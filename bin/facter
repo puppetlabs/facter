@@ -1,0 +1,72 @@
+#!/usr/bin/env ruby 
+
+#--------------------
+# duh, it's facter!
+#
+# $Id: facter,v 1.1.1.1 2004/03/21 21:06:27 luke Exp $
+
+require 'getoptlong'
+require 'facter'
+
+Facter.load
+
+$debug = 0
+
+config = nil
+
+result = GetoptLong.new(
+        [ "--version",         "-v",     GetoptLong::NO_ARGUMENT ],
+	[ "--help",		"-h",            GetoptLong::NO_ARGUMENT ],
+	[ "--debug",	"-d",            GetoptLong::NO_ARGUMENT ],
+	[ "--config",    "-c",           GetoptLong::REQUIRED_ARGUMENT ]
+)
+
+result.each { |opt,arg|
+    case opt
+        when "--version"
+            puts "%s" % Facter.version
+            exit
+        when "--debug"
+			Facter.debugging(1)
+        when "--help"
+            puts "There is no help yet"
+            exit
+        else
+            raise "Invalid option '#{opt}'"
+    end
+}
+
+names = []
+
+unless config.nil?
+	File.open(config) { |file|
+		names = file.readlines.collect { |line|
+			line.chomp
+		}
+	}
+end
+
+ARGV.each { |item|
+	names.push item
+}
+
+facts = {}
+
+if names.empty?
+    Facter.each { |name,fact|
+        facts[name] = fact
+    }
+else
+    names.each { |name|
+        begin
+            facts[name] = Facter[name].value
+        rescue => error
+            STDERR.puts "Could not retrieve %s: #{error}" % name
+            exit 10
+        end
+    }
+end
+
+facts.each { |name,value|
+	puts "%s => %s" % [name,value]
+}

@@ -1,0 +1,6 @@
+2.0:
+    Rewrote entirely.  It's much simpler to use, and now supports
+    adding new fact resolution mechanisms at run-time.
+
+1.0b1:
+	Initial release.

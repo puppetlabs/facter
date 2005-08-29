@@ -1,0 +1,9 @@
+This package is largely meant to be a library for collecting facts about your
+system.  These facts are mostly strings (i.e., not numbers), and are things
+like the output of 'uname', public ssh and cfengine keys, the number of
+processors, etc.
+
+It currently cannot collect very much information, but it is architected to be
+both OS and OS version specific.
+
+See bin/facter or http://madstop.com/svn/enhost for an example of the interface.
