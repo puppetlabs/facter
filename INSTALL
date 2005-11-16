@@ -1,2 +1,7 @@
-Unforantely, no install.rb yet.  Hopefully soon.  Just copy the libs into
-your main ruby library directory.  Or something.
+Run 'ruby install.rb' or use one of the distributed gem files at
+http://reductivelabs.com/downloads/gems .
+
+install.rb should successfully install; let me know if it doesn't.
+
+Otherwise, you can just set RUBYLIB to contain its lib directory, or copy
+the libs into your main ruby library directory.

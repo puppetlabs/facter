@@ -753,6 +753,11 @@ class Facter
             obj.tag("operatingsystem","=","Darwin")
             obj.code = "echo 'ps -auxwww'"
         }
+
+        Facter["id"].add { |obj|
+            obj.tag("operatingsystem","=","Linux")
+            obj.code = "whoami"
+        }
     end
 
     Facter.load

@@ -20,6 +20,10 @@ class TestFacter < Test::Unit::TestCase
     def teardown
         # clear out the list of facts, so we start fresh for every test
         Facter.reset
+
+        if ! @oldhandles.empty?
+            $stdin, $stdout, $stderr = @oldhandles
+        end
     end
 
     def test_version 
@@ -264,5 +268,22 @@ class TestFacter < Test::Unit::TestCase
             assert(name)
             assert(value)
         }
+    end
+
+    def test_withnoouts
+        @oldhandles = []
+        @oldhandles << $stdin.dup
+        $stdin.reopen "/dev/null"
+        @oldhandles << $stdout.dup
+        $stdout.reopen "/dev/null", "a"
+        @oldhandles << $stderr.dup
+        $stderr.reopen $stdout
+
+        assert_nothing_raised {
+            Facter.each { |name,fact|
+                list[name] = fact
+            }
+        }
+        $stdin, $stdout, $stderr = @oldhandles
     end
 end
