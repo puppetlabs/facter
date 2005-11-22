@@ -13,7 +13,7 @@ class Facter
     include Comparable
     include Enumerable
 
-    FACTERVERSION="1.0.1"
+    FACTERVERSION="1.0.0"
 	# = Facter 1.0
     # Functions as a hash of 'facts' you might care about about your
     # system, such as mac address, IP address, Video card, etc.
