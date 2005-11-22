@@ -1,4 +1,7 @@
-2.0:
+1.0.1:
+    Added 'id' fact, which basically returns 'whoami'.
+
+1.0:
     Rewrote entirely.  It's much simpler to use, and now supports
     adding new fact resolution mechanisms at run-time.
 
