@@ -30,6 +30,6 @@ class TestFacterBin < Test::Unit::TestCase
           output = %x{facter --version 2>&1}.chomp
         }
         print output
-        assert ( output == Facter.version )
+        assert(output == Facter.version)
     end
 end
