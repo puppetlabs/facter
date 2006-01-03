@@ -495,8 +495,7 @@ FACTERVERSION = '1.0.2'
         }
         Facter["Domain"].add { |obj|
             obj.code = proc {
-                domain = Resolution.exec('domainname')
-                return nil unless domain
+                domain = Resolution.exec('domainname') or return nil
                 # make sure it's a real domain
                 if domain =~ /.+\..+/
                     domain
@@ -535,7 +534,7 @@ FACTERVERSION = '1.0.2'
         Facter["Hostname"].add { |obj|
             obj.code = proc {
                 hostname = nil
-                name = Resolution.exec('hostname')
+                name = Resolution.exec('hostname') or return nil
                 if name =~ /^([\w-]+)\.(.+)$/
                     hostname = $1
                     # the Domain class uses this
@@ -552,7 +551,7 @@ FACTERVERSION = '1.0.2'
                 require 'resolv'
 
                 begin
-                    hostname = Facter["hostname"].value
+                    hostname = Facter["hostname"].value or return nil
                     ip = Resolv.getaddress(hostname)
                     unless ip == "127.0.0.1"
                         ip
@@ -566,11 +565,11 @@ FACTERVERSION = '1.0.2'
         }
         Facter["IPHostNumber"].add { |obj|
             obj.code = proc {
-                hostname = Facter["hostname"].value
+                hostname = Facter["hostname"].value or return nil
                 # we need Hostname to exist for this to work
-                list = Resolution.exec("host #{hostname}").chomp.split(/\s/)
+                list = Resolution.exec("host #{hostname}").chomp.split(/\s/) or
+                    return nil
 
-                return nil unless list
                 if defined? list[-1] and list[-1] =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
                     list[-1]
                 end
