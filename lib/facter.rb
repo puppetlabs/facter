@@ -13,7 +13,7 @@ class Facter
     include Comparable
     include Enumerable
 
-    FACTERVERSION="1.0.1"
+FACTERVERSION = '1.0.1'
 	# = Facter 1.0
     # Functions as a hash of 'facts' you might care about about your
     # system, such as mac address, IP address, Video card, etc.
@@ -332,6 +332,7 @@ class Facter
                     out = %x{#{code}}.chomp
                 rescue => detail
                     $stderr.puts detail
+                    return nil
                 end
                 if out == ""
                     return nil
@@ -495,6 +496,7 @@ class Facter
         Facter["Domain"].add { |obj|
             obj.code = proc {
                 domain = Resolution.exec('domainname')
+                return nil unless domain
                 # make sure it's a real domain
                 if domain =~ /.+\..+/
                     domain
@@ -565,9 +567,10 @@ class Facter
         Facter["IPHostNumber"].add { |obj|
             obj.code = proc {
                 hostname = Facter["hostname"].value
-                # crap, we need Hostname to exist for this to
-                # work
+                # we need Hostname to exist for this to work
                 list = Resolution.exec("host #{hostname}").chomp.split(/\s/)
+
+                return nil unless list
                 if defined? list[-1] and list[-1] =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
                     list[-1]
                 end
@@ -743,6 +746,8 @@ class Facter
                     return "Fedora"
                 elsif FileTest.exists?("/etc/redhat-release")
                     return "RedHat"
+                elsif FileTest.exists?("/etc/SuSE-release")
+                    return "SuSE"
                 end
             }
         }

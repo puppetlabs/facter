@@ -1,10 +1,10 @@
 # Rakefile for facter
 
 begin
-  require 'rubygems'
-  require 'rake/gempackagetask'
+    require 'rubygems'
+    require 'rake/gempackagetask'
 rescue Exception
-  nil
+    nil
 end
 
 require 'rake/clean'
@@ -32,6 +32,8 @@ else
   PKG_VERSION = CURRENT_VERSION
 end
 
+GEMDIR = "/export/docroots/reductivelabs.com/htdocs/downloads/gems"
+TARDIR = "/export/docroots/reductivelabs.com/htdocs/downloads/facter"
 
 # The default task is run if rake is given no explicit arguments.
 
@@ -40,16 +42,16 @@ task :default => :unittests
 
 # Test Tasks ---------------------------------------------------------
 
-task :u => :unittests
-task :a => :alltests
+#task :u => :unittests
+#task :a => :alltests
 
-task :alltests => :unittests
+#task :alltests => :unittests
 
-Rake::TestTask.new(:unittests) do |t|
-  t.test_files = FileList['tests/*.rb']
-  t.warning = true
-  t.verbose = false
-end
+#Rake::TestTask.new(:unittests) do |t|
+#    t.test_files = FileList['tests/*.rb']
+#    t.warning = true
+#    t.verbose = false
+#end
 
 # SVN Tasks ----------------------------------------------------------
 # ... none.
@@ -58,18 +60,18 @@ end
 
 desc "Install the application"
 task :install do
-  ruby "install.rb"
+    ruby "install.rb"
 end
 
 # Create a task to build the RDOC documentation tree.
 
 rd = Rake::RDocTask.new("rdoc") { |rdoc|
-  rdoc.rdoc_dir = 'html'
-  rdoc.template = 'css2'
-  rdoc.title    = "Facter"
-  rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'README'
-  rdoc.rdoc_files.include('README', 'LICENSE', 'TODO', 'CHANGES')
-  rdoc.rdoc_files.include('lib/**/*.rb', 'doc/**/*.rdoc')
+    rdoc.rdoc_dir = 'html'
+    rdoc.template = 'css2'
+    rdoc.title    = "Facter"
+    rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'README'
+    rdoc.rdoc_files.include('README', 'LICENSE', 'TODO', 'CHANGES')
+    rdoc.rdoc_files.include('lib/**/*.rb', 'doc/**/*.rdoc')
 }
 
 # ====================================================================
@@ -77,18 +79,18 @@ rd = Rake::RDocTask.new("rdoc") { |rdoc|
 # tar, zip and gem files.
 
 PKG_FILES = FileList[
-  'install.rb',
-  '[A-Z]*',
-  'bin/**/*', 
-  'lib/**/*.rb', 
-  'test/**/*.rb',
-  'doc/**/*',
-  'etc/*'
+    'install.rb',
+    '[A-Z]*',
+    'bin/**/*', 
+    'lib/**/*.rb', 
+    'test/**/*.rb',
+    'doc/**/*',
+    'etc/*'
 ]
 PKG_FILES.delete_if {|item| item.include?(".svn")}
 
 if ! defined?(Gem)
-  puts "Package Target requires RubyGEMs"
+    puts "Package Target requires RubyGEMs"
 else
   spec = Gem::Specification.new do |s|
     
@@ -192,10 +194,11 @@ desc "Make a new release"
 task :release => [
   :prerelease,
   :clobber,
-  :alltests,
   :update_version,
   :package,
+  :copy,
   :tag] do
+  #:alltests,
   
   announce 
   announce "**************************************************************"
@@ -246,7 +249,7 @@ task :update_version => [:prerelease] do
     open("lib/facter.rb") do |rakein|
       open("lib/facter.rb.new", "w") do |rakeout|
 	rakein.each do |line|
-	  if line =~ /^FACTERVERSION\s*=\s*/
+	  if line =~ /^\s*FACTERVERSION\s*=\s*/
 	    rakeout.puts "FACTERVERSION = '#{PKG_VERSION}'"
 	  else
 	    rakeout.puts line
@@ -271,7 +274,16 @@ task :tag => [:prerelease] do
   if ENV['RELTEST']
     announce "Release Task Testing, skipping SVN tagging"
   else
-    #sh %{svn copy trunk/ tags/#{reltag}}
+    sh %{svn copy trunk/ tags/#{reltag}}
   end
 end
 
+desc "Copy the newly created package into the downloads directory"
+task :copy => [:prerelease] do
+    sh %{cp pkg/facter-#{PKG_VERSION}.gem #{GEMDIR}}
+    sh %{generate_yaml_index.rb -d #{GEMDIR}}
+    sh %{cp pkg/facter-#{PKG_VERSION}.tgz #{TARDIR}}
+    sh %{ln -sf facter-#{PKG_VERSION}.tgz #{TARDIR}/facter-latest.tgz}
+end
+
+# $Id$
