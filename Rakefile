@@ -195,9 +195,9 @@ task :release => [
   :prerelease,
   :clobber,
   :update_version,
+  :tag,
   :package,
-  :copy,
-  :tag] do
+  :copy] do
   #:alltests,
   
   announce 
@@ -275,6 +275,7 @@ task :tag => [:prerelease] do
     announce "Release Task Testing, skipping SVN tagging"
   else
     sh %{svn copy ../trunk/ ../tags/#{reltag}}
+    sh %{cd ./tags; svn ci -m 'Adding Release tag'}
   end
 end
 
