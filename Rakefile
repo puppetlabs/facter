@@ -32,8 +32,7 @@ else
   PKG_VERSION = CURRENT_VERSION
 end
 
-GEMDIR = "/export/docroots/reductivelabs.com/htdocs/downloads/gems"
-TARDIR = "/export/docroots/reductivelabs.com/htdocs/downloads/facter"
+DOWNDIR = "/export/docroots/reductivelabs.com/htdocs/downloads"
 
 # The default task is run if rake is given no explicit arguments.
 
@@ -65,13 +64,14 @@ end
 
 # Create a task to build the RDOC documentation tree.
 
-rd = Rake::RDocTask.new("rdoc") { |rdoc|
+rd = Rake::RDocTask.new(:html) { |rdoc|
     rdoc.rdoc_dir = 'html'
-    rdoc.template = 'css2'
+    rdoc.template = 'html'
     rdoc.title    = "Facter"
     rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'README'
     rdoc.rdoc_files.include('README', 'LICENSE', 'TODO', 'CHANGES')
-    rdoc.rdoc_files.include('lib/**/*.rb', 'doc/**/*.rdoc')
+    rdoc.rdoc_files.include('lib/**/*.rb')
+    CLEAN.include("html")
 }
 
 # ====================================================================
@@ -140,6 +140,8 @@ else
     #pkg.need_zip = true
     pkg.need_tar = true
   end
+
+  CLEAN.include("pkg")
 end
 
 # Misc tasks =========================================================
@@ -275,16 +277,17 @@ task :tag => [:prerelease] do
     announce "Release Task Testing, skipping SVN tagging"
   else
     sh %{svn copy ../trunk/ ../tags/#{reltag}}
-    sh %{cd ./tags; svn ci -m 'Adding Release tag'}
+    sh %{cd ../tags; svn ci -m 'Adding Release tag #{reltag}'}
   end
 end
 
 desc "Copy the newly created package into the downloads directory"
-task :copy => [:prerelease] do
-    sh %{cp pkg/facter-#{PKG_VERSION}.gem #{GEMDIR}}
-    sh %{generate_yaml_index.rb -d #{GEMDIR}}
-    sh %{cp pkg/facter-#{PKG_VERSION}.tgz #{TARDIR}}
-    sh %{ln -sf facter-#{PKG_VERSION}.tgz #{TARDIR}/facter-latest.tgz}
+task :copy => [:package, :html] do
+    sh %{cp pkg/facter-#{PKG_VERSION}.gem #{DOWNDIR}/gems}
+    sh %{generate_yaml_index.rb -d #{DOWNDIR}}
+    sh %{cp pkg/facter-#{PKG_VERSION}.tgz #{DOWNDIR}/facter}
+    sh %{ln -sf facter-#{PKG_VERSION}.tgz #{DOWNDIR}/facter/facter-latest.tgz}
+    sh %{cp -r html #{DOWNDIR}/facter/apidocs}
 end
 
 # $Id$
