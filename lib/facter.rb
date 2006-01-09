@@ -3,12 +3,10 @@
 # Copyright 2004 Luke Kanies <luke@madstop.com>
 #
 # This program is free software. It may be redistributed and/or modified under
-# the terms of the GPL version 2 (or later), the Perl Artistic licence, or the
-# Ruby licence.
+# the terms of the Apache license.
 # 
 #--
 
-#--------------------------------------------------------------------
 class Facter
     include Comparable
     include Enumerable
@@ -37,14 +35,14 @@ FACTERVERSION = '1.0.2'
 
     attr_accessor :name, :os, :osrel, :hardware, :searching
 
-	#----------------------------------------------------------------
 	# module methods
-	#----------------------------------------------------------------
 
+    # Return the version of the library.
     def Facter.version
         return FACTERVERSION
     end
 
+    # Add some debugging
     def Facter.debug(string)
         if string.nil?
             return
@@ -54,7 +52,8 @@ FACTERVERSION = '1.0.2'
         end
     end
 
-	#----------------------------------------------------------------
+    # Return a fact object by name.  If you use this, you still have to call 'value'
+    # on it to retrieve the actual value.
 	def Facter.[](name)
         if @@facts.include?(name.downcase)
             return @@facts[name.downcase]
@@ -62,10 +61,10 @@ FACTERVERSION = '1.0.2'
             return Facter.add(name)
         end
     end
-	#----------------------------------------------------------------
 
-	#----------------------------------------------------------------
-    def Facter.add(name)
+    # Add a resolution mechanism for a named fact.  This does not distinguish between
+    # adding a new fact and adding a new way to resolve a fact.
+    def Facter.add(name, &block)
         fact = nil
         dcname = name.downcase
 
@@ -76,17 +75,18 @@ FACTERVERSION = '1.0.2'
             fact = @@facts[dcname]
         end
 
-        if block_given?
-            fact.add
+        unless block
+            raise ArgumentError, "You must pass a block to Facter.add"
         end
+
+        fact.add(&block)
 
         return fact
     end
-	#----------------------------------------------------------------
 
-	#----------------------------------------------------------------
     class << self
         include Enumerable
+        # Iterate across all of the facts.
         def each
             @@facts.each { |name,fact|
                 if fact.suitable?
@@ -98,18 +98,20 @@ FACTERVERSION = '1.0.2'
             }
         end
     end
-	#----------------------------------------------------------------
 
-	#----------------------------------------------------------------
+    # Flush all cached values.
+    def Facter.flush
+        @@facts.each { |fact| fact.flush }
+    end
+
+    # Remove them all.
     def Facter.reset
         @@facts.each { |name,fact|
             @@facts.delete(name)
         }
     end
-	#----------------------------------------------------------------
 
-	#----------------------------------------------------------------
-	# 
+	# Set debugging on or off.
 	def Facter.debugging(bit)
 		if bit
             case bit
@@ -134,64 +136,53 @@ FACTERVERSION = '1.0.2'
 			@@debug = 0
 		end
 	end
-	#----------------------------------------------------------------
 
-	#----------------------------------------------------------------
-    #def Facter.init
-    #    @@os = @@facts["operatingsystem"].value
-    #    @@release = @@facts["operatingsystemrelease"].value
-    #end
-	#----------------------------------------------------------------
-
-	#----------------------------------------------------------------
+    # Return a list of all of the facts.
     def Facter.list
         return @@facts.keys
     end
-	#----------------------------------------------------------------
 
-	#----------------------------------------------------------------
-    def Facter.os
-        return @@os
-    end
-	#----------------------------------------------------------------
-
-	#----------------------------------------------------------------
-    def Facter.release
-        return @@release
-    end
-	#----------------------------------------------------------------
-
-	#----------------------------------------------------------------
+    # Compare one value to another.
     def <=>(other)
         return self.value <=> other
     end
-	#----------------------------------------------------------------
 
-	#----------------------------------------------------------------
+    # Are we the same?  Used for case statements.
+    def ===(value)
+        self.value == value
+    end
+
+    # Create a new fact, with no resolution mechanisms.
     def initialize(name)
         @name = name.downcase
         if @@facts.include?(@name)
-            raise "A fact named %s already exists" % name
+            raise ArgumentError, "A fact named %s already exists" % name
         else
             @@facts[@name] = self
         end
 
         @resolves = []
         @searching = false
-    end
-	#----------------------------------------------------------------
 
-	#----------------------------------------------------------------
-    # as long as this doesn't work over the 'net, it should probably
-    # be optimized to throw away any resolutions not valid for the machine
-    # it's running on
-    # but that's not currently done...
-    def add
+        @value = nil
+    end
+
+    # Add a new resolution mechanism.  This requires a block, which will then
+    # be evaluated in the context of the new mechanism.
+    def add(&block)
+        unless block_given?
+            raise ArgumentError, "You must pass a block to Fact<instance>.add"
+        end
+
         resolve = Resolution.new(@name)
-        yield(resolve)
+
+        resolve.instance_eval(&block)
 
         # skip resolves that will never be suitable for us
-        return unless resolve.suitable?
+        unless resolve.suitable?
+            Facter.debug "Resolve is unsuitable"
+            return
+        end
 
         # insert resolves in order of number of tags
         inserted = false
@@ -207,41 +198,34 @@ FACTERVERSION = '1.0.2'
             @resolves.push resolve
         end
     end
-	#----------------------------------------------------------------
 
-	#----------------------------------------------------------------
-    # iterate across all of the currently configured resolves
-    # sort the resolves in order of most tags first, so we're getting
-    # the most specific answers first, hopefully
-    def each
-#        @resolves.sort { |a,b|
-#            puts "for tag %s, alength is %s and blength is %s" %
-#                [@name, a.length, b.length]
-#            b.length <=> a.length
-#        }.each { |resolve|
-#            yield resolve
-#        }
-        @resolves.each { |r| yield r }
-    end
-	#----------------------------------------------------------------
-
-	#----------------------------------------------------------------
-    # return a count of resolution mechanisms available
+    # Return a count of resolution mechanisms available.
     def count
         return @resolves.length
     end
-	#----------------------------------------------------------------
 
-	#----------------------------------------------------------------
-    # is this fact suitable for finding answers on this host?
-    # again, this should really be optimizing by throwing away everything
-    # not suitable, but...
+    # Iterate across all of the fact resolution mechanisms and yield each in
+    # turn.  These are inserted in order of most tags.
+    def each
+        @resolves.each { |r| yield r }
+    end
+
+    # Flush any cached values.
+    def flush
+        @value = nil
+        @suitable = nil
+    end
+
+    # Is this fact suitable for finding answers on this host?  This is used
+    # to throw away any initially unsuitable mechanisms.
     def suitable?
-        return false if @resolves.length == 0
+        if @resolves.length == 0
+            return false
+        end
 
-        unless defined? @suitable
+        unless defined? @suitable or (defined? @suitable and @suitable.nil?)
             @suitable = false
-            self.each { |resolve|
+            @resolves.each { |resolve|
                 if resolve.suitable?
                     @suitable = true
                     break
@@ -251,47 +235,47 @@ FACTERVERSION = '1.0.2'
 
         return @suitable
     end
-	#----------------------------------------------------------------
 
-	#----------------------------------------------------------------
+    # Return the value for a given fact.  Searches through all of the mechanisms
+    # and returns either the first value or nil.
     def value
-        # make sure we don't get stuck in recursive dependency loops
-        if @searching
-            Facter.debug "Caught recursion on %s" % @name
-            
-            # return a cached value if we've got it
-            if @value
-                return @value
-            else
+        unless @value
+            # make sure we don't get stuck in recursive dependency loops
+            if @searching
+                Facter.debug "Caught recursion on %s" % @name
+                
+                # return a cached value if we've got it
+                if @value
+                    return @value
+                else
+                    return nil
+                end
+            end
+            @value = nil
+            foundsuits = false
+
+            if @resolves.length == 0
+                Facter.debug "No resolves for %s" % @name
                 return nil
             end
-        end
-        @value = nil
-        foundsuits = false
 
-        if @resolves.length == 0
-            Facter.debug "No resolves for %s" % @name
-            return nil
-        end
+            @searching = true
+            @resolves.each { |resolve|
+                #Facter.debug "Searching resolves for %s" % @name
+                if resolve.suitable?
+                    @value = resolve.value
+                    foundsuits = true
+                end
+                unless @value.nil? or @value == ""
+                    break
+                end
+            }
+            @searching = false
 
-        @searching = true
-        @resolves.each { |resolve|
-            #Facter.debug "Searching resolves for %s" % @name
-            if resolve.suitable?
-                @value = resolve.value
-                foundsuits = true
-            else
-                Facter.debug "Unsuitable resolve %s for %s" % [resolve,@name]
+            unless foundsuits
+                Facter.debug "Found no suitable resolves of %s for %s" %
+                    [@resolves.length,@name]
             end
-            unless @value.nil? or @value == ""
-                break
-            end
-        }
-        @searching = false
-
-        unless foundsuits
-            Facter.debug "Found no suitable resolves of %s for %s" %
-                [@resolves.length,@name]
         end
 
         if @value.nil?
@@ -302,12 +286,15 @@ FACTERVERSION = '1.0.2'
             return @value
         end
     end
-	#----------------------------------------------------------------
 
-	#----------------------------------------------------------------
+    # An actual fact resolution mechanism.  These are largely just chunks of code,
+    # with optional tags restricting the mechanisms to only working on specific
+    # systems.  Note that the tags are always ANDed, so any tags specified
+    # must all be true for the resolution to be suitable.
     class Resolution
         attr_accessor :interpreter, :code, :name
 
+        # Execute a chunk of code.
         def Resolution.exec(code, interpreter = "/bin/sh")
             if interpreter == "/bin/sh"
                 binary = code.split(/\s+/).shift
@@ -340,29 +327,46 @@ FACTERVERSION = '1.0.2'
                     return out
                 end
             else
-                raise "non-sh interpreters are not currently supported"
+                raise ArgumentError, "non-sh interpreters are not currently supported"
             end
         end
 
+        # Create a new resolution mechanism.
         def initialize(name)
             @name = name
             @tags = []
+            @value = nil
         end
 
+        # Return the number of tags.
         def length
             @tags.length
         end
 
+        # Set our code for returning a value.
+        def setcode(string = nil, interp = nil, &block)
+            if string
+                @code = string
+                @interpreter = interp || "/bin/sh"
+            else
+                unless block_given?
+                    raise ArgumentError, "You must pass either code or a block"
+                end
+                @code = block
+            end
+        end
+
+        # Is this resolution mechanism suitable on the system in question?
         def suitable?
             unless defined? @suitable
                 @suitable = true
                 if @tags.length == 0
-                    #Facter.debug "'%s' has no tags" % @name
+                    Facter.debug "'%s' has no tags" % @name
                     return true
                 end
                 @tags.each { |tag|
                     unless tag.true?
-                        #Facter.debug "'%s' is false" % tag
+                        Facter.debug "'%s' is false" % tag
                         @suitable = false
                     end
                 }
@@ -371,18 +375,19 @@ FACTERVERSION = '1.0.2'
             return @suitable
         end
 
-        def tag(fact,op,value)
-            @tags.push Tag.new(fact,op,value)
+        # Add a new tag to the resolution mechanism.
+        def tag(fact,*values)
+            @tags.push Tag.new(fact,*values)
         end
 
         def to_s
             return self.value()
         end
 
-        # how we get a value for our resolution mechanism
+        # How we get a value for our resolution mechanism.
         def value
-            #puts "called %s value" % @name
             value = nil
+
             if @code.is_a?(Proc)
                 value = @code.call()
             else
@@ -402,26 +407,26 @@ FACTERVERSION = '1.0.2'
 
             return value
         end
-    end
-	#----------------------------------------------------------------
 
-	#----------------------------------------------------------------
+    end
+
+    # A restricting tag for fact resolution mechanisms.  The tag must be true
+    # for the resolution mechanism to be suitable.
     class Tag
         attr_accessor :fact, :op, :value
 
-        def initialize(fact,op,value)
+        # Add the tag.  Requires the fact name, an operator, and the value we're
+        # comparing to.
+        def initialize(fact, *values)
             @fact = fact
-            if op == "="
-                op = "=="
-            end
-            @op = op
-            @value = value
+            @values = values
         end
 
         def to_s
-            return "'%s' %s '%s'" % [@fact,@op,@value]
+            return "'%s' '%s'" % [@fact, @values.join(",")]
         end
 
+        # Evaluate the fact, returning true or false.
         def true?
             value = Facter[@fact].value
 
@@ -429,39 +434,72 @@ FACTERVERSION = '1.0.2'
                 return false
             end
 
-            str = "'%s' %s '%s'" % [value,@op,@value]
-            begin
-                if eval(str)
-                    return true
-                else
-                    return false
+            retval = @values.find { |v|
+                if value == v
+                    break true
                 end
-            rescue => detail
-                $stderr.puts "Failed to test '%s': %s" % [str,detail]
-                return false
+            }
+
+            if retval
+                retval = true
+            else
+                retval = false
             end
+
+            return retval || false
         end
     end
-	#----------------------------------------------------------------
 
     # Load all of the default facts
     def Facter.load
-        Facter["OperatingSystem"].add { |obj|
-            obj.code = 'uname -s'
-        }
+        Facter.add("Kernel") do
+            setcode 'uname -s'
+        end
 
-        Facter["OperatingSystemRelease"].add { |obj|
-            obj.code = 'uname -r'
-        }
+        Facter.add("KernelRelease") do
+            setcode 'uname -r'
+        end
 
-        Facter["HardwareModel"].add { |obj|
-            obj.code = 'uname -m'
-            #obj.os = "SunOS"
-            #obj.tag("operatingsystem","=","SunOS")
-        }
+        Facter.add("OperatingSystem") do
+            # Default to just returning the kernel as the operating system
+            setcode do Facter["Kernel"].value end
+        end
 
-        Facter["CfKey"].add { |obj|
-            obj.code = proc {
+        Facter.add("OperatingSystemRelease") do
+            setcode do Facter["KernelRelease"].value end
+        end
+
+        Facter.add("OperatingSystem") do
+            #obj.os = "Linux"
+            tag("kernel","SunOS")
+            setcode do "Solaris" end
+        end
+
+        Facter.add("OperatingSystem") do
+            #obj.os = "Linux"
+            tag("kernel","Linux")
+            setcode do
+                if FileTest.exists?("/etc/debian_version")
+                    "Debian"
+                elsif FileTest.exists?("/etc/gentoo-release")
+                    "Gentoo"
+                elsif FileTest.exists?("/etc/fedora-release")
+                    "Fedora"
+                elsif FileTest.exists?("/etc/redhat-release")
+                    "RedHat"
+                elsif FileTest.exists?("/etc/SuSE-release")
+                    "SuSE"
+                end
+            end
+        end
+
+        Facter.add("HardwareModel") do
+            setcode 'uname -m'
+            #tag("operatingsystem","SunOS")
+        end
+
+        Facter.add("CfKey") do
+            setcode do
                 value = nil
                 ["/usr/local/etc/cfkey.pub",
                     "/etc/cfkey.pub",
@@ -483,135 +521,148 @@ FACTERVERSION = '1.0.2'
                 }
 
                 value
-            }
-        }
+            end
+        end
 
-        Facter["Domain"].add { |obj|
-            obj.code = proc {
+        Facter.add("Domain") do
+            setcode do
                 if defined? $domain and ! $domain.nil?
                     $domain
+                else
+                    nil
                 end
-            }
-        }
-        Facter["Domain"].add { |obj|
-            obj.code = proc {
-                domain = Resolution.exec('domainname') or return nil
+            end
+        end
+        Facter.add("Domain") do
+            setcode do
+                domain = Resolution.exec('domainname') or nil
                 # make sure it's a real domain
-                if domain =~ /.+\..+/
+                if domain and domain =~ /.+\..+/
                     domain
                 else
                     nil
                 end
-            }
-        }
-        Facter["Domain"].add { |obj|
-            obj.code = proc {
+            end
+        end
+        Facter.add("Domain") do
+            setcode do
                 value = nil
-                unless FileTest.exists?("/etc/resolv.conf")
-                    return nil
-                end
-                File.open("/etc/resolv.conf") { |file|
-                    # is the domain set?
-                    file.each { |line|
-                        if line =~ /domain\s+(\S+)/
-                            value = $1
-                            break
-                        end
+                if FileTest.exists?("/etc/resolv.conf")
+                    File.open("/etc/resolv.conf") { |file|
+                        # is the domain set?
+                        file.each { |line|
+                            if line =~ /domain\s+(\S+)/
+                                value = $1
+                                break
+                            end
+                        }
                     }
-                }
-                ! value and File.open("/etc/resolv.conf") { |file|
-                    # is the search path set?
-                    file.each { |line|
-                        if line =~ /search\s+(\S+)/
-                            value = $1
-                            break
-                        end
+                    ! value and File.open("/etc/resolv.conf") { |file|
+                        # is the search path set?
+                        file.each { |line|
+                            if line =~ /search\s+(\S+)/
+                                value = $1
+                                break
+                            end
+                        }
                     }
-                }
-                value
-            }
-        }
-        Facter["Hostname"].add { |obj|
-            obj.code = proc {
-                hostname = nil
-                name = Resolution.exec('hostname') or return nil
-                if name =~ /^([\w-]+)\.(.+)$/
-                    hostname = $1
-                    # the Domain class uses this
-                    $domain = $2
+                    value
                 else
-                    hostname = name
+                    nil
                 end
-                hostname
-            }
-        }
+            end
+        end
+        Facter.add("Hostname") do
+            setcode do
+                hostname = nil
+                name = Resolution.exec('hostname') or nil
+                if name
+                    if name =~ /^([\w-]+)\.(.+)$/
+                        hostname = $1
+                        # the Domain class uses this
+                        $domain = $2
+                    else
+                        hostname = name
+                    end
+                    hostname
+                else
+                    nil
+                end
+            end
+        end
 
-        Facter["IPHostNumber"].add { |obj|
-            obj.code = proc {
+        Facter.add("IPHostNumber") do
+            setcode do
                 require 'resolv'
 
                 begin
-                    hostname = Facter["hostname"].value or return nil
-                    ip = Resolv.getaddress(hostname)
-                    unless ip == "127.0.0.1"
-                        ip
+                    if hostname = Facter["hostname"].value
+                        ip = Resolv.getaddress(hostname)
+                        unless ip == "127.0.0.1"
+                            ip
+                        end
+                    else
+                        nil
                     end
                 rescue Resolv::ResolvError
                     nil
                 rescue NoMethodError # i think this is a bug in resolv.rb?
                     nil
                 end
-            }
-        }
-        Facter["IPHostNumber"].add { |obj|
-            obj.code = proc {
-                hostname = Facter["hostname"].value or return nil
-                # we need Hostname to exist for this to work
-                list = Resolution.exec("host #{hostname}").chomp.split(/\s/) or
-                    return nil
+            end
+        end
+        Facter.add("IPHostNumber") do
+            setcode do
+                if hostname = Facter["hostname"].value
+                    # we need Hostname to exist for this to work
+                    if list = Resolution.exec("host #{hostname}").chomp.split(/\s/)
 
-                if defined? list[-1] and list[-1] =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
-                    list[-1]
+                        if defined? list[-1] and
+                                list[-1] =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
+                            list[-1]
+                        end
+                    else
+                        nil
+                    end
+                else
+                    nil
                 end
-            }
-        }
+            end
+        end
 
         ["/etc/ssh","/usr/local/etc/ssh","/etc","/usr/local/etc"].each { |dir|
             {"SSHDSAKey" => "ssh_host_dsa_key.pub",
                     "SSHRSAKey" => "ssh_host_rsa_key.pub"}.each { |name,file|
-                Facter[name].add { |obj|
-                    obj.code = proc {
+                Facter.add(name) do
+                    setcode do
                         value = nil
                         filepath = File.join(dir,file)
                         if FileTest.file?(filepath)
                             begin
                                 value = File.open(filepath).read.chomp
                             rescue
-                                return nil
+                                value = nil
                             end
                         end
-                        return value
-                    } # end of proc
-                } # end of add
+                        value
+                    end # end of proc
+                end # end of add
             } # end of hash each
         } # end of dir each
 
-        Facter["UniqueId"].add { |obj|
-            obj.code = 'hostid'
-            obj.interpreter = '/bin/sh'
-            obj.tag("operatingsystem","=","SunOS")
-            #obj.os = "SunOS"
-        }
-        Facter["HardwareISA"].add { |obj|
-            obj.code = 'uname -p'
-            obj.interpreter = '/bin/sh'
-            #obj.os = "SunOS"
-            obj.tag("operatingsystem","=","SunOS")
-        }
-        Facter["MacAddress"].add { |obj|
-            #obj.os = "SunOS"
-            obj.tag("operatingsystem","=","SunOS")
-            obj.code = proc {
+        Facter.add("UniqueId") do
+            setcode 'hostid',  '/bin/sh'
+            tag("operatingsystem","Solaris")
+        end
+
+        Facter.add("HardwareISA") do
+            setcode 'uname -p', '/bin/sh'
+            tag("operatingsystem","Solaris")
+        end
+
+        Facter.add("MacAddress") do
+            tag("operatingsystem","Solaris")
+            setcode do
                 ether = nil
                 output = %x{/sbin/ifconfig -a}
 
@@ -619,12 +670,12 @@ FACTERVERSION = '1.0.2'
                 ether = $1
 
                 ether
-            }
-        }
-        Facter["MacAddress"].add { |obj|
-            #obj.os = "Darwin"
-            obj.tag("operatingsystem","=","Darwin")
-            obj.code = proc {
+            end
+        end
+
+        Facter.add("MacAddress") do
+            tag("Kernel","Darwin")
+            setcode do
                 ether = nil
                 output = %x{/sbin/ifconfig}
 
@@ -636,12 +687,11 @@ FACTERVERSION = '1.0.2'
                 }
 
                 ether
-            }
-        }
-        Facter["IPHostnumber"].add { |obj|
-            #obj.os = "Darwin"
-            obj.tag("operatingsystem","=","Darwin")
-            obj.code = proc {
+            end
+        end
+        Facter.add("IPHostnumber") do
+            tag("Kernel","Darwin")
+            setcode do
                 ip = nil
                 output = %x{/sbin/ifconfig}
 
@@ -656,74 +706,76 @@ FACTERVERSION = '1.0.2'
                 }
 
                 ip
-            }
-        }
-        Facter["Hostname"].add { |obj|
-            #obj.os = "Darwin"
-            #obj.release = "R7"
-            obj.tag("operatingsystem","=","Darwin")
-            obj.tag("operatingsystemrelease","=","R7")
-            obj.code = proc {
+            end
+        end
+        Facter.add("Hostname") do
+            tag("Kernel","Darwin")
+            tag("KernelRelease","R7")
+            setcode do
                 hostname = nil
-                File.open(
-                    "/Library/Preferences/SystemConfiguration/preferences.plist"
-                ) { |file|
-                    found = 0
-                    file.each { |line|
-                        if line =~ /ComputerName/i
-                            found = 1
-                            next
-                        end
-                        if found == 1
-                            if line =~ /<string>([\w|-]+)<\/string>/
-                                hostname = $1
-                                break
+                if FileTest.exists?("/Library/Preferences/SystemConfiguration/preferences.plist")
+                    File.open(
+                        "/Library/Preferences/SystemConfiguration/preferences.plist"
+                    ) { |file|
+                        found = 0
+                        file.each { |line|
+                            if line =~ /ComputerName/i
+                                found = 1
+                                next
                             end
-                        end
+                            if found == 1
+                                if line =~ /<string>([\w|-]+)<\/string>/
+                                    hostname = $1
+                                    break
+                                end
+                            end
+                        }
                     }
-                }
+                end
 
                 if hostname != nil
                     hostname
+                else
+                    nil
                 end
-            }
-        }
-        Facter["IPHostnumber"].add { |obj|
-            #obj.os = "Darwin"
-            #obj.release = "R6"
-            obj.tag("operatingsystem","=","Darwin")
-            obj.tag("operatingsystemrelease","=","R6")
-            obj.code = proc {
+            end
+        end
+        Facter.add("IPHostnumber") do
+            tag("Kernel","Darwin")
+            tag("KernelRelease","R6")
+            setcode do
                 hostname = nil
-                File.open(
-                    "/var/db/SystemConfiguration/preferences.xml"
-                ) { |file|
-                    found = 0
-                    file.each { |line|
-                        if line =~ /ComputerName/i
-                            found = 1
-                            next
-                        end
-                        if found == 1
-                            if line =~ /<string>([\w|-]+)<\/string>/
-                                hostname = $1
-                                break
+                if FileTest.exists?("/var/db/SystemConfiguration/preferences.xml")
+                    File.open(
+                        "/var/db/SystemConfiguration/preferences.xml"
+                    ) { |file|
+                        found = 0
+                        file.each { |line|
+                            if line =~ /ComputerName/i
+                                found = 1
+                                next
                             end
-                        end
+                            if found == 1
+                                if line =~ /<string>([\w|-]+)<\/string>/
+                                    hostname = $1
+                                    break
+                                end
+                            end
+                        }
                     }
-                }
+                end
 
                 if hostname != nil
                     hostname
+                else
+                    nil
                 end
-            }
-        }
-        Facter["IPHostnumber"].add { |obj|
-            #obj.os = "Darwin"
-            #obj.release = "R6"
-            obj.tag("operatingsystem","=","Darwin")
-            obj.tag("operatingsystemrelease","=","R6")
-            obj.code = proc {
+            end
+        end
+        Facter.add("IPHostnumber") do
+            tag("Kernel","Darwin")
+            tag("KernelRelease","R6")
+            setcode do
                 ether = nil
                 output = %x{/sbin/ifconfig}
 
@@ -731,37 +783,22 @@ FACTERVERSION = '1.0.2'
                 ether = $1
 
                 ether
-            }
-        }
-        Facter["Distro"].add { |obj|
-            #obj.os = "Linux"
-            obj.tag("operatingsystem","=","Linux")
-            obj.code = proc {
-                if FileTest.exists?("/etc/debian_version")
-                    return "Debian"
-                elsif FileTest.exists?("/etc/gentoo-release")
-                    return "Gentoo"
-                elsif FileTest.exists?("/etc/fedora-release")
-                    return "Fedora"
-                elsif FileTest.exists?("/etc/redhat-release")
-                    return "RedHat"
-                elsif FileTest.exists?("/etc/SuSE-release")
-                    return "SuSE"
-                end
-            }
-        }
-        Facter["ps"].add { |obj|
-            obj.code = "echo 'ps -ef'"
-        }
-        Facter["ps"].add { |obj|
-            obj.tag("operatingsystem","=","Darwin")
-            obj.code = "echo 'ps -auxwww'"
-        }
+            end
+        end
 
-        Facter["id"].add { |obj|
-            obj.tag("operatingsystem","=","Linux")
-            obj.code = "whoami"
-        }
+        Facter.add("ps") do
+            setcode do 'ps -ef' end
+        end
+
+        Facter.add("ps") do
+            tag("operatingsystem","FreeBSD", "NetBSD", "OpenBSD", "Darwin")
+            setcode do 'ps -auxwww' end
+        end
+
+        Facter.add("id") do
+            tag("operatingsystem","Linux")
+            setcode "whoami"
+        end
     end
 
     Facter.load

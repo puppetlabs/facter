@@ -1,3 +1,7 @@
+1.1.0:
+    Added support for OpenBSD (and probably NetBSD and FreeBSD), and significantly
+    refactored (heh) how facts and resolution mechanisms are added.
+
 1.0.2:
     Added SuSE distro
     Added initial support for Cygwin, thanks to contributions from Eric Sorenson
