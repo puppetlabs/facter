@@ -55,11 +55,7 @@ FACTERVERSION = '1.1.0'
     # Return a fact object by name.  If you use this, you still have to call 'value'
     # on it to retrieve the actual value.
 	def Facter.[](name)
-        if @@facts.include?(name.downcase)
-            return @@facts[name.downcase]
-        else
-            return Facter.add(name)
-        end
+        @@facts[name.to_s.downcase]
     end
 
     # Add a resolution mechanism for a named fact.  This does not distinguish between
@@ -76,7 +72,7 @@ FACTERVERSION = '1.1.0'
         end
 
         unless block
-            raise ArgumentError, "You must pass a block to Facter.add"
+            return fact
         end
 
         fact.add(&block)
@@ -96,6 +92,14 @@ FACTERVERSION = '1.1.0'
                     end
                 end
             }
+        end
+    end
+
+    def Facter.value(name)
+        if @@facts.include?(name.to_s.downcase)
+            @@facts[name.to_s.downcase].value
+        else
+            nil
         end
     end
 
@@ -180,7 +184,6 @@ FACTERVERSION = '1.1.0'
 
         # skip resolves that will never be suitable for us
         unless resolve.suitable?
-            Facter.debug "Resolve is unsuitable"
             return
         end
 
@@ -361,12 +364,10 @@ FACTERVERSION = '1.1.0'
             unless defined? @suitable
                 @suitable = true
                 if @tags.length == 0
-                    Facter.debug "'%s' has no tags" % @name
                     return true
                 end
                 @tags.each { |tag|
                     unless tag.true?
-                        Facter.debug "'%s' is false" % tag
                         @suitable = false
                     end
                 }
@@ -428,7 +429,12 @@ FACTERVERSION = '1.1.0'
 
         # Evaluate the fact, returning true or false.
         def true?
-            value = Facter[@fact].value
+            fact = nil
+            unless fact = Facter[@fact]
+                Facter.debug "No fact for %s" % @fact
+                return false
+            end
+            value = fact.value
 
             if value.nil?
                 return false

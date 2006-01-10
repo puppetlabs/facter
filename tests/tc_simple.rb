@@ -84,16 +84,12 @@ class TestFacter < Test::Unit::TestCase
     end
 
     # I have no idea why this test is continually failing...
-    def disabled_test_recursivetags
+    def test_recursivetags
         assert_nothing_raised {
-            Facter.add("funtest") {
-                setcode { "tagged" }
-                tag("operatingsystem", Facter["operatingsystem"].value)
+            Facter.add("testing") {
+                setcode { "bar" }
+                tag("required","foo")
             }
-            #Facter.add("testing") {
-            #    setcode { "bar" }
-            #    tag("required","foo")
-            #}
         }
         assert_nothing_raised {
             Facter.add("required") do
