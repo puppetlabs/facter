@@ -1,52 +1,47 @@
+%define rb_ver %(ruby -rrbconfig -e 'puts Config::CONFIG["ruby_version"]')
 %define rubylibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')
 %define _pbuild %{_builddir}/%{name}-%{version}
 
-Summary: A fact-collection library
+Summary: Facter collects Operating system facts.
 Name: facter
 Version: 1.1.1
 Release: 1
 License: GPL
 Group: System Environment/Base
-
-URL: http://reductivelabs.com/projects/facter/
-Source: http://reductivelabs.com/downloads/facter/%{name}-%{version}.tgz
-
+URL: http://reductivelabs.com/projects/facter
 Vendor: Reductive Labs
-Packager: Duane Griffin <d.griffin@psenterprise.com>
-
-Requires: ruby >= 1.8.1
-Requires: facter >= 1.1
+Source0: %{name}-%{version}.tgz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArchitectures: noarch
 
+Requires: ruby >= 1.8.1
+BuildRequires: ruby >= 1.8.1
+
 %description
-Facter provides a cross-platform library for collecting simple facts about
-about your systems and making them available via either the command line or
-a Ruby library.  You can create multiple ways to retrieve a given fact and it
-will return the first valid value it finds.
+Facter is a module for collecting simple facts about a host Operating system.
 
 %prep
 %setup -q
 
-%install
-%{__rm} -rf %{buildroot}
-%{__install} -d -m0755 %{buildroot}%{_bindir}
-%{__install} -d -m0755 %{buildroot}%{rubylibdir}
-%{__install} -d -m0755 %{buildroot}%{_docdir}/%{name}-%{version}
-%{__install} -Dp -m0755 %{_pbuild}/bin/* %{buildroot}%{_bindir}/
-%{__install} -Dp -m0644 %{_pbuild}/lib/facter.rb %{buildroot}%{rubylibdir}/facter.rb
+%build
 
-%files
-%defattr(-, root, root, 0755)
-%{_sbindir}/facter
-%{rubylibdir}/*
-%{_localstatedir}/facter
-%config %{_initrddir}/facter
-%doc CHANGELOG COPYING LICENSE README TODO
+%install
+rm -rf $RPM_BUILD_ROOT
+mkdir $RPM_BUILD_ROOT
+DESTDIR=$RPM_BUILD_ROOT ruby install.rb --no-tests
 
 %clean
-%{__rm} -rf %{buildroot}
+rm -rf $RPM_BUILD_ROOT
+
+
+%files
+%defattr(-,root,root,-)
+%{_bindir}/facter
+%{rubylibdir}/facter.rb
+%doc CHANGELOG COPYING INSTALL LICENSE README
+
 
 %changelog
-* Tue Jan 17 2006 Luke Kanies <luke@reductivelabs.com> - 1.1.1
-- Created
+* Wed Jan 11 2006 David Lutterkort <dlutter@redhat.com> - 
+- Initial build.
+

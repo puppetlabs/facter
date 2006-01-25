@@ -69,7 +69,7 @@ rd = Rake::RDocTask.new(:html) { |rdoc|
     rdoc.template = 'html'
     rdoc.title    = "Facter"
     rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'README'
-    rdoc.rdoc_files.include('README', 'LICENSE', 'TODO', 'CHANGES')
+    rdoc.rdoc_files.include('README', 'LICENSE', 'TODO', 'CHANGELOG')
     rdoc.rdoc_files.include('lib/**/*.rb')
     CLEAN.include("html")
 }
@@ -293,40 +293,22 @@ end
 desc "Create an RPM"
 task :rpm do
     tarball = File.join(Dir.getwd, "pkg", "facter-#{PKG_VERSION}.tgz")
-    sources = File.join(Dir.getwd, "pkg", "facter-#{PKG_VERSION}")
-    ext= tarball[tarball.rindex('.')..-1]
-    (name, version) = File::basename(tarball, ext).split("-")
-    puts "tarball is %s" % tarball
 
-    #basedir = File.join(Dir.getwd, "pkg", "rpm")
-    #basedir = "/home/luke/rpm"
-
-    sourcedir = `rpm --define 'name #{name}' --define 'version #{version}' --eval '%_sourcedir'`.chomp
+    sourcedir = `rpm --define 'name facter' --define 'version #{PKG_VERSION}' --eval '%_sourcedir'`.chomp
 
     basedir = File.dirname(sourcedir)
-    puts "basedir is %s" % basedir
     FileUtils.mkdir_p(basedir)
 
     if ! FileTest::exist?(sourcedir)
         FileUtils.mkdir_p(sourcedir)
     end
 
-    #puts "target is %s" % target
-
     target = "#{sourcedir}/facter-#{PKG_VERSION}.tgz"
-    #CLEAN.include(target)
 
-    #FileUtils::copy(tarball, target)
     sh %{cp -r #{tarball} #{sourcedir}}
     sh %{cp conf/redhat/facter.spec %s/facter.spec} % basedir
 
     FileUtils::cd(basedir)
-    #FileUtils::cd(sourcedir)
-
-    puts "WD is %s" % Dir.getwd
-
-    #system("tar xzf #{tarball} -O '*/conf/redhat/facter.spec' > facter.spec")
-    #system("tar xzf #{tarball} -O '*/conf/redhat/facter.spec' > facter.spec")
 
     system("rpmbuild -ba facter.spec")
 end
