@@ -2,16 +2,15 @@
 %define rubylibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')
 %define _pbuild %{_builddir}/%{name}-%{version}
 
-Summary: Facter collects Operating system facts.
+Summary: Facter collects Operating system facts
 Name: facter
 Version: 1.1.1
-Release: 1
+Release: 3%{?dist}
 License: GPL
 Group: System Environment/Base
 URL: http://reductivelabs.com/projects/facter
-Vendor: Reductive Labs
 Source0: %{name}-%{version}.tgz
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArchitectures: noarch
 
 Requires: ruby >= 1.8.1
@@ -42,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Wed Jan 11 2006 David Lutterkort <dlutter@redhat.com> - 
+* Mon Feb  6 2006 David Lutterkort <dlutter@redhat.com> - 1.1.1-2
+- Fix BuildRoot. Add dist to release tag
+
+* Wed Jan 11 2006 David Lutterkort <dlutter@redhat.com> - 1.1.1-1
 - Initial build.
 
