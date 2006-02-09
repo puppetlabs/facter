@@ -1,3 +1,4 @@
+# -*- ruby -*- (Make emacs happy)
 # Rakefile for facter
 
 begin
@@ -260,6 +261,22 @@ task :update_version => [:prerelease] do
       end
     end
     mv "lib/facter.rb.new", "lib/facter.rb"
+
+    open("conf/redhat/facter.spec") do |rakein|
+      open("conf/redhat/facter.spec.new", "w") do |rakeout|
+        rakein.each do |line|
+          if line =~ /^Version:\s*/
+            rakeout.puts "Version: #{PKG_VERSION}"
+          elsif line =~ /^Release:\s*/
+            rakeout.puts "Release: 1%{?dist}"
+          else
+            rakeout.puts line
+          end
+        end
+      end
+    end
+    mv "conf/redhat/facter.spec.new", "conf/redhat/facter.spec"
+
     if ENV['RELTEST']
       announce "Release Task Testing, skipping commiting of new version"
     else
