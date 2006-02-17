@@ -249,4 +249,17 @@ class TestFacter < Test::Unit::TestCase
         }
         $stdin, $stdout, $stderr = @oldhandles
     end
+
+    def test_ldapname
+        facts = {}
+        assert_nothing_raised {
+            Facter.each { |name, value|
+                facts[name] = Facter[name]
+            }
+        }
+
+        facts.each { |name, fact|
+            assert(fact.ldapname, "Fact %s has no ldapname" % name)
+        }
+    end
 end

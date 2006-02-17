@@ -33,7 +33,7 @@ FACTERVERSION = '1.1.1'
     @@os = nil
     @@osrel = nil
 
-    attr_accessor :name, :os, :osrel, :hardware, :searching
+    attr_accessor :name, :os, :osrel, :hardware, :searching, :ldapname
 
 	# module methods
 
@@ -169,6 +169,8 @@ FACTERVERSION = '1.1.1'
         @searching = false
 
         @value = nil
+
+        @ldapname = name
     end
 
     # Add a new resolution mechanism.  This requires a block, which will then
@@ -179,6 +181,8 @@ FACTERVERSION = '1.1.1'
         end
 
         resolve = Resolution.new(@name)
+
+        resolve.fact = self
 
         resolve.instance_eval(&block)
 
@@ -295,7 +299,7 @@ FACTERVERSION = '1.1.1'
     # systems.  Note that the tags are always ANDed, so any tags specified
     # must all be true for the resolution to be suitable.
     class Resolution
-        attr_accessor :interpreter, :code, :name
+        attr_accessor :interpreter, :code, :name, :fact
 
         # Execute a chunk of code.
         def Resolution.exec(code, interpreter = "/bin/sh")
@@ -357,6 +361,12 @@ FACTERVERSION = '1.1.1'
                 end
                 @code = block
             end
+        end
+
+        # Set the name by which this parameter is known in LDAP.  The default
+        # is just the fact name.
+        def setldapname(name)
+            @fact.ldapname = name
         end
 
         # Is this resolution mechanism suitable on the system in question?
@@ -579,6 +589,7 @@ FACTERVERSION = '1.1.1'
             end
         end
         Facter.add("Hostname") do
+            setldapname "cn"
             setcode do
                 hostname = nil
                 name = Resolution.exec('hostname') or nil
@@ -597,7 +608,8 @@ FACTERVERSION = '1.1.1'
             end
         end
 
-        Facter.add("IPHostNumber") do
+        Facter.add("IPAddress") do
+            setldapname "iphostnumber"
             setcode do
                 require 'resolv'
 
@@ -617,7 +629,7 @@ FACTERVERSION = '1.1.1'
                 end
             end
         end
-        Facter.add("IPHostNumber") do
+        Facter.add("IPAddress") do
             setcode do
                 if hostname = Facter["hostname"].value
                     # we need Hostname to exist for this to work
@@ -695,7 +707,7 @@ FACTERVERSION = '1.1.1'
                 ether
             end
         end
-        Facter.add("IPHostnumber") do
+        Facter.add("IPAddress") do
             tag("Kernel","Darwin")
             setcode do
                 ip = nil

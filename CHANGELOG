@@ -1,3 +1,7 @@
+1.1.2:
+    Added 'ldapname' attribute, so Facts can be easily converted to
+    LDAP.
+
 1.1.1:
     Fixed a bug that occurs when you ask for the value of an unregistered
     fact.
