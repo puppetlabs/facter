@@ -307,6 +307,11 @@ task :copy => [:package, :html] do
     sh %{cp -r html #{DOWNDIR}/facter/apidocs}
 end
 
+desc "SSH to fedora and make the rpm"
+task :fedorarpm => [:package] do
+    sh %{ssh fedora1 'cd svn/facter/trunk; rake rpm'}
+end
+
 desc "Create an RPM"
 task :rpm do
     tarball = File.join(Dir.getwd, "pkg", "facter-#{PKG_VERSION}.tgz")

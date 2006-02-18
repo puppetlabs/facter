@@ -4,8 +4,8 @@
 
 Summary: Facter collects Operating system facts
 Name: facter
-Version: 1.1.1
-Release: 3%{?dist}
+Version: 1.1.2
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Base
 URL: http://reductivelabs.com/projects/facter
