@@ -502,7 +502,12 @@ FACTERVERSION = '1.1.2'
                 elsif FileTest.exists?("/etc/fedora-release")
                     "Fedora"
                 elsif FileTest.exists?("/etc/redhat-release")
-                    "RedHat"
+                    txt = File.read("/etc/redhat-release")
+                    if txt =~ /centos/i
+                        "CentOS"
+                    else
+                        "RedHat"
+                    end
                 elsif FileTest.exists?("/etc/SuSE-release")
                     "SuSE"
                 end
