@@ -155,6 +155,7 @@ def prepare_installation
     FileUtils.makedirs(bd)
     FileUtils.makedirs(sd)
   else
+    bd = Config::CONFIG['bindir']
     bds << Config::CONFIG['bindir']
   end
 
