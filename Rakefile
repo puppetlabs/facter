@@ -200,6 +200,7 @@ task :release => [
   :update_version,
   :tag,
   :package,
+  :fedorarpm,
   :copy] do
   #:alltests,
   
@@ -305,6 +306,7 @@ task :copy => [:package, :html] do
     sh %{cp pkg/facter-#{PKG_VERSION}.tgz #{DOWNDIR}/facter}
     sh %{ln -sf facter-#{PKG_VERSION}.tgz #{DOWNDIR}/facter/facter-latest.tgz}
     sh %{cp -r html #{DOWNDIR}/facter/apidocs}
+    sh %{rsync -av /home/luke/rpm/. #{DOWNDIR}/rpm}
 end
 
 desc "SSH to fedora and make the rpm"
