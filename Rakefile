@@ -37,7 +37,6 @@ if project.has?(:epm)
     project.mkepmtask do |task|
         task.bins = FileList.new("bin/facter")
         task.rubylibs = FileList.new('lib/**/*')          
-        task.add_dependency("ruby", "1.8.1")
     end
 end
 # $Id$
