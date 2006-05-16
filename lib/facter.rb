@@ -52,14 +52,14 @@ FACTERVERSION = '1.1.4'
         end
     end
 
-    # Return a fact object by name.  If you use this, you still have to call 'value'
-    # on it to retrieve the actual value.
+    # Return a fact object by name.  If you use this, you still have to call
+    # 'value' on it to retrieve the actual value.
 	def Facter.[](name)
         @@facts[name.to_s.downcase]
     end
 
-    # Add a resolution mechanism for a named fact.  This does not distinguish between
-    # adding a new fact and adding a new way to resolve a fact.
+    # Add a resolution mechanism for a named fact.  This does not distinguish
+    # between adding a new fact and adding a new way to resolve a fact.
     def Facter.add(name, &block)
         fact = nil
         dcname = name.downcase
@@ -294,10 +294,10 @@ FACTERVERSION = '1.1.4'
         end
     end
 
-    # An actual fact resolution mechanism.  These are largely just chunks of code,
-    # with optional tags restricting the mechanisms to only working on specific
-    # systems.  Note that the tags are always ANDed, so any tags specified
-    # must all be true for the resolution to be suitable.
+    # An actual fact resolution mechanism.  These are largely just chunks of
+    # code, with optional tags restricting the mechanisms to only working on
+    # specific systems.  Note that the tags are always ANDed, so any tags
+    # specified must all be true for the resolution to be suitable.
     class Resolution
         attr_accessor :interpreter, :code, :name, :fact
 
@@ -334,7 +334,8 @@ FACTERVERSION = '1.1.4'
                     return out
                 end
             else
-                raise ArgumentError, "non-sh interpreters are not currently supported"
+                raise ArgumentError,
+                    "non-sh interpreters are not currently supported"
             end
         end
 
@@ -426,8 +427,8 @@ FACTERVERSION = '1.1.4'
     class Tag
         attr_accessor :fact, :op, :value
 
-        # Add the tag.  Requires the fact name, an operator, and the value we're
-        # comparing to.
+        # Add the tag.  Requires the fact name, an operator, and the value
+        # we're comparing to.
         def initialize(fact, *values)
             @fact = fact
             @values = values
@@ -735,64 +736,14 @@ FACTERVERSION = '1.1.4'
             tag("Kernel","Darwin")
             tag("KernelRelease","R7")
             setcode do
-                hostname = nil
-                if FileTest.exists?("/Library/Preferences/SystemConfiguration/preferences.plist")
-                    File.open(
-                        "/Library/Preferences/SystemConfiguration/preferences.plist"
-                    ) { |file|
-                        found = 0
-                        file.each { |line|
-                            if line =~ /ComputerName/i
-                                found = 1
-                                next
-                            end
-                            if found == 1
-                                if line =~ /<string>([\w|-]+)<\/string>/
-                                    hostname = $1
-                                    break
-                                end
-                            end
-                        }
-                    }
-                end
-
-                if hostname != nil
-                    hostname
-                else
-                    nil
-                end
+                %x{/usr/sbin/scutil --get LocalHostName}
             end
         end
         Facter.add("IPHostnumber") do
             tag("Kernel","Darwin")
             tag("KernelRelease","R6")
             setcode do
-                hostname = nil
-                if FileTest.exists?("/var/db/SystemConfiguration/preferences.xml")
-                    File.open(
-                        "/var/db/SystemConfiguration/preferences.xml"
-                    ) { |file|
-                        found = 0
-                        file.each { |line|
-                            if line =~ /ComputerName/i
-                                found = 1
-                                next
-                            end
-                            if found == 1
-                                if line =~ /<string>([\w|-]+)<\/string>/
-                                    hostname = $1
-                                    break
-                                end
-                            end
-                        }
-                    }
-                end
-
-                if hostname != nil
-                    hostname
-                else
-                    nil
-                end
+                %x{/usr/sbin/scutil --get LocalHostName}
             end
         end
         Facter.add("IPHostnumber") do
