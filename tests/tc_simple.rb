@@ -1,6 +1,9 @@
 #! /usr/bin/env ruby
 
 $facterbase = File.dirname(File.dirname(__FILE__))
+if $facterbase == "."
+    $facterbase = ".."
+end
 libdir = File.join($facterbase, "lib")
 $:.unshift libdir
 
@@ -322,6 +325,13 @@ end
         assert_equal(val, ret, "Got incorrect value for autoloaded fact")
         assert_equal(val, Facter["autoloadfact"].value,
             "Got incorrect value for autoloaded fact")
+    end
+
+    def test_versionfacts
+        assert_nothing_raised {
+            assert(Facter.facterversion, "Could not get facter version")
+            assert(Facter.rubyversion, "Could not get ruby version")
+        }
     end
 end
 

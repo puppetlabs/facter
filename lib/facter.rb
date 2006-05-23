@@ -110,6 +110,7 @@ FACTERVERSION = '1.1.4'
             if fact = self[name]
                 return fact.value
             else
+                p @@facts.keys
                 super
             end
         end
@@ -497,6 +498,25 @@ FACTERVERSION = '1.1.4'
 
     # Load all of the default facts
     def Facter.load
+        Facter.add("FacterVersion") do
+            setcode { FACTERVERSION.to_s }
+        end
+
+        Facter.add("RubyVersion") do
+            setcode { RUBY_VERSION.to_s }
+        end
+
+        Facter.add("PuppetVersion") do
+            setcode {
+                begin
+                    require 'puppet'
+                    Puppet::PUPPETVERSION.to_s
+                rescue LoadError
+                    nil
+                end
+            }
+        end
+
         Facter.add("Kernel") do
             setcode 'uname -s'
         end
