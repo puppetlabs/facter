@@ -1,3 +1,7 @@
+1.2.1:
+    Fixed a "bug" that occurs if there's a file named "facter" in your
+    ruby search path (as opposed to directory).
+
 1.2.0:
     Added RubyVersion, FacterVersion, and PuppetVersion facts.
 

@@ -415,6 +415,25 @@ end
         assert(hash.include?("localfact"), "Did not load fact at startup")
         assert_equal(val, hash["localfact"], "Did not get correct value")
     end
+
+    def test_stupidchdirring
+        dir = "/tmp/localloading"
+        @tmpfiles << dir
+        Dir.mkdir(dir)
+        $: << dir
+
+        # Make our file
+        val = "localness"
+        File.open(File.join(dir, "facter"), "w") do |file|
+            file.puts %{
+some random stuff
+}
+        end
+
+        assert_nothing_raised do
+            Facter.load
+        end
+    end
 end
 
 # $Id$
