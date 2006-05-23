@@ -2,8 +2,8 @@
 
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
-Version: 1.1.4
-Release: 2%{?dist}
+Version: 1.2.0
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Base
 URL: http://reductivelabs.com/projects/facter
