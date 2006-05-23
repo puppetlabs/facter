@@ -110,30 +110,29 @@ FACTERVERSION = '1.1.4'
             if fact = self[name]
                 return fact.value
             else
-                p @@facts.keys
                 super
             end
         end
     end
 
-    def Facter.value(name)
-        if @@facts.include?(name.to_s.downcase)
-            @@facts[name.to_s.downcase].value
-        else
-            nil
+    # Load a file by path
+    def Facter.autoload(file)
+        name = File.basename(file).sub(".rb",'')
+        begin
+            require file
+            unless @@facts.include?(name)
+                warn "Loaded %s but it did not define fact %s" % [file, name]
+            end
+        rescue LoadError => detail
+            warn "Failed to load %s: %s" % [file, detail]
         end
     end
 
-    # Flush all cached values.
-    def Facter.flush
-        @@facts.each { |fact| fact.flush }
-    end
-
-    # Remove them all.
-    def Facter.reset
-        @@facts.each { |name,fact|
-            @@facts.delete(name)
-        }
+    # Clear all facts.  Mostly used for testing.
+    def Facter.clear
+        Facter.reset
+        Facter.flush
+        @@facts.clear
     end
 
 	# Set debugging on or off.
@@ -162,9 +161,21 @@ FACTERVERSION = '1.1.4'
 		end
 	end
 
+    # Flush all cached values.
+    def Facter.flush
+        @@facts.each { |fact| fact.flush }
+    end
+
     # Return a list of all of the facts.
     def Facter.list
         return @@facts.keys
+    end
+
+    # Remove them all.
+    def Facter.reset
+        @@facts.each { |name,fact|
+            @@facts.delete(name)
+        }
     end
 
     # Return a hash of all of our facts.
@@ -172,6 +183,14 @@ FACTERVERSION = '1.1.4'
         self.inject({}) do |h, ary|
             h[ary[0]] = ary[1]
             h
+        end
+    end
+
+    def Facter.value(name)
+        if @@facts.include?(name.to_s.downcase)
+            @@facts[name.to_s.downcase].value
+        else
+            nil
         end
     end
 
@@ -834,14 +853,28 @@ FACTERVERSION = '1.1.4'
             tag("operatingsystem","Linux")
             setcode "whoami"
         end
+
+        locals = []
+
+        # Now see if we can find any other facts
+        $:.each do |dir|
+            fdir = File.join(dir, "facter")
+            if FileTest.exists?(fdir)
+                Dir.chdir(fdir) do
+                    Dir.glob("*.rb").each do |file|
+                        if file == "local.rb"
+                            # Just require it normally
+                            require File.join(fdir, file)
+                        else
+                            # We assume it's a new fact to be
+                            # autoloaded, so ask Facter to load it for us
+                            Facter.autoload(File.join(fdir, file))
+                        end
+                    end
+                end
+            end
+        end
     end
 
     Facter.load
-end
-
-# try to load a local fact library, if there happens to be one
-begin
-    require 'facter/local'
-rescue LoadError
-    # no worries
 end

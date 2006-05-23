@@ -23,8 +23,7 @@ class TestFacter < Test::Unit::TestCase
 
     def teardown
         # clear out the list of facts, so we start fresh for every test
-        Facter.reset
-        Facter.flush
+        Facter.clear
 
         @tmpfiles.each do |file|
             if FileTest.exists?(file)
@@ -332,6 +331,89 @@ end
             assert(Facter.facterversion, "Could not get facter version")
             assert(Facter.rubyversion, "Could not get ruby version")
         }
+    end
+
+    # Verify we autoload everything from the start.
+    def test_initautoloading
+        dir = "/tmp/facterloading"
+        @tmpfiles << dir
+        Dir.mkdir(dir)
+        Dir.mkdir(File.join(dir, "facter"))
+        $: << dir
+
+        # Make sure we don't have a value right now.
+        assert_raise(NoMethodError) do
+            Facter.initautoloadfact
+        end
+        assert_nil(Facter["initautoloadfact"])
+
+        # Make our file
+        val = "autoloadedness"
+        File.open(File.join(dir, "facter", "initautoloadfact.rb"), "w") do |file|
+            file.puts %{
+Facter.add("InitAutoloadFact") do
+    setcode { "#{val}" }
+end
+}
+        end
+
+        # Now reset and reload
+        Facter.reset
+        Facter.flush
+
+        # And load
+        assert_nothing_raised {
+            Facter.load
+        }
+
+        hash = nil
+        assert_nothing_raised {
+            hash = Facter.to_hash
+        }
+
+        assert(hash.include?("initautoloadfact"), "Did not load fact at startup")
+        assert_equal(val, hash["initautoloadfact"], "Did not get correct value")
+    end
+
+    def test_localfacts
+        dir = "/tmp/localloading"
+        @tmpfiles << dir
+        Dir.mkdir(dir)
+        Dir.mkdir(File.join(dir, "facter"))
+        $: << dir
+
+        # Make sure we don't have a value right now.
+        assert_raise(NoMethodError) do
+            Facter.localfact
+        end
+        assert_nil(Facter["localfact"])
+
+        # Make our file
+        val = "localness"
+        File.open(File.join(dir, "facter", "local.rb"), "w") do |file|
+            file.puts %{
+Facter.add("LocalFact") do
+    setcode { "#{val}" }
+end
+}
+        end
+
+        # Now reset and reload
+        Facter.reset
+        Facter.flush
+
+        # And load
+        assert_nothing_raised {
+            Facter.load
+        }
+
+        hash = nil
+        assert_nothing_raised {
+            hash = Facter.to_hash
+        }
+
+        assert(hash.include?("localfact"), "Did not load fact at startup")
+        assert_equal(val, hash["localfact"], "Did not get correct value")
     end
 end
 
