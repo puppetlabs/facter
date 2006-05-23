@@ -55,14 +55,26 @@ FACTERVERSION = '1.1.4'
     # Return a fact object by name.  If you use this, you still have to call
     # 'value' on it to retrieve the actual value.
 	def Facter.[](name)
-        @@facts[name.to_s.downcase]
+        name = name.to_s.downcase
+        unless @@facts.include?(name)
+            # Try autoloading the fact.
+            begin
+                require "facter/#{name}"
+                unless @@facts.include?(name)
+                    warn "Loaded facter/#{name} but fact was not added"
+                end
+            rescue LoadError
+                # Just ignore it
+            end
+        end
+        @@facts[name]
     end
 
     # Add a resolution mechanism for a named fact.  This does not distinguish
     # between adding a new fact and adding a new way to resolve a fact.
     def Facter.add(name, &block)
         fact = nil
-        dcname = name.downcase
+        dcname = name.to_s.downcase
 
         if @@facts.include?(dcname)
             fact = @@facts[dcname]
@@ -92,6 +104,14 @@ FACTERVERSION = '1.1.4'
                     end
                 end
             }
+        end
+
+        def method_missing(name, *args)
+            if fact = self[name]
+                return fact.value
+            else
+                super
+            end
         end
     end
 
@@ -146,6 +166,14 @@ FACTERVERSION = '1.1.4'
         return @@facts.keys
     end
 
+    # Return a hash of all of our facts.
+    def Facter.to_hash
+        self.inject({}) do |h, ary|
+            h[ary[0]] = ary[1]
+            h
+        end
+    end
+
     # Compare one value to another.
     def <=>(other)
         return self.value <=> other
@@ -158,7 +186,7 @@ FACTERVERSION = '1.1.4'
 
     # Create a new fact, with no resolution mechanisms.
     def initialize(name)
-        @name = name.downcase
+        @name = name.downcase if name.is_a? String
         if @@facts.include?(@name)
             raise ArgumentError, "A fact named %s already exists" % name
         else
@@ -518,6 +546,19 @@ FACTERVERSION = '1.1.4'
         Facter.add("HardwareModel") do
             setcode 'uname -m'
             #tag("operatingsystem","SunOS")
+        end
+
+        Facter.add("Architecture") do
+            tag("operatingsystem","Debian")
+            setcode do
+                model = Facter.hardwaremodel
+                case model
+                when 'x86_64': "amd64" 
+                when /(i[3456]86|pentium)/: "i386"
+                else
+                    model
+                end
+            end
         end
 
         Facter.add("CfKey") do

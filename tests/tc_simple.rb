@@ -15,6 +15,8 @@ end
 class TestFacter < Test::Unit::TestCase
     def setup
         Facter.load
+
+        @tmpfiles = []
     end
 
     def teardown
@@ -22,9 +24,11 @@ class TestFacter < Test::Unit::TestCase
         Facter.reset
         Facter.flush
 
-        #if ! @oldhandles.empty?
-        #    $stdin, $stdout, $stderr = @oldhandles
-        #end
+        @tmpfiles.each do |file|
+            if FileTest.exists?(file)
+                system("rm -rf %s" % file)
+            end
+        end
     end
 
     def test_version 
@@ -261,5 +265,63 @@ class TestFacter < Test::Unit::TestCase
         facts.each { |name, fact|
             assert(fact.ldapname, "Fact %s has no ldapname" % name)
         }
+    end
+
+    def test_hash
+        hash = nil
+        assert_nothing_raised {
+            hash = Facter.to_hash
+        }
+
+        assert_instance_of(Hash, hash)
+
+        hash.each do |name, value|
+            assert_instance_of(String, name)
+            assert_instance_of(String, value)
+        end
+    end
+
+    # Verify we can call retrieve facts as methods
+    def test_factfunction
+        val = nil
+        assert_nothing_raised {
+            val = Facter.operatingsystem
+        }
+
+        assert_equal(Facter["operatingsystem"].value, val)
+
+        assert_raise(NoMethodError) { Facter.nosuchfact }
+    end
+
+    # Verify we can autoload facts.
+    def test_autoloading
+        dir = "/tmp/facterloading"
+        @tmpfiles << dir
+        Dir.mkdir(dir)
+        Dir.mkdir(File.join(dir, "facter"))
+        $: << dir
+
+        # Make sure we don't have a value right now.
+        assert_raise(NoMethodError) do
+            Facter.autoloadfact
+        end
+        assert_nil(Facter["autoloadfact"])
+
+        val = "autoloadedness"
+        File.open(File.join(dir, "facter", "autoloadfact.rb"), "w") do |file|
+            file.puts %{
+Facter.add("AutoloadFact") do
+    setcode { "#{val}" }
+end
+}
+        end
+
+        ret = nil
+        assert_nothing_raised do
+            ret = Facter.autoloadfact
+        end
+        assert_equal(val, ret, "Got incorrect value for autoloaded fact")
+        assert_equal(val, Facter["autoloadfact"].value,
+            "Got incorrect value for autoloaded fact")
     end
 end
