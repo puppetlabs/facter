@@ -197,10 +197,15 @@ end
 def run_tests(test_list)
 	begin
 		require 'test/unit/ui/console/testrunner'
+		require 'test/unit'
+
+        unless defined? Test::Unit::TestCase
+            raise LoadError, "Could not find unit test library"
+        end
 		$:.unshift "lib"
 		test_list.each do |test|
-		next if File.directory?(test)
-		require test
+            next if File.directory?(test)
+            require test
 		end
 
 		tests = []
@@ -293,6 +298,5 @@ bd = nil
 #    bd = "#{Config::CONFIG['bindir']}"
 #end
 
-puts "bin dir is %s" % InstallOptions.bin_dir
 do_bins(bins, InstallOptions.bin_dir)
 do_libs(libs)

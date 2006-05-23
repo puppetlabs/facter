@@ -1,7 +1,8 @@
 #! /usr/bin/env ruby
-# $Id: $
-$:.unshift '../lib'
-$facterbase = ".."
+
+$facterbase = File.dirname(File.dirname(__FILE__))
+libdir = File.join($facterbase, "lib")
+$:.unshift libdir
 
 require 'facter'
 require 'test/unit'
@@ -9,11 +10,8 @@ require 'test/unit'
 # add the bin directory to our search path
 ENV["PATH"] = File.join($facterbase, "bin") + ":" + ENV["PATH"]
 
-# and then the library directories
-libdirs = $:.find_all { |dir|
-    dir =~ /facter/ or dir =~ /\.\./
-}
-ENV["RUBYLIB"] = libdirs.join(":")
+# and then the library directory
+ENV["RUBYLIB"] = libdir
 
 class TestFacterBin < Test::Unit::TestCase
     def test_version
@@ -24,3 +22,5 @@ class TestFacterBin < Test::Unit::TestCase
         assert(output == Facter.version)
     end
 end
+
+# $Id$

@@ -1,9 +1,8 @@
 #! /usr/bin/env ruby
-# $Id$
-#     
-if __FILE__ == $0 # Make this library first!
-    $:.unshift '../lib'
-end
+
+$facterbase = File.dirname(File.dirname(__FILE__))
+libdir = File.join($facterbase, "lib")
+$:.unshift libdir
 
 require 'test/unit'
 require 'facter'
@@ -325,3 +324,5 @@ end
             "Got incorrect value for autoloaded fact")
     end
 end
+
+# $Id$
