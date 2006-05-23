@@ -1,3 +1,14 @@
+1.2.0:
+    Added RubyVersion, FacterVersion, and PuppetVersion facts.
+
+    Added autoload capabilities, so you can add facts without modifying
+    the core library.
+
+    Added the ability to retrieve facts by treating them as a method on the
+    Facter class, e.g., Facter.operatingsystem.
+
+    Added a to_hash method to Facter, which retrieves all facts as a hash.
+
 1.1.4:
     Fixing installer bug.
 
