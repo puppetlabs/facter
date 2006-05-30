@@ -88,8 +88,9 @@ class TestFacter < Test::Unit::TestCase
         assert_equal(nil, Facter["testing"].value)
     end
 
-    # I have no idea why this test is continually failing...
     def test_recursivetags
+        # This will try to autoload "required", which will fail, so the
+        # fact will be marked as unsuitable.
         assert_nothing_raised {
             Facter.add("testing") {
                 setcode { "bar" }

@@ -11,7 +11,7 @@ class Facter
     include Comparable
     include Enumerable
 
-FACTERVERSION = '1.2.1'
+    FACTERVERSION = '1.2.1'
 	# = Facter 1.0
     # Functions as a hash of 'facts' you might care about about your
     # system, such as mac address, IP address, Video card, etc.
@@ -54,18 +54,10 @@ FACTERVERSION = '1.2.1'
 
     # Return a fact object by name.  If you use this, you still have to call
     # 'value' on it to retrieve the actual value.
-	def Facter.[](name)
+    def Facter.[](name)
         name = name.to_s.downcase
         unless @@facts.include?(name)
-            # Try autoloading the fact.
-            begin
-                require "facter/#{name}"
-                unless @@facts.include?(name)
-                    warn "Loaded facter/#{name} but fact was not added"
-                end
-            rescue LoadError
-                # Just ignore it
-            end
+            Facter.autoload(name)
         end
         @@facts[name]
     end
@@ -107,24 +99,24 @@ FACTERVERSION = '1.2.1'
         end
 
         def method_missing(name, *args)
+            retval = nil
             if fact = self[name]
-                return fact.value
+                retval = fact.value
             else
-                super
+                retval = super
             end
+
+            retval
         end
     end
 
     # Load a file by path
-    def Facter.autoload(file)
-        name = File.basename(file).sub(".rb",'')
+    def Facter.autoload(name)
         begin
-            require file
-            unless @@facts.include?(name)
-                warn "Loaded %s but it did not define fact %s" % [file, name]
-            end
+            require "facter/#{name}"
         rescue LoadError => detail
-            warn "Failed to load %s: %s" % [file, detail]
+            #warn "Failed to load %s: %s" % [name, detail]
+            # nothing, just ignore it, i guess
         end
     end
 
@@ -860,17 +852,8 @@ FACTERVERSION = '1.2.1'
         $:.each do |dir|
             fdir = File.join(dir, "facter")
             if FileTest.exists?(fdir) and FileTest.directory?(fdir)
-                Dir.chdir(fdir) do
-                    Dir.glob("*.rb").each do |file|
-                        if file == "local.rb"
-                            # Just require it normally
-                            require File.join(fdir, file)
-                        else
-                            # We assume it's a new fact to be
-                            # autoloaded, so ask Facter to load it for us
-                            Facter.autoload(File.join(fdir, file))
-                        end
-                    end
+                Dir.glob("#{fdir}/*.rb").each do |file|
+                    Facter.autoload(File.basename(file, '.rb'))
                 end
             end
         end
