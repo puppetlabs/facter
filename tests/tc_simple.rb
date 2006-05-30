@@ -404,6 +404,49 @@ some random stuff
         end
     end
 
+    def test_tag_as_array_and_hash
+        assert_nothing_raised {
+            Facter.add("myfact") do
+                tag "kernel", Facter.kernel
+                setcode do "yep" end
+            end
+        }
+
+        assert_equal("yep", Facter.myfact, "Did not get tagged goal")
+
+        # now try it as a hash
+        assert_nothing_raised {
+            Facter.add("hashfact") do
+                tag "kernel" => Facter.kernel
+                setcode do "hashness" end
+            end
+        }
+
+        assert_equal("hashness", Facter.hashfact, "Did not get tagged goal")
+
+        # now with multiple values
+        assert_nothing_raised {
+            Facter.add("hashfact2") do
+                tag :kernel => ["nosuchkernel", Facter.kernel]
+                setcode do "multihash" end
+            end
+        }
+
+        assert_equal("multihash", Facter.hashfact2, "Did not get multivalue tag")
+
+    end
+
+    def test_strings_or_symbols
+        assert_nothing_raised {
+            Facter.add("symbol1") do
+                tag :kernel => Facter.kernel
+                setcode do "yep1" end
+            end
+        }
+
+        assert_equal("yep1", Facter.symbol1, "Did not get symbol fact")
+    end
+
     if Facter.kernel == "Linux"
     def test_memoryonlinux
         assert_nothing_raised {

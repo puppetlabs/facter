@@ -415,8 +415,15 @@ class Facter
         end
 
         # Add a new tag to the resolution mechanism.
-        def tag(fact,*values)
-            @tags.push Tag.new(fact,*values)
+        def tag(*args)
+            if args[0].is_a? Hash
+                args[0].each do |fact, values|
+                    @tags.push Tag.new(fact,*values)
+                end
+            else
+                fact = args.shift
+                @tags.push Tag.new(fact,*args)
+            end
         end
 
         def to_s
@@ -457,8 +464,15 @@ class Facter
         # Add the tag.  Requires the fact name, an operator, and the value
         # we're comparing to.
         def initialize(fact, *values)
+            fact = fact.to_s if fact.is_a? Symbol
             @fact = fact
-            @values = values
+            @values = values.collect do |value|
+                if value.is_a? String
+                    value
+                else
+                    value.to_s
+                end
+            end
         end
 
         def to_s
