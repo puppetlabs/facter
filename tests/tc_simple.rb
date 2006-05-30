@@ -16,7 +16,7 @@ end
 
 class TestFacter < Test::Unit::TestCase
     def setup
-        Facter.load
+        Facter.loadfacts
 
         @tmpfiles = []
     end
@@ -295,38 +295,6 @@ class TestFacter < Test::Unit::TestCase
         assert_raise(NoMethodError) { Facter.nosuchfact }
     end
 
-    # Verify we can autoload facts.
-    def test_autoloading
-        dir = "/tmp/facterloading"
-        @tmpfiles << dir
-        Dir.mkdir(dir)
-        Dir.mkdir(File.join(dir, "facter"))
-        $: << dir
-
-        # Make sure we don't have a value right now.
-        assert_raise(NoMethodError) do
-            Facter.autoloadfact
-        end
-        assert_nil(Facter["autoloadfact"])
-
-        val = "autoloadedness"
-        File.open(File.join(dir, "facter", "autoloadfact.rb"), "w") do |file|
-            file.puts %{
-Facter.add("AutoloadFact") do
-    setcode { "#{val}" }
-end
-}
-        end
-
-        ret = nil
-        assert_nothing_raised do
-            ret = Facter.autoloadfact
-        end
-        assert_equal(val, ret, "Got incorrect value for autoloaded fact")
-        assert_equal(val, Facter["autoloadfact"].value,
-            "Got incorrect value for autoloaded fact")
-    end
-
     def test_versionfacts
         assert_nothing_raised {
             assert(Facter.facterversion, "Could not get facter version")
@@ -364,7 +332,7 @@ end
 
         # And load
         assert_nothing_raised {
-            Facter.load
+            Facter.loadfacts
         }
 
         hash = nil
@@ -405,7 +373,7 @@ end
 
         # And load
         assert_nothing_raised {
-            Facter.load
+            Facter.loadfacts
         }
 
         hash = nil
@@ -432,13 +400,15 @@ some random stuff
         end
 
         assert_nothing_raised do
-            Facter.load
+            Facter.loadfacts
         end
     end
 
     if Facter.kernel == "Linux"
     def test_memoryonlinux
-        assert(Facter.memorysize, "Did not get memory")
+        assert_nothing_raised {
+            assert(Facter.memorysize, "Did not get memory")
+        }
     end
     end
 end

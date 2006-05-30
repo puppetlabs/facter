@@ -56,9 +56,6 @@ class Facter
     # 'value' on it to retrieve the actual value.
     def Facter.[](name)
         name = name.to_s.downcase
-        unless @@facts.include?(name)
-            Facter.autoload(name)
-        end
         @@facts[name]
     end
 
@@ -107,16 +104,6 @@ class Facter
             end
 
             retval
-        end
-    end
-
-    # Load a file by path
-    def Facter.autoload(name)
-        begin
-            require "facter/#{name}"
-        rescue LoadError => detail
-            #warn "Failed to load %s: %s" % [name, detail]
-            # nothing, just ignore it, i guess
         end
     end
 
@@ -508,7 +495,7 @@ class Facter
     end
 
     # Load all of the default facts
-    def Facter.load
+    def Facter.loadfacts
         Facter.add("FacterVersion") do
             setcode { FACTERVERSION.to_s }
         end
@@ -853,11 +840,15 @@ class Facter
             fdir = File.join(dir, "facter")
             if FileTest.exists?(fdir) and FileTest.directory?(fdir)
                 Dir.glob("#{fdir}/*.rb").each do |file|
-                    Facter.autoload(File.basename(file, '.rb'))
+                    # Load here, rather than require, because otherwise
+                    # the facts won't get reloaded if someone calls
+                    # "loadfacts".  Really only important in testing, but,
+                    # well, it's important in testing.
+                    load file
                 end
             end
         end
     end
 
-    Facter.load
+    Facter.loadfacts
 end
