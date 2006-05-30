@@ -435,6 +435,12 @@ some random stuff
             Facter.load
         end
     end
+
+    if Facter.kernel == "Linux"
+    def test_memoryonlinux
+        assert(Facter.memorysize, "Did not get memory")
+    end
+    end
 end
 
 # $Id$

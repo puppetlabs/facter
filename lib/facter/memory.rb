@@ -50,7 +50,7 @@ end
  :SwapSize   => "SwapTotal",
  :SwapFree   => "SwapFree"}.each do |fact, name|
     Facter.add(fact) do
-        tag "kernel", "linux"
+        tag "kernel", "Linux"
         setcode do
             Facter::Memory.meminfo_number(name)
         end
