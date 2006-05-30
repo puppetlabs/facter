@@ -453,6 +453,13 @@ some random stuff
             assert(Facter.memorysize, "Did not get memory")
         }
     end
+
+    def test_processor_on_linux
+        assert_nothing_raised {
+            assert(Facter.processorcount, "Did not get proc count")
+            assert(Facter.processor0, "Did not get proc 0")
+        }
+    end
     end
 end
 
