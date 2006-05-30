@@ -12,7 +12,7 @@ class Facter
     include Enumerable
 
     FACTERVERSION = '1.2.1'
-	# = Facter 1.0
+	# = Facter
     # Functions as a hash of 'facts' you might care about about your
     # system, such as mac address, IP address, Video card, etc.
     # returns them dynamically
@@ -493,7 +493,7 @@ class Facter
             end
 
             retval = @values.find { |v|
-                if value == v
+                if value.downcase == v.downcase
                     break true
                 end
             }

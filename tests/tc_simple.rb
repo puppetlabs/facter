@@ -447,6 +447,26 @@ some random stuff
         assert_equal("yep1", Facter.symbol1, "Did not get symbol fact")
     end
 
+    def test_tag_case_insensitivity
+        assert_nothing_raised {
+            Facter.add :casetest1 do
+                tag :kernel => Facter.kernel.downcase
+                setcode do "yep1" end
+            end
+        }
+
+        assert_equal("yep1", Facter.casetest1, "Did not get case test 1")
+
+        assert_nothing_raised {
+            Facter.add :casetest2 do
+                tag :kernel => Facter.kernel.upcase
+                setcode do "yep2" end
+            end
+        }
+
+        assert_equal("yep2", Facter.casetest2, "Did not get case test 1")
+    end
+
     if Facter.kernel == "Linux"
     def test_memoryonlinux
         assert_nothing_raised {
