@@ -40,7 +40,7 @@ class TestFacter < Test::Unit::TestCase
         assert(Facter.version =~ /^[0-9]+(\.[0-9]+)*$/ )
     end
 
-    def test_notags_sh
+    def test_noconfines_sh
         assert_nothing_raised {
             Facter.add("testing") do
                 setcode "echo yup"
@@ -50,7 +50,7 @@ class TestFacter < Test::Unit::TestCase
         assert_equal("yup", Facter["testing"].value)
     end
 
-    def test_notags
+    def test_noconfines
         assert_nothing_raised {
             Facter.add("testing") do
                 setcode { "foo" }
@@ -60,47 +60,47 @@ class TestFacter < Test::Unit::TestCase
         assert_equal("foo", Facter["testing"].value)
     end
 
-    def test_onetruetag
+    def test_onetrueconfine
         assert_nothing_raised {
             Facter.add("required") {
                 setcode { "foo" }
             }
             Facter.add("testing") {
                 setcode { "bar" }
-                tag("required","foo")
+                confine("required","foo")
             }
         }
 
         assert_equal("bar", Facter["testing"].value)
     end
 
-    def test_onefalsetag
+    def test_onefalseconfine
         assert_nothing_raised {
             Facter.add("required") {
                 setcode { "foo" }
             }
             Facter.add("testing") {
                 setcode { "bar" }
-                tag("required","bar")
+                confine("required","bar")
             }
         }
 
         assert_equal(nil, Facter["testing"].value)
     end
 
-    def test_recursivetags
+    def test_recursiveconfines
         # This will try to autoload "required", which will fail, so the
         # fact will be marked as unsuitable.
         assert_nothing_raised {
             Facter.add("testing") {
                 setcode { "bar" }
-                tag("required","foo")
+                confine("required","foo")
             }
         }
         assert_nothing_raised {
             Facter.add("required") do
                 setcode { "foo" }
-                tag("testing","bar")
+                confine("testing","bar")
             end
         }
 
@@ -110,15 +110,15 @@ class TestFacter < Test::Unit::TestCase
     def test_multipleresolves
         assert_nothing_raised {
             Facter.add("funtest") {
-                setcode { "untagged" }
+                setcode { "unconfineged" }
             }
             Facter.add("funtest") {
-                setcode { "tagged" }
-                tag("operatingsystem", Facter["operatingsystem"].value)
+                setcode { "confineged" }
+                confine("operatingsystem", Facter["operatingsystem"].value)
             }
         }
 
-        assert_equal("tagged", Facter["funtest"].value)
+        assert_equal("confineged", Facter["funtest"].value)
     end
 
 	def test_upcase
@@ -176,7 +176,7 @@ class TestFacter < Test::Unit::TestCase
     def test_adding2
         assert_nothing_raised() {
             Facter.add("bootest") {
-                tag("operatingsystem",  Facter["operatingsystem"].value)
+                confine("operatingsystem",  Facter["operatingsystem"].value)
                 setcode "echo bootest"
             }
         }
@@ -190,8 +190,8 @@ class TestFacter < Test::Unit::TestCase
             Facter.add("bahtest") {
                 #obj.os = Facter["operatingsystem"].value
                 #obj.release = Facter["operatingsystemrelease"].value
-                tag("operatingsystem",  Facter["operatingsystem"].value)
-                tag("operatingsystemrelease", 
+                confine("operatingsystem",  Facter["operatingsystem"].value)
+                confine("operatingsystemrelease", 
                     Facter["operatingsystemrelease"].value)
                 setcode "echo bahtest"
             }
@@ -206,8 +206,8 @@ class TestFacter < Test::Unit::TestCase
             Facter.add("failure") {
                 #obj.os = Facter["operatingsystem"].value
                 #obj.release = "FakeRelease"
-                tag("operatingsystem",  Facter["operatingsystem"].value)
-                tag("operatingsystemrelease",  "FakeRelease")
+                confine("operatingsystem",  Facter["operatingsystem"].value)
+                confine("operatingsystemrelease",  "FakeRelease")
                 setcode "echo failure"
             }
         }
@@ -404,42 +404,42 @@ some random stuff
         end
     end
 
-    def test_tag_as_array_and_hash
+    def test_confine_as_array_and_hash
         assert_nothing_raised {
             Facter.add("myfact") do
-                tag "kernel", Facter.kernel
+                confine "kernel", Facter.kernel
                 setcode do "yep" end
             end
         }
 
-        assert_equal("yep", Facter.myfact, "Did not get tagged goal")
+        assert_equal("yep", Facter.myfact, "Did not get confineged goal")
 
         # now try it as a hash
         assert_nothing_raised {
             Facter.add("hashfact") do
-                tag "kernel" => Facter.kernel
+                confine "kernel" => Facter.kernel
                 setcode do "hashness" end
             end
         }
 
-        assert_equal("hashness", Facter.hashfact, "Did not get tagged goal")
+        assert_equal("hashness", Facter.hashfact, "Did not get confineged goal")
 
         # now with multiple values
         assert_nothing_raised {
             Facter.add("hashfact2") do
-                tag :kernel => ["nosuchkernel", Facter.kernel]
+                confine :kernel => ["nosuchkernel", Facter.kernel]
                 setcode do "multihash" end
             end
         }
 
-        assert_equal("multihash", Facter.hashfact2, "Did not get multivalue tag")
+        assert_equal("multihash", Facter.hashfact2, "Did not get multivalue confine")
 
     end
 
     def test_strings_or_symbols
         assert_nothing_raised {
             Facter.add("symbol1") do
-                tag :kernel => Facter.kernel
+                confine :kernel => Facter.kernel
                 setcode do "yep1" end
             end
         }
@@ -447,10 +447,10 @@ some random stuff
         assert_equal("yep1", Facter.symbol1, "Did not get symbol fact")
     end
 
-    def test_tag_case_insensitivity
+    def test_confine_case_insensitivity
         assert_nothing_raised {
             Facter.add :casetest1 do
-                tag :kernel => Facter.kernel.downcase
+                confine :kernel => Facter.kernel.downcase
                 setcode do "yep1" end
             end
         }
@@ -459,7 +459,7 @@ some random stuff
 
         assert_nothing_raised {
             Facter.add :casetest2 do
-                tag :kernel => Facter.kernel.upcase
+                confine :kernel => Facter.kernel.upcase
                 setcode do "yep2" end
             end
         }

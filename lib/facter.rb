@@ -218,7 +218,7 @@ class Facter
             return
         end
 
-        # insert resolves in order of number of tags
+        # insert resolves in order of number of confinements
         inserted = false
         @resolves.each_with_index { |r,index|
             if resolve.length > r.length
@@ -239,7 +239,7 @@ class Facter
     end
 
     # Iterate across all of the fact resolution mechanisms and yield each in
-    # turn.  These are inserted in order of most tags.
+    # turn.  These are inserted in order of most confinements.
     def each
         @resolves.each { |r| yield r }
     end
@@ -322,9 +322,10 @@ class Facter
     end
 
     # An actual fact resolution mechanism.  These are largely just chunks of
-    # code, with optional tags restricting the mechanisms to only working on
-    # specific systems.  Note that the tags are always ANDed, so any tags
-    # specified must all be true for the resolution to be suitable.
+    # code, with optional confinements restricting the mechanisms to only working on
+    # specific systems.  Note that the confinements are always ANDed, so any
+    # confinements specified must all be true for the resolution to be
+    # suitable.
     class Resolution
         attr_accessor :interpreter, :code, :name, :fact
 
@@ -369,13 +370,13 @@ class Facter
         # Create a new resolution mechanism.
         def initialize(name)
             @name = name
-            @tags = []
+            @confines = []
             @value = nil
         end
 
-        # Return the number of tags.
+        # Return the number of confines.
         def length
-            @tags.length
+            @confines.length
         end
 
         # Set our code for returning a value.
@@ -401,11 +402,11 @@ class Facter
         def suitable?
             unless defined? @suitable
                 @suitable = true
-                if @tags.length == 0
+                if @confines.length == 0
                     return true
                 end
-                @tags.each { |tag|
-                    unless tag.true?
+                @confines.each { |confine|
+                    unless confine.true?
                         @suitable = false
                     end
                 }
@@ -414,15 +415,15 @@ class Facter
             return @suitable
         end
 
-        # Add a new tag to the resolution mechanism.
-        def tag(*args)
+        # Add a new confine to the resolution mechanism.
+        def confine(*args)
             if args[0].is_a? Hash
                 args[0].each do |fact, values|
-                    @tags.push Tag.new(fact,*values)
+                    @confines.push Confine.new(fact,*values)
                 end
             else
                 fact = args.shift
-                @tags.push Tag.new(fact,*args)
+                @confines.push Confine.new(fact,*args)
             end
         end
 
@@ -458,7 +459,7 @@ class Facter
 
     # A restricting tag for fact resolution mechanisms.  The tag must be true
     # for the resolution mechanism to be suitable.
-    class Tag
+    class Confine
         attr_accessor :fact, :op, :value
 
         # Add the tag.  Requires the fact name, an operator, and the value
@@ -548,13 +549,13 @@ class Facter
 
         Facter.add("OperatingSystem") do
             #obj.os = "Linux"
-            tag("kernel","SunOS")
+            confine("kernel","SunOS")
             setcode do "Solaris" end
         end
 
         Facter.add("OperatingSystem") do
             #obj.os = "Linux"
-            tag("kernel","Linux")
+            confine("kernel","Linux")
             setcode do
                 if FileTest.exists?("/etc/debian_version")
                     "Debian"
@@ -577,11 +578,11 @@ class Facter
 
         Facter.add("HardwareModel") do
             setcode 'uname -m'
-            #tag("operatingsystem","SunOS")
+            #confine("operatingsystem","SunOS")
         end
 
         Facter.add("Architecture") do
-            tag("operatingsystem","Debian")
+            confine("operatingsystem","Debian")
             setcode do
                 model = Facter.hardwaremodel
                 case model
@@ -749,16 +750,16 @@ class Facter
 
         Facter.add("UniqueId") do
             setcode 'hostid',  '/bin/sh'
-            tag("operatingsystem","Solaris")
+            confine("operatingsystem","Solaris")
         end
 
         Facter.add("HardwareISA") do
             setcode 'uname -p', '/bin/sh'
-            tag("operatingsystem","Solaris")
+            confine("operatingsystem","Solaris")
         end
 
         Facter.add("MacAddress") do
-            tag("operatingsystem","Solaris")
+            confine("operatingsystem","Solaris")
             setcode do
                 ether = nil
                 output = %x{/sbin/ifconfig -a}
@@ -771,7 +772,7 @@ class Facter
         end
 
         Facter.add("MacAddress") do
-            tag("Kernel","Darwin")
+            confine("Kernel","Darwin")
             setcode do
                 ether = nil
                 output = %x{/sbin/ifconfig}
@@ -787,7 +788,7 @@ class Facter
             end
         end
         Facter.add("IPAddress") do
-            tag("Kernel","Darwin")
+            confine("Kernel","Darwin")
             setcode do
                 ip = nil
                 output = %x{/sbin/ifconfig}
@@ -806,22 +807,22 @@ class Facter
             end
         end
         Facter.add("Hostname") do
-            tag("Kernel","Darwin")
-            tag("KernelRelease","R7")
+            confine("Kernel","Darwin")
+            confine("KernelRelease","R7")
             setcode do
                 %x{/usr/sbin/scutil --get LocalHostName}
             end
         end
         Facter.add("IPHostnumber") do
-            tag("Kernel","Darwin")
-            tag("KernelRelease","R6")
+            confine("Kernel","Darwin")
+            confine("KernelRelease","R6")
             setcode do
                 %x{/usr/sbin/scutil --get LocalHostName}
             end
         end
         Facter.add("IPHostnumber") do
-            tag("Kernel","Darwin")
-            tag("KernelRelease","R6")
+            confine("Kernel","Darwin")
+            confine("KernelRelease","R6")
             setcode do
                 ether = nil
                 output = %x{/sbin/ifconfig}
@@ -838,12 +839,12 @@ class Facter
         end
 
         Facter.add("ps") do
-            tag("operatingsystem","FreeBSD", "NetBSD", "OpenBSD", "Darwin")
+            confine("operatingsystem","FreeBSD", "NetBSD", "OpenBSD", "Darwin")
             setcode do 'ps -auxwww' end
         end
 
         Facter.add("id") do
-            tag("operatingsystem","Linux")
+            confine("operatingsystem","Linux")
             setcode "whoami"
         end
 

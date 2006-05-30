@@ -31,13 +31,13 @@ end
 
 Facter.add("ProcessorCount") do
 	setcode do
-		processor_list.length
+		processor_list.length.to_s
 	end
 end
 
 processor_list.each_with_index do |desc, i|
     Facter.add("Processor#{i}") do
-        tag :kernel => "Linux"
+        confine :kernel => :linux
         setcode do
             desc
         end
