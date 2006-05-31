@@ -1,10 +1,11 @@
 #! /usr/bin/env ruby
 
 $facterbase = File.dirname(File.dirname(__FILE__))
-if $facterbase == "."
+if $facterbase == "." and Dir.getwd =~ /tests$/
     $facterbase = ".."
 end
 libdir = File.join($facterbase, "lib")
+
 $:.unshift libdir
 
 require 'facter'
