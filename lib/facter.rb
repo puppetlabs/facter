@@ -558,13 +558,13 @@ class Facter
 
         Facter.add("OperatingSystem") do
             #obj.os = "Linux"
-            confine("kernel","SunOS")
+            confine :kernel => :sunos
             setcode do "Solaris" end
         end
 
         Facter.add("OperatingSystem") do
             #obj.os = "Linux"
-            confine("kernel","Linux")
+            confine :kernel => :linux
             setcode do
                 if FileTest.exists?("/etc/debian_version")
                     "Debian"
@@ -587,11 +587,10 @@ class Facter
 
         Facter.add("HardwareModel") do
             setcode 'uname -m'
-            #confine("operatingsystem","SunOS")
         end
 
         Facter.add("Architecture") do
-            confine("operatingsystem","Debian")
+            confine :operatingsystem => :debian
             setcode do
                 model = Facter.hardwaremodel
                 case model
@@ -759,16 +758,16 @@ class Facter
 
         Facter.add("UniqueId") do
             setcode 'hostid',  '/bin/sh'
-            confine("operatingsystem","Solaris")
+            confine :operatingsystem => :solaris
         end
 
         Facter.add("HardwareISA") do
             setcode 'uname -p', '/bin/sh'
-            confine("operatingsystem","Solaris")
+            confine :operatingsystem => :solaris
         end
 
         Facter.add("MacAddress") do
-            confine("operatingsystem","Solaris")
+            confine :operatingsystem => :solaris
             setcode do
                 ether = nil
                 output = %x{/sbin/ifconfig -a}
@@ -781,7 +780,7 @@ class Facter
         end
 
         Facter.add("MacAddress") do
-            confine("Kernel","Darwin")
+            confine :kernel => :darwin
             setcode do
                 ether = nil
                 output = %x{/sbin/ifconfig}
@@ -797,7 +796,7 @@ class Facter
             end
         end
         Facter.add("IPAddress") do
-            confine("Kernel","Darwin")
+            confine :kernel => :darwin
             setcode do
                 ip = nil
                 output = %x{/sbin/ifconfig}
@@ -816,22 +815,19 @@ class Facter
             end
         end
         Facter.add("Hostname") do
-            confine("Kernel","Darwin")
-            confine("KernelRelease","R7")
+            confine :kernel => :darwin, :kernelrelease => "R7"
             setcode do
                 %x{/usr/sbin/scutil --get LocalHostName}
             end
         end
         Facter.add("IPHostnumber") do
-            confine("Kernel","Darwin")
-            confine("KernelRelease","R6")
+            confine :kernel => :darwin, :kernelrelease => "R6"
             setcode do
                 %x{/usr/sbin/scutil --get LocalHostName}
             end
         end
         Facter.add("IPHostnumber") do
-            confine("Kernel","Darwin")
-            confine("KernelRelease","R6")
+            confine :kernel => :darwin, :kernelrelease => "R6"
             setcode do
                 ether = nil
                 output = %x{/sbin/ifconfig}
@@ -848,12 +844,12 @@ class Facter
         end
 
         Facter.add("ps") do
-            confine("operatingsystem","FreeBSD", "NetBSD", "OpenBSD", "Darwin")
+            confine :operatingsystem => %w{FreeBSD NetBSD OpenBSD Darwin}
             setcode do 'ps -auxwww' end
         end
 
         Facter.add("id") do
-            confine("operatingsystem","Linux")
+            confine :operatingsystem => :linux
             setcode "whoami"
         end
 
