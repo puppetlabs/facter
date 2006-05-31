@@ -1,12 +1,55 @@
 #!/usr/bin/env ruby 
-
-#--------------------
-# duh, it's facter!
 #
-# $Id: facter,v 1.1.1.1 2004/03/21 21:06:27 luke Exp $
+# = Synopsis
+#
+# Collect and display facts about the system.
+#
+# = Usage
+#
+#   facter [-d|--debug] [-h|--help] [-v|--version] [fact] [fact] [...]
+#
+# = Description
+#
+# Collect and display facts about the current system.  The library behind
+# Facter is easy to expand, making Facter an easy way to collect information
+# about a system from within the shell or within Ruby.
+#
+# If no facts are specifically asked for, then all facts will be returned.
+# 
+# = Options
+#
+# debug::
+#   Enable debugging.
+#
+# help::
+#   Print this help message
+#
+# version::
+#   Print the version and exit.
+#
+# = Example
+#
+#   facter kernel
+#
+# = Author
+#
+# Luke Kanies
+#
+# = Copyright
+#
+# Copyright (c) 2006 Reductive Labs, LLC
+# Licensed under the GNU Public License
 
 require 'getoptlong'
 require 'facter'
+
+$haveusage = true
+
+begin
+    require 'rdoc/usage'
+rescue LoadError
+    $haveusage = false
+end
 
 $debug = 0
 
@@ -27,8 +70,12 @@ result.each { |opt,arg|
         when "--debug"
 			Facter.debugging(1)
         when "--help"
-            puts "There is no help yet"
-            exit
+            if $haveusage
+                RDoc::usage && exit
+            else
+                puts "No help available unless you have RDoc::usage installed"
+                exit
+            end
         else
             $stderr.puts "Invalid option '#{opt}'"
             exit(12)
@@ -73,3 +120,5 @@ facts.each { |name,value|
         puts "%s => %s" % [name,value]
     end
 }
+
+# $Id: facter,v 1.1.1.1 2004/03/21 21:06:27 luke Exp $
