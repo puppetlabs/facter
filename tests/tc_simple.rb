@@ -279,7 +279,7 @@ class TestFacter < Test::Unit::TestCase
 
         hash.each do |name, value|
             assert_instance_of(String, name)
-            assert_instance_of(String, value)
+            assert_instance_of(String, value, "%s's value is not a string" % name)
         end
     end
 
@@ -467,6 +467,43 @@ some random stuff
         assert_equal("yep2", Facter.casetest2, "Did not get case test 1")
     end
 
+    def test_tags
+        assert_nothing_raised {
+            Facter.add :tagtest do
+                setcode do "yep1" end
+                tag :system, :performance
+            end
+
+            # Now add another resolution mechanism with overlapping tags
+            Facter.add :tagtest do
+                setcode do "yep2" end
+                tag :puppet, :performance
+            end
+
+            # Finally, one that's only got the performance tag
+            Facter.add :othertag do
+                setcode do "nope" end
+                tag :performance
+            end
+        }
+
+        tags = nil
+        assert_nothing_raised {
+            tags = Facter[:tagtest].tags
+        }
+        [:puppet, :performance, :system].each do |t|
+            assert(tags.include?(t), "Did not get tag %s" % t)
+        end
+
+        hash = nil
+        assert_nothing_raised {
+            hash = Facter.to_hash(:puppet, :system)
+        }
+
+        assert(hash.include?("tagtest"), "Did not get tagged fact")
+        assert(! hash.include?("othertag"), "Got incorrectly tagged fact")
+    end
+
     if Facter.kernel == "Linux"
     def test_memoryonlinux
         assert_nothing_raised {
@@ -480,6 +517,16 @@ some random stuff
             assert(Facter.processor0, "Did not get proc 0")
         }
     end
+    end
+
+    def test_factquestion
+        kernel = Facter.kernel
+        assert_nothing_raised {
+            assert(Facter.kernel?(kernel.downcase), "Kernel did not match")
+            assert(Facter.kernel?(kernel.upcase), "Upcase kernel did not match")
+            assert(Facter.kernel?(kernel.intern), "Symbol kernel did not match")
+            assert(! Facter.kernel?("nosuchkernel"), "Fake kernel matched")
+        }
     end
 end
 

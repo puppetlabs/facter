@@ -30,10 +30,8 @@ class Facter
     GREEN = "[0;32m"
     RESET = "[0m"
     @@debug = 0
-    @@os = nil
-    @@osrel = nil
 
-    attr_accessor :name, :os, :osrel, :hardware, :searching, :ldapname
+    attr_accessor :name, :searching, :ldapname
 
 	# module methods
 
@@ -95,15 +93,33 @@ class Facter
             }
         end
 
+        # Allow users to call fact names directly on the Facter class,
+        # either retrieving the value or comparing it to an existing value.
         def method_missing(name, *args)
-            retval = nil
-            if fact = self[name]
-                retval = fact.value
-            else
-                retval = super
+            question = false
+            if name.to_s =~ /\?$/
+                question = true
+                name = name.to_s.sub(/\?$/,'')
             end
 
-            retval
+            if fact = self[name]
+                if question
+                    value = fact.value.downcase
+                    args.each do |arg|
+                        if arg.to_s.downcase == value
+                            return true
+                        end
+                    end
+
+                    # If we got this far, there was no match.
+                    return false
+                else
+                    return fact.value
+                end
+            else
+                # Else, fail like a normal missing method.
+                return super
+            end
         end
     end
 
@@ -158,9 +174,14 @@ class Facter
     end
 
     # Return a hash of all of our facts.
-    def Facter.to_hash
-        self.inject({}) do |h, ary|
-            h[ary[0]] = ary[1]
+    def Facter.to_hash(*tags)
+        @@facts.inject({}) do |h, ary|
+            if ary[1].suitable? and (tags.empty? or ary[1].tagged?(*tags))
+                value = ary[1].value
+                if value
+                    h[ary[0]] = value
+                end
+            end
             h
         end
     end
@@ -193,6 +214,7 @@ class Facter
         end
 
         @resolves = []
+        @tags = []
         @searching = false
 
         @value = nil
@@ -268,6 +290,29 @@ class Facter
         end
 
         return @suitable
+    end
+
+    # Add one ore more tags
+    def tag(*tags)
+        tags.each do |t|
+            t = t.to_s.downcase.intern
+            @tags << t unless @tags.include?(t)
+        end
+    end
+
+    # Is our fact tagged with all of the specified tags?
+    def tagged?(*tags)
+        tags.each do |t|
+            unless @tags.include? t.to_s.downcase.intern
+                return false
+            end
+        end
+
+        return true
+    end
+
+    def tags
+        @tags.dup
     end
 
     # Return the value for a given fact.  Searches through all of the mechanisms
@@ -367,6 +412,18 @@ class Facter
             end
         end
 
+        # Add a new confine to the resolution mechanism.
+        def confine(*args)
+            if args[0].is_a? Hash
+                args[0].each do |fact, values|
+                    @confines.push Confine.new(fact,*values)
+                end
+            else
+                fact = args.shift
+                @confines.push Confine.new(fact,*args)
+            end
+        end
+
         # Create a new resolution mechanism.
         def initialize(name)
             @name = name
@@ -415,16 +472,9 @@ class Facter
             return @suitable
         end
 
-        # Add a new confine to the resolution mechanism.
-        def confine(*args)
-            if args[0].is_a? Hash
-                args[0].each do |fact, values|
-                    @confines.push Confine.new(fact,*values)
-                end
-            else
-                fact = args.shift
-                @confines.push Confine.new(fact,*args)
-            end
+        # Set tags on our parent fact.
+        def tag(*values)
+            @fact.tag(*values)
         end
 
         def to_s
