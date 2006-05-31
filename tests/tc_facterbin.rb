@@ -28,7 +28,7 @@ class TestFacterBin < Test::Unit::TestCase
     def test_output
         output = nil
         assert_nothing_raised {
-          output = %x{facter 2>&1}.chomp
+            output = %x{facter 2>&1}.chomp
         }
 
         hash = output.split("\n").inject({}) do |h, line|
@@ -44,6 +44,16 @@ class TestFacterBin < Test::Unit::TestCase
 
             assert_equal(fact, hash[name], "%s was not equal" % name)
         end
+    end
+
+    # Verify we don't print much when they just want a single fact.
+    def test_simpleoutput
+        output = nil
+        assert_nothing_raised {
+            output = %x{facter kernel 2>&1}.chomp
+        }
+
+        assert(output !~ / => /, "Output includes the farrow thing")
     end
 end
 
