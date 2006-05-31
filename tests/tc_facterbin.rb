@@ -14,7 +14,11 @@ require 'test/unit'
 ENV["PATH"] = File.join($facterbase, "bin") + ":" + ENV["PATH"]
 
 # and then the library directory
-ENV["RUBYLIB"] += ":" + libdir
+if ENV["RUBYLIB"]
+    ENV["RUBYLIB"] += ":" + libdir
+else
+    ENV["RUBYLIB"] = libdir
+end
 
 class TestFacterBin < Test::Unit::TestCase
     def test_version
