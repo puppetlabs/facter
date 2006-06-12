@@ -1,4 +1,4 @@
-%define sitelibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')
+%{!?ruby_sitelibdir: %define ruby_sitelibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')}
 
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
@@ -9,11 +9,10 @@ Group: System Environment/Base
 URL: http://reductivelabs.com/projects/facter
 Source0: http://reductivelabs.com/downloads/facter/%{name}-%{version}.tgz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-# It's not possible to build ruby noarch packages currently
-# See bz184199
-#BuildArchitectures: noarch
+BuildArchitectures: noarch
 
 Requires: ruby >= 1.8.1
+Requires: ruby(abi) = 1.8
 BuildRequires: ruby >= 1.8.1
 
 %description 
@@ -25,25 +24,40 @@ operating system. Additional facts can be added through simple Ruby scripts
 %setup -q
 
 %build
+sed -i -e 's@^#!.*$@#! /usr/bin/ruby@' bin/facter
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir $RPM_BUILD_ROOT
-DESTDIR=$RPM_BUILD_ROOT ruby install.rb --no-tests
-chmod a-x $RPM_BUILD_ROOT%{sitelibdir}/*.rb
+rm -rf %{buildroot}
+mkdir %{buildroot}
+
+%{__install} -d -m0755 %{buildroot}%{ruby_sitelibdir}
+%{__install} -d -m0755 %{buildroot}%{_bindir}
+%{__install} -d -m0755 %{buildroot}%{_docdir}/%{name}-%{version}
+
+%{__install} -p -m0644 lib/*.rb %{buildroot}%{ruby_sitelibdir}
+%{__install} -p -m0755 bin/facter %{buildroot}%{_bindir}
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 
 %files
 %defattr(-,root,root,-)
 %{_bindir}/facter
-%{sitelibdir}/facter.rb
+%{ruby_sitelibdir}/facter.rb
 %doc CHANGELOG COPYING INSTALL LICENSE README
 
 
 %changelog
+* Mon Jun 12 2006 David Lutterkort <dlutter@redhat.com> - 1.3-1
+- Require ruby(abi). Build as noarch
+
+* Mon Apr 17 2006 David Lutterkort <dlutter@redhat.com> - 1.1.4-4
+- Rebuilt with changed upstream tarball
+
+* Tue Mar 21 2006 David Lutterkort <dlutter@redhat.com> - 1.1.4-3
+- Do not rely on install.rb, it will be deleted upstream
+
 * Mon Mar 13 2006 David Lutterkort <dlutter@redhat.com> - 1.1.4-2
 - Commented out noarch; requires fix for bz184199
 
