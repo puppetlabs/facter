@@ -45,10 +45,15 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{_bindir}/facter
 %{ruby_sitelibdir}/facter.rb
+%{sitelibdir}/facter/memory.rb
+%{sitelibdir}/facter/processor.rb
 %doc CHANGELOG COPYING INSTALL LICENSE README
 
 
 %changelog
+* Fri Jun 9 2006 Luke Kanies <luke@madstop.com> - 1.3.0-1
+- Added memory.rb and processor.rb
+
 * Mon Jun 12 2006 David Lutterkort <dlutter@redhat.com> - 1.3-1
 - Require ruby(abi). Build as noarch
 
