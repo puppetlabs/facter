@@ -687,6 +687,18 @@ class Facter
                 end
             end
         end
+        # Look for the DNS domain name command first.
+        Facter.add("Domain") do
+            setcode do
+                domain = Resolution.exec('dnsdomainname') or nil
+                # make sure it's a real domain
+                if domain and domain =~ /.+\..+/
+                    domain
+                else
+                    nil
+                end
+            end
+        end
         Facter.add("Domain") do
             setcode do
                 domain = Resolution.exec('domainname') or nil
