@@ -914,7 +914,12 @@ class Facter
                     # the facts won't get reloaded if someone calls
                     # "loadfacts".  Really only important in testing, but,
                     # well, it's important in testing.
-                    load file
+                    begin
+                        load file
+                    rescue => detail
+                        warn "Could not load %s: %s" %
+                            [file, detail]
+                    end
                 end
             end
         end

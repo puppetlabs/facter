@@ -9,16 +9,22 @@ $:.unshift libdir
 
 require 'test/unit'
 require 'facter'
+require 'fileutils'
 
 if __FILE__ == $0
     Facter.debugging(true)
 end
 
 class TestFacter < Test::Unit::TestCase
+    def tearhook(&block)
+        @tearhooks << block
+    end
+
     def setup
         Facter.loadfacts
 
         @tmpfiles = []
+        @tearhooks = []
     end
 
     def teardown
@@ -527,6 +533,32 @@ some random stuff
             assert(Facter.kernel?(kernel.intern), "Symbol kernel did not match")
             assert(! Facter.kernel?("nosuchkernel"), "Fake kernel matched")
         }
+    end
+
+    # Make sure that facter doesn't fail when it gets bad files.
+    def test_ignore_bad_files
+        # Create a broken file
+        dir = "/tmp/factertest-brokenfile"
+        @tmpfiles << dir
+        libdir = File.join(dir, "facter")
+
+        FileUtils.mkdir_p(libdir)
+
+        $: << libdir
+        tearhook { $:.delete libdir }
+
+        file = File.join(libdir, "file.rb")
+
+
+        File.open(file, "w") do |f|
+            f.puts "asdflkjaeflkj23rljadflkjasdfuhasd8;;lkjadsf;j24iojlkajsdf"
+        end
+
+        assert_nothing_raised {
+            Facter.loadfacts()
+        }
+
+
     end
 end
 
