@@ -17,11 +17,15 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston MA  02110-1301 USA
 
 module Facter::Memory
+    require 'thread'
+
     def self.meminfo_number(tag)
         memsize = ""
-        File.readlines("/proc/meminfo").each do |l|
-            if l =~ /^#{tag}:\s+(\d+)\s+(\S+)/
-                memsize = scale_number($1.to_f, $2)
+        Thread::exclusive do
+            File.readlines("/proc/meminfo").each do |l|
+                if l =~ /^#{tag}:\s+(\d+)\s+(\S+)/
+                    memsize = scale_number($1.to_f, $2)
+                end
             end
         end
             
