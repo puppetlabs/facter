@@ -53,7 +53,7 @@ rm -rf %{buildroot}
 
 
 %changelog
-* Fri Jun 9 2006 Luke Kanies <luke@madstop.com> - 1.3.0-1
+* Fri Jun 19 2006 Luke Kanies <luke@madstop.com> - 1.3.0-1
 - Fixed spec file to work again with the extra memory and processor files.
 
 * Mon Jun 12 2006 David Lutterkort <dlutter@redhat.com> - 1.3.0-1
