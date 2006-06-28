@@ -1,3 +1,20 @@
+1.3.3:
+    Added thread exclusivity to memory and processor facts.
+
+    Added the ability to retrieve facts by pulling them out of the shell environment.
+
+1.3.2:
+    Temporarily disabled memory and processor facts since they might cause hangs.
+
+1.3.1:
+    Fixed autoloading so that it catches any errors in loaded libraries.
+
+1.3:
+    Significant internal refactoring, such as replacing 'tag' with 'confine', and
+    reusing 'tag' for semantic purposes.
+
+    Made autoloading of facts better.
+
 1.2.1:
     Fixed a "bug" that occurs if there's a file named "facter" in your
     ruby search path (as opposed to directory).

@@ -582,6 +582,7 @@ some random stuff
             }
 
             assert_equal(value, resp)
+            ENV.delete(var)
             Facter.clear
         end
     end
