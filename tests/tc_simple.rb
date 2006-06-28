@@ -560,6 +560,31 @@ some random stuff
 
 
     end
+
+    def test_env_facts
+        value = "a fact"
+
+        %w{FACTER_ENVNESS facter_envness facterenvness facter_envness}.each do |var|
+            ENV[var] = value
+
+            assert_nothing_raised {
+                Facter.loadfacts()
+            }
+
+            assert(Facter["envness"], "Did not get env fact")
+
+            assert_equal(value, Facter["envness"].value,
+                "Did not get value correctly")
+
+            resp = nil
+            assert_nothing_raised {
+                resp = Facter.envness
+            }
+
+            assert_equal(value, resp)
+            Facter.clear
+        end
+    end
 end
 
 # $Id$

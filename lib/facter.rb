@@ -946,6 +946,15 @@ class Facter
                 end
             end
         end
+
+        # Now try to get facts from the environment
+        ENV.each do |name, value|
+            if name =~ /^facter_?(\w+)$/i
+                Facter.add($1) do
+                    setcode { value }
+                end
+            end
+        end
     end
 
     Facter.loadfacts
