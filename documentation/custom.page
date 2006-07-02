@@ -1,5 +1,6 @@
 ---
 inMenu: true
+directoryName: Custom Facts
 ---
 
 Facter does everything it can to make adding custom facts easy.  It will
