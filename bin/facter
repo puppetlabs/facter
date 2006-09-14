@@ -47,7 +47,7 @@ $haveusage = true
 
 begin
     require 'rdoc/usage'
-rescue LoadError
+rescue Exception
     $haveusage = false
 end
 
