@@ -691,6 +691,10 @@ class Facter
 
         Facter.add("Domain") do
             setcode do
+                # First force the hostname to be checked
+                Facter.hostname
+
+                # Now check to see if it set the domain
                 if defined? $domain and ! $domain.nil?
                     $domain
                 else
@@ -775,7 +779,7 @@ class Facter
                 require 'resolv'
 
                 begin
-                    if hostname = Facter["hostname"].value
+                    if hostname = Facter.hostname
                         ip = Resolv.getaddress(hostname)
                         unless ip == "127.0.0.1"
                             ip
@@ -792,9 +796,10 @@ class Facter
         end
         Facter.add("IPAddress") do
             setcode do
-                if hostname = Facter["hostname"].value
+                if hostname = Facter.hostname
                     # we need Hostname to exist for this to work
-                    if list = Resolution.exec("host #{hostname}").chomp.split(/\s/)
+                    host = nil
+                    if host = Resolution.exec("host #{hostname}") and host.chomp.split(/\s/)
 
                         if defined? list[-1] and
                                 list[-1] =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
