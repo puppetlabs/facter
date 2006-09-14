@@ -22,11 +22,17 @@ module Facter::Memory
     def self.meminfo_number(tag)
         memsize = ""
         Thread::exclusive do
+            size, scale = [0, ""]
             File.readlines("/proc/meminfo").each do |l|
-                if l =~ /^#{tag}:\s+(\d+)\s+(\S+)/
-                    memsize = scale_number($1.to_f, $2)
+                size, scale = [$1.to_f, $2] if l =~ /^#{tag}:\s+(\d+)\s+(\S+)/
+                # MemoryFree == memfree + cached + buffers
+                #  (assume scales are all the same as memfree)
+                if tag == "MemFree" &&
+                    l =~ /^(?:Buffers|Cached):\s+(\d+)\s+(?:\S+)/
+                    size += $1.to_f
                 end
             end
+            memsize = scale_number(size, scale)
         end
             
         memsize
