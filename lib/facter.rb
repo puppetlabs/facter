@@ -840,7 +840,7 @@ class Facter
         end
 
         Facter.add("MacAddress") do
-            confine :operatingsystem => :solaris
+            confine :operatingsystem => %w{FreeBSD NetBSD OpenBSD solaris}
             setcode do
                 ether = nil
                 output = %x{/sbin/ifconfig -a}
@@ -867,9 +867,43 @@ class Facter
 
                 ether
             end
+
+        Facter.add("MacAddress") do
+	    confine :kernel => :linux
+            setcode do
+                ether = nil
+                output = %x{/sbin/ifconfig -a}
+
+                output =~ /HWaddr (\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
+                ether = $1
+
+                ether
+            end
+        end
+
+
+         Facter.add("IPAddress") do
+            confine :kernel => :linux
+            setcode do
+                ip = nil
+                output = %x{/sbin/ifconfig}
+
+                output.split(/^\S/).each { |str|
+                    if str =~ /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+                        tmp = $1
+                        unless tmp =~ /127\./
+                            ip = tmp
+                            break
+                        end
+                    end
+                }
+
+                ip
+            end
+        end
         end
         Facter.add("IPAddress") do
-            confine :kernel => :darwin
+            confine :kernel => %w{FreeBSD NetBSD OpenBSD solaris darwin}
             setcode do
                 ip = nil
                 output = %x{/sbin/ifconfig}
