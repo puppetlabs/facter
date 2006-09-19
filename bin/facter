@@ -105,7 +105,7 @@ if names.empty?
 else
     names.each { |name|
         begin
-            facts[name] = Facter[name].value
+            facts[name] = Facter.value(name)
         rescue => error
             STDERR.puts "Could not retrieve %s: #{error}" % name
             exit 10
@@ -115,7 +115,9 @@ end
 
 facts.sort { |a, b| a[0].to_s <=> b[0].to_s }.each { |name,value|
     if facts.length == 1
-        puts value
+        unless value.nil?
+            puts value
+        end
     else
         puts "%s => %s" % [name,value]
     end
