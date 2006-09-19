@@ -651,11 +651,13 @@ class Facter
         end
 
         Facter.add("Architecture") do
-            confine :operatingsystem => :debian
+            confine :kernel => :linux
             setcode do
                 model = Facter.hardwaremodel
                 case model
-                when 'x86_64': "amd64" 
+                # most linuxen use "x86_64"
+                when 'x86_64':
+                    Facter.operatingsystem == "Debian" ? "amd64" : model;
                 when /(i[3456]86|pentium)/: "i386"
                 else
                     model
@@ -848,24 +850,25 @@ class Facter
 
         Facter.add("UniqueId") do
             setcode 'hostid',  '/bin/sh'
-            confine :operatingsystem => :solaris
+            #confine :kernel => %w{Solaris Linux}
+            confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE Debian Gentoo}
         end
 
         Facter.add("HardwareISA") do
             setcode 'uname -p', '/bin/sh'
-            confine :operatingsystem => :solaris
+            confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE Debian Gentoo}
         end
 
         Facter.add("MacAddress") do
-            confine :operatingsystem => %w{FreeBSD NetBSD OpenBSD solaris}
+            #confine :kernel => %w{Solaris Linux}
+            confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE Debian Gentoo}
             setcode do
-                ether = nil
+                ether = []
                 output = %x{/sbin/ifconfig -a}
-
-                output =~ /ether (\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
-                ether = $1
-
-                ether
+                output.each {|s|
+                             ether.push($1) if s =~ /(?:ether|HWaddr) (\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
+                            }
+                ether.join(" ")
             end
         end
 
@@ -884,20 +887,6 @@ class Facter
 
                 ether
             end
-
-        Facter.add("MacAddress") do
-	    confine :kernel => :linux
-            setcode do
-                ether = nil
-                output = %x{/sbin/ifconfig -a}
-
-                output =~ /HWaddr (\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
-                ether = $1
-
-                ether
-            end
-        end
-
 
          Facter.add("IPAddress") do
             confine :kernel => :linux
@@ -973,7 +962,8 @@ class Facter
         end
 
         Facter.add("id") do
-            confine :operatingsystem => :linux
+            #confine :kernel => %w{Solaris Linux}
+            confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE Debian Gentoo}
             setcode "whoami"
         end
 
