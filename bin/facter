@@ -113,7 +113,7 @@ else
     }
 end
 
-facts.each { |name,value|
+facts.sort { |a, b| a[0].to_s <=> b[0].to_s }.each { |name,value|
     if facts.length == 1
         puts value
     else
