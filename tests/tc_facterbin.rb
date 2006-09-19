@@ -60,6 +60,24 @@ class TestFacterBin < Test::Unit::TestCase
 
         assert(output !~ / => /, "Output includes the farrow thing")
     end
+
+    def test_yaml
+        out = nil
+        assert_nothing_raised {
+            out = %x{facter -y}
+        }
+
+        require 'yaml'
+        result = nil
+        assert_nothing_raised {
+            result = YAML.load(out)
+        }
+
+        assert_instance_of(Hash, result)
+        result.each do |name, value|
+            assert_equal(value, Facter.value(name))
+        end
+    end
 end
 
 # $Id$

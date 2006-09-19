@@ -59,14 +59,21 @@ result = GetoptLong.new(
     [ "--version",         "-v",     GetoptLong::NO_ARGUMENT ],
     [ "--help",		"-h",            GetoptLong::NO_ARGUMENT ],
     [ "--debug",	"-d",            GetoptLong::NO_ARGUMENT ],
+    [ "--yaml",	"-y",                GetoptLong::NO_ARGUMENT ],
     [ "--config",    "-c",           GetoptLong::REQUIRED_ARGUMENT ]
 )
+
+options = {
+    :yaml => false
+}
 
 result.each { |opt,arg|
     case opt
         when "--version"
             puts "%s" % Facter.version
             exit
+        when "--yaml"
+			options[:yaml] = true
         when "--debug"
 			Facter.debugging(1)
         when "--help"
@@ -111,6 +118,12 @@ else
             exit 10
         end
     }
+end
+
+if options[:yaml]
+    require 'yaml'
+    puts YAML.dump(facts)
+    exit(0)
 end
 
 facts.sort { |a, b| a[0].to_s <=> b[0].to_s }.each { |name,value|
