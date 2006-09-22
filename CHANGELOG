@@ -1,7 +1,14 @@
+1.3.4:
+    Added many new facts, including LSB facts.
+
+    Fixed a few small bugs, notably the error you could get when asking
+    for a non-existent fact.
+
 1.3.3:
     Added thread exclusivity to memory and processor facts.
 
-    Added the ability to retrieve facts by pulling them out of the shell environment.
+    Added the ability to retrieve facts by pulling them out of the shell
+    environment.
 
 1.3.2:
     Temporarily disabled memory and processor facts since they might cause hangs.

@@ -75,6 +75,8 @@ class TestFacterBin < Test::Unit::TestCase
 
         assert_instance_of(Hash, result)
         result.each do |name, value|
+            # These change too frequently.
+            next if name.to_s.downcase =~ /mem/
             assert_equal(value, Facter.value(name))
         end
     end
