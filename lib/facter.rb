@@ -608,20 +608,23 @@ class Facter
             setcode 'uname -r'
         end
 
-        {"LSBRelease" => "^LSB Version:\t(.*)$", "LSBDistId" => "^Distributor ID:\t(.*)$",
-               "LSBDistRelease" => "^Release:\t(.*)$", "LSBDistDescription" => "^Description:\t(.*)$",
-               "LSBDistCodeName" => "^Codename:\t(.*)$"}.each { |fact, pattern|
-            output = %x{lsb_release -a 2>&1}
-            if $? == 0 
-                Facter.add(fact) do
-                    setcode do
-                        if $? == 0 and output =~ /#{pattern}/
-                            $1
-                        end
+        {   "LSBRelease" => "^LSB Version:\t(.*)$",
+            "LSBDistId" => "^Distributor ID:\t(.*)$",
+            "LSBDistRelease" => "^Release:\t(.*)$",
+            "LSBDistDescription" => "^Description:\t(.*)$",
+            "LSBDistCodeName" => "^Codename:\t(.*)$"
+        }.each do |fact, pattern|
+            Facter.add(fact) do
+                setcode do
+                    output = Resolution.exec('lsb_release -a 2>/dev/null')
+                    if output =~ /#{pattern}/
+                        $1
+                    else
+                        nil
                     end
-                end # end of add
+                end
             end
-        } 
+        end
 
         Facter.add("OperatingSystem") do
             # Default to just returning the kernel as the operating system
