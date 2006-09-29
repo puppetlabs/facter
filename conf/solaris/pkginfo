@@ -1,6 +1,6 @@
 PKG=CSWfacter
 NAME=facter - System Fact Gatherer
-VERSION=1.3.4
+VERSION=1.3.5
 CATEGORY=application
 VENDOR=http://reductivelabs.com/projects/facter
 HOTLINE=http://reductivelabs.com/cgi-bin/facter.cgi
