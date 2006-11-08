@@ -385,26 +385,37 @@ class Facter
     class Resolution
         attr_accessor :interpreter, :code, :name, :fact
 
+        def Resolution.have_which
+            if @have_which.nil?
+                %x{which which 2>/dev/null}
+                @have_which = ($? == 0)
+            end
+            @have_which
+        end
+
         # Execute a chunk of code.
         def Resolution.exec(code, interpreter = "/bin/sh")
             if interpreter == "/bin/sh"
                 binary = code.split(/\s+/).shift
 
-                path = nil
-                if binary !~ /^\//
-                    path = %x{which #{binary} 2>/dev/null}.chomp
-                    if path == ""
-                        # we don't have the binary necessary
+                if have_which
+                    path = nil
+                    if binary !~ /^\//
+                        path = %x{which #{binary} 2>/dev/null}.chomp
+                        if path == ""
+                            # we don't have the binary necessary
+                            return nil
+                        end
+                    else
+                        path = binary
+                    end
+
+                    unless FileTest.exists?(path)
+                        # our binary does not exist
                         return nil
                     end
-                else
-                    path = binary
                 end
 
-                unless FileTest.exists?(path)
-                    # our binary does not exist
-                    return nil
-                end
                 out = nil
                 begin
                     out = %x{#{code}}.chomp
