@@ -47,16 +47,25 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{_bindir}/facter
 %{ruby_sitelibdir}/facter.rb
-%{ruby_sitelibdir}/facter/memory.rb
-%{ruby_sitelibdir}/facter/processor.rb
+%{ruby_sitelibdir}/facter
 %doc CHANGELOG COPYING INSTALL LICENSE README
 
 
 %changelog
+* Tue Oct 10 2006 David Lutterkort <dlutter@redhat.com> - 1.3.5-1
+- New version
+
+* Tue Sep 26 2006 David Lutterkort <dlutter@redhat.com> - 1.3.4-1
+- New version
+
+* Wed Sep 13 2006 David Lutterkort <dlutter@redhat.com> - 1.3.3-2
+- Rebuilt for FC6
+
+* Wed Jun 28 2006 David Lutterkort <dlutter@redhat.com> - 1.3.3-1
+- Rebuilt
+
 * Fri Jun 19 2006 Luke Kanies <luke@madstop.com> - 1.3.0-1
 - Fixed spec file to work again with the extra memory and processor files.
-
-* Mon Jun 12 2006 David Lutterkort <dlutter@redhat.com> - 1.3.0-1
 - Require ruby(abi). Build as noarch
 
 * Fri Jun 9 2006 Luke Kanies <luke@madstop.com> - 1.3.0-1
