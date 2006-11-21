@@ -1,18 +1,25 @@
 %{!?ruby_sitelibdir: %define ruby_sitelibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')}
 
+%define has_ruby_abi 0%{?fedora:%fedora} >= 5 || 0%{?rhel:%rhel} >= 5
+%define has_ruby_noarch %has_ruby_abi
+
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
 Version: 1.3.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: System Environment/Base
 URL: http://reductivelabs.com/projects/facter
 Source0: http://reductivelabs.com/downloads/facter/%{name}-%{version}.tgz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+%if %has_ruby_noarch
 BuildArchitectures: noarch
+%endif
 
 Requires: ruby >= 1.8.1
+%if %has_ruby_abi
 Requires: ruby(abi) = 1.8
+%endif
 BuildRequires: ruby >= 1.8.1
 
 %description 
@@ -52,6 +59,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Nov 20 2006 David Lutterkort <dlutter@redhat.com> - 1.3.5-2
+- Make require ruby(abi) and buildarch: noarch conditional for fedora 5 or
+  later to allow building on older fedora releases
+
 * Tue Oct 10 2006 David Lutterkort <dlutter@redhat.com> - 1.3.5-1
 - New version
 
