@@ -842,8 +842,8 @@ class Facter
                 if hostname = Facter.hostname
                     # we need Hostname to exist for this to work
                     host = nil
-                    if host = Resolution.exec("host #{hostname}") and host.chomp.split(/\s/)
-
+                    if host = Resolution.exec("host #{hostname}")
+                        host = host.chomp.split(/\s/)
                         if defined? list[-1] and
                                 list[-1] =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
                             list[-1]
