@@ -586,6 +586,15 @@ some random stuff
             Facter.clear
         end
     end
+    
+    # Make sure that ssh keys only include the key, not the comment or the type.
+    def test_ssh_keys
+        %w{rsa dsa}.each do |type|
+            key = Facter.value("ssh#{type}key")
+            assert(key, "did not retrieve %s key" % type)
+            assert(key !~ /\s/, "%s key contains whitespace" % type)
+        end
+    end
 end
 
 # $Id$

@@ -866,7 +866,7 @@ class Facter
                         filepath = File.join(dir,file)
                         if FileTest.file?(filepath)
                             begin
-                                value = File.open(filepath).read.chomp
+                                value = File.open(filepath).read.chomp.split(/\s+/)[1]
                             rescue
                                 value = nil
                             end
