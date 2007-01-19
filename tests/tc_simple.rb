@@ -1,4 +1,4 @@
-#! /usr/bin/env ruby
+#!/usr/bin/env ruby
 
 $facterbase = File.dirname(File.dirname(__FILE__))
 if $facterbase == "."
