@@ -26,7 +26,7 @@ project = Rake::RedLabProject.new("facter") do |p|
 
     p.epmhosts = %w{culain}
     p.rpmhost = "fedora1"
-    p.sunpkghost = "sol10b"
+    #p.sunpkghost = "sol10b"
 end
 
 project.mkgemtask do |gem|
