@@ -6,4 +6,5 @@ processors, etc.
 It currently cannot collect very much information, but it is architected to be
 both OS and OS version specific.
 
-See bin/facter or http://madstop.com/svn/enhost for an example of the interface.
+See bin/facter or http://reductivelabs.com/project/enhost for an example of the
+interface.
