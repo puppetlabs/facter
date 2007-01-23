@@ -17,6 +17,7 @@ BuildArchitectures: noarch
 %endif
 
 Requires: ruby >= 1.8.1
+Requires: which
 %if %has_ruby_abi
 Requires: ruby(abi) = 1.8
 %endif
@@ -59,6 +60,12 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Jan 19 2007 David Lutterkort <dlutter@redhat.com> - 1.3.6-1
+- New version
+
+* Thu Jan 18 2007 David Lutterkort <dlutter@redhat.com> - 1.3.5-3
+- require which; facter is very unhappy without it
+
 * Mon Nov 20 2006 David Lutterkort <dlutter@redhat.com> - 1.3.5-2
 - Make require ruby(abi) and buildarch: noarch conditional for fedora 5 or
   later to allow building on older fedora releases
