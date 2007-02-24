@@ -700,7 +700,9 @@ class Facter
                 ["/usr/local/etc/cfkey.pub",
                     "/etc/cfkey.pub",
                     "/var/cfng/keys/localhost.pub",
-                    "/var/cfengine/ppkeys/localhost.pub"
+                    "/var/cfengine/ppkeys/localhost.pub",
+                    "/var/lib/cfengine/ppkeys/localhost.pub",
+                    "/var/lib/cfengine2/ppkeys/localhost.pub"
                 ].each { |file|
                     if FileTest.file?(file)
                         File.open(file) { |openfile|
