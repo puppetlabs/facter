@@ -1,3 +1,12 @@
+1.3.7:
+    A couple of small bugfixes, including fixing Facter.flush so it correctly
+    flushes cached values, and the mac address fact only returns one
+    value, not all of them.
+
+    Converted all of the fact names to symbols, rather than the somewhat
+    random case used previously.  When the facts are converted to a hash,
+    they still convert the fact name to a string.
+
 1.3.6:
     A bugfix release, including fixes for #29, and #30.  Also fixed
     the SSH keys so they only have the key, not the type or description.

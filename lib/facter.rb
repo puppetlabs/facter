@@ -1,4 +1,3 @@
-# $Id$
 #--
 # Copyright 2006 Luke Kanies <luke@madstop.com>
 # 
@@ -37,7 +36,14 @@ class Facter
     #
 
 
-    @@facts = {}
+    @@facts = Hash.new { |hash, key|
+        key = key.to_s.downcase.intern
+        if hash.include?(key)
+            hash[key]
+        else
+            nil
+        end
+    }
     GREEN = "[0;32m"
     RESET = "[0m"
     @@debug = 0
@@ -64,7 +70,6 @@ class Facter
     # Return a fact object by name.  If you use this, you still have to call
     # 'value' on it to retrieve the actual value.
     def self.[](name)
-        name = name.to_s.downcase
         @@facts[name]
     end
 
@@ -72,13 +77,9 @@ class Facter
     # between adding a new fact and adding a new way to resolve a fact.
     def self.add(name, &block)
         fact = nil
-        dcname = name.to_s.downcase
 
-        if @@facts.include?(dcname)
-            fact = @@facts[dcname]
-        else
-            Facter.new(dcname)
-            fact = @@facts[dcname]
+        unless fact = @@facts[name]
+            fact = Facter.new(name)
         end
 
         unless block
@@ -98,7 +99,7 @@ class Facter
                 if fact.suitable?
                     value = fact.value
                     unless value.nil?
-                        yield name, fact.value
+                        yield name.to_s, fact.value
                     end
                 end
             }
@@ -113,7 +114,7 @@ class Facter
                 name = name.to_s.sub(/\?$/,'')
             end
 
-            if fact = self[name]
+            if fact = @@facts[name]
                 if question
                     value = fact.value.downcase
                     args.each do |arg|
@@ -136,9 +137,8 @@ class Facter
 
     # Clear all facts.  Mostly used for testing.
     def self.clear
-        Facter.reset
         Facter.flush
-        @@facts.clear
+        Facter.reset
     end
 
 	# Set debugging on or off.
@@ -179,9 +179,7 @@ class Facter
 
     # Remove them all.
     def self.reset
-        @@facts.each { |name,fact|
-            @@facts.delete(name)
-        }
+        @@facts.clear
     end
 
     # Return a hash of all of our facts.
@@ -190,7 +188,8 @@ class Facter
             if ary[1].suitable? and (tags.empty? or ary[1].tagged?(*tags))
                 value = ary[1].value
                 if value
-                    h[ary[0]] = value
+                    # For backwards compatibility, convert the fact name to a string.
+                    h[ary[0].to_s] = value
                 end
             end
             h
@@ -198,8 +197,8 @@ class Facter
     end
 
     def self.value(name)
-        if @@facts.include?(name.to_s.downcase)
-            @@facts[name.to_s.downcase].value
+        if fact = @@facts[name]
+            fact.value
         else
             nil
         end
@@ -217,9 +216,9 @@ class Facter
 
     # Create a new fact, with no resolution mechanisms.
     def initialize(name)
-        @name = name.downcase if name.is_a? String
+        @name = name.to_s.downcase.intern
         if @@facts.include?(@name)
-            raise ArgumentError, "A fact named %s already exists" % name
+            raise ArgumentError, "A fact named %s already exists" % @name
         else
             @@facts[@name] = self
         end
@@ -583,15 +582,15 @@ class Facter
 
     # Load all of the default facts
     def self.loadfacts
-        Facter.add("FacterVersion") do
+        Facter.add(:facterversion) do
             setcode { FACTERVERSION.to_s }
         end
 
-        Facter.add("RubyVersion") do
+        Facter.add(:rubyversion) do
             setcode { RUBY_VERSION.to_s }
         end
 
-        Facter.add("PuppetVersion") do
+        Facter.add(:puppetversion) do
             setcode {
                 begin
                     require 'puppet'
@@ -611,11 +610,11 @@ class Facter
             end
         end
 
-        Facter.add("Kernel") do
+        Facter.add(:kernel) do
             setcode 'uname -s'
         end
 
-        Facter.add("KernelRelease") do
+        Facter.add(:kernelrelease) do
             setcode 'uname -r'
         end
 
@@ -637,23 +636,21 @@ class Facter
             end
         end
 
-        Facter.add("OperatingSystem") do
+        Facter.add(:operatingsystem) do
             # Default to just returning the kernel as the operating system
-            setcode do Facter["Kernel"].value end
+            setcode do Facter[:kernel].value end
         end
 
-        Facter.add("OperatingSystemRelease") do
-            setcode do Facter["KernelRelease"].value end
+        Facter.add(:operatingsystemrelease) do
+            setcode do Facter[:kernelrelease].value end
         end
 
-        Facter.add("OperatingSystem") do
-            #obj.os = "Linux"
+        Facter.add(:operatingsystem) do
             confine :kernel => :sunos
             setcode do "Solaris" end
         end
 
-        Facter.add("OperatingSystem") do
-            #obj.os = "Linux"
+        Facter.add(:operatingsystem) do
             confine :kernel => :linux
             setcode do
                 if FileTest.exists?("/etc/debian_version")
@@ -675,11 +672,11 @@ class Facter
             end
         end
 
-        Facter.add("HardwareModel") do
+        Facter.add(:hardwaremodel) do
             setcode 'uname -m'
         end
 
-        Facter.add("Architecture") do
+        Facter.add(:architecture) do
             confine :kernel => :linux
             setcode do
                 model = Facter.hardwaremodel
@@ -694,7 +691,7 @@ class Facter
             end
         end
 
-        Facter.add("CfKey") do
+        Facter.add(:Cfkey) do
             setcode do
                 value = nil
                 ["/usr/local/etc/cfkey.pub",
@@ -722,7 +719,7 @@ class Facter
             end
         end
 
-        Facter.add("Domain") do
+        Facter.add(:domain) do
             setcode do
                 # First force the hostname to be checked
                 Facter.hostname
@@ -736,7 +733,7 @@ class Facter
             end
         end
         # Look for the DNS domain name command first.
-        Facter.add("Domain") do
+        Facter.add(:domain) do
             setcode do
                 domain = Resolution.exec('dnsdomainname') or nil
                 # make sure it's a real domain
@@ -747,7 +744,7 @@ class Facter
                 end
             end
         end
-        Facter.add("Domain") do
+        Facter.add(:domain) do
             setcode do
                 domain = Resolution.exec('domainname') or nil
                 # make sure it's a real domain
@@ -758,7 +755,7 @@ class Facter
                 end
             end
         end
-        Facter.add("Domain") do
+        Facter.add(:domain) do
             setcode do
                 value = nil
                 if FileTest.exists?("/etc/resolv.conf")
@@ -786,7 +783,7 @@ class Facter
                 end
             end
         end
-        Facter.add("Hostname") do
+        Facter.add(:hostname) do
             setldapname "cn"
             setcode do
                 hostname = nil
@@ -818,7 +815,7 @@ class Facter
             end
         end
 
-        Facter.add("IPAddress") do
+        Facter.add(:ipaddress) do
             setldapname "iphostnumber"
             setcode do
                 require 'resolv'
@@ -839,7 +836,7 @@ class Facter
                 end
             end
         end
-        Facter.add("IPAddress") do
+        Facter.add(:ipaddress) do
             setcode do
                 if hostname = Facter.hostname
                     # we need Hostname to exist for this to work
@@ -879,19 +876,17 @@ class Facter
             } # end of hash each
         } # end of dir each
 
-        Facter.add("UniqueId") do
+        Facter.add(:uniqueid) do
             setcode 'hostid',  '/bin/sh'
-            #confine :kernel => %w{Solaris Linux}
             confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE Debian Gentoo}
         end
 
-        Facter.add("HardwareISA") do
+        Facter.add(:hardwareisa) do
             setcode 'uname -p', '/bin/sh'
             confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE Debian Gentoo}
         end
 
-        Facter.add("MacAddress") do
-            #confine :kernel => %w{Solaris Linux}
+        Facter.add(:macaddress) do
             confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE Debian Gentoo}
             setcode do
                 ether = []
@@ -903,7 +898,7 @@ class Facter
             end
         end
 
-        Facter.add("MacAddress") do
+        Facter.add(:macaddress) do
             confine :kernel => :darwin
             setcode do
                 ether = nil
@@ -920,7 +915,7 @@ class Facter
             end
         end
 
-         Facter.add("IPAddress") do
+         Facter.add(:ipaddress) do
             confine :kernel => :linux
             setcode do
                 ip = nil
@@ -939,7 +934,7 @@ class Facter
                 ip
             end
         end
-        Facter.add("IPAddress") do
+        Facter.add(:ipaddress) do
             confine :kernel => %w{FreeBSD NetBSD OpenBSD solaris}
             setcode do
                 ip = nil
@@ -958,7 +953,7 @@ class Facter
                 ip
             end
         end
-        Facter.add("IPAddress") do
+        Facter.add(:ipaddress) do
             confine :kernel => %w{darwin}
             setcode do
                 ip = nil
@@ -988,19 +983,19 @@ class Facter
                 ip
             end
         end
-        Facter.add("Hostname") do
+        Facter.add(:hostname) do
             confine :kernel => :darwin, :kernelrelease => "R7"
             setcode do
                 %x{/usr/sbin/scutil --get LocalHostName}
             end
         end
-        Facter.add("IPHostnumber") do
+        Facter.add(:iphostnumber) do
             confine :kernel => :darwin, :kernelrelease => "R6"
             setcode do
                 %x{/usr/sbin/scutil --get LocalHostName}
             end
         end
-        Facter.add("IPHostnumber") do
+        Facter.add(:iphostnumber) do
             confine :kernel => :darwin, :kernelrelease => "R6"
             setcode do
                 ether = nil
@@ -1013,16 +1008,16 @@ class Facter
             end
         end
 
-        Facter.add("ps") do
+        Facter.add(:ps) do
             setcode do 'ps -ef' end
         end
 
-        Facter.add("ps") do
+        Facter.add(:ps) do
             confine :operatingsystem => %w{FreeBSD NetBSD OpenBSD Darwin}
             setcode do 'ps -auxwww' end
         end
 
-        Facter.add("id") do
+        Facter.add(:id) do
             #confine :kernel => %w{Solaris Linux}
             confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE Debian Gentoo}
             setcode "whoami"
@@ -1075,3 +1070,5 @@ class Facter
 
     Facter.loadfacts
 end
+
+# $Id$

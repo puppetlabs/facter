@@ -38,14 +38,15 @@ class TestFacterBin < Test::Unit::TestCase
 
         hash = output.split("\n").inject({}) do |h, line|
             name, value = line.split(" => ")
-            h[name] = value
+            h[name.downcase] = value
             h
         end
 
         Facter.each do |name, fact|
             next if name.to_s =~ /memory/
 
-            assert(hash.include?(name.downcase), "Did not get " + name)
+            assert(hash.include?(name),
+                "Did not get %s" % name)
 
             assert_equal(fact, hash[name], "%s was not equal" % name)
         end
