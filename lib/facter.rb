@@ -1030,24 +1030,38 @@ class Facter
 
         locals = []
 
-        # Now see if we can find any other facts
+        # Now find all our loadable facts
+        factdirs = [] # All the places to check for facts
+        
+        # See if we can find any other facts in the regular Ruby lib
+        # paths
         $:.each do |dir|
             fdir = File.join(dir, "facter")
             if FileTest.exists?(fdir) and FileTest.directory?(fdir)
-                Dir.glob("#{fdir}/*.rb").each do |file|
-                    # Load here, rather than require, because otherwise
-                    # the facts won't get reloaded if someone calls
-                    # "loadfacts".  Really only important in testing, but,
-                    # well, it's important in testing.
-                    begin
-                        load file
-                    rescue => detail
-                        warn "Could not load %s: %s" %
-                            [file, detail]
-                    end
+                factdirs.push(fdir)
+            end
+        end
+        # Also check anything in 'FACTERLIB'
+        if ENV['FACTERLIB']
+            ENV['FACTERLIB'].split(":").each do |fdir|
+                factdirs.push(fdir)
+            end
+        end
+        factdirs.each do |fdir|
+            Dir.glob("#{fdir}/*.rb").each do |file|
+                # Load here, rather than require, because otherwise
+                # the facts won't get reloaded if someone calls
+                # "loadfacts".  Really only important in testing, but,
+                # well, it's important in testing.
+                begin
+                    load file
+                rescue => detail
+                    warn "Could not load %s: %s" %
+                        [file, detail]
                 end
             end
         end
+        
 
         # Now try to get facts from the environment
         ENV.each do |name, value|

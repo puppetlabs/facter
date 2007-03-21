@@ -356,18 +356,47 @@ end
         Dir.mkdir(dir)
         Dir.mkdir(File.join(dir, "facter"))
         $: << dir
-
-        # Make sure we don't have a value right now.
+        
+        Dir.mkdir(File.join(dir, "facterlib1"))
+        Dir.mkdir(File.join(dir, "facterlib2"))
+        ENV['FACTERLIB'] = "#{dir}/facterlib1:#{dir}/facterlib2"
+        
+        # Make sure we don't have a value right now, for both the localfact
+        # and the facterlib fact.
         assert_raise(NoMethodError) do
             Facter.localfact
         end
         assert_nil(Facter["localfact"])
+        
+        assert_raise(NoMethodError) do
+            Facter.facterlibfact
+        end
+        assert_nil(Facter["faterlibfact"])
+        
+        assert_raise(NoMethodError) do
+            Facter.facterlibfact2
+        end
+        assert_nil(Facter["faterlibfact2"])
 
-        # Make our file
+        # Make our files
         val = "localness"
         File.open(File.join(dir, "facter", "local.rb"), "w") do |file|
             file.puts %{
 Facter.add("LocalFact") do
+    setcode { "#{val}" }
+end
+}
+        end
+        File.open(File.join(dir, "facterlib1", "facterlibfact.rb"), "w") do |file|
+            file.puts %{
+Facter.add("facterlibfact") do
+    setcode { "#{val}" }
+end
+}
+        end
+        File.open(File.join(dir, "facterlib2", "facterlibfact2.rb"), "w") do |file|
+            file.puts %{
+Facter.add("facterlibfact2") do
     setcode { "#{val}" }
 end
 }
@@ -386,9 +415,13 @@ end
         assert_nothing_raised {
             hash = Facter.to_hash
         }
-
+        
         assert(hash.include?("localfact"), "Did not load fact at startup")
+        assert(hash.include?("facterlibfact"), "Did not load fact from FACTERLIB")
+        assert(hash.include?("facterlibfact2"), "Did not load fact from multiple FACTERLIBs")
         assert_equal(val, hash["localfact"], "Did not get correct value")
+        assert_equal(val, hash["facterlibfact"], "Did not get correct value from FACTERLIB fact")
+        assert_equal(val, hash["facterlibfact2"], "Did not get correct value from multiple FACTERLIB facts")
     end
 
     def test_stupidchdirring
