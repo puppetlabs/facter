@@ -899,7 +899,7 @@ class Facter
                 output.each {|s|
                              ether.push($1) if s =~ /(?:ether|HWaddr) (\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
                             }
-                ether.join(" ")
+                ether[0]
             end
         end
 

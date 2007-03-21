@@ -628,6 +628,12 @@ some random stuff
             assert(key !~ /\s/, "%s key contains whitespace" % type)
         end
     end
+
+    # #33 Make sure we only get one mac address
+    def test_one_macaddress
+        assert(! Facter.value(:macaddress).include?(" "),
+            "Got multiple mac addresses")
+    end
 end
 
 # $Id$
