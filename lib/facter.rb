@@ -918,6 +918,7 @@ class Facter
 
                 ether
             end
+        end
 
          Facter.add("IPAddress") do
             confine :kernel => :linux
@@ -937,7 +938,6 @@ class Facter
 
                 ip
             end
-        end
         end
         Facter.add("IPAddress") do
             confine :kernel => %w{FreeBSD NetBSD OpenBSD solaris}
