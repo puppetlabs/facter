@@ -47,12 +47,12 @@ class Facter
 	# module methods
 
     # Return the version of the library.
-    def Facter.version
+    def self.version
         return FACTERVERSION
     end
 
     # Add some debugging
-    def Facter.debug(string)
+    def self.debug(string)
         if string.nil?
             return
         end
@@ -63,14 +63,14 @@ class Facter
 
     # Return a fact object by name.  If you use this, you still have to call
     # 'value' on it to retrieve the actual value.
-    def Facter.[](name)
+    def self.[](name)
         name = name.to_s.downcase
         @@facts[name]
     end
 
     # Add a resolution mechanism for a named fact.  This does not distinguish
     # between adding a new fact and adding a new way to resolve a fact.
-    def Facter.add(name, &block)
+    def self.add(name, &block)
         fact = nil
         dcname = name.to_s.downcase
 
@@ -135,14 +135,14 @@ class Facter
     end
 
     # Clear all facts.  Mostly used for testing.
-    def Facter.clear
+    def self.clear
         Facter.reset
         Facter.flush
         @@facts.clear
     end
 
 	# Set debugging on or off.
-	def Facter.debugging(bit)
+	def self.debugging(bit)
 		if bit
             case bit
             when TrueClass: @@debug = 1
@@ -168,24 +168,24 @@ class Facter
 	end
 
     # Flush all cached values.
-    def Facter.flush
-        @@facts.each { |fact| fact.flush }
+    def self.flush
+        @@facts.each { |name, fact| fact.flush }
     end
 
     # Return a list of all of the facts.
-    def Facter.list
+    def self.list
         return @@facts.keys
     end
 
     # Remove them all.
-    def Facter.reset
+    def self.reset
         @@facts.each { |name,fact|
             @@facts.delete(name)
         }
     end
 
     # Return a hash of all of our facts.
-    def Facter.to_hash(*tags)
+    def self.to_hash(*tags)
         @@facts.inject({}) do |h, ary|
             if ary[1].suitable? and (tags.empty? or ary[1].tagged?(*tags))
                 value = ary[1].value
@@ -197,7 +197,7 @@ class Facter
         end
     end
 
-    def Facter.value(name)
+    def self.value(name)
         if @@facts.include?(name.to_s.downcase)
             @@facts[name.to_s.downcase].value
         else
@@ -582,7 +582,7 @@ class Facter
     end
 
     # Load all of the default facts
-    def Facter.loadfacts
+    def self.loadfacts
         Facter.add("FacterVersion") do
             setcode { FACTERVERSION.to_s }
         end

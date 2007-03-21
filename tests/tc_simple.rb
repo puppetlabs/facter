@@ -634,6 +634,27 @@ some random stuff
         assert(! Facter.value(:macaddress).include?(" "),
             "Got multiple mac addresses")
     end
+
+    def test_flush
+        val = "yay"
+        Facter.add(:testing) do
+            setcode { val }
+        end
+
+        assert_equal(val, Facter.value(:testing),
+            "did not get correct value initially")
+        val = "foo"
+        assert_equal("yay", Facter.value(:testing),
+            "did not cache value")
+
+        assert_nothing_raised("Could not clear facter cache") do
+            Facter.flush
+        end
+        assert_equal(val, Facter.value(:testing),
+            "did not clear cache")
+
+
+    end
 end
 
 # $Id$
