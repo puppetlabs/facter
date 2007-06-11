@@ -229,7 +229,7 @@ class Facter
 
         @value = nil
 
-        @ldapname = name
+        @ldapname = name.to_s
     end
 
     # Add a new resolution mechanism.  This requires a block, which will then
@@ -473,7 +473,7 @@ class Facter
         # Set the name by which this parameter is known in LDAP.  The default
         # is just the fact name.
         def setldapname(name)
-            @fact.ldapname = name
+            @fact.ldapname = name.to_s
         end
 
         # Is this resolution mechanism suitable on the system in question?

@@ -272,6 +272,7 @@ class TestFacter < Test::Unit::TestCase
 
         facts.each { |name, fact|
             assert(fact.ldapname, "Fact %s has no ldapname" % name)
+            assert_instance_of(String, fact.ldapname, "Fact %s has a non-string ldapname" % name)
         }
     end
 
