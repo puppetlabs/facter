@@ -54,29 +54,31 @@ module Facter::Macosx
   end
 end
 
-Facter::Macosx.hardware_overview.each do |fact, value|
-  Facter.add("sp_#{fact}") do
-    confine :kernel => :darwin
-    setcode do
-      value
+if Facter.kernel == "Darwin"
+  Facter::Macosx.hardware_overview.each do |fact, value|
+    Facter.add("sp_#{fact}") do
+      confine :kernel => :darwin
+      setcode do
+        value
+      end
     end
   end
-end
 
-Facter::Macosx.os_overview.each do |fact, value|
-  Facter.add("sp_#{fact}") do
-    confine :kernel => :darwin
-    setcode do
-      value
+  Facter::Macosx.os_overview.each do |fact, value|
+    Facter.add("sp_#{fact}") do
+      confine :kernel => :darwin
+      setcode do
+        value
+      end
     end
   end
-end
 
-Facter::Macosx.sw_vers.each do |fact, value|
-  Facter.add(fact) do
-    confine :kernel => :darwin
-    setcode do
-      value
+  Facter::Macosx.sw_vers.each do |fact, value|
+    Facter.add(fact) do
+      confine :kernel => :darwin
+      setcode do
+        value
+      end
     end
   end
 end
