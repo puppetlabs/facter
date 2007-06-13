@@ -14,8 +14,8 @@ require 'base64'
 require 'cgi'
 require 'stringio'
 
-require 'puppet/util/plist/generator'
-require 'puppet/util/plist/parser'
+require 'facter/util/plist/generator'
+require 'facter/util/plist/parser'
 
 module Plist
   VERSION = '3.0.0'
