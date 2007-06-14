@@ -6,7 +6,7 @@
 #
 # = Usage
 #
-#   facter [-d|--debug] [-h|--help] [-v|--version] [fact] [fact] [...]
+#   facter [-d|--debug] [-h|--help] [-v|--version] [-y|--yaml] [fact] [fact] [...]
 #
 # = Description
 #
@@ -26,6 +26,9 @@
 #
 # version::
 #   Print the version and exit.
+#
+# yaml::
+#   Emit facts in YAML format.
 #
 # = Example
 #
