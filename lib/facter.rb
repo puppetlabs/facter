@@ -637,15 +637,6 @@ class Facter
         end
 
         Facter.add(:operatingsystem) do
-            # Default to just returning the kernel as the operating system
-            setcode do Facter[:kernel].value end
-        end
-
-        Facter.add(:operatingsystemrelease) do
-            setcode do Facter[:kernelrelease].value end
-        end
-
-        Facter.add(:operatingsystem) do
             confine :kernel => :sunos
             setcode do "Solaris" end
         end
@@ -670,6 +661,43 @@ class Facter
                     "SuSE"
                 end
             end
+        end
+
+        Facter.add(:operatingsystem) do
+            # Default to just returning the kernel as the operating system
+            setcode do Facter[:kernel].value end
+        end
+
+        Facter.add(:operatingsystemrelease) do
+            confine :operatingsystem => :fedora
+            setcode do
+                File::open("/etc/fedora-release", "r") do |f|
+                    line = f.readline.chomp
+                    if line =~ /\(Rawhide\)$/
+                        "Rawhide"
+                    elsif line =~ /release (\d+)/
+                        $1
+                    end
+                end
+            end
+        end
+
+        Facter.add(:operatingsystemrelease) do
+            confine :operatingsystem => :redhat
+            setcode do
+                File::open("/etc/redhat-release", "r") do |f|
+                    line = f.readline.chomp
+                    if line =~ /\(Rawhide\)$/
+                        "Rawhide"
+                    elsif line =~ /release (\d+)/
+                        $1
+                    end
+                end
+            end
+        end
+
+        Facter.add(:operatingsystemrelease) do
+            setcode do Facter[:kernelrelease].value end
         end
 
         Facter.add(:hardwaremodel) do
