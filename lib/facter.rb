@@ -618,16 +618,20 @@ class Facter
             setcode 'uname -r'
         end
 
-        {   "LSBRelease" => "^LSB Version:\t(.*)$",
-            "LSBDistId" => "^Distributor ID:\t(.*)$",
-            "LSBDistRelease" => "^Release:\t(.*)$",
-            "LSBDistDescription" => "^Description:\t(.*)$",
-            "LSBDistCodeName" => "^Codename:\t(.*)$"
+        {   "LSBRelease" => %r{^LSB Version:\t(.*)$},
+            "LSBDistId" => %r{^Distributor ID:\t(.*)$},
+            "LSBDistRelease" => %r{^Release:\t(.*)$},
+            "LSBDistDescription" => %r{^Description:\t(.*)$},
+            "LSBDistCodeName" => %r{^Codename:\t(.*)$}
         }.each do |fact, pattern|
             Facter.add(fact) do
                 setcode do
-                    output = Resolution.exec('lsb_release -a 2>/dev/null')
-                    if output =~ /#{pattern}/
+                    unless defined?(@@lsbdata) and defined?(@@lsbtime) and (Time.now.to_i - @@lsbtime.to_i < 5)
+                        type = nil
+                        @@lsbtime = Time.now
+                        @@lsbdata = Resolution.exec('lsb_release -a 2>/dev/null')
+                    end
+                    if pattern.match(@@lsbdata)
                         $1
                     else
                         nil
