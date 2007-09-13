@@ -1,3 +1,17 @@
+1.3.?:
+    Added support to return multiple interfaces and their IP addresses and 
+    MAC addressess as facts. Returns interface_interfacename and 
+    macaddress_interfacename.  Existing ipaddress and macaddress facts are 
+    unchanged and still returned.  Currently Linux only.  Closes #6.
+ 
+    Added macaddress fact support for FreeBSD and OpenBSD - closes #37
+
+    Added hardwareisa support for *BSD platforms - closed #38
+
+    Facter now detects the Mandriva distribution - closes #39
+
+    Facter now correctly detects ipaddress on NetBSD - closes #42
+
 1.3.7:
     A couple of small bugfixes, including fixing Facter.flush so it correctly
     flushes cached values, and the mac address fact only returns one
