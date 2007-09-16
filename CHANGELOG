@@ -2,7 +2,7 @@
     Added support to return multiple interfaces and their IP addresses and 
     MAC addressess as facts. Returns interface_interfacename and 
     macaddress_interfacename.  Existing ipaddress and macaddress facts are 
-    unchanged and still returned.  Currently Linux only.  Closes #6.
+    unchanged and still returned.  Supports bith Linux and BSD.  Closes #6.
  
     Added macaddress fact support for FreeBSD and OpenBSD - closes #37
 

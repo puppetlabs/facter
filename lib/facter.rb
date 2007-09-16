@@ -1004,7 +1004,7 @@ class Facter
             end
         end
         Facter.add(:ipaddress) do
-            confine :kernel => :NetBSD
+            confine :kernel => %w{NetBSD} 
             setcode do
                 ip = nil
                 output = %x{/sbin/ifconfig -a}
