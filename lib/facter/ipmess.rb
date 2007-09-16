@@ -44,7 +44,7 @@ if Facter.kernel == "Linux"
                       confine :kernel => :linux
                       setcode do
                             fact
-                      end        
+                      end
                 end
         }
        }
@@ -52,16 +52,16 @@ end
 
 if Facter.kernel == "FreeBSD" || Facter.kernel == "OpenBSD" || Facter.kernel == "NetBSD"
 
-       output = %x{/sbin/ifconfig -a}       
-        int = nil        
-        output.scan(/^(\w+)(\d+):/) { |str|         
-         output_int = %x{/sbin/ifconfig #{str}}         
-         int = "#{str}"         
-         tmp1 = nil         
-         tmp2 = nil         
-         test = {}          
-          output_int.each { |s|           
-           int = "#{str}"           
+       output = %x{/sbin/ifconfig -a}
+        int = nil
+        output.scan(/^(\w+)(\d+):/) { |str|
+         output_int = %x{/sbin/ifconfig #{str}}
+         int = "#{str}"
+         tmp1 = nil
+         tmp2 = nil
+         test = {}
+          output_int.each { |s|
+           int = "#{str}"
            tmp1 = $1 if s =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
            tmp2 = $1 if s =~ /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/
             if tmp1 != nil && tmp2 != nil && int != "lo"
@@ -71,7 +71,7 @@ if Facter.kernel == "FreeBSD" || Facter.kernel == "OpenBSD" || Facter.kernel == 
               tmp1 = nil
               tmp2 = nil
             end
-           }  
+           } 
            test.each{|name,fact|
                 Facter.add(name) do
                       confine :kernel => :linux
