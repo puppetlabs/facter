@@ -654,6 +654,8 @@ class Facter
                     "Gentoo"
                 elsif FileTest.exists?("/etc/fedora-release")
                     "Fedora"
+	        elsif FileTest.exists?("/etc/mandriva-release")
+                    "Mandriva"
                 elsif FileTest.exists?("/etc/redhat-release")
                     txt = File.read("/etc/redhat-release")
                     if txt =~ /centos/i
@@ -917,7 +919,7 @@ class Facter
 
         Facter.add(:hardwareisa) do
             setcode 'uname -p', '/bin/sh'
-            confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE Debian Gentoo}
+            confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE Debian Gentoo FreeBSD OpenBSD NetBSD}
         end
 
         Facter.add(:macaddress) do
@@ -927,6 +929,20 @@ class Facter
                 output = %x{/sbin/ifconfig -a}
                 output.each {|s|
                              ether.push($1) if s =~ /(?:ether|HWaddr) (\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
+                            }
+                ether[0]
+            end
+        end
+
+        Facter.add(:macaddress) do
+            confine :operatingsystem => %w{FreeBSD OpenBSD}
+            setcode do
+            ether = []
+                output = %x{/sbin/ifconfig}
+                output.each {|s|
+                             if s =~ /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/
+                                  ether.push($1)
+                             end
                             }
                 ether[0]
             end
@@ -969,10 +985,29 @@ class Facter
             end
         end
         Facter.add(:ipaddress) do
-            confine :kernel => %w{FreeBSD NetBSD OpenBSD solaris}
+            confine :kernel => %w{FreeBSD OpenBSD solaris}
             setcode do
                 ip = nil
                 output = %x{/sbin/ifconfig}
+
+                output.split(/^\S/).each { |str|
+                    if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+                        tmp = $1
+                        unless tmp =~ /127\./
+                            ip = tmp
+                            break
+                        end
+                    end
+                }
+
+                ip
+            end
+        end
+        Facter.add(:ipaddress) do
+            confine :kernel => %w{NetBSD}
+            setcode do
+                ip = nil
+                output = %x{/sbin/ifconfig -a}
 
                 output.split(/^\S/).each { |str|
                     if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/

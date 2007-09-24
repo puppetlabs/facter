@@ -49,6 +49,7 @@ require 'facter'
 $haveusage = true
 
 begin
+    require 'rdoc/ri/ri_paths'
     require 'rdoc/usage'
 rescue Exception
     $haveusage = false
