@@ -21,7 +21,7 @@ if Facter.kernel == "Linux"
 
        output = %x{/sbin/ifconfig -a}
        int = nil
-        output.scan(/^(\w+)(\d+)/) { |str|
+        output.scan(/^(\w+)(\.|:?)(\d+)/) { |str|
          output_int = %x{/sbin/ifconfig #{str}}
          int = "#{str}"
          tmp1 = nil
@@ -54,7 +54,7 @@ if Facter.kernel == "FreeBSD" || Facter.kernel == "OpenBSD" || Facter.kernel == 
 
        output = %x{/sbin/ifconfig -a}
         int = nil
-        output.scan(/^(\w+)(\d+):/) { |str|
+        output.scan(/^(\w+)(\.|:?)(\d+):/) { |str|
          output_int = %x{/sbin/ifconfig #{str}}
          int = "#{str}"
          tmp1 = nil
