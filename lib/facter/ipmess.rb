@@ -17,18 +17,24 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston MA  02110-1301 USA
 #
 
+Facter.add(:interfaces) do
+       setcode do 
+        output = %x{/sbin/ifconfig -a}
+        int = nil
+        int = output.scan(/(^\w+[.:]?\d+)/).join(" ")
+       end
+end
+
 if Facter.kernel == "Linux"
 
-       output = %x{/sbin/ifconfig -a}
-       int = nil
-        output.scan(/^(\w+)(\.|:?)(\d+)/) { |str|
-         output_int = %x{/sbin/ifconfig #{str}}
-         int = "#{str}"
+       interfaces = nil
+       interfaces = Facter.interfaces.split(" ")
+       interfaces.each do |int|       
+         output_int = %x{/sbin/ifconfig #{int}}
          tmp1 = nil
          tmp2 = nil
          test = {}
           output_int.each { |s|
-           int = "#{str}"
            tmp1 = $1 if s =~ /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
            tmp2 = $1 if s =~ /(?:ether|HWaddr) (\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
            if tmp1 != nil && tmp2 != nil && int != "lo"
@@ -38,7 +44,7 @@ if Facter.kernel == "Linux"
               tmp1 = nil
               tmp2 = nil
            end
-        }
+          }
         test.each{|name,fact|
                 Facter.add(name) do
                       confine :kernel => :linux
@@ -47,21 +53,19 @@ if Facter.kernel == "Linux"
                       end
                 end
         }
-       }
+       end
 end
 
 if Facter.kernel == "FreeBSD" || Facter.kernel == "OpenBSD" || Facter.kernel == "NetBSD"
 
-       output = %x{/sbin/ifconfig -a}
-        int = nil
-        output.scan(/^(\w+)(\.|:?)(\d+):/) { |str|
-         output_int = %x{/sbin/ifconfig #{str}}
-         int = "#{str}"
+       interfaces = nil
+       interfaces = Facter.interfaces.split(" ")
+       interfaces.each do |int|
+         output_int = %x{/sbin/ifconfig #{int}}
          tmp1 = nil
          tmp2 = nil
          test = {}
           output_int.each { |s|
-           int = "#{str}"
            tmp1 = $1 if s =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
            tmp2 = $1 if s =~ /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/
             if tmp1 != nil && tmp2 != nil && int != "lo"
@@ -80,6 +84,6 @@ if Facter.kernel == "FreeBSD" || Facter.kernel == "OpenBSD" || Facter.kernel == 
                       end
                 end
            }
-        }
+        end
 end
 
