@@ -21,7 +21,7 @@ module Facter::Manufacturer
                     unless type
                         next
                     end
-                    @data[type][$1] = $2
+                    @data[type][$1] = $2.strip
                 end
             end
         end

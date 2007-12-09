@@ -4,6 +4,12 @@
 
     Added interfaces fact to add as index for ip/MAC address facts
 
+    Added Mandrake support for operatingsystem fact - closed ticket #47
+
+    Fixed ticket #45
+
+    Added netmask.rb closing ticket #46    
+
 1.3.8:
     Fixed Rdoc::usage bug on CentOS 5 - closed Puppet #753 and Facter #40
 

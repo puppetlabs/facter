@@ -656,6 +656,8 @@ class Facter
                     "Fedora"
 	        elsif FileTest.exists?("/etc/mandriva-release")
                     "Mandriva"
+                elsif FileTest.exists?("/etc/mandrake-release")
+                    "Mandrake"
                 elsif FileTest.exists?("/etc/redhat-release")
                     txt = File.read("/etc/redhat-release")
                     if txt =~ /centos/i
