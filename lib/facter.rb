@@ -691,7 +691,7 @@ class Facter
         end
 
         Facter.add(:operatingsystemrelease) do
-            confine :operatingsystem => :redhat
+            confine :operatingsystem => %w{RedHat CentOS}
             setcode do
                 File::open("/etc/redhat-release", "r") do |f|
                     line = f.readline.chomp

@@ -1,4 +1,6 @@
 ?:
+    Fixed ticket #48 - operatingsystemrelease for CentOS
+
     Fixed ticket #44 and allowed support for Xen multiple interfaces and aliased
     interfaces.  Supports both Linux and *BSD.
 
