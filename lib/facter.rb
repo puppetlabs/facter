@@ -691,7 +691,7 @@ class Facter
         end
 
         Facter.add(:operatingsystemrelease) do
-            confine :operatingsystem => %w{RedHat CentOS}
+            confine :operatingsystem => %w{RedHat}
             setcode do
                 File::open("/etc/redhat-release", "r") do |f|
                     line = f.readline.chomp
@@ -701,6 +701,16 @@ class Facter
                         $1
                     end
                 end
+            end
+        end
+
+        Facter.add(:operatingsystemrelease) do
+            confine :operatingsystem => %w{CentOS}
+            setcode do
+                release = Resolution.exec('rpm -q centos-release')
+                    if release =~ /release-(\d+)/
+                        $1
+                    end
             end
         end
 
