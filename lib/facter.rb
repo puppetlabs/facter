@@ -648,7 +648,9 @@ class Facter
         Facter.add(:operatingsystem) do
             confine :kernel => :linux
             setcode do
-                if FileTest.exists?("/etc/debian_version")
+                if Facter.lsbdistid == "Ubuntu"
+                   "Ubuntu"
+                elsif FileTest.exists?("/etc/debian_version")
                     "Debian"
                 elsif FileTest.exists?("/etc/gentoo-release")
                     "Gentoo"
@@ -723,6 +725,16 @@ class Facter
                     end
              end
          end
+
+        Facter.add(:operatingsystemrelease) do
+            confine :operatingsystem => %w{Ubuntu}
+            setcode do
+                release = Resolution.exec('cat /etc/issue')
+                    if release =~ /Ubuntu (\d+.\d+)/
+                        $1
+                    end
+            end
+        end
 
         Facter.add(:operatingsystemrelease) do
             setcode do Facter[:kernelrelease].value end
