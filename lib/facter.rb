@@ -715,6 +715,16 @@ class Facter
         end
 
         Facter.add(:operatingsystemrelease) do
+            confine :operatingsystem => %w{Debian}
+            setcode do
+                release = Resolution.exec('cat /proc/version')
+                    if release =~ /\(Debian (\d+.\d+).\d+-\d+\)/
+                        $1
+                    end
+             end
+         end
+
+        Facter.add(:operatingsystemrelease) do
             setcode do Facter[:kernelrelease].value end
         end
 
