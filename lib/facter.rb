@@ -707,6 +707,7 @@ class Facter
         end
 
         Facter.add(:operatingsystemrelease) do
+<<<<<<< HEAD:lib/facter.rb
             confine :operatingsystem => %w{CentOS}
             setcode do
                 release = Resolution.exec('rpm -q centos-release')
@@ -737,6 +738,8 @@ class Facter
         end
 
         Facter.add(:operatingsystemrelease) do
+=======
+>>>>>>> b3962ef... Fixed ticket #50 - added selinux facts:lib/facter.rb
             setcode do Facter[:kernelrelease].value end
         end
 
