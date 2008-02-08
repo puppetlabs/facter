@@ -22,37 +22,7 @@
 # at this point in time.
 # In particular, Installed Software might be an interesting addition.
 
-module Facter::Macosx
-  require 'thread'
-  require 'facter/util/plist'
-  
-  # JJM I'd really like to dynamically generate these methods 
-  # by looking at the _name key of the _items dict for each _dataType
-  
-  def self.hardware_overview
-    # JJM Perhaps we should cache the XML data in a "class" level object.
-    top_level_plist = Plist::parse_xml %x{/usr/sbin/system_profiler -xml SPHardwareDataType}
-    system_hardware = top_level_plist[0]['_items'][0]
-    system_hardware.delete '_name'
-    system_hardware
-  end
-  
-  # SPSoftwareDataType
-  def self.os_overview
-    top_level_plist = Plist::parse_xml %x{/usr/sbin/system_profiler -xml SPSoftwareDataType}
-    os_stuff = top_level_plist[0]['_items'][0]
-    os_stuff.delete '_name'
-    os_stuff
-  end
-  
-  def self.sw_vers
-    ver = Hash.new
-    [ "productName", "productVersion", "buildVersion" ].each do |option|
-      ver["macosx_#{option}"] = %x{sw_vers -#{option}}.strip
-    end
-    ver
-  end
-end
+require 'facter/util/macosx'
 
 if Facter.kernel == "Darwin"
   Facter::Macosx.hardware_overview.each do |fact, value|

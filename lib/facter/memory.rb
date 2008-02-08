@@ -16,44 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston MA  02110-1301 USA
 
-module Facter::Memory
-    require 'thread'
-
-    def self.meminfo_number(tag)
-        memsize = ""
-        Thread::exclusive do
-            size, scale = [0, ""]
-            File.readlines("/proc/meminfo").each do |l|
-                size, scale = [$1.to_f, $2] if l =~ /^#{tag}:\s+(\d+)\s+(\S+)/
-                # MemoryFree == memfree + cached + buffers
-                #  (assume scales are all the same as memfree)
-                if tag == "MemFree" &&
-                    l =~ /^(?:Buffers|Cached):\s+(\d+)\s+(?:\S+)/
-                    size += $1.to_f
-                end
-            end
-            memsize = scale_number(size, scale)
-        end
-            
-        memsize
-    end
-
-    def self.scale_number(size, multiplier)
-        suffixes = ['', 'kB', 'MB', 'GB', 'TB']
-
-        s = suffixes.shift
-        while s != multiplier
-            s = suffixes.shift
-        end
-
-        while size > 1024.0
-            size /= 1024.0
-            s = suffixes.shift
-        end
-                    
-        return "%.2f %s" % [size, s]
-    end
-end
+require 'facter/util/memory'
 
 {:MemorySize => "MemTotal",
  :MemoryFree => "MemFree",

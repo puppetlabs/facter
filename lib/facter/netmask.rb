@@ -1,8 +1,21 @@
-# netmask.rb -- find the netmask of the primary ipaddress
-# Copyright (C) 2007 David Schmitt <david@schmitt.edv-bus.at>
-# Copyright (C) 2007 Mark 'phips' Phillips
-# See LICENSE for the full license granted to you.
-# idea and originial source by Mark 'phips' Phillips
+## netmask.rb
+## Find the netmask of the primary ipaddress
+## Copyright (C) 2007 David Schmitt <david@schmitt.edv-bus.at>
+## Copyright (C) 2007 Mark 'phips' Phillips
+##
+## idea and originial source by Mark 'phips' Phillips
+##
+## This program is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License
+## as published by the Free Software Foundation (version 2 of the License)
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 51 Franklin St, Fifth Floor, Boston MA  02110-1301 USA
+##
 
 def get_netmask
 	netmask = nil;
