@@ -24,7 +24,7 @@
 
 require 'facter/util/macosx'
 
-if Facter.kernel == "Darwin"
+if Facter.value(:kernel) == "Darwin"
   Facter::Macosx.hardware_overview.each do |fact, value|
     Facter.add("sp_#{fact}") do
       confine :kernel => :darwin
