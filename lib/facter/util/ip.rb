@@ -48,7 +48,7 @@ module Facter::IPAddress
        regex = mask
     end 
      
-      if interface != "lo"
+      if interface != "lo" && interface != "lo0"
         output_int.each { |s|
            tmp1 = $1 if s =~ regex
        }
