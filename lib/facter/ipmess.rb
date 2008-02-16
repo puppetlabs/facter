@@ -17,125 +17,40 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston MA  02110-1301 USA
 #
 
-Facter.add(:interfaces) do
-       confine :kernel => [ :freebsd, :openbsd, :netbsd, :linux ]
-       setcode do 
-        output = %x{/sbin/ifconfig -a}
-        int = nil
-        int = output.scan(/(^\w+[.:]?\d+)/).join(" ")
-       end
-end
+require 'facter/util/ip'
 
 Facter.add(:interfaces) do
-       confine :kernel => :sunos
+       confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
        setcode do
-        output = %x{/usr/sbin/ifconfig -a}
-        int = nil
-        int = output.scan(/(^\w+[.:]?\d+)/).join(" ")
+           Facter::IPAddress.get_interfaces.join(",")
        end
 end
 
-if Facter.kernel == "Linux"
 
-       interfaces = nil
-       interfaces = Facter.interfaces.split(" ")
-       interfaces.each do |int|       
-         output_int = %x{/sbin/ifconfig #{int}}
-         tmp1 = nil
-         tmp2 = nil
-         tmp3 = nil
-         test = {}
-          output_int.each { |s|
-           tmp1 = $1 if s =~ /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-           tmp2 = $1 if s =~ /(?:ether|HWaddr)\s+(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
-           tmp3 = $1 if s =~ /Mask:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-           if tmp1 != nil && tmp2 != nil && tmp3 != nil && int != "lo"
-              test["ipaddress_" + int] = tmp1
-              test["macaddress_" + int] = tmp2
-              test["netmask_" + int] = tmp3
-              int = nil
-              tmp1 = nil
-              tmp2 = nil
-              tmp3 = nil
-           end
-          }
-        test.each{|name,fact|
-                Facter.add(name) do
-                      confine :kernel => :linux
-                      setcode do
-                            fact
-                      end
-                end
-        }
+Facter::IPAddress.get_interfaces.each do |interface|
+
+Facter.add("ipaddress_" + interface) do
+       confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
+       setcode do
+           label = 'ipaddress'
+           Facter::IPAddress.get_interface_value(interface, label)
        end
 end
 
-if Facter.kernel == "FreeBSD" || Facter.kernel == "OpenBSD" || Facter.kernel == "NetBSD"
-
-       interfaces = nil
-       interfaces = Facter.interfaces.split(" ")
-       interfaces.each do |int|
-         output_int = %x{/sbin/ifconfig #{int}}
-         tmp1 = nil
-         tmp2 = nil
-         tmp3 = nil
-         test = {}
-          output_int.each { |s|
-           tmp1 = $1 if s =~ /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-           tmp2 = $1 if s =~ /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/
-           tmp3 = $1 if s =~ /netmask\s+(\w{10})/
-            if tmp1 != nil && tmp2 != nil && tmp3 != nil && int != "lo"
-              test["ipaddress_" + int] = tmp1
-              test["macaddress_" + int] = tmp2
-              test["netmask_" + int] = tmp3
-              int = nil
-              tmp1 = nil
-              tmp2 = nil
-              tmp3 = nil
-            end
-           } 
-           test.each{|name,fact|
-                Facter.add(name) do
-                      confine :kernel => [ :freebsd, :openbsd, :netbsd ]
-                      setcode do
-                            fact
-                      end
-                end
-           }
-        end
+Facter.add("macaddress_" + interface) do
+       confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
+       setcode do
+           label = 'macaddress'
+           Facter::IPAddress.get_interface_value(interface, label) 
+       end
 end
 
-if Facter.kernel == "SunOS"
+Facter.add("netmask_" + interface) do 
+       confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
+       setcode do
+           label = 'netmask'
+           Facter::IPAddress.get_interface_value(interface, label)
+       end
+end
 
-       interfaces = nil
-       interfaces = Facter.interfaces.split(" ")
-       interfaces.each do |int|
-         output_int = %x{/usr/sbin/ifconfig #{int}}
-         tmp1 = nil
-         tmp2 = nil
-         tmp3 = nil
-         test = {}
-          output_int.each { |s|
-           tmp1 = $1 if s =~ /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-           tmp2 = $1 if s =~ /(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/
-           tmp3 = $1 if s =~ /netmask\s+(\w{8})/
-            if tmp1 != nil && tmp2 != nil && tmp3 != nil && int != "lo"
-              test["ipaddress_" + int] = tmp1
-              test["macaddress_" + int] = tmp2
-              test["netmask_" + int] = tmp3
-              int = nil
-              tmp1 = nil
-              tmp2 = nil
-              tmp3 = nil
-            end
-           }
-           test.each{|name,fact|
-                Facter.add(name) do
-                      confine :kernel => [ :sunos ]
-                      setcode do
-                            fact
-                      end
-                end
-           }
-        end
 end
