@@ -15,6 +15,8 @@
 ## along with this program; if not, write to the Free Software
 ## Foundation, Inc., 51 Franklin St, Fifth Floor, Boston MA  02110-1301 USA
 
+require 'facter/kernel'
+
 Facter.add(:interfaces) do
        setcode do 
         output = %x{/sbin/ifconfig -a}
@@ -23,7 +25,7 @@ Facter.add(:interfaces) do
        end
 end
 
-if Facter.kernel == "Linux"
+if Facter.value(:kernel) == "Linux"
 
        interfaces = nil
        interfaces = Facter.interfaces.split(" ")
@@ -54,7 +56,7 @@ if Facter.kernel == "Linux"
        end
 end
 
-if Facter.kernel == "FreeBSD" || Facter.kernel == "OpenBSD" || Facter.kernel == "NetBSD"
+if Facter.value(:kernel) == "FreeBSD" || Facter.value(:kernel) == "OpenBSD" || Facter.value(:kernel) == "NetBSD"
 
        interfaces = nil
        interfaces = Facter.interfaces.split(" ")
