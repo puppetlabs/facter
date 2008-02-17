@@ -1,30 +1,21 @@
-#
-# ipmess.rb
-# Try to get additional Facts about the machine's network interfaces on Linux
-#
-# Original concept Copyright (C) 2007 psychedelys <psychedelys@gmail.com>
-# Update and *BSD support (C) 2007 James Turnbull <james@lovedthanlost.net>
-# 
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation (version 2 of the License)
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston MA  02110-1301 USA
-#
+## ipmess.rb
+## Try to get additional Facts about the machine's network interfaces on Linux
+##
+## Original concept Copyright (C) 2007 psychedelys <psychedelys@gmail.com>
+## Update and *BSD support (C) 2007 James Turnbull <james@lovedthanlost.net>
+## 
+## This program is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License
+## as published by the Free Software Foundation (version 2 of the License)
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 51 Franklin St, Fifth Floor, Boston MA  02110-1301 USA
 
-Facter.add(:interfaces) do
-       confine :kernel => [ :freebsd, :openbsd, :netbsd, :linux ]
-       setcode do 
-        output = %x{/sbin/ifconfig -a}
-        int = nil
-        int = output.scan(/(^\w+[.:]?\d+)/).join(" ")
-       end
-end
+require 'facter/kernel'
 
 Facter.add(:interfaces) do
        confine :kernel => :sunos
@@ -35,7 +26,7 @@ Facter.add(:interfaces) do
        end
 end
 
-if Facter.kernel == "Linux"
+if Facter.value(:kernel) == "Linux"
 
        interfaces = nil
        interfaces = Facter.interfaces.split(" ")
@@ -70,7 +61,7 @@ if Facter.kernel == "Linux"
        end
 end
 
-if Facter.kernel == "FreeBSD" || Facter.kernel == "OpenBSD" || Facter.kernel == "NetBSD"
+if Facter.value(:kernel) == "FreeBSD" || Facter.value(:kernel) == "OpenBSD" || Facter.value(:kernel) == "NetBSD"
 
        interfaces = nil
        interfaces = Facter.interfaces.split(" ")
@@ -105,7 +96,7 @@ if Facter.kernel == "FreeBSD" || Facter.kernel == "OpenBSD" || Facter.kernel == 
         end
 end
 
-if Facter.kernel == "SunOS"
+if Facter.value(:kernel) == "SunOS"
 
        interfaces = nil
        interfaces = Facter.interfaces.split(" ")

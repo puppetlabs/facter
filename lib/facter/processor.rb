@@ -20,7 +20,7 @@
 
 require 'thread'
 
-if Facter.kernel == "Linux"
+if Facter.value(:kernel) == "Linux"
     processor_num = -1
     processor_list = []
     Thread::exclusive do
