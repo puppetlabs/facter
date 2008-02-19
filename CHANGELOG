@@ -1,5 +1,23 @@
 ?:
-    Fixed ticket #48 - operatingsystemrelease for CentOS
+    A netmask fact has been added closing ticket #46.  It only returns the 
+    netmask of the primary interface (in the same behaviour as the ipaddress 
+    and macaddress facts).
+
+    Facts to return multiple interfaces on a host have also been updated.  
+    If you have multiple interfaces on Linux, *BSD, or Solaris/SunOS you will 
+    now get facts for each interface's IP address, MAC address and netmask.  
+    The facts will be structured like:
+      ipaddress_int = 10.0.0.x
+      macaddress_int = xx:xx:xx:xx
+      netmask_int = 255.255.255.0
+
+    Facter now identifies Ubuntu hosts and their releases using the 
+    operatingsystem and operatingsystemrelease facts.
+
+    The Debian operatingsystemrelease fact now correctly returns the current 
+    Debian release.
+
+    Fixed ticket #48 - ioperatingsystem and operatingsystemrelease for CentOS
 
     Fixed ticket #44 and allowed support for Xen multiple interfaces and aliased
     interfaces.  Supports both Linux and *BSD.
