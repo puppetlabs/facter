@@ -29,7 +29,9 @@ end
 
 Facter::IPAddress.get_interfaces.each do |interface|
 
-Facter.add("ipaddress_" + interface) do
+mi = interface.gsub(':', '_')
+
+Facter.add("ipaddress_" + mi) do
        confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
        setcode do
            label = 'ipaddress'
@@ -37,7 +39,7 @@ Facter.add("ipaddress_" + interface) do
        end
 end
 
-Facter.add("macaddress_" + interface) do
+Facter.add("macaddress_" + mi) do
        confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
        setcode do
            label = 'macaddress'
@@ -45,7 +47,7 @@ Facter.add("macaddress_" + interface) do
        end
 end
 
-Facter.add("netmask_" + interface) do 
+Facter.add("netmask_" + mi) do
        confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
        setcode do
            label = 'netmask'
