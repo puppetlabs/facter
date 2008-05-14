@@ -25,29 +25,17 @@ class Facter::Confine
 
     # Evaluate the fact, returning true or false.
     def true?
-        fact = nil
         unless fact = Facter[@fact]
             Facter.debug "No fact for %s" % @fact
             return false
         end
         value = fact.value
 
-        if value.nil?
-            return false
-        end
+        return false if value.nil?
 
-        retval = @values.find { |v|
-            if value.downcase == v.downcase
-                break true
-            end
+        @values.each { |v|
+            return true if value.downcase == v.downcase
         }
-
-        if retval
-            retval = true
-        else
-            retval = false
-        end
-
-        return retval || false
+        return false
     end
 end
