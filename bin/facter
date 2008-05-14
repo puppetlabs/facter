@@ -107,13 +107,10 @@ ARGV.each { |item|
 	names.push item
 }
 
-facts = {}
-
 if names.empty?
-    Facter.each { |name,fact|
-        facts[name] = fact
-    }
+    facts = Facter.to_hash
 else
+    facts = {}
     names.each { |name|
         begin
             facts[name] = Facter.value(name)
@@ -139,5 +136,3 @@ facts.sort { |a, b| a[0].to_s <=> b[0].to_s }.each { |name,value|
         puts "%s => %s" % [name,value]
     end
 }
-
-# $Id: facter,v 1.1.1.1 2004/03/21 21:06:27 luke Exp $
