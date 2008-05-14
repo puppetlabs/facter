@@ -47,6 +47,18 @@ describe Facter do
         end
     end
 
+    describe Facter[:hostname] do
+        it "should have its ldapname set to 'cn'" do
+            Facter[:hostname].ldapname.should == "cn"
+        end
+    end
+
+    describe Facter[:ipaddress] do
+        it "should have its ldapname set to 'iphostnumber'" do
+            Facter[:ipaddress].ldapname.should == "iphostnumber"
+        end
+    end
+
     def test_onetrueconfine
         assert_nothing_raised {
             Facter.add("required") {

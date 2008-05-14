@@ -155,30 +155,6 @@ describe Facter::Resolution do
         end
     end
 
-    it "should have a method for setting its ldap name" do
-        Facter::Resolution.new("yay").should respond_to(:setldapname)
-    end
-
-    it "should set the ldap name on the associated fact" do
-        @resolve = Facter::Resolution.new("yay")
-        fact = mock 'fact'
-        @resolve.stubs(:fact).returns fact
-
-        fact.expects(:ldapname=).with "ldapness"
-
-        @resolve.setldapname "ldapness"
-    end
-
-    it "should always convert the ldap name to a string" do
-        @resolve = Facter::Resolution.new("yay")
-        fact = mock 'fact'
-        @resolve.stubs(:fact).returns fact
-
-        fact.expects(:ldapname=).with "ldapness"
-
-        @resolve.setldapname :ldapness
-    end
-
     it "should have a class method for executing code" do
         Facter::Resolution.should respond_to(:exec)
     end

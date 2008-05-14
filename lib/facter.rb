@@ -17,8 +17,8 @@
 # 
 #--
 
-class Facter
-    require 'facter/resolution'
+module Facter
+    require 'facter/fact'
 
     include Comparable
     include Enumerable
@@ -50,8 +50,6 @@ class Facter
     RESET = "[0m"
     @@debug = 0
 
-    attr_accessor :name, :searching, :ldapname
-
 	# module methods
 
     # Return the version of the library.
@@ -77,11 +75,10 @@ class Facter
 
     # Add a resolution mechanism for a named fact.  This does not distinguish
     # between adding a new fact and adding a new way to resolve a fact.
-    def self.add(name, &block)
-        fact = nil
-
+    def self.add(name, options = {}, &block)
         unless fact = @@facts[name]
-            fact = Facter.new(name)
+            fact = Facter::Fact.new(name, options)
+            @@facts[name] = fact
         end
 
         unless block
@@ -98,11 +95,9 @@ class Facter
         # Iterate across all of the facts.
         def each
             @@facts.each { |name,fact|
-                if fact.suitable?
-                    value = fact.value
-                    unless value.nil?
-                        yield name.to_s, fact.value
-                    end
+                value = fact.value
+                if ! value.nil?
+                    yield name.to_s, fact.value
                 end
             }
         end
@@ -132,7 +127,7 @@ class Facter
                 end
             else
                 # Else, fail like a normal missing method.
-                return super
+                raise NoMethodError, "Could not find fact '%s'" % name
             end
         end
     end
@@ -185,14 +180,12 @@ class Facter
     end
 
     # Return a hash of all of our facts.
-    def self.to_hash(*tags)
+    def self.to_hash
         @@facts.inject({}) do |h, ary|
-            if ary[1].suitable? and (tags.empty? or ary[1].tagged?(*tags))
-                value = ary[1].value
-                if value
-                    # For backwards compatibility, convert the fact name to a string.
-                    h[ary[0].to_s] = value
-                end
+            value = ary[1].value
+            if ! value.nil?
+                # For backwards compatibility, convert the fact name to a string.
+                h[ary[0].to_s] = value
             end
             h
         end
@@ -205,179 +198,6 @@ class Facter
             nil
         end
     end
-
-    # Compare one value to another.
-    def <=>(other)
-        return self.value <=> other
-    end
-
-    # Are we the same?  Used for case statements.
-    def ===(value)
-        self.value == value
-    end
-
-    # Create a new fact, with no resolution mechanisms.
-    def initialize(name)
-        @name = name.to_s.downcase.intern
-        if @@facts.include?(@name)
-            raise ArgumentError, "A fact named %s already exists" % @name
-        else
-            @@facts[@name] = self
-        end
-
-        @resolves = []
-        @tags = []
-        @searching = false
-
-        @value = nil
-
-        @ldapname = name.to_s
-    end
-
-    # Add a new resolution mechanism.  This requires a block, which will then
-    # be evaluated in the context of the new mechanism.
-    def add(&block)
-        unless block_given?
-            raise ArgumentError, "You must pass a block to Fact<instance>.add"
-        end
-
-        resolve = Resolution.new(@name)
-
-        resolve.fact = self
-
-        resolve.instance_eval(&block)
-
-        # skip resolves that will never be suitable for us
-        unless resolve.suitable?
-            return
-        end
-
-        # insert resolves in order of number of confinements
-        inserted = false
-        @resolves.each_with_index { |r,index|
-            if resolve.length > r.length
-                @resolves.insert(index,resolve)
-                inserted = true
-                break
-            end
-        }
-
-        unless inserted
-            @resolves.push resolve
-        end
-    end
-
-    # Return a count of resolution mechanisms available.
-    def count
-        return @resolves.length
-    end
-
-    # Iterate across all of the fact resolution mechanisms and yield each in
-    # turn.  These are inserted in order of most confinements.
-    def each
-        @resolves.each { |r| yield r }
-    end
-
-    # Flush any cached values.
-    def flush
-        @value = nil
-        @suitable = nil
-    end
-
-    # Is this fact suitable for finding answers on this host?  This is used
-    # to throw away any initially unsuitable mechanisms.
-    def suitable?
-        if @resolves.length == 0
-            return false
-        end
-
-        unless defined? @suitable or (defined? @suitable and @suitable.nil?)
-            @suitable = false
-            @resolves.each { |resolve|
-                if resolve.suitable?
-                    @suitable = true
-                    break
-                end
-            }
-        end
-
-        return @suitable
-    end
-
-    # Add one ore more tags
-    def tag(*tags)
-        tags.each do |t|
-            t = t.to_s.downcase.intern
-            @tags << t unless @tags.include?(t)
-        end
-    end
-
-    # Is our fact tagged with all of the specified tags?
-    def tagged?(*tags)
-        tags.each do |t|
-            unless @tags.include? t.to_s.downcase.intern
-                return false
-            end
-        end
-
-        return true
-    end
-
-    def tags
-        @tags.dup
-    end
-
-    # Return the value for a given fact.  Searches through all of the mechanisms
-    # and returns either the first value or nil.
-    def value
-        unless @value
-            # make sure we don't get stuck in recursive dependency loops
-            if @searching
-                Facter.debug "Caught recursion on %s" % @name
-                
-                # return a cached value if we've got it
-                if @value
-                    return @value
-                else
-                    return nil
-                end
-            end
-            @value = nil
-            foundsuits = false
-
-            if @resolves.length == 0
-                Facter.debug "No resolves for %s" % @name
-                return nil
-            end
-
-            @searching = true
-            @resolves.each { |resolve|
-                #Facter.debug "Searching resolves for %s" % @name
-                if resolve.suitable?
-                    @value = resolve.value
-                    foundsuits = true
-                end
-                unless @value.nil? or @value == ""
-                    break
-                end
-            }
-            @searching = false
-
-            unless foundsuits
-                Facter.debug "Found no suitable resolves of %s for %s" %
-                    [@resolves.length,@name]
-            end
-        end
-
-        if @value.nil?
-            # nothing
-            Facter.debug("value for %s is still nil" % @name)
-            return nil
-        else
-            return @value
-        end
-    end
-
 
     # Load all of the default facts
     def self.loadfacts
@@ -456,5 +276,3 @@ class Facter
 
     Facter.loadfacts
 end
-
-# $Id$

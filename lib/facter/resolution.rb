@@ -6,7 +6,7 @@
 require 'facter/confine'
 
 class Facter::Resolution
-    attr_accessor :interpreter, :code, :name, :fact
+    attr_accessor :interpreter, :code, :name
 
     def self.have_which
         if @have_which.nil?
@@ -78,12 +78,6 @@ class Facter::Resolution
             end
             @code = block
         end
-    end
-
-    # Set the name by which this parameter is known in LDAP.  The default
-    # is just the fact name.
-    def setldapname(name)
-        fact.ldapname = name.to_s
     end
 
     # Is this resolution mechanism suitable on the system in question?

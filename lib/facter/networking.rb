@@ -77,8 +77,7 @@
                 end
             end
         end
-        Facter.add(:hostname) do
-            setldapname "cn"
+        Facter.add(:hostname, :ldapname => "cn") do
             setcode do
                 hostname = nil
                 name = Facter::Resolution.exec('hostname') or nil
@@ -109,8 +108,7 @@
             end
         end
 
-        Facter.add(:ipaddress) do
-            setldapname "iphostnumber"
+        Facter.add(:ipaddress, :ldapname => "iphostnumber") do
             setcode do
                 require 'resolv'
 
