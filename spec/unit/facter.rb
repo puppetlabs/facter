@@ -2,10 +2,6 @@
 
 require File.dirname(__FILE__) + '/../spec_helper'
 
-#if __FILE__ == $0
-#    Facter.debugging(true)
-#end
-
 describe Facter do
     def tearhook(&block)
         @tearhooks << block
@@ -28,33 +24,27 @@ describe Facter do
             end
         end
     end
-
-    def test_version 
-        #Could match /[0-9.]+/
-        #Strict match: /^[0-9]+(\.[0-9]+)*$/
-        #ok: 1.0.0 1.0 1
-        #notok: 1..0 1. .1 1a
-        assert(Facter.version =~ /^[0-9]+(\.[0-9]+)*$/ )
+    
+    it "should have a version" do
+        Facter.version.should =~ /^[0-9]+(\.[0-9]+)*$/
     end
 
-    def test_noconfines_sh
-        assert_nothing_raised {
-            Facter.add("testing") do
+    describe "when provided code as a string" do
+        it "should execute the code in the shell" do
+            Facter.add("shell_testing") do
                 setcode "echo yup"
             end
-        }
 
-        assert_equal("yup", Facter["testing"].value)
+            Facter["shell_testing"].value.should == "yup"
+        end
     end
 
-    def test_noconfines
-        assert_nothing_raised {
-            Facter.add("testing") do
-                setcode { "foo" }
-            end
-        }
+    describe "when passed code as a block" do
+        it "should execute the provided block" do
+            Facter.add("block_testing") { setcode { "foo" } }
 
-        assert_equal("foo", Facter["testing"].value)
+            Facter["block_testing"].value.should == "foo"
+        end
     end
 
     def test_onetrueconfine
