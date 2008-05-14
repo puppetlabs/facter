@@ -11,7 +11,13 @@ module Facter::IPAddress
            output = %x{/usr/sbin/ifconfig -a} 
      end
     
-     int = output.scan(/^\w+[.:]?\d+/)
+     # We get lots of warnings on platforms that don't get an output
+     # made.
+     if output
+         int = output.scan(/^\w+[.:]?\d+/)
+     else
+         []
+     end
     
     end
     

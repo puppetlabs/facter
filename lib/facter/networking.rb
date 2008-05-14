@@ -16,7 +16,7 @@
      Facter.add(:domain) do
             setcode do
                 # First force the hostname to be checked
-                Facter.hostname
+                Facter.value(:hostname)
 
                 # Now check to see if it set the domain
                 if defined? $domain and ! $domain.nil?

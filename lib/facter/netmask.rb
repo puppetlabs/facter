@@ -22,7 +22,7 @@ def get_netmask
 	ipregex = %r{(\d{1,3}\.){3}\d{1,3}}
 
 	ops = nil
-	case Facter.kernel 
+	case Facter.value(:kernel) 
 		when 'Linux'
 			ops = {
 				:ifconfig => '/sbin/ifconfig',

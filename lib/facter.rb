@@ -156,7 +156,7 @@ module Facter
         @collection = nil
     end
 
-    # Load all of the default facts
+    # Load all of the default facts, and then everything from disk.
     def self.loadfacts
         Facter.add(:facterversion) do
             setcode { FACTERVERSION.to_s }
