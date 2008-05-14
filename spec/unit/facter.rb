@@ -3,30 +3,42 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Facter do
-    def tearhook(&block)
-        @tearhooks << block
-    end
-
-    def setup
-        Facter.loadfacts
-
-        @tmpfiles = []
-        @tearhooks = []
-    end
-
-    def teardown
-        # clear out the list of facts, so we start fresh for every test
-        Facter.clear
-
-        @tmpfiles.each do |file|
-            if FileTest.exists?(file)
-                system("rm -rf %s" % file)
-            end
-        end
-    end
     
     it "should have a version" do
         Facter.version.should =~ /^[0-9]+(\.[0-9]+)*$/
+    end
+
+    it "should have a method for returning its collection" do
+        Facter.should respond_to(:collection)
+    end
+
+    it "should cache the collection" do
+        Facter.collection.should equal(Facter.collection)
+    end
+
+    it "should delegate the :flush method to the collection" do
+        Facter.collection.expects(:flush)
+        Facter.flush
+    end
+
+    it "should delegate the :fact method to the collection" do
+        Facter.collection.expects(:fact)
+        Facter.fact
+    end
+
+    it "should delegate the :list method to the collection" do
+        Facter.collection.expects(:list)
+        Facter.list
+    end
+
+    it "should delegate the :to_hash method to the collection" do
+        Facter.collection.expects(:to_hash)
+        Facter.to_hash
+    end
+
+    it "should delegate the :value method to the collection" do
+        Facter.collection.expects(:value)
+        Facter.value
     end
 
     describe "when provided code as a string" do
@@ -57,6 +69,11 @@ describe Facter do
         it "should have its ldapname set to 'iphostnumber'" do
             Facter[:ipaddress].ldapname.should == "iphostnumber"
         end
+    end
+
+    # #33 Make sure we only get one mac address
+    it "should only return one mac address" do
+        Facter.value(:macaddress).should_not be_include(" ")
     end
 
     def test_onetrueconfine
@@ -623,11 +640,6 @@ some random stuff
         end
     end
 
-    # #33 Make sure we only get one mac address
-    it "should only return one mac address" do
-        Facter.value(:macaddress).should_not be_include(" ")
-    end
-
     def test_flush
         val = "yay"
         Facter.add(:testing) do
@@ -643,11 +655,6 @@ some random stuff
         assert_nothing_raised("Could not clear facter cache") do
             Facter.flush
         end
-        assert_equal(val, Facter.value(:testing),
-            "did not clear cache")
-
-
+        assert_equal(val, Facter.value(:testing), "did not clear cache")
     end
 end
-
-# $Id$

@@ -19,6 +19,7 @@
 
 module Facter
     require 'facter/fact'
+    require 'facter/collection'
 
     include Comparable
     include Enumerable
@@ -38,19 +39,18 @@ module Facter
     #
 
 
-    @@facts = Hash.new { |hash, key|
-        key = key.to_s.downcase.intern
-        if hash.include?(key)
-            hash[key]
-        else
-            nil
-        end
-    }
     GREEN = "[0;32m"
     RESET = "[0m"
     @@debug = 0
 
 	# module methods
+
+    def self.collection
+        unless defined?(@collection) and @collection
+            @collection = Facter::Collection.new
+        end
+        @collection
+    end
 
     # Return the version of the library.
     def self.version
@@ -70,38 +70,25 @@ module Facter
     # Return a fact object by name.  If you use this, you still have to call
     # 'value' on it to retrieve the actual value.
     def self.[](name)
-        @@facts[name]
+        collection.fact(name)
     end
+
+    class << self
+        [:add, :fact, :flush, :list, :to_hash, :value].each do |method|
+            define_method(method) do |*args|
+                collection.send(method, *args)
+            end
+        end
+    end
+
 
     # Add a resolution mechanism for a named fact.  This does not distinguish
     # between adding a new fact and adding a new way to resolve a fact.
     def self.add(name, options = {}, &block)
-        unless fact = @@facts[name]
-            fact = Facter::Fact.new(name, options)
-            @@facts[name] = fact
-        end
-
-        unless block
-            return fact
-        end
-
-        fact.add(&block)
-
-        return fact
+        collection.add(name, options, &block)
     end
 
     class << self
-        include Enumerable
-        # Iterate across all of the facts.
-        def each
-            @@facts.each { |name,fact|
-                value = fact.value
-                if ! value.nil?
-                    yield name.to_s, fact.value
-                end
-            }
-        end
-
         # Allow users to call fact names directly on the Facter class,
         # either retrieving the value or comparing it to an existing value.
         def method_missing(name, *args)
@@ -111,7 +98,7 @@ module Facter
                 name = name.to_s.sub(/\?$/,'')
             end
 
-            if fact = @@facts[name]
+            if fact = @collection.fact(name)
                 if question
                     value = fact.value.downcase
                     args.each do |arg|
@@ -164,39 +151,9 @@ module Facter
 		end
 	end
 
-    # Flush all cached values.
-    def self.flush
-        @@facts.each { |name, fact| fact.flush }
-    end
-
-    # Return a list of all of the facts.
-    def self.list
-        return @@facts.keys
-    end
-
     # Remove them all.
     def self.reset
-        @@facts.clear
-    end
-
-    # Return a hash of all of our facts.
-    def self.to_hash
-        @@facts.inject({}) do |h, ary|
-            value = ary[1].value
-            if ! value.nil?
-                # For backwards compatibility, convert the fact name to a string.
-                h[ary[0].to_s] = value
-            end
-            h
-        end
-    end
-
-    def self.value(name)
-        if fact = @@facts[name]
-            fact.value
-        else
-            nil
-        end
+        @collection = nil
     end
 
     # Load all of the default facts
