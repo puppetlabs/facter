@@ -18,54 +18,40 @@ class Facter::Resolution
 
     # Execute a chunk of code.
     def self.exec(code, interpreter = "/bin/sh")
-        if interpreter == "/bin/sh"
-            binary = code.split(/\s+/).shift
+        raise ArgumentError, "non-sh interpreters are not currently supported" unless interpreter == "/bin/sh"
+        binary = code.split(/\s+/).shift
 
-            if have_which
-                path = nil
-                if binary !~ /^\//
-                    path = %x{which #{binary} 2>/dev/null}.chomp
-                    if path == ""
-                        # we don't have the binary necessary
-                        return nil
-                    end
-                else
-                    path = binary
-                end
-
-                unless FileTest.exists?(path)
-                    # our binary does not exist
-                    return nil
-                end
-            end
-
-            out = nil
-            begin
-                out = %x{#{code}}.chomp
-            rescue => detail
-                $stderr.puts detail
-                return nil
-            end
-            if out == ""
-                return nil
+        if have_which
+            path = nil
+            if binary !~ /^\//
+                path = %x{which #{binary} 2>/dev/null}.chomp
+                # we don't have the binary necessary
+                return nil if path == ""
             else
-                return out
+                path = binary
             end
+
+            return nil unless FileTest.exists?(path)
+        end
+
+        out = nil
+        begin
+            out = %x{#{code}}.chomp
+        rescue => detail
+            $stderr.puts detail
+            return nil
+        end
+        if out == ""
+            return nil
         else
-            raise ArgumentError,
-                "non-sh interpreters are not currently supported"
+            return out
         end
     end
 
     # Add a new confine to the resolution mechanism.
-    def confine(*args)
-        if args[0].is_a? Hash
-            args[0].each do |fact, values|
-                @confines.push Facter::Confine.new(fact,*values)
-            end
-        else
-            fact = args.shift
-            @confines.push Facter::Confine.new(fact,*args)
+    def confine(confines)
+        confines.each do |fact, values|
+            @confines.push Facter::Confine.new(fact, *values)
         end
     end
 
@@ -97,29 +83,16 @@ class Facter::Resolution
     # Set the name by which this parameter is known in LDAP.  The default
     # is just the fact name.
     def setldapname(name)
-        @fact.ldapname = name.to_s
+        fact.ldapname = name.to_s
     end
 
     # Is this resolution mechanism suitable on the system in question?
     def suitable?
         unless defined? @suitable
-            @suitable = true
-            if @confines.length == 0
-                return true
-            end
-            @confines.each { |confine|
-                unless confine.true?
-                    @suitable = false
-                end
-            }
+            @suitable = ! @confines.detect { |confine| ! confine.true? }
         end
 
         return @suitable
-    end
-
-    # Set tags on our parent fact.
-    def tag(*values)
-        @fact.tag(*values)
     end
 
     def to_s
@@ -128,25 +101,13 @@ class Facter::Resolution
 
     # How we get a value for our resolution mechanism.
     def value
-        value = nil
-
         if @code.is_a?(Proc)
-            value = @code.call()
+            result = @code.call()
         else
-            unless defined? @interpreter
-                @interpreter = "/bin/sh"
-            end
-            if @code.nil?
-                $stderr.puts "Code for %s is nil" % @name
-            else
-                value = Facter::Resolution.exec(@code,@interpreter)
-            end
+            result = Facter::Resolution.exec(@code,@interpreter)
         end
 
-        if value == ""
-            value = nil
-        end
-
-        return value
+        return nil if result == ""
+        return result
     end
 end
