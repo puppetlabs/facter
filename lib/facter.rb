@@ -74,7 +74,7 @@ module Facter
     end
 
     class << self
-        [:add, :fact, :flush, :list, :to_hash, :value].each do |method|
+        [:add, :each, :fact, :flush, :list, :to_hash, :value].each do |method|
             define_method(method) do |*args|
                 collection.send(method, *args)
             end

@@ -128,4 +128,50 @@ describe Facter::Collection do
             @coll.to_hash.should_not be_include(:two)
         end
     end
+
+    it "should have a method for iterating over all facts" do
+        Facter::Collection.new.should respond_to(:each)
+    end
+
+    it "should include Enumerable" do
+        Facter::Collection.ancestors.should be_include(Enumerable)
+    end
+
+    describe "when iterating over facts" do
+        before do
+            @coll = Facter::Collection.new
+            @one = @coll.add(:one)
+            @two = @coll.add(:two)
+        end
+
+        it "should yield each fact name and the fact value" do
+            @one.stubs(:value).returns "ONE"
+            @two.stubs(:value).returns "TWO"
+            facts = {}
+            @coll.each do |fact, value|
+                facts[fact] = value
+            end
+            facts.should == {"one" => "ONE", "two" => "TWO"}
+        end
+
+        it "should convert the fact name to a string" do
+            @one.stubs(:value).returns "ONE"
+            @two.stubs(:value).returns "TWO"
+            facts = {}
+            @coll.each do |fact, value|
+                fact.should be_instance_of(String)
+            end
+        end
+
+        it "should only yield facts that have values" do
+            @one.stubs(:value).returns "ONE"
+            @two.stubs(:value).returns nil
+            facts = {}
+            @coll.each do |fact, value|
+                facts[fact] = value
+            end
+
+            facts.should_not be_include("two")
+        end
+    end
 end

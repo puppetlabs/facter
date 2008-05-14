@@ -25,6 +25,18 @@ class Facter::Collection
         return fact
     end
 
+    include Enumerable
+
+    # Iterate across all of the facts.
+    def each
+        @facts.each do |name, fact|
+            value = fact.value
+            unless value.nil?
+                yield name.to_s, value
+            end
+        end
+    end
+
     # Return a fact by name.
     def fact(name)
         @facts[canonize(name)]

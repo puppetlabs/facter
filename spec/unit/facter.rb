@@ -41,6 +41,11 @@ describe Facter do
         Facter.value
     end
 
+    it "should delegate the :each method to the collection" do
+        Facter.collection.expects(:each)
+        Facter.each
+    end
+
     describe "when provided code as a string" do
         it "should execute the code in the shell" do
             Facter.add("shell_testing") do
