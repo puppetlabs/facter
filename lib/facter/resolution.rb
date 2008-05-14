@@ -149,6 +149,4 @@ class Facter::Resolution
 
         return value
     end
-
 end
-
