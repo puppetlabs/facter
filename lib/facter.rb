@@ -179,6 +179,4 @@ module Facter
     def self.loadfacts
         collection.load_all
     end
-
-    Facter.loadfacts
 end
