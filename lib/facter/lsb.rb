@@ -25,7 +25,7 @@
       unless defined?(@@lsbdata) and defined?(@@lsbtime) and (Time.now.to_i - @@lsbtime.to_i < 5)
         type = nil
         @@lsbtime = Time.now
-        @@lsbdata = Facter::Resolution.exec('lsb_release -a 2>/dev/null')
+        @@lsbdata = Facter::Util::Resolution.exec('lsb_release -a 2>/dev/null')
       end
                     
       if pattern.match(@@lsbdata)

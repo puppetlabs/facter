@@ -29,7 +29,7 @@
         # Look for the DNS domain name command first.
         Facter.add(:domain) do
             setcode do
-                domain = Facter::Resolution.exec('dnsdomainname') or nil
+                domain = Facter::Util::Resolution.exec('dnsdomainname') or nil
                 # make sure it's a real domain
                 if domain and domain =~ /.+\..+/
                     domain
@@ -40,7 +40,7 @@
         end
         Facter.add(:domain) do
             setcode do
-                domain = Facter::Resolution.exec('domainname') or nil
+                domain = Facter::Util::Resolution.exec('domainname') or nil
                 # make sure it's a real domain
                 if domain and domain =~ /.+\..+/
                     domain
@@ -80,7 +80,7 @@
         Facter.add(:hostname, :ldapname => "cn") do
             setcode do
                 hostname = nil
-                name = Facter::Resolution.exec('hostname') or nil
+                name = Facter::Util::Resolution.exec('hostname') or nil
                 if name
                     if name =~ /^([\w-]+)\.(.+)$/
                         hostname = $1
@@ -133,7 +133,7 @@
                 if hostname = Facter.value(:hostname)
                     # we need Hostname to exist for this to work
                     host = nil
-                    if host = Facter::Resolution.exec("host #{hostname}")
+                    if host = Facter::Util::Resolution.exec("host #{hostname}")
                         host = host.chomp.split(/\s/)
                         if defined? list[-1] and
                                 list[-1] =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/

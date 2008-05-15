@@ -82,7 +82,7 @@
         Facter.add(:operatingsystemrelease) do
             confine :operatingsystem => %w{CentOS}
             setcode do
-                release = Facter::Resolution.exec('rpm -q centos-release')
+                release = Facter::Util::Resolution.exec('rpm -q centos-release')
                     if release =~ /release-(\d+)/
                         $1
                     end
@@ -92,7 +92,7 @@
         Facter.add(:operatingsystemrelease) do
             confine :operatingsystem => %w{Debian}
             setcode do
-                release = Facter::Resolution.exec('cat /proc/version')
+                release = Facter::Util::Resolution.exec('cat /proc/version')
                     if release =~ /\(Debian (\d+.\d+).\d+-\d+\)/
                         $1
                     end
@@ -102,7 +102,7 @@
         Facter.add(:operatingsystemrelease) do
             confine :operatingsystem => %w{Ubuntu}
             setcode do
-                release = Facter::Resolution.exec('cat /etc/issue')
+                release = Facter::Util::Resolution.exec('cat /etc/issue')
                     if release =~ /Ubuntu (\d+.\d+)/
                         $1
                     end
