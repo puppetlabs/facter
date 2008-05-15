@@ -177,34 +177,6 @@ module Facter
 
     # Load all of the default facts, and then everything from disk.
     def self.loadfacts
-        Facter.add(:facterversion) do
-            setcode { FACTERVERSION.to_s }
-        end
-
-        Facter.add(:rubyversion) do
-            setcode { RUBY_VERSION.to_s }
-        end
-
-        Facter.add(:puppetversion) do
-            setcode {
-                begin
-                    require 'puppet'
-                    Puppet::PUPPETVERSION.to_s
-                rescue LoadError
-                    nil
-                end
-            }
-        end
-
-        Facter.add :rubysitedir do
-            setcode do
-                version = RUBY_VERSION.to_s.sub(/\.\d+$/, '')
-                $:.find do |dir|
-                    dir =~ /#{File.join("site_ruby", version)}$/
-                end
-            end
-        end
-
         collection.load_all
     end
 
