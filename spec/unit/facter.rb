@@ -31,8 +31,20 @@ describe Facter do
         Facter.list
     end
 
+    it "should load all facts when listing" do
+        Facter.collection.expects(:load_all)
+        Facter.collection.stubs(:list)
+        Facter.list
+    end
+
     it "should delegate the :to_hash method to the collection" do
         Facter.collection.expects(:to_hash)
+        Facter.to_hash
+    end
+
+    it "should load all facts when calling :to_hash" do
+        Facter.collection.expects(:load_all)
+        Facter.collection.stubs(:to_hash)
         Facter.to_hash
     end
 
@@ -44,6 +56,20 @@ describe Facter do
     it "should delegate the :each method to the collection" do
         Facter.collection.expects(:each)
         Facter.each
+    end
+
+    it "should load all facts when calling :each" do
+        Facter.collection.expects(:load_all)
+        Facter.collection.stubs(:each)
+        Facter.each
+    end
+
+    it "should yield to the block when using :each" do
+        Facter.collection.stubs(:load_all)
+        Facter.collection.stubs(:each).yields "foo"
+        result = []
+        Facter.each { |f| result << f }
+        result.should == %w{foo}
     end
 
     describe "when provided code as a string" do

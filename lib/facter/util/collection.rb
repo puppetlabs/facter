@@ -1,5 +1,6 @@
 require 'facter'
 require 'facter/util/fact'
+require 'facter/util/loader'
 
 # Manage which facts exist and how we access them.  Largely just a wrapper
 # around a hash of facts.
@@ -39,7 +40,11 @@ class Facter::Util::Collection
 
     # Return a fact by name.
     def fact(name)
-        @facts[canonize(name)]
+        name = canonize(name)
+
+        loader.load(name) unless @facts[name]
+
+        return @facts[name]
     end
 
     # Flush all cached values.
@@ -54,6 +59,19 @@ class Facter::Util::Collection
     # Return a list of all of the facts.
     def list
         return @facts.keys
+    end
+
+    # Load all known facts.
+    def load_all
+        loader.load_all
+    end
+
+    # The thing that loads facts if we don't have them.
+    def loader
+        unless defined?(@loader)
+            @loader = Facter::Util::Loader.new
+        end
+        @loader
     end
 
     # Return a hash of all of our facts.

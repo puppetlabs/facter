@@ -9,6 +9,29 @@ describe Facter::Util::Collection do
         Facter::Util::Collection.new.should respond_to(:add)
     end
 
+    it "should have a method for returning a loader" do
+        Facter::Util::Collection.new.should respond_to(:loader)
+    end
+
+    it "should use an instance of the Loader class as its loader" do
+        Facter::Util::Collection.new.loader.should be_instance_of(Facter::Util::Loader)
+    end
+
+    it "should cache its loader" do
+        coll = Facter::Util::Collection.new
+        coll.loader.should equal(coll.loader)
+    end
+
+    it "should have a method for loading all facts" do
+        Facter::Util::Collection.new.should respond_to(:load_all)
+    end
+
+    it "should delegate its load_all method to its loader" do
+        coll = Facter::Util::Collection.new
+        coll.loader.expects(:load_all)
+        coll.load_all
+    end
+
     describe "when adding facts" do
         before do
             @coll = Facter::Util::Collection.new
@@ -54,6 +77,16 @@ describe Facter::Util::Collection do
         
         it "should treat strings and symbols equivalently" do
             @coll.fact(:yayness).should equal(@fact)
+        end
+
+        it "should use its loader to try to load the fact if no fact can be found" do
+            @coll.loader.expects(:load).with(:testing)
+            @coll.fact("testing")
+        end
+
+        it "should return nil if it cannot find or load the fact" do
+            @coll.loader.expects(:load).with(:testing)
+            @coll.fact("testing").should be_nil
         end
     end
 

@@ -77,8 +77,15 @@ module Facter
     end
 
     class << self
-        [:add, :each, :fact, :flush, :list, :to_hash, :value].each do |method|
+        [:add, :fact, :flush, :list, :value].each do |method|
             define_method(method) do |*args|
+                collection.send(method, *args)
+            end
+        end
+
+        [:list, :to_hash].each do |method|
+            define_method(method) do |*args|
+                collection.load_all
                 collection.send(method, *args)
             end
         end
@@ -89,6 +96,15 @@ module Facter
     # between adding a new fact and adding a new way to resolve a fact.
     def self.add(name, options = {}, &block)
         collection.add(name, options, &block)
+    end
+
+    def self.each
+        # Make sure all facts are loaded.
+        collection.load_all
+
+        collection.each do |*args|
+            yield(*args)
+        end
     end
 
     class << self
@@ -189,49 +205,7 @@ module Facter
             end
         end
 
-        locals = []
-
-        # Now find all our loadable facts
-        factdirs = [] # All the places to check for facts
-        
-        # See if we can find any other facts in the regular Ruby lib
-        # paths
-        $:.each do |dir|
-            fdir = File.join(dir, "facter")
-            if FileTest.exists?(fdir) and FileTest.directory?(fdir)
-                factdirs.push(fdir)
-            end
-        end
-        # Also check anything in 'FACTERLIB'
-        if ENV['FACTERLIB']
-            ENV['FACTERLIB'].split(":").each do |fdir|
-                factdirs.push(fdir)
-            end
-        end
-        factdirs.each do |fdir|
-            Dir.glob("#{fdir}/*.rb").each do |file|
-                # Load here, rather than require, because otherwise
-                # the facts won't get reloaded if someone calls
-                # "loadfacts".  Really only important in testing, but,
-                # well, it's important in testing.
-                begin
-                    load file
-                rescue => detail
-                    warn "Could not load %s: %s" %
-                        [file, detail]
-                end
-            end
-        end
-        
-
-        # Now try to get facts from the environment
-        ENV.each do |name, value|
-            if name =~ /^facter_?(\w+)$/i
-                Facter.add($1) do
-                    setcode { value }
-                end
-            end
-        end
+        collection.load_all
     end
 
     Facter.loadfacts

@@ -5,7 +5,6 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe Facter do
     before do
         Facter.reset
-        Facter.loadfacts
     end
 
     after do

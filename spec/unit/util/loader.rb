@@ -149,6 +149,18 @@ describe Facter::Util::Loader do
         before do
             @loader = Facter::Util::Loader.new
             @loader.stubs(:search_path).returns []
+
+            FileTest.stubs(:directory?).returns true
+        end
+
+        it "should skip directories that do not exist" do
+            @loader.expects(:search_path).returns %w{/one/dir}
+
+            FileTest.expects(:directory?).with("/one/dir").returns false
+
+            Dir.expects(:entries).with("/one/dir").never
+
+            @loader.load_all
         end
 
         it "should load all files in all search paths" do
@@ -190,6 +202,29 @@ describe Facter::Util::Loader do
             @loader.load_all
         end
 
+        it "should not load files in a lib subdirectory" do
+            @loader.expects(:search_path).returns %w{/one/dir}
+
+            Dir.expects(:entries).with("/one/dir").returns %w{lib}
+
+            File.expects(:directory?).with("/one/dir/lib").returns true
+
+            Dir.expects(:entries).with("/one/dir/lib").never
+
+            @loader.load_all
+        end
+
+        it "should not load files in '.' or '..'" do
+            @loader.expects(:search_path).returns %w{/one/dir}
+
+            Dir.expects(:entries).with("/one/dir").returns %w{. ..}
+
+            File.expects(:entries).with("/one/dir/.").never
+            File.expects(:entries).with("/one/dir/..").never
+
+            @loader.load_all
+        end
+
         it "should load all facts from the environment" do
             Facter.expects(:add).with('one')
             Facter.expects(:add).with('two')
@@ -197,6 +232,12 @@ describe Facter::Util::Loader do
             with_env "facter_one" => "yayness", "facter_two" => "boo" do
                 @loader.load_all
             end
+        end
+
+        it "should only load all facts one time" do
+            @loader.expects(:load_env).once
+            @loader.load_all
+            @loader.load_all
         end
     end
 end
