@@ -7,7 +7,19 @@ require 'facter/util/loader'
 # Make sure we have a Puppet constant, so we can test
 # loading Puppet facts.
 unless defined?(Puppet)
-    class Puppet; end
+    class Puppet
+        # We have to implement this, because other tests will
+        # see this constant and fail if this method doesn't exist.
+        # I couldn't find a way to add and remove the constant
+        # just for the correct tests.
+        def self.settings
+            s = Object.new
+            def s.value(arg)
+                return "/eh"
+            end
+            s
+        end
+    end
 end
 
 describe Facter::Util::Loader do
