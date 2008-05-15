@@ -1,41 +1,41 @@
 #!/usr/bin/env ruby
 
-require File.dirname(__FILE__) + '/../spec_helper'
+require File.dirname(__FILE__) + '/../../spec_helper'
 
-require 'facter/confine'
+require 'facter/util/confine'
 
-describe Facter::Confine do
+describe Facter::Util::Confine do
     it "should require a fact name" do
-        Facter::Confine.new("yay", true).fact.should == "yay"
+        Facter::Util::Confine.new("yay", true).fact.should == "yay"
     end
 
     it "should accept a value specified individually" do
-        Facter::Confine.new("yay", "test").values.should == ["test"]
+        Facter::Util::Confine.new("yay", "test").values.should == ["test"]
     end
 
     it "should accept multiple values specified at once" do
-        Facter::Confine.new("yay", "test", "other").values.should == ["test", "other"]
+        Facter::Util::Confine.new("yay", "test", "other").values.should == ["test", "other"]
     end
 
     it "should convert all values to strings" do
-        Facter::Confine.new("yay", :test).values.should == %w{test}
+        Facter::Util::Confine.new("yay", :test).values.should == %w{test}
     end
 
     it "should fail if no fact name is provided" do
-        lambda { Facter::Confine.new(nil, :test) }.should raise_error(ArgumentError)
+        lambda { Facter::Util::Confine.new(nil, :test) }.should raise_error(ArgumentError)
     end
 
     it "should fail if no values were provided" do
-        lambda { Facter::Confine.new("yay") }.should raise_error(ArgumentError)
+        lambda { Facter::Util::Confine.new("yay") }.should raise_error(ArgumentError)
     end
 
     it "should have a method for testing whether it matches" do
-        Facter::Confine.new("yay", :test).should respond_to(:true?)
+        Facter::Util::Confine.new("yay", :test).should respond_to(:true?)
     end
 
     describe "when evaluating" do
         before do
-            @confine = Facter::Confine.new("yay", "one", "two")
+            @confine = Facter::Util::Confine.new("yay", "one", "two")
             @fact = mock 'fact'
             Facter.stubs(:[]).returns @fact
         end

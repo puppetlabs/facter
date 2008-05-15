@@ -1,22 +1,22 @@
 #!/usr/bin/env ruby
 
-require File.dirname(__FILE__) + '/../spec_helper'
+require File.dirname(__FILE__) + '/../../spec_helper'
 
-require 'facter/collection'
+require 'facter/util/collection'
 
-describe Facter::Collection do
+describe Facter::Util::Collection do
     it "should have a method for adding facts" do
-        Facter::Collection.new.should respond_to(:add)
+        Facter::Util::Collection.new.should respond_to(:add)
     end
 
     describe "when adding facts" do
         before do
-            @coll = Facter::Collection.new
+            @coll = Facter::Util::Collection.new
         end
 
         it "should create a new fact if no fact with the same name already exists" do
             fact = mock 'fact'
-            Facter::Fact.expects(:new).with { |name, *args| name == :myname }.returns fact
+            Facter::Util::Fact.expects(:new).with { |name, *args| name == :myname }.returns fact
 
             @coll.add(:myname)
         end
@@ -24,7 +24,7 @@ describe Facter::Collection do
         describe "and a block is provided" do
             it "should use the block to add a resolution to the fact" do
                 fact = mock 'fact'
-                Facter::Fact.expects(:new).returns fact
+                Facter::Util::Fact.expects(:new).returns fact
 
                 fact.expects(:add)
 
@@ -34,12 +34,12 @@ describe Facter::Collection do
     end
 
     it "should have a method for retrieving facts by name" do
-        Facter::Collection.new.should respond_to(:fact)
+        Facter::Util::Collection.new.should respond_to(:fact)
     end
 
     describe "when retrieving facts" do
         before do
-            @coll = Facter::Collection.new
+            @coll = Facter::Util::Collection.new
 
             @fact = @coll.add("YayNess")
         end
@@ -58,12 +58,12 @@ describe Facter::Collection do
     end
 
     it "should have a method for returning a fact's value" do
-        Facter::Collection.new.should respond_to(:value)
+        Facter::Util::Collection.new.should respond_to(:value)
     end
 
     describe "when returning a fact's value" do
         before do
-            @coll = Facter::Collection.new
+            @coll = Facter::Util::Collection.new
             @fact = @coll.add("YayNess")
 
             @fact.stubs(:value).returns "result"
@@ -85,13 +85,13 @@ describe Facter::Collection do
     end
 
     it "should return the fact's value when the array index method is used" do
-        @coll = Facter::Collection.new
+        @coll = Facter::Util::Collection.new
         @coll.expects(:value).with("myfact").returns "foo"
         @coll["myfact"].should == "foo"
     end
 
     it "should have a method for flushing all facts" do
-        @coll = Facter::Collection.new
+        @coll = Facter::Util::Collection.new
         @fact = @coll.add("YayNess")
 
         @fact.expects(:flush)
@@ -100,7 +100,7 @@ describe Facter::Collection do
     end
 
     it "should have a method that returns all fact names" do
-        @coll = Facter::Collection.new
+        @coll = Facter::Util::Collection.new
         @coll.add(:one)
         @coll.add(:two)
 
@@ -108,12 +108,12 @@ describe Facter::Collection do
     end
 
     it "should have a method for returning a hash of fact values" do
-        Facter::Collection.new.should respond_to(:to_hash)
+        Facter::Util::Collection.new.should respond_to(:to_hash)
     end
 
     describe "when returning a hash of values" do
         before do
-            @coll = Facter::Collection.new
+            @coll = Facter::Util::Collection.new
             @fact = @coll.add(:one)
             @fact.stubs(:value).returns "me"
         end
@@ -130,16 +130,16 @@ describe Facter::Collection do
     end
 
     it "should have a method for iterating over all facts" do
-        Facter::Collection.new.should respond_to(:each)
+        Facter::Util::Collection.new.should respond_to(:each)
     end
 
     it "should include Enumerable" do
-        Facter::Collection.ancestors.should be_include(Enumerable)
+        Facter::Util::Collection.ancestors.should be_include(Enumerable)
     end
 
     describe "when iterating over facts" do
         before do
-            @coll = Facter::Collection.new
+            @coll = Facter::Util::Collection.new
             @one = @coll.add(:one)
             @two = @coll.add(:two)
         end

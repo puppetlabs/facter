@@ -1,7 +1,7 @@
 require 'facter'
 
 # Load facts on demand.
-class Facter::Loader
+class Facter::Util::Loader
     # Load all resolutions for a single fact.
     def load(fact)
         # Now load from the search path

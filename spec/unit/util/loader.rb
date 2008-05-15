@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-require File.dirname(__FILE__) + '/../spec_helper'
+require File.dirname(__FILE__) + '/../../spec_helper'
 
-require 'facter/loader'
+require 'facter/util/loader'
 
 # Make sure we have a Puppet constant, so we can test
 # loading Puppet facts.
@@ -10,7 +10,7 @@ unless defined?(Puppet)
     class Puppet; end
 end
 
-describe Facter::Loader do
+describe Facter::Util::Loader do
     def with_env(values)
         old = {}
         values.each do |var, value|
@@ -30,20 +30,20 @@ describe Facter::Loader do
     end
 
     it "should have a method for loading individual facts by name" do
-        Facter::Loader.new.should respond_to(:load)
+        Facter::Util::Loader.new.should respond_to(:load)
     end
 
     it "should have a method for loading all facts" do
-        Facter::Loader.new.should respond_to(:load_all)
+        Facter::Util::Loader.new.should respond_to(:load_all)
     end
 
     it "should have a method for returning directories containing facts" do
-        Facter::Loader.new.should respond_to(:search_path)
+        Facter::Util::Loader.new.should respond_to(:search_path)
     end
 
     describe "when determining the search path" do
         before do
-            @loader = Facter::Loader.new
+            @loader = Facter::Util::Loader.new
             @settings = mock 'settings'
             @settings.stubs(:value).returns "/eh"
             Puppet.stubs(:settings).returns @settings
@@ -84,7 +84,7 @@ describe Facter::Loader do
 
     describe "when loading facts" do
         before do
-            @loader = Facter::Loader.new
+            @loader = Facter::Util::Loader.new
             @loader.stubs(:search_path).returns []
         end
 
@@ -135,7 +135,7 @@ describe Facter::Loader do
 
     describe "when loading all facts" do
         before do
-            @loader = Facter::Loader.new
+            @loader = Facter::Util::Loader.new
             @loader.stubs(:search_path).returns []
         end
 

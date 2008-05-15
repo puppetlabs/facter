@@ -1,7 +1,7 @@
 require 'facter'
-require 'facter/resolution'
+require 'facter/util/resolution'
 
-class Facter::Fact
+class Facter::Util::Fact
     attr_accessor :name, :searching, :ldapname
 
     # Create a new fact, with no resolution mechanisms.
@@ -31,7 +31,7 @@ class Facter::Fact
     def add(&block)
         raise ArgumentError, "You must pass a block to Fact<instance>.add" unless block_given?
 
-        resolve = Facter::Resolution.new(@name)
+        resolve = Facter::Util::Resolution.new(@name)
 
         resolve.instance_eval(&block)
 

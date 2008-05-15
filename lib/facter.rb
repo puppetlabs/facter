@@ -18,8 +18,11 @@
 #--
 
 module Facter
-    require 'facter/fact'
-    require 'facter/collection'
+    # This is just so the other classes have the constant.
+    module Util; end
+
+    require 'facter/util/fact'
+    require 'facter/util/collection'
 
     include Comparable
     include Enumerable
@@ -47,7 +50,7 @@ module Facter
 
     def self.collection
         unless defined?(@collection) and @collection
-            @collection = Facter::Collection.new
+            @collection = Facter::Util::Collection.new
         end
         @collection
     end

@@ -8,10 +8,15 @@ describe Facter do
         Facter.loadfacts
     end
 
+    after do
+        Facter.reset
+    end
+
     it "should create a new collection if one does not exist" do
         Facter.reset
-        Facter::Collection.expects(:new).returns "coll"
-        Facter.collection.should == "coll"
+        coll = mock('coll')
+        Facter::Util::Collection.stubs(:new).returns coll
+        Facter.collection.should equal(coll)
         Facter.reset
     end
 

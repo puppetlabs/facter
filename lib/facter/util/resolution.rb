@@ -3,9 +3,9 @@
 # specific systems.  Note that the confinements are always ANDed, so any
 # confinements specified must all be true for the resolution to be
 # suitable.
-require 'facter/confine'
+require 'facter/util/confine'
 
-class Facter::Resolution
+class Facter::Util::Resolution
     attr_accessor :interpreter, :code, :name
 
     def self.have_which
@@ -51,7 +51,7 @@ class Facter::Resolution
     # Add a new confine to the resolution mechanism.
     def confine(confines)
         confines.each do |fact, values|
-            @confines.push Facter::Confine.new(fact, *values)
+            @confines.push Facter::Util::Confine.new(fact, *values)
         end
     end
 
@@ -98,7 +98,7 @@ class Facter::Resolution
         if @code.is_a?(Proc)
             result = @code.call()
         else
-            result = Facter::Resolution.exec(@code,@interpreter)
+            result = Facter::Util::Resolution.exec(@code,@interpreter)
         end
 
         return nil if result == ""

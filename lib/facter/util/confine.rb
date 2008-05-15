@@ -1,6 +1,6 @@
 # A restricting tag for fact resolution mechanisms.  The tag must be true
 # for the resolution mechanism to be suitable.
-class Facter::Confine
+class Facter::Util::Confine
     attr_accessor :fact, :values
 
     # Add the restriction.  Requires the fact name, an operator, and the value

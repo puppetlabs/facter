@@ -1,9 +1,9 @@
 require 'facter'
-require 'facter/resolution'
+require 'facter/util/fact'
 
 # Manage which facts exist and how we access them.  Largely just a wrapper
 # around a hash of facts.
-class Facter::Collection
+class Facter::Util::Collection
     # Return a fact object by name.  If you use this, you still have to call
     # 'value' on it to retrieve the actual value.
     def [](name)
@@ -16,7 +16,7 @@ class Facter::Collection
         name = canonize(name)
 
         unless fact = @facts[name]
-            fact = Facter::Fact.new(name, options)
+            fact = Facter::Util::Fact.new(name, options)
             @facts[name] = fact
         end
 
