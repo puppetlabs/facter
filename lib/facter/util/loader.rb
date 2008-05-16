@@ -51,9 +51,17 @@ class Facter::Util::Loader
             result += ENV["FACTERLIB"].split(":")
         end
 
-        if defined?(Puppet)
-            result << Puppet.settings.value(:factdest)
-            result << File.join(Puppet.settings.value(:libdir), "facter")
+        # LAK:NOTE We have to be this careful because facter gets loaded
+        # *very* early in Puppet's lifecycle, and this essentially
+        # builds interdependencies between the applications, which is
+        # tricky.
+        if defined?(Puppet) and Puppet.respond_to?(:settings)
+            if f = Puppet.settings.value(:factdest)
+                result << f
+            end
+            if l = Puppet.settings.value(:libdir)
+                result << File.join(l, "facter")
+            end
         end
         result
     end

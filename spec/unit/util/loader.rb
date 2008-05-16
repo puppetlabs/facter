@@ -4,24 +4,6 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 require 'facter/util/loader'
 
-# Make sure we have a Puppet constant, so we can test
-# loading Puppet facts.
-unless defined?(Puppet)
-    class Puppet
-        # We have to implement this, because other tests will
-        # see this constant and fail if this method doesn't exist.
-        # I couldn't find a way to add and remove the constant
-        # just for the correct tests.
-        def self.settings
-            s = Object.new
-            def s.value(arg)
-                return "/eh"
-            end
-            s
-        end
-    end
-end
-
 describe Facter::Util::Loader do
     def with_env(values)
         old = {}
@@ -58,7 +40,6 @@ describe Facter::Util::Loader do
             @loader = Facter::Util::Loader.new
             @settings = mock 'settings'
             @settings.stubs(:value).returns "/eh"
-            Puppet.stubs(:settings).returns @settings
         end
 
         it "should include the facter subdirectory of all paths in ruby LOAD_PATH" do
@@ -78,18 +59,6 @@ describe Facter::Util::Loader do
                         paths.should be_include(dir)
                     end
                 end
-            end
-        end
-
-        describe "and the Puppet libraries are loaded" do
-            it "should include the factdest setting" do
-                @settings.expects(:value).with(:factdest).returns "/my/facts"
-                @loader.search_path.should be_include("/my/facts")
-            end
-
-            it "should include the facter subdirectory of the libdir setting" do
-                @settings.expects(:value).with(:libdir).returns "/lib/dir"
-                @loader.search_path.should be_include("/lib/dir/facter")
             end
         end
     end
