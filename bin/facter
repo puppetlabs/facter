@@ -6,7 +6,7 @@
 #
 # = Usage
 #
-#   facter [-d|--debug] [-h|--help] [-v|--version] [-y|--yaml] [fact] [fact] [...]
+#   facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [fact] [fact] [...]
 #
 # = Description
 #
@@ -23,6 +23,9 @@
 #
 # help::
 #   Print this help message
+#
+# puppet::
+#   Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.
 #
 # version::
 #   Print the version and exit.
@@ -64,7 +67,8 @@ result = GetoptLong.new(
     [ "--help",		"-h",            GetoptLong::NO_ARGUMENT ],
     [ "--debug",	"-d",            GetoptLong::NO_ARGUMENT ],
     [ "--yaml",	"-y",                GetoptLong::NO_ARGUMENT ],
-    [ "--config",    "-c",           GetoptLong::REQUIRED_ARGUMENT ]
+    [ "--config",    "-c",           GetoptLong::REQUIRED_ARGUMENT ],
+    [ "--puppet",    "-p",           GetoptLong::NO_ARGUMENT ]
 )
 
 options = {
@@ -76,6 +80,12 @@ result.each { |opt,arg|
         when "--version"
                         puts "%s" % Facter.version
                         exit
+        when "--puppet"
+			begin
+                require 'puppet'
+            rescue LoadError => detail
+                $stderr.puts "Could not load Puppet: %s" % detail
+            end
         when "--yaml"
 			options[:yaml] = true
         when "--debug"

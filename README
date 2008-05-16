@@ -6,5 +6,5 @@ processors, etc.
 It currently cannot collect very much information, but it is architected to be
 both OS and OS version specific.
 
-See bin/facter or http://reductivelabs.com/project/enhost for an example of the
+See bin/facter or http://reductivelabs.com/trac/enhost for an example of the
 interface.

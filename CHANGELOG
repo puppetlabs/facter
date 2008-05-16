@@ -1,4 +1,15 @@
 ?:
+    The 'facter' executable now has an option (-p|--puppet) for loading the
+    Puppet libraries, which gives it access to Puppet's facts.
+
+    Added autoloading to Facter with a default of not loading all facts,
+    which results in a significant speedup when only one fact is sought.
+    Facts are autoloaded in either a single file named after the fact or
+    in any file in a directory named after the fact.
+
+    Significantly refactored Facter's internals, including creating tests
+    for all internal classes.
+
     A netmask fact has been added closing ticket #46.  It only returns the 
     netmask of the primary interface (in the same behaviour as the ipaddress 
     and macaddress facts).
