@@ -74,8 +74,8 @@ options = {
 result.each { |opt,arg|
     case opt
         when "--version"
-            puts "%s" % Facter.version
-            exit
+                        puts "%s" % Facter.version
+                        exit
         when "--yaml"
 			options[:yaml] = true
         when "--debug"
