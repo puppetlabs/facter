@@ -51,6 +51,13 @@ describe Facter::Util::Loader do
             end
         end
 
+        it "should include all search paths registered with Facter" do
+            Facter.expects(:search_path).returns %w{/one /two}
+            paths = @loader.search_path
+            paths.should be_include("/one")
+            paths.should be_include("/two")
+        end
+
         describe "and the FACTERLIB environment variable is set" do
             it "should include all paths in FACTERLIB" do
                 with_env "FACTERLIB" => "/one/path:/two/path" do

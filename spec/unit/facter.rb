@@ -107,6 +107,31 @@ describe Facter do
         Facter.value(:macaddress).should_not be_include(" ")
     end
 
+    it "should have a method for registering directories to search" do
+        Facter.should respond_to(:search)
+    end
+
+    it "should have a method for returning the registered search directories" do
+        Facter.should respond_to(:search_path)
+    end
+
+    describe "when registering directories to search" do
+        after { Facter.instance_variable_set("@search_path", []) }
+
+        it "should allow registration of a directory" do
+            Facter.search "/my/dir"
+        end
+
+        it "should allow registration of multiple directories" do
+            Facter.search "/my/dir", "/other/dir"
+        end
+
+        it "should return all registered directories when asked" do
+            Facter.search "/my/dir", "/other/dir"
+            Facter.search_path.should == %w{/my/dir /other/dir}
+        end
+    end
+
     def test_onetrueconfine
         assert_nothing_raised {
             Facter.add("required") {

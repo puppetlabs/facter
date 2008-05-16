@@ -179,4 +179,16 @@ module Facter
     def self.loadfacts
         collection.load_all
     end
+
+    @search_path = []
+
+    # Register a directory to search through.
+    def self.search(*dirs)
+        @search_path += dirs
+    end
+
+    # Return our registered search directories.
+    def self.search_path
+        @search_path.dup
+    end
 end
