@@ -102,6 +102,11 @@ describe Facter::Util::Collection do
             @fact.stubs(:value).returns "result"
         end
 
+        it "should use the 'fact' method to retrieve the fact" do
+            @coll.expects(:fact).with(:yayness).returns @fact
+            @coll.value(:yayness)
+        end
+
         it "should return the result of calling :value on the fact" do
             @fact.expects(:value).returns "result"
 
@@ -137,7 +142,7 @@ describe Facter::Util::Collection do
         @coll.add(:one)
         @coll.add(:two)
 
-        @coll.list.sort.should == [:one, :two].sort
+        @coll.list.sort { |a,b| a.to_s <=> b.to_s }.should == [:one, :two]
     end
 
     it "should have a method for returning a hash of fact values" do

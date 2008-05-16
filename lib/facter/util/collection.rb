@@ -87,7 +87,7 @@ class Facter::Util::Collection
     end
 
     def value(name)
-        if fact = @facts[canonize(name)]
+        if fact = fact(name)
             fact.value
         end
     end
