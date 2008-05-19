@@ -5,7 +5,7 @@
 
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
-Version: 1.3.8
+Version: 1.5.0
 Release: 1%{?dist}
 License: GPL
 Group: System Environment/Base
@@ -40,11 +40,15 @@ mkdir %{buildroot}
 
 %{__install} -d -m0755 %{buildroot}%{ruby_sitelibdir}
 %{__install} -d -m0755 %{buildroot}%{ruby_sitelibdir}/facter
+%{__install} -d -m0755 %{buildroot}%{ruby_sitelibdir}/facter/util
+%{__install} -d -m0755 %{buildroot}%{ruby_sitelibdir}/facter/util/plist
 %{__install} -d -m0755 %{buildroot}%{_bindir}
 %{__install} -d -m0755 %{buildroot}%{_docdir}/%{name}-%{version}
 
 %{__install} -p -m0644 lib/*.rb %{buildroot}%{ruby_sitelibdir}
 %{__install} -p -m0644 lib/facter/*.rb %{buildroot}%{ruby_sitelibdir}/facter
+%{__install} -p -m0644 lib/facter/util/*.rb %{buildroot}%{ruby_sitelibdir}/facter/util
+%{__install} -p -m0644 lib/facter/util/plist/*.rb %{buildroot}%{ruby_sitelibdir}/facter/util/plist
 %{__install} -p -m0755 bin/facter %{buildroot}%{_bindir}
 
 %clean
@@ -56,10 +60,18 @@ rm -rf %{buildroot}
 %{_bindir}/facter
 %{ruby_sitelibdir}/facter.rb
 %{ruby_sitelibdir}/facter
+%{ruby_sitelibdir}/facter/util
+%{ruby_sitelibdir}/facter/util/plist
+%{ruby_sitelibdir}/facter/util/*.rb
+%{ruby_sitelibdir}/facter/util/plist/*.rb
 %doc CHANGELOG COPYING INSTALL LICENSE README
 
 
 %changelog
+* Mon May 19 2008 James Turnbull <james@lovedthanlosty.net> - 1.5.0-1
+- New version
+- Added util and plist files
+
 * Fri Jan 19 2007 David Lutterkort <dlutter@redhat.com> - 1.3.6-1
 - New version
 
