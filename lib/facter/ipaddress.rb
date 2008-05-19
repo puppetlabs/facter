@@ -129,3 +129,23 @@
                 ip
             end
         end
+        
+        Facter.add(:ipaddress) do
+            confine :kernel => %w{AIX}
+            setcode do
+                ip = nil
+                output = %x{/usr/sbin/ifconfig -a}
+
+                output.split(/^\S/).each { |str|
+                    if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+                        tmp = $1
+                        unless tmp =~ /127\./
+                            ip = tmp
+                            break
+                        end
+                    end
+                }
+
+                ip
+            end
+        end

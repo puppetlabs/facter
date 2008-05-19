@@ -40,3 +40,26 @@
                 ether
             end
         end
+        
+        Facter.add(:macaddress) do
+            confine :kernel => %w{AIX}
+            setcode do
+                ether = []
+                ip = nil
+                output = %x{/usr/sbin/ifconfig -a}
+                output.each { |str|
+                    if str =~ /([a-z]+\d+): flags=/
+                        devname = $1
+                        unless devname =~ /lo0/
+                           output2 = %x{/usr/bin/entstat #{devname}}
+                           output2.each { |str2|
+                                       if str2 =~ /^Hardware Address: (\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
+                                          ether.push($1)
+                                       end
+                                       }
+                        end
+                    end
+                }
+                ether[0]
+            end
+        end
