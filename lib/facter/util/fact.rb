@@ -1,6 +1,8 @@
 require 'facter'
 require 'facter/util/resolution'
 
+require 'timeout'
+
 class Facter::Util::Fact
     attr_accessor :name, :searching, :ldapname
 
@@ -80,7 +82,15 @@ class Facter::Util::Fact
                 next unless resolve.suitable?
                 foundsuits = true
 
-                tmp = resolve.value
+                tmp = nil
+                begin
+                    Timeout.timeout(0.5) do
+                        tmp = resolve.value
+                    end
+                rescue Timeout::Error => detail
+                    warn "Timed out seeking value for %s" % self.name
+                    next
+                end
 
                 break tmp unless tmp.nil? or tmp == ""
             }
