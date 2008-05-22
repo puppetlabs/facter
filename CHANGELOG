@@ -1,4 +1,6 @@
 ?:
+    Updated dmidecode facts fixing ticket #60
+
     Added AIX support for some facts
 
     Add lsbmajdistrelease fact for CentOS and Red Hat
