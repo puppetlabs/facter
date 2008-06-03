@@ -43,4 +43,3 @@ if project.has?(:epm)
         task.rubylibs = FileList.new('lib/**/*')          
     end
 end
-# $Id$
