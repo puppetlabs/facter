@@ -1,4 +1,7 @@
 ?:
+    Refactered ipmess.rb and util/ip.rb to support separate *BSD logic for
+    *BSD aliased interfaces.
+
     Updated dmidecode facts fixing ticket #60
 
     Added AIX support for some facts
