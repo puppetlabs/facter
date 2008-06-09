@@ -14,32 +14,62 @@ Facter.add(:interfaces) do
     end
 end
 
-
-Facter::IPAddress.get_interfaces.each do |interface|
+case Facter.value(:kernel) 
+ when 'SunOS', 'Linux'
+  Facter::IPAddress.get_interfaces.each do |interface|
     mi = interface.gsub(':', '_')
 
     Facter.add("ipaddress_" + mi) do
-        confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
+        confine :kernel => [ :sunos, :linux ]
         setcode do
             label = 'ipaddress'
-            Facter::IPAddress.get_interface_value(interface, label)
+            Facter::IPAddress.get_interface_value_nonbsd(interface, label)
         end
     end
 
     Facter.add("macaddress_" + mi) do
-        confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
+        confine :kernel => [ :sunos, :linux ]
         setcode do
             label = 'macaddress'
-            Facter::IPAddress.get_interface_value(interface, label) 
+            Facter::IPAddress.get_interface_value_nonbsd(interface, label) 
         end
     end
 
     Facter.add("netmask_" + mi) do
-        confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
+        confine :kernel => [ :sunos, :linux ]
         setcode do
             label = 'netmask'
-            Facter::IPAddress.get_interface_value(interface, label)
+            Facter::IPAddress.get_interface_value_nonbsd(interface, label)
+        end
+    end
+ end
+
+ when 'OpenBSD', 'NetBSD', 'FreeBSD'
+  Facter::IPAddress.get_interfaces.each do |interface|
+    mi = interface.gsub(':', '_')
+
+    Facter.add("ipaddress_" + mi) do
+        confine :kernel => [ :openbsd, :freebsd, :netbsd ]
+        setcode do
+            label = 'ipaddress'
+            Facter::IPAddress.get_interface_value_bsd(interface, label)
         end
     end
 
+    Facter.add("netmask_" + mi) do
+        confine :kernel => [ :openbsd, :freebsd, :netbsd ]
+        setcode do
+            label = 'netmask'
+            Facter::IPAddress.get_interface_value_bsd(interface, label)
+        end
+    end
+ 
+    Facter.add("macaddress_" + mi) do
+        confine :kernel => [ :openbsd, :freebsd, :netbsd ]
+        setcode do
+            label = 'macaddress'
+            Facter::IPAddress.get_interface_value_bsd(interface, label)
+        end
+    end
+  end
 end

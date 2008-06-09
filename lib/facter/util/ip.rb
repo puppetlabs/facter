@@ -21,11 +21,9 @@ module Facter::IPAddress
     
     end
     
-    def self.get_interface_value(interface, label)
+    def self.get_interface_value_nonbsd(interface, label)
     
-    tmp1 =nil
-    tmp2 = nil
-    tmp3 = nil
+    tmp1 = nil
 
     case Facter.value(:kernel)
       when 'Linux'
@@ -58,11 +56,43 @@ module Facter::IPAddress
         output_int.each { |s|
            tmp1 = $1 if s =~ regex
        }
-       end
+      end
 
       if tmp1 
         value = tmp1
       end
 
    end
+
+   def self.get_interface_value_bsd(interface, label)
+
+    tmp1 = nil
+
+    int_hash = {}
+    output_int = %x{/sbin/ifconfig #{interface}}
+    addr = /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+    mac  = /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/
+    mask = /netmask\s+(\w{10})/
+
+    case label
+      when 'ipaddress'
+       regex = addr
+      when 'macaddress'
+       regex = mac
+      when 'netmask'
+       regex = mask
+    end
+
+    if interface != "lo" && interface != "lo0"
+      output_int.each { |s|
+        tmp1 = $1 if s =~ regex
+      }
+    end
+
+    if tmp1
+       value = tmp1
+    end
+
+   end
 end
+
