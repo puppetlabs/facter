@@ -1,4 +1,6 @@
 ?:
+    Fixes #1357 - change ps syntax for OSX and BSD
+
     Set the timeout on the AIX kernelrelease fact to 5 seconds.
 
     Refactored so each fact resolution can specify a separate timeout,
