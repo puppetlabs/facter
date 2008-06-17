@@ -1,151 +1,151 @@
-        Facter.add(:ipaddress, :ldapname => "iphostnumber") do
-            setcode do
-                require 'resolv'
+Facter.add(:ipaddress, :ldapname => "iphostnumber") do
+    setcode do
+        require 'resolv'
 
-                begin
-                    if hostname = Facter.value(:hostname)
-                        ip = Resolv.getaddress(hostname)
-                        unless ip == "127.0.0.1"
-                            ip
-                        end
-                    else
-                        nil
-                    end
-                rescue Resolv::ResolvError
-                    nil
-                rescue NoMethodError # i think this is a bug in resolv.rb?
-                    nil
+        begin
+            if hostname = Facter.value(:hostname)
+                ip = Resolv.getaddress(hostname)
+                unless ip == "127.0.0.1"
+                    ip
+                end
+            else
+                nil
+            end
+        rescue Resolv::ResolvError
+            nil
+        rescue NoMethodError # i think this is a bug in resolv.rb?
+            nil
+        end
+    end
+end
+
+Facter.add(:ipaddress) do
+    setcode do
+        if hostname = Facter.value(:hostname)
+            # we need Hostname to exist for this to work
+            host = nil
+            if host = Facter::Util::Resolution.exec("host #{hostname}")
+                host = host.chomp.split(/\s/)
+                if defined? list[-1] and
+                        list[-1] =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
+                    list[-1]
+                end
+            else
+                nil
+            end
+        else
+            nil
+        end
+    end
+end
+
+Facter.add(:ipaddress) do
+    confine :kernel => :linux
+    setcode do
+        ip = nil
+        output = %x{/sbin/ifconfig}
+
+        output.split(/^\S/).each { |str|
+            if str =~ /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+                tmp = $1
+                unless tmp =~ /127\./
+                    ip = tmp
+                    break
                 end
             end
-        end
- 
-        Facter.add(:ipaddress) do
-            setcode do
-                if hostname = Facter.value(:hostname)
-                    # we need Hostname to exist for this to work
-                    host = nil
-                    if host = Facter::Util::Resolution.exec("host #{hostname}")
-                        host = host.chomp.split(/\s/)
-                        if defined? list[-1] and
-                                list[-1] =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
-                            list[-1]
-                        end
-                    else
-                        nil
-                    end
-                else
-                    nil
+        }
+
+        ip
+    end
+end
+
+Facter.add(:ipaddress) do
+    confine :kernel => %w{FreeBSD OpenBSD solaris}
+    setcode do
+        ip = nil
+        output = %x{/sbin/ifconfig}
+
+        output.split(/^\S/).each { |str|
+            if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+                tmp = $1
+                unless tmp =~ /127\./
+                    ip = tmp
+                    break
                 end
             end
-        end
+        }
 
-        Facter.add(:ipaddress) do
-            confine :kernel => :linux
-            setcode do
-                ip = nil
-                output = %x{/sbin/ifconfig}
+        ip
+    end
+end
 
-                output.split(/^\S/).each { |str|
-                    if str =~ /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-                        tmp = $1
-                        unless tmp =~ /127\./
-                            ip = tmp
-                            break
-                        end
-                    end
-                }
+Facter.add(:ipaddress) do
+    confine :kernel => %w{NetBSD}
+    setcode do
+        ip = nil
+        output = %x{/sbin/ifconfig -a}
 
-                ip
-            end
-        end
- 
-        Facter.add(:ipaddress) do
-            confine :kernel => %w{FreeBSD OpenBSD solaris}
-            setcode do
-                ip = nil
-                output = %x{/sbin/ifconfig}
-
-                output.split(/^\S/).each { |str|
-                    if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-                        tmp = $1
-                        unless tmp =~ /127\./
-                            ip = tmp
-                            break
-                        end
-                    end
-                }
-
-                ip
-            end
-        end
-
-        Facter.add(:ipaddress) do
-            confine :kernel => %w{NetBSD}
-            setcode do
-                ip = nil
-                output = %x{/sbin/ifconfig -a}
-
-                output.split(/^\S/).each { |str|
-                    if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-                        tmp = $1
-                        unless tmp =~ /127\./
-                            ip = tmp
-                            break
-                        end
-                    end
-                }
-
-                ip
-            end
-        end
-
-        Facter.add(:ipaddress) do
-            confine :kernel => %w{darwin}
-            setcode do
-                ip = nil
-                iface = ""
-                output = %x{/usr/sbin/netstat -rn}
-                if output =~ /^default\s*\S*\s*\S*\s*\S*\s*\S*\s*(\S*).*/
-                  iface = $1
-                else
-                  warn "Could not find a default route. Using first non-loopback interface"
+        output.split(/^\S/).each { |str|
+            if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+                tmp = $1
+                unless tmp =~ /127\./
+                    ip = tmp
+                    break
                 end
-                if(iface != "")
-                  output = %x{/sbin/ifconfig #{iface}}
-                else
-                  output = %x{/sbin/ifconfig}
+            end
+        }
+
+        ip
+    end
+end
+
+Facter.add(:ipaddress) do
+    confine :kernel => %w{darwin}
+    setcode do
+        ip = nil
+        iface = ""
+        output = %x{/usr/sbin/netstat -rn}
+        if output =~ /^default\s*\S*\s*\S*\s*\S*\s*\S*\s*(\S*).*/
+          iface = $1
+        else
+          warn "Could not find a default route. Using first non-loopback interface"
+        end
+        if(iface != "")
+          output = %x{/sbin/ifconfig #{iface}}
+        else
+          output = %x{/sbin/ifconfig}
+        end
+
+        output.split(/^\S/).each { |str|
+            if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+                tmp = $1
+                unless tmp =~ /127\./
+                    ip = tmp
+                    break
                 end
-
-                output.split(/^\S/).each { |str|
-                    if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-                        tmp = $1
-                        unless tmp =~ /127\./
-                            ip = tmp
-                            break
-                        end
-                    end
-                }
-
-                ip
             end
-        end
-        
-        Facter.add(:ipaddress) do
-            confine :kernel => %w{AIX}
-            setcode do
-                ip = nil
-                output = %x{/usr/sbin/ifconfig -a}
+        }
 
-                output.split(/^\S/).each { |str|
-                    if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-                        tmp = $1
-                        unless tmp =~ /127\./
-                            ip = tmp
-                            break
-                        end
-                    end
-                }
+        ip
+    end
+end
 
-                ip
+Facter.add(:ipaddress) do
+    confine :kernel => %w{AIX}
+    setcode do
+        ip = nil
+        output = %x{/usr/sbin/ifconfig -a}
+
+        output.split(/^\S/).each { |str|
+            if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+                tmp = $1
+                unless tmp =~ /127\./
+                    ip = tmp
+                    break
+                end
             end
-        end
+        }
+
+        ip
+    end
+end

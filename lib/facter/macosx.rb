@@ -10,11 +10,11 @@
 # as published by the Free Software Foundation (version 2 of the License)
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston MA  02110-1301 USA
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston MA    02110-1301 USA
 
 # Jeff McCune
 # There's a lot more information coming out of system_profiler -xml
@@ -25,30 +25,30 @@
 require 'facter/util/macosx'
 
 if Facter.value(:kernel) == "Darwin"
-  Facter::Macosx.hardware_overview.each do |fact, value|
-    Facter.add("sp_#{fact}") do
-      confine :kernel => :darwin
-      setcode do
-        value.to_s
-      end
+    Facter::Macosx.hardware_overview.each do |fact, value|
+        Facter.add("sp_#{fact}") do
+            confine :kernel => :darwin
+            setcode do
+                value.to_s
+            end
+        end
     end
-  end
 
-  Facter::Macosx.os_overview.each do |fact, value|
-    Facter.add("sp_#{fact}") do
-      confine :kernel => :darwin
-      setcode do
-        value.to_s
-      end
+    Facter::Macosx.os_overview.each do |fact, value|
+        Facter.add("sp_#{fact}") do
+            confine :kernel => :darwin
+            setcode do
+                value.to_s
+            end
+        end
     end
-  end
 
-  Facter::Macosx.sw_vers.each do |fact, value|
-    Facter.add(fact) do
-      confine :kernel => :darwin
-      setcode do
-        value
-      end
+    Facter::Macosx.sw_vers.each do |fact, value|
+        Facter.add(fact) do
+            confine :kernel => :darwin
+            setcode do
+                value
+            end
+        end
     end
-  end
 end

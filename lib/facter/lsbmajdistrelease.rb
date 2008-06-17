@@ -10,7 +10,6 @@ Facter.add("lsbmajdistrelease") do
         else
             result=Facter.value(:lsbdistrelease)
         end
-    result
+        result
     end
 end
-

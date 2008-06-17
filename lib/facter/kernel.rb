@@ -1,3 +1,3 @@
-        Facter.add(:kernel) do
-            setcode 'uname -s'
-        end
+Facter.add(:kernel) do
+    setcode 'uname -s'
+end
