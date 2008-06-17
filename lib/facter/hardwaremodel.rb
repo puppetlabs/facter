@@ -4,5 +4,10 @@ end
 
 Facter.add(:hardwaremodel) do
     confine :operatingsystem => :aix
-    setcode 'lsattr -El proc0 -a type|cut -f2 -d" "'
+    setcode do
+        model = Facter::Util::Resolution.exec('lsattr -El sys0 -a modelname')
+        if model =~ /modelname\s(\S+)\s/
+            $1
+        end
+    end
 end
