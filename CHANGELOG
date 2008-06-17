@@ -1,5 +1,7 @@
 ?:
-    Fixes #1357 - change ps syntax for OSX and BSD
+    Fixes #1334 - Forced Facter to use LANG=C
+
+    Fixes #1357 - Change ps syntax for OSX and BSD
 
     Set the timeout on the AIX kernelrelease fact to 5 seconds.
 
