@@ -57,26 +57,16 @@ class Facter::Util::Fact
     # Return the value for a given fact.  Searches through all of the mechanisms
     # and returns either the first value or nil.
     def value
-        unless @value
-            # make sure we don't get stuck in recursive dependency loops
-            if @searching
-                Facter.debug "Caught recursion on %s" % @name
-                
-                # return a cached value if we've got it
-                if @value
-                    return @value
-                else
-                    return nil
-                end
-            end
+        return @value if @value
+
+        if @resolves.length == 0
+            Facter.debug "No resolves for %s" % @name
+            return nil
+        end
+
+        searching do
             @value = nil
 
-            if @resolves.length == 0
-                Facter.debug "No resolves for %s" % @name
-                return nil
-            end
-
-            @searching = true
             foundsuits = false
             @value = @resolves.inject(nil) { |result, resolve|
                 next unless resolve.suitable?
@@ -86,7 +76,6 @@ class Facter::Util::Fact
 
                 break tmp unless tmp.nil? or tmp == ""
             }
-            @searching = false
 
             unless foundsuits
                 Facter.debug "Found no suitable resolves of %s for %s" % [@resolves.length, @name]
@@ -99,6 +88,35 @@ class Facter::Util::Fact
             return nil
         else
             return @value
+        end
+    end
+
+    private
+
+    # Are we in the midst of a search?
+    def searching?
+        @searching
+    end
+
+    # Lock our searching process, so we never ge stuck in recursion.
+    def searching
+        if searching?
+            Facter.debug "Caught recursion on %s" % @name
+            
+            # return a cached value if we've got it
+            if @value
+                return @value
+            else
+                return nil
+            end
+        end
+
+        # If we've gotten this far, we're not already searching, so go ahead and do so.
+        @searching = true
+        begin
+            yield
+        ensure
+            @searching = false
         end
     end
 end
