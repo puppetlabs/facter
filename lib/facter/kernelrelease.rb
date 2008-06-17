@@ -2,7 +2,7 @@
             setcode 'uname -r'
         end
 
-   Facter.add(:kernelrelease) do
+   Facter.add(:kernelrelease, :timeout => 5) do
             confine :kernel => :aix
             setcode 'oslevel -s'
         end

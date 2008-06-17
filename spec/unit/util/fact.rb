@@ -121,13 +121,6 @@ describe Facter::Util::Fact do
 
             @fact.value.should be_nil
         end
-
-        it "should timeout after 0.5 seconds" do
-            @fact.expects(:warn)
-            @fact.add { setcode { sleep 2; raise "This is a test" } }
-
-            @fact.value.should be_nil
-        end
     end
 
     it "should have a method for flushing the cached fact" do

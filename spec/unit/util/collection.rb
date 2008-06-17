@@ -44,6 +44,46 @@ describe Facter::Util::Collection do
             @coll.add(:myname)
         end
 
+        it "should accept options" do
+            @coll.add(:myname, :ldapname => "whatever") { }
+        end
+
+        it "should set any appropriate options on the fact instances" do
+            # Use a real fact instance, because we're using respond_to?
+            fact = Facter::Util::Fact.new(:myname)
+            fact.expects(:ldapname=).with("testing")
+            Facter::Util::Fact.expects(:new).with(:myname).returns fact
+
+            @coll.add(:myname, :ldapname => "testing")
+        end
+
+        it "should set appropriate options on the resolution instance" do
+            fact = Facter::Util::Fact.new(:myname)
+            Facter::Util::Fact.expects(:new).with(:myname).returns fact
+
+            resolve = Facter::Util::Resolution.new(:myname) {}
+            fact.expects(:add).returns resolve
+
+            @coll.add(:myname, :timeout => "myval") {}
+        end
+
+        it "should not pass fact-specific options to resolutions" do
+            fact = Facter::Util::Fact.new(:myname)
+            Facter::Util::Fact.expects(:new).with(:myname).returns fact
+
+            resolve = Facter::Util::Resolution.new(:myname) {}
+            fact.expects(:add).returns resolve
+
+            fact.expects(:ldapname=).with("foo")
+            resolve.expects(:timeout=).with("myval")
+
+            @coll.add(:myname, :timeout => "myval", :ldapname => "foo") {}
+        end
+
+        it "should fail if invalid options are provided" do
+            lambda { @coll.add(:myname, :foo => :bar) }.should raise_error(ArgumentError)
+        end
+
         describe "and a block is provided" do
             it "should use the block to add a resolution to the fact" do
                 fact = mock 'fact'

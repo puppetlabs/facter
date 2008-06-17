@@ -17,6 +17,14 @@ describe Facter::Util::Resolution do
         Facter::Util::Resolution.new("yay").should respond_to(:setcode)
     end
 
+    it "should support a timeout value" do
+        Facter::Util::Resolution.new("yay").should respond_to(:timeout=)
+    end
+
+    it "should default to a timeout of 0.5 seconds" do
+        Facter::Util::Resolution.new("yay").timeout.should == 0.5
+    end
+
     describe "when setting the code" do
         before do
             @resolve = Facter::Util::Resolution.new("yay")
@@ -80,6 +88,14 @@ describe Facter::Util::Resolution do
 
             it "should return nil if the value is an empty string" do
                 @resolve.setcode { "" }
+                @resolve.value.should be_nil
+            end
+
+            it "should timeout after the provided timeout" do
+                @resolve.expects(:warn)
+                @resolve.timeout = 0.1
+                @resolve.setcode { sleep 2; raise "This is a test" }
+
                 @resolve.value.should be_nil
             end
         end

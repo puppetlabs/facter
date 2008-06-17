@@ -5,8 +5,10 @@
 # suitable.
 require 'facter/util/confine'
 
+require 'timeout'
+
 class Facter::Util::Resolution
-    attr_accessor :interpreter, :code, :name
+    attr_accessor :interpreter, :code, :name, :timeout
 
     def self.have_which
         if @have_which.nil?
@@ -60,6 +62,7 @@ class Facter::Util::Resolution
         @name = name
         @confines = []
         @value = nil
+        @timeout = 0.5
     end
 
     # Return the number of confines.
@@ -95,10 +98,18 @@ class Facter::Util::Resolution
 
     # How we get a value for our resolution mechanism.
     def value
-        if @code.is_a?(Proc)
-            result = @code.call()
-        else
-            result = Facter::Util::Resolution.exec(@code,@interpreter)
+        result = nil
+        begin
+            Timeout.timeout(timeout) do
+                if @code.is_a?(Proc)
+                    result = @code.call()
+                else
+                    result = Facter::Util::Resolution.exec(@code,@interpreter)
+                end
+            end
+        rescue Timeout::Error => detail
+            warn "Timed out seeking value for %s" % self.name
+            return nil
         end
 
         return nil if result == ""

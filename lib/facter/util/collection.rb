@@ -17,11 +17,35 @@ class Facter::Util::Collection
         name = canonize(name)
 
         unless fact = @facts[name]
-            fact = Facter::Util::Fact.new(name, options)
+            fact = Facter::Util::Fact.new(name)
+
             @facts[name] = fact
         end
 
-        fact.add(&block) if block
+        # Set any fact-appropriate options.
+        options.each do |opt, value|
+            method = opt.to_s + "="
+            if fact.respond_to?(method)
+                fact.send(method, value)
+                options.delete(opt)
+            end
+        end
+
+        if block
+            resolve = fact.add(&block)
+            # Set any resolve-appropriate options
+            options.each do |opt, value|
+                method = opt.to_s + "="
+                if resolve.respond_to?(method)
+                    resolve.send(method, value)
+                    options.delete(opt)
+                end
+            end
+        end
+
+        unless options.empty?
+            raise ArgumentError, "Invalid facter option(s) %s" % options.keys.collect { |k| k.to_s }.join(",")
+        end
 
         return fact
     end

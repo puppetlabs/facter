@@ -1,4 +1,9 @@
 ?:
+    Set the timeout on the AIX kernelrelease fact to 5 seconds.
+
+    Refactored so each fact resolution can specify a separate timeout,
+    but the default is still 0.5.
+
     Refactered ipmess.rb and util/ip.rb to support separate *BSD logic for
     *BSD aliased interfaces.
 
