@@ -37,3 +37,38 @@ if Facter.value(:kernel) == "Linux"
         end
     end
 end
+
+if Facter.value(:kernel) == "AIX"
+    processor_num = -1
+    processor_list = {}
+    Thread::exclusive do
+        procs = Facter::Util::Resolution.exec('lsdev -Cc processor')
+        procs.each do |proc|
+            if proc =~ /^proc(\d+)/
+                processor_num = $1.to_i
+                # Not retrieving the frequency since AIX 4.3.3 doesn't support the 
+                # attribute and some people still use the OS.
+                proctype = Facter::Util::Resolution.exec('lsattr -El proc0 -a type')
+                if proctype =~ /^type\s+(\S+)\s+/
+                    processor_list["processor#{processor_num}"] = $1
+                end
+            end
+        end
+    end
+
+    Facter.add("ProcessorCount") do
+        confine :kernel => :aix
+        setcode do
+            processor_list.length.to_s
+        end
+    end
+
+    processor_list.each do |proc, desc|
+        Facter.add(proc) do
+            confine :kernel => :aix
+            setcode do
+                desc
+            end
+        end
+    end
+end
