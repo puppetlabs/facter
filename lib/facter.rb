@@ -80,7 +80,7 @@ module Facter
     end
 
     class << self
-        [:add, :fact, :flush, :list, :value].each do |method|
+        [:fact, :flush, :list, :value].each do |method|
             define_method(method) do |*args|
                 collection.send(method, *args)
             end

@@ -4,7 +4,7 @@ require 'facter/util/resolution'
 class Facter::Util::Fact
     TIMEOUT = 5
 
-    attr_accessor :name, :searching, :ldapname
+    attr_accessor :name, :ldapname
 
     # Create a new fact, with no resolution mechanisms.
     def initialize(name, options = {})

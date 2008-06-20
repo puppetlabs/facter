@@ -11,7 +11,7 @@ class Facter::Util::Resolution
     attr_accessor :interpreter, :code, :name, :timeout
 
     def self.have_which
-        if @have_which.nil?
+        if ! defined?(@have_which) or @have_which.nil?
             %x{which which 2>/dev/null}
             @have_which = ($? == 0)
         end
