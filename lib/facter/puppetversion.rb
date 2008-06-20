@@ -1,4 +1,4 @@
-Facter.add(:puppetversion) do
+Facter.add(:puppetversion, :timeout => 1.5) do
     setcode {
         begin
             require 'puppet'
