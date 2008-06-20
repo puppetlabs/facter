@@ -8,7 +8,7 @@ require 'facter/util/confine'
 require 'timeout'
 
 class Facter::Util::Resolution
-    attr_accessor :interpreter, :code, :name, :limit
+    attr_accessor :interpreter, :code, :name, :timeout
 
     def self.have_which
         if ! defined?(@have_which) or @have_which.nil?
@@ -62,12 +62,19 @@ class Facter::Util::Resolution
         @name = name
         @confines = []
         @value = nil
-        @limit = 0.5
+        @timeout = 0.5
     end
 
     # Return the number of confines.
     def length
         @confines.length
+    end
+
+    # We need this as a getter for 'timeout', because some versions
+    # of ruby seem to already have a 'timeout' method and we can't
+    # seem to override the instance methods, somehow.
+    def limit
+        @timeout
     end
 
     # Set our code for returning a value.
