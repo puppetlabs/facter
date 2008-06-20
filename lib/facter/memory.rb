@@ -18,3 +18,28 @@ require 'facter/util/memory'
         end
     end
 end
+
+if Facter.value(:kernel) == "AIX"
+    swap = Facter::Util::Resolution.exec('swap -l')
+    swapfree, swaptotal = 0, 0
+    swap.each do |dev|
+        if dev =~ /^\/\S+\s.*\s+(\S+)MB\s+(\S+)MB/
+            swaptotal += $1.to_i
+            swapfree  += $2.to_i
+        end
+    end
+
+    Facter.add("SwapSize") do
+        confine :kernel => :aix
+        setcode do
+            Facter::Memory.scale_number(swaptotal.to_f,"MB")
+        end
+    end
+
+    Facter.add("SwapFree") do
+        confine :kernel => :aix
+        setcode do
+            Facter::Memory.scale_number(swapfree.to_f,"MB")
+        end
+    end
+end
