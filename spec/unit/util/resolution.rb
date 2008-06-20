@@ -18,11 +18,11 @@ describe Facter::Util::Resolution do
     end
 
     it "should support a timeout value" do
-        Facter::Util::Resolution.new("yay").should respond_to(:timeout=)
+        Facter::Util::Resolution.new("yay").should respond_to(:limit=)
     end
 
     it "should default to a timeout of 0.5 seconds" do
-        Facter::Util::Resolution.new("yay").timeout.should == 0.5
+        Facter::Util::Resolution.new("yay").limit.should == 0.5
     end
 
     describe "when setting the code" do
@@ -93,7 +93,7 @@ describe Facter::Util::Resolution do
 
             it "should timeout after the provided timeout" do
                 @resolve.expects(:warn)
-                @resolve.timeout = 0.1
+                @resolve.limit = 0.1
                 @resolve.setcode { sleep 2; raise "This is a test" }
 
                 @resolve.value.should be_nil

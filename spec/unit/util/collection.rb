@@ -64,7 +64,7 @@ describe Facter::Util::Collection do
             resolve = Facter::Util::Resolution.new(:myname) {}
             fact.expects(:add).returns resolve
 
-            @coll.add(:myname, :timeout => "myval") {}
+            @coll.add(:myname, :limit => "myval") {}
         end
 
         it "should not pass fact-specific options to resolutions" do
@@ -75,9 +75,9 @@ describe Facter::Util::Collection do
             fact.expects(:add).returns resolve
 
             fact.expects(:ldapname=).with("foo")
-            resolve.expects(:timeout=).with("myval")
+            resolve.expects(:limit=).with("myval")
 
-            @coll.add(:myname, :timeout => "myval", :ldapname => "foo") {}
+            @coll.add(:myname, :limit => "myval", :ldapname => "foo") {}
         end
 
         it "should fail if invalid options are provided" do

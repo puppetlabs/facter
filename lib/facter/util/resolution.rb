@@ -8,7 +8,7 @@ require 'facter/util/confine'
 require 'timeout'
 
 class Facter::Util::Resolution
-    attr_accessor :interpreter, :code, :name, :timeout
+    attr_accessor :interpreter, :code, :name, :limit
 
     def self.have_which
         if ! defined?(@have_which) or @have_which.nil?
@@ -62,7 +62,7 @@ class Facter::Util::Resolution
         @name = name
         @confines = []
         @value = nil
-        @timeout = 0.5
+        @limit = 0.5
     end
 
     # Return the number of confines.
@@ -100,7 +100,7 @@ class Facter::Util::Resolution
     def value
         result = nil
         begin
-            Timeout.timeout(timeout) do
+            Timeout.timeout(limit) do
                 if @code.is_a?(Proc)
                     result = @code.call()
                 else

@@ -1,4 +1,6 @@
 ?:
+    Changed 'timeout' option to 'limit' to avoid scope issue
+
     Fixes #1376 - Display memory facts for AIX
 
     Fixes #1334 - Forced Facter to use LANG=C
