@@ -8,10 +8,14 @@ module Facter::Manufacturer
 				return nil unless FileTest.exists?("/usr/sbin/dmidecode")
 		
 				output=%x{/usr/sbin/dmidecode 2>/dev/null}
-			when 'OpenBSD', 'NetBSD', 'FreeBSD'
+			when 'OpenBSD', 'FreeBSD'
 				return nil unless FileTest.exists?("/usr/local/sbin/dmidecode")
 		
 				output=%x{/usr/local/sbin/dmidecode 2>/dev/null}
+			when 'NetBSD'
+				return nil unless FileTest.exists?("/usr/pkg/sbin/dmidecode")
+
+				output=%x{/usr/pkg/sbin/dmidecode 2>/dev/null}
 		end
 		name.each_pair do |key,v|
 			v.each do |value|
