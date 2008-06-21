@@ -66,7 +66,7 @@ module Facter::IPAddress
 
    def self.get_interface_value_bsd(interface, label)
 
-    tmp1 = nil
+    tmp1 = []
 
     int_hash = {}
     output_int = %x{/sbin/ifconfig #{interface}}
@@ -85,12 +85,12 @@ module Facter::IPAddress
 
     if interface != "lo" && interface != "lo0"
       output_int.each { |s|
-        tmp1 = $1 if s =~ regex
+        tmp1.push($1) if s =~ regex
       }
     end
 
     if tmp1
-       value = tmp1
+       value = tmp1.shift
     end
 
    end
