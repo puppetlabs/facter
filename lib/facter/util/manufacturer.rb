@@ -16,6 +16,8 @@ module Facter::Manufacturer
 				return nil unless FileTest.exists?("/usr/pkg/sbin/dmidecode")
 
 				output=%x{/usr/pkg/sbin/dmidecode 2>/dev/null}
+            else
+                return
 		end
 		name.each_pair do |key,v|
 			v.each do |value|
