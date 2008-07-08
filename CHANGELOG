@@ -1,4 +1,6 @@
 ?:
+    Fixed #1400 - OperatingSystemRelease should now work on CentOS
+
     Changed 'timeout' option to 'limit' to avoid scope issue
 
     Fixes #1376 - Display memory facts for AIX
