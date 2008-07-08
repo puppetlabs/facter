@@ -29,10 +29,12 @@ end
 Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{CentOS}
     setcode do
-        release = Facter::Util::Resolution.exec('rpm -q centos-release')
-            if release =~ /release-(\d+)/
-                $1
-            end
+      centosrelease = Facter::Util::Resolution.exec('cat /etc/redhat-release | sed -e \'s/CentOS release//g\' -e \'s/(Final)//g\'')
+        if centosrelease =~ /^5^/
+          release = Facter::Util::Resolution.exec('rpm -q --qf \'%{VERSION}.%{RELEASE}\' centos-release | cut -d. -f1,2')
+        else
+          release = Facter::Util::Resolution.exec('cat /etc/redhat-release | sed -e \'s/CentOS release//g\' -e \'s/(Final)//g\'')
+        end
     end
 end
 
