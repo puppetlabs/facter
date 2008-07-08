@@ -25,13 +25,13 @@ module Facter::Manufacturer
 						Facter.add(value.chomp(':').gsub(' ','')) do
 							confine :kernel => [ :linux, :freebsd, :netbsd, :openbsd ]
 							setcode do
-							result
-						end
-					end
-				end
-			end
-		end
-	end
-end
+							    result
+						        end
+					        end
+				        end
+			        end
+		        end
+	        end
+        end
 end
 
