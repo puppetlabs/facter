@@ -35,6 +35,8 @@ project.mkgemtask do |gem|
     gem.bindir = "bin"                               # Use these for applications.
     gem.executables = ["facter"]
     gem.default_executable = "facter"
+
+    gem.author = "Luke Kanies"
 end
 
 if project.has?(:epm)
