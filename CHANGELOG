@@ -1,4 +1,6 @@
 1.5.0:
+    Fixed Rakefile to include additional files including tests et al
+
     Fixed #1400 - OperatingSystemRelease should now work on CentOS
 
     Changed 'timeout' option to 'limit' to avoid scope issue

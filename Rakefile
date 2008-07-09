@@ -18,9 +18,12 @@ project = Rake::RedLabProject.new("facter") do |p|
         'install.rb',
         '[A-Z]*',
         'bin/**/*', 
+        'lib/facter.rb',
         'lib/**/*.rb', 
         'test/**/*.rb',
-        'doc/**/*',
+        'spec/**/*',
+        'conf/**/*',
+        'documentation/**/*',
         'etc/*'
     ]
 
