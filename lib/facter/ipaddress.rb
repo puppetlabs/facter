@@ -149,3 +149,22 @@ Facter.add(:ipaddress) do
         ip
     end
 end
+
+Facter.add(:ipaddress) do
+    confine :kernel => %w{windows}
+    setcode do
+        ip = nil
+        output = %x{ipconfig}
+
+        output.split(/^\S/).each { |str|
+            if str =~ /IP Address.*: ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+                tmp = $1
+                unless tmp =~ /127\./
+                    ip = tmp
+                    break
+                end
+            end
+        }
+        ip
+    end
+end
