@@ -11,3 +11,11 @@ Facter.add(:hardwaremodel) do
         end
     end
 end
+
+Facter.add(:hardwaremodel) do
+    confine :operatingsystem => :windows
+    setcode do
+        require 'rbconfig'
+        Config::CONFIG['host_cpu']
+    end
+end
