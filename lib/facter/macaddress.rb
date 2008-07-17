@@ -63,3 +63,17 @@ Facter.add(:macaddress) do
         ether[0]
     end
 end
+
+Facter.add(:macaddress) do
+    confine :kernel => %w(windows)
+    setcode do
+	ether = []
+	output = %x{ipconfig /all}
+	output.split(/\r\n/).each  do |str|
+	    if str =~  /.*Physical Address.*: (\w{1,2}-\w{1,2}-\w{1,2}-\w{1,2}-\w{1,2}-\w{1,2})/
+		ether.push($1.gsub(/-/, ":"))
+	    end
+	end
+	ether[0]
+    end
+end
