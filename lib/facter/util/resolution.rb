@@ -6,14 +6,19 @@
 require 'facter/util/confine'
 
 require 'timeout'
+require 'rbconfig'
 
 class Facter::Util::Resolution
     attr_accessor :interpreter, :code, :name, :timeout
 
     def self.have_which
         if ! defined?(@have_which) or @have_which.nil?
-            %x{which which 2>/dev/null}
-            @have_which = ($? == 0)
+            if Config::CONFIG['host_os'] =~ /mswin/
+                @have_which = false
+            else
+                %x{which which 2>/dev/null}
+                @have_which = ($? == 0)
+            end
         end
         @have_which
     end
