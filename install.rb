@@ -30,45 +30,57 @@
 # 5) Install all library files ending in .rb from lib/ into Ruby's
 #    site_lib/version directory.
 #
-# $Id: install.rb,v 1.6 2004/08/08 20:33:09 austin Exp $
 #++
 
 require 'rbconfig'
 require 'find'
 require 'fileutils'
+require 'ftools' # apparently on some system ftools doesn't get loaded
 require 'optparse'
 require 'ostruct'
 
-InstallOptions = OpenStruct.new
-
-$loadedrdoc = false
-
 begin
     require 'rdoc/rdoc'
-    $loadedrdoc = true
-rescue LoadError => detail
-    $stderr.puts "Could not load rdoc/rdoc: %s" % detail
-    InstallOptions.rdoc = false
+    $haverdoc = true
+rescue LoadError
+    puts "Missing rdoc; skipping documentation"
+    $haverdoc = false
 end
 
+begin
+    if $haverdoc
+       rst2man = %x{which rst2man.py}
+       $haveman = true
+    else
+       $haveman = false
+    end
+rescue
+    puts "Missing rst2man; skipping man page creation"
+    $haveman = false
+end
+
+PREREQS = %w{openssl facter xmlrpc/client xmlrpc/server cgi}
+
+InstallOptions = OpenStruct.new
 
 def glob(list)
-  g = list.map { |i| Dir.glob(i) }
-  g.flatten!
-  g.compact!
-  g.reject! { |e| e =~ /CVS/ }
-  g
+    g = list.map { |i| Dir.glob(i) }
+    g.flatten!
+    g.compact!
+    g.reject! { |e| e =~ /\.svn/ }
+    g
 end
 
-  # Set these values to what you want installed.
-#bins  = glob(%w{bin/**/*}).reject { |e| e =~ /\.(bat|cmd)$/ }
-bins  = ["bin/facter"]
-rdoc  = glob(%w{bin/**/* lib/**/*.rb README CHANGELOG INSTALL}).reject { |e| e=~ /\.(bat|cmd)$/ }
-ri    = glob(%w(bin/**/* lib/**/*.rb)).reject { |e| e=~ /\.(bat|cmd)$/ }
-libs  = glob(%w{lib/**/*.rb})
+# Set these values to what you want installed.
+sbins = glob(%w{sbin/*})
+bins  = glob(%w{bin/*})
+rdoc  = glob(%w{bin/* sbin/* lib/**/*.rb README README-library CHANGELOG TODO Install}).reject { |e| e=~ /\.(bat|cmd)$/ }
+ri    = glob(%w(bin/*.rb sbin/* lib/**/*.rb)).reject { |e| e=~ /\.(bat|cmd)$/ }
+man   = glob(%w{man/man8/*})
+libs  = glob(%w{lib/**/*.rb lib/**/*.py})
 tests = glob(%w{tests/**/*.rb})
 
-def do_bins(bins, target, strip = 'bin/')
+def do_bins(bins, target, strip = 's?bin/')
   bins.each do |bf|
     obf = bf.gsub(/#{strip}/, '')
     install_binfile(bf, obf, target)
@@ -79,26 +91,64 @@ def do_libs(libs, strip = 'lib/')
   libs.each do |lf|
     olf = File.join(InstallOptions.site_dir, lf.gsub(/#{strip}/, ''))
     op = File.dirname(olf)
-    #if File.respond_to?(:makedirs)
-        FileUtils.makedirs(op)
-    #else
-    #    recmkdir(op)
-    #end
+    File.makedirs(op, true)
     File.chmod(0755, op)
-    FileUtils.install(lf, olf, :mode => 0755, :verbose => true)
+    File.install(lf, olf, 0755, true)
   end
+end
+
+def do_man(man, strip = 'man/')
+  man.each do |mf|
+    omf = File.join(InstallOptions.man_dir, mf.gsub(/#{strip}/, ''))
+    om = File.dirname(omf)
+    File.makedirs(om, true)
+    File.chmod(0644, om)
+    File.install(mf, omf, 0644, true)
+    gzip = %x{which gzip}
+    gzip.chomp!
+    %x{#{gzip} -f #{omf}}
+  end
+end
+
+# Verify that all of the prereqs are installed
+def check_prereqs
+    PREREQS.each { |pre|
+        begin
+            require pre
+        rescue LoadError
+            puts "Could not load %s; cannot install" % pre
+            exit -1
+        end
+    }
 end
 
 ##
 # Prepare the file installation.
 #
 def prepare_installation
-  InstallOptions.rdoc  = true
-  if RUBY_PLATFORM == "i386-mswin32"
-    InstallOptions.ri  = false
+  # Only try to do docs if we're sure they have rdoc
+  if $haverdoc
+      InstallOptions.rdoc  = true
+      if RUBY_PLATFORM == "i386-mswin32"
+        InstallOptions.ri  = false
+      else
+        InstallOptions.ri  = true
+      end
   else
-    InstallOptions.ri  = true
+      InstallOptions.rdoc  = false
+      InstallOptions.ri  = false
   end
+
+
+  if $haveman
+      InstallOptions.man = true
+      if RUBY_PLATFORM == "i386-mswin32"
+        InstallOptions.man  = false
+      end
+  else
+      InstallOptions.man = false
+  end
+
   InstallOptions.tests = true
 
   ARGV.options do |opts|
@@ -110,8 +160,26 @@ def prepare_installation
     opts.on('--[no-]ri', 'Prevents the creation of RI output.', 'Default off on mswin32.') do |onri|
       InstallOptions.ri = onri
     end
+    opts.on('--[no-]man', 'Presents the creation of man pages.', 'Default on.') do |onman|
+    InstallOptions.man = onman
+    end
     opts.on('--[no-]tests', 'Prevents the execution of unit tests.', 'Default on.') do |ontest|
       InstallOptions.tests = ontest
+    end
+    opts.on('--destdir[=OPTIONAL]', 'Installation prefix for all targets', 'Default essentially /') do |destdir|
+      InstallOptions.destdir = destdir
+    end
+    opts.on('--bindir[=OPTIONAL]', 'Installation directory for binaries', 'overrides Config::CONFIG["bindir"]') do |bindir|
+      InstallOptions.bindir = bindir
+    end
+    opts.on('--sbindir[=OPTIONAL]', 'Installation directory for system binaries', 'overrides Config::CONFIG["sbindir"]') do |sbindir|
+      InstallOptions.sbindir = sbindir
+    end
+    opts.on('--sitelibdir[=OPTIONAL]', 'Installation directory for libraries', 'overrides Config::CONFIG["sitelibdir"]') do |sitelibdir|
+      InstallOptions.sitelibdir = sitelibdir
+    end
+    opts.on('--mandir[=OPTIONAL]', 'Installation directory for man pages', 'overrides Config::CONFIG["mandir"]') do |mandir|
+      InstallOptions.mandir = mandir
     end
     opts.on('--quick', 'Performs a quick installation. Only the', 'installation is done.') do |quick|
       InstallOptions.rdoc   = false
@@ -132,21 +200,11 @@ def prepare_installation
     opts.parse!
   end
 
-  bds = [".", ENV['TMP'], ENV['TEMP'], "/tmp"]
+  tmpdirs = [".", ENV['TMP'], ENV['TEMP'], "/tmp", "/var/tmp"]
 
   version = [Config::CONFIG["MAJOR"], Config::CONFIG["MINOR"]].join(".")
-  ld = File.join(Config::CONFIG["libdir"], "ruby", version)
+  libdir = File.join(Config::CONFIG["libdir"], "ruby", version)
 
-  sd = Config::CONFIG["sitelibdir"]
-  if sd.nil?
-    sd = $:.find { |x| x =~ /site_ruby/ }
-    if sd.nil?
-      sd = File.join(ld, "site_ruby")
-    elsif sd !~ Regexp.quote(version)
-      sd = File.join(sd, version)
-    end
-  end
-  
   # Mac OS X 10.5 declares bindir and sbindir as
   # /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin
   # /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/sbin
@@ -155,66 +213,134 @@ def prepare_installation
     Config::CONFIG['bindir'] = "/usr/bin"
     Config::CONFIG['sbindir'] = "/usr/sbin"
   end
-
-  if (destdir = ENV['DESTDIR'])
-    bd = "#{destdir}#{Config::CONFIG['bindir']}"
-    sd = "#{destdir}#{sd}"
-    bds << bd
-
-    FileUtils.makedirs(bd)
-    FileUtils.makedirs(sd)
+  
+  if not InstallOptions.bindir.nil?
+    bindir = InstallOptions.bindir
   else
-    bd = Config::CONFIG['bindir']
-    bds << Config::CONFIG['bindir']
+    bindir = Config::CONFIG['bindir']
+  end
+  
+  if not InstallOptions.sbindir.nil?
+    sbindir = InstallOptions.sbindir
+  else
+    sbindir = Config::CONFIG['sbindir']
+  end
+  
+  if not InstallOptions.sitelibdir.nil?
+    sitelibdir = InstallOptions.sitelibdir
+  else
+    sitelibdir = Config::CONFIG["sitelibdir"]
+    if sitelibdir.nil?
+      sitelibdir = $:.find { |x| x =~ /site_ruby/ }
+      if sitelibdir.nil?
+        sitelibdir = File.join(libdir, "site_ruby")
+      elsif sitelibdir !~ Regexp.quote(version)
+        sitelibdir = File.join(sitelibdir, version)
+      end
+    end
+  end
+  
+  if not InstallOptions.mandir.nil?
+    mandir = InstallOptions.mandir
+  else
+    mandir = Config::CONFIG['mandir'] 
   end
 
-  InstallOptions.bin_dirs = bds.compact
-  InstallOptions.site_dir = sd
-  InstallOptions.bin_dir  = bd
-  InstallOptions.lib_dir  = ld
+  # To be deprecated once people move over to using --destdir option
+  if (destdir = ENV['DESTDIR'])
+    bindir = "#{destdir}#{bindir}"
+    sbindir = "#{destdir}#{sbindir}"
+    mandir = "#{destdir}#{mandir}"
+    sitelibdir = "#{destdir}#{sitelibdir}"
 
-  unless $loadedrdoc
-      InstallOptions.rdoc  = false
-      InstallOptions.ri  = false
+    FileUtils.makedirs(bindir)
+    FileUtils.makedirs(sbindir)
+    FileUtils.makedirs(mandir)
+    FileUtils.makedirs(sitelibdir)
+  # This is the new way forward
+  elsif (destdir = InstallOptions.destdir)
+    bindir = "#{destdir}#{bindir}"
+    sbindir = "#{destdir}#{sbindir}"
+    mandir = "#{destdir}#{mandir}"
+    sitelibdir = "#{destdir}#{sitelibdir}"
+
+    FileUtils.makedirs(bindir)
+    FileUtils.makedirs(sbindir)
+    FileUtils.makedirs(mandir)
+    FileUtils.makedirs(sitelibdir)
   end
+
+  tmpdirs << bindir
+
+  InstallOptions.tmp_dirs = tmpdirs.compact
+  InstallOptions.site_dir = sitelibdir
+  InstallOptions.bin_dir  = bindir
+  InstallOptions.sbin_dir = sbindir
+  InstallOptions.lib_dir  = libdir
+  InstallOptions.man_dir  = mandir
 end
 
 ##
 # Build the rdoc documentation. Also, try to build the RI documentation.
 #
 def build_rdoc(files)
-  r = RDoc::RDoc.new
-  r.document(["--main", "README", "--title", "Facter -- A Fact Collecter",
-              "--line-numbers"] + files)
-
-rescue RDoc::RDocError => e
-  $stderr.puts e.message
-rescue Exception => e
-  $stderr.puts "Couldn't build RDoc documentation\n#{e.message}"
+    return unless $haverdoc
+    begin
+        r = RDoc::RDoc.new
+        r.document(["--main", "README", "--title",
+            "Puppet -- Site Configuration Management", "--line-numbers"] + files)
+    rescue RDoc::RDocError => e
+        $stderr.puts e.message
+    rescue Exception => e
+        $stderr.puts "Couldn't build RDoc documentation\n#{e.message}"
+    end
 end
 
 def build_ri(files)
-  ri = RDoc::RDoc.new
-  ri.document(["--ri-site", "--merge"] + files)
-rescue RDoc::RDocError => e
-  $stderr.puts e.message
-rescue Exception => e
-  $stderr.puts e.class
-  $stderr.puts "Couldn't build Ri documentation\n#{e.message}"
+    return unless $haverdoc
+    begin
+        ri = RDoc::RDoc.new
+        #ri.document(["--ri-site", "--merge"] + files)
+        ri.document(["--ri-site"] + files)
+    rescue RDoc::RDocError => e
+        $stderr.puts e.message
+    rescue Exception => e
+        $stderr.puts "Couldn't build Ri documentation\n#{e.message}"
+        $stderr.puts "Continuing with install..."
+    end
+end
+
+def build_man(bins)
+    return unless $haveman
+    begin
+        # Locate rst2man
+        rst2man = %x{which rst2man.py}
+        rst2man.chomp!
+        # Create puppet.conf.8 man page
+        %x{bin/puppetdoc --reference configuration > ./puppet.conf.rst}
+        %x{#{rst2man} ./puppet.conf.rst ./man/man8/puppet.conf.8}
+        File.unlink("./puppet.conf.rst")
+
+        # Create binary man pages
+        bins.each do |bin|
+          b = bin.gsub( "bin/", "")
+          %x{#{bin} --help > ./#{b}.rst}
+          %x{#{rst2man} ./#{b}.rst ./man/man8/#{b}.8}
+          File.unlink("./#{b}.rst")
+        end
+    rescue SystemCallError
+        $stderr.puts "Couldn't build man pages: " + $!
+        $stderr.puts "Continuing with install..."
+    end
 end
 
 def run_tests(test_list)
 	begin
 		require 'test/unit/ui/console/testrunner'
-		require 'test/unit'
-
-        unless defined? Test::Unit::TestCase
-            raise LoadError, "Could not find unit test library"
-        end
 		$:.unshift "lib"
 		test_list.each do |test|
-            next if File.directory?(test)
-            require test
+		next if File.directory?(test)
+		require test
 		end
 
 		tests = []
@@ -236,8 +362,8 @@ end
 # windows, we add an '.rb' extension and let file associations do their stuff.
 def install_binfile(from, op_file, target)
   tmp_dir = nil
-  InstallOptions.bin_dirs.each do |t|
-    if File.directory?(t) and File.writable_real?(t)
+  InstallOptions.tmp_dirs.each do |t|
+    if File.directory?(t) and File.writable?(t)
       tmp_dir = t
       break
     end
@@ -251,12 +377,15 @@ def install_binfile(from, op_file, target)
     File.open(tmp_file, "w") do |op|
       ruby = File.join(Config::CONFIG['bindir'], Config::CONFIG['ruby_install_name'])
       op.puts "#!#{ruby}"
-      op.write ip.read
+      contents = ip.readlines
+      if contents[0] =~ /^#!/
+          contents.shift
+      end
+      op.write contents.join()
     end
   end
 
-  # We don't want bat files on darwin
-  if Config::CONFIG["target_os"] =~ /win/io and Config::CONFIG["target_os"] !~ /darwin/
+  if Config::CONFIG["target_os"] =~ /win/io and Config::CONFIG["target_os"] !~ /darwin/io
     installed_wrapper = false
 
     if File.exists?("#{from}.bat")
@@ -296,17 +425,14 @@ goto done
 :done
 EOS
 
+check_prereqs
 prepare_installation
 
 run_tests(tests) if InstallOptions.tests
 #build_rdoc(rdoc) if InstallOptions.rdoc
 #build_ri(ri) if InstallOptions.ri
-bd = nil
-#if (destdir = ENV['DESTDIR'])
-#    bd = "#{destdir}#{Config::CONFIG['bindir']}"
-#else
-#    bd = "#{Config::CONFIG['bindir']}"
-#end
-
+#build_man(bins) if InstallOptions.man
+do_bins(sbins, InstallOptions.sbin_dir)
 do_bins(bins, InstallOptions.bin_dir)
 do_libs(libs)
+do_man(man)
