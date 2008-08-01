@@ -1,4 +1,7 @@
 1.5.x:
+    Modified the operatingsystem fact for Debian so it looks in
+    /etc/debian_version instead of /proc/version.
+
     Fixes #1467 - macaddress not set on Ubuntu
 
 1.5.0:
