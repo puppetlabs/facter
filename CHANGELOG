@@ -1,4 +1,6 @@
 1.5.x:
+    Added virtual fact
+
     Modified the operatingsystem fact for Debian so it looks in
     /etc/debian_version instead of /proc/version.
 
