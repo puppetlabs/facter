@@ -61,8 +61,8 @@ function prepare_package() {
   # As we can't specify to follow symlinks from the command line, we have
   # to go through the hassle of creating an Info.plist file for packagemaker
   # to look at for package creation and substitue the version strings out.
-  # Major/Minor versions can only be integers, so we have "0" and "245" for
-  # puppet version 0.24.5
+  # Major/Minor versions can only be integers, so we have "1" and "50" for
+  # facter version 1.5
   # Note too that for 10.5 compatibility this Info.plist *must* be set to 
   # follow symlinks.
   VER1=$(echo ${facter_version} | awk -F "." '{print $1}')
@@ -76,18 +76,18 @@ function prepare_package() {
   sed -i '' "s/{MINORVERSION}/${minor_version}/g" "${pkgtemp}/${PROTO_PLIST}"
   
   # We need to create a preflight script to remove traces of previous
-  # puppet installs due to limitations in Apple's pkg format.
+  # facter installs due to limitations in Apple's pkg format.
   mkdir "${pkgtemp}/scripts"
   cp "${facter_root}/conf/osx/${PREFLIGHT}" "${pkgtemp}/scripts"
   
   # substitute in the sitelibdir specified above on the assumption that this
-  # is where any previous puppet install exists that should be cleaned out.
+  # is where any previous facter install exists that should be cleaned out.
   sed -i '' "s|{SITELIBDIR}|${SITELIBDIR}|g" "${pkgtemp}/scripts/${PREFLIGHT}"
   chmod 0755 "${pkgtemp}/scripts/${PREFLIGHT}"
 }
 
 function create_package() {
-  rm -fr "$(pwd)/facter-${puppet_version}.pkg"
+  rm -fr "$(pwd)/facter-${facter_version}.pkg"
   echo "Building package"
   echo "Note that packagemaker is reknowned for spurious errors. Don't panic."
   "${PACKAGEMAKER}" --root "${pkgroot}" \
