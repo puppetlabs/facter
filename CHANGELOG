@@ -1,4 +1,6 @@
 1.5.x:
+    Fixes #1492 - added kernelversion fact
+
     Added virtual fact
 
     Modified the operatingsystem fact for Debian so it looks in
