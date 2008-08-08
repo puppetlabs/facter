@@ -54,7 +54,13 @@ module Facter::IPAddress
      
       if interface != "lo" && interface != "lo0"
         output_int.each { |s|
-           tmp1.push($1) if s =~ regex
+           if s =~ regex
+               value = $1
+               if label == 'netmask' && Facter.value(:kernel) == "SunOS"
+                   value = value.scan(/../).collect do |byte| byte.to_i(16) end.join('.') 
+               end
+               tmp1.push(value)
+           end
        }
       end
 
