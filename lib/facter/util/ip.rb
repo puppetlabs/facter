@@ -4,13 +4,8 @@ module Facter::IPAddress
     
      int = nil
     
-     case Facter.value(:kernel)
-        when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD'
-           output = %x{/sbin/ifconfig -a}       
-        when 'SunOS'
-           output = %x{/usr/sbin/ifconfig -a} 
-     end
-    
+     output =  Facter::IPAddress.get_all_interface_output()
+
      # We get lots of warnings on platforms that don't get an output
      # made.
      if output
@@ -20,7 +15,18 @@ module Facter::IPAddress
      end
     
     end
-    
+
+    def self.get_all_interface_output
+        case Facter.value(:kernel)
+            when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD'
+                output = %x{/sbin/ifconfig -a}
+            when 'SunOS'
+                output = %x{/usr/sbin/ifconfig -a}
+        end
+        output
+    end
+
+
     def self.get_interface_value(interface, label)
     
     tmp1 = []
