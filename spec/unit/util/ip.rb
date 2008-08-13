@@ -26,5 +26,15 @@ describe Facter::IPAddress do
        Facter::IPAddress.should respond_to(:get_interface_value)
     end
 
+    it "should return a human readable netmask on Solaris" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/solaris_ifconfig_single_interface"
+        solaris_ifconfig_interface = File.new(sample_output_file).read()
+
+        Facter::IPAddress.expects(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
+        Facter.stubs(:value).with(:kernel).returns("SunOS")
+
+        Facter::IPAddress.get_interface_value("e1000g0", "netmask").should == "255.255.255.0"
+    end
+
 end
 
