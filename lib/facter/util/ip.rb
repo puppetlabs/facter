@@ -4,13 +4,8 @@ module Facter::IPAddress
     
      int = nil
     
-     case Facter.value(:kernel)
-        when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD'
-           output = %x{/sbin/ifconfig -a}       
-        when 'SunOS'
-           output = %x{/usr/sbin/ifconfig -a} 
-     end
-    
+     output =  Facter::IPAddress.get_all_interface_output()
+
      # We get lots of warnings on platforms that don't get an output
      # made.
      if output
@@ -20,24 +15,43 @@ module Facter::IPAddress
      end
     
     end
+
+    def self.get_all_interface_output
+        case Facter.value(:kernel)
+            when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD'
+                output = %x{/sbin/ifconfig -a}
+            when 'SunOS'
+                output = %x{/usr/sbin/ifconfig -a}
+        end
+        output
+    end
+
+    def self.get_single_interface_output(interface)
+        output = ""
+        case Facter.value(:kernel)
+            when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD'
+                    output = %x{/sbin/ifconfig #{interface}}
+            when 'SunOS'
+            output = %x{/usr/sbin/ifconfig #{interface}}
+        end
+        output
+    end
+
+
+    def self.get_interface_value(interface, label)
     
-    def self.get_interface_value_nonbsd(interface, label)
-    
-    tmp1 = nil
+    tmp1 = []
 
     case Facter.value(:kernel)
       when 'Linux'
-       output_int = %x{/sbin/ifconfig #{interface}}
        addr = /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
        mac  = /(?:ether|HWaddr)\s+(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
        mask = /Mask:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
      when 'OpenBSD', 'NetBSD', 'FreeBSD'
-       output_int = %x{/sbin/ifconfig #{interface}}
        addr = /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
        mac  = /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/
        mask = /netmask\s+(\w{10})/
     when 'SunOS'
-       output_int = %x{/usr/sbin/ifconfig #{interface}}
        addr = /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
        mac  = /(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/
        mask = /netmask\s+(\w{8})/
@@ -51,48 +65,24 @@ module Facter::IPAddress
       when 'netmask'
        regex = mask
     end 
+
+    output_int = get_single_interface_output(interface)
      
       if interface != "lo" && interface != "lo0"
         output_int.each { |s|
-           tmp1 = $1 if s =~ regex
+           if s =~ regex
+               value = $1
+               if label == 'netmask' && Facter.value(:kernel) == "SunOS"
+                   value = value.scan(/../).collect do |byte| byte.to_i(16) end.join('.') 
+               end
+               tmp1.push(value)
+           end
        }
       end
 
       if tmp1 
-        value = tmp1
+        value = tmp1.shift
       end
 
    end
-
-   def self.get_interface_value_bsd(interface, label)
-
-    tmp1 = []
-
-    int_hash = {}
-    output_int = %x{/sbin/ifconfig #{interface}}
-    addr = /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-    mac  = /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/
-    mask = /netmask\s+(\w{10})/
-
-    case label
-      when 'ipaddress'
-       regex = addr
-      when 'macaddress'
-       regex = mac
-      when 'netmask'
-       regex = mask
-    end
-
-    if interface != "lo" && interface != "lo0"
-      output_int.each { |s|
-        tmp1.push($1) if s =~ regex
-      }
-    end
-
-    if tmp1
-       value = tmp1.shift
-    end
-
-   end
 end
-
