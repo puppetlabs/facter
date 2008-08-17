@@ -56,5 +56,23 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
+    confine :operatingsystem => %w{SLES}
+    setcode do
+        releasefile = Facter::Util::Resolution.exec('cat /etc/SuSE-release')
+        if releasefile =~ /^VERSION\s*=\s*(\d+)/
+            releasemajor = $1
+            if releasefile =~ /^PATCHLEVEL\s*=\s*(\d+)/
+                releaseminor = $1
+            else
+                releaseminor = 0
+            end
+            releasemajor + "." + releaseminor
+        else
+            "unknown"
+        end
+    end
+end
+
+Facter.add(:operatingsystemrelease) do
     setcode do Facter[:kernelrelease].value end
 end

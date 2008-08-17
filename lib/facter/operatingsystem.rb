@@ -26,7 +26,12 @@ Facter.add(:operatingsystem) do
                 "RedHat"
             end
         elsif FileTest.exists?("/etc/SuSE-release")
-            "SuSE"
+            txt = File.read("/etc/SuSE-release")
+            if txt =~ /^SUSE LINUX Enterprise Server/i
+                "SLES"
+            else
+                "SuSE"
+            end
         end
     end
 end
