@@ -67,7 +67,7 @@ class Facter::Util::Resolution
         @name = name
         @confines = []
         @value = nil
-        @timeout = 0.5
+        @timeout = 0
     end
 
     # Return the number of confines.
