@@ -1,4 +1,8 @@
 1.5.x:
+    Fixed #1495 - CentOS version detection is now better.
+
+    Fixed #1422 - Facter now defaults to 0 timeout.
+
     Fixes #1492 - added kernelversion fact
 
     Added virtual fact
