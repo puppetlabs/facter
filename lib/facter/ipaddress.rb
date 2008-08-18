@@ -1,4 +1,4 @@
-Facter.add(:ipaddress, :ldapname => "iphostnumber") do
+Facter.add(:ipaddress, :ldapname => "iphostnumber", :timeout => 2) do
     setcode do
         require 'resolv'
 
@@ -19,7 +19,7 @@ Facter.add(:ipaddress, :ldapname => "iphostnumber") do
     end
 end
 
-Facter.add(:ipaddress) do
+Facter.add(:ipaddress, :timeout => 2) do
     setcode do
         if hostname = Facter.value(:hostname)
             # we need Hostname to exist for this to work

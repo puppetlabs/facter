@@ -1,4 +1,6 @@
 1.5.x:
+    Set the timeout the host-based and resolve-based resolutions to 2.
+
     Fixed #1495 - CentOS version detection is now better.
 
     Fixed #1422 - Facter now defaults to 0 timeout.
