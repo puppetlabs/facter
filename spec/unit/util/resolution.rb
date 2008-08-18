@@ -21,8 +21,8 @@ describe Facter::Util::Resolution do
         Facter::Util::Resolution.new("yay").should respond_to(:timeout=)
     end
 
-    it "should default to a timeout of 0.5 seconds" do
-        Facter::Util::Resolution.new("yay").limit.should == 0.5
+    it "should default to a timeout of 0 seconds" do
+        Facter::Util::Resolution.new("yay").limit.should == 0
     end
 
     it "should provide a 'limit' method that returns the timeout" do
