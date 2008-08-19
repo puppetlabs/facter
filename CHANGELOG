@@ -1,4 +1,6 @@
 1.5.x:
+    Added a Process.waitall thread when there's a timeout, to avoid zombies.
+
     Set the timeout the host-based and resolve-based resolutions to 2.
 
     Fixed #1495 - CentOS version detection is now better.

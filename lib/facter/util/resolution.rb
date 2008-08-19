@@ -121,6 +121,11 @@ class Facter::Util::Resolution
             end
         rescue Timeout::Error => detail
             warn "Timed out seeking value for %s" % self.name
+
+            # This call avoids zombies -- basically, create a thread that will
+            # dezombify all of the child processes that we're ignoring because
+            # of the timeout.
+            Thread.new { Process.waitall }
             return nil
         end
 

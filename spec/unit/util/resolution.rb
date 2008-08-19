@@ -112,6 +112,17 @@ describe Facter::Util::Resolution do
 
                 @resolve.value.should be_nil
             end
+
+            it "should waitall to avoid zombies if the timeout is exceeded" do
+                @resolve.stubs(:warn)
+                @resolve.timeout = 0.1
+                @resolve.setcode { sleep 2; raise "This is a test" }
+
+                Thread.expects(:new).yields
+                Process.expects(:waitall)
+
+                @resolve.value
+            end
         end
     end
 
