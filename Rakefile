@@ -48,3 +48,9 @@ if project.has?(:epm)
         task.rubylibs = FileList.new('lib/**/*')          
     end
 end
+
+task :archive do
+    raise ArgumentError, "You must specify the archive name by setting ARCHIVE; e.g., ARCHIVE=1.5.1rc1" unless archive = ENV["ARCHIVE"]
+
+    sh "git archive --format=tar  --prefix=facter-#{archive}/ HEAD | gzip -c > facter-#{archive}.tgz"
+end
