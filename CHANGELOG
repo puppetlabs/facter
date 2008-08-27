@@ -1,4 +1,4 @@
-1.5.x:
+1.5.1:
     Added a Process.waitall thread when there's a timeout, to avoid zombies.
 
     Set the timeout the host-based and resolve-based resolutions to 2.
@@ -15,6 +15,27 @@
     /etc/debian_version instead of /proc/version.
 
     Fixes #1467 - macaddress not set on Ubuntu
+
+    Adding a rake task for creating an archive.
+
+    Adding better SuSE detection for both operatingsystem and release.
+
+    Add sample test and strawman solution for IP parsing code
+
+    Add module level tests for Facter::IPAddress
+
+    Fixed #1425 - Solaris
+
+    Feature #1487: Package creation scripts for Mac OS X
+
+    Feature #1478: Allow specification of --bindir --sbindir --sitelibdir --mandir
+
+    Feature #1475: CONFIG['bindir'] CONFIG['sbindir'] have undesirable defaults on
+
+    Fixes #1467 - macaddress not set on Ubuntu
+
+    Enabled a number of Windows facts - operating system, domain, ipaddress, macaddress, 
+    kernel, ipconfig and others 
 
 1.5.0:
     Fixed Rakefile to include additional files including tests et al
