@@ -17,7 +17,7 @@ end
 case Facter.value(:kernel) 
  when 'SunOS', 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD'
   Facter::IPAddress.get_interfaces.each do |interface|
-    mi = interface.gsub(':', '_')
+    mi = interface.gsub('/:|\./', '_')
 
     Facter.add("ipaddress_" + mi) do
         confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
