@@ -1,4 +1,6 @@
 1.5.2:
+    Fixed #1562 - Removed facter from PREREQS
+
     Fixed #1558 - Updated virtual fact for xenu and xen0
 
     Fixed #1555 - Ddded operatingsystemrelease for Solaris

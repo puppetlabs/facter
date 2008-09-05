@@ -59,7 +59,7 @@ rescue
     $haveman = false
 end
 
-PREREQS = %w{openssl facter xmlrpc/client xmlrpc/server cgi}
+PREREQS = %w{openssl xmlrpc/client xmlrpc/server cgi}
 
 InstallOptions = OpenStruct.new
 
