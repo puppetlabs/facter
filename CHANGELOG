@@ -1,7 +1,9 @@
 1.5.2:
-    Fixed #1555 - added operatingsystemrelease for Solaris
+    Fixed #1558 - Updated virtual fact for xenu and xen0
 
-    Fixed #1559 - update to dmidecode fact
+    Fixed #1555 - Ddded operatingsystemrelease for Solaris
+
+    Fixed #1559 - Update to dmidecode fact
 
 1.5.1:
     Added a Process.waitall thread when there's a timeout, to avoid zombies.
