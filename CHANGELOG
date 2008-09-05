@@ -1,6 +1,9 @@
-1.5.1:
+1.5.2:
+    Fixed #1555 - added operatingsystemrelease for Solaris
+
     Fixed #1559 - update to dmidecode fact
 
+1.5.1:
     Added a Process.waitall thread when there's a timeout, to avoid zombies.
 
     Set the timeout the host-based and resolve-based resolutions to 2.
