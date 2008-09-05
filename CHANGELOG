@@ -1,4 +1,6 @@
 1.5.1:
+    Fixed #1559 - update to dmidecode fact
+
     Added a Process.waitall thread when there's a timeout, to avoid zombies.
 
     Set the timeout the host-based and resolve-based resolutions to 2.
