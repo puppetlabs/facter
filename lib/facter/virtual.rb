@@ -11,12 +11,12 @@ Facter.add("virtual") do
       result = "openvz"
     end
 
-    if FileTest.exists?("/proc/sys/xen/independent_wallclock")
-      result = "xenu"
-    elsif FileTest.exists?("/proc/xen/capabilities")
+    if FileTest.exists?("/proc/xen/capabilities") && FileTest.readable?("/proc/xen/capabilities")
       txt = File.read("/proc/xen/capabilities")
       if txt =~ /control_d/i
         result = "xen0"
+      else
+        result = "xenu" 
       end
     end
 

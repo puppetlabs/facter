@@ -22,8 +22,8 @@ module Facter::Manufacturer
 		name.each_pair do |key,v|
 			v.each do |value|
 				output.split("Handle").each do |line|
-					if line =~ /#{key}/  and line =~ /#{value} (\w.*)\n*./
-						result = $1
+				       if line =~ /#{key}/  and line =~ /#{value} ([-\w].*)\n*./
+                                                result = $1
 						Facter.add(value.chomp(':').gsub(' ','')) do
 							confine :kernel => [ :linux, :freebsd, :netbsd, :openbsd ]
 							setcode do
