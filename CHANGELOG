@@ -1,6 +1,7 @@
 1.5.x:
-    Fixed #1569 - createpackage.rb bug
+    Fixed #1569 - createpackage.sh bug
 
+    Fixed #1567 - createpackage.sh output
 1.5.2:
     Fixed #1562 - Removed facter from PREREQS
 
