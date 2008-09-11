@@ -49,7 +49,8 @@ function find_facter_root() {
 
 function install_facter() {
   echo "Installing Facter to ${pkgroot}"
-  "${installer}" --destdir="${pkgroot}" --bindir="${BINDIR}" --sitelibdir="${SITELIBDIR}" &> /dev/null
+  cd "$facter_root"
+  ./"${INSTALLRB}" --destdir="${pkgroot}" --bindir="${BINDIR}" --sitelibdir="${SITELIBDIR}" &> /dev/null
   chown -R root:admin "${pkgroot}"
 }
 
