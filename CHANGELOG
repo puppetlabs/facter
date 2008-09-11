@@ -2,6 +2,9 @@
     Fixed #1569 - createpackage.sh bug
 
     Fixed #1567 - createpackage.sh output
+
+    Fixed #1547 - finally killed dots in IP address facts
+
 1.5.2:
     Fixed #1562 - Removed facter from PREREQS
 
