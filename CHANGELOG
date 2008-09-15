@@ -1,4 +1,6 @@
 1.5.x:
+    Fixed #1575 - CentOS fix for Facter SPEC file
+
     Fixed #1569 - createpackage.sh bug
 
     Fixed #1567 - createpackage.sh output
