@@ -37,6 +37,25 @@ module Facter::IPAddress
         output
     end
 
+    def self.get_bonding_master(interface)
+        if Facter.value(:kernel) != 'Linux'
+            return nil
+        end
+        # We need ip instead of ifconfig because it will show us
+        # the bonding master device.
+	if not FileTest.executable?("/sbin/ip")
+            return nil
+        end
+        regex = /SLAVE[,>].* (bond[0-9]+)/
+	ethbond = regex.match(%x{/sbin/ip link show #{interface}})
+	if ethbond
+            device = ethbond[1]
+        else
+            device = nil
+        end
+        device
+    end
+        
 
     def self.get_interface_value(interface, label)
     
@@ -66,23 +85,33 @@ module Facter::IPAddress
        regex = mask
     end 
 
-    output_int = get_single_interface_output(interface)
+    # Linux changes the MAC address reported via ifconfig when an ethernet interface
+    # becomes a slave of a bonding device to the master MAC address.
+    # We have to dig a bit to get the original/real MAC address of the interface.
+    bonddev = get_bonding_master(interface)
+    if label == 'macaddress' and bonddev
+        bondinfo = IO.readlines("/proc/net/bonding/#{bonddev}")
+        hwaddrre = /^Slave Interface: #{interface}\n[^\n].+?\nPermanent HW addr: (([0-9a-fA-F]{2}:?)*)$/m
+        value = hwaddrre.match(bondinfo.to_s)[1].upcase
+    else
+        output_int = get_single_interface_output(interface)
      
-      if interface != "lo" && interface != "lo0"
-        output_int.each { |s|
-           if s =~ regex
-               value = $1
-               if label == 'netmask' && Facter.value(:kernel) == "SunOS"
-                   value = value.scan(/../).collect do |byte| byte.to_i(16) end.join('.') 
+          if interface != "lo" && interface != "lo0"
+            output_int.each { |s|
+               if s =~ regex
+                   value = $1
+                   if label == 'netmask' && Facter.value(:kernel) == "SunOS"
+                       value = value.scan(/../).collect do |byte| byte.to_i(16) end.join('.') 
+                   end
+                   tmp1.push(value)
                end
-               tmp1.push(value)
-           end
-       }
-      end
+           }
+          end
 
-      if tmp1 
-        value = tmp1.shift
-      end
+          if tmp1 
+            value = tmp1.shift
+          end
+    end
 
    end
 end

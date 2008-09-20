@@ -1,4 +1,6 @@
 1.5.x:
+    Fixes #1582 - Fix MAC address reporting for Linux bonding slave interfaces
+
     Fixed #1575 - CentOS fix for Facter SPEC file
 
     Fixed #1569 - createpackage.sh bug
