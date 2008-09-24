@@ -64,7 +64,7 @@ Facter.add(:operatingsystemrelease) do
             if releasefile =~ /^PATCHLEVEL\s*=\s*(\d+)/
                 releaseminor = $1
             else
-                releaseminor = 0
+                releaseminor = "0"
             end
             releasemajor + "." + releaseminor
         else
