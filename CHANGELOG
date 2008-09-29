@@ -1,4 +1,6 @@
 1.5.x:
+    Fixed #1619 - Applying patch by seanmil, adding support for SLES.
+
     Fixed #1509 - Fixed version recognition for SLES.
 
     Fixes #1582 - Fix MAC address reporting for Linux bonding slave interfaces
