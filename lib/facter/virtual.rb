@@ -8,7 +8,15 @@ Facter.add("virtual") do
   setcode do 
 
     if FileTest.exists?("/proc/user_beancounters")
-      result = "openvz"
+      # openvz. can be hardware node or virtual environment
+      # read the init process' status file, it has laxer permissions
+      # than /proc/user_beancounters (so this won't fail as non-root)
+      txt = File.read("/proc/1/status")
+      if txt =~ /^envID:[[:blank:]]+0$/mi
+        result = "openvzhn"
+      else
+        result = "openvzve"
+      end
     end
 
     if FileTest.exists?("/proc/xen/capabilities") && FileTest.readable?("/proc/xen/capabilities")
