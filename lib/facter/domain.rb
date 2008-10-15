@@ -1,67 +1,36 @@
 Facter.add(:domain) do
     setcode do
-        # First force the hostname to be checked
-        Facter.value(:hostname)
+        # Get the domain from various sources; the order of these
+        # steps is important
 
-        # Now check to see if it set the domain
-        if defined? $domain and ! $domain.nil?
-            $domain
-        else
-            nil
-        end
-    end
-end
-# Look for the DNS domain name command first.
-Facter.add(:domain) do
-    setcode do
-        domain = Facter::Util::Resolution.exec('dnsdomainname') or nil
-        # make sure it's a real domain
-        if domain and domain =~ /.+\..+/
-            domain
-        else
-            nil
-        end
-    end
-end
-Facter.add(:domain) do
-    setcode do
-        domain = Facter::Util::Resolution.exec('domainname') or nil
-        # make sure it's a real domain
-        if domain and domain =~ /.+\..+/
-            domain
-        else
-            nil
-        end
-    end
-end
-Facter.add(:domain) do
-    setcode do
-        value = nil
+        Facter.value(:hostname)
+        next $domain if defined? $domain and ! $domain.nil?
+
+        domain = Facter::Util::Resolution.exec('dnsdomainname')
+        next domain if domain =~ /.+\..+/
+
+        domain = Facter::Util::Resolution.exec('domainname')
+        next domain if domain =~ /.+\..+/
+
         if FileTest.exists?("/etc/resolv.conf")
+            domain = nil
+            search = nil
             File.open("/etc/resolv.conf") { |file|
-                # is the domain set?
                 file.each { |line|
                     if line =~ /domain\s+(\S+)/
-                        value = $1
-                        break
+                        domain = $1
+                    elsif line =~ /search\s+(\S+)/
+                        search = $1
                     end
                 }
             }
-            ! value and File.open("/etc/resolv.conf") { |file|
-                # is the search path set?
-                file.each { |line|
-                    if line =~ /search\s+(\S+)/
-                        value = $1
-                        break
-                    end
-                }
-            }
-            value
-        else
-            nil
+            next domain if domain
+            next search if search
         end
+        nil
     end
 end
+
 Facter.add(:domain) do
     confine :kernel => :windows
     setcode do
@@ -69,9 +38,9 @@ Facter.add(:domain) do
         domain = ""
         wmi = WIN32OLE.connect("winmgmts://")
         query = "select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True"
-        wmi.ExecQuery(query).each { |nic| 
+        wmi.ExecQuery(query).each { |nic|
             domain = nic.DNSDomain
-            break 
+            break
         }
         domain
     end
