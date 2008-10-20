@@ -1,8 +1,6 @@
 Facter.add("virtual") do
   confine :kernel => %w{Linux FreeBSD OpenBSD}
   
-  ENV["PATH"]="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/bin"
-  
   result = "physical"
   
   setcode do 
