@@ -1,4 +1,6 @@
 1.5.x:
+    Added Ubuntu to a variety of confines
+
     Fixed #1619 - Applying patch by seanmil, adding support for SLES.
     
     Fixed #1634 - Update virtual fact to differentiate OpenVZ 
