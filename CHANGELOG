@@ -1,4 +1,7 @@
-1.5.x:
+1.5.3:
+    Fixed #1650 - OS X package creation script should be more selective 
+    about cleaning out prior versions
+
     Added Ubuntu to a variety of confines
 
     Fixed #1619 - Applying patch by seanmil, adding support for SLES.
