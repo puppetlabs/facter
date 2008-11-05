@@ -27,9 +27,6 @@ project = Rake::RedLabProject.new("facter") do |p|
         'etc/*'
     ]
 
-    #p.epmhosts = %w{culain}
-    #p.rpmhost = "fedora1"
-    #p.sunpkghost = "sol10b"
 end
 
 project.mkgemtask do |gem|
@@ -40,13 +37,6 @@ project.mkgemtask do |gem|
     gem.default_executable = "facter"
 
     gem.author = "Luke Kanies"
-end
-
-if project.has?(:epm)
-    project.mkepmtask do |task|
-        task.bins = FileList.new("bin/facter")
-        task.rubylibs = FileList.new('lib/**/*')          
-    end
 end
 
 task :archive do
