@@ -1,19 +1,19 @@
 %{!?ruby_sitelibdir: %define ruby_sitelibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')}
 
-%define has_ruby_abi 0%{?fedora:%fedora} >= 5 || 0%{?rhel:%rhel} >= 5 || 0%{?centos:%centos} >= 5
+%define has_ruby_abi 0%{?fedora} || 0%{?rhel} >= 5
 %define has_ruby_noarch %has_ruby_abi
 
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
 Version: 1.5.2
 Release: 1%{?dist}
-License: GPL
+License: GPLv2+
 Group: System Environment/Base
 URL: http://reductivelabs.com/projects/facter
 Source0: http://reductivelabs.com/downloads/facter/%{name}-%{version}.tgz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 %if %has_ruby_noarch
-BuildArchitectures: noarch
+BuildArch: noarch
 %endif
 
 Requires: ruby >= 1.8.1
@@ -23,7 +23,7 @@ Requires: ruby(abi) = 1.8
 %endif
 BuildRequires: ruby >= 1.8.1
 
-%description 
+%description
 Ruby module for collecting simple facts about a host Operating
 system. Some of the facts are preconfigured, such as the hostname and the
 operating system. Additional facts can be added through simple Ruby scripts
@@ -36,7 +36,7 @@ sed -i -e 's@^#!.*$@#! /usr/bin/ruby@' bin/facter
 
 %install
 rm -rf %{buildroot}
-mkdir %{buildroot}
+mkdir -p %{buildroot}
 
 %{__install} -d -m0755 %{buildroot}%{ruby_sitelibdir}
 %{__install} -d -m0755 %{buildroot}%{ruby_sitelibdir}/facter
@@ -60,17 +60,33 @@ rm -rf %{buildroot}
 %{_bindir}/facter
 %{ruby_sitelibdir}/facter.rb
 %{ruby_sitelibdir}/facter
-%{ruby_sitelibdir}/facter/util
-%{ruby_sitelibdir}/facter/util/plist
-%{ruby_sitelibdir}/facter/util/*.rb
-%{ruby_sitelibdir}/facter/util/plist/*.rb
 %doc CHANGELOG COPYING INSTALL LICENSE README
 
 
 %changelog
+* Tue Sep 09 2008 Todd Zullinger <tmz@pobox.com> - 1.5.2-1
+- New version
+- Simplify spec file checking for Fedora and RHEL versions
+
+* Mon Sep  8 2008 David Lutterkort <dlutter@redhat.com> - 1.5.1-1
+- New version
+
+* Thu Jul 17 2008 David Lutterkort <dlutter@redhat.com> - 1.5.0-3
+- Change 'mkdir' in install to 'mkdir -p'
+
+* Thu Jul 17 2008 David Lutterkort <dlutter@redhat.com> - 1.5.0-2
+- Remove files that were listed twice in files section
+
 * Mon May 19 2008 James Turnbull <james@lovedthanlosty.net> - 1.5.0-1
 - New version
 - Added util and plist files
+
+* Mon Sep 24 2007 David Lutterkort <dlutter@redhat.com> - 1.3.8-1
+- Update license tag
+- Copy all of lib/ into ruby_sitelibdir
+
+* Thu Mar 29 2007 David Lutterkort <dlutter@redhat.com> - 1.3.7-1
+- New version
 
 * Fri Jan 19 2007 David Lutterkort <dlutter@redhat.com> - 1.3.6-1
 - New version
