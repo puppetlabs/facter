@@ -1,4 +1,15 @@
 Facter.add(:id) do
-    confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE SLES Debian Ubuntu Gentoo AIX}
+    confine :operatingsystem => %w{Linux Fedora RedHat CentOS SuSE SLES Debian Ubuntu Gentoo AIX}
     setcode "whoami"
+end
+
+Facter.add(:id) do
+    confine :operatingsystem => %w{Solaris}
+    setcode do
+        if %x{id} =~ /^uid=\d+\((\S+)\)/
+            $1
+        else
+            nil
+        end
+    end
 end
