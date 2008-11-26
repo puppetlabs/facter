@@ -44,3 +44,22 @@ task :archive do
 
     sh "git archive --format=tar  --prefix=facter-#{archive}/ HEAD | gzip -c > facter-#{archive}.tgz"
 end
+
+namespace :ci do
+
+  desc "Run the CI prep tasks"
+  task :prep do
+    require 'rubygems'
+    gem 'ci_reporter'
+    require 'ci/reporter/rake/rspec'
+    require 'ci/reporter/rake/test_unit'
+    ENV['CI_REPORTS'] = 'results'
+  end
+
+  desc "Run CI RSpec tests"
+  task :spec => [:prep, 'ci:setup:rspec'] do
+     sh "cd spec; rake all; exit 0"
+  end
+
+end
+

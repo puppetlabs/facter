@@ -1,4 +1,6 @@
 1.5.3:
+    Added ci namespace and Rake tasks
+
     Fixed #1650 - OS X package creation script should be more selective 
     about cleaning out prior versions
 
