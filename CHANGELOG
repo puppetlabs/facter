@@ -1,4 +1,6 @@
 1.5.3:
+    Fixed errors on unrecognised option in binary
+
     Added ci namespace and Rake tasks
 
     Fixed #1650 - OS X package creation script should be more selective 

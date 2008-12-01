@@ -75,7 +75,8 @@ options = {
     :yaml => false
 }
 
-result.each { |opt,arg|
+begin 
+  result.each { |opt,arg|
     case opt
         when "--version"
                         puts "%s" % Facter.version
@@ -101,7 +102,10 @@ result.each { |opt,arg|
             $stderr.puts "Invalid option '#{opt}'"
             exit(12)
     end
-}
+  }
+rescue
+  exit(12)
+end
 
 names = []
 
