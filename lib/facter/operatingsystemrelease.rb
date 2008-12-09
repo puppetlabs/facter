@@ -76,7 +76,7 @@ end
 Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{Solaris}
     setcode do
-        full_release = File.readlines("/etc/release").to_s.match(/Solaris \w+ [\w\/]+ ([^_]+_[^_]+)/).to_a.last.chomp("wos")
+        full_release = File.readlines("/etc/release").to_s.match(/Solaris (\w+ )?[\w\/]+ ([^_]+_[^_]+)/).to_a.last.to_s.chomp("wos")
         if full_release =~ /^s(\d+)\w(_\w\d)+/
             $1 + $2
         else
