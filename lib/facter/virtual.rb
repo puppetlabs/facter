@@ -1,5 +1,5 @@
 Facter.add("virtual") do
-  confine :kernel => %w{Linux FreeBSD OpenBSD}
+  confine :kernel => %w{Linux FreeBSD OpenBSD SunOS}
   
   result = "physical"
   
@@ -27,22 +27,30 @@ Facter.add("virtual") do
     end
 
     if result == "physical"
-      lspciexists = system "which lspci > /dev/null 2>&1"
-      if $?.exitstatus == 0
-        output = %x{lspci}
+      path = %x{which lspci 2> /dev/null}.chomp
+      if path !~ /no lspci/
+        output = %x{#{path}}
         output.each {|p|
           # --- look for the vmware video card to determine if it is virtual => vmware.
           # ---     00:0f.0 VGA compatible controller: VMware Inc [VMware SVGA II] PCI Display Adapter
           result = "vmware" if p =~ /VM[wW]are/
         }
       else
-        dmidecodeexists = system "which dmidecode > /dev/null 2>&1"
-        if $?.exitstatus == 0
-          outputd = %x{dmidecode}
-          outputd.each {|pd|
+        path = %x{which dmidecode 2> /dev/null}.chomp
+        if path !~ /no dmidecode/
+          output = %x{#{path}}
+          output.each {|pd|
             result = "vmware" if pd =~ /VMware|Parallels/
           }
-        end
+        else
+          path = %x{which prtdiag 2> /dev/null}.chomp
+          if path !~ /no prtdiag/
+            output = %x{#{path}}
+            output.each {|pd|
+              result = "vmware" if pd =~ /VMware|Parallels/
+            }
+          end
+         end
       end
     end
 

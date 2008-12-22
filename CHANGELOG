@@ -1,4 +1,6 @@
 1.5.3:
+    Fixed #1791 - support for virtual fact on Solaris 10
+
     Fixed #1793 - Added more Solaris 10 facts
 
     Fixed errors on unrecognised option in binary
