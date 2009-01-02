@@ -46,7 +46,7 @@ if Facter.value(:kernel) == "AIX"
         procs.each do |proc|
             if proc =~ /^proc(\d+)/
                 processor_num = $1.to_i
-                # Not retrieving the frequency since AIX 4.3.3 doesn't support the 
+                # Not retrieving the frequency since AIX 4.3.3 doesn't support the
                 # attribute and some people still use the OS.
                 proctype = Facter::Util::Resolution.exec('lsattr -El proc0 -a type')
                 if proctype =~ /^type\s+(\S+)\s+/

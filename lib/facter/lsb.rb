@@ -27,7 +27,7 @@
                 @@lsbtime = Time.now
                 @@lsbdata = Facter::Util::Resolution.exec('lsb_release -a 2>/dev/null')
             end
-                    
+
             if pattern.match(@@lsbdata)
                 $1
             else

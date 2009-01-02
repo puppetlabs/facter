@@ -16,4 +16,4 @@ query = {
 	]
 }
 
-Facter::Manufacturer.dmi_find_system_info(query) 
+Facter::Manufacturer.dmi_find_system_info(query)

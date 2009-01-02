@@ -29,11 +29,11 @@ end
 Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{CentOS}
     setcode do
-      centos_release = Facter::Util::Resolution.exec("sed -r -e 's/CentOS release //' -e 's/ \((Branch|Final)\)//' /etc/redhat-release")
+        centos_release = Facter::Util::Resolution.exec("sed -r -e 's/CentOS release //' -e 's/ \((Branch|Final)\)//' /etc/redhat-release")
         if centos_release =~ /5/
-          release = Facter::Util::Resolution.exec('rpm -q --qf \'%{VERSION}.%{RELEASE}\' centos-release | cut -d. -f1,2')
+            release = Facter::Util::Resolution.exec('rpm -q --qf \'%{VERSION}.%{RELEASE}\' centos-release | cut -d. -f1,2')
         else
-          release = centos_release
+            release = centos_release
         end
     end
 end
@@ -42,16 +42,16 @@ Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{Debian}
     setcode do
         release = Facter::Util::Resolution.exec('cat /etc/debian_version')
-     end
+    end
 end
 
 Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{Ubuntu}
     setcode do
         release = Facter::Util::Resolution.exec('cat /etc/issue')
-            if release =~ /Ubuntu (\d+.\d+)/
-                $1
-            end
+        if release =~ /Ubuntu (\d+.\d+)/
+            $1
+        end
     end
 end
 
@@ -76,7 +76,7 @@ end
 Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{Solaris}
     setcode do
-	release = Facter::Util::Resolution.exec('uname -v')
+        release = Facter::Util::Resolution.exec('uname -v')
     end
 end
 

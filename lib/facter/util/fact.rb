@@ -102,7 +102,7 @@ class Facter::Util::Fact
     def searching
         if searching?
             Facter.debug "Caught recursion on %s" % @name
-            
+
             # return a cached value if we've got it
             if @value
                 return @value

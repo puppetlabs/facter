@@ -14,10 +14,10 @@ Facter.add(:kernelrelease) do
         version = ""
         connection_string = "winmgmts://./root/cimv2"
         wmi = WIN32OLE.connect(connection_string)
-        wmi.ExecQuery("SELECT Version from Win32_OperatingSystem").each { |ole|
+        wmi.ExecQuery("SELECT Version from Win32_OperatingSystem").each do |ole|
             version = "#{ole.Version}"
             break
-        }
+        end
         version
     end
 end

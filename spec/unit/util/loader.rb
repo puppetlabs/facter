@@ -83,7 +83,7 @@ describe Facter::Util::Loader do
                 @loader.load(:testing)
             end
         end
-        
+
         it "should load any files in the search path with names matching the fact name" do
             @loader.expects(:search_path).returns %w{/one/dir /two/dir}
             FileTest.stubs(:exist?).returns false

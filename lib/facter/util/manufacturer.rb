@@ -42,6 +42,5 @@ module Facter::Manufacturer
 		        end
 	        end
         end
+    end
 end
-end
-

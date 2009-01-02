@@ -5,7 +5,6 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 require 'facter/util/ip'
 
 describe Facter::IPAddress do
-
     it "should return a list of interfaces" do
        Facter::IPAddress.should respond_to(:get_interfaces)
     end
@@ -23,7 +22,7 @@ describe Facter::IPAddress do
     end
 
     it "should return a value for a specific interface" do
-       Facter::IPAddress.should respond_to(:get_interface_value)
+        Facter::IPAddress.should respond_to(:get_interface_value)
     end
 
     it "should return a human readable netmask on Solaris" do
@@ -35,6 +34,4 @@ describe Facter::IPAddress do
 
         Facter::IPAddress.get_interface_value("e1000g0", "netmask").should == "255.255.255.0"
     end
-
 end
-

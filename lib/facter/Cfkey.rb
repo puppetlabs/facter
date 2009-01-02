@@ -22,7 +22,7 @@ Facter.add(:Cfkey) do
             "/var/cfengine/ppkeys/localhost.pub",
             "/var/lib/cfengine/ppkeys/localhost.pub",
             "/var/lib/cfengine2/ppkeys/localhost.pub"
-        ].each { |file|
+        ].each do |file|
             if FileTest.file?(file)
                 File.open(file) { |openfile|
                     value = openfile.readlines.reject { |line|
@@ -35,7 +35,7 @@ Facter.add(:Cfkey) do
             if value
                 break
             end
-        }
+        end
 
         value
     end

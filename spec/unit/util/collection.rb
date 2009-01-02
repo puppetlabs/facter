@@ -114,7 +114,7 @@ describe Facter::Util::Collection do
         it "should be case-insensitive" do
             @coll.fact("yayness").should equal(@fact)
         end
-        
+
         it "should treat strings and symbols equivalently" do
             @coll.fact(:yayness).should equal(@fact)
         end
@@ -156,7 +156,7 @@ describe Facter::Util::Collection do
         it "should be case-insensitive" do
             @coll.value("yayness").should_not be_nil
         end
-        
+
         it "should treat strings and symbols equivalently" do
             @coll.value(:yayness).should_not be_nil
         end
