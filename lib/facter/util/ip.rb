@@ -1,11 +1,48 @@
 # A base module for collecting IP-related
 # information from all kinds of platforms.
-module Facter::IPAddress
-    def self.get_interfaces
+module Facter::Util::IP
+    # A map of all the different regexes that work for
+    # a given platform or set of platforms.
+    REGEX_MAP = {
+        :linux => {
+            :ipaddress => /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
+            :macaddress  => /(?:ether|HWaddr)\s+(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/,
+            :netmask => /Mask:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+        },
+        :bsd => {
+            :aliases => [:openbsd, :netbsd, :freebsd],
+            :ipaddress => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
+            :macaddress  => /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/,
+            :netmask => /netmask\s+(\w{10})/
+        },
+        :sunos => {
+            :addr => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
+            :macaddress  => /(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/,
+            :netmask => /netmask\s+(\w{8})/
+        }
+    }
 
+    # Convert an interface name into purely alpha characters.
+    def self.alphafy(interface)
+        interface.gsub(/[:.]/, '_')
+    end
+
+    def self.supported_platforms
+        REGEX_MAP.inject([]) do |result, tmp|
+            key, map = tmp
+            if map[:aliases]
+                result += map[:aliases]
+            else
+                result << key
+            end
+            result
+        end
+    end
+
+    def self.get_interfaces
         int = nil
 
-        output =  Facter::IPAddress.get_all_interface_output()
+        output =  Facter::Util::IP.get_all_interface_output()
 
         # We get lots of warnings on platforms that don't get an output
         # made.
@@ -60,32 +97,15 @@ module Facter::IPAddress
     def self.get_interface_value(interface, label)
         tmp1 = []
 
-        # LAK:NOTE This is pretty ugly - two case statements being used for most of the
-        # logic.  These should be pulled into a small dispatch table.  We don't have tests for this code,
-        # though, so it's not exactly trivial to do so.
-        case Facter.value(:kernel)
-        when 'Linux'
-            addr = /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-            mac  = /(?:ether|HWaddr)\s+(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
-            mask = /Mask:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-        when 'OpenBSD', 'NetBSD', 'FreeBSD'
-            addr = /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-            mac  = /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/
-            mask = /netmask\s+(\w{10})/
-        when 'SunOS'
-            addr = /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-            mac  = /(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/
-            mask = /netmask\s+(\w{8})/
+        kernel = Facter.value(:kernel).downcase.to_sym
+
+        # If it's not directly in the map or aliased in the map, then we don't know how to deal with it.
+        unless map = REGEX_MAP[kernel] || REGEX_MAP.values.find { |tmp| tmp[:aliases] and tmp[:aliases].include?(kernel) }
+            return []
         end
 
-        case label
-        when 'ipaddress'
-            regex = addr
-        when 'macaddress'
-            regex = mac
-        when 'netmask'
-            regex = mask
-        end
+        # Pull the correct regex out of the map.
+        regex = map[label.to_sym]
 
         # Linux changes the MAC address reported via ifconfig when an ethernet interface
         # becomes a slave of a bonding device to the master MAC address.
@@ -99,7 +119,7 @@ module Facter::IPAddress
             output_int = get_single_interface_output(interface)
 
             if interface != "lo" && interface != "lo0"
-                output_int.each { |s|
+                output_int.each do |s|
                     if s =~ regex
                         value = $1
                         if label == 'netmask' && Facter.value(:kernel) == "SunOS"
@@ -107,7 +127,7 @@ module Facter::IPAddress
                         end
                         tmp1.push(value)
                     end
-                }
+                end
             end
 
             if tmp1

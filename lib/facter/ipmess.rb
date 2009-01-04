@@ -7,39 +7,26 @@
 
 require 'facter/util/ip'
 
+# Note that most of this only works on a fixed list of platforms; notably, Darwin
+# is missing.
+
 Facter.add(:interfaces) do
-    confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
+    confine :kernel => Facter::Util::IP.supported_platforms
     setcode do
-        Facter::IPAddress.get_interfaces.join(",")
+        Facter::Util::IP.get_interfaces.collect { |iface| Facter::Util::IP.alphafy(iface) }.join(",")
     end
 end
 
-case Facter.value(:kernel)
-when 'SunOS', 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD'
-    Facter::IPAddress.get_interfaces.each do |interface|
-        mi = interface.gsub(/[:.]/, '_')
+Facter::Util::IP.get_interfaces.each do |interface|
+    mi = Facter::Util::IP.alphafy(interface)
 
-        Facter.add("ipaddress_" + mi) do
-            confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
+    # Make a fact for each detail of each interface.  Yay.
+    #   There's no point in confining these facts, since we wouldn't be able to create
+    # them if we weren't running on a supported platform.
+    %w{ipaddress macaddress netmask}.each do |label|
+        Facter.add(label + "_" + mi) do
             setcode do
-                label = 'ipaddress'
-                Facter::IPAddress.get_interface_value(interface, label)
-            end
-        end
-
-        Facter.add("macaddress_" + mi) do
-            confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
-            setcode do
-                label = 'macaddress'
-                Facter::IPAddress.get_interface_value(interface, label)
-            end
-        end
-
-        Facter.add("netmask_" + mi) do
-            confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :linux ]
-            setcode do
-                label = 'netmask'
-                Facter::IPAddress.get_interface_value(interface, label)
+                Facter::Util::IP.get_interface_value(interface, label)
             end
         end
     end
