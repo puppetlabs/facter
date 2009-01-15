@@ -10,7 +10,7 @@ module Facter::Util::IP
             :netmask => /Mask:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
         },
         :bsd => {
-            :aliases => [:openbsd, :netbsd, :freebsd],
+            :aliases => [:openbsd, :netbsd, :freebsd, :darwin],
             :ipaddress => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
             :macaddress  => /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/,
             :netmask => /netmask\s+(\w{10})/
@@ -55,7 +55,7 @@ module Facter::Util::IP
 
     def self.get_all_interface_output
         case Facter.value(:kernel)
-        when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD'
+        when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin'
             output = %x{/sbin/ifconfig -a}
         when 'SunOS'
             output = %x{/usr/sbin/ifconfig -a}
@@ -66,7 +66,7 @@ module Facter::Util::IP
     def self.get_single_interface_output(interface)
         output = ""
         case Facter.value(:kernel)
-        when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD'
+        when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin'
             output = %x{/sbin/ifconfig #{interface}}
         when 'SunOS'
             output = %x{/usr/sbin/ifconfig #{interface}}

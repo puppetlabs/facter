@@ -5,7 +5,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 require 'facter/util/ip'
 
 describe Facter::Util::IP do
-    [:freebsd, :linux, :netbsd, :openbsd, :sunos].each do |platform|
+    [:freebsd, :linux, :netbsd, :openbsd, :sunos, :darwin].each do |platform|
         it "should be supported on #{platform}" do
             Facter::Util::IP.supported_platforms.should be_include(platform)
         end
@@ -55,6 +55,16 @@ describe Facter::Util::IP do
         Facter.stubs(:value).with(:kernel).returns("FreeBSD")
 
         Facter::Util::IP.get_interface_value("fxp0", "macaddress").should == "00:0e:0c:68:67:7c"
+    end
+
+    it "should return interface information for OS X" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/Mac_OS_X_10.5.5_ifconfig"
+        ifconfig_interface = File.new(sample_output_file).read()
+
+        Facter::Util::IP.expects(:get_single_interface_output).with("en1").returns(ifconfig_interface)
+        Facter.stubs(:value).with(:kernel).returns("Darwin")
+
+        Facter::Util::IP.get_interface_value("en1", "macaddress").should == "00:1b:63:ae:02:66"
     end
 
     it "should return a human readable netmask on Solaris" do

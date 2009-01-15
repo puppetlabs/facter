@@ -1,0 +1,26 @@
+lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
+	inet6 fe80::1%lo0 prefixlen 64 scopeid 0x1 
+	inet 127.0.0.1 netmask 0xff000000 
+	inet6 ::1 prefixlen 128 
+gif0: flags=8010<POINTOPOINT,MULTICAST> mtu 1280
+stf0: flags=0<> mtu 1280
+en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	ether 00:1b:63:ae:02:66 
+	media: autoselect status: inactive
+	supported media: autoselect 10baseT/UTP <half-duplex> 10baseT/UTP <full-duplex> 10baseT/UTP <full-duplex,hw-loopback> 10baseT/UTP <full-duplex,flow-control> 100baseTX <half-duplex> 100baseTX <full-duplex> 100baseTX <full-duplex,hw-loopback> 100baseTX <full-duplex,flow-control> 1000baseT <full-duplex> 1000baseT <full-duplex,hw-loopback> 1000baseT <full-duplex,flow-control> none
+fw0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 4078
+	lladdr 00:1e:52:ff:fe:31:1a:80 
+	media: autoselect <full-duplex> status: inactive
+	supported media: autoselect <full-duplex>
+en1: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	inet6 fe80::21e:52ff:fe70:d7b6%en1 prefixlen 64 scopeid 0x6 
+	inet 192.168.0.4 netmask 0xffffff00 broadcast 192.168.0.255
+	ether 00:1e:52:70:d7:b6 
+	media: autoselect status: active
+	supported media: autoselect
+vmnet8: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	inet 172.16.15.1 netmask 0xffffff00 broadcast 172.16.15.255
+	ether 00:50:56:c0:00:08 
+vmnet1: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	inet 192.168.89.1 netmask 0xffffff00 broadcast 192.168.89.255
+	ether 00:50:56:c0:00:01 
