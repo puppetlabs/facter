@@ -1,4 +1,8 @@
 1.5.3:
+    Fixed autotest on win32
+
+    Fixed #1870 - Added interface support for Darwin
+
     Fixed #1791 - support for virtual fact on Solaris 10
 
     Fixed #1793 - Added more Solaris 10 facts

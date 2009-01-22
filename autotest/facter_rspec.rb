@@ -40,6 +40,6 @@ end
 class Autotest::FacterRspec < Autotest::Rspec
     def spec_commands
         ENV["AUTOTEST"] = "true"
-        ENV["PATH"].split(":").collect { |dir| File.join(dir, "spec") }
+        ENV["PATH"].split(File::PATH_SEPARATOR).collect { |dir| File.join(dir, "spec") }
     end
 end
