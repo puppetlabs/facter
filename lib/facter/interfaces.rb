@@ -1,4 +1,4 @@
-# ipmess.rb
+# interfaces.rb
 # Try to get additional Facts about the machine's network interfaces
 #
 # Original concept Copyright (C) 2007 psychedelys <psychedelys@gmail.com>

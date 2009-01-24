@@ -4,7 +4,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 require 'facter'
 
-describe "Messy IP facts" do
+describe "Per Interface IP facts" do
     before do
         Facter.loadfacts
     end
