@@ -1,4 +1,6 @@
 1.5.3:
+    Added uptime facts
+
     Fixed autotest on win32
 
     Fixed #1870 - Added interface support for Darwin
