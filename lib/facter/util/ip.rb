@@ -13,7 +13,7 @@ module Facter::Util::IP
             :aliases => [:openbsd, :netbsd, :freebsd, :darwin],
             :ipaddress => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
             :macaddress  => /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/,
-            :netmask => /netmask\s+(\w{10})/
+            :netmask => /netmask\s+0x(\w{8})/
         },
         :sunos => {
             :addr => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
@@ -25,6 +25,11 @@ module Facter::Util::IP
     # Convert an interface name into purely alpha characters.
     def self.alphafy(interface)
         interface.gsub(/[:.]/, '_')
+    end
+
+    def self.convert_from_hex?(kernel)
+        kernels_to_convert = [:sunos, :openbsd, :netbsd, :freebsd, :darwin]
+        kernels_to_convert.include?(kernel)
     end
 
     def self.supported_platforms
@@ -122,7 +127,7 @@ module Facter::Util::IP
                 output_int.each do |s|
                     if s =~ regex
                         value = $1
-                        if label == 'netmask' && Facter.value(:kernel) == "SunOS"
+                        if label == 'netmask' && convert_from_hex?(kernel)
                             value = value.scan(/../).collect do |byte| byte.to_i(16) end.join('.')
                         end
                         tmp1.push(value)

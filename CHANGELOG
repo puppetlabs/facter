@@ -1,4 +1,6 @@
 1.5.3:
+    Fixed #1870 - Format all subnet masks as human-readable
+
     Added uptime facts
 
     Fixed autotest on win32

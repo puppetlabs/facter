@@ -76,4 +76,21 @@ describe Facter::Util::IP do
 
         Facter::Util::IP.get_interface_value("e1000g0", "netmask").should == "255.255.255.0"
     end
+
+    it "should return a human readable netmask on Darwin" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/darwin_ifconfig_single_interface"
+
+        darwin_ifconfig_interface = File.new(sample_output_file).read()
+
+        Facter::Util::IP.expects(:get_single_interface_output).with("en1").returns(darwin_ifconfig_interface)
+        Facter.stubs(:value).with(:kernel).returns("Darwin")
+
+        Facter::Util::IP.get_interface_value("en1", "netmask").should == "255.255.255.0"
+    end
+
+    [:freebsd, :netbsd, :openbsd, :sunos, :darwin].each do |platform|
+        it "should require conversion from hex on #{platform}" do
+            Facter::Util::IP.convert_from_hex?(platform).should == true
+        end
+    end
 end
