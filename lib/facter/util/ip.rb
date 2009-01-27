@@ -140,4 +140,17 @@ module Facter::Util::IP
             end
         end
     end
+  
+    def self.get_network_value(interface)
+        require 'ipaddr'
+
+        ipaddress = get_interface_value(interface, "ipaddress")
+        netmask = get_interface_value(interface, "netmask")
+        
+        if ipaddress && netmask
+            ip = IPAddr.new(ipaddress, Socket::AF_INET)
+            subnet = IPAddr.new(netmask, Socket::AF_INET)
+            network = ip.mask(subnet.to_s)
+        end
+    end
 end

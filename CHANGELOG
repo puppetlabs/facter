@@ -1,4 +1,6 @@
 1.5.3:
+    Added network fact
+
     Fixed #1870 - Format all subnet masks as human-readable
 
     Added uptime facts

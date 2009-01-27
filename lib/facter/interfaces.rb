@@ -18,13 +18,12 @@ Facter.add(:interfaces) do
 end
 
 Facter::Util::IP.get_interfaces.each do |interface|
-    mi = Facter::Util::IP.alphafy(interface)
 
     # Make a fact for each detail of each interface.  Yay.
     #   There's no point in confining these facts, since we wouldn't be able to create
     # them if we weren't running on a supported platform.
     %w{ipaddress macaddress netmask}.each do |label|
-        Facter.add(label + "_" + mi) do
+        Facter.add(label + "_" + Facter::Util::IP.alphafy(interface)) do
             setcode do
                 Facter::Util::IP.get_interface_value(interface, label)
             end
