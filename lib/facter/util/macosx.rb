@@ -16,7 +16,7 @@
 ## Foundation, Inc., 51 Franklin St, Fifth Floor, Boston MA  02110-1301 USA
 ##
 
-module Facter::Macosx
+module Facter::Util::Macosx
     require 'thread'
     require 'facter/util/plist'
     require 'facter/util/resolution'
