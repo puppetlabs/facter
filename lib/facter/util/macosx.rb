@@ -19,24 +19,38 @@
 module Facter::Macosx
     require 'thread'
     require 'facter/util/plist'
+    require 'facter/util/resolution'
 
     # JJM I'd really like to dynamically generate these methods
     # by looking at the _name key of the _items dict for each _dataType
 
-    def self.hardware_overview
-        # JJM Perhaps we should cache the XML data in a "class" level object.
-        top_level_plist = Plist::parse_xml %x{/usr/sbin/system_profiler -xml SPHardwareDataType}
-        system_hardware = top_level_plist[0]['_items'][0]
-        system_hardware.delete '_name'
-        system_hardware
+    def self.profiler_xml(data_field)
+        Facter::Util::Resolution.exec("/usr/sbin/system_profiler -xml #{data_field}")
     end
 
-    # SPSoftwareDataType
+    def self.intern_xml(xml)
+        return nil unless xml
+        Plist::parse_xml(xml)
+    end
+
+    # Return an xml result, modified as we need it.
+    def self.profiler_data(data_field)
+        begin
+            return nil unless parsed_xml = intern_xml(profiler_xml(data_field))
+            return nil unless data = parsed_xml[0]['_items'][0]
+            data.delete '_name'
+            data
+        rescue
+            return nil
+        end
+    end
+
+    def self.hardware_overview
+        profiler_data("SPHardwareDataType")
+    end
+
     def self.os_overview
-        top_level_plist = Plist::parse_xml %x{/usr/sbin/system_profiler -xml SPSoftwareDataType}
-        os_stuff = top_level_plist[0]['_items'][0]
-        os_stuff.delete '_name'
-        os_stuff
+        profiler_data("SPSoftwareDataType")
     end
 
     def self.sw_vers
