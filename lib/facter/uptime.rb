@@ -7,13 +7,14 @@ Facter.add(:uptime) do
     end
 end
 
-uptime = Facter::Util::Uptime.get_uptime
+if FileTest.exists?("/proc/uptime")
+    uptime = Facter::Util::Uptime.get_uptime
 
-%w{days hours seconds}.each do |label|
-    Facter.add("uptime_" + label) do
-        confine :kernel => 'Linux'    
-            setcode do
-                Facter::Util::Uptime.get_uptime_period(uptime, label)
-            end 
+    %w{days hours seconds}.each do |label|
+        Facter.add("uptime_" + label) do
+                setcode do
+                    Facter::Util::Uptime.get_uptime_period(uptime, label)
+                end 
         end 
-end 
+    end 
+end
