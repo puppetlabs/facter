@@ -31,6 +31,8 @@ Facter.add(:operatingsystem) do
             txt = File.read("/etc/SuSE-release")
             if txt =~ /^SUSE LINUX Enterprise Server/i
                 "SLES"
+	    elsif txt =~ /^openSUSE/i
+		"OpenSuSE"
             else
                 "SuSE"
             end
