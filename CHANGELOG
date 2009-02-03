@@ -3,6 +3,8 @@
 
     Fixed Ubuntu operatingsystem identification
 
+    Fixed generic uptime fact
+
 1.5.3:
     Added network fact
 

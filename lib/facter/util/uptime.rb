@@ -6,6 +6,8 @@ module Facter::Util::Uptime
         time = Facter::Util::Resolution.exec('uptime')
             if time =~ /up\s*(\d+\s\w+)/
                 $1
+            elsif time =~ /up\s*(\d+:\d+)/
+                $1 + " hours"
             else
                 "unknown"
             end
