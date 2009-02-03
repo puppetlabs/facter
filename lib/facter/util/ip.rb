@@ -150,7 +150,7 @@ module Facter::Util::IP
         if ipaddress && netmask
             ip = IPAddr.new(ipaddress, Socket::AF_INET)
             subnet = IPAddr.new(netmask, Socket::AF_INET)
-            network = ip.mask(subnet.to_s)
+            network = ip.mask(subnet.to_s).to_s
         end
     end
 end
