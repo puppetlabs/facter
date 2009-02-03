@@ -1,5 +1,7 @@
-1.6.0:
+1.5.4:
     Fixed #1926 - IPAddr to_s issue
+
+    Fixed Ubuntu operatingsystem identification
 
 1.5.3:
     Added network fact

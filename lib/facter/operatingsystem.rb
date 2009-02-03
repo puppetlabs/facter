@@ -1,3 +1,5 @@
+require 'facter/lsb'
+
 Facter.add(:operatingsystem) do
     confine :kernel => :sunos
     setcode do "Solaris" end
