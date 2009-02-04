@@ -5,6 +5,7 @@
 
     Fixed generic uptime fact
 
+    Fixed #1924 - Fixed lo / lo:0 local interface matching
 1.5.3:
     Added network fact
 

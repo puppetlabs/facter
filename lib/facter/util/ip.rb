@@ -123,7 +123,7 @@ module Facter::Util::IP
         else
             output_int = get_single_interface_output(interface)
 
-            if interface != "lo" && interface != "lo0"
+            if interface != /^lo[0:]?\d?/
                 output_int.each do |s|
                     if s =~ regex
                         value = $1
