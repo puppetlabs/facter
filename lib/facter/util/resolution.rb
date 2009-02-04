@@ -127,6 +127,9 @@ class Facter::Util::Resolution
             # of the timeout.
             Thread.new { Process.waitall }
             return nil
+        rescue => details
+            warn "Could not retrieve %s: %s" % [self.name, details]
+            return nil
         end
 
         return nil if result == ""

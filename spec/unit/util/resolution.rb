@@ -87,6 +87,12 @@ describe Facter::Util::Resolution do
         end
 
         describe "and the code is a block" do
+            it "should warn but not fail if the code fails" do
+                @resolve.setcode { raise "feh" }
+                @resolve.expects(:warn)
+                @resolve.value.should be_nil
+            end
+
             it "should return the value returned by the block" do
                 @resolve.setcode { "yayness" }
                 @resolve.value.should == "yayness"
