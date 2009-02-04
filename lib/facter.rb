@@ -151,15 +151,15 @@ module Facter
 	def self.debugging(bit)
 		if bit
             case bit
-            when TrueClass: @@debug = 1
-            when FalseClass: @@debug = 0
-            when Fixnum:
+            when TrueClass; @@debug = 1
+            when FalseClass; @@debug = 0
+            when Fixnum
                 if bit > 0
                     @@debug = 1
                 else
                     @@debug = 0
                 end
-            when String:
+            when String;
                 if bit.downcase == 'off'
                     @@debug = 0
                 else

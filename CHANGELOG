@@ -1,4 +1,6 @@
 1.5.4:
+    Fixed #1850 - Facter updates for Ruby 1.9
+
     Fixed #1926 - IPAddr to_s issue
 
     Fixed Ubuntu operatingsystem identification
