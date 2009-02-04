@@ -3,8 +3,6 @@ system.  These facts are mostly strings (i.e., not numbers), and are things
 like the output of 'uname', public ssh and cfengine keys, the number of
 processors, etc.
 
-It currently cannot collect very much information, but it is architected to be
-both OS and OS version specific.
+See bin/facter for an example of the interface.
 
-See bin/facter or http://reductivelabs.com/trac/enhost for an example of the
-interface.
+See http://reductivelabs.com/projects/facter/ for more details.
