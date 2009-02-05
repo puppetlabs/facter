@@ -100,12 +100,5 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
-    confine :operatingsystem => %w{Solaris}
-    setcode do
-        release = Facter::Util::Resolution.exec('uname -v')
-    end
-end
-
-Facter.add(:operatingsystemrelease) do
     setcode do Facter[:kernelrelease].value end
 end

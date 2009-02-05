@@ -1,4 +1,9 @@
 1.5.4:
+    Changes to Solaris facts:
+       operatingsystemrelease == kernel release or uname -r
+       kernelrelease == uname -r 
+       kernelversion == uname -v
+
     Added support for Oracle VM Server to operatingsystem
     and operatingsystemrelease
 
