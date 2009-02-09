@@ -1,5 +1,7 @@
 # Rakefile for facter
 
+$LOAD_PATH << File.join(File.dirname(__FILE__), 'tasks')
+
 begin 
     require 'rake/reductive'
 rescue LoadError
