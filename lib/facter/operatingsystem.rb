@@ -24,6 +24,8 @@ Facter.add(:operatingsystem) do
 	    "Archlinux"
         elsif FileTest.exists?("/etc/enterprise-release")
             "OEL"
+        elsif FileTest.exists?("/etc/ovs-release")
+            "OVS"
         elsif FileTest.exists?("/etc/redhat-release")
             txt = File.read("/etc/redhat-release")
             if txt =~ /centos/i

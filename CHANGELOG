@@ -1,4 +1,7 @@
 1.5.4:
+    Added support for Oracle VM Server to operatingsystem
+    and operatingsystemrelease
+
     Added support for Oracle Enterprise Linux to operatingsystem 
     and operatingsystemrelease
 
