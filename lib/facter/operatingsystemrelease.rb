@@ -27,6 +27,18 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
+    confine :operatingsystem => :oel
+    setcode do
+        File::open("/etc/enterprise-release", "r") do |f|
+            line = f.readline.chomp
+            if line =~ /release (\d+)/
+                $1
+            end
+        end
+    end
+end
+
+Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{CentOS}
     setcode do
         centos_release = Facter::Util::Resolution.exec("sed -r -e 's/CentOS release //' -e 's/ \((Branch|Final)\)//' /etc/redhat-release")

@@ -22,6 +22,8 @@ Facter.add(:operatingsystem) do
             "Mandrake"
 	elsif FileTest.exists?("/etc/arch-release")
 	    "Archlinux"
+        elsif FileTest.exists?("/etc/enterprise-release")
+            "OEL"
         elsif FileTest.exists?("/etc/redhat-release")
             txt = File.read("/etc/redhat-release")
             if txt =~ /centos/i

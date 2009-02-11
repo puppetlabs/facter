@@ -1,4 +1,7 @@
 1.5.4:
+    Added support for Oracle Enterprise Linux to operatingsystem 
+    and operatingsystemrelease
+
     Fixed #1927 - failing facts don't kill Facter
 
     Fixed #1850 - Facter updates for Ruby 1.9
