@@ -1,5 +1,7 @@
 1.5.4:
-    Changes to Solaris facts:
+    Fixed #1966 - Added physicalprocessorcount fact
+
+    Fixed #1761 - changes to Solaris facts:
        operatingsystemrelease == kernel release or uname -r
        kernelrelease == uname -r 
        kernelversion == uname -v
