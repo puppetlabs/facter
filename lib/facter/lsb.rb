@@ -13,11 +13,11 @@
 ## Foundation, Inc., 51 Franklin St, Fifth Floor, Boston MA  02110-1301 USA
 ##
 
-{   "LSBRelease" => %r{^LSB Version:\t(.*)$},
-    "LSBDistId" => %r{^Distributor ID:\t(.*)$},
-    "LSBDistRelease" => %r{^Release:\t(.*)$},
-    "LSBDistDescription" => %r{^Description:\t(.*)$},
-    "LSBDistCodeName" => %r{^Codename:\t(.*)$}
+{  "LSBRelease"         => %r{^LSB Version:\t(.*)$},
+   "LSBDistId"          => %r{^Distributor ID:\t(.*)$},
+   "LSBDistRelease"     => %r{^Release:\t(.*)$},
+   "LSBDistDescription" => %r{^Description:\t(.*)$},
+   "LSBDistCodeName"    => %r{^Codename:\t(.*)$}
 }.each do |fact, pattern|
     Facter.add(fact) do
         confine :kernel => :linux

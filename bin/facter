@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby 
+#!/usr/bin/env ruby
 #
 # = Synopsis
 #
@@ -15,7 +15,7 @@
 # about a system from within the shell or within Ruby.
 #
 # If no facts are specifically asked for, then all facts will be returned.
-# 
+#
 # = Options
 #
 # debug::
@@ -63,34 +63,34 @@ $debug = 0
 config = nil
 
 result = GetoptLong.new(
-    [ "--version",         "-v",     GetoptLong::NO_ARGUMENT ],
-    [ "--help",		"-h",            GetoptLong::NO_ARGUMENT ],
-    [ "--debug",	"-d",            GetoptLong::NO_ARGUMENT ],
-    [ "--yaml",	"-y",                GetoptLong::NO_ARGUMENT ],
-    [ "--config",    "-c",           GetoptLong::REQUIRED_ARGUMENT ],
-    [ "--puppet",    "-p",           GetoptLong::NO_ARGUMENT ]
+    [ "--version", "-v", GetoptLong::NO_ARGUMENT       ],
+    [ "--help",    "-h", GetoptLong::NO_ARGUMENT       ],
+    [ "--debug",   "-d", GetoptLong::NO_ARGUMENT       ],
+    [ "--yaml",    "-y", GetoptLong::NO_ARGUMENT       ],
+    [ "--config",  "-c", GetoptLong::REQUIRED_ARGUMENT ],
+    [ "--puppet",  "-p", GetoptLong::NO_ARGUMENT       ]
 )
 
 options = {
     :yaml => false
 }
 
-begin 
-  result.each { |opt,arg|
-    case opt
+begin
+    result.each { |opt,arg|
+        case opt
         when "--version"
-                        puts "%s" % Facter.version
-                        exit
+            puts "%s" % Facter.version
+            exit
         when "--puppet"
-			begin
+            begin
                 require 'puppet'
             rescue LoadError => detail
                 $stderr.puts "Could not load Puppet: %s" % detail
             end
         when "--yaml"
-			options[:yaml] = true
+            options[:yaml] = true
         when "--debug"
-			Facter.debugging(1)
+            Facter.debugging(1)
         when "--help"
             if $haveusage
                 RDoc::usage && exit
@@ -101,24 +101,24 @@ begin
         else
             $stderr.puts "Invalid option '#{opt}'"
             exit(12)
-    end
-  }
+        end
+    }
 rescue
-  exit(12)
+    exit(12)
 end
 
 names = []
 
 unless config.nil?
-	File.open(config) { |file|
-		names = file.readlines.collect { |line|
-			line.chomp
-		}
-	}
+    File.open(config) { |file|
+        names = file.readlines.collect { |line|
+            line.chomp
+        }
+    }
 end
 
 ARGV.each { |item|
-	names.push item
+    names.push item
 }
 
 if names.empty?

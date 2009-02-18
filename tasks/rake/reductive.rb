@@ -269,13 +269,13 @@ class Rake::RedLabProject < Rake::TaskLib
                 :package,
                 :publish
               ] do
-          
-            announce 
+
+            announce
             announce "**************************************************************"
             announce "* Release #{@version} Complete."
             announce "* Packages ready to upload."
             announce "**************************************************************"
-            announce 
+            announce
         end
     end
 
@@ -283,12 +283,12 @@ class Rake::RedLabProject < Rake::TaskLib
     def mktaskprerelease
         # Validate that everything is ready to go for a release.
         task :prerelease do
-            announce 
+            announce
             announce "**************************************************************"
             announce "* Making Release #{@version}"
             announce "* (current version #{self.currentversion})"
             announce "**************************************************************"
-            announce  
+            announce
 
             # Is a release number supplied?
             unless ENV['REL']
@@ -467,7 +467,7 @@ class Rake::RedLabProject < Rake::TaskLib
     end
 
     desc "List all ruby files"
-    task :rubyfiles do 
+    task :rubyfiles do
         puts Dir['**/*.rb'].reject { |fn| fn =~ /^pkg/ }
         puts Dir['**/bin/*'].reject { |fn| fn =~ /svn|(~$)|(\.rb$)/ }
     end

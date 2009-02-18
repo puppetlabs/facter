@@ -17,13 +17,13 @@ require 'rake/tasklib'
 #   of date.
 #
 # [<b>"<em>package_dir</em>/<em>name</em>-<em>version</em>.tgz"</b>]
-#   Create a gzipped tar package (if <em>need_tar</em> is true).  
+#   Create a gzipped tar package (if <em>need_tar</em> is true).
 #
 # [<b>"<em>package_dir</em>/<em>name</em>-<em>version</em>.tar.gz"</b>]
-#   Create a gzipped tar package (if <em>need_tar_gz</em> is true).  
+#   Create a gzipped tar package (if <em>need_tar_gz</em> is true).
 #
 # [<b>"<em>package_dir</em>/<em>name</em>-<em>version</em>.tar.bz2"</b>]
-#   Create a bzip2'd tar package (if <em>need_tar_bz2</em> is true).  
+#   Create a bzip2'd tar package (if <em>need_tar_bz2</em> is true).
 #
 # [<b>"<em>package_dir</em>/<em>name</em>-<em>version</em>.zip"</b>]
 #   Create a zip package archive (if <em>need_zip</em> is true).
@@ -38,8 +38,8 @@ require 'rake/tasklib'
 class Rake::RedLabPackageTask < Rake::TaskLib
     # The different directory types we can manage.
     DIRTYPES = {
-        :bindir => :bins,
-        :sbindir => :sbins,
+        :bindir     => :bins,
+        :sbindir    => :sbins,
         :sitelibdir => :rubylibs
     }
 
@@ -103,7 +103,7 @@ class Rake::RedLabPackageTask < Rake::TaskLib
 
     # The URL for the package.
     attr_accessor :url
-    
+
     # The source for the package.
     attr_accessor :source
 
@@ -139,7 +139,7 @@ class Rake::RedLabPackageTask < Rake::TaskLib
         end
     end
 
-    # Create a Package Task with the given name and version. 
+    # Create a Package Task with the given name and version.
     def initialize(name=nil, version=nil)
         # Theoretically, one could eventually add directory types here.
         @dirtypes = DIRTYPES.dup
@@ -226,7 +226,7 @@ class Rake::RedLabPackageTask < Rake::TaskLib
                             safe_ln(sourcefile, destfile)
                         end
                     end
-                    
+
                     # If we've set the destdir, then list it as a prereq.
                     if destdir
                         file destfile => destdir
@@ -236,7 +236,7 @@ class Rake::RedLabPackageTask < Rake::TaskLib
 
             # And create a task for each one
             task tname => reqs
-             
+
             # And then mark our task as a prereq
             tasks << tname
         end

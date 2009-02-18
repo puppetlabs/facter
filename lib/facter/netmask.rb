@@ -9,9 +9,9 @@
 require 'facter/util/netmask'
 
 Facter.add("netmask") do
-	confine :kernel => [ :sunos, :linux ]
-	setcode do
-		Facter::NetMask.get_netmask
-	end
+    confine :kernel => [ :sunos, :linux ]
+    setcode do
+        Facter::NetMask.get_netmask
+    end
 end
 

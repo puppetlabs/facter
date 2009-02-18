@@ -28,13 +28,13 @@ module Facter
     include Enumerable
 
     FACTERVERSION = '1.5.4'
-	# = Facter
+    # = Facter
     # Functions as a hash of 'facts' you might care about about your
     # system, such as mac address, IP address, Video card, etc.
     # returns them dynamically
 
-	# == Synopsis
-	#
+    # == Synopsis
+    #
     # Generally, treat <tt>Facter</tt> as a hash:
     # == Example
     # require 'facter'
@@ -49,7 +49,7 @@ module Facter
     RESET = "[0m"
     @@debug = 0
 
-	# module methods
+    # module methods
 
     def self.collection
         unless defined?(@collection) and @collection
@@ -147,9 +147,9 @@ module Facter
         Facter.reset
     end
 
-	# Set debugging on or off.
-	def self.debugging(bit)
-		if bit
+    # Set debugging on or off.
+    def self.debugging(bit)
+        if bit
             case bit
             when TrueClass; @@debug = 1
             when FalseClass; @@debug = 0
@@ -168,10 +168,10 @@ module Facter
             else
                 @@debug = 0
             end
-		else
-			@@debug = 0
-		end
-	end
+        else
+            @@debug = 0
+        end
+    end
 
     # Remove them all.
     def self.reset

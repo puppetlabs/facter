@@ -5,20 +5,20 @@ module Facter::Util::IP
     # a given platform or set of platforms.
     REGEX_MAP = {
         :linux => {
-            :ipaddress => /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-            :macaddress  => /(?:ether|HWaddr)\s+(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/,
-            :netmask => /Mask:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+            :ipaddress  => /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
+            :macaddress => /(?:ether|HWaddr)\s+(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/,
+            :netmask    => /Mask:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
         },
-        :bsd => {
-            :aliases => [:openbsd, :netbsd, :freebsd, :darwin],
-            :ipaddress => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-            :macaddress  => /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/,
-            :netmask => /netmask\s+0x(\w{8})/
+        :bsd   => {
+            :aliases    => [:openbsd, :netbsd, :freebsd, :darwin],
+            :ipaddress  => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
+            :macaddress => /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/,
+            :netmask    => /netmask\s+0x(\w{8})/
         },
         :sunos => {
-            :addr => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-            :macaddress  => /(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/,
-            :netmask => /netmask\s+(\w{8})/
+            :addr       => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
+            :macaddress => /(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/,
+            :netmask    => /netmask\s+(\w{8})/
         }
     }
 

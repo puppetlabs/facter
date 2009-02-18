@@ -12,9 +12,9 @@ if FileTest.exists?("/proc/uptime")
 
     %w{days hours seconds}.each do |label|
         Facter.add("uptime_" + label) do
-                setcode do
-                    Facter::Util::Uptime.get_uptime_period(uptime, label)
-                end 
+            setcode do
+                Facter::Util::Uptime.get_uptime_period(uptime, label)
+            end 
         end 
     end 
 end

@@ -2,7 +2,7 @@
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'tasks')
 
-begin 
+begin
     require 'rake/reductive'
 rescue LoadError
     $stderr.puts "You must have the Reductive build library in your RUBYLIB."
@@ -12,16 +12,16 @@ end
 project = Rake::RedLabProject.new("facter") do |p|
     p.summary = "Facter collects Operating system facts."
     p.description = <<-EOF
-      Facter is a module for collecting simple facts about a host 
+      Facter is a module for collecting simple facts about a host
       Operating system.
     EOF
 
     p.filelist = [
         'install.rb',
         '[A-Z]*',
-        'bin/**/*', 
+        'bin/**/*',
         'lib/facter.rb',
-        'lib/**/*.rb', 
+        'lib/**/*.rb',
         'test/**/*.rb',
         'spec/**/*',
         'conf/**/*',
@@ -48,21 +48,19 @@ task :archive do
 end
 
 namespace :ci do
+    desc "Run the CI prep tasks"
+    task :prep do
+        require 'rubygems'
+        gem 'ci_reporter'
+        require 'ci/reporter/rake/rspec'
+        require 'ci/reporter/rake/test_unit'
+        ENV['CI_REPORTS'] = 'results'
+    end
 
-  desc "Run the CI prep tasks"
-  task :prep do
-    require 'rubygems'
-    gem 'ci_reporter'
-    require 'ci/reporter/rake/rspec'
-    require 'ci/reporter/rake/test_unit'
-    ENV['CI_REPORTS'] = 'results'
-  end
-
-  desc "Run CI RSpec tests"
-  task :spec => [:prep, 'ci:setup:rspec'] do
-     sh "cd spec; rake all; exit 0"
-  end
-
+    desc "Run CI RSpec tests"
+    task :spec => [:prep, 'ci:setup:rspec'] do
+        sh "cd spec; rake all; exit 0"
+    end
 end
 
 desc "Send patch information to the puppet-dev list"
@@ -75,7 +73,7 @@ task :mail_patches do
         raise "Could not get branch from 'git status'"
     end
     branch = $1
-    
+
     unless branch =~ %r{^([^\/]+)/([^\/]+)/([^\/]+)$}
         raise "Branch name does not follow <type>/<parent>/<name> model; cannot autodetect parent branch"
     end

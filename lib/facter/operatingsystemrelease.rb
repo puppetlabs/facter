@@ -87,8 +87,8 @@ Facter.add(:operatingsystemrelease) do
             releasemajor = $1
             if releasefile =~ /^PATCHLEVEL\s*=\s*(\d+)/
                 releaseminor = $1
-	    elsif releasefile =~ /^VERSION\s=.*.(\d+)/
-		releaseminor = $1
+            elsif releasefile =~ /^VERSION\s=.*.(\d+)/
+                releaseminor = $1
             else
                 releaseminor = "0"
             end

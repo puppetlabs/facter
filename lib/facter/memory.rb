@@ -7,10 +7,11 @@
 #
 require 'facter/util/memory'
 
-{:MemorySize => "MemTotal",
- :MemoryFree => "MemFree",
- :SwapSize   => "SwapTotal",
- :SwapFree   => "SwapFree"}.each do |fact, name|
+{   :MemorySize => "MemTotal",
+    :MemoryFree => "MemFree",
+    :SwapSize   => "SwapTotal",
+    :SwapFree   => "SwapFree"
+}.each do |fact, name|
     Facter.add(fact) do
         confine :kernel => :linux
         setcode do
