@@ -66,7 +66,7 @@ Facter.add("virtual") do
             end
         end
 
-        if FileTest.directory?('/proc/virtual')
+        if FileTest.directory?('/proc/virtual') && result=="physical"
             result = "vserver_host"
         end
 
