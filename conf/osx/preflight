@@ -9,4 +9,4 @@
 # when being installed to volumes other than the current OS.
 
 /bin/rm -Rf "${3}{SITELIBDIR}/facter"
-/bin/rm -Rf "${3}{SITELIBDIR/facter.rb"
+/bin/rm -Rf "${3}{SITELIBDIR}/facter.rb"
