@@ -1,3 +1,6 @@
+1.5.x:
+   Fixed #2032 - file.open hanging on /proc/uptime on some platform 
+
 1.5.4:
     Fixed #1966 - Added physicalprocessorcount fact
 
