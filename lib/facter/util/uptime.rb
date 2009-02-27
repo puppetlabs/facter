@@ -16,6 +16,7 @@ module Facter::Util::Uptime
     def self.get_uptime
         r = IO.popen("/bin/cat /proc/uptime")
         uptime, idletime = r.readline.split(" ")        
+        r.close
         uptime_seconds = uptime.to_i
     end
 
