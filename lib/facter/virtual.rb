@@ -73,3 +73,16 @@ Facter.add("virtual") do
         result
     end
 end
+  
+Facter.add("is_virtual") do
+    confine :kernel => %w{Linux FreeBSD OpenBSD SunOS}
+
+    setcode do
+        case Facter.value(:virtual)
+        when "xenu", "openvzve", "vmware" 
+            true
+        else 
+            false
+        end
+    end
+end

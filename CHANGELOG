@@ -1,4 +1,6 @@
 1.6.x:
+    Fixed #2003 - Added is_virtual fact
+
     Fixed #2035 - Missing brace for OSX preflight
  
     Added EC2 facts
