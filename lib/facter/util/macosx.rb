@@ -58,6 +58,11 @@ module Facter::Util::Macosx
         [ "productName", "productVersion", "buildVersion" ].each do |option|
             ver["macosx_#{option}"] = %x{sw_vers -#{option}}.strip
         end
+        productversion = ver["macosx_productVersion"]
+        if not productversion.nil?
+            ver["macosx_productversion_major"] = productversion.scan(/(\d+\.\d+)/)[0][0]
+            ver["macosx_productversion_minor"] = productversion.scan(/(\d+)\.(\d+)\.(\d+)/)[0].last
+        end
         ver
     end
 end
