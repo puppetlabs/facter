@@ -1,4 +1,6 @@
 1.6.x:
+    Fixed lib install permissions
+
     Fixed #2040 - Facter should provide a macosx_productversion_major fact
 
     Fixed #2003 - Added is_virtual fact
