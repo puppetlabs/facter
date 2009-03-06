@@ -1,4 +1,6 @@
 1.6.x:
+    Fixed #2055 - SunoS Interface error
+
     Fixed #2044 - fixed virtual fact
 
     Fixed lib install permissions

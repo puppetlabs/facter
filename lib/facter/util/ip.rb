@@ -16,7 +16,7 @@ module Facter::Util::IP
             :netmask    => /netmask\s+0x(\w{8})/
         },
         :sunos => {
-            :addr       => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
+            :ipadddress => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
             :macaddress => /(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/,
             :netmask    => /netmask\s+(\w{8})/
         }
