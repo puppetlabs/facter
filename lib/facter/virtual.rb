@@ -4,6 +4,8 @@ Facter.add("virtual") do
     result = "physical"
 
     setcode do
+    require 'thread'
+
         if FileTest.exists?("/proc/user_beancounters")
             # openvz. can be hardware node or virtual environment
             # read the init process' status file, it has laxer permissions
@@ -16,13 +18,15 @@ Facter.add("virtual") do
             end
         end
 
-        if FileTest.exists?("/proc/xen/capabilities") && FileTest.readable?("/proc/xen/capabilities")
-            txt = File.read("/proc/xen/capabilities")
-            if txt =~ /control_d/i
-                result = "xen0"
-            else
-                result = "xenu"
-            end
+        Thread::exclusive do
+            if FileTest.exists?("/proc/xen/capabilities") && FileTest.readable?("/proc/xen/capabilities")
+                txt = File.read("/proc/xen/capabilities")
+                    if txt =~ /control_d/i
+                        result = "xen0"
+                    else
+                        result = "xenu"
+                    end
+             end
         end
 
         if result == "physical"
