@@ -15,7 +15,7 @@ Facter.add(:operatingsystemrelease) do
             line = f.readline.chomp
             if line =~ /\(Rawhide\)$/
                 "Rawhide"
-            elsif line =~ /release (\d+)/
+            elsif line =~ /release (\d[\d.]*)/
                 $1
             end
         end
