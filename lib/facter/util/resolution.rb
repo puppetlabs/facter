@@ -16,7 +16,7 @@ class Facter::Util::Resolution
             if Config::CONFIG['host_os'] =~ /mswin/
                 @have_which = false
             else
-                %x{which which 2>/dev/null}
+                %x{which which >/dev/null 2>&1}
                 @have_which = ($? == 0)
             end
         end
@@ -33,7 +33,7 @@ class Facter::Util::Resolution
             if binary !~ /^\//
                 path = %x{which #{binary} 2>/dev/null}.chomp
                 # we don't have the binary necessary
-                return nil if path == ""
+                return nil if path == "" or path.match(/Command not found\./)
             else
                 path = binary
             end
