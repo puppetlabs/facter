@@ -1,4 +1,6 @@
 1.6.x:
+    Fixed #2081 - Fixed interfaces fact for vlan subinterfaces
+
     Fixed #2063 - added kernelmajversion fact
 
     Fixed #2055 - SunoS Interface error

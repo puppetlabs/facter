@@ -52,7 +52,7 @@ module Facter::Util::IP
         # We get lots of warnings on platforms that don't get an output
         # made.
         if output
-            int = output.scan(/^\w+[.:]?\d+/)
+            int = output.scan(/^\w+[.:]?\d+[.:]?\d*/)
         else
             []
         end
