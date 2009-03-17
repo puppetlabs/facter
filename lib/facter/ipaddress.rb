@@ -1,44 +1,3 @@
-Facter.add(:ipaddress, :ldapname => "iphostnumber", :timeout => 2) do
-    setcode do
-        require 'resolv'
-
-        begin
-            if hostname = Facter.value(:hostname)
-                ip = Resolv.getaddress(hostname)
-                unless ip == "127.0.0.1"
-                    ip
-                end
-            else
-                nil
-            end
-        rescue Resolv::ResolvError
-            nil
-        rescue NoMethodError # i think this is a bug in resolv.rb?
-            nil
-        end
-    end
-end
-
-Facter.add(:ipaddress, :timeout => 2) do
-    setcode do
-        if hostname = Facter.value(:hostname)
-            # we need Hostname to exist for this to work
-            host = nil
-            if host = Facter::Util::Resolution.exec("host #{hostname}")
-                list = host.chomp.split(/\s/)
-                if defined? list[-1] and
-                        list[-1] =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
-                    list[-1]
-                end
-            else
-                nil
-            end
-        else
-            nil
-        end
-    end
-end
-
 Facter.add(:ipaddress) do
     confine :kernel => :linux
     setcode do
@@ -166,5 +125,46 @@ Facter.add(:ipaddress) do
             end
         }
         ip
+    end
+end
+
+Facter.add(:ipaddress, :ldapname => "iphostnumber", :timeout => 2) do
+    setcode do
+        require 'resolv'
+
+        begin
+            if hostname = Facter.value(:hostname)
+                ip = Resolv.getaddress(hostname)
+                unless ip == "127.0.0.1"
+                    ip
+                end
+            else
+                nil
+            end
+        rescue Resolv::ResolvError
+            nil
+        rescue NoMethodError # i think this is a bug in resolv.rb?
+            nil
+        end
+    end
+end
+
+Facter.add(:ipaddress, :timeout => 2) do
+    setcode do
+        if hostname = Facter.value(:hostname)
+            # we need Hostname to exist for this to work
+            host = nil
+            if host = Facter::Util::Resolution.exec("host #{hostname}")
+                list = host.chomp.split(/\s/)
+                if defined? list[-1] and
+                        list[-1] =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
+                    list[-1]
+                end
+            else
+                nil
+            end
+        else
+            nil
+        end
     end
 end

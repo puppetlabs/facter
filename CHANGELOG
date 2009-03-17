@@ -1,4 +1,10 @@
 1.6.x:
+    Fixed #2080 - IPAddress resolutions should be reordered
+
+    Fixed #2078 - ip.rb errors command not found
+
+    Fixed #2058 - Redirecting stderr doesn't work on all systems
+
     Fixed #2081 - Fixed interfaces fact for vlan subinterfaces
 
     Fixed #2063 - added kernelmajversion fact
