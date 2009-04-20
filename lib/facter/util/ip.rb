@@ -45,17 +45,13 @@ module Facter::Util::IP
     end
 
     def self.get_interfaces
-        int = nil
+        return [] unless output = Facter::Util::IP.get_all_interface_output()
 
-        output =  Facter::Util::IP.get_all_interface_output()
-
-        # We get lots of warnings on platforms that don't get an output
-        # made.
-        if output
-            int = output.scan(/^\w+[.:]?\d+[.:]?\d*[.:]?\w*/)
-        else
-            []
-        end
+        # Our regex appears to be stupid, in that it leaves colons sitting
+        # at the end of interfaces.  So, we have to trim those trailing
+        # characters.  I tried making the regex better but supporting all
+        # platforms with a single regex is probably a bit too much.
+        output.scan(/^\w+[.:]?\d+[.:]?\d*[.:]?\w*/).collect { |i| i.sub(/:$/, '') }
     end
 
     def self.get_all_interface_output

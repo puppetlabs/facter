@@ -37,7 +37,7 @@ describe Facter::Util::IP do
         Facter::Util::IP.get_interface_value("e1000g0", "netmask").should == []
     end
 
-    it "should return interface information for directly supported platforms" do
+    it "should return netmask information for Solaris" do
         sample_output_file = File.dirname(__FILE__) + "/../data/solaris_ifconfig_single_interface"
         solaris_ifconfig_interface = File.new(sample_output_file).read()
 
@@ -47,7 +47,7 @@ describe Facter::Util::IP do
         Facter::Util::IP.get_interface_value("e1000g0", "netmask").should == "255.255.255.0"
     end
 
-    it "should return interface information for platforms supported via an alias" do
+    it "should return interface information for FreeBSD supported via an alias" do
         sample_output_file = File.dirname(__FILE__) + "/../data/6.0-STABLE_FreeBSD_ifconfig"
         ifconfig_interface = File.new(sample_output_file).read()
 
@@ -57,7 +57,7 @@ describe Facter::Util::IP do
         Facter::Util::IP.get_interface_value("fxp0", "macaddress").should == "00:0e:0c:68:67:7c"
     end
 
-    it "should return interface information for OS X" do
+    it "should return macaddress information for OS X" do
         sample_output_file = File.dirname(__FILE__) + "/../data/Mac_OS_X_10.5.5_ifconfig"
         ifconfig_interface = File.new(sample_output_file).read()
 
@@ -65,6 +65,16 @@ describe Facter::Util::IP do
         Facter.stubs(:value).with(:kernel).returns("Darwin")
 
         Facter::Util::IP.get_interface_value("en1", "macaddress").should == "00:1b:63:ae:02:66"
+    end
+
+    it "should return all interfaces correctly on OS X" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/Mac_OS_X_10.5.5_ifconfig"
+        ifconfig_interface = File.new(sample_output_file).read()
+
+        Facter::Util::IP.expects(:get_all_interface_output).returns(ifconfig_interface)
+        Facter.stubs(:value).with(:kernel).returns("Darwin")
+
+        Facter::Util::IP.get_interfaces().should == ["lo0", "gif0", "stf0", "en0", "fw0", "en1", "vmnet8", "vmnet1"]
     end
 
     it "should return a human readable netmask on Solaris" do
