@@ -58,6 +58,19 @@ rescue Exception
     $haveusage = false
 end
 
+def load_puppet
+    require 'puppet'
+    Puppet.parse_config
+
+    # If you've set 'vardir' but not 'libdir' in your
+    # puppet.conf, then the hook to add libdir to $:
+    # won't get triggered.  This makes sure that it's setup
+    # correctly.
+    unless $LOAD_PATH.include?(Puppet[:libdir])
+        $LOAD_PATH << Puppet[:libdir]
+    end
+end
+
 $debug = 0
 
 config = nil
@@ -83,7 +96,7 @@ begin
             exit
         when "--puppet"
             begin
-                require 'puppet'
+                load_puppet()
             rescue LoadError => detail
                 $stderr.puts "Could not load Puppet: %s" % detail
             end
