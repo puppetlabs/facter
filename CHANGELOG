@@ -1,4 +1,6 @@
-1.6.x:
+1.5.5:
+    Fixed #2132 - Support for named interfaces under Linux
+
     Fixed #2080 - IPAddress resolutions should be reordered
 
     Fixed #2078 - ip.rb errors command not found
