@@ -1,4 +1,10 @@
 1.5.5:
+    Fixed #1918 - facter --puppet doesn't work
+
+    Fixed #2011 - virtual fact reports always vserver_host if /proc/virtual
+
+    Fixed #2021 - Returning boolean not always possible
+
     Fixed #2132 - Support for named interfaces under Linux
 
     Fixed #2080 - IPAddress resolutions should be reordered
