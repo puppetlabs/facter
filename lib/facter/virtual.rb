@@ -32,7 +32,7 @@ Facter.add("virtual") do
         if result == "physical"
             output = Facter::Util::Resolution.exec('lspci')
             if not output.nil?
-                output.each do |p|
+                output.each_line do |p|
                     # --- look for the vmware video card to determine if it is virtual => vmware.
                     # ---     00:0f.0 VGA compatible controller: VMware Inc [VMware SVGA II] PCI Display Adapter
                     result = "vmware" if p =~ /VM[wW]are/
@@ -40,13 +40,13 @@ Facter.add("virtual") do
             else
                 output = Facter::Util::Resolution.exec('dmidecode')
                 if not output.nil?
-                    output.each do |pd|
+                    output.each_line do |pd|
                         result = "vmware" if pd =~ /VMware|Parallels/
                     end
                 else
                     output = Facter::Util::Resolution.exec('prtdiag')
                     if not output.nil?
-                        output.each do |pd|
+                        output.each_line do |pd|
                             result = "vmware" if pd =~ /VMware|Parallels/
                         end
                     end
@@ -61,7 +61,7 @@ Facter.add("virtual") do
 
         output = Facter::Util::Resolution.exec('mount')
         if not output.nil?
-            output.each do |p|
+            output.each_line do |p|
                 result = "vserver" if p =~ /\/dev\/hdv1/
             end
         end

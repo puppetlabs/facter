@@ -120,7 +120,7 @@ module Facter::Util::IP
             output_int = get_single_interface_output(interface)
 
             if interface != /^lo[0:]?\d?/
-                output_int.each do |s|
+                output_int.each_line do |s|
                     if s =~ regex
                         value = $1
                         if label == 'netmask' && convert_from_hex?(kernel)
