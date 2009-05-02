@@ -18,17 +18,21 @@ Facter.add("virtual") do
             end
         end
 
-        Thread::exclusive do
-            if FileTest.exists?("/proc/xen/capabilities") && FileTest.readable?("/proc/xen/capabilities")
-                txt = File.read("/proc/xen/capabilities")
-                    if txt =~ /control_d/i
-                        result = "xen0"
-                    else
-                        result = "xenu"
-                    end
-             end
+        # new Xen domains have this in dom0 not domu :(
+        if FileTest.exists?("/proc/sys/xen/independent_wallclock")
+            result = "xenu" 
         end
-
+        if FileTest.exists?("/sys/bus/xen")
+            result = "xenu" 
+        end
+        
+        if FileTest.exists?("/proc/xen/capabilities")
+            txt = File.read("/proc/xen/capabilities")
+            if txt =~ /control_d/i
+                result = "xen0" 
+            end
+        end
+ 
         if result == "physical"
             output = Facter::Util::Resolution.exec('lspci')
             if not output.nil?
