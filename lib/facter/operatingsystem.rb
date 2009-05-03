@@ -26,6 +26,8 @@ Facter.add(:operatingsystem) do
             "OEL"
         elsif FileTest.exists?("/etc/ovs-release")
             "OVS"
+        elsif FileTest.exists?("/etc/arch-release")
+            "Arch"
         elsif FileTest.exists?("/etc/redhat-release")
             txt = File.read("/etc/redhat-release")
             if txt =~ /centos/i
