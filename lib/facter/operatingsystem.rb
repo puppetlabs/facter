@@ -23,9 +23,11 @@ Facter.add(:operatingsystem) do
         elsif FileTest.exists?("/etc/arch-release")
             "Archlinux"
         elsif FileTest.exists?("/etc/enterprise-release")
-            "OEL"
-        elsif FileTest.exists?("/etc/ovs-release")
-            "OVS"
+            if FileTest.exists?("/etc/ovs-release")
+                "OVS"
+            else
+                "OEL"
+            end
         elsif FileTest.exists?("/etc/arch-release")
             "Arch"
         elsif FileTest.exists?("/etc/redhat-release")
