@@ -27,6 +27,12 @@ describe Facter::Util::IP do
         Facter::Util::IP.get_interfaces().should == ["eth0"]
     end
 
+    it "should return a list two interfaces on Darwin with two interfaces" do
+        sample_output_file = File.dirname(__FILE__) + '/../data/darwin_ifconfig_all_with_multiple_interfaces'
+        darwin_ifconfig = File.new(sample_output_file).read()
+        Facter::Util::IP.stubs(:get_all_interface_output).returns(darwin_ifconfig)
+        Facter::Util::IP.get_interfaces().should == ["lo0", "en0"]
+    end
 
     it "should return a value for a specific interface" do
         Facter::Util::IP.should respond_to(:get_interface_value)
