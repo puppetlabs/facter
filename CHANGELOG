@@ -7,6 +7,8 @@
 
     Fixed #2132 - Support for named interfaces under Linux
 
+    Fixed #2119 - Added support for non-global Solaris 10 zones
+
     Fixed #2080 - IPAddress resolutions should be reordered
 
     Fixed #2078 - ip.rb errors command not found

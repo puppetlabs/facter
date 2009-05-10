@@ -6,6 +6,13 @@ Facter.add("virtual") do
     setcode do
     require 'thread'
 
+        if FileTest.exists?("/sbin/zonename")
+            z = %x{"/sbin/zonename"}.chomp
+            if z != 'global'
+                result = zone 
+            end
+        end
+
         if FileTest.exists?("/proc/user_beancounters")
             # openvz. can be hardware node or virtual environment
             # read the init process' status file, it has laxer permissions
