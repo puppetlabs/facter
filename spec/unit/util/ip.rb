@@ -37,6 +37,16 @@ describe Facter::Util::IP do
         Facter::Util::IP.get_interface_value("e1000g0", "netmask").should == []
     end
 
+    it "should return ipaddress information for Solaris" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/solaris_ifconfig_single_interface"
+        solaris_ifconfig_interface = File.new(sample_output_file).read()
+
+        Facter::Util::IP.expects(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
+        Facter.stubs(:value).with(:kernel).returns("SunOS")
+
+        Facter::Util::IP.get_interface_value("e1000g0", "ipaddress").should == "172.16.15.138"
+    end
+
     it "should return netmask information for Solaris" do
         sample_output_file = File.dirname(__FILE__) + "/../data/solaris_ifconfig_single_interface"
         solaris_ifconfig_interface = File.new(sample_output_file).read()
