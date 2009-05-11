@@ -30,7 +30,7 @@ Facter.add(:macaddress) do
         ether = nil
         output = %x{/sbin/ifconfig}
 
-        output.split(/^\S/).each_line do |str|
+        output.split(/^\S/).each do |str|
             if str =~ /10baseT/ # we're wired
                 str =~ /ether (\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/
                 ether = $1
@@ -69,7 +69,7 @@ Facter.add(:macaddress) do
     setcode do
         ether = []
         output = %x{ipconfig /all}
-        output.split(/\r\n/).each_line do |str|
+        output.split(/\r\n/).each do |str|
             if str =~  /.*Physical Address.*: (\w{1,2}-\w{1,2}-\w{1,2}-\w{1,2}-\w{1,2}-\w{1,2})/
                 ether.push($1.gsub(/-/, ":"))
             end
