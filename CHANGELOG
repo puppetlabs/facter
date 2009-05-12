@@ -1,4 +1,14 @@
 1.5.5:
+    Cleaned up Rakefile and removed requirement for Reductive Labs build library
+
+    Fixed #2131 (Closed): Facter doesn't populate lsbmajdistrelease on OEL
+
+    Fixed #2214 (Closed): Identify Oracle VM properly
+
+    Fixed #2231: ipaddress_pcn0 fact no longer exists on Solaris systems
+
+    Fixed #2236 (Closed): macaddress fact uses each_line on arrays
+
     Fixed #1918 - facter --puppet doesn't work
 
     Fixed #2011 - virtual fact reports always vserver_host if /proc/virtual

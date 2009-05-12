@@ -1,67 +1,63 @@
 # Rakefile for facter
 
-$LOAD_PATH << File.join(File.dirname(__FILE__), 'tasks')
+require 'facter'
+require 'rake'
+require 'rake/packagetask'
+require 'rake/gempackagetask'
 
-begin
-    require 'rake/reductive'
-rescue LoadError
-    $stderr.puts "You must have the Reductive build library in your RUBYLIB."
-    exit(14)
+FILES = FileList[
+    '[A-Z]*',
+    'bin/**/*',
+    'lib/**/*',
+    'conf/**/*',
+    'etc/**/*',
+]
+
+spec = Gem::Specification.new do |spec|
+    spec.platform = Gem::Platform::RUBY
+    spec.name = 'facter'
+    spec.files = FILES.to_a
+    spec.version = Facter::FACTERVERSION
+    spec.summary = 'Facter, a system inventory tool'
+    spec.author = 'Reductive Labs'
+    spec.email = 'puppet@reductivelabs.com'
+    spec.homepage = 'http://reductivelabs.com'
+    spec.rubyforge_project = 'facter'
+    spec.has_rdoc = true
+    spec.rdoc_options <<
+        '--title' <<  'Facter - System Inventory Tool' <<
+        '--main' << 'README' <<
+        '--line-numbers'
 end
 
-project = Rake::RedLabProject.new("facter") do |p|
-    p.summary = "Facter collects Operating system facts."
-    p.description = <<-EOF
-      Facter is a module for collecting simple facts about a host
-      Operating system.
-    EOF
-
-    p.filelist = [
-        'install.rb',
-        '[A-Z]*',
-        'bin/**/*',
-        'lib/facter.rb',
-        'lib/**/*.rb',
-        'test/**/*.rb',
-        'spec/**/*',
-        'conf/**/*',
-        'documentation/**/*',
-        'etc/*'
-    ]
-
+Rake::PackageTask.new("facter", Facter::FACTERVERSION) do |pkg|
+    pkg.package_dir = 'pkg'
+    pkg.need_tar_gz = true
+    pkg.package_files = FILES.to_a
 end
 
-project.mkgemtask do |gem|
-    gem.require_path = 'lib'                         # Use these for libraries.
-
-    gem.bindir = "bin"                               # Use these for applications.
-    gem.executables = ["facter"]
-    gem.default_executable = "facter"
-
-    gem.author = "Luke Kanies"
+Rake::GemPackageTask.new(spec) do |pkg|
 end
 
-task :archive do
-    raise ArgumentError, "You must specify the archive name by setting ARCHIVE; e.g., ARCHIVE=1.5.1rc1" unless archive = ENV["ARCHIVE"]
-
-    sh "git archive --format=tar  --prefix=facter-#{archive}/ HEAD | gzip -c > facter-#{archive}.tgz"
+desc "Run the specs under spec/"
+task :spec do
+    require 'spec'
+    require 'spec/rake/spectask'
+    # require 'rcov'
+    Spec::Rake::SpecTask.new do |t| 
+        t.spec_opts = ['--format','s', '--loadby','mtime'] 
+        t.spec_files = FileList['spec/**/*.rb']
+    end 
 end
 
-namespace :ci do
-    desc "Run the CI prep tasks"
-    task :prep do
-        require 'rubygems'
-        gem 'ci_reporter'
-        require 'ci/reporter/rake/rspec'
-        require 'ci/reporter/rake/test_unit'
-        ENV['CI_REPORTS'] = 'results'
-    end
+require 'rubygems'
+gem 'ci_reporter'
+require 'ci/reporter/rake/rspec'
+require 'ci/reporter/rake/test_unit'
+ENV['CI_REPORTS'] = 'results'
 
-    desc "Run CI RSpec tests"
-    task :spec => [:prep, 'ci:setup:rspec'] do
-        sh "cd spec; rake all; exit 0"
-    end
-end
+desc "Run CI RSpec tests"
+task :ci_spec => ['ci:setup:rspec', :spec]
 
 desc "Send patch information to the puppet-dev list"
 task :mail_patches do
