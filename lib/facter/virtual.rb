@@ -13,16 +13,23 @@ Facter.add("virtual") do
             end
         end
 
-        if FileTest.exists?("/proc/user_beancounters")
-            # openvz. can be hardware node or virtual environment
-            # read the init process' status file, it has laxer permissions
-            # than /proc/user_beancounters (so this won't fail as non-root)
-            txt = File.read("/proc/1/status")
-            if txt =~ /^envID:[[:blank:]]+0$/mi
+        if FileTest.exists?("/proc/vz/veinfo")
+            if FileTest.exists?("/proc/vz/version")
                 result = "openvzhn"
             else
                 result = "openvzve"
             end
+        end
+
+        if FileTest.exists?("/proc/self/status")
+            txt = File.read("/proc/self/status")
+            if txt =~ /^(s_context|VxID):[[:blank:]]*[1-9]/
+                result = "vserver"
+            end
+        end
+
+        if FileTest.exists?("/proc/virtual")
+            result = "vserver_host"
         end
 
         # new Xen domains have this in dom0 not domu :(
@@ -68,17 +75,6 @@ Facter.add("virtual") do
         # VMware server 1.0.3 rpm places vmware-vmx in this place, other versions or platforms may not.
         if FileTest.exists?("/usr/lib/vmware/bin/vmware-vmx")
             result = "vmware_server"
-        end
-
-        output = Facter::Util::Resolution.exec('mount')
-        if not output.nil?
-            output.each_line do |p|
-                result = "vserver" if p =~ /\/dev\/hdv1/
-            end
-        end
-
-        if FileTest.directory?('/proc/virtual') && result=="physical"
-            result = "vserver_host"
         end
 
         result
