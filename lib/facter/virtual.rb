@@ -48,24 +48,30 @@ Facter.add("virtual") do
         end
  
         if result == "physical"
-            output = Facter::Util::Resolution.exec('lspci')
-            if not output.nil?
-                output.each_line do |p|
-                    # --- look for the vmware video card to determine if it is virtual => vmware.
-                    # ---     00:0f.0 VGA compatible controller: VMware Inc [VMware SVGA II] PCI Display Adapter
-                    result = "vmware" if p =~ /VM[wW]are/
-                end
+            output = Facter::Util::Resolution.exec('vmware-checkvm')
+            if $?.exitstatus == 0
+                result = "vmware"
             else
-                output = Facter::Util::Resolution.exec('dmidecode')
+                output = Facter::Util::Resolution.exec('lspci')
                 if not output.nil?
-                    output.each_line do |pd|
-                        result = "vmware" if pd =~ /VMware|Parallels/
+                    output.each_line do |p|
+                        # --- look for the vmware video card to determine if it is virtual => vmware.
+                        # ---     00:0f.0 VGA compatible controller: VMware Inc [VMware SVGA II] PCI Display Adapter
+                        result = "vmware" if p =~ /VM[wW]are/
                     end
                 else
-                    output = Facter::Util::Resolution.exec('prtdiag')
+                    output = Facter::Util::Resolution.exec('dmidecode')
                     if not output.nil?
                         output.each_line do |pd|
                             result = "vmware" if pd =~ /VMware|Parallels/
+                        end
+                    elsif Facter[:kernel].value == 'SunOS' and Facter[:kernelrelease].value == '5.10'
+                        # prtdiag only works on Solaris 10 x86 hosts
+                        output = Facter::Util::Resolution.exec('prtdiag')
+                        if not output.nil?
+                            output.each_line do |pd|
+                                result = "vmware" if pd =~ /VMware|Parallels/
+                            end
                         end
                     end
                 end
