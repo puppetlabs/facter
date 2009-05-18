@@ -1,6 +1,6 @@
 # Rakefile for facter
 
-require 'facter'
+require './lib/facter.rb'
 require 'rake'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
