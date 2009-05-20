@@ -54,7 +54,7 @@ Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{CentOS}
     setcode do
         centos_release = Facter::Util::Resolution.exec("sed -r -e 's/CentOS release //' -e 's/ \\((Branch|Final)\\)//' /etc/redhat-release")
-        if centos_release =~ /5/
+        if centos_release =~ /^5/
             release = Facter::Util::Resolution.exec('rpm -q --qf \'%{VERSION}.%{RELEASE}\' centos-release | cut -d. -f1,2')
         else
             release = centos_release
