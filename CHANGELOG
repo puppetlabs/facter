@@ -1,4 +1,8 @@
 1.5.5:
+    Bug #2291 (Closed): Fix operatingsystemrelease for CentOS < 5
+
+    Bug #2278 (Closed): Virtual fact incorrect on Solaris sparc
+
     Cleaned up Rakefile and removed requirement for Reductive Labs build library
 
     Fixed #2131 (Closed): Facter doesn't populate lsbmajdistrelease on OEL
