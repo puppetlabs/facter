@@ -1,5 +1,7 @@
 # Rakefile for facter
 
+$: << File.expand_path('lib')
+
 require './lib/facter.rb'
 require 'rake'
 require 'rake/packagetask'
