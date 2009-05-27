@@ -21,6 +21,7 @@ spec = Gem::Specification.new do |spec|
     spec.platform = Gem::Platform::RUBY
     spec.name = 'facter'
     spec.files = FILES.to_a
+    spec.executables = %w{facter}
     spec.version = Facter::FACTERVERSION
     spec.summary = 'Facter, a system inventory tool'
     spec.author = 'Reductive Labs'
