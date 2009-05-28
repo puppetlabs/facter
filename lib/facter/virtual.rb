@@ -1,32 +1,19 @@
+require 'facter/util/virtual'
+
 Facter.add("virtual") do
     confine :kernel => %w{Linux FreeBSD OpenBSD SunOS}
 
     result = "physical"
 
     setcode do
-    require 'thread'
 
-        if FileTest.exists?("/sbin/zonename")
-            z = %x{"/sbin/zonename"}.chomp
-            if z != 'global'
-                result = 'zone' 
-            end
+        result = "zone" if Facter::Util::Virtual.zone?
+
+        if Facter::Util::Virtual.openvz?
+            result = Facter::Util::Virtual.openvz_type()
         end
 
-        if FileTest.exists?("/proc/vz/veinfo")
-            if FileTest.exists?("/proc/vz/version")
-                result = "openvzhn"
-            else
-                result = "openvzve"
-            end
-        end
-
-        if FileTest.exists?("/proc/self/status")
-            txt = File.read("/proc/self/status")
-            if txt =~ /^(s_context|VxID):[[:blank:]]*[1-9]/
-                result = "vserver"
-            end
-        end
+        result = "vserver" if Facter::Util::Virtual.vserver?
 
         if FileTest.exists?("/proc/virtual")
             result = "vserver_host"
@@ -34,19 +21,19 @@ Facter.add("virtual") do
 
         # new Xen domains have this in dom0 not domu :(
         if FileTest.exists?("/proc/sys/xen/independent_wallclock")
-            result = "xenu" 
+            result = "xenu"
         end
         if FileTest.exists?("/sys/bus/xen")
-            result = "xenu" 
+            result = "xenu"
         end
         
         if FileTest.exists?("/proc/xen/capabilities")
             txt = File.read("/proc/xen/capabilities")
             if txt =~ /control_d/i
-                result = "xen0" 
+                result = "xen0"
             end
         end
- 
+
         if result == "physical"
             output = Facter::Util::Resolution.exec('lspci')
             if not output.nil?
@@ -86,7 +73,7 @@ Facter.add("is_virtual") do
 
     setcode do
         case Facter.value(:virtual)
-        when "xenu", "openvzve", "vmware" 
+        when "xenu", "openvzve", "vmware"
             true
         else 
             false
