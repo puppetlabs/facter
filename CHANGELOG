@@ -1,3 +1,8 @@
+1.5.6:
+    Bug #2303: Add executable facter in spec
+    
+    Bug #2307: undefined local variable or method `zone'
+
 1.5.5:
     Bug #2291 (Closed): Fix operatingsystemrelease for CentOS < 5
 
