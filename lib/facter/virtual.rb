@@ -9,7 +9,7 @@ Facter.add("virtual") do
         if FileTest.exists?("/sbin/zonename")
             z = %x{"/sbin/zonename"}.chomp
             if z != 'global'
-                result = zone 
+                result = 'zone' 
             end
         end
 
