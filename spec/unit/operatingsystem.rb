@@ -5,7 +5,10 @@ require File.dirname(__FILE__) + '/../spec_helper'
 require 'facter'
 
 describe "Operating System fact" do
-    
+
+    before do
+        Facter.clear
+    end
     
     after do
         Facter.clear
