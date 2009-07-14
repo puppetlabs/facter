@@ -1,63 +1,23 @@
 Facter.add(:operatingsystemrelease) do
-    confine :operatingsystem => :fedora
+    confine :operatingsystem => %w{CentOS Fedora oel ovs RedHat}
     setcode do
-        File::open("/etc/fedora-release", "r") do |f|
+        case Facter.value(:operatingsystem)
+        when "CentOS", "RedHat"
+            releasefile = "/etc/redhat-release"
+        when "Fedora"
+            releasefile = "/etc/fedora-release"
+        when "oel"
+            releasefile = "/etc/enterprise-release"
+        when "ovs"
+            releasefile = "/etc/ovs-release"
+        end
+        File::open(releasefile, "r") do |f|
             line = f.readline.chomp
             if line =~ /\(Rawhide\)$/
                 "Rawhide"
-            elsif line =~ /release (\d+)/
+            elsif line =~ /release (\d[\d.]*)/
                 $1
             end
-        end
-    end
-end
-
-Facter.add(:operatingsystemrelease) do
-    confine :operatingsystem => %w{RedHat}
-    setcode do
-        File::open("/etc/redhat-release", "r") do |f|
-            line = f.readline.chomp
-            if line =~ /\(Rawhide\)$/
-                "Rawhide"
-            elsif line =~ /release (\d+)/
-                $1
-            end
-        end
-    end
-end
-
-Facter.add(:operatingsystemrelease) do
-    confine :operatingsystem => :oel
-    setcode do
-        File::open("/etc/enterprise-release", "r") do |f|
-            line = f.readline.chomp
-            if line =~ /release (\d+)/
-                $1
-            end
-        end
-    end
-end
-
-Facter.add(:operatingsystemrelease) do
-    confine :operatingsystem => :ovs
-    setcode do
-        File::open("/etc/ovs-release", "r") do |f|
-            line = f.readline.chomp
-            if line =~ /release (\d+)/
-                $1
-            end
-        end
-    end
-end
-
-Facter.add(:operatingsystemrelease) do
-    confine :operatingsystem => %w{CentOS}
-    setcode do
-        centos_release = Facter::Util::Resolution.exec("sed -r -e 's/CentOS release //' -e 's/ \\((Branch|Final)\\)//' /etc/redhat-release")
-        if centos_release =~ /^5/
-            release = Facter::Util::Resolution.exec('rpm -q --qf \'%{VERSION}.%{RELEASE}\' centos-release | cut -d. -f1,2')
-        else
-            release = centos_release
         end
     end
 end
