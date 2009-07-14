@@ -9,7 +9,7 @@ module Facter::Manufacturer
             return nil unless FileTest.exists?("/usr/sbin/dmidecode")
 
             output=%x{/usr/sbin/dmidecode 2>/dev/null}
-        when 'OpenBSD', 'FreeBSD'
+        when 'FreeBSD'
             return nil unless FileTest.exists?("/usr/local/sbin/dmidecode")
 
             output=%x{/usr/local/sbin/dmidecode 2>/dev/null}
@@ -32,13 +32,24 @@ module Facter::Manufacturer
                         if line =~ /#{key}/ and ( line =~ /#{value} 0x\d+ \(([-\w].*)\)\n*./ or line =~ /#{value} ([-\w].*)\n*./ )
                             result = $1
                             Facter.add(facterkey) do
-                                confine :kernel => [ :linux, :freebsd, :netbsd, :openbsd, :sunos ]
+                                confine :kernel => [ :linux, :freebsd, :netbsd, :sunos ]
                                 setcode do
                                     result
                                 end
                             end
                         end
                     end
+                end
+            end
+        end
+    end
+
+    def self.sysctl_find_system_info(name)
+        name.each do |sysctlkey,facterkey|
+            Facter.add(facterkey) do
+                confine :kernel => :openbsd
+                setcode do
+                    Facter::Util::Resolution.exec("sysctl -n " + sysctlkey)
                 end
             end
         end
