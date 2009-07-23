@@ -56,12 +56,16 @@ module Facter::Util::Macosx
     def self.sw_vers
         ver = Hash.new
         [ "productName", "productVersion", "buildVersion" ].each do |option|
-            ver["macosx_#{option}"] = %x{sw_vers -#{option}}.strip
+            ver["macosx_#{option}"] = Facter::Util::Resolution.exec("/usr/bin/sw_vers -#{option}").strip
         end
         productversion = ver["macosx_productVersion"]
         if not productversion.nil?
-            ver["macosx_productversion_major"] = productversion.scan(/(\d+\.\d+)/)[0][0]
-            ver["macosx_productversion_minor"] = productversion.scan(/(\d+)\.(\d+)\.(\d+)/)[0].last
+            versions = productversion.scan(/(\d+)\.(\d+)\.*(\d*)/)[0]
+            ver["macosx_productversion_major"] = "#{versions[0]}.#{versions[1]}"
+            if versions[2].empty?  # 10.x should be treated as 10.x.0
+                versions[2] = "0"
+            end
+            ver["macosx_productversion_minor"] = versions[2]
         end
         ver
     end
