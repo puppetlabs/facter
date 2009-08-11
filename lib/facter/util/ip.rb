@@ -51,7 +51,7 @@ module Facter::Util::IP
         # at the end of interfaces.  So, we have to trim those trailing
         # characters.  I tried making the regex better but supporting all
         # platforms with a single regex is probably a bit too much.
-        output.scan(/^\w+[.:]?\d+[.:]?\d*[.:]?\w*/).collect { |i| i.sub(/:$/, '') }
+        output.scan(/^\w+[.:]?\d+[.:]?\d*[.:]?\w*/).collect { |i| i.sub(/:$/, '') }.uniq
     end
 
     def self.get_all_interface_output

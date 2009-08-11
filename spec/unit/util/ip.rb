@@ -34,6 +34,13 @@ describe Facter::Util::IP do
         Facter::Util::IP.get_interfaces().should == ["lo0", "en0"]
     end
 
+    it "should return a list two interfaces on Solaris with two interfaces multiply reporting" do
+        sample_output_file = File.dirname(__FILE__) + '/../data/solaris_ifconfig_all_with_multiple_interfaces'
+        solaris_ifconfig = File.new(sample_output_file).read()
+        Facter::Util::IP.stubs(:get_all_interface_output).returns(solaris_ifconfig)
+        Facter::Util::IP.get_interfaces().should == ["lo0", "e1000g0"]
+    end
+
     it "should return a value for a specific interface" do
         Facter::Util::IP.should respond_to(:get_interface_value)
     end
