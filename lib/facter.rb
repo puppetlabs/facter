@@ -120,7 +120,7 @@ module Facter
                 name = name.to_s.sub(/\?$/,'')
             end
 
-            if fact = @collection.fact(name)
+            if fact = collection.fact(name)
                 if question
                     value = fact.value.downcase
                     args.each do |arg|
