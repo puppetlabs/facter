@@ -44,6 +44,10 @@ end
 Rake::GemPackageTask.new(spec) do |pkg|
 end
 
+task :default do
+    sh %{rake -T}
+end
+
 desc "Run the specs under spec/"
 task :spec do
     require 'spec'
