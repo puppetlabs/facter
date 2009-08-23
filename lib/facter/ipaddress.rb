@@ -19,7 +19,7 @@ Facter.add(:ipaddress) do
 end
 
 Facter.add(:ipaddress) do
-    confine :kernel => %w{FreeBSD OpenBSD solaris}
+    confine :kernel => %w{FreeBSD OpenBSD}
     setcode do
         ip = nil
         output = %x{/sbin/ifconfig}
@@ -39,7 +39,7 @@ Facter.add(:ipaddress) do
 end
 
 Facter.add(:ipaddress) do
-    confine :kernel => %w{NetBSD}
+    confine :kernel => %w{NetBSD SunOS}
     setcode do
         ip = nil
         output = %x{/sbin/ifconfig -a}
