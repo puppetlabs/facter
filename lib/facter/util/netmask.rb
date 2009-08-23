@@ -14,7 +14,13 @@ module Facter::NetMask
         when 'SunOS'
             ops = {
                 :ifconfig => '/usr/sbin/ifconfig -a',
-                :regex => %r{\s+ inet\s+? #{Facter.ipaddress} \+? mask (\w{8})}x,
+                :regex => %r{\s+ inet \s #{Facter.ipaddress} \s netmask \s (\w{8})}x,
+                :munge => Proc.new { |mask| mask.scan(/../).collect do |byte| byte.to_i(16) end.join('.') }
+            }
+        when 'FreeBSD','NetBSD','OpenBSD', 'Darwin'
+            ops = {
+                :ifconfig => '/sbin/ifconfig -a',
+                :regex => %r{\s+ inet \s #{Facter.ipaddress} \s netmask \s 0x(\w{8})}x,
                 :munge => Proc.new { |mask| mask.scan(/../).collect do |byte| byte.to_i(16) end.join('.') }
             }
         end
