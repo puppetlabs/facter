@@ -70,6 +70,16 @@ describe Facter::Util::IP do
         Facter::Util::IP.get_interface_value("e1000g0", "netmask").should == "255.255.255.0"
     end
 
+    it "should return calculated network information for Solaris" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/solaris_ifconfig_single_interface"
+        solaris_ifconfig_interface = File.new(sample_output_file).read()
+
+        Facter::Util::IP.stubs(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
+        Facter.stubs(:value).with(:kernel).returns("SunOS")
+
+        Facter::Util::IP.get_network_value("e1000g0").should == "172.16.15.0"
+    end
+
     it "should return interface information for FreeBSD supported via an alias" do
         sample_output_file = File.dirname(__FILE__) + "/../data/6.0-STABLE_FreeBSD_ifconfig"
         ifconfig_interface = File.new(sample_output_file).read()
