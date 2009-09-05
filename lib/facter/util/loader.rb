@@ -69,7 +69,11 @@ class Facter::Util::Loader
 
     def load_file(file)
         # We have to specify Kernel.load, because we have a load method.
-        Kernel.load(file)
+        begin
+            Kernel.load(file)
+        rescue ScriptError => detail
+            warn "Error loading fact #{file} #{detail}"
+        end
     end
 
     # Load facts from the environment.  If no name is provided,

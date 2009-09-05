@@ -111,6 +111,7 @@ class Facter::Util::Resolution
     # How we get a value for our resolution mechanism.
     def value
         result = nil
+        return result if @code == nil and @interpreter == nil
         begin
             Timeout.timeout(limit) do
                 if @code.is_a?(Proc)

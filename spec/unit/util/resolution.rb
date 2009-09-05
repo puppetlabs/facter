@@ -25,6 +25,14 @@ describe Facter::Util::Resolution do
         Facter::Util::Resolution.new("yay").limit.should == 0
     end
 
+    it "should default to nil for code" do
+        Facter::Util::Resolution.new("yay").code.should be_nil
+    end
+
+    it "should default to nil for interpreter" do
+        Facter::Util::Resolution.new("yay").interpreter.should be_nil
+    end
+
     it "should provide a 'limit' method that returns the timeout" do
         res = Facter::Util::Resolution.new("yay")
         res.timeout = "testing"
@@ -71,6 +79,13 @@ describe Facter::Util::Resolution do
             @resolve = Facter::Util::Resolution.new("yay")
         end
 
+        describe "and setcode has not been called" do
+            it "should return nil" do
+                Facter::Util::Resolution.expects(:exec).with(nil, nil).never
+                @resolve.value.should be_nil
+            end
+        end
+
         describe "and the code is a string" do
             it "should return the result of executing the code with the interpreter" do
                 @resolve.setcode "/bin/foo"
@@ -103,11 +118,17 @@ describe Facter::Util::Resolution do
                 @resolve.value.should be_nil
             end
 
+            it "should return nil if the value is an empty block" do
+                @resolve.setcode { "" }
+                @resolve.value.should be_nil
+            end
+
             it "should use its limit method to determine the timeout, to avoid conflict when a 'timeout' method exists for some other reason" do
                 @resolve.expects(:timeout).never
                 @resolve.expects(:limit).returns "foo"
                 Timeout.expects(:timeout).with("foo")
 
+                @resolve.setcode { sleep 2; "raise This is a test"}
                 @resolve.value
             end
 

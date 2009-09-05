@@ -201,6 +201,16 @@ describe Facter::Util::Loader do
             @loader.load_all
         end
 
+        it "should not raise an exception when a file is unloadable" do
+            @loader.expects(:search_path).returns %w{/one/dir}
+            Dir.expects(:entries).with("/one/dir").returns %w{a.rb}
+
+            Kernel.expects(:load).with("/one/dir/a.rb").raises(LoadError)
+            @loader.expects(:warn)
+
+            lambda { @loader.load_all }.should_not raise_error
+        end
+
         it "should load all facts from the environment" do
             Facter.expects(:add).with('one')
             Facter.expects(:add).with('two')
