@@ -84,6 +84,13 @@ module Facter::Util::IP
         if not FileTest.executable?("/sbin/ip")
             return nil
         end
+        # A bonding interface can never be an alias interface. Alias
+        # interfaces do have a colon in their name and the ip link show
+        # command throws an error message when we pass it an alias
+        # interface.
+        if interface =~ /:/
+            return nil
+        end
         regex = /SLAVE[,>].* (bond[0-9]+)/
             ethbond = regex.match(%x{/sbin/ip link show #{interface}})
         if ethbond
