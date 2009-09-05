@@ -13,24 +13,24 @@ Facter.add("virtual") do
             result = Facter::Util::Virtual.openvz_type()
         end
 
-        result = "vserver" if Facter::Util::Virtual.vserver?
-
-        if FileTest.exists?("/proc/virtual")
-            result = "vserver_host"
+        if Facter::Util::Virtual.vserver?
+            result = Facter::Util::Virtual.vserver_type()
         end
 
-        # new Xen domains have this in dom0 not domu :(
-        if FileTest.exists?("/proc/sys/xen/independent_wallclock")
-            result = "xenu"
-        end
-        if FileTest.exists?("/sys/bus/xen")
-            result = "xenu"
-        end
+        if Facter::Util::Virtual.xen?
+            # new Xen domains have this in dom0 not domu :(
+            if FileTest.exists?("/proc/sys/xen/independent_wallclock")
+                result = "xenu"
+            end
+            if FileTest.exists?("/sys/bus/xen")
+                result = "xenu"
+            end
         
-        if FileTest.exists?("/proc/xen/capabilities")
-            txt = File.read("/proc/xen/capabilities")
-            if txt =~ /control_d/i
-                result = "xen0"
+            if FileTest.exists?("/proc/xen/capabilities")
+                txt = File.read("/proc/xen/capabilities")
+                if txt =~ /control_d/i
+                    result = "xen0"
+                end
             end
         end
 
@@ -57,11 +57,10 @@ Facter.add("virtual") do
                     end
                 end
             end
-        end
-
-        # VMware server 1.0.3 rpm places vmware-vmx in this place, other versions or platforms may not.
-        if FileTest.exists?("/usr/lib/vmware/bin/vmware-vmx")
-            result = "vmware_server"
+            # VMware server 1.0.3 rpm places vmware-vmx in this place, other versions or platforms may not.
+            if FileTest.exists?("/usr/lib/vmware/bin/vmware-vmx")
+                result = "vmware_server"
+            end
         end
 
         result

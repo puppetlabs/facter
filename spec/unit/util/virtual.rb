@@ -57,4 +57,40 @@ describe Facter::Util::Virtual do
         Facter::Util::Virtual.should_not be_vserver
     end
 
+    it "should identify vserver_host when /proc/virtual exists" do
+        Facter::Util::Virtual.expects(:vserver?).returns(true)
+        FileTest.stubs(:exists?).with("/proc/virtual").returns(true)
+        Facter::Util::Virtual.vserver_type().should == "vserver_host"
+    end
+
+    it "should identify vserver_type as vserver when /proc/virtual does not exist" do
+        Facter::Util::Virtual.expects(:vserver?).returns(true)
+        FileTest.stubs(:exists?).with("/proc/virtual").returns(false)
+        Facter::Util::Virtual.vserver_type().should == "vserver"
+    end
+
+    it "should detect xen when /proc/sys/xen exists" do
+        FileTest.expects(:exists?).with("/proc/sys/xen").returns(true)
+        Facter::Util::Virtual.should be_xen
+    end
+
+    it "should detect xen when /sys/bus/xen exists" do
+        FileTest.expects(:exists?).with("/proc/sys/xen").returns(false)
+        FileTest.expects(:exists?).with("/sys/bus/xen").returns(true)
+        Facter::Util::Virtual.should be_xen
+    end
+
+    it "should detect xen when /proc/xen exists" do
+        FileTest.expects(:exists?).with("/proc/sys/xen").returns(false)
+        FileTest.expects(:exists?).with("/sys/bus/xen").returns(false)
+        FileTest.expects(:exists?).with("/proc/xen").returns(true)
+        Facter::Util::Virtual.should be_xen
+    end
+
+    it "should not detect xen when no sysfs/proc xen directories exist" do
+        FileTest.expects(:exists?).with("/proc/sys/xen").returns(false)
+        FileTest.expects(:exists?).with("/sys/bus/xen").returns(false)
+        FileTest.expects(:exists?).with("/proc/xen").returns(false)
+        Facter::Util::Virtual.should_not be_xen
+    end
 end

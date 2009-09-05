@@ -24,4 +24,20 @@ module Facter::Util::Virtual
         return true if txt =~ /^(s_context|VxID):[[:blank:]]*[1-9]/
         return false
     end
+
+    def self.vserver_type
+        if self.vserver?
+            if FileTest.exists?("/proc/virtual")
+                "vserver_host"
+            else
+                "vserver"
+            end
+        end
+    end
+
+    def self.xen?
+        ["/proc/sys/xen", "/sys/bus/xen", "/proc/xen" ].detect do |f|
+            FileTest.exists?(f)
+        end
+    end
 end
