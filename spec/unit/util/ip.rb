@@ -130,6 +130,12 @@ describe Facter::Util::IP do
 
         Facter::Util::IP.get_interface_value("en1", "netmask").should == "255.255.255.0"
     end
+    
+    it "should not get bonding master on interface aliases" do
+        Facter.stubs(:value).with(:kernel).returns("Linux")
+        
+        Facter::Util::IP.get_bonding_master("eth0:1").should be_nil
+    end
 
     [:freebsd, :netbsd, :openbsd, :sunos, :darwin].each do |platform|
         it "should require conversion from hex on #{platform}" do
