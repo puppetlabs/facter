@@ -25,9 +25,9 @@ Facter.add("virtual") do
             if FileTest.exists?("/sys/bus/xen")
                 result = "xenu"
             end
-        
+
             if FileTest.exists?("/proc/xen/capabilities")
-                txt = File.read("/proc/xen/capabilities")
+                txt = Facter::Util::Resolution.exec("cat /proc/xen/capabilities")
                 if txt =~ /control_d/i
                     result = "xen0"
                 end
