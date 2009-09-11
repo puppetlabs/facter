@@ -1,3 +1,17 @@
+1.5.7
+    *  Bug #2306: Facter[netmask] does not exist on Solaris and FreeBSD systems
+    * Bug #2312: The operatingsystemrelease fact does not account for non-integer Fedora and RHEL releases.
+    * Bug #2314: OpenBSD uses dmidecode for manufacturer info, should use native sysctl facility
+    * Bug #2407: Broken CI build
+    * Bug #2414: errors when alias IP's are defined
+    * Bug #2415: patch for first-rev Mac OS X versions
+    * Bug #2431: Facter binary installs in wrong location on Mac OS 10.6 developer seed
+    * Bug #2455: Misleading/ambiguous error message on invalid fact code should be changed
+    * Bug #2470: interfaces fact has duplicate entries under Solaris
+    * Bug #2535: undefined method when trying to access a fact's value through the Facter class method shortcut and @collection is not initialized
+    * Feature #2548: Netblock fact
+    * Refactor #2292: Add tests for virtual.rb
+
 1.5.6:
     Bug #2303: Add executable facter in spec
     
