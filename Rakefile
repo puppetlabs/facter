@@ -55,9 +55,17 @@ desc "Run the specs under spec/"
 task :spec do
     require 'spec'
     require 'spec/rake/spectask'
-    # require 'rcov'
-    Spec::Rake::SpecTask.new do |t| 
-        t.spec_opts = ['--format','s', '--loadby','mtime'] 
+    begin
+        require 'rcov'
+    rescue LoadError
+    end
+
+    Spec::Rake::SpecTask.new do |t|
+        t.spec_opts = ['--format','s', '--loadby','mtime']
         t.spec_files = FileList['spec/**/*.rb']
-    end 
+        if defined?(Rcov)
+            t.rcov = true
+            t.rcov_opts = ['--exclude', 'spec/*,test/*,results/*,/usr/lib/*']
+        end
+     end
 end
