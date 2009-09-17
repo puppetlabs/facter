@@ -13,5 +13,4 @@ end
 
 desc "Run the CI RSpec tests"
 task :ci_spec => [:ci_prep, 'ci:setup:rspec', :spec] do
-    sh "exit 0"
 end
