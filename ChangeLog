@@ -1,3 +1,23 @@
+Fri, 18 Sep 2009 10:10:55 +1000
+James Turnbull <james@lovedthanlost.net>
+Added additional exclusion to rcov process
+
+Thu, 17 Sep 2009 16:16:00 +1000
+James Turnbull <james@lovedthanlost.net>
+Added rcov support to spec task
+
+Thu, 17 Sep 2009 16:11:57 +1000
+James Turnbull <james@lovedthanlost.net>
+Updated CI Rake task
+
+Wed, 6 May 2009 13:50:30 -0400
+Todd Zullinger <tmz@pobox.com>
+Clarify licensing as GPLv2 (or any later version)
+
+Fri, 11 Sep 2009 14:23:50 +1000
+James Turnbull <james@lovedthanlost.net>
+Added new format ChangeLog
+
 Fri, 11 Sep 2009 14:22:11 +1000
 James Turnbull <james@lovedthanlost.net>
 Incremented version and updated CHANGELOG

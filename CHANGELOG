@@ -1,359 +1,497 @@
 1.5.7
-    *  Bug #2306: Facter[netmask] does not exist on Solaris and FreeBSD systems
-    * Bug #2312: The operatingsystemrelease fact does not account for non-integer Fedora and RHEL releases.
-    * Bug #2314: OpenBSD uses dmidecode for manufacturer info, should use native sysctl facility
-    * Bug #2407: Broken CI build
-    * Bug #2414: errors when alias IP's are defined
-    * Bug #2415: patch for first-rev Mac OS X versions
-    * Bug #2431: Facter binary installs in wrong location on Mac OS 10.6 developer seed
-    * Bug #2455: Misleading/ambiguous error message on invalid fact code should be changed
-    * Bug #2470: interfaces fact has duplicate entries under Solaris
-    * Bug #2535: undefined method when trying to access a fact's value through the Facter class method shortcut and @collection is not initialized
-    * Feature #2548: Netblock fact
-    * Refactor #2292: Add tests for virtual.rb
+=====
+07dca60  Added additional exclusion to rcov process
+8398238  Added rcov support to spec task
+7194454  Updated CI Rake task
+2472048  Clarify licensing as GPLv2 (or any later version)
+4bc05e9  Added new format ChangeLog
+5bc8db3  Incremented version and updated CHANGELOG
+eb3a8a7  Issue #2414 - add unit test
+7623e25  Fix errors when alias IP's are defined
+bfe8a2a  Fix 2455 - improve error handling on fact load
+49470cf  Fix broken solaris zone tests on EC2
+9515a40  Issue #2548 netblock fact
+33be9e0  Add Darwin netmask support on top of Jim's patch
+9d846b4  Fix #2306 netmask and ipaddress on SunOS and BSDs
+7d4a5f9  Updated Rakefile and moved Rake tasks to tasks/rake directory
+5982deb  Added default Rake task
+0e0483a  Fix bug where you'd get an 'undefined method' error if trying to access a fact's value when collection has not being yet initialized.
+fe41fb8  Fix #2470 - duplicate entries in interfaces fact
+be9e484  Update OS X minor version fact to cope with '10.x' values and provide test coverage
+f3ad66f  Update install.rb to cope with all OS X versions, not just 10.5
+c02d3b6  Issue #2292 Add tests for virtual facts
+6c9fec5  Added path fact
+51c6e3d  Issue #2314 OpenBSD sysctl
+95e5fea  Fix broken ci build with explicit clearing before tests
+efc30e7  Change spec output to enable broken build debugging
+6d71410  Fixed CI spec task
+82d97e2  Fix operatingsystemrelease on Red Hat based distros
+bee55c4  Consolidate operatingsystemrelease for CentOS, Fedora, oel, ovs, and RedHat
+
+1.5.6
+=====
+f4cb619  Updated CHANGELOG and bumped version for 1.5.6
+dcdd5ce  Fixes #2307 - Minor fix for zone in virtual.rb
+ba44f08  Removed --no-thread and --no-chain-reply-to from rake mail_patches task
+806f49f  Added facter branding to format patch command
+96c015c  Added spec.executables to Facter gemspec in Rakefile
+d97a63e  Sync rpm spec file with latest from Fedora/EPEL
+dad4569  Added path to Rakefile
+365cb8e  CHANGELOG updates
+68e0b24  Fix #2278 Revert fix for 2120
+b533e78  Tighten operatingsystemrelease regex on CentOS < 5
+48aa135  Fix operatingsystemrelease for CentOS < 5
+253fef1  Added spec files to package list
+b37d683  Added install.rb to Rakefile package task
+7995d05  Bumped release to 1.5.5rc2
+
+1.5.5rc2
+========
+1de8891  Bumped release to 1.5.5rc2
+
+1.5.5
+=====
+dad4569  Added path to Rakefile
+365cb8e  CHANGELOG updates
+68e0b24  Fix #2278 Revert fix for 2120
+b533e78  Tighten operatingsystemrelease regex on CentOS < 5
+48aa135  Fix operatingsystemrelease for CentOS < 5
+253fef1  Added spec files to package list
+b37d683  Added install.rb to Rakefile package task
+7995d05  Bumped release to 1.5.5rc2
+56760d3  Facter #2120 -  Solaris support for Facter[virtual]
+2fb91ca  Tests for #2227 - multiple interfaces on Darwin
+00b192a  Added SELinux tests
+aecac08  Fix #2155 - architecture facts on Gentoo
+831d937  Refactor #2154 - Modified patch from Benedikt Bohm to simplify openvz and vserver detection
+7f3d237  Cleaned up Rakefile and removed requirement for Reductive Labs build library
+a6adf59  Facter ticket  2214 - Fix facts for OVS
+e101faf  Fixed #2131 - Facter doesn't populate lsbmajdistrelease on OEL (also OEL/OVS and other facts)
+73e6656  Facter fix #2231 typo
+2518312  Fix #2236 - don't use each_line on arrays
+f94abfc  Fixed #1327 - Added SELinux facts
+8768371  Fixed #2119 - Added support for non-global Solaris 10 zones
+23a5b3d  Fixed #2215 - Added support for SUSE Linux Enterprise Desktop to operatingsystem and operatingsystemrelease
+e93b1e6  Added support for ArchLinux to operatingsystem fact
+8e4a689  Fixes #2169 Correctly recognises dom0 and domUs
+636a91d  Partial fix for #2191 - Facter compatibility for Ruby 1.9
+9df0583  Added COPYING in and CHANGELOG updates
+516402c  Fixing #1918 - facter --puppet always works
+d89ea7a  Fixing ifconfig warnings generated on OS X
+7fa2576  Fixed #2132 - support for named interface aliases under linux
+7a81945  correctly compare values - fixes #2021
+1288b26  Fixed #2080 - IPAddress resolutions should be reordered
+a6d6ba5  Use resultion.exec util instead of which checks
+89a3aa8  Fix to stdout in resolution.rb
+add6d47  Fixed #2081 - Fixed interfaces fact for vlan subinterfaces
+8def362  Fixed #2063 - added kernelmajversion fact
+5d94f7f  Fixed #2055 - SunoS Interface error
+9376e5b  Fixed #2044 - virtual fact thread fix
+c754949  Fix for rake task for reductive-build library
+75db918  Fixed lib install permissions
+ba2e470  Fixed #2040 - Facter should provide a macosx_productversion_major fact
+77fa46b  Fix virtual fact if xen but /proc/virtual present
+9722e1f  Fixed #2003 - Added is_virtual fact
+7a30a6a  Fixed CHANGELOG
+c6c30a4  Fixed #2035 - Missing brace for OSX preflight
+b6f0f99  more consistent indentation and alignment. also removal of trailing whitespace
+9bc174f  Further fix #2032 - close IO
+6b904a0  Added EC2 facts
+86b01bf  Fixed #2032 - file.open hanging on /proc/uptime on some platform
+91d8cb7  Updated to version 1.5.4
+a99d043  Fixed #1966 - Added physicalprocessorcount fact
+94ea807  This commit refs #1555, #1898 and fixes #1761
+04389db  Added support for Oracle VM Server to operatingsystem and operatingsystemrelease
+552f150  Added support for Oracle Enterprise Linux to operatingsystem
+a932a69  Added README.rst for Facter
+e52f962  Added Reductive Labs build library
+0726437  Updated README
+
+1.5.4
+=====
+91d8cb7  Updated to version 1.5.4
+a99d043  Fixed #1966 - Added physicalprocessorcount fact
+94ea807  This commit refs #1555, #1898 and fixes #1761
+04389db  Added support for Oracle VM Server to operatingsystem and operatingsystemrelease
+552f150  Added support for Oracle Enterprise Linux to operatingsystem
+a932a69  Added README.rst for Facter
+e52f962  Added Reductive Labs build library
+0726437  Updated README
+f4bc74d  Fixing #1927 - failing facts don't kill Facter
+063e4dc  Fixed #1850 - Facter updates for Ruby 1.9
+b85ab0a  Fixed #1924 - Fixed lo / lo:0 local interface matching
+4dcd012  Fixed generic uptime fact
+d93ca69  Fixed Ubuntu operatingsystem identification
+effb82f  Cleaner fix for #1926
+ccafc00  Fixed #1926 - IPAddr to_s issue
+d9eef19  Added timezone fact
+
+1.5.3
+=====
+b86a1fb  Updated to version 1.5.3
+a73e803  Fixing the usage of the macosx util module; I somehow missed renaming it here
+23289bd  Fixed uptime refactor issues on non-Linux platforms
+a194c91  Adding mail_patches rake task
+a82f476  Renaming Facter::Macosx to Facter::Util::Macosx
+1f1fa9b  Fixing #1838 - profiler failures don't throw exceptions
+5f202c9  Fixed #1867 - Fixed OpenSuSE detection
+0bcdb71  Fixing #1854 - Adding ArchLinux support
+fab9d1c  Added network fact
+da52e30  Fixed #1870 - Format all subnet masks as human-readable
+c2de35f  Added uptime facts
+02c2912  Refactor - rename ipmess to interfaces
+db4face  Fixed autotest on win32
+c149b49  Fix bug #1870 and add interface fact support for darwin systems
+aa56886  Refactoring the IP support, and fixing #1846.
+91e25b9  Fixing indentation everywhere
+074eda9  Fixing autotest, now that vendor/ is gone
+01754f6  Removing the vendor/ gems.
+e6d987d  Fixing #1761 - Solaris no longer uses /etc/release
+a70184a  Fixed #1791 - support for virtual fact on Solaris 10
+99833a1  Fixed #1793 - Added more Solaris 10 facts
+85b2a55  minor fix to operatingsystemversion to correctly parse /etc/release on OpenSolaris 2008.11.
+8247304  Fixed errors on unrecognised option in binary
+0fe4611  Added ci namespace and Rake tasks
+7ddea77  Fix for #1727 - id fact should not rely on whoami on Solaris
+f9a346a  Sync specfile with latest from Fedora
+fd07cd2  Removed EPM task
+43d0aea  Fixed #1697 - Typo in ipaddress.rb causes timeout under Solaris 10 SPARC
+4e707c6  Fixed #1650 - OS X package creation script should be more selective about cleaning out prior versions
+8a38aa5  Added Ubuntu to a variety of confines
+051c843  Removed ENV path setting from virtual.rb
+6393e82  Fixed #1634 - Update virtual fact to differentiate OpenVZ hardware nodes and virtual environments
+de39f6c  Revamp domain resolution
+4d7b44c  Fixed #1619 - Applying patch by seanmil, adding support for SLES.
+84b83c4  Fixed #1509 - Fixed version recognition for SLES.
+20650ac  Fixes #1582 - Fix MAC address reporting for Linux bonding slave interfaces
+a86577c  Fixing the GPL/LGPL incompatibility by choosing the oldest-mentioned license (GPL).
+c1d937c  Fixed #1575 - CentOS fix for Facter SPEC file
+1d00253  Fixed #1547 - finally killed dots in IP address facts
+9c9c79a  Fixed #1567 - fixed createpackage.sh output
+d4cf657  Fixed #1569 - createpackage.rb bug
+
+1.5.2
+=====
+a80779b  Updated to version 1.5.2
+0e49580  Updated to version 1.5.2
+6e0a1f3  Fixes #1558 - Adjusted virtual fact to allow non-root users to execute it
+4998d3b  Fixes #1562 - Removed facter from PREREQS
+0fac704  Fixed #1558 - Updated virtual fact for xenu and xen0
+5c50bc3  Fixed #1555 - added operatingsystemrelease for Solaris
+e503857  Fixed #1559 - update to dmidecode fact
+518393e  Fixed . dot escaping
+0356b6e  Updated to version 1.5.1
+
+1.5.1
+=====
+bff615c  Updated to version 1.5.1
+c2eb5ba  Updated to version 1.5.1
+bc35a3b  Adding a rake task for creating an archive.
+d24504e  Added a Process.waitall thread when there's a timeout, to avoid zombies.
+bd87aa0  Set the timeout for the host-based and resolv-based resolutions to 2.
+e6aa39f  Updating changelog for previous two commits
+095eb15  Applied patch by josb to fix CentOS version detection.
+422dd11  Facter fix #1422, no default timeout
+ca93b81  Adding better SuSE detection for both operatingsystem and release.
+b7be581  Add unit rspec tests for ticket 1425
+af81fb3  Extract ifconfig output to data directory
+2546c53  Add sample test and strawman solution for IP parsing code
+b33d8c6  Add module level tests for Facter::IPAddress
+590a3d0  Fixes #1492 - added kernelversion fact
+d8b708b  Fix ticket 1425 on Solaris
+b91ee5e  Remove duplicated code paths
+df8fc8c  fix terrible error with overwriting permissions
+91ca4ab  Fixed #1490 - Added virtual fact
+ff45c86  Feature #1487: Package creation scripts for Mac OS X
+9b42182  Modified the operatingsystem fact for Debian so it looks in
+e1023de  Feature #1478: Allow specification of --bindir --sbindir --sitelibdir --mandir --destdir in install.rb
+845ae94  Feature #1475: CONFIG['bindir'] CONFIG['sbindir'] have undesirable defaults on OS X 10.5
+a12608e  Fixes #1467 - macaddress not set on Ubuntu
+d999d95  Don't try and run lsb_release on windows
+1eb94d3  Bug #1434 Don't execute which on windows
+bb235e3  Use rbconfig to detect host cpu
+3f180b3  Get DNSDomain from WMI to set domain
+dc7363e  Set macaddress on windows platform
+0df872b  Get kernel version via wmi
+3ea1905  Use ipconfig to determine ip address
+5e09ea1  Use rbconfig to detect windows as no uname binary
+ded53b0  Fixed Rakefile to include additional files including tests et al
+1cf98d1  Adjusted version to be in line with previous standard
+ff0e90b  Adding (apparently now required) author info to the gem spec
+7042c46  Updated to version 1.5
+e98efd3  Updated to version 1.5
+d49d63c  Updating the changelog for 1.5
+88fe243  Fixed formatting
+8c91649  Fixed #1400 - OperatingSystemRelease should now work on CentOS
+927b3a1  Adding a default case for the manufacturer information.
+9b464de  Further fixes #1378 - updated dmidecode for NetBSD
+a44d6c3  Fixes #1378 - update manufacter.rb facts to support BSD
+9581190  Partial fix for #1345 - BSD interfaces with aliases now select the first address by default
+2ef2041  Retaining 'timeout' as the settor, but using 'limit' as the getter.
+e22b408  Changed 'timeout' option to 'limit'
+145cee2  Setting the timeout for the puppetversion fact to 1.5.
+40a9c1d  Fixing some warnings in various classes.
+0303885  Fixes #1376 - Display memory facts for AIX
+2ac29ac  Added processorcount and type facts to AIX
+0b0892d  Fixes #1334 - Forced Facter to use LANG=C
+def18b5  Fixes #1357 - change ps syntax for OSX and BSD
+ce7b74c  Rejustifying all of the whitespace in the facts, yay.
+2ee5d29  Refactoring how recursive searches are detected.
+d322df9  Refactored so each fact resolution can specify a separate timeout,
+9a1882e  Retrieve hardwaremodel for AIX from sys0 modelname.
+b574c6a  Refactered ipmess.rb and util/ip.rb to support separate *BSD logic for *BSD aliased interfaces.
+d9bd388  Refactor of netmask fact - fixes ticket #66
+09bc48c  Testing gitosis
+f9961c7  Fixes for ticket #60
+a12d3d8  Removing old test/unit tests.
+400bab9  Adding a timeout to fact retrieval, fixing #56.
+d235f26  Reverting the version.
+7e84cdb  Updated CHANGELOG
+a5a72bd  Added LSB Major Dist Release fact fixing #41
+fc6d1c9  Added support for AIX fixing ticket #56
+17f916f  Updated Red Hat spec file for new version and files
+86e0708  Incremented version number to 1.5
+edbfc44  Adding a --puppet option to facter to load Puppet facts.
+bb41db0  Switching to a search path registration system.
+07a3d47  Moving the puppet-related loading tests to an integration test.
+03258eb  Retrieval of fact values now autoloads facts.
+e02b0b3  Updated version.  Moved most facts to seperate files.
+9c91a6d  Facter no longer loads all facts by default.
+aaaf767  Moving the version and ruby facts to a separate file.
+f1acbc0  Switching Facter to using the new loader.
+bb92493  Fixing the last few occurrences of Facter::Resolution instead of Facter::Util::Resolution.
+dcfc171  Fixing the test so it doesn't break other tests.
+1ba2bed  Moving all of the support classes to util/.
+be0a803  Creating a 'loader' class to handle loading facts for the collection.
+cc9e221  Adding the 'each' method back into Facter.
+48b8744  Updating the executable to not use Facter.each.
+5889e43  Fixing warnings and interfaces.
+bfc4996  Moving Facter's container behaviour into a separate class.
+e3c1fda  Splitting the instance code into a Fact class.
+121d291  Adding all of the tests for the Facter::Resolution class.
+8971979  Reorganizing my new tests so they match the autotest discovery.
+b8de4e4  Simplifying Confine a bit
+c5492c2  Splitting the different classes in Facter up, and adding some tests.
+4f39ec8  Adding autotest hooks
+fef9b7d  fixing whitespace
+567549b  Closes #1145 - fixed bad interface names by replacing : with _
+d449472  Updated CHANGELOG
+bd3b316  removing .swp file
+e11edfb  Switching from test/unit to rspec, and fixing a couple
+1a5ba71  Fixed Solaris detection of lo0 for ticket #46
+92b43e0  Added require util ip.rb file
+0c4ac42  Fixed #46 - refactor ipmess.rb
+a633aeb  Added new files
+c312df8  Further updates to split facts and move support functions
+df4636a  Split out facts from facter.rb and moved all support code to util
+4bb9ed4  Added support for multiple interfaces, macaddress and netmask facts for Linux, *BSD, and Solaris
+64f9fe9  Fixed conflict merge
+2b06799  Revert "Fixed ticket #50 - added selinux facts"
+ecc1f0c  Added Ubuntu operatingsystem and operatingsystemrelease fact support
+96cf3d6  Added Debian release version support
+b3962ef  Fixed ticket #50 - added selinux facts
+d7d82fc  Fixed ticket #48 - CentOS operatingsystemrelease fact now reporting correct value
+2af364c  Added Mandrake support for operatingsystem fact - closed ticket #47
+85fbf8f  Added index to imess.rb fixing Ticket #43.
+be7c30b  Fixed ticket #44
+
+1.3.8
+=====
+74621b5  Updated to version 1.3.8
+7f1c840  Updated to version 1.3.8
+4d83f6f  Updating version in changelog
+00ab1f3  Removing the package hosts, so packages are no longer created at all
+57c76dd  Updated CHANGELOG
+b28ce1b  Added require for rdoc/ri/ri_paths to address Puppet #753 and Facter #40
+dce6245  Revert "Adjusted :kernel confine to make it more in line with others"
+c5e6f60  Adjusted :kernel confine to make it more in line with others
+a4698ce  Updated CHANGELOG
+8b08d5f  Added support to return multiple interfaces and their IP addresses as facts.  Existing ipaddress fact which returns IP address of first interface on node is still available.  Currently Linux only. Closes #6
+6113375  Added macaddress fact support for FreeBSD and OpenBSD - closes #37
+8426aaf  making the install script executable
+f35ee22  Drastically speeding up the lsb data retrieval, and refactoring the dmidecode data so it is a bit cleaner and does not produce extraneous output or errors
+20986d9  Set operatingsystemrelease to the major release on RHEL and Fedora
+43b5640  Remove tabs; don't fail if dmidecode doesn't return expected information
+68449a9  Adding manufacturer code, as requested by digant on the Puppet Trac site.
+750a0c6  Add YAML output option to the help text.
+8a67e32  Fixed problem with executing system_profiler and sw_vers on non Darwin hosts.
+43933dd  Fixed problem where facter referenced puppet plist utility library.
+46d9bed  Added a bunch of information from system_profiler -xml.  In particular, sp_serial_number is interesting.  Also added values from sw_vers, to get the commonly used Mac OS X version and build identifier.
+86e3d8e  Setting the ldapname so it is guaranteed to be a string
+b582612  Applying patch from Valentin Vidic, fixing open filehandles
+09261ac  Updated to version 1.3.7
+94ca0c3  Updated to version 1.3.7
+
+1.3.7
+=====
+3e12345  Adding release tag REL_1_3_7
+a329b65  Using consistent naming internally; I previously had essentially random quoting and case, but it is now all lower-case symbols.  It should behave the same externally.
+4880c69  Applying patch from #36 by psychedelys
+11cff7b  Fixing Facter.flush
+df57cec  Fixing #33 -- we now only return the first mac address
+31039dc  Applying patch from Adam Jacob that makes FACTERLIB work
+392d8f2  Applying patch from #35.
+824f91c  Fixing bug where an up interface not in active use was being selected as the canonical IP instead of using the IP attached to the interface assigned the default route.
+38cd613  Sync with Fedora specfile
+4cf0016  updating docs a bit
+c1a02be  Updated to version 1.3.6
+b333df2  Updated to version 1.3.6
+
+1.3.6
+=====
+ce5258b  Adding release tag REL_1_3_6
+cc672ba  disabling solaris package generation for facter
+067dc2c  updating changelog for 1.3.6
+b013e21  Applying patch from #29.
+7b665cc  Fixing ssh key facts so they only include the key, not the type.
+0674780  Make specfile work for FC < 5 and RHEL < 5
+ea65bdd  Reconciling with Fedora specfile
+4dc1c37  Do not try and check the command if which is not available; fixes trac #30
+c7a9e19  Updated to version 1.3.5
+bae0b49  Updated to version 1.3.5
+9a73c72  Updated to version 1.3.5
+
+1.3.5
+=====
+5192d94  Adding release tag REL_1_3_5
+4339b46  Fixing #26 -- using Resolution.exec instead of executing directly, and also calling lsb_release for every fact, instead of just once at startup
+82fd890  Updated to version 1.3.4
+95352bc  Updated to version 1.3.4
+677c986  Updated to version 1.3.4
+
+1.3.4
+=====
+e882251  Adding release tag REL_1_3_4
+ca498a2  updating changelog for 1.3.4
+d75744b  Adding patch from #21, adding lsb_release facts
+fe0f2f2  Adding yaml support, as requested in #24
+4abbce9  applying patch from #18.
+7407e0c  Fixing facter so it does not fail when an unknown fact is asked for
+e2185ce  Sorting the facts when they are all output
+c96cf6a  Adding fqdn fact
+fc9331a  Fixing #20.  I just made sure that the Domain fact cchecks the hostname first, so that if the hostname is an fqdn it will set the domain from that.
+07a42e6  Applying patch from #22
+610fb5d  Applying patch in #23.
+3569253  Applying memfree patch from #17.
+b9beaa8  updates
+722e6f2  doc updates
+e2337bd  doc updates
+2987d50  updates
+044f19c  adding docs
+6f01dec  adding docs
+4c04592  Updated to version 1.3.3
+474d65d  Updated to version 1.3.3
+
+1.3.3
+=====
+f3333f3  Adding release tag REL_1_3_3
+682b97a  updating changelog for 1.3.3
+747d45a  Adding the ability to retrieve facts from the environment.
+86fdc87  Updated to version 1.3.2
+c4659bd  Updated to version 1.3.2
+
+1.3.2
+=====
+3869edf  Adding release tag REL_1_3_3
+ea96381  simple packaging updaets
+c2aa508  Adding thread exclusivity to memory and cpu reading
+ace180f  Re-adding these files, since Matt has found a solution to the hanging problem.
+ba2e189  removing processor.rb in case it has the same problems as the memory file
+9f14df9  Deleting this file until the hanging problems are resolved
+157f68e  fixing license issues
+a0a33e6  fixing spec file again
+31caa08  Updated to version 1.3.1
+8ad0323  Updated to version 1.3.1
+5e34a1f  Updated to version 1.3.1
+
+1.3.1
+=====
+60be696  Adding release tag REL_1_3_1
+73aeade  adding a call to dnsdomainname before domainname
+6ac796d  Fixing #15.  Just adding rescue blocks around the load statements.
+81f451b  updating for 1.3
+b543152  Updated for use with latest Fedora ruby packages
+15f2f44  Updated to version 1.3
+15931ef  Updated to version 1.3
+261d909  Updated to version 1.3
+539d593  fixing installer so it does not install batch files on darwin
+4c1d5e0  trying to fix facterbin rubylib setting
+7f2504d  fixing test so that it works even if rubylib is not set
+75b1835  Adding tagging frameworks back into Facter, and adding the ability to specify tags to the to_hash method so that you only receive facts tagged with specific tags
+4296f1f  fixing the linux processor stuff so it only gets called on linux
+558d05a  changing the syntax of the fact confines
+9908628  Adding some documentation to the binary
+a15c8f5  Adding rubysitedir fact, as requested in #13.  Also, switching the output when one fact is asked for, so it only produces the single value, with no => symbol.
+ee7d3ca  fixing test to ignore differences in memory
+5ae066b  Switching "tag" to "confine", because it is a more appropriate term.  I will also add "tags", but they will be used for creating fact collections.
+c7cfd08  Adding patch from #11, with slight modifications.
+59cea90  Adding patch from #11, with slight modifications.
+f3cc5e3  Adding the ability to specify tags as hashes or arrays, as requested in #112.
+01d37d9  Getting rid of the autoload method entirely; facts are now only loaded at startup.
+3a0181e  fixing linux memory stuff
+6932a95  accepting patch in #10, although with more abstraction, and creating a module for the memory functions
+165a401  Accepting the patch in #9, with some modifications.
+af062c6  adding solaris pkg stuff
+8794e46  Updated to version 1.2.1
+
+1.2.1
+=====
+77344ea  Adding release tag REL_1_2_1
+b208f47  fixing small bug that only occurs with gems
+999929e  Updated to version 1.2.0
+
+1.2.0
+=====
+afe3c30  Adding release tag REL_1_2_0
+99b61e7  Adding final autoloading work.
+97f1a5e  updating changelog for 1.2.0
+87bbd50  adding another test for the exe
+f745454  Adding ruby, puppet, and facter version facts
+6c01e04  Fixing install and tests so that there are no errors, hopefully.
+22bd24b  Added "architecture" fact, added the ability to autoload facts from separate files, and added the ability to retrieve fact values via a method for each fact.
+fe782b9  Accepting the patch from #5
+6c37a20  Removing ruby as a prereq
+c78d113  Converting rakefile to the new build system
+fadc8c5  Minor changes for hte Fedora Extras review
+e3e4a03  fixing rake file to build and copy rpms automatically
+46996fa  updating changelog for 1.1.4
+aab8687  Updated to version 1.1.4
+
+1.1.4
+=====
+571683b  Adding Release tag REL_1_1_4
+0b7dce7  Fixing installer to put the facter executable in /usr/bin instead of /
+3c71757  Updated to version 1.1.3
+
+1.1.3
+=====
+d494ac2  Adding Release tag REL_1_1_3
+3a230a0  adding 1.1.3 changelog
+2e407d4  Identifying centos
+cc4a943  updates
+4579f8f  Updated to version 1.1.2
+
+1.1.2
+=====
+9279ca8  Adding Release tag REL_1_1_2
+d36885f  Adding ldapname capabilities
+a4309b4  Automatically update version and release in the specfile for new releases
+2d84edd  Fix specfile in accordance with Fedora Extras guidelines
+2c0999e  RPM creation now works
+62c050a  Working on packaging
+2c99812  Updated to version 1.1.1
+
+1.1.1
+=====
+6fef6af  Adding Release tag REL_1_1_1
+35ed5f4  Fixing bug when a fact with no resolutions is asked for
+a295c73  Fixing bug when a fact with no resolutions is asked for
+5a0bd4a  Updated to version 1.1.0
+
+1.1.0
+=====
+81657d1  Adding Release tag REL_1_1_0
+1ed4216  Redoing how tags work.
+d9c86d5  updating everything to essentially disable docs generation
+64a86db  Adding Release tag
 
-1.5.6:
-    Bug #2303: Add executable facter in spec
-    
-    Bug #2307: undefined local variable or method `zone'
-
-1.5.5:
-    Bug #2291 (Closed): Fix operatingsystemrelease for CentOS < 5
-
-    Bug #2278 (Closed): Virtual fact incorrect on Solaris sparc
-
-    Cleaned up Rakefile and removed requirement for Reductive Labs build library
-
-    Fixed #2131 (Closed): Facter doesn't populate lsbmajdistrelease on OEL
-
-    Fixed #2214 (Closed): Identify Oracle VM properly
-
-    Fixed #2231: ipaddress_pcn0 fact no longer exists on Solaris systems
-
-    Fixed #2236 (Closed): macaddress fact uses each_line on arrays
-
-    Fixed #1918 - facter --puppet doesn't work
-
-    Fixed #2011 - virtual fact reports always vserver_host if /proc/virtual
-
-    Fixed #2021 - Returning boolean not always possible
-
-    Fixed #2132 - Support for named interfaces under Linux
-
-    Fixed #1327 - Added SELinux facts
-
-    Fixed #2119 - Added support for non-global Solaris 10 zones
-
-    Fixed #2080 - IPAddress resolutions should be reordered
-
-    Fixed #2078 - ip.rb errors command not found
-
-    Fixed #2058 - Redirecting stderr doesn't work on all systems
-
-    Fixed #2081 - Fixed interfaces fact for vlan subinterfaces
-
-    Fixed #2063 - added kernelmajversion fact
-
-    Fixed #2055 - SunoS Interface error
-
-    Fixed #2044 - fixed virtual fact
-
-    Fixed lib install permissions
-
-    Fixed #2040 - Facter should provide a macosx_productversion_major fact
-
-    Fixed #2003 - Added is_virtual fact
-
-    Fixed #2035 - Missing brace for OSX preflight
- 
-    Added EC2 facts
-  
-    Fixed #2032 - file.open hanging on /proc/uptime on some platform
- 
-1.5.4:
-    Fixed #1966 - Added physicalprocessorcount fact
-
-    Fixed #1761 - changes to Solaris facts:
-       operatingsystemrelease == kernel release or uname -r
-       kernelrelease == uname -r
-       kernelversion == uname -v
-
-    Added support for Oracle VM Server to operatingsystem
-    and operatingsystemrelease
-
-    Added support for Oracle Enterprise Linux to operatingsystem
-    and operatingsystemrelease
-
-    Fixed #1927 - failing facts don't kill Facter
-
-    Fixed #1850 - Facter updates for Ruby 1.9
-
-    Fixed #1926 - IPAddr to_s issue
-
-    Fixed Ubuntu operatingsystem identification
-
-    Fixed generic uptime fact
-
-    Fixed #1924 - Fixed lo / lo:0 local interface matching
-1.5.3:
-    Added network fact
-
-    Fixed #1870 - Format all subnet masks as human-readable
-
-    Added uptime facts
-
-    Fixed autotest on win32
-
-    Fixed #1870 - Added interface support for Darwin
-
-    Fixed #1791 - support for virtual fact on Solaris 10
-
-    Fixed #1793 - Added more Solaris 10 facts
-
-    Fixed errors on unrecognised option in binary
-
-    Added ci namespace and Rake tasks
-
-    Fixed #1650 - OS X package creation script should be more selective
-    about cleaning out prior versions
-
-    Added Ubuntu to a variety of confines
-
-    Fixed #1619 - Applying patch by seanmil, adding support for SLES.
-
-    Fixed #1634 - Update virtual fact to differentiate OpenVZ
-    hardware nodes and virtual environments
-
-    Fixed #1509 - Fixed version recognition for SLES.
-
-    Fixes #1582 - Fix MAC address reporting for Linux bonding
-    slave interfaces
-
-    Fixed #1575 - CentOS fix for Facter SPEC file
-
-    Fixed #1569 - createpackage.sh bug
-
-    Fixed #1567 - createpackage.sh output
-
-    Fixed #1547 - finally killed dots in IP address facts
-
-1.5.2:
-    Fixed #1562 - Removed facter from PREREQS
-
-    Fixed #1558 - Updated virtual fact for xenu and xen0
-
-    Fixed #1555 - Ddded operatingsystemrelease for Solaris
-
-    Fixed #1559 - Update to dmidecode fact
-
-1.5.1:
-    Added a Process.waitall thread when there's a timeout, to avoid zombies.
-
-    Set the timeout the host-based and resolve-based resolutions to 2.
-
-    Fixed #1495 - CentOS version detection is now better.
-
-    Fixed #1422 - Facter now defaults to 0 timeout.
-
-    Fixes #1492 - added kernelversion fact
-
-    Added virtual fact
-
-    Modified the operatingsystem fact for Debian so it looks in
-    /etc/debian_version instead of /proc/version.
-
-    Fixes #1467 - macaddress not set on Ubuntu
-
-    Adding a rake task for creating an archive.
-
-    Adding better SuSE detection for both operatingsystem and release.
-
-    Add sample test and strawman solution for IP parsing code
-
-    Add module level tests for Facter::IPAddress
-
-    Fixed #1425 - Solaris
-
-    Feature #1487: Package creation scripts for Mac OS X
-
-    Feature #1478: Allow specification of --bindir --sbindir --sitelibdir --mandir
-
-    Feature #1475: CONFIG['bindir'] CONFIG['sbindir'] have undesirable defaults on
-
-    Fixes #1467 - macaddress not set on Ubuntu
-
-    Enabled a number of Windows facts - operating system, domain, ipaddress, macaddress,
-    kernel, ipconfig and others
-
-1.5.0:
-    Fixed Rakefile to include additional files including tests et al
-
-    Fixed #1400 - OperatingSystemRelease should now work on CentOS
-
-    Changed 'timeout' option to 'limit' to avoid scope issue
-
-    Fixes #1376 - Display memory facts for AIX
-
-    Fixes #1334 - Forced Facter to use LANG=C
-
-    Fixes #1357 - Change ps syntax for OSX and BSD
-
-    Set the timeout on the AIX kernelrelease fact to 5 seconds.
-
-    Refactored so each fact resolution can specify a separate timeout,
-    but the default is still 0.5.
-
-    Refactered ipmess.rb and util/ip.rb to support separate *BSD logic for
-    *BSD aliased interfaces.
-
-    Updated dmidecode facts fixing ticket #60
-
-    Added AIX support for some facts
-
-    Add lsbmajdistrelease fact for CentOS and Red Hat
-
-    Updated Red Hat spec file for new version
-    The 'facter' executable now has an option (-p|--puppet) for loading the
-    Puppet libraries, which gives it access to Puppet's facts.
-
-    Added autoloading to Facter with a default of not loading all facts,
-    which results in a significant speedup when only one fact is sought.
-    Facts are autoloaded in either a single file named after the fact or
-    in any file in a directory named after the fact.
-
-    Significantly refactored Facter's internals, including creating tests
-    for all internal classes.
-
-    A netmask fact has been added closing ticket #46.  It only returns the
-    netmask of the primary interface (in the same behaviour as the ipaddress
-    and macaddress facts).
-
-    Facts to return multiple interfaces on a host have also been updated.
-    If you have multiple interfaces on Linux, *BSD, or Solaris/SunOS you will
-    now get facts for each interface's IP address, MAC address and netmask.
-    The facts will be structured like:
-      ipaddress_int = 10.0.0.x
-      macaddress_int = xx:xx:xx:xx
-      netmask_int = 255.255.255.0
-
-    Facter now identifies Ubuntu hosts and their releases using the
-    operatingsystem and operatingsystemrelease facts.
-
-    The Debian operatingsystemrelease fact now correctly returns the current
-    Debian release.
-
-    Fixed ticket #48 - ioperatingsystem and operatingsystemrelease for CentOS
-
-    Fixed ticket #44 and allowed support for Xen multiple interfaces and aliased
-    interfaces.  Supports both Linux and *BSD.
-
-    Added interfaces fact to add as index for ip/MAC address facts
-
-    Added Mandrake support for operatingsystem fact - closed ticket #47
-
-    Fixed ticket #45
-
-    Added netmask.rb closing ticket #46
-
-1.3.8:
-    Fixed Rdoc::usage bug on CentOS 5 - closed Puppet #753 and Facter #40
-
-    Added support to return multiple interfaces and their IP addresses and
-    MAC addressess as facts. Returns interface_interfacename and
-    macaddress_interfacename.  Existing ipaddress and macaddress facts are
-    unchanged and still returned.  Currently Linux only.  Closes #6.
-
-    Added macaddress fact support for FreeBSD and OpenBSD - closes #37
-
-    Added hardwareisa support for *BSD platforms - closed #38
-
-    Facter now detects the Mandriva distribution - closes #39
-
-    Facter now correctly detects ipaddress on NetBSD - closes #42
-
-1.3.7:
-    A couple of small bugfixes, including fixing Facter.flush so it correctly
-    flushes cached values, and the mac address fact only returns one
-    value, not all of them.
-
-    Converted all of the fact names to symbols, rather than the somewhat
-    random case used previously.  When the facts are converted to a hash,
-    they still convert the fact name to a string.
-
-1.3.6:
-    A bugfix release, including fixes for #29, and #30.  Also fixed
-    the SSH keys so they only have the key, not the type or description.
-
-1.3.5:
-    A bugfix release.
-
-1.3.4:
-    Added many new facts, including LSB facts.
-
-    Fixed a few small bugs, notably the error you could get when asking
-    for a non-existent fact.
-
-1.3.3:
-    Added thread exclusivity to memory and processor facts.
-
-    Added the ability to retrieve facts by pulling them out of the shell
-    environment.
-
-1.3.2:
-    Temporarily disabled memory and processor facts since they might cause hangs.
-
-1.3.1:
-    Fixed autoloading so that it catches any errors in loaded libraries.
-
-1.3:
-    Significant internal refactoring, such as replacing 'tag' with 'confine', and
-    reusing 'tag' for semantic purposes.
-
-    Made autoloading of facts better.
-
-1.2.1:
-    Fixed a "bug" that occurs if there's a file named "facter" in your
-    ruby search path (as opposed to directory).
-
-1.2.0:
-    Added RubyVersion, FacterVersion, and PuppetVersion facts.
-
-    Added autoload capabilities, so you can add facts without modifying
-    the core library.
-
-    Added the ability to retrieve facts by treating them as a method on the
-    Facter class, e.g., Facter.operatingsystem.
-
-    Added a to_hash method to Facter, which retrieves all facts as a hash.
-
-1.1.4:
-    Fixing installer bug.
-
-1.1.3:
-    Identifying CentOS correctly.
-
-1.1.2:
-    Added 'ldapname' attribute, so Facts can be easily converted to
-    LDAP.
-
-1.1.1:
-    Fixed a bug that occurs when you ask for the value of an unregistered
-    fact.
-
-1.1.0:
-    Added support for OpenBSD (and probably NetBSD and FreeBSD), and significantly
-    refactored (heh) how facts and resolution mechanisms are added.
-
-1.0.2:
-    Added SuSE distro
-    Added initial support for Cygwin, thanks to contributions from Eric Sorenson
-
-1.0.1:
-    Added 'id' fact, which basically returns 'whoami'.
-
-1.0:
-    Rewrote entirely.  It's much simpler to use, and now supports
-    adding new fact resolution mechanisms at run-time.
-
-1.0b1:
-    Initial release.
