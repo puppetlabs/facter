@@ -1,5 +1,6 @@
 1.5.7
 =====
+3a39dd8  Updated ChangeLog and task
 07dca60  Added additional exclusion to rcov process
 8398238  Added rcov support to spec task
 7194454  Updated CI Rake task
