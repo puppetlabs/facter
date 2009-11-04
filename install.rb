@@ -35,7 +35,13 @@
 require 'rbconfig'
 require 'find'
 require 'fileutils'
-require 'ftools' # apparently on some system ftools doesn't get loaded
+begin
+  require 'ftools' # apparently on some system ftools doesn't get loaded
+  $haveftools = true
+rescue LoadError
+  puts "ftools not found.  Using FileUtils instead.."
+  $haveftools = false
+end
 require 'optparse'
 require 'ostruct'
 
@@ -91,9 +97,15 @@ def do_libs(libs, strip = 'lib/')
     libs.each do |lf|
         olf = File.join(InstallOptions.site_dir, lf.gsub(/#{strip}/, ''))
         op = File.dirname(olf)
-        File.makedirs(op, true)
-        File.chmod(0755, op)
-        File.install(lf, olf, 0644, true)
+        if $haveftools
+          File.makedirs(op, true)
+          File.chmod(0755, op)
+          File.install(lf, olf, 0644, true)
+        else
+          FileUtils.makedirs(op, {:mode => 0755, :verbose => true})
+          FileUtils.chmod(0755, op)
+          FileUtils.install(lf, olf, {:mode => 0644, :verbose => true})
+        end
     end
 end
 
