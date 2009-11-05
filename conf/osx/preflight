@@ -10,3 +10,7 @@
 
 /bin/rm -Rf "${3}{SITELIBDIR}/facter"
 /bin/rm -Rf "${3}{SITELIBDIR}/facter.rb"
+
+# remove old doc files
+
+/bin/rm -Rf "${3}/usr/share/doc/facter"

@@ -54,6 +54,17 @@ function install_facter() {
   chown -R root:admin "${pkgroot}"
 }
 
+function install_docs() {
+  echo "Installing docs to ${pkgroot}"
+  docdir="${pkgroot}/usr/share/doc/facter" 
+  mkdir -p "${docdir}"
+  for docfile in ChangeLog COPYING LICENSE README README.rst TODO; do
+    install -m 0644 "${facter_root}/${docfile}" "${docdir}"
+  done
+  chown -R root:wheel "${docdir}"
+  chmod 0755 "${docdir}"
+}
+
 function get_facter_version() {
   facter_version=$(RUBYLIB="${pkgroot}/${SITELIBDIR}:${RUBYLIB}" ruby -e "require 'facter'; puts Facter.version")
 }
