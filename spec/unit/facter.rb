@@ -131,6 +131,79 @@ describe Facter do
         Facter.should respond_to(:search_path)
     end
 
+    it "should have a method to query debugging mode" do
+        Facter.should respond_to(:debugging?)
+    end
+
+    it "should have a method to warn" do
+        Facter.should respond_to(:warn)
+    end
+
+    describe "when warning" do
+        it "should warn if debugging is enabled" do
+          Facter.debugging(true)
+          Kernel.stubs(:warn)
+          Kernel.expects(:warn).with('foo')
+          Facter.warn('foo')
+        end
+
+        it "should not warn if debugging is enabled but nil is passed" do
+          Facter.debugging(true)
+          Kernel.stubs(:warn)
+          Kernel.expects(:warn).never
+          Facter.warn(nil)
+        end
+
+        it "should not warn if debugging is enabled but an empyt string is passed" do
+          Facter.debugging(true)
+          Kernel.stubs(:warn)
+          Kernel.expects(:warn).never
+          Facter.warn('')
+        end
+
+        it "should not warn if debugging is disabled" do
+          Facter.debugging(false)
+          Kernel.stubs(:warn)
+          Kernel.expects(:warn).never
+          Facter.warn('foo')
+        end
+
+        it "should warn for any given element for an array if debugging is enabled" do
+          Facter.debugging(true)
+          Kernel.stubs(:warn)
+          Kernel.expects(:warn).with('foo')
+          Kernel.expects(:warn).with('bar')
+          Facter.warn( ['foo','bar'])
+        end
+    end
+
+    describe "when setting debugging mode" do
+        it "should have debugging enabled using 1" do
+            Facter.debugging(1)
+            Facter.should be_debugging
+        end
+        it "should have debugging enabled using true" do
+            Facter.debugging(true)
+            Facter.should be_debugging
+        end
+        it "should have debugging enabled using any string except off" do
+            Facter.debugging('aaaaa')
+            Facter.should be_debugging
+        end
+        it "should have debugging disabled using 0" do
+            Facter.debugging(0)
+            Facter.should_not be_debugging
+        end
+        it "should have debugging disabled using false" do
+            Facter.debugging(false)
+            Facter.should_not be_debugging
+        end
+        it "should have debugging disabled using the string 'off'" do
+            Facter.debugging('off')
+            Facter.should_not be_debugging
+        end
+    end
+
     describe "when registering directories to search" do
         after { Facter.instance_variable_set("@search_path", []) }
 
