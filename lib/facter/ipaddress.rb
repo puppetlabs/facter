@@ -7,7 +7,7 @@ Facter.add(:ipaddress) do
         output.split(/^\S/).each { |str|
             if str =~ /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
                 tmp = $1
-                unless tmp =~ /127\./
+                unless tmp =~ /^127\./
                     ip = tmp
                     break
                 end
@@ -27,7 +27,7 @@ Facter.add(:ipaddress) do
         output.split(/^\S/).each { |str|
             if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
                 tmp = $1
-                unless tmp =~ /127\./
+                unless tmp =~ /^127\./
                     ip = tmp
                     break
                 end
@@ -47,7 +47,7 @@ Facter.add(:ipaddress) do
         output.split(/^\S/).each { |str|
             if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
                 tmp = $1
-                unless tmp =~ /127\./
+                unless tmp =~ /^127\./
                     ip = tmp
                     break
                 end
@@ -78,7 +78,7 @@ Facter.add(:ipaddress) do
         output.split(/^\S/).each { |str|
             if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
                 tmp = $1
-                unless tmp =~ /127\./
+                unless tmp =~ /^127\./
                     ip = tmp
                     break
                 end
@@ -98,7 +98,7 @@ Facter.add(:ipaddress) do
         output.split(/^\S/).each { |str|
             if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
                 tmp = $1
-                unless tmp =~ /127\./
+                unless tmp =~ /^127\./
                     ip = tmp
                     break
                 end
@@ -118,7 +118,7 @@ Facter.add(:ipaddress) do
         output.split(/^\S/).each { |str|
             if str =~ /IP Address.*: ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
                 tmp = $1
-                unless tmp =~ /127\./
+                unless tmp =~ /^127\./
                     ip = tmp
                     break
                 end
