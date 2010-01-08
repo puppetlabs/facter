@@ -48,6 +48,8 @@ Facter.add(:operatingsystem) do
             else
                 "SuSE"
             end
+	elsif FileTest.exists?("/etc/slackware-version")
+	    "Slackware"
         end
     end
 end

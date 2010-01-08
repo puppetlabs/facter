@@ -60,5 +60,15 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
+    confine :operatingsystem => %w{Slackware}
+    setcode do
+        release = Facter::Util::Resolution.exec('cat /etc/slackware-version')
+        if release =~ /Slackware ([0-9.]+)/
+            $1
+        end
+    end
+end
+
+Facter.add(:operatingsystemrelease) do
     setcode do Facter[:kernelrelease].value end
 end
