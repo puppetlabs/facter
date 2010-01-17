@@ -23,4 +23,26 @@ describe Facter::Manufacturer do
         Facter::Manufacturer.dmi_find_system_info(query)
         Facter.value(:productname).should == "MS-6754"
     end
+    
+    it "should not split on dmi keys containing the string Handle" do
+        dmidecode_output = <<-eos
+Handle 0x1000, DMI type 16, 15 bytes
+Physical Memory Array
+        Location: System Board Or Motherboard
+        Use: System Memory
+        Error Correction Type: None
+        Maximum Capacity: 4 GB
+        Error Information Handle: Not Provided
+        Number Of Devices: 2
+
+Handle 0x001F
+        DMI type 127, 4 bytes.
+        End Of Table
+        eos
+        Facter::Manufacturer.expects(:get_dmi_table).returns(dmidecode_output)
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+        query = { 'Physical Memory Array' => [ { 'Number Of Devices:' => 'ramslots'}]}
+        Facter::Manufacturer.dmi_find_system_info(query)
+        Facter.value(:ramslots).should == "2"
+    end
 end
