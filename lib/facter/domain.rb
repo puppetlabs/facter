@@ -4,12 +4,12 @@ Facter.add(:domain) do
         # steps is important
 
         Facter.value(:hostname)
-        next $domain if defined? $domain and ! $domain.nil?
+        # try to fetch the domain from hostname if long hostname is used.
+        if defined? $fqdn and $fqdn =~ /^([\w-]+)\.(.+)$/
+          next $2
+        end
 
         domain = Facter::Util::Resolution.exec('dnsdomainname')
-        next domain if domain =~ /.+\..+/
-
-        domain = Facter::Util::Resolution.exec('domainname')
         next domain if domain =~ /.+\..+/
 
         if FileTest.exists?("/etc/resolv.conf")
