@@ -34,6 +34,10 @@ Facter.add("virtual") do
             end
         end
 
+        if Facter::Util::Virtual.kvm?
+            result = Facter::Util::Virtual.kvm_type()
+        end
+
         if result == "physical"
             output = Facter::Util::Resolution.exec('lspci')
             if not output.nil?
@@ -72,7 +76,7 @@ Facter.add("is_virtual") do
 
     setcode do
         case Facter.value(:virtual)
-        when "xenu", "openvzve", "vmware"
+        when "xenu", "openvzve", "vmware", "kvm"
             true
         else 
             false

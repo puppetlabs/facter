@@ -93,4 +93,11 @@ describe Facter::Util::Virtual do
         FileTest.expects(:exists?).with("/proc/xen").returns(false)
         Facter::Util::Virtual.should_not be_xen
     end
+
+    it "should detect kvm" do
+        FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(true)
+        File.stubs(:read).with("/proc/cpuinfo").returns("model name : QEMU Virtual CPU version 0.9.1\n")
+        Facter::Util::Virtual.should be_kvm
+    end
+
 end
