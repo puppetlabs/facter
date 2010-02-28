@@ -7,7 +7,6 @@ require 'facter/util/confine'
 
 require 'timeout'
 require 'rbconfig'
-require 'open3'
 
 class Facter::Util::Resolution
     attr_accessor :interpreter, :code, :name, :timeout
@@ -43,27 +42,17 @@ class Facter::Util::Resolution
         end
 
         out = nil
-        err = nil
         begin
-            Open3.popen3(code) do |stdin,stdout,stderr|
-              out = self.parse_output(stdout.readlines)
-              err = self.parse_output(stderr.readlines)
-            end
+            out = %x{#{code}}.chomp
         rescue => detail
             $stderr.puts detail
             return nil
         end
-        Facter.warn(err)
-
-        return nil if out == ""
-        out
-    end
-
-    def self.parse_output(output)
-        return nil unless output and output.size > 0
-        result = output.collect{|line| line.chomp }
-        return result.first unless result.size > 1
-        result
+        if out == ""
+            return nil
+        else
+            return out
+        end
     end
 
     # Add a new confine to the resolution mechanism.

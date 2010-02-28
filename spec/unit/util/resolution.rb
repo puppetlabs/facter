@@ -227,54 +227,10 @@ describe Facter::Util::Resolution do
         Facter::Util::Resolution.should respond_to(:exec)
     end
 
-    it "should have a class method to parse output" do
-        Facter::Util::Resolution.should respond_to(:parse_output)
-    end
-
     # It's not possible, AFAICT, to mock %x{}, so I can't really test this bit.
     describe "when executing code" do
         it "should fail if any interpreter other than /bin/sh is requested" do
             lambda { Facter::Util::Resolution.exec("/something", "/bin/perl") }.should raise_error(ArgumentError)
-        end
-
-        it "should produce stderr content as a warning" do
-            stdout = stdin = stub('fh', :readlines => ["aaa\n"])
-            stderr = stub('stderr', :readlines => %w{my content})
-            Open3.expects(:popen3).with("/bin/true").yields(stdin, stdout, stderr)
-
-            Facter.expects(:warn).with(['my','content'])
-            Facter::Util::Resolution.exec("/bin/true").should == 'aaa'
-        end
-
-        it "should produce nil as a warning if nothing is printed to stderr" do
-            stdout = stdin = stub('fh', :readlines => ["aaa\n"])
-            stderr = stub('stderr', :readlines => [])
-            Open3.expects(:popen3).with("/bin/true").yields(stdin, stdout, stderr)
-
-            Facter.expects(:warn).with(nil)
-            Facter::Util::Resolution.exec("/bin/true").should == 'aaa'
-        end
-    end
-
-    describe "when parsing output" do
-        it "should return nil on nil" do
-            Facter::Util::Resolution.parse_output(nil).should be_nil
-        end
-
-        it "should return nil on empty string" do
-            Facter::Util::Resolution.parse_output('').should be_nil
-        end
-
-        it "should return nil on an empty array" do
-            Facter::Util::Resolution.parse_output([]).should be_nil
-        end
-
-        it "should return a string on a 1 size array" do
-            Facter::Util::Resolution.parse_output(["aaa\n"]).should == "aaa"
-        end
-
-        it "should return an array with chomped new lines on an array" do
-            result = Facter::Util::Resolution.parse_output(["aaa\n","bbb\n","ccc\n"]).should == [ "aaa", "bbb", "ccc" ]
         end
     end
 end
