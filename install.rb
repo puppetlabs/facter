@@ -212,7 +212,7 @@ def prepare_installation
         opts.parse!
     end
 
-    tmpdirs = [".", ENV['TMP'], ENV['TEMP'], "/tmp", "/var/tmp"]
+    tmpdirs = [ENV['TMP'], ENV['TEMP'], "/tmp", "/var/tmp", "."]
 
     version = [Config::CONFIG["MAJOR"], Config::CONFIG["MINOR"]].join(".")
     libdir = File.join(Config::CONFIG["libdir"], "ruby", version)
