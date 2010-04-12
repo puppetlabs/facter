@@ -6,9 +6,9 @@ Facter.add(:operatingsystemrelease) do
             releasefile = "/etc/redhat-release"
         when "Fedora"
             releasefile = "/etc/fedora-release"
-        when "oel"
+        when "OEL"
             releasefile = "/etc/enterprise-release"
-        when "ovs"
+        when "OVS"
             releasefile = "/etc/ovs-release"
         end
         File::open(releasefile, "r") do |f|
