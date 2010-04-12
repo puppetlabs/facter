@@ -5,7 +5,7 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), 'tasks')
 
 Dir['tasks/**/*.rake'].each { |t| load t } 
 
-require './lib/facter.rb'
+require 'facter.rb'
 require 'rake'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
