@@ -180,6 +180,7 @@ module Facter
 
     def self.warn(msg)
         if Facter.debugging? and msg and not msg.empty?
+            msg = [msg] unless msg.respond_to? :each
             msg.each { |line| Kernel.warn line }
         end
     end
