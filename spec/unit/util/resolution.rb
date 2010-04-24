@@ -136,6 +136,7 @@ describe Facter::Util::Resolution do
                 @resolve.expects(:warn)
                 @resolve.timeout = 0.1
                 @resolve.setcode { sleep 2; raise "This is a test" }
+                Thread.expects(:new).yields
 
                 @resolve.value.should be_nil
             end
