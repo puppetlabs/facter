@@ -23,3 +23,11 @@ Facter.add(:architecture) do
         end
     end
 end
+
+Facter.add(:architecture) do
+    confine :kernel => :openbsd
+    setcode do
+        architecture = Facter.value(:hardwaremodel)
+    end
+end
+

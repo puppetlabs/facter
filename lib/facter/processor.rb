@@ -72,3 +72,19 @@ if Facter.value(:kernel) == "AIX"
         end
     end
 end
+
+if Facter.value(:kernel) == "OpenBSD"
+    Facter.add("Processor") do
+        confine :kernel => :openbsd
+        setcode do
+            Facter::Util::Resolution.exec("uname -p")
+        end
+    end
+    
+    Facter.add("ProcessorCount") do
+        confine :kernel => :openbsd 
+        setcode do
+            Facter::Util::Resolution.exec("sysctl hw.ncpu | cut -d'=' -f2")
+        end
+    end
+end
