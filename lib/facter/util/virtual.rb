@@ -13,6 +13,7 @@ module Facter::Util::Virtual
     end
 
     def self.zone?
+        return true if FileTest.directory?("/.SUNWnative")
         z = Facter::Util::Resolution.exec("/sbin/zonename")
         return false unless z
         return z.chomp != 'global'
