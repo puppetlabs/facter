@@ -50,6 +50,7 @@ describe "is_virtual fact" do
     end
 
     it "should be true when running on kvm" do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
         Facter.fact(:virtual).stubs(:value).returns("kvm")
         Facter.fact(:is_virtual).value.should == true
     end
