@@ -45,4 +45,42 @@ Handle 0x001F
         Facter::Manufacturer.dmi_find_system_info(query)
         Facter.value(:ramslots).should == "2"
     end
+
+    it "should match the key in the defined section and not the first one found" do
+        dmidecode_output = <<-eos
+Handle 0x000C, DMI type 7, 19 bytes
+Cache Information
+        Socket Designation: Internal L2 Cache
+        Configuration: Enabled, Socketed, Level 2
+        Operational Mode: Write Back
+        Location: Internal
+        Installed Size: 4096 KB
+        Maximum Size: 4096 KB
+        Supported SRAM Types:
+                Burst
+        Installed SRAM Type: Burst
+        Speed: Unknown
+        Error Correction Type: Single-bit ECC
+        System Type: Unified
+        Associativity: 8-way Set-associative
+
+Handle 0x1000, DMI type 16, 15 bytes
+Physical Memory Array
+        Location: System Board Or Motherboard
+        Use: System Memory
+        Error Correction Type: None
+        Maximum Capacity: 4 GB
+        Error Information Handle: Not Provided
+        Number Of Devices: 2
+
+Handle 0x001F
+        DMI type 127, 4 bytes.
+        End Of Table
+        eos
+        Facter::Manufacturer.expects(:get_dmi_table).returns(dmidecode_output)
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+        query = { 'Physical Memory Array' => [ { 'Location:' => 'ramlocation'}]}
+        Facter::Manufacturer.dmi_find_system_info(query)
+        Facter.value(:ramlocation).should == "System Board Or Motherboard"
+    end
 end

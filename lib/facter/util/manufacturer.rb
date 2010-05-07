@@ -28,7 +28,7 @@ module Facter::Manufacturer
     end
 
     def self.dmi_find_system_info(name)
-        splitstr=  Facter.value(:kernel) ==  'SunOS' ? "ID    SIZE TYPE" : "/^Handle/"
+        splitstr=  Facter.value(:kernel) ==  'SunOS' ? "ID    SIZE TYPE" : /^Handle/
         output = self.get_dmi_table()
         return if output.nil?
         name.each_pair do |key,v|
