@@ -33,7 +33,7 @@ Physical Memory Array
         Error Correction Type: None
         Maximum Capacity: 4 GB
         Error Information Handle: Not Provided
-        Number Of Devices: 2
+        Number Of Devices: 123
 
 Handle 0x001F
         DMI type 127, 4 bytes.
@@ -43,7 +43,7 @@ Handle 0x001F
         Facter.fact(:kernel).stubs(:value).returns("Linux")
         query = { 'Physical Memory Array' => [ { 'Number Of Devices:' => 'ramslots'}]}
         Facter::Manufacturer.dmi_find_system_info(query)
-        Facter.value(:ramslots).should == "2"
+        Facter.value(:ramslots).should == "123"
     end
 
     it "should match the key in the defined section and not the first one found" do
