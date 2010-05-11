@@ -1,0 +1,42 @@
+# dmidecode 2.10
+SMBIOS 2.5 present.
+5 structures occupying 352 bytes.
+Table at 0x000E1000.
+
+Handle 0x0000, DMI type 0, 20 bytes
+BIOS Information
+	Vendor: innotek GmbH
+	Version: VirtualBox
+	Release Date: 12/01/2006
+	Address: 0xE0000
+	Runtime Size: 128 kB
+	ROM Size: 128 kB
+	Characteristics:
+		ISA is supported
+		PCI is supported
+		Boot from CD is supported
+		Selectable boot is supported
+		8042 keyboard services are supported (int 9h)
+		CGA/mono video services are supported (int 10h)
+		ACPI is supported
+
+Handle 0x0001, DMI type 1, 27 bytes
+System Information
+	Manufacturer: innotek GmbH
+	Product Name: VirtualBox
+	Version: 1.2
+	Serial Number: 0
+	UUID: 3BD58031-AE9E-4F06-8A57-941942861939
+	Wake-up Type: Power Switch
+	SKU Number: Not Specified
+	Family: Virtual Machine
+
+Handle 0x0003, DMI type 126, 13 bytes
+Inactive
+
+Handle 0x0002, DMI type 126, 7 bytes
+Inactive
+
+Handle 0xFEFF, DMI type 127, 147 bytes
+End Of Table
+

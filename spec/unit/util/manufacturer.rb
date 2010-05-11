@@ -83,4 +83,27 @@ Handle 0x001F
         Facter::Manufacturer.dmi_find_system_info(query)
         Facter.value(:ramlocation).should == "System Board Or Motherboard"
     end
+
+    def find_product_name(os)
+        output_file = case os
+            when "FreeBSD": File.dirname(__FILE__) + "/../data/freebsd_dmidecode"
+            when "SunOS"  : File.dirname(__FILE__) + "/../data/opensolaris_smbios"
+            end
+
+        output = File.new(output_file).read()
+        query = { '[Ss]ystem [Ii]nformation' => [ { 'Product(?: Name)?:' => "product_name_#{os}" } ] }
+
+        Facter.fact(:kernel).stubs(:value).returns(os)
+        Facter::Manufacturer.expects(:get_dmi_table).returns(output)
+
+        Facter::Manufacturer.dmi_find_system_info(query)
+
+        return Facter.value("product_name_#{os}")
+    end
+
+    it "should return the same result with smbios than with dmidecode" do
+        find_product_name("FreeBSD").should_not == nil
+        find_product_name("FreeBSD").should == find_product_name("SunOS")
+    end
+
 end

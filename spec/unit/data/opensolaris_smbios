@@ -1,0 +1,33 @@
+ID    SIZE TYPE
+0     54   SMB_TYPE_BIOS (BIOS information)
+
+  Vendor: innotek GmbH
+  Version String: VirtualBox
+  Release Date: 12/01/2006
+  Address Segment: 0xe000
+  ROM Size: 131072 bytes
+  Image Size: 131072 bytes
+  Characteristics: 0x48018090
+	SMB_BIOSFL_ISA (ISA is supported)
+	SMB_BIOSFL_PCI (PCI is supported)
+	SMB_BIOSFL_CDBOOT (Boot from CD is supported)
+	SMB_BIOSFL_SELBOOT (Selectable Boot supported)
+	SMB_BIOSFL_I9_KBD (int 0x9 8042 keyboard svcs)
+	SMB_BIOSFL_I10_CGA (int 0x10 CGA svcs)
+  Characteristics Extension Byte 1: 0x1
+	SMB_BIOSXB1_ACPI (ACPI is supported)
+  Characteristics Extension Byte 2: 0x0
+
+ID    SIZE TYPE
+1     72   SMB_TYPE_SYSTEM (system information)
+
+  Manufacturer: innotek GmbH
+  Product: VirtualBox
+  Version: 1.2
+  Serial Number: 0
+
+  UUID: cf4bff06-0b33-4891-bda0-5ec17bea5511
+  Wake-Up Event: 0x6 (power switch)
+  SKU Number: 
+  Family: Virtual Machine
+
