@@ -24,6 +24,18 @@ describe Facter::Manufacturer do
         Facter.value(:productname).should == "MS-6754"
     end
     
+    it "should handle output from smbios when run under sunos" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/opensolaris_smbios"
+        smbios_output = File.new(sample_output_file).read()
+        Facter::Manufacturer.expects(:get_dmi_table).returns(smbios_output)
+        Facter.fact(:kernel).stubs(:value).returns("SunOS")
+
+        query = { 'BIOS information' => [ { 'Release Date:' => 'reldate' } ] }
+
+        Facter::Manufacturer.dmi_find_system_info(query)
+        Facter.value(:reldate).should == "12/01/2006"
+    end
+
     it "should not split on dmi keys containing the string Handle" do
         dmidecode_output = <<-eos
 Handle 0x1000, DMI type 16, 15 bytes

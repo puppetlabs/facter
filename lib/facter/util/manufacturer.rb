@@ -35,7 +35,7 @@ module Facter::Manufacturer
             v.each do |v2|
                 v2.each_pair do |value,facterkey|
                     output.split(splitstr).each do |line|
-                        if line =~ /#{key}/ and ( line =~ /#{value} 0x\d+ \(([-\w].*)\)\n*/ or line =~ /#{value} ([-\w].*)\n*/ )
+                        if line =~ /#{key}/ and line =~ /\n\s+#{value} (.+)\n/
                             result = $1.strip
                             Facter.add(facterkey) do
                                 confine :kernel => [ :linux, :freebsd, :netbsd, :sunos ]
