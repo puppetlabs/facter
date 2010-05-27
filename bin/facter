@@ -134,9 +134,9 @@ ARGV.each { |item|
     names.push item
 }
 
-if names.empty?
-    facts = Facter.to_hash
-else
+facts = Facter.to_hash
+
+unless names.empty?
     facts = {}
     names.each { |name|
         begin
