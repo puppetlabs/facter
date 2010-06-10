@@ -1,0 +1,6 @@
+Name      Mtu  Network         Address         Ipkts   Ierrs Opkts   Oerrs Coll
+lan1      1500 15.12.0.0       host1.default.com 
+                                               572527659 0     1129421249 0     0   
+lan0      1500 172.54.85.0     host2.default.com 
+                                               519222647 0     329127145 0     0   
+lo0       4136 loopback        localhost       14281117 0     14281125 0     0 

@@ -16,9 +16,14 @@ module Facter::Util::IP
             :netmask    => /netmask\s+0x(\w{8})/
         },
         :sunos => {
-            :ipaddress => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
+            :ipaddress  => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
             :macaddress => /(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/,
             :netmask    => /netmask\s+(\w{8})/
+        },
+        :"hp-ux" => {
+            :ipaddress  => /\s+inet (\S+)\s.*/,
+            :macaddress => /(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/,
+            :netmask    => /.*\s+netmask (\S+)\s.*/
         }
     }
 
@@ -28,7 +33,7 @@ module Facter::Util::IP
     end
 
     def self.convert_from_hex?(kernel)
-        kernels_to_convert = [:sunos, :openbsd, :netbsd, :freebsd, :darwin]
+        kernels_to_convert = [:sunos, :openbsd, :netbsd, :freebsd, :darwin, :"hp-ux"]
         kernels_to_convert.include?(kernel)
     end
 
@@ -60,6 +65,8 @@ module Facter::Util::IP
             output = %x{/sbin/ifconfig -a}
         when 'SunOS'
             output = %x{/usr/sbin/ifconfig -a}
+        when 'HP-UX'
+            output = %x{/bin/netstat -i}
         end
         output
     end
@@ -71,6 +78,12 @@ module Facter::Util::IP
             output = %x{/sbin/ifconfig #{interface}}
         when 'SunOS'
             output = %x{/usr/sbin/ifconfig #{interface}}
+        when 'HP-UX'
+           mac = ""
+           ifc = %x{/usr/sbin/ifconfig #{interface}}
+           %x{/usr/sbin/lanscan}.scan(/(\dx\S+).*UP\s+(\w+\d+)/).each {|i| mac = i[0] if i.include?(interface) }
+           mac = mac.sub(/0x(\S+)/,'\1').scan(/../).join(":")
+           output = ifc + "\n" + mac
         end
         output
     end
@@ -100,7 +113,6 @@ module Facter::Util::IP
         end
         device
     end
-
 
     def self.get_interface_value(interface, label)
         tmp1 = []

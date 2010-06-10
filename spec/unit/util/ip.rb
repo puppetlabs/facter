@@ -5,7 +5,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 require 'facter/util/ip'
 
 describe Facter::Util::IP do
-    [:freebsd, :linux, :netbsd, :openbsd, :sunos, :darwin].each do |platform|
+    [:freebsd, :linux, :netbsd, :openbsd, :sunos, :darwin, :"hp-ux"].each do |platform|
         it "should be supported on #{platform}" do
             Facter::Util::IP.supported_platforms.should be_include(platform)
         end
@@ -40,6 +40,13 @@ describe Facter::Util::IP do
         Facter::Util::IP.stubs(:get_all_interface_output).returns(solaris_ifconfig)
         Facter::Util::IP.get_interfaces().should == ["lo0", "e1000g0"]
     end
+
+    it "should return a list three interfaces on HP-UX with three interfaces multiply reporting" do
+        sample_output_file = File.dirname(__FILE__) + '/../data/hpux_netstat_all_interfaces'
+        hpux_netstat = File.new(sample_output_file).read()
+        Facter::Util::IP.stubs(:get_all_interface_output).returns(hpux_netstat)
+        Facter::Util::IP.get_interfaces().should == ["lan1", "lan0", "lo0"]
+    end 
 
     it "should return a value for a specific interface" do
         Facter::Util::IP.should respond_to(:get_interface_value)
@@ -79,6 +86,46 @@ describe Facter::Util::IP do
 
         Facter::Util::IP.get_network_value("e1000g0").should == "172.16.15.0"
     end
+
+    it "should return ipaddress information for HP-UX" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/hpux_ifconfig_single_interface"
+        hpux_ifconfig_interface = File.new(sample_output_file).read()
+
+        Facter::Util::IP.expects(:get_single_interface_output).with("lan0").returns(hpux_ifconfig_interface)
+        Facter.stubs(:value).with(:kernel).returns("HP-UX")
+
+        Facter::Util::IP.get_interface_value("lan0", "ipaddress").should == "168.24.80.71"
+    end 
+
+    it "should return macaddress information for HP-UX" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/hpux_ifconfig_single_interface"
+        hpux_ifconfig_interface = File.new(sample_output_file).read()
+
+        Facter::Util::IP.expects(:get_single_interface_output).with("lan0").returns(hpux_ifconfig_interface)
+        Facter.stubs(:value).with(:kernel).returns("HP-UX")
+
+        Facter::Util::IP.get_interface_value("lan0", "macaddress").should == "00:13:21:BD:9C:B7"
+    end 
+
+    it "should return netmask information for HP-UX" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/hpux_ifconfig_single_interface"
+        hpux_ifconfig_interface = File.new(sample_output_file).read()
+
+        Facter::Util::IP.expects(:get_single_interface_output).with("lan0").returns(hpux_ifconfig_interface)
+        Facter.stubs(:value).with(:kernel).returns("HP-UX")
+
+        Facter::Util::IP.get_interface_value("lan0", "netmask").should == "255.255.255.0"
+    end 
+
+    it "should return calculated network information for HP-UX" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/hpux_ifconfig_single_interface"
+        hpux_ifconfig_interface = File.new(sample_output_file).read()
+
+        Facter::Util::IP.stubs(:get_single_interface_output).with("lan0").returns(hpux_ifconfig_interface)
+        Facter.stubs(:value).with(:kernel).returns("HP-UX")
+
+        Facter::Util::IP.get_network_value("lan0").should == "168.24.80.0"
+    end 
 
     it "should return interface information for FreeBSD supported via an alias" do
         sample_output_file = File.dirname(__FILE__) + "/../data/6.0-STABLE_FreeBSD_ifconfig"
@@ -120,6 +167,16 @@ describe Facter::Util::IP do
         Facter::Util::IP.get_interface_value("e1000g0", "netmask").should == "255.255.255.0"
     end
 
+    it "should return a human readable netmask on HP-UX" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/hpux_ifconfig_single_interface"
+        hpux_ifconfig_interface = File.new(sample_output_file).read()
+
+        Facter::Util::IP.expects(:get_single_interface_output).with("lan0").returns(hpux_ifconfig_interface)
+        Facter.stubs(:value).with(:kernel).returns("HP-UX")
+
+        Facter::Util::IP.get_interface_value("lan0", "netmask").should == "255.255.255.0"
+    end 
+
     it "should return a human readable netmask on Darwin" do
         sample_output_file = File.dirname(__FILE__) + "/../data/darwin_ifconfig_single_interface"
 
@@ -137,7 +194,7 @@ describe Facter::Util::IP do
         Facter::Util::IP.get_bonding_master("eth0:1").should be_nil
     end
 
-    [:freebsd, :netbsd, :openbsd, :sunos, :darwin].each do |platform|
+    [:freebsd, :netbsd, :openbsd, :sunos, :darwin, :"hp-ux"].each do |platform|
         it "should require conversion from hex on #{platform}" do
             Facter::Util::IP.convert_from_hex?(platform).should == true
         end
