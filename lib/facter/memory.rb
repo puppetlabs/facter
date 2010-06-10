@@ -20,16 +20,16 @@ require 'facter/util/memory'
     end
 end
 
-if Facter.value(:kernel) == "AIX"
+if Facter.value(:kernel) == "AIX" and Facter.value(:id) == "root"
     swap = Facter::Util::Resolution.exec('swap -l')
     swapfree, swaptotal = 0, 0
     swap.each do |dev|
-        if dev =~ /^\/\S+\s.*\s+(\S+)MB\s+(\S+)MB/
-            swaptotal += $1.to_i
-            swapfree  += $2.to_i
-        end
-    end
-
+      if dev =~ /^\/\S+\s.*\s+(\S+)MB\s+(\S+)MB/
+        swaptotal += $1.to_i
+        swapfree  += $2.to_i
+      end 
+    end 
+ 
     Facter.add("SwapSize") do
         confine :kernel => :aix
         setcode do
