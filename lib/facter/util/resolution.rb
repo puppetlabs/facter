@@ -11,9 +11,13 @@ require 'rbconfig'
 class Facter::Util::Resolution
     attr_accessor :interpreter, :code, :name, :timeout
 
+    WINDOWS = Config::CONFIG['host_os'] =~ /mswin|win32|dos|mingw|cygwin/i
+
+    INTERPRETER = WINDOWS ? 'cmd.exe' : '/bin/sh'
+
     def self.have_which
         if ! defined?(@have_which) or @have_which.nil?
-            if Config::CONFIG['host_os'] =~ /mswin/
+            if Facter.value(:kernel) == 'windows'
                 @have_which = false
             else
                 %x{which which >/dev/null 2>&1}
@@ -23,31 +27,50 @@ class Facter::Util::Resolution
         @have_which
     end
 
-    # Execute a chunk of code.
-    def self.exec(code, interpreter = "/bin/sh")
-        raise ArgumentError, "non-sh interpreters are not currently supported" unless interpreter == "/bin/sh"
-        binary = code.split(/\s+/).shift
+    # Execute a program and return the output of that program.
+    #
+    # Returns nil if the program can't be found, or if there is a problem
+    # executing the code.
+    #
+    def self.exec(code, interpreter = INTERPRETER)
+        raise ArgumentError, "invalid interpreter" unless interpreter == INTERPRETER
 
-        if have_which
+        # Try to guess whether the specified code can be executed by looking at the
+        # first word. If it cannot be found on the PATH defer on resolving the fact
+        # by returning nil.
+        # This only fails on shell built-ins, most of which are masked by stuff in 
+        # /bin or of dubious value anyways. In the worst case, "sh -c 'builtin'" can
+        # be used to work around this limitation
+        #
+        # Windows' %x{} throws Errno::ENOENT when the command is not found, so we 
+        # can skip the check there. This is good, since builtins cannot be found 
+        # elsewhere.
+        if have_which and !WINDOWS
             path = nil
-            if binary !~ /^\//
+            binary = code.split.first
+            if code =~ /^\//
+                path = binary
+            else
                 path = %x{which #{binary} 2>/dev/null}.chomp
                 # we don't have the binary necessary
                 return nil if path == "" or path.match(/Command not found\./)
-            else
-                path = binary
             end
 
             return nil unless FileTest.exists?(path)
         end
 
         out = nil
+
         begin
             out = %x{#{code}}.chomp
+        rescue Errno::ENOENT => detail
+            # command not found on Windows
+            return nil
         rescue => detail
             $stderr.puts detail
             return nil
         end
+
         if out == ""
             return nil
         else
@@ -86,7 +109,7 @@ class Facter::Util::Resolution
     def setcode(string = nil, interp = nil, &block)
         if string
             @code = string
-            @interpreter = interp || "/bin/sh"
+            @interpreter = interp || INTERPRETER
         else
             unless block_given?
                 raise ArgumentError, "You must pass either code or a block"

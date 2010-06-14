@@ -111,30 +111,25 @@ end
 
 Facter.add(:ipaddress) do
     confine :kernel => %w{windows}
-    setcode do
-        ip = nil
-        output = %x{ipconfig}
-
-        output.split(/^\S/).each { |str|
-            if str =~ /IP Address.*: ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-                tmp = $1
-                unless tmp =~ /^127\./
-                    ip = tmp
-                    break
-                end
-            end
-        }
-        ip
-    end
+    require 'socket'
+    IPSocket.getaddress(Socket.gethostname)
 end
 
 Facter.add(:ipaddress, :ldapname => "iphostnumber", :timeout => 2) do
     setcode do
-        require 'resolv'
-
+        if Facter.value(:kernel) == 'windows'
+            require 'win32/resolv'
+        else
+            require 'resolv'
+        end
+        
         begin
             if hostname = Facter.value(:hostname)
-                ip = Resolv.getaddress(hostname)
+                if Facter.value(:kernel) == 'windows'
+                    ip = Win32::Resolv.get_resolv_info.last[0]
+                else
+                    ip = Resolv.getaddress(hostname)                
+                end
                 unless ip == "127.0.0.1"
                     ip
                 end

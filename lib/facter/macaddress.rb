@@ -67,13 +67,26 @@ end
 Facter.add(:macaddress) do
     confine :kernel => %w(windows)
     setcode do
-        ether = []
-        output = %x{ipconfig /all}
-        output.split(/\r\n/).each do |str|
-            if str =~  /.*Physical Address.*: (\w{1,2}-\w{1,2}-\w{1,2}-\w{1,2}-\w{1,2}-\w{1,2})/
-                ether.push($1.gsub(/-/, ":"))
-            end
-        end
-        ether[0]
+        require 'win32ole'
+        require 'socket'
+
+        ether = nil
+        host = Socket.gethostname
+        connect_string = "winmgmts://#{host}/root/cimv2"
+
+        wmi = WIN32OLE.connect(connect_string)
+
+        query = %Q{
+          select *
+          from Win32_NetworkAdapterConfiguration
+          where IPEnabled = True
+        }
+
+        wmi.ExecQuery(query).each{ |nic|
+          ether = nic.MacAddress
+          break
+        }
+        
+        ether
     end
 end

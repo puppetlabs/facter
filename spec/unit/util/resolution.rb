@@ -44,9 +44,10 @@ describe Facter::Util::Resolution do
             @resolve = Facter::Util::Resolution.new("yay")
         end
 
-        it "should default to /bin/sh as the interpreter if a string is provided" do
+        it "should default to the detected interpreter if a string is provided" do
+            Facter::Util::Resolution::INTERPRETER = "/bin/bar"
             @resolve.setcode "foo"
-            @resolve.interpreter.should == "/bin/sh"
+            @resolve.interpreter.should == "/bin/bar"
         end
 
         it "should set the code to any provided string" do
@@ -87,17 +88,44 @@ describe Facter::Util::Resolution do
         end
 
         describe "and the code is a string" do
-            it "should return the result of executing the code with the interpreter" do
-                @resolve.setcode "/bin/foo"
-                Facter::Util::Resolution.expects(:exec).with("/bin/foo", "/bin/sh").returns "yup"
+            describe "on windows" do
+                before do
+                    Facter::Util::Resolution::WINDOWS = true
+                    Facter::Util::Resolution::INTERPRETER = "cmd.exe"
+                end
+                
+                it "should return the result of executing the code with the interpreter" do
+                    @resolve.setcode "/bin/foo"
+                    Facter::Util::Resolution.expects(:exec).once.with("/bin/foo", "cmd.exe").returns "yup"
 
-                @resolve.value.should == "yup"
+                    @resolve.value.should == "yup"
+                end
+
+                it "should return nil if the value is an empty string" do
+                    @resolve.setcode "/bin/foo"
+                    Facter::Util::Resolution.expects(:exec).once.returns ""
+                    @resolve.value.should be_nil
+                end
             end
 
-            it "should return nil if the value is an empty string" do
-                @resolve.setcode "/bin/foo"
-                Facter::Util::Resolution.stubs(:exec).returns ""
-                @resolve.value.should be_nil
+            describe "on non-windows systems" do
+                before do
+                    Facter::Util::Resolution::WINDOWS = false
+                    Facter::Util::Resolution::INTERPRETER = "/bin/sh"
+                end
+                
+                it "should return the result of executing the code with the interpreter" do
+                    @resolve.setcode "/bin/foo"
+                    Facter::Util::Resolution.expects(:exec).once.with("/bin/foo", "/bin/sh").returns "yup"
+
+                    @resolve.value.should == "yup"
+                end
+
+                it "should return nil if the value is an empty string" do
+                    @resolve.setcode "/bin/foo"
+                    Facter::Util::Resolution.expects(:exec).once.returns ""
+                    @resolve.value.should be_nil
+                end
             end
         end
 
@@ -232,6 +260,10 @@ describe Facter::Util::Resolution do
     describe "when executing code" do
         it "should fail if any interpreter other than /bin/sh is requested" do
             lambda { Facter::Util::Resolution.exec("/something", "/bin/perl") }.should raise_error(ArgumentError)
+        end
+
+        it "should execute the binary" do
+            Facter::Util::Resolution.exec("echo foo").should == "foo"
         end
     end
 end
