@@ -111,8 +111,10 @@ end
 
 Facter.add(:ipaddress) do
     confine :kernel => %w{windows}
-    require 'socket'
-    IPSocket.getaddress(Socket.gethostname)
+    setcode do
+        require 'socket'
+        IPSocket.getaddress(Socket.gethostname)
+    end
 end
 
 Facter.add(:ipaddress, :ldapname => "iphostnumber", :timeout => 2) do
