@@ -55,4 +55,10 @@ describe "is_virtual fact" do
         Facter.fact(:is_virtual).value.should == true
     end
 
+    it "should be true when running in jail" do
+        Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
+        Facter.fact(:virtual).stubs(:value).returns("jail")
+        Facter.fact(:is_virtual).value.should == true
+    end
+
 end
