@@ -17,6 +17,13 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "zone"
   end
 
+  it "should be jail on FreeBSD when a jail in kvm" do
+      Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
+      Facter::Util::Virtual.stubs(:jail?).returns(true)
+      Facter::Util::Virtual.stubs(:kvm?).returns(true)
+      Facter.fact(:virtual).value.should == "jail"
+  end
+
 end
 
 describe "is_virtual fact" do

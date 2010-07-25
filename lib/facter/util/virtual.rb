@@ -43,11 +43,12 @@ module Facter::Util::Virtual
     end
 
     def self.kvm?
-       if FileTest.exists?("/proc/cpuinfo")
-           txt = File.read("/proc/cpuinfo")
-           return true if txt =~ /QEMU Virtual CPU/
+       txt = if FileTest.exists?("/proc/cpuinfo")
+           File.read("/proc/cpuinfo")
+       elsif Facter.value(:kernel)=="FreeBSD"
+           Facter::Util::Resolution.exec("/sbin/sysctl -n hw.model")
        end
-       return false
+       (txt =~ /QEMU Virtual CPU/) ? true : false
     end
 
     def self.kvm_type
