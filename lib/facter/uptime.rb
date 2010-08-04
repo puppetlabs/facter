@@ -1,20 +1,23 @@
 require 'facter/util/uptime'
 
 Facter.add(:uptime) do
-    confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE SLES Debian Ubuntu Gentoo AIX}
-    setcode do
-        Facter::Util::Uptime.get_uptime_simple
+  setcode do
+    seconds = Facter.fact(:uptime_seconds).value
+
+    unless seconds
+      "unknown"
+    else
+      days    = seconds / (60 * 60 * 24)
+      hours   = seconds / (60 * 60) % 24
+      minutes = seconds / 60 % 60
+
+      case days
+      when 0 then "#{hours}:#{"%02d" % minutes} hours"
+      when 1 then '1 day'
+      else "#{days} days"
+      end
     end
+
+  end
 end
 
-if FileTest.exists?("/proc/uptime")
-    uptime = Facter::Util::Uptime.get_uptime
-
-    %w{days hours seconds}.each do |label|
-        Facter.add("uptime_" + label) do
-            setcode do
-                Facter::Util::Uptime.get_uptime_period(uptime, label)
-            end 
-        end 
-    end 
-end
