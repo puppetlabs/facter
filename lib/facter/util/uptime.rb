@@ -16,20 +16,19 @@ module Facter::Util::Uptime
     private
 
     def self.uptime_proc_uptime
-        if File.exists? uptime_file
-            r = File.read uptime_file
-            r.split(" ").first.to_i
+        if output = `/bin/cat #{uptime_file} 2>/dev/null` and $?.success?
+            output.chomp.split(" ").first.to_i
         end
     end
 
     def self.uptime_sysctl
-        if (output = `#{uptime_sysctl_cmd}`) and $?.success?
+        if output = `#{uptime_sysctl_cmd} 2>/dev/null` and $?.success?
             compute_uptime(Time.at(output.unpack('L').first))
         end
     end
 
     def self.uptime_who_dash_b
-        if (output = `#{uptime_who_cmd}`) and $?.success?
+        if output = `#{uptime_who_cmd} 2>/dev/null` and $?.success?
             compute_uptime(Time.parse(output))
         end
     end
@@ -43,10 +42,10 @@ module Facter::Util::Uptime
     end
 
     def self.uptime_sysctl_cmd
-        'sysctl -b kern.boottime 2>/dev/null'
+        'sysctl -b kern.boottime'
     end
 
     def self.uptime_who_cmd
-        'who -b 2>/dev/null'
+        'who -b'
     end
 end
