@@ -38,6 +38,10 @@ Facter.add("virtual") do
             result = Facter::Util::Virtual.kvm_type()
         end
 
+        if Facter.value(:kernel)=="FreeBSD"
+            result = "jail" if Facter::Util::Virtual.jail?
+        end
+
         if result == "physical"
             output = Facter::Util::Resolution.exec('lspci')
             if not output.nil?
@@ -76,7 +80,7 @@ Facter.add("is_virtual") do
 
     setcode do
         case Facter.value(:virtual)
-        when "xenu", "openvzve", "vmware", "kvm", "vserver"
+        when "xenu", "openvzve", "vmware", "kvm", "vserver", "jail"
             true
         else 
             false
