@@ -20,6 +20,8 @@ Facter.add(:operatingsystem) do
             "Mandriva"
         elsif FileTest.exists?("/etc/mandrake-release")
             "Mandrake"
+        elsif FileTest.exists?("/etc/meego-release")
+            "MeeGo"
         elsif FileTest.exists?("/etc/arch-release")
             "Archlinux"
         elsif FileTest.exists?("/etc/enterprise-release")

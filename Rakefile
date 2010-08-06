@@ -3,6 +3,13 @@
 $: << File.expand_path('lib')
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'tasks')
 
+require 'spec'
+require 'spec/rake/spectask'
+begin
+    require 'rcov'
+rescue LoadError
+end
+
 Dir['tasks/**/*.rake'].each { |t| load t } 
 
 require 'facter.rb'
@@ -51,21 +58,14 @@ task :default do
     sh %{rake -T}
 end
 
-desc "Run the specs under spec/"
-task :spec do
-    require 'spec'
-    require 'spec/rake/spectask'
-    begin
-        require 'rcov'
-    rescue LoadError
-    end
+Spec::Rake::SpecTask.new(:spec) do |t|
+    t.spec_files = FileList['spec/**/*.rb']
+end
 
-    Spec::Rake::SpecTask.new do |t|
-        t.spec_opts = ['--format','s', '--loadby','mtime']
-        t.spec_files = FileList['spec/**/*.rb']
-        if defined?(Rcov)
-            t.rcov = true
-            t.rcov_opts = ['--exclude', 'spec/*,test/*,results/*,/usr/lib/*,/usr/local/lib/*']
-        end
-     end
+Spec::Rake::SpecTask.new('spec:rcov') do |t|
+    t.spec_files = FileList['spec/**/*.rb']
+    if defined?(Rcov)
+        t.rcov = true
+        t.rcov_opts = ['--exclude', 'spec/*,test/*,results/*,/usr/lib/*,/usr/local/lib/*,gems/*']
+    end
 end

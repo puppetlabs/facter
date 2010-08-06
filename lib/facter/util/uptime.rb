@@ -1,32 +1,51 @@
+require 'time'
+
 # A module to gather uptime facts
 #
 module Facter::Util::Uptime
-    def self.get_uptime_simple
-        time = Facter::Util::Resolution.exec('uptime')
-        if time =~ /up\s*(\d+\s\w+)/
-            $1
-        elsif time =~ /up\s*(\d+:\d+)/
-            $1 + " hours"
-        else
-            "unknown"
+    def self.get_uptime_seconds_unix
+        uptime_proc_uptime or uptime_sysctl or uptime_who_dash_b
+    end
+
+    def self.get_uptime_seconds_win
+        require 'Win32API'
+        getTickCount = Win32API.new("kernel32", "GetTickCount", nil, 'L')
+        compute_uptime(Time.at(getTickCount.call() / 1000.0))
+    end
+
+    private
+
+    def self.uptime_proc_uptime
+        if output = `/bin/cat #{uptime_file} 2>/dev/null` and $?.success?
+            output.chomp.split(" ").first.to_i
         end
     end
 
-    def self.get_uptime
-        r = IO.popen("/bin/cat /proc/uptime")
-        uptime, idletime = r.readline.split(" ")        
-        r.close
-        uptime_seconds = uptime.to_i
+    def self.uptime_sysctl
+        if output = `#{uptime_sysctl_cmd} 2>/dev/null` and $?.success?
+            compute_uptime(Time.at(output.unpack('L').first))
+        end
     end
 
-    def self.get_uptime_period(seconds, label)
-        case label
-        when 'days'
-            value = seconds / 86400
-        when 'hours'
-            value = seconds / 3600
-        when 'seconds'
-            seconds
-        end     
+    def self.uptime_who_dash_b
+        if output = `#{uptime_who_cmd} 2>/dev/null` and $?.success?
+            compute_uptime(Time.parse(output))
+        end
     end
-end   
+
+    def self.compute_uptime(time)
+        (Time.now - time).to_i
+    end
+
+    def self.uptime_file
+        "/proc/uptime"
+    end
+
+    def self.uptime_sysctl_cmd
+        'sysctl -b kern.boottime'
+    end
+
+    def self.uptime_who_cmd
+        'who -b'
+    end
+end
