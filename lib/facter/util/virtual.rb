@@ -1,6 +1,6 @@
 module Facter::Util::Virtual
     def self.openvz?
-        FileTest.exists?("/proc/vz/veinfo")
+        FileTest.directory?("/proc/vz")
     end
 
     def self.openvz_type
