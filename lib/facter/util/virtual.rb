@@ -22,7 +22,7 @@ module Facter::Util::Virtual
     def self.vserver?
         return false unless FileTest.exists?("/proc/self/status")
         txt = File.read("/proc/self/status")
-        return true if txt =~ /^(s_context|VxID):[[:blank:]]*[1-9]/
+        return true if txt =~ /^(s_context|VxID):[[:blank:]]*[0-9]/
         return false
     end
 
