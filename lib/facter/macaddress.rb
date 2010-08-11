@@ -1,3 +1,5 @@
+require 'facter/util/macaddress'
+
 Facter.add(:macaddress) do
     confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE SLES Debian Gentoo Ubuntu OEL OVS}
     setcode do
@@ -26,19 +28,7 @@ end
 
 Facter.add(:macaddress) do
     confine :kernel => :darwin
-    setcode do
-        ether = nil
-        output = %x{/sbin/ifconfig}
-
-        output.split(/^\S/).each do |str|
-            if str =~ /10baseT/ # we're wired
-                str =~ /ether (\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/
-                ether = $1
-            end
-        end
-
-        ether
-    end
+    setcode { Facter::Util::Macaddress::Darwin.macaddress }
 end
 
 Facter.add(:macaddress) do

@@ -1,0 +1,29 @@
+Routing tables
+
+Internet:
+Destination        Gateway            Flags        Refs      Use   Netif Expire
+default            imana.puppetlabs.l UGSc           18        0     en1
+127                localhost          UCS             0        0     lo0
+localhost          localhost          UH              2   161629     lo0
+169.254            link#5             UCS             0        0     en1
+172.16.38/24       link#9             UC              1        0  vmnet8
+172.16.38.255      ff:ff:ff:ff:ff:ff  UHLWbI          1        2  vmnet8
+172.16.135/24      link#8             UC              1        0  vmnet1
+172.16.135.255     ff:ff:ff:ff:ff:ff  UHLWbI          0        2  vmnet1
+192.168.100        link#5             UCS            17        0     en1
+imana.puppetlabs.l 0:25:bc:e2:e:56    UHLWI           9       12     en1   1145
+odys-iphone.puppet 5c:59:48:16:37:86  UHLWI           0        0     en1   1159
+reinh.puppetlabs.l localhost          UHS             0        0     lo0
+192.168.100.255    ff:ff:ff:ff:ff:ff  UHLWbI          0        2     en1
+
+Internet6:
+Destination        Gateway            Flags         Netif Expire
+localhost          localhost          UH              lo0
+fe80::%lo0         localhost          Uc              lo0
+localhost          link#1             UHL             lo0
+fe80::%en1         link#5             UC              en1
+fe80::226:b0ff:fef 0:26:b0:f9:ef:cb   UHLW            en1
+reinh.local        58:b0:35:7f:25:b3  UHL             lo0
+ff01::             localhost          Um              lo0
+ff02::             localhost          UmC             lo0
+ff02::             link#5             UmC             en1
