@@ -1,3 +1,53 @@
+1.5.8rc1
+========
+4398b36  Updated CHANGELOG rake task
+e02be1d  [#4156] Updating spec to match Kai's change
+bff84c2  [#4156] Applying patch by Kai
+b7fe989  [#2330] Update uptime calculation to use /bin/cat
+e9a60bc  Facter::Manufacturer - sunos test + simplified regex
+be411c0  Facter::Manufacturer - test for SunOS and FreeBSD
+67f6604  [#4062] Implement operating system facts for MeeGo
+a2bcacd  [#2330] Uptime should not make redundant system calls
+ce7bd9f  Refactor rakefile to use spec.ops, separate rcov task
+faaa169  Fix #4352 - Support for detecting KVM virtuals on FreeBSD
+82286e4  Fix #4352 - Support for detecting virtuals (jails) on FreeBSD
+b2c2114  Properly wrapped the windows ipaddress fact in a setcode block.
+1bd2ca2  Fixed #3929 - Added user confine to AIX memory facts
+8106bc3  Adding HP-UX support to Facter's IP facts
+83b3ea6  Fixed #3393 - Updates to Facter for MS Windows
+ffcae46  Fixed #3403 - Added fact to query vlans; added spec test
+d4b8401  Merged Jos Backus patch to remove requirement for ftools altogether
+73dcbb9  Fixed #2355 read hang on /proc/xen/capabilties on RHEL 4.7
+d109def  Fix #1365 - load all facts via cli
+6c87917  Fixed failing test introduced by previous commit
+c5b8d3b  Fixes #3740 - split dmi output on regex
+25bf5c2  Fix virtual unit test on non-linux by stubbing kernel
+9a00eae  Fixed #2313 - Somewhat essential hardware facts not available on OpenBSD, patch included
+e19024b  Fixed #2938 - interfaces that don't match ^\w+[.:]?\d+ are ignored
+97879f9  Added support for Slackware in operatingsystem and operatingsystemrelease
+802e6c2  Fixed #3542 - Ruby 1.9: broken unittest, String#each no longer exists
+2f016f3  Fixed #3541 - Ruby 1.9: broken unittest, unexpected invocation: Process.waitall()
+84d3d9f  Fixed #3445 - Facter does not handle solaris branded zones properly
+b5a8de0  Fix for #3411 install.rb should not put "." first in the tmp_dirs
+8ea33eb  Fixed #3447 - OVS and OEL not matching in operatingsystemrelease
+aeee83c  Fixed #3410 - Warnings in rake spec
+8bf8cb5  Fixes #3397 - is_virtual fact does not detect Linux-VServer
+62b6773  Add kvm support to virtual fact
+dca615c  fixes #2573, #2085, #1291 - fixes domain and fqdn facts resolution
+86447c8  Revert "use popen3 in Resolution.exec"
+7750f03  Fix #2341 - stricter handling of dmidecode split
+f4269d9  Fix #2746 - add architecture support for GNU/kFreeBSD
+50cef83  Fix missing error case
+356cf15  Remove whitespace in DMI facts (#3008, #3011)
+feecd39  Only ignore IPs starting with 127.
+68fc123  Added package signing task
+33fb770  use popen3 in Resolution.exec to catch stderr
+8109806  introduce a warn mechanism for debugging
+b2c1ca5  Add docs to Mac OS X package creation script and clean out old docs in the preflight
+5412eab  Fixed : 2788 - ftools missing in Ruby 1.9
+5b95a12  Fixes #2704. Problem finding install.rb three levels up
+9aef69e  Removed all ChangeLog
+
 1.5.7
 =====
 3a39dd8  Updated ChangeLog and task
@@ -5,6 +55,9 @@
 8398238  Added rcov support to spec task
 7194454  Updated CI Rake task
 2472048  Clarify licensing as GPLv2 (or any later version)
+
+1.5.7rc1
+========
 4bc05e9  Added new format ChangeLog
 5bc8db3  Incremented version and updated CHANGELOG
 eb3a8a7  Issue #2414 - add unit test
@@ -18,7 +71,7 @@ bfe8a2a  Fix 2455 - improve error handling on fact load
 5982deb  Added default Rake task
 0e0483a  Fix bug where you'd get an 'undefined method' error if trying to access a fact's value when collection has not being yet initialized.
 fe41fb8  Fix #2470 - duplicate entries in interfaces fact
-be9e484  Update OS X minor version fact to cope with '10.x' values and provide test coverage
+be9e484  Update OS X minor version fact to cope with '10.x' values and provide test coverage switch %x{} call to Facter::Util::Resolution.exec for better testing
 f3ad66f  Update install.rb to cope with all OS X versions, not just 10.5
 c02d3b6  Issue #2292 Add tests for virtual facts
 6c9fec5  Added path fact
@@ -37,18 +90,6 @@ ba44f08  Removed --no-thread and --no-chain-reply-to from rake mail_patches task
 806f49f  Added facter branding to format patch command
 96c015c  Added spec.executables to Facter gemspec in Rakefile
 d97a63e  Sync rpm spec file with latest from Fedora/EPEL
-dad4569  Added path to Rakefile
-365cb8e  CHANGELOG updates
-68e0b24  Fix #2278 Revert fix for 2120
-b533e78  Tighten operatingsystemrelease regex on CentOS < 5
-48aa135  Fix operatingsystemrelease for CentOS < 5
-253fef1  Added spec files to package list
-b37d683  Added install.rb to Rakefile package task
-7995d05  Bumped release to 1.5.5rc2
-
-1.5.5rc2
-========
-1de8891  Bumped release to 1.5.5rc2
 
 1.5.5
 =====
@@ -57,9 +98,13 @@ dad4569  Added path to Rakefile
 68e0b24  Fix #2278 Revert fix for 2120
 b533e78  Tighten operatingsystemrelease regex on CentOS < 5
 48aa135  Fix operatingsystemrelease for CentOS < 5
-253fef1  Added spec files to package list
+253fef1  Added spec files to package list Fixed CI rake tasks
 b37d683  Added install.rb to Rakefile package task
 7995d05  Bumped release to 1.5.5rc2
+
+1.5.5rc2
+========
+1de8891  Bumped release to 1.5.5rc2
 56760d3  Facter #2120 -  Solaris support for Facter[virtual]
 2fb91ca  Tests for #2227 - multiple interfaces on Darwin
 00b192a  Added SELinux tests
@@ -99,14 +144,6 @@ b6f0f99  more consistent indentation and alignment. also removal of trailing whi
 9bc174f  Further fix #2032 - close IO
 6b904a0  Added EC2 facts
 86b01bf  Fixed #2032 - file.open hanging on /proc/uptime on some platform
-91d8cb7  Updated to version 1.5.4
-a99d043  Fixed #1966 - Added physicalprocessorcount fact
-94ea807  This commit refs #1555, #1898 and fixes #1761
-04389db  Added support for Oracle VM Server to operatingsystem and operatingsystemrelease
-552f150  Added support for Oracle Enterprise Linux to operatingsystem
-a932a69  Added README.rst for Facter
-e52f962  Added Reductive Labs build library
-0726437  Updated README
 
 1.5.4
 =====
@@ -114,10 +151,13 @@ e52f962  Added Reductive Labs build library
 a99d043  Fixed #1966 - Added physicalprocessorcount fact
 94ea807  This commit refs #1555, #1898 and fixes #1761
 04389db  Added support for Oracle VM Server to operatingsystem and operatingsystemrelease
-552f150  Added support for Oracle Enterprise Linux to operatingsystem
+552f150  Added support for Oracle Enterprise Linux to operatingsystem and operatingsystemrelease
 a932a69  Added README.rst for Facter
 e52f962  Added Reductive Labs build library
 0726437  Updated README
+
+1.5.4rc1
+========
 f4bc74d  Fixing #1927 - failing facts don't kill Facter
 063e4dc  Fixed #1850 - Facter updates for Ruby 1.9
 b85ab0a  Fixed #1924 - Fixed lo / lo:0 local interface matching
@@ -131,7 +171,7 @@ d9eef19  Added timezone fact
 =====
 b86a1fb  Updated to version 1.5.3
 a73e803  Fixing the usage of the macosx util module; I somehow missed renaming it here
-23289bd  Fixed uptime refactor issues on non-Linux platforms
+23289bd  Fixed uptime refactor issues on non-Linux platforms Signed-off-by: James Turnbull <james@lovedthanlost.net>
 a194c91  Adding mail_patches rake task
 a82f476  Renaming Facter::Macosx to Facter::Util::Macosx
 1f1fa9b  Fixing #1838 - profiler failures don't throw exceptions
@@ -153,7 +193,7 @@ a70184a  Fixed #1791 - support for virtual fact on Solaris 10
 85b2a55  minor fix to operatingsystemversion to correctly parse /etc/release on OpenSolaris 2008.11.
 8247304  Fixed errors on unrecognised option in binary
 0fe4611  Added ci namespace and Rake tasks
-7ddea77  Fix for #1727 - id fact should not rely on whoami on Solaris
+7ddea77  Fix for #1727 - id fact should not rely on whoami on Solaris Signed-off-by: Martin Englund <martin@englund.nu>
 f9a346a  Sync specfile with latest from Fedora
 fd07cd2  Removed EPM task
 43d0aea  Fixed #1697 - Typo in ipaddress.rb causes timeout under Solaris 10 SPARC
@@ -204,7 +244,7 @@ b91ee5e  Remove duplicated code paths
 df8fc8c  fix terrible error with overwriting permissions
 91ca4ab  Fixed #1490 - Added virtual fact
 ff45c86  Feature #1487: Package creation scripts for Mac OS X
-9b42182  Modified the operatingsystem fact for Debian so it looks in
+9b42182  Modified the operatingsystem fact for Debian so it looks in /etc/debian_version instead of /proc/version.
 e1023de  Feature #1478: Allow specification of --bindir --sbindir --sitelibdir --mandir --destdir in install.rb
 845ae94  Feature #1475: CONFIG['bindir'] CONFIG['sbindir'] have undesirable defaults on OS X 10.5
 a12608e  Fixes #1467 - macaddress not set on Ubuntu
@@ -219,6 +259,9 @@ dc7363e  Set macaddress on windows platform
 ded53b0  Fixed Rakefile to include additional files including tests et al
 1cf98d1  Adjusted version to be in line with previous standard
 ff0e90b  Adding (apparently now required) author info to the gem spec
+
+1.5
+===
 7042c46  Updated to version 1.5
 e98efd3  Updated to version 1.5
 d49d63c  Updating the changelog for 1.5
@@ -238,7 +281,7 @@ e22b408  Changed 'timeout' option to 'limit'
 def18b5  Fixes #1357 - change ps syntax for OSX and BSD
 ce7b74c  Rejustifying all of the whitespace in the facts, yay.
 2ee5d29  Refactoring how recursive searches are detected.
-d322df9  Refactored so each fact resolution can specify a separate timeout,
+d322df9  Refactored so each fact resolution can specify a separate timeout, but the default is still 0.5.
 9a1882e  Retrieve hardwaremodel for AIX from sys0 modelname.
 b574c6a  Refactered ipmess.rb and util/ip.rb to support separate *BSD logic for *BSD aliased interfaces.
 d9bd388  Refactor of netmask fact - fixes ticket #66
@@ -278,7 +321,7 @@ fef9b7d  fixing whitespace
 567549b  Closes #1145 - fixed bad interface names by replacing : with _
 d449472  Updated CHANGELOG
 bd3b316  removing .swp file
-e11edfb  Switching from test/unit to rspec, and fixing a couple
+e11edfb  Switching from test/unit to rspec, and fixing a couple of small test failures.
 1a5ba71  Fixed Solaris detection of lo0 for ticket #46
 92b43e0  Added require util ip.rb file
 0c4ac42  Fixed #46 - refactor ipmess.rb
@@ -308,7 +351,7 @@ dce6245  Revert "Adjusted :kernel confine to make it more in line with others"
 c5e6f60  Adjusted :kernel confine to make it more in line with others
 a4698ce  Updated CHANGELOG
 8b08d5f  Added support to return multiple interfaces and their IP addresses as facts.  Existing ipaddress fact which returns IP address of first interface on node is still available.  Currently Linux only. Closes #6
-6113375  Added macaddress fact support for FreeBSD and OpenBSD - closes #37
+6113375  Added macaddress fact support for FreeBSD and OpenBSD - closes #37 Added hardwareisa support for *BSD platforms - closed #38 Facter now detects the Mandriva distribution - closes #39 Facter now correctly detects ipaddress on NetBSD - closes #42
 8426aaf  making the install script executable
 f35ee22  Drastically speeding up the lsb data retrieval, and refactoring the dmidecode data so it is a bit cleaner and does not produce extraneous output or errors
 20986d9  Set operatingsystemrelease to the major release on RHEL and Fedora
@@ -415,6 +458,10 @@ b543152  Updated for use with latest Fedora ruby packages
 15f2f44  Updated to version 1.3
 15931ef  Updated to version 1.3
 261d909  Updated to version 1.3
+
+1.3
+===
+92c48b9  Adding release tag REL_1_3
 539d593  fixing installer so it does not install batch files on darwin
 4c1d5e0  trying to fix facterbin rubylib setting
 7f2504d  fixing test so that it works even if rubylib is not set
@@ -495,4 +542,18 @@ a295c73  Fixing bug when a fact with no resolutions is asked for
 1ed4216  Redoing how tags work.
 d9c86d5  updating everything to essentially disable docs generation
 64a86db  Adding Release tag
+
+1.0.2
+=====
+8c91fb1  adding release tag
+1dc02f9  adding extra "return nil" statements, and hopefully fixing the test for cygwin
+b542ec5  Updated to version 1.0.2
+f1c8f10  adding changelog
+7df3411  adding fixes Eric Sorenson found with cygwin
+c646434  updates
+fe90bf1  Updated to version 1.0.1
+3f0186d  Modified version
+58538d2  removing filehandle-based tests
+8cb9662  updating INSTALL with patch from ian
+7cec936  moving things to the trunk
 
