@@ -12,10 +12,13 @@ end
 
 Dir['tasks/**/*.rake'].each { |t| load t } 
 
-require 'facter.rb'
 require 'rake'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
+
+module Facter
+    FACTERVERSION = File.read('lib/facter.rb')[/FACTERVERSION *= *'(.*)'/,1] or fail "Couldn't find FACTERVERSION"
+end
 
 FILES = FileList[
     '[A-Z]*',
