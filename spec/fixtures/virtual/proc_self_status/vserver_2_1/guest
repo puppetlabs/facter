@@ -1,0 +1,37 @@
+Name:   cat
+State:  R (running)
+SleepAVG:       58%
+Tgid:   24671
+Pid:    24671
+PPid:   24670
+TracerPid:      0
+Uid:    0       0       0       0
+Gid:    0       0       0       0
+FDSize: 32
+Groups: 0
+VmPeak:     1580 kB
+VmSize:     1580 kB
+VmLck:         0 kB
+VmHWM:       372 kB
+VmRSS:       372 kB
+VmData:      152 kB
+VmStk:        88 kB
+VmExe:        16 kB
+VmLib:      1280 kB
+VmPTE:        12 kB
+Threads:        1
+SigQ:   0/4294967295
+SigPnd: 0000000000000000
+ShdPnd: 0000000000000000
+SigBlk: 0000000000000000
+SigIgn: 0000000000000000
+SigCgt: 0000000000000000
+CapInh: 0000000000000000
+CapPrm: 00000000344c04ff
+CapEff: 00000000344c04ff
+s_context: 40074
+ctxflags: 1602020010
+initpid: 0
+ipv4root: 4a00007f/ffffffff 4a24f6d5/00ffffff
+ipv4root_bcast: 00000000
+
