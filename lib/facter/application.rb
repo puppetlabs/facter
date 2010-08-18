@@ -44,8 +44,12 @@ module Facter
       end
 
     rescue => e
-      $stderr.puts "Error: #{e}"
-      exit(12)
+      if options && options[:trace]
+        raise e
+      else
+        $stderr.puts "Error: #{e}"
+        exit(12)
+      end
     end
 
     private
@@ -54,6 +58,7 @@ module Facter
       options = {}
       OptionParser.new do |opts|
         opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
+        opts.on(      "--trace")  { |v| options[:trace]  = v }
 
         opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
         opts.on("-p", "--puppet") { |v| load_puppet }

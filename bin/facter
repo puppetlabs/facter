@@ -33,6 +33,9 @@
 # debug::
 #   Enable debugging.
 #
+# trace::
+#   Enable backtraces.
+#
 # = Example
 #
 #   facter kernel
