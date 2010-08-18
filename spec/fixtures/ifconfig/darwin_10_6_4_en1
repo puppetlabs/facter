@@ -1,0 +1,6 @@
+en1: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	ether 58:b0:35:7f:25:b3 
+	inet6 fe80::5ab0:35ff:fe7f:25b3%en1 prefixlen 64 scopeid 0x5 
+	inet 192.168.100.230 netmask 0xffffff00 broadcast 192.168.100.255
+	media: <unknown subtype>
+	status: active

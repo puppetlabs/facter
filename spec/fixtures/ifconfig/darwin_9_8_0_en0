@@ -1,0 +1,6 @@
+en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+        inet6 fe80::217:f2ff:fe06:e42e%en0 prefixlen 64 scopeid 0x4 
+        inet 100.100.107.4 netmask 0xffffff00 broadcast 100.100.107.255
+        ether 00:17:f2:06:e4:2e 
+        media: autoselect (1000baseT <full-duplex>) status: active
+        supported media: autoselect 10baseT/UTP <half-duplex> 10baseT/UTP <full-duplex> 10baseT/UTP <full-duplex,hw-loopback> 10baseT/UTP <full-duplex,flow-control> 100baseTX <half-duplex> 100baseTX <full-duplex> 100baseTX <full-duplex,hw-loopback> 100baseTX <full-duplex,flow-control> 1000baseT <full-duplex> 1000baseT <full-duplex,hw-loopback> 1000baseT <full-duplex,flow-control>
