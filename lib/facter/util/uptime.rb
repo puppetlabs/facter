@@ -10,7 +10,7 @@ module Facter::Util::Uptime
     def self.get_uptime_seconds_win
         require 'Win32API'
         getTickCount = Win32API.new("kernel32", "GetTickCount", nil, 'L')
-        compute_uptime(Time.at(getTickCount.call() / 1000.0))
+        (getTickCount.call() / 1000.0).to_i
     end
 
     private
