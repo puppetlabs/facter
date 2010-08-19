@@ -8,9 +8,12 @@ module Facter::Util::Uptime
     end
 
     def self.get_uptime_seconds_win
-        require 'Win32API'
-        getTickCount = Win32API.new("kernel32", "GetTickCount", nil, 'L')
-        (getTickCount.call() / 1000.0).to_i
+      require 'win32ole'
+      wmi = WIN32OLE.connect("winmgmts://")
+      query = wmi.ExecQuery("select * from Win32_OperatingSystem")
+      last_boot = ""
+      query.each { |x| last_boot = x.LastBootupTime}
+      self.compute_uptime(Time.parse(last_boot.split('.').first)) 
     end
 
     private
