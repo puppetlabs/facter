@@ -136,7 +136,7 @@ class Facter::Util::Resolution
         result = nil
         return result if @code == nil and @interpreter == nil
 
-        starttime = Time.now.to_i
+        starttime = Time.now.to_f
 
         begin
             Timeout.timeout(limit) do
@@ -159,11 +159,9 @@ class Facter::Util::Resolution
             return nil
         end
 
-        finishtime = Time.now.to_i
-
-        if Facter.timing?
-            Facter.show_time "Executing #{self.name} took #{finishtime - starttime} seconds"
-        end
+        finishtime = Time.now.to_f
+        ms = (finishtime - starttime) * 1000
+        Facter.show_time "#{self.name}: #{"%.2f" % ms}ms"
 
         return nil if result == ""
         return result

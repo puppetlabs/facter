@@ -80,12 +80,7 @@ module Facter
 
     # show the timing information
     def self.show_time(string)
-        if string.nil?
-            return
-        end
-        if self.timing?
-            puts GREEN + string + RESET
-        end
+        puts "#{GREEN}#{string}#{RESET}" if string and Facter.timing?
     end
 
     def self.timing?
