@@ -135,6 +135,9 @@ class Facter::Util::Resolution
     def value
         result = nil
         return result if @code == nil and @interpreter == nil
+
+        starttime = Time.now.to_i
+
         begin
             Timeout.timeout(limit) do
                 if @code.is_a?(Proc)
@@ -154,6 +157,12 @@ class Facter::Util::Resolution
         rescue => details
             warn "Could not retrieve %s: %s" % [self.name, details]
             return nil
+        end
+
+        finishtime = Time.now.to_i
+
+        if Facter.timing?
+            Facter.show_time "Executing #{self.name} took #{finishtime - starttime} seconds"
         end
 
         return nil if result == ""

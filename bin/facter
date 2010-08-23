@@ -21,17 +21,20 @@
 # yaml::
 #   Emit facts in YAML format.
 #
+# debug::
+#   Enable debugging.
+#
+# timing::
+#   Enable timing.
+#
+# help::
+#   Print this help message
+#
 # puppet::
 #   Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.
 #
 # version::
 #   Print the version and exit.
-#
-# help::
-#   Print this help message.
-#
-# debug::
-#   Enable debugging.
 #
 # = Example
 #

@@ -54,8 +54,8 @@ module Facter
       options = {}
       OptionParser.new do |opts|
         opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
-
         opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
+        opts.on("-t", "--timing") { |v| Facter.timing(1) }
         opts.on("-p", "--puppet") { |v| load_puppet }
 
         opts.on_tail("-v", "--version") do
