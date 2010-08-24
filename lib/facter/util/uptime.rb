@@ -19,19 +19,19 @@ module Facter::Util::Uptime
     private
 
     def self.uptime_proc_uptime
-        if output = `/bin/cat #{uptime_file} 2>/dev/null` and $?.success?
+        if output = Facter::Util::Resolution.exec("/bin/cat #{uptime_file} 2>/dev/null")
             output.chomp.split(" ").first.to_i
         end
     end
 
     def self.uptime_sysctl
-        if output = `#{uptime_sysctl_cmd} 2>/dev/null` and $?.success?
+        if output = Facter::Util::Resolution.exec("#{uptime_sysctl_cmd} 2>/dev/null")
             compute_uptime(Time.at(output.unpack('L').first))
         end
     end
 
     def self.uptime_who_dash_b
-        if output = `#{uptime_who_cmd} 2>/dev/null` and $?.success?
+        if output = Facter::Util::Resolution.exec("#{uptime_who_cmd} 2>/dev/null")
             compute_uptime(Time.parse(output))
         end
     end
