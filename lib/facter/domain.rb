@@ -9,9 +9,6 @@ Facter.add(:domain) do
         domain = Facter::Util::Resolution.exec('dnsdomainname')
         next domain if domain =~ /.+\..+/
 
-        domain = Facter::Util::Resolution.exec('domainname')
-        next domain if domain =~ /.+\..+/
-
         if FileTest.exists?("/etc/resolv.conf")
             domain = nil
             search = nil
