@@ -1,5 +1,10 @@
-1.5.8rc2
-========
+1.5.8
+=====
+ca2da36  Updated install.rb and created man page
+3671c9f  [#4583] Refactor uptime to use Resolution.exec
+fca8861  [#4594] Reintroduce fix for #1291 from original patch
+32c0cb0  [#4594] Revert "fixes #2573, #2085, #1291..."
+e7df4c0  Updated CHANGELOG for 1.5.8rc2
 9c9cabd  Better fix for Bug 4569: Uptime Fact is incorrect on Windows
 01a515f  [#4289] operatingsystemrelease fact for oel, ovs
 b6c0a6b  Fix for bug #4569
