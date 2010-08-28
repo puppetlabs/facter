@@ -9,8 +9,8 @@ Version: 1.5.5
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Base
-URL: http://reductivelabs.com/projects/facter
-Source0: http://reductivelabs.com/downloads/facter/%{name}-%{version}.tar.gz
+URL: http://www.puppetlabs.com/puppet/related-projects/%{name}/
+Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 %if %has_ruby_noarch
 BuildArch: noarch

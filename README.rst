@@ -16,11 +16,11 @@ Run the ``facter`` binary on the command for a full list of facts supported on y
 Adding your own facts
 +++++++++++++++++++++
 
-See the `Adding Facts`_ wiki page for details of how to add your own custom facts to Facter.
+See the `Adding Facts`_ page for details of how to add your own custom facts to Facter.
  
 Further Information
 +++++++++++++++++++
 
-See http://reductivelabs.com/projects/facter/ for more details.
+See http://www.puppetlabs.com/puppet/related-projects/facter for more details.
 
-.. _Adding Facts: http://reductivelabs.com/trac/puppet/wiki/AddingFacts
+.. _Adding Facts: http://docs.puppetlabs.com/guides/custom_facts.html
