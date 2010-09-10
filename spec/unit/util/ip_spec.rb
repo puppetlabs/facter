@@ -5,7 +5,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require 'facter/util/ip'
 
 describe Facter::Util::IP do
-    [:freebsd, :linux, :netbsd, :openbsd, :sunos, :darwin, :"hp-ux"].each do |platform|
+    [:freebsd, :linux, :netbsd, :openbsd, :sunos, :darwin, :"hp-ux", :"gnu/kfreebsd"].each do |platform|
         it "should be supported on #{platform}" do
             Facter::Util::IP.supported_platforms.should be_include(platform)
         end
@@ -47,6 +47,13 @@ describe Facter::Util::IP do
         Facter::Util::IP.stubs(:get_all_interface_output).returns(hpux_netstat)
         Facter::Util::IP.get_interfaces().should == ["lan1", "lan0", "lo0"]
     end 
+
+    it "should return a list of six interfaces on a GNU/kFreeBSD with six interfaces" do
+        sample_output_file = File.dirname(__FILE__) + '/../data/debian_kfreebsd_ifconfig'
+        kfreebsd_ifconfig = File.new(sample_output_file).read()
+        Facter::Util::IP.stubs(:get_all_interface_output).returns(kfreebsd_ifconfig)
+        Facter::Util::IP.get_interfaces().should == ["em0", "em1", "bge0", "bge1", "lo0", "vlan0"]
+    end
 
     it "should return a value for a specific interface" do
         Facter::Util::IP.should respond_to(:get_interface_value)
@@ -106,6 +113,16 @@ describe Facter::Util::IP do
 
         Facter::Util::IP.get_interface_value("lan0", "macaddress").should == "00:13:21:BD:9C:B7"
     end 
+
+    it "should return macaddress with leading zeros stripped off for GNU/kFreeBSD" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/debian_kfreebsd_ifconfig"
+        kfreebsd_ifconfig = File.new(sample_output_file).read()
+
+        Facter::Util::IP.expects(:get_single_interface_output).with("em0").returns(kfreebsd_ifconfig)
+        Facter.stubs(:value).with(:kernel).returns("GNU/kFreeBSD")
+
+        Facter::Util::IP.get_interface_value("em0", "macaddress").should == "0:11:a:59:67:90"
+    end
 
     it "should return netmask information for HP-UX" do
         sample_output_file = File.dirname(__FILE__) + "/../data/hpux_ifconfig_single_interface"
@@ -188,6 +205,17 @@ describe Facter::Util::IP do
         Facter::Util::IP.get_interface_value("en1", "netmask").should == "255.255.255.0"
     end
     
+    it "should return a human readable netmask on GNU/kFreeBSD" do
+        sample_output_file = File.dirname(__FILE__) + "/../data/debian_kfreebsd_ifconfig"
+
+        kfreebsd_ifconfig = File.new(sample_output_file).read()
+
+        Facter::Util::IP.expects(:get_single_interface_output).with("em1").returns(kfreebsd_ifconfig)
+        Facter.stubs(:value).with(:kernel).returns("GNU/kFreeBSD")
+
+        Facter::Util::IP.get_interface_value("em1", "netmask").should == "255.255.255.0"
+    end
+
     it "should not get bonding master on interface aliases" do
         Facter.stubs(:value).with(:kernel).returns("Linux")
         

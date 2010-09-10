@@ -20,7 +20,7 @@
    "LSBDistCodeName"    => %r{^Codename:\t(.*)$}
 }.each do |fact, pattern|
     Facter.add(fact) do
-        confine :kernel => :linux
+        confine :kernel => [ :linux, :"gnu/kfreebsd" ]
         setcode do
             unless defined?(@@lsbdata) and defined?(@@lsbtime) and (Time.now.to_i - @@lsbtime.to_i < 5)
                 type = nil

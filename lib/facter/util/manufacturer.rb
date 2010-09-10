@@ -5,7 +5,7 @@ module Facter::Manufacturer
 
     def self.get_dmi_table()
         case Facter.value(:kernel)
-        when 'Linux'
+        when 'Linux', 'GNU/kFreeBSD'
             return nil unless FileTest.exists?("/usr/sbin/dmidecode")
 
             output=%x{/usr/sbin/dmidecode 2>/dev/null}
@@ -38,7 +38,7 @@ module Facter::Manufacturer
                         if line =~ /#{key}/ and line =~ /\n\s+#{value} (.+)\n/
                             result = $1.strip
                             Facter.add(facterkey) do
-                                confine :kernel => [ :linux, :freebsd, :netbsd, :sunos ]
+                                confine :kernel => [ :linux, :freebsd, :netbsd, :sunos, :"gnu/kfreebsd" ]
                                 setcode do
                                     result
                                 end
