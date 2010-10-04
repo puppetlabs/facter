@@ -1,3 +1,4 @@
+
 #!/usr/bin/env sh
 #
 # Output the difference between a facter command run on two different versions
@@ -18,7 +19,7 @@ eval "$(echo "$OPTIONS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)
 trap 'err=$?; cleanup; exit $err' 0
 
 cleanup() {
-  test $origin && git checkout "$origin" &> /dev/null
+  test $origin && git checkout -q "$origin"
 }
 
 facter() {
@@ -29,7 +30,7 @@ log_facter_run() {
   local ref=$1 && shift
   local tmpfile=$1 && shift
 
-  git checkout -f "$ref" &> /dev/null ||
+  git checkout -qf "$ref" ||
     die "fatal: unable to checkout $ref"
   facter "$@" > $tmpfile
 }
@@ -68,6 +69,6 @@ tmpfile2="/tmp/$(basename $0).$$.2.tmp"
 log_facter_run $ref1 $tmpfile1 $@
 log_facter_run $ref2 $tmpfile2 $@
 
-git checkout -f "$origin" &> /dev/null
+git checkout -f "$origin" > /dev/null 2>&1
 
 diff --label "$ref1" --label "$ref2" -u $tmpfile1 $tmpfile2
