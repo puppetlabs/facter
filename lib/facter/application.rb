@@ -68,8 +68,13 @@ module Facter
             require 'rdoc/ri/ri_paths'
             require 'rdoc/usage'
             puts RDoc.usage
-          ensure
             exit
+          rescue LoadError
+            $stderr.puts "No help available unless your RDoc has RDoc.usage"
+            exit(1)
+          rescue => e
+            $stderr.puts "fatal: #{e}"
+            exit(1)
           end
         end
       end.parse!
