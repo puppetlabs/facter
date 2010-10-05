@@ -59,8 +59,8 @@ module Facter
       OptionParser.new do |opts|
         opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
         opts.on(      "--trace")  { |v| options[:trace]  = v }
-
         opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
+        opts.on("-t", "--timing") { |v| Facter.timing(1) }
         opts.on("-p", "--puppet") { |v| load_puppet }
 
         opts.on_tail("-v", "--version") do
@@ -75,6 +75,12 @@ module Facter
             puts RDoc.usage
           ensure
             exit
+          rescue LoadError
+            $stderr.puts "No help available unless your RDoc has RDoc.usage"
+            exit(1)
+          rescue => e
+            $stderr.puts "fatal: #{e}"
+            exit(1)
           end
         end
       end.parse!

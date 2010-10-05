@@ -48,6 +48,7 @@ module Facter
     GREEN = "[0;32m"
     RESET = "[0m"
     @@debug = 0
+    @@timing = 0
 
     # module methods
 
@@ -75,6 +76,15 @@ module Facter
 
     def self.debugging?
         @@debug != 0
+    end
+
+    # show the timing information
+    def self.show_time(string)
+        puts "#{GREEN}#{string}#{RESET}" if string and Facter.timing?
+    end
+
+    def self.timing?
+        @@timing != 0
     end
 
     # Return a fact object by name.  If you use this, you still have to call
@@ -177,6 +187,22 @@ module Facter
         end
     end
 
+    # Set timing on or off.
+    def self.timing(bit)
+        if bit
+            case bit
+            when TrueClass; @@timing = 1
+            when Fixnum
+                if bit > 0
+                    @@timing = 1
+                else
+                    @@timing = 0
+                end
+            end
+        else
+            @@timing = 0
+        end
+    end
 
     def self.warn(msg)
         if Facter.debugging? and msg and not msg.empty?

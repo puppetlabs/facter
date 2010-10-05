@@ -36,6 +36,9 @@
 # trace::
 #   Enable backtraces.
 #
+# timing::
+#   Enable timing.
+#
 # = Example
 #
 #   facter kernel
