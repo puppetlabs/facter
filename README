@@ -5,4 +5,4 @@ processors, etc.
 
 See bin/facter for an example of the interface.
 
-See http://reductivelabs.com/projects/facter/ for more details.
+See http://www.puppetlabs.com/puppet/related-projects/facter for more details.

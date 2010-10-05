@@ -316,12 +316,6 @@ def build_man(bins)
         # Locate rst2man
         rst2man = %x{which rst2man.py}
         rst2man.chomp!
-        # Create puppet.conf.8 man page
-        %x{bin/puppetdoc --reference configuration > ./puppet.conf.rst}
-        %x{#{rst2man} ./puppet.conf.rst ./man/man8/puppet.conf.8}
-        File.unlink("./puppet.conf.rst")
-
-        # Create binary man pages
         bins.each do |bin|
             b = bin.gsub( "bin/", "")
             %x{#{bin} --help > ./#{b}.rst}

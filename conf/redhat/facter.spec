@@ -5,12 +5,14 @@
 
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
-Version: 1.5.5
+Version: 1.5.8
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Base
-URL: http://reductivelabs.com/projects/facter
-Source0: http://reductivelabs.com/downloads/facter/%{name}-%{version}.tar.gz
+URL: http://www.puppetlabs.com/puppet/related-projects/%{name}/
+Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz
+Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz.sign
+
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 %if %has_ruby_noarch
 BuildArch: noarch
@@ -50,6 +52,19 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sat Aug 28 2010 Todd Zullinger <tmz@pobox.com> - 1.5.8-1
+- Update to 1.5.8
+
+* Fri Sep 25 2009 Todd Zullinger <tmz@pobox.com> - 1.5.7-1
+- Update to 1.5.7
+- Update #508037 patch from upstream ticket
+
+* Wed Aug 12 2009 Jeroen van Meeuwen <j.van.meeuwen@ogd.nl> - 1.5.5-3
+- Fix #508037 or upstream #2355
+
+* Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.5.5-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
+
 * Fri May 22 2009 Todd Zullinger <tmz@pobox.com> - 1.5.5-1
 - Update to 1.5.5
 - Drop upstreamed libperms patch
@@ -57,6 +72,9 @@ rm -rf %{buildroot}
 * Sat Feb 28 2009 Todd Zullinger <tmz@pobox.com> - 1.5.4-1
 - New version
 - Use upstream install script
+
+* Tue Feb 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.5.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
 * Tue Sep 09 2008 Todd Zullinger <tmz@pobox.com> - 1.5.2-1
 - New version
