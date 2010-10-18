@@ -1,0 +1,4 @@
+Name                                        ID   Mem VCPUs      State   Time(s)
+Domain-0                                     0   656     4     r-----  48140.9
+web01                                       48   512     2     -b----  97651.5
+mailserver                                  53   512     4     -b----   7536.1
