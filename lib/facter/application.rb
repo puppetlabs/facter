@@ -72,7 +72,7 @@ module Facter
           begin
             require 'rdoc/ri/ri_paths'
             require 'rdoc/usage'
-            puts RDoc.usage
+            RDoc.usage # print usage and exit
           rescue LoadError
             $stderr.puts "No help available unless your RDoc has RDoc.usage"
             exit(1)
