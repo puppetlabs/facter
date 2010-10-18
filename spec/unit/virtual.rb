@@ -35,37 +35,37 @@ describe "is_virtual fact" do
     it "should be virtual when running on xen" do
        Facter.fact(:kernel).stubs(:value).returns("Linux")
        Facter.fact(:virtual).stubs(:value).returns("xenu")
-       Facter.fact(:is_virtual).value.should == true
+       Facter.fact(:is_virtual).value.should == "true"
     end
 
     it "should be false when running on xen0" do
        Facter.fact(:kernel).stubs(:value).returns("Linux")
        Facter.fact(:virtual).stubs(:value).returns("xen0")
-       Facter.fact(:is_virtual).value.should == false
+       Facter.fact(:is_virtual).value.should == "false"
     end
 
     it "should be true when running on vmware" do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
         Facter.fact(:virtual).stubs(:value).returns("vmware")
-        Facter.fact(:is_virtual).value.should == true
+        Facter.fact(:is_virtual).value.should == "true"
     end
 
     it "should be true when running on openvz" do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
         Facter.fact(:virtual).stubs(:value).returns("openvzve")
-        Facter.fact(:is_virtual).value.should == true
+        Facter.fact(:is_virtual).value.should == "true"
     end
 
     it "should be true when running on kvm" do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
         Facter.fact(:virtual).stubs(:value).returns("kvm")
-        Facter.fact(:is_virtual).value.should == true
+        Facter.fact(:is_virtual).value.should == "true"
     end
 
     it "should be true when running in jail" do
         Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
         Facter.fact(:virtual).stubs(:value).returns("jail")
-        Facter.fact(:is_virtual).value.should == true
+        Facter.fact(:is_virtual).value.should == "true"
     end
 
 end

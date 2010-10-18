@@ -121,6 +121,7 @@ describe Facter::Util::Virtual do
     end
 
     it "should detect kvm on FreeBSD" do
+        FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
         Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
         Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns("QEMU Virtual CPU version 0.12.4")
         Facter::Util::Virtual.should be_kvm
