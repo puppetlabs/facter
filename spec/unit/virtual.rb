@@ -24,6 +24,11 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "jail"
   end
 
+  it "should be hpvm on HP-UX when in HP-VM" do
+     Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+     Facter::Util::Virtual.stubs(:hpvm?).returns(true)
+     Facter.fact(:virtual).value.should == "hpvm"
+  end
 end
 
 describe "is_virtual fact" do
@@ -65,6 +70,12 @@ describe "is_virtual fact" do
     it "should be true when running in jail" do
         Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
         Facter.fact(:virtual).stubs(:value).returns("jail")
+        Facter.fact(:is_virtual).value.should == true
+    end
+
+    it "should be true when running on hp-vm" do
+        Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+        Facter.fact(:virtual).stubs(:value).returns("hpvm")
         Facter.fact(:is_virtual).value.should == true
     end
 

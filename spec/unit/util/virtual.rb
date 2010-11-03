@@ -116,4 +116,15 @@ describe Facter::Util::Virtual do
         Facter::Util::Virtual.should_not be_jail
     end
 
+    it "should detect hpvm on HP-UX" do
+        Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+        Facter::Util::Resolution.stubs(:exec).with("/usr/bin/getconf MACHINE_MODEL").returns('ia64 hp server Integrity Virtual Machine')
+        Facter::Util::Virtual.should be_hpvm
+    end
+
+    it "should not detect hpvm on HP-UX when not in hpvm" do
+        Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+        Facter::Util::Resolution.stubs(:exec).with("/usr/bin/getconf MACHINE_MODEL").returns('ia64 hp server rx660')
+        Facter::Util::Virtual.should_not be_hpvm
+    end
 end
