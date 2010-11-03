@@ -80,7 +80,7 @@ Facter.add("is_virtual") do
 
     setcode do
         case Facter.value(:virtual)
-        when "xenu", "openvzve", "vmware", "kvm", "vserver", "jail"
+        when "xenu", "openvzve", "vmware", "kvm", "vserver", "jail", "zone"
             true
         else 
             false

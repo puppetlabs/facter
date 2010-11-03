@@ -68,4 +68,10 @@ describe "is_virtual fact" do
         Facter.fact(:is_virtual).value.should == true
     end
 
+    it "should be true when running in zone" do
+        Facter.fact(:kernel).stubs(:value).returns("SunOS")
+        Facter.fact(:virtual).stubs(:value).returns("zone")
+        Facter.fact(:is_virtual).value.should == true
+    end
+
 end
