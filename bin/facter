@@ -6,7 +6,7 @@
 #
 # = Usage
 #
-#   facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [fact] [fact] [...]
+#   facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [-j|--json] [fact] [fact] [...]
 #
 # = Description
 #
@@ -32,6 +32,9 @@
 #
 # yaml::
 #   Emit facts in YAML format.
+#
+# json::
+#   Emit facts in JSON format.
 #
 # = Example
 #
@@ -80,12 +83,14 @@ result = GetoptLong.new(
     [ "--help",    "-h", GetoptLong::NO_ARGUMENT       ],
     [ "--debug",   "-d", GetoptLong::NO_ARGUMENT       ],
     [ "--yaml",    "-y", GetoptLong::NO_ARGUMENT       ],
+    [ "--json",    "-j", GetoptLong::NO_ARGUMENT       ],
     [ "--config",  "-c", GetoptLong::REQUIRED_ARGUMENT ],
     [ "--puppet",  "-p", GetoptLong::NO_ARGUMENT       ]
 )
 
 options = {
-    :yaml => false
+    :yaml => false,
+    :json => false
 }
 
 begin
@@ -102,6 +107,8 @@ begin
             end
         when "--yaml"
             options[:yaml] = true
+        when "--json"
+            options[:json] = true
         when "--debug"
             Facter.debugging(1)
         when "--help"
@@ -152,6 +159,17 @@ if options[:yaml]
     require 'yaml'
     puts YAML.dump(facts)
     exit(0)
+end
+
+if options[:json]
+    begin
+      require 'json'
+      puts JSON.dump(facts)
+      exit(0)
+    rescue LoadError
+      puts "You do not have JSON support in your version of Ruby. JSON output disabled"
+      exit(1)
+    end
 end
 
 facts.sort { |a, b| a[0].to_s <=> b[0].to_s }.each { |name,value|
