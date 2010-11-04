@@ -6,7 +6,7 @@
 #
 # = Usage
 #
-#   facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [fact] [fact] [...]
+#   facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [-j|--json] [fact] [fact] [...]
 #
 # = Description
 #
@@ -20,6 +20,9 @@
 #
 # yaml::
 #   Emit facts in YAML format.
+#
+# json::
+#   Emit facts in JSON format.
 #
 # puppet::
 #   Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.

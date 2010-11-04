@@ -31,6 +31,18 @@ module Facter
         exit(0)
       end
 
+      # Print the facts as JSON and exit
+      if options[:json]
+        begin
+          require 'json'
+          puts JSON.dump(facts)
+          exit(0)
+        rescue LoadError
+          $stderr.puts "You do not have JSON support in your version of Ruby. JSON output disabled"
+          exit(1)
+        end
+      end
+
       # Print the value of a single fact, otherwise print a list sorted by fact
       # name and separated by "=>"
       if facts.length == 1
@@ -58,6 +70,7 @@ module Facter
       options = {}
       OptionParser.new do |opts|
         opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
+        opts.on("-j", "--json")   { |v| options[:json]   = v }
         opts.on(      "--trace")  { |v| options[:trace]  = v }
         opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
         opts.on("-t", "--timing") { |v| Facter.timing(1) }
