@@ -62,4 +62,8 @@ module Facter::Util::Virtual
         Facter::Util::Resolution.exec("/sbin/sysctl -n security.jail.jailed") == "1"
     end
 
+    def self.hpvm?
+        Facter::Util::Resolution.exec("/usr/bin/getconf MACHINE_MODEL").chomp =~ /Virtual Machine/
+    end
+
 end

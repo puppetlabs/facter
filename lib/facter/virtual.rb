@@ -1,13 +1,17 @@
 require 'facter/util/virtual'
 
 Facter.add("virtual") do
-    confine :kernel => %w{Linux FreeBSD OpenBSD SunOS}
+    confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX}
 
     result = "physical"
 
     setcode do
 
         result = "zone" if Facter::Util::Virtual.zone?
+
+        if Facter.value(:kernel)=="HP-UX"
+            result = "hpvm" if Facter::Util::Virtual.hpvm?
+        end
 
         if Facter::Util::Virtual.openvz?
             result = Facter::Util::Virtual.openvz_type()
@@ -76,11 +80,11 @@ Facter.add("virtual") do
 end
   
 Facter.add("is_virtual") do
-    confine :kernel => %w{Linux FreeBSD OpenBSD SunOS}
+    confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX}
 
     setcode do
         case Facter.value(:virtual)
-        when "xenu", "openvzve", "vmware", "kvm", "vserver", "jail", "zone"
+        when "xenu", "openvzve", "vmware", "kvm", "vserver", "jail", "zone", "hpvm"
             "true"
         else 
             "false"
