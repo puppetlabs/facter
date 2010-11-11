@@ -1,0 +1,74 @@
+
+#!/usr/bin/env sh
+#
+# Output the difference between a facter command run on two different versions
+# of facter. Uses unified diff format.
+
+OPTIONS_SPEC="\
+facter-diff [options] <rev1> <rev2> [fact]...
+
+Example:
+
+    ./ext/facter-diff 1.5.7 1.0.2
+
+--
+h,help      Display this help"
+
+. "$(git --exec-path)/git-sh-setup"
+eval "$(echo "$OPTIONS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
+trap 'err=$?; cleanup; exit $err' 0
+
+cleanup() {
+  test $origin && git checkout -q "$origin"
+}
+
+facter() {
+  ruby -Ilib bin/facter "$@"
+}
+
+log_facter_run() {
+  local ref=$1 && shift
+  local tmpfile=$1 && shift
+
+  git checkout -qf "$ref" ||
+    die "fatal: unable to checkout $ref"
+  facter "$@" > $tmpfile
+}
+
+verify_revision() {
+  git rev-parse --verify --quiet "$1" > /dev/null ||
+    die "fatal: '$1' is not a valid revision"
+}
+
+test $1 = "--" && shift # git rev-parse seems to leave the -- in
+test $# -eq 0 && usage
+
+test $# -gt 1 ||
+  die "fatal: must specify two revisions"
+
+status=$(git status -s)
+test -z "$status" ||
+  die "fatal: $0 cannot be used with a dirty working copy"
+
+origin=$(git rev-parse --symbolic-full-name HEAD)
+test "$origin" = "HEAD" &&
+  origin=$(git rev-parse HEAD)
+
+test -x "bin/facter" ||
+  die "fatal: $0 must be run from the project root"
+
+ref1="$1" && shift
+ref2="$1" && shift
+
+verify_revision $ref1
+verify_revision $ref2
+
+tmpfile1="/tmp/$(basename $0).$$.1.tmp"
+tmpfile2="/tmp/$(basename $0).$$.2.tmp"
+
+log_facter_run $ref1 $tmpfile1 $@
+log_facter_run $ref2 $tmpfile2 $@
+
+git checkout -f "$origin" > /dev/null 2>&1
+
+diff --label "$ref1" --label "$ref2" -u $tmpfile1 $tmpfile2

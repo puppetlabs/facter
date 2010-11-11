@@ -135,6 +135,14 @@ describe Facter do
         Facter.should respond_to(:debugging?)
     end
 
+    it "should have a method to query timing mode" do
+        Facter.should respond_to(:timing?)
+    end
+
+    it "should have a method to show timing information" do
+        Facter.should respond_to(:show_time)
+    end
+
     it "should have a method to warn" do
         Facter.should respond_to(:warn)
     end
@@ -201,6 +209,25 @@ describe Facter do
         it "should have debugging disabled using the string 'off'" do
             Facter.debugging('off')
             Facter.should_not be_debugging
+        end
+    end
+
+    describe "when setting timing mode" do
+        it "should have timing enabled using 1" do
+            Facter.timing(1)
+            Facter.should be_timing
+        end
+        it "should have timing enabled using true" do
+            Facter.timing(true)
+            Facter.should be_timing
+        end
+        it "should have timing disabled using 0" do
+            Facter.timing(0)
+            Facter.should_not be_timing
+        end
+        it "should have timing disabled using false" do
+            Facter.timing(false)
+            Facter.should_not be_timing
         end
     end
 

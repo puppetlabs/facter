@@ -1,0 +1,12 @@
+fxp0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+        options=b<RXCSUM,TXCSUM,VLAN_MTU>
+        inet x.x.58.26 netmask 0xfffffff8 broadcast x.x.58.31
+        inet x.x.58.27 netmask 0xffffffff broadcast x.x.58.27
+        inet x.x.58.28 netmask 0xffffffff broadcast x.x.58.28
+        inet x.x.58.29 netmask 0xffffffff broadcast x.x.58.29
+        inet x.x.58.30 netmask 0xffffffff broadcast x.x.58.30
+        ether 00:0e:0c:68:67:7c
+        media: Ethernet autoselect (100baseTX <full-duplex>)
+        status: active
+lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
+        inet 127.0.0.1 netmask 0xff000000 

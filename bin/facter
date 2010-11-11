@@ -6,7 +6,7 @@
 #
 # = Usage
 #
-#   facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [fact] [fact] [...]
+#   facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [-j|--json] [fact] [fact] [...]
 #
 # = Description
 #
@@ -18,11 +18,11 @@
 #
 # = Options
 #
-# debug::
-#   Enable debugging.
+# yaml::
+#   Emit facts in YAML format.
 #
-# help::
-#   Print this help message
+# json::
+#   Emit facts in JSON format.
 #
 # puppet::
 #   Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.
@@ -30,8 +30,17 @@
 # version::
 #   Print the version and exit.
 #
-# yaml::
-#   Emit facts in YAML format.
+# help::
+#   Print this help message.
+#
+# debug::
+#   Enable debugging.
+#
+# trace::
+#   Enable backtraces.
+#
+# timing::
+#   Enable timing.
 #
 # = Example
 #
@@ -46,120 +55,6 @@
 # Copyright (c) 2006 Reductive Labs, LLC
 # Licensed under the GNU Public License
 
-require 'getoptlong'
-require 'facter'
+require 'facter/application'
 
-$haveusage = true
-
-begin
-    require 'rdoc/ri/ri_paths'
-    require 'rdoc/usage'
-rescue Exception
-    $haveusage = false
-end
-
-def load_puppet
-    require 'puppet'
-    Puppet.parse_config
-
-    # If you've set 'vardir' but not 'libdir' in your
-    # puppet.conf, then the hook to add libdir to $:
-    # won't get triggered.  This makes sure that it's setup
-    # correctly.
-    unless $LOAD_PATH.include?(Puppet[:libdir])
-        $LOAD_PATH << Puppet[:libdir]
-    end
-end
-
-$debug = 0
-
-config = nil
-
-result = GetoptLong.new(
-    [ "--version", "-v", GetoptLong::NO_ARGUMENT       ],
-    [ "--help",    "-h", GetoptLong::NO_ARGUMENT       ],
-    [ "--debug",   "-d", GetoptLong::NO_ARGUMENT       ],
-    [ "--yaml",    "-y", GetoptLong::NO_ARGUMENT       ],
-    [ "--config",  "-c", GetoptLong::REQUIRED_ARGUMENT ],
-    [ "--puppet",  "-p", GetoptLong::NO_ARGUMENT       ]
-)
-
-options = {
-    :yaml => false
-}
-
-begin
-    result.each { |opt,arg|
-        case opt
-        when "--version"
-            puts "%s" % Facter.version
-            exit
-        when "--puppet"
-            begin
-                load_puppet()
-            rescue LoadError => detail
-                $stderr.puts "Could not load Puppet: %s" % detail
-            end
-        when "--yaml"
-            options[:yaml] = true
-        when "--debug"
-            Facter.debugging(1)
-        when "--help"
-            if $haveusage
-                RDoc::usage && exit
-            else
-                puts "No help available unless you have RDoc::usage installed"
-                exit
-            end
-        else
-            $stderr.puts "Invalid option '#{opt}'"
-            exit(12)
-        end
-    }
-rescue
-    exit(12)
-end
-
-names = []
-
-unless config.nil?
-    File.open(config) { |file|
-        names = file.readlines.collect { |line|
-            line.chomp
-        }
-    }
-end
-
-ARGV.each { |item|
-    names.push item
-}
-
-facts = Facter.to_hash
-
-unless names.empty?
-    facts = {}
-    names.each { |name|
-        begin
-            facts[name] = Facter.value(name)
-        rescue => error
-            STDERR.puts "Could not retrieve %s: #{error}" % name
-            exit 10
-        end
-    }
-end
-
-if options[:yaml]
-    require 'yaml'
-    puts YAML.dump(facts)
-    exit(0)
-end
-
-facts.sort { |a, b| a[0].to_s <=> b[0].to_s }.each { |name,value|
-    if facts.length == 1
-        unless value.nil?
-            puts value
-        end
-    else
-        puts "%s => %s" % [name,value]
-    end
-}
+Facter::Application.run(ARGV)

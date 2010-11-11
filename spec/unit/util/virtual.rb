@@ -57,6 +57,26 @@ describe Facter::Util::Virtual do
         Facter::Util::Virtual.should_not be_vserver
     end
 
+    fixture_path = File.join(SPECDIR, 'fixtures', 'virtual', 'proc_self_status')
+
+    test_cases = [
+        [File.join(fixture_path, 'vserver_2_1', 'guest'), true, 'vserver 2.1 guest'],
+        [File.join(fixture_path, 'vserver_2_1', 'host'),  true, 'vserver 2.1 host'],
+        [File.join(fixture_path, 'vserver_2_3', 'guest'), true, 'vserver 2.3 guest'],
+        [File.join(fixture_path, 'vserver_2_3', 'host'),  true, 'vserver 2.3 host']
+    ]
+
+    test_cases.each do |status_file, expected, description|
+        context "with /proc/self/status from #{description}" do
+            it "should detect vserver as #{expected.inspect}" do
+                status = File.read(status_file)
+                FileTest.stubs(:exists?).with("/proc/self/status").returns(true)
+                File.stubs(:read).with("/proc/self/status").returns(status)
+                Facter::Util::Virtual.vserver?.should == expected
+            end
+        end
+    end
+
     it "should identify vserver_host when /proc/virtual exists" do
         Facter::Util::Virtual.expects(:vserver?).returns(true)
         FileTest.stubs(:exists?).with("/proc/virtual").returns(true)
@@ -101,6 +121,7 @@ describe Facter::Util::Virtual do
     end
 
     it "should detect kvm on FreeBSD" do
+        FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
         Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
         Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns("QEMU Virtual CPU version 0.12.4")
         Facter::Util::Virtual.should be_kvm
@@ -116,4 +137,15 @@ describe Facter::Util::Virtual do
         Facter::Util::Virtual.should_not be_jail
     end
 
+    it "should detect hpvm on HP-UX" do
+        Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+        Facter::Util::Resolution.stubs(:exec).with("/usr/bin/getconf MACHINE_MODEL").returns('ia64 hp server Integrity Virtual Machine')
+        Facter::Util::Virtual.should be_hpvm
+    end
+
+    it "should not detect hpvm on HP-UX when not in hpvm" do
+        Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+        Facter::Util::Resolution.stubs(:exec).with("/usr/bin/getconf MACHINE_MODEL").returns('ia64 hp server rx660')
+        Facter::Util::Virtual.should_not be_hpvm
+    end
 end
