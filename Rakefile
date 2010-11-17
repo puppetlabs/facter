@@ -3,6 +3,7 @@
 $: << File.expand_path('lib')
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'tasks')
 
+require 'rubygems'
 require 'spec'
 require 'spec/rake/spectask'
 begin
