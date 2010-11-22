@@ -3,6 +3,10 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 require 'facter/util/manufacturer'
 
 describe Facter::Manufacturer do
+    before :each do
+        Facter.clear
+    end
+
     it "should return the system DMI table" do
         Facter::Manufacturer.should respond_to(:get_dmi_table)
     end
@@ -10,6 +14,13 @@ describe Facter::Manufacturer do
     it "should return nil on non-supported operating systems" do
         Facter.stubs(:value).with(:kernel).returns("SomeThing")
         Facter::Manufacturer.get_dmi_table().should be_nil
+    end
+
+    it "should parse prtdiag output" do
+        Facter::Util::Resolution.stubs(:exec).returns("System Configuration:  Sun Microsystems  sun4u Sun SPARC Enterprise M3000 Server")
+        Facter::Manufacturer.prtdiag_sparc_find_system_info()
+        Facter.value(:manufacturer).should == "Sun Microsystems"
+        Facter.value(:productname).should == "Sun SPARC Enterprise M3000 Server"
     end
 
     it "should strip white space on dmi output with spaces" do
@@ -23,7 +34,7 @@ describe Facter::Manufacturer do
         Facter::Manufacturer.dmi_find_system_info(query)
         Facter.value(:productname).should == "MS-6754"
     end
-    
+
     it "should handle output from smbios when run under sunos" do
         sample_output_file = File.dirname(__FILE__) + "/../data/opensolaris_smbios"
         smbios_output = File.new(sample_output_file).read()
