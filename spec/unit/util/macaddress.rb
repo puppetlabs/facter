@@ -25,7 +25,7 @@ context "Darwin" do
                     context "when netstat has a default interface" do
 
                         before do
-                            Facter::Util::Macaddress::Darwin.stubs(:netstat_command).returns("cat #{netstat_file}")
+                            Facter::Util::Macaddress::Darwin.stubs(:netstat_command).returns("cat \"#{netstat_file}\"")
                         end
 
                         it "should return the default interface name" do
@@ -40,7 +40,7 @@ context "Darwin" do
                         before do
                             Facter.stubs(:warn)
                             Facter::Util::Macaddress::Darwin.stubs(:default_interface).returns('')
-                            Facter::Util::Macaddress::Darwin.stubs(:ifconfig_command).returns("cat #{ifconfig_file}")
+                            Facter::Util::Macaddress::Darwin.stubs(:ifconfig_command).returns("cat \"#{ifconfig_file}\"")
                         end
 
                         it "should return the macaddress of the default interface" do
@@ -52,7 +52,7 @@ context "Darwin" do
                     context "when netstat does not have a default interface" do
                         before do
                             Facter::Util::Macaddress::Darwin.stubs(:default_interface).returns("")
-                            Facter::Util::Macaddress::Darwin.stubs(:ifconfig_command).returns("cat #{ifconfig_file_no_iface}")
+                            Facter::Util::Macaddress::Darwin.stubs(:ifconfig_command).returns("cat \"#{ifconfig_file_no_iface}\"")
                         end
 
                         it "should warn about the lack of default" do
