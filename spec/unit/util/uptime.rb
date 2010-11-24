@@ -10,7 +10,7 @@ describe Facter::Util::Uptime do
     context "when /proc/uptime is available" do
       before do
         uptime_file = File.join(SPECDIR, "fixtures", "uptime", "ubuntu_proc_uptime")
-        Facter::Util::Uptime.stubs(:uptime_file).returns(uptime_file)
+        Facter::Util::Uptime.stubs(:uptime_file).returns("\"#{uptime_file}\"")
       end
 
       it "should return the uptime in seconds as an integer" do
@@ -24,7 +24,7 @@ describe Facter::Util::Uptime do
       File.exists?(nonexistent_file).should == false
       Facter::Util::Uptime.stubs(:uptime_file).returns(nonexistent_file)
       sysctl_output_file = File.join(SPECDIR, 'fixtures', 'uptime', 'sysctl_kern_boottime') # Aug 01 14:13:47 -0700 2010
-      Facter::Util::Uptime.stubs(:uptime_sysctl_cmd).returns("cat #{sysctl_output_file}")
+      Facter::Util::Uptime.stubs(:uptime_sysctl_cmd).returns("cat \"#{sysctl_output_file}\"")
       Time.stubs(:now).returns Time.parse("Aug 01 15:13:47 -0700 2010") # one hour later
       Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60
     end
@@ -35,7 +35,7 @@ describe Facter::Util::Uptime do
       Facter::Util::Uptime.stubs(:uptime_file).returns(nonexistent_file)
       Facter::Util::Uptime.stubs(:uptime_sysctl_cmd).returns("cat #{nonexistent_file}")
       who_b_output_file = File.join(SPECDIR, 'fixtures', 'uptime', 'who_b_boottime') # Aug 1 14:13
-      Facter::Util::Uptime.stubs(:uptime_who_cmd).returns("cat #{who_b_output_file}")
+      Facter::Util::Uptime.stubs(:uptime_who_cmd).returns("cat \"#{who_b_output_file}\"")
       Time.stubs(:now).returns Time.parse("Aug 01 15:13") # one hour later
       Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60
     end
