@@ -69,13 +69,7 @@ if Facter.value(:kernel) == "OpenBSD"
         end
     end
 
-    Facter.add("MemoryFree") do
-        confine :kernel => :openbsd
-        memfree = Facter::Util::Resolution.exec("vmstat | tail -n 1 | awk '{ print $5 }'")
-        setcode do
-            Facter::Memory.scale_number(memfree.to_f,"kB")
-        end
-    end
+    Facter::Memory.vmstat_find_free_memory()
 
     Facter.add("MemoryTotal") do
         confine :kernel => :openbsd
@@ -84,4 +78,47 @@ if Facter.value(:kernel) == "OpenBSD"
             Facter::Memory.scale_number(memtotal.to_f,"")
         end
     end
+end
+
+if Facter.value(:kernel) == "SunOS"
+    swap = Facter::Util::Resolution.exec('/usr/sbin/swap -l')
+    swapfree, swaptotal = 0, 0
+    swap.each do |dev|
+        if dev =~ /^\/\S+\s.*\s+(\d+)\s+(\d+)$/
+            swaptotal += $1.to_i / 2
+            swapfree  += $2.to_i / 2
+        end 
+    end 
+ 
+    Facter.add("SwapSize") do
+        confine :kernel => :sunos
+        setcode do
+            Facter::Memory.scale_number(swaptotal.to_f,"kB")
+        end
+    end
+
+    Facter.add("SwapFree") do
+        confine :kernel => :sunos
+        setcode do
+            Facter::Memory.scale_number(swapfree.to_f,"kB")
+        end
+    end
+
+    # Total memory size available from prtconf
+    pconf = Facter::Util::Resolution.exec('/usr/sbin/prtconf')
+    phymem = ""
+    pconf.each do |line|
+        if line =~ /^Memory size:\s+(\d+) Megabytes/
+            phymem = $1
+        end
+    end
+
+    Facter.add("MemorySize") do
+        confine :kernel => :sunos
+        setcode do
+            Facter::Memory.scale_number(phymem.to_f,"MB")
+        end
+    end
+
+    Facter::Memory.vmstat_find_free_memory()
 end

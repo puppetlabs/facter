@@ -50,5 +50,17 @@ module Facter::Memory
 
         return "%.2f %s" % [size, s]
     end
+
+    def self.vmstat_find_free_memory()
+        row = Facter::Util::Resolution.exec('vmstat').split("\n")[-1]
+        if row =~ /^\s*\d+\s*\d+\s*\d+\s*\d+\s*(\d+)/
+            Facter.add("MemoryFree") do
+                memfree = $1
+                setcode do
+                    Facter::Memory.scale_number(memfree.to_f, "kB")
+                end
+            end
+        end
+    end
 end
 
