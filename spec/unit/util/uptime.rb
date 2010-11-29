@@ -38,20 +38,33 @@ describe Facter::Util::Uptime do
           Facter::Util::Uptime.stubs(:uptime_sysctl_cmd).returns("cat \"#{@nonexistent_file}\"")
         end
 
-        it "should use 'who -b'" do
-          who_b_output_file = File.join(SPECDIR, 'fixtures', 'uptime', 'who_b_boottime') # Aug 1 14:13
-          Facter::Util::Uptime.stubs(:uptime_who_cmd).returns("cat \"#{who_b_output_file}\"")
-          Time.stubs(:now).returns Time.parse("Aug 01 15:13") # one hour later
+        it "should use 'kstat -p unix:::boot_time'" do
+          kstat_output_file = File.join(SPECDIR, 'fixtures', 'uptime', 'kstat_boot_time') # unix:0:system_misc:boot_time    1236919980
+          Facter::Util::Uptime.stubs(:uptime_kstat_cmd).returns("cat \"#{kstat_output_file}\"")
+          Time.stubs(:now).returns Time.at(1236923580) #one hour later
           Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60
         end
 
-        context "nor is 'who -b'" do
+        context "nor is 'kstat -p unix:::boot_time'" do
           before :each do
-            Facter::Util::Uptime.stubs(:uptime_who_cmd).returns("cat \"#{@nonexistent_file}\"")
+            Facter::Util::Uptime.stubs(:uptime_kstat_cmd).returns("cat \"#{@nonexistent_file}\"")
           end
 
-          it "should return nil" do
-            Facter::Util::Uptime.get_uptime_seconds_unix.should == nil
+          it "should use 'who -b'" do
+            who_b_output_file = File.join(SPECDIR, 'fixtures', 'uptime', 'who_b_boottime') # Aug 1 14:13
+            Facter::Util::Uptime.stubs(:uptime_who_cmd).returns("cat \"#{who_b_output_file}\"")
+            Time.stubs(:now).returns Time.parse("Aug 01 15:13") # one hour later
+            Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60
+          end
+
+          context "nor is 'who -b'" do
+            before :each do
+              Facter::Util::Uptime.stubs(:uptime_who_cmd).returns("cat \"#{@nonexistent_file}\"")
+            end
+
+            it "should return nil" do
+              Facter::Util::Uptime.get_uptime_seconds_unix.should == nil
+            end
           end
         end
       end

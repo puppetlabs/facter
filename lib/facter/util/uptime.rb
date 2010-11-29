@@ -4,7 +4,7 @@ require 'time'
 #
 module Facter::Util::Uptime
     def self.get_uptime_seconds_unix
-        uptime_proc_uptime or uptime_sysctl or uptime_who_dash_b
+        uptime_proc_uptime or uptime_sysctl or uptime_kstat or uptime_who_dash_b
     end
 
     def self.get_uptime_seconds_win
@@ -30,6 +30,12 @@ module Facter::Util::Uptime
         end
     end
 
+    def self.uptime_kstat
+        if output = Facter::Util::Resolution.exec("#{uptime_kstat_cmd} 2>/dev/null")
+            compute_uptime(Time.at(output.chomp.split(/\s/).last.to_i))
+        end
+    end
+
     def self.uptime_who_dash_b
         if output = Facter::Util::Resolution.exec("#{uptime_who_cmd} 2>/dev/null")
             compute_uptime(Time.parse(output))
@@ -46,6 +52,10 @@ module Facter::Util::Uptime
 
     def self.uptime_sysctl_cmd
         'sysctl -b kern.boottime'
+    end
+
+    def self.uptime_kstat_cmd
+        'kstat -p unix:::boot_time'
     end
 
     def self.uptime_who_cmd
