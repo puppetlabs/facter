@@ -106,8 +106,7 @@ Facter.add("is_virtual") do
     confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin}
 
     setcode do
-        case Facter.value(:virtual)
-        when "xenu", "openvzve", "vmware", "kvm", "vserver", "jail", "zone", "hpvm", "parallels"
+        if Facter.value(:virtual) != "physical" && Facter.value(:virtual) != "xen0"
             "true"
         else
             "false"
