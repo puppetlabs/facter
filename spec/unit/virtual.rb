@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 require 'facter'
 require 'facter/util/virtual'
+require 'facter/util/macosx'
 
 describe "Virtual fact" do
 
@@ -29,6 +30,91 @@ describe "Virtual fact" do
      Facter::Util::Virtual.stubs(:hpvm?).returns(true)
      Facter.fact(:virtual).value.should == "hpvm"
   end
+
+  describe "on Darwin" do
+      it "should be parallels with Parallels vendor id" do
+          Facter.fact(:kernel).stubs(:value).returns("Darwin")
+          Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor-id" => "0x1ab8" })
+          Facter.fact(:virtual).value.should == "parallels"
+      end
+
+      it "should be parallels with Parallels vendor name" do
+          Facter.fact(:kernel).stubs(:value).returns("Darwin")
+          Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor" => "Parallels" })
+          Facter.fact(:virtual).value.should == "parallels"
+      end
+
+      it "should be vmware with VMWare vendor id" do
+          Facter.fact(:kernel).stubs(:value).returns("Darwin")
+          Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor-id" => "0x15ad" })
+          Facter.fact(:virtual).value.should == "vmware"
+      end
+
+      it "should be vmware with VMWare vendor name" do
+          Facter.fact(:kernel).stubs(:value).returns("Darwin")
+          Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor" => "VMWare" })
+          Facter.fact(:virtual).value.should == "vmware"
+      end
+  end
+
+  describe "on Linux" do
+      before do
+          Facter::Util::Virtual.stubs(:zone?).returns(false)
+          Facter::Util::Virtual.stubs(:openvz?).returns(false)
+          Facter::Util::Virtual.stubs(:vserver?).returns(false)
+          Facter::Util::Virtual.stubs(:xen?).returns(false)
+          Facter::Util::Virtual.stubs(:kvm?).returns(false)
+      end
+
+      it "should be parallels with Parallels vendor id from lspci" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns("01:00.0 VGA compatible controller: Unknown device 1ab8:4005")
+          Facter.fact(:virtual).value.should == "parallels"
+      end
+
+      it "should be parallels with Parallels vendor name from lspci" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns("01:00.0 VGA compatible controller: Parallels Display Adapter")
+          Facter.fact(:virtual).value.should == "parallels"
+      end
+
+      it "should be vmware with VMware vendor name from lspci" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns("00:0f.0 VGA compatible controller: VMware Inc [VMware SVGA II] PCI Display Adapter")
+          Facter.fact(:virtual).value.should == "vmware"
+      end
+
+      it "should be vmware with VMWare vendor name from dmidecode" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
+          Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("On Board Device 1 Information\nType: Video\nStatus: Disabled\nDescription: VMware SVGA II")
+          Facter.fact(:virtual).value.should == "vmware"
+      end
+
+      it "should be parallels with Parallels vendor name from dmidecode" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
+          Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("On Board Device Information\nType: Video\nStatus: Disabled\nDescription: Parallels Video Adapter")
+          Facter.fact(:virtual).value.should == "parallels"
+      end
+
+      it "should be vmware with VMWare vendor name from prtdiag" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
+          Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns(nil)
+          Facter::Util::Resolution.stubs(:exec).with('prtdiag').returns("System Configuration: VMware, Inc. VMware Virtual Platform")
+          Facter.fact(:virtual).value.should == "vmware"
+      end
+
+      it "should be parallels with Parallels vendor name from prtdiag" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
+          Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns(nil)
+          Facter::Util::Resolution.stubs(:exec).with('prtdiag').returns("System Configuration: Parallels Virtual Platform")
+          Facter.fact(:virtual).value.should == "parallels"
+      end
+  end
+
 end
 
 describe "is_virtual fact" do
@@ -85,4 +171,9 @@ describe "is_virtual fact" do
         Facter.fact(:is_virtual).value.should == "true"
     end
 
+    it "should be true when running on parallels" do
+        Facter.fact(:kernel).stubs(:value).returns("Darwin")
+        Facter.fact(:virtual).stubs(:value).returns("parallels")
+        Facter.fact(:is_virtual).value.should == "true"
+    end
 end
