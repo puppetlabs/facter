@@ -4,6 +4,19 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 require 'facter/util/loader'
 
+
+# loader subclass for making assertions about file/directory ordering        
+class TestLoader < Facter::Util::Loader
+  def loaded_files
+    @loaded_files ||= []
+  end
+  
+  def load_file(file)
+    loaded_files << file
+    super
+  end
+end
+
 describe Facter::Util::Loader do
     def with_env(values)
         old = {}
@@ -107,6 +120,21 @@ describe Facter::Util::Loader do
 
             @loader.load(:testing)
         end
+     
+        it 'should load any ruby files in directories matching the fact name in the search path in sorted order regardless of the order returned by Dir.entries' do
+          @loader = TestLoader.new
+
+          @loader.stubs(:search_path).returns %w{/one/dir}
+          FileTest.stubs(:exist?).returns false
+          FileTest.stubs(:directory?).with("/one/dir/testing").returns true
+          @loader.stubs(:search_path).returns %w{/one/dir}
+          
+          Dir.stubs(:entries).with("/one/dir/testing").returns %w{foo.rb bar.rb}
+          %w{/one/dir/testing/foo.rb /one/dir/testing/bar.rb}.each { |f| File.stubs(:directory?).with(f).returns false }
+          
+          @loader.load(:testing)
+          @loader.loaded_files.should == %w{/one/dir/testing/bar.rb /one/dir/testing/foo.rb}
+        end
 
         it "should not load files that don't end in '.rb'" do
             @loader.expects(:search_path).returns %w{/one/dir}
@@ -164,6 +192,20 @@ describe Facter::Util::Loader do
             %w{/one/dir/a/c.rb /two/dir/b/d.rb}.each { |f| Kernel.expects(:load).with(f) }
 
             @loader.load_all
+        end
+        
+        it 'should load all files in sorted order for any given directory regardless of the order returned by Dir.entries' do
+          @loader = TestLoader.new
+          
+          @loader.stubs(:search_path).returns %w{/one/dir}
+          Dir.stubs(:entries).with("/one/dir").returns %w{foo.rb bar.rb}
+
+          %w{/one/dir}.each { |f| File.stubs(:directory?).with(f).returns true }
+          %w{/one/dir/foo.rb /one/dir/bar.rb}.each { |f| File.stubs(:directory?).with(f).returns false }
+
+          @loader.load_all
+
+          @loader.loaded_files.should == %w{/one/dir/bar.rb /one/dir/foo.rb}
         end
 
         it "should not load files in the util subdirectory" do
