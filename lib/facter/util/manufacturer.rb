@@ -80,4 +80,21 @@ module Facter::Manufacturer
             end
         end
     end
+
+    def self.win32_find_system_info(name)
+        require 'win32ole'
+        value = ""
+        wmi = WIN32OLE.connect("winmgmts://")
+        name.each do |facterkey, win32key|
+            query = wmi.ExecQuery("select * from Win32_#{win32key.last}")
+            Facter.add(facterkey) do
+                confine :kernel => :windows
+                setcode do
+                    query.each { |x| value = x.__send__( (win32key.first).to_sym) }
+                    value
+                end
+            end
+        end
+    end
+
 end
