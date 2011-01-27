@@ -9,7 +9,7 @@ describe "uptime facts:" do
   before { Facter.clear }
   after { Facter.clear }
 
-  context "when uptime information is available" do
+  describe "when uptime information is available" do
     describe "uptime" do
       test_cases = [
         [60 * 60 * 24 * 3,      '3 days'],
@@ -34,7 +34,7 @@ describe "uptime facts:" do
 
   end
 
-  context "when uptime information is available" do
+  describe "when uptime information is available" do
     before do
       Facter::Util::Uptime.stubs(:get_uptime_seconds_unix).returns(60 * 60 * 24 + 23)
       Facter::Util::Uptime.stubs(:get_uptime_seconds_win).returns(60 * 60 * 24 + 23)
@@ -59,7 +59,7 @@ describe "uptime facts:" do
     end
   end
 
-  context "when uptime information is not available" do
+  describe "when uptime information is not available" do
     before do
       Facter::Util::Uptime.stubs(:get_uptime_seconds_unix).returns(nil)
       Facter::Util::Uptime.stubs(:get_uptime_seconds_win).returns(nil)

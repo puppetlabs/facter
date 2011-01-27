@@ -67,7 +67,7 @@ describe Facter::Util::Virtual do
     ]
 
     test_cases.each do |status_file, expected, description|
-        context "with /proc/self/status from #{description}" do
+        describe "with /proc/self/status from #{description}" do
             it "should detect vserver as #{expected.inspect}" do
                 status = File.read(status_file)
                 FileTest.stubs(:exists?).with("/proc/self/status").returns(true)

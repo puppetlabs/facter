@@ -4,7 +4,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 require 'facter/util/macaddress'
 
-context "Darwin" do
+describe "Darwin" do
     test_cases = [
         # version, iface, real macaddress,     fallback macaddress
         ["9.8.0",  'en0', "00:17:f2:06:e4:2e", "00:17:f2:06:e4:2e"],
@@ -17,12 +17,12 @@ context "Darwin" do
         ifconfig_file_no_iface = File.join(SPECDIR, "fixtures", "ifconfig", "darwin_#{version.tr('.', '_')}")
         ifconfig_file = "#{ifconfig_file_no_iface}_#{default_iface}"
 
-        context "version #{version}" do
+        describe "version #{version}" do
 
             describe Facter::Util::Macaddress::Darwin do
 
                 describe ".default_interface" do
-                    context "when netstat has a default interface" do
+                    describe "when netstat has a default interface" do
 
                         before do
                             Facter::Util::Macaddress::Darwin.stubs(:netstat_command).returns("cat \"#{netstat_file}\"")
@@ -36,7 +36,7 @@ context "Darwin" do
                 end
 
                 describe ".macaddress" do
-                    context "when netstat has a default interface" do
+                    describe "when netstat has a default interface" do
                         before do
                             Facter.stubs(:warn)
                             Facter::Util::Macaddress::Darwin.stubs(:default_interface).returns('')
@@ -49,7 +49,7 @@ context "Darwin" do
 
                     end
 
-                    context "when netstat does not have a default interface" do
+                    describe "when netstat does not have a default interface" do
                         before do
                             Facter::Util::Macaddress::Darwin.stubs(:default_interface).returns("")
                             Facter::Util::Macaddress::Darwin.stubs(:ifconfig_command).returns("cat \"#{ifconfig_file_no_iface}\"")
