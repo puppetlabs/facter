@@ -63,12 +63,12 @@ task :default do
 end
 
 RSpec::Core::RakeTask.new do |t|
-    t.pattern ='spec/{unit,integration}/**/*.rb'
+    t.pattern ='spec/{unit,integration}/**/*_spec.rb'
     t.fail_on_error = false
 end
 
 RSpec::Core::RakeTask.new('spec:rcov') do |t|
-    t.pattern ='spec/{unit,integration}/**/*.rb'
+    t.pattern ='spec/{unit,integration}/**/*_spec.rb'
     t.fail_on_error = false
     if defined?(Rcov)
         t.rcov = true
