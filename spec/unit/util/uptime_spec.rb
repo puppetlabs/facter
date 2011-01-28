@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
 
-require File.dirname(__FILE__) + '/../../spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 require 'facter/util/uptime'
 
 describe Facter::Util::Uptime do
 
   describe ".get_uptime_seconds_unix" do
-    context "when /proc/uptime is available" do
+    describe "when /proc/uptime is available" do
       before do
         uptime_file = File.join(SPECDIR, "fixtures", "uptime", "ubuntu_proc_uptime")
         Facter::Util::Uptime.stubs(:uptime_file).returns("\"#{uptime_file}\"")
@@ -19,7 +19,7 @@ describe Facter::Util::Uptime do
 
     end
 
-    context "when /proc/uptime is not available" do
+    describe "when /proc/uptime is not available" do
       before :each do
         @nonexistent_file = '/non/existent/file'
         File.exists?(@nonexistent_file).should == false
@@ -33,7 +33,7 @@ describe Facter::Util::Uptime do
         Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60
       end
 
-      context "nor is 'sysctl kern.boottime'" do
+      describe "nor is 'sysctl kern.boottime'" do
         before :each do
           Facter::Util::Uptime.stubs(:uptime_sysctl_cmd).returns("cat \"#{@nonexistent_file}\"")
         end
@@ -45,7 +45,7 @@ describe Facter::Util::Uptime do
           Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60
         end
 
-        context "nor is 'kstat -p unix:::boot_time'" do
+        describe "nor is 'kstat -p unix:::boot_time'" do
           before :each do
             Facter::Util::Uptime.stubs(:uptime_kstat_cmd).returns("cat \"#{@nonexistent_file}\"")
           end
@@ -57,7 +57,7 @@ describe Facter::Util::Uptime do
             Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60
           end
 
-          context "nor is 'who -b'" do
+          describe "nor is 'who -b'" do
             before :each do
               Facter::Util::Uptime.stubs(:uptime_who_cmd).returns("cat \"#{@nonexistent_file}\"")
             end
