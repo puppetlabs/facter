@@ -30,7 +30,7 @@ class Facter::Util::Loader
         search_path.each do |dir|
             next unless FileTest.directory?(dir)
 
-            Dir.entries(dir).each do |file|
+            Dir.entries(dir).sort.each do |file|
                 path = File.join(dir, file)
                 if File.directory?(path)
                     load_dir(path)
@@ -62,7 +62,7 @@ class Facter::Util::Loader
     def load_dir(dir)
         return if dir =~ /\/\.+$/ or dir =~ /\/util$/ or dir =~ /\/lib$/
 
-        Dir.entries(dir).find_all { |f| f =~ /\.rb$/ }.each do |file|
+        Dir.entries(dir).find_all { |f| f =~ /\.rb$/ }.sort.each do |file|
             load_file(File.join(dir, file))
         end
     end
