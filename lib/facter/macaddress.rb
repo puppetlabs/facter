@@ -1,7 +1,7 @@
 require 'facter/util/macaddress'
 
 Facter.add(:macaddress) do
-    confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE SLES Debian Gentoo Ubuntu OEL OVS}
+    confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE SLES Debian Gentoo Ubuntu OEL OVS GNU/kFreeBSD}
     setcode do
         ether = []
         output = %x{/sbin/ifconfig -a}

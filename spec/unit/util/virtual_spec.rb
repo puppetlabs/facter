@@ -128,12 +128,14 @@ describe Facter::Util::Virtual do
     end
 
     it "should identify FreeBSD jail when in jail" do
+        Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
         Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n security.jail.jailed").returns("1")
         Facter::Util::Virtual.should be_jail
     end
 
-    it "should not identify FreeBSD jail when not in jail" do
-        Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n security.jail.jailed").returns("0")
+    it "should not identify GNU/kFreeBSD jail when not in jail" do
+        Facter.fact(:kernel).stubs(:value).returns("GNU/kFreeBSD")
+        Facter::Util::Resolution.stubs(:exec).with("/bin/sysctl -n security.jail.jailed").returns("0")
         Facter::Util::Virtual.should_not be_jail
     end
 

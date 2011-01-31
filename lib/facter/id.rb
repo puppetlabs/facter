@@ -1,5 +1,5 @@
 Facter.add(:id) do
-    confine :operatingsystem => %w{Linux Fedora RedHat CentOS SuSE SLES Debian Ubuntu Gentoo AIX OEL OVS}
+    confine :operatingsystem => %w{Linux Fedora RedHat CentOS SuSE SLES Debian Ubuntu Gentoo AIX OEL OVS GNU/kFreeBSD}
     setcode "whoami"
 end
 
