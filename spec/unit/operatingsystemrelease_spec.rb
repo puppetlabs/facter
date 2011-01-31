@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require File.dirname(__FILE__) + '/../spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 require 'facter'
 
@@ -26,7 +26,7 @@ describe "Operating System Release fact" do
     }
 
     test_cases.each do |system, file|
-        context "with operatingsystem reported as #{system.inspect}" do
+        describe "with operatingsystem reported as #{system.inspect}" do
             it "should read the #{file.inspect} file" do
                 Facter.fact(:operatingsystem).stubs(:value).returns(system)
 
