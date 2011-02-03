@@ -13,7 +13,7 @@ require 'facter/util/memory'
     :SwapFree   => "SwapFree"
 }.each do |fact, name|
     Facter.add(fact) do
-        confine :kernel => :linux
+        confine :kernel => [ :linux, :"gnu/kfreebsd" ]
         setcode do
             Facter::Memory.meminfo_number(name)
         end

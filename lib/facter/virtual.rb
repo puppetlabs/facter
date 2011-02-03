@@ -19,7 +19,7 @@ end
 
 
 Facter.add("virtual") do
-    confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX}
+    confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX GNU/kFreeBSD}
 
     result = "physical"
 
@@ -60,7 +60,7 @@ Facter.add("virtual") do
             result = Facter::Util::Virtual.kvm_type()
         end
 
-        if Facter.value(:kernel)=="FreeBSD"
+        if ["FreeBSD", "GNU/kFreeBSD"].include? Facter.value(:kernel)
             result = "jail" if Facter::Util::Virtual.jail?
         end
 
@@ -103,7 +103,7 @@ Facter.add("virtual") do
 end
 
 Facter.add("is_virtual") do
-    confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin}
+    confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin GNU/kFreeBSD}
 
     setcode do
         if Facter.value(:virtual) != "physical" && Facter.value(:virtual) != "xen0"
