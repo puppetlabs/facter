@@ -14,5 +14,10 @@ require 'facter'
 Dir["#{dir}/monkey_patches/*.rb"].map { |file| require file }
 
 RSpec.configure do |config|
-    config.mock_with :mocha
+  config.mock_with :mocha
+
+  # Ensure that we don't accidentally cache between test cases.
+  config.before :each do
+    Facter.clear
+  end
 end
