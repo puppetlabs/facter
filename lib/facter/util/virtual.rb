@@ -60,8 +60,8 @@ module Facter::Util::Virtual
 
     def self.jail?
         path = case Facter.value(:kernel)
-            when "FreeBSD": "/sbin"
-            when "GNU/kFreeBSD": "/bin"
+            when "FreeBSD" then "/sbin"
+            when "GNU/kFreeBSD" then "/bin"
         end
         Facter::Util::Resolution.exec("#{path}/sysctl -n security.jail.jailed") == "1"
     end
