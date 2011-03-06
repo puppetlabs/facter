@@ -6,9 +6,14 @@ require 'facter/util/macosx'
 
 describe "Virtual fact" do
 
-    after do
-        Facter.clear
-    end
+  before do
+      Facter::Util::Virtual.stubs(:zone?).returns(false)
+      Facter::Util::Virtual.stubs(:openvz?).returns(false)
+      Facter::Util::Virtual.stubs(:vserver?).returns(false)
+      Facter::Util::Virtual.stubs(:xen?).returns(false)
+      Facter::Util::Virtual.stubs(:kvm?).returns(false)
+      Facter::Util::Virtual.stubs(:hpvm?).returns(false)
+  end
 
   it "should be zone on Solaris when a zone" do
       Facter.fact(:kernel).stubs(:value).returns("SunOS")
@@ -58,13 +63,6 @@ describe "Virtual fact" do
   end
 
   describe "on Linux" do
-      before do
-          Facter::Util::Virtual.stubs(:zone?).returns(false)
-          Facter::Util::Virtual.stubs(:openvz?).returns(false)
-          Facter::Util::Virtual.stubs(:vserver?).returns(false)
-          Facter::Util::Virtual.stubs(:xen?).returns(false)
-          Facter::Util::Virtual.stubs(:kvm?).returns(false)
-      end
 
       it "should be parallels with Parallels vendor id from lspci" do
           Facter.fact(:kernel).stubs(:value).returns("Linux")
@@ -114,14 +112,9 @@ describe "Virtual fact" do
           Facter.fact(:virtual).value.should == "parallels"
       end
   end
-
 end
 
 describe "is_virtual fact" do
-
-    after do
-        Facter.clear
-    end
 
     it "should be virtual when running on xen" do
        Facter.fact(:kernel).stubs(:value).returns("Linux")
