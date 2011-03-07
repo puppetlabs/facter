@@ -1,0 +1,4 @@
+SELinux status:         enabled
+SELinuxfs mount:        /selinux
+Current Mode:           permissive
+Policy version:         16

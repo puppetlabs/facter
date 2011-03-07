@@ -31,11 +31,11 @@ describe "SELinux facts" do
        File.stubs(:read).with("/selinux/enforce").returns("0")
 
        FileTest.expects(:exists?).with("/selinux/enforce").returns true
-       File.expects(:read).with("/selinux/enforce").returns("1") 
+       File.expects(:read).with("/selinux/enforce").returns("1")
 
        Facter.fact(:selinux_enforced).value.should == "true"
     end
-  
+
     it "should return an SELinux policy version" do
        Facter.fact(:selinux).stubs(:value).returns("true")
 
@@ -44,5 +44,16 @@ describe "SELinux facts" do
        File.expects(:read).with("/selinux/policyvers").returns("1")
 
        Facter.fact(:selinux_policyversion).value.should == "1"
+    end
+
+    it "should return the SELinux policy mode" do
+       Facter.fact(:selinux).stubs(:value).returns("true")
+
+       sample_output_file = File.dirname(__FILE__) + '/data/selinux_sestatus'
+       selinux_sestatus = File.read(sample_output_file)
+
+       Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/sestatus').returns(selinux_sestatus)
+
+       Facter.fact(:selinux_mode).value.should == "permissive"
     end
 end
