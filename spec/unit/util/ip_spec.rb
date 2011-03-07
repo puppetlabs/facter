@@ -20,11 +20,11 @@ describe Facter::Util::IP do
         Facter::Util::IP.get_interfaces().should == []
     end
 
-    it "should return a list with a single interface on Linux with a single interface" do
+    it "should return a list with a single interface and the loopback interface on Linux with a single interface" do
         sample_output_file = File.dirname(__FILE__) + '/../data/linux_ifconfig_all_with_single_interface'
         linux_ifconfig = File.new(sample_output_file).read()
         Facter::Util::IP.stubs(:get_all_interface_output).returns(linux_ifconfig)
-        Facter::Util::IP.get_interfaces().should == ["eth0"]
+        Facter::Util::IP.get_interfaces().should == ["eth0", "lo"]
     end
 
     it "should return a list two interfaces on Darwin with two interfaces" do
@@ -46,7 +46,7 @@ describe Facter::Util::IP do
         hpux_netstat = File.new(sample_output_file).read()
         Facter::Util::IP.stubs(:get_all_interface_output).returns(hpux_netstat)
         Facter::Util::IP.get_interfaces().should == ["lan1", "lan0", "lo0"]
-    end 
+    end
 
     it "should return a list of six interfaces on a GNU/kFreeBSD with six interfaces" do
         sample_output_file = File.dirname(__FILE__) + '/../data/debian_kfreebsd_ifconfig'
@@ -102,7 +102,7 @@ describe Facter::Util::IP do
         Facter.stubs(:value).with(:kernel).returns("HP-UX")
 
         Facter::Util::IP.get_interface_value("lan0", "ipaddress").should == "168.24.80.71"
-    end 
+    end
 
     it "should return macaddress information for HP-UX" do
         sample_output_file = File.dirname(__FILE__) + "/../data/hpux_ifconfig_single_interface"
@@ -112,7 +112,7 @@ describe Facter::Util::IP do
         Facter.stubs(:value).with(:kernel).returns("HP-UX")
 
         Facter::Util::IP.get_interface_value("lan0", "macaddress").should == "00:13:21:BD:9C:B7"
-    end 
+    end
 
     it "should return macaddress with leading zeros stripped off for GNU/kFreeBSD" do
         sample_output_file = File.dirname(__FILE__) + "/../data/debian_kfreebsd_ifconfig"
@@ -132,7 +132,7 @@ describe Facter::Util::IP do
         Facter.stubs(:value).with(:kernel).returns("HP-UX")
 
         Facter::Util::IP.get_interface_value("lan0", "netmask").should == "255.255.255.0"
-    end 
+    end
 
     it "should return calculated network information for HP-UX" do
         sample_output_file = File.dirname(__FILE__) + "/../data/hpux_ifconfig_single_interface"
@@ -142,7 +142,7 @@ describe Facter::Util::IP do
         Facter.stubs(:value).with(:kernel).returns("HP-UX")
 
         Facter::Util::IP.get_network_value("lan0").should == "168.24.80.0"
-    end 
+    end
 
     it "should return interface information for FreeBSD supported via an alias" do
         sample_output_file = File.dirname(__FILE__) + "/../data/6.0-STABLE_FreeBSD_ifconfig"
@@ -192,7 +192,7 @@ describe Facter::Util::IP do
         Facter.stubs(:value).with(:kernel).returns("HP-UX")
 
         Facter::Util::IP.get_interface_value("lan0", "netmask").should == "255.255.255.0"
-    end 
+    end
 
     it "should return a human readable netmask on Darwin" do
         sample_output_file = File.dirname(__FILE__) + "/../data/darwin_ifconfig_single_interface"
@@ -204,7 +204,7 @@ describe Facter::Util::IP do
 
         Facter::Util::IP.get_interface_value("en1", "netmask").should == "255.255.255.0"
     end
-    
+
     it "should return a human readable netmask on GNU/kFreeBSD" do
         sample_output_file = File.dirname(__FILE__) + "/../data/debian_kfreebsd_ifconfig"
 
@@ -218,7 +218,7 @@ describe Facter::Util::IP do
 
     it "should not get bonding master on interface aliases" do
         Facter.stubs(:value).with(:kernel).returns("Linux")
-        
+
         Facter::Util::IP.get_bonding_master("eth0:1").should be_nil
     end
 
