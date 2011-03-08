@@ -169,4 +169,11 @@ module Facter::Util::IP
             network = ip.mask(subnet.to_s).to_s
         end
     end
+
+    def self.get_arp_value(interface)
+        arp = Facter::Util::Resolution.exec("arp -en -i #{interface} | sed -e 1d")
+        if arp =~ /^\S+\s+\w+\s+(\S+)\s+\w\s+\S+$/
+         return $1
+        end
+    end
 end
