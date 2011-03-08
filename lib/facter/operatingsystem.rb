@@ -50,8 +50,12 @@ Facter.add(:operatingsystem) do
             else
                 "SuSE"
             end
-	elsif FileTest.exists?("/etc/slackware-version")
-	    "Slackware"
+        elsif FileTest.exists?("/etc/bluewhite64-version")
+            "Bluewhite64"
+        elsif FileTest.exists?("/etc/slamd64-version")
+            "Slamd64"
+        elsif FileTest.exists?("/etc/slackware-version")
+            "Slackware"
         end
     end
 end

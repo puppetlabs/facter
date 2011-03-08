@@ -72,5 +72,29 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
-    setcode do Facter[:kernelrelease].value end
+    confine :operatingsystem => %w{Bluewhite64}
+    setcode do
+        releasefile = Facter::Util::Resolution.exec('cat /etc/bluewhite64-version')
+        if releasefile =~ /^\s*\w+\s+(\d+)\.(\d+)/
+            $1 + "." + $2
+        else
+            "unknown"
+        end
+    end
+end
+
+Facter.add(:operatingsystemrelease) do
+    confine :operatingsystem => %w{Slamd64}
+    setcode do
+        releasefile = Facter::Util::Resolution.exec('cat /etc/slamd64-version')
+        if releasefile =~ /^\s*\w+\s+(\d+)\.(\d+)/
+            $1 + "." + $2
+        else
+            "unknown"
+        end
+    end
+end
+
+Facter.add(:operatingsystemrelease) do
+  setcode do Facter[:kernelrelease].value end
 end
