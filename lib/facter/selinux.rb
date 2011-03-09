@@ -4,7 +4,7 @@
 Facter.add("selinux") do
     confine :kernel => :linux
 
-    setcode do 
+    setcode do
         result = "false"
         if FileTest.exists?("/selinux/enforce")
             if FileTest.exists?("/proc/self/attr/current")
@@ -31,7 +31,7 @@ end
 
 Facter.add("selinux_policyversion") do
     confine :selinux => :true
-    setcode do 
+    setcode do
         File.read("/selinux/policyvers")
     end
 end
@@ -39,7 +39,9 @@ end
 Facter.add("selinux_mode") do
     confine :selinux => :true
     setcode do
-        %x{/usr/sbin/sestatus | /bin/grep "Policy from config file:" | awk '{print $5}'}        
+	result = 'unknown'
+        mode = Facter::Util::Resolution.exec('/usr/sbin/sestatus')
+        mode.each_line { |l| result = $1 if l =~ /^Current mode\:\s+(\w+)$/i }
+        result.chomp
     end
 end
-
