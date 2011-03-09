@@ -39,10 +39,9 @@ end
 Facter.add("selinux_mode") do
     confine :selinux => :true
     setcode do
+	result = 'unknown'
         mode = Facter::Util::Resolution.exec('/usr/sbin/sestatus')
-        mode.each_line do |l|
-          mode = $1 if l =~ /^Current Mode:\s+(\w+)$/
-        end
-        mode.chomp
+        mode.each_line { |l| result = $1 if l =~ /^Current mode\:\s+(\w+)$/i }
+        result.chomp
     end
 end
