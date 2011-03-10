@@ -46,7 +46,7 @@ describe "SELinux facts" do
        Facter.fact(:selinux_policyversion).value.should == "1"
     end
 
-    it "should return the SELinux policy mode" do
+    it "should return the SELinux current mode" do
        Facter.fact(:selinux).stubs(:value).returns("true")
 
        sample_output_file = File.dirname(__FILE__) + '/data/selinux_sestatus'
@@ -54,6 +54,36 @@ describe "SELinux facts" do
 
        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/sestatus').returns(selinux_sestatus)
 
-       Facter.fact(:selinux_mode).value.should == "permissive"
+       Facter.fact(:selinux_current_mode).value.should == "permissive"
+    end
+
+    it "should return the SELinux mode from the configuration file" do
+       Facter.fact(:selinux).stubs(:value).returns("true")
+
+       sample_output_file = File.dirname(__FILE__) + '/data/selinux_sestatus'
+       selinux_sestatus = File.read(sample_output_file)
+
+       Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/sestatus').returns(selinux_sestatus)
+
+       Facter.fact(:selinux_config_mode).value.should == "permissive"
+    end
+
+    it "should return the SELinux configuration file policy" do
+       Facter.fact(:selinux).stubs(:value).returns("true")
+
+       sample_output_file = File.dirname(__FILE__) + '/data/selinux_sestatus'
+       selinux_sestatus = File.read(sample_output_file)
+
+       Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/sestatus').returns(selinux_sestatus)
+
+       Facter.fact(:selinux_config_policy).value.should == "targeted"
+    end
+
+    it "should ensure legacy selinux_mode facts returns same value as selinux_config_policy fact" do
+       Facter.fact(:selinux).stubs(:value).returns("true")
+
+       Facter.fact(:selinux_config_policy).stubs(:value).returns("targeted")
+
+       Facter.fact(:selinux_mode).value.should == "targeted"
     end
 end
