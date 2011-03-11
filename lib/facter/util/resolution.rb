@@ -85,17 +85,29 @@ class Facter::Util::Resolution
         end
     end
 
+    # Say this resolution came from the environment
+    def from_environment
+        @from_environment = true
+    end
+
     # Create a new resolution mechanism.
     def initialize(name)
         @name = name
         @confines = []
         @value = nil
         @timeout = 0
+        @from_environment = false
     end
 
     # Return the number of confines.
     def length
-        @confines.length
+        # If the resolution came from an environment variable
+        # say we're very very sure about the value of the resolution
+        if @from_environment
+            1_000_000_000
+        else
+            @confines.length
+        end
     end
 
     # We need this as a getter for 'timeout', because some versions
