@@ -1,3 +1,14 @@
+# Fact: physicalprocessorcount
+#
+# Purpose: Return the number of physical processors.
+#
+# Resolution:
+#   On linux, parses the output of '/proc/cpuinfo' for the number of unique
+#   lines with "physical id" in them.
+#
+# Caveats:
+#
+
 Facter.add("physicalprocessorcount") do
     confine :kernel => :linux
 

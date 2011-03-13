@@ -1,3 +1,12 @@
+# Fact: selinux
+#
+# Purpose:
+#
+# Resolution:
+#
+# Caveats:
+#
+
 # Fact for SElinux
 # Written by immerda admin team (admin(at)immerda.ch)
 

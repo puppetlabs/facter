@@ -1,3 +1,30 @@
+# Fact: virtual
+#
+# Purpose: Determine if the system's hardware is real or virtualised.
+#
+# Resolution:
+#   Assumes physical unless proven otherwise.
+#
+#   On Darwin, use the macosx util module to acquire the SPDisplaysDataType,
+#   from that parse it to see if it's VMWare or Parallels pretending to be the
+#   display.
+#
+#   On Linux, BSD, Solaris and HPUX:
+#     Much of the logic here is obscured behind util/virtual.rb, which rather
+#     than document here, which would encourage drift, just refer to it.
+#   The Xen tests in here rely on /sys and /proc, and check for the presence and
+#   contents of files in there.
+#   If after all the other tests, it's still seen as physical, then it tries to
+#   parse the output of the "lspci", "dmidecode" and "prtdiag" and parses them
+#   for obvious signs of being under VMWare or Parallels.
+#   Finally it checks for the existence of vmware-vmx, which would hint it's
+#   VMWare.
+#
+# Caveats:
+#   Virtualbox detection isn't implemented. 
+#   Many checks rely purely on existence of files.
+#
+
 require 'facter/util/virtual'
 
 Facter.add("virtual") do
@@ -107,6 +134,17 @@ Facter.add("virtual") do
         result
     end
 end
+
+# Fact: is_virtual
+#
+# Purpose: returning true or false for if a machine is virtualised or not.
+#
+# Resolution: The Xen domain 0 machine is virtualised to a degree, but is generally
+# not viewed as being a virtual machine. This checks that the machine is not
+# physical nor xen0, if that is the case, it is virtual.
+#
+# Caveats:
+#
 
 Facter.add("is_virtual") do
     confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin GNU/kFreeBSD}

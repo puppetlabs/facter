@@ -1,3 +1,12 @@
+# Fact: ssh
+#
+# Purpose:
+#
+# Resolution:
+#
+# Caveats:
+#
+
 ## ssh.rb
 ## Facts related to SSH
 ##

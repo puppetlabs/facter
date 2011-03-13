@@ -1,3 +1,16 @@
+# Fact: lsb
+#
+# Purpose: Return Linux Standard Base information for the host.
+#
+# Resolution:
+#   Uses the lsb_release system command and parses the output with a series of
+#   regular expressions.
+#
+# Caveats:
+#   Only works on Linux (and the kfreebsd derivative) systems.
+#   Requires the lsb_release program, which may not be installed by default.
+#   Also is as only as accurate as that program outputs.
+
 ## lsb.rb
 ## Facts related to Linux Standard Base (LSB)
 ##
