@@ -1,3 +1,12 @@
+# Fact: interfaces
+#
+# Purpose:
+#
+# Resolution:
+#
+# Caveats:
+#
+
 # interfaces.rb
 # Try to get additional Facts about the machine's network interfaces
 #

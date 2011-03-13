@@ -1,3 +1,16 @@
+# Fact: macosx
+#
+# Purpose:
+#   Returns a number of Mac specific facts, from system profiler and
+#   sw_vers.
+#
+# Resolution:
+#   Uses util/macosx.rb to do the fact reconnaissance, then outputs them
+#   preceded by 'sp_'
+#
+# Caveats:
+#
+
 #
 # macosx.rb
 # Additional Facts coming from Mac OS X system_profiler command

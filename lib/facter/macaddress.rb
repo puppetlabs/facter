@@ -1,3 +1,12 @@
+# Fact: macaddress
+#
+# Purpose: 
+#
+# Resolution:
+#
+# Caveats:
+#
+
 require 'facter/util/macaddress'
 
 Facter.add(:macaddress) do
