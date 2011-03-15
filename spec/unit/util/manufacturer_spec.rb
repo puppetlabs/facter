@@ -109,8 +109,8 @@ Handle 0x001F
 
     def find_product_name(os)
         output_file = case os
-            when "FreeBSD": File.dirname(__FILE__) + "/../data/freebsd_dmidecode"
-            when "SunOS"  : File.dirname(__FILE__) + "/../data/opensolaris_smbios"
+            when "FreeBSD" then File.dirname(__FILE__) + "/../data/freebsd_dmidecode"
+            when "SunOS" then File.dirname(__FILE__) + "/../data/opensolaris_smbios"
             end
 
         output = File.new(output_file).read()

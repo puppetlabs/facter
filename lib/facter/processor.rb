@@ -17,6 +17,9 @@ if ["Linux", "GNU/kFreeBSD"].include? Facter.value(:kernel)
             elsif l =~ /model name\s+:\s+(.*)\s*$/
                 processor_list[processor_num] = $1 unless processor_num == -1
                 processor_num = -1
+            elsif l =~ /processor\s+(\d+):\s+(.*)/
+                processor_num = $1.to_i
+                processor_list[processor_num] = $2 unless processor_num == -1
             end
         end
     end
@@ -80,9 +83,9 @@ if Facter.value(:kernel) == "OpenBSD"
             Facter::Util::Resolution.exec("uname -p")
         end
     end
-    
+
     Facter.add("ProcessorCount") do
-        confine :kernel => :openbsd 
+        confine :kernel => :openbsd
         setcode do
             Facter::Util::Resolution.exec("sysctl hw.ncpu | cut -d'=' -f2")
         end

@@ -31,6 +31,10 @@ Facter.add("virtual") do
             result = "hpvm" if Facter::Util::Virtual.hpvm?
         end
 
+        if Facter.value(:architecture)=="s390x"
+            result = "zlinux" if Facter::Util::Virtual.zlinux?
+        end
+
         if Facter::Util::Virtual.openvz?
             result = Facter::Util::Virtual.openvz_type()
         end

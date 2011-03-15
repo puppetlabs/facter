@@ -119,7 +119,10 @@ describe Facter::Util::Loader do
         @loader.stubs(:search_path).returns %w{/one/dir}
 
         Dir.stubs(:entries).with("/one/dir/testing").returns %w{foo.rb bar.rb}
-        %w{/one/dir/testing/foo.rb /one/dir/testing/bar.rb}.each { |f| File.stubs(:directory?).with(f).returns false }
+        %w{/one/dir/testing/foo.rb /one/dir/testing/bar.rb}.each do |f|
+          File.stubs(:directory?).with(f).returns false
+          Kernel.stubs(:load).with(f)
+        end
 
         @loader.load(:testing)
         @loader.loaded_files.should == %w{/one/dir/testing/bar.rb /one/dir/testing/foo.rb}
@@ -202,7 +205,11 @@ describe Facter::Util::Loader do
         Dir.stubs(:entries).with("/one/dir").returns %w{foo.rb bar.rb}
 
         %w{/one/dir}.each { |f| File.stubs(:directory?).with(f).returns true }
-        %w{/one/dir/foo.rb /one/dir/bar.rb}.each { |f| File.stubs(:directory?).with(f).returns false }
+
+        %w{/one/dir/foo.rb /one/dir/bar.rb}.each do |f|
+          File.stubs(:directory?).with(f).returns false
+          Kernel.expects(:load).with(f)
+        end
 
         @loader.load_all
 

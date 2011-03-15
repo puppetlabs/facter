@@ -97,16 +97,20 @@ def do_libs(libs, strip = 'lib/')
 end
 
 def do_man(man, strip = 'man/')
+  if (InstallOptions.man == true)  
     man.each do |mf|
-        omf = File.join(InstallOptions.man_dir, mf.gsub(/#{strip}/, ''))
-        om = File.dirname(omf)
-        FileUtils.makedirs(om, {:mode => 0755, :verbose => true})
-        FileUtils.chmod(0755, om)
-        FileUtils.install(mf, omf, {:mode => 0644, :verbose => true})
-        gzip = %x{which gzip}
-        gzip.chomp!
-        %x{#{gzip} -f #{omf}}
+	omf = File.join(InstallOptions.man_dir, mf.gsub(/#{strip}/, ''))
+	om = File.dirname(omf)
+	FileUtils.makedirs(om, {:mode => 0755, :verbose => true})
+	FileUtils.chmod(0755, om)
+	FileUtils.install(mf, omf, {:mode => 0644, :verbose => true})
+	gzip = %x{which gzip}
+	gzip.chomp!
+	%x{#{gzip} -f #{omf}}
     end
+  else
+    puts "Skipping Man Page Generation"
+  end
 end
 
 # Verify that all of the prereqs are installed
@@ -121,6 +125,10 @@ def check_prereqs
     }
 end
 
+def is_windows?
+  RUBY_PLATFORM.to_s.match(/mswin|win32|dos|cygwin|mingw/)
+end
+
 ##
 # Prepare the file installation.
 #
@@ -128,7 +136,7 @@ def prepare_installation
     # Only try to do docs if we're sure they have rdoc
     if $haverdoc
         InstallOptions.rdoc  = true
-        if RUBY_PLATFORM == "i386-mswin32"
+        if is_windows?
             InstallOptions.ri  = false
         else
             InstallOptions.ri  = true
@@ -141,7 +149,7 @@ def prepare_installation
 
     if $haveman
         InstallOptions.man = true
-        if RUBY_PLATFORM == "i386-mswin32"
+        if is_windows?
             InstallOptions.man  = false
         end
     else
