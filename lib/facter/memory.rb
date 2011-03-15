@@ -110,6 +110,43 @@ if Facter.value(:kernel) == "OpenBSD"
     end
 end
 
+if Facter.value(:kernel) == "Darwin"
+    swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
+    swapfree, swaptotal = 0, 0
+    unless swap.empty?
+        # Parse the line:
+        # vm.swapusage: total = 128.00M  used = 0.37M  free = 127.63M  (encrypted)
+        if swap =~ /total\s=\s(\S+)\s+used\s=\s(\S+)\s+free\s=\s(\S+)\s/
+            swaptotal += $1.to_i
+            swapfree  += $3.to_i
+        end
+    end
+
+    Facter.add("SwapSize") do
+        confine :kernel => :Darwin
+        setcode do
+            Facter::Memory.scale_number(swaptotal.to_f,"MB")
+        end
+    end
+
+    Facter.add("SwapFree") do
+        confine :kernel => :Darwin
+        setcode do
+            Facter::Memory.scale_number(swapfree.to_f,"MB")
+        end
+    end
+
+    Facter::Memory.vmstat_darwin_find_free_memory()
+
+    Facter.add("MemoryTotal") do
+        confine :kernel => :Darwin
+        memtotal = Facter::Util::Resolution.exec("sysctl hw.memsize | cut -d':' -f2")
+        setcode do
+            Facter::Memory.scale_number(memtotal.to_f,"")
+        end
+    end
+end
+
 if Facter.value(:kernel) == "SunOS"
     swap = Facter::Util::Resolution.exec('/usr/sbin/swap -l')
     swapfree, swaptotal = 0, 0
