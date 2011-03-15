@@ -92,7 +92,7 @@ Facter.add("virtual") do
                     end
                 end
             end
-            # VMware server 1.0.3 rpm places vmware-vmx in this place, other versions or platforms may not.
+            
             if FileTest.exists?("/usr/lib/vmware/bin/vmware-vmx")
                 result = "vmware_server"
             end

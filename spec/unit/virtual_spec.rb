@@ -64,6 +64,10 @@ describe "Virtual fact" do
 
   describe "on Linux" do
 
+      before do
+        FileTest.expects(:exists?).with("/usr/lib/vmware/bin/vmware-vmx").returns false
+      end
+
       it "should be parallels with Parallels vendor id from lspci" do
           Facter.fact(:kernel).stubs(:value).returns("Linux")
           Facter::Util::Resolution.stubs(:exec).with('lspci').returns("01:00.0 VGA compatible controller: Unknown device 1ab8:4005")
