@@ -26,8 +26,13 @@ describe "Operating System fact" do
          Facter.fact(:operatingsystem).value.should == "Solaris"
     end
 
-    it "should identify Oracle VM as OVS" do
+    it "should be ESXi for VMkernel" do
+         Facter.fact(:kernel).stubs(:value).returns("VMkernel")
 
+         Facter.fact(:operatingsystem).value.should == "ESXi"
+    end
+
+    it "should identify Oracle VM as OVS" do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
         FileTest.stubs(:exists?).returns false
 
@@ -35,5 +40,14 @@ describe "Operating System fact" do
         FileTest.expects(:exists?).with("/etc/enterprise-release").returns true
 
         Facter.fact(:operatingsystem).value.should == "OVS"
+    end
+   
+    it "should identify VMWare ESX" do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+        FileTest.stubs(:exists?).returns false
+
+        FileTest.expects(:exists?).with("/etc/vmware-release").returns true
+
+        Facter.fact(:operatingsystem).value.should == "VMWareESX"
     end
 end
