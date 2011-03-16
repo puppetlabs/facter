@@ -227,4 +227,11 @@ describe Facter::Util::IP do
             Facter::Util::IP.convert_from_hex?(platform).should == true
         end
     end
+
+    it "should return an arp address on Linux" do
+        Facter.stubs(:value).with(:kernel).returns("Linux")
+
+        Facter::Util::IP.expects(:get_arp_value).with("eth0").returns("00:00:0c:9f:f0:04")
+        Facter::Util::IP.get_arp_value("eth0").should == "00:00:0c:9f:f0:04"
+    end
 end
