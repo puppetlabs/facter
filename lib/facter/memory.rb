@@ -20,6 +20,36 @@ require 'facter/util/memory'
     end
 end
 
+Facter.add("SwapSize") do
+    confine :kernel => :Darwin
+    setcode do
+	swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
+	swaptotal = 0
+	if swap =~ /total = (\S+)/ then swaptotal = $1; end
+	swaptotal
+    end
+end
+
+Facter.add("SwapFree") do
+    confine :kernel => :Darwin
+    setcode do
+	swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
+	swapfree = 0
+	if swap =~ /free = (\S+)/ then swapfree = $1; end
+	swapfree
+    end
+end
+
+Facter.add("SwapEncrypted") do
+    confine :kernel => :Darwin
+    setcode do
+	swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
+	encrypted = false
+	if swap =~ /\(encrypted\)/ then encrypted = true; end
+	encrypted
+    end
+end
+
 if Facter.value(:kernel) == "AIX" and Facter.value(:id) == "root"
     swap = Facter::Util::Resolution.exec('swap -l')
     swapfree, swaptotal = 0, 0
