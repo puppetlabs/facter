@@ -12,7 +12,7 @@ module Facter::Util::Macaddress
     end
 
     def self.default_interface
-      `#{netstat_command} | /usr/bin/awk  '/^default/{print $6}'`.chomp
+      `#{netstat_command} | /usr/bin/awk  '/^default/{print $6;exit}'`.chomp
     end
 
     private

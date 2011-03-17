@@ -1,0 +1,34 @@
+Routing tables
+
+Internet:
+Destination        Gateway            Flags        Refs      Use   Netif Expire
+default            192.168.1.254      UGSc           38        0     en1
+127                127.0.0.1          UCS             0        0     lo0
+127.0.0.1          127.0.0.1          UH             14  1044474     lo0
+169.254            link#5             UCS             0        0     en1
+192.168.1          link#5             UCS             2        0     en1
+192.168.1.207      127.0.0.1          UHS             0        1     lo0
+192.168.1.220      e0:f8:47:98:85:71  UHLWI           0        0     en1    135
+192.168.1.254      0:4:ed:66:13:cc    UHLWI          42      134     en1   1158
+
+Internet6:
+Destination                             Gateway                         Flags         Netif Expire
+default                                 2000:44b4:61::16e               UGSc           tun0
+::1                                     ::1                             UH              lo0
+2000:44b4:61::16e                       2000:44b4:61::16f               UH             tun0
+2000:44b4:61::16f                       link#9                          UHL             lo0
+2000:44b4:62:480::/64                   link#5                          UC              en1
+2000:44b4:62:480::/60                   ::1                             UGSc            lo0
+2000:44b4:62:480::1                     0:25:0:48:19:ef                 UHL             lo0
+fe80::%lo0/64                           fe80::1%lo0                     Uc              lo0
+fe80::1%lo0                             link#1                          UHL             lo0
+fe80::%en1/64                           link#5                          UC              en1
+fe80::225:ff:fe48:19ef%en1              0:25:0:48:19:ef                 UHL             lo0
+fe80::a00:27ff:fe02:bcb5%en1            8:0:27:2:bc:b5                  UHLW            en1
+fe80::a932:c76f:9c2e:ead8%en1           0:1e:2a:b3:9b:66                UHLW            en1
+fe80::e2f8:47ff:fe98:8571%en1           e0:f8:47:98:85:71               UHLW            en1
+fe80::225:4bff:feca:5672%tun0           link#9                          UHL             lo0
+ff01::/32                               ::1                             Um              lo0
+ff02::/32                               ::1                             UmC             lo0
+ff02::/32                               link#5                          UmC             en1
+ff02::/32                               fe80::225:4bff:feca:5672%tun0   UmC            tun0

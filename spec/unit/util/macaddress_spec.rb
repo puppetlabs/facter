@@ -9,7 +9,8 @@ describe "Darwin" do
         # version, iface, real macaddress,     fallback macaddress
         ["9.8.0",  'en0', "00:17:f2:06:e4:2e", "00:17:f2:06:e4:2e"],
         ["10.3.0", 'en0', "00:17:f2:06:e3:c2", "00:17:f2:06:e3:c2"],
-        ["10.6.4", 'en1', "58:b0:35:7f:25:b3", "58:b0:35:fa:08:b1"]
+        ["10.6.4", 'en1', "58:b0:35:7f:25:b3", "58:b0:35:fa:08:b1"],
+        ["10.6.6_dualstack", "en1" , "00:25:00:48:19:ef" , "00:25:4b:ca:56:72"] 
     ]
 
     test_cases.each do |version, default_iface, macaddress, fallback_macaddress|
