@@ -31,11 +31,11 @@ describe "SELinux facts" do
        File.stubs(:read).with("/selinux/enforce").returns("0")
 
        FileTest.expects(:exists?).with("/selinux/enforce").returns true
-       File.expects(:read).with("/selinux/enforce").returns("1") 
+       File.expects(:read).with("/selinux/enforce").returns("1")
 
        Facter.fact(:selinux_enforced).value.should == "true"
     end
-  
+
     it "should return an SELinux policy version" do
        Facter.fact(:selinux).stubs(:value).returns("true")
 
@@ -44,5 +44,46 @@ describe "SELinux facts" do
        File.expects(:read).with("/selinux/policyvers").returns("1")
 
        Facter.fact(:selinux_policyversion).value.should == "1"
+    end
+
+    it "should return the SELinux current mode" do
+       Facter.fact(:selinux).stubs(:value).returns("true")
+
+       sample_output_file = File.dirname(__FILE__) + '/data/selinux_sestatus'
+       selinux_sestatus = File.read(sample_output_file)
+
+       Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/sestatus').returns(selinux_sestatus)
+
+       Facter.fact(:selinux_current_mode).value.should == "permissive"
+    end
+
+    it "should return the SELinux mode from the configuration file" do
+       Facter.fact(:selinux).stubs(:value).returns("true")
+
+       sample_output_file = File.dirname(__FILE__) + '/data/selinux_sestatus'
+       selinux_sestatus = File.read(sample_output_file)
+
+       Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/sestatus').returns(selinux_sestatus)
+
+       Facter.fact(:selinux_config_mode).value.should == "permissive"
+    end
+
+    it "should return the SELinux configuration file policy" do
+       Facter.fact(:selinux).stubs(:value).returns("true")
+
+       sample_output_file = File.dirname(__FILE__) + '/data/selinux_sestatus'
+       selinux_sestatus = File.read(sample_output_file)
+
+       Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/sestatus').returns(selinux_sestatus)
+
+       Facter.fact(:selinux_config_policy).value.should == "targeted"
+    end
+
+    it "should ensure legacy selinux_mode facts returns same value as selinux_config_policy fact" do
+       Facter.fact(:selinux).stubs(:value).returns("true")
+
+       Facter.fact(:selinux_config_policy).stubs(:value).returns("targeted")
+
+       Facter.fact(:selinux_mode).value.should == "targeted"
     end
 end

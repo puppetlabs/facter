@@ -5,7 +5,6 @@ require 'facter/util/virtual'
 require 'facter/util/macosx'
 
 describe "Virtual fact" do
-
   before do
       Facter::Util::Virtual.stubs(:zone?).returns(false)
       Facter::Util::Virtual.stubs(:openvz?).returns(false)
@@ -13,6 +12,7 @@ describe "Virtual fact" do
       Facter::Util::Virtual.stubs(:xen?).returns(false)
       Facter::Util::Virtual.stubs(:kvm?).returns(false)
       Facter::Util::Virtual.stubs(:hpvm?).returns(false)
+      Facter::Util::Virtual.stubs(:zlinux?).returns(false)
   end
 
   it "should be zone on Solaris when a zone" do
@@ -34,6 +34,13 @@ describe "Virtual fact" do
      Facter.fact(:kernel).stubs(:value).returns("HP-UX")
      Facter::Util::Virtual.stubs(:hpvm?).returns(true)
      Facter.fact(:virtual).value.should == "hpvm"
+  end
+
+  it "should be zlinux on s390x" do
+     Facter.fact(:kernel).stubs(:value).returns("Linux")
+     Facter.fact(:architecture).stubs(:value).returns("s390x")
+     Facter::Util::Virtual.stubs(:zlinux?).returns(true)
+     Facter.fact(:virtual).value.should == "zlinux"
   end
 
   describe "on Darwin" do
@@ -63,6 +70,11 @@ describe "Virtual fact" do
   end
 
   describe "on Linux" do
+
+      before do
+        FileTest.expects(:exists?).with("/usr/lib/vmware/bin/vmware-vmx").returns false
+        Facter.fact(:architecture).stubs(:value).returns(true)
+      end
 
       it "should be parallels with Parallels vendor id from lspci" do
           Facter.fact(:kernel).stubs(:value).returns("Linux")
@@ -167,6 +179,12 @@ describe "is_virtual fact" do
     it "should be true when running on hp-vm" do
         Facter.fact(:kernel).stubs(:value).returns("HP-UX")
         Facter.fact(:virtual).stubs(:value).returns("hpvm")
+        Facter.fact(:is_virtual).value.should == "true"
+    end
+
+    it "should be true when running on S390" do
+        Facter.fact(:architecture).stubs(:value).returns("s390x")
+        Facter.fact(:virtual).stubs(:value).returns("zlinux")
         Facter.fact(:is_virtual).value.should == "true"
     end
 

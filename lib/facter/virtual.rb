@@ -25,10 +25,16 @@ Facter.add("virtual") do
 
     setcode do
 
-        result = "zone" if Facter::Util::Virtual.zone?
+        if Facter::Util::Virtual.zone? and Facter.value(:operatingsystem) == "Solaris"
+            result = "zone"
+        end
 
         if Facter.value(:kernel)=="HP-UX"
             result = "hpvm" if Facter::Util::Virtual.hpvm?
+        end
+
+        if Facter.value(:architecture)=="s390x"
+            result = "zlinux" if Facter::Util::Virtual.zlinux?
         end
 
         if Facter::Util::Virtual.openvz?
@@ -92,7 +98,7 @@ Facter.add("virtual") do
                     end
                 end
             end
-            # VMware server 1.0.3 rpm places vmware-vmx in this place, other versions or platforms may not.
+            
             if FileTest.exists?("/usr/lib/vmware/bin/vmware-vmx")
                 result = "vmware_server"
             end

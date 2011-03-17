@@ -36,6 +36,8 @@ Facter.add(:operatingsystem) do
             txt = File.read("/etc/redhat-release")
             if txt =~ /centos/i
                 "CentOS"
+            elsif txt =~ /scientific/i 
+                "Scientific"
             else
                 "RedHat"
             end
@@ -50,8 +52,12 @@ Facter.add(:operatingsystem) do
             else
                 "SuSE"
             end
-	elsif FileTest.exists?("/etc/slackware-version")
-	    "Slackware"
+        elsif FileTest.exists?("/etc/bluewhite64-version")
+            "Bluewhite64"
+        elsif FileTest.exists?("/etc/slamd64-version")
+            "Slamd64"
+        elsif FileTest.exists?("/etc/slackware-version")
+            "Slackware"
         end
     end
 end
