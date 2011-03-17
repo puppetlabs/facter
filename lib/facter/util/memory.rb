@@ -62,5 +62,36 @@ module Facter::Memory
             end
         end
     end
+
+    # Darwin had to be different. It's generally opaque with how much RAM it is
+    # using, and this figure could be improved upon too I fear.
+    # Parses the output of "vm_stat", takes the pages free & pages speculative
+    # and multiples that by the page size (also given in output). Ties in with
+    # what activity monitor outputs for free memory.
+    def self.vmstat_darwin_find_free_memory()
+
+        memfree = 0
+        pagesize = 0
+        memspecfree = 0
+
+        vmstats = Facter::Util::Resolution.exec('vm_stat')
+        vmstats.each do |vmline|
+          case
+            when vmline =~ /page\ssize\sof\s(\d+)\sbytes/
+              pagesize = $1.to_i
+            when vmline =~ /^Pages\sfree:\s+(\d+)\./
+              memfree = $1.to_i
+            when vmline =~ /^Pages\sspeculative:\s+(\d+)\./
+              memspecfree = $1.to_i
+          end
+        end
+
+        freemem = ( memfree + memspecfree ) * pagesize
+        Facter.add("MemoryFree") do
+          setcode do
+            Facter::Memory.scale_number(freemem.to_f, "")
+          end
+        end
+    end
 end
 

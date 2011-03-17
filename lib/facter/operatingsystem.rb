@@ -32,6 +32,8 @@ Facter.add(:operatingsystem) do
             end
         elsif FileTest.exists?("/etc/arch-release")
             "Arch"
+        elsif FileTest.exists?("/etc/vmware-release")
+            "VMWareESX"
         elsif FileTest.exists?("/etc/redhat-release")
             txt = File.read("/etc/redhat-release")
             if txt =~ /centos/i
@@ -59,6 +61,13 @@ Facter.add(:operatingsystem) do
         elsif FileTest.exists?("/etc/slackware-version")
             "Slackware"
         end
+    end
+end
+
+Facter.add(:operatingsystem) do
+    confine :kernel => "VMkernel"
+    setcode do
+        "ESXi"
     end
 end
 

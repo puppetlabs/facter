@@ -1,15 +1,8 @@
 Facter.add(:id) do
-    confine :operatingsystem => %w{Linux Fedora RedHat CentOS SuSE SLES Debian Ubuntu Gentoo AIX OEL OVS GNU/kFreeBSD windows}
     setcode "whoami"
 end
 
 Facter.add(:id) do
-    confine :operatingsystem => %w{Solaris}
-    setcode do
-        if %x{id} =~ /^uid=\d+\((\S+)\)/
-            $1
-        else
-            nil
-        end
-    end
+    confine :kernel => :SunOS
+    setcode "/usr/xpg4/bin/id -un"
 end

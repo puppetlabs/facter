@@ -84,6 +84,16 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
+    confine :operatingsystem => %w{VMwareESX}
+    setcode do
+        release = Facter::Util::Resolution.exec('vmware -v')
+        if release =~ /VMware ESX .*?(\d.*)/
+            $1
+        end
+    end
+end
+
+Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{Slamd64}
     setcode do
         releasefile = Facter::Util::Resolution.exec('cat /etc/slamd64-version')
@@ -96,5 +106,5 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
-  setcode do Facter[:kernelrelease].value end
+    setcode do Facter[:kernelrelease].value end
 end
