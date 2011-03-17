@@ -1,3 +1,74 @@
+1.5.9rc1
+========
+458a22d Incremented release to 1.5.9
+4eb64fe Fixed #6719 Typo
+ffd80ac (#5011) Adds swap statistics for OSX
+1207765 (#6719) Restricts virtualization types for zones
+8d71db3 Fixed #6616 - Stubbing in VMware tests on Linux
+aa959df Remove Solaris from the list of confined systems. It won't get the original lsb facts, and it's nonsensical too.
+d718af4 Fix #6679 - Added Scientific Linux to operatingsystem fact
+dea6f78 Further fix to #5485 - SELinux facts
+6d6d8da (#2721) Merged patch from Brane GraAnar
+868e7ba (#5485) Made selinux_mode fact work
+214da73 Fixed #5485 - Updated selinux_mode fact
+ba2601f Fix for #6495 - Updated interface detection
+93461d9 Fixed #5950 - Solaris ipaddress incorrect after bonding failure
+2e06cdc (#6615) fix missing stub calls in loader specs
+3c7841e (#5666) windows support for facter/id.rb
+dd5d5bf (#4925) - MS Windows doesn't do man pages
+52026ee Fixed #5699 - Added processorcount support for S390x
+7dd730d Fixed #5699 - Added virtual support for s390x/Zlinux
+d6ce08a Fixed #6611 - Fixed broken HPVM test and rationalised test structure
+84fa3c4 (#6525) change semicolons to 'then' in case statement for ruby 1.9.2 compatibility
+3e6217d Fixes #6521 and other Ruby 1.9 issues
+eb5d6fc Fixed #6525 - Test failures on Ruby 1.9.x
+cb25119 (#2270) add testing for the new ipaddress6 feature
+ea29483 (#2270) add IPv6 support to facter core.
+77eb512 (#2270) Remove DWIM code from ipaddress on Darwin.
+f5bf0f5 (#6360) Flush Facter top level cache before every test case.
+0d7a2e6 Fix #4755: add support for GNU/kFreeBSD platform where missing.
+b88a088 (#5510) Facter should load custom fact definitions in filename order.
+7a8be16 Refactor #6044 -- use _spec.rb as the pattern for spec tests.
+b39f892 Refactor #6044 -- require spec_helper with a consistent path.
+a4fe459 Refactor #6044 -- port testing to rspec2
+af9134c (#5086) Try using kstat before falling back to 'who -b' to determine uptime.
+cbbfe55 Refactor util/uptime.rb tests to reduce duplication using contexts
+f0cc2c0 (#4575) win32 support for manufacturer, productname, & serialnumber
+c40fc07 (#1423) Memory facts for Solaris
+1985528 (#4754) Change is_virtual logic to not enumerate virtual types
+739040f (#4754) Add support for Darwin and Parallels VM to "virtual" fact
+9332f8a (#5325) Add tests for SPARC manufacturer and product name
+5b561e3 (#5325) Manufacturer and product name on SPARC
+9d99079 maint: Fix spec failures caused by having a space in the path to facter's source
+89da001 maint: require rubygems so hudson can run the specs
+1eef842 Maint: add "Local-branch:" info to mails sent by "rake mail_patches"
+f007a9d (#4989) Add xendomains fact
+1fa87a9 JSON support. Works in 1.9.1. Warnings in 1.9.2. LoadError on 1.8.7 for some reason
+43e203c (#5040) fact virtual should detect hpvm
+7cec60a (#5016) is_virtual should be true on solaris zones
+f2e66b6 (#5031) Remove redundant puts from RDoc.usage
+f4da528 maint: Fix merge error
+d62b013 Issue #4889 Fact values should all be strings
+07f186d [#4552] Updating --timing to report in milliseconds instead of seconds
+1f387a5 [#4552] Apply patch from Dean Wilson
+244d2f1 Better fix for Bug 4569: Uptime Fact is incorrect on Windows
+11544c1 [#4289] operatingsystemrelease fact for oel, ovs
+e6bfdf9 Fix for bug #4569
+8c4d0cd (#4558) Fail with message on --help errors
+7210429 [#4558] Refactor facter binary using optparse
+b5c85de [#4563] Add a --trace option to the binary
+ebcb81b [#4558] Refactor facter binary using optparse
+b8b7123 (#4567) Remove unnecessary or non-portable redirects
+7ecba71 (#4567) Retain detached HEAD state
+1125e1e Make sure FreeBSD spec also works on systems that have /proc/cpuinfo.
+889e150 Sync rpm spec file from Fedora/EPEL
+725dce0 Rename Reductive Labs to Puppet Labs
+ff473ef Updated signing rake task
+a85f2b0 [#2865] Fix reporting of virtual facts
+f67ec05 [#4567] Add ext/facter-diff to compare output of 2 versions
+4050acc Removing stupid .DS_Store files :(
+016cf03 [#3703] Fix macaddress fact for Darwin
+
 1.5.8
 =====
 ca2da36  Updated install.rb and created man page
