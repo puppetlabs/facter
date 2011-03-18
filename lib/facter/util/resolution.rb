@@ -85,9 +85,8 @@ class Facter::Util::Resolution
         end
     end
 
-    # Say this resolution came from the environment
-    def from_environment
-        @from_environment = true
+    def has_weight(weight)
+        @weight = weight
     end
 
     # Create a new resolution mechanism.
@@ -96,15 +95,13 @@ class Facter::Util::Resolution
         @confines = []
         @value = nil
         @timeout = 0
-        @from_environment = false
+        @weight = nil
     end
 
-    # Return the number of confines.
-    def length
-        # If the resolution came from an environment variable
-        # say we're very very sure about the value of the resolution
-        if @from_environment
-            1_000_000_000
+    # Return the importance of this resolution.
+    def weight
+        if @weight
+            @weight
         else
             @confines.length
         end
