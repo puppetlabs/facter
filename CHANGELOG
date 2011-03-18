@@ -1,3 +1,14 @@
+1.5.9rc2
+========
+2fb8316 Clean up indentation, and alignment in macaddress_spec.rb
+3f0a340 (#6716) fix facter issues on OSX with ipv6 in macaddress.rb.
+d62e079 Fixed #2346 - A much cleverer EC2 fact
+0411d2e Fixed #2346 - Part 1: Added arp fact for Linux
+5b6f4fa Discussion on ec2 facts - #2346
+e917e1a Fixed #3087 - Identify VMWare
+d0f0f63 (#6327) Memory facts should be available on Mac Darwin
+2e48e18 Fixed #6695 - Updated id fact for Darwin et al
+
 1.5.9rc1
 ========
 458a22d Incremented release to 1.5.9
