@@ -1,3 +1,9 @@
+1.5.9rc3
+========
+def3322 (#6795) xendomains: Ignore error output from xm list
+f39d487 (#6763) Use Facter::Util::Resolution.exec for arp
+3eb9410 arp: Cleanup indendation
+
 1.5.9rc2
 ========
 2fb8316 Clean up indentation, and alignment in macaddress_spec.rb
