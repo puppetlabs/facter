@@ -9,13 +9,13 @@ describe Facter::Util::Xendomains do
     it "should return a list of running Xen Domains on Xen0" do
       sample_output_file = File.dirname(__FILE__) + '/../data/xendomains'
       xen0_domains = File.read(sample_output_file)
-      Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/xm list').returns(xen0_domains)
+      Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/xm list 2>/dev/null').returns(xen0_domains)
       Facter::Util::Xendomains.get_domains.should == %{web01,mailserver}
     end
 
     describe "when xm list isn't executable" do
       it "should be nil" do
-        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/xm list').returns(nil)
+        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/xm list 2>/dev/null').returns(nil)
         Facter::Util::Xendomains.get_domains.should == nil
       end
     end
