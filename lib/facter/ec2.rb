@@ -6,9 +6,11 @@
 require 'open-uri'
 require 'socket'
 
-EC2_ADDR = "169.254.169.254"
+EC2_ADDR         = "169.254.169.254"
 EC2_METADATA_URL = "http://#{EC2_ADDR}/2008-02-01/meta-data"
 EC2_USERDATA_URL = "http://#{EC2_ADDR}/2008-02-01/user-data"
+EC2_ARP          = "fe:ff:ff:ff:ff:ff"
+EC2_EUCA_MAC     = %r{^[dD]0:0[dD]:}
 
 def can_metadata_connect?(addr, port, timeout=2)
   t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
@@ -61,19 +63,11 @@ def userdata()
 end
 
 def has_euca_mac?
-  if Facter.value(:macaddress) =~ /^[dD]0:0[dD]:/
-    return true
-  else
-    return false
-  end
+  !!(Facter.value(:macaddress) =~ EC2_EUCA_MAC)
 end
 
 def has_ec2_arp?
-  if Facter.value(:arp) == 'fe:ff:ff:ff:ff:ff'
-    return true
-  else
-    return false
-  end
+  !!(Facter.value(:arp) == EC2_ARP)
 end
 
 if (has_euca_mac? || has_ec2_arp?) && can_metadata_connect?(EC2_ADDR,80)
