@@ -119,8 +119,11 @@ Facter.add("virtual") do
                         result = "vmware" if pd =~ /VMware/
                         result = "virtualbox" if pd =~ /VirtualBox/
                     end
-                else
-                    output = Facter::Util::Resolution.exec('prtdiag')
+                elsif Facter.value(:kernel) == 'SunOS'
+                    res = Facter::Util::Resolution.new('prtdiag')
+                    res.timeout = 6
+                    res.setcode('prtdiag')
+                    output = res.value
                     if not output.nil?
                         output.each_line do |pd|
                             result = "parallels" if pd =~ /Parallels/
