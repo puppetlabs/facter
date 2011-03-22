@@ -121,8 +121,10 @@ describe "Virtual fact" do
           Facter.fact(:virtual).value.should == "virtualbox"
       end
 
+  end
+  describe "on Solaris" do
       it "should be vmware with VMWare vendor name from prtdiag" do
-          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter.fact(:kernel).stubs(:value).returns("SunOS")
           Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
           Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns(nil)
           Facter::Util::Resolution.stubs(:exec).with('prtdiag').returns("System Configuration: VMware, Inc. VMware Virtual Platform")
@@ -130,7 +132,7 @@ describe "Virtual fact" do
       end
 
       it "should be parallels with Parallels vendor name from prtdiag" do
-          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter.fact(:kernel).stubs(:value).returns("SunOS")
           Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
           Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns(nil)
           Facter::Util::Resolution.stubs(:exec).with('prtdiag').returns("System Configuration: Parallels Virtual Platform")
@@ -138,7 +140,7 @@ describe "Virtual fact" do
       end
 
       it "should be virtualbox with VirtualBox vendor name from prtdiag" do
-          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter.fact(:kernel).stubs(:value).returns("SunOS")
           Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
           Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns(nil)
           Facter::Util::Resolution.stubs(:exec).with('prtdiag').returns("System Configuration: innotek GmbH VirtualBox")
