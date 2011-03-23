@@ -75,7 +75,7 @@ module Facter::Memory
         memspecfree = 0
 
         vmstats = Facter::Util::Resolution.exec('vm_stat')
-        vmstats.each do |vmline|
+        vmstats.each_line do |vmline|
           case
             when vmline =~ /page\ssize\sof\s(\d+)\sbytes/
               pagesize = $1.to_i
