@@ -94,4 +94,3 @@ module Facter::Memory
         end
     end
 end
-

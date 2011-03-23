@@ -23,30 +23,30 @@ end
 Facter.add("SwapSize") do
     confine :kernel => :Darwin
     setcode do
-	swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
-	swaptotal = 0
-	if swap =~ /total = (\S+)/ then swaptotal = $1; end
-	swaptotal
+    swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
+    swaptotal = 0
+    if swap =~ /total = (\S+)/ then swaptotal = $1; end
+      swaptotal
     end
 end
 
 Facter.add("SwapFree") do
     confine :kernel => :Darwin
     setcode do
-	swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
-	swapfree = 0
-	if swap =~ /free = (\S+)/ then swapfree = $1; end
-	swapfree
+    swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
+    swapfree = 0
+    if swap =~ /free = (\S+)/ then swapfree = $1; end
+      swapfree
     end
 end
 
 Facter.add("SwapEncrypted") do
     confine :kernel => :Darwin
     setcode do
-	swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
-	encrypted = false
-	if swap =~ /\(encrypted\)/ then encrypted = true; end
-	encrypted
+    swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
+    encrypted = false
+    if swap =~ /\(encrypted\)/ then encrypted = true; end
+      encrypted
     end
 end
 
@@ -57,9 +57,9 @@ if Facter.value(:kernel) == "AIX" and Facter.value(:id) == "root"
       if dev =~ /^\/\S+\s.*\s+(\S+)MB\s+(\S+)MB/
         swaptotal += $1.to_i
         swapfree  += $2.to_i
-      end 
-    end 
- 
+      end
+    end
+
     Facter.add("SwapSize") do
         confine :kernel => :aix
         setcode do
@@ -154,9 +154,9 @@ if Facter.value(:kernel) == "SunOS"
         if dev =~ /^\/\S+\s.*\s+(\d+)\s+(\d+)$/
             swaptotal += $1.to_i / 2
             swapfree  += $2.to_i / 2
-        end 
-    end 
- 
+        end
+    end
+
     Facter.add("SwapSize") do
         confine :kernel => :sunos
         setcode do
