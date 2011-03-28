@@ -1,3 +1,7 @@
+1.5.9rc4
+========
+09b9f9b (#6795) Update tests to reflect changed exec
+
 1.5.9rc3
 ========
 def3322 (#6795) xendomains: Ignore error output from xm list
