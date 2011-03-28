@@ -13,6 +13,18 @@ Facter.add(:macaddress) do
 end
 
 Facter.add(:macaddress) do
+    confine :operatingsystem => "Solaris"
+    setcode do
+        ether = []
+        output = Facter::Util::Resolution.exec("/usr/bin/netstat -np")
+        output.each_line do |s|
+            ether.push($1) if s =~ /(?:SPLA)\s+(\w{2}:\w{2}:\w{2}:\w{2}:\w{2}:\w{2})/
+        end
+        ether[0]
+    end
+end
+
+Facter.add(:macaddress) do
     confine :operatingsystem => %w{FreeBSD OpenBSD}
     setcode do
     ether = []
