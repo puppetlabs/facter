@@ -104,6 +104,9 @@ Facter.add("virtual") do
                     # --- look for the vmware video card to determine if it is virtual => vmware.
                     # ---     00:0f.0 VGA compatible controller: VMware Inc [VMware SVGA II] PCI Display Adapter
                     result = "vmware" if p =~ /VM[wW]are/
+                    # --- look for virtualbox video card to determine if it is virtual => virtualbox.
+                    # ---     00:02.0 VGA compatible controller: InnoTek Systemberatung GmbH VirtualBox Graphics Adapter
+                    result = "virtualbox" if p =~ /VirtualBox/
                     # --- look for pci vendor id used by Parallels video card
                     # ---   01:00.0 VGA compatible controller: Unknown device 1ab8:4005
                     result = "parallels" if p =~ /1ab8:|[Pp]arallels/
@@ -114,6 +117,7 @@ Facter.add("virtual") do
                     output.each_line do |pd|
                         result = "parallels" if pd =~ /Parallels/
                         result = "vmware" if pd =~ /VMware/
+                        result = "virtualbox" if pd =~ /VirtualBox/
                     end
                 else
                     output = Facter::Util::Resolution.exec('prtdiag')
@@ -121,6 +125,7 @@ Facter.add("virtual") do
                         output.each_line do |pd|
                             result = "parallels" if pd =~ /Parallels/
                             result = "vmware" if pd =~ /VMware/
+							result = "virtualbox" if pd =~ /VirtualBox/
                         end
                     end
                 end

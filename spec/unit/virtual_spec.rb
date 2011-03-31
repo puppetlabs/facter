@@ -94,6 +94,12 @@ describe "Virtual fact" do
           Facter.fact(:virtual).value.should == "vmware"
       end
 
+      it "should be virtualbox with VirtualBox vendor name from lspci" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns("00:02.0 VGA compatible controller: InnoTek Systemberatung GmbH VirtualBox Graphics Adapter")
+          Facter.fact(:virtual).value.should == "virtualbox"
+      end
+
       it "should be vmware with VMWare vendor name from dmidecode" do
           Facter.fact(:kernel).stubs(:value).returns("Linux")
           Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
@@ -106,6 +112,13 @@ describe "Virtual fact" do
           Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
           Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("On Board Device Information\nType: Video\nStatus: Disabled\nDescription: Parallels Video Adapter")
           Facter.fact(:virtual).value.should == "parallels"
+      end
+
+      it "should be virtualbox with VirtualBox vendor name from dmidecode" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
+          Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("BIOS Information\nVendor: innotek GmbH\nVersion: VirtualBox\n\nSystem Information\nManufacturer: innotek GmbH\nProduct Name: VirtualBox\nFamily: Virtual Machine")
+          Facter.fact(:virtual).value.should == "virtualbox"
       end
 
       it "should be vmware with VMWare vendor name from prtdiag" do
@@ -122,6 +135,14 @@ describe "Virtual fact" do
           Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns(nil)
           Facter::Util::Resolution.stubs(:exec).with('prtdiag').returns("System Configuration: Parallels Virtual Platform")
           Facter.fact(:virtual).value.should == "parallels"
+      end
+
+      it "should be virtualbox with VirtualBox vendor name from prtdiag" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
+          Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns(nil)
+          Facter::Util::Resolution.stubs(:exec).with('prtdiag').returns("System Configuration: innotek GmbH VirtualBox")
+          Facter.fact(:virtual).value.should == "virtualbox"
       end
   end
 end
@@ -149,6 +170,12 @@ describe "is_virtual fact" do
     it "should be true when running on vmware" do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
         Facter.fact(:virtual).stubs(:value).returns("vmware")
+        Facter.fact(:is_virtual).value.should == "true"
+    end
+
+    it "should be true when running on virtualbox" do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+        Facter.fact(:virtual).stubs(:value).returns("virtualbox")
         Facter.fact(:is_virtual).value.should == "true"
     end
 
