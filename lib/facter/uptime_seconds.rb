@@ -1,3 +1,17 @@
+# Fact: uptime_seconds
+#
+# Purpose: Return purely number of seconds of uptime.
+#
+# Resolution:
+#   Using the 'facter/util/uptime.rb' module, try a verity of methods to acquire
+#   the uptime on Unix.
+#
+#   On Windows, the module calculates the uptime by the "LastBootupTime" Windows
+#   management value.
+#
+# Caveats:
+#
+
 require 'facter/util/uptime'
 
 Facter.add(:uptime_seconds) do

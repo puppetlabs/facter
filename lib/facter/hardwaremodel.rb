@@ -1,3 +1,16 @@
+# Fact: hardwaremodel
+#
+# Purpose:
+#   Returns the hardware model of the system.
+#
+# Resolution:
+#   Uses purely "uname -m" on all platforms other than AIX and Windows.
+#   On AIX uses the parsed "modelname" output of "lsattr -El sys0 -a modelname".
+#   On Windows uses the 'host_cpu' pulled out of Ruby's config.
+#
+# Caveats:
+#
+
 Facter.add(:hardwaremodel) do
     setcode 'uname -m'
 end

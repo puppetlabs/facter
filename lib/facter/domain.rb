@@ -1,3 +1,23 @@
+# Fact: domain
+#
+# Purpose:
+#   Return the host's primary DNS domain name.
+# 
+# Resolution:
+#   On UNIX (excluding Darwin), first try and use the hostname fact,
+#   which uses the hostname system command, and then parse the output
+#   of that.
+#   Failing that it tries the dnsdomainname system command.
+#   Failing that it uses /etc/resolv.conf and takes the domain from that, or as
+#   a final resort, the search from that.
+#   Otherwise returns nil.
+#
+#   On Windows uses the win32ole gem and winmgmts to get the DNSDomain value
+#   from the Win32 networking stack.
+#
+# Caveats:
+#
+
 Facter.add(:domain) do
     setcode do
         # Get the domain from various sources; the order of these
