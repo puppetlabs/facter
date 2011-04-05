@@ -39,10 +39,7 @@ Facter.add('physicalprocessorcount') do
       lookup_pattern = "#{sysfs_cpu_directory}" +
         "/cpu*/topology/physical_package_id"
 
-      ids = Dir.glob(lookup_pattern).collect { |f| Facter::Util::Resolution.exec("cat #{f}")}
-
-      ids = ids.join if ids.is_a?(Array)
-      ids.scan(/\d+/).uniq.size
+      Dir.glob(lookup_pattern).collect { |f| Facter::Util::Resolution.exec("cat #{f}")}.uniq.size
 
     else
       #
@@ -53,7 +50,7 @@ Facter.add('physicalprocessorcount') do
       #
       str = Facter::Util::Resolution.exec("grep 'physical.\\+:' /proc/cpuinfo")
 
-      if not str.nil? then str.scan(/\d+/).uniq.size; end
+      if str then str.scan(/\d+/).uniq.size; end
     end
   end
 end
