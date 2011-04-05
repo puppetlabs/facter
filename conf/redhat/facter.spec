@@ -7,7 +7,7 @@ Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
 Version: 1.5.8
 Release: 1%{?dist}
-License: GPLv2+
+License: Apache 2.0
 Group: System Environment/Base
 URL: http://www.puppetlabs.com/puppet/related-projects/%{name}/
 Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz
