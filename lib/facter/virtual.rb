@@ -52,7 +52,7 @@ Facter.add("virtual") do
 
     setcode do
 
-        if Facter::Util::Virtual.zone? and Facter.value(:operatingsystem) == "Solaris"
+        if Facter.value(:operatingsystem) == "Solaris" and Facter::Util::Virtual.zone?
             result = "zone"
         end
 
