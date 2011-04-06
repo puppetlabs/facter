@@ -1,3 +1,7 @@
+1.5.9rc5
+========
+acf0bb2 Ensures that ARP facts are returned only on EC2 hosts
+
 1.5.9rc4
 ========
 09b9f9b (#6795) Update tests to reflect changed exec
