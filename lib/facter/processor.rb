@@ -19,90 +19,81 @@
 #
 
 require 'thread'
+require 'facter/util/processor'
 
-if ["Linux", "GNU/kFreeBSD"].include? Facter.value(:kernel)
-    processor_num = -1
-    processor_list = []
-    Thread::exclusive do
-        File.readlines("/proc/cpuinfo").each do |l|
-            if l =~ /processor\s+:\s+(\d+)/
-                processor_num = $1.to_i
-            elsif l =~ /model name\s+:\s+(.*)\s*$/
-                processor_list[processor_num] = $1 unless processor_num == -1
-                processor_num = -1
-            elsif l =~ /processor\s+(\d+):\s+(.*)/
-                processor_num = $1.to_i
-                processor_list[processor_num] = $2 unless processor_num == -1
-            end
-        end
+Facter.add("ProcessorCount") do
+  confine :kernel => [ :linux, :"gnu/kfreebsd" ]
+  setcode do
+    processor_list = Facter::Util::Processor.enum_cpuinfo
+    
+    ## If this returned nothing, then don't resolve the fact
+    if processor_list.length != 0
+      processor_list.length.to_s
     end
-
-    Facter.add("ProcessorCount") do
-        confine :kernel => [ :linux, :"gnu/kfreebsd" ]
-        setcode do
-            processor_list.length.to_s
-        end
-    end
-
-    processor_list.each_with_index do |desc, i|
-        Facter.add("Processor#{i}") do
-            confine :kernel => [ :linux, :"gnu/kfreebsd" ]
-            setcode do
-                desc
-            end
-        end
-    end
+  end
 end
 
-if Facter.value(:kernel) == "AIX"
-    processor_num = -1
-    processor_list = {}
-    Thread::exclusive do
-        procs = Facter::Util::Resolution.exec('lsdev -Cc processor')
-        procs.each do |proc|
-            if proc =~ /^proc(\d+)/
-                processor_num = $1.to_i
-                # Not retrieving the frequency since AIX 4.3.3 doesn't support the
-                # attribute and some people still use the OS.
-                proctype = Facter::Util::Resolution.exec('lsattr -El proc0 -a type')
-                if proctype =~ /^type\s+(\S+)\s+/
-                    processor_list["processor#{processor_num}"] = $1
-                end
-            end
-        end
-    end
-
-    Facter.add("ProcessorCount") do
-        confine :kernel => :aix
-        setcode do
-            processor_list.length.to_s
-        end
-    end
-
-    processor_list.each do |proc, desc|
-        Facter.add(proc) do
-            confine :kernel => :aix
-            setcode do
-                desc
-            end
-        end
-    end
+Facter.add("ProcessorCount") do
+	confine :kernel => [ :linux, :"gnu/kfreebsd" ]
+	setcode do
+## The method above is preferable since it provides the description of the CPU as well
+## but if that returned 0, then we enumerate sysfs
+			sysfs_cpu_directory = '/sys/devices/system/cpu'
+			if File.exists?(sysfs_cpu_directory)
+				lookup_pattern = "#{sysfs_cpu_directory}" + "/cpu[0-9]*"
+				cpuCount = Dir.glob(lookup_pattern).length
+				cpuCount.to_s
+			end
+	end
 end
 
-if Facter.value(:kernel) == "OpenBSD"
-    Facter.add("Processor") do
-        confine :kernel => :openbsd
-        setcode do
-            Facter::Util::Resolution.exec("uname -p")
-        end
-    end
+Facter.add("ProcessorCount") do
+  confine :kernel => :aix
+  setcode do
+    processor_list = Facter::Util::Processor.enum_lsdev
+        
+    processor_list.length.to_s
+  end
+end
 
-    Facter.add("ProcessorCount") do
-        confine :kernel => :openbsd
-        setcode do
-            Facter::Util::Resolution.exec("sysctl hw.ncpu | cut -d'=' -f2")
-        end
+
+Facter.add("ProcessorCount") do
+	confine :kernel => :openbsd
+	setcode do
+		Facter::Util::Resolution.exec("sysctl hw.ncpu | cut -d'=' -f2")
+	end
+end
+
+Facter.add("ProcessorCount") do
+	confine :kernel => :Darwin
+	setcode do
+		Facter::Util::Resolution.exec("sysctl hw.ncpu | cut -d' ' -f2")
+	end
+end
+
+## We have to enumerate these outside a Facter.add block to get the processorN descriptions iteratively
+## (but we need them inside the Facter.add block above for tests on processorcount to work)
+processor_list = Facter::Util::Processor.enum_cpuinfo
+processor_list_aix = Facter::Util::Processor.enum_lsdev
+
+if processor_list.length != 0
+  processor_list.each_with_index do |desc, i|
+    Facter.add("Processor#{i}") do
+      confine :kernel => [ :linux, :"gnu/kfreebsd" ]
+      setcode do
+        desc
+      end
     end
+  end
+elsif processor_list_aix.length != 0
+  processor_list_aix.each_with_index do |desc, i|
+    Facter.add("Processor#{i}") do
+      confine :kernel => [ :aix ]
+      setcode do
+        desc
+      end
+    end
+  end
 end
 
 if Facter.value(:kernel) == "windows"
