@@ -19,7 +19,7 @@ Facter.add(:ipaddress6) do
     output = Facter::Util::Resolution.exec('/sbin/ifconfig')
 
     output.scan(/inet6 addr: ((?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/).each { |str|
-      str = str.to_s
+      str = str.first
       unless str =~ /fe80.*/ or str == "::1"
         ip = str
       end
@@ -37,7 +37,7 @@ Facter.add(:ipaddress6) do
     ip = nil
 
     output.scan(/inet6 ((?>[0-9,a-f,A-F]*\:{0,2})+[0-9,a-f,A-F]{0,4})/).each { |str|
-      str = str.to_s
+      str = str.first
       unless str =~ /fe80.*/ or str == "::1"
         ip = str
       end
@@ -55,7 +55,7 @@ Facter.add(:ipaddress6) do
     ip = nil
 
     output.scan(/inet6 ((?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/).each do |str|
-      str = str.to_s
+      str = str.first
       unless str =~ /fe80.*/ or str == "::1"
         ip = str
         break
