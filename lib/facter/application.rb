@@ -9,19 +9,21 @@ module Facter
       # Accept fact names to return from the command line
       names = argv
 
-      # Create the facts hash that is printed to standard out
-      if names.empty?
-        facts = Facter.to_hash
-      else
+      # Create the facts hash that is printed to standard out.
+      # Pre-load all of the facts, since we can have multiple facts
+      # per file, and since we can't know ahead of time which file a
+      # fact will be in, we'll need to load every file.
+      facts = Facter.to_hash
+      unless names.empty?
         facts = {}
-        names.each { |name|
+        names.each do |name|
           begin
             facts[name] = Facter.value(name)
           rescue => error
             $stderr.puts "Could not retrieve #{name}: #{error}"
             exit 10
           end
-        }
+        end
       end
 
       # Print the facts as YAML and exit
