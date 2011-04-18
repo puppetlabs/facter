@@ -8,7 +8,7 @@ Facter.add(:arp) do
       arp = ""
       output.each_line do |s|
         if s =~ /^\S+\s\S+\s\S+\s(\S+)\s\S+\s\S+\s\S+$/
-          arp = $1
+          arp = $1.downcase
           break # stops on the first match
         end
       end
