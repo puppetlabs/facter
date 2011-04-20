@@ -80,6 +80,12 @@ Facter.add("virtual") do
                     # --- look for pci vendor id used by Parallels video card
                     # ---   01:00.0 VGA compatible controller: Unknown device 1ab8:4005
                     result = "parallels" if p =~ /1ab8:|[Pp]arallels/
+                    # Virtual box deploys a VGA compatble controller
+                    # 00:02.0 VGA compatible controller: InnoTek Systemberatung GmbH VirtualBox Graphics Adapter
+                    # And a system device 
+                    # 00:04.0 System peripheral: InnoTek Systemberatung GmbH VirtualBox Guest Service
+                    # Assuming that oracle will push their name here as well
+                    result = "virtualbox" if p =~ /VirtualBox/
                 end
             else
                 output = Facter::Util::Resolution.exec('dmidecode')
@@ -87,6 +93,7 @@ Facter.add("virtual") do
                     output.each_line do |pd|
                         result = "parallels" if pd =~ /Parallels/
                         result = "vmware" if pd =~ /VMware/
+                        result = "virtualbox" if pd =~ /VirtualBox/
                     end
                 else
                     output = Facter::Util::Resolution.exec('prtdiag')
@@ -98,7 +105,7 @@ Facter.add("virtual") do
                     end
                 end
             end
-            
+
             if FileTest.exists?("/usr/lib/vmware/bin/vmware-vmx")
                 result = "vmware_server"
             end

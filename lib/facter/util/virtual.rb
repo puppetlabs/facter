@@ -70,7 +70,7 @@ module Facter::Util::Virtual
         Facter::Util::Resolution.exec("/usr/bin/getconf MACHINE_MODEL").chomp =~ /Virtual Machine/
     end
 
-   def self.zlinux?
+    def self.zlinux?
         "zlinux"
-   end
+    end
 end
