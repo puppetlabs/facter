@@ -233,4 +233,35 @@ if Facter.value(:kernel) == "windows"
       Facter::Memory.scale_number(mem.to_f, "")
     end
   end
+
+if Facter.value(:kernel) == "DragonFly"
+    page_size = %x{/sbin/sysctl -n hw.pagesize}.to_f
+    swaptotal = %x{/sbin/sysctl -n vm.swap_size}.to_f * page_size
+    swap_anon_use = %x{/sbin/sysctl -n vm.swap_anon_use}.to_f * page_size
+    swap_cache_use = %x{/sbin/sysctl -n vm.swap_cache_use}.to_f * page_size
+    swapfree = swaptotal - swap_anon_use - swap_cache_use
+
+    Facter.add("SwapSize") do
+        confine :kernel => :dragonfly
+        setcode do
+            Facter::Memory.scale_number(swaptotal.to_f,"")
+        end
+    end
+
+    Facter.add("SwapFree") do
+        confine :kernel => :dragonfly
+        setcode do
+            Facter::Memory.scale_number(swapfree.to_f,"")
+        end
+    end
+
+    Facter::Memory.vmstat_find_free_memory()
+
+    Facter.add("MemoryTotal") do
+        confine :kernel => :dragonfly
+        memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
+        setcode do
+            Facter::Memory.scale_number(memtotal.to_f,"")
+        end
+    end
 end

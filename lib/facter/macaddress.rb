@@ -34,7 +34,7 @@ Facter.add(:macaddress) do
 end
 
 Facter.add(:macaddress) do
-    confine :operatingsystem => %w{FreeBSD OpenBSD}
+    confine :operatingsystem => %w{FreeBSD OpenBSD DragonFly}
     setcode do
     ether = []
         output = Facter::Util::Resolution.exec("/sbin/ifconfig")
