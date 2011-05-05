@@ -108,6 +108,19 @@ describe "Virtual fact" do
           Facter.fact(:virtual).value.should == "vmware"
       end
 
+      it "should be xenhvm with Xen HVM vendor name from lspci" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns("00:03.0 Unassigned class [ff80]: XenSource, Inc. Xen Platform Device (rev 01)")
+          Facter.fact(:virtual).value.should == "xenhvm"
+      end
+
+      it "should be xenhvm with Xen HVM vendor name from dmidecode" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
+          Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("System Information\nManufacturer: Xen\nProduct Name: HVM domU")
+          Facter.fact(:virtual).value.should == "xenhvm"
+      end
+
       it "should be parallels with Parallels vendor name from dmidecode" do
           Facter.fact(:kernel).stubs(:value).returns("Linux")
           Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
@@ -162,6 +175,12 @@ describe "is_virtual fact" do
        Facter.fact(:kernel).stubs(:value).returns("Linux")
        Facter.fact(:virtual).stubs(:value).returns("xen0")
        Facter.fact(:is_virtual).value.should == "false"
+    end
+
+    it "should be true when running on xenhvm" do
+       Facter.fact(:kernel).stubs(:value).returns("Linux")
+       Facter.fact(:virtual).stubs(:value).returns("xenhvm")
+       Facter.fact(:is_virtual).value.should == "true"
     end
 
     it "should be false when running on physical" do
