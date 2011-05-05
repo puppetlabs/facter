@@ -17,7 +17,7 @@ module Facter::NetMask
                 :regex => %r{\s+ inet \s #{Facter.ipaddress} \s netmask \s (\w{8})}x,
                 :munge => Proc.new { |mask| mask.scan(/../).collect do |byte| byte.to_i(16) end.join('.') }
             }
-        when 'FreeBSD','NetBSD','OpenBSD', 'Darwin', 'GNU/kFreeBSD'
+        when 'FreeBSD','NetBSD','OpenBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
             ops = {
                 :ifconfig => '/sbin/ifconfig -a',
                 :regex => %r{\s+ inet \s #{Facter.ipaddress} \s netmask \s 0x(\w{8})}x,
