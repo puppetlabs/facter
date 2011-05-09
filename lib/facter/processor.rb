@@ -66,14 +66,14 @@ end
 Facter.add("ProcessorCount") do
   confine :kernel => :openbsd
   setcode do
-    Facter::Util::Resolution.exec("sysctl hw.ncpu | cut -d'=' -f2")
+    Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
   end
 end
 
 Facter.add("ProcessorCount") do
   confine :kernel => :Darwin
   setcode do
-    Facter::Util::Resolution.exec("sysctl hw.ncpu | cut -d' ' -f2")
+    Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
   end
 end
 
@@ -138,6 +138,7 @@ if Facter.value(:kernel) == "windows"
       processor_list.length.to_s
     end
   end
+end
 
 Facter.add("Processor") do
   confine :kernel => :dragonfly
