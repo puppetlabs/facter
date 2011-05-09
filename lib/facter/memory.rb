@@ -93,13 +93,11 @@ if Facter.value(:kernel) == "AIX" and Facter.value(:id) == "root"
 end
 
 if Facter.value(:kernel) == "OpenBSD"
-    swap = Facter::Util::Resolution.exec('swapctl -l | sed 1d')
+    swap = Facter::Util::Resolution.exec('swapctl -s')
     swapfree, swaptotal = 0, 0
-    swap.each_line do |dev|
-        if dev =~ /^\S+\s+(\S+)\s+\S+\s+(\S+)\s+.*$/
-            swaptotal += $1.to_i
-            swapfree  += $2.to_i
-        end
+    if swap =~ /^total: (\d+)k bytes allocated = \d+k used, (\d+)k available$/
+        swaptotal = $1.to_i
+        swapfree  = $2.to_i
     end
 
     Facter.add("SwapSize") do
