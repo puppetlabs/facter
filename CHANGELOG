@@ -1,3 +1,10 @@
+1.5.9rc6
+========
+cc67a01 Removed inappropriately uncredited Ohai method from ec2 fact
+69f98da Add facter test for ticket 7039
+f91c120 downcase arp output so that the ec2 arp is matched
+a75f0f9 (#7039) Pre-load all facts when requesting a single fact
+
 1.5.9rc5
 ========
 acf0bb2 Ensures that ARP facts are returned only on EC2 hosts
