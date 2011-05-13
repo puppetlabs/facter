@@ -16,12 +16,11 @@
 #   contents of files in there.
 #   If after all the other tests, it's still seen as physical, then it tries to
 #   parse the output of the "lspci", "dmidecode" and "prtdiag" and parses them
-#   for obvious signs of being under VMWare or Parallels.
+#   for obvious signs of being under VMWare, Parallels or VirtualBox.
 #   Finally it checks for the existence of vmware-vmx, which would hint it's
 #   VMWare.
 #
 # Caveats:
-#   Virtualbox detection isn't implemented. 
 #   Many checks rely purely on existence of files.
 #
 
@@ -39,6 +38,7 @@ Facter.add("virtual") do
             result = "parallels" if output["spdisplays_vendor"] =~ /[Pp]arallels/
             result = "vmware" if output["spdisplays_vendor-id"] =~ /0x15ad/
             result = "vmware" if output["spdisplays_vendor"] =~ /VM[wW]are/
+            result = "virtualbox" if output["spdisplays_vendor-id"] =~ /0x80ee/
         end
         result
     end
