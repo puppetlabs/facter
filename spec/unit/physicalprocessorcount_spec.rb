@@ -14,7 +14,7 @@ describe "Physical processor count facts" do
     it "should return one physical CPU" do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
         File.stubs(:exists?).with('/sys/devices/system/cpu').returns(true)
-        Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu*/topology/physical_package_id").returns("/sys/devices/system/cpu/cpu0/topology/physical_package_id")
+        Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu*/topology/physical_package_id").returns(["/sys/devices/system/cpu/cpu0/topology/physical_package_id"])
         Facter::Util::Resolution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
 
         Facter.fact(:physicalprocessorcount).value.should == 1
