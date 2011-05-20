@@ -41,9 +41,7 @@ class Facter::Util::Fact
 
         # Immediately sort the resolutions, so that we always have
         # a sorted list for looking up values.
-        #  We always want to look them up in the order of number of
-        # confines, so the most restricted resolution always wins.
-        @resolves.sort! { |a, b| b.length <=> a.length }
+        @resolves.sort! { |a, b| b.weight <=> a.weight }
 
         return resolve
     end

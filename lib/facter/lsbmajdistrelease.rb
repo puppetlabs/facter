@@ -1,3 +1,15 @@
+# Fact: lsbmajdistrelease
+#
+# Purpose: Returns the major version of the operation system version as gleaned
+# from the lsbdistrelease fact.
+#
+# Resolution:
+#   Parses the lsbdistrelease fact for numbers followed by a period and
+#   returns those, or just the lsbdistrelease fact if none were found.
+#
+# Caveats:
+#
+
 # lsbmajdistrelease.rb
 #
 require 'facter'

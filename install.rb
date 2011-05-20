@@ -119,7 +119,7 @@ def check_prereqs
         begin
             require pre
         rescue LoadError
-            puts "Could not load %s; cannot install" % pre
+            puts "Could not load #{pre} Ruby library; cannot install"
             exit -1
         end
     }

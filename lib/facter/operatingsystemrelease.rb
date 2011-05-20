@@ -1,3 +1,20 @@
+# Fact: operatingsystemrelease
+#
+# Purpose: Returns the release of the operating system.
+#
+# Resolution:
+#   On RedHat derivatives, returns their '/etc/<variant>-release' file.
+#   On Debian, returns '/etc/debian_version'.
+#   On Ubuntu, parses '/etc/issue' for the release version.
+#   On Suse, derivatives, parses '/etc/SuSE-release' for a selection of version
+#   information.
+#   On Slackware, parses '/etc/slackware-version'.
+#   
+#   On all remaining systems, returns the 'kernelrelease' value.
+#
+# Caveats:
+#
+
 Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{CentOS Fedora oel ovs RedHat MeeGo}
     setcode do

@@ -56,10 +56,10 @@ describe Facter::Util::Fact do
             @fact.add { }
         end
 
-        it "should re-sort the resolutions by length, so the most restricted resolutions are first" do
-            r1 = stub 'r1', :length => 1
-            r2 = stub 'r2', :length => 2
-            r3 = stub 'r3', :length => 0
+        it "should re-sort the resolutions by weight, so the most restricted resolutions are first" do
+            r1 = stub 'r1', :weight => 1
+            r2 = stub 'r2', :weight => 2
+            r3 = stub 'r3', :weight => 0
             Facter::Util::Resolution.expects(:new).times(3).returns(r1).returns(r2).returns(r3)
             @fact.add { }
             @fact.add { }
@@ -83,9 +83,9 @@ describe Facter::Util::Fact do
         end
 
         it "should return the first value returned by a resolution" do
-            r1 = stub 'r1', :length => 2, :value => nil, :suitable? => true
-            r2 = stub 'r2', :length => 1, :value => "yay", :suitable? => true
-            r3 = stub 'r3', :length => 0, :value => "foo", :suitable? => true
+            r1 = stub 'r1', :weight => 2, :value => nil, :suitable? => true
+            r2 = stub 'r2', :weight => 1, :value => "yay", :suitable? => true
+            r3 = stub 'r3', :weight => 0, :value => "foo", :suitable? => true
             Facter::Util::Resolution.expects(:new).times(3).returns(r1).returns(r2).returns(r3)
             @fact.add { }
             @fact.add { }
@@ -95,8 +95,8 @@ describe Facter::Util::Fact do
         end
 
         it "should short-cut returning the value once one is found" do
-            r1 = stub 'r1', :length => 2, :value => "foo", :suitable? => true
-            r2 = stub 'r2', :length => 1, :suitable? => true # would fail if 'value' were asked for
+            r1 = stub 'r1', :weight => 2, :value => "foo", :suitable? => true
+            r2 = stub 'r2', :weight => 1, :suitable? => true # would fail if 'value' were asked for
             Facter::Util::Resolution.expects(:new).times(2).returns(r1).returns(r2)
             @fact.add { }
             @fact.add { }
@@ -105,8 +105,8 @@ describe Facter::Util::Fact do
         end
 
         it "should skip unsuitable resolutions" do
-            r1 = stub 'r1', :length => 2, :suitable? => false # would fail if 'value' were asked for'
-            r2 = stub 'r2', :length => 1, :value => "yay", :suitable? => true
+            r1 = stub 'r1', :weight => 2, :suitable? => false # would fail if 'value' were asked for'
+            r2 = stub 'r2', :weight => 1, :value => "yay", :suitable? => true
             Facter::Util::Resolution.expects(:new).times(2).returns(r1).returns(r2)
             @fact.add { }
             @fact.add { }

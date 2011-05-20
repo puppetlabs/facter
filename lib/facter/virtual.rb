@@ -1,3 +1,30 @@
+# Fact: virtual
+#
+# Purpose: Determine if the system's hardware is real or virtualised.
+#
+# Resolution:
+#   Assumes physical unless proven otherwise.
+#
+#   On Darwin, use the macosx util module to acquire the SPDisplaysDataType,
+#   from that parse it to see if it's VMWare or Parallels pretending to be the
+#   display.
+#
+#   On Linux, BSD, Solaris and HPUX:
+#     Much of the logic here is obscured behind util/virtual.rb, which rather
+#     than document here, which would encourage drift, just refer to it.
+#   The Xen tests in here rely on /sys and /proc, and check for the presence and
+#   contents of files in there.
+#   If after all the other tests, it's still seen as physical, then it tries to
+#   parse the output of the "lspci", "dmidecode" and "prtdiag" and parses them
+#   for obvious signs of being under VMWare or Parallels.
+#   Finally it checks for the existence of vmware-vmx, which would hint it's
+#   VMWare.
+#
+# Caveats:
+#   Virtualbox detection isn't implemented. 
+#   Many checks rely purely on existence of files.
+#
+
 require 'facter/util/virtual'
 
 Facter.add("virtual") do
@@ -25,7 +52,7 @@ Facter.add("virtual") do
 
     setcode do
 
-        if Facter::Util::Virtual.zone? and Facter.value(:operatingsystem) == "Solaris"
+        if Facter.value(:operatingsystem) == "Solaris" and Facter::Util::Virtual.zone?
             result = "zone"
         end
 
@@ -77,6 +104,9 @@ Facter.add("virtual") do
                     # --- look for the vmware video card to determine if it is virtual => vmware.
                     # ---     00:0f.0 VGA compatible controller: VMware Inc [VMware SVGA II] PCI Display Adapter
                     result = "vmware" if p =~ /VM[wW]are/
+                    # --- look for virtualbox video card to determine if it is virtual => virtualbox.
+                    # ---     00:02.0 VGA compatible controller: InnoTek Systemberatung GmbH VirtualBox Graphics Adapter
+                    result = "virtualbox" if p =~ /VirtualBox/
                     # --- look for pci vendor id used by Parallels video card
                     # ---   01:00.0 VGA compatible controller: Unknown device 1ab8:4005
                     result = "parallels" if p =~ /1ab8:|[Pp]arallels/
@@ -87,13 +117,18 @@ Facter.add("virtual") do
                     output.each_line do |pd|
                         result = "parallels" if pd =~ /Parallels/
                         result = "vmware" if pd =~ /VMware/
+                        result = "virtualbox" if pd =~ /VirtualBox/
                     end
-                else
-                    output = Facter::Util::Resolution.exec('prtdiag')
+                elsif Facter.value(:kernel) == 'SunOS'
+                    res = Facter::Util::Resolution.new('prtdiag')
+                    res.timeout = 6
+                    res.setcode('prtdiag')
+                    output = res.value
                     if not output.nil?
                         output.each_line do |pd|
                             result = "parallels" if pd =~ /Parallels/
                             result = "vmware" if pd =~ /VMware/
+							result = "virtualbox" if pd =~ /VirtualBox/
                         end
                     end
                 end
@@ -107,6 +142,17 @@ Facter.add("virtual") do
         result
     end
 end
+
+# Fact: is_virtual
+#
+# Purpose: returning true or false for if a machine is virtualised or not.
+#
+# Resolution: The Xen domain 0 machine is virtualised to a degree, but is generally
+# not viewed as being a virtual machine. This checks that the machine is not
+# physical nor xen0, if that is the case, it is virtual.
+#
+# Caveats:
+#
 
 Facter.add("is_virtual") do
     confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin GNU/kFreeBSD}
