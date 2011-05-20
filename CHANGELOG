@@ -1,43 +1,34 @@
-1.5.9rc6
-========
+1.5.9
+=====
+4de8b20 Updated CHANGELOG for 1.5.9rc6
 cc67a01 Removed inappropriately uncredited Ohai method from ec2 fact
 69f98da Add facter test for ticket 7039
 f91c120 downcase arp output so that the ec2 arp is matched
 a75f0f9 (#7039) Pre-load all facts when requesting a single fact
-
-1.5.9rc5
-========
+6b97242 Update CHANGELOG for 1.5.9rc5
 acf0bb2 Ensures that ARP facts are returned only on EC2 hosts
-
-1.5.9rc4
-========
+76f544b Updated CHANGELOG for 1.5.9rc4
 09b9f9b (#6795) Update tests to reflect changed exec
-
-1.5.9rc3
-========
+3db1cd0 Updated CHANGELOG for 1.5.9rc3
 def3322 (#6795) xendomains: Ignore error output from xm list
 f39d487 (#6763) Use Facter::Util::Resolution.exec for arp
 3eb9410 arp: Cleanup indendation
-
-1.5.9rc2
-========
+50b9b3f Updated CHANGELOG for 1.5.9rc2
 2fb8316 Clean up indentation, and alignment in macaddress_spec.rb
 3f0a340 (#6716) fix facter issues on OSX with ipv6 in macaddress.rb.
+43f82ef Update CHANGELOG for 1.5.9rc1
 d62e079 Fixed #2346 - A much cleverer EC2 fact
 0411d2e Fixed #2346 - Part 1: Added arp fact for Linux
 5b6f4fa Discussion on ec2 facts - #2346
 e917e1a Fixed #3087 - Identify VMWare
 d0f0f63 (#6327) Memory facts should be available on Mac Darwin
-2e48e18 Fixed #6695 - Updated id fact for Darwin et al
-
-1.5.9rc1
-========
 458a22d Incremented release to 1.5.9
 4eb64fe Fixed #6719 Typo
 ffd80ac (#5011) Adds swap statistics for OSX
 1207765 (#6719) Restricts virtualization types for zones
 8d71db3 Fixed #6616 - Stubbing in VMware tests on Linux
 aa959df Remove Solaris from the list of confined systems. It won't get the original lsb facts, and it's nonsensical too.
+2e48e18 Fixed #6695 - Updated id fact for Darwin et al
 d718af4 Fix #6679 - Added Scientific Linux to operatingsystem fact
 dea6f78 Further fix to #5485 - SELinux facts
 6d6d8da (#2721) Merged patch from Brane GraAnar
