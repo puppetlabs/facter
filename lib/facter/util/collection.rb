@@ -66,9 +66,13 @@ class Facter::Util::Collection
     def fact(name)
         name = canonize(name)
 
+        # Try to load the fact if necessary
         loader.load(name) unless @facts[name]
 
-        return @facts[name]
+        # Try HARDER
+        loader.load_all unless @facts[name]
+
+        @facts[name]
     end
 
     # Flush all cached values.

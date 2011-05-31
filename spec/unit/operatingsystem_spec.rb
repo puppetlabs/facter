@@ -34,6 +34,7 @@ describe "Operating System fact" do
 
     it "should identify Oracle VM as OVS" do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
+        Facter.stubs(:value).with(:lsbdistid).returns(nil)
         FileTest.stubs(:exists?).returns false
 
         FileTest.expects(:exists?).with("/etc/ovs-release").returns true
@@ -44,6 +45,7 @@ describe "Operating System fact" do
    
     it "should identify VMWare ESX" do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
+        Facter.stubs(:value).with(:lsbdistid).returns(nil)
         FileTest.stubs(:exists?).returns false
 
         FileTest.expects(:exists?).with("/etc/vmware-release").returns true
