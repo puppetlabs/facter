@@ -51,7 +51,7 @@ end
 Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{Ubuntu}
     setcode do
-        release = Facter::Util::Resolution.exec('cat /etc/issue')
+        release = Facter::Util::Resolution.exec('cat /etc/lsb-release')
         if release =~ /Ubuntu (\d+.\d+)/
             $1
         end

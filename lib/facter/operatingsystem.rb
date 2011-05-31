@@ -24,7 +24,11 @@ Facter.add(:operatingsystem) do
         if Facter.value(:lsbdistid) == "Ubuntu"
            "Ubuntu"
         elsif FileTest.exists?("/etc/debian_version")
+          if FileTest.exists?("/etc/lsb-release")
+            File.read("/etc/lsb-release") =~ /ubuntu/i ? "Ubuntu" : "Debian"
+          else
             "Debian"
+          end
         elsif FileTest.exists?("/etc/gentoo-release")
             "Gentoo"
         elsif FileTest.exists?("/etc/fedora-release")
