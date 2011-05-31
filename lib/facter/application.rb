@@ -10,10 +10,6 @@ module Facter
       names = argv
 
       # Create the facts hash that is printed to standard out.
-      # Pre-load all of the facts, since we can have multiple facts
-      # per file, and since we can't know ahead of time which file a
-      # fact will be in, we'll need to load every file.
-      facts = Facter.to_hash
       unless names.empty?
         facts = {}
         names.each do |name|
@@ -25,6 +21,9 @@ module Facter
           end
         end
       end
+
+      # Print everything if they didn't ask for specific facts.
+      facts ||= Facter.to_hash
 
       # Print the facts as YAML and exit
       if options[:yaml]
