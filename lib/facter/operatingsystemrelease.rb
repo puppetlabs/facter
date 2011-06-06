@@ -123,5 +123,11 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
+  setcode do
+    releasefile = Facter::Util::Resolution.exec('cat /etc/alpine-release')
+  end
+end
+
+Facter.add(:operatingsystemrelease) do
     setcode do Facter[:kernelrelease].value end
 end
