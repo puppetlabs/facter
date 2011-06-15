@@ -73,6 +73,8 @@ Facter.add(:operatingsystem) do
             "Slamd64"
         elsif FileTest.exists?("/etc/slackware-version")
             "Slackware"
+        elsif Facter.value(:lsbdistdescription) =~ /Amazon Linux/
+            "Amazon"
         end
     end
 end
