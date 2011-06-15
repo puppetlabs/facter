@@ -9,6 +9,7 @@
 #   On Suse, derivatives, parses '/etc/SuSE-release' for a selection of version
 #   information.
 #   On Slackware, parses '/etc/slackware-version'.
+#   On Amazon Linux, returns the 'lsbdistrelease' value.
 #   
 #   On all remaining systems, returns the 'kernelrelease' value.
 #
@@ -129,6 +130,11 @@ Facter.add(:operatingsystemrelease) do
   setcode do
     File.read('/etc/alpine-release')
   end
+end
+
+Facter.add(:operatingsystemrelease) do
+    confine :operatingsystem => %W{Amazon}
+    setcode do Facter[:lsbdistrelease].value end
 end
 
 Facter.add(:operatingsystemrelease) do
