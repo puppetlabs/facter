@@ -158,7 +158,7 @@ Facter.add("is_virtual") do
     confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin GNU/kFreeBSD}
 
     setcode do
-        if Facter.value(:virtual) != "physical" && Facter.value(:virtual) != "xen0"
+        if Facter.value(:virtual) != "physical" && Facter.value(:virtual) != "xen0" && Facter.value(:virtual) != 'openvzhn'
             "true"
         else
             "false"
