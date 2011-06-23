@@ -5,7 +5,7 @@
 
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
-Version: 1.5.8
+Version: 1.6.0
 Release: 1%{?dist}
 License: Apache 2.0
 Group: System Environment/Base
@@ -52,6 +52,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Jun 23 2011 Michael Stahnke <stahnma@puppetlabs.com> - 1.6.0-1
+- Update to 1.6.0
+
 * Sat Aug 28 2010 Todd Zullinger <tmz@pobox.com> - 1.5.8-1
 - Update to 1.5.8
 
