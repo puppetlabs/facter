@@ -19,6 +19,9 @@ module Facter::Util::Macosx
 
     def self.intern_xml(xml)
         return nil unless xml
+        if RUBY_VERSION.split('.')[1] > 8
+          xml.force_encoding("utf-8")
+        end
         Plist::parse_xml(xml)
     end
 
