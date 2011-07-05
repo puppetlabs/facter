@@ -1,3 +1,42 @@
+1.6.0
+===
+9404a7a (#7670) Add an acceptance test
+0c23845 maint: Fix spelling of acceptance directory
+926e912 (#7670) Stop preloading all facts in the application
+2255abe (#7670) Never fail to find a fact that is present
+8002c24 (#7507) Fix 1.9.2 test failure
+0635822 Removed inappropriately uncredited Ohai method from ec2 fact
+6b1cd16 (#6614) Update ipaddress6 fact to work with Ruby 1.9
+21fe217 (#6612) Changed uptime spec to be endian agnostic
+19f96b5 (#6728) Facter improperly detects openvzve on CloudLinux systems
+5b10173 (#5135) Fix faulty logic in physicalprocessorcount
+53cd946 Ensures that ARP facts are returned only on EC2 hosts
+bfa038d Fixed #6974 - Moved to Apache 2.0 license
+d56bca8 refactor the mechanism for allowing for resolution ordering to be influenced
+9f4c5c6 (#6740) facter doesn't always respect facts in environment variables
+7441b32 Partial fix for #6971 - Fix for virtual tests
+7f3e89d (#2714) Fixed faulty test
+bfc16f6 (#2714) Added timeout to prtdiag resulution
+c2ff833 (#5135) Refactored physicalprocessorcount
+0c4a98b Re-factor. Do not use pure-Ruby file reading against "/proc/cpuinfo" and possibly any entry under "/sys" from the sysfs file system.
+cb52b06 Fix. Using sysfs file system entries to count the number of physical CPUs. Fall-back to "/proc/cpuinfo" included for backward-compatibility with legacy systems.
+3efa9d7 (#3856) Add virtualbox detection via lspci (graphics card), dmidecode, and prtdiag for Solaris and corresponding tests. Darwin case is not handled yet.
+7c80172 (#6883) Update Facter install.rb to be slightly more informative.
+d31e3f9 (#5394) Document each Facter fact.
+af4947c (#6862) Add a default subject for the mail_patches rake task
+d6967a0 (#6613) Switch solaris macaddress fact to netstat
+e056218 (#6817) Fix for Ruby 1.9 by calling .each_line on a string
+861c2b2 maint: cleanup whitespace
+f6c9927 (#6719) Corrected faulty logic in bugfix
+e42e57c (#3856) Add virtualbox detection via lspci (graphics card), dmidecode, and prtdiag for Solaris and corresponding tests. Darwin case is not handled yet.
+0b5b546 (#6883) Update Facter install.rb to be slightly more informative.
+7c08270 (#5394) Document each Facter fact.
+06eb3f5 (#6883) Update Facter install.rb to be slightly more informative.
+1063753 (#6862) Add a default subject for the mail_patches rake task
+56b5f10 (#6613) Switch solaris macaddress fact to netstat
+fd4f31c (#6817) Fix for Ruby 1.9 by calling .each_line on a string
+72996ff maint: cleanup whitespace
+
 1.5.9
 =====
 4de8b20 Updated CHANGELOG for 1.5.9rc6
