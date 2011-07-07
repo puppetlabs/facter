@@ -58,6 +58,10 @@ rescue
     $haveman = false
 end
 
+$LOAD_PATH << File.join(File.dirname(__FILE__), 'lib')
+require 'facter'
+@operatingsystem = Facter[:operatingsystem].value
+
 PREREQS = %w{openssl xmlrpc/client xmlrpc/server cgi}
 
 InstallOptions = OpenStruct.new
@@ -126,7 +130,7 @@ def check_prereqs
 end
 
 def is_windows?
-  RUBY_PLATFORM.to_s.match(/mswin|win32|dos|cygwin|mingw/)
+  @operatingsystem == 'windows'
 end
 
 ##
@@ -387,7 +391,7 @@ def install_binfile(from, op_file, target)
         end
     end
 
-    if Config::CONFIG["target_os"] =~ /win/io and Config::CONFIG["target_os"] !~ /darwin/io
+    if is_windows?
         installed_wrapper = false
 
         if File.exists?("#{from}.bat")
