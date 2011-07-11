@@ -214,6 +214,7 @@ describe "is_virtual fact" do
 
     it "should be true when running on S390" do
         Facter.fact(:architecture).stubs(:value).returns("s390x")
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
         Facter.fact(:virtual).stubs(:value).returns("zlinux")
         Facter.fact(:is_virtual).value.should == "true"
     end

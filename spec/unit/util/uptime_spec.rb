@@ -6,7 +6,7 @@ require 'facter/util/uptime'
 
 describe Facter::Util::Uptime do
 
-  describe ".get_uptime_seconds_unix" do
+  describe ".get_uptime_seconds_unix", :unless => Facter.value(:operatingsystem) == 'windows' do
     describe "when /proc/uptime is available" do
       before do
         uptime_file = File.join(SPECDIR, "fixtures", "uptime", "ubuntu_proc_uptime")
@@ -73,6 +73,12 @@ describe Facter::Util::Uptime do
           end
         end
       end
+    end
+  end
+
+  describe ".get_uptime_seconds_win", :if => Facter.value(:operatingsystem) == 'windows' do
+    it "should return a postive value" do
+      Facter::Util::Uptime.get_uptime_seconds_win.should > 0
     end
   end
 end
