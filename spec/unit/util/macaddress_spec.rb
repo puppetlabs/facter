@@ -4,7 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 require 'facter/util/macaddress'
 
-describe "Darwin" do
+describe "Darwin", :unless => Facter.value(:operatingsystem) == 'windows' do
   test_cases = [
     # version,           iface, real macaddress,     fallback macaddress
     ["9.8.0",            'en0', "00:17:f2:06:e4:2e", "00:17:f2:06:e4:2e"],

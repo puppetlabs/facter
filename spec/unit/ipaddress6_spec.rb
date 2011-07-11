@@ -10,6 +10,10 @@ def ifconfig_fixture(filename)
 end
 
 describe "IPv6 address fact" do
+  before do
+    Facter::Util::Config.stubs(:is_windows?).returns(false)
+  end
+
   it "should return ipaddress6 information for Darwin" do
     Facter::Util::Resolution.stubs(:exec).with('uname -s').returns('Darwin')
     Facter::Util::Resolution.stubs(:exec).with('/sbin/ifconfig -a').
@@ -33,4 +37,6 @@ describe "IPv6 address fact" do
 
     Facter.value(:ipaddress6).should == "2610:10:20:209:203:baff:fe27:a7c"
   end
+
+  it "should return ipaddress6 information for Windows"
 end

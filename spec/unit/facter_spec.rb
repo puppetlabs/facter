@@ -185,6 +185,27 @@ describe Facter do
         end
     end
 
+    describe "when warning once" do
+        it "should only warn once" do
+          Kernel.stubs(:warnonce)
+          Kernel.expects(:warn).with('foo').once
+          Facter.warnonce('foo')
+          Facter.warnonce('foo')
+        end
+
+        it "should not warnonce if nil is passed" do
+          Kernel.stubs(:warn)
+          Kernel.expects(:warnonce).never
+          Facter.warnonce(nil)
+        end
+
+        it "should not warnonce if an empty string is passed" do
+          Kernel.stubs(:warn)
+          Kernel.expects(:warnonce).never
+          Facter.warnonce('')
+        end
+    end
+
     describe "when setting debugging mode" do
         it "should have debugging enabled using 1" do
             Facter.debugging(1)

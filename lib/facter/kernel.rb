@@ -11,9 +11,9 @@
 
 Facter.add(:kernel) do
     setcode do
-        require 'rbconfig'
-        case Config::CONFIG['host_os']
-        when /mswin|win32|dos|cygwin|mingw/i
+        require 'facter/util/config'
+
+        if Facter::Util::Config.is_windows?
             'windows'
         else
             Facter::Util::Resolution.exec("uname -s")

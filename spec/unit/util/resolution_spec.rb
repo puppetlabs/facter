@@ -34,6 +34,7 @@ describe Facter::Util::Resolution do
     end
 
     it "should default to nil for interpreter" do
+        Facter.expects(:warnonce).with("The 'Facter::Util::Resolution.interpreter' method is deprecated and will be removed in a future version.")
         Facter::Util::Resolution.new("yay").interpreter.should be_nil
     end
 
@@ -45,13 +46,25 @@ describe Facter::Util::Resolution do
 
     describe "when setting the code" do
         before do
+            Facter.stubs(:warnonce)
             @resolve = Facter::Util::Resolution.new("yay")
         end
 
-        it "should default to the detected interpreter if a string is provided" do
-            Facter::Util::Resolution::INTERPRETER = "/bin/bar"
-            @resolve.setcode "foo"
-            @resolve.interpreter.should == "/bin/bar"
+        it "should deprecate the interpreter argument to 'setcode'" do
+            Facter.expects(:warnonce).with("The interpreter parameter to 'setcode' is deprecated and will be removed in a future version.")
+            @resolve.setcode "foo", "bar"
+            @resolve.interpreter.should == "bar"
+        end
+
+        it "should deprecate the interpreter= method" do
+            Facter.expects(:warnonce).with("The 'Facter::Util::Resolution.interpreter=' method is deprecated and will be removed in a future version.")
+            @resolve.interpreter = "baz"
+            @resolve.interpreter.should == "baz"
+        end
+
+        it "should deprecate the interpreter method" do
+            Facter.expects(:warnonce).with("The 'Facter::Util::Resolution.interpreter' method is deprecated and will be removed in a future version.")
+            @resolve.interpreter
         end
 
         it "should set the code to any provided string" do
@@ -95,12 +108,11 @@ describe Facter::Util::Resolution do
             describe "on windows" do
                 before do
                     Facter::Util::Resolution::WINDOWS = true
-                    Facter::Util::Resolution::INTERPRETER = "cmd.exe"
                 end
-                
-                it "should return the result of executing the code with the interpreter" do
+
+                it "should return the result of executing the code" do
                     @resolve.setcode "/bin/foo"
-                    Facter::Util::Resolution.expects(:exec).once.with("/bin/foo", "cmd.exe").returns "yup"
+                    Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns "yup"
 
                     @resolve.value.should == "yup"
                 end
@@ -115,12 +127,11 @@ describe Facter::Util::Resolution do
             describe "on non-windows systems" do
                 before do
                     Facter::Util::Resolution::WINDOWS = false
-                    Facter::Util::Resolution::INTERPRETER = "/bin/sh"
                 end
-                
-                it "should return the result of executing the code with the interpreter" do
+
+                it "should return the result of executing the code" do
                     @resolve.setcode "/bin/foo"
-                    Facter::Util::Resolution.expects(:exec).once.with("/bin/foo", "/bin/sh").returns "yup"
+                    Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns "yup"
 
                     @resolve.value.should == "yup"
                 end
@@ -276,8 +287,9 @@ describe Facter::Util::Resolution do
 
     # It's not possible, AFAICT, to mock %x{}, so I can't really test this bit.
     describe "when executing code" do
-        it "should fail if any interpreter other than /bin/sh is requested" do
-            lambda { Facter::Util::Resolution.exec("/something", "/bin/perl") }.should raise_error(ArgumentError)
+        it "should deprecate the interpreter parameter" do
+            Facter.expects(:warnonce).with("The interpreter parameter to 'exec' is deprecated and will be removed in a future version.")
+            Facter::Util::Resolution.exec("/something", "/bin/perl")
         end
 
         it "should execute the binary" do
