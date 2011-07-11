@@ -4,16 +4,14 @@
 # confinements specified must all be true for the resolution to be
 # suitable.
 require 'facter/util/confine'
+require 'facter/util/config'
 
 require 'timeout'
-require 'rbconfig'
 
 class Facter::Util::Resolution
     attr_accessor :interpreter, :code, :name, :timeout
 
-    WINDOWS = Config::CONFIG['host_os'] =~ /mswin|win32|dos|mingw|cygwin/i
-
-    INTERPRETER = WINDOWS ? 'cmd.exe' : '/bin/sh'
+    INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
 
     def self.have_which
         if ! defined?(@have_which) or @have_which.nil?
@@ -45,7 +43,7 @@ class Facter::Util::Resolution
         # Windows' %x{} throws Errno::ENOENT when the command is not found, so we 
         # can skip the check there. This is good, since builtins cannot be found 
         # elsewhere.
-        if have_which and !WINDOWS
+        if have_which and !Facter::Util::Config.is_windows?
             path = nil
             binary = code.split.first
             if code =~ /^\//
