@@ -32,8 +32,8 @@ class Facter::Util::Resolution
     # Returns nil if the program can't be found, or if there is a problem
     # executing the code.
     #
-    def self.exec(code, interpreter = INTERPRETER)
-        raise ArgumentError, "invalid interpreter" unless interpreter == INTERPRETER
+    def self.exec(code, interpreter = nil)
+        Facter.warnonce "The interpreter parameter to 'exec' is deprecated and will be removed in a future version." if interpreter
 
         # Try to guess whether the specified code can be executed by looking at the
         # first word. If it cannot be found on the PATH defer on resolving the fact
@@ -116,6 +116,7 @@ class Facter::Util::Resolution
 
     # Set our code for returning a value.
     def setcode(string = nil, interp = nil, &block)
+        Facter.warnonce "The interpreter parameter to 'setcode' is deprecated and will be removed in a future version." if interp
         if string
             @code = string
             @interpreter = interp || INTERPRETER
@@ -125,6 +126,16 @@ class Facter::Util::Resolution
             end
             @code = block
         end
+    end
+
+    def interpreter
+      Facter.warnonce "The 'Facter::Util::Resolution.interpreter' method is deprecated and will be removed in a future version."
+      @interpreter
+    end
+
+    def interpreter=(interp)
+      Facter.warnonce "The 'Facter::Util::Resolution.interpreter=' method is deprecated and will be removed in a future version."
+      @interpreter = interp
     end
 
     # Is this resolution mechanism suitable on the system in question?
@@ -143,7 +154,7 @@ class Facter::Util::Resolution
     # How we get a value for our resolution mechanism.
     def value
         result = nil
-        return result if @code == nil and @interpreter == nil
+        return result if @code == nil
 
         starttime = Time.now.to_f
 
@@ -152,7 +163,7 @@ class Facter::Util::Resolution
                 if @code.is_a?(Proc)
                     result = @code.call()
                 else
-                    result = Facter::Util::Resolution.exec(@code,@interpreter)
+                    result = Facter::Util::Resolution.exec(@code)
                 end
             end
         rescue Timeout::Error => detail

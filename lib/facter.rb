@@ -46,6 +46,7 @@ module Facter
     RESET = "[0m"
     @@debug = 0
     @@timing = 0
+    @@messages = {}
 
     # module methods
 
@@ -205,6 +206,14 @@ module Facter
         if Facter.debugging? and msg and not msg.empty?
             msg = [msg] unless msg.respond_to? :each
             msg.each { |line| Kernel.warn line }
+        end
+    end
+
+    # Warn once.
+    def self.warnonce(msg)
+        if msg and not msg.empty? and @@messages[msg].nil?
+            @@messages[msg] = true
+            Kernel.warn(msg)
         end
     end
 
