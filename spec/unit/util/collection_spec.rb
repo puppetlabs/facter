@@ -38,10 +38,8 @@ describe Facter::Util::Collection do
         end
 
         it "should create a new fact if no fact with the same name already exists" do
-            fact = mock 'fact'
-            Facter::Util::Fact.expects(:new).with { |name, *args| name == :myname }.returns fact
-
             @coll.add(:myname)
+            @coll.fact(:myname).name.should == :myname
         end
 
         it "should accept options" do
@@ -51,10 +49,9 @@ describe Facter::Util::Collection do
         it "should set any appropriate options on the fact instances" do
             # Use a real fact instance, because we're using respond_to?
             fact = Facter::Util::Fact.new(:myname)
-            fact.expects(:ldapname=).with("testing")
-            Facter::Util::Fact.expects(:new).with(:myname).returns fact
 
             @coll.add(:myname, :ldapname => "testing")
+            @coll.fact(:myname).ldapname.should == "testing"
         end
 
         it "should set appropriate options on the resolution instance" do
@@ -84,15 +81,13 @@ describe Facter::Util::Collection do
             lambda { @coll.add(:myname, :foo => :bar) }.should raise_error(ArgumentError)
         end
 
-        describe "and a block is provided" do
-            it "should use the block to add a resolution to the fact" do
-                fact = mock 'fact'
-                Facter::Util::Fact.expects(:new).returns fact
+        it "should use the block to add a resolution to the fact if a block is provided" do
+            fact = mock 'fact'
+            Facter::Util::Fact.expects(:new).returns fact
 
-                fact.expects(:add)
+            fact.expects(:add)
 
-                @coll.add(:myname) {}
-            end
+            @coll.add(:myname) {}
         end
     end
 

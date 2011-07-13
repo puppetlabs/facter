@@ -33,13 +33,16 @@ class Facter::Util::Collection
 
         if block
             resolve = fact.add(&block)
-            # Set any resolve-appropriate options
-            options.each do |opt, value|
-                method = opt.to_s + "="
-                if resolve.respond_to?(method)
-                    resolve.send(method, value)
-                    options.delete(opt)
-                end
+        else
+            resolve = fact.add
+        end
+
+        # Set any resolve-appropriate options
+        options.each do |opt, value|
+            method = opt.to_s + "="
+            if resolve.respond_to?(method)
+                resolve.send(method, value)
+                options.delete(opt)
             end
         end
 
