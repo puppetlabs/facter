@@ -13,6 +13,12 @@ describe Facter::Util::Resolution do
     Facter::Util::Resolution.new("yay").name.should == "yay"
   end
 
+  it "should be able to set the value" do
+    resolve = Facter::Util::Resolution.new("yay")
+    resolve.value = "foo"
+    resolve.value.should == "foo"
+  end
+
   it "should have a method for setting the weight" do
     Facter::Util::Resolution.new("yay").should respond_to(:has_weight)
   end
@@ -97,6 +103,11 @@ describe Facter::Util::Resolution do
       @resolve = Facter::Util::Resolution.new("yay")
     end
 
+    it "should return any value that has been provided" do
+      @resolve.value = "foo"
+      @resolve.value.should == "foo"
+    end
+
     describe "and setcode has not been called" do
       it "should return nil" do
         Facter::Util::Resolution.expects(:exec).with(nil, nil).never
@@ -108,7 +119,7 @@ describe Facter::Util::Resolution do
       describe "on windows" do
         before do
           Facter::Util::Resolution::WINDOWS = true
-        end
+       end
 
         it "should return the result of executing the code" do
           @resolve.setcode "/bin/foo"
