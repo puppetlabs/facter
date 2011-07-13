@@ -10,6 +10,7 @@ require 'timeout'
 
 class Facter::Util::Resolution
     attr_accessor :interpreter, :code, :name, :timeout
+    attr_writer :value, :weight
 
     INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
 
@@ -151,6 +152,7 @@ class Facter::Util::Resolution
 
     # How we get a value for our resolution mechanism.
     def value
+        return @value if @value
         result = nil
         return result if @code == nil
 
