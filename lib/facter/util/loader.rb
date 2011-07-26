@@ -2,6 +2,11 @@ require 'facter'
 
 # Load facts on demand.
 class Facter::Util::Loader
+
+    def initialize
+      @loaded = []
+    end
+
     # Load all resolutions for a single fact.
     def load(fact)
         # Now load from the search path
@@ -68,10 +73,16 @@ class Facter::Util::Loader
     end
 
     def load_file(file)
+        return if @loaded.include? file
         # We have to specify Kernel.load, because we have a load method.
         begin
+            # Store the file path so we don't try to reload it
+            @loaded << file
             Kernel.load(file)
         rescue ScriptError => detail
+            # Don't store the path if the file can't be loaded
+            # in case it's loadable later on.
+            @loaded.delete(file)
             warn "Error loading fact #{file} #{detail}"
         end
     end
