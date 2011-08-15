@@ -34,9 +34,9 @@ Facter.add(:domain) do
             search = nil
             File.open("/etc/resolv.conf") { |file|
                 file.each { |line|
-                    if line =~ /domain\s+(\S+)/
+                    if line =~ /^\s*domain\s+(\S+)/
                         domain = $1
-                    elsif line =~ /search\s+(\S+)/
+                    elsif line =~ /^\s*search\s+(\S+)/
                         search = $1
                     end
                 }
