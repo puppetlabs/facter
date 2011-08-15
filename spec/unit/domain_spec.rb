@@ -71,4 +71,21 @@ describe "Domain name facts" do
       end
     end
   end
+
+  describe "on Windows" do
+    it "should use the DNSDomain for the first nic where ip is enabled" do
+      Facter.fact(:kernel).stubs(:value).returns("windows")
+
+      nic = stubs 'nic'
+      nic.stubs(:DNSDomain).returns("foo.com")
+
+      nic2 = stubs 'nic'
+      nic2.stubs(:DNSDomain).returns("bar.com")
+
+      require 'facter/util/wmi'
+      Facter::Util::WMI.stubs(:execquery).with("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").returns([nic, nic2])
+
+      Facter.fact(:domain).value.should == 'foo.com'
+    end
+  end
 end

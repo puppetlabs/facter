@@ -82,9 +82,9 @@ module Facter::Manufacturer
     end
 
     def self.win32_find_system_info(name)
-        require 'win32ole'
+        require 'facter/util/wmi'
         value = ""
-        wmi = WIN32OLE.connect("winmgmts://")
+        wmi = Facter::Util::WMI.connect()
         name.each do |facterkey, win32key|
             query = wmi.ExecQuery("select * from Win32_#{win32key.last}")
             Facter.add(facterkey) do
@@ -96,5 +96,4 @@ module Facter::Manufacturer
             end
         end
     end
-
 end

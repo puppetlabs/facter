@@ -23,11 +23,9 @@ end
 Facter.add(:kernelrelease) do
     confine :kernel => %{windows}
     setcode do
-        require 'win32ole'
+        require 'facter/util/wmi'
         version = ""
-        connection_string = "winmgmts://./root/cimv2"
-        wmi = WIN32OLE.connect(connection_string)
-        wmi.ExecQuery("SELECT Version from Win32_OperatingSystem").each do |ole|
+        Facter::Util::WMI.execquery("SELECT Version from Win32_OperatingSystem").each do |ole|
             version = "#{ole.Version}"
             break
         end
