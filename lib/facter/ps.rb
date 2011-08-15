@@ -18,3 +18,8 @@ Facter.add(:ps) do
     confine :operatingsystem => %w{FreeBSD NetBSD OpenBSD Darwin}
     setcode do 'ps auxwww' end
 end
+
+Facter.add(:ps) do
+  confine :operatingsystem => :windows
+  setcode do 'tasklist.exe' end
+end
