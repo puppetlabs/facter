@@ -1,0 +1,18 @@
+
+Address fe80::2087:77a:53ef:7527%12 Parameters
+---------------------------------------------------------
+Interface Luid     : Teredo Tunneling Pseudo-Interface
+Scope Id           : 0.12
+Valid Lifetime     : infinite
+Preferred Lifetime : infinite
+DAD State          : Preferred
+Address Type       : Other
+
+Address 2001:0:4137:9e76:2087:77a:53ef:7527 Parameters
+---------------------------------------------------------
+Interface Luid     : Teredo Tunneling Pseudo-Interface
+Scope Id           : 0.0
+Valid Lifetime     : infinite
+Preferred Lifetime : infinite
+DAD State          : Preferred
+Address Type       : Public
