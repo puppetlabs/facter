@@ -50,11 +50,9 @@ end
 Facter.add(:domain) do
     confine :kernel => :windows
     setcode do
-        require 'win32ole'
+        require 'facter/util/wmi'
         domain = ""
-        wmi = WIN32OLE.connect("winmgmts://")
-        query = "select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True"
-        wmi.ExecQuery(query).each { |nic|
+        Facter::Util::WMI.execquery("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").each { |nic|
             domain = nic.DNSDomain
             break
         }
