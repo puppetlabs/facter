@@ -23,13 +23,13 @@ Facter.add(:domain) do
         # Get the domain from various sources; the order of these
         # steps is important
 
-        Facter.value(:hostname)
-        next $domain if defined? $domain and ! $domain.nil?
-
-        domain = Facter::Util::Resolution.exec('dnsdomainname')
-        next domain if domain =~ /.+\..+/
-
-        if FileTest.exists?("/etc/resolv.conf")
+        if name = Facter::Util::Resolution.exec('hostname')
+          if name =~ /.*?\.(.+$)/
+            $1
+          end
+        elsif domain = Facter::Util::Resolution.exec('dnsdomainname')
+          domain if domain =~ /.+\..+/
+        elsif FileTest.exists?("/etc/resolv.conf")
             domain = nil
             search = nil
             File.open("/etc/resolv.conf") { |file|
@@ -44,7 +44,6 @@ Facter.add(:domain) do
             next domain if domain
             next search if search
         end
-        nil
     end
 end
 
