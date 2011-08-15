@@ -5,8 +5,13 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require 'facter/util/ip'
 
 describe Facter::Util::IP do
-    [:freebsd, :linux, :netbsd, :openbsd, :sunos, :darwin, :"hp-ux", :"gnu/kfreebsd"].each do |platform|
+    before :each do
+        Facter::Util::Config.stubs(:is_windows?).returns(false)
+    end
+
+    [:freebsd, :linux, :netbsd, :openbsd, :sunos, :darwin, :"hp-ux", :"gnu/kfreebsd", :windows].each do |platform|
         it "should be supported on #{platform}" do
+            Facter::Util::Config.stubs(:is_windows?).returns(true) if platform == :windows
             Facter::Util::IP.supported_platforms.should be_include(platform)
         end
     end
@@ -53,6 +58,14 @@ describe Facter::Util::IP do
         kfreebsd_ifconfig = File.new(sample_output_file).read()
         Facter::Util::IP.stubs(:get_all_interface_output).returns(kfreebsd_ifconfig)
         Facter::Util::IP.get_interfaces().should == ["em0", "em1", "bge0", "bge1", "lo0", "vlan0"]
+    end
+
+    it "should return a list of three interfaces on Windows with one interface disconnected" do
+        Facter.fact(:kernel).stubs(:value).returns("windows")
+        sample_output_file = File.dirname(__FILE__) + '/../data/windows_netsh_all_interfaces'
+        windows_netsh = File.new(sample_output_file).read()
+        Facter::Util::IP.stubs(:get_all_interface_output).returns(windows_netsh)
+        Facter::Util::IP.get_interfaces().should == ["Loopback Pseudo-Interface 1", "Local Area Connection", "Teredo Tunneling Pseudo-Interface"]
     end
 
     it "should return a value for a specific interface" do
@@ -228,10 +241,59 @@ describe Facter::Util::IP do
         end
     end
 
+    [:windows].each do |platform|
+        it "should not require conversion from hex on #{platform}" do
+            Facter::Util::IP.convert_from_hex?(platform).should be_false
+        end
+    end
+
     it "should return an arp address on Linux" do
         Facter.stubs(:value).with(:kernel).returns("Linux")
 
         Facter::Util::IP.expects(:get_arp_value).with("eth0").returns("00:00:0c:9f:f0:04")
         Facter::Util::IP.get_arp_value("eth0").should == "00:00:0c:9f:f0:04"
+    end
+
+    describe "on Windows" do
+        before :each do
+            Facter.stubs(:value).with(:kernel).returns("windows")
+        end
+
+        it "should return ipaddress information" do
+            sample_output_file = File.dirname(__FILE__) + "/../data/windows_netsh_single_interface"
+            windows_netsh = File.new(sample_output_file).read()
+
+            Facter::Util::IP.expects(:get_output_for_interface_and_label).with("Local Area Connection", "ipaddress").returns(windows_netsh)
+
+            Facter::Util::IP.get_interface_value("Local Area Connection", "ipaddress").should == "172.16.138.216"
+        end
+
+        it "should return a human readable netmask" do
+            sample_output_file = File.dirname(__FILE__) + "/../data/windows_netsh_single_interface"
+            windows_netsh = File.new(sample_output_file).read()
+
+            Facter::Util::IP.expects(:get_output_for_interface_and_label).with("Local Area Connection", "netmask").returns(windows_netsh)
+
+            Facter::Util::IP.get_interface_value("Local Area Connection", "netmask").should == "255.255.255.0"
+        end
+
+        it "should return network information" do
+            sample_output_file = File.dirname(__FILE__) + "/../data/windows_netsh_single_interface"
+            windows_netsh = File.new(sample_output_file).read()
+
+            Facter::Util::IP.stubs(:get_output_for_interface_and_label).with("Local Area Connection", "ipaddress").returns(windows_netsh)
+            Facter::Util::IP.stubs(:get_output_for_interface_and_label).with("Local Area Connection", "netmask").returns(windows_netsh)
+
+            Facter::Util::IP.get_network_value("Local Area Connection").should == "172.16.138.0"
+        end
+
+        it "should return ipaddress6 information" do
+            sample_output_file = File.dirname(__FILE__) + "/../data/windows_netsh_single_interface6"
+            windows_netsh = File.new(sample_output_file).read()
+
+            Facter::Util::IP.expects(:get_output_for_interface_and_label).with("Teredo Tunneling Pseudo-Interface", "ipaddress6").returns(windows_netsh)
+
+            Facter::Util::IP.get_interface_value("Teredo Tunneling Pseudo-Interface", "ipaddress6").should == "2001:0:4137:9e76:2087:77a:53ef:7527"
+        end
     end
 end
