@@ -1,0 +1,7 @@
+Configuration for interface "Local Area Connection"
+    DHCP enabled:                         Yes
+    IP Address:                           172.16.138.216
+    Subnet Prefix:                        172.16.138.0/24 (mask 255.255.255.0)
+    Default Gateway:                      172.16.138.2
+    Gateway Metric:                       0
+    InterfaceMetric:                      10
