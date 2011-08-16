@@ -5,6 +5,7 @@ describe "Domain name facts" do
   describe "on linux" do
     before do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
+      FileTest.stubs(:exists?).with("/etc/resolv.conf").returns(true)
     end
 
     it "should use the hostname binary" do
@@ -65,7 +66,7 @@ describe "Domain name facts" do
         lines = [
           "search example.org example.net",
         ]
-        @f.expects(:each).multiple_yields(*lines)
+        @mock_file.expects(:each).multiple_yields(*lines)
         Facter.fact(:domain).value.should == 'example.org'
       end
     end
