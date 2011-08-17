@@ -21,6 +21,8 @@ def selinux_mount_point
         line.split[4]
       end
     end
+  else
+    "/selinux"
   end
 end
 
