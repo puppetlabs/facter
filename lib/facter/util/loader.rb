@@ -4,6 +4,7 @@ require 'facter/util/directory_loader'
 # Load facts on demand.
 class Facter::Util::Loader
 
+  # Facter::Util::DirectoryLoader object
   attr_reader :directory_loader
 
   def initialize

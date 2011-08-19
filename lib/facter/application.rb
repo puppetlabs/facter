@@ -3,11 +3,22 @@ module Facter
     def self.run(argv)
       require 'optparse'
       require 'facter'
+      require 'facter/util/cache'
 
       options = parse(argv)
 
       # Accept fact names to return from the command line
       names = argv
+
+      # Change location of cache file
+      if options[:cachefile]
+        Facter::Util::Config.cache_file = options[:cachefile]
+      end
+
+      # Change location of external facts dir
+      if options[:ext]
+        Facter::Util::Config.ext_fact_dir = options[:ext]
+      end
 
       # Create the facts hash that is printed to standard out.
       unless names.empty?
@@ -74,6 +85,8 @@ module Facter
         opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
         opts.on("-j", "--json")   { |v| options[:json]   = v }
         opts.on(      "--trace")  { |v| options[:trace]  = v }
+        opts.on(      "--cachefile FILE") { |v| options[:cachefile] = v }
+        opts.on(      "--ext DIR") { |v| options[:ext] = v }
         opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
         opts.on("-t", "--timing") { |v| Facter.timing(1) }
         opts.on("-p", "--puppet") { |v| load_puppet }
