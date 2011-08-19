@@ -125,7 +125,7 @@ class Facter::Util::Parser
         end
       end
 
-      if cache and ttl > 0
+      if cache and cache.ttl(filename) > 0
         Facter.debug("Updating cache for #{filename}")
         cache[filename] = result
       end

@@ -123,6 +123,15 @@ echo three=four
       Facter::Util::Parser.new(@script, cache).results.should == {"one" => "yay"}
     end
 
+    it "should return a hash directly from the executable when the cache is not primed" do
+      cache_file = mk_test_file
+      cache = Facter::Util::Cache.new(mk_test_file)
+
+      cache.stubs(:write!)
+
+      Facter::Util::Parser.new(@script, cache).results.should == {"one" => "two", "three" => "four"}
+    end
+
     it "should return a hash of whatever is returned by the executable" do
       Facter::Util::Parser.new(@script).results.should == {"one" => "two", "three" => "four"}
     end
