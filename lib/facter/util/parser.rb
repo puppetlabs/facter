@@ -1,7 +1,14 @@
 require 'facter/util/cache'
 
+# This class acts as the factory and parent class for parsed
+# facts such as scripts, text, json and yaml files.
+#
+# Parsers must subclass this class and provide their own #results method.
 class Facter::Util::Parser
+  # filename to parse
   attr_reader :filename
+
+  # Facter::Util::Cache object
   attr_accessor :cache
   
   class << self
@@ -9,31 +16,39 @@ class Facter::Util::Parser
     attr_reader :extension
   end
 
-  # Register the extension that this parser matches.
+  # Used by subclasses. Registers +ext+ as the extension to match.
   def self.matches_extension(ext)
     @extension = ext
   end
 
+  # Returns file extension from the given +filename+.
   def self.file_extension(filename)
     File.extname(filename).sub(".", '')
   end
 
+  # When inherited this method is called to register subclasses.
   def self.inherited(klass)
     @subclasses ||= []
     @subclasses << klass
   end
 
+  # Used by subclasses. Returns +true+ if it matches +filename+.
+  #
+  # Subclasses can override this method to customize the behaviour.
   def self.matches?(filename)
     raise "Must override the 'matches?' method for #{self}" unless extension
 
     file_extension(filename) == extension
   end
 
+  # Return the list of subclasses.
   def self.subclasses
     @subclasses ||= []
     @subclasses
   end
 
+  # Analyse all subclasses to see which one is the best match for handling
+  # the file.
   def self.which_parser(filename)
     unless klass = subclasses.detect {|k| k.matches?(filename) }
       raise ArgumentError, "Could not find parser for #{filename}"
@@ -41,6 +56,7 @@ class Facter::Util::Parser
     klass
   end
 
+  # Return a new parser object that can handle +filename+.
   def self.new(filename, cache = nil)
     klass = which_parser(filename)
     
@@ -54,13 +70,16 @@ class Facter::Util::Parser
     object
   end
   
+  # Initialize parser subclass.
   def initialize(filename)
     @filename = filename
   end
 
+  # Parses static files containing #YAML content.
   class YamlParser < self
     matches_extension "yaml"
 
+    # Returns a hash of text from #YAML content.
     def results
       require 'yaml'
 
@@ -70,9 +89,11 @@ class Facter::Util::Parser
     end
   end
 
+  # Parses static text files with key value pairs.
   class TextParser < self
     matches_extension "txt"
 
+    # Returns a hash of facts from text content.
     def results
       result = {}
       File.readlines(filename).each do |line|
@@ -87,9 +108,11 @@ class Facter::Util::Parser
     end
   end
 
+  # Parses static files containing #JSON content.
   class JsonParser < self
     matches_extension "json"
     
+    # Returns a hash of facts from #JSON content.
     def results
       attempts = 0
       begin
@@ -105,11 +128,14 @@ class Facter::Util::Parser
     end
   end
 
+  # Executes and parses the key value output of executable files.
   class ScriptParser < self
+    # Returns true if file is executable.
     def self.matches?(file)
       File.executable?(file)
     end
 
+    # Returns a hash of facts from script output.
     def results
       if cache and result = cache[filename]
         Facter.debug("Using cached data for #{filename}")

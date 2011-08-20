@@ -1,3 +1,6 @@
+require 'facter/util/cache'
+require 'facter/util/parser'
+
 # A Facter plugin that loads facts from /etc/facter/facts.d.
 #
 # Facts can be in the form of JSON, YAML or Text files
@@ -11,32 +14,41 @@
 # 600 file and will have the end result of not calling your
 # fact scripts more often than is needed.  The cache is only
 # used for executable facts, not plain data.
-
-require 'facter/util/cache'
-require 'facter/util/parser'
-
 class Facter::Util::DirectoryLoader
   require 'yaml'
 
+  # A list of extensions to ignore in fact directory.
   SKIP_EXTENSIONS = %w{bak ttl orig}
 
-  attr_reader :directory, :cache
+  # Directory for fact loading
+  attr_reader :directory
 
+  # Facter::Util::Cache object.
+  attr_reader :cache
+
+  # Returns the cache file this loader uses.
   def cache_file
     @cache.filename
   end
 
+  # Initialize Facter::Util::DirectoryLoader.
+  # 
+  # Allows you to specify the directory to use and cache file for cacheable
+  # content.
   def initialize(dir="/etc/facter/facts.d", cache_file="/tmp/facts_cache.yml")
     @directory = dir
     @cache = Facter::Util::Cache.new(cache_file)
   end
 
+  # Return all relevant directory based fact file names.
   def entries
     Dir.entries(directory).find_all{|f| parse?(f) }.sort.map {|f| File.join(directory, f) }
   rescue
     []
   end
 
+  # Load facts from files in fact directory using the relevant parser classes to 
+  # parse them.
   def load
     cache.load
     entries.each do |file|
