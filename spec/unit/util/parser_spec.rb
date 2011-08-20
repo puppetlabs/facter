@@ -99,6 +99,16 @@ describe Facter::Util::Parser do
 
       Facter::Util::Parser.new(file).results.should == {"one" => "two", "three" => "four"}
     end
+
+    it "should ignore any extraneous whitespace" do
+      file = mk_test_file + ".txt"
+
+      data = "one  =\ttwo  \n   three =four\t\n"
+
+      File.open(file, "w") { |f| f.print data }
+
+      Facter::Util::Parser.new(file).results.should == {"one" => "two", "three" => "four"}
+    end
   end
 
   describe "scripts" do
@@ -134,6 +144,19 @@ echo three=four
 
     it "should return a hash of whatever is returned by the executable" do
       Facter::Util::Parser.new(@script).results.should == {"one" => "two", "three" => "four"}
+    end
+
+    it "should ignore any extraneous whitespace" do
+      my_script = mk_test_file
+      data = "#!/bin/sh
+echo 'one  =  two  '
+echo ' three  = 	four  '
+"
+
+      File.open(my_script, "w") { |f| f.print data }
+      File.chmod(0755, my_script)
+
+      Facter::Util::Parser.new(my_script).results.should == {"one" => "two", "three" => "four"}
     end
   end
 end

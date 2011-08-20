@@ -78,7 +78,7 @@ class Facter::Util::Parser
       File.readlines(filename).each do |line|
 
         if line.chomp =~ /^(.+)=(.+)$/
-          result[$1] = $2
+          result[$1.strip] = $2.strip
         end
       end
       result
@@ -121,7 +121,7 @@ class Facter::Util::Parser
       result = {}
       output.split("\n").each do |line|
         if line =~ /^(.+)=(.+)$/
-          result[$1] = $2
+          result[$1.strip] = $2.strip
         end
       end
 
