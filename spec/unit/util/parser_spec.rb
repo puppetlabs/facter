@@ -26,8 +26,9 @@ describe Facter::Util::Parser do
     end
   end
 
-  it "should fail when asked to parse a file type it does not support" do
-    lambda { Facter::Util::Parser.new("/my/file.foobar") }.should raise_error(ArgumentError)
+  it "should warn when asked to parse a file type it does not support" do
+    Facter.expects(:warn)
+    Facter::Util::Parser.new("/my/file.foobar")
   end
 
   describe "yaml" do
@@ -44,6 +45,14 @@ describe Facter::Util::Parser do
       File.open(file, "w") { |f| f.print YAML.dump(data) }
 
       Facter::Util::Parser.new(file).results.should == data
+    end
+
+    it "should return nil if YAML file is empty" do
+      file = mk_test_file + ".yaml"
+
+      File.open(file, "w") { |f| f.print "" }
+
+      Facter::Util::Parser.new(file).results.should == nil
     end
 
     it "should handle exceptions and warn" do
@@ -72,6 +81,23 @@ describe Facter::Util::Parser do
 
       Facter::Util::Parser.new(file).results.should == data
     end
+
+    it "should return an empty array if JSON file contains empty array" do
+      file = mk_test_file + ".json"
+
+      File.open(file, "w") { |f| f.print "{}" }
+
+      Facter::Util::Parser.new(file).results.should == {}
+    end
+
+    it "should handle exceptions and warn if JSON content is invalid" do
+      file = mk_test_file + ".json"
+
+      File.open(file, "w") { |f| f.print "" }
+      Facter.expects(:warn)
+      lambda { Facter::Util::Parser.new(file).results }.should_not raise_error
+    end
+
   end
 
   describe "txt" do
@@ -88,6 +114,14 @@ describe Facter::Util::Parser do
       File.open(file, "w") { |f| f.print data }
 
       Facter::Util::Parser.new(file).results.should == {"one" => "two", "three" => "four"}
+    end
+
+    it "should return a nil if txt content is empty" do
+      file = mk_test_file + ".txt"
+
+      File.open(file, "w") { |f| f.print "" }
+
+      Facter::Util::Parser.new(file).results.should == nil
     end
 
     it "should ignore any non-setting lines" do
@@ -158,5 +192,19 @@ echo ' three  = 	four  '
 
       Facter::Util::Parser.new(my_script).results.should == {"one" => "two", "three" => "four"}
     end
+
+    it "should return a nil if script data returns nothing" do
+      my_script = mk_test_file
+      data = "#!/bin/sh
+echo '='
+"
+
+      File.open(my_script, "w") { |f| f.print data }
+      File.chmod(0755, my_script)
+
+      my_parser = Facter::Util::Parser.new(my_script)
+      my_parser.results.should == nil
+    end
+
   end
 end

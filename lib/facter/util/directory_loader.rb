@@ -52,11 +52,19 @@ class Facter::Util::DirectoryLoader
   def load
     cache.load
     entries.each do |file|
-      unless data = Facter::Util::Parser.new(file, cache).results
-        raise "Could not interpret fact file #{file}"
+      parser = Facter::Util::Parser.new(file,cache)
+      if parser == nil
+        next
       end
 
-      data.each { |p,v| Facter.add(p, :value => v) }
+      data = parser.results
+      if not data
+        Facter.warn "Could not interpret fact file #{file}"
+      elsif data == {} or data == nil
+        Facter.warn "Fact file #{file} was parsed but returned an empty data set"
+      else
+        data.each { |p,v| Facter.add(p, :value => v) }
+      end
     end
   end
 

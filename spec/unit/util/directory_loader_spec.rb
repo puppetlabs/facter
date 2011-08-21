@@ -81,11 +81,36 @@ describe Facter::Util::DirectoryLoader do
       end
     end
 
-    it "should fail when trying to parse unknown file types" do
+    it "should throw a warning when trying to parse unknown file types" do
       file = File.join(@loader.directory, "file.unknownfiletype")
       File.open(file, "w") { |f| f.print "stuff=bar" }
 
-      lambda { @loader.load }.should raise_error(ArgumentError)
+      Facter.expects(:warn)
+      @loader.load
+    end
+
+    it "should output a warning message when JSON file type returns nothing" do
+      file = File.join(@loader.directory, "file.json")
+      File.open(file, "w") { |f| f.print "{}" }
+
+      Facter.expects(:warn)
+      @loader.load
+    end
+
+    it "should output a warning message when txt file type returns nothing" do
+      file = File.join(@loader.directory, "file.txt")
+      File.open(file, "w") { |f| f.print "" }
+
+      Facter.expects(:warn)
+      @loader.load
+    end
+
+    it "should output a warning message when YAML file type returns nothing" do
+      file = File.join(@loader.directory, "file.yaml")
+      File.open(file, "w") { |f| f.print "" }
+
+      Facter.expects(:warn)
+      @loader.load
     end
 
     it "should use the cache when loading data" do

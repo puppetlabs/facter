@@ -51,7 +51,8 @@ class Facter::Util::Parser
   # the file.
   def self.which_parser(filename)
     unless klass = subclasses.detect {|k| k.matches?(filename) }
-      raise ArgumentError, "Could not find parser for #{filename}"
+      Facter.warn "Could not find parser for #{filename}"
+      return nil
     end
     klass
   end
@@ -59,6 +60,10 @@ class Facter::Util::Parser
   # Return a new parser object that can handle +filename+.
   def self.new(filename, cache = nil)
     klass = which_parser(filename)
+
+    if klass == nil
+      return nil
+    end
     
     object = klass.allocate
     object.send(:initialize, filename)
@@ -83,7 +88,9 @@ class Facter::Util::Parser
     def results
       require 'yaml'
 
-      YAML.load_file(filename)
+      yaml_data = YAML.load_file(filename)
+
+      yaml_data ? yaml_data : nil
     rescue Exception => e
       Facter.warn("Failed to handle #{filename} as yaml facts: #{e.class}: #{e}")
     end
@@ -95,9 +102,9 @@ class Facter::Util::Parser
 
     # Returns a hash of facts from text content.
     def results
-      result = {}
+      result = nil
       File.readlines(filename).each do |line|
-
+        result ||= {}
         if line.chomp =~ /^(.+)=(.+)$/
           result[$1.strip] = $2.strip
         end
@@ -125,6 +132,8 @@ class Facter::Util::Parser
       end
 
       JSON.load(File.read(filename))
+    rescue Exception => e
+      Facter.warn("Failed to handle #{filename} as json facts: #{e.class}: #{e}")
     end
   end
 
@@ -144,9 +153,10 @@ class Facter::Util::Parser
 
       output = Facter::Util::Resolution.exec(filename)
 
-      result = {}
+      result = nil
       output.split("\n").each do |line|
         if line =~ /^(.+)=(.+)$/
+          result ||= {}
           result[$1.strip] = $2.strip
         end
       end
