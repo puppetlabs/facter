@@ -6,41 +6,12 @@ require 'facter/util/directory_loader'
 require 'tempfile'
 
 describe Facter::Util::DirectoryLoader do
+  include FacterSpec::Files
+
   subject { Facter::Util::DirectoryLoader.new("/my/dir.d") }
 
-  def mk_test_dir
-    file = Tempfile.new "testing_fact_caching_dir"
-    @dir = file.path
-    file.delete
-
-    Dir.mkdir(@dir)
-    @dirs << @dir # for cleanup
-
-    @dir
-  end
-
-  def mk_test_file
-    file = Tempfile.new "testing_fact_caching_file"
-    @filename = file.path
-    file.delete
-    @files << @filename # for cleanup
-
-    @filename
-  end
-
-  before {
-    @files = []
-    @dirs = []
-    @loader = Facter::Util::DirectoryLoader.new(mk_test_dir)
-  }
-
-  after do
-    @files.each do |file|
-      File.unlink(file) if File.exist?(file)
-    end
-    @dirs.each do |dir|
-      FileUtils.rm_f(dir) if File.exist?(dir)
-    end
+  before :each do
+    @loader = Facter::Util::DirectoryLoader.new(tmpdir)
   end
 
   it "should make the directory available" do
@@ -114,10 +85,10 @@ describe Facter::Util::DirectoryLoader do
     end
 
     it "should use the cache when loading data" do
-      cache_file = mk_test_file
+      cache_file = tmpfile
       cache = Facter::Util::Cache.new(cache_file)
 
-      @loader = Facter::Util::DirectoryLoader.new(mk_test_dir, cache_file)
+      @loader = Facter::Util::DirectoryLoader.new(tmpdir, cache_file)
 
       data = "#!/bin/sh
 echo one=two

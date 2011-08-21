@@ -58,7 +58,7 @@ class Facter::Util::DirectoryLoader
       end
 
       data = parser.results
-      if not data
+      if data == false
         Facter.warn "Could not interpret fact file #{file}"
       elsif data == {} or data == nil
         Facter.warn "Fact file #{file} was parsed but returned an empty data set"

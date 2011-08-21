@@ -7,24 +7,7 @@ require 'tempfile'
 require 'json'
 
 describe Facter::Util::Parser do
-  def mk_test_file
-    file = Tempfile.new "testing_fact_caching_file"
-    @filename = file.path
-    file.delete
-    @files << @filename # for cleanup
-
-    @filename
-  end
-
-  before {
-    @files = []
-  }
-
-  after do
-    @files.each do |file|
-      File.unlink(file) if File.exist?(file)
-    end
-  end
+  include FacterSpec::Files
 
   it "should warn when asked to parse a file type it does not support" do
     Facter.expects(:warn)
@@ -38,7 +21,7 @@ describe Facter::Util::Parser do
     end
 
     it "should return a hash of whatever is stored on disk" do
-      file = mk_test_file + ".yaml"
+      file = tmpfile("yamlfile", "yaml")
 
       data = {"one" => "two", "three" => "four"}
 
@@ -48,7 +31,7 @@ describe Facter::Util::Parser do
     end
 
     it "should return nil if YAML file is empty" do
-      file = mk_test_file + ".yaml"
+      file = tmpfile("emptyyaml", "yaml")
 
       File.open(file, "w") { |f| f.print "" }
 
@@ -56,7 +39,7 @@ describe Facter::Util::Parser do
     end
 
     it "should handle exceptions and warn" do
-      file = mk_test_file + ".yaml"
+      file = tmpfile("exceptions", "yaml")
 
       data = {"one" => "two", "three" => "four"}
 
@@ -73,7 +56,7 @@ describe Facter::Util::Parser do
     end
 
     it "should return a hash of whatever is stored on disk" do
-      file = mk_test_file + ".json"
+      file = tmpfile("jsonfile", "json")
 
       data = {"one" => "two", "three" => "four"}
 
@@ -83,7 +66,7 @@ describe Facter::Util::Parser do
     end
 
     it "should return an empty array if JSON file contains empty array" do
-      file = mk_test_file + ".json"
+      file = tmpfile("emptyjson", "json")
 
       File.open(file, "w") { |f| f.print "{}" }
 
@@ -91,7 +74,7 @@ describe Facter::Util::Parser do
     end
 
     it "should handle exceptions and warn if JSON content is invalid" do
-      file = mk_test_file + ".json"
+      file = tmpfile("invalid", "json")
 
       File.open(file, "w") { |f| f.print "" }
       Facter.expects(:warn)
@@ -107,7 +90,7 @@ describe Facter::Util::Parser do
     end
 
     it "should return a hash of whatever is stored on disk" do
-      file = mk_test_file + ".txt"
+      file = tmpfile("txtfile", "txt")
 
       data = "one=two\nthree=four\n"
 
@@ -117,7 +100,7 @@ describe Facter::Util::Parser do
     end
 
     it "should return a nil if txt content is empty" do
-      file = mk_test_file + ".txt"
+      file = tmpfile("emptytxt", "txt")
 
       File.open(file, "w") { |f| f.print "" }
 
@@ -125,7 +108,7 @@ describe Facter::Util::Parser do
     end
 
     it "should ignore any non-setting lines" do
-      file = mk_test_file + ".txt"
+      file = tmpfile("ignore", "txt")
 
       data = "one=two\nfive\nthree=four\n"
 
@@ -135,7 +118,7 @@ describe Facter::Util::Parser do
     end
 
     it "should ignore any extraneous whitespace" do
-      file = mk_test_file + ".txt"
+      file = tmpfile("whitespace", "txt")
 
       data = "one  =\ttwo  \n   three =four\t\n"
 
@@ -147,7 +130,7 @@ describe Facter::Util::Parser do
 
   describe "scripts" do
     before do
-      @script = mk_test_file
+      @script = tmpfile
       data = "#!/bin/sh
 echo one=two
 echo three=four
@@ -158,8 +141,8 @@ echo three=four
     end
 
     it "should use any cache provided at initialization time" do
-      cache_file = mk_test_file
-      cache = Facter::Util::Cache.new(mk_test_file)
+      cache_file = tmpfile
+      cache = Facter::Util::Cache.new(cache_file)
 
       cache.stubs(:write!)
       cache[@script] = {"one" => "yay"}
@@ -168,8 +151,8 @@ echo three=four
     end
 
     it "should return a hash directly from the executable when the cache is not primed" do
-      cache_file = mk_test_file
-      cache = Facter::Util::Cache.new(mk_test_file)
+      cache_file = tmpfile
+      cache = Facter::Util::Cache.new(cache_file)
 
       cache.stubs(:write!)
 
@@ -181,7 +164,7 @@ echo three=four
     end
 
     it "should ignore any extraneous whitespace" do
-      my_script = mk_test_file
+      my_script = tmpfile
       data = "#!/bin/sh
 echo 'one  =  two  '
 echo ' three  = 	four  '
@@ -194,7 +177,7 @@ echo ' three  = 	four  '
     end
 
     it "should return a nil if script data returns nothing" do
-      my_script = mk_test_file
+      my_script = tmpfile
       data = "#!/bin/sh
 echo '='
 "

@@ -6,40 +6,11 @@ require 'facter/util/cache'
 require 'tempfile'
 
 describe Facter::Util::Cache do
-  def mk_test_dir
-    file = Tempfile.new "testing_fact_caching_dir"
-    @dir = file.path
-    file.delete
+  include FacterSpec::Files
 
-    Dir.mkdir(@dir)
-    @dirs << @dir # for cleanup
-
-    @dir
-  end
-
-  def mk_test_file
-    file = Tempfile.new "testing_fact_caching_file"
-    @filename = file.path
-    file.delete
-    @files << @filename # for cleanup
-
-    @filename
-  end
-
-  before {
-    @files = []
-    @dirs = []
-    @cache = Facter::Util::Cache.new(mk_test_file)
+  before :each do
+    @cache = Facter::Util::Cache.new(tmpfile)
     @filename = @cache.filename
-  }
-
-  after do
-    @files.each do |file|
-      File.unlink(file) if File.exist?(file)
-    end
-    @dirs.each do |dir|
-      FileUtils.rm_f(dir) if File.exist?(dir)
-    end
   end
 
   it "should make the required filename available" do
@@ -48,7 +19,7 @@ describe Facter::Util::Cache do
 
   describe "when determining TTL" do
     it "should determine a file's TTL by looking in a file named after the file with a '.ttl' extension" do
-      dir = mk_test_dir
+      dir = tmpdir
       file = File.join(dir, "myscript")
       File.open(file + ".ttl", "w") { |f| f.print 300 }
 
