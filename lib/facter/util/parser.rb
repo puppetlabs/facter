@@ -139,9 +139,13 @@ class Facter::Util::Parser
 
   # Executes and parses the key value output of executable files.
   class ScriptParser < self
-    # Returns true if file is executable.
-    def self.matches?(file)
-      File.executable?(file)
+    if Facter::Util::Config.is_windows?
+      matches_extension "bat"
+    else
+      # Returns true if file is executable.
+      def self.matches?(file)
+        File.executable?(file)
+      end
     end
 
     # Returns a hash of facts from script output.

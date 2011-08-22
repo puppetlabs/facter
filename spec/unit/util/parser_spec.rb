@@ -130,14 +130,25 @@ describe Facter::Util::Parser do
 
   describe "scripts" do
     before do
-      @script = tmpfile
-      data = "#!/bin/sh
+      @script = nil
+      if Facter::Util::Config.is_windows?
+        @script = tmpfile("script","bat")
+        data = "@echo off
 echo one=two
 echo three=four
 "
 
-      File.open(@script, "w") { |f| f.print data }
-      File.chmod(0755, @script)
+        File.open(@script, "w") { |f| f.print data }
+      else
+        @script = tmpfile("script","sh")
+        data = "#!/bin/sh
+echo one=two
+echo three=four
+"
+
+        File.open(@script, "w") { |f| f.print data }
+        File.chmod(0755, @script)
+      end
     end
 
     it "should use any cache provided at initialization time" do
@@ -164,26 +175,43 @@ echo three=four
     end
 
     it "should ignore any extraneous whitespace" do
-      my_script = tmpfile
-      data = "#!/bin/sh
-echo 'one  =  two  '
-echo ' three  = 	four  '
+      my_script = nil
+      if Facter::Util::Config.is_windows?
+        my_script = tmpfile("script", "bat")
+        data = "@echo off
+echo one  =  two  
+echo  three  = 	four  
 "
-
-      File.open(my_script, "w") { |f| f.print data }
-      File.chmod(0755, my_script)
+        File.open(my_script, "w") { |f| f.print data }
+      else
+        my_script = tmpfile
+        data = "#!/bin/sh
+echo one  =  two  
+echo  three  = 	four  
+"
+        File.open(my_script, "w") { |f| f.print data }
+        File.chmod(0755, my_script)
+      end
 
       Facter::Util::Parser.new(my_script).results.should == {"one" => "two", "three" => "four"}
     end
 
     it "should return a nil if script data returns nothing" do
-      my_script = tmpfile
-      data = "#!/bin/sh
-echo '='
+      my_script = nil
+      if Facter::Util::Config.is_windows?
+        my_script = tmpfile("script","bat")
+        data = "@echo off
+echo =
 "
-
-      File.open(my_script, "w") { |f| f.print data }
-      File.chmod(0755, my_script)
+        File.open(my_script, "w") { |f| f.print data }
+      else
+        my_script = tmpfile
+        data = "#!/bin/sh
+echo =
+"
+        File.open(my_script, "w") { |f| f.print data }
+        File.chmod(0755, my_script)
+      end
 
       my_parser = Facter::Util::Parser.new(my_script)
       my_parser.results.should == nil

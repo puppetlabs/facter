@@ -90,11 +90,19 @@ describe Facter::Util::DirectoryLoader do
 
       @loader = Facter::Util::DirectoryLoader.new(tmpdir, cache_file)
 
-      data = "#!/bin/sh
+      data = nil
+      if Facter::Util::Config.is_windows?
+        data = "@echo off
 echo one=two
 echo three=four
 "
-      file = File.join(@loader.directory, "myscript")
+      else
+        data = "#!/bin/sh
+echo one=two
+echo three=four
+"
+      end
+      file = File.join(@loader.directory, "myscript.bat")
 
       File.open(file, "w") { |f| f.print data }
       File.chmod(0755, file)
