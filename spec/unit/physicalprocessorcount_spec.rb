@@ -37,4 +37,13 @@ describe "Physical processor count facts" do
 
         Facter.fact(:physicalprocessorcount).value.should == 4
     end
+
+    it "should return 4 physical CPUs on Windows" do
+        Facter.fact(:kernel).stubs(:value).returns("windows")
+
+        require 'facter/util/wmi'
+        Facter::Util::WMI.stubs(:execquery).with("select Name from Win32_Processor").returns(Array.new(4))
+
+        Facter.fact(:physicalprocessorcount).value.should == 4
+    end
 end

@@ -44,4 +44,30 @@ describe "Memory facts" do
         swapusage =~ /\(encrypted\)/
 	Facter.fact(:swapencrypted).value.should == true
     end
+
+    describe "on Windows" do
+        before :each do
+             Facter.clear
+             Facter.fact(:kernel).stubs(:value).returns("windows")
+             Facter.collection.loader.load(:memory)
+
+             require 'facter/util/wmi'
+        end
+
+        it "should return free memory" do
+             os = stubs 'os'
+             os.stubs(:FreePhysicalMemory).returns("3415624")
+             Facter::Util::WMI.stubs(:execquery).returns([os])
+
+             Facter.fact(:MemoryFree).value.should == '3.26 GB'
+        end
+
+        it "should return total memory" do
+             computer = stubs 'computer'
+             computer.stubs(:TotalPhysicalMemory).returns("4193837056")
+             Facter::Util::WMI.stubs(:execquery).returns([computer])
+
+             Facter.fact(:MemoryTotal).value.should == '3.91 GB'
+        end
+    end
 end

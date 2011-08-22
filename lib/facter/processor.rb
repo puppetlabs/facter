@@ -104,3 +104,41 @@ if Facter.value(:kernel) == "OpenBSD"
         end
     end
 end
+
+if Facter.value(:kernel) == "windows"
+  processor_list = []
+
+  Thread::exclusive do
+    require 'facter/util/wmi'
+
+    # get each physical processor
+    Facter::Util::WMI.execquery("select * from Win32_Processor").each do |proc|
+      # not supported before 2008
+      begin
+        processor_num = proc.NumberOfLogicalProcessors
+      rescue RuntimeError => e
+        processor_num = 1
+      end
+
+      processor_num.times do |i|
+        processor_list << proc.Name.squeeze(" ")
+      end
+    end
+  end
+
+  processor_list.each_with_index do |name, i|
+    Facter.add("Processor#{i}") do
+      confine :kernel => :windows
+      setcode do
+        name
+      end
+    end
+  end
+
+  Facter.add("ProcessorCount") do
+    confine :kernel => :windows
+    setcode do
+      processor_list.length.to_s
+    end
+  end
+end

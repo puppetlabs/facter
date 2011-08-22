@@ -1,0 +1,35 @@
+Address ::1 Parameters
+---------------------------------------------------------
+Interface Luid     : Loopback Pseudo-Interface 1
+Scope Id           : 0.0
+Valid Lifetime     : infinite
+Preferred Lifetime : infinite
+DAD State          : Preferred
+Address Type       : Other
+
+Address fe80::7128:aa90:8f2a:8375%9 Parameters
+---------------------------------------------------------
+Interface Luid     : Local Area Connection
+Scope Id           : 0.9
+Valid Lifetime     : infinite
+Preferred Lifetime : infinite
+DAD State          : Preferred
+Address Type       : Other
+
+Address fe80::5efe:172.16.138.216%11 Parameters
+---------------------------------------------------------
+Interface Luid     : isatap.localdomain
+Scope Id           : 0.11
+Valid Lifetime     : infinite
+Preferred Lifetime : infinite
+DAD State          : Deprecated
+Address Type       : Other
+
+Address 2001:0:4137:9e76:2087:77a:53ef:7527 Parameters
+---------------------------------------------------------
+Interface Luid     : Teredo Tunneling Pseudo-Interface
+Scope Id           : 0.0
+Valid Lifetime     : infinite
+Preferred Lifetime : infinite
+DAD State          : Preferred
+Address Type       : Public

@@ -25,4 +25,20 @@ module Facter::Util::Macaddress
       '/sbin/ifconfig'
     end
   end
+
+  module Windows
+    def macaddress
+      require 'facter/util/wmi'
+
+      query = "select MACAddress from Win32_NetworkAdapterConfiguration where IPEnabled = True"
+
+      ether = nil
+      Facter::Util::WMI.execquery(query).each do |nic|
+        ether = nic.MacAddress
+        break
+      end
+      ether
+    end
+    module_function :macaddress
+  end
 end
