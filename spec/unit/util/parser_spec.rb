@@ -14,6 +14,26 @@ describe Facter::Util::Parser do
     Facter::Util::Parser.new("/my/file.foobar")
   end
 
+  describe "matches? function" do
+    it "should match extensions when subclass uses match_extension" do
+      class TestParser < Facter::Util::Parser
+        matches_extension "foobar"
+      end
+
+      TestParser.matches?("myfile.foobar").should == true
+    end
+
+    it "should match extensions when subclass uses match_extension with an array" do
+      class TestParser < Facter::Util::Parser
+        matches_extension ["ext1","ext2","ext3"]
+      end
+
+      TestParser.matches?("myfile.ext1").should == true
+      TestParser.matches?("myfile.ext2").should == true
+      TestParser.matches?("myfile.ext3").should == true
+    end
+  end
+
   describe "yaml" do
     subject { Facter::Util::Parser::YamlParser }
     it "should match the 'yaml' extension" do
@@ -129,6 +149,8 @@ describe Facter::Util::Parser do
   end
 
   describe "scripts" do
+    subject { Facter::Util::Parser::ScriptParser }
+
     before do
       @script = nil
       if Facter::Util::Config.is_windows?
@@ -217,5 +239,71 @@ echo =
       my_parser.results.should == nil
     end
 
+    it "should match the extensions bat, exe & com", :if => Facter::Util::Config.is_windows? do
+      subject.extension.should == %w{bat com exe}
+    end
+  end
+
+  describe "powershell", :if => Facter::Util::Config.is_windows? do
+    subject { Facter::Util::Parser::PowershellParser }
+
+    before do
+      @script = tmpfile("script","ps1")
+      data = <<EOS
+Write-Host "var1=value1"
+Write-Host "var2=value2"
+Write-Host "var3=value3"
+EOS
+
+      File.open(@script, "w") { |f| f.print data }
+    end
+
+    it "should use any cache provided at initialization time" do
+      cache_file = tmpfile
+      cache = Facter::Util::Cache.new(cache_file)
+
+      cache.stubs(:write!)
+      cache[@script] = {"one" => "yay"}
+
+      Facter::Util::Parser.new(@script, cache).results.should == {"one" => "yay"}
+    end
+
+    it "should return a hash directly from the executable when the cache is not primed" do
+      cache_file = tmpfile
+      cache = Facter::Util::Cache.new(cache_file)
+
+      cache.stubs(:write!)
+
+      Facter::Util::Parser.new(@script, cache).results.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
+    end
+
+    it "should return a hash of whatever is returned by the executable" do
+      Facter::Util::Parser.new(@script).results.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
+    end
+
+    it "should ignore any extraneous whitespace" do
+      my_script = tmpfile("script", "ps1")
+      data = <<EOS
+Write-Host "   var1 	= value1"
+Write-Host "var2   	= 	value2  "
+Write-Host "var3=  value3   "
+EOS
+      File.open(my_script, "w") { |f| f.print data }
+
+      Facter::Util::Parser.new(my_script).results.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
+    end
+
+    it "should return a nil if script data returns nothing" do
+      my_script = tmpfile("script","ps1")
+      data = ""
+      File.open(my_script, "w") { |f| f.print data }
+
+      my_parser = Facter::Util::Parser.new(my_script)
+      my_parser.results.should == nil
+    end
+
+    it "should match the extensions ps1" do
+      subject.extension.should == "ps1"
+    end
   end
 end

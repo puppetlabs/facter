@@ -17,6 +17,9 @@ class Facter::Util::Parser
   end
 
   # Used by subclasses. Registers +ext+ as the extension to match.
+  #
+  # For support mutliple extensions you can pass an array of extensions as
+  # +ext+.
   def self.matches_extension(ext)
     @extension = ext
   end
@@ -38,7 +41,7 @@ class Facter::Util::Parser
   def self.matches?(filename)
     raise "Must override the 'matches?' method for #{self}" unless extension
 
-    file_extension(filename) == extension
+    [extension].flatten.to_a.include?(file_extension(filename))
   end
 
   # Return the list of subclasses.
@@ -140,7 +143,7 @@ class Facter::Util::Parser
   # Executes and parses the key value output of executable files.
   class ScriptParser < self
     if Facter::Util::Config.is_windows?
-      matches_extension "bat"
+      matches_extension %w{bat com exe}
     else
       # Returns true if file is executable.
       def self.matches?(file)
@@ -176,4 +179,54 @@ class Facter::Util::Parser
       Facter.debug(e.backtrace.join("\n\t"))
     end
   end
+
+  # Executes and parses the key value output of Powershell scripts
+  # 
+  # Before you can run unsigned ps1 scripts it requires a change to execution 
+  # policy:
+  #
+  #   Set-ExecutionPolicy RemoteSigned -Scope LocalMachine
+  #   Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+  #
+  class PowershellParser < self
+    matches_extension "ps1"
+
+    # Only return true if this is a windows box
+    def self.matches?(filename)
+      if Facter::Util::Config.is_windows?
+        super(filename)
+      else
+        return false
+      end
+    end
+
+    # Returns a hash of facts from powershell output
+    def results
+      if cache and result = cache[filename]
+        Facter.debug("Using cached data for #{filename}")
+        return result
+      end
+
+      output = Facter::Util::Resolution.exec("powershell " + filename)
+
+      result = nil
+      output.split("\n").each do |line|
+        if line =~ /^(.+)=(.+)$/
+          result ||= {}
+          result[$1.strip] = $2.strip
+        end
+      end
+
+      if cache and cache.ttl(filename) > 0
+        Facter.debug("Updating cache for #{filename}")
+        cache[filename] = result
+      end
+
+      result
+    rescue Exception => e
+      Facter.warn("Failed to handle #{filename} as powershell facts: #{e.class}: #{e}")
+      Facter.debug(e.backtrace.join("\n\t"))
+    end
+  end
+
 end
