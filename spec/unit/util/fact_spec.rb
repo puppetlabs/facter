@@ -59,6 +59,52 @@ describe Facter::Util::Fact do
     Facter::Util::Fact.new("yay").should respond_to(:value)
   end
 
+  describe "when validating fact resolutions" do
+    before do
+      @fact = Facter::Util::Fact.new("yay")
+    end
+
+    [
+      true,
+      false,
+      :yay,
+      "string",
+      1.0,
+      1000,
+      ["yay"],
+      [nil, nil, "", :yay],
+      {:foo => "bar"},
+      {:foo => [], :yay => "hi"},
+      {:foo => [false], :yay => "hi"},
+    ].each do |valid|
+      it "should return the valid value \"#{valid.inspect}\"" do
+        r1 = stub 'r1', :suitable? => true, :value => valid
+        Facter::Util::Resolution.expects(:new).returns r1
+        @fact.add { }
+
+        @fact.value.should == valid
+      end
+    end
+
+    [
+      nil,
+      "",
+      [],
+      {},
+      {:foo => nil},
+      {:foo => ""},
+      {:foo => [], :bar => [{}, {}, []]}
+    ].each do |invalid|
+      it "should return nil for the empty type \"#{invalid.inspect}\"" do
+        r1 = stub 'r1', :suitable? => true, :value => invalid
+        Facter::Util::Resolution.expects(:new).returns r1
+        @fact.add { }
+
+        @fact.value.should be_nil
+      end
+    end
+  end
+
   describe "when returning a value" do
     before do
       @fact = Facter::Util::Fact.new("yay")
@@ -98,14 +144,6 @@ describe Facter::Util::Fact do
       @fact.add { }
 
       @fact.value.should == "yay"
-    end
-
-    it "should return nil if the value is the empty string" do
-      r1 = stub 'r1', :suitable? => true, :value => ""
-      Facter::Util::Resolution.expects(:new).returns r1
-      @fact.add { }
-
-      @fact.value.should be_nil
     end
   end
 
