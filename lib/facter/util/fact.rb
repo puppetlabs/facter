@@ -59,39 +59,59 @@ class Facter::Util::Fact
   def value
     return @value if @value
 
-    if @resolves.length == 0
-      Facter.debug "No resolves for %s" % @name
+    suitable_resolves = @resolves.select {|r| r.suitable? }
+
+    if suitable_resolves.length == 0
+      Facter.debug "Found no suitable resolves of %s for %s" % [@resolves.length, @name]
       return nil
-    end
-
-    searching do
-      @value = nil
-
-      foundsuits = false
-      @value = @resolves.inject(nil) { |result, resolve|
-        next unless resolve.suitable?
-        foundsuits = true
-
-        tmp = resolve.value
-
-        break tmp unless tmp.nil? or tmp == ""
-      }
-
-      unless foundsuits
-        Facter.debug "Found no suitable resolves of %s for %s" % [@resolves.length, @name]
+    else
+      searching do
+        suitable_resolves.each do |resolve|
+          val = resolve.value
+          if valid? val
+            @value = val
+            break
+          end
+        end
       end
     end
 
     if @value.nil?
-      # nothing
-      Facter.debug("value for %s is still nil" % @name)
-      return nil
-    else
-      return @value
+      Facter.debug("Could not resolve fact #{@name}")
     end
+
+    @value
   end
 
   private
+
+  def valid? entity
+    validity = nil
+    begin
+      validity = case entity
+      when NilClass
+        false
+      when String
+        # Allow non-empty strings
+        !entity.empty?
+      when TrueClass, FalseClass, Numeric, Symbol
+        # Permit all booleans, numbers, and symbols
+        true
+      when Array
+        # If given an array, look for any valid elements
+        entity.any? {|v| valid? v}
+      when Hash
+        # If given a hash, look for any valid values
+        entity.values.any? {|v| valid? v}
+      else
+        false
+      end
+    rescue
+      Facter.debug("Unable to validate value #{entity} for fact #{@name}")
+      validity = false
+    end
+    validity
+  end
 
   # Are we in the midst of a search?
   def searching?
