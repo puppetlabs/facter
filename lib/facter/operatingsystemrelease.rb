@@ -27,6 +27,18 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
+    confine :operatingsystem => :OracleLinux
+    setcode do
+        File::open("/etc/oracle-release", "r") do |f|
+            line = f.readline.chomp
+            if line =~ /release (\d+)/
+                $1
+            end
+        end
+    end
+end
+
+Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => :oel
     setcode do
         File::open("/etc/enterprise-release", "r") do |f|
