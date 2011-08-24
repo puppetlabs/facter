@@ -70,7 +70,7 @@ end
 if Facter.value(:kernel) == "AIX" and Facter.value(:id) == "root"
     swap = Facter::Util::Resolution.exec('swap -l')
     swapfree, swaptotal = 0, 0
-    swap.each do |dev|
+    swap.each_line do |dev|
       if dev =~ /^\/\S+\s.*\s+(\S+)MB\s+(\S+)MB/
         swaptotal += $1.to_i
         swapfree  += $2.to_i
@@ -95,7 +95,7 @@ end
 if Facter.value(:kernel) == "OpenBSD"
     swap = Facter::Util::Resolution.exec('swapctl -l | sed 1d')
     swapfree, swaptotal = 0, 0
-    swap.each do |dev|
+    swap.each_line do |dev|
         if dev =~ /^\S+\s+(\S+)\s+\S+\s+(\S+)\s+.*$/
             swaptotal += $1.to_i
             swapfree  += $2.to_i
@@ -167,7 +167,7 @@ end
 if Facter.value(:kernel) == "SunOS"
     swap = Facter::Util::Resolution.exec('/usr/sbin/swap -l')
     swapfree, swaptotal = 0, 0
-    swap.each do |dev|
+    swap.each_line do |dev|
         if dev =~ /^\/\S+\s.*\s+(\d+)\s+(\d+)$/
             swaptotal += $1.to_i / 2
             swapfree  += $2.to_i / 2
@@ -191,7 +191,7 @@ if Facter.value(:kernel) == "SunOS"
     # Total memory size available from prtconf
     pconf = Facter::Util::Resolution.exec('/usr/sbin/prtconf')
     phymem = ""
-    pconf.each do |line|
+    pconf.each_line do |line|
         if line =~ /^Memory size:\s+(\d+) Megabytes/
             phymem = $1
         end
