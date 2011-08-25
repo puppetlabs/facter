@@ -46,4 +46,13 @@ describe "Operating System Release fact" do
 
         Facter.fact(:operatingsystemrelease).value
     end
+
+    it "for Alpine it should run the cat /alpine-release command" do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+        Facter.fact(:operatingsystem).stubs(:value).returns("Alpine")
+
+        Facter::Util::Resolution.stubs(:exec).with('cat /etc/alpine-release').returns('foo')
+
+        Facter.fact(:operatingsystemrelease).value
+    end
 end
