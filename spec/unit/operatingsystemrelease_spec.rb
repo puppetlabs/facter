@@ -46,4 +46,13 @@ describe "Operating System Release fact" do
 
         Facter.fact(:operatingsystemrelease).value
     end
+
+    it "for Alpine it should use the contents of /etc/alpine-release" do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+        Facter.fact(:operatingsystem).stubs(:value).returns("Alpine")
+
+        File.expects(:read).with("/etc/alpine-release").returns("foo")
+
+        Facter.fact(:operatingsystemrelease).value.should == "foo"
+    end
 end
