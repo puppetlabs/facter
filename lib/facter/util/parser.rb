@@ -207,7 +207,8 @@ class Facter::Util::Parser
         return result
       end
 
-      output = Facter::Util::Resolution.exec("powershell " + filename)
+      shell_command = 'powershell -File "' + filename + '"'
+      output = Facter::Util::Resolution.exec(shell_command)
 
       result = nil
       output.split("\n").each do |line|

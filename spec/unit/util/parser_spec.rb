@@ -305,5 +305,19 @@ EOS
     it "should match the extensions ps1" do
       subject.extension.should == "ps1"
     end
+
+    it "should handle script paths with spaces" do
+      my_script = tmpfile("script with space","ps1")
+      data = "Write-Host foo=bar"
+      File.open(my_script, "w") { |f| f.print data }
+
+      my_parser = Facter::Util::Parser.new(my_script)
+      my_parser.results.should == {"foo"=>"bar"}
+    end
+
+    it "should match the extensions ps1" do
+      subject.extension.should == "ps1"
+    end
+
   end
 end
