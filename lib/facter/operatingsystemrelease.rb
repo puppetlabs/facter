@@ -123,5 +123,12 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
+  confine :operatingsystem => :Alpine
+  setcode do
+    File.read('/etc/alpine-release')
+  end
+end
+
+Facter.add(:operatingsystemrelease) do
     setcode do Facter[:kernelrelease].value end
 end

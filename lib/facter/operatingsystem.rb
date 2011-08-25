@@ -73,6 +73,8 @@ Facter.add(:operatingsystem) do
             "Slamd64"
         elsif FileTest.exists?("/etc/slackware-version")
             "Slackware"
+        elsif FileTest.exists?("/etc/alpine-release")
+            "Alpine"
         end
     end
 end
