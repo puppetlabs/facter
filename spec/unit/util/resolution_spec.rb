@@ -118,7 +118,7 @@ describe Facter::Util::Resolution do
         describe "and the code is a string" do
             describe "on windows" do
                 before do
-                    Facter::Util::Resolution::WINDOWS = true
+                    Facter::Util::Config.stubs(:is_windows?).returns(true)
                 end
 
                 it "should return the result of executing the code" do
@@ -137,7 +137,7 @@ describe Facter::Util::Resolution do
 
             describe "on non-windows systems" do
                 before do
-                    Facter::Util::Resolution::WINDOWS = false
+                    Facter::Util::Config.stubs(:is_windows?).returns(false)
                 end
 
                 it "should return the result of executing the code" do
