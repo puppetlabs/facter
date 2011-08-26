@@ -83,6 +83,41 @@ class Facter::Util::Parser
     @filename = filename
   end
 
+  # Return results and report timing and handle cache.
+  def values
+    starttime = Time.now.to_f
+
+    from_cache = false
+    if cache and result = cache[filename]
+      # A cache exists 
+      Facter.debug("Using cached data for #{filename}")
+      return_values = result
+      from_cache = true
+    else
+      # No cache - lets evaluate and optionally store cache
+      return_values = results unless return_values
+
+      if cache and cache.ttl(filename) > 0
+        Facter.debug("Updating cache for #{filename}")
+        cache[filename] = return_values
+      end
+    end
+
+    finishtime = Time.now.to_f
+    ms = (finishtime - starttime) * 1000
+    timing_output = "#{filename}: #{"%.2f" % ms}ms"
+    timing_output += " (cached)" if from_cache
+    Facter.show_time timing_output
+
+    return_values
+  end
+
+  # This method must be overwriten by subclasses to provide
+  # the results (as a hash) of parsing the filename.
+  def results
+    raise "Must override the 'results' method for #{self}"   
+  end
+
   # Parses static files containing #YAML content.
   class YamlParser < self
     matches_extension "yaml"
@@ -153,11 +188,6 @@ class Facter::Util::Parser
 
     # Returns a hash of facts from script output.
     def results
-      if cache and result = cache[filename]
-        Facter.debug("Using cached data for #{filename}")
-        return result
-      end
-
       output = Facter::Util::Resolution.exec(filename)
 
       result = nil
@@ -166,11 +196,6 @@ class Facter::Util::Parser
           result ||= {}
           result[$1.strip] = $2.strip
         end
-      end
-
-      if cache and cache.ttl(filename) > 0
-        Facter.debug("Updating cache for #{filename}")
-        cache[filename] = result
       end
 
       result
@@ -202,11 +227,6 @@ class Facter::Util::Parser
 
     # Returns a hash of facts from powershell output
     def results
-      if cache and result = cache[filename]
-        Facter.debug("Using cached data for #{filename}")
-        return result
-      end
-
       shell_command = 'powershell -File "' + filename + '"'
       output = Facter::Util::Resolution.exec(shell_command)
 
@@ -216,11 +236,6 @@ class Facter::Util::Parser
           result ||= {}
           result[$1.strip] = $2.strip
         end
-      end
-
-      if cache and cache.ttl(filename) > 0
-        Facter.debug("Updating cache for #{filename}")
-        cache[filename] = result
       end
 
       result

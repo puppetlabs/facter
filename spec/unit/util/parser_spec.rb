@@ -14,6 +14,27 @@ describe Facter::Util::Parser do
     Facter::Util::Parser.new("/my/file.foobar")
   end
 
+  describe "values function" do
+    it "should output timing when results are requested" do
+      file = tmpfile("timing","txt") 
+      File.open(file, "w") { |f| f.print "abc=def" }
+  
+      Facter.expects(:show_time)
+      Facter::Util::Parser.new(file).values.should == {"abc"=>"def"}
+    end
+
+    it "should raise an error when results method is not overwritten in a subclass" do
+      class TestParser < Facter::Util::Parser
+        matches_extension "foobar"
+      end
+
+      file = tmpfile("timing","foobar") 
+      File.open(file, "w") { |f| f.print "abc=def" }
+
+      lambda { Facter::Util::Parser.new(file).values }.should raise_error
+    end
+  end
+
   describe "matches? function" do
     it "should match extensions when subclass uses match_extension" do
       class TestParser < Facter::Util::Parser
@@ -47,7 +68,7 @@ describe Facter::Util::Parser do
 
       File.open(file, "w") { |f| f.print YAML.dump(data) }
 
-      Facter::Util::Parser.new(file).results.should == data
+      Facter::Util::Parser.new(file).values.should == data
     end
 
     it "should return nil if YAML file is empty" do
@@ -55,7 +76,7 @@ describe Facter::Util::Parser do
 
       File.open(file, "w") { |f| f.print "" }
 
-      Facter::Util::Parser.new(file).results.should == nil
+      Facter::Util::Parser.new(file).values.should == nil
     end
 
     it "should handle exceptions and warn" do
@@ -65,7 +86,7 @@ describe Facter::Util::Parser do
 
       File.open(file, "w") { |f| f.print "}" }
       Facter.expects(:warn)
-      lambda { Facter::Util::Parser.new("/some/path/that/doesn't/exist.yaml").results }.should_not raise_error
+      lambda { Facter::Util::Parser.new("/some/path/that/doesn't/exist.yaml").values }.should_not raise_error
     end
   end
 
@@ -82,7 +103,7 @@ describe Facter::Util::Parser do
 
       File.open(file, "w") { |f| f.print data.to_json }
 
-      Facter::Util::Parser.new(file).results.should == data
+      Facter::Util::Parser.new(file).values.should == data
     end
 
     it "should return an empty array if JSON file contains empty array" do
@@ -90,7 +111,7 @@ describe Facter::Util::Parser do
 
       File.open(file, "w") { |f| f.print "{}" }
 
-      Facter::Util::Parser.new(file).results.should == {}
+      Facter::Util::Parser.new(file).values.should == {}
     end
 
     it "should handle exceptions and warn if JSON content is invalid" do
@@ -98,7 +119,7 @@ describe Facter::Util::Parser do
 
       File.open(file, "w") { |f| f.print "" }
       Facter.expects(:warn)
-      lambda { Facter::Util::Parser.new(file).results }.should_not raise_error
+      lambda { Facter::Util::Parser.new(file).values }.should_not raise_error
     end
 
   end
@@ -116,7 +137,7 @@ describe Facter::Util::Parser do
 
       File.open(file, "w") { |f| f.print data }
 
-      Facter::Util::Parser.new(file).results.should == {"one" => "two", "three" => "four"}
+      Facter::Util::Parser.new(file).values.should == {"one" => "two", "three" => "four"}
     end
 
     it "should return a nil if txt content is empty" do
@@ -124,7 +145,7 @@ describe Facter::Util::Parser do
 
       File.open(file, "w") { |f| f.print "" }
 
-      Facter::Util::Parser.new(file).results.should == nil
+      Facter::Util::Parser.new(file).values.should == nil
     end
 
     it "should ignore any non-setting lines" do
@@ -134,7 +155,7 @@ describe Facter::Util::Parser do
 
       File.open(file, "w") { |f| f.print data }
 
-      Facter::Util::Parser.new(file).results.should == {"one" => "two", "three" => "four"}
+      Facter::Util::Parser.new(file).values.should == {"one" => "two", "three" => "four"}
     end
 
     it "should ignore any extraneous whitespace" do
@@ -144,7 +165,7 @@ describe Facter::Util::Parser do
 
       File.open(file, "w") { |f| f.print data }
 
-      Facter::Util::Parser.new(file).results.should == {"one" => "two", "three" => "four"}
+      Facter::Util::Parser.new(file).values.should == {"one" => "two", "three" => "four"}
     end
   end
 
@@ -180,7 +201,7 @@ echo three=four
       cache.stubs(:write!)
       cache[@script] = {"one" => "yay"}
 
-      Facter::Util::Parser.new(@script, cache).results.should == {"one" => "yay"}
+      Facter::Util::Parser.new(@script, cache).values.should == {"one" => "yay"}
     end
 
     it "should return a hash directly from the executable when the cache is not primed" do
@@ -189,11 +210,11 @@ echo three=four
 
       cache.stubs(:write!)
 
-      Facter::Util::Parser.new(@script, cache).results.should == {"one" => "two", "three" => "four"}
+      Facter::Util::Parser.new(@script, cache).values.should == {"one" => "two", "three" => "four"}
     end
 
     it "should return a hash of whatever is returned by the executable" do
-      Facter::Util::Parser.new(@script).results.should == {"one" => "two", "three" => "four"}
+      Facter::Util::Parser.new(@script).values.should == {"one" => "two", "three" => "four"}
     end
 
     it "should ignore any extraneous whitespace" do
@@ -215,7 +236,7 @@ echo  three  = 	four
         File.chmod(0755, my_script)
       end
 
-      Facter::Util::Parser.new(my_script).results.should == {"one" => "two", "three" => "four"}
+      Facter::Util::Parser.new(my_script).values.should == {"one" => "two", "three" => "four"}
     end
 
     it "should return a nil if script data returns nothing" do
@@ -236,7 +257,7 @@ echo =
       end
 
       my_parser = Facter::Util::Parser.new(my_script)
-      my_parser.results.should == nil
+      my_parser.values.should == nil
     end
 
     it "should match the extensions bat, exe & com", :if => Facter::Util::Config.is_windows? do
@@ -265,7 +286,7 @@ EOS
       cache.stubs(:write!)
       cache[@script] = {"one" => "yay"}
 
-      Facter::Util::Parser.new(@script, cache).results.should == {"one" => "yay"}
+      Facter::Util::Parser.new(@script, cache).values.should == {"one" => "yay"}
     end
 
     it "should return a hash directly from the executable when the cache is not primed" do
@@ -274,11 +295,11 @@ EOS
 
       cache.stubs(:write!)
 
-      Facter::Util::Parser.new(@script, cache).results.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
+      Facter::Util::Parser.new(@script, cache).values.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
     end
 
     it "should return a hash of whatever is returned by the executable" do
-      Facter::Util::Parser.new(@script).results.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
+      Facter::Util::Parser.new(@script).values.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
     end
 
     it "should ignore any extraneous whitespace" do
@@ -290,7 +311,7 @@ Write-Host "var3=  value3   "
 EOS
       File.open(my_script, "w") { |f| f.print data }
 
-      Facter::Util::Parser.new(my_script).results.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
+      Facter::Util::Parser.new(my_script).values.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
     end
 
     it "should return a nil if script data returns nothing" do
@@ -299,7 +320,7 @@ EOS
       File.open(my_script, "w") { |f| f.print data }
 
       my_parser = Facter::Util::Parser.new(my_script)
-      my_parser.results.should == nil
+      my_parser.values.should == nil
     end
 
     it "should match the extensions ps1" do
@@ -312,7 +333,7 @@ EOS
       File.open(my_script, "w") { |f| f.print data }
 
       my_parser = Facter::Util::Parser.new(my_script)
-      my_parser.results.should == {"foo"=>"bar"}
+      my_parser.values.should == {"foo"=>"bar"}
     end
 
     it "should match the extensions ps1" do
