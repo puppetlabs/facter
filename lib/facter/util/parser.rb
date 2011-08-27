@@ -21,7 +21,11 @@ class Facter::Util::Parser
   # For support mutliple extensions you can pass an array of extensions as
   # +ext+.
   def self.matches_extension(ext)
-    @extension = ext
+    if ext.class == String then
+      @extension = ext.downcase
+    elsif ext.class == Array then
+      @extension = ext.collect {|x| x.downcase }
+    end
   end
 
   # Returns file extension from the given +filename+.
@@ -41,7 +45,7 @@ class Facter::Util::Parser
   def self.matches?(filename)
     raise "Must override the 'matches?' method for #{self}" unless extension
 
-    [extension].flatten.to_a.include?(file_extension(filename))
+    [extension].flatten.to_a.include?(file_extension(filename).downcase)
   end
 
   # Return the list of subclasses.

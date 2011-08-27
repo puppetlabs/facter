@@ -53,6 +53,27 @@ describe Facter::Util::Parser do
       TestParser.matches?("myfile.ext2").should == true
       TestParser.matches?("myfile.ext3").should == true
     end
+
+    it "should match extension ignoring case on file" do
+      class TestParser < Facter::Util::Parser
+        matches_extension "ext1"
+      end
+
+      TestParser.matches?("myfile.EXT1").should == true
+      TestParser.matches?("myfile.ExT1").should == true
+      TestParser.matches?("myfile.exT1").should == true
+    end
+
+    it "should match extension ignoring case for match_extension" do
+      class TestParser < Facter::Util::Parser
+        matches_extension "EXT1"
+      end
+
+      TestParser.matches?("myfile.EXT1").should == true
+      TestParser.matches?("myfile.ExT1").should == true
+      TestParser.matches?("myfile.exT1").should == true
+    end
+
   end
 
   describe "yaml" do
