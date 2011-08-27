@@ -197,8 +197,9 @@ echo three=four
     it "should use any cache provided at initialization time" do
       cache_file = tmpfile
       cache = Facter::Util::Cache.new(cache_file)
-
+      cache.stubs(:ttl).returns(1)
       cache.stubs(:write!)
+
       cache[@script] = {"one" => "yay"}
 
       Facter::Util::Parser.new(@script, cache).values.should == {"one" => "yay"}
@@ -283,6 +284,7 @@ EOS
       cache_file = tmpfile
       cache = Facter::Util::Cache.new(cache_file)
 
+      cache.stubs(:ttl).returns(1)
       cache.stubs(:write!)
       cache[@script] = {"one" => "yay"}
 

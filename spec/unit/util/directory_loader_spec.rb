@@ -107,6 +107,9 @@ echo three=four
       File.open(file, "w") { |f| f.print data }
       File.chmod(0755, file)
 
+      ttl_file = File.join(@loader.directory, "myscript.bat.ttl")
+      File.open(ttl_file, "w") { |f| f.print "1" }
+      
       cache[file] = {"foo" => "bar"}
       cache.write!
 

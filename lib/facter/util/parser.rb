@@ -89,15 +89,15 @@ class Facter::Util::Parser
 
     from_cache = false
     if cache and result = cache[filename]
-      # A cache exists 
+      # Use cache results if they exist
       Facter.debug("Using cached data for #{filename}")
       return_values = result
       from_cache = true
     else
-      # No cache - lets evaluate and optionally store cache
-      return_values = results unless return_values
+      # Run external fact and optionally cache results
+      return_values = results
 
-      if cache and cache.ttl(filename) > 0
+      if cache and return_values
         Facter.debug("Updating cache for #{filename}")
         cache[filename] = return_values
       end
