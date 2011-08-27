@@ -21,7 +21,7 @@ class Facter::Util::Cache
 
   # Stores cache keyed by the source file.
   def []=(file, stuff)
-    if ttl(file) and ttl(file) > 0 then
+    if ttl(file) and (ttl(file) > 0 or ttl(file) == -1) then
       data[file] = {:data => stuff, :stored => Time.now.to_i}
       write!
     end
@@ -31,8 +31,11 @@ class Facter::Util::Cache
   def [](file)
     ttl = ttl(file)
 
+    # If TTL -1 - always return cache
+    return data[file][:data] if ttl == -1
+
     return nil unless data[file]
-    return nil if ttl == 0
+    return nil unless ttl > 0
 
     now = Time.now.to_i
     return data[file][:data] if (now - data[file][:stored]) <= ttl

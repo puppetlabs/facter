@@ -8,32 +8,49 @@ require 'tempfile'
 describe Facter::Util::Cache do
   include FacterSpec::Files
 
-  before :each do
-    @cache = Facter::Util::Cache.new(tmpfile)
-    @cache.stubs(:ttl).returns(1)
-  end
-
   it "should make the required filename available" do
-    @cache.filename.should be_instance_of(String)
+    filename = tmpfile
+    cache = Facter::Util::Cache.new(filename)
+    cache.filename.should == filename
   end
 
   describe "when determining TTL" do
-    it "should determine TTL by looking in a file named after the external fact file with a '.ttl' extension" do
-      @cache.unstub(:ttl)
+    before :each do
+      @cache = Facter::Util::Cache.new(tmpfile)
       dir = tmpdir
-      file = File.join(dir, "myscript")
-      File.open(file + ".ttl", "w") { |f| f.print 300 }
+      @script_file = File.join(dir, "myscript")
+      @ttl_file = @script_file + ".ttl"
+    end
+    
+    it "should determine TTL by looking in a file named after the external fact file with a '.ttl' extension" do
+      File.open(@ttl_file, "w") { |f| f.print 300 }
 
-      @cache.ttl(file).should == 300
+      @cache.ttl(@script_file).should == 300
     end
 
-    it "should return a ttl of 0 when no ttl file is provided" do
-      @cache.unstub(:ttl)
-      @cache.ttl(@cache.filename).should == 0
+    it "should support a -1 for TTL" do
+      File.open(@ttl_file, "w") { |f| f.print -1 }
+
+      @cache.ttl(@script_file).should == -1
+    end
+
+    it "should return 0 when ttl file doesn't contain a number" do
+      File.open(@ttl_file, "w") { |f| f.print "some weird data" }
+
+      @cache.ttl(@script_file).should == 0
+    end
+
+    it "should return 0 when no ttl file is provided" do
+      @cache.ttl(@script_file).should == 0
     end
   end
 
   describe "when storing data" do
+    before :each do
+      @cache = Facter::Util::Cache.new(tmpfile)
+      @cache.stubs(:ttl).returns(1)
+    end
+
     it "should store the provided data in the cache" do
       @cache["/my/file"] = {:foo => :bar}
       @cache["/my/file"].should == {:foo => :bar}
@@ -77,17 +94,37 @@ describe Facter::Util::Cache do
       @cache["/my/file"].should be_nil
     end
 
+    it "should cache forever when TTL is set to -1" do
+      @cache.stubs(:ttl).returns(-1)
+      @cache["/my/file"] = "foo"
+
+      now = Time.now
+      Time.stubs(:now).returns(now + 1_000_000_000)
+      @cache["/my/file"].should == "foo"
+    end
+
+    it "should not cache data whose TTL is set to -100" do
+      @cache.stubs(:ttl).returns(-100)
+      @cache["/my/file"] = "foo"
+      @cache["/my/file"].should be_nil
+    end
+
     it "should discard data that has expired according to the TTL" do
       now = Time.now
       @cache["/my/file"] = "foo"
       @cache["/my/file"].should == "foo"
 
-      Time.expects(:now).returns(now + 30)
+      Time.stubs(:now).returns(now + 30)
       @cache["/my/file"].should be_nil
     end
   end
 
   describe "when reading and writing to disk" do
+    before :each do
+      @cache = Facter::Util::Cache.new(tmpfile)
+      @cache.stubs(:ttl).returns(1)
+    end
+
     it "should be able to save the data to disk" do
       @cache.write!
       File.should be_exist(@cache.filename)
@@ -112,7 +149,7 @@ describe Facter::Util::Cache do
       other_cache = @cache.class.new(@cache.filename)
       other_cache.load
 
-      Time.expects(:now).returns(now + 30)
+      Time.stubs(:now).returns(now + 30)
       other_cache.stubs(:ttl).returns 1
       other_cache["/my/file"].should be_nil
     end
