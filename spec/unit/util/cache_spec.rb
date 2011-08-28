@@ -48,7 +48,7 @@ describe Facter::Util::Cache do
 
     it "should not cache data whose TTL is set to 0" do
       Facter::Util::Cache.set("foo", "bar", 0)
-      Facter::Util::Cache.get("foo",0).should be_nil
+      lambda { Facter::Util::Cache.get("foo",0) }.should raise_exception
     end
 
     it "should cache forever when TTL is set to -1" do
@@ -61,7 +61,7 @@ describe Facter::Util::Cache do
 
     it "should not cache data whose TTL is set to -100" do
       Facter::Util::Cache.set("foo", "bar", -100)
-      Facter::Util::Cache.get("foo",-100).should be_nil
+      lambda { Facter::Util::Cache.get("foo",-100) }.should raise_exception
     end
 
     it "should discard data that has expired according to the TTL" do
@@ -70,7 +70,7 @@ describe Facter::Util::Cache do
 
       now = Time.now
       Time.stubs(:now).returns(now + 30)
-      Facter::Util::Cache.get("foo",1).should be_nil
+      lambda { Facter::Util::Cache.get("foo",1) }.should raise_exception
     end
   end
 
@@ -101,7 +101,7 @@ describe Facter::Util::Cache do
 
       now = Time.now
       Time.stubs(:now).returns(now + 30)
-      Facter::Util::Cache.get("foo",1).should be_nil
+      lambda { Facter::Util::Cache.get("foo",1) }.should raise_exception
     end
   end
 end

@@ -51,13 +51,16 @@ class Facter::Util::Cache
     return @@data[key][:data] if ttl == -1
     return @@data[key][:data] if ttl == -1
 
-    return nil unless @@data[key]
-    return nil unless ttl > 0
+    raise "TTL zero" unless ttl > 0
+    raise "No entry" unless @@data[key]
 
     now = Time.now.to_i
     return @@data[key][:data] if (now - @@data[key][:stored]) <= ttl
 
-    return nil
+    raise "Expired cache entry"
+  rescue Exception => e
+    Facter.debug("no cache for #{key}: " + e.message)
+    raise(e)
   end
 
   # Load the cache from its file.
