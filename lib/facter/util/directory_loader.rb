@@ -1,4 +1,3 @@
-require 'facter/util/cache'
 require 'facter/util/parser'
 
 # A Facter plugin that loads facts from /etc/facter/facts.d.
@@ -23,21 +22,12 @@ class Facter::Util::DirectoryLoader
   # Directory for fact loading
   attr_reader :directory
 
-  # Facter::Util::Cache object.
-  attr_reader :cache
-
-  # Returns the cache file this loader uses.
-  def cache_file
-    @cache.filename
-  end
-
   # Initialize Facter::Util::DirectoryLoader.
   # 
   # Allows you to specify the directory to use and cache file for cacheable
   # content.
-  def initialize(dir="/etc/facter/facts.d", cache_file="/tmp/facts_cache.yml")
+  def initialize(dir="/etc/facter/facts.d")
     @directory = dir
-    @cache = Facter::Util::Cache.new(cache_file)
   end
 
   # Return all relevant directory based fact file names.
@@ -50,9 +40,8 @@ class Facter::Util::DirectoryLoader
   # Load facts from files in fact directory using the relevant parser classes to 
   # parse them.
   def load
-    cache.load
     entries.each do |file|
-      parser = Facter::Util::Parser.new(file,cache)
+      parser = Facter::Util::Parser.new(file)
       if parser == nil
         next
       end

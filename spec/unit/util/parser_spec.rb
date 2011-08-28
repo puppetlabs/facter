@@ -14,6 +14,37 @@ describe Facter::Util::Parser do
     Facter::Util::Parser.new("/my/file.foobar")
   end
 
+  describe "when determining TTL" do
+    before :each do
+      dir = tmpdir
+      @script_file = File.join(dir, "myscript.txt")
+      @ttl_file = @script_file + ".ttl"
+      @parser = Facter::Util::Parser.new(@script_file)
+    end
+   
+    it "should determine TTL by looking in a file named after the external fact file with a '.ttl' extension" do
+      File.open(@ttl_file, "w") { |f| f.print 300 }
+
+      @parser.ttl.should == 300
+    end
+
+    it "should support a -1 for TTL" do
+      File.open(@ttl_file, "w") { |f| f.print -1 }
+
+      @parser.ttl.should == -1
+    end
+
+    it "should return 0 when ttl file doesn't contain a number" do
+      File.open(@ttl_file, "w") { |f| f.print "some weird data" }
+
+      @parser.ttl.should == 0
+    end
+
+    it "should return 0 when no ttl file is provided" do
+      @parser.ttl.should == 0
+    end
+  end
+
   describe "values function" do
     it "should output timing when results are requested" do
       file = tmpfile("timing","txt") 
@@ -216,23 +247,21 @@ echo three=four
     end
 
     it "should use any cache provided at initialization time" do
-      cache_file = tmpfile
-      cache = Facter::Util::Cache.new(cache_file)
-      cache.stubs(:ttl).returns(1)
-      cache.stubs(:write!)
+      Facter::Util::Cache.filename = tmpfile
+      Facter::Util::Cache.set(@script, {"one" => "yay"}, 1)
 
-      cache[@script] = {"one" => "yay"}
-
-      Facter::Util::Parser.new(@script, cache).values.should == {"one" => "yay"}
+      parser = Facter::Util::Parser.new(@script)
+      parser.expects(:ttl).once.returns(1)
+      parser.values.should == {"one" => "yay"}
     end
 
     it "should return a hash directly from the executable when the cache is not primed" do
       cache_file = tmpfile
-      cache = Facter::Util::Cache.new(cache_file)
+      Facter::Util::Cache.filename = cache_file
 
-      cache.stubs(:write!)
+      Facter::Util::Cache.any_instance.stubs(:write!)
 
-      Facter::Util::Parser.new(@script, cache).values.should == {"one" => "two", "three" => "four"}
+      Facter::Util::Parser.new(@script).values.should == {"one" => "two", "three" => "four"}
     end
 
     it "should return a hash of whatever is returned by the executable" do
@@ -303,22 +332,21 @@ EOS
 
     it "should use any cache provided at initialization time" do
       cache_file = tmpfile
-      cache = Facter::Util::Cache.new(cache_file)
+      Facter::Util::Cache.filename = cache_file
+      Facter::Util::Cache.set(@script,{"one" => "yay"},1)
 
-      cache.stubs(:ttl).returns(1)
-      cache.stubs(:write!)
-      cache[@script] = {"one" => "yay"}
-
-      Facter::Util::Parser.new(@script, cache).values.should == {"one" => "yay"}
+      parser = Facter::Util::Parser.new(@script)
+      parser.expects(:ttl).returns(1)
+      parser.values.should == {"one" => "yay"}
     end
 
     it "should return a hash directly from the executable when the cache is not primed" do
       cache_file = tmpfile
-      cache = Facter::Util::Cache.new(cache_file)
+      Facter::Util::Cache.filename = cache_file
 
-      cache.stubs(:write!)
+      Facter::Util::Cache.any_instance.stubs(:write!)
 
-      Facter::Util::Parser.new(@script, cache).values.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
+      Facter::Util::Parser.new(@script).values.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
     end
 
     it "should return a hash of whatever is returned by the executable" do

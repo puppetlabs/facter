@@ -8,9 +8,6 @@ class Facter::Util::Parser
   # filename to parse
   attr_reader :filename
 
-  # Facter::Util::Cache object
-  attr_accessor :cache
-  
   class << self
     # Retrieve the set extension, if any
     attr_reader :extension
@@ -65,7 +62,7 @@ class Facter::Util::Parser
   end
 
   # Return a new parser object that can handle +filename+.
-  def self.new(filename, cache = nil)
+  def self.new(filename)
     klass = which_parser(filename)
 
     if klass == nil
@@ -75,11 +72,14 @@ class Facter::Util::Parser
     object = klass.allocate
     object.send(:initialize, filename)
 
-    if cache
-      object.cache = cache
-    end
-
     object
+  end
+
+  def ttl
+    meta = filename + ".ttl"
+
+    return 0 unless File.exist?(meta)
+    return File.read(meta).chomp.to_i
   end
   
   # Initialize parser subclass.
@@ -92,7 +92,7 @@ class Facter::Util::Parser
     starttime = Time.now.to_f
 
     from_cache = false
-    if cache and result = cache[filename]
+    if result = Facter::Util::Cache.get(filename,ttl)
       # Use cache results if they exist
       Facter.debug("Using cached data for #{filename}")
       return_values = result
@@ -101,9 +101,9 @@ class Facter::Util::Parser
       # Run external fact and optionally cache results
       return_values = results
 
-      if cache and return_values
+      if return_values
         Facter.debug("Updating cache for #{filename}")
-        cache[filename] = return_values
+        Facter::Util::Cache.set(filename,return_values,ttl)
       end
     end
 
