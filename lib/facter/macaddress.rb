@@ -76,28 +76,8 @@ Facter.add(:macaddress) do
 end
 
 Facter.add(:macaddress) do
-    confine :kernel => %w(windows)
-    setcode do
-        require 'win32ole'
-        require 'socket'
-
-        ether = nil
-        host = Socket.gethostname
-        connect_string = "winmgmts://#{host}/root/cimv2"
-
-        wmi = WIN32OLE.connect(connect_string)
-
-        query = %Q{
-          select *
-          from Win32_NetworkAdapterConfiguration
-          where IPEnabled = True
-        }
-
-        wmi.ExecQuery(query).each{ |nic|
-          ether = nic.MacAddress
-          break
-        }
-        
-        ether
-    end
+  confine :kernel => %w(windows)
+  setcode do
+    Facter::Util::Macaddress::Windows.macaddress
+  end
 end

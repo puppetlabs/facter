@@ -27,12 +27,17 @@ module Facter::Util::IP
             :ipaddress  => /\s+inet (\S+)\s.*/,
             :macaddress => /(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/,
             :netmask    => /.*\s+netmask (\S+)\s.*/
+        },
+        :windows => {
+            :ipaddress  => /\s+IP Address:\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
+            :ipaddress6 => /Address ((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
+            :netmask    => /\s+Subnet Prefix:\s+\S+\s+\(mask ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\)/
         }
     }
 
-    # Convert an interface name into purely alpha characters.
+    # Convert an interface name into purely alphanumeric characters.
     def self.alphafy(interface)
-        interface.gsub(/[-:.]/, '_')
+        interface.gsub(/[^a-z0-9_]/i, '_')
     end
 
     def self.convert_from_hex?(kernel)
@@ -55,6 +60,10 @@ module Facter::Util::IP
     def self.get_interfaces
         return [] unless output = Facter::Util::IP.get_all_interface_output()
 
+        # windows interface names contain spaces and are quoted and can appear multiple
+        # times as ipv4 and ipv6
+        return output.scan(/\s* connected\s*(\S.*)/).flatten.uniq if Facter.value(:kernel) == 'windows'
+
         # Our regex appears to be stupid, in that it leaves colons sitting
         # at the end of interfaces.  So, we have to trim those trailing
         # characters.  I tried making the regex better but supporting all
@@ -70,6 +79,9 @@ module Facter::Util::IP
             output = %x{/usr/sbin/ifconfig -a}
         when 'HP-UX'
             output = %x{/bin/netstat -in | sed -e 1d}
+        when 'windows'
+          output = %x|#{ENV['SYSTEMROOT']}/system32/netsh interface ip show interface|
+          output += %x|#{ENV['SYSTEMROOT']}/system32/netsh interface ipv6 show interface|
         end
         output
     end
@@ -87,6 +99,17 @@ module Facter::Util::IP
            %x{/usr/sbin/lanscan}.scan(/(\dx\S+).*UP\s+(\w+\d+)/).each {|i| mac = i[0] if i.include?(interface) }
            mac = mac.sub(/0x(\S+)/,'\1').scan(/../).join(":")
            output = ifc + "\n" + mac
+        end
+        output
+    end
+
+    def self.get_output_for_interface_and_label(interface, label)
+        return get_single_interface_output(interface) unless Facter.value(:kernel) == 'windows'
+
+        if label == 'ipaddress6'
+          output = %x|#{ENV['SYSTEMROOT']}/system32/netsh interface ipv6 show address \"#{interface}\"|
+        else
+          output = %x|#{ENV['SYSTEMROOT']}/system32/netsh interface ip show address \"#{interface}\"|
         end
         output
     end
@@ -139,7 +162,7 @@ module Facter::Util::IP
             hwaddrre = /^Slave Interface: #{interface}\n[^\n].+?\nPermanent HW addr: (([0-9a-fA-F]{2}:?)*)$/m
             value = hwaddrre.match(bondinfo.to_s)[1].upcase
         else
-            output_int = get_single_interface_output(interface)
+            output_int = get_output_for_interface_and_label(interface, label)
 
             output_int.each_line do |s|
                 if s =~ regex
