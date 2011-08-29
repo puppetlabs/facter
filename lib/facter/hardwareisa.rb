@@ -12,5 +12,5 @@
 
 Facter.add(:hardwareisa) do
     setcode 'uname -p'
-    confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS SuSE SLES Debian Ubuntu Gentoo FreeBSD OpenBSD NetBSD OEL OVS GNU/kFreeBSD}
+    confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS Scientific SuSE SLES Debian Ubuntu Gentoo FreeBSD OpenBSD NetBSD OEL OVS GNU/kFreeBSD}
 end
