@@ -1,0 +1,12 @@
+Idx     Met         MTU          State                Name
+---  ----------  ----------  ------------  ---------------------------
+  1          50  4294967295  connected     Loopback Pseudo-Interface 1
+  9          10        1500  connected     Local Area Connection
+
+
+Idx     Met         MTU          State                Name
+---  ----------  ----------  ------------  ---------------------------
+  1          50  4294967295  connected     Loopback Pseudo-Interface 1
+  9          10        1500  connected     Local Area Connection
+ 11          50        1280  disconnected  isatap.localdomain
+ 12          50        1280  connected     Teredo Tunneling Pseudo-Interface

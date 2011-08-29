@@ -206,3 +206,31 @@ if Facter.value(:kernel) == "SunOS"
 
     Facter::Memory.vmstat_find_free_memory()
 end
+
+if Facter.value(:kernel) == "windows"
+  require 'facter/util/wmi'
+
+  Facter.add("MemoryFree") do
+    confine :kernel => :windows
+    setcode do
+      mem = 0
+      Facter::Util::WMI.execquery("select FreePhysicalMemory from Win32_OperatingSystem").each do |os|
+        mem = os.FreePhysicalMemory
+        break
+      end
+      Facter::Memory.scale_number(mem.to_f, "kB")
+    end
+  end
+
+  Facter.add("MemoryTotal") do
+    confine :kernel => :windows
+    setcode do
+      mem = 0
+      Facter::Util::WMI.execquery("select TotalPhysicalMemory from Win32_ComputerSystem").each do |comp|
+        mem = comp.TotalPhysicalMemory
+        break
+      end
+      Facter::Memory.scale_number(mem.to_f, "")
+    end
+  end
+end

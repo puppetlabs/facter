@@ -66,3 +66,20 @@ describe "Darwin", :unless => Facter.value(:operatingsystem) == 'windows' do
     end
   end
 end
+
+describe "Windows" do
+  it "should return the first macaddress" do
+    Facter.fact(:kernel).stubs(:value).returns("windows")
+
+    nic = stubs 'nic'
+    nic.stubs(:MacAddress).returns("00:0C:29:0C:9E:9F")
+
+    nic2 = stubs 'nic'
+    nic2.stubs(:MacAddress).returns("00:0C:29:0C:9E:AF")
+
+    require 'facter/util/wmi'
+    Facter::Util::WMI.stubs(:execquery).with("select MACAddress from Win32_NetworkAdapterConfiguration where IPEnabled = True").returns([nic, nic2])
+
+    Facter.fact(:macaddress).value.should == "00:0C:29:0C:9E:9F"
+  end
+end
