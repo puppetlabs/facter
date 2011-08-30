@@ -147,9 +147,9 @@ end
 #
 # Purpose: returning true or false for if a machine is virtualised or not.
 #
-# Resolution: The Xen domain 0 machine is virtualised to a degree, but is generally
-# not viewed as being a virtual machine. This checks that the machine is not
-# physical nor xen0, if that is the case, it is virtual.
+# Resolution: Hypervisors and the like may be detected as a virtual type, but
+# are not actual virtual machines, or should not be treated as such. This 
+# determines if the host is actually virtualized.
 #
 # Caveats:
 #
@@ -158,10 +158,12 @@ Facter.add("is_virtual") do
     confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin GNU/kFreeBSD}
 
     setcode do
-        if Facter.value(:virtual) != "physical" && Facter.value(:virtual) != "xen0"
-            "true"
-        else
+        physical_types = %w{physical xen0 vmware_server}
+
+        if physical_types.include? Facter.value(:virtual)
             "false"
+        else
+            "true"
         end
     end
 end
