@@ -226,11 +226,13 @@ describe "is_virtual fact" do
     end
 
     it "should be false on vmware_server" do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
         Facter.fact(:virtual).stubs(:value).returns("vmware_server")
         Facter.fact(:is_virtual).value.should == "false"
     end
 
     it "should be false on openvz host nodes" do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
         Facter.fact(:virtual).stubs(:value).returns("openvzhn")
         Facter.fact(:is_virtual).value.should == "false"
     end
