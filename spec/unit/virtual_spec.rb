@@ -224,4 +224,9 @@ describe "is_virtual fact" do
         Facter.fact(:virtual).stubs(:value).returns("parallels")
         Facter.fact(:is_virtual).value.should == "true"
     end
+
+    it "should be false on vmware_server" do
+        Facter.fact(:virtual).stubs(:value).returns("vmware_server")
+        Facter.fact(:is_virtual).value.should == "false"
+    end
 end
