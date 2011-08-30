@@ -3,7 +3,7 @@ require 'facter/util/ip'
 Facter.add(:arp) do
   confine :kernel => :linux
   setcode do
-    output = Facter::Util::Resolution.exec('arp -a')
+    output = Facter::Util::Resolution.exec('arp -an')
     if not output.nil?
       arp = ""
       output.each_line do |s|
