@@ -16,10 +16,10 @@
 #
 
 Facter.add(:operatingsystemrelease) do
-    confine :operatingsystem => %w{CentOS Fedora oel ovs RedHat MeeGo Scientific}
+    confine :operatingsystem => %w{CentOS Fedora oel ovs RedHat MeeGo Scientific SLC}
     setcode do
         case Facter.value(:operatingsystem)
-        when "CentOS", "RedHat", "Scientific"
+        when "CentOS", "RedHat", "Scientific", "SLC"
             releasefile = "/etc/redhat-release"
         when "Fedora"
             releasefile = "/etc/fedora-release"
