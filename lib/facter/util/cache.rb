@@ -1,6 +1,6 @@
 # This class provides a fact cache mechanism.
 #
-# The storage mechanism is file based using a YAML format for serialization.
+# The storage mechanism is file based using Ruby Marshal format for serialization.
 class Facter::Util::Cache
 
   @@data = nil
