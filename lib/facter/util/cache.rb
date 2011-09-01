@@ -4,7 +4,7 @@
 class Facter::Util::Cache
 
   @@data = nil
-  @@filename = "/tmp/facts_cache.yml"
+  @@filename = "/tmp/facts_cache.dat"
 
   class << self
     # Cache filename
@@ -66,7 +66,9 @@ class Facter::Util::Cache
   # Load the cache from its file.
   def self.load
     if File.exist?(filename)
-      @@data = YAML.load_file(filename)
+      File.open(filename) do |file|
+        @@data = Marshal.load(file)
+      end
       # If the file was empty, return {}
       @@data = {} if @@data == false
     else
@@ -81,6 +83,6 @@ class Facter::Util::Cache
     if @@data.nil?
       load
     end
-    File.open(filename, "w", 0600) {|f| f.write(YAML.dump(@@data)) }
+    File.open(filename, "w", 0600) {|f| f.write(Marshal.dump(@@data)) }
   end
 end
