@@ -1,5 +1,6 @@
-require 'autotest'
-require 'autotest/rspec'
+require "autotest/growl"
+
+Autotest.add_discovery { "rspec2" }
 
 Autotest.add_hook :initialize do |at|
     at.clear_mappings
@@ -35,11 +36,4 @@ Autotest.add_hook :initialize do |at|
     at.add_mapping(%r!^spec/lib/monkey_patches/.*!) { |filename, _|
         at.files_matching %r!spec/(unit|integration)/.*\.rb!
     }
-end
-
-class Autotest::FacterRspec < Autotest::Rspec
-    def spec_commands
-        ENV["AUTOTEST"] = "true"
-        ENV["PATH"].split(File::PATH_SEPARATOR).collect { |dir| File.join(dir, "spec") }
-    end
 end
