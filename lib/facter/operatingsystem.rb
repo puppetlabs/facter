@@ -51,6 +51,8 @@ Facter.add(:operatingsystem) do
             txt = File.read("/etc/redhat-release")
             if txt =~ /centos/i
                 "CentOS"
+            elsif txt =~ /CERN/
+                "SLC"
             elsif txt =~ /scientific/i 
                 "Scientific"
             else
