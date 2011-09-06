@@ -13,11 +13,11 @@ Facter.add(:macaddress) do
     confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS Scientific SLC SuSE SLES Debian Gentoo Ubuntu OEL OVS GNU/kFreeBSD}
     setcode do
         ether = []
-        output = %x{/sbin/ifconfig -a}
+        output = Facter::Util::Resolution.exec("/sbin/ifconfig -a")
         output.each_line do |s|
             ether.push($1) if s =~ /(?:ether|HWaddr) (\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
         end
-        ether[0]
+        Facter::Util::Macaddress.standardize(ether[0])
     end
 end
 
@@ -29,7 +29,7 @@ Facter.add(:macaddress) do
         output.each_line do |s|
             ether.push($1) if s =~ /(?:SPLA)\s+(\w{2}:\w{2}:\w{2}:\w{2}:\w{2}:\w{2})/
         end
-        ether[0]
+        Facter::Util::Macaddress.standardize(ether[0])
     end
 end
 
@@ -37,13 +37,13 @@ Facter.add(:macaddress) do
     confine :operatingsystem => %w{FreeBSD OpenBSD}
     setcode do
     ether = []
-        output = %x{/sbin/ifconfig}
+        output = Facter::Util::Resolution.exec("/sbin/ifconfig")
         output.each_line do |s|
             if s =~ /(?:ether|lladdr)\s+(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/
                 ether.push($1)
             end
         end
-        ether[0]
+        Facter::Util::Macaddress.standardize(ether[0])
     end
 end
 
@@ -71,7 +71,7 @@ Facter.add(:macaddress) do
                 end
             end
         end
-        ether[0]
+        Facter::Util::Macaddress.standardize(ether[0])
     end
 end
 
