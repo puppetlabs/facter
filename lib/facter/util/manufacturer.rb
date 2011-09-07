@@ -79,6 +79,12 @@ module Facter::Manufacturer
                 end
             end
         end
+
+        Facter.add('serialnumber') do
+          setcode do
+            Facter::Util::Resolution.exec("/usr/sbin/sneep")
+          end
+        end
     end
 
     def self.win32_find_system_info(name)
