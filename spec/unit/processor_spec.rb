@@ -61,6 +61,23 @@ describe "Processor facts" do
       end
     end
   end
+
+  describe "on Solaris" do
+    before :each do
+      Facter.collection.loader.load(:processor)
+      Facter.fact(:kernel).stubs(:value).returns(:sunos)
+    end
+
+    it "should detect the correct processor count on x86_64" do
+      fixture_data = File.read(File.expand_path(File.dirname(__FILE__) + '/../fixtures/processorcount/solaris-x86_64-kstat-cpu-info'))
+      Facter::Util::Resolution.expects(:exec).with("/usr/bin/kstat cpu_info").returns(fixture_data)
+      Facter.fact(:processorcount).value.should == 8
+    end
+
+    it "should detect the correct count on sparc" do
+      fixture_data = File.read(File.expand_path(File.dirname(__FILE__) + '/../fixtures/processorcount/solaris-sparc-kstat-cpu-info'))
+      Facter::Util::Resolution.expects(:exec).with("/usr/bin/kstat cpu_info").returns(fixture_data)
+      Facter.fact(:processorcount).value.should == 8
+    end
+  end
 end
-
-

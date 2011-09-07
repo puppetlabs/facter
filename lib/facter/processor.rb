@@ -142,3 +142,11 @@ if Facter.value(:kernel) == "windows"
     end
   end
 end
+
+Facter.add("processorcount") do
+  confine :kernel => :sunos
+  setcode do
+    kstat = Facter::Util::Resolution.exec("/usr/bin/kstat cpu_info")
+    kstat.scan(/\bcore_id\b\s+\d+/).uniq.length
+  end
+end
