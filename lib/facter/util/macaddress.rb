@@ -2,6 +2,10 @@
 #
 module Facter::Util::Macaddress
 
+  def self.standardize(macaddress)
+    macaddress.split(":").map{|x| "0#{x}"[-2..-1]}.join(":")
+  end
+
   module Darwin
     def self.macaddress
       iface = default_interface
