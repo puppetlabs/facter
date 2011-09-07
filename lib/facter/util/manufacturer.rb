@@ -53,7 +53,7 @@ module Facter::Manufacturer
     def self.sysctl_find_system_info(name)
         name.each do |sysctlkey,facterkey|
             Facter.add(facterkey) do
-                confine :kernel => :openbsd
+                confine :kernel => [:openbsd, :darwin]
                 setcode do
                     Facter::Util::Resolution.exec("sysctl -n #{sysctlkey} 2>/dev/null")
                 end
