@@ -15,15 +15,16 @@ describe "Operating System Release fact" do
     end
 
     test_cases = {
-        "CentOS"     => "/etc/redhat-release",
-        "RedHat"     => "/etc/redhat-release",
-        "Scientific" => "/etc/redhat-release",
-        "Fedora"     => "/etc/fedora-release",
-        "MeeGo"      => "/etc/meego-release",
-        "OEL"        => "/etc/enterprise-release",
-        "oel"        => "/etc/enterprise-release",
-        "OVS"        => "/etc/ovs-release",
-        "ovs"        => "/etc/ovs-release",
+        "CentOS"      => "/etc/redhat-release",
+        "RedHat"      => "/etc/redhat-release",
+        "Scientific"  => "/etc/redhat-release",
+        "Fedora"      => "/etc/fedora-release",
+        "MeeGo"       => "/etc/meego-release",
+        "OEL"         => "/etc/enterprise-release",
+        "oel"         => "/etc/enterprise-release",
+        "OVS"         => "/etc/ovs-release",
+        "ovs"         => "/etc/ovs-release",
+        "OracleLinux" => "/etc/oracle-release",
     }
 
     test_cases.each do |system, file|

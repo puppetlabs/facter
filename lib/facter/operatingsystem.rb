@@ -37,6 +37,8 @@ Facter.add(:operatingsystem) do
             "MeeGo"
         elsif FileTest.exists?("/etc/arch-release")
             "Archlinux"
+        elsif FileTest.exists?("/etc/oracle-release")
+            "OracleLinux"
         elsif FileTest.exists?("/etc/enterprise-release")
             if FileTest.exists?("/etc/ovs-release")
                 "OVS"
