@@ -55,7 +55,7 @@ module Facter::Manufacturer
             Facter.add(facterkey) do
                 confine :kernel => :openbsd
                 setcode do
-                    Facter::Util::Resolution.exec("sysctl -n " + sysctlkey)
+                    Facter::Util::Resolution.exec("sysctl -n #{sysctlkey} 2>/dev/null")
                 end
             end
         end
