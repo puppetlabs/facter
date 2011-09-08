@@ -24,7 +24,7 @@ module Facter
     include Comparable
     include Enumerable
 
-    FACTERVERSION = '1.6.1rc'
+    FACTERVERSION = '1.6.1'
     # = Facter
     # Functions as a hash of 'facts' you might care about about your
     # system, such as mac address, IP address, Video card, etc.
@@ -157,6 +157,12 @@ module Facter
     def self.clear
         Facter.flush
         Facter.reset
+    end
+
+    # Clear all messages. Used only in testing. Can't add to self.clear
+    # because we don't want to warn multiple times for items that are warnonce'd
+    def self.clear_messages
+        @@messages.clear
     end
 
     # Set debugging on or off.
