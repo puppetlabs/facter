@@ -11,7 +11,7 @@ begin
 rescue LoadError
 end
 
-Dir['tasks/**/*.rake'].each { |t| load t } 
+Dir['tasks/**/*.rake'].each { |t| load t }
 
 require 'rake'
 require 'rake/packagetask'
@@ -64,12 +64,12 @@ end
 
 RSpec::Core::RakeTask.new do |t|
     t.pattern ='spec/{unit,integration}/**/*_spec.rb'
-    t.fail_on_error = false
+    t.fail_on_error = true
 end
 
 RSpec::Core::RakeTask.new('spec:rcov') do |t|
     t.pattern ='spec/{unit,integration}/**/*_spec.rb'
-    t.fail_on_error = false
+    t.fail_on_error = true
     if defined?(Rcov)
         t.rcov = true
         t.rcov_opts = ['--exclude', 'spec/*,test/*,results/*,/usr/lib/*,/usr/local/lib/*,gems/*']
