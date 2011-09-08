@@ -72,7 +72,7 @@ describe "Virtual fact" do
   describe "on Linux" do
 
       before do
-        FileTest.expects(:exists?).with("/usr/lib/vmware/bin/vmware-vmx").returns false
+        Facter::Util::Resolution.expects(:exec).with("vmware -v").returns false
         Facter.fact(:operatingsystem).stubs(:value).returns(true)
         Facter.fact(:architecture).stubs(:value).returns(true)
       end
@@ -137,6 +137,10 @@ describe "Virtual fact" do
 
   end
   describe "on Solaris" do
+      before(:each) do
+          Facter::Util::Resolution.expects(:exec).with("vmware -v").returns false
+      end
+
       it "should be vmware with VMWare vendor name from prtdiag" do
           Facter.fact(:kernel).stubs(:value).returns("SunOS")
           Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
