@@ -1,5 +1,16 @@
+1.6.1rc2
+===
+9cdc87f Updated CHANGELOG for 1.6.1rc2
+7edef60 Change count to length for compatibility
+88f343c (#2344) VMware version parsing fix
+7457fe5 SELinux spec test fix for ubuntu
+8bed5bb Clear messages between test runs
+f4ad6bf Macaddress spec test needed operatingsystem fact
+6c098cc Rakefile should fail on error
+
 1.6.1rc1
 ===
+42c5471 Updated CHANGELOG for 1.6.1rc1.
 6d47012 (#4869) Implement productname as Darwin hw.model
 d28d96c (#4508) Xen HVM domU not detected as virtual
 d55983e (#9178) Add Oracle Linux identification
