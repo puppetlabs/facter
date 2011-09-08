@@ -20,5 +20,6 @@ RSpec.configure do |config|
   config.before :each do
     Facter::Util::Loader.any_instance.stubs(:load_all)
     Facter.clear
+    Facter.clear_messages
   end
 end
