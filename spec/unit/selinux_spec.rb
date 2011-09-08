@@ -38,6 +38,7 @@ describe "SELinux facts" do
 
     it "should return an SELinux policy version" do
        Facter.fact(:selinux).stubs(:value).returns("true")
+       FileTest.stubs(:exists?).with("/proc/self/mountinfo").returns false
 
        File.stubs(:read).with("/selinux/policyvers").returns("")
 
