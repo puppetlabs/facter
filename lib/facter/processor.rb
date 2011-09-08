@@ -105,7 +105,6 @@ if Facter.value(:kernel) == "OpenBSD"
     end
 end
 
-<<<<<<< HEAD
 if Facter.value(:kernel) == "windows"
   processor_list = []
 
@@ -142,6 +141,7 @@ if Facter.value(:kernel) == "windows"
       processor_list.length.to_s
     end
   end
+end
 
 if Facter.value(:kernel) == "DragonFly"
     Facter.add("Processor") do

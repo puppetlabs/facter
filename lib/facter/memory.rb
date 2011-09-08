@@ -231,6 +231,7 @@ if Facter.value(:kernel) == "windows"
       Facter::Memory.scale_number(mem.to_f, "")
     end
   end
+end
 
 if Facter.value(:kernel) == "DragonFly"
     page_size = %x{/sbin/sysctl -n hw.pagesize}.to_f
