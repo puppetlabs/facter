@@ -59,6 +59,6 @@ Facter.add('physicalprocessorcount') do
   confine :kernel => :windows
   setcode do
     require 'facter/util/wmi'
-    Facter::Util::WMI.execquery("select Name from Win32_Processor").count
+    Facter::Util::WMI.execquery("select Name from Win32_Processor").length
   end
 end
