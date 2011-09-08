@@ -20,12 +20,13 @@ describe "macaddress fact" do
 
   it "should return macaddress information for Linux" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
     Facter::Util::Resolution.stubs(:exec).with('/sbin/ifconfig -a').
       returns(ifconfig_fixture('linux_ifconfig_all_with_multiple_interfaces'))
 
     Facter.value(:macaddress).should == "00:12:3f:be:22:01"
   end
- 
+
   it "should return macaddress information for BSD" do
     Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
     Facter::Util::Resolution.stubs(:exec).with('/sbin/ifconfig').
@@ -33,5 +34,5 @@ describe "macaddress fact" do
 
     Facter.value(:macaddress).should == "00:0b:db:93:09:67"
   end
-  
+
 end
