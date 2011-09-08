@@ -139,8 +139,8 @@ Facter.add("virtual") do
                 end
             end
             
-            if FileTest.exists?("/usr/lib/vmware/bin/vmware-vmx")
-                result = "vmware_server"
+            if output = Facter::Util::Resolution.exec("vmware -v")
+                result = output.sub(/(\S+)\s+(\S+).*/) { | text | "#{$1}_#{$2}"}.downcase
             end
         end
 
@@ -163,7 +163,7 @@ Facter.add("is_virtual") do
     confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin GNU/kFreeBSD}
 
     setcode do
-        physical_types = %w{physical xen0 vmware_server openvzhn}
+        physical_types = %w{physical xen0 vmware_server vmware_workstation openvzhn}
 
         if physical_types.include? Facter.value(:virtual)
             "false"
