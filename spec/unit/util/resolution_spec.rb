@@ -141,7 +141,7 @@ describe Facter::Util::Resolution do
 
         describe "and ttl has been set" do
             before :each do
-                Facter::Util::Cache.filename = tmpfile
+                Facter::Util::Config.cache_file = tmpfile
             end
 
             it "return a cached value when ttl has not been reached" do

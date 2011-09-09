@@ -7,15 +7,9 @@ require 'facter/util/cache'
 describe Facter::Util::Cache do
   include FacterSpec::Files
 
-  it "should make the required filename available" do
-    filename = tmpfile
-    Facter::Util::Cache.filename = filename
-    Facter::Util::Cache.filename.should == filename
-  end
-
   describe "when storing data" do
     before :each do
-      Facter::Util::Cache.filename = tmpfile
+      Facter::Util::Config.cache_file = tmpfile
     end
 
     it "should store the provided data in the cache" do
@@ -76,7 +70,7 @@ describe Facter::Util::Cache do
   describe "when reading and writing to disk" do
     before :each do
       @@cache_file = tmpfile
-      Facter::Util::Cache.filename = @@cache_file
+      Facter::Util::Config.cache_file = @@cache_file
     end
 
     it "should be able to save the data to disk" do
@@ -101,6 +95,28 @@ describe Facter::Util::Cache do
       now = Time.now
       Time.stubs(:now).returns(now + 30)
       lambda { Facter::Util::Cache.get("foo",1) }.should raise_exception
+    end
+  end
+
+  describe "when cache file is not writeable" do
+    before :each do
+      @@cache_file = tmpfile
+      File.open(@@cache_file, "w") do |f|
+        f.write("")
+      end
+      File.chmod(0000, @@cache_file)
+      Facter::Util::Config.cache_file = @@cache_file
+    end
+
+    after :each do
+      # Reset permissions so files can be cleaned up
+      File.chmod(0644, @@cache_file)
+    end
+
+    it "setting and getting cache should still work" do
+      Facter::Util::Cache.set("foo", "bar", 1)
+      Facter::Util::Cache.write!
+      Facter::Util::Cache.get("foo",1).should == "bar"
     end
   end
 end

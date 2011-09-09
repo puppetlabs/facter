@@ -8,8 +8,6 @@ require 'tempfile'
 describe Facter::Util::DirectoryLoader do
   include FacterSpec::Files
 
-  subject { Facter::Util::DirectoryLoader.new("/my/dir.d") }
-
   before :each do
     @loader = Facter::Util::DirectoryLoader.new(tmpdir)
   end
@@ -18,8 +16,16 @@ describe Facter::Util::DirectoryLoader do
     @loader.directory.should be_instance_of(String)
   end
 
-  it "should default to '/etc/facter/facts.d' for the directory" do
+  it "should default to '/etc/facter/facts.d' for the directory if not windows" do
+    Facter::Util::Config.stubs(:is_windows?).returns(false)
     Facter::Util::DirectoryLoader.new.directory.should == "/etc/facter/facts.d"
+  end
+
+  it "should do nothing bad when dir doesn't exist" do
+    fakepath = "/foobar/path"
+    my_loader = Facter::Util::DirectoryLoader.new(fakepath)
+    FileTest.exists?(my_loader.directory).should be_false
+    my_loader.load
   end
 
   describe "when loading facts from disk" do
@@ -86,7 +92,7 @@ describe Facter::Util::DirectoryLoader do
 
     it "should use the cache when loading data" do
       cache_file = tmpfile
-      Facter::Util::Cache.filename = cache_file
+      Facter::Util::Config.cache_file = cache_file
 
       @loader = Facter::Util::DirectoryLoader.new(tmpdir)
 

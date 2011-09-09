@@ -4,22 +4,6 @@
 class Facter::Util::Cache
 
   @@data = nil
-  @@filename = "/tmp/facts_cache.dat"
-
-  class << self
-    # Cache filename
-    attr_accessor :filename
-  end
-
-  # Return the cache file name
-  def self.filename
-    @@filename
-  end
-
-  # Set the cache file name
-  def self.filename=(new_file)
-    @@filename = new_file
-  end
 
   # Return a hash of all cached data keyed by filename. A lazy load will occur
   # if the file has not been loaded earlier.
@@ -65,8 +49,9 @@ class Facter::Util::Cache
 
   # Load the cache from its file.
   def self.load
-    if File.exist?(filename)
-      File.open(filename) do |file|
+    cache_file = Facter::Util::Config.cache_file
+    if File.exist?(cache_file) and File.readable?(cache_file)
+      File.open(cache_file) do |file|
         @@data = Marshal.load(file)
       end
       # If the file was empty, return {}
@@ -83,6 +68,10 @@ class Facter::Util::Cache
     if @@data.nil?
       load
     end
-    File.open(filename, "w", 0600) {|f| f.write(Marshal.dump(@@data)) }
+    cache_file = Facter::Util::Config.cache_file
+    if (File.exists?(cache_file) and File.writable?(cache_file)) or
+      (!File.exists?(cache_file) and File.writable?(File.dirname(cache_file))) then
+      File.open(cache_file, "w", 0600) {|f| f.write(Marshal.dump(@@data)) }
+    end
   end
 end

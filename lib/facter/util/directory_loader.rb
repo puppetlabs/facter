@@ -26,8 +26,8 @@ class Facter::Util::DirectoryLoader
   # 
   # Allows you to specify the directory to use and cache file for cacheable
   # content.
-  def initialize(dir="/etc/facter/facts.d")
-    @directory = dir
+  def initialize(dir = nil)
+    @directory = dir || Facter::Util::Config.ext_fact_dir
   end
 
   # Return all relevant directory based fact file names.
