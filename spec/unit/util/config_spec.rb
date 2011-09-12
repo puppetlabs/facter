@@ -61,14 +61,14 @@ describe Facter::Util::Config do
     it "should return the default value for windows 2008" do
       Facter::Util::Config.stubs(:is_windows?).returns(true)
       ENV.stubs(:[]).with("ProgramData").returns("C:\\ProgramData")
-      Facter::Util::Config.cache_file.should == "C:\\ProgramData/Puppetlabs/facter/cache/facts_cache.dat"
+      Facter::Util::Config.cache_file.should == "C:\\ProgramData/Puppetlabs/facter/cache/facter_cache.dat"
     end
 
     it "should return the default value for windows 2003R2" do
       Facter::Util::Config.stubs(:is_windows?).returns(true)
       ENV.stubs(:[]).with("ProgramData").returns(nil)
       ENV.stubs(:[]).with("ALLUSERSPROFILE").returns("C:\\Documents and Settings\\All Users")
-      Facter::Util::Config.cache_file.should == "C:\\Documents and Settings\\All Users/Application Data/Puppetlabs/facter/cache/facts_cache.dat"
+      Facter::Util::Config.cache_file.should == "C:\\Documents and Settings\\All Users/Application Data/Puppetlabs/facter/cache/facter_cache.dat"
     end
   end
 
