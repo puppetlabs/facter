@@ -119,4 +119,28 @@ describe Facter::Util::Cache do
       Facter::Util::Cache.get("foo",1).should == "bar"
     end
   end
+
+  describe "when cache file has invalid data" do
+    before :each do
+      @@cache_file = tmpfile
+      File.open(@@cache_file, "w") do |f|
+        f.write("foobar data")
+      end
+      Facter::Util::Config.cache_file = @@cache_file
+    end
+
+    it "should return empty data set" do
+      Facter::Util::Cache.load
+      Facter::Util::Cache.all.should == {}
+    end
+
+    it "should allow overwriting" do
+      Facter::Util::Cache.load
+      Facter::Util::Cache.all.should == {}
+      Facter::Util::Cache.set("foo", "bar", 1)
+      Facter::Util::Cache.load
+      Facter::Util::Cache.get("foo", 1).should == "bar"
+    end
+  end
+
 end

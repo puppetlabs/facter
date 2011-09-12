@@ -51,8 +51,13 @@ class Facter::Util::Cache
   def self.load
     cache_file = Facter::Util::Config.cache_file
     if File.exist?(cache_file) and File.readable?(cache_file)
-      File.open(cache_file) do |file|
-        @@data = Marshal.load(file)
+      begin
+        File.open(cache_file) do |file|
+          @@data = Marshal.load(file)
+        end
+      rescue TypeError => e
+        Facter.warn("cache file content is invalid so returning empty set: " + e.message)
+        @@data = {}
       end
       # If the file was empty, return {}
       @@data = {} if @@data == false
