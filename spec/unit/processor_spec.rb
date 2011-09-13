@@ -66,17 +66,16 @@ describe "Processor facts" do
       end
     end
   end
-  
-  
-## This only tests the processorcount fact
-## The processor0, processor1, ... facts can't be tested using the current architecture
-## because the fact iterates over them outside of Facter.add,
-## and the testing stubs are only present inside the Facter.add block.
 
-  describe "on Linux"
+  describe "on Unixes" do
+    before :each do
+      Facter.collection.loader.load(:processor)
+    end
+
       it "should be 1 in SPARC fixture" do
 		Facter.fact(:kernel).stubs(:value).returns("Linux")
-		Facter.fact(:architecture).stubs(:value).returns("sparc")
+        Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
+        Facter.fact(:architecture).stubs(:value).returns("sparc")
 		File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
 		File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("sparc"))
 	
