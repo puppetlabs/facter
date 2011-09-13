@@ -14,15 +14,15 @@ describe "Domain name facts" do
     end
 
     it "should fall back to the dnsdomainname binary" do
-      Facter::Util::Resolution.stubs(:exec).with("hostname")
+      Facter::Util::Resolution.expects(:exec).with("hostname").returns("myhost")
       Facter::Util::Resolution.expects(:exec).with("dnsdomainname").returns("example.com")
       Facter.fact(:domain).value.should == "example.com"
     end
 
 
     it "should fall back to /etc/resolv.conf" do
-      Facter::Util::Resolution.stubs(:exec).with("hostname").at_least_once
-      Facter::Util::Resolution.stubs(:exec).with("dnsdomainname").at_least_once
+      Facter::Util::Resolution.expects(:exec).with("hostname").at_least_once.returns("myhost")
+      Facter::Util::Resolution.expects(:exec).with("dnsdomainname").at_least_once.returns("")
       File.expects(:open).with('/etc/resolv.conf').at_least_once
       Facter.fact(:domain).value
     end
