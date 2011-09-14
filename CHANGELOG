@@ -1,3 +1,8 @@
+1.6.1rc3
+===
+4d93745 (#8491) Prevent repeated loading of fact files
+6db71d4 (#9457) Fix logic for domain fact so hostname, then dnsdomainname and finally resolv.conf is used.
+
 1.6.1rc2
 ===
 9cdc87f Updated CHANGELOG for 1.6.1rc2
