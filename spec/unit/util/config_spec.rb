@@ -87,20 +87,20 @@ describe Facter::Util::Config do
 
     it "should return the default value for linux" do
       Facter::Util::Config.stubs(:is_windows?).returns(false)
-      Facter::Util::Config.ext_fact_dir.should == "/etc/facter/facts.d"
+      Facter::Util::Config.ext_fact_dir.should == "/usr/lib/facter/ext"
     end
 
     it "should return the default value for windows 2008" do
       Facter::Util::Config.stubs(:is_windows?).returns(true)
       ENV.stubs(:[]).with("ProgramData").returns("C:\\ProgramData")
-      Facter::Util::Config.ext_fact_dir.should == "C:\\ProgramData/Puppetlabs/facter/facts.d"
+      Facter::Util::Config.ext_fact_dir.should == "C:\\ProgramData/Puppetlabs/facter/ext"
     end
 
     it "should return the default value for windows 2003R2" do
       Facter::Util::Config.stubs(:is_windows?).returns(true)
       ENV.stubs(:[]).with("ProgramData").returns(nil)
       ENV.stubs(:[]).with("ALLUSERSPROFILE").returns("C:\\Documents and Settings\\All Users")
-      Facter::Util::Config.ext_fact_dir.should == "C:\\Documents and Settings\\All Users/Application Data/Puppetlabs/facter/facts.d"
+      Facter::Util::Config.ext_fact_dir.should == "C:\\Documents and Settings\\All Users/Application Data/Puppetlabs/facter/ext"
     end
   end
 

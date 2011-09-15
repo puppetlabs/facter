@@ -18,7 +18,7 @@ describe Facter::Util::DirectoryLoader do
 
   it "should default to '/etc/facter/facts.d' for the directory if not windows" do
     Facter::Util::Config.stubs(:is_windows?).returns(false)
-    Facter::Util::DirectoryLoader.new.directory.should == "/etc/facter/facts.d"
+    Facter::Util::DirectoryLoader.new.directory.should == "/usr/lib/facter/ext"
   end
 
   it "should do nothing bad when dir doesn't exist" do

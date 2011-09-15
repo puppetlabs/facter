@@ -59,9 +59,9 @@ module Facter::Util::Config
   # Retrieve the external fact directory
   def self.ext_fact_dir
     if is_windows?
-      @@ext_fact_dir ||= File.join(windows_data_dir, "facts.d")
+      @@ext_fact_dir ||= File.join(windows_data_dir, "ext")
     else
-      @@ext_fact_dir ||= "/etc/facter/facts.d"
+      @@ext_fact_dir ||= "/usr/lib/facter/ext"
     end
     @@ext_fact_dir
   end
