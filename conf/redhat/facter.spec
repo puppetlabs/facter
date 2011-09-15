@@ -48,6 +48,7 @@ rm -rf %{buildroot}
 %{_bindir}/facter
 %{ruby_sitelibdir}/facter.rb
 %{ruby_sitelibdir}/facter
+%{_libdir}/ext/README
 %doc CHANGELOG INSTALL LICENSE README.md
 
 
