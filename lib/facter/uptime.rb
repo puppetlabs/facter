@@ -1,3 +1,14 @@
+# Fact: uptime
+#
+# Purpose: return the system uptime in a human readable format.
+#
+# Resolution:
+#   Does basic maths on the "uptime_seconds" fact to return a count of
+#   days, hours and minutes of uptime
+#
+# Caveats:
+#
+
 require 'facter/util/uptime'
 
 Facter.add(:uptime) do

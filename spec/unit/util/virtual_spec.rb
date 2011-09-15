@@ -9,6 +9,7 @@ describe Facter::Util::Virtual do
     end
     it "should detect openvz" do
         FileTest.stubs(:directory?).with("/proc/vz").returns(true)
+        FileTest.stubs(:exists?).with("/proc/vz/veinfo").returns(true)
         Facter::Util::Virtual.should be_openvz
     end
 

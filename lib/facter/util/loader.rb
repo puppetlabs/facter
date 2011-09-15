@@ -90,6 +90,7 @@ class Facter::Util::Loader
             next if fact and env_name != fact
 
             Facter.add($1) do
+                has_weight 1_000_000
                 setcode { value }
             end
 

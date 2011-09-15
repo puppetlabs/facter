@@ -6,7 +6,9 @@ require 'facter'
 
 describe "Memory facts" do
     before do
-        Facter.loadfacts
+        # We need these facts loaded, but they belong to a file with a
+        # different name, so load the file explicitly.
+        Facter.collection.loader.load(:memory)
     end
 
     after do

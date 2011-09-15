@@ -13,6 +13,10 @@ describe Facter::Util::Resolution do
         Facter::Util::Resolution.new("yay").name.should == "yay"
     end
 
+    it "should have a method for setting the weight" do
+      Facter::Util::Resolution.new("yay").should respond_to(:has_weight)
+    end
+
     it "should have a method for setting the code" do
         Facter::Util::Resolution.new("yay").should respond_to(:setcode)
     end
@@ -195,11 +199,25 @@ describe Facter::Util::Resolution do
     it "should provide a method for returning the number of confines" do
         @resolve = Facter::Util::Resolution.new("yay")
         @resolve.confine "one" => "foo", "two" => "fee"
-        @resolve.length.should == 2
+        @resolve.weight.should == 2
     end
 
     it "should return 0 confines when no confines have been added" do
-        Facter::Util::Resolution.new("yay").length.should == 0
+        Facter::Util::Resolution.new("yay").weight.should == 0
+    end
+
+    it "should provide a way to set the weight" do
+        @resolve = Facter::Util::Resolution.new("yay")
+        @resolve.has_weight(45)
+        @resolve.weight.should == 45
+    end
+
+    it "should allow the weight to override the number of confines" do
+        @resolve = Facter::Util::Resolution.new("yay")
+        @resolve.confine "one" => "foo", "two" => "fee"
+        @resolve.weight.should == 2
+        @resolve.has_weight(45)
+        @resolve.weight.should == 45
     end
 
     it "should have a method for determining if it is suitable" do

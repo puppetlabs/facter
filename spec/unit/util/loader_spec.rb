@@ -19,6 +19,10 @@ end
 
 
 describe Facter::Util::Loader do
+    before :each do
+        Facter::Util::Loader.any_instance.unstub(:load_all)
+    end
+
     def with_env(values)
         old = {}
         values.each do |var, value|

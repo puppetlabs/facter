@@ -1,3 +1,27 @@
+# Fact: ipaddress
+#
+# Purpose: Return the main IP address for a host.
+#
+# Resolution:
+#   On the Unixes does an ifconfig, and returns the first non 127.0.0.0/8
+#   subnetted IP it finds.
+#   On Windows, it attempts to use the socket library and resolve the machine's
+#   hostname via DNS.
+#
+#   On LDAP based hosts it tries to use either the win32/resolv library to
+#   resolve the hostname to an IP address, or on Unix, it uses the resolv
+#   library.
+#
+#   As a fall back for undefined systems, it tries to run the "host" command to
+#   resolve the machine's hostname using the system DNS.
+#
+# Caveats:
+#   DNS resolution relies on working DNS infrastructure and resolvers on the
+#   host system.
+#   The ifconfig parsing purely takes the first IP address it finds without any
+#   checking this is a useful IP address.
+#
+
 Facter.add(:ipaddress) do
     confine :kernel => :linux
     setcode do

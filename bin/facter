@@ -52,8 +52,8 @@
 #
 # = Copyright
 #
-# Copyright (c) 2006 Reductive Labs, LLC
-# Licensed under the GNU Public License
+# Copyright (c) 2011 Puppet Labs, Inc
+# Licensed under the Apache 2.0 license
 
 require 'facter/application'
 

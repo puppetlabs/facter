@@ -18,6 +18,7 @@ RSpec.configure do |config|
 
   # Ensure that we don't accidentally cache between test cases.
   config.before :each do
+    Facter::Util::Loader.any_instance.stubs(:load_all)
     Facter.clear
   end
 end

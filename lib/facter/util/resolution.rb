@@ -85,17 +85,26 @@ class Facter::Util::Resolution
         end
     end
 
+    def has_weight(weight)
+        @weight = weight
+    end
+
     # Create a new resolution mechanism.
     def initialize(name)
         @name = name
         @confines = []
         @value = nil
         @timeout = 0
+        @weight = nil
     end
 
-    # Return the number of confines.
-    def length
-        @confines.length
+    # Return the importance of this resolution.
+    def weight
+        if @weight
+            @weight
+        else
+            @confines.length
+        end
     end
 
     # We need this as a getter for 'timeout', because some versions

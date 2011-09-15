@@ -27,7 +27,12 @@ describe Facter::Util::Uptime do
       end
 
       it "should use 'sysctl kern.boottime'" do
-        sysctl_output_file = File.join(SPECDIR, 'fixtures', 'uptime', 'sysctl_kern_boottime') # Aug 01 14:13:47 -0700 2010
+        if [1].pack("L") == [1].pack("V") # Determine endianness
+	  sysctl_output_filename = 'sysctl_kern_boottime_little_endian'
+	else
+	  sysctl_output_filename = 'sysctl_kern_boottime_big_endian'
+	end
+        sysctl_output_file = File.join(SPECDIR, 'fixtures', 'uptime', sysctl_output_filename) # Aug 01 14:13:47 -0700 2010
         Facter::Util::Uptime.stubs(:uptime_sysctl_cmd).returns("cat \"#{sysctl_output_file}\"")
         Time.stubs(:now).returns Time.parse("Aug 01 15:13:47 -0700 2010") # one hour later
         Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60

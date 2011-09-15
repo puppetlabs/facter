@@ -1,5 +1,18 @@
+# Fact: processor
+#
+# Purpose:
+#   Additional Facts about the machine's CPUs.
+#
+# Resolution:
+#   On Linux and kFreeBSD, parse '/proc/cpuinfo' for each processor.
+#   On AIX, parse the output of 'lsdev' for it's processor section.
+#   On OpenBSD, use 'uname -p' and the sysctl variable for 'hw.ncpu' for CPU
+#   count.
+#
+# Caveats:
+#
+
 # processor.rb
-# Additional Facts about the machine's CPUs
 #
 # Copyright (C) 2006 Mooter Media Ltd
 # Author: Matthew Palmer <matt@solutionsfirst.com.au>

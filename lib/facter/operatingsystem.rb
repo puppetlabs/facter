@@ -1,3 +1,16 @@
+# Fact: operatingsystem
+#
+# Purpose: Return the name of the operating system.
+#
+# Resolution:
+#   If the kernel is a Linux kernel, check for the existence of a selection of
+#   files in /etc/ to find the specific flavour.
+#   On SunOS based kernels, return Solaris.
+#   On systems other than Linux, use the kernel value.
+#
+# Caveats:
+#
+
 require 'facter/lsb'
 
 Facter.add(:operatingsystem) do
