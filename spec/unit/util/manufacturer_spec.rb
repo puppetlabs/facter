@@ -129,4 +129,25 @@ Handle 0x001F
         find_product_name("FreeBSD").should == find_product_name("SunOS")
     end
 
+    it "should find information on Windows" do
+        Facter.fact(:kernel).stubs(:value).returns("windows")
+        require 'facter/util/wmi'
+
+        bios = stubs 'bios'
+        bios.stubs(:Manufacturer).returns("Phoenix Technologies LTD")
+        bios.stubs(:Serialnumber).returns("56 4d 40 2b 4d 81 94 d6-e6 c5 56 a4 56 0c 9e 9f")
+
+        product = stubs 'product'
+        product.stubs(:Name).returns("VMware Virtual Platform")
+
+        wmi = stubs 'wmi'
+        wmi.stubs(:ExecQuery).with("select * from Win32_Bios").returns([bios])
+        wmi.stubs(:ExecQuery).with("select * from Win32_Bios").returns([bios])
+        wmi.stubs(:ExecQuery).with("select * from Win32_ComputerSystemProduct").returns([product])
+
+        Facter::Util::WMI.stubs(:connect).returns(wmi)
+        Facter.value(:manufacturer).should == "Phoenix Technologies LTD"
+        Facter.value(:serialnumber).should == "56 4d 40 2b 4d 81 94 d6-e6 c5 56 a4 56 0c 9e 9f"
+        Facter.value(:productname).should == "VMware Virtual Platform"
+    end
 end

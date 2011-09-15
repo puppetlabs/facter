@@ -4,7 +4,17 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 require 'facter/util/macaddress'
 
-describe "Darwin" do
+describe "standardized MAC address" do
+  it "should have zeroes added if missing" do
+    Facter::Util::Macaddress::standardize("0:ab:cd:e:12:3").should == "00:ab:cd:0e:12:03"
+  end
+  
+  it "should be identical if each octet already has two digits" do
+    Facter::Util::Macaddress::standardize("00:ab:cd:0e:12:03").should == "00:ab:cd:0e:12:03"
+  end
+end
+
+describe "Darwin", :unless => Facter.value(:operatingsystem) == 'windows' do
   test_cases = [
     # version,           iface, real macaddress,     fallback macaddress
     ["9.8.0",            'en0', "00:17:f2:06:e4:2e", "00:17:f2:06:e4:2e"],
@@ -64,5 +74,22 @@ describe "Darwin" do
         end
       end
     end
+  end
+end
+
+describe "Windows" do
+  it "should return the first macaddress" do
+    Facter.fact(:kernel).stubs(:value).returns("windows")
+
+    nic = stubs 'nic'
+    nic.stubs(:MacAddress).returns("00:0C:29:0C:9E:9F")
+
+    nic2 = stubs 'nic'
+    nic2.stubs(:MacAddress).returns("00:0C:29:0C:9E:AF")
+
+    require 'facter/util/wmi'
+    Facter::Util::WMI.stubs(:execquery).with("select MACAddress from Win32_NetworkAdapterConfiguration where IPEnabled = True").returns([nic, nic2])
+
+    Facter.fact(:macaddress).value.should == "00:0C:29:0C:9E:9F"
   end
 end

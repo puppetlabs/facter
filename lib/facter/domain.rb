@@ -23,13 +23,15 @@ Facter.add(:domain) do
         # Get the domain from various sources; the order of these
         # steps is important
 
-        Facter.value(:hostname)
-        next $domain if defined? $domain and ! $domain.nil?
+        if name = Facter::Util::Resolution.exec('hostname') and 
+            name =~ /.*?\.(.+$)/
 
-        domain = Facter::Util::Resolution.exec('dnsdomainname')
-        next domain if domain =~ /.+\..+/
+            $1
+        elsif domain = Facter::Util::Resolution.exec('dnsdomainname') and 
+            domain =~ /.+\..+/
 
-        if FileTest.exists?("/etc/resolv.conf")
+            domain
+        elsif FileTest.exists?("/etc/resolv.conf")
             domain = nil
             search = nil
             File.open("/etc/resolv.conf") { |file|
@@ -44,18 +46,15 @@ Facter.add(:domain) do
             next domain if domain
             next search if search
         end
-        nil
     end
 end
 
 Facter.add(:domain) do
     confine :kernel => :windows
     setcode do
-        require 'win32ole'
+        require 'facter/util/wmi'
         domain = ""
-        wmi = WIN32OLE.connect("winmgmts://")
-        query = "select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True"
-        wmi.ExecQuery(query).each { |nic|
+        Facter::Util::WMI.execquery("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").each { |nic|
             domain = nic.DNSDomain
             break
         }

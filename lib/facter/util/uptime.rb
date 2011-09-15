@@ -8,12 +8,13 @@ module Facter::Util::Uptime
     end
 
     def self.get_uptime_seconds_win
-      require 'win32ole'
-      wmi = WIN32OLE.connect("winmgmts://")
-      query = wmi.ExecQuery("select * from Win32_OperatingSystem")
+      require 'facter/util/wmi'
+
       last_boot = ""
-      query.each { |x| last_boot = x.LastBootupTime}
-      self.compute_uptime(Time.parse(last_boot.split('.').first)) 
+      Facter::Util::WMI.execquery("select * from Win32_OperatingSystem").each do |x|
+        last_boot = x.LastBootupTime
+      end
+      self.compute_uptime(Time.parse(last_boot.split('.').first))
     end
 
     private

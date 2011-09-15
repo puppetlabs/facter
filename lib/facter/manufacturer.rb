@@ -26,6 +26,11 @@ if Facter.value(:kernel) == "OpenBSD"
     }
 
     Facter::Manufacturer.sysctl_find_system_info(mfg_keys)
+elsif Facter.value(:kernel) == "Darwin" 
+    mfg_keys = {
+        'hw.model'   => 'productname'
+    }
+    Facter::Manufacturer.sysctl_find_system_info(mfg_keys)
 elsif Facter.value(:kernel) == "SunOS" and Facter.value(:hardwareisa) == "sparc"
     Facter::Manufacturer.prtdiag_sparc_find_system_info()
 elsif Facter.value(:kernel) == "windows"

@@ -52,4 +52,32 @@ describe "Operating System fact" do
 
         Facter.fact(:operatingsystem).value.should == "VMWareESX"
     end
+
+    it "should identify Alpine Linux" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      
+      FileTest.stubs(:exists?).returns false
+      
+      FileTest.expects(:exists?).with("/etc/alpine-release").returns true
+
+      Facter.fact(:operatingsystem).value.should == "Alpine"
+    end
+
+    it "should identify Scientific Linux" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      FileTest.stubs(:exists?).returns false
+
+      FileTest.expects(:exists?).with("/etc/redhat-release").returns true
+      File.expects(:read).with("/etc/redhat-release").returns("Scientific Linux SLC 5.7 (Boron)")
+      Facter.fact(:operatingsystem).value.should == "Scientific"
+    end
+
+    it "should differentiate between Scientific Linux CERN and Scientific Linux" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      FileTest.stubs(:exists?).returns false
+
+      FileTest.expects(:exists?).with("/etc/redhat-release").returns true
+      File.expects(:read).with("/etc/redhat-release").returns("Scientific Linux CERN SLC 5.7 (Boron)")
+      Facter.fact(:operatingsystem).value.should == "SLC"
+    end
 end

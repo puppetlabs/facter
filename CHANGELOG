@@ -1,3 +1,57 @@
+1.6.1rc3
+===
+4d93745 (#8491) Prevent repeated loading of fact files
+6db71d4 (#9457) Fix logic for domain fact so hostname, then dnsdomainname and finally resolv.conf is used.
+
+1.6.1rc2
+===
+9cdc87f Updated CHANGELOG for 1.6.1rc2
+7edef60 Change count to length for compatibility
+88f343c (#2344) VMware version parsing fix
+7457fe5 SELinux spec test fix for ubuntu
+8bed5bb Clear messages between test runs
+f4ad6bf Macaddress spec test needed operatingsystem fact
+6c098cc Rakefile should fail on error
+
+1.6.1rc1
+===
+42c5471 Updated CHANGELOG for 1.6.1rc1.
+6d47012 (#4869) Implement productname as Darwin hw.model
+d28d96c (#4508) Xen HVM domU not detected as virtual
+d55983e (#9178) Add Oracle Linux identification
+1cb9cb6 (#6610) Fix Autotest proper run
+ec04277 (#4228) Ensure MAC address octets have leading zeroes.
+241cddc (#6610) Fix rSpec output format
+3eb3628 Add Scientific Linux CERN detection to facter. Fixes #9260
+0bf827f (maint) Add kernel stubbing for is_virtual fact spec
+f810170 (#7957) is_virtual should be false for openvz host nodes
+1414e0b (#9059) is_virtual should be false on vmware_server
+7fb0e6a (#8439) Add interface-specific ip facts for Windows
+5d5848c (#8439) Add ipaddress6 fact on Windows
+7531a2b (#8439) Add ps fact on Windows
+ddb67c5 (#8439) Move macaddress resolution on Windows
+0721f2f (#7682) Add complete support for Scientific Linux
+a347920 (#9183) Add support for Alpine linux detection
+824fac0 (#8439) Add physicalprocessorcount and processor facts on Windows
+9ef56d6 (#8439) Implement total and free physical memory on Windows
+b3e2274 (#8439) Add Facter::Util::WMI module
+00bed7a (#8964) Search mountinfo for selinux mount point
+cceb74b (maint) Add stubbing and corrections for domain spec
+f7daae3 (maint) Remove global var from domain and hostname
+e8d00ec (#8964) Search mountinfo for selinux mount point
+46cbd68 Fix the SPEC file (COPYING no longer shipped, README -> README.md)
+c5d63d4 Fix #2766 - silence unknown sysctl values
+2ba8e7b Add document outlining preferred contribution methods
+5d9cc84 (#8660) Fix destdir option on Windows
+e329450 (#8247) Fixing arp DNS timeout issue.
+bdd9e39 Maint: Fix tests to run on Windows
+c1b631d Maint: Refactor detection of windows platform
+9b7a41d Maint: Deprecate facter resolution interpreter parameter
+0356a2a Maint: Fix facter install on Windows
+15d0406 use each_line instead of each for strings in ruby 1.9
+08b3f77 (#7854) Add Augeas library version fact
+e84c051 Fixed #7307 - Added serial number fact to Solaris
+
 1.6.0
 ===
 9404a7a (#7670) Add an acceptance test

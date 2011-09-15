@@ -24,7 +24,7 @@ module Facter
     include Comparable
     include Enumerable
 
-    FACTERVERSION = '1.6.0'
+    FACTERVERSION = '1.6.1'
     # = Facter
     # Functions as a hash of 'facts' you might care about about your
     # system, such as mac address, IP address, Video card, etc.
@@ -46,6 +46,7 @@ module Facter
     RESET = "[0m"
     @@debug = 0
     @@timing = 0
+    @@messages = {}
 
     # module methods
 
@@ -158,6 +159,12 @@ module Facter
         Facter.reset
     end
 
+    # Clear all messages. Used only in testing. Can't add to self.clear
+    # because we don't want to warn multiple times for items that are warnonce'd
+    def self.clear_messages
+        @@messages.clear
+    end
+
     # Set debugging on or off.
     def self.debugging(bit)
         if bit
@@ -205,6 +212,14 @@ module Facter
         if Facter.debugging? and msg and not msg.empty?
             msg = [msg] unless msg.respond_to? :each
             msg.each { |line| Kernel.warn line }
+        end
+    end
+
+    # Warn once.
+    def self.warnonce(msg)
+        if msg and not msg.empty? and @@messages[msg].nil?
+            @@messages[msg] = true
+            Kernel.warn(msg)
         end
     end
 

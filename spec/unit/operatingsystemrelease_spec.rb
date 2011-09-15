@@ -15,14 +15,16 @@ describe "Operating System Release fact" do
     end
 
     test_cases = {
-        "CentOS"    => "/etc/redhat-release",
-        "RedHat"    => "/etc/redhat-release",
-        "Fedora"    => "/etc/fedora-release",
-        "MeeGo"     => "/etc/meego-release",
-        "OEL"       => "/etc/enterprise-release",
-        "oel"       => "/etc/enterprise-release",
-        "OVS"       => "/etc/ovs-release",
-        "ovs"       => "/etc/ovs-release",
+        "CentOS"      => "/etc/redhat-release",
+        "RedHat"      => "/etc/redhat-release",
+        "Scientific"  => "/etc/redhat-release",
+        "Fedora"      => "/etc/fedora-release",
+        "MeeGo"       => "/etc/meego-release",
+        "OEL"         => "/etc/enterprise-release",
+        "oel"         => "/etc/enterprise-release",
+        "OVS"         => "/etc/ovs-release",
+        "ovs"         => "/etc/ovs-release",
+        "OracleLinux" => "/etc/oracle-release",
     }
 
     test_cases.each do |system, file|
@@ -45,5 +47,14 @@ describe "Operating System Release fact" do
         Facter::Util::Resolution.stubs(:exec).with('vmware -v').returns('foo')
 
         Facter.fact(:operatingsystemrelease).value
+    end
+
+    it "for Alpine it should use the contents of /etc/alpine-release" do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+        Facter.fact(:operatingsystem).stubs(:value).returns("Alpine")
+
+        File.expects(:read).with("/etc/alpine-release").returns("foo")
+
+        Facter.fact(:operatingsystemrelease).value.should == "foo"
     end
 end

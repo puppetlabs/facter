@@ -280,4 +280,12 @@ describe Facter::Util::Loader do
             @loader.load_all
         end
     end
+
+    it "should load facts on the facter search path only once" do
+        facterlibdir = File.expand_path(File.dirname(__FILE__) + '../../../fixtures/unit/util/loader')
+        with_env 'FACTERLIB' => facterlibdir do
+            Facter::Util::Loader.new.load_all
+            Facter.value(:nosuchfact).should be_nil
+        end
+    end
 end

@@ -53,9 +53,9 @@ module Facter::Manufacturer
     def self.sysctl_find_system_info(name)
         name.each do |sysctlkey,facterkey|
             Facter.add(facterkey) do
-                confine :kernel => :openbsd
+                confine :kernel => [:openbsd, :darwin]
                 setcode do
-                    Facter::Util::Resolution.exec("sysctl -n " + sysctlkey)
+                    Facter::Util::Resolution.exec("sysctl -n #{sysctlkey} 2>/dev/null")
                 end
             end
         end
@@ -79,12 +79,18 @@ module Facter::Manufacturer
                 end
             end
         end
+
+        Facter.add('serialnumber') do
+          setcode do
+            Facter::Util::Resolution.exec("/usr/sbin/sneep")
+          end
+        end
     end
 
     def self.win32_find_system_info(name)
-        require 'win32ole'
+        require 'facter/util/wmi'
         value = ""
-        wmi = WIN32OLE.connect("winmgmts://")
+        wmi = Facter::Util::WMI.connect()
         name.each do |facterkey, win32key|
             query = wmi.ExecQuery("select * from Win32_#{win32key.last}")
             Facter.add(facterkey) do
@@ -96,5 +102,4 @@ module Facter::Manufacturer
             end
         end
     end
-
 end

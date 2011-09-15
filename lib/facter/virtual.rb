@@ -110,6 +110,9 @@ Facter.add("virtual") do
                     # --- look for pci vendor id used by Parallels video card
                     # ---   01:00.0 VGA compatible controller: Unknown device 1ab8:4005
                     result = "parallels" if p =~ /1ab8:|[Pp]arallels/
+                    # --- look for pci vendor id used by Xen HVM device
+                    # ---   00:03.0 Unassigned class [ff80]: XenSource, Inc. Xen Platform Device (rev 01)
+                    result = "xenhvm" if p =~ /XenSource/
                 end
             else
                 output = Facter::Util::Resolution.exec('dmidecode')
@@ -118,6 +121,7 @@ Facter.add("virtual") do
                         result = "parallels" if pd =~ /Parallels/
                         result = "vmware" if pd =~ /VMware/
                         result = "virtualbox" if pd =~ /VirtualBox/
+                        result = "xenhvm" if pd =~ /HVM domU/
                     end
                 elsif Facter.value(:kernel) == 'SunOS'
                     res = Facter::Util::Resolution.new('prtdiag')
@@ -129,13 +133,14 @@ Facter.add("virtual") do
                             result = "parallels" if pd =~ /Parallels/
                             result = "vmware" if pd =~ /VMware/
 							result = "virtualbox" if pd =~ /VirtualBox/
+                            result = "xenhvm" if pd =~ /HVM domU/
                         end
                     end
                 end
             end
             
-            if FileTest.exists?("/usr/lib/vmware/bin/vmware-vmx")
-                result = "vmware_server"
+            if output = Facter::Util::Resolution.exec("vmware -v")
+                result = output.sub(/(\S+)\s+(\S+).*/) { | text | "#{$1}_#{$2}"}.downcase
             end
         end
 
@@ -147,9 +152,9 @@ end
 #
 # Purpose: returning true or false for if a machine is virtualised or not.
 #
-# Resolution: The Xen domain 0 machine is virtualised to a degree, but is generally
-# not viewed as being a virtual machine. This checks that the machine is not
-# physical nor xen0, if that is the case, it is virtual.
+# Resolution: Hypervisors and the like may be detected as a virtual type, but
+# are not actual virtual machines, or should not be treated as such. This 
+# determines if the host is actually virtualized.
 #
 # Caveats:
 #
@@ -158,10 +163,12 @@ Facter.add("is_virtual") do
     confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin GNU/kFreeBSD}
 
     setcode do
-        if Facter.value(:virtual) != "physical" && Facter.value(:virtual) != "xen0" && Facter.value(:virtual) != 'openvzhn'
-            "true"
-        else
+        physical_types = %w{physical xen0 vmware_server vmware_workstation openvzhn}
+
+        if physical_types.include? Facter.value(:virtual)
             "false"
+        else
+            "true"
         end
     end
 end

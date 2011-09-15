@@ -58,6 +58,10 @@ rescue
     $haveman = false
 end
 
+$LOAD_PATH << File.join(File.dirname(__FILE__), 'lib')
+require 'facter'
+@operatingsystem = Facter[:operatingsystem].value
+
 PREREQS = %w{openssl xmlrpc/client xmlrpc/server cgi}
 
 InstallOptions = OpenStruct.new
@@ -126,7 +130,7 @@ def check_prereqs
 end
 
 def is_windows?
-  RUBY_PLATFORM.to_s.match(/mswin|win32|dos|cygwin|mingw/)
+  @operatingsystem == 'windows'
 end
 
 ##
@@ -256,10 +260,11 @@ def prepare_installation
 
     # To be deprecated once people move over to using --destdir option
     if (destdir = ENV['DESTDIR'])
-        bindir = "#{destdir}#{bindir}"
-        sbindir = "#{destdir}#{sbindir}"
-        mandir = "#{destdir}#{mandir}"
-        sitelibdir = "#{destdir}#{sitelibdir}"
+        warn "DESTDIR is deprecated. Use --destdir instead."
+        bindir = join(destdir, bindir)
+        sbindir = join(destdir, sbindir)
+        mandir = join(destdir, mandir)
+        sitelibdir = join(destdir, sitelibdir)
 
         FileUtils.makedirs(bindir)
         FileUtils.makedirs(sbindir)
@@ -267,10 +272,10 @@ def prepare_installation
         FileUtils.makedirs(sitelibdir)
         # This is the new way forward
     elsif (destdir = InstallOptions.destdir)
-        bindir = "#{destdir}#{bindir}"
-        sbindir = "#{destdir}#{sbindir}"
-        mandir = "#{destdir}#{mandir}"
-        sitelibdir = "#{destdir}#{sitelibdir}"
+        bindir = join(destdir, bindir)
+        sbindir = join(destdir, sbindir)
+        mandir = join(destdir, mandir)
+        sitelibdir = join(destdir, sitelibdir)
 
         FileUtils.makedirs(bindir)
         FileUtils.makedirs(sbindir)
@@ -286,6 +291,16 @@ def prepare_installation
     InstallOptions.sbin_dir = sbindir
     InstallOptions.lib_dir  = libdir
     InstallOptions.man_dir  = mandir
+end
+
+##
+# Join two paths. On Windows, dir must be converted to a relative path,
+# by stripping the drive letter, but only if the basedir is not empty.
+#
+def join(basedir, dir)
+  return "#{basedir}#{dir[2..-1]}" if is_windows? and basedir.length > 0 and dir.length > 2
+
+  "#{basedir}#{dir}"
 end
 
 ##
@@ -387,7 +402,7 @@ def install_binfile(from, op_file, target)
         end
     end
 
-    if Config::CONFIG["target_os"] =~ /win/io and Config::CONFIG["target_os"] !~ /darwin/io
+    if is_windows?
         installed_wrapper = false
 
         if File.exists?("#{from}.bat")
