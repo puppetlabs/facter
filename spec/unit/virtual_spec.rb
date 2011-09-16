@@ -273,7 +273,7 @@ describe "is_virtual fact" do
         Facter.fact(:is_virtual).value.should == "false"
     end
 
-    it "should be true on when running on hyperv" do
+    it "should be true when running on hyperv" do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
         Facter.fact(:virtual).stubs(:value).returns("hyperv")
         Facter.fact(:is_virtual).value.should == "true"
