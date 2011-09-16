@@ -135,6 +135,19 @@ describe "Virtual fact" do
           Facter.fact(:virtual).value.should == "virtualbox"
       end
 
+      it "should be hyperv with Microsoft vendor name from lspci" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns("00:08.0 VGA compatible controller: Microsoft Corporation Hyper-V virtual VGA")
+          Facter.fact(:virtual).value.should == "hyperv"
+      end
+
+      it "should be hyperv with Microsoft vendor name from dmidecode" do
+          Facter.fact(:kernel).stubs(:value).returns("Linux")
+          Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
+          Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("System Information\nManufacturer: Microsoft Corporation\nProduct Name: Virtual Machine")
+          Facter.fact(:virtual).value.should == "hyperv"
+      end
+
   end
   describe "on Solaris" do
       before(:each) do
@@ -258,5 +271,11 @@ describe "is_virtual fact" do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
         Facter.fact(:virtual).stubs(:value).returns("openvzhn")
         Facter.fact(:is_virtual).value.should == "false"
+    end
+
+    it "should be true on when running on hyperv" do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+        Facter.fact(:virtual).stubs(:value).returns("hyperv")
+        Facter.fact(:is_virtual).value.should == "true"
     end
 end
