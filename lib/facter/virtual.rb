@@ -113,6 +113,9 @@ Facter.add("virtual") do
                     # --- look for pci vendor id used by Xen HVM device
                     # ---   00:03.0 Unassigned class [ff80]: XenSource, Inc. Xen Platform Device (rev 01)
                     result = "xenhvm" if p =~ /XenSource/
+                    # --- look for Hyper-V video card
+                    # ---   00:08.0 VGA compatible controller: Microsoft Corporation Hyper-V virtual VGA
+                    result = "hyperv" if p =~ /Microsoft Corporation Hyper-V/
                 end
             else
                 output = Facter::Util::Resolution.exec('dmidecode')
@@ -122,6 +125,7 @@ Facter.add("virtual") do
                         result = "vmware" if pd =~ /VMware/
                         result = "virtualbox" if pd =~ /VirtualBox/
                         result = "xenhvm" if pd =~ /HVM domU/
+                        result = "hyperv" if pd =~ /Product Name: Virtual Machine/
                     end
                 elsif Facter.value(:kernel) == 'SunOS'
                     res = Facter::Util::Resolution.new('prtdiag')
@@ -132,7 +136,7 @@ Facter.add("virtual") do
                         output.each_line do |pd|
                             result = "parallels" if pd =~ /Parallels/
                             result = "vmware" if pd =~ /VMware/
-							result = "virtualbox" if pd =~ /VirtualBox/
+                            result = "virtualbox" if pd =~ /VirtualBox/
                             result = "xenhvm" if pd =~ /HVM domU/
                         end
                     end
