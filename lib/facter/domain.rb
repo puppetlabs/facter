@@ -19,45 +19,45 @@
 #
 
 Facter.add(:domain) do
-    setcode do
-        # Get the domain from various sources; the order of these
-        # steps is important
+  setcode do
+    # Get the domain from various sources; the order of these
+    # steps is important
 
-        if name = Facter::Util::Resolution.exec('hostname') and 
-            name =~ /.*?\.(.+$)/
+    if name = Facter::Util::Resolution.exec('hostname') and 
+      name =~ /.*?\.(.+$)/
 
-            $1
-        elsif domain = Facter::Util::Resolution.exec('dnsdomainname') and 
-            domain =~ /.+\..+/
+      $1
+    elsif domain = Facter::Util::Resolution.exec('dnsdomainname') and 
+      domain =~ /.+\..+/
 
-            domain
-        elsif FileTest.exists?("/etc/resolv.conf")
-            domain = nil
-            search = nil
-            File.open("/etc/resolv.conf") { |file|
-                file.each { |line|
-                    if line =~ /^\s*domain\s+(\S+)/
-                        domain = $1
-                    elsif line =~ /^\s*search\s+(\S+)/
-                        search = $1
-                    end
-                }
-            }
-            next domain if domain
-            next search if search
-        end
+      domain
+    elsif FileTest.exists?("/etc/resolv.conf")
+      domain = nil
+      search = nil
+      File.open("/etc/resolv.conf") { |file|
+        file.each { |line|
+          if line =~ /^\s*domain\s+(\S+)/
+            domain = $1
+          elsif line =~ /^\s*search\s+(\S+)/
+            search = $1
+          end
+        }
+      }
+      next domain if domain
+      next search if search
     end
+  end
 end
 
 Facter.add(:domain) do
-    confine :kernel => :windows
-    setcode do
-        require 'facter/util/wmi'
-        domain = ""
-        Facter::Util::WMI.execquery("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").each { |nic|
-            domain = nic.DNSDomain
-            break
-        }
-        domain
-    end
+  confine :kernel => :windows
+  setcode do
+    require 'facter/util/wmi'
+    domain = ""
+    Facter::Util::WMI.execquery("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").each { |nic|
+      domain = nic.DNSDomain
+      break
+    }
+    domain
+  end
 end

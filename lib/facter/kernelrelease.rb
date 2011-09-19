@@ -12,23 +12,23 @@
 #
 
 Facter.add(:kernelrelease) do
-    setcode 'uname -r'
+  setcode 'uname -r'
 end
 
 Facter.add(:kernelrelease) do
-    confine :kernel => :aix
-    setcode 'oslevel -s'
+  confine :kernel => :aix
+  setcode 'oslevel -s'
 end
 
 Facter.add(:kernelrelease) do
-    confine :kernel => %{windows}
-    setcode do
-        require 'facter/util/wmi'
-        version = ""
-        Facter::Util::WMI.execquery("SELECT Version from Win32_OperatingSystem").each do |ole|
-            version = "#{ole.Version}"
-            break
-        end
-        version
+  confine :kernel => %{windows}
+  setcode do
+    require 'facter/util/wmi'
+    version = ""
+    Facter::Util::WMI.execquery("SELECT Version from Win32_OperatingSystem").each do |ole|
+      version = "#{ole.Version}"
+      break
     end
+    version
+  end
 end

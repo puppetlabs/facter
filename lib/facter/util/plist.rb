@@ -18,7 +18,7 @@ require 'facter/util/plist/generator'
 require 'facter/util/plist/parser'
 
 module Plist
-    VERSION = '3.0.0'
+  VERSION = '3.0.0'
 end
 
 # $Id: plist.rb 1781 2006-10-16 01:01:35Z luke $

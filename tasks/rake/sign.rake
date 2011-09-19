@@ -1,14 +1,14 @@
 desc "Sign the package with the Puppet Labs release key"
 task :sign_packages do
 
-version = Facter::FACTERVERSION
+  version = Facter::FACTERVERSION
 
-# Sign package
+  # Sign package
 
-sh "gpg --homedir $HOME/pl_release_key --detach-sign --output pkg/facter-#{version}.tar.gz.sign --armor pkg/facter-#{version}.tar.gz"
+  sh "gpg --homedir $HOME/pl_release_key --detach-sign --output pkg/facter-#{version}.tar.gz.sign --armor pkg/facter-#{version}.tar.gz"
 
-# Sign gem
+  # Sign gem
 
-sh "gpg --homedir $HOME/pl_release_key --detach-sign --output pkg/facter-#{version}.gem.sign --armor pkg/facter-#{version}.gem"
+  sh "gpg --homedir $HOME/pl_release_key --detach-sign --output pkg/facter-#{version}.gem.sign --armor pkg/facter-#{version}.gem"
 
 end
