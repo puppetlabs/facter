@@ -13,8 +13,19 @@
 require 'facter/lsb'
 
 Facter.add(:operatingsystem) do
+<<<<<<< HEAD
   confine :kernel => :sunos
   setcode do "Solaris" end
+=======
+    confine :kernel => :sunos
+    setcode do
+      if FileTest.exists?("/etc/debian_version")
+        "Nexenta"
+      else
+        "Solaris"
+      end
+    end
+>>>>>>> be7445a... add Nexenta to operatingsystem fact
 end
 
 Facter.add(:operatingsystem) do

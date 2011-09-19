@@ -20,6 +20,13 @@ describe "Operating System fact" do
     Facter.fact(:operatingsystem).value.should == "Nutmeg"
   end
 
+  it "should be Nexenta for SunOS" do
+     Facter.fact(:kernel).stubs(:value).returns("SunOS")
+
+     FileTest.expects(:exists?).with("/etc/debian_version").returns true
+     Facter.fact(:operatingsystem).value.should == "Nexenta"
+  end
+
   it "should be Solaris for SunOS" do
      Facter.fact(:kernel).stubs(:value).returns("SunOS")
 
@@ -42,7 +49,7 @@ describe "Operating System fact" do
 
     Facter.fact(:operatingsystem).value.should == "OVS"
   end
-   
+ 
   it "should identify VMWare ESX" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.stubs(:value).with(:lsbdistid).returns(nil)
