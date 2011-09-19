@@ -73,19 +73,10 @@ Facter.add("virtual") do
         end
 
         if Facter::Util::Virtual.xen?
-            # new Xen domains have this in dom0 not domu :(
-            if FileTest.exists?("/proc/sys/xen/independent_wallclock")
+            if FileTest.exists?("/proc/xen/xsd_kva")
+                result = "xen0"
+            elsif FileTest.exists?("/proc/xen/capabilities")
                 result = "xenu"
-            end
-            if FileTest.exists?("/sys/bus/xen")
-                result = "xenu"
-            end
-
-            if FileTest.exists?("/proc/xen/capabilities")
-                txt = Facter::Util::Resolution.exec("cat /proc/xen/capabilities")
-                if txt =~ /control_d/i
-                    result = "xen0"
-                end
             end
         end
 
