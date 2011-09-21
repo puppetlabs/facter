@@ -42,7 +42,9 @@ describe "Physical processor count facts" do
         Facter.fact(:kernel).stubs(:value).returns("windows")
 
         require 'facter/util/wmi'
-        Facter::Util::WMI.stubs(:execquery).with("select Name from Win32_Processor").returns(Array.new(4))
+        ole = stub 'WIN32OLE'
+        Facter::Util::WMI.expects(:execquery).with("select Name from Win32_Processor").returns(ole)
+        ole.stubs(:Count).returns(4)
 
         Facter.fact(:physicalprocessorcount).value.should == 4
     end
