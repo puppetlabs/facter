@@ -1,3 +1,7 @@
+1.6.1rc4
+===
+3117e82 (#9517) Fix physicalprocessorcount on windows
+
 1.6.1rc3
 ===
 4d93745 (#8491) Prevent repeated loading of fact files
