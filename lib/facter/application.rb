@@ -3,6 +3,7 @@ module Facter
     def self.run(argv)
       require 'optparse'
       require 'facter'
+      require 'yaml'
 
       options = parse(argv)
 
@@ -49,12 +50,10 @@ module Facter
       # name and separated by "=>"
       if facts.length == 1
         if value = facts.values.first
-          puts value
+          puts YAML.dump(value)
         end
       else
-        facts.sort_by{ |fact| fact.first }.each do |name,value|
-          puts "#{name} => #{value}"
-        end
+        puts YAML.dump(facts)
       end
 
     rescue => e
