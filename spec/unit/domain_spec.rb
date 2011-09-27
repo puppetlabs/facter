@@ -69,6 +69,29 @@ describe "Domain name facts" do
         @mock_file.expects(:each).multiple_yields(*lines)
         Facter.fact(:domain).value.should == 'example.org'
       end
+
+      # Test permutations of domain and search
+      [
+        ["domain domain", "domain"],
+        ["domain search", "search"],
+        ["search domain", "domain"],
+        ["search search", "search"],
+        ["search domain notdomain", "domain"],
+        [["#search notdomain","search search"], "search"],
+        [["# search notdomain","search search"], "search"],
+        [["#domain notdomain","domain domain"], "domain"],
+        [["# domain notdomain","domain domain"], "domain"],
+      ].each do |tuple|
+        field  = tuple[0]
+        expect = tuple[1]
+        it "should return #{expect} from \"#{field}\"" do
+          lines = [
+            field
+          ].flatten
+          @mock_file.expects(:each).multiple_yields(*lines)
+          Facter.fact(:domain).value.should == expect
+        end
+      end
     end
   end
 
