@@ -1,24 +1,17 @@
-1.6.1rc4
+1.6.1
 ===
+1f009e0 Updated CHANGELOG for 1.6.1rc4
 3117e82 (#9517) Fix physicalprocessorcount on windows
-
-1.6.1rc3
-===
+ef0a9aa Updated CHANGELOG for 1.6.1rc3
 4d93745 (#8491) Prevent repeated loading of fact files
 6db71d4 (#9457) Fix logic for domain fact so hostname, then dnsdomainname and finally resolv.conf is used.
-
-1.6.1rc2
-===
-9cdc87f Updated CHANGELOG for 1.6.1rc2
+18cd964 Updated CHANGELOG for 1.6.1rc2
 7edef60 Change count to length for compatibility
 88f343c (#2344) VMware version parsing fix
 7457fe5 SELinux spec test fix for ubuntu
 8bed5bb Clear messages between test runs
 f4ad6bf Macaddress spec test needed operatingsystem fact
 6c098cc Rakefile should fail on error
-
-1.6.1rc1
-===
 42c5471 Updated CHANGELOG for 1.6.1rc1.
 6d47012 (#4869) Implement productname as Darwin hw.model
 d28d96c (#4508) Xen HVM domU not detected as virtual
@@ -55,6 +48,8 @@ c1b631d Maint: Refactor detection of windows platform
 15d0406 use each_line instead of each for strings in ruby 1.9
 08b3f77 (#7854) Add Augeas library version fact
 e84c051 Fixed #7307 - Added serial number fact to Solaris
+6fb6ee5 (#4869) Implement productname as Darwin hw.model
+63c8b11 (#4508) Xen HVM domU not detected as virtual
 
 1.6.0
 ===
