@@ -11,7 +11,7 @@ module Facter::Util::IP
             :netmask    => /Mask:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
         },
         :bsd   => {
-            :aliases    => [:openbsd, :netbsd, :freebsd, :darwin, :"gnu/kfreebsd"],
+            :aliases    => [:openbsd, :netbsd, :freebsd, :darwin, :"gnu/kfreebsd", :dragonfly],
             :ipaddress  => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
             :ipaddress6 => /inet6 ((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
             :macaddress => /(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/,
@@ -41,7 +41,7 @@ module Facter::Util::IP
     end
 
     def self.convert_from_hex?(kernel)
-        kernels_to_convert = [:sunos, :openbsd, :netbsd, :freebsd, :darwin, :"hp-ux", :"gnu/kfreebsd"]
+        kernels_to_convert = [:sunos, :openbsd, :netbsd, :freebsd, :darwin, :"hp-ux", :"gnu/kfreebsd", :dragonfly]
         kernels_to_convert.include?(kernel)
     end
 
@@ -73,7 +73,7 @@ module Facter::Util::IP
 
     def self.get_all_interface_output
         case Facter.value(:kernel)
-        when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD'
+        when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
             output = %x{/sbin/ifconfig -a}
         when 'SunOS'
             output = %x{/usr/sbin/ifconfig -a}
@@ -89,7 +89,7 @@ module Facter::Util::IP
     def self.get_single_interface_output(interface)
         output = ""
         case Facter.value(:kernel)
-        when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD'
+        when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
             output = %x{/sbin/ifconfig #{interface}}
         when 'SunOS'
             output = %x{/usr/sbin/ifconfig #{interface}}
