@@ -15,7 +15,13 @@ require 'facter/lsb'
 
 Facter.add(:operatingsystem) do
     confine :kernel => :sunos
-    setcode do "Solaris" end
+    setcode do
+      if FileTest.exists?("/etc/debian_version")
+        "Nexenta"
+      else
+        "Solaris"
+      end
+    end
 end
 
 Facter.add(:operatingsystem) do
@@ -55,6 +61,8 @@ Facter.add(:operatingsystem) do
                 "SLC"
             elsif txt =~ /scientific/i 
                 "Scientific"
+            elsif txt =~ /cloud/i
+                "CloudLinux"
             else
                 "RedHat"
             end
