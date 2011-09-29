@@ -13,7 +13,13 @@ describe Facter::Util::Virtual do
         Facter::Util::Virtual.should be_openvz
     end
 
+    it "should not detect openvz when /proc/lve/list is present" do
+        FileTest.stubs(:file?).with("/proc/lve/list").returns(true)
+        Facter::Util::Virtual.should_not be_openvz
+    end
+
     it "should not detect openvz when /proc/vz/ is empty" do
+        FileTest.stubs(:file?).with("/proc/lve/list").returns(false)
         FileTest.stubs(:directory?).with("/proc/vz").returns(true)
         Dir.stubs(:glob).with("/proc/vz/*").returns([])
         Facter::Util::Virtual.should_not be_openvz
@@ -33,11 +39,11 @@ describe Facter::Util::Virtual do
         Facter::Util::Virtual.openvz_type().should == "openvzve"
     end
 
-    it "should identify unknown when /proc/self/status has no envID" do
+    it "should not attempt to identify openvz when /proc/self/status has no envID" do
         Facter::Util::Virtual.stubs(:openvz?).returns(true)
         FileTest.stubs(:exists?).with('/proc/self/status').returns(true)
         Facter::Util::Resolution.stubs(:exec).with('grep "envID" /proc/self/status').returns("")
-        Facter::Util::Virtual.openvz_type().should == "unknown"
+        Facter::Util::Virtual.openvz_type().should be_nil
     end
 
     it "should identify Solaris zones when non-global zone" do

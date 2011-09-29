@@ -13,14 +13,13 @@ module Facter::Util::Virtual
         return 'openvzhn'
       elsif envid =~ /^envID:\s+(\d+)$/i
         return 'openvzve'
-      else
-        return 'unknown'
       end
     end
 
-    # Cloudlinux uses OpenVZ to a degree, but always has an empty /proc/vz/
+    # Cloudlinux uses OpenVZ to a degree, but always has an empty /proc/vz/ and
+    # has /proc/lve/list present
     def self.openvz_cloudlinux?
-      Dir.glob( '/proc/vz/*' ).empty?
+      FileTest.file?("/proc/lve/list") or Dir.glob('/proc/vz/*').empty?
     end
 
     def self.zone?
