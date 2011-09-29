@@ -189,7 +189,7 @@ if Facter.value(:kernel) == "SunOS"
     end
 
     # Total memory size available from prtconf
-    pconf = Facter::Util::Resolution.exec('/usr/sbin/prtconf')
+    pconf = Facter::Util::Resolution.exec('/usr/sbin/prtconf 2>/dev/null')
     phymem = ""
     pconf.each_line do |line|
         if line =~ /^Memory size:\s+(\d+) Megabytes/
