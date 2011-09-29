@@ -62,6 +62,11 @@ task :default do
     sh %{rake -T}
 end
 
+# Aliases for spec
+task :test    => [:spec]
+task :tests   => [:spec]
+task :specs   => [:spec]
+
 RSpec::Core::RakeTask.new do |t|
     t.pattern ='spec/{unit,integration}/**/*_spec.rb'
     t.fail_on_error = true
