@@ -12,7 +12,7 @@
 ##
 
 ["/etc/ssh","/usr/local/etc/ssh","/etc","/usr/local/etc"].each do |dir|
-    {"SSHDSAKey" => "ssh_host_dsa_key.pub", "SSHRSAKey" => "ssh_host_rsa_key.pub"}.each do |name,file|
+    {"SSHDSAKey" => "ssh_host_dsa_key.pub", "SSHRSAKey" => "ssh_host_rsa_key.pub", "SSHECDSAKey" => "ssh_host_ecdsa_key.pub"}.each do |name,file|
         Facter.add(name) do
             setcode do
                 value = nil
