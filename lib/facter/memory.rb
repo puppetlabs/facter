@@ -93,13 +93,11 @@ if Facter.value(:kernel) == "AIX" and Facter.value(:id) == "root"
 end
 
 if Facter.value(:kernel) == "OpenBSD"
-    swap = Facter::Util::Resolution.exec('swapctl -l | sed 1d')
+    swap = Facter::Util::Resolution.exec('swapctl -s')
     swapfree, swaptotal = 0, 0
-    swap.each_line do |dev|
-        if dev =~ /^\S+\s+(\S+)\s+\S+\s+(\S+)\s+.*$/
-            swaptotal += $1.to_i
-            swapfree  += $2.to_i
-        end
+    if swap =~ /^total: (\d+)k bytes allocated = \d+k used, (\d+)k available$/
+        swaptotal = $1.to_i
+        swapfree  = $2.to_i
     end
 
     Facter.add("SwapSize") do
@@ -233,4 +231,34 @@ if Facter.value(:kernel) == "windows"
       Facter::Memory.scale_number(mem.to_f, "")
     end
   end
+end
+
+Facter.add("SwapSize") do
+    confine :kernel => :dragonfly
+    setcode do
+        page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
+        swaptotal = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
+        Facter::Memory.scale_number(swaptotal.to_f,"")
+    end
+end
+
+Facter.add("SwapFree") do
+    confine :kernel => :dragonfly
+    setcode do
+        page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
+        swaptotal = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
+        swap_anon_use = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_anon_use").to_f * page_size
+        swap_cache_use = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_cache_use").to_f * page_size
+        swapfree = swaptotal - swap_anon_use - swap_cache_use
+        Facter::Memory.scale_number(swapfree.to_f,"")
+    end
+end
+
+Facter.add("MemoryTotal") do
+    confine :kernel => :dragonfly
+    setcode do
+        Facter::Memory.vmstat_find_free_memory()
+        memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
+        Facter::Memory.scale_number(memtotal.to_f,"")
+    end
 end

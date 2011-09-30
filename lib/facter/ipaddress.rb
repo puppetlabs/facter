@@ -43,7 +43,7 @@ Facter.add(:ipaddress) do
 end
 
 Facter.add(:ipaddress) do
-    confine :kernel => %w{FreeBSD OpenBSD Darwin}
+    confine :kernel => %w{FreeBSD OpenBSD Darwin DragonFly}
     setcode do
         ip = nil
         output = %x{/sbin/ifconfig}
