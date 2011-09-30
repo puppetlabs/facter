@@ -29,6 +29,8 @@ Facter.add(:operatingsystem) do
             "Gentoo"
         elsif FileTest.exists?("/etc/fedora-release")
             "Fedora"
+        elsif FileTest.exists?("/etc/mageia-release")
+            "Mageia"
         elsif FileTest.exists?("/etc/mandriva-release")
             "Mandriva"
         elsif FileTest.exists?("/etc/mandrake-release")
