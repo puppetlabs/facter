@@ -175,18 +175,25 @@ describe "Processor facts" do
   
     it "should be 2 on dual-processor Darwin box" do
       Facter.fact(:kernel).stubs(:value).returns("Darwin")
-      Facter::Util::Resolution.stubs(:exec).with("sysctl hw.ncpu | cut -d' ' -f2").returns('2')
+      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
   
       Facter.fact(:processorcount).value.should == "2"
     end
     
     it "should be 2 on dual-processor OpenBSD box" do
       Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
-      Facter::Util::Resolution.stubs(:exec).with("sysctl hw.ncpu | cut -d'=' -f2").returns('2')
+      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
   
       Facter.fact(:processorcount).value.should == "2"
     end
+
+    it "should be 2 on dual-processor DragonFly box" do
+      Facter.fact(:kernel).stubs(:value).returns("DragonFly")
+      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
   
+      Facter.fact(:processorcount).value.should == "2"
+    end
+ 
     it "should be 6 on six-processor AIX box" do
       Facter.fact(:kernel).stubs(:value).returns("AIX")
       Facter::Util::Resolution.stubs(:exec).with("lsdev -Cc processor").returns("proc0 Available 00-00 Processor\nproc2 Available 00-02 Processor\nproc4 Available 00-04 Processor\nproc6 Available 00-06 Processor\nproc8 Available 00-08 Processor\nproc10 Available 00-10 Processor")

@@ -15,7 +15,7 @@ Facter.add(:ps) do
 end
 
 Facter.add(:ps) do
-    confine :operatingsystem => %w{FreeBSD NetBSD OpenBSD Darwin}
+    confine :operatingsystem => %w{FreeBSD NetBSD OpenBSD Darwin DragonFly}
     setcode do 'ps auxwww' end
 end
 
