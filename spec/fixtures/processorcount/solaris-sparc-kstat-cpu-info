@@ -1,0 +1,1216 @@
+module: cpu_info                        instance: 0     
+name:   cpu_info0                       class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         516
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312660.5754132
+	current_clock_Hz                1165379264
+	device_ID                       0
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           1
+	snaptime                        23630289.0909192
+	state                           on-line
+	state_begin                     1315099346
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 1     
+name:   cpu_info1                       class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         516
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.2806834
+	current_clock_Hz                1165379264
+	device_ID                       1
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           1
+	snaptime                        23630289.0927599
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 2     
+name:   cpu_info2                       class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         516
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.2828084
+	current_clock_Hz                1165379264
+	device_ID                       2
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           1
+	snaptime                        23630289.0943224
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 3     
+name:   cpu_info3                       class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         516
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.284967
+	current_clock_Hz                1165379264
+	device_ID                       3
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           1
+	snaptime                        23630289.0959092
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 4     
+name:   cpu_info4                       class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         516
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.2869702
+	current_clock_Hz                1165379264
+	device_ID                       4
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           4
+	snaptime                        23630289.0974779
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 5     
+name:   cpu_info5                       class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         516
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.2890495
+	current_clock_Hz                1165379264
+	device_ID                       5
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           4
+	snaptime                        23630289.0990405
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 6     
+name:   cpu_info6                       class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         516
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.2911274
+	current_clock_Hz                1165379264
+	device_ID                       6
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           4
+	snaptime                        23630289.1006005
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 7     
+name:   cpu_info7                       class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         516
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.2932203
+	current_clock_Hz                1165379264
+	device_ID                       7
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           4
+	snaptime                        23630289.1021675
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 8     
+name:   cpu_info8                       class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         524
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.2953277
+	current_clock_Hz                1165379264
+	device_ID                       8
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           5
+	snaptime                        23630289.1037276
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 9     
+name:   cpu_info9                       class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         524
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.2973458
+	current_clock_Hz                1165379264
+	device_ID                       9
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           5
+	snaptime                        23630289.1053163
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 10    
+name:   cpu_info10                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         524
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.2993978
+	current_clock_Hz                1165379264
+	device_ID                       10
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           5
+	snaptime                        23630289.1068773
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 11    
+name:   cpu_info11                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         524
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3015554
+	current_clock_Hz                1165379264
+	device_ID                       11
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           5
+	snaptime                        23630289.1085511
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 12    
+name:   cpu_info12                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         524
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3035692
+	current_clock_Hz                1165379264
+	device_ID                       12
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           7
+	snaptime                        23630289.1101482
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 13    
+name:   cpu_info13                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         524
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3058002
+	current_clock_Hz                1165379264
+	device_ID                       13
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           7
+	snaptime                        23630289.1117123
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 14    
+name:   cpu_info14                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         524
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3078818
+	current_clock_Hz                1165379264
+	device_ID                       14
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           7
+	snaptime                        23630289.1132754
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 15    
+name:   cpu_info15                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         524
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3099415
+	current_clock_Hz                1165379264
+	device_ID                       15
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           7
+	snaptime                        23630289.1148379
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 16    
+name:   cpu_info16                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         531
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3121222
+	current_clock_Hz                1165379264
+	device_ID                       16
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           8
+	snaptime                        23630289.1164032
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 17    
+name:   cpu_info17                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         531
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3144076
+	current_clock_Hz                1165379264
+	device_ID                       17
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           8
+	snaptime                        23630289.1179674
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 18    
+name:   cpu_info18                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         531
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3164902
+	current_clock_Hz                1165379264
+	device_ID                       18
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           8
+	snaptime                        23630289.119694
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 19    
+name:   cpu_info19                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         531
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3186612
+	current_clock_Hz                1165379264
+	device_ID                       19
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           8
+	snaptime                        23630289.1212498
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 20    
+name:   cpu_info20                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         531
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3208774
+	current_clock_Hz                1165379264
+	device_ID                       20
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           10
+	snaptime                        23630289.1228643
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 21    
+name:   cpu_info21                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         531
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3230514
+	current_clock_Hz                1165379264
+	device_ID                       21
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           10
+	snaptime                        23630289.1244296
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 22    
+name:   cpu_info22                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         531
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3252122
+	current_clock_Hz                1165379264
+	device_ID                       22
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           10
+	snaptime                        23630289.1260106
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 23    
+name:   cpu_info23                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         531
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3275665
+	current_clock_Hz                1165379264
+	device_ID                       23
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           10
+	snaptime                        23630289.1276002
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 24    
+name:   cpu_info24                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         538
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3297949
+	current_clock_Hz                1165379264
+	device_ID                       24
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           11
+	snaptime                        23630289.1291771
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 25    
+name:   cpu_info25                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         538
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3320294
+	current_clock_Hz                1165379264
+	device_ID                       25
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           11
+	snaptime                        23630289.1307659
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 26    
+name:   cpu_info26                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         538
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3342617
+	current_clock_Hz                1165379264
+	device_ID                       26
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           11
+	snaptime                        23630289.132355
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 27    
+name:   cpu_info27                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         538
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3364207
+	current_clock_Hz                1165379264
+	device_ID                       27
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           11
+	snaptime                        23630289.1339703
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 28    
+name:   cpu_info28                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         538
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3387068
+	current_clock_Hz                1165379264
+	device_ID                       28
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           13
+	snaptime                        23630289.1355427
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 29    
+name:   cpu_info29                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         538
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3410924
+	current_clock_Hz                1165379264
+	device_ID                       29
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           13
+	snaptime                        23630289.1371043
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 30    
+name:   cpu_info30                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         538
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.343326
+	current_clock_Hz                1165379264
+	device_ID                       30
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           13
+	snaptime                        23630289.1387291
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 31    
+name:   cpu_info31                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         538
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3455326
+	current_clock_Hz                1165379264
+	device_ID                       31
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           13
+	snaptime                        23630289.1403642
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 32    
+name:   cpu_info32                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         545
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3477709
+	current_clock_Hz                1165379264
+	device_ID                       32
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           14
+	snaptime                        23630289.141927
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 33    
+name:   cpu_info33                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         545
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3502553
+	current_clock_Hz                1165379264
+	device_ID                       33
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           14
+	snaptime                        23630289.1435087
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 34    
+name:   cpu_info34                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         545
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3525534
+	current_clock_Hz                1165379264
+	device_ID                       34
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           14
+	snaptime                        23630289.1451002
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 35    
+name:   cpu_info35                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         545
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3548208
+	current_clock_Hz                1165379264
+	device_ID                       35
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           14
+	snaptime                        23630289.1466879
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 36    
+name:   cpu_info36                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         545
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3571762
+	current_clock_Hz                1165379264
+	device_ID                       36
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           16
+	snaptime                        23630289.1482783
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 37    
+name:   cpu_info37                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         545
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3594942
+	current_clock_Hz                1165379264
+	device_ID                       37
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           16
+	snaptime                        23630289.1498468
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 38    
+name:   cpu_info38                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         545
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3619156
+	current_clock_Hz                1165379264
+	device_ID                       38
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           16
+	snaptime                        23630289.1514097
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 39    
+name:   cpu_info39                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         545
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3641867
+	current_clock_Hz                1165379264
+	device_ID                       39
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           16
+	snaptime                        23630289.1529782
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 40    
+name:   cpu_info40                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         552
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3664573
+	current_clock_Hz                1165379264
+	device_ID                       40
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           17
+	snaptime                        23630289.1546012
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 41    
+name:   cpu_info41                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         552
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3689115
+	current_clock_Hz                1165379264
+	device_ID                       41
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           17
+	snaptime                        23630289.1561584
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 42    
+name:   cpu_info42                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         552
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3713041
+	current_clock_Hz                1165379264
+	device_ID                       42
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           17
+	snaptime                        23630289.1577271
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 43    
+name:   cpu_info43                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         552
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.373675
+	current_clock_Hz                1165379264
+	device_ID                       43
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           17
+	snaptime                        23630289.1592959
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 44    
+name:   cpu_info44                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         552
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3760962
+	current_clock_Hz                1165379264
+	device_ID                       44
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           19
+	snaptime                        23630289.1608683
+	state                           on-line
+	state_begin                     1315099348
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 45    
+name:   cpu_info45                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         552
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3784792
+	current_clock_Hz                1165379264
+	device_ID                       45
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           19
+	snaptime                        23630289.1624495
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 46    
+name:   cpu_info46                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         552
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3809418
+	current_clock_Hz                1165379264
+	device_ID                       46
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           19
+	snaptime                        23630289.1640098
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 47    
+name:   cpu_info47                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         552
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3833624
+	current_clock_Hz                1165379264
+	device_ID                       47
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           19
+	snaptime                        23630289.1655756
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 48    
+name:   cpu_info48                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         559
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3857846
+	current_clock_Hz                1165379264
+	device_ID                       48
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           20
+	snaptime                        23630289.1671529
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 49    
+name:   cpu_info49                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         559
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3883379
+	current_clock_Hz                1165379264
+	device_ID                       49
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           20
+	snaptime                        23630289.1687334
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 50    
+name:   cpu_info50                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         559
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3908908
+	current_clock_Hz                1165379264
+	device_ID                       50
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           20
+	snaptime                        23630289.1703504
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 51    
+name:   cpu_info51                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         559
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3933023
+	current_clock_Hz                1165379264
+	device_ID                       51
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           20
+	snaptime                        23630289.1719139
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 52    
+name:   cpu_info52                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         559
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3957577
+	current_clock_Hz                1165379264
+	device_ID                       52
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           22
+	snaptime                        23630289.1734706
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 53    
+name:   cpu_info53                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         559
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.3982132
+	current_clock_Hz                1165379264
+	device_ID                       53
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           22
+	snaptime                        23630289.1750473
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 54    
+name:   cpu_info54                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         559
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.4008234
+	current_clock_Hz                1165379264
+	device_ID                       54
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           22
+	snaptime                        23630289.1767452
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 55    
+name:   cpu_info55                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         559
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.4032588
+	current_clock_Hz                1165379264
+	device_ID                       55
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           22
+	snaptime                        23630289.1783072
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 56    
+name:   cpu_info56                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         566
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.4057018
+	current_clock_Hz                1165379264
+	device_ID                       56
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           23
+	snaptime                        23630289.1798837
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 57    
+name:   cpu_info57                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         566
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.4083202
+	current_clock_Hz                1165379264
+	device_ID                       57
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           23
+	snaptime                        23630289.1814739
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 58    
+name:   cpu_info58                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         566
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.4108088
+	current_clock_Hz                1165379264
+	device_ID                       58
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           23
+	snaptime                        23630289.1830437
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 59    
+name:   cpu_info59                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         566
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.4133075
+	current_clock_Hz                1165379264
+	device_ID                       59
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           23
+	snaptime                        23630289.1846328
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 60    
+name:   cpu_info60                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         566
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.4157926
+	current_clock_Hz                1165379264
+	device_ID                       60
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           25
+	snaptime                        23630289.1862341
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 61    
+name:   cpu_info61                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         566
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.4217917
+	current_clock_Hz                1165379264
+	device_ID                       61
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           25
+	snaptime                        23630289.1878047
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 62    
+name:   cpu_info62                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         566
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.4243642
+	current_clock_Hz                1165379264
+	device_ID                       62
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           25
+	snaptime                        23630289.1894041
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+
+module: cpu_info                        instance: 63    
+name:   cpu_info63                      class:    misc
+	brand                           UltraSPARC-T2
+	chip_id                         0
+	clock_MHz                       1165
+	core_id                         566
+	cpu_fru                         hc:///component=
+	cpu_type                        sparcv9
+	crtime                          23312663.4268942
+	current_clock_Hz                1165379264
+	device_ID                       63
+	fpu_type                        sparcv9
+	implementation                  UltraSPARC-T2 (chipid 0, clock 1165 MHz)
+	pg_id                           25
+	snaptime                        23630289.1910039
+	state                           on-line
+	state_begin                     1315099349
+	supported_frequencies_Hz        1165379264
+

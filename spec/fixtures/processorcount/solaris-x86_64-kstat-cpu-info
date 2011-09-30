@@ -1,0 +1,225 @@
+module: cpu_info                        instance: 0     
+name:   cpu_info0                       class:    misc
+	brand                           Quad-Core AMD Opteron(tm) Processor 2356
+	cache_id                        0
+	chip_id                         0
+	clock_MHz                       2300
+	clog_id                         0
+	core_id                         0
+	cpu_type                        i386
+	crtime                          150.118972763
+	current_clock_Hz                2300000000
+	current_cstate                  0
+	family                          16
+	fpu_type                        i387 compatible
+	implementation                  x86 (chipid 0x0 AuthenticAMD family 16 model 2 step 3 clock 2300 MHz)
+	model                           2
+	ncore_per_chip                  4
+	ncpu_per_chip                   4
+	pg_id                           2
+	pkg_core_id                     0
+	snaptime                        1964970.24919915
+	state                           on-line
+	state_begin                     1315115687
+	stepping                        3
+	supported_frequencies_Hz        1200000000:1400000000:1700000000:2000000000:2300000000
+	supported_max_cstates           0
+	vendor_id                       AuthenticAMD
+
+module: cpu_info                        instance: 1     
+name:   cpu_info1                       class:    misc
+	brand                           Quad-Core AMD Opteron(tm) Processor 2356
+	cache_id                        1
+	chip_id                         0
+	clock_MHz                       2300
+	clog_id                         1
+	core_id                         1
+	cpu_type                        i386
+	crtime                          153.090853556
+	current_clock_Hz                1200000000
+	current_cstate                  1
+	family                          16
+	fpu_type                        i387 compatible
+	implementation                  x86 (chipid 0x0 AuthenticAMD family 16 model 2 step 3 clock 2300 MHz)
+	model                           2
+	ncore_per_chip                  4
+	ncpu_per_chip                   4
+	pg_id                           3
+	pkg_core_id                     1
+	snaptime                        1964970.24965225
+	state                           on-line
+	state_begin                     1315115690
+	stepping                        3
+	supported_frequencies_Hz        1200000000:1400000000:1700000000:2000000000:2300000000
+	supported_max_cstates           0
+	vendor_id                       AuthenticAMD
+
+module: cpu_info                        instance: 2     
+name:   cpu_info2                       class:    misc
+	brand                           Quad-Core AMD Opteron(tm) Processor 2356
+	cache_id                        2
+	chip_id                         0
+	clock_MHz                       2300
+	clog_id                         2
+	core_id                         2
+	cpu_type                        i386
+	crtime                          153.160162766
+	current_clock_Hz                1200000000
+	current_cstate                  1
+	family                          16
+	fpu_type                        i387 compatible
+	implementation                  x86 (chipid 0x0 AuthenticAMD family 16 model 2 step 3 clock 2300 MHz)
+	model                           2
+	ncore_per_chip                  4
+	ncpu_per_chip                   4
+	pg_id                           4
+	pkg_core_id                     2
+	snaptime                        1964970.24997443
+	state                           on-line
+	state_begin                     1315115690
+	stepping                        3
+	supported_frequencies_Hz        1200000000:1400000000:1700000000:2000000000:2300000000
+	supported_max_cstates           0
+	vendor_id                       AuthenticAMD
+
+module: cpu_info                        instance: 3     
+name:   cpu_info3                       class:    misc
+	brand                           Quad-Core AMD Opteron(tm) Processor 2356
+	cache_id                        3
+	chip_id                         0
+	clock_MHz                       2300
+	clog_id                         3
+	core_id                         3
+	cpu_type                        i386
+	crtime                          153.190177596
+	current_clock_Hz                1200000000
+	current_cstate                  1
+	family                          16
+	fpu_type                        i387 compatible
+	implementation                  x86 (chipid 0x0 AuthenticAMD family 16 model 2 step 3 clock 2300 MHz)
+	model                           2
+	ncore_per_chip                  4
+	ncpu_per_chip                   4
+	pg_id                           5
+	pkg_core_id                     3
+	snaptime                        1964970.2502919
+	state                           on-line
+	state_begin                     1315115690
+	stepping                        3
+	supported_frequencies_Hz        1200000000:1400000000:1700000000:2000000000:2300000000
+	supported_max_cstates           0
+	vendor_id                       AuthenticAMD
+
+module: cpu_info                        instance: 4     
+name:   cpu_info4                       class:    misc
+	brand                           Quad-Core AMD Opteron(tm) Processor 2356
+	cache_id                        4
+	chip_id                         1
+	clock_MHz                       2300
+	clog_id                         0
+	core_id                         4
+	cpu_type                        i386
+	crtime                          153.2201642
+	current_clock_Hz                1200000000
+	current_cstate                  1
+	family                          16
+	fpu_type                        i387 compatible
+	implementation                  x86 (chipid 0x1 AuthenticAMD family 16 model 2 step 3 clock 2300 MHz)
+	model                           2
+	ncore_per_chip                  4
+	ncpu_per_chip                   4
+	pg_id                           7
+	pkg_core_id                     0
+	snaptime                        1964970.2505907
+	state                           on-line
+	state_begin                     1315115690
+	stepping                        3
+	supported_frequencies_Hz        1200000000:1400000000:1700000000:2000000000:2300000000
+	supported_max_cstates           0
+	vendor_id                       AuthenticAMD
+
+module: cpu_info                        instance: 5     
+name:   cpu_info5                       class:    misc
+	brand                           Quad-Core AMD Opteron(tm) Processor 2356
+	cache_id                        5
+	chip_id                         1
+	clock_MHz                       2300
+	clog_id                         1
+	core_id                         5
+	cpu_type                        i386
+	crtime                          153.250190916
+	current_clock_Hz                1200000000
+	current_cstate                  1
+	family                          16
+	fpu_type                        i387 compatible
+	implementation                  x86 (chipid 0x1 AuthenticAMD family 16 model 2 step 3 clock 2300 MHz)
+	model                           2
+	ncore_per_chip                  4
+	ncpu_per_chip                   4
+	pg_id                           8
+	pkg_core_id                     1
+	snaptime                        1964970.25087316
+	state                           on-line
+	state_begin                     1315115690
+	stepping                        3
+	supported_frequencies_Hz        1200000000:1400000000:1700000000:2000000000:2300000000
+	supported_max_cstates           0
+	vendor_id                       AuthenticAMD
+
+module: cpu_info                        instance: 6     
+name:   cpu_info6                       class:    misc
+	brand                           Quad-Core AMD Opteron(tm) Processor 2356
+	cache_id                        6
+	chip_id                         1
+	clock_MHz                       2300
+	clog_id                         2
+	core_id                         6
+	cpu_type                        i386
+	crtime                          153.280185962
+	current_clock_Hz                1200000000
+	current_cstate                  1
+	family                          16
+	fpu_type                        i387 compatible
+	implementation                  x86 (chipid 0x1 AuthenticAMD family 16 model 2 step 3 clock 2300 MHz)
+	model                           2
+	ncore_per_chip                  4
+	ncpu_per_chip                   4
+	pg_id                           9
+	pkg_core_id                     2
+	snaptime                        1964970.25117252
+	state                           on-line
+	state_begin                     1315115690
+	stepping                        3
+	supported_frequencies_Hz        1200000000:1400000000:1700000000:2000000000:2300000000
+	supported_max_cstates           0
+	vendor_id                       AuthenticAMD
+
+module: cpu_info                        instance: 7     
+name:   cpu_info7                       class:    misc
+	brand                           Quad-Core AMD Opteron(tm) Processor 2356
+	cache_id                        7
+	chip_id                         1
+	clock_MHz                       2300
+	clog_id                         3
+	core_id                         7
+	cpu_type                        i386
+	crtime                          153.310206904
+	current_clock_Hz                2300000000
+	current_cstate                  1
+	family                          16
+	fpu_type                        i387 compatible
+	implementation                  x86 (chipid 0x1 AuthenticAMD family 16 model 2 step 3 clock 2300 MHz)
+	model                           2
+	ncore_per_chip                  4
+	ncpu_per_chip                   4
+	pg_id                           10
+	pkg_core_id                     3
+	snaptime                        1964970.25143389
+	state                           on-line
+	state_begin                     1315115690
+	stepping                        3
+	supported_frequencies_Hz        1200000000:1400000000:1700000000:2000000000:2300000000
+	supported_max_cstates           0
+	vendor_id                       AuthenticAMD
+
+

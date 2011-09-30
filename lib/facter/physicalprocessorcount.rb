@@ -62,3 +62,11 @@ Facter.add('physicalprocessorcount') do
     Facter::Util::WMI.execquery("select Name from Win32_Processor").Count
   end
 end
+
+Facter.add('physicalprocessorcount') do
+  confine :kernel => :sunos
+
+  setcode do
+    Facter::Util::Resolution.exec("/usr/sbin/psrinfo -p")
+  end
+end

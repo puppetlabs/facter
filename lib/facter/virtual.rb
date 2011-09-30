@@ -16,12 +16,11 @@
 #   contents of files in there.
 #   If after all the other tests, it's still seen as physical, then it tries to
 #   parse the output of the "lspci", "dmidecode" and "prtdiag" and parses them
-#   for obvious signs of being under VMWare or Parallels.
+#   for obvious signs of being under VMWare, Parallels or VirtualBox.
 #   Finally it checks for the existence of vmware-vmx, which would hint it's
 #   VMWare.
 #
 # Caveats:
-#   Virtualbox detection isn't implemented. 
 #   Many checks rely purely on existence of files.
 #
 
@@ -39,6 +38,7 @@ Facter.add("virtual") do
             result = "parallels" if output["spdisplays_vendor"] =~ /[Pp]arallels/
             result = "vmware" if output["spdisplays_vendor-id"] =~ /0x15ad/
             result = "vmware" if output["spdisplays_vendor"] =~ /VM[wW]are/
+            result = "virtualbox" if output["spdisplays_vendor-id"] =~ /0x80ee/
         end
         result
     end
@@ -104,6 +104,9 @@ Facter.add("virtual") do
                     # --- look for pci vendor id used by Xen HVM device
                     # ---   00:03.0 Unassigned class [ff80]: XenSource, Inc. Xen Platform Device (rev 01)
                     result = "xenhvm" if p =~ /XenSource/
+                    # --- look for Hyper-V video card
+                    # ---   00:08.0 VGA compatible controller: Microsoft Corporation Hyper-V virtual VGA
+                    result = "hyperv" if p =~ /Microsoft Corporation Hyper-V/
                 end
             else
                 output = Facter::Util::Resolution.exec('dmidecode')
@@ -113,6 +116,7 @@ Facter.add("virtual") do
                         result = "vmware" if pd =~ /VMware/
                         result = "virtualbox" if pd =~ /VirtualBox/
                         result = "xenhvm" if pd =~ /HVM domU/
+                        result = "hyperv" if pd =~ /Product Name: Virtual Machine/
                     end
                 elsif Facter.value(:kernel) == 'SunOS'
                     res = Facter::Util::Resolution.new('prtdiag')
@@ -123,7 +127,7 @@ Facter.add("virtual") do
                         output.each_line do |pd|
                             result = "parallels" if pd =~ /Parallels/
                             result = "vmware" if pd =~ /VMware/
-							result = "virtualbox" if pd =~ /VirtualBox/
+                            result = "virtualbox" if pd =~ /VirtualBox/
                             result = "xenhvm" if pd =~ /HVM domU/
                         end
                     end

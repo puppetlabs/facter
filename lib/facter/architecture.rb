@@ -12,14 +12,13 @@
 #
 
 Facter.add(:architecture) do
-    confine :kernel => [:linux, :"gnu/kfreebsd"]
     setcode do
         model = Facter.value(:hardwaremodel)
         case model
         # most linuxen use "x86_64"
         when "x86_64"
             case Facter.value(:operatingsystem)
-            when "Debian", "Gentoo", "GNU/kFreeBSD"
+            when "Debian", "Gentoo", "GNU/kFreeBSD", "Ubuntu"
                 "amd64"
             else
                 model
@@ -34,13 +33,6 @@ Facter.add(:architecture) do
         else
             model
         end
-    end
-end
-
-Facter.add(:architecture) do
-    confine :kernel => :openbsd
-    setcode do
-        architecture = Facter.value(:hardwaremodel)
     end
 end
 
