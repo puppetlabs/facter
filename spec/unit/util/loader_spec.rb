@@ -160,9 +160,15 @@ describe Facter::Util::Loader do
     describe "when loading all facts" do
         before do
             @loader = Facter::Util::Loader.new
+            @loader.directory_loader.stubs(:load)
             @loader.stubs(:search_path).returns []
 
             FileTest.stubs(:directory?).returns true
+        end
+
+        it "should load all facts from the directory loader" do
+            @loader.directory_loader.expects(:load)
+            @loader.load_all
         end
 
         it "should skip directories that do not exist" do
@@ -215,6 +221,7 @@ describe Facter::Util::Loader do
           Kernel.expects(:load).with(f)
         end
 
+        @loader.directory_loader.stubs(:load)
         @loader.load_all
 
         @loader.loaded_files.should == %w{/one/dir/bar.rb /one/dir/foo.rb}

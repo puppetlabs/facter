@@ -6,7 +6,7 @@
 #
 # = Usage
 #
-#   facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [-j|--json] [fact] [fact] [...]
+#   facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [-j|--json] [--cachefile PATH] [--ext DIR] [fact] [fact] [...]
 #
 # = Description
 #
@@ -41,6 +41,12 @@
 #
 # timing::
 #   Enable timing.
+#
+# cachefile::
+#   The path to a cache file.
+#
+# ext::
+#   The directory to use for external facts.
 #
 # = Example
 #
