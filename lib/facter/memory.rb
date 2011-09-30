@@ -234,34 +234,32 @@ if Facter.value(:kernel) == "windows"
     end
   end
 
-if Facter.value(:kernel) == "DragonFly"
-    page_size = %x{/sbin/sysctl -n hw.pagesize}.to_f
-    swaptotal = %x{/sbin/sysctl -n vm.swap_size}.to_f * page_size
-    swap_anon_use = %x{/sbin/sysctl -n vm.swap_anon_use}.to_f * page_size
-    swap_cache_use = %x{/sbin/sysctl -n vm.swap_cache_use}.to_f * page_size
-    swapfree = swaptotal - swap_anon_use - swap_cache_use
-
-    Facter.add("SwapSize") do
-        confine :kernel => :dragonfly
-        setcode do
-            Facter::Memory.scale_number(swaptotal.to_f,"")
-        end
+Facter.add("SwapSize") do
+    confine :kernel => :dragonfly
+    setcode do
+        page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
+        swaptotal = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
+        Facter::Memory.scale_number(swaptotal.to_f,"")
     end
+end
 
-    Facter.add("SwapFree") do
-        confine :kernel => :dragonfly
-        setcode do
-            Facter::Memory.scale_number(swapfree.to_f,"")
-        end
+Facter.add("SwapFree") do
+    confine :kernel => :dragonfly
+    setcode do
+        page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
+        swaptotal = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
+        swap_anon_use = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_anon_use").to_f * page_size
+        swap_cache_use = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_cache_use").to_f * page_size
+        swapfree = swaptotal - swap_anon_use - swap_cache_use
+        Facter::Memory.scale_number(swapfree.to_f,"")
     end
+end
 
-    Facter::Memory.vmstat_find_free_memory()
-
-    Facter.add("MemoryTotal") do
-        confine :kernel => :dragonfly
+Facter.add("MemoryTotal") do
+    confine :kernel => :dragonfly
+    setcode do
+        Facter::Memory.vmstat_find_free_memory()
         memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
-        setcode do
-            Facter::Memory.scale_number(memtotal.to_f,"")
-        end
+        Facter::Memory.scale_number(memtotal.to_f,"")
     end
 end

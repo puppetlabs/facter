@@ -139,20 +139,18 @@ if Facter.value(:kernel) == "windows"
     end
   end
 
-if Facter.value(:kernel) == "DragonFly"
-    Facter.add("Processor") do
-        confine :kernel => :dragonfly
-        setcode do
-            Facter::Util::Resolution.exec("sysctl -n hw.model")
-        end
-    end
+Facter.add("Processor") do
+  confine :kernel => :dragonfly
+  setcode do
+    Facter::Util::Resolution.exec("sysctl -n hw.model")
+  end
+end
 
-    Facter.add("ProcessorCount") do
-        confine :kernel => :dragonfly
-        setcode do
-            Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
-        end
-    end
+Facter.add("ProcessorCount") do
+  confine :kernel => :dragonfly
+  setcode do
+    Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
+  end
 end
 
 Facter.add("processorcount") do
