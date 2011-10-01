@@ -27,30 +27,30 @@
 require 'facter/util/macosx'
 
 if Facter.value(:kernel) == "Darwin"
-    Facter::Util::Macosx.hardware_overview.each do |fact, value|
-        Facter.add("sp_#{fact}") do
-            confine :kernel => :darwin
-            setcode do
-                value.to_s
-            end
-        end
+  Facter::Util::Macosx.hardware_overview.each do |fact, value|
+    Facter.add("sp_#{fact}") do
+      confine :kernel => :darwin
+      setcode do
+        value.to_s
+      end
     end
+  end
 
-    Facter::Util::Macosx.os_overview.each do |fact, value|
-        Facter.add("sp_#{fact}") do
-            confine :kernel => :darwin
-            setcode do
-                value.to_s
-            end
-        end
+  Facter::Util::Macosx.os_overview.each do |fact, value|
+    Facter.add("sp_#{fact}") do
+      confine :kernel => :darwin
+      setcode do
+        value.to_s
+      end
     end
+  end
 
-    Facter::Util::Macosx.sw_vers.each do |fact, value|
-        Facter.add(fact) do
-            confine :kernel => :darwin
-            setcode do
-                value
-            end
-        end
+  Facter::Util::Macosx.sw_vers.each do |fact, value|
+    Facter.add(fact) do
+      confine :kernel => :darwin
+      setcode do
+        value
+      end
     end
+  end
 end

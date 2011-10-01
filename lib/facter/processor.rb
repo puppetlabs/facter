@@ -57,10 +57,10 @@ Facter.add("ProcessorCount") do
 end
 
 Facter.add("Processor") do
-    confine :kernel => :openbsd
-    setcode do
-        Facter::Util::Resolution.exec("uname -p")
-    end
+  confine :kernel => :openbsd
+  setcode do
+    Facter::Util::Resolution.exec("uname -p")
+  end
 end
 
 Facter.add("ProcessorCount") do

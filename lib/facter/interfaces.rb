@@ -20,22 +20,22 @@ require 'facter/util/ip'
 # is missing.
 
 Facter.add(:interfaces) do
-    confine :kernel => Facter::Util::IP.supported_platforms
-    setcode do
-        Facter::Util::IP.get_interfaces.collect { |iface| Facter::Util::IP.alphafy(iface) }.join(",")
-    end
+  confine :kernel => Facter::Util::IP.supported_platforms
+  setcode do
+    Facter::Util::IP.get_interfaces.collect { |iface| Facter::Util::IP.alphafy(iface) }.join(",")
+  end
 end
 
 Facter::Util::IP.get_interfaces.each do |interface|
 
-    # Make a fact for each detail of each interface.  Yay.
-    #   There's no point in confining these facts, since we wouldn't be able to create
-    # them if we weren't running on a supported platform.
-    %w{ipaddress ipaddress6 macaddress netmask}.each do |label|
-        Facter.add(label + "_" + Facter::Util::IP.alphafy(interface)) do
-            setcode do
-                Facter::Util::IP.get_interface_value(interface, label)
-            end
-        end
+  # Make a fact for each detail of each interface.  Yay.
+  #   There's no point in confining these facts, since we wouldn't be able to create
+  # them if we weren't running on a supported platform.
+  %w{ipaddress ipaddress6 macaddress netmask}.each do |label|
+    Facter.add(label + "_" + Facter::Util::IP.alphafy(interface)) do
+      setcode do
+        Facter::Util::IP.get_interface_value(interface, label)
+      end
     end
+  end
 end
