@@ -10,13 +10,13 @@
 #
 
 Facter.add(:kernel) do
-    setcode do
-        require 'facter/util/config'
+  setcode do
+    require 'facter/util/config'
 
-        if Facter::Util::Config.is_windows?
-            'windows'
-        else
-            Facter::Util::Resolution.exec("uname -s")
-        end
+    if Facter::Util::Config.is_windows?
+      'windows'
+    else
+      Facter::Util::Resolution.exec("uname -s")
     end
+  end
 end

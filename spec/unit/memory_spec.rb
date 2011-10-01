@@ -42,7 +42,7 @@ describe "Memory facts" do
         swapusage = "vm.swapusage: total = 64.00M  used = 0.00M  free = 64.00M  (encrypted)"
 
         swapusage =~ /\(encrypted\)/
-	Facter.fact(:swapencrypted).value.should == true
+        Facter.fact(:swapencrypted).value.should == true
     end
 
     describe "on OpenBSD" do

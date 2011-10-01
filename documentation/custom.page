@@ -12,10 +12,10 @@ search through your environment for any variables whose names start with
 As a simple example, here is how I publish my home directory to Puppet:
 
    Facter.add("home") do
-        setcode do
-            ENV['HOME']
-        end
-    end 
+     setcode do
+       ENV['HOME']
+     end
+   end 
 
 I have ~/lib/ruby in my $RUBYLIB environment variable, so I just created
 ~/lib/ruby/facter and dropped the above code into a ``home.rb`` file

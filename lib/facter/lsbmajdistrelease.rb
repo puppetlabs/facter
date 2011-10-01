@@ -15,13 +15,13 @@
 require 'facter'
 
 Facter.add("lsbmajdistrelease") do
-    confine :operatingsystem => %w{Linux Fedora RedHat CentOS Scientific SLC SuSE SLES Debian Ubuntu Gentoo OEL OracleLinux OVS GNU/kFreeBSD}
-    setcode do
-        if /(\d*)\./i =~ Facter.value(:lsbdistrelease)
-            result=$1
-        else
-            result=Facter.value(:lsbdistrelease)
-        end
-        result
+  confine :operatingsystem => %w{Linux Fedora RedHat CentOS Scientific SLC SuSE SLES Debian Ubuntu Gentoo OEL OracleLinux OVS GNU/kFreeBSD}
+  setcode do
+    if /(\d*)\./i =~ Facter.value(:lsbdistrelease)
+      result=$1
+    else
+      result=Facter.value(:lsbdistrelease)
     end
+    result
+  end
 end
