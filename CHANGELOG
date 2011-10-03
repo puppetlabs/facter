@@ -1,3 +1,34 @@
+1.6.2rc1
+===
+d7c00f6 (#9852) Fixing watchr on facter
+abf636e (#9555) Change all cases of tabs and 4 space indentation to 2 space indentation.
+db1b5af (#9830) Add sshecdsakey fact
+1b69791 (#9404) Add memory & update processor facts for DragonFly and OpenBSD.
+bce2c69 (#9404) De-clumsify CPU count detection and swap detection on OpenBSD.
+cd0ae15 (#9404) Efficiency cleanups for DragonFly facts.
+d5511f6 (#9404) Add cross-fact support to facter for DragonFly BSD.
+0dfc4e9 (#6728) Improve openvz/cloudlinux detection.
+2c5ad52 (#6728) Facter improperly detects openvzve on CloudLinux systems
+9101e46 (#7951) added OS support for Amazon Linux
+b3784f7 add operatingsystema and operatingsystemrelease support for cloudlinux
+8605bba (#9787) Change rspec format so we use the default, not document
+b579613 (#7726) Silence prtconf error message inside zones
+db3c606 (#9786) Add aliases: specs, tests, test in rake that points at 'spec'.
+dfda9be (#4980, #6470) Fix architecture in Darwin and Ubuntu
+8f938c1 (#6792) Added osfamily fact.
+af1ef43 (#6515) Fix for ruby-1.8.5. Switched use of 'line.each' to 'each_line'.
+328ff75 (#6515 and #2945) Fix processorcount for arm, sparc & ppc for linux.
+51329b8 (#3856) Detect VirtualBox on Darwin as well as Linux and SunOS
+83498b5 (#7996) Restrict solaris cpu processor detection
+6e29ff7 (#8615) ENV hash is now local to tests
+124a09b (#8240) Fixed regex pattern for domain
+fd93c5f (#7996) Add solaris processor facts
+3f1a163 (#9593) Require rubygems to handle json output for ruby 1.8.7.
+c4fe415 (#9295) Added spec tests for Hyper-V detection
+ea23417 (#9295) Initial detection of Hyper-V hypervisor
+82351ab Stub out OS and HW model to avoid test failures. Only stub vmware -v (don't expect it) since it needn't be invoked if we already identified Xen or something else.
+16a8cab (#2747) Fix detection of xen0 vs xenu in Xen 3.2.
+
 1.6.1
 ===
 1f009e0 Updated CHANGELOG for 1.6.1rc4
