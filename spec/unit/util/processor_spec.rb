@@ -15,7 +15,7 @@ describe Facter::Util::Processor do
     Facter.fact(:architecture).stubs(:value).returns("amd64")
     File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
     File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64solo"))
-    
+
     Facter::Util::Processor.enum_cpuinfo[0].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
   end
 
@@ -24,28 +24,28 @@ describe Facter::Util::Processor do
     Facter.fact(:architecture).stubs(:value).returns("amd64")
     File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
     File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64dual"))
-    
+
     Facter::Util::Processor.enum_cpuinfo[0].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
     Facter::Util::Processor.enum_cpuinfo[1].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
   end
-  
+
   it "should get the processor descriptions from the amd64tri fixture" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:architecture).stubs(:value).returns("amd64")
     File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
     File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64tri"))
-    
+
     Facter::Util::Processor.enum_cpuinfo[0].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
     Facter::Util::Processor.enum_cpuinfo[1].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
     Facter::Util::Processor.enum_cpuinfo[2].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
   end
-  
+
   it "should get the processor descriptions from the amd64quad fixture" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:architecture).stubs(:value).returns("amd64")
     File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
     File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64quad"))
-    
+
     Facter::Util::Processor.enum_cpuinfo[0].should == "Quad-Core AMD Opteron(tm) Processor 2374 HE"
     Facter::Util::Processor.enum_cpuinfo[1].should == "Quad-Core AMD Opteron(tm) Processor 2374 HE"
     Facter::Util::Processor.enum_cpuinfo[2].should == "Quad-Core AMD Opteron(tm) Processor 2374 HE"

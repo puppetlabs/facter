@@ -12,7 +12,7 @@ timebase	: 33333333
 platform	: PowerMac
 model		: RackMac3,1
 machine		: RackMac3,1
-motherboard	: RackMac3,1 MacRISC4 Power Macintosh 
+motherboard	: RackMac3,1 MacRISC4 Power Macintosh
 detected as	: 339 (XServe G5)
 pmac flags	: 00000000
 L2 cache	: 512K unified

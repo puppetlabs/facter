@@ -21,7 +21,7 @@ module Facter::Util::Processor
             end
           end
         end
-       
+
       when "ppc64"
         Thread::exclusive do
           File.readlines(cpuinfo).each do |l|
@@ -33,7 +33,7 @@ module Facter::Util::Processor
             end
           end
         end
-          
+
       when /arm/
         Thread::exclusive do
           File.readlines(cpuinfo).each do |l|
@@ -63,7 +63,7 @@ module Facter::Util::Processor
     end
     processor_list
   end
-  
+
   def self.enum_lsdev
     processor_num = -1
     processor_list = {}

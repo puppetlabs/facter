@@ -9,4 +9,4 @@ fxp0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
         media: Ethernet autoselect (100baseTX <full-duplex>)
         status: active
 lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
-        inet 127.0.0.1 netmask 0xff000000 
+        inet 127.0.0.1 netmask 0xff000000

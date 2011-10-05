@@ -1,4 +1,4 @@
-module: cpu_info                        instance: 0     
+module: cpu_info                        instance: 0
 name:   cpu_info0                       class:    misc
 	brand                           Quad-Core AMD Opteron(tm) Processor 2356
 	cache_id                        0
@@ -26,7 +26,7 @@ name:   cpu_info0                       class:    misc
 	supported_max_cstates           0
 	vendor_id                       AuthenticAMD
 
-module: cpu_info                        instance: 1     
+module: cpu_info                        instance: 1
 name:   cpu_info1                       class:    misc
 	brand                           Quad-Core AMD Opteron(tm) Processor 2356
 	cache_id                        1
@@ -54,7 +54,7 @@ name:   cpu_info1                       class:    misc
 	supported_max_cstates           0
 	vendor_id                       AuthenticAMD
 
-module: cpu_info                        instance: 2     
+module: cpu_info                        instance: 2
 name:   cpu_info2                       class:    misc
 	brand                           Quad-Core AMD Opteron(tm) Processor 2356
 	cache_id                        2
@@ -82,7 +82,7 @@ name:   cpu_info2                       class:    misc
 	supported_max_cstates           0
 	vendor_id                       AuthenticAMD
 
-module: cpu_info                        instance: 3     
+module: cpu_info                        instance: 3
 name:   cpu_info3                       class:    misc
 	brand                           Quad-Core AMD Opteron(tm) Processor 2356
 	cache_id                        3
@@ -110,7 +110,7 @@ name:   cpu_info3                       class:    misc
 	supported_max_cstates           0
 	vendor_id                       AuthenticAMD
 
-module: cpu_info                        instance: 4     
+module: cpu_info                        instance: 4
 name:   cpu_info4                       class:    misc
 	brand                           Quad-Core AMD Opteron(tm) Processor 2356
 	cache_id                        4
@@ -138,7 +138,7 @@ name:   cpu_info4                       class:    misc
 	supported_max_cstates           0
 	vendor_id                       AuthenticAMD
 
-module: cpu_info                        instance: 5     
+module: cpu_info                        instance: 5
 name:   cpu_info5                       class:    misc
 	brand                           Quad-Core AMD Opteron(tm) Processor 2356
 	cache_id                        5
@@ -166,7 +166,7 @@ name:   cpu_info5                       class:    misc
 	supported_max_cstates           0
 	vendor_id                       AuthenticAMD
 
-module: cpu_info                        instance: 6     
+module: cpu_info                        instance: 6
 name:   cpu_info6                       class:    misc
 	brand                           Quad-Core AMD Opteron(tm) Processor 2356
 	cache_id                        6
@@ -194,7 +194,7 @@ name:   cpu_info6                       class:    misc
 	supported_max_cstates           0
 	vendor_id                       AuthenticAMD
 
-module: cpu_info                        instance: 7     
+module: cpu_info                        instance: 7
 name:   cpu_info7                       class:    misc
 	brand                           Quad-Core AMD Opteron(tm) Processor 2356
 	cache_id                        7

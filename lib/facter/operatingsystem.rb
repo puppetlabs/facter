@@ -55,7 +55,7 @@ Facter.add(:operatingsystem) do
         "CentOS"
       elsif txt =~ /CERN/
         "SLC"
-      elsif txt =~ /scientific/i 
+      elsif txt =~ /scientific/i
         "Scientific"
       elsif txt =~ /^cloudlinux/i
         "CloudLinux"
