@@ -1,4 +1,4 @@
-module: cpu_info                        instance: 0     
+module: cpu_info                        instance: 0
 name:   cpu_info0                       class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -17,7 +17,7 @@ name:   cpu_info0                       class:    misc
 	state_begin                     1315099346
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 1     
+module: cpu_info                        instance: 1
 name:   cpu_info1                       class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -36,7 +36,7 @@ name:   cpu_info1                       class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 2     
+module: cpu_info                        instance: 2
 name:   cpu_info2                       class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -55,7 +55,7 @@ name:   cpu_info2                       class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 3     
+module: cpu_info                        instance: 3
 name:   cpu_info3                       class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -74,7 +74,7 @@ name:   cpu_info3                       class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 4     
+module: cpu_info                        instance: 4
 name:   cpu_info4                       class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -93,7 +93,7 @@ name:   cpu_info4                       class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 5     
+module: cpu_info                        instance: 5
 name:   cpu_info5                       class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -112,7 +112,7 @@ name:   cpu_info5                       class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 6     
+module: cpu_info                        instance: 6
 name:   cpu_info6                       class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -131,7 +131,7 @@ name:   cpu_info6                       class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 7     
+module: cpu_info                        instance: 7
 name:   cpu_info7                       class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -150,7 +150,7 @@ name:   cpu_info7                       class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 8     
+module: cpu_info                        instance: 8
 name:   cpu_info8                       class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -169,7 +169,7 @@ name:   cpu_info8                       class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 9     
+module: cpu_info                        instance: 9
 name:   cpu_info9                       class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -188,7 +188,7 @@ name:   cpu_info9                       class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 10    
+module: cpu_info                        instance: 10
 name:   cpu_info10                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -207,7 +207,7 @@ name:   cpu_info10                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 11    
+module: cpu_info                        instance: 11
 name:   cpu_info11                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -226,7 +226,7 @@ name:   cpu_info11                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 12    
+module: cpu_info                        instance: 12
 name:   cpu_info12                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -245,7 +245,7 @@ name:   cpu_info12                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 13    
+module: cpu_info                        instance: 13
 name:   cpu_info13                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -264,7 +264,7 @@ name:   cpu_info13                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 14    
+module: cpu_info                        instance: 14
 name:   cpu_info14                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -283,7 +283,7 @@ name:   cpu_info14                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 15    
+module: cpu_info                        instance: 15
 name:   cpu_info15                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -302,7 +302,7 @@ name:   cpu_info15                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 16    
+module: cpu_info                        instance: 16
 name:   cpu_info16                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -321,7 +321,7 @@ name:   cpu_info16                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 17    
+module: cpu_info                        instance: 17
 name:   cpu_info17                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -340,7 +340,7 @@ name:   cpu_info17                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 18    
+module: cpu_info                        instance: 18
 name:   cpu_info18                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -359,7 +359,7 @@ name:   cpu_info18                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 19    
+module: cpu_info                        instance: 19
 name:   cpu_info19                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -378,7 +378,7 @@ name:   cpu_info19                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 20    
+module: cpu_info                        instance: 20
 name:   cpu_info20                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -397,7 +397,7 @@ name:   cpu_info20                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 21    
+module: cpu_info                        instance: 21
 name:   cpu_info21                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -416,7 +416,7 @@ name:   cpu_info21                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 22    
+module: cpu_info                        instance: 22
 name:   cpu_info22                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -435,7 +435,7 @@ name:   cpu_info22                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 23    
+module: cpu_info                        instance: 23
 name:   cpu_info23                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -454,7 +454,7 @@ name:   cpu_info23                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 24    
+module: cpu_info                        instance: 24
 name:   cpu_info24                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -473,7 +473,7 @@ name:   cpu_info24                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 25    
+module: cpu_info                        instance: 25
 name:   cpu_info25                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -492,7 +492,7 @@ name:   cpu_info25                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 26    
+module: cpu_info                        instance: 26
 name:   cpu_info26                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -511,7 +511,7 @@ name:   cpu_info26                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 27    
+module: cpu_info                        instance: 27
 name:   cpu_info27                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -530,7 +530,7 @@ name:   cpu_info27                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 28    
+module: cpu_info                        instance: 28
 name:   cpu_info28                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -549,7 +549,7 @@ name:   cpu_info28                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 29    
+module: cpu_info                        instance: 29
 name:   cpu_info29                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -568,7 +568,7 @@ name:   cpu_info29                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 30    
+module: cpu_info                        instance: 30
 name:   cpu_info30                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -587,7 +587,7 @@ name:   cpu_info30                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 31    
+module: cpu_info                        instance: 31
 name:   cpu_info31                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -606,7 +606,7 @@ name:   cpu_info31                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 32    
+module: cpu_info                        instance: 32
 name:   cpu_info32                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -625,7 +625,7 @@ name:   cpu_info32                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 33    
+module: cpu_info                        instance: 33
 name:   cpu_info33                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -644,7 +644,7 @@ name:   cpu_info33                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 34    
+module: cpu_info                        instance: 34
 name:   cpu_info34                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -663,7 +663,7 @@ name:   cpu_info34                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 35    
+module: cpu_info                        instance: 35
 name:   cpu_info35                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -682,7 +682,7 @@ name:   cpu_info35                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 36    
+module: cpu_info                        instance: 36
 name:   cpu_info36                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -701,7 +701,7 @@ name:   cpu_info36                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 37    
+module: cpu_info                        instance: 37
 name:   cpu_info37                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -720,7 +720,7 @@ name:   cpu_info37                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 38    
+module: cpu_info                        instance: 38
 name:   cpu_info38                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -739,7 +739,7 @@ name:   cpu_info38                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 39    
+module: cpu_info                        instance: 39
 name:   cpu_info39                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -758,7 +758,7 @@ name:   cpu_info39                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 40    
+module: cpu_info                        instance: 40
 name:   cpu_info40                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -777,7 +777,7 @@ name:   cpu_info40                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 41    
+module: cpu_info                        instance: 41
 name:   cpu_info41                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -796,7 +796,7 @@ name:   cpu_info41                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 42    
+module: cpu_info                        instance: 42
 name:   cpu_info42                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -815,7 +815,7 @@ name:   cpu_info42                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 43    
+module: cpu_info                        instance: 43
 name:   cpu_info43                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -834,7 +834,7 @@ name:   cpu_info43                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 44    
+module: cpu_info                        instance: 44
 name:   cpu_info44                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -853,7 +853,7 @@ name:   cpu_info44                      class:    misc
 	state_begin                     1315099348
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 45    
+module: cpu_info                        instance: 45
 name:   cpu_info45                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -872,7 +872,7 @@ name:   cpu_info45                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 46    
+module: cpu_info                        instance: 46
 name:   cpu_info46                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -891,7 +891,7 @@ name:   cpu_info46                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 47    
+module: cpu_info                        instance: 47
 name:   cpu_info47                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -910,7 +910,7 @@ name:   cpu_info47                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 48    
+module: cpu_info                        instance: 48
 name:   cpu_info48                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -929,7 +929,7 @@ name:   cpu_info48                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 49    
+module: cpu_info                        instance: 49
 name:   cpu_info49                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -948,7 +948,7 @@ name:   cpu_info49                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 50    
+module: cpu_info                        instance: 50
 name:   cpu_info50                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -967,7 +967,7 @@ name:   cpu_info50                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 51    
+module: cpu_info                        instance: 51
 name:   cpu_info51                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -986,7 +986,7 @@ name:   cpu_info51                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 52    
+module: cpu_info                        instance: 52
 name:   cpu_info52                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -1005,7 +1005,7 @@ name:   cpu_info52                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 53    
+module: cpu_info                        instance: 53
 name:   cpu_info53                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -1024,7 +1024,7 @@ name:   cpu_info53                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 54    
+module: cpu_info                        instance: 54
 name:   cpu_info54                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -1043,7 +1043,7 @@ name:   cpu_info54                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 55    
+module: cpu_info                        instance: 55
 name:   cpu_info55                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -1062,7 +1062,7 @@ name:   cpu_info55                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 56    
+module: cpu_info                        instance: 56
 name:   cpu_info56                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -1081,7 +1081,7 @@ name:   cpu_info56                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 57    
+module: cpu_info                        instance: 57
 name:   cpu_info57                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -1100,7 +1100,7 @@ name:   cpu_info57                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 58    
+module: cpu_info                        instance: 58
 name:   cpu_info58                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -1119,7 +1119,7 @@ name:   cpu_info58                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 59    
+module: cpu_info                        instance: 59
 name:   cpu_info59                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -1138,7 +1138,7 @@ name:   cpu_info59                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 60    
+module: cpu_info                        instance: 60
 name:   cpu_info60                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -1157,7 +1157,7 @@ name:   cpu_info60                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 61    
+module: cpu_info                        instance: 61
 name:   cpu_info61                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -1176,7 +1176,7 @@ name:   cpu_info61                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 62    
+module: cpu_info                        instance: 62
 name:   cpu_info62                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0
@@ -1195,7 +1195,7 @@ name:   cpu_info62                      class:    misc
 	state_begin                     1315099349
 	supported_frequencies_Hz        1165379264
 
-module: cpu_info                        instance: 63    
+module: cpu_info                        instance: 63
 name:   cpu_info63                      class:    misc
 	brand                           UltraSPARC-T2
 	chip_id                         0

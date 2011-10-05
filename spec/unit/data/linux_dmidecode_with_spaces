@@ -41,9 +41,9 @@ Handle 0x0001
         DMI type 1, 25 bytes.
         System Information
                 Manufacturer: MICRO-STAR INTERNATIONAL CO., LTD
-                Product Name: MS-6754 
-                Version:  
-                Serial Number:  
+                Product Name: MS-6754
+                Version:
+                Serial Number:
                 UUID: Not Present
                 Wake-up Type: Power Switch
 Handle 0x0002
@@ -51,8 +51,8 @@ Handle 0x0002
     Base Board Information
         Manufacturer: MICRO-STAR INTERNATIONAL CO., LTD
         Product Name: MS-6754
-        Version:  
-        Serial Number:  
+        Version:
+        Serial Number:
 
 Handle 0x001F
     DMI type 127, 4 bytes.

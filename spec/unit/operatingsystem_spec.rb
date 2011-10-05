@@ -42,7 +42,7 @@ describe "Operating System fact" do
 
     Facter.fact(:operatingsystem).value.should == "OVS"
   end
-   
+
   it "should identify VMWare ESX" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.stubs(:value).with(:lsbdistid).returns(nil)
@@ -55,9 +55,9 @@ describe "Operating System fact" do
 
   it "should identify Alpine Linux" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
-    
+
     FileTest.stubs(:exists?).returns false
-    
+
     FileTest.expects(:exists?).with("/etc/alpine-release").returns true
 
     Facter.fact(:operatingsystem).value.should == "Alpine"

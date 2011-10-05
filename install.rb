@@ -101,7 +101,7 @@ def do_libs(libs, strip = 'lib/')
 end
 
 def do_man(man, strip = 'man/')
-  if (InstallOptions.man == true)  
+  if (InstallOptions.man == true)
   man.each do |mf|
     omf = File.join(InstallOptions.man_dir, mf.gsub(/#{strip}/, ''))
     om = File.dirname(omf)

@@ -193,7 +193,7 @@ describe "Virtual fact" do
       FileTest.expects(:exists?).with("/proc/xen/xsd_kva").returns(true)
       Facter.fact(:virtual).value.should == "xen0"
     end
-    
+
     it "should be xenu with xen domU files in /proc" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:operatingsystem).stubs(:value).returns("Linux")

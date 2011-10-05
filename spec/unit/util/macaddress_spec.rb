@@ -8,7 +8,7 @@ describe "standardized MAC address" do
   it "should have zeroes added if missing" do
     Facter::Util::Macaddress::standardize("0:ab:cd:e:12:3").should == "00:ab:cd:0e:12:03"
   end
-  
+
   it "should be identical if each octet already has two digits" do
     Facter::Util::Macaddress::standardize("00:ab:cd:0e:12:03").should == "00:ab:cd:0e:12:03"
   end
