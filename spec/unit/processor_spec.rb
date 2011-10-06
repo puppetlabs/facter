@@ -207,7 +207,7 @@ describe "Processor facts" do
       File.stubs(:exists?).with('/sys/devices/system/cpu').returns(true)
       ## sysfs method is only used if cpuinfo method returned no processors
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
-      File.stubs(:readlines).with("/proc/cpuinfo").returns("")
+      File.stubs(:readlines).with("/proc/cpuinfo").returns([])
       Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu[0-9]*").returns(%w{
         /sys/devices/system/cpu/cpu0
         /sys/devices/system/cpu/cpu1
@@ -221,7 +221,7 @@ describe "Processor facts" do
       File.stubs(:exists?).with('/sys/devices/system/cpu').returns(true)
       ## sysfs method is only used if cpuinfo method returned no processors
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
-      File.stubs(:readlines).with("/proc/cpuinfo").returns("")
+      File.stubs(:readlines).with("/proc/cpuinfo").returns([])
       Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu[0-9]*").returns(%w{
         /sys/devices/system/cpu/cpu0
         /sys/devices/system/cpu/cpu1
