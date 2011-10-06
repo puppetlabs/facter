@@ -42,6 +42,9 @@ elsif Facter.value(:kernel) == "windows"
   Facter::Manufacturer.win32_find_system_info(win32_keys)
 else
   query = {
+    'BIOS Information' => [
+      { 'Version:' => 'bios_version' },
+    ],
     '[Ss]ystem [Ii]nformation' => [
       { 'Manufacturer:'    => 'manufacturer' },
       { 'Product(?: Name)?:' => 'productname' },
