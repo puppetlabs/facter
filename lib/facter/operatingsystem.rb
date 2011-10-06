@@ -81,6 +81,8 @@ Facter.add(:operatingsystem) do
       "Slackware"
     elsif FileTest.exists?("/etc/alpine-release")
       "Alpine"
+    elsif FileTest.exists?("/etc/mageia-release")
+      "Mageia"
     elsif Facter.value(:lsbdistdescription) =~ /Amazon Linux/
       "Amazon"
     end
