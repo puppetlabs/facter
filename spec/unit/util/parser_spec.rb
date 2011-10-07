@@ -15,33 +15,36 @@ describe Facter::Util::Parser do
   end
 
   describe "when determining TTL" do
-    before :each do
-      dir = tmpdir
-      @script_file = File.join(dir, "myscript.txt")
-      @ttl_file = @script_file + ".ttl"
-      @parser = Facter::Util::Parser.new(@script_file)
-    end
-   
-    it "should determine TTL by looking in a file named after the external fact file with a '.ttl' extension" do
-      File.open(@ttl_file, "w") { |f| f.print 300 }
 
-      @parser.ttl.should == 300
+    # Temporary data file
+    let(:data_file) { File.join(tmpdir, "mydata.txt") }
+
+    # The corresponding TTL file for the data file
+    let(:ttl_file) { data_file + ".ttl" }
+
+    # Parser object initialized with the data_file
+    let(:parser) { Facter::Util::Parser.new(data_file) }
+
+    it "should determine TTL by looking in a file named after the external fact file with a '.ttl' extension" do
+      File.open(ttl_file, "w") { |f| f.print 300 }
+
+      parser.ttl.should == 300
     end
 
     it "should support a -1 for TTL" do
-      File.open(@ttl_file, "w") { |f| f.print -1 }
+      File.open(ttl_file, "w") { |f| f.print -1 }
 
-      @parser.ttl.should == -1
+      parser.ttl.should == -1
     end
 
     it "should return 0 when ttl file doesn't contain a number" do
-      File.open(@ttl_file, "w") { |f| f.print "some weird data" }
+      File.open(ttl_file, "w") { |f| f.print "some weird data" }
 
-      @parser.ttl.should == 0
+      parser.ttl.should == 0
     end
 
     it "should return 0 when no ttl file is provided" do
-      @parser.ttl.should == 0
+      parser.ttl.should == 0
     end
   end
 
@@ -224,33 +227,38 @@ describe Facter::Util::Parser do
   describe "scripts" do
     subject { Facter::Util::Parser::ScriptParser }
 
-    before do
-      @script = nil
+    let(:script_file) do
       if Facter::Util::Config.is_windows?
-        @script = tmpfile("script","bat")
+        tmpfile("script","bat")
+      else 
+        tmpfile("script","sh")
+      end
+    end
+
+    before :each do
+      if Facter::Util::Config.is_windows?
         data = "@echo off
 echo one=two
 echo three=four
 "
 
-        File.open(@script, "w") { |f| f.print data }
+        File.open(script_file, "w") { |f| f.print data }
       else
-        @script = tmpfile("script","sh")
         data = "#!/bin/sh
 echo one=two
 echo three=four
 "
 
-        File.open(@script, "w") { |f| f.print data }
-        File.chmod(0755, @script)
+        File.open(script_file, "w") { |f| f.print data }
+        File.chmod(0755, script_file)
       end
-    end
+    end 
 
     it "should use any cache provided at initialization time" do
       Facter::Util::Config.cache_file = tmpfile
-      Facter::Util::Cache.set(@script, {"one" => "yay"}, 1)
+      Facter::Util::Cache.set(script_file, {"one" => "yay"}, 1)
 
-      parser = Facter::Util::Parser.new(@script)
+      parser = Facter::Util::Parser.new(script_file)
       parser.expects(:ttl).once.returns(1)
       parser.values.should == {"one" => "yay"}
     end
@@ -261,11 +269,11 @@ echo three=four
 
       Facter::Util::Cache.any_instance.stubs(:write!)
 
-      Facter::Util::Parser.new(@script).values.should == {"one" => "two", "three" => "four"}
+      Facter::Util::Parser.new(script_file).values.should == {"one" => "two", "three" => "four"}
     end
 
     it "should return a hash of whatever is returned by the executable" do
-      Facter::Util::Parser.new(@script).values.should == {"one" => "two", "three" => "four"}
+      Facter::Util::Parser.new(script_file).values.should == {"one" => "two", "three" => "four"}
     end
 
     it "should ignore any extraneous whitespace" do
@@ -319,23 +327,24 @@ echo =
   describe "powershell", :if => Facter::Util::Config.is_windows? do
     subject { Facter::Util::Parser::PowershellParser }
 
-    before do
-      @script = tmpfile("script","ps1")
+    let(:script_file) { tmpfile("script","ps1") }
+
+    before :each do
       data = <<EOS
 Write-Host "var1=value1"
 Write-Host "var2=value2"
 Write-Host "var3=value3"
 EOS
 
-      File.open(@script, "w") { |f| f.print data }
+      File.open(script_file, "w") { |f| f.print data }
     end
 
     it "should use any cache provided at initialization time" do
       cache_file = tmpfile
       Facter::Util::Config.cache_file = cache_file
-      Facter::Util::Cache.set(@script,{"one" => "yay"},1)
+      Facter::Util::Cache.set(script_file,{"one" => "yay"},1)
 
-      parser = Facter::Util::Parser.new(@script)
+      parser = Facter::Util::Parser.new(script_file)
       parser.expects(:ttl).returns(1)
       parser.values.should == {"one" => "yay"}
     end
@@ -346,11 +355,11 @@ EOS
 
       Facter::Util::Cache.any_instance.stubs(:write!)
 
-      Facter::Util::Parser.new(@script).values.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
+      Facter::Util::Parser.new(script_file).values.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
     end
 
     it "should return a hash of whatever is returned by the executable" do
-      Facter::Util::Parser.new(@script).values.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
+      Facter::Util::Parser.new(script_file).values.should == {"var1" => "value1", "var2" => "value2", "var3" => "value3"}
     end
 
     it "should ignore any extraneous whitespace" do

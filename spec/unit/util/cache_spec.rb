@@ -68,14 +68,15 @@ describe Facter::Util::Cache do
   end
 
   describe "when reading and writing to disk" do
+    let(:cache_file) { tmpfile }
+
     before :each do
-      @cache_file = tmpfile
-      Facter::Util::Config.cache_file = @cache_file
+      Facter::Util::Config.cache_file = cache_file
     end
 
     it "should be able to save the data to disk" do
       Facter::Util::Cache.write!
-      File.should be_exist(@cache_file)
+      File.should be_exist(cache_file)
     end
 
     it "should be able to return data saved to disk" do
@@ -99,18 +100,19 @@ describe Facter::Util::Cache do
   end
 
   describe "when cache file is not writeable" do
+    let(:cache_file) { tmpfile }
+
     before :each do
-      @cache_file = tmpfile
-      File.open(@cache_file, "w") do |f|
+      File.open(cache_file, "w") do |f|
         f.write("")
       end
-      File.chmod(0000, @cache_file)
-      Facter::Util::Config.cache_file = @cache_file
+      File.chmod(0000, cache_file)
+      Facter::Util::Config.cache_file = cache_file
     end
 
     after :each do
       # Reset permissions so files can be cleaned up
-      File.chmod(0644, @cache_file)
+      File.chmod(0644, cache_file)
     end
 
     it "setting and getting cache should still work" do
@@ -122,11 +124,11 @@ describe Facter::Util::Cache do
 
   describe "when cache file has invalid data" do
     before :each do
-      @cache_file = tmpfile
-      File.open(@cache_file, "w") do |f|
+      cache_file = tmpfile
+      File.open(cache_file, "w") do |f|
         f.write("foobar data")
       end
-      Facter::Util::Config.cache_file = @cache_file
+      Facter::Util::Config.cache_file = cache_file
     end
 
     it "should return empty data set" do
