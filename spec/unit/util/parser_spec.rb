@@ -112,7 +112,7 @@ describe Facter::Util::Parser do
   describe "yaml" do
     subject { Facter::Util::Parser::YamlParser }
     it "should match the 'yaml' extension" do
-      subject.extension.should == "yaml"
+      subject.extension.should == ["yaml","yml"]
     end
 
     it "should return a hash of whatever is stored on disk" do
@@ -147,7 +147,7 @@ describe Facter::Util::Parser do
   describe "json" do
     subject { Facter::Util::Parser::JsonParser }
     it "should match the 'json' extension" do
-      subject.extension.should == "json"
+      subject.extension.should == ["json","jsn"]
     end
 
     it "should return a hash of whatever is stored on disk" do
@@ -181,7 +181,7 @@ describe Facter::Util::Parser do
   describe "txt" do
     subject { Facter::Util::Parser::TextParser }
     it "should match the 'txt' extension" do
-      subject.extension.should == "txt"
+      subject.extension.should == ["text","txt"]
     end
 
     it "should return a hash of whatever is stored on disk" do

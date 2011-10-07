@@ -130,7 +130,7 @@ class Facter::Util::Parser
 
   # Parses static files containing #YAML content.
   class YamlParser < self
-    matches_extension "yaml"
+    matches_extension %w{yaml yml}
 
     # Returns a hash of text from #YAML content.
     def results
@@ -146,7 +146,7 @@ class Facter::Util::Parser
 
   # Parses static text files with key value pairs.
   class TextParser < self
-    matches_extension "txt"
+    matches_extension %w{text txt}
 
     # Returns a hash of facts from text content.
     def results
@@ -165,7 +165,7 @@ class Facter::Util::Parser
 
   # Parses static files containing #JSON content.
   class JsonParser < self
-    matches_extension "json"
+    matches_extension %w{json jsn}
     
     # Returns a hash of facts from #JSON content.
     def results
