@@ -1,18 +1,13 @@
 require 'facter/util/parser'
 
-# A Facter plugin that loads facts from /etc/facter/facts.d.
+# DirectoryLoader is the main entry point for external fact
+# support.
 #
-# Facts can be in the form of JSON, YAML or Text files
-# and any executable that returns key=value pairs.
+# http://links.puppetlabs.com/externalfacts
 #
-# In the case of scripts you can also create a file that
-# contains a cache TTL.  For foo.sh store the ttl as just
-# a number in foo.sh.ttl
-#
-# The cache is stored in /tmp/facts_cache.yaml as a mode
-# 600 file and will have the end result of not calling your
-# fact scripts more often than is needed.  The cache is only
-# used for executable facts, not plain data.
+# This class is responsible for the traversal of the external
+# facts directory, matching a file to a corresponding
+# Facter::Util::Parser object for interpretation.
 class Facter::Util::DirectoryLoader
   require 'yaml'
 
@@ -24,8 +19,8 @@ class Facter::Util::DirectoryLoader
 
   # Initialize Facter::Util::DirectoryLoader.
   # 
-  # Allows you to specify the directory to use and cache file for cacheable
-  # content.
+  # dir - Allows you to override the directory to parse, otherwise it is
+  #       automatically obtained from Facter::Util::Config.ext_fact_dir
   def initialize(dir = nil)
     @directory = dir || Facter::Util::Config.ext_fact_dir
   end
@@ -59,6 +54,7 @@ class Facter::Util::DirectoryLoader
 
   private
 
+  # Parse and trim down the list of files based on extension
   def parse?(file)
     return false if file =~ /^\./
     ext = file.split(".")[-1]
