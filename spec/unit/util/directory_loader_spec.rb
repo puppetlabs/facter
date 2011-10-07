@@ -1,9 +1,7 @@
 #!/usr/bin/env ruby
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
-
 require 'facter/util/directory_loader'
-require 'tempfile'
 
 describe Facter::Util::DirectoryLoader do
   include FacterSpec::Files
@@ -16,7 +14,7 @@ describe Facter::Util::DirectoryLoader do
     @loader.directory.should be_instance_of(String)
   end
 
-  it "should default to '/etc/facter/facts.d' for the directory if not windows" do
+  it "should default to '/usr/lib/facter/ext' for the directory if not windows" do
     Facter::Util::Config.stubs(:is_windows?).returns(false)
     Facter::Util::DirectoryLoader.new.directory.should == "/usr/lib/facter/ext"
   end
@@ -62,7 +60,7 @@ describe Facter::Util::DirectoryLoader do
       file = File.join(@loader.directory, "file.unknownfiletype")
       File.open(file, "w") { |f| f.print "stuff=bar" }
 
-      Facter.expects(:warn)
+      Facter.expects(:warn).with() { |v| v.match(/^Could not find parser for/) }
       @loader.load
     end
 
@@ -70,7 +68,7 @@ describe Facter::Util::DirectoryLoader do
       file = File.join(@loader.directory, "file.json")
       File.open(file, "w") { |f| f.print "{}" }
 
-      Facter.expects(:warn)
+      Facter.expects(:warn).with() { |v| v.match(/^Fact file .+ was parsed but returned an empty data set/) }
       @loader.load
     end
 
@@ -78,7 +76,7 @@ describe Facter::Util::DirectoryLoader do
       file = File.join(@loader.directory, "file.txt")
       File.open(file, "w") { |f| f.print "" }
 
-      Facter.expects(:warn)
+      Facter.expects(:warn).with() { |v| v.match(/^Fact file .+ was parsed but returned an empty data set/) }
       @loader.load
     end
 
@@ -86,7 +84,7 @@ describe Facter::Util::DirectoryLoader do
       file = File.join(@loader.directory, "file.yaml")
       File.open(file, "w") { |f| f.print "" }
 
-      Facter.expects(:warn)
+      Facter.expects(:warn).with() { |v| v.match(/^Fact file .+ was parsed but returned an empty data set/) }
       @loader.load
     end
 

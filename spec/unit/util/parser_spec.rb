@@ -3,7 +3,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 require 'facter/util/parser'
-require 'tempfile'
 require 'json'
 
 describe Facter::Util::Parser do
