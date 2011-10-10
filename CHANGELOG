@@ -1,4 +1,4 @@
-1.6.2rc1
+1.6.2
 ===
 d7c00f6 (#9852) Fixing watchr on facter
 abf636e (#9555) Change all cases of tabs and 4 space indentation to 2 space indentation.
