@@ -10,7 +10,7 @@
 #   information.
 #   On Slackware, parses '/etc/slackware-version'.
 #   On Amazon Linux, returns the 'lsbdistrelease' value.
-#   
+#
 #   On all remaining systems, returns the 'kernelrelease' value.
 #
 # Caveats:

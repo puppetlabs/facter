@@ -7,7 +7,7 @@
 #   the underlying Augeas library.
 #
 # Caveats:
-#   The library version may not indicate the presence of certain lenses, 
+#   The library version may not indicate the presence of certain lenses,
 #   depending on the system packages updated, nor the version of ruby-augeas
 #   which may affect support for the Puppet Augeas provider.
 #   Versions prior to 0.3.6 cannot be interrogated for their version.
@@ -26,4 +26,3 @@ Facter.add(:augeasversion) do
     end
   end
 end
-

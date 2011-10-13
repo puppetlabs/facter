@@ -133,7 +133,7 @@ Facter.add("virtual") do
           end
         end
       end
-      
+
       if output = Facter::Util::Resolution.exec("vmware -v")
         result = output.sub(/(\S+)\s+(\S+).*/) { | text | "#{$1}_#{$2}"}.downcase
       end
@@ -148,7 +148,7 @@ end
 # Purpose: returning true or false for if a machine is virtualised or not.
 #
 # Resolution: Hypervisors and the like may be detected as a virtual type, but
-# are not actual virtual machines, or should not be treated as such. This 
+# are not actual virtual machines, or should not be treated as such. This
 # determines if the host is actually virtualized.
 #
 # Caveats:

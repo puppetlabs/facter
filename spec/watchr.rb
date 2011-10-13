@@ -85,7 +85,7 @@ def files(dir)
   Find.find(File.join("spec", dir)) do |path|
     result << path if path =~ /\.rb/
   end
-  
+
   result
 end
 
