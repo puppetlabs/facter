@@ -36,12 +36,12 @@ class Facter::Util::Resolution
     # Try to guess whether the specified code can be executed by looking at the
     # first word. If it cannot be found on the PATH defer on resolving the fact
     # by returning nil.
-    # This only fails on shell built-ins, most of which are masked by stuff in 
+    # This only fails on shell built-ins, most of which are masked by stuff in
     # /bin or of dubious value anyways. In the worst case, "sh -c 'builtin'" can
     # be used to work around this limitation
     #
-    # Windows' %x{} throws Errno::ENOENT when the command is not found, so we 
-    # can skip the check there. This is good, since builtins cannot be found 
+    # Windows' %x{} throws Errno::ENOENT when the command is not found, so we
+    # can skip the check there. This is good, since builtins cannot be found
     # elsewhere.
     if have_which and !Facter::Util::Config.is_windows?
       path = nil

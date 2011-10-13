@@ -8,7 +8,6 @@
 #
 # Caveats:
 #
-
 require 'facter/util/xendomains'
 
 Facter.add("xendomains") do

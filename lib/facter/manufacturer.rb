@@ -26,7 +26,7 @@ if Facter.value(:kernel) == "OpenBSD"
   }
 
   Facter::Manufacturer.sysctl_find_system_info(mfg_keys)
-elsif Facter.value(:kernel) == "Darwin" 
+elsif Facter.value(:kernel) == "Darwin"
   mfg_keys = {
     'hw.model'   => 'productname'
   }

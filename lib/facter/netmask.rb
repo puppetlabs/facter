@@ -6,7 +6,6 @@
 #
 # Caveats:
 #
-
 # netmask.rb
 # Find the netmask of the primary ipaddress
 # Copyright (C) 2007 David Schmitt <david@schmitt.edv-bus.at>
@@ -14,7 +13,6 @@
 #
 # idea and originial source by Mark 'phips' Phillips
 #
-
 require 'facter/util/netmask'
 
 Facter.add("netmask") do
@@ -23,4 +21,3 @@ Facter.add("netmask") do
     Facter::NetMask.get_netmask
   end
 end
-

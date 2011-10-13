@@ -7,9 +7,8 @@
 #
 # Caveats:
 #
-
 require 'facter/util/vlans'
-    
+
 Facter.add("vlans") do
   confine :kernel => :linux
   setcode do
