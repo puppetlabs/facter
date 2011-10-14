@@ -2,7 +2,7 @@
 #
 # Purpose:
 #   Return the host's primary DNS domain name.
-# 
+#
 # Resolution:
 #   On UNIX (excluding Darwin), first try and use the hostname fact,
 #   which uses the hostname system command, and then parse the output
@@ -23,11 +23,11 @@ Facter.add(:domain) do
     # Get the domain from various sources; the order of these
     # steps is important
 
-    if name = Facter::Util::Resolution.exec('hostname') and 
+    if name = Facter::Util::Resolution.exec('hostname') and
       name =~ /.*?\.(.+$)/
 
       $1
-    elsif domain = Facter::Util::Resolution.exec('dnsdomainname') and 
+    elsif domain = Facter::Util::Resolution.exec('dnsdomainname') and
       domain =~ /.+\..+/
 
       domain

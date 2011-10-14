@@ -2,7 +2,7 @@ desc "Create a ChangeLog based on git commits."
 task :changelog do
   begin
      gitc = %x{which git-changelog}
-  rescue 
+  rescue
     puts "This task needs the git-changelog binary - http://github.com/ReinH/git-changelog"
   end
 

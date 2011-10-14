@@ -56,7 +56,7 @@ function install_facter() {
 
 function install_docs() {
   echo "Installing docs to ${pkgroot}"
-  docdir="${pkgroot}/usr/share/doc/facter" 
+  docdir="${pkgroot}/usr/share/doc/facter"
   mkdir -p "${docdir}"
   for docfile in ChangeLog COPYING LICENSE README README.rst TODO; do
     install -m 0644 "${facter_root}/${docfile}" "${docdir}"

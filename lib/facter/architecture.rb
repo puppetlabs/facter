@@ -2,7 +2,7 @@
 #
 # Purpose:
 #   Return the CPU hardware architecture.
-# 
+#
 # Resolution:
 #   On OpenBSD, Linux and Debian's kfreebsd, use the hardwaremodel fact.
 #   Gentoo and Debian call "x86_86" "amd64".
@@ -35,4 +35,3 @@ Facter.add(:architecture) do
     end
   end
 end
-

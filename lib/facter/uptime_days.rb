@@ -13,4 +13,3 @@ Facter.add(:uptime_days) do
     hours && hours / 24 # hours in day
   end
 end
-

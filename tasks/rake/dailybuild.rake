@@ -6,4 +6,3 @@ task :daily => :changelog do
   sh "rm ChangeLog"
   sh "gzip -f -9 #{version}.tar"
 end
-

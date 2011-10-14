@@ -1,6 +1,6 @@
 # Fact: macaddress
 #
-# Purpose: 
+# Purpose:
 #
 # Resolution:
 #
