@@ -80,6 +80,10 @@ Facter.add("virtual") do
       end
     end
 
+    if Facter::Util::Virtual.virtualbox?
+      result = "virtualbox"
+    end
+
     if Facter::Util::Virtual.kvm?
       result = Facter::Util::Virtual.kvm_type()
     end
