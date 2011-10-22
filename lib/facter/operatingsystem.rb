@@ -59,6 +59,8 @@ Facter.add(:operatingsystem) do
         "Scientific"
       elsif txt =~ /^cloudlinux/i
         "CloudLinux"
+      elsif txt =~ /^Parallels Server Bare Metal/i
+        "PSBM"
       else
         "RedHat"
       end
