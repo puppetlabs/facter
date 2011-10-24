@@ -18,7 +18,7 @@ require 'rake/packagetask'
 require 'rake/gempackagetask'
 
 module Facter
-  FACTERVERSION = File.read('lib/facter.rb')[/FACTERVERSION *= *'(.*)'/,1] or fail "Couldn't find FACTERVERSION"
+  FACTERVERSION = `git describe`.strip
 end
 
 FILES = FileList[
