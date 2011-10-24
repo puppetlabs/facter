@@ -1,0 +1,136 @@
+System Configuration:  Sun Microsystems  sun4v SPARC Enterprise T5220
+Memory size: 32640 Megabytes
+
+================================ Virtual CPUs ================================
+
+
+CPU ID Frequency Implementation         Status
+------ --------- ---------------------- -------
+0      1165 MHz  SUNW,UltraSPARC-T2     on-line  
+1      1165 MHz  SUNW,UltraSPARC-T2     on-line  
+2      1165 MHz  SUNW,UltraSPARC-T2     on-line  
+3      1165 MHz  SUNW,UltraSPARC-T2     on-line  
+4      1165 MHz  SUNW,UltraSPARC-T2     on-line  
+5      1165 MHz  SUNW,UltraSPARC-T2     on-line  
+6      1165 MHz  SUNW,UltraSPARC-T2     on-line  
+7      1165 MHz  SUNW,UltraSPARC-T2     on-line  
+8      1165 MHz  SUNW,UltraSPARC-T2     on-line  
+9      1165 MHz  SUNW,UltraSPARC-T2     on-line  
+10     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+11     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+12     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+13     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+14     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+15     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+16     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+17     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+18     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+19     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+20     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+21     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+22     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+23     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+24     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+25     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+26     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+27     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+28     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+29     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+30     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+31     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+32     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+33     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+34     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+35     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+36     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+37     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+38     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+39     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+40     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+41     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+42     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+43     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+44     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+45     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+46     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+47     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+48     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+49     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+50     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+51     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+52     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+53     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+54     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+55     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+56     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+57     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+58     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+59     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+60     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+61     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+62     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+63     1165 MHz  SUNW,UltraSPARC-T2     on-line  
+
+======================= Physical Memory Configuration ========================
+Segment Table:
+--------------------------------------------------------------
+Base           Segment  Interleave  Bank     Contains
+Address        Size     Factor      Size     Modules
+--------------------------------------------------------------
+0x0            32 GB    8           4 GB     MB/CMP0/BR0/CH0/D0
+                                             MB/CMP0/BR0/CH1/D0
+                                    4 GB     MB/CMP0/BR0/CH0/D1
+                                             MB/CMP0/BR0/CH1/D1
+                                    4 GB     MB/CMP0/BR1/CH0/D0
+                                             MB/CMP0/BR1/CH1/D0
+                                    4 GB     MB/CMP0/BR1/CH0/D1
+                                             MB/CMP0/BR1/CH1/D1
+                                    4 GB     MB/CMP0/BR2/CH0/D0
+                                             MB/CMP0/BR2/CH1/D0
+                                    4 GB     MB/CMP0/BR2/CH0/D1
+                                             MB/CMP0/BR2/CH1/D1
+                                    4 GB     MB/CMP0/BR3/CH0/D0
+                                             MB/CMP0/BR3/CH1/D0
+                                    4 GB     MB/CMP0/BR3/CH0/D1
+                                             MB/CMP0/BR3/CH1/D1
+
+
+================================ IO Devices ================================
+Slot +            Bus   Name +                            Model   
+Status            Type  Path                                      
+----------------------------------------------------------------------------
+MB/NET0           PCIE  network-pciex8086,105e                    
+                        /pci@0/pci@0/pci@1/pci@0/pci@2/network@0    
+MB/NET1           PCIE  network-pciex8086,105e                    
+                        /pci@0/pci@0/pci@1/pci@0/pci@2/network@0,1  
+MB/NET2           PCIE  network-pciex8086,105e                    
+                        /pci@0/pci@0/pci@1/pci@0/pci@3/network@0    
+MB/NET3           PCIE  network-pciex8086,105e                    
+                        /pci@0/pci@0/pci@1/pci@0/pci@3/network@0,1  
+MB/SASHBA         PCIE  scsi-pciex1000,58                 LSI,1068E
+                        /pci@0/pci@0/pci@2/scsi@0                   
+MB                PCIX  usb-pciclass,0c0310                       
+                        /pci@0/pci@0/pci@1/pci@0/pci@1/pci@0/usb@0  
+MB                PCIX  usb-pciclass,0c0310                       
+                        /pci@0/pci@0/pci@1/pci@0/pci@1/pci@0/usb@0,1
+MB                PCIX  usb-pciclass,0c0320                       
+                        /pci@0/pci@0/pci@1/pci@0/pci@1/pci@0/usb@0,2
+
+============================ Environmental Status ============================
+Fan sensors:
+All fan sensors are OK.
+
+Temperature sensors:
+All temperature sensors are OK.
+
+Current sensors:
+All current sensors are OK.
+
+Voltage sensors:
+All voltage sensors are OK.
+
+Voltage indicators:
+All voltage indicators are OK.
+
+============================ FRU Status ============================
+All FRUs are enabled.

@@ -1,0 +1,33 @@
+System Configuration:  Sun Microsystems  sun4u Sun Fire V120 (UltraSPARC-IIe 648MHz)
+System clock frequency: 100 MHz
+Memory size: 2048 Megabytes
+
+========================= CPUs =========================
+
+                    Run   Ecache   CPU    CPU
+Brd  CPU   Module   MHz     MB    Impl.   Mask
+---  ---  -------  -----  ------  ------  ----
+ 0     0     0      648     0.5   13       3.3
+
+
+========================= IO Cards =========================
+
+     Bus#  Freq
+Brd  Type  MHz   Slot  Name                              Model
+---  ----  ----  ----  --------------------------------  ----------------------
+ 0   PCI-1  33    12   ebus                                                    
+ 0   PCI-1  33     3   pmu-pci10b9,7101                                        
+ 0   PCI-1  33     3   lomp                                                    
+ 0   PCI-1  33     7   isa                                                     
+ 0   PCI-1  33    12   network-pci108e,1101              SUNW,pci-eri          
+ 0   PCI-1  33    12   usb-pci108e,1103.1                                      
+ 0   PCI-1  33    13   ide-pci10b9,5229                                        
+ 0   PCI-1  33     5   network-pci108e,1101              SUNW,pci-eri          
+ 0   PCI-1  33     5   usb-pci108e,1103.1                                      
+ 0   PCI-2  33     8   scsi-glm                          Symbios,53C896        
+ 0   PCI-2  33     8   scsi-glm                          Symbios,53C896        
+ 0   PCI-2  33     5   network-pci108e,2bad              SUNW,pci-gem          
+
+
+No failures found in System
+===========================
