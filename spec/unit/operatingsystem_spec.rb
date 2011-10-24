@@ -80,4 +80,13 @@ describe "Operating System fact" do
     File.expects(:read).with("/etc/redhat-release").returns("Scientific Linux CERN SLC 5.7 (Boron)")
     Facter.fact(:operatingsystem).value.should == "SLC"
   end
+
+  it "should identify Ascendos Linux" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    FileTest.stubs(:exists?).returns false
+
+    FileTest.expects(:exists?).with("/etc/redhat-release").returns true
+    File.expects(:read).with("/etc/redhat-release").returns("Ascendos release 6.0 (Nameless)")
+    Facter.fact(:operatingsystem).value.should == "Ascendos"
+  end
 end

@@ -60,6 +60,8 @@ Facter.add(:operatingsystem) do
         "CloudLinux"
       elsif txt =~ /^Parallels Server Bare Metal/i
         "PSBM"
+      elsif txt =~ /Ascendos/i
+        "Ascendos"
       else
         "RedHat"
       end
