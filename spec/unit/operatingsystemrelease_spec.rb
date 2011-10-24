@@ -25,7 +25,7 @@ describe "Operating System Release fact" do
     "OVS"     => "/etc/ovs-release",
     "ovs"     => "/etc/ovs-release",
     "OracleLinux" => "/etc/oracle-release",
-    "Ascendos"    => "/etc/ascendos-release",
+    "Ascendos"    => "/etc/redhat-release",
   }
 
   test_cases.each do |system, file|
