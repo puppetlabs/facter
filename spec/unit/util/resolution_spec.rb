@@ -5,12 +5,20 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require 'facter/util/resolution'
 
 describe Facter::Util::Resolution do
+  include FacterSpec::Files
+
   it "should require a name" do
     lambda { Facter::Util::Resolution.new }.should raise_error(ArgumentError)
   end
 
   it "should have a name" do
     Facter::Util::Resolution.new("yay").name.should == "yay"
+  end
+
+  it "should be able to set the value" do
+    resolve = Facter::Util::Resolution.new("yay")
+    resolve.value = "foo"
+    resolve.value.should == "foo"
   end
 
   it "should have a method for setting the weight" do
@@ -23,6 +31,10 @@ describe Facter::Util::Resolution do
 
   it "should support a timeout value" do
     Facter::Util::Resolution.new("yay").should respond_to(:timeout=)
+  end
+
+  it "should support a ttl value" do
+    Facter::Util::Resolution.new("yay").should respond_to(:ttl=)
   end
 
   it "should default to a timeout of 0 seconds" do
@@ -42,6 +54,30 @@ describe Facter::Util::Resolution do
     res = Facter::Util::Resolution.new("yay")
     res.timeout = "testing"
     res.limit.should == "testing"
+  end
+
+  describe "ttl attribute" do
+    it "should default to 0 seconds" do
+      Facter::Util::Resolution.new("yay").ttl.should == 0
+    end
+
+    it "should support setting and getting a valid ttl" do
+      res = Facter::Util::Resolution.new("yay")
+      res.ttl = 60
+      res.ttl.should == 60
+  
+      res.ttl = -1
+      res.ttl.should == -1
+    end
+  
+    it "should not allow you to set and get an invalid ttl" do
+      res = Facter::Util::Resolution.new("yay")
+      res.ttl = -15
+      res.ttl.should == 0
+  
+      res.ttl = "asdf"
+      res.ttl.should == 0
+    end
   end
 
   describe "when setting the code" do
@@ -95,6 +131,57 @@ describe Facter::Util::Resolution do
   describe "when returning the value" do
     before do
       @resolve = Facter::Util::Resolution.new("yay")
+    end
+
+    it "should return any value that has been provided" do
+      @resolve.value = "foo"
+      @resolve.value.should == "foo"
+    end
+
+    describe "and ttl has been set" do
+      before :each do
+        Facter::Util::Config.cache_file = tmpfile
+      end
+
+      it "return a cached value when ttl has not been reached" do
+        @resolve.ttl = 1_000_000
+        @resolve.setcode { "foo" }
+        @resolve.value.should == "foo"
+        @resolve.setcode { "bar" }
+        @resolve.value.should == "foo"
+      end
+
+      it "always return a cached value when ttl is -1" do
+        @resolve.ttl = -1
+        @resolve.setcode { "foo" }
+        @resolve.value.should == "foo"
+
+        now = Time.now
+        Time.stubs(:now).returns(now + 1_000_000)
+
+        @resolve.setcode { "bar" }
+        @resolve.value.should == "foo"
+      end
+
+      it "return an uncached value when ttl is zero" do
+        @resolve.ttl = 0
+        @resolve.setcode { "foo" }
+        @resolve.value.should == "foo"
+        @resolve.setcode { "bar" }
+        @resolve.value.should == "bar"
+      end
+
+      it "return an uncached value when ttl has expired" do
+        @resolve.ttl = 1 
+        @resolve.setcode { "foo" }
+        @resolve.value.should == "foo"
+
+        now = Time.now
+        Time.stubs(:now).returns(now + 2)
+
+        @resolve.setcode { "bar" }
+        @resolve.value.should == "bar"
+      end    
     end
 
     describe "and setcode has not been called" do
