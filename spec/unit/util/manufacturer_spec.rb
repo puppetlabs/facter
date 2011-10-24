@@ -16,11 +16,25 @@ describe Facter::Manufacturer do
     Facter::Manufacturer.get_dmi_table().should be_nil
   end
 
-  it "should parse prtdiag output" do
-    Facter::Util::Resolution.stubs(:exec).returns("System Configuration:  Sun Microsystems  sun4u Sun SPARC Enterprise M3000 Server")
+  it "should parse prtdiag output on a sunfire v120" do
+    Facter::Util::Resolution.stubs(:exec).returns(fixture_data(File.join("unit", "util", "manufacturer", "solaris_sunfire_v120_prtdiag")))
     Facter::Manufacturer.prtdiag_sparc_find_system_info()
     Facter.value(:manufacturer).should == "Sun Microsystems"
-    Facter.value(:productname).should == "Sun SPARC Enterprise M3000 Server"
+    Facter.value(:productname).should == "Sun Fire V120 (UltraSPARC-IIe 648MHz)"
+  end
+
+  it "should parse prtdiag output on a t5220" do
+    Facter::Util::Resolution.stubs(:exec).returns(fixture_data(File.join("unit", "util", "manufacturer", "solaris_t5220_prtdiag")))
+    Facter::Manufacturer.prtdiag_sparc_find_system_info()
+    Facter.value(:manufacturer).should == "Sun Microsystems"
+    Facter.value(:productname).should == "SPARC Enterprise T5220"
+  end
+
+  it "should not set manufacturer or productname if prtdiag output is nil" do
+    Facter::Util::Resolution.stubs(:exec).returns(nil)
+    Facter::Manufacturer.prtdiag_sparc_find_system_info()
+    Facter.value(:manufacturer).should be_nil
+    Facter.value(:productname).should be_nil
   end
 
   it "should strip white space on dmi output with spaces" do
