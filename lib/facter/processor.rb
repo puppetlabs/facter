@@ -25,7 +25,7 @@ Facter.add("ProcessorCount") do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]
   setcode do
     processor_list = Facter::Util::Processor.enum_cpuinfo
-    
+
     ## If this returned nothing, then don't resolve the fact
     if processor_list.length != 0
       processor_list.length.to_s
@@ -51,7 +51,7 @@ Facter.add("ProcessorCount") do
   confine :kernel => :aix
   setcode do
     processor_list = Facter::Util::Processor.enum_lsdev
-        
+
     processor_list.length.to_s
   end
 end

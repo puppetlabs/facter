@@ -1,6 +1,6 @@
 # Fact: macaddress
 #
-# Purpose: 
+# Purpose:
 #
 # Resolution:
 #
@@ -10,7 +10,7 @@
 require 'facter/util/macaddress'
 
 Facter.add(:macaddress) do
-  confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS Scientific SLC SuSE SLES Debian Gentoo Ubuntu OEL OracleLinux OVS GNU/kFreeBSD}
+  confine :operatingsystem => %w{Solaris Linux Fedora RedHat CentOS Scientific PSBM SLC Ascendos SuSE SLES Debian Gentoo Ubuntu OEL OracleLinux OVS GNU/kFreeBSD}
   setcode do
     ether = []
     output = Facter::Util::Resolution.exec("/sbin/ifconfig -a")

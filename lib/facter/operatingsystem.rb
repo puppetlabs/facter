@@ -10,7 +10,6 @@
 #
 # Caveats:
 #
-
 require 'facter/lsb'
 
 Facter.add(:operatingsystem) do
@@ -55,10 +54,14 @@ Facter.add(:operatingsystem) do
         "CentOS"
       elsif txt =~ /CERN/
         "SLC"
-      elsif txt =~ /scientific/i 
+      elsif txt =~ /scientific/i
         "Scientific"
       elsif txt =~ /^cloudlinux/i
         "CloudLinux"
+      elsif txt =~ /^Parallels Server Bare Metal/i
+        "PSBM"
+      elsif txt =~ /Ascendos/i
+        "Ascendos"
       else
         "RedHat"
       end
