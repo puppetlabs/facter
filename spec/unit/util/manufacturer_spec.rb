@@ -31,6 +31,9 @@ describe Facter::Manufacturer do
   end
 
   it "should not set manufacturer or productname if prtdiag output is nil" do
+    # Stub kernel so we don't have windows fall through to its own mechanism
+    Facter.fact(:kernel).stubs(:value).returns("SunOS")
+
     Facter::Util::Resolution.stubs(:exec).returns(nil)
     Facter::Manufacturer.prtdiag_sparc_find_system_info()
     Facter.value(:manufacturer).should be_nil
