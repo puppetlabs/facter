@@ -13,4 +13,3 @@ Facter.add(:uptime_hours) do
     seconds && seconds / (60 * 60) # seconds in hour
   end
 end
-

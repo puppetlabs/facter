@@ -10,17 +10,17 @@
 #   information.
 #   On Slackware, parses '/etc/slackware-version'.
 #   On Amazon Linux, returns the 'lsbdistrelease' value.
-#   
+#
 #   On all remaining systems, returns the 'kernelrelease' value.
 #
 # Caveats:
 #
 
 Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => %w{CentOS Fedora oel ovs OracleLinux RedHat MeeGo Scientific SLC CloudLinux}
+  confine :operatingsystem => %w{CentOS Fedora oel ovs OracleLinux RedHat MeeGo Scientific SLC Ascendos CloudLinux PSBM}
   setcode do
     case Facter.value(:operatingsystem)
-    when "CentOS", "RedHat", "Scientific", "SLC", "CloudLinux"
+    when "CentOS", "RedHat", "Scientific", "SLC", "Ascendos", "CloudLinux", "PSBM"
       releasefile = "/etc/redhat-release"
     when "Fedora"
       releasefile = "/etc/fedora-release"

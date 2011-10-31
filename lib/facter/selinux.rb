@@ -12,7 +12,7 @@
 
 sestatus_cmd = '/usr/sbin/sestatus'
 
-# This supports the fact that the selinux mount point is not always in the 
+# This supports the fact that the selinux mount point is not always in the
 # same location -- the selinux mount point is operating system specific.
 def selinux_mount_point
   if FileTest.exists?('/proc/self/mountinfo')
@@ -29,7 +29,7 @@ end
 Facter.add("selinux") do
   confine :kernel => :linux
   setcode do
-    result = "false" 
+    result = "false"
     if FileTest.exists?("#{selinux_mount_point}/enforce")
       if FileTest.exists?("/proc/self/attr/current")
         if (File.read("/proc/self/attr/current") != "kernel\0")
@@ -90,7 +90,7 @@ Facter.add("selinux_config_policy") do
   end
 end
 
-# This is a legacy fact which returns the old selinux_mode fact value to prevent 
+# This is a legacy fact which returns the old selinux_mode fact value to prevent
 # breakages of existing manifests. It should be removed at the next major release.
 # See ticket #6677.
 

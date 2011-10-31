@@ -117,13 +117,13 @@ Facter.add(:ipaddress, :ldapname => "iphostnumber", :timeout => 2) do
     else
       require 'resolv'
     end
-    
+
     begin
       if hostname = Facter.value(:hostname)
         if Facter.value(:kernel) == 'windows'
           ip = Win32::Resolv.get_resolv_info.last[0]
         else
-          ip = Resolv.getaddress(hostname)        
+          ip = Resolv.getaddress(hostname)
         end
         unless ip == "127.0.0.1"
           ip

@@ -8,7 +8,7 @@ module Facter
         value = value.to_s if value.is_a?(Symbol)
         value = value.downcase if value.is_a?(String)
         value
-      end  
+      end
     end
   end
 end
