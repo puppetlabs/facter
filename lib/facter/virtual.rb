@@ -129,7 +129,6 @@ Facter.add("virtual") do
               result = "vmware" if pd =~ /VMware/
               result = "virtualbox" if pd =~ /VirtualBox/
               result = "xenhvm" if pd =~ /HVM domU/
-	      result = "kvm" if pd =~ /KVM/
             end
           end
         end
