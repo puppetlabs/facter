@@ -16,20 +16,55 @@ def can_connect?(wait_sec=2)
     return false
 end
 
+def check_cache?
+  if FileTest.exists?('/tmp/facter_ec2.cache')
+    return true
+  else
+    return false
+  end
+end
+
 def metadata(id = "")
-  open("http://169.254.169.254/2008-02-01/meta-data/#{id||=''}").read.
-    split("\n").each do |o|
-    key = "#{id}#{o.gsub(/\=.*$/, '/')}"
-    if key[-1..-1] != '/'
-      value = open("http://169.254.169.254/2008-02-01/meta-data/#{key}").read.
-        split("\n")
-      value = value.size>1 ? value : value.first
-      symbol = "ec2_#{key.gsub(/\-|\//, '_')}".to_sym
-      Facter.add(symbol) { setcode { value } }
-    else
-      metadata(key)
+  meta = {}
+  begin
+    open("http://169.254.169.254/2008-02-01/meta-data/#{id||=''}").read.
+      split("\n").each do |o|
+      key = "#{id}#{o.gsub(/\=.*$/, '/')}"
+        if key[-1..-1] != '/'
+        value = open("http://169.254.169.254/2008-02-01/meta-data/#{key}").read.
+          split("\n")
+        if value.size > 1
+          value = value.join(",")
+        end
+        symbol = "ec2_#{key.gsub(/\-|\//, '_')}".to_sym
+        Facter.add(symbol) { setcode { value } }
+        meta[symbol] = value
+      else
+        metadata(key)
+      end
+    end
+    metadata_write(meta)
+  rescue
+    if check_cache?
+      metadata_cache()
     end
   end
+end
+
+def metadata_cache()
+  meta = metadata_read()
+  meta.each do |symbol,value|
+    Facter.add(symbol) { setcode {value} }
+  end
+end
+
+def metadata_write(meta)
+  File.open('/tmp/facter_ec2.cache', "wb") {|f| Marshal.dump(meta, f)}
+end
+
+def metadata_read()
+  meta = File.open('/tmp/facter_ec2.cache', "rb") {|f| Marshal.load(f)}
+  return meta
 end
 
 def userdata()
@@ -51,6 +86,8 @@ end
 if (has_euca_mac? || has_ec2_arp?) && can_connect?
   metadata
   userdata
+elsif check_cache?
+  metadata_cache
 else
   Facter.debug "Not an EC2 host"
 end
