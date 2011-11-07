@@ -118,6 +118,7 @@ Facter.add("virtual") do
           output.each_line do |pd|
             result = "parallels" if pd =~ /Parallels/
             result = "vmware" if pd =~ /VMware/
+            result = "kvm" if pd =~ /KVM/
             result = "virtualbox" if pd =~ /VirtualBox/
             result = "xenhvm" if pd =~ /HVM domU/
             result = "hyperv" if pd =~ /Product Name: Virtual Machine/
