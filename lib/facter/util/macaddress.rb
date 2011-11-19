@@ -3,6 +3,7 @@
 module Facter::Util::Macaddress
 
   def self.standardize(macaddress)
+    return nil unless macaddress
     macaddress.split(":").map{|x| "0#{x}"[-2..-1]}.join(":")
   end
 

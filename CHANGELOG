@@ -1,3 +1,14 @@
+1.6.3
+===
+b2a66a9 (#7038) Validate prtdiag output in manufacturer
+c9db305 (#10228) Ascendos OS support for various facts.
+6efadbb (#10233) Adds support for Parallels Server Bare Metal to Facter
+ce8f572 (#10079) Remove trailing whitespace
+e89758d Updated CHANGELOG for 1.6.2
+7b14b77 (#9928) Correct readlines stubbing to return an array instead of an empty string.
+0d6df28 (#9904) Remove windows rspec warning.
+f0ccb5e (#9555) Spec tests: Change all cases of tabs and 4 space indentation to 2 space indentation.
+
 1.6.2
 ===
 d7c00f6 (#9852) Fixing watchr on facter

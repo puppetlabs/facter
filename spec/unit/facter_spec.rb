@@ -120,7 +120,9 @@ describe Facter do
 
   # #33 Make sure we only get one mac address
   it "should only return one mac address" do
-    Facter.value(:macaddress).should_not be_include(" ")
+    if macaddress = Facter.value(:macaddress)
+      macaddress.should_not be_include(" ")
+    end
   end
 
   it "should have a method for registering directories to search" do

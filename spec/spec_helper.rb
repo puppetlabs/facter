@@ -2,6 +2,11 @@ dir = File.expand_path(File.dirname(__FILE__))
 
 SPECDIR = dir
 
+def fixture_data(file)
+  File.read(File.join(SPECDIR, "fixtures", file))
+end
+
+
 $LOAD_PATH.unshift("#{dir}/")
 $LOAD_PATH.unshift("#{dir}/../lib")
 
