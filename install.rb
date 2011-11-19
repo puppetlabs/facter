@@ -258,20 +258,7 @@ def prepare_installation
     mandir = Config::CONFIG['mandir']
   end
 
-  # To be deprecated once people move over to using --destdir option
-  if (destdir = ENV['DESTDIR'])
-    warn "DESTDIR is deprecated. Use --destdir instead."
-    bindir = join(destdir, bindir)
-    sbindir = join(destdir, sbindir)
-    mandir = join(destdir, mandir)
-    sitelibdir = join(destdir, sitelibdir)
-
-    FileUtils.makedirs(bindir)
-    FileUtils.makedirs(sbindir)
-    FileUtils.makedirs(mandir)
-    FileUtils.makedirs(sitelibdir)
-    # This is the new way forward
-  elsif (destdir = InstallOptions.destdir)
+  if (destdir = InstallOptions.destdir)
     bindir = join(destdir, bindir)
     sbindir = join(destdir, sbindir)
     mandir = join(destdir, mandir)
