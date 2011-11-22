@@ -8,7 +8,6 @@
 # make no sense and are not of our concern ...
 #
 
-require 'thread'
 require 'facter'
 
 def enumerate_proc
@@ -89,8 +88,17 @@ def enumerate_proc
     row = line.split(' ')
 
     # Only device and mount point are of interest ...
-    device = row[0].strip
-    mount  = row[1].strip
+    #
+    # When there are any spaces in the mount point name then Kernel will
+    # replace them with as octal "\040" (which is 32 decimal).  We have
+    # to accomodate for this and convert them back into proper spaces ...
+    #
+    # An example of such case:
+    #
+    #   /dev/sda1 /srv/shares/My\040Files ext3 rw,relatime,errors=continue,data=ordered 0 0
+    #
+    device = row[0].strip.gsub('\\040', ' ')
+    mount  = row[1].strip.gsub('\\040', ' ')
 
     #
     # Correlate mount point with a real device that exists in the system.
