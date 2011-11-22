@@ -7,6 +7,6 @@
 # Caveats:
 #
 
-Facter.add("pid') do
+Facter.add("pid") do
   setcode {Process.pid}
 end
