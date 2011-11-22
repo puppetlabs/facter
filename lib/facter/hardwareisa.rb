@@ -12,5 +12,4 @@
 
 Facter.add(:hardwareisa) do
   setcode 'uname -p'
-  confine :kernel => %w{SunOS Linux FreeBSD OpenBSD NetBSD GNU/kFreeBSD Darwin}
 end
