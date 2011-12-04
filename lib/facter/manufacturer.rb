@@ -46,6 +46,8 @@ else
       { 'Manufacturer:'    => 'boardmanufacturer' },
       { 'Product(?: Name)?:' => 'boardproductname' },
       { 'Serial Number:'   => 'boardserialnumber' }
+    'BIOS Information' => [
+      { 'Version:' => 'bios_version' },
     ],
     '[Ss]ystem [Ii]nformation' => [
       { 'Manufacturer:'    => 'manufacturer' },
