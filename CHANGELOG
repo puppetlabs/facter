@@ -1,4 +1,4 @@
-1.6.4rc1
+1.6.4
 ===
 6406c8f (##11041) Add dmidecode as a requirement for rpm
 ed81492 (#10444) Add identification of system boards to Facter
