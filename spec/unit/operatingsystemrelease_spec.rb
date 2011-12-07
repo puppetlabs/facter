@@ -120,5 +120,22 @@ describe "Operating System Release fact" do
       end
     end
 
+    it "should fallback to the kernelrelease fact if /etc/release is empty" do
+      File.stubs(:open).with('/etc/release','r').raises EOFError
+      Facter::Util::Resolution.any_instance.stubs(:warn) # do not pollute test output
+      Facter.fact(:operatingsystemrelease).value.should == Facter.fact(:kernelrelease).value
+    end
+
+    it "should fallback to the kernelrelease fact if /etc/release is not present" do
+      File.stubs(:open).with('/etc/release','r').raises Errno::ENOENT
+      Facter::Util::Resolution.any_instance.stubs(:warn) # do not pollute test output
+      Facter.fact(:operatingsystemrelease).value.should == Facter.fact(:kernelrelease).value
+    end
+
+    it "should fallback to the kernelrelease fact if /etc/release cannot be parsed" do
+      File.stubs(:open).with('/etc/release','r').returns 'some future release string'
+      Facter.fact(:operatingsystemrelease).value.should == Facter.fact(:kernelrelease).value
+    end
+
   end
 end
