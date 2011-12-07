@@ -3,6 +3,9 @@
 # Purpose: Return the main IP address for a host.
 #
 # Resolution:
+#   As a first resort, if the interface for the default route could be
+#   determined (cf. defaultroute.rb), return its IP address.
+#
 #   On the Unixes does an ifconfig, and returns the first non 127.0.0.0/8
 #   subnetted IP it finds.
 #   On Windows, it attempts to use the socket library and resolve the machine's
@@ -21,6 +24,17 @@
 #   The ifconfig parsing purely takes the first IP address it finds without any
 #   checking this is a useful IP address.
 #
+
+Facter.add(:ipaddress) do
+  setcode do
+    interface = Facter.value(:defaultroute_interface)
+    if interface.nil?
+      nil
+    else
+      Facter.value('ipaddress_' + interface)
+    end
+  end
+end
 
 Facter.add(:ipaddress) do
   confine :kernel => :linux
