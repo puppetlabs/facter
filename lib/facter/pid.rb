@@ -1,8 +1,9 @@
 # Fact: pid
 #
-# Purpose: Returns the Process ID.
+# Purpose: Internal fact for what to use to list the process id. 
 #
-# Resolution: Gets the Process ID.
+# Resolution:
+#   Assumes "Process.pid" for all operating systems 
 #
 # Caveats:
 #
