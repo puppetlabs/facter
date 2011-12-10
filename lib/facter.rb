@@ -24,7 +24,7 @@ module Facter
   include Comparable
   include Enumerable
 
-  FACTERVERSION = '1.6.3'
+  FACTERVERSION = '1.6.4'
   # = Facter
   # Functions as a hash of 'facts' you might care about about your
   # system, such as mac address, IP address, Video card, etc.

@@ -2,11 +2,11 @@
 
 %define has_ruby_abi 0%{?fedora} || 0%{?rhel} >= 5
 %define has_ruby_noarch %has_ruby_abi
-%global _ver 1.6.3
+%global _ver 1.6.4
 
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
-Version: 1.6.3
+Version: 1.6.4
 Release: 0.1rc1%{?dist}
 License: Apache 2.0
 Group: System Environment/Base
@@ -21,6 +21,7 @@ BuildArch: noarch
 
 Requires: ruby >= 1.8.1
 Requires: which
+Requires: dmidecode
 %if %has_ruby_abi
 Requires: ruby(abi) = 1.8
 %endif
@@ -53,6 +54,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Nov 30 2011 Matthaus Litteken <matthaus@puppetlabs.com> - 1.6.4-0.1rc1
+- 1.6.4 rc1
+
 * Mon Oct 31 2011 Michael Stahnke <stahnma@puppetlabs.com> - 1.6.3-0.1rc1
 - 1.6.3 rc1
 

@@ -1,3 +1,10 @@
+1.6.4
+===
+6406c8f (##11041) Add dmidecode as a requirement for rpm
+ed81492 (#10444) Add identification of system boards to Facter
+bdbb2da (#10885) Malformed facter.bat when ruby dir contains backreferences
+0bad18b (#10490) Handle case where no macaddress can be found
+
 1.6.3
 ===
 b2a66a9 (#7038) Validate prtdiag output in manufacturer
