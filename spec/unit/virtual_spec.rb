@@ -112,6 +112,25 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "vmware"
     end
 
+    it "should be xen0 with xen dom0 files in /proc" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
+      Facter.fact(:hardwaremodel).stubs(:value).returns("i386")
+      Facter::Util::Virtual.expects(:xen?).returns(true)
+      FileTest.expects(:exists?).with("/proc/xen/xsd_kva").returns(true)
+      Facter.fact(:virtual).value.should == "xen0"
+    end
+
+    it "should be xenu with xen domU files in /proc" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
+      Facter.fact(:hardwaremodel).stubs(:value).returns("i386")
+      Facter::Util::Virtual.expects(:xen?).returns(true)
+      FileTest.expects(:exists?).with("/proc/xen/xsd_kva").returns(false)
+      FileTest.expects(:exists?).with("/proc/xen/capabilities").returns(true)
+      Facter.fact(:virtual).value.should == "xenu"
+    end
+
     it "should be xenhvm with Xen HVM vendor name from lspci" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Resolution.stubs(:exec).with('lspci').returns("00:03.0 Unassigned class [ff80]: XenSource, Inc. Xen Platform Device (rev 01)")
@@ -183,25 +202,6 @@ describe "Virtual fact" do
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('prtdiag').returns("System Configuration: innotek GmbH VirtualBox")
       Facter.fact(:virtual).value.should == "virtualbox"
-    end
-
-    it "should be xen0 with xen dom0 files in /proc" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
-      Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
-      Facter.fact(:hardwaremodel).stubs(:value).returns("i386")
-      Facter::Util::Virtual.expects(:xen?).returns(true)
-      FileTest.expects(:exists?).with("/proc/xen/xsd_kva").returns(true)
-      Facter.fact(:virtual).value.should == "xen0"
-    end
-    
-    it "should be xenu with xen domU files in /proc" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
-      Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
-      Facter.fact(:hardwaremodel).stubs(:value).returns("i386")
-      Facter::Util::Virtual.expects(:xen?).returns(true)
-      FileTest.expects(:exists?).with("/proc/xen/xsd_kva").returns(false)
-      FileTest.expects(:exists?).with("/proc/xen/capabilities").returns(true)
-      Facter.fact(:virtual).value.should == "xenu"
     end
   end
 end
