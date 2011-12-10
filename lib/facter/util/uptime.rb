@@ -27,7 +27,7 @@ module Facter::Util::Uptime
 
   def self.uptime_sysctl
     if output = Facter::Util::Resolution.exec("#{uptime_sysctl_cmd} 2>/dev/null")
-      compute_uptime(Time.at(output.unpack('L').first))
+      compute_uptime(Time.at(output.match(/\d+/)[0].to_i))
     end
   end
 
@@ -52,7 +52,7 @@ module Facter::Util::Uptime
   end
 
   def self.uptime_sysctl_cmd
-    'sysctl -b kern.boottime'
+    'sysctl -n kern.boottime'
   end
 
   def self.uptime_kstat_cmd
