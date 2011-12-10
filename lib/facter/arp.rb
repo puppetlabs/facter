@@ -5,15 +5,14 @@ Facter.add(:arp) do
   setcode do
     output = Facter::Util::Resolution.exec('arp -an')
     if not output.nil?
-      arp = ""
+      arp = []
       output.each_line do |s|
         if s =~ /^\S+\s\S+\s\S+\s(\S+)\s\S+\s\S+\s\S+$/
-          arp = $1.downcase
-          break # stops on the first match
+          arp << $1.downcase
         end
       end
     end
-    "fe:ff:ff:ff:ff:ff" == arp ? arp : nil
+    arp.contains?("fe:ff:ff:ff:ff:ff") ? "fe:ff:ff:ff:ff:ff" : nil
   end
 end
 
