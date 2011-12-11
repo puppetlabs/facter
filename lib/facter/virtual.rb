@@ -131,6 +131,16 @@ Facter.add("virtual") do
               result = "xenhvm" if pd =~ /HVM domU/
             end
           end
+        elsif Facter.value(:kernel) == 'OpenBSD'
+          output = Facter::Util::Resolution.exec('sysctl -n hw.product 2>/dev/null')
+          if not output.nil?
+            output.each_line do |pd|
+              result = "parallels" if pd =~ /Parallels/
+              result = "vmware" if pd =~ /VMware/
+              result = "virtualbox" if pd =~ /VirtualBox/
+              result = "xenhvm" if pd =~ /HVM domU/
+            end
+          end
         end
       end
 
