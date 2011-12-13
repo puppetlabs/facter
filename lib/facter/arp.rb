@@ -1,3 +1,15 @@
+# Fact: arp
+#
+# Purpose: Internal fact used to specity the program to return the arp value.
+#
+# Warning: Fact might in future be deprcated. Refer to ticket #11307.
+#
+# Resolution: Internal fact used to specity the program to detect the arp value only on EC2.
+# The arp module creates a fact ‘arp’ if and only if the first entry in the arptable
+# is “fe:ff:ff:ff:ff:ff”.
+#
+# Caveats:
+#
 require 'facter/util/ip'
 
 Facter.add(:arp) do

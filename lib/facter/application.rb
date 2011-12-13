@@ -1,3 +1,11 @@
+# Module: Application
+#
+# Purpose: Internal fact used to specity the program to return the system specific facts.
+#
+# Resolution:
+#
+# Caveats:
+#
 module Facter
   module Application
     def self.run(argv)

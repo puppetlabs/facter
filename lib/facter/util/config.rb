@@ -1,4 +1,10 @@
-# A module to return config related data
+# Module: Config
+#
+# Purpose: Returns config related data.
+#
+# Resolution:
+#
+# Caveats:
 #
 module Facter::Util::Config
   require 'rbconfig'

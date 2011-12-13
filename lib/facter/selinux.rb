@@ -1,13 +1,11 @@
 # Fact: selinux
 #
-# Purpose:
+# Purpose: Get SELinux specific facts.
 #
-# Resolution:
+# Resolution: checks to see if selinux is enforced and based on that returns various facts.
 #
 # Caveats:
 #
-
-# Fact for SElinux
 # Written by immerda admin team (admin(at)immerda.ch)
 
 sestatus_cmd = '/usr/sbin/sestatus'

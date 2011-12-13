@@ -1,8 +1,12 @@
 # Fact: macaddress
 #
-# Purpose:
+# Purpose: Get the mac address for all systems.
 #
-# Resolution:
+# Resolution: For Solaris it uses 'netstat -np' to generate the fact.
+# SunOS, Linux, GNU/kFreeBSD use 'ifconfig -a'. 
+# FreeBSD, OpenBSD, DragonFly use 'ifconfig'.
+# Darwin and Windows use functions in util/macaddress.rb  
+# AIX uses 'ifconfig -a' or 'entstat'
 #
 # Caveats:
 #

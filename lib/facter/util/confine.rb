@@ -1,6 +1,11 @@
-# A restricting tag for fact resolution mechanisms.  The tag must be true
-# for the resolution mechanism to be suitable.
-
+# Module: Confine                                                  
+#
+# Purpose: A restricting tag for fact resolution mechanisms.  
+#
+# Resolution: The tag must be true for the resolution mechanism to be suitable.
+#
+# Caveats:
+#       
 require 'facter/util/values'
 
 class Facter::Util::Confine
