@@ -1,11 +1,10 @@
 # Fact: kernelmajversion
 #
-# Purpose: Return the operating system's release number's major value.
+# Purpose: 
+#   Return the operating system's release number's major value.
 #
 # Resolution:
 #   Takes the first 2 elements of the kernel version as delimited by periods.
-#
-# Caveats:
 #
 
 Facter.add("kernelmajversion") do

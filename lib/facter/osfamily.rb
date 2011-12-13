@@ -1,6 +1,7 @@
 # Fact: osfamily
 #
-# Purpose: Returns the operating system
+# Purpose: 
+#   Returns the operating system
 #
 # Resolution:
 #   Maps operating systems to operating system families, such as linux

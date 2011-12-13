@@ -1,6 +1,7 @@
 # Fact: virtual
 #
-# Purpose: Determine if the system's hardware is real or virtualised.
+# Purpose: 
+#   Determine if the system's hardware is real or virtualised.
 #
 # Resolution:
 #   Assumes physical unless proven otherwise.

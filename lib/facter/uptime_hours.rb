@@ -1,10 +1,10 @@
 # Fact: uptime_hours
 #
-# Purpose: Return purely number of hours of uptime.
+# Purpose: 
+#   Return purely number of hours of uptime.
 #
-# Resolution: Divides uptime_seconds fact by 3600.
-#
-# Caveats:
+# Resolution: 
+#   Divides uptime_seconds fact by 3600.
 #
 
 Facter.add(:uptime_hours) do

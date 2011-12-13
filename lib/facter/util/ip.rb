@@ -1,5 +1,12 @@
-# A base module for collecting IP-related
-# information from all kinds of platforms.
+# Module: IP
+#
+# Purpose:  A base module for collecting IP-related facts.
+#
+# Resolution: Information from all kinds of platforms.
+#  
+# Caveats:
+#
+#
 module Facter::Util::IP
   # A map of all the different regexes that work for
   # a given platform or set of platforms.

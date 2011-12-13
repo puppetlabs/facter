@@ -8,12 +8,8 @@
 #   Uses util/macosx.rb to do the fact reconnaissance, then outputs them
 #   preceded by 'sp_'
 #
-# Caveats:
-#
-
-#
 # macosx.rb
-# Additional Facts coming from Mac OS X system_profiler command
+#   Additional Facts coming from Mac OS X system_profiler command
 #
 # Copyright (C) 2007 Jeff McCune
 # Author: Jeff McCune <jeff.mccune@northstarlabs.net>

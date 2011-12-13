@@ -1,6 +1,7 @@
 # Fact: ipaddress6
 #
-# Purpose: Returns the "main" IPv6 IP address of a system.
+# Purpose: 
+#  Returns the "main" IPv6 IP address of a system.
 #
 # Resolution:
 #  OS dependant code that parses the output of various networking
@@ -13,9 +14,6 @@
 #  after the ipaddress fact for the sake of similar functionality
 #  and familiar mechanics.
 #
-# Caveats:
-#
-
 # Cody Herriges <c.a.herriges@gmail.com>
 #
 # Used the ipaddress fact that is already part of

@@ -1,3 +1,13 @@
+# Module: Loader
+#
+# Purpose:  A base module for loading all resolutions for a single or all facts, 
+# from all matching path and directories.
+#
+# Resolution: Information from all kinds of platforms.
+#
+# Caveats:
+#
+#
 require 'facter'
 
 # Load facts on demand.

@@ -1,6 +1,7 @@
 # Fact: ipaddress
 #
-# Purpose: Return the main IP address for a host.
+# Purpose: 
+#   Return the main IP address for a host.
 #
 # Resolution:
 #   On the Unixes does an ifconfig, and returns the first non 127.0.0.0/8

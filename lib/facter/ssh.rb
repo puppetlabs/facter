@@ -1,15 +1,11 @@
 # Fact: ssh
 #
-# Purpose:
+# Purpose: 
+#   Show the DSA and RSA public keys.
 #
-# Resolution:
+# Resolution: 
+#   Gets the public keys from the system.
 #
-# Caveats:
-#
-
-## ssh.rb
-## Facts related to SSH
-##
 
 ["/etc/ssh","/usr/local/etc/ssh","/etc","/usr/local/etc"].each do |dir|
   {"SSHDSAKey" => { :file => "ssh_host_dsa_key.pub", :sshfprrtype => 2 } , "SSHRSAKey" => { :file => "ssh_host_rsa_key.pub", :sshfprrtype => 1 }, "SSHECDSAKey" => { :file => "ssh_host_ecdsa_key.pub", :sshfprrtype => 3 } }.each do |name,key|

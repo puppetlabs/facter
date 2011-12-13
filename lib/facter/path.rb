@@ -1,10 +1,10 @@
 # Fact: path
 #
-# Purpose: Returns the $PATH variable.
+# Purpose: 
+#   Returns the $PATH variable.
 #
-# Resolution: Gets $PATH from the environment.
-#
-# Caveats:
+# Resolution: 
+#   Gets $PATH from the environment.
 #
 
 Facter.add(:path) do

@@ -1,6 +1,7 @@
 # Fact: manufacturer
 #
-# Purpose: Return the hardware manufacturer information about the hardware.
+# Purpose: 
+#   Return the hardware manufacturer information about the hardware.
 #
 # Resolution:
 #   On OpenBSD, queries sysctl values, via a util class.
@@ -8,12 +9,8 @@
 #   On Windows, queries the system via a util class.
 #   Uses the 'util/manufacturer.rb' for fallback parsing.
 #
-# Caveats:
-#
-
 # manufacturer.rb
 # Facts related to hardware manufacturer
-#
 #
 
 require 'facter/util/manufacturer'

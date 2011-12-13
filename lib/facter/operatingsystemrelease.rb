@@ -1,6 +1,7 @@
 # Fact: operatingsystemrelease
 #
-# Purpose: Returns the release of the operating system.
+# Purpose: 
+#   Returns the release of the operating system.
 #
 # Resolution:
 #   On RedHat derivatives, returns their '/etc/<variant>-release' file.
@@ -13,8 +14,6 @@
 #   On Mageia, parses '/etc/mageia-release' for the release version.
 #
 #   On all remaining systems, returns the 'kernelrelease' value.
-#
-# Caveats:
 #
 
 Facter.add(:operatingsystemrelease) do
