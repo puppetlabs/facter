@@ -44,8 +44,6 @@ Facter.add(:operatingsystem) do
       else
         "OEL"
       end
-    elsif FileTest.exists?("/etc/arch-release")
-      "Arch"
     elsif FileTest.exists?("/etc/vmware-release")
       "VMWareESX"
     elsif FileTest.exists?("/etc/redhat-release")
