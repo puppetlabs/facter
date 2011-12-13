@@ -31,9 +31,8 @@ class Facter::Util::Collection
       end
     end
 
-    if block
-      resolve = fact.add(&block)
-      # Set any resolve-appropriate options
+    if block_given? and resolve = fact.add(&block)
+      # If the resolve was actually added, set any resolve-appropriate options
       options.each do |opt, value|
         method = opt.to_s + "="
         if resolve.respond_to?(method)

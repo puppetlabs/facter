@@ -33,17 +33,22 @@ class Facter::Util::Fact
   def add(&block)
     raise ArgumentError, "You must pass a block to Fact<instance>.add" unless block_given?
 
-    resolve = Facter::Util::Resolution.new(@name)
+    begin
+      resolve = Facter::Util::Resolution.new(@name)
 
-    resolve.instance_eval(&block)
+      resolve.instance_eval(&block)
 
-    @resolves << resolve
+      @resolves << resolve
 
-    # Immediately sort the resolutions, so that we always have
-    # a sorted list for looking up values.
-    @resolves.sort! { |a, b| b.weight <=> a.weight }
+      # Immediately sort the resolutions, so that we always have
+      # a sorted list for looking up values.
+      @resolves.sort! { |a, b| b.weight <=> a.weight }
 
-    return resolve
+      resolve
+    rescue => e
+      Facter.warn "Unable to add resolve for #{@name}: #{e}"
+      nil
+    end
   end
 
   # Flush any cached values.
