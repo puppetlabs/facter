@@ -42,8 +42,7 @@ describe Facter::Manufacturer do
   end
 
   it "should strip white space on dmi output with spaces" do
-    sample_output_file = File.dirname(__FILE__) + "/../data/linux_dmidecode_with_spaces"
-    dmidecode_output = File.new(sample_output_file).read()
+    dmidecode_output = my_fixture_read("linux_dmidecode_with_spaces")
     Facter::Manufacturer.expects(:get_dmi_table).returns(dmidecode_output)
     Facter.fact(:kernel).stubs(:value).returns("Linux")
 
@@ -54,8 +53,7 @@ describe Facter::Manufacturer do
   end
 
   it "should handle output from smbios when run under sunos" do
-    sample_output_file = File.dirname(__FILE__) + "/../data/opensolaris_smbios"
-    smbios_output = File.new(sample_output_file).read()
+    smbios_output = my_fixture_read("opensolaris_smbios")
     Facter::Manufacturer.expects(:get_dmi_table).returns(smbios_output)
     Facter.fact(:kernel).stubs(:value).returns("SunOS")
 
@@ -127,8 +125,8 @@ Handle 0x001F
 
   def find_product_name(os)
     output_file = case os
-      when "FreeBSD" then File.dirname(__FILE__) + "/../data/freebsd_dmidecode"
-      when "SunOS" then File.dirname(__FILE__) + "/../data/opensolaris_smbios"
+      when "FreeBSD" then my_fixture("freebsd_dmidecode")
+      when "SunOS" then my_fixture("opensolaris_smbios")
       end
 
     output = File.new(output_file).read()
