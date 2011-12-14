@@ -1,16 +1,13 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
-$basedir = File.expand_path(File.dirname(__FILE__) + '/..')
-require File.join($basedir, 'spec_helper')
-
-require 'facter'
+require 'spec_helper'
 
 def ifconfig_fixture(filename)
-  ifconfig = File.new(File.join($basedir, 'fixtures', 'ifconfig', filename)).read
+  File.read(fixtures('ifconfig', filename))
 end
 
 def netsh_fixture(filename)
-  ifconfig = File.new(File.join($basedir, 'fixtures', 'netsh', filename)).read
+  File.read(fixtures('netsh', filename))
 end
 
 describe "macaddress fact" do

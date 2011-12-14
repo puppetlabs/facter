@@ -1,5 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+#!/usr/bin/env rspec
 
+require 'spec_helper'
 require 'facter/util/manufacturer'
 
 describe Facter::Manufacturer do
@@ -17,14 +18,14 @@ describe Facter::Manufacturer do
   end
 
   it "should parse prtdiag output on a sunfire v120" do
-    Facter::Util::Resolution.stubs(:exec).returns(fixture_data(File.join("unit", "util", "manufacturer", "solaris_sunfire_v120_prtdiag")))
+    Facter::Util::Resolution.stubs(:exec).returns(my_fixture_read("solaris_sunfire_v120_prtdiag"))
     Facter::Manufacturer.prtdiag_sparc_find_system_info()
     Facter.value(:manufacturer).should == "Sun Microsystems"
     Facter.value(:productname).should == "Sun Fire V120 (UltraSPARC-IIe 648MHz)"
   end
 
   it "should parse prtdiag output on a t5220" do
-    Facter::Util::Resolution.stubs(:exec).returns(fixture_data(File.join("unit", "util", "manufacturer", "solaris_t5220_prtdiag")))
+    Facter::Util::Resolution.stubs(:exec).returns(my_fixture_read("solaris_t5220_prtdiag"))
     Facter::Manufacturer.prtdiag_sparc_find_system_info()
     Facter.value(:manufacturer).should == "Sun Microsystems"
     Facter.value(:productname).should == "SPARC Enterprise T5220"

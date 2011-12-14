@@ -1,7 +1,6 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
-
+require 'spec_helper'
 require 'facter/util/macaddress'
 
 describe "standardized MAC address" do
@@ -29,8 +28,8 @@ describe "Darwin", :unless => Facter.value(:operatingsystem) == 'windows' do
   ]
 
   test_cases.each do |version, default_iface, macaddress, fallback_macaddress|
-    netstat_file = File.join(SPECDIR, "fixtures", "netstat", "darwin_#{version.tr('.', '_')}")
-    ifconfig_file_no_iface = File.join(SPECDIR, "fixtures", "ifconfig", "darwin_#{version.tr('.', '_')}")
+    netstat_file = fixtures("netstat", "darwin_#{version.tr('.', '_')}")
+    ifconfig_file_no_iface = fixtures("ifconfig", "darwin_#{version.tr('.', '_')}")
     ifconfig_file = "#{ifconfig_file_no_iface}_#{default_iface}"
 
     describe "version #{version}" do

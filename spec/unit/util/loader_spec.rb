@@ -1,9 +1,7 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
-
+require 'spec_helper'
 require 'facter/util/loader'
-
 
 # loader subclass for making assertions about file/directory ordering
 class TestLoader < Facter::Util::Loader

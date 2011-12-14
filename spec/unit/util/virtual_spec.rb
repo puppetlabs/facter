@@ -1,5 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+#!/usr/bin/env rspec
 
+require 'spec_helper'
 require 'facter/util/virtual'
 
 describe Facter::Util::Virtual do
@@ -79,7 +80,7 @@ describe Facter::Util::Virtual do
     Facter::Util::Virtual.should_not be_vserver
   end
 
-  fixture_path = File.join(SPECDIR, 'fixtures', 'virtual', 'proc_self_status')
+  fixture_path = fixtures('virtual', 'proc_self_status')
 
   test_cases = [
     [File.join(fixture_path, 'vserver_2_1', 'guest'), true, 'vserver 2.1 guest'],

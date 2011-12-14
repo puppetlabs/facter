@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+#!/usr/bin/env rspec
 
-require 'facter'
+require 'spec_helper'
 require 'facter/util/virtual'
 require 'facter/util/macosx'
 
