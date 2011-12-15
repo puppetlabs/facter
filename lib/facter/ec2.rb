@@ -23,9 +23,8 @@ def metadata(id = "")
     if key[-1..-1] != '/'
       value = open("http://169.254.169.254/2008-02-01/meta-data/#{key}").read.
         split("\n")
-      value = value.size>1 ? value : value.first
       symbol = "ec2_#{key.gsub(/\-|\//, '_')}".to_sym
-      Facter.add(symbol) { setcode { value } }
+      Facter.add(symbol) { setcode { value.join(',') } }
     else
       metadata(key)
     end
