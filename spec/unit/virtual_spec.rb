@@ -204,6 +204,36 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "virtualbox"
     end
   end
+
+  describe "on OpenBSD" do
+    before do
+      Facter::Util::Resolution.stubs(:exec).with("vmware -v").returns false
+      Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
+      Facter.fact(:hardwaremodel).stubs(:value).returns(nil)
+      Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
+      Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns(nil)
+    end
+
+    it "should be parallels with Parallels product name from sysctl" do
+      Facter::Util::Resolution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("Parallels Virtual Platform")
+      Facter.fact(:virtual).value.should == "parallels"
+    end
+
+    it "should be vmware with VMware product name from sysctl" do
+      Facter::Util::Resolution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("VMware Virtual Platform")
+      Facter.fact(:virtual).value.should == "vmware"
+    end
+
+    it "should be virtualbox with VirtualBox product name from sysctl" do
+      Facter::Util::Resolution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("VirtualBox")
+      Facter.fact(:virtual).value.should == "virtualbox"
+    end
+
+    it "should be xenhvm with Xen HVM product name from sysctl" do
+      Facter::Util::Resolution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("HVM domU")
+      Facter.fact(:virtual).value.should == "xenhvm"
+    end
+  end
 end
 
 describe "is_virtual fact" do
