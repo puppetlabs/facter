@@ -78,7 +78,7 @@ EOS
     end
 
     it "should return the current memorysize" do
-      Facter.fact(:memorytotal).value.should == "254.94 MB"
+      Facter.fact(:memorysize).value.should == "254.94 MB"
     end
   end
 
@@ -118,7 +118,7 @@ EOS
     end
 
     it "should return the current memorysize" do
-      Facter.fact(:memorytotal).value.should == "237.00 MB"
+      Facter.fact(:memorysize).value.should == "237.00 MB"
     end
   end
 
@@ -146,5 +146,12 @@ EOS
 
       Facter.fact(:MemoryTotal).value.should == '3.91 GB'
     end
+  end
+
+  it "should use the memorysize fact for the memorytotal fact" do
+    Facter.fact("memorysize").expects(:value).once.returns "yay"
+    Facter::Util::Resolution.expects(:exec).never
+    Facter::Memory.expects(:meminfo_number).never
+    Facter.fact("memorytotal").value.should == "yay"
   end
 end
