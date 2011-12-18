@@ -14,6 +14,7 @@ require 'rubygems'
 require 'mocha'
 require 'rspec'
 require 'facter'
+require 'fileutils'
 
 # load any monkey-patches
 Dir["#{dir}/monkey_patches/*.rb"].map { |file| require file }
