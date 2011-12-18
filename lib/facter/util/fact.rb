@@ -31,16 +31,21 @@ class Facter::Util::Fact
   # Add a new resolution mechanism.  This requires a block, which will then
   # be evaluated in the context of the new mechanism.
   def add(value = nil, &block)
-    resolve = Facter::Util::Resolution.new(@name)
+    begin
+      resolve = Facter::Util::Resolution.new(@name)
 
-    resolve.instance_eval(&block) if block
-    @resolves << resolve
+      resolve.instance_eval(&block) if block
+      @resolves << resolve
 
-    # Immediately sort the resolutions, so that we always have
-    # a sorted list for looking up values.
-    @resolves.sort! { |a, b| b.weight <=> a.weight }
+      # Immediately sort the resolutions, so that we always have
+      # a sorted list for looking up values.
+      @resolves.sort! { |a, b| b.weight <=> a.weight }
 
-    return resolve
+      resolve
+    rescue => e
+      Facter.warn "Unable to add resolve for #{@name}: #{e}"
+      nil
+    end
   end
 
   # Flush any cached values.

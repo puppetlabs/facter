@@ -90,6 +90,16 @@ describe Facter::Util::Collection do
 
         @coll.add(:myname) {}
       end
+
+      it "should discard resolutions that throw an exception when added" do
+        lambda {
+          @coll.add('yay') do
+            raise
+            setcode { 'yay' }
+          end
+        }.should_not raise_error
+        @coll.value('yay').should be_nil
+      end
     end
   end
 

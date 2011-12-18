@@ -31,18 +31,21 @@ class Facter::Util::Collection
       end
     end
 
-    if block
+    if block_given?
       resolve = fact.add(&block)
     else
       resolve = fact.add
     end
 
     # Set any resolve-appropriate options
-    options.each do |opt, value|
-      method = opt.to_s + "="
-      if resolve.respond_to?(method)
-        resolve.send(method, value)
-        options.delete(opt)
+    if resolve
+      # If the resolve was actually added, set any resolve-appropriate options
+      options.each do |opt, value|
+        method = opt.to_s + "="
+        if resolve.respond_to?(method)
+          resolve.send(method, value)
+          options.delete(opt)
+        end
       end
     end
 

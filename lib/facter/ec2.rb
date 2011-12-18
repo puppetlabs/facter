@@ -2,6 +2,7 @@
 # Additional work from KurtBe
 # Additional work for Paul Nasrat
 # Additional work modelled on Ohai EC2 fact
+# Remove depedency on arp fact by Pieter Lexis
 
 require 'open-uri'
 require 'timeout'
@@ -23,9 +24,8 @@ def metadata(id = "")
     if key[-1..-1] != '/'
       value = open("http://169.254.169.254/2008-02-01/meta-data/#{key}").read.
         split("\n")
-      value = value.size>1 ? value : value.first
       symbol = "ec2_#{key.gsub(/\-|\//, '_')}".to_sym
-      Facter.add(symbol) { setcode { value } }
+      Facter.add(symbol) { setcode { value.join(',') } }
     else
       metadata(key)
     end
@@ -40,12 +40,23 @@ def userdata()
   end
 end
 
+# Is the macaddress a eucalyptus macaddress?
 def has_euca_mac?
   !!(Facter.value(:macaddress) =~ %r{^[dD]0:0[dD]:})
 end
 
+# Is there an entry in the arp table for fe:ff:ff:ff:ff:ff,
+# this is a red flag for being on amazon
 def has_ec2_arp?
-  !!(Facter.value(:arp) == "fe:ff:ff:ff:ff:ff")
+  arp_table = Facter::Util::Resolution.exec('arp -an')
+  is_amazon_arp = false
+  if not arp_table.nil?
+    arp_table.each_line do |line|
+      is_amazon_arp = true if line.include?('fe:ff:ff:ff:ff:ff')
+      break
+    end
+  end
+  is_amazon_arp
 end
 
 if (has_euca_mac? || has_ec2_arp?) && can_connect?
