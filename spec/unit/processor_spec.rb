@@ -1,12 +1,9 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
-$basedir = File.expand_path(File.dirname(__FILE__) + '/..')
-require File.join($basedir, 'spec_helper')
-
-require 'facter'
+require 'spec_helper'
 
 def cpuinfo_fixture(filename)
-    cpuinfo = File.open(File.join($basedir, 'fixtures', 'cpuinfo', filename)).readlines
+  File.open(fixtures('cpuinfo', filename)).readlines
 end
 
 describe "Processor facts" do
@@ -74,18 +71,18 @@ describe "Processor facts" do
     end
 
     it "should detect the correct processor count on x86_64" do
-      fixture_data = File.read(File.expand_path(File.dirname(__FILE__) + '/../fixtures/processorcount/solaris-x86_64-kstat-cpu-info'))
+      fixture_data = File.read(fixtures('processorcount','solaris-x86_64-kstat-cpu-info'))
       Facter::Util::Resolution.expects(:exec).with("/usr/bin/kstat cpu_info").returns(fixture_data)
       Facter.fact(:processorcount).value.should == 8
     end
 
     it "should detect the correct processor count on sparc" do
-      fixture_data = File.read(File.expand_path(File.dirname(__FILE__) + '/../fixtures/processorcount/solaris-sparc-kstat-cpu-info'))
+      fixture_data = File.read(fixtures('processorcount','solaris-sparc-kstat-cpu-info'))
       Facter::Util::Resolution.expects(:exec).with("/usr/bin/kstat cpu_info").returns(fixture_data)
       Facter.fact(:processorcount).value.should == 8
     end
   end
-  
+
   describe "on Unixes" do
     before :each do
       Facter.collection.loader.load(:processor)
@@ -106,102 +103,102 @@ describe "Processor facts" do
       Facter.fact(:architecture).stubs(:value).returns("ppc64")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
       File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("ppc64"))
-    
+
       Facter.fact(:processorcount).value.should == "2"
     end
-  
+
     it "should be 2 in panda-armel fixture on Linux" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("arm")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
       File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("panda-armel"))
-    
+
       Facter.fact(:processorcount).value.should == "2"
     end
-  
+
     it "should be 1 in bbg3-armel fixture on Linux" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("arm")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
       File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("bbg3-armel"))
-    
+
       Facter.fact(:processorcount).value.should == "1"
     end
-  
+
     it "should be 1 in beaglexm-armel fixture on Linux" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("arm")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
       File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("beaglexm-armel"))
-    
+
       Facter.fact(:processorcount).value.should == "1"
     end
-    
+
     it "should be 1 in amd64solo fixture on Linux" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("amd64")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
       File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64solo"))
-    
+
       Facter.fact(:processorcount).value.should == "1"
     end
-    
+
     it "should be 2 in amd64dual fixture on Linux" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("amd64")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
       File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64dual"))
-    
+
       Facter.fact(:processorcount).value.should == "2"
     end
-    
+
     it "should be 3 in amd64tri fixture on Linux" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("amd64")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
       File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64tri"))
-    
+
       Facter.fact(:processorcount).value.should == "3"
     end
-      
+
     it "should be 4 in amd64quad fixture on Linux" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("amd64")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
       File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64quad"))
-  
+
       Facter.fact(:processorcount).value.should == "4"
     end
-  
+
     it "should be 2 on dual-processor Darwin box" do
       Facter.fact(:kernel).stubs(:value).returns("Darwin")
       Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
-  
+
       Facter.fact(:processorcount).value.should == "2"
     end
-    
+
     it "should be 2 on dual-processor OpenBSD box" do
       Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
       Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
-  
+
       Facter.fact(:processorcount).value.should == "2"
     end
 
     it "should be 2 on dual-processor DragonFly box" do
       Facter.fact(:kernel).stubs(:value).returns("DragonFly")
       Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
-  
+
       Facter.fact(:processorcount).value.should == "2"
     end
- 
+
     it "should be 6 on six-processor AIX box" do
       Facter.fact(:kernel).stubs(:value).returns("AIX")
       Facter::Util::Resolution.stubs(:exec).with("lsdev -Cc processor").returns("proc0 Available 00-00 Processor\nproc2 Available 00-02 Processor\nproc4 Available 00-04 Processor\nproc6 Available 00-06 Processor\nproc8 Available 00-08 Processor\nproc10 Available 00-10 Processor")
       Facter::Util::Resolution.stubs(:exec).with("lsattr -El proc0 -a type").returns("type PowerPC_POWER3 Processor type False")
-  
+
       Facter.fact(:processorcount).value.should == "6"
     end
-    
+
     it "should be 2 via sysfs when cpu0 and cpu1 are present" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       File.stubs(:exists?).with('/sys/devices/system/cpu').returns(true)
@@ -212,10 +209,10 @@ describe "Processor facts" do
         /sys/devices/system/cpu/cpu0
         /sys/devices/system/cpu/cpu1
       })
-  
+
       Facter.fact(:processorcount).value.should == "2"
     end
-  
+
     it "should be 16 via sysfs when cpu0 through cpu15 are present" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       File.stubs(:exists?).with('/sys/devices/system/cpu').returns(true)
@@ -240,7 +237,7 @@ describe "Processor facts" do
         /sys/devices/system/cpu/cpu14
         /sys/devices/system/cpu/cpu15
       })
-    
+
       Facter.fact(:processorcount).value.should == "16"
     end
   end
