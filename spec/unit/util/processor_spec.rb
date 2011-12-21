@@ -1,12 +1,10 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
-$basedir = File.expand_path(File.dirname(__FILE__) + '/../..')
-require File.join($basedir, 'spec_helper')
-
+require 'spec_helper'
 require 'facter/util/processor'
 
 def cpuinfo_fixture(filename)
-  cpuinfo = File.open(File.join($basedir, 'fixtures', 'cpuinfo', filename)).readlines
+  File.open(fixtures('cpuinfo', filename)).readlines
 end
 
 describe Facter::Util::Processor do
@@ -15,7 +13,7 @@ describe Facter::Util::Processor do
     Facter.fact(:architecture).stubs(:value).returns("amd64")
     File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
     File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64solo"))
-    
+
     Facter::Util::Processor.enum_cpuinfo[0].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
   end
 
@@ -24,22 +22,22 @@ describe Facter::Util::Processor do
     Facter.fact(:architecture).stubs(:value).returns("amd64")
     File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
     File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64dual"))
-    
+
     Facter::Util::Processor.enum_cpuinfo[0].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
     Facter::Util::Processor.enum_cpuinfo[1].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
   end
-  
+
   it "should get the processor descriptions from the amd64tri fixture" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:architecture).stubs(:value).returns("amd64")
     File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
     File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64tri"))
-    
+
     Facter::Util::Processor.enum_cpuinfo[0].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
     Facter::Util::Processor.enum_cpuinfo[1].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
     Facter::Util::Processor.enum_cpuinfo[2].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
   end
-  
+
   it "should get the processor descriptions from the amd64quad fixture" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:architecture).stubs(:value).returns("amd64")

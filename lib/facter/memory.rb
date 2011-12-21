@@ -116,7 +116,7 @@ if Facter.value(:kernel) == "OpenBSD"
 
   Facter::Memory.vmstat_find_free_memory()
 
-  Facter.add("MemoryTotal") do
+  Facter.add("memorysize") do
     confine :kernel => :openbsd
     memtotal = Facter::Util::Resolution.exec("sysctl hw.physmem | cut -d'=' -f2")
     setcode do
@@ -153,7 +153,7 @@ if Facter.value(:kernel) == "Darwin"
 
   Facter::Memory.vmstat_darwin_find_free_memory()
 
-  Facter.add("MemoryTotal") do
+  Facter.add("memorysize") do
     confine :kernel => :Darwin
     memtotal = Facter::Util::Resolution.exec("sysctl hw.memsize | cut -d':' -f2")
     setcode do
@@ -220,7 +220,7 @@ if Facter.value(:kernel) == "windows"
     end
   end
 
-  Facter.add("MemoryTotal") do
+  Facter.add("memorysize") do
     confine :kernel => :windows
     setcode do
       mem = 0
@@ -254,11 +254,22 @@ Facter.add("SwapFree") do
   end
 end
 
-Facter.add("MemoryTotal") do
+Facter.add("memorysize") do
   confine :kernel => :dragonfly
   setcode do
     Facter::Memory.vmstat_find_free_memory()
     memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
     Facter::Memory.scale_number(memtotal.to_f,"")
+  end
+end
+
+# http://projects.puppetlabs.com/issues/11436
+#
+# Unifying naming for the amount of physical memory in a given host.
+# This fact is DEPRECATED and will be removed in Facter 2.0 per
+# http://projects.puppetlabs.com/issues/11466
+Facter.add("MemoryTotal") do
+  setcode do
+    Facter.value("memorysize")
   end
 end

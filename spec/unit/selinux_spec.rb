@@ -1,8 +1,6 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
-
-require 'facter'
+require 'spec_helper'
 
 describe "SELinux facts" do
 
@@ -50,8 +48,7 @@ describe "SELinux facts" do
   it "should return the SELinux current mode" do
     Facter.fact(:selinux).stubs(:value).returns("true")
 
-    sample_output_file = File.dirname(__FILE__) + '/data/selinux_sestatus'
-    selinux_sestatus = File.read(sample_output_file)
+    selinux_sestatus = my_fixture_read("selinux_sestatus")
 
     Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/sestatus').returns(selinux_sestatus)
 
@@ -61,8 +58,7 @@ describe "SELinux facts" do
   it "should return the SELinux mode from the configuration file" do
     Facter.fact(:selinux).stubs(:value).returns("true")
 
-    sample_output_file = File.dirname(__FILE__) + '/data/selinux_sestatus'
-    selinux_sestatus = File.read(sample_output_file)
+    selinux_sestatus = my_fixture_read("selinux_sestatus")
 
     Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/sestatus').returns(selinux_sestatus)
 
@@ -72,8 +68,7 @@ describe "SELinux facts" do
   it "should return the SELinux configuration file policy" do
     Facter.fact(:selinux).stubs(:value).returns("true")
 
-    sample_output_file = File.dirname(__FILE__) + '/data/selinux_sestatus'
-    selinux_sestatus = File.read(sample_output_file)
+    selinux_sestatus = my_fixture_read("selinux_sestatus")
 
     Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/sestatus').returns(selinux_sestatus)
 
