@@ -1,8 +1,6 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
-
-require 'facter'
+require 'spec_helper'
 require 'facter/util/ip'
 
 describe "Per Interface IP facts" do

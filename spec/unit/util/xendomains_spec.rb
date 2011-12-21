@@ -1,14 +1,12 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
-
+require 'spec_helper'
 require 'facter/util/xendomains'
 
 describe Facter::Util::Xendomains do
   describe ".get_domains" do
     it "should return a list of running Xen Domains on Xen0" do
-      sample_output_file = File.dirname(__FILE__) + '/../data/xendomains'
-      xen0_domains = File.read(sample_output_file)
+      xen0_domains = my_fixture_read("xendomains")
       Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/xm list 2>/dev/null').returns(xen0_domains)
       Facter::Util::Xendomains.get_domains.should == %{web01,mailserver}
     end
