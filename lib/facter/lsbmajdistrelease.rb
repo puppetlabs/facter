@@ -15,7 +15,7 @@
 require 'facter'
 
 Facter.add("lsbmajdistrelease") do
-  confine :operatingsystem => %w{Linux Fedora RedHat CentOS Scientific PSBM SLC Ascendos SuSE SLES Debian Ubuntu Gentoo OEL OracleLinux OVS GNU/kFreeBSD}
+  confine :kernel => %w{Linux GNU/kFreeBSD}
   setcode do
     if /(\d*)\./i =~ Facter.value(:lsbdistrelease)
       result=$1
