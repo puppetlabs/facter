@@ -26,6 +26,14 @@ Facter.add(:hardwaremodel) do
 end
 
 Facter.add(:hardwaremodel) do
+  confine :operatingsystem => :"hp-ux"
+  setcode do
+    model = Facter::Util::Resolution.exec('model')
+    model
+  end
+end
+
+Facter.add(:hardwaremodel) do
   confine :operatingsystem => :windows
   setcode do
     require 'rbconfig'
