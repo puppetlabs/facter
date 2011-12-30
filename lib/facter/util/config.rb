@@ -2,7 +2,7 @@
 #
 # Purpose: Returns config related data.
 #
-# Resolution:
+# Resolution: The utility function 'is_windows' will be true if running on windows.
 #
 # Caveats:
 #

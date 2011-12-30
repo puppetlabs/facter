@@ -1,3 +1,11 @@
+# Module: Fact 
+#
+# Purpose: 
+#
+# Resolution: 
+#
+# Caveats: 
+#
 require 'facter'
 require 'facter/util/resolution'
 

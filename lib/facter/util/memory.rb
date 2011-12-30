@@ -1,7 +1,11 @@
-## memory.rb
-## Support module for memory related facts
-##
-
+# Module: Memory
+#
+# Purpose: Support module for memory related facts
+#
+# Resolution:
+#
+# Caveats:
+#
 module Facter::Memory
   require 'thread'
 

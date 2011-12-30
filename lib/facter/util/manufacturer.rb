@@ -1,6 +1,11 @@
-# mamufacturer.rb
-# Support methods for manufacturer specific facts
-
+# Module: Manufacture
+#
+# Purpose:  Support methods for manufacturer specific facts
+#
+# Resolution:
+#
+# Caveats:
+#
 module Facter::Manufacturer
 
   def self.get_dmi_table()
