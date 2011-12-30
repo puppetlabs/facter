@@ -45,6 +45,7 @@ describe "Operating System fact" do
       "Bluewhite64" => "/etc/bluewhite64-version",
       "Slamd64"     => "/etc/slamd64-version",
       "Slackware"   => "/etc/slackware-version",
+      "Amazon"      => "/etc/system-release",
     }.each_pair do |distribution, releasefile|
       it "should be #{distribution} if #{releasefile} exists" do
         FileTest.expects(:exists?).with(releasefile).returns true
@@ -64,10 +65,6 @@ describe "Operating System fact" do
         Facter.fact(:operatingsystem).value.should == "Ubuntu"
       end
 
-      it "on Amazon Linux should use the lsbdistdescription fact" do
-        Facter.fact(:lsbdistdescription).stubs(:value).returns "Amazon Linux"
-        Facter.fact(:operatingsystem).value.should == "Amazon"
-      end
     end
 
 
