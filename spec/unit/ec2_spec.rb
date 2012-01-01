@@ -135,7 +135,7 @@ describe "ec2 facts" do
 
       # Emulate a timeout when connecting by throwing an exception
       Object.any_instance.expects(:open).with("#{api_prefix}:80/").\
-        at_least_once.throws(Timeout::Error)
+        at_least_once.raises(Timeout::Error)
 
       # Return a eucalyptus mac address
       Facter.expects(:value).with(:macaddress).\
