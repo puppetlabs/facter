@@ -28,7 +28,8 @@ end
 Facter.add(:hardwaremodel) do
   confine :operatingsystem => :windows
   setcode do
-    require 'rbconfig'
-    Config::CONFIG['host_cpu']
+    require 'facter/util/config'
+
+    CONF['host_cpu']
   end
 end

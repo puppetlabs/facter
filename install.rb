@@ -64,6 +64,8 @@ require 'facter'
 
 PREREQS = %w{openssl xmlrpc/client xmlrpc/server cgi}
 
+CONF = Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG
+
 InstallOptions = OpenStruct.new
 
 def glob(list)
@@ -213,8 +215,8 @@ def prepare_installation
 
   tmpdirs = [ENV['TMP'], ENV['TEMP'], "/tmp", "/var/tmp", "."]
 
-  version = [Config::CONFIG["MAJOR"], Config::CONFIG["MINOR"]].join(".")
-  libdir = File.join(Config::CONFIG["libdir"], "ruby", version)
+  version = [CONF["MAJOR"], CONF["MINOR"]].join(".")
+  libdir = File.join(CONF["libdir"], "ruby", version)
 
   # Mac OS X 10.5 and higher declare bindir and sbindir as
   # /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin
@@ -222,26 +224,26 @@ def prepare_installation
   # which is not generally where people expect executables to be installed
   # These settings are appropriate defaults for all OS X versions.
   if RUBY_PLATFORM =~ /^universal-darwin[\d\.]+$/
-    Config::CONFIG['bindir'] = "/usr/bin"
-    Config::CONFIG['sbindir'] = "/usr/sbin"
+    CONF['bindir'] = "/usr/bin"
+    CONF['sbindir'] = "/usr/sbin"
   end
 
   if not InstallOptions.bindir.nil?
     bindir = InstallOptions.bindir
   else
-    bindir = Config::CONFIG['bindir']
+    bindir = CONF['bindir']
   end
 
   if not InstallOptions.sbindir.nil?
     sbindir = InstallOptions.sbindir
   else
-    sbindir = Config::CONFIG['sbindir']
+    sbindir = CONF['sbindir']
   end
 
   if not InstallOptions.sitelibdir.nil?
     sitelibdir = InstallOptions.sitelibdir
   else
-    sitelibdir = Config::CONFIG["sitelibdir"]
+    sitelibdir = CONF["sitelibdir"]
     if sitelibdir.nil?
       sitelibdir = $:.find { |x| x =~ /site_ruby/ }
       if sitelibdir.nil?
@@ -255,7 +257,7 @@ def prepare_installation
   if not InstallOptions.mandir.nil?
     mandir = InstallOptions.mandir
   else
-    mandir = Config::CONFIG['mandir']
+    mandir = CONF['mandir']
   end
 
   # To be deprecated once people move over to using --destdir option
@@ -388,11 +390,11 @@ def install_binfile(from, op_file, target)
 
   fail "Cannot find a temporary directory" unless tmp_dir
   tmp_file = File.join(tmp_dir, '_tmp')
-  ruby = File.join(Config::CONFIG['bindir'], Config::CONFIG['ruby_install_name'])
+  ruby = File.join(CONF['bindir'], CONF['ruby_install_name'])
 
   File.open(from) do |ip|
     File.open(tmp_file, "w") do |op|
-      ruby = File.join(Config::CONFIG['bindir'], Config::CONFIG['ruby_install_name'])
+      ruby = File.join(CONF['bindir'], CONF['ruby_install_name'])
       op.puts "#!#{ruby}"
       contents = ip.readlines
       if contents[0] =~ /^#!/
@@ -417,7 +419,7 @@ def install_binfile(from, op_file, target)
 
     if not installed_wrapper
       tmp_file2 = File.join(tmp_dir, '_tmp_wrapper')
-      cwn = File.join(Config::CONFIG['bindir'], op_file)
+      cwn = File.join(CONF['bindir'], op_file)
       cwv = <<-EOS
 @echo off
 if "%OS%"=="Windows_NT" goto WinNT
