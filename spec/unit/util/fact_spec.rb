@@ -32,39 +32,26 @@ describe Facter::Util::Fact do
     before do
       @fact = Facter::Util::Fact.new("yay")
 
-      @resolution = mock 'resolution'
-      @resolution.stub_everything
-
+      @resolution = Facter::Util::Resolution.new("yay")
     end
 
-    it "should fail if no block is given" do
-      lambda { @fact.add }.should raise_error(ArgumentError)
-    end
-
-    it "should create a new resolution instance" do
+    it "should be to create a new resolution instance with a block" do
       Facter::Util::Resolution.expects(:new).returns @resolution
 
       @fact.add { }
     end
-
     it "should instance_eval the passed block on the new resolution" do
-      @resolution.expects(:instance_eval)
-
-      Facter::Util::Resolution.stubs(:new).returns @resolution
-
-      @fact.add { }
+      @fact.add {
+        setcode { "foo" }
+      }
+      @fact.value.should == "foo"
     end
 
     it "should re-sort the resolutions by weight, so the most restricted resolutions are first" do
-      r1 = stub 'r1', :weight => 1
-      r2 = stub 'r2', :weight => 2
-      r3 = stub 'r3', :weight => 0
-      Facter::Util::Resolution.expects(:new).times(3).returns(r1).returns(r2).returns(r3)
-      @fact.add { }
-      @fact.add { }
-      @fact.add { }
-
-      @fact.instance_variable_get("@resolves").should == [r2, r1, r3]
+      @fact.add { self.value = "1"; self.weight = 1 }
+      @fact.add { self.value = "2"; self.weight = 2 }
+      @fact.add { self.value = "0"; self.weight = 0 }
+      @fact.value.should == "2"
     end
   end
 

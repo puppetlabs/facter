@@ -37,10 +37,8 @@ describe Facter::Util::Collection do
     end
 
     it "should create a new fact if no fact with the same name already exists" do
-      fact = mock 'fact'
-      Facter::Util::Fact.expects(:new).with { |name, *args| name == :myname }.returns fact
-
       @coll.add(:myname)
+      @coll.fact(:myname).name.should == :myname
     end
 
     it "should accept options" do
@@ -50,10 +48,9 @@ describe Facter::Util::Collection do
     it "should set any appropriate options on the fact instances" do
       # Use a real fact instance, because we're using respond_to?
       fact = Facter::Util::Fact.new(:myname)
-      fact.expects(:ldapname=).with("testing")
-      Facter::Util::Fact.expects(:new).with(:myname).returns fact
 
       @coll.add(:myname, :ldapname => "testing")
+      @coll.fact(:myname).ldapname.should == "testing"
     end
 
     it "should set appropriate options on the resolution instance" do

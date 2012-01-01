@@ -30,14 +30,11 @@ class Facter::Util::Fact
 
   # Add a new resolution mechanism.  This requires a block, which will then
   # be evaluated in the context of the new mechanism.
-  def add(&block)
-    raise ArgumentError, "You must pass a block to Fact<instance>.add" unless block_given?
-
+  def add(value = nil, &block)
     begin
       resolve = Facter::Util::Resolution.new(@name)
 
-      resolve.instance_eval(&block)
-
+      resolve.instance_eval(&block) if block
       @resolves << resolve
 
       # Immediately sort the resolutions, so that we always have
