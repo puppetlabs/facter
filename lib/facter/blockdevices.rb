@@ -101,5 +101,27 @@ if Facter.value(:kernel) == 'Linux'
       setcode { blockdevices.sort.join(',') }
     end 
   end
-
 end
+
+if Facter.value(:kernel) == 'FreeBSD'
+  blockdevices = Facter::Util::Resolution.exec('/sbin/sysctl -n kern.disks').split(' ')
+
+  Facter.add(:blockdevices) do
+    setcode { blockdevices.sort.join(',') }
+  end
+
+  blockdevices.each do |device|
+    Facter.add("blockdevice_#{device}_size".to_sym) do
+      setcode { Facter::Util::Resolution.exec("/usr/sbin/diskinfo #{device} | /usr/bin/awk '{print $3}'") }
+    end
+
+    Facter.add("blockdevice_#{device}_model".to_sym) do
+      if device =~ /ad/
+        setcode { Facter::Util::Resolution.exec("/sbin/atacontrol list | /usr/bin/awk -F '<|>' '/#{device}/ { print $2 }'") }
+      else
+        setcode { Facter::Util::Resolution.exec("/sbin/camcontrol inquiry #{device} -D | /usr/bin/awk -F '<|>' '{ print $2}'" ) }
+      end
+    end
+  end
+end
+
