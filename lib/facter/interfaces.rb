@@ -1,23 +1,17 @@
 # Fact: interfaces
 #
-# Purpose:
+# Purpose: Gives set of interfaces available on the machine and 
 #
-# Resolution:
+# Resolution: gets the additional facts about the machine's network interfaces like 
+# ipaddress, ipaddress6, macaddress and netmask 
 #
-# Caveats:
-#
-
-# interfaces.rb
-# Try to get additional Facts about the machine's network interfaces
+# Caveats:  Note that most of this only works on a fixed list of platforms; notably, Darwin
+# is missing
 #
 # Original concept Copyright (C) 2007 psychedelys <psychedelys@gmail.com>
 # Update and *BSD support (C) 2007 James Turnbull <james@lovedthanlost.net>
 #
-
 require 'facter/util/ip'
-
-# Note that most of this only works on a fixed list of platforms; notably, Darwin
-# is missing.
 
 Facter.add(:interfaces) do
   confine :kernel => Facter::Util::IP.supported_platforms

@@ -11,9 +11,6 @@
 #
 # Caveats:
 #
-
-# processor.rb
-#
 # Copyright (C) 2006 Mooter Media Ltd
 # Author: Matthew Palmer <matt@solutionsfirst.com.au>
 #

@@ -1,8 +1,16 @@
+# Fact: ec2
+#
+# Purpose: Passing through metadta and userdata that it detects on ec2
+#
+# Resolution: If EC2 host is true then passes the metadata and userdata
+#
+# Caveats:
+#
 # Original fact Tim Dysinger
 # Additional work from KurtBe
 # Additional work for Paul Nasrat
 # Additional work modelled on Ohai EC2 fact
-
+#
 require 'open-uri'
 require 'timeout'
 
