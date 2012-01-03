@@ -46,6 +46,12 @@ rescue LoadError
   $haverdoc = false
 end
 
+# Monkey patch RbConfig->Config for Rubies older then 1.8.5.
+unless defined? ::RbConfig
+  require 'rbconfig'
+  ::RbConfig = ::Config
+end
+
 begin
   if $haverdoc
      rst2man = %x{which rst2man.py}
@@ -180,16 +186,16 @@ def prepare_installation
     opts.on('--destdir[=OPTIONAL]', 'Installation prefix for all targets', 'Default essentially /') do |destdir|
       InstallOptions.destdir = destdir
     end
-    opts.on('--bindir[=OPTIONAL]', 'Installation directory for binaries', 'overrides Config::CONFIG["bindir"]') do |bindir|
+    opts.on('--bindir[=OPTIONAL]', 'Installation directory for binaries', 'overrides RbConfig::CONFIG["bindir"]') do |bindir|
       InstallOptions.bindir = bindir
     end
-    opts.on('--sbindir[=OPTIONAL]', 'Installation directory for system binaries', 'overrides Config::CONFIG["sbindir"]') do |sbindir|
+    opts.on('--sbindir[=OPTIONAL]', 'Installation directory for system binaries', 'overrides RbConfig::CONFIG["sbindir"]') do |sbindir|
       InstallOptions.sbindir = sbindir
     end
-    opts.on('--sitelibdir[=OPTIONAL]', 'Installation directory for libraries', 'overrides Config::CONFIG["sitelibdir"]') do |sitelibdir|
+    opts.on('--sitelibdir[=OPTIONAL]', 'Installation directory for libraries', 'overrides RbConfig::CONFIG["sitelibdir"]') do |sitelibdir|
       InstallOptions.sitelibdir = sitelibdir
     end
-    opts.on('--mandir[=OPTIONAL]', 'Installation directory for man pages', 'overrides Config::CONFIG["mandir"]') do |mandir|
+    opts.on('--mandir[=OPTIONAL]', 'Installation directory for man pages', 'overrides RbConfig::CONFIG["mandir"]') do |mandir|
       InstallOptions.mandir = mandir
     end
     opts.on('--quick', 'Performs a quick installation. Only the', 'installation is done.') do |quick|
@@ -213,8 +219,8 @@ def prepare_installation
 
   tmpdirs = [ENV['TMP'], ENV['TEMP'], "/tmp", "/var/tmp", "."]
 
-  version = [Config::CONFIG["MAJOR"], Config::CONFIG["MINOR"]].join(".")
-  libdir = File.join(Config::CONFIG["libdir"], "ruby", version)
+  version = [RbConfig::CONFIG["MAJOR"], RbConfig::CONFIG["MINOR"]].join(".")
+  libdir = File.join(RbConfig::CONFIG["libdir"], "ruby", version)
 
   # Mac OS X 10.5 and higher declare bindir and sbindir as
   # /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin
@@ -222,26 +228,26 @@ def prepare_installation
   # which is not generally where people expect executables to be installed
   # These settings are appropriate defaults for all OS X versions.
   if RUBY_PLATFORM =~ /^universal-darwin[\d\.]+$/
-    Config::CONFIG['bindir'] = "/usr/bin"
-    Config::CONFIG['sbindir'] = "/usr/sbin"
+    RbConfig::CONFIG['bindir'] = "/usr/bin"
+    RbConfig::CONFIG['sbindir'] = "/usr/sbin"
   end
 
   if not InstallOptions.bindir.nil?
     bindir = InstallOptions.bindir
   else
-    bindir = Config::CONFIG['bindir']
+    bindir = RbConfig::CONFIG['bindir']
   end
 
   if not InstallOptions.sbindir.nil?
     sbindir = InstallOptions.sbindir
   else
-    sbindir = Config::CONFIG['sbindir']
+    sbindir = RbConfig::CONFIG['sbindir']
   end
 
   if not InstallOptions.sitelibdir.nil?
     sitelibdir = InstallOptions.sitelibdir
   else
-    sitelibdir = Config::CONFIG["sitelibdir"]
+    sitelibdir = RbConfig::CONFIG["sitelibdir"]
     if sitelibdir.nil?
       sitelibdir = $:.find { |x| x =~ /site_ruby/ }
       if sitelibdir.nil?
@@ -255,7 +261,7 @@ def prepare_installation
   if not InstallOptions.mandir.nil?
     mandir = InstallOptions.mandir
   else
-    mandir = Config::CONFIG['mandir']
+    mandir = RbConfig::CONFIG['mandir']
   end
 
   # To be deprecated once people move over to using --destdir option
@@ -373,7 +379,7 @@ def run_tests(test_list)
 end
 
 ##
-# Install file(s) from ./bin to Config::CONFIG['bindir']. Patch it on the way
+# Install file(s) from ./bin to RbConfig::CONFIG['bindir']. Patch it on the way
 # to insert a #! line; on a Unix install, the command is named as expected
 # (e.g., bin/rdoc becomes rdoc); the shebang line handles running it. Under
 # windows, we add an '.rb' extension and let file associations do their stuff.
@@ -388,11 +394,11 @@ def install_binfile(from, op_file, target)
 
   fail "Cannot find a temporary directory" unless tmp_dir
   tmp_file = File.join(tmp_dir, '_tmp')
-  ruby = File.join(Config::CONFIG['bindir'], Config::CONFIG['ruby_install_name'])
+  ruby = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
 
   File.open(from) do |ip|
     File.open(tmp_file, "w") do |op|
-      ruby = File.join(Config::CONFIG['bindir'], Config::CONFIG['ruby_install_name'])
+      ruby = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
       op.puts "#!#{ruby}"
       contents = ip.readlines
       if contents[0] =~ /^#!/
@@ -417,7 +423,7 @@ def install_binfile(from, op_file, target)
 
     if not installed_wrapper
       tmp_file2 = File.join(tmp_dir, '_tmp_wrapper')
-      cwn = File.join(Config::CONFIG['bindir'], op_file)
+      cwn = File.join(RbConfig::CONFIG['bindir'], op_file)
       cwv = <<-EOS
 @echo off
 if "%OS%"=="Windows_NT" goto WinNT
