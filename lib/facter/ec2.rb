@@ -48,12 +48,22 @@ end
 # Is there an entry in the arp table for fe:ff:ff:ff:ff:ff,
 # this is a red flag for being on amazon
 def has_ec2_arp?
-  arp_table = Facter::Util::Resolution.exec('arp -an')
   is_amazon_arp = false
-  if not arp_table.nil?
-    arp_table.each_line do |line|
-      is_amazon_arp = true if line.include?('fe:ff:ff:ff:ff:ff')
-      break
+  if Facter.value(:operatingsystem) == 'windows'
+    arp_table = Facter::Util::Resolution.exec('arp -a')
+    if not arp_table.nil?
+      arp_table.each_line("\r\n") do |line|
+        is_amazon_arp = true if line.include?('fe-ff-ff-ff-ff-ff')
+        break
+      end
+    end
+  else
+    arp_table = Facter::Util::Resolution.exec('arp -an')
+    if not arp_table.nil?
+      arp_table.each_line do |line|
+        is_amazon_arp = true if line.include?('fe:ff:ff:ff:ff:ff')
+        break
+      end
     end
   end
   is_amazon_arp
