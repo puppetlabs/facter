@@ -40,6 +40,11 @@ def userdata()
   end
 end
 
+# Is the macaddress an openstack macaddress?
+def has_openstack_mac?
+  !!(Facter.value(:macaddress) =~ %r{^02:16:3E})
+end
+
 # Is the macaddress a eucalyptus macaddress?
 def has_euca_mac?
   !!(Facter.value(:macaddress) =~ %r{^[dD]0:0[dD]:})
@@ -59,7 +64,7 @@ def has_ec2_arp?
   is_amazon_arp
 end
 
-if (has_euca_mac? || has_ec2_arp?) && can_connect?
+if (has_euca_mac? || has_openstack_mac? || has_ec2_arp?) && can_connect?
   metadata
   userdata
 else
