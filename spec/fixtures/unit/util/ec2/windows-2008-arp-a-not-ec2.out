@@ -1,0 +1,6 @@
+
+Interface: 192.168.5.4 --- 0xd
+  Internet Address      Physical Address      Type
+  192.168.5.1           c8-02-14-0c-5d-18     dynamic   
+  192.168.5.255         ff-ff-ff-ff-ff-ff     static    
+  255.255.255.255       ff-ff-ff-ff-ff-ff     static    
