@@ -48,7 +48,8 @@ else
       { 'Serial Number:'   => 'boardserialnumber' }
     ],
     '[Bb][Ii][Oo][Ss] [Ii]nformation' => [
-      { 'Version:' => 'bios_version' },
+      { '[Vv]ersion:' => 'bios_version' },
+      { '[Rr]elease [Dd]ate::' => 'bios_release_date' },
     ],
     '[Ss]ystem [Ii]nformation' => [
       { 'Manufacturer:'    => 'manufacturer' },
