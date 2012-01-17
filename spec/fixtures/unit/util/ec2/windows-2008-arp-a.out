@@ -1,0 +1,10 @@
+
+Interface: 10.32.123.54 --- 0xd
+  Internet Address      Physical Address      Type
+  10.32.120.163         fe-ff-ff-ff-ff-ff     dynamic   
+  10.32.122.1           fe-ff-ff-ff-ff-ff     dynamic   
+  10.32.123.255         ff-ff-ff-ff-ff-ff     static    
+  169.254.169.254       fe-ff-ff-ff-ff-ff     dynamic   
+  224.0.0.22            01-00-5e-00-00-16     static    
+  224.0.0.252           01-00-5e-00-00-fc     static    
+  255.255.255.255       ff-ff-ff-ff-ff-ff     static    
