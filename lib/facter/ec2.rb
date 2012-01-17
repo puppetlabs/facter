@@ -34,8 +34,8 @@ end
 
 def userdata()
   begin
-     value = OpenURI.open_uri("http://169.254.169.254/2008-02-01/user-data/").read.split
-     Facter.add(:ec2_userdata) { setcode { value } }
+    value = open("http://169.254.169.254/2008-02-01/user-data/").read.split
+    Facter.add(:ec2_userdata) { setcode { value } }
   rescue OpenURI::HTTPError
   end
 end

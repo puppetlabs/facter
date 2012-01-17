@@ -13,17 +13,25 @@ describe "Operating System fact" do
 
     Facter.fact(:operatingsystem).value.should == "Nutmeg"
   end
-
-  it "should be Solaris for SunOS" do
-     Facter.fact(:kernel).stubs(:value).returns("SunOS")
-
-     Facter.fact(:operatingsystem).value.should == "Solaris"
-  end
-
   it "should be ESXi for VMkernel" do
      Facter.fact(:kernel).stubs(:value).returns("VMkernel")
 
      Facter.fact(:operatingsystem).value.should == "ESXi"
+  end
+
+  describe "on Solaris variants" do
+    before :each do
+      Facter.fact(:kernel).stubs(:value).returns("SunOS")
+    end
+
+    it "should be Nexenta if /etc/debian_version is present" do
+      FileTest.expects(:exists?).with("/etc/debian_version").returns true
+      Facter.fact(:operatingsystem).value.should == "Nexenta"
+    end
+
+    it "should be Solaris for SunOS if no other variants match" do
+      Facter.fact(:operatingsystem).value.should == "Solaris"
+    end
   end
 
   describe "on Linux" do
@@ -45,6 +53,7 @@ describe "Operating System fact" do
       "Bluewhite64" => "/etc/bluewhite64-version",
       "Slamd64"     => "/etc/slamd64-version",
       "Slackware"   => "/etc/slackware-version",
+      "Amazon"      => "/etc/system-release",
     }.each_pair do |distribution, releasefile|
       it "should be #{distribution} if #{releasefile} exists" do
         FileTest.expects(:exists?).with(releasefile).returns true
@@ -64,10 +73,6 @@ describe "Operating System fact" do
         Facter.fact(:operatingsystem).value.should == "Ubuntu"
       end
 
-      it "on Amazon Linux should use the lsbdistdescription fact" do
-        Facter.fact(:lsbdistdescription).stubs(:value).returns "Amazon Linux"
-        Facter.fact(:operatingsystem).value.should == "Amazon"
-      end
     end
 
 
