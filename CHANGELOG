@@ -1,6 +1,37 @@
+1.6.5rc1
+===
+1df5b46 (#11566) Add windows support for ec2 facts
+d1a33e5 (#11848) Don't hard code ruby install paths in Windows batch files
+14cad7e Build a Rake task for building Apple Packages
+5a60ca6 (#11559) Switch to RbConfig & Provide alias for RbConfig for pre-1.8.5
+88c9429 (#10271) Identifying 'Amazon' using '/etc/system-release'
+2de7b84 (#11661) EC2 rspec tests were using throw not raise to simulate a timeout
+b51ccf0 (#11583) Add basic coverage to the ec2 fact
+82692ba (#9599) Generalize zone detection
+e6cebd3 (#9599) Add nexenta facts
+9401b78 (#11583) Switch request method to open-uri monkey patch 'open'
+3ccac87 (#9708) Amend requires in specs to use simple requires
+b0b5282 (#9708) Confine facts by kernel not operating system and remove confine for hardwareisa
+c473e3f (#10309) Remove the with_verbose_disabled method
+a99d87c (#10309) Rename tmpfile to tmpfilename to make function clear
+d50fc48 (#10309) Move all fixture data in spec/unit/data to spec/fixtures
+d6e8523 (#10309) Integrate new PuppetlabsSpec helpers into our existing facter spec code and general spec cleanup
+c1604c7 (#10309) Add puppetlabs_spec helper library based on Puppets own puppet_spec helpers
+d141e7e (maint) Fix requirement for FileUtils as operatingsystem_spec needs it now
+9c224d3 (#11436) Unify memorysize and memorytotal facts
+5c6322a (maint) Joined conditional statements for domain
+a1dba38 (#11196) Scan all arp entries for an ec2 mac
+5cd30eb (#8279) Join ec2 fact output with commas
+4633996 (#9789) Extend coverage of operatingsystem specs
+6d21f90 Move Linux specific virtual tests to correct block.
+cb4e294 (#7753) Added error checking when adding resolves
+6201820 (maint) remove redundant arch detection
+4f9da1c (#11328) Fix uptime detection on OpenBSD
+3f99f16 (#11328) Add virtualisation detection for OpenBSD
+
 1.6.4
 ===
-6406c8f (##11041) Add dmidecode as a requirement for rpm
+6406c8f (#11041) Add dmidecode as a requirement for rpm
 ed81492 (#10444) Add identification of system boards to Facter
 bdbb2da (#10885) Malformed facter.bat when ruby dir contains backreferences
 0bad18b (#10490) Handle case where no macaddress can be found
