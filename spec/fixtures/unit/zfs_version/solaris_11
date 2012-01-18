@@ -1,0 +1,12 @@
+The following filesystem versions are supported:
+
+VER  DESCRIPTION
+---  --------------------------------------------------------
+ 1   Initial ZFS filesystem version
+ 2   Enhanced directory entries
+ 3   Case insensitive and SMB credentials support
+ 4   userquota, groupquota properties
+ 5   System attributes
+
+For more information on a particular version, including supported releases,
+see the ZFS Administration Guide.
