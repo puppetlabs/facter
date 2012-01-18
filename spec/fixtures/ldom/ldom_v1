@@ -1,0 +1,6 @@
+VERSION 1.0
+DOMAINROLE|impl=LDoms|control=false|io=true|service=true|root=true
+DOMAINNAME|name=primary
+DOMAINUUID|uuid=8e0d6ec5-cd55-e57f-ae9f-b4cc050999a4
+DOMAINCONTROL|name=san-t2k-6
+DOMAINCHASSIS|serialno=0704RB0280
