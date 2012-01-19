@@ -10,6 +10,8 @@
 #
 # lsbmajdistrelease.rb
 #
+## lsbmajdistrelease.rb
+#
 
 require 'facter'
 

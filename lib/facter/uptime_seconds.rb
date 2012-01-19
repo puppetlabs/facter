@@ -10,6 +10,8 @@
 #   On Windows, the module calculates the uptime by the "LastBootupTime" Windows
 #   management value.
 #
+## uptime_seconds.rb
+#
 
 require 'facter/util/uptime'
 

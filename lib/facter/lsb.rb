@@ -1,4 +1,5 @@
-# Fact: lsb
+# Fact: lsb 
+#   (Facts related to Linux Standard Base (LSB))
 #
 # Purpose: 
 #   Return Linux Standard Base information for the host.
@@ -13,7 +14,7 @@
 #   Also is as only as accurate as that program outputs.
 #
 ## lsb.rb
-## Facts related to Linux Standard Base (LSB)
+#
 
 {  "LSBRelease"         => %r{^LSB Version:\t(.*)$},
    "LSBDistId"          => %r{^Distributor ID:\t(.*)$},

@@ -12,6 +12,8 @@
 #   This fact is completely reliant on the operatingsystem fact, and no
 #   heuristics are used
 #
+## osfamily.rb
+#
 
 Facter.add(:osfamily) do
 

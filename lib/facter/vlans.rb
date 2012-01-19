@@ -6,6 +6,8 @@
 # Resolution: 
 #   On Linux only, checks for and reads /proc/net/vlan/config and parses it.
 #
+## vlans.rb
+#
 
 require 'facter/util/vlans'
 

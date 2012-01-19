@@ -15,6 +15,8 @@
 #
 #   On all remaining systems, returns the 'kernelrelease' value.
 #
+## operatingsystemrelease.rb
+#
 
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{CentOS Fedora oel ovs OracleLinux RedHat MeeGo Scientific SLC Ascendos CloudLinux PSBM}

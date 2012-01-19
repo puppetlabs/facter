@@ -14,10 +14,12 @@
 #  after the ipaddress fact for the sake of similar functionality
 #  and familiar mechanics.
 #
+#  Used the ipaddress fact that is already part of facter as a template.
+#
 # Cody Herriges <c.a.herriges@gmail.com>
 #
-# Used the ipaddress fact that is already part of
-# Facter as a template.
+## ipaddress6.rb
+#
 
 def get_address_after_token(output, token, return_first=false)
   ip = nil

@@ -6,6 +6,8 @@
 # Resolution: 
 #   Returns RUBY_VERSION.
 #
+## rubyversion.rb
+#
 
 Facter.add(:rubyversion) do
   setcode { RUBY_VERSION.to_s }

@@ -7,6 +7,8 @@
 #   Attempts to use sysfs to get the physical IDs of the processors. Falls
 #   back to /proc/cpuinfo and "physical id" if sysfs is not available.
 #
+## physicalprocessorcount.rb
+#
 
 Facter.add('physicalprocessorcount') do
   confine :kernel => :linux

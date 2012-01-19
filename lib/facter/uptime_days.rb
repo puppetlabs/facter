@@ -6,6 +6,8 @@
 # Resolution: 
 #   Divides uptime_hours fact by 24.
 #
+## uptime_days.rb
+#
 
 Facter.add(:uptime_days) do
   setcode do

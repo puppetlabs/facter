@@ -19,6 +19,9 @@
 # We could add quite a bit more, but I didn't want to overload facter
 # at this point in time.
 # In particular, Installed Software might be an interesting addition.
+#
+## macos.rb
+#
 
 require 'facter/util/macosx'
 

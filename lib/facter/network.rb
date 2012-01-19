@@ -6,6 +6,8 @@
 # Resolution:
 #    Uses 'facter/util/ip' to enumerate interfaces and return their information.
 #
+## network.rb
+#
 
 require 'facter/util/ip'
 

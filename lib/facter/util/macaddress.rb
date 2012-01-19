@@ -1,12 +1,3 @@
-# Module: Macaddress
-#
-# Purpose: A module to gather macaddress facts.
-#
-# Resolution: Relates to fact macaddress for Darwin and Windows.
-# Darwin uses 'ifconfig' or 'netstat' to resolve the macaddress fact.
-#
-# Caveats:
-#
 module Facter::Util::Macaddress
 
   def self.standardize(macaddress)

@@ -6,6 +6,8 @@
 # Resolution:
 #   Takes the first 2 elements of the kernel version as delimited by periods.
 #
+## kernelmajversion.rb
+#
 
 Facter.add("kernelmajversion") do
   setcode do

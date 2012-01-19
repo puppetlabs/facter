@@ -8,6 +8,8 @@
 #   Otherwise returns the 'kernerlversion' fact up to the first '-'. This may be
 #   the entire 'kernelversion' fact in many cases.
 #
+## kernelversion.rb
+#
 
 Facter.add("kernelversion") do
   setcode do

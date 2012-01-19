@@ -8,6 +8,8 @@
 #   On AIX uses the parsed "modelname" output of "lsattr -El sys0 -a modelname".
 #   On Windows uses the 'host_cpu' pulled out of Ruby's config.
 #
+## hardwaremodel.rb
+#
 
 Facter.add(:hardwaremodel) do
   setcode 'uname -m'

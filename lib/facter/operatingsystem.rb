@@ -9,6 +9,8 @@
 #   On SunOS based kernels, return Solaris.
 #   On systems other than Linux, use the kernel value.
 #
+## operatingsystem.rb
+#
 
 require 'facter/lsb'
 

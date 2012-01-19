@@ -8,7 +8,7 @@
 #   Gentoo and Debian call "x86_86" "amd64".
 #   Gentoo also calls "i386" "x86".
 #
-# Caveats:
+## architecture.rb
 #
 
 Facter.add(:architecture) do

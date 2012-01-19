@@ -10,6 +10,8 @@
 #   Darwin and Windows use functions in util/macaddress.rb, Darwin uses 'ifconfig' or 'netstat'.  
 #   AIX uses 'ifconfig -a' or 'entstat'
 #
+## macaddress.rb
+#
 
 require 'facter/util/macaddress'
 

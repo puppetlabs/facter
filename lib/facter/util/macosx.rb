@@ -1,14 +1,3 @@
-# Module: macosx.rb
-#
-# Purpose:  Collect Macosx facts
-#
-# Resolution: Supports methods for Apple OSX facts
-#
-# Caveats:
-#
-# Copyright (C) 2007 Jeff McCune
-# Author: Jeff McCune <jeff.mccune@northstarlabs.net>
-#
 module Facter::Util::Macosx
   require 'thread'
   require 'facter/util/plist'

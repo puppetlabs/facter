@@ -9,6 +9,8 @@
 #   On Solaris, parses the output of the "id" command to grab the username, as
 #   Solaris doesn't have the whoami command.
 #
+## id.rb
+#
 
 Facter.add(:id) do
   setcode "whoami"

@@ -1,11 +1,11 @@
 # Fact: interfaces
 #
 # Purpose: 
-#    Gives set of interfaces available on the machine and information regarding them. 
+#    Get information regarding all primary available interfaces available on the machine 
 #
 # Resolution: 
-#    Gets the additional facts about the machine's network interfaces like 
-#    ipaddress, ipaddress6, macaddress and netmask.
+#    Generates facts regarding the information about all the network interfaces available 
+#    on the machine (e.g. ipaddress, ipaddress6, macaddress and netmask)
 #
 # Caveats:  
 #    Note that most of this only works on a fixed list of platforms; 
@@ -13,6 +13,8 @@
 #
 # Original concept Copyright (C) 2007 psychedelys <psychedelys@gmail.com>
 # Update and *BSD support (C) 2007 James Turnbull <james@lovedthanlost.net>
+#
+## intertaces.rb
 #
 
 require 'facter/util/ip'

@@ -13,6 +13,8 @@
 #   which may affect support for the Puppet Augeas provider.
 #   Versions prior to 0.3.6 cannot be interrogated for their version.
 #
+## augeasversion.rb
+#
 
 Facter.add(:augeasversion) do
   setcode do

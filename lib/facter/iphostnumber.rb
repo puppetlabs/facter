@@ -7,6 +7,8 @@
 #   Uses either the scutil program to get the localhost name, or parses output
 #   of ifconfig for a MAC address.
 #
+## iphostnumber
+#
 
 Facter.add(:iphostnumber) do
   confine :kernel => :darwin, :kernelrelease => "R6"

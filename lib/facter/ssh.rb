@@ -1,10 +1,20 @@
 # Fact: ssh
 #
 # Purpose: 
-#   Show the DSA and RSA public keys.
+#   Create facts for the public RSA, DSA, ECDSA host keys for ssh
 #
 # Resolution: 
-#   Gets the public keys from the system.
+#   The code looks in 4 directories for the files ssh_host_dsa_key.pub 
+#   and two more, and if those files exists, it creates facter facts called SSHDSAKey,  
+#   SSHRSAKey, SSHECDSAKey - then opens and reads the file (e.g. ssh_host_dsa_key.pub 
+#   by f=File.open(filepath) ), gets rid of blank spaces and then stores the string in 
+#   an array. The first entry in the array is set to a specific facts value.  
+#
+#   It gets set to nil if you have trouble opening file, or reading/parsing the line 
+#   or if thefiles dont exist, the code sets those facts to nil (i.e. it still 
+#   creates the facts)
+#
+## ssh.rb
 #
 
 ["/etc/ssh","/usr/local/etc/ssh","/etc","/usr/local/etc"].each do |dir|

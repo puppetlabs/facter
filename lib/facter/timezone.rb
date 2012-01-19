@@ -6,6 +6,8 @@
 # Resolution: 
 #   Uses's Ruby's Time module's Time.new call.
 #
+## timezone.rb
+#
 
 Facter.add("timezone") do
   setcode do

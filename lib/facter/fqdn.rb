@@ -10,6 +10,8 @@
 #    No attempt is made to check that the two facts are accurate or that the two
 #    facts go together. At no point is there any DNS resolution made either.
 #
+## fqdn.rb
+#
 
 Facter.add(:fqdn) do
   setcode do

@@ -12,6 +12,8 @@
 # manufacturer.rb
 # Facts related to hardware manufacturer
 #
+## manufacturer.rb
+#
 
 require 'facter/util/manufacturer'
 

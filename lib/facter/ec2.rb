@@ -18,7 +18,6 @@
 #    More details at:
 #    "http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html" 
 # 
-#
 require 'facter/util/ec2'
 require 'open-uri'
 

@@ -7,6 +7,8 @@
 #   Works out the version to major/minor (1.8, 1.9, etc), 
 #   then joins that with all the $: library paths.
 #
+## rubysitedir.rb
+#
 
 Facter.add :rubysitedir do
   setcode do
