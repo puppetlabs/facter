@@ -49,6 +49,45 @@ describe Facter::Util::Resolution do
     res.limit.should == "testing"
   end
 
+
+  describe "when overriding environment variables" do
+    it "should execute the caller's block with the specified env vars" do
+      test_env = { "LANG" => "C", "FOO" => "BAR" }
+      Facter::Util::Resolution.with_env test_env do
+        test_env.keys.each do |key|
+          ENV[key].should == test_env[key]
+        end
+      end
+    end
+
+    it "should restore pre-existing environment variables to their previous values" do
+      orig_env = {}
+      new_env = {}
+      # an arbitrary sentinel value to use to temporarily set the environment vars to
+      sentinel_value = "Abracadabra"
+
+      # grab some values from the existing ENV (arbitrarily choosing 3 here)
+      ENV.first(3).each do |key, val|
+        # save the original values so that we can test against them later
+        orig_env[key] = val
+        # create bogus temp values for the chosen keys
+        new_env[key] = sentinel_value
+      end
+
+      # verify that, during the 'with_env', the new values are used
+      Facter::Util::Resolution.with_env new_env do
+        orig_env.keys.each do |key|
+          ENV[key].should == new_env[key]
+        end
+      end
+
+      # verify that, after the 'with_env', the old values are restored
+      orig_env.keys.each do |key|
+        ENV[key].should == orig_env[key]
+      end
+    end
+  end
+
   describe "when setting the code" do
     before do
       Facter.stubs(:warnonce)
@@ -304,6 +343,16 @@ describe Facter::Util::Resolution do
 
     it "should execute the binary" do
       Facter::Util::Resolution.exec("echo foo").should == "foo"
+    end
+
+    it "should override the LANG environment variable" do
+      Facter::Util::Resolution.exec("echo $LANG").should == "C"
+    end
+
+    it "should respect other overridden environment variables" do
+      Facter::Util::Resolution.with_env( {"FOO" => "foo"} ) do
+        Facter::Util::Resolution.exec("echo $FOO").should == "foo"
+      end
     end
   end
 end
