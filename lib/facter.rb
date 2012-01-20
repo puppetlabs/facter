@@ -39,10 +39,6 @@ module Facter
   # puts Facter['operatingsystem']
   #
 
-  # Set LANG to force i18n to C
-  #
-  ENV['LANG'] = 'C'
-
   GREEN = "[0;32m"
   RESET = "[0m"
   @@debug = 0
