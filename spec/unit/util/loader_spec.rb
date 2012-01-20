@@ -21,24 +21,6 @@ describe Facter::Util::Loader do
     Facter::Util::Loader.any_instance.unstub(:load_all)
   end
 
-  def with_env(values)
-    old = {}
-    values.each do |var, value|
-      if old_val = ENV[var]
-        old[var] = old_val
-      end
-      ENV[var] = value
-    end
-    yield
-    values.each do |var, value|
-      if old.include?(var)
-        ENV[var] = old[var]
-      else
-        ENV.delete(var)
-      end
-    end
-  end
-
   it "should have a method for loading individual facts by name" do
     Facter::Util::Loader.new.should respond_to(:load)
   end
@@ -76,7 +58,7 @@ describe Facter::Util::Loader do
 
     describe "and the FACTERLIB environment variable is set" do
       it "should include all paths in FACTERLIB" do
-        with_env "FACTERLIB" => "/one/path:/two/path" do
+        Facter::Util::Resolution.with_env "FACTERLIB" => "/one/path:/two/path" do
           paths = @loader.search_path
           %w{/one/path /two/path}.each do |dir|
             paths.should be_include(dir)
@@ -95,7 +77,7 @@ describe Facter::Util::Loader do
     it "should load values from the matching environment variable if one is present" do
       Facter.expects(:add).with("testing")
 
-      with_env "facter_testing" => "yayness" do
+      Facter::Util::Resolution.with_env "facter_testing" => "yayness" do
         @loader.load(:testing)
       end
     end
@@ -267,7 +249,7 @@ describe Facter::Util::Loader do
       Facter.expects(:add).with('one')
       Facter.expects(:add).with('two')
 
-      with_env "facter_one" => "yayness", "facter_two" => "boo" do
+      Facter::Util::Resolution.with_env "facter_one" => "yayness", "facter_two" => "boo" do
         @loader.load_all
       end
     end
@@ -281,7 +263,7 @@ describe Facter::Util::Loader do
 
   it "should load facts on the facter search path only once" do
     facterlibdir = File.expand_path(File.dirname(__FILE__) + '../../../fixtures/unit/util/loader')
-    with_env 'FACTERLIB' => facterlibdir do
+    Facter::Util::Resolution.with_env 'FACTERLIB' => facterlibdir do
       Facter::Util::Loader.new.load_all
       Facter.value(:nosuchfact).should be_nil
     end

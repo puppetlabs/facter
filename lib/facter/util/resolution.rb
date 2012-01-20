@@ -26,6 +26,36 @@ class Facter::Util::Resolution
     @have_which
   end
 
+  #
+  # Call this method with a block of code for which you would like to temporarily modify
+  # one or more environment variables; the specified values will be set for the duration
+  # of your block, after which the original values (if any) will be restored.
+  #
+  # [values] a Hash containing the key/value pairs of any environment variables that you
+  # would like to temporarily override
+  def self.with_env(values)
+    old = {}
+    values.each do |var, value|
+      # save the old value if it exists
+      if old_val = ENV[var]
+        old[var] = old_val
+      end
+      # set the new (temporary) value for the environment variable
+      ENV[var] = value
+    end
+    # execute the caller's block
+    yield
+    # restore the old values
+    values.each do |var, value|
+      if old.include?(var)
+        ENV[var] = old[var]
+      else
+        # if there was no old value, delete the key from the current environment variables hash
+        ENV.delete(var)
+      end
+    end
+  end
+
   # Execute a program and return the output of that program.
   #
   # Returns nil if the program can't be found, or if there is a problem
