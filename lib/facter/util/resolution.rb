@@ -26,6 +26,36 @@ class Facter::Util::Resolution
     @have_which
   end
 
+  #
+  # Call this method with a block of code for which you would like to temporarily modify
+  # one or more environment variables; the specified values will be set for the duration
+  # of your block, after which the original values (if any) will be restored.
+  #
+  # [values] a Hash containing the key/value pairs of any environment variables that you
+  # would like to temporarily override
+  def self.with_env(values)
+    old = {}
+    values.each do |var, value|
+      # save the old value if it exists
+      if old_val = ENV[var]
+        old[var] = old_val
+      end
+      # set the new (temporary) value for the environment variable
+      ENV[var] = value
+    end
+    # execute the caller's block
+    yield
+    # restore the old values
+    values.each do |var, value|
+      if old.include?(var)
+        ENV[var] = old[var]
+      else
+        # if there was no old value, delete the key from the current environment variables hash
+        ENV.delete(var)
+      end
+    end
+  end
+
   # Execute a program and return the output of that program.
   #
   # Returns nil if the program can't be found, or if there is a problem
@@ -34,47 +64,55 @@ class Facter::Util::Resolution
   def self.exec(code, interpreter = nil)
     Facter.warnonce "The interpreter parameter to 'exec' is deprecated and will be removed in a future version." if interpreter
 
-    # Try to guess whether the specified code can be executed by looking at the
-    # first word. If it cannot be found on the PATH defer on resolving the fact
-    # by returning nil.
-    # This only fails on shell built-ins, most of which are masked by stuff in
-    # /bin or of dubious value anyways. In the worst case, "sh -c 'builtin'" can
-    # be used to work around this limitation
-    #
-    # Windows' %x{} throws Errno::ENOENT when the command is not found, so we
-    # can skip the check there. This is good, since builtins cannot be found
-    # elsewhere.
-    if have_which and !Facter::Util::Config.is_windows?
-      path = nil
-      binary = code.split.first
-      if code =~ /^\//
-        path = binary
-      else
-        path = %x{which #{binary} 2>/dev/null}.chomp
-        # we don't have the binary necessary
-        return nil if path == "" or path.match(/Command not found\./)
+
+    ## Set LANG to force i18n to C for the duration of this exec; this ensures that any code that parses the
+    ## output of the command can expect it to be in a consistent / predictable format / locale
+    with_env "LANG" => "C" do
+
+      # Try to guess whether the specified code can be executed by looking at the
+      # first word. If it cannot be found on the PATH defer on resolving the fact
+      # by returning nil.
+      # This only fails on shell built-ins, most of which are masked by stuff in
+      # /bin or of dubious value anyways. In the worst case, "sh -c 'builtin'" can
+      # be used to work around this limitation
+      #
+      # Windows' %x{} throws Errno::ENOENT when the command is not found, so we
+      # can skip the check there. This is good, since builtins cannot be found
+      # elsewhere.
+      if have_which and !Facter::Util::Config.is_windows?
+        path = nil
+        binary = code.split.first
+        if code =~ /^\//
+          path = binary
+        else
+          path = %x{which #{binary} 2>/dev/null}.chomp
+          # we don't have the binary necessary
+          return nil if path == "" or path.match(/Command not found\./)
+        end
+
+        return nil unless FileTest.exists?(path)
       end
 
-      return nil unless FileTest.exists?(path)
+      out = nil
+
+      begin
+        out = %x{#{code}}.chomp
+      rescue Errno::ENOENT => detail
+        # command not found on Windows
+        return nil
+      rescue => detail
+        $stderr.puts detail
+        return nil
+      end
+
+      if out == ""
+        return nil
+      else
+        return out
+      end
+
     end
 
-    out = nil
-
-    begin
-      out = %x{#{code}}.chomp
-    rescue Errno::ENOENT => detail
-      # command not found on Windows
-      return nil
-    rescue => detail
-      $stderr.puts detail
-      return nil
-    end
-
-    if out == ""
-      return nil
-    else
-      return out
-    end
   end
 
   # Add a new confine to the resolution mechanism.
