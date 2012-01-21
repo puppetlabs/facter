@@ -342,16 +342,22 @@ describe Facter::Util::Resolution do
     end
 
     it "should execute the binary" do
-      Facter::Util::Resolution.exec("echo foo").should == "foo"
+      Facter::Util::Resolution.exec(
+        Facter::Util::Config.is_windows? ? 'cmd.exe /c "echo foo"' : 'echo foo'
+      ).should == "foo"
     end
 
     it "should override the LANG environment variable" do
-      Facter::Util::Resolution.exec("echo $LANG").should == "C"
+      Facter::Util::Resolution.exec(
+        Facter::Util::Config.is_windows? ? 'cmd.exe /c "echo %LANG%"' : 'echo $LANG'
+      ).should == "C"
     end
 
     it "should respect other overridden environment variables" do
       Facter::Util::Resolution.with_env( {"FOO" => "foo"} ) do
-        Facter::Util::Resolution.exec("echo $FOO").should == "foo"
+        Facter::Util::Resolution.exec(
+          Facter::Util::Config.is_windows? ? 'cmd.exe /c "echo %FOO%"' : 'echo $FOO'
+        ).should == "foo"
       end
     end
   end
