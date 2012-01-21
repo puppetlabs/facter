@@ -67,9 +67,9 @@ describe Facter::Util::Resolution do
       sentinel_value = "Abracadabra"
 
       # grab some values from the existing ENV (arbitrarily choosing 3 here)
-      ENV.first(3).each do |key, val|
+      ENV.keys.first(3).each do |key|
         # save the original values so that we can test against them later
-        orig_env[key] = val
+        orig_env[key] = ENV[key]
         # create bogus temp values for the chosen keys
         new_env[key] = sentinel_value
       end
