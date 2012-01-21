@@ -59,9 +59,18 @@ def has_ec2_arp?
   is_amazon_arp
 end
 
+if has_ec2_arp?
+  Facter.add(:is_ec2) { setcode { "true" } }
+elsif has_euca_mac?
+  Facter.add(:is_euca) { setcode { "true" } }
+else
+  Facter.add(:is_ec2) { setcode { "false" } }
+  Facter.add(:is_euca) { setcode { "false" } }
+end
+
 if (has_euca_mac? || has_ec2_arp?) && can_connect?
   metadata
   userdata
 else
-  Facter.debug "Not an EC2 host"
+  Facter.debug "Not an EC2 or Eucalyptus host"
 end
