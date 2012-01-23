@@ -24,8 +24,8 @@ def userdata()
   end
 end
 
-if (Facter::Util::EC2.has_euca_mac? || Facter::Util::EC2.has_ec2_arp?) &&
-  Facter::Util::EC2.can_connect?
+if (Facter::Util::EC2.has_euca_mac? || Facter::Util::EC2.has_openstack_mac? || 
+    Facter::Util::EC2.has_ec2_arp?) && Facter::Util::EC2.can_connect?
 
   metadata
   userdata
