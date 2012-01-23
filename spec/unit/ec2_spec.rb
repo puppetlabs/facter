@@ -12,6 +12,7 @@ describe "ec2 facts" do
     before :each do
       # This is an ec2 instance, not a eucalyptus instance
       Facter::Util::EC2.expects(:has_euca_mac?).at_least_once.returns(false)
+      Facter::Util::EC2.expects(:has_openstack_mac?).at_least_once.returns(false)
       Facter::Util::EC2.expects(:has_ec2_arp?).at_least_once.returns(true)
 
       # Assume we can connect
@@ -95,6 +96,35 @@ describe "ec2 facts" do
     before :each do
       # Return false for ec2, true for eucalyptus
       Facter::Util::EC2.expects(:has_euca_mac?).at_least_once.returns(true)
+      Facter::Util::EC2.expects(:has_openstack_mac?).at_least_once.returns(false)
+      Facter::Util::EC2.expects(:has_ec2_arp?).never
+
+      # Assume we can connect
+      Facter::Util::EC2.expects(:can_connect?).at_least_once.returns(true)
+    end
+
+    it "should create ec2_user_data fact" do
+      # No meta-data
+      Object.any_instance.expects(:open).\
+        with("#{api_prefix}/2008-02-01/meta-data/").\
+        at_least_once.returns(StringIO.new(""))
+
+      Object.any_instance.expects(:open).\
+        with("#{api_prefix}/2008-02-01/user-data/").\
+        at_least_once.returns(StringIO.new("test"))
+
+      # Force a fact load
+      Facter.collection.loader.load(:ec2)
+
+      Facter.fact(:ec2_userdata).value.should == ["test"]
+    end
+  end
+
+  describe "when running on openstack" do
+    before :each do
+      # Return false for ec2, true for eucalyptus
+      Facter::Util::EC2.expects(:has_openstack_mac?).at_least_once.returns(true)
+      Facter::Util::EC2.expects(:has_euca_mac?).at_least_once.returns(false)
       Facter::Util::EC2.expects(:has_ec2_arp?).never
 
       # Assume we can connect
