@@ -22,6 +22,7 @@ BuildArch: noarch
 Requires: ruby >= 1.8.1
 Requires: which
 Requires: dmidecode
+Requires: pciutils
 %if %has_ruby_abi
 Requires: ruby(abi) = 1.8
 %endif
