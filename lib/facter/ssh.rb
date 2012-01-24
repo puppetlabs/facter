@@ -10,9 +10,8 @@
 #   by f=File.open(filepath) ), gets rid of blank spaces and then stores the string in 
 #   an array. The first entry in the array is set to a specific facts value.  
 #
-#   It gets set to nil if you have trouble opening file, or reading/parsing the line 
-#   or if thefiles dont exist, the code sets those facts to nil (i.e. it still 
-#   creates the facts)
+#   If trouble in opening file, or reading/parsing the line or if the files don't exist, 
+#   the code sets those facts to nil (the facts are still created with nil value)
 #
 ## ssh.rb
 #

@@ -4,7 +4,7 @@
 #   Generate the mac address.
 #
 # Resolution: 
-#   Solaris it uses 'netstat -np' to generate the fact.
+#   Solaris uses 'netstat -np' to generate the fact.
 #   SunOS, Linux, GNU/kFreeBSD use 'ifconfig -a'. 
 #   FreeBSD, OpenBSD, DragonFly use 'ifconfig'.
 #   Darwin and Windows use functions in util/macaddress.rb, Darwin uses 'ifconfig' or 'netstat'.  
