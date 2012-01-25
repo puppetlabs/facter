@@ -1,17 +1,19 @@
-%{!?ruby_sitelibdir: %define ruby_sitelibdir %(ruby -rrbconfig -e 'puts Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG["sitelibdir"]'
+%{!?ruby_sitelibdir: %define ruby_sitelibdir %(ruby -rrbconfig -e 'puts Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG["sitelibdir"]')}
 
 %define has_ruby_abi 0%{?fedora} || 0%{?rhel} >= 5
 %define has_ruby_noarch %has_ruby_abi
-%global _ver 1.6.4
+%global _ver 1.6.5
 
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
-Version: 1.6.4
-Release: 0.1rc1%{?dist}
+Version: 1.6.5
+Release: 1%{?dist}
+#Release: 0.1rc1%{?dist}
 License: Apache 2.0
 Group: System Environment/Base
-URL: http://www.puppetlabs.com/puppet/related-projects/%{name}/
-Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz
+URL: http://www.puppetlabs.com/puppet/related-projects/%{name}
+#Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz
+Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz
 #Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz.asc
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -34,7 +36,8 @@ system. Some of the facts are preconfigured, such as the hostname and the
 operating system. Additional facts can be added through simple Ruby scripts
 
 %prep
-%setup -q  -n %{name}-%{version}rc1
+%setup -q  -n %{name}-%{version}
+#%setup -q  -n %{name}-%{version}rc1
 
 %build
 
@@ -55,6 +58,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Jan 25 2012 Matthaus Litteken <matthaus@puppetlabs.com> - 1.6.5-1
+- Update to 1.6.5
+
 * Wed Nov 30 2011 Matthaus Litteken <matthaus@puppetlabs.com> - 1.6.4-0.1rc1
 - 1.6.4 rc1
 
