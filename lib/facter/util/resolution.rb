@@ -91,12 +91,12 @@ class Facter::Util::Resolution
           # we don't have the binary necessary
           # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
           # without performing the necessary cleanup of environment variables
-          next nil if path == "" or path.match(/Command not found\./)
+          next if path == "" or path.match(/Command not found\./)
         end
 
         # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
         # without performing the necessary cleanup of environment variables
-        next nil unless FileTest.exists?(path)
+        next unless FileTest.exists?(path)
       end
 
       out = nil
@@ -107,18 +107,18 @@ class Facter::Util::Resolution
         # command not found on Windows
         # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
         # without performing the necessary cleanup of environment variables
-        next nil
+        next
       rescue => detail
         $stderr.puts detail
         # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
         # without performing the necessary cleanup of environment variables
-        next nil
+        next
       end
 
       # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
       # without performing the necessary cleanup of environment variables
       if out == ""
-        next nil
+        next
       else
         next out
       end
