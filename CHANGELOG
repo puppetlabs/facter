@@ -1,5 +1,6 @@
-1.6.5rc1
+1.6.5
 ===
+71d3d3d (#12077) Add pciutils RPM dependency
 1df5b46 (#11566) Add windows support for ec2 facts
 d1a33e5 (#11848) Don't hard code ruby install paths in Windows batch files
 14cad7e Build a Rake task for building Apple Packages
