@@ -23,8 +23,8 @@ SED           = '/usr/bin/sed'
 # Setup task to populate all the variables
 task :setup do
   @version               = `git describe`.chomp
-  @title                 = "puppet-#{@version}"
-  @reverse_domain        = 'com.puppetlabs.puppet'
+  @title                 = "facter-#{@version}"
+  @reverse_domain        = 'com.puppetlabs.facter'
   @package_major_version = @version.split('.')[0]
   @package_minor_version = @version.split('.')[1] +
                            @version.split('.')[2].split('-')[0].split('rc')[0]
