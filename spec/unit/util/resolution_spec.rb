@@ -336,28 +336,51 @@ describe Facter::Util::Resolution do
 
   # It's not possible, AFAICT, to mock %x{}, so I can't really test this bit.
   describe "when executing code" do
+    # set up some command strings, making sure we get the right version for both unix and windows
+    echo_command = Facter::Util::Config.is_windows? ? 'cmd.exe /c "echo foo"' : 'echo foo'
+    echo_env_var_command = Facter::Util::Config.is_windows? ? 'cmd.exe /c "echo %%%s%%"' : 'echo $%s'
+
     it "should deprecate the interpreter parameter" do
       Facter.expects(:warnonce).with("The interpreter parameter to 'exec' is deprecated and will be removed in a future version.")
       Facter::Util::Resolution.exec("/something", "/bin/perl")
     end
 
+    # execute a simple echo command
     it "should execute the binary" do
-      Facter::Util::Resolution.exec(
-        Facter::Util::Config.is_windows? ? 'cmd.exe /c "echo foo"' : 'echo foo'
-      ).should == "foo"
+      Facter::Util::Resolution.exec(echo_command).should == "foo"
     end
 
     it "should override the LANG environment variable" do
-      Facter::Util::Resolution.exec(
-        Facter::Util::Config.is_windows? ? 'cmd.exe /c "echo %LANG%"' : 'echo $LANG'
-      ).should == "C"
+      Facter::Util::Resolution.exec(echo_env_var_command % 'LANG').should == "C"
     end
 
     it "should respect other overridden environment variables" do
       Facter::Util::Resolution.with_env( {"FOO" => "foo"} ) do
-        Facter::Util::Resolution.exec(
-          Facter::Util::Config.is_windows? ? 'cmd.exe /c "echo %FOO%"' : 'echo $FOO'
-        ).should == "foo"
+        Facter::Util::Resolution.exec(echo_env_var_command % 'FOO').should == "foo"
+      end
+    end
+
+    it "should restore overridden LANG environment variable after execution" do
+      # we're going to call with_env in a nested fashion, to make sure that the environment gets restored properly
+      # at each level
+      Facter::Util::Resolution.with_env( {"LANG" => "foo"} ) do
+        # Resolution.exec always overrides 'LANG' for its own execution scope
+        Facter::Util::Resolution.exec(echo_env_var_command % 'LANG').should == "C"
+        # But after 'exec' completes, we should see our value restored
+        ENV['LANG'].should == "foo"
+        # Now we'll do a nested call to with_env
+        Facter::Util::Resolution.with_env( {"LANG" => "bar"} ) do
+          # During 'exec' it should still be 'C'
+          Facter::Util::Resolution.exec(echo_env_var_command % 'LANG').should == "C"
+          # After exec it should be restored to our current value for this level of the nesting...
+          ENV['LANG'].should == "bar"
+        end
+        # Now we've dropped out of one level of nesting,
+        ENV['LANG'].should == "foo"
+        # Call exec one more time just for kicks
+        Facter::Util::Resolution.exec(echo_env_var_command % 'LANG').should == "C"
+        # One last check at our current nesting level.
+        ENV['LANG'].should == "foo"
       end
     end
   end

@@ -43,8 +43,8 @@ class Facter::Util::Resolution
       # set the new (temporary) value for the environment variable
       ENV[var] = value
     end
-    # execute the caller's block
-    yield
+    # execute the caller's block, capture the return value
+    rv = yield
     # restore the old values
     values.each do |var, value|
       if old.include?(var)
@@ -54,6 +54,8 @@ class Facter::Util::Resolution
         ENV.delete(var)
       end
     end
+    # return the captured return value
+    rv
   end
 
   # Execute a program and return the output of that program.
@@ -87,10 +89,14 @@ class Facter::Util::Resolution
         else
           path = %x{which #{binary} 2>/dev/null}.chomp
           # we don't have the binary necessary
-          return nil if path == "" or path.match(/Command not found\./)
+          # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
+          # without performing the necessary cleanup of environment variables
+          next nil if path == "" or path.match(/Command not found\./)
         end
 
-        return nil unless FileTest.exists?(path)
+        # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
+        # without performing the necessary cleanup of environment variables
+        next nil unless FileTest.exists?(path)
       end
 
       out = nil
@@ -99,16 +105,22 @@ class Facter::Util::Resolution
         out = %x{#{code}}.chomp
       rescue Errno::ENOENT => detail
         # command not found on Windows
-        return nil
+        # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
+        # without performing the necessary cleanup of environment variables
+        next nil
       rescue => detail
         $stderr.puts detail
-        return nil
+        # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
+        # without performing the necessary cleanup of environment variables
+        next nil
       end
 
+      # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
+      # without performing the necessary cleanup of environment variables
       if out == ""
-        return nil
+        next nil
       else
-        return out
+        next out
       end
 
     end
