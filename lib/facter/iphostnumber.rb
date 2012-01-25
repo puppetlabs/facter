@@ -6,10 +6,8 @@
 # Resolution:
 #   Uses either the scutil program to get the localhost name, or parses output
 #   of ifconfig for a MAC address.
+#   Related issue (redundant fact): http://projects.puppetlabs.com/issues/12147
 #
-## iphostnumber
-#
-
 Facter.add(:iphostnumber) do
   confine :kernel => :darwin, :kernelrelease => "R6"
   setcode do

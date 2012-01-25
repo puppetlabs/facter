@@ -1,6 +1,3 @@
-## application.rb
-#
-
 module Facter
   module Application
     def self.run(argv)

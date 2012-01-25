@@ -9,9 +9,6 @@
 #   for the 'Win32_OperatingSystem' value.
 #   Otherwise uses the output of "uname -r" system command.
 #
-## kernelrelease.rb
-#
-
 Facter.add(:kernelrelease) do
   setcode 'uname -r'
 end

@@ -50,7 +50,6 @@
 #
 # Author: Jason Gill <jasongill@gmail.com>
 #
-
 require 'facter'
 
 # Only Linux 2.6+ kernels support sysfs which is required to easily get device details

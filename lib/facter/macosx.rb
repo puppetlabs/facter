@@ -20,9 +20,6 @@
 # at this point in time.
 # In particular, Installed Software might be an interesting addition.
 #
-## macos.rb
-#
-
 require 'facter/util/macosx'
 
 if Facter.value(:kernel) == "Darwin"

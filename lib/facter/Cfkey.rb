@@ -8,9 +8,6 @@
 #   Tries each file of standard localhost.pub & cfkey.pub locations,
 #   checks if they appear to be a public key, and then join them all together.
 #
-## Cfkey.rb 
-#
-
 Facter.add(:Cfkey) do
   setcode do
     value = nil

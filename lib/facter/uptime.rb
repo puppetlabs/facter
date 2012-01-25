@@ -7,9 +7,6 @@
 #   Does basic maths on the "uptime_seconds" fact to return a count of
 #   days, hours and minutes of uptime
 #
-## uptime.rb
-#
-
 require 'facter/util/uptime'
 
 Facter.add(:uptime) do

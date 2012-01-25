@@ -12,9 +12,6 @@
 # 	   Internal fact used to specity the program to detect the arp value only on EC2.
 #	   Warning: Fact might in future be deprcated. Refer to ticket #11307.
 #
-## arp.rb
-#
-
 require 'facter/util/ip'
 
 Facter.add(:arp) do

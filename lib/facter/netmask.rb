@@ -11,9 +11,6 @@
 #
 # idea and originial source by Mark 'phips' Phillips
 #
-## netmask.rb
-#
-
 require 'facter/util/netmask'
 
 Facter.add("netmask") do

@@ -18,9 +18,6 @@
 # Original concept Copyright (C) 2007 psychedelys <psychedelys@gmail.com>
 # Update and *BSD support (C) 2007 James Turnbull <james@lovedthanlost.net>
 #
-## intertaces.rb
-#
-
 require 'facter/util/ip'
 
 Facter.add(:interfaces) do

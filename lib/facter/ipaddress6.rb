@@ -18,9 +18,6 @@
 #
 # Cody Herriges <c.a.herriges@gmail.com>
 #
-## ipaddress6.rb
-#
-
 def get_address_after_token(output, token, return_first=false)
   ip = nil
 

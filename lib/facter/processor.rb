@@ -12,9 +12,6 @@
 # Copyright (C) 2006 Mooter Media Ltd
 # Author: Matthew Palmer <matt@solutionsfirst.com.au>
 #
-## processor.rb
-#
-
 require 'thread'
 require 'facter/util/processor'
 

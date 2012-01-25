@@ -9,12 +9,6 @@
 #   On Windows, queries the system via a util class.
 #   Uses the 'util/manufacturer.rb' for fallback parsing.
 #
-# manufacturer.rb
-# Facts related to hardware manufacturer
-#
-## manufacturer.rb
-#
-
 require 'facter/util/manufacturer'
 
 if Facter.value(:kernel) == "OpenBSD"

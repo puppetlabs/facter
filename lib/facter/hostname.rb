@@ -9,9 +9,6 @@
 #   On Darwin, uses the system configuration util to get the LocalHostName
 #   variable.
 #
-## hostname
-#
-
 Facter.add(:hostname, :ldapname => "cn") do
   setcode do
     hostname = nil

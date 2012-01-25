@@ -22,9 +22,6 @@
 #   The ifconfig parsing purely takes the first IP address it finds without any
 #   checking this is a useful IP address.
 #
-## ipaddress.rb
-#
-
 Facter.add(:ipaddress) do
   confine :kernel => :linux
   setcode do

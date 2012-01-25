@@ -7,9 +7,6 @@
 #   On a Xen Dom0 host, return a list of Xen domains using the 'util/xendomains'
 #   library.
 #
-## xendomains.rb
-#
-
 require 'facter/util/xendomains'
 
 Facter.add("xendomains") do

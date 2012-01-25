@@ -8,9 +8,6 @@
 #   Assumes "ps -ef" for all operating systems other than BSD derivatives, where
 #   it uses "ps auxwww"
 #
-## ps.rb
-#
-
 Facter.add(:ps) do
   setcode do 'ps -ef' end
 end

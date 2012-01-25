@@ -13,9 +13,6 @@
 #   Requires the lsb_release program, which may not be installed by default.
 #   Also is as only as accurate as that program outputs.
 #
-## lsb.rb
-#
-
 {  "LSBRelease"         => %r{^LSB Version:\t(.*)$},
    "LSBDistId"          => %r{^Distributor ID:\t(.*)$},
    "LSBDistRelease"     => %r{^Release:\t(.*)$},

@@ -15,9 +15,6 @@
 #
 # Written by immerda admin team (admin(at)immerda.ch)
 #
-## selinux.rb
-#
-
 sestatus_cmd = '/usr/sbin/sestatus'
 
 # This supports the fact that the selinux mount point is not always in the

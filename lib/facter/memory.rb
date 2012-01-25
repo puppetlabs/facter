@@ -14,16 +14,11 @@
 #
 # Caveats:
 #   Some BSD platforms aren't covered at all. AIX is missing memory values.
-#
-# memory.rb
-# Additional Facts for memory/swap usage
+#   The number is automatically scaled, and postfixed with a unit name.
 #
 # Copyright (C) 2006 Mooter Media Ltd
 # Author: Matthew Palmer <matt@solutionsfirst.com.au>
 #
-## memory.rb
-#
-
 require 'facter/util/memory'
 
 {   :MemorySize => "MemTotal",

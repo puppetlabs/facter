@@ -24,9 +24,6 @@
 # Caveats:
 #   Many checks rely purely on existence of files.
 #
-## virtual.rb
-#
-
 require 'facter/util/virtual'
 
 Facter.add("virtual") do
