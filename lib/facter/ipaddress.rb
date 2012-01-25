@@ -3,8 +3,13 @@
 # Purpose: Return the main IP address for a host.
 #
 # Resolution:
+#   On Linux, it lloks to see if 'ip' is available and if so it does 'ip addr' 
+#   and returns the first non 127.0.0.0/8 subnetted IP it finds. IF 'ip' is not 
+#   available then it does and 'ifconfig' and returns the IP in the same way.
+#
 #   On the Unixes does an ifconfig, and returns the first non 127.0.0.0/8
 #   subnetted IP it finds.
+#
 #   On Windows, it attempts to use the socket library and resolve the machine's
 #   hostname via DNS.
 #
@@ -26,7 +31,12 @@ Facter.add(:ipaddress) do
   confine :kernel => :linux
   setcode do
     ip = nil
-    output = %x{/sbin/ifconfig}
+
+    if FileTest.exists?('/sbin/ip')
+       output = %x{/sbin/ip addr}
+    else
+       output = %x{/sbin/ifconfig}
+    end
 
     output.split(/^\S/).each { |str|
       if str =~ /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
