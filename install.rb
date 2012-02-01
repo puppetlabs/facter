@@ -37,6 +37,7 @@ require 'find'
 require 'fileutils'
 require 'optparse'
 require 'ostruct'
+require 'tempfile'
 
 begin
   require 'rdoc/rdoc'
@@ -217,8 +218,6 @@ def prepare_installation
     opts.parse!
   end
 
-  tmpdirs = [ENV['TMP'], ENV['TEMP'], "/tmp", "/var/tmp", "."]
-
   version = [RbConfig::CONFIG["MAJOR"], RbConfig::CONFIG["MINOR"]].join(".")
   libdir = File.join(RbConfig::CONFIG["libdir"], "ruby", version)
 
@@ -289,9 +288,6 @@ def prepare_installation
     FileUtils.makedirs(sitelibdir)
   end
 
-  tmpdirs << bindir
-
-  InstallOptions.tmp_dirs = tmpdirs.compact
   InstallOptions.site_dir = sitelibdir
   InstallOptions.bin_dir  = bindir
   InstallOptions.sbin_dir = sbindir
@@ -384,20 +380,12 @@ end
 # (e.g., bin/rdoc becomes rdoc); the shebang line handles running it. Under
 # windows, we add an '.rb' extension and let file associations do their stuff.
 def install_binfile(from, op_file, target)
-  tmp_dir = nil
-  InstallOptions.tmp_dirs.each do |t|
-    if File.directory?(t) and File.writable?(t)
-      tmp_dir = t
-      break
-    end
-  end
+  tmp_file = Tempfile.new('facter-binfile')
 
-  fail "Cannot find a temporary directory" unless tmp_dir
-  tmp_file = File.join(tmp_dir, '_tmp')
   ruby = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
 
   File.open(from) do |ip|
-    File.open(tmp_file, "w") do |op|
+    File.open(tmp_file.path, "w") do |op|
       ruby = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
       op.puts "#!#{ruby}"
       contents = ip.readlines
@@ -422,7 +410,7 @@ def install_binfile(from, op_file, target)
     end
 
     if not installed_wrapper
-      tmp_file2 = File.join(tmp_dir, '_tmp_wrapper')
+      tmp_file2 = Tempfile.new('facter-wrapper')
       cwv = <<-EOS
 @echo off
 setlocal
@@ -430,15 +418,15 @@ set RUBY_BIN=%~dp0
 set RUBY_BIN=%RUBY_BIN:\\=/%
 "%RUBY_BIN%ruby.exe" -x "%RUBY_BIN%facter" %*
 EOS
-      File.open(tmp_file2, "w") { |cw| cw.puts cwv }
-      FileUtils.install(tmp_file2, File.join(target, "#{op_file}.bat"), :mode => 0755, :verbose => true)
+      File.open(tmp_file2.path, "w") { |cw| cw.puts cwv }
+      FileUtils.install(tmp_file2.path, File.join(target, "#{op_file}.bat"), :mode => 0755, :verbose => true)
 
-      File.unlink(tmp_file2)
+      tmp_file2.unlink
       installed_wrapper = true
     end
   end
-  FileUtils.install(tmp_file, File.join(target, op_file), :mode => 0755, :verbose => true)
-  File.unlink(tmp_file)
+  FileUtils.install(tmp_file.path, File.join(target, op_file), :mode => 0755, :verbose => true)
+  tmp_file.unlink
 end
 
 check_prereqs
