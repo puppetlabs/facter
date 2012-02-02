@@ -180,4 +180,20 @@ describe Facter::Util::Virtual do
     Facter::Util::Resolution.stubs(:exec).with("/usr/bin/getconf MACHINE_MODEL").returns('ia64 hp server rx660')
     Facter::Util::Virtual.should_not be_hpvm
   end
+
+  it "should be able to detect virtualbox via sysfs on Linux" do
+    # Fake files are always hard to stub. :/
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").
+      returns("VirtualBox")
+
+    Facter::Util::Virtual.should be_virtualbox
+  end
+
+  it "should be able to detect virtualbox via sysfs on Linux improperly" do
+    # Fake files are always hard to stub. :/
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").
+      returns("HP-Oracle-Sun-VMWare-funky-town")
+
+    Facter::Util::Virtual.should_not be_virtualbox
+  end
 end

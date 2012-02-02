@@ -61,6 +61,10 @@ module Facter::Util::Virtual
      (txt =~ /QEMU Virtual CPU/) ? true : false
   end
 
+  def self.virtualbox?
+    File.read("/sys/devices/virtual/dmi/id/product_name") =~ /VirtualBox/ rescue false
+  end
+
   def self.kvm_type
     # TODO Tell the difference between kvm and qemu
     # Can't work out a way to do this at the moment that doesn't
