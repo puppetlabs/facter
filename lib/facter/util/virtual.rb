@@ -62,10 +62,7 @@ module Facter::Util::Virtual
   end
 
   def self.virtualbox?
-    txt = if FileTest.exists?("/sys/devices/virtual/dmi/id/product_name")
-            File.read("/sys/devices/virtual/dmi/id/product_name")
-          end
-    (txt =~ /VirtualBox/) ? true : false
+    File.read("/sys/devices/virtual/dmi/id/product_name") =~ /VirtualBox/ rescue false
   end
 
   def self.kvm_type
