@@ -68,6 +68,22 @@ describe Facter::Util::EC2 do
     end
   end
 
+  describe "is_openstack_mac? method" do
+    it "should return true when the mac is an openstack one" do
+      Facter.expects(:value).with(:macaddress).\
+        at_least_once.returns("02:16:3e:54:89:fd")
+
+      Facter::Util::EC2.has_openstack_mac?.should == true
+    end
+
+    it "should return false when the mac is not a openstack one" do
+      Facter.expects(:value).with(:macaddress).\
+        at_least_once.returns("0c:1d:a0:bc:aa:02")
+
+      Facter::Util::EC2.has_openstack_mac?.should == false
+    end
+  end
+
   describe "can_connect? method" do
     it "returns true if api responds" do
       # Return something upon connecting to the root

@@ -67,7 +67,7 @@ describe "Virtual fact" do
       Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor" => "VMWare" })
       Facter.fact(:virtual).value.should == "vmware"
     end
-  end
+   end
 
   describe "on Linux" do
 
@@ -185,6 +185,17 @@ describe "Virtual fact" do
       Facter::Util::Resolution.stubs(:exec).with('prtdiag').returns("System Configuration: VMware, Inc. VMware Virtual Platform")
       Facter.fact(:virtual).value.should == "vmware"
     end
+
+    it "should be kvm with KVM vendor name from prtdiag" do
+      Facter.fact(:kernel).stubs(:value).returns("SunOS")
+      Facter.fact(:hardwaremodel).stubs(:value).returns(nil)
+      Facter::Util::Resolution.stubs(:exec).with('lspci').returns(nil)
+      Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns(nil)
+      Facter::Util::Resolution.stubs(:exec).with('prtdiag').returns("System Configuration: KVM Virtual Pla\
+tform")
+      Facter.fact(:virtual).value.should == "kvm"
+    end
+
 
     it "should be parallels with Parallels vendor name from prtdiag" do
       Facter.fact(:kernel).stubs(:value).returns("SunOS")
