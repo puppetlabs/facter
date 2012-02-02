@@ -73,9 +73,9 @@ Facter.add("virtual") do
     end
 
     if Facter::Util::Virtual.xen?
-      if FileTest.exists?("/proc/xen/xsd_kva")
+      if FileTest.exists?("/dev/xen/evtchn")
         result = "xen0"
-      elsif FileTest.exists?("/proc/xen/capabilities")
+      elsif FileTest.exists?("/proc/xen")
         result = "xenu"
       end
     end
