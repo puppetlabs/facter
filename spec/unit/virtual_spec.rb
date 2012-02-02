@@ -112,22 +112,22 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "vmware"
     end
 
-    it "should be xen0 with xen dom0 files in /proc" do
+    it "should be xen0 if exists? /dev/xen/evtchn" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
       Facter.fact(:hardwaremodel).stubs(:value).returns("i386")
       Facter::Util::Virtual.expects(:xen?).returns(true)
-      FileTest.expects(:exists?).with("/proc/xen/xsd_kva").returns(true)
+      FileTest.expects(:exists?).with("/dev/xen/evtchn").returns(true)
       Facter.fact(:virtual).value.should == "xen0"
     end
 
-    it "should be xenu with xen domU files in /proc" do
+    it "should be xenu if not xen0 and /proc/xen exists" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
       Facter.fact(:hardwaremodel).stubs(:value).returns("i386")
       Facter::Util::Virtual.expects(:xen?).returns(true)
-      FileTest.expects(:exists?).with("/proc/xen/xsd_kva").returns(false)
-      FileTest.expects(:exists?).with("/proc/xen/capabilities").returns(true)
+      FileTest.expects(:exists?).with("/dev/xen/evtchn").returns(false)
+      FileTest.expects(:exists?).with("/proc/xen").returns(true)
       Facter.fact(:virtual).value.should == "xenu"
     end
 
