@@ -9,6 +9,11 @@ module Facter
       # Accept fact names to return from the command line
       names = argv
 
+      # Change location of external facts dir
+      if options[:ext]
+        Facter::Util::Config.ext_fact_dir = options[:ext]
+      end
+
       # Create the facts hash that is printed to standard out.
       unless names.empty?
         facts = {}
@@ -74,6 +79,7 @@ module Facter
         opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
         opts.on("-j", "--json")   { |v| options[:json]   = v }
         opts.on(      "--trace")  { |v| options[:trace]  = v }
+        opts.on(      "--ext DIR") { |v| options[:ext] = v }
         opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
         opts.on("-t", "--timing") { |v| Facter.timing(1) }
         opts.on("-p", "--puppet") { |v| load_puppet }
