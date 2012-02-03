@@ -4,16 +4,19 @@
 # and any executable that returns key=value pairs.
 
 require 'facter/util/parser'
+require 'facter/util/config'
 
 class Facter::Util::DirectoryLoader
   require 'yaml'
 
+  # A list of extensions to ignore in fact directory.
   SKIP_EXTENSIONS = %w{bak orig}
 
+  # Directory for fact loading
   attr_reader :directory
 
-  def initialize(dir="/etc/facter/facts.d")
-    @directory = dir
+  def initialize(dir = nil)
+    @directory = dir || Facter::Util::Config.ext_fact_dir
   end
 
   def entries
@@ -22,6 +25,8 @@ class Facter::Util::DirectoryLoader
     []
   end
 
+  # Load facts from files in fact directory using the relevant parser classes to
+  # parse them.
   def load
     entries.each do |file|
       unless data = Facter::Util::Parser.new(file).results
