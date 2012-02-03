@@ -29,11 +29,19 @@ class Facter::Util::DirectoryLoader
   # parse them.
   def load
     entries.each do |file|
-      unless data = Facter::Util::Parser.new(file).results
-        raise "Could not interpret fact file #{file}"
+      parser = Facter::Util::Parser.new(file)
+      if parser == nil
+        next
       end
 
-      data.each { |p,v| Facter.add(p, :value => v) }
+      data = parser.values
+      if data == false
+        Facter.warn "Could not interpret fact file #{file}"
+      elsif data == {} or data == nil
+        Facter.warn "Fact file #{file} was parsed but returned an empty data set"
+      else
+        data.each { |p,v| Facter.add(p, :value => v) }
+      end
     end
   end
 
@@ -41,7 +49,7 @@ class Facter::Util::DirectoryLoader
 
   def parse?(file)
     return false if file =~ /^\./
-    ext = file.split(".")[-1]
+      ext = file.split(".")[-1]
     return false if SKIP_EXTENSIONS.include?(ext)
     true
   end
