@@ -89,6 +89,7 @@ ri  = glob(%w(bin/*.rb sbin/* lib/**/*.rb)).reject { |e| e=~ /\.(bat|cmd)$/ }
 man   = glob(%w{man/man8/*})
 libs  = glob(%w{lib/**/*.rb lib/**/*.py lib/**/LICENSE})
 tests = glob(%w{tests/**/*.rb})
+libexec = glob(%w{libexec/ext/README})
 
 def do_bins(bins, target, strip = 's?bin/')
   bins.each do |bf|
@@ -121,6 +122,16 @@ def do_man(man, strip = 'man/')
   end
   else
   puts "Skipping Man Page Generation"
+  end
+end
+
+def do_libexec(libexec, strip = 'libexec/')
+  libexec.each do |lf|
+    olf = File.join(InstallOptions.libexec_dir, lf.gsub(/#{strip}/, ''))
+    op = File.dirname(olf)
+    FileUtils.makedirs(op, {:mode => 0755, :verbose => true})
+    FileUtils.chmod(0755, op)
+    FileUtils.install(lf, olf, {:mode => 0644, :verbose => true})
   end
 end
 
@@ -199,6 +210,9 @@ def prepare_installation
     opts.on('--mandir[=OPTIONAL]', 'Installation directory for man pages', 'overrides RbConfig::CONFIG["mandir"]') do |mandir|
       InstallOptions.mandir = mandir
     end
+    opts.on('--libexecdir[=OPTIONAL]', 'Installation directory for libexec files', 'Defaults to /usr/lib/facter') do |libexecdir|
+      InstallOptions.libexecdir = libexecdir
+    end
     opts.on('--quick', 'Performs a quick installation. Only the', 'installation is done.') do |quick|
       InstallOptions.rdoc   = false
       InstallOptions.ri   = false
@@ -263,16 +277,28 @@ def prepare_installation
     mandir = RbConfig::CONFIG['mandir']
   end
 
+  if not InstallOptions.libexecdir.nil?
+    libexecdir = InstallOptions.libexecdir
+  else
+    if is_windows?
+      libexecdir = Facter::Util::Config.windows_data_dir
+    else
+      libexecdir = "/usr/lib/facter"
+    end
+  end
+
   if (destdir = InstallOptions.destdir)
     bindir = join(destdir, bindir)
     sbindir = join(destdir, sbindir)
     mandir = join(destdir, mandir)
     sitelibdir = join(destdir, sitelibdir)
+    libexeclibdir = join(destdir, libexeclibdir)
 
     FileUtils.makedirs(bindir)
     FileUtils.makedirs(sbindir)
     FileUtils.makedirs(mandir)
     FileUtils.makedirs(sitelibdir)
+    FileUtils.makedirs(libexeclibdir)
   end
 
   InstallOptions.site_dir = sitelibdir
@@ -280,6 +306,7 @@ def prepare_installation
   InstallOptions.sbin_dir = sbindir
   InstallOptions.lib_dir  = libdir
   InstallOptions.man_dir  = mandir
+  InstallOptions.libexec_dir = libexecdir
 end
 
 ##
@@ -427,3 +454,4 @@ do_bins(sbins, InstallOptions.sbin_dir)
 do_bins(bins, InstallOptions.bin_dir)
 do_libs(libs)
 do_man(man)
+do_libexec(libexec)
