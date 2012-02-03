@@ -1,46 +1,14 @@
 #!/usr/bin/env ruby
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require 'spec_helper'
 
 require 'facter/util/directory_loader'
-require 'tempfile'
 
 describe Facter::Util::DirectoryLoader do
-  subject { Facter::Util::DirectoryLoader.new("/my/dir.d") }
+  include PuppetlabsSpec::Files
 
-  def mk_test_dir
-    file = Tempfile.new "testing_fact_loading_dir"
-    @dir = file.path
-    file.delete
-
-    Dir.mkdir(@dir)
-    @dirs << @dir # for cleanup
-
-    @dir
-  end
-
-  def mk_test_file
-    file = Tempfile.new "testing_fact_loading_file"
-    @filename = file.path
-    file.delete
-    @files << @filename # for cleanup
-
-    @filename
-  end
-
-  before {
-    @files = []
-    @dirs = []
-    @loader = Facter::Util::DirectoryLoader.new(mk_test_dir)
-  }
-
-  after do
-    @files.each do |file|
-      File.unlink(file) if File.exist?(file)
-    end
-    @dirs.each do |dir|
-      FileUtils.rm_f(dir) if File.exist?(dir)
-    end
+  before :each do
+    @loader = Facter::Util::DirectoryLoader.new(tmpdir('directory_loader'))
   end
 
   it "should make the directory available" do
