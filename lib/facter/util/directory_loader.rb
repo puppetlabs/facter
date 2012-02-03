@@ -4,6 +4,7 @@
 # and any executable that returns key=value pairs.
 
 require 'facter/util/parser'
+require 'facter/util/config'
 
 class Facter::Util::DirectoryLoader
   require 'yaml'
@@ -12,8 +13,8 @@ class Facter::Util::DirectoryLoader
 
   attr_reader :directory
 
-  def initialize(dir="/etc/facter/facts.d")
-    @directory = dir
+  def initialize(dir = nil)
+    @directory = dir || Facter::Util::Config.ext_fact_dir
   end
 
   def entries
