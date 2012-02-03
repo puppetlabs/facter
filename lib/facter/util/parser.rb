@@ -1,3 +1,7 @@
+# This class acts as the factory and parent class for parsed
+# facts such as scripts, text, json and yaml files.
+#
+# Parsers must subclass this class and provide their own #results method.
 class Facter::Util::Parser
   attr_reader :filename
 
