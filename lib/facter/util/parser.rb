@@ -139,4 +139,43 @@ class Facter::Util::Parser
       Facter.debug(e.backtrace.join("\n\t"))
     end
   end
+
+  # Executes and parses the key value output of Powershell scripts
+  #
+  # Before you can run unsigned ps1 scripts it requires a change to execution
+  # policy:
+  #
+  #   Set-ExecutionPolicy RemoteSigned -Scope LocalMachine
+  #   Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+  #
+  class PowershellParser < self
+    matches_extension "ps1"
+
+    # Only return true if this is a windows box
+    def self.matches?(filename)
+      if Facter::Util::Config.is_windows?
+        super(filename)
+      else
+        return false
+      end
+    end
+
+    # Returns a hash of facts from powershell output
+    def results
+      shell_command = "powershell -File #{filename}"
+      output = Facter::Util::Resolution.exec(shell_command)
+
+      result = {}
+      output.split("\n").each do |line|
+        if line =~ /^(.+)=(.+)$/
+          result[$1] = $2
+        end
+      end
+
+      result
+    rescue Exception => e
+      Facter.warn("Failed to handle #{filename} as powershell facts: #{e.class}: #{e}")
+      Facter.debug(e.backtrace.join("\n\t"))
+    end
+  end
 end
