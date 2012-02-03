@@ -101,11 +101,12 @@ class Facter::Util::Parser
     matches_extension "json"
 
     def results
+      attempts = 0
       begin
         require 'json'
-      rescue LoadError
-        require 'rubygems'
-        retry
+      rescue LoadError => e
+        raise e if attempts >= 1
+        attempts += 1
       end
 
       JSON.load(File.read(filename))
