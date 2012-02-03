@@ -7,24 +7,7 @@ require 'tempfile'
 require 'json'
 
 describe Facter::Util::Parser do
-  def mk_test_file
-    file = Tempfile.new "testing_fact_parser"
-    @filename = file.path
-    file.delete
-    @files << @filename # for cleanup
-
-    @filename
-  end
-
-  before {
-    @files = []
-  }
-
-  after do
-    @files.each do |file|
-      File.unlink(file) if File.exist?(file)
-    end
-  end
+  include PuppetlabsSpec::Files
 
   it "should fail when asked to parse a file type it does not support" do
     lambda { Facter::Util::Parser.new("/my/file.foobar") }.should raise_error(ArgumentError)
@@ -37,7 +20,7 @@ describe Facter::Util::Parser do
     end
 
     it "should return a hash of whatever is stored on disk" do
-      file = mk_test_file + ".yaml"
+      file = tmpfilename('parser') + ".yaml"
 
       data = {"one" => "two", "three" => "four"}
 
@@ -47,7 +30,7 @@ describe Facter::Util::Parser do
     end
 
     it "should handle exceptions and warn" do
-      file = mk_test_file + ".yaml"
+      file = tmpfilename('parser') + ".yaml"
 
       data = {"one" => "two", "three" => "four"}
 
@@ -64,7 +47,7 @@ describe Facter::Util::Parser do
     end
 
     it "should return a hash of whatever is stored on disk" do
-      file = mk_test_file + ".json"
+      file = tmpfilename('parser') + ".json"
 
       data = {"one" => "two", "three" => "four"}
 
@@ -81,7 +64,7 @@ describe Facter::Util::Parser do
     end
 
     it "should return a hash of whatever is stored on disk" do
-      file = mk_test_file + ".txt"
+      file = tmpfilename('parser') + ".txt"
 
       data = "one=two\nthree=four\n"
 
@@ -91,7 +74,7 @@ describe Facter::Util::Parser do
     end
 
     it "should ignore any non-setting lines" do
-      file = mk_test_file + ".txt"
+      file = tmpfilename('parser') + ".txt"
 
       data = "one=two\nfive\nthree=four\n"
 
@@ -103,7 +86,7 @@ describe Facter::Util::Parser do
 
   describe "scripts" do
     before do
-      @script = mk_test_file
+      @script = tmpfilename('parser')
       data = "#!/bin/sh
 echo one=two
 echo three=four
