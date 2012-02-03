@@ -62,6 +62,12 @@ class Facter::Util::Parser
     @filename = filename
   end
 
+  # This method must be overwriten by subclasses to provide
+  # the results (as a hash) of parsing the filename.
+  def results
+    raise "Must override the 'results' method for #{self}"
+  end
+
   class YamlParser < self
     matches_extension "yaml"
 
