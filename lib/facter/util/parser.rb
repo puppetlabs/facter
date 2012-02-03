@@ -114,8 +114,13 @@ class Facter::Util::Parser
   end
 
   class ScriptParser < self
-    def self.matches?(file)
-      File.executable?(file)
+    if Facter::Util::Config.is_windows?
+      matches_extension %w{bat com exe}
+    else
+      # Returns true if file is executable.
+      def self.matches?(file)
+        File.executable?(file)
+      end
     end
 
     def results
