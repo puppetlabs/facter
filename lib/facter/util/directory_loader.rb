@@ -9,8 +9,10 @@ require 'facter/util/config'
 class Facter::Util::DirectoryLoader
   require 'yaml'
 
+  # A list of extensions to ignore in fact directory.
   SKIP_EXTENSIONS = %w{bak orig}
 
+  # Directory for fact loading
   attr_reader :directory
 
   def initialize(dir = nil)
@@ -23,6 +25,8 @@ class Facter::Util::DirectoryLoader
     []
   end
 
+  # Load facts from files in fact directory using the relevant parser classes to
+  # parse them.
   def load
     entries.each do |file|
       unless data = Facter::Util::Parser.new(file).results
