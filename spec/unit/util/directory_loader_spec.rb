@@ -19,6 +19,13 @@ describe Facter::Util::DirectoryLoader do
     Facter::Util::DirectoryLoader.new.directory.should == "/usr/lib/facter/ext"
   end
 
+  it "should do nothing bad when dir doesn't exist" do
+    fakepath = "/foobar/path"
+    my_loader = Facter::Util::DirectoryLoader.new(fakepath)
+    FileTest.exists?(my_loader.directory).should be_false
+    my_loader.load
+   end
+
   describe "when loading facts from disk" do
     it "should be able to load files from disk and set facts" do
       data = {"f1" => "one", "f2" => "two"}
