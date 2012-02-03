@@ -1,12 +1,16 @@
 require 'facter'
 require 'pathname'
+require 'facter/util/directory_loader'
 
 # Load facts on demand.
 class Facter::Util::Loader
 
+  attr_reader :directory_loader
+
   def initialize
     @loaded = []
     @valid_path = {}
+    @directory_loader = Facter::Util::DirectoryLoader.new
   end
 
   # Load all resolutions for a single fact.
@@ -33,6 +37,8 @@ class Facter::Util::Loader
     return if defined?(@loaded_all)
 
     load_env
+
+    directory_loader.load
 
     search_path.each do |dir|
       next unless FileTest.directory?(dir)
