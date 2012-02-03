@@ -34,7 +34,7 @@ class Facter::Util::DirectoryLoader
         next
       end
 
-      data = parser.values
+      data = parser.results
       if data == false
         Facter.warn "Could not interpret fact file #{file}"
       elsif data == {} or data == nil
