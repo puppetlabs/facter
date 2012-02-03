@@ -15,8 +15,8 @@ describe Facter::Util::DirectoryLoader do
     @loader.directory.should be_instance_of(String)
   end
 
-  it "should default to '/etc/facter/facts.d' for the directory" do
-    Facter::Util::DirectoryLoader.new.directory.should == "/etc/facter/facts.d"
+  it "should default to '/usr/lib/facter/ext' for the directory" do
+    Facter::Util::DirectoryLoader.new.directory.should == "/usr/lib/facter/ext"
   end
 
   describe "when loading facts from disk" do
