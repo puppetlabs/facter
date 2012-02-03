@@ -10,9 +10,16 @@ class Facter::Util::Parser
     attr_reader :extension
   end
 
-  # Register the extension that this parser matches.
+  # Used by subclasses. Registers +ext+ as the extension to match.
+  #
+  # For support mutliple extensions you can pass an array of extensions as
+  # +ext+.
   def self.matches_extension(ext)
-    @extension = ext
+    if ext.class == String then
+      @extension = ext.downcase
+    elsif ext.class == Array then
+      @extension = ext.collect {|x| x.downcase }
+    end
   end
 
   def self.file_extension(filename)
@@ -27,7 +34,7 @@ class Facter::Util::Parser
   def self.matches?(filename)
     raise "Must override the 'matches?' method for #{self}" unless extension
 
-    file_extension(filename) == extension
+    [extension].flatten.to_a.include?(file_extension(filename).downcase)
   end
 
   def self.subclasses
