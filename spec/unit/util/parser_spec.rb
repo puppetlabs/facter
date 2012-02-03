@@ -13,6 +13,46 @@ describe Facter::Util::Parser do
     lambda { Facter::Util::Parser.new("/my/file.foobar") }.should raise_error(ArgumentError)
   end
 
+  describe "matches? function" do
+    it "should match extensions when subclass uses match_extension" do
+      class TestParser < Facter::Util::Parser
+        matches_extension "foobar"
+      end
+
+      TestParser.matches?("myfile.foobar").should == true
+    end
+
+    it "should match extensions when subclass uses match_extension with an array" do
+      class TestParser < Facter::Util::Parser
+        matches_extension ["ext1","ext2","ext3"]
+      end
+
+      TestParser.matches?("myfile.ext1").should == true
+      TestParser.matches?("myfile.ext2").should == true
+      TestParser.matches?("myfile.ext3").should == true
+    end
+
+    it "should match extension ignoring case on file" do
+      class TestParser < Facter::Util::Parser
+        matches_extension "ext1"
+      end
+
+      TestParser.matches?("myfile.EXT1").should == true
+      TestParser.matches?("myfile.ExT1").should == true
+      TestParser.matches?("myfile.exT1").should == true
+    end
+
+    it "should match extension ignoring case for match_extension" do
+      class TestParser < Facter::Util::Parser
+        matches_extension "EXT1"
+      end
+
+      TestParser.matches?("myfile.EXT1").should == true
+      TestParser.matches?("myfile.ExT1").should == true
+      TestParser.matches?("myfile.exT1").should == true
+    end
+  end
+
   describe "yaml" do
     subject { Facter::Util::Parser::YamlParser }
     it "should match the 'yaml' extension" do
