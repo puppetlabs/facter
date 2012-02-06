@@ -26,13 +26,6 @@ module Facter
       # Print everything if they didn't ask for specific facts.
       facts ||= Facter.to_hash
 
-      # Print the facts as YAML and exit
-      if options[:yaml]
-        require 'yaml'
-        puts YAML.dump(facts)
-        exit(0)
-      end
-
       # Print the facts as JSON and exit
       if options[:json]
         begin
@@ -46,14 +39,13 @@ module Facter
         end
       end
 
-      # Print the value of a single fact, otherwise print a list sorted by fact
-      # name and separated by "=>"
+      # Print the value of a single fact, otherwise print the lot
       if facts.length == 1
         if value = facts.values.first
-          puts YAML.dump(value)
+          puts value.to_yaml
         end
       else
-        puts YAML.dump(facts)
+        puts facts.to_yaml
       end
 
     rescue => e
