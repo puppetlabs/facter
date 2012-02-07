@@ -29,9 +29,7 @@ require 'facter'
      zone_list = File.readlines(sample_output_file)
      zone_list.each do |this_line|
         this_zone = this_line.split(":")[1]
-         puts "tz=" + this_zone
         this_zone_stat = this_line.split(":")[2]
-         puts "tzs=" + this_zone_stat
         Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/zoneadm list -cp 2>/dev/null').returns(zone_list)
         Facter.collection.loader.load(:zones)
         Facter.value("zone_#{this_zone}".to_sym).should == this_zone_stat
