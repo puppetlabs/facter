@@ -38,6 +38,7 @@ spec = Gem::Specification.new do |spec|
   spec.executables = %w{facter}
   spec.version = Facter::FACTERVERSION
   spec.summary = 'Facter, a system inventory tool'
+  spec.description = 'You can prove anything with facts!'
   spec.author = 'Puppet Labs'
   spec.email = 'info@puppetlabs.com'
   spec.homepage = 'http://puppetlabs.com'
