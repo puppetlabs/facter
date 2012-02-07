@@ -3,8 +3,7 @@
 #
 #Author: Shubhra Sinha Varma
 #
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
-
+require 'spec_helper'
 require 'facter'
 
  describe "on Solaris" do
@@ -16,8 +15,8 @@ require 'facter'
 
   describe "number of zones" do
     it "should output number of zones" do
-     sample_output_file = File.dirname(__FILE__) + '/data/zones'
-     zone_list = File.readlines(sample_output_file)
+     sample_output_file = File.open(fixtures('zones', 'zones'))
+     zone_list = sample_output_file.readlines
      Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/zoneadm list -cp 2>/dev/null').returns(zone_list)
      Facter.fact(:zones).value.should == zone_list.size
     end
@@ -25,8 +24,8 @@ require 'facter'
 
   describe "per zone fact and its status" do
    it "should have a per zone fact with its status" do
-     sample_output_file = File.dirname(__FILE__) + '/data/zones'
-     zone_list = File.readlines(sample_output_file)
+     sample_output_file = File.open(fixtures('zones', 'zones'))
+     zone_list = sample_output_file.readlines
      zone_list.each do |this_line|
         this_zone = this_line.split(":")[1]
         this_zone_stat = this_line.split(":")[2]
