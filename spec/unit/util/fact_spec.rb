@@ -67,15 +67,19 @@ describe Facter::Util::Fact do
     [
       true,
       false,
-      :yay,
       "string",
       1.0,
       1000,
+      true,
+      false,
       ["yay"],
-      [nil, nil, "", :yay],
-      {:foo => "bar"},
-      {:foo => [], :yay => "hi"},
-      {:foo => [false], :yay => "hi"},
+      {"test" => "fact"},
+      {"test" => ["fact","value","var"]},
+      {"test" => { "test2" => { "test3" => { "test4" => "value" }}}},
+      {"foo" => [], "bar" => [{}, {}, []]},
+      "",
+      [],
+      {},
     ].each do |valid|
       it "should return the valid value \"#{valid.inspect}\"" do
         r1 = stub 'r1', :suitable? => true, :value => valid
@@ -88,12 +92,21 @@ describe Facter::Util::Fact do
 
     [
       nil,
-      "",
-      [],
-      {},
+      :yay,
       {:foo => nil},
       {:foo => ""},
-      {:foo => [], :bar => [{}, {}, []]}
+      {:foo => [], :bar => [{}, {}, []]},
+      Object.new,
+      {"test" => Object.new},
+      [nil, nil, "", :yay],
+      {:foo => "bar"},
+      {:foo => [], :yay => "hi"},
+      {:foo => [false], :yay => "hi"},
+      {"test" => ["fact", { "deep" => Object.new }, "value"] },
+      {"" => "value"},
+      {"" => {"" => "value"}},
+      [Object.new],
+      [{Object.new => "test"}],
     ].each do |invalid|
       it "should return nil for the empty type \"#{invalid.inspect}\"" do
         r1 = stub 'r1', :suitable? => true, :value => invalid

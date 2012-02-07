@@ -57,7 +57,13 @@ class Facter::Util::Fact
   # Return the value for a given fact.  Searches through all of the mechanisms
   # and returns either the first value or nil.
   def value
-    return @value if @value
+    begin
+      # We duplicate to avoid using links in YAML output
+      return @value.dup if @value
+    rescue TypeError
+      # This is because some values can't be duplicated
+      return @value
+    end
 
     suitable_resolves = @resolves.select {|r| r.suitable? }
 
@@ -80,37 +86,64 @@ class Facter::Util::Fact
       Facter.debug("Could not resolve fact #{@name}")
     end
 
-    @value
+    begin
+      # We duplicate to avoid using links in YAML output
+      @value.dup
+    rescue TypeError
+      # This is because some values can't be duplicated
+      @value
+    end
   end
 
   private
 
-  def valid? entity
-    validity = nil
-    begin
-      validity = case entity
-      when NilClass
-        false
-      when String
-        # Allow non-empty strings
-        !entity.empty?
-      when TrueClass, FalseClass, Numeric, Symbol
-        # Permit all booleans, numbers, and symbols
-        true
-      when Array
-        # If given an array, look for any valid elements
-        entity.any? {|v| valid? v}
-      when Hash
-        # If given a hash, look for any valid values
-        entity.values.any? {|v| valid? v}
-      else
-        false
+  # Validate that an object is either a string, hash, array or
+  # combination thereof.
+  def valid?(value)
+    case value
+    when String,TrueClass,FalseClass,Numeric then
+      return true
+    when Array then
+      validity = true
+      # Validate each item by calling validate again
+      value.each do |item|
+        if (validity = valid?(item)) == false
+          break
+        end
       end
-    rescue
-      Facter.debug("Unable to validate value #{entity} for fact #{@name}")
-      validity = false
+      return validity
+    when Hash then
+      validity = true
+      value.each do |k,v|
+        # Validate key first
+        if (validity = validate_value_lhs(k)) == false
+          break
+        end
+
+        # Validate value by calling validate again
+        if (validity = valid?(v)) == false
+          break
+        end
+      end
+      return validity
+    else
+      return false
     end
-    validity
+  end
+
+  # This method is used for validating the left hand side in
+  # a hash.
+  def validate_value_lhs(value)
+    case value
+    when String
+      if value.empty?
+        return false
+      else
+        return true
+      end
+    else
+      return false
+    end
   end
 
   # Are we in the midst of a search?
