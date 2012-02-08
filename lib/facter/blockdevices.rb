@@ -118,6 +118,8 @@ if Facter.value(:kernel) == 'FreeBSD'
     Facter.add("blockdevice_#{device}_model".to_sym) do
       if device =~ /ad/
         setcode { Facter::Util::Resolution.exec("/sbin/atacontrol list | /usr/bin/awk -F '<|>' '/#{device}/ { print $2 }'") }
+      elsif device =~ /mfi/
+        setcode { "MFI Local Disk" }
       else
         setcode { Facter::Util::Resolution.exec("/sbin/camcontrol inquiry #{device} -D | /usr/bin/awk -F '<|>' '{ print $2}'" ) }
       end
