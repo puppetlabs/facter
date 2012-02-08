@@ -45,6 +45,8 @@ class Facter::Util::Resolution
     end
     # execute the caller's block, capture the return value
     rv = yield
+  # use an ensure block to make absolutely sure we restore the variables
+  ensure
     # restore the old values
     values.each do |var, value|
       if old.include?(var)
@@ -89,14 +91,10 @@ class Facter::Util::Resolution
         else
           path = %x{which #{binary} 2>/dev/null}.chomp
           # we don't have the binary necessary
-          # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
-          # without performing the necessary cleanup of environment variables
-          next if path == "" or path.match(/Command not found\./)
+          return if path == "" or path.match(/Command not found\./)
         end
 
-        # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
-        # without performing the necessary cleanup of environment variables
-        next unless FileTest.exists?(path)
+        return unless FileTest.exists?(path)
       end
 
       out = nil
@@ -105,22 +103,16 @@ class Facter::Util::Resolution
         out = %x{#{code}}.chomp
       rescue Errno::ENOENT => detail
         # command not found on Windows
-        # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
-        # without performing the necessary cleanup of environment variables
-        next
+        return
       rescue => detail
         $stderr.puts detail
-        # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
-        # without performing the necessary cleanup of environment variables
-        next
+        return
       end
 
-      # we need to use "next" here, rather than "return"... because "return" would break out of the with_env wrapper
-      # without performing the necessary cleanup of environment variables
       if out == ""
-        next
+        return
       else
-        next out
+        return out
       end
 
     end

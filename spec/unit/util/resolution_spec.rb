@@ -86,6 +86,27 @@ describe Facter::Util::Resolution do
         ENV[key].should == orig_env[key]
       end
     end
+
+    it "should not be affected by a 'return' statement in the yield block" do
+      @sentinel_var = :resolution_test_foo.to_s
+
+      # the intent of this test case is to test a yield block that contains a return statement.  However, it's illegal
+      # to use a return statement outside of a method, so we need to create one here to give scope to the 'return'
+      def handy_method()
+        ENV[@sentinel_var] = "foo"
+        new_env = { @sentinel_var => "bar" }
+
+        Facter::Util::Resolution.with_env new_env do
+          ENV[@sentinel_var].should == "bar"
+          return
+        end
+      end
+
+      handy_method()
+
+      ENV[@sentinel_var].should == "foo"
+
+    end
   end
 
   describe "when setting the code" do
