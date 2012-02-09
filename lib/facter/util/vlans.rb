@@ -1,5 +1,5 @@
-# A module to gather vlan facts
-#
+# A module to gather vlan facts.
+
 module Facter::Util::Vlans
   def self.get_vlan_config
     output = ""

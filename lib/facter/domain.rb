@@ -14,7 +14,7 @@
 #
 #   Windows uses the win32ole gem and winmgmts to get the DNSDomain value
 #   from the Win32 networking stack.
-#
+
 Facter.add(:domain) do
   setcode do
     # Get the domain from various sources; the order of these

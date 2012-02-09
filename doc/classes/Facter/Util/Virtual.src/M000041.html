@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>kvm? (Facter::Util::Virtual)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/facter/util/virtual.rb, line 58</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">kvm?</span>
+     <span class="ruby-identifier">txt</span> = <span class="ruby-keyword kw">if</span> <span class="ruby-constant">FileTest</span>.<span class="ruby-identifier">exists?</span>(<span class="ruby-value str">&quot;/proc/cpuinfo&quot;</span>)
+       <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-value str">&quot;/proc/cpuinfo&quot;</span>)
+     <span class="ruby-keyword kw">elsif</span> [<span class="ruby-value str">&quot;FreeBSD&quot;</span>, <span class="ruby-value str">&quot;OpenBSD&quot;</span>].<span class="ruby-identifier">include?</span> <span class="ruby-constant">Facter</span>.<span class="ruby-identifier">value</span>(<span class="ruby-identifier">:kernel</span>)
+       <span class="ruby-constant">Facter</span><span class="ruby-operator">::</span><span class="ruby-constant">Util</span><span class="ruby-operator">::</span><span class="ruby-constant">Resolution</span>.<span class="ruby-identifier">exec</span>(<span class="ruby-value str">&quot;/sbin/sysctl -n hw.model&quot;</span>)
+     <span class="ruby-keyword kw">end</span>
+     (<span class="ruby-identifier">txt</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/QEMU Virtual CPU/</span>) <span class="ruby-operator">?</span> <span class="ruby-keyword kw">true</span> <span class="ruby-operator">:</span> <span class="ruby-keyword kw">false</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

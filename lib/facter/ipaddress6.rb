@@ -1,23 +1,23 @@
 # Fact: ipaddress6
 #
 # Purpose: 
-#  Returns the "main" IPv6 IP address of a system.
+#   Returns the "main" IPv6 IP address of a system.
 #
 # Resolution:
-#  OS dependant code that parses the output of various networking
-#  tools and currently not very intelligent. Returns the first
-#  non-loopback and non-linklocal address found in the ouput unless
-#  a default route can be mapped to a routeable interface. Guessing
-#  an interface is currently only possible with BSD type systems
-#  to many assumptions have to be made on other platforms to make
-#  this work with the current code. Most code ported or modeled
-#  after the ipaddress fact for the sake of similar functionality
-#  and familiar mechanics.
+#   OS dependant code that parses the output of various networking
+#   tools and currently not very intelligent. Returns the first
+#   non-loopback and non-linklocal address found in the ouput unless
+#   a default route can be mapped to a routeable interface. Guessing
+#   an interface is currently only possible with BSD type systems
+#   to many assumptions have to be made on other platforms to make
+#   this work with the current code. Most code ported or modeled
+#   after the ipaddress fact for the sake of similar functionality
+#   and familiar mechanics.
 #
-#  Used the ipaddress fact that is already part of facter as a template.
+#   Used the ipaddress fact that is already part of facter as a template.
 #
 # Cody Herriges <c.a.herriges@gmail.com>
-#
+
 def get_address_after_token(output, token, return_first=false)
   ip = nil
 

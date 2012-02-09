@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>value (Facter::Util::Resolution)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/facter/util/resolution.rb, line 205</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">value</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@value</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@value</span>
+    <span class="ruby-identifier">result</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">result</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@code</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+
+    <span class="ruby-identifier">starttime</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">to_f</span>
+
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-constant">Timeout</span>.<span class="ruby-identifier">timeout</span>(<span class="ruby-identifier">limit</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@code</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Proc</span>)
+          <span class="ruby-identifier">result</span> = <span class="ruby-ivar">@code</span>.<span class="ruby-identifier">call</span>()
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">result</span> = <span class="ruby-constant">Facter</span><span class="ruby-operator">::</span><span class="ruby-constant">Util</span><span class="ruby-operator">::</span><span class="ruby-constant">Resolution</span>.<span class="ruby-identifier">exec</span>(<span class="ruby-ivar">@code</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Timeout</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">detail</span>
+      <span class="ruby-identifier">warn</span> <span class="ruby-value str">&quot;Timed out seeking value for %s&quot;</span> <span class="ruby-operator">%</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">name</span>
+
+      <span class="ruby-comment cmt"># This call avoids zombies -- basically, create a thread that will</span>
+      <span class="ruby-comment cmt"># dezombify all of the child processes that we're ignoring because</span>
+      <span class="ruby-comment cmt"># of the timeout.</span>
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">new</span> { <span class="ruby-constant">Process</span>.<span class="ruby-identifier">waitall</span> }
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">details</span>
+      <span class="ruby-identifier">warn</span> <span class="ruby-value str">&quot;Could not retrieve %s: %s&quot;</span> <span class="ruby-operator">%</span> [<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">details</span>]
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">finishtime</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">to_f</span>
+    <span class="ruby-identifier">ms</span> = (<span class="ruby-identifier">finishtime</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">starttime</span>) <span class="ruby-operator">*</span> <span class="ruby-value">1000</span>
+    <span class="ruby-constant">Facter</span>.<span class="ruby-identifier">show_time</span> <span class="ruby-node">&quot;#{self.name}: #{&quot;%.2f&quot; % ms}ms&quot;</span>
+
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">result</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;&quot;</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">result</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

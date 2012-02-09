@@ -7,7 +7,7 @@
 #   On OpenBSD, Linux and Debian's kfreebsd, use the hardwaremodel fact.
 #   Gentoo and Debian call "x86_86" "amd64".
 #   Gentoo also calls "i386" "x86".
-#
+
 Facter.add(:architecture) do
   setcode do
     model = Facter.value(:hardwaremodel)

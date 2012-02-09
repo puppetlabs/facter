@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>get_network_value (Facter::Util::IP)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/facter/util/ip.rb, line 183</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">get_network_value</span>(<span class="ruby-identifier">interface</span>)
+    <span class="ruby-identifier">require</span> <span class="ruby-value str">'ipaddr'</span>
+
+    <span class="ruby-identifier">ipaddress</span> = <span class="ruby-identifier">get_interface_value</span>(<span class="ruby-identifier">interface</span>, <span class="ruby-value str">&quot;ipaddress&quot;</span>)
+    <span class="ruby-identifier">netmask</span> = <span class="ruby-identifier">get_interface_value</span>(<span class="ruby-identifier">interface</span>, <span class="ruby-value str">&quot;netmask&quot;</span>)
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ipaddress</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">netmask</span>
+      <span class="ruby-identifier">ip</span> = <span class="ruby-constant">IPAddr</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">ipaddress</span>, <span class="ruby-constant">Socket</span><span class="ruby-operator">::</span><span class="ruby-constant">AF_INET</span>)
+      <span class="ruby-identifier">subnet</span> = <span class="ruby-constant">IPAddr</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">netmask</span>, <span class="ruby-constant">Socket</span><span class="ruby-operator">::</span><span class="ruby-constant">AF_INET</span>)
+      <span class="ruby-identifier">network</span> = <span class="ruby-identifier">ip</span>.<span class="ruby-identifier">mask</span>(<span class="ruby-identifier">subnet</span>.<span class="ruby-identifier">to_s</span>).<span class="ruby-identifier">to_s</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

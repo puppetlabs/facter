@@ -12,9 +12,10 @@
 #   'selinux_mode' is a legacy fact which returns the old selinux_mode fact value to prevent
 #   breakages of existing manifests. It should be removed at the next major release.
 #   See ticket #6677.
-#
+#--
 # Written by immerda admin team (admin(at)immerda.ch)
-#
+#++
+
 sestatus_cmd = '/usr/sbin/sestatus'
 
 # This supports the fact that the selinux mount point is not always in the

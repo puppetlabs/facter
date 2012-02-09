@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>build_man (install.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File install.rb, line 329</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">build_man</span>(<span class="ruby-identifier">bins</span>)
+  <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">$haveman</span>
+  <span class="ruby-keyword kw">begin</span>
+    <span class="ruby-comment cmt"># Locate rst2man</span>
+    <span class="ruby-identifier">rst2man</span> = <span class="ruby-value">%x{which rst2man.py}</span>
+    <span class="ruby-identifier">rst2man</span>.<span class="ruby-identifier">chomp!</span>
+    <span class="ruby-identifier">bins</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">bin</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">b</span> = <span class="ruby-identifier">bin</span>.<span class="ruby-identifier">gsub</span>( <span class="ruby-value str">&quot;bin/&quot;</span>, <span class="ruby-value str">&quot;&quot;</span>)
+      <span class="ruby-node">%x{#{bin} --help &gt; ./#{b}.rst}</span>
+      <span class="ruby-node">%x{#{rst2man} ./#{b}.rst ./man/man8/#{b}.8}</span>
+      <span class="ruby-constant">File</span>.<span class="ruby-identifier">unlink</span>(<span class="ruby-node">&quot;./#{b}.rst&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">SystemCallError</span>
+    <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;Couldn't build man pages: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$!</span>
+    <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;Continuing with install...&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

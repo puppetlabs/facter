@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: virtual.rb</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>virtual.rb</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>lib/facter/virtual.rb
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Wed Feb 08 11:37:20 -0800 2012</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Fact: virtual
+</p>
+<p>
+Purpose:
+</p>
+<pre>
+  Determine if the system's hardware is real or virtualised.
+</pre>
+<p>
+Resolution:
+</p>
+<pre>
+  Assumes physical unless proven otherwise.
+
+  On Darwin, use the macosx util module to acquire the SPDisplaysDataType,
+  from that parse it to see if it's VMWare or Parallels pretending to be the
+  display.
+
+  On Linux, BSD, Solaris and HPUX:
+  Much of the logic here is obscured behind util/virtual.rb, which rather
+  than document here, which would encourage drift, just refer to it.
+  The Xen tests in here rely on /sys and /proc, and check for the presence and
+  contents of files in there.
+  If after all the other tests, it's still seen as physical, then it tries to
+  parse the output of the &quot;lspci&quot;, &quot;dmidecode&quot; and &quot;prtdiag&quot; and parses them
+  for obvious signs of being under VMWare, Parallels or VirtualBox.
+  Finally it checks for the existence of vmware-vmx, which would hint it's
+  VMWare.
+</pre>
+<p>
+Caveats:
+</p>
+<pre>
+  Many checks rely purely on existence of files.
+</pre>
+
+    </div>
+
+    <div id="requires-list">
+      <h3 class="section-bar">Required files</h3>
+
+      <div class="name-list">
+      facter/util/virtual&nbsp;&nbsp;
+      facter/util/macosx&nbsp;&nbsp;
+      </div>
+    </div>
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

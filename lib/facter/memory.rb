@@ -17,8 +17,10 @@
 #   The number is automatically scaled, and postfixed with a unit name.
 #
 # Copyright (C) 2006 Mooter Media Ltd
+#--
 # Author: Matthew Palmer <matt@solutionsfirst.com.au>
-#
+#++
+
 require 'facter/util/memory'
 
 {   :MemorySize => "MemTotal",

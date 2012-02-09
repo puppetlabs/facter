@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>win32_find_system_info (Facter::Manufacturer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/facter/util/manufacturer.rb, line 88</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">win32_find_system_info</span>(<span class="ruby-identifier">name</span>)
+    <span class="ruby-identifier">require</span> <span class="ruby-value str">'facter/util/wmi'</span>
+    <span class="ruby-identifier">value</span> = <span class="ruby-value str">&quot;&quot;</span>
+    <span class="ruby-identifier">wmi</span> = <span class="ruby-constant">Facter</span><span class="ruby-operator">::</span><span class="ruby-constant">Util</span><span class="ruby-operator">::</span><span class="ruby-constant">WMI</span>.<span class="ruby-identifier">connect</span>()
+    <span class="ruby-identifier">name</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">facterkey</span>, <span class="ruby-identifier">win32key</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">query</span> = <span class="ruby-identifier">wmi</span>.<span class="ruby-constant">ExecQuery</span>(<span class="ruby-node">&quot;select * from Win32_#{win32key.last}&quot;</span>)
+      <span class="ruby-constant">Facter</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">facterkey</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-identifier">confine</span> <span class="ruby-identifier">:kernel</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:windows</span>
+        <span class="ruby-identifier">setcode</span> <span class="ruby-keyword kw">do</span>
+          <span class="ruby-identifier">query</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">value</span> = <span class="ruby-identifier">x</span>.<span class="ruby-identifier">__send__</span>( (<span class="ruby-identifier">win32key</span>.<span class="ruby-identifier">first</span>).<span class="ruby-identifier">to_sym</span>) }
+          <span class="ruby-identifier">value</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

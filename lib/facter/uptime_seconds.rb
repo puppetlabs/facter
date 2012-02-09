@@ -9,7 +9,7 @@
 #
 #   On Windows, the module calculates the uptime by the "LastBootupTime" Windows
 #   management value.
-#
+
 require 'facter/util/uptime'
 
 Facter.add(:uptime_seconds) do

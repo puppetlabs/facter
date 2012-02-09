@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>cleanup (PuppetlabsSpec::Files)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File spec/puppetlabs_spec/files.rb, line 19</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">cleanup</span>
+    <span class="ruby-identifier">$global_tempfiles</span> <span class="ruby-operator">||=</span> []
+    <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">path</span> = <span class="ruby-identifier">$global_tempfiles</span>.<span class="ruby-identifier">pop</span> <span class="ruby-keyword kw">do</span>
+      <span class="ruby-identifier">fail</span> <span class="ruby-node">&quot;Not deleting tmpfile #{path} outside regular tmpdir&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">in_tmp</span>(<span class="ruby-identifier">path</span>)
+
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-constant">FileUtils</span>.<span class="ruby-identifier">rm_r</span> <span class="ruby-identifier">path</span>, <span class="ruby-identifier">:secure</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">ENOENT</span>
+        <span class="ruby-comment cmt"># nothing to do</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

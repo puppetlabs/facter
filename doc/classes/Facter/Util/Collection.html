@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Facter::Util::Collection</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Facter::Util::Collection</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/lib/facter/util/collection_rb.html">
+                lib/facter/util/collection.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000105">[]</a>&nbsp;&nbsp;
+      <a href="#M000106">add</a>&nbsp;&nbsp;
+      <a href="#M000107">each</a>&nbsp;&nbsp;
+      <a href="#M000108">fact</a>&nbsp;&nbsp;
+      <a href="#M000109">flush</a>&nbsp;&nbsp;
+      <a href="#M000111">list</a>&nbsp;&nbsp;
+      <a href="#M000112">load_all</a>&nbsp;&nbsp;
+      <a href="#M000113">loader</a>&nbsp;&nbsp;
+      <a href="#M000110">new</a>&nbsp;&nbsp;
+      <a href="#M000114">to_hash</a>&nbsp;&nbsp;
+      <a href="#M000115">value</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name">Enumerable</span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000110" class="method-detail">
+        <a name="M000110"></a>
+
+        <div class="method-heading">
+          <a href="Collection.src/M000110.html" target="Code" class="method-signature"
+            onclick="popupCode('Collection.src/M000110.html');return false;">
+          <span class="method-name">new</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000105" class="method-detail">
+        <a name="M000105"></a>
+
+        <div class="method-heading">
+          <a href="Collection.src/M000105.html" target="Code" class="method-signature"
+            onclick="popupCode('Collection.src/M000105.html');return false;">
+          <span class="method-name">[]</span><span class="method-args">(name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a <a href="Collection.html#M000108">fact</a> object by name. If you
+use this, you still have to call &#8216;<a
+href="Collection.html#M000115">value</a>&#8217; on it to retrieve the
+actual <a href="Collection.html#M000115">value</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000106" class="method-detail">
+        <a name="M000106"></a>
+
+        <div class="method-heading">
+          <a href="Collection.src/M000106.html" target="Code" class="method-signature"
+            onclick="popupCode('Collection.src/M000106.html');return false;">
+          <span class="method-name">add</span><span class="method-args">(name, options = {}, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add a resolution mechanism for a named <a
+href="Collection.html#M000108">fact</a>. This does not distinguish between
+adding a <a href="Collection.html#M000110">new</a> <a
+href="Collection.html#M000108">fact</a> and adding a <a
+href="Collection.html#M000110">new</a> way to resolve a <a
+href="Collection.html#M000108">fact</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000107" class="method-detail">
+        <a name="M000107"></a>
+
+        <div class="method-heading">
+          <a href="Collection.src/M000107.html" target="Code" class="method-signature"
+            onclick="popupCode('Collection.src/M000107.html');return false;">
+          <span class="method-name">each</span><span class="method-args">() {|name.to_s, value| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Iterate across all of the facts.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000108" class="method-detail">
+        <a name="M000108"></a>
+
+        <div class="method-heading">
+          <a href="Collection.src/M000108.html" target="Code" class="method-signature"
+            onclick="popupCode('Collection.src/M000108.html');return false;">
+          <span class="method-name">fact</span><span class="method-args">(name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a <a href="Collection.html#M000108">fact</a> by name.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000109" class="method-detail">
+        <a name="M000109"></a>
+
+        <div class="method-heading">
+          <a href="Collection.src/M000109.html" target="Code" class="method-signature"
+            onclick="popupCode('Collection.src/M000109.html');return false;">
+          <span class="method-name">flush</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Flush all cached values.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000111" class="method-detail">
+        <a name="M000111"></a>
+
+        <div class="method-heading">
+          <a href="Collection.src/M000111.html" target="Code" class="method-signature"
+            onclick="popupCode('Collection.src/M000111.html');return false;">
+          <span class="method-name">list</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a <a href="Collection.html#M000111">list</a> of all of the facts.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000112" class="method-detail">
+        <a name="M000112"></a>
+
+        <div class="method-heading">
+          <a href="Collection.src/M000112.html" target="Code" class="method-signature"
+            onclick="popupCode('Collection.src/M000112.html');return false;">
+          <span class="method-name">load_all</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Load all known facts.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000113" class="method-detail">
+        <a name="M000113"></a>
+
+        <div class="method-heading">
+          <a href="Collection.src/M000113.html" target="Code" class="method-signature"
+            onclick="popupCode('Collection.src/M000113.html');return false;">
+          <span class="method-name">loader</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The thing that loads facts if we don&#8216;t have them.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000114" class="method-detail">
+        <a name="M000114"></a>
+
+        <div class="method-heading">
+          <a href="Collection.src/M000114.html" target="Code" class="method-signature"
+            onclick="popupCode('Collection.src/M000114.html');return false;">
+          <span class="method-name">to_hash</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a hash of all of our facts.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000115" class="method-detail">
+        <a name="M000115"></a>
+
+        <div class="method-heading">
+          <a href="Collection.src/M000115.html" target="Code" class="method-signature"
+            onclick="popupCode('Collection.src/M000115.html');return false;">
+          <span class="method-name">value</span><span class="method-args">(name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

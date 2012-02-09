@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sysctl_find_system_info (Facter::Manufacturer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/facter/util/manufacturer.rb, line 52</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">sysctl_find_system_info</span>(<span class="ruby-identifier">name</span>)
+    <span class="ruby-identifier">name</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">sysctlkey</span>,<span class="ruby-identifier">facterkey</span><span class="ruby-operator">|</span>
+      <span class="ruby-constant">Facter</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">facterkey</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-identifier">confine</span> <span class="ruby-identifier">:kernel</span> =<span class="ruby-operator">&gt;</span> [<span class="ruby-identifier">:openbsd</span>, <span class="ruby-identifier">:darwin</span>]
+        <span class="ruby-identifier">setcode</span> <span class="ruby-keyword kw">do</span>
+          <span class="ruby-constant">Facter</span><span class="ruby-operator">::</span><span class="ruby-constant">Util</span><span class="ruby-operator">::</span><span class="ruby-constant">Resolution</span>.<span class="ruby-identifier">exec</span>(<span class="ruby-node">&quot;sysctl -n #{sysctlkey} 2&gt;/dev/null&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: install.rb</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>install.rb</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>install.rb
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Wed Feb 08 09:23:02 -0800 2012</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+    <div id="requires-list">
+      <h3 class="section-bar">Required files</h3>
+
+      <div class="name-list">
+      rbconfig&nbsp;&nbsp;
+      find&nbsp;&nbsp;
+      fileutils&nbsp;&nbsp;
+      optparse&nbsp;&nbsp;
+      ostruct&nbsp;&nbsp;
+      rdoc/rdoc&nbsp;&nbsp;
+      rbconfig&nbsp;&nbsp;
+      facter&nbsp;&nbsp;
+      test/unit/ui/console/testrunner&nbsp;&nbsp;
+      </div>
+    </div>
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000011">build_man</a>&nbsp;&nbsp;
+      <a href="#M000009">build_rdoc</a>&nbsp;&nbsp;
+      <a href="#M000010">build_ri</a>&nbsp;&nbsp;
+      <a href="#M000005">check_prereqs</a>&nbsp;&nbsp;
+      <a href="#M000002">do_bins</a>&nbsp;&nbsp;
+      <a href="#M000003">do_libs</a>&nbsp;&nbsp;
+      <a href="#M000004">do_man</a>&nbsp;&nbsp;
+      <a href="#M000001">glob</a>&nbsp;&nbsp;
+      <a href="#M000013">install_binfile</a>&nbsp;&nbsp;
+      <a href="#M000006">is_windows?</a>&nbsp;&nbsp;
+      <a href="#M000008">join</a>&nbsp;&nbsp;
+      <a href="#M000007">prepare_installation</a>&nbsp;&nbsp;
+      <a href="#M000012">run_tests</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RbConfig</td>
+          <td>=</td>
+          <td class="context-item-value">::Config</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PREREQS</td>
+          <td>=</td>
+          <td class="context-item-value">%w{openssl xmlrpc/client xmlrpc/server cgi}</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">InstallOptions</td>
+          <td>=</td>
+          <td class="context-item-value">OpenStruct.new</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000011" class="method-detail">
+        <a name="M000011"></a>
+
+        <div class="method-heading">
+          <a href="install_rb.src/M000011.html" target="Code" class="method-signature"
+            onclick="popupCode('install_rb.src/M000011.html');return false;">
+          <span class="method-name">build_man</span><span class="method-args">(bins)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000009" class="method-detail">
+        <a name="M000009"></a>
+
+        <div class="method-heading">
+          <a href="install_rb.src/M000009.html" target="Code" class="method-signature"
+            onclick="popupCode('install_rb.src/M000009.html');return false;">
+          <span class="method-name">build_rdoc</span><span class="method-args">(files)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Build the rdoc documentation. Also, try to build the RI documentation.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000010" class="method-detail">
+        <a name="M000010"></a>
+
+        <div class="method-heading">
+          <a href="install_rb.src/M000010.html" target="Code" class="method-signature"
+            onclick="popupCode('install_rb.src/M000010.html');return false;">
+          <span class="method-name">build_ri</span><span class="method-args">(files)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000005" class="method-detail">
+        <a name="M000005"></a>
+
+        <div class="method-heading">
+          <a href="install_rb.src/M000005.html" target="Code" class="method-signature"
+            onclick="popupCode('install_rb.src/M000005.html');return false;">
+          <span class="method-name">check_prereqs</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Verify that all of the prereqs are installed
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000002" class="method-detail">
+        <a name="M000002"></a>
+
+        <div class="method-heading">
+          <a href="install_rb.src/M000002.html" target="Code" class="method-signature"
+            onclick="popupCode('install_rb.src/M000002.html');return false;">
+          <span class="method-name">do_bins</span><span class="method-args">(bins, target, strip = 's?bin/')</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000003" class="method-detail">
+        <a name="M000003"></a>
+
+        <div class="method-heading">
+          <a href="install_rb.src/M000003.html" target="Code" class="method-signature"
+            onclick="popupCode('install_rb.src/M000003.html');return false;">
+          <span class="method-name">do_libs</span><span class="method-args">(libs, strip = 'lib/')</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000004" class="method-detail">
+        <a name="M000004"></a>
+
+        <div class="method-heading">
+          <a href="install_rb.src/M000004.html" target="Code" class="method-signature"
+            onclick="popupCode('install_rb.src/M000004.html');return false;">
+          <span class="method-name">do_man</span><span class="method-args">(man, strip = 'man/')</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000001" class="method-detail">
+        <a name="M000001"></a>
+
+        <div class="method-heading">
+          <a href="install_rb.src/M000001.html" target="Code" class="method-signature"
+            onclick="popupCode('install_rb.src/M000001.html');return false;">
+          <span class="method-name">glob</span><span class="method-args">(list)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000013" class="method-detail">
+        <a name="M000013"></a>
+
+        <div class="method-heading">
+          <a href="install_rb.src/M000013.html" target="Code" class="method-signature"
+            onclick="popupCode('install_rb.src/M000013.html');return false;">
+          <span class="method-name">install_binfile</span><span class="method-args">(from, op_file, target)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Install file(s) from ./bin to RbConfig::CONFIG[&#8216;bindir&#8217;]. Patch
+it on the way to insert a #! line; on a Unix install, the command is named
+as expected (e.g., bin/rdoc becomes rdoc); the shebang line handles running
+it. Under windows, we add an &#8217;.rb&#8217; extension and let file
+associations do their stuff.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000006" class="method-detail">
+        <a name="M000006"></a>
+
+        <div class="method-heading">
+          <a href="install_rb.src/M000006.html" target="Code" class="method-signature"
+            onclick="popupCode('install_rb.src/M000006.html');return false;">
+          <span class="method-name">is_windows?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000008" class="method-detail">
+        <a name="M000008"></a>
+
+        <div class="method-heading">
+          <a href="install_rb.src/M000008.html" target="Code" class="method-signature"
+            onclick="popupCode('install_rb.src/M000008.html');return false;">
+          <span class="method-name">join</span><span class="method-args">(basedir, dir)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Join two paths. On Windows, dir must be converted to a relative path, by
+stripping the drive letter, but only if the basedir is not empty.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000007" class="method-detail">
+        <a name="M000007"></a>
+
+        <div class="method-heading">
+          <a href="install_rb.src/M000007.html" target="Code" class="method-signature"
+            onclick="popupCode('install_rb.src/M000007.html');return false;">
+          <span class="method-name">prepare_installation</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Prepare the file installation.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000012" class="method-detail">
+        <a name="M000012"></a>
+
+        <div class="method-heading">
+          <a href="install_rb.src/M000012.html" target="Code" class="method-signature"
+            onclick="popupCode('install_rb.src/M000012.html');return false;">
+          <span class="method-name">run_tests</span><span class="method-args">(test_list)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

@@ -1,3 +1,6 @@
+# A module to determine if the system's hardware is real or virtualised.
+# Assumed physical unless proven otherwise.
+
 module Facter::Util::Virtual
   def self.openvz?
     FileTest.directory?("/proc/vz") and not self.openvz_cloudlinux?

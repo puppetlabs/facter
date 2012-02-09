@@ -1,9 +1,10 @@
+# A module that manages which facts exist and how we access them.  
+# Largely just a wrapper around a hash of facts.
+
 require 'facter'
 require 'facter/util/fact'
 require 'facter/util/loader'
 
-# Manage which facts exist and how we access them.  Largely just a wrapper
-# around a hash of facts.
 class Facter::Util::Collection
   # Return a fact object by name.  If you use this, you still have to call
   # 'value' on it to retrieve the actual value.

@@ -6,7 +6,7 @@
 # Resolution:
 #   Does basic maths on the "uptime_seconds" fact to return a count of
 #   days, hours and minutes of uptime
-#
+
 require 'facter/util/uptime'
 
 Facter.add(:uptime) do
@@ -26,7 +26,6 @@ Facter.add(:uptime) do
       else "#{days} days"
       end
     end
-
   end
 end
 

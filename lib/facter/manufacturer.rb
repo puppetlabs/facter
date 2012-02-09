@@ -8,7 +8,7 @@
 #   On SunOS Sparc, uses prtdiag via a util class.
 #   On Windows, queries the system via a util class.
 #   Uses the 'util/manufacturer.rb' for fallback parsing.
-#
+
 require 'facter/util/manufacturer'
 
 if Facter.value(:kernel) == "OpenBSD"

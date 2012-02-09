@@ -1,3 +1,5 @@
+# A module with support methods for manufacturer specific facts.
+
 module Facter::Manufacturer
 
   def self.get_dmi_table()

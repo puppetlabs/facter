@@ -1,0 +1,150 @@
+
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+
+    Methods
+
+  -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Methods</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="rdoc-style.css" type="text/css" />
+  <base target="docwin" />
+</head>
+<body>
+<div id="index">
+  <h1 class="section-bar">Methods</h1>
+  <div id="index-entries">
+    <a href="classes/Facter/Util/Collection.html#M000105">[] (Facter::Util::Collection)</a><br />
+    <a href="classes/Facter/Util/Fact.html#M000099">add (Facter::Util::Fact)</a><br />
+    <a href="classes/Facter/Util/Collection.html#M000106">add (Facter::Util::Collection)</a><br />
+    <a href="classes/Facter/Util/IP.html#M000061">alphafy (Facter::Util::IP)</a><br />
+    <a href="classes/Facter/Util/EC2.html#M000075">can_connect? (Facter::Util::EC2)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000087">confine (Facter::Util::Resolution)</a><br />
+    <a href="classes/Facter/Util/WMI.html#M000072">connect (Facter::Util::WMI)</a><br />
+    <a href="classes/Facter/Util/Values.html#M000046">convert (Facter::Util::Values)</a><br />
+    <a href="classes/Facter/Util/IP.html#M000062">convert_from_hex? (Facter::Util::IP)</a><br />
+    <a href="classes/Facter/Util/Macaddress/Darwin.html#M000060">default_interface (Facter::Util::Macaddress::Darwin)</a><br />
+    <a href="classes/Facter/Manufacturer.html#M000117">dmi_find_system_info (Facter::Manufacturer)</a><br />
+    <a href="classes/Plist/Emit.html#M000008">dump (Plist::Emit)</a><br />
+    <a href="classes/Facter/Util/Collection.html#M000107">each (Facter::Util::Collection)</a><br />
+    <a href="classes/Facter/Util/Processor.html#M000032">enum_cpuinfo (Facter::Util::Processor)</a><br />
+    <a href="classes/Facter/Util/Processor.html#M000033">enum_lsdev (Facter::Util::Processor)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000086">exec (Facter::Util::Resolution)</a><br />
+    <a href="classes/Facter/Util/WMI.html#M000074">execquery (Facter::Util::WMI)</a><br />
+    <a href="classes/Facter/Util/Collection.html#M000108">fact (Facter::Util::Collection)</a><br />
+    <a href="classes/Facter/Util/Collection.html#M000109">flush (Facter::Util::Collection)</a><br />
+    <a href="classes/Facter/Util/Fact.html#M000100">flush (Facter::Util::Fact)</a><br />
+    <a href="files/lib/facter/ipaddress6_rb.html#M000003">get_address_after_token (lib/facter/ipaddress6.rb)</a><br />
+    <a href="classes/Facter/Util/IP.html#M000065">get_all_interface_output (Facter::Util::IP)</a><br />
+    <a href="classes/Facter/Util/IP.html#M000071">get_arp_value (Facter::Util::IP)</a><br />
+    <a href="classes/Facter/Util/IP.html#M000068">get_bonding_master (Facter::Util::IP)</a><br />
+    <a href="classes/Facter/Manufacturer.html#M000116">get_dmi_table (Facter::Manufacturer)</a><br />
+    <a href="classes/Facter/Util/Xendomains.html#M000048">get_domains (Facter::Util::Xendomains)</a><br />
+    <a href="classes/Facter/Util/IP.html#M000069">get_interface_value (Facter::Util::IP)</a><br />
+    <a href="classes/Facter/Util/IP.html#M000064">get_interfaces (Facter::Util::IP)</a><br />
+    <a href="classes/Facter/NetMask.html#M000031">get_netmask (Facter::NetMask)</a><br />
+    <a href="classes/Facter/Util/IP.html#M000070">get_network_value (Facter::Util::IP)</a><br />
+    <a href="classes/Facter/Util/IP.html#M000067">get_output_for_interface_and_label (Facter::Util::IP)</a><br />
+    <a href="classes/Facter/Util/IP.html#M000066">get_single_interface_output (Facter::Util::IP)</a><br />
+    <a href="classes/Facter/Util/Uptime.html#M000078">get_uptime_seconds_unix (Facter::Util::Uptime)</a><br />
+    <a href="classes/Facter/Util/Uptime.html#M000079">get_uptime_seconds_win (Facter::Util::Uptime)</a><br />
+    <a href="classes/Facter/Util/Vlans.html#M000049">get_vlan_config (Facter::Util::Vlans)</a><br />
+    <a href="classes/Facter/Util/Vlans.html#M000050">get_vlans (Facter::Util::Vlans)</a><br />
+    <a href="classes/Facter/Util/Macosx.html#M000054">hardware_overview (Facter::Util::Macosx)</a><br />
+    <a href="classes/Facter/Util/EC2.html#M000077">has_ec2_arp? (Facter::Util::EC2)</a><br />
+    <a href="classes/Facter/Util/EC2.html#M000076">has_euca_mac? (Facter::Util::EC2)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000088">has_weight (Facter::Util::Resolution)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000084">have_which (Facter::Util::Resolution)</a><br />
+    <a href="classes/Facter/Util/Virtual.html#M000044">hpvm? (Facter::Util::Virtual)</a><br />
+    <a href="classes/Plist/PTag.html#M000018">inherited (Plist::PTag)</a><br />
+    <a href="classes/Facter/Util/Macosx.html#M000052">intern_xml (Facter::Util::Macosx)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000093">interpreter (Facter::Util::Resolution)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000094">interpreter= (Facter::Util::Resolution)</a><br />
+    <a href="classes/Facter/Util/Config.html#M000047">is_windows? (Facter::Util::Config)</a><br />
+    <a href="classes/Facter/Util/Virtual.html#M000043">jail? (Facter::Util::Virtual)</a><br />
+    <a href="classes/Facter/Util/Virtual.html#M000041">kvm? (Facter::Util::Virtual)</a><br />
+    <a href="classes/Facter/Util/Virtual.html#M000042">kvm_type (Facter::Util::Virtual)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000091">limit (Facter::Util::Resolution)</a><br />
+    <a href="classes/Facter/Util/Collection.html#M000111">list (Facter::Util::Collection)</a><br />
+    <a href="classes/Facter/Util/Loader.html#M000081">load (Facter::Util::Loader)</a><br />
+    <a href="classes/Facter/Util/Loader.html#M000082">load_all (Facter::Util::Loader)</a><br />
+    <a href="classes/Facter/Util/Collection.html#M000112">load_all (Facter::Util::Collection)</a><br />
+    <a href="classes/Facter/Util/Collection.html#M000113">loader (Facter::Util::Collection)</a><br />
+    <a href="classes/Facter/Util/Macaddress/Darwin.html#M000059">macaddress (Facter::Util::Macaddress::Darwin)</a><br />
+    <a href="classes/Facter/Util/Macaddress/Windows.html#M000058">macaddress (Facter::Util::Macaddress::Windows)</a><br />
+    <a href="classes/Plist/PTag.html#M000017">mappings (Plist::PTag)</a><br />
+    <a href="classes/Facter/Memory.html#M000121">meminfo_number (Facter::Memory)</a><br />
+    <a href="files/lib/facter/ec2_rb.html#M000001">metadata (lib/facter/ec2.rb)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000089">new (Facter::Util::Resolution)</a><br />
+    <a href="classes/Plist/PTag.html#M000019">new (Plist::PTag)</a><br />
+    <a href="classes/Facter/Util/Fact.html#M000098">new (Facter::Util::Fact)</a><br />
+    <a href="classes/Facter/Util/Loader.html#M000080">new (Facter::Util::Loader)</a><br />
+    <a href="classes/Facter/Util/Confine.html#M000102">new (Facter::Util::Confine)</a><br />
+    <a href="classes/Plist/Listener.html#M000012">new (Plist::Listener)</a><br />
+    <a href="classes/Plist/StreamParser.html#M000010">new (Plist::StreamParser)</a><br />
+    <a href="classes/Facter/Util/Collection.html#M000110">new (Facter::Util::Collection)</a><br />
+    <a href="classes/Facter/Util/Virtual.html#M000034">openvz? (Facter::Util::Virtual)</a><br />
+    <a href="classes/Facter/Util/Virtual.html#M000036">openvz_cloudlinux? (Facter::Util::Virtual)</a><br />
+    <a href="classes/Facter/Util/Virtual.html#M000035">openvz_type (Facter::Util::Virtual)</a><br />
+    <a href="classes/Facter/Util/Macosx.html#M000055">os_overview (Facter::Util::Macosx)</a><br />
+    <a href="classes/Plist/StreamParser.html#M000011">parse (Plist::StreamParser)</a><br />
+    <a href="classes/Plist.html#M000005">parse_xml (Plist)</a><br />
+    <a href="classes/Facter/Util/Macosx.html#M000053">profiler_data (Facter::Util::Macosx)</a><br />
+    <a href="classes/Facter/Util/Macosx.html#M000051">profiler_xml (Facter::Util::Macosx)</a><br />
+    <a href="classes/Facter/Manufacturer.html#M000119">prtdiag_sparc_find_system_info (Facter::Manufacturer)</a><br />
+    <a href="classes/Plist/Emit.html#M000007">save_plist (Plist::Emit)</a><br />
+    <a href="classes/Plist/Emit.html#M000009">save_plist (Plist::Emit)</a><br />
+    <a href="classes/Facter/Memory.html#M000122">scale_number (Facter::Memory)</a><br />
+    <a href="classes/Facter/Util/Loader.html#M000083">search_path (Facter::Util::Loader)</a><br />
+    <a href="files/lib/facter/selinux_rb.html#M000004">selinux_mount_point (lib/facter/selinux.rb)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000092">setcode (Facter::Util::Resolution)</a><br />
+    <a href="classes/Facter/Util/Macaddress.html#M000057">standardize (Facter::Util::Macaddress)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000095">suitable? (Facter::Util::Resolution)</a><br />
+    <a href="classes/Facter/Util/IP.html#M000063">supported_platforms (Facter::Util::IP)</a><br />
+    <a href="classes/Facter/Util/Macosx.html#M000056">sw_vers (Facter::Util::Macosx)</a><br />
+    <a href="classes/Facter/Manufacturer.html#M000118">sysctl_find_system_info (Facter::Manufacturer)</a><br />
+    <a href="classes/Plist/Listener.html#M000015">tag_end (Plist::Listener)</a><br />
+    <a href="classes/Plist/Listener.html#M000013">tag_start (Plist::Listener)</a><br />
+    <a href="classes/Plist/Listener.html#M000014">text (Plist::Listener)</a><br />
+    <a href="classes/Facter/Util/Collection.html#M000114">to_hash (Facter::Util::Collection)</a><br />
+    <a href="classes/Plist/Emit.html#M000006">to_plist (Plist::Emit)</a><br />
+    <a href="classes/Plist/PDict.html#M000030">to_ruby (Plist::PDict)</a><br />
+    <a href="classes/Plist/PKey.html#M000024">to_ruby (Plist::PKey)</a><br />
+    <a href="classes/Plist/PInteger.html#M000025">to_ruby (Plist::PInteger)</a><br />
+    <a href="classes/Plist/PData.html#M000026">to_ruby (Plist::PData)</a><br />
+    <a href="classes/Plist/PDate.html#M000016">to_ruby (Plist::PDate)</a><br />
+    <a href="classes/Plist/PString.html#M000023">to_ruby (Plist::PString)</a><br />
+    <a href="classes/Plist/PTrue.html#M000029">to_ruby (Plist::PTrue)</a><br />
+    <a href="classes/Plist/PArray.html#M000027">to_ruby (Plist::PArray)</a><br />
+    <a href="classes/Plist/PList.html#M000021">to_ruby (Plist::PList)</a><br />
+    <a href="classes/Plist/PTag.html#M000020">to_ruby (Plist::PTag)</a><br />
+    <a href="classes/Plist/PReal.html#M000022">to_ruby (Plist::PReal)</a><br />
+    <a href="classes/Plist/PFalse.html#M000028">to_ruby (Plist::PFalse)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000096">to_s (Facter::Util::Resolution)</a><br />
+    <a href="classes/Facter/Util/Confine.html#M000103">to_s (Facter::Util::Confine)</a><br />
+    <a href="classes/Facter/Util/Confine.html#M000104">true? (Facter::Util::Confine)</a><br />
+    <a href="files/lib/facter/ec2_rb.html#M000002">userdata (lib/facter/ec2.rb)</a><br />
+    <a href="classes/Facter/Util/Collection.html#M000115">value (Facter::Util::Collection)</a><br />
+    <a href="classes/Facter/Util/Fact.html#M000101">value (Facter::Util::Fact)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000097">value (Facter::Util::Resolution)</a><br />
+    <a href="classes/Facter/Memory.html#M000124">vmstat_darwin_find_free_memory (Facter::Memory)</a><br />
+    <a href="classes/Facter/Memory.html#M000123">vmstat_find_free_memory (Facter::Memory)</a><br />
+    <a href="classes/Facter/Util/Virtual.html#M000038">vserver? (Facter::Util::Virtual)</a><br />
+    <a href="classes/Facter/Util/Virtual.html#M000039">vserver_type (Facter::Util::Virtual)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000090">weight (Facter::Util::Resolution)</a><br />
+    <a href="classes/Facter/Manufacturer.html#M000120">win32_find_system_info (Facter::Manufacturer)</a><br />
+    <a href="classes/Facter/Util/Resolution.html#M000085">with_env (Facter::Util::Resolution)</a><br />
+    <a href="classes/Facter/Util/WMI.html#M000073">wmi_resource_uri (Facter::Util::WMI)</a><br />
+    <a href="classes/Facter/Util/Virtual.html#M000040">xen? (Facter::Util::Virtual)</a><br />
+    <a href="classes/Facter/Util/Virtual.html#M000045">zlinux? (Facter::Util::Virtual)</a><br />
+    <a href="classes/Facter/Util/Virtual.html#M000037">zone? (Facter::Util::Virtual)</a><br />
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>run_spec_files (spec/watchr.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File spec/watchr.rb, line 63</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run_spec_files</span>(<span class="ruby-identifier">files</span>)
+  <span class="ruby-identifier">files</span> = <span class="ruby-constant">Array</span>(<span class="ruby-identifier">files</span>)
+  <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">files</span>.<span class="ruby-identifier">empty?</span>
+  <span class="ruby-identifier">opts</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">readlines</span>(<span class="ruby-value str">'.rspec'</span>).<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">l</span><span class="ruby-operator">|</span> <span class="ruby-identifier">l</span>.<span class="ruby-identifier">chomp</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot; &quot;</span>)
+  <span class="ruby-keyword kw">begin</span>
+    <span class="ruby-identifier">run_spec</span>(<span class="ruby-node">&quot;rspec --tty #{opts} #{files.join(' ')}&quot;</span>)
+  <span class="ruby-keyword kw">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">detail</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-identifier">detail</span>.<span class="ruby-identifier">backtrace</span>
+    <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;Failed to run #{files.join(', ')}: #{detail}&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

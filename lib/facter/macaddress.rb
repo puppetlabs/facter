@@ -9,7 +9,7 @@
 #   FreeBSD, OpenBSD, DragonFly use 'ifconfig'.
 #   Darwin and Windows use functions in util/macaddress.rb, Darwin uses 'ifconfig' or 'netstat'.  
 #   AIX uses 'ifconfig -a' or 'entstat'
-#
+
 require 'facter/util/macaddress'
 
 Facter.add(:macaddress) do

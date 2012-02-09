@@ -3,6 +3,7 @@
 # specific systems.  Note that the confinements are always ANDed, so any
 # confinements specified must all be true for the resolution to be
 # suitable.
+
 require 'facter/util/confine'
 require 'facter/util/config'
 

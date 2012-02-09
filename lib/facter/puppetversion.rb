@@ -5,7 +5,7 @@
 #
 # Resolution:
 #   Requres puppet via Ruby and returns it's version constant.
-#
+
 Facter.add(:puppetversion) do
   setcode do
     begin

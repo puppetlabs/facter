@@ -14,7 +14,7 @@
 #   On Mageia, parses '/etc/mageia-release' for the release version.
 #
 #   On all remaining systems, returns the 'kernelrelease' value.
-#
+
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{CentOS Fedora oel ovs OracleLinux RedHat MeeGo Scientific SLC Ascendos CloudLinux PSBM}
   setcode do

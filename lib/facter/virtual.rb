@@ -23,7 +23,7 @@
 #
 # Caveats:
 #   Many checks rely purely on existence of files.
-#
+
 require 'facter/util/virtual'
 
 Facter.add("virtual") do

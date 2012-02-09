@@ -1,3 +1,5 @@
+# Support module for memory related facts.
+
 module Facter::Memory
   require 'thread'
 

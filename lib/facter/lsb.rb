@@ -12,7 +12,7 @@
 #   Only works on Linux (and the kfreebsd derivative) systems.
 #   Requires the lsb_release program, which may not be installed by default.
 #   Also is as only as accurate as that program outputs.
-#
+
 {  "LSBRelease"         => %r{^LSB Version:\t(.*)$},
    "LSBDistId"          => %r{^Distributor ID:\t(.*)$},
    "LSBDistRelease"     => %r{^Release:\t(.*)$},

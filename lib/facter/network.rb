@@ -1,11 +1,11 @@
 # Fact: network
 #
 # Purpose:
-#    Get IP, network and netmask information for available network interfacs.
+#   Get IP, network and netmask information for available network interfaces.
 #
 # Resolution:
-#    Uses 'facter/util/ip' to enumerate interfaces and return their information.
-#
+#   Uses 'facter/util/ip' to enumerate interfaces and return their information.
+
 require 'facter/util/ip'
 
 Facter::Util::IP.get_interfaces.each do |interface|

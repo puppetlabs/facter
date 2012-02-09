@@ -1,3 +1,5 @@
+# A module to gather macaddress facts.
+
 module Facter::Util::Macaddress
 
   def self.standardize(macaddress)

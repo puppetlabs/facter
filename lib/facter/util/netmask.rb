@@ -1,3 +1,5 @@
+# A module to gather the netmask related facts for different systems.
+
 module Facter::NetMask
   def self.get_netmask
     netmask = nil;

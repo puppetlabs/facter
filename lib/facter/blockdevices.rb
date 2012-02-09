@@ -45,11 +45,10 @@
 #
 # Caveats:
 #   Block devices must have been identified using sysfs information
-#
-## blockdevices.rb
-#
+#--
 # Author: Jason Gill <jasongill@gmail.com>
-#
+#++
+
 require 'facter'
 
 # Only Linux 2.6+ kernels support sysfs which is required to easily get device details

@@ -11,7 +11,7 @@
 # Caveats:
 #   This fact is completely reliant on the operatingsystem fact, and no
 #   heuristics are used
-#
+
 Facter.add(:osfamily) do
 
   setcode do

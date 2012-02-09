@@ -1,17 +1,17 @@
-#--###########################################################
-# Copyright 2006, Ben Bleything <ben@bleything.net> and    #
-# Patrick May <patrick@hexane.org>               #
-#                              #
-# Distributed under the MIT license.             #
-##############################################################
-#++
 # Plist parses Mac OS X xml property list files into ruby data structures.
 #
-# === Load a plist file
+# Copyright 2006, Ben Bleything <ben@bleything.net> and
+# Patrick May <patrick@hexane.org>
+#
+# Distributed under the MIT license.             
+#
+# ===Load a plist file
 # This is the main point of the library:
 #
 #   r = Plist::parse_xml( filename_or_xml )
+
 module Plist
+
 # Note that I don't use these two elements much:
 #
 #  + Date elements are returned as DateTime objects.
@@ -21,6 +21,7 @@ module Plist
 # If you encounter such an error, or if you have a Date element which
 # can't be parsed into a Time object, please send your plist file to
 # plist@hexane.org so that I can implement the proper support.
+#
   def Plist::parse_xml( filename_or_xml )
     listener = Listener.new
     #parser = REXML::Parsers::StreamParser.new(File.new(filename), listener)

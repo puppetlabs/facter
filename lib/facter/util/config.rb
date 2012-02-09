@@ -1,3 +1,5 @@
+# A module to return config related data.
+
 require 'rbconfig'
 
 module Facter::Util::Config

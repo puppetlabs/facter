@@ -5,7 +5,7 @@
 #
 # Resolution: 
 #   Divides uptime_seconds fact by 3600.
-#
+
 Facter.add(:uptime_hours) do
   setcode do
     seconds = Facter.value(:uptime_seconds)

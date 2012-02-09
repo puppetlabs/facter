@@ -1,9 +1,12 @@
+#Fact: filesystems
 #
-# filesystems.rb
+# Purpose:
+#    This fact provides an alphabetic list of usable file systems that can
+#    be used for block devices like hard drives, media cards and so on ...
 #
-# This fact provides an alphabetic list of usable file systems that can
-# be used for block devices like hard drives, media cards and so on ...
-#
+# Resolution:
+#    Values from entries read under "/proc" by using the command 'cat /proc/filesystems'
+
 Facter.add('filesystems') do
   confine :kernel => :linux
   setcode do
@@ -14,7 +17,7 @@ Facter.add('filesystems') do
     # Make regular expression form our patterns ...
     exclude = Regexp.union(*exclude.collect { |i| Regexp.new(i) })
 
-    # We utilise rely on "cat" for reading values from entries under "/proc".
+    # We utilise and rely on "cat" for reading values from entries under "/proc".
     # This is due to some problems with IO#read in Ruby and reading content of
     # the "proc" file system that was reported more than once in the past ...
     file_systems = []

@@ -1,8 +1,8 @@
+# A module providing a set of utility static methods that helps resolve the EC2 fact.
+
 require 'timeout'
 require 'open-uri'
 
-# Provide a set of utility static methods that help with resolving the EC2
-# fact.
 module Facter::Util::EC2
   class << self
     # Test if we can connect to the EC2 api. Return true if able to connect.

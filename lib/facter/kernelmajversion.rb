@@ -5,7 +5,7 @@
 #
 # Resolution:
 #   Takes the first 2 elements of the kernel version as delimited by periods.
-#
+
 Facter.add("kernelmajversion") do
   setcode do
     Facter.value(:kernelversion).split('.')[0..1].join('.')

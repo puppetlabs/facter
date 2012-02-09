@@ -1,17 +1,17 @@
 # Fact: arp
 #
 # Purpose: 
-# 	   Internal fact used to specity the program to return the arp value.
+#    Internal fact used to specity the program to return the arp value.
 #
 # Resolution: 
-# 	   The arp module creates a fact ‘arp’ if and only if the first entry 
-#	   in the arptable is “fe:ff:ff:ff:ff:ff”. The output is IP address 
-#	   mapped against the MAC address of the machine.
+#    The arp module creates a fact ‘arp’ if and only if the first entry 
+#    in the arptable is “fe:ff:ff:ff:ff:ff”. The output is IP address 
+#    mapped against the MAC address of the machine.
 #
 # Caveats: 
-# 	   Internal fact used to specity the program to detect the arp value only on EC2.
-#	   Warning: Fact might in future be deprcated. Refer to ticket #11307.
-#
+#    Internal fact used to specity the program to detect the arp value only on EC2.
+#    Warning: Fact might in future be deprcated. Refer to ticket #11307.
+
 require 'facter/util/ip'
 
 Facter.add(:arp) do

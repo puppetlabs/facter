@@ -8,7 +8,7 @@
 #   to everything before the first period.
 #   On Darwin, uses the system configuration util to get the LocalHostName
 #   variable.
-#
+
 Facter.add(:hostname, :ldapname => "cn") do
   setcode do
     hostname = nil

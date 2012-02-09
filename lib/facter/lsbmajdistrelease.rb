@@ -7,7 +7,7 @@
 # Resolution:
 #   Parses the lsbdistrelease fact for numbers followed by a period and
 #   returns those, or just the lsbdistrelease fact if none were found.
-#
+
 require 'facter'
 
 Facter.add("lsbmajdistrelease") do

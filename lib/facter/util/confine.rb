@@ -1,3 +1,6 @@
+# A restricting tag for fact resolution mechanisms.  
+# The tag must be true for the resolution mechanism to be suitable.
+
 require 'facter/util/values'
 
 class Facter::Util::Confine

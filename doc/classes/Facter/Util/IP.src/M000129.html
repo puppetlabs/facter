@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>get_bonding_master (Facter::Util::IP)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/facter/util/ip.rb, line 117</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">get_bonding_master</span>(<span class="ruby-identifier">interface</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Facter</span>.<span class="ruby-identifier">value</span>(<span class="ruby-identifier">:kernel</span>) <span class="ruby-operator">!=</span> <span class="ruby-value str">'Linux'</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># We need ip instead of ifconfig because it will show us</span>
+    <span class="ruby-comment cmt"># the bonding master device.</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">not</span> <span class="ruby-constant">FileTest</span>.<span class="ruby-identifier">executable?</span>(<span class="ruby-value str">&quot;/sbin/ip&quot;</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># A bonding interface can never be an alias interface. Alias</span>
+    <span class="ruby-comment cmt"># interfaces do have a colon in their name and the ip link show</span>
+    <span class="ruby-comment cmt"># command throws an error message when we pass it an alias</span>
+    <span class="ruby-comment cmt"># interface.</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">interface</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/:/</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">regex</span> = <span class="ruby-regexp re">/SLAVE[,&gt;].* (bond[0-9]+)/</span>
+      <span class="ruby-identifier">ethbond</span> = <span class="ruby-identifier">regex</span>.<span class="ruby-identifier">match</span>(<span class="ruby-node">%x{/sbin/ip link show #{interface}}</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ethbond</span>
+      <span class="ruby-identifier">device</span> = <span class="ruby-identifier">ethbond</span>[<span class="ruby-value">1</span>]
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">device</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">device</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

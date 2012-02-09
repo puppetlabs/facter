@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Facter::Util::Resolution</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Facter::Util::Resolution</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/lib/facter/util/resolution_rb.html">
+                lib/facter/util/resolution.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000087">confine</a>&nbsp;&nbsp;
+      <a href="#M000086">exec</a>&nbsp;&nbsp;
+      <a href="#M000088">has_weight</a>&nbsp;&nbsp;
+      <a href="#M000084">have_which</a>&nbsp;&nbsp;
+      <a href="#M000093">interpreter</a>&nbsp;&nbsp;
+      <a href="#M000094">interpreter=</a>&nbsp;&nbsp;
+      <a href="#M000091">limit</a>&nbsp;&nbsp;
+      <a href="#M000089">new</a>&nbsp;&nbsp;
+      <a href="#M000092">setcode</a>&nbsp;&nbsp;
+      <a href="#M000095">suitable?</a>&nbsp;&nbsp;
+      <a href="#M000096">to_s</a>&nbsp;&nbsp;
+      <a href="#M000097">value</a>&nbsp;&nbsp;
+      <a href="#M000090">weight</a>&nbsp;&nbsp;
+      <a href="#M000085">with_env</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">INTERPRETER</td>
+          <td>=</td>
+          <td class="context-item-value">Facter::Util::Config.is_windows? ? &quot;cmd.exe&quot; : &quot;/bin/sh&quot;</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">code</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">interpreter</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">name</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">timeout</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">value</td>
+          <td class="context-item-value">&nbsp;[W]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">weight</td>
+          <td class="context-item-value">&nbsp;[W]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000086" class="method-detail">
+        <a name="M000086"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000086.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000086.html');return false;">
+          <span class="method-name">exec</span><span class="method-args">(code, interpreter = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Execute a program and return the output of that program.
+</p>
+<p>
+Returns nil if the program can&#8216;t be found, or if there is a problem
+executing the code.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000084" class="method-detail">
+        <a name="M000084"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000084.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000084.html');return false;">
+          <span class="method-name">have_which</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000089" class="method-detail">
+        <a name="M000089"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000089.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000089.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="Resolution.html#M000089">new</a> resolution mechanism.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000085" class="method-detail">
+        <a name="M000085"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000085.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000085.html');return false;">
+          <span class="method-name">with_env</span><span class="method-args">(values) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Call this method with a block of code for which you would like to
+temporarily modify one or more environment variables; the specified values
+will be set for the duration of your block, after which the original values
+(if any) will be restored.
+</p>
+<dl>
+<dt>values</dt><dd>a Hash containing the key/value pairs of any environment variables that you
+
+</dd>
+</dl>
+<p>
+would like to temporarily override
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000087" class="method-detail">
+        <a name="M000087"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000087.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000087.html');return false;">
+          <span class="method-name">confine</span><span class="method-args">(confines)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add a <a href="Resolution.html#M000089">new</a> <a
+href="Resolution.html#M000087">confine</a> to the resolution mechanism.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000088" class="method-detail">
+        <a name="M000088"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000088.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000088.html');return false;">
+          <span class="method-name">has_weight</span><span class="method-args">(weight)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000093" class="method-detail">
+        <a name="M000093"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000093.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000093.html');return false;">
+          <span class="method-name">interpreter</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000094" class="method-detail">
+        <a name="M000094"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000094.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000094.html');return false;">
+          <span class="method-name">interpreter=</span><span class="method-args">(interp)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000091" class="method-detail">
+        <a name="M000091"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000091.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000091.html');return false;">
+          <span class="method-name">limit</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+We need this as a getter for &#8216;timeout&#8217;, because some versions
+of ruby seem to already have a &#8216;timeout&#8217; method and we
+can&#8216;t seem to override the instance methods, somehow.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000092" class="method-detail">
+        <a name="M000092"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000092.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000092.html');return false;">
+          <span class="method-name">setcode</span><span class="method-args">(string = nil, interp = nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set our code for returning a <a href="Resolution.html#M000097">value</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000095" class="method-detail">
+        <a name="M000095"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000095.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000095.html');return false;">
+          <span class="method-name">suitable?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Is this resolution mechanism suitable on the system in question?
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000096" class="method-detail">
+        <a name="M000096"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000096.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000096.html');return false;">
+          <span class="method-name">to_s</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000097" class="method-detail">
+        <a name="M000097"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000097.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000097.html');return false;">
+          <span class="method-name">value</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+How we get a <a href="Resolution.html#M000097">value</a> for our resolution
+mechanism.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000090" class="method-detail">
+        <a name="M000090"></a>
+
+        <div class="method-heading">
+          <a href="Resolution.src/M000090.html" target="Code" class="method-signature"
+            onclick="popupCode('Resolution.src/M000090.html');return false;">
+          <span class="method-name">weight</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the importance of this resolution.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

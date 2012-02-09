@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>convert_from_hex? (Facter::Util::IP)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/facter/util/ip.rb, line 43</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">convert_from_hex?</span>(<span class="ruby-identifier">kernel</span>)
+    <span class="ruby-identifier">kernels_to_convert</span> = [<span class="ruby-identifier">:sunos</span>, <span class="ruby-identifier">:openbsd</span>, <span class="ruby-identifier">:netbsd</span>, <span class="ruby-identifier">:freebsd</span>, <span class="ruby-identifier">:darwin</span>, <span class="ruby-value str">&quot;hp-ux&quot;</span><span class="ruby-value str">&quot;hp-ux&quot;</span>, <span class="ruby-value str">&quot;gnu/kfreebsd&quot;</span><span class="ruby-value str">&quot;gnu/kfreebsd&quot;</span>, <span class="ruby-identifier">:dragonfly</span>]
+    <span class="ruby-identifier">kernels_to_convert</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">kernel</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

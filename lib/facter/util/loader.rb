@@ -1,6 +1,8 @@
+# A base module for loading all resolutions for a single or all facts, 
+# from all matching path and directories on demand.
+
 require 'facter'
 
-# Load facts on demand.
 class Facter::Util::Loader
 
   def initialize

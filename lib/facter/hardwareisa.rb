@@ -8,7 +8,7 @@
 #
 # Caveats:
 #   Some linuxes return unknown to uname -p with relative ease.
-#
+
 Facter.add(:hardwareisa) do
   setcode 'uname -p'
 end

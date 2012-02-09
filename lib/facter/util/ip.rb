@@ -1,3 +1,5 @@
+# A base module for collecting IP-related information from all kinds of platforms.
+
 module Facter::Util::IP
   # A map of all the different regexes that work for
   # a given platform or set of platforms.

@@ -8,7 +8,7 @@
 #   files in /etc/ to find the specific flavour.
 #   On SunOS based kernels, return Solaris.
 #   On systems other than Linux, use the kernel value.
-#
+
 require 'facter/lsb'
 
 Facter.add(:operatingsystem) do

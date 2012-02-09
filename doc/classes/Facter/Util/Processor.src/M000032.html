@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>enum_cpuinfo (Facter::Util::Processor)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/facter/util/processor.rb, line 4</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">enum_cpuinfo</span>
+    <span class="ruby-identifier">processor_num</span> = <span class="ruby-value">-1</span>
+    <span class="ruby-identifier">processor_list</span> = []
+    <span class="ruby-identifier">cpuinfo</span> = <span class="ruby-value str">&quot;/proc/cpuinfo&quot;</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exists?</span>(<span class="ruby-identifier">cpuinfo</span>)
+      <span class="ruby-identifier">model</span> = <span class="ruby-constant">Facter</span>.<span class="ruby-identifier">value</span>(<span class="ruby-identifier">:architecture</span>)
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">model</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;x86_64&quot;</span>, <span class="ruby-value str">&quot;amd64&quot;</span>, <span class="ruby-value str">&quot;i386&quot;</span>, <span class="ruby-regexp re">/parisc/</span>, <span class="ruby-value str">&quot;hppa&quot;</span>, <span class="ruby-value str">&quot;ia64&quot;</span>
+        <span class="ruby-constant">Thread</span><span class="ruby-operator">::</span><span class="ruby-identifier">exclusive</span> <span class="ruby-keyword kw">do</span>
+          <span class="ruby-constant">File</span>.<span class="ruby-identifier">readlines</span>(<span class="ruby-identifier">cpuinfo</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">l</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">l</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/processor\s+:\s+(\d+)/</span>
+              <span class="ruby-identifier">processor_num</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+            <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">l</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/model name\s+:\s+(.*)\s*$/</span>
+              <span class="ruby-identifier">processor_list</span>[<span class="ruby-identifier">processor_num</span>] = <span class="ruby-identifier">$1</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">processor_num</span> <span class="ruby-operator">==</span> <span class="ruby-value">-1</span>
+              <span class="ruby-identifier">processor_num</span> = <span class="ruby-value">-1</span>
+            <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">l</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/processor\s+(\d+):\s+(.*)/</span>
+              <span class="ruby-identifier">processor_num</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+              <span class="ruby-identifier">processor_list</span>[<span class="ruby-identifier">processor_num</span>] = <span class="ruby-identifier">$2</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">processor_num</span> <span class="ruby-operator">==</span> <span class="ruby-value">-1</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;ppc64&quot;</span>
+        <span class="ruby-constant">Thread</span><span class="ruby-operator">::</span><span class="ruby-identifier">exclusive</span> <span class="ruby-keyword kw">do</span>
+          <span class="ruby-constant">File</span>.<span class="ruby-identifier">readlines</span>(<span class="ruby-identifier">cpuinfo</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">l</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">l</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/processor\s+:\s+(\d+)/</span>
+              <span class="ruby-identifier">processor_num</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+            <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">l</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/cpu\s+:\s+(.*)\s*$/</span>
+              <span class="ruby-identifier">processor_list</span>[<span class="ruby-identifier">processor_num</span>] = <span class="ruby-identifier">$1</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">processor_num</span> <span class="ruby-operator">==</span> <span class="ruby-value">-1</span>
+              <span class="ruby-identifier">processor_num</span> = <span class="ruby-value">-1</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/arm/</span>
+        <span class="ruby-constant">Thread</span><span class="ruby-operator">::</span><span class="ruby-identifier">exclusive</span> <span class="ruby-keyword kw">do</span>
+          <span class="ruby-constant">File</span>.<span class="ruby-identifier">readlines</span>(<span class="ruby-identifier">cpuinfo</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">l</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">l</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/Processor\s+:\s+(.+)/</span>
+              <span class="ruby-identifier">processor_num</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+              <span class="ruby-identifier">processor_list</span>[<span class="ruby-identifier">processor_num</span>] = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">chomp</span>
+            <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">l</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/processor\s+:\s+(\d+)\s*$/</span>
+              <span class="ruby-identifier">proc_num</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+              <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">proc_num</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span>
+                <span class="ruby-identifier">processor_num</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+                <span class="ruby-identifier">processor_list</span>[<span class="ruby-identifier">processor_num</span>] = <span class="ruby-identifier">processor_list</span>[<span class="ruby-identifier">processor_num</span><span class="ruby-operator">-</span><span class="ruby-value">1</span>]
+              <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/sparc/</span>
+        <span class="ruby-constant">Thread</span><span class="ruby-operator">::</span><span class="ruby-identifier">exclusive</span> <span class="ruby-keyword kw">do</span>
+          <span class="ruby-constant">File</span>.<span class="ruby-identifier">readlines</span>(<span class="ruby-identifier">cpuinfo</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">l</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">l</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/cpu\s+:\s+(.*)\s*$/</span>
+              <span class="ruby-identifier">processor_num</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+              <span class="ruby-identifier">processor_list</span>[<span class="ruby-identifier">processor_num</span>] = <span class="ruby-identifier">$1</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">processor_list</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

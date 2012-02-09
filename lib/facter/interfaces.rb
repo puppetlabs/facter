@@ -1,23 +1,23 @@
 # Fact: interfaces
 #
 # Purpose: 
-#    Get information regarding all primary interfaces available on the machine 
+#   Get information regarding all primary interfaces available on the machine 
 #
 # Resolution: 
-#    Generates facts regarding the information about all the network interfaces -
-#    physical or virtual that are available on the machine (e.g. ipaddress, ipaddress6, 
-#    macaddress and netmask)
+#   Generates facts regarding the information about all the network interfaces -
+#   physical or virtual that are available on the machine (e.g. ipaddress, ipaddress6, 
+#   macaddress and netmask)
 #
-#    The function 'get_all_interface_output' in util/ip.rb is used to get the details for 
-#    each interface's ipaddress, macaddress, netmask:
-#    Linux, OpenBSD, NetBSD, FreeBSD, Darwin, GNU/kFreeBSD, DragonFly use 'ifconfig -a'.
-#    SunOS uses 'ifconfig -a'.
-#    HP-UX uses 'netstat -in | sed -e 1d'
-#    windows uses 'netsh'
+#   The function 'get_all_interface_output' in util/ip.rb is used to get the details for 
+#   each interface's ipaddress, macaddress, netmask:
+#   Linux, OpenBSD, NetBSD, FreeBSD, Darwin, GNU/kFreeBSD, DragonFly use 'ifconfig -a'.
+#   SunOS uses 'ifconfig -a'.
+#   HP-UX uses 'netstat -in | sed -e 1d'
+#   windows uses 'netsh'
 #    
 # Original concept Copyright (C) 2007 psychedelys <psychedelys@gmail.com>
 # Update and *BSD support (C) 2007 James Turnbull <james@lovedthanlost.net>
-#
+
 require 'facter/util/ip'
 
 Facter.add(:interfaces) do
