@@ -10,7 +10,7 @@
 #
 # Caveats: 
 #    Internal fact used to specity the program to detect the arp value only on EC2.
-#    Warning: Fact might in future be deprcated. Refer to ticket #11307.
+#    Warning: Fact might in future be deprecated. Refer to ticket #11307.
 
 require 'facter/util/ip'
 
