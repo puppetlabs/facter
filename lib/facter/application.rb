@@ -28,25 +28,10 @@ module Facter
 
       # Print the facts as JSON and exit
       if options[:json]
-        begin
-          require 'rubygems'
-          require 'json'
-          puts JSON.dump(facts)
-          exit(0)
-        rescue LoadError
-          $stderr.puts "You do not have JSON support in your version of Ruby. JSON output disabled"
-          exit(1)
-        end
+        print_json(facts)
       end
 
-      # Print the value of a single fact, otherwise print the lot
-      if facts.length == 1
-        if value = facts.values.first
-          puts value.to_yaml
-        end
-      else
-        puts facts.to_yaml
-      end
+      print_yaml(facts)
 
     rescue => e
       if options && options[:trace]
@@ -58,6 +43,33 @@ module Facter
     end
 
     private
+
+    def self.print_json(facts)
+      begin
+        require 'rubygems'
+        require 'json'
+        puts JSON.dump(facts)
+        exit(0)
+      rescue LoadError
+        $stderr.puts "You do not have JSON support in your version of Ruby. JSON output disabled"
+        exit(1)
+      end
+    end
+
+    def self.print_yaml(facts)
+      puts sort_yaml_hash(facts)
+      exit(1)
+    end
+
+    def self.sort_yaml_hash(obj)
+      arr = obj.sort
+      out = "---\n"
+      arr.each do |element|
+        entry = {element[0] => element[1]}
+        out += entry.to_yaml.to_a[1..-1].join + "\n"
+      end
+      out
+    end
 
     def self.parse(argv)
       options = {}
