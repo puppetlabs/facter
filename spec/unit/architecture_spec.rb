@@ -30,7 +30,7 @@ describe "Architecture fact" do
     "i686" => "i386",
     "pentium" => "i386",
   }
-  
+
   os_archs.each do |pair, result|
     it "should be #{result} if os is #{pair[0]} and hardwaremodel is #{pair[1]}" do
      Facter.fact(:operatingsystem).stubs(:value).returns(pair[0])

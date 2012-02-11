@@ -54,20 +54,20 @@ describe "Block device facts" do
           %w{ . .. hda }.each do |device|
             Facter.fact("blockdevice_#{device}_size".to_sym).should == nil
             Facter.fact("blockdevice_#{device}_vendor".to_sym).should == nil
-            Facter.fact("blockdevice_#{device}_model".to_sym).should == nil          
+            Facter.fact("blockdevice_#{device}_model".to_sym).should == nil
           end
 
           # handle facts that should exist
           %w{ sda sdb }.each do |device|
             Facter.fact("blockdevice_#{device}_size".to_sym).should_not == nil
             Facter.fact("blockdevice_#{device}_vendor".to_sym).should_not == nil
-            Facter.fact("blockdevice_#{device}_model".to_sym).should_not == nil          
+            Facter.fact("blockdevice_#{device}_model".to_sym).should_not == nil
           end
 
           Facter.fact(:blockdevice_sda_model).value.should == "WDC WD5000AAKS-0"
           Facter.fact(:blockdevice_sda_vendor).value.should == "ATA"
           Facter.fact(:blockdevice_sda_size).value.should == 500107862016
-          
+
           Facter.fact(:blockdevice_sdb_model).value.should == "PERC H700"
           Facter.fact(:blockdevice_sdb_vendor).value.should == "DELL"
           Facter.fact(:blockdevice_sdb_size).value.should == 4499246678016
