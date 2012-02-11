@@ -26,7 +26,7 @@ module Facter::Util::EC2
       !!(Facter.value(:macaddress) =~ %r{^[dD]0:0[dD]:})
     end
 
-    # Test if this host has a mac address used by OpenStack, which 
+    # Test if this host has a mac address used by OpenStack, which
     # normally starts with 02:16:3E
     def has_openstack_mac?
       !!(Facter.value(:macaddress) =~ %r{^02:16:3[eE]})

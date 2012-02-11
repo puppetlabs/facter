@@ -43,7 +43,7 @@ describe Facter::Util::Processor do
     Facter.fact(:architecture).stubs(:value).returns("amd64")
     File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
     File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64quad"))
-    
+
     Facter::Util::Processor.enum_cpuinfo[0].should == "Quad-Core AMD Opteron(tm) Processor 2374 HE"
     Facter::Util::Processor.enum_cpuinfo[1].should == "Quad-Core AMD Opteron(tm) Processor 2374 HE"
     Facter::Util::Processor.enum_cpuinfo[2].should == "Quad-Core AMD Opteron(tm) Processor 2374 HE"

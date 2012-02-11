@@ -11,7 +11,7 @@
 #   On Slackware, parses '/etc/slackware-version'.
 #   On Amazon Linux, returns the 'lsbdistrelease' value.
 #   On Mageia, parses '/etc/mageia-release' for the release version.
-#   
+#
 #   On all remaining systems, returns the 'kernelrelease' value.
 #
 # Caveats:

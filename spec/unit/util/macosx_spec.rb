@@ -43,19 +43,19 @@ describe Facter::Util::Macosx do
     Facter::Util::Macosx.expects(:profiler_data).with("SPSoftwareDataType").returns "eh"
     Facter::Util::Macosx.os_overview.should == "eh"
   end
-  
+
   describe "when working out software version" do
-    
+
     before do
       Facter::Util::Resolution.expects(:exec).with("/usr/bin/sw_vers -productName").returns "Mac OS X"
       Facter::Util::Resolution.expects(:exec).with("/usr/bin/sw_vers -buildVersion").returns "9J62"
     end
-    
+
     it "should have called sw_vers three times when determining software version" do
       Facter::Util::Resolution.expects(:exec).with("/usr/bin/sw_vers -productVersion").returns "10.5.7"
       Facter::Util::Macosx.sw_vers
     end
-  
+
     it "should return a hash with the correct keys when determining software version" do
       Facter::Util::Resolution.expects(:exec).with("/usr/bin/sw_vers -productVersion").returns "10.5.7"
       Facter::Util::Macosx.sw_vers.keys.sort.should == ["macosx_productName",
@@ -64,14 +64,14 @@ describe Facter::Util::Macosx do
                                                         "macosx_productversion_major",
                                                         "macosx_productVersion"].sort
     end
-  
+
     it "should split a product version of 'x.y.z' into separate hash entries correctly" do
       Facter::Util::Resolution.expects(:exec).with("/usr/bin/sw_vers -productVersion").returns "1.2.3"
       sw_vers = Facter::Util::Macosx.sw_vers
       sw_vers["macosx_productversion_major"].should == "1.2"
       sw_vers["macosx_productversion_minor"].should == "3"
     end
-  
+
     it "should treat a product version of 'x.y' as 'x.y.0" do
       Facter::Util::Resolution.expects(:exec).with("/usr/bin/sw_vers -productVersion").returns "2.3"
       Facter::Util::Macosx.sw_vers["macosx_productversion_minor"].should == "0"
