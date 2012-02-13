@@ -75,7 +75,7 @@ if Facter.value(:kernel) == 'Linux'
 
       if File.exist?(sizefile)
         Facter.add("blockdevice_#{device}_size".to_sym) do
-          setcode { IO.read(sizefile).strip.to_i * 512 }
+          setcode { (IO.read(sizefile).strip.to_i * 512).to_s }
         end
       end
 
