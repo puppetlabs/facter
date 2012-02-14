@@ -1,4 +1,4 @@
-# Fact: zones#                                                                                                
+# Fact: zones                                                                                                
 #
 # Purpose: 
 #   Return the list of zones on the system and add one zones_ fact
@@ -11,10 +11,10 @@
 #
 # Caveats: 
 #   Only for Solaris operating system 10 and greater
-#
+
 Facter.add("zones") do
   confine :kernel => 'SunOS'
-  confine :kernelrelease =>  %w{5.10 5.11} # or ["5.10", "5.11"]
+  confine :kernelrelease =>  %w{5.10 5.11} 
 
   num_zones = 0
 

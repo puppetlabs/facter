@@ -1,8 +1,5 @@
-#!usr/bin/env ruby
-#Test for zones and zone_[name] facts
-#
-#Author: Shubhra Sinha Varma
-#
+#!usr/bin/env rspec
+
 require 'spec_helper'
 require 'facter'
 
@@ -14,7 +11,7 @@ describe "on Solaris" do
 
   describe "number of zones" do
     it "should output number of zones" do
-      zone_list = File.open(fixtures('zones', 'zoneadm_solaris10.out')).readlines
+      zone_list = File.open(fixtures('zones', 'zoneadm_list.out')).readlines
       Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/zoneadm list -cp 2>/dev/null').returns(zone_list)
       Facter.fact(:zones).value.should == zone_list.size
     end
@@ -29,7 +26,7 @@ describe "on Solaris" do
 
   describe "per zone fact and its status" do
     it "should have a per zone fact with its status" do
-      zone_list = File.open(fixtures('zones', 'zoneadm_solaris10.out')).readlines
+      zone_list = File.open(fixtures('zones', 'zoneadm_list.out')).readlines
       zone_list.each do |this_line|
         this_zone = this_line.split(":")[1]
         this_zone_stat = this_line.split(":")[2]
