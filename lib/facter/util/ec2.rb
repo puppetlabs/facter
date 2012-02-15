@@ -46,7 +46,7 @@ module Facter::Util::EC2
       arp_table = Facter::Util::Resolution.exec(arp_command)
       if not arp_table.nil?
         arp_table.each_line do |line|
-          return true if line.include?(mac_address)
+          return true if line.downcase.include?(mac_address)
         end
       end
       return false

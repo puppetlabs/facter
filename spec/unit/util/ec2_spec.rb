@@ -22,6 +22,13 @@ describe Facter::Util::EC2 do
         Facter::Util::EC2.has_ec2_arp?.should == true
       end
 
+      it "should succeed if arp table contains FE:FF:FF:FF:FF:FF" do
+        ec2arp = my_fixture_read("centos-arp-ec2.out")
+        Facter::Util::Resolution.expects(:exec).with("arp -an").\
+          at_least_once.returns(ec2arp)
+        Facter::Util::EC2.has_ec2_arp?.should == true
+      end
+
       it "should fail if arp table does not contain fe:ff:ff:ff:ff:ff" do
         ec2arp = my_fixture_read("linux-arp-not-ec2.out")
         Facter::Util::Resolution.expects(:exec).with("arp -an").
