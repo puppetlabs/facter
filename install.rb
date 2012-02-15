@@ -103,7 +103,7 @@ def do_libs(libs, strip = 'lib/')
     op = File.dirname(olf)
     FileUtils.makedirs(op, {:mode => 0755, :verbose => true})
     FileUtils.chmod(0755, op)
-    FileUtils.install(lf, olf, {:mode => 0644, :verbose => true})
+    FileUtils.install(lf, olf, {:mode => 0644, :preserve => true, :verbose => true})
   end
 end
 
@@ -114,7 +114,7 @@ def do_man(man, strip = 'man/')
     om = File.dirname(omf)
     FileUtils.makedirs(om, {:mode => 0755, :verbose => true})
     FileUtils.chmod(0755, om)
-    FileUtils.install(mf, omf, {:mode => 0644, :verbose => true})
+    FileUtils.install(mf, omf, {:mode => 0644, :preserve => true, :verbose => true})
     gzip = %x{which gzip}
     gzip.chomp!
     %x{#{gzip} -f #{omf}}
@@ -400,12 +400,12 @@ def install_binfile(from, op_file, target)
     installed_wrapper = false
 
     if File.exists?("#{from}.bat")
-      FileUtils.install("#{from}.bat", File.join(target, "#{op_file}.bat"), :mode => 0755, :verbose => true)
+      FileUtils.install("#{from}.bat", File.join(target, "#{op_file}.bat"), :mode => 0755, :preserve => true, :verbose => true)
       installed_wrapper = true
     end
 
     if File.exists?("#{from}.cmd")
-      FileUtils.install("#{from}.cmd", File.join(target, "#{op_file}.cmd"), :mode => 0755, :verbose => true)
+      FileUtils.install("#{from}.cmd", File.join(target, "#{op_file}.cmd"), :mode => 0755, :preserve => true, :verbose => true)
       installed_wrapper = true
     end
 
@@ -419,13 +419,13 @@ set RUBY_BIN=%RUBY_BIN:\\=/%
 "%RUBY_BIN%ruby.exe" -x "%RUBY_BIN%facter" %*
 EOS
       File.open(tmp_file2.path, "w") { |cw| cw.puts cwv }
-      FileUtils.install(tmp_file2.path, File.join(target, "#{op_file}.bat"), :mode => 0755, :verbose => true)
+      FileUtils.install(tmp_file2.path, File.join(target, "#{op_file}.bat"), :mode => 0755, :preserve => true, :verbose => true)
 
       tmp_file2.unlink
       installed_wrapper = true
     end
   end
-  FileUtils.install(tmp_file.path, File.join(target, op_file), :mode => 0755, :verbose => true)
+  FileUtils.install(tmp_file.path, File.join(target, op_file), :mode => 0755, :preserve => true, :verbose => true)
   tmp_file.unlink
 end
 
