@@ -1,4 +1,4 @@
-# Fact: zones                                                                                                
+# Fact: zones
 #
 # Purpose: 
 #   Return the list of zones on the system and add one zones_ fact

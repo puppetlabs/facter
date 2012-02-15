@@ -1,7 +1,6 @@
 #!usr/bin/env rspec
 
 require 'spec_helper'
-require 'facter'
 
 describe "on Solaris" do
   before do
@@ -11,29 +10,25 @@ describe "on Solaris" do
 
   describe "number of zones" do
     it "should output number of zones" do
-      zone_list = File.open(fixtures('zones', 'zoneadm_list.out')).readlines
-      Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/zoneadm list -cp 2>/dev/null').returns(zone_list)
-      Facter.fact(:zones).value.should == zone_list.size
-    end
-  end
-
-  describe "when zoneadm returns error" do
-    it "should not populate the zones fact" do
-      Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/zoneadm list -cp 2>/dev/null').returns(nil)
-      Facter.fact(:zones).value.should be_nil
+      zone_list = my_fixture_read("zoneadm-list.out")
+      Facter::Util::Resolution.stubs(:exec).
+        with('/usr/sbin/zoneadm list -cp 2>/dev/null').
+        returns(zone_list)
+      Facter.fact(:zones).value.should == 3
     end
   end
 
   describe "per zone fact and its status" do
     it "should have a per zone fact with its status" do
-      zone_list = File.open(fixtures('zones', 'zoneadm_list.out')).readlines
-      zone_list.each do |this_line|
-        this_zone = this_line.split(":")[1]
-        this_zone_stat = this_line.split(":")[2]
-        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/zoneadm list -cp 2>/dev/null').returns(zone_list)
-        Facter.collection.loader.load(:zones)
-        Facter.value("zone_#{this_zone}_status".to_sym).should == this_zone_stat
-      end
+      zone_list = my_fixture_read("zoneadm-list.out")
+      Facter::Util::Resolution.stubs(:exec).
+        with('/usr/sbin/zoneadm list -cp 2>/dev/null').
+        returns(zone_list)
+
+      Facter.collection.loader.load(:zones)
+      Facter.value("zone_global_status").should == "running"
+      Facter.value("zone_local_status").should  == "configured"
+      Facter.value("zone_zoneA_status").should  == "stopped"
     end
   end
 end
