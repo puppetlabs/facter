@@ -102,7 +102,6 @@ elsif processor_list_aix.length != 0
       end
     end
   end
-end
 elsif processor_list_sunos.length != 0
   processor_list_sunos.each_with_index do |desc, i|
     Facter.add("Processor#{i}") do
