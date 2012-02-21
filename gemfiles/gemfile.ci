@@ -1,0 +1,13 @@
+source 'http://rubygems.org'
+
+# These are the base gems that facter requires for CI testing. This is a
+# duplicate of what the Puppetlabs Jenkins environment was running at the
+# time this file was created.
+gem 'rspec', '2.6.0'
+gem 'rspec-core', '2.6.0'
+gem 'rspec-expectations', '2.6.0'
+gem 'rspec-mocks', '2.6.0'
+gem 'rake', '0.8.7'
+gem 'mocha', '0.9.12'
+gem 'json', '1.6.5'
+gem 'diff-lcs', '1.1.2'
