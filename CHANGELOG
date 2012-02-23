@@ -1,10 +1,7 @@
-1.6.6rc2
+1.6.6
 ===
 e046144 Updated CHANGELOG for 1.6.6rc2
 c273d34 Make ec2 facts work on CentOS again (#12666)
-
-1.6.6rc1
-===
 c218d84 (#12362) Use Tempfile to generate temp files
 f6bbe14 (#12170) Adds gem spec description Without this patch, the gem spec file is missing a description attribute, which caus
 5c5c330 Changes apple rake task to reflect package name facter instead of puppet.
