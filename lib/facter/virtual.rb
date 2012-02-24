@@ -89,7 +89,7 @@ Facter.add("virtual") do
     end
 
     if result == "physical"
-      output = Facter::Util::Resolution.exec('lspci')
+      output = Facter::Util::Resolution.exec('lspci 2>/dev/null')
       if not output.nil?
         output.each_line do |p|
           # --- look for the vmware video card to determine if it is virtual => vmware.
