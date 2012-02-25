@@ -23,6 +23,10 @@ Facter.add(:architecture) do
       else
         model
       end
+    when /ia64/
+      "ia64"
+    when /9000/
+      "hppa"
     when /(i[3456]86|pentium)/
       case Facter.value(:operatingsystem)
       when "Gentoo"

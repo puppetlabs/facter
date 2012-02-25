@@ -78,7 +78,7 @@ module Facter::Util::IP
     when 'SunOS'
       output = %x{/usr/sbin/ifconfig -a}
     when 'HP-UX'
-      output = %x{/bin/netstat -in | sed -e 1d}
+      output = %x{/bin/netstat -in | sed -e 1d | sed 's/*//g'}
     when 'windows'
       output = %x|#{ENV['SYSTEMROOT']}/system32/netsh interface ip show interface|
       output += %x|#{ENV['SYSTEMROOT']}/system32/netsh interface ipv6 show interface|
