@@ -1,5 +1,18 @@
-1.6.5rc1
+1.6.6
 ===
+e046144 Updated CHANGELOG for 1.6.6rc2
+c273d34 Make ec2 facts work on CentOS again (#12666)
+c218d84 (#12362) Use Tempfile to generate temp files
+f6bbe14 (#12170) Adds gem spec description Without this patch, the gem spec file is missing a description attribute, which caus
+5c5c330 Changes apple rake task to reflect package name facter instead of puppet.
+9b5cb26 Updating conf/redhat/facter.spec for 1.6.5 release.
+7d3889d (#12079) Fix order-dependent test failure due to odd stubbing.
+7f2a0e2 add a simple test for openstack ec2 facts
+cb598aa Support EC2 facts on OpenStack
+
+1.6.5
+===
+71d3d3d (#12077) Add pciutils RPM dependency
 1df5b46 (#11566) Add windows support for ec2 facts
 d1a33e5 (#11848) Don't hard code ruby install paths in Windows batch files
 14cad7e Build a Rake task for building Apple Packages
