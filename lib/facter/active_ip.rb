@@ -31,7 +31,7 @@ Facter.add("active_ip") do
         "foreign_address" => foreign_address,
         "foreign_port" => foreign_port,
       }
-      hash["state"] if state
+      hash["state"] =state if state
 
       table << hash
 
