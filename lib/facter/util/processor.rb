@@ -85,4 +85,23 @@ module Facter::Util::Processor
     end
     processor_list
   end
+
+  def self.enum_kstat
+    processor_num = -1
+    processor_list = []
+    Thread::exclusive do
+      kstat = Facter::Util::Resolution.exec('/usr/bin/kstat cpu_info')
+      if kstat
+        kstat.each_line do |l|
+          if l =~ /cpu_info(\d+)/
+            processor_num = $1.to_i
+          elsif l =~ /brand\s+(.*)\s*$/
+            processor_list[processor_num] = $1 unless processor_num == -1
+            processor_num = -1
+          end
+        end
+      end
+    end
+    processor_list
+  end
 end
