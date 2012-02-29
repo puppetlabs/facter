@@ -17,7 +17,9 @@ if Facter.value(:kernel) == "Linux"
     Facter.add("RAIDControllerCount") do
         confine :kernel => :linux
         setcode do
-            raidcontroller_list.length.to_s
+            if raidcontroller_list.length != 0
+                raidcontroller_list.length.to_s
+            end
         end
     end
 
