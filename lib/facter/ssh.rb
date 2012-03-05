@@ -11,7 +11,7 @@
 ## Facts related to SSH
 ##
 
-["/etc/ssh","/usr/local/etc/ssh","/etc","/usr/local/etc"].each do |dir|
+["/etc/ssh","/usr/local/etc/ssh","/etc","/usr/local/etc","/etc/opt/ssh"].each do |dir|
   {"SSHDSAKey" => { :file => "ssh_host_dsa_key.pub", :sshfprrtype => 2 } , "SSHRSAKey" => { :file => "ssh_host_rsa_key.pub", :sshfprrtype => 1 }, "SSHECDSAKey" => { :file => "ssh_host_ecdsa_key.pub", :sshfprrtype => 3 } }.each do |name,key|
     Facter.add(name) do
       setcode do
