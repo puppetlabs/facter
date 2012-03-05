@@ -21,6 +21,14 @@ Facter.add(:kernelrelease) do
 end
 
 Facter.add(:kernelrelease) do
+  confine :kernel => :"hp-ux"
+  version=Facter::Util::Resolution.exec('uname -r')
+  setcode do
+    version[2..-1]
+  end
+end
+
+Facter.add(:kernelrelease) do
   confine :kernel => %{windows}
   setcode do
     require 'facter/util/wmi'
