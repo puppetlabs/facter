@@ -283,6 +283,13 @@ describe Facter::Util::Resolution do
     @resolve.weight.should == 2
   end
 
+  it "should include block confines when measuring weight" do
+    @resolve = Facter::Util::Resolution.new("yay")
+    @resolve.confine "one" => "foo", "two" => "fee"
+    @resolve.confine { true }
+    @resolve.weight.should == 3
+  end
+
   it "should return 0 confines when no confines have been added" do
     Facter::Util::Resolution.new("yay").weight.should == 0
   end
@@ -314,11 +321,20 @@ describe Facter::Util::Resolution do
       lambda { @resolve.confine :one => "two" }.should_not raise_error
     end
 
+    it "should accept a block" do
+      expect { @resolve.confine { true } }.to_not raise_error
+    end
+
     it "should create a Util::Confine instance for every argument in the provided hash" do
       Facter::Util::Confine.expects(:new).with("one", "foo")
       Facter::Util::Confine.expects(:new).with("two", "fee")
 
       @resolve.confine "one" => "foo", "two" => "fee"
+    end
+
+    it "should create a Util::ConfineBlock instance when adding a block confine" do
+      Facter::Util::ConfineBlock.expects(:new)
+      @resolve.confine { true }
     end
 
   end
