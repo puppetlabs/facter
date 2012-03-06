@@ -1,0 +1,151 @@
+module: cpu_info                        instance: 0
+name:   cpu_info0                       class:    misc
+        brand                           SPARC64-VII
+        chip_id                         1024
+        clock_MHz                       2520
+        core_id                         0
+        cpu_fru                         hc:///component=/MBU_A
+        cpu_type                        sparcv9
+        crtime                          92.5418505
+        current_clock_Hz                2520000000
+        device_ID                       175931055444225
+        fpu_type                        sparcv9
+        implementation                  SPARC64-VII (portid 1024 impl 0x7 ver 0x91 clock 2520 MHz)
+        pg_id                           1
+        snaptime                        15277456.9660361
+        state                           on-line
+        state_begin                     1314212380
+        supported_frequencies_Hz        2520000000
+
+module: cpu_info                        instance: 1
+name:   cpu_info1                       class:    misc
+        brand                           SPARC64-VII
+        chip_id                         1024
+        clock_MHz                       2520
+        core_id                         0
+        cpu_fru                         hc:///component=/MBU_A
+        cpu_type                        sparcv9
+        crtime                          93.3416172
+        current_clock_Hz                2520000000
+        device_ID                       175931055444225
+        fpu_type                        sparcv9
+        implementation                  SPARC64-VII (portid 1024 impl 0x7 ver 0x91 clock 2520 MHz)
+        pg_id                           1
+        snaptime                        15277456.9667477
+        state                           on-line
+        state_begin                     1314212381
+        supported_frequencies_Hz        2520000000
+
+module: cpu_info                        instance: 2
+name:   cpu_info2                       class:    misc
+        brand                           SPARC64-VII
+        chip_id                         1024
+        clock_MHz                       2520
+        core_id                         2
+        cpu_fru                         hc:///component=/MBU_A
+        cpu_type                        sparcv9
+        crtime                          93.3433262
+        current_clock_Hz                2520000000
+        device_ID                       175931055444225
+        fpu_type                        sparcv9
+        implementation                  SPARC64-VII (portid 1024 impl 0x7 ver 0x91 clock 2520 MHz)
+        pg_id                           4
+        snaptime                        15277456.9671387
+        state                           on-line
+        state_begin                     1314212381
+        supported_frequencies_Hz        2520000000
+
+module: cpu_info                        instance: 3
+name:   cpu_info3                       class:    misc
+        brand                           SPARC64-VII
+        chip_id                         1024
+        clock_MHz                       2520
+        core_id                         2
+        cpu_fru                         hc:///component=/MBU_A
+        cpu_type                        sparcv9
+        crtime                          93.3449653
+        current_clock_Hz                2520000000
+        device_ID                       175931055444225
+        fpu_type                        sparcv9
+        implementation                  SPARC64-VII (portid 1024 impl 0x7 ver 0x91 clock 2520 MHz)
+        pg_id                           4
+        snaptime                        15277456.9675197
+        state                           on-line
+        state_begin                     1314212381
+        supported_frequencies_Hz        2520000000
+
+module: cpu_info                        instance: 4
+name:   cpu_info4                       class:    misc
+        brand                           SPARC64-VII
+        chip_id                         1024
+        clock_MHz                       2520
+        core_id                         4
+        cpu_fru                         hc:///component=/MBU_A
+        cpu_type                        sparcv9
+        crtime                          93.3465648
+        current_clock_Hz                2520000000
+        device_ID                       175931055444225
+        fpu_type                        sparcv9
+        implementation                  SPARC64-VII (portid 1024 impl 0x7 ver 0x91 clock 2520 MHz)
+        pg_id                           5
+        snaptime                        15277456.9678953
+        state                           on-line
+        state_begin                     1314212381
+        supported_frequencies_Hz        2520000000
+
+module: cpu_info                        instance: 5
+name:   cpu_info5                       class:    misc
+        brand                           SPARC64-VII
+        chip_id                         1024
+        clock_MHz                       2520
+        core_id                         4
+        cpu_fru                         hc:///component=/MBU_A
+        cpu_type                        sparcv9
+        crtime                          93.3481605
+        current_clock_Hz                2520000000
+        device_ID                       175931055444225
+        fpu_type                        sparcv9
+        implementation                  SPARC64-VII (portid 1024 impl 0x7 ver 0x91 clock 2520 MHz)
+        pg_id                           5
+        snaptime                        15277456.968269
+        state                           on-line
+        state_begin                     1314212381
+        supported_frequencies_Hz        2520000000
+
+module: cpu_info                        instance: 6
+name:   cpu_info6                       class:    misc
+        brand                           SPARC64-VII
+        chip_id                         1024
+        clock_MHz                       2520
+        core_id                         6
+        cpu_fru                         hc:///component=/MBU_A
+        cpu_type                        sparcv9
+        crtime                          93.3497654
+        current_clock_Hz                2520000000
+        device_ID                       175931055444225
+        fpu_type                        sparcv9
+        implementation                  SPARC64-VII (portid 1024 impl 0x7 ver 0x91 clock 2520 MHz)
+        pg_id                           6
+        snaptime                        15277456.9686422
+        state                           on-line
+        state_begin                     1314212381
+        supported_frequencies_Hz        2520000000
+
+module: cpu_info                        instance: 7
+name:   cpu_info7                       class:    misc
+        brand                           SPARC64-VII
+        chip_id                         1024
+        clock_MHz                       2520
+        core_id                         6
+        cpu_fru                         hc:///component=/MBU_A
+        cpu_type                        sparcv9
+        crtime                          93.3513776
+        current_clock_Hz                2520000000
+        device_ID                       175931055444225
+        fpu_type                        sparcv9
+        implementation                  SPARC64-VII (portid 1024 impl 0x7 ver 0x91 clock 2520 MHz)
+        pg_id                           6
+        snaptime                        15277456.9690115
+        state                           on-line
+        state_begin                     1314212381
+        supported_frequencies_Hz        2520000000
