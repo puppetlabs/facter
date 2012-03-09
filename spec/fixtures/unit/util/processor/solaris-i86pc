@@ -1,0 +1,28 @@
+module: cpu_info                        instance: 0     
+name:   cpu_info0                       class:    misc
+        brand                           Intel(r) Core(tm) i5 CPU       M 450  @ 2.40GHz
+        cache_id                        0
+        chip_id                         0
+        clock_MHz                       2375
+        clog_id                         0
+        core_id                         0
+        cpu_type                        i386
+        crtime                          70.899819526
+        current_clock_Hz                2374891267
+        current_cstate                  0
+        family                          6
+        fpu_type                        i387 compatible
+        implementation                  x86 (GenuineIntel family 6 model 37 step 5 clock 2375 MHz)
+        model                           37
+        ncore_per_chip                  1
+        ncpu_per_chip                   1
+        pg_id                           -1
+        pkg_core_id                     0
+        snaptime                        2279.514858392
+        state                           on-line
+        state_begin                     1329488796
+        stepping                        5
+        supported_frequencies_Hz        2374891267
+        supported_max_cstates           1
+        vendor_id                       GenuineIntel
+

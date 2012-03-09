@@ -5,7 +5,8 @@
 #
 # Resolution:
 #   On Linux and kFreeBSD, parse '/proc/cpuinfo' for each processor.
-#   On AIX, parse the output of 'lsdev' for it's processor section.
+#   On AIX, parse the output of 'lsdev' for its processor section.
+#   On Solaris, parse the output of 'kstat' for each processor.
 #   On OpenBSD, use 'uname -p' and the sysctl variable for 'hw.ncpu' for CPU
 #   count.
 #
@@ -81,6 +82,7 @@ end
 ## (but we need them inside the Facter.add block above for tests on processorcount to work)
 processor_list = Facter::Util::Processor.enum_cpuinfo
 processor_list_aix = Facter::Util::Processor.enum_lsdev
+processor_list_sunos = Facter::Util::Processor.enum_kstat
 
 if processor_list.length != 0
   processor_list.each_with_index do |desc, i|
@@ -95,6 +97,15 @@ elsif processor_list_aix.length != 0
   processor_list_aix.each_with_index do |desc, i|
     Facter.add("Processor#{i}") do
       confine :kernel => [ :aix ]
+      setcode do
+        desc
+      end
+    end
+  end
+elsif processor_list_sunos.length != 0
+  processor_list_sunos.each_with_index do |desc, i|
+    Facter.add("Processor#{i}") do
+      confine :kernel => [ :sunos ]
       setcode do
         desc
       end
