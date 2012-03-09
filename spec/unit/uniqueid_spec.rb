@@ -22,4 +22,11 @@ describe "Uniqueid fact" do
 
     Facter.fact(:uniqueid).value.should == "Moe"
   end
+
+  it "should match kern.hostid on FreeBSD" do
+    Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
+    Facter::Util::Resolution.stubs(:exec).with("sysctl -n kern.hostid").returns("Shemp")
+
+    Facter.fact(:uniqueid).value.should == "Shemp"
+  end
 end
