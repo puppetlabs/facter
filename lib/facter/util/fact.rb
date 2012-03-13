@@ -57,18 +57,13 @@ class Facter::Util::Fact
   # Return the value for a given fact.  Searches through all of the mechanisms
   # and returns either the first value or nil.
   def value
-    begin
-      # We duplicate to avoid using links in YAML output
-      return @value.dup if @value
-    rescue TypeError
-      # This is because some values can't be duplicated
-      return @value
-    end
+    return @value if @value
 
     suitable_resolves = @resolves.select {|r| r.suitable? }
 
     if suitable_resolves.length == 0
-      Facter.debug "Found no suitable resolves of %s for %s" % [@resolves.length, @name]
+      Facter.debug "Found no suitable resolves of %s for %s" %
+        [@resolves.length, @name]
       return nil
     else
       searching do
@@ -86,13 +81,7 @@ class Facter::Util::Fact
       Facter.debug("Could not resolve fact #{@name}")
     end
 
-    begin
-      # We duplicate to avoid using links in YAML output
-      @value.dup
-    rescue TypeError
-      # This is because some values can't be duplicated
-      @value
-    end
+    @value
   end
 
   private
