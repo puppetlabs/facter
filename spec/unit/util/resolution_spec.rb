@@ -441,7 +441,6 @@ describe Facter::Util::Resolution do
       Facter::Util::ConfineBlock.expects(:new)
       @resolve.confine { true }
     end
-
   end
 
   describe "when determining suitability" do
