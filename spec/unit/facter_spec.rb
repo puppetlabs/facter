@@ -208,6 +208,27 @@ describe Facter do
     end
   end
 
+  describe "when using bitcheck method" do
+    it "should return true if set to 1" do
+      Facter.bitcheck(1).should == 1
+    end
+    it "should return true if set to true" do
+      Facter.bitcheck(1).should == 1
+    end
+    it "should return true if any string except off" do
+      Facter.bitcheck('aaaaa').should == 1
+    end
+    it "should return false if set to 0" do
+      Facter.bitcheck(0).should be_zero
+    end
+    it "should return false if set to false" do
+      Facter.bitcheck(false).should be_zero
+    end
+    it "should return false if set to off" do
+      Facter.bitcheck('off').should be_zero
+    end
+  end
+
   describe "when setting debugging mode" do
     it "should have debugging enabled using 1" do
       Facter.debugging(1)
@@ -251,6 +272,25 @@ describe Facter do
     it "should have timing disabled using false" do
       Facter.timing(false)
       Facter.should_not be_timing
+    end
+  end
+
+  describe "when setting color mode" do
+    it "should have color enabled using 1" do
+      Facter.color(1)
+      Facter.should be_color
+    end
+    it "should have color enabled using true" do
+      Facter.color(true)
+      Facter.should be_color
+    end
+    it "should have color disabled using 0" do
+      Facter.color(0)
+      Facter.should_not be_color
+    end
+    it "should have color disabled using false" do
+      Facter.color(false)
+      Facter.should_not be_color
     end
   end
 

@@ -171,7 +171,7 @@ module Facter
 
   # Set timing on or off.
   def self.timing(bit)
-    @@color = bitcheck(bit)
+    @@timing = bitcheck(bit)
   end
 
   # Turn console color support on or off.
@@ -202,7 +202,7 @@ module Facter
           return 0
         end
       when String;
-        if bit.downcase = 'off'
+        if bit.downcase == 'off'
           return 0
         else
           return 1
