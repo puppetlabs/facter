@@ -21,6 +21,7 @@ module Facter
   require 'facter/util/fact'
   require 'facter/util/collection'
   require 'facter/util/monkey_patches'
+  require 'facter/util/text'
 
   include Comparable
   include Enumerable
@@ -39,11 +40,10 @@ module Facter
   # puts Facter['operatingsystem']
   #
 
-  GREEN = "[0;32m"
-  RESET = "[0m"
   @@debug = 0
   @@timing = 0
   @@messages = {}
+  @@color = 1
 
   # module methods
 
@@ -65,7 +65,8 @@ module Facter
       return
     end
     if self.debugging?
-      puts GREEN + string + RESET
+      t = Facter::Util::Text.new
+      puts t.green + string + t.reset
     end
   end
 
@@ -75,7 +76,8 @@ module Facter
 
   # show the timing information
   def self.show_time(string)
-    puts "#{GREEN}#{string}#{RESET}" if string and Facter.timing?
+    t = Facter::Util::Text.new
+    puts "#{t.green}#{string}#{t.reset}" if string and Facter.timing?
   end
 
   def self.timing?
@@ -164,44 +166,52 @@ module Facter
 
   # Set debugging on or off.
   def self.debugging(bit)
-    if bit
-      case bit
-      when TrueClass; @@debug = 1
-      when FalseClass; @@debug = 0
-      when Fixnum
-        if bit > 0
-          @@debug = 1
-        else
-          @@debug = 0
-        end
-      when String;
-        if bit.downcase == 'off'
-          @@debug = 0
-        else
-          @@debug = 1
-        end
-      else
-        @@debug = 0
-      end
-    else
-      @@debug = 0
-    end
+    @@debug = bitcheck(bit)
   end
 
   # Set timing on or off.
   def self.timing(bit)
+    @@color = bitcheck(bit)
+  end
+
+  # Turn console color support on or off.
+  def self.color(bit)
+    @@color = bitcheck(bit)
+  end
+
+  # Return true if color support is available and switched on.
+  def self.color?
+    if Facter::Util::Config.is_windows?
+      false
+    else
+      @@color != 0
+    end
+  end
+
+  # This convenience method allows us to support the bit setting methodology
+  # for global facter settings.
+  def self.bitcheck(bit)
     if bit
       case bit
-      when TrueClass; @@timing = 1
+      when TrueClass; return 1
+      when FalseClass; return 0
       when Fixnum
         if bit > 0
-          @@timing = 1
+          return 1
         else
-          @@timing = 0
+          return 0
         end
+      when String;
+        if bit.downcase = 'off'
+          return 0
+        else
+          return 1
+        end
+      else
+        return 0
       end
     else
-      @@timing = 0
+      return 0
     end
   end
 

@@ -1,3 +1,5 @@
+require 'facter/util/text'
+
 module Facter
   module Application
     def self.run(argv)
@@ -69,12 +71,13 @@ module Facter
     def self.parse(argv)
       options = {}
       OptionParser.new do |opts|
-        opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
-        opts.on("-j", "--json")   { |v| options[:json]   = v }
-        opts.on(      "--trace")  { |v| options[:trace]  = v }
-        opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
-        opts.on("-t", "--timing") { |v| Facter.timing(1) }
-        opts.on("-p", "--puppet") { |v| load_puppet }
+        opts.on("-y", "--yaml")    { |v| options[:yaml]    = v }
+        opts.on("-j", "--json")    { |v| options[:json]    = v }
+        opts.on(      "--trace")   { |v| options[:trace]   = v }
+        opts.on("-d", "--debug")   { |v| Facter.debugging(1) }
+        opts.on("-t", "--timing")  { |v| Facter.timing(1) }
+        opts.on("-p", "--puppet")  { |v| load_puppet }
+        opts.on("-n", "--nocolor") { |v| Facter.color(0) }
 
         opts.on_tail("-v", "--version") do
           puts Facter.version
@@ -117,29 +120,44 @@ module Facter
       $stderr.puts "Could not load Puppet: #{detail}"
     end
 
+    # This provides a wrapper around pretty_output which outputs the top level
+    # keys as puppet-style variables. For example:
+    #
+    #     $key1 = value
+    #     $key2 = [
+    #       'value1',
+    #       'value2',
+    #     ]
+    #
     def self.facter_output(data)
+      t = Facter::Util::Text.new
+
       # Line up equals signs
       size_ordered = data.keys.sort_by {|x| x.length}
       max_var_length = size_ordered[-1].length
 
       data.sort.each do |e|
         k,v = e
-        $stdout.write("\e[33m$#{k}\e[0m")
+        $stdout.write("#{t.yellow}$#{k}#{t.reset}")
         indent(max_var_length - k.length, " ")
         $stdout.write(" = ")
         pretty_output(v)
       end
     end
 
+    # This method returns formatted output (with color where applicable) from
+    # basic types (hashes, arrays, strings, booleans and numbers).
     def self.pretty_output(data, indent = 0)
+      t = Facter::Util::Text.new
+
       case data
       when Hash
-        puts "\e[35m{\e[0m"
+        puts "#{t.magenta}{#{t.reset}"
         indent = indent+1
         data.sort.each do |e|
           k,v = e
           indent(indent)
-          $stdout.write "\e[32m\"#{k}\"\e[0m => "
+          $stdout.write "#{t.green}\"#{k}\"#{t.reset} => "
           case v
           when String,TrueClass,FalseClass
             pretty_output(v, indent)
@@ -148,9 +166,9 @@ module Facter
           end
         end
         indent(indent-1)
-        puts "\e[35m}\e[0m#{tc(indent-1)}"
+        puts "#{t.magenta}}#{t.reset}#{tc(indent-1)}"
       when Array
-        puts "\e[35m[\e[0m"
+        puts "#{t.magenta}[#{t.reset}"
         indent = indent+1
         data.each do |e|
           indent(indent)
@@ -162,18 +180,21 @@ module Facter
           end
         end
         indent(indent-1)
-        puts "\e[35m]\e[0m#{tc(indent-1)}"
+        puts "#{t.magenta}]#{t.reset}#{tc(indent-1)}"
       when TrueClass,FalseClass,Numeric
-        puts "\e[36m#{data}\e[0m#{tc(indent)}"
+        puts "#{t.cyan}#{data}#{t.reset}#{tc(indent)}"
       when String
-        puts "\e[32m\"#{data}\"\e[0m#{tc(indent)}"
+        puts "#{t.green}\"#{data}\"#{t.reset}#{tc(indent)}"
       end
     end
 
+    # Provide a trailing comma if required
     def self.tc(indent)
       indent > 0 ? "," : ""
     end
 
+    # Return a series of space characters based on a provided indent size and
+    # the number of indents required.
     def self.indent(num, indent = "  ")
       num.times { $stdout.write(indent) }
     end
