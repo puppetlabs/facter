@@ -69,9 +69,15 @@ class Facter::Util::Fact
       searching do
         suitable_resolves.each do |resolve|
           val = resolve.value
-          if valid? val
+          if val.nil?
+            next
+          elsif valid? val
             @value = val
             break
+          else
+            Facter.warnonce("Resolution returned invalid data for fact '#{@name}'")
+            Facter.debug("Resolution returned the following invalid data " +
+              "for fact '#{@name}':\n  #{val.inspect}")
           end
         end
       end

@@ -108,7 +108,10 @@ describe Facter::Util::Fact do
       [Object.new],
       [{Object.new => "test"}],
     ].each do |invalid|
-      it "should return nil for the empty type \"#{invalid.inspect}\"" do
+      it "should return nil for the invalid value \"#{invalid.inspect}\"" do
+        # Stop warning messages being sent to the console
+        Kernel.stubs(:warn)
+
         r1 = stub 'r1', :suitable? => true, :value => invalid
         Facter::Util::Resolution.expects(:new).returns r1
         @fact.add { }
