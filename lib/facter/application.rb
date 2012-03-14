@@ -49,12 +49,13 @@ module Facter
 
       # Print the value of a single fact, otherwise print a list sorted by fact
       # name and separated by "=>"
+      text = Facter::Util::Text.new
       if facts.length == 1
         if value = facts.values.first
-          pretty_output(value)
+          text.pretty_output(value)
         end
       else
-        facter_output(facts)
+        text.facter_output(facts)
       end
 
     rescue => e
@@ -119,85 +120,5 @@ module Facter
     rescue LoadError => detail
       $stderr.puts "Could not load Puppet: #{detail}"
     end
-
-    # This provides a wrapper around pretty_output which outputs the top level
-    # keys as puppet-style variables. For example:
-    #
-    #     $key1 = value
-    #     $key2 = [
-    #       'value1',
-    #       'value2',
-    #     ]
-    #
-    def self.facter_output(data)
-      t = Facter::Util::Text.new
-
-      # Line up equals signs
-      size_ordered = data.keys.sort_by {|x| x.length}
-      max_var_length = size_ordered[-1].length
-
-      data.sort.each do |e|
-        k,v = e
-        $stdout.write("#{t.yellow}$#{k}#{t.reset}")
-        indent(max_var_length - k.length, " ")
-        $stdout.write(" = ")
-        pretty_output(v)
-      end
-    end
-
-    # This method returns formatted output (with color where applicable) from
-    # basic types (hashes, arrays, strings, booleans and numbers).
-    def self.pretty_output(data, indent = 0)
-      t = Facter::Util::Text.new
-
-      case data
-      when Hash
-        puts "#{t.magenta}{#{t.reset}"
-        indent = indent+1
-        data.sort.each do |e|
-          k,v = e
-          indent(indent)
-          $stdout.write "#{t.green}\"#{k}\"#{t.reset} => "
-          case v
-          when String,TrueClass,FalseClass
-            pretty_output(v, indent)
-          when Hash,Array
-            pretty_output(v, indent)
-          end
-        end
-        indent(indent-1)
-        puts "#{t.magenta}}#{t.reset}#{tc(indent-1)}"
-      when Array
-        puts "#{t.magenta}[#{t.reset}"
-        indent = indent+1
-        data.each do |e|
-          indent(indent)
-          case e
-          when String,TrueClass,FalseClass
-            pretty_output(e, indent)
-          when Hash,Array
-            pretty_output(e, indent)
-          end
-        end
-        indent(indent-1)
-        puts "#{t.magenta}]#{t.reset}#{tc(indent-1)}"
-      when TrueClass,FalseClass,Numeric
-        puts "#{t.cyan}#{data}#{t.reset}#{tc(indent)}"
-      when String
-        puts "#{t.green}\"#{data}\"#{t.reset}#{tc(indent)}"
-      end
-    end
-
-    # Provide a trailing comma if required
-    def self.tc(indent)
-      indent > 0 ? "," : ""
-    end
-
-    # Return a series of space characters based on a provided indent size and
-    # the number of indents required.
-    def self.indent(num, indent = "  ")
-      num.times { $stdout.write(indent) }
-    end
-
   end
 end
