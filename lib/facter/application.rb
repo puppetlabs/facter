@@ -55,7 +55,7 @@ module Facter
           text.pretty_output(value)
         end
       else
-        text.facter_output(facts)
+        text.toplevel_output(facts)
       end
 
     rescue => e

@@ -191,11 +191,7 @@ module Facter
 
   # Return true if color support is available and switched on.
   def self.color?
-    if Facter::Util::Config.is_windows?
-      false
-    else
-      @@color != 0
-    end
+    @@color != 0
   end
 
   # This convenience method allows us to support the bit setting methodology
