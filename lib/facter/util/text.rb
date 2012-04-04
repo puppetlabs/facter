@@ -7,32 +7,115 @@ require 'facter'
 # well.
 class Facter::Util::Text
   def initialize
-    @ansi_colors = {
-      :black   => 0,
-      :red     => 1,
-      :green   => 2,
-      :yellow  => 3,
-      :blue    => 4,
-      :magenta => 5,
-      :cyan    => 6,
-      :white   => 7,
+    # Windows color masks
+    win_fg_black     = 0x0000
+    win_fg_blue      = 0x0001
+    win_fg_green     = 0x0002
+    win_fg_red       = 0x0004
+    win_fg_intensity = 0x0008
+
+    @colors = {
+      :black   => {
+        :win32 => win_fg_black,
+        :ansi  => 0,
+      },
+      :red     => {
+        :win32 => win_fg_red | win_fg_intensity,
+        :ansi  => 1,
+      },
+      :green   => {
+        :win32 => win_fg_green | win_fg_intensity,
+        :ansi  => 2,
+      },
+      :yellow  => {
+        :win32 => win_fg_red | win_fg_green | win_fg_intensity,
+        :ansi  => 3,
+      },
+      :blue    => {
+        :win32 => win_fg_blue | win_fg_intensity,
+        :ansi  => 4,
+      },
+      :magenta => {
+        :win32 => win_fg_red | win_fg_blue | win_fg_intensity,
+        :ansi  => 5,
+      },
+      :cyan    => {
+        :win32 => win_fg_blue | win_fg_green | win_fg_intensity,
+        :ansi  => 6,
+      },
+      :white   => {
+        :win32 => win_fg_blue | win_fg_green|win_fg_red | win_fg_intensity,
+        :ansi  => 7,
+      },
     }
+
+    # If we are running in windows, pre-grab the existing console attributes
+    # and stdhandle for later.
+    if is_windows?
+      require 'Win32API'
+
+      gsh = Win32API.new('kernel32', 'GetStdHandle', 'L', 'L')
+      @win_handle = gsh.call(-11) # -11 being stdout
+
+      gcsbi = Win32API.new('kernel32', 'GetConsoleScreenBufferInfo', 'LP', 'I')
+      lpBuffer = ' ' * 22
+      gcsbi.call(@win_handle, lpBuffer)
+      info = lpBuffer.unpack('SSSSSssssSS')
+
+      # Console attributes are in the 5th element of the unpacked data
+      @win_existing_console_attributes = info[4]
+
+      @stdhandle = Win32API.new('kernel32', 'GetStdHandle', 'L', 'L').call(-11)
+    end
   end
 
-  def bright
-    color? ? "\e[1m" : ""
+  # This method accepts a foreground color attribute from 0-15 and will change
+  # the current Windows console accordingly, preserving any other attributes
+  # (this includes background color).
+  def win_set_fg_color(attribute)
+    # Get current background color
+    existing_attribute_mask = @win_existing_console_attributes & 0xFFF0
+
+    scta = Win32API.new('kernel32', 'SetConsoleTextAttribute', 'LL', 'I')
+    scta.call(@stdhandle, attribute | existing_attribute_mask)
   end
 
-  def reset
-    color? ? "\e[0m" : ""
+  # This outputs text using the default foreground color scheme.
+  def print_default(text)
+    if is_windows? and color?
+      win_set_fg_color(@win_existing_console_attributes)
+    elsif color?
+      print "\e[0m"
+    end
+    print text
   end
 
-  # This method_missing handler deals with outputting ASCII escape characters for
-  # terminal colors.
+  # This method_missing handler deals with outputting colored text in an OS
+  # independant way. It dynamically routes a series of methods in the form:
+  #
+  #     print_<color>
+  #
+  # Color being one of: black, green, blue, red, yellow, magenta, cyan, white
   def method_missing(meth, *args, &block)
-    if @ansi_colors.include?(meth)
-      color_num = @ansi_colors[meth]
-      return color? ? "\e[3#{color_num}m" : ""
+    if meth.to_s.index("print_") == 0 \
+      and @colors.include?(color = meth.to_s.sub(/^print_/, '').to_sym)
+
+      # Change color first
+      if is_windows? and color?
+        win_set_fg_color(@colors[color][:win32])
+      elsif color?
+        print "\e[3#{@colors[color][:ansi]}m"
+      end
+
+      # Print the output
+      print args[0]
+
+      # Now reset the color to default
+      if is_windows? and color?
+        win_set_fg_color(@win_existing_console_attributes)
+      elsif color?
+        print "\e[0m"
+      end
     else
       super
     end
@@ -47,7 +130,7 @@ class Facter::Util::Text
   #       'value2',
   #     ]
   #
-  def facter_output(data)
+  def toplevel_output(data)
     t = Facter::Util::Text.new
 
     # Line up equals signs
@@ -56,9 +139,9 @@ class Facter::Util::Text
 
     data.sort.each do |e|
       k,v = e
-      $stdout.write("#{t.yellow}$#{k}#{t.reset}")
+      print_yellow("$#{k}")
       indent(max_var_length - k.length, " ")
-      $stdout.write(" = ")
+      print_default(" = ")
       pretty_output(v)
     end
   end
@@ -66,16 +149,15 @@ class Facter::Util::Text
   # This method returns formatted output (with color where applicable) from
   # basic types (hashes, arrays, strings, booleans and numbers).
   def pretty_output(data, indent = 0)
-    t = Facter::Util::Text.new
-
     case data
     when Hash
-      puts "#{t.magenta}{#{t.reset}"
+      print_magenta("{\n")
       indent = indent+1
       data.sort.each do |e|
         k,v = e
         indent(indent)
-        $stdout.write "#{t.green}\"#{k}\"#{t.reset} => "
+        print_green("\"#{k}\"")
+        print_default " => "
         case v
         when String,TrueClass,FalseClass,Numeric
           pretty_output(v, indent)
@@ -84,9 +166,10 @@ class Facter::Util::Text
         end
       end
       indent(indent-1)
-      puts "#{t.magenta}}#{t.reset}#{tc(indent-1)}"
+      print_magenta("}")
+      print_default("#{tc(indent-1)}\n")
     when Array
-      puts "#{t.magenta}[#{t.reset}"
+      print_magenta("[\n")
       indent = indent+1
       data.each do |e|
         indent(indent)
@@ -98,11 +181,14 @@ class Facter::Util::Text
         end
       end
       indent(indent-1)
-      puts "#{t.magenta}]#{t.reset}#{tc(indent-1)}"
+      print_magenta("]")
+      print_default("#{tc(indent-1)}\n")
     when TrueClass,FalseClass,Numeric
-      puts "#{t.cyan}#{data}#{t.reset}#{tc(indent)}"
+      print_cyan("#{data}")
+      print_default("#{tc(indent)}\n")
     when String
-      puts "#{t.green}\"#{data}\"#{t.reset}#{tc(indent)}"
+      print_green("\"#{data}\"")
+      print_default("#{tc(indent)}\n")
     end
   end
 
@@ -111,6 +197,11 @@ class Facter::Util::Text
   # Returns true if color is supported
   def color?
     Facter.color?
+  end
+
+  # Returns true if windows
+  def is_windows?
+    Facter::Util::Config.is_windows?
   end
 
   # Provide a trailing comma if there is an indent, implying this is not
