@@ -142,29 +142,29 @@ describe Facter::Util::Text do
     end
   end
 
-  context "facter_output" do
+  context "toplevel_output" do
     before :each do
       # Disable color for these tests
       Facter::Util::Text.any_instance.stubs(:color?).returns(false)
     end
 
     it "should handle string types on the left hand side" do
-      text.facter_output({"fact" => "a"})
+      text.toplevel_output({"fact" => "a"})
       stdout.string.should == "$fact = \"a\"\n"
     end
 
     it "should handle numbers on the left hand side" do
-      text.facter_output({"fact" => 3})
+      text.toplevel_output({"fact" => 3})
       stdout.string.should == "$fact = 3\n"
     end
 
     it "should handle booleans on the left hand side" do
-      text.facter_output({"fact" => true})
+      text.toplevel_output({"fact" => true})
       stdout.string.should == "$fact = true\n"
     end
 
     it "should handle arrays on the left hand side" do
-      text.facter_output({"fact" => ["a","b"]})
+      text.toplevel_output({"fact" => ["a","b"]})
       stdout.string.should == <<-EOS
 $fact = [
   "a",
@@ -174,7 +174,7 @@ $fact = [
     end
 
     it "should handle hashes on the left hand side" do
-      text.facter_output({"fact" => {"a"=>1,"b"=>2}})
+      text.toplevel_output({"fact" => {"a"=>1,"b"=>2}})
       stdout.string.should == <<-EOS
 $fact = {
   "a" => 1,
@@ -184,7 +184,7 @@ $fact = {
     end
 
     it "should adjust first equals based on longest fact name" do
-      text.facter_output({
+      text.toplevel_output({
         "fact1" => "value",
         "longfactname" => "value",
       })
