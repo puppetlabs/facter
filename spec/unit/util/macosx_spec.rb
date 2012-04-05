@@ -4,15 +4,46 @@ require 'spec_helper'
 require 'facter/util/macosx'
 
 describe Facter::Util::Macosx do
+  let(:badplist) do
+    '<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC -//Apple Computer//DTD PLIST 1.0//EN http://www.apple.com/DTDs/PropertyList-1.0.dtd>
+    <plist version="1.0">
+      <dict>
+          <key>test</key>
+              <string>file</string>
+                </dict>
+                </plist>'
+  end
+
+  let(:goodplist) do
+    '<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+    <dict>
+      <key>test</key>
+        <string>file</string>
+        </dict>
+        </plist>'
+  end
+
   it "should be able to retrieve profiler data as xml for a given data field" do
     Facter::Util::Resolution.expects(:exec).with("/usr/sbin/system_profiler -xml foo").returns "yay"
     Facter::Util::Macosx.profiler_xml("foo").should == "yay"
   end
 
-  it "should use PList to convert xml to data structures" do
-    Plist.expects(:parse_xml).with("foo").returns "bar"
+  it 'should correct a bad XML doctype string' do
+    Facter.expects(:debug).with('Had to fix plist with incorrect DOCTYPE declaration')
+    Facter::Util::Macosx.intern_xml(badplist)
+  end
 
-    Facter::Util::Macosx.intern_xml("foo").should == "bar"
+  it 'should return a hash given XML data' do
+    test_hash = { 'test' => 'file' }
+    Facter::Util::Macosx.intern_xml(goodplist).should == test_hash
+  end
+
+  it 'should fail when trying to read invalid XML' do
+    expect { Facter::Util::Macosx.intern_xml('<bad}|%-->xml<--->') }.should \
+      raise_error(RuntimeError, /A plist file could not be properly read by CFPropertyList/)
   end
 
   describe "when collecting profiler data" do
