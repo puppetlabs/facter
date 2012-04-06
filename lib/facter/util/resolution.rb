@@ -13,17 +13,62 @@ class Facter::Util::Resolution
 
   INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
 
-  def self.have_which
-    if ! defined?(@have_which) or @have_which.nil?
-      if Facter::Util::Config.is_windows?
-        @have_which = false
-      else
-        %x{which which >/dev/null 2>&1}
-        @have_which = $?.success?
+  def self.search_paths
+    if Facter::Util::Config.is_windows?
+      ENV['PATH'].split(File::PATH_SEPARATOR)
+    else
+      # Make sure facter is usable even for non-root users. Most commands
+      # in /sbin (like ifconfig) can be run as non priviledged users as
+      # long as they do not modify anything - which we do not do with facter
+      ENV['PATH'].split(File::PATH_SEPARATOR) + [ '/sbin', '/usr/sbin' ]
+    end
+  end
+
+  # taken from puppet: lib/puppet/util.rb
+  def self.which(bin)
+    if absolute_path?(bin)
+      return bin if File.executable?(bin)
+    else
+      search_paths.each do |dir|
+        dest = File.join(dir, bin)
+        if Facter::Util::Config.is_windows? && File.extname(dest).empty?
+          exts = ENV['PATHEXT']
+          exts = exts ? exts.split(File::PATH_SEPARATOR) : %w[.COM .EXE .BAT .CMD]
+          exts.each do |ext|
+            destext = dest + ext
+            return destext if File.executable?(destext)
+          end
+        end
+        return dest if File.executable?(dest)
       end
     end
-    @have_which
+    nil
   end
+
+  # taken from puppet: lib/puppet/util.rb
+  def self.absolute_path?(path, platform=nil)
+    # Escape once for the string literal, and once for the regex.
+    slash = '[\\\\/]'
+    name = '[^\\\\/]+'
+    regexes = {
+      :windows => %r!^(([A-Z]:#{slash})|(#{slash}#{slash}#{name}#{slash}#{name})|(#{slash}#{slash}\?#{slash}#{name}))!i,
+      :posix   => %r!^/!,
+    }
+    platform ||= Facter::Util::Config.is_windows? ? :windows : :posix
+
+    !! (path =~ regexes[platform])
+  end
+
+  def self.expand_command(command)
+    if match = /^"([^"]+)"(?:\s+(.*))?/.match(command)
+      exe, arguments = match.captures
+      exe = which(exe) and [ "\"#{exe}\"", arguments ].compact.join(" ")
+    else
+      exe, arguments = command.split(/ /,2)
+      exe = which(exe) and [ exe, arguments ].compact.join(" ")
+    end
+  end
+
 
   # Execute a program and return the output of that program.
   #
@@ -33,37 +78,12 @@ class Facter::Util::Resolution
   def self.exec(code, interpreter = nil)
     Facter.warnonce "The interpreter parameter to 'exec' is deprecated and will be removed in a future version." if interpreter
 
-    # Try to guess whether the specified code can be executed by looking at the
-    # first word. If it cannot be found on the PATH defer on resolving the fact
-    # by returning nil.
-    # This only fails on shell built-ins, most of which are masked by stuff in
-    # /bin or of dubious value anyways. In the worst case, "sh -c 'builtin'" can
-    # be used to work around this limitation
-    #
-    # Windows' %x{} throws Errno::ENOENT when the command is not found, so we
-    # can skip the check there. This is good, since builtins cannot be found
-    # elsewhere.
-    if have_which and !Facter::Util::Config.is_windows?
-      path = nil
-      binary = code.split.first
-      if code =~ /^\//
-        path = binary
-      else
-        path = %x{which #{binary} 2>/dev/null}.chomp
-        # we don't have the binary necessary
-        return nil if path == "" or path.match(/Command not found\./)
-      end
-
-      return nil unless FileTest.exists?(path)
-    end
+    return nil unless code = expand_command(code)
 
     out = nil
 
     begin
       out = %x{#{code}}.chomp
-    rescue Errno::ENOENT => detail
-      # command not found on Windows
-      return nil
     rescue => detail
       $stderr.puts detail
       return nil
