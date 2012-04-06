@@ -295,4 +295,38 @@ describe Facter::Util::Resolution do
       Facter::Util::Resolution.exec("echo foo").should == "foo"
     end
   end
+
+  describe "have_which" do
+    before :each do
+      Facter::Util::Resolution.instance_variable_set(:@have_which, nil)
+
+      # we do not execute anything in the following test cases itself
+      # but we rely on $? to be an instance of Process::Status. So
+      # just execute anything here to make sure that $? is not nil
+      %x{echo foo}
+    end
+
+    it "on windows should always return false" do
+      Facter::Util::Config.stubs(:is_windows?).returns(true)
+      Facter::Util::Resolution.expects(:`).
+        with('which which >/dev/null 2>&1').never
+      Facter::Util::Resolution.have_which.should == false
+    end
+
+    it "on other platforms than windows should return true if which exists" do
+      Facter::Util::Config.stubs(:is_windows?).returns(false)
+      Facter::Util::Resolution.expects(:`).
+        with('which which >/dev/null 2>&1').returns('')
+      Process::Status.any_instance.stubs(:success?).returns true
+      Facter::Util::Resolution.have_which.should == true
+    end
+
+    it "on other platforms than windows should return false if which returns non-zero exit code" do
+      Facter::Util::Config.stubs(:is_windows?).returns(false)
+      Facter::Util::Resolution.expects(:`).
+        with('which which >/dev/null 2>&1').returns('')
+      Process::Status.any_instance.stubs(:success?).returns false
+      Facter::Util::Resolution.have_which.should == false
+    end
+  end
 end

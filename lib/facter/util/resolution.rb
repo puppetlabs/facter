@@ -19,7 +19,7 @@ class Facter::Util::Resolution
         @have_which = false
       else
         %x{which which >/dev/null 2>&1}
-        @have_which = ($? == 0)
+        @have_which = $?.success?
       end
     end
     @have_which
