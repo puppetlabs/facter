@@ -5,8 +5,8 @@
 #
 # Resolution:
 #   On OpenBSD, Linux and Debian's kfreebsd, use the hardwaremodel fact.
-#   Gentoo and Debian call "x86_86" "amd64".
-#   Gentoo also calls "i386" "x86".
+#   Gentoo (and its fork Funtoo) and Debian call "x86_86" "amd64".
+#   Gentoo (and its fork Funtoo) also calls "i386" "x86".
 #
 # Caveats:
 #
@@ -18,14 +18,14 @@ Facter.add(:architecture) do
       # most linuxen use "x86_64"
     when "x86_64"
       case Facter.value(:operatingsystem)
-      when "Debian", "Gentoo", "GNU/kFreeBSD", "Ubuntu"
+      when "Debian", "Gentoo", "Funtoo", "GNU/kFreeBSD", "Ubuntu"
         "amd64"
       else
         model
       end
     when /(i[3456]86|pentium)/
       case Facter.value(:operatingsystem)
-      when "Gentoo"
+      when "Gentoo", "Funtoo"
         "x86"
       else
         "i386"

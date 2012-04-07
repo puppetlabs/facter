@@ -31,7 +31,12 @@ Facter.add(:operatingsystem) do
     elsif FileTest.exists?("/etc/debian_version")
       "Debian"
     elsif FileTest.exists?("/etc/gentoo-release")
-      "Gentoo"
+      txt = File.read("/etc/gentoo-release")
+      if txt =~ /funtoo/i
+        "Funtoo"
+      else
+        "Gentoo"
+      end
     elsif FileTest.exists?("/etc/fedora-release")
       "Fedora"
     elsif FileTest.exists?("/etc/mandriva-release")

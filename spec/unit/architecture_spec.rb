@@ -14,6 +14,7 @@ describe "Architecture fact" do
   os_archs = {
     ["Debian","x86_64"] => "amd64",
     ["Gentoo","x86_64"] => "amd64",
+    ["Funtoo","x86_64"] => "amd64",
     ["GNU/kFreeBSD","x86_64"] => "amd64",
     ["Ubuntu","x86_64"] => "amd64",
     ["Gentoo","i386"] => "x86",
@@ -21,6 +22,11 @@ describe "Architecture fact" do
     ["Gentoo","i586"] => "x86",
     ["Gentoo","i686"] => "x86",
     ["Gentoo","pentium"] => "x86",
+    ["Funtoo","i386"] => "x86",
+    ["Funtoo","i486"] => "x86",
+    ["Funtoo","i586"] => "x86",
+    ["Funtoo","i686"] => "x86",
+    ["Funtoo","pentium"] => "x86",
   }
   generic_archs = Hash.new
   generic_archs = {
@@ -30,7 +36,7 @@ describe "Architecture fact" do
     "i686" => "i386",
     "pentium" => "i386",
   }
-  
+
   os_archs.each do |pair, result|
     it "should be #{result} if os is #{pair[0]} and hardwaremodel is #{pair[1]}" do
      Facter.fact(:operatingsystem).stubs(:value).returns(pair[0])
