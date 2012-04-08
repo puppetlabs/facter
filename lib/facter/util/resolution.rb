@@ -13,6 +13,9 @@ class Facter::Util::Resolution
 
   INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
 
+  # Returns the locations to be searched when looking for a binary. This
+  # is currently determined by the +PATH+ environment variable plus
+  # <tt>/sbin</tt> and <tt>/usr/sbin</tt> when run on unix
   def self.search_paths
     if Facter::Util::Config.is_windows?
       ENV['PATH'].split(File::PATH_SEPARATOR)
@@ -24,7 +27,12 @@ class Facter::Util::Resolution
     end
   end
 
-  # taken from puppet: lib/puppet/util.rb
+  # Determine the full path to a binary. If the supplied filename does not
+  # already describe an absolute path then different locations (determined
+  # by <tt>self.search_paths</tt>) will be searched for a match.
+  #
+  # Returns nil if no matching executable can be found otherwise returns
+  # the expanded pathname.
   def self.which(bin)
     if absolute_path?(bin)
       return bin if File.executable?(bin)
@@ -45,7 +53,8 @@ class Facter::Util::Resolution
     nil
   end
 
-  # taken from puppet: lib/puppet/util.rb
+  # Determine in a platform-specific way whether a path is absolute. This
+  # defaults to the local platform if none is specified.
   def self.absolute_path?(path, platform=nil)
     # Escape once for the string literal, and once for the regex.
     slash = '[\\\\/]'
@@ -59,6 +68,12 @@ class Facter::Util::Resolution
     !! (path =~ regexes[platform])
   end
 
+  # Expand the executable of a commandline to an absolute path. The executable
+  # is the first word of the commandline. If the executable contains spaces,
+  # it has be but in double quotes to be properly recognized.
+  #
+  # Returns the commandline with the expanded binary or nil if the binary
+  # can't be found
   def self.expand_command(command)
     if match = /^"([^"]+)"(?:\s+(.*))?/.match(command)
       exe, arguments = match.captures
