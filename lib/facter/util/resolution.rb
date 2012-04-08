@@ -73,14 +73,23 @@ class Facter::Util::Resolution
   # it has be but in double quotes to be properly recognized.
   #
   # Returns the commandline with the expanded binary or nil if the binary
-  # can't be found
+  # can't be found. If the path to the binary contains quotes, the whole binary
+  # is put in quotes.
   def self.expand_command(command)
-    if match = /^"([^"]+)"(?:\s+(.*))?/.match(command)
+    if match = /^"(.+?)"(?:\s+(.*))?/.match(command)
       exe, arguments = match.captures
       exe = which(exe) and [ "\"#{exe}\"", arguments ].compact.join(" ")
+    elsif match = /^'(.+?)'(?:\s+(.*))?/.match(command) and not Facter::Util::Config.is_windows?
+      exe, arguments = match.captures
+      exe = which(exe) and [ "'#{exe}'", arguments ].compact.join(" ")
     else
       exe, arguments = command.split(/ /,2)
-      exe = which(exe) and [ exe, arguments ].compact.join(" ")
+      if exe = which(exe)
+        # the binary was not quoted which means it contains no spaces. But the
+        # full path to the binary may do so.
+        exe = "\"#{exe}\"" if exe =~ /\s/
+        [ exe, arguments ].compact.join(" ")
+      end
     end
   end
 

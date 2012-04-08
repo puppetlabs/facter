@@ -444,13 +444,31 @@ describe Facter::Util::Resolution do
         Facter::Util::Resolution.expand_command('foo -a | stuff >> /dev/null').should == '/bin/foo -a | stuff >> /dev/null'
       end
 
-      it "should expand quoted binary" do
+      it "should expand single quoted binary on unix" do
+        Facter::Util::Config.stubs(:is_windows?).returns false
+        Facter::Util::Resolution.expects(:which).with('my foo').returns '/home/bob/my path/my foo'
+        Facter::Util::Resolution.expand_command('\'my foo\' -a').should == '\'/home/bob/my path/my foo\' -a'
+      end
+
+      it "should not expand single quoted binary on windows" do
+        Facter::Util::Config.stubs(:is_windows?).returns true
+        Facter::Util::Resolution.expects(:which).with('\'C:\My').returns nil
+        Facter::Util::Resolution.expand_command('\'C:\My Tools\foo.exe\' /a /b').should == nil
+      end
+
+      it "should expand double quoted binary on unix" do
+        Facter::Util::Config.stubs(:is_windows?).returns false
+        Facter::Util::Resolution.expects(:which).with('my foo').returns '/home/bob/my path/my foo'
+        Facter::Util::Resolution.expand_command('"my foo" -a').should == '"/home/bob/my path/my foo" -a'
+      end
+
+      it "should expand double quoted binary on windows" do
+        Facter::Util::Config.stubs(:is_windows?).returns true
         Facter::Util::Resolution.expects(:which).with('C:\My Tools\foo.exe').returns 'C:\My Tools\foo.exe'
         Facter::Util::Resolution.expand_command('"C:\My Tools\foo.exe" /a /b').should == '"C:\My Tools\foo.exe" /a /b'
       end
 
       it "should escape spaces in path" do
-        pending "Not yet implemented"
         Facter::Util::Resolution.expects(:which).with('foo.exe').returns 'C:\My Tools\foo.exe'
         Facter::Util::Resolution.expand_command('foo.exe /a /b').should == '"C:\My Tools\foo.exe" /a /b'
       end
