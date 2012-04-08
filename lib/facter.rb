@@ -181,7 +181,17 @@ module Facter
 
   # Return true if color support is available and switched on.
   def self.color?
-    @@color != 0
+    if Facter::Util::Config.is_windows?
+      begin
+        require 'rubygems'
+        require 'win32console'
+        @@color != 0
+      rescue LoadError
+        return false
+      end
+    else
+      @@color != 0
+    end
   end
 
   # This convenience method allows us to support the bit setting methodology
