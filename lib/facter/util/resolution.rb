@@ -15,11 +15,11 @@ class Facter::Util::Resolution
 
   def self.have_which
     if ! defined?(@have_which) or @have_which.nil?
-      if Facter.value(:kernel) == 'windows'
+      if Facter::Util::Config.is_windows?
         @have_which = false
       else
         %x{which which >/dev/null 2>&1}
-        @have_which = ($? == 0)
+        @have_which = $?.success?
       end
     end
     @have_which
