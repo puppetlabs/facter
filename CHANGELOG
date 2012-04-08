@@ -1,3 +1,10 @@
+1.6.7
+===
+ab9e26c Updating CHANGELOG and lib/facter.rb for Facter 1.6.7rc1
+bdbf332 (#12720) Add Solaris CPU info to 'processorN' fact.
+a7f5924 (#12813) Redirect lspci output to /dev/null
+6ec2863 (#12669) Preserve timestamps when installing files
+
 1.6.6
 ===
 e046144 Updated CHANGELOG for 1.6.6rc2
