@@ -192,15 +192,28 @@ module Facter
   # Return true if color support is available and switched on.
   def self.color?
     if Facter::Util::Config.is_windows?
-      begin
-        require 'rubygems'
-        require 'win32console'
+      # For windows, check if win32console is loaded, otherwise always return
+      # false.
+      if win32console?
         @@color != 0
-      rescue LoadError
-        return false
+      else
+        false
       end
     else
       @@color != 0
+    end
+  end
+
+  # Return true if win32console is loaded. It will try to load win32console at
+  # this point if it hasn't already loaded it.
+  def self.win32console?
+    return @@win32console if defined? @@win32console
+    begin
+      require 'rubygems'
+      require 'win32console'
+      @@win32console = true
+    rescue LoadError
+      @@win32console = false
     end
   end
 
