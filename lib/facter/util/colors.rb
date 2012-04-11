@@ -85,6 +85,21 @@ module Facter::Util::Colors
     :reset       => { :console => "\e[m", :html => "" }
   }
 
+  # In Powershell, secondary low intensity colors do not match the names, so
+  # I'm switching them for their more intense (bright) versions as these do
+  # not have the same problem.
+  if Facter::Util::Config.is_windows?
+    Colormap[:fact_name]     = HYELLOW
+    Colormap[:curly_braces]  = HMAGENTA
+    Colormap[:square_braces] = HMAGENTA
+    Colormap[:booleans]      = HCYAN
+    Colormap[:numbers]       = HCYAN
+
+    # While green doesn't suffer this problem, with the default powershell blue
+    # backgroup HGREEN is easier to read.
+    Colormap[:strings]       = HGREEN
+  end
+
   def colorize(color, str)
     if Facter.color?
       console_color(color, str)
