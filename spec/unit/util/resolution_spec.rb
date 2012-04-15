@@ -489,7 +489,8 @@ describe Facter::Util::Resolution do
     end
 
     it "should execute the binary" do
-      Facter::Util::Resolution.exec("echo foo").should == "foo"
+      test_command = Facter::Util::Config.is_windows? ? 'cmd.exe /c echo foo' : 'echo foo'
+      Facter::Util::Resolution.exec(test_command).should == "foo"
     end
 
     describe "when run on unix" do

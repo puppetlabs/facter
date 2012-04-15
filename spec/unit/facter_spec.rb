@@ -74,8 +74,9 @@ describe Facter do
 
   describe "when provided code as a string" do
     it "should execute the code in the shell" do
+      test_command = Facter::Util::Config.is_windows? ? 'cmd.exe /c echo yup' : 'echo yup'
       Facter.add("shell_testing") do
-        setcode "echo yup"
+        setcode test_command
       end
 
       Facter["shell_testing"].value.should == "yup"
