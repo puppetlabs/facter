@@ -83,6 +83,36 @@ class Facter::Util::Text
     end
   end
 
+  # Running this function will cause output to be paged through your local
+  # PAGER application. This can be used to make an application behave just like
+  # git.
+  def run_pager
+    return if PLATFORM =~ /win32/
+    Facter.pager(true)
+    return unless STDOUT.tty?
+
+    read, write = IO.pipe
+
+    unless Kernel.fork # Child process
+      STDOUT.reopen(write)
+      STDERR.reopen(write) if STDERR.tty?
+      read.close
+      write.close
+      return
+    end
+
+    # Parent process, become pager
+    STDIN.reopen(read)
+    read.close
+    write.close
+
+    ENV['LESS'] = 'FSRX' # Don't page if the input is short enough
+
+    Kernel.select [STDIN] # Wait until we have input before we start the pager
+    pager = ENV['PAGER'] || 'less'
+    exec pager rescue exec "/bin/sh", "-c", pager
+  end
+
   private
 
   # Provide a trailing comma if there is an indent, implying this is not

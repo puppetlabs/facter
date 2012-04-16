@@ -50,6 +50,7 @@ module Facter
       # Print the value of a single fact, otherwise print a list sorted by fact
       # name and separated by "=>"
       text = Facter::Util::Text.new
+      text.run_pager if $stdout.isatty
       if facts.length == 1
         if value = facts.values.first
           text.pretty_output(value)
