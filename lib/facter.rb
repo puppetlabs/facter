@@ -44,6 +44,7 @@ module Facter
   @@timing = 0
   @@messages = {}
   @@color = 1
+  @@pager = 0
 
   # module methods
 
@@ -174,6 +175,14 @@ module Facter
     @@timing = bitcheck(bit)
   end
 
+  def self.pager(bit)
+    @@pager = bitcheck(bit)
+  end
+
+  def self.pager?
+    @@pager != 0
+  end
+
   # Turn console color support on or off.
   def self.color(bit)
     @@color = bitcheck(bit)
@@ -190,7 +199,12 @@ module Facter
         false
       end
     else
-      @@color != 0
+      # Disable color if we are being piped externally, just like git
+      if $stdout.isatty or pager?
+        @@color != 0
+      else
+        false
+      end
     end
   end
 
