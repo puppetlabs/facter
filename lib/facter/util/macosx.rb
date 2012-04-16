@@ -26,13 +26,13 @@ module Facter::Util::Macosx
       xml.gsub!( bad_xml_doctype, Plist_Xml_Doctype )
       Facter.debug("Had to fix plist with incorrect DOCTYPE declaration")
     end
-    plist = CFPropertyList::List.new
+    plist = Facter::Util::CFPropertyList::List.new
     begin
       plist.load_str(xml)
     rescue => e
-      fail("A plist file could not be properly read by CFPropertyList: #{e.inspect}")
+      fail("A plist file could not be properly read by Facter::Util::CFPropertyList: #{e.inspect}")
     end
-    CFPropertyList.native_types(plist.value)
+    Facter::Util::CFPropertyList.native_types(plist.value)
   end
 
   # Return an xml result, modified as we need it.
