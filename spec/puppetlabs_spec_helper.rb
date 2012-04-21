@@ -11,6 +11,7 @@ end
 require 'puppetlabs_spec/files'
 require 'puppetlabs_spec/fixtures'
 require 'puppetlabs_spec/matchers'
+require 'puppetlabs_spec/verbose'
 
 RSpec.configure do |config|
   # Include PuppetlabsSpec helpers so they can be called at convenience
