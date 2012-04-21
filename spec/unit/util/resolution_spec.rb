@@ -465,7 +465,6 @@ describe Facter::Util::Resolution do
         end
 
         it "should quote expanded binary if found in path with spaces" do
-          pending
           Facter::Util::Resolution.expects(:which).with('foo.sh').returns '/home/bob/my tools/foo.sh'
           Facter::Util::Resolution.expand_command('foo.sh /a /b').should == %q{'/home/bob/my tools/foo.sh' /a /b}
         end

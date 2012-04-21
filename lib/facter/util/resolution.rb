@@ -90,7 +90,8 @@ class Facter::Util::Resolution
       if exe = which(exe)
         # the binary was not quoted which means it contains no spaces. But the
         # full path to the binary may do so.
-        exe = "\"#{exe}\"" if exe =~ /\s/
+        exe = "\"#{exe}\"" if exe =~ /\s/ and Facter::Util::Config.is_windows?
+        exe = "'#{exe}'" if exe =~ /\s/ and not Facter::Util::Config.is_windows?
         [ exe, arguments ].compact.join(" ")
       end
     end
