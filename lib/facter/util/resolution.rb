@@ -39,12 +39,15 @@ class Facter::Util::Resolution
     else
       search_paths.each do |dir|
         dest = File.join(dir, bin)
-        if Facter::Util::Config.is_windows? && File.extname(dest).empty?
-          exts = ENV['PATHEXT']
-          exts = exts ? exts.split(File::PATH_SEPARATOR) : %w[.COM .EXE .BAT .CMD]
-          exts.each do |ext|
-            destext = dest + ext
-            return destext if File.executable?(destext)
+        if Facter::Util::Config.is_windows?
+          dest.gsub!(File::SEPARATOR, File::ALT_SEPARATOR)
+          if File.extname(dest).empty?
+            exts = ENV['PATHEXT']
+            exts = exts ? exts.split(File::PATH_SEPARATOR) : %w[.COM .EXE .BAT .CMD]
+            exts.each do |ext|
+              destext = dest + ext
+              return destext if File.executable?(destext)
+            end
           end
         end
         return dest if File.executable?(dest)
