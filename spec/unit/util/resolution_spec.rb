@@ -286,11 +286,7 @@ describe Facter::Util::Resolution do
 
   # taken from puppet: spec/unit/util_spec.rb
   describe "#absolute_path?" do
-    describe "when run on unix" do
-      before :each do
-        Facter::Util::Config.stubs(:is_windows?).returns false
-      end
-
+    context "when run on unix", :as_platform => :posix do
       %w[/ /foo /foo/../bar //foo //Server/Foo/Bar //?/C:/foo/bar /\Server/Foo /foo//bar/baz].each do |path|
         it "should return true for #{path}" do
           Facter::Util::Resolution.should be_absolute_path(path)
@@ -304,11 +300,7 @@ describe Facter::Util::Resolution do
       end
     end
 
-    describe "when run on windows" do
-      before :each do
-        Facter::Util::Config.stubs(:is_windows?).returns true
-      end
-
+    context "when run on windows", :as_platform => :windows  do
       %w[C:/foo C:\foo \\\\Server\Foo\Bar \\\\?\C:\foo\bar //Server/Foo/Bar //?/C:/foo/bar /\?\C:/foo\bar \/Server\Foo/Bar c:/foo//bar//baz].each do |path|
         it "should return true for #{path}" do
           Facter::Util::Resolution.should be_absolute_path(path)
@@ -324,39 +316,28 @@ describe Facter::Util::Resolution do
   end
 
   describe "#search_paths" do
-    it "should use the PATH evironment variable to determine locations on windows" do
-      # The reason for hacking the PATH_SEPARATOR constant is that
-      # a single path like C:\Windows already contains the unix PATH_SEPARATOR
-      # and splitting would be wrong. The other way around works because unix
-      # pathes normallay do not contain the windows PATH_SEPARATOR
-      old_separator = File::PATH_SEPARATOR
-      Facter::Util::Config.stubs(:is_windows?).returns true
-      ENV.expects(:[]).with('PATH').returns 'C:\Windows;C:\Windows\System32'
-      File.send(:remove_const,'PATH_SEPARATOR')
-      File.const_set('PATH_SEPARATOR', ';')
-      begin
+    context "on windows", :as_platform => :windows do
+      it "should use the PATH environment variable to determine locations" do
+        ENV.expects(:[]).with('PATH').returns 'C:\Windows;C:\Windows\System32'
         Facter::Util::Resolution.search_paths.should == %w{C:\Windows C:\Windows\System32}
-      ensure
-        File.send(:remove_const,'PATH_SEPARATOR')
-        File.const_set('PATH_SEPARATOR', old_separator)
       end
     end
 
-    it "should use the PATH environment variable plus /sbin and /usr/sbin on unix" do
-      Facter::Util::Config.stubs(:is_windows?).returns false
-      ENV.expects(:[]).with('PATH').returns "/bin#{File::PATH_SEPARATOR}/usr/bin"
-      Facter::Util::Resolution.search_paths.should == %w{/bin /usr/bin /sbin /usr/sbin}
+    context "on posix", :as_platform => :posix do
+      it "should use the PATH environment variable plus /sbin and /usr/sbin on unix" do
+        ENV.expects(:[]).with('PATH').returns "/bin:/usr/bin"
+        Facter::Util::Resolution.search_paths.should == %w{/bin /usr/bin /sbin /usr/sbin}
+      end
     end
   end
 
   describe "#which" do
-    describe "when run on unix" do
+    context "when run on posix", :as_platform => :posix  do
       before :each do
-        Facter::Util::Config.stubs(:is_windows?).returns false
         Facter::Util::Resolution.stubs(:search_paths).returns [ '/bin', '/sbin', '/usr/sbin']
       end
 
-      describe "and provided with an absolute path" do
+      context "and provided with an absolute path" do
         it "should return the binary if executable" do
           File.expects(:executable?).with('/opt/foo').returns true
           Facter::Util::Resolution.which('/opt/foo').should == '/opt/foo'
@@ -368,30 +349,29 @@ describe Facter::Util::Resolution do
         end
       end
 
-      describe "and not provided with an absolute path" do
+      context "and not provided with an absolute path" do
         it "should return the absolute path if found" do
-          File.expects(:executable?).with(File.join('/bin','foo')).returns false
-          File.expects(:executable?).with(File.join('/sbin','foo')).returns true
-          File.expects(:executable?).with(File.join('/usr/sbin','foo')).never
-          Facter::Util::Resolution.which('foo').should == File.join('/sbin','foo')
+          File.expects(:executable?).with('/bin/foo').returns false
+          File.expects(:executable?).with('/sbin/foo').returns true
+          File.expects(:executable?).with('/usr/sbin/foo').never
+          Facter::Util::Resolution.which('foo').should == '/sbin/foo'
         end
 
         it "should return nil if not found" do
-          File.expects(:executable?).with(File.join('/bin','foo')).returns false
-          File.expects(:executable?).with(File.join('/sbin','foo')).returns false
-          File.expects(:executable?).with(File.join('/usr/sbin','foo')).returns false
+          File.expects(:executable?).with('/bin/foo').returns false
+          File.expects(:executable?).with('/sbin/foo').returns false
+          File.expects(:executable?).with('/usr/sbin/foo').returns false
           Facter::Util::Resolution.which('foo').should be_nil
         end
       end
     end
 
-    describe "when run on windows" do
+    context "when run on windows", :as_platform => :windows do
       before :each do
-        Facter::Util::Config.stubs(:is_windows?).returns true
         Facter::Util::Resolution.stubs(:search_paths).returns ['C:\Windows\system32', 'C:\Windows', 'C:\Windows\System32\Wbem' ]
       end
 
-      describe "and provided with an absolute path" do
+      context "and provided with an absolute path" do
         it "should return the binary if executable" do
           File.expects(:executable?).with('C:\Tools\foo.exe').returns true
           File.expects(:executable?).with('\\\\remote\dir\foo.exe').returns true
@@ -407,75 +387,93 @@ describe Facter::Util::Resolution do
         end
       end
 
-      describe "and not provided with an absolute path" do
+      context "and not provided with an absolute path" do
         it "should return the absolute path if found" do
-          File.expects(:executable?).with(File.join('C:\Windows\system32','foo.exe')).returns false
-          File.expects(:executable?).with(File.join('C:\Windows','foo.exe')).returns true
-          File.expects(:executable?).with(File.join('C:\Windows\System32\Wbem', 'foo.exe')).never
-          Facter::Util::Resolution.which('foo.exe').should == File.join('C:\Windows','foo.exe')
+          File.expects(:executable?).with('C:\Windows\system32\foo.exe').returns false
+          File.expects(:executable?).with('C:\Windows\foo.exe').returns true
+          File.expects(:executable?).with('C:\Windows\System32\Wbem\foo.exe').never
+          Facter::Util::Resolution.which('foo.exe').should == 'C:\Windows\foo.exe'
         end
 
         it "should return the absolute path with file extension if found" do
           ENV.stubs(:[]).with('PATHEXT').returns nil
           ['.COM', '.EXE', '.BAT', '.CMD', '' ].each do |ext|
-            File.stubs(:executable?).with(File.join('C:\Windows\system32',"foo#{ext}")).returns false
-            File.stubs(:executable?).with(File.join('C:\Windows\System32\Wbem',"foo#{ext}")).returns false
+            File.stubs(:executable?).with('C:\Windows\system32\foo'+ext).returns false
+            File.stubs(:executable?).with('C:\Windows\System32\Wbem\foo'+ext).returns false
           end
           ['.COM', '.BAT', '.CMD', '' ].each do |ext|
-            File.stubs(:executable?).with(File.join('C:\Windows',"foo#{ext}")).returns false
+            File.stubs(:executable?).with('C:\Windows\foo'+ext).returns false
           end
-          File.stubs(:executable?).with(File.join('C:\Windows',"foo.EXE")).returns true
+          File.stubs(:executable?).with('C:\Windows\foo.EXE').returns true
 
-          Facter::Util::Resolution.which('foo').should == File.join('C:\Windows','foo.EXE')
+          Facter::Util::Resolution.which('foo').should == 'C:\Windows\foo.EXE'
         end
 
         it "should return nil if not found" do
-          File.expects(:executable?).with(File.join('C:\Windows\system32','foo.exe')).returns false
-          File.expects(:executable?).with(File.join('C:\Windows','foo.exe')).returns false
-          File.expects(:executable?).with(File.join('C:\Windows\System32\Wbem', 'foo.exe')).returns false
+          File.expects(:executable?).with('C:\Windows\system32\foo.exe').returns false
+          File.expects(:executable?).with('C:\Windows\foo.exe').returns false
+          File.expects(:executable?).with('C:\Windows\System32\Wbem\foo.exe').returns false
           Facter::Util::Resolution.which('foo.exe').should be_nil
         end
       end
     end
 
     describe "#expand_command" do
-      it "should expand binary" do
-        Facter::Util::Resolution.expects(:which).with('foo').returns '/bin/foo'
-        Facter::Util::Resolution.expand_command('foo -a | stuff >> /dev/null').should == '/bin/foo -a | stuff >> /dev/null'
+      context "on windows", :as_platform => :windows do
+        it "should expand binary" do
+          Facter::Util::Resolution.expects(:which).with('cmd').returns 'C:\Windows\System32\cmd'
+          Facter::Util::Resolution.expand_command(
+            'cmd /c echo foo > C:\bar'
+          ).should == 'C:\Windows\System32\cmd /c echo foo > C:\bar'
+        end
+
+        it "should expand double quoted binary" do
+          Facter::Util::Resolution.expects(:which).with('my foo').returns 'C:\My Tools\my foo.exe'
+          Facter::Util::Resolution.expand_command('"my foo" /a /b').should == '"C:\My Tools\my foo.exe" /a /b'
+        end
+
+        it "should not expand single quoted binary" do
+          Facter::Util::Resolution.expects(:which).with('\'C:\My').returns nil
+          Facter::Util::Resolution.expand_command('\'C:\My Tools\foo.exe\' /a /b').should be_nil
+        end
+
+        it "should quote expanded binary if found in path with spaces" do
+          Facter::Util::Resolution.expects(:which).with('foo').returns 'C:\My Tools\foo.exe'
+          Facter::Util::Resolution.expand_command('foo /a /b').should == '"C:\My Tools\foo.exe" /a /b'
+        end
+
+        it "should return nil if not found" do
+          Facter::Util::Resolution.expects(:which).with('foo').returns nil
+          Facter::Util::Resolution.expand_command('foo /a | stuff >> /dev/null').should be_nil
+        end
       end
 
-      it "should expand single quoted binary on unix" do
-        Facter::Util::Config.stubs(:is_windows?).returns false
-        Facter::Util::Resolution.expects(:which).with('my foo').returns '/home/bob/my path/my foo'
-        Facter::Util::Resolution.expand_command('\'my foo\' -a').should == '\'/home/bob/my path/my foo\' -a'
-      end
+      context "on unix", :as_platform => :posix do
+        it "should expand binary" do
+          Facter::Util::Resolution.expects(:which).with('foo').returns '/bin/foo'
+          Facter::Util::Resolution.expand_command('foo -a | stuff >> /dev/null').should == '/bin/foo -a | stuff >> /dev/null'
+        end
 
-      it "should not expand single quoted binary on windows" do
-        Facter::Util::Config.stubs(:is_windows?).returns true
-        Facter::Util::Resolution.expects(:which).with('\'C:\My').returns nil
-        Facter::Util::Resolution.expand_command('\'C:\My Tools\foo.exe\' /a /b').should == nil
-      end
+        it "should expand double quoted binary" do
+          Facter::Util::Resolution.expects(:which).with('/tmp/my foo').returns '/tmp/my foo'
+          Facter::Util::Resolution.expand_command(%q{"/tmp/my foo" bar}).should == %q{"/tmp/my foo" bar}
+        end
 
-      it "should expand double quoted binary on unix" do
-        Facter::Util::Config.stubs(:is_windows?).returns false
-        Facter::Util::Resolution.expects(:which).with('my foo').returns '/home/bob/my path/my foo'
-        Facter::Util::Resolution.expand_command('"my foo" -a').should == '"/home/bob/my path/my foo" -a'
-      end
+        it "should expand single quoted binary" do
+          Facter::Util::Resolution.expects(:which).with('my foo').returns '/home/bob/my path/my foo'
+          Facter::Util::Resolution.expand_command(%q{'my foo' -a}).should == %q{'/home/bob/my path/my foo' -a}
+        end
 
-      it "should expand double quoted binary on windows" do
-        Facter::Util::Config.stubs(:is_windows?).returns true
-        Facter::Util::Resolution.expects(:which).with('C:\My Tools\foo.exe').returns 'C:\My Tools\foo.exe'
-        Facter::Util::Resolution.expand_command('"C:\My Tools\foo.exe" /a /b').should == '"C:\My Tools\foo.exe" /a /b'
-      end
+        it "should quote expanded binary if found in path with spaces" do
+          pending
+          Facter::Util::Resolution.expects(:which).with('foo.sh').returns '/home/bob/my tools/foo.sh'
+          Facter::Util::Resolution.expand_command('foo.sh /a /b').should == %q{'/home/bob/my tools/foo.sh' /a /b}
+        end
 
-      it "should escape spaces in path" do
-        Facter::Util::Resolution.expects(:which).with('foo.exe').returns 'C:\My Tools\foo.exe'
-        Facter::Util::Resolution.expand_command('foo.exe /a /b').should == '"C:\My Tools\foo.exe" /a /b'
-      end
-
-      it "should return nil if not found" do
-        Facter::Util::Resolution.expects(:which).with('foo').returns nil
-        Facter::Util::Resolution.expand_command('foo -a | stuff >> /dev/null').should be_nil
+        it "should return nil if not found" do
+          Facter::Util::Resolution.expects(:which).with('foo').returns nil
+          Facter::Util::Resolution.expand_command('foo -a | stuff >> /dev/null').should be_nil
+        end
       end
     end
 
@@ -493,110 +491,61 @@ describe Facter::Util::Resolution do
       Facter::Util::Resolution.exec(test_command).should == "foo"
     end
 
-    describe "when run on unix" do
-      before :each do
-        Facter::Util::Config.stubs(:is_windows?).returns false
-      end
-
-      describe "and the binary is an absolute path" do
-        it "should run the command if the binary is found" do
-          File.expects(:executable?).with('/usr/bin/uname').returns true
-          Facter::Util::Resolution.expects(:`).with('/usr/bin/uname -a').returns "x86_64\n"
-          Facter::Util::Resolution.exec('/usr/bin/uname -a').should == 'x86_64'
+    context "when run on unix", :as_platform => :posix  do
+      context "binary is present" do
+        it "should run the command if path to binary is absolute" do
+          Facter::Util::Resolution.expects(:expand_command).with('/usr/bin/uname -m').returns('/usr/bin/uname -m')
+          Facter::Util::Resolution.expects(:`).with('/usr/bin/uname -m').returns 'x86_64'
+          Facter::Util::Resolution.exec('/usr/bin/uname -m').should == 'x86_64'
         end
 
-        # taken from the ip fact
-        it "should run more complicated shell expression" do
-          File.expects(:executable?).with('/sbin/arp').returns true
-          Facter::Util::Resolution.expects(:`).with('/sbin/arp -en -i eth0 | sed -e 1d').returns "some_data\n"
-          Facter::Util::Resolution.exec('/sbin/arp -en -i eth0 | sed -e 1d').should == 'some_data'
-        end
-
-        it "should not run the command if the binary is not present" do
-          File.expects(:executable?).with('/usr/bin/uname').returns false
-          Facter::Util::Resolution.expects(:`).with('/usr/bin/uname -a').never
-          Facter::Util::Resolution.exec('/usr/bin/uname -a').should be_nil
+        it "should run the expanded command if path to binary not absolute" do
+          Facter::Util::Resolution.expects(:expand_command).with('uname -m').returns('/usr/bin/uname -m')
+          Facter::Util::Resolution.expects(:`).with('/usr/bin/uname -m').returns 'x86_64'
+          Facter::Util::Resolution.exec('uname -m').should == 'x86_64'
         end
       end
 
-      describe "and the binary is a relative path" do
-        it "should always include /sbin and /usr/sbin in search path" do
-          Facter::Util::Resolution.search_paths.should include '/sbin'
-          Facter::Util::Resolution.search_paths.should include '/usr/sbin'
+      context "binary is not present" do
+        it "should not run the command if path to binary is absolute" do
+          Facter::Util::Resolution.expects(:expand_command).with('/usr/bin/uname -m').returns nil
+          Facter::Util::Resolution.expects(:`).with('/usr/bin/uname -m').never
+          Facter::Util::Resolution.exec('/usr/bin/uname -m').should be_nil
         end
-
-        it "should run the command if found in search path" do
-          Facter::Util::Resolution.stubs(:search_paths).returns ['/sbin', '/bin' ]
-          File.stubs(:executable?).with(File.join('/sbin','ifconfig')).returns false
-          File.stubs(:executable?).with(File.join('/bin','ifconfig')).returns true
-          Facter::Util::Resolution.expects(:`).with(File.join('/bin','ifconfig -a')).returns "done\n"
-          Facter::Util::Resolution.exec('ifconfig -a').should == 'done'
-        end
-
-        it "should not run the command if not found in any search path" do
-          Facter::Util::Resolution.stubs(:search_paths).returns ['/sbin', '/bin' ]
-          File.stubs(:executable?).with(File.join('/sbin','ifconfig')).returns false
-          File.stubs(:executable?).with(File.join('/bin','ifconfig')).returns false
-          Facter::Util::Resolution.exec('ifconfig -a').should be_nil
+        it "should not run the command if path to binary is not absolute" do
+          Facter::Util::Resolution.expects(:expand_command).with('uname -m').returns nil
+          Facter::Util::Resolution.expects(:`).with('uname -m').never
+          Facter::Util::Resolution.exec('uname -m').should be_nil
         end
       end
     end
 
-    describe "when run on windows" do
-      before :each do
-        Facter::Util::Config.stubs(:is_windows?).returns true
-      end
-
-      describe "and the binary is an absolute path" do
-        it "should run the command if the binary is found" do
-          File.expects(:executable?).with('C:\foo\bar.exe').returns true
-          Facter::Util::Resolution.expects(:`).with('C:\foo\bar.exe /a /b /c "foo bar.txt"').returns "done\n"
-          Facter::Util::Resolution.exec('C:\foo\bar.exe /a /b /c "foo bar.txt"').should == 'done'
+    context "when run on windows", :as_platform => :windows do
+      context "binary is present" do
+        it "should run the command if path to binary is absolute" do
+          Facter::Util::Resolution.expects(:expand_command).with(%q{C:\Windows\foo.exe /a /b}).returns(%q{C:\Windows\foo.exe /a /b})
+          Facter::Util::Resolution.expects(:`).with(%q{C:\Windows\foo.exe /a /b}).returns 'bar'
+          Facter::Util::Resolution.exec(%q{C:\Windows\foo.exe /a /b}).should == 'bar'
         end
 
-        it "should handle quoted binaries with spaces correctly" do
-          File.expects(:executable?).with('C:\foo baz\bar.exe').returns true
-          Facter::Util::Resolution.expects(:`).with('"C:\foo baz\bar.exe" /a /b /c "foo bar.txt"').returns "done\n"
-          Facter::Util::Resolution.exec('"C:\foo baz\bar.exe" /a /b /c "foo bar.txt"').should == 'done'
-        end
-
-        it "should not run the command if the binary is not found" do
-          File.expects(:executable?).with('C:\foo\bar.exe').returns false
-          Facter::Util::Resolution.expects(:`).with('C:\foo\bar.exe /a /b /c "foo bar.txt"').never
-          Facter::Util::Resolution.exec('C:\foo\bar.exe /a /b /c "foo bar.txt"').should be_nil
+        it "should run the expanded command if path to binary not absolute" do
+          Facter::Util::Resolution.expects(:expand_command).with(%q{foo.exe /a /b}).returns(%q{C:\Windows\foo.exe /a /b})
+          Facter::Util::Resolution.expects(:`).with(%q{C:\Windows\foo.exe /a /b}).returns 'bar'
+          Facter::Util::Resolution.exec(%q{foo.exe /a /b}).should == 'bar'
         end
       end
 
-      describe "and the binary is a relative path" do
-        it "should run the command if found in search path" do
-          Facter::Util::Resolution.stubs(:search_paths).returns ['C:\Windows\system32', 'C:\Windows', 'C:\Windows\System32\Wbem' ]
-          File.stubs(:executable?).with(File.join('C:\Windows\system32','foo.exe')).returns false
-          File.stubs(:executable?).with(File.join('C:\Windows','foo.exe')).returns true
-          File.stubs(:executable?).with(File.join('C:\Windows\System32\Wbem', 'foo.exe')).returns false
-          Facter::Util::Resolution.expects(:`).with(File.join('C:\Windows','foo.exe')).returns "done\n"
-          Facter::Util::Resolution.exec('foo.exe').should == 'done'
+      context "binary is not present" do
+        it "should not run the command if path to binary is absolute" do
+          Facter::Util::Resolution.expects(:expand_command).with(%q{C:\Windows\foo.exe /a /b}).returns nil
+          Facter::Util::Resolution.expects(:`).with(%q{C:\Windows\foo.exe /a /b}).never
+          Facter::Util::Resolution.exec(%q{C:\Windows\foo.exe /a /b}).should be_nil
         end
-
-        it "should try to find the correct extension" do
-          ENV.stubs(:[]).with('PATHEXT').returns nil
-          Facter::Util::Resolution.stubs(:search_paths).returns ['C:\Windows\system32', 'C:\Windows']
-          ['.COM', '.EXE', '.BAT', '.CMD', '' ].each do |ext|
-            File.stubs(:executable?).with(File.join('C:\Windows\system32',"foo#{ext}")).returns false
-          end
-          ['.COM', '.BAT', '.CMD', '' ].each do |ext|
-            File.stubs(:executable?).with(File.join('C:\Windows',"foo#{ext}")).returns false
-          end
-          File.stubs(:executable?).with(File.join('C:\Windows',"foo.EXE")).returns true
-          Facter::Util::Resolution.expects(:`).with(File.join('C:\Windows','foo.EXE')).returns "done\n"
-          Facter::Util::Resolution.exec('foo').should == 'done'
+        it "should try to run the command and return output of a shell-builtin" do
+          pending
         end
-
-        it "should not run the command if not found in any search path" do
-          Facter::Util::Resolution.stubs(:search_paths).returns ['C:\Windows\system32', 'C:\Windows', 'C:\Windows\System32\Wbem' ]
-          File.stubs(:executable?).with(File.join('C:\Windows\system32','foo.exe')).returns false
-          File.stubs(:executable?).with(File.join('C:\Windows','foo.exe')).returns false
-          File.stubs(:executable?).with(File.join('C:\Windows\System32\Wbem', 'foo.exe')).returns false
-          Facter::Util::Resolution.exec('foo.exe').should be_nil
+        it "should try to run the command and return nil if not shell-builtin" do
+          pending
         end
       end
     end
