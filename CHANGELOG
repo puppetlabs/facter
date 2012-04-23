@@ -1,4 +1,4 @@
-1.6.8rc1
+1.6.8
 ===
 b86fe4c (#12831) Add rspec tests to have_which method in Resolution
 70be957 (#12831) Fix recursion on first kernel fact resolution
