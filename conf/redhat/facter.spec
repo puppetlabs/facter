@@ -1,11 +1,8 @@
 %{!?ruby_sitelibdir: %define ruby_sitelibdir %(ruby -rrbconfig -e 'puts Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG["sitelibdir"]')}
 
-%define has_ruby_abi 0%{?fedora} || 0%{?rhel} >= 5
-%define has_ruby_noarch %has_ruby_abi
-
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
-Version: 1.6.6
+Version: 1.6.8
 Release: 1%{?dist}
 #Release: 0.1rc1%{?dist}
 License: Apache 2.0
@@ -16,20 +13,15 @@ Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz
 #Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz.asc
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-%if %has_ruby_noarch
-BuildArch: noarch
-%endif
 
-Requires: ruby >= 1.8.1
+Requires: ruby >= 1.8.5
 Requires: which
 # Note: dmidecode is only available on x86 and x86_64 so this package may need to move into being
 #  arch specific if people are using ppc, arm, s390 etc
 Requires: dmidecode
 Requires: pciutils
-%if %has_ruby_abi
 Requires: ruby(abi) = 1.8
-%endif
-BuildRequires: ruby >= 1.8.1
+BuildRequires: ruby >= 1.8.5
 
 %description
 Ruby module for collecting simple facts about a host Operating
@@ -59,6 +51,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Apr 23 2012 Moses Mendoza <moses@puppetlabs.com> - 1.6.8-1
+- Update for 1.6.8, spec for arch-specific build, req ruby 1.8.5
+
 * Thu Feb 23 2012 Michael Stahnke <stahnma@puppetlabs.com> - 1.6.6-1
 - Update for 1.6.6
 
