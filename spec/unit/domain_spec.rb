@@ -98,19 +98,39 @@ describe "Domain name facts" do
   end
 
   describe "on Windows" do
-    it "should use the DNSDomain for the first nic where ip is enabled" do
+    before(:each) do
       Facter.fact(:kernel).stubs(:value).returns("windows")
+      require 'facter/util/registry'
+    end
+    describe "with primary dns suffix" do
+      before(:each) do
+        Facter::Util::Registry.stubs(:hklm_read).returns('baz.com')
+      end
+      it "should get the primary dns suffix" do
+        Facter.fact(:domain).value.should == 'baz.com'
+      end
+      it "should not execute the wmi query" do
+        require 'facter/util/wmi'
+        Facter::Util::WMI.expects(:execquery).never
+        Facter.fact(:domain).value
+      end
+    end
+    describe "without primary dns suffix" do
+      before(:each) do
+        Facter::Util::Registry.stubs(:hklm_read).returns('')
+      end
+      it "should use the DNSDomain for the first nic where ip is enabled" do
+        nic = stubs 'nic'
+        nic.stubs(:DNSDomain).returns("foo.com")
 
-      nic = stubs 'nic'
-      nic.stubs(:DNSDomain).returns("foo.com")
+        nic2 = stubs 'nic'
+        nic2.stubs(:DNSDomain).returns("bar.com")
 
-      nic2 = stubs 'nic'
-      nic2.stubs(:DNSDomain).returns("bar.com")
+        require 'facter/util/wmi'
+        Facter::Util::WMI.stubs(:execquery).with("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").returns([nic, nic2])
 
-      require 'facter/util/wmi'
-      Facter::Util::WMI.stubs(:execquery).with("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").returns([nic, nic2])
-
-      Facter.fact(:domain).value.should == 'foo.com'
+        Facter.fact(:domain).value.should == 'foo.com'
+      end
     end
   end
 end
