@@ -52,12 +52,17 @@ end
 Facter.add(:domain) do
   confine :kernel => :windows
   setcode do
-    require 'facter/util/wmi'
+    require 'facter/util/registry'
     domain = ""
-    Facter::Util::WMI.execquery("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").each { |nic|
-      domain = nic.DNSDomain
-      break
-    }
+    regvalue = Facter::Util::Registry.hklm_read('SYSTEM\CurrentControlSet\Services\Tcpip\Parameters', 'Domain')
+    domain = regvalue if regvalue
+    if domain == ""
+      require 'facter/util/wmi'
+      Facter::Util::WMI.execquery("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").each { |nic|
+        domain = nic.DNSDomain
+        break
+      }
+    end
     domain
   end
 end
