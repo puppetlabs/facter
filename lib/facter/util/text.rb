@@ -85,9 +85,10 @@ class Facter::Util::Text
 
   # Running this function will cause output to be paged through your local
   # PAGER application. This can be used to make an application behave just like
-  # git.
+  # git, and to automatically kick in less or more if the ouput is large
+  # enough.
   def run_pager
-    return if PLATFORM =~ /win32/
+    return if Facter::Util::Config.is_windows?
     Facter.pager(true)
     return unless STDOUT.tty?
 
