@@ -541,10 +541,16 @@ describe Facter::Util::Resolution do
           Facter::Util::Resolution.exec(%q{C:\Windows\foo.exe /a /b}).should be_nil
         end
         it "should try to run the command and return output of a shell-builtin" do
-          pending
+          Facter::Util::Resolution.expects(:expand_command).with(%q{echo foo}).returns nil
+          Facter::Util::Resolution.expects(:`).with(%q{echo foo}).returns 'foo'
+          Facter.expects(:warnonce).with('Using Facter::Util::Resolution.exec with a shell built-in is deprecated. Most built-ins can be replaced with native ruby commands. If you really have to run a built-in, pass "cmd /c your_builtin" as a command')
+          Facter::Util::Resolution.exec(%q{echo foo}).should == 'foo'
         end
         it "should try to run the command and return nil if not shell-builtin" do
-          pending
+          Facter::Util::Resolution.expects(:expand_command).with(%q{echo foo}).returns nil
+          Facter::Util::Resolution.stubs(:`).with(%q{echo foo}).raises Errno::ENOENT, 'some_error_message'
+          Facter.expects(:warnonce).never
+          Facter::Util::Resolution.exec(%q{echo foo}).should be_nil
         end
       end
     end
