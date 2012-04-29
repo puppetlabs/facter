@@ -21,10 +21,11 @@ module Facter
   require 'facter/util/fact'
   require 'facter/util/collection'
   require 'facter/util/monkey_patches'
-  require 'facter/util/text'
+  require 'facter/util/colors'
 
   include Comparable
   include Enumerable
+  extend Facter::Util::Colors
 
   FACTERVERSION = '2.0.0'
   # = Facter
@@ -66,8 +67,7 @@ module Facter
       return
     end
     if self.debugging?
-      t = Facter::Util::Text.new
-      puts t.green + string + t.reset
+      puts colorize(:green, string)
     end
   end
 
@@ -77,8 +77,7 @@ module Facter
 
   # show the timing information
   def self.show_time(string)
-    t = Facter::Util::Text.new
-    puts "#{t.green}#{string}#{t.reset}" if string and Facter.timing?
+    puts colorize(:green, string) if string and Facter.timing?
   end
 
   def self.timing?
