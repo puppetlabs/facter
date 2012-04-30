@@ -16,10 +16,11 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires: ruby >= 1.8.5
 Requires: which
-# Note: dmidecode is only available on x86 and x86_64 so this package may need to move into being
-#  arch specific if people are using ppc, arm, s390 etc
+# dmidecode and pciutils are not available on all arches
+%ifarch %ix86 x86_64 ia64
 Requires: dmidecode
 Requires: pciutils
+%endif
 Requires: ruby(abi) = 1.8
 BuildRequires: ruby >= 1.8.5
 
@@ -51,7 +52,7 @@ rm -rf %{buildroot}
 
 
 %changelog
-* Mon Apr 23 2012 Moses Mendoza <moses@puppetlabs.com> - 1.6.8-1
+* Mon Apr 30 2012 Moses Mendoza <moses@puppetlabs.com> - 1.6.8-1
 - Update for 1.6.8, spec for arch-specific build, req ruby 1.8.5
 
 * Thu Feb 23 2012 Michael Stahnke <stahnma@puppetlabs.com> - 1.6.6-1
