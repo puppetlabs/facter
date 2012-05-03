@@ -80,6 +80,9 @@ class Facter::Util::Text
     when String
       print(colorize(:strings, "\"#{data}\""))
       print(colorize(:commas, tc(indent)), "\n")
+    when NilClass
+      print(colorize(:strings, "undef"))
+      print(colorize(:commas, tc(indent)), "\n")
     end
   end
 
