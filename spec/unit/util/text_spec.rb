@@ -36,10 +36,9 @@ describe Facter::Util::Text do
       stdout.string.should == "false\n"
     end
 
-    pending "should output nil without quotes" do
-      # Not sure if this should return 'undef' or not yet
+    it "should output undef without quotes" do
       text.pretty_output(nil)
-      stdout.string.should == "nil\n"
+      stdout.string.should == "undef\n"
     end
 
     it "should output integers without quotes" do
