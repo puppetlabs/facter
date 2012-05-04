@@ -26,6 +26,11 @@ module Facter
 
       # Print everything if they didn't ask for specific facts.
       facts ||= Facter.to_hash
+      
+      if options[:flatten]
+        require 'facter/util/namespace'
+        facts = Facter::Util::Namespace.to_namespace(facts)
+      end
 
       # Print the facts as YAML and exit
       if options[:yaml]
@@ -80,6 +85,7 @@ module Facter
         opts.on("-t", "--timing")  { |v| Facter.timing(1) }
         opts.on("-p", "--puppet")  { |v| load_puppet }
         opts.on("-n", "--nocolor") { |v| Facter.color(0) }
+        opts.on("-f", "--flatten") { |v| options[:flatten] = v }
 
         opts.on_tail("-v", "--version") do
           puts Facter.version
