@@ -59,39 +59,87 @@ class Facter::Util::Fact
   def value
     return @value if @value
 
-    if @resolves.length == 0
-      Facter.debug "No resolves for %s" % @name
+    suitable_resolves = @resolves.select {|r| r.suitable? }
+
+    if suitable_resolves.length == 0
+      Facter.debug "Found no suitable resolves of %s for %s" %
+        [@resolves.length, @name]
       return nil
-    end
-
-    searching do
-      @value = nil
-
-      foundsuits = false
-      @value = @resolves.inject(nil) { |result, resolve|
-        next unless resolve.suitable?
-        foundsuits = true
-
-        tmp = resolve.value
-
-        break tmp unless tmp.nil? or tmp == ""
-      }
-
-      unless foundsuits
-        Facter.debug "Found no suitable resolves of %s for %s" % [@resolves.length, @name]
+    else
+      searching do
+        suitable_resolves.each do |resolve|
+          val = resolve.value
+          if val.nil?
+            next
+          elsif valid? val
+            @value = val
+            break
+          else
+            Facter.warnonce("Resolution returned invalid data for fact '#{@name}'")
+            Facter.debug("Resolution returned the following invalid data " +
+              "for fact '#{@name}':\n  #{val.inspect}")
+          end
+        end
       end
     end
 
     if @value.nil?
-      # nothing
-      Facter.debug("value for %s is still nil" % @name)
-      return nil
-    else
-      return @value
+      Facter.debug("Could not resolve fact #{@name}")
     end
+
+    @value
   end
 
   private
+
+  # Validate that an object is either a string, hash, array or
+  # combination thereof.
+  def valid?(value)
+    case value
+    when String,TrueClass,FalseClass,Numeric then
+      return true
+    when Array then
+      validity = true
+      # Validate each item by calling validate again
+      value.each do |item|
+        if (validity = valid?(item)) == false
+          break
+        end
+      end
+      return validity
+    when Hash then
+      validity = true
+      value.each do |k,v|
+        # Validate key first
+        if (validity = validate_value_lhs(k)) == false
+          break
+        end
+
+        # Validate value by calling validate again
+        if (validity = valid?(v)) == false
+          break
+        end
+      end
+      return validity
+    else
+      return false
+    end
+  end
+
+  # This method is used for validating the left hand side in
+  # a hash.
+  def validate_value_lhs(value)
+    case value
+    when String
+      if value.empty?
+        return false
+      else
+        return true
+      end
+    else
+      return false
+    end
+  end
 
   # Are we in the midst of a search?
   def searching?

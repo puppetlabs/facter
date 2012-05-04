@@ -4,6 +4,7 @@
 # confinements specified must all be true for the resolution to be
 # suitable.
 require 'facter/util/confine'
+require 'facter/util/confine_block'
 require 'facter/util/config'
 
 require 'timeout'
@@ -119,10 +120,24 @@ class Facter::Util::Resolution
 
   end
 
-  # Add a new confine to the resolution mechanism.
-  def confine(confines)
-    confines.each do |fact, values|
-      @confines.push Facter::Util::Confine.new(fact, *values)
+  # Add a new confine to the resolution mechanism. This supports either passing
+  # a hash of key value pairs in the form of:
+  #
+  #   confine :fact => :value_constraint
+  #
+  # Or a block which allows you to provide your own confine logic:
+  #
+  #   confine do
+  #     Facter["operatingsystem"].value =~ /Red/
+  #   end
+  #
+  def confine(confines = [], &block)
+    if(block_given?)
+      @confines.push Facter::Util::ConfineBlock.new(block)
+    else
+      confines.each do |fact, values|
+        @confines.push Facter::Util::Confine.new(fact, *values)
+      end
     end
   end
 

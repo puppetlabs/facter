@@ -21,11 +21,13 @@ module Facter
   require 'facter/util/fact'
   require 'facter/util/collection'
   require 'facter/util/monkey_patches'
+  require 'facter/util/colors'
 
   include Comparable
   include Enumerable
+  extend Facter::Util::Colors
 
-  FACTERVERSION = '1.6.8'
+  FACTERVERSION = '2.0.0'
   # = Facter
   # Functions as a hash of 'facts' you might care about about your
   # system, such as mac address, IP address, Video card, etc.
@@ -39,11 +41,11 @@ module Facter
   # puts Facter['operatingsystem']
   #
 
-  GREEN = "[0;32m"
-  RESET = "[0m"
   @@debug = 0
   @@timing = 0
   @@messages = {}
+  @@color = 1
+  @@pager = 0
 
   # module methods
 
@@ -65,7 +67,7 @@ module Facter
       return
     end
     if self.debugging?
-      puts GREEN + string + RESET
+      puts colorize(:green, string)
     end
   end
 
@@ -75,7 +77,7 @@ module Facter
 
   # show the timing information
   def self.show_time(string)
-    puts "#{GREEN}#{string}#{RESET}" if string and Facter.timing?
+    puts colorize(:green, string) if string and Facter.timing?
   end
 
   def self.timing?
@@ -164,44 +166,84 @@ module Facter
 
   # Set debugging on or off.
   def self.debugging(bit)
-    if bit
-      case bit
-      when TrueClass; @@debug = 1
-      when FalseClass; @@debug = 0
-      when Fixnum
-        if bit > 0
-          @@debug = 1
-        else
-          @@debug = 0
-        end
-      when String;
-        if bit.downcase == 'off'
-          @@debug = 0
-        else
-          @@debug = 1
-        end
-      else
-        @@debug = 0
-      end
-    else
-      @@debug = 0
-    end
+    @@debug = bitcheck(bit)
   end
 
   # Set timing on or off.
   def self.timing(bit)
-    if bit
-      case bit
-      when TrueClass; @@timing = 1
-      when Fixnum
-        if bit > 0
-          @@timing = 1
-        else
-          @@timing = 0
-        end
+    @@timing = bitcheck(bit)
+  end
+
+  def self.pager(bit)
+    @@pager = bitcheck(bit)
+  end
+
+  def self.pager?
+    @@pager != 0
+  end
+
+  # Turn console color support on or off.
+  def self.color(bit)
+    @@color = bitcheck(bit)
+  end
+
+  # Return true if color support is available and switched on.
+  def self.color?
+    if Facter::Util::Config.is_windows?
+      # For windows, check if win32console is loaded, otherwise always return
+      # false.
+      if win32console?
+        @@color != 0
+      else
+        false
       end
     else
-      @@timing = 0
+      # Disable color if we are being piped externally, just like git
+      if $stdout.isatty or pager?
+        @@color != 0
+      else
+        false
+      end
+    end
+  end
+
+  # Return true if win32console is loaded. It will try to load win32console at
+  # this point if it hasn't already loaded it.
+  def self.win32console?
+    return @@win32console if defined? @@win32console
+    begin
+      require 'rubygems'
+      require 'win32console'
+      @@win32console = true
+    rescue LoadError
+      @@win32console = false
+    end
+  end
+
+  # This convenience method allows us to support the bit setting methodology
+  # for global facter settings.
+  def self.bitcheck(bit)
+    if bit
+      case bit
+      when TrueClass; return 1
+      when FalseClass; return 0
+      when Fixnum
+        if bit > 0
+          return 1
+        else
+          return 0
+        end
+      when String;
+        if bit.downcase == 'off'
+          return 0
+        else
+          return 1
+        end
+      else
+        return 0
+      end
+    else
+      return 0
     end
   end
 
