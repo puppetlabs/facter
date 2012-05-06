@@ -48,6 +48,7 @@ module Facter
   @@debug = 0
   @@timing = 0
   @@messages = {}
+  @@tracing = 0
 
   # module methods
 
@@ -84,6 +85,10 @@ module Facter
 
   def self.timing?
     @@timing != 0
+  end
+
+  def self.tracing?
+    @@tracing != 0
   end
 
   # Return a fact object by name.  If you use this, you still have to call
@@ -206,6 +211,38 @@ module Facter
       end
     else
       @@timing = 0
+    end
+  end
+
+  # Turn tracing on or off
+  def self.tracing(bit)
+    @@tracing = bitcheck(bit)
+  end
+
+  # This convenience method allows us to support the bit setting methodology
+  # for global facter settings.
+  def self.bitcheck(bit)
+    if bit
+      case bit
+      when TrueClass; return 1
+      when FalseClass; return 0
+      when Fixnum
+        if bit > 0
+          return 1
+        else
+          return 0
+        end
+      when String;
+        if bit.downcase == 'off'
+          return 0
+        else
+          return 1
+        end
+      else
+        return 0
+      end
+    else
+      return 0
     end
   end
 
