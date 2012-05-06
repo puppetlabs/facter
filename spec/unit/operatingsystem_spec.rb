@@ -37,6 +37,9 @@ describe "Operating System fact" do
   describe "on Linux" do
     before :each do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
+
+      # Always stub lsbdistid by default, so tests work on Ubuntu
+      Facter.stubs(:value).with(:lsbdistid).returns(nil)
     end
 
     {
@@ -69,7 +72,7 @@ describe "Operating System fact" do
       it "on Ubuntu should use the lsbdistid fact" do
         FileUtils.stubs(:exists?).with("/etc/debian_version").returns true
 
-        Facter.fact(:lsbdistid).expects(:value).returns("Ubuntu")
+        Facter.stubs(:value).with(:lsbdistid).returns("Ubuntu")
         Facter.fact(:operatingsystem).value.should == "Ubuntu"
       end
 
