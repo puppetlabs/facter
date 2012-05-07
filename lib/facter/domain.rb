@@ -23,7 +23,9 @@ Facter.add(:domain) do
     # Get the domain from various sources; the order of these
     # steps is important
 
-    if name = Facter::Util::Resolution.exec('hostname') \
+    hostname_command = (Facter.value(:kernel) =~ /SunOS/i) ? 'hostname' : 'hostname -f' 
+       
+    if name = Facter::Util::Resolution.exec(hostname_command) \
       and name =~ /.*?\.(.+$)/
 
       $1
