@@ -91,8 +91,21 @@ describe "Domain name facts" do
           @mock_file.expects(:each).multiple_yields(*lines)
           Facter.fact(:domain).value.should == 'example.org'
         end
-
-        # Test permutations of domain and search
+        
+        # Test permutations of domain and search, where 'domain' can be a value of
+        # the search keyword and the domain keyword
+        # and also where 'search' can be a value of the search keyword and the
+        # domain keyword
+        # For example, /etc/resolv.conf may look like:
+        #     domain domain
+        # or
+        #     search search
+        # or
+        #     domain search
+        #
+        #
+        # Why someone would have their machines named 'www.domain' or 'www.search', I
+        # don't know, but we'll at least handle it properly
         [
          ["domain domain", "domain"],
          ["domain search", "search"],
@@ -123,23 +136,28 @@ describe "Domain name facts" do
       Facter.fact(:kernel).stubs(:value).returns("windows")
       require 'facter/util/registry'
     end
+
     describe "with primary dns suffix" do
       before(:each) do
         Facter::Util::Registry.stubs(:hklm_read).returns('baz.com')
       end
+
       it "should get the primary dns suffix" do
         Facter.fact(:domain).value.should == 'baz.com'
       end
+
       it "should not execute the wmi query" do
         require 'facter/util/wmi'
         Facter::Util::WMI.expects(:execquery).never
         Facter.fact(:domain).value
       end
     end
+
     describe "without primary dns suffix" do
       before(:each) do
         Facter::Util::Registry.stubs(:hklm_read).returns('')
       end
+
       it "should use the DNSDomain for the first nic where ip is enabled" do
         nic = stubs 'nic'
         nic.stubs(:DNSDomain).returns("foo.com")
@@ -152,6 +170,75 @@ describe "Domain name facts" do
 
         Facter.fact(:domain).value.should == 'foo.com'
       end
+    end
+  end
+
+  describe "with trailing dots" do 
+    describe "on Windows" do 
+      before do
+        Facter.fact(:kernel).stubs(:value).returns("windows")
+        require 'facter/util/registry'
+        require 'facter/util/wmi'
+      end
+ 
+      [{:registry => 'testdomain.', :wmi => '', :expect => 'testdomain'},
+       {:registry => '', :wmi => 'testdomain.', :expect => 'testdomain'},
+      ].each do |scenario|
+
+        describe "scenarios" do 
+          before(:each) do
+            Facter::Util::Registry.stubs(:hklm_read).returns(scenario[:registry])
+            nic = stubs 'nic'
+            nic.stubs(:DNSDomain).returns(scenario[:wmi])
+            Facter::Util::WMI.stubs(:execquery).with("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").returns([nic])
+          end
+ 
+          it "should return #{scenario[:expect]}" do
+            Facter.fact(:domain).value.should == scenario[:expect]
+          end
+ 
+          it "should remove trailing dots"  do
+            Facter.fact(:domain).value.should_not =~ /\.$/
+          end
+        end 
+      end 
+    end
+
+    describe "on everything else" do
+      before do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+        FileTest.stubs(:exists?).with("/etc/resolv.conf").returns(true)
+      end
+
+      [{:hostname => 'host.testdomain.', :dnsdomainname => '', :resolve_domain => '', :resolve_search => '', :expect => 'testdomain'},
+       {:hostname => '', :dnsdomainname => 'testdomain.', :resolve_domain => '', :resolve_search => '', :expect => 'testdomain'},
+       {:hostname => '', :dnsdomainname => '', :resolve_domain => 'testdomain.', :resolve_search => '', :expect => 'testdomain'},
+       {:hostname => '', :dnsdomainname => '', :resolve_domain => '', :resolve_search => 'testdomain.', :expect => 'testdomain'}, 
+       {:hostname => '', :dnsdomainname => '', :resolve_domain => '', :resolve_search => '', :expect => nil}
+      ].each do |scenario|
+
+        describe "scenarios" do
+          before(:each) do 
+            Facter::Util::Resolution.stubs(:exec).with("hostname -f").returns(scenario[:hostname])
+            Facter::Util::Resolution.stubs(:exec).with("dnsdomainname").returns(scenario[:dnsdomainname])
+            @mock_file = mock()
+            File.stubs(:open).with("/etc/resolv.conf").yields(@mock_file)
+            lines = [
+                     "search #{scenario[:resolve_search]}",
+                     "domain #{scenario[:resolve_domain]}",
+                    ]
+            @mock_file.stubs(:each).multiple_yields(*lines)
+          end
+
+          it "should remove trailing dots" do
+            Facter.fact(:domain).value.should_not =~ /\.$/
+          end
+
+          it "should return #{scenario[:expect]}" do
+            Facter.fact(:domain).value.should == scenario[:expect]
+          end
+        end
+      end      
     end
   end
 end
