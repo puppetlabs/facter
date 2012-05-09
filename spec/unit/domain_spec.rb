@@ -8,6 +8,7 @@ describe "Domain name facts" do
     :solaris => {:kernel => "SunOS", :hostname_command => "hostname"},
     :darwin => {:kernel => "Darwin", :hostname_command => "hostname -f"},
     :freebsd => {:kernel => "FreeBSD", :hostname_command => "hostname -f"},
+    :hpux => {:kernel => "HP-UX", :hostname_command => "hostname"},
   }.each do |key, nested_hash|
 
     describe "on #{key}" do
