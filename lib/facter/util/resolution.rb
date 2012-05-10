@@ -10,7 +10,7 @@ require 'timeout'
 
 class Facter::Util::Resolution
   attr_accessor :interpreter, :code, :name, :timeout
-  attr_writer :value, :weight, :preserve_whitespace
+  attr_writer :value, :weight
 
   INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
 
@@ -155,6 +155,10 @@ class Facter::Util::Resolution
     @timeout
   end
 
+  def preserve_whitespace
+    @preserve_whitespace = true
+  end   
+
   # Set our code for returning a value.
   def setcode(string = nil, interp = nil, &block)
     Facter.warnonce "The interpreter parameter to 'setcode' is deprecated and will be removed in a future version." if interp
@@ -226,7 +230,7 @@ class Facter::Util::Resolution
     Facter.show_time "#{self.name}: #{"%.2f" % ms}ms"
 
     unless @preserve_whitespace
-      result = result.strip if result 
+      result.strip! if result && result.respond_to?(:strip!) 
     end
     
     return nil if result == ""

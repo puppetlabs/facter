@@ -172,6 +172,7 @@ describe Facter::Util::Resolution do
         @resolve.setcode {'  value  '}
         @resolve.value.should == 'value' 
       end 
+
       describe "when given a string" do
         [true, false
         ].each do |windows| 
@@ -179,10 +180,8 @@ describe Facter::Util::Resolution do
             before do
               Facter::Util::Config.stubs(:is_windows?).returns(windows)
             end
-            describe "stripping whitespace" do 
-              before do
-                @resolve.preserve_whitespace = false 
-              end 
+
+            describe "stripping whitespace" do
               [{:name => 'leading', :result => '  value', :expect => 'value'},
                {:name => 'trailing', :result => 'value  ', :expect => 'value'}, 
                {:name => 'internal', :result => 'val  ue', :expect => 'val  ue'},
@@ -190,17 +189,21 @@ describe Facter::Util::Resolution do
                {:name => 'leading and internal', :result => '  val  ue', :expect => 'val  ue'}, 
                {:name => 'trailing and internal', :result => 'val  ue  ', :expect => 'val  ue'}
               ].each do |scenario|
+
                 it "should remove outer whitespace when whitespace is #{scenario[:name]}" do 
                   @resolve.setcode "/bin/foo"
                   Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns scenario[:result]
                   @resolve.value.should == scenario[:expect] 
                 end 
+
               end 
             end 
+
             describe "not stripping whitespace" do
               before do
-                @resolve.preserve_whitespace = true 
+                @resolve.preserve_whitespace 
               end 
+
               [{:name => 'leading', :result => '  value', :expect => '  value'}, 
                {:name => 'trailing', :result => 'value  ', :expect => 'value  '}, 
                {:name => 'internal', :result => 'val  ue', :expect => 'val  ue'},
@@ -208,21 +211,21 @@ describe Facter::Util::Resolution do
                {:name => 'leading and internal', :result => '  val  ue', :expect => '  val  ue'}, 
                {:name => 'trailing and internal', :result => 'val  ue  ', :expect => 'val  ue  '}
               ].each do |scenario|
+
                 it "should not remove #{scenario[:name]} whitespace" do 
                   @resolve.setcode "/bin/foo"
                   Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns scenario[:result]
                   @resolve.value.should == scenario[:expect] 
                 end 
+
               end 
             end 
           end 
         end 
-      end 
+      end
+ 
       describe "when given a block" do
         describe "stripping whitespace" do 
-          before do
-            @resolve.preserve_whitespace = false 
-          end 
           [{:name => 'leading', :result => '  value', :expect => 'value'},
            {:name => 'trailing', :result => 'value  ', :expect => 'value'}, 
            {:name => 'internal', :result => 'val  ue', :expect => 'val  ue'},
@@ -230,31 +233,38 @@ describe Facter::Util::Resolution do
            {:name => 'leading and internal', :result => '  val  ue', :expect => 'val  ue'}, 
            {:name => 'trailing and internal', :result => 'val  ue  ', :expect => 'val  ue'}
           ].each do |scenario|
+
             it "should remove outer whitespace when whitespace is #{scenario[:name]}" do 
               @resolve.setcode {scenario[:result]}
               @resolve.value.should == scenario[:expect] 
             end
+
           end 
         end
+
         describe "not stripping whitespace" do 
           before do
-            @resolve.preserve_whitespace = true 
-          end 
+            @resolve.preserve_whitespace 
+          end
+          
           [{:name => 'leading', :result => '  value', :expect => '  value'}, 
-          {:name => 'trailing', :result => 'value  ', :expect => 'value  '}, 
-          {:name => 'internal', :result => 'val  ue', :expect => 'val  ue'},
-          {:name => 'leading and trailing', :result => '  value  ', :expect => '  value  '},  
-          {:name => 'leading and internal', :result => '  val  ue', :expect => '  val  ue'}, 
-          {:name => 'trailing and internal', :result => 'val  ue  ', :expect => 'val  ue  '}
-         ].each do |scenario|
+           {:name => 'trailing', :result => 'value  ', :expect => 'value  '}, 
+           {:name => 'internal', :result => 'val  ue', :expect => 'val  ue'},
+           {:name => 'leading and trailing', :result => '  value  ', :expect => '  value  '},  
+           {:name => 'leading and internal', :result => '  val  ue', :expect => '  val  ue'}, 
+           {:name => 'trailing and internal', :result => 'val  ue  ', :expect => 'val  ue  '}
+          ].each do |scenario|
+
             it "should not remove #{scenario[:name]} whitespace" do 
               @resolve.setcode {scenario[:result]}
               @resolve.value.should == scenario[:expect] 
             end
+
           end 
         end 
       end 
-    end 
+    end
+ 
     describe "and setcode has not been called" do
       it "should return nil" do
         Facter::Util::Resolution.expects(:exec).with(nil, nil).never
