@@ -10,7 +10,7 @@ require 'timeout'
 
 class Facter::Util::Resolution
   attr_accessor :interpreter, :code, :name, :timeout
-  attr_writer :value, :weight
+  attr_writer :value, :weight, :preserve_whitespace
 
   INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
 
@@ -225,6 +225,10 @@ class Facter::Util::Resolution
     ms = (finishtime - starttime) * 1000
     Facter.show_time "#{self.name}: #{"%.2f" % ms}ms"
 
+    unless @preserve_whitespace
+      result = result.strip if result 
+    end
+    
     return nil if result == ""
     return result
   end
