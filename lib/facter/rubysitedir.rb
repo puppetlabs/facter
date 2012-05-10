@@ -1,12 +1,11 @@
 # Fact: rubysitedir
 #
-# Purpose: Returns Ruby's site library directory.
+# Purpose: 
+#   Returns Ruby's site library directory.
 #
-# Resolution: Works out the version to major/minor (1.8, 1.9, etc), then joins
-# that with all the $: library paths.
-#
-# Caveats:
-#
+# Resolution: 
+#   Works out the version to major/minor (1.8, 1.9, etc), 
+#   then joins that with all the $: library paths.
 
 Facter.add :rubysitedir do
   setcode do

@@ -10,14 +10,8 @@
 #   On OpenBSD, use 'uname -p' and the sysctl variable for 'hw.ncpu' for CPU
 #   count.
 #
-# Caveats:
-#
-
-# processor.rb
-#
 # Copyright (C) 2006 Mooter Media Ltd
 # Author: Matthew Palmer <matt@solutionsfirst.com.au>
-#
 
 require 'thread'
 require 'facter/util/processor'

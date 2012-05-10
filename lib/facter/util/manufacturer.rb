@@ -1,5 +1,4 @@
-# mamufacturer.rb
-# Support methods for manufacturer specific facts
+# A module with support methods for manufacturer specific facts.
 
 module Facter::Manufacturer
 

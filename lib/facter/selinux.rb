@@ -1,14 +1,20 @@
 # Fact: selinux
 #
-# Purpose:
+# Purpose: 
+#   Get SELinux specific facts.
 #
-# Resolution:
+# Resolution: 
+#   Checks to see if system is SElinux capable and if so is it enforced or not 
+#   e.g. turned on or off. Based on that, sets SELinux facts like selinux_policyversion and
+#   selinux_current_mode, selinux_config_mode & selinux_config_policy using sestatus_cmd.
 #
-# Caveats:
-#
-
-# Fact for SElinux
+# Caveat:
+#   'selinux_mode' is a legacy fact which returns the old selinux_mode fact value to prevent
+#   breakages of existing manifests. It should be removed at the next major release.
+#   See ticket #6677.
+#--
 # Written by immerda admin team (admin(at)immerda.ch)
+#++
 
 sestatus_cmd = '/usr/sbin/sestatus'
 

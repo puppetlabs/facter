@@ -1,9 +1,9 @@
-## macosx.rb
-## Support methods for Apple OSX facts
-##
-## Copyright (C) 2007 Jeff McCune
-## Author: Jeff McCune <jeff.mccune@northstarlabs.net>
-##
+# A module with support methods for Apple OSX facts.
+#		
+# Copyright (C) 2007 Jeff McCune
+#--
+# Author: Jeff McCune <jeff.mccune@northstarlabs.net>
+#++
 
 module Facter::Util::Macosx
   require 'thread'

@@ -1,6 +1,7 @@
 # Fact: ipaddress
 #
-# Purpose: Return the main IP address for a host.
+# Purpose: 
+#   Return the main IP address for a host.
 #
 # Resolution:
 #   On the Unixes does an ifconfig, and returns the first non 127.0.0.0/8
@@ -20,7 +21,6 @@
 #   host system.
 #   The ifconfig parsing purely takes the first IP address it finds without any
 #   checking this is a useful IP address.
-#
 
 Facter.add(:ipaddress) do
   confine :kernel => :linux

@@ -1,6 +1,7 @@
 # Fact: osfamily
 #
-# Purpose: Returns the operating system
+# Purpose: 
+#   Returns the operating system
 #
 # Resolution:
 #   Maps operating systems to operating system families, such as linux
@@ -10,7 +11,6 @@
 # Caveats:
 #   This fact is completely reliant on the operatingsystem fact, and no
 #   heuristics are used
-#
 
 Facter.add(:osfamily) do
 

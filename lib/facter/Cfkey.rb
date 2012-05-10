@@ -1,17 +1,12 @@
 # Fact: Cfkey
+#    (Facts related to cfengine)
 #
-# Purpose: Return the public key(s) for CFengine.
+# Purpose: 
+#    Return the public key(s) for CFengine.
 #
 # Resolution:
-#   Tries each file of standard localhost.pub & cfkey.pub locations,
-#   checks if they appear to be a public key, and then join them all together.
-#
-# Caveats:
-#
-
-## Cfkey.rb
-## Facts related to cfengine
-##
+#    Tries each file of standard localhost.pub & cfkey.pub locations,
+#    checks if they appear to be a public key, and then join them all together.
 
 Facter.add(:Cfkey) do
   setcode do

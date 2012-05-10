@@ -7,15 +7,10 @@
 # Resolution:
 #   Uses util/macosx.rb to do the fact reconnaissance, then outputs them
 #   preceded by 'sp_'
-#
-# Caveats:
-#
-
-#
-# macosx.rb
-# Additional Facts coming from Mac OS X system_profiler command
+#   Additional Facts coming from Mac OS X system_profiler command
 #
 # Copyright (C) 2007 Jeff McCune
+#--
 # Author: Jeff McCune <jeff.mccune@northstarlabs.net>
 #
 # Jeff McCune
@@ -23,6 +18,7 @@
 # We could add quite a bit more, but I didn't want to overload facter
 # at this point in time.
 # In particular, Installed Software might be an interesting addition.
+#++
 
 require 'facter/util/macosx'
 

@@ -1,3 +1,6 @@
+# A windows management instrumentation module that facilitates a managed environment 
+# through which management data from any source can be accessed in a common way.
+
 module Facter::Util::WMI
   class << self
     def connect(uri = wmi_resource_uri)

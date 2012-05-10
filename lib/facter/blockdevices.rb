@@ -9,7 +9,7 @@
 # Caveats:
 #   Only supports Linux 2.6+ at this time, due to the reliance on sysfs
 #
-
+###
 # Fact: blockdevice_<devicename>_vendor
 #
 # Purpose:
@@ -21,7 +21,8 @@
 # Caveats:
 #   Only supports Linux 2.6+ at this time, due to the reliance on sysfs
 #
-
+#
+###
 # Fact: blockdevice_<devicename>_model
 #
 # Purpose:
@@ -33,8 +34,7 @@
 # Caveats:
 #   Only supports Linux 2.6+ at this time, due to the reliance on sysfs
 #
-
-
+###
 # Fact: blockdevices
 #
 # Purpose:
@@ -45,9 +45,9 @@
 #
 # Caveats:
 #   Block devices must have been identified using sysfs information
-#
-
+#--
 # Author: Jason Gill <jasongill@gmail.com>
+#++
 
 require 'facter'
 

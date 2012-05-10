@@ -1,11 +1,10 @@
-#--###########################################################
-# Copyright 2006, Ben Bleything <ben@bleything.net> and    #
-# Patrick May <patrick@hexane.org>               #
-#                              #
-# Distributed under the MIT license.             #
-##############################################################
-#++
 # See Plist::Emit.
+#
+# Copyright 2006, Ben Bleything <ben@bleything.net> and
+# Patrick May <patrick@hexane.org>
+#
+# Distributed under the MIT license.
+
 module Plist
   # === Create a plist
   # You can dump an object to a plist in one of two ways:

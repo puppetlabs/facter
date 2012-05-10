@@ -1,13 +1,12 @@
 # Fact: iphostnumber
 #
-# Purpose: On selected versions of Darwin, returns the host's IP address.
+# Purpose: 
+#   On selected versions of Darwin, returns the host's IP address.
 #
 # Resolution:
 #   Uses either the scutil program to get the localhost name, or parses output
 #   of ifconfig for a MAC address.
-#
-# Caveats:
-#
+#   Related issue (redundant fact): http://projects.puppetlabs.com/issues/12147
 
 Facter.add(:iphostnumber) do
   confine :kernel => :darwin, :kernelrelease => "R6"

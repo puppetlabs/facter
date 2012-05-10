@@ -1,6 +1,4 @@
-## memory.rb
-## Support module for memory related facts
-##
+# Support module for memory related facts.
 
 module Facter::Memory
   def self.meminfo_number(tag)

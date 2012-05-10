@@ -1,3 +1,23 @@
+# Fact: ec2
+#
+# Purpose: 
+#   Passing through metadta and userdata that it detects on EC2.
+#
+# Resolution: 
+#   If EC2 host is true then passes the metadata and userdata. The meta and user data 
+#   is instance-specific, and therefore only accessible to the instance. 
+#    
+#   Metadata is descriptive information about a particular data set, object, or resource, 
+#   including how it is formatted, and when and by whom it was collected.
+#   Each Amazon EC2 instance has associated metadata, as well as user data supplied when 
+#   launching the instance. 
+#    
+#   Userdata is used by cloud-init to pass bootstrapping scripts to instances when they launch.
+#   In the case of cloudformation, the convention is to pass aws credentials in the userdata.
+#    
+#   More details at:
+#   "http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html" 
+ 
 require 'facter/util/ec2'
 require 'open-uri'
 

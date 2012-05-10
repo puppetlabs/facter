@@ -1,3 +1,5 @@
+# A module to gather processor related facts.
+
 module Facter::Util::Processor
   def self.enum_cpuinfo
     processor_num = -1

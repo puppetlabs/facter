@@ -1,11 +1,10 @@
 # Fact: uptime_days
 #
-# Purpose: Return purely number of days of uptime.
+# Purpose: 
+#   Return purely number of days of uptime.
 #
-# Resolution: Divides uptime_hours fact by 24.
-#
-# Caveats:
-#
+# Resolution: 
+#   Divides uptime_hours fact by 24.
 
 Facter.add(:uptime_days) do
   setcode do

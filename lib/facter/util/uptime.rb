@@ -1,7 +1,7 @@
+# A module to gather uptime facts.
+
 require 'time'
 
-# A module to gather uptime facts
-#
 module Facter::Util::Uptime
   def self.get_uptime_seconds_unix
     uptime_proc_uptime or uptime_sysctl or uptime_kstat or uptime_who_dash_b

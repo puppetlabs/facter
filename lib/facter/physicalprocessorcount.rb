@@ -1,14 +1,12 @@
 # Fact: physicalprocessorcount
 #
-# Purpose: Return the number of physical processors.
+# Purpose: 
+#   Return the number of physical processors.
 #
 # Resolution:
-#
 #   Attempts to use sysfs to get the physical IDs of the processors. Falls
 #   back to /proc/cpuinfo and "physical id" if sysfs is not available.
-#
-# Caveats:
-#
+
 Facter.add('physicalprocessorcount') do
   confine :kernel => :linux
 

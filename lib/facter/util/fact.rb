@@ -1,3 +1,5 @@
+# A module to represent a creation of a fact.
+
 require 'facter'
 require 'facter/util/resolution'
 

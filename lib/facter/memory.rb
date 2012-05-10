@@ -1,6 +1,7 @@
 # Fact: memory
 #
-# Purpose: Return information about memory and swap usage.
+# Purpose: 
+#   Return information about memory and swap usage.
 #
 # Resolution:
 #   On Linuxes, uses Facter::Memory.meminfo_number from
@@ -13,15 +14,13 @@
 #
 # Caveats:
 #   Some BSD platforms aren't covered at all. AIX is missing memory values.
-#
-
-# memory.rb
-# Additional Facts for memory/swap usage
+#   The number is automatically scaled, and postfixed with a unit name.
 #
 # Copyright (C) 2006 Mooter Media Ltd
+#--
 # Author: Matthew Palmer <matt@solutionsfirst.com.au>
-#
-#
+#++
+
 require 'facter/util/memory'
 
 {   :MemorySize => "MemTotal",
