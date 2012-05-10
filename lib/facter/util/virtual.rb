@@ -1,3 +1,5 @@
+require 'facter/util/ec2'
+
 module Facter::Util::Virtual
   def self.openvz?
     FileTest.directory?("/proc/vz") and not self.openvz_cloudlinux?
@@ -86,5 +88,11 @@ module Facter::Util::Virtual
 
    def self.zlinux?
     "zlinux"
+   end
+
+   def self.ec2?
+     if Facter::Util::EC2.can_connect?
+       "ec2"
+     end
    end
 end

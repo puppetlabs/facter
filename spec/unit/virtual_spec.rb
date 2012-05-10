@@ -13,6 +13,7 @@ describe "Virtual fact" do
     Facter::Util::Virtual.stubs(:kvm?).returns(false)
     Facter::Util::Virtual.stubs(:hpvm?).returns(false)
     Facter::Util::Virtual.stubs(:zlinux?).returns(false)
+    Facter::Util::EC2.stubs(:can_connect?).returns(false)
   end
 
   it "should be zone on Solaris when a zone" do
@@ -233,6 +234,12 @@ describe "Virtual fact" do
       Facter::Util::Resolution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("HVM domU")
       Facter.fact(:virtual).value.should == "xenhvm"
     end
+
+    it "should be ec2 with EC2 can_connect?" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter::Util::EC2.stubs(:can_connect?).returns(true)
+      Facter.fact(:virtual).value.should == "ec2"
+    end
   end
 end
 
@@ -332,6 +339,12 @@ describe "is_virtual fact" do
   it "should be true when running on hyperv" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("hyperv")
+    Facter.fact(:is_virtual).value.should == "true"
+  end
+  
+  it "should be true when running on ec2" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter::Util::EC2.stubs(:can_connect?).returns(true)
     Facter.fact(:is_virtual).value.should == "true"
   end
 end

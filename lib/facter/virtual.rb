@@ -92,6 +92,10 @@ Facter.add("virtual") do
       result = "jail" if Facter::Util::Virtual.jail?
     end
 
+    if Facter::Util::Virtual.ec2?
+      result = "ec2"
+    end
+
     if result == "physical"
       output = Facter::Util::Resolution.exec('lspci 2>/dev/null')
       if not output.nil?
