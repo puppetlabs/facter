@@ -1,3 +1,14 @@
+1.6.9rc1
+===
+b398bd8 (#14334) Fix dmidecode based facts on DragonFly BSD
+6c46b2c (#14332) Correct stubbing on Ubuntu
+753f3a4 Revert "(#12864) Windows: get primary DNS from registry"
+ac51593 Wrap dmidecode/pciutils in ifarch block
+fbaa8fe (#11511) Correct lsbrelease specfile filename
+14eee2b (#12864) Windows: get primary DNS from registry
+2842c96 Update rpm spec file
+515fd65 (#11511) Split lsb facts into multiple files
+
 1.6.8
 ===
 b86fe4c (#12831) Add rspec tests to have_which method in Resolution

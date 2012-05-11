@@ -2,15 +2,16 @@
 
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
-Version: 1.6.8
-Release: 1%{?dist}
-#Release: 0.1rc1%{?dist}
+Version: 1.6.9
+#Release: 1%{?dist}
+Release: 0.1rc1%{?dist}
 License: Apache 2.0
 Group: System Environment/Base
 URL: http://www.puppetlabs.com/puppet/related-projects/%{name}
-#Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz
-Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz
-#Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz.asc
+Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz
+#Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz
+Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz.asc
+#Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz.asc
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -30,8 +31,8 @@ system. Some of the facts are preconfigured, such as the hostname and the
 operating system. Additional facts can be added through simple Ruby scripts
 
 %prep
-%setup -q  -n %{name}-%{version}
-#%setup -q  -n %{name}-%{version}rc1
+#%setup -q  -n %{name}-%{version}
+%setup -q  -n %{name}-%{version}rc1
 
 %build
 
@@ -52,6 +53,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu May 10 2012 Matthaus Litteken <matthaus@puppetlabs.com> - 1.6.9-0.1rc1
+- Update for 1.6.9rc1
+
 * Mon Apr 30 2012 Moses Mendoza <moses@puppetlabs.com> - 1.6.8-1
 - Update for 1.6.8, spec for arch-specific build, req ruby 1.8.5
 
