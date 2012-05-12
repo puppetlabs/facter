@@ -1,10 +1,12 @@
 require 'facter'
+require 'pathname'
 
 # Load facts on demand.
 class Facter::Util::Loader
 
   def initialize
     @loaded = []
+    @valid_path = {}
   end
 
   # Load all resolutions for a single fact.
@@ -53,14 +55,21 @@ class Facter::Util::Loader
     result = []
     result += $LOAD_PATH.collect { |d| File.join(d, "facter") }
     if ENV.include?("FACTERLIB")
-      result += ENV["FACTERLIB"].split(":")
+      result += ENV["FACTERLIB"].split(File::PATH_SEPARATOR)
     end
 
     # This allows others to register additional paths we should search.
     result += Facter.search_path
 
-    result
+    result.select { |dir| valid_search_path? dir }
   end
+  
+  def valid_search_path?(path)
+    return @valid_path[path] unless @valid_path[path].nil?
+    
+    return @valid_path[path] = Pathname.new(path).absolute?
+  end
+  private :valid_search_path?
 
   private
 
