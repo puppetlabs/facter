@@ -7,8 +7,10 @@
 
 module Facter::Util::Macosx
   require 'thread'
-  require 'facter/util/plist'
+  require 'facter/util/cfpropertylist'
   require 'facter/util/resolution'
+
+  Plist_Xml_Doctype  = '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">'
 
   # JJM I'd really like to dynamically generate these methods
   # by looking at the _name key of the _items dict for each _dataType
@@ -19,7 +21,18 @@ module Facter::Util::Macosx
 
   def self.intern_xml(xml)
     return nil unless xml
-    Plist::parse_xml(xml)
+    bad_xml_doctype = /^.*<!DOCTYPE plist PUBLIC -\/\/Apple Computer.*$/
+    if xml =~ bad_xml_doctype
+      xml.gsub!( bad_xml_doctype, Plist_Xml_Doctype )
+      Facter.debug("Had to fix plist with incorrect DOCTYPE declaration")
+    end
+    plist = Facter::Util::CFPropertyList::List.new
+    begin
+      plist.load_str(xml)
+    rescue => e
+      fail("A plist file could not be properly read by Facter::Util::CFPropertyList: #{e.inspect}")
+    end
+    Facter::Util::CFPropertyList.native_types(plist.value)
   end
 
   # Return an xml result, modified as we need it.
