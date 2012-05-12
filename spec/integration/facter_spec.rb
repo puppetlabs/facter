@@ -24,4 +24,16 @@ describe Facter do
     Facter.reset
     Facter.collection.should_not equal(old)
   end
+
+  it "should raise an error if a recursion is detected" do
+    Facter.clear
+    Facter.add(:foo) do
+      confine :bar => 'some_value'
+    end
+    Facter.add(:bar) do
+      confine :foo => 'some_value'
+    end
+    lambda { Facter.value(:foo) }.should raise_error(RuntimeError, /Caught recursion on foo/)
+  end
+
 end
