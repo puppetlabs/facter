@@ -23,7 +23,17 @@ Facter.add(:domain) do
     # Get the domain from various sources; the order of these
     # steps is important
 
-    if name = Facter::Util::Resolution.exec('hostname') \
+    # In some OS 'hostname -f' will change the hostname to '-f' 
+    # We know that Solaris and HP-UX exhibit this behavior 
+    # On good OS, 'hostname -f' will return the FQDN which is preferable 
+    # Due to dangerous behavior of 'hostname -f' on old OS, we will explicitly opt-in 
+    # 'hostname -f' --hkenney May 9, 2012
+    hostname_command = 'hostname'
+    can_do_hostname_f = Regexp.union /Linux/i, /FreeBSD/i, /Darwin/i
+    hostname_command = 'hostname -f' if Facter.value(:kernel) =~ can_do_hostname_f
+
+       
+    if name = Facter::Util::Resolution.exec(hostname_command) \
       and name =~ /.*?\.(.+$)/
 
       $1
