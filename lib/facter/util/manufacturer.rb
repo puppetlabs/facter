@@ -13,7 +13,7 @@ module Facter::Manufacturer
       return nil unless FileTest.exists?("/usr/local/sbin/dmidecode")
 
       output=%x{/usr/local/sbin/dmidecode 2>/dev/null}
-    when 'NetBSD'
+    when 'NetBSD', 'DragonFly'
       return nil unless FileTest.exists?("/usr/pkg/sbin/dmidecode")
 
       output=%x{/usr/pkg/sbin/dmidecode 2>/dev/null}
@@ -38,7 +38,7 @@ module Facter::Manufacturer
             if line =~ /#{key}/ and line =~ /\n\s+#{value} (.+)\n/
               result = $1.strip
               Facter.add(facterkey) do
-                confine :kernel => [ :linux, :freebsd, :netbsd, :sunos, :"gnu/kfreebsd" ]
+                confine :kernel => [ :linux, :freebsd, :netbsd, :sunos, :"gnu/kfreebsd", :dragonfly ]
                 setcode do
                   result
                 end

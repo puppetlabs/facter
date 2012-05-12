@@ -10,7 +10,6 @@
 #
 # Caveats:
 #
-require 'facter/lsb'
 
 Facter.add(:operatingsystem) do
   confine :kernel => :sunos
