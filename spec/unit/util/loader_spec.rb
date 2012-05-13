@@ -33,6 +33,62 @@ describe Facter::Util::Loader do
     Facter::Util::Loader.new.should respond_to(:search_path)
   end
 
+  describe "#valid_seach_path?" do
+    before do
+      @loader = Facter::Util::Loader.new
+      @settings = mock 'settings'
+      @settings.stubs(:value).returns "/eh"
+    end
+    
+    it "should cache the result of a previous check" do
+      Pathname.any_instance.expects(:absolute?).returns(true).once
+      
+      # we explicitly want two calls here to check that we get
+      # the second from the cache
+      @loader.should be_valid_search_path "/foo"
+      @loader.should be_valid_search_path "/foo"
+    end
+    
+    [
+      '.',
+      '..',
+      '...',
+      '.foo',
+      '../foo',
+      'foo',
+      'foo/bar',
+      'foo/../bar',
+      ' ',
+      ' /',
+      ' \/',
+    ].each do |dir|
+      
+      it "should be false for relative path #{dir}" do
+        @loader.should_not be_valid_search_path dir
+      end
+      
+    end
+    
+    [
+      '/.',
+      '/..',
+      '/...',
+      '/.foo',
+      '/../foo',
+      '/foo',
+      '/foo/bar',
+      '/foo/../bar',
+      '/ ',
+      '/ /..',
+    ].each do |dir|
+      
+      it "should be true for absolute path #{dir}" do
+        @loader.should be_valid_search_path dir
+      end
+      
+    end
+  end
+
   describe "when determining the search path" do
     before do
       @loader = Facter::Util::Loader.new
@@ -42,10 +98,20 @@ describe Facter::Util::Loader do
 
     it "should include the facter subdirectory of all paths in ruby LOAD_PATH" do
       dirs = $LOAD_PATH.collect { |d| File.join(d, "facter") }
+      @loader.stubs(:valid_search_path?).returns(true)
       paths = @loader.search_path
 
       dirs.each do |dir|
         paths.should be_include(dir)
+      end
+    end
+    
+    it "should exclude invalid search paths" do
+      dirs = $LOAD_PATH.collect { |d| File.join(d, "facter") }
+      @loader.stubs(:valid_search_path?).returns(false)
+      paths = @loader.search_path
+      dirs.each do |dir|
+        paths.should_not be_include(dir)
       end
     end
 
