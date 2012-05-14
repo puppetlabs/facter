@@ -61,7 +61,11 @@ class Facter::Util::Loader
     # This allows others to register additional paths we should search.
     result += Facter.search_path
 
-    result.select { |dir| valid_search_path? dir }
+    result.select do |dir|
+      good = valid_search_path? dir
+      Facter.warnonce("Relative directory #{dir} removed from search path.") unless good
+      good
+    end
   end
   
   def valid_search_path?(path)
