@@ -25,6 +25,7 @@ RSpec.configure do |config|
     # Store any environment variables away to be restored later
     @old_env = {}
     ENV.each_key {|k| @old_env[k] = ENV[k]}
+    Kernel.stubs(:warn)
   end
 
   config.after :each do
