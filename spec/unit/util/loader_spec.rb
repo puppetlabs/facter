@@ -19,7 +19,6 @@ end
 describe Facter::Util::Loader do
   before :each do
     Facter::Util::Loader.any_instance.unstub(:load_all)
-    Facter.stubs(:warnonce)
   end
 
   it "should have a method for loading individual facts by name" do
@@ -116,7 +115,7 @@ describe Facter::Util::Loader do
       dirs = $LOAD_PATH.collect { |d| File.join(d, "facter") }
       @loader.stubs(:valid_search_path?).returns(false)
       dirs.each do |dir|
-        Facter.expects(:warnonce).with("Relative directory #{dir} removed from search path.").once
+        Facter.expects(:debugonce).with("Relative directory #{dir} removed from search path.").once
       end 
       paths = @loader.search_path
     end 

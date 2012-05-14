@@ -63,7 +63,7 @@ class Facter::Util::Loader
 
     result.select do |dir|
       good = valid_search_path? dir
-      Facter.warnonce("Relative directory #{dir} removed from search path.") unless good
+      Facter.debugonce("Relative directory #{dir} removed from search path.") unless good
       good
     end
   end
