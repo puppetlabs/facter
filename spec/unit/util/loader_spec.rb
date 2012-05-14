@@ -49,6 +49,12 @@ describe Facter::Util::Loader do
       @loader.should be_valid_search_path "/foo"
     end
     
+    # Used to have test for " " as a directory since that should 
+    # be a relative directory, but on Windows in both 1.8.7 and
+    # 1.9.3 it is an absolute directory (WTF Windows). Considering
+    # we didn't have a valid use case for a " " directory, the 
+    # test was removed. 
+
     [
       '.',
       '..',
@@ -58,7 +64,6 @@ describe Facter::Util::Loader do
       'foo',
       'foo/bar',
       'foo/../bar',
-      ' ',
       ' /',
       ' \/',
     ].each do |dir|
@@ -124,7 +129,7 @@ describe Facter::Util::Loader do
 
     describe "and the FACTERLIB environment variable is set" do
       it "should include all paths in FACTERLIB" do
-        Facter::Util::Resolution.with_env "FACTERLIB" => "/one/path:/two/path" do
+        Facter::Util::Resolution.with_env "FACTERLIB" => "/one/path#{File::PATH_SEPARATOR}/two/path" do
           paths = @loader.search_path
           %w{/one/path /two/path}.each do |dir|
             paths.should be_include(dir)
