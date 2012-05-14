@@ -110,7 +110,17 @@ describe Facter::Util::Loader do
         paths.should be_include(dir)
       end
     end
-    
+
+    it "should warn the user when an invalid search path has been excluded" do 
+      dirs = $LOAD_PATH.collect { |d| File.join(d, "facter") }
+      @loader.stubs(:valid_search_path?).returns(false)
+      dirs.each do |dir|
+        Facter.expects(:debugonce).with("Relative directory #{dir} removed from search path.").once
+      end 
+      paths = @loader.search_path
+    end 
+
+
     it "should exclude invalid search paths" do
       dirs = $LOAD_PATH.collect { |d| File.join(d, "facter") }
       @loader.stubs(:valid_search_path?).returns(false)
