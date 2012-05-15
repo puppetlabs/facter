@@ -36,11 +36,11 @@ Facter.add(:domain) do
     if name = Facter::Util::Resolution.exec(hostname_command) \
       and name =~ /.*?\.(.+$)/
 
-      $1
+      return_value = $1
     elsif domain = Facter::Util::Resolution.exec('dnsdomainname') \
-      and domain =~ /.+\..+/
+      and domain =~ /.+/
 
-      domain
+      return_value = domain
     elsif FileTest.exists?("/etc/resolv.conf")
       domain = nil
       search = nil
@@ -53,9 +53,11 @@ Facter.add(:domain) do
           end
         }
       }
-      next domain if domain
-      next search if search
+      return_value ||= domain
+      return_value ||= search
     end
+    return_value = '' if return_value.nil?
+    return_value.gsub(/\.$/, '')
   end
 end
 
@@ -73,6 +75,6 @@ Facter.add(:domain) do
         break
       }
     end
-    domain
+    domain.gsub(/\.$/, '')
   end
 end
