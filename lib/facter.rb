@@ -44,6 +44,7 @@ module Facter
   @@debug = 0
   @@timing = 0
   @@messages = {}
+  @@debug_messages = {}
 
   # module methods
 
@@ -68,6 +69,14 @@ module Facter
       puts GREEN + string + RESET
     end
   end
+
+  # Debug once.
+  def self.debugonce(msg)
+    if msg and not msg.empty? and @@debug_messages[msg].nil?
+      @@debug_messages[msg] = true
+      debug(msg) 
+    end 
+  end 
 
   def self.debugging?
     @@debug != 0
