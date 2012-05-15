@@ -1,3 +1,57 @@
+2.0.0rc1
+===
+1dd50f4 Use absolute path for $LOAD_PATH in installer
+02ff878 Bump Facter version to 2.0.0 for the release.
+ffe7129 (#3909) Strip trailing dots from domain fact
+e9326d7 (#14467) Warn when removing relative paths
+fa38c60 (#14469) Strip whitespace from frozen strings
+c13a517 (maint) Fix broken Windows tests
+cb429df Partial revert of CFPropertyList migration.
+9f01fe7 (#12147) Remove Darwin 6-specific iphostnumber fact
+9810595 (#11466) Remove deprecated memorytotal fact
+4a2d358 (#6955) Remove relative dirs from fact search path
+6e7d967 (#3226) Wire up fact preserve_whitespace DSL
+3a84a0e (#3226) Strip whitespace from fact
+3168927 (#7484) Domain Fact should handle TLD
+6b9e2e5 (#7484) Domain fact should handle only TLD
+5aa2a6f (#12864) Windows: get primary DNS from registry
+635ccc4 Namespace CFPropertyList under Puppet::Util
+af682cc [#11299] Replace facter/util/plist with cfpropertylist
+2e7a108 (#12790) Raise an exception if recursion is detected
+9ff4453 Removed exclusive threading
+4581b17 (maint) removing trailing whitespace
+c80de1c (#11969) Add zfs zpool version facts.
+5273842 (#6682) Add Solaris ldom facts and update virtual detection.
+f77584f (#12311) use 'ensure' to restore env vars in Resolution.with_env
+0010a65 (#10232) Tests for VirtualBox detection via sysfs
+40efab4 fix tests for virtual detection
+976b7af fix xen0/xenu detection: https://projects.puppetlabs.com/issues/10625
+2a86219 (#11660) Adds feature SSHFP (#11659) Adds ssh spec
+4595c48 (#12012) removed extraneous nils
+9c2afdb (#12012) Fix bug with overriding LANG environment variable
+2fc1b0c (#9574) Add filesystem fact & tests
+c93922c (#12012) Fix ENV['LANG'] spec tests on Windows
+d8be0a6 (#12012) Fix ruby 1.8.5 incompatibility in new spec test
+66cbfac (#12012) Add spec unit tests for env/LANG changes
+810c465 (#12012) Remove global override of LANG environment variable
+26918b3 (#12012) Move "with_env" utility method from test code into lib code
+f47c592 (#1424) Add Solaris zonename fact.
+2bdacfb Revert "(#11660) Adds feature SSHFP"
+50f6da6 (#11660) Adds feature SSHFP
+6c8683a (#11660) Adds feature SSHFP (#11659) Adds ssh spec
+64fa8ea (maint) Fix requires for newer rspec revisions so we don't break build
+2eb4ede (#9708) Confine facts by kernel not operating system and remove confine for hardwareisa
+30e068a (#11082) Add negative tests for operatingsystemrelease
+7713d95 (#11082) Add fact operatingsystemrelease for Solaris
+844b67b (#10964) Adding the ability to directly set values
+a9140d5 (#6617) Deprecate DESTDIR environment variable for installer
+dd704c5 (#10238) Adds support for retrieving information about block devices in Linux, with tests; updated to include sizes and be more flexible for future additions
+e0cb1ae Revert "Merge branch 'ticket/10251' of git://github.com/jgrocho/facter"
+ce67c98 (#10251) Creating RC tarballs should be handled by rake.
+64770d0 Try to get VirtualBox info without dmidecode
+9df78a1 (#9929) Add support for Mageia to operatingsystem.rb and operatingsystemrelease.rb
+51cb8e2 Cleaned up Arch Linux detection routine
+
 1.6.9rc1
 ===
 b398bd8 (#14334) Fix dmidecode based facts on DragonFly BSD
