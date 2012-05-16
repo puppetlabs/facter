@@ -87,7 +87,7 @@ bins  = glob(%w{bin/*})
 rdoc  = glob(%w{bin/* sbin/* lib/**/*.rb README README-library CHANGELOG TODO Install}).reject { |e| e=~ /\.(bat|cmd)$/ }
 ri  = glob(%w(bin/*.rb sbin/* lib/**/*.rb)).reject { |e| e=~ /\.(bat|cmd)$/ }
 man   = glob(%w{man/man8/*})
-libs  = glob(%w{lib/**/*.rb lib/**/*.py})
+libs  = glob(%w{lib/**/*.rb lib/**/*.py lib/**/LICENSE})
 tests = glob(%w{tests/**/*.rb})
 
 def do_bins(bins, target, strip = 's?bin/')
@@ -99,7 +99,7 @@ end
 
 def do_libs(libs, strip = 'lib/')
   libs.each do |lf|
-    olf = File.join(InstallOptions.site_dir, lf.gsub(/#{strip}/, ''))
+    olf = File.join(InstallOptions.site_dir, lf.gsub(/^#{strip}/, ''))
     op = File.dirname(olf)
     FileUtils.makedirs(op, {:mode => 0755, :verbose => true})
     FileUtils.chmod(0755, op)
