@@ -99,7 +99,7 @@ end
 
 def do_libs(libs, strip = 'lib/')
   libs.each do |lf|
-    olf = File.join(InstallOptions.site_dir, lf.gsub(/#{strip}/, ''))
+    olf = File.join(InstallOptions.site_dir, lf.gsub(/^#{strip}/, ''))
     op = File.dirname(olf)
     FileUtils.makedirs(op, {:mode => 0755, :verbose => true})
     FileUtils.chmod(0755, op)
