@@ -1,4 +1,4 @@
-1.6.9rc1
+1.6.9
 ===
 b398bd8 (#14334) Fix dmidecode based facts on DragonFly BSD
 6c46b2c (#14332) Correct stubbing on Ubuntu
