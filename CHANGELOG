@@ -1,3 +1,8 @@
+2.0.0rc2
+===
+0fa58fc (#14521) Ensure install propagates licenses
+4eaa7c4 (#14521) Ensure install only strips leading lib dir
+
 2.0.0rc1
 ===
 1dd50f4 Use absolute path for $LOAD_PATH in installer

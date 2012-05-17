@@ -4,13 +4,13 @@ Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
 Version: 2.0.0
 #Release: 1%{?dist}
-Release: 0.1rc1%{?dist}
+Release: 0.1rc2%{?dist}
 License: Apache 2.0
 Group: System Environment/Base
 URL: http://www.puppetlabs.com/puppet/related-projects/%{name}
-Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz
+Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc2.tar.gz
 #Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz
-Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz.asc
+Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc2.tar.gz.asc
 #Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz.asc
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -32,7 +32,7 @@ operating system. Additional facts can be added through simple Ruby scripts
 
 %prep
 #%setup -q  -n %{name}-%{version}
-%setup -q  -n %{name}-%{version}rc1
+%setup -q  -n %{name}-%{version}rc2
 
 %build
 
@@ -53,6 +53,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu May 17 2012 Moses Mendoza <moses@puppetlabs.com> - 2.0.0-0.1rc2
+- Update for 2.0.0rc2 release
+
 * Tue May 15 2012 Matthaus Litteken <matthaus@puppetlabs.com> - 2.0.0-0.1rc1
 - Facter 2.0.0rc1 release
 
