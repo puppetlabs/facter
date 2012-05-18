@@ -369,6 +369,7 @@ describe Facter::Util::Resolution do
     context "when run on windows", :as_platform => :windows do
       before :each do
         Facter::Util::Resolution.stubs(:search_paths).returns ['C:\Windows\system32', 'C:\Windows', 'C:\Windows\System32\Wbem' ]
+        ENV.stubs(:[]).with('PATHEXT').returns nil
       end
 
       context "and provided with an absolute path" do
@@ -377,6 +378,16 @@ describe Facter::Util::Resolution do
           File.expects(:executable?).with('\\\\remote\dir\foo.exe').returns true
           Facter::Util::Resolution.which('C:\Tools\foo.exe').should == 'C:\Tools\foo.exe'
           Facter::Util::Resolution.which('\\\\remote\dir\foo.exe').should == '\\\\remote\dir\foo.exe'
+        end
+
+        it "should return the binary with added extension if executable" do
+          ['.COM', '.BAT', '.CMD', '' ].each do |ext|
+            File.stubs(:executable?).with('C:\Windows\system32\netsh'+ext).returns false
+          end
+          File.expects(:executable?).with('C:\Windows\system32\netsh.EXE').returns true
+
+          Facter.expects(:warnonce).with('Using Facter::Util::Resolution.which with an absolute path like C:\\Windows\\system32\\netsh but no fileextension is deprecated. Please add the correct extension (.EXE)')
+          Facter::Util::Resolution.which('C:\Windows\system32\netsh').should == 'C:\Windows\system32\netsh.EXE'
         end
 
         it "should return nil if the binary is not executable" do
@@ -396,7 +407,6 @@ describe Facter::Util::Resolution do
         end
 
         it "should return the absolute path with file extension if found" do
-          ENV.stubs(:[]).with('PATHEXT').returns nil
           ['.COM', '.EXE', '.BAT', '.CMD', '' ].each do |ext|
             File.stubs(:executable?).with('C:\Windows\system32\foo'+ext).returns false
             File.stubs(:executable?).with('C:\Windows\System32\Wbem\foo'+ext).returns false

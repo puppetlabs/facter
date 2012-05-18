@@ -36,6 +36,17 @@ class Facter::Util::Resolution
   def self.which(bin)
     if absolute_path?(bin)
       return bin if File.executable?(bin)
+      if Facter::Util::Config.is_windows? and File.extname(bin).empty?
+        exts = ENV['PATHEXT']
+        exts = exts ? exts.split(File::PATH_SEPARATOR) : %w[.COM .EXE .BAT .CMD]
+        exts.each do |ext|
+          destext = bin + ext
+          if File.executable?(destext)
+            Facter.warnonce("Using Facter::Util::Resolution.which with an absolute path like #{bin} but no fileextension is deprecated. Please add the correct extension (#{ext})")
+            return destext
+          end
+        end
+      end
     else
       search_paths.each do |dir|
         dest = File.join(dir, bin)
