@@ -149,6 +149,10 @@ describe "ec2 facts" do
   end
 
   describe "when api connect test fails" do
+    before :each do 
+      Facter.stubs(:warnonce) 
+    end 
+    
     it "should not populate ec2_userdata" do
       # Emulate ec2 for now as it matters little to this test
       Facter::Util::EC2.stubs(:has_euca_mac?).returns(true)
