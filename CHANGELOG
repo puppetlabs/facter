@@ -57,7 +57,7 @@ ce67c98 (#10251) Creating RC tarballs should be handled by rake.
 9df78a1 (#9929) Add support for Mageia to operatingsystem.rb and operatingsystemrelease.rb
 51cb8e2 Cleaned up Arch Linux detection routine
 
-1.6.9rc1
+1.6.9
 ===
 b398bd8 (#14334) Fix dmidecode based facts on DragonFly BSD
 6c46b2c (#14332) Correct stubbing on Ubuntu
