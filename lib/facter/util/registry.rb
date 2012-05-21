@@ -3,7 +3,9 @@ module Facter::Util::Registry
     def hklm_read(key, value)
       require 'win32/registry'
       reg = Win32::Registry::HKEY_LOCAL_MACHINE.open(key)
-      reg[value]
+      rval = reg[value]
+      reg.close
+      rval
     end
   end
 end
