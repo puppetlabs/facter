@@ -13,6 +13,6 @@
 Facter.add(:lsbrelease) do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]
   setcode do
-    Facter::Util::Resolution.exec('lsb_release -v -s')
+    Facter::Util::Resolution.exec('lsb_release -v -s 2>/dev/null')
   end
 end
