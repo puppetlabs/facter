@@ -258,4 +258,19 @@ describe Facter::Util::Collection do
       facts.should_not be_include("two")
     end
   end
+
+  describe "when no facts are loaded" do 
+    before :each do 
+      @coll =  Facter::Util::Collection.new
+      @load = Facter::Util::Loader.new 
+      @load.stubs(:load).returns nil 
+      @load.stubs(:load_all).returns nil 
+      @coll.stubs(:loader).returns @load 
+    end
+ 
+    it "should warn when no facts were loaded" do 
+      Facter.expects(:warnonce).with("No facts loaded from #{@load.search_path.join(File::PATH_SEPARATOR)}").once
+      @coll.fact("one")
+    end 
+  end 
 end

@@ -78,6 +78,9 @@ class Facter::Util::Collection
     # Try HARDER
     loader.load_all unless @facts[name]
 
+    # Warn if no facts were loaded 
+    Facter.warnonce("No facts loaded from #{loader.search_path.join(File::PATH_SEPARATOR)}") if @facts.length == 0 
+
     @facts[name]
   end
 
