@@ -86,6 +86,8 @@ end
 Rake::GemPackageTask.new(spec) do |pkg|
 end
 
+task :package => :tar
+
 task :default do
   sh %{rake -T}
 end
