@@ -17,10 +17,6 @@ require 'rake'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
 
-module Facter
-  FACTERVERSION = File.read('lib/facter.rb')[/FACTERVERSION *= *'(.*)'/,1] or fail "Couldn't find FACTERVERSION"
-end
-
 FILES = FileList[
   '[A-Z]*',
   'install.rb',
@@ -31,12 +27,50 @@ FILES = FileList[
   'spec/**/*'
 ]
 
+def get_version
+  `git describe`.strip
+end
+
+# :build_environment and :tar are mostly borrowed from puppet-dashboard Rakefile
+task :build_environment do
+  unless ENV['FORCE'] == '1'
+    modified = `git status --porcelain | sed -e '/^\?/d'`
+    if modified.split(/\n/).length != 0
+      puts <<-HERE
+!! ERROR: Your git working directory is not clean. You must
+!! remove or commit your changes before you can create a package:
+
+#{`git status | grep '^#'`.chomp}
+
+!! To override this check, set FORCE=1 -- e.g. `rake package:deb FORCE=1`
+      HERE
+      raise
+    end
+  end
+end
+
+desc "Create a release .tar.gz"
+task :tar => :build_environment do
+  name = "facter"
+  rm_rf 'pkg/tar'
+  temp=`mktemp -d -t tmpXXXXXX`.strip!
+  version = get_version
+  base = "#{temp}/#{name}-#{version}/"
+  mkdir_p base
+  sh "git checkout-index -af --prefix=#{base}"
+  mkdir_p "pkg/tar"
+  sh "tar -C #{temp} -pczf #{temp}/#{name}-#{version}.tar.gz #{name}-#{version}"
+  mv "#{temp}/#{name}-#{version}.tar.gz", "pkg/tar"
+  rm_rf temp
+  puts "Tarball is pkg/tar/#{name}-#{version}.tar.gz"
+end
+
 spec = Gem::Specification.new do |spec|
   spec.platform = Gem::Platform::RUBY
   spec.name = 'facter'
   spec.files = FILES.to_a
   spec.executables = %w{facter}
-  spec.version = Facter::FACTERVERSION
+  spec.version = get_version.split('-')[0]
   spec.summary = 'Facter, a system inventory tool'
   spec.description = 'You can prove anything with facts!'
   spec.author = 'Puppet Labs'
@@ -49,13 +83,6 @@ spec = Gem::Specification.new do |spec|
     '--main' << 'README' <<
     '--line-numbers'
 end
-
-Rake::PackageTask.new("facter", Facter::FACTERVERSION) do |pkg|
-  pkg.package_dir = 'pkg'
-  pkg.need_tar_gz = true
-  pkg.package_files = FILES.to_a
-end
-
 Rake::GemPackageTask.new(spec) do |pkg|
 end
 
