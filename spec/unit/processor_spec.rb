@@ -16,6 +16,8 @@ describe "Processor facts" do
     def load(procs)
       require 'facter/util/wmi'
       Facter::Util::WMI.stubs(:execquery).with("select * from Win32_Processor").returns(procs)
+      # This is to workaround #14674
+      Facter.fact(:architecture).stubs(:value).returns("x64")
 
       # processor facts belong to a file with a different name,
       # so load the file explicitly (after stubbing kernel),
