@@ -25,7 +25,7 @@ Facter.add(:architecture) do
       end
     when /(i[3456]86|pentium)/
       case Facter.value(:operatingsystem)
-      when "Gentoo"
+      when "Gentoo", "windows"
         "x86"
       else
         "i386"
