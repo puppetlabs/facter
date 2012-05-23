@@ -13,17 +13,101 @@ class Facter::Util::Resolution
 
   INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
 
-  def self.have_which
-    if ! defined?(@have_which) or @have_which.nil?
-      if Facter::Util::Config.is_windows?
-        @have_which = false
-      else
-        %x{which which >/dev/null 2>&1}
-        @have_which = $?.success?
+  # Returns the locations to be searched when looking for a binary. This
+  # is currently determined by the +PATH+ environment variable plus
+  # <tt>/sbin</tt> and <tt>/usr/sbin</tt> when run on unix
+  def self.search_paths
+    if Facter::Util::Config.is_windows?
+      ENV['PATH'].split(File::PATH_SEPARATOR)
+    else
+      # Make sure facter is usable even for non-root users. Most commands
+      # in /sbin (like ifconfig) can be run as non priviledged users as
+      # long as they do not modify anything - which we do not do with facter
+      ENV['PATH'].split(File::PATH_SEPARATOR) + [ '/sbin', '/usr/sbin' ]
+    end
+  end
+
+  # Determine the full path to a binary. If the supplied filename does not
+  # already describe an absolute path then different locations (determined
+  # by <tt>self.search_paths</tt>) will be searched for a match.
+  #
+  # Returns nil if no matching executable can be found otherwise returns
+  # the expanded pathname.
+  def self.which(bin)
+    if absolute_path?(bin)
+      return bin if File.executable?(bin)
+      if Facter::Util::Config.is_windows? and File.extname(bin).empty?
+        exts = ENV['PATHEXT']
+        exts = exts ? exts.split(File::PATH_SEPARATOR) : %w[.COM .EXE .BAT .CMD]
+        exts.each do |ext|
+          destext = bin + ext
+          if File.executable?(destext)
+            Facter.warnonce("Using Facter::Util::Resolution.which with an absolute path like #{bin} but no fileextension is deprecated. Please add the correct extension (#{ext})")
+            return destext
+          end
+        end
+      end
+    else
+      search_paths.each do |dir|
+        dest = File.join(dir, bin)
+        if Facter::Util::Config.is_windows?
+          dest.gsub!(File::SEPARATOR, File::ALT_SEPARATOR)
+          if File.extname(dest).empty?
+            exts = ENV['PATHEXT']
+            exts = exts ? exts.split(File::PATH_SEPARATOR) : %w[.COM .EXE .BAT .CMD]
+            exts.each do |ext|
+              destext = dest + ext
+              return destext if File.executable?(destext)
+            end
+          end
+        end
+        return dest if File.executable?(dest)
       end
     end
-    @have_which
+    nil
   end
+
+  # Determine in a platform-specific way whether a path is absolute. This
+  # defaults to the local platform if none is specified.
+  def self.absolute_path?(path, platform=nil)
+    # Escape once for the string literal, and once for the regex.
+    slash = '[\\\\/]'
+    name = '[^\\\\/]+'
+    regexes = {
+      :windows => %r!^(([A-Z]:#{slash})|(#{slash}#{slash}#{name}#{slash}#{name})|(#{slash}#{slash}\?#{slash}#{name}))!i,
+      :posix   => %r!^/!,
+    }
+    platform ||= Facter::Util::Config.is_windows? ? :windows : :posix
+
+    !! (path =~ regexes[platform])
+  end
+
+  # Expand the executable of a commandline to an absolute path. The executable
+  # is the first word of the commandline. If the executable contains spaces,
+  # it has be but in double quotes to be properly recognized.
+  #
+  # Returns the commandline with the expanded binary or nil if the binary
+  # can't be found. If the path to the binary contains quotes, the whole binary
+  # is put in quotes.
+  def self.expand_command(command)
+    if match = /^"(.+?)"(?:\s+(.*))?/.match(command)
+      exe, arguments = match.captures
+      exe = which(exe) and [ "\"#{exe}\"", arguments ].compact.join(" ")
+    elsif match = /^'(.+?)'(?:\s+(.*))?/.match(command) and not Facter::Util::Config.is_windows?
+      exe, arguments = match.captures
+      exe = which(exe) and [ "'#{exe}'", arguments ].compact.join(" ")
+    else
+      exe, arguments = command.split(/ /,2)
+      if exe = which(exe)
+        # the binary was not quoted which means it contains no spaces. But the
+        # full path to the binary may do so.
+        exe = "\"#{exe}\"" if exe =~ /\s/ and Facter::Util::Config.is_windows?
+        exe = "'#{exe}'" if exe =~ /\s/ and not Facter::Util::Config.is_windows?
+        [ exe, arguments ].compact.join(" ")
+      end
+    end
+  end
+
 
   # Execute a program and return the output of that program.
   #
@@ -33,34 +117,21 @@ class Facter::Util::Resolution
   def self.exec(code, interpreter = nil)
     Facter.warnonce "The interpreter parameter to 'exec' is deprecated and will be removed in a future version." if interpreter
 
-    # Try to guess whether the specified code can be executed by looking at the
-    # first word. If it cannot be found on the PATH defer on resolving the fact
-    # by returning nil.
-    # This only fails on shell built-ins, most of which are masked by stuff in
-    # /bin or of dubious value anyways. In the worst case, "sh -c 'builtin'" can
-    # be used to work around this limitation
-    #
-    # Windows' %x{} throws Errno::ENOENT when the command is not found, so we
-    # can skip the check there. This is good, since builtins cannot be found
-    # elsewhere.
-    if have_which and !Facter::Util::Config.is_windows?
-      path = nil
-      binary = code.split.first
-      if code =~ /^\//
-        path = binary
-      else
-        path = %x{which #{binary} 2>/dev/null}.chomp
-        # we don't have the binary necessary
-        return nil if path == "" or path.match(/Command not found\./)
-      end
-
-      return nil unless FileTest.exists?(path)
+    if expanded_code = expand_command(code)
+      # if we can find the binary, we'll run the command with the expanded path to the binary
+      code = expanded_code
+    else
+      # if we cannot find the binary return nil on posix. On windows we'll still try to run the
+      # command in case it is a shell-builtin. In case it is not, windows will raise Errno::ENOENT
+      return nil unless Facter::Util::Config.is_windows?
+      return nil if absolute_path?(code)
     end
 
     out = nil
 
     begin
       out = %x{#{code}}.chomp
+      Facter.warnonce 'Using Facter::Util::Resolution.exec with a shell built-in is deprecated. Most built-ins can be replaced with native ruby commands. If you really have to run a built-in, pass "cmd /c your_builtin" as a command' unless expanded_code
     rescue Errno::ENOENT => detail
       # command not found on Windows
       return nil

@@ -44,7 +44,7 @@ describe "IPv6 address fact" do
     Facter::Util::Config.stubs(:is_windows?).returns(true)
 
     fixture = netsh_fixture('windows_netsh_addresses_with_multiple_interfaces')
-    Facter::Util::Resolution.stubs(:exec).with('d:/windows/system32/netsh interface ipv6 show address level=verbose').
+    Facter::Util::Resolution.stubs(:exec).with('d:/windows/system32/netsh.exe interface ipv6 show address level=verbose').
       returns(fixture)
 
     Facter.value(:ipaddress6).should == "2001:0:4137:9e76:2087:77a:53ef:7527"

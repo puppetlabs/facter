@@ -11,6 +11,11 @@ require 'rspec'
 require 'facter'
 require 'fileutils'
 require 'puppetlabs_spec_helper'
+require 'pathname'
+
+Pathname.glob("#{dir}/shared_contexts/*.rb") do |file|
+  require file.relative_path_from(Pathname.new(dir))
+end
 
 RSpec.configure do |config|
   config.mock_with :mocha
