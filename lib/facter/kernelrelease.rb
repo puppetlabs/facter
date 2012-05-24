@@ -16,14 +16,14 @@ Facter.add(:kernelrelease) do
 end
 
 Facter.add(:kernelrelease) do
-  confine :kernel => :aix
+  confine :kernel => %{aix}
   setcode 'oslevel -s'
 end
 
 Facter.add(:kernelrelease) do
-  confine :kernel => :"hp-ux"
-  version=Facter::Util::Resolution.exec('uname -r')
+  confine :kernel => %{hp-ux}
   setcode do
+    version=Facter::Util::Resolution.exec('uname -r') 
     version[2..-1]
   end
 end
