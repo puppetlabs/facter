@@ -27,6 +27,7 @@ describe Facter::Util::Registry do
           end
           it "should return #{scenario[:expected]} value" do
             Win32::Registry::HKEY_LOCAL_MACHINE.stubs(:open).with(scenario[:key]).returns(fake_registry_key)
+            fake_registry_key.stubs(:close)
 
             Facter::Util::Registry.hklm_read(scenario[:key], scenario[:value]).should == scenario[:expected]
           end
@@ -45,6 +46,7 @@ describe Facter::Util::Registry do
           end
           it "should raise an error" do
             Win32::Registry::HKEY_LOCAL_MACHINE.stubs(:open).with(scenario[:key]).returns(fake_registry_key)
+            fake_registry_key.stubs(:close)
 
             Facter::Util::Registry.hklm_read(scenario[:key], scenario[:value]).should raise_error
           end
