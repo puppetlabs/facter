@@ -65,7 +65,7 @@ end
 Facter.add(:ipaddress6) do
   confine :kernel => :windows
   setcode do
-    output = Facter::Util::Resolution.exec("#{ENV['SYSTEMROOT']}/system32/netsh interface ipv6 show address level=verbose")
+    output = Facter::Util::Resolution.exec("#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ipv6 show address level=verbose")
 
     get_address_after_token(output, 'Address', true)
   end

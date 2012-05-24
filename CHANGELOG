@@ -1,3 +1,10 @@
+2.0.0rc3
+===
+6cc881d Use git describe in Rakefile to determine pkg ver
+653e9e0 (#14466) Fix style issues
+5a8547d (14466) Warn when no facts found
+b050eb1 (#14582) Fix noise in LSB facts
+
 2.0.0rc2
 ===
 0fa58fc (#14521) Ensure install propagates licenses
