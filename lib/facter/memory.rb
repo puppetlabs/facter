@@ -8,6 +8,8 @@
 #   On AIX, parses "swap -l" for swap values only.
 #   On OpenBSD, it parses "swapctl -l" for swap values, vmstat via a module for
 #   free memory, and "sysctl hw.physmem" for maximum memory.
+#   On FreeBSD, it parses "swapinfo -k" for swap values, and parses sysctl for
+#   maximum memory.
 #   On Solaris, use "swap -l" for swap values, and parsing prtconf for maximum
 #   memory, and again, the vmstat module for free memory.
 #
@@ -123,6 +125,43 @@ if Facter.value(:kernel) == "OpenBSD"
       Facter::Memory.scale_number(memtotal.to_f,"")
     end
   end
+end
+
+if Facter.value(:kernel) == "FreeBSD"
+    swap = Facter::Util::Resolution.exec('swapinfo -k')
+    swapfree, swaptotal = 0, 0
+    unless swap.empty?
+        # Parse the line:
+        # /dev/foo SIZE   USAGE   AVAILABLE    PERCENTAGE%
+        if swap =~ /\S+\s+(\d+)\s+\d+\s+(\d+)\s+\d+%$/
+            swaptotal += $1.to_i
+            swapfree  += $2.to_i
+        end
+    end
+
+    Facter.add("SwapSize") do
+        confine :kernel => :freebsd
+        setcode do
+            Facter::Memory.scale_number(swaptotal.to_f,"kB")
+        end
+    end
+
+    Facter.add("SwapFree") do
+        confine :kernel => :freebsd
+        setcode do
+            Facter::Memory.scale_number(swapfree.to_f,"kB")
+        end
+    end
+
+    Facter::Memory.vmstat_find_free_memory()
+
+    Facter.add("MemoryTotal") do
+        confine :kernel => :freebsd
+        memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
+        setcode do
+            Facter::Memory.scale_number(memtotal.to_f,"")
+        end
+    end
 end
 
 if Facter.value(:kernel) == "Darwin"
