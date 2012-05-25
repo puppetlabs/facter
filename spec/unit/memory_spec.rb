@@ -79,6 +79,111 @@ EOS
       Facter.fact(:memorysize).value.should == "254.94 MB"
     end
   end
+  
+  describe "on Solaris" do
+    before(:each) do
+      Facter.clear
+      Facter.fact(:kernel).stubs(:value).returns("SunOS")
+      sample_prtconf = <<PRTCONF
+System Configuration:  Sun Microsystems  sun4u
+Memory size: 2048 Megabytes
+System Peripherals (Software Nodes):
+
+PRTCONF
+      Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/prtconf 2>/dev/null').returns sample_prtconf
+      
+      vmstat_lines = <<VMSTAT
+ kthr      memory            page            disk          faults      cpu
+ r b w   swap  free  re  mf pi po fr de sr s0 s3 -- --   in   sy   cs us sy id
+ 0 0 0 1154552 476224 8  19  0  0  0  0  0  0  0  0  0  460  294  236  1  2 97
+VMSTAT
+      Facter::Util::Resolution.stubs(:exec).with('vmstat').returns(vmstat_lines)
+    end
+    
+    after(:each) do
+      Facter.clear
+    end    
+    
+    describe "when single swap exists" do
+      before(:each) do
+        sample_swap_line = <<SWAP
+swapfile             dev  swaplo blocks   free
+/dev/swap           4294967295,4294967295     16 2097136 2097136
+SWAP
+        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l').returns sample_swap_line
+
+        Facter.collection.loader.load(:memory)
+      end
+
+      it "should return the current memory size" do      
+        Facter.fact(:memorysize).value.should == "2.00 GB"
+      end
+      
+      it "should return the current memory free" do
+        Facter.fact(:memoryfree).value.should == "465.06 MB"
+      end
+      
+      it "should return the current swap free" do
+        Facter.fact(:swapfree).value.should == "1023.99 MB"
+      end
+      
+      it "should return the current swap size" do
+        Facter.fact(:swapsize).value.should == "1023.99 MB"
+      end
+    end
+
+    describe "when multiple swaps exist" do
+      before(:each) do
+        sample_swap_line = <<SWAP
+swapfile             dev  swaplo blocks   free
+/dev/swap           4294967295,4294967295     16 2097136 2097136
+/dev/swap2          4294967295,4294967295     16 2097136 2097136
+SWAP
+        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l').returns sample_swap_line
+        Facter.collection.loader.load(:memory)
+      end
+      
+      it "should return the current memory size" do      
+        Facter.fact(:memorysize).value.should == "2.00 GB"
+      end
+      
+      it "should return the current memory free" do
+        Facter.fact(:memoryfree).value.should == "465.06 MB"
+      end
+      
+      it "should total the swap free" do
+        Facter.fact(:swapfree).value.should == "2.00 GB"
+      end
+      
+      it "should total the swap size" do
+        Facter.fact(:swapsize).value.should == "2.00 GB"
+      end
+    end
+    
+    describe "when no swap exists" do
+      before(:each) do
+        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l').returns ""
+
+        Facter.collection.loader.load(:memory)
+      end
+      
+      it "should return the current memory size" do      
+        Facter.fact(:memorysize).value.should == "2.00 GB"
+      end
+      
+      it "should return the current memory free" do
+        Facter.fact(:memoryfree).value.should == "465.06 MB"
+      end
+      
+      it "should return 0 for the swap free" do
+        Facter.fact(:swapfree).value.should == "0.00 kB"
+      end
+      
+      it "should return 0 for the swap size" do
+        Facter.fact(:swapsize).value.should == "0.00 kB"
+      end
+    end
+  end
 
   describe "on DragonFly BSD" do
     before :each do
