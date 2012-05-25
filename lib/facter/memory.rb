@@ -165,10 +165,12 @@ end
 if Facter.value(:kernel) == "SunOS"
   swap = Facter::Util::Resolution.exec('/usr/sbin/swap -l')
   swapfree, swaptotal = 0, 0
-  swap.each_line do |dev|
-    if dev =~ /^\/\S+\s.*\s+(\d+)\s+(\d+)$/
-      swaptotal += $1.to_i / 2
-      swapfree  += $2.to_i / 2
+  unless swap.nil?
+    swap.each_line do |dev|
+      if dev =~ /^\/\S+\s.*\s+(\d+)\s+(\d+)$/
+        swaptotal += $1.to_i / 2
+        swapfree  += $2.to_i / 2
+      end
     end
   end
 
