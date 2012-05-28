@@ -80,8 +80,8 @@ module Facter::Util::Processor
   end
 
   def self.enum_ioscan
-    processor_num=-1
-    processor_list={}
+    processor_num = -1
+    processor_list = {}
     model = Facter.value(:hardwaremodel)
     case model
       when "ia64"
@@ -90,7 +90,7 @@ module Facter::Util::Processor
         if procs
           proctype = Facter::Util::Resolution.exec('machinfo | grep Intel')
           procs.each_line do |proc|
-            if proc =~/^processor\s+(\S+)\s+/
+            if proc =~ /^processor\s+(\S+)\s+/
               processor_num = $1.to_i
               if proctype =~ /Intel\S+\s+(.*)/
                 processor_list[processor_num] = $1
