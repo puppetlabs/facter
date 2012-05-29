@@ -130,13 +130,15 @@ end
 if Facter.value(:kernel) == "FreeBSD"
     swap = Facter::Util::Resolution.exec('swapinfo -k')
     swapfree, swaptotal = 0, 0
-    unless swap.empty?
+    unless swap.nil?
+      swap.each_line do |device|
         # Parse the line:
         # /dev/foo SIZE   USAGE   AVAILABLE    PERCENTAGE%
-        if swap =~ /\S+\s+(\d+)\s+\d+\s+(\d+)\s+\d+%$/
+        if device =~ /\S+\s+(\d+)\s+\d+\s+(\d+)\s+\d+%$/
             swaptotal += $1.to_i
             swapfree  += $2.to_i
         end
+      end 
     end
 
     Facter.add("SwapSize") do
@@ -153,9 +155,13 @@ if Facter.value(:kernel) == "FreeBSD"
         end
     end
 
-    Facter::Memory.vmstat_find_free_memory()
+    # FreeBSD had to be different and be default prints human readable
+    # format instead of machine readable. So using 'vmstat -H' instead
+    # Facter::Memory.vmstat_find_free_memory()
+    
+    Facter::Memory.vmstat_find_free_memory(["-H"])
 
-    Facter.add("MemoryTotal") do
+    Facter.add("MemorySize") do
         confine :kernel => :freebsd
         memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
         setcode do
