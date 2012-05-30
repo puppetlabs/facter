@@ -16,6 +16,7 @@ describe "Kernel fact" do
   
   describe "on everything else" do 
     before do 
+     Facter::Util::Config.stubs(:is_windows?).returns(false)
      Facter::Util::Resolution.stubs(:exec).with('uname -s').returns("test_kernel")
     end 
     
