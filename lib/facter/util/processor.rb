@@ -97,7 +97,7 @@ module Facter::Util::Processor
         end
       end
     end
-  processor_list
+    processor_list
   end
 
   def self.enum_kstat
