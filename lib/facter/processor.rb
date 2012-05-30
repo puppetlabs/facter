@@ -6,6 +6,7 @@
 # Resolution:
 #   On Linux and kFreeBSD, parse '/proc/cpuinfo' for each processor.
 #   On AIX, parse the output of 'lsdev' for its processor section.
+#   On HP-UX, parse the output of 'ioscan' for its processor section.
 #   On Solaris, parse the output of 'kstat' for each processor.
 #   On OpenBSD, use 'uname -p' and the sysctl variable for 'hw.ncpu' for CPU
 #   count.
