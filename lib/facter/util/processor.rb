@@ -59,19 +59,16 @@ module Facter::Util::Processor
   def self.enum_lsdev
     processor_num = -1
     processor_list = {}
-    model = Facter.value(:hardwaremodel)
-    if model =~ /IBM/
-      procs = Facter::Util::Resolution.exec('lsdev -Cc processor')
-      if procs
-        procs.each_line do |proc|
-          if proc =~ /^proc(\d+)/
-            processor_num = $1.to_i
-            # Not retrieving the frequency since AIX 4.3.3 doesn't support the
-            # attribute and some people still use the OS.
-            proctype = Facter::Util::Resolution.exec('lsattr -El proc0 -a type')
-            if proctype =~ /^type\s+(\S+)\s+/
-              processor_list[processor_num] = $1
-            end
+    procs = Facter::Util::Resolution.exec('lsdev -Cc processor')
+    if procs
+      procs.each_line do |proc|
+        if proc =~ /^proc(\d+)/
+          processor_num = $1.to_i
+          # Not retrieving the frequency since AIX 4.3.3 doesn't support the
+          # attribute and some people still use the OS.
+          proctype = Facter::Util::Resolution.exec('lsattr -El proc0 -a type')
+          if proctype =~ /^type\s+(\S+)\s+/
+            processor_list[processor_num] = $1
           end
         end
       end
