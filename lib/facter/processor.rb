@@ -52,7 +52,14 @@ Facter.add("ProcessorCount") do
   confine :kernel => :aix
   setcode do
     processor_list = Facter::Util::Processor.enum_lsdev
+    processor_list.length.to_s
+  end
+end
 
+Facter.add("ProcessorCount") do
+  confine :kernel => :"hp-ux"
+  setcode do
+    processor_list = Facter::Util::Processor.enum_ioscan
     processor_list.length.to_s
   end
 end
@@ -82,6 +89,7 @@ end
 ## (but we need them inside the Facter.add block above for tests on processorcount to work)
 processor_list = Facter::Util::Processor.enum_cpuinfo
 processor_list_aix = Facter::Util::Processor.enum_lsdev
+processor_list_hpux = Facter::Util::Processor.enum_ioscan
 processor_list_sunos = Facter::Util::Processor.enum_kstat
 
 if processor_list.length != 0
@@ -99,6 +107,15 @@ elsif processor_list_aix.length != 0
       confine :kernel => [ :aix ]
       setcode do
         desc
+      end
+    end
+  end
+elsif processor_list_hpux.length != 0
+  processor_list_hpux.each_with_index do |desc, i|
+    Facter.add("Processor#{i}") do
+      confine :kernel => [ :"hp-ux" ]
+      setcode do
+        desc[1]
       end
     end
   end
