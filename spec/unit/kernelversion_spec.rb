@@ -17,6 +17,7 @@ describe "Kernel version fact" do
   
   describe "on everything else" do
     before do 
+      Facter.fact(:kernel).stubs(:value).returns('linux')
       Facter.fact(:kernelrelease).stubs(:value).returns('1.23.4-56')
     end 
     
