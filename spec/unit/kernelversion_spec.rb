@@ -2,13 +2,14 @@
 
 require 'spec_helper'
 
-describe "Kerenel version fact" do
+describe "Kernel version fact" do
   
   describe "on Solaris/Sun OS" do
     before do
       Facter.fact(:kernel).stubs(:value).returns('sunos')
       Facter::Util::Resolution.stubs(:exec).with('uname -v').returns("1.234.5")
     end 
+    
     it "should return the kernel version using 'uname -v'" do 
       Facter.fact(:kernelversion).value.should == "1.234.5"
     end 
@@ -18,6 +19,7 @@ describe "Kerenel version fact" do
     before do 
       Facter.fact(:kernelrelease).stubs(:value).returns('1.23.4-56')
     end 
+    
     it "should return the kernel version using kernel release" do 
       Facter.fact(:kernelversion).value.should == "1.23.4"
     end 
