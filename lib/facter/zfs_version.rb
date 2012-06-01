@@ -1,7 +1,7 @@
 require 'facter'
 
 Facter.add('zfs_version') do
-  confine :kernel => :sunos
+  confine :kernel => %w(SunOS FreeBSD GNU/kFreeBSD)
 
   setcode do
     zfs_v = Facter::Util::Resolution.exec('zfs upgrade -v')
