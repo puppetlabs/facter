@@ -35,8 +35,31 @@ describe "zpool_version fact" do
     end
   end
 
+  ['FreeBSD', 'GNU/kFreeBSD'].each do |kernel|
+    describe "on #{kernel}" do
+      before :each do
+        Facter.fact(:kernel).stubs(:value).returns("#{kernel}")
+      end
+
+      it "should return correct version on #{kernel} 8.2" do
+        Facter::Util::Resolution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('freebsd_8.2'))
+        Facter.fact(:zpool_version).value.should == "15"
+      end
+
+      it "should return correct version on #{kernel} 9.0" do
+        Facter::Util::Resolution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('freebsd_9.0'))
+        Facter.fact(:zpool_version).value.should == "28"
+      end
+
+      it "should return nil if zpool is not available" do
+        Facter::Util::Resolution.stubs(:exec).with("zpool upgrade -v").returns(nil)
+        Facter.fact(:zpool_version).value.should == nil
+      end
+    end
+  end 
   it "should not run on Linux" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:zpool_version).value.should == nil
   end
 end
+ 
