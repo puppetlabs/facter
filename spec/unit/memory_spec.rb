@@ -3,44 +3,58 @@
 require 'spec_helper'
 
 describe "Memory facts" do
-  before do
-    # We need these facts loaded, but they belong to a file with a
-    # different name, so load the file explicitly.
-    Facter.collection.loader.load(:memory)
-  end
-
   after do
     Facter.clear
   end
 
-  it "should return the current swap size" do
+  describe "on Darwin" do
+    before(:each) do
+      Facter.fact(:kernel).stubs(:value).returns("Darwin")
+      Facter::Util::Resolution.stubs(:exec).with('sysctl -n hw.memsize').returns('8589934592')
+      sample_vm_stat = <<VMSTAT
+Mach Virtual Memory Statistics: (page size of 4096 bytes)
+Pages free:                          28430.
+Pages active:                      1152576.
+Pages inactive:                     489054.
+Pages speculative:                    7076.
+Pages wired down:                   418217.
+"Translation faults":           1340091228.
+Pages copy-on-write:              16851357.
+Pages zero filled:               665168768.
+Pages reactivated:                 3082708.
+Pageins:                          13862917.
+Pageouts:                          1384383.
+Object cache: 14 hits of 2619925 lookups (0% hit rate)
+VMSTAT
+      Facter::Util::Resolution.stubs(:exec).with('vm_stat').returns(sample_vm_stat)
+      Facter::Util::Resolution.stubs(:exec).with('sysctl vm.swapusage').returns("vm.swapusage: total = 64.00M  used = 1.00M  free = 63.00M  (encrypted)")
 
-    Facter.fact(:kernel).stubs(:value).returns("Darwin")
-    Facter::Util::Resolution.stubs(:exec).with('sysctl vm.swapusage').returns("vm.swapusage: total = 64.00M  used = 0.00M  free = 64.00M  (encrypted)")
-    swapusage = "vm.swapusage: total = 64.00M  used = 0.00M  free = 64.00M  (encrypted)"
-
-    if swapusage =~ /total = (\S+).*/
-      Facter.fact(:swapfree).value.should == $1
+      Facter.collection.loader.load(:memory)
     end
-  end
 
-  it "should return the current swap free" do
-    Facter.fact(:kernel).stubs(:value).returns("Darwin")
-    Facter::Util::Resolution.stubs(:exec).with('sysctl vm.swapusage').returns("vm.swapusage: total = 64.00M  used = 0.00M  free = 64.00M  (encrypted)")
-    swapusage = "vm.swapusage: total = 64.00M  used = 0.00M  free = 64.00M  (encrypted)"
-
-    if swapusage =~ /free = (\S+).*/
-      Facter.fact(:swapfree).value.should == $1
+    it "should return the current swap size" do
+      Facter.fact(:swapsize).value.should == "64.00 MB"
     end
-  end
 
-  it "should return whether swap is encrypted" do
-    Facter.fact(:kernel).stubs(:value).returns("Darwin")
-    Facter::Util::Resolution.stubs(:exec).with('sysctl vm.swapusage').returns("vm.swapusage: total = 64.00M  used = 0.00M  free = 64.00M  (encrypted)")
-    swapusage = "vm.swapusage: total = 64.00M  used = 0.00M  free = 64.00M  (encrypted)"
+    it "should return the current swap free" do
+      Facter.fact(:swapfree).value.should == "63.00 MB"
+    end
 
-    swapusage =~ /\(encrypted\)/
-    Facter.fact(:swapencrypted).value.should == true
+    it "should return whether swap is encrypted" do
+      Facter.fact(:swapencrypted).value.should == true
+    end
+    
+    it "should return the memorysize" do
+      Facter.fact(:memorysize).value.should == "8.00 GB"
+    end
+    
+    it "should return the memoryfree" do
+      Facter.fact(:memoryfree).value.should == "138.70 MB"
+    end
+    
+    after(:each) do
+      Facter.clear
+    end
   end
 
   describe "on OpenBSD" do
