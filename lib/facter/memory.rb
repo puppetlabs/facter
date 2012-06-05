@@ -39,36 +39,6 @@ require 'facter/util/memory'
   end
 end
 
-Facter.add("SwapSize") do
-  confine :kernel => :Darwin
-  setcode do
-    swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
-    swaptotal = 0
-    if swap =~ /total = (\S+)/ then swaptotal = $1; end
-    swaptotal
-  end
-end
-
-Facter.add("SwapFree") do
-  confine :kernel => :Darwin
-  setcode do
-    swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
-    swapfree = 0
-    if swap =~ /free = (\S+)/ then swapfree = $1; end
-    swapfree
-  end
-end
-
-Facter.add("SwapEncrypted") do
-  confine :kernel => :Darwin
-  setcode do
-    swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
-    encrypted = false
-    if swap =~ /\(encrypted\)/ then encrypted = true; end
-    encrypted
-  end
-end
-
 if Facter.value(:kernel) == "AIX" and Facter.value(:id) == "root"
   swap = Facter::Util::Resolution.exec('swap -l')
   swapfree, swaptotal = 0, 0
@@ -176,7 +146,7 @@ if Facter.value(:kernel) == "Darwin"
   unless swap.empty?
     # Parse the line:
     # vm.swapusage: total = 128.00M  used = 0.37M  free = 127.63M  (encrypted)
-    if swap =~ /total\s=\s(\S+)\s+used\s=\s(\S+)\s+free\s=\s(\S+)\s/
+    if swap =~ /total\s=\s(\S+)M\s+used\s=\s(\S+)M\s+free\s=\s(\S+)M\s/
       swaptotal += $1.to_i
       swapfree  += $3.to_i
     end
@@ -200,9 +170,19 @@ if Facter.value(:kernel) == "Darwin"
 
   Facter.add("memorysize") do
     confine :kernel => :Darwin
-    memtotal = Facter::Util::Resolution.exec("sysctl hw.memsize | cut -d':' -f2")
+    memtotal = Facter::Util::Resolution.exec("sysctl -n hw.memsize")
     setcode do
       Facter::Memory.scale_number(memtotal.to_f,"")
+    end
+  end
+
+  Facter.add("SwapEncrypted") do
+    confine :kernel => :Darwin
+    setcode do
+      swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
+      encrypted = false
+      if swap =~ /\(encrypted\)/ then encrypted = true; end
+      encrypted
     end
   end
 end
