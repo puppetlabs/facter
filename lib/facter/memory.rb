@@ -79,12 +79,26 @@ if Facter.value(:kernel) == "OpenBSD"
     end
   end
 
+  Facter.add("swapsize_mb") do
+    confine :kernel => :openbsd
+    setcode do
+      "%.2f" % [swaptotal.to_f / 1024.0]
+    end
+  end  
+
   Facter.add("SwapFree") do
     confine :kernel => :openbsd
     setcode do
       Facter::Memory.scale_number(swapfree.to_f,"kB")
     end
   end
+
+  Facter.add("swapfree_mb") do
+    confine :kernel => :openbsd
+    setcode do
+      "%.2f" % [swapfree.to_f / 1024.0]
+    end
+  end  
 
   Facter::Memory.vmstat_find_free_memory()
 
@@ -93,6 +107,15 @@ if Facter.value(:kernel) == "OpenBSD"
     memtotal = Facter::Util::Resolution.exec("sysctl hw.physmem | cut -d'=' -f2")
     setcode do
       Facter::Memory.scale_number(memtotal.to_f,"")
+    end
+  end
+
+  Facter.add("memorysize_mb") do
+    confine :kernel => :openbsd
+    memtotal = Facter::Util::Resolution.exec("sysctl hw.physmem | cut -d'=' -f2")
+    size = 
+    setcode do
+      "%.2f" % [(memtotal.to_f / 1024.0) / 1024.0]
     end
   end
 end
@@ -114,14 +137,28 @@ if Facter.value(:kernel) == "FreeBSD"
     Facter.add("SwapSize") do
         confine :kernel => :freebsd
         setcode do
-            Facter::Memory.scale_number(swaptotal.to_f,"kB")
+          Facter::Memory.scale_number(swaptotal.to_f,"kB")
+        end
+    end
+
+    Facter.add("swapsize_mb") do
+        confine :kernel => :freebsd
+        setcode do
+          "%.2f" % [swaptotal.to_f / 1024.0]
         end
     end
 
     Facter.add("SwapFree") do
         confine :kernel => :freebsd
         setcode do
-            Facter::Memory.scale_number(swapfree.to_f,"kB")
+          Facter::Memory.scale_number(swapfree.to_f,"kB")
+        end
+    end
+
+    Facter.add("swapfree_mb") do
+        confine :kernel => :freebsd
+        setcode do
+          "%.2f" % [swapfree.to_f / 1024.0]
         end
     end
 
@@ -135,7 +172,15 @@ if Facter.value(:kernel) == "FreeBSD"
         confine :kernel => :freebsd
         memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
         setcode do
-            Facter::Memory.scale_number(memtotal.to_f,"")
+          Facter::Memory.scale_number(memtotal.to_f,"")
+        end
+    end
+
+    Facter.add("memorysize_mb") do
+        confine :kernel => :freebsd
+        memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
+        setcode do
+          "%.2f" % [(memtotal.to_f / 1024.0) / 1024.0]
         end
     end
 end
@@ -159,10 +204,24 @@ if Facter.value(:kernel) == "Darwin"
     end
   end
 
+  Facter.add("swapsize_mb") do
+    confine :kernel => :Darwin
+    setcode do
+      "%.2f" % [swaptotal.to_f]
+    end
+  end
+
   Facter.add("SwapFree") do
     confine :kernel => :Darwin
     setcode do
       Facter::Memory.scale_number(swapfree.to_f,"MB")
+    end
+  end
+
+  Facter.add("swapfree_mb") do
+    confine :kernel => :Darwin
+    setcode do
+      "%.2f" % [swapfree.to_f]
     end
   end
 
@@ -173,6 +232,14 @@ if Facter.value(:kernel) == "Darwin"
     memtotal = Facter::Util::Resolution.exec("sysctl -n hw.memsize")
     setcode do
       Facter::Memory.scale_number(memtotal.to_f,"")
+    end
+  end
+
+  Facter.add("memorysize_mb") do
+    confine :kernel => :Darwin
+    memtotal = Facter::Util::Resolution.exec("sysctl -n hw.memsize")
+    setcode do
+      "%.2f" % [(memtotal.to_f / 1024.0) / 1024.0]
     end
   end
 
@@ -206,10 +273,24 @@ if Facter.value(:kernel) == "SunOS"
     end
   end
 
+  Facter.add("swapsize_mb") do
+    confine :kernel => :sunos
+    setcode do
+      "%.2f" % [swaptotal.to_f / 1024.0]
+    end
+  end
+
   Facter.add("SwapFree") do
     confine :kernel => :sunos
     setcode do
       Facter::Memory.scale_number(swapfree.to_f,"kB")
+    end
+  end
+
+  Facter.add("swapfree_mb") do
+    confine :kernel => :sunos
+    setcode do
+      "%.2f" % [swapfree.to_f / 1024.0]
     end
   end
 
@@ -226,6 +307,13 @@ if Facter.value(:kernel) == "SunOS"
     confine :kernel => :sunos
     setcode do
       Facter::Memory.scale_number(phymem.to_f,"MB")
+    end
+  end
+
+  Facter.add("memorysize_mb") do
+    confine :kernel => :sunos
+    setcode do
+      "%.2f" % [phymem.to_f]
     end
   end
 
@@ -247,6 +335,18 @@ if Facter.value(:kernel) == "windows"
     end
   end
 
+  Facter.add("memoryfree_mb") do
+    confine :kernel => :windows
+    setcode do
+      mem = 0
+      Facter::Util::WMI.execquery("select FreePhysicalMemory from Win32_OperatingSystem").each do |os|
+        mem = os.FreePhysicalMemory
+        break
+      end
+      "%.2f" % [mem.to_f / 1024.0]
+    end
+  end
+
   Facter.add("memorysize") do
     confine :kernel => :windows
     setcode do
@@ -258,6 +358,18 @@ if Facter.value(:kernel) == "windows"
       Facter::Memory.scale_number(mem.to_f, "")
     end
   end
+
+  Facter.add("memorysize_mb") do
+    confine :kernel => :windows
+    setcode do
+      mem = 0
+      Facter::Util::WMI.execquery("select TotalPhysicalMemory from Win32_ComputerSystem").each do |comp|
+        mem = comp.TotalPhysicalMemory
+        break
+      end
+      "%.2f" % [(mem.to_f / 1024.0) / 1024.0]
+    end
+  end
 end
 
 Facter.add("SwapSize") do
@@ -266,6 +378,15 @@ Facter.add("SwapSize") do
     page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
     swaptotal = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
     Facter::Memory.scale_number(swaptotal.to_f,"")
+  end
+end
+
+Facter.add("swapsize_mb") do
+  confine :kernel => :dragonfly
+  setcode do
+    page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
+    swaptotal = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
+    "%.2f" % [(swaptotal.to_f / 1024.0) / 1024.0]
   end
 end
 
@@ -281,11 +402,34 @@ Facter.add("SwapFree") do
   end
 end
 
+Facter.add("swapfree_mb") do
+  confine :kernel => :dragonfly
+  setcode do
+    page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
+    swaptotal = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
+    swap_anon_use = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_anon_use").to_f * page_size
+    swap_cache_use = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_cache_use").to_f * page_size
+    swapfree = swaptotal - swap_anon_use - swap_cache_use
+    "%.2f" % [(swapfree.to_f / 1024.0) / 1024.0]
+  end
+end
+
 Facter.add("memorysize") do
   confine :kernel => :dragonfly
   setcode do
-    Facter::Memory.vmstat_find_free_memory()
     memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
     Facter::Memory.scale_number(memtotal.to_f,"")
   end
+end
+
+Facter.add("memorysize_mb") do
+  confine :kernel => :dragonfly
+  setcode do
+    memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
+    "%.2f" % [(memtotal.to_f / 1024.0) / 1024.0]
+  end
+end
+
+if Facter.value(:kernel) == "dragonfly"
+  Facter::Memory.vmstat_find_free_memory()
 end

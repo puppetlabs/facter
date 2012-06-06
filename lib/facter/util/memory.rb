@@ -47,6 +47,12 @@ module Facter::Memory
           Facter::Memory.scale_number(memfree.to_f, "kB")
         end
       end
+      Facter.add("memoryfree_mb") do
+        memfree = $1
+        setcode do
+          "%.2f" % [memfree.to_f / 1024.0]
+        end
+      end
     end
   end
 
@@ -77,6 +83,12 @@ module Facter::Memory
     Facter.add("MemoryFree") do
       setcode do
         Facter::Memory.scale_number(freemem.to_f, "")
+      end
+    end
+
+    Facter.add("memoryfree_mb") do
+      setcode do
+        "%.2f" % [(freemem.to_f / 1024.0) / 1024.0]
       end
     end
   end
