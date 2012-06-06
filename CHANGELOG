@@ -1,3 +1,26 @@
+1.6.10rc1
+===
+d6a3e91 Make package task depend on tar in Rakfile
+f42896d (#14764) Stub architecture fact when Windows facts run on Linux
+f44ca52 (maint) Fix hardware model fact for ruby 1.9
+964d1f0 (#12864) Close registry key
+ab025bb Revert "Revert "(#12864) Windows: get primary DNS from registry""
+478386d (#10261) Detect x64 architecture on Windows
+6cc881d Use git describe in Rakefile to determine pkg ver
+2043244 (#13678) Remove deprecation msg triggerd by the ipaddress6 fact
+d118d81 (#13678) Add filename extension on absolute paths on windows
+b050eb1 (#14582) Fix noise in LSB facts
+85654b0 (#13678) Allow passing shell built-ins to exec method on windows
+8f4c016 (#13678) Single quote paths on unix with spaces
+2d164e8 (#13678) Join PATHs correctly on windows
+e7e7e8f (#13678) Extend spec tests for expand_command
+0fea7b0 maint: Add shared context for specs to imitate windows or posix
+60d0cd2 (#13678) Fix spec failures on windows
+121a2ab (#13678) Fix quoting in expand_command
+55b1125 (#13678) Add more unit tests for new methods
+9086c0a (#13678) Add RDoc documentation for new methods
+165ace4 (#13678) Convert command to absolute paths before executing
+
 1.6.9
 ===
 b398bd8 (#14334) Fix dmidecode based facts on DragonFly BSD
