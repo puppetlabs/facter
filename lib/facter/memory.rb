@@ -8,6 +8,8 @@
 #   On AIX, parses "swap -l" for swap values only.
 #   On OpenBSD, it parses "swapctl -l" for swap values, vmstat via a module for
 #   free memory, and "sysctl hw.physmem" for maximum memory.
+#   On FreeBSD, it parses "swapinfo -k" for swap values, and parses sysctl for
+#   maximum memory.
 #   On Solaris, use "swap -l" for swap values, and parsing prtconf for maximum
 #   memory, and again, the vmstat module for free memory.
 #
@@ -34,36 +36,6 @@ require 'facter/util/memory'
     setcode do
       Facter::Memory.meminfo_number(name)
     end
-  end
-end
-
-Facter.add("SwapSize") do
-  confine :kernel => :Darwin
-  setcode do
-    swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
-    swaptotal = 0
-    if swap =~ /total = (\S+)/ then swaptotal = $1; end
-    swaptotal
-  end
-end
-
-Facter.add("SwapFree") do
-  confine :kernel => :Darwin
-  setcode do
-    swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
-    swapfree = 0
-    if swap =~ /free = (\S+)/ then swapfree = $1; end
-    swapfree
-  end
-end
-
-Facter.add("SwapEncrypted") do
-  confine :kernel => :Darwin
-  setcode do
-    swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
-    encrypted = false
-    if swap =~ /\(encrypted\)/ then encrypted = true; end
-    encrypted
   end
 end
 
@@ -125,13 +97,56 @@ if Facter.value(:kernel) == "OpenBSD"
   end
 end
 
+if Facter.value(:kernel) == "FreeBSD"
+    swap = Facter::Util::Resolution.exec('swapinfo -k')
+    swapfree, swaptotal = 0, 0
+    unless swap.nil?
+      swap.each_line do |device|
+        # Parse the line:
+        # /dev/foo SIZE   USAGE   AVAILABLE    PERCENTAGE%
+        if device =~ /\S+\s+(\d+)\s+\d+\s+(\d+)\s+\d+%$/
+            swaptotal += $1.to_i
+            swapfree  += $2.to_i
+        end
+      end 
+    end
+
+    Facter.add("SwapSize") do
+        confine :kernel => :freebsd
+        setcode do
+            Facter::Memory.scale_number(swaptotal.to_f,"kB")
+        end
+    end
+
+    Facter.add("SwapFree") do
+        confine :kernel => :freebsd
+        setcode do
+            Facter::Memory.scale_number(swapfree.to_f,"kB")
+        end
+    end
+
+    # FreeBSD had to be different and be default prints human readable
+    # format instead of machine readable. So using 'vmstat -H' instead
+    # Facter::Memory.vmstat_find_free_memory()
+    
+    Facter::Memory.vmstat_find_free_memory(["-H"])
+
+    Facter.add("MemorySize") do
+        confine :kernel => :freebsd
+        memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
+        setcode do
+            Facter::Memory.scale_number(memtotal.to_f,"")
+        end
+    end
+end
+
 if Facter.value(:kernel) == "Darwin"
   swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
   swapfree, swaptotal = 0, 0
   unless swap.empty?
     # Parse the line:
     # vm.swapusage: total = 128.00M  used = 0.37M  free = 127.63M  (encrypted)
-    if swap =~ /total\s=\s(\S+)\s+used\s=\s(\S+)\s+free\s=\s(\S+)\s/
+    if swap =~ /total\s=\s(\S+)M\s+used\s=\s(\S+)M\s+free\s=\s(\S+)M\s/
       swaptotal += $1.to_i
       swapfree  += $3.to_i
     end
@@ -155,9 +170,19 @@ if Facter.value(:kernel) == "Darwin"
 
   Facter.add("memorysize") do
     confine :kernel => :Darwin
-    memtotal = Facter::Util::Resolution.exec("sysctl hw.memsize | cut -d':' -f2")
+    memtotal = Facter::Util::Resolution.exec("sysctl -n hw.memsize")
     setcode do
       Facter::Memory.scale_number(memtotal.to_f,"")
+    end
+  end
+
+  Facter.add("SwapEncrypted") do
+    confine :kernel => :Darwin
+    setcode do
+      swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
+      encrypted = false
+      if swap =~ /\(encrypted\)/ then encrypted = true; end
+      encrypted
     end
   end
 end
