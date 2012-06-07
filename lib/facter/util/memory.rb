@@ -41,18 +41,8 @@ module Facter::Memory
     cmd += (' ' + args.join(' ')) unless args.empty?
     row = Facter::Util::Resolution.exec(cmd).split("\n")[-1]
     if row =~ /^\s*\d+\s*\d+\s*\d+\s*\d+\s*(\d+)/
-      Facter.add("MemoryFree") do
-        memfree = $1
-        setcode do
-          Facter::Memory.scale_number(memfree.to_f, "kB")
-        end
-      end
-      Facter.add("memoryfree_mb") do
-        memfree = $1
-        setcode do
-          "%.2f" % [memfree.to_f / 1024.0]
-        end
-      end
+      memfree = $1
+      return "%.2f" % [memfree.to_f / 1024.0]
     end
   end
 
@@ -79,17 +69,6 @@ module Facter::Memory
       end
     end
 
-    freemem = ( memfree + memspecfree ) * pagesize
-    Facter.add("MemoryFree") do
-      setcode do
-        Facter::Memory.scale_number(freemem.to_f, "")
-      end
-    end
-
-    Facter.add("memoryfree_mb") do
-      setcode do
-        "%.2f" % [(freemem.to_f / 1024.0) / 1024.0]
-      end
-    end
+    return ( memfree + memspecfree ) * pagesize
   end
 end
