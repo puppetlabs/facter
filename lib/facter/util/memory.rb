@@ -33,7 +33,7 @@ module Facter::Memory
       s = suffixes.shift
     end
 
-    return "%.2f %s" % [size, s]
+    "%.2f %s" % [size, s]
   end
 
   def self.vmstat_find_free_memory(args = [])
@@ -42,7 +42,7 @@ module Facter::Memory
     row = Facter::Util::Resolution.exec(cmd).split("\n")[-1]
     if row =~ /^\s*\d+\s*\d+\s*\d+\s*\d+\s*(\d+)/
       memfree = $1
-      return "%.2f" % [memfree.to_f / 1024.0]
+      "%.2f" % [memfree.to_f / 1024.0]
     end
   end
 
@@ -70,5 +70,86 @@ module Facter::Memory
     end
 
     return ( memfree + memspecfree ) * pagesize
+  end
+
+  def self.swap_size(kernel = Facter.value(:kernel))
+    output = swap_info(kernel)
+    parse_swap output, kernel, :size 
+  end
+
+  def self.swap_free(kernel = Facter.value(:kernel))
+    output = swap_info(kernel)
+    parse_swap output, kernel, :free
+  end
+
+  def self.swap_info(kernel = Facter.value(:kernel))
+    case kernel
+    when /OpenBSD/i
+      Facter::Util::Resolution.exec('swapctl -s')
+    when /FreeBSD/i
+      Facter::Util::Resolution.exec('swapinfo -k')
+    when /Darwin/i
+      Facter::Util::Resolution.exec('sysctl vm.swapusage')
+    when /SunOS/i
+      Facter::Util::Resolution.exec('/usr/sbin/swap -l')
+    end
+  end
+
+  def self.parse_swap (output, kernel = Facter.value(:kernel), size_or_free = :size)
+    value_in_mb = 0.0
+    value = 0
+    is_size = size_or_free == :size
+    unless output.nil?
+      output.each_line do |line|
+        value += parse_line(line, kernel, is_size)
+      end
+    end      
+    value_in_mb = scale_swap_value(value, kernel)
+  end
+
+  # There is a lot of duplication here because of concern over being able to add
+  # new platforms in a reasonable manner. For all of these platforms the first
+  # regex corresponds to the swap size value and the second corresponds to the swap
+  # free value, but this may not always be the case. In Ruby 1.9.3 it is possible
+  # to give these names, but sadly 1.8.7 does not support this.
+ 
+  def self.parse_line(line, kernel, is_size)
+    case kernel
+    when /OpenBSD/i
+      if line =~ /^total: (\d+)k bytes allocated = \d+k used, (\d+)k available$/
+        (is_size) ? $1.to_i : $2.to_i
+      else
+        0
+      end
+    when /FreeBSD/i
+      if line =~ /\S+\s+(\d+)\s+\d+\s+(\d+)\s+\d+%$/
+        (is_size) ? $1.to_i : $2.to_i
+      else
+        0
+      end
+    when /Darwin/i
+      if line =~ /total\s=\s(\S+)M\s+used\s=\s\S+M\s+free\s=\s(\S+)M\s/
+        (is_size) ? $1.to_i : $2.to_i
+      else
+        0
+      end
+    when /SunOS/i
+      if line =~ /^\/\S+\s.*\s+(\d+)\s+(\d+)$/
+        (is_size) ? $1.to_i : $2.to_i
+      else
+        0
+      end
+    end
+  end
+
+  def self.scale_swap_value(value, kernel)
+    case kernel
+    when /OpenBSD/i, /FreeBSD/i
+      value.to_f / 1024.0
+    when /SunOS/i
+      value.to_f / 2 / 1024.0
+    else
+      value.to_f
+    end
   end
 end

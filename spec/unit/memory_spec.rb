@@ -224,6 +224,7 @@ SWAP
         Facter.fact(:swapsize_mb).value.should == "0.00"
       end
     end
+  end
 
     describe "on DragonFly BSD" do
       before :each do
@@ -397,7 +398,6 @@ SWAP
         Facter::Util::WMI.stubs(:execquery).returns([computer])
 
         Facter.fact(:memorysize_mb).value.should == '3999.55'
-      end
     end
   end
 end

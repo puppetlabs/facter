@@ -52,6 +52,21 @@ end
   end
 end
 
+Facter.add("swapsize_mb") do
+  setcode do
+    swaptotal = Facter::Memory.swap_size
+    "%.2f" % [swaptotal]
+  end
+end
+
+Facter.add("swapfree_mb") do
+  setcode do
+    swapfree = Facter::Memory.swap_free
+    "%.2f" % [swapfree]
+  end
+end
+
+
 if Facter.value(:kernel) == "AIX" and Facter.value(:id) == "root"
   swap = Facter::Util::Resolution.exec('swap -l')
   swapfree, swaptotal = 0, 0
@@ -78,13 +93,6 @@ if Facter.value(:kernel) == "AIX" and Facter.value(:id) == "root"
 end
 
 if Facter.value(:kernel) == "OpenBSD"
-  swap = Facter::Util::Resolution.exec('swapctl -s')
-  swapfree, swaptotal = 0, 0
-  if swap =~ /^total: (\d+)k bytes allocated = \d+k used, (\d+)k available$/
-    swaptotal = $1.to_i
-    swapfree  = $2.to_i
-  end
-
   Facter.add("memorysize_mb") do
     confine :kernel => :openbsd
     memtotal = Facter::Util::Resolution.exec("sysctl hw.physmem | cut -d'=' -f2")
@@ -99,50 +107,9 @@ if Facter.value(:kernel) == "OpenBSD"
       Facter::Memory.vmstat_find_free_memory()
     end
   end
-
-  Facter.add("swapsize_mb") do
-    confine :kernel => :openbsd
-    setcode do
-      "%.2f" % [swaptotal.to_f / 1024.0]
-    end
-  end
-
-  Facter.add("swapfree_mb") do
-    confine :kernel => :openbsd
-    setcode do
-      "%.2f" % [swapfree.to_f / 1024.0]
-    end
-  end  
 end
 
 if Facter.value(:kernel) == "FreeBSD"
-    swap = Facter::Util::Resolution.exec('swapinfo -k')
-    swapfree, swaptotal = 0, 0
-    unless swap.nil?
-      swap.each_line do |device|
-        # Parse the line:
-        # /dev/foo SIZE   USAGE   AVAILABLE    PERCENTAGE%
-        if device =~ /\S+\s+(\d+)\s+\d+\s+(\d+)\s+\d+%$/
-            swaptotal += $1.to_i
-            swapfree  += $2.to_i
-        end
-      end 
-    end
-
-  Facter.add("swapsize_mb") do
-    confine :kernel => :freebsd
-    setcode do
-      "%.2f" % [swaptotal.to_f / 1024.0]
-    end
-  end
-
-  Facter.add("swapfree_mb") do
-    confine :kernel => :freebsd
-    setcode do
-      "%.2f" % [swapfree.to_f / 1024.0]
-    end
-  end
-
   Facter.add("memorysize_mb") do
     confine :kernel => :freebsd
     memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
@@ -164,31 +131,6 @@ if Facter.value(:kernel) == "FreeBSD"
 end
 
 if Facter.value(:kernel) == "Darwin"
-  swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
-  swapfree, swaptotal = 0, 0
-  unless swap.empty?
-    # Parse the line:
-    # vm.swapusage: total = 128.00M  used = 0.37M  free = 127.63M  (encrypted)
-    if swap =~ /total\s=\s(\S+)M\s+used\s=\s(\S+)M\s+free\s=\s(\S+)M\s/
-      swaptotal += $1.to_i
-      swapfree  += $3.to_i
-    end
-  end
-
-  Facter.add("swapsize_mb") do
-    confine :kernel => :Darwin
-    setcode do
-      "%.2f" % [swaptotal.to_f]
-    end
-  end
-
-  Facter.add("swapfree_mb") do
-    confine :kernel => :Darwin
-    setcode do
-      "%.2f" % [swapfree.to_f]
-    end
-  end
-
 
   Facter.add("memorysize_mb") do
     confine :kernel => :Darwin
@@ -218,31 +160,6 @@ if Facter.value(:kernel) == "Darwin"
 end
 
 if Facter.value(:kernel) == "SunOS"
-  swap = Facter::Util::Resolution.exec('/usr/sbin/swap -l')
-  swapfree, swaptotal = 0, 0
-  unless swap.nil?
-    swap.each_line do |dev|
-      if dev =~ /^\/\S+\s.*\s+(\d+)\s+(\d+)$/
-        swaptotal += $1.to_i / 2
-        swapfree  += $2.to_i / 2
-      end
-    end
-  end
-
-  Facter.add("swapsize_mb") do
-    confine :kernel => :sunos
-    setcode do
-      "%.2f" % [swaptotal.to_f / 1024.0]
-    end
-  end
-
-  Facter.add("swapfree_mb") do
-    confine :kernel => :sunos
-    setcode do
-      "%.2f" % [swapfree.to_f / 1024.0]
-    end
-  end
-
   # Total memory size available from prtconf
   pconf = Facter::Util::Resolution.exec('/usr/sbin/prtconf 2>/dev/null')
   phymem = ""
@@ -298,6 +215,7 @@ end
 Facter.add("swapsize_mb") do
   confine :kernel => :dragonfly
   setcode do
+#    swaptotal = Facter::Memory.swap_total_dragonfly()
     page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
     swaptotal = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
     "%.2f" % [(swaptotal.to_f / 1024.0) / 1024.0]
