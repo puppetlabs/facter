@@ -74,16 +74,18 @@ module Facter::Memory
 
   def self.swap_size(kernel = Facter.value(:kernel))
     output = swap_info(kernel)
-    parse_swap output, kernel, :size 
+    parse_swap output, kernel, :size if output
   end
 
   def self.swap_free(kernel = Facter.value(:kernel))
     output = swap_info(kernel)
-    parse_swap output, kernel, :free
+    parse_swap output, kernel, :free if output
   end
 
   def self.swap_info(kernel = Facter.value(:kernel))
     case kernel
+    when /AIX/i
+      (Facter.value(:id) == "root") ? Facter::Util::Resolution.exec('swap -l') : nil
     when /OpenBSD/i
       Facter::Util::Resolution.exec('swapctl -s')
     when /FreeBSD/i
@@ -115,6 +117,12 @@ module Facter::Memory
  
   def self.parse_line(line, kernel, is_size)
     case kernel
+    when /AIX/i
+      if line =~ /^\/\S+\s.*\s+(\S+)MB\s+(\S+)MB/
+        (is_size) ? $1.to_i : $2.to_i
+      else
+        0
+      end
     when /OpenBSD/i
       if line =~ /^total: (\d+)k bytes allocated = \d+k used, (\d+)k available$/
         (is_size) ? $1.to_i : $2.to_i

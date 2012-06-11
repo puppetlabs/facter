@@ -18,6 +18,16 @@ describe "Memory facts" do
        "swapfree"
     ].each do |fact|
 
+      describe "when #{fact}_mb does not exist" do
+        before(:each) do
+          Facter.fact(fact + "_mb").stubs(:value).returns(nil)
+        end
+        
+        it "#{fact} should not exist either" do
+          Facter.fact(fact).value.should be_nil
+        end
+      end
+
       {   "200.00"      => "200.00 MB",
           "1536.00"     => "1.50 GB",
           "1572864.00"  => "1.50 TB",
@@ -27,6 +37,10 @@ describe "Memory facts" do
           Facter.fact(fact).value.should == scval
         end
       end
+    end
+
+    after(:each) do
+      Facter.clear
     end
   end
 
@@ -79,6 +93,55 @@ VMSTAT
       Facter.clear
     end
   end
+
+  describe "on AIX" do
+    before (:each) do
+      Facter.clear
+      Facter.fact(:kernel).stubs(:value).returns("AIX")
+
+      swapusage = <<SWAP
+device maj,min total free
+/dev/hd6 10, 2 512MB 508MB
+SWAP
+
+      Facter::Util::Resolution.stubs(:exec).with('swap -l').returns(swapusage)
+
+      Facter.collection.loader.load(:memory)
+    end
+
+    after(:each) do
+      Facter.clear
+    end
+    
+    describe "when not root" do
+      before(:each) do
+        Facter.fact(:id).stubs(:value).returns("notroot")
+      end
+
+      it "should return nil for swap size" do
+        Facter.fact(:swapsize_mb).value.should be_nil
+      end
+
+      it "should return nil for swap free" do
+        Facter.fact(:swapfree_mb).value.should be_nil
+      end
+    end
+
+    describe "when root" do
+      before(:each) do
+        Facter.fact(:id).stubs(:value).returns("root")
+      end
+
+      it "should return the current swap size in MB" do
+        Facter.fact(:swapsize_mb).value.should == "512.00"
+      end
+      
+      it "should return the current swap free in MB" do
+        Facter.fact(:swapfree_mb).value.should == "508.00"
+      end
+    end
+  end
+ 
 
   describe "on OpenBSD" do
     before :each do

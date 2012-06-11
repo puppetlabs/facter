@@ -47,7 +47,7 @@ end
   Facter.add(fact) do
     setcode do
       name = Facter.fact(fact + "_mb").value
-      Facter::Memory.scale_number(name.to_f, "MB")
+      Facter::Memory.scale_number(name.to_f, "MB") if name
     end
   end
 end
@@ -55,40 +55,14 @@ end
 Facter.add("swapsize_mb") do
   setcode do
     swaptotal = Facter::Memory.swap_size
-    "%.2f" % [swaptotal]
+    "%.2f" % [swaptotal] if swaptotal
   end
 end
 
 Facter.add("swapfree_mb") do
   setcode do
     swapfree = Facter::Memory.swap_free
-    "%.2f" % [swapfree]
-  end
-end
-
-
-if Facter.value(:kernel) == "AIX" and Facter.value(:id) == "root"
-  swap = Facter::Util::Resolution.exec('swap -l')
-  swapfree, swaptotal = 0, 0
-  swap.each_line do |dev|
-    if dev =~ /^\/\S+\s.*\s+(\S+)MB\s+(\S+)MB/
-      swaptotal += $1.to_i
-      swapfree  += $2.to_i
-    end
-  end
-
-  Facter.add("swapsize_mb") do
-    confine :kernel => :aix
-    setcode do
-      "%.2f" % [swaptotal.to_f]
-    end
-  end
-
-  Facter.add("swapfree_mb") do
-    confine :kernel => :aix
-    setcode do
-      "%.2f" % [swapfree.to_f]
-    end
+    "%.2f" % [swapfree] if swapfree
   end
 end
 
