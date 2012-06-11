@@ -37,6 +37,8 @@ describe Facter::Util::DirectoryLoader do
     end
 
     it "should ignore files that begin with '.'" do
+      # Since we know we won't load any facts, suppress the warning message 
+      Facter.stubs(:warnonce)
       file = File.join(subject.directory, ".data.yaml")
       data = {"f1" => "one", "f2" => "two"}
       File.open(file, "w") { |f| f.print YAML.dump(data) }

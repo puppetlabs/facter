@@ -77,7 +77,9 @@ module Facter
       options = {}
       OptionParser.new do |opts|
         opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
-        opts.on("-j", "--json")   { |v| options[:json]   = v }
+        if Facter.json? 
+          opts.on("-j", "--json")   { |v| options[:json]   = v }
+        end 
         opts.on(      "--trace")  { |v| options[:trace]  = v }
         opts.on(      "--ext DIR") { |v| options[:ext] = v }
         opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
