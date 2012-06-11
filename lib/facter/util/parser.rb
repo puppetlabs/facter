@@ -2,6 +2,8 @@
 # facts such as scripts, text, json and yaml files.
 #
 # Parsers must subclass this class and provide their own #results method.
+require 'facter/util/json'
+
 class Facter::Util::Parser
   attr_reader :filename
 
@@ -97,19 +99,21 @@ class Facter::Util::Parser
     end
   end
 
-  class JsonParser < self
-    matches_extension "json"
+  if Facter.json?
+    class JsonParser < self
+      matches_extension "json"
 
-    def results
-      attempts = 0
-      begin
-        require 'json'
-      rescue LoadError => e
-        raise e if attempts >= 1
-        attempts += 1
+      def results
+        attempts = 0
+        begin
+          require 'json'
+        rescue LoadError => e
+          raise e if attempts >= 1
+          attempts += 1
+        end
+
+        JSON.load(File.read(filename))
       end
-
-      JSON.load(File.read(filename))
     end
   end
 

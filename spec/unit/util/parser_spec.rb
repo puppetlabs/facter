@@ -4,7 +4,6 @@ require 'spec_helper'
 
 require 'facter/util/parser'
 require 'tempfile'
-require 'json'
 
 describe Facter::Util::Parser do
   include PuppetlabsSpec::Files
@@ -79,21 +78,23 @@ describe Facter::Util::Parser do
       lambda { Facter::Util::Parser.new("/some/path/that/doesn't/exist.yaml").results }.should_not raise_error
     end
   end
+  
+  if Facter.json? 
+    describe "json" do
+      subject { Facter::Util::Parser::JsonParser }
+      it "should match the 'json' extension" do
+        subject.extension.should == "json"
+      end
 
-  describe "json" do
-    subject { Facter::Util::Parser::JsonParser }
-    it "should match the 'json' extension" do
-      subject.extension.should == "json"
-    end
+      it "should return a hash of whatever is stored on disk" do
+        file = tmpfilename('parser') + ".json"
 
-    it "should return a hash of whatever is stored on disk" do
-      file = tmpfilename('parser') + ".json"
+        data = {"one" => "two", "three" => "four"}
 
-      data = {"one" => "two", "three" => "four"}
+        File.open(file, "w") { |f| f.print data.to_json }
 
-      File.open(file, "w") { |f| f.print data.to_json }
-
-      Facter::Util::Parser.new(file).results.should == data
+        Facter::Util::Parser.new(file).results.should == data
+      end
     end
   end
 
