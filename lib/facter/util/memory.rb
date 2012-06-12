@@ -15,9 +15,8 @@ module Facter::Memory
         size += $1.to_f
       end
     end
-    memsize = scale_number(size, scale)
 
-    memsize
+    memsize = scale_number(size, scale)
   end
 
   def self.scale_number(size, multiplier)
@@ -42,7 +41,6 @@ module Facter::Memory
     row = Facter::Util::Resolution.exec(cmd).split("\n")[-1]
     if row =~ /^\s*\d+\s*\d+\s*\d+\s*\d+\s*(\d+)/
       memfree = $1
-      "%.2f" % [memfree.to_f / 1024.0]
     end
   end
 
@@ -69,7 +67,61 @@ module Facter::Memory
       end
     end
 
-    return ( memfree + memspecfree ) * pagesize
+    freemem = ( memfree + memspecfree ) * pagesize
+  end
+
+  def self.mem_free(kernel = Facter.value(:kernel))
+    output = mem_free_info(kernel)
+    scale_mem_free_value output, kernel
+  end
+
+  def self.mem_free_info(kernel = Facter.value(:kernel))
+    case kernel
+    when /OpenBSD/i, /SunOS/i, /Dragonfly/i
+      vmstat_find_free_memory()
+    when /FreeBSD/i
+      vmstat_find_free_memory(["-H"])
+    when /Darwin/i
+      vmstat_darwin_find_free_memory()
+    end
+  end
+
+  def self.scale_mem_free_value (value, kernel)
+    case kernel
+    when /OpenBSD/i, /FreeBSD/i, /SunOS/i, /Dragonfly/i
+      value.to_f / 1024.0
+    when /Darwin/i
+      value.to_f / 1024.0 / 1024.0
+    else
+      value.to_f
+    end
+ end
+
+  def self.mem_size(kernel = Facter.value(:kernel))
+    output = mem_size_info(kernel)
+    scale_mem_size_value output, kernel
+  end
+
+  def self.mem_size_info(kernel = Facter.value(:kernel))
+    case kernel
+    when /OpenBSD/i
+      Facter::Util::Resolution.exec("sysctl hw.physmem | cut -d'=' -f2")
+    when /FreeBSD/i
+      Facter::Util::Resolution.exec("sysctl -n hw.physmem")
+    when /Darwin/i
+      Facter::Util::Resolution.exec("sysctl -n hw.memsize")
+    when /Dragonfly/i
+      Facter::Util::Resolution.exec("sysctl -n hw.physmem")
+    end
+  end
+
+  def self.scale_mem_size_value(value, kernel)
+    case kernel
+    when /OpenBSD/i, /FreeBSD/i, /Darwin/i, /Dragonfly/i
+      value.to_f / 1024.0 / 1024.0
+    else
+      value.to_f
+    end
   end
 
   def self.swap_size(kernel = Facter.value(:kernel))

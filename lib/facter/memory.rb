@@ -66,62 +66,21 @@ Facter.add("swapfree_mb") do
   end
 end
 
-if Facter.value(:kernel) == "OpenBSD"
-  Facter.add("memorysize_mb") do
-    confine :kernel => :openbsd
-    memtotal = Facter::Util::Resolution.exec("sysctl hw.physmem | cut -d'=' -f2")
-    setcode do
-      "%.2f" % [(memtotal.to_f / 1024.0) / 1024.0]
-    end
-  end
-
-  Facter.add("memoryfree_mb") do
-    confine :kernel => :openbsd
-    setcode do
-      Facter::Memory.vmstat_find_free_memory()
-    end
+Facter.add("memorysize_mb") do
+  setcode do
+    memtotal = Facter::Memory.mem_size
+    "%.2f" % [memtotal] if memtotal
   end
 end
 
-if Facter.value(:kernel) == "FreeBSD"
-  Facter.add("memorysize_mb") do
-    confine :kernel => :freebsd
-    memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
-    setcode do
-      "%.2f" % [(memtotal.to_f / 1024.0) / 1024.0]
-    end
-  end
-
-  # FreeBSD had to be different and be default prints human readable
-  # format instead of machine readable. So using 'vmstat -H' instead
-  # Facter::Memory.vmstat_find_free_memory()
-
-  Facter.add("memoryfree_mb") do
-    confine :kernel => :freebsd
-    setcode do
-      Facter::Memory.vmstat_find_free_memory(["-H"])
-    end
+Facter.add("memoryfree_mb") do
+  setcode do
+    memfree = Facter::Memory.mem_free
+    "%.2f" % [memfree] if memfree
   end
 end
 
 if Facter.value(:kernel) == "Darwin"
-
-  Facter.add("memorysize_mb") do
-    confine :kernel => :Darwin
-    memtotal = Facter::Util::Resolution.exec("sysctl -n hw.memsize")
-    setcode do
-      "%.2f" % [(memtotal.to_f / 1024.0) / 1024.0]
-    end
-  end
-
-  Facter.add("memoryfree_mb") do
-    confine :kernel => :Darwin
-    freemem = Facter::Memory.vmstat_darwin_find_free_memory()
-    setcode do
-      "%.2f" % [(freemem.to_f / 1024.0) / 1024.0]
-    end
-  end
-
   Facter.add("SwapEncrypted") do
     confine :kernel => :Darwin
     setcode do
@@ -134,26 +93,19 @@ if Facter.value(:kernel) == "Darwin"
 end
 
 if Facter.value(:kernel) == "SunOS"
-  # Total memory size available from prtconf
-  pconf = Facter::Util::Resolution.exec('/usr/sbin/prtconf 2>/dev/null')
-  phymem = ""
-  pconf.each_line do |line|
-    if line =~ /^Memory size:\s+(\d+) Megabytes/
-      phymem = $1
-    end
-  end
 
   Facter.add("memorysize_mb") do
     confine :kernel => :sunos
+    # Total memory size available from prtconf
+    pconf = Facter::Util::Resolution.exec('/usr/sbin/prtconf 2>/dev/null')
+    phymem = ""
+    pconf.each_line do |line|
+      if line =~ /^Memory size:\s+(\d+) Megabytes/
+        phymem = $1
+      end
+    end
     setcode do
       "%.2f" % [phymem.to_f]
-    end
-  end
-
-  Facter.add("memoryfree_mb") do
-    confine :kernel => :sunos
-    setcode do
-      Facter::Memory.vmstat_find_free_memory()
     end
   end
 end
@@ -189,7 +141,6 @@ end
 Facter.add("swapsize_mb") do
   confine :kernel => :dragonfly
   setcode do
-#    swaptotal = Facter::Memory.swap_total_dragonfly()
     page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
     swaptotal = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
     "%.2f" % [(swaptotal.to_f / 1024.0) / 1024.0]
@@ -205,22 +156,5 @@ Facter.add("swapfree_mb") do
     swap_cache_use = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_cache_use").to_f * page_size
     swapfree = swaptotal - swap_anon_use - swap_cache_use
     "%.2f" % [(swapfree.to_f / 1024.0) / 1024.0]
-  end
-end
-
-Facter.add("memorysize_mb") do
-  confine :kernel => :dragonfly
-  setcode do
-    memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
-    "%.2f" % [(memtotal.to_f / 1024.0) / 1024.0]
-  end
-end
-
-if Facter.value(:kernel) == "dragonfly"
-  Facter.add("memoryfree_mb") do
-    confine :kernel => :dragonfly
-    setcode do
-      Facter::Memory.vmstat_find_free_memory()
-    end
   end
 end
