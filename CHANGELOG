@@ -1,5 +1,6 @@
-1.6.10rc1
+1.6.10
 ===
+35067dc Bump Facter epoch to 1
 d6a3e91 Make package task depend on tar in Rakfile
 f42896d (#14764) Stub architecture fact when Windows facts run on Linux
 f44ca52 (maint) Fix hardware model fact for ruby 1.9
