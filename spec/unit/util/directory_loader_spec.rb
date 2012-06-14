@@ -6,6 +6,7 @@ require 'facter/util/directory_loader'
 
 describe Facter::Util::DirectoryLoader do
   include PuppetlabsSpec::Files
+  include FacterSpec::ConfigHelper
 
   subject { Facter::Util::DirectoryLoader.new(tmpdir('directory_loader')) }
 
@@ -13,9 +14,21 @@ describe Facter::Util::DirectoryLoader do
     subject.directory.should be_instance_of(String)
   end
 
-  it "should default to '/usr/lib/facter/ext' for the directory" do
-    Facter::Util::DirectoryLoader.new.directory.should == "/usr/lib/facter/ext"
-  end
+  it "defaults to ext directory in data_dir" do 
+    path = "data_dir"
+    given_a_configuration_of(:data_dir => path)
+    Facter::Util::DirectoryLoader.default_loader.directory.should == File.join(path, "ext")
+  end 
+  
+  it "can be created with a given directory" do 
+    Facter::Util::DirectoryLoader.loader_for("ext").directory.should == "ext"
+  end 
+  
+  it "raises an error when the directory does not exist" do 
+    missing_dir = "missing"
+    File.stubs(:directory?).with(missing_dir).returns(false)
+    expect { Facter::Util::DirectoryLoader.loader_for(missing_dir) }.should raise_error Facter::Util::DirectoryLoader::NoSuchDirectoryError
+  end 
 
   it "should do nothing bad when dir doesn't exist" do
     fakepath = "/foobar/path"

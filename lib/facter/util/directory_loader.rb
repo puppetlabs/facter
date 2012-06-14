@@ -8,6 +8,9 @@ require 'facter/util/config'
 
 class Facter::Util::DirectoryLoader
   require 'yaml'
+  
+  class NoSuchDirectoryError < Exception 
+  end 
 
   # A list of extensions to ignore in fact directory.
   SKIP_EXTENSIONS = %w{bak orig}
@@ -15,15 +18,22 @@ class Facter::Util::DirectoryLoader
   # Directory for fact loading
   attr_reader :directory
 
-  def initialize(dir = nil)
-    @directory = dir || Facter::Util::Config.ext_fact_dir
+  def initialize(dir)
+    @directory = dir
   end
-
-  def entries
-    Dir.entries(directory).find_all{|f| parse?(f) }.sort.map {|f| File.join(directory, f) }
-  rescue
-    []
-  end
+  
+  def self.loader_for(dir)
+    if File.directory?(dir) 
+      Facter::Util::DirectoryLoader.new(dir)
+    else
+      raise NoSuchDirectoryError 
+    end 
+  end 
+  
+  def self.default_loader
+    dir = File.join(Facter::Util::Config.data_dir, "ext")
+    Facter::Util::DirectoryLoader.new(dir)
+  end 
 
   # Load facts from files in fact directory using the relevant parser classes to
   # parse them.
@@ -45,11 +55,17 @@ class Facter::Util::DirectoryLoader
     end
   end
 
-  private
+private
 
-  def parse?(file)
+  def entries
+    Dir.entries(directory).find_all { |f| should_parse?(f) }.sort.map { |f| File.join(directory, f) }
+  rescue
+    []
+  end
+
+  def should_parse?(file)
     return false if file =~ /^\./
-      ext = file.split(".")[-1]
+    ext = file.split(".")[-1]
     return false if SKIP_EXTENSIONS.include?(ext)
     true
   end

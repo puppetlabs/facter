@@ -219,16 +219,19 @@ describe Facter::Util::Loader do
   end
 
   describe "when loading all facts" do
-    before do
+    before :each do
+      @ext_loader = mock "External Loader"
+      Facter::Util::Config.ext_fact_loader = @ext_loader
+      @ext_loader.stubs(:load)
       @loader = Facter::Util::Loader.new
-      @loader.directory_loader.stubs(:load)
       @loader.stubs(:search_path).returns []
 
       FileTest.stubs(:directory?).returns true
+      Dir.stubs(:entries).with("/usr/lib/facter/ext").returns []
     end
 
     it "should load all facts from the directory loader" do
-      @loader.directory_loader.expects(:load)
+      @ext_loader.expects(:load)
       @loader.load_all
     end
 
@@ -282,7 +285,7 @@ describe Facter::Util::Loader do
         Kernel.expects(:load).with(f)
       end
 
-      @loader.directory_loader.stubs(:load)
+      @ext_loader.stubs(:load)
       @loader.load_all
 
       @loader.loaded_files.should == %w{/one/dir/bar.rb /one/dir/foo.rb}
