@@ -10,8 +10,14 @@ module Facter
       names = argv
 
       # Change location of external facts dir
+      # Check here for valid ext_dir and exit program
       if options[:ext]
-        Facter::Util::Config.ext_fact_dir = options[:ext]
+        begin
+          Facter::Util::Config.ext_fact_loader = Facter::Util::DirectoryLoader.loader_for(options[:ext])
+        rescue Facter::Util::DirectoryLoader::NoSuchDirectoryError => error
+          $stderr.puts "Specified external facts directory #{options[:ext]} does not exist."
+          exit(1)
+        end
       end
 
       # Create the facts hash that is printed to standard out.

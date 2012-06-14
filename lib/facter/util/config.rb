@@ -4,6 +4,14 @@ require 'rbconfig'
 #
 module Facter::Util::Config
 
+  def self.ext_fact_loader 
+    @ext_fact_loader || Facter::Util::DirectoryLoader.default_loader 
+  end 
+  
+  def self.ext_fact_loader=(loader)
+    @ext_fact_loader = loader 
+  end 
+  
   def self.is_mac?
     Config::CONFIG['host_os'] =~ /darwin/i
   end
@@ -14,7 +22,7 @@ module Facter::Util::Config
   end
 
   # The basedir to use for windows data
-  def self.windows_data_dir
+  def self.data_dir
     if is_windows?
       # If neither environment variable is set - fail.
       if not ENV["ProgramData"] and not ENV["ALLUSERSPROFILE"] then
@@ -26,22 +34,7 @@ module Facter::Util::Config
         File.join(ENV["ALLUSERSPROFILE"], "Application Data")
       File.join(base_dir, "Puppetlabs", "facter")
     else
-      nil
+      "/usr/lib/facter"
     end
-  end
-
-  # Retrieve the external fact directory
-  def self.ext_fact_dir
-    if is_windows?
-      @@ext_fact_dir ||= File.join(windows_data_dir, "ext")
-    else
-      @@ext_fact_dir ||= "/usr/lib/facter/ext"
-    end
-    @@ext_fact_dir
-  end
-
-  # Set the external fact directory
-  def self.ext_fact_dir=(path)
-    @@ext_fact_dir = path
   end
 end

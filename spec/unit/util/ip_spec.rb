@@ -4,13 +4,15 @@ require 'spec_helper'
 require 'facter/util/ip'
 
 describe Facter::Util::IP do
+  include FacterSpec::ConfigHelper
+  
   before :each do
-    Facter::Util::Config.stubs(:is_windows?).returns(false)
+    given_a_configuration_of(:is_windows => false)
   end
 
   [:freebsd, :linux, :netbsd, :openbsd, :sunos, :darwin, :"hp-ux", :"gnu/kfreebsd", :windows].each do |platform|
     it "should be supported on #{platform}" do
-      Facter::Util::Config.stubs(:is_windows?).returns(platform == :windows)
+      given_a_configuration_of(:is_windows => platform == :windows)
       Facter::Util::IP.supported_platforms.should be_include(platform)
     end
   end

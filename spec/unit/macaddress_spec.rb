@@ -11,8 +11,10 @@ def netsh_fixture(filename)
 end
 
 describe "macaddress fact" do
+  include FacterSpec::ConfigHelper
+  
   before do
-    Facter::Util::Config.stubs(:is_windows?).returns(false)
+    given_a_configuration_of(:is_windows => false)
   end
 
   describe "when run on Linux" do

@@ -39,3 +39,12 @@ RSpec.configure do |config|
     to_remove.each {|key| ENV.delete key }
   end
 end
+
+module FacterSpec
+  module ConfigHelper
+    def given_a_configuration_of(config)
+      Facter::Util::Config.stubs(:is_windows?).returns(config[:is_windows])
+      Facter::Util::Config.stubs(:data_dir).returns(config[:data_dir] || "data_dir")
+    end
+  end
+end
