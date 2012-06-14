@@ -3,7 +3,7 @@
 # Purpose: Return the main IP address for a host.
 #
 # Resolution:
-#   On the Unixes does an ifconfig, and returns the first non 127.0.0.0/8
+#   On the Unixes does an ip addr, and returns the first non 127.0.0.0/8
 #   subnetted IP it finds.
 #   On Windows, it attempts to use the socket library and resolve the machine's
 #   hostname via DNS.
@@ -26,10 +26,11 @@ Facter.add(:ipaddress) do
   confine :kernel => :linux
   setcode do
     ip = nil
-    output = %x{/sbin/ifconfig}
+    output = %x{/sbin/ip addr}
+    # on RHEL and Debian this is symlinked to /bin, Fedora is /sbin only
 
     output.split(/^\S/).each { |str|
-      if str =~ /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+      if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
         tmp = $1
         unless tmp =~ /^127\./
           ip = tmp
