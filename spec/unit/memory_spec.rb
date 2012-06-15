@@ -94,6 +94,55 @@ VMSTAT
     end
   end
 
+  [   "linux",
+      "gnu/kfreebsd",
+  ].each do |kernel|
+
+
+    describe "on #{kernel}" do
+      before(:each) do
+        Facter.clear
+        Facter.fact(:kernel).stubs(:value).returns(kernel)
+        meminfo = <<INFO
+MemTotal:   255908 kB
+MemFree:     69936 kB
+Buffers:     15812 kB
+Cached:     115124 kB
+SwapCached:      0 kB
+Active:      92700 kB
+Inactive:    63792 kB
+SwapTotal:  524280 kB
+SwapFree:   524280 kB
+Dirty:           4 kB
+INFO
+
+        File.stubs(:readlines).with("/proc/meminfo").returns(meminfo.split("\n"))
+        
+        Facter.collection.loader.load(:memory)
+      end
+      
+      after(:each) do
+        Facter.clear
+      end
+      
+      it "should return the current memory size in MB" do
+        Facter.fact(:memorysize_mb).value.should == "249.91"
+      end
+      
+      it "should return the current memory free in MB" do
+        Facter.fact(:memoryfree_mb).value.should == "196.16"
+      end
+      
+      it "should return the current swap size in MB" do
+        Facter.fact(:swapsize_mb).value.should == "511.99"
+      end
+      
+      it "should return the current swap free in MB" do
+        Facter.fact(:swapfree_mb).value.should == "511.99"
+      end
+    end
+  end
+
   describe "on AIX" do
     before (:each) do
       Facter.clear

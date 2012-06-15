@@ -24,20 +24,8 @@
 # Author: Matthew Palmer <matt@solutionsfirst.com.au>
 #
 #
-require 'facter/util/memory'
 
-{   :MemorySize => "MemTotal",
-    :MemoryFree => "MemFree",
-    :SwapSize   => "SwapTotal",
-    :SwapFree   => "SwapFree"
-}.each do |fact, name|
-  Facter.add(fact) do
-    confine :kernel => [ :linux, :"gnu/kfreebsd" ]
-    setcode do
-      Facter::Memory.meminfo_number(name)
-    end
-  end
-end
+require 'facter/util/memory'
 
 [  "memorysize",
    "memoryfree",
@@ -77,6 +65,20 @@ Facter.add("memoryfree_mb") do
   setcode do
     memfree = Facter::Memory.mem_free
     "%.2f" % [memfree] if memfree
+  end
+end
+
+{   :memorysize_mb => "MemTotal",
+    :memoryfree_mb => "MemFree",
+    :swapsize_mb   => "SwapTotal",
+    :swapfree_mb   => "SwapFree"
+}.each do |fact, name|
+  Facter.add(fact) do
+    confine :kernel => [ :linux, :"gnu/kfreebsd" ]
+    meminfo = Facter::Memory.meminfo_number(name)
+    setcode do
+      "%.2f" % [meminfo]
+    end
   end
 end
 
