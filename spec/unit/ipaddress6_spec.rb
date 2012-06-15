@@ -10,9 +10,12 @@ def netsh_fixture(filename)
   File.read(fixtures('netsh', filename))
 end
 
+
 describe "IPv6 address fact" do
+  include FacterSpec::ConfigHelper
+  
   before do
-    Facter::Util::Config.stubs(:is_windows?).returns(false)
+    given_a_configuration_of(:is_windows => false)
   end
 
   it "should return ipaddress6 information for Darwin" do
@@ -41,7 +44,7 @@ describe "IPv6 address fact" do
 
   it "should return ipaddress6 information for Windows" do
     ENV.stubs(:[]).with('SYSTEMROOT').returns('d:/windows')
-    Facter::Util::Config.stubs(:is_windows?).returns(true)
+    given_a_configuration_of(:is_windows => true)
 
     fixture = netsh_fixture('windows_netsh_addresses_with_multiple_interfaces')
     Facter::Util::Resolution.stubs(:exec).with('d:/windows/system32/netsh.exe interface ipv6 show address level=verbose').

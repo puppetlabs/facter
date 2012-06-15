@@ -21,6 +21,7 @@ module Facter
   require 'facter/util/fact'
   require 'facter/util/collection'
   require 'facter/util/monkey_patches'
+  require 'facter/util/json'
 
   include Comparable
   include Enumerable
@@ -82,7 +83,7 @@ module Facter
   def self.debugging?
     @@debug != 0
   end
-
+ 
   # show the timing information
   def self.show_time(string)
     puts "#{GREEN}#{string}#{RESET}" if string and Facter.timing?
