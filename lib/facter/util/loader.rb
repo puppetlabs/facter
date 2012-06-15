@@ -8,7 +8,7 @@ class Facter::Util::Loader
   def initialize
     @loaded = []
     @valid_path = {}
-    @directory_loader = Facter::Util::Config.ext_fact_loader
+    @ext_fact_loader = Facter::Util::Config.ext_fact_loader
   end
 
   # Load all resolutions for a single fact.
@@ -36,7 +36,7 @@ class Facter::Util::Loader
 
     load_env
 
-    @directory_loader.load
+    @ext_fact_loader.load
 
     search_path.each do |dir|
       next unless FileTest.directory?(dir)
