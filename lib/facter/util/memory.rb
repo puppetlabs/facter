@@ -5,18 +5,15 @@
 module Facter::Memory
   def self.meminfo_number(tag)
     memsize = ""
-    size, scale = [0, ""]
+    size = [0]
     File.readlines("/proc/meminfo").each do |l|
-      size, scale = [$1.to_f, $2] if l =~ /^#{tag}:\s+(\d+)\s+(\S+)/
-      # MemoryFree == memfree + cached + buffers
-      #  (assume scales are all the same as memfree)
+      size = $1.to_f if l =~ /^#{tag}:\s+(\d+)\s+\S+/
       if tag == "MemFree" &&
-        l =~ /^(?:Buffers|Cached):\s+(\d+)\s+(?:\S+)/
+          l =~ /^(?:Buffers|Cached):\s+(\d+)\s+\S+/
         size += $1.to_f
       end
     end
-
-    memsize = scale_number(size, scale)
+    size / 1024.0
   end
 
   def self.scale_number(size, multiplier)
@@ -155,7 +152,7 @@ module Facter::Memory
     is_size = size_or_free == :size
     unless output.nil?
       output.each_line do |line|
-        value += parse_line(line, kernel, is_size)
+        value += parse_swap_line(line, kernel, is_size)
       end
     end      
     value_in_mb = scale_swap_value(value, kernel)
@@ -167,7 +164,7 @@ module Facter::Memory
   # free value, but this may not always be the case. In Ruby 1.9.3 it is possible
   # to give these names, but sadly 1.8.7 does not support this.
  
-  def self.parse_line(line, kernel, is_size)
+  def self.parse_swap_line(line, kernel, is_size)
     case kernel
     when /AIX/i
       if line =~ /^\/\S+\s.*\s+(\S+)MB\s+(\S+)MB/
