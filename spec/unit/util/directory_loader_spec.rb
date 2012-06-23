@@ -14,12 +14,6 @@ describe Facter::Util::DirectoryLoader do
     subject.directory.should be_instance_of(String)
   end
 
-  it "defaults to ext directory in data_dir" do 
-    path = "data_dir"
-    given_a_configuration_of(:data_dir => path)
-    Facter::Util::DirectoryLoader.default_loader.directory.should == File.join(path, "ext")
-  end 
-  
   it "can be created with a given directory" do 
     Facter::Util::DirectoryLoader.loader_for("ext").directory.should == "ext"
   end 

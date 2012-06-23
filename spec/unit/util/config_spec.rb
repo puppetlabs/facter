@@ -33,24 +33,23 @@ describe Facter::Util::Config do
     end
   end
 
-  describe "data_dir" do
+  describe "external_facts_dirs" do
 
     it "should return the default value for linux" do
       Facter::Util::Config.stubs(:is_windows?).returns(false)
-      Facter::Util::Config.data_dir.should == "/usr/lib/facter"
+      Facter::Util::Config.external_facts_dirs.should == ["/etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"]
     end
 
     it "should return the default value for windows 2008" do
       Facter::Util::Config.stubs(:is_windows?).returns(true)
-      ENV.stubs(:[]).with("ProgramData").returns("C:\\ProgramData")
-      Facter::Util::Config.data_dir.should == "C:\\ProgramData/Puppetlabs/facter"
+      Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\ProgramData") 
+      Facter::Util::Config.external_facts_dirs.should == [File.join("C:\\ProgramData", 'PuppetLabs', 'facter', 'facts.d')]
     end
 
     it "should return the default value for windows 2003R2" do
       Facter::Util::Config.stubs(:is_windows?).returns(true)
-      ENV.stubs(:[]).with("ProgramData").returns(nil)
-      ENV.stubs(:[]).with("ALLUSERSPROFILE").returns("C:\\Documents and Settings\\All Users")
-      Facter::Util::Config.data_dir.should == "C:\\Documents and Settings\\All Users/Application Data/Puppetlabs/facter"
+      Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\Documents") 
+      Facter::Util::Config.external_facts_dirs.should == [File.join("C:\\Documents", 'PuppetLabs', 'facter', 'facts.d')]
     end
   end
 

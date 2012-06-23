@@ -5,6 +5,7 @@
 
 require 'facter/util/parser'
 require 'facter/util/config'
+require 'facter/util/composite_loader'
 
 class Facter::Util::DirectoryLoader
   require 'yaml'
@@ -31,8 +32,12 @@ class Facter::Util::DirectoryLoader
   end 
   
   def self.default_loader
-    dir = File.join(Facter::Util::Config.data_dir, "ext")
-    Facter::Util::DirectoryLoader.new(dir)
+    dir = []
+    dir[0] = Facter::Util::DirectoryLoader.new(Facter::Util::Config.external_facts_dirs[0])
+    if (Facter::Util::Config.external_facts_dirs.size > 1) 
+      dir[1] = Facter::Util::DirectoryLoader.new(Facter::Util::Config.external_facts_dirs[1])
+    end 
+    Facter::Util::CompositeLoader.new(dir) 
   end 
 
   # Load facts from files in fact directory using the relevant parser classes to

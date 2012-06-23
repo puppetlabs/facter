@@ -44,7 +44,7 @@ module FacterSpec
   module ConfigHelper
     def given_a_configuration_of(config)
       Facter::Util::Config.stubs(:is_windows?).returns(config[:is_windows])
-      Facter::Util::Config.stubs(:data_dir).returns(config[:data_dir] || "data_dir")
+      Facter::Util::Config.stubs(:external_facts_dir).returns(config[:external_facts_dir] || "data_dir")
     end
   end
 end

@@ -95,8 +95,8 @@ module Facter
           opts.on("-j", "--json")   { |v| options[:json]   = v }
         end 
         opts.on(      "--trace")  { |v| options[:trace]  = v }
-        opts.on(      "--ext DIR") { |v| create_directory_loader(v) ; puts("Called create_directory_loader")}
-        opts.on(      "--no-ext") { |v| create_nothing_loader ; puts("Called create_nothing_loader") }
+        opts.on(      "--external-dir DIR") { |v| create_directory_loader(v) }
+        opts.on(      "--no-external-dir") { |v| create_nothing_loader }
         opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
         opts.on("-t", "--timing") { |v| Facter.timing(1) }
         opts.on("-p", "--puppet") { |v| load_puppet }
