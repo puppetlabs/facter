@@ -63,11 +63,13 @@ describe Facter::Util::DirectoryLoader do
       end
     end
 
-    it "should fail when trying to parse unknown file types" do
+    it "should warn when trying to parse unknown file types" do
       file = File.join(subject.directory, "file.unknownfiletype")
       File.open(file, "w") { |f| f.print "stuff=bar" }
+      
+      Facter.expects(:warn).with(regexp_matches(/file.unknownfiletype/))
 
-      expect { subject.load }.should raise_error(ArgumentError)
+      subject.load
     end
   end
 end

@@ -4,75 +4,47 @@
 # Parsers must subclass this class and provide their own #results method.
 require 'facter/util/json'
 
-class Facter::Util::Parser
-  attr_reader :filename
-
-  class << self
-    # Retrieve the set extension, if any
-    attr_reader :extension
-  end
-
-  # Used by subclasses. Registers +ext+ as the extension to match.
-  #
+module Facter::Util::Parser
+  @parsers = []
+  
   # For support mutliple extensions you can pass an array of extensions as
   # +ext+.
-  def self.matches_extension(ext)
+  def self.extension_matches?(filename, ext)
     if ext.class == String then
-      @extension = ext.downcase
+      extension = ext.downcase
     elsif ext.class == Array then
-      @extension = ext.collect {|x| x.downcase }
+      extension = ext.collect {|x| x.downcase }
     end
+    [extension].flatten.to_a.include?(file_extension(filename).downcase)
   end
-
+    
   def self.file_extension(filename)
     File.extname(filename).sub(".", '')
   end
-
-  def self.inherited(klass)
-    @subclasses ||= []
-    @subclasses << klass
+  
+  def self.register(klass, &suitable)
+    @parsers << [klass, suitable]
   end
 
-  def self.matches?(filename)
-    raise "Must override the 'matches?' method for #{self}" unless extension
-
-    [extension].flatten.to_a.include?(file_extension(filename).downcase)
-  end
-
-  def self.subclasses
-    @subclasses ||= []
-    @subclasses
-  end
-
-  def self.which_parser(filename)
-    unless klass = subclasses.detect {|k| k.matches?(filename) }
-      raise ArgumentError, "Could not find parser for #{filename}"
+  def self.parser_for(filename)
+    registration = @parsers.detect { |k| k[1].call(filename) }
+    
+    if registration.nil?
+      NothingParser.new
+    else
+      registration[0].new(filename)
     end
-    klass
   end
 
-  def self.new(filename)
-    klass = which_parser(filename)
-
-    object = klass.allocate
-    object.send(:initialize, filename)
-
-    object
+  class Base
+    attr_reader :filename
+    
+    def initialize(filename)
+      @filename = filename
+    end
   end
 
-  def initialize(filename)
-    @filename = filename
-  end
-
-  # This method must be overwriten by subclasses to provide
-  # the results (as a hash) of parsing the filename.
-  def results
-    raise "Must override the 'results' method for #{self}"
-  end
-
-  class YamlParser < self
-    matches_extension "yaml"
-
+  class YamlParser < Base
     def results
       require 'yaml'
 
@@ -81,9 +53,15 @@ class Facter::Util::Parser
       Facter.warn("Failed to handle #{filename} as yaml facts: #{e.class}: #{e}")
     end
   end
+  
+  register(YamlParser) do |filename|
+    extension_matches?(filename, "yaml")
+  end
 
-  class TextParser < self
-    matches_extension "txt"
+  class TextParser < Base
+    def self.matches?(filename)
+      extension_matches?(filename, "txt")
+    end
 
     def results
       result = {}
@@ -98,10 +76,16 @@ class Facter::Util::Parser
       Facter.warn("Failed to handle #{filename} as text facts: #{e.class}: #{e}")
     end
   end
+  
+  register(TextParser) do |filename|
+    extension_matches?(filename, "txt")
+  end
 
   if Facter.json?
-    class JsonParser < self
-      matches_extension "json"
+    class JsonParser < Base
+      def self.matches?(filename)
+        extension_matches?(filename, "json")
+      end
 
       def results
         attempts = 0
@@ -115,18 +99,13 @@ class Facter::Util::Parser
         JSON.load(File.read(filename))
       end
     end
+    
+    register(JsonParser) do |filename|
+      extension_matches?(filename, "json")
+    end
   end
 
-  class ScriptParser < self
-    if Facter::Util::Config.is_windows?
-      matches_extension %w{bat com exe}
-    else
-      # Returns true if file is executable.
-      def self.matches?(file)
-        File.executable?(file)
-      end
-    end
-
+  class ScriptParser < Base
     def results
       output = Facter::Util::Resolution.exec(filename)
 
@@ -144,6 +123,14 @@ class Facter::Util::Parser
     end
   end
 
+  register(ScriptParser) do |filename|
+    if Facter::Util::Config.is_windows?
+      extension_matches?(filename, %w{bat com exe})
+    else
+      File.executable?(filename)
+    end
+  end
+
   # Executes and parses the key value output of Powershell scripts
   #
   # Before you can run unsigned ps1 scripts it requires a change to execution
@@ -152,18 +139,7 @@ class Facter::Util::Parser
   #   Set-ExecutionPolicy RemoteSigned -Scope LocalMachine
   #   Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
   #
-  class PowershellParser < self
-    matches_extension "ps1"
-
-    # Only return true if this is a windows box
-    def self.matches?(filename)
-      if Facter::Util::Config.is_windows?
-        super(filename)
-      else
-        return false
-      end
-    end
-
+  class PowershellParser < Base
     # Returns a hash of facts from powershell output
     def results
       shell_command = "powershell -File #{filename}"
@@ -180,6 +156,18 @@ class Facter::Util::Parser
     rescue Exception => e
       Facter.warn("Failed to handle #{filename} as powershell facts: #{e.class}: #{e}")
       Facter.debug(e.backtrace.join("\n\t"))
+    end
+  end
+
+  register(PowershellParser) do |filename|
+    Facter::Util::Config.is_windows? && extension_matches?(filename, "ps1")
+  end
+  
+  # A parser that is used when there is no other parser that can handle the file
+  # The return from results indicates to the caller the file was not parsed correctly.
+  class NothingParser
+    def results
+      false
     end
   end
 end

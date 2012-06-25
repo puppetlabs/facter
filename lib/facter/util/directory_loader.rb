@@ -1,4 +1,13 @@
-# A Facter plugin that loads facts from /etc/facter/facts.d.
+# A Facter plugin that loads external facts. 
+# 
+# Default Unix Directories:
+# /etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"
+# 
+# Default Windows Direcotires: 
+# C:\ProgramData\PuppetLabs\facter\facts.d (2008)
+# C:\Documents\PuppetLabs\facter\facts.d (2003) 
+#
+# Can also load from command-line specified directory
 #
 # Facts can be in the form of JSON, YAML or Text files
 # and any executable that returns key=value pairs.
@@ -20,6 +29,7 @@ class Facter::Util::DirectoryLoader
   attr_reader :directory
 
   def initialize(dir)
+    puts(dir) 
     @directory = dir
   end
   
@@ -32,19 +42,17 @@ class Facter::Util::DirectoryLoader
   end 
   
   def self.default_loader
-    dir = []
-    dir[0] = Facter::Util::DirectoryLoader.new(Facter::Util::Config.external_facts_dirs[0])
-    if (Facter::Util::Config.external_facts_dirs.size > 1) 
-      dir[1] = Facter::Util::DirectoryLoader.new(Facter::Util::Config.external_facts_dirs[1])
-    end 
-    Facter::Util::CompositeLoader.new(dir) 
+    loaders = Facter::Util::Config.external_facts_dirs.collect do |dir|
+      Facter::Util::DirectoryLoader.new(dir)
+    end
+    Facter::Util::CompositeLoader.new(loaders) 
   end 
 
   # Load facts from files in fact directory using the relevant parser classes to
   # parse them.
   def load
     entries.each do |file|
-      parser = Facter::Util::Parser.new(file)
+      parser = Facter::Util::Parser.parser_for(file)
       if parser == nil
         next
       end

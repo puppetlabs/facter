@@ -227,7 +227,7 @@ describe Facter::Util::Loader do
       @loader.stubs(:search_path).returns []
 
       FileTest.stubs(:directory?).returns true
-      Dir.stubs(:entries).with("/usr/lib/facter/ext").returns []
+      Dir.stubs(:entries).with("/etc/facter/facts.d").returns []
     end
 
     it "should load all facts from the directory loader" do
