@@ -1,3 +1,5 @@
+require 'facter/util/text'
+
 module Facter
   module Application
     def self.run(argv)
@@ -24,6 +26,11 @@ module Facter
 
       # Print everything if they didn't ask for specific facts.
       facts ||= Facter.to_hash
+      
+      if options[:flatten]
+        require 'facter/util/namespace'
+        facts = Facter::Util::Namespace.to_namespace(facts)
+      end
 
       # Print the facts as YAML and exit
       if options[:yaml]
@@ -47,14 +54,14 @@ module Facter
 
       # Print the value of a single fact, otherwise print a list sorted by fact
       # name and separated by "=>"
+      text = Facter::Util::Text.new
+      text.run_pager if $stdout.isatty
       if facts.length == 1
         if value = facts.values.first
-          puts value
+          text.pretty_output(value)
         end
       else
-        facts.sort_by{ |fact| fact.first }.each do |name,value|
-          puts "#{name} => #{value}"
-        end
+        text.toplevel_output(facts)
       end
 
     rescue => e
@@ -71,12 +78,14 @@ module Facter
     def self.parse(argv)
       options = {}
       OptionParser.new do |opts|
-        opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
-        opts.on("-j", "--json")   { |v| options[:json]   = v }
-        opts.on(      "--trace")  { |v| options[:trace]  = v }
-        opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
-        opts.on("-t", "--timing") { |v| Facter.timing(1) }
-        opts.on("-p", "--puppet") { |v| load_puppet }
+        opts.on("-y", "--yaml")    { |v| options[:yaml]    = v }
+        opts.on("-j", "--json")    { |v| options[:json]    = v }
+        opts.on(      "--trace")   { |v| options[:trace]   = v }
+        opts.on("-d", "--debug")   { |v| Facter.debugging(1) }
+        opts.on("-t", "--timing")  { |v| Facter.timing(1) }
+        opts.on("-p", "--puppet")  { |v| load_puppet }
+        opts.on("-n", "--nocolor") { |v| Facter.color(0) }
+        opts.on("-f", "--flatten") { |v| options[:flatten] = v }
 
         opts.on_tail("-v", "--version") do
           puts Facter.version
@@ -118,6 +127,5 @@ module Facter
     rescue LoadError => detail
       $stderr.puts "Could not load Puppet: #{detail}"
     end
-
   end
 end

@@ -6,7 +6,7 @@
 #
 # = Usage
 #
-#   facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [-j|--json] [fact] [fact] [...]
+#   facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [-j|--json] [-n|--nocolor] [fact] [fact] [...]
 #
 # = Description
 #
@@ -41,6 +41,9 @@
 #
 # timing::
 #   Enable timing.
+#
+# nocolor::
+#   Disable colored output.
 #
 # = Example
 #

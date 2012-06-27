@@ -59,6 +59,68 @@ describe Facter::Util::Fact do
     Facter::Util::Fact.new("yay").should respond_to(:value)
   end
 
+  describe "when validating fact resolutions" do
+    before do
+      @fact = Facter::Util::Fact.new("yay")
+    end
+
+    [
+      true,
+      false,
+      "string",
+      1.0,
+      1000,
+      true,
+      false,
+      ["yay"],
+      {"test" => "fact"},
+      {"test" => ["fact","value","var"]},
+      {"test" => { "test2" => { "test3" => { "test4" => "value" }}}},
+      {"foo" => [], "bar" => [{}, {}, []]},
+      "",
+      [],
+      {},
+    ].each do |valid|
+      it "should return the valid value \"#{valid.inspect}\"" do
+        r1 = stub 'r1', :suitable? => true, :value => valid
+        Facter::Util::Resolution.expects(:new).returns r1
+        @fact.add { }
+
+        @fact.value.should == valid
+      end
+    end
+
+    [
+      nil,
+      :yay,
+      {:foo => nil},
+      {:foo => ""},
+      {:foo => [], :bar => [{}, {}, []]},
+      Object.new,
+      {"test" => Object.new},
+      [nil, nil, "", :yay],
+      {:foo => "bar"},
+      {:foo => [], :yay => "hi"},
+      {:foo => [false], :yay => "hi"},
+      {"test" => ["fact", { "deep" => Object.new }, "value"] },
+      {"" => "value"},
+      {"" => {"" => "value"}},
+      [Object.new],
+      [{Object.new => "test"}],
+    ].each do |invalid|
+      it "should return nil for the invalid value \"#{invalid.inspect}\"" do
+        # Stop warning messages being sent to the console
+        Kernel.stubs(:warn)
+
+        r1 = stub 'r1', :suitable? => true, :value => invalid
+        Facter::Util::Resolution.expects(:new).returns r1
+        @fact.add { }
+
+        @fact.value.should be_nil
+      end
+    end
+  end
+
   describe "when returning a value" do
     before do
       @fact = Facter::Util::Fact.new("yay")
@@ -98,14 +160,6 @@ describe Facter::Util::Fact do
       @fact.add { }
 
       @fact.value.should == "yay"
-    end
-
-    it "should return nil if the value is the empty string" do
-      r1 = stub 'r1', :suitable? => true, :value => ""
-      Facter::Util::Resolution.expects(:new).returns r1
-      @fact.add { }
-
-      @fact.value.should be_nil
     end
   end
 

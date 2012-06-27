@@ -23,7 +23,7 @@ class Facter::Util::Fact
     @ldapname ||= @name.to_s
 
     @resolves = []
-    @searching = false
+    @currently_evaluating = false
 
     @value = nil
   end
@@ -58,56 +58,100 @@ class Facter::Util::Fact
   # and returns either the first value or nil.
   def value
     return @value if @value
+    
+    guard_against_recursion do
+      suitable_resolves = @resolves.select {|r| r.suitable? }
 
-    if @resolves.length == 0
-      Facter.debug "No resolves for %s" % @name
-      return nil
-    end
-
-    searching do
-      @value = nil
-
-      foundsuits = false
-      @value = @resolves.inject(nil) { |result, resolve|
-        next unless resolve.suitable?
-        foundsuits = true
-
-        tmp = resolve.value
-
-        break tmp unless tmp.nil? or tmp == ""
-      }
-
-      unless foundsuits
+      if suitable_resolves.empty?
         Facter.debug "Found no suitable resolves of %s for %s" % [@resolves.length, @name]
+        return nil
+      else
+        suitable_resolves.each do |resolve|
+          val = resolve.value
+          if val.nil?
+            next
+          elsif valid? val
+            @value = val
+            break
+          else
+            Facter.warnonce("Resolution returned invalid data for fact '#{@name}'")
+            Facter.debug("Resolution returned the following invalid data " +
+              "for fact '#{@name}':\n  #{val.inspect}")
+          end
+        end
       end
     end
 
     if @value.nil?
-      # nothing
-      Facter.debug("value for %s is still nil" % @name)
-      return nil
-    else
-      return @value
+      Facter.debug("Could not resolve fact #{@name}")
     end
+
+    @value
   end
 
   private
 
-  # Are we in the midst of a search?
-  def searching?
-    @searching
+  # Validate that an object is either a string, hash, array or
+  # combination thereof.
+  def valid?(value)
+    case value
+    when String,TrueClass,FalseClass,Numeric then
+      return true
+    when Array then
+      validity = true
+      # Validate each item by calling validate again
+      value.each do |item|
+        if (validity = valid?(item)) == false
+          break
+        end
+      end
+      return validity
+    when Hash then
+      validity = true
+      value.each do |k,v|
+        # Validate key first
+        if (validity = validate_value_lhs(k)) == false
+          break
+        end
+
+        # Validate value by calling validate again
+        if (validity = valid?(v)) == false
+          break
+        end
+      end
+      return validity
+    else
+      return false
+    end
   end
 
-  # Lock our searching process, so we never ge stuck in recursion.
-  def searching
-    raise RuntimeError, "Caught recursion on #{@name}" if searching?
+  # This method is used for validating the left hand side in
+  # a hash.
+  def validate_value_lhs(value)
+    case value
+    when String
+      if value.empty?
+        return false
+      else
+        return true
+      end
+    else
+      return false
+    end
+  end
 
-    # If we've gotten this far, we're not already searching, so go ahead and do so.
-    @searching = true
+  def currently_evaluating?
+    @currently_evaluating
+  end
+
+  def guard_against_recursion
+    raise RuntimeError, "Caught recursion on #{@name}" if currently_evaluating?
+
+    @currently_evaluating = true
     begin
       yield
     ensure
-      @searching = false
+      @currently_evaluating = false
     end
   end
 end
