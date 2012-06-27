@@ -23,7 +23,7 @@ class Facter::Util::Fact
     @ldapname ||= @name.to_s
 
     @resolves = []
-    @searching = false
+    @currently_evaluating = false
 
     @value = nil
   end
@@ -58,15 +58,14 @@ class Facter::Util::Fact
   # and returns either the first value or nil.
   def value
     return @value if @value
+    
+    guard_against_recursion do
+      suitable_resolves = @resolves.select {|r| r.suitable? }
 
-    suitable_resolves = @resolves.select {|r| r.suitable? }
-
-    if suitable_resolves.length == 0
-      Facter.debug "Found no suitable resolves of %s for %s" %
-        [@resolves.length, @name]
-      return nil
-    else
-      searching do
+      if suitable_resolves.empty?
+        Facter.debug "Found no suitable resolves of %s for %s" % [@resolves.length, @name]
+        return nil
+      else
         suitable_resolves.each do |resolve|
           val = resolve.value
           if val.nil?
@@ -141,21 +140,18 @@ class Facter::Util::Fact
     end
   end
 
-  # Are we in the midst of a search?
-  def searching?
-    @searching
+  def currently_evaluating?
+    @currently_evaluating
   end
 
-  # Lock our searching process, so we never ge stuck in recursion.
-  def searching
-    raise RuntimeError, "Caught recursion on #{@name}" if searching?
+  def guard_against_recursion
+    raise RuntimeError, "Caught recursion on #{@name}" if currently_evaluating?
 
-    # If we've gotten this far, we're not already searching, so go ahead and do so.
-    @searching = true
+    @currently_evaluating = true
     begin
       yield
     ensure
-      @searching = false
+      @currently_evaluating = false
     end
   end
 end
