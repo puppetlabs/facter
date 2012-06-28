@@ -7,12 +7,9 @@ def ip_fixture(filename)
 end
 
 describe "IPv4 address fact" do
-  before do
-    Facter::Util::Config.stubs(:is_windows?).returns(false)
-  end
 
   it "should return the first non 127.0.0.0/8 subnetted ip address for Linux" do
-    Facter::Util::Resolution.stubs(:exec).with('uname -s').returns('Linux')
+    Facter.fact(:kernel).stubs(:value).returns('Linux')
     Facter::Util::Resolution.stubs(:exec).with('ip addr').
       returns(ip_fixture('linux_ip_addr_ipv4_with_multiple_interfaces'))
 
