@@ -38,3 +38,8 @@ module Facter::Util::Config
     end
   end
 end
+
+if Facter::Util::Config.is_windows?
+  require 'rubygems'
+  require 'win32/dir'
+end

@@ -11,5 +11,4 @@ class Facter::Util::CompositeLoader
     @loaders.each { |loader| loader.load }
   end 
 end 
-  
-  
+    

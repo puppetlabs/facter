@@ -12,4 +12,5 @@ module Facter
       end   
     end
   end
-end 
+end
+ 

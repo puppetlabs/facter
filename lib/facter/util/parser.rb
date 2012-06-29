@@ -124,45 +124,10 @@ module Facter::Util::Parser
   end
 
   register(ScriptParser) do |filename|
-    if Facter::Util::Config.is_windows?
-      extension_matches?(filename, %w{bat com exe})
-    else
-      File.executable?(filename)
-    end
+    File.executable?(filename)
   end
 
-  # Executes and parses the key value output of Powershell scripts
-  #
-  # Before you can run unsigned ps1 scripts it requires a change to execution
-  # policy:
-  #
-  #   Set-ExecutionPolicy RemoteSigned -Scope LocalMachine
-  #   Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-  #
-  class PowershellParser < Base
-    # Returns a hash of facts from powershell output
-    def results
-      shell_command = "powershell -File #{filename}"
-      output = Facter::Util::Resolution.exec(shell_command)
 
-      result = {}
-      output.split("\n").each do |line|
-        if line =~ /^(.+)=(.+)$/
-          result[$1] = $2
-        end
-      end
-
-      result
-    rescue Exception => e
-      Facter.warn("Failed to handle #{filename} as powershell facts: #{e.class}: #{e}")
-      Facter.debug(e.backtrace.join("\n\t"))
-    end
-  end
-
-  register(PowershellParser) do |filename|
-    Facter::Util::Config.is_windows? && extension_matches?(filename, "ps1")
-  end
-  
   # A parser that is used when there is no other parser that can handle the file
   # The return from results indicates to the caller the file was not parsed correctly.
   class NothingParser

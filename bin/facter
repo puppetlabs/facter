@@ -42,7 +42,7 @@
 # timing::
 #   Enable timing.
 #
-# ext::
+# facts.d::
 #   The directory to use for external facts.
 #
 # = Example

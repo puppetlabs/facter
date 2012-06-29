@@ -1,11 +1,11 @@
 # A Facter plugin that loads external facts. 
 # 
 # Default Unix Directories:
-# /etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"
+# /etc/facter/facts.d, /etc/puppetlbas/facter/facts.d
 # 
 # Default Windows Direcotires: 
-# C:\ProgramData\PuppetLabs\facter\facts.d (2008)
-# C:\Documents\PuppetLabs\facter\facts.d (2003) 
+# C:\ProgramData\Puppetlabs\facter\facts.d (2008)
+# C:\Documents and Settings\All Users\Application Data\Puppetlabs\facter\facts.d (2003) 
 #
 # Can also load from command-line specified directory
 #
@@ -29,7 +29,6 @@ class Facter::Util::DirectoryLoader
   attr_reader :directory
 
   def initialize(dir)
-    puts(dir) 
     @directory = dir
   end
   
