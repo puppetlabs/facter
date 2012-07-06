@@ -21,9 +21,6 @@ class Facter::Util::DirectoryLoader
   
   class NoSuchDirectoryError < Exception 
   end 
-
-  # A list of extensions to ignore in fact directory.
-  SKIP_EXTENSIONS = %w{bak orig}
   
   # This value makes it highly likely that external facts will take 
   # precedence over all other facts
@@ -80,9 +77,6 @@ private
   end
 
   def should_parse?(file)
-    return false if file =~ /^\./
-    ext = file.split(".")[-1]
-    return false if SKIP_EXTENSIONS.include?(ext)
-    true
+    not file.start_with?('.')
   end
 end
