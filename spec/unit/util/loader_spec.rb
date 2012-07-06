@@ -177,7 +177,7 @@ describe Facter::Util::Loader do
 
     it 'should load any ruby files in directories matching the fact name in the search path in sorted order regardless of the order returned by Dir.entries' do
       @loader = TestLoader.new
-
+      
       @loader.stubs(:search_path).returns %w{/one/dir}
       FileTest.stubs(:exist?).returns false
       FileTest.stubs(:directory?).with("/one/dir/testing").returns true
@@ -194,6 +194,7 @@ describe Facter::Util::Loader do
     end
 
     it "should load any ruby files in directories matching the fact name in the search path" do
+      
       @loader.expects(:search_path).returns %w{/one/dir}
       FileTest.stubs(:exist?).returns false
       FileTest.expects(:directory?).with("/one/dir/testing").returns true
@@ -220,19 +221,10 @@ describe Facter::Util::Loader do
 
   describe "when loading all facts" do
     before :each do
-      @ext_loader = mock "External Loader"
-      Facter::Util::Config.ext_fact_loader = @ext_loader
-      @ext_loader.stubs(:load)
       @loader = Facter::Util::Loader.new
       @loader.stubs(:search_path).returns []
 
       FileTest.stubs(:directory?).returns true
-      Dir.stubs(:entries).with("/etc/facter/facts.d").returns []
-    end
-
-    it "should load all facts from the directory loader" do
-      @ext_loader.expects(:load)
-      @loader.load_all
     end
 
     it "should skip directories that do not exist" do

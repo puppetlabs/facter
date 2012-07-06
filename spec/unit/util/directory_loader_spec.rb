@@ -34,7 +34,7 @@ describe Facter::Util::DirectoryLoader do
   describe "when loading facts from disk" do
     it "should be able to load files from disk and set facts" do
       data = {"f1" => "one", "f2" => "two"}
-      file = File.join(subject.directory, "data" + ".yaml")
+      file = File.join(subject.directory, "data.yaml")
       File.open(file, "w") { |f| f.print YAML.dump(data) }
 
       subject.load
@@ -71,5 +71,16 @@ describe Facter::Util::DirectoryLoader do
 
       subject.load
     end
+    
+    it "external facts should almost always precedence over all other facts" do 
+      Facter.add("f1", :value => "lower_weight_fact") { has_weight(Facter::Util::DirectoryLoader::EXTERNAL_FACT_WEIGHT - 1) }
+      data = {"f1" => "external_fact"}
+      file = File.join(subject.directory, "data.yaml")
+      File.open(file, "w") { |f| f.print YAML.dump(data) }
+
+      subject.load
+
+      Facter.value("f1").should == "external_fact"
+    end 
   end
 end

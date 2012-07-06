@@ -8,7 +8,6 @@ class Facter::Util::Loader
   def initialize
     @loaded = []
     @valid_path = {}
-    @ext_fact_loader = Facter::Util::Config.ext_fact_loader
   end
 
   # Load all resolutions for a single fact.
@@ -16,7 +15,7 @@ class Facter::Util::Loader
     # Now load from the search path
     shortname = fact.to_s.downcase
     load_env(shortname)
-
+    
     filename = shortname + ".rb"
     search_path.each do |dir|
       # Load individual files
@@ -35,8 +34,6 @@ class Facter::Util::Loader
     return if defined?(@loaded_all)
 
     load_env
-
-    @ext_fact_loader.load
 
     search_path.each do |dir|
       next unless FileTest.directory?(dir)

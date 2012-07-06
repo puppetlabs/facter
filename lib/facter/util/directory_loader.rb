@@ -24,7 +24,11 @@ class Facter::Util::DirectoryLoader
 
   # A list of extensions to ignore in fact directory.
   SKIP_EXTENSIONS = %w{bak orig}
-
+  
+  # This value makes it highly likely that external facts will take 
+  # precedence over all other facts
+  EXTERNAL_FACT_WEIGHT = 10000
+  
   # Directory for fact loading
   attr_reader :directory
 
@@ -62,7 +66,7 @@ class Facter::Util::DirectoryLoader
       elsif data == {} or data == nil
         Facter.warn "Fact file #{file} was parsed but returned an empty data set"
       else
-        data.each { |p,v| Facter.add(p, :value => v) }
+        data.each { |p,v| Facter.add(p, :value => v) { has_weight(EXTERNAL_FACT_WEIGHT) } }
       end
     end
   end

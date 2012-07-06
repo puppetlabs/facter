@@ -60,6 +60,7 @@ class Facter::Util::Collection
 
   # Iterate across all of the facts.
   def each
+    load_all
     @facts.each do |name, fact|
       value = fact.value
       unless value.nil?
@@ -73,8 +74,8 @@ class Facter::Util::Collection
     name = canonize(name)
 
     # Try to load the fact if necessary
-    loader.load(name) unless @facts[name]
-
+    load(name) unless @facts[name]
+    
     # Try HARDER
     loader.load_all unless @facts[name]
 
@@ -96,12 +97,19 @@ class Facter::Util::Collection
 
   # Return a list of all of the facts.
   def list
+    load_all
     return @facts.keys
+  end
+
+  def load(name) 
+    loader.load(name) 
+    ext_loader.load
   end
 
   # Load all known facts.
   def load_all
     loader.load_all
+    ext_loader.load
   end
 
   # The thing that loads facts if we don't have them.
@@ -111,7 +119,14 @@ class Facter::Util::Collection
     end
     @loader
   end
-
+  
+  def ext_loader
+    unless defined?(@ext_loader)
+      @ext_loader = Facter::Util::Config.ext_fact_loader
+    end
+    @ext_loader
+  end
+  
   # Return a hash of all of our facts.
   def to_hash
     @facts.inject({}) do |h, ary|

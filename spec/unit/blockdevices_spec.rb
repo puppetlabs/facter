@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 require 'facter'
+require 'facter/util/nothing_loader'
 
 describe "Block device facts" do
 
@@ -20,6 +21,7 @@ describe "Block device facts" do
 
       describe "with valid entries" do
         before :each do
+          Facter::Util::Config.ext_fact_loader = Facter::Util::NothingLoader.new
           Facter.fact(:kernel).stubs(:value).returns("Linux")
           File.stubs(:exist?).with('/sys/block/').returns(true)
 

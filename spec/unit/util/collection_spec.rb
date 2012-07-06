@@ -273,4 +273,36 @@ describe Facter::Util::Collection do
       @coll.fact("one")
     end 
   end 
+  
+  describe "external facts" do 
+    before :each do
+      Facter::Util::Config.ext_fact_loader = SingleFactLoader.new(:test_fact, "fact value")
+    end
+    
+    it "loads when a specific fact is requested" do
+      Facter.collection.fact(:test_fact).value.should == "fact value"
+    end 
+
+    it "loads when facts are listed" do
+      Facter.collection.list.should == [:test_fact]
+    end
+    
+    it "loads when all facts are iterated over" do
+      facts = []
+      Facter.collection.each { |fact_name, fact_value| facts << [fact_name, fact_value] }
+      
+      facts.should == [["test_fact", "fact value"]]
+    end
+  end
+  
+  class SingleFactLoader
+    def initialize(name, value)
+      @name = name
+      @value = value
+    end
+    
+    def load
+      Facter.add(@name, :value => @value)
+    end
+  end
 end
