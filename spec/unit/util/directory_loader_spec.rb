@@ -34,8 +34,7 @@ describe Facter::Util::DirectoryLoader do
   describe "when loading facts from disk" do
     it "should be able to load files from disk and set facts" do
       data = {"f1" => "one", "f2" => "two"}
-      file = File.join(subject.directory, "data.yaml")
-      File.open(file, "w") { |f| f.print YAML.dump(data) }
+      write_to_file("data.yaml", YAML.dump(data))
 
       subject.load
 
@@ -46,9 +45,9 @@ describe Facter::Util::DirectoryLoader do
     it "should ignore files that begin with '.'" do
       # Since we know we won't load any facts, suppress the warning message 
       Facter.stubs(:warnonce)
-      file = File.join(subject.directory, ".data.yaml")
+    
       data = {"f1" => "one", "f2" => "two"}
-      File.open(file, "w") { |f| f.print YAML.dump(data) }
+      write_to_file(".data.yaml", YAML.dump(data))
 
       subject.load
       Facter.value("f1").should be_nil
@@ -56,16 +55,14 @@ describe Facter::Util::DirectoryLoader do
 
     %w{bak orig}.each do |ext|
       it "should ignore files with an extension of '#{ext}'" do
-        file = File.join(subject.directory, "data" + ".#{ext}")
-        File.open(file, "w") { |f| f.print "foo=bar" }
+        write_to_file("data" + ".#{ext}", "foo=bar")
 
         subject.load
       end
     end
 
     it "should warn when trying to parse unknown file types" do
-      file = File.join(subject.directory, "file.unknownfiletype")
-      File.open(file, "w") { |f| f.print "stuff=bar" }
+      write_to_file("file.unknownfiletype", "stuff=bar") 
       
       Facter.expects(:warn).with(regexp_matches(/file.unknownfiletype/))
 
@@ -75,12 +72,16 @@ describe Facter::Util::DirectoryLoader do
     it "external facts should almost always precedence over all other facts" do 
       Facter.add("f1", :value => "lower_weight_fact") { has_weight(Facter::Util::DirectoryLoader::EXTERNAL_FACT_WEIGHT - 1) }
       data = {"f1" => "external_fact"}
-      file = File.join(subject.directory, "data.yaml")
-      File.open(file, "w") { |f| f.print YAML.dump(data) }
+      write_to_file("data.yaml", YAML.dump(data)) 
 
       subject.load
 
       Facter.value("f1").should == "external_fact"
     end 
   end
+  
+  def write_to_file(file_name, to_write)
+    file = File.join(subject.directory, file_name)
+    File.open(file, "w") { |f| f.print to_write} 
+  end 
 end
