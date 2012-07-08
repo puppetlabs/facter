@@ -3,7 +3,7 @@
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
 Version: 1.6.10
-Release: 1%{?dist}
+Release: 2%{?dist}
 #Release: 0.1rc1.2%{?dist}
 Epoch: 1
 License: Apache 2.0
@@ -23,7 +23,7 @@ Requires: which
 Requires: dmidecode
 Requires: pciutils
 %endif
-Requires: ruby(abi) = 1.8
+Requires: ruby(abi) >= 1.8
 BuildRequires: ruby >= 1.8.5
 
 %description
@@ -50,10 +50,14 @@ rm -rf %{buildroot}
 %{_bindir}/facter
 %{ruby_sitelibdir}/facter.rb
 %{ruby_sitelibdir}/facter
+%{_mandir}/man8/*
 %doc CHANGELOG INSTALL LICENSE README.md
 
 
 %changelog
+* Sat Jul 07 2012 Michael Stahnke <stahnma@puppetlabs.com> - 1.6.10-2
+- Attempt to build fro Ruby 1.9.3
+
 * Wed Jun 13 2012 Moses Mendoza <moses@puppetlabs.com> - 1.6.10-1
 - Update for 1.6.10
 
