@@ -47,7 +47,6 @@ class Facter::Util::Fact
   # Flush any cached values.
   def flush
     @value = nil
-    @suitable = nil
   end
 
   # Return the value for a given fact.  Searches through all of the mechanisms
