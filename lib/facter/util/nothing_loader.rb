@@ -1,16 +1,16 @@
-# An external fact loader that doesn't load anything 
+# An external fact loader that doesn't load anything
 
-# This makes it possible to disable loading 
-# of external facts 
+# This makes it possible to disable loading
+# of external facts
 
-module Facter 
-  module Util 
-    
-    class NothingLoader 
+module Facter
+  module Util
 
-      def load 
-      end   
+    class NothingLoader
+
+      def load(collection)
+      end
     end
   end
 end
- 
+

@@ -103,13 +103,13 @@ class Facter::Util::Collection
 
   def load(name) 
     loader.load(name) 
-    ext_loader.load
+    ext_loader.load(self)
   end
 
   # Load all known facts.
   def load_all
     loader.load_all
-    ext_loader.load
+    ext_loader.load(self)
   end
 
   # The thing that loads facts if we don't have them.

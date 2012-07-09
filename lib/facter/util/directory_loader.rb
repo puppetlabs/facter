@@ -1,11 +1,11 @@
-# A Facter plugin that loads external facts. 
-# 
+# A Facter plugin that loads external facts.
+#
 # Default Unix Directories:
 # /etc/facter/facts.d, /etc/puppetlbas/facter/facts.d
-# 
-# Default Windows Direcotires: 
+#
+# Default Windows Direcotires:
 # C:\ProgramData\Puppetlabs\facter\facts.d (2008)
-# C:\Documents and Settings\All Users\Application Data\Puppetlabs\facter\facts.d (2003) 
+# C:\Documents and Settings\All Users\Application Data\Puppetlabs\facter\facts.d (2003)
 #
 # Can also load from command-line specified directory
 #
@@ -18,39 +18,39 @@ require 'facter/util/composite_loader'
 
 class Facter::Util::DirectoryLoader
   require 'yaml'
-  
-  class NoSuchDirectoryError < Exception 
-  end 
-  
-  # This value makes it highly likely that external facts will take 
+
+  class NoSuchDirectoryError < Exception
+  end
+
+  # This value makes it highly likely that external facts will take
   # precedence over all other facts
   EXTERNAL_FACT_WEIGHT = 10000
-  
+
   # Directory for fact loading
   attr_reader :directory
 
   def initialize(dir)
     @directory = dir
   end
-  
+
   def self.loader_for(dir)
-    if File.directory?(dir) 
+    if File.directory?(dir)
       Facter::Util::DirectoryLoader.new(dir)
     else
-      raise NoSuchDirectoryError 
-    end 
-  end 
-  
+      raise NoSuchDirectoryError
+    end
+  end
+
   def self.default_loader
     loaders = Facter::Util::Config.external_facts_dirs.collect do |dir|
       Facter::Util::DirectoryLoader.new(dir)
     end
-    Facter::Util::CompositeLoader.new(loaders) 
-  end 
+    Facter::Util::CompositeLoader.new(loaders)
+  end
 
   # Load facts from files in fact directory using the relevant parser classes to
   # parse them.
-  def load
+  def load(collection)
     entries.each do |file|
       parser = Facter::Util::Parser.parser_for(file)
       if parser == nil
@@ -63,7 +63,7 @@ class Facter::Util::DirectoryLoader
       elsif data == {} or data == nil
         Facter.warn "Fact file #{file} was parsed but returned an empty data set"
       else
-        data.each { |p,v| Facter.add(p, :value => v) { has_weight(EXTERNAL_FACT_WEIGHT) } }
+        data.each { |p,v| collection.add(p, :value => v) { has_weight(EXTERNAL_FACT_WEIGHT) } }
       end
     end
   end
