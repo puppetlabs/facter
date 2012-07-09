@@ -15,7 +15,7 @@ class Facter::Util::Loader
     # Now load from the search path
     shortname = fact.to_s.downcase
     load_env(shortname)
-    
+
     filename = shortname + ".rb"
     search_path.each do |dir|
       # Load individual files
@@ -68,10 +68,10 @@ class Facter::Util::Loader
       good
     end
   end
-  
+
   def valid_search_path?(path)
     return @valid_path[path] unless @valid_path[path].nil?
-    
+
     return @valid_path[path] = Pathname.new(path).absolute?
   end
   private :valid_search_path?

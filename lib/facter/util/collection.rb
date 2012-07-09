@@ -5,6 +5,13 @@ require 'facter/util/loader'
 # Manage which facts exist and how we access them.  Largely just a wrapper
 # around a hash of facts.
 class Facter::Util::Collection
+
+  def initialize(internal_loader, external_loader)
+    @facts = Hash.new
+    @internal_loader = internal_loader
+    @external_loader = external_loader
+  end
+
   # Return a fact object by name.  If you use this, you still have to call
   # 'value' on it to retrieve the actual value.
   def [](name)
@@ -75,24 +82,20 @@ class Facter::Util::Collection
 
     # Try to load the fact if necessary
     load(name) unless @facts[name]
-    
+
     # Try HARDER
     loader.load_all unless @facts[name]
 
-    if @facts.empty? 
+    if @facts.empty?
       Facter.warnonce("No facts loaded from #{loader.search_path.join(File::PATH_SEPARATOR)}")
     end
-      
+
     @facts[name]
   end
 
   # Flush all cached values.
   def flush
     @facts.each { |name, fact| fact.flush }
-  end
-
-  def initialize
-    @facts = Hash.new
   end
 
   # Return a list of all of the facts.
@@ -112,21 +115,14 @@ class Facter::Util::Collection
     ext_loader.load(self)
   end
 
-  # The thing that loads facts if we don't have them.
   def loader
-    unless defined?(@loader)
-      @loader = Facter::Util::Loader.new
-    end
-    @loader
+    @internal_loader
   end
-  
+
   def ext_loader
-    unless defined?(@ext_loader)
-      @ext_loader = Facter::Util::Config.ext_fact_loader
-    end
-    @ext_loader
+    @external_loader
   end
-  
+
   # Return a hash of all of our facts.
   def to_hash
     @facts.inject({}) do |h, ary|

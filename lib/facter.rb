@@ -52,7 +52,9 @@ module Facter
 
   def self.collection
     unless defined?(@collection) and @collection
-      @collection = Facter::Util::Collection.new
+      @collection = Facter::Util::Collection.new(
+        Facter::Util::Loader.new,
+        Facter::Util::Config.ext_fact_loader)
     end
     @collection
   end
@@ -76,14 +78,14 @@ module Facter
   def self.debugonce(msg)
     if msg and not msg.empty? and @@debug_messages[msg].nil?
       @@debug_messages[msg] = true
-      debug(msg) 
-    end 
-  end 
+      debug(msg)
+    end
+  end
 
   def self.debugging?
     @@debug != 0
   end
- 
+
   # show the timing information
   def self.show_time(string)
     puts "#{GREEN}#{string}#{RESET}" if string and Facter.timing?
