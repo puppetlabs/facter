@@ -37,10 +37,6 @@ class Facter::Util::Fact
       resolve.instance_eval(&block) if block
       @resolves << resolve
 
-      # Immediately sort the resolutions, so that we always have
-      # a sorted list for looking up values.
-      @resolves.sort! { |a, b| b.weight <=> a.weight }
-
       resolve
     rescue => e
       Facter.warn "Unable to add resolve for #{@name}: #{e}"
@@ -59,37 +55,23 @@ class Facter::Util::Fact
   def value
     return @value if @value
 
-    if @resolves.length == 0
+    if @resolves.empty?
       Facter.debug "No resolves for %s" % @name
       return nil
     end
 
     searching do
-      @value = nil
 
-      foundsuits = false
-      @value = @resolves.inject(nil) { |result, resolve|
-        next unless resolve.suitable?
-        foundsuits = true
+      suitable_resolutions = sort_by_weight(find_suitable_resolutions(@resolves))
+      @value = find_first_real_value(suitable_resolutions)
+      
+      announce_when_no_suitable_resolution(suitable_resolutions)
+      announce_when_no_value_found(@value)
 
-        tmp = resolve.value
-
-        break tmp unless tmp.nil? or tmp == ""
-      }
-
-      unless foundsuits
-        Facter.debug "Found no suitable resolves of %s for %s" % [@resolves.length, @name]
-      end
+      @value
     end
+  end 
 
-    if @value.nil?
-      # nothing
-      Facter.debug("value for %s is still nil" % @name)
-      return nil
-    else
-      return @value
-    end
-  end
 
   private
 
@@ -109,5 +91,39 @@ class Facter::Util::Fact
     ensure
       @searching = false
     end
+  end
+  
+  def find_suitable_resolutions(resolutions) 
+    resolutions.find_all{ |resolve| resolve.suitable? }
+  end 
+  
+  def sort_by_weight(resolutions)
+    resolutions.sort { |a, b| b.weight <=> a.weight }
+  end 
+  
+  def find_first_real_value(resolutions) 
+    resolutions.each do |resolve| 
+      value = normalize_value(resolve.value) 
+      if not value.nil?
+        return value
+      end 
+    end
+    nil
+  end 
+  
+  def announce_when_no_suitable_resolution(resolutions)
+    if resolutions.empty? 
+      Facter.debug "Found no suitable resolves of %s for %s" % [@resolves.length, @name]
+    end
+  end 
+
+  def announce_when_no_value_found(value)
+    if value.nil?
+      Facter.debug("value for %s is still nil" % @name)
+    end
+  end
+
+  def normalize_value(value)
+    value == "" ? nil : value
   end
 end
