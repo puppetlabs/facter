@@ -5,6 +5,13 @@ require 'facter/util/loader'
 # Manage which facts exist and how we access them.  Largely just a wrapper
 # around a hash of facts.
 class Facter::Util::Collection
+
+  def initialize(internal_loader, external_loader)
+    @facts = Hash.new
+    @internal_loader = internal_loader
+    @external_loader = external_loader
+  end
+
   # Return a fact object by name.  If you use this, you still have to call
   # 'value' on it to retrieve the actual value.
   def [](name)
@@ -60,6 +67,7 @@ class Facter::Util::Collection
 
   # Iterate across all of the facts.
   def each
+    load_all
     @facts.each do |name, fact|
       value = fact.value
       unless value.nil?
@@ -73,15 +81,15 @@ class Facter::Util::Collection
     name = canonize(name)
 
     # Try to load the fact if necessary
-    loader.load(name) unless @facts[name]
+    load(name) unless @facts[name]
 
     # Try HARDER
     loader.load_all unless @facts[name]
 
-    if @facts.empty? 
+    if @facts.empty?
       Facter.warnonce("No facts loaded from #{loader.search_path.join(File::PATH_SEPARATOR)}")
     end
-      
+
     @facts[name]
   end
 
@@ -90,26 +98,29 @@ class Facter::Util::Collection
     @facts.each { |name, fact| fact.flush }
   end
 
-  def initialize
-    @facts = Hash.new
-  end
-
   # Return a list of all of the facts.
   def list
+    load_all
     return @facts.keys
+  end
+
+  def load(name) 
+    loader.load(name) 
+    ext_loader.load(self)
   end
 
   # Load all known facts.
   def load_all
     loader.load_all
+    ext_loader.load(self)
   end
 
-  # The thing that loads facts if we don't have them.
   def loader
-    unless defined?(@loader)
-      @loader = Facter::Util::Loader.new
-    end
-    @loader
+    @internal_loader
+  end
+
+  def ext_loader
+    @external_loader
   end
 
   # Return a hash of all of our facts.

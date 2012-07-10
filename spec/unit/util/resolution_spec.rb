@@ -4,6 +4,8 @@ require 'spec_helper'
 require 'facter/util/resolution'
 
 describe Facter::Util::Resolution do
+  include FacterSpec::ConfigHelper
+  
   it "should require a name" do
     lambda { Facter::Util::Resolution.new }.should raise_error(ArgumentError)
   end
@@ -181,11 +183,12 @@ describe Facter::Util::Resolution do
       end 
 
       describe "when given a string" do
+        
         [true, false
         ].each do |windows| 
           describe "#{ (windows) ? '' : 'not' } on Windows" do
             before do
-              Facter::Util::Config.stubs(:is_windows?).returns(windows)
+              given_a_configuration_of(:is_windows => windows)
             end
 
             describe "stripping whitespace" do
@@ -282,7 +285,7 @@ describe Facter::Util::Resolution do
     describe "and the code is a string" do
       describe "on windows" do
         before do
-          Facter::Util::Config.stubs(:is_windows?).returns(true)
+          given_a_configuration_of(:is_windows => true)
         end
 
         it "should return the result of executing the code" do
@@ -301,7 +304,7 @@ describe Facter::Util::Resolution do
 
       describe "on non-windows systems" do
         before do
-          Facter::Util::Config.stubs(:is_windows?).returns(false)
+          given_a_configuration_of(:is_windows => false)
         end
 
         it "should return the result of executing the code" do
