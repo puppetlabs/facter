@@ -4,6 +4,7 @@ require 'spec_helper'
 
 require 'facter/util/parser'
 require 'tempfile'
+require 'tmpdir.rb'
 
 describe Facter::Util::Parser do
   include PuppetlabsSpec::Files
@@ -104,6 +105,12 @@ echo three=four
 
     it "should return a hash of whatever is returned by the executable" do
       Facter::Util::Parser.parser_for(@script).results.should == {"one" => "two", "three" => "four"}
+    end
+
+    it "should not parse a directory" do
+      Dir.mktmpdir do |dir|
+        Facter::Util::Parser.parser_for(dir).results.should == false
+      end 
     end
   end
   

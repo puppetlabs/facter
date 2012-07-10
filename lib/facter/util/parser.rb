@@ -124,7 +124,7 @@ module Facter::Util::Parser
   end
 
   register(ScriptParser) do |filename|
-    File.executable?(filename)
+    File.executable?(filename) && File.file?(filename)
   end
 
 
