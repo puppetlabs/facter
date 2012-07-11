@@ -22,7 +22,7 @@ describe "Processor facts" do
       # processor facts belong to a file with a different name,
       # so load the file explicitly (after stubbing kernel),
       # but we have to stub execquery first
-      Facter.collection.loader.load(:processor)
+      Facter.collection.internal_loader.load(:processor)
     end
 
     describe "2003" do
@@ -68,7 +68,7 @@ describe "Processor facts" do
 
   describe "on Solaris" do
     before :each do
-      Facter.collection.loader.load(:processor)
+      Facter.collection.internal_loader.load(:processor)
       Facter.fact(:kernel).stubs(:value).returns(:sunos)
     end
 
@@ -87,7 +87,7 @@ describe "Processor facts" do
 
   describe "on Unixes" do
     before :each do
-      Facter.collection.loader.load(:processor)
+      Facter.collection.internal_loader.load(:processor)
     end
 
     it "should be 1 in SPARC fixture" do

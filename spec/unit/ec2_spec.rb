@@ -33,7 +33,7 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/user-data/").
         at_least_once.returns(StringIO.new(""))
 
-      Facter.collection.loader.load(:ec2)
+      Facter.collection.internal_loader.load(:ec2)
       Facter.fact(:ec2_foo).value.should == "bar"
     end
 
@@ -51,7 +51,7 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/user-data/").
         at_least_once.returns(StringIO.new(""))
 
-      Facter.collection.loader.load(:ec2)
+      Facter.collection.internal_loader.load(:ec2)
       Facter.fact(:ec2_foo).value.should == "bar,baz"
     end
 
@@ -73,7 +73,7 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/user-data/").
         at_least_once.returns(StringIO.new(""))
 
-      Facter.collection.loader.load(:ec2)
+      Facter.collection.internal_loader.load(:ec2)
       Facter.fact(:ec2_foo_bar).value.should == "baz"
     end
 
@@ -87,7 +87,7 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/user-data/").
         at_least_once.returns(StringIO.new("test"))
 
-      Facter.collection.loader.load(:ec2)
+      Facter.collection.internal_loader.load(:ec2)
       Facter.fact(:ec2_userdata).value.should == ["test"]
     end
   end
@@ -114,7 +114,7 @@ describe "ec2 facts" do
         at_least_once.returns(StringIO.new("test"))
 
       # Force a fact load
-      Facter.collection.loader.load(:ec2)
+      Facter.collection.internal_loader.load(:ec2)
 
       Facter.fact(:ec2_userdata).value.should == ["test"]
     end
@@ -142,7 +142,7 @@ describe "ec2 facts" do
         at_least_once.returns(StringIO.new("test"))
 
       # Force a fact load
-      Facter.collection.loader.load(:ec2)
+      Facter.collection.internal_loader.load(:ec2)
 
       Facter.fact(:ec2_userdata).value.should == ["test"]
     end
@@ -166,7 +166,7 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/user-data/").never
 
       # Force a fact load
-      Facter.collection.loader.load(:ec2)
+      Facter.collection.internal_loader.load(:ec2)
 
       Facter.fact(:ec2_userdata).should == nil
     end

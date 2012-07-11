@@ -9,7 +9,7 @@ describe "Memory facts" do
 
   describe "when returning scaled sizes" do
     before(:each) do
-      Facter.collection.loader.load(:memory)
+      Facter.collection.internal_loader.load(:memory)
     end
 
     [  "memorysize",
@@ -66,7 +66,7 @@ VMSTAT
       Facter::Util::Resolution.stubs(:exec).with('vm_stat').returns(sample_vm_stat)
       Facter::Util::Resolution.stubs(:exec).with('sysctl vm.swapusage').returns("vm.swapusage: total = 64.00M  used = 1.00M  free = 63.00M  (encrypted)")
 
-      Facter.collection.loader.load(:memory)
+      Facter.collection.internal_loader.load(:memory)
     end
 
     it "should return the current swap size in MB" do
@@ -118,7 +118,7 @@ INFO
 
         File.stubs(:readlines).with("/proc/meminfo").returns(meminfo.split("\n"))
 
-        Facter.collection.loader.load(:memory)
+        Facter.collection.internal_loader.load(:memory)
       end
 
       after(:each) do
@@ -155,7 +155,7 @@ SWAP
 
       Facter::Util::Resolution.stubs(:exec).with('swap -l').returns(swapusage)
 
-      Facter.collection.loader.load(:memory)
+      Facter.collection.internal_loader.load(:memory)
     end
 
     after(:each) do
@@ -209,7 +209,7 @@ EOS
 
       Facter::Util::Resolution.stubs(:exec).with("sysctl hw.physmem | cut -d'=' -f2").returns('267321344')
 
-      Facter.collection.loader.load(:memory)
+      Facter.collection.internal_loader.load(:memory)
     end
 
     after :each do
@@ -265,7 +265,7 @@ swapfile             dev  swaplo blocks   free
 SWAP
         Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l').returns sample_swap_line
 
-        Facter.collection.loader.load(:memory)
+        Facter.collection.internal_loader.load(:memory)
       end
 
       it "should return the current memory size in MB" do
@@ -293,7 +293,7 @@ swapfile             dev  swaplo blocks   free
 /dev/swap2          4294967295,4294967295     16 2097136 2097136
 SWAP
         Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l').returns sample_swap_line
-        Facter.collection.loader.load(:memory)
+        Facter.collection.internal_loader.load(:memory)
       end
 
       it "should return the current memory size in MB" do
@@ -317,7 +317,7 @@ SWAP
       before(:each) do
         Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l').returns ""
 
-        Facter.collection.loader.load(:memory)
+        Facter.collection.internal_loader.load(:memory)
       end
 
       it "should return the current memory size in MB" do
@@ -358,7 +358,7 @@ EOS
 
         Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.physmem").returns('248512512')
 
-        Facter.collection.loader.load(:memory)
+        Facter.collection.internal_loader.load(:memory)
       end
 
       after :each do
@@ -410,7 +410,7 @@ Device          1K-blocks     Used    Avail Capacity
 SWAP
           Facter::Util::Resolution.stubs(:exec).with('swapinfo -k').returns sample_swapinfo
 
-          Facter.collection.loader.load(:memory)
+          Facter.collection.internal_loader.load(:memory)
         end
 
         it "should return the current swap free in MB" do
@@ -438,7 +438,7 @@ Device          1K-blocks     Used    Avail Capacity
 SWAP
           Facter::Util::Resolution.stubs(:exec).with('swapinfo -k').returns sample_swapinfo
 
-          Facter.collection.loader.load(:memory)
+          Facter.collection.internal_loader.load(:memory)
         end
 
         it "should return the current swap free in MB" do
@@ -467,7 +467,7 @@ Device          1K-blocks     Used    Avail Capacity
 SWAP
           Facter::Util::Resolution.stubs(:exec).with('swapinfo -k').returns sample_swapinfo
 
-          Facter.collection.loader.load(:memory)
+          Facter.collection.internal_loader.load(:memory)
         end
 
         it "should return the current swap free in MB" do

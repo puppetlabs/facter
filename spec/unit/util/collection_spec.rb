@@ -105,12 +105,12 @@ describe Facter::Util::Collection do
     end
 
     it "should use its loader to try to load the fact if no fact can be found" do
-      collection.loader.expects(:load).with(:testing)
+      collection.internal_loader.expects(:load).with(:testing)
       collection.fact("testing")
     end
 
     it "should return nil if it cannot find or load the fact" do
-      collection.loader.expects(:load).with(:testing)
+      collection.internal_loader.expects(:load).with(:testing)
       collection.fact("testing").should be_nil
     end
   end

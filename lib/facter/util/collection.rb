@@ -84,10 +84,10 @@ class Facter::Util::Collection
     load(name) unless @facts[name]
 
     # Try HARDER
-    loader.load_all unless @facts[name]
+    internal_loader.load_all unless @facts[name]
 
     if @facts.empty?
-      Facter.warnonce("No facts loaded from #{loader.search_path.join(File::PATH_SEPARATOR)}")
+      Facter.warnonce("No facts loaded from #{internal_loader.search_path.join(File::PATH_SEPARATOR)}")
     end
 
     @facts[name]
@@ -104,22 +104,22 @@ class Facter::Util::Collection
     return @facts.keys
   end
 
-  def load(name) 
-    loader.load(name) 
-    ext_loader.load(self)
+  def load(name)
+    internal_loader.load(name)
+    external_loader.load(self)
   end
 
   # Load all known facts.
   def load_all
-    loader.load_all
-    ext_loader.load(self)
+    internal_loader.load_all
+    external_loader.load(self)
   end
 
-  def loader
+  def internal_loader
     @internal_loader
   end
 
-  def ext_loader
+  def external_loader
     @external_loader
   end
 

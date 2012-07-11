@@ -13,10 +13,10 @@ describe "SSH fact" do
     '/etc/opt/ssh',
   ]
 
-  before do
+  before :each do
     # We need these facts loaded, but they belong to a file with a
     # different name, so load the file explicitly.
-    Facter.collection.loader.load(:ssh)
+    Facter.collection.internal_loader.load(:ssh)
   end
 
   # fingerprints extracted from ssh-keygen -r '' -f /etc/ssh/ssh_host_dsa_key.pub
