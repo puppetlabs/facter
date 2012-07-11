@@ -42,13 +42,13 @@ describe Facter::Util::Config do
 
     it "should return the default value for windows 2008" do
       Facter::Util::Config.stubs(:is_windows?).returns(true)
-      Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\ProgramData") 
+      Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\ProgramData")
       Facter::Util::Config.external_facts_dirs.should == [File.join("C:\\ProgramData", 'PuppetLabs', 'facter', 'facts.d')]
     end
 
     it "should return the default value for windows 2003R2" do
       Facter::Util::Config.stubs(:is_windows?).returns(true)
-      Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\Documents") 
+      Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\Documents")
       Facter::Util::Config.external_facts_dirs.should == [File.join("C:\\Documents", 'PuppetLabs', 'facter', 'facts.d')]
     end
   end

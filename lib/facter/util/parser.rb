@@ -6,7 +6,7 @@ require 'facter/util/json'
 
 module Facter::Util::Parser
   @parsers = []
-  
+
   # For support mutliple extensions you can pass an array of extensions as
   # +ext+.
   def self.extension_matches?(filename, ext)
@@ -17,18 +17,18 @@ module Facter::Util::Parser
     end
     [extension].flatten.to_a.include?(file_extension(filename).downcase)
   end
-    
+
   def self.file_extension(filename)
     File.extname(filename).sub(".", '')
   end
-  
+
   def self.register(klass, &suitable)
     @parsers << [klass, suitable]
   end
 
   def self.parser_for(filename)
     registration = @parsers.detect { |k| k[1].call(filename) }
-    
+
     if registration.nil?
       NothingParser.new
     else
@@ -38,7 +38,7 @@ module Facter::Util::Parser
 
   class Base
     attr_reader :filename
-    
+
     def initialize(filename)
       @filename = filename
     end
@@ -53,7 +53,7 @@ module Facter::Util::Parser
       Facter.warn("Failed to handle #{filename} as yaml facts: #{e.class}: #{e}")
     end
   end
-  
+
   register(YamlParser) do |filename|
     extension_matches?(filename, "yaml")
   end
@@ -76,7 +76,7 @@ module Facter::Util::Parser
       Facter.warn("Failed to handle #{filename} as text facts: #{e.class}: #{e}")
     end
   end
-  
+
   register(TextParser) do |filename|
     extension_matches?(filename, "txt")
   end
@@ -99,7 +99,7 @@ module Facter::Util::Parser
         JSON.load(File.read(filename))
       end
     end
-    
+
     register(JsonParser) do |filename|
       extension_matches?(filename, "json")
     end

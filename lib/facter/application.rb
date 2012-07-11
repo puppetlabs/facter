@@ -1,21 +1,21 @@
 module Facter
   module Application
-    
+
     require 'facter/util/nothing_loader'
-    
-    def self.create_directory_loader(dir) 
+
+    def self.create_directory_loader(dir)
       begin
         Facter::Util::Config.ext_fact_loader = Facter::Util::DirectoryLoader.loader_for(dir)
       rescue Facter::Util::DirectoryLoader::NoSuchDirectoryError => error
         $stderr.puts "Specified external facts directory #{dir} does not exist."
         exit(1)
       end
-    end 
-  
-    def self.create_nothing_loader
-      Facter::Util::Config.ext_fact_loader = Facter::Util::NothingLoader.new 
     end
-    
+
+    def self.create_nothing_loader
+      Facter::Util::Config.ext_fact_loader = Facter::Util::NothingLoader.new
+    end
+
     def self.run(argv)
       require 'optparse'
       require 'facter'
@@ -27,7 +27,7 @@ module Facter
 
       # Change location of external facts dir
       # Check here for valid ext_dir and exit program
-  
+
       # Create the facts hash that is printed to standard out.
       unless names.empty?
         facts = {}
@@ -91,9 +91,9 @@ module Facter
       options = {}
       OptionParser.new do |opts|
         opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
-        if Facter.json? 
+        if Facter.json?
           opts.on("-j", "--json")   { |v| options[:json]   = v }
-        end 
+        end
         opts.on(      "--trace")  { |v| options[:trace]  = v }
         opts.on(      "--external-dir DIR") { |v| create_directory_loader(v) }
         opts.on(      "--no-external-dir") { |v| create_nothing_loader }

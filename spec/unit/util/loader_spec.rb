@@ -177,7 +177,7 @@ describe Facter::Util::Loader do
 
     it 'should load any ruby files in directories matching the fact name in the search path in sorted order regardless of the order returned by Dir.entries' do
       @loader = TestLoader.new
-      
+
       @loader.stubs(:search_path).returns %w{/one/dir}
       FileTest.stubs(:exist?).returns false
       FileTest.stubs(:directory?).with("/one/dir/testing").returns true
@@ -194,7 +194,6 @@ describe Facter::Util::Loader do
     end
 
     it "should load any ruby files in directories matching the fact name in the search path" do
-      
       @loader.expects(:search_path).returns %w{/one/dir}
       FileTest.stubs(:exist?).returns false
       FileTest.expects(:directory?).with("/one/dir/testing").returns true

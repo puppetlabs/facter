@@ -63,13 +63,13 @@ class Facter::Util::Fact
 
       suitable_resolutions = sort_by_weight(find_suitable_resolutions(@resolves))
       @value = find_first_real_value(suitable_resolutions)
-      
+
       announce_when_no_suitable_resolution(suitable_resolutions)
       announce_when_no_value_found(@value)
 
       @value
     end
-  end 
+  end
 
 
   private
@@ -91,30 +91,30 @@ class Facter::Util::Fact
       @searching = false
     end
   end
-  
-  def find_suitable_resolutions(resolutions) 
+
+  def find_suitable_resolutions(resolutions)
     resolutions.find_all{ |resolve| resolve.suitable? }
-  end 
-  
+  end
+
   def sort_by_weight(resolutions)
     resolutions.sort { |a, b| b.weight <=> a.weight }
-  end 
-  
-  def find_first_real_value(resolutions) 
-    resolutions.each do |resolve| 
-      value = normalize_value(resolve.value) 
+  end
+
+  def find_first_real_value(resolutions)
+    resolutions.each do |resolve|
+      value = normalize_value(resolve.value)
       if not value.nil?
         return value
-      end 
+      end
     end
     nil
-  end 
-  
+  end
+
   def announce_when_no_suitable_resolution(resolutions)
-    if resolutions.empty? 
+    if resolutions.empty?
       Facter.debug "Found no suitable resolves of %s for %s" % [@resolves.length, @name]
     end
-  end 
+  end
 
   def announce_when_no_value_found(value)
     if value.nil?

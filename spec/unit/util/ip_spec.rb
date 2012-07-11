@@ -5,7 +5,7 @@ require 'facter/util/ip'
 
 describe Facter::Util::IP do
   include FacterSpec::ConfigHelper
-  
+
   before :each do
     given_a_configuration_of(:is_windows => false)
   end

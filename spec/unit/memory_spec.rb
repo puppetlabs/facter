@@ -22,7 +22,7 @@ describe "Memory facts" do
         before(:each) do
           Facter.fact(fact + "_mb").stubs(:value).returns(nil)
         end
-        
+
         it "#{fact} should not exist either" do
           Facter.fact(fact).value.should be_nil
         end
@@ -88,7 +88,7 @@ VMSTAT
     it "should return the memory free in MB" do
       Facter.fact(:memoryfree_mb).value.should == "138.70"
     end
-    
+
     after(:each) do
       Facter.clear
     end
@@ -117,26 +117,26 @@ Dirty:           4 kB
 INFO
 
         File.stubs(:readlines).with("/proc/meminfo").returns(meminfo.split("\n"))
-        
+
         Facter.collection.loader.load(:memory)
       end
-      
+
       after(:each) do
         Facter.clear
       end
-      
+
       it "should return the current memory size in MB" do
         Facter.fact(:memorysize_mb).value.should == "249.91"
       end
-      
+
       it "should return the current memory free in MB" do
         Facter.fact(:memoryfree_mb).value.should == "196.16"
       end
-      
+
       it "should return the current swap size in MB" do
         Facter.fact(:swapsize_mb).value.should == "511.99"
       end
-      
+
       it "should return the current swap free in MB" do
         Facter.fact(:swapfree_mb).value.should == "511.99"
       end
@@ -161,7 +161,7 @@ SWAP
     after(:each) do
       Facter.clear
     end
-    
+
     describe "when not root" do
       before(:each) do
         Facter.fact(:id).stubs(:value).returns("notroot")
@@ -184,13 +184,13 @@ SWAP
       it "should return the current swap size in MB" do
         Facter.fact(:swapsize_mb).value.should == "512.00"
       end
-      
+
       it "should return the current swap free in MB" do
         Facter.fact(:swapfree_mb).value.should == "508.00"
       end
     end
   end
- 
+
 
   describe "on OpenBSD" do
     before :each do
@@ -232,7 +232,7 @@ EOS
       Facter.fact(:memorysize_mb).value.should == "254.94"
     end
   end
-  
+
   describe "on Solaris" do
     before(:each) do
       Facter.clear
@@ -244,7 +244,7 @@ System Peripherals (Software Nodes):
 
 PRTCONF
       Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/prtconf 2>/dev/null').returns sample_prtconf
-      
+
       vmstat_lines = <<VMSTAT
  kthr      memory            page            disk          faults      cpu
  r b w   swap  free  re  mf pi po fr de sr s0 s3 -- --   in   sy   cs us sy id
@@ -252,11 +252,11 @@ PRTCONF
 VMSTAT
       Facter::Util::Resolution.stubs(:exec).with('vmstat').returns(vmstat_lines)
     end
-    
+
     after(:each) do
       Facter.clear
-    end    
-    
+    end
+
     describe "when single swap exists" do
       before(:each) do
         sample_swap_line = <<SWAP
@@ -268,10 +268,10 @@ SWAP
         Facter.collection.loader.load(:memory)
       end
 
-      it "should return the current memory size in MB" do      
+      it "should return the current memory size in MB" do
         Facter.fact(:memorysize_mb).value.should == "2048.00"
       end
-      
+
       it "should return the current memory free in MB" do
         Facter.fact(:memoryfree_mb).value.should == "465.06"
       end
@@ -296,7 +296,7 @@ SWAP
         Facter.collection.loader.load(:memory)
       end
 
-      it "should return the current memory size in MB" do      
+      it "should return the current memory size in MB" do
         Facter.fact(:memorysize_mb).value.should == "2048.00"
       end
 
@@ -312,7 +312,7 @@ SWAP
         Facter.fact(:swapsize_mb).value.should == "2047.98"
       end
     end
-    
+
     describe "when no swap exists" do
       before(:each) do
         Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l').returns ""
@@ -381,9 +381,9 @@ EOS
         Facter.fact(:memoryfree_mb).value.should == "13.61"
       end
     end
-    
-    describe "on FreeBSD" do 
-      before(:each) do 
+
+    describe "on FreeBSD" do
+      before(:each) do
         Facter.clear
         Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
 
@@ -398,40 +398,40 @@ VM_STAT
 PHYSMEM
         Facter::Util::Resolution.stubs(:exec).with('sysctl -n hw.physmem').returns sample_physmem
       end
-      
-      after(:each) do 
-        Facter.clear 
-      end 
-      
-      describe "with no swap" do 
-        before(:each) do 
+
+      after(:each) do
+        Facter.clear
+      end
+
+      describe "with no swap" do
+        before(:each) do
           sample_swapinfo = <<SWAP
 Device          1K-blocks     Used    Avail Capacity
 SWAP
           Facter::Util::Resolution.stubs(:exec).with('swapinfo -k').returns sample_swapinfo
 
           Facter.collection.loader.load(:memory)
-        end 
+        end
 
-        it "should return the current swap free in MB" do 
+        it "should return the current swap free in MB" do
           Facter.fact(:swapfree_mb).value.should == "0.00"
         end
-        
-        it "should return the current swap size in MB" do 
+
+        it "should return the current swap size in MB" do
           Facter.fact(:swapsize_mb).value.should == "0.00"
-        end 
+        end
 
-        it "should return the current memory size in MB" do 
+        it "should return the current memory size in MB" do
           Facter.fact(:memorysize_mb).value.should == "1007.34"
-        end 
+        end
 
-        it "should return the current memory free in MB" do 
+        it "should return the current memory free in MB" do
           Facter.fact(:memoryfree_mb).value.should == "641.25"
-        end 
-      end 
-      
-      describe "with one swap" do 
-        before(:each) do 
+        end
+      end
+
+      describe "with one swap" do
+        before(:each) do
           sample_swapinfo = <<SWAP
 Device          1K-blocks     Used    Avail Capacity
 /dev/da0p3        2048540        0  1048540     0%
@@ -441,25 +441,25 @@ SWAP
           Facter.collection.loader.load(:memory)
         end
 
-        it "should return the current swap free in MB" do 
+        it "should return the current swap free in MB" do
           Facter.fact(:swapfree_mb).value.should == "1023.96"
         end
-        
-        it "should return the current swap size in MB" do 
+
+        it "should return the current swap size in MB" do
           Facter.fact(:swapsize_mb).value.should == "2000.53"
-        end 
+        end
 
-        it "should return the current memory size in MB" do 
+        it "should return the current memory size in MB" do
           Facter.fact(:memorysize_mb).value.should == "1007.34"
-        end 
+        end
 
-        it "should return the current memory free in MB" do 
+        it "should return the current memory free in MB" do
           Facter.fact(:memoryfree_mb).value.should == "641.25"
-        end 
-      end 
+        end
+      end
 
-      describe "with multiple swaps" do 
-        before(:each) do 
+      describe "with multiple swaps" do
+        before(:each) do
           sample_swapinfo = <<SWAP
 Device          1K-blocks     Used    Avail Capacity
 /dev/da0p3        2048540        0  1048540     0%
@@ -468,31 +468,31 @@ SWAP
           Facter::Util::Resolution.stubs(:exec).with('swapinfo -k').returns sample_swapinfo
 
           Facter.collection.loader.load(:memory)
-        end 
+        end
 
-        it "should return the current swap free in MB" do 
+        it "should return the current swap free in MB" do
           Facter.fact(:swapfree_mb).value.should == "2047.93"
         end
 
-        it "should return the current swap size in MB" do 
+        it "should return the current swap size in MB" do
           Facter.fact(:swapsize_mb).value.should == "4977.62"
-        end 
+        end
 
-        it "should return the current memory size in MB" do 
+        it "should return the current memory size in MB" do
           Facter.fact(:memorysize_mb).value.should == "1007.34"
-        end 
+        end
 
-        it "should return the current memory free in MB" do 
+        it "should return the current memory free in MB" do
           Facter.fact(:memoryfree_mb).value.should == "641.25"
-        end 
-      end 
-    end 
+        end
+      end
+    end
 
     describe "on Windows" do
       before :each do
         Facter.clear
         Facter.fact(:kernel).stubs(:value).returns("windows")
-        Facter.collection.loader.load(:memory)
+        Facter.collection.internal_loader.load(:memory)
         require 'facter/util/wmi'
       end
 

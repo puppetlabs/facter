@@ -13,7 +13,7 @@ end
 
 describe "IPv6 address fact" do
   include FacterSpec::ConfigHelper
-  
+
   before do
     given_a_configuration_of(:is_windows => false)
   end
