@@ -10,10 +10,11 @@ module Facter::Util::Parser
   # For support mutliple extensions you can pass an array of extensions as
   # +ext+.
   def self.extension_matches?(filename, ext)
-    if ext.class == String then
-      extension = ext.downcase
-    elsif ext.class == Array then
-      extension = ext.collect {|x| x.downcase }
+    extension = case ext
+    when String
+      ext.downcase
+    when Enumerable
+      ext.collect {|x| x.downcase }
     end
     [extension].flatten.to_a.include?(file_extension(filename).downcase)
   end
