@@ -33,86 +33,77 @@ describe Facter::Util::Parser do
     end
   end
 
+  let(:data) do {"one" => "two", "three" => "four"} end
+
   describe "yaml" do
+    let(:data_in_yaml) do YAML.dump(data) end
+    let(:data_file) do "/tmp/foo.yaml" end
+
     it "should return a hash of whatever is stored on disk" do
-      file = tmpfilename('parser') + ".yaml"
-
-      data = {"one" => "two", "three" => "four"}
-
-      File.open(file, "w") { |f| f.print YAML.dump(data) }
-
-      Facter::Util::Parser.parser_for(file).results.should == data
+      File.stubs(:read).with(data_file).returns(data_in_yaml)
+      described_class.parser_for(data_file).results.should == data
     end
 
     it "should handle exceptions and warn" do
-      file = tmpfilename('parser') + ".yaml"
-
-      data = {"one" => "two", "three" => "four"}
-
-      File.open(file, "w") { |f| f.print "}" }
-      Facter.expects(:warn)
-      lambda { Facter::Util::Parser.parser_for("/some/path/that/doesn't/exist.yaml").results }.should_not raise_error
+      # YAML data with an error
+      File.stubs(:read).with(data_file).returns(data_in_yaml + "}")
+      Facter.expects(:warn).at_least_once
+      lambda { Facter::Util::Parser.parser_for(data_file).results }.should_not raise_error
     end
   end
 
   describe "json" do
+    let(:data_in_json) do JSON.dump(data) end
+    let(:data_file) do "/tmp/foo.yaml" end
+
     it "should return a hash of whatever is stored on disk" do
       pending("this test requires the json library") unless Facter.json?
-      file = tmpfilename('parser') + ".json"
-
-      data = {"one" => "two", "three" => "four"}
-
-      File.open(file, "w") { |f| f.print data.to_json }
-
-      Facter::Util::Parser.parser_for(file).results.should == data
+      File.stubs(:read).with(data_file).returns(data_in_json)
+      Facter::Util::Parser.parser_for(data_file).results.should == data
     end
   end
 
   describe "txt" do
-    it "should return a hash of whatever is stored on disk" do
-      file = tmpfilename('parser') + ".txt"
+    let(:data_file) do "/tmp/foo.txt" end
 
-      data = "one=two\nthree=four\n"
-
-      File.open(file, "w") { |f| f.print data }
-
-      Facter::Util::Parser.parser_for(file).results.should == {"one" => "two", "three" => "four"}
+    shared_examples_for "txt parser" do
+      it "should return a hash of whatever is stored on disk" do
+        File.stubs(:read).with(data_file).returns(data_in_txt)
+        Facter::Util::Parser.parser_for(data_file).results.should == data
+      end
     end
 
-    it "should ignore any non-setting lines" do
-      file = tmpfilename('parser') + ".txt"
+    context "well formed data" do
+      let(:data_in_txt) do "one=two\nthree=four\n" end
+      it_behaves_like "txt parser"
+    end
 
-      data = "one=two\nfive\nthree=four\n"
-
-      File.open(file, "w") { |f| f.print data }
-
-      Facter::Util::Parser.parser_for(file).results.should == {"one" => "two", "three" => "four"}
+    context "extra data" do
+      let(:data_in_txt) do "one=two\nfive\nthree=four\n" end
+      it_behaves_like "txt parser"
     end
   end
 
   describe "scripts" do
-    before do
-      @script = tmpfilename('parser')
-      data = "#!/bin/sh
-echo one=two
-echo three=four
-"
+    let :cmd do "/tmp/foo.sh" end
+    let :data_in_txt do "one=two\nthree=four\n" end
 
-      File.open(@script, "w") { |f| f.print data }
-      File.chmod(0755, @script)
+    before :each do
+      Facter::Util::Resolution.stubs(:exec).with(cmd).returns(data_in_txt)
+      File.stubs(:executable?).with(cmd).returns(true)
     end
 
     it "should return a hash of whatever is returned by the executable" do
-      Facter::Util::Parser.parser_for(@script).results.should == {"one" => "two", "three" => "four"}
+      File.stubs(:file?).with(cmd).returns(true)
+      Facter::Util::Parser.parser_for(cmd).results.should == data
     end
 
     it "should not parse a directory" do
-      Dir.mktmpdir do |dir|
-        Facter::Util::Parser.parser_for(dir).results.should == false
-      end 
+      File.stubs(:file?).with(cmd).returns(false)
+      Facter::Util::Parser.parser_for(cmd).results.should == false
     end
   end
-  
+
   describe "nothing parser" do
     it "uses the nothing parser when there is no other parser" do
       Facter::Util::Parser.parser_for("this.is.not.valid").results.should == false

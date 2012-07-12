@@ -3,6 +3,7 @@
 #
 # Parsers must subclass this class and provide their own #results method.
 require 'facter'
+require 'yaml'
 
 module Facter::Util::Parser
   @parsers = []
@@ -40,18 +41,34 @@ module Facter::Util::Parser
   class Base
     attr_reader :filename
 
-    def initialize(filename)
+    def initialize(filename, content = nil)
       @filename = filename
+      @content  = content
+    end
+
+    def content
+      @content ||= File.read(filename)
+    end
+
+    # results on the base class is really meant to be just an exception handler
+    # wrapper.
+    def results
+      parse_results
+    rescue Exception => detail
+      Facter.warn("Failed to handle #{filename} as #{self.class} facts")
+      Facter.warn("detail: #{detail.class}: #{detail.message}")
+      Facter.debug(detail.backtrace.join("\n\t"))
+      nil
+    end
+
+    def parse_results
+      raise ArgumentError, "Subclasses must respond to parse_results"
     end
   end
 
   class YamlParser < Base
-    def results
-      require 'yaml'
-
-      YAML.load_file(filename)
-    rescue Exception => e
-      Facter.warn("Failed to handle #{filename} as yaml facts: #{e.class}: #{e}")
+    def parse_results
+      YAML.load(content)
     end
   end
 
@@ -60,17 +77,15 @@ module Facter::Util::Parser
   end
 
   class TextParser < Base
-    def results
+    def parse_results
+      re = /^(.+)=(.+)$/
       result = {}
-      File.readlines(filename).each do |line|
-
-        if line.chomp =~ /^(.+)=(.+)$/
-          result[$1] = $2
+      content.lines.each do |line|
+        if match_data = re.match(line.chomp)
+          result[match_data[1]] = match_data[2]
         end
       end
       result
-    rescue Exception => e
-      Facter.warn("Failed to handle #{filename} as text facts: #{e.class}: #{e}")
     end
   end
 
@@ -81,7 +96,7 @@ module Facter::Util::Parser
   class JsonParser < Base
     def results
       if Facter.json?
-        JSON.load(File.read(filename))
+        JSON.load(content)
       else
         Facter.warnonce "Cannot parse JSON data file #{filename} without the json library."
         Facter.warnonce "Suggested next step is `gem install json` to install the json library."
@@ -89,8 +104,6 @@ module Facter::Util::Parser
       end
     end
   end
-
-
 
   register(JsonParser) do |filename|
     extension_matches?(filename, "json")
@@ -101,16 +114,13 @@ module Facter::Util::Parser
       output = Facter::Util::Resolution.exec(filename)
 
       result = {}
-      output.split("\n").each do |line|
-        if line =~ /^(.+)=(.+)$/
-          result[$1] = $2
+      re = /^(.+)=(.+)$/
+      output.lines.collect(&:chomp).each do |line|
+        if match_data = re.match(line)
+          result[match_data[1]] = match_data[2]
         end
       end
-
       result
-    rescue Exception => e
-      Facter.warn("Failed to handle #{filename} as script facts: #{e.class}: #{e}")
-      Facter.debug(e.backtrace.join("\n\t"))
     end
   end
 
