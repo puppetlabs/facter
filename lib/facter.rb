@@ -21,7 +21,6 @@ module Facter
   require 'facter/util/fact'
   require 'facter/util/collection'
   require 'facter/util/monkey_patches'
-  require 'facter/util/json'
 
   include Comparable
   include Enumerable
@@ -93,6 +92,17 @@ module Facter
 
   def self.timing?
     @@timing != 0
+  end
+
+  # Facter.json? is meant to provide a lightweight way to check if the JSON
+  # "feature" is available.
+  def self.json?
+    begin
+      require 'json'
+      true
+    rescue LoadError
+      false
+    end
   end
 
   # Return a fact object by name.  If you use this, you still have to call

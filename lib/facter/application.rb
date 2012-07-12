@@ -91,9 +91,7 @@ module Facter
       options = {}
       OptionParser.new do |opts|
         opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
-        if Facter.json?
-          opts.on("-j", "--json")   { |v| options[:json]   = v }
-        end
+        opts.on("-j", "--json")   { |v| options[:json]   = v }
         opts.on(      "--trace")  { |v| options[:trace]  = v }
         opts.on(      "--external-dir DIR") { |v| create_directory_loader(v) }
         opts.on(      "--no-external-dir") { |v| create_nothing_loader }

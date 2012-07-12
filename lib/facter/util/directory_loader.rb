@@ -12,9 +12,10 @@
 # Facts can be in the form of JSON, YAML or Text files
 # and any executable that returns key=value pairs.
 
-require 'facter/util/parser'
+require 'facter'
 require 'facter/util/config'
 require 'facter/util/composite_loader'
+require 'facter/util/parser'
 
 class Facter::Util::DirectoryLoader
   require 'yaml'

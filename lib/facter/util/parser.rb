@@ -2,7 +2,7 @@
 # facts such as scripts, text, json and yaml files.
 #
 # Parsers must subclass this class and provide their own #results method.
-require 'facter/util/json'
+require 'facter'
 
 module Facter::Util::Parser
   @parsers = []
@@ -81,28 +81,24 @@ module Facter::Util::Parser
     extension_matches?(filename, "txt")
   end
 
-  if Facter.json?
-    class JsonParser < Base
-      def self.matches?(filename)
-        extension_matches?(filename, "json")
-      end
-
-      def results
-        attempts = 0
-        begin
-          require 'json'
-        rescue LoadError => e
-          raise e if attempts >= 1
-          attempts += 1
-        end
-
-        JSON.load(File.read(filename))
-      end
-    end
-
-    register(JsonParser) do |filename|
+  class JsonParser < Base
+    def self.matches?(filename)
       extension_matches?(filename, "json")
     end
+
+    def results
+      if Facter.json?
+        JSON.load(File.read(filename))
+      else
+        Facter.warnonce "Cannot parse JSON data file #{filename} without the json library."
+        Facter.warnonce "Suggested next step is `gem install json` to install the json library."
+        nil
+      end
+    end
+  end
+
+  register(JsonParser) do |filename|
+    extension_matches?(filename, "json")
   end
 
   class ScriptParser < Base

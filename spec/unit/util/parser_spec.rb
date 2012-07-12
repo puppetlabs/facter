@@ -54,18 +54,17 @@ describe Facter::Util::Parser do
       lambda { Facter::Util::Parser.parser_for("/some/path/that/doesn't/exist.yaml").results }.should_not raise_error
     end
   end
-  
-  if Facter.json? 
-    describe "json" do
-      it "should return a hash of whatever is stored on disk" do
-        file = tmpfilename('parser') + ".json"
 
-        data = {"one" => "two", "three" => "four"}
+  describe "json" do
+    it "should return a hash of whatever is stored on disk" do
+      pending("this test requires the json library") unless Facter.json?
+      file = tmpfilename('parser') + ".json"
 
-        File.open(file, "w") { |f| f.print data.to_json }
+      data = {"one" => "two", "three" => "four"}
 
-        Facter::Util::Parser.parser_for(file).results.should == data
-      end
+      File.open(file, "w") { |f| f.print data.to_json }
+
+      Facter::Util::Parser.parser_for(file).results.should == data
     end
   end
 
