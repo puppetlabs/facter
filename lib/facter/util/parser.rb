@@ -60,10 +60,6 @@ module Facter::Util::Parser
   end
 
   class TextParser < Base
-    def self.matches?(filename)
-      extension_matches?(filename, "txt")
-    end
-
     def results
       result = {}
       File.readlines(filename).each do |line|
@@ -83,10 +79,6 @@ module Facter::Util::Parser
   end
 
   class JsonParser < Base
-    def self.matches?(filename)
-      extension_matches?(filename, "json")
-    end
-
     def results
       if Facter.json?
         JSON.load(File.read(filename))
@@ -97,6 +89,8 @@ module Facter::Util::Parser
       end
     end
   end
+
+
 
   register(JsonParser) do |filename|
     extension_matches?(filename, "json")
