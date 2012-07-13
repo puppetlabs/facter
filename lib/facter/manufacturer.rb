@@ -50,7 +50,8 @@ else
     '[Ss]ystem [Ii]nformation' => [
       { 'Manufacturer:'    => 'manufacturer' },
       { 'Product(?: Name)?:' => 'productname' },
-      { 'Serial Number:'   => 'serialnumber' }
+      { 'Serial Number:'   => 'serialnumber' },
+      { 'UUID:'   => 'uuid' }
     ],
     '(Chassis Information|system enclosure or chassis)' => [
       { '(?:Chassis )?Type:' => 'type' }
