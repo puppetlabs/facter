@@ -26,10 +26,16 @@ Facter.add(:ipaddress) do
   confine :kernel => :linux
   setcode do
     ip = nil
-    output = %x{/sbin/ifconfig}
+    if FileTest.exists?("/sbin/ifconfig")
+      output = Facter::Util::Resolution.exec('/sbin/ifconfig')
+      regexp = /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+    elsif FileTest.exists?("/sbin/ip")
+      output = Facter::Util::Resolution.exec('/sbin/ip addr show')
+      regexp = /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+    end
 
     output.split(/^\S/).each { |str|
-      if str =~ /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+      if str =~ regexp
         tmp = $1
         unless tmp =~ /^127\./
           ip = tmp
