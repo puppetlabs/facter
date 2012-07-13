@@ -1,5 +1,6 @@
 require 'facter'
 require 'pathname'
+require 'facter/util/directory_loader'
 
 # Load facts on demand.
 class Facter::Util::Loader
@@ -67,10 +68,10 @@ class Facter::Util::Loader
       good
     end
   end
-  
+
   def valid_search_path?(path)
     return @valid_path[path] unless @valid_path[path].nil?
-    
+
     return @valid_path[path] = Pathname.new(path).absolute?
   end
   private :valid_search_path?

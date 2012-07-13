@@ -1,4 +1,4 @@
-#!/usr/bin/env rspec
+#! /usr/bin/env ruby -S rspec
 
 require 'spec_helper'
 
@@ -66,7 +66,7 @@ describe "Operating System fact" do
 
     describe "depending on LSB release information" do
       before :each do
-        Facter.collection.loader.load(:lsb)
+        Facter.collection.internal_loader.load(:lsb)
       end
 
       it "on Ubuntu should use the lsbdistid fact" do

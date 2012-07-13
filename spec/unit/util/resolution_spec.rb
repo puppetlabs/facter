@@ -1,9 +1,11 @@
-#!/usr/bin/env rspec
+#! /usr/bin/env ruby -S rspec
 
 require 'spec_helper'
 require 'facter/util/resolution'
 
 describe Facter::Util::Resolution do
+  include FacterSpec::ConfigHelper
+
   it "should require a name" do
     lambda { Facter::Util::Resolution.new }.should raise_error(ArgumentError)
   end
@@ -168,110 +170,111 @@ describe Facter::Util::Resolution do
     end
 
     describe "when dealing with whitespace" do
-      it "should by default strip whitespace" do 
+      it "should by default strip whitespace" do
         @resolve.setcode {'  value  '}
-        @resolve.value.should == 'value' 
-      end 
-      
+        @resolve.value.should == 'value'
+      end
+
       it "should strip whitespace from frozen strings" do
-        result = '  val  ue  ' 
-        result.freeze 
+        result = '  val  ue  '
+        result.freeze
         @resolve.setcode{result}
         @resolve.value.should == 'val  ue'
-      end 
+      end
 
       describe "when given a string" do
+
         [true, false
-        ].each do |windows| 
+        ].each do |windows|
           describe "#{ (windows) ? '' : 'not' } on Windows" do
             before do
-              Facter::Util::Config.stubs(:is_windows?).returns(windows)
+              given_a_configuration_of(:is_windows => windows)
             end
 
             describe "stripping whitespace" do
               [{:name => 'leading', :result => '  value', :expect => 'value'},
-               {:name => 'trailing', :result => 'value  ', :expect => 'value'}, 
+               {:name => 'trailing', :result => 'value  ', :expect => 'value'},
                {:name => 'internal', :result => 'val  ue', :expect => 'val  ue'},
-               {:name => 'leading and trailing', :result => '  value  ', :expect => 'value'},  
-               {:name => 'leading and internal', :result => '  val  ue', :expect => 'val  ue'}, 
+               {:name => 'leading and trailing', :result => '  value  ', :expect => 'value'},
+               {:name => 'leading and internal', :result => '  val  ue', :expect => 'val  ue'},
                {:name => 'trailing and internal', :result => 'val  ue  ', :expect => 'val  ue'}
               ].each do |scenario|
 
-                it "should remove outer whitespace when whitespace is #{scenario[:name]}" do 
+                it "should remove outer whitespace when whitespace is #{scenario[:name]}" do
                   @resolve.setcode "/bin/foo"
                   Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns scenario[:result]
-                  @resolve.value.should == scenario[:expect] 
-                end 
+                  @resolve.value.should == scenario[:expect]
+                end
 
-              end 
-            end 
+              end
+            end
 
             describe "not stripping whitespace" do
               before do
-                @resolve.preserve_whitespace 
-              end 
+                @resolve.preserve_whitespace
+              end
 
-              [{:name => 'leading', :result => '  value', :expect => '  value'}, 
-               {:name => 'trailing', :result => 'value  ', :expect => 'value  '}, 
+              [{:name => 'leading', :result => '  value', :expect => '  value'},
+               {:name => 'trailing', :result => 'value  ', :expect => 'value  '},
                {:name => 'internal', :result => 'val  ue', :expect => 'val  ue'},
-               {:name => 'leading and trailing', :result => '  value  ', :expect => '  value  '},  
-               {:name => 'leading and internal', :result => '  val  ue', :expect => '  val  ue'}, 
+               {:name => 'leading and trailing', :result => '  value  ', :expect => '  value  '},
+               {:name => 'leading and internal', :result => '  val  ue', :expect => '  val  ue'},
                {:name => 'trailing and internal', :result => 'val  ue  ', :expect => 'val  ue  '}
               ].each do |scenario|
 
-                it "should not remove #{scenario[:name]} whitespace" do 
+                it "should not remove #{scenario[:name]} whitespace" do
                   @resolve.setcode "/bin/foo"
                   Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns scenario[:result]
-                  @resolve.value.should == scenario[:expect] 
-                end 
+                  @resolve.value.should == scenario[:expect]
+                end
 
-              end 
-            end 
-          end 
-        end 
+              end
+            end
+          end
+        end
       end
- 
+
       describe "when given a block" do
-        describe "stripping whitespace" do 
+        describe "stripping whitespace" do
           [{:name => 'leading', :result => '  value', :expect => 'value'},
-           {:name => 'trailing', :result => 'value  ', :expect => 'value'}, 
+           {:name => 'trailing', :result => 'value  ', :expect => 'value'},
            {:name => 'internal', :result => 'val  ue', :expect => 'val  ue'},
-           {:name => 'leading and trailing', :result => '  value  ', :expect => 'value'},  
-           {:name => 'leading and internal', :result => '  val  ue', :expect => 'val  ue'}, 
+           {:name => 'leading and trailing', :result => '  value  ', :expect => 'value'},
+           {:name => 'leading and internal', :result => '  val  ue', :expect => 'val  ue'},
            {:name => 'trailing and internal', :result => 'val  ue  ', :expect => 'val  ue'}
           ].each do |scenario|
 
-            it "should remove outer whitespace when whitespace is #{scenario[:name]}" do 
+            it "should remove outer whitespace when whitespace is #{scenario[:name]}" do
               @resolve.setcode {scenario[:result]}
-              @resolve.value.should == scenario[:expect] 
+              @resolve.value.should == scenario[:expect]
             end
 
-          end 
+          end
         end
 
-        describe "not stripping whitespace" do 
+        describe "not stripping whitespace" do
           before do
-            @resolve.preserve_whitespace 
+            @resolve.preserve_whitespace
           end
-          
-          [{:name => 'leading', :result => '  value', :expect => '  value'}, 
-           {:name => 'trailing', :result => 'value  ', :expect => 'value  '}, 
+
+          [{:name => 'leading', :result => '  value', :expect => '  value'},
+           {:name => 'trailing', :result => 'value  ', :expect => 'value  '},
            {:name => 'internal', :result => 'val  ue', :expect => 'val  ue'},
-           {:name => 'leading and trailing', :result => '  value  ', :expect => '  value  '},  
-           {:name => 'leading and internal', :result => '  val  ue', :expect => '  val  ue'}, 
+           {:name => 'leading and trailing', :result => '  value  ', :expect => '  value  '},
+           {:name => 'leading and internal', :result => '  val  ue', :expect => '  val  ue'},
            {:name => 'trailing and internal', :result => 'val  ue  ', :expect => 'val  ue  '}
           ].each do |scenario|
 
-            it "should not remove #{scenario[:name]} whitespace" do 
+            it "should not remove #{scenario[:name]} whitespace" do
               @resolve.setcode {scenario[:result]}
-              @resolve.value.should == scenario[:expect] 
+              @resolve.value.should == scenario[:expect]
             end
 
-          end 
-        end 
-      end 
+          end
+        end
+      end
     end
- 
+
     describe "and setcode has not been called" do
       it "should return nil" do
         Facter::Util::Resolution.expects(:exec).with(nil, nil).never
@@ -282,7 +285,7 @@ describe Facter::Util::Resolution do
     describe "and the code is a string" do
       describe "on windows" do
         before do
-          Facter::Util::Config.stubs(:is_windows?).returns(true)
+          given_a_configuration_of(:is_windows => true)
         end
 
         it "should return the result of executing the code" do
@@ -301,7 +304,7 @@ describe Facter::Util::Resolution do
 
       describe "on non-windows systems" do
         before do
-          Facter::Util::Config.stubs(:is_windows?).returns(false)
+          given_a_configuration_of(:is_windows => false)
         end
 
         it "should return the result of executing the code" do

@@ -17,7 +17,7 @@ describe "ldom fact" do
       # http://docs.oracle.com/cd/E23824_01/html/821-1462/virtinfo-1m.html
       Facter::Util::Resolution.stubs(:exec).with("virtinfo -ap").
         returns(ldom_fixtures('ldom_v1'))
-      Facter.collection.loader.load(:ldom)
+      Facter.collection.internal_loader.load(:ldom)
     end
 
     it "should return correct impl on version 1.0" do
@@ -64,7 +64,7 @@ describe "ldom fact" do
   describe "when running on non ldom hardware" do
     before :each do
       Facter::Util::Resolution.stubs(:exec).with("virtinfo -ap").returns(nil)
-      Facter.collection.loader.load(:ldom)
+      Facter.collection.internal_loader.load(:ldom)
     end
 
     it "should return correct virtual" do
