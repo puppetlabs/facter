@@ -5,7 +5,7 @@
 # Resolution:
 #   If the kernel is a Linux kernel, check for the existence of a selection of
 #   files in /etc/ to find the specific flavour.
-#   On SunOS based kernels, return Solaris.
+#   On SunOS based kernels, attempt to determine the flavour, otherwise return Solaris.
 #   On systems other than Linux, use the kernel value.
 #
 # Caveats:
@@ -17,7 +17,18 @@ Facter.add(:operatingsystem) do
     if FileTest.exists?("/etc/debian_version")
       "Nexenta"
     else
-      "Solaris"
+      txt = File.read("/etc/release")
+      if txt =~ /OmniOS/
+        "OmniOS"
+      elsif txt =~ /OpenIndiana/
+        "OpenIndiana"
+      elsif txt =~ /SmartOS/
+        "SmartOS"
+      elsif txt =~ /Joyent/
+        "SmartOS"
+      else
+        "Solaris"
+      end
     end
   end
 end
