@@ -16,9 +16,9 @@ require 'facter'
 require 'facter/util/config'
 require 'facter/util/composite_loader'
 require 'facter/util/parser'
+require 'yaml'
 
 class Facter::Util::DirectoryLoader
-  require 'yaml'
 
   class NoSuchDirectoryError < Exception
   end
@@ -73,11 +73,11 @@ private
 
   def entries
     Dir.entries(directory).find_all { |f| should_parse?(f) }.sort.map { |f| File.join(directory, f) }
-  rescue
+  rescue Errno::ENOENT => detail
     []
   end
 
   def should_parse?(file)
-    not file.start_with?('.')
+    not file =~ /^\./
   end
 end
