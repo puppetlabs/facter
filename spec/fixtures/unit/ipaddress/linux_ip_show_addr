@@ -1,0 +1,20 @@
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: dummy0: <BROADCAST,NOARP> mtu 1500 qdisc noop state DOWN 
+    link/ether e2:96:85:ac:40:24 brd ff:ff:ff:ff:ff:ff
+3: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 4c:72:b9:24:7d:28 brd ff:ff:ff:ff:ff:ff
+    inet 198.245.51.174/24 brd 198.245.51.255 scope global eth0
+    inet6 2607:5300:60:6ae::1/64 scope global 
+       valid_lft forever preferred_lft forever
+    inet6 fe80::4e72:b9ff:fe24:7d28/64 scope link 
+       valid_lft forever preferred_lft forever
+4: tunl0: <NOARP> mtu 1480 qdisc noop state DOWN 
+    link/ipip 0.0.0.0 brd 0.0.0.0
+5: sit0: <NOARP> mtu 1480 qdisc noop state DOWN 
+    link/sit 0.0.0.0 brd 0.0.0.0
+6: ip6tnl0: <NOARP> mtu 1452 qdisc noop state DOWN 
+    link/tunnel6 :: brd ::
