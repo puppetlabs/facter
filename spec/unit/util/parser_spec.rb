@@ -54,7 +54,7 @@ describe Facter::Util::Parser do
 
   describe "json" do
     let(:data_in_json) do JSON.dump(data) end
-    let(:data_file) do "/tmp/foo.yaml" end
+    let(:data_file) do "/tmp/foo.json" end
 
     it "should return a hash of whatever is stored on disk" do
       pending("this test requires the json library") unless Facter.json?
