@@ -20,7 +20,8 @@ describe "ipaddress fact" do
     it "should return ipddress for linux with /sbin/ip" do
       ifconfig = my_fixture_read("linux_ip_show_addr")
       Facter::Util::Resolution.stubs(:exec).with('uname -s').returns('Linux')
-      FileTest.expects(:exists?).with('/sbin/ifconfig').returns(false)
+      #FileTest.expects(:exists?).with('/sbin/ifconfig').returns(false)
+      FileTest.stubs(:exists?).with("/sbin/ifconfig").returns(false)
       Facter::Util::Resolution.stubs(:exec).with('/sbin/ip addr show').returns(ifconfig)
       Facter.collection.internal_loader.load(:ipaddress)
       Facter.fact(:ipaddress).value.should == "198.245.51.174"

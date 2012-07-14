@@ -38,8 +38,10 @@ Facter.add(:ipaddress) do
           end
         end
       end
+      ip
+    else
+      nil
     end
-    ip
   end
 end
 
@@ -59,8 +61,10 @@ Facter.add(:ipaddress) do
           end
         end
       end
+      ip
+    else
+      nil
     end
-    ip
   end
 end
 
