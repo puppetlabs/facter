@@ -3,13 +3,12 @@
 require 'spec_helper'
 
 describe "ipaddress fact" do
-  before {
-    Facter.clear
-    Facter::Util::Resolution.stubs(:exec).with('uname -s').returns('Linux')
-  }
-  after { Facter.clear }
+  before do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+  end
 
   describe "on linux" do
+
     it "should return ipddress for linux with /sbin/ifconfig" do
       ifconfig = my_fixture_read("linux_ifconfig_all_with_multiple_interfaces")
       FileTest.stubs(:exists?).with("/sbin/ifconfig").returns(true)
@@ -18,9 +17,7 @@ describe "ipaddress fact" do
       Facter.collection.internal_loader.load(:ipaddress)
       Facter.fact(:ipaddress).value.should == "131.252.209.153"
     end
-  end
 
-  describe "on linux" do
     it "should return ipddress for linux with /sbin/ip" do
       ifconfig = my_fixture_read("linux_ip_show_addr")
       FileTest.stubs(:exists?).with("/sbin/ifconfig").returns(false)
