@@ -9,11 +9,6 @@ describe "ipaddress fact" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
     end
 
-    it "should use /sbin/ifconfig if it exists" do
-      FileTest.expects(:exists?).with("/sbin/ifconfig").returns(true)
-      Facter::Util::Resolution.expects(:exec).with('/sbin/ifconfig')
-    end
-
     it "should return ipddress for linux with /sbin/ifconfig" do
       ifconfig = my_fixture_read("linux_ifconfig_all_with_multiple_interfaces")
       FileTest.stubs(:exists?).with("/sbin/ifconfig").returns(true)

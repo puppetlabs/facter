@@ -49,7 +49,7 @@ Facter.add(:ipaddress) do
   has_weight 50
   confine :kernel => :linux
   setcode do
-    ip = nil 
+    ip = nil
     if FileTest.exists? '/sbin/ip'
       output = Facter::Util::Resolution.exec('/sbin/ip addr show')
       output.each_line do |str|
