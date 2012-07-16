@@ -34,7 +34,7 @@ describe Facter::Util::Loader do
   end
 
   describe "#valid_seach_path?" do
-    before do
+    before :each do
       @loader = Facter::Util::Loader.new
       @settings = mock 'settings'
       @settings.stubs(:value).returns "/eh"
@@ -270,7 +270,6 @@ describe Facter::Util::Loader do
         Kernel.expects(:load).with(f)
       end
 
-      @ext_loader.stubs(:load)
       @loader.load_all
 
       @loader.loaded_files.should == %w{/one/dir/bar.rb /one/dir/foo.rb}
