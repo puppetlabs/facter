@@ -34,9 +34,9 @@ describe Facter::Util::Config do
   end
 
   describe "external_facts_dirs" do
-
     it "should return the default value for linux" do
       Facter::Util::Config.stubs(:is_windows?).returns(false)
+      Facter::Util::Config.stubs(:windows_data_dir).returns(nil)
       Facter::Util::Config.external_facts_dirs.should == ["/etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"]
     end
 
@@ -52,5 +52,4 @@ describe Facter::Util::Config do
       Facter::Util::Config.external_facts_dirs.should == [File.join("C:\\Documents", 'PuppetLabs', 'facter', 'facts.d')]
     end
   end
-
 end

@@ -94,19 +94,36 @@ describe Facter::Util::Parser do
     end
 
     it "should return a hash of whatever is returned by the executable" do
+      pending("this test does not run on windows") if Facter::Util::Config.is_windows?
       File.stubs(:file?).with(cmd).returns(true)
       Facter::Util::Parser.parser_for(cmd).results.should == data
     end
 
     it "should not parse a directory" do
       File.stubs(:file?).with(cmd).returns(false)
-      Facter::Util::Parser.parser_for(cmd).results.should == false
+      Facter::Util::Parser.parser_for(cmd).results.should be_nil
+    end
+
+    context "on Windows" do
+      let :cmd do "/tmp/foo.bat" end
+
+      before :each do
+        Facter::Util::Config.stubs(:is_windows?).returns(true)
+      end
+
+      let :parser do
+        Facter::Util::Parser.parser_for(cmd)
+      end
+
+      it "should return no results" do
+        parser.results.should be_nil
+      end
     end
   end
 
   describe "nothing parser" do
     it "uses the nothing parser when there is no other parser" do
-      Facter::Util::Parser.parser_for("this.is.not.valid").results.should == false
+      Facter::Util::Parser.parser_for("this.is.not.valid").results.should be_nil
     end
   end
 end

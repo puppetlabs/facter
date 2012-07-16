@@ -125,7 +125,9 @@ module Facter::Util::Parser
   end
 
   register(ScriptParser) do |filename|
-    File.executable?(filename) && File.file?(filename)
+    if not Facter::Util::Config.is_windows?
+      File.executable?(filename) && File.file?(filename)
+    end
   end
 
 
@@ -133,7 +135,7 @@ module Facter::Util::Parser
   # The return from results indicates to the caller the file was not parsed correctly.
   class NothingParser
     def results
-      false
+      nil
     end
   end
 end
