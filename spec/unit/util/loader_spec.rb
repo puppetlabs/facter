@@ -39,21 +39,21 @@ describe Facter::Util::Loader do
       @settings = mock 'settings'
       @settings.stubs(:value).returns "/eh"
     end
-    
+
     it "should cache the result of a previous check" do
       Pathname.any_instance.expects(:absolute?).returns(true).once
-      
+
       # we explicitly want two calls here to check that we get
       # the second from the cache
       @loader.should be_valid_search_path "/foo"
       @loader.should be_valid_search_path "/foo"
     end
-    
-    # Used to have test for " " as a directory since that should 
+
+    # Used to have test for " " as a directory since that should
     # be a relative directory, but on Windows in both 1.8.7 and
     # 1.9.3 it is an absolute directory (WTF Windows). Considering
-    # we didn't have a valid use case for a " " directory, the 
-    # test was removed. 
+    # we didn't have a valid use case for a " " directory, the
+    # test was removed.
 
     [
       '.',
@@ -67,13 +67,10 @@ describe Facter::Util::Loader do
       ' /',
       ' \/',
     ].each do |dir|
-      
       it "should be false for relative path #{dir}" do
         @loader.should_not be_valid_search_path dir
       end
-      
     end
-    
     [
       '/.',
       '/..',
@@ -86,11 +83,9 @@ describe Facter::Util::Loader do
       '/ ',
       '/ /..',
     ].each do |dir|
-      
       it "should be true for absolute path #{dir}" do
         @loader.should be_valid_search_path dir
       end
-      
     end
   end
 
@@ -111,15 +106,14 @@ describe Facter::Util::Loader do
       end
     end
 
-    it "should warn the user when an invalid search path has been excluded" do 
+    it "should warn the user when an invalid search path has been excluded" do
       dirs = $LOAD_PATH.collect { |d| File.join(d, "facter") }
       @loader.stubs(:valid_search_path?).returns(false)
       dirs.each do |dir|
         Facter.expects(:debugonce).with("Relative directory #{dir} removed from search path.").once
-      end 
+      end
       paths = @loader.search_path
-    end 
-
+    end
 
     it "should exclude invalid search paths" do
       dirs = $LOAD_PATH.collect { |d| File.join(d, "facter") }
