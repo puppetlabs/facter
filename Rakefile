@@ -28,7 +28,12 @@ FILES = FileList[
 ]
 
 def get_version
-  `git describe`.strip
+  %x{which git &> /dev/null}
+  if $?.success?
+    `git describe`.strip
+  else
+    File.read('lib/facter.rb')[/FACTERVERSION *= *'(.*)'/,1] or fail "Couldn't find FACTERVERSION"
+  end
 end
 
 # :build_environment and :tar are mostly borrowed from puppet-dashboard Rakefile
