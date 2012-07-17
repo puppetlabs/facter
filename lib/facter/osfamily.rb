@@ -22,7 +22,7 @@ Facter.add(:osfamily) do
       "Debian"
     when "SLES", "SLED", "OpenSuSE", "SuSE"
       "Suse"
-    when "Solaris", "Nexenta"
+    when "Solaris", "Nexenta", "OmniOS"
       "Solaris"
     else
       Facter.value("kernel")

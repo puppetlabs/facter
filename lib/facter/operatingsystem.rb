@@ -16,6 +16,11 @@ Facter.add(:operatingsystem) do
   setcode do
     if FileTest.exists?("/etc/debian_version")
       "Nexenta"
+    elsif FileTest.exists?("/etc/release")
+      txt = File.read("/etc/release")
+      if txt =~ /omnios/i
+        "OmniOS"
+      end
     else
       "Solaris"
     end
