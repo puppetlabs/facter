@@ -13,6 +13,7 @@ describe "Virtual fact" do
     Facter::Util::Virtual.stubs(:kvm?).returns(false)
     Facter::Util::Virtual.stubs(:hpvm?).returns(false)
     Facter::Util::Virtual.stubs(:zlinux?).returns(false)
+    Facter::Util::Virtual.stubs(:virtualbox?).returns(false)
   end
 
   it "should be zone on Solaris when a zone" do
