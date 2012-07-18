@@ -18,7 +18,7 @@ Facter.add(:architecture) do
       # most linuxen use "x86_64"
     when "x86_64"
       case Facter.value(:operatingsystem)
-      when "Debian", "Gentoo", "GNU/kFreeBSD", "Ubuntu"
+      when "Debian", "Gentoo", "GNU/kFreeBSD", "Ubuntu", "Proxmox"
         "amd64"
       else
         model
