@@ -79,8 +79,8 @@ The long version
         based on the current stable series if it was introduced there,
         or on `master` if it is not yet present in a stable release.
 
-      The current stable series is 2.7.x, and the current maintenance
-      series is 2.6.x.
+      The current facter stable series is 2.x, and the current maintenance
+      series is 1.6.x.
 
   1.  Make separate commits for logically separate changes.
 
@@ -108,7 +108,7 @@ The long version
       code are much more likely to be merged in with a minimum of
       bike-shedding or requested changes.  Ideally, the commit message
       would include information, and be in a form suitable for
-      inclusion in the release notes for the version of Puppet that
+      inclusion in the release notes for the version of Facter that
       includes them.
 
       Please also check that you are not introducing any trailing
@@ -270,7 +270,7 @@ review.
   * Merging topic branches
 
     When merging code from a topic branch into the integration branch
-    (Ex: master, 2.7.x, 1.6.x, etc.), there should always be a merge
+    (Ex: master, 2.x, 1.6.x, etc.), there should always be a merge
     commit.  You can accomplish this by always providing the `--no-ff`
     flag to `git merge`.
 
