@@ -22,7 +22,7 @@ Facter.add(:macaddress) do
 end
 
 Facter.add(:macaddress) do
-  confine :operatingsystem => "Solaris"
+  confine :osfamily => "Solaris"
   setcode do
     ether = []
     output = Facter::Util::Resolution.exec("/usr/bin/netstat -np")
