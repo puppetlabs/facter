@@ -65,8 +65,5 @@ end
 
 Facter.add('physicalprocessorcount') do
   confine :kernel => :sunos
-
-  setcode do
-    Facter::Util::Resolution.exec("/usr/sbin/psrinfo -p")
-  end
+  setcode "/usr/sbin/psrinfo -p"
 end
