@@ -6,31 +6,17 @@
 #
 Facter.add('filesystems') do
   confine :kernel => :linux
+
+  exclude = /^nodev|fuseblk/
+
   setcode do
-    # fuseblk can't be created and arguably isn't usable here. If you feel this
-    # doesn't match your use-case please raise a bug.
-    exclude = %w(fuseblk)
-
-    # Make regular expression form our patterns ...
-    exclude = Regexp.union(*exclude.collect { |i| Regexp.new(i) })
-
-    # We utilise rely on "cat" for reading values from entries under "/proc".
-    # This is due to some problems with IO#read in Ruby and reading content of
-    # the "proc" file system that was reported more than once in the past ...
-    file_systems = []
-    Facter::Util::Resolution.exec('cat /proc/filesystems 2> /dev/null').each_line do |line|
-      # Remove bloat ...
-      line.strip!
-
-      # Line of interest should not start with "nodev" ...
-      next if line.empty? or line.match(/^nodev/)
-
-      # We have something, so let us apply our device type filter ...
-      next if line.match(exclude)
-
-      file_systems << line
-    end
-    file_systems.sort.join(',')
+    # fuseblk can't be created and arguably isn't usable here. If you feel
+    # this doesn't match your use-case please raise a bug.
+    File.read('/proc/filesystems').
+      split(/\n/).
+      reject {|l| l =~ exclude }.
+      map {|l| l.strip! }.
+      join(',')
   end
 end
 
