@@ -8,8 +8,7 @@ describe Facter::Util::Uptime do
   describe ".get_uptime_seconds_unix", :unless => Facter.value(:operatingsystem) == 'windows' do
     describe "when /proc/uptime is available" do
       before do
-        uptime_file = my_fixture("ubuntu_proc_uptime")
-        Facter::Util::Uptime.stubs(:uptime_file).returns("\"#{uptime_file}\"")
+        Facter::Util::Uptime.stubs(:uptime_file).returns(my_fixture("ubuntu_proc_uptime"))
       end
 
       it "should return the uptime in seconds as an integer" do
