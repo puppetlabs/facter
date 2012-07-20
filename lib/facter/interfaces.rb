@@ -1,12 +1,3 @@
-# Fact: interfaces
-#
-# Purpose:
-#
-# Resolution:
-#
-# Caveats:
-#
-
 # interfaces.rb
 # Try to get additional Facts about the machine's network interfaces
 #
@@ -18,6 +9,17 @@ require 'facter/util/ip'
 
 # Note that most of this only works on a fixed list of platforms; notably, Darwin
 # is missing.
+
+Facter.add(:interfaces) do
+  confine :kernel => 'Linux'
+  has_weight 20
+  setcode do
+    list = Dir.glob('/sys/class/net/*').map do |name|
+      Facter::Util::IP.alphafy(name.split('/').last)
+    end
+    list.empty? ? nil : list.join(',')
+  end
+end
 
 Facter.add(:interfaces) do
   confine :kernel => Facter::Util::IP.supported_platforms
