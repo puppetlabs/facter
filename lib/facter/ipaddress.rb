@@ -3,10 +3,8 @@
 # Purpose: Return the main IP address for a host.
 #
 # Resolution:
-#   On the Unixes does an ifconfig, and returns the first non 127.0.0.0/8
-#   subnetted IP it finds.
-#   On Windows, it attempts to use the socket library and resolve the machine's
-#   hostname via DNS.
+#   On most operating systems it uses Facter::Util::IP, which will find an
+#   appropriate binary and extract the first IP that matches the regexp/token/etc.
 #
 #   On LDAP based hosts it tries to use either the win32/resolv library to
 #   resolve the hostname to an IP address, or on Unix, it uses the resolv
@@ -22,59 +20,13 @@
 #   checking this is a useful IP address.
 #
 
-def get_address_after_token(output, token, return_first=false, ignore=/^127\./)
-  ip = nil
-
-  output.scan(/#{token}([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/).each do |match|
-    match = match.first
-    unless match =~ ignore
-      ip = match
-      break if return_first
-    end
-  end
-
-  ip
-end
+require 'facter/util/ip'
 
 Facter.add(:ipaddress) do
   has_weight 100
-  confine :kernel => :linux
+  confine :kernel => %w{Linux FreeBSD OpenBSD Darwin DragonFly HP-UX GNU/kFreeBSD AIX windows}
   setcode do
-    ip = nil
-    if FileTest.exists? '/sbin/ifconfig'
-      output = Facter::Util::Resolution.exec('/sbin/ifconfig')
-      get_address_after_token(output, 'inet addr:')
-    else
-      nil
-    end
-  end
-end
-
-Facter.add(:ipaddress) do
-  has_weight 50
-  confine :kernel => :linux
-  setcode do
-    ip = nil
-    if FileTest.exists? '/sbin/ip'
-      output = Facter::Util::Resolution.exec('/sbin/ip addr show')
-      get_address_after_token(output, 'inet ')
-    else
-      nil
-    end
-  end
-end
-
-Facter.add(:ipaddress) do
-  has_weight 100
-  confine :kernel => %w{FreeBSD OpenBSD Darwin DragonFly}
-  setcode do
-    ip = nil
-    if FileTest.exists? '/sbin/ifconfig'
-      output = Facter::Util::Resolution.exec('/sbin/ifconfig')
-      get_address_after_token(output, 'inet ', true)
-    else
-      nil
-    end
+    Facter::Util::IP.ipaddress(nil)
   end
 end
 
@@ -82,34 +34,7 @@ Facter.add(:ipaddress) do
   has_weight 100
   confine :kernel => %w{NetBSD SunOS}
   setcode do
-    ip = nil
-    if FileTest.exists? '/sbin/ifconfig'
-      output = Facter::Util::Resolution.exec('/sbin/ifconfig')
-      get_address_after_token(output, 'inet addr:', false, /^127\.|^0\.0\.0\.0/)
-    else
-      nil
-    end
-  end
-end
-
-Facter.add(:ipaddress) do
-  confine :kernel => %w{AIX}
-  setcode do
-    ip = nil
-    if FileTest.exists? '/sbin/ifconfig'
-      output = Facter::Util::Resolution.exec('/sbin/ifconfig -a')
-      get_address_after_token(output, 'inet ')
-    else
-      nil
-    end
-  end
-end
-
-Facter.add(:ipaddress) do
-  confine :kernel => %w{windows}
-  setcode do
-    require 'socket'
-    IPSocket.getaddress(Socket.gethostname)
+    Facter::Util::IP.ipaddress(nil, /^127\.|^0\.0\.0\.0/)
   end
 end
 

@@ -1,0 +1,4 @@
+eth0.160  Link encap:Ethernet  HWaddr 00:22:19:11:8F:9F                                                                   inet addr:192.168.190.58  Bcast:192.168.191.255  Mask:255.255.252.0                                                  inet6 addr: fe80::222:19ff:fe11:8f9f/64 Scope:Link                                                                   UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1                                                                   RX packets:4113036 errors:0 dropped:0 overruns:0 frame:0                                                        
+     TX packets:54980 errors:0 dropped:0 overruns:0 carrier:0                                                        
+     collisions:0 txqueuelen:0                                                                                       
+     RX bytes:336027667 (320.4 MiB)  TX bytes:4065074 (3.8 MiB) 
