@@ -44,7 +44,6 @@ describe "Operating System fact" do
 
     {
       "Debian"      => "/etc/debian_version",
-      "Gentoo"      => "/etc/gentoo-release",
       "Fedora"      => "/etc/fedora-release",
       "Mandriva"    => "/etc/mandriva-release",
       "Mandrake"    => "/etc/mandrake-release",
@@ -76,6 +75,19 @@ describe "Operating System fact" do
         Facter.fact(:operatingsystem).value.should == "Ubuntu"
       end
 
+    end
+
+    # Check distributions that rely on the contents of /etc/gentoo-release
+    {
+      'Gentoo' => 'Gentoo Base System release 2.1',
+      'Funtoo' => 'Funtoo Linux - baselayout 2.1.8'
+    }.each_pair do |operatingsystem, string|
+      it "should be #{operatingsystem} based on /etc/gentoo-release contents #{string}" do
+        FileTest.expects(:exists?).with("/etc/gentoo-release").returns true
+        File.expects(:read).with("/etc/gentoo-release").returns string
+
+        Facter.fact(:operatingsystem).value.should == operatingsystem
+      end
     end
 
 

@@ -14,6 +14,7 @@ describe "Architecture fact" do
   os_archs = {
     ["Debian","x86_64"] => "amd64",
     ["Gentoo","x86_64"] => "amd64",
+    ["Funtoo","x86_64"] => "amd64",
     ["GNU/kFreeBSD","x86_64"] => "amd64",
     ["Ubuntu","x86_64"] => "amd64",
     ["Gentoo","i386"] => "x86",
@@ -23,6 +24,11 @@ describe "Architecture fact" do
     ["Gentoo","pentium"] => "x86",
     ["windows","i386"] => "x86",
     ["windows","x64"] => "x64",
+    ["Funtoo","i386"] => "x86",
+    ["Funtoo","i486"] => "x86",
+    ["Funtoo","i586"] => "x86",
+    ["Funtoo","i686"] => "x86",
+    ["Funtoo","pentium"] => "x86"
   }
   generic_archs = Hash.new
   generic_archs = {
