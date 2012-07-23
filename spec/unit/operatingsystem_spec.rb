@@ -29,8 +29,17 @@ describe "Operating System fact" do
       Facter.fact(:operatingsystem).value.should == "Nexenta"
     end
 
-    it "should be Solaris for SunOS if no other variants match" do
-      Facter.fact(:operatingsystem).value.should == "Solaris"
+    {
+      "OpenIndiana" => "OpenIndiana Development oi_148 X86",
+      "Solaris"     => "Solaris 10 10/08 s10x_u6wos_07b X86",
+    }.each_pair do |operatingsystem, string|
+      it "should be #{operatingsystem} based on /etc/release contents #{string}" do
+        FileTest.expects(:exists?).with("/etc/debian_version").returns false
+        FileTest.expects(:exists?).with("/etc/release").returns true
+        File.expects(:read).with("/etc/release").returns string
+
+        Facter.fact(:operatingsystem).value.should == operatingsystem
+      end
     end
   end
 
