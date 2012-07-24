@@ -22,14 +22,14 @@ describe Facter::Util::DirectoryLoader do
   it "raises an error when the directory does not exist" do
     missing_dir = "missing"
     File.stubs(:directory?).with(missing_dir).returns(false)
-    expect { Facter::Util::DirectoryLoader.loader_for(missing_dir) }.should raise_error Facter::Util::DirectoryLoader::NoSuchDirectoryError
+    expect { Facter::Util::DirectoryLoader.loader_for(missing_dir) }.to raise_error Facter::Util::DirectoryLoader::NoSuchDirectoryError
   end
 
   it "should do nothing bad when dir doesn't exist" do
     fakepath = "/foobar/path"
     my_loader = Facter::Util::DirectoryLoader.new(fakepath)
     FileTest.exists?(my_loader.directory).should be_false
-    expect { my_loader.load(collection) }.should_not raise_error
+    expect { my_loader.load(collection) }.to_not raise_error
    end
 
   describe "when loading facts from disk" do
