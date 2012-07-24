@@ -9,17 +9,58 @@ describe "SELinux facts" do
     Facter.clear
   end
 
-  it "should return true if SELinux enabled" do
-    Facter.fact(:kernel).stubs(:value).returns("Linux")
+  describe "should detect if SELinux is enabled" do
+    it "and return true with default /selinux" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
 
-    FileTest.stubs(:exists?).returns false
-    File.stubs(:read).with("/proc/self/attr/current").returns("notkernel")
+      FileTest.stubs(:exists?).returns false
+      File.stubs(:read).with("/proc/self/attr/current").returns("notkernel")
 
-    FileTest.expects(:exists?).with("/selinux/enforce").returns true
-    FileTest.expects(:exists?).with("/proc/self/attr/current").returns true
-    File.expects(:read).with("/proc/self/attr/current").returns("kernel")
+      FileTest.expects(:exists?).with("/selinux/enforce").returns true
+      FileTest.expects(:exists?).with("/proc/self/attr/current").returns true
+      File.expects(:read).with("/proc/self/attr/current").returns("kernel")
 
-    Facter.fact(:selinux).value.should == "true"
+      Facter.fact(:selinux).value.should == "true"
+    end
+
+    it "and return true with selinuxfs path from /proc" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+
+      mounts = mock()
+      lines = [ "selinuxfs /sys/fs/selinux selinuxfs rw,relatime 0 0" ]
+      mounts.expects(:grep).multiple_yields(*lines)
+
+      FileTest.expects(:exists?).with("/proc/self/mounts").returns true
+      File.expects(:open).with("/proc/self/mounts").yields(mounts)
+
+      FileTest.expects(:exists?).with("/sys/fs/selinux/enforce").returns true
+
+      FileTest.expects(:exists?).with("/proc/self/attr/current").returns true
+      File.expects(:read).with("/proc/self/attr/current").returns("kernel")
+
+      Facter.fact(:selinux).value.should == "true"
+    end
+
+    it "and return true with multiple selinuxfs mounts from /proc" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+
+      mounts = mock()
+      lines = [
+        "selinuxfs /sys/fs/selinux selinuxfs rw,relatime 0 0",
+        "selinuxfs /var/tmp/imgcreate-R2wmE6/install_root/sys/fs/selinux selinuxfs rw,relatime 0 0",
+      ]
+      mounts.expects(:grep).multiple_yields(*lines)
+
+      FileTest.expects(:exists?).with("/proc/self/mounts").returns true
+      File.expects(:open).with("/proc/self/mounts").yields(mounts)
+
+      FileTest.expects(:exists?).with("/sys/fs/selinux/enforce").returns true
+
+      FileTest.expects(:exists?).with("/proc/self/attr/current").returns true
+      File.expects(:read).with("/proc/self/attr/current").returns("kernel")
+
+      Facter.fact(:selinux).value.should == "true"
+    end
   end
 
   it "should return true if SELinux policy enabled" do
@@ -36,7 +77,7 @@ describe "SELinux facts" do
 
   it "should return an SELinux policy version" do
     Facter.fact(:selinux).stubs(:value).returns("true")
-    FileTest.stubs(:exists?).with("/proc/self/mountinfo").returns false
+    FileTest.stubs(:exists?).with("/proc/self/mounts").returns false
 
     File.stubs(:read).with("/selinux/policyvers").returns("")
 

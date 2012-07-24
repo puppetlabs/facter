@@ -15,15 +15,16 @@ sestatus_cmd = '/usr/sbin/sestatus'
 # This supports the fact that the selinux mount point is not always in the
 # same location -- the selinux mount point is operating system specific.
 def selinux_mount_point
-  if FileTest.exists?('/proc/self/mountinfo')
-    File.open('/proc/self/mountinfo') do |f|
+  path = "/selinux"
+  if FileTest.exists?('/proc/self/mounts')
+    File.open('/proc/self/mounts') do |f|
       f.grep(/selinuxfs/) do |line|
-        line.split[4]
+        path = line.split[1]
+        break
       end
     end
-  else
-    "/selinux"
   end
+  path
 end
 
 Facter.add("selinux") do
