@@ -42,7 +42,7 @@ describe Facter::Util::Macosx do
   end
 
   it 'should fail when trying to read invalid XML' do
-    expect { Facter::Util::Macosx.intern_xml('<bad}|%-->xml<--->') }.should \
+    expect { Facter::Util::Macosx.intern_xml('<bad}|%-->xml<--->') }.to \
       raise_error(RuntimeError, /A plist file could not be properly read by Facter::Util::CFPropertyList/)
   end
 
