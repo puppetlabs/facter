@@ -29,16 +29,19 @@ describe "Operating System fact" do
       Facter.fact(:operatingsystem).value.should == "Nexenta"
     end
 
-    {
-      "OpenIndiana" => "OpenIndiana Development oi_148 X86",
-      "Solaris"     => "Solaris 10 10/08 s10x_u6wos_07b X86",
-    }.each_pair do |operatingsystem, string|
-      it "should be #{operatingsystem} based on /etc/release contents #{string}" do
-        FileTest.expects(:exists?).with("/etc/debian_version").returns false
-        FileTest.expects(:exists?).with("/etc/release").returns true
-        File.expects(:read).with("/etc/release").returns string
+    it "should be Solaris if /etc/debian_version is missing and uname -v failed to match" do
+      FileTest.expects(:exists?).with("/etc/debian_version").returns false
+      Facter.fact(:operatingsystem).value.should == "Solaris"
+    end
 
-        Facter.fact(:operatingsystem).value.should == operatingsystem
+    {
+      "SmartOS"     => "joyent_20120629T002039Z",
+      "OmniOS"      => "omnios-dda4bb3",
+      "OpenIndiana" => "oi_151a",
+    }.each_pair do |distribution, string|
+      it "should be #{distribution} if uname -v is '#{string}'" do
+        Facter::Util::Resolution.stubs(:exec).with('uname -v').returns(string)
+        Facter.fact(:operatingsystem).value.should == distribution
       end
     end
   end

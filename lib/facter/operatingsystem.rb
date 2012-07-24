@@ -14,23 +14,19 @@
 Facter.add(:operatingsystem) do
   confine :kernel => :sunos
   setcode do
-    if FileTest.exists?("/etc/debian_version")
+    # Use uname -v because /etc/release can change in zones under SmartOS.
+    # It's apparently not trustworthy enough to rely on for this fact.
+    output = Facter::Util::Resolution.exec('uname -v')
+    if output =~ /^joyent_/
+      "SmartOS"
+    elsif output =~ /^oi_/
+      "OpenIndiana"
+    elsif output =~ /^omnios-/
+      "OmniOS"
+    elsif FileTest.exists?("/etc/debian_version")
       "Nexenta"
-    elsif FileTest.exists?("/etc/release")
-      txt = File.read("/etc/release")
-      if txt =~ /OmniOS/
-        "OmniOS"
-      elsif txt =~ /OpenIndiana/
-        "OpenIndiana"
-      elsif txt =~ /SmartOS/
-        "SmartOS"
-      elsif txt =~ /Joyent/
-        "SmartOS"
-      else
-        "Solaris"
-      end
     else
-        "Solaris"
+      "Solaris"
     end
   end
 end
