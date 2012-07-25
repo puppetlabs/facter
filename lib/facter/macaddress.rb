@@ -10,6 +10,19 @@
 require 'facter/util/macaddress'
 
 Facter.add(:macaddress) do
+  confine :kernel => 'Linux'
+  has_weight  10                # about an order of magnitude faster
+  setcode do
+    begin
+      Dir.glob('/sys/class/net/*').reject {|x| x[-3..-1] == '/lo' }.first
+      path and File.read(path + '/address')
+    rescue Exception
+      nil
+    end
+  end
+end
+
+Facter.add(:macaddress) do
   confine :kernel => %w{SunOS Linux GNU/kFreeBSD}
   setcode do
     ether = []

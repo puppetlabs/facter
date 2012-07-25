@@ -2,6 +2,7 @@
 
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
+<<<<<<< HEAD
 Version: 2.0.0
 #Release: 1%{?dist}
 Release: 0.1rc4%{?dist}
@@ -22,7 +23,7 @@ Requires: which
 Requires: dmidecode
 Requires: pciutils
 %endif
-Requires: ruby(abi) = 1.8
+Requires: ruby(abi) >= 1.8
 BuildRequires: ruby >= 1.8.5
 
 %description

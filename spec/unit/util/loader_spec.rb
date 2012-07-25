@@ -1,4 +1,4 @@
-#!/usr/bin/env rspec
+#! /usr/bin/env ruby -S rspec
 
 require 'spec_helper'
 require 'facter/util/loader'
@@ -34,26 +34,26 @@ describe Facter::Util::Loader do
   end
 
   describe "#valid_seach_path?" do
-    before do
+    before :each do
       @loader = Facter::Util::Loader.new
       @settings = mock 'settings'
       @settings.stubs(:value).returns "/eh"
     end
-    
+
     it "should cache the result of a previous check" do
       Pathname.any_instance.expects(:absolute?).returns(true).once
-      
+
       # we explicitly want two calls here to check that we get
       # the second from the cache
       @loader.should be_valid_search_path "/foo"
       @loader.should be_valid_search_path "/foo"
     end
-    
-    # Used to have test for " " as a directory since that should 
+
+    # Used to have test for " " as a directory since that should
     # be a relative directory, but on Windows in both 1.8.7 and
     # 1.9.3 it is an absolute directory (WTF Windows). Considering
-    # we didn't have a valid use case for a " " directory, the 
-    # test was removed. 
+    # we didn't have a valid use case for a " " directory, the
+    # test was removed.
 
     [
       '.',
@@ -67,13 +67,10 @@ describe Facter::Util::Loader do
       ' /',
       ' \/',
     ].each do |dir|
-      
       it "should be false for relative path #{dir}" do
         @loader.should_not be_valid_search_path dir
       end
-      
     end
-    
     [
       '/.',
       '/..',
@@ -86,11 +83,9 @@ describe Facter::Util::Loader do
       '/ ',
       '/ /..',
     ].each do |dir|
-      
       it "should be true for absolute path #{dir}" do
         @loader.should be_valid_search_path dir
       end
-      
     end
   end
 
@@ -111,15 +106,14 @@ describe Facter::Util::Loader do
       end
     end
 
-    it "should warn the user when an invalid search path has been excluded" do 
+    it "should warn the user when an invalid search path has been excluded" do
       dirs = $LOAD_PATH.collect { |d| File.join(d, "facter") }
       @loader.stubs(:valid_search_path?).returns(false)
       dirs.each do |dir|
         Facter.expects(:debugonce).with("Relative directory #{dir} removed from search path.").once
-      end 
+      end
       paths = @loader.search_path
-    end 
-
+    end
 
     it "should exclude invalid search paths" do
       dirs = $LOAD_PATH.collect { |d| File.join(d, "facter") }
@@ -176,21 +170,21 @@ describe Facter::Util::Loader do
     end
 
     it 'should load any ruby files in directories matching the fact name in the search path in sorted order regardless of the order returned by Dir.entries' do
-    @loader = TestLoader.new
+      @loader = TestLoader.new
 
-    @loader.stubs(:search_path).returns %w{/one/dir}
-    FileTest.stubs(:exist?).returns false
-    FileTest.stubs(:directory?).with("/one/dir/testing").returns true
-    @loader.stubs(:search_path).returns %w{/one/dir}
+      @loader.stubs(:search_path).returns %w{/one/dir}
+      FileTest.stubs(:exist?).returns false
+      FileTest.stubs(:directory?).with("/one/dir/testing").returns true
+      @loader.stubs(:search_path).returns %w{/one/dir}
 
-    Dir.stubs(:entries).with("/one/dir/testing").returns %w{foo.rb bar.rb}
-    %w{/one/dir/testing/foo.rb /one/dir/testing/bar.rb}.each do |f|
-      File.stubs(:directory?).with(f).returns false
-      Kernel.stubs(:load).with(f)
-    end
+      Dir.stubs(:entries).with("/one/dir/testing").returns %w{foo.rb bar.rb}
+      %w{/one/dir/testing/foo.rb /one/dir/testing/bar.rb}.each do |f|
+        File.stubs(:directory?).with(f).returns false
+        Kernel.stubs(:load).with(f)
+      end
 
-    @loader.load(:testing)
-    @loader.loaded_files.should == %w{/one/dir/testing/bar.rb /one/dir/testing/foo.rb}
+      @loader.load(:testing)
+      @loader.loaded_files.should == %w{/one/dir/testing/bar.rb /one/dir/testing/foo.rb}
     end
 
     it "should load any ruby files in directories matching the fact name in the search path" do
@@ -219,7 +213,7 @@ describe Facter::Util::Loader do
   end
 
   describe "when loading all facts" do
-    before do
+    before :each do
       @loader = Facter::Util::Loader.new
       @loader.stubs(:search_path).returns []
 
@@ -264,21 +258,21 @@ describe Facter::Util::Loader do
     end
 
     it 'should load all files in sorted order for any given directory regardless of the order returned by Dir.entries' do
-    @loader = TestLoader.new
+      @loader = TestLoader.new
 
-    @loader.stubs(:search_path).returns %w{/one/dir}
-    Dir.stubs(:entries).with("/one/dir").returns %w{foo.rb bar.rb}
+      @loader.stubs(:search_path).returns %w{/one/dir}
+      Dir.stubs(:entries).with("/one/dir").returns %w{foo.rb bar.rb}
 
-    %w{/one/dir}.each { |f| File.stubs(:directory?).with(f).returns true }
+      %w{/one/dir}.each { |f| File.stubs(:directory?).with(f).returns true }
 
-    %w{/one/dir/foo.rb /one/dir/bar.rb}.each do |f|
-      File.stubs(:directory?).with(f).returns false
-      Kernel.expects(:load).with(f)
-    end
+      %w{/one/dir/foo.rb /one/dir/bar.rb}.each do |f|
+        File.stubs(:directory?).with(f).returns false
+        Kernel.expects(:load).with(f)
+      end
 
-    @loader.load_all
+      @loader.load_all
 
-    @loader.loaded_files.should == %w{/one/dir/bar.rb /one/dir/foo.rb}
+      @loader.loaded_files.should == %w{/one/dir/bar.rb /one/dir/foo.rb}
     end
 
     it "should not load files in the util subdirectory" do

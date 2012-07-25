@@ -24,158 +24,65 @@
 # Author: Matthew Palmer <matt@solutionsfirst.com.au>
 #
 #
+
 require 'facter/util/memory'
 
-{   :MemorySize => "MemTotal",
-    :MemoryFree => "MemFree",
-    :SwapSize   => "SwapTotal",
-    :SwapFree   => "SwapFree"
+[  "memorysize",
+   "memoryfree",
+   "swapsize",
+   "swapfree"
+].each do |fact|
+  Facter.add(fact) do
+    setcode do
+      name = Facter.fact(fact + "_mb").value
+      Facter::Memory.scale_number(name.to_f, "MB") if name
+    end
+  end
+end
+
+Facter.add("swapsize_mb") do
+  setcode do
+    swaptotal = Facter::Memory.swap_size
+    "%.2f" % [swaptotal] if swaptotal
+  end
+end
+
+Facter.add("swapfree_mb") do
+  setcode do
+    swapfree = Facter::Memory.swap_free
+    "%.2f" % [swapfree] if swapfree
+  end
+end
+
+Facter.add("memorysize_mb") do
+  setcode do
+    memtotal = Facter::Memory.mem_size
+    "%.2f" % [memtotal] if memtotal
+  end
+end
+
+Facter.add("memoryfree_mb") do
+  setcode do
+    memfree = Facter::Memory.mem_free
+    "%.2f" % [memfree] if memfree
+  end
+end
+
+{   :memorysize_mb => "MemTotal",
+    :memoryfree_mb => "MemFree",
+    :swapsize_mb   => "SwapTotal",
+    :swapfree_mb   => "SwapFree"
 }.each do |fact, name|
   Facter.add(fact) do
     confine :kernel => [ :linux, :"gnu/kfreebsd" ]
+    meminfo = Facter::Memory.meminfo_number(name)
     setcode do
-      Facter::Memory.meminfo_number(name)
+      "%.2f" % [meminfo]
     end
   end
-end
-
-if Facter.value(:kernel) == "AIX" and Facter.value(:id) == "root"
-  swap = Facter::Util::Resolution.exec('swap -l')
-  swapfree, swaptotal = 0, 0
-  swap.each_line do |dev|
-    if dev =~ /^\/\S+\s.*\s+(\S+)MB\s+(\S+)MB/
-      swaptotal += $1.to_i
-      swapfree  += $2.to_i
-    end
-  end
-
-  Facter.add("SwapSize") do
-    confine :kernel => :aix
-    setcode do
-      Facter::Memory.scale_number(swaptotal.to_f,"MB")
-    end
-  end
-
-  Facter.add("SwapFree") do
-    confine :kernel => :aix
-    setcode do
-      Facter::Memory.scale_number(swapfree.to_f,"MB")
-    end
-  end
-end
-
-if Facter.value(:kernel) == "OpenBSD"
-  swap = Facter::Util::Resolution.exec('swapctl -s')
-  swapfree, swaptotal = 0, 0
-  if swap =~ /^total: (\d+)k bytes allocated = \d+k used, (\d+)k available$/
-    swaptotal = $1.to_i
-    swapfree  = $2.to_i
-  end
-
-  Facter.add("SwapSize") do
-    confine :kernel => :openbsd
-    setcode do
-      Facter::Memory.scale_number(swaptotal.to_f,"kB")
-    end
-  end
-
-  Facter.add("SwapFree") do
-    confine :kernel => :openbsd
-    setcode do
-      Facter::Memory.scale_number(swapfree.to_f,"kB")
-    end
-  end
-
-  Facter::Memory.vmstat_find_free_memory()
-
-  Facter.add("memorysize") do
-    confine :kernel => :openbsd
-    memtotal = Facter::Util::Resolution.exec("sysctl hw.physmem | cut -d'=' -f2")
-    setcode do
-      Facter::Memory.scale_number(memtotal.to_f,"")
-    end
-  end
-end
-
-if Facter.value(:kernel) == "FreeBSD"
-    swap = Facter::Util::Resolution.exec('swapinfo -k')
-    swapfree, swaptotal = 0, 0
-    unless swap.nil?
-      swap.each_line do |device|
-        # Parse the line:
-        # /dev/foo SIZE   USAGE   AVAILABLE    PERCENTAGE%
-        if device =~ /\S+\s+(\d+)\s+\d+\s+(\d+)\s+\d+%$/
-            swaptotal += $1.to_i
-            swapfree  += $2.to_i
-        end
-      end 
-    end
-
-    Facter.add("SwapSize") do
-        confine :kernel => :freebsd
-        setcode do
-            Facter::Memory.scale_number(swaptotal.to_f,"kB")
-        end
-    end
-
-    Facter.add("SwapFree") do
-        confine :kernel => :freebsd
-        setcode do
-            Facter::Memory.scale_number(swapfree.to_f,"kB")
-        end
-    end
-
-    # FreeBSD had to be different and be default prints human readable
-    # format instead of machine readable. So using 'vmstat -H' instead
-    # Facter::Memory.vmstat_find_free_memory()
-    
-    Facter::Memory.vmstat_find_free_memory(["-H"])
-
-    Facter.add("MemorySize") do
-        confine :kernel => :freebsd
-        memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
-        setcode do
-            Facter::Memory.scale_number(memtotal.to_f,"")
-        end
-    end
 end
 
 if Facter.value(:kernel) == "Darwin"
-  swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
-  swapfree, swaptotal = 0, 0
-  unless swap.empty?
-    # Parse the line:
-    # vm.swapusage: total = 128.00M  used = 0.37M  free = 127.63M  (encrypted)
-    if swap =~ /total\s=\s(\S+)M\s+used\s=\s(\S+)M\s+free\s=\s(\S+)M\s/
-      swaptotal += $1.to_i
-      swapfree  += $3.to_i
-    end
-  end
-
-  Facter.add("SwapSize") do
-    confine :kernel => :Darwin
-    setcode do
-      Facter::Memory.scale_number(swaptotal.to_f,"MB")
-    end
-  end
-
-  Facter.add("SwapFree") do
-    confine :kernel => :Darwin
-    setcode do
-      Facter::Memory.scale_number(swapfree.to_f,"MB")
-    end
-  end
-
-  Facter::Memory.vmstat_darwin_find_free_memory()
-
-  Facter.add("memorysize") do
-    confine :kernel => :Darwin
-    memtotal = Facter::Util::Resolution.exec("sysctl -n hw.memsize")
-    setcode do
-      Facter::Memory.scale_number(memtotal.to_f,"")
-    end
-  end
-
   Facter.add("SwapEncrypted") do
     confine :kernel => :Darwin
     setcode do
@@ -188,66 +95,27 @@ if Facter.value(:kernel) == "Darwin"
 end
 
 if Facter.value(:kernel) == "SunOS"
-  swap = Facter::Util::Resolution.exec('/usr/sbin/swap -l')
-  swapfree, swaptotal = 0, 0
-  unless swap.nil?
-    swap.each_line do |dev|
-      if dev =~ /^\/\S+\s.*\s+(\d+)\s+(\d+)$/
-        swaptotal += $1.to_i / 2
-        swapfree  += $2.to_i / 2
+
+  Facter.add("memorysize_mb") do
+    confine :kernel => :sunos
+    # Total memory size available from prtconf
+    pconf = Facter::Util::Resolution.exec('/usr/sbin/prtconf 2>/dev/null')
+    phymem = ""
+    pconf.each_line do |line|
+      if line =~ /^Memory size:\s+(\d+) Megabytes/
+        phymem = $1
       end
     end
-  end
-
-  Facter.add("SwapSize") do
-    confine :kernel => :sunos
     setcode do
-      Facter::Memory.scale_number(swaptotal.to_f,"kB")
+      "%.2f" % [phymem.to_f]
     end
   end
-
-  Facter.add("SwapFree") do
-    confine :kernel => :sunos
-    setcode do
-      Facter::Memory.scale_number(swapfree.to_f,"kB")
-    end
-  end
-
-  # Total memory size available from prtconf
-  pconf = Facter::Util::Resolution.exec('/usr/sbin/prtconf 2>/dev/null')
-  phymem = ""
-  pconf.each_line do |line|
-    if line =~ /^Memory size:\s+(\d+) Megabytes/
-      phymem = $1
-    end
-  end
-
-  Facter.add("MemorySize") do
-    confine :kernel => :sunos
-    setcode do
-      Facter::Memory.scale_number(phymem.to_f,"MB")
-    end
-  end
-
-  Facter::Memory.vmstat_find_free_memory()
 end
 
 if Facter.value(:kernel) == "windows"
   require 'facter/util/wmi'
 
-  Facter.add("MemoryFree") do
-    confine :kernel => :windows
-    setcode do
-      mem = 0
-      Facter::Util::WMI.execquery("select FreePhysicalMemory from Win32_OperatingSystem").each do |os|
-        mem = os.FreePhysicalMemory
-        break
-      end
-      Facter::Memory.scale_number(mem.to_f, "kB")
-    end
-  end
-
-  Facter.add("memorysize") do
+  Facter.add("memorysize_mb") do
     confine :kernel => :windows
     setcode do
       mem = 0
@@ -255,21 +123,33 @@ if Facter.value(:kernel) == "windows"
         mem = comp.TotalPhysicalMemory
         break
       end
-      Facter::Memory.scale_number(mem.to_f, "")
+      "%.2f" % [(mem.to_f / 1024.0) / 1024.0]
+    end
+  end
+
+  Facter.add("memoryfree_mb") do
+    confine :kernel => :windows
+    setcode do
+      mem = 0
+      Facter::Util::WMI.execquery("select FreePhysicalMemory from Win32_OperatingSystem").each do |os|
+        mem = os.FreePhysicalMemory
+        break
+      end
+      "%.2f" % [mem.to_f / 1024.0]
     end
   end
 end
 
-Facter.add("SwapSize") do
+Facter.add("swapsize_mb") do
   confine :kernel => :dragonfly
   setcode do
     page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
     swaptotal = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
-    Facter::Memory.scale_number(swaptotal.to_f,"")
+    "%.2f" % [(swaptotal.to_f / 1024.0) / 1024.0]
   end
 end
 
-Facter.add("SwapFree") do
+Facter.add("swapfree_mb") do
   confine :kernel => :dragonfly
   setcode do
     page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
@@ -277,15 +157,6 @@ Facter.add("SwapFree") do
     swap_anon_use = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_anon_use").to_f * page_size
     swap_cache_use = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_cache_use").to_f * page_size
     swapfree = swaptotal - swap_anon_use - swap_cache_use
-    Facter::Memory.scale_number(swapfree.to_f,"")
-  end
-end
-
-Facter.add("memorysize") do
-  confine :kernel => :dragonfly
-  setcode do
-    Facter::Memory.vmstat_find_free_memory()
-    memtotal = Facter::Util::Resolution.exec("sysctl -n hw.physmem")
-    Facter::Memory.scale_number(memtotal.to_f,"")
+    "%.2f" % [(swapfree.to_f / 1024.0) / 1024.0]
   end
 end

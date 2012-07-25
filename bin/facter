@@ -6,7 +6,7 @@
 #
 # = Usage
 #
-#   facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [-j|--json] [fact] [fact] [...]
+#   facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [-j|--json] [--external-dir DIR] [--no-external-dir] [fact] [fact] [...]
 #
 # = Description
 #
@@ -41,6 +41,9 @@
 #
 # timing::
 #   Enable timing.
+#
+# facts.d::
+#   The directory to use for external facts.
 #
 # = Example
 #

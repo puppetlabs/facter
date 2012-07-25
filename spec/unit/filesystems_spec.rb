@@ -1,4 +1,4 @@
-#!/usr/bin/env rspec
+#! /usr/bin/env ruby -S rspec
 
 require 'spec_helper'
 
@@ -16,7 +16,7 @@ describe 'Filesystem facts' do
       fixture_data = my_fixture_read('linux')
       Facter::Util::Resolution.expects(:exec) \
         .with('cat /proc/filesystems 2> /dev/null').returns(fixture_data)
-      Facter.collection.loader.load(:filesystems)
+      Facter.collection.internal_loader.load(:filesystems)
     end
 
     after :each do
