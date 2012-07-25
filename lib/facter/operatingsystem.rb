@@ -5,7 +5,7 @@
 # Resolution:
 #   If the kernel is a Linux kernel, check for the existence of a selection of
 #   files in /etc/ to find the specific flavour.
-#   On SunOS based kernels, return Solaris.
+#   On SunOS based kernels, attempt to determine the flavour, otherwise return Solaris.
 #   On systems other than Linux, use the kernel value.
 #
 # Caveats:
@@ -14,7 +14,16 @@
 Facter.add(:operatingsystem) do
   confine :kernel => :sunos
   setcode do
-    if FileTest.exists?("/etc/debian_version")
+    # Use uname -v because /etc/release can change in zones under SmartOS.
+    # It's apparently not trustworthy enough to rely on for this fact.
+    output = Facter::Util::Resolution.exec('uname -v')
+    if output =~ /^joyent_/
+      "SmartOS"
+    elsif output =~ /^oi_/
+      "OpenIndiana"
+    elsif output =~ /^omnios-/
+      "OmniOS"
+    elsif FileTest.exists?("/etc/debian_version")
       "Nexenta"
     else
       "Solaris"

@@ -149,7 +149,7 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => :solaris
+  confine :osfamily => :solaris
   setcode do
     release = File.open('/etc/release','r') {|f| f.readline.chomp}
     if match = /\s+s(\d+)[sx]?(_u\d+)?.*(?:SPARC|X86)/.match(release)
