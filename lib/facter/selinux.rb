@@ -57,7 +57,11 @@ end
 Facter.add("selinux_policyversion") do
   confine :selinux => :true
   setcode do
-    File.read("#{selinux_mount_point}/policyvers")
+    result = 'unknown'
+    if FileTest.exists?("#{selinux_mount_point}/policyvers")
+      result = File.read("#{selinux_mount_point}/policyvers").chomp
+    end
+    result
   end
 end
 
