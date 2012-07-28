@@ -39,8 +39,10 @@ Facter::Util::IP.get_interfaces.each do |interface|
           Facter::Util::IP.ipaddress(interface, 'ipv4')
         when 'ipaddress6'
           Facter::Util::IP.ipaddress(interface, 'ipv6')
-        when 'macaddress', 'netmask'
-          Facter::Util::IP.get_interface_value(interface, label)
+        when 'macaddress'
+          Facter::Util::IP.macaddress(interface)
+        when 'netmask'
+          Facter::Util::IP.netmask(interface)
         end
       end
     end
