@@ -15,7 +15,7 @@ Dir['tasks/**/*.rake'].each { |t| load t }
 
 require 'rake'
 require 'rake/packagetask'
-require 'rake/gempackagetask'
+require 'rubygems/package_task'
 
 FILES = FileList[
   '[A-Z]*',
@@ -82,13 +82,12 @@ spec = Gem::Specification.new do |spec|
   spec.email = 'info@puppetlabs.com'
   spec.homepage = 'http://puppetlabs.com'
   spec.rubyforge_project = 'facter'
-  spec.has_rdoc = true
   spec.rdoc_options <<
     '--title' <<  'Facter - System Inventory Tool' <<
     '--main' << 'README' <<
     '--line-numbers'
 end
-Rake::GemPackageTask.new(spec) do |pkg|
+Gem::PackageTask.new(spec) do |pkg|
 end
 
 task :package => :tar
