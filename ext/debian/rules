@@ -1,0 +1,9 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/rules/buildcore.mk
+
+LIBDIR=$(shell /usr/bin/ruby1.8 -rrbconfig -e 'puts Config::CONFIG["rubylibdir"]')
+
+binary-install/facter::
+	 /usr/bin/ruby1.8 install.rb --sitelibdir=$(LIBDIR) --destdir=$(CURDIR)/debian/$(cdbs_curpkg) --quick --no-rdoc
