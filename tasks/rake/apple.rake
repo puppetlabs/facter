@@ -130,7 +130,7 @@ def pack_facter_source
 
   # Setup a preflight script and replace variables in the files with
   # the correct paths.
-  system("#{INSTALL} -o root -g wheel -m 644 #{facter_source}/conf/osx/preflight #{@working_tree['scripts']}")
+  system("#{INSTALL} -o root -g wheel -m 644 #{facter_source}/ext/osx/preflight #{@working_tree['scripts']}")
   system("#{SED} -i '' \"s\#{SITELIBDIR}\#/usr/lib/ruby/site_ruby/1.8\#g\" #{@working_tree['scripts']}/preflight")
   system("#{SED} -i '' \"s\#{BINDIR}\#/usr/bin\#g\" #{@working_tree['scripts']}/preflight")
 
