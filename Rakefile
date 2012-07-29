@@ -25,7 +25,7 @@ FILES = FileList[
   'install.rb',
   'bin/**/*',
   'lib/**/*',
-  'conf/**/*',
+  'ext/**/*',
   'etc/**/*',
   'spec/**/*'
 ]
