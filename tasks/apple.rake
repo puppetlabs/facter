@@ -36,7 +36,7 @@ end
 # description:  This method sets up the directory structure that packagemaker
 #               needs to build a package. A prototype.plist file (holding
 #               package-specific options) is built from an ERB template located
-#               in the tasks/rake/templates directory.
+#               in the ext/osx/templates directory.
 def make_directory_tree
   facter_tmp      = '/tmp/facter'
   @scratch       = "#{facter_tmp}/#{@title}"
@@ -53,7 +53,7 @@ def make_directory_tree
     FileUtils.mkdir_p(val)
   end
   File.open("#{@scratch}/#{'prototype.plist'}", "w+") do |f|
-    f.write(ERB.new(File.read('tasks/rake/templates/prototype.plist.erb')).result())
+    f.write(ERB.new(File.read('ext/osx/templates/prototype.plist.erb')).result())
   end
 end
 
