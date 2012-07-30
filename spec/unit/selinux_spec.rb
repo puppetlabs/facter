@@ -79,11 +79,18 @@ describe "SELinux facts" do
     Facter.fact(:selinux).stubs(:value).returns("true")
     FileTest.stubs(:exists?).with("/proc/self/mounts").returns false
 
-    File.stubs(:read).with("/selinux/policyvers").returns("")
-
     File.expects(:read).with("/selinux/policyvers").returns("1")
+    FileTest.expects(:exists?).with("/selinux/policyvers").returns true
 
     Facter.fact(:selinux_policyversion).value.should == "1"
+  end
+
+  it "it should return 'unknown' SELinux policy version if /selinux/policyvers doesn't exist" do
+    Facter.fact(:selinux).stubs(:value).returns("true")
+    FileTest.expects(:exists?).with("/proc/self/mounts").returns false
+    FileTest.expects(:exists?).with("/selinux/policyvers").returns false
+
+    Facter.fact(:selinux_policyversion).value.should == "unknown"
   end
 
   it "should return the SELinux current mode" do
