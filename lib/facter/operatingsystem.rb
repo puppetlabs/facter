@@ -75,7 +75,7 @@ Facter.add(:operatingsystem) do
       elsif txt =~ /^SUSE LINUX Enterprise Desktop/i
         "SLED"
       elsif txt =~ /^openSUSE/i
-        "OpenSuSE"
+        "openSUSE"
       else
         "SuSE"
       end

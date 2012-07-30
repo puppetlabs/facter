@@ -62,7 +62,7 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => %w{SLES SLED OpenSuSE}
+  confine :operatingsystem => %w{SLES SLED openSUSE}
   setcode do
     releasefile = Facter::Util::Resolution.exec('cat /etc/SuSE-release')
     if releasefile =~ /^VERSION\s*=\s*(\d+)/

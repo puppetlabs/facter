@@ -20,7 +20,7 @@ Facter.add(:osfamily) do
       "RedHat"
     when "Ubuntu", "Debian"
       "Debian"
-    when "SLES", "SLED", "OpenSuSE", "SuSE"
+    when "SLES", "SLED", "openSUSE", "SuSE"
       "Suse"
     when "Solaris", "Nexenta"
       "Solaris"
