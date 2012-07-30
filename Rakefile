@@ -66,6 +66,7 @@ Gem::PackageTask.new(spec) do |pkg|
 end
 
 task :package => :tar
+task :tar => "package:tar"
 
 task :default do
   sh %{rake -T}

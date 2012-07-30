@@ -51,6 +51,7 @@ end
 @origversion  ||= get_origversion
 @rpmversion   ||= get_rpmversion
 @release      ||= get_release
+@key_id       = ENV['KEY_ID'] ||= '4BD6EC30'
 
 def erb(erbfile,  outfile)
   template = File.read(erbfile)
@@ -75,6 +76,10 @@ def mv_f(src, dest, options={})
   mv(src, dest, options.merge(mandatory))
 end
 
+def gpg_sign_file(file)
+  %x{/usr/bin/gpg --armor --detach-sign -u #{@key_id} #{file}}
+end
+
 def build_rpm(buildarg = "-bs")
   %x{which rpmbuild}
   unless $?.success?
@@ -91,7 +96,9 @@ def build_rpm(buildarg = "-bs")
   mkdir_p 'pkg/rpm'
   mkdir_p "#{temp}/SOURCES"
   mkdir_p "#{temp}/SPECS"
+  gpg_sign_file "pkg/#{@name}-#{@version}.tar.gz"
   cp_p "pkg/#{@name}-#{@version}.tar.gz", "#{temp}/SOURCES"
+  cp_p "pkg/#{@name}-#{@version}.tar.gz.asc", "#{temp}/SOURCES"
   erb "ext/redhat/#{@name}.spec.erb", "#{temp}/SPECS/#{@name}.spec"
   sh "rpmbuild #{args} #{buildarg} --nodeps #{temp}/SPECS/#{@name}.spec"
   output = `find #{temp} -name *.rpm`
