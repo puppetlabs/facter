@@ -15,28 +15,30 @@ Dir['tasks/**/*.rake'].each { |t| load t }
 
 require 'rake'
 require 'rake/packagetask'
-require 'rake/gempackagetask'
+require 'rubygems/package_task'
+require 'erb'
 
 FILES = FileList[
   '[A-Z]*',
   'install.rb',
   'bin/**/*',
   'lib/**/*',
-  'conf/**/*',
+  'ext/**/*',
   'etc/**/*',
   'spec/**/*'
 ]
 
-def get_version
-  %x{which git &> /dev/null}
-  if $?.success?
-    `git describe`.strip
-  else
-    File.read('lib/facter.rb')[/FACTERVERSION *= *'(.*)'/,1] or fail "Couldn't find FACTERVERSION"
-  end
-end
+@name         = 'facter'
+@build_root   ||= Dir.pwd
+@cow          ||= get_cow
+@pbuild_conf  ||= get_pbuild_conf
+@version      ||= get_version
+@debversion   ||= get_debversion
+@origversion  ||= get_origversion
+@rpmversion   ||= get_rpmversion
+@release      ||= get_release
+@key_id       = ENV['KEY_ID'] ||= '4BD6EC30'
 
-# :build_environment and :tar are mostly borrowed from puppet-dashboard Rakefile
 task :build_environment do
   unless ENV['FORCE'] == '1'
     modified = `git status --porcelain | sed -e '/^\?/d'`
@@ -54,22 +56,6 @@ task :build_environment do
   end
 end
 
-desc "Create a release .tar.gz"
-task :tar => :build_environment do
-  name = "facter"
-  rm_rf 'pkg/tar'
-  temp=`mktemp -d -t tmpXXXXXX`.strip!
-  version = get_version
-  base = "#{temp}/#{name}-#{version}/"
-  mkdir_p base
-  sh "git checkout-index -af --prefix=#{base}"
-  mkdir_p "pkg/tar"
-  sh "tar -C #{temp} -pczf #{temp}/#{name}-#{version}.tar.gz #{name}-#{version}"
-  mv "#{temp}/#{name}-#{version}.tar.gz", "pkg/tar"
-  rm_rf temp
-  puts "Tarball is pkg/tar/#{name}-#{version}.tar.gz"
-end
-
 spec = Gem::Specification.new do |spec|
   spec.platform = Gem::Platform::RUBY
   spec.name = 'facter'
@@ -82,16 +68,17 @@ spec = Gem::Specification.new do |spec|
   spec.email = 'info@puppetlabs.com'
   spec.homepage = 'http://puppetlabs.com'
   spec.rubyforge_project = 'facter'
-  spec.has_rdoc = true
   spec.rdoc_options <<
     '--title' <<  'Facter - System Inventory Tool' <<
     '--main' << 'README' <<
     '--line-numbers'
 end
-Rake::GemPackageTask.new(spec) do |pkg|
+
+Gem::PackageTask.new(spec) do |pkg|
 end
 
-task :package => :tar
+task :package => "package:tar"
+task :tar => "package:tar"
 
 task :default do
   sh %{rake -T}

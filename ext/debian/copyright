@@ -1,0 +1,19 @@
+This package was debianized by Jacob Helwig <jacob@puppetlabs.com> on
+Sat, 11 Dec 2010 21:11:11 -0800
+
+It was downloaded from http://www.puppetlabs.com/
+
+Upstream Author:
+
+    Puppet Labs <info@puppetlabs.com>
+
+Copyright:
+
+    Copyright 2010-2011 Puppet Labs <info@puppetlabs.com>
+
+License: ASL-2
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    On a Debian system, the license can be found at
+    /usr/share/common-licenses/Apache-2.0 .
+
