@@ -7,8 +7,6 @@
 #               packagemaker binary (can be installed by installing the
 #               XCode Tools) which will create the .pkg file.
 #
-require 'fileutils'
-require 'erb'
 require 'find'
 require 'pathname'
 
@@ -22,7 +20,6 @@ SED           = '/usr/bin/sed'
 
 # Setup task to populate all the variables
 task :setup do
-  @version               = `git describe`.chomp
   @title                 = "facter-#{@version}"
   @reverse_domain        = 'com.puppetlabs.facter'
   @package_major_version = @version.split('.')[0]
@@ -47,14 +44,12 @@ def make_directory_tree
      'payload'   => "#{@scratch}/payload",
   }
   puts "Cleaning Tree: #{facter_tmp}"
-  FileUtils.rm_rf(facter_tmp)
+  rm_rf(facter_tmp)
   @working_tree.each do |key,val|
     puts "Creating: #{val}"
-    FileUtils.mkdir_p(val)
+    mkdir_p(val)
   end
-  File.open("#{@scratch}/#{'prototype.plist'}", "w+") do |f|
-    f.write(ERB.new(File.read('ext/osx/templates/prototype.plist.erb')).result())
-  end
+  erb 'ext/osx/templates/prototype.plist.erb', "#{@scratch}/prototype.plist"
 end
 
 # method:        build_dmg
@@ -98,11 +93,11 @@ def build_dmg
     #{dmg_file}")
 
   if File.directory?("#{Pathname.pwd}/pkg/apple")
-    FileUtils.mv("#{Pathname.pwd}/#{dmg_file}", "#{Pathname.pwd}/pkg/apple/#{dmg_file}")
+    mv("#{Pathname.pwd}/#{dmg_file}", "#{Pathname.pwd}/pkg/apple/#{dmg_file}")
     puts "moved:   #{dmg_file} has been moved to #{Pathname.pwd}/pkg/apple/#{dmg_file}"
   else
-    FileUtils.mkdir_p("#{Pathname.pwd}/pkg/apple")
-    FileUtils.mv(dmg_file, "#{Pathname.pwd}/pkg/apple/#{dmg_file}")
+    mkdir_p("#{Pathname.pwd}/pkg/apple")
+    mv(dmg_file, "#{Pathname.pwd}/pkg/apple/#{dmg_file}")
     puts "moved:   #{dmg_file} has been moved to #{Pathname.pwd}/pkg/apple/#{dmg_file}"
   end
 end
@@ -122,7 +117,7 @@ def pack_facter_source
   directories = ["#{work}/usr/bin",
                  "#{work}/usr/share/doc/facter",
                  "#{work}/usr/lib/ruby/site_ruby/1.8/facter"]
-  FileUtils.mkdir_p(directories)
+  mkdir_p(directories)
 
   # Install necessary files
   system("#{DITTO} #{facter_source}/bin/ #{work}/usr/bin")
@@ -141,12 +136,12 @@ def pack_facter_source
 
   # Set Permissions
   executable_directories = [ "#{work}/usr/bin", ]
-  FileUtils.chmod_R(0755, executable_directories)
-  FileUtils.chown_R('root', 'wheel', directories)
-  FileUtils.chmod_R(0644, "#{work}/usr/lib/ruby/site_ruby/1.8/")
-  FileUtils.chown_R('root', 'wheel', "#{work}/usr/lib/ruby/site_ruby/1.8/")
+  chmod_R(0755, executable_directories)
+  chown_R('root', 'wheel', directories)
+  chmod_R(0644, "#{work}/usr/lib/ruby/site_ruby/1.8/")
+  chown_R('root', 'wheel', "#{work}/usr/lib/ruby/site_ruby/1.8/")
   Find.find("#{work}/usr/lib/ruby/site_ruby/1.8/") do |dir|
-    FileUtils.chmod(0755, dir) if File.directory?(dir)
+    chmod(0755, dir) if File.directory?(dir)
   end
 end
 
@@ -161,6 +156,6 @@ namespace :package do
     make_directory_tree
     pack_facter_source
     build_dmg
-    FileUtils.chmod_R(0775, "#{Pathname.pwd}/pkg")
+    chmod_R(0775, "#{Pathname.pwd}/pkg")
   end
 end
