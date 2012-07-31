@@ -16,6 +16,7 @@ Dir['tasks/**/*.rake'].each { |t| load t }
 require 'rake'
 require 'rake/packagetask'
 require 'rubygems/package_task'
+require 'erb'
 
 FILES = FileList[
   '[A-Z]*',
@@ -27,7 +28,17 @@ FILES = FileList[
   'spec/**/*'
 ]
 
-# :build_environment and :tar are mostly borrowed from puppet-dashboard Rakefile
+@name         = 'facter'
+@build_root   ||= Dir.pwd
+@cow          ||= get_cow
+@pbuild_conf  ||= get_pbuild_conf
+@version      ||= get_version
+@debversion   ||= get_debversion
+@origversion  ||= get_origversion
+@rpmversion   ||= get_rpmversion
+@release      ||= get_release
+@key_id       = ENV['KEY_ID'] ||= '4BD6EC30'
+
 task :build_environment do
   unless ENV['FORCE'] == '1'
     modified = `git status --porcelain | sed -e '/^\?/d'`
@@ -62,10 +73,11 @@ spec = Gem::Specification.new do |spec|
     '--main' << 'README' <<
     '--line-numbers'
 end
+
 Gem::PackageTask.new(spec) do |pkg|
 end
 
-task :package => :tar
+task :package => "package:tar"
 task :tar => "package:tar"
 
 task :default do
