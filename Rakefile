@@ -7,6 +7,12 @@ require 'rubygems'
 require 'rspec'
 require 'rspec/core/rake_task'
 begin
+  require 'bundler/gem_tasks'
+  task :gem => :build
+rescue LoadError
+  puts "The gem `bundler` is not installed, without it I don't know how to run the 'gem' task"
+end
+begin
   require 'rcov'
 rescue LoadError
 end
@@ -14,18 +20,6 @@ end
 Dir['tasks/**/*.rake'].each { |t| load t }
 
 require 'rake'
-require 'rake/packagetask'
-require 'rake/gempackagetask'
-
-FILES = FileList[
-  '[A-Z]*',
-  'install.rb',
-  'bin/**/*',
-  'lib/**/*',
-  'conf/**/*',
-  'etc/**/*',
-  'spec/**/*'
-]
 
 def get_version
   %x{which git &> /dev/null}
@@ -70,28 +64,8 @@ task :tar => :build_environment do
   puts "Tarball is pkg/tar/#{name}-#{version}.tar.gz"
 end
 
-spec = Gem::Specification.new do |spec|
-  spec.platform = Gem::Platform::RUBY
-  spec.name = 'facter'
-  spec.files = FILES.to_a
-  spec.executables = %w{facter}
-  spec.version = get_version.split('-')[0]
-  spec.summary = 'Facter, a system inventory tool'
-  spec.description = 'You can prove anything with facts!'
-  spec.author = 'Puppet Labs'
-  spec.email = 'info@puppetlabs.com'
-  spec.homepage = 'http://puppetlabs.com'
-  spec.rubyforge_project = 'facter'
-  spec.has_rdoc = true
-  spec.rdoc_options <<
-    '--title' <<  'Facter - System Inventory Tool' <<
-    '--main' << 'README' <<
-    '--line-numbers'
-end
-Rake::GemPackageTask.new(spec) do |pkg|
-end
-
 task :package => :tar
+task :gem => :build
 
 task :default do
   sh %{rake -T}
