@@ -50,10 +50,14 @@ rm -rf %{buildroot}
 %{_bindir}/facter
 %{ruby_sitelibdir}/facter.rb
 %{ruby_sitelibdir}/facter
+%{_mandir}/man8/facter.8.gz
 %doc CHANGELOG INSTALL LICENSE README.md
 
 
 %changelog
+* Sun Jul 08 2012 Michael Stahnke <stahnma@puppetlabs.com> - 2.0.0-0.2rc4
+- Update to work on Ruby 1.9
+
 * Thu May 24 2012 Moses Mendoza <moses@puppetlabs.com> - 2.0.0-0.1rc4
 - Update for 2.0.0rc4 release
 
