@@ -25,6 +25,7 @@ Requires: pciutils
 %endif
 Requires: ruby(abi) >= 1.8
 BuildRequires: ruby >= 1.8.5
+BuildRequires: ruby-rdoc
 
 %description
 Ruby module for collecting simple facts about a host Operating
@@ -39,7 +40,7 @@ operating system. Additional facts can be added through simple Ruby scripts
 
 %install
 rm -rf %{buildroot}
-ruby install.rb --destdir=%{buildroot} --quick --no-rdoc
+ruby install.rb --destdir=%{buildroot} --quick
 
 %clean
 rm -rf %{buildroot}
@@ -50,7 +51,7 @@ rm -rf %{buildroot}
 %{_bindir}/facter
 %{ruby_sitelibdir}/facter.rb
 %{ruby_sitelibdir}/facter
-%{_mandir}/man8/*
+%{_mandir}/man8/facter.8.gz
 %doc CHANGELOG INSTALL LICENSE README.md
 
 
