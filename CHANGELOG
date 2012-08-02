@@ -1,3 +1,11 @@
+1.6.11rc1
+===
+e9e084f (Maint) Update CONTRIBUTING.md to match Puppet
+841b99a (#15687) Selinux: Test for policyvers before reading it
+10aa3aa (#15049) Return only one selinuxfs path as string from mounts
+f7f90e4 Update version nos to match Facter development
+ab87a2c Modify facter spec to work with Ruby 1.9
+
 1.6.10
 ===
 35067dc Bump Facter epoch to 1
