@@ -9,7 +9,7 @@ describe Facter::Util::Config do
     it "should detect windows if Ruby Config::CONFIG['host_os'] returns a windows OS" do
       host_os = ["mswin","win32","dos","mingw","cygwin"]
       host_os.each do |h|
-        Config::CONFIG.stubs(:[]).with('host_os').returns(h)
+        RbConfig::CONFIG.stubs(:[]).with('host_os').returns(h)
         Facter::Util::Config.is_windows?.should be_true
       end
     end
@@ -17,7 +17,7 @@ describe Facter::Util::Config do
     it "should not detect windows if Ruby Config::CONFIG['host_os'] returns a non-windows OS" do
       host_os = ["darwin","linux"]
       host_os.each do |h|
-        Config::CONFIG.stubs(:[]).with('host_os').returns(h)
+        RbConfig::CONFIG.stubs(:[]).with('host_os').returns(h)
         Facter::Util::Config.is_windows?.should be_false
       end
     end
@@ -27,7 +27,7 @@ describe Facter::Util::Config do
     it "should detect mac if Ruby Config::CONFIG['host_os'] returns darwin" do
       host_os = ["darwin"]
       host_os.each do |h|
-        Config::CONFIG.stubs(:[]).with('host_os').returns(h)
+        RbConfig::CONFIG.stubs(:[]).with('host_os').returns(h)
         Facter::Util::Config.is_mac?.should be_true
       end
     end

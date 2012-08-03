@@ -13,7 +13,7 @@ module Facter::Util::Config
   end
 
   def self.is_mac?
-    Config::CONFIG['host_os'] =~ /darwin/i
+    RbConfig::CONFIG['host_os'] =~ /darwin/i
   end
 
   # Returns true if OS is windows

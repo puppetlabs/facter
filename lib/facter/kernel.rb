@@ -8,11 +8,10 @@
 #
 # Caveats:
 #
+require 'facter/util/config'
 
 Facter.add(:kernel) do
   setcode do
-    require 'facter/util/config'
-
     if Facter::Util::Config.is_windows?
       'windows'
     else
