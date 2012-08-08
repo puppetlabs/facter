@@ -25,7 +25,13 @@ Requires: pciutils
 %endif
 Requires: ruby(abi) >= 1.8
 BuildRequires: ruby >= 1.8.5
+
+# In Fedora 17 ruby-rdoc is called rubygem-rdoc
+%if 0%{?fedora} >= 17
+BuildRequires: rubygem-rdoc
+%else
 BuildRequires: ruby-rdoc
+%endif
 
 %description
 Ruby module for collecting simple facts about a host Operating
