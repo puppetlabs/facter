@@ -1,5 +1,6 @@
-1.6.11rc1
+1.6.11
 ===
+f75e46e Add build-requires of ruby-rdoc for manpage generation
 e9e084f (Maint) Update CONTRIBUTING.md to match Puppet
 841b99a (#15687) Selinux: Test for policyvers before reading it
 10aa3aa (#15049) Return only one selinuxfs path as string from mounts
