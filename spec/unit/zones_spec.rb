@@ -10,8 +10,9 @@ describe "on Solaris" do
   describe "number of zones" do
     it "should output number of zones" do
       zone_list = my_fixture_read("zoneadm-list.out")
-      Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/zoneadm list -cp').returns(zone_list)
-
+      Facter::Util::Resolution.stubs(:exec).
+        with('/usr/sbin/zoneadm list -cp').
+        returns(zone_list)
       Facter.fact(:zones).value.should == 3
     end
   end
@@ -19,7 +20,9 @@ describe "on Solaris" do
   describe "per zone fact and its status" do
     it "should have a per zone fact with its status" do
       zone_list = my_fixture_read("zoneadm-list.out")
-      Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/zoneadm list -cp').returns(zone_list)
+      Facter::Util::Resolution.stubs(:exec).
+        with('/usr/sbin/zoneadm list -cp').
+        returns(zone_list)
 
       Facter.collection.internal_loader.load(:zones)
       Facter.value("zone_global_status").should == "running"
