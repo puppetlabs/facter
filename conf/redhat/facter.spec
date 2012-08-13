@@ -12,6 +12,7 @@ Version: 1.6.11
 Release: 2%{?dist}
 #Release: 0.1rc1%{?dist}
 Epoch: 1
+Vendor:         %{?_host_vendor}
 License: Apache 2.0
 Group: System Environment/Base
 URL: http://www.puppetlabs.com/puppet/related-projects/%{name}
