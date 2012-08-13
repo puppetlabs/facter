@@ -6,37 +6,38 @@
 %global facter_libdir   %(ruby -rrbconfig -e 'puts Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG["sitelibdir"]')
 %endif
 
-Summary: Ruby module for collecting simple facts about a host operating system
-Name: facter
-Version: 1.6.11
-Release: 2%{?dist}
-#Release: 0.1rc1%{?dist}
-Epoch: 1
-License: Apache 2.0
-Group: System Environment/Base
-URL: http://www.puppetlabs.com/puppet/related-projects/%{name}
-#Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz
-Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz
-#Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz.asc
-Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz.asc
+Summary:        Ruby module for collecting simple facts about a host operating system
+Name:           facter
+Version:        1.6.11
+Release:        2%{?dist}
+#Release:       0.1rc1%{?dist}
+Epoch:          1
+Vendor:         %{?_host_vendor}
+License:        Apache 2.0
+Group:          System Environment/Base
+URL:            http://www.puppetlabs.com/puppet/related-projects/%{name}
+#Source0:       http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz
+Source0:        http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz
+#Source1:       http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz.asc
+Source1:        http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz.asc
 
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires: ruby >= 1.8.5
-Requires: which
+Requires:       ruby >= 1.8.5
+Requires:       which
 # dmidecode and pciutils are not available on all arches
 %ifarch %ix86 x86_64 ia64
-Requires: dmidecode
-Requires: pciutils
+Requires:       dmidecode
+Requires:       pciutils
 %endif
-Requires: ruby(abi) >= 1.8
-BuildRequires: ruby >= 1.8.5
+Requires:       ruby(abi) >= 1.8
+BuildRequires:  ruby >= 1.8.5
 
 # In Fedora 17 ruby-rdoc is called rubygem-rdoc
 %if 0%{?fedora} >= 17
-BuildRequires: rubygem-rdoc
+BuildRequires:  rubygem-rdoc
 %else
-BuildRequires: ruby-rdoc
+BuildRequires:  ruby-rdoc
 %endif
 
 %description
