@@ -26,10 +26,11 @@ module Facter::Util::EC2
       !!(Facter.value(:macaddress) =~ %r{^[dD]0:0[dD]:})
     end
 
-    # Test if this host has a mac address used by OpenStack, which 
-    # normally starts with 02:16:3E
+    # Test if this host has a mac address used by OpenStack, which
+    # normally starts with FA:16:3E (older versions of OpenStack
+    # may generate mac addresses starting with 02:16:3E)
     def has_openstack_mac?
-      !!(Facter.value(:macaddress) =~ %r{^02:16:3[eE]})
+      !!(Facter.value(:macaddress) =~ %r{^(02|[fF][aA]):16:3[eE]})
     end
 
     # Test if the host has an arp entry in its cache that matches the EC2 arp,
