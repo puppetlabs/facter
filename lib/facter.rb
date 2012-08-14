@@ -25,7 +25,7 @@ module Facter
   include Comparable
   include Enumerable
 
-  FACTERVERSION = '2.0.0'
+  FACTERVERSION = '2.0.0-rc4'
 
   # = Facter
   # Functions as a hash of 'facts' you might care about about your
