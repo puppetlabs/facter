@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'facter/version'
+
 module Facter
   # This is just so the other classes have the constant.
   module Util; end
@@ -25,7 +27,6 @@ module Facter
   include Comparable
   include Enumerable
 
-  FACTERVERSION = '1.6.11'
   # = Facter
   # Functions as a hash of 'facts' you might care about about your
   # system, such as mac address, IP address, Video card, etc.
@@ -56,11 +57,6 @@ module Facter
       @collection = Facter::Util::Collection.new
     end
     @collection
-  end
-
-  # Return the version of the library.
-  def self.version
-    return FACTERVERSION
   end
 
   # Add some debugging

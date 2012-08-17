@@ -1,7 +1,7 @@
 desc "Sign the package with the Puppet Labs release key"
 task :sign_packages do
 
-  version = Facter::FACTERVERSION
+  version = Facter.version
 
   # Sign package
 
