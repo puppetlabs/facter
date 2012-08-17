@@ -186,6 +186,21 @@ describe "Processor facts" do
       Facter.fact(:processorcount).value.should == "2"
     end
 
+    it "should be 2 on dual-processor FreeBSD box" do
+      Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
+      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
+
+      Facter.fact(:processorcount).value.should == "2"
+    end
+
+    it "should print the correct CPU Model on FreeBSD" do
+      Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
+      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.model").returns('SomeVendor CPU 3GHz')
+
+      Facter.fact(:processor).value.should == "SomeVendor CPU 3GHz"
+    end
+
+
     it "should be 2 on dual-processor DragonFly box" do
       Facter.fact(:kernel).stubs(:value).returns("DragonFly")
       Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
