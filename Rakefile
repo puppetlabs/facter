@@ -1,6 +1,9 @@
 # Rakefile for facter
 
-$: << File.expand_path('lib')
+# We need access to the Puppet.version method
+$LOAD_PATH.unshift(File.expand_path("lib"))
+require 'facter/version'
+
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'tasks')
 
 require 'rubygems'

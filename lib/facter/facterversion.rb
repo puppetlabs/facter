@@ -2,11 +2,14 @@
 #
 # Purpose: returns the version of the facter module.
 #
-# Resolution: Uses the version constant.
+# Resolution: Uses the Facter.version method.
 #
 # Caveats:
 #
 
 Facter.add(:facterversion) do
-  setcode { Facter::FACTERVERSION.to_s }
+  setcode do
+    require 'facter/version'
+    Facter.version.to_s
+  end
 end
