@@ -2,7 +2,6 @@
 
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
-<<<<<<< HEAD
 Version: 2.0.0
 #Release: 1%{?dist}
 Release: 0.1rc4%{?dist}
@@ -20,11 +19,18 @@ Requires: ruby >= 1.8.5
 Requires: which
 # dmidecode and pciutils are not available on all arches
 %ifarch %ix86 x86_64 ia64
-Requires: dmidecode
-Requires: pciutils
+Requires:       dmidecode
+Requires:       pciutils
 %endif
-Requires: ruby(abi) >= 1.8
-BuildRequires: ruby >= 1.8.5
+Requires:       ruby(abi) >= 1.8
+BuildRequires:  ruby >= 1.8.5
+
+# In Fedora 17 ruby-rdoc is called rubygem-rdoc
+%if 0%{?fedora} >= 17
+BuildRequires:  rubygem-rdoc
+%else
+BuildRequires:  ruby-rdoc
+%endif
 
 %description
 Ruby module for collecting simple facts about a host Operating
@@ -39,7 +45,7 @@ operating system. Additional facts can be added through simple Ruby scripts
 
 %install
 rm -rf %{buildroot}
-ruby install.rb --destdir=%{buildroot} --quick --no-rdoc
+ruby install.rb --destdir=%{buildroot} --quick --sitelibdir=%{facter_libdir}
 
 %clean
 rm -rf %{buildroot}
@@ -56,6 +62,19 @@ rm -rf %{buildroot}
 %changelog
 * Thu May 24 2012 Moses Mendoza <moses@puppetlabs.com> - 2.0.0-0.1rc4
 - Update for 2.0.0rc4 release
+
+* Wed Aug 08 2012 Moses Mendoza <moses@puppetlabs.com> - 1.6.11-2
+- Use correct ruby libdir for fedora 17 / ruby 1.9
+
+* Wed Aug 08 2012 Moses Mendoza <moses@puppetlabs.com> - 1.6.11-1
+- Update for 1.6.11
+
+* Wed Aug 01 2012 Moses Mendoza <moses@puppetlabs.com> - 1.6.11-0.1rc1
+- Update for 1.6.11rc1
+
+* Sat Jul 07 2012 Michael Stahnke <stahnma@puppetlabs.com> - 1.6.10-2
+- Attempt to build fro Ruby 1.9.3
+>>>>>>> 1.6.x
 
 * Tue May 22 2012 Moses Mendoza <moses@puppetlabs.com> - 2.0.0-0.1rc3
 - Update for 2.0.0rc3 release

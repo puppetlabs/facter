@@ -83,6 +83,22 @@ describe Facter::Util::EC2 do
       Facter::Util::EC2.has_openstack_mac?.should == true
     end
 
+    it "should return true when the mac is a newer openstack mac" do
+      # https://github.com/openstack/nova/commit/b684d651f540fc512ced58acd5ae2ef4d55a885c#nova/utils.py
+      Facter.expects(:value).with(:macaddress).\
+        at_least_once.returns("fa:16:3e:54:89:fd")
+
+      Facter::Util::EC2.has_openstack_mac?.should == true
+    end
+
+    it "should return true when the mac is a newer openstack mac and returned in upper case" do
+      # https://github.com/openstack/nova/commit/b684d651f540fc512ced58acd5ae2ef4d55a885c#nova/utils.py
+      Facter.expects(:value).with(:macaddress).\
+        at_least_once.returns("FA:16:3E:54:89:FD")
+
+      Facter::Util::EC2.has_openstack_mac?.should == true
+    end
+
     it "should return false when the mac is not a openstack one" do
       Facter.expects(:value).with(:macaddress).\
         at_least_once.returns("0c:1d:a0:bc:aa:02")
