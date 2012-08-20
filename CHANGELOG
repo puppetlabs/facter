@@ -1,4 +1,13 @@
-2.0.0rc4
+1.6.11
+===
+f75e46e Add build-requires of ruby-rdoc for manpage generation
+e9e084f (Maint) Update CONTRIBUTING.md to match Puppet
+841b99a (#15687) Selinux: Test for policyvers before reading it
+10aa3aa (#15049) Return only one selinuxfs path as string from mounts
+f7f90e4 Update version nos to match Facter development
+ab87a2c Modify facter spec to work with Ruby 1.9
+
+1.6.10
 ===
 d6a3e91 Make package task depend on tar in Rakfile
 f42896d (#14764) Stub architecture fact when Windows facts run on Linux
