@@ -9,6 +9,8 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), 'tasks')
 require 'rubygems'
 require 'rspec'
 require 'rspec/core/rake_task'
+require 'rake'
+
 begin
   require 'rcov'
 rescue LoadError
@@ -16,9 +18,6 @@ end
 
 Dir['tasks/**/*.rake'].each { |t| load t }
 
-require 'rake'
-require 'rake/packagetask'
-require 'rubygems/package_task'
 
 FILES = FileList[
   '[A-Z]*',
