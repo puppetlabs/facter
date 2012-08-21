@@ -1,8 +1,11 @@
-%{!?ruby_sitelibdir: %define ruby_sitelibdir %(ruby -rrbconfig -e 'puts Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG["sitelibdir"]')}
+# Fedora 17 ships with ruby 1.9, which uses vendorlibdir instead
+# of sitelibdir
+%if 0%{?fedora} >= 17
+%global facter_libdir   %(ruby -rrbconfig -e 'puts RbConfig::CONFIG["vendorlibdir"]')
+%else
+%global facter_libdir   %(ruby -rrbconfig -e 'puts Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG["sitelibdir"]')
+%endif
 
-
-%global _ver 2.0.0
-%global confdir ext/redhat
 # VERSION is subbed out during rake srpm process
 # %global realversion <%= @version %>
 # %global rpmversion <%= @rpmversion %>
