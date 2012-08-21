@@ -1,4 +1,10 @@
-%{!?ruby_sitelibdir: %define ruby_sitelibdir %(ruby -rrbconfig -e 'puts Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG["sitelibdir"]')}
+# Fedora 17 ships with ruby 1.9, which uses vendorlibdir instead
+# of sitelibdir
+%if 0%{?fedora} >= 17
+%global facter_libdir   %(ruby -rrbconfig -e 'puts RbConfig::CONFIG["vendorlibdir"]')
+%else
+%global facter_libdir   %(ruby -rrbconfig -e 'puts Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG["sitelibdir"]')
+%endif
 
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
@@ -54,15 +60,13 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %{_bindir}/facter
-%{ruby_sitelibdir}/facter.rb
-%{ruby_sitelibdir}/facter
+%{facter_libdir}/facter.rb
+%{facter_libdir}/facter
+%{_mandir}/man8/facter.8.gz
 %doc CHANGELOG INSTALL LICENSE README.md
 
 
 %changelog
-* Thu May 24 2012 Moses Mendoza <moses@puppetlabs.com> - 2.0.0-0.1rc4
-- Update for 2.0.0rc4 release
-
 * Wed Aug 08 2012 Moses Mendoza <moses@puppetlabs.com> - 1.6.11-2
 - Use correct ruby libdir for fedora 17 / ruby 1.9
 
@@ -74,7 +78,6 @@ rm -rf %{buildroot}
 
 * Sat Jul 07 2012 Michael Stahnke <stahnma@puppetlabs.com> - 1.6.10-2
 - Attempt to build fro Ruby 1.9.3
->>>>>>> 1.6.x
 
 * Tue May 22 2012 Moses Mendoza <moses@puppetlabs.com> - 2.0.0-0.1rc3
 - Update for 2.0.0rc3 release
