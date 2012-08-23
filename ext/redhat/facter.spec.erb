@@ -6,25 +6,25 @@
 %global facter_libdir   %(ruby -rrbconfig -e 'puts Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG["sitelibdir"]')
 %endif
 
-Summary:        Ruby module for collecting simple facts about a host operating system
-Name:           facter
-Version:        1.6.11
-Release:        2%{?dist}
-#Release:       0.1rc1%{?dist}
-Epoch:          1
-Vendor:         %{?_host_vendor}
-License:        Apache 2.0
-Group:          System Environment/Base
-URL:            http://www.puppetlabs.com/puppet/related-projects/%{name}
-#Source0:       http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz
-Source0:        http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz
-#Source1:       http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc1.tar.gz.asc
-Source1:        http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz.asc
+# VERSION is subbed out during rake srpm process
+# %global realversion <%= @version %>
+# %global rpmversion <%= @rpmversion %>
 
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Summary: Ruby module for collecting simple facts about a host operating system
+Name: facter
+Version: %{rpmversion}
+Release: <%= @release -%>%{?dist}
 
-Requires:       ruby >= 1.8.5
-Requires:       which
+License: Apache 2.0
+Group: System Environment/Base
+URL: http://www.puppetlabs.com/puppet/related-projects/%{name}
+Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{realversion}.tar.gz
+Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{realversion}.tar.gz.asc
+
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
+Requires: ruby >= 1.8.5
+Requires: which
 # dmidecode and pciutils are not available on all arches
 %ifarch %ix86 x86_64 ia64
 Requires:       dmidecode
@@ -46,8 +46,7 @@ system. Some of the facts are preconfigured, such as the hostname and the
 operating system. Additional facts can be added through simple Ruby scripts
 
 %prep
-%setup -q  -n %{name}-%{version}
-#%setup -q  -n %{name}-%{version}rc1
+%setup -q  -n %{name}-%{realversion}
 
 %build
 
@@ -69,6 +68,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* <%= Time.now.strftime("%a %b %d %Y") %> Puppet Labs Release <info@puppetlabs.com> -  <%= @rpmversion %>-<%= @release %>
+- Build for <%= @version %>
+
 * Wed Aug 08 2012 Moses Mendoza <moses@puppetlabs.com> - 1.6.11-2
 - Use correct ruby libdir for fedora 17 / ruby 1.9
 
