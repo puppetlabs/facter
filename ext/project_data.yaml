@@ -1,0 +1,15 @@
+---
+project: 'facter'
+author: 'Puppet Labs'
+email: 'info@puppetlabs.com'
+homepage: 'https://github.com/puppetlabs/facter'
+summary: 'Facter, a system inventory tool'
+description: 'You can prove anything with facts!'
+version_file: 'lib/facter/version.rb'
+# files and gem_files are space separated lists
+files: '[A-Z]* acceptance bin documentation etc ext install.rb lib man spec'
+gem_files: '[A-Z]* install.rb bin etc ext lib spec'
+gem_require_path: 'lib'
+gem_test_files: 'spec/**/*'
+gem_executables: 'facter'
+gem_default_executables: 'facter'
