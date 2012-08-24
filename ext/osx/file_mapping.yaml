@@ -1,0 +1,27 @@
+directories:
+  lib:
+    path: 'usr/lib/ruby/site_ruby/1.8'
+    owner: 'root'
+    group: 'wheel'
+    perms: '0644'
+  bin:
+    path: 'usr/bin'
+    owner: 'root'
+    group: 'wheel'
+    perms: '0755'
+  facter:
+    path: 'var/lib/facter'
+    owner: 'root'
+    group: 'wheel'
+    perms: '0644'
+  etc:
+    path: 'etc'
+    owner: 'root'
+    group: 'wheel'
+    perms: '0644'
+files:
+  '[A-Z]*':
+    path: 'usr/share/doc/facter'
+    owner: 'root'
+    group: 'wheel'
+    perms: '0644'
