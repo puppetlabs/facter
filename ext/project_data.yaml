@@ -7,7 +7,7 @@ summary: 'Facter, a system inventory tool'
 description: 'You can prove anything with facts!'
 version_file: 'lib/facter/version.rb'
 # files and gem_files are space separated lists
-files: '[A-Z]* acceptance bin documentation etc ext install.rb lib man spec'
+files: '[A-Z]* acceptance bin documentation etc ext install.rb lib libexec man spec'
 gem_files: '[A-Z]* install.rb bin etc ext lib spec'
 gem_require_path: 'lib'
 gem_test_files: 'spec/**/*'
