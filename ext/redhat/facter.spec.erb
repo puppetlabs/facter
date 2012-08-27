@@ -6,18 +6,20 @@
 %global facter_libdir   %(ruby -rrbconfig -e 'puts Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG["sitelibdir"]')
 %endif
 
+# VERSION is subbed out during rake srpm process
+# %global realversion <%= @version %>
+# %global rpmversion <%= @rpmversion %>
+
 Summary: Ruby module for collecting simple facts about a host operating system
 Name: facter
-Version: 2.0.0
-#Release: 1%{?dist}
-Release: 0.1rc4%{?dist}
+Version: %{rpmversion}
+Release: <%= @release -%>%{?dist}
+
 License: Apache 2.0
 Group: System Environment/Base
 URL: http://www.puppetlabs.com/puppet/related-projects/%{name}
-Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc4.tar.gz
-#Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz
-Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}rc4.tar.gz.asc
-#Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{version}.tar.gz.asc
+Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{realversion}.tar.gz
+Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{realversion}.tar.gz.asc
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -44,8 +46,7 @@ system. Some of the facts are preconfigured, such as the hostname and the
 operating system. Additional facts can be added through simple Ruby scripts
 
 %prep
-#%setup -q  -n %{name}-%{version}
-%setup -q  -n %{name}-%{version}rc4
+%setup -q  -n %{name}-%{realversion}
 
 %build
 
@@ -67,6 +68,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* <%= Time.now.strftime("%a %b %d %Y") %> Puppet Labs Release <info@puppetlabs.com> -  <%= @rpmversion %>-<%= @release %>
+- Build for <%= @version %>
+
 * Wed Aug 08 2012 Moses Mendoza <moses@puppetlabs.com> - 1.6.11-2
 - Use correct ruby libdir for fedora 17 / ruby 1.9
 
