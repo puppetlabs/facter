@@ -17,14 +17,14 @@
 # remove libdir
 <% Dir.chdir("lib") %>
 <% FileList["**/*"].select {|i| File.file?(i)}.each do |file| %>
-/bin/rm -Rf "${3}{SITELIBDIR}/<%=file%>"
+/bin/rm -Rf "${3}<%= @apple_libdir %>/<%=file%>"
 <% end %>
 # remove bin files
 <% Dir.chdir("../bin") %>
 <% FileList["**/*"].select {|i| File.file?(i)}.each do |file| %>
-/bin/rm -Rf "${3}{BINDIR}/<%=file%>"
+/bin/rm -Rf "${3}<%= @apple_bindir %>/<%=file%>"
 <% end %>
 <% Dir.chdir("..") %>
 
 # remove old doc files
-/bin/rm -Rf "${3}/usr/share/doc/<%=@package_name%>"
+/bin/rm -Rf "${3}<%= @apple_docdir %>/<%=@package_name%>"
