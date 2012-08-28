@@ -6,6 +6,36 @@ module Facter
 
       opts = Trollop::options do
         version "#{Facter.version}"
+        banner <<-EOS
+SYNOPSIS
+========
+Collect and display facts about the system.
+
+DESCRIPTION
+===========
+Collect and display facts about the current system. The library behind
+Facter is easy to expand, making Facter an easy way to collect
+information about a system from within the shell or within Ruby.
+
+If no facts are specifically asked for, then all facts will be returned.
+
+EXAMPLE
+=======
+  facter kernel
+
+AUTHOR
+======
+Luke Kanies
+
+COPYRIGHT
+=========
+Copyright (c) 2011-2012 Puppet Labs, Inc Licensed under the Apache 2.0
+license
+
+USAGE
+=====
+
+EOS
         opt :yaml, "Emit facts in YAML format."
         opt :json, "Emit facts in JSON format."
         opt :timing, "Enable timing."
@@ -17,6 +47,18 @@ module Facter
 
       # Accept fact names to return from the command line
       names = argv
+
+      if opts[:debug]
+        Facter.debugging(1)
+      end
+
+      if opts[:timing]
+        Facter.timing(1)
+      end
+
+      if opts[:puppet]
+        self.load_puppet
+      end
 
       # Create the facts hash that is printed to standard out.
       unless names.empty?
@@ -54,17 +96,6 @@ module Facter
         end
       end
 
-      if opts[:debug]
-        Facter.debugging(1)
-      end
-
-      if opts[:timing]
-        Facter.timing(1)
-      end
-
-      if opts[:puppet]
-        self.load_puppet
-      end
 
       # Print the value of a single fact, otherwise print a list sorted by fact
       # name and separated by "=>"
