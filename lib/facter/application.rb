@@ -4,7 +4,7 @@ module Facter
       require 'facter/util/trollop'
       require 'facter'
 
-      opts = Trollop::options do
+      options = Trollop::options do
         version "#{Facter.version}"
         banner <<-EOS
 SYNOPSIS
@@ -48,15 +48,15 @@ EOS
       # Accept fact names to return from the command line
       names = argv
 
-      if opts[:debug]
+      if options[:debug]
         Facter.debugging(1)
       end
 
-      if opts[:timing]
+      if options[:timing]
         Facter.timing(1)
       end
 
-      if opts[:puppet]
+      if options[:puppet]
         self.load_puppet
       end
 
@@ -77,14 +77,14 @@ EOS
       facts ||= Facter.to_hash
 
       # Print the facts as YAML and exit
-      if opts[:yaml]
+      if options[:yaml]
         require 'yaml'
         puts YAML.dump(facts)
         exit(0)
       end
 
       # Print the facts as JSON and exit
-      if opts[:json]
+      if options[:json]
         begin
           require 'rubygems'
           require 'json'
@@ -110,7 +110,7 @@ EOS
       end
 
     rescue => e
-      if opts && opts[:trace]
+      if options && options[:trace]
         raise e
       else
         $stderr.puts "Error: #{e}"
