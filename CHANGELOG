@@ -1,3 +1,29 @@
+1.6.12rc1
+===
+3ad05f1 Remove version test from facter
+fce4b01 fix redhat spec release template variable
+903b1d9 Stop using sed to generate the preflight erb
+601a967 Use git read-only packaging repo for public access
+dd3401e Fixup apple packaging
+e0454df Remove libexec from file list as its only in 2.x
+1e7f5b3 Update debhelper compat to 7, add format
+6659e61 Fixup redhat spec erb template for f17
+6752530 Shift to using packaging repo
+fe311c2 Remove obsolete tasks directory
+900895f Group requires together
+8c18e33 Move facter redhat spec file to erb
+84f8e10 Add debian build artifacts to facter project
+d2d3baf Replace rake/gempackagetask with rubygems/gempackagetask
+6f58b4e Move tasks out of 'rake' subdirectory
+db9d154 Move packaging files to ext, rm conf
+c0cbe62 (#15464) Make Facter.version settable via Facter.version=
+0b49eae (#15464) Make contributing easy via bundle Gemfile
+bf6ee4f Retabbed conf/redhat/facter.spec to lineup tag contents.
+defbfb8 (#15291) Add Vendor tag to Facter spec file
+17243bb Update facter redhat spec for fedora 17
+7ca9122 Update a facter build-requires for f17
+d5d2328 (#11640) Added support for new OpenStack MAC addresses
+
 1.6.11
 ===
 f75e46e Add build-requires of ruby-rdoc for manpage generation
