@@ -1,6 +1,6 @@
 module Facter
   if not defined? FACTERVERSION then
-    FACTERVERSION = '1.6.12-rc1'
+    FACTERVERSION = '1.6.12-rc2'
   end
 
   def self.version
