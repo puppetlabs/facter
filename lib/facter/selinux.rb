@@ -17,11 +17,14 @@ sestatus_cmd = '/usr/sbin/sestatus'
 def selinux_mount_point
   path = "/selinux"
   if FileTest.exists?('/proc/self/mounts')
-    File.open('/proc/self/mounts') do |f|
-      f.grep(/selinuxfs/) do |line|
-        path = line.split[1]
-        break
-      end
+    # Centos 5 shows an error in which having ruby use File.read to read
+    # /proc/self/mounts combined with the puppet agent run with --listen causes
+    # a hang. Reading from other parts of /proc does not seem to cause this problem.
+    # The work around is to read the file in another process.
+    # -- andy Fri Aug 31 2012
+    selinux_line = Facter::Util::Resolution.exec('cat /proc/self/mounts').lines.find { |line| line =~ /selinuxfs/ }
+    if selinux_line
+      path = selinux_line.split[1]
     end
   end
   path
