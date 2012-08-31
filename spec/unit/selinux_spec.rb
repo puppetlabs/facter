@@ -26,12 +26,9 @@ describe "SELinux facts" do
     it "and return true with selinuxfs path from /proc" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
 
-      mounts = mock()
-      lines = [ "selinuxfs /sys/fs/selinux selinuxfs rw,relatime 0 0" ]
-      mounts.expects(:grep).multiple_yields(*lines)
-
       FileTest.expects(:exists?).with("/proc/self/mounts").returns true
-      File.expects(:open).with("/proc/self/mounts").yields(mounts)
+      lines = [ "selinuxfs /sys/fs/selinux selinuxfs rw,relatime 0 0" ]
+      Facter::Util::Resolution.expects(:exec).with("cat /proc/self/mounts").returns(lines.join("\n"))
 
       FileTest.expects(:exists?).with("/sys/fs/selinux/enforce").returns true
 
@@ -44,15 +41,13 @@ describe "SELinux facts" do
     it "and return true with multiple selinuxfs mounts from /proc" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
 
-      mounts = mock()
+      FileTest.expects(:exists?).with("/proc/self/mounts").returns true
+
       lines = [
         "selinuxfs /sys/fs/selinux selinuxfs rw,relatime 0 0",
         "selinuxfs /var/tmp/imgcreate-R2wmE6/install_root/sys/fs/selinux selinuxfs rw,relatime 0 0",
       ]
-      mounts.expects(:grep).multiple_yields(*lines)
-
-      FileTest.expects(:exists?).with("/proc/self/mounts").returns true
-      File.expects(:open).with("/proc/self/mounts").yields(mounts)
+      Facter::Util::Resolution.expects(:exec).with("cat /proc/self/mounts").returns(lines.join("\n"))
 
       FileTest.expects(:exists?).with("/sys/fs/selinux/enforce").returns true
 
