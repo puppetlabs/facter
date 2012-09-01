@@ -34,7 +34,16 @@ Facter::Util::IP.get_interfaces.each do |interface|
   %w{ipaddress ipaddress6 macaddress netmask}.each do |label|
     Facter.add(label + "_" + Facter::Util::IP.alphafy(interface)) do
       setcode do
-        Facter::Util::IP.get_interface_value(interface, label)
+        case label
+        when 'ipaddress'
+          Facter::Util::IP.ipaddress(interface, 'ipv4')
+        when 'ipaddress6'
+          Facter::Util::IP.ipaddress(interface, 'ipv6')
+        when 'macaddress'
+          Facter::Util::IP.macaddress(interface)
+        when 'netmask'
+          Facter::Util::IP.netmask(interface)
+        end
       end
     end
   end
