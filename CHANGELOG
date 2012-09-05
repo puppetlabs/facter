@@ -1,3 +1,9 @@
+1.6.12-rc2
+===
+398b111 (Maint) Extract common elements of selinux tests
+c534126 (#10819) Avoid reading from /proc/self/mounts in ruby
+b95ea54 fix yum repo path in yaml file
+
 1.6.12rc1
 ===
 3ad05f1 Remove version test from facter
