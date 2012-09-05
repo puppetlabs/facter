@@ -63,8 +63,8 @@ describe Facter::Util::Config do
 
       it "should return the default value for windows 2003R2" do
         Facter::Util::Config.stubs(:is_windows?).returns(true)
-        Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\Documents")
-        Facter::Util::Config.external_facts_dirs.should == [File.join("C:\\Documents", 'PuppetLabs', 'facter', 'facts.d')]
+        Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\Documents and Settings")
+        Facter::Util::Config.external_facts_dirs.should == [File.join("C:\\Documents and Settings", 'PuppetLabs', 'facter', 'facts.d')]
       end
     end
     
@@ -82,7 +82,7 @@ describe Facter::Util::Config do
       
       it "should return an empty set on windows 2008" do
         Facter::Util::Config.stubs(:is_windows?).returns(true)
-        Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\Documents")
+        Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\Documents and Settings")
         Facter::Util::Config.external_facts_dirs.should == []
       end
     end
