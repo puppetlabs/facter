@@ -77,6 +77,12 @@ describe Facter::Util::Parser do
       let(:data_in_txt) do "one=two\nthree=four\n" end
       it_behaves_like "txt parser"
     end
+    
+    context "extra equal sign" do
+      let(:data_in_txt) do "one=two\nthree=four=five\n" end
+      let(:data) do {"one" => "two", "three" => "four=five"} end
+      it_behaves_like "txt parser"
+    end
 
     context "extra data" do
       let(:data_in_txt) do "one=two\nfive\nthree=four\n" end

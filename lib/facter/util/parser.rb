@@ -78,7 +78,7 @@ module Facter::Util::Parser
 
   class TextParser < Base
     def parse_results
-      re = /^(.+)=(.+)$/
+      re = /^(.+?)=(.+)$/
       result = {}
       content.each_line do |line|
         if match_data = re.match(line.chomp)
