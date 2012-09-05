@@ -1,21 +1,6 @@
 module Facter
   module Application
 
-    require 'facter/util/nothing_loader'
-
-    def self.create_directory_loader(dir)
-      begin
-        Facter::Util::Config.ext_fact_loader = Facter::Util::DirectoryLoader.loader_for(dir)
-      rescue Facter::Util::DirectoryLoader::NoSuchDirectoryError => error
-        $stderr.puts "Specified external facts directory #{dir} does not exist."
-        exit(1)
-      end
-    end
-
-    def self.create_nothing_loader
-      Facter::Util::Config.ext_fact_loader = Facter::Util::NothingLoader.new
-    end
-
     def self.run(argv)
       require 'optparse'
       require 'facter'
@@ -93,8 +78,6 @@ module Facter
         opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
         opts.on("-j", "--json")   { |v| options[:json]   = v }
         opts.on(      "--trace")  { |v| options[:trace]  = v }
-        opts.on(      "--external-dir DIR") { |v| create_directory_loader(v) }
-        opts.on(      "--no-external-dir") { |v| create_nothing_loader }
         opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
         opts.on("-t", "--timing") { |v| Facter.timing(1) }
         opts.on("-p", "--puppet") { |v| load_puppet }
