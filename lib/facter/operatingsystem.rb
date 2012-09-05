@@ -74,6 +74,8 @@ Facter.add(:operatingsystem) do
         "PSBM"
       elsif txt =~ /Ascendos/i
         "Ascendos"
+      elsif txt =~ /^XenServer/i
+        "XenServer"
       else
         "RedHat"
       end
