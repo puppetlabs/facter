@@ -58,6 +58,15 @@ describe Facter::Util::Processor do
     Facter::Util::Processor.enum_lsdev[0].should == "PowerPC_POWER3"
   end
 
+  it "should get the processor type on a HP-UX box" do
+    Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+    Facter::Util::Resolution.stubs(:exec).with("ioscan -fknCprocessor | grep processor").returns("processor   0  0/120     processor   CLAIMED     PROCESSOR    Processor\nprocessor   1  0/121     processor   CLAIMED     PROCESSOR    Processor\nprocessor   2  0/122     processor   CLAIMED     PROCESSOR    Processor\nprocessor   3  0/123     processor   CLAIMED     PROCESSOR    Processor\nprocessor   4  0/124     processor   CLAIMED     PROCESSOR    Processor\nprocessor   5  0/125     processor   CLAIMED     PROCESSOR    Processor\nprocessor   6  0/126     processor   CLAIMED     PROCESSOR    Processor\nprocessor   7  0/127     processor   CLAIMED     PROCESSOR    Processor\nprocessor   8  1/120     processor   CLAIMED     PROCESSOR    Processor\nprocessor   9  1/121     processor   CLAIMED     PROCESSOR    Processor\nprocessor  10  1/122     processor   CLAIMED     PROCESSOR    Processor\nprocessor  11  1/123     processor   CLAIMED     PROCESSOR    Processor\nprocessor  12  1/124     processor   CLAIMED     PROCESSOR    Processor\nprocessor  13  5/125     processor   CLAIMED     PROCESSOR    Processor\nprocessor  14  5/126     processor   CLAIMED     PROCESSOR    Processor\nprocessor  15  5/127     processor   CLAIMED     PROCESSOR    Processor\nprocessor  16  6/120     processor   CLAIMED     PROCESSOR    Processor\nprocessor  17  6/121     processor   CLAIMED     PROCESSOR    Processor\nprocessor  18  6/122     processor   CLAIMED     PROCESSOR    Processor\nprocessor  19  6/123     processor   CLAIMED     PROCESSOR    Processor\nprocessor  20  6/124     processor   CLAIMED     PROCESSOR    Processor\nprocessor  21  6/125     processor   CLAIMED     PROCESSOR    Processor\nprocessor  22  7/120     processor   CLAIMED     PROCESSOR    Processor\nprocessor  23  7/121     processor   CLAIMED     PROCESSOR    Processor")
+    Facter::Util::Resolution.stubs(:exec).with("machinfo | grep Intel").returns(" 13 Intel(R) Itanium 2 9000 series processors (1.6 GHz, 18 MB)")
+    Facter::Util::Resolution.stubs(:exec).with("uname -m").returns("ia64")
+
+    Facter::Util::Processor.enum_ioscan[0].should == "Itanium 2 9000 series processors (1.6 GHz, 18 MB)"
+  end
+
   it "should get the processor description on Solaris (x86)" do
     Facter.fact(:kernel).stubs(:value).returns("SunOS")
     Facter.fact(:architecture).stubs(:value).returns("i86pc")

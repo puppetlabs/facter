@@ -26,6 +26,13 @@ Facter.add(:hardwaremodel) do
 end
 
 Facter.add(:hardwaremodel) do
+  confine :operatingsystem => :"hp-ux"
+  setcode do
+    Facter::Util::Resolution.exec('uname -m')
+  end
+end
+
+Facter.add(:hardwaremodel) do
   confine :operatingsystem => :windows
   setcode do
     # The cryptic windows cpu architecture models are documented in these places:

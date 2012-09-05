@@ -31,4 +31,19 @@ describe "Hardwareisa fact" do
 
     Facter.fact(:hardwareisa).value.should == "Clyde"
   end
+
+  it "should return ia64 on HP-UX/ia64" do
+    Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+    Facter::Util::Resolution.stubs(:exec).with("uname -m").returns("ia64")
+
+    Facter.fact(:hardwareisa).value.should == "ia64"
+  end
+
+  it "should return parisc on non-ia64 HP-UX" do
+    Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+    Facter::Util::Resolution.stubs(:exec).with("uname -m").returns("9000/123")
+
+    Facter.fact(:hardwareisa).value.should == "parisc"
+  end
+
 end

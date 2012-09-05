@@ -11,5 +11,11 @@
 #
 
 Facter.add(:hardwareisa) do
+  if Facter.value(:kernel) == 'HP-UX'
+    setcode do
+      (Facter.value(:architecture) == "ia64") ? "ia64" : "parisc"
+    end
+  else
   setcode 'uname -p'
+  end
 end
