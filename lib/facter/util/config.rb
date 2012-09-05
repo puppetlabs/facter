@@ -38,18 +38,11 @@ module Facter::Util::Config
     end
   end
 
-  # This is a hack because we could not stub out the PATH_SEPARATOR constant
-  # Evan, Sept/5/2012
-  def self.path_sep
-    File::PATH_SEPARATOR
-  end
-
-
   def self.external_facts_dirs
     if ENV["FACTER_PATH"].nil? then
       default_external_facts_dirs
     else 
-      ENV["FACTER_PATH"].split(path_sep)
+      ENV["FACTER_PATH"].split(File::PATH_SEPARATOR)
     end
   end
 end

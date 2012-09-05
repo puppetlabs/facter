@@ -37,20 +37,9 @@ describe Facter::Util::Config do
   describe "external_facts_dirs" do
     
     describe "Environment variables set to directories" do
-      it "should return directories for linux" do
-        ENV["FACTER_PATH"] = "/test1:/test2"
-        Facter::Util::Config.stubs(:is_windows?).returns(false)
-        Facter::Util::Config.stubs(:windows_data_dir).returns(nil)
-        Facter::Util::Config.stubs(:path_sep).returns(":")
+      it "should return directories for both linux and windows" do
+        ENV["FACTER_PATH"] = ["/test1", "/test2"].join File::PATH_SEPARATOR
         Facter::Util::Config.external_facts_dirs.should == ["/test1", "/test2"]
-      end
-      
-      it "should return directories for windows" do
-        ENV["FACTER_PATH"] = "C:\\test1;C:\\test2"
-        Facter::Util::Config.stubs(:is_windows?).returns(true)
-        Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\ProgramData")
-        Facter::Util::Config.stubs(:path_sep).returns(";")
-        Facter::Util::Config.external_facts_dirs.should == ["C:\\test1", "C:\\test2"]
       end
     end
     
