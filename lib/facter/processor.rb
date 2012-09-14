@@ -22,6 +22,26 @@
 require 'thread'
 require 'facter/util/processor'
 
+## We have to enumerate these outside a Facter.add block to get the processorN descriptions iteratively
+## (but we need them inside the Facter.add block above for tests on processorcount to work)
+processor_list = case Facter.value(:kernel)
+when "AIX"
+  Facter::Util::Processor.enum_lsdev
+when "SunOS"
+  Facter::Util::Processor.enum_kstat
+else
+  Facter::Util::Processor.enum_cpuinfo
+end
+
+processor_list.each_with_index do |desc, i|
+  Facter.add("Processor#{i}") do
+    confine :kernel => [ :aix, :sunos, :linux, :"gnu/kfreebsd" ]
+    setcode do
+      desc
+    end
+  end
+end
+
 Facter.add("ProcessorCount") do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]
   setcode do
@@ -78,41 +98,6 @@ Facter.add("ProcessorCount") do
   end
 end
 
-## We have to enumerate these outside a Facter.add block to get the processorN descriptions iteratively
-## (but we need them inside the Facter.add block above for tests on processorcount to work)
-processor_list = Facter::Util::Processor.enum_cpuinfo
-processor_list_aix = Facter::Util::Processor.enum_lsdev
-processor_list_sunos = Facter::Util::Processor.enum_kstat
-
-if processor_list.length != 0
-  processor_list.each_with_index do |desc, i|
-    Facter.add("Processor#{i}") do
-      confine :kernel => [ :linux, :"gnu/kfreebsd" ]
-      setcode do
-        desc
-      end
-    end
-  end
-elsif processor_list_aix.length != 0
-  processor_list_aix.each_with_index do |desc, i|
-    Facter.add("Processor#{i}") do
-      confine :kernel => [ :aix ]
-      setcode do
-        desc
-      end
-    end
-  end
-elsif processor_list_sunos.length != 0
-  processor_list_sunos.each_with_index do |desc, i|
-    Facter.add("Processor#{i}") do
-      confine :kernel => [ :sunos ]
-      setcode do
-        desc
-      end
-    end
-  end
-end
-
 if Facter.value(:kernel) == "windows"
   processor_list = []
 
@@ -165,7 +150,7 @@ Facter.add("ProcessorCount") do
   end
 end
 
-Facter.add("processorcount") do
+Facter.add("ProcessorCount") do
   confine :kernel => :sunos
   setcode do
     kstat = Facter::Util::Resolution.exec("/usr/bin/kstat cpu_info")
