@@ -80,35 +80,19 @@ end
 
 ## We have to enumerate these outside a Facter.add block to get the processorN descriptions iteratively
 ## (but we need them inside the Facter.add block above for tests on processorcount to work)
-processor_list = Facter::Util::Processor.enum_cpuinfo
-processor_list_aix = Facter::Util::Processor.enum_lsdev
-processor_list_sunos = Facter::Util::Processor.enum_kstat
+if Facter.value(:kernel) == "AIX"
+  processor_list = Facter::Util::Processor.enum_lsdev
+elsif Facter.value(:kernel) == "SunOS"
+  processor_list = Facter::Util::Processor.enum_kstat
+else
+  processor_list = Facter::Util::Processor.enum_cpuinfo
+end
 
-if processor_list.length != 0
-  processor_list.each_with_index do |desc, i|
-    Facter.add("Processor#{i}") do
-      confine :kernel => [ :linux, :"gnu/kfreebsd" ]
-      setcode do
-        desc
-      end
-    end
-  end
-elsif processor_list_aix.length != 0
-  processor_list_aix.each_with_index do |desc, i|
-    Facter.add("Processor#{i}") do
-      confine :kernel => [ :aix ]
-      setcode do
-        desc
-      end
-    end
-  end
-elsif processor_list_sunos.length != 0
-  processor_list_sunos.each_with_index do |desc, i|
-    Facter.add("Processor#{i}") do
-      confine :kernel => [ :sunos ]
-      setcode do
-        desc
-      end
+processor_list.each_with_index do |desc, i|
+  Facter.add("Processor#{i}") do
+    confine :kernel => [ :aix, :sunos, :linux, :"gnu/kfreebsd" ]
+    setcode do
+      desc
     end
   end
 end
