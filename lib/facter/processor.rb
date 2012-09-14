@@ -22,6 +22,25 @@
 require 'thread'
 require 'facter/util/processor'
 
+## We have to enumerate these outside a Facter.add block to get the processorN descriptions iteratively
+## (but we need them inside the Facter.add block above for tests on processorcount to work)
+if Facter.value(:kernel) == "AIX"
+  processor_list = Facter::Util::Processor.enum_lsdev
+elsif Facter.value(:kernel) == "SunOS"
+  processor_list = Facter::Util::Processor.enum_kstat
+else
+  processor_list = Facter::Util::Processor.enum_cpuinfo
+end
+
+processor_list.each_with_index do |desc, i|
+  Facter.add("Processor#{i}") do
+    confine :kernel => [ :aix, :sunos, :linux, :"gnu/kfreebsd" ]
+    setcode do
+      desc
+    end
+  end
+end
+
 Facter.add("ProcessorCount") do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]
   setcode do
@@ -75,25 +94,6 @@ Facter.add("ProcessorCount") do
   confine :kernel => :Darwin
   setcode do
     Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
-  end
-end
-
-## We have to enumerate these outside a Facter.add block to get the processorN descriptions iteratively
-## (but we need them inside the Facter.add block above for tests on processorcount to work)
-if Facter.value(:kernel) == "AIX"
-  processor_list = Facter::Util::Processor.enum_lsdev
-elsif Facter.value(:kernel) == "SunOS"
-  processor_list = Facter::Util::Processor.enum_kstat
-else
-  processor_list = Facter::Util::Processor.enum_cpuinfo
-end
-
-processor_list.each_with_index do |desc, i|
-  Facter.add("Processor#{i}") do
-    confine :kernel => [ :aix, :sunos, :linux, :"gnu/kfreebsd" ]
-    setcode do
-      desc
-    end
   end
 end
 
