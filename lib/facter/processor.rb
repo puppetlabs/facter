@@ -149,7 +149,7 @@ Facter.add("ProcessorCount") do
   end
 end
 
-Facter.add("processorcount") do
+Facter.add("ProcessorCount") do
   confine :kernel => :sunos
   setcode do
     kstat = Facter::Util::Resolution.exec("/usr/bin/kstat cpu_info")
