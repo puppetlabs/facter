@@ -73,7 +73,14 @@ module Facter::Util::IP
 
   def self.get_all_interface_output
     case Facter.value(:kernel)
-    when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
+    when 'Linux'
+      require 'open3'
+      input3, output3, error3 = Open3.popen3("/sbin/ifconfig -a")
+      output  = output3.read
+      error   = error3.read
+      
+      Facter.debug("ifconfig error: " + error.chomp) unless error.empty?
+    when 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
       output = %x{/sbin/ifconfig -a}
     when 'SunOS'
       output = %x{/usr/sbin/ifconfig -a}
@@ -89,7 +96,9 @@ module Facter::Util::IP
   def self.get_single_interface_output(interface)
     output = ""
     case Facter.value(:kernel)
-    when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
+    when 'Linux'
+      output = %x{/sbin/ifconfig #{interface} 2>/dev/null}
+    when 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
       output = %x{/sbin/ifconfig #{interface}}
     when 'SunOS'
       output = %x{/usr/sbin/ifconfig #{interface}}

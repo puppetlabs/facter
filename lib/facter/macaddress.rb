@@ -23,7 +23,25 @@ Facter.add(:macaddress) do
 end
 
 Facter.add(:macaddress) do
-  confine :kernel => %w{SunOS Linux GNU/kFreeBSD}
+  confine :kernel => 'Linux'
+  setcode do
+    require 'open3'
+    ether = []
+    input3, output3, error3 = Open3.popen3("/sbin/ifconfig -a")
+    output  = output3.read
+    error   = error3.read
+    
+    Facter.debug("ifconfig error: " + error.chomp) unless error.empty?
+    
+    output.each_line do |s|
+      ether.push($1) if s =~ /(?:ether|HWaddr) (\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
+    end
+    Facter::Util::Macaddress.standardize(ether[0])
+  end
+end
+
+Facter.add(:macaddress) do
+  confine :kernel => %w{SunOS GNU/kFreeBSD}
   setcode do
     ether = []
     output = Facter::Util::Resolution.exec("/sbin/ifconfig -a")
