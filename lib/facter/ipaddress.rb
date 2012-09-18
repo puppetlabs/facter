@@ -23,10 +23,14 @@
 #
 
 Facter.add(:ipaddress) do
-  confine :kernel => :linux
+confine :kernel => :linux
   setcode do
+    require 'open3'
     ip = nil
-    output = %x{/sbin/ifconfig 2>/dev/null}
+#    output = %x{/sbin/ifconfig 2>/dev/null}
+    input3, output3, error3 = Open3.popen3("/sbin/ifconfig")
+    output  = output3.read
+    error   = error3.read
 
     output.split(/^\S/).each { |str|
       if str =~ /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
@@ -38,8 +42,13 @@ Facter.add(:ipaddress) do
       end
     }
 
+    Facter.debug("ifconfig error: " + error.chomp) unless error.empty?
+
+    input3.close
+    output3.close
+    error3.close
+
     ip
-  end
 end
 
 Facter.add(:ipaddress) do
