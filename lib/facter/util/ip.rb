@@ -100,8 +100,7 @@ module Facter::Util::IP
   end
 
   def self.ifconfig_interface(interface)
-    output = %x{/sbin/ifconfig #{interface} 2>/dev/null}
-    output
+    %x{/sbin/ifconfig #{interface} 2>/dev/null}
   end
 
   def self.get_single_interface_output(interface)
