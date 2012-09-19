@@ -101,6 +101,7 @@ module Facter::Util::IP
 
   def self.ifconfig_interface(interface)
     output = %x{/sbin/ifconfig #{interface} 2>/dev/null}
+    output
   end
 
   def self.get_single_interface_output(interface)
