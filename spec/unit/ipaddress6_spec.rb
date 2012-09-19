@@ -28,7 +28,7 @@ describe "IPv6 address fact" do
 
   it "should return ipaddress6 information for Linux" do
     Facter::Util::Resolution.stubs(:exec).with('uname -s').returns('Linux')
-    Facter::Util::Resolution.stubs(:exec).with('/sbin/ifconfig').
+    Facter::Util::Resolution.stubs(:exec).with('/sbin/ifconfig 2>/dev/null').
       returns(ifconfig_fixture('linux_ifconfig_all_with_multiple_interfaces'))
 
     Facter.value(:ipaddress6).should == "2610:10:20:209:212:3fff:febe:2201"
