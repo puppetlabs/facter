@@ -73,9 +73,7 @@ module Facter::Util::IP
 
   def self.get_all_interface_output
     case Facter.value(:kernel)
-    when 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
-      output = %x{/sbin/ifconfig -a}
-    when 'Linux'
+    when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
       output = %x{/sbin/ifconfig -a 2>/dev/null}
     when 'SunOS'
       output = %x{/usr/sbin/ifconfig -a}
@@ -88,23 +86,32 @@ module Facter::Util::IP
     output
   end
 
+  def self.get_infiniband_macaddress(interface)
+    if File::exist?("/sys/class/net/#{interface}/address") then
+      ib_mac_address = `cat /sys/class/net/#{interface}/address`.chomp
+    elsif File::exist?("/sbin/ip") then
+      ip_output = %x{/sbin/ip link show #{interface}}
+      ib_mac_address = ip_output.scan(%r{infiniband\s+((\w{1,2}:){5,}\w{1,2})})
+    else
+      ib_mac_address = "FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF"
+      Facter.debug("ip.rb: nothing under /sys/class/net/#{interface}/address and /sbin/ip not available")
+    end
+    ib_mac_address
+  end
+
+  def self.ifconfig_interface(interface)
+    output = %x{/sbin/ifconfig #{interface} 2>/dev/null}
+  end
+
   def self.get_single_interface_output(interface)
     output = ""
     case Facter.value(:kernel)
     when 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
-      output = %x{/sbin/ifconfig #{interface}}
+      output = Facter::Util::IP.ifconfig_interface(interface)
     when 'Linux'
-      ifconfig_output = %x{/sbin/ifconfig #{interface} 2>/dev/null}
+      ifconfig_output = Facter::Util::IP.ifconfig_interface(interface)
       if interface =~ /^ib/ then
-        if File::exist?("/sys/class/net/#{interface}/address") then
-          real_mac_address = `cat /sys/class/net/#{interface}/address`.chomp
-        elsif File::exist?("/sbin/ip") then
-          ip_output = %x{/sbin/ip link show #{interface}}
-          real_mac_address = ip_output.scan(%r{infiniband\s+((\w{1,2}:){5,}\w{1,2})})
-        else
-          real_mac_address = "FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF"
-          Facter.debug("ip.rb: nothing under /sys/class/net/#{interface}/address and /sbin/ip not available")
-        end
+        real_mac_address = get_infiniband_macaddress(interface)
         output = ifconfig_output.sub(%r{(?:ether|HWaddr)\s+((\w{1,2}:){5,}\w{1,2})}, "HWaddr #{real_mac_address}")
       else
         output = ifconfig_output

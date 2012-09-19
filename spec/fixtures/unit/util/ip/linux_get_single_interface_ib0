@@ -1,4 +1,4 @@
-ib0       Link encap:InfiniBand  HWaddr 80:00:00:4A:FE:80:00:00:00:00:00:00:00:00:00:00:00:00:00:00  
+ib0       Link encap:InfiniBand  HWaddr 80:00:00:4a:fe:80:00:00:00:00:00:00:00:02:c9:03:00:43:27:21  
           inet addr:10.6.193.12  Bcast:10.6.193.255  Mask:255.255.255.0
           inet6 addr: fe80::202:c903:43:2721/64 Scope:Link
           UP BROADCAST RUNNING MULTICAST  MTU:65520  Metric:1

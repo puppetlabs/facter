@@ -206,12 +206,34 @@ describe Facter::Util::IP do
   end
 
   it "should return correct macaddress information for infiniband on Linux" do
-    ifconfig_interface = my_fixture_read("linux_ifconfig_ib0")
+    correct_ifconfig_interface = my_fixture_read("linux_get_single_interface_ib0")
 
-    Facter::Util::IP.expects(:get_single_interface_output).with("ib0").returns(ifconfig_interface)
+    Facter::Util::IP.expects(:get_single_interface_output).with("ib0").returns(correct_ifconfig_interface)
     Facter.stubs(:value).with(:kernel).returns("Linux")
 
     Facter::Util::IP.get_interface_value("ib0", "macaddress").should == "80:00:00:4a:fe:80:00:00:00:00:00:00:00:02:c9:03:00:43:27:21"
+  end
+
+  it "should replace the incorrect macaddress with the correct macaddress in ifconfig for infiniband on Linux" do
+    ifconfig_interface = my_fixture_read("linux_ifconfig_ib0")
+    correct_ifconfig_interface = my_fixture_read("linux_get_single_interface_ib0")
+
+    Facter::Util::IP.expects(:get_infiniband_macaddress).with("ib0").returns("80:00:00:4a:fe:80:00:00:00:00:00:00:00:02:c9:03:00:43:27:21")
+    Facter::Util::IP.expects(:ifconfig_interface).with("ib0").returns(ifconfig_interface)
+    Facter.stubs(:value).with(:kernel).returns("Linux")
+
+    Facter::Util::IP.get_single_interface_output("ib0").should == correct_ifconfig_interface
+  end
+
+  it "should return fake macaddress information for infiniband on Linux when neither sysfs or /sbin/ip are available" do
+    ifconfig_interface = my_fixture_read("linux_ifconfig_ib0")
+
+    File.stubs(:exists?).with("/sys/class/net/ib0/address").returns(false)
+    File.stubs(:exists?).with("/sbin/ip").returns(false)
+    Facter::Util::IP.expects(:ifconfig_interface).with("ib0").returns(ifconfig_interface)
+    Facter.stubs(:value).with(:kernel).returns("Linux")
+
+    Facter::Util::IP.get_interface_value("ib0", "macaddress").should == "FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF"
   end
 
   it "should not get bonding master on interface aliases" do
