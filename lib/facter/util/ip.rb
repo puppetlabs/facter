@@ -73,8 +73,10 @@ module Facter::Util::IP
 
   def self.get_all_interface_output
     case Facter.value(:kernel)
-    when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
+    when 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
       output = %x{/sbin/ifconfig -a}
+    when 'Linux'
+      output = %x{/sbin/ifconfig -a 2>/dev/null}
     when 'SunOS'
       output = %x{/usr/sbin/ifconfig -a}
     when 'HP-UX'
