@@ -1,0 +1,8 @@
+ib0       Link encap:InfiniBand  HWaddr 80:00:00:4a:fe:80:00:00:00:00:00:00:00:02:c9:03:00:43:27:21  
+          inet addr:10.6.193.12  Bcast:10.6.193.255  Mask:255.255.255.0
+          inet6 addr: fe80::202:c903:43:2721/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:65520  Metric:1
+          RX packets:8 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1024 
+          RX bytes:448 (448.0 b)  TX bytes:0 (0.0 b)

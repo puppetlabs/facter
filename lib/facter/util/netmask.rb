@@ -7,7 +7,7 @@ module Facter::NetMask
     case Facter.value(:kernel)
     when 'Linux'
       ops = {
-        :ifconfig => '/sbin/ifconfig',
+        :ifconfig => '/sbin/ifconfig 2>/dev/null',
         :regex => %r{\s+ inet\saddr: #{Facter.ipaddress} .*? Mask: (#{ipregex})}x,
         :munge => nil,
       }
