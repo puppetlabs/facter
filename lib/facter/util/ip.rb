@@ -105,7 +105,7 @@ module Facter::Util::IP
         end
         output = ifconfig_output.sub(%r{(?:ether|HWaddr)\s+((\w{1,2}:){5,}\w{1,2})}, "HWaddr #{real_mac_address}")
       else
-        output = %x{/sbin/ifconfig #{interface}}
+        output = ifconfig_output
       end
     when 'SunOS'
       output = %x{/usr/sbin/ifconfig #{interface}}
