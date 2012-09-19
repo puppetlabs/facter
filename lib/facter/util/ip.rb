@@ -95,7 +95,7 @@ module Facter::Util::IP
       ifconfig_output = %x{/sbin/ifconfig #{interface} 2>/dev/null}
       if interface =~ /^ib/ then
         if File::exist?("/sys/class/net/#{interface}/address") then
-          real_mac_address = File.read("/sys/class/net/#{interface}/address").chomp
+          real_mac_address = `cat /sys/class/net/#{interface}/address`.chomp
         elsif File::exist?("/sbin/ip") then
           ip_output = %x{/sbin/ip link show #{interface}}
           real_mac_address = ip_output.scan(%r{infiniband\s+((\w{1,2}:){5,}\w{1,2})})
