@@ -15,7 +15,7 @@ Facter.add(:macaddress) do
     ether = []
     output = Facter::Util::Resolution.exec("/sbin/ifconfig -a")
     output.each_line do |s|
-      ether.push($1) if s =~ /(?:ether|HWaddr) (\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
+      ether.push($1) if s =~ /(?:ether|HWaddr) ((\w{1,2}:){5,}\w{1,2})/
     end
     Facter::Util::Macaddress.standardize(ether[0])
   end
