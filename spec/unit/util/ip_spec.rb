@@ -207,6 +207,15 @@ describe Facter::Util::IP do
     Facter::Util::IP.get_interface_value("em1", "netmask").should == "255.255.255.0"
   end
 
+  it "should return correct macaddress information for infiniband on Linux" do
+    ifconfig_interface = my_fixture_read("linux_ifconfig_ib0")
+
+    Facter::Util::IP.expects(:get_single_interface_output).with("ib0").returns(ifconfig_interface)
+    Facter.stubs(:value).with(:kernel).returns("Linux")
+
+    Facter::Util::IP.get_interface_value("ib0", "macaddress").should == "80:00:00:4a:fe:80:00:00:00:00:00:00:00:02:c9:03:00:43:27:21"
+  end
+
   it "should not get bonding master on interface aliases" do
     Facter.stubs(:value).with(:kernel).returns("Linux")
 
