@@ -47,12 +47,6 @@ rescue LoadError
   $haverdoc = false
 end
 
-# Monkey patch RbConfig->Config for Rubies older then 1.8.5.
-unless defined? ::RbConfig
-  require 'rbconfig'
-  ::RbConfig = ::Config
-end
-
 begin
   if $haverdoc
      rst2man = %x{which rst2man.py}
