@@ -47,12 +47,6 @@ rescue LoadError
   $haverdoc = false
 end
 
-# Monkey patch RbConfig->Config for Rubies older then 1.8.5.
-unless defined? ::RbConfig
-  require 'rbconfig'
-  ::RbConfig = ::Config
-end
-
 begin
   if $haverdoc
      rst2man = %x{which rst2man.py}
@@ -77,15 +71,13 @@ def glob(list)
   g = list.map { |i| Dir.glob(i) }
   g.flatten!
   g.compact!
-  g.reject! { |e| e =~ /\.svn/ }
   g
 end
 
 # Set these values to what you want installed.
-sbins = glob(%w{sbin/*})
 bins  = glob(%w{bin/*})
-rdoc  = glob(%w{bin/* sbin/* lib/**/*.rb README README-library CHANGELOG TODO Install}).reject { |e| e=~ /\.(bat|cmd)$/ }
-ri  = glob(%w(bin/*.rb sbin/* lib/**/*.rb)).reject { |e| e=~ /\.(bat|cmd)$/ }
+rdoc  = glob(%w{bin/* lib/**/*.rb README README-library CHANGELOG TODO Install}).reject { |e| e=~ /\.(bat|cmd)$/ }
+ri  = glob(%w(bin/*.rb lib/**/*.rb)).reject { |e| e=~ /\.(bat|cmd)$/ }
 man   = glob(%w{man/man8/*})
 libs  = glob(%w{lib/**/*.rb lib/**/*.py})
 tests = glob(%w{tests/**/*.rb})
@@ -190,8 +182,8 @@ def prepare_installation
     opts.on('--bindir[=OPTIONAL]', 'Installation directory for binaries', 'overrides RbConfig::CONFIG["bindir"]') do |bindir|
       InstallOptions.bindir = bindir
     end
-    opts.on('--sbindir[=OPTIONAL]', 'Installation directory for system binaries', 'overrides RbConfig::CONFIG["sbindir"]') do |sbindir|
-      InstallOptions.sbindir = sbindir
+    opts.on('--ruby[=OPTIONAL]', 'Ruby interpreter to use with installation', 'overrides ruby used to call install.rb') do |ruby|
+      InstallOptions.ruby = ruby
     end
     opts.on('--sitelibdir[=OPTIONAL]', 'Installation directory for libraries', 'overrides RbConfig::CONFIG["sitelibdir"]') do |sitelibdir|
       InstallOptions.sitelibdir = sitelibdir
@@ -221,26 +213,18 @@ def prepare_installation
   version = [RbConfig::CONFIG["MAJOR"], RbConfig::CONFIG["MINOR"]].join(".")
   libdir = File.join(RbConfig::CONFIG["libdir"], "ruby", version)
 
-  # Mac OS X 10.5 and higher declare bindir and sbindir as
+  # Mac OS X 10.5 and higher declare bindir
   # /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin
-  # /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/sbin
   # which is not generally where people expect executables to be installed
   # These settings are appropriate defaults for all OS X versions.
   if RUBY_PLATFORM =~ /^universal-darwin[\d\.]+$/
     RbConfig::CONFIG['bindir'] = "/usr/bin"
-    RbConfig::CONFIG['sbindir'] = "/usr/sbin"
   end
 
   if not InstallOptions.bindir.nil?
     bindir = InstallOptions.bindir
   else
     bindir = RbConfig::CONFIG['bindir']
-  end
-
-  if not InstallOptions.sbindir.nil?
-    sbindir = InstallOptions.sbindir
-  else
-    sbindir = RbConfig::CONFIG['sbindir']
   end
 
   if not InstallOptions.sitelibdir.nil?
@@ -267,30 +251,25 @@ def prepare_installation
   if (destdir = ENV['DESTDIR'])
     warn "DESTDIR is deprecated. Use --destdir instead."
     bindir = join(destdir, bindir)
-    sbindir = join(destdir, sbindir)
     mandir = join(destdir, mandir)
     sitelibdir = join(destdir, sitelibdir)
 
     FileUtils.makedirs(bindir)
-    FileUtils.makedirs(sbindir)
     FileUtils.makedirs(mandir)
     FileUtils.makedirs(sitelibdir)
     # This is the new way forward
   elsif (destdir = InstallOptions.destdir)
     bindir = join(destdir, bindir)
-    sbindir = join(destdir, sbindir)
     mandir = join(destdir, mandir)
     sitelibdir = join(destdir, sitelibdir)
 
     FileUtils.makedirs(bindir)
-    FileUtils.makedirs(sbindir)
     FileUtils.makedirs(mandir)
     FileUtils.makedirs(sitelibdir)
   end
 
   InstallOptions.site_dir = sitelibdir
   InstallOptions.bin_dir  = bindir
-  InstallOptions.sbin_dir = sbindir
   InstallOptions.lib_dir  = libdir
   InstallOptions.man_dir  = mandir
 end
@@ -382,17 +361,18 @@ end
 def install_binfile(from, op_file, target)
   tmp_file = Tempfile.new('facter-binfile')
 
-  ruby = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
+  if not InstallOptions.ruby.nil?
+    ruby = InstallOptions.ruby
+  else
+    ruby = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
+  end
 
   File.open(from) do |ip|
     File.open(tmp_file.path, "w") do |op|
-      ruby = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
       op.puts "#!#{ruby}"
       contents = ip.readlines
-      if contents[0] =~ /^#!/
-        contents.shift
-      end
-      op.write contents.join()
+      contents.shift if contents[0] =~ /^#!/
+      op.write contents.join
     end
   end
 
@@ -436,7 +416,6 @@ run_tests(tests) if InstallOptions.tests
 #build_rdoc(rdoc) if InstallOptions.rdoc
 #build_ri(ri) if InstallOptions.ri
 #build_man(bins) if InstallOptions.man
-do_bins(sbins, InstallOptions.sbin_dir)
 do_bins(bins, InstallOptions.bin_dir)
 do_libs(libs)
 do_man(man)
