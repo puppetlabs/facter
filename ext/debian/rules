@@ -3,7 +3,9 @@
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/buildcore.mk
 
-LIBDIR=$(shell /usr/bin/ruby1.8 -rrbconfig -e 'puts Config::CONFIG["rubylibdir"]')
+LIBDIR=$(shell /usr/bin/ruby -rrbconfig -e 'puts RbConfig::CONFIG["vendordir"]')
+BINDIR=$(shell /usr/bin/ruby -rrbconfig -e 'puts RbConfig::CONFIG["bindir"]')
 
 binary-install/facter::
-	 /usr/bin/ruby1.8 install.rb --sitelibdir=$(LIBDIR) --destdir=$(CURDIR)/debian/$(cdbs_curpkg) --quick --no-rdoc
+	 /usr/bin/ruby install.rb --sitelibdir=$(LIBDIR) --destdir=$(CURDIR)/debian/$(cdbs_curpkg) --quick
+	 cp -p $(CURDIR)/bin/facter $(CURDIR)/debian/$(cdbs_curpkg)/$(BINDIR)
