@@ -58,7 +58,8 @@ module Facter::Util::Virtual
      elsif ["FreeBSD", "OpenBSD"].include? Facter.value(:kernel)
        Facter::Util::Resolution.exec("/sbin/sysctl -n hw.model")
      end
-     (txt =~ /QEMU Virtual CPU/) ? true : false
+     return true if txt =~ /QEMU Virtual CPU/
+     File.read("/sys/devices/virtual/dmi/id/product_name") =~ /Bochs/ rescue false
   end
 
   def self.virtualbox?

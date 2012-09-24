@@ -111,6 +111,10 @@ Facter.add("virtual") do
           # --- look for Hyper-V video card
           # ---   00:08.0 VGA compatible controller: Microsoft Corporation Hyper-V virtual VGA
           result = "hyperv" if p =~ /Microsoft Corporation Hyper-V/
+          # --- look for KVM Virtio
+          # ---  00:04.0 SCSI storage controller: Red Hat, Inc Virtio block device
+          # ---  00:07.0 RAM memory: Red Hat, Inc Virtio memory balloon
+          result = "kvm" if p =~ /Red Hat, Inc Virtio/
         end
       else
         output = Facter::Util::Resolution.exec('dmidecode')
@@ -119,6 +123,7 @@ Facter.add("virtual") do
             result = "parallels" if pd =~ /Parallels/
             result = "vmware" if pd =~ /VMware/
             result = "virtualbox" if pd =~ /VirtualBox/
+            result = "kvm" if pd =~ /Bochs/
             result = "xenhvm" if pd =~ /HVM domU/
             result = "hyperv" if pd =~ /Product Name: Virtual Machine/
           end
