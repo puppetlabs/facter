@@ -4,7 +4,7 @@ require 'time'
 #
 module Facter::Util::Uptime
   def self.get_uptime_seconds_unix
-    uptime_proc_uptime or uptime_sysctl or uptime_kstat or uptime_who_dash_b
+    uptime_proc_uptime or uptime_sysctl or uptime_executable
   end
 
   def self.get_uptime_seconds_win
@@ -31,15 +31,30 @@ module Facter::Util::Uptime
     end
   end
 
-  def self.uptime_kstat
-    if output = Facter::Util::Resolution.exec("#{uptime_kstat_cmd} 2>/dev/null")
-      compute_uptime(Time.at(output.chomp.split(/\s/).last.to_i))
-    end
-  end
-
-  def self.uptime_who_dash_b
-    if output = Facter::Util::Resolution.exec("#{uptime_who_cmd} 2>/dev/null")
-      compute_uptime(Time.parse(output))
+  def self.uptime_executable
+    if output = Facter::Util::Resolution.exec("#{uptime_executable_cmd} 2>/dev/null")
+      up=0
+      if output =~ /(\d+) day(?:s|\(s\))?,\s+(\d+):(\d+)/
+        # Regexp handles Solaris, AIX, HP-UX, and Tru64.
+        # 'day(?:s|\(s\))?' says maybe 'day', 'days',
+        #   or 'day(s)', and don't set $2.
+        up=86400*$1.to_i + 3600*$2.to_i + 60*$3.to_i
+      elsif output =~ /(\d+) day(?:s|\(s\))?,\s+(\d+) hr(?:s|\(s\))?,/
+        up=86400*$1.to_i + 3600*$2.to_i
+      elsif output =~ /(\d+) day(?:s|\(s\))?,\s+(\d+) min(?:s|\(s\))?,/
+        up=86400*$1.to_i + 60*$2.to_i
+      elsif output =~ /(\d+) day(?:s|\(s\))?,/
+        up=86400*$1.to_i
+      elsif output =~ /up\s+(\d+):(\d+),/
+        # must anchor to 'up' to avoid matching time of day
+        # at beginning of line.
+        up=3600*$1.to_i + 60*$2.to_i
+      elsif output =~ /(\d+) hr(?:s|\(s\))?,/
+        up=3600*$1.to_i
+      elsif output =~ /(\d+) min(?:s|\(s\))?,/
+        up=60*$1.to_i
+      end
+      up
     end
   end
 
@@ -55,11 +70,7 @@ module Facter::Util::Uptime
     'sysctl -n kern.boottime'
   end
 
-  def self.uptime_kstat_cmd
-    'kstat -p unix:::boot_time'
-  end
-
-  def self.uptime_who_cmd
-    'who -b'
+  def self.uptime_executable_cmd
+    "uptime"
   end
 end
