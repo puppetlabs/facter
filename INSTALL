@@ -1,7 +1,0 @@
-Run 'ruby install.rb' or use one of the distributed gem files at
-http://puppetlabs.com/downloads/gems .
-
-install.rb should successfully install; let me know if it doesn't.
-
-Otherwise, you can just set RUBYLIB to contain its lib directory, or copy
-the libs into your main ruby library directory.
