@@ -55,6 +55,14 @@
 # Copyright (c) 2011 Puppet Labs, Inc
 # Licensed under the Apache 2.0 license
 
+# Load rubygems
+unless defined? Bundler::Setup
+  begin
+    require 'rubygems'
+  rescue LoadError
+  end
+end
+
 require 'facter/application'
 
 Facter::Application.run(ARGV)

@@ -35,7 +35,6 @@ module Facter
       # Print the facts as JSON and exit
       if options[:json]
         begin
-          require 'rubygems'
           require 'json'
           puts JSON.dump(facts)
           exit(0)
