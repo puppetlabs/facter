@@ -183,9 +183,9 @@ module Facter::Util::IP
     # We have to dig a bit to get the original/real MAC address of the interface.
     bonddev = get_bonding_master(interface)
     if label == 'macaddress' and bonddev
-      bondinfo = IO.readlines("/proc/net/bonding/#{bonddev}")
+      bondinfo = IO.readlines("/proc/net/bonding/#{bonddev}").join
       hwaddrre = /^Slave Interface: #{interface}\n[^\n].+?\nPermanent HW addr: (([0-9a-fA-F]{2}:?)*)$/m
-      value = hwaddrre.match(bondinfo.to_s)[1].upcase
+      value = hwaddrre.match(bondinfo)[1].upcase
     else
       output_int = get_output_for_interface_and_label(interface, label)
 
