@@ -153,7 +153,20 @@ end
 Facter.add("ProcessorCount") do
   confine :kernel => :sunos
   setcode do
-    kstat = Facter::Util::Resolution.exec("/usr/bin/kstat cpu_info")
-    kstat.scan(/\bcore_id\b\s+\d+/).uniq.length
+    kernelrelease = Facter.value(:kernelrelease)
+    (major_version, minor_version) = kernelrelease.split(".").map { |str| str.to_i }
+    result = nil
+
+    if (major_version > 5) or (major_version == 5 and minor_version >= 8) then
+      if kstat = Facter::Util::Resolution.exec("/usr/bin/kstat cpu_info")
+        result = kstat.scan(/\bcore_id\b\s+\d+/).uniq.length
+      end
+    else
+      if output = Facter::Util::Resolution.exec("/usr/sbin/psrinfo") then
+        result = output.split("\n").length
+      end
+    end
+
+    result
   end
 end
