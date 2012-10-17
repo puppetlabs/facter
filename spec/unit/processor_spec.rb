@@ -70,6 +70,7 @@ describe "Processor facts" do
     before :each do
       Facter.collection.loader.load(:processor)
       Facter.fact(:kernel).stubs(:value).returns(:sunos)
+      Facter.stubs(:value).with(:kernelrelease).returns("5.10")
     end
 
     it "should detect the correct processor count on x86_64" do
@@ -241,6 +242,43 @@ describe "Processor facts" do
       })
 
       Facter.fact(:processorcount).value.should == "16"
+    end
+
+    describe "on solaris" do
+      before :all do
+        @fixture_kstat_sparc  = File.read(fixtures('processorcount','solaris-sparc-kstat-cpu-info'))
+        @fixture_kstat_x86_64 = File.read(fixtures('processorcount','solaris-x86_64-kstat-cpu-info'))
+      end
+
+      let(:psrinfo) do
+        "0       on-line   since 10/16/2012 14:06:12\n" +
+        "1       on-line   since 10/16/2012 14:06:14\n"
+      end
+
+      let(:kstat_sparc) { @fixture_kstat_sparc }
+      let(:kstat_x86_64) { @fixture_kstat_x86_64 }
+
+      %w{ 5.8 5.9 5.10 5.11 }.each do |release|
+        %w{ sparc x86_64 }.each do |arch|
+          it "uses kstat on release #{release} (#{arch})" do
+            Facter.fact(:kernel).stubs(:value).returns(:sunos)
+            Facter.stubs(:value).with(:kernelrelease).returns(release)
+
+            Facter::Util::Resolution.expects(:exec).with("/usr/bin/kstat cpu_info").returns(self.send("kstat_#{arch}".intern))
+            Facter.fact(:processorcount).value.should == 8
+          end
+        end
+      end
+
+      %w{ 5.5.1 5.6 5.7 }.each do |release|
+        it "uses psrinfo on release #{release}" do
+          Facter.fact(:kernel).stubs(:value).returns(:sunos)
+          Facter.stubs(:value).with(:kernelrelease).returns(release)
+
+          Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(psrinfo)
+          Facter.fact(:physicalprocessorcount).value.should == "2"
+        end
+      end
     end
   end
 end
