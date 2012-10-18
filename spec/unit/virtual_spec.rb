@@ -5,7 +5,7 @@ require 'facter/util/virtual'
 require 'facter/util/macosx'
 
 describe "Virtual fact" do
-  before do
+  before(:each) do
     Facter::Util::Virtual.stubs(:zone?).returns(false)
     Facter::Util::Virtual.stubs(:openvz?).returns(false)
     Facter::Util::Virtual.stubs(:vserver?).returns(false)
@@ -70,15 +70,14 @@ describe "Virtual fact" do
   end
 
   describe "on Linux" do
-
-    before do
-    Facter::Util::Resolution.stubs(:exec).with("vmware -v").returns false
-    Facter.fact(:operatingsystem).stubs(:value).returns(true)
-    # Ensure the tests don't fail on Xen
-    FileTest.stubs(:exists?).with("/proc/sys/xen").returns false
-    FileTest.stubs(:exists?).with("/sys/bus/xen").returns false
-    FileTest.stubs(:exists?).with("/proc/xen").returns false
-    Facter.fact(:architecture).stubs(:value).returns(true)
+    before(:each) do
+      Facter::Util::Resolution.stubs(:exec).with("vmware -v").returns false
+      Facter.fact(:operatingsystem).stubs(:value).returns(true)
+      # Ensure the tests don't fail on Xen
+      FileTest.stubs(:exists?).with("/proc/sys/xen").returns false
+      FileTest.stubs(:exists?).with("/sys/bus/xen").returns false
+      FileTest.stubs(:exists?).with("/proc/xen").returns false
+      Facter.fact(:architecture).stubs(:value).returns(true)
     end
 
     it "should be parallels with Parallels vendor id from lspci 2>/dev/null" do
