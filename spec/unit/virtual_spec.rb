@@ -13,6 +13,7 @@ describe "Virtual fact" do
     Facter::Util::Virtual.stubs(:kvm?).returns(false)
     Facter::Util::Virtual.stubs(:hpvm?).returns(false)
     Facter::Util::Virtual.stubs(:zlinux?).returns(false)
+    Facter::Util::Virtual.stubs(:virt_what).returns(nil)
   end
 
   it "should be zone on Solaris when a zone" do
@@ -82,13 +83,13 @@ describe "Virtual fact" do
 
     it "should be parallels with Parallels vendor id from lspci 2>/dev/null" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
-      Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("01:00.0 VGA compatible controller: Unknown device 1ab8:4005")
+      Facter::Util::Virtual.stubs(:lspci).returns("01:00.0 VGA compatible controller: Unknown device 1ab8:4005")
       Facter.fact(:virtual).value.should == "parallels"
     end
 
     it "should be parallels with Parallels vendor name from lspci 2>/dev/null" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
-      Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("01:00.0 VGA compatible controller: Parallels Display Adapter")
+      Facter::Util::Virtual.stubs(:lspci).returns("01:00.0 VGA compatible controller: Parallels Display Adapter")
       Facter.fact(:virtual).value.should == "parallels"
     end
 
@@ -231,6 +232,39 @@ describe "Virtual fact" do
     it "should be xenhvm with Xen HVM product name from sysctl" do
       Facter::Util::Resolution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("HVM domU")
       Facter.fact(:virtual).value.should == "xenhvm"
+    end
+  end
+
+  describe "with the virt-what command available (#8210)" do
+    describe "when the output of virt-what disagrees with lower weight facts" do
+      virt_what_map = {
+        'xen-hvm'  => 'xenhvm',
+        'xen-dom0' => 'xen0',
+        'xen-domU' => 'xenu',
+        'ibm_systemz' => 'zlinux',
+      }
+
+      virt_what_map.each do |input,output|
+        it "maps #{input} to #{output}" do
+          Facter::Util::Virtual.expects(:virt_what).returns(input)
+          Facter.value(:virtual).should == output
+        end
+      end
+    end
+
+    describe "arbitrary outputs of virt-what" do
+      it "returns the last line output from virt-what" do
+        Facter::Util::Virtual.expects(:virt_what).returns("one\ntwo\nthree space\n")
+        Facter.value(:virtual).should == "three space"
+      end
+    end
+
+    describe "when virt-what returns linux_vserver" do
+      it "delegates to Facter::Util::Virtual.vserver_type" do
+        Facter::Util::Virtual.expects(:virt_what).returns("linux_vserver")
+        Facter::Util::Virtual.expects(:vserver_type).returns("fake_vserver_type")
+        Facter.value(:virtual).should == "fake_vserver_type"
+      end
     end
   end
 end

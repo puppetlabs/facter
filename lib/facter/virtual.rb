@@ -89,7 +89,7 @@ Facter.add("virtual") do
     end
 
     if result == "physical"
-      output = Facter::Util::Resolution.exec('lspci 2>/dev/null')
+      output = Facter::Util::Virtual.lspci
       if not output.nil?
         output.each_line do |p|
           # --- look for the vmware video card to determine if it is virtual => vmware.
@@ -150,6 +150,39 @@ Facter.add("virtual") do
     end
 
     result
+  end
+end
+
+##
+# virtual fact based on virt-what command.
+#
+# The output is mapped onto existing known values for the virtual fact in an
+# effort to preserve consistency.  This fact has a high weight becuase the
+# virt-what tool is expected to be maintained upstream.
+#
+# If the virt-what command is not available, this fact will not resolve to a
+# value and lower-weight virtual facts will be attempted.
+#
+# Only the last line of the virt-what command is returned
+Facter.add("virtual") do
+  has_weight 500
+
+  setcode do
+    output = Facter::Util::Virtual.virt_what
+    case output
+    when 'linux_vserver'
+      Facter::Util::Virtual.vserver_type
+    when /xen-hvm/i
+      'xenhvm'
+    when /xen-dom0/i
+      'xen0'
+    when /xen-domU/i
+      'xenu'
+    when /ibm_systemz/i
+      'zlinux'
+    else
+      output.to_s.split("\n").last
+    end
   end
 end
 
