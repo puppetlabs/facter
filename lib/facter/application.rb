@@ -1,13 +1,64 @@
 module Facter
   module Application
     def self.run(argv)
-      require 'optparse'
+      require 'facter/util/trollop'
       require 'facter'
 
-      options = parse(argv)
+      options = Trollop::options do
+        version "#{Facter.version}"
+        banner <<-EOS
+SYNOPSIS
+========
+Collect and display facts about the system.
+
+DESCRIPTION
+===========
+Collect and display facts about the current system. The library behind
+Facter is easy to expand, making Facter an easy way to collect
+information about a system from within the shell or within Ruby.
+
+If no facts are specifically asked for, then all facts will be returned.
+
+EXAMPLE
+=======
+  facter kernel
+
+AUTHOR
+======
+Luke Kanies
+
+COPYRIGHT
+=========
+Copyright (c) 2011-2012 Puppet Labs, Inc Licensed under the Apache 2.0
+license
+
+USAGE
+=====
+
+EOS
+        opt :yaml, "Emit facts in YAML format."
+        opt :json, "Emit facts in JSON format."
+        opt :timing, "Enable timing."
+        opt :trace, "Enable backtraces."
+        opt :debug, "Enable debugging."
+        opt :puppet, "Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts."
+        opt :version, "Print the version and exit."
+      end
 
       # Accept fact names to return from the command line
       names = argv
+
+      if options[:debug]
+        Facter.debugging(1)
+      end
+
+      if options[:timing]
+        Facter.timing(1)
+      end
+
+      if options[:puppet]
+        self.load_puppet
+      end
 
       # Create the facts hash that is printed to standard out.
       unless names.empty?
@@ -44,6 +95,7 @@ module Facter
         end
       end
 
+
       # Print the value of a single fact, otherwise print a list sorted by fact
       # name and separated by "=>"
       if facts.length == 1
@@ -63,44 +115,6 @@ module Facter
         $stderr.puts "Error: #{e}"
         exit(12)
       end
-    end
-
-    private
-
-    def self.parse(argv)
-      options = {}
-      OptionParser.new do |opts|
-        opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
-        opts.on("-j", "--json")   { |v| options[:json]   = v }
-        opts.on(      "--trace")  { |v| options[:trace]  = v }
-        opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
-        opts.on("-t", "--timing") { |v| Facter.timing(1) }
-        opts.on("-p", "--puppet") { |v| load_puppet }
-
-        opts.on_tail("-v", "--version") do
-          puts Facter.version
-          exit(0)
-        end
-
-        opts.on_tail("-h", "--help") do
-          begin
-            require 'rdoc/ri/ri_paths'
-            require 'rdoc/usage'
-            RDoc.usage # print usage and exit
-          rescue LoadError
-            $stderr.puts "No help available unless your RDoc has RDoc.usage"
-            exit(1)
-          rescue => e
-            $stderr.puts "fatal: #{e}"
-            exit(1)
-          end
-        end
-      end.parse!
-
-      options
-    rescue OptionParser::InvalidOption => e
-      $stderr.puts e.message
-      exit(12)
     end
 
     def self.load_puppet
