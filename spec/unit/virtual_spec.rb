@@ -5,7 +5,7 @@ require 'facter/util/virtual'
 require 'facter/util/macosx'
 
 describe "Virtual fact" do
-  before do
+  before(:each) do
     Facter::Util::Virtual.stubs(:zone?).returns(false)
     Facter::Util::Virtual.stubs(:openvz?).returns(false)
     Facter::Util::Virtual.stubs(:vserver?).returns(false)
@@ -13,6 +13,7 @@ describe "Virtual fact" do
     Facter::Util::Virtual.stubs(:kvm?).returns(false)
     Facter::Util::Virtual.stubs(:hpvm?).returns(false)
     Facter::Util::Virtual.stubs(:zlinux?).returns(false)
+    Facter::Util::Virtual.stubs(:virt_what).returns(nil)
   end
 
   it "should be zone on Solaris when a zone" do
@@ -31,16 +32,16 @@ describe "Virtual fact" do
   end
 
   it "should be hpvm on HP-UX when in HP-VM" do
-   Facter.fact(:kernel).stubs(:value).returns("HP-UX")
-   Facter::Util::Virtual.stubs(:hpvm?).returns(true)
-   Facter.fact(:virtual).value.should == "hpvm"
+    Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+    Facter::Util::Virtual.stubs(:hpvm?).returns(true)
+    Facter.fact(:virtual).value.should == "hpvm"
   end
 
   it "should be zlinux on s390x" do
-   Facter.fact(:kernel).stubs(:value).returns("Linux")
-   Facter.fact(:architecture).stubs(:value).returns("s390x")
-   Facter::Util::Virtual.stubs(:zlinux?).returns(true)
-   Facter.fact(:virtual).value.should == "zlinux"
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:architecture).stubs(:value).returns("s390x")
+    Facter::Util::Virtual.stubs(:zlinux?).returns(true)
+    Facter.fact(:virtual).value.should == "zlinux"
   end
 
   describe "on Darwin" do
@@ -70,26 +71,25 @@ describe "Virtual fact" do
   end
 
   describe "on Linux" do
-
-    before do
-    Facter::Util::Resolution.stubs(:exec).with("vmware -v").returns false
-    Facter.fact(:operatingsystem).stubs(:value).returns(true)
-    # Ensure the tests don't fail on Xen
-    FileTest.stubs(:exists?).with("/proc/sys/xen").returns false
-    FileTest.stubs(:exists?).with("/sys/bus/xen").returns false
-    FileTest.stubs(:exists?).with("/proc/xen").returns false
-    Facter.fact(:architecture).stubs(:value).returns(true)
+    before(:each) do
+      Facter::Util::Resolution.stubs(:exec).with("vmware -v").returns false
+      Facter.fact(:operatingsystem).stubs(:value).returns(true)
+      # Ensure the tests don't fail on Xen
+      FileTest.stubs(:exists?).with("/proc/sys/xen").returns false
+      FileTest.stubs(:exists?).with("/sys/bus/xen").returns false
+      FileTest.stubs(:exists?).with("/proc/xen").returns false
+      Facter.fact(:architecture).stubs(:value).returns(true)
     end
 
     it "should be parallels with Parallels vendor id from lspci 2>/dev/null" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
-      Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("01:00.0 VGA compatible controller: Unknown device 1ab8:4005")
+      Facter::Util::Virtual.stubs(:lspci).returns("01:00.0 VGA compatible controller: Unknown device 1ab8:4005")
       Facter.fact(:virtual).value.should == "parallels"
     end
 
     it "should be parallels with Parallels vendor name from lspci 2>/dev/null" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
-      Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("01:00.0 VGA compatible controller: Parallels Display Adapter")
+      Facter::Util::Virtual.stubs(:lspci).returns("01:00.0 VGA compatible controller: Parallels Display Adapter")
       Facter.fact(:virtual).value.should == "parallels"
     end
 
@@ -170,8 +170,8 @@ describe "Virtual fact" do
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("System Information\nManufacturer: Microsoft Corporation\nProduct Name: Virtual Machine")
       Facter.fact(:virtual).value.should == "hyperv"
     end
-
   end
+
   describe "on Solaris" do
     before(:each) do
       Facter::Util::Resolution.stubs(:exec).with("vmware -v").returns false
@@ -234,32 +234,64 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "xenhvm"
     end
   end
+
+  describe "with the virt-what command available (#8210)" do
+    describe "when the output of virt-what disagrees with lower weight facts" do
+      virt_what_map = {
+        'xen-hvm'  => 'xenhvm',
+        'xen-dom0' => 'xen0',
+        'xen-domU' => 'xenu',
+        'ibm_systemz' => 'zlinux',
+      }
+
+      virt_what_map.each do |input,output|
+        it "maps #{input} to #{output}" do
+          Facter::Util::Virtual.expects(:virt_what).returns(input)
+          Facter.value(:virtual).should == output
+        end
+      end
+    end
+
+    describe "arbitrary outputs of virt-what" do
+      it "returns the last line output from virt-what" do
+        Facter::Util::Virtual.expects(:virt_what).returns("one\ntwo\nthree space\n")
+        Facter.value(:virtual).should == "three space"
+      end
+    end
+
+    describe "when virt-what returns linux_vserver" do
+      it "delegates to Facter::Util::Virtual.vserver_type" do
+        Facter::Util::Virtual.expects(:virt_what).returns("linux_vserver")
+        Facter::Util::Virtual.expects(:vserver_type).returns("fake_vserver_type")
+        Facter.value(:virtual).should == "fake_vserver_type"
+      end
+    end
+  end
 end
 
 describe "is_virtual fact" do
-
   it "should be virtual when running on xen" do
-     Facter.fact(:kernel).stubs(:value).returns("Linux")
-     Facter.fact(:virtual).stubs(:value).returns("xenu")
-     Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("xenu")
+    Facter.fact(:is_virtual).value.should == "true"
   end
 
   it "should be false when running on xen0" do
-     Facter.fact(:kernel).stubs(:value).returns("Linux")
-     Facter.fact(:virtual).stubs(:value).returns("xen0")
-     Facter.fact(:is_virtual).value.should == "false"
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("xen0")
+    Facter.fact(:is_virtual).value.should == "false"
   end
 
   it "should be true when running on xenhvm" do
-     Facter.fact(:kernel).stubs(:value).returns("Linux")
-     Facter.fact(:virtual).stubs(:value).returns("xenhvm")
-     Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("xenhvm")
+    Facter.fact(:is_virtual).value.should == "true"
   end
 
   it "should be false when running on physical" do
-     Facter.fact(:kernel).stubs(:value).returns("Linux")
-     Facter.fact(:virtual).stubs(:value).returns("physical")
-     Facter.fact(:is_virtual).value.should == "false"
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("physical")
+    Facter.fact(:is_virtual).value.should == "false"
   end
 
   it "should be true when running on vmware" do

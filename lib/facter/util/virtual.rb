@@ -1,4 +1,19 @@
 module Facter::Util::Virtual
+  ##
+  # virt_what is a delegating helper method intended to make it easier to stub
+  # the system call without affecting other calls to
+  # Facter::Util::Resolution.exec
+  def self.virt_what(command = "virt-what")
+    Facter::Util::Resolution.exec command
+  end
+
+  ##
+  # lspci is a delegating helper method intended to make it easier to stub the
+  # system call without affecting other calls to Facter::Util::Resolution.exec
+  def self.lspci(command = "lspci 2>/dev/null")
+    Facter::Util::Resolution.exec command
+  end
+
   def self.openvz?
     FileTest.directory?("/proc/vz") and not self.openvz_cloudlinux?
   end
