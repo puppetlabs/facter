@@ -25,7 +25,7 @@ Facter.add(:osfamily) do
     when "Solaris", "Nexenta", "OmniOS", "OpenIndiana", "SmartOS"
       "Solaris"
     when "Gentoo"
-      "Gentoo" 
+      "Gentoo"
     else
       Facter.value("kernel")
     end
