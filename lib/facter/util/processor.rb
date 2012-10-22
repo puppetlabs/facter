@@ -1,4 +1,75 @@
-module Facter::Util::Processor
+module Facter
+module Util
+module Processor
+  ##
+  # aix_processor_list is intended to generate a list of values for the
+  # processorX facts.  The behavior is as follows from
+  # [#11609](http://projects.puppetlabs.com/issues/11609)
+  #
+  # 1. Take a list of all the processor identifiers for the platform,
+  #    represented as system-native identifiers in strings.
+  # 2. Sort the list
+  # 3. Assign an incrementing from 0 integer index to each identifier.
+  # 4. Store the value of the system identifier in the processorX fact where X
+  #    is the incrementing index.
+  #
+  # Returns an Array, sorted, containing the values for the facts.
+  def self.aix_processor_list
+    return_value = []
+    aix_proc_id_list = []
+
+    if output = lsdev then
+      output.split("\n").each do |line|
+        if match = line.match(/proc\d+/)
+          aix_proc_id_list << match[0]
+        end
+      end
+    end
+
+    # Generalized alphanumeric sort to put "proc12" behind "proc4"
+    padding = 8
+    aix_proc_id_list = aix_proc_id_list.sort do |a,b|
+      a,b = [a,b].map do |s|
+        s.gsub(/\d+/) { |m| "0"*(padding - m.size) + m }
+      end
+      a<=>b
+    end
+
+    aix_proc_id_list.each do |proc_id|
+      if output = lsattr("lsattr -El #{proc_id} -a type")
+        if match = output.match(/type\s+([^\s]+)\s+Processor/i)
+          return_value << match[1]
+        end
+      end
+    end
+
+    return_value
+  end
+
+  ##
+  # lsdev is intended to directly delegate to Facter::Util::Resolution.exec in an
+  # effort to make the processorX facts easier to test by stubbing only the
+  # behaviors we need to stub to get the output of the system command.
+  def self.lsdev(command="lsdev -Cc processor")
+    Facter::Util::Resolution.exec(command)
+  end
+
+  ##
+  # lsattr is intended to directly delegate to Facter::Util::Resolution.exec in
+  # an effort to make the processorX facts easier to test.  See also the
+  # {lsdev} method.
+  def self.lsattr(command="lsattr -El proc0 -a type")
+    Facter::Util::Resolution.exec(command)
+  end
+
+  ##
+  # kernel_fact_value is intended to directly delegate to Facter.value(:kernel)
+  # to make it easier to stub the kernel fact without affecting the entire
+  # system.
+  def self.kernel_fact_value
+    Facter.value(:kernel)
+  end
+
   def self.enum_cpuinfo
     processor_num = -1
     processor_list = []
@@ -64,28 +135,6 @@ module Facter::Util::Processor
     processor_list
   end
 
-  def self.enum_lsdev
-    processor_num = -1
-    processor_list = {}
-    Thread::exclusive do
-      procs = Facter::Util::Resolution.exec('lsdev -Cc processor')
-      if procs
-        procs.each_line do |proc|
-          if proc =~ /^proc(\d+)/
-            processor_num = $1.to_i
-            # Not retrieving the frequency since AIX 4.3.3 doesn't support the
-            # attribute and some people still use the OS.
-            proctype = Facter::Util::Resolution.exec('lsattr -El proc0 -a type')
-            if proctype =~ /^type\s+(\S+)\s+/
-              processor_list[processor_num] = $1
-            end
-          end
-        end
-      end
-    end
-    processor_list
-  end
-
   def self.enum_kstat
     processor_num = -1
     processor_list = []
@@ -104,4 +153,6 @@ module Facter::Util::Processor
     end
     processor_list
   end
+end
+end
 end
