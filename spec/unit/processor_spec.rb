@@ -1,5 +1,6 @@
 #! /usr/bin/env ruby
 
+require 'facter/util/processor'
 require 'spec_helper'
 
 def cpuinfo_fixture(filename)
@@ -209,14 +210,6 @@ describe "Processor facts" do
       Facter.fact(:processorcount).value.should == "2"
     end
 
-    it "should be 6 on six-processor AIX box" do
-      Facter.fact(:kernel).stubs(:value).returns("AIX")
-      Facter::Util::Resolution.stubs(:exec).with("lsdev -Cc processor").returns("proc0 Available 00-00 Processor\nproc2 Available 00-02 Processor\nproc4 Available 00-04 Processor\nproc6 Available 00-06 Processor\nproc8 Available 00-08 Processor\nproc10 Available 00-10 Processor")
-      Facter::Util::Resolution.stubs(:exec).with("lsattr -El proc0 -a type").returns("type PowerPC_POWER3 Processor type False")
-
-      Facter.fact(:processorcount).value.should == "6"
-    end
-
     it "should be 2 via sysfs when cpu0 and cpu1 are present" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       File.stubs(:exists?).with('/sys/devices/system/cpu').returns(true)
@@ -292,6 +285,41 @@ describe "Processor facts" do
 
           Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(psrinfo)
           Facter.fact(:physicalprocessorcount).value.should == "2"
+        end
+      end
+    end
+  end
+end
+
+describe "processorX facts" do
+  describe "on AIX" do
+    def self.lsdev_examples
+      examples = []
+      examples << "proc0  Available 00-00 Processor\n" +
+        "proc4  Available 00-04 Processor\n" +
+        "proc8  Defined   00-08 Processor\n" +
+        "proc12 Defined   00-12 Processor\n"
+      examples
+    end
+
+    let(:lsattr) do
+      "type PowerPC_POWER5 Processor type False\n"
+    end
+
+    lsdev_examples.each_with_index do |lsdev_example, i|
+      context "lsdev example ##{i}" do
+        before :each do
+          Facter.fact(:kernel).stubs(:value).returns("AIX")
+          Facter::Util::Processor.stubs(:lsdev).returns(lsdev_example)
+          Facter::Util::Processor.stubs(:lsattr).returns(lsattr)
+          Facter.collection.internal_loader.load(:processor)
+        end
+
+        lsdev_example.split("\n").each_with_index do |line, idx|
+          aix_idx = idx * 4
+          it "maps proc#{aix_idx} to processor#{idx} (#11609)" do
+            Facter.value("processor#{idx}").should == "PowerPC_POWER5"
+          end
         end
       end
     end
