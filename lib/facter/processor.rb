@@ -24,9 +24,9 @@ require 'facter/util/processor'
 
 ## We have to enumerate these outside a Facter.add block to get the processorN descriptions iteratively
 ## (but we need them inside the Facter.add block above for tests on processorcount to work)
-processor_list = case Facter.value(:kernel)
+processor_list = case Facter::Util::Processor.kernel_fact_value
 when "AIX"
-  Facter::Util::Processor.enum_lsdev
+  Facter::Util::Processor.aix_processor_list
 when "SunOS"
   Facter::Util::Processor.enum_kstat
 else
@@ -71,7 +71,7 @@ end
 Facter.add("ProcessorCount") do
   confine :kernel => :aix
   setcode do
-    processor_list = Facter::Util::Processor.enum_lsdev
+    processor_list = Facter::Util::Processor.aix_processor_list
 
     processor_list.length.to_s
   end
