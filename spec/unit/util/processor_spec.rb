@@ -50,14 +50,6 @@ describe Facter::Util::Processor do
     Facter::Util::Processor.enum_cpuinfo[3].should == "Quad-Core AMD Opteron(tm) Processor 2374 HE"
   end
 
-  it "should get the processor type on AIX box" do
-    Facter.fact(:kernel).stubs(:value).returns("AIX")
-    Facter::Util::Resolution.stubs(:exec).with("lsdev -Cc processor").returns("proc0 Available 00-00 Processor\nproc2 Available 00-02 Processor\nproc4 Available 00-04 Processor\nproc6 Available 00-06 Processor\nproc8 Available 00-08 Processor\nproc10 Available 00-10 Processor")
-    Facter::Util::Resolution.stubs(:exec).with("lsattr -El proc0 -a type").returns("type PowerPC_POWER3 Processor type False")
-
-    Facter::Util::Processor.enum_lsdev[0].should == "PowerPC_POWER3"
-  end
-
   it "should get the processor description on Solaris (x86)" do
     Facter.fact(:kernel).stubs(:value).returns("SunOS")
     Facter.fact(:architecture).stubs(:value).returns("i86pc")
