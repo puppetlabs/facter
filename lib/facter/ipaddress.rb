@@ -1,3 +1,6 @@
+require 'facter/util/ipaddress'
+require 'facter/util/resolution'
+
 # Fact: ipaddress
 #
 # Purpose: Return the main IP address for a host.
@@ -41,17 +44,17 @@ Facter.add(:ipaddress) do
   confine :kernel => %w{FreeBSD OpenBSD Darwin DragonFly}
   setcode do
     ip = nil
-    output = %x{/sbin/ifconfig}
-
-    output.split(/^\S/).each { |str|
-      if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-        tmp = $1
-        unless tmp =~ /^127\./
-          ip = tmp
-          break
+    if output = Facter::Util::Resolution.locale_wrapper { Facter::Util::IPAddress.ifconfig("/sbin/ifconfig") }
+      output.split(/^\S/).each do |str|
+        if match = str.match(/inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
+          tmp = match[1]
+          unless tmp =~ /^127\./
+            ip = tmp
+            break
+          end
         end
       end
-    }
+    end
 
     ip
   end
@@ -61,17 +64,17 @@ Facter.add(:ipaddress) do
   confine :kernel => %w{NetBSD SunOS}
   setcode do
     ip = nil
-    output = %x{/sbin/ifconfig -a}
-
-    output.split(/^\S/).each { |str|
-      if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-        tmp = $1
-        unless tmp =~ /^127\./ or tmp == "0.0.0.0"
-          ip = tmp
-          break
+    if output = Facter::Util::Resolution.locale_wrapper { Facter::Util::IPAddress.ifconfig("/sbin/ifconfig -a") }
+      output.split(/^\S/).each do |str|
+        if match = str.match(/inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
+          tmp = match[1]
+          unless tmp =~ /^127\./ or tmp == "0.0.0.0"
+            ip = tmp
+            break
+          end
         end
       end
-    }
+    end
 
     ip
   end
@@ -81,18 +84,17 @@ Facter.add(:ipaddress) do
   confine :kernel => %w{AIX}
   setcode do
     ip = nil
-    output = %x{/usr/sbin/ifconfig -a}
-
-    output.split(/^\S/).each { |str|
-      if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-        tmp = $1
-        unless tmp =~ /^127\./
-          ip = tmp
-          break
+    if output = Facter::Util::Resolution.locale_wrapper { Facter::Util::IPAddress.ifconfig("/usr/sbin/ifconfig -a") }
+      output.split(/^\S/).each do |str|
+        if match = str.match(/inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
+          tmp = match[1]
+          unless tmp =~ /^127\./
+            ip = tmp
+            break
+          end
         end
       end
-    }
-
+    end
     ip
   end
 end
