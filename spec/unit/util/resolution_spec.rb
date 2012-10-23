@@ -565,4 +565,45 @@ describe Facter::Util::Resolution do
       end
     end
   end
+
+  describe ".locale_wrapper" do
+    let(:env) do
+      env = ENV.to_hash
+      env['LANG'] = 'en_US.UTF8'
+      env['LC_ALL'] = 'en_US.UTF8'
+      env['LC_CTYPE'] = 'en_US.UTF8'
+      env
+    end
+
+    it "accepts an environment object" do
+      Facter::Util::Resolution.locale_wrapper(env) do
+        "nothing to see here"
+      end
+    end
+
+    it "returns the value of the block" do
+      Facter::Util::Resolution.locale_wrapper(env) do
+        "nothing to see here"
+      end.should == "nothing to see here"
+    end
+
+    it "preserves the environment" do
+      env_start = env.dup
+      Facter::Util::Resolution.locale_wrapper(env) do
+        "nothing to see here"
+      end
+
+      env.should == env_start
+    end
+
+    %w{ LANG LC_CTYPE LC_ALL }.each do |var|
+      it "sets #{var} to 'C'" do
+        env[var].should == 'en_US.UTF8'
+        Facter::Util::Resolution.locale_wrapper(env) do
+          env[var].should == 'C'
+        end
+        env[var].should == 'en_US.UTF8'
+      end
+    end
+  end
 end
