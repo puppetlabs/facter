@@ -38,13 +38,15 @@ module Facter::Util::EC2
     def has_ec2_arp?
       mac_address = "fe:ff:ff:ff:ff:ff"
       if Facter.value(:kernel) == 'windows'
-        arp_command = "arp -a"
         mac_address.gsub!(":","-")
+        arp_table = Facter::Util::Resolution.exec("arp -a")
+      elsif Facter.value(:kernel) == 'Linux' and File.exist?('/proc/net/arp')
+        # this is, like, an order of magnitude faster than exec
+        arp_table = File.read('/proc/net/arp')
       else
-        arp_command = "arp -an"
+        arp_table = Facter::Util::Resolution.exec("arp -an")
       end
 
-      arp_table = Facter::Util::Resolution.exec(arp_command)
       if not arp_table.nil?
         arp_table.each_line do |line|
           return true if line.downcase.include?(mac_address)
