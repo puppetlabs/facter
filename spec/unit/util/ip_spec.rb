@@ -263,6 +263,33 @@ describe Facter::Util::IP do
     Facter::Util::IP.get_arp_value("eth0").should == "00:00:0c:9f:f0:04"
   end
 
+  it "should return mtu information on Linux" do
+    linux_ifconfig = my_fixture_read("linux_ifconfig_all_with_single_interface")
+    Facter::Util::IP.stubs(:get_all_interface_output).returns(linux_ifconfig)
+    Facter.stubs(:value).with(:kernel).returns("Linux")
+
+    Facter::Util::IP.get_interface_value("eth0", "mtu").should == "1500"
+    Facter::Util::IP.get_interface_value("lo", "mtu").should == "16436"
+  end
+  
+  it "should return mtu information on Darwin" do
+    darwin_ifconfig_interface = my_fixture_read("darwin_ifconfig_single_interface")
+
+    Facter::Util::IP.expects(:get_single_interface_output).with("en1").returns(darwin_ifconfig_interface)
+    Facter.stubs(:value).with(:kernel).returns("Darwin")
+
+    Facter::Util::IP.get_interface_value("en1", "mtu").should == "1500"
+  end
+  
+  it "should return mtu information for Solaris" do
+    solaris_ifconfig_interface = my_fixture_read("solaris_ifconfig_single_interface")
+
+    Facter::Util::IP.expects(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
+    Facter.stubs(:value).with(:kernel).returns("SunOS")
+
+    Facter::Util::IP.get_interface_value("e1000g0", "mtu").should == "1500"
+  end
+  
   describe "on Windows" do
     before :each do
       Facter.stubs(:value).with(:kernel).returns("windows")
