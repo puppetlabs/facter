@@ -87,9 +87,9 @@ module Facter::Util::IP
   end
 
   def self.get_infiniband_macaddress(interface)
-    if File::exist?("/sys/class/net/#{interface}/address") then
+    if File.exists?("/sys/class/net/#{interface}/address") then
       ib_mac_address = `cat /sys/class/net/#{interface}/address`.chomp
-    elsif File::exist?("/sbin/ip") then
+    elsif File.exists?("/sbin/ip") then
       ip_output = %x{/sbin/ip link show #{interface}}
       ib_mac_address = ip_output.scan(%r{infiniband\s+((\w{1,2}:){5,}\w{1,2})})
     else
