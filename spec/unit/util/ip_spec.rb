@@ -230,8 +230,8 @@ describe Facter::Util::IP do
   it "should return fake macaddress information for infiniband on Linux when neither sysfs or /sbin/ip are available" do
     ifconfig_interface = my_fixture_read("linux_ifconfig_ib0")
 
-    File.stubs(:exists?).with("/sys/class/net/ib0/address").returns(false)
-    File.stubs(:exists?).with("/sbin/ip").returns(false)
+    File.expects(:exists?).with("/sys/class/net/ib0/address").returns(false)
+    File.expects(:exists?).with("/sbin/ip").returns(false)
     Facter::Util::IP.expects(:ifconfig_interface).with("ib0").returns(ifconfig_interface)
     Facter.stubs(:value).with(:kernel).returns("Linux")
 
