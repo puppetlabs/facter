@@ -57,6 +57,21 @@ describe Facter::Util::EC2 do
         Facter::Util::EC2.has_ec2_arp?.should == false
       end
     end
+
+    describe "on solaris" do
+      before :each do
+        Facter.stubs(:value).with(:kernel).returns("SunOS")
+      end
+
+      it "should fail if arp table does not contain fe:ff:ff:ff:ff:ff" do
+        ec2arp = my_fixture_read("solaris8_arp_a_not_ec2.out")
+
+        Facter::Util::Resolution.expects(:exec).with("arp -a").
+          at_least_once.returns(ec2arp)
+
+        Facter::Util::EC2.has_ec2_arp?.should == false
+      end
+    end
   end
 
   describe "is_euca_mac? method" do
