@@ -1,0 +1,26 @@
+CPU info:
+  4 PA-RISC 8800 processors (1000 MHz, 64 MB)
+          CPU version 5
+          8 logical processors (2 per socket)
+
+Memory: 24574 MB (24 GB)
+
+Firmware info:
+   Firmware revision:  45.44
+   IPMI is supported on this system.
+   BMC firmware revision: 3.52
+
+Platform info:
+   Model:                  "9000/800/rp4440  "
+   Machine ID number:      XXXXXXXXXXXXXXXXXXX
+   Machine serial number:  SGHXXXXXXX
+
+OS info:
+   Nodename:  myhost
+   Release:   HP-UX B.11.31
+   Version:   U (unlimited-user license)
+   Machine:   9000/800
+   ID Number: 97704309
+   vmunix _release_version:
+_release_version:
+@(#) $Revision: vmunix:    B.11.31_LR FLAVOR=perf
