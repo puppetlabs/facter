@@ -29,12 +29,20 @@ module Facter::Util::Config
     end
   end
 
-  def self.external_facts_dirs
+  def self.default_external_facts_dirs
     windows_dir = windows_data_dir
     if windows_dir.nil? then
       ["/etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"]
     else
       [File.join(windows_dir, 'PuppetLabs', 'facter', 'facts.d')]
+    end
+  end
+
+  def self.external_facts_dirs
+    if ENV["FACTER_PATH"].nil? then
+      default_external_facts_dirs
+    else 
+      ENV["FACTER_PATH"].split(File::PATH_SEPARATOR)
     end
   end
 end
