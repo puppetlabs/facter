@@ -1,0 +1,25 @@
+--- !ruby/object:Net::HTTPOK 
+body: quicklaunch-1
+body_exist: true
+code: "200"
+header: 
+  connection: 
+  - close
+  server: 
+  - EC2ws
+  date: 
+  - Wed, 31 Oct 2012 02:34:30 GMT
+  etag: 
+  - "\"3774366741\""
+  content-length: 
+  - "13"
+  last-modified: 
+  - Tue, 30 Oct 2012 23:48:24 GMT
+  accept-ranges: 
+  - bytes
+  content-type: 
+  - text/plain
+http_version: "1.0"
+message: OK
+read: true
+socket: 
