@@ -297,7 +297,7 @@ class Facter::Util::Resolution
     Facter.show_time "#{self.name}: #{"%.2f" % ms}ms"
 
     unless @preserve_whitespace
-      result =  result.strip if result && result.respond_to?(:strip)
+      result.strip! if result && result.respond_to?(:strip!) 
     end
     
     return nil if result == ""

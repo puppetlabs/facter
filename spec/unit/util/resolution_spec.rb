@@ -172,15 +172,8 @@ describe Facter::Util::Resolution do
     describe "when dealing with whitespace" do
       it "should by default strip whitespace" do
         @resolve.setcode {'  value  '}
-        @resolve.value.should == 'value'
-      end
-
-      it "should strip whitespace from frozen strings" do
-        result = '  val  ue  '
-        result.freeze
-        @resolve.setcode{result}
-        @resolve.value.should == 'val  ue'
-      end
+        @resolve.value.should == 'value' 
+      end 
 
       describe "when given a string" do
 
