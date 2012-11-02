@@ -222,10 +222,6 @@ class Facter::Util::Resolution
     @timeout
   end
 
-  def preserve_whitespace
-    @preserve_whitespace = true
-  end   
-
   # Set our code for returning a value.
   def setcode(string = nil, interp = nil, &block)
     Facter.warnonce "The interpreter parameter to 'setcode' is deprecated and will be removed in a future version." if interp
@@ -296,10 +292,6 @@ class Facter::Util::Resolution
     ms = (finishtime - starttime) * 1000
     Facter.show_time "#{self.name}: #{"%.2f" % ms}ms"
 
-    unless @preserve_whitespace
-      result.strip! if result && result.respond_to?(:strip!) 
-    end
-    
     return nil if result == ""
     return result
   end
