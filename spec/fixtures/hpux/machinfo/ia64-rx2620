@@ -1,0 +1,49 @@
+CPU info:
+   Number of CPUs = 2
+   Number of enabled CPUs = 2
+   Clock speed = 1600 MHz
+   Bus speed   = 400 MT/s
+   CPUID registers
+      vendor information =       "GenuineIntel"
+      processor serial number =  0x0000000000000000
+      processor version info =   0x000000001f020104
+         architecture revision:       0
+         processor family:           31   Intel(R) Itanium 2 Family Processors
+         processor model:             2   Intel(R) Itanium 2 processor
+   Bus features
+      implemented =  0xbdf0000060000000
+      selected    =  0x0000000040000000
+         Bus Lock Signal masked
+         processor revision:          1   Stepping A1
+         largest CPUID reg:           4
+      processor capabilities =   0x0000000000000001
+                      implements long branch:  1
+
+Cache info:
+   L1 Instruction: size =   16 KB, associativity = 4
+   L1 Data:        size =   16 KB, associativity = 4
+   L2 Unified:     size =  256 KB, associativity = 8
+   L3 Unified:     size = 6144 KB, associativity = 12
+
+Memory = 20468 MB (19.988281 GB)
+
+Firmware info:
+   Firmware revision = 03.17
+   FP SWA driver revision: 1.18
+   IPMI is supported on this system.
+   BMC version: 3.48
+
+Platform info:
+   model string =          "ia64 hp server rx2620"
+   machine id number =     xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+   machine serial number = XXXXXXXXXX
+
+OS info:
+   sysname  = HP-UX
+   nodename = myhost
+   release  = B.11.23
+   version  = U (unlimited-user license)
+   machine  = ia64
+   idnumber = XXXXXXXXXX
+   vmunix _release_version:
+@(#) $Revision: vmunix:    B11.23_LR FLAVOR=perf Fri Aug 29 22:35:38 PDT 2003 $
