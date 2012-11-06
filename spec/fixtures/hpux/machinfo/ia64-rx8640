@@ -1,0 +1,53 @@
+CPU info:
+   Number of CPUs = 16
+   Number of enabled CPUs = 2
+   Number of enabled sockets = 2
+   Cores per socket = 2
+   Clock speed = 1598 MHz
+   Bus speed   = 533 MT/s
+   CPUID registers
+      vendor information =       "GenuineIntel"
+      processor serial number =  0x0000000000000000
+      processor version info =   0x0000000020010104
+         architecture revision:       0
+         processor family:           32   Intel(R) Itanium 2 9100 series
+         processor model:             1   Intel(R) Itanium 2 9100 series
+   Bus features
+      implemented =  0xbdf0000020000000
+      selected    =  0x0020000000000000
+         Exclusive Bus Cache Line Replacement Enabled
+         processor revision:          1   Stepping A1
+         largest CPUID reg:           4
+      processor capabilities =   0x0000000000000005
+                      implements long branch:  1
+        implements 16-byte atomic operations:  1
+
+Cache info (per core):
+   L1 Instruction: size =   16 KB, associativity = 4
+   L1 Data:        size =   16 KB, associativity = 4
+   L2 Instruction: size = 1024 KB, associativity = 8
+   L2 Data:        size =  256 KB, associativity = 8
+   L3 Unified:     size = 9216 KB, associativity = 9
+
+Memory = 4046 MB (3.951172 GB)
+
+Firmware info:
+   Firmware revision = 9.048
+   FP SWA driver revision: 1.18
+   IPMI is supported on this system.
+   BMC version: 4.01
+
+Platform info:
+   model string =          "ia64 hp server rx8640"
+   machine id number =     xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+   machine serial number = XXXXXXXXXX
+
+OS info:
+   sysname  = HP-UX
+   nodename = bakprdinfh001
+   release  = B.11.23
+   version  = U (unlimited-user license)
+   machine  = ia64
+   idnumber = XXXXXXXXXX
+   vmunix _release_version:               
+@(#) $Revision: vmunix:    B11.23_LR FLAVOR=perf Fri Aug 29 22:35:38 PDT 2003 $

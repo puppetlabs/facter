@@ -1,0 +1,26 @@
+CPU info:
+  4 Intel(R) Itanium 2 9100 series processors (1.59 GHz, 18 MB)
+          532 MT/s bus, CPU version A1
+          8 logical processors (2 per socket)
+
+Memory: 24542 MB (23.97 GB)
+
+Firmware info:
+   Firmware revision:  04.11
+   FP SWA driver revision: 1.18
+   IPMI is supported on this system.
+   BMC firmware revision: 5.24
+
+Platform info:
+   Model:                  "ia64 hp server rx6600"
+   Machine ID number:      xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+   Machine serial number:  XXXXXXXXXX
+
+OS info:
+   Nodename:  bt1353b6
+   Release:   HP-UX B.11.31
+   Version:   U (unlimited-user license)
+   Machine:   ia64
+   ID Number: XXXXXXXXXX
+   vmunix _release_version:
+@(#) $Revision: vmunix:    B.11.31_LR FLAVOR=perf

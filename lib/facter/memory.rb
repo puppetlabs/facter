@@ -160,3 +160,14 @@ Facter.add("swapfree_mb") do
     "%.2f" % [(swapfree.to_f / 1024.0) / 1024.0]
   end
 end
+
+# http://projects.puppetlabs.com/issues/11436
+#
+# Unifying naming for the amount of physical memory in a given host.
+# This fact is DEPRECATED and will be removed in Facter 2.0 per
+# http://projects.puppetlabs.com/issues/11466
+Facter.add("MemoryTotal") do
+  setcode do
+    Facter.value("memorysize")
+  end
+end
