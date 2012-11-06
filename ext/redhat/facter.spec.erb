@@ -3,28 +3,29 @@
 %if 0%{?fedora} >= 17
 %global facter_libdir   %(ruby -rrbconfig -e 'puts RbConfig::CONFIG["vendorlibdir"]')
 %else
-%global facter_libdir   %(ruby -rrbconfig -e 'puts Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG["sitelibdir"]')
+%global facter_libdir   %(ruby -rrbconfig -e 'puts RbConfig::CONFIG["sitelibdir"]')
 %endif
 
 # VERSION is subbed out during rake srpm process
-# %global realversion <%= @version %>
-# %global rpmversion <%= @rpmversion %>
+%global realversion <%= @version %>
+%global rpmversion <%= @rpmversion %>
 
-Summary: Ruby module for collecting simple facts about a host operating system
-Name: facter
-Version: %{rpmversion}
-Release: <%= @rpmrelease -%>%{?dist}
-Epoch: 1
-License: Apache 2.0
-Group: System Environment/Base
-URL: http://www.puppetlabs.com/puppet/related-projects/%{name}
-Source0: http://puppetlabs.com/downloads/%{name}/%{name}-%{realversion}.tar.gz
-Source1: http://puppetlabs.com/downloads/%{name}/%{name}-%{realversion}.tar.gz.asc
+Summary:        Ruby module for collecting simple facts about a host operating system
+Name:           facter
+Version:        %{rpmversion}
+Release:        <%= @rpmrelease -%>%{?dist}
+Epoch:          1
+Vendor:         %{?_host_vendor}
+License:        ASL 2.0
+Group:          System Environment/Base
+URL:            http://www.puppetlabs.com/puppet/related-projects/%{name}
+# Note this     URL will only be valid at official tags from Puppet Labs
+Source0:        http://puppetlabs.com/downloads/%{name}/%{name}-%{realversion}.tar.gz
 
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires: ruby >= 1.8.5
-Requires: which
+Requires:       ruby >= 1.8.5
+Requires:       which
 # dmidecode and pciutils are not available on all arches
 %ifarch %ix86 x86_64 ia64
 Requires:       dmidecode
@@ -64,11 +65,11 @@ rm -rf %{buildroot}
 %{facter_libdir}/facter.rb
 %{facter_libdir}/facter
 %{_mandir}/man8/facter.8.gz
-%doc CHANGELOG INSTALL LICENSE README.md
+%doc LICENSE README.md
 
 
 %changelog
-* <%= Time.now.strftime("%a %b %d %Y") %> Puppet Labs Release <info@puppetlabs.com> -  <%= @rpmversion %>-<%= @rpmrelease %>
+* <%= Time.now.strftime("%a %b %d %Y") %> Puppet Labs Release <info@puppetlabs.com> -  1:<%= @rpmversion %>-<%= @rpmrelease %>
 - Build for <%= @version %>
 
 * Wed Aug 08 2012 Moses Mendoza <moses@puppetlabs.com> - 1.6.11-2

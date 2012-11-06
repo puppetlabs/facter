@@ -36,19 +36,24 @@ module Facter::Util::EC2
     # Test if the host has an arp entry in its cache that matches the EC2 arp,
     # which is normally +fe:ff:ff:ff:ff:ff+.
     def has_ec2_arp?
-      mac_address = "fe:ff:ff:ff:ff:ff"
-      if Facter.value(:kernel) == 'windows'
-        arp_command = "arp -a"
-        mac_address.gsub!(":","-")
-      else
-        arp_command = "arp -an"
-      end
+      kernel = Facter.value(:kernel)
 
-      arp_table = Facter::Util::Resolution.exec(arp_command)
-      if not arp_table.nil?
-        arp_table.each_line do |line|
-          return true if line.downcase.include?(mac_address)
-        end
+      mac_address_re = case kernel
+                       when /Windows/i
+                         /fe-ff-ff-ff-ff-ff/i
+                       else
+                         /fe:ff:ff:ff:ff:ff/i
+                       end
+
+      arp_command = case kernel
+                    when /Windows/i, /SunOS/i
+                      "arp -a"
+                    else
+                      "arp -an"
+                    end
+
+      if arp_table = Facter::Util::Resolution.exec(arp_command)
+        return true if arp_table.match(mac_address_re)
       end
       return false
     end

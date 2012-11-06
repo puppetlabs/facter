@@ -1,5 +1,6 @@
-#! /usr/bin/env ruby -S rspec
+#! /usr/bin/env ruby
 
+require 'facter/util/processor'
 require 'spec_helper'
 
 def cpuinfo_fixture(filename)
@@ -70,6 +71,7 @@ describe "Processor facts" do
     before :each do
       Facter.collection.internal_loader.load(:processor)
       Facter.fact(:kernel).stubs(:value).returns(:sunos)
+      Facter.stubs(:value).with(:kernelrelease).returns("5.10")
     end
 
     it "should detect the correct processor count on x86_64" do
@@ -208,14 +210,6 @@ describe "Processor facts" do
       Facter.fact(:processorcount).value.should == "2"
     end
 
-    it "should be 6 on six-processor AIX box" do
-      Facter.fact(:kernel).stubs(:value).returns("AIX")
-      Facter::Util::Resolution.stubs(:exec).with("lsdev -Cc processor").returns("proc0 Available 00-00 Processor\nproc2 Available 00-02 Processor\nproc4 Available 00-04 Processor\nproc6 Available 00-06 Processor\nproc8 Available 00-08 Processor\nproc10 Available 00-10 Processor")
-      Facter::Util::Resolution.stubs(:exec).with("lsattr -El proc0 -a type").returns("type PowerPC_POWER3 Processor type False")
-
-      Facter.fact(:processorcount).value.should == "6"
-    end
-
     it "should be 2 via sysfs when cpu0 and cpu1 are present" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       File.stubs(:exists?).with('/sys/devices/system/cpu').returns(true)
@@ -256,6 +250,174 @@ describe "Processor facts" do
       })
 
       Facter.fact(:processorcount).value.should == "16"
+    end
+
+    describe "on solaris" do
+      before :all do
+        @fixture_kstat_sparc  = File.read(fixtures('processorcount','solaris-sparc-kstat-cpu-info'))
+        @fixture_kstat_x86_64 = File.read(fixtures('processorcount','solaris-x86_64-kstat-cpu-info'))
+      end
+
+      let(:psrinfo) do
+        "0       on-line   since 10/16/2012 14:06:12\n" +
+        "1       on-line   since 10/16/2012 14:06:14\n"
+      end
+
+      let(:kstat_sparc) { @fixture_kstat_sparc }
+      let(:kstat_x86_64) { @fixture_kstat_x86_64 }
+
+      %w{ 5.8 5.9 5.10 5.11 }.each do |release|
+        %w{ sparc x86_64 }.each do |arch|
+          it "uses kstat on release #{release} (#{arch})" do
+            Facter.fact(:kernel).stubs(:value).returns(:sunos)
+            Facter.stubs(:value).with(:kernelrelease).returns(release)
+
+            Facter::Util::Resolution.expects(:exec).with("/usr/bin/kstat cpu_info").returns(self.send("kstat_#{arch}".intern))
+            Facter.fact(:processorcount).value.should == 8
+          end
+        end
+      end
+
+      %w{ 5.5.1 5.6 5.7 }.each do |release|
+        it "uses psrinfo on release #{release}" do
+          Facter.fact(:kernel).stubs(:value).returns(:sunos)
+          Facter.stubs(:value).with(:kernelrelease).returns(release)
+
+          Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(psrinfo)
+          Facter.fact(:physicalprocessorcount).value.should == "2"
+        end
+      end
+    end
+  end
+end
+
+describe "processorX facts" do
+  describe "on AIX" do
+    def self.lsdev_examples
+      examples = []
+      examples << "proc0  Available 00-00 Processor\n" +
+        "proc4  Available 00-04 Processor\n" +
+        "proc8  Defined   00-08 Processor\n" +
+        "proc12 Defined   00-12 Processor\n"
+      examples
+    end
+
+    let(:lsattr) do
+      "type PowerPC_POWER5 Processor type False\n"
+    end
+
+    lsdev_examples.each_with_index do |lsdev_example, i|
+      context "lsdev example ##{i}" do
+        before :each do
+          Facter.fact(:kernel).stubs(:value).returns("AIX")
+          Facter::Util::Processor.stubs(:lsdev).returns(lsdev_example)
+          Facter::Util::Processor.stubs(:lsattr).returns(lsattr)
+          Facter.collection.internal_loader.load(:processor)
+        end
+
+        lsdev_example.split("\n").each_with_index do |line, idx|
+          aix_idx = idx * 4
+          it "maps proc#{aix_idx} to processor#{idx} (#11609)" do
+            Facter.value("processor#{idx}").should == "PowerPC_POWER5"
+          end
+        end
+      end
+    end
+  end
+
+  describe "on HP-UX" do
+    def self.machinfo_examples
+      examples = []
+      examples << [File.read(fixtures('hpux','machinfo','ia64-rx2620')), "Intel(R) Itanium 2 processor"]
+      examples << [File.read(fixtures('hpux','machinfo','ia64-rx6600')), "Intel(R) Itanium 2 9100 series processor (1.59 GHz, 18 MB)"]
+      examples << [File.read(fixtures('hpux','machinfo','ia64-rx8640')), "Intel(R) Itanium 2 9100 series"]
+      examples << [File.read(fixtures('hpux','machinfo','hppa-rp4440')), "PA-RISC 8800 processor (1000 MHz, 64 MB)"]
+      examples
+    end
+
+    let(:ioscan) do
+      "Class       I  H/W Path  Driver    S/W State H/W Type  Description\n" +
+      "===================================================================\n" +
+      "processor   0  0/120     processor CLAIMED   PROCESSOR Processor\n" +
+      "processor   1  0/123     processor CLAIMED   PROCESSOR Processor\n"
+    end
+
+    describe "when machinfo is available" do
+      machinfo_examples.each_with_index do |example, i|
+        machinfo_example, expected_cpu = example
+        context "machinfo example ##{i}" do
+          before :each do
+            Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+            Facter::Util::Processor.stubs(:ioscan).returns(ioscan)
+            Facter::Util::Processor.stubs(:machinfo).returns(machinfo_example)
+            Facter.collection.internal_loader.load(:processor)
+          end
+
+          %w{ 0 1 }.each do |j|
+            it "should find #{expected_cpu}" do
+              Facter.value("processor#{j}").should == expected_cpu
+            end
+          end
+        end
+      end
+    end
+
+    def self.model_and_getconf_examples
+      examples = []
+      examples << ["9000/800/L3000-5x",     "sched.models_present", "unistd.h_present", "532", "616",       "PA-RISC 8600 processor"]
+      examples << ["9000/800/L3000-5x",     "",                     "unistd.h_present", "532", "616",       "HP PA-RISC2.0 CHIP TYPE #616"]
+      examples << ["9000/800/L3000-5x",     "",                     "",                 "532", "616",       "CPU v532 CHIP TYPE #616"]
+      examples << ["ia64 hp server rx2660", "sched.models_present", "unistd.h_present", "768", "536936708", "IA-64 archrev 0 CHIP TYPE #536936708"]
+      examples << ["ia64 hp server rx2660", "",                     "unistd.h_present", "768", "536936708", "IA-64 archrev 0 CHIP TYPE #536936708"]
+      examples << ["ia64 hp server rx2660", "",                     "",                 "768", "536936708", "CPU v768 CHIP TYPE #536936708"]
+      examples
+    end
+
+    sched_models = File.readlines(fixtures('hpux','sched.models'))
+    unistd_h     = File.readlines(fixtures('hpux','unistd.h'))
+
+    describe "when machinfo is not available" do
+      model_and_getconf_examples.each_with_index do |example, i|
+        model_example, sm, unistd, getconf_cpu_ver, getconf_chip_type, expected_cpu = example
+        context "and model and getconf example ##{i}" do
+          before :each do
+            Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+            Facter::Util::Processor.stubs(:ioscan).returns(ioscan)
+            Facter::Util::Processor.stubs(:getconf_cpu_version).returns(getconf_cpu_ver)
+            Facter::Util::Processor.stubs(:getconf_cpu_chip_type).returns(getconf_chip_type)
+            Facter::Util::Processor.stubs(:machinfo).returns(nil)
+            Facter::Util::Processor.stubs(:model).returns(model_example)
+          end
+
+          if unistd == "unistd.h_present" then
+            before :each do
+              Facter::Util::Processor.stubs(:read_unistd_h).returns(unistd_h)
+            end
+          else
+            before :each do
+              Facter::Util::Processor.stubs(:read_unistd_h).returns(nil)
+            end
+          end
+
+          if sm == "sched.models_present" then
+            before :each do
+              Facter::Util::Processor.stubs(:read_sched_models).returns(sched_models)
+              Facter.collection.internal_loader.load(:processor)
+            end
+          else
+            before :each do
+              Facter::Util::Processor.stubs(:read_sched_models).returns(nil)
+              Facter.collection.internal_loader.load(:processor)
+            end
+          end
+
+          %w{ 0 1 }.each do |j|
+            it "should find #{expected_cpu}" do
+              Facter.value("processor#{j}").should == expected_cpu
+            end
+          end
+        end
+      end
     end
   end
 end

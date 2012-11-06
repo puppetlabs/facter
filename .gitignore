@@ -1,2 +1,5 @@
 pkg/
 ext/packaging/
+# YARD generated documentation
+.yardoc
+doc

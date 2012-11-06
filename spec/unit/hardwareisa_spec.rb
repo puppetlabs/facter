@@ -31,4 +31,11 @@ describe "Hardwareisa fact" do
 
     Facter.fact(:hardwareisa).value.should == "Clyde"
   end
+
+  it "should match uname -m on HP-UX" do
+    Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+    Facter::Util::Resolution.stubs(:exec).with("uname -m").returns("Pac-Man")
+
+    Facter.fact(:hardwareisa).value.should == "Pac-Man"
+  end
 end

@@ -1,0 +1,7 @@
+Net to Media Table: IPv4
+Device   IP Address               Mask      Flags   Phys Addr  
+------ -------------------- --------------- ----- --------------- 
+dnet0  pecan                255.255.255.255       08:00:20:05:21:33 
+dnet0  horseshoe            255.255.255.255       00:00:0c:e0:80:b1 
+dnet0  crab                 255.255.255.255  SP   08:00:20:22:fd:51
+dnet0  BASE-ADDRESS.MCAST.NET 240.0.0.0      SM   01:00:5e:00:00:00

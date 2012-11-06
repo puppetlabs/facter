@@ -4,12 +4,17 @@
 #   Returns hardware processor type.
 #
 # Resolution:
-#   On Solaris, Linux and the BSDs simply uses the output of "uname -p"
+#   On Solaris, AIX, Linux and the BSDs simply uses the output of "uname -p"
+#   On HP-UX, "uname -m" gives us the same information.
 #
 # Caveats:
 #   Some linuxes return unknown to uname -p with relative ease.
 #
 
 Facter.add(:hardwareisa) do
-  setcode 'uname -p'
+  if Facter.value(:kernel) == 'HP-UX'
+    setcode 'uname -m'
+  else
+    setcode 'uname -p'
+  end
 end

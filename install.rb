@@ -76,7 +76,7 @@ end
 
 # Set these values to what you want installed.
 bins  = glob(%w{bin/*})
-rdoc  = glob(%w{bin/* lib/**/*.rb README README-library CHANGELOG TODO Install}).reject { |e| e=~ /\.(bat|cmd)$/ }
+rdoc  = glob(%w{bin/* lib/**/*.rb README README-library TODO }).reject { |e| e=~ /\.(bat|cmd)$/ }
 ri  = glob(%w(bin/*.rb lib/**/*.rb)).reject { |e| e=~ /\.(bat|cmd)$/ }
 man   = glob(%w{man/man8/*})
 libs  = glob(%w{lib/**/*.rb lib/**/*.py lib/**/LICENSE})
