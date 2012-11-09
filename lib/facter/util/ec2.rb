@@ -17,6 +17,7 @@ module Facter::Util::EC2
         return true
       rescue
         return false
+      end
     end
 
     # Test if this host has a mac address used by Eucalyptus clouds, which
