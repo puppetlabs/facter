@@ -12,10 +12,9 @@ module Facter::Util::EC2
     #
     def can_connect?(wait_sec=2)
       url = "http://169.254.169.254:80/"
-      Timeout::timeout(wait_sec) {open(url)}
-      return true
-      rescue Timeout::Error
-        return false
+      begin
+        Timeout::timeout(wait_sec) {open(url)}
+        return true
       rescue
         return false
     end

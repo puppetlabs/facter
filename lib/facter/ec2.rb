@@ -2,17 +2,20 @@ require 'facter/util/ec2'
 require 'open-uri'
 
 def metadata(id = "")
-  open("http://169.254.169.254/2008-02-01/meta-data/#{id||=''}").read.
-    split("\n").each do |o|
-    key = "#{id}#{o.gsub(/\=.*$/, '/')}"
-    if key[-1..-1] != '/'
-      value = open("http://169.254.169.254/2008-02-01/meta-data/#{key}").read.
-        split("\n")
-      symbol = "ec2_#{key.gsub(/\-|\//, '_')}".to_sym
-      Facter.add(symbol) { setcode { value.join(',') } }
-    else
-      metadata(key)
+  begin
+    open("http://169.254.169.254/2008-02-01/meta-data/#{id||=''}").read.
+      split("\n").each do |o|
+      key = "#{id}#{o.gsub(/\=.*$/, '/')}"
+      if key[-1..-1] != '/'
+        value = open("http://169.254.169.254/2008-02-01/meta-data/#{key}").read.
+          split("\n")
+        symbol = "ec2_#{key.gsub(/\-|\//, '_')}".to_sym
+        Facter.add(symbol) { setcode { value.join(',') } }
+      else
+        metadata(key)
+      end
     end
+  rescue
   end
 end
 
