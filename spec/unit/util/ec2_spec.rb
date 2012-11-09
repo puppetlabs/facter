@@ -125,41 +125,29 @@ describe Facter::Util::EC2 do
   describe "can_connect? method" do
     it "returns true if api responds" do
       # Return something upon connecting to the root
-      Module.any_instance.expects(:open).with("#{api_prefix}:80/").\
+      Module.any_instance.expects(:open).with("#{api_prefix}:80/").
         at_least_once.returns("2008-02-01\nlatest")
 
-      Facter::Util::EC2.can_connect?.should == true
+      Facter::Util::EC2.can_connect?.should be_true
     end
 
     describe "when connection times out" do
-      before :each do
-        # Emulate a timeout when connecting by throwing an exception
-        Module.any_instance.expects(:open).with("#{api_prefix}:80/").\
-          at_least_once.raises(Timeout::Error)
-      end
-
-      it "should not raise exception" do
-        expect { Facter::Util::EC2.can_connect? }.to_not raise_error
-      end
-
       it "should return false" do
-        Facter::Util::EC2.can_connect?.should == false
+        # Emulate a timeout when connecting by throwing an exception
+        Module.any_instance.expects(:open).with("#{api_prefix}:80/").
+          at_least_once.raises(RuntimeError)
+
+        Facter::Util::EC2.can_connect?.should be_false
       end
     end
 
     describe "when connection is refused" do
-      before :each do
-        # Emulate a connection refused
-        Module.any_instance.expects(:open).with("#{api_prefix}:80/").\
-          at_least_once.raises(Errno::ECONNREFUSED)
-      end
-
-      it "should not raise exception" do
-        expect { Facter::Util::EC2.can_connect? }.to_not raise_error
-      end
-
       it "should return false" do
-        Facter::Util::EC2.can_connect?.should == false
+        # Emulate a connection refused
+        Module.any_instance.expects(:open).with("#{api_prefix}:80/").
+          at_least_once.raises(Errno::ECONNREFUSED)
+
+        Facter::Util::EC2.can_connect?.should be_false
       end
     end
   end
