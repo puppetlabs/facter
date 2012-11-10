@@ -26,6 +26,8 @@ Facter.add(:osfamily) do
       "Solaris"
     when "Gentoo"
       "Gentoo"
+    when "Archlinux"
+      "Archlinux"
     else
       Facter.value("kernel")
     end
