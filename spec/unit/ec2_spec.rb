@@ -28,11 +28,6 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/meta-data/foo").
         at_least_once.returns(StringIO.new("bar"))
 
-      # No user-data
-      Object.any_instance.expects(:open).
-        with("#{api_prefix}/2008-02-01/user-data/").
-        at_least_once.returns(StringIO.new(""))
-
       Facter.collection.loader.load(:ec2)
       Facter.fact(:ec2_foo).value.should == "bar"
     end
@@ -45,11 +40,6 @@ describe "ec2 facts" do
       Object.any_instance.expects(:open).
         with("#{api_prefix}/2008-02-01/meta-data/foo").
         at_least_once.returns(StringIO.new("bar\nbaz"))
-
-      # No user-data
-      Object.any_instance.expects(:open).
-        with("#{api_prefix}/2008-02-01/user-data/").
-        at_least_once.returns(StringIO.new(""))
 
       Facter.collection.loader.load(:ec2)
       Facter.fact(:ec2_foo).value.should == "bar,baz"
@@ -68,11 +58,6 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/meta-data/foo/bar").
         at_least_once.returns(StringIO.new("baz"))
 
-      # No user-data
-      Object.any_instance.expects(:open).
-        with("#{api_prefix}/2008-02-01/user-data/").
-        at_least_once.returns(StringIO.new(""))
-
       Facter.collection.loader.load(:ec2)
       Facter.fact(:ec2_foo_bar).value.should == "baz"
     end
@@ -83,7 +68,7 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/meta-data/").
         at_least_once.returns(StringIO.new(""))
 
-      Object.any_instance.expects(:open).
+      Facter::Util::Resolution.any_instance.expects(:open).
         with("#{api_prefix}/2008-02-01/user-data/").
         at_least_once.returns(StringIO.new("test"))
 
@@ -109,7 +94,7 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/meta-data/").\
         at_least_once.returns(StringIO.new(""))
 
-      Object.any_instance.expects(:open).\
+      Facter::Util::Resolution.any_instance.expects(:open).\
         with("#{api_prefix}/2008-02-01/user-data/").\
         at_least_once.returns(StringIO.new("test"))
 
@@ -137,7 +122,7 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/meta-data/").\
         at_least_once.returns(StringIO.new(""))
 
-      Object.any_instance.expects(:open).\
+      Facter::Util::Resolution.any_instance.expects(:open).\
         with("#{api_prefix}/2008-02-01/user-data/").\
         at_least_once.returns(StringIO.new("test"))
 
@@ -146,6 +131,25 @@ describe "ec2 facts" do
 
       Facter.fact(:ec2_userdata).value.should == ["test"]
     end
+
+    it "should return nil if open fails" do
+      Facter.expects(:warn).with('Could not retrieve ec2 metadata: host unreachable').twice
+      Facter::Util::Resolution.any_instance.stubs(:warn) # do not pollute test output
+
+      Object.any_instance.expects(:open).
+        with("#{api_prefix}/2008-02-01/meta-data/").
+        at_least_once.raises(RuntimeError, 'host unreachable')
+
+      Facter::Util::Resolution.any_instance.expects(:open).
+        with("#{api_prefix}/2008-02-01/user-data/").
+        at_least_once.raises(RuntimeError, 'host unreachable')
+
+      # Force a fact load
+      Facter.collection.loader.load(:ec2)
+
+      Facter.fact(:ec2_userdata).value.should be_nil
+    end
+
   end
 
   describe "when api connect test fails" do

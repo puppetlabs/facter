@@ -14,13 +14,15 @@ def metadata(id = "")
       metadata(key)
     end
   end
+rescue => details
+  Facter.warn "Could not retrieve ec2 metadata: #{details.message}"
 end
 
 def userdata()
-  begin
-    value = open("http://169.254.169.254/2008-02-01/user-data/").read.split
-    Facter.add(:ec2_userdata) { setcode { value } }
-  rescue OpenURI::HTTPError
+  Facter.add(:ec2_userdata) do
+    setcode do
+      open("http://169.254.169.254/2008-02-01/user-data/").read.split
+    end
   end
 end
 
