@@ -15,6 +15,7 @@ yum_host: 'burji.puppetlabs.com'
 yum_repo_path: '/opt/repository/yum/'
 build_gem: TRUE
 build_dmg: TRUE
+build_ips: TRUE
 apt_host: 'burji.puppetlabs.com'
 apt_repo_url: 'http://apt.puppetlabs.com'
 apt_repo_path: '/opt/repository/incoming'
