@@ -70,6 +70,145 @@ module Processor
     Facter.value(:kernel)
   end
 
+  ##
+  # hpux_processor_list is intended to generate a list of values for the
+  # processorX facts.
+  def self.hpux_processor_list
+    return_value = []
+    hpux_proc_id_list = []
+    cpu = ""
+
+    ##
+    # first, try parsing machinfo output.
+    if output = machinfo then
+      output.split("\n").each do |line|
+        if line.match(/processor model:\s+\d+\s+(.*)/) then
+          cpu = $1.to_s
+        elsif line.match(/\d+\s+((?:PA-RISC|Intel).*processors.*)/) then
+          cpu = $1.to_s
+          cpu.sub!(/processors/, "processor")
+        end
+      end
+    end
+
+    ##
+    # if that fails, try looking using model command and cross referencing against
+    # sched.models, which could be in three places. This file only catered for
+    # PA-RISC. Unfortunately, the file is not up to date sometimes.
+    if cpu.empty? then
+      m = model
+      m.sub!(/\s+$/, "")
+      m.sub!(/.*\//, "")
+      m.sub!(/.*\s+/, "")
+
+      if sched_models_lines = read_sched_models
+        sched_models_lines.each do |l|
+          if l.match(m) and l.match(/^\S+\s+\d+\.\d+\s+(\S+)/) then
+            cpu = "PA-RISC " + $1.to_s.sub!(/^PA/, "") + " processor"
+            break # we assume first match is the only match.
+          end
+        end
+      end
+    end
+
+    ##
+    # if that also fails, report the CPU version based on unistd.h and chip type based on getconf.
+    if cpu.empty? then
+      cpu_version = getconf_cpu_version
+      cpu_chip_type = getconf_cpu_chip_type
+      cpu_string = ""
+
+      if lines = read_unistd_h("/usr/include/sys/unistd.h") then
+        lines.each do |l|
+          if l.match(/define.*0x#{cpu_version.to_i.to_s(16)}.*\/\*\s+(.*)\s+\*\//) then
+            cpu_string = $1.to_s
+            break
+          end
+        end
+      end
+
+      if cpu_string.empty? then
+        cpu_string = "CPU v" + cpu_version
+      end
+
+      cpu = cpu_string + " CHIP TYPE #" + cpu_chip_type
+    end
+
+    ##
+    # now count (logical) CPUs using ioscan. We set processorX for X in 0..processorcount
+    # to cpu as worked out above. HP-UX does not support more than one installed CPU
+    # model.
+    if output = ioscan then
+      output.split("\n").each do |line|
+        if line.match(/processor/) then
+          hpux_proc_id_list << cpu
+        end
+      end
+    end
+
+    hpux_proc_id_list
+  end
+
+  ##
+  # read_sched_models is intended to be stubbed instead of File.readlines
+  # @return [Array] of strings containing the lines of the file or nil if the
+  # sched.models file could not be located.
+  def self.read_sched_models
+    path = if File.exists?("/usr/lib/sched.models")
+             "/usr/lib/sched.models"
+           elsif File.exists?("/usr/sam/lib/mo/sched.models")
+             "/usr/sam/lib/mo/sched.models"
+           elsif File.exists?("/opt/langtools/lib/sched.models")
+             "/opt/langtools/lib/sched.models"
+           end
+
+    if path
+      File.readlines(path)
+    end
+  end
+  private_class_method :read_sched_models
+
+  ##
+  # read_unistd_h is intended to be stubbed instead of File.readlines
+  # @return [Array] of Strings or nil if the file does not exist.
+  def self.read_unistd_h(path)
+    if File.exists?(path) then
+      File.readlines(path)
+    end
+  end
+  private_class_method :read_unistd_h
+
+  ##
+  # machinfo delegates directly to Facter::Util::Resolution.exec, as with lsdev
+  # above.
+  def self.machinfo(command="/usr/contrib/bin/machinfo")
+    Facter::Util::Resolution.exec(command)
+  end
+
+  ##
+  # model delegates directly to Facter::Util::Resolution.exec.
+  def self.model(command="model")
+    Facter::Util::Resolution.exec(command)
+  end
+
+  ##
+  # ioscan delegates directly to Facter::Util::Resolution.exec.
+  def self.ioscan(command="ioscan -fknCprocessor")
+    Facter::Util::Resolution.exec(command)
+  end
+
+  ##
+  # getconf_cpu_version delegates directly to Facter::Util::Resolution.exec.
+  def self.getconf_cpu_version(command="getconf CPU_VERSION")
+    Facter::Util::Resolution.exec(command)
+  end
+
+  ##
+  # getconf_cpu_chip_type delegates directly to Facter::Util::Resolution.exec.
+  def self.getconf_cpu_chip_type(command="getconf CPU_CHIP_TYPE")
+    Facter::Util::Resolution.exec(command)
+  end
+
   def self.enum_cpuinfo
     processor_num = -1
     processor_list = []

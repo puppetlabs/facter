@@ -27,6 +27,8 @@ require 'facter/util/processor'
 processor_list = case Facter::Util::Processor.kernel_fact_value
 when "AIX"
   Facter::Util::Processor.aix_processor_list
+when "HP-UX"
+  Facter::Util::Processor.hpux_processor_list
 when "SunOS"
   Facter::Util::Processor.enum_kstat
 else
@@ -35,7 +37,7 @@ end
 
 processor_list.each_with_index do |desc, i|
   Facter.add("Processor#{i}") do
-    confine :kernel => [ :aix, :sunos, :linux, :"gnu/kfreebsd" ]
+    confine :kernel => [ :aix, :"hp-ux", :sunos, :linux, :"gnu/kfreebsd" ]
     setcode do
       desc
     end
@@ -73,6 +75,14 @@ Facter.add("ProcessorCount") do
   setcode do
     processor_list = Facter::Util::Processor.aix_processor_list
 
+    processor_list.length.to_s
+  end
+end
+
+Facter.add("ProcessorCount") do
+  confine :kernel => :"hp-ux"
+  setcode do
+    processor_list = Facter::Util::Processor.hpux_processor_list
     processor_list.length.to_s
   end
 end

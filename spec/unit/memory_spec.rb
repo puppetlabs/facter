@@ -510,6 +510,13 @@ SWAP
         Facter::Util::WMI.stubs(:execquery).returns([computer])
 
         Facter.fact(:memorysize_mb).value.should == '3999.55'
+        Facter.fact(:MemoryTotal).value.should == '3.91 GB'
     end
+  end
+
+  it "should use the memorysize fact for the memorytotal fact" do
+    Facter.fact("memorysize").expects(:value).once.returns "yay"
+    Facter::Util::Resolution.expects(:exec).never
+    Facter.fact("memorytotal").value.should == "yay"
   end
 end
