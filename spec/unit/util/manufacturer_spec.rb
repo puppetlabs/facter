@@ -31,6 +31,17 @@ describe Facter::Manufacturer do
     Facter.value(:productname).should == "SPARC Enterprise T5220"
   end
 
+  it "should not set manufacturer or productname if prtdiag output is nil" do
+    # Stub kernel so we don't have windows fall through to its own mechanism
+    Facter.fact(:kernel).stubs(:value).returns("SunOS")
+    Facter.fact(:hardwareisa).stubs(:value).returns("sparc")
+
+    Facter::Util::Resolution.stubs(:exec).with(regexp_matches(/prtdiag/)).returns(nil)
+    Facter::Manufacturer.prtdiag_sparc_find_system_info()
+    Facter.value(:manufacturer).should be_nil
+    Facter.value(:productname).should be_nil
+  end
+
   it "should strip white space on dmi output with spaces" do
     dmidecode_output = my_fixture_read("linux_dmidecode_with_spaces")
     Facter::Manufacturer.expects(:get_dmi_table).returns(dmidecode_output)
@@ -117,7 +128,7 @@ Handle 0x001F
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     dmidecode = my_fixture_read("intel_linux_dmidecode")
     Facter::Manufacturer.expects(:get_dmi_table).returns(dmidecode)
-   
+
     query = { '[Ss]ystem [Ii]nformation' => [ { 'UUID:' => 'uuid' } ] }
     Facter::Manufacturer.dmi_find_system_info(query)
     Facter.value(:uuid).should == "60A98BB3-95B6-E111-AF74-4C72B9247D28"

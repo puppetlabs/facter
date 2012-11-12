@@ -14,10 +14,8 @@ module Facter::Util::EC2
       url = "http://169.254.169.254:80/"
       Timeout::timeout(wait_sec) {open(url)}
       return true
-      rescue Timeout::Error
-        return false
-      rescue
-        return false
+    rescue
+      return false
     end
 
     # Test if this host has a mac address used by Eucalyptus clouds, which
