@@ -269,7 +269,7 @@ describe Facter::Util::IP do
     Facter::Util::IP.get_interface_value("eth0", "mtu").should == "1500"
     Facter::Util::IP.get_interface_value("lo", "mtu").should == "16436"
   end
-  
+
   it "should return mtu information on Darwin" do
     darwin_ifconfig_interface = my_fixture_read("darwin_ifconfig_single_interface")
 
@@ -278,7 +278,7 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.get_interface_value("en1", "mtu").should == "1500"
   end
-  
+
   it "should return mtu information for Solaris" do
     solaris_ifconfig_interface = my_fixture_read("solaris_ifconfig_single_interface")
 
@@ -287,7 +287,7 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.get_interface_value("e1000g0", "mtu").should == "1500"
   end
-  
+
   describe "on Windows" do
     before :each do
       Facter.stubs(:value).with(:kernel).returns("windows")
