@@ -264,6 +264,10 @@ describe Facter::Util::IP do
   it "should return mtu information on Linux" do
     linux_ifconfig = my_fixture_read("linux_ifconfig_all_with_single_interface")
     Facter::Util::IP.stubs(:get_all_interface_output).returns(linux_ifconfig)
+    Facter::Util::IP.stubs(:get_single_interface_output).with("eth0").
+      returns(my_fixture_read("linux_get_single_interface_eth0"))
+    Facter::Util::IP.stubs(:get_single_interface_output).with("lo").
+      returns(my_fixture_read("linux_get_single_interface_lo"))
     Facter.stubs(:value).with(:kernel).returns("Linux")
 
     Facter::Util::IP.get_interface_value("eth0", "mtu").should == "1500"
