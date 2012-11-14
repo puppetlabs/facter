@@ -105,6 +105,12 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "virtualbox"
     end
 
+    it "should be gce with gce vendor name from lspci 2>/dev/null" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("00:05.0 Class 8007: Google, Inc. Device 6442")
+      Facter.fact(:virtual).value.should == "gce"
+    end
+
     it "should be vmware with VMWare vendor name from dmidecode" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)

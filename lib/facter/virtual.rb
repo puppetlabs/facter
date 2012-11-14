@@ -111,6 +111,9 @@ Facter.add("virtual") do
           # --- look for Hyper-V video card
           # ---   00:08.0 VGA compatible controller: Microsoft Corporation Hyper-V virtual VGA
           result = "hyperv" if p =~ /Microsoft Corporation Hyper-V/
+          # --- look for gmetrics for GCE
+          # --- 00:05.0 Class 8007: Google, Inc. Device 6442
+          result = "gce" if p =~ /Class 8007: Google, Inc/
         end
       else
         output = Facter::Util::Resolution.exec('dmidecode')
