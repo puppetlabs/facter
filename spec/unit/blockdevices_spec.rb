@@ -6,13 +6,85 @@ require 'facter/util/nothing_loader'
 
 describe "Block device facts" do
 
-  describe "on non-Linux OS" do
+  describe "on unsupported platforms" do
 
-    it "should not exist when kernel isn't Linux" do
+    it "should not exist when kernel isn't Linux or FreeBSD" do
       Facter.fact(:kernel).stubs(:value).returns("SunOS")
       Facter.fact(:blockdevices).should == nil
     end
 
+  end
+
+  describe "on FreeBSD" do
+
+    before :each do
+      Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
+
+      Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n kern.disks").returns("cd0 da0 ada0 ad10 mfi0")
+
+      Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol inquiry cd0 -D | /usr/bin/awk -F '<|>' '{ print $2 }'").returns("TEAC DV-28E-N 1.6A")
+      Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol inquiry da0 -D | /usr/bin/awk -F '<|>' '{ print $2 }'").returns("HP 73.4G MAU3073NC HPC2")
+      Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol identify ada0 | /usr/bin/awk -F 'device\ model\ *' '/device model/ { print $2 }'").returns("Corsair Force GT")
+      Facter::Util::Resolution.stubs(:exec).with("/sbin/atacontrol list | /usr/bin/awk -F '<|>' '/ad10/ { print $2 }'").returns("WDC WD1003FBYX-01Y7B0/01.01V01")
+
+      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo da0 | /usr/bin/awk '{ print $3 }'").returns("73407865856")
+      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo ada0 | /usr/bin/awk '{ print $3 }'").returns("120034123776")
+      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo ad10 | /usr/bin/awk '{ print $3 }'").returns("1000204886016")
+      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo mfi0 | /usr/bin/awk '{ print $3 }'").returns("1000000000000")
+    end
+
+    describe 'blockdevices fact' do
+      it 'should return a sorted list of block devices' do
+        Facter.fact(:blockdevices).value.should == 'ad10,ada0,cd0,da0,mfi0'
+      end
+    end
+
+    describe 'individual block device facts' do
+
+      before :each do
+        # We need to manually load this fact file since the fact name varies
+        # from the contained file.
+        Facter.collection.internal_loader.load(:blockdevices)
+      end
+
+      blockdev_tests = {
+        'cd0' => {
+          :size   => "0",
+          :model  => "DV-28E-N 1.6A",
+          :vendor => "TEAC",
+        },
+        'da0' => {
+          :model => "73.4G MAU3073NC HPC2",
+          :vendor => "HP",
+          :size => "73407865856",
+        },
+        'ada0' => {
+          :model => "Force GT",
+          :vendor => "Corsair",
+          :size => "120034123776",
+        },
+        'ad10' => {
+          :model => "WD1003FBYX-01Y7B0/01.01V01",
+          :vendor => "WDC",
+          :size => "1000204886016",
+        },
+        'mfi0' => {
+          :model => "Local Disk",
+          :vendor => "MFI",
+          :size => "1000000000000",
+        }
+      }
+
+      blockdev_tests.each_pair do |dev, tests|
+        tests.each_pair do |name, expected|
+          factname = "blockdevice_#{dev}_#{name}"
+
+          it "#{factname} should be #{expected}" do
+            Facter.fact(factname).value.should == expected
+          end
+        end
+      end
+    end
   end
 
   describe "on Linux" do
