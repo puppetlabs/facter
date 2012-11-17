@@ -81,7 +81,9 @@ module Facter::Util::IP
     when 'SunOS'
       output = %x{/usr/sbin/ifconfig -a}
     when 'HP-UX'
-      output = %x{/bin/netstat -in | sed -e 1d}
+      # see discussion at https://github.com/puppetlabs/facter/pull/232 and
+      # https://projects.puppetlabs.com/issues/11612.
+      output = %x{/bin/netstat -in | sed -e '1d; /none/d; s/*//g'}
     when 'windows'
       output = %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ip show interface|
       output += %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ipv6 show interface|
