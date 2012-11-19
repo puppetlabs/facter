@@ -5,6 +5,7 @@ require 'spec_helper'
 describe "OS Family fact" do
 
   {
+    'Archlinux'   => 'Archlinux',
     'SmartOS'     => 'Solaris',
     'OpenIndiana' => 'Solaris',
     'OmniOS'      => 'Solaris',
@@ -41,7 +42,6 @@ describe "OS Family fact" do
     'Mandriva',
     'Mandrake',
     'MeeGo',
-    'Archlinux',
     'VMWareESX',
     'Bluewhite64',
     'Slamd64',
