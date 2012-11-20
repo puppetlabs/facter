@@ -14,6 +14,7 @@ describe "ec2 facts" do
       Facter::Util::EC2.stubs(:has_euca_mac?).returns(false)
       Facter::Util::EC2.stubs(:has_openstack_mac?).returns(false)
       Facter::Util::EC2.stubs(:has_ec2_arp?).returns(true)
+      Facter::Util::EC2.stubs(:has_flag_file?).returns(true)
 
       # Assume we can connect
       Facter::Util::EC2.stubs(:can_connect?).returns(true)
@@ -86,6 +87,7 @@ describe "ec2 facts" do
       Facter::Util::EC2.stubs(:has_euca_mac?).returns(true)
       Facter::Util::EC2.stubs(:has_openstack_mac?).returns(false)
       Facter::Util::EC2.stubs(:has_ec2_arp?).returns(false)
+      Facter::Util::EC2.stubs(:has_flag_file?).returns(false)
 
       # Assume we can connect
       Facter::Util::EC2.stubs(:can_connect?).returns(true)
@@ -114,6 +116,7 @@ describe "ec2 facts" do
       Facter::Util::EC2.stubs(:has_openstack_mac?).returns(true)
       Facter::Util::EC2.stubs(:has_euca_mac?).returns(false)
       Facter::Util::EC2.stubs(:has_ec2_arp?).returns(false)
+      Facter::Util::EC2.stubs(:has_flag_file?).returns(false)
 
       # Assume we can connect
       Facter::Util::EC2.stubs(:can_connect?).returns(true)
@@ -165,6 +168,7 @@ describe "ec2 facts" do
       Facter::Util::EC2.stubs(:has_euca_mac?).returns(true)
       Facter::Util::EC2.stubs(:has_ec2_arp?).never
       Facter::Util::EC2.expects(:can_connect?).at_least_once.returns(false)
+      Facter::Util::EC2.stubs(:has_flag_file).returns(false)
 
       # The API should never be called at this point
       Object.any_instance.expects(:open).

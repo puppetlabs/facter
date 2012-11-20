@@ -31,6 +31,15 @@ module Facter::Util::EC2
       !!(Facter.value(:macaddress) =~ %r{^(02|[fF][aA]):16:3[eE]})
     end
 
+    # Test to see if the EC2 flag file is present
+    def has_flag_file?
+      if Facter::Util::Config.is_windows?
+        FileTest.exist?("#{Facter::Util::Config.windows_data_dir}\\facter_ec2")
+      else
+        FileTest.exists?("/etc/facter_ec2")
+      end
+    end
+
     # Test if the host has an arp entry in its cache that matches the EC2 arp,
     # which is normally +fe:ff:ff:ff:ff:ff+.
     def has_ec2_arp?
