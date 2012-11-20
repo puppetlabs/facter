@@ -17,6 +17,8 @@
 # Caveats:
 #
 
+require 'facter/util/file_read'
+
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{CentOS Fedora oel ovs OracleLinux RedHat MeeGo Scientific SLC Ascendos CloudLinux PSBM}
   setcode do
@@ -55,9 +57,12 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Ubuntu}
   setcode do
-    release = Facter::Util::Resolution.exec('cat /etc/issue')
-    if release =~ /Ubuntu (\d+.\d+)/
-      $1
+    if release = Facter::Util::FileRead.read('/etc/issue')
+      if match = release.match(/Ubuntu ((\d+.\d+)(\.(\d+))?)/)
+        # Return only the major and minor version numbers.  This behavior must
+        # be preserved for compatibility reasons.
+        match[2]
+      end
     end
   end
 end
