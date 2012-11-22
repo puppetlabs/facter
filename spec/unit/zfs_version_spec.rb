@@ -14,52 +14,38 @@ describe "zfs_version fact" do
   # Solaris 10 8/11 (u10) 29  5
   # Solaris 11 11/11 (ga) 33  5
 
-  describe "for Solaris" do
-    before :each do
-      Facter.fact(:kernel).stubs(:value).returns("SunOS")
-    end
-
-    it "should return correct version on Solaris 10" do
-      Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('solaris_10'))
-      Facter.fact(:zfs_version).value.should == "3"
-    end
-
-    it "should return correct version on Solaris 11" do
-      Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('solaris_11'))
-      Facter.fact(:zfs_version).value.should == "5"
-    end
-
-    it "should return nil if zfs command is not available" do
-      Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(nil)
-      Facter.fact(:zfs_version).value.should == nil
-    end
+  it "should return correct version on Solaris 10" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('solaris_10'))
+    Facter.fact(:zfs_version).value.should == "3"
   end
 
-  ['FreeBSD', 'GNU/kFreeBSD'].each do |kernel|
-    describe "for #{kernel}" do
-      before :each do
-        Facter.fact(:kernel).stubs(:value).returns("#{kernel}")
-      end
+  it "should return correct version on Solaris 11" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('solaris_11'))
+    Facter.fact(:zfs_version).value.should == "5"
+  end
 
-      it "should return correct version on #{kernel} 8.2" do
-        Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('freebsd_8.2'))
-        Facter.fact(:zfs_version).value.should == "4"
-      end
+  it "should return correct version on FreeBSD 8.2" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('freebsd_8.2'))
+    Facter.fact(:zfs_version).value.should == "4"
+  end
 
-      it "should return correct version on #{kernel} 9.0" do
-        Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('freebsd_9.0'))
-        Facter.fact(:zfs_version).value.should == "5"
-      end
+  it "should return correct version on FreeBSD 9.0" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('freebsd_9.0'))
+    Facter.fact(:zfs_version).value.should == "5"
+  end
 
-      it "should return nil if zfs command is not available" do
-        Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(nil)
-        Facter.fact(:zfs_version).value.should == nil
-      end
-    end
-  end 
+  it "should return correct version on Linux with ZFS-fuse" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('linux-fuse_0.6.9'))
+    Facter.fact(:zfs_version).value.should == "4"
+  end
 
-  it "should not run on Linux" do
-    Facter.fact(:kernel).stubs(:value).returns("Linux")
+  it "should return nil if zfs command is not available" do
+    Facter::Util::Resolution.stubs(:which).with("zfs").returns(nil)
+    Facter.fact(:zfs_version).value.should == nil
+  end
+
+  it "should return nil if zfs fails to run" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(nil)
     Facter.fact(:zfs_version).value.should == nil
   end
 end
