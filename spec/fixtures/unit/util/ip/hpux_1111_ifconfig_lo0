@@ -1,0 +1,2 @@
+lo0: flags=849<UP,LOOPBACK,RUNNING,MULTICAST>
+        inet 127.0.0.1 netmask ff000000
