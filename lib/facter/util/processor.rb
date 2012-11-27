@@ -217,7 +217,7 @@ module Processor
     if File.exists?(cpuinfo)
       model = Facter.value(:architecture)
       case model
-      when "x86_64", "amd64", "i386", /parisc/, "hppa", "ia64"
+      when "x86_64", "amd64", "i386", "x86", /parisc/, "hppa", "ia64"
         File.readlines(cpuinfo).each do |l|
           if l =~ /processor\s+:\s+(\d+)/
             processor_num = $1.to_i
