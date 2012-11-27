@@ -1,0 +1,41 @@
+processor : 0
+vendor_id : GenuineIntel
+cpu family  : 6
+model   : 5
+model name  : Pentium II (Deschutes)
+stepping  : 1
+cpu MHz   : 333.379
+cache size  : 512 KB
+fdiv_bug  : no
+hlt_bug   : no
+f00f_bug  : no
+coma_bug  : no
+fpu   : yes
+fpu_exception : yes
+cpuid level : 2
+wp    : yes
+flags   : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 mmx fxsr
+bogomips  : 667.53
+clflush size  : 32
+power management:
+
+processor : 1
+vendor_id : GenuineIntel
+cpu family  : 6
+model   : 5
+model name  : Pentium II (Deschutes)
+stepping  : 1
+cpu MHz   : 333.379
+cache size  : 512 KB
+fdiv_bug  : no
+hlt_bug   : no
+f00f_bug  : no
+coma_bug  : no
+fpu   : yes
+fpu_exception : yes
+cpuid level : 2
+wp    : yes
+flags   : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 mmx fxsr
+bogomips  : 666.44
+clflush size  : 32
+power management:
