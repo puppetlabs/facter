@@ -50,6 +50,22 @@ describe Facter::Util::Processor do
     Facter::Util::Processor.enum_cpuinfo[3].should == "Quad-Core AMD Opteron(tm) Processor 2374 HE"
   end
 
+  describe "with architecture x86" do
+    before do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter.fact(:architecture).stubs(:value).returns("x86")
+      File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
+      File.stubs(:readlines).with("/proc/cpuinfo").returns(my_fixture_read("x86-pentium2").lines)
+    end
+
+    subject { Facter::Util::Processor.enum_cpuinfo }
+
+    it "should have the correct processor titles" do
+      subject[0].should == "Pentium II (Deschutes)"
+      subject[1].should == "Pentium II (Deschutes)"
+    end
+  end
+
   it "should get the processor description on Solaris (x86)" do
     Facter.fact(:kernel).stubs(:value).returns("SunOS")
     Facter.fact(:architecture).stubs(:value).returns("i86pc")
