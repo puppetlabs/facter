@@ -74,14 +74,6 @@ def glob(list)
   g
 end
 
-# Set these values to what you want installed.
-bins  = glob(%w{bin/*})
-rdoc  = glob(%w{bin/* lib/**/*.rb README README-library TODO }).reject { |e| e=~ /\.(bat|cmd)$/ }
-ri  = glob(%w(bin/*.rb lib/**/*.rb)).reject { |e| e=~ /\.(bat|cmd)$/ }
-man   = glob(%w{man/man8/*})
-libs  = glob(%w{lib/**/*.rb lib/**/*.py lib/**/LICENSE})
-tests = glob(%w{tests/**/*.rb})
-
 def do_bins(bins, target, strip = 's?bin/')
   bins.each do |bf|
     obf = bf.gsub(/#{strip}/, '')
@@ -409,13 +401,24 @@ EOS
   tmp_file.unlink
 end
 
-check_prereqs
-prepare_installation
+# Change directory into the facter root so we don't get the wrong files for install.
+FileUtils.cd File.dirname(__FILE__) do
+  # Set these values to what you want installed.
+  bins  = glob(%w{bin/*})
+  rdoc  = glob(%w{bin/* lib/**/*.rb README README-library TODO }).reject { |e| e=~ /\.(bat|cmd)$/ }
+  ri  = glob(%w(bin/*.rb lib/**/*.rb)).reject { |e| e=~ /\.(bat|cmd)$/ }
+  man   = glob(%w{man/man8/*})
+  libs  = glob(%w{lib/**/*.rb lib/**/*.py lib/**/LICENSE})
+  tests = glob(%w{tests/**/*.rb})
 
-run_tests(tests) if InstallOptions.tests
-#build_rdoc(rdoc) if InstallOptions.rdoc
-#build_ri(ri) if InstallOptions.ri
-#build_man(bins) if InstallOptions.man
-do_bins(bins, InstallOptions.bin_dir)
-do_libs(libs)
-do_man(man)
+  check_prereqs
+  prepare_installation
+
+  run_tests(tests) if InstallOptions.tests
+  #build_rdoc(rdoc) if InstallOptions.rdoc
+  #build_ri(ri) if InstallOptions.ri
+  #build_man(bins) if InstallOptions.man
+  do_bins(bins, InstallOptions.bin_dir)
+  do_libs(libs)
+  do_man(man)
+end
