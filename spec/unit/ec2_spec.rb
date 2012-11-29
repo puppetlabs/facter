@@ -170,5 +170,11 @@ describe "ec2 facts" do
 
       Facter.fact(:ec2_userdata).should == nil
     end
+
+    it "should rescue the exception" do
+      Facter::Util::EC2.expects(:open).with("#{api_prefix}:80/").raises(Timeout::Error)
+
+      Facter::Util::EC2.should_not be_can_connect
+    end
   end
 end
