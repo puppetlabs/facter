@@ -14,20 +14,17 @@
 #
 #   bin/  # executable files -- "commands"
 #   lib/  # the source of the library
-#   tests/  # unit tests
 #
 # The default behaviour:
-# 1) Run all unit test files (ending in .rb) found in all directories under
-#  tests/.
-# 2) Build Rdoc documentation from all files in bin/ (excluding .bat and .cmd),
+# 1) Build Rdoc documentation from all files in bin/ (excluding .bat and .cmd),
 #  all .rb files in lib/, ./README, ./ChangeLog, and ./Install.
-# 3) Build ri documentation from all files in bin/ (excluding .bat and .cmd),
+# 2) Build ri documentation from all files in bin/ (excluding .bat and .cmd),
 #  and all .rb files in lib/. This is disabled by default on Win32.
-# 4) Install commands from bin/ into the Ruby bin directory. On Windows, if a
+# 3) Install commands from bin/ into the Ruby bin directory. On Windows, if a
 #  if a corresponding batch file (.bat or .cmd) exists in the bin directory,
 #  it will be copied over as well. Otherwise, a batch file (always .bat) will
 #  be created to run the specified command.
-# 5) Install all library files ending in .rb from lib/ into Ruby's
+# 4) Install all library files ending in .rb from lib/ into Ruby's
 #  site_lib/version directory.
 #
 #++
@@ -73,14 +70,6 @@ def glob(list)
   g.compact!
   g
 end
-
-# Set these values to what you want installed.
-bins  = glob(%w{bin/*})
-rdoc  = glob(%w{bin/* lib/**/*.rb README README-library TODO }).reject { |e| e=~ /\.(bat|cmd)$/ }
-ri  = glob(%w(bin/*.rb lib/**/*.rb)).reject { |e| e=~ /\.(bat|cmd)$/ }
-man   = glob(%w{man/man8/*})
-libs  = glob(%w{lib/**/*.rb lib/**/*.py lib/**/LICENSE})
-tests = glob(%w{tests/**/*.rb})
 
 def do_bins(bins, target, strip = 's?bin/')
   bins.each do |bf|
@@ -159,8 +148,6 @@ def prepare_installation
     InstallOptions.man = false
   end
 
-  InstallOptions.tests = true
-
   ARGV.options do |opts|
     opts.banner = "Usage: #{File.basename($0)} [options]"
     opts.separator ""
@@ -173,8 +160,9 @@ def prepare_installation
     opts.on('--[no-]man', 'Presents the creation of man pages.', 'Default on.') do |onman|
     InstallOptions.man = onman
     end
-    opts.on('--[no-]tests', 'Prevents the execution of unit tests.', 'Default on.') do |ontest|
+    opts.on('--[no-]tests', 'Prevents the execution of unit tests.', 'Default off.') do |ontest|
       InstallOptions.tests = ontest
+      warn "The tests flag has never worked in Facter, is deprecated as of Nov 29, 2012, and will be removed in a future release of Facter."
     end
     opts.on('--destdir[=OPTIONAL]', 'Installation prefix for all targets', 'Default essentially /') do |destdir|
       InstallOptions.destdir = destdir
@@ -194,12 +182,10 @@ def prepare_installation
     opts.on('--quick', 'Performs a quick installation. Only the', 'installation is done.') do |quick|
       InstallOptions.rdoc   = false
       InstallOptions.ri   = false
-      InstallOptions.tests  = false
     end
     opts.on('--full', 'Performs a full installation. All', 'optional installation steps are run.') do |full|
       InstallOptions.rdoc   = true
       InstallOptions.ri   = true
-      InstallOptions.tests  = true
     end
     opts.separator("")
     opts.on_tail('--help', "Shows this help text.") do
@@ -332,27 +318,6 @@ def build_man(bins)
   end
 end
 
-def run_tests(test_list)
-  begin
-    require 'test/unit/ui/console/testrunner'
-    $:.unshift "lib"
-    test_list.each do |test|
-      next if File.directory?(test)
-      require test
-    end
-
-    tests = []
-    ObjectSpace.each_object { |o| tests << o if o.kind_of?(Class) }
-    tests.delete_if { |o| !o.ancestors.include?(Test::Unit::TestCase) }
-    tests.delete_if { |o| o == Test::Unit::TestCase }
-
-    tests.each { |test| Test::Unit::UI::Console::TestRunner.run(test) }
-    $:.shift
-  rescue LoadError
-    puts "Missing testrunner library; skipping tests"
-  end
-end
-
 ##
 # Install file(s) from ./bin to RbConfig::CONFIG['bindir']. Patch it on the way
 # to insert a #! line; on a Unix install, the command is named as expected
@@ -409,13 +374,22 @@ EOS
   tmp_file.unlink
 end
 
-check_prereqs
-prepare_installation
+# Change directory into the facter root so we don't get the wrong files for install.
+FileUtils.cd File.dirname(__FILE__) do
+  # Set these values to what you want installed.
+  bins  = glob(%w{bin/*})
+  rdoc  = glob(%w{bin/* lib/**/*.rb README* }).reject { |e| e=~ /\.(bat|cmd)$/ }
+  ri  = glob(%w(bin/*.rb lib/**/*.rb)).reject { |e| e=~ /\.(bat|cmd)$/ }
+  man   = glob(%w{man/man8/*})
+  libs  = glob(%w{lib/**/*.rb lib/**/*.py lib/**/LICENSE})
 
-run_tests(tests) if InstallOptions.tests
-#build_rdoc(rdoc) if InstallOptions.rdoc
-#build_ri(ri) if InstallOptions.ri
-#build_man(bins) if InstallOptions.man
-do_bins(bins, InstallOptions.bin_dir)
-do_libs(libs)
-do_man(man)
+  check_prereqs
+  prepare_installation
+
+  #build_rdoc(rdoc) if InstallOptions.rdoc
+  #build_ri(ri) if InstallOptions.ri
+  #build_man(bins) if InstallOptions.man
+  do_bins(bins, InstallOptions.bin_dir)
+  do_libs(libs)
+  do_man(man)
+end
