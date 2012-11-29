@@ -148,8 +148,6 @@ def prepare_installation
     InstallOptions.man = false
   end
 
-  InstallOptions.tests = true
-
   ARGV.options do |opts|
     opts.banner = "Usage: #{File.basename($0)} [options]"
     opts.separator ""
@@ -162,8 +160,9 @@ def prepare_installation
     opts.on('--[no-]man', 'Presents the creation of man pages.', 'Default on.') do |onman|
     InstallOptions.man = onman
     end
-    opts.on('--[no-]tests', 'Prevents the execution of unit tests.', 'Default on.') do |ontest|
+    opts.on('--[no-]tests', 'Prevents the execution of unit tests.', 'Default off.') do |ontest|
       InstallOptions.tests = ontest
+      warn "The tests flag has never worked in Facter, is deprecated as of Nov 29, 2012, and will be removed in a future release of Facter."
     end
     opts.on('--destdir[=OPTIONAL]', 'Installation prefix for all targets', 'Default essentially /') do |destdir|
       InstallOptions.destdir = destdir
@@ -183,12 +182,10 @@ def prepare_installation
     opts.on('--quick', 'Performs a quick installation. Only the', 'installation is done.') do |quick|
       InstallOptions.rdoc   = false
       InstallOptions.ri   = false
-      InstallOptions.tests  = false
     end
     opts.on('--full', 'Performs a full installation. All', 'optional installation steps are run.') do |full|
       InstallOptions.rdoc   = true
       InstallOptions.ri   = true
-      InstallOptions.tests  = true
     end
     opts.separator("")
     opts.on_tail('--help', "Shows this help text.") do
