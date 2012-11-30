@@ -14,6 +14,10 @@ describe "zpool_version fact" do
   # Solaris 10 8/11 (u10) 29  5
   # Solaris 11 11/11 (ga) 33  5
 
+  before :each do
+    Facter::Util::Resolution.stubs(:which).with("zpool").returns("/usr/bin/zpool")
+  end
+
   it "should return correct version on Solaris 10" do
     Facter::Util::Resolution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('solaris_10'))
     Facter.fact(:zpool_version).value.should == "22"
@@ -41,6 +45,7 @@ describe "zpool_version fact" do
 
   it "should return nil if zpool is not available" do
     Facter::Util::Resolution.stubs(:which).with("zpool").returns(nil)
+    Facter::Util::Resolution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('linux-fuse_0.6.9'))
     Facter.fact(:zpool_version).value.should == nil
   end
 
