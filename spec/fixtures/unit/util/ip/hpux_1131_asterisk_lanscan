@@ -1,0 +1,5 @@
+Hardware Station        Crd  Hdw   Net-Interface    NM   MAC       HP-DLPI DLPI
+Path     Address        In#  State NamePPA          ID   Type      Support Mjr#
+0/0/0/0  0x00305D0626B2 0    UP    lan0 snap0       1    ETHER       Yes   119
+0/4/2/0/6/0 0x0010797BBE46 1    UP    lan1 snap1       2    ETHER       Yes   119
+0/4/2/0/7/0 0x0010797BBE47 2    DOWN  lan2 snap2       3    ETHER       Yes   119

@@ -81,12 +81,26 @@ module Facter::Util::IP
     when 'SunOS'
       output = %x{/usr/sbin/ifconfig -a}
     when 'HP-UX'
-      output = %x{/bin/netstat -in | sed -e 1d}
+      # (#17487)[https://projects.puppetlabs.com/issues/17487]
+      # Handle NIC bonding where asterisks and virtual NICs are printed.
+      if output = hpux_netstat_in
+        output.gsub!(/\*/, "")                  # delete asterisks.
+        output.gsub!(/^[^\n]*none[^\n]*\n/, "") # delete lines with 'none' instead of IPs.
+        output.sub!(/^[^\n]*\n/, "")            # delete the header line.
+        output
+      end
     when 'windows'
       output = %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ip show interface|
       output += %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ipv6 show interface|
     end
     output
+  end
+
+  ##
+  # hpux_netstat_in is a delegate method that allows us to stub netstat -in
+  # without stubbing exec.
+  def self.hpux_netstat_in
+    Facter::Util::Resolution.exec("/bin/netstat -in")
   end
 
   def self.get_infiniband_macaddress(interface)
@@ -123,12 +137,20 @@ module Facter::Util::IP
       output = %x{/usr/sbin/ifconfig #{interface}}
     when 'HP-UX'
        mac = ""
-       ifc = %x{/usr/sbin/ifconfig #{interface}}
-       %x{/usr/sbin/lanscan}.scan(/(\dx\S+).*UP\s+(\w+\d+)/).each {|i| mac = i[0] if i.include?(interface) }
+       ifc = hpux_ifconfig_interface(interface)
+       hpux_lanscan.scan(/(\dx\S+).*UP\s+(\w+\d+)/).each {|i| mac = i[0] if i.include?(interface) }
        mac = mac.sub(/0x(\S+)/,'\1').scan(/../).join(":")
        output = ifc + "\n" + mac
     end
     output
+  end
+
+  def self.hpux_ifconfig_interface(interface)
+    Facter::Util::Resolution.exec("/usr/sbin/ifconfig #{interface}")
+  end
+
+  def self.hpux_lanscan
+    Facter::Util::Resolution.exec("/usr/sbin/lanscan")
   end
 
   def self.get_output_for_interface_and_label(interface, label)
