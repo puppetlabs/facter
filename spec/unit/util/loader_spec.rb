@@ -31,8 +31,6 @@ describe Facter::Util::Loader do
   describe "#valid_seach_path?" do
     before :each do
       @loader = Facter::Util::Loader.new
-      @settings = mock 'settings'
-      @settings.stubs(:value).returns "/eh"
     end
 
     # Used to have test for " " as a directory since that should
@@ -94,8 +92,6 @@ describe Facter::Util::Loader do
   describe "when determining the search path" do
     before do
       @loader = Facter::Util::Loader.new
-      @settings = mock 'settings'
-      @settings.stubs(:value).returns "/eh"
     end
 
     it "should include the facter subdirectory of all paths in ruby LOAD_PATH" do
