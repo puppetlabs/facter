@@ -5,9 +5,10 @@ require 'facter/util/directory_loader'
 # Load facts on demand.
 class Facter::Util::Loader
 
-  def initialize
+  def initialize(environment_vars = ENV)
     @loaded = []
     @valid_path = {}
+    @environment_vars = environment_vars
   end
 
   # Load all resolutions for a single fact.
@@ -55,8 +56,8 @@ class Facter::Util::Loader
   def search_path
     result = []
     result += $LOAD_PATH.collect { |d| File.join(d, "facter") }
-    if ENV.include?("FACTERLIB")
-      result += ENV["FACTERLIB"].split(File::PATH_SEPARATOR)
+    if @environment_vars.include?("FACTERLIB")
+      result += @environment_vars["FACTERLIB"].split(File::PATH_SEPARATOR)
     end
 
     # This allows others to register additional paths we should search.
@@ -105,7 +106,7 @@ class Facter::Util::Loader
   # all will be loaded.
   def load_env(fact = nil)
     # Load from the environment, if possible
-    ENV.each do |name, value|
+    @environment_vars.each do |name, value|
       # Skip anything that doesn't match our regex.
       next unless name =~ /^facter_?(\w+)$/i
       env_name = $1
