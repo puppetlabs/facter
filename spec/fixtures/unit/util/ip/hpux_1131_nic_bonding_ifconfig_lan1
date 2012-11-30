@@ -1,0 +1,2 @@
+lan1: flags=1843<UP,BROADCAST,RUNNING,MULTICAST,CKO>
+        inet 192.168.30.32 netmask ffffff00 broadcast 192.168.30.255
