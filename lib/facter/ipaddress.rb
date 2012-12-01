@@ -29,7 +29,7 @@ Facter.add(:ipaddress) do
     output = %x{/sbin/ifconfig 2>/dev/null}
 
     output.split(/^\S/).each { |str|
-      if str =~ /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+      if str =~ /inet (?:addr:)?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
         tmp = $1
         unless tmp =~ /^127\./
           ip = tmp
