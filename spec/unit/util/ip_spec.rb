@@ -338,14 +338,13 @@ describe Facter::Util::IP do
       expected_netmask = array_of_expected_netmasks[i]
       expected_mac = array_of_expected_macs[i]
 
-      # (#17808) These tests fail because MTU facts haven't been implemented for HP-UX.
-      #it "should return MTU #{expected_mtu} on #{nic} for #{description} example" do
-      #  Facter.stubs(:value).with(:kernel).returns("HP-UX")
-      #  Facter::Util::IP.stubs(:hpux_netstat_in).returns(netstat_in_fixture)
-      #  Facter::Util::IP.stubs(:hpux_lanscan).returns(lanscan_fixture)
-      #  Facter::Util::IP.stubs(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
-      #  Facter::Util::IP.get_interface_value(nic, "mtu").should == expected_mtu
-      #end
+      it "should return MTU #{expected_mtu} on #{nic} for #{description} example" do
+        Facter.stubs(:value).with(:kernel).returns("HP-UX")
+        Facter::Util::IP.stubs(:hpux_netstat_in).returns(netstat_in_fixture)
+        Facter::Util::IP.stubs(:hpux_lanscan).returns(lanscan_fixture)
+        Facter::Util::IP.stubs(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
+        Facter::Util::IP.get_interface_value(nic, "mtu").should == expected_mtu
+      end
 
       it "should return IP #{expected_ip} on #{nic} for #{description} example" do
         Facter.stubs(:value).with(:kernel).returns("HP-UX")
