@@ -53,4 +53,24 @@ describe "zfs_version fact" do
     Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(nil)
     Facter.fact(:zfs_version).value.should == nil
   end
+
+  it "handles the zfs command becoming available at a later point in time" do
+    # Simulate Puppet configuring the zfs tools from a persistent daemon by
+    # simulating three sequential responses to which('zfs')
+    # (NOTE, each resolution causes which to execute twice.
+    Facter::Util::Resolution.stubs(:which).
+      with("zfs").
+      returns(nil,nil,nil,nil,"/usr/bin/zfs")
+    Facter::Util::Resolution.stubs(:exec).
+      with("zfs upgrade -v").
+      returns(my_fixture_read('linux-fuse_0.6.9'))
+
+    fact = Facter.fact(:zfs_version)
+
+    # zfs is not present the first two times the fact is resolved.
+    fact.value.should_not == "4"
+    fact.value.should_not == "4"
+    # zfs was configured between the second and third resolutions.
+    fact.value.should == "4"
+  end
 end
