@@ -3,8 +3,7 @@ Facter
 
 This package is largely meant to be a library for collecting facts about your
 system.  These facts are mostly strings (i.e., not numbers), and are things
-like the output of `uname`, public ssh and cfengine keys, the number of
-processors, etc.
+like the output of `uname`, public ssh keys, the number of processors, etc.
 
 See `bin/facter` for an example of the interface.
 
