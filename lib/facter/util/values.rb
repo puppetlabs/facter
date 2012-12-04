@@ -1,6 +1,6 @@
-# A util module for facter containing helper methods
 module Facter
   module Util
+    # A util module for facter containing helper methods
     module Values
       module_function
 
