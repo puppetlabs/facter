@@ -1,12 +1,28 @@
 require 'facter'
 require 'facter/util/resolution'
 
+# This class represents a fact. Each fact has a name and multiple
+# {Facter::Util::Resolution resolutions}.
+#
+# Create facts using {Facter.add}
+#
+# @api public
 class Facter::Util::Fact
-  TIMEOUT = 5
+  # The name of the fact
+  # @return [String]
+  attr_accessor :name
 
-  attr_accessor :name, :ldapname
+  # @return [String]
+  # @deprecated
+  attr_accessor :ldapname
 
-  # Create a new fact, with no resolution mechanisms.
+  # Creates a new fact, with no resolution mechanisms. See {Facter.add}
+  # for the public API for creating facts.
+  # @param name [String] the fact name
+  # @param options [Hash] optional parameters
+  # @option options [String] :ldapname set the ldapname property on the fact
+  #
+  # @api private
   def initialize(name, options = {})
     @name = name.to_s.downcase.intern
 
@@ -28,8 +44,13 @@ class Facter::Util::Fact
     @value = nil
   end
 
-  # Add a new resolution mechanism.  This requires a block, which will then
-  # be evaluated in the context of the new mechanism.
+  # Adds a new {Facter::Util::Resolution resolution}.  This requires a
+  # block, which will then be evaluated in the context of the new
+  # resolution.
+  #
+  # @return [void]
+  #
+  # @api private
   def add(value = nil, &block)
     begin
       resolve = Facter::Util::Resolution.new(@name)
@@ -44,13 +65,20 @@ class Facter::Util::Fact
     end
   end
 
-  # Flush any cached values.
+  # Flushs any cached values.
+  #
+  # @return [void]
+  #
+  # @api private
   def flush
     @value = nil
   end
 
-  # Return the value for a given fact.  Searches through all of the mechanisms
-  # and returns either the first value or nil.
+  # Returns the value for this fact. This searches all resolutions by
+  # suitability and weight (see {Facter::Util::Resolution}). If no
+  # suitable resolution is found, it returns nil.
+  #
+  # @api public
   def value
     return @value if @value
 

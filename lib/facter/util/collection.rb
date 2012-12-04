@@ -4,6 +4,8 @@ require 'facter/util/loader'
 
 # Manage which facts exist and how we access them.  Largely just a wrapper
 # around a hash of facts.
+#
+# @api private
 class Facter::Util::Collection
 
   def initialize(internal_loader, external_loader)
@@ -12,8 +14,7 @@ class Facter::Util::Collection
     @external_loader = external_loader
   end
 
-  # Return a fact object by name.  If you use this, you still have to call
-  # 'value' on it to retrieve the actual value.
+  # Return a fact object by name.
   def [](name)
     value(name)
   end

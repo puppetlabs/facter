@@ -1,22 +1,37 @@
-# An actual fact resolution mechanism.  These are largely just chunks of
-# code, with optional confinements restricting the mechanisms to only working on
-# specific systems.  Note that the confinements are always ANDed, so any
-# confinements specified must all be true for the resolution to be
-# suitable.
 require 'facter/util/confine'
 require 'facter/util/config'
 
 require 'timeout'
 
+# This represents a fact resolution. A resolution is a concrete
+# implementation of a fact. A single fact can have many resolutions and
+# the correct resolution will be chosen at runtime. Each time
+# {Facter.add} is called, a new resolution is created and added to the
+# set of resolutions for the fact named in the call.  Each resolution
+# has a {#has_weight weight}, which defines its priority over other
+# resolutions, and a set of {#confine _confinements_}, which defines the
+# conditions under which it will be chosen. All confinements must be
+# satisfied for a fact to be considered _suitable_.
+#
+# @api public
 class Facter::Util::Resolution
-  attr_accessor :interpreter, :code, :name, :timeout
+  # The timeout for evaluating this resolution
+  # @return [Integer]
+  # @api public
+  attr_accessor :timeout
+
+  # @api private
+  attr_accessor :interpreter, :code, :name
   attr_writer :value, :weight
 
   INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
 
   # Returns the locations to be searched when looking for a binary. This
   # is currently determined by the +PATH+ environment variable plus
-  # <tt>/sbin</tt> and <tt>/usr/sbin</tt> when run on unix
+  # `/sbin` and `/usr/sbin` when run on unix
+  #
+  # @return [Array<String>] the paths to be searched for binaries
+  # @api private
   def self.search_paths
     if Facter::Util::Config.is_windows?
       ENV['PATH'].split(File::PATH_SEPARATOR)
@@ -28,12 +43,18 @@ class Facter::Util::Resolution
     end
   end
 
-  # Determine the full path to a binary. If the supplied filename does not
+  # Determines the full path to a binary. If the supplied filename does not
   # already describe an absolute path then different locations (determined
-  # by <tt>self.search_paths</tt>) will be searched for a match.
+  # by {search_paths}) will be searched for a match.
   #
   # Returns nil if no matching executable can be found otherwise returns
   # the expanded pathname.
+  #
+  # @param bin [String] the executable to locate
+  # @return [String,nil] the full path to the executable or nil if not
+  #   found
+  #
+  # @api public
   def self.which(bin)
     if absolute_path?(bin)
       return bin if File.executable?(bin)
@@ -70,6 +91,9 @@ class Facter::Util::Resolution
 
   # Determine in a platform-specific way whether a path is absolute. This
   # defaults to the local platform if none is specified.
+  #
+  # @param path [String] the path to check
+  # @param platform [:posix,:windows,nil] the platform logic to use
   def self.absolute_path?(path, platform=nil)
     # Escape once for the string literal, and once for the regex.
     slash = '[\\\\/]'
@@ -83,13 +107,14 @@ class Facter::Util::Resolution
     !! (path =~ regexes[platform])
   end
 
-  # Expand the executable of a commandline to an absolute path. The executable
-  # is the first word of the commandline. If the executable contains spaces,
-  # it has be but in double quotes to be properly recognized.
+  # Given a command line, this returns the command line with the
+  # executable written as an absolute path. If the executable contains
+  # spaces, it has be but in double quotes to be properly recognized.
   #
-  # Returns the commandline with the expanded binary or nil if the binary
-  # can't be found. If the path to the binary contains quotes, the whole binary
-  # is put in quotes.
+  # @param command [String] the command line
+  #
+  # @return [String, nil] the command line with the executable's path
+  # expanded, or nil if the executable cannot be found.
   def self.expand_command(command)
     if match = /^"(.+?)"(?:\s+(.*))?/.match(command)
       exe, arguments = match.captures
@@ -109,13 +134,18 @@ class Facter::Util::Resolution
     end
   end
 
+  # Overrides environment variables within a block of code.  The
+  # specified values will be set for the duration of the block, after
+  # which the original values (if any) will be restored.
   #
-  # Call this method with a block of code for which you would like to temporarily modify
-  # one or more environment variables; the specified values will be set for the duration
-  # of your block, after which the original values (if any) will be restored.
+  # @overload with_env(values, { ... })
   #
-  # [values] a Hash containing the key/value pairs of any environment variables that you
-  # would like to temporarily override
+  # @param values [Hash<String=>String>] A hash of the environment
+  #   variables to override
+  #
+  # @return [void]
+  #
+  # @api public
   def self.with_env(values)
     old = {}
     values.each do |var, value|
@@ -143,18 +173,32 @@ class Facter::Util::Resolution
     rv
   end
 
-  # Execute a program and return the output of that program.
+  # Executes a program and return the output of that program.
   #
   # Returns nil if the program can't be found, or if there is a problem
   # executing the code.
   #
+  # @param code [String] the program to run
+  # @return [String, nil] the output of the program or nil
+  #
+  # @api public
+  #
+  # @note Since Facter 1.5.8 this strips trailing newlines from the
+  #   returned value. If a fact will be used by versions of Facter older
+  #   than 1.5.8 then you should call chomp the returned string.
+  #
+  # @overload exec(code)
+  # @overload exec(code, interpreter = nil)
+  #   @param [String] interpreter unused, only exists for backwards
+  #     compatibility
+  #   @deprecated
   def self.exec(code, interpreter = nil)
     Facter.warnonce "The interpreter parameter to 'exec' is deprecated and will be removed in a future version." if interpreter
 
     ## Set LANG to force i18n to C for the duration of this exec; this ensures that any code that parses the
     ## output of the command can expect it to be in a consistent / predictable format / locale
     with_env "LANG" => "C" do
-      
+
       if expanded_code = expand_command(code)
         # if we can find the binary, we'll run the command with the expanded path to the binary
         code = expanded_code
@@ -164,7 +208,7 @@ class Facter::Util::Resolution
         return nil unless Facter::Util::Config.is_windows?
         return nil if absolute_path?(code)
       end
-      
+
       out = nil
 
       begin
@@ -177,7 +221,7 @@ class Facter::Util::Resolution
         $stderr.puts detail
         return nil
       end
-      
+
       if out == ""
         return nil
       else
@@ -186,18 +230,56 @@ class Facter::Util::Resolution
     end
   end
 
-  # Add a new confine to the resolution mechanism.
+  # Sets the conditions for this resolution to be used. This takes a
+  # hash of fact names and values. Every fact must match the values
+  # given for that fact, otherwise this resolution will not be
+  # considered suitable. The values given for a fact can be an array, in
+  # which case the value of the fact must be in the array for it to
+  # match.
+  #
+  # @param confines [Hash{String => Object}] a hash of facts and the
+  #   values they should have in order for this resolution to be
+  #   used
+  #
+  # @example Confining to Linux
+  #     Facter.add(:powerstates) do
+  #       # This resolution only makes sense on linux systems
+  #       confine :kernel => "Linux"
+  #       setcode do
+  #         Facter::Util::Resolution.exec('cat /sys/power/states')
+  #       end
+  #     end
+  #
+  # @return [void]
+  #
+  # @api public
   def confine(confines)
     confines.each do |fact, values|
       @confines.push Facter::Util::Confine.new(fact, *values)
     end
   end
 
+  # Sets the weight of this resolution. If multiple suitable resolutions
+  # are found, the one with the highest weight will be used.  If weight
+  # is not given, the number of confines set on a resolution will be
+  # used as its weight (so that the most specific resolution is used).
+  #
+  # @param weight [Integer] the weight of this resolution
+  #
+  # @return [void]
+  #
+  # @api public
   def has_weight(weight)
     @weight = weight
   end
 
   # Create a new resolution mechanism.
+  #
+  # @param name [String] The name of the resolution. This is mostly
+  #   unused and resolutions are treated as anonymous.
+  # @return [void]
+  #
+  # @api private
   def initialize(name)
     @name = name
     @confines = []
@@ -206,7 +288,13 @@ class Facter::Util::Resolution
     @weight = nil
   end
 
-  # Return the importance of this resolution.
+  # Returns the importance of this resolution. If the weight was not
+  # given, the number of confines is used instead (so that a more
+  # specific resolution wins over a less specific one).
+  #
+  # @return [Integer] the weight of this resolution
+  #
+  # @api private
   def weight
     if @weight
       @weight
@@ -215,14 +303,31 @@ class Facter::Util::Resolution
     end
   end
 
-  # We need this as a getter for 'timeout', because some versions
-  # of ruby seem to already have a 'timeout' method and we can't
-  # seem to override the instance methods, somehow.
+  # (see #timeout)
+  # @comment We need this as a getter for 'timeout', because some versions
+  #   of ruby seem to already have a 'timeout' method and we can't
+  #   seem to override the instance methods, somehow.
   def limit
     @timeout
   end
 
-  # Set our code for returning a value.
+  # Sets the code block or external program that will be evaluated to
+  # get the value of the fact.
+  #
+  # @return [void]
+  #
+  # @overload setcode(string)
+  #   Sets an external program to call to get the value of the resolution
+  #   @param [String] string the external program to run to get the
+  #     value
+  #
+  # @overload setcode(&block)
+  #   Sets the resolution's value by evaluating a block at runtime
+  #   @param [Proc] block The block to determine the resolution's value.
+  #     This block is run when the fact is evaluated. Errors raised from
+  #     inside the block are rescued and printed to stderr.
+  #
+  # @api public
   def setcode(string = nil, interp = nil, &block)
     Facter.warnonce "The interpreter parameter to 'setcode' is deprecated and will be removed in a future version." if interp
     if string
@@ -236,17 +341,21 @@ class Facter::Util::Resolution
     end
   end
 
+  # @deprecated
   def interpreter
     Facter.warnonce "The 'Facter::Util::Resolution.interpreter' method is deprecated and will be removed in a future version."
     @interpreter
   end
 
+  # @deprecated
   def interpreter=(interp)
     Facter.warnonce "The 'Facter::Util::Resolution.interpreter=' method is deprecated and will be removed in a future version."
     @interpreter = interp
   end
 
   # Is this resolution mechanism suitable on the system in question?
+  #
+  # @api private
   def suitable?
     unless defined? @suitable
       @suitable = ! @confines.detect { |confine| ! confine.true? }
@@ -255,11 +364,16 @@ class Facter::Util::Resolution
     return @suitable
   end
 
+  # (see value)
+  # @deprecated
   def to_s
     return self.value()
   end
 
-  # How we get a value for our resolution mechanism.
+  # Evaluates the code block or external program to get the value of the
+  # fact.
+  #
+  # @api private
   def value
     return @value if @value
     result = nil

@@ -17,8 +17,8 @@ describe Facter do
   end
 
   it "should delegate the :fact method to the collection" do
-    Facter.collection.expects(:fact)
-    Facter.fact
+    Facter.collection.expects(:fact).with("afact")
+    Facter.fact("afact")
   end
 
   it "should delegate the :list method to the collection" do
@@ -28,7 +28,6 @@ describe Facter do
 
   it "should load all facts when listing" do
     Facter.collection.expects(:load_all)
-    Facter.collection.stubs(:list)
     Facter.list
   end
 
@@ -44,8 +43,8 @@ describe Facter do
   end
 
   it "should delegate the :value method to the collection" do
-    Facter.collection.expects(:value)
-    Facter.value
+    Facter.collection.expects(:value).with("myvaluefact")
+    Facter.value("myvaluefact")
   end
 
   it "should delegate the :each method to the collection" do
