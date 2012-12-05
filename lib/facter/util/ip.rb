@@ -190,6 +190,19 @@ module Facter::Util::IP
     device
   end
 
+  ##
+  # get_interface_value obtains the value of a specific attribute of a specific
+  # interface.
+  #
+  # @param interface [String] the interface identifier, e.g. "eth0" or "bond0"
+  #
+  # @param label [String] the attribute of the interface to obtain a value for,
+  # e.g. "netmask" or "ipaddress"
+  #
+  # @api private
+  #
+  # @return [String] representing the requested value.  An empty array is
+  # returned if the kernel is not supported by the REGEX_MAP constant.
   def self.get_interface_value(interface, label)
     tmp1 = []
 
@@ -208,9 +221,11 @@ module Facter::Util::IP
     # We have to dig a bit to get the original/real MAC address of the interface.
     bonddev = get_bonding_master(interface)
     if label == 'macaddress' and bonddev
-      bondinfo = IO.readlines("/proc/net/bonding/#{bonddev}")
-      hwaddrre = /^Slave Interface: #{interface}\n[^\n].+?\nPermanent HW addr: (([0-9a-fA-F]{2}:?)*)$/m
-      value = hwaddrre.match(bondinfo.to_s)[1].upcase
+      bondinfo = read_proc_net_bonding("/proc/net/bonding/#{bonddev}")
+      re = /^Slave Interface: #{interface}\b.*?\bPermanent HW addr: (([0-9A-F]{2}:?)*)$/im
+      if match = re.match(bondinfo)
+        value = match[1].upcase
+      end
     else
       output_int = get_output_for_interface_and_label(interface, label)
 
@@ -229,6 +244,19 @@ module Facter::Util::IP
       end
     end
   end
+
+  ##
+  # read_proc_net_bonding is a seam method for mocking purposes.
+  #
+  # @param path [String] representing the path to read, e.g. "/proc/net/bonding/bond0"
+  #
+  # @api private
+  #
+  # @return [String] modeling the raw file read
+  def self.read_proc_net_bonding(path)
+    File.read(path) if File.exists?(path)
+  end
+  private_class_method :read_proc_net_bonding
 
   def self.get_network_value(interface)
     require 'ipaddr'
