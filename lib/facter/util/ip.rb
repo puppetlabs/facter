@@ -190,6 +190,19 @@ module Facter::Util::IP
     device
   end
 
+  ##
+  # get_interface_value obtains the value of a specific attribute of a specific
+  # interface.
+  #
+  # @param interface [String] the interface identifier, e.g. "eth0" or "bond0"
+  #
+  # @param label [String] the attribute of the interface to obtain a value for,
+  # e.g. "netmask" or "ipaddress"
+  #
+  # @api private
+  #
+  # @return [String] representing the requested value.  An empty array is
+  # returned if the kernel is not supported by the REGEX_MAP constant.
   def self.get_interface_value(interface, label)
     tmp1 = []
 
