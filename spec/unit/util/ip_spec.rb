@@ -410,4 +410,27 @@ describe Facter::Util::IP do
       Facter::Util::IP.get_interface_value("Teredo Tunneling Pseudo-Interface", "ipaddress6").should == "2001:0:4137:9e76:2087:77a:53ef:7527"
     end
   end
+
+  context "with bonded ethernet interfaces on Linux" do
+    before :each do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+    end
+
+    describe "Facter::Util::Ip.get_interface_value" do
+      before :each do
+        Facter::Util::IP.stubs(:read_proc_net_bonding).
+          with("/proc/net/bonding/bond0").
+          returns(my_fixture_read("linux_2_6_35_proc_net_bonding_bond0"))
+
+        Facter::Util::IP.stubs(:get_bonding_master).returns("bond0")
+      end
+
+      it 'provides the real device macaddress for eth0' do
+        Facter::Util::IP.get_interface_value("eth0", "macaddress").should == "00:11:22:33:44:55"
+      end
+      it 'provides the real device macaddress for eth1' do
+        Facter::Util::IP.get_interface_value("eth1", "macaddress").should == "00:11:22:33:44:56"
+      end
+    end
+  end
 end
