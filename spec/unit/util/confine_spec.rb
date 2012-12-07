@@ -32,8 +32,12 @@ describe Facter::Util::Confine do
   end
 
   describe "when evaluating" do
+    def confined(fact_value, *confines)
+      @fact.stubs(:value).returns fact_value
+      Facter::Util::Confine.new("yay", *confines).true?
+    end
+
     before do
-      @confine = Facter::Util::Confine.new("yay", "one", "two", "Four", :xy, true, 1, [3,4])
       @fact = mock 'fact'
       Facter.stubs(:[]).returns @fact
     end
@@ -41,7 +45,7 @@ describe Facter::Util::Confine do
     it "should return false if the fact does not exist" do
       Facter.expects(:[]).with("yay").returns nil
 
-      @confine.true?.should be_false
+      Facter::Util::Confine.new("yay", "test").true?.should be_false
     end
 
     it "should use the returned fact to get the value" do
@@ -49,91 +53,75 @@ describe Facter::Util::Confine do
 
       @fact.expects(:value).returns nil
 
-      @confine.true?
+      Facter::Util::Confine.new("yay", "test").true?
     end
 
     it "should return false if the fact has no value" do
-      @fact.stubs(:value).returns nil
-
-      @confine.true?.should be_false
+      confined(nil, "test").should be_false
     end
 
     it "should return true if any of the provided values matches the fact's value" do
-      @fact.stubs(:value).returns "two"
-
-      @confine.true?.should be_true
+      confined("two", "two").should be_true
     end
 
     it "should return true if any of the provided symbol values matches the fact's value" do
-      @fact.stubs(:value).returns :xy
-
-      @confine.true?.should be_true
+      confined(:xy, :xy).should be_true
     end
 
     it "should return true if any of the provided integer values matches the fact's value" do
-      @fact.stubs(:value).returns 1
-
-      @confine.true?.should be_true
+      confined(1, 1).should be_true
     end
 
     it "should return true if any of the provided boolan values matches the fact's value" do
-      @fact.stubs(:value).returns true
-
-      @confine.true?.should be_true
+      confined(true, true).should be_true
     end
 
     it "should return true if any of the provided array values matches the fact's value" do
-      @fact.stubs(:value).returns [3,4]
-
-      @confine.true?.should be_true
+      confined([3,4], [3,4]).should be_true
     end
 
     it "should return true if any of the provided symbol values matches the fact's string value" do
-      @fact.stubs(:value).returns :one
-
-      @confine.true?.should be_true
+      confined(:one, "one").should be_true
     end
 
     it "should return true if any of the provided string values matches case-insensitive the fact's value" do
-      @fact.stubs(:value).returns "four"
-
-      @confine.true?.should be_true
+      confined("four", "Four").should be_true
     end
 
     it "should return true if any of the provided symbol values matches case-insensitive the fact's string value" do
-      @fact.stubs(:value).returns :four
-
-      @confine.true?.should be_true
+      confined(:four, "Four").should be_true
     end
 
     it "should return true if any of the provided symbol values matches the fact's string value" do
-      @fact.stubs(:value).returns :Xy
+      confined("xy", :xy).should be_true
+    end
 
-      @confine.true?.should be_true
+    it "should return true if any of the provided regexp values matches the fact's string value" do
+      confined("abc", /abc/).should be_true
+    end
+
+    it "should return true if any of the provided ranges matches the fact's value" do
+      confined(6, (5..7)).should be_true
     end
 
     it "should return false if none of the provided values matches the fact's value" do
-      @fact.stubs(:value).returns "three"
-
-      @confine.true?.should be_false
+      confined("three", "two", "four").should be_false
     end
 
     it "should return false if none of the provided integer values matches the fact's value" do
-      @fact.stubs(:value).returns 2
-
-      @confine.true?.should be_false
+      confined(2, 1, [3,4], (5..7)).should be_false
     end
 
     it "should return false if none of the provided boolan values matches the fact's value" do
-      @fact.stubs(:value).returns false
-
-      @confine.true?.should be_false
+      confined(false, true).should be_false
     end
 
     it "should return false if none of the provided array values matches the fact's value" do
-      @fact.stubs(:value).returns [1,2]
+      confined([1,2], [3,4]).should be_false
+    end
 
-      @confine.true?.should be_false
+    it "should return false if none of the provided ranges matches the fact's value" do
+      confined(8, (5..7)).should be_false
     end
   end
 end
