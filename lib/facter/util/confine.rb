@@ -31,11 +31,6 @@ class Facter::Util::Confine
 
     return false if value.nil?
 
-    @values.each do |v|
-      v = convert(v)
-      next unless v.class == value.class
-      return true if value == v
-    end
-    return false
+    return @values.any? { |v| convert(v) === value }
   end
 end
