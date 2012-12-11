@@ -151,4 +151,30 @@ describe Facter::Util::EC2 do
       end
     end
   end
+
+  describe "Facter::Util::EC2.userdata" do
+    let :not_found_error do
+      OpenURI::HTTPError.new("404 Not Found", StringIO.new)
+    end
+
+    let :example_userdata do
+      "owner=jeff@puppetlabs.com\ngroup=platform_team"
+    end
+
+    it 'returns nil when no userdata is present' do
+      Facter::Util::EC2.stubs(:read_uri).raises(not_found_error)
+      Facter::Util::EC2.userdata.should be_nil
+    end
+
+    it "returns the string containing the body" do
+      Facter::Util::EC2.stubs(:read_uri).returns(example_userdata)
+      Facter::Util::EC2.userdata.should == example_userdata
+    end
+
+    it "uses the specified API version" do
+      expected_uri = "http://169.254.169.254/2008-02-01/user-data/"
+      Facter::Util::EC2.expects(:read_uri).with(expected_uri).returns(example_userdata)
+      Facter::Util::EC2.userdata('2008-02-01').should == example_userdata
+    end
+  end
 end
