@@ -68,9 +68,9 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/meta-data/").
         at_least_once.returns(StringIO.new(""))
 
-      Facter::Util::Resolution.any_instance.expects(:open).
-        with("#{api_prefix}/2008-02-01/user-data/").
-        at_least_once.returns(StringIO.new("test"))
+      Facter::Util::EC2.stubs(:read_uri).
+        with("#{api_prefix}/latest/user-data/").
+        returns("test")
 
       Facter.collection.loader.load(:ec2)
       Facter.fact(:ec2_userdata).value.should == ["test"]
@@ -94,9 +94,9 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/meta-data/").\
         at_least_once.returns(StringIO.new(""))
 
-      Facter::Util::Resolution.any_instance.expects(:open).\
-        with("#{api_prefix}/2008-02-01/user-data/").\
-        at_least_once.returns(StringIO.new("test"))
+      Facter::Util::EC2.stubs(:read_uri).
+        with("#{api_prefix}/latest/user-data/").
+        returns("test")
 
       # Force a fact load
       Facter.collection.loader.load(:ec2)
@@ -122,9 +122,9 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/meta-data/").\
         at_least_once.returns(StringIO.new(""))
 
-      Facter::Util::Resolution.any_instance.expects(:open).\
-        with("#{api_prefix}/2008-02-01/user-data/").\
-        at_least_once.returns(StringIO.new("test"))
+      Facter::Util::EC2.stubs(:read_uri).
+        with("#{api_prefix}/latest/user-data/").
+        returns("test")
 
       # Force a fact load
       Facter.collection.loader.load(:ec2)
@@ -140,9 +140,9 @@ describe "ec2 facts" do
         with("#{api_prefix}/2008-02-01/meta-data/").
         at_least_once.raises(RuntimeError, 'host unreachable')
 
-      Facter::Util::Resolution.any_instance.expects(:open).
-        with("#{api_prefix}/2008-02-01/user-data/").
-        at_least_once.raises(RuntimeError, 'host unreachable')
+      Facter::Util::EC2.stubs(:read_uri).
+        with("#{api_prefix}/latest/user-data/").
+        raises(RuntimeError, 'host unreachable')
 
       # Force a fact load
       Facter.collection.loader.load(:ec2)
