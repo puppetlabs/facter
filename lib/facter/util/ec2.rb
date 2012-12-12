@@ -58,4 +58,44 @@ module Facter::Util::EC2
       return false
     end
   end
+
+  ##
+  # userdata returns a single string containing the body of the response of the
+  # GET request for the URI http://169.254.169.254/latest/user-data/  If the
+  # metadata server responds with a 404 Not Found error code then this method
+  # retuns `nil`.
+  #
+  # @param version [String] containing the API version for the request.
+  # Defaults to "latest" and other examples are documented at
+  # http://aws.amazon.com/archives/Amazon%20EC2
+  #
+  # @api public
+  #
+  # @return [String] containing the response body or `nil`
+  def self.userdata(version="latest")
+    uri = "http://169.254.169.254/#{version}/user-data/"
+    begin
+      read_uri(uri)
+    rescue OpenURI::HTTPError => detail
+      case detail.message
+      when /404 Not Found/i
+        Facter.debug "No user-data present at #{uri}: server responded with #{detail.message}"
+        return nil
+      else
+        raise detail
+      end
+    end
+  end
+
+  ##
+  # read_uri provides a seam method to easily test the HTTP client
+  # functionality of a HTTP based metadata server.
+  #
+  # @api private
+  #
+  # @return [String] containing the body of the response
+  def self.read_uri(uri)
+    open(uri).read
+  end
+  private_class_method :read_uri
 end
