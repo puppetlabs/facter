@@ -101,5 +101,43 @@ if Facter.value(:kernel) == 'Linux'
       setcode { blockdevices.sort.join(',') }
     end
   end
+end
 
+if Facter.value(:kernel) == 'FreeBSD'
+  blockdevices = Facter::Util::Resolution.exec('/sbin/sysctl -n kern.disks').split(' ')
+
+  Facter.add(:blockdevices) do
+    setcode { blockdevices.sort.join(',') }
+  end
+
+  blockdevices.each do |device|
+    Facter.add("blockdevice_#{device}_size".to_sym) do
+      if device =~ /acd|cd/
+        setcode { "0" }
+      else
+        setcode { Facter::Util::Resolution.exec("/usr/sbin/diskinfo #{device} | /usr/bin/awk '{ print $3 }'") }
+      end
+    end
+
+    devicestring = ""
+    if device =~ /ada/
+      devicestring = Facter::Util::Resolution.exec("/sbin/camcontrol identify #{device} | /usr/bin/awk -F 'device\ model\ *' '/device model/ { print $2 }'")
+    elsif device =~ /ad/
+      devicestring = Facter::Util::Resolution.exec("/sbin/atacontrol list | /usr/bin/awk -F '<|>' '/#{device}/ { print $2 }'")
+    elsif device =~ /mfi/
+      devicestring = "MFI Local Disk"
+    else
+      devicestring = Facter::Util::Resolution.exec("/sbin/camcontrol inquiry #{device} -D | /usr/bin/awk -F '<|>' '{ print $2 }'")
+    end
+
+    devicevendor, devicemodel = devicestring.split(' ', 2)
+
+    Facter.add("blockdevice_#{device}_vendor".to_sym) do
+      setcode { devicevendor }
+    end
+
+    Facter.add("blockdevice_#{device}_model".to_sym) do
+      setcode { devicemodel }
+    end
+  end
 end
