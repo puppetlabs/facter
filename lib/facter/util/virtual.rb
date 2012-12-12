@@ -99,7 +99,22 @@ module Facter::Util::Virtual
     Facter::Util::Resolution.exec("/usr/bin/getconf MACHINE_MODEL").chomp =~ /Virtual Machine/
   end
 
-   def self.zlinux?
+  def self.zlinux?
     "zlinux"
-   end
+  end
+
+  ##
+  # read_sysfs Reads the raw data as per the documentation at [Detecting if You
+  # Are Running in Google Compute
+  # Engine](https://developers.google.com/compute/docs/instances#dmi)  This
+  # method is intended to provide an easy seam to mock.
+  #
+  # @api public
+  #
+  # @return [String] or nil if the path does not exist
+  def self.read_sysfs_dmi_entries(path="/sys/firmware/dmi/entries/1-0/raw")
+    if File.exists?(path)
+      File.read(path)
+    end
+  end
 end
