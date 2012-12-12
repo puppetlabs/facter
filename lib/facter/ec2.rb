@@ -21,7 +21,9 @@ end
 def userdata()
   Facter.add(:ec2_userdata) do
     setcode do
-      open("http://169.254.169.254/2008-02-01/user-data/").read.split
+      if userdata = Facter::Util::EC2.userdata
+        userdata.split
+      end
     end
   end
 end
