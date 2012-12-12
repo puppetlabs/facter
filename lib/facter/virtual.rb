@@ -193,6 +193,21 @@ Facter.add("virtual") do
   end
 end
 
+##
+# virtual fact specific to Google Compute Engine's Linux sysfs entry.
+Facter.add("virtual") do
+  has_weight 600
+  confine :kernel => "Linux"
+
+  setcode do
+    if dmi_data = Facter::Util::Virtual.read_sysfs_dmi_entries
+      case dmi_data
+      when /Google/
+        "gce"
+      end
+    end
+  end
+end
 # Fact: is_virtual
 #
 # Purpose: returning true or false for if a machine is virtualised or not.

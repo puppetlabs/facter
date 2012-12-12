@@ -105,12 +105,6 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "virtualbox"
     end
 
-    it "should be gce with gce vendor name from lspci 2>/dev/null" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
-      Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("00:05.0 Class 8007: Google, Inc. Device 6442")
-      Facter.fact(:virtual).value.should == "gce"
-    end
-
     it "should be vmware with VMWare vendor name from dmidecode" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
@@ -175,6 +169,37 @@ describe "Virtual fact" do
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("System Information\nManufacturer: Microsoft Corporation\nProduct Name: Virtual Machine")
       Facter.fact(:virtual).value.should == "hyperv"
+    end
+
+    context "In Google Compute Engine" do
+      before :each do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+      end
+
+      context "Without /sys/firmware/dmi/entries/1-0/raw" do
+        before :each do
+          Facter::Util::Virtual.stubs(:read_sysfs_dmi_entries).returns(nil)
+        end
+
+        it "should be gce with gce vendor name from lspci 2>/dev/null" do
+          Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("00:05.0 Class 8007: Google, Inc. Device 6442")
+          Facter.fact(:virtual).value.should == "gce"
+        end
+      end
+
+      context "With /sys/firmware/dmi/entries/1-0/raw" do
+        let :sysfs_dmi_raw do
+          my_fixture_read('sysfs_dmi_entries_raw.txt')
+        end
+
+        before :each do
+          Facter::Util::Virtual.stubs(:read_sysfs_dmi_entries).returns(sysfs_dmi_raw)
+        end
+
+        it "(#17612) is 'gce'" do
+          Facter.fact(:virtual).value.should == "gce"
+        end
+      end
     end
   end
 
