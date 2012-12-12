@@ -111,6 +111,9 @@ Facter.add("virtual") do
           # --- look for Hyper-V video card
           # ---   00:08.0 VGA compatible controller: Microsoft Corporation Hyper-V virtual VGA
           result = "hyperv" if p =~ /Microsoft Corporation Hyper-V/
+          # --- look for gmetrics for GCE
+          # --- 00:05.0 Class 8007: Google, Inc. Device 6442
+          result = "gce" if p =~ /Class 8007: Google, Inc/
         end
       else
         output = Facter::Util::Resolution.exec('dmidecode')
@@ -190,6 +193,21 @@ Facter.add("virtual") do
   end
 end
 
+##
+# virtual fact specific to Google Compute Engine's Linux sysfs entry.
+Facter.add("virtual") do
+  has_weight 600
+  confine :kernel => "Linux"
+
+  setcode do
+    if dmi_data = Facter::Util::Virtual.read_sysfs_dmi_entries
+      case dmi_data
+      when /Google/
+        "gce"
+      end
+    end
+  end
+end
 # Fact: is_virtual
 #
 # Purpose: returning true or false for if a machine is virtualised or not.
