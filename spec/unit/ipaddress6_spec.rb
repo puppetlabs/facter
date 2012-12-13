@@ -31,6 +31,14 @@ describe "IPv6 address fact" do
     Facter.value(:ipaddress6).should == "2610:10:20:209:212:3fff:febe:2201"
   end
 
+  it "should return ipaddress6 information for Linux with nettools >=1.60" do
+    Facter::Util::Resolution.stubs(:exec).with('uname -s').returns('Linux')
+    Facter::Util::Resolution.stubs(:exec).with('/sbin/ifconfig 2>/dev/null').
+      returns(ifconfig_fixture('linux_ifconfig_no_addr'))
+
+    Facter.value(:ipaddress6).should == "2610:10:20:209:212:3fff:febe:2201"
+  end
+
   it "should return ipaddress6 information for Solaris" do
     Facter::Util::Resolution.stubs(:exec).with('uname -s').returns('SunOS')
     Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/ifconfig -a').
