@@ -97,6 +97,14 @@ module Facter::Util::IP
   end
 
   ##
+  # get_ifconfig simply delegates to the ifconfig command.
+  #
+  # @return [String] the output of `/sbin/ifconfig 2>/dev/null` or nil
+  def self.get_ifconfig
+    Facter::Util::Resolution.exec("/sbin/ifconfig 2>/dev/null")
+  end
+
+  ##
   # hpux_netstat_in is a delegate method that allows us to stub netstat -in
   # without stubbing exec.
   def self.hpux_netstat_in
