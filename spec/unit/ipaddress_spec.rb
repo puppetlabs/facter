@@ -16,7 +16,7 @@ end
 
 describe "The ipaddress fact" do
   subject do
-    Facter.collection.loader.load(:ipaddress)
+    Facter.collection.internal_loader.load(:ipaddress)
     Facter.fact(:ipaddress)
   end
   context "on Linux" do
