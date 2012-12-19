@@ -10,12 +10,12 @@ directories:
     group: 'wheel'
     perms: '0755'
   facter:
-    path: 'var/lib/facter'
+    path: 'private/var/lib/facter'
     owner: 'root'
     group: 'wheel'
     perms: '0644'
   etc:
-    path: 'etc'
+    path: 'private/etc'
     owner: 'root'
     group: 'wheel'
     perms: '0644'
