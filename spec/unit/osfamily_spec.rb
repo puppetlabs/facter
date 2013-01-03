@@ -30,7 +30,9 @@ describe "OS Family fact" do
     'SLES'        => 'Suse',
     'SLED'        => 'Suse',
     'OpenSuSE'    => 'Suse',
-    'SuSE'        => 'Suse'
+    'SuSE'        => 'Suse',
+    'Mandriva'    => 'Mandrake',
+    'Mandrake'    => 'Mandrake'
   }.each do |os,family|
     it "should return #{family} on operatingsystem #{os}" do
       Facter.fact(:operatingsystem).stubs(:value).returns os
@@ -39,8 +41,6 @@ describe "OS Family fact" do
   end
 
   [
-    'Mandriva',
-    'Mandrake',
     'MeeGo',
     'VMWareESX',
     'Bluewhite64',
