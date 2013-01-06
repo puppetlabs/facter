@@ -1,6 +1,8 @@
 Facter
 ======
 
+[![Build Status](https://travis-ci.org/puppetlabs/facter.png?branch=master)](https://travis-ci.org/puppetlabs/facter)
+
 This package is largely meant to be a library for collecting facts about your
 system.  These facts are mostly strings (i.e., not numbers), and are things
 like the output of `uname`, public ssh keys, the number of processors, etc.
