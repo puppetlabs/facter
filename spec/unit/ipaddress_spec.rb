@@ -1,5 +1,7 @@
 #! /usr/bin/env ruby
 
+require 'facter/util/resolution'
+require 'facter/util/ipaddress'
 require 'spec_helper'
 require 'facter/util/ip'
 

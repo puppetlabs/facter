@@ -255,4 +255,25 @@ class Facter::Util::Resolution
     return nil if result == ""
     return result
   end
+
+  ##
+  # locale_wrapper accepts a block, sets the desired enviornment locale, then
+  # yields to the block.  All of this happens in a with a thread local
+  # exclusive lock.
+  def self.locale_wrapper(env=ENV, &block)
+    rval = nil
+    Thread.exclusive do
+      current_lang = env['LANG']
+      current_lc_all = env['LC_ALL']
+      current_lc_ctype = env['LC_CTYPE']
+      env['LANG'] = 'C'
+      env['LC_ALL'] = 'C'
+      env['LC_CTYPE'] = 'C'
+      rval = block.call
+      env['LANG'] = current_lang
+      env['LC_ALL'] = current_lc_all
+      env['LC_CTYPE'] = current_lc_ctype
+    end
+    rval
+  end
 end
