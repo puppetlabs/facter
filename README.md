@@ -11,12 +11,14 @@ See `bin/facter` for an example of the interface.
 Running Facter
 --------------
 
-Run the `facter` binary on the command for a full list of facts supported on your host.
+Run the `facter` binary on the command for a full list of facts supported on
+your host.
 
 Adding your own facts
 ---------------------
 
-See the [Adding Facts](http://docs.puppetlabs.com/guides/custom_facts.html) page for details of how to add your own custom facts to Facter.
+See the [Adding Facts](http://docs.puppetlabs.com/guides/custom_facts.html)
+page for details of how to add your own custom facts to Facter.
 
 Further Information
 -------------------
