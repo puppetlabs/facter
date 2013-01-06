@@ -3,6 +3,6 @@ ext/packaging/
 # YARD generated documentation
 .yardoc
 doc
-.bundle
+.bundle/
 vendor/
 Gemfile.lock
