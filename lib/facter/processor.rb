@@ -96,13 +96,6 @@ Facter.add("Processor") do
 end
 
 Facter.add("ProcessorCount") do
-  confine :kernel => :openbsd
-  setcode do
-    Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
-  end
-end
-
-Facter.add("ProcessorCount") do
   confine :kernel => :Darwin
   setcode do
     Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
@@ -155,7 +148,7 @@ Facter.add("Processor") do
 end
 
 Facter.add("ProcessorCount") do
-  confine :kernel => [:dragonfly,:freebsd]
+  confine :kernel => [:dragonfly,:freebsd,:openbsd]
   setcode do
     Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
   end
