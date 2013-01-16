@@ -86,6 +86,11 @@ module Facter
 
     private
 
+    # Parses the given argument array destructively to return an options hash
+    # (and possibly perform side effects such as changing settings).
+    #
+    # @param [Array<String>] argv command line arguments
+    # @return [Hash] options hash
     def self.parse(argv)
       options = {}
       OptionParser.new do |opts|
@@ -116,7 +121,7 @@ module Facter
             exit(1)
           end
         end
-      end.parse!
+      end.parse!(argv)
 
       options
     rescue OptionParser::InvalidOption => e
