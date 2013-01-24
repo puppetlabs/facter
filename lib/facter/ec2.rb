@@ -28,10 +28,20 @@ def userdata()
   end
 end
 
+def region()
+  Facter.add(:ec2_region) do
+    setcode do
+      ec2_region = open('http://169.254.169.254/2008-02-01/meta-data/placement/availability-zone').read
+      ec2_region.sub(/[a-z]$/,'')
+    end
+  end 
+end
+
 if (Facter::Util::EC2.has_euca_mac? || Facter::Util::EC2.has_openstack_mac? ||
     Facter::Util::EC2.has_ec2_arp?) && Facter::Util::EC2.can_connect?
   metadata
   userdata
+  region
 else
   Facter.debug "Not an EC2 host"
 end
