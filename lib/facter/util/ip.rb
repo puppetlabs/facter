@@ -1,6 +1,7 @@
 # A base module for collecting IP-related
 # information from all kinds of platforms.
 module Facter::Util::IP
+  require 'facter/util/ip/ipaddress'
   # A map of all the different regexes that work for
   # a given platform or set of platforms.
   REGEX_MAP = {
@@ -38,6 +39,38 @@ module Facter::Util::IP
     }
   }
 
+  # Extract the information from the output given a token, regex to parse and a regex of addresses to ignore.
+  def self.find_token(output, token, regex, ignore)
+    result = nil
+    output.scan(/#{token}#{regex}/).each do |match|
+    result = match.first
+      if ignore
+        if result.scan(/#{ignore}/)
+          break
+        end
+        return result
+      end
+    end
+
+    result
+  end
+
+  # Check each of the available execs on an operating system and select the method
+  # of the first one we find.
+  def self.find_method(map)
+    method = nil
+    map.each do |name, option|
+      if option[:exec]
+        # Strip back to just the file if the exec method contains arguments.
+        if FileTest.exists?(option[:exec].split(' ').first)
+          method = name
+          break
+        end
+      end
+    end
+    return method
+  end
+
   # Convert an interface name into purely alphanumeric characters.
   def self.alphafy(interface)
     interface.gsub(/[^a-z0-9_]/i, '_')
@@ -48,8 +81,8 @@ module Facter::Util::IP
     kernels_to_convert.include?(kernel)
   end
 
-  def self.supported_platforms
-    REGEX_MAP.inject([]) do |result, tmp|
+  def self.supported_platforms(os_map=REGEX_MAP)
+    os_map.inject([]) do |result, tmp|
       key, map = tmp
       if map[:aliases]
         result += map[:aliases]
@@ -212,6 +245,10 @@ module Facter::Util::IP
   # @return [String] representing the requested value.  An empty array is
   # returned if the kernel is not supported by the REGEX_MAP constant.
   def self.get_interface_value(interface, label)
+    if label == 'ipaddress'
+      return Facter::Util::IP::Ipaddress.get(interface)
+    end
+
     tmp1 = []
 
     kernel = Facter.value(:kernel).downcase.to_sym

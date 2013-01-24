@@ -5,7 +5,7 @@ require 'facter/util/ip'
 
 shared_examples_for "ifconfig output" do |platform, address, fixture|
   it "correctly on #{platform}" do
-    Facter::Util::IP.stubs(:get_ifconfig).returns(my_fixture_read(fixture))
+    Facter::Util::Resolution.stubs(:exec).with('/sbin/ifconfig').returns(my_fixture_read(fixture))
     subject.value.should == address
   end
 end
@@ -18,15 +18,5 @@ describe "The ipaddress fact" do
   subject do
     Facter.collection.internal_loader.load(:ipaddress)
     Facter.fact(:ipaddress)
-  end
-  context "on Linux" do
-    before :each do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
-    end
-
-    example_behavior_for "ifconfig output",
-      "Ubuntu 12.04", "10.87.80.110", "ifconfig_ubuntu_1204.txt"
-    example_behavior_for "ifconfig output",
-      "Fedora 17", "131.252.209.153", "ifconfig_net_tools_1.60.txt"
   end
 end
