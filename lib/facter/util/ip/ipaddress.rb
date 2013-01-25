@@ -65,13 +65,14 @@ module Facter::Util::IP
           :regex => '((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})',
           :exec  => '/sbin/ip addr show',
           :token => 'inet6 ',
-          :ignore => '^127\.|^0\.0\.0\.0',
+          :ignore => '^fe80::',
         },
         :ifconfig => {
           :regex  => '((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})',
           :exec   => '/sbin/ifconfig',
           :token  => 'inet6 addr: ',
           :ignore => '^127\.|^0\.0\.0\.0',
+          :ignore => '^fe80::',
         },
       },
       :bsdlike => {
@@ -80,7 +81,7 @@ module Facter::Util::IP
           :regex => '((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})',
           :exec  => '/sbin/ifconfig',
           :token => 'inet6 addr: ',
-          :ignore => '^127\.|^0\.0\.0\.0',
+          :ignore => '^fe80::',
         },
       },
       :darwin => {
@@ -88,7 +89,7 @@ module Facter::Util::IP
           :regex => '((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})',
           :exec  => '/sbin/ifconfig',
           :token => 'inet6 ',
-          :ignore => '^127\.|^0\.0\.0\.0',
+          :ignore => '^fe80::',
         },
       },
       :sunos => {
@@ -96,7 +97,7 @@ module Facter::Util::IP
           :regex => '((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})',
           :exec  => '/usr/sbin/ifconfig',
           :token => 'inet6 ',
-          :ignore => '^127\.|^0\.0\.0\.0',
+          :ignore => '^fe80::',
         },
       },
       :"hp-ux" => {
@@ -104,7 +105,7 @@ module Facter::Util::IP
           :regex => '((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})',
           :exec  => '/usr/sbin/ifconfig',
           :token => 'inet6 addr: ',
-          :ignore => '^127\.|^0\.0\.0\.0',
+          :ignore => '^fe80::',
         },
       },
       :aix => {
@@ -112,7 +113,7 @@ module Facter::Util::IP
           :regex => '((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})',
           :exec  => '/sbin/ifconfig -a',
           :token => 'inet6 ',
-          :ignore => '^127\.|^0\.0\.0\.0',
+          :ignore => '^fe80::',
         },
       },
       :windows => {
@@ -120,7 +121,7 @@ module Facter::Util::IP
           :regex => '((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})',
           :exec  => "#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ipv6 show interface",
           :token => 'Address\s+',
-          :ignore => '^127\.|^0\.0\.0\.0',
+          :ignore => '^fe80::',
         },
       },
     },
