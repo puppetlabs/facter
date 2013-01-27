@@ -131,8 +131,8 @@ module Facter::Util::IP
     return nil unless Facter::Util::IP.supported_platforms(MAP[ip_version.downcase.to_sym])
     return nil unless ip_version == 'ipv4' || ip_version == 'ipv6'
     ipaddress = nil
+    map = Facter::Util::IP.find_submap(MAP[ip_version.downcase.to_sym])
 
-    map    = MAP[ip_version.downcase.to_sym][Facter.value(:kernel).downcase.to_sym]
     # This checks each exec in turn until one is found and then uses that
     # method for the rest of the matches.
     method = Facter::Util::IP.find_method(map)

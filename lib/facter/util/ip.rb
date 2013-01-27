@@ -60,7 +60,9 @@ module Facter::Util::IP
   def self.find_method(map)
     method = nil
     map.each do |name, option|
-      if option[:exec]
+      if name == :aliases
+        next
+      elsif option[:exec]
         # Strip back to just the file if the exec method contains arguments.
         if FileTest.exists?(option[:exec].split(' ').first)
           method = name
@@ -70,6 +72,26 @@ module Facter::Util::IP
     end
     return method
   end
+
+  # Return the appropriate subhash for the mappings in ip/*
+  def self.find_submap(map)
+    kernel = Facter.value(:kernel).downcase.to_sym
+    submap = {}
+
+    # This is a little ugly, the intent is to check all the aliases
+    # as well as the main keys in order to fetch the right subhash.
+    map.keys.each do |k|
+      if k == kernel
+        submap = map[k]
+      elsif map[k][:aliases]
+        if map[k][:aliases].include?(kernel)
+          submap = map[k]
+        end
+      end
+    end
+    submap
+  end
+
 
   # Convert an interface name into purely alphanumeric characters.
   def self.alphafy(interface)
