@@ -25,87 +25,16 @@
 require 'facter/util/ip'
 
 Facter.add(:ipaddress) do
-  confine :kernel => :linux
+  has_weight 100
+  confine :kernel => [:linux, :freebsd, :openbsd, :darwin, :dragonfly, :"hp-ux",
+                      :'gnu/kfreebsd', :aix, :windows, :netbsd, :sunos, :windows]
   setcode do
-    ip = nil
-    if output = Facter::Util::IP.get_ifconfig
-      regexp = /inet (?:addr:)?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-      if match = regexp.match(output)
-        match[1] unless /^127/.match(match[1])
-      end
-    end
-  end
-end
-
-Facter.add(:ipaddress) do
-  confine :kernel => %w{FreeBSD OpenBSD Darwin DragonFly}
-  setcode do
-    ip = nil
-    output = %x{/sbin/ifconfig}
-
-    output.split(/^\S/).each { |str|
-      if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-        tmp = $1
-        unless tmp =~ /^127\./
-          ip = tmp
-          break
-        end
-      end
-    }
-
-    ip
-  end
-end
-
-Facter.add(:ipaddress) do
-  confine :kernel => %w{NetBSD SunOS}
-  setcode do
-    ip = nil
-    output = %x{/sbin/ifconfig -a}
-
-    output.split(/^\S/).each { |str|
-      if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-        tmp = $1
-        unless tmp =~ /^127\./ or tmp == "0.0.0.0"
-          ip = tmp
-          break
-        end
-      end
-    }
-
-    ip
-  end
-end
-
-Facter.add(:ipaddress) do
-  confine :kernel => %w{AIX}
-  setcode do
-    ip = nil
-    output = %x{/usr/sbin/ifconfig -a}
-
-    output.split(/^\S/).each { |str|
-      if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-        tmp = $1
-        unless tmp =~ /^127\./
-          ip = tmp
-          break
-        end
-      end
-    }
-
-    ip
-  end
-end
-
-Facter.add(:ipaddress) do
-  confine :kernel => %w{windows}
-  setcode do
-    require 'socket'
-    IPSocket.getaddress(Socket.gethostname)
+    Facter::Util::IP::Ipaddress.get(nil)
   end
 end
 
 Facter.add(:ipaddress, :ldapname => "iphostnumber", :timeout => 2) do
+  has_weight 50
   setcode do
     if Facter.value(:kernel) == 'windows'
       require 'win32/resolv'
@@ -135,6 +64,7 @@ Facter.add(:ipaddress, :ldapname => "iphostnumber", :timeout => 2) do
 end
 
 Facter.add(:ipaddress, :timeout => 2) do
+  has_weight 10
   setcode do
     if hostname = Facter.value(:hostname)
       # we need Hostname to exist for this to work

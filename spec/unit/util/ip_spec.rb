@@ -66,31 +66,33 @@ describe Facter::Util::IP do
     Facter::Util::IP.get_interface_value("e1000g0", "netmask").should == []
   end
 
-  it "should return ipaddress information for Solaris" do
-    solaris_ifconfig_interface = my_fixture_read("solaris_ifconfig_single_interface")
+  context "on solaris" do
 
-    Facter::Util::IP.expects(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
-    Facter.stubs(:value).with(:kernel).returns("SunOS")
+    before :each do
+      FileTest.stubs(:exists?).with('/usr/sbin/ifconfig').returns(true)
+      Facter.stubs(:value).with(:kernel).returns("SunOS")
+    end
 
-    Facter::Util::IP.get_interface_value("e1000g0", "ipaddress").should == "172.16.15.138"
-  end
+    it "should return ipaddress information for Solaris" do
+      solaris_ifconfig_interface = my_fixture_read("solaris_ifconfig_single_interface")
+      Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/ifconfig e1000g0').returns(solaris_ifconfig_interface)
+      Facter::Util::IP.get_interface_value("e1000g0", "ipaddress").should == "172.16.15.138"
+    end
 
-  it "should return netmask information for Solaris" do
-    solaris_ifconfig_interface = my_fixture_read("solaris_ifconfig_single_interface")
+    it "should return netmask information for Solaris" do
+      solaris_ifconfig_interface = my_fixture_read("solaris_ifconfig_single_interface")
+      Facter::Util::IP.expects(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
+      Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/ifconfig e1000g0').returns(solaris_ifconfig_interface)
+      Facter::Util::IP.get_interface_value("e1000g0", "netmask").should == "255.255.255.0"
+    end
 
-    Facter::Util::IP.expects(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
-    Facter.stubs(:value).with(:kernel).returns("SunOS")
+    it "should return calculated network information for Solaris" do
+      solaris_ifconfig_interface = my_fixture_read("solaris_ifconfig_single_interface")
+      Facter::Util::IP.expects(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
+      Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/ifconfig e1000g0').returns(solaris_ifconfig_interface)
+      Facter::Util::IP.get_network_value("e1000g0").should == "172.16.15.0"
+    end
 
-    Facter::Util::IP.get_interface_value("e1000g0", "netmask").should == "255.255.255.0"
-  end
-
-  it "should return calculated network information for Solaris" do
-    solaris_ifconfig_interface = my_fixture_read("solaris_ifconfig_single_interface")
-
-    Facter::Util::IP.stubs(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
-    Facter.stubs(:value).with(:kernel).returns("SunOS")
-
-    Facter::Util::IP.get_network_value("e1000g0").should == "172.16.15.0"
   end
 
   it "should return macaddress with leading zeros stripped off for GNU/kFreeBSD" do
@@ -352,21 +354,22 @@ describe Facter::Util::IP do
       it "should return IP #{expected_ip} on #{nic} for #{description} example" do
         Facter.stubs(:value).with(:kernel).returns("HP-UX")
         Facter::Util::IP.stubs(:hpux_lanscan).returns(lanscan_fixture)
-        Facter::Util::IP.stubs(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
-        Facter::Util::IP.get_interface_value(nic, "ipaddress").should == expected_ip
+        FileTest.stubs(:exists?).with('/usr/sbin/ifconfig').returns(true)
+        Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/ifconfig #{nic}").returns(ifconfig_fixture)
+        Facter::Util::IP::Ipaddress.get(nic, "ipv4", ignore='').should == expected_ip
       end
 
       it "should return netmask #{expected_netmask} on #{nic} for #{description} example" do
         Facter.stubs(:value).with(:kernel).returns("HP-UX")
         Facter::Util::IP.stubs(:hpux_lanscan).returns(lanscan_fixture)
-        Facter::Util::IP.stubs(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
+        Facter::Util::Resolution.stubs(:exec).returns(ifconfig_fixture)
         Facter::Util::IP.get_interface_value(nic, "netmask").should == expected_netmask
       end
 
       it "should return MAC address #{expected_mac} on #{nic} for #{description} example" do
         Facter.stubs(:value).with(:kernel).returns("HP-UX")
         Facter::Util::IP.stubs(:hpux_lanscan).returns(lanscan_fixture)
-        Facter::Util::IP.stubs(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
+        Facter::Util::Resolution.stubs(:exec).returns(ifconfig_fixture)
         Facter::Util::IP.get_interface_value(nic, "macaddress").should == expected_mac
       end
     end
@@ -375,12 +378,14 @@ describe Facter::Util::IP do
   describe "on Windows" do
     before :each do
       Facter.stubs(:value).with(:kernel).returns("windows")
+      FileTest.stubs(:exists?).with('/system32/netsh.exe').returns(true)
     end
 
     it "should return ipaddress information" do
       windows_netsh = my_fixture_read("windows_netsh_single_interface")
 
-      Facter::Util::IP.expects(:get_output_for_interface_and_label).with("Local Area Connection", "ipaddress").returns(windows_netsh)
+      #Facter::Util::IP.expects(:get_output_for_interface_and_label).with("Local Area Connection", "ipaddress").returns(windows_netsh)
+      Facter::Util::Resolution.stubs(:exec).returns(windows_netsh)
 
       Facter::Util::IP.get_interface_value("Local Area Connection", "ipaddress").should == "172.16.138.216"
     end
@@ -396,7 +401,7 @@ describe Facter::Util::IP do
     it "should return network information" do
       windows_netsh = my_fixture_read("windows_netsh_single_interface")
 
-      Facter::Util::IP.stubs(:get_output_for_interface_and_label).with("Local Area Connection", "ipaddress").returns(windows_netsh)
+      Facter::Util::Resolution.stubs(:exec).returns(windows_netsh)
       Facter::Util::IP.stubs(:get_output_for_interface_and_label).with("Local Area Connection", "netmask").returns(windows_netsh)
 
       Facter::Util::IP.get_network_value("Local Area Connection").should == "172.16.138.0"
