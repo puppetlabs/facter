@@ -5,7 +5,7 @@ require 'facter/util/ip'
 
 shared_examples_for "ifconfig output" do |platform, address, fixture|
   it "correctly on #{platform}" do
-    Facter::Util::IP.stubs(:get_ifconfig).returns(my_fixture_read(fixture))
+    Facter::Util::IP.stubs(:exec_ifconfig).returns(my_fixture_read(fixture))
     subject.value.should == address
   end
 end

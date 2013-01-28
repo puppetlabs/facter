@@ -7,25 +7,25 @@ module Facter::NetMask
     case Facter.value(:kernel)
     when 'Linux'
       ops = {
-        :ifconfig => '/sbin/ifconfig 2>/dev/null',
+        :ifconfig_opts => ['2>/dev/null'],
         :regex => %r{\s+ inet\saddr: #{Facter.ipaddress} .*? Mask: (#{ipregex})}x,
         :munge => nil,
       }
     when 'SunOS'
       ops = {
-        :ifconfig => '/usr/sbin/ifconfig -a',
+        :ifconfig_opts => ['-a'],
         :regex => %r{\s+ inet \s #{Facter.ipaddress} \s netmask \s (\w{8})}x,
         :munge => Proc.new { |mask| mask.scan(/../).collect do |byte| byte.to_i(16) end.join('.') }
       }
     when 'FreeBSD','NetBSD','OpenBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
       ops = {
-        :ifconfig => '/sbin/ifconfig -a',
+        :ifconfig_opts => ['-a'],
         :regex => %r{\s+ inet \s #{Facter.ipaddress} \s netmask \s 0x(\w{8})}x,
         :munge => Proc.new { |mask| mask.scan(/../).collect do |byte| byte.to_i(16) end.join('.') }
       }
     end
 
-    %x{#{ops[:ifconfig]}}.split(/\n/).collect do |line|
+    Facter::Util::IP.get_ifconfig(ops[:ifconfig_opts]).split(/\n/).collect do |line|
       matches = line.match(ops[:regex])
       if !matches.nil?
         if ops[:munge].nil?
