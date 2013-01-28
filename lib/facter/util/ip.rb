@@ -77,9 +77,9 @@ module Facter::Util::IP
   def self.get_all_interface_output
     case Facter.value(:kernel)
     when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
-      output = %x{/sbin/ifconfig -a 2>/dev/null}
+      output = Facter::Util::IP.exec_ifconfig(["-a","2>/dev/null"])
     when 'SunOS'
-      output = %x{/usr/sbin/ifconfig -a}
+      output = Facter::Util::IP.exec_ifconfig(["-a"])
     when 'HP-UX'
       # (#17487)[https://projects.puppetlabs.com/issues/17487]
       # Handle NIC bonding where asterisks and virtual NICs are printed.
@@ -96,14 +96,22 @@ module Facter::Util::IP
     output
   end
 
-  ##
-  # get_ifconfig simply delegates to the ifconfig command.
-  #
-  # @return [String] the output of `/sbin/ifconfig 2>/dev/null` or nil
-  def self.get_ifconfig
-    Facter::Util::Resolution.exec("/sbin/ifconfig 2>/dev/null")
-  end
 
+  ##
+  # exec_ifconfig uses the ifconfig command
+  #
+  # @return [String] the output of `ifconfig #{arguments} 2>/dev/null` or nil
+  def self.exec_ifconfig(additional_arguments=[])
+    Facter::Util::Resolution.exec("#{self.get_ifconfig} #{additional_arguments.join(' ')}")
+  end
+  ##
+  # get_ifconfig looks up the ifconfig binary
+  #
+  # @return [String] path to the ifconfig binary
+  def self.get_ifconfig
+    common_paths=["/bin/ifconfig","/sbin/ifconfig","/usr/sbin/ifconfig"]
+    common_paths.select{|path| File.executable?(path)}.first
+  end
   ##
   # hpux_netstat_in is a delegate method that allows us to stub netstat -in
   # without stubbing exec.
@@ -125,7 +133,7 @@ module Facter::Util::IP
   end
 
   def self.ifconfig_interface(interface)
-    %x{/sbin/ifconfig #{interface} 2>/dev/null}
+    output = Facter::Util::IP.exec_ifconfig([interface,"2>/dev/null"])
   end
 
   def self.get_single_interface_output(interface)
@@ -142,7 +150,7 @@ module Facter::Util::IP
         output = ifconfig_output
       end
     when 'SunOS'
-      output = %x{/usr/sbin/ifconfig #{interface}}
+      output = Facter::Util::IP.exec_ifconfig([interface])
     when 'HP-UX'
        mac = ""
        ifc = hpux_ifconfig_interface(interface)
@@ -154,7 +162,7 @@ module Facter::Util::IP
   end
 
   def self.hpux_ifconfig_interface(interface)
-    Facter::Util::Resolution.exec("/usr/sbin/ifconfig #{interface}")
+    Facter::Util::IP.exec_ifconfig([interface])
   end
 
   def self.hpux_lanscan

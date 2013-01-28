@@ -38,7 +38,7 @@ end
 Facter.add(:ipaddress6) do
   confine :kernel => :linux
   setcode do
-    output = Facter::Util::Resolution.exec('/sbin/ifconfig 2>/dev/null')
+    output = Facter::Util::IP.exec_ifconfig(["2>/dev/null"])
 
     get_address_after_token(output, 'inet6 addr:')
   end
@@ -47,7 +47,7 @@ end
 Facter.add(:ipaddress6) do
   confine :kernel => %w{SunOS}
   setcode do
-    output = Facter::Util::Resolution.exec('/usr/sbin/ifconfig -a')
+    output = Facter::Util::IP.exec_ifconfig(["-a"])
 
     get_address_after_token(output, 'inet6')
   end
@@ -56,7 +56,7 @@ end
 Facter.add(:ipaddress6) do
   confine :kernel => %w{Darwin FreeBSD OpenBSD}
   setcode do
-    output = Facter::Util::Resolution.exec('/sbin/ifconfig -a')
+    output = Facter::Util::IP.exec_ifconfig(["-a"])
 
     get_address_after_token(output, 'inet6', true)
   end
