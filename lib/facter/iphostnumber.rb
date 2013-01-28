@@ -19,7 +19,7 @@ Facter.add(:iphostnumber) do
   confine :kernel => :darwin, :kernelrelease => "R6"
   setcode do
     ether = nil
-    output = %x{/sbin/ifconfig}
+    output = Facter::Util::IP.exec_ifconfig
 
     output =~ /HWaddr (\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)/
     ether = $1
