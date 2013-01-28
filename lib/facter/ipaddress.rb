@@ -28,7 +28,7 @@ Facter.add(:ipaddress) do
   confine :kernel => :linux
   setcode do
     ip = nil
-    if output = Facter::Util::IP.get_ifconfig
+    if output = Facter::Util::IP.exec_ifconfig(["2>/dev/null"])
       regexp = /inet (?:addr:)?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
       if match = regexp.match(output)
         match[1] unless /^127/.match(match[1])
@@ -41,7 +41,7 @@ Facter.add(:ipaddress) do
   confine :kernel => %w{FreeBSD OpenBSD Darwin DragonFly}
   setcode do
     ip = nil
-    output = %x{/sbin/ifconfig}
+    output = Facter::Util::IP.exec_ifconfig
 
     output.split(/^\S/).each { |str|
       if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
@@ -61,7 +61,7 @@ Facter.add(:ipaddress) do
   confine :kernel => %w{NetBSD SunOS}
   setcode do
     ip = nil
-    output = %x{/sbin/ifconfig -a}
+    output = Facter::Util::IP.exec_ifconfig(["-a"])
 
     output.split(/^\S/).each { |str|
       if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
@@ -81,7 +81,7 @@ Facter.add(:ipaddress) do
   confine :kernel => %w{AIX}
   setcode do
     ip = nil
-    output = %x{/usr/sbin/ifconfig -a}
+    output = Facter::Util::IP.exec_ifconfig(["-a"])
 
     output.split(/^\S/).each { |str|
       if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
