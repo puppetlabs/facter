@@ -8,150 +8,6 @@ describe Facter::Util::EC2 do
   # environments.
   let(:api_prefix) { "http://169.254.169.254" }
 
-  describe "is_ec2_arp? method" do
-    describe "on linux" do
-      before :each do
-        # Return fake kernel
-        Facter.stubs(:value).with(:kernel).returns("linux")
-      end
-
-      it "should succeed if arp table contains fe:ff:ff:ff:ff:ff" do
-        ec2arp = my_fixture_read("linux-arp-ec2.out")
-        Facter::Util::Resolution.expects(:exec).with("arp -an").\
-          at_least_once.returns(ec2arp)
-        Facter::Util::EC2.has_ec2_arp?.should == true
-      end
-
-      it "should succeed if arp table contains FE:FF:FF:FF:FF:FF" do
-        ec2arp = my_fixture_read("centos-arp-ec2.out")
-        Facter::Util::Resolution.expects(:exec).with("arp -an").\
-          at_least_once.returns(ec2arp)
-        Facter::Util::EC2.has_ec2_arp?.should == true
-      end
-
-      it "should fail if arp table does not contain fe:ff:ff:ff:ff:ff" do
-        ec2arp = my_fixture_read("linux-arp-not-ec2.out")
-        Facter::Util::Resolution.expects(:exec).with("arp -an").
-          at_least_once.returns(ec2arp)
-        Facter::Util::EC2.has_ec2_arp?.should == false
-      end
-    end
-
-    describe "on windows" do
-      before :each do
-        # Return fake kernel
-        Facter.stubs(:value).with(:kernel).returns("windows")
-      end
-
-      it "should succeed if arp table contains fe-ff-ff-ff-ff-ff" do
-        ec2arp = my_fixture_read("windows-2008-arp-a.out")
-        Facter::Util::Resolution.expects(:exec).with("arp -a").\
-          at_least_once.returns(ec2arp)
-        Facter::Util::EC2.has_ec2_arp?.should == true
-      end
-
-      it "should fail if arp table does not contain fe-ff-ff-ff-ff-ff" do
-        ec2arp = my_fixture_read("windows-2008-arp-a-not-ec2.out")
-        Facter::Util::Resolution.expects(:exec).with("arp -a").
-          at_least_once.returns(ec2arp)
-        Facter::Util::EC2.has_ec2_arp?.should == false
-      end
-    end
-
-    describe "on solaris" do
-      before :each do
-        Facter.stubs(:value).with(:kernel).returns("SunOS")
-      end
-
-      it "should fail if arp table does not contain fe:ff:ff:ff:ff:ff" do
-        ec2arp = my_fixture_read("solaris8_arp_a_not_ec2.out")
-
-        Facter::Util::Resolution.expects(:exec).with("arp -a").
-          at_least_once.returns(ec2arp)
-
-        Facter::Util::EC2.has_ec2_arp?.should == false
-      end
-    end
-  end
-
-  describe "is_euca_mac? method" do
-    it "should return true when the mac is a eucalyptus one" do
-      Facter.expects(:value).with(:macaddress).\
-        at_least_once.returns("d0:0d:1a:b0:a1:00")
-
-      Facter::Util::EC2.has_euca_mac?.should == true
-    end
-
-    it "should return false when the mac is not a eucalyptus one" do
-      Facter.expects(:value).with(:macaddress).\
-        at_least_once.returns("0c:1d:a0:bc:aa:02")
-
-      Facter::Util::EC2.has_euca_mac?.should == false
-    end
-  end
-
-  describe "is_openstack_mac? method" do
-    it "should return true when the mac is an openstack one" do
-      Facter.expects(:value).with(:macaddress).\
-        at_least_once.returns("02:16:3e:54:89:fd")
-
-      Facter::Util::EC2.has_openstack_mac?.should == true
-    end
-
-    it "should return true when the mac is a newer openstack mac" do
-      # https://github.com/openstack/nova/commit/b684d651f540fc512ced58acd5ae2ef4d55a885c#nova/utils.py
-      Facter.expects(:value).with(:macaddress).\
-        at_least_once.returns("fa:16:3e:54:89:fd")
-
-      Facter::Util::EC2.has_openstack_mac?.should == true
-    end
-
-    it "should return true when the mac is a newer openstack mac and returned in upper case" do
-      # https://github.com/openstack/nova/commit/b684d651f540fc512ced58acd5ae2ef4d55a885c#nova/utils.py
-      Facter.expects(:value).with(:macaddress).\
-        at_least_once.returns("FA:16:3E:54:89:FD")
-
-      Facter::Util::EC2.has_openstack_mac?.should == true
-    end
-
-    it "should return false when the mac is not a openstack one" do
-      Facter.expects(:value).with(:macaddress).\
-        at_least_once.returns("0c:1d:a0:bc:aa:02")
-
-      Facter::Util::EC2.has_openstack_mac?.should == false
-    end
-  end
-
-  describe "can_connect? method" do
-    it "returns true if api responds" do
-      # Return something upon connecting to the root
-      Module.any_instance.expects(:open).with("#{api_prefix}:80/").
-        at_least_once.returns("2008-02-01\nlatest")
-
-      Facter::Util::EC2.can_connect?.should be_true
-    end
-
-    describe "when connection times out" do
-      it "should return false" do
-        # Emulate a timeout when connecting by throwing an exception
-        Module.any_instance.expects(:open).with("#{api_prefix}:80/").
-          at_least_once.raises(RuntimeError)
-
-        Facter::Util::EC2.can_connect?.should be_false
-      end
-    end
-
-    describe "when connection is refused" do
-      it "should return false" do
-        # Emulate a connection refused
-        Module.any_instance.expects(:open).with("#{api_prefix}:80/").
-          at_least_once.raises(Errno::ECONNREFUSED)
-
-        Facter::Util::EC2.can_connect?.should be_false
-      end
-    end
-  end
-
   describe "Facter::Util::EC2.userdata" do
     let :not_found_error do
       OpenURI::HTTPError.new("404 Not Found", StringIO.new)
@@ -175,6 +31,50 @@ describe Facter::Util::EC2 do
       expected_uri = "http://169.254.169.254/2008-02-01/user-data/"
       Facter::Util::EC2.expects(:read_uri).with(expected_uri).returns(example_userdata)
       Facter::Util::EC2.userdata('2008-02-01').should == example_userdata
+    end
+  end
+
+  describe "Facter::Util::EC2.with_metadata_server", :focus => true do
+    before :each do
+      Facter::Util::EC2.stubs(:read_uri).returns("latest")
+    end
+
+    subject do
+      Facter::Util::EC2.with_metadata_server do
+        "HELLO FROM THE CODE BLOCK"
+      end
+    end
+
+    it 'returns false when not running on xenu' do
+      Facter.stubs(:value).with('virtual').returns('vmware')
+      subject.should be_false
+    end
+
+    context 'default options and running on a xenu virtual machine' do
+      before :each do
+        Facter.stubs(:value).with('virtual').returns('xenu')
+      end
+      it 'returns the value of the block when the metadata server responds' do
+        subject.should == "HELLO FROM THE CODE BLOCK"
+      end
+      it 'returns false when the metadata server is unreachable' do
+        described_class.stubs(:read_uri).raises(Errno::ENETUNREACH)
+        subject.should be_false
+      end
+      it 'does not execute the block if the connection raises an exception' do
+        described_class.stubs(:read_uri).raises(Timeout::Error)
+        myvar = "The block didn't get called"
+        described_class.with_metadata_server do
+          myvar = "The block was called and should not have been."
+        end.should be_false
+        myvar.should == "The block didn't get called"
+      end
+      it 'succeeds on the third retry' do
+        retry_metadata = sequence('metadata')
+        Timeout.expects(:timeout).twice.in_sequence(retry_metadata).raises(Timeout::Error)
+        Timeout.expects(:timeout).once.in_sequence(retry_metadata).returns(true)
+        subject.should == "HELLO FROM THE CODE BLOCK"
+      end
     end
   end
 end
