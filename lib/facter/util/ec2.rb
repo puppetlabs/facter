@@ -4,9 +4,60 @@ require 'open-uri'
 # Provide a set of utility static methods that help with resolving the EC2
 # fact.
 module Facter::Util::EC2
+  CONNECTION_ERRORS = [
+    OpenURI::HTTPError,
+    Errno::EHOSTDOWN,
+    Errno::EHOSTUNREACH,
+    Errno::ENETUNREACH,
+    Errno::ECONNABORTED,
+    Errno::ECONNREFUSED,
+    Errno::ECONNRESET,
+    Errno::ETIMEDOUT,
+  ]
   ##
-  # with_metadata_server takes a block of code and executes the block only if Facter is
-  # running on node that can access a metadata server at
+  # metadata is a recursive function that walks over the metadata server
+  # located at http://169.254.169.254 and defines a fact for each value found.
+  # This method introduces a high amount of latency to Facter, so care must be
+  # taken to call it only when reasonably certain the host is running in an
+  # environment where the metadata server is available.
+  def self.define_metadata_facts(id = "")
+    begin
+      if body = read_uri("http://169.254.169.254/latest/meta-data/#{id}")
+        body.split("\n").each do |o|
+          key = "#{id}#{o.gsub(/\=.*$/, '/')}"
+          if key[-1..-1] != '/'
+            value = read_uri("http://169.254.169.254/latest/meta-data/#{key}").split("\n")
+            symbol = "ec2_#{key.gsub(/\-|\//, '_')}".to_sym
+            Facter.add(symbol) { setcode { value.join(',') } }
+          else
+            define_metadata_facts(key)
+          end
+        end
+      end
+    rescue *CONNECTION_ERRORS => detail
+      Facter.warn "Could not retrieve ec2 metadata: #{detail.message}"
+    end
+  end
+
+  ##
+  # define_userdata_fact creates a single fact named 'ec2_userdata' which has a
+  # value of the contents of the EC2 userdata field.  This method introduces a
+  # high amount of latency to Facter, so care must be taken to call it only
+  # when reasonably certain the host is running in an environment where the
+  # metadata server is available.
+  def self.define_userdata_fact
+    Facter.add(:ec2_userdata) do
+      setcode do
+        if userdata = Facter::Util::EC2.userdata
+          userdata.split
+        end
+      end
+    end
+  end
+
+  ##
+  # with_metadata_server takes a block of code and executes the block only if
+  # Facter is running on node that can access a metadata server at
   # http://169.254.168.254/.  This is useful to decide if it's reasonably
   # likely that talking to the EC2 metadata server will be successful or not.
   #
@@ -14,12 +65,12 @@ module Facter::Util::EC2
   # milliseconds Facter will block trying to talk to the metadata server.
   # Defaults to 200.
   #
-  # @option options [String] :fact ('virtual') the fact to check.  The block will only be
-  # executed if the fact named here matches the value named in the :value
-  # option.
+  # @option options [String] :fact ('virtual') the fact to check.  The block
+  # will only be executed if the fact named here matches the value named in the
+  # :value option.
   #
-  # @option options [String] :value ('xenu') the value to check.  The block will be
-  # executed if Facter.value(options[:fact]) matches this value.
+  # @option options [String] :value ('xenu') the value to check.  The block
+  # will be executed if Facter.value(options[:fact]) matches this value.
   #
   # @option options [String] :api_version ('latest') the Amazon AWS API
   # version.  The version string is usually a date, e.g. '2008-02-01'.
@@ -77,61 +128,6 @@ module Facter::Util::EC2
     end
   end
 
-  class << self
-    # Test if we can connect to the EC2 api. Return true if able to connect.
-    # On failure this function fails silently and returns false.
-    #
-    # The +wait_sec+ parameter provides you with an adjustable timeout.
-    #
-    def can_connect?(wait_sec=2)
-      url = "http://169.254.169.254:80/"
-      Timeout::timeout(wait_sec) {open(url)}
-      return true
-    rescue Timeout::Error
-      return false
-    rescue
-      return false
-    end
-
-    # Test if this host has a mac address used by Eucalyptus clouds, which
-    # normally is +d0:0d+.
-    def has_euca_mac?
-      !!(Facter.value(:macaddress) =~ %r{^[dD]0:0[dD]:})
-    end
-
-    # Test if this host has a mac address used by OpenStack, which
-    # normally starts with FA:16:3E (older versions of OpenStack
-    # may generate mac addresses starting with 02:16:3E)
-    def has_openstack_mac?
-      !!(Facter.value(:macaddress) =~ %r{^(02|[fF][aA]):16:3[eE]})
-    end
-
-    # Test if the host has an arp entry in its cache that matches the EC2 arp,
-    # which is normally +fe:ff:ff:ff:ff:ff+.
-    def has_ec2_arp?
-      kernel = Facter.value(:kernel)
-
-      mac_address_re = case kernel
-                       when /Windows/i
-                         /fe-ff-ff-ff-ff-ff/i
-                       else
-                         /fe:ff:ff:ff:ff:ff/i
-                       end
-
-      arp_command = case kernel
-                    when /Windows/i, /SunOS/i
-                      "arp -a"
-                    else
-                      "arp -an"
-                    end
-
-      if arp_table = Facter::Util::Resolution.exec(arp_command)
-        return true if arp_table.match(mac_address_re)
-      end
-      return false
-    end
-  end
-
   ##
   # userdata returns a single string containing the body of the response of the
   # GET request for the URI http://169.254.169.254/latest/user-data/  If the
@@ -171,4 +167,24 @@ module Facter::Util::EC2
     open(uri).read
   end
   private_class_method :read_uri
+
+  ##
+  # add_ec2_facts defines EC2 related facts when running on an EC2 compatible
+  # node.  This method will only ever do work once for the life of a process in
+  # order to limit the amount of network I/O.
+  #
+  # @option options [Boolean] :force (false) whether or not to force
+  # re-definition of the facts.
+  def self.add_ec2_facts(options = {})
+    opts = options.dup
+    opts[:force] ||= false
+    unless opts[:force]
+      return nil if @add_ec2_facts_has_run
+    end
+    @add_ec2_facts_has_run = true
+    with_metadata_server :timeout => 50 do
+      define_userdata_fact
+      define_metadata_facts
+    end
+  end
 end
