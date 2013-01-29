@@ -4,6 +4,79 @@ require 'open-uri'
 # Provide a set of utility static methods that help with resolving the EC2
 # fact.
 module Facter::Util::EC2
+  ##
+  # with_metadata_server takes a block of code and executes the block only if Facter is
+  # running on node that can access a metadata server at
+  # http://169.254.168.254/.  This is useful to decide if it's reasonably
+  # likely that talking to the EC2 metadata server will be successful or not.
+  #
+  # @option options [Integer] :timeout (100) the maxiumum number of
+  # milliseconds Facter will block trying to talk to the metadata server.
+  # Defaults to 200.
+  #
+  # @option options [String] :fact ('virtual') the fact to check.  The block will only be
+  # executed if the fact named here matches the value named in the :value
+  # option.
+  #
+  # @option options [String] :value ('xenu') the value to check.  The block will be
+  # executed if Facter.value(options[:fact]) matches this value.
+  #
+  # @option options [String] :api_version ('latest') the Amazon AWS API
+  # version.  The version string is usually a date, e.g. '2008-02-01'.
+  #
+  # @option options [Fixnum] :retry_limit (3) the maximum number of times that
+  # this method will try to contact the metadata server.  The maximum run time
+  # is the timeout times this limit, so please keep the value small.
+  #
+  # @return [Object] the return value of the passed block, or {false} if the
+  # block was not executed because the conditions were not met or a timeout
+  # occurs.
+  def self.with_metadata_server(options = {}, &block)
+    opts = options.dup
+    opts[:timeout] ||= 100
+    opts[:fact] ||= 'virtual'
+    opts[:value] ||= 'xenu'
+    opts[:api_version] ||= 'latest'
+    opts[:retry_limit] ||= 3
+    # Conversion to fractional seconds for Timeout
+    timeout = opts[:timeout] / 1000.0
+    raise ArgumentError, "A value is required for :fact" if opts[:fact].nil?
+    raise ArgumentError, "A value is required for :value" if opts[:value].nil?
+    return false if Facter.value(opts[:fact]) != opts[:value]
+
+    metadata_base_url = "http://169.254.169.254"
+
+    attempts = 0
+    begin
+      able_to_connect = false
+      attempts = attempts + 1
+      # Read the list of supported API versions
+      Timeout.timeout(timeout) do
+        read_uri(metadata_base_url)
+      end
+    rescue Timeout::Error => detail
+      retry if attempts < opts[:retry_limit]
+      Facter.warn "Timeout exceeded trying to communicate with #{metadata_base_url}, " +
+        "metadata server facts will be undefined. #{detail.message}"
+    rescue Errno::EHOSTUNREACH, Errno::ENETUNREACH, Errno::ECONNREFUSED => detail
+      retry if attempts < opts[:retry_limit]
+      Facter.warn "No metadata server available at #{metadata_base_url}, " +
+        "metadata server facts will be undefined. #{detail.message}"
+    rescue OpenURI::HTTPError => detail
+      retry if attempts < opts[:retry_limit]
+      Facter.warn "Metadata server at #{metadata_base_url} responded with an error. " +
+        "metadata server facts will be undefined. #{detail.message}"
+    else
+      able_to_connect = true
+    end
+
+    if able_to_connect
+      return block.call
+    else
+      return false
+    end
+  end
+
   class << self
     # Test if we can connect to the EC2 api. Return true if able to connect.
     # On failure this function fails silently and returns false.
