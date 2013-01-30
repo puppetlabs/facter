@@ -61,6 +61,13 @@ module Facter::Util::IP
   end
 
   def self.get_interfaces
+    # Use sysfs on most Linux systems, which is the fastest option.
+    if File.exist?('/sys/class/net')
+      return Dir.glob('/sys/class/net/*').map do |name|
+        Facter::Util::IP.alphafy(name.split('/').last)
+      end
+    end
+
     return [] unless output = Facter::Util::IP.get_all_interface_output()
 
     # windows interface names contain spaces and are quoted and can appear multiple
