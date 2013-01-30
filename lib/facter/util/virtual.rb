@@ -23,11 +23,11 @@ module Facter::Util::Virtual
     return false unless self.openvz?
     return false unless FileTest.exists?( '/proc/self/status' )
 
-    envid = Facter::Util::Resolution.exec( 'grep "envID" /proc/self/status' )
+    envid = File.read('/proc/self/status')
     if envid =~ /^envID:\s+0$/i
-    return 'openvzhn'
+      return 'openvzhn'
     elsif envid =~ /^envID:\s+(\d+)$/i
-    return 'openvzve'
+      return 'openvzve'
     end
   end
 
