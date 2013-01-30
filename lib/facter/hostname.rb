@@ -27,7 +27,5 @@ end
 
 Facter.add(:hostname) do
   confine :kernel => :darwin, :kernelrelease => "R7"
-  setcode do
-    Facter::Core::Execution.exec('/usr/sbin/scutil --get LocalHostName')
-  end
+  setcode '/usr/sbin/scutil --get LocalHostName'
 end

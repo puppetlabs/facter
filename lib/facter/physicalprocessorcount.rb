@@ -66,19 +66,17 @@ end
 Facter.add('physicalprocessorcount') do
   confine :kernel => :sunos
 
+  # (#16526) The -p flag was not added until Solaris 8.  Our intent is to
+  # split the kernel release fact value on the dot, take the second element,
+  # and disable the -p flag for values < 8 when.
   setcode do
-    # (#16526) The -p flag was not added until Solaris 8.  Our intent is to
-    # split the kernel release fact value on the dot, take the second element,
-    # and disable the -p flag for values < 8 when.
     kernelrelease = Facter.value(:kernelrelease)
     (major_version, minor_version) = kernelrelease.split(".").map { |str| str.to_i }
-    cmd = "/usr/sbin/psrinfo"
-    result = nil
     if (major_version > 5) or (major_version == 5 and minor_version >= 8) then
-      result = Facter::Core::Execution.exec("#{cmd} -p")
+      Facter::Core::Execution.exec("/usr/sbin/psrinfo -p")
     else
-      output = Facter::Core::Execution.exec(cmd)
-      result = output.split("\n").length.to_s
+      output = Facter::Core::Execution.exec("/usr/sbin/psrinfo")
+      output.split("\n").length.to_s
     end
   end
 end
