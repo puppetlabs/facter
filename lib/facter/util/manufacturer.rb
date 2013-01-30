@@ -54,9 +54,7 @@ module Facter::Manufacturer
     name.each do |sysctlkey,facterkey|
       Facter.add(facterkey) do
         confine :kernel => [:openbsd, :darwin]
-        setcode do
-          Facter::Util::Resolution.exec("sysctl -n #{sysctlkey} 2>/dev/null")
-        end
+        setcode "sysctl -n #{sysctlkey} 2>/dev/null"
       end
     end
   end
@@ -80,9 +78,7 @@ module Facter::Manufacturer
     end
 
     Facter.add('serialnumber') do
-      setcode do
-        Facter::Util::Resolution.exec("/usr/sbin/sneep")
-      end
+      setcode "/usr/sbin/sneep"
     end
   end
 

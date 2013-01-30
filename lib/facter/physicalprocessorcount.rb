@@ -39,7 +39,7 @@ Facter.add('physicalprocessorcount') do
       lookup_pattern = "#{sysfs_cpu_directory}" +
         "/cpu*/topology/physical_package_id"
 
-      Dir.glob(lookup_pattern).collect { |f| Facter::Util::Resolution.exec("cat #{f}")}.uniq.size
+      Dir.glob(lookup_pattern).collect {|f| File.read(f) }.uniq.size
 
     else
       #
@@ -48,9 +48,8 @@ Facter.add('physicalprocessorcount') do
       # We assume that /proc/cpuinfo has what we need and is so then we need
       # to make sure that we only count unique entries ...
       #
-      str = Facter::Util::Resolution.exec("grep 'physical.\\+:' /proc/cpuinfo")
-
-      if str then str.scan(/\d+/).uniq.size; end
+      n = File.read('/proc/cpuinfo').split(/\n/).grep(/^physical id/).count
+      n > 0 ? n : nil
     end
   end
 end
@@ -66,19 +65,17 @@ end
 Facter.add('physicalprocessorcount') do
   confine :kernel => :sunos
 
+  # (#16526) The -p flag was not added until Solaris 8.  Our intent is to
+  # split the kernel release fact value on the dot, take the second element,
+  # and disable the -p flag for values < 8 when.
   setcode do
-    # (#16526) The -p flag was not added until Solaris 8.  Our intent is to
-    # split the kernel release fact value on the dot, take the second element,
-    # and disable the -p flag for values < 8 when.
     kernelrelease = Facter.value(:kernelrelease)
     (major_version, minor_version) = kernelrelease.split(".").map { |str| str.to_i }
-    cmd = "/usr/sbin/psrinfo"
-    result = nil
     if (major_version > 5) or (major_version == 5 and minor_version >= 8) then
-      result = Facter::Util::Resolution.exec("#{cmd} -p")
+      Facter::Util::Resolution.exec("/usr/sbin/psrinfo -p")
     else
-      output = Facter::Util::Resolution.exec(cmd)
-      result = output.split("\n").length.to_s
+      output = Facter::Util::Resolution.exec("/usr/sbin/psrinfo")
+      output.split("\n").length.to_s
     end
   end
 end

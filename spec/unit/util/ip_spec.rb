@@ -22,35 +22,41 @@ describe Facter::Util::IP do
   end
 
   it "should return an empty list of interfaces on an unknown kernel" do
+    File.stubs(:exist?).with('/sys/class/net').returns(false)
     Facter.stubs(:value).returns("UnknownKernel")
     Facter::Util::IP.get_interfaces().should == []
   end
 
-  it "should return a list with a single interface and the loopback interface on Linux with a single interface" do
+  it "should return a list with a single interface and the loopback interface on Linux with a single interface without sysfs" do
+    File.stubs(:exist?).with('/sys/class/net').returns(false)
     linux_ifconfig = my_fixture_read("linux_ifconfig_all_with_single_interface")
     Facter::Util::IP.stubs(:get_all_interface_output).returns(linux_ifconfig)
-    Facter::Util::IP.get_interfaces().should == ["eth0", "lo"]
+    Facter::Util::IP.get_interfaces().should =~ ["eth0", "lo"]
   end
 
   it "should return a list two interfaces on Darwin with two interfaces" do
+    File.stubs(:exist?).with('/sys/class/net').returns(false)
     darwin_ifconfig = my_fixture_read("darwin_ifconfig_all_with_multiple_interfaces")
     Facter::Util::IP.stubs(:get_all_interface_output).returns(darwin_ifconfig)
     Facter::Util::IP.get_interfaces().should == ["lo0", "en0"]
   end
 
   it "should return a list two interfaces on Solaris with two interfaces multiply reporting" do
+    File.stubs(:exist?).with('/sys/class/net').returns(false)
     solaris_ifconfig = my_fixture_read("solaris_ifconfig_all_with_multiple_interfaces")
     Facter::Util::IP.stubs(:get_all_interface_output).returns(solaris_ifconfig)
     Facter::Util::IP.get_interfaces().should == ["lo0", "e1000g0"]
   end
 
   it "should return a list of six interfaces on a GNU/kFreeBSD with six interfaces" do
+    File.stubs(:exist?).with('/sys/class/net').returns(false)
     kfreebsd_ifconfig = my_fixture_read("debian_kfreebsd_ifconfig")
     Facter::Util::IP.stubs(:get_all_interface_output).returns(kfreebsd_ifconfig)
     Facter::Util::IP.get_interfaces().should == ["em0", "em1", "bge0", "bge1", "lo0", "vlan0"]
   end
 
   it "should return a list of only connected interfaces on Windows" do
+    File.stubs(:exist?).with('/sys/class/net').returns(false)
     Facter.fact(:kernel).stubs(:value).returns("windows")
     windows_netsh = my_fixture_read("windows_netsh_all_interfaces")
     Facter::Util::IP.stubs(:get_all_interface_output).returns(windows_netsh)
@@ -121,6 +127,7 @@ describe Facter::Util::IP do
   end
 
   it "should return all interfaces correctly on OS X" do
+    File.stubs(:exist?).with('/sys/class/net').returns(false)
     ifconfig_interface = my_fixture_read("Mac_OS_X_10.5.5_ifconfig")
 
     Facter::Util::IP.expects(:get_all_interface_output).returns(ifconfig_interface)

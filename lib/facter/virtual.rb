@@ -48,9 +48,8 @@ end
 Facter.add("virtual") do
   confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX GNU/kFreeBSD}
 
-  result = "physical"
-
   setcode do
+    result = "physical"
 
     if Facter.value(:kernel) == "SunOS" and Facter::Util::Virtual.zone?
       result = "zone"

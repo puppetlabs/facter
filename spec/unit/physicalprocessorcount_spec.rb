@@ -12,7 +12,7 @@ describe "Physical processor count facts" do
 
     it "should return one physical CPU" do
       Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu*/topology/physical_package_id").returns(["/sys/devices/system/cpu/cpu0/topology/physical_package_id"])
-      Facter::Util::Resolution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
+      File.stubs(:read).with("/sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
 
       Facter.fact(:physicalprocessorcount).value.should == 1
     end
@@ -25,10 +25,10 @@ describe "Physical processor count facts" do
         /sys/devices/system/cpu/cpu3/topology/physical_package_id
       })
 
-      Facter::Util::Resolution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
-      Facter::Util::Resolution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu1/topology/physical_package_id").returns("1")
-      Facter::Util::Resolution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu2/topology/physical_package_id").returns("2")
-      Facter::Util::Resolution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu3/topology/physical_package_id").returns("3")
+      File.stubs(:read).with("/sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
+      File.stubs(:read).with("/sys/devices/system/cpu/cpu1/topology/physical_package_id").returns("1")
+      File.stubs(:read).with("/sys/devices/system/cpu/cpu2/topology/physical_package_id").returns("2")
+      File.stubs(:read).with("/sys/devices/system/cpu/cpu3/topology/physical_package_id").returns("3")
 
       Facter.fact(:physicalprocessorcount).value.should == 4
     end
@@ -37,6 +37,7 @@ describe "Physical processor count facts" do
   describe "on windows" do
     it "should return 4 physical CPUs" do
       Facter.fact(:kernel).stubs(:value).returns("windows")
+      Facter.fact(:kernelrelease).stubs(:value).returns("6.1.7601")
 
       require 'facter/util/wmi'
       ole = stub 'WIN32OLE'
