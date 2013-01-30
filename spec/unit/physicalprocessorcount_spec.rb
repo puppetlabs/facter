@@ -37,6 +37,7 @@ describe "Physical processor count facts" do
   describe "on windows" do
     it "should return 4 physical CPUs" do
       Facter.fact(:kernel).stubs(:value).returns("windows")
+      Facter.fact(:kernelrelease).stubs(:value).returns("6.1.7601")
 
       require 'facter/util/wmi'
       ole = stub 'WIN32OLE'
