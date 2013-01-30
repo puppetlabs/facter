@@ -1,0 +1,25 @@
+--- !ruby/object:Net::HTTPOK 
+body: ec2-23-22-77-215.compute-1.amazonaws.com
+body_exist: true
+code: "200"
+header: 
+  connection: 
+  - close
+  server: 
+  - EC2ws
+  date: 
+  - Wed, 31 Oct 2012 02:34:30 GMT
+  etag: 
+  - "\"2977445269\""
+  content-length: 
+  - "40"
+  last-modified: 
+  - Tue, 30 Oct 2012 23:48:24 GMT
+  accept-ranges: 
+  - bytes
+  content-type: 
+  - text/plain
+http_version: "1.0"
+message: OK
+read: true
+socket: 

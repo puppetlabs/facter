@@ -1,0 +1,12 @@
+--- !ruby/object:Net::HTTP::Get 
+body: 
+body_stream: 
+header: 
+  accept: 
+  - "*/*"
+  host: 
+  - 169.254.169.254
+method: GET
+path: /latest/meta-data/network/
+request_has_body: false
+response_has_body: true
