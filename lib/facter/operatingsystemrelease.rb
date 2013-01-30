@@ -50,7 +50,7 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Debian}
   setcode do
-    release = Facter::Util::Resolution.exec('cat /etc/debian_version')
+    release = File.read('/etc/debian_version')
   end
 end
 
@@ -70,7 +70,7 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{SLES SLED OpenSuSE}
   setcode do
-    releasefile = Facter::Util::Resolution.exec('cat /etc/SuSE-release')
+    releasefile = File.read('/etc/SuSE-release')
     if releasefile =~ /^VERSION\s*=\s*(\d+)/
       releasemajor = $1
       if releasefile =~ /^PATCHLEVEL\s*=\s*(\d+)/
@@ -90,7 +90,7 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Slackware}
   setcode do
-    release = Facter::Util::Resolution.exec('cat /etc/slackware-version')
+    release = File.read('/etc/slackware-version')
     if release =~ /Slackware ([0-9.]+)/
       $1
     end
@@ -100,7 +100,7 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Mageia}
   setcode do
-    release = Facter::Util::Resolution.exec('cat /etc/mageia-release')
+    release = File.read('/etc/mageia-release')
     if release =~ /Mageia release ([0-9.]+)/
       $1
     end
@@ -110,7 +110,7 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Bluewhite64}
   setcode do
-    releasefile = Facter::Util::Resolution.exec('cat /etc/bluewhite64-version')
+    releasefile = File.read('/etc/bluewhite64-version')
     if releasefile =~ /^\s*\w+\s+(\d+)\.(\d+)/
       $1 + "." + $2
     else
@@ -132,7 +132,7 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Slamd64}
   setcode do
-    releasefile = Facter::Util::Resolution.exec('cat /etc/slamd64-version')
+    releasefile = File.read('/etc/slamd64-version')
     if releasefile =~ /^\s*\w+\s+(\d+)\.(\d+)/
       $1 + "." + $2
     else
