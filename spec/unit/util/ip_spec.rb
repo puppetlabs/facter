@@ -335,9 +335,10 @@ describe Facter::Util::IP do
            netstat_in_fixture, lanscan_fixture = example
 
     it "should return a list three interfaces on #{description}" do
-      Facter.stubs(:value).with(:kernel).returns("HP-UX")
-      Facter::Util::IP.stubs(:hpux_netstat_in).returns(netstat_in_fixture)
-      Facter::Util::IP.get_interfaces().should == array_of_expected_ifs
+      Facter.expects(:value).with(:kernel).at_least_once.returns("HP-UX")
+      File.expects(:exist?).with('/sys/class/net').returns(false)
+      Facter::Util::IP.expects(:hpux_netstat_in).returns(netstat_in_fixture)
+      Facter::Util::IP.get_interfaces.should == array_of_expected_ifs
     end
 
     array_of_expected_ifs.each_with_index do |nic, i|
@@ -349,31 +350,31 @@ describe Facter::Util::IP do
 
       # (#17808) These tests fail because MTU facts haven't been implemented for HP-UX.
       #it "should return MTU #{expected_mtu} on #{nic} for #{description} example" do
-      #  Facter.stubs(:value).with(:kernel).returns("HP-UX")
-      #  Facter::Util::IP.stubs(:hpux_netstat_in).returns(netstat_in_fixture)
-      #  Facter::Util::IP.stubs(:hpux_lanscan).returns(lanscan_fixture)
-      #  Facter::Util::IP.stubs(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
+      #  Facter.expects(:value).with(:kernel).at_least_once.returns("HP-UX")
+      #  Facter::Util::IP.expects(:hpux_netstat_in).returns(netstat_in_fixture)
+      #  Facter::Util::IP.expects(:hpux_lanscan).returns(lanscan_fixture)
+      #  Facter::Util::IP.expects(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
       #  Facter::Util::IP.get_interface_value(nic, "mtu").should == expected_mtu
       #end
 
       it "should return IP #{expected_ip} on #{nic} for #{description} example" do
-        Facter.stubs(:value).with(:kernel).returns("HP-UX")
-        Facter::Util::IP.stubs(:hpux_lanscan).returns(lanscan_fixture)
-        Facter::Util::IP.stubs(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
+        Facter.expects(:value).with(:kernel).at_least_once.returns("HP-UX")
+        Facter::Util::IP.expects(:hpux_lanscan).returns(lanscan_fixture)
+        Facter::Util::IP.expects(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
         Facter::Util::IP.get_interface_value(nic, "ipaddress").should == expected_ip
       end
 
       it "should return netmask #{expected_netmask} on #{nic} for #{description} example" do
-        Facter.stubs(:value).with(:kernel).returns("HP-UX")
-        Facter::Util::IP.stubs(:hpux_lanscan).returns(lanscan_fixture)
-        Facter::Util::IP.stubs(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
+        Facter.expects(:value).with(:kernel).at_least_once.returns("HP-UX")
+        Facter::Util::IP.expects(:hpux_lanscan).returns(lanscan_fixture)
+        Facter::Util::IP.expects(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
         Facter::Util::IP.get_interface_value(nic, "netmask").should == expected_netmask
       end
 
       it "should return MAC address #{expected_mac} on #{nic} for #{description} example" do
-        Facter.stubs(:value).with(:kernel).returns("HP-UX")
-        Facter::Util::IP.stubs(:hpux_lanscan).returns(lanscan_fixture)
-        Facter::Util::IP.stubs(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
+        Facter.expects(:value).with(:kernel).at_least_once.returns("HP-UX")
+        Facter::Util::IP.expects(:hpux_lanscan).returns(lanscan_fixture)
+        Facter::Util::IP.expects(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
         Facter::Util::IP.get_interface_value(nic, "macaddress").should == expected_mac
       end
     end
