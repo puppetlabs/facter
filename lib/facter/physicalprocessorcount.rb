@@ -48,7 +48,7 @@ Facter.add('physicalprocessorcount') do
       # We assume that /proc/cpuinfo has what we need and is so then we need
       # to make sure that we only count unique entries ...
       #
-      n = File.read('/proc/cpuinfo').split(/\n/).grep(/^physical id/).count
+      n = File.read('/proc/cpuinfo').split(/\n/).grep(/^physical id/).uniq.count
       n > 0 ? n : nil
     end
   end
