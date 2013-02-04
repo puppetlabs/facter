@@ -31,7 +31,7 @@ describe Facter::Util::IP do
   end
 
   it "should return a list two interfaces on Darwin with two interfaces" do
-    darwin_ifconfig = my_fixture_read("darwin_ifconfig_all_with_multiple_interfaces")
+    darwin_ifconfig = my_fixture_read("darwin_ifconfig_all_with_multiple_int5erfaces")
     Facter::Util::IP.stubs(:get_all_interface_output).returns(darwin_ifconfig)
     Facter::Util::IP.get_interfaces().should == ["lo0", "en0"]
   end
