@@ -46,6 +46,23 @@ describe "the ipaddress_$iface fact" do
     end
     example_behavior_for "iface specific ifconfig output", "Fedora 18", "10.10.220.1", "eth0_net_tools_2.0.txt"
 
-    example_behavior_for "iface specific ifconfig output", "net_tools 1.60", "131.252.209.153", "eth0_net_tools_1.60.txt"
+    example_behavior_for "iface specific ifconfig output", "net_tools 1.60", "10.10.220.210", "eth0_net_tools_1.60.txt"
+  end
+end
+
+describe "the ipaddress6_$iface fact" do
+  subject do
+    Facter.collection.loader.load(:interfaces)
+    Facter.fact(:ipaddress6_eth0)
+  end
+
+  context "on Linux" do
+    before :each do
+      Facter::Util::IP.stubs(:get_interfaces).returns(["eth0"])
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+    end
+    example_behavior_for "iface specific ifconfig output", "Fedora 18", "dead::21f:bcff:fe0d:5fb1", "eth0_net_tools_2.0.txt"
+
+    example_behavior_for "iface specific ifconfig output", "net_tools 1.60", "dead::216:3eff:fe7d:ec7e", "eth0_net_tools_1.60.txt"
   end
 end
