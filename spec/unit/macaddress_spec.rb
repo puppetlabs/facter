@@ -1,6 +1,8 @@
 #! /usr/bin/env ruby
 
 require 'spec_helper'
+require 'facter/util/ip'
+
 
 def ifconfig_fixture(filename)
   File.read(fixtures('ifconfig', filename))
@@ -19,17 +21,18 @@ describe "macaddress fact" do
     before :each do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
+      Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
     end
 
     it "should return the macaddress of the first interface" do
-      Facter::Util::Resolution.stubs(:exec).with('/sbin/ifconfig -a 2>/dev/null').
+      Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
         returns(ifconfig_fixture('linux_ifconfig_all_with_multiple_interfaces'))
 
       Facter.value(:macaddress).should == "00:12:3f:be:22:01"
     end
 
     it "should return nil when no macaddress can be found" do
-      Facter::Util::Resolution.stubs(:exec).with('/sbin/ifconfig -a 2>/dev/null').
+      Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
         returns(ifconfig_fixture('linux_ifconfig_no_mac'))
 
       proc { Facter.value(:macaddress) }.should_not raise_error
@@ -38,7 +41,7 @@ describe "macaddress fact" do
 
     # some interfaces dont have a real mac addresses (like venet inside a container)
     it "should return nil when no interface has a real macaddress" do
-      Facter::Util::Resolution.stubs(:exec).with('/sbin/ifconfig -a 2>/dev/null').
+      Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
         returns(ifconfig_fixture('linux_ifconfig_venet'))
 
       proc { Facter.value(:macaddress) }.should_not raise_error
@@ -49,7 +52,8 @@ describe "macaddress fact" do
   describe "when run on BSD" do
     it "should return macaddress information" do
       Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
-      Facter::Util::Resolution.stubs(:exec).with('/sbin/ifconfig').
+      Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
+      Facter::Util::IP.stubs(:exec_ifconfig).
         returns(ifconfig_fixture('bsd_ifconfig_all_with_multiple_interfaces'))
 
       Facter.value(:macaddress).should == "00:0b:db:93:09:67"

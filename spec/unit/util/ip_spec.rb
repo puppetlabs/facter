@@ -409,6 +409,45 @@ describe Facter::Util::IP do
     end
   end
 
+  describe "exec_ifconfig" do
+    it "uses get_ifconfig" do
+      Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig").once
+
+      Facter::Util::IP.exec_ifconfig
+    end
+    it "support additional arguments" do
+      Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
+
+      Facter::Util::Resolution.stubs(:exec).with("/sbin/ifconfig -a")
+
+      Facter::Util::IP.exec_ifconfig(["-a"])
+    end
+    it "joins multiple arguments correctly" do
+      Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
+
+      Facter::Util::Resolution.stubs(:exec).with("/sbin/ifconfig -a -e -i -j")
+
+      Facter::Util::IP.exec_ifconfig(["-a","-e","-i","-j"])
+    end
+  end
+  describe "get_ifconfig" do
+    it "assigns /sbin/ifconfig if it is executable" do
+      File.stubs(:executable?).returns(false)
+      File.stubs(:executable?).with("/sbin/ifconfig").returns(true)
+      Facter::Util::IP.get_ifconfig.should eq("/sbin/ifconfig")
+    end
+    it "assigns /usr/sbin/ifconfig if it is executable" do
+      File.stubs(:executable?).returns(false)
+      File.stubs(:executable?).with("/usr/sbin/ifconfig").returns(true)
+      Facter::Util::IP.get_ifconfig.should eq("/usr/sbin/ifconfig")
+    end
+    it "assigns /bin/ifconfig if it is executable" do
+      File.stubs(:executable?).returns(false)
+      File.stubs(:executable?).with("/bin/ifconfig").returns(true)
+      Facter::Util::IP.get_ifconfig.should eq("/bin/ifconfig")
+    end
+  end
+
   context "with bonded ethernet interfaces on Linux" do
     before :each do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
