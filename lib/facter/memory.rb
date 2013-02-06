@@ -75,8 +75,8 @@ end
 }.each do |fact, name|
   Facter.add(fact) do
     confine :kernel => [ :linux, :"gnu/kfreebsd" ]
-    meminfo = Facter::Memory.meminfo_number(name)
     setcode do
+      meminfo = Facter::Memory.meminfo_number(name)
       "%.2f" % [meminfo]
     end
   end
