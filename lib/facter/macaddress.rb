@@ -8,6 +8,7 @@
 #
 
 require 'facter/util/macaddress'
+require 'facter/util/ip'
 
 Facter.add(:macaddress) do
   confine :kernel => 'Linux'
