@@ -1,6 +1,8 @@
 Facter
 ======
 
+Let's see how this pull request flows through to Trello.
+
 [![Build Status](https://travis-ci.org/puppetlabs/facter.png?branch=master)](https://travis-ci.org/puppetlabs/facter)
 
 This package is largely meant to be a library for collecting facts about your
