@@ -5,8 +5,8 @@ module Facter::Util::IP
   # a given platform or set of platforms.
   REGEX_MAP = {
     :linux => {
-      :ipaddress  => /inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-      :ipaddress6 => /inet6 addr: ((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
+      :ipaddress  => /inet (?:addr:)?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
+      :ipaddress6 => /inet6 (?:addr:)? ?((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
       :macaddress => /(?:ether|HWaddr)\s+((\w{1,2}:){5,}\w{1,2})/,
       :netmask  => /Mask:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
       :mtu  => /MTU:(\d+)/
@@ -61,6 +61,13 @@ module Facter::Util::IP
   end
 
   def self.get_interfaces
+    # Use sysfs on most Linux systems, which is the fastest option.
+    if File.exist?('/sys/class/net')
+      return Dir.glob('/sys/class/net/*').map do |name|
+        Facter::Util::IP.alphafy(name.split('/').last)
+      end
+    end
+
     return [] unless output = Facter::Util::IP.get_all_interface_output()
 
     # windows interface names contain spaces and are quoted and can appear multiple

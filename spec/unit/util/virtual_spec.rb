@@ -30,20 +30,47 @@ describe Facter::Util::Virtual do
   it "should identify openvzhn when /proc/self/status has envID of 0" do
     Facter::Util::Virtual.stubs(:openvz?).returns(true)
     FileTest.stubs(:exists?).with("/proc/self/status").returns(true)
-    Facter::Util::Resolution.stubs(:exec).with('grep "envID" /proc/self/status').returns("envID:  0")
+    File.stubs(:read).with('/proc/self/status').returns <<EOT
+Name:	cat
+State:	R (running)
+Tgid:	8418
+Pid:	8418
+PPid:	2354
+envID:  0
+TracerPid:	0
+Uid:	0	0	0	0
+EOT
     Facter::Util::Virtual.openvz_type().should == "openvzhn"
   end
 
   it "should identify openvzve when /proc/self/status has envID of 0" do
     Facter::Util::Virtual.stubs(:openvz?).returns(true)
     FileTest.stubs(:exists?).with('/proc/self/status').returns(true)
-    Facter::Util::Resolution.stubs(:exec).with('grep "envID" /proc/self/status').returns("envID:  666")
+    File.stubs(:read).with('/proc/self/status').returns <<EOT
+Name:	cat
+State:	R (running)
+Tgid:	8418
+Pid:	8418
+PPid:	2354
+envID:  101
+TracerPid:	0
+Uid:	0	0	0	0
+EOT
     Facter::Util::Virtual.openvz_type().should == "openvzve"
   end
 
   it "should not attempt to identify openvz when /proc/self/status has no envID" do
     Facter::Util::Virtual.stubs(:openvz?).returns(true)
     FileTest.stubs(:exists?).with('/proc/self/status').returns(true)
+    File.stubs(:read).with('/proc/self/status').returns <<EOT
+Name:	cat
+State:	R (running)
+Tgid:	8418
+Pid:	8418
+PPid:	2354
+TracerPid:	0
+Uid:	0	0	0	0
+EOT
     Facter::Util::Resolution.stubs(:exec).with('grep "envID" /proc/self/status').returns("")
     Facter::Util::Virtual.openvz_type().should be_nil
   end
@@ -79,6 +106,44 @@ describe Facter::Util::Virtual do
     FileTest.stubs(:exists?).with("/proc/self/status").returns(true)
     File.stubs(:open).with("/proc/self/status", "rb").returns(StringIO.new("wibble: 42\n"))
     Facter::Util::Virtual.should_not be_vserver
+  end
+
+  it "should identify kvm" do
+    Facter::Util::Virtual.stubs(:kvm?).returns(true)
+    Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("something")
+    Facter::Util::Virtual.kvm_type().should == "kvm"
+  end
+
+  it "should be able to detect RHEV via sysfs on Linux" do
+    # Fake files are always hard to stub. :/
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").
+      returns("RHEV Hypervisor")
+
+    Facter::Util::Virtual.should be_rhev
+  end
+
+  it "should be able to detect RHEV via sysfs on Linux improperly" do
+    # Fake files are always hard to stub. :/
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").
+      returns("something else")
+
+    Facter::Util::Virtual.should_not be_rhev
+  end
+
+  it "should be able to detect ovirt via sysfs on Linux" do
+    # Fake files are always hard to stub. :/
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").
+      returns("oVirt Node")
+
+    Facter::Util::Virtual.should be_ovirt
+  end
+
+  it "should be able to detect ovirt via sysfs on Linux improperly" do
+    # Fake files are always hard to stub. :/
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").
+      returns("something else")
+
+    Facter::Util::Virtual.should_not be_ovirt
   end
 
   fixture_path = fixtures('virtual', 'proc_self_status')

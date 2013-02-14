@@ -23,11 +23,11 @@ module Facter::Util::Virtual
     return false unless self.openvz?
     return false unless FileTest.exists?( '/proc/self/status' )
 
-    envid = Facter::Util::Resolution.exec( 'grep "envID" /proc/self/status' )
+    envid = File.read('/proc/self/status')
     if envid =~ /^envID:\s+0$/i
-    return 'openvzhn'
+      return 'openvzhn'
     elsif envid =~ /^envID:\s+(\d+)$/i
-    return 'openvzve'
+      return 'openvzve'
     end
   end
 
@@ -84,7 +84,17 @@ module Facter::Util::Virtual
     # TODO Tell the difference between kvm and qemu
     # Can't work out a way to do this at the moment that doesn't
     # require a special binary
-    "kvm"
+    if self.kvm?
+      "kvm"
+    end
+  end
+
+  def self.rhev?
+    File.read("/sys/devices/virtual/dmi/id/product_name") =~ /RHEV Hypervisor/ rescue false
+  end
+
+  def self.ovirt?
+    File.read("/sys/devices/virtual/dmi/id/product_name") =~ /oVirt Node/ rescue false
   end
 
   def self.jail?

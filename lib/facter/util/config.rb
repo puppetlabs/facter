@@ -13,12 +13,12 @@ module Facter::Util::Config
   end
 
   def self.is_mac?
-    RbConfig::CONFIG['host_os'] =~ /darwin/i
+    (defined?(RbConfig) ? RbConfig : Config)::CONFIG['host_os'] =~ /darwin/i
   end
 
   # Returns true if OS is windows
   def self.is_windows?
-    RbConfig::CONFIG['host_os'] =~ /mswin|win32|dos|mingw|cygwin/i
+    (defined?(RbConfig) ? RbConfig : Config)::CONFIG['host_os'] =~ /mswin|win32|dos|mingw|cygwin/i
   end
 
   def self.windows_data_dir

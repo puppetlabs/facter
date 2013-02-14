@@ -48,9 +48,8 @@ end
 Facter.add("virtual") do
   confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX GNU/kFreeBSD}
 
-  result = "physical"
-
   setcode do
+    result = "physical"
 
     if Facter.value(:kernel) == "SunOS" and Facter::Util::Virtual.zone?
       result = "zone"
@@ -92,6 +91,14 @@ Facter.add("virtual") do
       result = "jail" if Facter::Util::Virtual.jail?
     end
 
+    if Facter::Util::Virtual.rhev?
+      result = "rhev"
+    end
+
+    if Facter::Util::Virtual.ovirt?
+      result = "ovirt"
+    end
+
     if result == "physical"
       output = Facter::Util::Virtual.lspci
       if not output.nil?
@@ -124,6 +131,8 @@ Facter.add("virtual") do
             result = "virtualbox" if pd =~ /VirtualBox/
             result = "xenhvm" if pd =~ /HVM domU/
             result = "hyperv" if pd =~ /Product Name: Virtual Machine/
+            result = "rhev" if pd =~ /Product Name: RHEV Hypervisor/
+            result = "ovirt" if pd =~ /Product Name: oVirt Node/
           end
         elsif Facter.value(:kernel) == 'SunOS'
           res = Facter::Util::Resolution.new('prtdiag')

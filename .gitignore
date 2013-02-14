@@ -6,3 +6,4 @@ doc
 .bundle/
 vendor/
 Gemfile.lock
+.rspec

@@ -1,8 +1,22 @@
+#
 # -*- encoding: utf-8 -*-
+
+begin
+  require 'facter/version'
+rescue LoadError => detail
+  $LOAD_PATH.unshift(File.expand_path("../lib", __FILE__))
+  require 'facter/version'
+end
 
 Gem::Specification.new do |s|
   s.name = "facter"
-  s.version = "1.6.11"
+
+  version = Facter.version
+  if mdata = version.match(/(\d+\.\d+\.\d+)/)
+    s.version = mdata[1]
+  else
+    s.version = version
+  end
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Puppet Labs"]

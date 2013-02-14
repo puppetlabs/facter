@@ -48,9 +48,9 @@ describe Facter::Util::Fact do
     end
 
     it "should re-sort the resolutions by weight, so the most restricted resolutions are first" do
-      @fact.add { self.value = "1"; self.weight = 1 }
-      @fact.add { self.value = "2"; self.weight = 2 }
-      @fact.add { self.value = "0"; self.weight = 0 }
+      @fact.add { has_weight 1; setcode { "1" } }
+      @fact.add { has_weight 2; setcode { "2" } }
+      @fact.add { has_weight 0; setcode { "0" } }
       @fact.value.should == "2"
     end
   end

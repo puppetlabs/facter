@@ -22,8 +22,9 @@
 require 'thread'
 require 'facter/util/processor'
 
-## We have to enumerate these outside a Facter.add block to get the processorN descriptions iteratively
-## (but we need them inside the Facter.add block above for tests on processorcount to work)
+# We have to enumerate these outside a Facter.add block to get the processorN
+# descriptions iteratively (but we need them inside the Facter.add block above
+# for tests on processorcount to work)
 processor_list = case Facter::Util::Processor.kernel_fact_value
 when "AIX"
   Facter::Util::Processor.aix_processor_list
@@ -89,23 +90,12 @@ end
 
 Facter.add("Processor") do
   confine :kernel => :openbsd
-  setcode do
-    Facter::Util::Resolution.exec("uname -p")
-  end
-end
-
-Facter.add("ProcessorCount") do
-  confine :kernel => :openbsd
-  setcode do
-    Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
-  end
+  setcode "uname -p"
 end
 
 Facter.add("ProcessorCount") do
   confine :kernel => :Darwin
-  setcode do
-    Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
-  end
+  setcode "sysctl -n hw.ncpu"
 end
 
 if Facter.value(:kernel) == "windows"
@@ -148,16 +138,12 @@ end
 
 Facter.add("Processor") do
   confine :kernel => [:dragonfly,:freebsd]
-  setcode do
-    Facter::Util::Resolution.exec("sysctl -n hw.model")
-  end
+  setcode "sysctl -n hw.model"
 end
 
 Facter.add("ProcessorCount") do
-  confine :kernel => [:dragonfly,:freebsd]
-  setcode do
-    Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
-  end
+  confine :kernel => [:dragonfly,:freebsd,:openbsd]
+  setcode "sysctl -n hw.ncpu"
 end
 
 Facter.add("ProcessorCount") do
