@@ -108,6 +108,44 @@ EOT
     Facter::Util::Virtual.should_not be_vserver
   end
 
+  it "should identify kvm" do
+    Facter::Util::Virtual.stubs(:kvm?).returns(true)
+    Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("something")
+    Facter::Util::Virtual.kvm_type().should == "kvm"
+  end
+
+  it "should be able to detect RHEV via sysfs on Linux" do
+    # Fake files are always hard to stub. :/
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").
+      returns("RHEV Hypervisor")
+
+    Facter::Util::Virtual.should be_rhev
+  end
+
+  it "should be able to detect RHEV via sysfs on Linux improperly" do
+    # Fake files are always hard to stub. :/
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").
+      returns("something else")
+
+    Facter::Util::Virtual.should_not be_rhev
+  end
+
+  it "should be able to detect ovirt via sysfs on Linux" do
+    # Fake files are always hard to stub. :/
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").
+      returns("oVirt Node")
+
+    Facter::Util::Virtual.should be_ovirt
+  end
+
+  it "should be able to detect ovirt via sysfs on Linux improperly" do
+    # Fake files are always hard to stub. :/
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").
+      returns("something else")
+
+    Facter::Util::Virtual.should_not be_ovirt
+  end
+
   fixture_path = fixtures('virtual', 'proc_self_status')
 
   test_cases = [
