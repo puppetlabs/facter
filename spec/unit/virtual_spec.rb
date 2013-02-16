@@ -14,6 +14,8 @@ describe "Virtual fact" do
     Facter::Util::Virtual.stubs(:hpvm?).returns(false)
     Facter::Util::Virtual.stubs(:zlinux?).returns(false)
     Facter::Util::Virtual.stubs(:virt_what).returns(nil)
+    Facter::Util::Virtual.stubs(:rhev?).returns(false)
+    Facter::Util::Virtual.stubs(:ovirt?).returns(false)
     Facter::Util::Virtual.stubs(:virtualbox?).returns(false)
   end
 
@@ -157,6 +159,20 @@ describe "Virtual fact" do
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("BIOS Information\nVendor: innotek GmbH\nVersion: VirtualBox\n\nSystem Information\nManufacturer: innotek GmbH\nProduct Name: VirtualBox\nFamily: Virtual Machine")
       Facter.fact(:virtual).value.should == "virtualbox"
+    end
+
+    it "should be rhev with RHEV Hypervisor product name from dmidecode" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
+      Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("Product Name: RHEV Hypervisor")
+      Facter.fact(:virtual).value.should == "rhev"
+    end
+
+    it "should be ovirt with oVirt Node product name from dmidecode" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
+      Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("Product Name: oVirt Node")
+      Facter.fact(:virtual).value.should == "ovirt"
     end
 
     it "should be hyperv with Microsoft vendor name from lspci 2>/dev/null" do
@@ -396,6 +412,18 @@ describe "is_virtual fact" do
   it "should be true when running on hyperv" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("hyperv")
+    Facter.fact(:is_virtual).value.should == "true"
+  end
+
+  it "should be true when running on rhev" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("rhev")
+    Facter.fact(:is_virtual).value.should == "true"
+  end
+
+  it "should be true when running on ovirt" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("ovirt")
     Facter.fact(:is_virtual).value.should == "true"
   end
 end
