@@ -39,6 +39,12 @@ describe "Operating System Release fact" do
     end
   end
 
+  it "does not include trailing whitespace on Debian" do
+    Facter.fact(:operatingsystem).stubs(:value).returns("Debian")
+    Facter::Util::FileRead.stubs(:read).returns("6.0.6\n")
+    Facter.fact(:operatingsystemrelease).value.should == "6.0.6"
+  end
+
   it "for VMWareESX it should run the vmware -v command" do
     Facter.fact(:kernel).stubs(:value).returns("VMkernel")
     Facter.fact(:kernelrelease).stubs(:value).returns("4.1.0")

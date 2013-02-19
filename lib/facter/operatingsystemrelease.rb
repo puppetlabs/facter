@@ -50,7 +50,9 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Debian}
   setcode do
-    release = Facter::Util::Resolution.exec('cat /etc/debian_version')
+    release = Facter::Util::FileRead.read('/etc/debian_version')
+    release.sub!(/\s*$/, '')
+    release
   end
 end
 
@@ -144,7 +146,9 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => :Alpine
   setcode do
-    File.read('/etc/alpine-release')
+    release = Facter::Util::FileRead.read('/etc/alpine-release')
+    release.sub!(/\s*$/, '')
+    release
   end
 end
 
