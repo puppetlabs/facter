@@ -32,7 +32,7 @@ describe "Operating System Release fact" do
       it "should read the #{file.inspect} file" do
         Facter.fact(:operatingsystem).stubs(:value).returns(system)
 
-        File.expects(:open).with(file, "r").at_least(1)
+        Facter::Util::FileRead.expects(:read).with(file).at_least(1)
 
         Facter.fact(:operatingsystemrelease).value
       end
@@ -120,7 +120,7 @@ describe "Operating System Release fact" do
       'Oracle Solaris 10 8/11 s10x_u10wos_17b X86'   => '10_u10',
     }.each do |fakeinput,expected_output|
       it "should be able to parse a release of #{fakeinput}" do
-        File.stubs(:open).with('/etc/release','r').returns fakeinput
+        Facter::Util::FileRead.stubs(:read).with('/etc/release').returns fakeinput
         Facter.fact(:operatingsystemrelease).value.should == expected_output
       end
     end

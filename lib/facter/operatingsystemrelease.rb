@@ -36,12 +36,13 @@ Facter.add(:operatingsystemrelease) do
     when "OVS", "ovs"
       releasefile = "/etc/ovs-release"
     end
-    File::open(releasefile, "r") do |f|
-      line = f.readline.chomp
-      if line =~ /\(Rawhide\)$/
+
+    if release = Facter::Util::FileRead.read(releasefile)
+      line = release.split("\n").first.chomp
+      if match = /\(Rawhide\)$/.match(line)
         "Rawhide"
-      elsif line =~ /release (\d[\d.]*)/
-        $1
+      elsif match = /release (\d[\d.]*)/.match(line)
+        match[1]
       end
     end
   end
@@ -50,9 +51,10 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Debian}
   setcode do
-    release = Facter::Util::FileRead.read('/etc/debian_version')
-    release.sub!(/\s*$/, '')
-    release
+    if release = Facter::Util::FileRead.read('/etc/debian_version')
+      release.sub!(/\s*$/, '')
+      release
+    end
   end
 end
 
@@ -72,19 +74,20 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{SLES SLED OpenSuSE}
   setcode do
-    releasefile = Facter::Util::Resolution.exec('cat /etc/SuSE-release')
-    if releasefile =~ /^VERSION\s*=\s*(\d+)/
-      releasemajor = $1
-      if releasefile =~ /^PATCHLEVEL\s*=\s*(\d+)/
-        releaseminor = $1
-      elsif releasefile =~ /^VERSION\s=.*.(\d+)/
-        releaseminor = $1
+    if release = Facter::Util::FileRead.read('/etc/SuSE-release')
+      if match = /^VERSION\s*=\s*(\d+)/.match(release)
+        releasemajor = match[1]
+        if match = /^PATCHLEVEL\s*=\s*(\d+)/.match(release)
+          releaseminor = match[1]
+        elsif match = /^VERSION\s=.*.(\d+)/.match(release)
+          releaseminor = match[1]
+        else
+          releaseminor = "0"
+        end
+        releasemajor + "." + releaseminor
       else
-        releaseminor = "0"
+        "unknown"
       end
-      releasemajor + "." + releaseminor
-    else
-      "unknown"
     end
   end
 end
@@ -92,9 +95,10 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Slackware}
   setcode do
-    release = Facter::Util::Resolution.exec('cat /etc/slackware-version')
-    if release =~ /Slackware ([0-9.]+)/
-      $1
+    if release = Facter::Util::FileRead.read('/etc/slackware-version')
+      if match = /Slackware ([0-9.]+)/.match(release)
+        match[1]
+      end
     end
   end
 end
@@ -102,9 +106,10 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Mageia}
   setcode do
-    release = Facter::Util::Resolution.exec('cat /etc/mageia-release')
-    if release =~ /Mageia release ([0-9.]+)/
-      $1
+    if release = Facter::Util::FileRead.read('/etc/mageia-release')
+      if match = /Mageia release ([0-9.]+)/.match(release)
+        match[1]
+      end
     end
   end
 end
@@ -112,11 +117,12 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Bluewhite64}
   setcode do
-    releasefile = Facter::Util::Resolution.exec('cat /etc/bluewhite64-version')
-    if releasefile =~ /^\s*\w+\s+(\d+)\.(\d+)/
-      $1 + "." + $2
-    else
-      "unknown"
+    if release = Facter::Util::FileRead.read('/etc/bluewhite64-version')
+      if match = /^\s*\w+\s+(\d+)\.(\d+)/.match(release)
+        match[1] + "." + match[2]
+      else
+        "unknown"
+      end
     end
   end
 end
@@ -125,8 +131,8 @@ Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{VMwareESX}
   setcode do
     release = Facter::Util::Resolution.exec('vmware -v')
-    if release =~ /VMware ESX .*?(\d.*)/
-      $1
+    if match = /VMware ESX .*?(\d.*)/.match(release)
+      match[1]
     end
   end
 end
@@ -134,11 +140,12 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Slamd64}
   setcode do
-    releasefile = Facter::Util::Resolution.exec('cat /etc/slamd64-version')
-    if releasefile =~ /^\s*\w+\s+(\d+)\.(\d+)/
-      $1 + "." + $2
-    else
-      "unknown"
+    if release = Facter::Util::FileRead.read('/etc/slamd64-version')
+      if match = /^\s*\w+\s+(\d+)\.(\d+)/.match(release)
+        match[1] + "." + match[2]
+      else
+        "unknown"
+      end
     end
   end
 end
@@ -146,9 +153,10 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => :Alpine
   setcode do
-    release = Facter::Util::FileRead.read('/etc/alpine-release')
-    release.sub!(/\s*$/, '')
-    release
+    if release = Facter::Util::FileRead.read('/etc/alpine-release')
+      release.sub!(/\s*$/, '')
+      release
+    end
   end
 end
 
@@ -160,9 +168,11 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :osfamily => :solaris
   setcode do
-    release = File.open('/etc/release','r') {|f| f.readline.chomp}
-    if match = /\s+s(\d+)[sx]?(_u\d+)?.*(?:SPARC|X86)/.match(release)
-      match.captures.join('')
+    if release = Facter::Util::FileRead.read('/etc/release')
+      line = release.split("\n").first.chomp
+      if match = /\s+s(\d+)[sx]?(_u\d+)?.*(?:SPARC|X86)/.match(line)
+        match.captures.join('')
+      end
     end
   end
 end
