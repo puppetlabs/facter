@@ -6,7 +6,9 @@ notifications:
 rvm:
   - 1.9.3
   - 1.8.7
+  - 2.0.0
   - ruby-head
 matrix:
   allow_failures:
     - rvm: ruby-head
+    - rvm: 2.0.0
