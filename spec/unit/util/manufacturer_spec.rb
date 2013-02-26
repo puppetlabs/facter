@@ -31,15 +31,14 @@ describe Facter::Manufacturer do
     Facter.value(:productname).should == "SPARC Enterprise T5220"
   end
 
-  it "should not set manufacturer or productname if prtdiag output is nil" do
+  it "should not set manufacturer if prtdiag output is nil" do
     # Stub kernel so we don't have windows fall through to its own mechanism
     Facter.fact(:kernel).stubs(:value).returns("SunOS")
     Facter.fact(:hardwareisa).stubs(:value).returns("sparc")
 
     Facter::Util::Resolution.stubs(:exec).with(regexp_matches(/prtdiag/)).returns(nil)
     Facter::Manufacturer.prtdiag_sparc_find_system_info()
-    Facter.value(:manufacturer).should be_nil
-    Facter.value(:productname).should be_nil
+    Facter.value(:manufacturer).should_not == "Sun Microsystems"
   end
 
   it "should strip white space on dmi output with spaces" do
