@@ -39,8 +39,8 @@ Facter.add(:ipaddress6) do
   confine :kernel => :linux
   setcode do
     output = Facter::Util::IP.exec_ifconfig(["2>/dev/null"])
-
-    get_address_after_token(output, 'inet6 addr:')
+    get_address_after_token(output, 'inet6 addr:') or
+      get_address_after_token(output, 'inet6')
   end
 end
 
