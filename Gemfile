@@ -10,11 +10,11 @@ end
 
 group :development, :test do
   gem 'rake'
-  gem 'facter', ">= 1.0.0", :path => File.expand_path("..", __FILE__), :require => false
-  gem 'rspec', "~> 2.11.0", :require => false
-  gem 'mocha', "~> 0.10.5", :require => false
-  gem 'json', "~> 1.7", :require => false
-  gem 'puppetlabs_spec_helper', :require => false
+  gem 'facter', ">= 1.0.0", :path => File.expand_path("..", __FILE__)
+  gem 'rspec', "~> 2.11.0"
+  gem 'mocha', "~> 0.10.5"
+  gem 'json', "~> 1.7"
+  gem 'puppetlabs_spec_helper'
 end
 
 platform :mswin, :mingw do
