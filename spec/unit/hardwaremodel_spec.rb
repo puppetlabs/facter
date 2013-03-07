@@ -25,10 +25,17 @@ describe "Hardwaremodel fact" do
     end
 
     it "should detect x64" do
-      cpu = mock('cpu', :Architecture => 9)
+      cpu = mock('cpu', :Architecture => 9, :AddressWidth => 64)
       Facter::Util::WMI.expects(:execquery).returns([cpu])
 
       Facter.fact(:hardwaremodel).value.should == "x64"
+    end
+
+    it "(#16948) reports i686 when a 32 bit OS is running on a 64 bit CPU" do
+      cpu = mock('cpu', :Architecture => 9, :AddressWidth => 32, :Level => 6)
+      Facter::Util::WMI.expects(:execquery).returns([cpu])
+
+      Facter.fact(:hardwaremodel).value.should == "i686"
     end
   end
 end
