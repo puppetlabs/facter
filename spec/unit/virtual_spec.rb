@@ -46,26 +46,26 @@ describe "Virtual fact" do
   end
 
   describe "on Darwin" do
-    it "should be parallels with Parallels vendor id" do
+    before do
       Facter.fact(:kernel).stubs(:value).returns("Darwin")
+    end
+
+    it "should be parallels with Parallels vendor id" do
       Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor-id" => "0x1ab8" })
       Facter.fact(:virtual).value.should == "parallels"
     end
 
     it "should be parallels with Parallels vendor name" do
-      Facter.fact(:kernel).stubs(:value).returns("Darwin")
       Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor" => "Parallels" })
       Facter.fact(:virtual).value.should == "parallels"
     end
 
     it "should be vmware with VMWare vendor id" do
-      Facter.fact(:kernel).stubs(:value).returns("Darwin")
       Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor-id" => "0x15ad" })
       Facter.fact(:virtual).value.should == "vmware"
     end
 
     it "should be vmware with VMWare vendor name" do
-      Facter.fact(:kernel).stubs(:value).returns("Darwin")
       Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor" => "VMWare" })
       Facter.fact(:virtual).value.should == "vmware"
     end
@@ -73,9 +73,11 @@ describe "Virtual fact" do
 
   describe "on Linux" do
     before(:each) do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
+
       Facter::Util::Resolution.stubs(:exec).with("vmware -v").returns false
-      Facter.fact(:operatingsystem).stubs(:value).returns(true)
-      # Ensure the tests don't fail on Xen
+
       FileTest.stubs(:exists?).with("/proc/sys/xen").returns false
       FileTest.stubs(:exists?).with("/sys/bus/xen").returns false
       FileTest.stubs(:exists?).with("/proc/xen").returns false
@@ -83,39 +85,32 @@ describe "Virtual fact" do
     end
 
     it "should be parallels with Parallels vendor id from lspci 2>/dev/null" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Virtual.stubs(:lspci).returns("01:00.0 VGA compatible controller: Unknown device 1ab8:4005")
       Facter.fact(:virtual).value.should == "parallels"
     end
 
     it "should be parallels with Parallels vendor name from lspci 2>/dev/null" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Virtual.stubs(:lspci).returns("01:00.0 VGA compatible controller: Parallels Display Adapter")
       Facter.fact(:virtual).value.should == "parallels"
     end
 
     it "should be vmware with VMware vendor name from lspci 2>/dev/null" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("00:0f.0 VGA compatible controller: VMware Inc [VMware SVGA II] PCI Display Adapter")
       Facter.fact(:virtual).value.should == "vmware"
     end
 
     it "should be virtualbox with VirtualBox vendor name from lspci 2>/dev/null" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("00:02.0 VGA compatible controller: InnoTek Systemberatung GmbH VirtualBox Graphics Adapter")
       Facter.fact(:virtual).value.should == "virtualbox"
     end
 
     it "should be vmware with VMWare vendor name from dmidecode" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("On Board Device 1 Information\nType: Video\nStatus: Disabled\nDescription: VMware SVGA II")
       Facter.fact(:virtual).value.should == "vmware"
     end
 
     it "should be xen0 with xen dom0 files in /proc" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
-      Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
       Facter.fact(:hardwaremodel).stubs(:value).returns("i386")
       Facter::Util::Virtual.expects(:xen?).returns(true)
       FileTest.expects(:exists?).with("/proc/xen/xsd_kva").returns(true)
@@ -123,8 +118,6 @@ describe "Virtual fact" do
     end
 
     it "should be xenu with xen domU files in /proc" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
-      Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
       Facter.fact(:hardwaremodel).stubs(:value).returns("i386")
       Facter::Util::Virtual.expects(:xen?).returns(true)
       FileTest.expects(:exists?).with("/proc/xen/xsd_kva").returns(false)
@@ -133,40 +126,34 @@ describe "Virtual fact" do
     end
 
     it "should be xenhvm with Xen HVM vendor name from lspci 2>/dev/null" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("00:03.0 Unassigned class [ff80]: XenSource, Inc. Xen Platform Device (rev 01)")
       Facter.fact(:virtual).value.should == "xenhvm"
     end
 
     it "should be xenhvm with Xen HVM vendor name from dmidecode" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("System Information\nManufacturer: Xen\nProduct Name: HVM domU")
       Facter.fact(:virtual).value.should == "xenhvm"
     end
 
     it "should be parallels with Parallels vendor name from dmidecode" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("On Board Device Information\nType: Video\nStatus: Disabled\nDescription: Parallels Video Adapter")
       Facter.fact(:virtual).value.should == "parallels"
     end
 
     it "should be virtualbox with VirtualBox vendor name from dmidecode" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("BIOS Information\nVendor: innotek GmbH\nVersion: VirtualBox\n\nSystem Information\nManufacturer: innotek GmbH\nProduct Name: VirtualBox\nFamily: Virtual Machine")
       Facter.fact(:virtual).value.should == "virtualbox"
     end
 
     it "should be hyperv with Microsoft vendor name from lspci 2>/dev/null" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("00:08.0 VGA compatible controller: Microsoft Corporation Hyper-V virtual VGA")
       Facter.fact(:virtual).value.should == "hyperv"
     end
 
     it "should be hyperv with Microsoft vendor name from dmidecode" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("System Information\nManufacturer: Microsoft Corporation\nProduct Name: Virtual Machine")
       Facter.fact(:virtual).value.should == "hyperv"
@@ -176,10 +163,10 @@ describe "Virtual fact" do
   describe "on Solaris" do
     before(:each) do
       Facter::Util::Resolution.stubs(:exec).with("vmware -v").returns false
+      Facter.fact(:kernel).stubs(:value).returns("SunOS")
     end
 
     it "should be vmware with VMWare vendor name from prtdiag" do
-      Facter.fact(:kernel).stubs(:value).returns("SunOS")
       Facter.fact(:hardwaremodel).stubs(:value).returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns(nil)
@@ -188,7 +175,6 @@ describe "Virtual fact" do
     end
 
     it "should be parallels with Parallels vendor name from prtdiag" do
-      Facter.fact(:kernel).stubs(:value).returns("SunOS")
       Facter.fact(:hardwaremodel).stubs(:value).returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns(nil)
@@ -197,7 +183,6 @@ describe "Virtual fact" do
     end
 
     it "should be virtualbox with VirtualBox vendor name from prtdiag" do
-      Facter.fact(:kernel).stubs(:value).returns("SunOS")
       Facter.fact(:hardwaremodel).stubs(:value).returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns(nil)
