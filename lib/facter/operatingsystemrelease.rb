@@ -93,6 +93,17 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
+  confine :operatingsystem => %w{OpenWrt}
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/openwrt_release')
+      if match = /^DISTRIB_RELEASE="(\d+\.\d+)"/.match(release)
+        match[1]
+      end
+    end
+  end
+end
+
+Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Slackware}
   setcode do
     if release = Facter::Util::FileRead.read('/etc/slackware-version')
