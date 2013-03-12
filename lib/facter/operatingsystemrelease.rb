@@ -96,7 +96,7 @@ Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{OpenWrt}
   setcode do
     if release = Facter::Util::FileRead.read('/etc/openwrt_version')
-      if match = /^(\d+\.\d+.*)"/.match(release)
+      if match = /^(\d+\.\d+.*)/.match(release)                                                               
         match[1]
       end
     end
