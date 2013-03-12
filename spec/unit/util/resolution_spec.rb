@@ -155,6 +155,27 @@ describe Facter::Util::Resolution do
     end
   end
 
+  describe 'callbacks when flushing facts' do
+    class FlushFakeError < StandardError; end
+
+    subject do
+      Facter::Util::Resolution.new("jeff")
+    end
+
+    context '#on_flush' do
+      it 'accepts a block with on_flush' do
+        subject.on_flush() { raise NotImplementedError }
+      end
+    end
+
+    context '#flush' do
+      it 'calls the block passed to on_flush' do
+        subject.on_flush() { raise FlushFakeError }
+        expect { subject.flush }.to raise_error FlushFakeError
+      end
+    end
+  end
+
   it "should be able to return a value" do
     Facter::Util::Resolution.new("yay").should respond_to(:value)
   end

@@ -236,6 +236,37 @@ class Facter::Util::Resolution
     end
   end
 
+  ##
+  # on_flush accepts a block and executes the block when the resolution's value
+  # is flushed.  This makes it possible to model a single, expensive system
+  # call inside of a Ruby object and then define multiple dynamic facts which
+  # resolve by sending messages to the model instance.  If one of the dynamic
+  # facts is flushed then it can, in turn, flush the data stored in the model
+  # instance to keep all of the dynamic facts in sync without making multiple,
+  # expensive, system calls.
+  #
+  # Please see the Solaris zones fact for an example of how this feature may be
+  # used.
+  #
+  # @see Facter::Util::Fact#flush
+  # @see Facter::Util::Resolution#flush
+  #
+  # @api public
+  def on_flush(&block)
+    @on_flush_block = block
+  end
+
+  ##
+  # flush executes the block, if any, stored by the {on_flush} method
+  #
+  # @see Facter::Util::Fact#flush
+  # @see Facter::Util::Resolution#on_flush
+  #
+  # @api private
+  def flush
+    @on_flush_block.call if @on_flush_block
+  end
+
   def interpreter
     Facter.warnonce "The 'Facter::Util::Resolution.interpreter' method is deprecated and will be removed in a future version."
     @interpreter
