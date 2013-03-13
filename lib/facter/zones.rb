@@ -11,16 +11,7 @@
 #
 # Caveats:
 #   We dont support below s10 where zones are not available.
-
-Facter.add("zones") do
-  confine :kernel => :sunos
-  fmt = [:id, :name, :status, :path, :uuid, :brand, :iptype]
-  l = Facter::Util::Resolution.exec('/usr/sbin/zoneadm list -cp').split("\n").collect{|l|l.split(':')}.each do |val|
-      fmt.each_index do |i|
-        Facter.add "zone_%s_%s" % [val[1], fmt[i]] do
-          setcode { val[i] }
-        end
-      end
-  end
-  setcode { l.length }
+require 'facter/util/solaris_zones'
+if Facter.value(:kernel) == 'SunOS'
+  Facter::Util::SolarisZones.add_facts
 end
