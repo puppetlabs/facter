@@ -44,8 +44,12 @@ class Facter::Util::Fact
     end
   end
 
-  # Flush any cached values.
+  ##
+  # Flush any cached values.  If the resolver has a callback block defined
+  # using the on_flush DSL method, then invoke that block by sending a message
+  # to Resolution#flush.
   def flush
+    @resolves.each { |r| r.flush }
     @value = nil
   end
 
