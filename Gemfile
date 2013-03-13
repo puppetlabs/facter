@@ -4,9 +4,12 @@ else
   source "https://rubygems.org"
 end
 
-group :development do
-  gem 'pry'
-  gem 'watchr'
+# C Ruby (MRI) or Rubinius, but NOT Windows
+platforms :ruby do
+  gem 'watchr', :group => :development
+  gem 'pry', :group => :development
+  gem 'yard', :group => :development
+  gem 'redcarpet', :group => :development
 end
 
 group :development, :test do

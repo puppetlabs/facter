@@ -109,7 +109,32 @@ describe Facter::Util::Fact do
     end
   end
 
-  it "should have a method for flushing the cached fact" do
-    Facter::Util::Fact.new(:foo).should respond_to(:flush)
+  describe '#flush' do
+    subject do
+      Facter::Util::Fact.new(:foo)
+    end
+    context 'basic facts using setcode' do
+      it "flushes the cached value when invoked" do
+        system = mock('some_system_call')
+        system.expects(:data).twice.returns(100,200)
+
+        subject.add { setcode { system.data } }
+        5.times { subject.value.should == 100 }
+        subject.flush
+        subject.value.should == 200
+      end
+    end
+    context 'facts using setcode and on_flush' do
+      it 'invokes the block passed to on_flush' do
+        model = { :data => "Hello World" }
+        subject.add do
+          on_flush { model[:data] = "FLUSHED!" }
+          setcode { model[:data] }
+        end
+        subject.value.should == "Hello World"
+        subject.flush
+        subject.value.should == "FLUSHED!"
+      end
+    end
   end
 end
