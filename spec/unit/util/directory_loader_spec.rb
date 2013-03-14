@@ -1,7 +1,4 @@
-#!/usr/bin/env ruby
-
 require 'spec_helper'
-
 require 'facter/util/directory_loader'
 
 describe Facter::Util::DirectoryLoader do
