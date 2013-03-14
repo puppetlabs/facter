@@ -1,296 +1,249 @@
-# A base module for collecting IP-related
-# information from all kinds of platforms.
-module Facter::Util::IP
-  # A map of all the different regexes that work for
-  # a given platform or set of platforms.
-  REGEX_MAP = {
-    :linux => {
-      :ipaddress  => /inet (?:addr:)?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-      :ipaddress6 => /inet6 (?:addr: )?((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
-      :macaddress => /(?:ether|HWaddr)\s+((\w{1,2}:){5,}\w{1,2})/,
-      :netmask  => /Mask:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-      :mtu  => /MTU:(\d+)/
-    },
-    :bsd   => {
-      :aliases  => [:openbsd, :netbsd, :freebsd, :darwin, :"gnu/kfreebsd", :dragonfly],
-      :ipaddress  => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-      :ipaddress6 => /inet6 ((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
-      :macaddress => /(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/,
-      :netmask  => /netmask\s+0x(\w{8})/,
-      :mtu => /mtu\s+(\d+)/
-    },
-    :sunos => {
-      :ipaddress  => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-      :ipaddress6 => /inet6 ((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
-      :macaddress => /(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/,
-      :netmask  => /netmask\s+(\w{8})/,
-      :mtu => /mtu\s+(\d+)/
-    },
-    :"hp-ux" => {
-      :ipaddress  => /\s+inet (\S+)\s.*/,
-      :macaddress => /(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/,
-      :netmask  => /.*\s+netmask (\S+)\s.*/
-    },
-    :windows => {
-      :ipaddress  => /\s+IP Address:\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-      :ipaddress6 => /Address ((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
-      :netmask  => /\s+Subnet Prefix:\s+\S+\s+\(mask ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\)/
-    }
-  }
+# encoding: UTF-8
+
+require 'facter/util/ip/base'
+require 'facter/util/ip/darwin'
+require 'facter/util/ip/sun_os'
+require 'facter/util/ip/linux'
+require 'facter/util/ip/net_bsd'
+require 'facter/util/ip/open_bsd'
+require 'facter/util/ip/free_bsd'
+require 'facter/util/ip/dragonfly'
+require 'facter/util/ip/windows'
+require 'facter/util/ip/hpux'
+require 'facter/util/ip/gnu_k_free_bsd'
+
+# A base module for collecting IP related info from all kinds of platforms.
+class Facter::Util::IP
+  INTERFACE_KEYS = %w[ipaddress ipaddress6 macaddress netmask mtu]
+
+  attr_accessor :interfaces_hash
+
+  # Uses the interfaces stored in {@interfaces} to obtain and parse the
+  # attributes corresponding to {INTERFACE_KEYS} and stores the resulting hash
+  # in {@interfaces_hash}.
+  #
+  # @api private
+  def parse!
+    @interfaces_hash = @interfaces.inject({}) do |hashA, interface|
+      hashA[interface] = INTERFACE_KEYS.inject({}) do |hashB, key|
+        hashB[key] = value_for_interface_and_label interface, key
+
+        hashB
+      end
+
+      hashA[interface][:network] = network interface
+
+      hashA
+    end
+  end
+
+  # Adds interface facts like 'eth0'. Also defines dynamic facts describing
+  # attributes of each interface, like 'ipaddress_eth0' and 'network_eth0'.
+  #
+  # @api private
+  def self.add_interface_facts
+    model = new
+
+    model.refresh
+    model.add_dynamic_interface_facts
+
+    Facter.add :interfaces do
+      confine :kernel => model.supported_platforms
+
+      setcode do
+        model.refresh if model.flushed?
+        model.add_dynamic_interface_facts
+        model.stringified_interfaces
+      end
+
+      on_flush { model.flush! }
+    end
+  end
+
 
   # Convert an interface name into purely alphanumeric characters.
-  def self.alphafy(interface)
-    interface.gsub(/[^a-z0-9_]/i, '_')
-  end
-
-  def self.convert_from_hex?(kernel)
-    kernels_to_convert = [:sunos, :openbsd, :netbsd, :freebsd, :darwin, :"hp-ux", :"gnu/kfreebsd", :dragonfly]
-    kernels_to_convert.include?(kernel)
-  end
-
-  def self.supported_platforms
-    REGEX_MAP.inject([]) do |result, tmp|
-      key, map = tmp
-      if map[:aliases]
-        result += map[:aliases]
-      else
-        result << key
-      end
-      result
-    end
-  end
-
-  def self.get_interfaces
-    # Use sysfs on most Linux systems, which is the fastest option.
-    if File.exist?('/sys/class/net')
-      return Dir.glob('/sys/class/net/*').map do |name|
-        Facter::Util::IP.alphafy(name.split('/').last)
-      end
-    end
-
-    return [] unless output = Facter::Util::IP.get_all_interface_output()
-
-    # windows interface names contain spaces and are quoted and can appear multiple
-    # times as ipv4 and ipv6
-    return output.scan(/\s* connected\s*(\S.*)/).flatten.uniq if Facter.value(:kernel) == 'windows'
-
-    # Our regex appears to be stupid, in that it leaves colons sitting
-    # at the end of interfaces.  So, we have to trim those trailing
-    # characters.  I tried making the regex better but supporting all
-    # platforms with a single regex is probably a bit too much.
-    output.scan(/^\S+/).collect { |i| i.sub(/:$/, '') }.uniq
-  end
-
-  def self.get_all_interface_output
-    case Facter.value(:kernel)
-    when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
-      output = Facter::Util::IP.exec_ifconfig(["-a","2>/dev/null"])
-    when 'SunOS'
-      output = Facter::Util::IP.exec_ifconfig(["-a"])
-    when 'HP-UX'
-      # (#17487)[https://projects.puppetlabs.com/issues/17487]
-      # Handle NIC bonding where asterisks and virtual NICs are printed.
-      if output = hpux_netstat_in
-        output.gsub!(/\*/, "")                  # delete asterisks.
-        output.gsub!(/^[^\n]*none[^\n]*\n/, "") # delete lines with 'none' instead of IPs.
-        output.sub!(/^[^\n]*\n/, "")            # delete the header line.
-        output
-      end
-    when 'windows'
-      output = %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ip show interface|
-      output += %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ipv6 show interface|
-    end
-    output
-  end
-
-
-  ##
-  # exec_ifconfig uses the ifconfig command
   #
-  # @return [String] the output of `ifconfig #{arguments} 2>/dev/null` or nil
+  # @param [String] interface e.g. 'eth0'
+  #
+  # @return [String]
+  #
+  # @api private
+  def self.alphafy(interface)
+    interface.to_s.gsub(/[^a-z0-9_]/i, '_')
+  end
+
+  # Returns an array of supported platforms in string format. These array values
+  # are synonymous with the values returned from Facter.value(:kernel).
+  #
+  # @return [Array] contains strings corresponding to a kernel
+  #
+  # @api private
+  def supported_platforms
+    kernel_classes.map(&:to_s)
+  end
+
+  # A delegate method to the kernel's subclass ultimately obtaining the
+  # interfaces.
+  #
+  # @return [Array]
+  #
+  # @api private
+  def interfaces
+    kernel_class.interfaces
+  end
+
+  # Uses the ifconfig command
+  #
+  # @param [Array] additional arguments
+  #
+  # @return [String] the output of the command
+  #
+  # @api private
   def self.exec_ifconfig(additional_arguments=[])
     Facter::Util::Resolution.exec("#{self.get_ifconfig} #{additional_arguments.join(' ')}")
   end
-  ##
-  # get_ifconfig looks up the ifconfig binary
+
+  # Looks up the ifconfig binary.
   #
   # @return [String] path to the ifconfig binary
+  #
+  # @api private
   def self.get_ifconfig
     common_paths=["/bin/ifconfig","/sbin/ifconfig","/usr/sbin/ifconfig"]
     common_paths.select{|path| File.executable?(path)}.first
   end
-  ##
-  # hpux_netstat_in is a delegate method that allows us to stub netstat -in
-  # without stubbing exec.
-  def self.hpux_netstat_in
-    Facter::Util::Resolution.exec("/bin/netstat -in")
-  end
 
-  def self.get_infiniband_macaddress(interface)
-    if File.exists?("/sys/class/net/#{interface}/address") then
-      ib_mac_address = `cat /sys/class/net/#{interface}/address`.chomp
-    elsif File.exists?("/sbin/ip") then
-      ip_output = %x{/sbin/ip link show #{interface}}
-      ib_mac_address = ip_output.scan(%r{infiniband\s+((\w{1,2}:){5,}\w{1,2})})
-    else
-      ib_mac_address = "FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF"
-      Facter.debug("ip.rb: nothing under /sys/class/net/#{interface}/address and /sbin/ip not available")
-    end
-    ib_mac_address
-  end
-
-  def self.ifconfig_interface(interface)
-    output = Facter::Util::IP.exec_ifconfig([interface,"2>/dev/null"])
-  end
-
-  def self.get_single_interface_output(interface)
-    output = ""
-    case Facter.value(:kernel)
-    when 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
-      output = Facter::Util::IP.ifconfig_interface(interface)
-    when 'Linux'
-      ifconfig_output = Facter::Util::IP.ifconfig_interface(interface)
-      if interface =~ /^ib/ then
-        real_mac_address = get_infiniband_macaddress(interface)
-        output = ifconfig_output.sub(%r{(?:ether|HWaddr)\s+((\w{1,2}:){5,}\w{1,2})}, "HWaddr #{real_mac_address}")
-      else
-        output = ifconfig_output
-      end
-    when 'SunOS'
-      output = Facter::Util::IP.exec_ifconfig([interface])
-    when 'HP-UX'
-       mac = ""
-       ifc = hpux_ifconfig_interface(interface)
-       hpux_lanscan.scan(/(\dx\S+).*UP\s+(\w+\d+)/).each {|i| mac = i[0] if i.include?(interface) }
-       mac = mac.sub(/0x(\S+)/,'\1').scan(/../).join(":")
-       output = ifc + "\n" + mac
-    end
-    output
-  end
-
-  def self.hpux_ifconfig_interface(interface)
-    Facter::Util::IP.exec_ifconfig([interface])
-  end
-
-  def self.hpux_lanscan
-    Facter::Util::Resolution.exec("/usr/sbin/lanscan")
-  end
-
-  def self.get_output_for_interface_and_label(interface, label)
-    return get_single_interface_output(interface) unless Facter.value(:kernel) == 'windows'
-
-    if label == 'ipaddress6'
-      output = %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ipv6 show address \"#{interface}\"|
-    else
-      output = %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ip show address \"#{interface}\"|
-    end
-    output
-  end
-
-  def self.get_bonding_master(interface)
-    if Facter.value(:kernel) != 'Linux'
-      return nil
-    end
-    # We need ip instead of ifconfig because it will show us
-    # the bonding master device.
-    if not FileTest.executable?("/sbin/ip")
-      return nil
-    end
-    # A bonding interface can never be an alias interface. Alias
-    # interfaces do have a colon in their name and the ip link show
-    # command throws an error message when we pass it an alias
-    # interface.
-    if interface =~ /:/
-      return nil
-    end
-    regex = /SLAVE[,>].* (bond[0-9]+)/
-      ethbond = regex.match(%x{/sbin/ip link show #{interface}})
-    if ethbond
-      device = ethbond[1]
-    else
-      device = nil
-    end
-    device
-  end
-
-  ##
-  # get_interface_value obtains the value of a specific attribute of a specific
-  # interface.
+  # A delegate method to `value_for_interface_and_label` which is implemented in
+  # Facter::Util::IP::Base and it's subclasses.
   #
-  # @param interface [String] the interface identifier, e.g. "eth0" or "bond0"
+  # @param interface [String] label [String] e.g ['eth0', 'MTU']
   #
-  # @param label [String] the attribute of the interface to obtain a value for,
-  # e.g. "netmask" or "ipaddress"
+  # @return [String] or [NilClass]
   #
   # @api private
+  def value_for_interface_and_label(interface, label)
+    kernel_class.value_for_interface_and_label interface, label
+  end
+
+  # A delegate method to obtain the network of an interface
   #
-  # @return [String] representing the requested value.  An empty array is
-  # returned if the kernel is not supported by the REGEX_MAP constant.
-  def self.get_interface_value(interface, label)
-    tmp1 = []
+  # @param interface [String] e.g 'eth0'
+  #
+  # @return [String] or [NilClass]
+  #
+  # @api private
+  def network(interface)
+    kernel_class.network(interface)
+  end
 
-    kernel = Facter.value(:kernel).downcase.to_sym
+  # A delegate method for obtaining Facter::Util::IP::Base's subclasses.
+  #
+  # @return [Array]
+  #
+  # @api private
+  def kernel_classes
+    Facter::Util::IP::Base.subclasses
+  end
 
-    # If it's not directly in the map or aliased in the map, then we don't know how to deal with it.
-    unless map = REGEX_MAP[kernel] || REGEX_MAP.values.find { |tmp| tmp[:aliases] and tmp[:aliases].include?(kernel) }
-      return []
+  # Obtains the cooresponding Facter::Util::IP::Base subclass for the current
+  # kernel.
+  #
+  # @return Subclass of [Facter::Util::IP::Base]
+  #
+  # @api private
+  def kernel_class
+    kernel_classes.find { |klass| klass.to_s == Facter.value(:kernel) }
+  end
+
+  # Boolean to determine whether the current kernel is supported.
+  #
+  # @return [Boolean] true or false
+  #
+  # @api private
+  def kernel_supported?
+    supported_platforms.include?(Facter.value(:kernel))
+  end
+
+  # Stringifies interfaces so that it can be used as a fact value.
+  #
+  # @return [String] the interfaces as a string
+  #
+  # @api private
+  def stringified_interfaces
+    alphafied_interfaces = @interfaces.map do |interface|
+      Facter::Util::IP.alphafy(interface)
     end
 
-    # Pull the correct regex out of the map.
-    regex = map[label.to_sym]
+    alphafied_interfaces.join ','
+  end
 
-    # Linux changes the MAC address reported via ifconfig when an ethernet interface
-    # becomes a slave of a bonding device to the master MAC address.
-    # We have to dig a bit to get the original/real MAC address of the interface.
-    bonddev = get_bonding_master(interface)
-    if label == 'macaddress' and bonddev
-      bondinfo = read_proc_net_bonding("/proc/net/bonding/#{bonddev}")
-      re = /^Slave Interface: #{interface}\b.*?\bPermanent HW addr: (([0-9A-F]{2}:?)*)$/im
-      if match = re.match(bondinfo)
-        value = match[1].upcase
-      end
-    else
-      output_int = get_output_for_interface_and_label(interface, label)
+  # Defines all of the dynamic interface facts derived from parsing the output
+  # of the network interface ouput. The interface facts are dynamic, so this
+  # method has the behavior of figuring out what facts need to be added and how
+  # they should be resolved.
+  #
+  # @api private
+  def add_dynamic_interface_facts
+    model = self
 
-      output_int.each_line do |s|
-        if s =~ regex
-          value = $1
-            if label == 'netmask' && convert_from_hex?(kernel)
-              value = value.scan(/../).collect do |byte| byte.to_i(16) end.join('.')
+    @interfaces.each do |interface|
+      INTERFACE_KEYS.each do |key|
+        Facter.add "#{key}_#{model.class.alphafy(interface)}" do
+          confine :kernel => model.supported_platforms
+
+          setcode do
+            model.refresh if model.flushed?
+
+            # Don't resolve if the interface has since been deleted
+            if keys_hash = model.interfaces_hash[interface]
+              keys_hash[key]
             end
-          tmp1.push(value)
+          end
+
+          on_flush { model.flush! }
         end
       end
 
-      if tmp1
-        value = tmp1.shift
+      Facter.add "network_#{interface}" do
+        confine :kernel => model.supported_platforms
+
+        setcode do
+          model.refresh if model.flushed?
+
+          # Don't resolve if the interface has since been deleted
+          if keys_hash = model.interfaces_hash[interface]
+            keys_hash[:network]
+          end
+        end
+
+        on_flush { model.flush! }
       end
     end
   end
 
-  ##
-  # read_proc_net_bonding is a seam method for mocking purposes.
-  #
-  # @param path [String] representing the path to read, e.g. "/proc/net/bonding/bond0"
+  # Executes the platform specific system command to obtain the interfaces and
+  # stores them in {@interfaces}.
   #
   # @api private
-  #
-  # @return [String] modeling the raw file read
-  def self.read_proc_net_bonding(path)
-    File.read(path) if File.exists?(path)
+  def refresh
+    @interfaces = interfaces
+
+    parse!
   end
-  private_class_method :read_proc_net_bonding
 
-  def self.get_network_value(interface)
-    require 'ipaddr'
+  # Checks to see if the intstance has been flushed.
+  #
+  # @return [Boolean] true if there is no parsed data
+  #
+  # @api private
+  def flushed?
+    !interfaces_hash
+  end
 
-    ipaddress = get_interface_value(interface, "ipaddress")
-    netmask = get_interface_value(interface, "netmask")
-
-    if ipaddress && netmask
-      ip = IPAddr.new(ipaddress, Socket::AF_INET)
-      subnet = IPAddr.new(netmask, Socket::AF_INET)
-      network = ip.mask(subnet.to_s).to_s
-    end
+  # Purges the saved data so that the fact can be resolved properly upon flush.
+  #
+  # @api private
+  def flush!
+    @interfaces_hash = nil
   end
 end
