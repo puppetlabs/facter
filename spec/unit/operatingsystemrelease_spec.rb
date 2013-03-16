@@ -14,7 +14,7 @@ describe "Operating System Release fact" do
   end
 
   test_cases = {
-    "OpenWrt"    => "/etc/openwrt_release",
+    "OpenWrt"    => "/etc/openwrt_version",
     "CentOS"    => "/etc/redhat-release",
     "RedHat"    => "/etc/redhat-release",
     "Scientific"  => "/etc/redhat-release",
