@@ -38,6 +38,8 @@ Facter.add(:operatingsystem) do
        "Ubuntu"
     elsif FileTest.exists?("/etc/debian_version")
       "Debian"
+    elsif FileTest.exists?("/etc/openwrt_release")
+      "OpenWrt"
     elsif FileTest.exists?("/etc/gentoo-release")
       "Gentoo"
     elsif FileTest.exists?("/etc/fedora-release")
