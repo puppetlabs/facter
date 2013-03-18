@@ -63,6 +63,7 @@ describe "Operating System fact" do
       "MeeGo"       => "/etc/meego-release",
       "Archlinux"   => "/etc/arch-release",
       "OracleLinux" => "/etc/oracle-release",
+      "OpenWrt"     => "/etc/openwrt_release",
       "Alpine"      => "/etc/alpine-release",
       "VMWareESX"   => "/etc/vmware-release",
       "Bluewhite64" => "/etc/bluewhite64-version",
