@@ -131,5 +131,9 @@ describe Facter::Util::Confine do
     it "should return false if the Proc returns false" do
       confined("foo", Proc.new { |v| false } ).should be_false
     end
+
+    it "should return false if the Proc raises a StandardError" do
+      confined("foo", Proc.new { |v| raise StandardError, "foo" } ).should be_false
+    end
   end
 end
