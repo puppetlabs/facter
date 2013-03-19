@@ -10,6 +10,11 @@ class Facter::Util::Confine
 
   # Add the restriction.  Requires the fact name, an operator, and the value
   # we're comparing to.
+  #
+  # @param fact [Symbol] Name of the fact
+  # @param values [Array] One or more values to match against.
+  #   They can be any type that provides a === method. Proc types will be
+  #   evaluated by using the call method with the value of the fact as parameter.
   def initialize(fact, *values)
     raise ArgumentError, "The fact name must be provided" unless fact
     raise ArgumentError, "One or more values must be provided" if values.empty?
@@ -31,6 +36,13 @@ class Facter::Util::Confine
 
     return false if value.nil?
 
-    return @values.any? { |v| convert(v) === value }
+    return @values.any? do |v|
+      # Always use Ruby 1.9+ semantics on Proc confines.
+      if v.kind_of? Proc then
+        v.call(value)
+      else
+        convert(v) === value
+      end
+    end
   end
 end
