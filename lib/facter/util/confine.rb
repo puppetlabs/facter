@@ -31,6 +31,18 @@ class Facter::Util::Confine
 
     return false if value.nil?
 
-    return @values.any? { |v| convert(v) === value }
+    return @values.any? do |v|
+      # Always use Ruby 1.9+ semantics on Proc confines.
+      if v.kind_of? Proc then
+        begin
+          v.call(value)
+        rescue StandardError => error
+          Facter.debug "Confine raised #{error.class} #{error}"
+          false
+        end
+      else
+        convert(v) === value
+      end
+    end
   end
 end
