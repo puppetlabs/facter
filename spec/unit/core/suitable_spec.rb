@@ -13,16 +13,42 @@ describe Facter::Core::Suitable do
 
   subject { SuitableClass.new }
 
-  it "can add confines" do
-    subject.confine :kernel => 'Linux'
+  describe "confining on facts" do
+    it "can add confines with a fact and a single value" do
+      subject.confine :kernel => 'Linux'
+    end
+
+    it "creates a Facter::Util::Confine object for the confine call" do
+      subject.confine :kernel => 'Linux'
+      conf = subject.confines.first
+      expect(conf).to be_a_kind_of Facter::Util::Confine
+      expect(conf.fact).to eq :kernel
+      expect(conf.values).to eq ['Linux']
+    end
   end
 
-  it "creates a Facter::Util::Confine object for the confine call" do
-    subject.confine :kernel => 'Linux'
-    conf = subject.confines.first
-    expect(conf).to be_a_kind_of Facter::Util::Confine
-    expect(conf.fact).to eq :kernel
-    expect(conf.values).to eq ['Linux']
+  describe "confining on blocks" do
+    it "can add a single fact with a block parameter" do
+      subject.confine(:one) { true }
+    end
+
+    it "creates a Util::Confine instance for the provided fact with block parameter" do
+      block = lambda { true }
+      Facter::Util::Confine.expects(:new).with("one")
+
+      subject.confine("one", &block)
+    end
+
+    it "should accept a single block parameter" do
+      subject.confine() { true }
+    end
+
+    it "should create a Util::Confine instance for the provided block parameter" do
+      block = lambda { true }
+      Facter::Util::Confine.expects(:new)
+
+      subject.confine(&block)
+    end
   end
 
   describe "determining weight" do

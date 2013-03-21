@@ -46,9 +46,21 @@ module Facter::Core::Suitable
   # @return [void]
   #
   # @api public
-  def confine(confines)
-    confines.each do |fact, values|
-      @confines.push Facter::Util::Confine.new(fact, *values)
+  def confine(confines = nil, &block)
+    case confines
+    when Hash
+      confines.each do |fact, values|
+        @confines.push Facter::Util::Confine.new(fact, *values)
+      end
+    else
+      if block
+        if confines
+          @confines.push Facter::Util::Confine.new(confines, &block)
+        else
+          @confines.push Facter::Util::Confine.new(&block)
+        end
+      else
+      end
     end
   end
 
