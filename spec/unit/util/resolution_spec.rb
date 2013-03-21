@@ -344,6 +344,27 @@ describe Facter::Util::Resolution do
       @resolve.confine "one" => "foo", "two" => "fee"
     end
 
+    it "should accept a single fact with a block parameter" do
+      lambda { @resolve.confine :one do true end }.should_not raise_error
+    end
+
+    it "should create a Util::Confine instance for the provided fact with block parameter" do
+      block = lambda { true }
+      Facter::Util::Confine.expects(:new).with("one")
+
+      @resolve.confine("one", &block)
+    end
+
+    it "should accept a single block parameter" do
+      lambda { @resolve.confine() do true end }.should_not raise_error
+    end
+
+    it "should create a Util::Confine instance for the provided block parameter" do
+      block = lambda { true }
+      Facter::Util::Confine.expects(:new)
+
+      @resolve.confine(&block)
+    end
   end
 
   describe "when determining suitability" do
