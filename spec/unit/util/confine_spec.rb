@@ -135,5 +135,14 @@ describe Facter::Util::Confine do
     it "should return false if the Proc raises a StandardError" do
       confined("foo", Proc.new { |v| raise StandardError, "foo" } ).should be_false
     end
+
+    it "should accept and evaluate a block argument" do
+      Facter::Util::Confine.new { true }.true?.should be_true
+      Facter::Util::Confine.new { false }.true?.should be_false
+    end
+
+    it "should return false if the block raises a StandardError" do
+      Facter::Util::Confine.new { raise StandardError }.true?.should be_false
+    end
   end
 end
