@@ -268,6 +268,37 @@ describe "Virtual fact" do
     end
   end
 
+  describe "on Windows" do
+    require 'facter/util/wmi'
+    before do
+      Facter.fact(:kernel).stubs(:value).returns("windows")
+    end
+
+    it "should be kvm with KVM model name from Win32_ComputerSystem" do
+      computersystem = mock('computersystem', :model => 'KVM')
+      Facter::Util::WMI.expects(:execquery).returns([computersystem])
+      Facter.fact(:virtual).value.should == "kvm"
+    end
+
+    it "should be hyperv with Virtual Machine model name and Microsoft Corporation manufacturer from Win32_ComputerSystem" do
+      computersystem = mock('computersystem', :manufacturer => 'Microsoft Corporation', :model => 'Virtual Machine')
+      Facter::Util::WMI.expects(:execquery).returns([computersystem])
+      Facter.fact(:virtual).value.should == "hyperv"
+    end
+
+    it "should be virtualbox with VirtualBox model name from Win32_ComputerSystem" do
+      computersystem = mock('computersystem', :model => 'VirtualBox')
+      Facter::Util::WMI.expects(:execquery).returns([computersystem])
+      Facter.fact(:virtual).value.should == "virtualbox"
+    end
+
+    it "should be vmware with VMware like model name from Win32_ComputerSystem" do
+      computersystem = mock('computersystem', :model => 'VMware Virtual Platform')
+      Facter::Util::WMI.expects(:execquery).returns([computersystem])
+      Facter.fact(:virtual).value.should == "vmware"
+    end
+  end
+
   describe "with the virt-what command available (#8210)" do
     describe "when the output of virt-what disagrees with lower weight facts" do
       virt_what_map = {

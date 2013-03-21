@@ -170,6 +170,27 @@ Facter.add("virtual") do
   end
 end
 
+Facter.add("virtual") do
+  confine :kernel => "windows"
+  setcode do
+      require 'facter/util/wmi'
+      result = nil
+      Facter::Util::WMI.execquery("SELECT manufacturer, model FROM Win32_ComputerSystem").each do |computersystem|
+        result =
+          case computersystem.model
+          when /VirtualBox/ then "virtualbox"
+          when /Virtual Machine/
+            computersystem.manufacturer =~ /Microsoft/ ? "hyperv" : nil
+          when /VMware/ then "vmware"
+          when /KVM/ then "kvm"
+          else "physical"
+          end
+        break
+      end
+      result
+  end
+end
+
 ##
 # virtual fact based on virt-what command.
 #
@@ -230,7 +251,7 @@ end
 #
 
 Facter.add("is_virtual") do
-  confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin GNU/kFreeBSD}
+  confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin GNU/kFreeBSD windows}
 
   setcode do
     physical_types = %w{physical xen0 vmware_server vmware_workstation openvzhn}
