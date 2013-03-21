@@ -123,5 +123,26 @@ describe Facter::Util::Confine do
     it "should return false if none of the provided ranges matches the fact's value" do
       confined(8, (5..7)).should be_false
     end
+
+    it "should return true if the Proc returns true" do
+      confined("foo", Proc.new { |v| true } ).should be_true
+    end
+
+    it "should return false if the Proc returns false" do
+      confined("foo", Proc.new { |v| false } ).should be_false
+    end
+
+    it "should return false if the Proc raises a StandardError" do
+      confined("foo", Proc.new { |v| raise StandardError, "foo" } ).should be_false
+    end
+
+    it "should accept and evaluate a block argument" do
+      Facter::Util::Confine.new { true }.true?.should be_true
+      Facter::Util::Confine.new { false }.true?.should be_false
+    end
+
+    it "should return false if the block raises a StandardError" do
+      Facter::Util::Confine.new { raise StandardError }.true?.should be_false
+    end
   end
 end
