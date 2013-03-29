@@ -4,7 +4,9 @@ module Facter::Util::Virtual
   # the system call without affecting other calls to
   # Facter::Util::Resolution.exec
   def self.virt_what(command = "virt-what")
-    Facter::Util::Resolution.exec command
+    redirected_cmd = "#{command} 2>/dev/null"
+    output = Facter::Util::Resolution.exec redirected_cmd
+    output.gsub(/^virt-what: .*$/, '')
   end
 
   ##

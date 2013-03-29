@@ -252,6 +252,14 @@ describe "Virtual fact" do
         Facter.value(:virtual).should == "fake_vserver_type"
       end
     end
+
+    describe "when virt-what issues warnings to stdout" do
+      virt_what_warning = "virt-what: this script must be run as root"
+      it "should not end up in the virtual fact" do
+        Facter::Util::Resolution.expects(:exec).with('virt-what 2>/dev/null').returns virt_what_warning
+        Facter::Util::Virtual.virt_what.should_not match /^virt-what: /
+      end
+    end
   end
 end
 
