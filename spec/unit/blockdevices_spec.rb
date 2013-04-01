@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 require 'facter'
+require 'facter/util/blockdevices'
 require 'facter/util/nothing_loader'
 
 describe "Block device facts" do
@@ -22,15 +23,26 @@ describe "Block device facts" do
 
       Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n kern.disks").returns("cd0 da0 ada0 ad10 mfi0")
 
-      Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol inquiry cd0 -D | /usr/bin/awk -F '<|>' '{ print $2 }'").returns("TEAC DV-28E-N 1.6A")
-      Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol inquiry da0 -D | /usr/bin/awk -F '<|>' '{ print $2 }'").returns("HP 73.4G MAU3073NC HPC2")
-      Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol identify ada0 | /usr/bin/awk -F 'device\ model\ *' '/device model/ { print $2 }'").returns("Corsair Force GT")
-      Facter::Util::Resolution.stubs(:exec).with("/sbin/atacontrol list | /usr/bin/awk -F '<|>' '/ad10/ { print $2 }'").returns("WDC WD1003FBYX-01Y7B0/01.01V01")
+      Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol inquiry cd0 -D").returns("pass0: <TEAC DV-28E-N 1.6A> Removable CD-ROM SCSI-0 device")
+      Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol inquiry da0 -D").returns("pass1: <HP 73.4G MAU3073NC HPC2> Fixed Direct Access SCSI-3 device")
 
-      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo da0 | /usr/bin/awk '{ print $3 }'").returns("73407865856")
-      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo ada0 | /usr/bin/awk '{ print $3 }'").returns("120034123776")
-      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo ad10 | /usr/bin/awk '{ print $3 }'").returns("1000204886016")
-      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo mfi0 | /usr/bin/awk '{ print $3 }'").returns("1000000000000")
+      sample_atacontrol_cap = File.read(fixtures('blockdevices','freebsd_atacontrol_cap_ad10'))
+      Facter::Util::Resolution.stubs(:exec).with("/sbin/atacontrol cap ad10").returns(sample_atacontrol_cap)
+
+      sample_camcontrol_identify = File.read(fixtures('blockdevices','freebsd_camcontrol_identify_ada0'))
+      Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol identify ada0").returns(sample_camcontrol_identify)
+
+      sample_diskinfo_da0 = File.read(fixtures('blockdevices','freebsd_diskinfo_da0'))
+      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo -v da0").returns(sample_diskinfo_da0)
+
+      sample_diskinfo_ada0 = File.read(fixtures('blockdevices','freebsd_diskinfo_ada0'))
+      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo -v ada0").returns(sample_diskinfo_ada0)
+
+      sample_diskinfo_ad10 = File.read(fixtures('blockdevices','freebsd_diskinfo_ad10'))
+      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo -v ad10").returns(sample_diskinfo_ad10)
+
+      sample_diskinfo_mfi0 = File.read(fixtures('blockdevices','freebsd_diskinfo_mfi0'))
+      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo -v mfi0").returns(sample_diskinfo_mfi0)
     end
 
     describe 'blockdevices fact' do
@@ -59,13 +71,13 @@ describe "Block device facts" do
           :size => "73407865856",
         },
         'ada0' => {
-          :model => "Force GT",
+          :model => "Force GT 1.3.3",
           :vendor => "Corsair",
           :size => "120034123776",
         },
         'ad10' => {
-          :model => "WD1003FBYX-01Y7B0/01.01V01",
-          :vendor => "WDC",
+          :model => "WDC WD1003FBYX-01Y7B 0/01.01V01",
+          :vendor => "ATA",
           :size => "1000204886016",
         },
         'mfi0' => {
@@ -126,16 +138,16 @@ describe "Block device facts" do
 
           # handle facts that should not exist
           %w{ . .. hda }.each do |device|
-            Facter.fact("blockdevice_#{device}_size".to_sym).should == nil
-            Facter.fact("blockdevice_#{device}_vendor".to_sym).should == nil
-            Facter.fact("blockdevice_#{device}_model".to_sym).should == nil
+            Facter.value("blockdevice_#{device}_size".to_sym).should == nil
+            Facter.value("blockdevice_#{device}_vendor".to_sym).should == nil
+            Facter.value("blockdevice_#{device}_model".to_sym).should == nil
           end
 
           # handle facts that should exist
           %w{ sda sdb }.each do |device|
-            Facter.fact("blockdevice_#{device}_size".to_sym).should_not == nil
-            Facter.fact("blockdevice_#{device}_vendor".to_sym).should_not == nil
-            Facter.fact("blockdevice_#{device}_model".to_sym).should_not == nil
+            Facter.value("blockdevice_#{device}_size".to_sym).should_not == nil
+            Facter.value("blockdevice_#{device}_vendor".to_sym).should_not == nil
+            Facter.value("blockdevice_#{device}_model".to_sym).should_not == nil
           end
 
           Facter.fact(:blockdevice_sda_model).value.should == "WDC WD5000AAKS-0"
