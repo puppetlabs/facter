@@ -50,94 +50,24 @@
 # Author: Jason Gill <jasongill@gmail.com>
 
 require 'facter'
+require 'facter/util/blockdevices'
 
-# Only Linux 2.6+ kernels support sysfs which is required to easily get device details
-if Facter.value(:kernel) == 'Linux'
-
-  sysfs_block_directory = '/sys/block/'
-
-  blockdevices = []
-
-  # This should prevent any non-2.6 kernels or odd machines without sysfs support from being investigated further
-  if File.exist?(sysfs_block_directory)
-
-    # Iterate over each file in the /sys/block/ directory and skip ones that do not have a device subdirectory
-    Dir.entries(sysfs_block_directory).each do |device|
-      sysfs_device_directory = sysfs_block_directory + device + "/device"
-      next unless File.exist?(sysfs_device_directory)
-
-      # Add the device to the blockdevices list, which is returned as it's own fact later on
-      blockdevices << device
-
-      sizefile = sysfs_block_directory + device + "/size"
-      vendorfile = sysfs_device_directory + "/vendor"
-      modelfile = sysfs_device_directory + "/model"
-
-      if File.exist?(sizefile)
-        Facter.add("blockdevice_#{device}_size".to_sym) do
-          setcode { IO.read(sizefile).strip.to_i * 512 }
-        end
-      end
-
-      if File.exist?(vendorfile)
-        Facter.add("blockdevice_#{device}_vendor".to_sym) do
-          setcode { IO.read(vendorfile).strip }
-        end
-      end
-
-      if File.exist?(modelfile)
-        Facter.add("blockdevice_#{device}_model".to_sym) do
-          setcode { IO.read(modelfile).strip }
-        end
-      end
-
-    end
-
-  end
-
-  # Return a comma-seperated list of block devices found
-  unless blockdevices.empty?
-    Facter.add(:blockdevices) do
-      setcode { blockdevices.sort.join(',') }
-    end
-  end
-end
-
-if Facter.value(:kernel) == 'FreeBSD'
-  blockdevices = Facter::Util::Resolution.exec('/sbin/sysctl -n kern.disks').split(' ')
-
+if Facter::Util::Blockdevices.available?
   Facter.add(:blockdevices) do
-    setcode { blockdevices.sort.join(',') }
+    setcode { Facter::Util::Blockdevices.devices.join(',') }
   end
 
-  blockdevices.each do |device|
-    Facter.add("blockdevice_#{device}_size".to_sym) do
-      if device =~ /acd|cd/
-        setcode { "0" }
-      else
-        setcode { Facter::Util::Resolution.exec("/usr/sbin/diskinfo #{device} | /usr/bin/awk '{ print $3 }'") }
-      end
+  Facter::Util::Blockdevices.devices.each do |device|
+    Facter.add("blockdevice_#{device}_size") do
+      setcode { Facter::Util::Blockdevices.device_size(device) }
     end
 
-    devicestring = ""
-    if device =~ /ada/
-      devicestring = Facter::Util::Resolution.exec("/sbin/camcontrol identify #{device} | /usr/bin/awk -F 'device\ model\ *' '/device model/ { print $2 }'")
-    elsif device =~ /ad/
-      devicestring = Facter::Util::Resolution.exec("/sbin/atacontrol list | /usr/bin/awk -F '<|>' '/#{device}/ { print $2 }'")
-    elsif device =~ /mfi/
-      devicestring = "MFI Local Disk"
-    else
-      devicestring = Facter::Util::Resolution.exec("/sbin/camcontrol inquiry #{device} -D | /usr/bin/awk -F '<|>' '{ print $2 }'")
+    Facter.add("blockdevice_#{device}_vendor") do
+      setcode { Facter::Util::Blockdevices.device_vendor(device) }
     end
 
-    devicevendor, devicemodel = devicestring.split(' ', 2)
-
-    Facter.add("blockdevice_#{device}_vendor".to_sym) do
-      setcode { devicevendor }
-    end
-
-    Facter.add("blockdevice_#{device}_model".to_sym) do
-      setcode { devicemodel }
+    Facter.add("blockdevice_#{device}_model") do
+      setcode { Facter::Util::Blockdevices.device_model(device)}
     end
   end
 end

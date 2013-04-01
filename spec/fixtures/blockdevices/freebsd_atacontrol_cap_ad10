@@ -1,0 +1,22 @@
+Protocol              ATA/ATAPI revision 4
+device model          WDC WD1003FBYX-01Y7B 0/01.01V01
+serial number         00000000000000000001
+firmware revision     00000001
+cylinders             8322
+heads                 16
+sectors/track         63
+lba supported         8388608 sectors
+lba48 not supported
+dma supported
+overlap not supported
+
+Feature                      Support  Enable    Value           Vendor
+write cache                    no       no
+read ahead                     no       no
+Tagged Command Queuing (TCQ)   no       no      0/0x00
+SMART                          no       no
+microcode download             no       no
+security                       no       no
+power management               yes      yes
+advanced power management      yes      no      16384/0x4000
+automatic acoustic management  no       no      0/0x00  0/0x00
