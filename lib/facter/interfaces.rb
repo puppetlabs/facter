@@ -1,42 +1,35 @@
-# interfaces.rb
+# encoding: UTF-8
+
+# Fact: interfaces
+#
+# Purpose:
 # Try to get additional Facts about the machine's network interfaces
 #
-# Original concept Copyright (C) 2007 psychedelys <psychedelys@gmail.com>
-# Update and *BSD support (C) 2007 James Turnbull <james@lovedthanlost.net>
-#
+# Caveats:
+# Most of this only works on a fixed list of platforms; notably, Darwin is
+# missing.
 
 require 'facter/util/ip'
 
-# Note that most of this only works on a fixed list of platforms; notably, Darwin
-# is missing.
+interfaces = Facter::Util::IP.interfaces
 
-Facter.add(:interfaces) do
-  confine :kernel => 'Linux'
-  has_weight 20
-  setcode do
-    list = Dir.glob('/sys/class/net/*').map do |name|
-      Facter::Util::IP.alphafy(name.split('/').last)
+if interfaces.any?
+  Facter.add(:interfaces) do
+    setcode do
+      alphafied_interfaces = interfaces.map do |interface|
+        Facter::Util::IP.alphafy(interface)
+      end
+
+      alphafied_interfaces.join(",")
     end
-    list.empty? ? nil : list.join(',')
   end
-end
 
-Facter.add(:interfaces) do
-  confine :kernel => Facter::Util::IP.supported_platforms
-  setcode do
-    Facter::Util::IP.get_interfaces.collect { |iface| Facter::Util::IP.alphafy(iface) }.join(",")
-  end
-end
-
-Facter::Util::IP.get_interfaces.each do |interface|
-
-  # Make a fact for each detail of each interface.  Yay.
-  #   There's no point in confining these facts, since we wouldn't be able to create
-  # them if we weren't running on a supported platform.
-  %w{ipaddress ipaddress6 macaddress netmask mtu}.each do |label|
-    Facter.add(label + "_" + Facter::Util::IP.alphafy(interface)) do
-      setcode do
-        Facter::Util::IP.get_interface_value(interface, label)
+  interfaces.each do |interface|
+    %w[ipaddress ipaddress6 macaddress netmask mtu].each do |label|
+      Facter.add("#{label}_#{Facter::Util::IP.alphafy(interface)}") do
+        setcode do
+          Facter::Util::IP.value_for_interface_and_label(interface, label)
+        end
       end
     end
   end
