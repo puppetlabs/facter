@@ -31,6 +31,7 @@ Requires:       which
 Requires:       dmidecode
 Requires:       pciutils
 %endif
+Requires:       virt-what
 Requires:       ruby(abi) >= 1.8
 BuildRequires:  ruby >= 1.8.5
 
@@ -71,6 +72,9 @@ rm -rf %{buildroot}
 %changelog
 * <%= Time.now.strftime("%a %b %d %Y") %> Puppet Labs Release <info@puppetlabs.com> -  1:<%= @rpmversion %>-<%= @rpmrelease %>
 - Build for <%= @version %>
+
+* Mon Apr 01 2013 Matthaus Owens <matthaus@puppetlabs.com> - 1:1.7.0-0.1rc1
+- Add dependency on virt-what to facter for better virutalization detection
 
 * Wed Aug 08 2012 Moses Mendoza <moses@puppetlabs.com> - 1.6.11-2
 - Use correct ruby libdir for fedora 17 / ruby 1.9
