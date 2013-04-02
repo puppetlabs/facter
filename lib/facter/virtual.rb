@@ -122,6 +122,9 @@ Facter.add("virtual") do
           # --- look for gmetrics for GCE
           # --- 00:05.0 Class 8007: Google, Inc. Device 6442
           result = "gce" if p =~ /Class 8007: Google, Inc/
+          # --- look for Red Hat VirtIO drivers. Commonly used in KVM environment
+          # ---   00:03.0 Unclassified device [00ff]: Red Hat, Inc Virtio memory balloon
+          result = "kvm" if p =~ /Red Hat, Inc Virtio/
         end
       else
         output = Facter::Util::Resolution.exec('dmidecode')
@@ -134,6 +137,7 @@ Facter.add("virtual") do
             result = "hyperv" if pd =~ /Product Name: Virtual Machine/
             result = "rhev" if pd =~ /Product Name: RHEV Hypervisor/
             result = "ovirt" if pd =~ /Product Name: oVirt Node/
+            result = "kvm" if pd =~ /Manufacturer: Bochs/
           end
         elsif Facter.value(:kernel) == 'SunOS'
           res = Facter::Util::Resolution.new('prtdiag')
