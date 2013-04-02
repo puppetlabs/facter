@@ -3,8 +3,16 @@ module Facter::Util::Virtual
   # virt_what is a delegating helper method intended to make it easier to stub
   # the system call without affecting other calls to
   # Facter::Util::Resolution.exec
+  #
+  # Per https://bugzilla.redhat.com/show_bug.cgi?id=719611 when run as a
+  # non-root user the virt-what command may emit an error message on stdout,
+  # and later versions of virt-what may emit this message on stderr. This
+  # method ensures stderr is redirected and that error messages are stripped
+  # from stdout.
   def self.virt_what(command = "virt-what")
-    Facter::Util::Resolution.exec command
+    redirected_cmd = "#{command} 2>/dev/null"
+    output = Facter::Util::Resolution.exec redirected_cmd
+    output.gsub(/^virt-what: .*$/, '')
   end
 
   ##

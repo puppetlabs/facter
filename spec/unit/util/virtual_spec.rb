@@ -262,4 +262,10 @@ EOT
 
     Facter::Util::Virtual.should_not be_virtualbox
   end
+
+  it "should strip out warnings on stdout from virt-what" do
+    virt_what_warning = "virt-what: this script must be run as root"
+    Facter::Util::Resolution.expects(:exec).with('virt-what 2>/dev/null').returns virt_what_warning
+    Facter::Util::Virtual.virt_what.should_not match /^virt-what: /
+  end
 end
