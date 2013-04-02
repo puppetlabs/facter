@@ -82,6 +82,7 @@ module Facter::Util::Virtual
        Facter::Util::Resolution.exec("/sbin/sysctl -n hw.model")
      end
      (txt =~ /QEMU Virtual CPU/) ? true : false
+     (txt =~ /Common KVM processor/) ? true : false
   end
 
   def self.virtualbox?
