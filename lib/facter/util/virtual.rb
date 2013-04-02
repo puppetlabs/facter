@@ -81,7 +81,10 @@ module Facter::Util::Virtual
      elsif ["FreeBSD", "OpenBSD"].include? Facter.value(:kernel)
        Facter::Util::Resolution.exec("/sbin/sysctl -n hw.model")
      end
-     (txt =~ /QEMU Virtual CPU/) ? true : false
+     if txt =~ /QEMU Virtual CPU/ then true
+     elsif txt =~ /Common KVM processor/ then true
+	 else false
+     end
   end
 
   def self.virtualbox?
