@@ -137,7 +137,7 @@ Facter.add("virtual") do
             result = "hyperv" if pd =~ /Product Name: Virtual Machine/
             result = "rhev" if pd =~ /Product Name: RHEV Hypervisor/
             result = "ovirt" if pd =~ /Product Name: oVirt Node/
-            result = "kvm" if pd =~ /Product Name: Bochs/
+            result = "kvm" if pd =~ /Manufacturer: Bochs/
           end
         elsif Facter.value(:kernel) == 'SunOS'
           res = Facter::Util::Resolution.new('prtdiag')

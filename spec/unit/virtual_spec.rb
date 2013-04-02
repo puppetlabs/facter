@@ -180,10 +180,11 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "hyperv"
     end
 
-	it "should be kvm with Bochs product name from dmidecode" do
-	  Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("Product Name: Bochs")
-	  Facter.fact(:virtual).value.should == "kvm"
-	end
+    it "should be kvm with Bochs vendor name from dmidecode" do
+      Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
+      Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("Manufacturer: Bochs")
+      Facter.fact(:virtual).value.should == "kvm"
+    end
 
     context "In Google Compute Engine" do
       before :each do
