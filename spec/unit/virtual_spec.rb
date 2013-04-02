@@ -106,6 +106,11 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "virtualbox"
     end
 
+	it "should be kvm with Red Hat, Inc vendor name and Virtio driver family from lspci 2>/dev/null" do
+	  Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("00:03.0 Unclassified device [00ff]: Red Hat, Inc Virtio memory balloon")
+      Facter.fact(:virtual).value.should == "kvm"
+	end
+
     it "should be vmware with VMWare vendor name from dmidecode" do
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("On Board Device 1 Information\nType: Video\nStatus: Disabled\nDescription: VMware SVGA II")
@@ -174,6 +179,11 @@ describe "Virtual fact" do
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("System Information\nManufacturer: Microsoft Corporation\nProduct Name: Virtual Machine")
       Facter.fact(:virtual).value.should == "hyperv"
     end
+
+	it "should be kvm with Bochs product name from dmidecode" do
+	  Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("Product Name: Bochs")
+	  Facter.fact(:virtual).value.should == "kvm"
+	end
 
     context "In Google Compute Engine" do
       before :each do
