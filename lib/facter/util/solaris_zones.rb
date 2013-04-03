@@ -103,7 +103,12 @@ module Util
     #
     # @api private
     def parse!
-      rows = @zoneadm_output.split("\n").collect { |line| line.split(':') }
+      if @zoneadm_output
+        rows = @zoneadm_output.split("\n").collect { |line| line.split(':') }
+      else
+        Facter.debug "Cannot parse zone facts, #{zoneadm_cmd} returned no output"
+        rows = []
+      end
 
       @zone_hash = rows.inject({}) do |memo, fields|
         zone = fields[1].intern
