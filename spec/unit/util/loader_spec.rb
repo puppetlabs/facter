@@ -321,12 +321,11 @@ describe Facter::Util::Loader do
     end
 
     it "should load all facts from the environment" do
-      Facter.expects(:add).with('one')
-      Facter.expects(:add).with('two')
-
       Facter::Util::Resolution.with_env "facter_one" => "yayness", "facter_two" => "boo" do
         @loader.load_all
       end
+      Facter.value(:one).should == 'yayness'
+      Facter.value(:two).should == 'boo'
     end
 
     it "should only load all facts one time" do
