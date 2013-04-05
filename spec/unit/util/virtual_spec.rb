@@ -58,6 +58,14 @@ describe Facter::Util::Virtual do
     Facter::Util::Virtual.should_not be_zone
   end
 
+  it "(#14522) handles the unencoded binary data in /proc/self/status on Solaris" do
+    Facter.fact(:osfamily).stubs(:value).returns("Solaris")
+    File.stubs(:open).with('/proc/self/status', 'rb').returns(solaris_proc_self_status)
+    FileTest.stubs(:exists?).with('/proc/self/status').returns(true)
+
+    Facter::Util::Virtual.vserver?.should eq(false)
+  end
+
   it "should not detect vserver if no self status" do
     FileTest.stubs(:exists?).with("/proc/self/status").returns(false)
     Facter::Util::Virtual.should_not be_vserver
@@ -234,6 +242,13 @@ describe Facter::Util::Virtual do
       returns("HP-Oracle-Sun-VMWare-funky-town")
 
     Facter::Util::Virtual.should_not be_virtualbox
+  end
+
+  let :solaris_proc_self_status do
+    sample_data = my_fixture_read('solaris10_proc_self_status1')
+    mockfile = mock('File')
+    mockfile.stubs(:read).returns(sample_data)
+    mockfile
   end
 
   shared_examples_for "virt-what" do |kernel, path, null_device|

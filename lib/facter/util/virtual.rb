@@ -62,6 +62,9 @@ module Facter::Util::Virtual
   def self.vserver?
     return false unless FileTest.exists?("/proc/self/status")
     txt = File.open("/proc/self/status", "rb").read
+    if txt.respond_to?(:encode!)
+      txt.encode!('UTF-8', 'UTF-8', :invalid => :replace)
+    end
     return true if txt =~ /^(s_context|VxID):[[:blank:]]*[0-9]/
     return false
   end
