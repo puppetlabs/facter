@@ -98,6 +98,8 @@ Facter.add(:operatingsystem) do
         "Ascendos"
       elsif txt =~ /^XenServer/i
         "XenServer"
+      elsif txt =~ /XCP/
+        "XCP"
       else
         "RedHat"
       end
