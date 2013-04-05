@@ -58,6 +58,13 @@ describe Facter::Util::Virtual do
     Facter::Util::Virtual.should_not be_zone
   end
 
+  it "should not read /proc/self/status on Solaris" do
+    Facter.expects(:value).with(:osfamily).returns("Solaris")
+    FileTest.expects(:exists?).with("/proc/self/status").never
+    File.expects(:open).with("/proc/self/status").never
+    Facter::Util::Virtual.vserver?.should == false
+  end
+
   it "should not detect vserver if no self status" do
     FileTest.stubs(:exists?).with("/proc/self/status").returns(false)
     Facter::Util::Virtual.should_not be_vserver

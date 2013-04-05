@@ -45,6 +45,8 @@ module Facter::Util::Virtual
   end
 
   def self.vserver?
+    # /proc/self/status is not easily readable on Solaris. See http://projects.puppetlabs.com/issues/14522
+    return false if Facter.value(:osfamily) == "Solaris"
     return false unless FileTest.exists?("/proc/self/status")
     txt = File.open("/proc/self/status", "rb").read
     return true if txt =~ /^(s_context|VxID):[[:blank:]]*[0-9]/
