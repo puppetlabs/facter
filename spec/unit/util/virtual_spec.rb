@@ -252,21 +252,18 @@ describe Facter::Util::Virtual do
   end
 
   shared_examples_for "virt-what" do |kernel, path, null_device|
-    Facter.fact(:kernel).expects(:value).returns(kernel)
+    Facter.fact(:kernel).stubs(:value).returns(kernel)
     Facter::Util::Resolution.expects(:which).with("virt-what").returns(path)
     Facter::Util::Resolution.expects(:exec).with("#{path} 2>#{null_device}")
     Facter::Util::Virtual.virt_what
   end
 
   context "on linux" do
-    before :each do
-      Facter.fact(:kernel).expects(:value).returns("linux")
-    end
-
     it_should_behave_like "virt-what", "linux", "/usr/bin/virt-what", "/dev/null"
 
     it "should strip out warnings on stdout from virt-what" do
       virt_what_warning = "virt-what: this script must be run as root"
+      Facter.fact(:kernel).stubs(:value).returns('linux')
       Facter::Util::Resolution.expects(:which).with('virt-what').returns "/usr/bin/virt-what"
       Facter::Util::Resolution.expects(:exec).with('/usr/bin/virt-what 2>/dev/null').returns virt_what_warning
       Facter::Util::Virtual.virt_what.should_not match /^virt-what: /
@@ -274,16 +271,10 @@ describe Facter::Util::Virtual do
   end
 
   context "on unix" do
-    before :each do
-      Facter.fact(:kernel).expects(:value).returns("unix")
-    end
     it_should_behave_like "virt-what", "unix", "/usr/bin/virt-what", "/dev/null"
   end
 
   context "on windows" do
-    before :each do
-      Facter.fact(:kernel).expects(:value).returns("windows")
-    end
     it_should_behave_like "virt-what", "windows", 'c:\windows\system32\virt-what', "NUL"
   end
 end

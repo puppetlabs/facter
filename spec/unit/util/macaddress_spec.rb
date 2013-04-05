@@ -18,7 +18,7 @@ describe "standardized MAC address" do
   end
 end
 
-describe "Darwin", :unless => Facter.value(:operatingsystem) == 'windows' do
+describe "Darwin", :unless => Facter::Util::Config.is_windows? do
   test_cases = [
     # version,           iface, real macaddress,     fallback macaddress
     ["9.8.0",            'en0', "00:17:f2:06:e4:2e", "00:17:f2:06:e4:2e"],
