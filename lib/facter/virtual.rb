@@ -209,20 +209,21 @@ Facter.add("virtual") do
   has_weight 500
 
   setcode do
-    output = Facter::Util::Virtual.virt_what
-    case output
-    when 'linux_vserver'
-      Facter::Util::Virtual.vserver_type
-    when /xen-hvm/i
-      'xenhvm'
-    when /xen-dom0/i
-      'xen0'
-    when /xen-domU/i
-      'xenu'
-    when /ibm_systemz/i
-      'zlinux'
-    else
-      output.to_s.split("\n").last
+    if output = Facter::Util::Virtual.virt_what
+      case output
+      when 'linux_vserver'
+        Facter::Util::Virtual.vserver_type
+      when /xen-hvm/i
+        'xenhvm'
+      when /xen-dom0/i
+        'xen0'
+      when /xen-domU/i
+        'xenu'
+      when /ibm_systemz/i
+        'zlinux'
+      else
+        output.to_s.split("\n").last
+      end
     end
   end
 end

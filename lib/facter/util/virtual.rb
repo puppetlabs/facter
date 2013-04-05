@@ -12,7 +12,7 @@ module Facter::Util::Virtual
   def self.virt_what(command = "virt-what")
     redirected_cmd = "#{command} 2>/dev/null"
     output = Facter::Util::Resolution.exec redirected_cmd
-    output.gsub(/^virt-what: .*$/, '')
+    output.gsub(/^virt-what: .*$/, '') if output
   end
 
   ##
