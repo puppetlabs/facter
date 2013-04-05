@@ -87,6 +87,7 @@ describe "Operating System fact" do
       "SLC"        => "Scientific Linux CERN SLC release 5.7 (Boron)",
       "Ascendos"   => "Ascendos release 6.0 (Nameless)",
       "CloudLinux" => "CloudLinux Server release 5.5",
+      "XCP"        => "XCP release 1.6.10-61809c",
     }.each_pair do |operatingsystem, string|
       it "should be #{operatingsystem} based on /etc/redhat-release contents #{string}" do
         FileTest.expects(:exists?).with("/etc/redhat-release").returns true
