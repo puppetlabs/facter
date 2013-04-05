@@ -238,7 +238,20 @@ describe Facter::Util::Virtual do
 
   it "should strip out warnings on stdout from virt-what" do
     virt_what_warning = "virt-what: this script must be run as root"
+    Facter.fact(:kernel).expects(:value).returns("linux")
     Facter::Util::Resolution.expects(:exec).with('virt-what 2>/dev/null').returns virt_what_warning
     Facter::Util::Virtual.virt_what.should_not match /^virt-what: /
+  end
+
+  ["windows","linux","unix"].each do |kernel|
+    describe "virt_what should redirect to the correct null device" do
+      let(:null_device) { kernel == "windows" ? "2>NUL" : "2>/dev/null" }
+
+      it "on #{kernel}" do
+        Facter.fact(:kernel).expects(:value).returns(kernel)
+        Facter::Util::Resolution.expects(:exec).with("virt-what #{null_device}")
+        Facter::Util::Virtual.virt_what
+      end
+    end
   end
 end
