@@ -10,7 +10,14 @@ module Facter::Util::Virtual
   # method ensures stderr is redirected and that error messages are stripped
   # from stdout.
   def self.virt_what(command = "virt-what")
-    redirected_cmd = "#{command} 2>/dev/null"
+    command = Facter::Util::Resolution.which(command)
+    return unless command
+
+    if Facter.value(:kernel) == 'windows'
+      redirected_cmd = "#{command} 2>NUL"
+    else
+      redirected_cmd = "#{command} 2>/dev/null"
+    end
     output = Facter::Util::Resolution.exec redirected_cmd
     output.gsub(/^virt-what: .*$/, '') if output
   end
@@ -55,6 +62,9 @@ module Facter::Util::Virtual
   def self.vserver?
     return false unless FileTest.exists?("/proc/self/status")
     txt = File.open("/proc/self/status", "rb").read
+    if txt.respond_to?(:encode!)
+      txt.encode!('UTF-8', 'UTF-8', :invalid => :replace)
+    end
     return true if txt =~ /^(s_context|VxID):[[:blank:]]*[0-9]/
     return false
   end
