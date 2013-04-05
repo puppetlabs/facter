@@ -20,6 +20,13 @@ end
 RSpec.configure do |config|
   config.mock_with :mocha
 
+  if Facter::Util::Config.is_windows?
+    require 'win32console'
+    config.output_stream = $stdout
+    config.error_stream = $stderr
+    config.formatters.each { |f| f.instance_variable_set(:@output, $stdout) }
+  end
+
   config.before :each do
     # Ensure that we don't accidentally cache facts and environment
     # between test cases.
