@@ -101,6 +101,7 @@ describe "Operating System fact" do
       "Ascendos"   => "Ascendos release 6.0 (Nameless)",
       "CloudLinux" => "CloudLinux Server release 5.5",
       "XenServer"  => "XenServer release 5.6.0-31188p (xenenterprise)",
+      "XCP"        => "XCP release 1.6.10-61809c",
     }.each_pair do |operatingsystem, string|
       it "should be #{operatingsystem} based on /etc/redhat-release contents #{string}" do
         FileTest.expects(:exists?).with("/etc/redhat-release").returns true
