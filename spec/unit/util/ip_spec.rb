@@ -77,7 +77,7 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.expects(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
     Facter.stubs(:value).with(:kernel).returns("SunOS")
-
+    Facter.stubs(:value).with(:ipaddress_regex).returns(/inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
     Facter::Util::IP.get_interface_value("e1000g0", "ipaddress").should == "172.16.15.138"
   end
 
@@ -85,6 +85,7 @@ describe Facter::Util::IP do
     solaris_ifconfig_interface = my_fixture_read("solaris_ifconfig_single_interface")
 
     Facter::Util::IP.expects(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
+    Facter.stubs(:value).with(:netmask_regex).returns(/netmask (\w+)/)
     Facter.stubs(:value).with(:kernel).returns("SunOS")
 
     Facter::Util::IP.get_interface_value("e1000g0", "netmask").should == "255.255.255.0"
@@ -95,6 +96,8 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.stubs(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
     Facter.stubs(:value).with(:kernel).returns("SunOS")
+    Facter.stubs(:value).with(:ipaddress_regex).returns(/inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
+    Facter.stubs(:value).with(:netmask_regex).returns(/netmask (\w+)/)
 
     Facter::Util::IP.get_network_value("e1000g0").should == "172.16.15.0"
   end
@@ -104,6 +107,8 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.expects(:get_single_interface_output).with("em0").returns(kfreebsd_ifconfig)
     Facter.stubs(:value).with(:kernel).returns("GNU/kFreeBSD")
+    Facter.stubs(:value).with(:macaddress_regex).returns(
+      /(?:ether|HWaddr) (\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/)
 
     Facter::Util::IP.get_interface_value("em0", "macaddress").should == "0:11:a:59:67:90"
   end
@@ -113,6 +118,8 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.expects(:get_single_interface_output).with("fxp0").returns(ifconfig_interface)
     Facter.stubs(:value).with(:kernel).returns("FreeBSD")
+    Facter.stubs(:value).with(:macaddress_regex).returns(
+      /(?:ether|HWaddr) ((\w{1,2}:){5,}\w{1,2})/)
 
     Facter::Util::IP.get_interface_value("fxp0", "macaddress").should == "00:0e:0c:68:67:7c"
   end
@@ -122,6 +129,8 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.expects(:get_single_interface_output).with("en1").returns(ifconfig_interface)
     Facter.stubs(:value).with(:kernel).returns("Darwin")
+    Facter.stubs(:value).with(:macaddress_regex).returns(
+      /(?:ether|HWaddr) (\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/)
 
     Facter::Util::IP.get_interface_value("en1", "macaddress").should == "00:1b:63:ae:02:66"
   end
@@ -141,6 +150,7 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.expects(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
     Facter.stubs(:value).with(:kernel).returns("SunOS")
+    Facter.stubs(:value).with(:netmask_regex).returns(/netmask (\w+)/)
 
     Facter::Util::IP.get_interface_value("e1000g0", "netmask").should == "255.255.255.0"
   end
@@ -150,6 +160,7 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.expects(:get_single_interface_output).with("en1").returns(darwin_ifconfig_interface)
     Facter.stubs(:value).with(:kernel).returns("Darwin")
+    Facter.stubs(:value).with(:netmask_regex).returns(/netmask 0x(\w+)/)
 
     Facter::Util::IP.get_interface_value("en1", "netmask").should == "255.255.255.0"
   end
@@ -159,6 +170,7 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.expects(:get_single_interface_output).with("em1").returns(kfreebsd_ifconfig)
     Facter.stubs(:value).with(:kernel).returns("GNU/kFreeBSD")
+    Facter.stubs(:value).with(:netmask_regex).returns(/netmask 0x(\w+)/)
 
     Facter::Util::IP.get_interface_value("em1", "netmask").should == "255.255.255.0"
   end
@@ -168,6 +180,8 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.expects(:get_single_interface_output).with("ib0").returns(correct_ifconfig_interface)
     Facter.stubs(:value).with(:kernel).returns("Linux")
+    Facter.stubs(:value).with(:macaddress_regex).returns(
+      /(?:ether|HWaddr)\s+((\w{1,2}:){5,}\w{1,2})/)
 
     Facter::Util::IP.get_interface_value("ib0", "macaddress").should == "80:00:00:4a:fe:80:00:00:00:00:00:00:00:02:c9:03:00:43:27:21"
   end
@@ -178,6 +192,8 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.expects(:get_infiniband_macaddress).with("ib0").returns("80:00:00:4a:fe:80:00:00:00:00:00:00:00:02:c9:03:00:43:27:21")
     Facter::Util::IP.expects(:ifconfig_interface).with("ib0").returns(ifconfig_interface)
+    Facter.stubs(:value).with(:macaddress_regex).returns(
+      /(?:ether|HWaddr)\s+((\w{1,2}:){5,}\w{1,2})/)
     Facter.stubs(:value).with(:kernel).returns("Linux")
 
     Facter::Util::IP.get_single_interface_output("ib0").should == correct_ifconfig_interface
@@ -190,6 +206,8 @@ describe Facter::Util::IP do
     File.expects(:exists?).with("/sbin/ip").returns(false)
     Facter::Util::IP.expects(:ifconfig_interface).with("ib0").returns(ifconfig_interface)
     Facter.stubs(:value).with(:kernel).returns("Linux")
+    Facter.stubs(:value).with(:macaddress_regex).returns(
+      /(?:ether|HWaddr)\s+((\w{1,2}:){5,}\w{1,2})/)
 
     Facter::Util::IP.get_interface_value("ib0", "macaddress").should == "FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF:FF"
   end
@@ -227,6 +245,7 @@ describe Facter::Util::IP do
     Facter::Util::IP.stubs(:get_single_interface_output).with("lo").
       returns(my_fixture_read("linux_get_single_interface_lo"))
     Facter.stubs(:value).with(:kernel).returns("Linux")
+    Facter.stubs(:value).with(:mtu_regex).returns(/MTU:(\d+)/)
 
     Facter::Util::IP.get_interface_value("eth0", "mtu").should == "1500"
     Facter::Util::IP.get_interface_value("lo", "mtu").should == "16436"
@@ -237,6 +256,7 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.expects(:get_single_interface_output).with("en1").returns(darwin_ifconfig_interface)
     Facter.stubs(:value).with(:kernel).returns("Darwin")
+    Facter.stubs(:value).with(:mtu_regex).returns(/mtu\s+(\d+)/)
 
     Facter::Util::IP.get_interface_value("en1", "mtu").should == "1500"
   end
@@ -246,6 +266,7 @@ describe Facter::Util::IP do
 
     Facter::Util::IP.expects(:get_single_interface_output).with("e1000g0").returns(solaris_ifconfig_interface)
     Facter.stubs(:value).with(:kernel).returns("SunOS")
+    Facter.stubs(:value).with(:mtu_regex).returns(/mtu\s+(\d+)/)
 
     Facter::Util::IP.get_interface_value("e1000g0", "mtu").should == "1500"
   end
@@ -269,7 +290,8 @@ describe Facter::Util::IP do
     input, expected_output = example
     it "should pass regexp test on fake netstat input example #{i}" do
       Facter.stubs(:value).with(:kernel).returns("HP-UX")
-      Facter::Util::IP.stubs(:hpux_netstat_in).returns(input)
+      Facter.stubs(:value).with(:ip_path).returns('/bin/netstat')
+      Facter::Util::Resolution.stubs(:exec).with('/bin/netstat -in').returns(input)
       Facter::Util::IP.get_all_interface_output().should == expected_output
     end
   end
@@ -335,9 +357,11 @@ describe Facter::Util::IP do
            netstat_in_fixture, lanscan_fixture = example
 
     it "should return a list three interfaces on #{description}" do
+      Facter.fact(:ip_path).stubs(:value).returns('/bin/netstat')
       Facter.expects(:value).with(:kernel).at_least_once.returns("HP-UX")
       File.expects(:exist?).with('/sys/class/net').returns(false)
-      Facter::Util::IP.expects(:hpux_netstat_in).returns(netstat_in_fixture)
+      Facter.stubs(:value).with(:ip_path).returns('/bin/netstat')
+      Facter::Util::Resolution.stubs(:exec).with('/bin/netstat -in').returns(netstat_in_fixture)
       Facter::Util::IP.get_interfaces.should == array_of_expected_ifs
     end
 
@@ -361,11 +385,13 @@ describe Facter::Util::IP do
         Facter.expects(:value).with(:kernel).at_least_once.returns("HP-UX")
         Facter::Util::IP.expects(:hpux_lanscan).returns(lanscan_fixture)
         Facter::Util::IP.expects(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
+        Facter.stubs(:value).with(:ipaddress_regex).returns(/inet addr: ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
         Facter::Util::IP.get_interface_value(nic, "ipaddress").should == expected_ip
       end
 
       it "should return netmask #{expected_netmask} on #{nic} for #{description} example" do
         Facter.expects(:value).with(:kernel).at_least_once.returns("HP-UX")
+        Facter.stubs(:value).with(:netmask_regex).returns(/netmask (\w+)/)
         Facter::Util::IP.expects(:hpux_lanscan).returns(lanscan_fixture)
         Facter::Util::IP.expects(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
         Facter::Util::IP.get_interface_value(nic, "netmask").should == expected_netmask
@@ -375,6 +401,7 @@ describe Facter::Util::IP do
         Facter.expects(:value).with(:kernel).at_least_once.returns("HP-UX")
         Facter::Util::IP.expects(:hpux_lanscan).returns(lanscan_fixture)
         Facter::Util::IP.expects(:hpux_ifconfig_interface).with(nic).returns(ifconfig_fixture)
+        Facter.stubs(:value).with(:macaddress_regex).returns(/0x(\w+)/)
         Facter::Util::IP.get_interface_value(nic, "macaddress").should == expected_mac
       end
     end
@@ -389,6 +416,7 @@ describe Facter::Util::IP do
       windows_netsh = my_fixture_read("windows_netsh_single_interface")
 
       Facter::Util::IP.expects(:get_output_for_interface_and_label).with("Local Area Connection", "ipaddress").returns(windows_netsh)
+    Facter.stubs(:value).with(:ipaddress_regex).returns(/IP Address:\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
 
       Facter::Util::IP.get_interface_value("Local Area Connection", "ipaddress").should == "172.16.138.216"
     end
@@ -397,6 +425,7 @@ describe Facter::Util::IP do
       windows_netsh = my_fixture_read("windows_netsh_single_interface")
 
       Facter::Util::IP.expects(:get_output_for_interface_and_label).with("Local Area Connection", "netmask").returns(windows_netsh)
+        Facter.stubs(:value).with(:netmask_regex).returns(/mask ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
 
       Facter::Util::IP.get_interface_value("Local Area Connection", "netmask").should == "255.255.255.0"
     end
@@ -406,6 +435,8 @@ describe Facter::Util::IP do
 
       Facter::Util::IP.stubs(:get_output_for_interface_and_label).with("Local Area Connection", "ipaddress").returns(windows_netsh)
       Facter::Util::IP.stubs(:get_output_for_interface_and_label).with("Local Area Connection", "netmask").returns(windows_netsh)
+    Facter.stubs(:value).with(:ipaddress_regex).returns(/IP Address:\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
+    Facter.stubs(:value).with(:netmask_regex).returns(/mask ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
 
       Facter::Util::IP.get_network_value("Local Area Connection").should == "172.16.138.0"
     end
@@ -414,47 +445,31 @@ describe Facter::Util::IP do
       windows_netsh = my_fixture_read("windows_netsh_single_interface6")
 
       Facter::Util::IP.expects(:get_output_for_interface_and_label).with("Teredo Tunneling Pseudo-Interface", "ipaddress6").returns(windows_netsh)
+    Facter.stubs(:value).with(:ipaddress6_regex).returns(/Address\s+((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/)
 
       Facter::Util::IP.get_interface_value("Teredo Tunneling Pseudo-Interface", "ipaddress6").should == "2001:0:4137:9e76:2087:77a:53ef:7527"
     end
   end
 
   describe "exec_ifconfig" do
-    it "uses get_ifconfig" do
-      Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig").once
+    it "uses the ip_path fact" do
+      Facter.fact(:ip_path).stubs(:value).returns("/sbin/ifconfig")
 
       Facter::Util::IP.exec_ifconfig
     end
     it "support additional arguments" do
-      Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
+      Facter.fact(:ip_path).stubs(:value).returns("/sbin/ifconfig")
 
       Facter::Util::Resolution.stubs(:exec).with("/sbin/ifconfig -a")
 
       Facter::Util::IP.exec_ifconfig(["-a"])
     end
     it "joins multiple arguments correctly" do
-      Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
+      Facter.fact(:ip_path).stubs(:value).returns("/sbin/ifconfig")
 
       Facter::Util::Resolution.stubs(:exec).with("/sbin/ifconfig -a -e -i -j")
 
       Facter::Util::IP.exec_ifconfig(["-a","-e","-i","-j"])
-    end
-  end
-  describe "get_ifconfig" do
-    it "assigns /sbin/ifconfig if it is executable" do
-      File.stubs(:executable?).returns(false)
-      File.stubs(:executable?).with("/sbin/ifconfig").returns(true)
-      Facter::Util::IP.get_ifconfig.should eq("/sbin/ifconfig")
-    end
-    it "assigns /usr/sbin/ifconfig if it is executable" do
-      File.stubs(:executable?).returns(false)
-      File.stubs(:executable?).with("/usr/sbin/ifconfig").returns(true)
-      Facter::Util::IP.get_ifconfig.should eq("/usr/sbin/ifconfig")
-    end
-    it "assigns /bin/ifconfig if it is executable" do
-      File.stubs(:executable?).returns(false)
-      File.stubs(:executable?).with("/bin/ifconfig").returns(true)
-      Facter::Util::IP.get_ifconfig.should eq("/bin/ifconfig")
     end
   end
 

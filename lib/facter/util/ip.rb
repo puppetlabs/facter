@@ -82,23 +82,25 @@ module Facter::Util::IP
   end
 
   def self.get_all_interface_output
+    command = Facter.value(:ip_path)
+
     case Facter.value(:kernel)
     when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
-      output = Facter::Util::IP.exec_ifconfig(["-a","2>/dev/null"])
+      output = Facter::Util::Resolution.exec('#{command} -a 2>/dev/null')
     when 'SunOS'
-      output = Facter::Util::IP.exec_ifconfig(["-a"])
+      output = Facter::Util::Resolution.exec('#{command} -a')
     when 'HP-UX'
       # (#17487)[https://projects.puppetlabs.com/issues/17487]
       # Handle NIC bonding where asterisks and virtual NICs are printed.
-      if output = hpux_netstat_in
+      if output = Facter::Util::Resolution.exec(command+' -in')
         output.gsub!(/\*/, "")                  # delete asterisks.
         output.gsub!(/^[^\n]*none[^\n]*\n/, "") # delete lines with 'none' instead of IPs.
         output.sub!(/^[^\n]*\n/, "")            # delete the header line.
         output
       end
     when 'windows'
-      output = %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ip show interface|
-      output += %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ipv6 show interface|
+      output = %x|#{command} interface ip show interface|
+      output += %x|#{command} interface ipv6 show interface|
     end
     output
   end
@@ -109,15 +111,7 @@ module Facter::Util::IP
   #
   # @return [String] the output of `ifconfig #{arguments} 2>/dev/null` or nil
   def self.exec_ifconfig(additional_arguments=[])
-    Facter::Util::Resolution.exec("#{self.get_ifconfig} #{additional_arguments.join(' ')}")
-  end
-  ##
-  # get_ifconfig looks up the ifconfig binary
-  #
-  # @return [String] path to the ifconfig binary
-  def self.get_ifconfig
-    common_paths=["/bin/ifconfig","/sbin/ifconfig","/usr/sbin/ifconfig"]
-    common_paths.select{|path| File.executable?(path)}.first
+    Facter::Util::Resolution.exec("#{Facter.value(:ip_path)} #{additional_arguments.join(' ')}")
   end
   ##
   # hpux_netstat_in is a delegate method that allows us to stub netstat -in
@@ -180,9 +174,9 @@ module Facter::Util::IP
     return get_single_interface_output(interface) unless Facter.value(:kernel) == 'windows'
 
     if label == 'ipaddress6'
-      output = %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ipv6 show address \"#{interface}\"|
+      output = %x|#{Facter.value(:ip_path)} interface ipv6 show address \"#{interface}\"|
     else
-      output = %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ip show address \"#{interface}\"|
+      output = %x|#{Facter.value(:ip_path)} interface ip show address \"#{interface}\"|
     end
     output
   end
@@ -237,7 +231,9 @@ module Facter::Util::IP
     end
 
     # Pull the correct regex out of the map.
-    regex = map[label.to_sym]
+    regex = Facter.value("#{label}_regex".to_sym)
+    puts "regex is #{regex} and kernel is #{kernel}"
+
 
     # Linux changes the MAC address reported via ifconfig when an ethernet interface
     # becomes a slave of a bonding device to the master MAC address.
