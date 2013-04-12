@@ -11,15 +11,13 @@
 #   would return '2'. For the value '1', no fact would be set for
 #   lsbminordistrelease.
 #
-# Copyright (C) 2013 Garrett Honeycutt <code@garretthoneycutt.com>
-#
 require 'facter'
 
 Facter.add('lsbminordistrelease') do
+  confine :kernel => %w{Linux GNU/kFreeBSD}
   setcode do
-    confine :kernel => %w{Linux GNU/kFreeBSD}
-      if /(\d).(\d)/i =~ Facter.value(:lsbdistrelease)
-        result=$2
-      end
+    if /(\d).(\d)/i =~ Facter.value(:lsbdistrelease)
+      result=$2
+    end
   end
 end
