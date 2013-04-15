@@ -11,8 +11,6 @@
 #   would return '2'. For the value '1', no fact would be set for
 #   lsbminordistrelease.
 #
-require 'facter'
-
 Facter.add('lsbminordistrelease') do
   confine(:lsbdistrelease) {|ver| !!ver }
 

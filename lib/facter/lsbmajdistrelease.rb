@@ -7,16 +7,14 @@
 #   Parses the lsbdistrelease fact for numbers followed by a period and
 #   returns those, or just the lsbdistrelease fact if none were found.
 #
-require 'facter'
-
 Facter.add('lsbmajdistrelease') do
-  confine :kernel => %w{Linux GNU/kFreeBSD}
+  confine(:lsbdistrelease) {|ver| !!ver }
+
+  regexp = /(\d+)\./
+
   setcode do
-    if /(\d*)\./i =~ Facter.value(:lsbdistrelease)
-      result=$1
-    else
-      result=Facter.value(:lsbdistrelease)
-    end
-    result
+    lsbdistrelease = Facter.value(:lsbdistrelease)
+    mdata = regexp.match(lsbdistrelease)
+    mdata ? mdata[1] : lsbdistrelease
   end
 end
