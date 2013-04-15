@@ -63,18 +63,17 @@ describe Facter::Util::IP do
       Facter::Util::Resolution.expects(:exec).with("/sbin/ifconfig")
       Facter::Util::IP.exec_ifconfig
     end
-    it "support additional arguments" do
+
+    it "executes `ifconfig -a` when given ['-a']" do
       Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
 
-      Facter::Util::Resolution.stubs(:exec).with("/sbin/ifconfig -a")
-
+      Facter::Util::Resolution.expects(:exec).with("/sbin/ifconfig -a")
       Facter::Util::IP.exec_ifconfig(["-a"])
     end
-    it "joins multiple arguments correctly" do
+    it "executes `ifconfig -a -e -i -j` when given ['-a', '-e', '-i', '-j]" do
       Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
 
-      Facter::Util::Resolution.stubs(:exec).with("/sbin/ifconfig -a -e -i -j")
-
+      Facter::Util::Resolution.expects(:exec).with("/sbin/ifconfig -a -e -i -j")
       Facter::Util::IP.exec_ifconfig(["-a","-e","-i","-j"])
     end
   end
