@@ -58,9 +58,9 @@ describe Facter::Util::IP do
   end
 
   describe "exec_ifconfig" do
-    it "uses get_ifconfig" do
-      Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig").once
-
+    it "executes /sbin/ifconfig when get_ifconfig() returns /sbin/ifconfig" do
+      Facter::Util::IP.expects(:get_ifconfig).returns("/sbin/ifconfig")
+      Facter::Util::Resolution.expects(:exec).with("/sbin/ifconfig")
       Facter::Util::IP.exec_ifconfig
     end
     it "support additional arguments" do
