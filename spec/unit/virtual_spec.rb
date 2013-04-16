@@ -205,6 +205,12 @@ describe "Virtual fact" do
         end
       end
     end
+
+    it "(#20236) is vmware when dmidecode contains vmware and lspci returns insufficient information", :focus => true do
+      Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("garbage\ninformation\n")
+      Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("On Board Device 1 Information\nType: Video\nStatus: Disabled\nDescription: VMware SVGA II")
+      expect(Facter.fact(:virtual).value).to eq("vmware")
+    end
   end
 
   describe "on Solaris" do
@@ -272,6 +278,7 @@ describe "Virtual fact" do
     require 'facter/util/wmi'
     before do
       Facter.fact(:kernel).stubs(:value).returns("windows")
+      Facter.fact(:architecture).stubs(:value).returns("x64")
     end
 
     it "should be kvm with KVM model name from Win32_ComputerSystem" do

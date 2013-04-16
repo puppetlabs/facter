@@ -44,129 +44,116 @@ Facter.add("virtual") do
   end
 end
 
+Facter.add("virtual") do
+  confine :kernel => ["FreeBSD", "GNU/kFreeBSD"]
+
+  setcode do
+    "jail" if Facter::Util::Virtual.jail?
+  end
+end
+
+Facter.add("virtual") do
+  confine :kernel => 'SunOS'
+
+  setcode do
+    next "zone" if Facter::Util::Virtual.zone?
+
+    resolver = Facter::Util::Resolution.new('prtdiag')
+    resolver.timeout = 6
+    resolver.setcode('prtdiag')
+    output = resolver.value
+    if output
+      lines = output.split("\n")
+      next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
+      next "vmware"     if lines.any? {|l| l =~ /VM[wW]are/ }
+      next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
+      next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
+    end
+  end
+end
+
+Facter.add("virtual") do
+  confine :kernel => 'HP-UX'
+
+  setcode do
+    "hpvm" if Facter::Util::Virtual.hpvm?
+  end
+end
+
+Facter.add("virtual") do
+  confine :architecture => 's390x'
+
+  setcode do
+    "zlinux" if Facter::Util::Virtual.zlinux?
+  end
+end
+
+Facter.add("virtual") do
+  confine :kernel => 'OpenBSD'
+
+  setcode do
+    output = Facter::Util::Resolution.exec('sysctl -n hw.product 2>/dev/null')
+    if output
+      lines = output.split("\n")
+      next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
+      next "vmware"     if lines.any? {|l| l =~ /VMware/ }
+      next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
+      next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
+    end
+  end
+end
 
 Facter.add("virtual") do
   confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX GNU/kFreeBSD}
 
-  result = "physical"
-
   setcode do
-
-    if Facter.value(:kernel) == "SunOS" and Facter::Util::Virtual.zone?
-      result = "zone"
-    end
-
-    if Facter.value(:kernel)=="HP-UX"
-      result = "hpvm" if Facter::Util::Virtual.hpvm?
-    end
-
-    if Facter.value(:architecture)=="s390x"
-      result = "zlinux" if Facter::Util::Virtual.zlinux?
-    end
-
-    if Facter::Util::Virtual.openvz?
-      result = Facter::Util::Virtual.openvz_type()
-    end
-
-    if Facter::Util::Virtual.vserver?
-      result = Facter::Util::Virtual.vserver_type()
-    end
+    next Facter::Util::Virtual.openvz_type if Facter::Util::Virtual.openvz?
+    next Facter::Util::Virtual.vserver_type if Facter::Util::Virtual.vserver?
 
     if Facter::Util::Virtual.xen?
-      if FileTest.exists?("/dev/xen/evtchn")
-        result = "xen0"
-      elsif FileTest.exists?("/proc/xen")
-        result = "xenu"
-      end
+      next "xen0" if FileTest.exists?("/dev/xen/evtchn")
+      next "xenu" if FileTest.exists?("/proc/xen")
     end
 
-    if Facter::Util::Virtual.virtualbox?
-      result = "virtualbox"
+    next "virtualbox" if Facter::Util::Virtual.virtualbox?
+    next Facter::Util::Virtual.kvm_type if Facter::Util::Virtual.kvm?
+    next "rhev" if Facter::Util::Virtual.rhev?
+    next "ovirt" if Facter::Util::Virtual.ovirt?
+
+    # Parse lspci
+    output = Facter::Util::Virtual.lspci
+    if output
+      lines = output.split("\n")
+      next "vmware"     if lines.any? {|l| l =~ /VM[wW]are/ }
+      next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
+      next "parallels"  if lines.any? {|l| l =~ /1ab8:|[Pp]arallels/ }
+      next "xenhvm"     if lines.any? {|l| l =~ /XenSource/ }
+      next "hyperv"     if lines.any? {|l| l =~ /Microsoft Corporation Hyper-V/ }
+      next "gce"        if lines.any? {|l| l =~ /Class 8007: Google, Inc/ }
     end
 
-    if Facter::Util::Virtual.kvm?
-      result = Facter::Util::Virtual.kvm_type()
+    # Parse dmidecode
+    output = Facter::Util::Resolution.exec('dmidecode')
+    if output
+      lines = output.split("\n")
+      next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
+      next "vmware"     if lines.any? {|l| l =~ /VMware/ }
+      next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
+      next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
+      next "hyperv"     if lines.any? {|l| l =~ /Product Name: Virtual Machine/ }
+      next "rhev"       if lines.any? {|l| l =~ /Product Name: RHEV Hypervisor/ }
+      next "ovirt"      if lines.any? {|l| l =~ /Product Name: oVirt Node/ }
     end
 
-    if ["FreeBSD", "GNU/kFreeBSD"].include? Facter.value(:kernel)
-      result = "jail" if Facter::Util::Virtual.jail?
+    # Sample output of vmware -v `VMware Server 1.0.5 build-80187`
+    output = Facter::Util::Resolution.exec("vmware -v")
+    if output
+      mdata = output.match /(\S+)\s+(\S+)/
+      next "#{mdata[1]}_#{mdata[2]}".downcase if mdata
     end
 
-    if Facter::Util::Virtual.rhev?
-      result = "rhev"
-    end
-
-    if Facter::Util::Virtual.ovirt?
-      result = "ovirt"
-    end
-
-    if result == "physical"
-      output = Facter::Util::Virtual.lspci
-      if not output.nil?
-        output.each_line do |p|
-          # --- look for the vmware video card to determine if it is virtual => vmware.
-          # ---   00:0f.0 VGA compatible controller: VMware Inc [VMware SVGA II] PCI Display Adapter
-          result = "vmware" if p =~ /VM[wW]are/
-          # --- look for virtualbox video card to determine if it is virtual => virtualbox.
-          # ---   00:02.0 VGA compatible controller: InnoTek Systemberatung GmbH VirtualBox Graphics Adapter
-          result = "virtualbox" if p =~ /VirtualBox/
-          # --- look for pci vendor id used by Parallels video card
-          # ---   01:00.0 VGA compatible controller: Unknown device 1ab8:4005
-          result = "parallels" if p =~ /1ab8:|[Pp]arallels/
-          # --- look for pci vendor id used by Xen HVM device
-          # ---   00:03.0 Unassigned class [ff80]: XenSource, Inc. Xen Platform Device (rev 01)
-          result = "xenhvm" if p =~ /XenSource/
-          # --- look for Hyper-V video card
-          # ---   00:08.0 VGA compatible controller: Microsoft Corporation Hyper-V virtual VGA
-          result = "hyperv" if p =~ /Microsoft Corporation Hyper-V/
-          # --- look for gmetrics for GCE
-          # --- 00:05.0 Class 8007: Google, Inc. Device 6442
-          result = "gce" if p =~ /Class 8007: Google, Inc/
-        end
-      else
-        output = Facter::Util::Resolution.exec('dmidecode')
-        if not output.nil?
-          output.each_line do |pd|
-            result = "parallels" if pd =~ /Parallels/
-            result = "vmware" if pd =~ /VMware/
-            result = "virtualbox" if pd =~ /VirtualBox/
-            result = "xenhvm" if pd =~ /HVM domU/
-            result = "hyperv" if pd =~ /Product Name: Virtual Machine/
-            result = "rhev" if pd =~ /Product Name: RHEV Hypervisor/
-            result = "ovirt" if pd =~ /Product Name: oVirt Node/
-          end
-        elsif Facter.value(:kernel) == 'SunOS'
-          res = Facter::Util::Resolution.new('prtdiag')
-          res.timeout = 6
-          res.setcode('prtdiag')
-          output = res.value
-          if not output.nil?
-            output.each_line do |pd|
-              result = "parallels" if pd =~ /Parallels/
-              result = "vmware" if pd =~ /VMware/
-              result = "virtualbox" if pd =~ /VirtualBox/
-              result = "xenhvm" if pd =~ /HVM domU/
-            end
-          end
-        elsif Facter.value(:kernel) == 'OpenBSD'
-          output = Facter::Util::Resolution.exec('sysctl -n hw.product 2>/dev/null')
-          if not output.nil?
-            output.each_line do |pd|
-              result = "parallels" if pd =~ /Parallels/
-              result = "vmware" if pd =~ /VMware/
-              result = "virtualbox" if pd =~ /VirtualBox/
-              result = "xenhvm" if pd =~ /HVM domU/
-            end
-          end
-        end
-      end
-
-      if output = Facter::Util::Resolution.exec("vmware -v")
-        result = output.sub(/(\S+)\s+(\S+).*/) { | text | "#{$1}_#{$2}"}.downcase
-      end
-    end
-
-    result
+    # Default to 'physical'
+    next 'physical'
   end
 end
 
