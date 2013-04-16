@@ -19,7 +19,9 @@ end
 Facter.add(:ip_path) do
   confine :kernel => :"hp-ux"
   setcode do
-    [ '/bin/netstat' ].select { |path| FileTest.executable?(path) }.first
+    if FileTest.executable?('/bin/netstat')
+      '/bin/netstat'
+    end
   end
 end
 
@@ -27,6 +29,8 @@ end
 Facter.add(:ip_path) do
   confine :kernel => :windows
   setcode do
-    [ "#{ENV['SYSTEMROOT']}/system32/netsh.exe" ].select { |path| FileTest.executable?(path) }.first
+    if FileTest.executable?("#{ENV['SYSTEMROOT']}/system32/netsh.exe")
+      "#{ENV['SYSTEMROOT']}/system32/netsh.exe"
+    end
   end
 end

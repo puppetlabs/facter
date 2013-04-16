@@ -19,7 +19,9 @@ end
 Facter.add(:macaddress_path) do
   confine :kernel => :"hp-ux"
   setcode do
-    [ '/sbin/lanscan' ].select { |path| FileTest.executable?(path) }.first
+    if FileTest.executable?('/sbin/lanscan')
+      '/sbin/lanscan'
+    end
   end
 end
 
@@ -27,6 +29,8 @@ end
 Facter.add(:macaddress_path) do
   confine :kernel => :windows
   setcode do
-    [ "#{ENV['SYSTEMROOT']}/system32/netsh.exe" ].select { |path| FileTest.executable?(path) }.first
+    if FileTest.executable?("#{ENV['SYSTEMROOT']}/system32/netsh.exe")
+      "#{ENV['SYSTEMROOT']}/system32/netsh.exe"
+    end
   end
 end
