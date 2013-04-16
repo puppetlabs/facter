@@ -278,6 +278,7 @@ describe "Virtual fact" do
     require 'facter/util/wmi'
     before do
       Facter.fact(:kernel).stubs(:value).returns("windows")
+      Facter.fact(:architecture).stubs(:value).returns("x64")
     end
 
     it "should be kvm with KVM model name from Win32_ComputerSystem" do
