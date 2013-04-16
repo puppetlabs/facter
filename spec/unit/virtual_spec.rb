@@ -217,10 +217,10 @@ describe "Virtual fact" do
       end
     end
 
-    it "(#20236) is vmware when dmidecode contains vmware and lspci returns insufficient information", :focus => true do
+    it "(#20236) is vmware when dmidecode contains vmware and lspci returns insufficient information" do
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns("garbage\ninformation\n")
       Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("On Board Device 1 Information\nType: Video\nStatus: Disabled\nDescription: VMware SVGA II")
-      expect(Facter.fact(:virtual).value).to eq("vmware")
+      Facter.fact(:virtual).value.should eq("vmware")
     end
   end
 
