@@ -31,6 +31,8 @@ Gem::Specification.new do |s|
   s.rubyforge_project = "facter"
   s.rubygems_version = "1.8.24"
   s.summary = "Facter, a system inventory tool"
+  
+  s.license = "Apache 2.0"
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
