@@ -1,6 +1,16 @@
 #
 # -*- encoding: utf-8 -*-
 
+# Note to package builders:
+#
+# This gemspec is only present for use with Bundler, and is not intended for
+# building gems. Facter should be packaged as a gem with the following commands:
+#
+#     rake package:bootstrap
+#     rake package:gem
+#
+# For more information, see https://github.com/puppetlabs/packaging
+
 begin
   require 'facter/version'
 rescue LoadError => detail
