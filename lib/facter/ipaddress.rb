@@ -28,10 +28,14 @@ Facter.add(:ipaddress) do
   confine :kernel => :linux
   setcode do
     ip = nil
-    if output = Facter::Util::IP.exec_ifconfig(["2>/dev/null"])
+    output = Facter::Util::IP.exec_ifconfig(["2>/dev/null"])
+    if output
       regexp = /inet (?:addr:)?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-      if match = regexp.match(output)
-        match[1] unless /^127/.match(match[1])
+      output.split("\n").each do |line|
+        match = regexp.match(line)
+        if match
+          break match[1] unless /^127/.match(match[1])
+        end
       end
     end
   end

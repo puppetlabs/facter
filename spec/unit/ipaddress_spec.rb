@@ -28,5 +28,9 @@ describe "The ipaddress fact" do
       "Ubuntu 12.04", "10.87.80.110", "ifconfig_ubuntu_1204.txt"
     example_behavior_for "ifconfig output",
       "Fedora 17", "131.252.209.153", "ifconfig_net_tools_1.60.txt"
+    example_behavior_for "ifconfig output",
+      "Linux with multiple loopback addresses",
+      "10.0.222.20",
+      "ifconfig_multiple_127_addresses.txt"
   end
 end
