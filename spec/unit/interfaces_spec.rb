@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'facter/util/ip'
 
-shared_examples_for "netmask from ifconfig output" do |platform, interface, address, fixture|
+shared_examples_for "netmask_* from ifconfig output" do |platform, interface, address, fixture|
   it "correctly on #{platform} interface #{interface}" do
     Facter::Util::IP.stubs(:exec_ifconfig).returns(my_fixture_read(fixture))
     Facter::Util::IP.stubs(:get_output_for_interface_and_label).
@@ -41,10 +41,10 @@ describe "Netmask handling on Linux" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
   end
 
-  example_behavior_for "netmask from ifconfig output",
+  example_behavior_for "netmask_* from ifconfig output",
     "Archlinux (net-tools 1.60)", "em1",
     "255.255.255.0", "ifconfig_net_tools_1.60.txt"
-  example_behavior_for "netmask from ifconfig output",
+  example_behavior_for "netmask_* from ifconfig output",
     "Archlinux (net-tools 1.60)", "lo",
     "255.0.0.0", "ifconfig_net_tools_1.60.txt"
 end
