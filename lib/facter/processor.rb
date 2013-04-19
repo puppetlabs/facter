@@ -117,9 +117,9 @@ if Facter.value(:kernel) == "windows"
     # get each physical processor
     Facter::Util::WMI.execquery("select * from Win32_Processor").each do |proc|
       # not supported before 2008
-      begin
+      if proc.respond_to?(:NumberOfLogicalProcessors)
         processor_num = proc.NumberOfLogicalProcessors
-      rescue RuntimeError => e
+      else
         processor_num = 1
       end
 

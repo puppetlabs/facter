@@ -29,13 +29,14 @@ describe "Processor facts" do
     describe "2003" do
       before :each do
         proc = stubs 'proc'
-        proc.stubs(:NumberOfLogicalProcessors).raises(RuntimeError)
         proc.stubs(:Name).returns("Intel(R)    Celeron(R)   processor")
 
         load(Array.new(2, proc))
       end
 
       it "should count 2 processors" do
+        proc.expects(:NumberOfLogicalProcessors).never
+
         Facter.fact(:processorcount).value.should == "2"
       end
 
