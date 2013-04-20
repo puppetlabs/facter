@@ -685,7 +685,7 @@ describe Facter::Util::Resolution do
         it "should try to run the command and return output of a shell-builtin" do
           Facter::Util::Resolution.expects(:expand_command).with(%q{echo foo}).returns nil
           Facter::Util::Resolution.expects(:`).with(%q{echo foo}).returns 'foo'
-          Facter.expects(:warnonce).with('Using Facter::Util::Resolution.exec with a shell built-in is deprecated. Most built-ins can be replaced with native ruby commands. If you really have to run a built-in, pass "cmd /c your_builtin" as a command')
+          Facter.expects(:warnonce).with 'Using Facter::Util::Resolution.exec with a shell built-in is deprecated. Most built-ins can be replaced with native ruby commands. If you really have to run a built-in, pass "cmd /c your_builtin" as a command (command responsible for this message was "echo foo")'
           Facter::Util::Resolution.exec(%q{echo foo}).should == 'foo'
         end
         it "should try to run the command and return nil if not shell-builtin" do
