@@ -11,7 +11,7 @@ Facter.add(:ip_path) do
   confine :kernel => [ :linux, :openbsd, :netbsd, :freebsd, :darwin,
                        :"gnu/kfreebsd", :dragonfly, :sunos ]
   setcode do
-    [ '/sbin/ip', '/sbin/ifconfig', '/usr/sbin/ifconfig' ].select { |path| FileTest.executable?(path) }.first
+    [ '/sbin/ip', '/bin/ifconfig', '/sbin/ifconfig', '/usr/sbin/ifconfig' ].select { |path| FileTest.executable?(path) }.first
   end
 end
 
