@@ -34,7 +34,7 @@ describe Facter::Util::EC2 do
     end
   end
 
-  describe "Facter::Util::EC2.with_metadata_server", :focus => true do
+  describe "Facter::Util::EC2.with_metadata_server" do
     before :each do
       Facter::Util::EC2.stubs(:read_uri).returns("latest")
     end
