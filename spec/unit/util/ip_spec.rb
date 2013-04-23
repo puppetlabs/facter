@@ -135,6 +135,8 @@ describe Facter::Util::IP do
 
     describe "when interface facts have been flushed after being resolved" do
       before :each do
+        Facter.stubs(:warnonce)
+
         given_initial_interfaces_facts
         when_interfaces_facts_have_been_resolved_then_flushed
       end
