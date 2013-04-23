@@ -1,5 +1,16 @@
 #
 # -*- encoding: utf-8 -*-
+#
+# PLEASE NOTE
+# This gemspec is not intended to be used for building the Facter gem.  This
+# gemspec is intended for use with bundler when Facter is a dependency of
+# another project.  For example, the stdlib project is able to integrate with
+# the master branch of Facter by using a Gemfile path of
+# git://github.com/puppetlabs/facter.git
+#
+# Please see the [packaging
+# repository](https://github.com/puppetlabs/packaging) for information on how
+# to build the Puppet gem package.
 
 begin
   require 'facter/version'
@@ -10,13 +21,9 @@ end
 
 Gem::Specification.new do |s|
   s.name = "facter"
-
   version = Facter.version
-  if mdata = version.match(/(\d+\.\d+\.\d+)/)
-    s.version = mdata[1]
-  else
-    s.version = version
-  end
+  mdata = version.match(/(\d+\.\d+\.\d+)/)
+  s.version = mdata ? mdata[1] : version
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Puppet Labs"]
