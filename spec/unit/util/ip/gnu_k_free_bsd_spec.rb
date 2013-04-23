@@ -14,7 +14,7 @@ describe Facter::Util::IP::GNUkFreeBSD do
     end
 
     it "should be 'GNU/kFreeBSD'" do
-      expect(to_s).to eq 'GNU/kFreeBSD'
+      to_s.should eq 'GNU/kFreeBSD'
     end
   end
 
@@ -24,7 +24,7 @@ describe Facter::Util::IP::GNUkFreeBSD do
     end
 
     it "should be true" do
-      expect(convert_netmask_from_hex?).to be true
+      convert_netmask_from_hex?.should be true
     end
   end
 
@@ -33,7 +33,7 @@ describe Facter::Util::IP::GNUkFreeBSD do
       described_class.bonding_master('eth0')
     end
 
-    it { expect(bonding_master).to be_nil }
+    it { bonding_master.should be_nil }
   end
 
   describe ".interfaces" do
@@ -51,7 +51,7 @@ describe Facter::Util::IP::GNUkFreeBSD do
     end
 
     it "should return an array with six interfaces" do
-      expect(interfaces).to eq %w[em0 em1 bge0 bge1 lo0 vlan0]
+      interfaces.should eq %w[em0 em1 bge0 bge1 lo0 vlan0]
     end
   end
 
@@ -73,13 +73,13 @@ describe Facter::Util::IP::GNUkFreeBSD do
     describe "macaddress" do
       let(:label) { 'macaddress' }
 
-      it { expect(value_for_interface_and_label).to eq '0:11:a:59:67:91' }
+      it { value_for_interface_and_label.should eq '0:11:a:59:67:91' }
     end
 
     describe "netmask" do
       let(:label) { 'netmask' }
 
-      it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
+      it { value_for_interface_and_label.should eq '255.255.255.0' }
     end
   end
 end

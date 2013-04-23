@@ -9,16 +9,16 @@ describe Facter::Util::IP::Base do
   describe ".subclasses" do
     let(:subclasses) { described_class.subclasses }
 
-    it { expect(subclasses).to be_an Array }
+    it { subclasses.should be_an Array }
 
     it "should be memoized" do
-      expect(subclasses).to be subclasses
+      described_class.subclasses().should be described_class.subclasses()
     end
 
     it "should list subclasses" do
       subclass = Class.new described_class
 
-      expect(subclasses).to include subclass
+      subclasses.should include subclass
     end
   end
 
@@ -26,7 +26,7 @@ describe Facter::Util::IP::Base do
     let(:to_s) { described_class.to_s }
 
     it "should return the name of the class without nesting" do
-      expect(to_s).to eq 'Base'
+      to_s.should eq 'Base'
     end
   end
 
@@ -35,13 +35,13 @@ describe Facter::Util::IP::Base do
       described_class.convert_netmask_from_hex?
     end
 
-    it { expect(convert_netmask_from_hex?).to be true }
+    it { convert_netmask_from_hex?.should eq true }
   end
 
   describe ".bonding_master" do
     let(:bonding_master) { described_class.bonding_master('eth0') }
 
-    it { expect(bonding_master).to be_nil }
+    it { bonding_master.should be_nil }
   end
 
   describe ".interfaces" do
@@ -50,7 +50,7 @@ describe Facter::Util::IP::Base do
     it "uses `ifconfig` to list the interfaces" do
       described_class.expects(:ifconfig_path).returns('/bin/ifconfig')
       described_class.expects(:exec).with("/bin/ifconfig -a 2> /dev/null")
-      expect(interfaces).to be_an Array
+      interfaces.should be_an Array
     end
   end
 
@@ -68,7 +68,7 @@ describe Facter::Util::IP::Base do
         described_class.expects(:regex_for).with(label).returns(nil)
       end
 
-      it { expect(value_for_interface_and_label).to be_nil }
+      it { value_for_interface_and_label.should be_nil }
     end
 
     describe "there is a regex for the label" do
@@ -89,7 +89,7 @@ describe Facter::Util::IP::Base do
           let(:match_data) { ['inet 127.0.0.1', '127.0.0.1'] }
           let(:label) { 'ipaddress' }
 
-          it { expect(value_for_interface_and_label).to eq '127.0.0.1' }
+          it { value_for_interface_and_label.should eq '127.0.0.1' }
         end
 
         describe "the label is 'netmask'" do
@@ -102,7 +102,7 @@ describe Facter::Util::IP::Base do
               described_class.expects(:convert_netmask_from_hex?).returns(true)
             end
 
-            it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
+            it { value_for_interface_and_label.should eq '255.255.255.0' }
           end
 
           describe "the netmask does not need to be converted from hex" do
@@ -112,7 +112,7 @@ describe Facter::Util::IP::Base do
               described_class.expects(:convert_netmask_from_hex?).returns(false)
             end
 
-            it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
+            it { value_for_interface_and_label.should eq '255.255.255.0' }
           end
         end
       end
@@ -121,7 +121,7 @@ describe Facter::Util::IP::Base do
         let(:match_data) { nil }
         let(:label) { 'ipaddress' }
 
-        it { expect(value_for_interface_and_label).to be_nil }
+        it { value_for_interface_and_label.should be_nil }
       end
     end
 
@@ -141,7 +141,7 @@ describe Facter::Util::IP::Base do
           returns('255.255.255.0')
       end
 
-      it { expect(network).to eq "172.16.15.0" }
+      it { network.should eq "172.16.15.0" }
     end
   end
 end

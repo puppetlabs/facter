@@ -85,22 +85,20 @@ describe Facter::Util::IP do
     end
 
     it "defines the 'interfaces' fact" do
-      expect(Facter.fact(:interfaces)).to be_a_kind_of Facter::Util::Fact
+      Facter.fact(:interfaces).should be_a_kind_of Facter::Util::Fact
     end
 
     it "defines a fact for each attribute of an interface" do
       interfaces_hash.keys.each do |interface|
         described_class::INTERFACE_KEYS.each do |attr|
-          expect(Facter.fact("#{attr}_#{interface}")).
-            to be_a_kind_of Facter::Util::Fact
+          Facter.fact("#{attr}_#{interface}").should be_a_kind_of Facter::Util::Fact
         end
       end
     end
 
     it "defines a fact for an interface's network" do
       interfaces_hash.keys.each do |interface|
-        expect(Facter.fact("network_#{interface}")).
-          to be_a_kind_of Facter::Util::Fact
+        Facter.fact("network_#{interface}").should be_a_kind_of Facter::Util::Fact
       end
     end
   end
@@ -113,22 +111,20 @@ describe Facter::Util::IP do
       end
 
       it 'lists the interfaces for the interfaces fact' do
-        expect(Facter.value(:interfaces)).to eq interfaces_hash.keys.join(',')
+        Facter.value(:interfaces).should eq interfaces_hash.keys.join(',')
       end
 
       it 'defines dynamic facts for the interfaces' do
         interfaces_hash.keys.each do |interface|
           described_class::INTERFACE_KEYS.each do |attr|
-            expect(Facter.value("#{attr}_#{interface}")).
-              to eq interfaces_hash[interface][attr]
+            Facter.value("#{attr}_#{interface}").should eq interfaces_hash[interface][attr]
           end
         end
       end
 
       it 'defines a dynamic fact for the interfaces networks' do
         interfaces_hash.keys.each do |interface|
-          expect(Facter.value("network_#{interface}")).
-            to eq interfaces_hash[interface][:network]
+          Facter.value("network_#{interface}").should eq interfaces_hash[interface][:network]
         end
       end
     end
@@ -142,22 +138,20 @@ describe Facter::Util::IP do
       end
 
       it "updates the interfaces fact" do
-        expect(Facter.value(:interfaces)).to eq interfaces_hash2.keys.join(',')
+        Facter.value(:interfaces).should eq interfaces_hash2.keys.join(',')
       end
 
       it "defines new dynamic facts for the new interfaces attributes" do
         interfaces_hash2.keys.each do |interface|
           described_class::INTERFACE_KEYS.each do |attr|
-            expect(Facter.value("#{attr}_#{interface}")).
-              to eq interfaces_hash2[interface][attr]
+            Facter.value("#{attr}_#{interface}").should eq interfaces_hash2[interface][attr]
           end
         end
       end
 
       it "defines a new dynamic fact for the new interfaces network" do
         interfaces_hash2.keys.each do |interface|
-          expect(Facter.value("network_#{interface}")).
-            to eq interfaces_hash2[interface][:network]
+          Facter.value("network_#{interface}").should eq interfaces_hash2[interface][:network]
         end
       end
     end
