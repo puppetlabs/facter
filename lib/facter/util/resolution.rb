@@ -169,7 +169,7 @@ class Facter::Util::Resolution
 
       begin
         out = %x{#{code}}.chomp
-        Facter.warnonce 'Using Facter::Util::Resolution.exec with a shell built-in is deprecated. Most built-ins can be replaced with native ruby commands. If you really have to run a built-in, pass "cmd /c your_builtin" as a command' unless expanded_code
+        Facter.warnonce "Using Facter::Util::Resolution.exec with a shell built-in is deprecated. Most built-ins can be replaced with native ruby commands. If you really have to run a built-in, pass \"cmd /c your_builtin\" as a command (command responsible for this message was \"#{code}\")" unless expanded_code
       rescue Errno::ENOENT => detail
         # command not found on Windows
         return nil
