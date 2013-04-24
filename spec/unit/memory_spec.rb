@@ -515,8 +515,6 @@ SWAP
   end
 
   it "should use the memorysize fact for the memorytotal fact" do
-    Facter.stubs(:warnonce)
-
     Facter.fact("memorysize").expects(:value).once.returns "yay"
     Facter::Util::Resolution.expects(:exec).never
     Facter.fact("memorytotal").value.should == "yay"

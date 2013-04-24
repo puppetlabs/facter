@@ -1,7 +1,10 @@
+#!/usr/bin/env ruby
+
 require 'spec_helper'
+
 require 'facter/util/parser'
 require 'tempfile'
-require 'tmpdir'
+require 'tmpdir.rb'
 
 describe Facter::Util::Parser do
   include PuppetlabsSpec::Files
