@@ -10,7 +10,7 @@ describe Facter::Util::IP::NetBSD do
     end
 
     it "should be 'NetBSD'" do
-      to_s.should eq 'NetBSD'
+      expect(to_s).to eq 'NetBSD'
     end
   end
 
@@ -20,7 +20,7 @@ describe Facter::Util::IP::NetBSD do
     end
 
     it "should be true" do
-      convert_netmask_from_hex?.should be true
+      expect(convert_netmask_from_hex?).to be true
     end
   end
 
@@ -29,6 +29,6 @@ describe Facter::Util::IP::NetBSD do
       described_class.bonding_master('eth0')
     end
 
-    it { bonding_master.should be_nil }
+    it { expect(bonding_master).to be_nil }
   end
 end

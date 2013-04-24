@@ -14,7 +14,7 @@ describe Facter::Util::IP::SunOS do
     end
 
     it "should be 'SunOS'" do
-      to_s.should eq 'SunOS'
+      expect(to_s).to eq 'SunOS'
     end
   end
 
@@ -24,7 +24,7 @@ describe Facter::Util::IP::SunOS do
     end
 
     it "should be true" do
-      convert_netmask_from_hex?.should be true
+      expect(convert_netmask_from_hex?).to be true
     end
   end
 
@@ -33,7 +33,7 @@ describe Facter::Util::IP::SunOS do
       described_class.bonding_master('eth0')
     end
 
-    it { bonding_master.should be_nil }
+    it { expect(bonding_master).to be_nil }
   end
 
   describe ".interfaces" do
@@ -51,7 +51,7 @@ describe Facter::Util::IP::SunOS do
     end
 
     it "should return an array with two interfaces" do
-      interfaces.should eq ["lo0", "e1000g0"]
+      expect(interfaces).to eq ["lo0", "e1000g0"]
     end
   end
 
@@ -73,19 +73,19 @@ describe Facter::Util::IP::SunOS do
     describe "ipaddress" do
       let(:label) { "ipaddress" }
 
-      it { value_for_interface_and_label.should eq "172.16.15.138" }
+      it { expect(value_for_interface_and_label).to eq "172.16.15.138" }
     end
 
     describe "netmask" do
       let(:label) { "netmask" }
 
-      it { value_for_interface_and_label.should eq "255.255.255.0" }
+      it { expect(value_for_interface_and_label).to eq "255.255.255.0" }
     end
 
     describe "mtu" do
       let(:label) { "mtu" }
 
-      it { value_for_interface_and_label.should eq '1500' }
+      it { expect(value_for_interface_and_label).to eq '1500' }
     end
   end
 end

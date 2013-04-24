@@ -10,7 +10,7 @@ describe Facter::Util::IP::FreeBSD do
     end
 
     it "should be 'FreeBSD'" do
-      to_s.should eq 'FreeBSD'
+      expect(to_s).to eq 'FreeBSD'
     end
   end
 
@@ -20,7 +20,7 @@ describe Facter::Util::IP::FreeBSD do
     end
 
     it "should be true" do
-      convert_netmask_from_hex?.should be true
+      expect(convert_netmask_from_hex?).to be true
     end
   end
 
@@ -29,7 +29,7 @@ describe Facter::Util::IP::FreeBSD do
       described_class.bonding_master('eth0')
     end
 
-    it { bonding_master.should be_nil }
+    it { expect(bonding_master).to be_nil }
   end
 
   describe ".value_for_interface_and_label(interface, label)" do
@@ -50,7 +50,7 @@ describe Facter::Util::IP::FreeBSD do
     describe "macaddress" do
       let(:label) { 'macaddress' }
 
-      it { value_for_interface_and_label.should eq '00:0e:0c:68:67:7c' }
+      it { expect(value_for_interface_and_label).to eq '00:0e:0c:68:67:7c' }
     end
   end
 end

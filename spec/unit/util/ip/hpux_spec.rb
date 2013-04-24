@@ -14,7 +14,7 @@ describe Facter::Util::IP::HPUX do
     end
 
     it "should be 'HP-UX'" do
-      to_s.should eq 'HP-UX'
+      expect(to_s).to eq 'HP-UX'
     end
   end
 
@@ -24,7 +24,7 @@ describe Facter::Util::IP::HPUX do
     end
 
     it "should be true" do
-      convert_netmask_from_hex?.should be true
+      expect(convert_netmask_from_hex?).to be true
     end
   end
 
@@ -33,7 +33,7 @@ describe Facter::Util::IP::HPUX do
       described_class.bonding_master('eth0')
     end
 
-    it { bonding_master.should be_nil }
+    it { expect(bonding_master).to be_nil }
   end
 
   describe ".interfaces" do
@@ -51,7 +51,7 @@ describe Facter::Util::IP::HPUX do
       end
 
       it "should return an array of interfaces" do
-        interfaces.should eq %w[lan1 lan0 lo0]
+        expect(interfaces).to eq %w[lan1 lan0 lo0]
       end
     end
 
@@ -61,7 +61,7 @@ describe Facter::Util::IP::HPUX do
       end
 
       it "should return an array of interfaces" do
-        interfaces.should eq %w[lan1 lan0 lo0]
+        expect(interfaces).to eq %w[lan1 lan0 lo0]
       end
     end
   end
@@ -85,7 +85,7 @@ describe Facter::Util::IP::HPUX do
         describe "ipaddress" do
           let(:label) { 'ipaddress' }
 
-          it { value_for_interface_and_label.should eq '10.1.1.6' }
+          it { expect(value_for_interface_and_label).to eq '10.1.1.6' }
         end
 
         describe "mtu" do
@@ -97,7 +97,7 @@ describe Facter::Util::IP::HPUX do
         describe "netmask" do
           let(:label) { 'netmask' }
 
-          it { value_for_interface_and_label.should eq '255.255.255.0' }
+          it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
         end
 
         describe "macaddress" do
@@ -107,7 +107,7 @@ describe Facter::Util::IP::HPUX do
             described_class.expects(:lanscan).returns(lanscan_output)
           end
 
-          it { value_for_interface_and_label.should eq "00:10:79:7B:5C:DE" }
+          it { expect(value_for_interface_and_label).to eq "00:10:79:7B:5C:DE" }
         end
       end
 
@@ -117,7 +117,7 @@ describe Facter::Util::IP::HPUX do
         describe "ipaddress" do
           let(:label) { 'ipaddress' }
 
-          it { value_for_interface_and_label.should eq "192.168.3.10" }
+          it { expect(value_for_interface_and_label).to eq "192.168.3.10" }
         end
 
         describe "mtu" do
@@ -129,7 +129,7 @@ describe Facter::Util::IP::HPUX do
         describe "netmask" do
           let(:label) { 'netmask' }
 
-          it { value_for_interface_and_label.should eq '255.255.255.0' }
+          it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
         end
 
         describe "macaddress" do
@@ -139,7 +139,7 @@ describe Facter::Util::IP::HPUX do
             described_class.expects(:lanscan).returns(lanscan_output)
           end
 
-          it { value_for_interface_and_label.should eq "00:30:7F:0C:79:DC" }
+          it { expect(value_for_interface_and_label).to eq "00:30:7F:0C:79:DC" }
         end
       end
 
@@ -149,7 +149,7 @@ describe Facter::Util::IP::HPUX do
         describe "ipaddress" do
           let(:label) { 'ipaddress' }
 
-          it { value_for_interface_and_label.should eq "127.0.0.1" }
+          it { expect(value_for_interface_and_label).to eq "127.0.0.1" }
         end
 
         describe "mtu" do
@@ -161,13 +161,13 @@ describe Facter::Util::IP::HPUX do
         describe "netmask" do
           let(:label) { 'netmask' }
 
-          it { value_for_interface_and_label.should eq '255.0.0.0' }
+          it { expect(value_for_interface_and_label).to eq '255.0.0.0' }
         end
 
         describe "macaddress" do
           let(:label) { 'macaddress' }
 
-          it { value_for_interface_and_label.should be_nil }
+          it { expect(value_for_interface_and_label).to be_nil }
         end
       end
     end
@@ -187,13 +187,13 @@ describe Facter::Util::IP::HPUX do
           describe "ipaddress" do
             let(:label) { 'ipaddress' }
 
-            it { value_for_interface_and_label.should eq '10.1.54.36' }
+            it { expect(value_for_interface_and_label).to eq '10.1.54.36' }
           end
 
           describe "netmask" do
             let(:label) { 'netmask' }
 
-            it { value_for_interface_and_label.should eq '255.255.255.0' }
+            it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
           end
 
           describe "macaddress" do
@@ -204,7 +204,7 @@ describe Facter::Util::IP::HPUX do
               described_class.expects(:lanscan).returns(lanscan_output)
             end
 
-            it { value_for_interface_and_label.should eq macaddress }
+            it { expect(value_for_interface_and_label).to eq macaddress }
           end
 
           describe "mtu" do
@@ -220,13 +220,13 @@ describe Facter::Util::IP::HPUX do
           describe "ipaddress" do
             let(:label) { 'ipaddress' }
 
-            it { value_for_interface_and_label.should eq '192.168.30.152' }
+            it { expect(value_for_interface_and_label).to eq '192.168.30.152' }
           end
 
           describe "netmask" do
             let(:label) { 'netmask' }
 
-            it { value_for_interface_and_label.should eq '255.255.255.0' }
+            it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
           end
 
           describe "macaddress" do
@@ -237,7 +237,7 @@ describe Facter::Util::IP::HPUX do
               described_class.expects(:lanscan).returns(lanscan_output)
             end
 
-            it { value_for_interface_and_label.should eq macaddress }
+            it { expect(value_for_interface_and_label).to eq macaddress }
           end
 
           describe "mtu" do
@@ -253,13 +253,13 @@ describe Facter::Util::IP::HPUX do
           describe "ipaddress" do
             let(:label) { 'ipaddress' }
 
-            it { value_for_interface_and_label.should eq '127.0.0.1' }
+            it { expect(value_for_interface_and_label).to eq '127.0.0.1' }
           end
 
           describe "netmask" do
             let(:label) { 'netmask' }
 
-            it { value_for_interface_and_label.should eq '255.0.0.0' }
+            it { expect(value_for_interface_and_label).to eq '255.0.0.0' }
           end
 
           describe "macaddress" do
@@ -269,7 +269,7 @@ describe Facter::Util::IP::HPUX do
               described_class.expects(:lanscan).returns(lanscan_output)
             end
 
-            it { value_for_interface_and_label.should be_nil }
+            it { expect(value_for_interface_and_label).to be_nil }
           end
 
           describe "mtu" do
@@ -297,13 +297,13 @@ describe Facter::Util::IP::HPUX do
           describe "ipaddress" do
             let(:label) { 'ipaddress' }
 
-            it { value_for_interface_and_label.should eq '10.10.0.5' }
+            it { expect(value_for_interface_and_label).to eq '10.10.0.5' }
           end
 
           describe "netmask" do
             let(:label) { 'netmask' }
 
-            it { value_for_interface_and_label.should eq '255.255.255.0' }
+            it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
           end
 
           describe "macaddress" do
@@ -314,7 +314,7 @@ describe Facter::Util::IP::HPUX do
               described_class.expects(:lanscan).returns(lanscan_output)
             end
 
-            it { value_for_interface_and_label.should eq macaddress }
+            it { expect(value_for_interface_and_label).to eq macaddress }
           end
 
           describe "mtu" do
@@ -330,13 +330,13 @@ describe Facter::Util::IP::HPUX do
           describe "ipaddress" do
             let(:label) { 'ipaddress' }
 
-            it { value_for_interface_and_label.should eq '192.168.3.9' }
+            it { expect(value_for_interface_and_label).to eq '192.168.3.9' }
           end
 
           describe "netmask" do
             let(:label) { 'netmask' }
 
-            it { value_for_interface_and_label.should eq '255.255.255.0' }
+            it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
           end
 
           describe "macaddress" do
@@ -347,7 +347,7 @@ describe Facter::Util::IP::HPUX do
               described_class.expects(:lanscan).returns(lanscan_output)
             end
 
-            it { value_for_interface_and_label.should eq macaddress }
+            it { expect(value_for_interface_and_label).to eq macaddress }
           end
 
           describe "mtu" do
@@ -363,13 +363,13 @@ describe Facter::Util::IP::HPUX do
           describe "ipaddress" do
             let(:label) { 'ipaddress' }
 
-            it { value_for_interface_and_label.should eq '127.0.0.1' }
+            it { expect(value_for_interface_and_label).to eq '127.0.0.1' }
           end
 
           describe "netmask" do
             let(:label) { 'netmask' }
 
-            it { value_for_interface_and_label.should eq '255.0.0.0' }
+            it { expect(value_for_interface_and_label).to eq '255.0.0.0' }
           end
 
           describe "macaddress" do
@@ -379,7 +379,7 @@ describe Facter::Util::IP::HPUX do
               described_class.expects(:lanscan).returns(lanscan_output)
             end
 
-            it { value_for_interface_and_label.should be_nil }
+            it { expect(value_for_interface_and_label).to be_nil }
           end
 
           describe "mtu" do
@@ -407,13 +407,13 @@ describe Facter::Util::IP::HPUX do
           describe "ipaddress" do
             let(:label) { 'ipaddress' }
 
-            it { value_for_interface_and_label.should eq '192.168.30.32' }
+            it { expect(value_for_interface_and_label).to eq '192.168.30.32' }
           end
 
           describe "netmask" do
             let(:label) { 'netmask' }
 
-            it { value_for_interface_and_label.should eq '255.255.255.0' }
+            it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
           end
 
           describe "macaddress" do
@@ -424,7 +424,7 @@ describe Facter::Util::IP::HPUX do
               described_class.expects(:lanscan).returns(lanscan_output)
             end
 
-            it { value_for_interface_and_label.should eq macaddress }
+            it { expect(value_for_interface_and_label).to eq macaddress }
           end
 
           describe "mtu" do
@@ -440,13 +440,13 @@ describe Facter::Util::IP::HPUX do
           describe "ipaddress" do
             let(:label) { 'ipaddress' }
 
-            it { value_for_interface_and_label.should eq '127.0.0.1' }
+            it { expect(value_for_interface_and_label).to eq '127.0.0.1' }
           end
 
           describe "netmask" do
             let(:label) { 'netmask' }
 
-            it { value_for_interface_and_label.should eq '255.0.0.0' }
+            it { expect(value_for_interface_and_label).to eq '255.0.0.0' }
           end
 
           describe "macaddress" do
@@ -456,7 +456,7 @@ describe Facter::Util::IP::HPUX do
               described_class.expects(:lanscan).returns(lanscan_output)
             end
 
-            it { value_for_interface_and_label.should be_nil }
+            it { expect(value_for_interface_and_label).to be_nil }
           end
 
           describe "mtu" do
@@ -472,13 +472,13 @@ describe Facter::Util::IP::HPUX do
           describe "ipaddress" do
             let(:label) { 'ipaddress' }
 
-            it { value_for_interface_and_label.should eq '192.168.32.75' }
+            it { expect(value_for_interface_and_label).to eq '192.168.32.75' }
           end
 
           describe "netmask" do
             let(:label) { 'netmask' }
 
-            it { value_for_interface_and_label.should eq '255.255.255.0' }
+            it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
           end
 
           describe "macaddress" do
@@ -489,7 +489,7 @@ describe Facter::Util::IP::HPUX do
               described_class.expects(:lanscan).returns(lanscan_output)
             end
 
-            it { value_for_interface_and_label.should eq macaddress }
+            it { expect(value_for_interface_and_label).to eq macaddress }
           end
 
           describe "mtu" do
@@ -505,13 +505,13 @@ describe Facter::Util::IP::HPUX do
           describe "ipaddress" do
             let(:label) { 'ipaddress' }
 
-            it { value_for_interface_and_label.should eq '192.168.1.197' }
+            it { expect(value_for_interface_and_label).to eq '192.168.1.197' }
           end
 
           describe "netmask" do
             let(:label) { 'netmask' }
 
-            it { value_for_interface_and_label.should eq '255.255.255.0' }
+            it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
           end
 
           describe "macaddress" do
@@ -521,7 +521,7 @@ describe Facter::Util::IP::HPUX do
               described_class.expects(:lanscan).returns(lanscan_output)
             end
 
-            it { value_for_interface_and_label.should be_nil }
+            it { expect(value_for_interface_and_label).to be_nil }
           end
 
           describe "mtu" do
