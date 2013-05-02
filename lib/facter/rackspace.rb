@@ -12,8 +12,6 @@ Facter.add(:is_rsc) do
     result = Facter::Util::Resolution.exec("/usr/bin/xenstore-read vm-data/provider_data/provider")
     if result == "Rackspace"
       "true"
-    else
-      "false"
     end
   end
 end

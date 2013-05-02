@@ -32,9 +32,9 @@ describe "rackspace facts" do
       Facter.collection.internal_loader.load(:rackspace)
     end
 
-    it "should set is_rsc to false" do
+    it "shouldn't set is_rsc" do
       Facter::Util::Resolution.stubs(:exec).with("/usr/bin/xenstore-read vm-data/provider_data/provider").returns("other")
-      Facter.fact(:is_rsc).value.should == "false"
+      Facter.fact(:is_rsc).value.should == nil
     end
   end
 end
