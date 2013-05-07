@@ -275,7 +275,7 @@ describe "Processor facts" do
       let(:kstat_sparc) { @fixture_kstat_sparc }
       let(:kstat_x86_64) { @fixture_kstat_x86_64 }
 
-      %w{ 5.8 5.9 5.10 5.11 }.each do |release|
+      %w{ 5.5.1 5.6 5.7 }.each do |release|
         %w{ sparc x86_64 }.each do |arch|
           it "uses kstat on release #{release} (#{arch})" do
             Facter.fact(:kernel).stubs(:value).returns(:sunos)
@@ -287,7 +287,7 @@ describe "Processor facts" do
         end
       end
 
-      %w{ 5.5.1 5.6 5.7 }.each do |release|
+      %w{ 5.8 5.9 5.10 5.11 }.each do |release|
         it "uses psrinfo on release #{release}" do
           Facter.fact(:kernel).stubs(:value).returns(:sunos)
           Facter.stubs(:value).with(:kernelrelease).returns(release)
