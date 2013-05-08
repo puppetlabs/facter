@@ -43,6 +43,11 @@ describe "zfs_version fact" do
     Facter.fact(:zfs_version).value.should == "4"
   end
 
+  it "should return correct version on Linux with zfsonlinux" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('zfsonlinux_0.6.1'))
+    Facter.fact(:zfs_version).value.should == "5"
+  end
+
   it "should return nil if zfs command is not available" do
     Facter::Util::Resolution.stubs(:which).with("zfs").returns(nil)
     Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('linux-fuse_0.6.9'))
