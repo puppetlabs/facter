@@ -293,7 +293,7 @@ describe "Processor facts" do
           Facter.stubs(:value).with(:kernelrelease).returns(release)
 
           Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(psrinfo)
-          Facter.fact(:physicalprocessorcount).value.should == "2"
+          Facter.fact(:processorcount).value.should == "2"
         end
       end
     end
