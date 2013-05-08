@@ -43,6 +43,11 @@ describe "zpool_version fact" do
     Facter.fact(:zpool_version).value.should == "23"
   end
 
+  it "should return correct version on Linux with zfsonlinux" do
+    Facter::Core::Execution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('zfsonlinux_0.6.1'))
+    Facter.fact(:zpool_version).value.should == "28"
+  end
+
   it "should return nil if zpool is not available" do
     Facter::Core::Execution.stubs(:which).with("zpool").returns(nil)
     Facter::Core::Execution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('linux-fuse_0.6.9'))
