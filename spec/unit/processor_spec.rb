@@ -73,15 +73,15 @@ describe "Processor facts" do
     end
 
     it "should detect the correct processor count on x86_64" do
-      fixture_data = File.read(fixtures('processorcount','solaris-x86_64-kstat-cpu-info'))
-      Facter::Util::Resolution.expects(:exec).with("/usr/bin/kstat cpu_info").returns(fixture_data)
-      Facter.fact(:processorcount).value.should == 8
+      fixture_data = File.read(fixtures('processorcount','solaris-psrinfo'))
+      Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(fixture_data)
+      Facter.fact(:processorcount).value.should == 24
     end
 
     it "should detect the correct processor count on sparc" do
-      fixture_data = File.read(fixtures('processorcount','solaris-sparc-kstat-cpu-info'))
-      Facter::Util::Resolution.expects(:exec).with("/usr/bin/kstat cpu_info").returns(fixture_data)
-      Facter.fact(:processorcount).value.should == 8
+      fixture_data = File.read(fixtures('processorcount','solaris-psrinfo'))
+      Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(fixture_data)
+      Facter.fact(:processorcount).value.should == 24
     end
   end
 
@@ -267,11 +267,6 @@ describe "Processor facts" do
         @fixture_kstat_x86_64 = File.read(fixtures('processorcount','solaris-x86_64-kstat-cpu-info'))
       end
 
-      let(:psrinfo) do
-        "0       on-line   since 10/16/2012 14:06:12\n" +
-        "1       on-line   since 10/16/2012 14:06:14\n"
-      end
-
       let(:kstat_sparc) { @fixture_kstat_sparc }
       let(:kstat_x86_64) { @fixture_kstat_x86_64 }
 
@@ -292,8 +287,9 @@ describe "Processor facts" do
           Facter.fact(:kernel).stubs(:value).returns(:sunos)
           Facter.stubs(:value).with(:kernelrelease).returns(release)
 
-          Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(psrinfo)
-          Facter.fact(:processorcount).value.should == "2"
+          fixture_data = File.read(fixtures('processorcount','solaris-psrinfo'))
+          Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(fixture_data)
+          Facter.fact(:processorcount).value.should == "24"
         end
       end
     end
