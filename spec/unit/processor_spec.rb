@@ -281,7 +281,7 @@ describe "Processor facts" do
 
           fixture_data = File.read(fixtures('processorcount','solaris-psrinfo'))
           Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(fixture_data)
-          Facter.fact(:processorcount).value.should == "24"
+          Facter.fact(:processorcount).value.should == 24
         end
       end
     end
