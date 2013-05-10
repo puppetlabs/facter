@@ -65,26 +65,6 @@ describe "Processor facts" do
     end
   end
 
-  describe "on Solaris" do
-    before :each do
-      Facter.collection.internal_loader.load(:processor)
-      Facter.fact(:kernel).stubs(:value).returns(:sunos)
-      Facter.stubs(:value).with(:kernelrelease).returns("5.10")
-    end
-
-    it "should detect the correct processor count on x86_64" do
-      fixture_data = File.read(fixtures('processorcount','solaris-psrinfo'))
-      Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(fixture_data)
-      Facter.fact(:processorcount).value.should == 24
-    end
-
-    it "should detect the correct processor count on sparc" do
-      fixture_data = File.read(fixtures('processorcount','solaris-psrinfo'))
-      Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(fixture_data)
-      Facter.fact(:processorcount).value.should == 24
-    end
-  end
-
   describe "on Unixes" do
     include FacterSpec::Cpuinfo
 
