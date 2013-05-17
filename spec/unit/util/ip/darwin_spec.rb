@@ -10,7 +10,7 @@ describe Facter::Util::IP::Darwin do
     end
 
     it "should be 'Darwin'" do
-      expect(to_s).to eq 'Darwin'
+      to_s.should eq 'Darwin'
     end
   end
 
@@ -20,7 +20,7 @@ describe Facter::Util::IP::Darwin do
     end
 
     it "should be true" do
-      expect(convert_netmask_from_hex?).to be true
+      convert_netmask_from_hex?.should be true
     end
   end
 
@@ -29,7 +29,7 @@ describe Facter::Util::IP::Darwin do
       described_class.bonding_master('eth0')
     end
 
-    it { expect(bonding_master).to be_nil }
+    it { bonding_master.should be_nil }
   end
 
   describe ".interfaces" do
@@ -47,7 +47,7 @@ describe Facter::Util::IP::Darwin do
     end
 
     it "should return an array with two interfaces" do
-      expect(interfaces).to eq ["lo0", "en0"]
+      interfaces.should eq ["lo0", "en0"]
     end
   end
 
@@ -69,19 +69,19 @@ describe Facter::Util::IP::Darwin do
     describe "macaddress" do
       let(:label) { 'macaddress' }
 
-      it { expect(value_for_interface_and_label).to eq '00:23:6c:99:60:2b' }
+      it { value_for_interface_and_label.should eq '00:23:6c:99:60:2b' }
     end
 
     describe "netmask" do
       let(:label) { 'netmask' }
 
-      it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
+      it { value_for_interface_and_label.should eq '255.255.255.0' }
     end
 
     describe "mtu" do
       let(:label) { 'mtu' }
 
-      it { expect(value_for_interface_and_label).to eq '1500' }
+      it { value_for_interface_and_label.should eq '1500' }
     end
   end
 end

@@ -10,7 +10,7 @@ describe Facter::Util::IP::OpenBSD do
     end
 
     it "should be 'OpenBSD'" do
-      expect(to_s).to eq 'OpenBSD'
+      to_s.should eq 'OpenBSD'
     end
   end
 
@@ -20,7 +20,7 @@ describe Facter::Util::IP::OpenBSD do
     end
 
     it "should be true" do
-      expect(convert_netmask_from_hex?).to be true
+      convert_netmask_from_hex?.should be true
     end
   end
 
@@ -29,6 +29,6 @@ describe Facter::Util::IP::OpenBSD do
       described_class.bonding_master('eth0')
     end
 
-    it { expect(bonding_master).to be_nil }
+    it { bonding_master.should be_nil }
   end
 end
