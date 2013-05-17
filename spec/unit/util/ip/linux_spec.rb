@@ -14,7 +14,7 @@ describe Facter::Util::IP::Linux do
     end
 
     it "should be 'Linux'" do
-      expect(to_s).to eq 'Linux'
+      to_s.should eq 'Linux'
     end
   end
 
@@ -24,7 +24,7 @@ describe Facter::Util::IP::Linux do
     end
 
     it "should be true" do
-      expect(convert_netmask_from_hex?).to be false
+      convert_netmask_from_hex?.should be false
     end
   end
 
@@ -38,7 +38,7 @@ describe Facter::Util::IP::Linux do
         "eth0:1"
       end
 
-      it { expect(bonding_master).to be_nil }
+      it { bonding_master.should be_nil }
     end
   end
 
@@ -59,7 +59,7 @@ describe Facter::Util::IP::Linux do
       end
 
       it "should return an array with a single interface and the loopback" do
-        expect(interfaces).to eq ["eth0", "lo"]
+        interfaces.should eq ["eth0", "lo"]
       end
     end
 
@@ -74,7 +74,7 @@ describe Facter::Util::IP::Linux do
       end
 
       it "should return an array with a single interface and the loopback" do
-        expect(interfaces).to eq ["eth0", "lo"]
+        interfaces.should eq ["eth0", "lo"]
       end
     end
   end
@@ -98,7 +98,7 @@ describe Facter::Util::IP::Linux do
           described_class.expects(:infiniband_macaddress).returns('bar')
         end
 
-        it { expect(value_for_interface_and_label).to eq 'bar' }
+        it { value_for_interface_and_label.should eq 'bar' }
       end
     end
 
@@ -121,7 +121,7 @@ describe Facter::Util::IP::Linux do
         describe "mtu" do
           let(:label) { 'mtu' }
 
-          it { expect(value_for_interface_and_label).to eq '1500' }
+          it { value_for_interface_and_label.should eq '1500' }
         end
       end
 
@@ -131,7 +131,7 @@ describe Facter::Util::IP::Linux do
         describe "mtu" do
           let(:label) { 'mtu' }
 
-          it { expect(value_for_interface_and_label).to eq '16436' }
+          it { value_for_interface_and_label.should eq '16436' }
         end
       end
     end
@@ -151,7 +151,7 @@ describe Facter::Util::IP::Linux do
       describe "macaddress" do
         let(:label) { 'macaddress' }
 
-        it { expect(value_for_interface_and_label).to eq "00:11:22:33:44:55" }
+        it { value_for_interface_and_label.should eq "00:11:22:33:44:55" }
       end
     end
   end

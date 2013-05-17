@@ -11,7 +11,7 @@ describe Facter::Util::IP::Windows do
   describe ".to_s" do
     let(:to_s) { described_class.to_s }
 
-    it { expect(to_s).to eq 'windows' }
+    it { to_s.should eq 'windows' }
   end
 
   describe ".convert_netmask_from_hex?" do
@@ -19,13 +19,13 @@ describe Facter::Util::IP::Windows do
       described_class.convert_netmask_from_hex?
     end
 
-    it { expect(convert_netmask_from_hex?).to be false }
+    it { convert_netmask_from_hex?.should be false }
   end
 
   describe ".bonding_master" do
     let(:bonding_master) { described_class.bonding_master('eth0') }
 
-    it { expect(bonding_master).to be_nil }
+    it { bonding_master.should be_nil }
   end
 
   describe ".interfaces" do
@@ -46,7 +46,7 @@ describe Facter::Util::IP::Windows do
     end
 
     it "should return an array of only connected interfaces" do
-      expect(interfaces).to eq expected_interfaces
+      interfaces.should eq expected_interfaces
     end
   end
 
@@ -69,13 +69,13 @@ describe Facter::Util::IP::Windows do
     describe "ipaddress" do
       let(:label) { 'ipaddress' }
 
-      it { expect(value_for_interface_and_label).to eq '172.16.138.216' }
+      it { value_for_interface_and_label.should eq '172.16.138.216' }
     end
 
     describe "netmask" do
       let(:label) { 'netmask' }
 
-      it { expect(value_for_interface_and_label).to eq '255.255.255.0' }
+      it { value_for_interface_and_label.should eq '255.255.255.0' }
     end
 
     describe "ipaddress6" do
@@ -88,7 +88,7 @@ describe Facter::Util::IP::Windows do
         "#{described_class::NETSH} interface ipv6 show address \"#{interface}\""
       end
 
-      it { expect(value_for_interface_and_label).to eq expected_ip }
+      it { value_for_interface_and_label.should eq expected_ip }
     end
   end
 end
