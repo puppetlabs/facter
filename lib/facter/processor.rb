@@ -65,23 +65,22 @@ Facter.add("TotalProcessorCount") do
   end
 end
 
-Facter.add("ProcessorCount") do
+Facter.add(:processorcount) do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]
+  has_weight 10
   setcode do
-    processor_list = Facter::Util::Processor.sysfs_proc_count
-
-    if processor_list.length != 0
-      processor_list.length.to_s
+    output = Facter.value(:activeprocessorcount)
+    if output != 0
+      output
     end
   end
 end
 
-Facter.add("ProcessorCount") do
+Facter.add(:processorcount) do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]
+  has_weight 1
   setcode do
-    ## The method above is preferable since it provides the description of the CPU as well
-    ## but if that returned 0, then we enumerate sysfs
-    Facter::Util::Processor.sysfs_proc_count
+    Facter.value(:totalprocessorcount)
   end
 end
 
