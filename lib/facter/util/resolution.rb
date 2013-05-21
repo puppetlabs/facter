@@ -23,7 +23,7 @@ class Facter::Util::Resolution
   attr_accessor :timeout
 
   # @api private
-  attr_accessor :interpreter, :code, :name
+  attr_accessor :code, :name
   attr_writer :value, :weight
 
   INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
