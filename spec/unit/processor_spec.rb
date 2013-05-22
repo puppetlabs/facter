@@ -166,6 +166,34 @@ describe "Processor facts" do
         Facter.fact(:processorcount).value.should == '2'
       end
     end
+
+    describe 'totalprocessorcount' do
+      def sysfs_cpu_stubs(count)
+        (0...count).map { |index| "/sys/devices/system/cpu/cpu#{index}" }
+      end
+
+      include_context 'Linux processor stubs'
+
+      before do
+        File.stubs(:exists?).with('/sys/devices/system/cpu').returns(true)
+      end
+
+      it "should be 2 via sysfs when cpu0 and cpu1 are present" do
+        Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu[0-9]*").returns(
+          sysfs_cpu_stubs(2)
+        )
+
+        Facter.fact(:totalprocessorcount).value.should == "2"
+      end
+
+      it "should be 16 via sysfs when cpu0 through cpu15 are present" do
+        Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu[0-9]*").returns(
+          sysfs_cpu_stubs(16)
+        )
+
+        Facter.fact(:totalprocessorcount).value.should == "16"
+      end
+    end
   end
 
   describe "on Unixes" do
@@ -201,56 +229,12 @@ describe "Processor facts" do
       Facter.fact(:processor).value.should == "SomeVendor CPU 3GHz"
     end
 
-
     it "should be 2 on dual-processor DragonFly box" do
       Facter.fact(:kernel).stubs(:value).returns("DragonFly")
       Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
 
       Facter.fact(:processorcount).value.should == "2"
     end
-
-    it "should be 2 via sysfs when cpu0 and cpu1 are present" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
-      File.stubs(:exists?).with('/sys/devices/system/cpu').returns(true)
-      ## sysfs method is only used if cpuinfo method returned no processors
-      File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
-      File.stubs(:readlines).with("/proc/cpuinfo").returns([])
-      Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu[0-9]*").returns(%w{
-        /sys/devices/system/cpu/cpu0
-        /sys/devices/system/cpu/cpu1
-      })
-
-      Facter.fact(:processorcount).value.should == "2"
-    end
-
-    it "should be 16 via sysfs when cpu0 through cpu15 are present" do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
-      File.stubs(:exists?).with('/sys/devices/system/cpu').returns(true)
-      ## sysfs method is only used if cpuinfo method returned no processors
-      File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
-      File.stubs(:readlines).with("/proc/cpuinfo").returns([])
-      Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu[0-9]*").returns(%w{
-        /sys/devices/system/cpu/cpu0
-        /sys/devices/system/cpu/cpu1
-        /sys/devices/system/cpu/cpu2
-        /sys/devices/system/cpu/cpu3
-        /sys/devices/system/cpu/cpu4
-        /sys/devices/system/cpu/cpu5
-        /sys/devices/system/cpu/cpu6
-        /sys/devices/system/cpu/cpu7
-        /sys/devices/system/cpu/cpu8
-        /sys/devices/system/cpu/cpu9
-        /sys/devices/system/cpu/cpu10
-        /sys/devices/system/cpu/cpu11
-        /sys/devices/system/cpu/cpu12
-        /sys/devices/system/cpu/cpu13
-        /sys/devices/system/cpu/cpu14
-        /sys/devices/system/cpu/cpu15
-      })
-
-      Facter.fact(:processorcount).value.should == "16"
-    end
-
     describe "on solaris" do
       before :all do
         @fixture_kstat_sparc  = File.read(fixtures('processorcount','solaris-sparc-kstat-cpu-info'))
