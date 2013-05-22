@@ -150,6 +150,10 @@ describe "Processor facts" do
     it_behaves_like 'a /proc/cpuinfo based processor fact', :activeprocessorcount
     it_behaves_like 'a /proc/cpuinfo based processor fact', :processorcount
 
+    def sysfs_cpu_stubs(count)
+      (0...count).map { |index| "/sys/devices/system/cpu/cpu#{index}" }
+    end
+
     describe 'when /proc/cpuinfo returns 0 processors (#2945)' do
       include_context 'Linux processor stubs'
       before do
@@ -158,20 +162,15 @@ describe "Processor facts" do
 
       it 'enumerates sysfs for the processorcount' do
         File.stubs(:exists?).with('/sys/devices/system/cpu').returns(true)
-        Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu[0-9]*").returns(%w{
-          /sys/devices/system/cpu/cpu0
-          /sys/devices/system/cpu/cpu1
-        })
+        Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu[0-9]*").returns(
+          sysfs_cpu_stubs(2)
+        )
 
         Facter.fact(:processorcount).value.should == '2'
       end
     end
 
     describe 'totalprocessorcount' do
-      def sysfs_cpu_stubs(count)
-        (0...count).map { |index| "/sys/devices/system/cpu/cpu#{index}" }
-      end
-
       include_context 'Linux processor stubs'
 
       before do
