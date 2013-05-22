@@ -45,7 +45,7 @@ processor_list.each_with_index do |desc, i|
   end
 end
 
-Facter.add("ActiveProcessorCount") do
+Facter.add(:activeprocessorcount) do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]
   setcode do
     processor_list = Facter::Util::Processor.enum_cpuinfo
@@ -58,7 +58,7 @@ Facter.add("ActiveProcessorCount") do
   end
 end
 
-Facter.add("TotalProcessorCount") do
+Facter.add(:totalprocessorcount) do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]
   setcode do
     Facter::Util::Processor.sysfs_proc_count
