@@ -1,6 +1,7 @@
 #! /usr/bin/env ruby
 
 require 'spec_helper'
+require 'shared_formats/parses'
 require 'facter/util/ip'
 
 shared_examples_for "netmask_* from ifconfig output" do |platform, interface, address, fixture|
@@ -13,10 +14,6 @@ shared_examples_for "netmask_* from ifconfig output" do |platform, interface, ad
     fact = Facter.fact("netmask_#{interface}".intern)
     fact.value.should eq(address)
   end
-end
-
-RSpec.configure do |config|
-  config.alias_it_should_behave_like_to :example_behavior_for, "parses"
 end
 
 describe "Per Interface IP facts" do
