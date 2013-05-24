@@ -1,7 +1,20 @@
 #! /usr/bin/env ruby
 
 require 'spec_helper'
+require 'shared_formats/parses'
 require 'facter/util/ip'
+
+shared_examples_for "netmask_* from ifconfig output" do |platform, interface, address, fixture|
+  it "correctly on #{platform} interface #{interface}" do
+    Facter::Util::IP.stubs(:exec_ifconfig).returns(my_fixture_read(fixture))
+    Facter::Util::IP.stubs(:get_output_for_interface_and_label).
+      returns(my_fixture_read("#{fixture}.#{interface}"))
+    Facter.collection.internal_loader.load(:interfaces)
+
+    fact = Facter.fact("netmask_#{interface}".intern)
+    fact.value.should eq(address)
+  end
+end
 
 describe "Per Interface IP facts" do
   it "should replace the ':' in an interface list with '_'" do
@@ -18,4 +31,17 @@ describe "Per Interface IP facts" do
     Facter::Util::IP.stubs(:get_interfaces).returns ["Local Area Connection", "Loopback \"Pseudo-Interface\" (#1)"]
     Facter.fact(:interfaces).value.should == %{Local_Area_Connection,Loopback__Pseudo_Interface____1_}
   end
+end
+
+describe "Netmask handling on Linux" do
+  before :each do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+  end
+
+  example_behavior_for "netmask_* from ifconfig output",
+    "Archlinux (net-tools 1.60)", "em1",
+    "255.255.255.0", "ifconfig_net_tools_1.60.txt"
+  example_behavior_for "netmask_* from ifconfig output",
+    "Archlinux (net-tools 1.60)", "lo",
+    "255.0.0.0", "ifconfig_net_tools_1.60.txt"
 end
