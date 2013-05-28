@@ -4,11 +4,11 @@ require 'spec_helper'
 
 describe "Domain name facts" do
 
-  { :linux => {:kernel => "Linux", :hostname_command => "hostname -f"},
-    :solaris => {:kernel => "SunOS", :hostname_command => "hostname"},
-    :darwin => {:kernel => "Darwin", :hostname_command => "hostname -f"},
-    :freebsd => {:kernel => "FreeBSD", :hostname_command => "hostname -f"},
-    :hpux => {:kernel => "HP-UX", :hostname_command => "hostname"},
+  { :linux => {:kernel => "Linux", :hostname_command => "hostname -f 2> /dev/null"},
+    :solaris => {:kernel => "SunOS", :hostname_command => "hostname 2> /dev/null"},
+    :darwin => {:kernel => "Darwin", :hostname_command => "hostname -f 2> /dev/null"},
+    :freebsd => {:kernel => "FreeBSD", :hostname_command => "hostname -f 2> /dev/null"},
+    :hpux => {:kernel => "HP-UX", :hostname_command => "hostname 2> /dev/null"},
   }.each do |key, nested_hash|
 
     describe "on #{key}" do
@@ -28,14 +28,14 @@ describe "Domain name facts" do
 
       it "should fall back to the dnsdomainname binary" do
         Facter::Util::Resolution.expects(:exec).with(hostname_command).returns("myhost")
-        Facter::Util::Resolution.expects(:exec).with("dnsdomainname").returns("example.com")
+        Facter::Util::Resolution.expects(:exec).with("dnsdomainname 2> /dev/null").returns("example.com")
         Facter.fact(:domain).value.should == "example.com"
       end
 
 
       it "should fall back to /etc/resolv.conf" do
         Facter::Util::Resolution.expects(:exec).with(hostname_command).at_least_once.returns("myhost")
-        Facter::Util::Resolution.expects(:exec).with("dnsdomainname").at_least_once.returns("")
+        Facter::Util::Resolution.expects(:exec).with("dnsdomainname 2> /dev/null").at_least_once.returns("")
         File.expects(:open).with('/etc/resolv.conf').at_least_once
         Facter.fact(:domain).value
       end
@@ -43,7 +43,7 @@ describe "Domain name facts" do
       it "should attempt to resolve facts in a specific order" do
         seq = sequence('domain')
         Facter::Util::Resolution.stubs(:exec).with(hostname_command).in_sequence(seq).at_least_once
-        Facter::Util::Resolution.stubs(:exec).with("dnsdomainname").in_sequence(seq).at_least_once
+        Facter::Util::Resolution.stubs(:exec).with("dnsdomainname 2> /dev/null").in_sequence(seq).at_least_once
         File.expects(:open).with('/etc/resolv.conf').in_sequence(seq).at_least_once
         Facter.fact(:domain).value
       end
@@ -51,7 +51,7 @@ describe "Domain name facts" do
       describe "Top level domain" do
         it "should find the domain name" do
           Facter::Util::Resolution.expects(:exec).with(hostname_command).returns "ns01.tld"
-          Facter::Util::Resolution.expects(:exec).with("dnsdomainname").never
+          Facter::Util::Resolution.expects(:exec).with("dnsdomainname 2> /dev/null").never
           File.expects(:exists?).with('/etc/resolv.conf').never
           Facter.fact(:domain).value.should == "tld"
         end
@@ -60,7 +60,7 @@ describe "Domain name facts" do
       describe "when using /etc/resolv.conf" do
         before do
           Facter::Util::Resolution.stubs(:exec).with(hostname_command)
-          Facter::Util::Resolution.stubs(:exec).with("dnsdomainname")
+          Facter::Util::Resolution.stubs(:exec).with("dnsdomainname 2> /dev/null")
           @mock_file = mock()
           File.stubs(:open).with("/etc/resolv.conf").yields(@mock_file)
         end
@@ -219,8 +219,8 @@ describe "Domain name facts" do
 
         describe "scenarios" do
           before(:each) do
-            Facter::Util::Resolution.stubs(:exec).with("hostname -f").returns(scenario[:hostname])
-            Facter::Util::Resolution.stubs(:exec).with("dnsdomainname").returns(scenario[:dnsdomainname])
+            Facter::Util::Resolution.stubs(:exec).with("hostname -f 2> /dev/null").returns(scenario[:hostname])
+            Facter::Util::Resolution.stubs(:exec).with("dnsdomainname 2> /dev/null").returns(scenario[:dnsdomainname])
             @mock_file = mock()
             File.stubs(:open).with("/etc/resolv.conf").yields(@mock_file)
             lines = [
