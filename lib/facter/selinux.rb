@@ -68,33 +68,18 @@ Facter.add("selinux_policyversion") do
   end
 end
 
-Facter.add("selinux_current_mode") do
-  confine :selinux => :true
-  setcode do
-    result = 'unknown'
-    mode = Facter::Util::Resolution.exec(sestatus_cmd)
-    mode.each_line { |l| result = $1 if l =~ /^Current mode\:\s+(\w+)$/i }
-    result.chomp
-  end
-end
-
-Facter.add("selinux_config_mode") do
-  confine :selinux => :true
-  setcode do
-    result = 'unknown'
-    mode = Facter::Util::Resolution.exec(sestatus_cmd)
-    mode.each_line { |l| result = $1 if l =~ /^Mode from config file\:\s+(\w+)$/i }
-    result.chomp
-  end
-end
-
-Facter.add("selinux_config_policy") do
-  confine :selinux => :true
-  setcode do
-    result = 'unknown'
-    mode = Facter::Util::Resolution.exec(sestatus_cmd)
-    mode.each_line { |l| result = $1 if l =~ /^Policy from config file\:\s+(\w+)$/i }
-    result.chomp
+{ "selinux_current_mode" => "Current mode",
+  "selinux_config_mode" => "Mode from config file",
+  "selinux_config_policy" => "Policy from config file"
+}.each_pair do |fact, label|
+  Facter.add(fact) do
+    confine :selinux => :true
+    setcode do
+      result = 'unknown'
+      mode = Facter::Util::Resolution.exec(sestatus_cmd)
+      mode.each_line { |l| result = $1 if l =~ /^#{label}\:\s+(\w+)$/i }
+      result.chomp
+    end
   end
 end
 
