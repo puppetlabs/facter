@@ -135,6 +135,16 @@ module Facter::Util::Virtual
     "zlinux"
   end
 
+  def self.parse_virtualization(output)
+    if output
+      lines = output.split("\n")
+      return "parallels"  if lines.any? {|l| l =~ /Parallels/ }
+      return "vmware"     if lines.any? {|l| l =~ /VM[wW]are/ }
+      return "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
+      return "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
+    end
+  end
+
   ##
   # read_sysfs Reads the raw data as per the documentation at [Detecting if You
   # Are Running in Google Compute
