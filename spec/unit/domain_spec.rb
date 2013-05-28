@@ -16,30 +16,30 @@ describe "Domain name facts" do
         Facter.fact(:kernel).stubs(:value).returns(nested_hash[:kernel])
         FileTest.stubs(:exists?).with("/etc/resolv.conf").returns(true)
       end
-      
-      let :hostname_command do 
+
+      let :hostname_command do
         nested_hash[:hostname_command]
-      end 
-      
+      end
+
       it "should use the hostname binary" do
         Facter::Util::Resolution.expects(:exec).with(hostname_command).returns "test.example.com"
         Facter.fact(:domain).value.should == "example.com"
       end
-      
+
       it "should fall back to the dnsdomainname binary" do
         Facter::Util::Resolution.expects(:exec).with(hostname_command).returns("myhost")
         Facter::Util::Resolution.expects(:exec).with("dnsdomainname").returns("example.com")
         Facter.fact(:domain).value.should == "example.com"
       end
-      
-      
+
+
       it "should fall back to /etc/resolv.conf" do
         Facter::Util::Resolution.expects(:exec).with(hostname_command).at_least_once.returns("myhost")
         Facter::Util::Resolution.expects(:exec).with("dnsdomainname").at_least_once.returns("")
         File.expects(:open).with('/etc/resolv.conf').at_least_once
         Facter.fact(:domain).value
       end
-      
+
       it "should attempt to resolve facts in a specific order" do
         seq = sequence('domain')
         Facter::Util::Resolution.stubs(:exec).with(hostname_command).in_sequence(seq).at_least_once
@@ -47,16 +47,16 @@ describe "Domain name facts" do
         File.expects(:open).with('/etc/resolv.conf').in_sequence(seq).at_least_once
         Facter.fact(:domain).value
       end
-      
-      describe "Top level domain" do 
+
+      describe "Top level domain" do
         it "should find the domain name" do
           Facter::Util::Resolution.expects(:exec).with(hostname_command).returns "ns01.tld"
           Facter::Util::Resolution.expects(:exec).with("dnsdomainname").never
           File.expects(:exists?).with('/etc/resolv.conf').never
-          Facter.fact(:domain).value.should == "tld" 
-        end  
-      end 
-      
+          Facter.fact(:domain).value.should == "tld"
+        end
+      end
+
       describe "when using /etc/resolv.conf" do
         before do
           Facter::Util::Resolution.stubs(:exec).with(hostname_command)
@@ -64,7 +64,7 @@ describe "Domain name facts" do
           @mock_file = mock()
           File.stubs(:open).with("/etc/resolv.conf").yields(@mock_file)
         end
-        
+
         it "should use the domain field over the search field" do
           lines = [
                    "nameserver 4.2.2.1",
@@ -83,7 +83,7 @@ describe "Domain name facts" do
           @mock_file.expects(:each).multiple_yields(*lines)
           Facter.fact(:domain).value.should == 'example.org'
         end
-        
+
         it "should use the first domain in the search field" do
           lines = [
                    "search example.org example.net",
@@ -91,7 +91,7 @@ describe "Domain name facts" do
           @mock_file.expects(:each).multiple_yields(*lines)
           Facter.fact(:domain).value.should == 'example.org'
         end
-        
+
         # Test permutations of domain and search, where 'domain' can be a value of
         # the search keyword and the domain keyword
         # and also where 'search' can be a value of the search keyword and the
@@ -129,7 +129,7 @@ describe "Domain name facts" do
         end
       end
     end
-  end 
+  end
 
   describe "on Windows" do
     before(:each) do
@@ -173,35 +173,35 @@ describe "Domain name facts" do
     end
   end
 
-  describe "with trailing dots" do 
-    describe "on Windows" do 
+  describe "with trailing dots" do
+    describe "on Windows" do
       before do
         Facter.fact(:kernel).stubs(:value).returns("windows")
         require 'facter/util/registry'
         require 'facter/util/wmi'
       end
- 
+
       [{:registry => 'testdomain.', :wmi => '', :expect => 'testdomain'},
        {:registry => '', :wmi => 'testdomain.', :expect => 'testdomain'},
       ].each do |scenario|
 
-        describe "scenarios" do 
+        describe "scenarios" do
           before(:each) do
             Facter::Util::Registry.stubs(:hklm_read).returns(scenario[:registry])
             nic = stubs 'nic'
             nic.stubs(:DNSDomain).returns(scenario[:wmi])
             Facter::Util::WMI.stubs(:execquery).with("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").returns([nic])
           end
- 
+
           it "should return #{scenario[:expect]}" do
             Facter.fact(:domain).value.should == scenario[:expect]
           end
- 
+
           it "should remove trailing dots"  do
             Facter.fact(:domain).value.should_not =~ /\.$/
           end
-        end 
-      end 
+        end
+      end
     end
 
     describe "on everything else" do
@@ -213,12 +213,12 @@ describe "Domain name facts" do
       [{:hostname => 'host.testdomain.', :dnsdomainname => '', :resolve_domain => '', :resolve_search => '', :expect => 'testdomain'},
        {:hostname => '', :dnsdomainname => 'testdomain.', :resolve_domain => '', :resolve_search => '', :expect => 'testdomain'},
        {:hostname => '', :dnsdomainname => '', :resolve_domain => 'testdomain.', :resolve_search => '', :expect => 'testdomain'},
-       {:hostname => '', :dnsdomainname => '', :resolve_domain => '', :resolve_search => 'testdomain.', :expect => 'testdomain'}, 
+       {:hostname => '', :dnsdomainname => '', :resolve_domain => '', :resolve_search => 'testdomain.', :expect => 'testdomain'},
        {:hostname => '', :dnsdomainname => '', :resolve_domain => '', :resolve_search => '', :expect => nil}
       ].each do |scenario|
 
         describe "scenarios" do
-          before(:each) do 
+          before(:each) do
             Facter::Util::Resolution.stubs(:exec).with("hostname -f").returns(scenario[:hostname])
             Facter::Util::Resolution.stubs(:exec).with("dnsdomainname").returns(scenario[:dnsdomainname])
             @mock_file = mock()
@@ -238,7 +238,7 @@ describe "Domain name facts" do
             Facter.fact(:domain).value.should == scenario[:expect]
           end
         end
-      end      
+      end
     end
   end
 end
