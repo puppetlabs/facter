@@ -248,4 +248,16 @@ class Facter::Util::IP
   def flush!
     @interfaces_hash = nil
   end
+  
+  def self.parse_inet_address(output)
+  	output.split(/^\S/).each { |str|
+      if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+        tmp = $1
+        unless tmp =~ /^127\./ or tmp == "0.0.0.0"
+          return tmp
+        end
+      end
+    }
+    return nil
+  end
 end
