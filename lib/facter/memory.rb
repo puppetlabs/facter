@@ -40,31 +40,16 @@ require 'facter/util/memory'
   end
 end
 
-Facter.add("swapsize_mb") do
-  setcode do
-    swaptotal = Facter::Memory.swap_size
-    "%.2f" % [swaptotal] if swaptotal
-  end
-end
-
-Facter.add("swapfree_mb") do
-  setcode do
-    swapfree = Facter::Memory.swap_free
-    "%.2f" % [swapfree] if swapfree
-  end
-end
-
-Facter.add("memorysize_mb") do
-  setcode do
-    memtotal = Facter::Memory.mem_size
-    "%.2f" % [memtotal] if memtotal
-  end
-end
-
-Facter.add("memoryfree_mb") do
-  setcode do
-    memfree = Facter::Memory.mem_free
-    "%.2f" % [memfree] if memfree
+{ "swapsize_mb" => :swap_size,
+  "swapfree_mb" => :swap_free,
+  "memorysize_mb" => :mem_size,
+  "memoryfree_mb" => :mem_free
+}.each do |fact_name, fact_method| 
+  Facter.add(fact_name) do
+    setcode do
+      fact_value = Facter::Memory.send(fact_method)
+      "%.2f" % [fact_value] if fact_value
+    end
   end
 end
 
