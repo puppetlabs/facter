@@ -62,13 +62,7 @@ Facter.add("virtual") do
     resolver.timeout = 6
     resolver.setcode('prtdiag')
     output = resolver.value
-    if output
-      lines = output.split("\n")
-      next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
-      next "vmware"     if lines.any? {|l| l =~ /VM[wW]are/ }
-      next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
-      next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
-    end
+    Facter::Util::Virtual.parse_virtualization(output)
   end
 end
 
@@ -93,13 +87,7 @@ Facter.add("virtual") do
 
   setcode do
     output = Facter::Util::Resolution.exec('sysctl -n hw.product 2>/dev/null')
-    if output
-      lines = output.split("\n")
-      next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
-      next "vmware"     if lines.any? {|l| l =~ /VMware/ }
-      next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
-      next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
-    end
+    Facter::Util::Virtual.parse_virtualization(output)
   end
 end
 
