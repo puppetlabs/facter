@@ -67,6 +67,14 @@ module Facter::Memory
     freemem = ( memfree + memspecfree ) * pagesize
   end
 
+  # on AIX use svmon to get the free memory:
+  # it's the third value on the line starting with memory
+  # svmon can be run by non root users
+  def self.svmon_aix_find_free_memory()
+    Facter::Util::Resolution.exec("/usr/bin/svmon -O unit=KB") =~ /^memory\s+\d+\s+\d+\s+(\d+)\s+/
+    $1
+  end
+
   def self.mem_free(kernel = Facter.value(:kernel))
     output = mem_free_info(kernel)
     scale_mem_free_value output, kernel
@@ -80,12 +88,14 @@ module Facter::Memory
       vmstat_find_free_memory(["-H"])
     when /Darwin/i
       vmstat_darwin_find_free_memory()
+    when /AIX/i
+      svmon_aix_find_free_memory()
     end
   end
 
   def self.scale_mem_free_value (value, kernel)
     case kernel
-    when /OpenBSD/i, /FreeBSD/i, /SunOS/i, /Dragonfly/i
+    when /OpenBSD/i, /FreeBSD/i, /SunOS/i, /Dragonfly/i, /AIX/i
       value.to_f / 1024.0
     when /Darwin/i
       value.to_f / 1024.0 / 1024.0
