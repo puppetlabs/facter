@@ -109,6 +109,10 @@ module Facter::Memory
       Facter::Util::Resolution.exec("sysctl -n hw.memsize")
     when /Dragonfly/i
       Facter::Util::Resolution.exec("sysctl -n hw.physmem")
+    when /AIX/i
+      if Facter::Util::Resolution.exec("/usr/bin/svmon -O unit=KB") =~ /^memory\s+(\d+)\s+/
+        $1
+      end
     end
   end
 
@@ -116,6 +120,8 @@ module Facter::Memory
     case kernel
     when /OpenBSD/i, /FreeBSD/i, /Darwin/i, /Dragonfly/i
       value.to_f / 1024.0 / 1024.0
+    when /AIX/i
+      value.to_f / 1024.0
     else
       value.to_f
     end
