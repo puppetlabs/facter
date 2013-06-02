@@ -156,6 +156,20 @@ SWAP
 
       Facter::Util::Resolution.stubs(:exec).with('swap -l 2>/dev/null').returns(swapusage)
 
+      svmon = <<SVMON
+Unit: KB
+--------------------------------------------------------------------------------------
+               size       inuse        free         pin     virtual  available   mmode
+memory     32768000     9948408    22819592     2432080     4448928   27231828     Ded
+pg space   34078720       15000
+
+               work        pers        clnt       other
+pin         1478228           0           0      953852
+in use      4448928           0     5499480
+SVMON
+
+      Facter::Util::Resolution.stubs(:exec).with('/usr/bin/svmon -O unit=KB').returns(svmon)
+
       Facter.collection.internal_loader.load(:memory)
     end
 
@@ -190,6 +204,15 @@ SWAP
         Facter.fact(:swapfree_mb).value.should == "508.00"
       end
     end
+
+    it "should return the current memory free in MB" do
+      Facter.fact(:memoryfree_mb).value.should == "22284.76"
+    end
+
+    it "should return the current memory size in MB" do
+      Facter.fact(:memorysize_mb).value.should == "32000.00"
+    end
+
   end
 
 
