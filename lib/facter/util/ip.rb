@@ -250,14 +250,16 @@ class Facter::Util::IP
   end
   
   def self.parse_inet_address(output)
-  	output.split(/^\S/).each { |str|
-      if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-        tmp = $1
-        unless tmp =~ /^127\./ or tmp == "0.0.0.0"
-          return tmp
-        end
-      end
-    }
+  	if output.is_a? String
+			output.split(/^\S/).each { |str|
+				if str =~ /inet (?:addr:)?(([0-9]{1,2}|[01][0-9]{2}|2[0-4][0-9]|25[0-5])(\.([0-9]{1,2}|[01][0-9]{2}|2[0-4][0-9]|25[0-5])){3})/
+					tmp = $1
+					unless tmp =~ /^127\./ or tmp == "0.0.0.0"
+						return tmp
+					end
+				end
+			}
+    end
     return nil
   end
 end
