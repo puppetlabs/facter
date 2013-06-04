@@ -156,79 +156,48 @@ describe Facter::Util::IP do
     end
   end
 
+	class TestOutput
+		def self.openBSD(ipstr) 
+			return <<-eos
+				ural0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+        lladdr 00:0d:0b:ed:84:fb
+        media: IEEE802.11 DS2 mode 11b hostap (autoselect mode 11b hostap)
+        status: active
+        ieee80211: nwid ARK chan 11 bssid 00:0d:0b:ed:84:fb  100dBm
+        inet #{ipstr} netmask 0xffffff00 broadcast #{ipstr}
+        inet6 fe80::20d:bff:feed:84fb%ural0 prefixlen 64 scopeid 0xa
+			eos
+		end
+		def self.darwin(ipstr)
+			return <<-eos
+				eth0 Link encap:Ethernet HWaddr 00:xx:xx:CB:4B:2B 
+				inet addr:#{ipstr} Bcast:#{ipstr} Mask:#{ipstr}
+				inet6 addr: xxxx::xxx:xxxx:xxxx:xxxx Scope:Link
+				UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
+				RX packets:23666380 errors:0 dropped:0 overruns:0 frame:0
+				TX packets:10898 errors:0 dropped:0 overruns:0 carrier:0
+				collisions:0 txqueuelen:0 
+				RX bytes:3430295711 (3.1 GiB) TX bytes:457932 (447.1 KiB)
+			eos
+		end
+	end		
 	describe ".parse_inet_address" do
     it "should parse out an ipaddress v4 format" do
-    	Facter::Util::IP.parse_inet_address("ural0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-        lladdr 00:0d:0b:ed:84:fb
-        media: IEEE802.11 DS2 mode 11b hostap (autoselect mode 11b hostap)
-        status: active
-        ieee80211: nwid ARK chan 11 bssid 00:0d:0b:ed:84:fb  100dBm
-        inet 218.72.98.97 netmask 0xffffff00 broadcast 218.72.98.97
-        inet6 fe80::20d:bff:feed:84fb%ural0 prefixlen 64 scopeid 0xa"
-        ).should eq "218.72.98.97"
-        Facter::Util::IP.parse_inet_address("eth0 Link encap:Ethernet HWaddr 00:xx:xx:CB:4B:2B 
-				inet addr:218.72.98.97 Bcast:218.72.98.97 Mask:218.72.98.97
-				inet6 addr: xxxx::xxx:xxxx:xxxx:xxxx/64 Scope:Link
-				UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
-				RX packets:23666380 errors:0 dropped:0 overruns:0 frame:0
-				TX packets:10898 errors:0 dropped:0 overruns:0 carrier:0
-				collisions:0 txqueuelen:0 
-				RX bytes:3430295711 (3.1 GiB) TX bytes:457932 (447.1 KiB)"
-				).should eq "218.72.98.97"
+    	Facter::Util::IP.parse_inet_address(TestOutput.openBSD("218.72.98.97")).should eq "218.72.98.97"
+    	Facter::Util::IP.parse_inet_address(TestOutput.darwin("218.72.98.97")).should eq "218.72.98.97"
 		end
   	it "should not return an invalid ip address" do
-    	Facter::Util::IP.parse_inet_address("ural0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-        lladdr 00:0d:0b:ed:84:fb
-        media: IEEE802.11 DS2 mode 11b hostap (autoselect mode 11b hostap)
-        status: active
-        ieee80211: nwid ARK chan 11 bssid 00:0d:0b:ed:84:fb  100dBm
-        inet 999.999.999.999 netmask 0xffffff00 broadcast 999.999.999.999
-        inet6 fe80::20d:bff:feed:84fb%ural0 prefixlen 64 scopeid 0xa"
-        ).should be_nil
-      Facter::Util::IP.parse_inet_address("eth0 Link encap:Ethernet HWaddr 00:xx:xx:CB:4B:2B 
-				inet addr:999.999.999.999 Bcast:999.999.999.999 Mask:999.999.999.999
-				inet6 addr: xxxx::xxx:xxxx:xxxx:xxxx/64 Scope:Link
-				UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
-				RX packets:23666380 errors:0 dropped:0 overruns:0 frame:0
-				TX packets:10898 errors:0 dropped:0 overruns:0 carrier:0
-				collisions:0 txqueuelen:0 
-				RX bytes:3430295711 (3.1 GiB) TX bytes:457932 (447.1 KiB)"
-				).should be_nil
+  		Facter::Util::IP.parse_inet_address(TestOutput.openBSD("999.999.999.999")).should be_nil
+    	Facter::Util::IP.parse_inet_address(TestOutput.darwin("999.999.999.999")).should be_nil
 		end
     it "should not return addresses starting with 127" do
-    	Facter::Util::IP.parse_inet_address("ural0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-        lladdr 00:0d:0b:ed:84:fb
-        media: IEEE802.11 DS2 mode 11b hostap (autoselect mode 11b hostap)
-        status: active
-        ieee80211: nwid ARK chan 11 bssid 00:0d:0b:ed:84:fb  100dBm
-        inet 127.72.98.97 netmask 0xffffff00 broadcast 127.72.98.97
-        inet6 fe80::20d:bff:feed:84fb%ural0 prefixlen 64 scopeid 0xa").should be_nil
-      Facter::Util::IP.parse_inet_address("eth0 Link encap:Ethernet HWaddr 00:xx:xx:CB:4B:2B 
-				inet addr:127.72.98.97 Bcast:127.72.98.97 Mask:127.72.98.97
-				inet6 addr: xxxx::xxx:xxxx:xxxx:xxxx/64 Scope:Link
-				UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
-				RX packets:23666380 errors:0 dropped:0 overruns:0 frame:0
-				TX packets:10898 errors:0 dropped:0 overruns:0 carrier:0
-				collisions:0 txqueuelen:0 
-				RX bytes:3430295711 (3.1 GiB) TX bytes:457932 (447.1 KiB)").should be_nil 
+    	Facter::Util::IP.parse_inet_address(TestOutput.openBSD("127.72.98.97")).should be_nil
+    	Facter::Util::IP.parse_inet_address(TestOutput.darwin("127.72.98.97")).should be_nil
     end
     it "should not return 0.0.0.0 addresses" do
-    	Facter::Util::IP.parse_inet_address("ural0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-        lladdr 00:0d:0b:ed:84:fb
-        media: IEEE802.11 DS2 mode 11b hostap (autoselect mode 11b hostap)
-        status: active
-        ieee80211: nwid ARK chan 11 bssid 00:0d:0b:ed:84:fb  100dBm
-        inet 0.0.0.0 netmask 0xffffff00 broadcast 0.0.0.0
-        inet6 fe80::20d:bff:feed:84fb%ural0 prefixlen 64 scopeid 0xa").should be_nil
-      Facter::Util::IP.parse_inet_address("eth0 Link encap:Ethernet HWaddr 00:xx:xx:CB:4B:2B 
-				inet addr:0.0.0.0 Bcast:0.0.0.0 Mask:0.0.0.0
-				inet6 addr: xxxx::xxx:xxxx:xxxx:xxxx/64 Scope:Link
-				UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
-				RX packets:23666380 errors:0 dropped:0 overruns:0 frame:0
-				TX packets:10898 errors:0 dropped:0 overruns:0 carrier:0
-				collisions:0 txqueuelen:0 
-				RX bytes:3430295711 (3.1 GiB) TX bytes:457932 (447.1 KiB)").should be_nil 
-    end
+    	Facter::Util::IP.parse_inet_address(TestOutput.openBSD("0.0.0.0")).should be_nil
+    	Facter::Util::IP.parse_inet_address(TestOutput.darwin("0.0.0.0")).should be_nil
+		end
     describe "if we pass in 'nil'" do
       it "should not blow up" do
         lambda {
