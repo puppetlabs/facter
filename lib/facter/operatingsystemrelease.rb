@@ -48,12 +48,17 @@ Facter.add(:operatingsystemrelease) do
   end
 end
 
-Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => %w{Debian}
-  setcode do
-    if release = Facter::Util::FileRead.read('/etc/debian_version')
-      release.sub!(/\s*$/, '')
-      release
+{
+  :Debian  => '/etc/debian_version',
+  :Alpine => '/etc/alpine-release',
+}.each do |platform, file_name|
+  Facter.add(:operatingsystemrelease) do
+    confine :operatingsystem => platform
+    setcode do
+      if release = Facter::Util::FileRead.read(file_name)
+        release.sub!(/\s*$/, '')
+        release
+      end
     end
   end
 end
@@ -92,47 +97,22 @@ Facter.add(:operatingsystemrelease) do
   end
 end
 
-Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => %w{OpenWrt}
-  setcode do
-    if release = Facter::Util::FileRead.read('/etc/openwrt_version')
-      if match = /^(\d+\.\d+.*)/.match(release)
-        match[1]
-      end
-    end
-  end
-end
-
-Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => %w{Slackware}
-  setcode do
-    if release = Facter::Util::FileRead.read('/etc/slackware-version')
-      if match = /Slackware ([0-9.]+)/.match(release)
-        match[1]
-      end
-    end
-  end
-end
-
-Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => %w{Mageia}
-  setcode do
-    if release = Facter::Util::FileRead.read('/etc/mageia-release')
-      if match = /Mageia release ([0-9.]+)/.match(release)
-        match[1]
-      end
-    end
-  end
-end
-
-Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => %w{Bluewhite64}
-  setcode do
-    if release = Facter::Util::FileRead.read('/etc/bluewhite64-version')
-      if match = /^\s*\w+\s+(\d+)\.(\d+)/.match(release)
-        match[1] + "." + match[2]
-      else
-        "unknown"
+{
+  :OpenWrt => {:file => '/etc/openwrt_version', :regexp => /^(\d+\.\d+.*)/},
+  :Slackware => {:file => '/etc/slackware-version', :regexp  => /Slackware ([0-9.]+)/},
+  :Mageia => {:file => '/etc/mageia-release', :regexp => /Mageia release ([0-9.]+)/},
+  :Bluewhite64 => {:file => '/etc/bluewhite64-version', :regexp => /^\s*\w+\s+(\d+\.\d+)/},
+  :Slamd64 => {:file => '/etc/slamd64-version', :regexp => /^\s*\w+\s+(\d+\.\d+)/},
+}.each do |platform, other_stuff|
+  Facter.add(:operatingsystemrelease) do
+    confine :operatingsystem => platform
+    setcode do
+      if release = Facter::Util::FileRead.read(other_stuff[:file])
+        if match = other_stuff[:regexp].match(release)
+          match[1]
+        else
+          "unknown"
+        end
       end
     end
   end
@@ -148,28 +128,6 @@ Facter.add(:operatingsystemrelease) do
   end
 end
 
-Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => %w{Slamd64}
-  setcode do
-    if release = Facter::Util::FileRead.read('/etc/slamd64-version')
-      if match = /^\s*\w+\s+(\d+)\.(\d+)/.match(release)
-        match[1] + "." + match[2]
-      else
-        "unknown"
-      end
-    end
-  end
-end
-
-Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => :Alpine
-  setcode do
-    if release = Facter::Util::FileRead.read('/etc/alpine-release')
-      release.sub!(/\s*$/, '')
-      release
-    end
-  end
-end
 
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %W{Amazon}
