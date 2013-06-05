@@ -36,6 +36,8 @@ Facter.add(:operatingsystem) do
   setcode do
     if Facter.value(:lsbdistid) == "Ubuntu"
        "Ubuntu"
+    elsif Facter.value(:lsbdistid) == "LinuxMint"
+       "LinuxMint"
     elsif FileTest.exists?("/etc/debian_version")
       "Debian"
     elsif FileTest.exists?("/etc/openwrt_release")
