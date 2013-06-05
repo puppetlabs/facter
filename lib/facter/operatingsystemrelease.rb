@@ -73,11 +73,24 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
+  confine :operatingsystem => 'LinuxMint'
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/linuxmint/info')
+      if match = release.match(/RELEASE\=(\d+)/)
+        match[1]
+      end
+    end
+  end
+end
+
+Facter.add(:operatingsystemrelease) do
 confine :operatingsystem => 'CumulusLinux'
   setcode do
     Facter::Util::Operatingsystem.os_release['VERSION_ID']
   end
 end
+
+
 
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{SLES SLED OpenSuSE}
