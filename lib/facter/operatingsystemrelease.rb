@@ -72,6 +72,19 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
+  confine :operatingsystem => %w{LinuxMint}
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/linuxmint/info')
+      if match = release.match(/RELEASE\=(\d+)/)
+        # Return only the major and minor version numbers.  This behavior must
+        # be preserved for compatibility reasons.   
+        match[1]
+      end
+    end
+  end
+end
+
+Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{SLES SLED OpenSuSE}
   setcode do
     if release = Facter::Util::FileRead.read('/etc/SuSE-release')
