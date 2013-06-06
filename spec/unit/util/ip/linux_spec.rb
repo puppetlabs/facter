@@ -102,41 +102,75 @@ describe Facter::Util::IP::Linux do
       end
     end
 
-    describe "normal interface" do
-      let(:ifconfig_path) { '/usr/bin/ifconfig' }
-      let(:exec_cmd) { "#{ifconfig_path} #{interface} 2> /dev/null" }
+    def executes_ifconfig_for(interface, result)
+      described_class.expects(:exec).with(regexp_matches(/#{interface}/)).returns(result)
+    end
 
-      let(:ifconfig_output) do
-        my_fixture_read "ifconfig_single_interface_#{interface}"
-      end
-
-      before :each do
-        described_class.expects(:ifconfig_path).returns(ifconfig_path)
-        described_class.expects(:exec).with(exec_cmd).returns(ifconfig_output)
-      end
-
+    describe "on Ubuntu (net-tools 1.60)" do
       describe "eth0" do
-        let(:interface) { 'eth0' }
+        before :each do
+          executes_ifconfig_for("eth0", my_fixture_read("ifconfig_single_interface_eth0"))
+        end
 
-        describe "mtu" do
-          let(:label) { 'mtu' }
+        it "extracts the mtu" do
+          described_class.value_for_interface_and_label("eth0", "mtu").should eq "1500"
+        end
 
-          it { value_for_interface_and_label.should eq '1500' }
+        it "extracts the netmask" do
+          described_class.value_for_interface_and_label("eth0", "netmask").should eq "255.255.255.0"
         end
       end
 
       describe "lo" do
-        let(:interface) { 'lo' }
+        before :each do
+          executes_ifconfig_for("lo", my_fixture_read("ifconfig_single_interface_lo"))
+        end
 
-        describe "mtu" do
-          let(:label) { 'mtu' }
+        it "extracts the mtu" do
+          described_class.value_for_interface_and_label("lo", "mtu").should eq "16436"
+        end
 
-          it { value_for_interface_and_label.should eq '16436' }
+        it "extracts the netmask" do
+          described_class.value_for_interface_and_label("lo", "netmask").should eq "255.0.0.0"
         end
       end
     end
 
-    describe "bonded interface" do
+    describe "on Archlinux (net-tools 1.60)" do
+      describe "em1" do
+        before :each do
+          executes_ifconfig_for("em1", my_fixture_read("ifconfig_net_tools_1.60.txt.em1"))
+        end
+
+        it "extracts the mtu" do
+          pending "Resolution of Archlinux, which outputs BSD style output, getting parsed using Linux formatting" do
+            described_class.value_for_interface_and_label("em1", "mtu").should eq "1500"
+          end
+        end
+
+        it "extracts the netmask" do
+          described_class.value_for_interface_and_label("em1", "netmask").should eq "255.255.255.0"
+        end
+      end
+
+      describe "lo" do
+        before :each do
+          executes_ifconfig_for("lo", my_fixture_read("ifconfig_net_tools_1.60.txt.lo"))
+        end
+
+        it "extracts the mtu" do
+          pending "Resolution of Archlinux, which outputs BSD style output, getting parsed using Linux formatting" do
+            described_class.value_for_interface_and_label("lo", "mtu").should eq "16436"
+          end
+        end
+
+        it "extracts the netmask" do
+          described_class.value_for_interface_and_label("lo", "netmask").should eq "255.0.0.0"
+        end
+      end
+    end
+
+    describe "bonded interface on Linux kernel 2.6.35" do
       let(:interface) { 'eth0' }
       let(:bond) { 'bond0' }
       let(:proc_net_path) { '/proc/net/bonding/bond0' }

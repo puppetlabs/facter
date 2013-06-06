@@ -27,7 +27,6 @@ class Facter::Util::IP
     @interfaces_hash = @interfaces.inject({}) do |hashA, interface|
       hashA[interface] = INTERFACE_KEYS.inject({}) do |hashB, key|
         hashB[key] = value_for_interface_and_label interface, key
-
         hashB
       end
 

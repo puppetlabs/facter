@@ -30,7 +30,7 @@ class Facter::Util::IP::Linux < Facter::Util::IP::Base
   # @return [Regexp]
   #
   # @api private
-  NETMASK_REGEX = /Mask:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+  NETMASK_REGEX = /(?:Mask:|netmask )([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
 
   # A regex to match the MTU from `ifconfig` output.
   #

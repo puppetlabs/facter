@@ -1,3 +1,5 @@
+require 'facter/util/file_read'
+
 module Facter::Util::Virtual
   ##
   # virt_what is a delegating helper method intended to make it easier to stub
@@ -156,7 +158,7 @@ module Facter::Util::Virtual
   # @return [String] or nil if the path does not exist
   def self.read_sysfs_dmi_entries(path="/sys/firmware/dmi/entries/1-0/raw")
     if File.exists?(path)
-      File.read(path)
+      Facter::Util::FileRead.read_binary(path)
     end
   end
 end

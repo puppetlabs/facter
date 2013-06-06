@@ -1,0 +1,8 @@
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 16436
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 0  (Local Loopback)
+        RX packets 257371  bytes 37104110 (35.3 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 257371  bytes 37104110 (35.3 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
