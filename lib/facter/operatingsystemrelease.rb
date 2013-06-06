@@ -98,20 +98,33 @@ Facter.add(:operatingsystemrelease) do
 end
 
 {
-  :OpenWrt => {:file => '/etc/openwrt_version', :regexp => /^(\d+\.\d+.*)/},
-  :Slackware => {:file => '/etc/slackware-version', :regexp  => /Slackware ([0-9.]+)/},
-  :Mageia => {:file => '/etc/mageia-release', :regexp => /Mageia release ([0-9.]+)/},
-  :Bluewhite64 => {:file => '/etc/bluewhite64-version', :regexp => /^\s*\w+\s+(\d+\.\d+)/},
-  :Slamd64 => {:file => '/etc/slamd64-version', :regexp => /^\s*\w+\s+(\d+\.\d+)/},
-}.each do |platform, other_stuff|
+  :OpenWrt => {
+    :file => '/etc/openwrt_version', 
+    :regexp => /^(\d+\.\d+.*)/
+  },
+  :Slackware => {
+    :file => '/etc/slackware-version', 
+    :regexp  => /Slackware ([0-9.]+)/
+  },
+  :Mageia => {
+    :file => '/etc/mageia-release', 
+    :regexp => /Mageia release ([0-9.]+)/
+  },
+  :Bluewhite64 => {
+    :file => '/etc/bluewhite64-version', 
+    :regexp => /^\s*\w+\s+(\d+\.\d+)/
+  },
+  :Slamd64 => {
+    :file => '/etc/slamd64-version', 
+    :regexp => /^\s*\w+\s+(\d+\.\d+)/
+  },
+}.each do |platform, platform_data|
   Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => platform
     setcode do
-      if release = Facter::Util::FileRead.read(other_stuff[:file])
-        if match = other_stuff[:regexp].match(release)
+      if release = Facter::Util::FileRead.read(platform_data[:file])
+        if match = platform_data[:regexp].match(release)
           match[1]
-        else
-          "unknown"
         end
       end
     end

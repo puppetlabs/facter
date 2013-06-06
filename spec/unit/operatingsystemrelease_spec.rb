@@ -13,6 +13,7 @@ describe "Operating System Release fact" do
     Facter.clear
   end
 
+  #added test cases, it looks like Debian, Alpine, and Ubuntu are tested later in this code
   test_cases = {
     "OpenWrt"    => "/etc/openwrt_version",
     "CentOS"    => "/etc/redhat-release",
@@ -26,15 +27,25 @@ describe "Operating System Release fact" do
     "ovs"     => "/etc/ovs-release",
     "OracleLinux" => "/etc/oracle-release",
     "Ascendos"    => "/etc/redhat-release",
+    "CloudLinux"  => "/etc/redhat-release",
+    "SLC" => "/etc/redhat-release",
   }
+
+  #these are the OSs that we have information on what the content fo the files they should be reading looks like
+  file_content_test_cases = [
+      "CentOS", "RedHat", "Scientific", " Ascendos", "CloudLinux", "SLC"]
 
   test_cases.each do |system, file|
     describe "with operatingsystem reported as #{system.inspect}" do
       it "should read the #{file.inspect} file" do
         Facter.fact(:operatingsystem).stubs(:value).returns(system)
-
-        Facter::Util::FileRead.expects(:read).with(file).at_least(1)
-
+        
+        if file_content_test_cases.include?(system) 
+          Facter::Util::FileRead.expects(:read).with(file).at_least(1).returns(my_fixture_read(system.downcase))
+        else 
+          Facter::Util::FileRead.expects(:read).with(file).at_least(1)
+        end 
+        
         Facter.fact(:operatingsystemrelease).value
       end
     end
@@ -59,7 +70,7 @@ describe "Operating System Release fact" do
   it "for Alpine it should use the contents of /etc/alpine-release" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:operatingsystem).stubs(:value).returns("Alpine")
-
+    
     File.expects(:read).with("/etc/alpine-release").returns("foo")
 
     Facter.fact(:operatingsystemrelease).value.should == "foo"
