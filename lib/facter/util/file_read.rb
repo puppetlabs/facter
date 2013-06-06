@@ -27,6 +27,10 @@ module FileRead
     Facter.debug "Could not read #{path}: #{detail.message}"
     nil
   end
+
+  def self.read_binary(path)
+    File.open(path, "rb") { |contents| contents.read }
+  end
 end
 end
 end
