@@ -147,6 +147,15 @@ describe Facter::Util::Virtual do
     end
   end
 
+  it "reads dmi entries as ascii data" do
+    entries_file = my_fixture('invalid_unicode_dmi_entries')
+    expected_contents = 'Virtual'
+
+    entries = Facter::Util::Virtual.read_sysfs_dmi_entries(entries_file)
+
+    entries.should =~ /#{expected_contents}/
+  end
+
   it "should identify vserver_host when /proc/virtual exists" do
     Facter::Util::Virtual.expects(:vserver?).returns(true)
     FileTest.stubs(:exists?).with("/proc/virtual").returns(true)
