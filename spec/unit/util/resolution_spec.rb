@@ -198,42 +198,17 @@ describe Facter::Util::Resolution do
     end
 
     describe "and the code is a string" do
-      describe "on windows" do
-        before do
-          given_a_configuration_of(:is_windows => true)
-        end
+      it "should return the result of executing the code" do
+        @resolve.setcode "/bin/foo"
+        Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns "yup"
 
-        it "should return the result of executing the code" do
-          @resolve.setcode "/bin/foo"
-          Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns "yup"
-
-          @resolve.value.should == "yup"
-        end
-
-        it "should return nil if the value is an empty string" do
-          @resolve.setcode "/bin/foo"
-          Facter::Util::Resolution.expects(:exec).once.returns ""
-          @resolve.value.should be_nil
-        end
+        @resolve.value.should == "yup"
       end
 
-      describe "on non-windows systems" do
-        before do
-          given_a_configuration_of(:is_windows => false)
-        end
-
-        it "should return the result of executing the code" do
-          @resolve.setcode "/bin/foo"
-          Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns "yup"
-
-          @resolve.value.should == "yup"
-        end
-
-        it "should return nil if the value is an empty string" do
-          @resolve.setcode "/bin/foo"
-          Facter::Util::Resolution.expects(:exec).once.returns ""
-          @resolve.value.should be_nil
-        end
+      it "should return nil if the value is an empty string" do
+        @resolve.setcode "/bin/foo"
+        Facter::Util::Resolution.expects(:exec).once.returns ""
+        @resolve.value.should be_nil
       end
     end
 
