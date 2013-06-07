@@ -1,0 +1,3 @@
+ procs  memory     page          disks  traps      cpu
+ r b w  avm   fre  flt  re  pi  po  fr  sr cd0 sd0  int   sys   cs us sy id
+ 0 0 0  11048  181028   39   0   0   0   0   0   0   1  3  90   17  0  0 100
