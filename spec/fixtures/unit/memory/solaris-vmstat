@@ -1,0 +1,3 @@
+ kthr      memory            page            disk          faults      cpu
+ r b w   swap  free  re  mf pi po fr de sr s0 s3 -- --   in   sy   cs us sy id
+ 0 0 0 1154552 476224 8  19  0  0  0  0  0  0  0  0  0  460  294  236  1  2 97
