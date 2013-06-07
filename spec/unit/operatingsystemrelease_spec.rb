@@ -13,39 +13,76 @@ describe "Operating System Release fact" do
     Facter.clear
   end
 
-  #added test cases, it looks like Debian, Alpine, and Ubuntu are tested later in this code
   test_cases = {
-    "OpenWrt"    => "/etc/openwrt_version",
-    "CentOS"    => "/etc/redhat-release",
-    "RedHat"    => "/etc/redhat-release",
-    "Scientific"  => "/etc/redhat-release",
-    "Fedora"    => "/etc/fedora-release",
-    "MeeGo"     => "/etc/meego-release",
-    "OEL"     => "/etc/enterprise-release",
-    "oel"     => "/etc/enterprise-release",
-    "OVS"     => "/etc/ovs-release",
-    "ovs"     => "/etc/ovs-release",
-    "OracleLinux" => "/etc/oracle-release",
-    "Ascendos"    => "/etc/redhat-release",
-    "CloudLinux"  => "/etc/redhat-release",
-    "SLC" => "/etc/redhat-release",
+    'OpenWrt'    => {
+      :path => '/etc/openwrt_version',
+      :has_fixture => false
+    },
+    "CentOS"    => {
+      :path => "/etc/redhat-release",
+      :has_fixture => true
+    },
+    "RedHat"    => {
+      :path => "/etc/redhat-release",
+      :has_fixture => true
+    },
+    "Scientific"  => {
+      :path => "/etc/redhat-release",
+      :has_fixture => true
+    },
+    "Fedora"    => {
+      :path => "/etc/fedora-release",
+      :has_fixture => false
+    },
+    "MeeGo"     => {
+      :path => "/etc/meego-release",
+      :has_fixture => false
+    },
+    "OEL"     => {
+      :path => "/etc/enterprise-release",
+      :has_fixture => false
+    },
+    "oel"     => {
+      :path => "/etc/enterprise-release",
+      :has_fixture => false
+    },
+    "OVS"     => {
+      :path => "/etc/ovs-release",
+      :has_fixture => false
+    },
+    "ovs"     => {
+      :path => "/etc/ovs-release",
+      :has_fixture => false
+    },
+    "OracleLinux" => {
+      :path => "/etc/oracle-release",
+      :has_fixture => false
+    },
+    "Ascendos"    => {
+      :path => "/etc/redhat-release",
+      :has_fixture => true
+    },
+    "CloudLinux"  => {
+      :path => "/etc/redhat-release",
+      :has_fixture => true
+    },
+    "SLC" => {
+      :path => "/etc/redhat-release",
+      :has_fixture => true
+    }
   }
 
-  #these are the OSs that we have information on what the content fo the files they should be reading looks like
-  file_content_test_cases = [
-      "CentOS", "RedHat", "Scientific", " Ascendos", "CloudLinux", "SLC"]
-
-  test_cases.each do |system, file|
+  test_cases.each do |system, file_data|
     describe "with operatingsystem reported as #{system.inspect}" do
-      it "should read the #{file.inspect} file" do
+      it "should read the #{file_data[:path].inspect} file" do
         Facter.fact(:operatingsystem).stubs(:value).returns(system)
-        
-        if file_content_test_cases.include?(system) 
-          Facter::Util::FileRead.expects(:read).with(file).at_least(1).returns(my_fixture_read(system.downcase))
-        else 
-          Facter::Util::FileRead.expects(:read).with(file).at_least(1)
-        end 
-        
+
+        if file_data[:has_fixture] == true
+          Facter::Util::FileRead.expects(:read).with(file_data[:path]).returns(my_fixture_read(system.downcase))
+        else
+          Facter::Util::FileRead.expects(:read).with(file_data[:path]).at_least(1)
+        end
+
         Facter.fact(:operatingsystemrelease).value
       end
     end
@@ -70,7 +107,7 @@ describe "Operating System Release fact" do
   it "for Alpine it should use the contents of /etc/alpine-release" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:operatingsystem).stubs(:value).returns("Alpine")
-    
+
     File.expects(:read).with("/etc/alpine-release").returns("foo")
 
     Facter.fact(:operatingsystemrelease).value.should == "foo"
