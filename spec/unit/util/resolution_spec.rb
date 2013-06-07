@@ -198,30 +198,18 @@ describe Facter::Util::Resolution do
     end
 
     describe "and the code is a string" do
-      [  true,
-         false
-      ].each do |bool|
+      it "should return the result of executing the code" do
+        @resolve.setcode "/bin/foo"
+        Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns "yup"
 
-        describe "on #{(bool)?'':'non-'}windows system" do
-          before do
-            given_a_configuration_of(:is_windows => bool)
-          end
-
-          it "should return the result of executing the code" do
-            @resolve.setcode "/bin/foo"
-            Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns "yup"
-
-            @resolve.value.should == "yup"
-          end
-
-          it "should return nil if the value is an empty string" do
-            @resolve.setcode "/bin/foo"
-            Facter::Util::Resolution.expects(:exec).once.returns ""
-            @resolve.value.should be_nil
-          end
-        end
+        @resolve.value.should == "yup"
       end
 
+      it "should return nil if the value is an empty string" do
+        @resolve.setcode "/bin/foo"
+        Facter::Util::Resolution.expects(:exec).once.returns ""
+        @resolve.value.should be_nil
+      end
     end
 
     describe "and the code is a block" do
