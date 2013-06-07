@@ -92,7 +92,7 @@ describe Facter::Util::Parser do
     let :data_in_txt do "one=two\nthree=four\n" end
 
     before :each do
-      Facter::Util::Resolution.stubs(:exec).with(cmd).returns(data_in_txt)
+      Facter::Util::Resolution.stubs(:exec).with("sh #{cmd}").returns(data_in_txt)
       File.stubs(:executable?).with(cmd).returns(true)
     end
 

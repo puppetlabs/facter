@@ -111,7 +111,7 @@ module Facter::Util::Parser
 
   class ScriptParser < Base
     def results
-      output = Facter::Util::Resolution.exec(filename)
+      output = Facter::Util::Resolution.exec("sh #{filename}")
 
       result = {}
       re = /^(.+)=(.+)$/
