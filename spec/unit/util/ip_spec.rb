@@ -155,32 +155,6 @@ describe Facter::Util::IP do
       end
     end
   end
-
-	class TestOutput
-		def self.openBSD(ipstr) 
-			return <<-eos
-				ural0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-        lladdr 00:0d:0b:ed:84:fb
-        media: IEEE802.11 DS2 mode 11b hostap (autoselect mode 11b hostap)
-        status: active
-        ieee80211: nwid ARK chan 11 bssid 00:0d:0b:ed:84:fb  100dBm
-        inet #{ipstr} netmask 0xffffff00 broadcast #{ipstr}
-        inet6 fe80::20d:bff:feed:84fb%ural0 prefixlen 64 scopeid 0xa
-			eos
-		end
-		def self.darwin(ipstr)
-			return <<-eos
-				eth0 Link encap:Ethernet HWaddr 00:xx:xx:CB:4B:2B 
-				inet addr:#{ipstr} Bcast:#{ipstr} Mask:#{ipstr}
-				inet6 addr: xxxx::xxx:xxxx:xxxx:xxxx Scope:Link
-				UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
-				RX packets:23666380 errors:0 dropped:0 overruns:0 frame:0
-				TX packets:10898 errors:0 dropped:0 overruns:0 carrier:0
-				collisions:0 txqueuelen:0 
-				RX bytes:3430295711 (3.1 GiB) TX bytes:457932 (447.1 KiB)
-			eos
-		end
-	end	
 	
 	shared_examples_for "ifconfig output" do |platform, address, fixture|
 		describe "correctly on #{platform}" do 	
