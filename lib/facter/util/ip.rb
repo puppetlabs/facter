@@ -1,6 +1,5 @@
 # encoding: UTF-8
 
-require 'ipaddr'
 require 'facter/util/ip/base'
 require 'facter/util/ip/darwin'
 require 'facter/util/ip/sun_os'
@@ -250,17 +249,42 @@ class Facter::Util::IP
     @interfaces_hash = nil
   end
   
+  # Extract an IP address from the output of the `ifconfig` command
+	#
+	# @param output [String] The output of the ifconfig command
+	# @return [String, nil] A string if an actual IP address was extracted, otherwise nil
   def self.parse_inet_address(output)
-  	if output.is_a? String
-			output.split(/^\S/).each { |str|
-				if str =~ /inet (?:addr:)?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-					tmp = $1
-					unless (IPAddr.new(tmp) rescue nil).nil? or tmp =~ /^127\./ or tmp == "0.0.0.0"
-						return tmp
-					end
+		output.split(/^\S/).each { |str|
+			if (match = str.match(/inet (?:addr:)?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/))
+				ip_addr_string = match[1]
+				ip_addr = valid_ip_addr(ip_addr_string) # we either have a valid object or nil
+				unless ip_addr.nil? or 
+							 loopback.include?(ip_addr) or 
+							 bonding_failure.include?(ip_addr)
+					return ip_addr.to_s
 				end
-			}
-    end
+			end
+		}
     return nil
+  end
+  
+  def self.bonding_failure
+    # we could totally cache this for multiple calls, because this should only be executed
+    # once per call to Facter (in production, at least). Obviously the tests will call
+    # many, many times
+  	IPAddr.new '0.0.0.0'
+  end
+  
+  def  self.loopback
+    # we could totally cache this for multiple calls
+  	IPAddr.new '127.0.0.0/8'
+  end
+  
+  def self.valid_ip_addr(ip_string)
+  	IPAddr.new(ip_string) rescue nil
+  end
+  
+  def self.get_ip_from_ifconfig(additional_arguments=[])
+  	parse_inet_address(exec_ifconfig(additional_arguments))
   end
 end

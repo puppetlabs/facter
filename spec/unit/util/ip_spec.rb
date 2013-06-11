@@ -180,50 +180,109 @@ describe Facter::Util::IP do
 				RX bytes:3430295711 (3.1 GiB) TX bytes:457932 (447.1 KiB)
 			eos
 		end
-	end		
+	end	
+	
+	shared_examples_for "ifconfig output" do |platform, address, fixture|
+		describe "correctly on #{platform}" do 	
+			describe ".parse_inet_address" do
+				it "should parse out an ipaddress v4 format" do
+					Facter::Util::IP.parse_inet_address(my_fixture_read(fixture)).should eq address
+				end
+			end
+		end
+	end
+	
+	shared_examples_for "ifconfig output loopback only" do |platform, fixture|
+		describe "correctly on #{platform}" do 	
+			describe ".parse_inet_address" do
+				it "should not return addresses starting with 127" do
+	        Facter::Util::IP.parse_inet_address(my_fixture_read(fixture)).should be_nil
+				end
+			end
+		end
+	end
+	
+	shared_examples_for "ifconfig output bonding failure" do |platform, fixture|
+		describe "correctly on #{platform}" do 	
+			describe ".parse_inet_address" do
+				it "should not return 0.0.0.0 addresses" do
+	        Facter::Util::IP.parse_inet_address(my_fixture_read(fixture)).should be_nil
+				end
+			end
+		end
+	end
+	
+	RSpec.configure do |config|
+  	config.alias_it_should_behave_like_to :example_behavior_for, "parses"
+	end
 	describe ".parse_inet_address" do
-    it "should parse out an ipaddress v4 format" do
-    	Facter::Util::IP.parse_inet_address(TestOutput.openBSD("218.72.98.97")).should eq "218.72.98.97"
-    	Facter::Util::IP.parse_inet_address(TestOutput.darwin("218.72.98.97")).should eq "218.72.98.97"
+		example_behavior_for "ifconfig output",
+    	"AIX","10.16.77.22", "aix/ifconfig_all_with_multiple_interfaces"
+    example_behavior_for "ifconfig output",
+    	"Darwin","192.168.0.10", "darwin/ifconfig_all_with_multiple_interfaces"
+    example_behavior_for "ifconfig output",
+    	"FreeBSD","192.10.58.26", "free_bsd/6.0-STABLE_ifconfig_with_multiple_interfaces"
+    example_behavior_for "ifconfig output",
+    	"GNU K FreeBSD","192.168.10.10", "gnu_k_free_bsd/ifconfig_all_with_multiple_interfaces"
+    example_behavior_for "ifconfig output",
+    	"HPUX","192.168.3.10", "hpux/1111_ifconfig_lan0"
+    example_behavior_for "ifconfig output",
+    	"Linux","172.16.15.133", "linux/ifconfig_all_with_single_interface"
+    example_behavior_for "ifconfig output",
+    	"Mac OS X 10.5.5","192.168.0.4", "Mac_OS_X_10.5.5_ifconfig"
+		example_behavior_for "ifconfig output",
+      "SunOS", "172.16.15.138", "sun_os/ifconfig_single_interface"
+    example_behavior_for "ifconfig output",
+    	"Solaris","10.16.77.145", "solaris/ifconfig_all_with_multiple_interfaces"
+    	
+    example_behavior_for "ifconfig output loopback only",
+    	"AIX", "aix/ifconfig_single_interface_lo0"
+    example_behavior_for "ifconfig output loopback only",
+    	"Darwin", "darwin/ifconfig_single_interface_lo0"
+    example_behavior_for "ifconfig output loopback only",
+    	"FreeBSD", "free_bsd/ifconfig_single_interface_lo0"
+    example_behavior_for "ifconfig output loopback only",
+    	"GNU K FreeBSD", "gnu_k_free_bsd/ifconfig_single_interface_lo0"
+    example_behavior_for "ifconfig output loopback only",
+    	"HPUX", "hpux/1111_ifconfig_lo0"
+    example_behavior_for "ifconfig output loopback only",
+    	"Linux", "linux/ifconfig_single_interface_lo"
+    example_behavior_for "ifconfig output loopback only",
+    	"Mac OS X 10.5.5", "Mac_OS_X_10.5.5_ifconfig_single_interface_lo0"
+		example_behavior_for "ifconfig output loopback only",
+      "SunOS", "sun_os/ifconfig_single_interface_lo0"
+    example_behavior_for "ifconfig output loopback only",
+    	"Solaris", "solaris/ifconfig_single_interface_lo0"
+    	
+    example_behavior_for "ifconfig output bonding failure",
+    	"AIX", "aix/ifconfig_with_single_interface_bonding_failure"
+    example_behavior_for "ifconfig output bonding failure",
+    	"Darwin", "darwin/ifconfig_with_single_interface_bonding_failure"
+    example_behavior_for "ifconfig output bonding failure",
+    	"FreeBSD", "free_bsd/ifconfig_with_single_interface_bonding_failure"
+    example_behavior_for "ifconfig output bonding failure",
+    	"GNU K FreeBSD", "gnu_k_free_bsd/ifconfig_with_single_interface_bonding_failure"
+    example_behavior_for "ifconfig output bonding failure",
+    	"HPUX", "hpux/ifconfig_with_single_interface_bonding_failure"
+    example_behavior_for "ifconfig output bonding failure",
+    	"Linux", "linux/ifconfig_with_single_interface_bonding_failure"
+    example_behavior_for "ifconfig output bonding failure",
+    	"Mac OS X 10.5.5", "Mac_OS_X_10.5.5_ifconfig_with_single_interface_bonding_failure"
+		example_behavior_for "ifconfig output bonding failure",
+      "SunOS", "sun_os/ifconfig_with_single_interface_bonding_failure"
+    example_behavior_for "ifconfig output bonding failure",
+    	"Solaris", "solaris/ifconfig_with_single_interface_bonding_failure"
+    		
+		it "should fail if we pass 'nil'" do
+				lambda { Facter::Util::IP.parse_inet_address(nil) }.should raise_error
 		end
-  	it "should not return an invalid ip address" do
-  		Facter::Util::IP.parse_inet_address(TestOutput.openBSD("999.999.999.999")).should be_nil
-    	Facter::Util::IP.parse_inet_address(TestOutput.darwin("999.999.999.999")).should be_nil
+		it "should fail if we pass non-string input" do
+			lambda { Facter::Util::IP.parse_inet_address(127) }.should raise_error
 		end
-    it "should not return addresses starting with 127" do
-    	Facter::Util::IP.parse_inet_address(TestOutput.openBSD("127.72.98.97")).should be_nil
-    	Facter::Util::IP.parse_inet_address(TestOutput.darwin("127.72.98.97")).should be_nil
-    end
-    it "should not return 0.0.0.0 addresses" do
-    	Facter::Util::IP.parse_inet_address(TestOutput.openBSD("0.0.0.0")).should be_nil
-    	Facter::Util::IP.parse_inet_address(TestOutput.darwin("0.0.0.0")).should be_nil
+		it "should return 'nil' if we pass empty string" do
+			Facter::Util::IP.parse_inet_address("").should be_nil
 		end
-    describe "if we pass in 'nil'" do
-      it "should not blow up" do
-        lambda {
-      	  Facter::Util::IP.parse_inet_address nil
-        }.should_not raise_error
-      end
-      it "should return 'nil'" do
-        Facter::Util::IP.parse_inet_address(nil).should be_nil
-      end
-
-    end
-    describe "if we pass in non-string input" do
-    	it "should not blow up" do
-        lambda {
-      	  Facter::Util::IP.parse_inet_address 127
-        }.should_not raise_error
-      end
-      it "should return 'nil'" do
-        Facter::Util::IP.parse_inet_address(127).should be_nil
-      end
-    end
-    it "should return 'nil' for empty string" do
-    	Facter::Util::IP.parse_inet_address("").should be_nil
-    end
-  end
-
+	end
   def given_initial_interfaces_facts
     model = described_class.new
     model.stubs(:interfaces).returns(interfaces_hash.keys)
