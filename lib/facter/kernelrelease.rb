@@ -20,6 +20,13 @@ Facter.add(:kernelrelease) do
   setcode 'oslevel -s'
 end
 
+Facter.add("kernelrelease") do
+  confine :kernel => :openbsd
+  setcode do
+    Facter::Util::Resolution.exec("/sbin/sysctl -n kern.version").split(' ')[1]
+  end
+end
+
 Facter.add(:kernelrelease) do
   confine :kernel => "hp-ux"
   setcode do
