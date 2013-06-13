@@ -156,7 +156,7 @@ describe Facter::Util::IP do
     end
   end
 	
-	shared_examples_for "ifconfig output" do |platform, address, fixture|
+	shared_examples_for "ifconfig output test" do |platform, address, fixture|
 		describe "correctly on #{platform}" do 	
 			describe ".parse_inet_address" do
 				it "should parse out an ipaddress v4 format" do
@@ -190,23 +190,23 @@ describe Facter::Util::IP do
   	config.alias_it_should_behave_like_to :example_behavior_for, "parses"
 	end
 	describe ".parse_inet_address" do
-		example_behavior_for "ifconfig output",
+		example_behavior_for "ifconfig output test",
     	"AIX","10.16.77.22", "aix/ifconfig_all_with_multiple_interfaces"
-    example_behavior_for "ifconfig output",
+    example_behavior_for "ifconfig output test",
     	"Darwin","192.168.0.10", "darwin/ifconfig_all_with_multiple_interfaces"
-    example_behavior_for "ifconfig output",
+    example_behavior_for "ifconfig output test",
     	"FreeBSD","192.10.58.26", "free_bsd/6.0-STABLE_ifconfig_with_multiple_interfaces"
-    example_behavior_for "ifconfig output",
+    example_behavior_for "ifconfig output test",
     	"GNU K FreeBSD","192.168.10.10", "gnu_k_free_bsd/ifconfig_all_with_multiple_interfaces"
-    example_behavior_for "ifconfig output",
+    example_behavior_for "ifconfig output test",
     	"HPUX","192.168.3.10", "hpux/1111_ifconfig_lan0"
-    example_behavior_for "ifconfig output",
+    example_behavior_for "ifconfig output test",
     	"Linux","172.16.15.133", "linux/ifconfig_all_with_single_interface"
-    example_behavior_for "ifconfig output",
+    example_behavior_for "ifconfig output test",
     	"Mac OS X 10.5.5","192.168.0.4", "Mac_OS_X_10.5.5_ifconfig"
-		example_behavior_for "ifconfig output",
+		example_behavior_for "ifconfig output test",
       "SunOS", "172.16.15.138", "sun_os/ifconfig_single_interface"
-    example_behavior_for "ifconfig output",
+    example_behavior_for "ifconfig output test",
     	"Solaris","10.16.77.145", "solaris/ifconfig_all_with_multiple_interfaces"
     	
     example_behavior_for "ifconfig output loopback only",
