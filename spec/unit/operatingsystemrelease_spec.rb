@@ -14,26 +14,74 @@ describe "Operating System Release fact" do
   end
 
   test_cases = {
-    "OpenWrt"    => "/etc/openwrt_version",
-    "CentOS"    => "/etc/redhat-release",
-    "RedHat"    => "/etc/redhat-release",
-    "Scientific"  => "/etc/redhat-release",
-    "Fedora"    => "/etc/fedora-release",
-    "MeeGo"     => "/etc/meego-release",
-    "OEL"     => "/etc/enterprise-release",
-    "oel"     => "/etc/enterprise-release",
-    "OVS"     => "/etc/ovs-release",
-    "ovs"     => "/etc/ovs-release",
-    "OracleLinux" => "/etc/oracle-release",
-    "Ascendos"    => "/etc/redhat-release",
+    'OpenWrt'    => {
+      :path => '/etc/openwrt_version',
+      :has_fixture => false
+    },
+    "CentOS"    => {
+      :path => "/etc/redhat-release",
+      :has_fixture => true
+    },
+    "RedHat"    => {
+      :path => "/etc/redhat-release",
+      :has_fixture => true
+    },
+    "Scientific"  => {
+      :path => "/etc/redhat-release",
+      :has_fixture => true
+    },
+    "Fedora"    => {
+      :path => "/etc/fedora-release",
+      :has_fixture => false
+    },
+    "MeeGo"     => {
+      :path => "/etc/meego-release",
+      :has_fixture => false
+    },
+    "OEL"     => {
+      :path => "/etc/enterprise-release",
+      :has_fixture => false
+    },
+    "oel"     => {
+      :path => "/etc/enterprise-release",
+      :has_fixture => false
+    },
+    "OVS"     => {
+      :path => "/etc/ovs-release",
+      :has_fixture => false
+    },
+    "ovs"     => {
+      :path => "/etc/ovs-release",
+      :has_fixture => false
+    },
+    "OracleLinux" => {
+      :path => "/etc/oracle-release",
+      :has_fixture => false
+    },
+    "Ascendos"    => {
+      :path => "/etc/redhat-release",
+      :has_fixture => true
+    },
+    "CloudLinux"  => {
+      :path => "/etc/redhat-release",
+      :has_fixture => true
+    },
+    "SLC" => {
+      :path => "/etc/redhat-release",
+      :has_fixture => true
+    }
   }
 
-  test_cases.each do |system, file|
+  test_cases.each do |system, file_data|
     describe "with operatingsystem reported as #{system.inspect}" do
-      it "should read the #{file.inspect} file" do
+      it "should read the #{file_data[:path].inspect} file" do
         Facter.fact(:operatingsystem).stubs(:value).returns(system)
 
-        Facter::Util::FileRead.expects(:read).with(file).at_least(1)
+        if file_data[:has_fixture] == true
+          Facter::Util::FileRead.expects(:read).with(file_data[:path]).returns(my_fixture_read(system.downcase))
+        else
+          Facter::Util::FileRead.expects(:read).with(file_data[:path]).at_least(1)
+        end
 
         Facter.fact(:operatingsystemrelease).value
       end
