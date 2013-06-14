@@ -13,77 +13,58 @@ describe "Operating System Release fact" do
     Facter.clear
   end
 
-  test_cases = {
-    'OpenWrt'    => {
-      :path => '/etc/openwrt_version',
-      :has_fixture => false
-    },
+  # We don't currently have fixtures for these releases.
+  no_fixtures = {
+    "Fedora"      => { :path => "/etc/fedora-release" },
+    "MeeGo"       => { :path => "/etc/meego-release" },
+    "OEL"         => { :path => "/etc/enterprise-release" },
+    "oel"         => { :path => "/etc/enterprise-release" },
+    "OVS"         => { :path => "/etc/ovs-release" },
+    "ovs"         => { :path => "/etc/ovs-release" },
+    "OracleLinux" => { :path => "/etc/oracle-release" },
+    'OpenWrt'     => { :path => '/etc/openwrt_version' },
+    "Scientific"  => { :path => "/etc/redhat-release" }
+  }
+
+  no_fixtures.each do |system, file_data|
+    describe "with operatingsystem #{system.inspect}" do
+      it "reads the #{file_data[:path].inspect} file" do
+        Facter.fact(:operatingsystem).stubs(:value).returns(system)
+        Facter::Util::FileRead.expects(:read).with(file_data[:path]).at_least_once
+        Facter.fact(:operatingsystemrelease).value
+      end
+    end
+  end
+
+  with_fixtures = {
     "CentOS"    => {
       :path => "/etc/redhat-release",
-      :has_fixture => true
+      :expected_value => '5.6'
     },
     "RedHat"    => {
       :path => "/etc/redhat-release",
-      :has_fixture => true
-    },
-    "Scientific"  => {
-      :path => "/etc/redhat-release",
-      :has_fixture => true
-    },
-    "Fedora"    => {
-      :path => "/etc/fedora-release",
-      :has_fixture => false
-    },
-    "MeeGo"     => {
-      :path => "/etc/meego-release",
-      :has_fixture => false
-    },
-    "OEL"     => {
-      :path => "/etc/enterprise-release",
-      :has_fixture => false
-    },
-    "oel"     => {
-      :path => "/etc/enterprise-release",
-      :has_fixture => false
-    },
-    "OVS"     => {
-      :path => "/etc/ovs-release",
-      :has_fixture => false
-    },
-    "ovs"     => {
-      :path => "/etc/ovs-release",
-      :has_fixture => false
-    },
-    "OracleLinux" => {
-      :path => "/etc/oracle-release",
-      :has_fixture => false
+      :expected_value => '6.0'
     },
     "Ascendos"    => {
       :path => "/etc/redhat-release",
-      :has_fixture => true
+      :expected_value => '6.0'
     },
     "CloudLinux"  => {
       :path => "/etc/redhat-release",
-      :has_fixture => true
+      :expected_value => '5.5'
     },
     "SLC" => {
       :path => "/etc/redhat-release",
-      :has_fixture => true
-    }
+      :expected_value => '5.7'
+    },
   }
 
-  test_cases.each do |system, file_data|
-    describe "with operatingsystem reported as #{system.inspect}" do
-      it "should read the #{file_data[:path].inspect} file" do
+  with_fixtures.each do |system, file_data|
+    describe "with operatingsystem #{system.inspect}" do
+      it "reads the #{file_data[:path].inspect} file" do
         Facter.fact(:operatingsystem).stubs(:value).returns(system)
-
-        if file_data[:has_fixture] == true
-          Facter::Util::FileRead.expects(:read).with(file_data[:path]).returns(my_fixture_read(system.downcase))
-        else
-          Facter::Util::FileRead.expects(:read).with(file_data[:path]).at_least(1)
-        end
-
-        Facter.fact(:operatingsystemrelease).value
+        Facter::Util::FileRead.expects(:read).with(file_data[:path]).returns(my_fixture_read(system.downcase))
+        Facter.fact(:operatingsystemrelease).value.should == file_data[:expected_value]
       end
     end
   end
