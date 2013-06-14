@@ -72,6 +72,17 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
+confine :operatingsystem => 'CumulusLinux'
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/os-release')
+      if match = release.match(/VERSION_ID=["']?(.+?)["']?$/)
+        match[1]
+      end
+    end
+  end
+end
+
+Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{SLES SLED OpenSuSE}
   setcode do
     if release = Facter::Util::FileRead.read('/etc/SuSE-release')

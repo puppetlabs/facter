@@ -34,7 +34,10 @@ end
 Facter.add(:operatingsystem) do
   confine :kernel => :linux
   setcode do
-    if Facter.value(:lsbdistid) == "Ubuntu"
+    if FileTest.exists?("/etc/os-release")
+      match = File.read('/etc/os-release').match /^NAME=["']?(.+?)["']?$/
+      match[1].gsub(/[^a-zA-Z]/, '')
+    elsif Facter.value(:lsbdistid) == "Ubuntu"
        "Ubuntu"
     elsif FileTest.exists?("/etc/debian_version")
       "Debian"
