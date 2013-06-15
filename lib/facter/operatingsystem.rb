@@ -36,7 +36,7 @@ Facter.add(:operatingsystem) do
   setcode do
     if FileTest.exists?("/etc/os-release")
       File.read("/etc/os-release") =~ /^NAME=.*["'](.+?)["']$/
-        $1
+        $1.gsub(/[^a-zA-Z]/, '')
     elsif Facter.value(:lsbdistid) == "Ubuntu"
        "Ubuntu"
     elsif FileTest.exists?("/etc/debian_version")
