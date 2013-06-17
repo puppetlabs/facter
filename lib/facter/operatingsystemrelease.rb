@@ -79,7 +79,7 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => 'CumulusLinux'
   setcode do
-    File.read("/etc/os-release") =~ /^VERSION_ID=.*["'](.+?)["']$/
+    File.read("/etc/os-release") =~ /^VERSION_ID=["']?(.+?)["']?$/
     $1
   end
 end
