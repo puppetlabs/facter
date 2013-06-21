@@ -1,4 +1,3 @@
-missing command
 usage: zfs command args ...
 where 'command' is one of the following:
 
