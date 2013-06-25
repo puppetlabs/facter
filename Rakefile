@@ -7,7 +7,10 @@ require 'yaml'
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'tasks')
 
+require 'rake'
+
 begin
+  load File.join(File.dirname(__FILE__), 'ext', 'packaging', 'packaging.rake')
   require 'rubygems'
   require 'rspec'
   require 'rspec/core/rake_task'
@@ -15,10 +18,7 @@ begin
 rescue LoadError
 end
 
-require 'rake'
-
 Dir['tasks/**/*.rake'].each { |t| load t }
-Dir['ext/packaging/tasks/**/*'].sort.each { |t| load t }
 
 build_defs_file = 'ext/build_defaults.yaml'
 if File.exist?(build_defs_file)
