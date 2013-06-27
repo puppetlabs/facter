@@ -140,4 +140,12 @@ describe "Physical processor count facts" do
       end
     end
   end
+
+  describe "on openbsd" do
+    it "should return 4 physical CPUs" do
+      Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
+      Facter::Util::Resolution.expects(:exec).with("sysctl -n hw.ncpufound").returns("4")
+      Facter.fact(:physicalprocessorcount).value.should == "4"
+    end
+  end
 end
