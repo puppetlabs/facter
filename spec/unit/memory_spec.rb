@@ -232,6 +232,8 @@ EOS
       Facter::Core::Execution.stubs(:exec).with('vmstat').returns(vmstat)
       Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.physmem').returns('267321344')
 
+      Facter::Core::Execution.stubs(:exec).with('sysctl -n vm.swapencrypt.enable').returns('1')
+
       Facter.collection.internal_loader.load(:memory)
     end
 
@@ -253,6 +255,10 @@ EOS
 
     it "should return the current memory size in MB" do
       Facter.fact(:memorysize_mb).value.should == "254.94"
+    end
+
+    it "should return whether swap is encrypted" do
+      Facter.fact(:swapencrypted).value.should == true
     end
   end
 

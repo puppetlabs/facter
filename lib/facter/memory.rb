@@ -82,15 +82,21 @@ end
   end
 end
 
-if Facter.value(:kernel) == "Darwin"
-  Facter.add("SwapEncrypted") do
-    confine :kernel => :Darwin
-    setcode do
-      swap = Facter::Core::Execution.exec('sysctl vm.swapusage')
-      encrypted = false
-      if swap =~ /\(encrypted\)/ then encrypted = true; end
-      encrypted
-    end
+Facter.add("SwapEncrypted") do
+  confine :kernel => :openbsd
+  setcode do
+    sysctl_encrypted = Facter::Core::Execution.exec("sysctl -n vm.swapencrypt.enable").to_i
+    !(sysctl_encrypted.zero?)
+  end
+end
+
+Facter.add("SwapEncrypted") do
+  confine :kernel => :Darwin
+  setcode do
+    swap = Facter::Core::Execution.exec('sysctl vm.swapusage')
+    encrypted = false
+    if swap =~ /\(encrypted\)/ then encrypted = true; end
+    encrypted
   end
 end
 
