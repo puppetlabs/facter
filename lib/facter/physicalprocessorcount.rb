@@ -79,3 +79,10 @@ Facter.add('physicalprocessorcount') do
     end
   end
 end
+
+Facter.add('physicalprocessorcount') do
+  confine :kernel => :openbsd
+    setcode do
+      Facter::Util::Resolution.exec("sysctl -n hw.ncpufound")
+    end
+end
