@@ -185,6 +185,8 @@ describe "Memory facts" do
 
       Facter::Util::Resolution.stubs(:exec).with("sysctl hw.physmem | cut -d'=' -f2").returns('267321344')
 
+      Facter::Util::Resolution.stubs(:exec).with('sysctl -n vm.swapencrypt.enable').returns('1')
+
       Facter.collection.internal_loader.load(:memory)
     end
 
@@ -206,6 +208,10 @@ describe "Memory facts" do
 
     it "should return the current memory size in MB" do
       Facter.fact(:memorysize_mb).value.should == "254.94"
+    end
+
+    it "should return whether swap is encrypted" do
+      Facter.fact(:swapencrypted).value.should == true
     end
   end
 
