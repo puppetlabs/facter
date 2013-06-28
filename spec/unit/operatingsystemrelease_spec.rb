@@ -16,6 +16,7 @@ describe "Operating System Release fact" do
   # We don't currently have fixtures for these releases.
   no_fixtures = {
     "Fedora"      => { :path => "/etc/fedora-release" },
+    "LinuxMint"   => { :path => "/etc/linuxmint/info" },
     "MeeGo"       => { :path => "/etc/meego-release" },
     "OEL"         => { :path => "/etc/enterprise-release" },
     "oel"         => { :path => "/etc/enterprise-release" },
