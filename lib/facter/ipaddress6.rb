@@ -26,7 +26,7 @@ require 'facter/util/ip'
 def get_address_after_token(output, token, return_first=false)
   ip = nil
 
-  output.scan(/#{token} ((?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/).each do |match|
+  String(output).scan(/#{token} ((?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/).each do |match|
     match = match.first
     unless match =~ /fe80.*/ or match == "::1"
       ip = match
