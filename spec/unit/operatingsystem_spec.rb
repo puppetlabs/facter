@@ -139,4 +139,12 @@ describe "Operating System fact" do
       Facter.fact(:operatingsystem).value.should == "SLC"
     end
   end
+    describe "on Cumulus Linux" do
+      it "should identify as 'Cumulus Linux'" do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+        FileTest.expects(:exists?).with("/etc/os-release").returns true
+        File.expects(:read).with("/etc/os-release").returns 'NAME="Cumulus Linux"'
+        Facter.fact(:operatingsystem).value.should == "CumulusLinux"
+      end
+    end
 end

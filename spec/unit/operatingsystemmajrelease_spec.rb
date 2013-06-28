@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'facter'
 
 describe "OS Major Release fact" do
-  ['Amazon','CentOS','CloudLinux','Debian','Fedora','OEL','OracleLinux','OVS','RedHat','Scientific','SLC'].each do |operatingsystem|
+  ['Amazon','CentOS','CloudLinux','Debian','Fedora','OEL','OracleLinux','OVS','RedHat','Scientific','SLC','CumulusLinux'].each do |operatingsystem|
     context "on #{operatingsystem} operatingsystems" do
       it "should be derived from operatingsystemrelease" do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
