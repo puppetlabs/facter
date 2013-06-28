@@ -1,0 +1,2 @@
+lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
+        inet 127.0.0.1 netmask 0xff000000 

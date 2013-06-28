@@ -1,0 +1,4 @@
+lo0: flags=e08084b<UP,BROADCAST,LOOPBACK,RUNNING,SIMPLEX,MULTICAST,GROUPRT,64BIT>
+        inet 127.0.0.1 netmask 0xff000000 broadcast 127.255.255.255
+        inet6 ::1/0
+         tcp_sendspace 131072 tcp_recvspace 131072 rfc1323 1
