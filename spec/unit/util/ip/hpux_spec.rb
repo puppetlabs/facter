@@ -181,101 +181,50 @@ describe Facter::Util::IP::HPUX do
           described_class.stubs(:exec).returns(ifconfig_output)
         end
 
-        describe "lan1" do
-          let(:interface) { 'lan1' }
+        { "lan1" => 
+          { :ipaddress  => '10.1.54.36',
+            :netmask    => '255.255.255.0',
+            :macaddress => '00:17:FD:2D:2A:57'
+          },
+          "lan0" => 
+          { :ipaddress  => '192.168.30.152',
+            :netmask    => '255.255.255.0',
+            :macaddress => '00:12:31:7D:62:09'},
+          "lo0" => 
+          { :ipaddress  => '127.0.0.1',
+            :netmask    => '255.0.0.0',
+            :macaddress => nil}
+        }.each do |key, value|
+          describe key do
+            let (:interface) { key }
 
-          describe "ipaddress" do
-            let(:label) { 'ipaddress' }
+            describe "ipaddress" do
+              let(:label) { 'ipaddress' }
 
-            it { value_for_interface_and_label.should eq '10.1.54.36' }
-          end
-
-          describe "netmask" do
-            let(:label) { 'netmask' }
-
-            it { value_for_interface_and_label.should eq '255.255.255.0' }
-          end
-
-          describe "macaddress" do
-            let(:label) { 'macaddress' }
-            let(:macaddress) { '00:17:FD:2D:2A:57' }
-
-            before :each do
-              described_class.expects(:lanscan).returns(lanscan_output)
+              it { value_for_interface_and_label.should eq value[:ipaddress] }
             end
 
-            it { value_for_interface_and_label.should eq macaddress }
-          end
+            describe "netmask" do
+              let(:label) { 'netmask' }
 
-          describe "mtu" do
-            let(:label) { 'mtu' }
-
-            it { pending "(#17808) MTU has not been implemented for HP-UX" }
-          end
-        end
-
-        describe "lan0" do
-          let(:interface) { 'lan0' }
-
-          describe "ipaddress" do
-            let(:label) { 'ipaddress' }
-
-            it { value_for_interface_and_label.should eq '192.168.30.152' }
-          end
-
-          describe "netmask" do
-            let(:label) { 'netmask' }
-
-            it { value_for_interface_and_label.should eq '255.255.255.0' }
-          end
-
-          describe "macaddress" do
-            let(:label) { 'macaddress' }
-            let(:macaddress) { '00:12:31:7D:62:09' }
-
-            before :each do
-              described_class.expects(:lanscan).returns(lanscan_output)
+              it { value_for_interface_and_label.should eq value[:netmask] }
             end
 
-            it { value_for_interface_and_label.should eq macaddress }
-          end
+            describe "macaddress" do
+              let(:label) { 'macaddress' }
+              
+              before :each do
+                described_class.expects(:lanscan).returns(lanscan_output)
+              end
 
-          describe "mtu" do
-            let(:label) { 'mtu' }
-
-            it { pending "(#17808) MTU has not been implemented for HP-UX" }
-          end
-        end
-
-        describe "lo0" do
-          let(:interface) { 'lo0' }
-
-          describe "ipaddress" do
-            let(:label) { 'ipaddress' }
-
-            it { value_for_interface_and_label.should eq '127.0.0.1' }
-          end
-
-          describe "netmask" do
-            let(:label) { 'netmask' }
-
-            it { value_for_interface_and_label.should eq '255.0.0.0' }
-          end
-
-          describe "macaddress" do
-            let(:label) { 'macaddress' }
-
-            before :each do
-              described_class.expects(:lanscan).returns(lanscan_output)
+              it { value_for_interface_and_label.should eq value[:macaddress] }
             end
 
-            it { value_for_interface_and_label.should be_nil }
-          end
+            describe "mtu" do
+              let(:label) { 'mtu' }
 
-          describe "mtu" do
-            let(:label) { 'mtu' }
-
-            it { pending "(#17808) MTU has not been implemented for HP-UX" }
+              it { pending "(#17808) MTU has not been implemented for HP-UX" }
+            end
           end
         end
       end
