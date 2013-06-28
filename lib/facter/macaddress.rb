@@ -29,7 +29,7 @@ Facter.add(:macaddress) do
     ether = []
     output = Facter::Util::IP.exec_ifconfig(["-a","2>/dev/null"])
 
-    output.each_line do |s|
+    String(output).each_line do |s|
       ether.push($1) if s =~ /(?:ether|HWaddr) ((\w{1,2}:){5,}\w{1,2})/
     end
     Facter::Util::Macaddress.standardize(ether[0])
