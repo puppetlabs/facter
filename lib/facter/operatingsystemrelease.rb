@@ -90,8 +90,6 @@ confine :operatingsystem => 'CumulusLinux'
   end
 end
 
-
-
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{SLES SLED OpenSuSE}
   setcode do

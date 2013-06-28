@@ -13,6 +13,7 @@ describe "OS Family fact" do
     'Solaris'      => 'Solaris',
     'Ubuntu'       => 'Debian',
     'Debian'       => 'Debian',
+    'LinuxMint'    => 'Debian',
     'Gentoo'       => 'Gentoo',
     'Fedora'       => 'RedHat',
     'Amazon'       => 'RedHat',
