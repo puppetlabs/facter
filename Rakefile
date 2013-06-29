@@ -9,11 +9,12 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), 'tasks')
 
 require 'rake'
 
+require 'rubygems'
+require 'rspec'
+require 'rspec/core/rake_task'
+
 begin
   load File.join(File.dirname(__FILE__), 'ext', 'packaging', 'packaging.rake')
-  require 'rubygems'
-  require 'rspec'
-  require 'rspec/core/rake_task'
   require 'rcov'
 rescue LoadError
 end
