@@ -47,6 +47,14 @@ describe "macaddress fact" do
 
         Facter.value(:macaddress).should == "00:12:3f:be:22:01"
       end
+
+      # the local loopback interface (lo) doesn't have a macaddress/has its macaddress zero-filled
+      it "should return nil for zero-only macaddresses" do
+          Dir.stubs(:glob).returns( [ '/sys/class/net/lo' ])
+          File.stubs(:read).returns( "00:00:00:00:00:00\n" )
+
+          Facter.value(:macaddress).should == nil
+      end
     end
 
     describe "without /sys available" do
