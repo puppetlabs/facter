@@ -20,34 +20,66 @@ describe "macaddress fact" do
   end
 
   describe "when run on Linux" do
-    before :each do
-      Facter.fact(:kernel).stubs(:value).returns("Linux")
-      Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
-      Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
+    describe "with /sys available" do
+      before :each do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+        Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
+      end
+
+      it "should glob /sys/class/net" do
+        Dir.expects(:glob).with('/sys/class/net/*').returns([ '/sys/class/net/eth0', '/sys/class/net/lo' ])
+        File.stubs(:read).returns( "00:12:3f:be:22:01\n" )
+
+        Facter.value(:macaddress)
+      end
+
+      it "should open the address file of the first interface" do
+        Dir.stubs(:glob).returns([ '/sys/class/net/eth0', '/sys/class/net/lo' ])
+        File.expects(:read).with('/sys/class/net/eth0/address').returns( "00:12:3f:be:22:01\n" )
+
+        Facter.value(:macaddress)
+      end
+
+
+      it "should return the macaddress of the first interface" do
+        Dir.stubs(:glob).returns( [ '/sys/class/net/eth0', '/sys/class/net/lo' ])
+        File.stubs(:read).returns( "00:12:3f:be:22:01\n" )
+
+        Facter.value(:macaddress).should == "00:12:3f:be:22:01"
+      end
     end
 
-    it "should return the macaddress of the first interface" do
-      Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
-        returns(ifconfig_fixture('linux_ifconfig_all_with_multiple_interfaces'))
+    describe "without /sys available" do
+      before :each do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+        Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
+        Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
+        Dir.stubs(:glob).with('/sys/class/net/*').returns([])
+      end
 
-      Facter.value(:macaddress).should == "00:12:3f:be:22:01"
-    end
+      it "should return the macaddress of the first interface" do
+        Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
+          returns(ifconfig_fixture('linux_ifconfig_all_with_multiple_interfaces'))
 
-    it "should return nil when no macaddress can be found" do
-      Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
-        returns(ifconfig_fixture('linux_ifconfig_no_mac'))
+        Facter.value(:macaddress).should == "00:12:3f:be:22:01"
+      end
 
-      proc { Facter.value(:macaddress) }.should_not raise_error
-      Facter.value(:macaddress).should be_nil
-    end
+      it "should return nil when no macaddress can be found" do
+        Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
+          returns(ifconfig_fixture('linux_ifconfig_no_mac'))
 
-    # some interfaces dont have a real mac addresses (like venet inside a container)
-    it "should return nil when no interface has a real macaddress" do
-      Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
-        returns(ifconfig_fixture('linux_ifconfig_venet'))
+        proc { Facter.value(:macaddress) }.should_not raise_error
+        Facter.value(:macaddress).should be_nil
+      end
 
-      proc { Facter.value(:macaddress) }.should_not raise_error
-      Facter.value(:macaddress).should be_nil
+      # some interfaces dont have a real mac addresses (like venet inside a container)
+      it "should return nil when no interface has a real macaddress" do
+        Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
+          returns(ifconfig_fixture('linux_ifconfig_venet'))
+
+        proc { Facter.value(:macaddress) }.should_not raise_error
+        Facter.value(:macaddress).should be_nil
+      end
     end
   end
 
