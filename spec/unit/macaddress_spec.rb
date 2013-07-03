@@ -37,7 +37,7 @@ describe "macaddress fact" do
       Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
         returns(ifconfig_fixture('linux_ifconfig_no_mac'))
 
-      proc { Facter.value(:macaddress) }.should_not raise_error
+      expect { Facter.value(:macaddress) }.to_not raise_error
       Facter.value(:macaddress).should be_nil
     end
 
@@ -46,7 +46,7 @@ describe "macaddress fact" do
       Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
         returns(ifconfig_fixture('linux_ifconfig_venet'))
 
-      proc { Facter.value(:macaddress) }.should_not raise_error
+      expect { Facter.value(:macaddress) }.to_not raise_error
       Facter.value(:macaddress).should be_nil
     end
   end
@@ -69,7 +69,7 @@ describe "macaddress fact" do
       Facter::Util::IP.stubs(:exec_ifconfig).
         returns(ifconfig_fixture('openbsd_bridge_rules'))
 
-      proc { Facter.value(:macaddress) }.should_not raise_error
+      expect { Facter.value(:macaddress) }.to_not raise_error
       Facter.value(:macaddress).should be_nil
     end
   end
