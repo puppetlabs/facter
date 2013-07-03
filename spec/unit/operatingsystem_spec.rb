@@ -89,6 +89,13 @@ describe "Operating System fact" do
         Facter.fact(:operatingsystem).value.should == "Ubuntu"
       end
 
+      it "on LinuxMint should use the lsbdistid fact" do
+        FileUtils.stubs(:exists?).with("/etc/debian_version").returns true
+
+        Facter.stubs(:value).with(:lsbdistid).returns("LinuxMint")
+        Facter.fact(:operatingsystem).value.should == "LinuxMint"
+      end
+
     end
 
 
