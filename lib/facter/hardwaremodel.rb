@@ -32,17 +32,22 @@ Facter.add(:hardwaremodel) do
     # http://source.winehq.org/source/include/winnt.h#L568
     # http://msdn.microsoft.com/en-us/library/windows/desktop/aa394373(v=vs.85).aspx
     # http://msdn.microsoft.com/en-us/library/windows/desktop/windows.system.processorarchitecture.aspx
+    # http://linux.derkeiler.com/Mailing-Lists/Kernel/2008-05/msg12924.html (anything over 6 is still i686)
     # Also, arm and neutral are included because they are valid for the upcoming
     # windows 8 release.  --jeffweiss 23 May 2012
     require 'facter/util/wmi'
     model = ""
+    architecture_level = nil
+
     Facter::Util::WMI.execquery("select Architecture, Level, AddressWidth from Win32_Processor").each do |cpu|
+      architecture_level = (cpu.Level > 5) ? 6 : cpu.Level;
+
       model =
         case cpu.Architecture
         when 11 then 'neutral'        # PROCESSOR_ARCHITECTURE_NEUTRAL
         when 10 then 'i686'           # PROCESSOR_ARCHITECTURE_IA32_ON_WIN64
         when 9 then                   # PROCESSOR_ARCHITECTURE_AMD64
-          cpu.AddressWidth == 32 ? "i#{cpu.Level}86" : 'x64' # 32 bit OS on 64 bit CPU
+          cpu.AddressWidth == 32 ? "i#{architecture_level}86" : 'x64' # 32 bit OS on 64 bit CPU
         when 8 then 'msil'            # PROCESSOR_ARCHITECTURE_MSIL
         when 7 then 'alpha64'         # PROCESSOR_ARCHITECTURE_ALPHA64
         when 6 then 'ia64'            # PROCESSOR_ARCHITECTURE_IA64
@@ -51,7 +56,7 @@ Facter.add(:hardwaremodel) do
         when 3 then 'powerpc'         # PROCESSOR_ARCHITECTURE_PPC
         when 2 then 'alpha'           # PROCESSOR_ARCHITECTURE_ALPHA
         when 1 then 'mips'            # PROCESSOR_ARCHITECTURE_MIPS
-        when 0 then "i#{cpu.Level}86" # PROCESSOR_ARCHITECTURE_INTEL
+        when 0 then "i#{architecture_level}86" # PROCESSOR_ARCHITECTURE_INTEL
         else 'unknown'            # PROCESSOR_ARCHITECTURE_UNKNOWN
         end
       break
