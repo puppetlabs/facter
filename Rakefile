@@ -10,11 +10,17 @@ require 'rake'
 
 begin
   load File.join(File.dirname(__FILE__), 'ext', 'packaging', 'packaging.rake')
-  require 'rubygems'
-  require 'rspec'
-  require 'rspec/core/rake_task'
-  require 'rcov'
 rescue LoadError
+end
+
+['rubygems',
+'rspec',
+'rspec/core/rake_task',
+'rcov',].each do |lib|
+  begin
+    require lib
+  rescue LoadError
+  end
 end
 
 Dir['tasks/**/*.rake'].each { |t| load t }
