@@ -20,6 +20,14 @@ Adding your own facts
 See the [Adding Facts](http://docs.puppetlabs.com/guides/custom_facts.html)
 page for details of how to add your own custom facts to Facter.
 
+Running Specs
+-------------
+
+* bundle install --path .bundle/gems
+* bundle exec rake spec
+
+Note: external facts in the system facts.d directory can cause spec failures.
+
 Further Information
 -------------------
 
