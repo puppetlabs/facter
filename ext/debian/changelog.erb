@@ -4,6 +4,12 @@ facter (<%= @debversion %>) hardy lucid oneiric unstable sid wheezy lucid squeez
 
  -- Puppet Labs Release <info@puppetlabs.com>  <%= Time.now.strftime("%a, %d %b %Y %H:%M:%S %z")%>
 
+facter (1.7.2-1puppetlabs2) lucid unstable sid wheezy lucid squeeze precise; urgency=low
+
+  * Remove dependenices on libssl-ruby from facter as they are not used
+
+ -- Matthaus Owens <matthaus@puppetlabs.com>  Thu, 11 Jul 2013 13:11:30 +0000
+
 facter (1.7.0-0.1rc1puppetlabs1) hardy lucid oneiric unstable sid wheezy lucid squeeze precise; urgency=low
 
   * Add dependency on virt-what to facter for better virutalization detection

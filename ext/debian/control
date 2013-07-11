@@ -2,13 +2,13 @@ Source: facter
 Section: ruby
 Priority: optional
 Maintainer: Puppet Labs <info@puppetlabs.com>
-Build-Depends: cdbs, debhelper (>> 7), ruby | ruby-interpreter, libopenssl-ruby | libopenssl-ruby1.8 | libopenssl-ruby1.9.1, rdoc
+Build-Depends: cdbs, debhelper (>> 7), ruby | ruby-interpreter
 Standards-Version: 3.9.1
 Homepage: http://www.puppetlabs.com
 
 Package: facter
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, ruby | ruby-interpreter, libopenssl-ruby | libopenssl-ruby1.8 | libopenssl-ruby1.9.1, dmidecode [i386 amd64 ia64], virt-what, pciutils
+Depends: ${shlibs:Depends}, ${misc:Depends}, ruby | ruby-interpreter, dmidecode [i386 amd64 ia64], virt-what, pciutils
 Description: Ruby module for collecting simple facts about a host operating system
  Some of the facts are preconfigured, such as the hostname and the operating
  system. Additional facts can be added through simple Ruby scripts.
