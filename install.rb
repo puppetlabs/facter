@@ -60,7 +60,7 @@ $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), 'lib')))
 require 'facter'
 @operatingsystem = Facter[:operatingsystem].value
 
-PREREQS = %w{openssl xmlrpc/client xmlrpc/server cgi}
+PREREQS = %w{cgi}
 
 InstallOptions = OpenStruct.new
 
