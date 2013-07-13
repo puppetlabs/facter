@@ -111,13 +111,14 @@ module Facter::Util::Parser
 
   class ScriptParser < Base
     def results
-      output = Facter::Util::Resolution.exec(filename)
-
       result = {}
-      re = /^(.+)=(.+)$/
-      output.each_line do |line|
-        if match_data = re.match(line.chomp)
-          result[match_data[1]] = match_data[2]
+
+      if output = Facter::Util::Resolution.exec(filename)
+        re = /^(.+)=(.+)$/
+        output.each_line do |line|
+          if match_data = re.match(line.chomp)
+            result[match_data[1]] = match_data[2]
+          end
         end
       end
       result
