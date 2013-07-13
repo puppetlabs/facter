@@ -86,7 +86,7 @@ module Facter::Core::Logging
   #
   # @api private
   def show_time(string)
-    puts "#{GREEN}#{string}#{RESET}" if string and self.timing?
+    $stderr.puts "#{GREEN}#{string}#{RESET}" if string and self.timing?
   end
 
   # Enable or disable logging of debug messages
