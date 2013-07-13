@@ -106,7 +106,7 @@ module Facter
   #
   # @api private
   def self.show_time(string)
-    puts "#{GREEN}#{string}#{RESET}" if string and Facter.timing?
+    $stderr.puts "#{GREEN}#{string}#{RESET}" if string and Facter.timing?
   end
 
   # Returns whether timing output is turned on
