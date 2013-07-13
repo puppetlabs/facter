@@ -154,8 +154,14 @@ end
 
 
 Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => %W{Amazon}
-  setcode do Facter[:lsbdistrelease].value end
+  confine :operatingsystem => 'Amazon'
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/issue')
+      if match = release.match(/Amazon Linux AMI release (\d{4}\.\d{2})/)
+        match[1]
+      end
+    end
+  end
 end
 
 Facter.add(:operatingsystemrelease) do
