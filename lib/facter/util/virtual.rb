@@ -22,6 +22,9 @@ module Facter::Util::Virtual
     end
     output = Facter::Util::Resolution.exec redirected_cmd
     output.gsub(/^virt-what: .*$/, '') if output
+
+    # Keep output consistent if we're running in an OpenVZ CT (Bug #20382)
+    output.gsub(/^openvz$/,'openvzve') if output
   end
 
   ##
