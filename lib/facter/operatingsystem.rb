@@ -114,12 +114,10 @@ end
 
 Facter.add(:operatingsystem) do
   confine :kernel => "VMkernel"
-  setcode do
-    "ESXi"
-  end
+  setcode { "ESXi" }
 end
 
 Facter.add(:operatingsystem) do
   # Default to just returning the kernel as the operating system
-  setcode do Facter[:kernel].value end
+  setcode { Facter[:kernel].value }
 end
