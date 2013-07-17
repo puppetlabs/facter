@@ -11,6 +11,8 @@
 # Caveats:
 #
 
+require 'facter/util/operatingsystem'
+
 Facter.add(:operatingsystem) do
   confine :kernel => :sunos
   setcode do
@@ -31,84 +33,74 @@ Facter.add(:operatingsystem) do
   end
 end
 
+# Resolution for Debian variants.
 Facter.add(:operatingsystem) do
   confine :kernel => :linux
+  has_weight 10
   setcode do
-    if Facter.value(:lsbdistid) == "Ubuntu"
-       "Ubuntu"
-    elsif Facter.value(:lsbdistid) == "LinuxMint"
-       "LinuxMint"
-    elsif FileTest.exists?("/etc/debian_version")
-      "Debian"
-    elsif FileTest.exists?("/etc/openwrt_release")
-      "OpenWrt"
-    elsif FileTest.exists?("/etc/gentoo-release")
-      "Gentoo"
-    elsif FileTest.exists?("/etc/fedora-release")
-      "Fedora"
-    elsif FileTest.exists?("/etc/mandriva-release")
-      "Mandriva"
-    elsif FileTest.exists?("/etc/mandrake-release")
-      "Mandrake"
-    elsif FileTest.exists?("/etc/meego-release")
-      "MeeGo"
-    elsif FileTest.exists?("/etc/arch-release")
-      "Archlinux"
-    elsif FileTest.exists?("/etc/oracle-release")
-      "OracleLinux"
-    elsif FileTest.exists?("/etc/enterprise-release")
-      if FileTest.exists?("/etc/ovs-release")
-        "OVS"
+    if FileTest.exists? '/etc/debian_version'
+      if Facter.value(:lsbdistid) == "Ubuntu"
+         "Ubuntu"
+      elsif Facter.value(:lsbdistid) == "LinuxMint"
+        "LinuxMint"
       else
-        "OEL"
+        "Debian"
       end
-    elsif FileTest.exists?("/etc/vmware-release")
-      "VMWareESX"
-    elsif FileTest.exists?("/etc/redhat-release")
-      txt = File.read("/etc/redhat-release")
-      if txt =~ /centos/i
-        "CentOS"
-      elsif txt =~ /CERN/
-        "SLC"
-      elsif txt =~ /scientific/i
-        "Scientific"
-      elsif txt =~ /^cloudlinux/i
-        "CloudLinux"
-      elsif txt =~ /^Parallels Server Bare Metal/i
-        "PSBM"
-      elsif txt =~ /Ascendos/i
-        "Ascendos"
-      elsif txt =~ /^XenServer/i
-        "XenServer"
-      elsif txt =~ /XCP/
-        "XCP"
-      else
-        "RedHat"
-      end
-    elsif FileTest.exists?("/etc/SuSE-release")
-      txt = File.read("/etc/SuSE-release")
-      if txt =~ /^SUSE LINUX Enterprise Server/i
-        "SLES"
-      elsif txt =~ /^SUSE LINUX Enterprise Desktop/i
-        "SLED"
-      elsif txt =~ /^openSUSE/i
-        "OpenSuSE"
-      else
-        "SuSE"
-      end
-    elsif FileTest.exists?("/etc/bluewhite64-version")
-      "Bluewhite64"
-    elsif FileTest.exists?("/etc/slamd64-version")
-      "Slamd64"
-    elsif FileTest.exists?("/etc/slackware-version")
-      "Slackware"
-    elsif FileTest.exists?("/etc/alpine-release")
-      "Alpine"
-    elsif FileTest.exists?("/etc/mageia-release")
-      "Mageia"
-    elsif FileTest.exists?("/etc/system-release")
-      "Amazon"
     end
+  end
+end
+
+Facter.add(:operatingsystem) do
+  confine :kernel => :linux
+  has_weight 10
+  setcode do
+    fpath = '/etc/redhat-release'
+    if FileTest.exists? fpath
+      candidates = Facter::Util::Operatingsystem::REDHAT_VARIANTS
+      variant = Facter::Util::Operatingsystem.release_by_file(fpath, candidates)
+      variant || 'RedHat'
+    end
+  end
+end
+
+Facter.add(:operatingsystem) do
+  confine :kernel => :linux
+  has_weight 10
+  setcode do
+    if FileTest.exists? '/etc/enterprise-release'
+      if FileTest.exists? '/etc/ovs-release'
+        'OVS'
+      else
+        'OEL'
+      end
+    end
+  end
+end
+
+Facter.add(:operatingsystem) do
+  confine :kernel => :linux
+  has_weight 10
+  setcode do
+    fpath = "/etc/SuSE-release"
+    if FileTest.exists? fpath
+      candidates = Facter::Util::Operatingsystem::SUSE_VARIANTS
+      variant = Facter::Util::Operatingsystem.release_by_file(fpath, candidates)
+      variant || 'SuSE'
+    end
+  end
+end
+
+Facter.add(:operatingsystem) do
+  confine :kernel => :linux
+  has_weight 5
+  setcode do
+    files = Facter::Util::Operatingsystem::OPERATINGSYSTEM_FILES
+
+    key = files.keys.find do |release_file|
+      FileTest.exists? release_file
+    end
+
+    files[key]
   end
 end
 
