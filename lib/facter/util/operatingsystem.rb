@@ -22,14 +22,14 @@ module Operatingsystem
   }
 
   REDHAT_VARIANTS = {
-      /centos/i      => "CentOS",
-      /CERN/         => "SLC",
-      /scientific/i  => "Scientific",
-      /^cloudlinux/i => "CloudLinux",
-      /Ascendos/i    => "Ascendos",
-      /^XenServer/i  => "XenServer",
-      /XCP/          => "XCP",
-      /^Parallels Server Bare Metal/i => "PSBM",
+    /centos/i                       => "CentOS",
+    /scientific linux CERN/i        => "SLC",
+    /scientific linux release/i     => "Scientific",
+    /^cloudlinux/i                  => "CloudLinux",
+    /Ascendos/i                     => "Ascendos",
+    /^XenServer/i                   => "XenServer",
+    /XCP/                           => "XCP",
+    /^Parallels Server Bare Metal/i => "PSBM",
   }
 
   SUSE_VARIANTS = {
