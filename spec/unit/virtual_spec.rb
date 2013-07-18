@@ -304,6 +304,12 @@ describe "Virtual fact" do
       Facter::Util::WMI.expects(:execquery).returns([computersystem])
       Facter.fact(:virtual).value.should == "vmware"
     end
+
+    it "resolves as Xen with a manufacturer name like xen" do
+      computersystem = mock('computersystem', :model => nil, :manufacturer => 'Xen')
+      Facter::Util::WMI.expects(:execquery).returns([computersystem])
+      Facter.fact(:virtual).value.should == "xen"
+    end
   end
 
   describe "with the virt-what command available (#8210)" do
