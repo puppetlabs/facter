@@ -83,14 +83,14 @@ describe "Operating System fact" do
       end
 
       it "on Ubuntu should use the lsbdistid fact" do
-        FileUtils.stubs(:exists?).with("/etc/debian_version").returns true
+        FileTest.stubs(:exists?).with("/etc/debian_version").returns true
 
         Facter.stubs(:value).with(:lsbdistid).returns("Ubuntu")
         Facter.fact(:operatingsystem).value.should == "Ubuntu"
       end
 
       it "on LinuxMint should use the lsbdistid fact" do
-        FileUtils.stubs(:exists?).with("/etc/debian_version").returns true
+        FileTest.stubs(:exists?).with("/etc/debian_version").returns true
 
         Facter.stubs(:value).with(:lsbdistid).returns("LinuxMint")
         Facter.fact(:operatingsystem).value.should == "LinuxMint"
