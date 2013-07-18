@@ -154,6 +154,9 @@ Facter.add("virtual") do
       result = nil
       Facter::Util::WMI.execquery("SELECT manufacturer, model FROM Win32_ComputerSystem").each do |computersystem|
         result =
+          case computersystem.manufacturer
+          when /Xen/ then "xen"
+          end
           case computersystem.model
           when /VirtualBox/ then "virtualbox"
           when /Virtual Machine/
