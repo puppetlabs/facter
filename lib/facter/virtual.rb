@@ -160,7 +160,12 @@ Facter.add("virtual") do
             computersystem.manufacturer =~ /Microsoft/ ? "hyperv" : nil
           when /VMware/ then "vmware"
           when /KVM/ then "kvm"
-          else "physical"
+          else
+            if computersystem.manufacturer =~ /Xen/
+              "xen"
+            else
+              "physical"
+            end
           end
         break
       end
