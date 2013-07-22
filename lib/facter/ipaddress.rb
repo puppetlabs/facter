@@ -27,15 +27,34 @@ require 'facter/util/ip'
 Facter.add(:ipaddress) do
   confine :kernel => :linux
   setcode do
-    ip = nil
+    ip = firstip = nil
+    maxbytes = 0
     output = Facter::Util::IP.exec_ifconfig(["2>/dev/null"])
     if output
       regexp = /inet (?:addr:)?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-      output.split("\n").each do |line|
-        match = regexp.match(line)
-        if match
-          break match[1] unless /^127/.match(match[1])
+        output.split(/^$/).each do |line|
+          # for every interface
+          match = regexp.match(line)
+          if match
+            if (!/^127/.match(match[1]))
+              if (!firstip)
+                # fallback to first discovered ip if byte count magic fail
+                firstip = match[1]
+              end
+              if (matchbytes = line.scan(/.X packets:([0-9]+)/m) and matchbytes[0][0] and matchbytes[1][0])
+                nbytes = matchbytes[0][0].to_i + matchbytes[1][0].to_i
+                if (nbytes > maxbytes)
+                  maxbytes = nbytes
+                  ip=match[1]
+                end
+              end
+            end
+          end
         end
+      if (maxbytes > 0)
+        ip
+      else
+        firstip
       end
     end
   end
