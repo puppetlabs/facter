@@ -368,7 +368,7 @@ end
 
 class Array
   # convert an array to plist format
-  def to_plist(options={})
+  def to_cfplist(options={})
     options[:plist_format] ||= Facter::Util::CFPropertyList::List::FORMAT_BINARY
 
     plist = Facter::Util::CFPropertyList::List.new
@@ -379,7 +379,7 @@ end
 
 class Enumerator
   # convert an array to plist format
-  def to_plist(options={})
+  def to_cfplist(options={})
     options[:plist_format] ||= Facter::Util::CFPropertyList::List::FORMAT_BINARY
 
     plist = Facter::Util::CFPropertyList::List.new
@@ -390,7 +390,7 @@ end
 
 class Hash
   # convert a hash to plist format
-  def to_plist(options={})
+  def to_cfplist(options={})
     options[:plist_format] ||= Facter::Util::CFPropertyList::List::FORMAT_BINARY
 
     plist = Facter::Util::CFPropertyList::List.new
