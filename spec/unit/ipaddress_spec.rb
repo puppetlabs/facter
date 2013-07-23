@@ -32,5 +32,7 @@ describe "The ipaddress fact" do
       "Linux with multiple loopback addresses",
       "10.0.222.20",
       "ifconfig_multiple_127_addresses.txt"
+    example_behavior_for "ifconfig output",
+      "Linux with non english locale", nil, "ifconfig_non_english_locale.txt"
   end
 end

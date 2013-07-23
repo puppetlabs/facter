@@ -1,0 +1,18 @@
+lo        Link encap:Boucle locale  
+          inet adr:127.0.0.1  Masque:255.0.0.0
+          adr inet6: ::1/128 Scope:Hote
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:1001 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:1001 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 lg file transmission:0 
+          RX bytes:52562 (51.3 KiB)  TX bytes:52562 (51.3 KiB)
+
+wlan0     Link encap:Ethernet  HWaddr ac:81:12:2d:86:25  
+          inet adr:192.168.1.83  Bcast:192.168.1.255  Masque:255.255.255.0
+          adr inet6: fe80::ae81:12ff:fe2d:8625/64 Scope:Lien
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:493220 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:390375 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 lg file transmission:1000 
+          RX bytes:569234568 (542.8 MiB)  TX bytes:69778980 (66.5 MiB)
+
