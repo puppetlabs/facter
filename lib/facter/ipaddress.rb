@@ -103,9 +103,19 @@ end
 
 Facter.add(:ipaddress) do
   confine :kernel => %w{windows}
+
   setcode do
-    require 'socket'
-    IPSocket.getaddress(Socket.gethostname)
+    ipaddr = nil
+
+    adapters = Facter::Util::IP::Windows.get_preferred_network_adapters
+    adapters.find do |nic|
+      nic.IPAddress.any? do |addr|
+        ipaddr = addr if Facter::Util::IP::Windows.valid_ipv4_address?(addr)
+        ipaddr
+      end
+    end
+
+    ipaddr
   end
 end
 
