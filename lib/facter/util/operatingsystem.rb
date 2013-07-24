@@ -6,7 +6,6 @@ module Operatingsystem
   OPERATINGSYSTEM_FILES = {
     "/etc/openwrt_release"     => "OpenWrt",
     "/etc/gentoo-release"      => "Gentoo",
-    "/etc/fedora-release"      => "Fedora",
     "/etc/mandriva-release"    => "Mandriva",
     "/etc/mandrake-release"    => "Mandrake",
     "/etc/meego-release"       => "MeeGo",
@@ -30,6 +29,7 @@ module Operatingsystem
     /^XenServer/i                   => "XenServer",
     /XCP/                           => "XCP",
     /^Parallels Server Bare Metal/i => "PSBM",
+    /^Fedora release/               => "Fedora",
   }
 
   SUSE_VARIANTS = {
