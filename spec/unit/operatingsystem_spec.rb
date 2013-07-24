@@ -57,7 +57,6 @@ describe "Operating System fact" do
     {
       "Debian"      => "/etc/debian_version",
       "Gentoo"      => "/etc/gentoo-release",
-      "Fedora"      => "/etc/fedora-release",
       "Mandriva"    => "/etc/mandriva-release",
       "Mandrake"    => "/etc/mandrake-release",
       "MeeGo"       => "/etc/meego-release",
@@ -109,6 +108,7 @@ describe "Operating System fact" do
       "CloudLinux" => "CloudLinux Server release 5.5",
       "XenServer"  => "XenServer release 5.6.0-31188p (xenenterprise)",
       "XCP"        => "XCP release 1.6.10-61809c",
+      "Fedora"     => "Fedora release 18 (Spherical Cow)",
     }.each_pair do |operatingsystem, string|
       it "should be #{operatingsystem} based on /etc/redhat-release contents #{string}" do
         FileTest.expects(:exists?).with("/etc/redhat-release").returns true
