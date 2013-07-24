@@ -205,7 +205,7 @@ class Facter::Util::IP
         end
       end
 
-      Facter.add "network_#{interface}" do
+      Facter.add "network_#{model.class.alphafy(interface)}" do
         confine :kernel => model.supported_platforms
 
         setcode do
