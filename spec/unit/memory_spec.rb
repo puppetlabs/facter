@@ -230,8 +230,7 @@ SVMON
  0 0 0  11048  181028   39   0   0   0   0   0   0   1  3  90   17  0  0 100
 EOS
       Facter::Core::Execution.stubs(:exec).with('vmstat').returns(vmstat)
-
-      Facter::Core::Execution.stubs(:exec).with("sysctl hw.physmem | cut -d'=' -f2").returns('267321344')
+      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.physmem').returns('267321344')
 
       Facter.collection.internal_loader.load(:memory)
     end
