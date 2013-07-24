@@ -9,6 +9,10 @@ describe "ipaddress fact" do
   end
 
   context 'using `ifconfig`' do
+    before :each do
+      Facter.fact(:hostname).stubs(:value)
+    end
+
     context "on Linux" do
       before :each do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
