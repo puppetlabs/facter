@@ -140,4 +140,22 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
 
     nil
   end
+
+  # Determines if the value passed in is a valid ipv6 address.
+  #
+  # @param ip_address [String]
+  #
+  # @return [String] or [NilClass]
+  #
+  # @api private
+  def self.valid_ipv6_address?(ip_address)
+    String(ip_address).scan(/(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4}/).each do |match|
+      unless match =~ /fe80.*/ or match == "::1"
+        return match
+      end
+    end
+
+    nil
+  end
+
 end
