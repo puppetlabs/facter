@@ -17,6 +17,13 @@ class Facter::Util::IP::Windows
   # @api private
   WMI_IP_INFO_QUERY = 'SELECT Description, ServiceName, IPAddress, IPConnectionMetric, InterfaceIndex, Index, IPSubnet, MACAddress, MTU, SettingID FROM Win32_NetworkAdapterConfiguration WHERE IPConnectionMetric IS NOT NULL AND IPEnabled = TRUE'
 
+  WINDOWS_LABEL_WMI_MAP = {
+      :ipaddress => 'IPAddress',
+      :ipaddress6 => 'IPAddress',
+      :macaddress => 'MACAddress',
+      :netmask => 'IPSubnet'
+  }
+
   def self.to_s
     'windows'
   end
@@ -30,16 +37,58 @@ class Facter::Util::IP::Windows
     false
   end
 
-  # Uses netsh.exe to obtain a list of interfaces.
+  # Retrieves a list of unique interfaces names.
   #
   # @return [Array]
   #
   # @api private
   def self.interfaces
-    cmd = "#{NETSH} interface %s show interface"
-    output = exec("#{cmd % 'ip'} && #{cmd % 'ipv6'}").to_s
+    network_interfaces = []
+    self.exec_wmi_ip_query do |nic_config|
+      Facter::Util::WMI.execquery("SELECT * FROM Win32_NetworkAdapter WHERE Index = #{nic_config.Index}").each do |nic|
+        network_interfaces << nic.NetConnectionId
+      end
+    end
 
-    output.scan(/\s* connected\s*(\S.*)/).flatten.uniq
+    network_interfaces.uniq
+  end
+
+  # Get the value of an interface and label. For example, you may want to find
+  # the MTU for eth0.
+  #
+  # @param interface [String] label [String]
+  #
+  # @return [String] or [NilClass]
+  #
+  # @api private
+  def self.value_for_interface_and_label(interface, label)
+    wmi_value = WINDOWS_LABEL_WMI_MAP[label.downcase.to_sym]
+    label_value = nil
+    Facter::Util::WMI.execquery("SELECT Index FROM Win32_NetworkAdapter WHERE NetConnectionID = '#{interface}'").each do |nic|
+      Facter::Util::WMI.execquery("SELECT #{wmi_value} FROM Win32_NetworkAdapterConfiguration WHERE Index = #{nic.Index}").each do |nic_config|
+        case label.downcase.to_sym
+        when :ipaddress
+          nic_config.IPAddress.any? do |addr|
+            label_value = addr if valid_ipv4_address?(addr)
+            label_value
+          end
+        when :ipaddress6
+          nic_config.IPAddress.any? do |addr|
+            label_value = addr if Facter::Util::IP::Windows.valid_ipv6_address?(addr)
+            label_value
+          end
+        when :netmask
+          nic_config.IPSubnet.any? do |addr|
+            label_value = addr if Facter::Util::IP::Windows.valid_ipv4_address?(addr)
+            label_value
+          end
+        when :macaddress
+          label_value = nic_config.MACAddress
+        end
+      end
+    end
+
+    label_value
   end
 
   # Executes a wmi query that returns ip information and returns for each item in the results
