@@ -183,7 +183,7 @@ describe "Memory facts" do
 
       Facter::Util::Resolution.stubs(:exec).with('vmstat').returns(my_fixture_read('openbsd-vmstat'))
 
-      Facter::Util::Resolution.stubs(:exec).with("sysctl hw.physmem | cut -d'=' -f2").returns('267321344')
+      Facter::Util::Resolution.stubs(:exec).with('sysctl -n hw.physmem').returns('267321344')
 
       Facter.collection.internal_loader.load(:memory)
     end
