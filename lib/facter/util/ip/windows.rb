@@ -4,27 +4,6 @@ require 'facter/util/ip/base'
 require 'facter/util/wmi'
 
 class Facter::Util::IP::Windows < Facter::Util::IP::Base
-  # A regex to match an IPv4 address from `ifconfig` output.
-  #
-  # @return [Regexp]
-  #
-  # @api private
-  IPADDRESS_REGEX = /\s+IP\sAddress:\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-
-  # A regex to match an IPv6 address from `ifconfig` output.
-  #
-  # @return [Regexp]
-  #
-  # @api private
-  IPADDRESS6_REGEX = /Address\s((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/
-
-  # A regex to match the netmask from `ifconfig` output.
-  #
-  # @return [Regexp]
-  #
-  # @api private
-  NETMASK_REGEX = /\s+Subnet\sPrefix:\s+\S+\s+\(mask\s([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\)/
-
   # The WMI query used to return ip information
   #
   # @return [String]
