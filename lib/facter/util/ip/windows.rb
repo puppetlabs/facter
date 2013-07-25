@@ -25,13 +25,6 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
   # @api private
   NETMASK_REGEX = /\s+Subnet\sPrefix:\s+\S+\s+\(mask\s([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\)/
 
-  # The path to netsh.exe.
-  #
-  # @return [String]
-  #
-  # @api private
-  NETSH = "#{ENV['SYSTEMROOT']}/system32/netsh.exe"
-
   # The WMI query used to return ip information
   #
   # @return [String]
