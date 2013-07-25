@@ -11,6 +11,9 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
   # @api private
   WMI_IP_INFO_QUERY = 'SELECT Description, ServiceName, IPAddress, IPConnectionMetric, InterfaceIndex, Index, IPSubnet, MACAddress, MTU, SettingID FROM Win32_NetworkAdapterConfiguration WHERE IPConnectionMetric IS NOT NULL AND IPEnabled = TRUE'
 
+  # Mapping fact names to WMI properties of the Win32_NetworkAdapterConfiguration
+  #
+  # @api private
   WINDOWS_LABEL_WMI_MAP = {
       :ipaddress => 'IPAddress',
       :ipaddress6 => 'IPAddress',
@@ -33,7 +36,7 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
 
   # Retrieves a list of unique interfaces names.
   #
-  # @return [Array]
+  # @return [Array<String>]
   #
   # @api private
   def self.interfaces
@@ -51,8 +54,9 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
   # Get the value of an interface and label. For example, you may want to find
   # the MTU for eth0.
   #
-  # @param interface [String] label [String]
-  # @return [String] or [NilClass]
+  # @param [String] interface the name of the interface returned by the {#interfaces} method.
+  # @param [String] label the type of value to return, e.g. ipaddress
+  # @return [String] the value, or nil if not defined
   #
   # @api private
   def self.value_for_interface_and_label(interface, label)
@@ -85,14 +89,14 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
     label_value
   end
 
-  # Executes a wmi query that returns ip information and returns for each item in the results
+  # Returns an array of partial Win32_NetworkAdapterConfiguration objects.
   #
-  # @return [Win32OLE] objects
+  # @return [Array<WIN32OLE>] objects
   #
   # @api private
   def self.network_adapter_configurations
     nics = []
-    # Win32OLE doesn't implement Enumerable
+    # WIN32OLE doesn't implement Enumerable
     Facter::Util::WMI.execquery(WMI_IP_INFO_QUERY).each do |nic|
       nics << nic
     end
@@ -104,7 +108,7 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
   # then the IPv4 specific binding order as specified in the registry will
   # be used.
   #
-  # return [Array<Win32OLE>]
+  # @return [Array<WIN32OLE>]
   #
   # @api private
   def self.get_preferred_ipv4_adapters
@@ -116,7 +120,7 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
   # then the IPv6 specific binding order as specified in the registry will
   # be used.
   #
-  # return [Array<Win32OLE>]
+  # @return [Array<WIN32OLE>]
   #
   # @api private
   def self.get_preferred_ipv6_adapters
@@ -129,7 +133,7 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
   # Note the order may different for IPv4 vs IPv6 addresses.
   #
   # @see http://support.microsoft.com/kb/894564
-  # @return [Array<Win32OLE>]
+  # @return [Array<WIN32OLE>]
   #
   # @api private
   def self.get_preferred_network_adapters(bindings)
@@ -171,8 +175,8 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
 
   # Determines if the value passed in is a valid ipv4 address.
   #
-  # @param ip_address [String]
-  # @return [String] or [NilClass]
+  # @param [String] ip_address the IPv4 address to validate
+  # @return [Boolean]
   #
   # @api private
   def self.valid_ipv4_address?(ip_address)
@@ -181,27 +185,27 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
       #  meaning that if the node cannot get an ip address from the dhcp server,
       #  it auto-assigns a private ip address
       unless match == "127.0.0.1" or match =~ /^169.254.*/
-        return match
+        return !!match
       end
     end
 
-    nil
+    false
   end
 
   # Determines if the value passed in is a valid ipv6 address.
   #
-  # @param ip_address [String]
-  # @return [String] or [NilClass]
+  # @param [String] ip_address the IPv6 address to validate
+  # @return [Boolean]
   #
   # @api private
   def self.valid_ipv6_address?(ip_address)
     String(ip_address).scan(/(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4}/).each do |match|
       unless match =~ /fe80.*/ or match == "::1"
-        return match
+        return !!match
       end
     end
 
-    nil
+    false
   end
 
 end
