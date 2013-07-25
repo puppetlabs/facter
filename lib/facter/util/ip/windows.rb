@@ -52,7 +52,6 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
   # the MTU for eth0.
   #
   # @param interface [String] label [String]
-  #
   # @return [String] or [NilClass]
   #
   # @api private
@@ -100,36 +99,79 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
     nics
   end
 
-  # Gets a list of active adapters and sorts by the lowest connection metric (aka best weight) and MACAddress to ensure order
+  # Gets a list of active IPv4 network adapter configurations sorted by the
+  # lowest IP connection metric. If two configurations have the same metric,
+  # then the IPv4 specific binding order as specified in the registry will
+  # be used.
   #
-  # @return [Win32OLE]
+  # return [Array<Win32OLE>]
   #
   # @api private
-  def self.get_preferred_network_adapters
-    require 'facter/util/registry'
-    bindings = {}
+  def self.get_preferred_ipv4_adapters
+    get_preferred_network_adapters(Bindings4.new)
+  end
 
-    Facter::Util::Registry.hklm_read('SYSTEM\CurrentControlSet\Services\Tcpip\Linkage','Bind').each_with_index do |entry, index|
-      match_data = entry.match(/\\Device\\({.*})/)
-      unless match_data.nil?
-        bindings[match_data[1]] = index
-      end
-    end
+  # Gets a list of active IPv4 network adapter configurations sorted by the
+  # lowest IP connection metric. If two configurations have the same metric,
+  # then the IPv6 specific binding order as specified in the registry will
+  # be used.
+  #
+  # return [Array<Win32OLE>]
+  #
+  # @api private
+  def self.get_preferred_ipv6_adapters
+    get_preferred_network_adapters(Bindings6.new)
+  end
 
+  # Gets a list of active network adapter configurations sorted by the lowest
+  # IP connection metric. If two configurations have the same metric, then
+  # the adapter binding order as specified in the registry will be used.
+  # Note the order may different for IPv4 vs IPv6 addresses.
+  #
+  # @see http://support.microsoft.com/kb/894564
+  # @return [Array<Win32OLE>]
+  #
+  # @api private
+  def self.get_preferred_network_adapters(bindings)
     network_adapter_configurations.sort do |nic_left,nic_right|
       cmp = nic_left.IPConnectionMetric <=> nic_right.IPConnectionMetric
       if cmp == 0
-        bindings[nic_left.SettingID] <=> bindings[nic_right.SettingID]
+        bindings.bindings[nic_left.SettingID] <=> bindings.bindings[nic_right.SettingID]
       else
         cmp
       end
     end
   end
 
+  class Bindings4
+    def initialize
+      @key = 'SYSTEM\CurrentControlSet\Services\Tcpip\Linkage'
+    end
+
+    def bindings
+      require 'facter/util/registry'
+      bindings = {}
+
+      Facter::Util::Registry.hklm_read(@key, 'Bind').each_with_index do |entry, index|
+        match_data = entry.match(/\\Device\\({.*})/)
+        unless match_data.nil?
+          bindings[match_data[1]] = index
+        end
+      end
+
+      bindings
+    end
+  end
+
+  class Bindings6 < Bindings4
+    def initialize
+      @key = 'SYSTEM\CurrentControlSet\Services\Tcpip6\Linkage'
+    end
+  end
+
   # Determines if the value passed in is a valid ipv4 address.
   #
   # @param ip_address [String]
-  #
   # @return [String] or [NilClass]
   #
   # @api private
@@ -149,7 +191,6 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
   # Determines if the value passed in is a valid ipv6 address.
   #
   # @param ip_address [String]
-  #
   # @return [String] or [NilClass]
   #
   # @api private

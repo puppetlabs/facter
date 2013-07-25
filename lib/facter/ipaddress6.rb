@@ -68,7 +68,7 @@ Facter.add(:ipaddress6) do
   setcode do
     ipaddr = nil
 
-    adapters = Facter::Util::IP::Windows.get_preferred_network_adapters
+    adapters = Facter::Util::IP::Windows.get_preferred_ipv6_adapters
     adapters.find do |nic|
       nic.IPAddress.any? do |addr|
         ipaddr = addr if Facter::Util::IP::Windows.valid_ipv6_address?(addr)
