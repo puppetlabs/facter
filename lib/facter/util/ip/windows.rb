@@ -115,7 +115,7 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
     get_preferred_network_adapters(Bindings4.new)
   end
 
-  # Gets a list of active IPv4 network adapter configurations sorted by the
+  # Gets a list of active IPv6 network adapter configurations sorted by the
   # lowest IP connection metric. If two configurations have the same metric,
   # then the IPv6 specific binding order as specified in the registry will
   # be used.
@@ -139,6 +139,7 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
   def self.get_preferred_network_adapters(bindings)
     network_adapter_configurations.sort do |nic_left,nic_right|
       cmp = nic_left.IPConnectionMetric <=> nic_right.IPConnectionMetric
+      require 'pry';binding.pry
       if cmp == 0
         bindings.bindings[nic_left.SettingID] <=> bindings.bindings[nic_right.SettingID]
       else
