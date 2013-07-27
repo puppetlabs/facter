@@ -3,6 +3,7 @@
 require 'spec_helper'
 require 'facter/util/ip'
 
+
 def ifconfig_fixture(filename)
   File.read(fixtures('ifconfig', filename))
 end
@@ -53,10 +54,9 @@ describe "The IPv6 address fact" do
   context "on Windows" do
     require 'facter/util/wmi'
     require 'facter/util/registry'
+    require 'facter_spec/windows_network'
 
-    let(:settingId0) { '{4AE6B55C-6DD6-427D-A5BB-13535D4BE926}' }
-    let(:settingId1) { '{38762816-7957-42AC-8DAA-3B08D0C857C7}' }
-    let(:nic_bindings) { ["\\Device\\#{settingId0}", "\\Device\\#{settingId1}" ] }
+    include FacterSpec::WindowsNetwork
 
     before :each do
       Facter.fact(:kernel).stubs(:value).returns(:windows)
@@ -76,99 +76,79 @@ describe "The IPv6 address fact" do
 
     context "when you have one network adapter" do
       it "should return empty if ipv6 is not on" do
-        network1 = mock('network1', :IPAddress => ["12.123.12.12"])
-        Facter::Util::WMI.expects(:execquery).returns([network1])
+        nic = given_a_valid_windows_nic_with_ipv4_and_ipv6
+        nic.expects(:IPAddress).returns([ipAddress1])
+        Facter::Util::WMI.expects(:execquery).returns([nic])
 
         Facter.value(:ipaddress6).should == nil
       end
 
       it "should return the ipv6 address properly" do
-        network1 = mock('network1', :IPAddress => ["12.123.12.12", "2011:0:4137:9e76:2087:77a:53ef:7527"])
-        Facter::Util::WMI.expects(:execquery).returns([network1])
+        Facter::Util::WMI.expects(:execquery).returns([given_a_valid_windows_nic_with_ipv4_and_ipv6])
 
-        Facter.value(:ipaddress6).should == "2011:0:4137:9e76:2087:77a:53ef:7527"
+        Facter.value(:ipaddress6).should == ipv6Address0
       end
 
       it "should return the first ipv6 address if there is more than one (multi-homing)" do
-        network1 = mock('network1', :IPAddress => ["12.123.12.12", "2013:0:4137:9e76:2087:77a:53ef:7527", "2011:0:4137:9e76:2087:77a:53ef:7527"])
-        Facter::Util::WMI.expects(:execquery).returns([network1])
-
-        Facter.value(:ipaddress6).should == "2013:0:4137:9e76:2087:77a:53ef:7527"
+        nic = given_a_valid_windows_nic_with_ipv4_and_ipv6
+        nic.expects(:IPAddress).returns([ipAddress0, ipv6Address0,ipv6Address1])
+        Facter::Util::WMI.expects(:execquery).returns([nic])
+        
+        Facter.value(:ipaddress6).should == ipv6Address0
       end
 
       it "should return return nil if the ipv6 address is link local" do
-        network1 = mock('network1', :IPAddress => ["12.123.12.12", "fe80::2db2:5b42:4e30:b508"])
-        Facter::Util::WMI.expects(:execquery).returns([network1])
-
+        nic = given_a_valid_windows_nic_with_ipv4_and_ipv6
+        nic.expects(:IPAddress).returns([ipAddress0, ipv6LinkLocal])
+        Facter::Util::WMI.expects(:execquery).returns([nic])
+        
         Facter.value(:ipaddress6).should == nil
       end
     end
 
     context "when you have more than one network adapter" do
       it "should return empty if ipv6 is not on" do
-        network1 = mock('network1')
-        network1.expects(:SettingID).returns(settingId0)
-        network1.expects(:IPConnectionMetric).returns(10)
-        network1.expects(:IPAddress).returns(["12.123.12.12"])
-        network2 = mock('network2')
-        network2.expects(:SettingID).returns(settingId1)
-        network2.expects(:IPConnectionMetric).returns(10)
-        network2.expects(:IPAddress).returns(["12.123.12.13"])
-        Facter::Util::WMI.expects(:execquery).returns([network1, network2])
+        nics = given_two_valid_windows_nics_with_ipv4_and_ipv6
+        nics[:nic0].expects(:IPAddress).returns([ipAddress0])
+        nics[:nic1].expects(:IPAddress).returns([ipAddress1])
+        
+        Facter::Util::WMI.expects(:execquery).returns(nics.values)
 
         Facter.value(:ipaddress6).should == nil
       end
 
       it "should return the ipv6 of the adapter with the lowest IP connection metric (best connection)" do
-        network1 = mock('network1')
-        network1.expects(:IPConnectionMetric).returns(10)
-        network2 = mock('network2')
-        network2.expects(:IPConnectionMetric).returns(5)
-        network2.expects(:IPAddress).returns(["12.123.12.13", "2013:0:4137:9e76:2087:77a:53ef:7527"])
-        Facter::Util::WMI.expects(:execquery).returns([network1, network2])
+        nics = given_two_valid_windows_nics_with_ipv4_and_ipv6
+        nics[:nic1].expects(:IPConnectionMetric).returns(5)
+        Facter::Util::WMI.expects(:execquery).returns(nics.values)
 
-        Facter.value(:ipaddress6).should == "2013:0:4137:9e76:2087:77a:53ef:7527"
+        Facter.value(:ipaddress6).should == ipv6Address1
       end
 
       it "should return the ipv6 of the adapter with the lowest IP connection metric (best connection) that has ipv6 enabled" do
-        network1 = mock('network1')
-        network1.expects(:IPConnectionMetric).returns(10)
-        network1.expects(:IPAddress).returns(["12.123.12.12", "2011:0:4137:9e76:2087:77a:53ef:7527"])
-        network2 = mock('network2')
-        network2.expects(:IPConnectionMetric).returns(5)
-        network2.expects(:IPAddress).returns(["12.123.12.13"])
+        nics = given_two_valid_windows_nics_with_ipv4_and_ipv6
+        nics[:nic1].expects(:IPConnectionMetric).returns(5)
+        nics[:nic1].expects(:IPAddress).returns([ipAddress1])
+        Facter::Util::WMI.expects(:execquery).returns(nics.values)
 
-        Facter::Util::WMI.expects(:execquery).returns([network2, network1])
-
-        Facter.value(:ipaddress6).should == "2011:0:4137:9e76:2087:77a:53ef:7527"
+        Facter.value(:ipaddress6).should == ipv6Address0
       end
 
       context "when the IP connection metric is the same" do
         it "should return the ipv6 of the adapter with the lowest binding order" do
-          network1 = mock('network1')
-          network1.expects(:SettingID).returns(settingId0)
-          network1.expects(:IPConnectionMetric).returns(5)
-          network1.expects(:IPAddress).returns(["12.123.12.12", "2011:0:4137:9e76:2087:77a:53ef:7527"])
-          network2 = mock('network2')
-          network2.expects(:SettingID).returns(settingId1)
-          network2.expects(:IPConnectionMetric).returns(5)
-          #network2.expects(:IPAddress).returns(["12.123.12.13", "2013:0:4137:9e76:2087:77a:53ef:7527"])
-          Facter::Util::WMI.expects(:execquery).returns([network1, network2])
-
-          Facter.value(:ipaddress6).should == "2011:0:4137:9e76:2087:77a:53ef:7527"
+          nics = given_two_valid_windows_nics_with_ipv4_and_ipv6
+          Facter::Util::WMI.expects(:execquery).returns(nics.values)
+        
+          Facter.value(:ipaddress6).should == ipv6Address0
         end
 
         it "should return the ipv6 of the adapter with the lowest binding order even if the adapter is not first" do
-          network1 = mock('network1')
-          network1.expects(:SettingID).returns(settingId1)
-          network1.expects(:IPConnectionMetric).returns(5)
-          network2 = mock('network2')
-          network2.expects(:SettingID).returns(settingId0)
-          network2.expects(:IPConnectionMetric).returns(5)
-          network2.expects(:IPAddress).returns(["12.123.12.13", "2013:0:4137:9e76:2087:77a:53ef:7527"])
-          Facter::Util::WMI.expects(:execquery).returns([network1, network2])
+          nics = given_two_valid_windows_nics_with_ipv4_and_ipv6
+          Facter::Util::Registry.stubs(:hklm_read).returns(["\\Device\\#{settingId1}", "\\Device\\#{settingId0}" ])
+          
+          Facter::Util::WMI.expects(:execquery).returns(nics.values)
 
-          Facter.value(:ipaddress6).should == "2013:0:4137:9e76:2087:77a:53ef:7527"
+          Facter.value(:ipaddress6).should == ipv6Address1
         end
       end
     end
