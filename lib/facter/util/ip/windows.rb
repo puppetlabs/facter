@@ -137,9 +137,10 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
   #
   # @api private
   def self.get_preferred_network_adapters(bindings)
-    network_adapter_configurations.sort do |nic_left,nic_right|
+    network_adapter_configurations.select do |nic| 
+      bindings.bindings.include?(nic.SettingID)
+    end.sort do |nic_left,nic_right|
       cmp = nic_left.IPConnectionMetric <=> nic_right.IPConnectionMetric
-      require 'pry';binding.pry
       if cmp == 0
         bindings.bindings[nic_left.SettingID] <=> bindings.bindings[nic_right.SettingID]
       else
