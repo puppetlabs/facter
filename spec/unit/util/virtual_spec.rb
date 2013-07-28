@@ -229,14 +229,14 @@ EOT
   it "should detect kvm on FreeBSD" do
     FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
     Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
-    Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns("QEMU Virtual CPU version 0.12.4")
+    Facter::Util::POSIX.stubs(:sysctl).with("hw.model").returns("QEMU Virtual CPU version 0.12.4")
     Facter::Util::Virtual.should be_kvm
   end
 
   it "should detect kvm on OpenBSD" do
     FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
     Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
-    Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns('QEMU Virtual CPU version (cpu64-rhel6) ("AuthenticAMD" 686-class, 512KB L2 cache)')
+    Facter::Util::POSIX.stubs(:sysctl).with("hw.model").returns('QEMU Virtual CPU version (cpu64-rhel6) ("AuthenticAMD" 686-class, 512KB L2 cache)')
     Facter::Util::Virtual.should be_kvm
   end
 

@@ -1,3 +1,5 @@
+require 'facter/util/posix'
+
 module Facter::Util::Blockdevices
 
   module FreeBSD
@@ -19,7 +21,7 @@ module Facter::Util::Blockdevices
     end
 
     def self.devices
-      Facter::Util::Resolution.exec('/sbin/sysctl -n kern.disks').split(' ').sort
+      Facter::Util::POSIX.sysctl('kern.disks').split(' ').sort
     end
 
     private

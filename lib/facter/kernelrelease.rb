@@ -10,6 +10,7 @@
 #
 # Caveats:
 #
+require 'facter/util/posix'
 
 Facter.add(:kernelrelease) do
   setcode 'uname -r'
@@ -23,7 +24,7 @@ end
 Facter.add("kernelrelease") do
   confine :kernel => :openbsd
   setcode do
-    Facter::Util::Resolution.exec("/sbin/sysctl -n kern.version").split(' ')[1]
+    Facter::Util::POSIX.sysctl("kern.version").split(' ')[1]
   end
 end
 
