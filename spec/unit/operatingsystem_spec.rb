@@ -68,7 +68,7 @@ describe "Operating System fact" do
       "Bluewhite64" => "/etc/bluewhite64-version",
       "Slamd64"     => "/etc/slamd64-version",
       "Slackware"   => "/etc/slackware-version",
-      "Amazon"      => "/etc/system-release",
+      "Amazon"      => "/etc/system-release"
     }.each_pair do |distribution, releasefile|
       it "should be #{distribution} if #{releasefile} exists" do
         FileTest.expects(:exists?).with(releasefile).returns true
@@ -145,13 +145,14 @@ describe "Operating System fact" do
       File.expects(:read).with("/etc/redhat-release").returns("Scientific Linux CERN SLC 5.7 (Boron)")
       Facter.fact(:operatingsystem).value.should == "SLC"
     end
-  end
-    describe "on Cumulus Linux" do
-      it "should identify as 'Cumulus Linux'" do
-        Facter.fact(:kernel).stubs(:value).returns("Linux")
-        FileTest.expects(:exists?).with("/etc/os-release").returns true
-        File.expects(:read).with("/etc/os-release").returns 'NAME="Cumulus Linux"'
+
+    describe "CumulusLinux variant" do
+      it "should be CumulusLinux if /etc/os-release exist and NAME says it is Cumulus Linux" do
+        # Facter.fact(:kernel).stubs(:value).returns("Linux")
+        FileTest.expects(:exists?).with('/etc/os-release').returns true
+        File.expects(:read).with('/etc/os-release').returns 'NAME="Cumulus Linux"'
         Facter.fact(:operatingsystem).value.should == "CumulusLinux"
       end
     end
+  end
 end

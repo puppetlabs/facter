@@ -196,10 +196,15 @@ describe "Operating System Release fact" do
     end
   end
 
-  it "for Cumulus Linux" do
-    Facter.fact(:kernel).stubs(:value).returns("Linux")
-    Facter.fact(:operatingsystem).stubs(:value).returns("CumulusLinux")
-    File.expects(:read).with("/etc/os-release").returns("VERSION_ID=1.5.0")
-    Facter.fact(:operatingsystemrelease).value.should == "1.5.0"
+  context "CumulusLinux" do
+    before :each do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter.fact(:operatingsystem).stubs(:value).returns("CumulusLinux")
+    end
+    it "Returns version from /etc/os-release" do
+      Facter::Util::FileRead.stubs(:read).with("/etc/os-release").returns('VERSION_ID=1.5.0')
+      Facter.fact(:operatingsystemrelease).value.should == '1.5.0'
+    end
   end
+
 end
