@@ -8,6 +8,7 @@ require 'pathname'
 
 # load shared_context within this project's spec directory
 dir = File.expand_path(File.dirname(__FILE__))
+$LOAD_PATH.unshift File.join(dir, 'lib')
 
 Pathname.glob("#{dir}/shared_contexts/*.rb") do |file|
   require file.relative_path_from(Pathname.new(dir))
