@@ -137,7 +137,7 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
   #
   # @api private
   def self.get_preferred_network_adapters(bindings)
-    network_adapter_configurations.select do |nic| 
+    network_adapter_configurations.select do |nic|
       bindings.bindings.include?(nic.SettingID)
     end.sort do |nic_left,nic_right|
       cmp = nic_left.IPConnectionMetric <=> nic_right.IPConnectionMetric
@@ -158,6 +158,7 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
       require 'facter/util/registry'
       bindings = {}
 
+
       Facter::Util::Registry.hklm_read(@key, 'Bind').each_with_index do |entry, index|
         match_data = entry.match(/\\Device\\(\{.*\})/)
         unless match_data.nil?
@@ -166,6 +167,8 @@ class Facter::Util::IP::Windows < Facter::Util::IP::Base
       end
 
       bindings
+    rescue
+      {}
     end
   end
 
