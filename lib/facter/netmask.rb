@@ -40,4 +40,3 @@ Facter.add(:netmask) do
     mask
   end
 end
-

@@ -93,7 +93,7 @@ describe "The IPv6 address fact" do
         nic = given_a_valid_windows_nic_with_ipv4_and_ipv6
         nic.expects(:IPAddress).returns([ipAddress0, ipv6Address0,ipv6Address1])
         Facter::Util::WMI.expects(:execquery).returns([nic])
-        
+
         Facter.value(:ipaddress6).should == ipv6Address0
       end
 
@@ -101,7 +101,7 @@ describe "The IPv6 address fact" do
         nic = given_a_valid_windows_nic_with_ipv4_and_ipv6
         nic.expects(:IPAddress).returns([ipAddress0, ipv6LinkLocal])
         Facter::Util::WMI.expects(:execquery).returns([nic])
-        
+
         Facter.value(:ipaddress6).should == nil
       end
     end
@@ -111,7 +111,6 @@ describe "The IPv6 address fact" do
         nics = given_two_valid_windows_nics_with_ipv4_and_ipv6
         nics[:nic0].expects(:IPAddress).returns([ipAddress0])
         nics[:nic1].expects(:IPAddress).returns([ipAddress1])
-        
         Facter::Util::WMI.expects(:execquery).returns(nics.values)
 
         Facter.value(:ipaddress6).should == nil
@@ -138,14 +137,13 @@ describe "The IPv6 address fact" do
         it "should return the ipv6 of the adapter with the lowest binding order" do
           nics = given_two_valid_windows_nics_with_ipv4_and_ipv6
           Facter::Util::WMI.expects(:execquery).returns(nics.values)
-        
+
           Facter.value(:ipaddress6).should == ipv6Address0
         end
 
         it "should return the ipv6 of the adapter with the lowest binding order even if the adapter is not first" do
           nics = given_two_valid_windows_nics_with_ipv4_and_ipv6
           Facter::Util::Registry.stubs(:hklm_read).returns(["\\Device\\#{settingId1}", "\\Device\\#{settingId0}" ])
-          
           Facter::Util::WMI.expects(:execquery).returns(nics.values)
 
           Facter.value(:ipaddress6).should == ipv6Address1
