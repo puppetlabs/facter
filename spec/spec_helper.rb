@@ -1,10 +1,3 @@
-# Add the projects lib directory to our load path so we can require libraries
-# within it easily.
-dir = File.expand_path(File.dirname(__FILE__))
-
-SPECDIR = dir
-$LOAD_PATH.unshift("#{dir}/../lib")
-
 require 'rubygems'
 require 'mocha'
 require 'rspec'
@@ -12,6 +5,9 @@ require 'facter'
 require 'fileutils'
 require 'puppetlabs_spec_helper'
 require 'pathname'
+
+# load shared_context within this project's spec directory
+dir = File.expand_path(File.dirname(__FILE__))
 
 Pathname.glob("#{dir}/shared_contexts/*.rb") do |file|
   require file.relative_path_from(Pathname.new(dir))
