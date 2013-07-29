@@ -111,14 +111,10 @@ module Facter::Memory
 
   def self.mem_size_info(kernel = Facter.value(:kernel))
     case kernel
-    when /OpenBSD/i
-      Facter::Util::Resolution.exec("sysctl hw.physmem | cut -d'=' -f2")
-    when /FreeBSD/i
+    when /Dragonfly/i, /FreeBSD/i, /OpenBSD/i
       Facter::Util::Resolution.exec("sysctl -n hw.physmem")
     when /Darwin/i
       Facter::Util::Resolution.exec("sysctl -n hw.memsize")
-    when /Dragonfly/i
-      Facter::Util::Resolution.exec("sysctl -n hw.physmem")
     when /AIX/i
       if Facter::Util::Resolution.exec("/usr/bin/svmon -O unit=KB") =~ /^memory\s+(\d+)\s+/
         $1

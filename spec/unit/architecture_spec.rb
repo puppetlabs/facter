@@ -22,6 +22,7 @@ describe "Architecture fact" do
     ["Gentoo","i686"] => "x86",
     ["Gentoo","pentium"] => "x86",
     ["windows","i386"] => "x86",
+    ["windows","i686"] => "x86",
     ["windows","x64"] => "x64",
   }
   generic_archs = Hash.new

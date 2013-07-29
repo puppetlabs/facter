@@ -25,7 +25,7 @@ module Facter::NetMask
       }
     end
 
-    Facter::Util::IP.exec_ifconfig(ops[:ifconfig_opts]).split(/\n/).collect do |line|
+    String(Facter::Util::IP.exec_ifconfig(ops[:ifconfig_opts])).split(/\n/).collect do |line|
       matches = line.match(ops[:regex])
       if !matches.nil?
         if ops[:munge].nil?
