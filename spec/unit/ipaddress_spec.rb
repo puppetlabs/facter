@@ -43,6 +43,7 @@ describe "The ipaddress fact" do
 
     before :each do
       Facter.fact(:kernel).stubs(:value).returns(:windows)
+      Facter.fact(:kernelrelease).stubs(:value).returns('6.1.7601')
       Facter::Util::Registry.stubs(:hklm_read).returns(nic_bindings)
     end
 
@@ -50,7 +51,7 @@ describe "The ipaddress fact" do
 
     context "when you have no active network adapter" do
       it "should return nil if there are no active (or any) network adapters" do
-        Facter::Util::WMI.expects(:execquery).returns([])
+        Facter::Util::WMI.expects(:execquery).with(Facter::Util::IP::Windows::WMI_IP_INFO_QUERY).returns([])
         Facter::Util::Resolution.stubs(:exec)
 
         Facter.value(:ipaddress).should == nil
