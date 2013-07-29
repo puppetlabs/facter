@@ -81,19 +81,75 @@ describe "Darwin", :unless => Facter::Util::Config.is_windows? do
   end
 end
 
-describe "Windows" do
-  it "should return the first macaddress" do
-    Facter.fact(:kernel).stubs(:value).returns("windows")
-
-    nic = stubs 'nic'
-    nic.stubs(:MacAddress).returns("00:0C:29:0C:9E:9F")
-
-    nic2 = stubs 'nic'
-    nic2.stubs(:MacAddress).returns("00:0C:29:0C:9E:AF")
-
+describe "The macaddress fact" do
+  context "on Windows" do
     require 'facter/util/wmi'
-    Facter::Util::WMI.stubs(:execquery).with("select MACAddress from Win32_NetworkAdapterConfiguration where IPEnabled = True").returns([nic, nic2])
+    require 'facter/util/registry'
 
-    Facter.fact(:macaddress).value.should == "00:0C:29:0C:9E:9F"
+    let(:settingId0) { '{4AE6B55C-6DD6-427D-A5BB-13535D4BE926}' }
+    let(:settingId1) { '{38762816-7957-42AC-8DAA-3B08D0C857C7}' }
+    let(:nic_bindings) { ["\\Device\\#{settingId0}", "\\Device\\#{settingId1}" ] }
+
+    before :each do
+      Facter.fact(:kernel).stubs(:value).returns(:windows)
+      Facter::Util::Registry.stubs(:hklm_read).returns(nic_bindings)
+    end
+
+    describe "when you have no active network adapter" do
+      it "should return nil if there are no active (or any) network adapters" do
+        Facter::Util::WMI.expects(:execquery).returns([])
+
+        Facter.value(:macaddress).should == nil
+      end
+    end
+
+    describe "when you have one network adapter" do
+      it "should return properly" do
+        network1 = mock('network1')
+        network1.expects(:MACAddress).returns("00:0C:29:0C:9E:9F")
+        Facter::Util::WMI.expects(:execquery).returns([network1])
+
+        Facter.value(:macaddress).should == "00:0C:29:0C:9E:9F"
+      end
+    end
+
+    describe "when you have more than one network adapter" do
+      it "should return the macaddress of the adapter with the lowest IP connection metric (best connection)" do
+        network1 = mock('network1')
+        network1.expects(:IPConnectionMetric).returns(10)
+        network2 = mock('network2')
+        network2.expects(:MACAddress).returns("00:0C:29:0C:9E:AF")
+        network2.expects(:IPConnectionMetric).returns(5)
+        Facter::Util::WMI.expects(:execquery).returns([network1, network2])
+
+        Facter.value(:macaddress).should == "00:0C:29:0C:9E:AF"
+      end
+
+      context "when the IP connection metric is the same" do
+        it "should return the macaddress of the adapter with the lowest binding order" do
+          network1 = mock('network1', :MACAddress => "23:24:df:12:12:00")
+          network1.expects(:SettingID).returns(settingId0)
+          network1.expects(:IPConnectionMetric).returns(5)
+          network2 = mock('network2')
+          network2.expects(:SettingID).returns(settingId1)
+          network2.expects(:IPConnectionMetric).returns(5)
+          Facter::Util::WMI.expects(:execquery).returns([network1, network2])
+
+          Facter.value(:macaddress).should == "23:24:df:12:12:00"
+        end
+
+        it "should return the macaddress of the adapter with the lowest MACAddress when multiple adapters have the same IP connection metric when the lowest MACAddress is not first" do
+          network1 = stub('network1', :MACAddress => "23:24:df:12:12:00")
+          network1.expects(:SettingID).returns(settingId1)
+          network1.expects(:IPConnectionMetric).returns(5)
+          network2 = stub('network2', :MACAddress => "23:24:df:12:12:11")
+          network2.expects(:SettingID).returns(settingId0)
+          network2.expects(:IPConnectionMetric).returns(5)
+          Facter::Util::WMI.expects(:execquery).returns([network1, network2])
+
+          Facter.value(:macaddress).should == "23:24:df:12:12:11"
+        end
+      end
+    end
   end
 end
