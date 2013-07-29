@@ -64,7 +64,7 @@ end
 end
 
 Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => 'Ubuntu'
+  confine :operatingsystem => %w{Ubuntu}
   setcode do
     if release = Facter::Util::FileRead.read('/etc/issue')
       if match = release.match(/Ubuntu ((\d+.\d+)(\.(\d+))?)/)
@@ -77,10 +77,10 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
-confine :operatingsystem => 'CumulusLinux'
+  confine :operatingsystem => 'LinuxMint'
   setcode do
-    if release = Facter::Util::FileRead.read('/etc/os-release')
-      if match = release.match(/VERSION_ID=["']?(.+?)["']?$/)
+    if release = Facter::Util::FileRead.read('/etc/linuxmint/info')
+      if match = release.match(/RELEASE\=(\d+)/)
         match[1]
       end
     end
@@ -143,7 +143,7 @@ end
 end
 
 Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => 'VMwareESX'
+  confine :operatingsystem => %w{VMwareESX}
   setcode do
     release = Facter::Util::Resolution.exec('vmware -v')
     if match = /VMware ESX .*?(\d.*)/.match(release)

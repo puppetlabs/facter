@@ -57,7 +57,6 @@ describe "Operating System fact" do
     {
       "Debian"      => "/etc/debian_version",
       "Gentoo"      => "/etc/gentoo-release",
-      "Fedora"      => "/etc/fedora-release",
       "Mandriva"    => "/etc/mandriva-release",
       "Mandrake"    => "/etc/mandrake-release",
       "MeeGo"       => "/etc/meego-release",
@@ -83,10 +82,17 @@ describe "Operating System fact" do
       end
 
       it "on Ubuntu should use the lsbdistid fact" do
-        FileUtils.stubs(:exists?).with("/etc/debian_version").returns true
+        FileTest.stubs(:exists?).with("/etc/debian_version").returns true
 
         Facter.stubs(:value).with(:lsbdistid).returns("Ubuntu")
         Facter.fact(:operatingsystem).value.should == "Ubuntu"
+      end
+
+      it "on LinuxMint should use the lsbdistid fact" do
+        FileTest.stubs(:exists?).with("/etc/debian_version").returns true
+
+        Facter.stubs(:value).with(:lsbdistid).returns("LinuxMint")
+        Facter.fact(:operatingsystem).value.should == "LinuxMint"
       end
 
     end
@@ -102,6 +108,7 @@ describe "Operating System fact" do
       "CloudLinux" => "CloudLinux Server release 5.5",
       "XenServer"  => "XenServer release 5.6.0-31188p (xenenterprise)",
       "XCP"        => "XCP release 1.6.10-61809c",
+      "Fedora"     => "Fedora release 18 (Spherical Cow)",
     }.each_pair do |operatingsystem, string|
       it "should be #{operatingsystem} based on /etc/redhat-release contents #{string}" do
         FileTest.expects(:exists?).with("/etc/redhat-release").returns true

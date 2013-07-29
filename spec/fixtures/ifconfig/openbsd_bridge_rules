@@ -1,0 +1,11 @@
+bridge0: flags=41
+        groups: bridge
+        priority 32768 hellotime 2 fwddelay 15 maxage 20 holdcnt 6 proto rstp
+        vlan1 flags=3
+                port 5 ifpriority 0 ifcost 0
+        em0 flags=7
+                port 1 ifpriority 0 ifcost 0
+block out on em0 src 00:24:21:ef:1b:de
+pflog0: flags=41 mtu 33152
+        priority: 0
+        groups: pflog

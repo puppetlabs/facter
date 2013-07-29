@@ -59,7 +59,7 @@ Facter.add("virtual") do
     next "zone" if Facter::Util::Virtual.zone?
 
     resolver = Facter::Util::Resolution.new('prtdiag')
-    resolver.timeout = 6
+    resolver.timeout = 12
     resolver.setcode('prtdiag')
     output = resolver.value
     Facter::Util::Virtual.parse_virtualization(output)
