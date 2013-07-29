@@ -74,6 +74,13 @@ describe "The IPv6 address fact" do
       end
     end
 
+    it "should return nil if the system doesn't have ipv6 installed", :if => Facter::Util::Config.is_windows? do
+      Facter::Util::Resolution.any_instance.expects(:warn).never
+      Facter::Util::Registry.stubs(:hklm_read).raises(Win32::Registry::Error, 2)
+
+      Facter.value(:ipaddress6).should == nil
+    end
+
     context "when you have one network adapter" do
       it "should return empty if ipv6 is not on" do
         nic = given_a_valid_windows_nic_with_ipv4_and_ipv6

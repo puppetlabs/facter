@@ -157,6 +157,7 @@ class Facter::Util::IP::Windows
       require 'facter/util/registry'
       bindings = {}
 
+
       Facter::Util::Registry.hklm_read(@key, 'Bind').each_with_index do |entry, index|
         match_data = entry.match(/\\Device\\(\{.*\})/)
         unless match_data.nil?
@@ -165,6 +166,8 @@ class Facter::Util::IP::Windows
       end
 
       bindings
+    rescue
+      {}
     end
   end
 
