@@ -7,11 +7,6 @@ def ifconfig_fixture(filename)
   File.read(fixtures('ifconfig', filename))
 end
 
-def netsh_fixture(filename)
-  File.read(fixtures('netsh', filename))
-end
-
-
 describe "The IPv6 address fact" do
   include FacterSpec::ConfigHelper
 

@@ -3,13 +3,6 @@
 require 'facter/util/wmi'
 
 class Facter::Util::IP::Windows
-  # The path to netsh.exe.
-  #
-  # @return [String]
-  #
-  # @api private
-  NETSH = "#{ENV['SYSTEMROOT']}/system32/netsh.exe"
-
   # The WMI query used to return ip information
   #
   # @return [String]

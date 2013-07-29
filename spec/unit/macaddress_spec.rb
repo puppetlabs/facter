@@ -8,10 +8,6 @@ def ifconfig_fixture(filename)
   File.read(fixtures('ifconfig', filename))
 end
 
-def netsh_fixture(filename)
-  File.read(fixtures('netsh', filename))
-end
-
 describe "macaddress fact" do
   include FacterSpec::ConfigHelper
 
