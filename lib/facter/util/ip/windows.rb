@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require 'facter/util/wmi'
+require 'facter/util/ip'
 
 class Facter::Util::IP::Windows
   # The WMI query used to return ip information
@@ -156,7 +157,6 @@ class Facter::Util::IP::Windows
     def bindings
       require 'facter/util/registry'
       bindings = {}
-
 
       Facter::Util::Registry.hklm_read(@key, 'Bind').each_with_index do |entry, index|
         match_data = entry.match(/\\Device\\(\{.*\})/)

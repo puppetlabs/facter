@@ -31,11 +31,7 @@ module Facter::Util::IP
       :macaddress => /(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/,
       :netmask  => /.*\s+netmask (\S+)\s.*/
     },
-    :windows => {
-      :ipaddress  => /\s+IP Address:\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-      :ipaddress6 => /Address ((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
-      :netmask  => /\s+Subnet Prefix:\s+\S+\s+\(mask ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\)/
-    }
+    :windows => {}
   }
 
   # Convert an interface name into purely alphanumeric characters.
@@ -61,11 +57,12 @@ module Facter::Util::IP
   end
 
   def self.get_interfaces
-    return [] unless output = Facter::Util::IP.get_all_interface_output()
+    if Facter.value(:kernel) == 'windows'
+      require 'facter/util/ip/windows'
+      return Facter::Util::IP::Windows.interfaces
+    end
 
-    # windows interface names contain spaces and are quoted and can appear multiple
-    # times as ipv4 and ipv6
-    return output.scan(/\s* connected\s*(\S.*)/).flatten.uniq if Facter.value(:kernel) == 'windows'
+    return [] unless output = Facter::Util::IP.get_all_interface_output()
 
     # Our regex appears to be stupid, in that it leaves colons sitting
     # at the end of interfaces.  So, we have to trim those trailing
@@ -89,9 +86,6 @@ module Facter::Util::IP
         output.sub!(/^[^\n]*\n/, "")            # delete the header line.
         output
       end
-    when 'windows'
-      output = %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ip show interface|
-      output += %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ipv6 show interface|
     end
     output
   end
@@ -172,12 +166,9 @@ module Facter::Util::IP
   def self.get_output_for_interface_and_label(interface, label)
     return get_single_interface_output(interface) unless Facter.value(:kernel) == 'windows'
 
-    if label == 'ipaddress6'
-      output = %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ipv6 show address \"#{interface}\"|
-    else
-      output = %x|#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ip show address \"#{interface}\"|
-    end
-    output
+    require 'facter/util/ip/windows'
+    output = Facter::Util::IP::Windows.value_for_interface_and_label(interface, label)
+    output ? output : ""
   end
 
   def self.get_bonding_master(interface)
@@ -220,6 +211,11 @@ module Facter::Util::IP
   # @return [String] representing the requested value.  An empty array is
   # returned if the kernel is not supported by the REGEX_MAP constant.
   def self.get_interface_value(interface, label)
+    if Facter.value(:kernel) == 'windows'
+      require 'facter/util/ip/windows'
+      return Facter::Util::IP::Windows.value_for_interface_and_label(interface, label)
+    end
+
     tmp1 = []
 
     kernel = Facter.value(:kernel).downcase.to_sym
