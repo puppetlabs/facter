@@ -32,6 +32,7 @@ describe "OS Family fact" do
     'SLED'        => 'Suse',
     'OpenSuSE'    => 'Suse',
     'SuSE'        => 'Suse',
+    'Mageia'      => 'Mandrake',
     'Mandriva'    => 'Mandrake',
     'Mandrake'    => 'Mandrake'
   }.each do |os,family|
@@ -48,7 +49,6 @@ describe "OS Family fact" do
     'Slamd64',
     'Slackware',
     'Alpine',
-    'Mageia',
     'ESXi',
     'windows',
     'HP-UX'
