@@ -29,66 +29,18 @@ describe Facter::Util::IP::Windows do
   end
 
   describe ".interfaces" do
-    let(:interfaces) { described_class.interfaces }
-
-    let(:netsh_output) { my_fixture_read "netsh_all_interfaces" }
-
-    let :expected_interfaces do
-      [
-        "Loopback Pseudo-Interface 1",
-        "Local Area Connection",
-        "Teredo Tunneling Pseudo-Interface"
-      ]
-    end
-
-    before :each do
-      described_class.expects(:exec).with(anything).returns(netsh_output)
-    end
+    let(:name)       { 'Local Area Connection' }
+    let(:index)      { 7 }
+    let(:nic_config) { mock('nic_config', :Index => index) }
+    let(:nic)        { mock('nic', :NetConnectionId => name ) }
 
     it "should return an array of only connected interfaces" do
-      interfaces.should eq expected_interfaces
-    end
-  end
+      Facter::Util::WMI.expects(:execquery).with(Facter::Util::IP::Windows::WMI_IP_INFO_QUERY).
+        returns([nic_config])
+      Facter::Util::WMI.expects(:execquery).with("SELECT * FROM Win32_NetworkAdapter WHERE Index = #{index}").
+        returns([nic])
 
-  describe "value_for_interface_and_label(interface, label)" do
-    let(:interface) { 'Local Area Connection' }
-    let(:netsh_output) { my_fixture_read("netsh_with_single_interface") }
-
-    let :value_for_interface_and_label do
-      described_class.value_for_interface_and_label interface, label
-    end
-
-    let(:exec_cmd) do
-      "#{described_class::NETSH} interface ip show address \"#{interface}\""
-    end
-
-    before :each do
-      described_class.expects(:exec).with(exec_cmd).returns(netsh_output)
-    end
-
-    describe "ipaddress" do
-      let(:label) { 'ipaddress' }
-
-      it { value_for_interface_and_label.should eq '172.16.138.216' }
-    end
-
-    describe "netmask" do
-      let(:label) { 'netmask' }
-
-      it { value_for_interface_and_label.should eq '255.255.255.0' }
-    end
-
-    describe "ipaddress6" do
-      let(:interface) { 'Teredo Tunneling Pseudo-Interface' }
-      let(:label) { 'ipaddress6' }
-      let(:expected_ip) { '2001:0:4137:9e76:2087:77a:53ef:7527' }
-      let(:netsh_output) { my_fixture_read("netsh_with_single_interface6") }
-
-      let(:exec_cmd) do
-        "#{described_class::NETSH} interface ipv6 show address \"#{interface}\""
-      end
-
-      it { value_for_interface_and_label.should eq expected_ip }
+      described_class.interfaces.should == [name]
     end
   end
 end
