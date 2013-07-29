@@ -28,7 +28,7 @@ Facter.add(:osfamily) do
       "Gentoo"
     when "Archlinux"
       "Archlinux"
-    when "Mandrake", "Mandriva"
+    when "Mandrake", "Mandriva", "Mageia"
       "Mandrake"
     else
       Facter.value("kernel")
