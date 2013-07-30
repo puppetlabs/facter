@@ -35,7 +35,7 @@ module Facter::Util::Macaddress
     def macaddress
       require 'facter/util/ip/windows'
 
-      adapter = Facter::Util::IP::Windows.get_preferred_network_adapters.first
+      adapter = Facter::Util::IP::Windows.get_preferred_ipv4_adapters.first
       adapter ? adapter.MACAddress : nil
     end
     module_function :macaddress
