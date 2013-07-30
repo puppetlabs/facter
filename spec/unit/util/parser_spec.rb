@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'spec_helper'
-
 require 'facter/util/parser'
 require 'tempfile'
 require 'tmpdir.rb'
@@ -121,9 +120,39 @@ describe Facter::Util::Parser do
         Facter::Util::Parser.parser_for(cmd)
       end
 
-      it "should return no results" do
-        parser.results.should be_nil
+      it "should not parse a directory" do
+        File.stubs(:file?).with(cmd).returns(false)
+        Facter::Util::Parser.parser_for(cmd).results.should be_nil
       end
+
+      it "should return the data properly" do
+        File.stubs(:file?).with(cmd).returns(true)
+        parser.results.should == data
+      end
+    end
+  end
+
+  describe "powershell parser" do
+    let :ps1 do "/tmp/foo.ps1" end
+    let :data_in_ps1 do "one=two\nthree=four\n" end
+
+    before :each do
+      Facter::Util::Config.stubs(:is_windows?).returns(true)
+      Facter::Util::Resolution.stubs(:exec).returns(data_in_ps1)
+    end
+
+    let :parser do
+      Facter::Util::Parser.parser_for(ps1)
+    end
+
+    it "should not parse a directory" do
+      File.stubs(:file?).with(ps1).returns(false)
+      Facter::Util::Parser.parser_for(ps1).results.should be_nil
+    end
+
+    it "should return data properly" do
+      File.stubs(:file?).with(ps1).returns(true)
+      parser.results.should == data
     end
   end
 
