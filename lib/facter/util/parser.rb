@@ -126,24 +126,17 @@ module Facter::Util::Parser
 
   register(ScriptParser) do |filename|
     if Facter::Util::Config.is_windows?
-      extension_matches?(filename, %w{bat com exe})
+      extension_matches?(filename, %w{bat cmd com exe}) && File.file?(filename)
     else
-      File.executable?(filename)
+      File.executable?(filename) && File.file?(filename)
     end
   end
 
   # Executes and parses the key value output of Powershell scripts
-  #
-  # Before you can run unsigned ps1 scripts it requires a change to execution
-  # policy:
-  #
-  #   Set-ExecutionPolicy RemoteSigned -Scope LocalMachine
-  #   Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-  #
   class PowershellParser < Base
     # Returns a hash of facts from powershell output
     def results
-      shell_command = "powershell -File #{filename}"
+      shell_command = "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File \"#{filename}\""
       output = Facter::Util::Resolution.exec(shell_command)
 
       result = {}
@@ -161,7 +154,7 @@ module Facter::Util::Parser
   end
 
   register(PowershellParser) do |filename|
-    Facter::Util::Config.is_windows? && extension_matches?(filename, "ps1")
+    Facter::Util::Config.is_windows? && extension_matches?(filename, "ps1") && File.file?(filename)
   end
   
   # A parser that is used when there is no other parser that can handle the file
