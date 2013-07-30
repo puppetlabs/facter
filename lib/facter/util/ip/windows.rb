@@ -36,14 +36,15 @@ class Facter::Util::IP::Windows
   #
   # @api private
   def self.interfaces
-    network_interfaces = []
-    self.exec_wmi_ip_query do |nic_config|
-      Facter::Util::WMI.execquery("SELECT * FROM Win32_NetworkAdapter WHERE Index = #{nic_config.Index}").each do |nic|
-        network_interfaces << nic.NetConnectionId
+    interface_names = []
+
+    network_adapter_configurations.map do |nic|
+      Facter::Util::WMI.execquery("SELECT * FROM Win32_NetworkAdapter WHERE Index = #{nic.Index}").each do |nic|
+        interface_names << nic.NetConnectionId
       end
     end
 
-    network_interfaces.uniq
+    interface_names.uniq
   end
 
   # Get the value of an interface and label. For example, you may want to find
@@ -89,10 +90,13 @@ class Facter::Util::IP::Windows
   # @return [Win32OLE] objects
   #
   # @api private
-  def self.exec_wmi_ip_query(&block)
+  def self.network_adapter_configurations
+    nics = []
+    # Win32OLE doesn't implement Enumerable
     Facter::Util::WMI.execquery(WMI_IP_INFO_QUERY).each do |nic|
-      yield nic
+      nics << nic
     end
+    nics
   end
 
   # Gets a list of active adapters and sorts by the lowest connection metric (aka best weight) and MACAddress to ensure order
@@ -101,12 +105,6 @@ class Facter::Util::IP::Windows
   #
   # @api private
   def self.get_preferred_network_adapters
-    network_adapters = []
-
-    self.exec_wmi_ip_query do |nic|
-      network_adapters << nic
-    end
-
     require 'facter/util/registry'
     bindings = {}
 
@@ -117,7 +115,7 @@ class Facter::Util::IP::Windows
       end
     end
 
-    network_adapters.sort do |nic_left,nic_right|
+    network_adapter_configurations.sort do |nic_left,nic_right|
       cmp = nic_left.IPConnectionMetric <=> nic_right.IPConnectionMetric
       if cmp == 0
         bindings[nic_left.SettingID] <=> bindings[nic_right.SettingID]
