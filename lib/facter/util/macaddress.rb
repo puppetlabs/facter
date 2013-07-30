@@ -33,16 +33,10 @@ module Facter::Util::Macaddress
 
   module Windows
     def macaddress
-      require 'facter/util/wmi'
+      require 'facter/util/ip/windows'
 
-      query = "select MACAddress from Win32_NetworkAdapterConfiguration where IPEnabled = True"
-
-      ether = nil
-      Facter::Util::WMI.execquery(query).each do |nic|
-        ether = nic.MacAddress
-        break
-      end
-      ether
+      adapter = Facter::Util::IP::Windows.get_preferred_ipv4_adapters.first
+      adapter ? adapter.MACAddress : nil
     end
     module_function :macaddress
   end
