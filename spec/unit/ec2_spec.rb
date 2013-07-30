@@ -136,7 +136,7 @@ describe "ec2 facts" do
     end
 
     it "should return nil if open fails" do
-      Facter.expects(:warn).with('Could not retrieve ec2 metadata: host unreachable').twice
+      Facter.expects(:warn).with('Could not retrieve ec2 metadata: host unreachable')
       Facter::Util::Resolution.any_instance.stubs(:warn) # do not pollute test output
 
       Object.any_instance.expects(:open).

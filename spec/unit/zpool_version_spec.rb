@@ -56,11 +56,10 @@ describe "zpool_version fact" do
 
   it "handles the zpool command becoming available" do
     # Simulate Puppet configuring the zfs tools from a persistent daemon by
-    # simulating three sequential responses to which('zpool')
-    # (NOTE, each resolution causes which to execute twice.
+    # simulating three sequential responses to which('zpool').
     Facter::Util::Resolution.stubs(:which).
       with("zpool").
-      returns(nil,nil,nil,nil,"/usr/bin/zpool")
+      returns(nil,nil,"/usr/bin/zpool")
     Facter::Util::Resolution.stubs(:exec).
       with("zpool upgrade -v").
       returns(my_fixture_read('linux-fuse_0.6.9'))
@@ -68,8 +67,8 @@ describe "zpool_version fact" do
     fact = Facter.fact(:zpool_version)
 
     # zfs is not present the first two times the fact is resolved.
-    fact.value.should_not == "23"
-    fact.value.should_not == "23"
+    fact.value.should be_nil
+    fact.value.should be_nil
     # zfs was configured between the second and third resolutions.
     fact.value.should == "23"
   end

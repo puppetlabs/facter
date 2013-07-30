@@ -52,8 +52,8 @@ describe Facter::Util::IP do
 
   it "should return a list of only connected interfaces on Windows" do
     Facter.fact(:kernel).stubs(:value).returns("windows")
-    windows_netsh = my_fixture_read("windows_netsh_all_interfaces")
-    Facter::Util::IP.stubs(:get_all_interface_output).returns(windows_netsh)
+
+    Facter::Util::IP::Windows.expects(:interfaces).returns(["Loopback Pseudo-Interface 1", "Local Area Connection", "Teredo Tunneling Pseudo-Interface"])
     Facter::Util::IP.get_interfaces().should == ["Loopback Pseudo-Interface 1", "Local Area Connection", "Teredo Tunneling Pseudo-Interface"]
   end
 
@@ -373,41 +373,29 @@ describe Facter::Util::IP do
   end
 
   describe "on Windows" do
+    require 'facter/util/ip/windows'
+
     before :each do
       Facter.stubs(:value).with(:kernel).returns("windows")
     end
 
     it "should return ipaddress information" do
-      windows_netsh = my_fixture_read("windows_netsh_single_interface")
-
-      Facter::Util::IP.expects(:get_output_for_interface_and_label).with("Local Area Connection", "ipaddress").returns(windows_netsh)
+      Facter::Util::IP::Windows.expects(:value_for_interface_and_label).with("Local Area Connection", "ipaddress").returns('172.16.138.216')
 
       Facter::Util::IP.get_interface_value("Local Area Connection", "ipaddress").should == "172.16.138.216"
     end
 
-    it "should return a human readable netmask" do
-      windows_netsh = my_fixture_read("windows_netsh_single_interface")
-
-      Facter::Util::IP.expects(:get_output_for_interface_and_label).with("Local Area Connection", "netmask").returns(windows_netsh)
-
-      Facter::Util::IP.get_interface_value("Local Area Connection", "netmask").should == "255.255.255.0"
-    end
-
     it "should return network information" do
-      windows_netsh = my_fixture_read("windows_netsh_single_interface")
-
-      Facter::Util::IP.stubs(:get_output_for_interface_and_label).with("Local Area Connection", "ipaddress").returns(windows_netsh)
-      Facter::Util::IP.stubs(:get_output_for_interface_and_label).with("Local Area Connection", "netmask").returns(windows_netsh)
+      Facter::Util::IP::Windows.expects(:value_for_interface_and_label).with("Local Area Connection", "ipaddress").returns('172.16.138.216')
+      Facter::Util::IP::Windows.expects(:value_for_interface_and_label).with("Local Area Connection", "netmask").returns('255.255.255.0')
 
       Facter::Util::IP.get_network_value("Local Area Connection").should == "172.16.138.0"
     end
 
     it "should return ipaddress6 information" do
-      windows_netsh = my_fixture_read("windows_netsh_single_interface6")
+      Facter::Util::IP::Windows.expects(:value_for_interface_and_label).with("Local Area Connection", "ipaddress6").returns("2001:0:4137:9e76:2087:77a:53ef:7527")
 
-      Facter::Util::IP.expects(:get_output_for_interface_and_label).with("Teredo Tunneling Pseudo-Interface", "ipaddress6").returns(windows_netsh)
-
-      Facter::Util::IP.get_interface_value("Teredo Tunneling Pseudo-Interface", "ipaddress6").should == "2001:0:4137:9e76:2087:77a:53ef:7527"
+      Facter::Util::IP.get_interface_value("Local Area Connection", "ipaddress6").should == "2001:0:4137:9e76:2087:77a:53ef:7527"
     end
   end
 
