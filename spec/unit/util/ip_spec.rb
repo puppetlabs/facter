@@ -157,27 +157,27 @@ describe Facter::Util::IP do
   end
 
   def given_initial_interfaces_facts
-    model = described_class.new
-    model.stubs(:interfaces).returns(interfaces_hash.keys)
-    model.stubs(:parse!)
-    model.interfaces_hash = interfaces_hash
-    described_class.stubs(:new).returns(model)
+    stub_ip_facts(interfaces_hash)
   end
 
   def when_interfaces_facts_have_been_resolved_then_flushed
-    interfaces_hash.keys.each do |interface|
-      described_class::INTERFACE_KEYS.each do |attr|
-        Facter.value("#{attr}_#{interface}")
-      end
-    end
+    Facter.value(:interfaces)
 
-    model = described_class.new
-    model.stubs(:interfaces).returns(interfaces_hash2.keys)
-    model.stubs(:parse!)
-    model.interfaces_hash = interfaces_hash2
-    described_class.stubs(:new).returns(model)
+    stub_ip_facts(interfaces_hash2)
 
     Facter.flush
     Facter.value(:interfaces)
+  end
+
+  def stub_ip_facts(intf_hash)
+    delegate = stub('ipsubclass')
+    delegate.stubs(:interfaces).returns(intf_hash.keys)
+    intf_hash.each_pair do |interface, values|
+      described_class::INTERFACE_KEYS.each do |label|
+        delegate.stubs(:value_for_interface_and_label).with(interface, label).returns(values[label])
+      end
+      delegate.stubs(:network).with(interface).returns(values[:network])
+    end
+    described_class.any_instance.stubs(:kernel_class).returns(delegate)
   end
 end
