@@ -46,6 +46,7 @@ describe "Memory facts" do
 
   describe "on Darwin" do
     before(:each) do
+      Facter.clear
       Facter.fact(:kernel).stubs(:value).returns("Darwin")
       Facter::Util::Resolution.stubs(:exec).with('sysctl -n hw.memsize').returns('8589934592')
       Facter::Util::Resolution.stubs(:exec).with('vm_stat').returns(my_fixture_read('darwin-vm_stat'))
