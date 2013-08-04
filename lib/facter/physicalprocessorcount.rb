@@ -9,6 +9,8 @@
 #
 # Caveats:
 #
+require 'facter/util/posix'
+
 Facter.add('physicalprocessorcount') do
   confine :kernel => :linux
 
@@ -83,6 +85,6 @@ end
 Facter.add('physicalprocessorcount') do
   confine :kernel => :openbsd
   setcode do
-    Facter::Util::Resolution.exec("sysctl -n hw.ncpufound")
+    Facter::Util::POSIX.sysctl("hw.ncpufound")
   end
 end

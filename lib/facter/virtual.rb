@@ -86,7 +86,7 @@ Facter.add("virtual") do
   confine :kernel => 'OpenBSD'
   has_weight 10
   setcode do
-    output = Facter::Util::Resolution.exec('sysctl -n hw.product 2>/dev/null')
+    output = Facter::Util::POSIX.sysctl("hw.product")
     Facter::Util::Virtual.parse_virtualization(output)
   end
 end
