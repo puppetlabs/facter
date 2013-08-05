@@ -66,6 +66,19 @@ module Facter::Util::Parser
     end
   end
 
+  module KeyValuePairOutputFormat
+    def self.parse(output)
+      result = {}
+      re = /^(.+?)=(.+)$/
+      output.each_line do |line|
+        if match_data = re.match(line.chomp)
+          result[match_data[1]] = match_data[2]
+        end
+      end
+      result
+    end
+  end
+
   class YamlParser < Base
     def parse_results
       YAML.load(content)
@@ -78,14 +91,7 @@ module Facter::Util::Parser
 
   class TextParser < Base
     def parse_results
-      re = /^(.+?)=(.+)$/
-      result = {}
-      content.each_line do |line|
-        if match_data = re.match(line.chomp)
-          result[match_data[1]] = match_data[2]
-        end
-      end
-      result
+      KeyValuePairOutputFormat.parse content
     end
   end
 
@@ -111,16 +117,7 @@ module Facter::Util::Parser
 
   class ScriptParser < Base
     def results
-      output = Facter::Util::Resolution.exec(filename)
-
-      result = {}
-      re = /^(.+)=(.+)$/
-      output.each_line do |line|
-        if match_data = re.match(line.chomp)
-          result[match_data[1]] = match_data[2]
-        end
-      end
-      result
+      KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(filename)
     end
   end
 
@@ -137,19 +134,7 @@ module Facter::Util::Parser
     # Returns a hash of facts from powershell output
     def results
       shell_command = "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File \"#{filename}\""
-      output = Facter::Util::Resolution.exec(shell_command)
-
-      result = {}
-      output.split("\n").each do |line|
-        if line =~ /^(.+)=(.+)$/
-          result[$1] = $2
-        end
-      end
-
-      result
-    rescue Exception => e
-      Facter.warn("Failed to handle #{filename} as powershell facts: #{e.class}: #{e}")
-      Facter.debug(e.backtrace.join("\n\t"))
+      KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(shell_command)
     end
   end
 
