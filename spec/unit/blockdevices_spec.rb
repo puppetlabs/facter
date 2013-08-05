@@ -19,7 +19,7 @@ describe "Block device facts" do
     before :each do
       Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
 
-      Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n kern.disks").returns("cd0 da0 ada0 ad10 mfi0")
+      Facter::Util::POSIX.stubs(:sysctl).with("kern.disks").returns("cd0 da0 ada0 ad10 mfi0")
 
       Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol inquiry cd0 -D").returns("pass0: <TEAC DV-28E-N 1.6A> Removable CD-ROM SCSI-0 device")
       Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol inquiry da0 -D").returns("pass1: <HP 73.4G MAU3073NC HPC2> Fixed Direct Access SCSI-3 device")
