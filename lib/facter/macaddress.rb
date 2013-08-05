@@ -12,19 +12,6 @@ require 'facter/util/ip'
 
 Facter.add(:macaddress) do
   confine :kernel => 'Linux'
-  has_weight  10                # about an order of magnitude faster
-  setcode do
-    begin
-      Dir.glob('/sys/class/net/*').reject {|x| x[-3..-1] == '/lo' }.first
-      path and File.read(path + '/address')
-    rescue Exception
-      nil
-    end
-  end
-end
-
-Facter.add(:macaddress) do
-  confine :kernel => 'Linux'
   setcode do
     ether = []
     output = Facter::Util::IP.exec_ifconfig(["-a","2>/dev/null"])
