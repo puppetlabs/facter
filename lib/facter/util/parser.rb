@@ -66,6 +66,19 @@ module Facter::Util::Parser
     end
   end
 
+  module KeyValuePairOutputFormat
+    def self.parse(output)
+      result = {}
+      re = /^(.+?)=(.+)$/
+      output.each_line do |line|
+        if match_data = re.match(line.chomp)
+          result[match_data[1]] = match_data[2]
+        end
+      end
+      result
+    end
+  end
+
   class YamlParser < Base
     def parse_results
       YAML.load(content)
@@ -78,14 +91,7 @@ module Facter::Util::Parser
 
   class TextParser < Base
     def parse_results
-      re = /^(.+?)=(.+)$/
-      result = {}
-      content.each_line do |line|
-        if match_data = re.match(line.chomp)
-          result[match_data[1]] = match_data[2]
-        end
-      end
-      result
+      KeyValuePairOutputFormat.parse content
     end
   end
 
@@ -111,25 +117,30 @@ module Facter::Util::Parser
 
   class ScriptParser < Base
     def results
-      output = Facter::Util::Resolution.exec(filename)
-
-      result = {}
-      re = /^(.+)=(.+)$/
-      output.each_line do |line|
-        if match_data = re.match(line.chomp)
-          result[match_data[1]] = match_data[2]
-        end
-      end
-      result
+      KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(filename)
     end
   end
 
   register(ScriptParser) do |filename|
-    if not Facter::Util::Config.is_windows?
+    if Facter::Util::Config.is_windows?
+      extension_matches?(filename, %w{bat cmd com exe}) && File.file?(filename)
+    else
       File.executable?(filename) && File.file?(filename)
     end
   end
 
+  # Executes and parses the key value output of Powershell scripts
+  class PowershellParser < Base
+    # Returns a hash of facts from powershell output
+    def results
+      shell_command = "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File \"#{filename}\""
+      KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(shell_command)
+    end
+  end
+
+  register(PowershellParser) do |filename|
+    Facter::Util::Config.is_windows? && extension_matches?(filename, "ps1") && File.file?(filename)
+  end
 
   # A parser that is used when there is no other parser that can handle the file
   # The return from results indicates to the caller the file was not parsed correctly.

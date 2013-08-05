@@ -1,7 +1,7 @@
 # A Facter plugin that loads external facts.
 #
 # Default Unix Directories:
-# /etc/facter/facts.d, /etc/puppetlbas/facter/facts.d
+# /etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"
 #
 # Default Windows Direcotires:
 # C:\ProgramData\Puppetlabs\facter\facts.d (2008)
