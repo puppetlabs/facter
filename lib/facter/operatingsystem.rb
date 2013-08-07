@@ -50,6 +50,22 @@ Facter.add(:operatingsystem) do
   end
 end
 
+# Resolution for Cumulus Linux (Debian variant)
+Facter.add(:operatingsystem) do
+  confine :kernel => :linux
+  has_weight 11 # Should go before Debian
+  setcode do
+    if FileTest.exists? '/etc/os-release'
+      if release = Facter::Util::FileRead.read('/etc/os-release')
+        if match = release.match(/^NAME=["']?(.+?)["']?$/)
+            name = match[1].gsub(/[^a-zA-Z]/, '')
+            name if name == 'CumulusLinux'
+        end
+      end
+    end
+  end
+end
+
 Facter.add(:operatingsystem) do
   confine :kernel => :linux
   has_weight 10
