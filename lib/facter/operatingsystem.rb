@@ -12,6 +12,7 @@
 #
 
 require 'facter/util/operatingsystem'
+require 'facter/util/file_read'
 
 Facter.add(:operatingsystem) do
   confine :kernel => :sunos
