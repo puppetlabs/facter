@@ -594,8 +594,8 @@ describe Facter::Util::Resolution do
       Facter::Util::Resolution.exec(echo_command).should == "foo"
     end
 
-    it "should override the LANG environment variable" do
-      Facter::Util::Resolution.exec(echo_env_var_command % 'LANG').should == "C"
+    it "should override the LC_ALL environment variable" do
+      Facter::Util::Resolution.exec(echo_env_var_command % 'LC_ALL').should == "C"
     end
 
     it "should respect other overridden environment variables" do
@@ -604,27 +604,27 @@ describe Facter::Util::Resolution do
       end
     end
 
-    it "should restore overridden LANG environment variable after execution" do
+    it "should restore overridden LC_ALL environment variable after execution" do
       # we're going to call with_env in a nested fashion, to make sure that the environment gets restored properly
       # at each level
-      Facter::Util::Resolution.with_env( {"LANG" => "foo"} ) do
-        # Resolution.exec always overrides 'LANG' for its own execution scope
-        Facter::Util::Resolution.exec(echo_env_var_command % 'LANG').should == "C"
+      Facter::Util::Resolution.with_env( {"LC_ALL" => "foo"} ) do
+        # Resolution.exec always overrides 'LC_ALL' for its own execution scope
+        Facter::Util::Resolution.exec(echo_env_var_command % 'LC_ALL').should == "C"
         # But after 'exec' completes, we should see our value restored
-        ENV['LANG'].should == "foo"
+        ENV['LC_ALL'].should == "foo"
         # Now we'll do a nested call to with_env
-        Facter::Util::Resolution.with_env( {"LANG" => "bar"} ) do
+        Facter::Util::Resolution.with_env( {"LC_ALL" => "bar"} ) do
           # During 'exec' it should still be 'C'
-          Facter::Util::Resolution.exec(echo_env_var_command % 'LANG').should == "C"
+          Facter::Util::Resolution.exec(echo_env_var_command % 'LC_ALL').should == "C"
           # After exec it should be restored to our current value for this level of the nesting...
-          ENV['LANG'].should == "bar"
+          ENV['LC_ALL'].should == "bar"
         end
         # Now we've dropped out of one level of nesting,
-        ENV['LANG'].should == "foo"
+        ENV['LC_ALL'].should == "foo"
         # Call exec one more time just for kicks
-        Facter::Util::Resolution.exec(echo_env_var_command % 'LANG').should == "C"
+        Facter::Util::Resolution.exec(echo_env_var_command % 'LC_ALL').should == "C"
         # One last check at our current nesting level.
-        ENV['LANG'].should == "foo"
+        ENV['LC_ALL'].should == "foo"
       end
     end
 
