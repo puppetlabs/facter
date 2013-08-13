@@ -73,7 +73,8 @@ class Facter::Util::Loader
   def valid_search_path?(path)
     return @valid_path[path] unless @valid_path[path].nil?
 
-    return @valid_path[path] = Pathname.new(path).absolute?
+    #if absolute or if embedded in a jar
+    return @valid_path[path] = (Pathname.new(path).absolute? or path.start_with?('file:/'))
   end
   private :valid_search_path?
 
