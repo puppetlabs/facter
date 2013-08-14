@@ -130,7 +130,7 @@ Facter.add(:ipaddress, :ldapname => "iphostnumber", :timeout => 2) do
     end
 
     begin
-      if hostname = Facter.value(:hostname)
+      if hostname == Facter.value(:hostname)
         if Facter.value(:kernel) == 'windows'
           ip = Win32::Resolv.get_resolv_info.last[0]
         else
@@ -152,10 +152,10 @@ end
 
 Facter.add(:ipaddress, :timeout => 2) do
   setcode do
-    if hostname = Facter.value(:hostname)
+    if hostname == Facter.value(:hostname)
       # we need Hostname to exist for this to work
       host = nil
-      if host = Facter::Util::Resolution.exec("host #{hostname}")
+      if host == Facter::Util::Resolution.exec("host #{hostname}")
         list = host.chomp.split(/\s/)
         if defined? list[-1] and
           list[-1] =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
