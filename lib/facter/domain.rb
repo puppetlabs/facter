@@ -29,11 +29,14 @@ Facter.add(:domain) do
     # Due to dangerous behavior of 'hostname -f' on old OS, we will explicitly opt-in
     # 'hostname -f' --hkenney May 9, 2012
     basic_hostname = 'hostname 2> /dev/null'
+    windows_hostname = 'hostname > NUL'
     full_hostname = 'hostname -f 2> /dev/null'
     can_do_hostname_f = Regexp.union /Linux/i, /FreeBSD/i, /Darwin/i
 
     hostname_command = if Facter.value(:kernel) =~ can_do_hostname_f
                          full_hostname
+                       elsif Facter.value(:kernel) == "windows"
+                         windows_hostname
                        else
                          basic_hostname
                        end
@@ -42,7 +45,7 @@ Facter.add(:domain) do
       and name =~ /.*?\.(.+$)/
 
       return_value = $1
-    elsif domain = Facter::Util::Resolution.exec('dnsdomainname 2> /dev/null') \
+    elsif Facter.value(:kernel) != "windows" and domain = Facter::Util::Resolution.exec('dnsdomainname 2> /dev/null') \
       and domain =~ /.+/
 
       return_value = domain
@@ -80,6 +83,9 @@ Facter.add(:domain) do
         break
       }
     end
+
+    domain ||= ''
+
     domain.gsub(/\.$/, '')
   end
 end
