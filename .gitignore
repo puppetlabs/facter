@@ -1,5 +1,6 @@
 pkg/
 ext/packaging/
+*.swp
 # YARD generated documentation
 .yardoc
 doc
