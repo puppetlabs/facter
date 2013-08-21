@@ -22,7 +22,6 @@
 
 require 'timeout'
 require 'open-uri'
-require 'json'
 
 # Provide a set of utility static methods that help with resolving the GCE
 # fact.
@@ -110,6 +109,7 @@ module Facter::Util::GCE
       # Read the list of supported API versions
       Timeout.timeout(timeout) do
         if body = read_uri("#{METADATA_URL}")
+          require_json
           metadata_facts("gce", JSON.parse(body))
         end
       end
@@ -150,4 +150,12 @@ module Facter::Util::GCE
     @add_gce_facts_has_run = true
     with_metadata_server :timeout => 50
   end
+
+  private
+
+  # @api private
+  def self.require_json
+    raise(LoadError, "no json gem") if !Facter.json?
+  end
+
 end
