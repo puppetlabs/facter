@@ -36,16 +36,20 @@ describe "gce facts" do
       Facter::Util::GCE
     end
 
-    it "defines facts dynamically from metadata/" do
+    it "defines facts dynamically from metadata/", :if => Facter.json? do
       util.stubs(:read_uri).
         with("#{api_prefix}/#{api_version}/?recursive=true&alt=json").
         returns('{"some_key_name":"some_key_value"}')
 
-      Facter::Util::GCE.add_gce_facts(:force => true)
-
-      Facter.fact(:gce_some_key_name).
-        value.should == "some_key_value"
+        Facter::Util::GCE.add_gce_facts(:force => true)
+  
+        Facter.fact(:gce_some_key_name).
+          value.should == "some_key_value"
     end
 
+    it "raises a LoadError if json gem is not present.", :unless => Facter.json? do
+      util.stubs(:read_uri).returns('{"some":"json"}')
+      expect { Facter::Util::GCE.add_gce_facts(:force => true) }.to raise_error(LoadError, /no json gem/)
+    end
   end
 end
