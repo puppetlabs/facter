@@ -17,6 +17,6 @@ end
 Facter.add(:uniqueid) do
   confine :kernel => :freebsd
   setcode do
-    Facter::Util::Resolution.exec('sysctl -n kern.hostid')
+    Facter::Util::POSIX.sysctl('kern.hostid')
   end
 end
