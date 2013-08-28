@@ -154,16 +154,16 @@ Facter.add("virtual") do
       result = nil
       Facter::Util::WMI.execquery("SELECT manufacturer, model FROM Win32_ComputerSystem").each do |computersystem|
         result =
-          case computersystem.manufacturer
-          when /Xen/ then "xen"
-          end
           case computersystem.model
           when /VirtualBox/ then "virtualbox"
           when /Virtual Machine/
             computersystem.manufacturer =~ /Microsoft/ ? "hyperv" : nil
           when /VMware/ then "vmware"
           when /KVM/ then "kvm"
-          else "physical"
+          else 
+              if computersystem.manufacturer =~ /Xen/ then "xen"
+              else "physical"
+              end
           end
         break
       end
