@@ -1,6 +1,6 @@
 directories:
   lib:
-    path: 'usr/lib/ruby/site_ruby/1.8'
+    path: 'SITELIBDIR'
     owner: 'root'
     group: 'wheel'
     perms: '0644'
