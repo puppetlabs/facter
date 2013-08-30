@@ -30,16 +30,22 @@ module Facter::Util::Config
   end
 
   def self.external_facts_dirs
-    windows_dir = windows_data_dir
-    if windows_dir.nil? then
-      ["/etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"]
+    if Facter::Util::Root.root?
+      windows_dir = windows_data_dir
+      if windows_dir.nil? then
+        ["/etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"]
+      else
+        [File.join(windows_dir, 'PuppetLabs', 'facter', 'facts.d')]
+      end
     else
-      [File.join(windows_dir, 'PuppetLabs', 'facter', 'facts.d')]
+      [File.expand_path(File.join("~", ".facter", "facts.d"))]
     end
   end
 end
 
 if Facter::Util::Config.is_windows?
-  require 'rubygems'
   require 'win32/dir'
+  require 'facter/util/windows_root'
+else
+  require 'facter/util/unix_root'
 end
