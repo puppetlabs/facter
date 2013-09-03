@@ -23,33 +23,27 @@ describe "gce facts" do
   let(:api_version) { "v1beta1" }
 
   describe "when running on gce" do
+    let(:gce) { Facter::Util::GCE }
+    let(:url) { "#{api_prefix}/#{api_version}/?recursive=true&alt=json" }
     before :each do
       # Assume we can connect
-      Facter::Util::GCE.stubs(:can_connect?).returns(true)
-      Facter::Util::GCE.stubs(:read_uri).
-        with('http://metadata').returns('OK')
+      gce.stubs(:can_connect?).returns(true)
       Facter.stubs(:value).
         with('virtual').returns('gce')
     end
 
-    let :util do
-      Facter::Util::GCE
-    end
-
     it "defines facts dynamically from metadata/", :if => Facter.json? do
-      util.stubs(:read_uri).
-        with("#{api_prefix}/#{api_version}/?recursive=true&alt=json").
-        returns('{"some_key_name":"some_key_value"}')
+      gce.expects(:read_uri).with(url).returns('{"some_key_name":"some_key_value"}')
 
-        Facter::Util::GCE.add_gce_facts(:force => true)
-  
-        Facter.fact(:gce_some_key_name).
-          value.should == "some_key_value"
+      expect(gce.add_gce_facts(:force => true)).to be_true
+      expect(Facter.fact(:gce_some_key_name).value).to eq("some_key_value")
     end
 
-    it "raises a LoadError if json gem is not present.", :unless => Facter.json? do
-      util.stubs(:read_uri).returns('{"some":"json"}')
-      expect { Facter::Util::GCE.add_gce_facts(:force => true) }.to raise_error(LoadError, /no json gem/)
+    it "returns false if json gem is not present.", :unless => Facter.json? do
+      gce.expects(:read_uri).with(url).returns('{"some":"json"}')
+
+      expect(gce.add_gce_facts(:force => true)).to be_false
+      expect(Facter.to_hash.keys).to_not include('gce_some')
     end
   end
 end

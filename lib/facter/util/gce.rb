@@ -109,7 +109,7 @@ module Facter::Util::GCE
       # Read the list of supported API versions
       Timeout.timeout(timeout) do
         if body = read_uri("#{METADATA_URL}")
-          require_json
+          return false if !require_json
           metadata_facts("gce", JSON.parse(body))
         end
       end
@@ -155,7 +155,9 @@ module Facter::Util::GCE
 
   # @api private
   def self.require_json
-    raise(LoadError, "no json gem") if !Facter.json?
+    return true if Facter.json?
+    Facter.warn("Cannot load GCE facts: no JSON gem available")
+    return false
   end
 
 end
