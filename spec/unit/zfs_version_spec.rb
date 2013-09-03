@@ -16,32 +16,43 @@ describe "zfs_version fact" do
     Facter::Util::Resolution.stubs(:which).with("zfs").returns("/usr/bin/zfs")
   end
 
+  it "should return nil on old versions of Solaris 10" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs -?").returns(my_fixture_read('zfs_old'))
+    Facter.fact(:zfs_version).value.should == nil
+  end
+
   it "should return correct version on Solaris 10" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs -?").returns(my_fixture_read('zfs_new'))
     Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('solaris_10'))
     Facter.fact(:zfs_version).value.should == "3"
   end
 
   it "should return correct version on Solaris 11" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs -?").returns(my_fixture_read('zfs_new'))
     Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('solaris_11'))
     Facter.fact(:zfs_version).value.should == "5"
   end
 
   it "should return correct version on FreeBSD 8.2" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs -?").returns(my_fixture_read('zfs_new'))
     Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('freebsd_8.2'))
     Facter.fact(:zfs_version).value.should == "4"
   end
 
   it "should return correct version on FreeBSD 9.0" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs -?").returns(my_fixture_read('zfs_new'))
     Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('freebsd_9.0'))
     Facter.fact(:zfs_version).value.should == "5"
   end
 
   it "should return correct version on Linux with ZFS-fuse" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs -?").returns(my_fixture_read('zfs_new'))
     Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('linux-fuse_0.6.9'))
     Facter.fact(:zfs_version).value.should == "4"
   end
 
   it "should return correct version on Linux with zfsonlinux" do
+    Facter::Util::Resolution.stubs(:exec).with("zfs -?").returns(my_fixture_read('zfs_new'))
     Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('zfsonlinux_0.6.1'))
     Facter.fact(:zfs_version).value.should == "5"
   end
@@ -53,17 +64,19 @@ describe "zfs_version fact" do
   end
 
   it "should return nil if zfs fails to run" do
-    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(nil)
+    Facter::Util::Resolution.stubs(:exec).with("zfs -?").returns(nil)
     Facter.fact(:zfs_version).value.should == nil
   end
 
   it "handles the zfs command becoming available at a later point in time" do
     # Simulate Puppet configuring the zfs tools from a persistent daemon by
-    # simulating three sequential responses to which('zfs')
-    # (NOTE, each resolution causes which to execute twice.
+    # simulating three sequential responses to which('zfs').
     Facter::Util::Resolution.stubs(:which).
       with("zfs").
-      returns(nil,nil,nil,nil,"/usr/bin/zfs")
+      returns(nil,nil,"/usr/bin/zfs")
+    Facter::Util::Resolution.stubs(:exec).
+      with("zfs -?").
+      returns(my_fixture_read('zfs_new'))
     Facter::Util::Resolution.stubs(:exec).
       with("zfs upgrade -v").
       returns(my_fixture_read('linux-fuse_0.6.9'))
@@ -71,8 +84,8 @@ describe "zfs_version fact" do
     fact = Facter.fact(:zfs_version)
 
     # zfs is not present the first two times the fact is resolved.
-    fact.value.should_not == "4"
-    fact.value.should_not == "4"
+    fact.value.should be_nil
+    fact.value.should be_nil
     # zfs was configured between the second and third resolutions.
     fact.value.should == "4"
   end

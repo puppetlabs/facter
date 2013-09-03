@@ -8,10 +8,6 @@ def ifconfig_fixture(filename)
   File.read(fixtures('ifconfig', filename))
 end
 
-def netsh_fixture(filename)
-  File.read(fixtures('netsh', filename))
-end
-
 describe "macaddress fact" do
   include FacterSpec::ConfigHelper
 
@@ -37,7 +33,7 @@ describe "macaddress fact" do
       Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
         returns(ifconfig_fixture('linux_ifconfig_no_mac'))
 
-      proc { Facter.value(:macaddress) }.should_not raise_error
+      expect { Facter.value(:macaddress) }.to_not raise_error
       Facter.value(:macaddress).should be_nil
     end
 
@@ -46,7 +42,7 @@ describe "macaddress fact" do
       Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
         returns(ifconfig_fixture('linux_ifconfig_venet'))
 
-      proc { Facter.value(:macaddress) }.should_not raise_error
+      expect { Facter.value(:macaddress) }.to_not raise_error
       Facter.value(:macaddress).should be_nil
     end
   end
@@ -59,6 +55,18 @@ describe "macaddress fact" do
         returns(ifconfig_fixture('bsd_ifconfig_all_with_multiple_interfaces'))
 
       Facter.value(:macaddress).should == "00:0b:db:93:09:67"
+    end
+  end
+
+  describe "when run on OpenBSD with bridge(4) rules" do
+    it "should return macaddress information" do
+      Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
+      Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
+      Facter::Util::IP.stubs(:exec_ifconfig).
+        returns(ifconfig_fixture('openbsd_bridge_rules'))
+
+      expect { Facter.value(:macaddress) }.to_not raise_error
+      Facter.value(:macaddress).should be_nil
     end
   end
 

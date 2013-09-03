@@ -2,6 +2,8 @@
 ## Support module for memory related facts
 ##
 
+require 'facter/util/posix'
+
 module Facter::Memory
   def self.meminfo_number(tag)
     memsize = ""
@@ -111,14 +113,10 @@ module Facter::Memory
 
   def self.mem_size_info(kernel = Facter.value(:kernel))
     case kernel
-    when /OpenBSD/i
-      Facter::Util::Resolution.exec("sysctl hw.physmem | cut -d'=' -f2")
-    when /FreeBSD/i
-      Facter::Util::Resolution.exec("sysctl -n hw.physmem")
+    when /Dragonfly/i, /FreeBSD/i, /OpenBSD/i
+      Facter::Util::POSIX.sysctl("hw.physmem")
     when /Darwin/i
-      Facter::Util::Resolution.exec("sysctl -n hw.memsize")
-    when /Dragonfly/i
-      Facter::Util::Resolution.exec("sysctl -n hw.physmem")
+      Facter::Util::POSIX.sysctl("hw.memsize")
     when /AIX/i
       if Facter::Util::Resolution.exec("/usr/bin/svmon -O unit=KB") =~ /^memory\s+(\d+)\s+/
         $1
@@ -156,7 +154,7 @@ module Facter::Memory
     when /FreeBSD/i
       Facter::Util::Resolution.exec('swapinfo -k')
     when /Darwin/i
-      Facter::Util::Resolution.exec('sysctl vm.swapusage')
+      Facter::Util::POSIX.sysctl('vm.swapusage')
     when /SunOS/i
       Facter::Util::Resolution.exec('/usr/sbin/swap -l')
     end

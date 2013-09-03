@@ -229,14 +229,14 @@ EOT
   it "should detect kvm on FreeBSD" do
     FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
     Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
-    Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns("QEMU Virtual CPU version 0.12.4")
+    Facter::Util::POSIX.stubs(:sysctl).with("hw.model").returns("QEMU Virtual CPU version 0.12.4")
     Facter::Util::Virtual.should be_kvm
   end
 
   it "should detect kvm on OpenBSD" do
     FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
     Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
-    Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns('QEMU Virtual CPU version (cpu64-rhel6) ("AuthenticAMD" 686-class, 512KB L2 cache)')
+    Facter::Util::POSIX.stubs(:sysctl).with("hw.model").returns('QEMU Virtual CPU version (cpu64-rhel6) ("AuthenticAMD" 686-class, 512KB L2 cache)')
     Facter::Util::Virtual.should be_kvm
   end
 
@@ -288,10 +288,15 @@ EOT
   end
 
   shared_examples_for "virt-what" do |kernel, path, null_device|
-    Facter.fact(:kernel).stubs(:value).returns(kernel)
-    Facter::Util::Resolution.expects(:which).with("virt-what").returns(path)
-    Facter::Util::Resolution.expects(:exec).with("#{path} 2>#{null_device}")
-    Facter::Util::Virtual.virt_what
+    before(:each) do
+      Facter.fact(:kernel).stubs(:value).returns(kernel)
+      Facter::Util::Resolution.expects(:which).with("virt-what").returns(path)
+      Facter::Util::Resolution.expects(:exec).with("#{path} 2>#{null_device}")
+    end
+
+    it "on #{kernel} virt-what is at #{path} and stderr is sent to #{null_device}" do
+      Facter::Util::Virtual.virt_what
+    end
   end
 
   context "on linux" do

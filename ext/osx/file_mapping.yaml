@@ -1,6 +1,6 @@
 directories:
   lib:
-    path: 'usr/lib/ruby/site_ruby/1.8'
+    path: 'Library/Ruby/Site'
     owner: 'root'
     group: 'wheel'
     perms: '0644'
@@ -11,11 +11,6 @@ directories:
     perms: '0755'
   facter:
     path: 'private/var/lib/facter'
-    owner: 'root'
-    group: 'wheel'
-    perms: '0644'
-  etc:
-    path: 'private/etc'
     owner: 'root'
     group: 'wheel'
     perms: '0644'

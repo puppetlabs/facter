@@ -61,7 +61,6 @@ class Facter::Util::IP
     end
   end
 
-
   # Convert an interface name into purely alphanumeric characters.
   #
   # @param [String] interface e.g. 'eth0'
@@ -205,7 +204,7 @@ class Facter::Util::IP
         end
       end
 
-      Facter.add "network_#{interface}" do
+      Facter.add "network_#{model.class.alphafy(interface)}" do
         confine :kernel => model.supported_platforms
 
         setcode do

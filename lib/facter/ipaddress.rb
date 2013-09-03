@@ -33,11 +33,13 @@ Facter.add(:ipaddress) do
       regexp = /inet (?:addr:)?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
       output.split("\n").each do |line|
         match = regexp.match(line)
-        if match
-          break match[1] unless /^127/.match(match[1])
+        if match and not /^127\./.match(match[1])
+          ip = match[1]
+          break
         end
       end
     end
+    ip
   end
 end
 
@@ -104,8 +106,18 @@ end
 Facter.add(:ipaddress) do
   confine :kernel => %w{windows}
   setcode do
-    require 'socket'
-    IPSocket.getaddress(Socket.gethostname)
+    require 'facter/util/ip/windows'
+    ipaddr = nil
+
+    adapters = Facter::Util::IP::Windows.get_preferred_ipv4_adapters
+    adapters.find do |nic|
+      nic.IPAddress.any? do |addr|
+        ipaddr = addr if Facter::Util::IP::Windows.valid_ipv4_address?(addr)
+        ipaddr
+      end
+    end
+
+    ipaddr
   end
 end
 

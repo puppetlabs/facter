@@ -160,17 +160,48 @@ describe "Domain name facts" do
         Facter::Util::Registry.stubs(:hklm_read).returns('')
       end
 
-      it "should use the DNSDomain for the first nic where ip is enabled" do
-        nic = stubs 'nic'
-        nic.stubs(:DNSDomain).returns("foo.com")
+      def expects_dnsdomains(domains)
+        nics = []
 
-        nic2 = stubs 'nic'
-        nic2.stubs(:DNSDomain).returns("bar.com")
+        domains.each do |domain|
+          nic = stubs 'nic'
+          nic.stubs(:DNSDomain).returns(domain)
+          nics << nic
+        end
 
         require 'facter/util/wmi'
-        Facter::Util::WMI.stubs(:execquery).with("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").returns([nic, nic2])
+        Facter::Util::WMI.stubs(:execquery).with("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").returns(nics)
+      end
+
+      it "uses the first DNSDomain" do
+        expects_dnsdomains(['foo.com', 'bar.com'])
 
         Facter.fact(:domain).value.should == 'foo.com'
+      end
+
+      it "uses the first non-nil DNSDomain" do
+        expects_dnsdomains([nil, 'bar.com'])
+
+        Facter.fact(:domain).value.should == 'bar.com'
+      end
+
+      it "uses the first non-empty DNSDomain" do
+        expects_dnsdomains(['', 'bar.com'])
+
+        Facter.fact(:domain).value.should == 'bar.com'
+      end
+
+      context "without any network adapters with a specified DNSDomain" do
+        let(:hostname_command) { 'hostname > NUL' }
+
+        it "should return nil" do
+          expects_dnsdomains([nil])
+
+          Facter::Util::Resolution.stubs(:exec).with(hostname_command).returns('sometest')
+          FileTest.stubs(:exists?).with("/etc/resolv.conf").returns(false)
+
+          Facter.fact(:domain).value.should be_nil
+        end
       end
     end
   end

@@ -197,9 +197,10 @@ class Facter::Util::Resolution
   def self.exec(code, interpreter = nil)
     Facter.warnonce "The interpreter parameter to 'exec' is deprecated and will be removed in a future version." if interpreter
 
-    ## Set LANG to force i18n to C for the duration of this exec; this ensures that any code that parses the
+    ## Set LC_ALL to force i18n to C for the duration of this exec; this ensures that any code that parses the
     ## output of the command can expect it to be in a consistent / predictable format / locale
-    with_env "LANG" => "C" do
+    locale_vars = { "LC_ALL" => "C", "LANG" => "C" }
+    with_env locale_vars  do
 
       if expanded_code = expand_command(code)
         # if we can find the binary, we'll run the command with the expanded path to the binary

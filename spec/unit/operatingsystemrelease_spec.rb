@@ -16,6 +16,7 @@ describe "Operating System Release fact" do
   # We don't currently have fixtures for these releases.
   no_fixtures = {
     "Fedora"      => { :path => "/etc/fedora-release" },
+    "LinuxMint"   => { :path => "/etc/linuxmint/info" },
     "MeeGo"       => { :path => "/etc/meego-release" },
     "OEL"         => { :path => "/etc/enterprise-release" },
     "oel"         => { :path => "/etc/enterprise-release" },
@@ -194,4 +195,16 @@ describe "Operating System Release fact" do
       Facter.fact(:operatingsystemrelease).value.should == "10.04"
     end
   end
+
+  context "CumulusLinux" do
+    before :each do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter.fact(:operatingsystem).stubs(:value).returns("CumulusLinux")
+    end
+    it "Returns version from /etc/os-release" do
+      Facter::Util::FileRead.stubs(:read).with("/etc/os-release").returns('VERSION_ID=1.5.0')
+      Facter.fact(:operatingsystemrelease).value.should == '1.5.0'
+    end
+  end
+
 end

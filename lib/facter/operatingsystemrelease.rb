@@ -77,6 +77,17 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
+  confine :operatingsystem => 'LinuxMint'
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/linuxmint/info')
+      if match = release.match(/RELEASE\=(\d+)/)
+        match[1]
+      end
+    end
+  end
+end
+
+Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{SLES SLED OpenSuSE}
   setcode do
     if release = Facter::Util::FileRead.read('/etc/SuSE-release')
@@ -99,23 +110,23 @@ end
 
 {
   :OpenWrt => {
-    :file => '/etc/openwrt_version', 
+    :file => '/etc/openwrt_version',
     :regexp => /^(\d+\.\d+.*)/
   },
   :Slackware => {
-    :file => '/etc/slackware-version', 
+    :file => '/etc/slackware-version',
     :regexp  => /Slackware ([0-9.]+)/
   },
   :Mageia => {
-    :file => '/etc/mageia-release', 
+    :file => '/etc/mageia-release',
     :regexp => /Mageia release ([0-9.]+)/
   },
   :Bluewhite64 => {
-    :file => '/etc/bluewhite64-version', 
+    :file => '/etc/bluewhite64-version',
     :regexp => /^\s*\w+\s+(\d+\.\d+)/
   },
   :Slamd64 => {
-    :file => '/etc/slamd64-version', 
+    :file => '/etc/slamd64-version',
     :regexp => /^\s*\w+\s+(\d+\.\d+)/
   },
 }.each do |platform, platform_data|
@@ -158,6 +169,18 @@ Facter.add(:operatingsystemrelease) do
     end
   end
 end
+
+Facter.add(:operatingsystemrelease) do
+  confine :operatingsystem => %w{CumulusLinux}
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/os-release')
+      if match = /^VERSION_ID\s*=\s*(\d+\.\d+\.\d+)/.match(release)
+        match[1]
+      end
+    end
+  end
+end
+
 
 Facter.add(:operatingsystemrelease) do
   setcode do Facter[:kernelrelease].value end

@@ -1,3 +1,4 @@
+require 'facter/util/posix'
 require 'facter/util/file_read'
 
 module Facter::Util::Virtual
@@ -92,7 +93,7 @@ module Facter::Util::Virtual
      txt = if FileTest.exists?("/proc/cpuinfo")
        File.read("/proc/cpuinfo")
      elsif ["FreeBSD", "OpenBSD"].include? Facter.value(:kernel)
-       Facter::Util::Resolution.exec("/sbin/sysctl -n hw.model")
+       Facter::Util::POSIX.sysctl("hw.model")
      end
      if txt =~ /QEMU Virtual CPU/ then true
      elsif txt =~ /Common KVM processor/ then true

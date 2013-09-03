@@ -1,5 +1,6 @@
 #! /usr/bin/env ruby
 
+require 'facter/util/posix'
 require 'facter/util/processor'
 require 'spec_helper'
 
@@ -202,38 +203,39 @@ describe "Processor facts" do
 
     it "should be 2 on dual-processor Darwin box" do
       Facter.fact(:kernel).stubs(:value).returns("Darwin")
-      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
+      Facter::Util::POSIX.stubs(:sysctl).with("hw.ncpu").returns('2')
 
       Facter.fact(:processorcount).value.should == "2"
     end
 
     it "should be 2 on dual-processor OpenBSD box" do
       Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
-      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
+      Facter::Util::POSIX.stubs(:sysctl).with("hw.ncpu").returns('2')
 
       Facter.fact(:processorcount).value.should == "2"
     end
 
     it "should be 2 on dual-processor FreeBSD box" do
       Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
-      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
+      Facter::Util::POSIX.stubs(:sysctl).with("hw.ncpu").returns('2')
 
       Facter.fact(:processorcount).value.should == "2"
     end
 
     it "should print the correct CPU Model on FreeBSD" do
       Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
-      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.model").returns('SomeVendor CPU 3GHz')
+      Facter::Util::POSIX.stubs(:sysctl).with("hw.model").returns('SomeVendor CPU 3GHz')
 
       Facter.fact(:processor).value.should == "SomeVendor CPU 3GHz"
     end
 
     it "should be 2 on dual-processor DragonFly box" do
       Facter.fact(:kernel).stubs(:value).returns("DragonFly")
-      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
+      Facter::Util::POSIX.stubs(:sysctl).with("hw.ncpu").returns('2')
 
       Facter.fact(:processorcount).value.should == "2"
     end
+
     describe "on solaris" do
       before :all do
         @fixture_kstat_sparc  = File.read(fixtures('processorcount','solaris-sparc-kstat-cpu-info'))

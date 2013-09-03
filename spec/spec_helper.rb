@@ -1,10 +1,3 @@
-# Add the projects lib directory to our load path so we can require libraries
-# within it easily.
-dir = File.expand_path(File.dirname(__FILE__))
-
-SPECDIR = dir
-$LOAD_PATH.unshift("#{dir}/../lib")
-
 require 'rubygems'
 require 'mocha'
 require 'rspec'
@@ -13,9 +6,34 @@ require 'fileutils'
 require 'puppetlabs_spec_helper'
 require 'pathname'
 
+# load shared_context within this project's spec directory
+dir = File.expand_path(File.dirname(__FILE__))
+$LOAD_PATH.unshift File.join(dir, 'lib')
+
 Pathname.glob("#{dir}/shared_contexts/*.rb") do |file|
   require file.relative_path_from(Pathname.new(dir))
 end
+
+module LogSpecOrder
+  # Log the spec order to a file, but only if the LOG_SPEC_ORDER environment
+  # variable is set.  This could be enabled on Jenkins runs, as it can
+  # be used with Nick L.'s bisect script to help identify and debug
+  # order-dependent spec failures.
+  #
+  # jpartlow 2013-07-05: this was in puppet and I pulled it into facter because
+  # I was seeing similar ordering issues in the specs...and needed to bisect them :/
+  def self.log_spec_order
+    if ENV['LOG_SPEC_ORDER']
+      File.open("./spec_order.txt", "w") do |logfile|
+        RSpec.configuration.files_to_run.each { |f| logfile.puts f }
+      end
+    end
+  end
+end
+
+# Executing here rather than after :suite, so that we can get the order output
+# even when the issue breaks rspec when specs are first loaded.
+LogSpecOrder.log_spec_order
 
 RSpec.configure do |config|
   config.mock_with :mocha

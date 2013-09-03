@@ -26,7 +26,7 @@ require 'facter/util/ip'
 def get_address_after_token(output, token, return_first=false)
   ip = nil
 
-  output.scan(/#{token} ((?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/).each do |match|
+  String(output).scan(/#{token}\s?((?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/).each do |match|
     match = match.first
     unless match =~ /fe80.*/ or match == "::1"
       ip = match
@@ -66,8 +66,17 @@ end
 Facter.add(:ipaddress6) do
   confine :kernel => :windows
   setcode do
-    output = Facter::Util::Resolution.exec("#{ENV['SYSTEMROOT']}/system32/netsh.exe interface ipv6 show address level=verbose")
+    require 'facter/util/ip/windows'
+    ipaddr = nil
 
-    get_address_after_token(output, 'Address', true)
+    adapters = Facter::Util::IP::Windows.get_preferred_ipv6_adapters
+    adapters.find do |nic|
+      nic.IPAddress.any? do |addr|
+        ipaddr = addr if Facter::Util::IP::Windows.valid_ipv6_address?(addr)
+        ipaddr
+      end
+    end
+
+    ipaddr
   end
 end

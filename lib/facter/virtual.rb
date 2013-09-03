@@ -46,7 +46,7 @@ end
 
 Facter.add("virtual") do
   confine :kernel => ["FreeBSD", "GNU/kFreeBSD"]
-
+  has_weight 10
   setcode do
     "jail" if Facter::Util::Virtual.jail?
   end
@@ -54,12 +54,12 @@ end
 
 Facter.add("virtual") do
   confine :kernel => 'SunOS'
-
+  has_weight 10
   setcode do
     next "zone" if Facter::Util::Virtual.zone?
 
     resolver = Facter::Util::Resolution.new('prtdiag')
-    resolver.timeout = 6
+    resolver.timeout = 12
     resolver.setcode('prtdiag')
     output = resolver.value
     Facter::Util::Virtual.parse_virtualization(output)
@@ -68,7 +68,7 @@ end
 
 Facter.add("virtual") do
   confine :kernel => 'HP-UX'
-
+  has_weight 10
   setcode do
     "hpvm" if Facter::Util::Virtual.hpvm?
   end
@@ -76,7 +76,7 @@ end
 
 Facter.add("virtual") do
   confine :architecture => 's390x'
-
+  has_weight 10
   setcode do
     "zlinux" if Facter::Util::Virtual.zlinux?
   end
@@ -84,9 +84,9 @@ end
 
 Facter.add("virtual") do
   confine :kernel => 'OpenBSD'
-
+  has_weight 10
   setcode do
-    output = Facter::Util::Resolution.exec('sysctl -n hw.product 2>/dev/null')
+    output = Facter::Util::POSIX.sysctl("hw.product")
     Facter::Util::Virtual.parse_virtualization(output)
   end
 end
