@@ -174,7 +174,7 @@ class Facter::Util::Resolution
         # command not found on Windows
         return nil
       rescue => detail
-        $stderr.puts detail
+        Facter.warn(detail)
         return nil
       end
       
@@ -307,7 +307,7 @@ class Facter::Util::Resolution
         end
       end
     rescue Timeout::Error => detail
-      warn "Timed out seeking value for %s" % self.name
+      Facter.warn "Timed out seeking value for %s" % self.name
 
       # This call avoids zombies -- basically, create a thread that will
       # dezombify all of the child processes that we're ignoring because
@@ -315,7 +315,7 @@ class Facter::Util::Resolution
       Thread.new { Process.waitall }
       return nil
     rescue => details
-      warn "Could not retrieve %s: %s" % [self.name, details]
+      Facter.warn "Could not retrieve %s: %s" % [self.name, details]
       return nil
     end
 
