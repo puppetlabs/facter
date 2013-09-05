@@ -38,15 +38,15 @@ describe "gce facts" do
       gce.expects(:read_uri).with(url).returns('{"some_key_name":"some_key_value"}')
 
       expect(gce.add_gce_facts(:force => true)).to be_true
-      expect(Facter.fact(:gce_some_key_name).value).to eq("some_key_value")
+      Facter.fact(:gce_some_key_name).value.should eq("some_key_value")
     end
 
     it "returns false if json gem is not present." do
       gce.stubs(:require_json).returns(false)
       gce.expects(:read_uri).with(url).returns('{"some":"json"}')
 
-      expect(gce.add_gce_facts(:force => true)).to be_false
-      expect(Facter.to_hash.keys).to_not include('gce_some')
+      gce.add_gce_facts(:force => true).should be_false
+      Facter.to_hash.keys.should_not include('gce_some')
     end
   end
 end
