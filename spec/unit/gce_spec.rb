@@ -32,14 +32,17 @@ describe "gce facts" do
         with('virtual').returns('gce')
     end
 
-    it "defines facts dynamically from metadata/", :if => Facter.json? do
+    it "defines facts dynamically from metadata/" do
+      pending "Example cannot run without the 'json' library" unless Facter.json?
+
       gce.expects(:read_uri).with(url).returns('{"some_key_name":"some_key_value"}')
 
       expect(gce.add_gce_facts(:force => true)).to be_true
       expect(Facter.fact(:gce_some_key_name).value).to eq("some_key_value")
     end
 
-    it "returns false if json gem is not present.", :unless => Facter.json? do
+    it "returns false if json gem is not present." do
+      gce.stubs(:require_json).returns(false)
       gce.expects(:read_uri).with(url).returns('{"some":"json"}')
 
       expect(gce.add_gce_facts(:force => true)).to be_false
