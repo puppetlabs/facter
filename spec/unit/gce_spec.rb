@@ -43,7 +43,6 @@ describe "gce facts" do
 
     it "returns false if json gem is not present." do
       gce.stubs(:require_json).returns(false)
-      gce.expects(:read_uri).with(url).returns('{"some":"json"}')
 
       gce.add_gce_facts(:force => true).should be_false
       Facter.to_hash.keys.should_not include('gce_some')
