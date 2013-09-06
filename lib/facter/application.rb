@@ -93,35 +93,80 @@ module Facter
     # @return [Hash] options hash
     def self.parse(argv)
       options = {}
-      OptionParser.new do |opts|
-        opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
-        opts.on("-j", "--json")   { |v| options[:json]   = v }
-        opts.on(      "--trace")  { |v| options[:trace]  = v }
-        opts.on(      "--external-dir DIR") { |v| create_directory_loader(v) }
-        opts.on(      "--no-external-dir") { |v| create_nothing_loader }
-        opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
-        opts.on("-t", "--timing") { |v| Facter.timing(1) }
-        opts.on("-p", "--puppet") { |v| load_puppet }
+      parser = OptionParser.new do |opts|
+        opts.banner = <<-BANNER
+Synopsis
+========
 
-        opts.on_tail("-v", "--version") do
+Collect and display facts about the system.
+
+Usage
+=====
+
+  facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [-j|--json] [--external-dir DIR] [--no-external-dir] [fact] [fact] [...]
+
+Description
+===========
+
+Collect and display facts about the current system.  The library behind
+Facter is easy to expand, making Facter an easy way to collect information
+about a system from within the shell or within Ruby.
+
+If no facts are specifically asked for, then all facts will be returned.
+
+EXAMPLE
+=======
+  facter kernel
+
+AUTHOR
+======
+  Luke Kanies
+
+COPYRIGHT
+=========
+  Copyright (c) 2011-2012 Puppet Labs, Inc Licensed under the Apache 2.0 license
+
+USAGE
+=====
+        BANNER
+        opts.on("-y",
+                "--yaml",
+                "Emit facts in YAML format.")   { |v| options[:yaml]   = v }
+        opts.on("-j",
+                "--json",
+                "Emit facts in JSON format.")   { |v| options[:json]   = v }
+        opts.on("--trace",
+                "Enable backtraces.")  { |v| options[:trace]  = v }
+        opts.on("--external-dir DIR",
+                "The directory to use for external facts.") { |v| create_directory_loader(v) }
+        opts.on("--no-external-dir",
+                "Turn off external facts.") { |v| create_nothing_loader }
+        opts.on("-d",
+                "--debug",
+                "Enable debugging.")  { |v| Facter.debugging(1) }
+        opts.on("-t",
+                "--timing",
+                "Enable timing.") { |v| Facter.timing(1) }
+        opts.on("-p",
+                "--puppet",
+                "Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.") { |v| load_puppet }
+
+        opts.on_tail("-v",
+                     "--version",
+                     "Print the version and exit.") do
           puts Facter.version
           exit(0)
         end
 
-        opts.on_tail("-h", "--help") do
-          begin
-            require 'rdoc/ri/ri_paths'
-            require 'rdoc/usage'
-            RDoc.usage # print usage and exit
-          rescue LoadError
-            $stderr.puts "No help available unless your RDoc has RDoc.usage"
-            exit(1)
-          rescue => e
-            $stderr.puts "fatal: #{e}"
-            exit(1)
-          end
+        opts.on_tail("-h",
+                     "--help",
+                     "Print this help message.") do
+          puts parser
+          exit(0)
         end
-      end.parse!(argv)
+      end
+
+      parser.parse!(argv)
 
       options
     rescue OptionParser::InvalidOption => e

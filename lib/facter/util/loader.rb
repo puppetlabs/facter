@@ -99,7 +99,7 @@ class Facter::Util::Loader
       # Don't store the path if the file can't be loaded
       # in case it's loadable later on.
       @loaded.delete(file)
-      warn "Error loading fact #{file} #{detail}"
+      Facter.warn "Error loading fact #{file} #{detail}"
     end
   end
 

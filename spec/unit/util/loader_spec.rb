@@ -315,7 +315,7 @@ describe Facter::Util::Loader do
       Dir.expects(:entries).with("/one/dir").returns %w{a.rb}
 
       Kernel.expects(:load).with("/one/dir/a.rb").raises(LoadError)
-      loader.expects(:warn)
+      Facter.expects(:warn)
 
       lambda { loader.load_all }.should_not raise_error
     end

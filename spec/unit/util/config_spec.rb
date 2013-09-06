@@ -34,6 +34,10 @@ describe Facter::Util::Config do
   end
 
   describe "external_facts_dirs" do
+    before :each do
+      Facter::Util::Root.stubs(:root?).returns(true)
+    end
+
     it "should return the default value for linux" do
       Facter::Util::Config.stubs(:is_windows?).returns(false)
       Facter::Util::Config.stubs(:windows_data_dir).returns(nil)
@@ -50,6 +54,11 @@ describe Facter::Util::Config do
       Facter::Util::Config.stubs(:is_windows?).returns(true)
       Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\Documents")
       Facter::Util::Config.external_facts_dirs.should == [File.join("C:\\Documents", 'PuppetLabs', 'facter', 'facts.d')]
+    end
+
+    it "returns the users home directory when not root" do
+      Facter::Util::Root.stubs(:root?).returns(false)
+      Facter::Util::Config.external_facts_dirs.should == [File.expand_path(File.join("~", ".facter", "facts.d"))]
     end
   end
 end

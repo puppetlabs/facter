@@ -23,6 +23,7 @@ group :development, :test do
 end
 
 platform :mswin, :mingw do
+  gem "sys-admin", "~> 1.5.6"
   gem "win32-api", "~> 1.4.8"
   gem "win32-dir", "~> 0.3.7"
   gem "windows-api", "~> 0.4.1"

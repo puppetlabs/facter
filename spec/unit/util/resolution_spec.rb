@@ -215,7 +215,7 @@ describe Facter::Util::Resolution do
     describe "and the code is a block" do
       it "should warn but not fail if the code fails" do
         @resolve.setcode { raise "feh" }
-        @resolve.expects(:warn)
+        Facter.expects(:warn)
         @resolve.value.should be_nil
       end
 
@@ -244,7 +244,7 @@ describe Facter::Util::Resolution do
       end
 
       it "should timeout after the provided timeout" do
-        @resolve.expects(:warn)
+        Facter.expects(:warn)
         @resolve.timeout = 0.1
         @resolve.setcode { sleep 2; raise "This is a test" }
         Thread.expects(:new).yields
@@ -253,7 +253,7 @@ describe Facter::Util::Resolution do
       end
 
       it "should waitall to avoid zombies if the timeout is exceeded" do
-        @resolve.stubs(:warn)
+        Facter.stubs(:warn)
         @resolve.timeout = 0.1
         @resolve.setcode { sleep 2; raise "This is a test" }
 
