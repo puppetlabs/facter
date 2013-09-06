@@ -18,7 +18,7 @@ group :development, :test do
   gem 'facter', ">= 1.0.0", :path => File.expand_path("..", __FILE__)
   gem 'rspec', "~> 2.11.0"
   gem 'mocha', "~> 0.10.5"
-  gem 'json', "~> 1.7"
+  gem 'json', "~> 1.7", :platforms => :ruby_18
   gem 'puppetlabs_spec_helper'
 end
 

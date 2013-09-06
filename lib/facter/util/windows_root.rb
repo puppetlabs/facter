@@ -19,7 +19,7 @@ module Facter::Util::Root
     size = [80].pack('L')
     member = 0.chr * 4
 
-    unless CreateWellKnownSid(WinBuiltinAdministratorsSid, nil, sid, size)
+    unless CreateWellKnownSid(Windows::Security::WinBuiltinAdministratorsSid, nil, sid, size)
       raise "Failed to create administrators SID"
     end
 
