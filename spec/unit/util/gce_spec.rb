@@ -17,7 +17,7 @@ require 'spec_helper'
 require 'facter/util/gce'
 
 describe Facter::Util::GCE do
-  describe "with_metadata_server", :focus => true do
+  describe "with_metadata_server" do
     let(:gce) { Facter::Util::GCE }
 
     it 'returns false when not running on gce' do
