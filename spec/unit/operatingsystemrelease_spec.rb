@@ -191,7 +191,7 @@ describe "Operating System Release fact" do
     end
 
     it "Returns only the major and minor version (not patch version)" do
-      Facter::Util::FileRead.stubs(:read).with("/etc/issue").returns(issue)
+      Facter::Util::FileRead.stubs(:read).with("/etc/lsb-release").returns(issue)
       Facter.fact(:operatingsystemrelease).value.should == "10.04"
     end
   end
