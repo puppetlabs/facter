@@ -184,14 +184,14 @@ describe "Operating System Release fact" do
   end
 
   context "Ubuntu" do
-    let(:issue) { "Ubuntu 10.04.4 LTS \\n \\l\n\n" }
+    let(:lsbrelease) { 'DISTRIB_ID=Ubuntu\nDISTRIB_RELEASE=10.04\nDISTRIB_CODENAME=lucid\nDISTRIB_DESCRIPTION="Ubuntu 10.04.4 LTS"'}
     before :each do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:operatingsystem).stubs(:value).returns("Ubuntu")
     end
 
     it "Returns only the major and minor version (not patch version)" do
-      Facter::Util::FileRead.stubs(:read).with("/etc/issue").returns(issue)
+      Facter::Util::FileRead.stubs(:read).with("/etc/lsb-release").returns(lsbrelease)
       Facter.fact(:operatingsystemrelease).value.should == "10.04"
     end
   end
