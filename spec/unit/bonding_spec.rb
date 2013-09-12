@@ -19,6 +19,14 @@ describe "Bonded interface facts" do
       it "should enumerate a list of bonded interfaces" do
         Facter.fact(:bonding_interfaces).value.should == "bond0"
       end
+
+      it "should add all the expected facts for that interface" do
+        Facter.fact(:bonding_bond0_active_slave).value.should == "eth2"
+        Facter.fact(:bonding_bond0_mode).value.should == "active-backup"
+        Facter.fact(:bonding_bond0_primary_slave).value.should == "none"
+        Facter.fact(:bonding_bond0_slaves).value.should == "eth2,eth3"
+        Facter.fact(:bonding_bond0_status).value.should == "up"
+      end
     end
 
     context "with multiple bonded interfaces" do
