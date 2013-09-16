@@ -5,7 +5,7 @@
 # Resolution:
 #   On RedHat derivatives, returns their '/etc/<variant>-release' file.
 #   On Debian, returns '/etc/debian_version'.
-#   On Ubuntu, parses '/etc/issue' for the release version.
+#   On Ubuntu, parses '/etc/lsb-release' for the release version.
 #   On Suse, derivatives, parses '/etc/SuSE-release' for a selection of version
 #   information.
 #   On Slackware, parses '/etc/slackware-version'.
@@ -61,8 +61,8 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{Ubuntu}
   setcode do
-    if release = Facter::Util::FileRead.read('/etc/issue')
-      if match = release.match(/Ubuntu ((\d+.\d+)(\.(\d+))?)/)
+    if release = Facter::Util::FileRead.read('/etc/lsb-release')
+      if match = release.match(/DISTRIB_RELEASE=((\d+.\d+)(\.(\d+))?)/)
         # Return only the major and minor version numbers.  This behavior must
         # be preserved for compatibility reasons.
         match[2]
