@@ -29,7 +29,9 @@ module Facter::Util::IP
     :"hp-ux" => {
       :ipaddress  => /\s+inet (\S+)\s.*/,
       :macaddress => /(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/,
-      :netmask  => /.*\s+netmask (\S+)\s.*/
+      :netmask  => /.*\s+netmask (\S+)\s.*/,
+      :mtu => /MTU:(\d+)/   # see comments below about the HP-UX hack
+                            # for MAC address and MTU.
     },
     :windows => {
       :ipaddress  => /\s+IP Address:\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
@@ -152,11 +154,17 @@ module Facter::Util::IP
     when 'SunOS'
       output = Facter::Util::IP.exec_ifconfig([interface])
     when 'HP-UX'
-       mac = ""
-       ifc = hpux_ifconfig_interface(interface)
-       hpux_lanscan.scan(/(\dx\S+).*UP\s+(\w+\d+)/).each {|i| mac = i[0] if i.include?(interface) }
-       mac = mac.sub(/0x(\S+)/,'\1').scan(/../).join(":")
-       output = ifc + "\n" + mac
+      # (#17808)[https://projects.puppetlabs.com/issues/17808] HP-UX hack.
+      # This hack adds MAC address and MTU information from the 'lanscan' and 'netstat -in'
+      # commands respectively after the output from ifconfig <interface>.  This allows ip.rb
+      # to make the (otherwise incorrect) assumption that ifconfig tells us the MAC address
+      # and MTU on all Unix-like operating systems.
+      mac = ""; mtu = ""
+      ifc = hpux_ifconfig_interface(interface)
+      hpux_netstat_in.each_line {|l| x, y, z = l.split(/\s+/); mtu = y if x == interface}
+      hpux_lanscan.scan(/(\dx\S+).*UP\s+(\w+\d+)/).each {|i| mac = i[0] if i.include?(interface) }
+      mac = mac.sub(/0x(\S+)/,'\1').scan(/../).join(":")
+      output = "#{ifc}\n#{mac} MTU:#{mtu}"
     end
     output
   end
