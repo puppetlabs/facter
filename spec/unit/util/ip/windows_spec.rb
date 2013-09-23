@@ -32,15 +32,47 @@ describe Facter::Util::IP::Windows do
     let(:name)       { 'Local Area Connection' }
     let(:index)      { 7 }
     let(:nic_config) { mock('nic_config', :Index => index) }
-    let(:nic)        { mock('nic', :NetConnectionId => name ) }
+    let(:nic)        { stub('nic', :NetConnectionId => name ) }
+    let(:nic_empty_NetConnectionId)        { stub('nic', :NetConnectionId => '' ) }
+    let(:nic_nil_NetConnectionId)        { stub('nic', :NetConnectionId => nil ) }
+    let(:wmi_query) {"SELECT * FROM Win32_NetworkAdapter WHERE Index = #{index} AND NetEnabled = TRUE"}
 
     it "should return an array of only connected interfaces" do
       Facter::Util::WMI.expects(:execquery).with(Facter::Util::IP::Windows::WMI_IP_INFO_QUERY).
         returns([nic_config])
-      Facter::Util::WMI.expects(:execquery).with("SELECT * FROM Win32_NetworkAdapter WHERE Index = #{index}").
+      Facter::Util::WMI.expects(:execquery).with(wmi_query).
         returns([nic])
 
       described_class.interfaces.should == [name]
+    end
+
+    it "should not return an interface with an empty NetConnectionId" do
+      Facter::Util::WMI.expects(:execquery).with(Facter::Util::IP::Windows::WMI_IP_INFO_QUERY).
+        returns([nic_config])
+      Facter::Util::WMI.expects(:execquery).with(wmi_query).
+        returns([nic_empty_NetConnectionId])
+
+      described_class.interfaces.should == []
+    end
+
+    it "should not return an interface with a nil NetConnectionId" do
+      Facter::Util::WMI.expects(:execquery).with(Facter::Util::IP::Windows::WMI_IP_INFO_QUERY).
+        returns([nic_config])
+      Facter::Util::WMI.expects(:execquery).with(wmi_query).
+        returns([nic_nil_NetConnectionId])
+
+      described_class.interfaces.should == []
+    end
+
+    context "when the adapter configuration is enabled but the underlying adapter is not enabled" do
+      it "should not return an interface" do
+        Facter::Util::WMI.expects(:execquery).with(Facter::Util::IP::Windows::WMI_IP_INFO_QUERY).
+          returns([nic_config])
+        Facter::Util::WMI.expects(:execquery).with(wmi_query).
+          returns([])
+
+        described_class.interfaces.should == []
+      end
     end
   end
 end
