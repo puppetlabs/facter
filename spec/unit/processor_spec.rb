@@ -1,9 +1,9 @@
 #! /usr/bin/env ruby
 
 require 'spec_helper'
+require 'facter_spec/cpuinfo'
 require 'facter/util/posix'
 require 'facter/util/processor'
-require 'facter_spec/cpuinfo'
 
 describe "Processor facts" do
   describe "on Windows" do
@@ -141,6 +141,15 @@ describe "Processor facts" do
       it "should be 4 in amd64quad fixture on Linux" do
         Facter.fact(:architecture).stubs(:value).returns("amd64")
         File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("amd64quad"))
+
+        Facter.fact(processor_fact).value.should == "4"
+      end
+
+      it "should be 24 in amd64twentyfour fixture on Linux" do
+        Facter.fact(:architecture).stubs(:value).returns("amd64")
+        File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("amd64twentyfour"))
+
+        Facter.fact(processor_fact).value.should == "24"
       end
     end
 

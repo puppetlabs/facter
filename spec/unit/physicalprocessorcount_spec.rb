@@ -1,11 +1,14 @@
 #! /usr/bin/env ruby
 
 require 'spec_helper'
+require 'facter_spec/cpuinfo'
 require 'facter/util/posix'
 
 describe "Physical processor count facts" do
 
   describe "on linux" do
+    include FacterSpec::Cpuinfo
+
     before :each do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
     end
@@ -82,19 +85,25 @@ describe "Physical processor count facts" do
       end
 
       it "should return 1 physical CPU when there are multiple cores" do
-        @cpuinfo = my_fixture_read('amd64dual')
+        @cpuinfo = cpuinfo_fixture_read('amd64dual')
         File.stubs(:read).with("/proc/cpuinfo").returns(@cpuinfo)
         Facter.fact(:physicalprocessorcount).value.should == 1
       end
 
       it "should return 2 physical CPUs when there are 2 singlecore CPUs" do
-        @cpuinfo = my_fixture_read('two_singlecore')
+        @cpuinfo = cpuinfo_fixture_read('two_singlecore')
         File.stubs(:read).with("/proc/cpuinfo").returns(@cpuinfo)
         Facter.fact(:physicalprocessorcount).value.should == 2
       end
 
       it "should return 2 physical CPUs when there are 2 multicore CPUs" do
-        @cpuinfo = my_fixture_read('two_multicore')
+        @cpuinfo = cpuinfo_fixture_read('two_multicore')
+        File.stubs(:read).with("/proc/cpuinfo").returns(@cpuinfo)
+        Facter.fact(:physicalprocessorcount).value.should == 2
+      end
+
+      it "should return 2 physical CPUs when there are 2 multicore CPUs" do
+        @cpuinfo = cpuinfo_fixture_read('amd64twentyfour')
         File.stubs(:read).with("/proc/cpuinfo").returns(@cpuinfo)
         Facter.fact(:physicalprocessorcount).value.should == 2
       end
