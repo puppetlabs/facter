@@ -1,11 +1,8 @@
 #! /usr/bin/env ruby
 
 require 'facter/util/processor'
+require 'facter_spec/cpuinfo'
 require 'spec_helper'
-
-def cpuinfo_fixture(filename)
-  File.open(fixtures('cpuinfo', filename)).readlines
-end
 
 describe "Processor facts" do
   describe "on Windows" do
@@ -89,6 +86,8 @@ describe "Processor facts" do
   end
 
   describe "on Unixes" do
+    include FacterSpec::Cpuinfo
+
     before :each do
       Facter.collection.internal_loader.load(:processor)
     end
@@ -98,7 +97,7 @@ describe "Processor facts" do
       Facter.fact(:operatingsystem).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("sparc")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
-      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("sparc"))
+      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("sparc"))
 
       Facter.fact(:processorcount).value.should == "1"
     end
@@ -107,7 +106,7 @@ describe "Processor facts" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("ppc64")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
-      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("ppc64"))
+      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("ppc64"))
 
       Facter.fact(:processorcount).value.should == "2"
     end
@@ -116,7 +115,7 @@ describe "Processor facts" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("arm")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
-      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("panda-armel"))
+      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("panda-armel"))
 
       Facter.fact(:processorcount).value.should == "2"
     end
@@ -125,7 +124,7 @@ describe "Processor facts" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("arm")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
-      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("bbg3-armel"))
+      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("bbg3-armel"))
 
       Facter.fact(:processorcount).value.should == "1"
     end
@@ -134,7 +133,7 @@ describe "Processor facts" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("arm")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
-      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("beaglexm-armel"))
+      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("beaglexm-armel"))
 
       Facter.fact(:processorcount).value.should == "1"
     end
@@ -143,7 +142,7 @@ describe "Processor facts" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("amd64")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
-      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64solo"))
+      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("amd64solo"))
 
       Facter.fact(:processorcount).value.should == "1"
     end
@@ -152,7 +151,7 @@ describe "Processor facts" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("amd64")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
-      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64dual"))
+      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("amd64dual"))
 
       Facter.fact(:processorcount).value.should == "2"
     end
@@ -161,7 +160,7 @@ describe "Processor facts" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("amd64")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
-      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64tri"))
+      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("amd64tri"))
 
       Facter.fact(:processorcount).value.should == "3"
     end
@@ -170,9 +169,18 @@ describe "Processor facts" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter.fact(:architecture).stubs(:value).returns("amd64")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
-      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64quad"))
+      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("amd64quad"))
 
       Facter.fact(:processorcount).value.should == "4"
+    end
+
+    it "should be 4 in amd64quad fixture on Linux" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter.fact(:architecture).stubs(:value).returns("amd64")
+      File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
+      File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("amd64twentyfour"))
+
+      Facter.fact(:processorcount).value.should == "24"
     end
 
     it "should be 2 on dual-processor Darwin box" do
