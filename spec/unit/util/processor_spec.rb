@@ -2,13 +2,12 @@
 
 require 'spec_helper'
 require 'facter/util/processor'
-
-def cpuinfo_fixture(filename)
-  File.open(fixtures('cpuinfo', filename)).readlines
-end
+require 'facter_spec/cpuinfo'
 
 describe Facter::Util::Processor do
   describe "on linux" do
+    include FacterSpec::Cpuinfo
+
     before :each do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       File.stubs(:exists?).with("/proc/cpuinfo").returns(true)
@@ -20,19 +19,19 @@ describe Facter::Util::Processor do
       end
 
       it "should get the processor description from the amd64solo fixture" do
-        File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64solo"))
+        File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("amd64solo"))
         Facter::Util::Processor.enum_cpuinfo[0].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
       end
 
       it "should get the processor descriptions from the amd64dual fixture" do
-        File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64dual"))
+        File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("amd64dual"))
 
         Facter::Util::Processor.enum_cpuinfo[0].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
         Facter::Util::Processor.enum_cpuinfo[1].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
       end
 
       it "should get the processor descriptions from the amd64tri fixture" do
-        File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64tri"))
+        File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("amd64tri"))
 
         Facter::Util::Processor.enum_cpuinfo[0].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
         Facter::Util::Processor.enum_cpuinfo[1].should == "Intel(R) Core(TM)2 Duo CPU     P8700  @ 2.53GHz"
@@ -40,7 +39,7 @@ describe Facter::Util::Processor do
       end
 
       it "should get the processor descriptions from the amd64quad fixture" do
-        File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture("amd64quad"))
+        File.stubs(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("amd64quad"))
 
         Facter::Util::Processor.enum_cpuinfo[0].should == "Quad-Core AMD Opteron(tm) Processor 2374 HE"
         Facter::Util::Processor.enum_cpuinfo[1].should == "Quad-Core AMD Opteron(tm) Processor 2374 HE"
