@@ -13,7 +13,7 @@ int main(int argc, char **argv)
     dump_network_facts();
     dump_kernel_facts();
     dump_blockdevice_facts();
-    dump_lsb_facts();
+    dump_operatingsystem_facts();
     dump_uptime_facts();
     dump_virtual_facts();
     dump_hardwired_facts();

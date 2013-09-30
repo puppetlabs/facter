@@ -58,6 +58,11 @@ static inline void split(const string &s, char delim, vector<string> &elems) {
   }
 }
 
+static bool file_exist (string filename)
+{
+  struct stat buffer;
+  return stat (filename.c_str(), &buffer) == 0;
+}
 
 // handy for some /proc and /sys files
 string read_oneline_file(const string file_path)
@@ -199,7 +204,7 @@ void dump_kernel_facts()
     cout << "kernelmajversion => " << kernelmajversion << endl;
 }
 
-void dump_lsb_facts()
+static void dump_lsb_facts()
 {
     std::ifstream lsb_release_file("/etc/lsb-release", std::ifstream::in);
     std::string line;
@@ -223,6 +228,33 @@ void dump_lsb_facts()
         else if (key == "DISTRIB_DESCRIPTION")
             cout << "lsbdistdescription => " << value << endl;
     }
+}
+
+// gonna need to pick a regex library to do os facts rights given all the variants
+// for now, just fedora ;>
+
+static void dump_redhat_facts()
+{
+  if (file_exist("/etc/redhat-release")) {
+    string redhat_release = read_oneline_file("/etc/redhat-release");
+    vector<string> tokens;
+    tokenize(redhat_release, tokens);
+    if (tokens.size() >= 2 && tokens[0] == "Fedora" && tokens[1] == "release") {
+      cout << "operatingsystem => Fedora" << endl;
+      if (tokens.size() >= 3) {
+	cout << "operatingsystemrelease => " << tokens[2] << endl;
+	cout << "operatingsystemmajrelease => " << tokens[2] << endl;
+      }
+    }
+    else
+      cout << "operatingsystem => RedHat" << endl;
+  }
+}
+
+void dump_operatingsystem_facts()
+{
+  dump_lsb_facts();
+  dump_redhat_facts();
 }
 
 void dump_uptime_facts()
@@ -417,12 +449,6 @@ void dump_mem_facts()
     }
 
     dump_mem_fact("memoryfree", memoryfree);
-}
-
-static bool file_exist (string filename)
-{
-  struct stat buffer;
-  return stat (filename.c_str(), &buffer) == 0;
 }
 
 static string get_selinux_path()
