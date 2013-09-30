@@ -383,7 +383,8 @@ void dump_blockdevice_facts()
 void dump_misc_facts()
 {
     cout << "path => " << getenv("PATH") << endl;
-    cout << "uid => " << popen_stdout("whoami") << endl;
+    string whoami = popen_stdout("whoami");
+    cout << "id => " << trim(whoami) << endl;
 
     // timezone
     //char tzstring[16];
