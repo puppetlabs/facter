@@ -154,7 +154,7 @@ device maj,min total free
 /dev/hd6 10, 2 512MB 508MB
 SWAP
 
-      Facter::Util::Resolution.stubs(:exec).with('swap -l').returns(swapusage)
+      Facter::Util::Resolution.stubs(:exec).with('swap -l 2>/dev/null').returns(swapusage)
 
       Facter.collection.internal_loader.load(:memory)
     end
@@ -264,7 +264,7 @@ VMSTAT
 swapfile             dev  swaplo blocks   free
 /dev/swap           4294967295,4294967295     16 2097136 2097136
 SWAP
-        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l').returns sample_swap_line
+        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns sample_swap_line
 
         Facter.collection.internal_loader.load(:memory)
       end
@@ -293,7 +293,7 @@ swapfile             dev  swaplo blocks   free
 /dev/swap           4294967295,4294967295     16 2097136 2097136
 /dev/swap2          4294967295,4294967295     16 2097136 2097136
 SWAP
-        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l').returns sample_swap_line
+        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns sample_swap_line
         Facter.collection.internal_loader.load(:memory)
       end
 
@@ -316,7 +316,7 @@ SWAP
 
     describe "when no swap exists" do
       before(:each) do
-        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l').returns ""
+        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns ""
 
         Facter.collection.internal_loader.load(:memory)
       end
