@@ -134,7 +134,7 @@ module Facter::Memory
   def self.swap_info(kernel = Facter.value(:kernel))
     case kernel
     when /AIX/i
-      (Facter.value(:id) == "root") ? Facter::Util::Resolution.exec('swap -l') : nil
+      (Facter.value(:id) == "root") ? Facter::Util::Resolution.exec('swap -l 2>/dev/null') : nil
     when /OpenBSD/i
       Facter::Util::Resolution.exec('swapctl -s')
     when /FreeBSD/i
@@ -142,7 +142,7 @@ module Facter::Memory
     when /Darwin/i
       Facter::Util::Resolution.exec('sysctl vm.swapusage')
     when /SunOS/i
-      Facter::Util::Resolution.exec('/usr/sbin/swap -l')
+      Facter::Util::Resolution.exec('/usr/sbin/swap -l 2>/dev/null')
     end
   end
 
