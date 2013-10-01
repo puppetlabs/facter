@@ -124,8 +124,7 @@ describe "Memory facts" do
       Facter.clear
       Facter.fact(:kernel).stubs(:value).returns("AIX")
 
-      Facter::Util::Resolution.stubs(:exec).with('swap -l').returns(my_fixture_read('aix-swap_l'))
-
+      Facter::Util::Resolution.stubs(:exec).with('swap -l 2>/dev/null').returns(my_fixture_read('aix-swap_l'))
       Facter::Util::Resolution.stubs(:exec).with('/usr/bin/svmon -O unit=KB').returns(my_fixture_read('aix-svmon'))
 
       Facter.collection.internal_loader.load(:memory)
@@ -232,7 +231,7 @@ describe "Memory facts" do
 
     describe "when single swap exists" do
       before(:each) do
-        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l').returns my_fixture_read('solaris-swap_l-single')
+        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns my_fixture_read('solaris-swap_l-single')
 
         Facter.collection.internal_loader.load(:memory)
       end
@@ -256,7 +255,7 @@ describe "Memory facts" do
 
     describe "when multiple swaps exist" do
       before(:each) do
-        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l').returns my_fixture_read('solaris-swap_l-multiple')
+        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns my_fixture_read('solaris-swap_l-multiple')
         Facter.collection.internal_loader.load(:memory)
       end
 
@@ -279,7 +278,7 @@ describe "Memory facts" do
 
     describe "when no swap exists" do
       before(:each) do
-        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l').returns ""
+        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns ""
 
         Facter.collection.internal_loader.load(:memory)
       end
