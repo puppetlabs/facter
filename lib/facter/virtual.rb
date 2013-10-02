@@ -122,17 +122,19 @@ Facter.add("virtual") do
     end
 
     # Parse dmidecode
-    output = Facter::Util::Resolution.exec('dmidecode')
-    if output
-      lines = output.split("\n")
-      next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
-      next "vmware"     if lines.any? {|l| l =~ /VMware/ }
-      next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
-      next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
-      next "hyperv"     if lines.any? {|l| l =~ /Product Name: Virtual Machine/ }
-      next "rhev"       if lines.any? {|l| l =~ /Product Name: RHEV Hypervisor/ }
-      next "ovirt"      if lines.any? {|l| l =~ /Product Name: oVirt Node/ }
-      next "kvm"        if lines.any? {|l| l =~ /Manufacturer: Bochs/ }
+    if File.exists?("/dev/mem") and File.stat("/dev/mem").readable?
+      output = Facter::Util::Resolution.exec('dmidecode')
+      if output
+        lines = output.split("\n")
+        next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
+        next "vmware"     if lines.any? {|l| l =~ /VMware/ }
+        next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
+        next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
+        next "hyperv"     if lines.any? {|l| l =~ /Product Name: Virtual Machine/ }
+        next "rhev"       if lines.any? {|l| l =~ /Product Name: RHEV Hypervisor/ }
+        next "ovirt"      if lines.any? {|l| l =~ /Product Name: oVirt Node/ }
+        next "kvm"        if lines.any? {|l| l =~ /Manufacturer: Bochs/ }
+      end
     end
 
     # Sample output of vmware -v `VMware Server 1.0.5 build-80187`
@@ -180,7 +182,7 @@ end
 # virtual fact based on virt-what command.
 #
 # The output is mapped onto existing known values for the virtual fact in an
-# effort to preserve consistency.  This fact has a high weight becuase the
+# effort to preserve consistency.  This fact has a high weight because the
 # virt-what tool is expected to be maintained upstream.
 #
 # If the virt-what command is not available, this fact will not resolve to a
