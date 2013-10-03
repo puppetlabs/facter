@@ -6,8 +6,7 @@ require 'facter/util/posix'
 
 module Facter::Memory
   def self.meminfo_number(tag)
-    memsize = ""
-    size = [0]
+    size = 0
     File.readlines("/proc/meminfo").each do |l|
       size = $1.to_f if l =~ /^#{tag}:\s+(\d+)\s+\S+/
       if tag == "MemFree" &&
@@ -168,7 +167,7 @@ module Facter::Memory
       output.each_line do |line|
         value += parse_swap_line(line, kernel, is_size)
       end
-    end      
+    end
     value_in_mb = scale_swap_value(value, kernel)
   end
 
@@ -177,7 +176,7 @@ module Facter::Memory
   # regex corresponds to the swap size value and the second corresponds to the swap
   # free value, but this may not always be the case. In Ruby 1.9.3 it is possible
   # to give these names, but sadly 1.8.7 does not support this.
- 
+
   def self.parse_swap_line(line, kernel, is_size)
     case kernel
     when /AIX/i
