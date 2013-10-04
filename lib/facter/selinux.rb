@@ -36,8 +36,11 @@ Facter.add("selinux") do
     result = "false"
     if FileTest.exists?("#{selinux_mount_point}/enforce")
       if FileTest.exists?("/proc/self/attr/current")
-        if (File.read("/proc/self/attr/current") != "kernel\0")
-          result = "true"
+        begin
+          if (File.read("/proc/self/attr/current") != "kernel\0")
+            result = "true"
+          end
+        rescue
         end
       end
     end
