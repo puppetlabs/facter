@@ -12,5 +12,6 @@ void dump_ruby_lib_versions();
 void dump_mem_facts();
 void dump_selinux_facts();
 void dump_ssh_facts();
+void dump_processor_facts();
 
 }

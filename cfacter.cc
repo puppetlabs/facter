@@ -22,5 +22,6 @@ int main(int argc, char **argv)
     dump_mem_facts();
     dump_selinux_facts();
     dump_ssh_facts();
+    dump_processor_facts();
     exit(0);
 }

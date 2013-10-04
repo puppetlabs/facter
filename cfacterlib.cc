@@ -17,9 +17,11 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <list>
 #include <map>
 #include <string>
 #include <sstream>
+#include <string>
 #include <vector>
 #include <iterator>
 
@@ -589,4 +591,38 @@ void dump_ssh_facts()
   for (iter i = fact_map.begin(); i != fact_map.end(); ++i) {
     dump_ssh_fact(i->first, i->second);
   }
+}
+
+static void dump_physicalprocessorcount_fact()
+{
+  // So, facter has logic to use /sys and fallback to /proc
+  // but I don't know why the /sys support was added; research needed.
+  // Since sys is the default, just reproduce that logic for now.
+
+  string sysfs_cpu_directory = "/sys/devices/system/cpu";
+  vector<string> package_ids;
+  if (file_exist(sysfs_cpu_directory)) {
+    unsigned int i = 0;
+    while (true) {
+      char buf[10];
+      snprintf(buf, sizeof(buf) - 1, "%ud", i);
+      string cpu_phys_file = sysfs_cpu_directory + "/cpu" + buf + "/topology/physical_package_id";
+      if (!file_exist(cpu_phys_file))
+	break;
+
+      package_ids.push_back(read_oneline_file(cpu_phys_file));
+    }
+
+    sort(package_ids.begin(), package_ids.end());
+    unique(package_ids.begin(), package_ids.end());
+    cout << "physicalprocessorcount => " << package_ids.size() << endl;
+  }
+  else {
+    // here's where the fall back to /proc/cpuinfo would go
+  }
+}
+
+void dump_processor_facts()
+{
+  dump_physicalprocessorcount_fact();
 }
