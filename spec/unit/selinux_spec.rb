@@ -104,7 +104,23 @@ describe "SELinux facts" do
     end
   end
 
-  def sestatus_is(status)
+  describe "should detect if SELinux is disabled" do
+    before :each do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+    end
+
+    it "and return false if /proc/self/attr/current is unavailable" do
+      mounts_does_not_exist
+
+      File.stubs(:read).with("/proc/self/attr/current").raises(Errno::EINVAL)
+      FileTest.expects(:exists?).with("/proc/self/attr/current").returns true
+      FileTest.expects(:exists?).with("/selinux/enforce").returns true
+
+      Facter.fact(:selinux).value.should == "false"
+    end
+  end
+
+    def sestatus_is(status)
     Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/sestatus').returns(status)
   end
 
