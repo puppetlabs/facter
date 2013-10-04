@@ -17,6 +17,7 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <map>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -236,6 +237,7 @@ static void dump_lsb_facts()
 static void dump_redhat_facts()
 {
   if (file_exist("/etc/redhat-release")) {
+    cout << "osfamily => RedHat" << endl;
     string redhat_release = read_oneline_file("/etc/redhat-release");
     vector<string> tokens;
     tokenize(redhat_release, tokens);
@@ -499,15 +501,26 @@ void dump_selinux_facts()
     return;
   }
 
-  cout << "selinux => true" << endl;
+  map<string, string> selinux_map;
+  selinux_map["selinux"] = "true";
+
+  // defaults from facter
+  selinux_map["selinux_enforced"] = "false";
+  selinux_map["selinux_policyversion"] = "unknown";
+  selinux_map["selinux_current_mode"] = "unknown";
+  selinux_map["selinux_config_mode"] = "unknown";
+  selinux_map["selinux_config_policy"] = "unknown";
+  selinux_map["selinux_mode"] = "unknown";
 
   string selinux_path = get_selinux_path();
 
   string selinux_enforce_path = selinux_path + "/enforce";
-  cout << "selinux_enforced => " << ((read_oneline_file(selinux_enforce_path) == "1") ? "true" : "false") << endl;
+  if (file_exist(selinux_enforce_path))
+    selinux_map["selinux_enforced"] = ((read_oneline_file(selinux_enforce_path) == "1") ? "true" : "false");
 
   string selinux_policyvers_path = selinux_path + "/policyvers";
-  cout << "selinux_policyversion => " << read_oneline_file(selinux_policyvers_path) << endl;
+  if (file_exist(selinux_policyvers_path))
+    selinux_map["selinux_policyversion"] = read_oneline_file(selinux_policyvers_path);
 
   string selinux_cmd = "/usr/sbin/sestatus";
   FILE* pipe = popen(selinux_cmd.c_str(), "r");
@@ -520,19 +533,60 @@ void dump_selinux_facts()
       split(buffer, ':', elems);
       if (elems.size() < 2) continue;  // shouldn't happen
       if (elems[0] == "Current mode") {
-	cout << "selinux_current_mode => " << trim(elems[1]) << endl;
+	selinux_map["selinux_current_mode"] = trim(elems[1]);
       }
       else if (elems[0] == "Mode from config file") {
-	cout << "selinux_config_mode => " << trim(elems[1]) << endl;
+	selinux_map["selinux_config_mode"] = trim(elems[1]);
       }
       else if (elems[0] == "Policy from config file") {
-	cout << "selinux_config_policy => " << trim(elems[1]) << endl;
-	cout << "selinux_mode => " << trim(elems[1]) << endl;
+	selinux_map["selinux_config_policy"] = trim(elems[1]);
+	selinux_map["selinux_mode"] = trim(elems[1]);
       }
     }
   }
 
   pclose(pipe);
+
+  typedef map<string, string>::iterator iter;
+  for (iter i = selinux_map.begin(); i != selinux_map.end(); ++i) {
+    cout << i->first << " => " << i->second << endl;
+  }
 }
 
+static void dump_ssh_fact(string fact_name, string path_name)
+{
+  string ssh_directories[] = {
+    "/etc/ssh",
+    "/usr/local/etc/ssh",
+    "/etc",
+    "/usr/local/etc",
+    "/etc/opt/ssh",
+  };
 
+  for (int i = 0; i < sizeof(ssh_directories) / sizeof(string); ++i) {
+    string full_path = ssh_directories[i] + "/" + path_name;
+    if (file_exist(full_path)) {
+      string key = read_oneline_file(full_path);
+      vector<string> tokens;
+      tokenize(trim(key), tokens);
+      if (tokens.size() < 2) continue;  // should never happen
+      cout << fact_name << " => " << tokens[1] << endl;
+      break;
+    }
+  }
+}
+
+// no support for the sshfp facts, which require base64/sha1sum code
+void dump_ssh_facts()
+{
+  // not til C++11 do we have static initialization of stl maps
+  map<string, string> fact_map;
+  fact_map["sshdsakey"] = "ssh_host_dsa_key.pub";
+  fact_map["sshrsakey"] = "ssh_host_rsa_key.pub";
+  fact_map["sshecdsakey"] = "ssh_host_ecdsa_key.pub";
+
+  typedef map<string, string>::iterator iter;
+  for (iter i = fact_map.begin(); i != fact_map.end(); ++i) {
+    dump_ssh_fact(i->first, i->second);
+  }
+}
