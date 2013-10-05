@@ -1,0 +1,8 @@
+* Add regex support (e.g. for os and processor file parsing)
+* Allow 'facter <factname>' (currently returns all facts) -- still *retrieve* all facts but only return the one? or introspect what's available?
+* Split out into app, core lib, libs per functional group (network, storage, selinux, processors, etc)
+* Use dynamic loading of libs (dlopen, etc)
+* autoconf build
+* is 'weight' needed or is there a better way?
+* virtual
+* fact dependencies

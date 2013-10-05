@@ -29,6 +29,41 @@
 
 using namespace std;
 
+// For case-insensitive strings, define ci_string
+// Thank you, Herb Sutter: http://www.gotw.ca/gotw/029.htm
+//
+struct ci_char_traits : public char_traits<char>
+// just inherit all the other functions
+//  that we don't need to override
+{
+  static bool eq( char c1, char c2 )
+  { return toupper(c1) == toupper(c2); }
+
+  static bool ne( char c1, char c2 )
+  { return toupper(c1) != toupper(c2); }
+
+  static bool lt( char c1, char c2 )
+  { return toupper(c1) <  toupper(c2); }
+
+  static int compare( const char* s1,
+		      const char* s2,
+		      size_t n ) {
+    return strncasecmp( s1, s2, n );
+    // if available on your compiler,
+    //  otherwise you can roll your own
+  }
+
+    static const char*
+    find( const char* s, int n, char a ) {
+      while( n-- > 0 && toupper(*s) != toupper(a) ) {
+	++s;
+      }
+      return s;
+    }
+};
+
+typedef basic_string<char, ci_char_traits> ci_string;
+
 // trim from start
 static inline std::string &ltrim(std::string &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
@@ -284,6 +319,7 @@ string popen_stdout(string cmd)
         buf[bytesRead] = 0;
         cmd_output += buf;
     }
+    pclose(cmd_fd);
     return cmd_output;
 }
 
@@ -292,25 +328,12 @@ void dump_virtual_facts()
     // poked at the real facter's virtual support, some combo of file existence
     // plus lspci plus dmidecode
 
-    // from a time perspective simulate expense with lspci and dmidecode invocations
-    string lspci_output     = popen_stdout("lspci");
-    string dmidecode_output = popen_stdout("dmidecode");
-    std::stringstream ss(dmidecode_output);
-    string dmidecode_line;
-    while (std::getline(ss, dmidecode_line)) {
-        size_t sep = dmidecode_line.find(":");
-        if (sep != string::npos) {
-            string key = dmidecode_line.substr(0, sep);
-            string value = dmidecode_line.substr(sep + 1, string::npos);
-            if (key.find("UUID") != string::npos)
-                cout << "uuid => " << trim(value) << endl;
-        }
-    }
-
     // instead of parsing all of lspci, how about looking for vendors in lspci -n?
     // or walking the /sys/bus/pci/devices files.  or don't sweat it, the total 
     // lspci time is ~40 ms.
 
+    // virtual could be discovered in lots of places so requires some special handling
+  
     cout << "is_virtual => false" << endl;
     cout << "virtual => physical" << endl;
 
@@ -390,10 +413,12 @@ void dump_misc_facts()
     string whoami = popen_stdout("whoami");
     cout << "id => " << trim(whoami) << endl;
 
-    // timezone
-    //char tzstring[16];
-    ////time_t here_and_now;
-    ////strftime(tzstring, sizeof(tzstring - 1), "%Z", localtime(here_and_now));
+    //timezone
+    char tzstring[16];
+    time_t t = time(NULL);
+    struct tm *loc = localtime(&t);
+    strftime(tzstring, sizeof(tzstring - 1), "%Z", loc);
+    cout << "timezone => " << tzstring << endl;
 }
 
 // dump just one fact, optionally in two formats
@@ -573,6 +598,12 @@ static void dump_ssh_fact(string fact_name, string path_name)
       tokenize(trim(key), tokens);
       if (tokens.size() < 2) continue;  // should never happen
       cout << fact_name << " => " << tokens[1] << endl;
+
+      // skpping the finger print facts, which require base64 decode and sha libs
+      // on the cmd line it would be something like the result of these two:
+      //  "cat " + full_path + " | cut -d' ' -f 2 | base64 -d - | sha256sum - | cut -d' ' -f 1"
+      //  "cat " + full_path + " | cut -d' ' -f 2 | base64 -d - | sha1sum   - | cut -d' ' -f 1"
+
       break;
     }
   }
@@ -602,11 +633,11 @@ static void dump_physicalprocessorcount_fact()
   string sysfs_cpu_directory = "/sys/devices/system/cpu";
   vector<string> package_ids;
   if (file_exist(sysfs_cpu_directory)) {
-    unsigned int i = 0;
-    while (true) {
+    for (int i = 0; ; i++) {
       char buf[10];
-      snprintf(buf, sizeof(buf) - 1, "%ud", i);
+      snprintf(buf, sizeof(buf) - 1, "%u", i);
       string cpu_phys_file = sysfs_cpu_directory + "/cpu" + buf + "/topology/physical_package_id";
+      cout << cpu_phys_file << endl;
       if (!file_exist(cpu_phys_file))
 	break;
 
@@ -622,7 +653,218 @@ static void dump_physicalprocessorcount_fact()
   }
 }
 
+void dump_processorcount_fact()
+{
+    std::ifstream cpuinfo_file("/proc/cpuinfo", std::ifstream::in);
+    std::string line;
+    int processor_count = 0;
+    string current_processor_number;
+    while (std::getline(cpuinfo_file, line)) {
+        unsigned sep = line.find(":");
+	string tmp = line.substr(0, sep);
+        string key = trim(tmp);
+
+        if (key == "processor") {
+	  ++processor_count;
+	  string tmp = line.substr(sep + 1, string::npos);
+	  current_processor_number = trim(tmp);
+	}
+        else if (key == "model name") {
+	  string tmp = line.substr(sep + 1, string::npos);
+	  cout << "processor" << current_processor_number << " => " << trim(tmp) << endl;
+        }
+    }
+    // this was added after 1.7.3, omit for now, needs investigation
+    if (false) cout << "activeprocessorcount => " << processor_count << endl;
+    cout << "processorcount => " << processor_count << endl;
+}
+
 void dump_processor_facts()
 {
   dump_physicalprocessorcount_fact();
+  dump_processorcount_fact();
+}
+
+void dump_architecture_facts()
+{
+  struct utsname uts;
+  if (uname(&uts) == 0) {
+    // This is cheating at some level because these are all the same on x86_64 linux.
+    // Otoh, some of these may be compiled-in for a C version.  And then if facter
+    // relies on 'uname -p' here and that commonizes, this should perhaps just shell out
+    // and not reproduce that logic. Regardless, need to survey cross-platform here and
+    // take it from there.
+    cout << "hardwaremodel => " << uts.machine << endl;
+    cout << "hardwareisa => " << uts.machine << endl;
+    cout << "architecture => " << uts.machine << endl;
+  }
+}
+
+void dump_dmidecode_facts()
+{
+    // from a time perspective simulate expense with lspci and dmidecode invocations
+    string dmidecode_output = popen_stdout("/usr/sbin/dmidecode");
+    std::stringstream ss(dmidecode_output);
+    string line;
+
+    enum {
+      bios_information,
+      base_board_information,
+      system_information,
+      chassis_information,
+      unknown
+    } dmi_section = unknown;
+
+    while (std::getline(ss, line)) {
+      if (line.empty()) continue;
+
+      // enable case-insensitive compares
+      ci_string ci_line = line.c_str();
+
+      // identify the dmi section, they all begin at the beginning of a line
+      // and there are only a handful of interest to us
+      if (ci_line == "BIOS Information") {
+	dmi_section = bios_information;
+	continue;
+      }
+      else if (ci_line == "Base Board Information") {
+	dmi_section = base_board_information;
+	continue;
+      }
+      else if (ci_line == "System Information") {
+	dmi_section = system_information;
+	continue;
+      }
+      else if (ci_line == "Chassis Information" || ci_line == "system enclosure or chassis") {
+	dmi_section = chassis_information;
+	continue;
+      }
+      else if (ci_line[0] >= 'A' && ci_line[0] <= 'Z') {
+	dmi_section = unknown;
+	continue;
+      }
+
+      // if we're in the middle of an unknown section, skip
+      if (dmi_section == unknown) continue;
+
+      size_t sep = line.find(":");
+      if (sep != string::npos) {
+	string tmp = line.substr(0, sep);
+	string key = trim(tmp);
+	if (dmi_section == bios_information) {
+ 	  ci_string ci_key = key.c_str();
+	  if (ci_key == "vendor") {
+ 	    string tmp = line.substr(sep + 1, string::npos);
+	    string value = trim(tmp);
+	    cout << "bios_vendor => " << value << endl;
+	  }
+	  if (ci_key == "version") {
+ 	    string tmp = line.substr(sep + 1, string::npos);
+	    string value = trim(tmp);
+	    cout << "bios_version => " << value << endl;
+	  }
+	  if (ci_key == "release date") {
+ 	    string tmp = line.substr(sep + 1, string::npos);
+	    string value = trim(tmp);
+	    cout << "bios_release_date => " << value << endl;
+	  }
+	}
+	else if (dmi_section == base_board_information) {
+ 	  ci_string ci_key = key.c_str();
+	  if (ci_key == "manufacturer") {
+ 	    string tmp = line.substr(sep + 1, string::npos);
+	    string value = trim(tmp);
+	    cout << "boardmanufacturer => " << value << endl;
+	  }
+	  if (ci_key == "product name" || ci_key == "product") {
+ 	    string tmp = line.substr(sep + 1, string::npos);
+	    string value = trim(tmp);
+	    cout << "boardproductname => " << value << endl;
+	  }
+	  if (ci_key == "serial number") {
+ 	    string tmp = line.substr(sep + 1, string::npos);
+	    string value = trim(tmp);
+	    cout << "boardserialnumber => " << value << endl;
+	  }
+	}
+	else if (dmi_section == system_information) {
+ 	  ci_string ci_key = key.c_str();
+	  if (ci_key == "manufacturer") {
+ 	    string tmp = line.substr(sep + 1, string::npos);
+	    string value = trim(tmp);
+	    cout << "manufacturer => " << value << endl;
+	  }
+	  if (ci_key == "product name" || ci_key == "product") {
+ 	    string tmp = line.substr(sep + 1, string::npos);
+	    string value = trim(tmp);
+	    cout << "productname => " << value << endl;
+	  }
+	  if (ci_key == "serial number") {
+ 	    string tmp = line.substr(sep + 1, string::npos);
+	    string value = trim(tmp);
+	    cout << "serialnumber => " << value << endl;
+	  }
+	  if (ci_key == "uuid") {
+ 	    string tmp = line.substr(sep + 1, string::npos);
+	    string value = trim(tmp);
+	    cout << "uuid => " << value << endl;
+	  }
+	}
+	else if (dmi_section == chassis_information) {
+ 	  ci_string ci_key = key.c_str();
+	  if (ci_key == "chassis type" || ci_key == "type") {
+ 	    string tmp = line.substr(sep + 1, string::npos);
+	    string value = trim(tmp);
+	    cout << "type => " << value << endl;
+	  }
+	}
+      }
+    }
+}
+
+void dump_filesystems_facts()
+{
+    std::ifstream cpuinfo_file("/proc/filesystems", std::ifstream::in);
+    std::string line;
+    string filesystems = "";
+    while (std::getline(cpuinfo_file, line)) {
+      if (line.find("nodev") != string::npos || line.find("fuseblk") != string::npos)
+	continue;
+
+      if (!filesystems.empty())
+	filesystems += ",";
+
+      filesystems += trim(line);
+    }
+    cout << "filesystems => " << filesystems << endl;
+}
+
+void dump_hostname_facts()
+{
+  // there's some history here, perhaps just port the facter conditional straight across?
+  // so this is short-term
+  string hostname_output = popen_stdout("hostname");
+  unsigned sep = hostname_output.find(".");
+  string hostname = hostname_output.substr(0, sep);
+  
+  ifstream resolv_conf_file("/etc/resolv.conf", std::ifstream::in);
+  string line;
+  string domain;
+  string search;
+  while (std::getline(resolv_conf_file, line)) {
+    vector<string> elems;
+    tokenize(line, elems);
+    if (elems.size() >= 2) {
+      if (elems[0] == "domain")
+	domain = trim(elems[1]);
+      else if (elems[0] == "search")
+	search = trim(elems[1]);
+    }
+  }
+  if (domain.empty() && !search.empty())
+    domain = search;
+
+  cout << "hostname => " << hostname << endl;
+  cout << "domain => " << domain << endl;
+  cout << "fqdn => " << hostname << "." << domain << endl;
 }

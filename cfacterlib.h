@@ -13,5 +13,8 @@ void dump_mem_facts();
 void dump_selinux_facts();
 void dump_ssh_facts();
 void dump_processor_facts();
-
+void dump_architecture_facts();
+void dump_dmidecode_facts();
+void dump_filesystems_facts();
+void dump_hostname_facts();
 }

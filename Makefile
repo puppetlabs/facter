@@ -11,5 +11,5 @@ missing:
 	-$(shell facter    | grep "=>" | cut -f1 -d' ' | sort > /tmp/facter.txt)
 	-$(shell ./cfacter | grep "=>" | cut -f1 -d' ' | sort > /tmp/cfacter.txt)
 	-@$(shell diff /tmp/facter.txt /tmp/cfacter.txt > /tmp/facterdiff.txt | true)
-	cat /tmp/facterdiff.txt
+	-@cat /tmp/facterdiff.txt
 	-@rm /tmp/facter.txt /tmp/cfacter.txt /tmp/facterdiff.txt

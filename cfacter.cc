@@ -23,5 +23,10 @@ int main(int argc, char **argv)
     dump_selinux_facts();
     dump_ssh_facts();
     dump_processor_facts();
+    dump_architecture_facts();
+    dump_dmidecode_facts();
+    dump_filesystems_facts();
+    dump_hostname_facts();
+
     exit(0);
 }
