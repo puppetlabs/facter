@@ -400,6 +400,12 @@ describe "is_virtual fact" do
     Facter.fact(:is_virtual).value.should == "true"
   end
 
+  it "should be true when running on vserver" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("vserver")
+    Facter.fact(:is_virtual).value.should == "true"
+  end
+
   it "should be true when running on kvm" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("kvm")
@@ -446,6 +452,12 @@ describe "is_virtual fact" do
   it "should be false on openvz host nodes" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("openvzhn")
+    Facter.fact(:is_virtual).value.should == "false"
+  end
+
+  it "should be false on vserver host nodes" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("vserver_host")
     Facter.fact(:is_virtual).value.should == "false"
   end
 
