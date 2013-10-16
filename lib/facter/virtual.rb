@@ -172,6 +172,8 @@ Facter.add("virtual") do
           result = "vmware"
         when /KVM/
           result = "kvm"
+        when /Bochs/
+          result = "bochs"
         end
 
         if result.nil? and computersystem.manufacturer =~ /Xen/
