@@ -128,6 +128,28 @@ describe Facter::Util::Parser do
         parser.results.should == data
       end
     end
+
+    context "exe, bat, cmd, and com files" do
+      let :cmds do ["/tmp/foo.bat", "/tmp/foo.cmd", "/tmp/foo.exe", "/tmp/foo.com"] end
+
+      before :each do
+        cmds.each {|cmd|
+          File.stubs(:executable?).with(cmd).returns(true)
+          File.stubs(:file?).with(cmd).returns(true)
+        }
+      end
+
+      it "should return nothing parser if not on windows" do
+        Facter::Util::Config.stubs(:is_windows?).returns(false)
+        cmds.each {|cmd| Facter::Util::Parser.parser_for(cmd).should be_an_instance_of(Facter::Util::Parser::NothingParser) }
+      end
+
+      it "should return script  parser if on windows" do
+        Facter::Util::Config.stubs(:is_windows?).returns(true)
+        cmds.each {|cmd| Facter::Util::Parser.parser_for(cmd).should be_an_instance_of(Facter::Util::Parser::ScriptParser) }
+      end
+
+     end
   end
 
   describe "powershell parser" do
