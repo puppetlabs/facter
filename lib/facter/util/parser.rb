@@ -125,7 +125,7 @@ module Facter::Util::Parser
     if Facter::Util::Config.is_windows?
       extension_matches?(filename, %w{bat cmd com exe}) && File.file?(filename)
     else
-      File.executable?(filename) && File.file?(filename)
+      File.executable?(filename) && File.file?(filename) && ! extension_matches?(filename, %w{bat cmd com exe})
     end
   end
 
