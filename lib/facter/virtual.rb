@@ -122,7 +122,7 @@ Facter.add("virtual") do
     end
 
     # Parse dmidecode
-    output = Facter::Util::Resolution.exec('dmidecode')
+    output = Facter::Util::Virtual.dmidecode
     if output
       lines = output.split("\n")
       next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
