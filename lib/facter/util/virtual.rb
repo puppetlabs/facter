@@ -32,6 +32,10 @@ module Facter::Util::Virtual
     Facter::Util::Resolution.exec command
   end
 
+  def self.dmidecode(command = "dmidecode 2>/dev/null")
+    Facter::Util::Resolution.exec command
+  end
+
   def self.openvz?
     FileTest.directory?("/proc/vz") and not self.openvz_cloudlinux?
   end
