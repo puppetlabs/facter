@@ -13,8 +13,22 @@
 
 Facter.add(:hostname, :ldapname => "cn") do
   setcode do
+
+  basic_hostname = 'hostname 2> /dev/null'
+  windows_hostname = 'hostname > NUL'
+  full_hostname = 'hostname -f 2> /dev/null'
+  can_do_hostname_f = Regexp.union /Linux/i, /FreeBSD/i, /Darwin/i
+
+  hostname_command = if Facter.value(:kernel) =~ can_do_hostname_f
+          full_hostname
+        elsif Facter.value(:kernel) == "windows"
+          windows_hostname
+        else
+          basic_hostname
+        end
+
     hostname = nil
-    if name = Facter::Util::Resolution.exec('hostname')
+    if name = Facter::Util::Resolution.exec(hostname_command)
       if name =~ /(.*?)\./
         hostname = $1
       else
