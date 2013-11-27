@@ -1,8 +1,4 @@
-if gem_source = ENV['GEM_SOURCE']
-  source gem_source
-else
-  source "https://rubygems.org"
-end
+source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
 # C Ruby (MRI) or Rubinius, but NOT Windows
 platforms :ruby do
