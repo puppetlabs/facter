@@ -138,6 +138,10 @@ module Facter::Util::Virtual
     "zlinux"
   end
 
+  def self.docker?
+    File.read("/proc/1/environ") =~ /container_manager=docker/ rescue false
+  end
+
   def self.parse_virtualization(output)
     if output
       lines = output.split("\n")

@@ -226,6 +226,11 @@ EOT
     Facter::Util::Virtual.should be_kvm
   end
 
+  it "should detect Docker" do
+    File.stubs(:read).with("/proc/1/environ").returns("container_manager=docker\n")
+    Facter::Util::Virtual.should be_docker
+  end
+
   it "should detect kvm on FreeBSD" do
     FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
     Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
