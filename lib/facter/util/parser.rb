@@ -68,6 +68,8 @@ module Facter::Util::Parser
 
   module KeyValuePairOutputFormat
     def self.parse(output)
+      return {} if output.nil?
+
       result = {}
       re = /^(.+?)=(.+)$/
       output.each_line do |line|

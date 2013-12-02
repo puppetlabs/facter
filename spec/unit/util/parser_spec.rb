@@ -76,7 +76,7 @@ describe Facter::Util::Parser do
       let(:data_in_txt) do "one=two\nthree=four\n" end
       it_behaves_like "txt parser"
     end
-    
+
     context "extra equal sign" do
       let(:data_in_txt) do "one=two\nthree=four=five\n" end
       let(:data) do {"one" => "two", "three" => "four=five"} end
@@ -107,6 +107,19 @@ describe Facter::Util::Parser do
     it "should not parse a directory" do
       File.stubs(:file?).with(cmd).returns(false)
       Facter::Util::Parser.parser_for(cmd).results.should be_nil
+    end
+
+    context "with nil external script output" do
+      # ensure NothingParser is not used on Windows by tricking parser registration
+      if Facter::Util::Config.is_windows?
+        let :cmd do "/tmp/foo.bat" end
+      end
+      let :data_in_txt do nil end
+
+      it "should return an empty hash" do
+        File.stubs(:file?).with(cmd).returns(true)
+        Facter::Util::Parser.parser_for(cmd).results.should == {}
+      end
     end
 
     context "on Windows" do
