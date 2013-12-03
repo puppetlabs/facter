@@ -127,6 +127,20 @@ describe "Memory facts" do
       Facter::Util::Resolution.stubs(:exec).with('swap -l 2>/dev/null').returns(my_fixture_read('aix-swap_l'))
       Facter::Util::Resolution.stubs(:exec).with('/usr/bin/svmon -O unit=KB').returns(my_fixture_read('aix-svmon'))
 
+      svmon = <<SVMON
+Unit: KB
+--------------------------------------------------------------------------------------
+               size       inuse        free         pin     virtual  available   mmode
+memory     32768000     9948408    22819592     2432080     4448928   27231828     Ded
+pg space   34078720       15000
+
+               work        pers        clnt       other
+pin         1478228           0           0      953852
+in use      4448928           0     5499480
+SVMON
+
+      Facter::Util::Resolution.stubs(:exec).with('/usr/bin/svmon -O unit=KB').returns(svmon)
+
       Facter.collection.internal_loader.load(:memory)
     end
 
