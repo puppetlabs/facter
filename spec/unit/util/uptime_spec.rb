@@ -103,7 +103,7 @@ describe Facter::Util::Uptime do
             end
           end
 
-          describe "nor is 'uptime' command" do
+          describe "but when 'uptime' is unavailable" do
             before :each do
               Facter::Util::Uptime.stubs(:uptime_executable_cmd).returns("cat \"#{@nonexistent_file}\"")
             end

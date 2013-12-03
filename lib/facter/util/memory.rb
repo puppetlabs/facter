@@ -163,10 +163,8 @@ module Facter::Memory
     value_in_mb = 0.0
     value = 0
     is_size = size_or_free == :size
-    unless output.nil?
-      output.each_line do |line|
-        value += parse_swap_line(line, kernel, is_size)
-      end
+    output.each_line do |line|
+      value += parse_swap_line(line, kernel, is_size)
     end
     value_in_mb = scale_swap_value(value, kernel)
   end

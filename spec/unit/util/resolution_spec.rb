@@ -647,12 +647,12 @@ describe Facter::Util::Resolution do
         it "should not run the command if path to binary is absolute" do
           Facter::Util::Resolution.expects(:expand_command).with('/usr/bin/uname -m').returns nil
           Facter::Util::Resolution.expects(:`).with('/usr/bin/uname -m').never
-          Facter::Util::Resolution.exec('/usr/bin/uname -m').should be_nil
+          Facter::Util::Resolution.exec('/usr/bin/uname -m').should be_empty
         end
         it "should not run the command if path to binary is not absolute" do
           Facter::Util::Resolution.expects(:expand_command).with('uname -m').returns nil
           Facter::Util::Resolution.expects(:`).with('uname -m').never
-          Facter::Util::Resolution.exec('uname -m').should be_nil
+          Facter::Util::Resolution.exec('uname -m').should be_empty
         end
       end
     end
@@ -676,7 +676,7 @@ describe Facter::Util::Resolution do
         it "should not run the command if path to binary is absolute" do
           Facter::Util::Resolution.expects(:expand_command).with(%q{C:\Windows\foo.exe /a /b}).returns nil
           Facter::Util::Resolution.expects(:`).with(%q{C:\Windows\foo.exe /a /b}).never
-          Facter::Util::Resolution.exec(%q{C:\Windows\foo.exe /a /b}).should be_nil
+          Facter::Util::Resolution.exec(%q{C:\Windows\foo.exe /a /b}).should be_empty
         end
         it "should try to run the command and return output of a shell-builtin" do
           Facter::Util::Resolution.expects(:expand_command).with(%q{echo foo}).returns nil
@@ -688,7 +688,7 @@ describe Facter::Util::Resolution do
           Facter::Util::Resolution.expects(:expand_command).with(%q{echo foo}).returns nil
           Facter::Util::Resolution.stubs(:`).with(%q{echo foo}).raises Errno::ENOENT, 'some_error_message'
           Facter.expects(:warnonce).never
-          Facter::Util::Resolution.exec(%q{echo foo}).should be_nil
+          Facter::Util::Resolution.exec(%q{echo foo}).should be_empty
         end
       end
     end
