@@ -181,7 +181,7 @@ class Facter::Util::Resolution
   # executing the code.
   #
   # @param code [String] the program to run
-  # @return [String, nil] the output of the program or nil
+  # @return [String] the output of the program or an empty string
   #
   # @api public
   #
@@ -206,30 +206,26 @@ class Facter::Util::Resolution
         # if we can find the binary, we'll run the command with the expanded path to the binary
         code = expanded_code
       else
-        # if we cannot find the binary return nil on posix. On windows we'll still try to run the
+        # if we cannot find the binary return '' on posix. On windows we'll still try to run the
         # command in case it is a shell-builtin. In case it is not, windows will raise Errno::ENOENT
-        return nil unless Facter::Util::Config.is_windows?
-        return nil if absolute_path?(code)
+        return '' unless Facter::Util::Config.is_windows?
+        return '' if absolute_path?(code)
       end
 
-      out = nil
+      out = ''
 
       begin
         out = %x{#{code}}.chomp
         Facter.warnonce "Using Facter::Util::Resolution.exec with a shell built-in is deprecated. Most built-ins can be replaced with native ruby commands. If you really have to run a built-in, pass \"cmd /c your_builtin\" as a command (command responsible for this message was \"#{code}\")" unless expanded_code
       rescue Errno::ENOENT => detail
         # command not found on Windows
-        return nil
+        return ''
       rescue => detail
         Facter.warn(detail)
-        return nil
+        return ''
       end
 
-      if out == ""
-        return nil
-      else
-        return out
-      end
+      return out
     end
   end
 

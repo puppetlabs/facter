@@ -68,6 +68,8 @@ module Facter::Util::Parser
 
   module KeyValuePairOutputFormat
     def self.parse(output)
+      return {} if output.nil?
+
       result = {}
       re = /^(.+?)=(.+)$/
       output.each_line do |line|
@@ -117,9 +119,7 @@ module Facter::Util::Parser
 
   class ScriptParser < Base
     def results
-      if output = Facter::Util::Resolution.exec(filename)
-        KeyValuePairOutputFormat.parse output
-      end
+      KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(filename)
     end
   end
 
