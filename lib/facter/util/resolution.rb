@@ -1,16 +1,34 @@
-# An actual fact resolution mechanism.  These are largely just chunks of
-# code, with optional confinements restricting the mechanisms to only working on
-# specific systems.  Note that the confinements are always ANDed, so any
-# confinements specified must all be true for the resolution to be
-# suitable.
 require 'facter/util/confine'
 require 'facter/util/config'
 
 require 'timeout'
 
+# Define a mechanism for resolving facts, and confining the mechanism to a given
+# platform.
+#
+# Resolutions may be given one or more confine statements; in order for a
+# resolution to be suitable all confines must evaluate to true.
+#
+# @api public
 class Facter::Util::Resolution
-  attr_accessor :interpreter, :code, :name, :timeout
-  attr_writer :value, :weight
+
+  attr_accessor :interpreter, :code
+
+  # @!attribute [r] name
+  #   @return [Symbol] The name of this resolution that is unique to the given fact
+  attr_reader :name
+
+  # @!attribute [r] timeout
+  #   @return [Numeric] The timeout to use when resolving, defaults to 0 (no timeout)
+  attr_accessor :timeout
+
+  # @!attribute [w] value
+  # Manually define the value of the given resolution
+  attr_writer :value
+
+  # @!attribute [w] weight
+  # Manually define the weight of the given resolution
+  attr_writer :weight
 
   INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
 
@@ -186,13 +204,25 @@ class Facter::Util::Resolution
     end
   end
 
-  # Add a new confine to the resolution mechanism.
+  # Add one or more confines to the resolution mechanism.
+  #
+  # @param confines [Hash<Symbol, String>] A hash of fact names and fact values
+  #   to determine if the given resolution is suitable.
+  #
+  # @example
+  #   resolution = Facter::Util::Resolution.new('something')
+  #   resolution.confine :kernel => 'Linux'
+  #   resolution.confine :operatingsystem => 'Haiku', :operatingsystem_release => '4.2'
+  #
   def confine(confines)
     confines.each do |fact, values|
       @confines.push Facter::Util::Confine.new(fact, *values)
     end
   end
 
+  # Manually define the weight of this resolution
+  #
+  # @param weight [Integer]
   def has_weight(weight)
     @weight = weight
   end
@@ -206,7 +236,8 @@ class Facter::Util::Resolution
     @weight = nil
   end
 
-  # Return the importance of this resolution.
+  # @return [Integer] the precedence of this resolution, defaults to the number
+  #   of confines.
   def weight
     if @weight
       @weight
@@ -215,9 +246,13 @@ class Facter::Util::Resolution
     end
   end
 
-  # We need this as a getter for 'timeout', because some versions
-  # of ruby seem to already have a 'timeout' method and we can't
-  # seem to override the instance methods, somehow.
+  # Define an alias to retrieve the resolution timeout.
+  #
+  # The ruby 'timeout' class defines Object#timeout as an alias to
+  # Timeout::timeout, to avoid confusing the two we define this method to
+  # safely retrieve the resolution timeout.
+  #
+  # @return [Numeric]
   def limit
     @timeout
   end
@@ -251,6 +286,7 @@ class Facter::Util::Resolution
   # @see Facter::Util::Fact#flush
   # @see Facter::Util::Resolution#flush
   #
+  # @since 1.7.0
   # @api public
   def on_flush(&block)
     @on_flush_block = block
@@ -262,6 +298,7 @@ class Facter::Util::Resolution
   # @see Facter::Util::Fact#flush
   # @see Facter::Util::Resolution#on_flush
   #
+  # @since 1.7.0
   # @api private
   def flush
     @on_flush_block.call if @on_flush_block
@@ -290,7 +327,9 @@ class Facter::Util::Resolution
     return self.value()
   end
 
-  # How we get a value for our resolution mechanism.
+  # Perform the resolution and return the value, or provide the cached value
+  #
+  # @return [Object, nil] The object if it could be resolved, nil on error.
   def value
     return @value if @value
     result = nil

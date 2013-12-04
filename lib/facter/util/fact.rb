@@ -1,6 +1,9 @@
 require 'facter'
 require 'facter/util/resolution'
 
+# Facts represent a given value and a set of resolutions to generate that value.
+#
+# @api public
 class Facter::Util::Fact
   TIMEOUT = 5
 
@@ -28,8 +31,12 @@ class Facter::Util::Fact
     @value = nil
   end
 
-  # Add a new resolution mechanism.  This requires a block, which will then
-  # be evaluated in the context of the new mechanism.
+  # Add a new anonymous resolution mechanism.
+  #
+  # This creates a new resolution and evaluates the given block in the context
+  # of that new resolution.
+  #
+  # @param value [Object] Unused
   def add(value = nil, &block)
     begin
       resolve = Facter::Util::Resolution.new(@name)
@@ -53,8 +60,14 @@ class Facter::Util::Fact
     @value = nil
   end
 
-  # Return the value for a given fact.  Searches through all of the mechanisms
-  # and returns either the first value or nil.
+  # Return the first valid value for a given fact.
+  #
+  # Resolution ordering is handled by selecting all suitable resolutions and
+  # ordering them by weight ordering them by weight. In the case that multiple
+  # resolutions have the same weight, the resolutions are are in the order they
+  # were loaded.
+  #
+  # @return [Object, nil] The value if resolve, nil if not.
   def value
     return @value if @value
 
