@@ -14,18 +14,21 @@ Facter.add(:test_fact2) do
 end
 }
 
-agent1=agents.first
-step "Agent: Create fact file with multiple facts"
-create_remote_file(agent1, '/tmp/test_facts.rb', fact_file )
+agents.each do |agent|
+  step "Agent: Create fact file with multiple facts"
+  dir = agent.tmpdir('facter7039')
+  create_remote_file(agent, "#{dir}/test_facts.rb", fact_file)
+  env = { 'FACTERLIB' => dir }
 
-step "Agent: Verify test_fact1 from /tmp/test_facts.rb"
-on(agent1, "export FACTERLIB=/tmp && facter --puppet test_fact1") do
-  fail_test "Fact 1 not returned by facter --puppet test_fact1" unless
-    stdout.include? 'test fact 1'
-end
+  step "Agent: Verify test_fact1 from #{dir}/test_facts.rb"
+  on(agent, facter('--puppet', 'test_fact1', :environment => env)) do
+    fail_test "Fact 1 not returned by facter --puppet test_fact1" unless
+      stdout.include? 'test fact 1'
+  end
 
-step "Agent: Verify test_fact2 from /tmp/test_facts.rb"
-on(agent1, "export FACTERLIB=/tmp && facter --puppet test_fact2") do
-  fail_test "Fact 1 not returned by facter --puppet test_fact2" unless
-    stdout.include? 'test fact 2'
+  step "Agent: Verify test_fact2 from #{dir}/test_facts.rb"
+  on(agent, facter('--puppet', 'test_fact2', :environment => env)) do
+    fail_test "Fact 1 not returned by facter --puppet test_fact2" unless
+      stdout.include? 'test fact 2'
+  end
 end
