@@ -96,6 +96,7 @@ class Facter::Util::Collection
   # Flush all cached values.
   def flush
     @facts.each { |name, fact| fact.flush }
+    @external_facts_loaded = nil
   end
 
   # Return a list of all of the facts.
