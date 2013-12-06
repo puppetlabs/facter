@@ -21,7 +21,7 @@ class Facter::Util::Collection
   # Add a resolution mechanism for a named fact.  This does not distinguish
   # between adding a new fact and adding a new way to resolve a fact.
   def add(name, options = {}, &block)
-    name = canonize(name)
+    name = canonicalize(name)
 
     unless fact = @facts[name]
       fact = Facter::Util::Fact.new(name)
@@ -78,7 +78,7 @@ class Facter::Util::Collection
 
   # Return a fact by name.
   def fact(name)
-    name = canonize(name)
+    name = canonicalize(name)
 
     # Try to load the fact if necessary
     load(name) unless @facts[name]
@@ -143,9 +143,7 @@ class Facter::Util::Collection
 
   private
 
-  # Provide a consistent means of getting the exact same fact name
-  # every time.
-  def canonize(name)
+  def canonicalize(name)
     name.to_s.downcase.to_sym
   end
 end
