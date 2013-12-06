@@ -35,8 +35,8 @@ describe Facter::Util::Parser do
   let(:data) do {"one" => "two", "three" => "four"} end
 
   describe "yaml" do
-    let(:data_in_yaml) do YAML.dump(data) end
-    let(:data_file) do "/tmp/foo.yaml" end
+    let(:data_in_yaml) { YAML.dump(data) }
+    let(:data_file) { "/tmp/foo.yaml" }
 
     it "should return a hash of whatever is stored on disk" do
       File.stubs(:read).with(data_file).returns(data_in_yaml)
@@ -52,8 +52,8 @@ describe Facter::Util::Parser do
   end
 
   describe "json" do
-    let(:data_in_json) do JSON.dump(data) end
-    let(:data_file) do "/tmp/foo.json" end
+    let(:data_in_json) { JSON.dump(data) }
+    let(:data_file) { "/tmp/foo.json" }
 
     it "should return a hash of whatever is stored on disk" do
       pending("this test requires the json library") unless Facter.json?
@@ -63,7 +63,7 @@ describe Facter::Util::Parser do
   end
 
   describe "txt" do
-    let(:data_file) do "/tmp/foo.txt" end
+    let(:data_file) { "/tmp/foo.txt" }
 
     shared_examples_for "txt parser" do
       it "should return a hash of whatever is stored on disk" do
@@ -73,75 +73,51 @@ describe Facter::Util::Parser do
     end
 
     context "well formed data" do
-      let(:data_in_txt) do "one=two\nthree=four\n" end
+      let(:data_in_txt) { "one=two\nthree=four\n" }
       it_behaves_like "txt parser"
     end
 
     context "extra equal sign" do
-      let(:data_in_txt) do "one=two\nthree=four=five\n" end
+      let(:data_in_txt) { "one=two\nthree=four=five\n" }
       let(:data) do {"one" => "two", "three" => "four=five"} end
       it_behaves_like "txt parser"
     end
 
     context "extra data" do
-      let(:data_in_txt) do "one=two\nfive\nthree=four\n" end
+      let(:data_in_txt) { "one=two\nfive\nthree=four\n" }
       it_behaves_like "txt parser"
     end
   end
 
   describe "scripts" do
-    let :cmd do "/tmp/foo.sh" end
-    let :data_in_txt do "one=two\nthree=four\n" end
+    let(:ext) { Facter::Util::Config.is_windows? ? '.bat' : '.sh' }
+    let(:cmd) { "/tmp/foo#{ext}" }
+    let(:data_in_txt) { "one=two\nthree=four\n" }
 
-    before :each do
-      Facter::Util::Resolution.stubs(:exec).with(cmd).returns(data_in_txt)
-      File.stubs(:executable?).with(cmd).returns(true)
+    def expects_script_to_return(path, content, result)
+      Facter::Util::Resolution.stubs(:exec).with(path).returns(content)
+      File.stubs(:executable?).with(path).returns(true)
+      File.stubs(:file?).with(path).returns(true)
+
+      Facter::Util::Parser.parser_for(path).results.should == result
     end
 
-    it "should return a hash of whatever is returned by the executable" do
-      pending("this test does not run on windows") if Facter::Util::Config.is_windows?
-      File.stubs(:file?).with(cmd).returns(true)
-      Facter::Util::Parser.parser_for(cmd).results.should == data
+    def expects_parser_to_return_nil_for_directory(path)
+      File.stubs(:file?).with(path).returns(false)
+
+      Facter::Util::Parser.parser_for(path).results.should be_nil
+    end
+
+    it "returns a hash of whatever is returned by the executable" do
+      expects_script_to_return(cmd, data_in_txt, data)
     end
 
     it "should not parse a directory" do
-      File.stubs(:file?).with(cmd).returns(false)
-      Facter::Util::Parser.parser_for(cmd).results.should be_nil
+      expects_parser_to_return_nil_for_directory(cmd)
     end
 
-    context "with nil external script output" do
-      # ensure NothingParser is not used on Windows by tricking parser registration
-      if Facter::Util::Config.is_windows?
-        let :cmd do "/tmp/foo.bat" end
-      end
-      let :data_in_txt do nil end
-
-      it "should return an empty hash" do
-        File.stubs(:file?).with(cmd).returns(true)
-        Facter::Util::Parser.parser_for(cmd).results.should == {}
-      end
-    end
-
-    context "on Windows" do
-      let :cmd do "/tmp/foo.bat" end
-
-      before :each do
-        Facter::Util::Config.stubs(:is_windows?).returns(true)
-      end
-
-      let :parser do
-        Facter::Util::Parser.parser_for(cmd)
-      end
-
-      it "should not parse a directory" do
-        File.stubs(:file?).with(cmd).returns(false)
-        Facter::Util::Parser.parser_for(cmd).results.should be_nil
-      end
-
-      it "should return the data properly" do
-        File.stubs(:file?).with(cmd).returns(true)
-        parser.results.should == data
-      end
+    it "returns an empty hash when the script returns nil" do
+      expects_script_to_return(cmd, nil, {})
     end
 
     context "exe, bat, cmd, and com files" do
@@ -159,35 +135,30 @@ describe Facter::Util::Parser do
         cmds.each {|cmd| Facter::Util::Parser.parser_for(cmd).should be_an_instance_of(Facter::Util::Parser::NothingParser) }
       end
 
-      it "should return script  parser if on windows" do
+      it "should return script parser if on windows" do
         Facter::Util::Config.stubs(:is_windows?).returns(true)
         cmds.each {|cmd| Facter::Util::Parser.parser_for(cmd).should be_an_instance_of(Facter::Util::Parser::ScriptParser) }
       end
-
-     end
-  end
-
-  describe "powershell parser" do
-    let :ps1 do "/tmp/foo.ps1" end
-    let :data_in_ps1 do "one=two\nthree=four\n" end
-
-    before :each do
-      Facter::Util::Config.stubs(:is_windows?).returns(true)
-      Facter::Util::Resolution.stubs(:exec).returns(data_in_ps1)
     end
 
-    let :parser do
-      Facter::Util::Parser.parser_for(ps1)
-    end
+    describe "powershell parser" do
+      let(:ps1) { "/tmp/foo.ps1" }
 
-    it "should not parse a directory" do
-      File.stubs(:file?).with(ps1).returns(false)
-      Facter::Util::Parser.parser_for(ps1).results.should be_nil
-    end
+      def expects_to_parse_powershell(cmd, content, result)
+        Facter::Util::Config.stubs(:is_windows?).returns(true)
+        Facter::Util::Resolution.stubs(:exec).returns(content)
+        File.stubs(:file?).with(ps1).returns(true)
 
-    it "should return data properly" do
-      File.stubs(:file?).with(ps1).returns(true)
-      parser.results.should == data
+        Facter::Util::Parser.parser_for(cmd).results.should == result
+      end
+
+      it "should not parse a directory" do
+        expects_parser_to_return_nil_for_directory(ps1)
+      end
+
+      it "should parse output from powershell" do
+        expects_to_parse_powershell(ps1, data_in_txt, data)
+      end
     end
   end
 
