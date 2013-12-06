@@ -102,7 +102,7 @@ module Facter::Util::Parser
   end
 
   class JsonParser < Base
-    def results
+    def parse_results
       if Facter.json?
         JSON.load(content)
       else
@@ -118,8 +118,14 @@ module Facter::Util::Parser
   end
 
   class ScriptParser < Base
-    def results
-      KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(filename)
+    def parse_results
+      KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(quote(filename))
+    end
+
+    private
+
+    def quote(filename)
+      filename.index(' ') ? "\"#{filename}\"" : filename
     end
   end
 
@@ -134,7 +140,7 @@ module Facter::Util::Parser
   # Executes and parses the key value output of Powershell scripts
   class PowershellParser < Base
     # Returns a hash of facts from powershell output
-    def results
+    def parse_results
       shell_command = "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File \"#{filename}\""
       KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(shell_command)
     end
