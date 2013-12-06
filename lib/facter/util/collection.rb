@@ -106,13 +106,13 @@ class Facter::Util::Collection
 
   def load(name)
     internal_loader.load(name)
-    external_loader.load(self)
+    load_external_facts
   end
 
   # Load all known facts.
   def load_all
     internal_loader.load_all
-    external_loader.load(self)
+    load_external_facts
   end
 
   def internal_loader
@@ -145,5 +145,12 @@ class Facter::Util::Collection
 
   def canonicalize(name)
     name.to_s.downcase.to_sym
+  end
+
+  def load_external_facts
+    if ! @external_facts_loaded
+      @external_facts_loaded = true
+      external_loader.load(self)
+    end
   end
 end
