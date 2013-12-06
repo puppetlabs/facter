@@ -28,7 +28,7 @@ describe "zfs_version fact" do
   end
 
   it "should return correct version on Solaris 11" do
-    Facter::Util::Resolution.stubs(:exec).with("zfs -? 2> /dev/null").returns(my_fixture_read('zfs_new'))
+    Facter::Util::Resolution.stubs(:exec).with("zfs -? 2> /dev/null").returns(my_fixture_read('zfs_solaris11_help'))
     Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('solaris_11'))
     Facter.fact(:zfs_version).value.should == "5"
   end
