@@ -209,7 +209,8 @@ describe Facter::Util::Collection do
   end
 
   describe "external facts" do
-    let(:collection) { Facter::Util::Collection.new(internal_loader, SingleFactLoader.new(:test_fact, "fact value")) }
+    let(:external_loader) { SingleFactLoader.new(:test_fact, "fact value") }
+    let(:collection) { Facter::Util::Collection.new(internal_loader, external_loader) }
 
     it "loads when a specific fact is requested" do
       collection.fact(:test_fact).value.should == "fact value"
@@ -224,6 +225,21 @@ describe Facter::Util::Collection do
       collection.each { |fact_name, fact_value| facts << [fact_name, fact_value] }
 
       facts.should == [["test_fact", "fact value"]]
+    end
+
+    it "are loaded only once" do
+      external_loader.expects(:load).with(collection)
+
+      collection.load_all
+      collection.load_all
+    end
+
+    it "are reloaded after flushing" do
+      external_loader.expects(:load).with(collection).twice
+
+      collection.load_all
+      collection.flush
+      collection.load_all
     end
   end
 
