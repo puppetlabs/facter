@@ -119,7 +119,13 @@ module Facter::Util::Parser
 
   class ScriptParser < Base
     def parse_results
-      KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(filename)
+      KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(quote(filename))
+    end
+
+    private
+
+    def quote(filename)
+      filename.index(' ') ? "\"#{filename}\"" : filename
     end
   end
 

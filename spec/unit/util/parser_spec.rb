@@ -120,6 +120,14 @@ describe Facter::Util::Parser do
       expects_script_to_return(cmd, nil, {})
     end
 
+    it "quotes scripts with spaces" do
+      path = "/h a s s p a c e s#{ext}"
+
+      Facter::Util::Resolution.expects(:exec).with("\"#{path}\"").returns(data_in_txt)
+
+      expects_script_to_return(path, data_in_txt, data)
+    end
+
     context "exe, bat, cmd, and com files" do
       let :cmds do ["/tmp/foo.bat", "/tmp/foo.cmd", "/tmp/foo.exe", "/tmp/foo.com"] end
 
