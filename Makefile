@@ -1,11 +1,11 @@
 cfacter: cfacter.cc cfacterlib.cc cfacterlib.h
-	g++ -g -o cfacter cfacter.cc cfacterlib.cc
+	g++ -std=c++0x -g -o cfacter cfacter.cc cfacterlib.cc
 
 cfacterlib.o: cfacterlib.cc cfacterlib.h
-	g++ -g -fPIC -c -o $@ cfacterlib.cc
+	g++ -std=c++0x -g -fPIC -c -o $@ cfacterlib.cc
 
 cfacterlib.so: cfacterlib.o
-	g++ -g -o $@ $^ -fPIC -shared
+	g++ -std=c++0x -g -o $@ $^ -fPIC -shared
 
 missing:
 	-$(shell facter    | grep "=>" | cut -f1 -d' ' | sort > /tmp/facter.txt)
