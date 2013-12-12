@@ -5,6 +5,10 @@
 #include <string>
 #include <stdlib.h>
 
+#include "rapidjson/document.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/stringbuffer.h"
+
 using namespace std;
 
 int main(int argc, char **argv)
@@ -30,9 +34,28 @@ int main(int argc, char **argv)
   get_filesystems_facts(facts);
   get_hostname_facts(facts);
 
-  typedef map<string, string>::iterator iter;
-  for (iter i = facts.begin(); i != facts.end(); ++i) {
-    cout << i->first << " => " << i->second << endl;
+  if (0) {
+   typedef map<string, string>::iterator iter;
+   for (iter i = facts.begin(); i != facts.end(); ++i) {
+     cout << i->first << " => " << i->second << endl;
+   }
+  }
+  else {
+    rapidjson::Document json;
+    json.SetObject();
+
+    rapidjson::Document::AllocatorType& allocator = json.GetAllocator();
+
+    typedef map<string, string>::iterator iter;
+    for (iter i = facts.begin(); i != facts.end(); ++i) {
+      json.AddMember(i->first.c_str(), i->second.c_str(), allocator);
+    }
+
+    rapidjson::StringBuffer buf;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buf);
+    json.Accept(writer);
+
+    cout << buf.GetString() << endl;
   }
   exit(0);
 }

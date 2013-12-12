@@ -1,8 +1,8 @@
 cfacter: cfacter.cc cfacterlib.cc cfacterlib.h
-	g++ -std=c++0x -g -o cfacter cfacter.cc cfacterlib.cc -I rapidjson
+	g++ -std=c++0x -g -o cfacter cfacter.cc cfacterlib.cc -I .
 
 cfacterlib.o: cfacterlib.cc cfacterlib.h
-	g++ -std=c++0x -g -fPIC -c -o $@ cfacterlib.cc -I rapidjson
+	g++ -std=c++0x -g -fPIC -c -o $@ cfacterlib.cc -I .
 
 cfacterlib.so: cfacterlib.o
 	g++ -std=c++0x -g -o $@ $^ -fPIC -shared
