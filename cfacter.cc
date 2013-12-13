@@ -15,6 +15,9 @@ int main(int argc, char **argv)
 {
   std::map<std::string, std::string> facts;
   facts["facterversion"] = "3.0.0";
+
+  list<string> external_directories;
+  external_directories.push_back("/etc/facter/facts.d");
   
   get_network_facts(facts);
   get_kernel_facts(facts);
@@ -33,6 +36,7 @@ int main(int argc, char **argv)
   get_dmidecode_facts(facts);
   get_filesystems_facts(facts);
   get_hostname_facts(facts);
+  get_external_facts(facts, external_directories);
 
   if (0) {
    typedef map<string, string>::iterator iter;

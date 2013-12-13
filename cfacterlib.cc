@@ -867,3 +867,50 @@ void get_hostname_facts(fact_map& facts)
   facts["domain"] = domain;
   facts["fqdn"] = hostname + "." + domain;
 }
+
+static void get_external_facts_from_executable(fact_map& facts, string executable)
+{
+  // executable
+  FILE *stdout = popen(executable.c_str(), "r");
+  if (stdout)
+  {
+    while (!feof(stdout))
+    {
+       const int buffer_len = 32 * 1024;
+       char buffer[buffer_len];
+       if (fgets(buffer, buffer_len, stdout))
+       {
+         vector<string> elems;
+         split(buffer, '=', elems);
+         if (elems.size() != 2) continue;  // shouldn't happen
+         string key = trim(elems[0]);
+         string val = trim(elems[1]);
+         facts[key] = val;
+       }
+    }
+  }
+}
+
+static void get_external_facts(fact_map& facts, string directory)
+{
+  DIR *external_dir = opendir(directory.c_str());
+  struct dirent *external_fact;
+
+  while (external_fact = readdir(external_dir)) {
+    string full_path = directory + "/" + external_fact->d_name;
+
+    if (access(full_path.c_str(), X_OK) != 0)
+      continue;
+
+    get_external_facts_from_executable(facts, full_path);
+  }
+}
+
+void get_external_facts(fact_map& facts, list<string> directories)
+{
+  list<string>::iterator iter;
+  for (iter = directories.begin(); iter != directories.end(); ++iter)
+  {
+    get_external_facts(facts, *iter);
+  }
+}
