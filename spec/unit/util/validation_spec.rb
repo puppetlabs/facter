@@ -36,7 +36,7 @@ describe Facter::Util::Validation do
 
     describe "and string encoding is not supported", :unless => String.instance_methods.include?(:encoding) do
       it "doesn't check encoding information" do
-        str = 'A̍̍̀ͬͮr͓͙̣͕͙̭͌̎͐ͅe͔͈̰̊̌ͭͪ ̺̱̭̣̺̗͉w̫ͯ̽̇͊̋̓e̝͚̥̭ͅ ̈́̀h̲͍̤ͮͦ̃͆a͙̼̯̦͂ͤ̏́v͉̩̑͆͛ͮͬ͐i̥͈͖͍̠͈ͥͮ̍̊̎ṅ͈̞̲̘̮̳̎ͩͦg͕̿̔ ̻̺ͥ̉ͨ̆ͬ̐̚f̐͆u̱͔̯̪̟̪̗ͨ́ṅͨ̑ ͈̺̣͖̺̿́ͭ̇ẏ̊̿͒ͫë͉̲̩̯̗̱́͆ͯͩͪ̚t̼̥̤͕̥̭̞̿̇͒?̱̤ͪ͐͒̀'.force_encoding(Encoding::SHIFT_JIS)
+        str = 'A̍̍̀ͬͮr͓͙̣͕͙̭͌̎͐ͅe͔͈̰̊̌ͭͪ ̺̱̭̣̺̗͉w̫ͯ̽̇͊̋̓e̝͚̥̭ͅ ̈́̀h̲͍̤ͮͦ̃͆a͙̼̯̦͂ͤ̏́v͉̩̑͆͛ͮͬ͐i̥͈͖͍̠͈ͥͮ̍̊̎ṅ͈̞̲̘̮̳̎ͩͦg͕̿̔ ̻̺ͥ̉ͨ̆ͬ̐̚f̐͆u̱͔̯̪̟̪̗ͨ́ṅͨ̑ ͈̺̣͖̺̿́ͭ̇ẏ̊̿͒ͫë͉̲̩̯̗̱́͆ͯͩͪ̚t̼̥̤͕̥̭̞̿̇͒?̱̤ͪ͐͒̀'
         expect { subject.validate(str) }.to_not raise_error
       end
     end
