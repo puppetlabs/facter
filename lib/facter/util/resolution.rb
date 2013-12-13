@@ -392,8 +392,8 @@ class Facter::Util::Resolution
   #
   # @api private
   def suitable?
-    unless defined? @suitable
-      @suitable = ! @confines.detect { |confine| ! confine.true? }
+    if @suitable.nil?
+      @suitable = @confines.all? { |confine| confine.true? }
     end
 
     return @suitable
