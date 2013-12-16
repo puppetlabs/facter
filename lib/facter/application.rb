@@ -1,5 +1,6 @@
 require 'optparse'
 require 'facter'
+require 'facter/util/formatter'
 
 module Facter
   module Application
@@ -44,36 +45,20 @@ module Facter
       # Print everything if they didn't ask for specific facts.
       facts ||= Facter.to_hash
 
-      # Print the facts as YAML and exit
+      output = nil
+
       if options[:yaml]
-        require 'yaml'
-        puts YAML.dump(facts)
-        exit(0)
-      end
-
-      # Print the facts as JSON and exit
-      if options[:json]
-        begin
-          require 'json'
-          puts JSON.dump(facts)
-          exit(0)
-        rescue LoadError
-          $stderr.puts "You do not have JSON support in your version of Ruby. JSON output disabled"
-          exit(1)
-        end
-      end
-
-      # Print the value of a single fact, otherwise print a list sorted by fact
-      # name and separated by "=>"
-      if facts.length == 1
-        if value = facts.values.first
-          puts value
-        end
+        output = Facter::Util::Formatter.format_yaml(facts)
+      elsif options[:json]
+        output = Facter::Util::Formatter.format_json(facts)
+      elsif options[:plaintext]
+        output = Facter::Util::Formatter.format_plaintext(facts)
       else
-        facts.sort_by { |(name, value)| name }.each do |name,value|
-          puts "#{name} => #{value}"
-        end
+        output = Facter::Util::Formatter.format_plaintext(facts)
       end
+
+      puts output
+      exit(0)
 
     rescue => e
       if options && options[:trace]
@@ -135,6 +120,8 @@ USAGE
         opts.on("-j",
                 "--json",
                 "Emit facts in JSON format.")   { |v| options[:json]   = v }
+        opts.on("--plaintext",
+                "Emit facts in plaintext format.") { |v| options[:plaintext] = v }
         opts.on("--trace",
                 "Enable backtraces.")  { |v| options[:trace]  = v }
         opts.on("--external-dir DIR",

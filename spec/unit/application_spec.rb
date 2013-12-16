@@ -53,4 +53,36 @@ describe Facter::Application do
       argv.should == ['uptime', 'virtual']
     end
   end
+
+  describe "formatting facts" do
+    before do
+      Facter.stubs(:to_hash)
+      Facter.stubs(:value)
+      Facter::Application.stubs(:puts)
+    end
+
+    it "delegates YAML formatting" do
+      Facter::Util::Formatter.expects(:format_yaml)
+      Facter::Application.stubs(:exit).with(0)
+      Facter::Application.run(['--yaml'])
+    end
+
+    it "delegates JSON formatting", :if => Facter.json? do
+      Facter::Util::Formatter.expects(:format_json)
+      Facter::Application.stubs(:exit).with(0)
+      Facter::Application.run(['--json'])
+    end
+
+    it "delegates plaintext formatting" do
+      Facter::Util::Formatter.expects(:format_plaintext)
+      Facter::Application.stubs(:exit).with(0)
+      Facter::Application.run(['--plaintext'])
+    end
+
+    it "defaults to plaintext" do
+      Facter::Util::Formatter.expects(:format_plaintext)
+      Facter::Application.stubs(:exit).with(0)
+      Facter::Application.run([])
+    end
+  end
 end
