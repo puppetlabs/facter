@@ -1,3 +1,6 @@
+require 'optparse'
+require 'facter'
+
 module Facter
   module Application
 
@@ -17,9 +20,6 @@ module Facter
     end
 
     def self.run(argv)
-      require 'optparse'
-      require 'facter'
-
       options = parse(argv)
 
       # Accept fact names to return from the command line
@@ -70,7 +70,7 @@ module Facter
           puts value
         end
       else
-        facts.sort_by{ |fact| fact.first }.each do |name,value|
+        facts.sort_by { |(name, value)| name }.each do |name,value|
           puts "#{name} => #{value}"
         end
       end
