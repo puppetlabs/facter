@@ -7,43 +7,46 @@ class Facter::Util::Loader
 
   def initialize
     @loaded = []
-    @valid_path = {}
   end
 
   # Load all resolutions for a single fact.
+  #
+  # @api public
+  # @param name [Symbol]
   def load(fact)
     # Now load from the search path
     shortname = fact.to_s.downcase
     load_env(shortname)
 
     filename = shortname + ".rb"
-    search_path.each do |dir|
-      # Load individual files
-      file = File.join(dir, filename)
 
-      load_file(file) if FileTest.exist?(file)
+    paths = search_path
+    unless paths.nil?
+      paths.each do |dir|
+        # Load individual files
+        file = File.join(dir, filename)
 
-      # And load any directories matching the name
-      factdir = File.join(dir, shortname)
-      load_dir(factdir) if FileTest.directory?(factdir)
+        load_file(file) if File.file?(file)
+      end
     end
   end
 
   # Load all facts from all directories.
+  #
+  # @api public
   def load_all
     return if defined?(@loaded_all)
 
     load_env
 
-    search_path.each do |dir|
-      next unless FileTest.directory?(dir)
-
-      Dir.entries(dir).sort.each do |file|
-        path = File.join(dir, file)
-        if File.directory?(path)
-          load_dir(path)
-        elsif file =~ /\.rb$/
-          load_file(File.join(dir, file))
+    paths = search_path
+    unless paths.nil?
+      paths.each do |dir|
+        # dir is already an absolute path
+        Dir.glob(File.join(dir, '*.rb')).each do |dirent|
+          path = File.join(dir, dirent)
+          # exclude dirs that end with .rb
+          load_file(path) if File.file?(path)
         end
       end
     end
@@ -51,43 +54,67 @@ class Facter::Util::Loader
     @loaded_all = true
   end
 
-  # The list of directories we're going to search through for facts.
+  # List of directories to search for fact files.
+  #
+  # Search paths are gathered from the following sources:
+  #
+  # 1. $LOAD_PATH entries are expanded to absolute paths
+  # 2. ENV['FACTERLIB'] is split and expanded to absolute paths
+  # 3. Entries from Facter::search_path are used verbatim
+  #
+  # A warning will be generated for any path(s) from Facter::search_path that
+  # are not an absolute path to an existing directory.
+  #
+  # @api public
+  # @return [Array<String>]
   def search_path
     result = []
-    result += $LOAD_PATH.collect { |d| File.join(d, "facter") }
-    if ENV.include?("FACTERLIB")
-      result += ENV["FACTERLIB"].split(File::PATH_SEPARATOR)
+    result += $LOAD_PATH.map { |path| File.expand_path('facter', path) }
+
+    if ENV.include?('FACTERLIB')
+      ENV['FACTERLIB'].split(File::PATH_SEPARATOR).each do |path|
+        result << File.expand_path(path)
+      end
     end
+
+    # silently ignore bad search paths from $LOAD_PATH and FACTERLIB
+    result = result.select { |path| valid_search_path?(path) }
 
     # This allows others to register additional paths we should search.
-    result += Facter.search_path
-
-    result.select do |dir|
-      good = valid_search_path? dir
-      Facter.debugonce("Relative directory #{dir} removed from search path.") unless good
-      good
+    # We are assuming that these are already absolute paths.
+    result += Facter.search_path.select do |path|
+      valid = valid_search_path?(path)
+      Facter.warn "Excluding #{path} from search path. Fact file paths must be an absolute directory" unless valid
+      valid
     end
-  end
 
-  def valid_search_path?(path)
-    return @valid_path[path] unless @valid_path[path].nil?
-
-    return @valid_path[path] = Pathname.new(path).absolute?
+    # remove any dups
+    result.uniq
   end
-  private :valid_search_path?
 
   private
 
-  def load_dir(dir)
-    return if dir =~ /\/\.+$/ or dir =~ /\/util$/ or dir =~ /\/lib$/
-
-    Dir.entries(dir).find_all { |f| f =~ /\.rb$/ }.sort.each do |file|
-      load_file(File.join(dir, file))
+  # Validate that a path string is a valid to use for loading loading fact .rb
+  # files from.  The path must both be absolute and a directory.
+  #
+  # @api private
+  # @param path [String]
+  # @return [Boolean]
+  def valid_search_path?(path)
+    unless File.directory?(path) and Pathname.new(path).absolute?
+      return false
     end
+
+    true
   end
 
+  # Load a file and record is paths to prevent duplicate loads.
+  #
+  # @api private
+  # @params file [String] The *absolute path* to the file to load
   def load_file(file)
     return if @loaded.include? file
+
     # We have to specify Kernel.load, because we have a load method.
     begin
       # Store the file path so we don't try to reload it
