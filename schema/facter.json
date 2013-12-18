@@ -64,7 +64,7 @@
         "operatingsystemrelease" : { "type": "string" },
         "osfamily" : { "type": "string" },
         "path" : { "type": "string" },
-        "physicalprocessorcount" : { "type": "integer" },
+        "physicalprocessorcount" : { "type": "string" },
         "processorcount" : { "type": "string" },
         "productname" : { "type": "string" },
         "ps" : { "type": "string" },
