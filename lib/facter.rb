@@ -23,6 +23,9 @@ module Facter
   require 'facter/util/fact'
   require 'facter/util/collection'
   require 'facter/util/monkey_patches'
+  # #method_missing is preventing us from [usefully] importing
+  # #canonicalize_name
+  require 'facter/util/name'
 
   include Comparable
   include Enumerable
@@ -103,6 +106,7 @@ module Facter
   # Return a fact object by name.  If you use this, you still have to call
   # 'value' on it to retrieve the actual value.
   def self.[](name)
+    name = Facter::Util::Name::canonicalize_name(name)
     collection.fact(name)
   end
 
@@ -125,6 +129,7 @@ module Facter
   # Add a resolution mechanism for a named fact.  This does not distinguish
   # between adding a new fact and adding a new way to resolve a fact.
   def self.add(name, options = {}, &block)
+    name = Facter::Util::Name::canonicalize_name(name)
     collection.add(name, options, &block)
   end
 

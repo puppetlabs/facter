@@ -11,7 +11,7 @@ describe Facter::Util::Resolution do
   end
 
   it "should have a name" do
-    Facter::Util::Resolution.new("yay").name.should == "yay"
+    Facter::Util::Resolution.new("yay").name.should == :yay
   end
 
   it "should be able to set the value" do

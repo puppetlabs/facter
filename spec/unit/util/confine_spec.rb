@@ -8,7 +8,7 @@ include Facter::Util::Values
 
 describe Facter::Util::Confine do
   it "should require a fact name" do
-    Facter::Util::Confine.new("yay", true).fact.should == "yay"
+    Facter::Util::Confine.new("yay", true).fact.should == :yay
   end
 
   it "should accept a value specified individually" do
@@ -43,13 +43,13 @@ describe Facter::Util::Confine do
     end
 
     it "should return false if the fact does not exist" do
-      Facter.expects(:[]).with("yay").returns nil
+      Facter.expects(:[]).with(:yay).returns nil
 
       Facter::Util::Confine.new("yay", "test").true?.should be_false
     end
 
     it "should use the returned fact to get the value" do
-      Facter.expects(:[]).with("yay").returns @fact
+      Facter.expects(:[]).with(:yay).returns @fact
 
       @fact.expects(:value).returns nil
 

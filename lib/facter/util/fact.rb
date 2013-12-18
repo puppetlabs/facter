@@ -2,13 +2,16 @@ require 'facter'
 require 'facter/util/resolution'
 
 class Facter::Util::Fact
+  require 'facter/util/name'
+  include Facter::Util::Name
+
   TIMEOUT = 5
 
   attr_accessor :name, :ldapname
 
   # Create a new fact, with no resolution mechanisms.
   def initialize(name, options = {})
-    @name = name.to_s.downcase.intern
+    @name = canonicalize_name(name)
 
     # LAK:NOTE: This is slow for many options, but generally we won't have any and at
     # worst we'll have one.  If we add more, this should be made more efficient.

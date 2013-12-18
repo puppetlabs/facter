@@ -4,13 +4,18 @@
 require 'facter/util/values'
 
 class Facter::Util::Confine
-  attr_accessor :fact, :values
+  require 'facter/util/name'
 
+  include Facter::Util::Name
   include Facter::Util::Values
+
+  attr_accessor :fact, :values
 
   # Add the restriction.  Requires the fact name, an operator, and the value
   # we're comparing to.
   def initialize(fact, *values)
+    fact = canonicalize_name(fact)
+
     raise ArgumentError, "The fact name must be provided" unless fact
     raise ArgumentError, "One or more values must be provided" if values.empty?
     @fact = fact

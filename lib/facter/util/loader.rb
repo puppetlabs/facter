@@ -4,6 +4,8 @@ require 'facter/util/directory_loader'
 
 # Load facts on demand.
 class Facter::Util::Loader
+  require 'facter/util/name'
+  include Facter::Util::Name
 
   def initialize
     @loaded = []
@@ -13,12 +15,12 @@ class Facter::Util::Loader
   #
   # @api public
   # @param name [Symbol]
-  def load(fact)
-    # Now load from the search path
-    shortname = fact.to_s.downcase
-    load_env(shortname)
+  def load(name)
+    name = canonicalize_name(name)
 
-    filename = shortname + ".rb"
+    load_env(name)
+
+    filename = name.to_s + ".rb"
 
     paths = search_path
     unless paths.nil?
@@ -130,6 +132,11 @@ class Facter::Util::Loader
   # Load facts from the environment.  If no name is provided,
   # all will be loaded.
   def load_env(fact = nil)
+    unless fact.nil?
+      fact = canonicalize_name(fact)
+      fact = fact.to_s
+    end
+
     # Load from the environment, if possible
     ENV.each do |name, value|
       # Skip anything that doesn't match our regex.
@@ -140,7 +147,7 @@ class Facter::Util::Loader
       # match it.
       next if fact and env_name != fact
 
-      Facter.add($1) do
+      Facter.add($1.to_sym) do
         has_weight 1_000_000
         setcode { value }
       end
