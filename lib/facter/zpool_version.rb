@@ -1,6 +1,6 @@
 require 'facter'
 
-Facter.add('zpool_version') do
+Facter.add(:zpool_version) do
   setcode do
     if Facter::Util::Resolution.which('zpool')
       zpool_v = Facter::Util::Resolution.exec('zpool upgrade -v')

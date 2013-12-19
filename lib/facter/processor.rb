@@ -36,7 +36,7 @@ else
 end
 
 processor_list.each_with_index do |desc, i|
-  Facter.add("Processor#{i}") do
+  Facter.add("processor#{i}".to_sym) do
     confine :kernel => [ :aix, :"hp-ux", :sunos, :linux, :"gnu/kfreebsd" ]
     setcode do
       desc
@@ -44,7 +44,7 @@ processor_list.each_with_index do |desc, i|
   end
 end
 
-Facter.add("ProcessorCount") do
+Facter.add(:processorcount) do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]
   setcode do
     processor_list = Facter::Util::Processor.enum_cpuinfo
@@ -56,7 +56,7 @@ Facter.add("ProcessorCount") do
   end
 end
 
-Facter.add("ProcessorCount") do
+Facter.add(:processorcount) do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]
   setcode do
     ## The method above is preferable since it provides the description of the CPU as well
@@ -70,7 +70,7 @@ Facter.add("ProcessorCount") do
   end
 end
 
-Facter.add("ProcessorCount") do
+Facter.add(:processorcount) do
   confine :kernel => :aix
   setcode do
     processor_list = Facter::Util::Processor.aix_processor_list
@@ -79,7 +79,7 @@ Facter.add("ProcessorCount") do
   end
 end
 
-Facter.add("ProcessorCount") do
+Facter.add(:processorcount) do
   confine :kernel => :"hp-ux"
   setcode do
     processor_list = Facter::Util::Processor.hpux_processor_list
@@ -87,21 +87,21 @@ Facter.add("ProcessorCount") do
   end
 end
 
-Facter.add("Processor") do
+Facter.add(:processor) do
   confine :kernel => :openbsd
   setcode do
     Facter::Util::Resolution.exec("uname -p")
   end
 end
 
-Facter.add("ProcessorCount") do
+Facter.add(:processorcount) do
   confine :kernel => :openbsd
   setcode do
     Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
   end
 end
 
-Facter.add("ProcessorCount") do
+Facter.add(:processorcount) do
   confine :kernel => :Darwin
   setcode do
     Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
@@ -130,7 +130,7 @@ if Facter.value(:kernel) == "windows"
   end
 
   processor_list.each_with_index do |name, i|
-    Facter.add("Processor#{i}") do
+    Facter.add("processor#{i}".to_sym) do
       confine :kernel => :windows
       setcode do
         name
@@ -138,7 +138,7 @@ if Facter.value(:kernel) == "windows"
     end
   end
 
-  Facter.add("ProcessorCount") do
+  Facter.add(:processorcount) do
     confine :kernel => :windows
     setcode do
       processor_list.length.to_s
@@ -146,21 +146,21 @@ if Facter.value(:kernel) == "windows"
   end
 end
 
-Facter.add("Processor") do
+Facter.add(:processor) do
   confine :kernel => [:dragonfly,:freebsd]
   setcode do
     Facter::Util::Resolution.exec("sysctl -n hw.model")
   end
 end
 
-Facter.add("ProcessorCount") do
+Facter.add(:processorcount) do
   confine :kernel => [:dragonfly,:freebsd]
   setcode do
     Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
   end
 end
 
-Facter.add("ProcessorCount") do
+Facter.add(:processorcount) do
   confine :kernel => :sunos
   setcode do
     kernelrelease = Facter.value(:kernelrelease)

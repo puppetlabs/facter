@@ -28,7 +28,7 @@ describe "SSH fact" do
       let(:filename) { data[0] }
       let(:contents) { data[1] }
       let(:fingerprint) { data[2] }
-      let(:fingerprint_fact) { "SSHFP_#{fact[3..-4]}" }
+      let(:fingerprint_fact) { "sshfp_#{fact[3..-4]}".downcase.to_sym }
       let(:private_key) { /AAAA\S+/.match(contents).to_s }
 
       # Before we start testing, we'll say that the file
@@ -57,12 +57,12 @@ describe "SSH fact" do
 
           it "should find in #{dir}" do
             FileTest.expects(:file?).with(full_path)
-            Facter.fact(fact).value
+            Facter.fact(fact.downcase.to_sym).value
           end
 
           it "should match the contents" do
             File.expects(:read).with(full_path).at_least_once.returns contents
-            Facter.fact(fact).value.should == private_key
+            Facter.fact(fact.downcase.to_sym).value.should == private_key
           end
 
           it "should have matching fingerprint" do

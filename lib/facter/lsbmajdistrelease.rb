@@ -14,7 +14,7 @@
 #
 require 'facter'
 
-Facter.add("lsbmajdistrelease") do
+Facter.add(:lsbmajdistrelease) do
   confine :kernel => %w{Linux GNU/kFreeBSD}
   setcode do
     if /(\d*)\./i =~ Facter.value(:lsbdistrelease)

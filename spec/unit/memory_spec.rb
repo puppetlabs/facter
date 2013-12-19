@@ -20,11 +20,11 @@ describe "Memory facts" do
 
       describe "when #{fact}_mb does not exist" do
         before(:each) do
-          Facter.fact(fact + "_mb").stubs(:value).returns(nil)
+          Facter.fact((fact + "_mb").to_sym).stubs(:value).returns(nil)
         end
 
         it "#{fact} should not exist either" do
-          Facter.fact(fact).value.should be_nil
+          Facter.fact(fact.to_sym).value.should be_nil
         end
       end
 
@@ -33,8 +33,8 @@ describe "Memory facts" do
           "1572864.00"  => "1.50 TB",
       }.each do |mbval, scval|
         it "should scale #{fact} when given #{mbval} MB" do
-          Facter.fact(fact + "_mb").stubs(:value).returns(mbval)
-          Facter.fact(fact).value.should == scval
+          Facter.fact((fact + "_mb").to_sym).stubs(:value).returns(mbval)
+          Facter.fact(fact.to_sym).value.should == scval
         end
       end
     end
@@ -523,7 +523,7 @@ SWAP
       it "should return free memory in MB" do
         os = stubs 'os'
         os.stubs(:FreePhysicalMemory).returns("3415624")
-        Facter::Util::WMI.stubs(:execquery).returns([os])
+        Facter::Util::WMI.stubs(:execquery).returns([os]).once
 
         Facter.fact(:memoryfree_mb).value.should == '3335.57'
       end
@@ -534,12 +534,12 @@ SWAP
         Facter::Util::WMI.stubs(:execquery).returns([computer])
 
         Facter.fact(:memorysize_mb).value.should == '3999.55'
-        Facter.fact(:MemoryTotal).value.should == '3.91 GB'
+        Facter.fact(:memorytotal).value.should == '3.91 GB'
     end
   end
 
   it "should use the memorysize fact for the memorytotal fact" do
-    Facter.fact("memorysize").expects(:value).once.returns "16.00 GB"
+    Facter.fact(:memorysize).expects(:value).once.returns "16.00 GB"
     Facter::Util::Resolution.expects(:exec).never
     Facter.fact(:memorytotal).value.should == "16.00 GB"
   end

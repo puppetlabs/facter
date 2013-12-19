@@ -11,9 +11,13 @@
 ## Facts related to SSH
 ##
 
-{"SSHDSAKey" => { :file => "ssh_host_dsa_key.pub", :sshfprrtype => 2 } , "SSHRSAKey" => { :file => "ssh_host_rsa_key.pub", :sshfprrtype => 1 }, "SSHECDSAKey" => { :file => "ssh_host_ecdsa_key.pub", :sshfprrtype => 3 } }.each do |name,key|
+{
+  'sshdsakey'   => { :file => 'ssh_host_dsa_key.pub',   :sshfprrtype => 2 },
+  'sshrsakey'   => { :file => 'ssh_host_rsa_key.pub',   :sshfprrtype => 1 },
+  'sshecdsakey' => { :file => 'ssh_host_ecdsa_key.pub', :sshfprrtype => 3 },
+}.each do |name,key|
   
-  Facter.add(name) do
+  Facter.add(name.to_sym) do
     setcode do
       value = nil
       
@@ -40,9 +44,9 @@
     end
   end
   
-  Facter.add('SSHFP_' + name[3..-4]) do
+  Facter.add(('sshfp_' + name[3..-4]).to_sym) do
     setcode do
-      ssh = Facter.fact(name).value
+      ssh = Facter.fact(name.to_sym).value
       value = nil
       
       if ssh && key[:sshfprrtype]

@@ -23,31 +23,31 @@ describe "on Solaris" do
   describe "zone specific values" do
     it "Fact#zone_<z>_status" do
       {'global' => 'running', 'local' => 'configured', 'zoneA' => 'stopped'}.each do |key, val|
-        Facter.value("zone_%s_status" % key).should == val
+        Facter.value("zone_#{key}_status".downcase.to_sym).should == val
       end
     end
 
     it "Fact#zone_<z>_id" do
       {'global' => '0', 'local' => '-', 'zoneA' => '-'}.each do |key, val|
-        Facter.value("zone_%s_id" % key).should == val
+        Facter.value("zone_#{key}_id".downcase.to_sym).should == val
       end
     end
 
     it "Fact#zone_<z>_path" do
       {'global' => '/', 'local' => '/', 'zoneA' => '/'}.each do |key, val|
-        Facter.value("zone_%s_path" % key).should == val
+        Facter.value("zone_#{key}_path".downcase.to_sym).should == val
       end
     end
 
     it "Fact#zone_<z>_brand" do
       {'global' => 'native', 'local' => 'native', 'zoneA' => 'native'}.each do |key, val|
-        Facter.value("zone_%s_brand" % key).should == val
+        Facter.value("zone_#{key}_brand".downcase.to_sym).should == val
       end
     end
 
     it "Fact#zone_<z>_iptype" do
       {'global' => 'shared', 'local' => 'shared', 'zoneA' => 'shared'}.each do |key, val|
-        Facter.value("zone_%s_iptype" % key).should == val
+        Facter.value("zone_#{key}_iptype".downcase.to_sym).should == val
       end
     end
   end

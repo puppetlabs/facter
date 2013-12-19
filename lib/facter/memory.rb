@@ -32,36 +32,36 @@ require 'facter/util/memory'
    "swapsize",
    "swapfree"
 ].each do |fact|
-  Facter.add(fact) do
+  Facter.add(fact.to_sym) do
     setcode do
-      name = Facter.fact(fact + "_mb").value
+      name = Facter.fact((fact + "_mb").to_sym).value
       Facter::Memory.scale_number(name.to_f, "MB") if name
     end
   end
 end
 
-Facter.add("swapsize_mb") do
+Facter.add(:swapsize_mb) do
   setcode do
     swaptotal = Facter::Memory.swap_size
     "%.2f" % [swaptotal] if swaptotal
   end
 end
 
-Facter.add("swapfree_mb") do
+Facter.add(:swapfree_mb) do
   setcode do
     swapfree = Facter::Memory.swap_free
     "%.2f" % [swapfree] if swapfree
   end
 end
 
-Facter.add("memorysize_mb") do
+Facter.add(:memorysize_mb) do
   setcode do
     memtotal = Facter::Memory.mem_size
     "%.2f" % [memtotal] if memtotal
   end
 end
 
-Facter.add("memoryfree_mb") do
+Facter.add(:memoryfree_mb) do
   setcode do
     memfree = Facter::Memory.mem_free
     "%.2f" % [memfree] if memfree
@@ -83,7 +83,7 @@ end
 end
 
 if Facter.value(:kernel) == "Darwin"
-  Facter.add("SwapEncrypted") do
+  Facter.add(:swapencrypted) do
     confine :kernel => :Darwin
     setcode do
       swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
@@ -96,7 +96,7 @@ end
 
 if Facter.value(:kernel) == "SunOS"
 
-  Facter.add("memorysize_mb") do
+  Facter.add(:memorysize_mb) do
     confine :kernel => :sunos
     # Total memory size available from prtconf
     pconf = Facter::Util::Resolution.exec('/usr/sbin/prtconf 2>/dev/null')
@@ -115,7 +115,7 @@ end
 if Facter.value(:kernel) == "windows"
   require 'facter/util/wmi'
 
-  Facter.add("memorysize_mb") do
+  Facter.add(:memorysize_mb) do
     confine :kernel => :windows
     setcode do
       mem = 0
@@ -127,7 +127,7 @@ if Facter.value(:kernel) == "windows"
     end
   end
 
-  Facter.add("memoryfree_mb") do
+  Facter.add(:memoryfree_mb) do
     confine :kernel => :windows
     setcode do
       mem = 0
@@ -140,7 +140,7 @@ if Facter.value(:kernel) == "windows"
   end
 end
 
-Facter.add("swapsize_mb") do
+Facter.add(:swapsize_mb) do
   confine :kernel => :dragonfly
   setcode do
     page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
@@ -149,7 +149,7 @@ Facter.add("swapsize_mb") do
   end
 end
 
-Facter.add("swapfree_mb") do
+Facter.add(:swapfree_mb) do
   confine :kernel => :dragonfly
   setcode do
     page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
@@ -166,8 +166,8 @@ end
 # Unifying naming for the amount of physical memory in a given host.
 # This fact is DEPRECATED and will be removed in Facter 2.0 per
 # http://projects.puppetlabs.com/issues/11466
-Facter.add("MemoryTotal") do
+Facter.add(:memorytotal) do
   setcode do
-    Facter.value("memorysize")
+    Facter.value(:memorysize)
   end
 end

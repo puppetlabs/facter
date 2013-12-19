@@ -13,7 +13,7 @@
 ## Facts related to cfengine
 ##
 
-Facter.add(:Cfkey) do
+Facter.add(:cfkey) do
   setcode do
     value = nil
     ["/usr/local/etc/cfkey.pub",

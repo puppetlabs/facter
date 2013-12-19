@@ -8,15 +8,15 @@ include Facter::Util::Values
 
 describe Facter::Util::Confine do
   it "should require a fact name" do
-    Facter::Util::Confine.new("yay", true).fact.should == :yay
+    Facter::Util::Confine.new(:yay, true).fact.should == :yay
   end
 
   it "should accept a value specified individually" do
-    Facter::Util::Confine.new("yay", "test").values.should == ["test"]
+    Facter::Util::Confine.new(:yay, "test").values.should == ["test"]
   end
 
   it "should accept multiple values specified at once" do
-    Facter::Util::Confine.new("yay", "test", "other").values.should == ["test", "other"]
+    Facter::Util::Confine.new(:yay, "test", "other").values.should == ["test", "other"]
   end
 
   it "should fail if no fact name is provided" do
@@ -24,17 +24,17 @@ describe Facter::Util::Confine do
   end
 
   it "should fail if no values were provided" do
-    lambda { Facter::Util::Confine.new("yay") }.should raise_error(ArgumentError)
+    lambda { Facter::Util::Confine.new(:yay) }.should raise_error(ArgumentError)
   end
 
   it "should have a method for testing whether it matches" do
-    Facter::Util::Confine.new("yay", :test).should respond_to(:true?)
+    Facter::Util::Confine.new(:yay, :test).should respond_to(:true?)
   end
 
   describe "when evaluating" do
     def confined(fact_value, *confines)
       @fact.stubs(:value).returns fact_value
-      Facter::Util::Confine.new("yay", *confines).true?
+      Facter::Util::Confine.new(:yay, *confines).true?
     end
 
     before do
@@ -45,7 +45,7 @@ describe Facter::Util::Confine do
     it "should return false if the fact does not exist" do
       Facter.expects(:[]).with(:yay).returns nil
 
-      Facter::Util::Confine.new("yay", "test").true?.should be_false
+      Facter::Util::Confine.new(:yay, "test").true?.should be_false
     end
 
     it "should use the returned fact to get the value" do
@@ -53,7 +53,7 @@ describe Facter::Util::Confine do
 
       @fact.expects(:value).returns nil
 
-      Facter::Util::Confine.new("yay", "test").true?
+      Facter::Util::Confine.new(:yay, "test").true?
     end
 
     it "should return false if the fact has no value" do

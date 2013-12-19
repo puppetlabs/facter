@@ -8,31 +8,31 @@ describe Facter::Util::Fact do
     lambda { Facter::Util::Fact.new }.should raise_error(ArgumentError)
   end
 
-  it "should always downcase the name and convert it to a symbol" do
-    Facter::Util::Fact.new("YayNess").name.should == :yayness
+  it "should pass through it's name" do
+    Facter::Util::Fact.new(:yayness).name.should == :yayness
   end
 
   it "should default to its name converted to a string as its ldapname" do
-    Facter::Util::Fact.new("YayNess").ldapname.should == "yayness"
+    Facter::Util::Fact.new(:yayness).ldapname.should == "yayness"
   end
 
   it "should allow specifying the ldap name at initialization" do
-    Facter::Util::Fact.new("YayNess", :ldapname => "fooness").ldapname.should == "fooness"
+    Facter::Util::Fact.new(:yayness, :ldapname => "fooness").ldapname.should == "fooness"
   end
 
   it "should fail if an unknown option is provided" do
-    lambda { Facter::Util::Fact.new('yay', :foo => :bar) }.should raise_error(ArgumentError)
+    lambda { Facter::Util::Fact.new(:yay, :foo => :bar) }.should raise_error(ArgumentError)
   end
 
   it "should have a method for adding resolution mechanisms" do
-    Facter::Util::Fact.new("yay").should respond_to(:add)
+    Facter::Util::Fact.new(:yay).should respond_to(:add)
   end
 
   describe "when adding resolution mechanisms" do
     before do
-      @fact = Facter::Util::Fact.new("yay")
+      @fact = Facter::Util::Fact.new(:yay)
 
-      @resolution = Facter::Util::Resolution.new("yay")
+      @resolution = Facter::Util::Resolution.new(:yay)
     end
 
     it "should be to create a new resolution instance with a block" do
@@ -56,28 +56,28 @@ describe Facter::Util::Fact do
   end
 
   it "should be able to return a value" do
-    Facter::Util::Fact.new("yay").should respond_to(:value)
+    Facter::Util::Fact.new(:yay).should respond_to(:value)
   end
 
   describe "when returning a value" do
     before do
-      @fact = Facter::Util::Fact.new("yay")
+      @fact = Facter::Util::Fact.new(:yay)
     end
 
     it "should return nil if there are no resolutions" do
-      Facter::Util::Fact.new("yay").value.should be_nil
+      Facter::Util::Fact.new(:yay).value.should be_nil
     end
 
     it "should return the first value returned by a resolution" do
       r1 = stub 'r1', :weight => 2, :value => nil, :suitable? => true
-      r2 = stub 'r2', :weight => 1, :value => "yay", :suitable? => true
+      r2 = stub 'r2', :weight => 1, :value => :yay, :suitable? => true
       r3 = stub 'r3', :weight => 0, :value => "foo", :suitable? => true
       Facter::Util::Resolution.expects(:new).times(3).returns(r1).returns(r2).returns(r3)
       @fact.add { }
       @fact.add { }
       @fact.add { }
 
-      @fact.value.should == "yay"
+      @fact.value.should == :yay
     end
 
     it "should short-cut returning the value once one is found" do
@@ -92,12 +92,12 @@ describe Facter::Util::Fact do
 
     it "should skip unsuitable resolutions" do
       r1 = stub 'r1', :weight => 2, :suitable? => false # would fail if 'value' were asked for'
-      r2 = stub 'r2', :weight => 1, :value => "yay", :suitable? => true
+      r2 = stub 'r2', :weight => 1, :value => :yay, :suitable? => true
       Facter::Util::Resolution.expects(:new).times(2).returns(r1).returns(r2)
       @fact.add { }
       @fact.add { }
 
-      @fact.value.should == "yay"
+      @fact.value.should == :yay
     end
 
     it "should return nil if the value is the empty string" do

@@ -147,7 +147,7 @@ class Facter::Util::Loader
       # match it.
       next if fact and env_name != fact
 
-      Facter.add($1.to_sym) do
+      Facter.add(env_name.downcase.to_sym) do
         has_weight 1_000_000
         setcode { value }
       end

@@ -28,6 +28,6 @@ Facter.add(:operatingsystemmajrelease) do
     :SLC
   ]
   setcode do
-    Facter.value('operatingsystemrelease').split('.').first
+    Facter.value(:operatingsystemrelease).split('.').first
   end
 end
