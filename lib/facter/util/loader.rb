@@ -59,7 +59,7 @@ class Facter::Util::Loader
   # Search paths are gathered from the following sources:
   #
   # 1. $LOAD_PATH entries are expanded to absolute paths
-  # 2. ENV['FACTERLIB'] is split and expanded to absolute paths
+  # 2. ENV['FACTERLIB'] is split and used verbatim
   # 3. Entries from Facter::search_path are used verbatim
   #
   # A warning will be generated for any path(s) from Facter::search_path that
@@ -73,7 +73,7 @@ class Facter::Util::Loader
 
     if ENV.include?('FACTERLIB')
       ENV['FACTERLIB'].split(File::PATH_SEPARATOR).each do |path|
-        result << File.expand_path(path)
+        result << path
       end
     end
 
