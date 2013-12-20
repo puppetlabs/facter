@@ -5,4 +5,12 @@ require 'json-schema'
 
 facts  = `bundle exec facter --json`
 schema = JSON.parse(File.read("schema/facter.json"))
-JSON::Validator.validate!(schema, facts)
+errors =  JSON::Validator.fully_validate(schema, facts)
+if errors.empty?
+  puts "Passed validation!"
+  exit 0
+else
+  puts errors
+  puts "Failed validation."
+  exit 1
+end
