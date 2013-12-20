@@ -20,14 +20,14 @@ if Facter.value(:kernel) == 'SunOS'
       value = x[1..x.size]
 
       if value.size == 1
-        Facter.add("ldom_#{key.downcase}") do
+        Facter.add("ldom_#{key.downcase}".to_sym) do
           setcode { value.first.split('=')[1] }
         end
       else
         value.each do |y|
           k = y.split('=')[0]
           v = y.split('=')[1]
-          Facter.add("ldom_#{key.downcase}_#{k.downcase}") do
+          Facter.add("ldom_#{key.downcase}_#{k.downcase}".to_sym) do
             setcode { v }
           end
         end
@@ -36,7 +36,7 @@ if Facter.value(:kernel) == 'SunOS'
 
     # When ldom domainrole control = false, the system is a guest, so we mark it
     # as a virtual system:
-    Facter.add("virtual") do
+    Facter.add(:virtual) do
       confine :ldom_domainrole_control => 'false'
       has_weight 10
       setcode do

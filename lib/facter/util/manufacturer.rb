@@ -37,7 +37,7 @@ module Facter::Manufacturer
           output.split(splitstr).each do |line|
             if line =~ /#{key}/ and line =~ /\n\s+#{value} (.+)\n/
               result = $1.strip
-              Facter.add(facterkey) do
+              Facter.add(facterkey.downcase.to_sym) do
                 confine :kernel => [ :linux, :freebsd, :netbsd, :sunos, :"gnu/kfreebsd", :dragonfly ]
                 setcode do
                   result
@@ -52,7 +52,7 @@ module Facter::Manufacturer
 
   def self.sysctl_find_system_info(name)
     name.each do |sysctlkey,facterkey|
-      Facter.add(facterkey) do
+      Facter.add(facterkey.downcase.to_sym) do
         confine :kernel => [:openbsd, :darwin]
         setcode do
           Facter::Util::Resolution.exec("sysctl -n #{sysctlkey} 2>/dev/null")
@@ -67,19 +67,19 @@ module Facter::Manufacturer
 
     # System Configuration:  Sun Microsystems  sun4u Sun SPARC Enterprise M3000 Server
     if output and output =~ /^System Configuration:\s+(.+?)\s+(sun\d+\S+)\s+(.+)/
-      Facter.add('manufacturer') do
+      Facter.add(:manufacturer) do
         setcode do
           $1
         end
       end
-      Facter.add('productname') do
+      Facter.add(:productname) do
         setcode do
           $3
         end
       end
     end
 
-    Facter.add('serialnumber') do
+    Facter.add(:serialnumber) do
       setcode do
         Facter::Util::Resolution.exec("/usr/sbin/sneep")
       end
@@ -92,7 +92,7 @@ module Facter::Manufacturer
     wmi = Facter::Util::WMI.connect()
     name.each do |facterkey, win32key|
       query = wmi.ExecQuery("select * from Win32_#{win32key.last}")
-      Facter.add(facterkey) do
+      Facter.add(facterkey.downcase.to_sym) do
         confine :kernel => :windows
         setcode do
           query.each { |x| value = x.__send__( (win32key.first).to_sym) }

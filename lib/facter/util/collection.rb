@@ -5,6 +5,8 @@ require 'facter/util/loader'
 # Manage which facts exist and how we access them.  Largely just a wrapper
 # around a hash of facts.
 class Facter::Util::Collection
+  require 'facter/util/name'
+  include Facter::Util::Name
 
   def initialize(internal_loader, external_loader)
     @facts = Hash.new
@@ -15,13 +17,14 @@ class Facter::Util::Collection
   # Return a fact object by name.  If you use this, you still have to call
   # 'value' on it to retrieve the actual value.
   def [](name)
+    name = canonicalize_name(name)
     value(name)
   end
 
   # Add a resolution mechanism for a named fact.  This does not distinguish
   # between adding a new fact and adding a new way to resolve a fact.
   def add(name, options = {}, &block)
-    name = canonicalize(name)
+    name = canonicalize_name(name)
 
     unless fact = @facts[name]
       fact = Facter::Util::Fact.new(name)
@@ -78,7 +81,7 @@ class Facter::Util::Collection
 
   # Return a fact by name.
   def fact(name)
-    name = canonicalize(name)
+    name = canonicalize_name(name)
 
     # Try to load the fact if necessary
     load(name) unless @facts[name]
@@ -106,6 +109,7 @@ class Facter::Util::Collection
   end
 
   def load(name)
+    name = canonicalize_name(name)
     internal_loader.load(name)
     load_external_facts
   end
@@ -137,16 +141,13 @@ class Facter::Util::Collection
   end
 
   def value(name)
+    name = canonicalize_name(name)
     if fact = fact(name)
       fact.value
     end
   end
 
   private
-
-  def canonicalize(name)
-    name.to_s.downcase.to_sym
-  end
 
   def load_external_facts
     if ! @external_facts_loaded

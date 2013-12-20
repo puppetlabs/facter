@@ -9,6 +9,9 @@ require 'facter/util/config'
 require 'timeout'
 
 class Facter::Util::Resolution
+  require 'facter/util/name'
+  include Facter::Util::Name
+
   attr_accessor :interpreter, :code, :name, :timeout
   attr_writer :value, :weight
 
@@ -199,6 +202,8 @@ class Facter::Util::Resolution
 
   # Create a new resolution mechanism.
   def initialize(name)
+    name = canonicalize_name(name)
+
     @name = name
     @confines = []
     @value = nil

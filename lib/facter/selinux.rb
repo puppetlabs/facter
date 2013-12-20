@@ -30,7 +30,7 @@ def selinux_mount_point
   path
 end
 
-Facter.add("selinux") do
+Facter.add(:selinux) do
   confine :kernel => :linux
   setcode do
     result = "false"
@@ -45,7 +45,7 @@ Facter.add("selinux") do
   end
 end
 
-Facter.add("selinux_enforced") do
+Facter.add(:selinux_enforced) do
   confine :selinux => :true
   setcode do
     result = "false"
@@ -57,7 +57,7 @@ Facter.add("selinux_enforced") do
   end
 end
 
-Facter.add("selinux_policyversion") do
+Facter.add(:selinux_policyversion) do
   confine :selinux => :true
   setcode do
     result = 'unknown'
@@ -68,7 +68,7 @@ Facter.add("selinux_policyversion") do
   end
 end
 
-Facter.add("selinux_current_mode") do
+Facter.add(:selinux_current_mode) do
   confine :selinux => :true
   setcode do
     result = 'unknown'
@@ -78,7 +78,7 @@ Facter.add("selinux_current_mode") do
   end
 end
 
-Facter.add("selinux_config_mode") do
+Facter.add(:selinux_config_mode) do
   confine :selinux => :true
   setcode do
     result = 'unknown'
@@ -88,7 +88,7 @@ Facter.add("selinux_config_mode") do
   end
 end
 
-Facter.add("selinux_config_policy") do
+Facter.add(:selinux_config_policy) do
   confine :selinux => :true
   setcode do
     result = 'unknown'
@@ -102,7 +102,7 @@ end
 # breakages of existing manifests. It should be removed at the next major release.
 # See ticket #6677.
 
-Facter.add("selinux_mode") do
+Facter.add(:selinux_mode) do
   confine :selinux => :true
   setcode do
     Facter.value(:selinux_config_policy)

@@ -286,7 +286,7 @@ describe "processorX facts" do
         lsdev_example.split("\n").each_with_index do |line, idx|
           aix_idx = idx * 4
           it "maps proc#{aix_idx} to processor#{idx} (#11609)" do
-            Facter.value("processor#{idx}").should == "PowerPC_POWER5"
+            Facter.value("processor#{idx}".to_sym).should == "PowerPC_POWER5"
           end
         end
       end
@@ -325,7 +325,7 @@ describe "processorX facts" do
 
           %w{ 0 1 }.each do |j|
             it "should find #{expected_cpu}" do
-              Facter.value("processor#{j}").should == expected_cpu
+              Facter.value("processor#{j}".to_sym).should == expected_cpu
             end
           end
         end
@@ -383,7 +383,7 @@ describe "processorX facts" do
 
           %w{ 0 1 }.each do |j|
             it "should find #{expected_cpu}" do
-              Facter.value("processor#{j}").should == expected_cpu
+              Facter.value("processor#{j}".to_sym).should == expected_cpu
             end
           end
         end

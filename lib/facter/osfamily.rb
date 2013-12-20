@@ -29,7 +29,7 @@ Facter.add(:osfamily) do
     when "Archlinux"
       "Archlinux"
     else
-      Facter.value("kernel")
+      Facter.value(:kernel)
     end
   end
 end

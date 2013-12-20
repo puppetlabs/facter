@@ -32,7 +32,7 @@ Facter::Util::IP.get_interfaces.each do |interface|
   #   There's no point in confining these facts, since we wouldn't be able to create
   # them if we weren't running on a supported platform.
   %w{ipaddress ipaddress6 macaddress netmask mtu}.each do |label|
-    Facter.add(label + "_" + Facter::Util::IP.alphafy(interface)) do
+    Facter.add((label + "_" + Facter::Util::IP.alphafy(interface)).downcase.to_sym) do
       setcode do
         Facter::Util::IP.get_interface_value(interface, label)
       end

@@ -11,42 +11,42 @@ describe Facter::Util::Resolution do
   end
 
   it "should have a name" do
-    Facter::Util::Resolution.new("yay").name.should == "yay"
+    Facter::Util::Resolution.new(:yay).name.should == :yay
   end
 
   it "should be able to set the value" do
-    resolve = Facter::Util::Resolution.new("yay")
+    resolve = Facter::Util::Resolution.new(:yay)
     resolve.value = "foo"
     resolve.value.should == "foo"
   end
 
   it "should have a method for setting the weight" do
-    Facter::Util::Resolution.new("yay").should respond_to(:has_weight)
+    Facter::Util::Resolution.new(:yay).should respond_to(:has_weight)
   end
 
   it "should have a method for setting the code" do
-    Facter::Util::Resolution.new("yay").should respond_to(:setcode)
+    Facter::Util::Resolution.new(:yay).should respond_to(:setcode)
   end
 
   it "should support a timeout value" do
-    Facter::Util::Resolution.new("yay").should respond_to(:timeout=)
+    Facter::Util::Resolution.new(:yay).should respond_to(:timeout=)
   end
 
   it "should default to a timeout of 0 seconds" do
-    Facter::Util::Resolution.new("yay").limit.should == 0
+    Facter::Util::Resolution.new(:yay).limit.should == 0
   end
 
   it "should default to nil for code" do
-    Facter::Util::Resolution.new("yay").code.should be_nil
+    Facter::Util::Resolution.new(:yay).code.should be_nil
   end
 
   it "should default to nil for interpreter" do
     Facter.expects(:warnonce).with("The 'Facter::Util::Resolution.interpreter' method is deprecated and will be removed in a future version.")
-    Facter::Util::Resolution.new("yay").interpreter.should be_nil
+    Facter::Util::Resolution.new(:yay).interpreter.should be_nil
   end
 
   it "should provide a 'limit' method that returns the timeout" do
-    res = Facter::Util::Resolution.new("yay")
+    res = Facter::Util::Resolution.new(:yay)
     res.timeout = "testing"
     res.limit.should == "testing"
   end
@@ -114,7 +114,7 @@ describe Facter::Util::Resolution do
   describe "when setting the code" do
     before do
       Facter.stubs(:warnonce)
-      @resolve = Facter::Util::Resolution.new("yay")
+      @resolve = Facter::Util::Resolution.new(:yay)
     end
 
     it "should deprecate the interpreter argument to 'setcode'" do
@@ -159,7 +159,7 @@ describe Facter::Util::Resolution do
     class FlushFakeError < StandardError; end
 
     subject do
-      Facter::Util::Resolution.new("jeff")
+      Facter::Util::Resolution.new(:jeff)
     end
 
     context '#on_flush' do
@@ -177,12 +177,12 @@ describe Facter::Util::Resolution do
   end
 
   it "should be able to return a value" do
-    Facter::Util::Resolution.new("yay").should respond_to(:value)
+    Facter::Util::Resolution.new(:yay).should respond_to(:value)
   end
 
   describe "when returning the value" do
     before do
-      @resolve = Facter::Util::Resolution.new("yay")
+      @resolve = Facter::Util::Resolution.new(:yay)
     end
 
     it "should return any value that has been provided" do
@@ -291,46 +291,46 @@ describe Facter::Util::Resolution do
   end
 
   it "should return its value when converted to a string" do
-    @resolve = Facter::Util::Resolution.new("yay")
+    @resolve = Facter::Util::Resolution.new(:yay)
     @resolve.expects(:value).returns "myval"
     @resolve.to_s.should == "myval"
   end
 
   it "should allow the adding of confines" do
-    Facter::Util::Resolution.new("yay").should respond_to(:confine)
+    Facter::Util::Resolution.new(:yay).should respond_to(:confine)
   end
 
   it "should provide a method for returning the number of confines" do
-    @resolve = Facter::Util::Resolution.new("yay")
-    @resolve.confine "one" => "foo", "two" => "fee"
+    @resolve = Facter::Util::Resolution.new(:yay)
+    @resolve.confine :one => "foo", :two => "fee"
     @resolve.weight.should == 2
   end
 
   it "should return 0 confines when no confines have been added" do
-    Facter::Util::Resolution.new("yay").weight.should == 0
+    Facter::Util::Resolution.new(:yay).weight.should == 0
   end
 
   it "should provide a way to set the weight" do
-    @resolve = Facter::Util::Resolution.new("yay")
+    @resolve = Facter::Util::Resolution.new(:yay)
     @resolve.has_weight(45)
     @resolve.weight.should == 45
   end
 
   it "should allow the weight to override the number of confines" do
-    @resolve = Facter::Util::Resolution.new("yay")
-    @resolve.confine "one" => "foo", "two" => "fee"
+    @resolve = Facter::Util::Resolution.new(:yay)
+    @resolve.confine :one => "foo", :two => "fee"
     @resolve.weight.should == 2
     @resolve.has_weight(45)
     @resolve.weight.should == 45
   end
 
   it "should have a method for determining if it is suitable" do
-    Facter::Util::Resolution.new("yay").should respond_to(:suitable?)
+    Facter::Util::Resolution.new(:yay).should respond_to(:suitable?)
   end
 
   describe "when adding confines" do
     before do
-      @resolve = Facter::Util::Resolution.new("yay")
+      @resolve = Facter::Util::Resolution.new(:yay)
     end
 
     it "should accept a hash of fact names and values" do
@@ -348,7 +348,7 @@ describe Facter::Util::Resolution do
 
   describe "when determining suitability" do
     before do
-      @resolve = Facter::Util::Resolution.new("yay")
+      @resolve = Facter::Util::Resolution.new(:yay)
     end
 
     it "should always be suitable if no confines have been added" do

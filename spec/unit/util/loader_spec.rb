@@ -151,7 +151,7 @@ describe Facter::Util::Loader do
     end
 
     it "should load values from the matching environment variable if one is present" do
-      Facter.expects(:add).with("testing")
+      Facter.expects(:add).with(:testing)
 
       Facter::Util::Resolution.with_env "facter_testing" => "yayness" do
         @loader.load(:testing)

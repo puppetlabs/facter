@@ -147,7 +147,7 @@ Handle 0x001F
 
     Facter::Manufacturer.dmi_find_system_info(query)
 
-    return Facter.value("product_name_#{os}")
+    return Facter.value("product_name_#{os}".downcase.to_sym)
   end
 
   it "should return the same result with smbios than with dmidecode" do

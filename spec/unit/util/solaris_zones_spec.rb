@@ -60,17 +60,17 @@ describe Facter::Util::SolarisZones do
       end
       it 'defines facts for zoneA' do
         given_initial_zone_facts
-        Facter.fact(:zone_zoneA_id).value.should == '-'
+        Facter.fact(:zone_zonea_id).value.should == '-'
       end
       it 'does not define facts for zoneB' do
         given_initial_zone_facts
-        Facter.fact(:zone_zoneB_id).should be_nil
+        Facter.fact(:zone_zoneb_id).should be_nil
       end
       it 'uses a single read of the system information for all of the dynamically generated zone facts' do
         given_initial_zone_facts # <= single read happens here
 
         Facter::Util::Resolution.expects(:exec).never
-        Facter.fact(:zone_zoneA_id).value
+        Facter.fact(:zone_zonea_id).value
         Facter.fact(:zone_local_id).value
       end
     end
@@ -85,17 +85,17 @@ describe Facter::Util::SolarisZones do
         given_initial_zone_facts
         when_facts_have_been_resolved_then_flushed
 
-        Facter.fact(:zone_zoneA_id).value.should be_nil
-        Facter.fact(:zone_zoneA_status).value.should be_nil
-        Facter.fact(:zone_zoneA_path).value.should be_nil
+        Facter.fact(:zone_zonea_id).value.should be_nil
+        Facter.fact(:zone_zonea_status).value.should be_nil
+        Facter.fact(:zone_zonea_path).value.should be_nil
       end
       it 'defines facts for new zones' do
         given_initial_zone_facts
         when_facts_have_been_resolved_then_flushed
 
-        Facter.fact(:zone_zoneB_id).should be_nil
+        Facter.fact(:zone_zoneb_id).should be_nil
         Facter.fact(:zones).value
-        Facter.fact(:zone_zoneB_id).value.should be_a_kind_of String
+        Facter.fact(:zone_zoneb_id).value.should be_a_kind_of String
       end
       it 'uses a single read of the system information for all of the dynamically generated zone facts' do
         given_initial_zone_facts
@@ -103,7 +103,7 @@ describe Facter::Util::SolarisZones do
 
         Facter::Util::Resolution.expects(:exec).once.returns(zone_list2)
         Facter.fact(:zones).value
-        Facter.fact(:zone_zoneA_id).value
+        Facter.fact(:zone_zonea_id).value
         Facter.fact(:zone_local_id).value
       end
 
@@ -119,7 +119,7 @@ describe Facter::Util::SolarisZones do
 
   def when_facts_have_been_resolved_then_flushed
     Facter.fact(:zones).value
-    Facter.fact(:zone_zoneA_id).value
+    Facter.fact(:zone_zonea_id).value
     Facter.fact(:zone_local_id).value
     Facter::Util::Resolution.stubs(:exec).returns(zone_list2)
     Facter.flush

@@ -26,7 +26,7 @@
 
 require 'facter/util/virtual'
 
-Facter.add("virtual") do
+Facter.add(:virtual) do
   confine :kernel => "Darwin"
 
   setcode do
@@ -44,7 +44,7 @@ Facter.add("virtual") do
   end
 end
 
-Facter.add("virtual") do
+Facter.add(:virtual) do
   confine :kernel => ["FreeBSD", "GNU/kFreeBSD"]
   has_weight 10
   setcode do
@@ -52,13 +52,13 @@ Facter.add("virtual") do
   end
 end
 
-Facter.add("virtual") do
+Facter.add(:virtual) do
   confine :kernel => 'SunOS'
   has_weight 10
   setcode do
     next "zone" if Facter::Util::Virtual.zone?
 
-    resolver = Facter::Util::Resolution.new('prtdiag')
+    resolver = Facter::Util::Resolution.new(:prtdiag)
     resolver.timeout = 6
     resolver.setcode('prtdiag')
     output = resolver.value
@@ -72,7 +72,7 @@ Facter.add("virtual") do
   end
 end
 
-Facter.add("virtual") do
+Facter.add(:virtual) do
   confine :kernel => 'HP-UX'
   has_weight 10
   setcode do
@@ -80,7 +80,7 @@ Facter.add("virtual") do
   end
 end
 
-Facter.add("virtual") do
+Facter.add(:virtual) do
   confine :architecture => 's390x'
   has_weight 10
   setcode do
@@ -88,7 +88,7 @@ Facter.add("virtual") do
   end
 end
 
-Facter.add("virtual") do
+Facter.add(:virtual) do
   confine :kernel => 'OpenBSD'
   has_weight 10
   setcode do
@@ -103,7 +103,7 @@ Facter.add("virtual") do
   end
 end
 
-Facter.add("virtual") do
+Facter.add(:virtual) do
   confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX GNU/kFreeBSD}
 
   setcode do
@@ -157,7 +157,7 @@ Facter.add("virtual") do
   end
 end
 
-Facter.add("virtual") do
+Facter.add(:virtual) do
   confine :kernel => "windows"
   setcode do
       require 'facter/util/wmi'
@@ -199,7 +199,7 @@ end
 # value and lower-weight virtual facts will be attempted.
 #
 # Only the last line of the virt-what command is returned
-Facter.add("virtual") do
+Facter.add(:virtual) do
   has_weight 500
 
   setcode do
@@ -224,7 +224,7 @@ end
 
 ##
 # virtual fact specific to Google Compute Engine's Linux sysfs entry.
-Facter.add("virtual") do
+Facter.add(:virtual) do
   has_weight 600
   confine :kernel => "Linux"
 
@@ -248,7 +248,7 @@ end
 # Caveats:
 #
 
-Facter.add("is_virtual") do
+Facter.add(:is_virtual) do
   confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin GNU/kFreeBSD windows}
 
   setcode do

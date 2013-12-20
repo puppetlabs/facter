@@ -70,11 +70,11 @@ describe Facter do
   describe "when provided code as a string" do
     it "should execute the code in the shell" do
       test_command = Facter::Util::Config.is_windows? ? 'cmd.exe /c echo yup' : 'echo yup'
-      Facter.add("shell_testing") do
+      Facter.add(:shell_testing) do
         setcode test_command
       end
 
-      Facter["shell_testing"].value.should == "yup"
+      Facter[:shell_testing].value.should == "yup"
     end
   end
 
@@ -82,23 +82,23 @@ describe Facter do
     describe "and the collection is already initialized" do
       it "should return the fact's value" do
         Facter.collection
-        Facter.ipaddress.should == Facter['ipaddress'].value
+        Facter.ipaddress.should == Facter[:ipaddress].value
       end
     end
 
     describe "and the collection has been just reset" do
       it "should return the fact's value" do
         Facter.reset
-        Facter.ipaddress.should == Facter['ipaddress'].value
+        Facter.ipaddress.should == Facter[:ipaddress].value
       end
     end
   end
 
   describe "when passed code as a block" do
     it "should execute the provided block" do
-      Facter.add("block_testing") { setcode { "foo" } }
+      Facter.add(:block_testing) { setcode { "foo" } }
 
-      Facter["block_testing"].value.should == "foo"
+      Facter[:block_testing].value.should == "foo"
     end
   end
 

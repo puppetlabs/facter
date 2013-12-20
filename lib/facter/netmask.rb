@@ -15,7 +15,7 @@
 #
 require 'facter/util/netmask'
 
-Facter.add("netmask") do
+Facter.add(:netmask) do
   confine :kernel => [ :sunos, :linux, :freebsd, :openbsd, :netbsd, :darwin, :"gnu/kfreebsd", :dragonfly ]
   setcode do
     Facter::NetMask.get_netmask

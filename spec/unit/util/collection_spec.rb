@@ -77,70 +77,54 @@ describe Facter::Util::Collection do
 
       it "should discard resolutions that throw an exception when added" do
         lambda {
-          collection.add('yay') do
+          collection.add(:yay) do
             raise
             setcode { 'yay' }
           end
         }.should_not raise_error
-        collection.value('yay').should be_nil
+        collection.value(:yay).should be_nil
       end
     end
   end
 
   describe "when retrieving facts" do
     before do
-      @fact = collection.add("YayNess")
+      @fact = collection.add(:yayness)
     end
 
     it "should return the fact instance specified by the name" do
-      collection.fact("YayNess").should equal(@fact)
-    end
-
-    it "should be case-insensitive" do
-      collection.fact("yayness").should equal(@fact)
-    end
-
-    it "should treat strings and symbols equivalently" do
       collection.fact(:yayness).should equal(@fact)
     end
 
     it "should use its loader to try to load the fact if no fact can be found" do
       collection.internal_loader.expects(:load).with(:testing)
-      collection.fact("testing")
+      collection.fact(:testing)
     end
 
     it "should return nil if it cannot find or load the fact" do
       collection.internal_loader.expects(:load).with(:testing)
-      collection.fact("testing").should be_nil
+      collection.fact(:testing).should be_nil
     end
   end
 
   describe "when returning a fact's value" do
     before do
-      @fact = collection.add("YayNess", :value => "result")
+      @fact = collection.add(:yayness, :value => "result")
     end
 
     it "should return the result of calling :value on the fact" do
-      collection.value("YayNess").should == "result"
-    end
-
-    it "should be case-insensitive" do
-      collection.value("yayness").should == "result"
-    end
-
-    it "should treat strings and symbols equivalently" do
       collection.value(:yayness).should == "result"
     end
   end
 
   it "should return the fact's value when the array index method is used" do
-    collection.add("myfact", :value => "foo")
+    collection.add(:myfact, :value => "foo")
 
-    collection["myfact"].should == "foo"
+    collection[:myfact].should == "foo"
   end
 
   it "should have a method for flushing all facts" do
-    fact = collection.add("YayNess")
+    fact = collection.add(:yayness)
 
     fact.expects(:flush)
 
@@ -204,7 +188,7 @@ describe Facter::Util::Collection do
     it "should warn when no facts were loaded" do
       Facter.expects(:warnonce).with("No facts loaded from #{internal_loader.search_path.join(File::PATH_SEPARATOR)}").once
 
-      collection.fact("one")
+      collection.fact(:one)
     end
   end
 

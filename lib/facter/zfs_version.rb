@@ -1,6 +1,6 @@
 require 'facter'
 
-Facter.add('zfs_version') do
+Facter.add(:zfs_version) do
   setcode do
     if Facter::Util::Resolution.which('zfs')
       zfs_v = Facter::Util::Resolution.exec('zfs upgrade -v')

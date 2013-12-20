@@ -31,7 +31,7 @@ module Util
       model = new
       model.refresh
       model.add_dynamic_facts
-      Facter.add("zones") do
+      Facter.add(:zones) do
         setcode do
           model.refresh if model.flushed?
           model.add_dynamic_facts
@@ -70,7 +70,7 @@ module Util
       model = self
       zone_hash.each_pair do |zone, attr_hsh|
         attr_hsh.keys.each do |attr|
-          Facter.add("zone_#{zone}_#{attr}") do
+          Facter.add("zone_#{zone}_#{attr}".downcase.to_sym) do
             setcode do
               model.refresh if model.flushed?
               # Don't resolve if the zone has since been deleted

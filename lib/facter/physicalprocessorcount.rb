@@ -9,7 +9,7 @@
 #
 # Caveats:
 #
-Facter.add('physicalprocessorcount') do
+Facter.add(:physicalprocessorcount) do
   confine :kernel => :linux
 
   setcode do
@@ -55,7 +55,7 @@ Facter.add('physicalprocessorcount') do
   end
 end
 
-Facter.add('physicalprocessorcount') do
+Facter.add(:physicalprocessorcount) do
   confine :kernel => :windows
   setcode do
     require 'facter/util/wmi'
@@ -63,7 +63,7 @@ Facter.add('physicalprocessorcount') do
   end
 end
 
-Facter.add('physicalprocessorcount') do
+Facter.add(:physicalprocessorcount) do
   confine :kernel => :sunos
 
   setcode do
