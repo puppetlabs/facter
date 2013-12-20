@@ -207,8 +207,8 @@ describe Facter::Util::Loader do
     it "should load all files in all search paths" do
       @loader.expects(:search_path).returns %w{/one/dir /two/dir}
 
-      Dir.expects(:glob).with('/one/dir/*.rb').returns %w{a.rb b.rb}
-      Dir.expects(:glob).with('/two/dir/*.rb').returns %w{c.rb d.rb}
+      Dir.expects(:glob).with('/one/dir/*.rb').returns %w{/one/dir/a.rb /one/dir/b.rb}
+      Dir.expects(:glob).with('/two/dir/*.rb').returns %w{/two/dir/c.rb /two/dir/d.rb}
 
       %w{/one/dir/a.rb /one/dir/b.rb /two/dir/c.rb /two/dir/d.rb}.each do |f|
         File.expects(:file?).with(f).returns true
@@ -222,13 +222,13 @@ describe Facter::Util::Loader do
       @loader.expects(:search_path).returns %w{/one/dir /two/dir}
 
       # a.rb is a directory
-      Dir.expects(:glob).with('/one/dir/*.rb').returns %w{a.rb b.rb}
+      Dir.expects(:glob).with('/one/dir/*.rb').returns %w{/one/dir/a.rb /one/dir/b.rb}
       File.expects(:file?).with('/one/dir/a.rb').returns false
       File.expects(:file?).with('/one/dir/b.rb').returns true
       Kernel.expects(:load).with('/one/dir/b.rb')
 
       # c.rb is a directory
-      Dir.expects(:glob).with('/two/dir/*.rb').returns %w{c.rb d.rb}
+      Dir.expects(:glob).with('/two/dir/*.rb').returns %w{/two/dir/c.rb /two/dir/d.rb}
       File.expects(:file?).with('/two/dir/c.rb').returns false
       File.expects(:file?).with('/two/dir/d.rb').returns true
       Kernel.expects(:load).with('/two/dir/d.rb')
@@ -239,7 +239,7 @@ describe Facter::Util::Loader do
     it "should not raise an exception when a file is unloadable" do
       @loader.expects(:search_path).returns %w{/one/dir}
 
-      Dir.expects(:glob).with('/one/dir/*.rb').returns %w{a.rb}
+      Dir.expects(:glob).with('/one/dir/*.rb').returns %w{/one/dir/a.rb}
       File.expects(:file?).with('/one/dir/a.rb').returns true
 
       Kernel.expects(:load).with("/one/dir/a.rb").raises(LoadError)

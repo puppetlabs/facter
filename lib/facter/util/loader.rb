@@ -43,8 +43,7 @@ class Facter::Util::Loader
     unless paths.nil?
       paths.each do |dir|
         # dir is already an absolute path
-        Dir.glob(File.join(dir, '*.rb')).each do |dirent|
-          path = File.join(dir, dirent)
+        Dir.glob(File.join(dir, '*.rb')).each do |path|
           # exclude dirs that end with .rb
           load_file(path) if File.file?(path)
         end
