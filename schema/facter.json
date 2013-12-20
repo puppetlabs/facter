@@ -9,10 +9,11 @@
         "^blockdevice_[A-Za-z0-9]+_vendor$" : { "type": "string" },
         "^blockdevice_[A-Za-z0-9]+_model$" : { "type": "string" },
         "^mtu_[A-Za-z0-9]+$" : { "type": "string" },
-        "^netmask_[A-Za-z0-9]+$" : { "type": "string" },
-        "^network_[A-Za-z0-9]+$" : { "type": "string" },
-        "^ipaddress_[A-Za-z0-9]+$" : { "type": "string" },
-        "^macaddress_[A-Za-z0-9]+$" : { "type": "string" },
+        "^netmask_[A-Za-z0-9_]+$" : { "type": "string" },
+        "^network_[A-Za-z0-9_]+$" : { "type": "string" },
+        "^ipaddress_[A-Za-z0-9_]+$" : { "type": "string" },
+        "^ipaddress6_[A-Za-z0-9_]+$" : { "type": "string" },
+        "^macaddress_[A-Za-z0-9_]+$" : { "type": "string" },
         "^processor[0-9]+" : { "type": "string" }
     },
     "properties": {
@@ -26,6 +27,7 @@
         "boardmanufacturer" : { "type": "string" },
         "boardproductname" : { "type": "string" },
         "boardserialnumber" : { "type": "string" },
+        "cfkey" : { "type": "string" },
         "domain" : { "type": "string" },
         "facterversion" : { "type": "string" },
         "filesystems" : { "type": "string" },
@@ -37,6 +39,7 @@
         "id" : { "type": "string" },
         "interfaces" : { "type": "string" },
         "ipaddress" : { "type": "string" },
+        "ipaddress6" : { "type": "string" },
         "is_virtual" : { "type": "string" },
         "kernel" : { "type": "string" },
         "kernelmajversion" : { "type": "string" },
@@ -47,6 +50,7 @@
         "lsbdistid" : { "type": "string" },
         "lsbdistrelease" : { "type": "string" },
         "lsbmajdistrelease" : { "type": "string" },
+        "lsbrelease" : { "type": "string" },
         "macaddress" : { "type": "string" },
         "macosx_buildversion" : { "type": "string" },
         "macosx_productname" : { "type": "string" },
@@ -67,8 +71,10 @@
         "path" : { "type": "string" },
         "physicalprocessorcount" : { "type": "string" },
         "processorcount" : { "type": "string" },
+        "processor" : { "type": "string" },
         "productname" : { "type": "string" },
         "ps" : { "type": "string" },
+        "puppetversion" : { "type": "string" },
         "rubysitedir" : { "type": "string" },
         "rubyversion" : { "type": "string" },
         "selinux" : { "type": "string" },
@@ -121,6 +127,11 @@
         "uptime_hours" : { "type": "integer" },
         "uptime_seconds" : { "type": "integer" },
         "uuid" : { "type": "string" },
-        "virtual" : { "type": "string" }
+        "virtual" : { "type": "string" },
+        "vlans" : { "type": "string" },
+        "xendomains" : { "type": "string" },
+        "zfs_version" : { "type": "string" },
+        "zonename" : { "type": "string" },
+        "zpool_version" : { "type": "string" }
     }
 }
