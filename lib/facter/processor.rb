@@ -22,8 +22,9 @@
 require 'thread'
 require 'facter/util/processor'
 
-## We have to enumerate these outside a Facter.add block to get the processorN descriptions iteratively
-## (but we need them inside the Facter.add block above for tests on processorcount to work)
+# We have to enumerate these outside a Facter.add block to get the processorN
+# descriptions iteratively (but we need them inside the Facter.add block above
+# for tests on processorcount to work)
 processor_list = case Facter::Util::Processor.kernel_fact_value
 when "AIX"
   Facter::Util::Processor.aix_processor_list
