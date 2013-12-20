@@ -163,8 +163,10 @@ describe Facter::Util::Loader do
     it "should load any files in the search path with names matching the fact name" do
       loader = loader_from(:search_path => %w{/one/dir /two/dir})
 
+      loader.expects(:search_path).returns %w{/one/dir /two/dir}
       File.stubs(:file?).returns false
       File.expects(:file?).with("/one/dir/testing.rb").returns true
+
       Kernel.expects(:load).with("/one/dir/testing.rb")
 
       loader.load(:testing)
