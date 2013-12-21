@@ -11,8 +11,11 @@
 ## Facts related to SSH
 ##
 
-{"SSHDSAKey" => { :file => "ssh_host_dsa_key.pub", :sshfprrtype => 2 } , "SSHRSAKey" => { :file => "ssh_host_rsa_key.pub", :sshfprrtype => 1 }, "SSHECDSAKey" => { :file => "ssh_host_ecdsa_key.pub", :sshfprrtype => 3 } }.each do |name,key|
-  
+{"SSHDSAKey" => { :file => "ssh_host_dsa_key.pub", :sshfprrtype => 2 },
+ "SSHRSAKey" => { :file => "ssh_host_rsa_key.pub", :sshfprrtype => 1 },
+ "SSHECDSAKey" => { :file => "ssh_host_ecdsa_key.pub", :sshfprrtype => 3 },
+ "SSHED25519Key" => { :file => "ssh_host_ed25519_key.pub", :sshfprrtype => 4 } }.each do |name,key|
+
   Facter.add(name) do
     setcode do
       value = nil
