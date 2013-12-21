@@ -4,7 +4,7 @@ require 'json-schema'
 test_name "Running facter --json should validate against the schema"
 
 agents.each do |agent|
-  step "Install json gem (needed on older platforms)"
+  step "Agent #{agent}: Install json gem (needed on older platforms)"
   win_cmd_prefix = 'cmd /c ' if agent['platform'] =~ /windows/
   on(agent, "#{win_cmd_prefix}gem install json")
 
