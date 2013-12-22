@@ -4,16 +4,26 @@
     "description": "All the built-in facts for facter cross-platform",
     "type":        "object",
     "additionalProperties": false,
+    "definitions": {
+         "ipaddress" : {
+             "type": "string",
+             "pattern" : "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+         },
+        "macaddress" : {
+            "type": "string",
+            "pattern" : "^(([0-9a-fA-F]){2}\:){5}([0-9a-fA-F]){2}$"
+        }
+    },
     "patternProperties": {
         "^blockdevice_[A-Za-z0-9]+_size$" : { "type": "integer" },
         "^blockdevice_[A-Za-z0-9]+_vendor$" : { "type": "string" },
         "^blockdevice_[A-Za-z0-9]+_model$" : { "type": "string" },
         "^mtu_[A-Za-z0-9]+$" : { "type": "string" },
-        "^netmask_[A-Za-z0-9_]+$" : { "type": "string" },
-        "^network_[A-Za-z0-9_]+$" : { "type": "string" },
-        "^ipaddress_[A-Za-z0-9_]+$" : { "type": "string" },
+        "^netmask_[A-Za-z0-9_]+$" : { "$ref" : "#/definitions/ipaddress" },
+        "^network_[A-Za-z0-9_]+$" : { "$ref" : "#/definitions/ipaddress" },
+        "^ipaddress_[A-Za-z0-9_]+$" : { "$ref" : "#/definitions/ipaddress" },
         "^ipaddress6_[A-Za-z0-9_]+$" : { "type": "string" },
-        "^macaddress_[A-Za-z0-9_]+$" : { "type": "string" },
+        "^macaddress_[A-Za-z0-9_]+$" : { "$ref" : "#/definitions/macaddress" },
         "^processor[0-9]+" : { "type": "string" }
     },
     "properties": {
@@ -38,7 +48,7 @@
         "hostname" : { "type": "string" },
         "id" : { "type": "string" },
         "interfaces" : { "type": "string" },
-        "ipaddress" : { "type": "string" },
+        "ipaddress" : { "$ref" : "#/definitions/ipaddress" },
         "ipaddress6" : { "type": "string" },
         "is_virtual" : { "type": "string" },
         "kernel" : { "type": "string" },
@@ -51,7 +61,7 @@
         "lsbdistrelease" : { "type": "string" },
         "lsbmajdistrelease" : { "type": "string" },
         "lsbrelease" : { "type": "string" },
-        "macaddress" : { "type": "string" },
+        "macaddress" : { "$ref" : "#/definitions/macaddress" },
         "macosx_buildversion" : { "type": "string" },
         "macosx_productname" : { "type": "string" },
         "macosx_productversion" : { "type": "string" },
@@ -63,7 +73,7 @@
         "memorysize" : { "type": "string" },
         "memorysize_mb" : { "type": "string" },
         "memorytotal" : { "type": "string" },
-        "netmask" : { "type": "string" },
+        "netmask" : { "$ref" : "#/definitions/ipaddress" },
         "operatingsystem" : { "type": "string" },
         "operatingsystemmajrelease" : { "type": "string" },
         "operatingsystemrelease" : { "type": "string" },
