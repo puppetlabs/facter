@@ -55,6 +55,43 @@ describe Facter::Util::Fact do
     end
   end
 
+  describe "looking up resolutions by name" do
+    subject(:fact) { described_class.new('yay') }
+
+    it "returns nil if no such resolution exists" do
+      expect(fact.resolution('nope')).to be_nil
+    end
+
+    it "never returns anonymous resolutions" do
+      fact.add() { setcode { 'anonymous' } }
+
+      expect(fact.resolution(nil)).to be_nil
+    end
+  end
+
+  describe "adding resolution mechanisms by name" do
+    subject(:fact) { described_class.new('yay') }
+
+    it "creates a new resolution if no such resolution exists" do
+      res = stub 'resolution', :name => 'named'
+      Facter::Util::Resolution.expects(:new).once.with('named').returns(res)
+
+      fact.define_resolution('named')
+
+      expect(fact.resolution('named')).to eq res
+    end
+
+    it "returns existing resolutions by name" do
+      res = stub 'resolution', :name => 'named'
+      Facter::Util::Resolution.expects(:new).once.with('named').returns(res)
+
+      fact.define_resolution('named')
+      fact.define_resolution('named')
+
+      expect(fact.resolution('named')).to eq res
+    end
+  end
+
   it "should be able to return a value" do
     Facter::Util::Fact.new("yay").should respond_to(:value)
   end

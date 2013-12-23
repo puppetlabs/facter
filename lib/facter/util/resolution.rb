@@ -24,8 +24,15 @@ class Facter::Util::Resolution
   # @api public
   attr_accessor :timeout
 
+  # @!attribute [rw] name
+  # The name of this resolution. The resolution name should be unique with
+  # respect to the given fact.
+  # @return [String]
+  # @api public
+  attr_accessor :name
+
   # @api private
-  attr_accessor :interpreter, :code, :name
+  attr_accessor :code
   attr_writer :value, :weight
 
   INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
@@ -86,8 +93,7 @@ class Facter::Util::Resolution
 
   # Create a new resolution mechanism.
   #
-  # @param name [String] The name of the resolution. This is mostly
-  #   unused and resolutions are treated as anonymous.
+  # @param name [String] The name of the resolution.
   # @return [void]
   #
   # @api private
