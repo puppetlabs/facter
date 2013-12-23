@@ -178,6 +178,6 @@ Facter.add("ProcessorCount") do
       end
     end
 
-    result
+    result.to_s
   end
 end
