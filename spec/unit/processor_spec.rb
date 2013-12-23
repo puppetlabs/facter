@@ -266,7 +266,7 @@ describe "Processor facts" do
 
           Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").never
           Facter::Util::Resolution.expects(:exec).with("/usr/bin/kstat cpu_info").returns(self.send("kstat_#{arch}".intern))
-          Facter.fact(:processorcount).value.should == 8
+          Facter.fact(:processorcount).value.should == '8'
         end
       end
     end
@@ -277,8 +277,9 @@ describe "Processor facts" do
           Facter.stubs(:value).with(:kernelrelease).returns(release)
 
           fixture_data = File.read(fixtures('processorcount','solaris-psrinfo'))
+          Facter::Util::Resolution.expects(:exec).with("/usr/bin/kstat cpu_info").never
           Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(fixture_data)
-          Facter.fact(:processorcount).value.should == 24
+          Facter.fact(:processorcount).value.should == '24'
         end
       end
     end
