@@ -31,6 +31,16 @@ describe "Per Interface IP facts" do
     Facter::Util::IP.stubs(:get_interfaces).returns ["Local Area Connection", "Loopback \"Pseudo-Interface\" (#1)"]
     Facter.fact(:interfaces).value.should == %{Local_Area_Connection,Loopback__Pseudo_Interface____1_}
   end
+
+  it "should properly format a mac address" do
+    Facter::Util::IP.stubs(:get_interfaces).returns ["net0"]
+    Facter::Util::IP.stubs(:get_interface_value).returns "0:12:34:56:78:90"
+
+    Facter.collection.internal_loader.load(:interfaces)
+
+    fact = Facter.fact("macaddress_net0".intern)
+    fact.value.should eq("00:12:34:56:78:90")
+  end
 end
 
 describe "Netmask handling on Linux" do
