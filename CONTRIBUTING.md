@@ -9,7 +9,7 @@ top of things.
 
 ## Getting Started
 
-* Make sure you have a [Redmine account](http://projects.puppetlabs.com)
+* Make sure you have a [Jira account](http://tickets.puppetlabs.com)
 * Make sure you have a [GitHub account](https://github.com/signup/free)
 * Submit a ticket for your issue, assuming one does not already exist.
   * Clearly describe the issue including steps to reproduce when it is a bug.
@@ -52,13 +52,13 @@ top of things.
 * Sign the [Contributor License Agreement](http://links.puppetlabs.com/cla).
 * Push your changes to a topic branch in your fork of the repository.
 * Submit a pull request to the repository in the puppetlabs organization.
-* Update your Redmine ticket to mark that you have submitted code and are ready for it to be reviewed.
+* Update your ticket to mark that you have submitted code and are ready for it to be reviewed.
   * Include a link to the pull request in the ticket
 
 # Additional Resources
 
 * [More information on contributing](http://links.puppetlabs.com/contribute-to-puppet)
-* [Bug tracker (Redmine)](http://projects.puppetlabs.com)
+* [Bug tracker (Jira)](http://tickets.puppetlabs.com)
 * [Contributor License Agreement](http://links.puppetlabs.com/cla)
 * [General GitHub documentation](http://help.github.com/)
 * [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
