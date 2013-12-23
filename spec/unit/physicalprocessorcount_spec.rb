@@ -21,7 +21,7 @@ describe "Physical processor count facts" do
         Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu*/topology/physical_package_id").returns(["/sys/devices/system/cpu/cpu0/topology/physical_package_id"])
         File.stubs(:read).with("/sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
 
-        Facter.fact(:physicalprocessorcount).value.should == 1
+        Facter.fact(:physicalprocessorcount).value.should == "1"
       end
 
       it "should still return one physical CPU if on a multicore processor" do
@@ -36,7 +36,7 @@ describe "Physical processor count facts" do
         File.expects(:read).with("/sys/devices/system/cpu/cpu2/topology/physical_package_id").returns("0")
         File.expects(:read).with("/sys/devices/system/cpu/cpu3/topology/physical_package_id").returns("0")
 
-        Facter.fact(:physicalprocessorcount).value.should == 1
+        Facter.fact(:physicalprocessorcount).value.should == "1"
       end
 
       it "should return four physical CPUs" do
@@ -52,7 +52,7 @@ describe "Physical processor count facts" do
         File.stubs(:read).with("/sys/devices/system/cpu/cpu2/topology/physical_package_id").returns("2")
         File.stubs(:read).with("/sys/devices/system/cpu/cpu3/topology/physical_package_id").returns("3")
 
-        Facter.fact(:physicalprocessorcount).value.should == 4
+        Facter.fact(:physicalprocessorcount).value.should == "4"
       end
 
       it "should return four physical CPUs if on 4 multicore processors" do
@@ -75,7 +75,7 @@ describe "Physical processor count facts" do
         File.expects(:read).with("/sys/devices/system/cpu/cpu6/topology/physical_package_id").returns("3")
         File.expects(:read).with("/sys/devices/system/cpu/cpu7/topology/physical_package_id").returns("3")
 
-        Facter.fact(:physicalprocessorcount).value.should == 4
+        Facter.fact(:physicalprocessorcount).value.should == "4"
       end
     end
 
@@ -87,25 +87,25 @@ describe "Physical processor count facts" do
       it "should return 1 physical CPU when there are multiple cores" do
         @cpuinfo = cpuinfo_fixture_read('amd64dual')
         File.stubs(:read).with("/proc/cpuinfo").returns(@cpuinfo)
-        Facter.fact(:physicalprocessorcount).value.should == 1
+        Facter.fact(:physicalprocessorcount).value.should == "1"
       end
 
       it "should return 2 physical CPUs when there are 2 singlecore CPUs" do
         @cpuinfo = cpuinfo_fixture_read('two_singlecore')
         File.stubs(:read).with("/proc/cpuinfo").returns(@cpuinfo)
-        Facter.fact(:physicalprocessorcount).value.should == 2
+        Facter.fact(:physicalprocessorcount).value.should == "2"
       end
 
       it "should return 2 physical CPUs when there are 2 multicore CPUs" do
         @cpuinfo = cpuinfo_fixture_read('two_multicore')
         File.stubs(:read).with("/proc/cpuinfo").returns(@cpuinfo)
-        Facter.fact(:physicalprocessorcount).value.should == 2
+        Facter.fact(:physicalprocessorcount).value.should == "2"
       end
 
       it "should return 2 physical CPUs when there are 2 multicore CPUs" do
         @cpuinfo = cpuinfo_fixture_read('amd64twentyfour')
         File.stubs(:read).with("/proc/cpuinfo").returns(@cpuinfo)
-        Facter.fact(:physicalprocessorcount).value.should == 2
+        Facter.fact(:physicalprocessorcount).value.should == "2"
       end
     end
   end
@@ -120,7 +120,7 @@ describe "Physical processor count facts" do
       Facter::Util::WMI.expects(:execquery).with("select Name from Win32_Processor").returns(ole)
       ole.stubs(:Count).returns(4)
 
-      Facter.fact(:physicalprocessorcount).value.should == 4
+      Facter.fact(:physicalprocessorcount).value.should == "4"
     end
   end
 

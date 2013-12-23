@@ -41,7 +41,7 @@ Facter.add('physicalprocessorcount') do
       lookup_pattern = "#{sysfs_cpu_directory}" +
         "/cpu*/topology/physical_package_id"
 
-      Dir.glob(lookup_pattern).collect {|f| File.read(f) }.uniq.size
+      Dir.glob(lookup_pattern).collect {|f| File.read(f) }.uniq.size.to_s
 
     else
       #
@@ -51,7 +51,7 @@ Facter.add('physicalprocessorcount') do
       # to make sure that we only count unique entries ...
       #
       n = File.read('/proc/cpuinfo').split(/\n/).grep(/^physical id/).uniq.length
-      n > 0 ? n : nil
+      n > 0 ? n.to_s : nil
     end
   end
 end
@@ -60,7 +60,7 @@ Facter.add('physicalprocessorcount') do
   confine :kernel => :windows
   setcode do
     require 'facter/util/wmi'
-    Facter::Util::WMI.execquery("select Name from Win32_Processor").Count
+    Facter::Util::WMI.execquery("select Name from Win32_Processor").Count.to_s
   end
 end
 
