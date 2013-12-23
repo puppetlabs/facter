@@ -142,6 +142,13 @@
         "xendomains" : { "type": "string" },
         "zfs_version" : { "type": "string" },
         "zonename" : { "type": "string" },
+        "zones" : { "type": "integer" },
+        "zone_global_iptype" : { "type": "string" },
+        "zone_global_name" : { "type": "string" },
+        "zone_global_path" : { "type": "string" },
+        "zone_global_brand" : { "type": "string" },
+        "zone_global_id" : { "type": "string" },
+        "zone_global_status" : { "type": "string" },
         "zpool_version" : { "type": "string" }
     }
 }
