@@ -12,6 +12,8 @@ require 'facter/util/ip/windows'
 require 'facter/util/ip/hpux'
 require 'facter/util/ip/gnu_k_free_bsd'
 
+require 'facter/util/macaddress'
+
 # A base module for collecting IP related info from all kinds of platforms.
 class Facter::Util::IP
   INTERFACE_KEYS = %w[ipaddress ipaddress6 macaddress netmask mtu]
@@ -178,7 +180,7 @@ class Facter::Util::IP
   end
 
   # Defines all of the dynamic interface facts derived from parsing the output
-  # of the network interface ouput. The interface facts are dynamic, so this
+  # of the network interface output. The interface facts are dynamic, so this
   # method has the behavior of figuring out what facts need to be added and how
   # they should be resolved.
   #
@@ -196,7 +198,11 @@ class Facter::Util::IP
 
             # Don't resolve if the interface has since been deleted
             if keys_hash = model.interfaces_hash[interface]
-              keys_hash[key]
+              if key == "macaddress"
+                Facter::Util::Macaddress.standardize(keys_hash[key])
+              else
+                keys_hash[key]
+              end
             end
           end
 
