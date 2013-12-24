@@ -60,6 +60,7 @@
         "lsbdistid" : { "type": "string" },
         "lsbdistrelease" : { "type": "string" },
         "lsbmajdistrelease" : { "type": "string" },
+        "lsbminordistrelease" : { "type": "string" },
         "lsbrelease" : { "type": "string" },
         "macaddress" : { "$ref" : "#/definitions/macaddress" },
         "macosx_buildversion" : { "type": "string" },
