@@ -66,6 +66,33 @@ describe Facter::Util::Collection do
     end
   end
 
+  describe "when only defining facts" do
+    it "creates a new fact if no such fact exists" do
+      fact = Facter::Util::Fact.new(:newfact)
+      Facter::Util::Fact.expects(:new).with(:newfact, {}).returns fact
+      expect(collection.define_fact(:newfact)).to equal fact
+    end
+
+    it "returns an existing fact if the fact has already been defined" do
+      fact = collection.define_fact(:newfact)
+      expect(collection.define_fact(:newfact)).to equal fact
+    end
+
+    it "passes options to newly generated facts" do
+      Facter.stubs(:warnonce)
+      fact = collection.define_fact(:newfact, :ldapname => 'NewFact')
+      expect(fact.ldapname).to eq 'NewFact'
+    end
+
+    it "logs a warning if the fact could not be defined" do
+      Facter.expects(:warn).with("Unable to add fact newfact: kaboom!")
+
+      collection.define_fact(:newfact) do
+        raise "kaboom!"
+      end
+    end
+  end
+
   describe "when retrieving facts" do
     before do
       @fact = collection.add("YayNess")
