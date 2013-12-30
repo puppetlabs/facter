@@ -55,10 +55,11 @@ describe Facter::Util::Collection do
       resolve = Facter::Util::Resolution.new(:myname) {}
       fact.expects(:add).returns resolve
 
-      fact.expects(:ldapname=).with("foo")
-      resolve.expects(:timeout=).with("myval")
 
       collection.add(:myname, :timeout => "myval", :ldapname => "foo") {}
+
+      expect(fact.ldapname).to eq 'foo'
+      expect(resolve.limit).to eq 'myval'
     end
 
     it "should fail if invalid options are provided" do
@@ -67,7 +68,7 @@ describe Facter::Util::Collection do
 
     describe "and a block is provided" do
       it "should use the block to add a resolution to the fact" do
-        fact = mock 'fact'
+        fact = mock 'fact', :set_options => {}
         Facter::Util::Fact.expects(:new).returns fact
 
         fact.expects(:add)
