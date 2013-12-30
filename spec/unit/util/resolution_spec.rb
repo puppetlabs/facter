@@ -391,4 +391,35 @@ describe Facter::Util::Resolution do
       @resolve.should be_suitable
     end
   end
+
+  describe "setting options" do
+    subject(:resolution) { described_class.new(:foo) }
+
+    it "can set the value" do
+      resolution.set_options(:value => 'something')
+      expect(resolution.value).to eq 'something'
+    end
+
+    it "can set the timeout" do
+      resolution.set_options(:timeout => 314)
+      expect(resolution.limit).to eq 314
+    end
+
+    it "can set the weight" do
+      resolution.set_options(:weight => 27)
+      expect(resolution.weight).to eq 27
+    end
+
+    it "fails on unhandled options by default" do
+      expect do
+        resolution.set_options(:foo => 'bar')
+      end.to raise_error(ArgumentError, 'Invalid resolution option foo')
+    end
+
+    it "can ignore unhandled options" do
+      opts = {:foo => 'bar'}
+      unhandled_opts = resolution.set_options(opts, false)
+      expect(unhandled_opts).to eq(:foo => 'bar')
+    end
+  end
 end

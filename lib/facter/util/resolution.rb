@@ -105,6 +105,29 @@ class Facter::Util::Resolution
     @weight = nil
   end
 
+  def set_options(options, fail_on_unhandled = true)
+    ret = {}
+
+    options.each_pair do |name, value|
+      case name
+      when :value
+        @value = value
+      when :timeout
+        @timeout = value
+      when :weight
+        @weight = value
+      else
+        if fail_on_unhandled
+          raise ArgumentError, "Invalid resolution option #{name}"
+        else
+          ret[name] = value
+        end
+      end
+    end
+
+    ret
+  end
+
   # Returns the importance of this resolution. If the weight was not
   # given, the number of confines is used instead (so that a more
   # specific resolution wins over a less specific one).
