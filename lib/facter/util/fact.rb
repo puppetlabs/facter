@@ -126,16 +126,25 @@ class Facter::Util::Fact
     end
   end
 
-  def set_options(options)
-    # LAK:NOTE: This is slow for many options, but generally we won't have any and at
-    # worst we'll have one.  If we add more, this should be made more efficient.
-    options.each do |name, value|
+  # LAK:NOTE: This is slow for many options, but generally we won't have any and at
+  # worst we'll have one.  If we add more, this should be made more efficient.
+  def set_options(options, fail_on_unhandled = true)
+    ret = {}
+
+    options.each_pair do |name, value|
       case name
-      when :ldapname; self.ldapname = value
+      when :ldapname
+        @ldapname = value
       else
-        raise ArgumentError, "Invalid fact option '%s'" % name
+        if fail_on_unhandled
+          raise ArgumentError, "Invalid fact option #{name}"
+        else
+          ret[name] = value
+        end
       end
     end
+
+    ret
   end
 
   private

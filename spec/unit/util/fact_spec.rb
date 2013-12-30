@@ -16,16 +16,29 @@ describe Facter::Util::Fact do
     Facter::Util::Fact.new("YayNess").ldapname.should == "yayness"
   end
 
-  it "should allow specifying the ldap name at initialization" do
-    Facter::Util::Fact.new("YayNess", :ldapname => "fooness").ldapname.should == "fooness"
-  end
-
-  it "should fail if an unknown option is provided" do
-    lambda { Facter::Util::Fact.new('yay', :foo => :bar) }.should raise_error(ArgumentError)
-  end
-
   it "should have a method for adding resolution mechanisms" do
     Facter::Util::Fact.new("yay").should respond_to(:add)
+  end
+
+  describe "when setting options" do
+    subject(:fact) { described_class.new('yay') }
+
+    it "can set the ldapname" do
+      fact.set_options(:ldapname => 'Yay')
+      expect(fact.ldapname).to eq 'Yay'
+    end
+
+    it "fails on unhandled options by default" do
+      expect do
+        fact.set_options(:foo => 'bar')
+      end.to raise_error(ArgumentError, 'Invalid fact option foo')
+    end
+
+    it "can ignore unhandled options" do
+      opts = {:foo => 'bar'}
+      unhandled_opts = fact.set_options(opts, false)
+      expect(unhandled_opts).to eq(:foo => 'bar')
+    end
   end
 
   describe "when adding resolution mechanisms" do
