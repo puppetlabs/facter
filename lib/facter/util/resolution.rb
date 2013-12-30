@@ -105,6 +105,28 @@ class Facter::Util::Resolution
     @weight = nil
   end
 
+  def set_options(options)
+    ret = {}
+
+    if options[:value]
+      @value = options.delete(:value)
+    end
+
+    if options[:timeout]
+      @timeout = options.delete(:timeout)
+    end
+
+    if options[:weight]
+      @weight = options.delete(:weight)
+    end
+
+    if not options.keys.empty?
+      raise ArgumentError, "Invalid resolution options #{options.keys.inspect}"
+    end
+
+    ret
+  end
+
   # Returns the importance of this resolution. If the weight was not
   # given, the number of confines is used instead (so that a more
   # specific resolution wins over a less specific one).
