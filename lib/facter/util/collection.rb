@@ -19,8 +19,40 @@ class Facter::Util::Collection
     value(name)
   end
 
+  # Define a new fact or extend an existing fact.
+  #
+  # @param name [Symbol] The name of the fact to define
+  # @param options [Hash] A hash of options to set on the fact
+  #
+  # @return [Facter::Util::Fact] The fact that was defined
+  def define_fact(name, options = {}, &block)
+    name = canonicalize(name)
+
+    fact = @facts[name]
+
+    if fact.nil?
+      fact = Facter::Util::Fact.new(name, options)
+      @facts[name] = fact
+    else
+      fact.set_options(options)
+    end
+
+    if block_given?
+      fact.instance_eval(&block)
+    end
+
+    fact
+  rescue => e
+    Facter.warn "Unable to add fact #{name}: #{e}"
+  end
+
   # Add a resolution mechanism for a named fact.  This does not distinguish
   # between adding a new fact and adding a new way to resolve a fact.
+  #
+  # @param name [Symbol] The name of the fact to define
+  # @param options [Hash] A hash of options to set on the fact and resolution
+  #
+  # @return [Facter::Util::Fact] The fact that was defined
   def add(name, options = {}, &block)
     name = canonicalize(name)
 
