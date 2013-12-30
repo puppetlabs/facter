@@ -60,14 +60,7 @@ class Facter::Util::Collection
       @facts[name] = fact
     end
 
-    # Set any fact-appropriate options.
-    options.each do |opt, value|
-      method = opt.to_s + "="
-      if fact.respond_to?(method)
-        fact.send(method, value)
-        options.delete(opt)
-      end
-    end
+    fact.extract_ldapname_option!(options)
 
     if block_given?
       resolve = fact.add(&block)
@@ -77,18 +70,7 @@ class Facter::Util::Collection
 
     # Set any resolve-appropriate options
     if resolve
-      # If the resolve was actually added, set any resolve-appropriate options
-      options.each do |opt, value|
-        method = opt.to_s + "="
-        if resolve.respond_to?(method)
-          resolve.send(method, value)
-          options.delete(opt)
-        end
-      end
-    end
-
-    unless options.empty?
-      raise ArgumentError, "Invalid facter option(s) %s" % options.keys.collect { |k| k.to_s }.join(",")
+      resolve.set_options(options)
     end
 
     return fact

@@ -46,7 +46,7 @@ describe Facter::Util::Collection do
 
     describe "and a block is provided" do
       it "should use the block to add a resolution to the fact" do
-        fact = mock 'fact'
+        fact = mock 'fact', :extract_ldapname_option! => nil
         Facter::Util::Fact.expects(:new).returns fact
 
         fact.expects(:add)

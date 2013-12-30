@@ -108,15 +108,15 @@ class Facter::Util::Resolution
   def set_options(options)
     ret = {}
 
-    if options[:value]
+    if options.has_key?(:value)
       @value = options.delete(:value)
     end
 
-    if options[:timeout]
+    if options.has_key?(:timeout)
       @timeout = options.delete(:timeout)
     end
 
-    if options[:weight]
+    if options.has_key?(:weight)
       @weight = options.delete(:weight)
     end
 
