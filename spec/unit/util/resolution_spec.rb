@@ -213,7 +213,7 @@ describe Facter::Util::Resolution do
         it "it validates the resolved value" do
           @resolve.setcode "/bin/foo"
           Facter::Util::Resolution.expects(:exec).once.returns ""
-          Facter::Util::Validation.expects(:validate).with ""
+          Facter::Util::Normalization.expects(:normalize).with ""
           @resolve.value.should eq ""
         end
       end
@@ -233,7 +233,7 @@ describe Facter::Util::Resolution do
         it "it validates the resolved value" do
           @resolve.setcode "/bin/foo"
           Facter::Util::Resolution.expects(:exec).once.returns ""
-          Facter::Util::Validation.expects(:validate).with ""
+          Facter::Util::Normalization.expects(:normalize).with ""
           @resolve.value.should eq ""
         end
       end
@@ -254,7 +254,7 @@ describe Facter::Util::Resolution do
       it "it validates the resolved value" do
         @resolve.setcode "/bin/foo"
         Facter::Util::Resolution.expects(:exec).once.returns ""
-        Facter::Util::Validation.expects(:validate).with ""
+        Facter::Util::Normalization.expects(:normalize).with ""
         @resolve.value.should eq ""
       end
 
