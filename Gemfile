@@ -9,7 +9,7 @@ platforms :ruby do
   gem 'watchr', :group => :development
   gem 'pry', :group => :development
   gem 'yard', :group => :development
-  gem 'redcarpet', :group => :development
+  gem 'redcarpet', '<= 2.3.0', :group => :development
 end
 
 group :development, :test do
