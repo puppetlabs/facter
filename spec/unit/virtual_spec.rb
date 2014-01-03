@@ -17,6 +17,7 @@ describe "Virtual fact" do
     Facter::Util::Virtual.stubs(:rhev?).returns(false)
     Facter::Util::Virtual.stubs(:ovirt?).returns(false)
     Facter::Util::Virtual.stubs(:virtualbox?).returns(false)
+    Facter::Util::Virtual.stubs(:docker?).returns(false)
   end
 
   it "should be zone on Solaris when a zone" do
@@ -476,6 +477,12 @@ describe "is_virtual fact" do
   it "should be true when running on ovirt" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("ovirt")
+    Facter.fact(:is_virtual).value.should == "true"
+  end
+
+  it "should be true when running on Docker" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("docker")
     Facter.fact(:is_virtual).value.should == "true"
   end
 end

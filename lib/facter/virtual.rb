@@ -107,6 +107,7 @@ Facter.add("virtual") do
     next Facter::Util::Virtual.kvm_type if Facter::Util::Virtual.kvm?
     next "rhev" if Facter::Util::Virtual.rhev?
     next "ovirt" if Facter::Util::Virtual.ovirt?
+    next "docker" if Facter::Util::Virtual.docker?
 
     # Parse lspci
     output = Facter::Util::Virtual.lspci

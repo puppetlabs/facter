@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'mocha'
 require 'rspec'
+require 'rspec/expectations'
 require 'facter'
 require 'fileutils'
 require 'puppetlabs_spec_helper'
