@@ -2,6 +2,47 @@ require 'spec_helper'
 require 'facter/util/values'
 
 describe Facter::Util::Values do
+  describe 'deep_freeze' do
+    it "it dups and freezes strings" do
+      input = "hi"
+      output = described_class.deep_freeze(input)
+      expect(input).to_not be_frozen
+      expect(output).to be_frozen
+    end
+
+    it "freezes arrays and each element in the array" do
+      input = %w[one two three]
+      output = described_class.deep_freeze(input)
+
+      input.each { |entry| expect(entry).to_not be_frozen }
+      output.each { |entry| expect(entry).to be_frozen }
+
+      expect(input).to_not be_frozen
+      expect(output).to be_frozen
+    end
+
+    it "freezes hashes and each key and value in the hash" do
+      input = {'one' => 'two', 'three' => 'four'}
+
+      output = described_class.deep_freeze(input)
+
+      input.each_pair do |key, val|
+        # Ruby freezes all string keys, so these will always be frozen
+        expect(key).to be_frozen
+        expect(val).to_not be_frozen
+      end
+
+      output.each_pair do |key, val|
+        expect(key).to be_frozen
+        expect(val).to be_frozen
+      end
+
+      expect(input).to_not be_frozen
+      expect(output).to be_frozen
+    end
+
+  end
+
   describe 'deep_merge' do
     it "non-destructively concatenates arrays" do
       first = %w[foo bar]
