@@ -4,6 +4,31 @@ module Facter
     module Values
       module_function
 
+      # Duplicate and deeply freeze a given data structure
+      #
+      # @param value [Object] The structure to freeze
+      # @return [void]
+      def deep_freeze(value)
+        case value
+        when Numeric, Symbol, TrueClass, FalseClass, NilClass
+          # These are immutable values, we can safely ignore them
+          value
+        when String
+          value.dup.freeze
+        when Array
+          value.map do |entry|
+            deep_freeze(entry)
+          end.freeze
+        when Hash
+          value.inject({}) do |hash, (key, value)|
+            hash[deep_freeze(key)] = deep_freeze(value)
+            hash
+          end.freeze
+        else
+          raise ArgumentError, "Cannot deep freeze #{value}:#{value.class}"
+        end
+      end
+
       # Perform a deep merge of two nested data structures.
       #
       # @param left [Object]
