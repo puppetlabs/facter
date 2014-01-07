@@ -32,3 +32,4 @@ Further Information
 -------------------
 
 See http://www.puppetlabs.com/puppet/related-projects/facter for more details.
+
