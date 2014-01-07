@@ -65,7 +65,6 @@ module Facter::Core::Resolvable
     end
 
     Facter::Util::Normalization.normalize(result)
-
   rescue Timeout::Error => detail
     Facter.warn "Timed out seeking value for #{self.name}"
 
