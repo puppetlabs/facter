@@ -22,7 +22,7 @@ def selinux_mount_point
     # a hang. Reading from other parts of /proc does not seem to cause this problem.
     # The work around is to read the file in another process.
     # -- andy Fri Aug 31 2012
-    selinux_line = Facter::Util::Resolution.exec('cat /proc/self/mounts').lines.find { |line| line =~ /selinuxfs/ }
+    selinux_line = Facter::Util::Resolution.exec('cat /proc/self/mounts').each_line.find { |line| line =~ /selinuxfs/ }
     if selinux_line
       path = selinux_line.split[1]
     end

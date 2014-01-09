@@ -205,10 +205,31 @@ describe Facter::Util::Resolution do
         @resolve.value.should == "yup"
       end
 
-      it "should return nil if the value is an empty string" do
+      it "it validates the resolved value" do
         @resolve.setcode "/bin/foo"
         Facter::Util::Resolution.expects(:exec).once.returns ""
-        @resolve.value.should be_nil
+        Facter::Util::Normalization.expects(:normalize).with ""
+        @resolve.value.should eq ""
+      end
+
+      describe "on non-windows systems" do
+        before do
+          given_a_configuration_of(:is_windows => false)
+        end
+
+        it "should return the result of executing the code" do
+          @resolve.setcode "/bin/foo"
+          Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns "yup"
+
+          @resolve.value.should == "yup"
+        end
+
+        it "it validates the resolved value" do
+          @resolve.setcode "/bin/foo"
+          Facter::Util::Resolution.expects(:exec).once.returns ""
+          Facter::Util::Normalization.expects(:normalize).with ""
+          @resolve.value.should eq ""
+        end
       end
     end
 
@@ -224,14 +245,11 @@ describe Facter::Util::Resolution do
         @resolve.value.should == "yayness"
       end
 
-      it "should return nil if the value is an empty string" do
-        @resolve.setcode { "" }
-        @resolve.value.should be_nil
-      end
-
-      it "should return nil if the value is an empty block" do
-        @resolve.setcode { "" }
-        @resolve.value.should be_nil
+      it "it validates the resolved value" do
+        @resolve.setcode "/bin/foo"
+        Facter::Util::Resolution.expects(:exec).once.returns ""
+        Facter::Util::Normalization.expects(:normalize).with ""
+        @resolve.value.should eq ""
       end
 
       it "should use its limit method to determine the timeout, to avoid conflict when a 'timeout' method exists for some other reason" do
