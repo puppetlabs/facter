@@ -1,5 +1,6 @@
 require 'facter/util/confine'
 require 'facter/util/config'
+require 'facter/util/normalization'
 
 require 'timeout'
 
@@ -440,7 +441,11 @@ class Facter::Util::Resolution
     ms = (finishtime - starttime) * 1000
     Facter.show_time "#{self.name}: #{"%.2f" % ms}ms"
 
-    return nil if result == ""
+    Facter::Util::Normalization.normalize(result)
+
     return result
+  rescue Facter::Util::Normalization::NormalizationError => e
+    Facter.warn "Fact resolution #{self.name} resolved to an invalid value: #{e.message}"
+    nil
   end
 end
