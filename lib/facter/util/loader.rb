@@ -141,7 +141,7 @@ class Facter::Util::Loader
 
       Facter.add($1) do
         has_weight 1_000_000
-        setcode { value.dup }
+        setcode { value }
       end
 
       # Short-cut, if we are only looking for one value.

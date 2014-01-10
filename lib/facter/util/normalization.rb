@@ -15,7 +15,7 @@ module Facter
       def normalize(value)
         case value
         when Integer, Float, TrueClass, FalseClass, NilClass
-          true
+          value
         when String
           normalize_string(value)
         when Array
@@ -52,20 +52,19 @@ module Facter
           if converted != value
             raise NormalizationError, "String #{value.inspect} is not valid UTF-8"
           end
+          value
         end
       else
         def normalize_string(value)
-          unless value.encoding == Encoding::UTF_8
-            begin
-              value.encode!(Encoding::UTF_8)
-            rescue EncodingError
-              raise NormalizationError, "String encoding #{value.encoding} is not UTF-8 and could not be converted to UTF-8"
-            end
-          end
+          value = value.encode(Encoding::UTF_8)
 
           unless value.valid_encoding?
             raise NormalizationError, "String #{value.inspect} doesn't match the reported encoding #{value.encoding}"
           end
+
+          value
+        rescue EncodingError
+          raise NormalizationError, "String encoding #{value.encoding} is not UTF-8 and could not be converted to UTF-8"
         end
       end
 
@@ -76,7 +75,7 @@ module Facter
       # @param value [Array]
       # @return [void]
       def normalize_array(value)
-        value.each do |elem|
+        value.collect do |elem|
           normalize(elem)
         end
       end
@@ -88,10 +87,7 @@ module Facter
       # @param value [Hash]
       # @return [void]
       def normalize_hash(value)
-        value.each_pair do |k, v|
-          normalize(k)
-          normalize(v)
-        end
+        Hash[value.collect { |k, v| [ normalize(k), normalize(v) ] } ]
       end
     end
   end
