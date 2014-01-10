@@ -181,6 +181,8 @@ describe Facter::Util::Resolution do
   end
 
   describe "when returning the value" do
+    let(:utf16_string) { "".encode(Encoding::UTF_16LE).freeze }
+
     before do
       @resolve = Facter::Util::Resolution.new("yay")
     end
@@ -210,11 +212,12 @@ describe Facter::Util::Resolution do
           @resolve.value.should == "yup"
         end
 
-        it "it validates the resolved value" do
+        it "it normalizes the resolved value" do
           @resolve.setcode "/bin/foo"
-          Facter::Util::Resolution.expects(:exec).once.returns ""
-          Facter::Util::Normalization.expects(:normalize).with ""
-          @resolve.value.should eq ""
+
+          Facter::Util::Resolution.expects(:exec).once.returns(utf16_string)
+
+          expect(@resolve.value).to eq(utf16_string.encode(Encoding::UTF_8))
         end
       end
 
@@ -230,11 +233,12 @@ describe Facter::Util::Resolution do
           @resolve.value.should == "yup"
         end
 
-        it "it validates the resolved value" do
+        it "it normalizes the resolved value" do
           @resolve.setcode "/bin/foo"
-          Facter::Util::Resolution.expects(:exec).once.returns ""
-          Facter::Util::Normalization.expects(:normalize).with ""
-          @resolve.value.should eq ""
+
+          Facter::Util::Resolution.expects(:exec).once.returns(utf16_string)
+
+          expect(@resolve.value).to eq(utf16_string.encode(Encoding::UTF_8))
         end
       end
     end
@@ -251,11 +255,10 @@ describe Facter::Util::Resolution do
         @resolve.value.should == "yayness"
       end
 
-      it "it validates the resolved value" do
-        @resolve.setcode "/bin/foo"
-        Facter::Util::Resolution.expects(:exec).once.returns ""
-        Facter::Util::Normalization.expects(:normalize).with ""
-        @resolve.value.should eq ""
+      it "it normalizes the resolved value" do
+        @resolve.setcode { utf16_string }
+
+        expect(@resolve.value).to eq(utf16_string.encode(Encoding::UTF_8))
       end
 
       it "should use its limit method to determine the timeout, to avoid conflict when a 'timeout' method exists for some other reason" do
