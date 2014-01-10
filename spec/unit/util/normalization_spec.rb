@@ -8,11 +8,19 @@ describe Facter::Util::Normalization do
   subject { described_class }
 
   def utf16(str)
-    str.encode(Encoding::UTF_16LE)
+    if String.method_defined?(:encode) && defined?(::Encoding)
+      str.encode(Encoding::UTF_16LE)
+    else
+      str
+    end
   end
 
   def utf8(str)
-    str.encode(Encoding::UTF_8)
+    if String.method_defined?(:encode) && defined?(::Encoding)
+      str.encode(Encoding::UTF_8)
+    else
+      str
+    end
   end
 
   describe "validating strings" do

@@ -181,7 +181,23 @@ describe Facter::Util::Resolution do
   end
 
   describe "when returning the value" do
-    let(:utf16_string) { "".encode(Encoding::UTF_16LE).freeze }
+    let(:fact_value) { "" }
+
+    let(:utf16_string) do
+      if String.method_defined?(:encode) && defined?(::Encoding)
+        fact_value.encode(Encoding::UTF_16LE).freeze
+      else
+        [0x00, 0x00].pack('C*').freeze
+      end
+    end
+
+    let(:expected_value) do
+      if String.method_defined?(:encode) && defined?(::Encoding)
+        fact_value.encode(Encoding::UTF_8).freeze
+      else
+        [0x00, 0x00].pack('C*').freeze
+      end
+    end
 
     before do
       @resolve = Facter::Util::Resolution.new("yay")
@@ -217,7 +233,7 @@ describe Facter::Util::Resolution do
 
           Facter::Util::Resolution.expects(:exec).once.returns(utf16_string)
 
-          expect(@resolve.value).to eq(utf16_string.encode(Encoding::UTF_8))
+          expect(@resolve.value).to eq(expected_value)
         end
       end
 
@@ -238,7 +254,7 @@ describe Facter::Util::Resolution do
 
           Facter::Util::Resolution.expects(:exec).once.returns(utf16_string)
 
-          expect(@resolve.value).to eq(utf16_string.encode(Encoding::UTF_8))
+          expect(@resolve.value).to eq(expected_value)
         end
       end
     end
@@ -258,7 +274,7 @@ describe Facter::Util::Resolution do
       it "it normalizes the resolved value" do
         @resolve.setcode { utf16_string }
 
-        expect(@resolve.value).to eq(utf16_string.encode(Encoding::UTF_8))
+        expect(@resolve.value).to eq(expected_value)
       end
 
       it "should use its limit method to determine the timeout, to avoid conflict when a 'timeout' method exists for some other reason" do
