@@ -7,23 +7,38 @@ describe Facter::Util::Normalization do
 
   subject { described_class }
 
+  def utf16(str)
+    str.encode(Encoding::UTF_16LE)
+  end
+
+  def utf8(str)
+    str.encode(Encoding::UTF_8)
+  end
+
   describe "validating strings" do
     describe "and string encoding is supported", :if => String.instance_methods.include?(:encoding) do
       it "accepts strings that are ASCII and match their encoding and converts them to UTF-8" do
         str = "ASCII".encode(Encoding::ASCII)
-        subject.normalize(str)
-        expect(str.encoding).to eq(Encoding::UTF_8)
+        normalized_str = subject.normalize(str)
+        expect(normalized_str.encoding).to eq(Encoding::UTF_8)
       end
 
       it "accepts strings that are UTF-8 and match their encoding" do
         str = "let's make a ☃!".encode(Encoding::UTF_8)
-        subject.normalize(str)
+        expect(subject.normalize(str)).to eq(str)
       end
 
       it "converts valid non UTF-8 strings to UTF-8" do
         str = "let's make a ☃!".encode(Encoding::UTF_16LE)
-        subject.normalize(str)
-        expect(str.encoding).to eq(Encoding::UTF_8)
+        enc = subject.normalize(str).encoding
+        expect(enc).to eq(Encoding::UTF_8)
+      end
+
+      it "normalizes a frozen string returning a non-frozen string" do
+        str = "factvalue".encode(Encoding::UTF_16LE).freeze
+        normalized_str = subject.normalize(str)
+        expect(normalized_str.encoding).to eq(Encoding::UTF_8)
+        expect(normalized_str).to_not be_frozen
       end
 
       it "rejects strings that are not UTF-8 and do not match their claimed encoding" do
@@ -44,7 +59,7 @@ describe Facter::Util::Normalization do
     describe "and string encoding is not supported", :unless => String.instance_methods.include?(:encoding) do
       it "accepts strings that are UTF-8 and match their encoding" do
         str = "let's make a ☃!"
-        subject.normalize(str)
+        expect(subject.normalize(str)).to eq(str)
       end
 
       it "rejects strings that are not UTF-8" do
@@ -56,34 +71,27 @@ describe Facter::Util::Normalization do
     end
   end
 
-  describe "validating arrays" do
+  describe "normalizing arrays" do
     it "normalizes each element in the array" do
-      arr = ['first', 'second', ['third', 'fourth']]
+      arr = [utf16('first'), utf16('second'), [utf16('third'), utf16('fourth')]]
+      expected_arr = [utf8('first'), utf8('second'), [utf8('third'), utf8('fourth')]]
 
-      subject.expects(:normalize).with('first')
-      subject.expects(:normalize).with('second')
-      subject.expects(:normalize).with(['third', 'fourth'])
-
-      subject.normalize_array(arr)
+      expect(subject.normalize_array(arr)).to eq(expected_arr)
     end
   end
 
-  describe "validating hashes" do
+  describe "normalizing hashes" do
     it "normalizes each element in the array" do
-      hsh = {'first' => 'second', 'third' => ['fourth', 'fifth']}
+      hsh = {utf16('first') => utf16('second'), utf16('third') => [utf16('fourth'), utf16('fifth')]}
+      expected_hsh = {utf8('first') => utf8('second'), utf8('third') => [utf8('fourth'), utf8('fifth')]}
 
-      subject.expects(:normalize).with('first')
-      subject.expects(:normalize).with('second')
-      subject.expects(:normalize).with('third')
-      subject.expects(:normalize).with(['fourth', 'fifth'])
-
-      subject.normalize_hash(hsh)
+      expect(subject.normalize_hash(hsh)).to eq(expected_hsh)
     end
   end
 
   [1, 1.0, true, false, nil].each do |val|
     it "accepts #{val.inspect}:#{val.class}" do
-      subject.normalize(val)
+      expect(subject.normalize(val)).to eq(val)
     end
   end
 

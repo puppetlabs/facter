@@ -481,8 +481,6 @@ class Facter::Util::Resolution
     Facter.show_time "#{self.name}: #{"%.2f" % ms}ms"
 
     Facter::Util::Normalization.normalize(result)
-
-    return result
   rescue Facter::Util::Normalization::NormalizationError => e
     Facter.warn "Fact resolution #{self.name} resolved to an invalid value: #{e.message}"
     nil
