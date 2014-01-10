@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'facter/util/execution'
+require 'facter/core/execution'
 
-describe Facter::Util::Execution do
+describe Facter::Core::Execution do
 
   describe "#search_paths" do
     context "on windows", :as_platform => :windows do

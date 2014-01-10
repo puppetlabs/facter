@@ -1,7 +1,7 @@
 require 'facter/util/confine'
 require 'facter/util/config'
 require 'facter/util/normalization'
-require 'facter/util/execution'
+require 'facter/core/execution'
 
 require 'timeout'
 
@@ -30,7 +30,8 @@ class Facter::Util::Resolution
 
   INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
 
-  extend Facter::Util::Execution
+  extend Facter::Core::Execution
+
   class << self
     # Expose command execution methods that were extracted into
     # Facter::Util::Execution from Facter::Util::Resolution in Facter 2.0.0 for

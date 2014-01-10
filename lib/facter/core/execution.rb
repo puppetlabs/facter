@@ -1,7 +1,7 @@
 require 'facter/util/config'
 
 module Facter
-  module Util
+  module Core
     module Execution
 
       module_function
