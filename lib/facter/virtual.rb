@@ -219,14 +219,12 @@ Facter.add("virtual") do
   confine :kernel => "Linux"
 
   setcode do
-    if dmi_data = Facter::Util::Virtual.read_sysfs_dmi_entries
-      case dmi_data
-      when /Google/
-        "gce"
-      end
+    if Facter::Util::Resolution.exec('sudo dmidecode -s bios-vendor | grep Google')
+      "gce"
     end
   end
 end
+
 # Fact: is_virtual
 #
 # Purpose: returning true or false for if a machine is virtualised or not.
