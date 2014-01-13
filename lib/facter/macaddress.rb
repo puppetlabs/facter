@@ -15,8 +15,8 @@ Facter.add(:macaddress) do
   has_weight  10                # about an order of magnitude faster
   setcode do
     begin
-      Dir.glob('/sys/class/net/*').reject {|x| x[-3..-1] == '/lo' }.first
-      path and File.read(path + '/address')
+      path = Dir.glob('/sys/class/net/*').reject {|x| x[-3..-1] == '/lo' }.first
+      File.read(path + '/address')
     rescue Exception
       nil
     end
