@@ -106,7 +106,9 @@ class Facter::Util::Resolution
   end
 
   def set_options(options)
-    ret = {}
+    if options[:name]
+      @name = options.delete(:name)
+    end
 
     if options.has_key?(:value)
       @value = options.delete(:value)
@@ -123,8 +125,6 @@ class Facter::Util::Resolution
     if not options.keys.empty?
       raise ArgumentError, "Invalid resolution options #{options.keys.inspect}"
     end
-
-    ret
   end
 
   # Returns the importance of this resolution. If the weight was not
