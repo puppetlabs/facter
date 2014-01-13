@@ -145,7 +145,7 @@ end
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{VMwareESX}
   setcode do
-    release = Facter::Util::Resolution.exec('vmware -v')
+    release = Facter::Util::Resolution.exec('vmware -v 2> /dev/null')
     if match = /VMware ESX .*?(\d.*)/.match(release)
       match[1]
     end

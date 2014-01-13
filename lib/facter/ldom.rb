@@ -1,5 +1,5 @@
 if Facter.value(:kernel) == 'SunOS'
-  virtinfo = Facter::Util::Resolution.exec('virtinfo -ap')
+  virtinfo = Facter::Util::Resolution.exec('virtinfo -ap 2> /dev/null')
 
   # Convert virtinfo parseable output format to array of arrays.
   # DOMAINROLE|impl=LDoms|control=true|io=true|service=true|root=true

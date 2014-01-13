@@ -19,7 +19,7 @@ Facter.add(:operatingsystem) do
   setcode do
     # Use uname -v because /etc/release can change in zones under SmartOS.
     # It's apparently not trustworthy enough to rely on for this fact.
-    output = Facter::Util::Resolution.exec('uname -v')
+    output = Facter::Util::Resolution.exec('uname -v 2> /dev/null')
     if output =~ /^joyent_/
       "SmartOS"
     elsif output =~ /^oi_/

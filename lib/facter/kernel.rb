@@ -16,7 +16,7 @@ Facter.add(:kernel) do
     if Facter::Util::Config.is_windows?
       'windows'
     else
-      Facter::Util::Resolution.exec("uname -s")
+      Facter::Util::Resolution.exec('uname -s 2> /dev/null')
     end
   end
 end

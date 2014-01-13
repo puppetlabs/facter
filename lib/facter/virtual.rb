@@ -122,7 +122,7 @@ Facter.add("virtual") do
     end
 
     # Parse dmidecode
-    output = Facter::Util::Resolution.exec('dmidecode')
+    output = Facter::Util::Resolution.exec('dmidecode 2> /dev/null')
     if output
       lines = output.split("\n")
       next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
@@ -136,7 +136,7 @@ Facter.add("virtual") do
     end
 
     # Sample output of vmware -v `VMware Server 1.0.5 build-80187`
-    output = Facter::Util::Resolution.exec("vmware -v")
+    output = Facter::Util::Resolution.exec('vmware -v 2> /dev/null')
     if output
       mdata = output.match /(\S+)\s+(\S+)/
       next "#{mdata[1]}_#{mdata[2]}".downcase if mdata
