@@ -16,9 +16,9 @@ Facter.add(:macaddress) do
   setcode do
     begin
       path = Dir.glob('/sys/class/net/*').reject {|x| x[-3..-1] == '/lo' }.first
-      File.read(path + '/address')
-    rescue Exception
-      nil
+      if path
+        File.read(path + '/address')
+      end
     end
   end
 end
