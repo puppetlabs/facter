@@ -91,7 +91,7 @@ describe Facter::Util::Collection do
   describe "when only defining facts" do
     it "creates a new fact if no such fact exists" do
       fact = Facter::Util::Fact.new(:newfact)
-      Facter::Util::Fact.expects(:new).with(:newfact, {}).returns fact
+      Facter::Util::Fact.expects(:new).with(:newfact).returns fact
       expect(collection.define_fact(:newfact)).to equal fact
     end
 
