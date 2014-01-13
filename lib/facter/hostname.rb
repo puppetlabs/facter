@@ -14,7 +14,7 @@
 Facter.add(:hostname, :ldapname => "cn") do
   setcode do
     hostname = nil
-    if name = Facter::Util::Resolution.exec('hostname')
+    if name = Facter::Util::Resolution.exec('hostname 2> /dev/null')
       if name =~ /(.*?)\./
         hostname = $1
       else

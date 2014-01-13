@@ -174,11 +174,11 @@ Facter.add("ProcessorCount") do
     result = nil
 
     if (major_version < 5) or (major_version == 5 and minor_version < 8) then
-      if kstat = Facter::Util::Resolution.exec("/usr/bin/kstat cpu_info")
+      if kstat = Facter::Util::Resolution.exec('/usr/bin/kstat cpu_info 2> /dev/null')
         result = kstat.scan(/\bcore_id\b\s+\d+/).uniq.length
       end
     else
-      if output = Facter::Util::Resolution.exec("/usr/sbin/psrinfo") then
+      if output = Facter::Util::Resolution.exec('/usr/sbin/psrinfo 2> /dev/null') then
         result = output.split("\n").length
       end
     end

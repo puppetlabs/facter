@@ -31,7 +31,7 @@ end
 Facter.add(:kernelrelease) do
   confine :kernel => "hp-ux"
   setcode do
-    version = Facter::Util::Resolution.exec('uname -r')
+    version = Facter::Util::Resolution.exec('uname -r 2> /dev/null')
     version[2..-1]
   end
 end
