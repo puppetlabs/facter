@@ -101,18 +101,6 @@ describe Facter do
     end
   end
 
-  describe "Facter[:hostname]" do
-    it "should have its ldapname set to 'cn'" do
-      Facter[:hostname].ldapname.should == "cn"
-    end
-  end
-
-  describe "Facter[:ipaddress]" do
-    it "should have its ldapname set to 'iphostnumber'" do
-      Facter[:ipaddress].ldapname.should == "iphostnumber"
-    end
-  end
-
   # #33 Make sure we only get one mac address
   it "should only return one mac address" do
     if macaddress = Facter.value(:macaddress)
