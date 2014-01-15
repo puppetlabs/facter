@@ -30,7 +30,9 @@ class Facter::Util::Fact
     # worst we'll have one.  If we add more, this should be made more efficient.
     options.each do |name, value|
       case name
-      when :ldapname; self.ldapname = value
+        when :ldapname
+          Facter.warnonce("ldapname is deprecated and will be removed in a future version")
+          self.ldapname = value
       else
         raise ArgumentError, "Invalid fact option '%s'" % name
       end
