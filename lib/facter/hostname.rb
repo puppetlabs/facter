@@ -11,7 +11,7 @@
 # Caveats:
 #
 
-Facter.add(:hostname, :ldapname => "cn") do
+Facter.add(:hostname) do
   setcode do
     hostname = nil
     if name = Facter::Util::Resolution.exec('hostname')
