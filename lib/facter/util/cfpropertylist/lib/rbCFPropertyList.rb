@@ -164,7 +164,12 @@ module Facter::Util::CFPropertyList
       when Object.const_defined?('BigDecimal') && object.is_a?(BigDecimal)
         CFReal.new(object)
       when object.respond_to?(:read)
-        CFData.new(object.read(), CFData::DATA_RAW)
+        raw_data = object.read
+        # treat the data as a bytestring (ASCII-8BIT) if Ruby supports it.  Do this by forcing
+        # the encoding, on the assumption that the bytes were read correctly, and just tagged with
+        # an inappropriate encoding, rather than transcoding.
+        raw_data.force_encoding(Encoding::ASCII_8BIT) if raw_data.respond_to?(:force_encoding)
+        CFData.new(raw_data, CFData::DATA_RAW)
       when options[:converter_method] && object.respond_to?(options[:converter_method])
         if options[:converter_with_opts]
           Facter::Util::CFPropertyList.guess(object.send(options[:converter_method],options),options)
