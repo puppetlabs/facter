@@ -12,12 +12,9 @@ describe Facter::Util::Fact do
     Facter::Util::Fact.new("YayNess").name.should == :yayness
   end
 
-  it "should default to its name converted to a string as its ldapname" do
-    Facter::Util::Fact.new("YayNess").ldapname.should == "yayness"
-  end
-
-  it "should allow specifying the ldap name at initialization" do
-    Facter::Util::Fact.new("YayNess", :ldapname => "fooness").ldapname.should == "fooness"
+  it "should issue a deprecation warning for use of ldapname" do
+    Facter.expects(:warnonce).with("ldapname is deprecated and will be removed in a future version")
+    Facter::Util::Fact.new("YayNess", :ldapname => "fooness")
   end
 
   it "should fail if an unknown option is provided" do
