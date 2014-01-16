@@ -26,7 +26,7 @@ class Facter::Util::Fact
   def initialize(name, options = {})
     @name = name.to_s.downcase.intern
 
-    set_options(options)
+    extract_ldapname_option!(options)
 
     @ldapname ||= @name.to_s
 
@@ -126,17 +126,12 @@ class Facter::Util::Fact
     end
   end
 
-  def set_options(options)
-    # LAK:NOTE: This is slow for many options, but generally we won't have any and at
-    # worst we'll have one.  If we add more, this should be made more efficient.
-    options.each do |name, value|
-      case name
-      when :ldapname
-        Facter.warnonce("ldapname is deprecated and will be removed in a future version")
-        self.ldapname = value
-      else
-        raise ArgumentError, "Invalid fact option '%s'" % name
-      end
+  # @api private
+  # @deprecated
+  def extract_ldapname_option!(options)
+    if options[:ldapname]
+      Facter.warnonce("ldapname is deprecated and will be removed in a future version")
+      self.ldapname = options.delete(:ldapname)
     end
   end
 

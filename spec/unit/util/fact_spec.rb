@@ -17,10 +17,6 @@ describe Facter::Util::Fact do
     Facter::Util::Fact.new("YayNess", :ldapname => "fooness")
   end
 
-  it "should fail if an unknown option is provided" do
-    lambda { Facter::Util::Fact.new('yay', :foo => :bar) }.should raise_error(ArgumentError)
-  end
-
   it "should have a method for adding resolution mechanisms" do
     Facter::Util::Fact.new("yay").should respond_to(:add)
   end
