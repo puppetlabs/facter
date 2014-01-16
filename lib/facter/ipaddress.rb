@@ -121,7 +121,7 @@ Facter.add(:ipaddress) do
   end
 end
 
-Facter.add(:ipaddress, :ldapname => "iphostnumber", :timeout => 2) do
+Facter.add(:ipaddress, :timeout => 2) do
   setcode do
     if Facter.value(:kernel) == 'windows'
       require 'win32/resolv'
