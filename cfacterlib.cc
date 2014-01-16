@@ -894,6 +894,9 @@ static void get_external_facts_from_executable(fact_map& facts, string executabl
 static void get_external_facts(fact_map& facts, string directory)
 {
   DIR *external_dir = opendir(directory.c_str());
+  if (external_dir == NULL)
+    return;
+
   struct dirent *external_fact;
 
   while (external_fact = readdir(external_dir)) {
