@@ -26,14 +26,7 @@ class Facter::Util::Collection
   #
   # @return [Facter::Util::Fact] The fact that was defined
   def define_fact(name, options = {}, &block)
-    name = canonicalize(name)
-
-    fact = @facts[name]
-
-    if fact.nil?
-      fact = Facter::Util::Fact.new(name, options)
-      @facts[name] = fact
-    end
+    fact = create_or_return_fact(name, options)
 
     if block_given?
       fact.instance_eval(&block)
@@ -52,15 +45,7 @@ class Facter::Util::Collection
   #
   # @return [Facter::Util::Fact] The fact that was defined
   def add(name, options = {}, &block)
-    name = canonicalize(name)
-
-    unless fact = @facts[name]
-      fact = Facter::Util::Fact.new(name)
-
-      @facts[name] = fact
-    end
-
-    fact.extract_ldapname_option!(options)
+    fact = create_or_return_fact(name, options)
 
     if block_given?
       resolve = fact.add(&block)
@@ -156,6 +141,21 @@ class Facter::Util::Collection
   end
 
   private
+
+  def create_or_return_fact(name, options)
+    name = canonicalize(name)
+
+    fact = @facts[name]
+
+    if fact.nil?
+      fact = Facter::Util::Fact.new(name, options)
+      @facts[name] = fact
+    else
+      fact.extract_ldapname_option!(options)
+    end
+
+    fact
+  end
 
   def canonicalize(name)
     name.to_s.downcase.to_sym

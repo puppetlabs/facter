@@ -32,7 +32,7 @@ describe Facter::Util::Collection do
 
     it "should set appropriate options on the resolution instance" do
       fact = Facter::Util::Fact.new(:myname)
-      Facter::Util::Fact.expects(:new).with(:myname).returns fact
+      Facter::Util::Fact.expects(:new).with(:myname, {:timeout => 'myval'}).returns fact
 
       resolve = Facter::Util::Resolution.new(:myname) {}
       fact.expects(:add).returns resolve
@@ -46,7 +46,8 @@ describe Facter::Util::Collection do
 
     describe "and a block is provided" do
       it "should use the block to add a resolution to the fact" do
-        fact = mock 'fact', :extract_ldapname_option! => nil
+        fact = mock 'fact'
+        fact.stubs(:extract_ldapname_option!)
         Facter::Util::Fact.expects(:new).returns fact
 
         fact.expects(:add)
