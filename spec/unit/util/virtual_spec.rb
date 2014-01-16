@@ -118,7 +118,7 @@ EOT
 
   it "should identify kvm" do
     Facter::Util::Virtual.stubs(:kvm?).returns(true)
-    Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("something")
+    Facter::Util::Resolution.stubs(:exec).with('dmidecode 2> /dev/null').returns("something")
     Facter::Util::Virtual.kvm_type().should == "kvm"
   end
 
