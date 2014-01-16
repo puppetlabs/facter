@@ -51,66 +51,6 @@ describe Facter::Util::Resolution do
     res.limit.should == "testing"
   end
 
-
-  describe "when overriding environment variables" do
-    it "should execute the caller's block with the specified env vars" do
-      test_env = { "LC_ALL" => "C", "FOO" => "BAR" }
-      Facter::Util::Resolution.with_env test_env do
-        test_env.keys.each do |key|
-          ENV[key].should == test_env[key]
-        end
-      end
-    end
-
-    it "should restore pre-existing environment variables to their previous values" do
-      orig_env = {}
-      new_env = {}
-      # an arbitrary sentinel value to use to temporarily set the environment vars to
-      sentinel_value = "Abracadabra"
-
-      # grab some values from the existing ENV (arbitrarily choosing 3 here)
-      ENV.keys.first(3).each do |key|
-        # save the original values so that we can test against them later
-        orig_env[key] = ENV[key]
-        # create bogus temp values for the chosen keys
-        new_env[key] = sentinel_value
-      end
-
-      # verify that, during the 'with_env', the new values are used
-      Facter::Util::Resolution.with_env new_env do
-        orig_env.keys.each do |key|
-          ENV[key].should == new_env[key]
-        end
-      end
-
-      # verify that, after the 'with_env', the old values are restored
-      orig_env.keys.each do |key|
-        ENV[key].should == orig_env[key]
-      end
-    end
-
-    it "should not be affected by a 'return' statement in the yield block" do
-      @sentinel_var = :resolution_test_foo.to_s
-
-      # the intent of this test case is to test a yield block that contains a return statement.  However, it's illegal
-      # to use a return statement outside of a method, so we need to create one here to give scope to the 'return'
-      def handy_method()
-        ENV[@sentinel_var] = "foo"
-        new_env = { @sentinel_var => "bar" }
-
-        Facter::Util::Resolution.with_env new_env do
-          ENV[@sentinel_var].should == "bar"
-          return
-        end
-      end
-
-      handy_method()
-
-      ENV[@sentinel_var].should == "foo"
-
-    end
-  end
-
   describe "when setting the code" do
     before do
       Facter.stubs(:warnonce)
