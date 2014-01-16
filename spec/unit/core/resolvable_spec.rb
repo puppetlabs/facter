@@ -23,32 +23,15 @@ describe Facter::Core::Resolvable do
   end
 
   describe "generating a value" do
-    let(:fact_value) { "" }
-
-    let(:utf16_string) do
-      if String.method_defined?(:encode) && defined?(::Encoding)
-        fact_value.encode(Encoding::UTF_16LE).freeze
-      else
-        [0x00, 0x00].pack('C*').freeze
-      end
-    end
-
-    let(:expected_value) do
-      if String.method_defined?(:encode) && defined?(::Encoding)
-        fact_value.encode(Encoding::UTF_8).freeze
-      else
-        [0x00, 0x00].pack('C*').freeze
-      end
-    end
-
     it "returns the results of #resolve_value" do
       subject.resolve_value = 'stuff'
       expect(subject.value).to eq 'stuff'
     end
 
     it "normalizes the resolved value" do
-      subject.resolve_value = fact_value
-      expect(subject.value).to eq(expected_value)
+      Facter::Util::Normalization.expects(:normalize).returns 'stuff'
+      subject.resolve_value = 'stuff'
+      expect(subject.value).to eq('stuff')
     end
 
     it "returns nil if an exception was raised" do
