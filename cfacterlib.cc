@@ -8,7 +8,12 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
+#ifdef __linux__
 #include <linux/if.h>
+#endif
+#ifdef __APPLE__
+#include <net/if.h>
+#endif
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
@@ -179,7 +184,8 @@ void get_network_facts(fact_map& facts)
     }
 
     facts[string("mtu_") + r->ifr_name] = to_string(r->ifr_mtu);
-    if (primaryInterface) ; // no unmarked version of this network fact
+    if (primaryInterface)
+        ; // no unmarked version of this network fact
      
     // netmask and network are both derived from the same ioctl
     if (ioctl(s, SIOCGIFNETMASK, r) < 0) {
@@ -187,6 +193,7 @@ void get_network_facts(fact_map& facts)
       exit(1);
     }
 
+#ifndef __APPLE__  // ifr_netmask isn't supported, might need to use SC library
     // netmask
     struct in_addr netmask_addr = ((struct sockaddr_in *)&r->ifr_netmask)->sin_addr;
     const char *netmask = inet_ntoa(netmask_addr);
@@ -202,12 +209,14 @@ void get_network_facts(fact_map& facts)
     facts[string("network_") + r->ifr_name] = network;
     if (primaryInterface)
       facts["network"] = network;
+#endif
 
+#ifndef __APPLE__  // SIOCGIFHWADDR isn't supported, might need to use SC library
     // and the mac address (but not for loopback)
     if (strcmp(r->ifr_name, "lo")) {
       if (ioctl(s, SIOCGIFHWADDR, r) < 0) {
-	perror("ioctl SIOCGIFHWADDR");
-	exit(1);
+        perror("ioctl SIOCGIFHWADDR");
+        exit(1);
       }
 
       // extract mac into a string, okay a char array
@@ -222,6 +231,7 @@ void get_network_facts(fact_map& facts)
       if (primaryInterface)
 	facts["macaddress"] = mac_address;
     }
+#endif
   }
 
   facts["interfaces"] = interfaces;
@@ -232,6 +242,7 @@ void get_network_facts(fact_map& facts)
 
 void get_kernel_facts(fact_map& facts)
 {
+#ifdef __linux__
   // this is linux-only, so there you have it
   facts["kernel"] = "Linux";
   string kernelrelease = read_oneline_file("/proc/sys/kernel/osrelease");
@@ -240,6 +251,11 @@ void get_kernel_facts(fact_map& facts)
   facts["kernelversion"] = kernelversion;
   string kernelmajversion = kernelversion.substr(0, kernelversion.rfind("."));
   facts["kernelmajversion"] = kernelmajversion;
+#else
+#ifdef __APPLE__
+  facts["kernel"] = "Darwin";
+#endif
+#endif
 }
 
 static void get_lsb_facts(fact_map& facts)
@@ -315,7 +331,7 @@ string popen_stdout(string cmd)
   string cmd_output = "";
   char buf[1024];
   size_t bytesRead;
-  while (bytesRead = fread(buf, 1, sizeof(buf) - 1, cmd_fd)) {
+  while ((bytesRead = fread(buf, 1, sizeof(buf) - 1, cmd_fd))) {
     buf[bytesRead] = 0;
     cmd_output += buf;
   }
@@ -363,17 +379,22 @@ void get_ruby_lib_versions(fact_map& facts)
 void get_blockdevice_facts(fact_map& facts)
 {
   string blockdevices = "";
-  DIR *sys_block_dir = opendir("/sys/block");
-  struct dirent *bd;
 
-  while (bd = readdir(sys_block_dir)) {
+  DIR *sys_block_dir = opendir("/sys/block");
+  if (sys_block_dir == NULL) {
+    return;
+  }
+
+  struct dirent *bd;
+  while ((bd = readdir(sys_block_dir))) {
+
     bool real_block_device = false;
     string device_dir_path = "/sys/block/";
     device_dir_path += bd->d_name;
 
     DIR *device_dir = opendir(device_dir_path.c_str());
     struct dirent *subdir;
-    while (subdir = readdir(device_dir)) {
+    while ((subdir = readdir(device_dir))) {
       if (strcmp(subdir->d_name, "device") == 0) {
 	// we have a winner
 	real_block_device = true;
@@ -700,7 +721,6 @@ void get_architecture_facts(fact_map& facts)
 
 void get_dmidecode_facts(fact_map& facts)
 {
-  // from a time perspective simulate expense with lspci and dmidecode invocations
   string dmidecode_output = popen_stdout("/usr/sbin/dmidecode");
   std::stringstream ss(dmidecode_output);
   string line;
@@ -899,7 +919,7 @@ static void get_external_facts(fact_map& facts, string directory)
 
   struct dirent *external_fact;
 
-  while (external_fact = readdir(external_dir)) {
+  while ((external_fact = readdir(external_dir))) {
     string full_path = directory + "/" + external_fact->d_name;
 
     if (access(full_path.c_str(), X_OK) != 0)
