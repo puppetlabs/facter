@@ -182,7 +182,7 @@ describe "Virtual fact" do
 
     it "should be kvm with Bochs vendor name from dmidecode" do
       Facter::Util::Resolution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
-      Facter::Util::Resolution.stubs(:exec).with('dmidecode').returns("Manufacturer: Bochs")
+      Facter::Util::Resolution.stubs(:exec).with('dmidecode 2> /dev/null').returns("Manufacturer: Bochs")
       Facter.fact(:virtual).value.should == "kvm"
     end
 
