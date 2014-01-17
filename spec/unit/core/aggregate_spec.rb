@@ -101,14 +101,7 @@ describe Facter::Core::Aggregate do
   end
 
   describe "evaluating chunks" do
-    it "discards chunks that raise errors" do
-      subject.chunk(:ok) { "didn't raise" }
-      subject.chunk(:boom) { raise 'kaboom!' }
-
-      expect(subject.value).to eq(["didn't raise"])
-    end
-
-    it "emits a warning when an chunk raises an error" do
+    it "emits a warning and returns nil when a chunk raises an error" do
       Facter.expects(:warn) do |msg|
         expect(msg).to match /Could not run chunk boom.*kaboom!/
       end

@@ -153,14 +153,10 @@ class Facter::Core::Aggregate
   def run_chunks
     results = {}
     order_chunks.each do |(name, block)|
-      begin
-        input = @deps[name].map { |dep_name| results[dep_name] }
+      input = @deps[name].map { |dep_name| results[dep_name] }
 
-        output = block.call(*input)
-        results[name] = Facter::Util::Values.deep_freeze(output)
-      rescue => e
-        Facter.warn "Could not run chunk #{name}:#{block}: #{e.message}"
-      end
+      output = block.call(*input)
+      results[name] = Facter::Util::Values.deep_freeze(output)
     end
 
     results
@@ -170,8 +166,6 @@ class Facter::Core::Aggregate
   # @return [Object]
   def aggregate_results(results)
     @aggregate.call(results)
-  rescue => e
-    Facter.warn "Could not aggregate chunks for #{name}: #{e.message}"
   end
 
   # Order chunks based on their dependencies
