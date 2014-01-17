@@ -26,17 +26,7 @@ class Facter::Util::Fact
   def initialize(name, options = {})
     @name = name.to_s.downcase.intern
 
-    # LAK:NOTE: This is slow for many options, but generally we won't have any and at
-    # worst we'll have one.  If we add more, this should be made more efficient.
-    options.each do |name, value|
-      case name
-        when :ldapname
-          Facter.warnonce("ldapname is deprecated and will be removed in a future version")
-          self.ldapname = value
-      else
-        raise ArgumentError, "Invalid fact option '%s'" % name
-      end
-    end
+    extract_ldapname_option!(options)
 
     @ldapname ||= @name.to_s
 
@@ -67,7 +57,41 @@ class Facter::Util::Fact
     end
   end
 
-  # Flushs any cached values.
+  # Define a new named resolution or return an existing resolution with
+  # the given name.
+  #
+  # @param resolve_name [String] The name of the resolve to define or look up
+  # @return [void]
+  #
+  # @api public
+  def define_resolution(resolve_name, &block)
+    resolve = self.resolution(resolve_name)
+
+    if resolve.nil?
+      resolve = Facter::Util::Resolution.new(resolve_name)
+      resolve.instance_eval(&block) if block
+      @resolves << resolve
+    else
+      resolve.instance_eval(&block) if block
+    end
+
+  rescue => e
+    Facter.warn "Unable to add resolve #{resolve_name} for fact #{@name}: #{e}"
+  end
+
+  # Retrieve an existing resolution by name
+  #
+  # @param name [String]
+  #
+  # @return [Facter::Util::Resolution, nil] The resolution if exists, nil if
+  #   it doesn't exist or name is nil
+  def resolution(name)
+    return nil if name.nil?
+
+    @resolves.find { |resolve| resolve.name == name }
+  end
+
+  # Flushes any cached values.
   #
   # @return [void]
   #
@@ -102,6 +126,14 @@ class Facter::Util::Fact
     end
   end
 
+  # @api private
+  # @deprecated
+  def extract_ldapname_option!(options)
+    if options[:ldapname]
+      Facter.warnonce("ldapname is deprecated and will be removed in a future version")
+      self.ldapname = options.delete(:ldapname)
+    end
+  end
 
   private
 

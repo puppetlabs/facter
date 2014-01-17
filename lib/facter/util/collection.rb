@@ -19,25 +19,33 @@ class Facter::Util::Collection
     value(name)
   end
 
+  # Define a new fact or extend an existing fact.
+  #
+  # @param name [Symbol] The name of the fact to define
+  # @param options [Hash] A hash of options to set on the fact
+  #
+  # @return [Facter::Util::Fact] The fact that was defined
+  def define_fact(name, options = {}, &block)
+    fact = create_or_return_fact(name, options)
+
+    if block_given?
+      fact.instance_eval(&block)
+    end
+
+    fact
+  rescue => e
+    Facter.warn "Unable to add fact #{name}: #{e}"
+  end
+
   # Add a resolution mechanism for a named fact.  This does not distinguish
   # between adding a new fact and adding a new way to resolve a fact.
+  #
+  # @param name [Symbol] The name of the fact to define
+  # @param options [Hash] A hash of options to set on the fact and resolution
+  #
+  # @return [Facter::Util::Fact] The fact that was defined
   def add(name, options = {}, &block)
-    name = canonicalize(name)
-
-    unless fact = @facts[name]
-      fact = Facter::Util::Fact.new(name)
-
-      @facts[name] = fact
-    end
-
-    # Set any fact-appropriate options.
-    options.each do |opt, value|
-      method = opt.to_s + "="
-      if fact.respond_to?(method)
-        fact.send(method, value)
-        options.delete(opt)
-      end
-    end
+    fact = create_or_return_fact(name, options)
 
     if block_given?
       resolve = fact.add(&block)
@@ -47,18 +55,7 @@ class Facter::Util::Collection
 
     # Set any resolve-appropriate options
     if resolve
-      # If the resolve was actually added, set any resolve-appropriate options
-      options.each do |opt, value|
-        method = opt.to_s + "="
-        if resolve.respond_to?(method)
-          resolve.send(method, value)
-          options.delete(opt)
-        end
-      end
-    end
-
-    unless options.empty?
-      raise ArgumentError, "Invalid facter option(s) %s" % options.keys.collect { |k| k.to_s }.join(",")
+      resolve.set_options(options)
     end
 
     return fact
@@ -144,6 +141,21 @@ class Facter::Util::Collection
   end
 
   private
+
+  def create_or_return_fact(name, options)
+    name = canonicalize(name)
+
+    fact = @facts[name]
+
+    if fact.nil?
+      fact = Facter::Util::Fact.new(name, options)
+      @facts[name] = fact
+    else
+      fact.extract_ldapname_option!(options)
+    end
+
+    fact
+  end
 
   def canonicalize(name)
     name.to_s.downcase.to_sym
