@@ -86,7 +86,18 @@ describe Facter::Core::Aggregate do
       expect(output).to include 'foo bar'
     end
 
-    it "clones and freezes chunk results passed to other chunks"
+    it "clones and freezes chunk results passed to other chunks" do
+      subject.chunk(:first) { 'foo' }
+      subject.chunk(:second, :require => [:first]) do |first|
+        expect(first).to be_frozen
+      end
+
+      subject.aggregate do |chunks|
+        chunks.values.each do |chunk|
+          expect(chunk).to be_frozen
+        end
+      end
+    end
   end
 
   describe "evaluating chunks" do

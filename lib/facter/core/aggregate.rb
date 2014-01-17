@@ -2,6 +2,7 @@ require 'facter'
 require 'facter/core/directed_graph'
 require 'facter/core/suitable'
 require 'facter/core/resolvable'
+require 'facter/util/values'
 
 # Aggregates provide a mechanism for facts to be resolved in multiple steps.
 #
@@ -154,7 +155,8 @@ class Facter::Core::Aggregate
     order_chunks.each do |(name, block)|
       input = @deps[name].map { |dep_name| results[dep_name] }
 
-      results[name] = block.call(*input)
+      output = block.call(*input)
+      results[name] = Facter::Util::Values.deep_freeze(output)
     end
 
     results
