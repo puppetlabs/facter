@@ -41,6 +41,11 @@ describe Facter::Util::Values do
       expect(output).to be_frozen
     end
 
+    it "raises an error when given a structure that cannot be deeply frozen" do
+      expect {
+        described_class.deep_freeze(Set.new)
+      }.to raise_error(Facter::Util::Values::DeepFreezeError, /Cannot deep freeze.*Set/)
+    end
   end
 
   describe 'deep_merge' do
@@ -105,7 +110,7 @@ describe Facter::Util::Values do
 
         expect {
           described_class.deep_merge(first, second)
-        }.to raise_error(ArgumentError, /Cannot merge .*at .*foo.*bar.*baz.*quux/)
+        }.to raise_error(Facter::Util::Values::DeepMergeError, /Cannot merge .*at .*foo.*bar.*baz.*quux/)
       end
     end
 
@@ -118,7 +123,7 @@ describe Facter::Util::Values do
         it "raises an error when merging #{left}:#{left.class} and #{right}:#{right.class}" do
           expect {
             described_class.deep_merge(left, right)
-          }.to raise_error(ArgumentError, /Cannot merge #{left.inspect}:#{left.class} and #{right.inspect}:#{right.class}/)
+          }.to raise_error(Facter::Util::Values::DeepMergeError, /Cannot merge #{left.inspect}:#{left.class} and #{right.inspect}:#{right.class}/)
         end
       end
     end
