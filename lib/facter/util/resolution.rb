@@ -24,8 +24,15 @@ class Facter::Util::Resolution
   # @api public
   attr_accessor :timeout
 
+  # @!attribute [rw] name
+  # The name of this resolution. The resolution name should be unique with
+  # respect to the given fact.
+  # @return [String]
+  # @api public
+  attr_accessor :name
+
   # @api private
-  attr_accessor :code, :name
+  attr_accessor :code
   attr_writer :value, :weight
 
   INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
@@ -124,8 +131,7 @@ class Facter::Util::Resolution
 
   # Create a new resolution mechanism.
   #
-  # @param name [String] The name of the resolution. This is mostly
-  #   unused and resolutions are treated as anonymous.
+  # @param name [String] The name of the resolution.
   # @return [void]
   #
   # @api private
@@ -135,6 +141,28 @@ class Facter::Util::Resolution
     @value = nil
     @timeout = 0
     @weight = nil
+  end
+
+  def set_options(options)
+    if options[:name]
+      @name = options.delete(:name)
+    end
+
+    if options.has_key?(:value)
+      @value = options.delete(:value)
+    end
+
+    if options.has_key?(:timeout)
+      @timeout = options.delete(:timeout)
+    end
+
+    if options.has_key?(:weight)
+      @weight = options.delete(:weight)
+    end
+
+    if not options.keys.empty?
+      raise ArgumentError, "Invalid resolution options #{options.keys.inspect}"
+    end
   end
 
   # Returns the importance of this resolution. If the weight was not

@@ -32,7 +32,7 @@ describe Facter::Util::Collection do
 
     it "should set appropriate options on the resolution instance" do
       fact = Facter::Util::Fact.new(:myname)
-      Facter::Util::Fact.expects(:new).with(:myname).returns fact
+      Facter::Util::Fact.expects(:new).with(:myname, {:timeout => 'myval'}).returns fact
 
       resolve = Facter::Util::Resolution.new(:myname) {}
       fact.expects(:add).returns resolve
@@ -47,6 +47,7 @@ describe Facter::Util::Collection do
     describe "and a block is provided" do
       it "should use the block to add a resolution to the fact" do
         fact = mock 'fact'
+        fact.stubs(:extract_ldapname_option!)
         Facter::Util::Fact.expects(:new).returns fact
 
         fact.expects(:add)
@@ -62,6 +63,33 @@ describe Facter::Util::Collection do
           end
         }.should_not raise_error
         collection.value('yay').should be_nil
+      end
+    end
+  end
+
+  describe "when only defining facts" do
+    it "creates a new fact if no such fact exists" do
+      fact = Facter::Util::Fact.new(:newfact)
+      Facter::Util::Fact.expects(:new).with(:newfact, {}).returns fact
+      expect(collection.define_fact(:newfact)).to equal fact
+    end
+
+    it "returns an existing fact if the fact has already been defined" do
+      fact = collection.define_fact(:newfact)
+      expect(collection.define_fact(:newfact)).to equal fact
+    end
+
+    it "passes options to newly generated facts" do
+      Facter.stubs(:warnonce)
+      fact = collection.define_fact(:newfact, :ldapname => 'NewFact')
+      expect(fact.ldapname).to eq 'NewFact'
+    end
+
+    it "logs a warning if the fact could not be defined" do
+      Facter.expects(:warn).with("Unable to add fact newfact: kaboom!")
+
+      collection.define_fact(:newfact) do
+        raise "kaboom!"
       end
     end
   end

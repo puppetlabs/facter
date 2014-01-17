@@ -17,10 +17,6 @@ describe Facter::Util::Fact do
     Facter::Util::Fact.new("YayNess", :ldapname => "fooness")
   end
 
-  it "should fail if an unknown option is provided" do
-    lambda { Facter::Util::Fact.new('yay', :foo => :bar) }.should raise_error(ArgumentError)
-  end
-
   it "should have a method for adding resolution mechanisms" do
     Facter::Util::Fact.new("yay").should respond_to(:add)
   end
@@ -49,6 +45,43 @@ describe Facter::Util::Fact do
       @fact.add { has_weight 2; setcode { "2" } }
       @fact.add { has_weight 0; setcode { "0" } }
       @fact.value.should == "2"
+    end
+  end
+
+  describe "looking up resolutions by name" do
+    subject(:fact) { described_class.new('yay') }
+
+    it "returns nil if no such resolution exists" do
+      expect(fact.resolution('nope')).to be_nil
+    end
+
+    it "never returns anonymous resolutions" do
+      fact.add() { setcode { 'anonymous' } }
+
+      expect(fact.resolution(nil)).to be_nil
+    end
+  end
+
+  describe "adding resolution mechanisms by name" do
+    subject(:fact) { described_class.new('yay') }
+
+    it "creates a new resolution if no such resolution exists" do
+      res = stub 'resolution', :name => 'named'
+      Facter::Util::Resolution.expects(:new).once.with('named').returns(res)
+
+      fact.define_resolution('named')
+
+      expect(fact.resolution('named')).to eq res
+    end
+
+    it "returns existing resolutions by name" do
+      res = stub 'resolution', :name => 'named'
+      Facter::Util::Resolution.expects(:new).once.with('named').returns(res)
+
+      fact.define_resolution('named')
+      fact.define_resolution('named')
+
+      expect(fact.resolution('named')).to eq res
     end
   end
 
