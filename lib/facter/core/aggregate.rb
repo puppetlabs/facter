@@ -162,10 +162,27 @@ class Facter::Core::Aggregate
     results
   end
 
-  # Process the results of all chunks with the aggregate block and return the results.
+  # Process the results of all chunks with the aggregate block and return the
+  # results. If no aggregate block has been specified, fall back to deep
+  # merging the given data structure
+  #
+  # @param results [Hash<Symbol, Object>] A hash of chunk names and the output
+  #   of that chunk.
   # @return [Object]
   def aggregate_results(results)
-    @aggregate.call(results)
+    if @aggregate
+      @aggregate.call(results)
+    else
+      default_aggregate(results)
+    end
+  end
+
+  def default_aggregate(results)
+    Facter::Util::Values.deep_merge(results.keys)
+  rescue Facter::Util::Values::DeepMergeError => e
+    raise ArgumentError, "No aggregate block specified and could not deep merge" +
+      " all chunks, either specify an aggregate block or ensure that all chunks" +
+      " return deep mergable structures. (Original error: #{e.message})", e.backtrace
   end
 
   # Order chunks based on their dependencies
