@@ -4,6 +4,8 @@ module Facter
     module Values
       module_function
 
+      class DeepFreezeError < StandardError; end
+
       # Duplicate and deeply freeze a given data structure
       #
       # @param value [Object] The structure to freeze
@@ -25,9 +27,11 @@ module Facter
             hash
           end.freeze
         else
-          raise ArgumentError, "Cannot deep freeze #{value}:#{value.class}"
+          raise DeepFreezeError, "Cannot deep freeze #{value}:#{value.class}"
         end
       end
+
+      class DeepMergeError < StandardError; end
 
       # Perform a deep merge of two nested data structures.
       #
@@ -60,7 +64,7 @@ module Facter
             msg << " at root"
             msg << path.map { |part| "[#{part.inspect}]" }.join
           end
-          raise ArgumentError, msg
+          raise DeepMergeError, msg
         end
 
         ret
