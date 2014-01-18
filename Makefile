@@ -9,14 +9,20 @@ ifeq ($(UNAME_S),Darwin)
   CCFLAGS += -Wno-tautological-constant-out-of-range-compare
 endif
 
-cfacter: cfacter.cc cfacterlib.cc cfacterlib.h
-	g++ ${CCFLAGS} -o cfacter cfacter.cc cfacterlib.cc -I C
+cfacter: cfacter.cc cfacterlib.cc cfacterimpl.cc cfacterlib.h cfacterimpl.h
+	g++ ${CCFLAGS} -o cfacter cfacter.cc cfacterlib.cc cfacterimpl.cc -I C
 
-cfacterlib.o: cfacterlib.cc cfacterlib.h
+cfacterlib.o: cfacterlib.cc cfacterlib.h cfacterimpl.h
 	g++ ${CCFLAGS} -fPIC -c -o $@ cfacterlib.cc -I .
+
+cfacterimpl.o: cfacterimpl.cc cfacterimpl.h
+	g++ ${CCFLAGS} -fPIC -c -o $@ cfacterimpl.cc -I .
 
 cfacterlib.so: cfacterlib.o
 	g++ ${CCFLAGS} -o $@ $^ -fPIC -shared
+
+clean:
+	-rm cfacterlib.o cfacterimpl.o cfacterlib.so cfacter 2> /dev/null
 
 missing:
 	-$(shell facter    | grep "=>" | cut -f1 -d' ' | sort > /tmp/facter.txt)
