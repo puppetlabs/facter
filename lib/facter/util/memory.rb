@@ -21,7 +21,7 @@ module Facter::Memory
     suffixes = ['', 'kB', 'MB', 'GB', 'TB']
 
     s = suffixes.shift
-    while s != multiplier
+    until s.downcase == multiplier.downcase
       s = suffixes.shift
     end
 
