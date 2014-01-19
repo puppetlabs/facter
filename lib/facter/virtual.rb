@@ -5,9 +5,11 @@
 # Resolution:
 #   Assumes physical unless proven otherwise.
 #
-#   On Darwin, use the macosx util module to acquire the SPDisplaysDataType,
-#   from that parse it to see if it's VMWare or Parallels pretending to be the
-#   display.
+#   On Darwin, use the macosx util module to acquire the SPHardwareDataType and
+#   SPEthernetDataType, from which it is possible to determine if the host is a
+#   VMware, Parallels, or VirtualBox.  This previously used SPDisplaysDataType
+#   which was not reliable if running headless, and also caused lagging issues
+#   on actual Macs.
 #
 #   On Linux, BSD, Solaris and HPUX:
 #   Much of the logic here is obscured behind util/virtual.rb, which rather
@@ -16,9 +18,9 @@
 #   contents of files in there.
 #   If after all the other tests, it's still seen as physical, then it tries to
 #   parse the output of the "lspci", "dmidecode" and "prtdiag" and parses them
-#   for obvious signs of being under VMWare, Parallels or VirtualBox.
+#   for obvious signs of being under VMware, Parallels or VirtualBox.
 #   Finally it checks for the existence of vmware-vmx, which would hint it's
-#   VMWare.
+#   VMware.
 #
 # Caveats:
 #   Many checks rely purely on existence of files.
@@ -32,13 +34,18 @@ Facter.add("virtual") do
   setcode do
     require 'facter/util/macosx'
     result = "physical"
-    output = Facter::Util::Macosx.profiler_data("SPDisplaysDataType")
+    # use SPHardwareDataType for VMware and VirtualBox, since it is the most
+    # reliable source.
+    output = Facter::Util::Macosx.profiler_data("SPHardwareDataType")
     if output.is_a?(Hash)
-      result = "parallels" if output["spdisplays_vendor-id"] =~ /0x1ab8/
-      result = "parallels" if output["spdisplays_vendor"] =~ /[Pp]arallels/
-      result = "vmware" if output["spdisplays_vendor-id"] =~ /0x15ad/
-      result = "vmware" if output["spdisplays_vendor"] =~ /VM[wW]are/
-      result = "virtualbox" if output["spdisplays_vendor-id"] =~ /0x80ee/
+      result = "vmware" if output["machine_model"] =~ /VMware/
+      result = "virtualbox" if output["boot_rom_version"] =~ /VirtualBox/
+    end
+    # Parallels passes through almost all of the host's hardware info to the
+    # virtual machine, so use a different field.
+    output = Facter::Util::Macosx.profiler_data("SPEthernetDataType")
+    if output.is_a?(Hash)
+      result = "parallels" if output["spethernet_subsystem-vendor-id"] =~ /0x1ab8/
     end
     result
   end

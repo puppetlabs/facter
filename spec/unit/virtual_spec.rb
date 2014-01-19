@@ -52,23 +52,18 @@ describe "Virtual fact" do
       Facter.fact(:kernel).stubs(:value).returns("Darwin")
     end
 
-    it "should be parallels with Parallels vendor id" do
-      Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor-id" => "0x1ab8" })
+    it "should be parallels with Parallels ethernet vendor id" do
+      Facter::Util::Macosx.stubs(:profiler_data).returns({ "spethernet_subsystem-vendor-id" => "0x1ab8" })
       Facter.fact(:virtual).value.should == "parallels"
     end
 
-    it "should be parallels with Parallels vendor name" do
-      Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor" => "Parallels" })
-      Facter.fact(:virtual).value.should == "parallels"
+    it "should be virtualbox with VirtualBox boot rom name" do
+      Facter::Util::Macosx.stubs(:profiler_data).returns({ "boot_rom_version" => "VirtualBox" })
+      Facter.fact(:virtual).value.should == "virtualbox"
     end
 
-    it "should be vmware with VMWare vendor id" do
-      Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor-id" => "0x15ad" })
-      Facter.fact(:virtual).value.should == "vmware"
-    end
-
-    it "should be vmware with VMWare vendor name" do
-      Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor" => "VMWare" })
+    it "should be vmware with VMware machine model" do
+      Facter::Util::Macosx.stubs(:profiler_data).returns({ "machine_model" => "VMware7,1" })
       Facter.fact(:virtual).value.should == "vmware"
     end
   end
