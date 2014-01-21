@@ -353,7 +353,6 @@ void get_virtual_facts(fact_map& facts)
   
   facts["is_virtual"] = "false";
   facts["virtual"] = "physical";
-
 }
 
 // placeholders for some hardwired facts, cuz not sure what to do with them
@@ -722,7 +721,7 @@ void get_architecture_facts(fact_map& facts)
 
 void get_dmidecode_facts(fact_map& facts)
 {
-  string dmidecode_output = popen_stdout("/usr/sbin/dmidecode");
+  string dmidecode_output = popen_stdout("/usr/sbin/dmidecode 2> /dev/null");
   std::stringstream ss(dmidecode_output);
   string line;
 
