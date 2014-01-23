@@ -116,6 +116,14 @@ describe Facter do
     Facter.should respond_to(:search_path)
   end
 
+  it "should have a method for registering directories to search for external facts" do
+    Facter.should respond_to(:search_external)
+  end
+
+  it "should have a method for returning the registered search directories for external facts" do
+    Facter.should respond_to(:search_external_path)
+  end
+
   it "should have a method to query debugging mode" do
     Facter.should respond_to(:debugging?)
   end
@@ -251,6 +259,21 @@ describe Facter do
     it "should return all registered directories when asked" do
       Facter.search "/my/dir", "/other/dir"
       Facter.search_path.should == %w{/my/dir /other/dir}
+    end
+  end
+
+  describe "when registering directories to search for external facts" do
+    it "should allow registration of a directory" do
+      Facter.search_external ["/my/dir"]
+    end
+
+    it "should allow registration of multiple directories" do
+      Facter.search_external ["/my/dir", "/other/dir"]
+    end
+
+    it "should return all registered directories when asked" do
+      Facter.search_external ["/my/dir", "/other/dir"]
+      Facter.search_external_path.should include("/my/dir", "/other/dir")
     end
   end
 end
