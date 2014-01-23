@@ -19,9 +19,9 @@ gem_platform_dependencies:
       CFPropertyList: '~> 2.2.6'
   x86-mingw32:
     gem_runtime_dependencies:
-      ffi: '~> 1.9.0'
-      sys-admin: '~> 1.5.6'
-      win32-api: '~> 1.4.8'
+      ffi: '1.9.0'
+      sys-admin: '1.5.6'
+      win32-api: '1.4.8'
       win32-dir: '~> 0.4.3'
       windows-api: '~> 0.4.2'
       windows-pr: '~> 1.2.2'
