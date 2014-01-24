@@ -29,23 +29,33 @@ module Facter::Util::Config
     end
   end
 
+  def self.external_facts_dirs=(dir)
+    @external_facts_dirs = dir
+  end
+
   def self.external_facts_dirs
+    @external_facts_dirs
+  end
+
+  def self.setup_default_ext_facts_dirs
     if Facter::Util::Root.root?
       windows_dir = windows_data_dir
       if windows_dir.nil? then
-        ["/etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"]
+        @external_facts_dirs = ["/etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"]
       else
-        [File.join(windows_dir, 'PuppetLabs', 'facter', 'facts.d')]
+        @external_facts_dirs = [File.join(windows_dir, 'PuppetLabs', 'facter', 'facts.d')]
       end
     else
-      [File.expand_path(File.join("~", ".facter", "facts.d"))]
+      @external_facts_dirs = [File.expand_path(File.join("~", ".facter", "facts.d"))]
     end
   end
-end
 
-if Facter::Util::Config.is_windows?
-  require 'win32/dir'
-  require 'facter/util/windows_root'
-else
-  require 'facter/util/unix_root'
+  if Facter::Util::Config.is_windows?
+    require 'win32/dir'
+    require 'facter/util/windows_root'
+  else
+    require 'facter/util/unix_root'
+  end
+
+  setup_default_ext_facts_dirs
 end
