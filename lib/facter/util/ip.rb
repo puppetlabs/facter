@@ -111,7 +111,7 @@ class Facter::Util::IP
   #
   # @api private
   def self.get_ifconfig
-    common_paths=["/bin/ifconfig","/sbin/ifconfig","/usr/sbin/ifconfig"]
+    common_paths=["/bin/ifconfig","/sbin/ifconfig","/usr/sbin/ifconfig","/etc/ifconfig"]
     common_paths.select{|path| File.executable?(path)}.first
   end
 
