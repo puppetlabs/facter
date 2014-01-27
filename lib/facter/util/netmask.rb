@@ -11,7 +11,7 @@ module Facter::NetMask
         :regex => %r{#{Facter.ipaddress}.*?(?:Mask:|netmask)\s*(#{ipregex})}x,
         :munge => nil,
       }
-    when 'SunOS'
+    when 'SunOS','AIX'
       ops = {
         :ifconfig_opts => ['-a'],
         :regex => %r{\s+ inet \s #{Facter.ipaddress} \s netmask \s (\w{8})}x,
