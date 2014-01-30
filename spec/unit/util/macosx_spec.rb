@@ -45,7 +45,7 @@ describe Facter::Util::Macosx do
     STDERR.stubs(:<<)
     expect {
       Facter::Util::Macosx.intern_xml('<bad}|%-->xml<--->')
-    }.to raise_error(RuntimeError, /A plist file could not be properly read by Facter::Util::CFPropertyList/)
+    }.to raise_error(RuntimeError, /A plist file could not be properly read by CFPropertyList/)
   end
 
   describe "when collecting profiler data" do
