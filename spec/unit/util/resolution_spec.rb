@@ -134,4 +134,20 @@ describe Facter::Util::Resolution do
       end.to raise_error(ArgumentError, /Invalid resolution options.*foo/)
     end
   end
+
+  describe "evaluating" do
+    it "evaluates the block in the context of the given resolution" do
+      subject.expects(:has_weight).with(5)
+      subject.evaluate { has_weight(5) }
+    end
+
+    it "raises a warning if the resolution is evaluated twice" do
+      Facter.expects(:warn).with do |msg|
+        expect(msg).to match /Already evaluated foo at.*reevaluating anyways/
+      end
+
+      subject.evaluate { }
+      subject.evaluate { }
+    end
+  end
 end

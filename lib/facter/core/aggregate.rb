@@ -69,6 +69,10 @@ class Facter::Core::Aggregate
     end
   end
 
+  def evaluate(&block)
+    instance_eval(&block)
+  end
+
   # Define a new chunk for the given aggregate
   #
   # @api public

@@ -47,7 +47,7 @@ class Facter::Util::Fact
     begin
       resolve = Facter::Util::Resolution.new(@name, self)
 
-      resolve.instance_eval(&block) if block
+      resolve.evaluate(&block) if block
       @resolves << resolve
 
       resolve
@@ -69,10 +69,10 @@ class Facter::Util::Fact
 
     if resolve.nil?
       resolve = Facter::Util::Resolution.new(resolve_name, self)
-      resolve.instance_eval(&block) if block
+      resolve.evaluate(&block) if block
       @resolves << resolve
     else
-      resolve.instance_eval(&block) if block
+      resolve.evaluate(&block) if block
     end
 
   rescue => e

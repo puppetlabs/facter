@@ -23,12 +23,6 @@ describe Facter::Util::Fact do
   end
 
   describe "when adding resolution mechanisms" do
-    it "can create a new resolution instance with a block" do
-      Facter::Util::Resolution.expects(:new).at_least_once.returns resolution
-
-      fact.add { }
-    end
-
     it "instance_evals the passed block on the new resolution" do
       fact.add {
         setcode { "foo" }
@@ -52,7 +46,6 @@ describe Facter::Util::Fact do
   end
 
   describe "adding resolution mechanisms by name" do
-    subject(:fact) { described_class.new('yay') }
 
     it "creates a new resolution if no such resolution exists" do
       res = stub 'resolution', :name => 'named'
@@ -72,10 +65,6 @@ describe Facter::Util::Fact do
 
       expect(fact.resolution('named')).to eq res
     end
-  end
-
-  it "can able to return a value" do
-    Facter::Util::Fact.new("yay").should respond_to(:value)
   end
 
   describe "when returning a value" do

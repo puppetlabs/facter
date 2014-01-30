@@ -140,4 +140,11 @@ describe Facter::Core::Aggregate do
       subject.value
     end
   end
+
+  describe "evaluating" do
+    it "evaluates the block in the context of the aggregate" do
+      subject.expects(:has_weight).with(5)
+      subject.evaluate { has_weight(5) }
+    end
+  end
 end
