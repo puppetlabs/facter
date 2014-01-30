@@ -399,4 +399,24 @@ module Facter
   def self.search_path
     @search_path.dup
   end
+
+  # Registers directories to be searched for external facts.
+  #
+  # @param dirs [Array<String>] directories to search
+  #
+  # @return [void]
+  #
+  # @api public
+  def self.search_external(dirs)
+    Facter::Util::Config.external_facts_dirs += dirs
+  end
+
+  # Returns the registered search directories.
+  #
+  # @return [Array<String>] An array of the directories searched
+  #
+  # @api public
+  def self.search_external_path
+    Facter::Util::Config.external_facts_dirs.dup
+  end
 end

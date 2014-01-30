@@ -17,14 +17,18 @@ group :development, :test do
   gem 'puppetlabs_spec_helper'
 end
 
-platform :mswin, :mingw do
-  gem "ffi", "1.9.0", :require => false
-  gem "sys-admin", "1.5.6", :require => false
-  gem "win32-api", "1.4.8", :require => false
-  gem "win32-dir", "0.4.3", :require => false
-  gem "windows-api", "0.4.2", :require => false
-  gem "windows-pr", "1.2.2", :require => false
-  gem "win32console", "1.3.2", :require => false
+require 'yaml'
+data = YAML.load_file(File.join(File.dirname(__FILE__), 'ext', 'project_data.yaml'))
+bundle_platforms = data['bundle_platforms']
+data['gem_platform_dependencies'].each_pair do |gem_platform, info|
+  if bundle_deps = info['gem_runtime_dependencies']
+    bundle_platform = bundle_platforms[gem_platform] or raise "Missing bundle_platform"
+    platform(bundle_platform.intern) do
+      bundle_deps.each_pair do |name, version|
+        gem(name, version, :require => false)
+      end
+    end
+  end
 end
 
 gem 'facter', ">= 1.0.0", :path => File.expand_path("..", __FILE__)
