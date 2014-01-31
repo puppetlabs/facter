@@ -144,6 +144,10 @@ class Facter::Core::Aggregate
     end
   end
 
+  def resolution_type
+    :aggregate
+  end
+
   private
 
   # Evaluate the results of this aggregate.

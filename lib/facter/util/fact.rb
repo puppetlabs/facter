@@ -1,5 +1,6 @@
 require 'facter'
 require 'facter/util/resolution'
+require 'facter/core/aggregate'
 
 # This class represents a fact. Each fact has a name and multiple
 # {Facter::Util::Resolution resolutions}.
@@ -52,27 +53,23 @@ class Facter::Util::Fact
   # Define a new named resolution or return an existing resolution with
   # the given name.
   #
-  # @param resolve_name [String] The name of the resolve to define or look up
+  # @param resolution_name [String] The name of the resolve to define or look up
   # @param options [Hash] A hash of options to set on the resolution
   # @return [Facter::Util::Resolution]
   #
   # @api public
-  def define_resolution(resolve_name, options = {}, &block)
-    resolve = self.resolution(resolve_name)
+  def define_resolution(resolution_name, options = {}, &block)
 
-    if resolve.nil?
-      resolve = Facter::Util::Resolution.new(resolve_name, self)
-      resolve.set_options(options) unless options.empty?
+    resolution_type = options.delete(:type) || :simple
 
-      resolve.evaluate(&block) if block
-      @resolves << resolve
-    else
-      resolve.set_options(options) unless options.empty?
-      resolve.evaluate(&block) if block
-    end
+    resolve = create_or_return_resolution(resolution_name, resolution_type)
 
+    resolve.set_options(options) unless options.empty?
+    resolve.evaluate(&block) if block
+
+    resolve
   rescue => e
-    Facter.warn "Unable to add resolve #{resolve_name.inspect} for fact #{@name}: #{e}"
+    Facter.warn "Unable to add resolve #{resolution_name.inspect} for fact #{@name}: #{e}"
   end
 
   # Retrieve an existing resolution by name
@@ -183,5 +180,29 @@ class Facter::Util::Fact
 
   def normalize_value(value)
     value == "" ? nil : value
+  end
+
+  def create_or_return_resolution(resolution_name, resolution_type)
+    resolve = self.resolution(resolution_name)
+
+    if resolve
+      if resolution_type != resolve.resolution_type
+        raise ArgumentError, "Cannot return resolution #{resolution_name} with type" +
+          " #{resolution_type}; already defined as #{resolve.resolution_type}"
+      end
+    else
+      case resolution_type
+      when :simple
+        resolve = Facter::Util::Resolution.new(resolution_name, self)
+      when :aggregate
+        resolve = Facter::Core::Aggregate.new(resolution_name, self)
+      else
+        raise ArgumentError, "Expected resolution type to be one of (:simple, :aggregate) but was #{resolution_type}"
+      end
+
+      @resolves << resolve
+    end
+
+    resolve
   end
 end
