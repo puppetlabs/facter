@@ -5,11 +5,7 @@ describe Facter::Core::Aggregate do
 
   let(:fact) { stub('stub_fact', :name => 'stub_fact') }
 
-  subject do
-    obj = described_class.new('aggregated', fact)
-    obj.aggregate { |chunks| chunks.values }
-    obj
-  end
+  subject { obj = described_class.new('aggregated', fact) }
 
   it "can be resolved" do
     expect(subject).to be_a_kind_of Facter::Core::Resolvable
@@ -78,9 +74,9 @@ describe Facter::Core::Aggregate do
     end
 
     it "passes all requested chunk results to the depending chunk" do
-      subject.chunk(:first) { 'foo' }
+      subject.chunk(:first) { ['foo'] }
       subject.chunk(:second, :require => [:first]) do |first|
-        "#{first} bar"
+        [first[0] + ' bar']
       end
 
       output = subject.value
