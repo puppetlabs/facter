@@ -40,38 +40,34 @@ class Facter::Util::Fact
   # block, which will then be evaluated in the context of the new
   # resolution.
   #
-  # @return [void]
+  # @param options [Hash] A hash of options to set on the resolution
+  #
+  # @return [Facter::Util::Resolution]
   #
   # @api private
-  def add(value = nil, &block)
-    begin
-      resolve = Facter::Util::Resolution.new(@name, self)
-
-      resolve.evaluate(&block) if block
-      @resolves << resolve
-
-      resolve
-    rescue => e
-      Facter.warn "Unable to add resolve for #{@name}: #{e}"
-      nil
-    end
+  def add(options = {}, &block)
+    define_resolution(nil, options, &block)
   end
 
   # Define a new named resolution or return an existing resolution with
   # the given name.
   #
   # @param resolve_name [String] The name of the resolve to define or look up
-  # @return [void]
+  # @param options [Hash] A hash of options to set on the resolution
+  # @return [Facter::Util::Resolution]
   #
   # @api public
-  def define_resolution(resolve_name, &block)
+  def define_resolution(resolve_name, options = {}, &block)
     resolve = self.resolution(resolve_name)
 
     if resolve.nil?
       resolve = Facter::Util::Resolution.new(resolve_name, self)
+      resolve.set_options(options) unless options.empty?
+
       resolve.evaluate(&block) if block
       @resolves << resolve
     else
+      resolve.set_options(options) unless options.empty?
       resolve.evaluate(&block) if block
     end
 

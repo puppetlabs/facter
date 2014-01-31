@@ -47,8 +47,9 @@ describe Facter::Util::Fact do
 
   describe "adding resolution mechanisms by name" do
 
+    let(:res) { stub 'resolution', :name => 'named', :set_options => nil }
+
     it "creates a new resolution if no such resolution exists" do
-      res = stub 'resolution', :name => 'named'
       Facter::Util::Resolution.expects(:new).once.with('named', fact).returns(res)
 
       fact.define_resolution('named')
@@ -57,7 +58,6 @@ describe Facter::Util::Fact do
     end
 
     it "returns existing resolutions by name" do
-      res = stub 'resolution', :name => 'named'
       Facter::Util::Resolution.expects(:new).once.with('named', fact).returns(res)
 
       fact.define_resolution('named')
