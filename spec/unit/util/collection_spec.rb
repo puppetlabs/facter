@@ -56,14 +56,13 @@ describe Facter::Util::Collection do
       end
 
       it "should discard resolutions that throw an exception when added" do
-        Facter.expects(:warn).with("Unable to add resolve for yay: ")
-        lambda {
+        Facter.expects(:warn).with(regexp_matches(/Unable to add resolve .* kaboom!/))
+        expect {
           collection.add('yay') do
-            raise
-            setcode { 'yay' }
+            raise "kaboom!"
           end
-        }.should_not raise_error
-        collection.value('yay').should be_nil
+        }.to_not raise_error
+        expect(collection.value('yay')).to be_nil
       end
     end
   end
