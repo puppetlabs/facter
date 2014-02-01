@@ -1,5 +1,5 @@
 Please
-* ffi wrapper
+* complete ffi wrapper
 * Handle non-string values
 * Normalize value and to_json to both return json?
 * virtual
