@@ -1,3 +1,4 @@
+Please
 * ffi wrapper
 * Handle non-string values
 * Normalize value and to_json to both return json?
@@ -5,4 +6,10 @@
 * cmake or autoconf?
 * abstract out command execution method
 * Add regex support (e.g. for os and processor file parsing)
+* Allow 'facter <factname>' (currently returns all facts)
+
+Not sure
+* Split out into app, core lib, libs per functional group (network, storage, selinux, processors, etc)
+* Use dynamic loading of libs (dlopen, etc)
+* is 'weight' needed?
 * fact dependencies?
