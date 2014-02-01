@@ -9,6 +9,8 @@ ifeq ($(UNAME_S),Darwin)
   CCFLAGS += -Wno-tautological-constant-out-of-range-compare
 endif
 
+all: cfacter libcfacter.so
+
 cfacter: cfacter.cc cfacterlib.cc cfacterimpl.cc cfacterlib.h cfacterimpl.h
 	g++ ${CCFLAGS} -o cfacter cfacter.cc cfacterlib.cc cfacterimpl.cc -I C
 
@@ -18,7 +20,7 @@ cfacterlib.o: cfacterlib.cc cfacterlib.h cfacterimpl.h
 cfacterimpl.o: cfacterimpl.cc cfacterimpl.h
 	g++ ${CCFLAGS} -fPIC -c -o $@ cfacterimpl.cc -I .
 
-cfacterlib.so: cfacterlib.o
+libcfacter.so: cfacterlib.o cfacterimpl.o
 	g++ ${CCFLAGS} -o $@ $^ -fPIC -shared
 
 clean:
