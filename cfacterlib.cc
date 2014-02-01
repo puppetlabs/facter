@@ -21,7 +21,7 @@ void clear()
 
 void loadfacts()
 {
-  facts["facterversion"] = "3.0.0";
+  facts["cfacterversion"] = "0.0.1";
 
   list<string> external_directories;
   external_directories.push_back("/etc/facter/facts.d");
@@ -69,7 +69,9 @@ int  to_json(char *facts_json, size_t facts_len)
     rapidjson::Writer<rapidjson::StringBuffer> writer(buf);
     json.Accept(writer);
 
-    cout << buf.GetString() << endl;
+    // FIXME can rapidjson write straight into the provided char array in a safe manner?
+    // if not roll my own strncpy which doesn't zero-pad and returns success rather than the ptr
+    strncpy(facts_json, buf.GetString(), facts_len);
     return 0;
   }
 }
