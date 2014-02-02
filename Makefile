@@ -23,6 +23,9 @@ cfacterimpl.o: cfacterimpl.cc cfacterimpl.h
 libcfacter.so: cfacterlib.o cfacterimpl.o
 	g++ ${CCFLAGS} -o $@ $^ -fPIC -shared
 
+install: libcfacter.so
+	-cp libcfacter.so $(HOME)/lib
+
 clean:
 	-rm cfacterlib.o cfacterimpl.o cfacterlib.so cfacter 2> /dev/null
 
