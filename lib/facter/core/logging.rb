@@ -10,9 +10,9 @@ module Facter::Core::Logging
   RESET = "[0m"
 
   # @api private
-  @@debug = 0
+  @@debug = false
   # @api private
-  @@timing = 0
+  @@timing = false
   # @api private
   @@warn_messages = {}
   # @api private
@@ -85,67 +85,40 @@ module Facter::Core::Logging
     puts "#{GREEN}#{string}#{RESET}" if string and self.timing?
   end
 
-  # Sets debugging on or off.
+  # Enable or disable logging of debug messages
   #
+  # @param bool [true, false]
   # @return [void]
   #
   # @api private
-  def debugging(bit)
-    if bit
-      case bit
-      when TrueClass; @@debug = 1
-      when FalseClass; @@debug = 0
-      when Fixnum
-        if bit > 0
-          @@debug = 1
-        else
-          @@debug = 0
-        end
-      when String;
-        if bit.downcase == 'off'
-          @@debug = 0
-        else
-          @@debug = 1
-        end
-      else
-        @@debug = 0
-      end
-    else
-      @@debug = 0
-    end
+  def debugging(bool)
+    @@debug = bool
   end
 
-  # Returns whether debugging output is turned on
+  # Is debugging enabled?
+  #
+  # @return [true, false]
+  #
+  # @api private
   def debugging?
-    @@debug != 0
+    @@debug
   end
 
-  # Sets whether timing messages are displayed.
+  # Enable or disable logging of timing information
   #
+  # @param bool [true, false]
   # @return [void]
   #
   # @api private
-  def timing(bit)
-    if bit
-      case bit
-      when TrueClass; @@timing = 1
-      when Fixnum
-        if bit > 0
-          @@timing = 1
-        else
-          @@timing = 0
-        end
-      end
-    else
-      @@timing = 0
-    end
+  def timing(bool)
+    @@timing = bool
   end
 
   # Returns whether timing output is turned on
   #
   # @api private
   def timing?
-    @@timing != 0
+    @@timing
   end
 
   # Clears the seen state of warning messages. See {warnonce}.

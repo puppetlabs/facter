@@ -64,50 +64,37 @@ describe Facter::Core::Logging do
     end
   end
 
-  describe "when setting debugging mode" do
-    it "should have debugging enabled using 1" do
-      subject.debugging(1)
-      subject.should be_debugging
-    end
-    it "should have debugging enabled using true" do
+  describe "when setting the debugging mode" do
+    it "is enabled when the given value is true" do
       subject.debugging(true)
-      subject.should be_debugging
+      expect(subject.debugging?).to be_true
     end
-    it "should have debugging enabled using any string except off" do
-      subject.debugging('aaaaa')
-      subject.should be_debugging
-    end
-    it "should have debugging disabled using 0" do
-      subject.debugging(0)
-      subject.should_not be_debugging
-    end
-    it "should have debugging disabled using false" do
+
+    it "is disabled when the given value is false" do
       subject.debugging(false)
-      subject.should_not be_debugging
+      expect(subject.debugging?).to be_false
     end
-    it "should have debugging disabled using the string 'off'" do
-      subject.debugging('off')
-      subject.should_not be_debugging
+
+    it "is disabled when the given value is nil" do
+      subject.debugging(nil)
+      expect(subject.debugging?).to be_false
     end
   end
 
-  describe "when setting timing mode" do
-    it "should have timing enabled using 1" do
-      subject.timing(1)
-      subject.should be_timing
-    end
-    it "should have timing enabled using true" do
+  describe "when setting the timing mode" do
+    it "is enabled when the given value is true" do
       subject.timing(true)
-      subject.should be_timing
+      expect(subject.timing?).to be_true
     end
-    it "should have timing disabled using 0" do
-      subject.timing(0)
-      subject.should_not be_timing
-    end
-    it "should have timing disabled using false" do
+
+    it "is disabled when the given value is false" do
       subject.timing(false)
-      subject.should_not be_timing
+      expect(subject.timing?).to be_false
+    end
+
+    it "is disabled when the given value is nil" do
+      subject.timing(nil)
+      expect(subject.timing?).to be_false
     end
   end
-
 end
