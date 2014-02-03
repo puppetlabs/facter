@@ -33,14 +33,6 @@ describe Facter::Core::Logging do
       Kernel.expects(:warn).never
       subject.warn('foo')
     end
-
-    it "should warn for any given element for an array if debugging is enabled" do
-      subject.debugging(true)
-      Kernel.stubs(:warn)
-      Kernel.expects(:warn).with('foo')
-      Kernel.expects(:warn).with('bar')
-      subject.warn( ['foo','bar'])
-    end
   end
 
   describe "when warning once" do

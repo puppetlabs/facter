@@ -53,8 +53,7 @@ module Facter::Core::Logging
   # @return [void]
   def warn(msg)
     if self.debugging? and msg and not msg.empty?
-      msg = [msg] unless msg.respond_to? :each
-      msg.each { |line| Kernel.warn line }
+      Kernel.warn msg
     end
   end
 
