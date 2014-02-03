@@ -20,14 +20,16 @@ module Facter::Core::Logging
 
   # Prints a debug message if debugging is turned on
   #
-  # @param string [String] the debug message
+  # @param msg [String] the debug message
   # @return [void]
-  def debug(string)
-    if string.nil?
-      return
-    end
+  def debug(msg)
     if self.debugging?
-      puts GREEN + string + RESET
+      if msg.nil? or msg.empty?
+        invoker = caller[0].slice(/.*:\d+/)
+        self.warn "#{self.class}#debug invoked with invalid message #{msg.inspect}:#{msg.class} at #{invoker}"
+      else
+        puts GREEN + msg + RESET
+      end
     end
   end
 
@@ -52,7 +54,10 @@ module Facter::Core::Logging
   #
   # @return [void]
   def warn(msg)
-    if msg and not msg.empty?
+    if msg.nil? or msg.empty?
+      invoker = caller[0].slice(/.*:\d+/)
+      Kernel.warn "#{self.class}#debug invoked with invalid message #{msg.inspect}:#{msg.class} at #{invoker}"
+    else
       Kernel.warn msg
     end
   end

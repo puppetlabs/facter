@@ -5,33 +5,58 @@ describe Facter::Core::Logging do
 
   subject { described_class }
 
+  after(:all) do
+    subject.debugging(false)
+    subject.timing(false)
+  end
+
+  describe "emitting debug messages" do
+    it "doesn't log a message when debugging is disabled" do
+      subject.debugging(false)
+      subject.expects(:puts).never
+      subject.debug("foo")
+    end
+
+    describe "and debugging is enabled" do
+      before { subject.debugging(true) }
+      it "emits a warning when called with nil" do
+        subject.expects(:warn).with { |msg| expect(msg).to match /invalid message nil:NilClass/ }
+        subject.debug(nil)
+      end
+
+      it "emits a warning when called with an empty string" do
+        subject.expects(:warn).with { |msg| expect(msg).to match /invalid message "":String/ }
+        subject.debug("")
+      end
+
+      it "prints the message when logging is enabled" do
+        subject.expects(:puts).with { |msg| expect(msg).to match /foo/ }
+        subject.debug("foo")
+      end
+    end
+  end
+
   describe "when warning" do
-    it "should warn if debugging is enabled" do
+    it "emits a warning when given a string" do
       subject.debugging(true)
-      Kernel.stubs(:warn)
       Kernel.expects(:warn).with('foo')
       subject.warn('foo')
     end
 
-    it "should not warn if debugging is enabled but nil is passed" do
-      subject.debugging(true)
-      Kernel.stubs(:warn)
-      Kernel.expects(:warn).never
+    it "emits a warning regardless of log level" do
+      subject.debugging(false)
+      Kernel.expects(:warn).with "foo"
+      subject.warn "foo"
+    end
+
+    it "emits a warning if nil is passed" do
+      Kernel.expects(:warn).with { |msg| expect(msg).to match /invalid message nil:NilClass/ }
       subject.warn(nil)
     end
 
-    it "should not warn if debugging is enabled but an empyt string is passed" do
-      subject.debugging(true)
-      Kernel.stubs(:warn)
-      Kernel.expects(:warn).never
+    it "emits a warning if an empty string is passed" do
+      Kernel.expects(:warn).with { |msg| expect(msg).to match /invalid message "":String/ }
       subject.warn('')
-    end
-
-    it "should not warn if debugging is disabled" do
-      subject.debugging(false)
-      Kernel.stubs(:warn)
-      Kernel.expects(:warn).never
-      subject.warn('foo')
     end
   end
 
