@@ -36,23 +36,10 @@ describe Facter::Core::Logging do
   end
 
   describe "when warning once" do
-    it "should only warn once" do
-      Kernel.stubs(:warnonce)
-      Kernel.expects(:warn).with('foo').once
+    it "only logs a given warning string once" do
+      subject.expects(:warn).with('foo').once
       subject.warnonce('foo')
       subject.warnonce('foo')
-    end
-
-    it "should not warnonce if nil is passed" do
-      Kernel.stubs(:warn)
-      Kernel.expects(:warnonce).never
-      subject.warnonce(nil)
-    end
-
-    it "should not warnonce if an empty string is passed" do
-      Kernel.stubs(:warn)
-      Kernel.expects(:warnonce).never
-      subject.warnonce('')
     end
   end
 

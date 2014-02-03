@@ -68,9 +68,9 @@ module Facter::Core::Logging
   #
   # @return [void]
   def warnonce(msg)
-    if msg and not msg.empty? and @@warn_messages[msg].nil?
+    if @@warn_messages[msg].nil?
+      self.warn(msg)
       @@warn_messages[msg] = true
-      Kernel.warn(msg)
     end
   end
 
