@@ -49,6 +49,16 @@ describe Facter do
       Facter.each
     end
 
+    it "delegates the :add method to the collection" do
+      Facter.collection.expects(:add).with("factname", {})
+      Facter.add("factname")
+    end
+
+    it "delegates the :define_fact method to the collection" do
+      Facter.collection.expects(:define_fact).with("factname", {})
+      Facter.define_fact("factname")
+    end
+
     it "loads all facts when calling :each" do
       Facter.collection.expects(:load_all)
       Facter.collection.stubs(:each)
