@@ -52,7 +52,7 @@ module Facter::Core::Logging
   #
   # @return [void]
   def warn(msg)
-    if self.debugging? and msg and not msg.empty?
+    if msg and not msg.empty?
       Kernel.warn msg
     end
   end
