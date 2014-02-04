@@ -77,22 +77,6 @@ describe Facter do
     end
   end
 
-  describe "when asked for a fact as an undefined Facter class method" do
-    describe "and the collection is already initialized" do
-      it "should return the fact's value" do
-        Facter.collection
-        Facter.ipaddress.should == Facter['ipaddress'].value
-      end
-    end
-
-    describe "and the collection has been just reset" do
-      it "should return the fact's value" do
-        Facter.reset
-        Facter.ipaddress.should == Facter['ipaddress'].value
-      end
-    end
-  end
-
   describe "when passed code as a block" do
     it "should execute the provided block" do
       Facter.add("block_testing") { setcode { "foo" } }
