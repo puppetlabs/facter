@@ -55,14 +55,6 @@ describe Facter::Core::Resolvable do
       subject.value
     end
 
-    it "times out after the provided timeout" do
-      def subject.resolve_value
-        sleep 2
-      end
-      subject.timeout = 0.1
-      subject.value
-    end
-
     it "returns nil if the timeout was reached" do
       Timeout.expects(:timeout).raises Timeout::Error
 
