@@ -166,39 +166,6 @@ module Facter
     end
   end
 
-  class << self
-    # Allow users to call fact names directly on the Facter class,
-    # either retrieving the value or comparing it to an existing value.
-    #
-    # @api private
-    def method_missing(name, *args)
-      question = false
-      if name.to_s =~ /\?$/
-        question = true
-        name = name.to_s.sub(/\?$/,'')
-      end
-
-      if fact = collection.fact(name)
-        if question
-          value = fact.value.downcase
-          args.each do |arg|
-            if arg.to_s.downcase == value
-              return true
-            end
-          end
-
-          # If we got this far, there was no match.
-          return false
-        else
-          return fact.value
-        end
-      else
-        # Else, fail like a normal missing method.
-        raise NoMethodError, "Could not find fact '%s'" % name
-      end
-    end
-  end
-
   # Clears all cached values and removes all facts from memory.
   #
   # @return [void]
