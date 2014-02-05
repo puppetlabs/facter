@@ -34,11 +34,6 @@ describe Facter::Core::Resolvable do
       expect(subject.value).to eq('stuff')
     end
 
-    it "returns nil if an exception was raised" do
-      subject.expects(:resolve_value).raises RuntimeError, "kaboom!"
-      expect(subject.value).to eq nil
-    end
-
     it "logs a warning if an exception was raised" do
       subject.expects(:resolve_value).raises RuntimeError, "kaboom!"
       Facter.expects(:warn).with('Could not retrieve resolvable: kaboom!')
