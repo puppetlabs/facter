@@ -54,57 +54,51 @@ class Facter::Util::Loader
     @loaded_all = true
   end
 
-  # List of directories to search for fact files.
+  # List directories to search for fact files.
   #
   # Search paths are gathered from the following sources:
   #
   # 1. $LOAD_PATH entries are expanded to absolute paths
   # 2. ENV['FACTERLIB'] is split and used verbatim
-  # 3. Entries from Facter::search_path are used verbatim
+  # 3. Entries from Facter.search_path are used verbatim
   #
-  # A warning will be generated for any path(s) from Facter::search_path that
-  # are not an absolute path to an existing directory.
+  # A warning will be generated for paths in Facter.search_path that are not
+  # absolute directories.
   #
   # @api public
   # @return [Array<String>]
   def search_path
-    result = []
-
-    result += $LOAD_PATH.map { |path| File.expand_path('facter', path) }
+    search_paths = []
+    search_paths += $LOAD_PATH.map { |path| File.expand_path('facter', path) }
 
     if @environment_vars.include?("FACTERLIB")
-      result += @environment_vars["FACTERLIB"].split(File::PATH_SEPARATOR)
+      search_paths += @environment_vars["FACTERLIB"].split(File::PATH_SEPARATOR)
     end
 
-    # silently ignore bad search paths from $LOAD_PATH and FACTERLIB
-    result = result.select { |path| valid_search_path?(path) }
+    search_paths.delete_if { |path| ! valid_search_path?(path) }
 
-    # This allows others to register additional paths we should search.
-    # We are assuming that these are already absolute paths.
-    result += Facter.search_path.select do |path|
-      valid = valid_search_path?(path)
-      Facter.warn "Excluding #{path} from search path. Fact file paths must be an absolute directory" unless valid
-      valid
+    Facter.search_path.each do |path|
+      if valid_search_path?(path)
+        search_paths << path
+      else
+        Facter.warn "Excluding #{path} from search path. Fact file paths must be an absolute directory"
+      end
     end
 
-    # remove any dups
-    result.uniq
+    search_paths.delete_if { |path| ! File.directory?(path) }
+
+    search_paths.uniq
   end
 
-  # Validate that a path string is a valid to use for loading loading fact .rb
-  # files from.  The path must both be absolute and a directory.
+  private
+
+  # Validate that the given path is valid, ie it is an absolute path.
   #
   # @api private
   # @param path [String]
   # @return [Boolean]
   def valid_search_path?(path)
-    if File.directory?(path) and Pathname.new(path).absolute?
-      return true
-    elsif path.match %r[^file:/]
-      return true
-    end
-
-    return false
+    Pathname.new(path).absolute? or path.match(%r[^file:/])
   end
 
   # Load a file and record is paths to prevent duplicate loads.
