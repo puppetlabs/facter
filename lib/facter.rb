@@ -197,8 +197,8 @@ module Facter
 
   @search_path = []
 
-  # Registers directories to be searched for facts. Relative paths will
-  # be interpreted in the current working directory.
+  # Register directories to be searched for facts. The registered directories
+  # must be absolute paths or they will be ignored.
   #
   # @param dirs [String] directories to search
   #
