@@ -67,11 +67,11 @@ describe "Darwin", :unless => Facter::Util::Config.is_windows? do
 
             it "should warn about the lack of default" do
               Facter.expects(:warn).with("Could not find a default route. Using first non-loopback interface")
-              Facter::Util::Macaddress::Darwin.stubs(:default_interface).returns('')
               Facter::Util::Macaddress::Darwin.macaddress
             end
 
             it "should return the macaddress of the first non-loopback interface" do
+              Facter.expects(:warn).with("Could not find a default route. Using first non-loopback interface")
               Facter::Util::Macaddress::Darwin.macaddress.should == fallback_macaddress
             end
           end
