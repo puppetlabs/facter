@@ -29,9 +29,7 @@ describe Facter::Util::Loader do
   end
 
   describe "#valid_seach_path?" do
-    before :each do
-      @loader = Facter::Util::Loader.new
-    end
+    let(:loader) { Facter::Util::Loader.new }
 
     # Used to have test for " " as a directory since that should
     # be a relative directory, but on Windows in both 1.8.7 and
@@ -52,7 +50,7 @@ describe Facter::Util::Loader do
       ' \/',
     ].each do |dir|
       it "should be false for relative path #{dir}" do
-        @loader.should_not be_valid_search_path dir
+        loader.should_not be_valid_search_path dir
       end
     end
     [
@@ -68,22 +66,20 @@ describe Facter::Util::Loader do
       '/ /..',
     ].each do |dir|
       it "should be true for absolute path #{dir}" do
-        @loader.should be_valid_search_path dir
+        loader.should be_valid_search_path dir
       end
     end
   end
 
   describe "when determining the search path" do
-    before do
-      @loader = Facter::Util::Loader.new
-    end
+    let(:loader) { Facter::Util::Loader.new }
 
     it "should include the facter subdirectory of all paths in ruby LOAD_PATH" do
       dirs = $LOAD_PATH.collect { |d| File.expand_path('facter', d) }
-      @loader.stubs(:valid_search_path?).returns(true)
+      loader.stubs(:valid_search_path?).returns(true)
       File.stubs(:directory?).returns true
 
-      paths = @loader.search_path
+      paths = loader.search_path
 
       dirs.each do |dir|
         paths.should be_include(dir)
@@ -92,8 +88,8 @@ describe Facter::Util::Loader do
 
     it "should exclude invalid search paths" do
       dirs = $LOAD_PATH.collect { |d| File.join(d, "facter") }
-      @loader.stubs(:valid_search_path?).returns(false)
-      paths = @loader.search_path
+      loader.stubs(:valid_search_path?).returns(false)
+      paths = loader.search_path
       dirs.each do |dir|
         paths.should_not be_include(dir)
       end
@@ -101,43 +97,43 @@ describe Facter::Util::Loader do
 
     it "should include all search paths registered with Facter" do
       Facter.expects(:search_path).returns %w{/one /two}
-      @loader.stubs(:valid_search_path?).returns true
+      loader.stubs(:valid_search_path?).returns true
 
       File.stubs(:directory?).returns false
       File.stubs(:directory?).with('/one').returns true
       File.stubs(:directory?).with('/two').returns true
 
-      paths = @loader.search_path
+      paths = loader.search_path
       paths.should be_include("/one")
       paths.should be_include("/two")
     end
 
     it "should warn on invalid search paths registered with Facter" do
       Facter.expects(:search_path).returns %w{/one two/three}
-      @loader.stubs(:valid_search_path?).returns false
-      @loader.stubs(:valid_search_path?).with('/one').returns true
-      @loader.stubs(:valid_search_path?).with('two/three').returns false
+      loader.stubs(:valid_search_path?).returns false
+      loader.stubs(:valid_search_path?).with('/one').returns true
+      loader.stubs(:valid_search_path?).with('two/three').returns false
       Facter.expects(:warn).with('Excluding two/three from search path. Fact file paths must be an absolute directory').once
 
       File.stubs(:directory?).returns false
       File.stubs(:directory?).with('/one').returns true
 
-      paths = @loader.search_path
+      paths = loader.search_path
       paths.should be_include("/one")
       paths.should_not be_include("two/three")
     end
 
     it "should strip paths that are valid paths but not are not present" do
       Facter.expects(:search_path).returns %w{/one /two}
-      @loader.stubs(:valid_search_path?).returns false
-      @loader.stubs(:valid_search_path?).with('/one').returns true
-      @loader.stubs(:valid_search_path?).with('/two').returns true
+      loader.stubs(:valid_search_path?).returns false
+      loader.stubs(:valid_search_path?).with('/one').returns true
+      loader.stubs(:valid_search_path?).with('/two').returns true
 
       File.stubs(:directory?).returns false
       File.stubs(:directory?).with('/one').returns true
       File.stubs(:directory?).with('/two').returns false
 
-      paths = @loader.search_path
+      paths = loader.search_path
       paths.should be_include("/one")
       paths.should_not be_include('/two')
     end
