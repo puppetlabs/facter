@@ -51,6 +51,7 @@ describe Facter::Core::Resolvable do
     end
 
     it "returns nil if the timeout was reached" do
+      Facter.expects(:warn).with("Timed out seeking value for resolvable")
       Timeout.expects(:timeout).raises Timeout::Error
 
       expect(subject.value).to be_nil
@@ -61,6 +62,7 @@ describe Facter::Core::Resolvable do
       Thread.expects(:new).yields
       Process.expects(:waitall)
 
+      Facter.expects(:warn).with("Timed out seeking value for resolvable")
       Timeout.expects(:timeout).raises Timeout::Error
 
       subject.value
