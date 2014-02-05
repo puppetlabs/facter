@@ -75,7 +75,7 @@ class Facter::Util::Loader
       search_paths += @environment_vars["FACTERLIB"].split(File::PATH_SEPARATOR)
     end
 
-    search_paths.select! { |path| valid_search_path?(path) }
+    search_paths.delete_if { |path| ! valid_search_path?(path) }
 
     Facter.search_path.each do |path|
       if valid_search_path?(path)
@@ -85,7 +85,7 @@ class Facter::Util::Loader
       end
     end
 
-    search_paths.select! { |path| File.directory?(path) }
+    search_paths.delete_if { |path| ! File.directory?(path) }
 
     search_paths.uniq
   end
