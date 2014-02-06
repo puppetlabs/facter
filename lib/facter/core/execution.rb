@@ -166,14 +166,7 @@ module Facter
       # @note Since Facter 1.5.8 this strips trailing newlines from the
       #   returned value. If a fact will be used by versions of Facter older
       #   than 1.5.8 then you should call chomp the returned string.
-      #
-      # @overload exec(code)
-      # @overload exec(code, interpreter = nil)
-      #   @param [String] interpreter unused, only exists for backwards
-      #     compatibility
-      #   @deprecated
-      def exec(code, interpreter = nil)
-        Facter.warnonce "The interpreter parameter to 'exec' is deprecated and will be removed in a future version." if interpreter
+      def exec(code)
 
         ## Set LANG to force i18n to C for the duration of this exec; this ensures that any code that parses the
         ## output of the command can expect it to be in a consistent / predictable format / locale
