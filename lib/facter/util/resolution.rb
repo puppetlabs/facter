@@ -98,7 +98,6 @@ class Facter::Util::Resolution
   def setcode(string = nil, &block)
     if string
       @code = string
-      @interpreter = interp || INTERPRETER
     else
       unless block_given?
         raise ArgumentError, "You must pass either code or a block"

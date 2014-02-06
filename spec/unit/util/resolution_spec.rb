@@ -24,32 +24,10 @@ describe Facter::Util::Resolution do
     Facter::Util::Resolution.new("yay").code.should be_nil
   end
 
-  it "should default to nil for interpreter" do
-    Facter.expects(:warnonce).with("The 'Facter::Util::Resolution.interpreter' method is deprecated and will be removed in a future version.")
-    Facter::Util::Resolution.new("yay").interpreter.should be_nil
-  end
-
   describe "when setting the code" do
     before do
       Facter.stubs(:warnonce)
       @resolve = Facter::Util::Resolution.new("yay")
-    end
-
-    it "should deprecate the interpreter argument to 'setcode'" do
-      Facter.expects(:warnonce).with("The interpreter parameter to 'setcode' is deprecated and will be removed in a future version.")
-      @resolve.setcode "foo", "bar"
-      @resolve.interpreter.should == "bar"
-    end
-
-    it "should deprecate the interpreter= method" do
-      Facter.expects(:warnonce).with("The 'Facter::Util::Resolution.interpreter=' method is deprecated and will be removed in a future version.")
-      @resolve.interpreter = "baz"
-      @resolve.interpreter.should == "baz"
-    end
-
-    it "should deprecate the interpreter method" do
-      Facter.expects(:warnonce).with("The 'Facter::Util::Resolution.interpreter' method is deprecated and will be removed in a future version.")
-      @resolve.interpreter
     end
 
     it "should set the code to any provided string" do
