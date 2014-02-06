@@ -55,6 +55,7 @@ describe Facter::Util::DirectoryLoader do
 
     %w{bak orig}.each do |ext|
       it "should ignore files with an extension of '#{ext}'" do
+        Facter.expects(:warn).with(regexp_matches(/#{ext}/))
         write_to_file("data" + ".#{ext}", "foo=bar")
 
         subject.load(collection)
