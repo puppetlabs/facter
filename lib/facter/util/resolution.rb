@@ -106,12 +106,6 @@ class Facter::Util::Resolution
     end
   end
 
-  # (see value)
-  # @deprecated
-  def to_s
-    return self.value()
-  end
-
   private
 
   def resolve_value

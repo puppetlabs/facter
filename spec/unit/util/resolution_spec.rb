@@ -110,12 +110,6 @@ describe Facter::Util::Resolution do
     end
   end
 
-  it "should return its value when converted to a string" do
-    @resolve = Facter::Util::Resolution.new("yay")
-    @resolve.expects(:value).returns "myval"
-    @resolve.to_s.should == "myval"
-  end
-
   describe "setting options" do
     subject(:resolution) { described_class.new(:foo) }
 
