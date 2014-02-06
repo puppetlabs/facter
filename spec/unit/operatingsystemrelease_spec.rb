@@ -223,6 +223,14 @@ describe "Operating System Release fact" do
       end
     end
 
+    it "reports '2003' if the WMI method othertypedescription does not exist" do
+      os = mock('os', :version => '5.2.3790', :producttype => 2)
+      os.stubs(:othertypedescription).raises(NoMethodError)
+
+      Facter::Util::WMI.expects(:execquery).returns([os])
+      Facter.fact(:operatingsystemrelease).value.should == '2003'
+    end
+
     context "Unknown Windows version" do
       before :each do
         Facter.fact(:kernelrelease).stubs(:value).returns("X.Y.ZZZZ")
