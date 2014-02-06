@@ -176,20 +176,13 @@ module Facter
             # if we can find the binary, we'll run the command with the expanded path to the binary
             code = expanded_code
           else
-            # if we cannot find the binary return nil on posix. On windows we'll still try to run the
-            # command in case it is a shell-builtin. In case it is not, windows will raise Errno::ENOENT
-            return nil unless Facter::Util::Config.is_windows?
-            return nil if absolute_path?(code)
+            return nil
           end
 
           out = nil
 
           begin
             out = %x{#{code}}.chomp
-            Facter.warnonce "Using Facter::Util::Execution.exec with a shell built-in is deprecated. Most built-ins can be replaced with native ruby commands. If you really have to run a built-in, pass \"cmd /c your_builtin\" as a command (command responsible for this message was \"#{code}\")" unless expanded_code
-          rescue Errno::ENOENT => detail
-            # command not found on Windows
-            return nil
           rescue => detail
             Facter.warn(detail)
             return nil
