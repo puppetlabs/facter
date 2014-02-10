@@ -60,17 +60,6 @@ describe Facter::Core::Resolvable do
 
       expect(subject.value).to be_nil
     end
-
-
-    it "starts a thread to wait on all child processes if the timeout was reached" do
-      Thread.expects(:new).yields
-      Process.expects(:waitall)
-
-      Facter.stubs(:warn)
-      Timeout.expects(:timeout).raises Timeout::Error
-
-      subject.value
-    end
   end
 
   describe 'callbacks when flushing facts' do

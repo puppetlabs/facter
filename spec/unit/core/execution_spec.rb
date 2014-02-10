@@ -255,4 +255,52 @@ describe Facter::Core::Execution do
     end
   end
 
+
+  describe "#exec" do
+
+    it "switches LANG to C when executing the command" do
+      described_class.expects(:with_env).with('LANG' => 'C')
+      described_class.exec('foo')
+    end
+
+    it "switches LC_ALL to C when executing the command"
+
+    it "expands the command before running it" do
+      described_class.stubs(:`).returns ''
+      described_class.expects(:expand_command).with('foo').returns '/bin/foo'
+      described_class.exec('foo')
+    end
+
+    it "returns an empty string when the command could not be expanded" do
+      described_class.expects(:expand_command).with('foo').returns nil
+      expect(described_class.exec('foo')).to be_empty
+    end
+
+    it "logs a warning and returns an empty string when the command execution fails" do
+      described_class.expects(:`).with("/bin/foo").raises "kaboom!"
+      Facter.expects(:warn).with("kaboom!")
+
+      described_class.expects(:expand_command).with('foo').returns '/bin/foo'
+
+      expect(described_class.exec("foo")).to be_empty
+    end
+
+    it "launches a thread to wait on children if the command was interrupted" do
+      described_class.expects(:`).with("/bin/foo").raises "kaboom!"
+      described_class.expects(:expand_command).with('foo').returns '/bin/foo'
+
+      Facter.stubs(:warn)
+      Thread.expects(:new).yields
+      Process.expects(:waitall).once
+
+      described_class.exec("foo")
+    end
+
+    it "returns the output of the command" do
+      described_class.expects(:`).with("/bin/foo").returns 'hi'
+      described_class.expects(:expand_command).with('foo').returns '/bin/foo'
+
+      expect(described_class.exec("foo")).to eq 'hi'
+    end
+  end
 end
