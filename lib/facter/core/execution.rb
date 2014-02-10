@@ -8,13 +8,15 @@ module Facter
       require 'facter/core/execution/ruby18'
       require 'facter/core/execution/ruby19'
 
-      @@impl = Facter::Core::Execution::Ruby18.new
+      @@impl = if RUBY_VERSION.match /^1\.8/
+                 Facter::Core::Execution::Ruby18.new
+               else
+                 Facter::Core::Execution::Ruby19.new
+               end
 
-      #if RUBY_VERSION.match /^1\.8/
-      #  @@impl = Facter::Core::Execution::Ruby18.new
-      #else
-      #  @@impl = Facter::Core::Execution::Ruby19.new
-      #end
+      def self.impl
+        @@impl
+      end
 
       module_function
 
