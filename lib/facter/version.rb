@@ -1,6 +1,6 @@
 module Facter
   if not defined? FACTERVERSION then
-    FACTERVERSION = '1.7.5-rc2'
+    FACTERVERSION = '1.7.5'
   end
 
   ##
