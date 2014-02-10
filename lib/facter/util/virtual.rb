@@ -90,15 +90,15 @@ module Facter::Util::Virtual
   end
 
   def self.kvm?
-     txt = if FileTest.exists?("/proc/cpuinfo")
-       File.read("/proc/cpuinfo")
-     elsif ["FreeBSD", "OpenBSD"].include? Facter.value(:kernel)
-       Facter::Util::POSIX.sysctl("hw.model")
-     end
-     if txt =~ /QEMU Virtual CPU/ then true
-     elsif txt =~ /Common KVM processor/ then true
-	 else false
-     end
+    txt = if FileTest.exists?("/proc/cpuinfo")
+            File.read("/proc/cpuinfo")
+          elsif ["FreeBSD", "OpenBSD"].include? Facter.value(:kernel)
+            Facter::Util::POSIX.sysctl("hw.model")
+          end
+    if txt =~ /QEMU Virtual CPU/ then true
+    elsif txt =~ /Common KVM processor/ then true
+    else false
+    end
   end
 
   def self.virtualbox?
