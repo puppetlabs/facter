@@ -1,4 +1,5 @@
 require 'facter/util/file_read'
+require 'pathname'
 
 module Facter::Util::Virtual
   ##
@@ -128,6 +129,18 @@ module Facter::Util::Virtual
 
   def self.hpvm?
     Facter::Core::Execution.exec("/usr/bin/getconf MACHINE_MODEL").chomp =~ /Virtual Machine/
+  end
+
+  ##
+  # lxc? returns true if the process is running inside of a linux container.
+  # Implementation derived from
+  # http://stackoverflow.com/questions/20010199/determining-if-a-process-runs-inside-lxc-docker
+  def self.lxc?
+    path = Pathname.new('/proc/1/cgroup')
+    return false unless path.readable?
+    lxc_hierarchies = path.readlines.map {|l| l.split(":")[2].to_s.start_with? '/lxc/' }
+    return true if lxc_hierarchies.include?(true)
+    return false
   end
 
   def self.zlinux?

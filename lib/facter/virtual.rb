@@ -251,6 +251,19 @@ Facter.add("virtual") do
     end
   end
 end
+
+##
+# virtual fact specific to linux containers.  This also works for Docker
+# containers running in lxc.
+Facter.add("virtual") do
+  has_weight 700
+  confine :kernel => "Linux"
+
+  setcode do
+    "lxc" if Facter::Util::Virtual.lxc?
+  end
+end
+
 # Fact: is_virtual
 #
 # Purpose: returning true or false for if a machine is virtualised or not.
