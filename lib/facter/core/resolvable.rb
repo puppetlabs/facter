@@ -66,7 +66,7 @@ module Facter::Core::Resolvable
 
     Facter::Util::Normalization.normalize(result)
   rescue Timeout::Error => detail
-    Facter.warn "Timed out seeking value for #{self.name}"
+    Facter.warn "Timed out after #{limit} seconds while resolving #{qualified_name}"
 
     # This call avoids zombies -- basically, create a thread that will
     # dezombify all of the child processes that we're ignoring because
@@ -74,10 +74,10 @@ module Facter::Core::Resolvable
     Thread.new { Process.waitall }
     return nil
   rescue Facter::Util::Normalization::NormalizationError => e
-    Facter.warn "Fact resolution #{self.name} resolved to an invalid value: #{e.message}"
+    Facter.warn "Fact resolution #{qualified_name} resolved to an invalid value: #{e.message}"
     return nil
   rescue => details
-    Facter.warn "Could not retrieve #{self.name}: #{details.message}"
+    Facter.warn "Could not retrieve #{qualified_name}: #{details.message}"
     return nil
   end
 
@@ -90,6 +90,10 @@ module Facter::Core::Resolvable
 
     finishtime = Time.now.to_f
     ms = (finishtime - starttime) * 1000
-    Facter.show_time "#{self.name}: #{"%.2f" % ms}ms"
+    Facter.show_time "#{qualified_name}: #{"%.2f" % ms}ms"
+  end
+
+  def qualified_name
+    "fact='#{@fact.name.to_s}', resolution='#{@name || '<anonymous>'}'"
   end
 end

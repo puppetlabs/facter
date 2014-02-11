@@ -6,8 +6,10 @@ describe Facter::Core::Resolvable do
   class ResolvableClass
     def initialize(name)
       @name = name
+      @fact = Facter::Util::Fact.new("stub fact")
     end
     attr_accessor :name, :resolve_value
+    attr_reader :fact
     include Facter::Core::Resolvable
   end
 
@@ -36,7 +38,7 @@ describe Facter::Core::Resolvable do
 
     it "logs a warning if an exception was raised" do
       subject.expects(:resolve_value).raises RuntimeError, "kaboom!"
-      Facter.expects(:warn).with('Could not retrieve resolvable: kaboom!')
+      Facter.expects(:warn).with(regexp_matches(/Could not retrieve .*: kaboom!/))
       expect(subject.value).to eq nil
     end
   end
@@ -51,8 +53,10 @@ describe Facter::Core::Resolvable do
     end
 
     it "returns nil if the timeout was reached" do
-      Facter.expects(:warn).with("Timed out seeking value for resolvable")
+      Facter.expects(:warn).with(regexp_matches(/Timed out after 0\.1 seconds while resolving/))
       Timeout.expects(:timeout).raises Timeout::Error
+
+      subject.timeout = 0.1
 
       expect(subject.value).to be_nil
     end
@@ -62,7 +66,7 @@ describe Facter::Core::Resolvable do
       Thread.expects(:new).yields
       Process.expects(:waitall)
 
-      Facter.expects(:warn).with("Timed out seeking value for resolvable")
+      Facter.stubs(:warn)
       Timeout.expects(:timeout).raises Timeout::Error
 
       subject.value
