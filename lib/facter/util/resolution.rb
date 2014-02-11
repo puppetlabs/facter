@@ -21,8 +21,6 @@ class Facter::Util::Resolution
   attr_accessor :code
   attr_writer :value
 
-  INTERPRETER = Facter::Util::Config.is_windows? ? "cmd.exe" : "/bin/sh"
-
   extend Facter::Core::Execution
 
   class << self
@@ -97,35 +95,15 @@ class Facter::Util::Resolution
   #     inside the block are rescued and printed to stderr.
   #
   # @api public
-  def setcode(string = nil, interp = nil, &block)
-    Facter.warnonce "The interpreter parameter to 'setcode' is deprecated and will be removed in a future version." if interp
+  def setcode(string = nil, &block)
     if string
       @code = string
-      @interpreter = interp || INTERPRETER
     else
       unless block_given?
         raise ArgumentError, "You must pass either code or a block"
       end
       @code = block
     end
-  end
-
-  # @deprecated
-  def interpreter
-    Facter.warnonce "The 'Facter::Util::Resolution.interpreter' method is deprecated and will be removed in a future version."
-    @interpreter
-  end
-
-  # @deprecated
-  def interpreter=(interp)
-    Facter.warnonce "The 'Facter::Util::Resolution.interpreter=' method is deprecated and will be removed in a future version."
-    @interpreter = interp
-  end
-
-  # (see value)
-  # @deprecated
-  def to_s
-    return self.value()
   end
 
   private

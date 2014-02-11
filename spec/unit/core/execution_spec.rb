@@ -127,16 +127,6 @@ describe Facter::Core::Execution do
           described_class.which('\\\\remote\dir\foo.exe').should == '\\\\remote\dir\foo.exe'
         end
 
-        it "should return the binary with added extension if executable" do
-          ['.COM', '.BAT', '.CMD', '' ].each do |ext|
-            File.stubs(:executable?).with('C:\Windows\system32\netsh'+ext).returns false
-          end
-          File.expects(:executable?).with('C:\Windows\system32\netsh.EXE').returns true
-
-          Facter.expects(:warnonce).with('Using Facter::Util::Execution.which with an absolute path like C:\\Windows\\system32\\netsh but no fileextension is deprecated. Please add the correct extension (.EXE)')
-          described_class.which('C:\Windows\system32\netsh').should == 'C:\Windows\system32\netsh.EXE'
-        end
-
         it "should return nil if the binary is not executable" do
           File.expects(:executable?).with('C:\Tools\foo.exe').returns false
           File.expects(:executable?).with('\\\\remote\dir\foo.exe').returns false

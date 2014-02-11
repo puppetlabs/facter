@@ -38,17 +38,6 @@ module Facter
       def which(bin)
         if absolute_path?(bin)
           return bin if File.executable?(bin)
-          if Facter::Util::Config.is_windows? and File.extname(bin).empty?
-            exts = ENV['PATHEXT']
-            exts = exts ? exts.split(File::PATH_SEPARATOR) : %w[.COM .EXE .BAT .CMD]
-            exts.each do |ext|
-              destext = bin + ext
-              if File.executable?(destext)
-                Facter.warnonce("Using Facter::Util::Execution.which with an absolute path like #{bin} but no fileextension is deprecated. Please add the correct extension (#{ext})")
-                return destext
-              end
-            end
-          end
         else
           search_paths.each do |dir|
             dest = File.join(dir, bin)
@@ -166,14 +155,7 @@ module Facter
       # @note Since Facter 1.5.8 this strips trailing newlines from the
       #   returned value. If a fact will be used by versions of Facter older
       #   than 1.5.8 then you should call chomp the returned string.
-      #
-      # @overload exec(code)
-      # @overload exec(code, interpreter = nil)
-      #   @param [String] interpreter unused, only exists for backwards
-      #     compatibility
-      #   @deprecated
-      def exec(code, interpreter = nil)
-        Facter.warnonce "The interpreter parameter to 'exec' is deprecated and will be removed in a future version." if interpreter
+      def exec(code)
 
         ## Set LANG to force i18n to C for the duration of this exec; this ensures that any code that parses the
         ## output of the command can expect it to be in a consistent / predictable format / locale
@@ -183,20 +165,13 @@ module Facter
             # if we can find the binary, we'll run the command with the expanded path to the binary
             code = expanded_code
           else
-            # if we cannot find the binary return nil on posix. On windows we'll still try to run the
-            # command in case it is a shell-builtin. In case it is not, windows will raise Errno::ENOENT
-            return nil unless Facter::Util::Config.is_windows?
-            return nil if absolute_path?(code)
+            return nil
           end
 
           out = nil
 
           begin
             out = %x{#{code}}.chomp
-            Facter.warnonce "Using Facter::Util::Execution.exec with a shell built-in is deprecated. Most built-ins can be replaced with native ruby commands. If you really have to run a built-in, pass \"cmd /c your_builtin\" as a command (command responsible for this message was \"#{code}\")" unless expanded_code
-          rescue Errno::ENOENT => detail
-            # command not found on Windows
-            return nil
           rescue => detail
             Facter.warn(detail)
             return nil

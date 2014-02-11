@@ -160,10 +160,6 @@ def prepare_installation
     opts.on('--[no-]man', 'Presents the creation of man pages.', 'Default on.') do |onman|
     InstallOptions.man = onman
     end
-    opts.on('--[no-]tests', 'Prevents the execution of unit tests.', 'Default off.') do |ontest|
-      InstallOptions.tests = ontest
-      warn "The tests flag has never worked in Facter, is deprecated as of Nov 29, 2012, and will be removed in a future release of Facter."
-    end
     opts.on('--destdir[=OPTIONAL]', 'Installation prefix for all targets', 'Default essentially /') do |destdir|
       InstallOptions.destdir = destdir
     end
@@ -233,18 +229,7 @@ def prepare_installation
     mandir = RbConfig::CONFIG['mandir']
   end
 
-  # To be deprecated once people move over to using --destdir option
-  if (destdir = ENV['DESTDIR'])
-    warn "DESTDIR is deprecated. Use --destdir instead."
-    bindir = join(destdir, bindir)
-    mandir = join(destdir, mandir)
-    sitelibdir = join(destdir, sitelibdir)
-
-    FileUtils.makedirs(bindir)
-    FileUtils.makedirs(mandir)
-    FileUtils.makedirs(sitelibdir)
-    # This is the new way forward
-  elsif (destdir = InstallOptions.destdir)
+  if (destdir = InstallOptions.destdir)
     bindir = join(destdir, bindir)
     mandir = join(destdir, mandir)
     sitelibdir = join(destdir, sitelibdir)
