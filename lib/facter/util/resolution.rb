@@ -42,14 +42,20 @@ class Facter::Util::Resolution
   # @api public
   attr_accessor :name
 
+  # @!attribute [r] fact
+  # @return [Facter::Util::Fact]
+  # @api private
+  attr_reader :fact
+
   # Create a new resolution mechanism.
   #
   # @param name [String] The name of the resolution.
   # @return [void]
   #
   # @api private
-  def initialize(name)
+  def initialize(name, fact)
     @name = name
+    @fact = fact
     @confines = []
     @value = nil
     @timeout = 0

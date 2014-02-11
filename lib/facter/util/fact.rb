@@ -45,7 +45,7 @@ class Facter::Util::Fact
   # @api private
   def add(value = nil, &block)
     begin
-      resolve = Facter::Util::Resolution.new(@name)
+      resolve = Facter::Util::Resolution.new(@name, self)
 
       resolve.instance_eval(&block) if block
       @resolves << resolve
@@ -68,7 +68,7 @@ class Facter::Util::Fact
     resolve = self.resolution(resolve_name)
 
     if resolve.nil?
-      resolve = Facter::Util::Resolution.new(resolve_name)
+      resolve = Facter::Util::Resolution.new(resolve_name, self)
       resolve.instance_eval(&block) if block
       @resolves << resolve
     else

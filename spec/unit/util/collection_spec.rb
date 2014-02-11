@@ -34,7 +34,7 @@ describe Facter::Util::Collection do
       fact = Facter::Util::Fact.new(:myname)
       Facter::Util::Fact.expects(:new).with(:myname, {:timeout => 'myval'}).returns fact
 
-      resolve = Facter::Util::Resolution.new(:myname) {}
+      resolve = Facter::Util::Resolution.new(:myname, fact) {}
       fact.expects(:add).returns resolve
 
       collection.add(:myname, :timeout => "myval") {}
