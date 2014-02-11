@@ -109,7 +109,7 @@ describe Facter do
   end
 
   describe "when registering directories to search" do
-    after { Facter.instance_variable_set("@search_path", []) }
+    after { Facter.reset_search_path! }
 
     it "should allow registration of a directory" do
       Facter.search "/my/dir"

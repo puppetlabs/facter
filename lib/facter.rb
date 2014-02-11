@@ -184,6 +184,7 @@ module Facter
   # @api public
   def self.reset
     @collection = nil
+    reset_search_path!
   end
 
   # Loads all facts.
@@ -194,8 +195,6 @@ module Facter
   def self.loadfacts
     collection.load_all
   end
-
-  @search_path = []
 
   # Register directories to be searched for facts. The registered directories
   # must be absolute paths or they will be ignored.
@@ -217,6 +216,16 @@ module Facter
   def self.search_path
     @search_path.dup
   end
+
+  # Reset the Facter search directories.
+  #
+  # @api private
+  # @return [void]
+  def self.reset_search_path!
+    @search_path = []
+  end
+
+  reset_search_path!
 
   # Registers directories to be searched for external facts.
   #
