@@ -98,17 +98,6 @@ describe Facter::Core::Aggregate do
     end
   end
 
-  describe "evaluating chunks" do
-    it "emits a warning and returns nil when a chunk raises an error" do
-      Facter.expects(:warn) do |msg|
-        expect(msg).to match /Could not run chunk boom.*kaboom!/
-      end
-
-      subject.chunk(:boom) { raise 'kaboom!' }
-      subject.value
-    end
-  end
-
   describe "aggregating chunks" do
     it "passes all chunk results as a hash to the aggregate block" do
       subject.chunk(:data) { 'data chunk' }
@@ -124,16 +113,6 @@ describe Facter::Core::Aggregate do
     it "uses the result of the aggregate block as the value" do
       subject.aggregate { "who needs chunks anyways" }
       expect(subject.value).to eq "who needs chunks anyways"
-    end
-
-    it "generates a warning and returns if the aggregate raises an error" do
-      subject.aggregate { raise 'kaboom!' }
-
-      Facter.expects(:warn) do |msg|
-        expect(msg).to match /Could not aggregate chunks for boom.*kaboom!/
-      end
-
-      subject.value
     end
   end
 
