@@ -62,6 +62,30 @@ class Facter::Util::Resolution
     @weight = nil
   end
 
+  # Evaluate the given block in the context of this resolution. If a block has
+  # already been evaluated emit a warning to that effect.
+  #
+  # @return [void]
+  def evaluate(&block)
+    if @last_evaluated
+      msg = "Already evaluated #{@name}"
+      msg << " at #{@last_evaluated}" if msg.is_a? String
+      msg << ", reevaluating anyways"
+      Facter.warn msg
+    end
+
+    instance_eval(&block)
+
+    # Ruby 1.9+ provides the source location of procs which can provide useful
+    # debugging information if a resolution is being evaluated twice. Since 1.8
+    # doesn't support this we opportunistically provide this information.
+    if block.respond_to? :source_location
+      @last_evaluated = block.source_location.join(':')
+    else
+      @last_evaluated = true
+    end
+  end
+
   def set_options(options)
     if options[:name]
       @name = options.delete(:name)

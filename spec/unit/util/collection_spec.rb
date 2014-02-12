@@ -30,18 +30,13 @@ describe Facter::Util::Collection do
       collection.add(:myname, :timeout => 1) { }
     end
 
-    it "should set appropriate options on the resolution instance" do
+    it "passes resolution specific options to the fact" do
       fact = Facter::Util::Fact.new(:myname)
       Facter::Util::Fact.expects(:new).with(:myname, {:timeout => 'myval'}).returns fact
 
-      resolve = Facter::Util::Resolution.new(:myname, fact) {}
-      fact.expects(:add).returns resolve
+      fact.expects(:add).with({:timeout => 'myval'})
 
       collection.add(:myname, :timeout => "myval") {}
-    end
-
-    it "should fail if invalid options are provided" do
-      lambda { collection.add(:myname, :foo => :bar) }.should raise_error(ArgumentError)
     end
 
     describe "and a block is provided" do
@@ -56,14 +51,13 @@ describe Facter::Util::Collection do
       end
 
       it "should discard resolutions that throw an exception when added" do
-        Facter.expects(:warn).with("Unable to add resolve for yay: ")
-        lambda {
+        Facter.expects(:warn).with(regexp_matches(/Unable to add resolve .* kaboom!/))
+        expect {
           collection.add('yay') do
-            raise
-            setcode { 'yay' }
+            raise "kaboom!"
           end
-        }.should_not raise_error
-        collection.value('yay').should be_nil
+        }.to_not raise_error
+        expect(collection.value('yay')).to be_nil
       end
     end
   end

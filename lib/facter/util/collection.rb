@@ -47,16 +47,7 @@ class Facter::Util::Collection
   def add(name, options = {}, &block)
     fact = create_or_return_fact(name, options)
 
-    if block_given?
-      resolve = fact.add(&block)
-    else
-      resolve = fact.add
-    end
-
-    # Set any resolve-appropriate options
-    if resolve
-      resolve.set_options(options)
-    end
+    fact.add(options, &block)
 
     return fact
   end

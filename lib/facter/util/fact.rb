@@ -1,5 +1,6 @@
 require 'facter'
 require 'facter/util/resolution'
+require 'facter/core/aggregate'
 
 # This class represents a fact. Each fact has a name and multiple
 # {Facter::Util::Resolution resolutions}.
@@ -40,43 +41,35 @@ class Facter::Util::Fact
   # block, which will then be evaluated in the context of the new
   # resolution.
   #
-  # @return [void]
+  # @param options [Hash] A hash of options to set on the resolution
+  #
+  # @return [Facter::Util::Resolution]
   #
   # @api private
-  def add(value = nil, &block)
-    begin
-      resolve = Facter::Util::Resolution.new(@name, self)
-
-      resolve.instance_eval(&block) if block
-      @resolves << resolve
-
-      resolve
-    rescue => e
-      Facter.warn "Unable to add resolve for #{@name}: #{e}"
-      nil
-    end
+  def add(options = {}, &block)
+    define_resolution(nil, options, &block)
   end
 
   # Define a new named resolution or return an existing resolution with
   # the given name.
   #
-  # @param resolve_name [String] The name of the resolve to define or look up
-  # @return [void]
+  # @param resolution_name [String] The name of the resolve to define or look up
+  # @param options [Hash] A hash of options to set on the resolution
+  # @return [Facter::Util::Resolution]
   #
   # @api public
-  def define_resolution(resolve_name, &block)
-    resolve = self.resolution(resolve_name)
+  def define_resolution(resolution_name, options = {}, &block)
 
-    if resolve.nil?
-      resolve = Facter::Util::Resolution.new(resolve_name, self)
-      resolve.instance_eval(&block) if block
-      @resolves << resolve
-    else
-      resolve.instance_eval(&block) if block
-    end
+    resolution_type = options.delete(:type) || :simple
 
+    resolve = create_or_return_resolution(resolution_name, resolution_type)
+
+    resolve.set_options(options) unless options.empty?
+    resolve.evaluate(&block) if block
+
+    resolve
   rescue => e
-    Facter.warn "Unable to add resolve #{resolve_name} for fact #{@name}: #{e}"
+    Facter.warn "Unable to add resolve #{resolution_name.inspect} for fact #{@name}: #{e}"
   end
 
   # Retrieve an existing resolution by name
@@ -187,5 +180,29 @@ class Facter::Util::Fact
 
   def normalize_value(value)
     value == "" ? nil : value
+  end
+
+  def create_or_return_resolution(resolution_name, resolution_type)
+    resolve = self.resolution(resolution_name)
+
+    if resolve
+      if resolution_type != resolve.resolution_type
+        raise ArgumentError, "Cannot return resolution #{resolution_name} with type" +
+          " #{resolution_type}; already defined as #{resolve.resolution_type}"
+      end
+    else
+      case resolution_type
+      when :simple
+        resolve = Facter::Util::Resolution.new(resolution_name, self)
+      when :aggregate
+        resolve = Facter::Core::Aggregate.new(resolution_name, self)
+      else
+        raise ArgumentError, "Expected resolution type to be one of (:simple, :aggregate) but was #{resolution_type}"
+      end
+
+      @resolves << resolve
+    end
+
+    resolve
   end
 end
