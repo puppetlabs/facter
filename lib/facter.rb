@@ -128,6 +128,19 @@ module Facter
     collection.to_hash
   end
 
+  # Define a new fact or extend an existing fact.
+  #
+  # @param name [Symbol] The name of the fact to define
+  # @param options [Hash] A hash of options to set on the fact
+  #
+  # @return [Facter::Util::Fact] The fact that was defined
+  #
+  # @api public
+  # @see {Facter::Util::Collection#define_fact}
+  def self.define_fact(name, options = {}, &block)
+    collection.define_fact(name, options, &block)
+  end
+
   # Adds a {Facter::Util::Resolution resolution} mechanism for a named
   # fact. This does not distinguish between adding a new fact and adding
   # a new way to resolve a fact.

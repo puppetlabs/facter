@@ -3,11 +3,9 @@ require 'facter/core/aggregate'
 
 describe Facter::Core::Aggregate do
 
-  subject do
-    obj = described_class.new('aggregated')
-    obj.aggregate { |chunks| chunks.values }
-    obj
-  end
+  let(:fact) { stub('stub_fact', :name => 'stub_fact') }
+
+  subject { obj = described_class.new('aggregated', fact) }
 
   it "can be resolved" do
     expect(subject).to be_a_kind_of Facter::Core::Resolvable
@@ -76,9 +74,9 @@ describe Facter::Core::Aggregate do
     end
 
     it "passes all requested chunk results to the depending chunk" do
-      subject.chunk(:first) { 'foo' }
+      subject.chunk(:first) { ['foo'] }
       subject.chunk(:second, :require => [:first]) do |first|
-        "#{first} bar"
+        [first[0] + ' bar']
       end
 
       output = subject.value
@@ -100,17 +98,6 @@ describe Facter::Core::Aggregate do
     end
   end
 
-  describe "evaluating chunks" do
-    it "emits a warning and returns nil when a chunk raises an error" do
-      Facter.expects(:warn) do |msg|
-        expect(msg).to match /Could not run chunk boom.*kaboom!/
-      end
-
-      subject.chunk(:boom) { raise 'kaboom!' }
-      subject.value
-    end
-  end
-
   describe "aggregating chunks" do
     it "passes all chunk results as a hash to the aggregate block" do
       subject.chunk(:data) { 'data chunk' }
@@ -127,15 +114,12 @@ describe Facter::Core::Aggregate do
       subject.aggregate { "who needs chunks anyways" }
       expect(subject.value).to eq "who needs chunks anyways"
     end
+  end
 
-    it "generates a warning and returns if the aggregate raises an error" do
-      subject.aggregate { raise 'kaboom!' }
-
-      Facter.expects(:warn) do |msg|
-        expect(msg).to match /Could not aggregate chunks for boom.*kaboom!/
-      end
-
-      subject.value
+  describe "evaluating" do
+    it "evaluates the block in the context of the aggregate" do
+      subject.expects(:has_weight).with(5)
+      subject.evaluate { has_weight(5) }
     end
   end
 end

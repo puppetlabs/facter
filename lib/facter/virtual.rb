@@ -55,13 +55,12 @@ end
 Facter.add("virtual") do
   confine :kernel => 'SunOS'
   has_weight 10
+  self.timeout = 12
+
   setcode do
     next "zone" if Facter::Util::Virtual.zone?
 
-    resolver = Facter::Util::Resolution.new('prtdiag')
-    resolver.timeout = 12
-    resolver.setcode('prtdiag')
-    output = resolver.value
+    output = Facter::Util::Resolution.exec('prtdiag')
     Facter::Util::Virtual.parse_virtualization(output)
   end
 end

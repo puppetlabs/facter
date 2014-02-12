@@ -157,13 +157,10 @@ describe "Operating System Release fact" do
     end
 
     context "malformed /etc/release files" do
-      before :each do
-        Facter::Util::Resolution.any_instance.stubs(:warn)
-      end
       it "should fallback to the kernelrelease fact if /etc/release is empty" do
         Facter::Util::FileRead.stubs(:read).with('/etc/release').
           raises EOFError
-        Facter.expects(:warn).with("Could not retrieve operatingsystemrelease: EOFError")
+        Facter.expects(:warn).with(regexp_matches(/Could not retrieve fact='operatingsystemrelease'.*EOFError/))
         Facter.fact(:operatingsystemrelease).value.
           should == Facter.fact(:kernelrelease).value
       end
@@ -171,7 +168,7 @@ describe "Operating System Release fact" do
       it "should fallback to the kernelrelease fact if /etc/release is not present" do
         Facter::Util::FileRead.stubs(:read).with('/etc/release').
           raises Errno::ENOENT
-        Facter.expects(:warn).with("Could not retrieve operatingsystemrelease: No such file or directory")
+        Facter.expects(:warn).with(regexp_matches(/Could not retrieve fact='operatingsystemrelease'.*No such file or directory/))
         Facter.fact(:operatingsystemrelease).value.
           should == Facter.fact(:kernelrelease).value
       end

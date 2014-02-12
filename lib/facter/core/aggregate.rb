@@ -35,8 +35,14 @@ class Facter::Core::Aggregate
   #   @see Facter::Core::Suitable
   attr_reader :confines
 
-  def initialize(name)
+  # @!attribute [r] fact
+  # @return [Facter::Util::Fact]
+  # @api private
+  attr_reader :fact
+
+  def initialize(name, fact)
     @name = name
+    @fact = fact
 
     @confines = []
     @chunks = {}
@@ -61,6 +67,10 @@ class Facter::Core::Aggregate
     if not options.keys.empty?
       raise ArgumentError, "Invalid aggregate options #{options.keys.inspect}"
     end
+  end
+
+  def evaluate(&block)
+    instance_eval(&block)
   end
 
   # Define a new chunk for the given aggregate
@@ -134,6 +144,10 @@ class Facter::Core::Aggregate
     end
   end
 
+  def resolution_type
+    :aggregate
+  end
+
   private
 
   # Evaluate the results of this aggregate.
@@ -178,7 +192,9 @@ class Facter::Core::Aggregate
   end
 
   def default_aggregate(results)
-    Facter::Util::Values.deep_merge(results.keys)
+    results.values.inject do |result, current|
+      Facter::Util::Values.deep_merge(result, current)
+    end
   rescue Facter::Util::Values::DeepMergeError => e
     raise ArgumentError, "No aggregate block specified and could not deep merge" +
       " all chunks, either specify an aggregate block or ensure that all chunks" +
