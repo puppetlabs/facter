@@ -3,8 +3,10 @@ require 'facter/core/aggregate'
 
 describe Facter::Core::Aggregate do
 
+  let(:fact) { stub('stub_fact', :name => 'stub_fact') }
+
   subject do
-    obj = described_class.new('aggregated')
+    obj = described_class.new('aggregated', fact)
     obj.aggregate { |chunks| chunks.values }
     obj
   end

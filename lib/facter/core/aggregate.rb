@@ -35,8 +35,14 @@ class Facter::Core::Aggregate
   #   @see Facter::Core::Suitable
   attr_reader :confines
 
-  def initialize(name)
+  # @!attribute [r] fact
+  # @return [Facter::Util::Fact]
+  # @api private
+  attr_reader :fact
+
+  def initialize(name, fact)
     @name = name
+    @fact = fact
 
     @confines = []
     @chunks = {}
