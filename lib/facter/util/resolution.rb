@@ -129,13 +129,7 @@ class Facter::Util::Resolution
     if string
       @code = Proc.new do
         output = Facter::Core::Execution.exec(string)
-        if output.nil?
-          nil
-        elsif output.empty?
-          nil
-        else
-          output
-        end
+        output.empty? ? nil : output
       end
     elsif block_given?
       @code = block

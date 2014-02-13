@@ -168,7 +168,7 @@ module Facter
             return nil
           end
 
-          out = nil
+          out = ''
 
           begin
             out = %x{#{code}}.chomp
@@ -177,11 +177,7 @@ module Facter
             return nil
           end
 
-          if out == ""
-            return nil
-          else
-            return out
-          end
+          out
         end
       end
     end
