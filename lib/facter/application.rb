@@ -11,7 +11,7 @@ module Facter
       begin
         Facter::Util::Config.ext_fact_loader = Facter::Util::DirectoryLoader.loader_for(dir)
       rescue Facter::Util::DirectoryLoader::NoSuchDirectoryError => error
-        $stderr.puts "Specified external facts directory #{dir} does not exist."
+        Facter.log_exception(error, "Specified external facts directory #{dir} does not exist.")
         exit(1)
       end
     end
@@ -36,8 +36,8 @@ module Facter
           begin
             facts[name] = Facter.value(name)
           rescue => error
-            $stderr.puts "Could not retrieve #{name}: #{error}"
-            exit 10
+            Facter.log_exception(error, "Could not retrieve #{name}: #{error.message}")
+            exit(10)
           end
         end
       end
@@ -61,12 +61,8 @@ module Facter
       exit(0)
 
     rescue => e
-      if options && options[:trace]
-        raise e
-      else
-        $stderr.puts "Error: #{e}"
-        exit(12)
-      end
+      Facter.log_exception(e)
+      exit(12)
     end
 
     private
@@ -151,7 +147,7 @@ OPTIONS
         opts.on("--plaintext",
                 "Emit facts in plaintext format.") { |v| options[:plaintext] = v }
         opts.on("--trace",
-                "Enable backtraces.")  { |v| options[:trace]  = v }
+                "Enable backtraces.")  { |v| Facter.trace(true) }
         opts.on("--external-dir DIR",
                 "The directory to use for external facts.") { |v| create_directory_loader(v) }
         opts.on("--no-external-dir",

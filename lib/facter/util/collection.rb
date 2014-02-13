@@ -34,7 +34,7 @@ class Facter::Util::Collection
 
     fact
   rescue => e
-    Facter.warn "Unable to add fact #{name}: #{e}"
+    Facter.log_exception(e, "Unable to add fact #{name}: #{e}")
   end
 
   # Add a resolution mechanism for a named fact.  This does not distinguish

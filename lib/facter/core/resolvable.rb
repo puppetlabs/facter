@@ -66,13 +66,13 @@ module Facter::Core::Resolvable
 
     Facter::Util::Normalization.normalize(result)
   rescue Timeout::Error => detail
-    Facter.warn "Timed out after #{limit} seconds while resolving #{qualified_name}"
+    Facter.log_exception(detail, "Timed out after #{limit} seconds while resolving #{qualified_name}")
     return nil
-  rescue Facter::Util::Normalization::NormalizationError => e
-    Facter.warn "Fact resolution #{qualified_name} resolved to an invalid value: #{e.message}"
+  rescue Facter::Util::Normalization::NormalizationError => detail
+    Facter.log_exception(detail, "Fact resolution #{qualified_name} resolved to an invalid value: #{detail.message}")
     return nil
-  rescue => details
-    Facter.warn "Could not retrieve #{qualified_name}: #{details.message}"
+  rescue => detail
+    Facter.log_exception(detail, "Could not retrieve #{qualified_name}: #{detail.message}")
     return nil
   end
 
