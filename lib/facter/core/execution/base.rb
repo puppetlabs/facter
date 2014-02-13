@@ -1,71 +1,5 @@
 class Facter::Core::Execution::Base
 
-  def search_paths
-    if Facter::Util::Config.is_windows?
-      ENV['PATH'].split(File::PATH_SEPARATOR)
-    else
-      # Make sure facter is usable even for non-root users. Most commands
-      # in /sbin (like ifconfig) can be run as non priviledged users as
-      # long as they do not modify anything - which we do not do with facter
-      ENV['PATH'].split(File::PATH_SEPARATOR) + [ '/sbin', '/usr/sbin' ]
-    end
-  end
-
-  def which(bin)
-    if absolute_path?(bin)
-      return bin if File.executable?(bin)
-    else
-      search_paths.each do |dir|
-        dest = File.join(dir, bin)
-        if Facter::Util::Config.is_windows?
-          dest.gsub!(File::SEPARATOR, File::ALT_SEPARATOR)
-          if File.extname(dest).empty?
-            exts = ENV['PATHEXT']
-            exts = exts ? exts.split(File::PATH_SEPARATOR) : %w[.COM .EXE .BAT .CMD]
-            exts.each do |ext|
-              destext = dest + ext
-              return destext if File.executable?(destext)
-            end
-          end
-        end
-        return dest if File.executable?(dest)
-      end
-    end
-    nil
-  end
-
-  def absolute_path?(path, platform=nil)
-    # Escape once for the string literal, and once for the regex.
-    slash = '[\\\\/]'
-    name = '[^\\\\/]+'
-    regexes = {
-      :windows => %r!^(([A-Z]:#{slash})|(#{slash}#{slash}#{name}#{slash}#{name})|(#{slash}#{slash}\?#{slash}#{name}))!i,
-      :posix   => %r!^/!,
-    }
-    platform ||= Facter::Util::Config.is_windows? ? :windows : :posix
-
-    !! (path =~ regexes[platform])
-  end
-
-  def expand_command(command)
-    if match = /^"(.+?)"(?:\s+(.*))?/.match(command)
-      exe, arguments = match.captures
-      exe = which(exe) and [ "\"#{exe}\"", arguments ].compact.join(" ")
-    elsif match = /^'(.+?)'(?:\s+(.*))?/.match(command) and not Facter::Util::Config.is_windows?
-      exe, arguments = match.captures
-      exe = which(exe) and [ "'#{exe}'", arguments ].compact.join(" ")
-    else
-      exe, arguments = command.split(/ /,2)
-      if exe = which(exe)
-        # the binary was not quoted which means it contains no spaces. But the
-        # full path to the binary may do so.
-        exe = "\"#{exe}\"" if exe =~ /\s/ and Facter::Util::Config.is_windows?
-        exe = "'#{exe}'" if exe =~ /\s/ and not Facter::Util::Config.is_windows?
-        [ exe, arguments ].compact.join(" ")
-      end
-    end
-  end
-
   def with_env(values)
     old = {}
     values.each do |var, value|
@@ -93,4 +27,47 @@ class Facter::Core::Execution::Base
     rv
   end
 
+  def exec(code)
+
+    ## Set LANG to force i18n to C for the duration of this exec; this ensures that any code that parses the
+    ## output of the command can expect it to be in a consistent / predictable format / locale
+    with_env "LANG" => "C" do
+
+      if expanded_code = expand_command(code)
+        # if we can find the binary, we'll run the command with the expanded path to the binary
+        code = expanded_code
+      else
+        return ''
+      end
+
+      out = ''
+
+      begin
+        wait_for_child = true
+        out = %x{#{code}}.chomp
+        wait_for_child = false
+      rescue => detail
+        Facter.warn(detail.message)
+        return ''
+      ensure
+        if wait_for_child
+          # We need to ensure that if this code exits early then any spawned
+          # children will be reaped. Process execution is frequently
+          # terminated using Timeout.timeout but since the timeout isn't in
+          # this scope we can't rescue the raised exception. The best that
+          # we can do is determine if the child has exited, and if it hasn't
+          # then we need to spawn a thread to wait for the child.
+          #
+          # Due to the limitations of Ruby 1.8 there aren't good ways to
+          # asynchronously run a command and grab the PID of that command
+          # using the standard library. The best we can do is blindly wait
+          # on all processes and hope for the best. This issue is described
+          # at https://tickets.puppetlabs.com/browse/FACT-150
+          Thread.new { Process.waitall }
+        end
+      end
+
+      out
+    end
+  end
 end

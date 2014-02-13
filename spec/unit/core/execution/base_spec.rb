@@ -62,196 +62,58 @@ describe Facter::Core::Execution::Base do
     end
   end
 
-  describe "#search_paths" do
-    context "on windows", :as_platform => :windows do
-      it "should use the PATH environment variable to determine locations" do
-        ENV.expects(:[]).with('PATH').returns 'C:\Windows;C:\Windows\System32'
-        subject.search_paths.should == %w{C:\Windows C:\Windows\System32}
-      end
+  describe "#exec" do
+
+    it "switches LANG to C when executing the command" do
+      subject.expects(:with_env).with('LANG' => 'C')
+      subject.exec('foo')
     end
 
-    context "on posix", :as_platform => :posix do
-      it "should use the PATH environment variable plus /sbin and /usr/sbin on unix" do
-        ENV.expects(:[]).with('PATH').returns "/bin:/usr/bin"
-        subject.search_paths.should == %w{/bin /usr/bin /sbin /usr/sbin}
-      end
-    end
-  end
+    it "switches LC_ALL to C when executing the command"
 
-  describe "#which" do
-    context "when run on posix", :as_platform => :posix  do
-      before :each do
-        subject.stubs(:search_paths).returns [ '/bin', '/sbin', '/usr/sbin']
-      end
-
-      context "and provided with an absolute path" do
-        it "should return the binary if executable" do
-          File.expects(:executable?).with('/opt/foo').returns true
-          subject.which('/opt/foo').should == '/opt/foo'
-        end
-
-        it "should return nil if the binary is not executable" do
-          File.expects(:executable?).with('/opt/foo').returns false
-          subject.which('/opt/foo').should be_nil
-        end
-      end
-
-      context "and not provided with an absolute path" do
-        it "should return the absolute path if found" do
-          File.expects(:executable?).with('/bin/foo').returns false
-          File.expects(:executable?).with('/sbin/foo').returns true
-          File.expects(:executable?).with('/usr/sbin/foo').never
-          subject.which('foo').should == '/sbin/foo'
-        end
-
-        it "should return nil if not found" do
-          File.expects(:executable?).with('/bin/foo').returns false
-          File.expects(:executable?).with('/sbin/foo').returns false
-          File.expects(:executable?).with('/usr/sbin/foo').returns false
-          subject.which('foo').should be_nil
-        end
-      end
+    it "expands the command before running it" do
+      subject.stubs(:`).returns ''
+      subject.expects(:expand_command).with('foo').returns '/bin/foo'
+      subject.exec('foo')
     end
 
-    context "when run on windows", :as_platform => :windows do
-      before :each do
-        subject.stubs(:search_paths).returns ['C:\Windows\system32', 'C:\Windows', 'C:\Windows\System32\Wbem' ]
-        ENV.stubs(:[]).with('PATHEXT').returns nil
-      end
-
-      context "and provided with an absolute path" do
-        it "should return the binary if executable" do
-          File.expects(:executable?).with('C:\Tools\foo.exe').returns true
-          File.expects(:executable?).with('\\\\remote\dir\foo.exe').returns true
-          subject.which('C:\Tools\foo.exe').should == 'C:\Tools\foo.exe'
-          subject.which('\\\\remote\dir\foo.exe').should == '\\\\remote\dir\foo.exe'
-        end
-
-        it "should return nil if the binary is not executable" do
-          File.expects(:executable?).with('C:\Tools\foo.exe').returns false
-          File.expects(:executable?).with('\\\\remote\dir\foo.exe').returns false
-          subject.which('C:\Tools\foo.exe').should be_nil
-          subject.which('\\\\remote\dir\foo.exe').should be_nil
-        end
-      end
-
-      context "and not provided with an absolute path" do
-        it "should return the absolute path if found" do
-          File.expects(:executable?).with('C:\Windows\system32\foo.exe').returns false
-          File.expects(:executable?).with('C:\Windows\foo.exe').returns true
-          File.expects(:executable?).with('C:\Windows\System32\Wbem\foo.exe').never
-          subject.which('foo.exe').should == 'C:\Windows\foo.exe'
-        end
-
-        it "should return the absolute path with file extension if found" do
-          ['.COM', '.EXE', '.BAT', '.CMD', '' ].each do |ext|
-            File.stubs(:executable?).with('C:\Windows\system32\foo'+ext).returns false
-            File.stubs(:executable?).with('C:\Windows\System32\Wbem\foo'+ext).returns false
-          end
-          ['.COM', '.BAT', '.CMD', '' ].each do |ext|
-            File.stubs(:executable?).with('C:\Windows\foo'+ext).returns false
-          end
-          File.stubs(:executable?).with('C:\Windows\foo.EXE').returns true
-
-          subject.which('foo').should == 'C:\Windows\foo.EXE'
-        end
-
-        it "should return nil if not found" do
-          File.expects(:executable?).with('C:\Windows\system32\foo.exe').returns false
-          File.expects(:executable?).with('C:\Windows\foo.exe').returns false
-          File.expects(:executable?).with('C:\Windows\System32\Wbem\foo.exe').returns false
-          subject.which('foo.exe').should be_nil
-        end
-      end
+    it "returns an empty string when the command could not be expanded" do
+      subject.expects(:expand_command).with('foo').returns nil
+      expect(subject.exec('foo')).to be_empty
     end
 
-    describe "#expand_command" do
-      context "on windows", :as_platform => :windows do
-        it "should expand binary" do
-          subject.expects(:which).with('cmd').returns 'C:\Windows\System32\cmd'
-          subject.expand_command(
-            'cmd /c echo foo > C:\bar'
-          ).should == 'C:\Windows\System32\cmd /c echo foo > C:\bar'
-        end
+    it "logs a warning and returns an empty string when the command execution fails" do
+      subject.expects(:`).with("/bin/foo").raises "kaboom!"
+      Facter.expects(:warn).with("kaboom!")
 
-        it "should expand double quoted binary" do
-          subject.expects(:which).with('my foo').returns 'C:\My Tools\my foo.exe'
-          subject.expand_command('"my foo" /a /b').should == '"C:\My Tools\my foo.exe" /a /b'
-        end
+      subject.expects(:expand_command).with('foo').returns '/bin/foo'
 
-        it "should not expand single quoted binary" do
-          subject.expects(:which).with('\'C:\My').returns nil
-          subject.expand_command('\'C:\My Tools\foo.exe\' /a /b').should be_nil
-        end
-
-        it "should quote expanded binary if found in path with spaces" do
-          subject.expects(:which).with('foo').returns 'C:\My Tools\foo.exe'
-          subject.expand_command('foo /a /b').should == '"C:\My Tools\foo.exe" /a /b'
-        end
-
-        it "should return nil if not found" do
-          subject.expects(:which).with('foo').returns nil
-          subject.expand_command('foo /a | stuff >> /dev/null').should be_nil
-        end
-      end
-
-      context "on unix", :as_platform => :posix do
-        it "should expand binary" do
-          subject.expects(:which).with('foo').returns '/bin/foo'
-          subject.expand_command('foo -a | stuff >> /dev/null').should == '/bin/foo -a | stuff >> /dev/null'
-        end
-
-        it "should expand double quoted binary" do
-          subject.expects(:which).with('/tmp/my foo').returns '/tmp/my foo'
-          subject.expand_command(%q{"/tmp/my foo" bar}).should == %q{"/tmp/my foo" bar}
-        end
-
-        it "should expand single quoted binary" do
-          subject.expects(:which).with('my foo').returns '/home/bob/my path/my foo'
-          subject.expand_command(%q{'my foo' -a}).should == %q{'/home/bob/my path/my foo' -a}
-        end
-
-        it "should quote expanded binary if found in path with spaces" do
-          subject.expects(:which).with('foo.sh').returns '/home/bob/my tools/foo.sh'
-          subject.expand_command('foo.sh /a /b').should == %q{'/home/bob/my tools/foo.sh' /a /b}
-        end
-
-        it "should return nil if not found" do
-          subject.expects(:which).with('foo').returns nil
-          subject.expand_command('foo -a | stuff >> /dev/null').should be_nil
-        end
-      end
+      expect(subject.exec("foo")).to be_empty
     end
 
-  end
+    it "launches a thread to wait on children if the command was interrupted" do
+      subject.expects(:`).with("/bin/foo").raises "kaboom!"
+      subject.expects(:expand_command).with('foo').returns '/bin/foo'
 
-  describe "#absolute_path?" do
-    context "when run on unix", :as_platform => :posix do
-      %w[/ /foo /foo/../bar //foo //Server/Foo/Bar //?/C:/foo/bar /\Server/Foo /foo//bar/baz].each do |path|
-        it "should return true for #{path}" do
-          subject.should be_absolute_path(path)
-        end
-      end
+      Facter.stubs(:warn)
+      Thread.expects(:new).yields
+      Process.expects(:waitall).once
 
-      %w[. ./foo \foo C:/foo \\Server\Foo\Bar \\?\C:\foo\bar \/?/foo\bar \/Server/foo foo//bar/baz].each do |path|
-        it "should return false for #{path}" do
-          subject.should_not be_absolute_path(path)
-        end
-      end
+      subject.exec("foo")
     end
 
-    context "when run on windows", :as_platform => :windows  do
-      %w[C:/foo C:\foo \\\\Server\Foo\Bar \\\\?\C:\foo\bar //Server/Foo/Bar //?/C:/foo/bar /\?\C:/foo\bar \/Server\Foo/Bar c:/foo//bar//baz].each do |path|
-        it "should return true for #{path}" do
-          subject.should be_absolute_path(path)
-        end
-      end
+    it "returns the output of the command" do
+      subject.expects(:`).with("/bin/foo").returns 'hi'
+      subject.expects(:expand_command).with('foo').returns '/bin/foo'
 
-      %w[/ . ./foo \foo /foo /foo/../bar //foo C:foo/bar foo//bar/baz].each do |path|
-        it "should return false for #{path}" do
-          subject.should_not be_absolute_path(path)
-        end
-      end
+      expect(subject.exec("foo")).to eq 'hi'
+    end
+
+    it "strips off trailing newlines" do
+      subject.expects(:`).with("/bin/foo").returns "hi\n"
+      subject.expects(:expand_command).with('foo').returns '/bin/foo'
+
+      expect(subject.exec("foo")).to eq 'hi'
     end
   end
 end

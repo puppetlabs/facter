@@ -5,9 +5,14 @@ module Facter
     module Execution
 
       require 'facter/core/execution/base'
-      require 'facter/core/execution/ruby18'
+      require 'facter/core/execution/windows'
+      require 'facter/core/execution/posix'
 
-      @@impl = Facter::Core::Execution::Ruby18.new
+      @@impl = if Facter::Util::Config.is_windows?
+                 Facter::Core::Execution::Windows.new
+               else
+                 Facter::Core::Execution::Posix.new
+               end
 
       def self.impl
         @@impl
@@ -52,7 +57,7 @@ module Facter
 
       # Given a command line, this returns the command line with the
       # executable written as an absolute path. If the executable contains
-      # spaces, it has be but in double quotes to be properly recognized.
+      # spaces, it has be put in double quotes to be properly recognized.
       #
       # @param command [String] the command line
       #
