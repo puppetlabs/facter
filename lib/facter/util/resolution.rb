@@ -127,25 +127,32 @@ class Facter::Util::Resolution
   # @api public
   def setcode(string = nil, &block)
     if string
-      @code = string
-    else
-      unless block_given?
-        raise ArgumentError, "You must pass either code or a block"
+      @code = Proc.new do
+        output = Facter::Core::Execution.exec(string)
+        if output.nil?
+          nil
+        elsif output.empty?
+          nil
+        else
+          output
+        end
       end
+    elsif block_given?
       @code = block
+    else
+      raise ArgumentError, "You must pass either code or a block"
     end
   end
 
   private
 
   def resolve_value
-    return @value if @value
-    return nil if @code.nil?
-
-    if @code.is_a? Proc
+    if @value
+      @value
+    elsif @code.nil?
+      nil
+    elsif @code
       @code.call()
-    else
-      Facter::Core::Execution.exec(@code)
     end
   end
 end
