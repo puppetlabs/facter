@@ -39,7 +39,7 @@ Facter.add(:macaddress) do
   confine :osfamily => "Solaris"
   setcode do
     ether = []
-    output = Facter::Util::Resolution.exec("/usr/bin/netstat -np")
+    output = Facter::Core::Execution.exec("/usr/bin/netstat -np")
     output.each_line do |s|
       ether.push($1) if s =~ /(?:SPLA)\s+(\w{2}:\w{2}:\w{2}:\w{2}:\w{2}:\w{2})/
     end

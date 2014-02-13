@@ -17,21 +17,21 @@ describe Facter::Util::EC2 do
 
       it "should succeed if arp table contains fe:ff:ff:ff:ff:ff" do
         ec2arp = my_fixture_read("linux-arp-ec2.out")
-        Facter::Util::Resolution.expects(:exec).with("arp -an").\
+        Facter::Core::Execution.expects(:exec).with("arp -an").\
           at_least_once.returns(ec2arp)
         Facter::Util::EC2.has_ec2_arp?.should == true
       end
 
       it "should succeed if arp table contains FE:FF:FF:FF:FF:FF" do
         ec2arp = my_fixture_read("centos-arp-ec2.out")
-        Facter::Util::Resolution.expects(:exec).with("arp -an").\
+        Facter::Core::Execution.expects(:exec).with("arp -an").\
           at_least_once.returns(ec2arp)
         Facter::Util::EC2.has_ec2_arp?.should == true
       end
 
       it "should fail if arp table does not contain fe:ff:ff:ff:ff:ff" do
         ec2arp = my_fixture_read("linux-arp-not-ec2.out")
-        Facter::Util::Resolution.expects(:exec).with("arp -an").
+        Facter::Core::Execution.expects(:exec).with("arp -an").
           at_least_once.returns(ec2arp)
         Facter::Util::EC2.has_ec2_arp?.should == false
       end
@@ -45,14 +45,14 @@ describe Facter::Util::EC2 do
 
       it "should succeed if arp table contains fe-ff-ff-ff-ff-ff" do
         ec2arp = my_fixture_read("windows-2008-arp-a.out")
-        Facter::Util::Resolution.expects(:exec).with("arp -a").\
+        Facter::Core::Execution.expects(:exec).with("arp -a").\
           at_least_once.returns(ec2arp)
         Facter::Util::EC2.has_ec2_arp?.should == true
       end
 
       it "should fail if arp table does not contain fe-ff-ff-ff-ff-ff" do
         ec2arp = my_fixture_read("windows-2008-arp-a-not-ec2.out")
-        Facter::Util::Resolution.expects(:exec).with("arp -a").
+        Facter::Core::Execution.expects(:exec).with("arp -a").
           at_least_once.returns(ec2arp)
         Facter::Util::EC2.has_ec2_arp?.should == false
       end
@@ -66,7 +66,7 @@ describe Facter::Util::EC2 do
       it "should fail if arp table does not contain fe:ff:ff:ff:ff:ff" do
         ec2arp = my_fixture_read("solaris8_arp_a_not_ec2.out")
 
-        Facter::Util::Resolution.expects(:exec).with("arp -a").
+        Facter::Core::Execution.expects(:exec).with("arp -a").
           at_least_once.returns(ec2arp)
 
         Facter::Util::EC2.has_ec2_arp?.should == false

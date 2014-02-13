@@ -105,7 +105,7 @@ describe "SELinux facts" do
   end
 
   def sestatus_is(status)
-    Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/sestatus').returns(status)
+    Facter::Core::Execution.stubs(:exec).with('/usr/sbin/sestatus').returns(status)
   end
 
   def mounts_does_not_exist
@@ -114,7 +114,7 @@ describe "SELinux facts" do
 
   def mounts_contains(*lines)
     FileTest.expects(:exists?).with("/proc/self/mounts").returns true
-    Facter::Util::Resolution.expects(:exec).with("cat /proc/self/mounts").returns(lines.join("\n"))
+    Facter::Core::Execution.expects(:exec).with("cat /proc/self/mounts").returns(lines.join("\n"))
   end
 
 end

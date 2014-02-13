@@ -20,19 +20,19 @@ module Facter::Util::Uptime
   private
 
   def self.uptime_proc_uptime
-    if output = Facter::Util::Resolution.exec("/bin/cat #{uptime_file} 2>/dev/null")
+    if output = Facter::Core::Execution.exec("/bin/cat #{uptime_file} 2>/dev/null")
       output.chomp.split(" ").first.to_i
     end
   end
 
   def self.uptime_sysctl
-    if output = Facter::Util::Resolution.exec("#{uptime_sysctl_cmd} 2>/dev/null")
+    if output = Facter::Core::Execution.exec("#{uptime_sysctl_cmd} 2>/dev/null")
       compute_uptime(Time.at(output.match(/\d+/)[0].to_i))
     end
   end
 
   def self.uptime_executable
-    if output = Facter::Util::Resolution.exec("#{uptime_executable_cmd} 2>/dev/null")
+    if output = Facter::Core::Execution.exec("#{uptime_executable_cmd} 2>/dev/null")
       up=0
       if output =~ /(\d+) day(?:s|\(s\))?,\s+(\d+):(\d+)/
         # Regexp handles Solaris, AIX, HP-UX, and Tru64.

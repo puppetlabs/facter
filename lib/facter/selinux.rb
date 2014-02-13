@@ -22,7 +22,7 @@ def selinux_mount_point
     # a hang. Reading from other parts of /proc does not seem to cause this problem.
     # The work around is to read the file in another process.
     # -- andy Fri Aug 31 2012
-    selinux_line = Facter::Util::Resolution.exec('cat /proc/self/mounts').each_line.find { |line| line =~ /selinuxfs/ }
+    selinux_line = Facter::Core::Execution.exec('cat /proc/self/mounts').each_line.find { |line| line =~ /selinuxfs/ }
     if selinux_line
       path = selinux_line.split[1]
     end
@@ -72,7 +72,7 @@ Facter.add("selinux_current_mode") do
   confine :selinux => :true
   setcode do
     result = 'unknown'
-    mode = Facter::Util::Resolution.exec(sestatus_cmd)
+    mode = Facter::Core::Execution.exec(sestatus_cmd)
     mode.each_line { |l| result = $1 if l =~ /^Current mode\:\s+(\w+)$/i }
     result.chomp
   end
@@ -82,7 +82,7 @@ Facter.add("selinux_config_mode") do
   confine :selinux => :true
   setcode do
     result = 'unknown'
-    mode = Facter::Util::Resolution.exec(sestatus_cmd)
+    mode = Facter::Core::Execution.exec(sestatus_cmd)
     mode.each_line { |l| result = $1 if l =~ /^Mode from config file\:\s+(\w+)$/i }
     result.chomp
   end
@@ -92,7 +92,7 @@ Facter.add("selinux_config_policy") do
   confine :selinux => :true
   setcode do
     result = 'unknown'
-    mode = Facter::Util::Resolution.exec(sestatus_cmd)
+    mode = Facter::Core::Execution.exec(sestatus_cmd)
     mode.each_line { |l| result = $1 if l =~ /^Policy from config file\:\s+(\w+)$/i }
     result.chomp
   end

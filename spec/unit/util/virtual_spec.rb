@@ -30,31 +30,31 @@ describe Facter::Util::Virtual do
   it "should identify openvzhn when /proc/self/status has envID of 0" do
     Facter::Util::Virtual.stubs(:openvz?).returns(true)
     FileTest.stubs(:exists?).with("/proc/self/status").returns(true)
-    Facter::Util::Resolution.stubs(:exec).with('grep "envID" /proc/self/status').returns("envID:  0")
+    Facter::Core::Execution.stubs(:exec).with('grep "envID" /proc/self/status').returns("envID:  0")
     Facter::Util::Virtual.openvz_type().should == "openvzhn"
   end
 
   it "should identify openvzve when /proc/self/status has envID of 0" do
     Facter::Util::Virtual.stubs(:openvz?).returns(true)
     FileTest.stubs(:exists?).with('/proc/self/status').returns(true)
-    Facter::Util::Resolution.stubs(:exec).with('grep "envID" /proc/self/status').returns("envID:  666")
+    Facter::Core::Execution.stubs(:exec).with('grep "envID" /proc/self/status').returns("envID:  666")
     Facter::Util::Virtual.openvz_type().should == "openvzve"
   end
 
   it "should not attempt to identify openvz when /proc/self/status has no envID" do
     Facter::Util::Virtual.stubs(:openvz?).returns(true)
     FileTest.stubs(:exists?).with('/proc/self/status').returns(true)
-    Facter::Util::Resolution.stubs(:exec).with('grep "envID" /proc/self/status').returns("")
+    Facter::Core::Execution.stubs(:exec).with('grep "envID" /proc/self/status').returns("")
     Facter::Util::Virtual.openvz_type().should be_nil
   end
 
   it "should identify Solaris zones when non-global zone" do
-    Facter::Util::Resolution.stubs(:exec).with("/sbin/zonename").returns("somezone")
+    Facter::Core::Execution.stubs(:exec).with("/sbin/zonename").returns("somezone")
     Facter::Util::Virtual.should be_zone
   end
 
   it "should not identify Solaris zones when global zone" do
-    Facter::Util::Resolution.stubs(:exec).with("/sbin/zonename").returns("global")
+    Facter::Core::Execution.stubs(:exec).with("/sbin/zonename").returns("global")
     Facter::Util::Virtual.should_not be_zone
   end
 
@@ -91,7 +91,7 @@ describe Facter::Util::Virtual do
 
   it "should identify kvm" do
     Facter::Util::Virtual.stubs(:kvm?).returns(true)
-    Facter::Util::Resolution.stubs(:exec).with('dmidecode 2> /dev/null').returns("something")
+    Facter::Core::Execution.stubs(:exec).with('dmidecode 2> /dev/null').returns("something")
     Facter::Util::Virtual.kvm_type().should == "kvm"
   end
 
@@ -202,38 +202,38 @@ describe Facter::Util::Virtual do
   it "should detect kvm on FreeBSD" do
     FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
     Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
-    Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns("QEMU Virtual CPU version 0.12.4")
+    Facter::Core::Execution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns("QEMU Virtual CPU version 0.12.4")
     Facter::Util::Virtual.should be_kvm
   end
 
   it "should detect kvm on OpenBSD" do
     FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
     Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
-    Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns('QEMU Virtual CPU version (cpu64-rhel6) ("AuthenticAMD" 686-class, 512KB L2 cache)')
+    Facter::Core::Execution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns('QEMU Virtual CPU version (cpu64-rhel6) ("AuthenticAMD" 686-class, 512KB L2 cache)')
     Facter::Util::Virtual.should be_kvm
   end
 
   it "should identify FreeBSD jail when in jail" do
     Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
-    Facter::Util::Resolution.stubs(:exec).with("/sbin/sysctl -n security.jail.jailed").returns("1")
+    Facter::Core::Execution.stubs(:exec).with("/sbin/sysctl -n security.jail.jailed").returns("1")
     Facter::Util::Virtual.should be_jail
   end
 
   it "should not identify GNU/kFreeBSD jail when not in jail" do
     Facter.fact(:kernel).stubs(:value).returns("GNU/kFreeBSD")
-    Facter::Util::Resolution.stubs(:exec).with("/bin/sysctl -n security.jail.jailed").returns("0")
+    Facter::Core::Execution.stubs(:exec).with("/bin/sysctl -n security.jail.jailed").returns("0")
     Facter::Util::Virtual.should_not be_jail
   end
 
   it "should detect hpvm on HP-UX" do
     Facter.fact(:kernel).stubs(:value).returns("HP-UX")
-    Facter::Util::Resolution.stubs(:exec).with("/usr/bin/getconf MACHINE_MODEL").returns('ia64 hp server Integrity Virtual Machine')
+    Facter::Core::Execution.stubs(:exec).with("/usr/bin/getconf MACHINE_MODEL").returns('ia64 hp server Integrity Virtual Machine')
     Facter::Util::Virtual.should be_hpvm
   end
 
   it "should not detect hpvm on HP-UX when not in hpvm" do
     Facter.fact(:kernel).stubs(:value).returns("HP-UX")
-    Facter::Util::Resolution.stubs(:exec).with("/usr/bin/getconf MACHINE_MODEL").returns('ia64 hp server rx660')
+    Facter::Core::Execution.stubs(:exec).with("/usr/bin/getconf MACHINE_MODEL").returns('ia64 hp server rx660')
     Facter::Util::Virtual.should_not be_hpvm
   end
 
@@ -263,8 +263,8 @@ describe Facter::Util::Virtual do
   shared_examples_for "virt-what" do |kernel, path, null_device|
     before(:each) do
       Facter.fact(:kernel).stubs(:value).returns(kernel)
-      Facter::Util::Resolution.expects(:which).with("virt-what").returns(path)
-      Facter::Util::Resolution.expects(:exec).with("#{path} 2>#{null_device}")
+      Facter::Core::Execution.expects(:which).with("virt-what").returns(path)
+      Facter::Core::Execution.expects(:exec).with("#{path} 2>#{null_device}")
     end
 
     it "on #{kernel} virt-what is at #{path} and stderr is sent to #{null_device}" do
@@ -278,8 +278,8 @@ describe Facter::Util::Virtual do
     it "should strip out warnings on stdout from virt-what" do
       virt_what_warning = "virt-what: this script must be run as root"
       Facter.fact(:kernel).stubs(:value).returns('linux')
-      Facter::Util::Resolution.expects(:which).with('virt-what').returns "/usr/bin/virt-what"
-      Facter::Util::Resolution.expects(:exec).with('/usr/bin/virt-what 2>/dev/null').returns virt_what_warning
+      Facter::Core::Execution.expects(:which).with('virt-what').returns "/usr/bin/virt-what"
+      Facter::Core::Execution.expects(:exec).with('/usr/bin/virt-what 2>/dev/null').returns virt_what_warning
       Facter::Util::Virtual.virt_what.should_not match /^virt-what: /
     end
   end

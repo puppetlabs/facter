@@ -145,7 +145,7 @@ class Facter::Util::Resolution
     if @code.is_a? Proc
       @code.call()
     else
-      Facter::Util::Resolution.exec(@code)
+      Facter::Core::Execution.exec(@code)
     end
   end
 end

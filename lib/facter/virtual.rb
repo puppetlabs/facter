@@ -60,7 +60,7 @@ Facter.add("virtual") do
   setcode do
     next "zone" if Facter::Util::Virtual.zone?
 
-    output = Facter::Util::Resolution.exec('prtdiag')
+    output = Facter::Core::Execution.exec('prtdiag')
     if output
       lines = output.split("\n")
       next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
@@ -91,7 +91,7 @@ Facter.add("virtual") do
   confine :kernel => 'OpenBSD'
   has_weight 10
   setcode do
-    output = Facter::Util::Resolution.exec('sysctl -n hw.product 2>/dev/null')
+    output = Facter::Core::Execution.exec('sysctl -n hw.product 2>/dev/null')
     if output
       lines = output.split("\n")
       next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
@@ -132,7 +132,7 @@ Facter.add("virtual") do
     end
 
     # Parse dmidecode
-    output = Facter::Util::Resolution.exec('dmidecode 2> /dev/null')
+    output = Facter::Core::Execution.exec('dmidecode 2> /dev/null')
     if output
       lines = output.split("\n")
       next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
@@ -145,7 +145,7 @@ Facter.add("virtual") do
     end
 
     # Sample output of vmware -v `VMware Server 1.0.5 build-80187`
-    output = Facter::Util::Resolution.exec("vmware -v")
+    output = Facter::Core::Execution.exec("vmware -v")
     if output
       mdata = output.match /(\S+)\s+(\S+)/
       next "#{mdata[1]}_#{mdata[2]}".downcase if mdata

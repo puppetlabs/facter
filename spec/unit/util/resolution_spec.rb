@@ -65,7 +65,7 @@ describe Facter::Util::Resolution do
 
     describe "and setcode has not been called" do
       it "should return nil" do
-        Facter::Util::Resolution.expects(:exec).with(nil, nil).never
+        Facter::Core::Execution.expects(:exec).with(nil, nil).never
         resolution.value.should be_nil
       end
     end
@@ -78,7 +78,7 @@ describe Facter::Util::Resolution do
 
         it "should return the result of executing the code" do
           resolution.setcode "/bin/foo"
-          Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns "yup"
+          Facter::Core::Execution.expects(:exec).once.with("/bin/foo").returns "yup"
 
           expect(resolution.value).to eq "yup"
         end
@@ -91,7 +91,7 @@ describe Facter::Util::Resolution do
 
         it "should return the result of executing the code" do
           resolution.setcode "/bin/foo"
-          Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns "yup"
+          Facter::Core::Execution.expects(:exec).once.with("/bin/foo").returns "yup"
 
           expect(resolution.value).to eq "yup"
         end

@@ -96,7 +96,7 @@ module Facter::Util::IP
   #
   # @return [String] the output of `ifconfig #{arguments} 2>/dev/null` or nil
   def self.exec_ifconfig(additional_arguments=[])
-    Facter::Util::Resolution.exec("#{self.get_ifconfig} #{additional_arguments.join(' ')}")
+    Facter::Core::Execution.exec("#{self.get_ifconfig} #{additional_arguments.join(' ')}")
   end
   ##
   # get_ifconfig looks up the ifconfig binary
@@ -110,7 +110,7 @@ module Facter::Util::IP
   # hpux_netstat_in is a delegate method that allows us to stub netstat -in
   # without stubbing exec.
   def self.hpux_netstat_in
-    Facter::Util::Resolution.exec("/bin/netstat -in")
+    Facter::Core::Execution.exec("/bin/netstat -in")
   end
 
   def self.get_infiniband_macaddress(interface)
@@ -160,7 +160,7 @@ module Facter::Util::IP
   end
 
   def self.hpux_lanscan
-    Facter::Util::Resolution.exec("/usr/sbin/lanscan")
+    Facter::Core::Execution.exec("/usr/sbin/lanscan")
   end
 
   def self.get_output_for_interface_and_label(interface, label)

@@ -91,21 +91,21 @@ end
 Facter.add("Processor") do
   confine :kernel => :openbsd
   setcode do
-    Facter::Util::Resolution.exec("uname -p")
+    Facter::Core::Execution.exec("uname -p")
   end
 end
 
 Facter.add("ProcessorCount") do
   confine :kernel => :openbsd
   setcode do
-    Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
+    Facter::Core::Execution.exec("sysctl -n hw.ncpu")
   end
 end
 
 Facter.add("ProcessorCount") do
   confine :kernel => :Darwin
   setcode do
-    Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
+    Facter::Core::Execution.exec("sysctl -n hw.ncpu")
   end
 end
 
@@ -150,14 +150,14 @@ end
 Facter.add("Processor") do
   confine :kernel => [:dragonfly,:freebsd]
   setcode do
-    Facter::Util::Resolution.exec("sysctl -n hw.model")
+    Facter::Core::Execution.exec("sysctl -n hw.model")
   end
 end
 
 Facter.add("ProcessorCount") do
   confine :kernel => [:dragonfly,:freebsd]
   setcode do
-    Facter::Util::Resolution.exec("sysctl -n hw.ncpu")
+    Facter::Core::Execution.exec("sysctl -n hw.ncpu")
   end
 end
 
@@ -169,11 +169,11 @@ Facter.add("ProcessorCount") do
     result = nil
 
     if (major_version > 5) or (major_version == 5 and minor_version >= 8) then
-      if kstat = Facter::Util::Resolution.exec("/usr/bin/kstat cpu_info")
+      if kstat = Facter::Core::Execution.exec("/usr/bin/kstat cpu_info")
         result = kstat.scan(/\bcore_id\b\s+\d+/).uniq.length
       end
     else
-      if output = Facter::Util::Resolution.exec("/usr/sbin/psrinfo") then
+      if output = Facter::Core::Execution.exec("/usr/sbin/psrinfo") then
         result = output.split("\n").length
       end
     end

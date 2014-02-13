@@ -15,7 +15,7 @@ describe "The IPv6 address fact" do
   end
 
   it "should return ipaddress6 information for Darwin" do
-    Facter::Util::Resolution.stubs(:exec).with('uname -s').returns('Darwin')
+    Facter::Core::Execution.stubs(:exec).with('uname -s').returns('Darwin')
     Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
     Facter::Util::IP.stubs(:exec_ifconfig).with(["-a"]).
       returns(ifconfig_fixture('darwin_ifconfig_all_with_multiple_interfaces'))
@@ -24,7 +24,7 @@ describe "The IPv6 address fact" do
   end
 
   it "should return ipaddress6 information for Linux" do
-    Facter::Util::Resolution.stubs(:exec).with('uname -s').returns('Linux')
+    Facter::Core::Execution.stubs(:exec).with('uname -s').returns('Linux')
     Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
     Facter::Util::IP.stubs(:exec_ifconfig).with(["2>/dev/null"]).
       returns(ifconfig_fixture('linux_ifconfig_all_with_multiple_interfaces'))
@@ -33,7 +33,7 @@ describe "The IPv6 address fact" do
   end
 
   it "should return ipaddress6 information for Linux with recent net-tools" do
-      Facter::Util::Resolution.stubs(:exec).with('uname -s').returns('Linux')
+      Facter::Core::Execution.stubs(:exec).with('uname -s').returns('Linux')
       Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
       Facter::Util::IP.stubs(:exec_ifconfig).with(["2>/dev/null"]).
         returns(ifconfig_fixture('ifconfig_net_tools_1.60.txt'))
@@ -42,7 +42,7 @@ describe "The IPv6 address fact" do
     end
 
   it "should return ipaddress6 information for Solaris" do
-    Facter::Util::Resolution.stubs(:exec).with('uname -s').returns('SunOS')
+    Facter::Core::Execution.stubs(:exec).with('uname -s').returns('SunOS')
     Facter::Util::IP.stubs(:get_ifconfig).returns("/usr/sbin/ifconfig")
     Facter::Util::IP.stubs(:exec_ifconfig).with(["-a"]).
       returns(ifconfig_fixture('sunos_ifconfig_all_with_multiple_interfaces'))
