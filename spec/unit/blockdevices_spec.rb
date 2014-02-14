@@ -21,26 +21,26 @@ describe "Block device facts" do
 
       Facter::Util::POSIX.stubs(:sysctl).with("kern.disks").returns("cd0 da0 ada0 ad10 mfi0")
 
-      Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol inquiry cd0 -D").returns("pass0: <TEAC DV-28E-N 1.6A> Removable CD-ROM SCSI-0 device")
-      Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol inquiry da0 -D").returns("pass1: <HP 73.4G MAU3073NC HPC2> Fixed Direct Access SCSI-3 device")
+      Facter::Core::Execution.stubs(:exec).with("/sbin/camcontrol inquiry cd0 -D").returns("pass0: <TEAC DV-28E-N 1.6A> Removable CD-ROM SCSI-0 device")
+      Facter::Core::Execution.stubs(:exec).with("/sbin/camcontrol inquiry da0 -D").returns("pass1: <HP 73.4G MAU3073NC HPC2> Fixed Direct Access SCSI-3 device")
 
       sample_atacontrol_cap = File.read(fixtures('blockdevices','freebsd_atacontrol_cap_ad10'))
-      Facter::Util::Resolution.stubs(:exec).with("/sbin/atacontrol cap ad10").returns(sample_atacontrol_cap)
+      Facter::Core::Execution.stubs(:exec).with("/sbin/atacontrol cap ad10").returns(sample_atacontrol_cap)
 
       sample_camcontrol_identify = File.read(fixtures('blockdevices','freebsd_camcontrol_identify_ada0'))
-      Facter::Util::Resolution.stubs(:exec).with("/sbin/camcontrol identify ada0").returns(sample_camcontrol_identify)
+      Facter::Core::Execution.stubs(:exec).with("/sbin/camcontrol identify ada0").returns(sample_camcontrol_identify)
 
       sample_diskinfo_da0 = File.read(fixtures('blockdevices','freebsd_diskinfo_da0'))
-      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo -v da0").returns(sample_diskinfo_da0)
+      Facter::Core::Execution.stubs(:exec).with("/usr/sbin/diskinfo -v da0").returns(sample_diskinfo_da0)
 
       sample_diskinfo_ada0 = File.read(fixtures('blockdevices','freebsd_diskinfo_ada0'))
-      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo -v ada0").returns(sample_diskinfo_ada0)
+      Facter::Core::Execution.stubs(:exec).with("/usr/sbin/diskinfo -v ada0").returns(sample_diskinfo_ada0)
 
       sample_diskinfo_ad10 = File.read(fixtures('blockdevices','freebsd_diskinfo_ad10'))
-      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo -v ad10").returns(sample_diskinfo_ad10)
+      Facter::Core::Execution.stubs(:exec).with("/usr/sbin/diskinfo -v ad10").returns(sample_diskinfo_ad10)
 
       sample_diskinfo_mfi0 = File.read(fixtures('blockdevices','freebsd_diskinfo_mfi0'))
-      Facter::Util::Resolution.stubs(:exec).with("/usr/sbin/diskinfo -v mfi0").returns(sample_diskinfo_mfi0)
+      Facter::Core::Execution.stubs(:exec).with("/usr/sbin/diskinfo -v mfi0").returns(sample_diskinfo_mfi0)
     end
 
     describe 'blockdevices fact' do

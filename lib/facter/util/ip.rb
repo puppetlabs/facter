@@ -102,7 +102,7 @@ class Facter::Util::IP
   #
   # @api private
   def self.exec_ifconfig(additional_arguments=[])
-    Facter::Util::Resolution.exec("#{self.get_ifconfig} #{additional_arguments.join(' ')}")
+    Facter::Core::Execution.exec("#{self.get_ifconfig} #{additional_arguments.join(' ')}")
   end
 
   # Looks up the ifconfig binary.

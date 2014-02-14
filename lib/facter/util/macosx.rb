@@ -15,7 +15,7 @@ module Facter::Util::Macosx
   # by looking at the _name key of the _items dict for each _dataType
 
   def self.profiler_xml(data_field)
-    Facter::Util::Resolution.exec("/usr/sbin/system_profiler -xml #{data_field}")
+    Facter::Core::Execution.exec("/usr/sbin/system_profiler -xml #{data_field}")
   end
 
   def self.intern_xml(xml)
@@ -57,7 +57,7 @@ module Facter::Util::Macosx
   def self.sw_vers
     ver = Hash.new
     [ "productName", "productVersion", "buildVersion" ].each do |option|
-      ver["macosx_#{option}"] = Facter::Util::Resolution.exec("/usr/bin/sw_vers -#{option}").strip
+      ver["macosx_#{option}"] = Facter::Core::Execution.exec("/usr/bin/sw_vers -#{option}").strip
     end
     productversion = ver["macosx_productVersion"]
     if not productversion.nil?

@@ -148,7 +148,7 @@ module Facter
       # executing the code.
       #
       # @param code [String] the program to run
-      # @return [String, nil] the output of the program or nil
+      # @return [String] the output of the program or the empty string on error
       #
       # @api public
       #
@@ -165,23 +165,19 @@ module Facter
             # if we can find the binary, we'll run the command with the expanded path to the binary
             code = expanded_code
           else
-            return nil
+            return ''
           end
 
-          out = nil
+          out = ''
 
           begin
             out = %x{#{code}}.chomp
           rescue => detail
             Facter.warn(detail)
-            return nil
+            return ''
           end
 
-          if out == ""
-            return nil
-          else
-            return out
-          end
+          out
         end
       end
     end

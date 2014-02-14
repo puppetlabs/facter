@@ -55,14 +55,14 @@ module Facter::Manufacturer
     name.each do |sysctlkey,facterkey|
       Facter.add(facterkey) do
         confine :kernel => [:openbsd, :darwin]
-        setcode Facter::Util::POSIX.sysctl(sysctlkey)
+        setcode { Facter::Util::POSIX.sysctl(sysctlkey) }
       end
     end
   end
 
   def self.prtdiag_sparc_find_system_info()
     # Parses prtdiag for a SPARC architecture string, won't work with Solaris x86
-    output = Facter::Util::Resolution.exec('/usr/sbin/prtdiag 2>/dev/null')
+    output = Facter::Core::Execution.exec('/usr/sbin/prtdiag 2>/dev/null')
 
     # System Configuration:  Sun Microsystems  sun4u Sun SPARC Enterprise M3000 Server
     if output and output =~ /^System Configuration:\s+(.+?)\s+(sun\d+\S+)\s+(.+)/

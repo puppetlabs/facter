@@ -70,14 +70,14 @@ describe Facter::Util::Processor do
 
     it "should get the processor description on Solaris (x86)" do
       Facter.fact(:architecture).stubs(:value).returns("i86pc")
-      Facter::Util::Resolution.stubs(:exec).with("/usr/bin/kstat cpu_info").returns(my_fixture_read("solaris-i86pc"))
+      Facter::Core::Execution.stubs(:exec).with("/usr/bin/kstat cpu_info").returns(my_fixture_read("solaris-i86pc"))
 
       Facter::Util::Processor.enum_kstat[0].should == "Intel(r) Core(tm) i5 CPU       M 450  @ 2.40GHz"
     end
 
     it "should get the processor description on Solaris (SPARC64)" do
       Facter.fact(:architecture).stubs(:value).returns("sun4u")
-      Facter::Util::Resolution.stubs(:exec).with("/usr/bin/kstat cpu_info").returns(my_fixture_read("solaris-sun4u"))
+      Facter::Core::Execution.stubs(:exec).with("/usr/bin/kstat cpu_info").returns(my_fixture_read("solaris-sun4u"))
 
       Facter::Util::Processor.enum_kstat[0].should == "SPARC64-VII"
       Facter::Util::Processor.enum_kstat[1].should == "SPARC64-VII"

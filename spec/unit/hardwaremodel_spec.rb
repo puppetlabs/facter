@@ -4,7 +4,7 @@ require 'facter'
 describe "Hardwaremodel fact" do
   it "should match uname -m by default" do
     Facter.fact(:kernel).stubs(:value).returns("Darwin")
-    Facter::Util::Resolution.stubs(:exec).with("uname -m").returns("Inky")
+    Facter::Core::Execution.stubs(:exec).with("uname -m").returns("Inky")
 
     Facter.fact(:hardwaremodel).value.should == "Inky"
   end

@@ -47,19 +47,19 @@ module Processor
   end
 
   ##
-  # lsdev is intended to directly delegate to Facter::Util::Resolution.exec in an
+  # lsdev is intended to directly delegate to Facter::Core::Execution.exec in an
   # effort to make the processorX facts easier to test by stubbing only the
   # behaviors we need to stub to get the output of the system command.
   def self.lsdev(command="lsdev -Cc processor")
-    Facter::Util::Resolution.exec(command)
+    Facter::Core::Execution.exec(command)
   end
 
   ##
-  # lsattr is intended to directly delegate to Facter::Util::Resolution.exec in
+  # lsattr is intended to directly delegate to Facter::Core::Execution.exec in
   # an effort to make the processorX facts easier to test.  See also the
   # {lsdev} method.
   def self.lsattr(command="lsattr -El proc0 -a type")
-    Facter::Util::Resolution.exec(command)
+    Facter::Core::Execution.exec(command)
   end
 
   ##
@@ -181,34 +181,34 @@ module Processor
   private_class_method :read_unistd_h
 
   ##
-  # machinfo delegates directly to Facter::Util::Resolution.exec, as with lsdev
+  # machinfo delegates directly to Facter::Core::Execution.exec, as with lsdev
   # above.
   def self.machinfo(command="/usr/contrib/bin/machinfo")
-    Facter::Util::Resolution.exec(command)
+    Facter::Core::Execution.exec(command)
   end
 
   ##
-  # model delegates directly to Facter::Util::Resolution.exec.
+  # model delegates directly to Facter::Core::Execution.exec.
   def self.model(command="model")
-    Facter::Util::Resolution.exec(command)
+    Facter::Core::Execution.exec(command)
   end
 
   ##
-  # ioscan delegates directly to Facter::Util::Resolution.exec.
+  # ioscan delegates directly to Facter::Core::Execution.exec.
   def self.ioscan(command="ioscan -fknCprocessor")
-    Facter::Util::Resolution.exec(command)
+    Facter::Core::Execution.exec(command)
   end
 
   ##
-  # getconf_cpu_version delegates directly to Facter::Util::Resolution.exec.
+  # getconf_cpu_version delegates directly to Facter::Core::Execution.exec.
   def self.getconf_cpu_version(command="getconf CPU_VERSION")
-    Facter::Util::Resolution.exec(command)
+    Facter::Core::Execution.exec(command)
   end
 
   ##
-  # getconf_cpu_chip_type delegates directly to Facter::Util::Resolution.exec.
+  # getconf_cpu_chip_type delegates directly to Facter::Core::Execution.exec.
   def self.getconf_cpu_chip_type(command="getconf CPU_CHIP_TYPE")
-    Facter::Util::Resolution.exec(command)
+    Facter::Core::Execution.exec(command)
   end
 
   def self.sysfs_proc_count
@@ -281,7 +281,7 @@ module Processor
     processor_num = -1
     processor_list = []
     Thread::exclusive do
-      kstat = Facter::Util::Resolution.exec('/usr/bin/kstat cpu_info')
+      kstat = Facter::Core::Execution.exec('/usr/bin/kstat cpu_info')
       if kstat
         kstat.each_line do |l|
           if l =~ /cpu_info(\d+)/

@@ -2,11 +2,11 @@
 
 module Facter::Util::Architecture
   ##
-  # lsattr is intended to directly delegate to Facter::Util::Resolution.exec in
+  # lsattr is intended to directly delegate to Facter::Core::Execution.exec in
   # an effort to make the processorX facts easier to test.  See also the
   # {lsdev} method.
   def self.lsattr(command="lsattr -El proc0 -a type")
-    Facter::Util::Resolution.exec(command)
+    Facter::Core::Execution.exec(command)
   end
 
   ##

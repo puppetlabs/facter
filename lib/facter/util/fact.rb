@@ -158,7 +158,7 @@ class Facter::Util::Fact
 
   def find_first_real_value(resolutions)
     resolutions.each do |resolve|
-      value = normalize_value(resolve.value)
+      value = resolve.value
       if not value.nil?
         return value
       end
@@ -176,10 +176,6 @@ class Facter::Util::Fact
     if value.nil?
       Facter.debug("value for %s is still nil" % @name)
     end
-  end
-
-  def normalize_value(value)
-    value == "" ? nil : value
   end
 
   def create_or_return_resolution(resolution_name, resolution_type)

@@ -74,9 +74,9 @@ Facter.add('physicalprocessorcount') do
     kernelrelease = Facter.value(:kernelrelease)
     (major_version, minor_version) = kernelrelease.split(".").map { |str| str.to_i }
     if (major_version > 5) or (major_version == 5 and minor_version >= 8) then
-      Facter::Util::Resolution.exec("/usr/sbin/psrinfo -p")
+      Facter::Core::Execution.exec("/usr/sbin/psrinfo -p")
     else
-      output = Facter::Util::Resolution.exec("/usr/sbin/psrinfo")
+      output = Facter::Core::Execution.exec("/usr/sbin/psrinfo")
       output.split("\n").length.to_s
     end
   end

@@ -9,7 +9,7 @@
 
 Facter.add(:gid) do
   confine do
-    Facter::Util::Resolution.which('id')
+    Facter::Core::Execution.which('id')
   end
   setcode 'id -ng'
 end

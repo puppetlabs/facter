@@ -36,7 +36,7 @@ module Facter::Memory
   def self.vmstat_find_free_memory(args = [])
     cmd = 'vmstat'
     cmd += (' ' + args.join(' ')) unless args.empty?
-    row = Facter::Util::Resolution.exec(cmd).split("\n")[-1]
+    row = Facter::Core::Execution.exec(cmd).split("\n")[-1]
     if row =~ /^\s*\d+\s*\d+\s*\d+\s*\d+\s*(\d+)/
       memfree = $1
     end
@@ -53,7 +53,7 @@ module Facter::Memory
     pagesize = 0
     memspecfree = 0
 
-    vmstats = Facter::Util::Resolution.exec('vm_stat')
+    vmstats = Facter::Core::Execution.exec('vm_stat')
     vmstats.each_line do |vmline|
       case
       when vmline =~ /page\ssize\sof\s(\d+)\sbytes/
@@ -72,7 +72,7 @@ module Facter::Memory
   # it's the third value on the line starting with memory
   # svmon can be run by non root users
   def self.svmon_aix_find_free_memory()
-    Facter::Util::Resolution.exec("/usr/bin/svmon -O unit=KB") =~ /^memory\s+\d+\s+\d+\s+(\d+)\s+/
+    Facter::Core::Execution.exec("/usr/bin/svmon -O unit=KB") =~ /^memory\s+\d+\s+\d+\s+(\d+)\s+/
     $1
   end
 
@@ -117,7 +117,7 @@ module Facter::Memory
     when /Darwin/i
       Facter::Util::POSIX.sysctl("hw.memsize")
     when /AIX/i
-      if Facter::Util::Resolution.exec("/usr/bin/svmon -O unit=KB") =~ /^memory\s+(\d+)\s+/
+      if Facter::Core::Execution.exec("/usr/bin/svmon -O unit=KB") =~ /^memory\s+(\d+)\s+/
         $1
       end
     end
@@ -147,15 +147,15 @@ module Facter::Memory
   def self.swap_info(kernel = Facter.value(:kernel))
     case kernel
     when /AIX/i
-      (Facter.value(:id) == "root") ? Facter::Util::Resolution.exec('swap -l 2>/dev/null') : nil
+      (Facter.value(:id) == "root") ? Facter::Core::Execution.exec('swap -l 2>/dev/null') : nil
     when /OpenBSD/i
-      Facter::Util::Resolution.exec('swapctl -s')
+      Facter::Core::Execution.exec('swapctl -s')
     when /FreeBSD/i
-      Facter::Util::Resolution.exec('swapinfo -k')
+      Facter::Core::Execution.exec('swapinfo -k')
     when /Darwin/i
       Facter::Util::POSIX.sysctl('vm.swapusage')
     when /SunOS/i
-      Facter::Util::Resolution.exec('/usr/sbin/swap -l 2>/dev/null')
+      Facter::Core::Execution.exec('/usr/sbin/swap -l 2>/dev/null')
     end
   end
 

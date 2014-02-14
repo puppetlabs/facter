@@ -15,7 +15,7 @@ module Facter::Util::Blockdevices
       if device_name =~ /acd|cd/
         "0"
       else
-        cmd_out = Facter::Util::Resolution.exec("/usr/sbin/diskinfo -v #{device_name}")
+        cmd_out = Facter::Core::Execution.exec("/usr/sbin/diskinfo -v #{device_name}")
         parse_diskinfo_size cmd_out
       end
     end
@@ -29,15 +29,15 @@ module Facter::Util::Blockdevices
     def self.vendor_and_model(device_name)
       devicestring = ""
       if device_name =~ /ada/
-        cmd_out = Facter::Util::Resolution.exec("/sbin/camcontrol identify #{device_name}")
+        cmd_out = Facter::Core::Execution.exec("/sbin/camcontrol identify #{device_name}")
         devicestring = parse_camcontrol cmd_out
       elsif device_name =~ /ad/
-        cmd_out = Facter::Util::Resolution.exec("/sbin/atacontrol cap #{device_name}")
+        cmd_out = Facter::Core::Execution.exec("/sbin/atacontrol cap #{device_name}")
         devicestring = parse_atacontrol cmd_out
       elsif device_name =~ /mfi/
         devicestring = "MFI Local Disk"
       else
-        cmd_out = Facter::Util::Resolution.exec("/sbin/camcontrol inquiry #{device_name} -D")
+        cmd_out = Facter::Core::Execution.exec("/sbin/camcontrol inquiry #{device_name} -D")
         devicestring = parse_camcontrol cmd_out
       end
 

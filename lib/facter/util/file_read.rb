@@ -7,7 +7,7 @@ module Util
 # Ruby, as mocking these behaviors can have wide-ranging effects.
 #
 # All Facter facts are encouraged to use this method instead of File.read or
-# Facter::Util::Resolution.exec('cat ...')
+# Facter::Core::Execution.exec('cat ...')
 #
 # @api public
 module FileRead

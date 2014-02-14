@@ -81,7 +81,7 @@ describe "Operating System Release fact" do
     Facter.fact(:kernelrelease).stubs(:value).returns("4.1.0")
     Facter.fact(:operatingsystem).stubs(:value).returns("VMwareESX")
 
-    Facter::Util::Resolution.stubs(:exec).with('vmware -v').returns('foo')
+    Facter::Core::Execution.stubs(:exec).with('vmware -v').returns('foo')
 
     Facter.fact(:operatingsystemrelease).value
   end

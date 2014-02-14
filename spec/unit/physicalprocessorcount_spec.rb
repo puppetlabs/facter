@@ -135,7 +135,7 @@ describe "Physical processor count facts" do
         Facter.fact(:kernel).stubs(:value).returns(:sunos)
         Facter.stubs(:value).with(:kernelrelease).returns(release)
 
-        Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo -p").returns("1")
+        Facter::Core::Execution.expects(:exec).with("/usr/sbin/psrinfo -p").returns("1")
         Facter.fact(:physicalprocessorcount).value.should == "1"
       end
     end
@@ -145,7 +145,7 @@ describe "Physical processor count facts" do
         Facter.fact(:kernel).stubs(:value).returns(:sunos)
         Facter.stubs(:value).with(:kernelrelease).returns(release)
 
-        Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(psrinfo)
+        Facter::Core::Execution.expects(:exec).with("/usr/sbin/psrinfo").returns(psrinfo)
         Facter.fact(:physicalprocessorcount).value.should == "2"
       end
     end

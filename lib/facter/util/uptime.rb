@@ -30,13 +30,16 @@ module Facter::Util::Uptime
   end
 
   def self.uptime_sysctl
-    if output = Facter::Util::Resolution.exec("#{uptime_sysctl_cmd} 2>/dev/null")
+    output = Facter::Core::Execution.exec("#{uptime_sysctl_cmd} 2>/dev/null")
+    if not output.empty?
       compute_uptime(Time.at(output.match(/\d+/)[0].to_i))
     end
   end
 
   def self.uptime_executable
-    if output = Facter::Util::Resolution.exec("#{uptime_executable_cmd} 2>/dev/null")
+    output = Facter::Core::Execution.exec("#{uptime_executable_cmd} 2>/dev/null")
+
+    if not output.empty?
       up=0
       if output =~ /(\d+) day(?:s|\(s\))?,\s+(\d+):(\d+)/
         # Regexp handles Solaris, AIX, HP-UX, and Tru64.

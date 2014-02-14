@@ -40,7 +40,7 @@ describe "Operating System fact" do
       "OpenIndiana" => "oi_151a",
     }.each_pair do |distribution, string|
       it "should be #{distribution} if uname -v is '#{string}'" do
-        Facter::Util::Resolution.stubs(:exec).with('uname -v').returns(string)
+        Facter::Core::Execution.stubs(:exec).with('uname -v').returns(string)
         Facter.fact(:operatingsystem).value.should == distribution
       end
     end

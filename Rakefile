@@ -8,6 +8,7 @@ require 'yaml'
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'tasks')
 
 require 'rake'
+Dir['tasks/**/*.rake'].each { |t| load t }
 
 begin
   load File.join(File.dirname(__FILE__), 'ext', 'packaging', 'packaging.rake')
@@ -24,7 +25,6 @@ end
   end
 end
 
-Dir['tasks/**/*.rake'].each { |t| load t }
 
 build_defs_file = 'ext/build_defaults.yaml'
 if File.exist?(build_defs_file)

@@ -49,7 +49,7 @@ describe "Memory facts" do
       Facter.clear
       Facter.fact(:kernel).stubs(:value).returns("Darwin")
       Facter::Util::POSIX.stubs(:sysctl).with('hw.memsize').returns('8589934592')
-      Facter::Util::Resolution.stubs(:exec).with('vm_stat').returns(my_fixture_read('darwin-vm_stat'))
+      Facter::Core::Execution.stubs(:exec).with('vm_stat').returns(my_fixture_read('darwin-vm_stat'))
       Facter::Util::POSIX.stubs(:sysctl).with('vm.swapusage').returns("vm.swapusage: total = 64.00M  used = 1.00M  free = 63.00M  (encrypted)")
 
       Facter.collection.internal_loader.load(:memory)
@@ -124,8 +124,8 @@ describe "Memory facts" do
       Facter.clear
       Facter.fact(:kernel).stubs(:value).returns("AIX")
 
-      Facter::Util::Resolution.stubs(:exec).with('swap -l 2>/dev/null').returns(my_fixture_read('aix-swap_l'))
-      Facter::Util::Resolution.stubs(:exec).with('/usr/bin/svmon -O unit=KB').returns(my_fixture_read('aix-svmon'))
+      Facter::Core::Execution.stubs(:exec).with('swap -l 2>/dev/null').returns(my_fixture_read('aix-swap_l'))
+      Facter::Core::Execution.stubs(:exec).with('/usr/bin/svmon -O unit=KB').returns(my_fixture_read('aix-svmon'))
 
       svmon = <<SVMON
 Unit: KB
@@ -139,7 +139,7 @@ pin         1478228           0           0      953852
 in use      4448928           0     5499480
 SVMON
 
-      Facter::Util::Resolution.stubs(:exec).with('/usr/bin/svmon -O unit=KB').returns(svmon)
+      Facter::Core::Execution.stubs(:exec).with('/usr/bin/svmon -O unit=KB').returns(svmon)
 
       Facter.collection.internal_loader.load(:memory)
     end
@@ -193,9 +193,9 @@ SVMON
       Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
 
       swapusage = "total: 148342k bytes allocated = 0k used, 148342k available"
-      Facter::Util::Resolution.stubs(:exec).with('swapctl -s').returns(swapusage)
+      Facter::Core::Execution.stubs(:exec).with('swapctl -s').returns(swapusage)
 
-      Facter::Util::Resolution.stubs(:exec).with('vmstat').returns(my_fixture_read('openbsd-vmstat'))
+      Facter::Core::Execution.stubs(:exec).with('vmstat').returns(my_fixture_read('openbsd-vmstat'))
 
       Facter::Util::POSIX.stubs(:sysctl).with('hw.physmem').returns('267321344')
 
@@ -234,9 +234,9 @@ SVMON
       Facter.clear
       Facter.fact(:kernel).stubs(:value).returns("SunOS")
 
-      Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/prtconf 2>/dev/null').returns(my_fixture_read('solaris-prtconf'))
+      Facter::Core::Execution.stubs(:exec).with('/usr/sbin/prtconf 2>/dev/null').returns(my_fixture_read('solaris-prtconf'))
 
-      Facter::Util::Resolution.stubs(:exec).with('vmstat').returns(my_fixture_read('solaris-vmstat'))
+      Facter::Core::Execution.stubs(:exec).with('vmstat').returns(my_fixture_read('solaris-vmstat'))
     end
 
     after(:each) do
@@ -245,7 +245,7 @@ SVMON
 
     describe "when single swap exists" do
       before(:each) do
-        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns my_fixture_read('solaris-swap_l-single')
+        Facter::Core::Execution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns my_fixture_read('solaris-swap_l-single')
 
         Facter.collection.internal_loader.load(:memory)
       end
@@ -269,7 +269,7 @@ SVMON
 
     describe "when multiple swaps exist" do
       before(:each) do
-        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns my_fixture_read('solaris-swap_l-multiple')
+        Facter::Core::Execution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns my_fixture_read('solaris-swap_l-multiple')
         Facter.collection.internal_loader.load(:memory)
       end
 
@@ -292,7 +292,7 @@ SVMON
 
     describe "when no swap exists" do
       before(:each) do
-        Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns ""
+        Facter::Core::Execution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns ""
 
         Facter.collection.internal_loader.load(:memory)
       end
@@ -326,7 +326,7 @@ SVMON
         Facter::Util::POSIX.stubs(:sysctl).with('vm.swap_anon_use').returns("2635")
         Facter::Util::POSIX.stubs(:sysctl).with('vm.swap_cache_use').returns("0")
 
-        Facter::Util::Resolution.stubs(:exec).with('vmstat').returns my_fixture_read('dragonfly-vmstat')
+        Facter::Core::Execution.stubs(:exec).with('vmstat').returns my_fixture_read('dragonfly-vmstat')
 
         Facter::Util::POSIX.stubs(:sysctl).with("hw.physmem").returns('248512512')
 
@@ -359,7 +359,7 @@ SVMON
         Facter.clear
         Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
 
-        Facter::Util::Resolution.stubs(:exec).with('vmstat -H').returns my_fixture_read('freebsd-vmstat')
+        Facter::Core::Execution.stubs(:exec).with('vmstat -H').returns my_fixture_read('freebsd-vmstat')
         Facter::Util::POSIX.stubs(:sysctl).with('hw.physmem').returns '1056276480'
       end
 
@@ -371,7 +371,7 @@ SVMON
         before(:each) do
           sample_swapinfo = 'Device          1K-blocks     Used    Avail Capacity'
 
-          Facter::Util::Resolution.stubs(:exec).with('swapinfo -k').returns sample_swapinfo
+          Facter::Core::Execution.stubs(:exec).with('swapinfo -k').returns sample_swapinfo
           Facter.collection.internal_loader.load(:memory)
         end
 
@@ -394,7 +394,7 @@ SVMON
 
       describe "with one swap" do
         before(:each) do
-          Facter::Util::Resolution.stubs(:exec).with('swapinfo -k').returns my_fixture_read('darwin-swapinfo-single')
+          Facter::Core::Execution.stubs(:exec).with('swapinfo -k').returns my_fixture_read('darwin-swapinfo-single')
 
           Facter.collection.internal_loader.load(:memory)
         end
@@ -418,7 +418,7 @@ SVMON
 
       describe "with multiple swaps" do
         before(:each) do
-          Facter::Util::Resolution.stubs(:exec).with('swapinfo -k').returns my_fixture_read('darwin-swapinfo-multiple')
+          Facter::Core::Execution.stubs(:exec).with('swapinfo -k').returns my_fixture_read('darwin-swapinfo-multiple')
 
           Facter.collection.internal_loader.load(:memory)
         end

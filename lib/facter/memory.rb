@@ -105,7 +105,7 @@ if Facter.value(:kernel) == "SunOS"
   Facter.add("memorysize_mb") do
     confine :kernel => :sunos
     # Total memory size available from prtconf
-    pconf = Facter::Util::Resolution.exec('/usr/sbin/prtconf 2>/dev/null')
+    pconf = Facter::Core::Execution.exec('/usr/sbin/prtconf 2>/dev/null')
     phymem = ""
     pconf.each_line do |line|
       if line =~ /^Memory size:\s+(\d+) Megabytes/

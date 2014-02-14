@@ -170,7 +170,7 @@ class Facter::Util::IP::Base
     end
   end
 
-  # Delegation method to Facter::Util::Resolution.exec.
+  # Delegation method to Facter::Core::Execution.exec.
   #
   # @param command [String] the command to execute
   #
@@ -178,7 +178,7 @@ class Facter::Util::IP::Base
   #
   # @api private
   def self.exec string
-    Facter::Util::Resolution.exec string
+    Facter::Core::Execution.exec string
   end
 
   # Grabs the corresponding regex constant. e.g. NETMASK_REGEX

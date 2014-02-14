@@ -93,7 +93,7 @@ describe Facter::Util::Parser do
     let(:data_in_txt) { "one=two\nthree=four\n" }
 
     def expects_script_to_return(path, content, result)
-      Facter::Util::Resolution.stubs(:exec).with(path).returns(content)
+      Facter::Core::Execution.stubs(:exec).with(path).returns(content)
       File.stubs(:executable?).with(path).returns(true)
       File.stubs(:file?).with(path).returns(true)
 
@@ -121,7 +121,7 @@ describe Facter::Util::Parser do
     it "quotes scripts with spaces" do
       path = "/h a s s p a c e s#{ext}"
 
-      Facter::Util::Resolution.expects(:exec).with("\"#{path}\"").returns(data_in_txt)
+      Facter::Core::Execution.expects(:exec).with("\"#{path}\"").returns(data_in_txt)
 
       expects_script_to_return(path, data_in_txt, data)
     end
@@ -174,7 +174,7 @@ describe Facter::Util::Parser do
 
       def expects_to_parse_powershell(cmd, content, result)
         Facter::Util::Config.stubs(:is_windows?).returns(true)
-        Facter::Util::Resolution.stubs(:exec).returns(content)
+        Facter::Core::Execution.stubs(:exec).returns(content)
         File.stubs(:file?).with(ps1).returns(true)
 
         Facter::Util::Parser.parser_for(cmd).results.should == result

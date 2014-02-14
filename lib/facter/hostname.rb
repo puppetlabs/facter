@@ -14,7 +14,7 @@
 Facter.add(:hostname) do
   setcode do
     hostname = nil
-    if name = Facter::Util::Resolution.exec('hostname')
+    if name = Facter::Core::Execution.exec('hostname')
       if name =~ /(.*?)\./
         hostname = $1
       else

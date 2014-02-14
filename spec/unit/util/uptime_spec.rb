@@ -98,7 +98,7 @@ describe Facter::Util::Uptime do
 
           test_cases.each do |uptime, expected|
             it "should return #{expected} for #{uptime}" do
-              Facter::Util::Resolution.stubs(:exec).with('uptime 2>/dev/null').returns(uptime)
+              Facter::Core::Execution.stubs(:exec).with('uptime 2>/dev/null').returns(uptime)
               Facter.fact(:uptime_seconds).value.should == expected
             end
           end
