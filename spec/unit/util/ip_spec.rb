@@ -408,14 +408,14 @@ describe Facter::Util::IP do
     it "support additional arguments" do
       Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
 
-      Facter::Util::Resolution.stubs(:exec).with("/sbin/ifconfig -a")
+      Facter::Core::Execution.stubs(:exec).with("/sbin/ifconfig -a")
 
       Facter::Util::IP.exec_ifconfig(["-a"])
     end
     it "joins multiple arguments correctly" do
       Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
 
-      Facter::Util::Resolution.stubs(:exec).with("/sbin/ifconfig -a -e -i -j")
+      Facter::Core::Execution.stubs(:exec).with("/sbin/ifconfig -a -e -i -j")
 
       Facter::Util::IP.exec_ifconfig(["-a","-e","-i","-j"])
     end

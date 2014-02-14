@@ -11,17 +11,17 @@ describe "Hostname facts" do
     end
 
     it "should use the hostname command" do
-      Facter::Util::Resolution.expects(:exec).with('hostname').at_least_once
+      Facter::Core::Execution.expects(:exec).with('hostname').at_least_once
       Facter.fact(:hostname).value.should be_nil
     end
 
     it "should use hostname as the fact if unqualified" do
-      Facter::Util::Resolution.stubs(:exec).with('hostname').returns('host1')
+      Facter::Core::Execution.stubs(:exec).with('hostname').returns('host1')
       Facter.fact(:hostname).value.should == "host1"
     end
 
     it "should truncate the domain name if qualified" do
-      Facter::Util::Resolution.stubs(:exec).with('hostname').returns('host1.example.com')
+      Facter::Core::Execution.stubs(:exec).with('hostname').returns('host1.example.com')
       Facter.fact(:hostname).value.should == "host1"
     end
   end
@@ -33,7 +33,7 @@ describe "Hostname facts" do
     end
 
     it "should use scutil to get the hostname" do
-      Facter::Util::Resolution.expects(:exec).with('/usr/sbin/scutil --get LocalHostName').returns("host1")
+      Facter::Core::Execution.expects(:exec).with('/usr/sbin/scutil --get LocalHostName').returns("host1")
       Facter.fact(:hostname).value.should == "host1"
     end
   end

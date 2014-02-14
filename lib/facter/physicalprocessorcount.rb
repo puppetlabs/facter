@@ -39,7 +39,7 @@ Facter.add('physicalprocessorcount') do
       lookup_pattern = "#{sysfs_cpu_directory}" +
         "/cpu*/topology/physical_package_id"
 
-      Dir.glob(lookup_pattern).collect { |f| Facter::Util::Resolution.exec("cat #{f}")}.uniq.size.to_s
+      Dir.glob(lookup_pattern).collect { |f| Facter::Core::Execution.exec("cat #{f}")}.uniq.size.to_s
 
     else
       #
@@ -48,7 +48,7 @@ Facter.add('physicalprocessorcount') do
       # We assume that /proc/cpuinfo has what we need and is so then we need
       # to make sure that we only count unique entries ...
       #
-      str = Facter::Util::Resolution.exec("grep 'physical.\\+:' /proc/cpuinfo")
+      str = Facter::Core::Execution.exec("grep 'physical.\\+:' /proc/cpuinfo")
 
       if str then str.scan(/\d+/).uniq.size.to_s; end
     end
@@ -75,9 +75,9 @@ Facter.add('physicalprocessorcount') do
     cmd = "/usr/sbin/psrinfo"
     result = nil
     if (major_version > 5) or (major_version == 5 and minor_version >= 8) then
-      result = Facter::Util::Resolution.exec("#{cmd} -p")
+      result = Facter::Core::Execution.exec("#{cmd} -p")
     else
-      output = Facter::Util::Resolution.exec(cmd)
+      output = Facter::Core::Execution.exec(cmd)
       result = output.split("\n").length.to_s
     end
   end

@@ -24,11 +24,11 @@ describe "Domain name facts" do
       let(:dnsdomain_command) { "dnsdomainname 2> /dev/null" }
 
       def the_hostname_is(value)
-        Facter::Util::Resolution.stubs(:exec).with(hostname_command).returns(value)
+        Facter::Core::Execution.stubs(:exec).with(hostname_command).returns(value)
       end
 
       def the_dnsdomainname_is(value)
-        Facter::Util::Resolution.stubs(:exec).with(dnsdomain_command).returns(value)
+        Facter::Core::Execution.stubs(:exec).with(dnsdomain_command).returns(value)
       end
 
       before do
@@ -197,7 +197,7 @@ describe "Domain name facts" do
         it "should return nil" do
           expects_dnsdomains([nil])
 
-          Facter::Util::Resolution.stubs(:exec).with(hostname_command).returns('sometest')
+          Facter::Core::Execution.stubs(:exec).with(hostname_command).returns('sometest')
           FileTest.stubs(:exists?).with("/etc/resolv.conf").returns(false)
 
           Facter.fact(:domain).value.should be_nil
@@ -288,8 +288,8 @@ describe "Domain name facts" do
 
         describe scenario[:scenario] do
           before(:each) do
-            Facter::Util::Resolution.stubs(:exec).with("hostname -f 2> /dev/null").returns(scenario[:hostname])
-            Facter::Util::Resolution.stubs(:exec).with("dnsdomainname 2> /dev/null").returns(scenario[:dnsdomainname])
+            Facter::Core::Execution.stubs(:exec).with("hostname -f 2> /dev/null").returns(scenario[:hostname])
+            Facter::Core::Execution.stubs(:exec).with("dnsdomainname 2> /dev/null").returns(scenario[:dnsdomainname])
             resolv_conf_contains(
               "search #{scenario[:resolve_search]}",
               "domain #{scenario[:resolve_domain]}"

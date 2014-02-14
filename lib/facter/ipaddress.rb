@@ -155,7 +155,7 @@ Facter.add(:ipaddress, :timeout => 2) do
     if hostname = Facter.value(:hostname)
       # we need Hostname to exist for this to work
       host = nil
-      if host = Facter::Util::Resolution.exec("host #{hostname}")
+      if host = Facter::Core::Execution.exec("host #{hostname}")
         list = host.chomp.split(/\s/)
         if defined? list[-1] and
           list[-1] =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/

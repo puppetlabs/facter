@@ -22,12 +22,12 @@ describe Facter::Util::Resolution do
     expect(resolution.name).to eq :foo
   end
 
-  it "should be able to set the value" do
+  it "can explicitly set a value" do
     resolution.value = "foo"
     expect(resolution.value).to eq "foo"
   end
 
-  it "should default to nil for code" do
+  it "defaults to nil for code" do
     expect(resolution.code).to be_nil
   end
 
@@ -36,76 +36,52 @@ describe Facter::Util::Resolution do
       Facter.stubs(:warnonce)
     end
 
-    it "should set the code to any provided string" do
+    it "creates a block when given a command" do
       resolution.setcode "foo"
-      expect(resolution.code).to eq "foo"
+      expect(resolution.code).to be_a_kind_of Proc
     end
 
-    it "should set the code to any provided block" do
+    it "stores the provided block when given a block" do
       block = lambda { }
       resolution.setcode(&block)
       resolution.code.should equal(block)
     end
 
-    it "should prefer the string over a block" do
-      resolution.setcode("foo") { }
-      expect(resolution.code).to eq "foo"
+
+    it "prefers a command over a block" do
+      block = lambda { }
+      resolution.setcode("foo", &block)
+      expect(resolution.code).to_not eq block
     end
 
-    it "should fail if neither a string nor block has been provided" do
+    it "fails if neither a string nor block has been provided" do
       expect { resolution.setcode }.to raise_error(ArgumentError)
     end
   end
 
   describe "when returning the value" do
-    it "should return any value that has been provided" do
+    it "returns any value that has been provided" do
       resolution.value = "foo"
       expect(resolution.value).to eq "foo"
     end
 
     describe "and setcode has not been called" do
-      it "should return nil" do
-        Facter::Util::Resolution.expects(:exec).with(nil, nil).never
-        resolution.value.should be_nil
+      it "returns nil" do
+        expect(resolution.value).to be_nil
       end
     end
 
     describe "and the code is a string" do
-      describe "on windows" do
-        before do
-          given_a_configuration_of(:is_windows => true)
-        end
+      it "returns the result of executing the code" do
+        resolution.setcode "/bin/foo"
+        Facter::Core::Execution.expects(:exec).once.with("/bin/foo").returns "yup"
 
-        it "should return the result of executing the code" do
-          resolution.setcode "/bin/foo"
-          Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns "yup"
-
-          expect(resolution.value).to eq "yup"
-        end
-      end
-
-      describe "on non-windows systems" do
-        before do
-          given_a_configuration_of(:is_windows => false)
-        end
-
-        it "should return the result of executing the code" do
-          resolution.setcode "/bin/foo"
-          Facter::Util::Resolution.expects(:exec).once.with("/bin/foo").returns "yup"
-
-          expect(resolution.value).to eq "yup"
-        end
+        expect(resolution.value).to eq "yup"
       end
     end
 
     describe "and the code is a block" do
-      it "should warn but not fail if the code fails" do
-        resolution.setcode { raise "feh" }
-        Facter.expects(:warn)
-        resolution.value.should be_nil
-      end
-
-      it "should return the value returned by the block" do
+      it "returns the value returned by the block" do
         resolution.setcode { "yayness" }
         expect(resolution.value).to eq "yayness"
       end

@@ -7,7 +7,7 @@ describe "Kernel version fact" do
   describe "on Solaris/Sun OS" do
     before do
       Facter.fact(:kernel).stubs(:value).returns('sunos')
-      Facter::Util::Resolution.stubs(:exec).with('uname -v').returns("1.234.5")
+      Facter::Core::Execution.stubs(:exec).with('uname -v').returns("1.234.5")
     end 
     
     it "should return the kernel version using 'uname -v'" do 

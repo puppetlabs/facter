@@ -10,7 +10,7 @@ describe "on Solaris" do
 -:local:configured:/::native:shared
 -:zoneA:stopped:/::native:shared
     EOF
-    Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/zoneadm list -cp').returns(zone_list)
+    Facter::Core::Execution.stubs(:exec).with('/usr/sbin/zoneadm list -cp').returns(zone_list)
     Facter.collection.internal_loader.load(:zones)
   end
 

@@ -119,7 +119,7 @@ module Facter::Util::Parser
 
   class ScriptParser < Base
     def parse_results
-      KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(quote(filename))
+      KeyValuePairOutputFormat.parse Facter::Core::Execution.exec(quote(filename))
     end
 
     private
@@ -142,7 +142,7 @@ module Facter::Util::Parser
     # Returns a hash of facts from powershell output
     def parse_results
       shell_command = "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File \"#{filename}\""
-      KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(shell_command)
+      KeyValuePairOutputFormat.parse Facter::Core::Execution.exec(shell_command)
     end
   end
 

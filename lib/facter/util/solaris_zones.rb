@@ -93,7 +93,7 @@ module Util
     #
     # @return [Hash] the parsed output of the zoneadm command
     def refresh
-      @zoneadm_output = Facter::Util::Resolution.exec(zoneadm_cmd)
+      @zoneadm_output = Facter::Core::Execution.exec(zoneadm_cmd)
       parse!
     end
 

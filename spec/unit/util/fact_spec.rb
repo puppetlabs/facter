@@ -122,12 +122,6 @@ describe Facter::Util::Fact do
 
       expect(fact.value).to eq "1"
     end
-
-    it "returns nil if the value is the empty string" do
-      fact.add { setcode { "" } }
-
-      expect(fact.value).to be_nil
-    end
   end
 
   describe '#flush' do
