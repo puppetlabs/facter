@@ -148,7 +148,7 @@ module Facter
       # executing the code.
       #
       # @param code [String] the program to run
-      # @return [String, nil] the output of the program or nil
+      # @return [String] the output of the program or the empty string on error
       #
       # @api public
       #
