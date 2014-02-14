@@ -165,7 +165,7 @@ module Facter
             # if we can find the binary, we'll run the command with the expanded path to the binary
             code = expanded_code
           else
-            return nil
+            return ''
           end
 
           out = ''
@@ -174,7 +174,7 @@ module Facter
             out = %x{#{code}}.chomp
           rescue => detail
             Facter.warn(detail)
-            return nil
+            return ''
           end
 
           out
