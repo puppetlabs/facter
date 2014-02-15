@@ -148,6 +148,7 @@
         "zone_global_path" : { "type": "string" },
         "zone_global_brand" : { "type": "string" },
         "zone_global_id" : { "type": "string" },
+        "zone_global_uuid" : { "type": "string" },
         "zone_global_status" : { "type": "string" },
         "zpool_version" : { "type": "string" }
     }
