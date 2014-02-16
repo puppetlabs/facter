@@ -50,7 +50,7 @@ describe Facter::Util::IP do
 
   %w{
     FreeBSD Linux NetBSD OpenBSD SunOS Darwin HP-UX GNU/kFreeBSD windows
-    Dragonfly
+    Dragonfly AIX
   }.each do |platform|
     it "should be supported on #{platform}" do
       Facter::Util::IP.new.supported_platforms.should include platform

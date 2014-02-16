@@ -11,6 +11,7 @@ require 'facter/util/ip/dragonfly'
 require 'facter/util/ip/windows'
 require 'facter/util/ip/hpux'
 require 'facter/util/ip/gnu_k_free_bsd'
+require 'facter/util/ip/aix'
 
 require 'facter/util/macaddress'
 
