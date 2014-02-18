@@ -34,7 +34,6 @@
 #   Only supports Linux 2.6+ at this time, due to the reliance on sysfs
 #
 
-
 # Fact: blockdevices
 #
 # Purpose:
@@ -45,6 +44,30 @@
 #
 # Caveats:
 #   Block devices must have been identified using sysfs information
+#
+
+# Fact: blockdevice_<devicename>_partitions
+#
+# Purpose:
+#   Returns a comma separated list of partitions on the block device.
+#
+# Resolution:
+#   Parses the contents of /sys/block/<device/<device>*
+#
+# Caveats:
+#   Only supports Linux 2.6+ at this time, due to the reliance on sysfs
+#
+
+# Fact: blockdevice_<devicename><partition>_uuid
+#
+# Purpose:
+#   Returns the UUID of the partitions on blockdevices.
+#
+# Resolution:
+#   Parses /dev/disk/by-uuid and resolves the links back to the partitions in /dev
+#
+# Caveats:
+#   Only supports Linux 2.6+ at this time, due to the reliance on sysfs
 #
 
 # Author: Jason Gill <jasongill@gmail.com>
@@ -72,6 +95,8 @@ if Facter.value(:kernel) == 'Linux'
       sizefile = sysfs_block_directory + device + "/size"
       vendorfile = sysfs_device_directory + "/vendor"
       modelfile = sysfs_device_directory + "/model"
+      partitions = Dir.glob(sysfs_block_directory + device + "/#{device}*").map { |d| File.basename(d) }
+      devdisk_by_uuid_directory = '/dev/disk/by-uuid/'
 
       if File.exist?(sizefile)
         Facter.add("blockdevice_#{device}_size".to_sym) do
@@ -91,8 +116,33 @@ if Facter.value(:kernel) == 'Linux'
         end
       end
 
-    end
+      unless partitions.empty?
+        Facter.add("blockdevice_#{device}_partitions") do
+          setcode { partitions.join(',') }
+        end
+      end
 
+      partitions.each do |part|
+        Facter.add("blockdevice_#{part}_uuid") do
+          setcode do
+            uuid = nil
+            if File.directory?(devdisk_by_uuid_directory)
+              Dir.entries(devdisk_by_uuid_directory).each do |file|
+                qualified_file = "#{devdisk_by_uuid_directory}#{file}"
+
+                #A uuid is 16 octets long (RFC4122) which is 32hex chars + 4 '-'s
+                next unless file.length == 36
+                next unless File.symlink?(qualified_file)
+                next unless File.readlink(qualified_file).match(%r[(?:\.\./\.\./|/dev/)#{part}$])
+
+                uuid = file
+              end
+            end
+            uuid
+          end
+        end
+      end
+    end
   end
 
   # Return a comma-seperated list of block devices found
@@ -101,5 +151,4 @@ if Facter.value(:kernel) == 'Linux'
       setcode { blockdevices.sort.join(',') }
     end
   end
-
 end
