@@ -64,7 +64,7 @@ describe "Block device facts" do
           ])
 
           File.stubs(:directory?).returns(true)
-          
+
           Dir.stubs(:entries).with('/dev/disk/by-uuid/').returns([
             ".",                                    #wont match the length requirements
             "..",                                   #wont match the length requirements
@@ -113,7 +113,7 @@ describe "Block device facts" do
           Facter.fact(:blockdevice_sdb_model).value.should == "PERC H700"
           Facter.fact(:blockdevice_sdb_vendor).value.should == "DELL"
           Facter.fact(:blockdevice_sdb_size).value.should == 4499246678016
-          Facter.fact(:blockdevice_sdb_partitions).value.should == 'sdb1,sdb2'  
+          Facter.fact(:blockdevice_sdb_partitions).value.should == 'sdb1,sdb2'
 
           #These partitions should have a UUID
           %w{ sda1 sda2 sdb1 }.each do |d|
