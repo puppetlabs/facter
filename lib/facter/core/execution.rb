@@ -4,6 +4,20 @@ module Facter
   module Core
     module Execution
 
+      require 'facter/core/execution/base'
+      require 'facter/core/execution/windows'
+      require 'facter/core/execution/posix'
+
+      @@impl = if Facter::Util::Config.is_windows?
+                 Facter::Core::Execution::Windows.new
+               else
+                 Facter::Core::Execution::Posix.new
+               end
+
+      def self.impl
+        @@impl
+      end
+
       module_function
 
       # Returns the locations to be searched when looking for a binary. This
@@ -13,14 +27,7 @@ module Facter
       # @return [Array<String>] the paths to be searched for binaries
       # @api private
       def search_paths
-        if Facter::Util::Config.is_windows?
-          ENV['PATH'].split(File::PATH_SEPARATOR)
-        else
-          # Make sure facter is usable even for non-root users. Most commands
-          # in /sbin (like ifconfig) can be run as non priviledged users as
-          # long as they do not modify anything - which we do not do with facter
-          ENV['PATH'].split(File::PATH_SEPARATOR) + [ '/sbin', '/usr/sbin' ]
-        end
+        @@impl.search_paths
       end
 
       # Determines the full path to a binary. If the supplied filename does not
@@ -36,26 +43,7 @@ module Facter
       #
       # @api public
       def which(bin)
-        if absolute_path?(bin)
-          return bin if File.executable?(bin)
-        else
-          search_paths.each do |dir|
-            dest = File.join(dir, bin)
-            if Facter::Util::Config.is_windows?
-              dest.gsub!(File::SEPARATOR, File::ALT_SEPARATOR)
-              if File.extname(dest).empty?
-                exts = ENV['PATHEXT']
-                exts = exts ? exts.split(File::PATH_SEPARATOR) : %w[.COM .EXE .BAT .CMD]
-                exts.each do |ext|
-                  destext = dest + ext
-                  return destext if File.executable?(destext)
-                end
-              end
-            end
-            return dest if File.executable?(dest)
-          end
-        end
-        nil
+        @@impl.which(bin)
       end
 
       # Determine in a platform-specific way whether a path is absolute. This
@@ -63,44 +51,20 @@ module Facter
       #
       # @param path [String] the path to check
       # @param platform [:posix,:windows,nil] the platform logic to use
-      def absolute_path?(path, platform=nil)
-        # Escape once for the string literal, and once for the regex.
-        slash = '[\\\\/]'
-        name = '[^\\\\/]+'
-        regexes = {
-          :windows => %r!^(([A-Z]:#{slash})|(#{slash}#{slash}#{name}#{slash}#{name})|(#{slash}#{slash}\?#{slash}#{name}))!i,
-          :posix   => %r!^/!,
-        }
-        platform ||= Facter::Util::Config.is_windows? ? :windows : :posix
-
-        !! (path =~ regexes[platform])
+      def absolute_path?(path, platform = nil)
+        @@impl.absolute_path?(path, platform)
       end
 
       # Given a command line, this returns the command line with the
       # executable written as an absolute path. If the executable contains
-      # spaces, it has be but in double quotes to be properly recognized.
+      # spaces, it has be put in double quotes to be properly recognized.
       #
       # @param command [String] the command line
       #
       # @return [String, nil] the command line with the executable's path
       # expanded, or nil if the executable cannot be found.
       def expand_command(command)
-        if match = /^"(.+?)"(?:\s+(.*))?/.match(command)
-          exe, arguments = match.captures
-          exe = which(exe) and [ "\"#{exe}\"", arguments ].compact.join(" ")
-        elsif match = /^'(.+?)'(?:\s+(.*))?/.match(command) and not Facter::Util::Config.is_windows?
-          exe, arguments = match.captures
-          exe = which(exe) and [ "'#{exe}'", arguments ].compact.join(" ")
-        else
-          exe, arguments = command.split(/ /,2)
-          if exe = which(exe)
-            # the binary was not quoted which means it contains no spaces. But the
-            # full path to the binary may do so.
-            exe = "\"#{exe}\"" if exe =~ /\s/ and Facter::Util::Config.is_windows?
-            exe = "'#{exe}'" if exe =~ /\s/ and not Facter::Util::Config.is_windows?
-            [ exe, arguments ].compact.join(" ")
-          end
-        end
+        @@impl.expand_command(command)
       end
 
       # Overrides environment variables within a block of code.  The
@@ -115,31 +79,8 @@ module Facter
       # @return [void]
       #
       # @api public
-      def with_env(values)
-        old = {}
-        values.each do |var, value|
-          # save the old value if it exists
-          if old_val = ENV[var]
-            old[var] = old_val
-          end
-          # set the new (temporary) value for the environment variable
-          ENV[var] = value
-        end
-        # execute the caller's block, capture the return value
-        rv = yield
-      # use an ensure block to make absolutely sure we restore the variables
-      ensure
-        # restore the old values
-        values.each do |var, value|
-          if old.include?(var)
-            ENV[var] = old[var]
-          else
-            # if there was no old value, delete the key from the current environment variables hash
-            ENV.delete(var)
-          end
-        end
-        # return the captured return value
-        rv
+      def with_env(values, &block)
+        @@impl.with_env(values, &block)
       end
 
       # Executes a program and return the output of that program.
@@ -151,34 +92,8 @@ module Facter
       # @return [String] the output of the program or the empty string on error
       #
       # @api public
-      #
-      # @note Since Facter 1.5.8 this strips trailing newlines from the
-      #   returned value. If a fact will be used by versions of Facter older
-      #   than 1.5.8 then you should call chomp the returned string.
-      def exec(code)
-
-        ## Set LANG to force i18n to C for the duration of this exec; this ensures that any code that parses the
-        ## output of the command can expect it to be in a consistent / predictable format / locale
-        with_env "LANG" => "C" do
-
-          if expanded_code = expand_command(code)
-            # if we can find the binary, we'll run the command with the expanded path to the binary
-            code = expanded_code
-          else
-            return ''
-          end
-
-          out = ''
-
-          begin
-            out = %x{#{code}}.chomp
-          rescue => detail
-            Facter.warn(detail)
-            return ''
-          end
-
-          out
-        end
+      def exec(command)
+        @@impl.exec(command)
       end
     end
   end
