@@ -61,7 +61,8 @@ module Facter::Util::EC2
     def amazon_hypervisor?
       f = '/sys/hypervisor/version/extra'
       File.readable?(f) and File.read(f).index('amazon') >= 0
-      rescue false
+      rescue
+        false
     end
   end
 
