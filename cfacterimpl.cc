@@ -918,9 +918,16 @@ static void get_external_facts(fact_map& facts, string directory)
     return;
 
   struct dirent *external_fact;
+  struct stat s;
 
   while ((external_fact = readdir(external_dir))) {
     string full_path = directory + "/" + external_fact->d_name;
+
+    if (stat(full_path.c_str(), &s) != 0)
+      continue;
+
+    if (s.st_mode & S_IFDIR)
+      continue;
 
     if (access(full_path.c_str(), X_OK) != 0)
       continue;
