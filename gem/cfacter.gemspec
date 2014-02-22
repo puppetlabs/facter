@@ -7,5 +7,5 @@ Gem::Specification.new do |s|
   s.email       = 'kylo@kylo.net'
   s.files       = ["lib/cfacter.rb"]
   s.add_runtime_dependency 'json', '~> 1.8', '>= 1.8.1'
-  s.add_runtime_dependency 'ffi', '~> 1.9', '>= 1.9.3'
+  s.add_runtime_dependency 'ffi', '1.9.0'
 end
