@@ -21,6 +21,15 @@ void clear()
 
 void loadfacts()
 {
+  // Make loadfacts() idempotent, if client has reason to
+  // want a reload, they should clear() then loadfacts().
+  //
+  // This goes along with to_json() and value() always calling
+  // loadfacts().
+  //
+  if (!facts.empty())
+    return;
+
   facts["cfacterversion"] = "0.0.1";
 
   list<string> external_directories;
@@ -48,6 +57,8 @@ void loadfacts()
 
 int  to_json(char *facts_json, size_t facts_len)
 {
+  loadfacts();
+
   if (0) {
    typedef map<string, string>::iterator iter;
    for (iter i = facts.begin(); i != facts.end(); ++i) {
@@ -78,6 +89,8 @@ int  to_json(char *facts_json, size_t facts_len)
 
 int  value(const char *fact, char *value, size_t value_len)
 {
+    loadfacts();
+
     typedef map<string, string>::iterator iter;
     iter i = facts.find(fact);
     if (i == facts.end())
