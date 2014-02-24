@@ -1,51 +1,102 @@
-.TH   "FACTER" "8" "September 2012" "Puppet Labs, Inc" "Facter manual"
-.SH NAME
-Facter - Collect and display facts about the system.
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.SH SYNOPSIS
-.sp
-Collect and display facts about the system.
-.SH USAGE
-.INDENT 0.0
-.INDENT 3.5
-facter [\-d|\-\-debug] [\-h|\-\-help] [\-p|\-\-puppet] [\-v|\-\-version] [\-y|\-\-yaml] [\-j|\-\-json] [fact] [fact] [...]
-.UNINDENT
-.UNINDENT
-.SH DESCRIPTION
-.sp
-Collect and display facts about the current system. The library behind
-Facter is easy to expand, making Facter an easy way to collect
-information about a system from within the shell or within Ruby.
-.sp
-If no facts are specifically asked for, then all facts will be returned.
-.SH OPTIONS
-.sp
-yaml:    Emit facts in YAML format.
-.sp
-json:    Emit facts in JSON format.
-.sp
-puppet:  Load the Puppet libraries, thus allowing Facter to load Puppet specific (custom) facts
-.sp
-version: Print the version and exit.
-.sp
-help:    Print this help message.
-.sp
-debug:   Enable debugging.
-.sp
-trace:   Enable backtraces.
-.sp
-timing:  Enable timing.
-.SH EXAMPLE
-.INDENT 0.0
-.INDENT 3.5
-facter kernel
-.UNINDENT
-.UNINDENT
-.SH AUTHOR
-.sp
+.TH "FACTER" "8" "February 2014" "" ""
+.
+.SH "NAME"
+\fBfacter\fR \- Gather system information
+.
+.SH "SYNOPSIS"
+Collect and display facts about the system\.
+.
+.SH "USAGE"
+.
+.nf
+
+facter [\-h|\-\-help] [\-t|\-\-timing] [\-d|\-\-debug] [\-p|\-\-puppet] [\-v|\-\-version]
+  [\-y|\-\-yaml] [\-j|\-\-json] [\-\-plaintext] [\-\-external\-dir DIR] [\-\-no\-external\-dir]
+  [fact] [fact] [\.\.\.]
+.
+.fi
+.
+.SH "DESCRIPTION"
+Collect and display facts about the current system\. The library behind Facter is easy to expand, making Facter an easy way to collect information about a system from within the shell or within Ruby\.
+.
+.P
+If no facts are specifically asked for, then all facts will be returned\.
+.
+.SH "EXAMPLE"
+Display all facts:
+.
+.IP "" 4
+.
+.nf
+
+$ facter
+architecture => amd64
+blockdevices => sda,sr0
+domain => example\.com
+fqdn => puppet\.example\.com
+hardwaremodel => x86_64
+[\.\.\.]
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Display a single fact:
+.
+.IP "" 4
+.
+.nf
+
+$ facter kernel
+Linux
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Format facts as JSON:
+.
+.IP "" 4
+.
+.nf
+
+$ facter \-\-json architecture kernel hardwaremodel
+{
+  "architecture": "amd64",
+  "kernel": "Linux",
+  "hardwaremodel": "x86_64"
+}
+.
+.fi
+.
+.IP "" 0
+.
+.SH "AUTHOR"
 Luke Kanies
-.SH COPYRIGHT
-.sp
-Copyright (c) 2012 Puppet Labs, Inc Licensed under the Apache 2.0
-license
 .
+.SH "COPYRIGHT"
+Copyright (c) 2011\-2014 Puppet Labs, Inc Licensed under the Apache 2\.0 license
+.
+.SH "OPTIONS"
+.
+.nf
+
+\-y, \-\-yaml                       Emit facts in YAML format\.
+\-j, \-\-json                       Emit facts in JSON format\.
+    \-\-plaintext                  Emit facts in plaintext format\.
+    \-\-trace                      Enable backtraces\.
+    \-\-external\-dir DIR           The directory to use for external facts\.
+    \-\-no\-external\-dir            Turn off external facts\.
+\-d, \-\-debug                      Enable debugging\.
+\-t, \-\-timing                     Enable timing\.
+\-p, \-\-puppet                     Load the Puppet libraries, thus allowing Facter to load Puppet\-specific facts\.
+\-v, \-\-version                    Print the version and exit\.
+\-h, \-\-help                       Print this help message\.
+.
+.fi
+
