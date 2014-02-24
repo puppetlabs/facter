@@ -12,10 +12,6 @@ module Facter::Util::Blockdevices
     def self.devices
       []
     end
-
-    def self.device_partitions
-      []
-    end
   end
 
   def self.implementation
@@ -36,18 +32,6 @@ module Facter::Util::Blockdevices
 
   def self.device_size(device_name)
     implementation.device_size(device_name)
-  end
-
-  def self.device_partitions(device_name)
-    if Facter.value(:kernel) == 'Linux'
-      implementation.device_partitions(device_name)
-    else
-      NoImplementation.device_partitions
-    end
-  end
-
-  def self.partition_uuid(partition_name)
-    implementation.partition_uuid(partition_name)
   end
 
   def self.available?
