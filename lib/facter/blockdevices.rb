@@ -34,6 +34,7 @@
 #   Only supports Linux 2.6+ at this time, due to the reliance on sysfs
 #
 
+
 # Fact: blockdevices
 #
 # Purpose:
@@ -44,30 +45,6 @@
 #
 # Caveats:
 #   Block devices must have been identified using sysfs information
-#
-
-# Fact: blockdevice_<devicename>_partitions
-#
-# Purpose:
-#   Returns a comma separated list of partitions on the block device.
-#
-# Resolution:
-#   Parses the contents of /sys/block/<device/<device>*
-#
-# Caveats:
-#   Only supports Linux 2.6+ at this time, due to the reliance on sysfs
-#
-
-# Fact: blockdevice_<devicename><partition>_uuid
-#
-# Purpose:
-#   Returns the UUID of the partitions on blockdevices.
-#
-# Resolution:
-#   Parses /dev/disk/by-uuid and resolves the links back to the partitions in /dev
-#
-# Caveats:
-#   Only supports Linux 2.6+ at this time, due to the reliance on sysfs
 #
 
 # Author: Jason Gill <jasongill@gmail.com>
@@ -90,19 +67,7 @@ if Facter::Util::Blockdevices.available?
     end
 
     Facter.add("blockdevice_#{device}_model") do
-      setcode { Facter::Util::Blockdevices.device_model(device) }
-    end
-
-    Facter.add("blockdevice_#{device}_partitions") do
-      confine :kernel => "Linux"
-      setcode { Facter::Util::Blockdevices.device_partitions(device).join(',') }
-    end
-
-    Facter::Util::Blockdevices.device_partitions(device).each do |part|
-      Facter.add("blockdevice_#{part}_uuid") do
-        confine :kernel => "Linux"
-        setcode { Facter::Util::Blockdevices.partition_uuid(part) }
-      end
+      setcode { Facter::Util::Blockdevices.device_model(device)}
     end
   end
 end

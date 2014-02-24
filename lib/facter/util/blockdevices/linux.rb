@@ -2,8 +2,7 @@ module Facter::Util::Blockdevices
 
   module Linux
     # Only Linux 2.6+ kernels support sysfs which is required to easily get device details
-    SYSFS_BLOCK_DIRECTORY     = '/sys/block/'
-    DEVDISK_BY_UUID_DIRECTORY = '/dev/disk/by-uuid/'
+    SYSFS_BLOCK_DIRECTORY = '/sys/block/'
 
     def self.read_if_exists(f)
       if File.exist?(f)
@@ -46,31 +45,6 @@ module Facter::Util::Blockdevices
 
     def self.device_dir(device)
       SYSFS_BLOCK_DIRECTORY + device + "/device"
-    end
-
-    def self.device_partitions(device)
-      Dir.glob( SYSFS_BLOCK_DIRECTORY + device + "/#{device}*" ).map do |d|
-        File.basename(d)
-      end
-    end
-
-    def self.partition_uuid(partition)
-      if File.directory?(DEVDISK_BY_UUID_DIRECTORY)
-        Dir.entries(DEVDISK_BY_UUID_DIRECTORY).each do |file|
-          uuid = nil
-          qualified_file = "#{DEVDISK_BY_UUID_DIRECTORY}#{file}"
-
-          #A uuid is 16 octets long (RFC4122) which is 32hex chars + 4 '-'s
-          next unless file.length == 36
-          next unless File.symlink?(qualified_file)
-          next unless File.readlink(qualified_file).match(%r[(?:\.\./\.\./|/dev/)#{partition}$])
-
-          uuid = file
-          return uuid
-        end
-      end
-
-      uuid
     end
 
   end
