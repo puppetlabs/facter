@@ -85,14 +85,3 @@ end
     end
   end
 end
-
-# This is a legacy fact which returns the old selinux_mode fact value to prevent
-# breakages of existing manifests. It should be removed at the next major release.
-# See ticket #6677.
-
-Facter.add("selinux_mode") do
-  confine :selinux => :true
-  setcode do
-    Facter.value(:selinux_config_policy)
-  end
-end

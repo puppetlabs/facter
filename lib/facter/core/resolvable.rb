@@ -67,11 +67,6 @@ module Facter::Core::Resolvable
     Facter::Util::Normalization.normalize(result)
   rescue Timeout::Error => detail
     Facter.warn "Timed out after #{limit} seconds while resolving #{qualified_name}"
-
-    # This call avoids zombies -- basically, create a thread that will
-    # dezombify all of the child processes that we're ignoring because
-    # of the timeout.
-    Thread.new { Process.waitall }
     return nil
   rescue Facter::Util::Normalization::NormalizationError => e
     Facter.warn "Fact resolution #{qualified_name} resolved to an invalid value: #{e.message}"
