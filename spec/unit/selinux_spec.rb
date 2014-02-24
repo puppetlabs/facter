@@ -96,12 +96,6 @@ describe "SELinux facts" do
 
       Facter.fact(:selinux_config_policy).value.should == "targeted"
     end
-
-    it "should ensure legacy selinux_mode facts returns same value as selinux_config_policy fact" do
-      Facter.fact(:selinux_config_policy).stubs(:value).returns("targeted")
-
-      Facter.fact(:selinux_mode).value.should == "targeted"
-    end
   end
 
   def sestatus_is(status)
