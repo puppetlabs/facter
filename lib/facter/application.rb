@@ -80,18 +80,23 @@ module Facter
       options = {}
       parser = OptionParser.new do |opts|
         opts.banner = <<-BANNER
-Synopsis
-========
+facter(8) -- Gather system information
+======
+
+SYNOPSIS
+--------
 
 Collect and display facts about the system.
 
-Usage
-=====
+USAGE
+-----
 
-  facter [-d|--debug] [-h|--help] [-p|--puppet] [-v|--version] [-y|--yaml] [-j|--json] [--external-dir DIR] [--no-external-dir] [fact] [fact] [...]
+    facter [-h|--help] [-t|--timing] [-d|--debug] [-p|--puppet] [-v|--version]
+      [-y|--yaml] [-j|--json] [--plaintext] [--external-dir DIR] [--no-external-dir]
+      [fact] [fact] [...]
 
-Description
-===========
+DESCRIPTION
+-----------
 
 Collect and display facts about the current system.  The library behind
 Facter is easy to expand, making Facter an easy way to collect information
@@ -100,19 +105,42 @@ about a system from within the shell or within Ruby.
 If no facts are specifically asked for, then all facts will be returned.
 
 EXAMPLE
-=======
-  facter kernel
+-------
+
+Display all facts:
+
+    $ facter
+    architecture => amd64
+    blockdevices => sda,sr0
+    domain => example.com
+    fqdn => puppet.example.com
+    hardwaremodel => x86_64
+    [...]
+
+Display a single fact:
+
+    $ facter kernel
+    Linux
+
+Format facts as JSON:
+
+    $ facter --json architecture kernel hardwaremodel
+    {
+      "architecture": "amd64",
+      "kernel": "Linux",
+      "hardwaremodel": "x86_64"
+    }
 
 AUTHOR
-======
+------
   Luke Kanies
 
 COPYRIGHT
-=========
-  Copyright (c) 2011-2012 Puppet Labs, Inc Licensed under the Apache 2.0 license
+---------
+  Copyright (c) 2011-2014 Puppet Labs, Inc Licensed under the Apache 2.0 license
 
-USAGE
-=====
+OPTIONS
+-------
         BANNER
         opts.on("-y",
                 "--yaml",
