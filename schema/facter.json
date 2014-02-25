@@ -92,7 +92,6 @@
         "selinux_config_policy" : { "type": "string" },
         "selinux_current_mode" : { "type": "string" },
         "selinux_enforced" : { "type": "string" },
-        "selinux_mode" : { "type": "string" },
         "selinux_policyversion" : { "type": "string" },
         "serialnumber" : { "type": "string" },
         "sp_boot_mode" : { "type": "string" },
