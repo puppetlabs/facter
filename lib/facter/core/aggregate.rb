@@ -196,9 +196,9 @@ class Facter::Core::Aggregate
       Facter::Util::Values.deep_merge(result, current)
     end
   rescue Facter::Util::Values::DeepMergeError => e
-    raise ArgumentError, "No aggregate block specified and could not deep merge" +
-      " all chunks, either specify an aggregate block or ensure that all chunks" +
-      " return deep mergable structures. (Original error: #{e.message})", e.backtrace
+    raise ArgumentError, "Could not deep merge all chunks (Original error: " +
+      "#{e.message}), ensure that chunks return either an Array or Hash or " +
+      "override the aggregate block", e.backtrace
   end
 
   # Order chunks based on their dependencies
