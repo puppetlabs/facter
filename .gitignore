@@ -11,3 +11,4 @@ install_manifest.txt
 /version.h
 /exe/cfacter
 /lib/libcfacter.so
+/lib/libcfacter.dylib
