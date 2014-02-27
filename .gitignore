@@ -1,6 +1,13 @@
 *.swp
-*.so
-*.o
-*~
-cfacter
-cfacter.DSYM
+
+# CMake
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+install_manifest.txt
+
+# Generated files
+/version.h
+/exe/cfacter
+/lib/libcfacter.so

@@ -1,10 +1,11 @@
+#include "../version.h"
 #include "cfacterlib.h"
 #include "cfacterimpl.h"
 
 #include <iostream>
 #include <map>
 #include <string>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
@@ -30,11 +31,11 @@ void loadfacts()
   if (!facts.empty())
     return;
 
-  facts["cfacterversion"] = "0.0.1";
+  facts["cfacterversion"] = CFACTER_VERSION;
 
   list<string> external_directories;
   external_directories.push_back("/etc/facter/facts.d");
-  
+
   get_network_facts(facts);
   get_kernel_facts(facts);
   get_blockdevice_facts(facts);
@@ -55,7 +56,7 @@ void loadfacts()
   get_external_facts(facts, external_directories);
 }
 
-int  to_json(char *facts_json, size_t facts_len)
+int to_json(char *facts_json, size_t facts_len)
 {
   loadfacts();
 

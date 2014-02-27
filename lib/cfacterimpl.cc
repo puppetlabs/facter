@@ -1,9 +1,9 @@
 #include <dirent.h>
 #include <inttypes.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <unistd.h>
-#include <string.h>
+#include <cstring>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -185,9 +185,7 @@ void get_network_facts(fact_map& facts)
     }
 
     facts[string("mtu_") + r->ifr_name] = to_string(r->ifr_mtu);
-    if (primaryInterface)
-        ; // no unmarked version of this network fact
-     
+
     // netmask and network are both derived from the same ioctl
     if (ioctl(s, SIOCGIFNETMASK, r) < 0) {
       perror("ioctl SIOCGIFNETMASK");
@@ -267,7 +265,7 @@ static void get_lsb_facts(fact_map& facts)
     unsigned sep = line.find("=");
     string key = line.substr(0, sep);
     string value = line.substr(sep + 1, string::npos);
-        
+
     if (key == "DISTRIB_ID") {
       facts["lsbdistid"] = value;
       facts["operatingsystem"] = value;
@@ -350,7 +348,7 @@ void get_virtual_facts(fact_map& facts)
   // lspci time is ~40 ms.
 
   // virtual could be discovered in lots of places so requires some special handling
-  
+
   facts["is_virtual"] = "false";
   facts["virtual"] = "physical";
 }
@@ -401,7 +399,7 @@ void get_blockdevice_facts(fact_map& facts)
 	break;
       }
     }
-        
+
     if (!real_block_device) continue;
 
     // add it to the blockdevices list, careful with the comma
@@ -448,7 +446,7 @@ static void get_mem_fact(std::string fact_name, int fact_value, fact_map& facts,
 {
   float fact_value_scaled = fact_value / 1024.0;
   char float_buf[32];
-  
+
   if (get_mb_variant) {
     snprintf(float_buf, sizeof(float_buf) - 1, "%.2f", fact_value_scaled);
     facts[string(fact_name) + "_mb"] = float_buf;
@@ -458,9 +456,9 @@ static void get_mem_fact(std::string fact_name, int fact_value, fact_map& facts,
   for (scale_index = 0;
        fact_value_scaled > 1024.0;
        fact_value_scaled /= 1024.0, ++scale_index) ;
-     
+
   std::string scale[4] = {"MB", "GB", "TB", "PB"};  // oh yeah, petabytes ...
-  
+
   snprintf(float_buf, sizeof(float_buf) - 1, "%.2f", fact_value_scaled);
   facts[fact_name] = string(float_buf) + scale[scale_index];
 }
@@ -522,7 +520,7 @@ static string get_selinux_path()
     tokenize(line, tokens);
     if (tokens.size() < 2) continue;
     if (tokens[0] != "selinuxfs") continue;
-    
+
     selinux_path = tokens[1];
     break;
   }
@@ -610,7 +608,7 @@ static void get_ssh_fact(string fact_name, string path_name, fact_map& facts)
     "/etc/opt/ssh",
   };
 
-  for (int i = 0; i < sizeof(ssh_directories) / sizeof(string); ++i) {
+  for (size_t i = 0; i < sizeof(ssh_directories) / sizeof(string); ++i) {
     string full_path = ssh_directories[i] + "/" + path_name;
     if (file_exist(full_path)) {
       string key = read_oneline_file(full_path);
@@ -865,7 +863,7 @@ void get_hostname_facts(fact_map& facts)
   unsigned sep = hostname_output.find(".");
   string hostname1 = hostname_output.substr(0, sep);
   string hostname = trim(hostname1);
-  
+
   ifstream resolv_conf_file("/etc/resolv.conf", std::ifstream::in);
   string line;
   string domain;
