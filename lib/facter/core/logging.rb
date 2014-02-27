@@ -14,6 +14,9 @@ module Facter::Core::Logging
   # @api private
   @@timing = false
   # @api private
+  @@trace = false
+
+  # @api private
   @@warn_messages = {}
   # @api private
   @@debug_messages = {}
@@ -79,6 +82,28 @@ module Facter::Core::Logging
     end
   end
 
+  def log_exception(exception, message = :default)
+    self.warn(format_exception(exception, message, @@trace))
+  end
+
+  def format_exception(exception, message, trace)
+    arr = []
+
+    if message == :default
+      arr << exception.message
+    elsif message
+      arr << message
+    end
+
+    if trace
+      arr.concat(exception.backtrace)
+    end
+
+    arr.flatten.join("\n")
+  end
+
+  # Print an exception message, and optionally a backtrace if trace is set
+
   # Print timing information
   #
   # @param string [String] the time to print
@@ -123,6 +148,14 @@ module Facter::Core::Logging
   # @api private
   def timing?
     @@timing
+  end
+
+  def trace(bool)
+    @@trace = bool
+  end
+
+  def trace?
+    @@trace
   end
 
   # Clears the seen state of warning messages. See {warnonce}.
