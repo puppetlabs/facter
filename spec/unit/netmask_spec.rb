@@ -27,6 +27,15 @@ describe "The netmask fact" do
       "ifconfig_ubuntu_1204.txt"
   end
 
+  context "on Darwin" do
+    before :each do
+      Facter.fact(:kernel).stubs(:value).returns("Darwin")
+    end
+
+    example_behavior_for "netmask from ifconfig output",
+      "Darwin 10.8.5", "255.255.252.0", "darwin_10_8_5.txt"
+  end
+
   context "on Windows" do
     require 'facter/util/wmi'
     require 'facter/util/registry'
