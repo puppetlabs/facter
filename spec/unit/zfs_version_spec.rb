@@ -64,7 +64,7 @@ describe "zfs_version fact" do
   end
 
   it "should return nil if zfs fails to run" do
-    Facter::Core::Execution.stubs(:exec).with("zfs -? 2> /dev/null").returns(nil)
+    Facter::Core::Execution.stubs(:exec).with("zfs -? 2> /dev/null").returns('')
     Facter.fact(:zfs_version).value.should == nil
   end
 

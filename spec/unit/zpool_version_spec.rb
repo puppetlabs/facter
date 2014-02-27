@@ -53,7 +53,7 @@ describe "zpool_version fact" do
   end
 
   it "should return nil if zpool fails to run" do
-    Facter::Core::Execution.stubs(:exec).with("zpool upgrade -v").returns(nil)
+    Facter::Core::Execution.stubs(:exec).with("zpool upgrade -v").returns('')
     Facter.fact(:zpool_version).value.should == nil
   end
 
