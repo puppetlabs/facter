@@ -55,9 +55,7 @@ module Facter::Util::Parser
     def results
       parse_results
     rescue Exception => detail
-      Facter.warn("Failed to handle #{filename} as #{self.class} facts")
-      Facter.warn("detail: #{detail.class}: #{detail.message}")
-      Facter.debug(detail.backtrace.join("\n\t"))
+      Facter.log_exception(detail, "Failed to handle #{filename} as #{self.class} facts: #{detail.message}")
       nil
     end
 

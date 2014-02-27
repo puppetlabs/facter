@@ -69,7 +69,7 @@ class Facter::Util::Fact
 
     resolve
   rescue => e
-    Facter.warn "Unable to add resolve #{resolution_name.inspect} for fact #{@name}: #{e}"
+    Facter.log_exception(e, "Unable to add resolve #{resolution_name.inspect} for fact #{@name}: #{e.message}")
   end
 
   # Retrieve an existing resolution by name
