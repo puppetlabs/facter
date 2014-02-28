@@ -4,7 +4,7 @@ module Facter::Util::Virtual
   ##
   # virt_what is a delegating helper method intended to make it easier to stub
   # the system call without affecting other calls to
-  # Facter::Util::Resolution.exec
+  # Facter::Core::Execution.exec
   #
   # Per https://bugzilla.redhat.com/show_bug.cgi?id=719611 when run as a
   # non-root user the virt-what command may emit an error message on stdout,
@@ -12,7 +12,7 @@ module Facter::Util::Virtual
   # method ensures stderr is redirected and that error messages are stripped
   # from stdout.
   def self.virt_what(command = "virt-what")
-    command = Facter::Util::Resolution.which(command)
+    command = Facter::Core::Execution.which(command)
     return unless command
 
     if Facter.value(:kernel) == 'windows'
@@ -20,15 +20,15 @@ module Facter::Util::Virtual
     else
       redirected_cmd = "#{command} 2>/dev/null"
     end
-    output = Facter::Util::Resolution.exec redirected_cmd
+    output = Facter::Core::Execution.exec redirected_cmd
     output.gsub(/^virt-what: .*$/, '') if output
   end
 
   ##
   # lspci is a delegating helper method intended to make it easier to stub the
-  # system call without affecting other calls to Facter::Util::Resolution.exec
+  # system call without affecting other calls to Facter::Core::Execution.exec
   def self.lspci(command = "lspci 2>/dev/null")
-    Facter::Util::Resolution.exec command
+    Facter::Core::Execution.exec command
   end
 
   def self.openvz?
@@ -40,7 +40,7 @@ module Facter::Util::Virtual
     return false unless self.openvz?
     return false unless FileTest.exists?( '/proc/self/status' )
 
-    envid = Facter::Util::Resolution.exec( 'grep "envID" /proc/self/status' )
+    envid = Facter::Core::Execution.exec( 'grep "envID" /proc/self/status' )
     if envid =~ /^envID:\s+0$/i
     return 'openvzhn'
     elsif envid =~ /^envID:\s+(\d+)$/i
@@ -56,7 +56,7 @@ module Facter::Util::Virtual
 
   def self.zone?
     return true if FileTest.directory?("/.SUNWnative")
-    z = Facter::Util::Resolution.exec("/sbin/zonename")
+    z = Facter::Core::Execution.exec("/sbin/zonename")
     return false unless z
     return z.chomp != 'global'
   end
@@ -92,7 +92,7 @@ module Facter::Util::Virtual
      txt = if FileTest.exists?("/proc/cpuinfo")
        File.read("/proc/cpuinfo")
      elsif ["FreeBSD", "OpenBSD"].include? Facter.value(:kernel)
-       Facter::Util::Resolution.exec("/sbin/sysctl -n hw.model")
+       Facter::Core::Execution.exec("/sbin/sysctl -n hw.model")
      end
      (txt =~ /QEMU Virtual CPU/) ? true : false
   end
@@ -123,11 +123,11 @@ module Facter::Util::Virtual
       when "FreeBSD" then "/sbin"
       when "GNU/kFreeBSD" then "/bin"
     end
-    Facter::Util::Resolution.exec("#{path}/sysctl -n security.jail.jailed") == "1"
+    Facter::Core::Execution.exec("#{path}/sysctl -n security.jail.jailed") == "1"
   end
 
   def self.hpvm?
-    Facter::Util::Resolution.exec("/usr/bin/getconf MACHINE_MODEL").chomp =~ /Virtual Machine/
+    Facter::Core::Execution.exec("/usr/bin/getconf MACHINE_MODEL").chomp =~ /Virtual Machine/
   end
 
   def self.zlinux?

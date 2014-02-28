@@ -24,9 +24,9 @@
 # at this point in time.
 # In particular, Installed Software might be an interesting addition.
 
-require 'facter/util/macosx'
-
 if Facter.value(:kernel) == "Darwin"
+  require 'facter/util/macosx'
+
   Facter::Util::Macosx.hardware_overview.each do |fact, value|
     Facter.add("sp_#{fact}") do
       confine :kernel => :darwin

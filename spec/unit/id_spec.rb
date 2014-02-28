@@ -12,7 +12,7 @@ describe "id fact" do
       it "should return the current user" do
         given_a_configuration_of(:is_windows => k == 'windows')
         Facter.fact(:kernel).stubs(:value).returns(k)
-        Facter::Util::Resolution.expects(:exec).once.with('whoami').returns 'bar'
+        Facter::Core::Execution.expects(:exec).once.with('whoami').returns 'bar'
 
         Facter.fact(:id).value.should == 'bar'
       end
@@ -21,8 +21,8 @@ describe "id fact" do
 
   it "should return the current user on Solaris" do
     given_a_configuration_of(:is_windows => false)
-    Facter::Util::Resolution.stubs(:exec).with('uname -s').returns('SunOS')
-    Facter::Util::Resolution.expects(:exec).once.with('/usr/xpg4/bin/id -un').returns 'bar'
+    Facter::Core::Execution.stubs(:exec).with('uname -s').returns('SunOS')
+    Facter::Core::Execution.expects(:exec).once.with('/usr/xpg4/bin/id -un').returns 'bar'
 
     Facter.fact(:id).value.should == 'bar'
   end

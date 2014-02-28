@@ -15,6 +15,7 @@
 #
 
 require 'facter/util/ip'
+require 'facter/util/macaddress'
 
 # Note that most of this only works on a fixed list of platforms; notably, Darwin
 # is missing.
@@ -34,7 +35,11 @@ Facter::Util::IP.get_interfaces.each do |interface|
   %w{ipaddress ipaddress6 macaddress netmask mtu}.each do |label|
     Facter.add(label + "_" + Facter::Util::IP.alphafy(interface)) do
       setcode do
-        Facter::Util::IP.get_interface_value(interface, label)
+        value = Facter::Util::IP.get_interface_value(interface, label)
+        if label == "macaddress"
+          value = Facter::Util::Macaddress.standardize(value)
+        end
+        value
       end
     end
   end

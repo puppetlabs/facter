@@ -8,19 +8,19 @@ module Facter::NetMask
     when 'Linux'
       ops = {
         :ifconfig_opts => ['2>/dev/null'],
-        :regex => %r{#{Facter.ipaddress}.*?(?:Mask:|netmask)\s*(#{ipregex})}x,
+        :regex => %r{#{Facter.value(:ipaddress)}.*?(?:Mask:|netmask)\s*(#{ipregex})}x,
         :munge => nil,
       }
     when 'SunOS'
       ops = {
         :ifconfig_opts => ['-a'],
-        :regex => %r{\s+ inet \s #{Facter.ipaddress} \s netmask \s (\w{8})}x,
+        :regex => %r{\s+ inet \s #{Facter.value(:ipaddress)} \s netmask \s (\w{8})}x,
         :munge => Proc.new { |mask| mask.scan(/../).collect do |byte| byte.to_i(16) end.join('.') }
       }
     when 'FreeBSD','NetBSD','OpenBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
       ops = {
         :ifconfig_opts => ['-a'],
-        :regex => %r{\s+ inet \s #{Facter.ipaddress} \s netmask \s 0x(\w{8})}x,
+        :regex => %r{\s+ inet \s #{Facter.value(:ipaddress)} \s netmask \s 0x(\w{8})}x,
         :munge => Proc.new { |mask| mask.scan(/../).collect do |byte| byte.to_i(16) end.join('.') }
       }
     end

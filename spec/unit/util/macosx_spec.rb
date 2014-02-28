@@ -27,7 +27,7 @@ describe Facter::Util::Macosx do
   end
 
   it "should be able to retrieve profiler data as xml for a given data field" do
-    Facter::Util::Resolution.expects(:exec).with("/usr/sbin/system_profiler -xml foo").returns "yay"
+    Facter::Core::Execution.expects(:exec).with("/usr/sbin/system_profiler -xml foo").returns "yay"
     Facter::Util::Macosx.profiler_xml("foo").should == "yay"
   end
 
@@ -45,7 +45,7 @@ describe Facter::Util::Macosx do
     STDERR.stubs(:<<)
     expect {
       Facter::Util::Macosx.intern_xml('<bad}|%-->xml<--->')
-    }.to raise_error(RuntimeError, /A plist file could not be properly read by Facter::Util::CFPropertyList/)
+    }.to raise_error(RuntimeError, /A plist file could not be properly read by CFPropertyList/)
   end
 
   describe "when collecting profiler data" do
@@ -80,17 +80,17 @@ describe Facter::Util::Macosx do
   describe "when working out software version" do
 
     before do
-      Facter::Util::Resolution.expects(:exec).with("/usr/bin/sw_vers -productName").returns "Mac OS X"
-      Facter::Util::Resolution.expects(:exec).with("/usr/bin/sw_vers -buildVersion").returns "9J62"
+      Facter::Core::Execution.expects(:exec).with("/usr/bin/sw_vers -productName").returns "Mac OS X"
+      Facter::Core::Execution.expects(:exec).with("/usr/bin/sw_vers -buildVersion").returns "9J62"
     end
 
     it "should have called sw_vers three times when determining software version" do
-      Facter::Util::Resolution.expects(:exec).with("/usr/bin/sw_vers -productVersion").returns "10.5.7"
+      Facter::Core::Execution.expects(:exec).with("/usr/bin/sw_vers -productVersion").returns "10.5.7"
       Facter::Util::Macosx.sw_vers
     end
 
     it "should return a hash with the correct keys when determining software version" do
-      Facter::Util::Resolution.expects(:exec).with("/usr/bin/sw_vers -productVersion").returns "10.5.7"
+      Facter::Core::Execution.expects(:exec).with("/usr/bin/sw_vers -productVersion").returns "10.5.7"
       Facter::Util::Macosx.sw_vers.keys.sort.should == ["macosx_productName",
                                                         "macosx_buildVersion",
                                                         "macosx_productversion_minor",
@@ -99,14 +99,14 @@ describe Facter::Util::Macosx do
     end
 
     it "should split a product version of 'x.y.z' into separate hash entries correctly" do
-      Facter::Util::Resolution.expects(:exec).with("/usr/bin/sw_vers -productVersion").returns "1.2.3"
+      Facter::Core::Execution.expects(:exec).with("/usr/bin/sw_vers -productVersion").returns "1.2.3"
       sw_vers = Facter::Util::Macosx.sw_vers
       sw_vers["macosx_productversion_major"].should == "1.2"
       sw_vers["macosx_productversion_minor"].should == "3"
     end
 
     it "should treat a product version of 'x.y' as 'x.y.0" do
-      Facter::Util::Resolution.expects(:exec).with("/usr/bin/sw_vers -productVersion").returns "2.3"
+      Facter::Core::Execution.expects(:exec).with("/usr/bin/sw_vers -productVersion").returns "2.3"
       Facter::Util::Macosx.sw_vers["macosx_productversion_minor"].should == "0"
     end
   end

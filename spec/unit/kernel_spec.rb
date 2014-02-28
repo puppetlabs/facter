@@ -1,4 +1,4 @@
-#! /usr/bin/env ruby -S rspec
+#! /usr/bin/env ruby
 
 require 'spec_helper'
 
@@ -16,7 +16,7 @@ describe "Kernel fact" do
   describe "on everything else" do
     it "should return the kernel using 'uname -s'" do
       given_a_configuration_of(:is_windows => false)
-      Facter::Util::Resolution.stubs(:exec).with('uname -s').returns("test_kernel")
+      Facter::Core::Execution.stubs(:exec).with('uname -s').returns("test_kernel")
 
       Facter.fact(:kernel).value.should == 'test_kernel'
     end

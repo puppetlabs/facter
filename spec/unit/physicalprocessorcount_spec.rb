@@ -12,9 +12,9 @@ describe "Physical processor count facts" do
 
     it "should return one physical CPU" do
       Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu*/topology/physical_package_id").returns(["/sys/devices/system/cpu/cpu0/topology/physical_package_id"])
-      Facter::Util::Resolution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
+      Facter::Core::Execution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
 
-      Facter.fact(:physicalprocessorcount).value.should == 1
+      Facter.fact(:physicalprocessorcount).value.should == "1"
     end
 
     it "should return four physical CPUs" do
@@ -25,12 +25,12 @@ describe "Physical processor count facts" do
         /sys/devices/system/cpu/cpu3/topology/physical_package_id
       })
 
-      Facter::Util::Resolution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
-      Facter::Util::Resolution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu1/topology/physical_package_id").returns("1")
-      Facter::Util::Resolution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu2/topology/physical_package_id").returns("2")
-      Facter::Util::Resolution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu3/topology/physical_package_id").returns("3")
+      Facter::Core::Execution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
+      Facter::Core::Execution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu1/topology/physical_package_id").returns("1")
+      Facter::Core::Execution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu2/topology/physical_package_id").returns("2")
+      Facter::Core::Execution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu3/topology/physical_package_id").returns("3")
 
-      Facter.fact(:physicalprocessorcount).value.should == 4
+      Facter.fact(:physicalprocessorcount).value.should == "4"
     end
   end
 
@@ -43,7 +43,7 @@ describe "Physical processor count facts" do
       Facter::Util::WMI.expects(:execquery).with("select Name from Win32_Processor").returns(ole)
       ole.stubs(:Count).returns(4)
 
-      Facter.fact(:physicalprocessorcount).value.should == 4
+      Facter.fact(:physicalprocessorcount).value.should == "4"
     end
   end
 
@@ -58,7 +58,7 @@ describe "Physical processor count facts" do
         Facter.fact(:kernel).stubs(:value).returns(:sunos)
         Facter.stubs(:value).with(:kernelrelease).returns(release)
 
-        Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo -p").returns("1")
+        Facter::Core::Execution.expects(:exec).with("/usr/sbin/psrinfo -p").returns("1")
         Facter.fact(:physicalprocessorcount).value.should == "1"
       end
     end
@@ -68,7 +68,7 @@ describe "Physical processor count facts" do
         Facter.fact(:kernel).stubs(:value).returns(:sunos)
         Facter.stubs(:value).with(:kernelrelease).returns(release)
 
-        Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(psrinfo)
+        Facter::Core::Execution.expects(:exec).with("/usr/sbin/psrinfo").returns(psrinfo)
         Facter.fact(:physicalprocessorcount).value.should == "2"
       end
     end

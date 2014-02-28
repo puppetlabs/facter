@@ -52,7 +52,7 @@ module Facter::Util::EC2
                       "arp -an"
                     end
 
-      if arp_table = Facter::Util::Resolution.exec(arp_command)
+      if arp_table = Facter::Core::Execution.exec(arp_command)
         return true if arp_table.match(mac_address_re)
       end
       return false

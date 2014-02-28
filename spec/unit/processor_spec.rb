@@ -185,35 +185,35 @@ describe "Processor facts" do
 
     it "should be 2 on dual-processor Darwin box" do
       Facter.fact(:kernel).stubs(:value).returns("Darwin")
-      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
+      Facter::Core::Execution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
 
       Facter.fact(:processorcount).value.should == "2"
     end
 
     it "should be 2 on dual-processor OpenBSD box" do
       Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
-      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
+      Facter::Core::Execution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
 
       Facter.fact(:processorcount).value.should == "2"
     end
 
     it "should be 2 on dual-processor FreeBSD box" do
       Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
-      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
+      Facter::Core::Execution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
 
       Facter.fact(:processorcount).value.should == "2"
     end
 
     it "should print the correct CPU Model on FreeBSD" do
       Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
-      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.model").returns('SomeVendor CPU 3GHz')
+      Facter::Core::Execution.stubs(:exec).with("sysctl -n hw.model").returns('SomeVendor CPU 3GHz')
 
       Facter.fact(:processor).value.should == "SomeVendor CPU 3GHz"
     end
 
     it "should be 2 on dual-processor DragonFly box" do
       Facter.fact(:kernel).stubs(:value).returns("DragonFly")
-      Facter::Util::Resolution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
+      Facter::Core::Execution.stubs(:exec).with("sysctl -n hw.ncpu").returns('2')
 
       Facter.fact(:processorcount).value.should == "2"
     end
@@ -239,9 +239,9 @@ describe "Processor facts" do
         it "uses kstat on release #{release} (#{arch})" do
           Facter.stubs(:value).with(:kernelrelease).returns(release)
 
-          Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").never
-          Facter::Util::Resolution.expects(:exec).with("/usr/bin/kstat cpu_info").returns(self.send("kstat_#{arch}".intern))
-          Facter.fact(:processorcount).value.should == 8
+          Facter::Core::Execution.expects(:exec).with("/usr/sbin/psrinfo").never
+          Facter::Core::Execution.expects(:exec).with("/usr/bin/kstat cpu_info").returns(self.send("kstat_#{arch}".intern))
+          Facter.fact(:processorcount).value.should == '8'
         end
       end
     end
@@ -251,9 +251,9 @@ describe "Processor facts" do
         Facter.stubs(:value).with(:kernelrelease).returns(release)
 
         fixture_data = File.read(fixtures('processorcount','solaris-psrinfo'))
-        Facter::Util::Resolution.expects(:exec).with("/usr/bin/kstat cpu_info").never
-        Facter::Util::Resolution.expects(:exec).with("/usr/sbin/psrinfo").returns(fixture_data)
-        Facter.fact(:processorcount).value.should == 24
+        Facter::Core::Execution.expects(:exec).with("/usr/bin/kstat cpu_info").never
+        Facter::Core::Execution.expects(:exec).with("/usr/sbin/psrinfo").returns(fixture_data)
+        Facter.fact(:processorcount).value.should == '24'
       end
     end
   end

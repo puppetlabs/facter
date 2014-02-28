@@ -96,16 +96,10 @@ describe "SELinux facts" do
 
       Facter.fact(:selinux_config_policy).value.should == "targeted"
     end
-
-    it "should ensure legacy selinux_mode facts returns same value as selinux_config_policy fact" do
-      Facter.fact(:selinux_config_policy).stubs(:value).returns("targeted")
-
-      Facter.fact(:selinux_mode).value.should == "targeted"
-    end
   end
 
   def sestatus_is(status)
-    Facter::Util::Resolution.stubs(:exec).with('/usr/sbin/sestatus').returns(status)
+    Facter::Core::Execution.stubs(:exec).with('/usr/sbin/sestatus').returns(status)
   end
 
   def mounts_does_not_exist
@@ -114,7 +108,7 @@ describe "SELinux facts" do
 
   def mounts_contains(*lines)
     FileTest.expects(:exists?).with("/proc/self/mounts").returns true
-    Facter::Util::Resolution.expects(:exec).with("cat /proc/self/mounts").returns(lines.join("\n"))
+    Facter::Core::Execution.expects(:exec).with("cat /proc/self/mounts").returns(lines.join("\n"))
   end
 
 end

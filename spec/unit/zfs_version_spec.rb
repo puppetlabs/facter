@@ -15,52 +15,52 @@ describe "zfs_version fact" do
   # Solaris 11 11/11 (ga) 33  5
 
   before :each do
-    Facter::Util::Resolution.stubs(:which).with("zfs").returns("/usr/bin/zfs")
+    Facter::Core::Execution.stubs(:which).with("zfs").returns("/usr/bin/zfs")
   end
 
   it "should return correct version on Solaris 10" do
-    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('solaris_10'))
+    Facter::Core::Execution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('solaris_10'))
     Facter.fact(:zfs_version).value.should == "3"
   end
 
   it "should return correct version on Solaris 11" do
-    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('solaris_11'))
+    Facter::Core::Execution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('solaris_11'))
     Facter.fact(:zfs_version).value.should == "5"
   end
 
   it "should return correct version on FreeBSD 8.2" do
-    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('freebsd_8.2'))
+    Facter::Core::Execution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('freebsd_8.2'))
     Facter.fact(:zfs_version).value.should == "4"
   end
 
   it "should return correct version on FreeBSD 9.0" do
-    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('freebsd_9.0'))
+    Facter::Core::Execution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('freebsd_9.0'))
     Facter.fact(:zfs_version).value.should == "5"
   end
 
   it "should return correct version on Linux with ZFS-fuse" do
-    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('linux-fuse_0.6.9'))
+    Facter::Core::Execution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('linux-fuse_0.6.9'))
     Facter.fact(:zfs_version).value.should == "4"
   end
 
   it "should return nil if zfs command is not available" do
-    Facter::Util::Resolution.stubs(:which).with("zfs").returns(nil)
-    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('linux-fuse_0.6.9'))
+    Facter::Core::Execution.stubs(:which).with("zfs").returns(nil)
+    Facter::Core::Execution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('linux-fuse_0.6.9'))
     Facter.fact(:zfs_version).value.should == nil
   end
 
   it "should return nil if zfs fails to run" do
-    Facter::Util::Resolution.stubs(:exec).with("zfs upgrade -v").returns(nil)
+    Facter::Core::Execution.stubs(:exec).with("zfs upgrade -v").returns('')
     Facter.fact(:zfs_version).value.should == nil
   end
 
   it "handles the zfs command becoming available at a later point in time" do
     # Simulate Puppet configuring the zfs tools from a persistent daemon by
     # simulating three sequential responses to which('zfs').
-    Facter::Util::Resolution.stubs(:which).
+    Facter::Core::Execution.stubs(:which).
       with("zfs").
       returns(nil,nil,"/usr/bin/zfs")
-    Facter::Util::Resolution.stubs(:exec).
+    Facter::Core::Execution.stubs(:exec).
       with("zfs upgrade -v").
       returns(my_fixture_read('linux-fuse_0.6.9'))
 

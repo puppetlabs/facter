@@ -27,47 +27,22 @@ describe Facter::Util::Collection do
     end
 
     it "should accept options" do
-      collection.add(:myname, :ldapname => "whatever") { }
+      collection.add(:myname, :timeout => 1) { }
     end
 
-    it "should set any appropriate options on the fact instances" do
-      # Use a real fact instance, because we're using respond_to?
+    it "passes resolution specific options to the fact" do
       fact = Facter::Util::Fact.new(:myname)
+      Facter::Util::Fact.expects(:new).with(:myname, {:timeout => 'myval'}).returns fact
 
-      collection.add(:myname, :ldapname => "testing")
-      collection.fact(:myname).ldapname.should == "testing"
-    end
-
-    it "should set appropriate options on the resolution instance" do
-      fact = Facter::Util::Fact.new(:myname)
-      Facter::Util::Fact.expects(:new).with(:myname).returns fact
-
-      resolve = Facter::Util::Resolution.new(:myname) {}
-      fact.expects(:add).returns resolve
+      fact.expects(:add).with({:timeout => 'myval'})
 
       collection.add(:myname, :timeout => "myval") {}
-    end
-
-    it "should not pass fact-specific options to resolutions" do
-      fact = Facter::Util::Fact.new(:myname)
-      Facter::Util::Fact.expects(:new).with(:myname).returns fact
-
-      resolve = Facter::Util::Resolution.new(:myname) {}
-      fact.expects(:add).returns resolve
-
-      fact.expects(:ldapname=).with("foo")
-      resolve.expects(:timeout=).with("myval")
-
-      collection.add(:myname, :timeout => "myval", :ldapname => "foo") {}
-    end
-
-    it "should fail if invalid options are provided" do
-      lambda { collection.add(:myname, :foo => :bar) }.should raise_error(ArgumentError)
     end
 
     describe "and a block is provided" do
       it "should use the block to add a resolution to the fact" do
         fact = mock 'fact'
+        fact.stubs(:extract_ldapname_option!)
         Facter::Util::Fact.expects(:new).returns fact
 
         fact.expects(:add)
@@ -76,13 +51,40 @@ describe Facter::Util::Collection do
       end
 
       it "should discard resolutions that throw an exception when added" do
-        lambda {
+        Facter.expects(:warn).with(regexp_matches(/Unable to add resolve .* kaboom!/))
+        expect {
           collection.add('yay') do
-            raise
-            setcode { 'yay' }
+            raise "kaboom!"
           end
-        }.should_not raise_error
-        collection.value('yay').should be_nil
+        }.to_not raise_error
+        expect(collection.value('yay')).to be_nil
+      end
+    end
+  end
+
+  describe "when only defining facts" do
+    it "creates a new fact if no such fact exists" do
+      fact = Facter::Util::Fact.new(:newfact)
+      Facter::Util::Fact.expects(:new).with(:newfact, {}).returns fact
+      expect(collection.define_fact(:newfact)).to equal fact
+    end
+
+    it "returns an existing fact if the fact has already been defined" do
+      fact = collection.define_fact(:newfact)
+      expect(collection.define_fact(:newfact)).to equal fact
+    end
+
+    it "passes options to newly generated facts" do
+      Facter.stubs(:warnonce)
+      fact = collection.define_fact(:newfact, :ldapname => 'NewFact')
+      expect(fact.ldapname).to eq 'NewFact'
+    end
+
+    it "logs a warning if the fact could not be defined" do
+      Facter.expects(:warn).with("Unable to add fact newfact: kaboom!")
+
+      collection.define_fact(:newfact) do
+        raise "kaboom!"
       end
     end
   end

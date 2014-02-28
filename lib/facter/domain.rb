@@ -41,11 +41,11 @@ Facter.add(:domain) do
                          basic_hostname
                        end
 
-    if name = Facter::Util::Resolution.exec(hostname_command) \
+    if name = Facter::Core::Execution.exec(hostname_command) \
       and name =~ /.*?\.(.+$)/
 
       return_value = $1
-    elsif Facter.value(:kernel) != "windows" and domain = Facter::Util::Resolution.exec('dnsdomainname 2> /dev/null') \
+    elsif Facter.value(:kernel) != "windows" and domain = Facter::Core::Execution.exec('dnsdomainname 2> /dev/null') \
       and domain =~ /.+/
 
       return_value = domain
@@ -64,8 +64,10 @@ Facter.add(:domain) do
       return_value ||= domain
       return_value ||= search
     end
-    return_value = '' if return_value.nil?
-    return_value.gsub(/\.$/, '')
+
+    if return_value
+      return_value.gsub(/\.$/, '')
+    end
   end
 end
 
@@ -73,10 +75,13 @@ Facter.add(:domain) do
   confine :kernel => :windows
   setcode do
     require 'facter/util/registry'
-    domain = ""
+
+    domain = nil
     regvalue = Facter::Util::Registry.hklm_read('SYSTEM\CurrentControlSet\Services\Tcpip\Parameters', 'Domain')
-    domain = regvalue if regvalue
-    if domain == ""
+
+    if regvalue and not regvalue.empty?
+      domain = regvalue
+    else
       require 'facter/util/wmi'
       Facter::Util::WMI.execquery("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").each { |nic|
         if nic.DNSDomain && nic.DNSDomain.length > 0
@@ -86,8 +91,9 @@ Facter.add(:domain) do
       }
     end
 
-    domain ||= ''
 
-    domain.gsub(/\.$/, '')
+    if domain
+      domain.gsub(/\.$/, '')
+    end
   end
 end

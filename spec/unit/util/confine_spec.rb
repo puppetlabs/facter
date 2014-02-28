@@ -123,5 +123,26 @@ describe Facter::Util::Confine do
     it "should return false if none of the provided ranges matches the fact's value" do
       confined(8, (5..7)).should be_false
     end
+
+    it "should accept and evaluate a block argument against the fact" do
+      @fact.expects(:value).returns 'foo'
+      confine = Facter::Util::Confine.new :yay do |f| f === 'foo' end
+      confine.true?.should be_true
+    end
+
+    it "should return false if the block raises a StandardError when checking a fact" do
+      @fact.stubs(:value).returns 'foo'
+      confine = Facter::Util::Confine.new :yay do |f| raise StandardError end
+      confine.true?.should be_false
+    end
+
+    it "should accept and evaluate only a block argument" do
+      Facter::Util::Confine.new { true }.true?.should be_true
+      Facter::Util::Confine.new { false }.true?.should be_false
+    end
+
+    it "should return false if the block raises a StandardError" do
+      Facter::Util::Confine.new { raise StandardError }.true?.should be_false
+    end
   end
 end

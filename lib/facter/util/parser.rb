@@ -55,9 +55,7 @@ module Facter::Util::Parser
     def results
       parse_results
     rescue Exception => detail
-      Facter.warn("Failed to handle #{filename} as #{self.class} facts")
-      Facter.warn("detail: #{detail.class}: #{detail.message}")
-      Facter.debug(detail.backtrace.join("\n\t"))
+      Facter.log_exception(detail, "Failed to handle #{filename} as #{self.class} facts: #{detail.message}")
       nil
     end
 
@@ -119,7 +117,7 @@ module Facter::Util::Parser
 
   class ScriptParser < Base
     def parse_results
-      KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(quote(filename))
+      KeyValuePairOutputFormat.parse Facter::Core::Execution.exec(quote(filename))
     end
 
     private
@@ -142,7 +140,7 @@ module Facter::Util::Parser
     # Returns a hash of facts from powershell output
     def parse_results
       shell_command = "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File \"#{filename}\""
-      KeyValuePairOutputFormat.parse Facter::Util::Resolution.exec(shell_command)
+      KeyValuePairOutputFormat.parse Facter::Core::Execution.exec(shell_command)
     end
   end
 

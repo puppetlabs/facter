@@ -1,24 +1,33 @@
 require 'facter'
 require 'facter/util/resolution'
+require 'facter/core/aggregate'
 
+# This class represents a fact. Each fact has a name and multiple
+# {Facter::Util::Resolution resolutions}.
+#
+# Create facts using {Facter.add}
+#
+# @api public
 class Facter::Util::Fact
-  TIMEOUT = 5
+  # The name of the fact
+  # @return [String]
+  attr_accessor :name
 
-  attr_accessor :name, :ldapname
+  # @return [String]
+  # @deprecated
+  attr_accessor :ldapname
 
-  # Create a new fact, with no resolution mechanisms.
+  # Creates a new fact, with no resolution mechanisms. See {Facter.add}
+  # for the public API for creating facts.
+  # @param name [String] the fact name
+  # @param options [Hash] optional parameters
+  # @option options [String] :ldapname set the ldapname property on the fact
+  #
+  # @api private
   def initialize(name, options = {})
     @name = name.to_s.downcase.intern
 
-    # LAK:NOTE: This is slow for many options, but generally we won't have any and at
-    # worst we'll have one.  If we add more, this should be made more efficient.
-    options.each do |name, value|
-      case name
-      when :ldapname; self.ldapname = value
-      else
-        raise ArgumentError, "Invalid fact option '%s'" % name
-      end
-    end
+    extract_ldapname_option!(options)
 
     @ldapname ||= @name.to_s
 
@@ -28,33 +37,68 @@ class Facter::Util::Fact
     @value = nil
   end
 
-  # Add a new resolution mechanism.  This requires a block, which will then
-  # be evaluated in the context of the new mechanism.
-  def add(value = nil, &block)
-    begin
-      resolve = Facter::Util::Resolution.new(@name)
-
-      resolve.instance_eval(&block) if block
-      @resolves << resolve
-
-      resolve
-    rescue => e
-      Facter.warn "Unable to add resolve for #{@name}: #{e}"
-      nil
-    end
+  # Adds a new {Facter::Util::Resolution resolution}.  This requires a
+  # block, which will then be evaluated in the context of the new
+  # resolution.
+  #
+  # @param options [Hash] A hash of options to set on the resolution
+  #
+  # @return [Facter::Util::Resolution]
+  #
+  # @api private
+  def add(options = {}, &block)
+    define_resolution(nil, options, &block)
   end
 
-  ##
-  # Flush any cached values.  If the resolver has a callback block defined
-  # using the on_flush DSL method, then invoke that block by sending a message
-  # to Resolution#flush.
+  # Define a new named resolution or return an existing resolution with
+  # the given name.
+  #
+  # @param resolution_name [String] The name of the resolve to define or look up
+  # @param options [Hash] A hash of options to set on the resolution
+  # @return [Facter::Util::Resolution]
+  #
+  # @api public
+  def define_resolution(resolution_name, options = {}, &block)
+
+    resolution_type = options.delete(:type) || :simple
+
+    resolve = create_or_return_resolution(resolution_name, resolution_type)
+
+    resolve.set_options(options) unless options.empty?
+    resolve.evaluate(&block) if block
+
+    resolve
+  rescue => e
+    Facter.log_exception(e, "Unable to add resolve #{resolution_name.inspect} for fact #{@name}: #{e.message}")
+  end
+
+  # Retrieve an existing resolution by name
+  #
+  # @param name [String]
+  #
+  # @return [Facter::Util::Resolution, nil] The resolution if exists, nil if
+  #   it doesn't exist or name is nil
+  def resolution(name)
+    return nil if name.nil?
+
+    @resolves.find { |resolve| resolve.name == name }
+  end
+
+  # Flushes any cached values.
+  #
+  # @return [void]
+  #
+  # @api private
   def flush
     @resolves.each { |r| r.flush }
     @value = nil
   end
 
-  # Return the value for a given fact.  Searches through all of the mechanisms
-  # and returns either the first value or nil.
+  # Returns the value for this fact. This searches all resolutions by
+  # suitability and weight (see {Facter::Util::Resolution}). If no
+  # suitable resolution is found, it returns nil.
+  #
+  # @api public
   def value
     return @value if @value
 
@@ -75,6 +119,14 @@ class Facter::Util::Fact
     end
   end
 
+  # @api private
+  # @deprecated
+  def extract_ldapname_option!(options)
+    if options[:ldapname]
+      Facter.warnonce("ldapname is deprecated and will be removed in a future version")
+      self.ldapname = options.delete(:ldapname)
+    end
+  end
 
   private
 
@@ -106,7 +158,7 @@ class Facter::Util::Fact
 
   def find_first_real_value(resolutions)
     resolutions.each do |resolve|
-      value = normalize_value(resolve.value)
+      value = resolve.value
       if not value.nil?
         return value
       end
@@ -126,7 +178,27 @@ class Facter::Util::Fact
     end
   end
 
-  def normalize_value(value)
-    value == "" ? nil : value
+  def create_or_return_resolution(resolution_name, resolution_type)
+    resolve = self.resolution(resolution_name)
+
+    if resolve
+      if resolution_type != resolve.resolution_type
+        raise ArgumentError, "Cannot return resolution #{resolution_name} with type" +
+          " #{resolution_type}; already defined as #{resolve.resolution_type}"
+      end
+    else
+      case resolution_type
+      when :simple
+        resolve = Facter::Util::Resolution.new(resolution_name, self)
+      when :aggregate
+        resolve = Facter::Core::Aggregate.new(resolution_name, self)
+      else
+        raise ArgumentError, "Expected resolution type to be one of (:simple, :aggregate) but was #{resolution_type}"
+      end
+
+      @resolves << resolve
+    end
+
+    resolve
   end
 end

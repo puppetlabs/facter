@@ -41,24 +41,44 @@ describe Facter::Util::Config do
     it "should return the default value for linux" do
       Facter::Util::Config.stubs(:is_windows?).returns(false)
       Facter::Util::Config.stubs(:windows_data_dir).returns(nil)
+      Facter::Util::Config.setup_default_ext_facts_dirs
       Facter::Util::Config.external_facts_dirs.should == ["/etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"]
     end
 
     it "should return the default value for windows 2008" do
       Facter::Util::Config.stubs(:is_windows?).returns(true)
       Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\ProgramData")
+      Facter::Util::Config.setup_default_ext_facts_dirs
       Facter::Util::Config.external_facts_dirs.should == [File.join("C:\\ProgramData", 'PuppetLabs', 'facter', 'facts.d')]
     end
 
     it "should return the default value for windows 2003R2" do
       Facter::Util::Config.stubs(:is_windows?).returns(true)
       Facter::Util::Config.stubs(:windows_data_dir).returns("C:\\Documents")
+      Facter::Util::Config.setup_default_ext_facts_dirs
       Facter::Util::Config.external_facts_dirs.should == [File.join("C:\\Documents", 'PuppetLabs', 'facter', 'facts.d')]
     end
 
     it "returns the users home directory when not root" do
       Facter::Util::Root.stubs(:root?).returns(false)
+      Facter::Util::Config.setup_default_ext_facts_dirs
       Facter::Util::Config.external_facts_dirs.should == [File.expand_path(File.join("~", ".facter", "facts.d"))]
     end
+
+    it "includes additional values when user appends to the list" do
+      Facter::Util::Config.setup_default_ext_facts_dirs
+      original_values = Facter::Util::Config.external_facts_dirs.dup
+      new_value = '/usr/share/newdir'
+      Facter::Util::Config.external_facts_dirs << new_value
+      Facter::Util::Config.external_facts_dirs.should == original_values + [new_value]
+    end
+
+    it "should only output new values when explicitly set" do
+      Facter::Util::Config.setup_default_ext_facts_dirs
+      new_value = ['/usr/share/newdir']
+      Facter::Util::Config.external_facts_dirs = new_value
+      Facter::Util::Config.external_facts_dirs.should == new_value
+    end
+
   end
 end

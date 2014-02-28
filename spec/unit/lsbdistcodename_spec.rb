@@ -11,12 +11,12 @@ describe "lsbdistcodename fact" do
       end
 
       it "should return the codename through lsb_release -c -s 2>/dev/null" do
-        Facter::Util::Resolution.stubs(:exec).with('lsb_release -c -s 2>/dev/null').returns 'n/a'
+        Facter::Core::Execution.stubs(:exec).with('lsb_release -c -s 2>/dev/null').returns 'n/a'
         Facter.fact(:lsbdistcodename).value.should == 'n/a'
       end
 
       it "should return nil if lsb_release is not installed" do
-        Facter::Util::Resolution.stubs(:exec).with('lsb_release -c -s 2>/dev/null').returns nil
+        Facter::Core::Execution.stubs(:exec).with('lsb_release -c -s 2>/dev/null').returns nil
         Facter.fact(:lsbdistcodename).value.should be_nil
       end
     end

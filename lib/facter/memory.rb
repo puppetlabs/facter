@@ -86,7 +86,7 @@ if Facter.value(:kernel) == "Darwin"
   Facter.add("SwapEncrypted") do
     confine :kernel => :Darwin
     setcode do
-      swap = Facter::Util::Resolution.exec('sysctl vm.swapusage')
+      swap = Facter::Core::Execution.exec('sysctl vm.swapusage')
       encrypted = false
       if swap =~ /\(encrypted\)/ then encrypted = true; end
       encrypted
@@ -99,7 +99,7 @@ if Facter.value(:kernel) == "SunOS"
   Facter.add("memorysize_mb") do
     confine :kernel => :sunos
     # Total memory size available from prtconf
-    pconf = Facter::Util::Resolution.exec('/usr/sbin/prtconf 2>/dev/null')
+    pconf = Facter::Core::Execution.exec('/usr/sbin/prtconf 2>/dev/null')
     phymem = ""
     pconf.each_line do |line|
       if line =~ /^Memory size:\s+(\d+) Megabytes/
@@ -143,8 +143,8 @@ end
 Facter.add("swapsize_mb") do
   confine :kernel => :dragonfly
   setcode do
-    page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
-    swaptotal = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
+    page_size = Facter::Core::Execution.exec("/sbin/sysctl -n hw.pagesize").to_f
+    swaptotal = Facter::Core::Execution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
     "%.2f" % [(swaptotal.to_f / 1024.0) / 1024.0]
   end
 end
@@ -152,22 +152,11 @@ end
 Facter.add("swapfree_mb") do
   confine :kernel => :dragonfly
   setcode do
-    page_size = Facter::Util::Resolution.exec("/sbin/sysctl -n hw.pagesize").to_f
-    swaptotal = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
-    swap_anon_use = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_anon_use").to_f * page_size
-    swap_cache_use = Facter::Util::Resolution.exec("/sbin/sysctl -n vm.swap_cache_use").to_f * page_size
+    page_size = Facter::Core::Execution.exec("/sbin/sysctl -n hw.pagesize").to_f
+    swaptotal = Facter::Core::Execution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
+    swap_anon_use = Facter::Core::Execution.exec("/sbin/sysctl -n vm.swap_anon_use").to_f * page_size
+    swap_cache_use = Facter::Core::Execution.exec("/sbin/sysctl -n vm.swap_cache_use").to_f * page_size
     swapfree = swaptotal - swap_anon_use - swap_cache_use
     "%.2f" % [(swapfree.to_f / 1024.0) / 1024.0]
-  end
-end
-
-# http://projects.puppetlabs.com/issues/11436
-#
-# Unifying naming for the amount of physical memory in a given host.
-# This fact is DEPRECATED and will be removed in Facter 2.0 per
-# http://projects.puppetlabs.com/issues/11466
-Facter.add("MemoryTotal") do
-  setcode do
-    Facter.value("memorysize")
   end
 end

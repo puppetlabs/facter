@@ -15,52 +15,52 @@ describe "zpool_version fact" do
   # Solaris 11 11/11 (ga) 33  5
 
   before :each do
-    Facter::Util::Resolution.stubs(:which).with("zpool").returns("/usr/bin/zpool")
+    Facter::Core::Execution.stubs(:which).with("zpool").returns("/usr/bin/zpool")
   end
 
   it "should return correct version on Solaris 10" do
-    Facter::Util::Resolution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('solaris_10'))
+    Facter::Core::Execution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('solaris_10'))
     Facter.fact(:zpool_version).value.should == "22"
   end
 
   it "should return correct version on Solaris 11" do
-    Facter::Util::Resolution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('solaris_11'))
+    Facter::Core::Execution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('solaris_11'))
     Facter.fact(:zpool_version).value.should == "33"
   end
 
   it "should return correct version on FreeBSD 8.2" do
-    Facter::Util::Resolution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('freebsd_8.2'))
+    Facter::Core::Execution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('freebsd_8.2'))
     Facter.fact(:zpool_version).value.should == "15"
   end
 
   it "should return correct version on FreeBSD 9.0" do
-    Facter::Util::Resolution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('freebsd_9.0'))
+    Facter::Core::Execution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('freebsd_9.0'))
     Facter.fact(:zpool_version).value.should == "28"
   end
 
   it "should return correct version on Linux with ZFS-fuse" do
-    Facter::Util::Resolution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('linux-fuse_0.6.9'))
+    Facter::Core::Execution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('linux-fuse_0.6.9'))
     Facter.fact(:zpool_version).value.should == "23"
   end
 
   it "should return nil if zpool is not available" do
-    Facter::Util::Resolution.stubs(:which).with("zpool").returns(nil)
-    Facter::Util::Resolution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('linux-fuse_0.6.9'))
+    Facter::Core::Execution.stubs(:which).with("zpool").returns(nil)
+    Facter::Core::Execution.stubs(:exec).with("zpool upgrade -v").returns(my_fixture_read('linux-fuse_0.6.9'))
     Facter.fact(:zpool_version).value.should == nil
   end
 
   it "should return nil if zpool fails to run" do
-    Facter::Util::Resolution.stubs(:exec).with("zpool upgrade -v").returns(nil)
+    Facter::Core::Execution.stubs(:exec).with("zpool upgrade -v").returns('')
     Facter.fact(:zpool_version).value.should == nil
   end
 
   it "handles the zpool command becoming available" do
     # Simulate Puppet configuring the zfs tools from a persistent daemon by
     # simulating three sequential responses to which('zpool').
-    Facter::Util::Resolution.stubs(:which).
+    Facter::Core::Execution.stubs(:which).
       with("zpool").
       returns(nil,nil,"/usr/bin/zpool")
-    Facter::Util::Resolution.stubs(:exec).
+    Facter::Core::Execution.stubs(:exec).
       with("zpool upgrade -v").
       returns(my_fixture_read('linux-fuse_0.6.9'))
 

@@ -16,8 +16,20 @@
 
 require 'facter/version'
 
+# Functions as a hash of 'facts' about your system system, such as MAC
+# address, IP address, architecture, etc.
+#
+# @example Retrieve a fact
+#     puts Facter['operatingsystem'].value
+#
+# @example Retrieve all facts
+#   Facter.to_hash
+#    => { "kernel"=>"Linux", "uptime_days"=>0, "ipaddress"=>"10.0.0.1" }
+#
+# @api public
 module Facter
-  # This is just so the other classes have the constant.
+  # Most core functionality of facter is implemented in `Facter::Util`.
+  # @api public
   module Util; end
 
   require 'facter/util/fact'
@@ -27,28 +39,15 @@ module Facter
   include Comparable
   include Enumerable
 
-  # = Facter
-  # Functions as a hash of 'facts' you might care about about your
-  # system, such as mac address, IP address, Video card, etc.
-  # returns them dynamically
-
-  # == Synopsis
-  #
-  # Generally, treat <tt>Facter</tt> as a hash:
-  # == Example
-  # require 'facter'
-  # puts Facter['operatingsystem']
-  #
-
-  GREEN = "[0;32m"
-  RESET = "[0m"
-  @@debug = 0
-  @@timing = 0
-  @@messages = {}
-  @@debug_messages = {}
+  require 'facter/core/logging'
+  extend Facter::Core::Logging
 
   # module methods
 
+  # Accessor for the collection object which holds all the facts
+  # @return [Facter::Util::Collection] the collection of facts
+  #
+  # @api private
   def self.collection
     unless defined?(@collection) and @collection
       @collection = Facter::Util::Collection.new(
@@ -58,39 +57,9 @@ module Facter
     @collection
   end
 
-  # Add some debugging
-  def self.debug(string)
-    if string.nil?
-      return
-    end
-    if self.debugging?
-      puts GREEN + string + RESET
-    end
-  end
-
-  # Debug once.
-  def self.debugonce(msg)
-    if msg and not msg.empty? and @@debug_messages[msg].nil?
-      @@debug_messages[msg] = true
-      debug(msg)
-    end
-  end
-
-  def self.debugging?
-    @@debug != 0
-  end
-
-  # show the timing information
-  def self.show_time(string)
-    puts "#{GREEN}#{string}#{RESET}" if string and Facter.timing?
-  end
-
-  def self.timing?
-    @@timing != 0
-  end
-
-  # Facter.json? is meant to provide a lightweight way to check if the JSON
-  # "feature" is available.
+  # Returns whether the JSON "feature" is available.
+  #
+  # @api private
   def self.json?
     begin
       require 'json'
@@ -100,34 +69,107 @@ module Facter
     end
   end
 
-  # Return a fact object by name.  If you use this, you still have to call
-  # 'value' on it to retrieve the actual value.
+  # Returns a fact object by name.  If you use this, you still have to
+  # call {Facter::Util::Fact#value `value`} on it to retrieve the actual
+  # value.
+  #
+  # @param name [String] the name of the fact
+  #
+  # @return [Facter::Util::Fact, nil] The fact object, or nil if no fact
+  #   is found.
+  #
+  # @api public
   def self.[](name)
     collection.fact(name)
   end
 
-  class << self
-    [:fact, :flush, :list, :value].each do |method|
-      define_method(method) do |*args|
-        collection.send(method, *args)
-      end
-    end
-
-    [:list, :to_hash].each do |method|
-      define_method(method) do |*args|
-        collection.load_all
-        collection.send(method, *args)
-      end
-    end
+  # (see [])
+  def self.fact(name)
+    collection.fact(name)
   end
 
+  # Flushes cached values for all facts. This does not cause code to be
+  # reloaded; it only clears the cached results.
+  #
+  # @return [void]
+  #
+  # @api public
+  def self.flush
+    collection.flush
+  end
 
-  # Add a resolution mechanism for a named fact.  This does not distinguish
-  # between adding a new fact and adding a new way to resolve a fact.
+  # Lists all fact names
+  #
+  # @return [Array<String>] array of fact names
+  #
+  # @api public
+  def self.list
+    collection.list
+  end
+
+  # Gets the value for a fact. Returns `nil` if no such fact exists.
+  #
+  # @param name [String] the fact name
+  # @return [Object, nil] the value of the fact, or nil if no fact is
+  #   found
+  #
+  # @api public
+  def self.value(name)
+    collection.value(name)
+  end
+
+  # Gets a hash mapping fact names to their values
+  #
+  # @return [Hash{String => Object}] the hash of fact names and values
+  #
+  # @api public
+  def self.to_hash
+    collection.load_all
+    collection.to_hash
+  end
+
+  # Define a new fact or extend an existing fact.
+  #
+  # @param name [Symbol] The name of the fact to define
+  # @param options [Hash] A hash of options to set on the fact
+  #
+  # @return [Facter::Util::Fact] The fact that was defined
+  #
+  # @api public
+  # @see {Facter::Util::Collection#define_fact}
+  def self.define_fact(name, options = {}, &block)
+    collection.define_fact(name, options, &block)
+  end
+
+  # Adds a {Facter::Util::Resolution resolution} mechanism for a named
+  # fact. This does not distinguish between adding a new fact and adding
+  # a new way to resolve a fact.
+  #
+  # @overload add(name, options = {}, { || ... })
+  # @param name [String] the fact name
+  # @param options [Hash] optional parameters for the fact - attributes
+  #   of {Facter::Util::Fact} and {Facter::Util::Resolution} can be
+  #   supplied here
+  # @option options [Integer] :timeout set the
+  #   {Facter::Util::Resolution#timeout timeout} for this resolution
+  # @param block [Proc] a block defining a fact resolution
+  #
+  # @return [Facter::Util::Fact] the fact object, which includes any previously
+  #   defined resolutions
+  #
+  # @api public
   def self.add(name, options = {}, &block)
     collection.add(name, options, &block)
   end
 
+  # Iterates over fact names and values
+  #
+  # @yieldparam [String] name the fact name
+  # @yieldparam [String] value the current value of the fact
+  #
+  # @return [void]
+  #
+  # @api public
   def self.each
     # Make sure all facts are loaded.
     collection.load_all
@@ -137,126 +179,84 @@ module Facter
     end
   end
 
-  class << self
-    # Allow users to call fact names directly on the Facter class,
-    # either retrieving the value or comparing it to an existing value.
-    def method_missing(name, *args)
-      question = false
-      if name.to_s =~ /\?$/
-        question = true
-        name = name.to_s.sub(/\?$/,'')
-      end
-
-      if fact = collection.fact(name)
-        if question
-          value = fact.value.downcase
-          args.each do |arg|
-            if arg.to_s.downcase == value
-              return true
-            end
-          end
-
-          # If we got this far, there was no match.
-          return false
-        else
-          return fact.value
-        end
-      else
-        # Else, fail like a normal missing method.
-        raise NoMethodError, "Could not find fact '%s'" % name
-      end
-    end
-  end
-
-  # Clear all facts.  Mostly used for testing.
+  # Clears all cached values and removes all facts from memory.
+  #
+  # @return [void]
+  #
+  # @api public
   def self.clear
     Facter.flush
     Facter.reset
   end
 
-  # Clear all messages. Used only in testing. Can't add to self.clear
-  # because we don't want to warn multiple times for items that are warnonce'd
-  def self.clear_messages
-    @@messages.clear
-  end
-
-  # Set debugging on or off.
-  def self.debugging(bit)
-    if bit
-      case bit
-      when TrueClass; @@debug = 1
-      when FalseClass; @@debug = 0
-      when Fixnum
-        if bit > 0
-          @@debug = 1
-        else
-          @@debug = 0
-        end
-      when String;
-        if bit.downcase == 'off'
-          @@debug = 0
-        else
-          @@debug = 1
-        end
-      else
-        @@debug = 0
-      end
-    else
-      @@debug = 0
-    end
-  end
-
-  # Set timing on or off.
-  def self.timing(bit)
-    if bit
-      case bit
-      when TrueClass; @@timing = 1
-      when Fixnum
-        if bit > 0
-          @@timing = 1
-        else
-          @@timing = 0
-        end
-      end
-    else
-      @@timing = 0
-    end
-  end
-
-  def self.warn(msg)
-    if Facter.debugging? and msg and not msg.empty?
-      msg = [msg] unless msg.respond_to? :each
-      msg.each { |line| Kernel.warn line }
-    end
-  end
-
-  # Warn once.
-  def self.warnonce(msg)
-    if msg and not msg.empty? and @@messages[msg].nil?
-      @@messages[msg] = true
-      Kernel.warn(msg)
-    end
-  end
-
-  # Remove them all.
+  # Removes all facts from memory. Use this when the fact code has
+  # changed on disk and needs to be reloaded.
+  #
+  # @return [void]
+  #
+  # @api public
   def self.reset
     @collection = nil
+    reset_search_path!
   end
 
-  # Load all of the default facts, and then everything from disk.
+  # Loads all facts.
+  #
+  # @return [void]
+  #
+  # @api public
   def self.loadfacts
     collection.load_all
   end
 
-  @search_path = []
-
-  # Register a directory to search through.
+  # Register directories to be searched for facts. The registered directories
+  # must be absolute paths or they will be ignored.
+  #
+  # @param dirs [String] directories to search
+  #
+  # @return [void]
+  #
+  # @api public
   def self.search(*dirs)
     @search_path += dirs
   end
 
-  # Return our registered search directories.
+  # Returns the registered search directories.
+  #
+  # @return [Array<String>] An array of the directories searched
+  #
+  # @api public
   def self.search_path
     @search_path.dup
+  end
+
+  # Reset the Facter search directories.
+  #
+  # @api private
+  # @return [void]
+  def self.reset_search_path!
+    @search_path = []
+  end
+
+  reset_search_path!
+
+  # Registers directories to be searched for external facts.
+  #
+  # @param dirs [Array<String>] directories to search
+  #
+  # @return [void]
+  #
+  # @api public
+  def self.search_external(dirs)
+    Facter::Util::Config.external_facts_dirs += dirs
+  end
+
+  # Returns the registered search directories.
+  #
+  # @return [Array<String>] An array of the directories searched
+  #
+  # @api public
+  def self.search_external_path
+    Facter::Util::Config.external_facts_dirs.dup
   end
 end

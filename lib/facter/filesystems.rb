@@ -18,7 +18,7 @@ Facter.add('filesystems') do
     # This is due to some problems with IO#read in Ruby and reading content of
     # the "proc" file system that was reported more than once in the past ...
     file_systems = []
-    Facter::Util::Resolution.exec('cat /proc/filesystems 2> /dev/null').each_line do |line|
+    Facter::Core::Execution.exec('cat /proc/filesystems 2> /dev/null').each_line do |line|
       # Remove bloat ...
       line.strip!
 

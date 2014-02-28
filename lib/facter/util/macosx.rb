@@ -6,8 +6,7 @@
 ##
 
 module Facter::Util::Macosx
-  require 'thread'
-  require 'facter/util/cfpropertylist'
+  require 'cfpropertylist'
   require 'facter/util/resolution'
 
   Plist_Xml_Doctype  = '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">'
@@ -16,7 +15,7 @@ module Facter::Util::Macosx
   # by looking at the _name key of the _items dict for each _dataType
 
   def self.profiler_xml(data_field)
-    Facter::Util::Resolution.exec("/usr/sbin/system_profiler -xml #{data_field}")
+    Facter::Core::Execution.exec("/usr/sbin/system_profiler -xml #{data_field}")
   end
 
   def self.intern_xml(xml)
@@ -26,13 +25,13 @@ module Facter::Util::Macosx
       xml.gsub!( bad_xml_doctype, Plist_Xml_Doctype )
       Facter.debug("Had to fix plist with incorrect DOCTYPE declaration")
     end
-    plist = Facter::Util::CFPropertyList::List.new
+    plist = CFPropertyList::List.new
     begin
       plist.load_str(xml)
-    rescue => e
-      fail("A plist file could not be properly read by Facter::Util::CFPropertyList: #{e.inspect}")
+    rescue CFFormatError => e
+      raise RuntimeError, "A plist file could not be properly read by CFPropertyList: #{e.message}", e.backtrace
     end
-    Facter::Util::CFPropertyList.native_types(plist.value)
+    CFPropertyList.native_types(plist.value)
   end
 
   # Return an xml result, modified as we need it.
@@ -58,7 +57,7 @@ module Facter::Util::Macosx
   def self.sw_vers
     ver = Hash.new
     [ "productName", "productVersion", "buildVersion" ].each do |option|
-      ver["macosx_#{option}"] = Facter::Util::Resolution.exec("/usr/bin/sw_vers -#{option}").strip
+      ver["macosx_#{option}"] = Facter::Core::Execution.exec("/usr/bin/sw_vers -#{option}").strip
     end
     productversion = ver["macosx_productVersion"]
     if not productversion.nil?
