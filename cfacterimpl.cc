@@ -903,6 +903,7 @@ static void get_external_facts_from_executable(fact_map& facts, string executabl
                 facts[key] = val;
             }
         }
+        pclose(stdout);
     }
 }
 

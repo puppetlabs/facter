@@ -40,3 +40,7 @@ missing:
 .PHONY: lint
 lint:
 	-@ext/cpplint.py --filter=-build/include,-legal/copyright,-readability/streams,-whitespace/braces,-whitespace/line_length,-runtime/arrays,-readability/todo *cc 2>&1 | less
+
+.PHONY: check
+check:
+	-@cppcheck .
