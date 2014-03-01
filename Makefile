@@ -35,3 +35,8 @@ missing:
 	-@$(shell diff /tmp/facter.txt /tmp/cfacter.txt > /tmp/facterdiff.txt | true)
 	-@cat /tmp/facterdiff.txt
 	-@rm /tmp/facter.txt /tmp/cfacter.txt /tmp/facterdiff.txt
+
+# Just experimenting with cpplint at this point; not sure what I like and dislike.
+.PHONY: lint
+lint:
+	-@ext/cpplint.py --filter=-build/include,-legal/copyright,-readability/streams,-whitespace/braces,-whitespace/line_length,-runtime/arrays,-readability/todo *cc 2>&1 | less
