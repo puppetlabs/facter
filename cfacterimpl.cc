@@ -42,34 +42,34 @@ struct ci_char_traits : public char_traits<char>
 // just inherit all the other functions
 //  that we don't need to override
 {
-    static bool eq( char c1, char c2 )
+    static bool eq(char c1, char c2)
     {
         return toupper(c1) == toupper(c2);
     }
 
-    static bool ne( char c1, char c2 )
+    static bool ne(char c1, char c2)
     {
         return toupper(c1) != toupper(c2);
     }
 
-    static bool lt( char c1, char c2 )
+    static bool lt(char c1, char c2)
     {
         return toupper(c1) <  toupper(c2);
     }
 
-    static int compare( const char* s1,
-                        const char* s2,
-                        size_t n )
+    static int compare(const char* s1,
+                       const char* s2,
+                       size_t n)
     {
-        return strncasecmp( s1, s2, n );
+        return strncasecmp(s1, s2, n);
         // if available on your compiler,
         //  otherwise you can roll your own
     }
 
     static const char*
-    find( const char* s, int n, char a )
+    find(const char* s, int n, char a)
     {
-        while( n-- > 0 && toupper(*s) != toupper(a) ) {
+        while (n-- > 0 && toupper(*s) != toupper(a)) {
             ++s;
         }
         return s;
@@ -115,7 +115,7 @@ static inline void split(const string &s, char delim, vector<string> &elems)
     }
 }
 
-static bool file_exist (string filename)
+static bool file_exist(string filename)
 {
     struct stat buffer;
     return stat (filename.c_str(), &buffer) == 0;
@@ -198,8 +198,7 @@ void get_network_facts(fact_map& facts)
         }
 
         facts[string("mtu_") + r->ifr_name] = to_string(r->ifr_mtu);
-        if (primaryInterface)
-            ; // no unmarked version of this network fact
+        if (primaryInterface) {}  // no unmarked version of this network fact
 
         // netmask and network are both derived from the same ioctl
         if (ioctl(s, SIOCGIFNETMASK, r) < 0) {
@@ -289,10 +288,11 @@ static void get_lsb_facts(fact_map& facts)
             facts["lsbdistrelease"] = value;
             facts["operatingsystemrelease"] = value;
             facts["lsbmajdistrelease"] = value.substr(0, value.find("."));
-        } else if (key == "DISTRIB_CODENAME")
+        } else if (key == "DISTRIB_CODENAME") {
             facts["lsbdistcodename"] = value;
-        else if (key == "DISTRIB_DESCRIPTION")
+        } else if (key == "DISTRIB_DESCRIPTION") {
             facts["lsbdistdescription"] = value;
+        }
     }
 }
 
@@ -312,8 +312,9 @@ static void get_redhat_facts(fact_map& facts)
                 facts["operatingsystemrelease"] = tokens[2];
                 facts["operatingsystemmajrelease"] = tokens[2];
             }
-        } else
+        } else {
             facts["operatingsystem"] = "RedHat";
+       }
     }
 }
 
@@ -397,7 +398,6 @@ void get_blockdevice_facts(fact_map& facts)
 
     struct dirent *bd;
     while ((bd = readdir(sys_block_dir))) {
-
         bool real_block_device = false;
         string device_dir_path = "/sys/block/";
         device_dir_path += bd->d_name;
@@ -444,7 +444,7 @@ void get_misc_facts(fact_map& facts)
     string whoami = popen_stdout("whoami");
     facts["id"] = trim(whoami);
 
-    //timezone
+    // timezone
     char tzstring[16];
     time_t t = time(NULL);
     struct tm *loc = localtime(&t);
@@ -467,7 +467,7 @@ static void get_mem_fact(std::string fact_name, int fact_value, fact_map& facts,
     int scale_index;
     for (scale_index = 0;
             fact_value_scaled > 1024.0;
-            fact_value_scaled /= 1024.0, ++scale_index) ;
+            fact_value_scaled /= 1024.0, ++scale_index) {}
 
     std::string scale[4] = {"MB", "GB", "TB", "PB"};  // oh yeah, petabytes ...
 
@@ -505,10 +505,11 @@ void get_mem_facts(fact_map& facts)
             get_mem_fact("memorytotal", mem_total, facts, false);
         } else if (tokens[0] == "MemFree:" || tokens[0] == "Cached:" || tokens[0] == "Buffers:") {
             memoryfree += atoi(tokens[1].c_str());
-        } else if (tokens[0] == "SwapTotal:")
+        } else if (tokens[0] == "SwapTotal:") {
             get_mem_fact("swapsize", atoi(tokens[1].c_str()), facts);
-        else if (tokens[0] == "SwapFree:")
+        } else if (tokens[0] == "SwapFree:") {
             get_mem_fact("swapfree", atoi(tokens[1].c_str()), facts);
+        }
     }
 
     get_mem_fact("memoryfree", memoryfree, facts);

@@ -35,7 +35,7 @@ void help()
          "    -j, --json                       Emit facts in JSON format.\n"
          "    -v, --version                    Print the version and exit.\n"
          "    -h, --help                       Print this help message and exit.\n"
-         ;
+         "";
 }
 
 void version()
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 #define MAX_LEN_FACTS_JSON_STRING (1024 * 1024)  // go crazy here
     char facts_json[MAX_LEN_FACTS_JSON_STRING];
 
-    if (optind == argc) { // display all facts
+    if (optind == argc) {  // display all facts
         if (to_json(facts_json, MAX_LEN_FACTS_JSON_STRING) < 0) {
             cout << "Wow, that's a lot of facts" << endl;
             exit(1);
