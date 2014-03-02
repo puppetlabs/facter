@@ -33,12 +33,10 @@
 #include "cfacterlib.h"
 #include "cfacterimpl.h"
 
-using namespace std;
-
 // For case-insensitive strings, define ci_string
 // Thank you, Herb Sutter: http://www.gotw.ca/gotw/029.htm
 //
-struct ci_char_traits : public char_traits<char>
+struct ci_char_traits : public std::char_traits<char>
 // just inherit all the other functions
 //  that we don't need to override
 {
@@ -76,7 +74,7 @@ struct ci_char_traits : public char_traits<char>
     }
 };
 
-typedef basic_string<char, ci_char_traits> ci_string;
+typedef std::basic_string<char, ci_char_traits> ci_string;
 
 // trim from start
 static inline std::string &ltrim(std::string &s)
@@ -98,31 +96,31 @@ static inline std::string &trim(std::string &s)
     return ltrim(rtrim(s));
 }
 
-static inline void tokenize(std::string &s, vector<string> &tokens)
+static inline void tokenize(std::string &s, std::vector<std::string> &tokens)
 {
-    istringstream iss(s);
-    copy(istream_iterator<string>(iss),
-         istream_iterator<string>(),
-         back_inserter<vector<string> >(tokens));
+    std::istringstream iss(s);
+    copy(std::istream_iterator<std::string>(iss),
+         std::istream_iterator<std::string>(),
+         std::back_inserter<std::vector<std::string> >(tokens));
 }
 
-static inline void split(const string &s, char delim, vector<string> &elems)
+static inline void split(const std::string &s, char delim, std::vector<std::string> &elems)
 {
-    stringstream ss(s);
-    string item;
+    std::stringstream ss(s);
+    std::string item;
     while (getline(ss, item, delim)) {
         elems.push_back(item);
     }
 }
 
-static bool file_exist(string filename)
+static bool file_exist(std::string filename)
 {
     struct stat buffer;
     return stat (filename.c_str(), &buffer) == 0;
 }
 
 // handy for some /proc and /sys files
-string read_oneline_file(const string file_path)
+std::string read_oneline_file(const std::string file_path)
 {
     std::ifstream oneline_file(file_path.c_str(), std::ifstream::in);
     std::string line;
@@ -163,7 +161,7 @@ void get_network_facts(fact_map& facts)
         exit(1);
     }
 
-    string interfaces = "";
+    std::string interfaces = "";
 
     bool primaryInterfacePrinted = false;
     numif = ifc.ifc_len / sizeof(struct ifreq);
@@ -187,7 +185,7 @@ void get_network_facts(fact_map& facts)
             interfaces += ",";
 
         const char *ipaddress = inet_ntoa(ip_addr);
-        facts[string("ipaddress_") + r->ifr_name] = ipaddress;
+        facts[std::string("ipaddress_") + r->ifr_name] = ipaddress;
         if (primaryInterface)
             facts["ipaddress"] = ipaddress;
 
@@ -197,7 +195,7 @@ void get_network_facts(fact_map& facts)
             exit(1);
         }
 
-        facts[string("mtu_") + r->ifr_name] = to_string(r->ifr_mtu);
+        facts[std::string("mtu_") + r->ifr_name] = std::to_string(r->ifr_mtu);
         if (primaryInterface) {}  // no unmarked version of this network fact
 
         // netmask and network are both derived from the same ioctl
@@ -210,7 +208,7 @@ void get_network_facts(fact_map& facts)
         // netmask
         struct in_addr netmask_addr = ((struct sockaddr_in *)&r->ifr_netmask)->sin_addr;
         const char *netmask = inet_ntoa(netmask_addr);
-        facts[string("netmask_") + r->ifr_name] = netmask;
+        facts[std::string("netmask_") + r->ifr_name] = netmask;
         if (primaryInterface)
             facts["netmask"] = netmask;
 
@@ -218,8 +216,8 @@ void get_network_facts(fact_map& facts)
         struct in_addr network_addr;
         network_addr.s_addr =
             (in_addr_t) uint32_t(netmask_addr.s_addr) & uint32_t(ip_addr.s_addr);
-        string network = inet_ntoa(network_addr);
-        facts[string("network_") + r->ifr_name] = network;
+        std::string network = inet_ntoa(network_addr);
+        facts[std::string("network_") + r->ifr_name] = network;
         if (primaryInterface)
             facts["network"] = network;
 #endif
@@ -241,7 +239,7 @@ void get_network_facts(fact_map& facts)
                      mac_bytes[3], mac_bytes[4], mac_bytes[5]);
 
             // and get it out
-            facts[string("macaddress_") + r->ifr_name] = mac_address;
+            facts[std::string("macaddress_") + r->ifr_name] = mac_address;
             if (primaryInterface)
                 facts["macaddress"] = mac_address;
         }
@@ -259,11 +257,11 @@ void get_kernel_facts(fact_map& facts)
 #ifdef __linux__
     // this is linux-only, so there you have it
     facts["kernel"] = "Linux";
-    string kernelrelease = read_oneline_file("/proc/sys/kernel/osrelease");
+    std::string kernelrelease = read_oneline_file("/proc/sys/kernel/osrelease");
     facts["kernelrelease"] = kernelrelease;
-    string kernelversion = kernelrelease.substr(0, kernelrelease.find("-"));
+    std::string kernelversion = kernelrelease.substr(0, kernelrelease.find("-"));
     facts["kernelversion"] = kernelversion;
-    string kernelmajversion = kernelversion.substr(0, kernelversion.rfind("."));
+    std::string kernelmajversion = kernelversion.substr(0, kernelversion.rfind("."));
     facts["kernelmajversion"] = kernelmajversion;
 #else
 #ifdef __APPLE__
@@ -278,8 +276,8 @@ static void get_lsb_facts(fact_map& facts)
     std::string line;
     while (std::getline(lsb_release_file, line)) {
         unsigned sep = line.find("=");
-        string key = line.substr(0, sep);
-        string value = line.substr(sep + 1, string::npos);
+        std::string key = line.substr(0, sep);
+        std::string value = line.substr(sep + 1, std::string::npos);
 
         if (key == "DISTRIB_ID") {
             facts["lsbdistid"] = value;
@@ -304,8 +302,8 @@ static void get_redhat_facts(fact_map& facts)
 {
     if (file_exist("/etc/redhat-release")) {
         facts["osfamily"] = "RedHat";
-        string redhat_release = read_oneline_file("/etc/redhat-release");
-        vector<string> tokens;
+        std::string redhat_release = read_oneline_file("/etc/redhat-release");
+        std::vector<std::string> tokens;
         tokenize(redhat_release, tokens);
         if (tokens.size() >= 2 && tokens[0] == "Fedora" && tokens[1] == "release") {
             facts["operatingsystem"] = "Fedora";
@@ -327,21 +325,21 @@ void get_operatingsystem_facts(fact_map& facts)
 
 void get_uptime_facts(fact_map& facts)
 {
-    string uptime = read_oneline_file("/proc/uptime");
+    std::string uptime = read_oneline_file("/proc/uptime");
     unsigned int uptime_seconds;
     sscanf(uptime.c_str(), "%ud", &uptime_seconds);
     unsigned int uptime_hours = uptime_seconds / 3600;
     unsigned int uptime_days  = uptime_hours   / 24;
-    facts["uptime_seconds"] = to_string(uptime_seconds);
-    facts["uptime_hours"] =   to_string(uptime_hours);
-    facts["uptime_days"] =    to_string(uptime_days);
-    facts["uptime"] =         to_string(uptime_days) + " days";
+    facts["uptime_seconds"] = std::to_string(uptime_seconds);
+    facts["uptime_hours"] =   std::to_string(uptime_hours);
+    facts["uptime_days"] =    std::to_string(uptime_days);
+    facts["uptime"] =         std::to_string(uptime_days) + " days";
 }
 
-string popen_stdout(string cmd)
+std::string popen_stdout(std::string cmd)
 {
     FILE *cmd_fd = popen(cmd.c_str(), "r");
-    string cmd_output = "";
+    std::string cmd_output = "";
     char buf[1024];
     size_t bytesRead;
     while ((bytesRead = fread(buf, 1, sizeof(buf) - 1, cmd_fd))) {
@@ -390,7 +388,7 @@ void get_ruby_lib_versions(fact_map& facts)
 // block devices
 void get_blockdevice_facts(fact_map& facts)
 {
-    string blockdevices = "";
+    std::string blockdevices = "";
 
     DIR *sys_block_dir = opendir("/sys/block");
     if (sys_block_dir == NULL) {
@@ -400,7 +398,7 @@ void get_blockdevice_facts(fact_map& facts)
     struct dirent *bd;
     while ((bd = readdir(sys_block_dir))) {
         bool real_block_device = false;
-        string device_dir_path = "/sys/block/";
+        std::string device_dir_path = "/sys/block/";
         device_dir_path += bd->d_name;
 
         DIR *device_dir = opendir(device_dir_path.c_str());
@@ -420,19 +418,19 @@ void get_blockdevice_facts(fact_map& facts)
             blockdevices += ",";
         blockdevices += bd->d_name;
 
-        string model_file = "/sys/block/" + string(bd->d_name) + "/device/model";
-        facts[string("blockdevice_") + bd->d_name + "_model"] =
+        std::string model_file = "/sys/block/" + std::string(bd->d_name) + "/device/model";
+        facts[std::string("blockdevice_") + bd->d_name + "_model"] =
             read_oneline_file(model_file);
 
-        string vendor_file = "/sys/block/" + string(bd->d_name) + "/device/vendor";
-        facts[string("blockdevice_") + bd->d_name + "_vendor"] =
+        std::string vendor_file = "/sys/block/" + std::string(bd->d_name) + "/device/vendor";
+        facts[std::string("blockdevice_") + bd->d_name + "_vendor"] =
             read_oneline_file(vendor_file);
 
-        string size_file = "/sys/block/" + string(bd->d_name) + "/size";
-        string size_line = read_oneline_file(size_file);
+        std::string size_file = "/sys/block/" + std::string(bd->d_name) + "/size";
+        std::string size_line = read_oneline_file(size_file);
         int64_t size;
         sscanf(size_line.c_str(), "%" SCNd64, &size);
-        facts[string("blockdevice_") + bd->d_name + "_size"] = to_string(size * 512);
+        facts[std::string("blockdevice_") + bd->d_name + "_size"] = std::to_string(size * 512);
     }
 
     facts["blockdevices"] = blockdevices;
@@ -441,7 +439,7 @@ void get_blockdevice_facts(fact_map& facts)
 void get_misc_facts(fact_map& facts)
 {
     facts["path"] = getenv("PATH");
-    string whoami = popen_stdout("whoami");
+    std::string whoami = popen_stdout("whoami");
     facts["id"] = trim(whoami);
 
     // timezone
@@ -462,7 +460,7 @@ static void get_mem_fact(std::string fact_name, int fact_value, fact_map& facts,
 
     if (get_mb_variant) {
         snprintf(float_buf, sizeof(float_buf) - 1, "%.2f", fact_value_scaled);
-        facts[string(fact_name) + "_mb"] = float_buf;
+        facts[std::string(fact_name) + "_mb"] = float_buf;
     }
 
     int scale_index;
@@ -473,7 +471,7 @@ static void get_mem_fact(std::string fact_name, int fact_value, fact_map& facts,
     std::string scale[4] = {"MB", "GB", "TB", "PB"};  // oh yeah, petabytes ...
 
     snprintf(float_buf, sizeof(float_buf) - 1, "%.2f", fact_value_scaled);
-    facts[fact_name] = string(float_buf) + scale[scale_index];
+    facts[fact_name] = std::string(float_buf) + scale[scale_index];
 }
 
 void get_mem_facts(fact_map& facts)
@@ -496,7 +494,7 @@ void get_mem_facts(fact_map& facts)
     unsigned int memoryfree = 0;
 
     while (std::getline(oneline_file, line)) {
-        vector<string> tokens;
+        std::vector<std::string> tokens;
         tokenize(line, tokens);
         if (tokens.size() < 3) continue;  // should never happen
 
@@ -516,10 +514,10 @@ void get_mem_facts(fact_map& facts)
     get_mem_fact("memoryfree", memoryfree, facts);
 }
 
-static string get_selinux_path()
+static std::string get_selinux_path()
 {
-    static string selinux_path = "";
-    static bool   inited       = false;
+    static std::string selinux_path = "";
+    static bool        inited       = false;
 
     if (inited)
         return selinux_path;
@@ -528,7 +526,7 @@ static string get_selinux_path()
     std::string line;
 
     while (std::getline(mounts, line)) {
-        vector<string> tokens;
+        std::vector<std::string> tokens;
         tokenize(line, tokens);
         if (tokens.size() < 2) continue;
         if (tokens[0] != "selinuxfs") continue;
@@ -544,12 +542,12 @@ static string get_selinux_path()
 
 static bool selinux()
 {
-    string selinux_path = get_selinux_path();
+    std::string selinux_path = get_selinux_path();
     if (selinux_path.empty())
         return false;
 
-    string selinux_enforce_path = selinux_path + "/enforce";
-    string security_attr_path   = "/proc/self/attr/current";
+    std::string selinux_enforce_path = selinux_path + "/enforce";
+    std::string security_attr_path   = "/proc/self/attr/current";
     if (file_exist(selinux_enforce_path) && file_exist(security_attr_path) &&
             read_oneline_file(security_attr_path) != "kernel")
         return true;
@@ -574,24 +572,24 @@ void get_selinux_facts(fact_map& facts)
     facts["selinux_config_policy"] = "unknown";
     facts["selinux_mode"] = "unknown";
 
-    string selinux_path = get_selinux_path();
+    std::string selinux_path = get_selinux_path();
 
-    string selinux_enforce_path = selinux_path + "/enforce";
+    std::string selinux_enforce_path = selinux_path + "/enforce";
     if (file_exist(selinux_enforce_path))
         facts["selinux_enforced"] = ((read_oneline_file(selinux_enforce_path) == "1") ? "true" : "false");
 
-    string selinux_policyvers_path = selinux_path + "/policyvers";
+    std::string selinux_policyvers_path = selinux_path + "/policyvers";
     if (file_exist(selinux_policyvers_path))
         facts["selinux_policyversion"] = read_oneline_file(selinux_policyvers_path);
 
-    string selinux_cmd = "/usr/sbin/sestatus";
+    std::string selinux_cmd = "/usr/sbin/sestatus";
     FILE* pipe = popen(selinux_cmd.c_str(), "r");
     if (!pipe) return;
 
     char buffer[512];   // seems like a lot, but there's no constant available
     while (!feof(pipe)) {
         if (fgets(buffer, 128, pipe) != NULL) {
-            vector<string> elems;
+            std::vector<std::string> elems;
             split(buffer, ':', elems);
             if (elems.size() < 2) continue;  // shouldn't happen
             if (elems[0] == "Current mode") {
@@ -608,9 +606,9 @@ void get_selinux_facts(fact_map& facts)
     pclose(pipe);
 }
 
-static void get_ssh_fact(string fact_name, string path_name, fact_map& facts)
+static void get_ssh_fact(std::string fact_name, std::string path_name, fact_map& facts)
 {
-    string ssh_directories[] = {
+    std::string ssh_directories[] = {
         "/etc/ssh",
         "/usr/local/etc/ssh",
         "/etc",
@@ -618,11 +616,11 @@ static void get_ssh_fact(string fact_name, string path_name, fact_map& facts)
         "/etc/opt/ssh",
     };
 
-    for (int i = 0; i < sizeof(ssh_directories) / sizeof(string); ++i) {
-        string full_path = ssh_directories[i] + "/" + path_name;
+    for (int i = 0; i < sizeof(ssh_directories) / sizeof(std::string); ++i) {
+        std::string full_path = ssh_directories[i] + "/" + path_name;
         if (file_exist(full_path)) {
-            string key = read_oneline_file(full_path);
-            vector<string> tokens;
+            std::string key = read_oneline_file(full_path);
+            std::vector<std::string> tokens;
             tokenize(trim(key), tokens);
             if (tokens.size() < 2) continue;  // should never happen
             facts[fact_name] = tokens[1];
@@ -641,12 +639,12 @@ static void get_ssh_fact(string fact_name, string path_name, fact_map& facts)
 void get_ssh_facts(fact_map& facts)
 {
     // not til C++11 do we have static initialization of stl maps
-    map<string, string> ssh_facts;
+    std::map<std::string, std::string> ssh_facts;
     ssh_facts["sshdsakey"] = "ssh_host_dsa_key.pub";
     ssh_facts["sshrsakey"] = "ssh_host_rsa_key.pub";
     ssh_facts["sshecdsakey"] = "ssh_host_ecdsa_key.pub";
 
-    typedef map<string, string>::iterator iter;
+    typedef std::map<std::string, std::string>::iterator iter;
     for (iter i = ssh_facts.begin(); i != ssh_facts.end(); ++i) {
         get_ssh_fact(i->first, i->second, facts);
     }
@@ -658,13 +656,13 @@ static void get_physicalprocessorcount_fact(fact_map& facts)
     // but I don't know why the /sys support was added; research needed.
     // Since sys is the default, just reproduce that logic for now.
 
-    string sysfs_cpu_directory = "/sys/devices/system/cpu";
-    vector<string> package_ids;
+    std::string sysfs_cpu_directory = "/sys/devices/system/cpu";
+    std::vector<std::string> package_ids;
     if (file_exist(sysfs_cpu_directory)) {
         for (int i = 0; ; i++) {
             char buf[10];
             snprintf(buf, sizeof(buf) - 1, "%u", i);
-            string cpu_phys_file = sysfs_cpu_directory + "/cpu" + buf + "/topology/physical_package_id";
+            std::string cpu_phys_file = sysfs_cpu_directory + "/cpu" + buf + "/topology/physical_package_id";
             if (!file_exist(cpu_phys_file))
                 break;
 
@@ -673,7 +671,7 @@ static void get_physicalprocessorcount_fact(fact_map& facts)
 
         sort(package_ids.begin(), package_ids.end());
         unique(package_ids.begin(), package_ids.end());
-        facts["physicalprocessorcount"] = to_string(package_ids.size());
+        facts["physicalprocessorcount"] = std::to_string(package_ids.size());
     } else {
         // here's where the fall back to /proc/cpuinfo would go
     }
@@ -684,24 +682,24 @@ void get_processorcount_fact(fact_map& facts)
     std::ifstream cpuinfo_file("/proc/cpuinfo", std::ifstream::in);
     std::string line;
     int processor_count = 0;
-    string current_processor_number;
+    std::string current_processor_number;
     while (std::getline(cpuinfo_file, line)) {
         unsigned sep = line.find(":");
-        string tmp = line.substr(0, sep);
-        string key = trim(tmp);
+        std::string tmp = line.substr(0, sep);
+        std::string key = trim(tmp);
 
         if (key == "processor") {
             ++processor_count;
-            string tmp = line.substr(sep + 1, string::npos);
+            std::string tmp = line.substr(sep + 1, std::string::npos);
             current_processor_number = trim(tmp);
         } else if (key == "model name") {
-            string tmp = line.substr(sep + 1, string::npos);
-            facts[string("processor") + current_processor_number] = trim(tmp);
+            std::string tmp = line.substr(sep + 1, std::string::npos);
+            facts[std::string("processor") + current_processor_number] = trim(tmp);
         }
     }
     // this was added after 1.7.3, omit for now, needs investigation
     if (false) facts["activeprocessorcount"] = processor_count;
-    facts["processorcount"] = to_string(processor_count);
+    facts["processorcount"] = std::to_string(processor_count);
 }
 
 void get_processor_facts(fact_map& facts)
@@ -727,9 +725,9 @@ void get_architecture_facts(fact_map& facts)
 
 void get_dmidecode_facts(fact_map& facts)
 {
-    string dmidecode_output = popen_stdout("/usr/sbin/dmidecode 2> /dev/null");
+    std::string dmidecode_output = popen_stdout("/usr/sbin/dmidecode 2> /dev/null");
     std::stringstream ss(dmidecode_output);
-    string line;
+    std::string line;
 
     enum {
         bios_information,
@@ -768,70 +766,70 @@ void get_dmidecode_facts(fact_map& facts)
         if (dmi_section == unknown) continue;
 
         size_t sep = line.find(":");
-        if (sep != string::npos) {
-            string tmp = line.substr(0, sep);
-            string key = trim(tmp);
+        if (sep != std::string::npos) {
+            std::string tmp = line.substr(0, sep);
+            std::string key = trim(tmp);
             if (dmi_section == bios_information) {
                 ci_string ci_key = key.c_str();
                 if (ci_key == "vendor") {
-                    string tmp = line.substr(sep + 1, string::npos);
-                    string value = trim(tmp);
+                    std::string tmp = line.substr(sep + 1, std::string::npos);
+                    std::string value = trim(tmp);
                     facts["bios_vendor"] = value;
                 }
                 if (ci_key == "version") {
-                    string tmp = line.substr(sep + 1, string::npos);
-                    string value = trim(tmp);
+                    std::string tmp = line.substr(sep + 1, std::string::npos);
+                    std::string value = trim(tmp);
                     facts["bios_version"] = value;
                 }
                 if (ci_key == "release date") {
-                    string tmp = line.substr(sep + 1, string::npos);
-                    string value = trim(tmp);
+                    std::string tmp = line.substr(sep + 1, std::string::npos);
+                    std::string value = trim(tmp);
                     facts["bios_release_date"] = value;
                 }
             } else if (dmi_section == base_board_information) {
                 ci_string ci_key = key.c_str();
                 if (ci_key == "manufacturer") {
-                    string tmp = line.substr(sep + 1, string::npos);
-                    string value = trim(tmp);
+                    std::string tmp = line.substr(sep + 1, std::string::npos);
+                    std::string value = trim(tmp);
                     facts["boardmanufacturer"] = value;
                 }
                 if (ci_key == "product name" || ci_key == "product") {
-                    string tmp = line.substr(sep + 1, string::npos);
-                    string value = trim(tmp);
+                    std::string tmp = line.substr(sep + 1, std::string::npos);
+                    std::string value = trim(tmp);
                     facts["boardproductname"] = value;
                 }
                 if (ci_key == "serial number") {
-                    string tmp = line.substr(sep + 1, string::npos);
-                    string value = trim(tmp);
+                    std::string tmp = line.substr(sep + 1, std::string::npos);
+                    std::string value = trim(tmp);
                     facts["boardserialnumber"] = value;
                 }
             } else if (dmi_section == system_information) {
                 ci_string ci_key = key.c_str();
                 if (ci_key == "manufacturer") {
-                    string tmp = line.substr(sep + 1, string::npos);
-                    string value = trim(tmp);
+                    std::string tmp = line.substr(sep + 1, std::string::npos);
+                    std::string value = trim(tmp);
                     facts["manufacturer"] = value;
                 }
                 if (ci_key == "product name" || ci_key == "product") {
-                    string tmp = line.substr(sep + 1, string::npos);
-                    string value = trim(tmp);
+                    std::string tmp = line.substr(sep + 1, std::string::npos);
+                    std::string value = trim(tmp);
                     facts["productname"] = value;
                 }
                 if (ci_key == "serial number") {
-                    string tmp = line.substr(sep + 1, string::npos);
-                    string value = trim(tmp);
+                    std::string tmp = line.substr(sep + 1, std::string::npos);
+                    std::string value = trim(tmp);
                     facts["serialnumber"] = value;
                 }
                 if (ci_key == "uuid") {
-                    string tmp = line.substr(sep + 1, string::npos);
-                    string value = trim(tmp);
+                    std::string tmp = line.substr(sep + 1, std::string::npos);
+                    std::string value = trim(tmp);
                     facts["uuid"] = value;
                 }
             } else if (dmi_section == chassis_information) {
                 ci_string ci_key = key.c_str();
                 if (ci_key == "chassis type" || ci_key == "type") {
-                    string tmp = line.substr(sep + 1, string::npos);
-                    string value = trim(tmp);
+                    std::string tmp = line.substr(sep + 1, std::string::npos);
+                    std::string value = trim(tmp);
                     facts["type"] = value;
                 }
             }
@@ -843,9 +841,9 @@ void get_filesystems_facts(fact_map& facts)
 {
     std::ifstream cpuinfo_file("/proc/filesystems", std::ifstream::in);
     std::string line;
-    string filesystems = "";
+    std::string filesystems = "";
     while (std::getline(cpuinfo_file, line)) {
-        if (line.find("nodev") != string::npos || line.find("fuseblk") != string::npos)
+        if (line.find("nodev") != std::string::npos || line.find("fuseblk") != std::string::npos)
             continue;
 
         if (!filesystems.empty())
@@ -860,17 +858,17 @@ void get_hostname_facts(fact_map& facts)
 {
     // there's some history here, perhaps just port the facter conditional straight across?
     // so this is short-term
-    string hostname_output = popen_stdout("hostname");
+    std::string hostname_output = popen_stdout("hostname");
     unsigned sep = hostname_output.find(".");
-    string hostname1 = hostname_output.substr(0, sep);
-    string hostname = trim(hostname1);
+    std::string hostname1 = hostname_output.substr(0, sep);
+    std::string hostname = trim(hostname1);
 
-    ifstream resolv_conf_file("/etc/resolv.conf", std::ifstream::in);
-    string line;
-    string domain;
-    string search;
+    std::ifstream resolv_conf_file("/etc/resolv.conf", std::ifstream::in);
+    std::string line;
+    std::string domain;
+    std::string search;
     while (std::getline(resolv_conf_file, line)) {
-        vector<string> elems;
+        std::vector<std::string> elems;
         tokenize(line, elems);
         if (elems.size() >= 2) {
             if (elems[0] == "domain")
@@ -887,7 +885,7 @@ void get_hostname_facts(fact_map& facts)
     facts["fqdn"] = hostname + "." + domain;
 }
 
-static void get_external_facts_from_executable(fact_map& facts, string executable)
+static void get_external_facts_from_executable(fact_map& facts, std::string executable)
 {
     // executable
     FILE *stdout = popen(executable.c_str(), "r");
@@ -896,11 +894,11 @@ static void get_external_facts_from_executable(fact_map& facts, string executabl
             const int buffer_len = 32 * 1024;
             char buffer[buffer_len];
             if (fgets(buffer, buffer_len, stdout)) {
-                vector<string> elems;
+                std::vector<std::string> elems;
                 split(buffer, '=', elems);
                 if (elems.size() != 2) continue;  // shouldn't happen
-                string key = trim(elems[0]);
-                string val = trim(elems[1]);
+                std::string key = trim(elems[0]);
+                std::string val = trim(elems[1]);
                 facts[key] = val;
             }
         }
@@ -908,7 +906,7 @@ static void get_external_facts_from_executable(fact_map& facts, string executabl
     }
 }
 
-static void get_external_facts(fact_map& facts, string directory)
+static void get_external_facts(fact_map& facts, std::string directory)
 {
     DIR *external_dir = opendir(directory.c_str());
     if (external_dir == NULL)
@@ -918,7 +916,7 @@ static void get_external_facts(fact_map& facts, string directory)
     struct stat s;
 
     while ((external_fact = readdir(external_dir))) {
-        string full_path = directory + "/" + external_fact->d_name;
+        std::string full_path = directory + "/" + external_fact->d_name;
 
         if (stat(full_path.c_str(), &s) != 0)
             continue;
@@ -933,9 +931,9 @@ static void get_external_facts(fact_map& facts, string directory)
     }
 }
 
-void get_external_facts(fact_map& facts, list<string> directories)
+void get_external_facts(fact_map& facts, std::list<std::string> directories)
 {
-    list<string>::iterator iter;
+    std::list<std::string>::iterator iter;
     for (iter = directories.begin(); iter != directories.end(); ++iter) {
         get_external_facts(facts, *iter);
     }
