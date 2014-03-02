@@ -233,11 +233,12 @@ void get_network_facts(fact_map& facts)
             }
 
             // extract mac into a string, okay a char array
-            uint8_t *mac_bytes = (uint8_t *)((sockaddr *)&r->ifr_hwaddr)->sa_data;
+            uint8_t *mac_bytes = reinterpret_cast<uint8_t *>((reinterpret_cast<sockaddr *>(&r->ifr_hwaddr))->sa_data);
             char mac_address[18];
-            sprintf(mac_address, "%02x:%02x:%02x:%02x:%02x:%02x",
-                    mac_bytes[0], mac_bytes[1], mac_bytes[2],
-                    mac_bytes[3], mac_bytes[4], mac_bytes[5]);
+            snprintf(mac_address, sizeof(mac_address),
+                     "%02x:%02x:%02x:%02x:%02x:%02x",
+                     mac_bytes[0], mac_bytes[1], mac_bytes[2],
+                     mac_bytes[3], mac_bytes[4], mac_bytes[5]);
 
             // and get it out
             facts[string("macaddress_") + r->ifr_name] = mac_address;
@@ -430,8 +431,7 @@ void get_blockdevice_facts(fact_map& facts)
         string size_file = "/sys/block/" + string(bd->d_name) + "/size";
         string size_line = read_oneline_file(size_file);
         int64_t size;
-        // SCNd64 didn't work here??
-        sscanf(size_line.c_str(), "%lld", (long long int *)&size);
+        sscanf(size_line.c_str(), "%" SCNd64, &size);
         facts[string("blockdevice_") + bd->d_name + "_size"] = to_string(size * 512);
     }
 
@@ -447,8 +447,9 @@ void get_misc_facts(fact_map& facts)
     // timezone
     char tzstring[16];
     time_t t = time(NULL);
-    struct tm *loc = localtime(&t);
-    strftime(tzstring, sizeof(tzstring - 1), "%Z", loc);
+    struct tm loc;
+    localtime_r(&t, &loc);
+    strftime(tzstring, sizeof(tzstring - 1), "%Z", &loc);
     facts["timezone"] = tzstring;
 }
 

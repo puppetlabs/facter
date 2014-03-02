@@ -3,10 +3,9 @@
 #include <getopt.h>
 #include <iostream>
 
-using namespace std;
 void help()
 {
-    cout <<
+    std::cout <<
          "Synopsis\n"
          "========\n"
          "\n"
@@ -40,7 +39,7 @@ void help()
 
 void version()
 {
-    cout << "0.0.1" << endl;
+    std::cout << "0.0.1" << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -81,16 +80,16 @@ int main(int argc, char **argv)
 
     if (optind == argc) {  // display all facts
         if (to_json(facts_json, MAX_LEN_FACTS_JSON_STRING) < 0) {
-            cout << "Wow, that's a lot of facts" << endl;
+            std::cout << "Wow, that's a lot of facts" << std::endl;
             exit(1);
         }
-        cout << facts_json << endl;
+        std::cout << facts_json << std::endl;
     } else {
         // display requested fact(s)
         while (optind < argc) {
             // fix me
             if (value(argv[optind], facts_json, MAX_LEN_FACTS_JSON_STRING) == 0)
-                cout << facts_json << endl;
+                std::cout << facts_json << std::endl;
             ++optind;
         }
     }

@@ -10,8 +10,6 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/stringbuffer.h"
 
-using namespace std;
-
 std::map<std::string, std::string> facts;
 
 void clear()
@@ -32,7 +30,7 @@ void loadfacts()
 
     facts["cfacterversion"] = "0.0.1";
 
-    list<string> external_directories;
+    std::list<std::string> external_directories;
     external_directories.push_back("/etc/facter/facts.d");
 
     get_network_facts(facts);
@@ -59,38 +57,31 @@ int  to_json(char *facts_json, size_t facts_len)
 {
     loadfacts();
 
-    if (0) {
-        typedef map<string, string>::iterator iter;
-        for (iter i = facts.begin(); i != facts.end(); ++i) {
-            cout << i->first << " => " << i->second << endl;
-        }
-    } else {
-        rapidjson::Document json;
-        json.SetObject();
+    rapidjson::Document json;
+    json.SetObject();
 
-        rapidjson::Document::AllocatorType& allocator = json.GetAllocator();
+    rapidjson::Document::AllocatorType& allocator = json.GetAllocator();
 
-        typedef map<string, string>::iterator iter;
-        for (iter i = facts.begin(); i != facts.end(); ++i) {
-            json.AddMember(i->first.c_str(), i->second.c_str(), allocator);
-        }
-
-        rapidjson::StringBuffer buf;
-        rapidjson::Writer<rapidjson::StringBuffer> writer(buf);
-        json.Accept(writer);
-
-        // FIXME can rapidjson write straight into the provided char array in a safe manner?
-        // if not roll my own strncpy which doesn't zero-pad and returns success rather than the ptr
-        strncpy(facts_json, buf.GetString(), facts_len);
-        return 0;
+    typedef std::map<std::string, std::string>::iterator iter;
+    for (iter i = facts.begin(); i != facts.end(); ++i) {
+        json.AddMember(i->first.c_str(), i->second.c_str(), allocator);
     }
+
+    rapidjson::StringBuffer buf;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buf);
+    json.Accept(writer);
+
+    // FIXME can rapidjson write straight into the provided char array in a safe manner?
+    // if not roll my own strncpy which doesn't zero-pad and returns success rather than the ptr
+    strncpy(facts_json, buf.GetString(), facts_len);
+    return 0;
 }
 
 int  value(const char *fact, char *value, size_t value_len)
 {
     loadfacts();
 
-    typedef map<string, string>::iterator iter;
+    typedef std::map<std::string, std::string>::iterator iter;
     iter i = facts.find(fact);
     if (i == facts.end())
         return -1;
