@@ -313,7 +313,7 @@ static void get_redhat_facts(fact_map& facts)
             }
         } else {
             facts["operatingsystem"] = "RedHat";
-       }
+        }
     }
 }
 
