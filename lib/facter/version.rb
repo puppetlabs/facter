@@ -1,6 +1,6 @@
 module Facter
   if not defined? FACTERVERSION then
-    FACTERVERSION = '1.7.5'
+    FACTERVERSION = '2.0.1-rc1'
   end
 
   # Returns the running version of Facter.
