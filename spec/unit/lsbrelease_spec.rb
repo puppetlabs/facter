@@ -10,14 +10,14 @@ describe "lsbrelease fact" do
         Facter.fact(:kernel).stubs(:value).returns kernel
       end
 
-      it "should return the release through lsb_release -v -s 2>/dev/null" do
-        Facter::Core::Execution.stubs(:exec).with('lsb_release -v -s 2>/dev/null').returns 'n/a'
-        Facter.fact(:lsbrelease).value.should == 'n/a'
+      it "returns the release through lsb_release -v -s 2>/dev/null" do
+        Facter::Core::Execution.impl.stubs(:exec).with('lsb_release -v -s 2>/dev/null', anything).returns 'n/a'
+        expect(Facter.fact(:lsbrelease).value).to eq 'n/a'
       end
 
-      it "should return nil if lsb_release is not installed" do
-        Facter::Core::Execution.stubs(:exec).with('lsb_release -v -s 2>/dev/null').returns nil
-        Facter.fact(:lsbrelease).value.should be_nil
+      it "returns nil if lsb_release is not installed" do
+        Facter::Core::Execution.impl.stubs(:expand_command).with('lsb_release -v -s 2>/dev/null').returns nil
+        expect(Facter.fact(:lsbrelease).value).to be_nil
       end
     end
   end

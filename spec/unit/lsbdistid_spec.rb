@@ -10,14 +10,14 @@ describe "lsbdistid fact" do
         Facter.fact(:kernel).stubs(:value).returns kernel
       end
 
-      it "should return the id through lsb_release -i -s 2>/dev/null" do
-        Facter::Core::Execution.stubs(:exec).with('lsb_release -i -s 2>/dev/null').returns 'Gentoo'
-        Facter.fact(:lsbdistid).value.should == 'Gentoo'
+      it "returns the id through lsb_release -i -s 2>/dev/null" do
+        Facter::Core::Execution.impl.stubs(:exec).with('lsb_release -i -s 2>/dev/null', anything).returns 'Gentoo'
+        expect(Facter.fact(:lsbdistid).value).to eq 'Gentoo'
       end
 
-      it "should return nil if lsb_release is not installed 2>/dev/null" do
-        Facter::Core::Execution.stubs(:exec).with('lsb_release -i -s 2>/dev/null').returns nil
-        Facter.fact(:lsbdistid).value.should be_nil
+      it "returns nil if lsb_release is not installed" do
+        Facter::Core::Execution.impl.stubs(:expand_command).with('lsb_release -i -s 2>/dev/null').returns nil
+        expect(Facter.fact(:lsbdistid).value).to be_nil
       end
     end
   end

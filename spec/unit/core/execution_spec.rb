@@ -31,7 +31,7 @@ describe Facter::Core::Execution do
   end
 
   it "delegates #exec to the implementation" do
-    impl.expects(:exec).with('waffles')
+    impl.expects(:exec).with('waffles', {})
     subject.exec('waffles')
   end
 end
