@@ -1,12 +1,9 @@
 Please
-* complete ffi wrapper
-* Handle non-string values
+* Handle non-string values, conform to facter.json schema
 * Normalize value and to_json to both return json?
 * virtual
-* cmake or autoconf?
 * abstract out command execution method
 * Add regex support (e.g. for os and processor file parsing)
-* Allow 'facter <factname>' (currently returns all facts)
 
 Not sure
 * Split out into app, core lib, libs per functional group (network, storage, selinux, processors, etc)
