@@ -12,3 +12,45 @@ configure_file (
 )
 
 add_subdirectory(exe)
+
+#
+# Add cpplint target
+#
+include(FindPythonInterp)
+if (NOT PYTHONINTERP_FOUND)
+    message(STATUS "Python not found; 'cpplint' target will not be available")
+else()
+    set(CPPLINT_FILTER
+        "-build/include"          # Why?
+        "-legal/copyright"        # Not yet
+        "-runtime/references"     # Not sure about this religion
+        "-readability/streams"    # What?
+        "-whitespace/braces"      # Is there a k&r setting?
+        "-whitespace/line_length" # Well yeah, but ... not just now
+        "-runtime/arrays"         # Sizing an array with a 'const int' doesn't make it variable sized
+        "-readability/todo"       # Seriously? todo comments need to identify an owner? pffft
+    )
+
+    FILE (GLOB ALL_SOURCES lib/*.cc exe/*.cc)
+
+    set(CPPLINT_PATH "ext/cpplint.py")
+
+    set(CPPLINT_ARGS "")
+    if (CPPLINT_FILTER)
+        string(REPLACE ";" "," CPPLINT_FILTER "${CPPLINT_FILTER}")
+        set(CPPLINT_ARGS "${CPPLINT_ARGS}--filter=${CPPLINT_FILTER}")
+    endif()
+    if (MSVC)
+        set(CPPLINT_ARGS "${CPPLINT_ARGS} --output=vs7")
+    endif()
+
+    add_custom_target(cpplint
+        COMMAND ${PYTHON_EXECUTABLE} ${CPPLINT_PATH} ${CPPLINT_ARGS} ${ALL_SOURCES}
+        VERBATIM
+    )
+
+endif()
+
+add_custom_target(cppcheck
+    COMMAND cppcheck lib exe
+)
