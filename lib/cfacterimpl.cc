@@ -1,9 +1,9 @@
 #include <dirent.h>
 #include <inttypes.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <unistd.h>
-#include <string.h>
+#include <cstring>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -616,7 +616,7 @@ static void get_ssh_fact(std::string fact_name, std::string path_name, fact_map&
         "/etc/opt/ssh",
     };
 
-    for (int i = 0; i < sizeof(ssh_directories) / sizeof(std::string); ++i) {
+    for (size_t i = 0; i < sizeof(ssh_directories) / sizeof(std::string); ++i) {
         std::string full_path = ssh_directories[i] + "/" + path_name;
         if (file_exist(full_path)) {
             std::string key = read_oneline_file(full_path);
