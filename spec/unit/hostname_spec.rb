@@ -33,7 +33,7 @@ describe "Hostname facts" do
     end
 
     it "should use scutil to get the hostname" do
-      Facter::Core::Execution.expects(:exec).with('/usr/sbin/scutil --get LocalHostName').returns("host1")
+      Facter::Core::Execution.expects(:exec).with('/usr/sbin/scutil --get LocalHostName', anything).returns("host1")
       Facter.fact(:hostname).value.should == "host1"
     end
   end
