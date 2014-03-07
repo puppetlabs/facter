@@ -929,7 +929,7 @@ static void get_external_facts(fact_map& facts, std::string directory)
     }
 }
 
-void get_external_facts(fact_map& facts, std::list<std::string> directories)
+void get_external_facts(fact_map& facts, const std::list<std::string>& directories)
 {
     for (auto iter = directories.begin(); iter != directories.end(); ++iter) {
         get_external_facts(facts, *iter);

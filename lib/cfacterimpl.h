@@ -21,4 +21,4 @@ void get_architecture_facts(fact_map&);
 void get_dmidecode_facts(fact_map&);
 void get_filesystems_facts(fact_map&);
 void get_hostname_facts(fact_map&);
-void get_external_facts(fact_map&, std::list<std::string> directories);
+void get_external_facts(fact_map&, const std::list<std::string>&);
