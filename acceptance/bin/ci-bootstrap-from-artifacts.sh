@@ -26,6 +26,7 @@ rm -rf acceptance
 mkdir acceptance
 cd acceptance
 tar -xzf ../acceptance-artifacts.tar.gz
+mkdir -p log/latest
 
 echo "===== This artifact is from ====="
 cat creator.txt
