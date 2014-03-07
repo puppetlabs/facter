@@ -15,6 +15,7 @@ describe "ldom fact" do
     before :each do
       # For virtinfo documentation:
       # http://docs.oracle.com/cd/E23824_01/html/821-1462/virtinfo-1m.html
+      Facter::Core::Execution.stubs(:which).with("virtinfo").returns 'virtinfo'
       Facter::Core::Execution.stubs(:exec).with("virtinfo -ap").
         returns(ldom_fixtures('ldom_v1'))
       Facter.collection.internal_loader.load(:ldom)
@@ -63,7 +64,7 @@ describe "ldom fact" do
 
   describe "when running on non ldom hardware" do
     before :each do
-      Facter::Core::Execution.stubs(:exec).with("virtinfo -ap").returns(nil)
+      Facter::Core::Execution.stubs(:which).with("virtinfo").returns(nil)
       Facter.collection.internal_loader.load(:ldom)
     end
 

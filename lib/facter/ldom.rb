@@ -1,4 +1,4 @@
-if Facter.value(:kernel) == 'SunOS'
+if Facter.value(:kernel) == 'SunOS' and Facter::Core::Execution.which('virtinfo')
   virtinfo = Facter::Core::Execution.exec('virtinfo -ap')
 
   # Convert virtinfo parseable output format to array of arrays.
