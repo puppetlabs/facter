@@ -28,7 +28,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <iterator>
 
 #include "cfacterlib.h"
 #include "cfacterimpl.h"
@@ -644,8 +643,7 @@ void get_ssh_facts(fact_map& facts)
     ssh_facts["sshrsakey"] = "ssh_host_rsa_key.pub";
     ssh_facts["sshecdsakey"] = "ssh_host_ecdsa_key.pub";
 
-    typedef std::map<std::string, std::string>::iterator iter;
-    for (iter i = ssh_facts.begin(); i != ssh_facts.end(); ++i) {
+    for (auto i = ssh_facts.begin(); i != ssh_facts.end(); ++i) {
         get_ssh_fact(i->first, i->second, facts);
     }
 }
@@ -933,8 +931,7 @@ static void get_external_facts(fact_map& facts, std::string directory)
 
 void get_external_facts(fact_map& facts, std::list<std::string> directories)
 {
-    std::list<std::string>::iterator iter;
-    for (iter = directories.begin(); iter != directories.end(); ++iter) {
+    for (auto iter = directories.begin(); iter != directories.end(); ++iter) {
         get_external_facts(facts, *iter);
     }
 }

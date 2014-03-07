@@ -63,8 +63,7 @@ int to_json(char *facts_json, size_t facts_len)
 
     rapidjson::Document::AllocatorType& allocator = json.GetAllocator();
 
-    typedef std::map<std::string, std::string>::iterator iter;
-    for (iter i = facts.begin(); i != facts.end(); ++i) {
+    for (auto i = facts.begin(); i != facts.end(); ++i) {
         json.AddMember(i->first.c_str(), i->second.c_str(), allocator);
     }
 
@@ -82,8 +81,7 @@ int  value(const char *fact, char *value, size_t value_len)
 {
     loadfacts();
 
-    typedef std::map<std::string, std::string>::iterator iter;
-    iter i = facts.find(fact);
+    auto i = facts.find(fact);
     if (i == facts.end())
         return -1;
 
