@@ -1,6 +1,7 @@
 require 'puppet/acceptance/install_utils'
-
 extend Puppet::Acceptance::InstallUtils
+require 'beaker/dsl/install_utils'
+extend Beaker::DSL::InstallUtils
 
 test_name "Install Packages"
 
