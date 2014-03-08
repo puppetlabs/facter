@@ -10,14 +10,14 @@ describe "lsbdistcodename fact" do
         Facter.fact(:kernel).stubs(:value).returns kernel
       end
 
-      it "should return the codename through lsb_release -c -s 2>/dev/null" do
-        Facter::Core::Execution.stubs(:exec).with('lsb_release -c -s 2>/dev/null').returns 'n/a'
-        Facter.fact(:lsbdistcodename).value.should == 'n/a'
+      it "returns the codename through lsb_release -c -s 2>/dev/null" do
+        Facter::Core::Execution.impl.stubs(:exec).with('lsb_release -c -s 2>/dev/null', anything).returns 'n/a'
+        expect(Facter.fact(:lsbdistcodename).value).to eq 'n/a'
       end
 
-      it "should return nil if lsb_release is not installed" do
-        Facter::Core::Execution.stubs(:exec).with('lsb_release -c -s 2>/dev/null').returns nil
-        Facter.fact(:lsbdistcodename).value.should be_nil
+      it "returns nil if lsb_release is not installed" do
+        Facter::Core::Execution.impl.stubs(:expand_command).with('lsb_release -c -s 2>/dev/null').returns nil
+        expect(Facter.fact(:lsbdistcodename).value).to be_nil
       end
     end
   end

@@ -90,23 +90,12 @@ end
 
 Facter.add("Processor") do
   confine :kernel => :openbsd
-  setcode do
-    Facter::Core::Execution.exec("uname -p")
-  end
-end
-
-Facter.add("ProcessorCount") do
-  confine :kernel => :openbsd
-  setcode do
-    Facter::Core::Execution.exec("sysctl -n hw.ncpu")
-  end
+  setcode "uname -p"
 end
 
 Facter.add("ProcessorCount") do
   confine :kernel => :Darwin
-  setcode do
-    Facter::Core::Execution.exec("sysctl -n hw.ncpu")
-  end
+  setcode "sysctl -n hw.ncpu"
 end
 
 if Facter.value(:kernel) == "windows"
@@ -149,16 +138,12 @@ end
 
 Facter.add("Processor") do
   confine :kernel => [:dragonfly,:freebsd]
-  setcode do
-    Facter::Core::Execution.exec("sysctl -n hw.model")
-  end
+  setcode "sysctl -n hw.model"
 end
 
 Facter.add("ProcessorCount") do
-  confine :kernel => [:dragonfly,:freebsd]
-  setcode do
-    Facter::Core::Execution.exec("sysctl -n hw.ncpu")
-  end
+  confine :kernel => [:dragonfly,:freebsd,:openbsd]
+  setcode "sysctl -n hw.ncpu"
 end
 
 Facter.add("ProcessorCount") do
