@@ -12,6 +12,10 @@
 
 Facter.add(:lsbdistdescription) do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]
+  confine do
+    Facter::Core::Execution.which("lsb_release")
+  end
+
   setcode do
     if output = Facter::Core::Execution.exec('lsb_release -d -s 2>/dev/null')
       # the output may be quoted (at least it is on gentoo)
