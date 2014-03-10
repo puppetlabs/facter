@@ -30,7 +30,7 @@ module Facter::Util::Uptime
   end
 
   def self.uptime_sysctl
-    output = Facter::Core::Execution.exec("#{uptime_sysctl_cmd} 2>/dev/null")
+    output = Facter::Core::Execution.exec("#{uptime_sysctl_cmd} 2>/dev/null", :on_fail => nil)
     if not output.empty?
       compute_uptime(Time.at(output.match(/\d+/)[0].to_i))
     end
