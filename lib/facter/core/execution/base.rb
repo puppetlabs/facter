@@ -27,31 +27,39 @@ class Facter::Core::Execution::Base
     rv
   end
 
-  def exec(code)
+  def exec(command, options = {})
+
+    on_fail = options.fetch(:on_fail, :raise)
 
     ## Set LANG to force i18n to C for the duration of this exec; this ensures that any code that parses the
     ## output of the command can expect it to be in a consistent / predictable format / locale
     with_env "LANG" => "C" do
 
-      if expanded_code = expand_command(code)
-        # if we can find the binary, we'll run the command with the expanded path to the binary
-        code = expanded_code
-      else
-        return ''
+      expanded_command = expand_command(command)
+
+      if expanded_command.nil?
+        if on_fail == :raise
+          raise Facter::Core::Execution::ExecutionFailure.new, "Could not execute '#{command}': command not found"
+        else
+          return on_fail
+        end
       end
 
       out = ''
 
       begin
         wait_for_child = true
-        out = %x{#{code}}.chomp
+        out = %x{#{expanded_command}}.chomp
         wait_for_child = false
       rescue => detail
-        Facter.warn(detail.message)
-        return ''
+        if on_fail == :raise
+          raise Facter::Core::Execution::ExecutionFailure.new, "Failed while executing '#{expanded_command}': #{detail.message}"
+        else
+          return on_fail
+        end
       ensure
         if wait_for_child
-          # We need to ensure that if this code exits early then any spawned
+          # We need to ensure that if this command exits early then any spawned
           # children will be reaped. Process execution is frequently
           # terminated using Timeout.timeout but since the timeout isn't in
           # this scope we can't rescue the raised exception. The best that

@@ -89,12 +89,24 @@ module Facter
       # executing the code.
       #
       # @param code [String] the program to run
-      # @return [String] the output of the program or the empty string on error
+      # @param options [Hash]
+      #
+      # @option options [Object] :on_fail How to behave when the command could
+      #   not be run. Specifying :raise will raise an error, anything else will
+      #   return that object on failure. Default is :raise.
+      #
+      # @raise [Facter::Core::Execution::ExecutionFailure] If the command does
+      #   not exist or could not be executed.
+      #
+      # @return [String] the output of the program, or the value of :on_fail if
+      #   command execution failed and :on_fail was specified.
       #
       # @api public
-      def exec(command)
-        @@impl.exec(command)
+      def exec(command, options = {})
+        @@impl.exec(command, options)
       end
+
+      class ExecutionFailure < StandardError; end
     end
   end
 end

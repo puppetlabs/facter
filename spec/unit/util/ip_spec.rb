@@ -59,6 +59,7 @@ describe Facter::Util::IP do
 
   describe "exec_ifconfig" do
     it "uses get_ifconfig" do
+      Facter::Core::Execution.stubs(:exec)
       Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig").once
 
       Facter::Util::IP.exec_ifconfig

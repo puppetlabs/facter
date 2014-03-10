@@ -4,7 +4,7 @@ require 'facter'
 describe "Hardwaremodel fact" do
   it "should match uname -m by default" do
     Facter.fact(:kernel).stubs(:value).returns("Darwin")
-    Facter::Core::Execution.stubs(:exec).with("uname -m").returns("Inky")
+    Facter::Core::Execution.stubs(:exec).with("uname -m", anything).returns("Inky")
 
     Facter.fact(:hardwaremodel).value.should == "Inky"
   end
@@ -21,7 +21,7 @@ describe "Hardwaremodel fact" do
       Facter::Util::WMI.expects(:execquery).returns([cpu])
 
       Facter.fact(:hardwaremodel).value.should == "i486"
-    end    
+    end
 
     it "should detect i686" do
       cpu = mock('cpu', :Architecture => 0, :Level => 6)

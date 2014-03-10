@@ -134,15 +134,23 @@ Facter.add("virtual") do
       next "kvm"        if lines.any? {|l| l =~ /Manufacturer: Bochs/ }
     end
 
+    # Default to 'physical'
+    next 'physical'
+  end
+end
+
+Facter.add("virtual") do
+  confine do
+    Facter::Core::Execution.which('vmware')
+  end
+
+  setcode do
     # Sample output of vmware -v `VMware Server 1.0.5 build-80187`
     output = Facter::Core::Execution.exec("vmware -v")
     if output
       mdata = output.match /(\S+)\s+(\S+)/
       next "#{mdata[1]}_#{mdata[2]}".downcase if mdata
     end
-
-    # Default to 'physical'
-    next 'physical'
   end
 end
 

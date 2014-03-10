@@ -77,18 +77,31 @@ describe Facter::Core::Execution::Base do
       subject.exec('foo')
     end
 
-    it "returns an empty string when the command could not be expanded" do
-      subject.expects(:expand_command).with('foo').returns nil
-      expect(subject.exec('foo')).to be_empty
+    describe "and the command is not present" do
+      it "raises an error when the :on_fail behavior is :raise" do
+        subject.expects(:expand_command).with('foo').returns nil
+        expect { subject.exec('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
+      end
+
+      it "returns the given value when :on_fail is set to a value" do
+        subject.expects(:expand_command).with('foo').returns nil
+        expect(subject.exec('foo', :on_fail => nil)).to be_nil
+      end
     end
 
-    it "logs a warning and returns an empty string when the command execution fails" do
-      subject.expects(:`).with("/bin/foo").raises "kaboom!"
-      Facter.expects(:warn).with("kaboom!")
+    describe "when command execution fails" do
+      before do
+        subject.expects(:`).with("/bin/foo").raises "kaboom!"
+        subject.expects(:expand_command).with('foo').returns '/bin/foo'
+      end
 
-      subject.expects(:expand_command).with('foo').returns '/bin/foo'
+      it "raises an error when the :on_fail behavior is :raise" do
+        expect { subject.exec('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
+      end
 
-      expect(subject.exec("foo")).to be_empty
+      it "returns the given value when :on_fail is set to a value" do
+        expect(subject.exec('foo', :on_fail => nil)).to be_nil
+      end
     end
 
     it "launches a thread to wait on children if the command was interrupted" do
@@ -99,7 +112,7 @@ describe Facter::Core::Execution::Base do
       Thread.expects(:new).yields
       Process.expects(:waitall).once
 
-      subject.exec("foo")
+      subject.exec("foo", :on_fail => nil)
     end
 
     it "returns the output of the command" do
