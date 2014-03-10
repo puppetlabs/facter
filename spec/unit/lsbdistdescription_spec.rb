@@ -11,7 +11,8 @@ describe "lsbdistdescription fact" do
       end
 
       it "returns the description through lsb_release -d -s 2>/dev/null" do
-        Facter::Core::Execution.impl.stubs(:exec).with('lsb_release -d -s 2>/dev/null', anything).returns '"Gentoo Base System release 2.1"'
+        Facter::Core::Execution.stubs(:which).with('lsb_release').returns '/usr/bin/lsb_release'
+        Facter::Core::Execution.stubs(:exec).with('lsb_release -d -s 2>/dev/null', anything).returns '"Gentoo Base System release 2.1"'
         expect(Facter.fact(:lsbdistdescription).value).to eq 'Gentoo Base System release 2.1'
       end
 
