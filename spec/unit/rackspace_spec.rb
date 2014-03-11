@@ -7,6 +7,7 @@ describe "rackspace facts" do
   describe "on Rackspace Cloud" do
     before :each do
       Facter.collection.internal_loader.load(:rackspace)
+      Facter::Core::Execution.stubs(:which).returns '/usr/bin/xenstore-read'
     end
 
     it "should set is_rsc to true" do
@@ -30,6 +31,7 @@ describe "rackspace facts" do
   describe "not on Rackspace Cloud" do
     before do
       Facter.collection.internal_loader.load(:rackspace)
+      Facter::Core::Execution.stubs(:which).returns nil
     end
 
     it "shouldn't set is_rsc" do
