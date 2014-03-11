@@ -8,6 +8,10 @@
 #
 
 Facter.add(:is_rsc) do
+  confine do
+    Facter::Core::Execution.which("/usr/bin/xenstore-read")
+  end
+
   setcode do
     result = Facter::Core::Execution.exec("/usr/bin/xenstore-read vm-data/provider_data/provider")
     if result == "Rackspace"
