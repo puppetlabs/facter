@@ -47,7 +47,7 @@ describe Facter::Util::SolarisZones do
 
   describe '#refresh' do
     it 'executes the zoneadm_cmd' do
-      Facter::Core::Execution.expects(:exec).with(subject.zoneadm_cmd).returns(zone_list)
+      Facter::Core::Execution.expects(:exec).with(subject.zoneadm_cmd, {:on_fail => nil}).returns(zone_list)
       subject.refresh
     end
   end
@@ -112,7 +112,7 @@ describe Facter::Util::SolarisZones do
 
   def given_initial_zone_facts
     Facter::Core::Execution.stubs(:exec).
-      with(subject.zoneadm_cmd).
+      with(subject.zoneadm_cmd, {:on_fail => nil}).
       returns(zone_list)
     described_class.add_facts
   end
