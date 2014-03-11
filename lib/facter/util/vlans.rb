@@ -15,7 +15,7 @@ module Facter::Util::Vlans
           vlans << match[2] if match[2]
         end
       end
-      vlans.join(',')
+      vlans.join(',') unless vlans.empty?
     end
   end
 end
