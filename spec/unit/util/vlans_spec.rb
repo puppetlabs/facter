@@ -33,5 +33,10 @@ describe Facter::Util::Vlans do
       Facter::Util::Vlans.stubs(:get_vlan_config).returns(nil)
       expect(Facter::Util::Vlans.get_vlans()).to be_nil
     end
+
+    it "returns nil when only the vlan header is returned" do
+      Facter::Util::Vlans.stubs(:get_vlan_config).returns(my_fixture_read("centos-5-no-vlans"))
+      expect(Facter::Util::Vlans.get_vlans()).to be_nil
+    end
   end
 end
