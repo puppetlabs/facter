@@ -22,6 +22,7 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <iterator>
 #include <list>
 #include <map>
 #include <string>
@@ -446,7 +447,7 @@ void get_misc_facts(fact_map& facts)
     time_t t = time(NULL);
     struct tm loc;
     localtime_r(&t, &loc);
-    strftime(tzstring, sizeof(tzstring - 1), "%Z", &loc);
+    strftime(tzstring, sizeof(tzstring), "%Z", &loc);
     facts["timezone"] = tzstring;
 }
 
