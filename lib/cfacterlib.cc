@@ -63,8 +63,8 @@ int to_json(char *facts_json, size_t facts_len)
 
     rapidjson::Document::AllocatorType& allocator = json.GetAllocator();
 
-    for (auto i = facts.begin(); i != facts.end(); ++i) {
-        json.AddMember(i->first.c_str(), i->second.c_str(), allocator);
+    for (auto i : facts) {
+        json.AddMember(i.first.c_str(), i.second.c_str(), allocator);
     }
 
     rapidjson::StringBuffer buf;

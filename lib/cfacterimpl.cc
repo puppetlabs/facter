@@ -644,8 +644,8 @@ void get_ssh_facts(fact_map& facts)
     ssh_facts["sshrsakey"] = "ssh_host_rsa_key.pub";
     ssh_facts["sshecdsakey"] = "ssh_host_ecdsa_key.pub";
 
-    for (auto i = ssh_facts.begin(); i != ssh_facts.end(); ++i) {
-        get_ssh_fact(i->first, i->second, facts);
+    for (auto i : ssh_facts) {
+        get_ssh_fact(i.first, i.second, facts);
     }
 }
 
@@ -668,8 +668,8 @@ static void get_physicalprocessorcount_fact(fact_map& facts)
             package_ids.push_back(read_oneline_file(cpu_phys_file));
         }
 
-        sort(package_ids.begin(), package_ids.end());
-        unique(package_ids.begin(), package_ids.end());
+        sort(begin(package_ids), end(package_ids));
+        unique(begin(package_ids), end(package_ids));
         facts["physicalprocessorcount"] = std::to_string(package_ids.size());
     } else {
         // here's where the fall back to /proc/cpuinfo would go
@@ -932,7 +932,7 @@ static void get_external_facts(fact_map& facts, std::string directory)
 
 void get_external_facts(fact_map& facts, const std::list<std::string>& directories)
 {
-    for (auto iter = directories.begin(); iter != directories.end(); ++iter) {
-        get_external_facts(facts, *iter);
+    for (auto dir : directories) {
+        get_external_facts(facts, dir);
     }
 }
