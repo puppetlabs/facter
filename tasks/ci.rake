@@ -9,10 +9,8 @@ namespace "ci" do
 
   desc "Tar up the acceptance/ directory so that package test runs have tests to run against."
   task :acceptance_artifacts => :tag_creator do
-    Dir.chdir("acceptance") do
-      rm_f "acceptance-artifacts.tar.gz"
-      sh "tar -czv --exclude .bundle -f acceptance-artifacts.tar.gz *"
-    end
+    rm_f "acceptance/acceptance-artifacts.tar.gz"
+    sh "tar -czv --exclude acceptance/.bundle -f acceptance-artifacts.tar.gz acceptance schema"
   end
 
   task :tag_creator do

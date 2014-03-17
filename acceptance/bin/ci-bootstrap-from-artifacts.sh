@@ -23,9 +23,7 @@ echo "BUILD_SELECTOR: ${BUILD_SELECTOR}"
 echo "PACKAGE_BUILD_STATUS: ${PACKAGE_BUILD_STATUS}"
 
 rm -rf acceptance
-mkdir acceptance
-cd acceptance
-tar -xzf ../acceptance-artifacts.tar.gz
+tar -xzf acceptance-artifacts.tar.gz
 mkdir -p log/latest
 
 echo "===== This artifact is from ====="
@@ -37,7 +35,7 @@ if [[ "${platform}" =~ 'solaris' ]]; then
   repo_proxy="  :repo_proxy => false,"
 fi
 
-cat > local_options.rb <<-EOF
+cat > acceptance/local_options.rb <<-EOF
 {
   :hosts_file => 'config/nodes/${platform}.yaml',
   :ssh => {
