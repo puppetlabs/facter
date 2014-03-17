@@ -100,7 +100,7 @@ module Puppet
               platform_configs_dir
             )
 
-            pattern = "pl-puppet-%s-%s-%s%s-%s.repo"
+            pattern = "pl-facter-%s-%s-%s%s-%s.repo"
             repo_filename = pattern % [
               sha,
               variant,
@@ -109,7 +109,7 @@ module Puppet
               arch
             ]
             repo = fetch(
-              "http://builds.puppetlabs.lan/puppet/%s/repo_configs/rpm/" % sha,
+              "http://builds.puppetlabs.lan/facter/%s/repo_configs/rpm/" % sha,
               repo_filename,
               platform_configs_dir
             )
@@ -134,8 +134,8 @@ module Puppet
             )
 
             list = fetch(
-              "http://builds.puppetlabs.lan/puppet/%s/repo_configs/deb/" % sha,
-              "pl-puppet-%s-%s.list" % [sha, version],
+              "http://builds.puppetlabs.lan/facter/%s/repo_configs/deb/" % sha,
+              "pl-facter-%s-%s.list" % [sha, version],
               platform_configs_dir
             )
 
