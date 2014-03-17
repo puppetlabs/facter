@@ -3,15 +3,15 @@ HOSTS:
     roles:
       - master
       - agent
-    platform: ubuntu-lucid-x86_64
+    platform: debian-wheezy-x86_64
     hypervisor: vcloud
-    template: Delivery/Quality Assurance/Templates/vCloud/ubuntu-1004-x86_64
+    template: Delivery/Quality Assurance/Templates/vCloud/debian-7-x86_64
   agent:
     roles:
       - agent
-    platform: ubuntu-lucid-i386
+    platform: debian-wheezy-i386
     hypervisor: vcloud
-    template: Delivery/Quality Assurance/Templates/vCloud/ubuntu-1004-i386
+    template: Delivery/Quality Assurance/Templates/vCloud/debian-7-i386
 CONFIG:
   filecount: 12
   datastore: instance0
