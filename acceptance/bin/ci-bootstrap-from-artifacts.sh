@@ -24,6 +24,8 @@ echo "PACKAGE_BUILD_STATUS: ${PACKAGE_BUILD_STATUS}"
 
 rm -rf acceptance
 tar -xzf acceptance-artifacts.tar.gz
+cd acceptance
+
 mkdir -p log/latest
 
 echo "===== This artifact is from ====="
@@ -35,7 +37,7 @@ if [[ "${platform}" =~ 'solaris' ]]; then
   repo_proxy="  :repo_proxy => false,"
 fi
 
-cat > acceptance/local_options.rb <<-EOF
+cat > local_options.rb <<-EOF
 {
   :hosts_file => 'config/nodes/${platform}.yaml',
   :ssh => {
