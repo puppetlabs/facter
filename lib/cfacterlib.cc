@@ -31,8 +31,7 @@ void loadfacts()
 
     facts["cfacterversion"] = CFACTER_VERSION;
 
-    std::list<std::string> external_directories;
-    external_directories.push_back("/etc/facter/facts.d");
+    std::list<std::string> external_directories = { "/etc/facter/facts.d" };
 
     get_network_facts(facts);
     get_kernel_facts(facts);
@@ -63,7 +62,7 @@ int to_json(char *facts_json, size_t facts_len)
 
     rapidjson::Document::AllocatorType& allocator = json.GetAllocator();
 
-    for (auto i : facts) {
+    for (auto const& i : facts) {
         json.AddMember(i.first.c_str(), i.second.c_str(), allocator);
     }
 

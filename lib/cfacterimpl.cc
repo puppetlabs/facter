@@ -608,7 +608,7 @@ void get_selinux_facts(fact_map& facts)
 
 static void get_ssh_fact(std::string fact_name, std::string path_name, fact_map& facts)
 {
-    std::string ssh_directories[] = {
+    std::vector<std::string> ssh_directories = {
         "/etc/ssh",
         "/usr/local/etc/ssh",
         "/etc",
@@ -616,8 +616,8 @@ static void get_ssh_fact(std::string fact_name, std::string path_name, fact_map&
         "/etc/opt/ssh",
     };
 
-    for (size_t i = 0; i < sizeof(ssh_directories) / sizeof(std::string); ++i) {
-        std::string full_path = ssh_directories[i] + "/" + path_name;
+    for (auto const &ssh_directory : ssh_directories) {
+        std::string full_path = ssh_directory + "/" + path_name;
         if (file_exist(full_path)) {
             std::string key = read_oneline_file(full_path);
             std::vector<std::string> tokens;
@@ -638,13 +638,13 @@ static void get_ssh_fact(std::string fact_name, std::string path_name, fact_map&
 // no support for the sshfp facts, which require base64/sha1sum code
 void get_ssh_facts(fact_map& facts)
 {
-    // not til C++11 do we have static initialization of stl maps
-    std::map<std::string, std::string> ssh_facts;
-    ssh_facts["sshdsakey"] = "ssh_host_dsa_key.pub";
-    ssh_facts["sshrsakey"] = "ssh_host_rsa_key.pub";
-    ssh_facts["sshecdsakey"] = "ssh_host_ecdsa_key.pub";
+    std::map<std::string, std::string> ssh_facts = {
+        { "sshdsakey",   "ssh_host_dsa_key.pub"   },
+        { "sshrsakey",   "ssh_host_rsa_key.pub"   },
+        { "sshecdsakey", "ssh_host_ecdsa_key.pub" },
+    };
 
-    for (auto i : ssh_facts) {
+    for (auto const& i : ssh_facts) {
         get_ssh_fact(i.first, i.second, facts);
     }
 }
@@ -932,7 +932,7 @@ static void get_external_facts(fact_map& facts, std::string directory)
 
 void get_external_facts(fact_map& facts, const std::list<std::string>& directories)
 {
-    for (auto dir : directories) {
+    for (auto const& dir : directories) {
         get_external_facts(facts, dir);
     }
 }
