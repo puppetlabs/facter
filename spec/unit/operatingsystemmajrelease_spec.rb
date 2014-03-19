@@ -13,4 +13,26 @@ describe "OS Major Release fact" do
       end
     end
   end
+
+  context "on Solaris operatingsystems" do
+    before :each do
+      Facter.fact(:kernel).stubs(:value).returns("SunOS")
+      Facter.fact(:operatingsystem).stubs(:value).returns("Solaris")
+    end
+
+    it "should correctly derive from operatingsystemrelease on solaris 10" do
+      Facter.fact(:operatingsystemrelease).expects(:value).returns("10_u8")
+      Facter.fact(:operatingsystemmajrelease).value.should == "10"
+    end
+
+    it "should correctly derive from operatingsystemrelease on solaris 11 (old version scheme)" do
+      Facter.fact(:operatingsystemrelease).expects(:value).returns("11 11/11")
+      Facter.fact(:operatingsystemmajrelease).value.should == "11"
+    end
+
+    it "should correctly derive from operatingsystemrelease on solaris 11 (new version scheme)" do
+      Facter.fact(:operatingsystemrelease).expects(:value).returns("11.1")
+      Facter.fact(:operatingsystemmajrelease).value.should == "11"
+    end
+  end
 end
