@@ -146,6 +146,7 @@ module Puppet
 
             on host, "mv /root/*.list /etc/apt/sources.list.d"
             on host, "dpkg -i --force-all /root/*.deb"
+            on host, "apt-get update"
           else
             host.logger.notify("No repository installation step for #{platform} yet...")
         end
