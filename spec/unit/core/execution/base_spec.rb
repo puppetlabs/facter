@@ -62,11 +62,11 @@ describe Facter::Core::Execution::Base do
     end
   end
 
-  describe "#exec" do
+  describe "#execute" do
 
     it "switches LANG to C when executing the command" do
       subject.expects(:with_env).with('LANG' => 'C')
-      subject.exec('foo')
+      subject.execute('foo')
     end
 
     it "switches LC_ALL to C when executing the command"
@@ -74,18 +74,18 @@ describe Facter::Core::Execution::Base do
     it "expands the command before running it" do
       subject.stubs(:`).returns ''
       subject.expects(:expand_command).with('foo').returns '/bin/foo'
-      subject.exec('foo')
+      subject.execute('foo')
     end
 
     describe "and the command is not present" do
       it "raises an error when the :on_fail behavior is :raise" do
         subject.expects(:expand_command).with('foo').returns nil
-        expect { subject.exec('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
+        expect { subject.execute('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
       end
 
       it "returns the given value when :on_fail is set to a value" do
         subject.expects(:expand_command).with('foo').returns nil
-        expect(subject.exec('foo', :on_fail => nil)).to be_nil
+        expect(subject.execute('foo', :on_fail => nil)).to be_nil
       end
     end
 
@@ -96,11 +96,11 @@ describe Facter::Core::Execution::Base do
       end
 
       it "raises an error when the :on_fail behavior is :raise" do
-        expect { subject.exec('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
+        expect { subject.execute('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
       end
 
       it "returns the given value when :on_fail is set to a value" do
-        expect(subject.exec('foo', :on_fail => nil)).to be_nil
+        expect(subject.execute('foo', :on_fail => nil)).to be_nil
       end
     end
 
@@ -112,21 +112,21 @@ describe Facter::Core::Execution::Base do
       Thread.expects(:new).yields
       Process.expects(:waitall).once
 
-      subject.exec("foo", :on_fail => nil)
+      subject.execute("foo", :on_fail => nil)
     end
 
     it "returns the output of the command" do
       subject.expects(:`).with("/bin/foo").returns 'hi'
       subject.expects(:expand_command).with('foo').returns '/bin/foo'
 
-      expect(subject.exec("foo")).to eq 'hi'
+      expect(subject.execute("foo")).to eq 'hi'
     end
 
     it "strips off trailing newlines" do
       subject.expects(:`).with("/bin/foo").returns "hi\n"
       subject.expects(:expand_command).with('foo').returns '/bin/foo'
 
-      expect(subject.exec("foo")).to eq 'hi'
+      expect(subject.execute("foo")).to eq 'hi'
     end
   end
 end

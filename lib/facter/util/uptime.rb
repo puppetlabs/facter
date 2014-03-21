@@ -20,7 +20,7 @@ module Facter::Util::Uptime
   private
 
   def self.uptime_proc_uptime
-    output = Facter::Core::Execution.exec("/bin/cat #{uptime_file} 2>/dev/null")
+    output = Facter::Core::Execution.execute("/bin/cat #{uptime_file} 2>/dev/null")
 
     if not output.empty?
       output.chomp.split(" ").first.to_i
@@ -28,14 +28,14 @@ module Facter::Util::Uptime
   end
 
   def self.uptime_sysctl
-    output = Facter::Core::Execution.exec("#{uptime_sysctl_cmd} 2>/dev/null", :on_fail => nil)
+    output = Facter::Core::Execution.execute("#{uptime_sysctl_cmd} 2>/dev/null", :on_fail => nil)
     if output
       compute_uptime(Time.at(output.match(/\d+/)[0].to_i))
     end
   end
 
   def self.uptime_executable
-    output = Facter::Core::Execution.exec("#{uptime_executable_cmd} 2>/dev/null", :on_fail => nil)
+    output = Facter::Core::Execution.execute("#{uptime_executable_cmd} 2>/dev/null", :on_fail => nil)
 
     if output
       up=0

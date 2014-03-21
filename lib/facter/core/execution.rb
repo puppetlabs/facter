@@ -83,10 +83,20 @@ module Facter
         @@impl.with_env(values, &block)
       end
 
-      # Executes a program and return the output of that program.
+      # Try to execute a command and return the output.
       #
-      # Returns nil if the program can't be found, or if there is a problem
-      # executing the code.
+      # @param code [String] the program to run
+      #
+      # @return [String] the output of the program, or nil if the command does
+      #   not exist or could not be executed.
+      #
+      # @deprecated Use #{execute} instead
+      # @api public
+      def exec(command)
+        @@impl.execute(command, :on_fail => nil)
+      end
+
+      # Execute a command and return the output of that program.
       #
       # @param code [String] the program to run
       # @param options [Hash]
@@ -102,8 +112,9 @@ module Facter
       #   command execution failed and :on_fail was specified.
       #
       # @api public
-      def exec(command, options = {})
-        @@impl.exec(command, options)
+      # @since 2.0.1
+      def execute(command, options = {})
+        @@impl.execute(command, options)
       end
 
       class ExecutionFailure < StandardError; end

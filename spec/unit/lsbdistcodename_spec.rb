@@ -11,7 +11,7 @@ describe "lsbdistcodename fact" do
       end
 
       it "returns the codename through lsb_release -c -s 2>/dev/null" do
-        Facter::Core::Execution.impl.stubs(:exec).with('lsb_release -c -s 2>/dev/null', anything).returns 'n/a'
+        Facter::Core::Execution.impl.stubs(:execute).with('lsb_release -c -s 2>/dev/null', anything).returns 'n/a'
         expect(Facter.fact(:lsbdistcodename).value).to eq 'n/a'
       end
 
