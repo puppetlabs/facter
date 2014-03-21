@@ -1,4 +1,5 @@
 *.swp
+.DS_Store
 
 # CMake
 CMakeCache.txt
@@ -6,9 +7,14 @@ CMakeFiles
 Makefile
 cmake_install.cmake
 install_manifest.txt
+/CFACTER.*
+CFACTER.build
+CMakeScripts
 
 # Generated files
 /version.h
 /exe/cfacter
+/exe/Debug
 /lib/libcfacter.so
 /lib/libcfacter.dylib
+/lib/Debug

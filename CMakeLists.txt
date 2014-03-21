@@ -22,6 +22,7 @@ if (NOT PYTHONINTERP_FOUND)
 else()
     set(CPPLINT_FILTER
         "-build/include"          # Why?
+        "-build/namespaces"       # What's a namespace to do 
         "-legal/copyright"        # Not yet
         "-runtime/references"     # Not sure about this religion
         "-readability/streams"    # What?

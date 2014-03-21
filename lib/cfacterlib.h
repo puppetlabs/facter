@@ -1,5 +1,5 @@
-#ifndef __CFACTERLIB_IMPL_H__
-#define __CFACTERLIB_IMPL_H__
+#ifndef __CFACTERLIB_H__
+#define __CFACTERLIB_H__
 
 #include <stdlib.h>
 

@@ -1,11 +1,13 @@
 #include "cfacterlib.h"
-
+#include "../version.h"
 #include <getopt.h>
 #include <iostream>
 
+using namespace std;
+
 void help()
 {
-    std::cout <<
+    cout <<
               "Synopsis\n"
               "========\n"
               "\n"
@@ -39,21 +41,22 @@ void help()
 
 void version()
 {
-    std::cout << "0.0.1" << std::endl;
+    cout << CFACTER_VERSION << endl;
 }
 
 int main(int argc, char **argv)
 {
+    // TODO: use Boost.Program_options?
     static struct option long_options[] = {
-        {"help", no_argument, NULL, 'h'},
-        {"json", no_argument, NULL, 'j'},
-        {"version", no_argument, NULL, 'v'},
-        {NULL, 0, NULL, 0}
+        {"help", no_argument, nullptr, 'h'},
+        {"json", no_argument, nullptr, 'j'},
+        {"version", no_argument, nullptr, 'v'},
+        {nullptr, 0, nullptr, 0}
     };
 
     // loop over all of the options
     int ch;
-    while ((ch = getopt_long(argc, argv, "hjv", long_options, NULL)) != -1) {
+    while ((ch = getopt_long(argc, argv, "hjv", long_options, nullptr)) != -1) {
         // check to see if a single character or long option came through
         switch (ch) {
         // short option 'v'
@@ -80,16 +83,16 @@ int main(int argc, char **argv)
 
     if (optind == argc) {  // display all facts
         if (to_json(facts_json, MAX_LEN_FACTS_JSON_STRING) < 0) {
-            std::cout << "Wow, that's a lot of facts" << std::endl;
+            cout << "Wow, that's a lot of facts" << endl;
             exit(1);
         }
-        std::cout << facts_json << std::endl;
+        cout << facts_json << endl;
     } else {
         // display requested fact(s)
         while (optind < argc) {
             // fix me
             if (value(argv[optind], facts_json, MAX_LEN_FACTS_JSON_STRING) == 0)
-                std::cout << facts_json << std::endl;
+                cout << facts_json << endl;
             ++optind;
         }
     }

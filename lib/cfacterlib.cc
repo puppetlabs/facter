@@ -11,7 +11,9 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/stringbuffer.h"
 
-std::map<std::string, std::string> facts;
+using namespace std;
+
+map<string, string> facts;
 
 void clear()
 {
@@ -31,7 +33,7 @@ void loadfacts()
 
     facts["cfacterversion"] = CFACTER_VERSION;
 
-    std::list<std::string> external_directories = { "/etc/facter/facts.d" };
+    list<string> external_directories = { "/etc/facter/facts.d" };
 
     get_network_facts(facts);
     get_kernel_facts(facts);
@@ -76,11 +78,11 @@ int to_json(char *facts_json, size_t facts_len)
     return 0;
 }
 
-int  value(const char *fact, char *value, size_t value_len)
+int value(const char *fact, char *value, size_t value_len)
 {
     loadfacts();
 
-    auto i = facts.find(fact);
+    auto const& i = facts.find(fact);
     if (i == facts.end())
         return -1;
 

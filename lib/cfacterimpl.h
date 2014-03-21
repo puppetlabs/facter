@@ -1,3 +1,6 @@
+#ifndef __CFACTERIMPL_H__
+#define __CFACTERIMPL_H__
+
 #include <list>
 #include <map>
 #include <string>
@@ -21,4 +24,6 @@ void get_architecture_facts(fact_map&);
 void get_dmidecode_facts(fact_map&);
 void get_filesystems_facts(fact_map&);
 void get_hostname_facts(fact_map&);
-void get_external_facts(fact_map&, const std::list<std::string>&);
+void get_external_facts(fact_map&, std::list<std::string> const&);
+
+#endif
