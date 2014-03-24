@@ -11,7 +11,7 @@ describe "lsbrelease fact" do
       end
 
       it "returns the release through lsb_release -v -s 2>/dev/null" do
-        Facter::Core::Execution.impl.stubs(:exec).with('lsb_release -v -s 2>/dev/null', anything).returns 'n/a'
+        Facter::Core::Execution.impl.stubs(:execute).with('lsb_release -v -s 2>/dev/null', anything).returns 'n/a'
         expect(Facter.fact(:lsbrelease).value).to eq 'n/a'
       end
 

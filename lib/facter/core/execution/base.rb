@@ -27,7 +27,7 @@ class Facter::Core::Execution::Base
     rv
   end
 
-  def exec(command, options = {})
+  def execute(command, options = {})
 
     on_fail = options.fetch(:on_fail, :raise)
 
