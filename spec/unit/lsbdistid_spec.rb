@@ -11,7 +11,7 @@ describe "lsbdistid fact" do
       end
 
       it "returns the id through lsb_release -i -s 2>/dev/null" do
-        Facter::Core::Execution.impl.stubs(:exec).with('lsb_release -i -s 2>/dev/null', anything).returns 'Gentoo'
+        Facter::Core::Execution.impl.stubs(:execute).with('lsb_release -i -s 2>/dev/null', anything).returns 'Gentoo'
         expect(Facter.fact(:lsbdistid).value).to eq 'Gentoo'
       end
 

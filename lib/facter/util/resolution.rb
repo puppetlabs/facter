@@ -128,7 +128,7 @@ class Facter::Util::Resolution
   def setcode(string = nil, &block)
     if string
       @code = Proc.new do
-        output = Facter::Core::Execution.exec(string, :on_fail => nil)
+        output = Facter::Core::Execution.execute(string, :on_fail => nil)
         if output.nil? or output.empty?
           nil
         else

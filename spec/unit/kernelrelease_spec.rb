@@ -21,7 +21,7 @@ describe "Kernel release fact" do
   describe "on AIX" do
     before do
       Facter.fact(:kernel).stubs(:value).returns("aix")
-      Facter::Core::Execution.stubs(:exec).with('oslevel -s', anything).returns("test_kernel")
+      Facter::Core::Execution.stubs(:execute).with('oslevel -s', anything).returns("test_kernel")
     end
 
     it "should return the kernel release" do
@@ -32,7 +32,7 @@ describe "Kernel release fact" do
   describe "on HP-UX" do
     before do
       Facter.fact(:kernel).stubs(:value).returns("hp-ux")
-      Facter::Core::Execution.stubs(:exec).with('uname -r').returns("B.11.31")
+      Facter::Core::Execution.stubs(:execute).with('uname -r').returns("B.11.31")
     end
 
     it "should remove preceding letters" do
@@ -43,7 +43,7 @@ describe "Kernel release fact" do
   describe "on everything else" do
     before do
       Facter.fact(:kernel).stubs(:value).returns("linux")
-      Facter::Core::Execution.stubs(:exec).with('uname -r', anything).returns("test_kernel")
+      Facter::Core::Execution.stubs(:execute).with('uname -r', anything).returns("test_kernel")
     end
 
     it "should return the kernel release" do

@@ -30,8 +30,13 @@ describe Facter::Core::Execution do
     subject.expand_command('waffles')
   end
 
-  it "delegates #exec to the implementation" do
-    impl.expects(:exec).with('waffles', {})
+  it "delegates #exec to #execute" do
+    impl.expects(:execute).with('waffles', {:on_fail => nil})
     subject.exec('waffles')
+  end
+
+  it "delegates #execute to the implementation" do
+    impl.expects(:execute).with('waffles', {})
+    subject.execute('waffles')
   end
 end
