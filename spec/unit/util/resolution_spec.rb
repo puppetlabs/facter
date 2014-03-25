@@ -74,7 +74,7 @@ describe Facter::Util::Resolution do
     describe "and the code is a string" do
       it "returns the result of executing the code" do
         resolution.setcode "/bin/foo"
-        Facter::Core::Execution.expects(:exec).once.with("/bin/foo", anything).returns "yup"
+        Facter::Core::Execution.expects(:execute).once.with("/bin/foo", anything).returns "yup"
 
         expect(resolution.value).to eq "yup"
       end

@@ -60,7 +60,7 @@ describe "ipaddress fact" do
     context "when you have no active network adapter" do
       it "should return nil if there are no active (or any) network adapters" do
         Facter::Util::WMI.expects(:execquery).with(Facter::Util::IP::Windows::WMI_IP_INFO_QUERY).returns([])
-        Facter::Core::Execution.stubs(:exec)
+        Facter::Core::Execution.stubs(:execute)
 
         Facter.value(:ipaddress).should == nil
       end

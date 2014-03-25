@@ -47,7 +47,7 @@ describe Facter::Util::SolarisZones do
 
   describe '#refresh' do
     it 'executes the zoneadm_cmd' do
-      Facter::Core::Execution.expects(:exec).with(subject.zoneadm_cmd, {:on_fail => nil}).returns(zone_list)
+      Facter::Core::Execution.expects(:execute).with(subject.zoneadm_cmd, {:on_fail => nil}).returns(zone_list)
       subject.refresh
     end
   end
@@ -69,7 +69,7 @@ describe Facter::Util::SolarisZones do
       it 'uses a single read of the system information for all of the dynamically generated zone facts' do
         given_initial_zone_facts # <= single read happens here
 
-        Facter::Core::Execution.expects(:exec).never
+        Facter::Core::Execution.expects(:execute).never
         Facter.fact(:zone_zoneA_id).value
         Facter.fact(:zone_local_id).value
       end
@@ -101,7 +101,7 @@ describe Facter::Util::SolarisZones do
         given_initial_zone_facts
         when_facts_have_been_resolved_then_flushed
 
-        Facter::Core::Execution.expects(:exec).once.returns(zone_list2)
+        Facter::Core::Execution.expects(:execute).once.returns(zone_list2)
         Facter.fact(:zones).value
         Facter.fact(:zone_zoneA_id).value
         Facter.fact(:zone_local_id).value
@@ -111,7 +111,7 @@ describe Facter::Util::SolarisZones do
   end
 
   def given_initial_zone_facts
-    Facter::Core::Execution.stubs(:exec).
+    Facter::Core::Execution.stubs(:execute).
       with(subject.zoneadm_cmd, {:on_fail => nil}).
       returns(zone_list)
     described_class.add_facts
@@ -121,7 +121,7 @@ describe Facter::Util::SolarisZones do
     Facter.fact(:zones).value
     Facter.fact(:zone_zoneA_id).value
     Facter.fact(:zone_local_id).value
-    Facter::Core::Execution.stubs(:exec).returns(zone_list2)
+    Facter::Core::Execution.stubs(:execute).returns(zone_list2)
     Facter.flush
   end
 end

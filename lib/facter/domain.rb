@@ -41,11 +41,11 @@ Facter.add(:domain) do
                          basic_hostname
                        end
 
-    if name = Facter::Core::Execution.exec(hostname_command, :on_fail => nil) \
+    if name = Facter::Core::Execution.exec(hostname_command) \
       and name =~ /.*?\.(.+$)/
 
       return_value = $1
-    elsif Facter.value(:kernel) != "windows" and domain = Facter::Core::Execution.exec('dnsdomainname 2> /dev/null', :on_fail => nil) \
+    elsif Facter.value(:kernel) != "windows" and domain = Facter::Core::Execution.exec('dnsdomainname 2> /dev/null') \
       and domain =~ /.+/
 
       return_value = domain
