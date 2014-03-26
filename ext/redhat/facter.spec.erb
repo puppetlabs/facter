@@ -24,7 +24,7 @@ Source0:        http://puppetlabs.com/downloads/%{name}/%{name}-%{realversion}.t
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires:       ruby >= 1.8.5
+Requires:       ruby >= 1.8.7
 Requires:       which
 # dmidecode and pciutils are not available on all arches
 %ifarch %ix86 x86_64 ia64
@@ -32,8 +32,8 @@ Requires:       dmidecode
 Requires:       pciutils
 %endif
 Requires:       virt-what
-Requires:       ruby >= 1.8.5
-BuildRequires:  ruby >= 1.8.5
+Requires:       ruby >= 1.8.7
+BuildRequires:  ruby >= 1.8.7
 
 # In Fedora 17+ or RHEL 7+ ruby-rdoc is called rubygem-rdoc
 %if 0%{?fedora} >= 17 || 0%{?rhel} >= 7
