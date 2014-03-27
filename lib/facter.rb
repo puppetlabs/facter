@@ -34,7 +34,6 @@ module Facter
 
   require 'facter/util/fact'
   require 'facter/util/collection'
-  require 'facter/util/monkey_patches'
 
   include Comparable
   include Enumerable
