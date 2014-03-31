@@ -62,6 +62,10 @@ class Facter::Util::Resolution
     @weight = nil
   end
 
+  def resolution_type
+    :simple
+  end
+
   # Evaluate the given block in the context of this resolution. If a block has
   # already been evaluated emit a warning to that effect.
   #
