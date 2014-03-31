@@ -44,6 +44,60 @@ describe "ec2_metadata" do
   end
 end
 
+describe "ec2_userdata" do
+  before do
+    Facter.collection.internal_loader.load(:ec2)
+  end
+
+  subject { Facter.fact(:ec2_userdata).resolution(:rest) }
+
+  it "is unsuitable if the virtual fact is not xen" do
+    Facter.fact(:virtual).stubs(:value).returns "kvm"
+    Facter::Util::EC2.stubs(:uri_reachable?).returns true
+    expect(subject).to_not be_suitable
+  end
+
+  it "is unsuitable if ec2 endpoint is not reachable" do
+    Facter.fact(:virtual).stubs(:value).returns "xen"
+    Facter::Util::EC2.stubs(:uri_reachable?).returns false
+    expect(subject).to_not be_suitable
+  end
+
+  describe "when the ec2 endpoint is reachable" do
+    before do
+      Facter::Util::EC2.stubs(:uri_reachable?).returns true
+    end
+
+    it "is suitable if the virtual fact is xen" do
+      Facter.fact(:virtual).stubs(:value).returns "xen"
+      expect(subject).to be_suitable
+    end
+
+    it "is suitable if the virtual fact is xenu" do
+      Facter.fact(:virtual).stubs(:value).returns "xenu"
+      expect(subject).to be_suitable
+    end
+  end
+
+  let(:userdata_uri) { 'http://169.254.169.254/latest/user-data/' }
+
+  it "resolves the value by fetching the rest endpoint" do
+    Facter::Util::EC2.expects(:fetch).with(userdata_uri).returns(["my ec2 userdata"])
+    expect(subject.value).to eq "my ec2 userdata"
+  end
+
+  it "returns the user data as a single string" do
+    userdata = [
+      "my multiline",
+      "user data",
+      "split by fetch"
+    ]
+
+    Facter::Util::EC2.expects(:fetch).with(userdata_uri).returns(userdata)
+    expect(subject.value).to eq "my multiline\nuser data\nsplit by fetch"
+  end
+end
+
 describe "flattened versions of ec2 facts" do
   # These facts are tricky to test because they are dynamic facts, and they are
   # generated from a fact that is defined in the same file. In order to pull
