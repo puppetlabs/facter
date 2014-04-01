@@ -1,37 +1,45 @@
 require 'facter/util/ec2'
-require 'open-uri'
 
-def metadata(id = "")
-  open("http://169.254.169.254/2008-02-01/meta-data/#{id||=''}").read.
-    split("\n").each do |o|
-    key = "#{id}#{o.gsub(/\=.*$/, '/')}"
-    if key[-1..-1] != '/'
-      value = open("http://169.254.169.254/2008-02-01/meta-data/#{key}").read.
-        split("\n")
-      symbol = "ec2_#{key.gsub(/\-|\//, '_')}".to_sym
-      Facter.add(symbol) { setcode { value.join(',') } }
-    else
-      metadata(key)
+Facter.define_fact(:ec2_metadata) do
+  define_resolution(:rest) do
+    confine do
+      Facter.value(:virtual).match /^xen/
     end
-  end
-rescue => details
-  Facter.warn "Could not retrieve ec2 metadata: #{details.message}"
-end
 
-def userdata()
-  Facter.add(:ec2_userdata) do
+    confine do
+      Facter::Util::EC2.uri_reachable?("http://169.254.169.254/latest/meta-data/")
+    end
+
     setcode do
-      if userdata = Facter::Util::EC2.userdata
-        userdata.split
-      end
+      metadata_uri = "http://169.254.169.254/latest/meta-data/"
+      Facter::Util::EC2.recursive_fetch(metadata_uri)
     end
   end
 end
 
-if (Facter::Util::EC2.has_euca_mac? || Facter::Util::EC2.has_openstack_mac? ||
-    Facter::Util::EC2.has_ec2_arp?) && Facter::Util::EC2.can_connect?
-  metadata
-  userdata
-else
-  Facter.debug "Not an EC2 host"
+Facter.define_fact(:ec2_userdata) do
+  define_resolution(:rest) do
+    confine do
+      Facter.value(:virtual).match /^xen/
+    end
+
+    confine do
+      Facter::Util::EC2.uri_reachable?("http://169.254.169.254/latest/user-data/")
+    end
+
+    setcode do
+      userdata_uri = "http://169.254.169.254/latest/user-data/"
+      output = Facter::Util::EC2.fetch(userdata_uri)
+      output.join("\n")
+    end
+  end
+end
+
+# The flattened version of the EC2 facts are deprecated and will be removed in
+# a future release of Facter.
+if (ec2_metadata = Facter.value(:ec2_metadata))
+  ec2_facts = Facter::Util::Values.flatten_structure("ec2", ec2_metadata)
+  ec2_facts.each_pair do |factname, factvalue|
+    Facter.add(factname, :value => factvalue)
+  end
 end

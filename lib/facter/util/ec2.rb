@@ -3,99 +3,99 @@ require 'open-uri'
 
 # Provide a set of utility static methods that help with resolving the EC2
 # fact.
+#
+# @see http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html
 module Facter::Util::EC2
-  class << self
-    # Test if we can connect to the EC2 api. Return true if able to connect.
-    # On failure this function fails silently and returns false.
-    #
-    # The +wait_sec+ parameter provides you with an adjustable timeout.
-    #
-    def can_connect?(wait_sec=2)
-      url = "http://169.254.169.254:80/"
-      Timeout::timeout(wait_sec) {open(url)}
-      return true
-    rescue Timeout::Error
-      return false
-    rescue
-      return false
-    end
+  CONNECTION_ERRORS = [
+    Errno::EHOSTDOWN,
+    Errno::EHOSTUNREACH,
+    Errno::ENETUNREACH,
+    Errno::ECONNABORTED,
+    Errno::ECONNREFUSED,
+    Errno::ECONNRESET,
+    Errno::ETIMEDOUT,
+  ]
 
-    # Test if this host has a mac address used by Eucalyptus clouds, which
-    # normally is +d0:0d+.
-    def has_euca_mac?
-      !!(Facter.value(:macaddress) =~ %r{^[dD]0:0[dD]:})
-    end
-
-    # Test if this host has a mac address used by OpenStack, which
-    # normally starts with FA:16:3E (older versions of OpenStack
-    # may generate mac addresses starting with 02:16:3E)
-    def has_openstack_mac?
-      !!(Facter.value(:macaddress) =~ %r{^(02|[fF][aA]):16:3[eE]})
-    end
-
-    # Test if the host has an arp entry in its cache that matches the EC2 arp,
-    # which is normally +fe:ff:ff:ff:ff:ff+.
-    def has_ec2_arp?
-      kernel = Facter.value(:kernel)
-
-      mac_address_re = case kernel
-                       when /Windows/i
-                         /fe-ff-ff-ff-ff-ff/i
-                       else
-                         /fe:ff:ff:ff:ff:ff/i
-                       end
-
-      arp_command = case kernel
-                    when /Windows/i, /SunOS/i
-                      "arp -a"
-                    else
-                      "arp -an"
-                    end
-
-      if arp_table = Facter::Core::Execution.exec(arp_command)
-        return true if arp_table.match(mac_address_re)
-      end
-      return false
-    end
-  end
-
-  ##
-  # userdata returns a single string containing the body of the response of the
-  # GET request for the URI http://169.254.169.254/latest/user-data/  If the
-  # metadata server responds with a 404 Not Found error code then this method
-  # retuns `nil`.
-  #
-  # @param version [String] containing the API version for the request.
-  # Defaults to "latest" and other examples are documented at
-  # http://aws.amazon.com/archives/Amazon%20EC2
-  #
-  # @api public
-  #
-  # @return [String] containing the response body or `nil`
-  def self.userdata(version="latest")
-    uri = "http://169.254.169.254/#{version}/user-data/"
-    begin
-      read_uri(uri)
-    rescue OpenURI::HTTPError => detail
-      case detail.message
-      when /404 Not Found/i
-        Facter.debug "No user-data present at #{uri}: server responded with #{detail.message}"
-        return nil
-      else
-        raise detail
-      end
-    end
-  end
-
-  ##
-  # read_uri provides a seam method to easily test the HTTP client
-  # functionality of a HTTP based metadata server.
+  # Query a specific AWS metadata URI.
   #
   # @api private
-  #
-  # @return [String] containing the body of the response
-  def self.read_uri(uri)
-    open(uri).read
+  def self.fetch(uri)
+    body = open(uri).read
+
+    lines = body.split("\n").map do |line|
+      if (match = line.match(/^(\d+)=.*$/))
+        # Metadata arrays are formatted like '<index>=<associated key>/', so
+        # we need to extract the index from that output.
+        "#{match[1]}/"
+      else
+        line
+      end
+    end
+
+    lines
+  rescue OpenURI::HTTPError => e
+    if e.message.match /404 Not Found/i
+      return nil
+    else
+      Facter.log_exception(e, "Failed to fetch ec2 uri #{uri}: #{e.message}")
+      return nil
+    end
+  rescue *CONNECTION_ERRORS => e
+    Facter.log_exception(e, "Failed to fetch ec2 uri #{uri}: #{e.message}")
   end
-  private_class_method :read_uri
+
+  def self.recursive_fetch(uri)
+    results = {}
+
+    keys = fetch(uri)
+
+    keys.each do |key|
+      if key.match(%r[/$])
+        # If a metadata key is suffixed with '/' then it's a general metadata
+        # resource, so we have to recursively look up all the keys in the given
+        # collection.
+        name = key[0..-2]
+        results[name] = recursive_fetch("#{uri}#{key}")
+      else
+        # This is a simple key/value pair, we can just query the given endpoint
+        # and store the results.
+        ret = fetch("#{uri}#{key}")
+        results[key] = ret.size > 1 ? ret : ret.first
+      end
+    end
+
+    results
+  end
+
+  # Is the given URI reachable?
+  #
+  # @param uri [String] The HTTP URI to attempt to reach
+  #
+  # @return [true, false] If the given URI could be fetched after retry_limit attempts
+  def self.uri_reachable?(uri, retry_limit = 3)
+    timeout = 0.2
+    able_to_connect = false
+    attempts = 0
+
+    begin
+      Timeout.timeout(timeout) do
+        open(uri).read
+      end
+      able_to_connect = true
+    rescue OpenURI::HTTPError => e
+      if e.message.match /404 Not Found/i
+        able_to_connect = false
+      else
+        retry if attempts < retry_limit
+      end
+    rescue Timeout::Error
+      retry if attempts < retry_limit
+    rescue *CONNECTION_ERRORS
+      retry if attempts < retry_limit
+    ensure
+      attempts = attempts + 1
+    end
+
+    able_to_connect
+  end
 end

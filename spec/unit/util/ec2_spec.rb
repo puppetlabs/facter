@@ -1,180 +1,104 @@
-#! /usr/bin/env ruby
-
 require 'spec_helper'
 require 'facter/util/ec2'
 
 describe Facter::Util::EC2 do
-  # This is the standard prefix for making an API call in EC2 (or fake)
-  # environments.
-  let(:api_prefix) { "http://169.254.169.254" }
+  let(:response) { StringIO.new }
 
-  describe "is_ec2_arp? method" do
-    describe "on linux" do
-      before :each do
-        # Return fake kernel
-        Facter.stubs(:value).with(:kernel).returns("linux")
-      end
+  describe "fetching a uri" do
+    it "splits the body into an array" do
+      response.string = my_fixture_read("meta-data/root")
+      described_class.stubs(:open).with("http://169.254.169.254/latest/meta-data/").returns response
+      output = described_class.fetch("http://169.254.169.254/latest/meta-data/")
 
-      it "should succeed if arp table contains fe:ff:ff:ff:ff:ff" do
-        ec2arp = my_fixture_read("linux-arp-ec2.out")
-        Facter::Core::Execution.expects(:exec).with("arp -an").\
-          at_least_once.returns(ec2arp)
-        Facter::Util::EC2.has_ec2_arp?.should == true
-      end
-
-      it "should succeed if arp table contains FE:FF:FF:FF:FF:FF" do
-        ec2arp = my_fixture_read("centos-arp-ec2.out")
-        Facter::Core::Execution.expects(:exec).with("arp -an").\
-          at_least_once.returns(ec2arp)
-        Facter::Util::EC2.has_ec2_arp?.should == true
-      end
-
-      it "should fail if arp table does not contain fe:ff:ff:ff:ff:ff" do
-        ec2arp = my_fixture_read("linux-arp-not-ec2.out")
-        Facter::Core::Execution.expects(:exec).with("arp -an").
-          at_least_once.returns(ec2arp)
-        Facter::Util::EC2.has_ec2_arp?.should == false
-      end
+      expect(output).to eq %w[
+        ami-id ami-launch-index ami-manifest-path block-device-mapping/ hostname
+        instance-action instance-id instance-type kernel-id local-hostname
+        local-ipv4 mac metrics/ network/ placement/ profile public-hostname
+        public-ipv4 public-keys/ reservation-id
+      ]
     end
 
-    describe "on windows" do
-      before :each do
-        # Return fake kernel
-        Facter.stubs(:value).with(:kernel).returns("windows")
-      end
+    it "reformats keys that are array indices" do
+      response.string = "0=adrien@grey/"
+      described_class.stubs(:open).with("http://169.254.169.254/latest/meta-data/public-keys/").returns response
+      output = described_class.fetch("http://169.254.169.254/latest/meta-data/public-keys/")
 
-      it "should succeed if arp table contains fe-ff-ff-ff-ff-ff" do
-        ec2arp = my_fixture_read("windows-2008-arp-a.out")
-        Facter::Core::Execution.expects(:exec).with("arp -a").\
-          at_least_once.returns(ec2arp)
-        Facter::Util::EC2.has_ec2_arp?.should == true
-      end
-
-      it "should fail if arp table does not contain fe-ff-ff-ff-ff-ff" do
-        ec2arp = my_fixture_read("windows-2008-arp-a-not-ec2.out")
-        Facter::Core::Execution.expects(:exec).with("arp -a").
-          at_least_once.returns(ec2arp)
-        Facter::Util::EC2.has_ec2_arp?.should == false
-      end
+      expect(output).to eq %w[0/]
     end
 
-    describe "on solaris" do
-      before :each do
-        Facter.stubs(:value).with(:kernel).returns("SunOS")
-      end
+    it "returns nil if the endpoint returns a 404" do
+      described_class.stubs(:open).with("http://169.254.169.254/latest/meta-data/public-keys/1/").raises OpenURI::HTTPError.new("404 Not Found", response)
+      output = described_class.fetch("http://169.254.169.254/latest/meta-data/public-keys/1/")
 
-      it "should fail if arp table does not contain fe:ff:ff:ff:ff:ff" do
-        ec2arp = my_fixture_read("solaris8_arp_a_not_ec2.out")
+      expect(output).to be_nil
+    end
 
-        Facter::Core::Execution.expects(:exec).with("arp -a").
-          at_least_once.returns(ec2arp)
+    it "logs an error if the endpoint raises a non-404 HTTPError" do
+      Facter.expects(:log_exception).with(instance_of(OpenURI::HTTPError), anything)
 
-        Facter::Util::EC2.has_ec2_arp?.should == false
-      end
+      described_class.stubs(:open).with("http://169.254.169.254/latest/meta-data/").raises OpenURI::HTTPError.new("418 I'm a Teapot", response)
+      output = described_class.fetch("http://169.254.169.254/latest/meta-data/")
+
+      expect(output).to be_nil
+    end
+
+    it "logs an error if the endpoint raises a connection error" do
+      Facter.expects(:log_exception).with(instance_of(Errno::ECONNREFUSED), anything)
+
+      described_class.stubs(:open).with("http://169.254.169.254/latest/meta-data/").raises Errno::ECONNREFUSED
+      output = described_class.fetch("http://169.254.169.254/latest/meta-data/")
+
+      expect(output).to be_nil
     end
   end
 
-  describe "is_euca_mac? method" do
-    it "should return true when the mac is a eucalyptus one" do
-      Facter.expects(:value).with(:macaddress).\
-        at_least_once.returns("d0:0d:1a:b0:a1:00")
-
-      Facter::Util::EC2.has_euca_mac?.should == true
+  describe "recursively fetching the EC2 metadata API" do
+    it "queries the given endpoint for metadata keys" do
+      described_class.expects(:fetch).with("http://169.254.169.254/latest/meta-data/").returns([])
+      described_class.recursive_fetch("http://169.254.169.254/latest/meta-data/")
     end
 
-    it "should return false when the mac is not a eucalyptus one" do
-      Facter.expects(:value).with(:macaddress).\
-        at_least_once.returns("0c:1d:a0:bc:aa:02")
+    it "fetches the value for a simple metadata key" do
+      described_class.expects(:fetch).with("http://169.254.169.254/latest/meta-data/").returns(['indexthing'])
+      described_class.expects(:fetch).with("http://169.254.169.254/latest/meta-data/indexthing").returns(['first', 'second'])
 
-      Facter::Util::EC2.has_euca_mac?.should == false
-    end
-  end
-
-  describe "is_openstack_mac? method" do
-    it "should return true when the mac is an openstack one" do
-      Facter.expects(:value).with(:macaddress).\
-        at_least_once.returns("02:16:3e:54:89:fd")
-
-      Facter::Util::EC2.has_openstack_mac?.should == true
+      output = described_class.recursive_fetch("http://169.254.169.254/latest/meta-data/")
+      expect(output).to eq({'indexthing' => ['first', 'second']})
     end
 
-    it "should return true when the mac is a newer openstack mac" do
-      # https://github.com/openstack/nova/commit/b684d651f540fc512ced58acd5ae2ef4d55a885c#nova/utils.py
-      Facter.expects(:value).with(:macaddress).\
-        at_least_once.returns("fa:16:3e:54:89:fd")
+    it "unwraps metadata values that are in single element arrays" do
+      described_class.expects(:fetch).with("http://169.254.169.254/latest/meta-data/").returns(['ami-id'])
+      described_class.expects(:fetch).with("http://169.254.169.254/latest/meta-data/ami-id").returns(['i-12x'])
 
-      Facter::Util::EC2.has_openstack_mac?.should == true
+      output = described_class.recursive_fetch("http://169.254.169.254/latest/meta-data/")
+      expect(output).to eq({'ami-id' => 'i-12x'})
     end
 
-    it "should return true when the mac is a newer openstack mac and returned in upper case" do
-      # https://github.com/openstack/nova/commit/b684d651f540fc512ced58acd5ae2ef4d55a885c#nova/utils.py
-      Facter.expects(:value).with(:macaddress).\
-        at_least_once.returns("FA:16:3E:54:89:FD")
+    it "recursively queries an endpoint if the key ends with '/'" do
+      described_class.expects(:fetch).with("http://169.254.169.254/latest/meta-data/").returns(['metrics/'])
+      described_class.expects(:fetch).with("http://169.254.169.254/latest/meta-data/metrics/").returns(['vhostmd'])
+      described_class.expects(:fetch).with("http://169.254.169.254/latest/meta-data/metrics/vhostmd").returns(['woo'])
 
-      Facter::Util::EC2.has_openstack_mac?.should == true
-    end
-
-    it "should return false when the mac is not a openstack one" do
-      Facter.expects(:value).with(:macaddress).\
-        at_least_once.returns("0c:1d:a0:bc:aa:02")
-
-      Facter::Util::EC2.has_openstack_mac?.should == false
+      output = described_class.recursive_fetch("http://169.254.169.254/latest/meta-data/")
+      expect(output).to eq({'metrics' => {'vhostmd' => 'woo'}})
     end
   end
 
-  describe "can_connect? method" do
-    it "returns true if api responds" do
-      # Return something upon connecting to the root
-      Module.any_instance.expects(:open).with("#{api_prefix}:80/").
-        at_least_once.returns("2008-02-01\nlatest")
-
-      Facter::Util::EC2.can_connect?.should be_true
+  describe "determining if a uri is reachable" do
+    it "retries if the connection times out" do
+      described_class.stubs(:fetch)
+      Timeout.expects(:timeout).with(0.2).twice.raises(Timeout::Error).returns(true)
+      expect(described_class.uri_reachable?("http://169.254.169.254/latest/meta-data/")).to be_true
     end
 
-    describe "when connection times out" do
-      it "should return false" do
-        # Emulate a timeout when connecting by throwing an exception
-        Module.any_instance.expects(:open).with("#{api_prefix}:80/").
-          at_least_once.raises(RuntimeError)
-
-        Facter::Util::EC2.can_connect?.should be_false
-      end
+    it "retries if the connection is reset" do
+      described_class.expects(:open).with(anything).twice.raises(Errno::ECONNREFUSED).returns(StringIO.new("woo"))
+      expect(described_class.uri_reachable?("http://169.254.169.254/latest/meta-data/")).to be_true
     end
 
-    describe "when connection is refused" do
-      it "should return false" do
-        # Emulate a connection refused
-        Module.any_instance.expects(:open).with("#{api_prefix}:80/").
-          at_least_once.raises(Errno::ECONNREFUSED)
-
-        Facter::Util::EC2.can_connect?.should be_false
-      end
-    end
-  end
-
-  describe "Facter::Util::EC2.userdata" do
-    let :not_found_error do
-      OpenURI::HTTPError.new("404 Not Found", StringIO.new)
-    end
-
-    let :example_userdata do
-      "owner=jeff@puppetlabs.com\ngroup=platform_team"
-    end
-
-    it 'returns nil when no userdata is present' do
-      Facter::Util::EC2.stubs(:read_uri).raises(not_found_error)
-      Facter::Util::EC2.userdata.should be_nil
-    end
-
-    it "returns the string containing the body" do
-      Facter::Util::EC2.stubs(:read_uri).returns(example_userdata)
-      Facter::Util::EC2.userdata.should == example_userdata
-    end
-
-    it "uses the specified API version" do
-      expected_uri = "http://169.254.169.254/2008-02-01/user-data/"
-      Facter::Util::EC2.expects(:read_uri).with(expected_uri).returns(example_userdata)
-      Facter::Util::EC2.userdata('2008-02-01').should == example_userdata
+    it "is false if the given uri returns a 404" do
+      described_class.expects(:open).with(anything).once.raises(OpenURI::HTTPError.new("404 Not Found", StringIO.new("woo")))
+      expect(described_class.uri_reachable?("http://169.254.169.254/latest/meta-data/")).to be_false
     end
   end
 end
