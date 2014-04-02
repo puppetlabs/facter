@@ -1,0 +1,533 @@
+ID    SIZE TYPE
+0     63   SMB_TYPE_BIOS (BIOS information)
+
+  Vendor: Phoenix Technologies Ltd.
+  Version String: V1.23D
+  Release Date: 06/11/2007
+  Address Segment: 0xe3b4
+  ROM Size: 524288 bytes
+  Image Size: 115904 bytes
+  Characteristics: 0x7fc8de80
+	SMB_BIOSFL_PCI (PCI is supported)
+	SMB_BIOSFL_PLUGNPLAY (Plug and Play is supported)
+	SMB_BIOSFL_APM (APM is supported)
+	SMB_BIOSFL_FLASH (BIOS is Flash Upgradeable)
+	SMB_BIOSFL_SHADOW (BIOS shadowing is allowed)
+	SMB_BIOSFL_ESCD (ESCD support is available)
+	SMB_BIOSFL_CDBOOT (Boot from CD is supported)
+	SMB_BIOSFL_EDD (EDD Spec is supported)
+	SMB_BIOSFL_525_360K (int 0x13 5.25" 360K floppy)
+	SMB_BIOSFL_525_12M (int 0x13 5.25" 1.2M floppy)
+	SMB_BIOSFL_35_720K (int 0x13 3.5" 720K floppy)
+	SMB_BIOSFL_35_288M (int 0x13 3.5" 2.88M floppy)
+	SMB_BIOSFL_I5_PRINT (int 0x5 print screen svcs)
+	SMB_BIOSFL_I9_KBD (int 0x9 8042 keyboard svcs)
+	SMB_BIOSFL_I14_SER (int 0x14 serial svcs)
+	SMB_BIOSFL_I17_PRINTER (int 0x17 printer svcs)
+	SMB_BIOSFL_I10_CGA (int 0x10 CGA svcs)
+  Characteristics Extension Byte 1: 0x13
+	SMB_BIOSXB1_ACPI (ACPI is supported)
+	SMB_BIOSXB1_USBL (USB legacy is supported)
+	SMB_BIOSXB1_LS120 (LS-120 boot is supported)
+  Characteristics Extension Byte 2: 0x0
+
+ID    SIZE TYPE
+1     52   SMB_TYPE_SYSTEM (system information)
+
+  Manufacturer: RIOWORKS
+  Product: HDAMA
+  Version:  
+  Serial Number: 0123456789
+
+  UUID: 00000000-0000-0000-0000-000000000000
+  Wake-Up Event: 0x6 (power switch)
+  SKU Number: 
+  Family: 
+
+ID    SIZE TYPE
+2     37   SMB_TYPE_BASEBOARD (base board)
+
+  Manufacturer: RIOWORKS
+  Product: HDAMA-I
+  Version:  
+  Serial Number: 0123456789
+
+  Chassis: 0
+  Flags: 0x0
+  Board Type: 0x0
+
+ID    SIZE TYPE
+3     37   SMB_TYPE_CHASSIS (system enclosure or chassis)
+
+  Manufacturer: RIOWORKS
+  Version: N/A
+  Serial Number: N/A
+  Asset Tag: N/A
+
+  OEM Data: 0x1234
+  Lock Present: N
+  Chassis Type: 0x7 (tower)
+  Boot-Up State: 0x2 (unknown)
+  Power Supply State: 0x2 (unknown)
+  Thermal State: 0x2 (unknown)
+  Chassis Height: 0u
+  Power Cords: 0
+  Element Records: 0
+
+ID    SIZE TYPE
+4     68   SMB_TYPE_PROCESSOR (processor)
+
+  Manufacturer: AMD
+  Version: AMD               
+  Location Tag: Socket 940
+
+  Family: 132 (Opteron)
+  CPUID: 0x178bfbff00020f12
+  Type: 3 (central processor)
+  Socket Upgrade: 6 (none)
+  Socket Status: Populated
+  Processor Status: 1 (enabled)
+  Supported Voltages: 1.6V
+  External Clock Speed: Unknown
+  Maximum Speed: 3000MHz
+  Current Speed: 2200MHz
+  L1 Cache: 6
+  L2 Cache: 7
+  L3 Cache: None
+
+ID    SIZE TYPE
+5     67   SMB_TYPE_PROCESSOR (processor)
+
+  Manufacturer: AMD
+  Version: AMD              
+  Location Tag: Socket 940
+
+  Family: 132 (Opteron)
+  CPUID: 0x178bfbff00020f12
+  Type: 3 (central processor)
+  Socket Upgrade: 6 (none)
+  Socket Status: Populated
+  Processor Status: 1 (enabled)
+  Supported Voltages: 1.6V
+  External Clock Speed: Unknown
+  Maximum Speed: 3000MHz
+  Current Speed: 2200MHz
+  L1 Cache: None
+  L2 Cache: None
+  L3 Cache: None
+
+ID    SIZE TYPE
+6     27   SMB_TYPE_CACHE (processor cache)
+
+  Location Tag: L1 Cache
+
+  Level: 1
+  Maximum Installed Size: 131072 bytes
+  Installed Size: 131072 bytes
+  Speed: Unknown
+  Supported SRAM Types: 0x58
+	SMB_CAT_BURST (burst)
+	SMB_CAT_PBURST (pipeline burst)
+	SMB_CAT_ASYNC (asynchronous)
+  Current SRAM Type: 0x40 (asynchronous)
+  Error Correction Type: 2 (unknown)
+  Logical Cache Type: 2 (unknown)
+  Associativity: 2 (unknown)
+  Mode: 1 (write-back)
+  Location: 0 (internal)
+  Flags: 0x1
+	SMB_CAF_ENABLED (enabled at boot time)
+
+ID    SIZE TYPE
+7     27   SMB_TYPE_CACHE (processor cache)
+
+  Location Tag: L2 Cache
+
+  Level: 2
+  Maximum Installed Size: 1048576 bytes
+  Installed Size: 2097152 bytes
+  Speed: Unknown
+  Supported SRAM Types: 0x38
+	SMB_CAT_BURST (burst)
+	SMB_CAT_PBURST (pipeline burst)
+	SMB_CAT_SYNC (synchronous)
+  Current SRAM Type: 0x20 (synchronous)
+  Error Correction Type: 2 (unknown)
+  Logical Cache Type: 5 (unified)
+  Associativity: 2 (unknown)
+  Mode: 0 (write-through)
+  Location: 0 (internal)
+  Flags: 0x1
+	SMB_CAF_ENABLED (enabled at boot time)
+
+ID    SIZE TYPE
+8     25   SMB_TYPE_SLOT (upgradeable system slot)
+
+  Location Tag: PCI-X Slot 1
+
+  Reference Designator: PCI-X Slot 1
+  Slot ID: 0x0
+  Type: 0x10 (AGP 2X)
+  Width: 0x5 (32 bit)
+  Usage: 0x2 (unknown)
+  Length: 0x4 (long length)
+  Slot Characteristics 1: 0x4
+	SMB_SLCH1_33V (provides 3.3V)
+  Slot Characteristics 2: 0x1
+	SMB_SLCH2_PME (slot supports PME# signal)
+  Segment Group: 0
+  Bus Number: 0
+  Device/Function Number: 0
+
+ID    SIZE TYPE
+9     25   SMB_TYPE_SLOT (upgradeable system slot)
+
+  Location Tag: PCI-X Slot 2
+
+  Reference Designator: PCI-X Slot 2
+  Slot ID: 0x1
+  Type: 0x6 (PCI)
+  Width: 0x5 (32 bit)
+  Usage: 0x4 (in use)
+  Length: 0x4 (long length)
+  Slot Characteristics 1: 0x4
+	SMB_SLCH1_33V (provides 3.3V)
+  Slot Characteristics 2: 0x1
+	SMB_SLCH2_PME (slot supports PME# signal)
+  Segment Group: 0
+  Bus Number: 0
+  Device/Function Number: 0
+
+ID    SIZE TYPE
+10    25   SMB_TYPE_SLOT (upgradeable system slot)
+
+  Location Tag: PCI-X Slot 3
+
+  Reference Designator: PCI-X Slot 3
+  Slot ID: 0x2
+  Type: 0x6 (PCI)
+  Width: 0x5 (32 bit)
+  Usage: 0x3 (available)
+  Length: 0x4 (long length)
+  Slot Characteristics 1: 0x4
+	SMB_SLCH1_33V (provides 3.3V)
+  Slot Characteristics 2: 0x1
+	SMB_SLCH2_PME (slot supports PME# signal)
+  Segment Group: 0
+  Bus Number: 0
+  Device/Function Number: 0
+
+ID    SIZE TYPE
+11    25   SMB_TYPE_SLOT (upgradeable system slot)
+
+  Location Tag: PCI-X Slot 4
+
+  Reference Designator: PCI-X Slot 4
+  Slot ID: 0x3
+  Type: 0x6 (PCI)
+  Width: 0x5 (32 bit)
+  Usage: 0x3 (available)
+  Length: 0x4 (long length)
+  Slot Characteristics 1: 0x4
+	SMB_SLCH1_33V (provides 3.3V)
+  Slot Characteristics 2: 0x1
+	SMB_SLCH2_PME (slot supports PME# signal)
+  Segment Group: 0
+  Bus Number: 0
+  Device/Function Number: 0
+
+ID    SIZE TYPE
+12    23   SMB_TYPE_SLOT (upgradeable system slot)
+
+  Location Tag: PCI Slot 5
+
+  Reference Designator: PCI Slot 5
+  Slot ID: 0x4
+  Type: 0x6 (PCI)
+  Width: 0x5 (32 bit)
+  Usage: 0x3 (available)
+  Length: 0x4 (long length)
+  Slot Characteristics 1: 0x4
+	SMB_SLCH1_33V (provides 3.3V)
+  Slot Characteristics 2: 0x1
+	SMB_SLCH2_PME (slot supports PME# signal)
+  Segment Group: 0
+  Bus Number: 0
+  Device/Function Number: 0
+
+ID    SIZE TYPE
+13    23   SMB_TYPE_SLOT (upgradeable system slot)
+
+  Location Tag: PCI Slot 6
+
+  Reference Designator: PCI Slot 6
+  Slot ID: 0x5
+  Type: 0x6 (PCI)
+  Width: 0x5 (32 bit)
+  Usage: 0x3 (available)
+  Length: 0x4 (long length)
+  Slot Characteristics 1: 0x4
+	SMB_SLCH1_33V (provides 3.3V)
+  Slot Characteristics 2: 0x1
+	SMB_SLCH2_PME (slot supports PME# signal)
+  Segment Group: 0
+  Bus Number: 0
+  Device/Function Number: 0
+
+ID    SIZE TYPE
+14    29   SMB_TYPE_SLOT (upgradeable system slot)
+
+  Location Tag: PCI-X Riser Slot
+
+  Reference Designator: PCI-X Riser Slot
+  Slot ID: 0x2
+  Type: 0x12 (PCI-X)
+  Width: 0x6 (64 bit)
+  Usage: 0x3 (available)
+  Length: 0x4 (long length)
+  Slot Characteristics 1: 0x6
+	SMB_SLCH1_5V (provides 5.0V)
+	SMB_SLCH1_33V (provides 3.3V)
+  Slot Characteristics 2: 0x1
+	SMB_SLCH2_PME (slot supports PME# signal)
+  Segment Group: 0
+  Bus Number: 0
+  Device/Function Number: 0
+
+ID    SIZE TYPE
+15    34   SMB_TYPE_OEMSTR (OEM string table)
+
+  0
+  0
+  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+
+ID    SIZE TYPE
+16    29   SMB_TYPE_EVENTLOG (system event log)
+
+  Log Area Size: 16 bytes
+  Header Offset: 0
+  Data Offset: 16
+  Data Access Method: 4 (GP Non-Volatile API Access)
+  Log Flags: 0x1
+	SMB_EVFL_VALID (log area valid)
+  Log Header Format: 1 (DMTF log header type 1)
+  Update Token: 0x40
+  Data Access Address: 0x0
+  Type Descriptors:
+  0: Log Type 0x8, Data Type 0x4
+  1: Log Type 0x1, Data Type 0x2
+  2: Log Type 0x2, Data Type 0x2
+
+ID    SIZE TYPE
+17    15   SMB_TYPE_MEMARRAY (physical memory array)
+
+  Location: 3 (system board or motherboard)
+  Use: 3 (system memory)
+  ECC: 5 (single-bit ECC)
+  Number of Slots/Sockets: 3
+  Memory Error Data: Not Supported
+  Max Capacity: 34359738368 bytes
+
+ID    SIZE TYPE
+18    36   SMB_TYPE_MEMDEVICE (memory device)
+
+  Location Tag: S0
+
+  Physical Memory Array: 17
+  Memory Error Data: None
+  Total Width: 128 bits
+  Data Width: 64 bits
+  Size: 1073741824 bytes
+  Form Factor: 9 (DIMM)
+  Set: 1
+  Memory Type: 3 (DRAM)
+  Flags: 0x80
+	SMB_MDF_SYNC (synchronous)
+  Speed: Unknown
+  Device Locator: S0
+  Bank Locator: Bank 0
+
+ID    SIZE TYPE
+19    36   SMB_TYPE_MEMDEVICE (memory device)
+
+  Location Tag: S1
+
+  Physical Memory Array: 17
+  Memory Error Data: None
+  Total Width: 128 bits
+  Data Width: 64 bits
+  Size: 1073741824 bytes
+  Form Factor: 9 (DIMM)
+  Set: 1
+  Memory Type: 3 (DRAM)
+  Flags: 0x80
+	SMB_MDF_SYNC (synchronous)
+  Speed: Unknown
+  Device Locator: S1
+  Bank Locator: Bank 0
+
+ID    SIZE TYPE
+20    36   SMB_TYPE_MEMDEVICE (memory device)
+
+  Location Tag: S2
+
+  Physical Memory Array: 17
+  Memory Error Data: None
+  Total Width: 128 bits
+  Data Width: 64 bits
+  Size: 1073741824 bytes
+  Form Factor: 9 (DIMM)
+  Set: 2
+  Memory Type: 3 (DRAM)
+  Flags: 0x80
+	SMB_MDF_SYNC (synchronous)
+  Speed: Unknown
+  Device Locator: S2
+  Bank Locator: Bank 1
+
+ID    SIZE TYPE
+21    36   SMB_TYPE_MEMDEVICE (memory device)
+
+  Location Tag: S3
+
+  Physical Memory Array: 17
+  Memory Error Data: None
+  Total Width: 128 bits
+  Data Width: 64 bits
+  Size: 1073741824 bytes
+  Form Factor: 9 (DIMM)
+  Set: 2
+  Memory Type: 3 (DRAM)
+  Flags: 0x80
+	SMB_MDF_SYNC (synchronous)
+  Speed: Unknown
+  Device Locator: S3
+  Bank Locator: Bank 1
+
+ID    SIZE TYPE
+22    36   SMB_TYPE_MEMDEVICE (memory device)
+
+  Location Tag: S4
+
+  Physical Memory Array: 17
+  Memory Error Data: None
+  Total Width: 128 bits
+  Data Width: 64 bits
+  Size: 1073741824 bytes
+  Form Factor: 9 (DIMM)
+  Set: 5
+  Memory Type: 3 (DRAM)
+  Flags: 0x80
+	SMB_MDF_SYNC (synchronous)
+  Speed: Unknown
+  Device Locator: S4
+  Bank Locator: Bank 2
+
+ID    SIZE TYPE
+23    36   SMB_TYPE_MEMDEVICE (memory device)
+
+  Location Tag: S5
+
+  Physical Memory Array: 17
+  Memory Error Data: None
+  Total Width: 128 bits
+  Data Width: 64 bits
+  Size: 1073741824 bytes
+  Form Factor: 9 (DIMM)
+  Set: 5
+  Memory Type: 3 (DRAM)
+  Flags: 0x80
+	SMB_MDF_SYNC (synchronous)
+  Speed: Unknown
+  Device Locator: S5
+  Bank Locator: Bank 2
+
+ID    SIZE TYPE
+24    36   SMB_TYPE_MEMDEVICE (memory device)
+
+  Location Tag: S6
+
+  Physical Memory Array: 17
+  Memory Error Data: None
+  Total Width: 128 bits
+  Data Width: 64 bits
+  Size: 1073741824 bytes
+  Form Factor: 9 (DIMM)
+  Set: 6
+  Memory Type: 3 (DRAM)
+  Flags: 0x80
+	SMB_MDF_SYNC (synchronous)
+  Speed: Unknown
+  Device Locator: S6
+  Bank Locator: Bank 3
+
+ID    SIZE TYPE
+25    36   SMB_TYPE_MEMDEVICE (memory device)
+
+  Location Tag: S7
+
+  Physical Memory Array: 17
+  Memory Error Data: None
+  Total Width: 128 bits
+  Data Width: 64 bits
+  Size: 1073741824 bytes
+  Form Factor: 9 (DIMM)
+  Set: 6
+  Memory Type: 3 (DRAM)
+  Flags: 0x80
+	SMB_MDF_SYNC (synchronous)
+  Speed: Unknown
+  Device Locator: S7
+  Bank Locator: Bank 3
+
+ID    SIZE TYPE
+26    15   SMB_TYPE_MEMARRAYMAP (memory array mapped address)
+
+  Physical Memory Array: 17
+  Devices per Row: 2
+  Physical Address: 0x0
+  Size: 8589934592 bytes
+
+ID    SIZE TYPE
+27    19   SMB_TYPE_MEMDEVICEMAP (memory device mapped address)
+
+  Memory Device: 18
+  Memory Array Mapped Address: 26
+  Physical Address: 0x0
+  Size: 1073741824 bytes
+  Partition Row Position: 1
+  Interleave Position: 0
+  Interleave Data Depth: 1
+
+ID    SIZE TYPE
+28    19   SMB_TYPE_MEMDEVICEMAP (memory device mapped address)
+
+  Memory Device: 19
+  Memory Array Mapped Address: 26
+  Physical Address: 0x40000000
+  Size: 1073741824 bytes
+  Partition Row Position: 1
+  Interleave Position: 0
+  Interleave Data Depth: 1
+
+ID    SIZE TYPE
+29    19   SMB_TYPE_MEMDEVICEMAP (memory device mapped address)
+
+  Memory Device: 20
+  Memory Array Mapped Address: 26
+  Physical Address: 0x80000000
+  Size: 1073741824 bytes
+  Partition Row Position: 1
+  Interleave Position: 0
+  Interleave Data Depth: 1
+
+ID    SIZE TYPE
+30    20   SMB_TYPE_BOOT (system boot status)
+
+  Boot Status Code: 0xc
+  Boot Data (9 bytes):
+
+  offset:   0 1 2 3  4 5 6 7  8 9 a b  c d e f  0123456789abcdef
+       0:  01020304 05060708 09                 .........       
+
+
