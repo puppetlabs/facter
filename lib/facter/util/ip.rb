@@ -71,7 +71,7 @@ class Facter::Util::IP
   #
   # @api private
   def self.alphafy(interface)
-    interface.to_s.gsub(/[^a-z0-9_]/i, '_')
+    interface.to_s.gsub(/[^a-z0-9_:.]/i, '_')
   end
 
   # Returns an array of supported platforms in string format. These array values
