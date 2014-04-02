@@ -1,3 +1,4 @@
+
 module Facter
   module Util
     # A util module for facter containing helper methods
@@ -74,6 +75,34 @@ module Facter
         value = value.to_s if value.is_a?(Symbol)
         value = value.downcase if value.is_a?(String)
         value
+      end
+
+      # Flatten the given data structure to something that's suitable to return
+      # as flat facts.
+      #
+      # @param path [String] The fact path to be prefixed to the given value.
+      # @param structure [Object] The data structure to flatten. Nested hashes
+      #   will be recursively flattened, everything else will be returned as-is.
+      #
+      # @return [Hash] The given data structure prefixed with the given path
+      def flatten_structure(path, structure)
+        results = {}
+
+        if structure.is_a? Hash
+          structure.each_pair do |name, value|
+            new_path = "#{path}_#{name}".gsub(/\-|\//, '_')
+            results.merge! flatten_structure(new_path, value)
+          end
+        elsif structure.is_a? Array
+          structure.each_with_index do |value, index|
+            new_path = "#{path}_#{index}"
+            results.merge! flatten_structure(new_path, value)
+          end
+        else
+          results[path] = structure
+        end
+
+        results
       end
     end
   end
