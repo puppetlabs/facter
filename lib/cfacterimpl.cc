@@ -139,7 +139,8 @@ void get_network_facts(fact_map& facts)
     }
 
     // find number of interfaces.
-    ifconf ifc = {};
+    ifconf ifc;
+    memset(&ifc, 0, sizeof(ifc));
     if (ioctl(sock, SIOCGIFCONF, &ifc) < 0) {
         perror("ioctl");
         exit(1);
@@ -217,7 +218,7 @@ void get_network_facts(fact_map& facts)
 #ifndef __APPLE__  // SIOCGIFHWADDR isn't supported, might need to use SC library
         // and the mac address (but not for loopback)
         if (strcmp(req.ifr_name, "lo")) {
-            if (ioctl(s, SIOCGIFHWADDR, r) < 0) {
+            if (ioctl(sock, SIOCGIFHWADDR, &req) < 0) {
                 perror("ioctl SIOCGIFHWADDR");
                 exit(1);
             }

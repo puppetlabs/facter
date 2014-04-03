@@ -1,5 +1,8 @@
+# Misc files
 *.swp
 .DS_Store
+/nbproject
+compile_commands.json
 
 # CMake
 CMakeCache.txt
