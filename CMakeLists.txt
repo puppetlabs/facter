@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.12)
 project(CFACTER)
 
 set(CFACTER_VERSION_MAJOR 0)
@@ -7,9 +7,26 @@ set(CFACTER_VERSION_PATCH 1)
 
 # Generate a file containing the above version numbers
 configure_file (
-  "${PROJECT_SOURCE_DIR}/version.h.in"
-  "${PROJECT_SOURCE_DIR}/version.h"
+    "${PROJECT_SOURCE_DIR}/version.h.in"
+    "${PROJECT_SOURCE_DIR}/version.h"
 )
+
+if(APPLE)
+    # Set the RPATH to OSX magic value @executable_path (where the loading executable is located)
+    set(CMAKE_INSTALL_RPATH "@executable_path/")
+    set(CMAKE_MACOSX_RPATH 1)
+elseif(UNIX)
+    # Set the RPATH to be magic value $ORIGIN (where the loading executable is located)
+    set(CMAKE_INSTALL_RPATH "$ORIGIN")
+endif()
+
+
+# Set the default install path
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "/opt/cfacter" CACHE PATH "default install path" FORCE)
+endif()
+
+set(VENDOR_DIRECTORY "${PROJECT_SOURCE_DIR}/vendor")
 
 add_subdirectory(exe)
 
@@ -22,7 +39,7 @@ if (NOT PYTHONINTERP_FOUND)
 else()
     set(CPPLINT_FILTER
         "-build/include"          # Why?
-        "-build/namespaces"       # What's a namespace to do 
+        "-build/namespaces"       # What's a namespace to do
         "-legal/copyright"        # Not yet
         "-runtime/references"     # Not sure about this religion
         "-readability/streams"    # What?
@@ -32,7 +49,7 @@ else()
         "-readability/todo"       # Seriously? todo comments need to identify an owner? pffft
     )
 
-    FILE (GLOB ALL_SOURCES lib/*.cc exe/*.cc)
+    file(GLOB ALL_SOURCES lib/*.cc exe/*.cc)
 
     set(CPPLINT_PATH "ext/cpplint.py")
 
@@ -49,7 +66,6 @@ else()
         COMMAND ${PYTHON_EXECUTABLE} ${CPPLINT_PATH} ${CPPLINT_ARGS} ${ALL_SOURCES}
         VERBATIM
     )
-
 endif()
 
 add_custom_target(cppcheck
