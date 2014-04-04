@@ -21,3 +21,5 @@ CMakeScripts
 /lib/libcfacter.so
 /lib/libcfacter.dylib
 /lib/Debug
+/vendor/src
+/vendor/tmp

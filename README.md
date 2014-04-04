@@ -28,7 +28,7 @@ To build cfacter with debug information:
 
 To turn off debug information:
 
-`$ cmake -DCMAKE_BUILD_TYPE= . && make clean all`
+`$ cmake -UCMAKE_BUILD_TYPE . && make clean all`
 
 Run
 ---
@@ -42,15 +42,15 @@ Install
 
 You can install cfacter into your system:
 
-`$ sudo make install`
+`$ make && sudo make install`
 
-By default, this will install cfacter into `/usr/local/bin`, using an install prefix of `/usr/local`.
+By default, this will install cfacter into `/opt/cfacter`.
 
-To install with a different prefix:
+To install to a different location, set the install prefix:
 
-`$ cmake -DCMAKE_INSTALL_PREFIX=/usr . && sudo make clean install`
+`$ cmake -DCMAKE_INSTALL_PREFIX=~/cfacter . && make clean install`
 
-This would install cfacter into `/usr/bin`.
+This would install cfacter into `~/cfacter`.
 
 Uninstall
 ---------
