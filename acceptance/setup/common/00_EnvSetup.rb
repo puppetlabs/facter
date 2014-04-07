@@ -11,10 +11,12 @@ PACKAGES = {
   :redhat => [
     'git',
     'ruby',
+    'rubygem-json',
   ],
   :debian => [
     ['git', 'git-core'],
     'ruby',
+    'libjson-ruby',
   ],
   :solaris => [
     ['git', 'developer/versioning/git'],
