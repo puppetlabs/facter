@@ -71,6 +71,7 @@ def beaker_test(mode = :packages, options = {})
   if mode == :git
     puppet_fork = ENV['FORK'] || 'puppetlabs'
     git_server  = ENV['GIT_SERVER'] || 'github.com'
+    final_options[:install] ||= []
     final_options[:install] << "git://#{git_server}/#{puppet_fork}/facter.git##{sha}"
   end
 
