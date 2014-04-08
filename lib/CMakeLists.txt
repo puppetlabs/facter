@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(CFACTER)
 include(${VENDOR_DIRECTORY}/re2.cmake)
+include(${VENDOR_DIRECTORY}/rapidjson.cmake)
 
 set(CFACTERLIB_SOURCES
-    "${PROJECT_SOURCE_DIR}/cfacterlib.cc"
-    "${PROJECT_SOURCE_DIR}/cfacterimpl.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/cfacterlib.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/cfacterimpl.cc"
 )
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -23,6 +23,7 @@ install(TARGETS libcfacter DESTINATION .)
 # Set include directories
 include_directories(
     ${RE2_INCLUDE_DIRS}
+    ${RAPIDJSON_INCLUDE_DIRS}
 )
 
 # Link in additional libraries
@@ -30,3 +31,6 @@ target_link_libraries(libcfacter
     pthread
     libre2
 )
+
+# Add a dependency on rapidjson
+add_dependencies(libcfacter rapidjson)

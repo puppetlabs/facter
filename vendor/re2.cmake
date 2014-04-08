@@ -15,7 +15,7 @@ endif()
 # Add an external project to build re2
 externalproject_add(
     re2
-    PREFIX "${VENDOR_DIRECTORY}"
+    PREFIX "${PROJECT_BINARY_DIR}"
     URL "file://${VENDOR_DIRECTORY}/re2-20140304.tgz"
     URL_MD5 "e82a6491efdf2bc928dc3779abcb3bc8"
     CONFIGURE_COMMAND ""
