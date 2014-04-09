@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.12)
 project(CFACTER)
 
 set(CFACTER_VERSION_MAJOR 0)
-set(CFACTER_VERSION_MINOR 0)
-set(CFACTER_VERSION_PATCH 1)
+set(CFACTER_VERSION_MINOR 1)
+set(CFACTER_VERSION_PATCH 0)
 
 # Generate a file containing the above version numbers
 configure_file (
@@ -19,7 +19,6 @@ elseif(UNIX)
     # Set the RPATH to be magic value $ORIGIN (where the loading executable is located)
     set(CMAKE_INSTALL_RPATH "$ORIGIN")
 endif()
-
 
 # Set the default install path
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)

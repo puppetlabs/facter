@@ -1,9 +1,11 @@
-#include "cfacterlib.h"
+#include <cfacterlib.h>
 #include "../version.h"
 #include <getopt.h>
 #include <iostream>
+#include <facts/fact_map.hpp>
 
 using namespace std;
+using namespace cfacter::facts;
 
 void help()
 {
@@ -71,29 +73,14 @@ int main(int argc, char **argv)
 
         // short option 'j'
         case 'j':
-            // do json, that's the only output option atm
+            // TODO: properly support this
             break;
         }
     }
 
-    loadfacts();
-
-#define MAX_LEN_FACTS_JSON_STRING (1024 * 1024)  // go crazy here
-    char facts_json[MAX_LEN_FACTS_JSON_STRING];
-
-    if (optind == argc) {  // display all facts
-        if (to_json(facts_json, MAX_LEN_FACTS_JSON_STRING) < 0) {
-            cout << "Wow, that's a lot of facts" << endl;
-            exit(1);
-        }
-        cout << facts_json << endl;
-    } else {
-        // display requested fact(s)
-        while (optind < argc) {
-            // fix me
-            if (value(argv[optind], facts_json, MAX_LEN_FACTS_JSON_STRING) == 0)
-                cout << facts_json << endl;
-            ++optind;
-        }
-    }
+    // TODO: re-implement JSON output
+    fact_map::instance().each([](string const& name, value const* val) {
+        cout << name << " => " << (!val ? "<null>" : val->to_string()) << "\n";
+        return false;
+    });
 }
