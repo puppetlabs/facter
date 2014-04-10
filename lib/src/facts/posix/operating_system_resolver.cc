@@ -16,12 +16,12 @@ namespace cfacter { namespace facts { namespace posix {
     void operating_system_resolver::resolve_operating_system(fact_map& facts)
     {
         // Default to the same value as the kernel
-        auto kernel = facts.get_value<string_value>(kernel_resolver::kernel_name);
+        auto kernel = facts.get<string_value>(kernel_resolver::kernel_name);
         if (!kernel) {
             return;
         }
 
-        facts.add_fact(fact(operating_system_name, make_value<string_value>(kernel->value())));
+        facts.add(operating_system_name, make_value<string_value>(kernel->value()));
     }
 
 }}}  // namespace cfacter::facts::posix

@@ -7,17 +7,17 @@ namespace cfacter { namespace facts {
 
     fact_map fact_map::_instance;
 
-    void fact_map::add_fact(fact&& f)
+    void fact_map::add(std::string&& name, std::unique_ptr<value>&& value)
     {
         // Search for the fact first
-        auto const& it = _facts.lower_bound(f.name());
-        if (it != _facts.end() && !(_facts.key_comp()(f.name(), it->first))) {
-            throw fact_exists_exception("fact " + f.name() + " already exists.");
+        auto const& it = _facts.lower_bound(name);
+        if (it != _facts.end() && !(_facts.key_comp()(name, it->first))) {
+            throw fact_exists_exception("fact " + name + " already exists.");
         }
 
         // Remove any resolver for this fact and add the fact
-        _resolvers.erase(f.name());
-        _facts.insert(it, std::make_pair(f.name(), std::move(f)));
+        _resolvers.erase(name);
+        _facts.insert(it, std::make_pair(name, std::move(value)));
     }
 
     void fact_map::remove(string const& name)
@@ -36,7 +36,43 @@ namespace cfacter { namespace facts {
         return _facts.empty() && _resolvers.empty();
     }
 
-    fact const* fact_map::get_fact(std::string const& name)
+    void fact_map::each(std::function<bool(std::string const&, value const*)> func)
+    {
+        load();
+        resolve_facts();
+
+        std::find_if(begin(_facts), end(_facts), [&func](fact_map_type::value_type const& it) {
+            return func(it.first, it.second.get());
+        });
+    }
+
+    fact_map& fact_map::instance()
+    {
+        return fact_map::_instance;
+    }
+
+    void fact_map::load()
+    {
+        if (!empty()) {
+            return;
+        }
+        populate_common_facts(*this);
+        populate_platform_facts(*this);
+    }
+
+    void fact_map::resolve_facts()
+    {
+        // Go through every resolver and get each fact
+        while (!_resolvers.empty())
+        {
+            // Copy the string from the key as resolving the facts will
+            // destruct the resolver entry in the map
+            string name = _resolvers.begin()->first;
+            get_value(name);
+        }
+    }
+
+    value const* fact_map::get_value(std::string const& name)
     {
         load();
 
@@ -64,44 +100,7 @@ namespace cfacter { namespace facts {
                 return nullptr;
             }
         }
-        return &it->second;
-    }
-
-
-    void fact_map::each(std::function<bool(std::string const&, value const*)> func)
-    {
-        load();
-        resolve_facts();
-
-        std::find_if(begin(_facts), end(_facts), [&func](fact_map_type::value_type const& it) {
-            return func(it.first, it.second.val());
-        });
-    }
-
-    fact_map& fact_map::instance()
-    {
-        return fact_map::_instance;
-    }
-
-    void fact_map::load()
-    {
-        if (!empty()) {
-            return;
-        }
-        populate_common_facts();
-        populate_platform_facts();
-    }
-
-    void fact_map::resolve_facts()
-    {
-        // Go through every resolver and get each fact
-        while (!_resolvers.empty())
-        {
-            // Copy the string from the key as resolving the facts will
-            // destruct the resolver entry in the map
-            string name = _resolvers.begin()->first;
-            get_fact(name);
-        }
+        return it->second.get();
     }
 
 }}  // namespace cfacter::facts

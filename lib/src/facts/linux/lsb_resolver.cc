@@ -20,7 +20,7 @@ namespace cfacter { namespace facts { namespace linux {
         if (value.empty()) {
             return;
         }
-        facts.add_fact(fact(lsb_dist_id_name, make_value<string_value>(std::move(value))));
+        facts.add(lsb_dist_id_name, make_value<string_value>(std::move(value)));
     }
 
 }}}  // namespace cfacter::facts::linux

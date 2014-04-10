@@ -7,10 +7,23 @@
 #include <memory>
 #include <functional>
 #include "value.hpp"
-#include "fact.hpp"
 #include "fact_resolver.hpp"
 
 namespace cfacter { namespace facts {
+
+    struct fact_map;
+
+    /**
+     * Called to populate common facts.
+     * @param facts The fact map being populated.
+     */
+    void populate_common_facts(fact_map& facts);
+
+    /**
+     * Called to populate platform-specific facts.
+     * @param facts The fact map being populated.
+     */
+    void populate_platform_facts(fact_map& facts);
 
     /**
      * Thrown when a fact already exists in the map.
@@ -41,7 +54,7 @@ namespace cfacter { namespace facts {
      */
     struct fact_map
     {
-        typedef std::map<std::string, fact> fact_map_type;
+        typedef std::map<std::string, std::unique_ptr<value>> fact_map_type;
         typedef std::map<std::string, std::shared_ptr<fact_resolver>> resolver_map_type;
 
         /**
@@ -64,9 +77,10 @@ namespace cfacter { namespace facts {
 
         /**
          * Adds a fact to the map.
-         * @param f The fact to add to the map.
+         * @param name The name of the fact.
+         * @param value The value of the fact.
          */
-        void add_fact(fact&& f);
+        void add(std::string&& name, std::unique_ptr<value>&& value);
 
         /**
          * Removes a fact by name.
@@ -86,25 +100,14 @@ namespace cfacter { namespace facts {
         bool empty() const;
 
         /**
-         * Gets a fact by name.
-         * @param name The name of the fact to get.
-         * @return Returns a pointer to the fact or nullptr if the fact is not in the map.
-         */
-        fact const* get_fact(std::string const& name);
-
-        /**
          * Gets a fact value by name.
          * @param name The name of the fact to get the value of.
          * @return Returns a pointer to the fact value or nullptr if the fact is not in the map or the value is not the expected type.
          */
         template <typename T>
-        T const* get_value(std::string const& name)
+        T const* get(std::string const& name)
         {
-            auto f = get_fact(name);
-            if (!f) {
-                return nullptr;
-            }
-            return dynamic_cast<T const*>(f->val());
+            return dynamic_cast<T const*>(get_value(name));
         }
 
         /**
@@ -123,6 +126,7 @@ namespace cfacter { namespace facts {
         fact_map() {}
         void load();
         void resolve_facts();
+        value const* get_value(std::string const& name);
 
         static fact_map _instance;
 

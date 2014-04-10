@@ -5,7 +5,6 @@
 #include <memory>
 #include <string>
 #include <initializer_list>
-#include "fact.hpp"
 
 namespace cfacter { namespace facts {
 

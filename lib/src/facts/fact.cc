@@ -6,10 +6,9 @@ using namespace std;
 
 namespace cfacter { namespace facts {
 
-    void populate_common_facts()
+    void populate_common_facts(fact_map& facts)
     {
-        auto& facts = fact_map::instance();
-        facts.add_fact(fact("cfacterversion", make_value<string_value>(CFACTER_VERSION)));
+        facts.add("cfacterversion", make_value<string_value>(CFACTER_VERSION));
     }
 
 }}  // namespace cfacter::facts

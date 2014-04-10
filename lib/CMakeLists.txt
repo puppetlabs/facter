@@ -35,13 +35,13 @@ endif()
 # Set the platform-specific sources
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     set(LIBCFACTER_PLATFORM_SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/fact.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/platform.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBCFACTER_PLATFORM_SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/fact.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/operating_system_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/lsb_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/operating_system_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/platform.cc"
     )
 endif()
 

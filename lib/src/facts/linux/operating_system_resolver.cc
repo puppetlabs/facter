@@ -14,7 +14,7 @@ namespace cfacter { namespace facts { namespace linux {
 
     void operating_system_resolver::resolve_operating_system(fact_map& facts)
     {
-        auto dist_id = facts.get_value<string_value>(lsb_resolver::lsb_dist_id_name);
+        auto dist_id = facts.get<string_value>(lsb_resolver::lsb_dist_id_name);
 
         // Start by checking for Cumulus Linux
         string value = check_cumulus_linux();
@@ -51,7 +51,7 @@ namespace cfacter { namespace facts { namespace linux {
         }
 
         // Add the fact
-        facts.add_fact(fact(operating_system_name, make_value<string_value>(value)));
+        facts.add(operating_system_name, make_value<string_value>(value));
     }
 
     string operating_system_resolver::check_cumulus_linux()

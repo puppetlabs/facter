@@ -6,9 +6,8 @@ using namespace std;
 
 namespace cfacter { namespace facts {
 
-    void populate_platform_facts()
+    void populate_platform_facts(fact_map& facts)
     {
-        auto& facts = fact_map::instance();
         facts.add_resolver<posix::kernel_resolver>();
         facts.add_resolver<posix::operating_system_resolver>();
     }
