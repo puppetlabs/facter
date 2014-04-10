@@ -1,5 +1,4 @@
 #include <util/string.hpp>
-#include <cctype>
 #include <sstream>
 #include <algorithm>
 #include <iterator>
@@ -8,36 +7,42 @@ using namespace std;
 
 namespace cfacter { namespace util {
 
-    string& ltrim(string& str)
+    initializer_list<char> default_trim_set = { '\r', '\n', ' ', '\t', '\v', '\f' };
+
+    string& ltrim(string& str, initializer_list<char> const& set)
     {
-        str.erase(str.begin(), find_if(str.begin(), str.end(), [](char c) { return !isspace(c); }));
+        str.erase(str.begin(), find_if(str.begin(), str.end(), [&set](char c) {
+            return find(set.begin(), set.end(), c) == set.end();
+        }));
         return str;
     }
 
-    string& ltrim(string&& str)
+    string& ltrim(string&& str, initializer_list<char> const& set)
     {
-        return ltrim(str);
+        return ltrim(str, set);
     }
 
-    string& rtrim(string& str)
+    string& rtrim(string& str, initializer_list<char> const& set)
     {
-        str.erase(find_if(str.rbegin(), str.rend(), [](char c) { return !isspace(c); }).base(), str.end());
+        str.erase(find_if(str.rbegin(), str.rend(), [&set](char c) {
+            return find(set.begin(), set.end(), c) == set.end();
+        }).base(), str.end());
         return str;
     }
 
-    string& rtrim(string&& str)
+    string& rtrim(string&& str, initializer_list<char> const& set)
     {
-        return rtrim(str);
+        return rtrim(str, set);
     }
 
-    string& trim(std::string& str)
+    string& trim(std::string& str, initializer_list<char> const& set)
     {
-        return ltrim(rtrim(str));
+        return ltrim(rtrim(str, set), set);
     }
 
-    string& trim(string&& str)
+    string& trim(string&& str, initializer_list<char> const& set)
     {
-        return trim(str);
+        return trim(str, set);
     }
 
     vector<string> tokenize(string const& str)
