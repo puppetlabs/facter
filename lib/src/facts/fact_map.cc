@@ -14,6 +14,9 @@ namespace cfacter { namespace facts {
         if (it != _facts.end() && !(_facts.key_comp()(f.name(), it->first))) {
             throw fact_exists_exception("fact " + f.name() + " already exists.");
         }
+
+        // Remove any resolver for this fact and add the fact
+        _resolvers.erase(f.name());
         _facts.insert(it, std::make_pair(f.name(), std::move(f)));
     }
 
@@ -46,12 +49,14 @@ namespace cfacter { namespace facts {
                 return nullptr;
             }
             auto resolver = resolver_it->second;
-            // Remove all facts mapped to this resolver
+
+            // Resolve the facts
+            resolver->resolve(*this);
+
+            // Remove any associated facts that didn't resolve
             for (auto const& name : resolver->names()) {
                 _resolvers.erase(name);
             }
-            // Add all resolved facts
-            resolver->resolve(*this);
 
             it = _facts.find(name);
             if (it == _facts.end()) {
