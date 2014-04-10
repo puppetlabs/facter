@@ -1,36 +1,39 @@
 #include <facts/posix/kernel_resolver.hpp>
 #include <facts/fact_map.hpp>
 #include <facts/string_value.hpp>
-#include <execution/execution.hpp>
 #include <util/string.hpp>
 
 using namespace std;
-using namespace cfacter::execution;
 using namespace cfacter::util;
 
 namespace cfacter { namespace facts { namespace posix {
 
     void kernel_resolver::resolve_facts(fact_map& facts)
     {
+        utsname name;
+        memset(&name, 0, sizeof(name));
+        if (uname(&name) != 0) {
+            return;
+        }
         // Resolve all kernel-related facts
-        resolve_kernel(facts);
-        resolve_kernel_release(facts);
+        resolve_kernel(facts, name);
+        resolve_kernel_release(facts, name);
         resolve_kernel_version(facts);
         resolve_kernel_major_version(facts);
     }
 
-    void kernel_resolver::resolve_kernel(fact_map& facts)
+    void kernel_resolver::resolve_kernel(fact_map& facts, utsname const& name)
     {
-        string value = execute("uname", {"-s"}, { execution_options::trim_output });
+        string value = name.sysname;
         if (value.empty()) {
             return;
         }
         facts.add(kernel_name, make_value<string_value>(std::move(value)));
     }
 
-    void kernel_resolver::resolve_kernel_release(fact_map& facts)
+    void kernel_resolver::resolve_kernel_release(fact_map& facts, utsname const& name)
     {
-        string value = execute("uname", {"-r"}, { execution_options::trim_output });
+        string value = name.release;
         if (value.empty()) {
             return;
         }

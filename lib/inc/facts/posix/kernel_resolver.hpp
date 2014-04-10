@@ -2,6 +2,7 @@
 #define LIB_INC_FACTS_POSIX_KERNEL_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
+#include <sys/utsname.h>
 
 namespace cfacter { namespace facts { namespace posix {
 
@@ -38,13 +39,15 @@ namespace cfacter { namespace facts { namespace posix {
         /**
          * Called to resolve the kernel fact.
          * @param facts The fact map that is resolving facts.
+         * @param name The result of the uname call.
          */
-        virtual void resolve_kernel(fact_map& facts);
+        virtual void resolve_kernel(fact_map& facts, utsname const& name);
         /**
          * Called to resolve the kernel release fact.
          * @param facts The fact map that is resolving facts.
+         * @param name The result of the uname call.
          */
-        virtual void resolve_kernel_release(fact_map& facts);
+        virtual void resolve_kernel_release(fact_map& facts, utsname const& name);
         /**
          * Called to resolve the kernel version fact.
          * @param facts The fact map that is resolving facts.
