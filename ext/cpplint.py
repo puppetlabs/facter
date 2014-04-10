@@ -2180,6 +2180,7 @@ def CheckForNonStandardConstructs(filename, clean_lines, linenum,
                line)
   if (args and
       args.group(1) != 'void' and
+      not args.group(1).startswith('std::initializer_list<') and
       not Match(r'(const\s+)?%s(\s+const)?\s*(?:<\w+>\s*)?&'
                 % re.escape(base_classname), args.group(1).strip())):
     error(filename, linenum, 'runtime/explicit', 5,
@@ -3400,7 +3401,7 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
 
   # Check if the line is a header guard.
   is_header_guard = False
-  if file_extension == 'h':
+  if file_extension in ['h', 'hpp']:
     cppvar = GetHeaderGuardCPPVariable(filename)
     if (line.startswith('#ifndef %s' % cppvar) or
         line.startswith('#define %s' % cppvar) or
@@ -3867,7 +3868,7 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
     error(filename, linenum, 'runtime/init', 4,
           'You seem to be initializing a member variable with itself.')
 
-  if file_extension == 'h':
+  if file_extension in ['h', 'hpp']:
     # TODO(unknown): check that 1-arg constructors are explicit.
     #                How to tell it's a constructor?
     #                (handled in CheckForNonStandardConstructs for now)
@@ -4011,7 +4012,7 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
   # Check for use of unnamed namespaces in header files.  Registration
   # macros are typically OK, so we allow use of "namespace {" on lines
   # that end with backslashes.
-  if (file_extension == 'h'
+  if (file_extension in ['h', 'hpp']
       and Search(r'\bnamespace\s*{', line)
       and line[-1] != '\\'):
     error(filename, linenum, 'build/namespaces', 4,
@@ -4552,7 +4553,7 @@ def ProcessFileData(filename, file_extension, lines, error,
 
   CheckForCopyright(filename, lines, error)
 
-  if file_extension == 'h':
+  if file_extension in ['h', 'hpp']:
     CheckForHeaderGuard(filename, lines, error)
 
   RemoveMultiLineComments(filename, lines, error)

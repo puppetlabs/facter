@@ -1,5 +1,5 @@
-#ifndef __STRING_HPP__
-#define	__STRING_HPP__
+#ifndef LIB_INC_UTIL_STRING_HPP_
+#define LIB_INC_UTIL_STRING_HPP_
 
 #include <string>
 #include <vector>
@@ -139,7 +139,6 @@ namespace cfacter { namespace util {
      */
     typedef std::basic_string<char, ci_char_traits> ci_string;
 
-}} // namespace cfacter::util
+}}  // namespace cfacter::util
 
-#endif	/* STRING_HPP */
-
+#endif  // LIB_INC_UTIL_STRING_HPP_

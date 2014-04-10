@@ -1,5 +1,5 @@
-#ifndef __FACT_MAP_HPP__
-#define	__FACT_MAP_HPP__
+#ifndef LIB_INC_FACTS_FACT_MAP_HPP_
+#define LIB_INC_FACTS_FACT_MAP_HPP_
 
 #include <vector>
 #include <map>
@@ -119,8 +119,8 @@ namespace cfacter { namespace facts {
          */
         static fact_map& instance();
 
-    private:
-        //fact_map() {}
+     private:
+        fact_map() {}
         void load();
         void resolve_facts();
 
@@ -130,7 +130,7 @@ namespace cfacter { namespace facts {
         resolver_map_type _resolvers;
     };
 
-}} // namespace cfacter::facts
+}}  // namespace cfacter::facts
 
-#endif
+#endif  // LIB_INC_FACTS_FACT_MAP_HPP_
 

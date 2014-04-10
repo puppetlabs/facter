@@ -15,4 +15,4 @@ namespace cfacter { namespace facts {
         facts.add_resolver<linux::lsb_resolver>();
     }
 
-} } // namespace cfacter::facts
+}}  // namespace cfacter::facts

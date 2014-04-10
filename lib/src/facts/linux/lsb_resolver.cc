@@ -23,4 +23,4 @@ namespace cfacter { namespace facts { namespace linux {
         facts.add_fact(fact(lsb_dist_id_name, make_value<string_value>(std::move(value))));
     }
 
-}}} // namespace cfacter::facts::linux
+}}}  // namespace cfacter::facts::linux

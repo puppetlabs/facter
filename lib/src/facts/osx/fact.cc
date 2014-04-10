@@ -13,4 +13,4 @@ namespace cfacter { namespace facts {
         facts.add_resolver<posix::operating_system_resolver>();
     }
 
-} } // namespace cfacter::facts
+}}  // namespace cfacter::facts

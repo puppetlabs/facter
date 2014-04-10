@@ -1,5 +1,5 @@
-#ifndef __OPTION_SET_HPP__
-#define	__OPTION_SET_HPP__
+#ifndef LIB_INC_UTIL_OPTION_SET_HPP_
+#define LIB_INC_UTIL_OPTION_SET_HPP_
 
 #include <iostream>
 #include <numeric>
@@ -44,8 +44,7 @@ namespace cfacter { namespace util {
                 value_type(0),
                 [](value_type acc, enum_type value) {
                     return acc | static_cast<value_type>(value);
-                }
-            );
+                });
         }
 
         /**
@@ -148,7 +147,7 @@ namespace cfacter { namespace util {
             size_t total = 0;
             for (; bits != 0; ++total)
             {
-                bits &= bits - 1; // clear the least significant bit set
+                bits &= bits - 1;  // clear the least significant bit set
             }
             return total;
         }
@@ -182,7 +181,7 @@ namespace cfacter { namespace util {
             return _value == 0;
         }
 
-    private:
+     private:
         value_type _value;
     };
 
@@ -223,6 +222,6 @@ namespace cfacter { namespace util {
         return option_set<T>(option_set<T>::value_type(lhs) ^ option_set<T>::value_type(rhs));
     }
 
-} } // namespace cfacter::util
-#endif
+}}  // namespace cfacter::util
 
+#endif  // LIB_INC_UTIL_OPTION_SET_HPP_

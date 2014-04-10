@@ -24,4 +24,4 @@ namespace cfacter { namespace facts { namespace posix {
         facts.add_fact(fact(operating_system_name, make_value<string_value>(kernel->value())));
     }
 
-}}} // namespace cfacter::facts::posix
+}}}  // namespace cfacter::facts::posix

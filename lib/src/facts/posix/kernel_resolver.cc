@@ -71,4 +71,4 @@ namespace cfacter { namespace facts { namespace posix {
         facts.add_fact(fact(kernel_maj_release_name, make_value<string_value>(std::move(value))));
     }
 
-}}} // namespace cfacter::facts::posix
+}}}  // namespace cfacter::facts::posix

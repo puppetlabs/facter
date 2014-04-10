@@ -14,4 +14,4 @@ namespace cfacter { namespace facts {
         return resolve_facts(facts);
     }
 
-}} // namespace cfacter::facts
+}}  // namespace cfacter::facts

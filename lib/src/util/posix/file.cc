@@ -25,4 +25,4 @@ namespace cfacter { namespace util {
         return contents.str();
     }
 
-}} // namespace cfacter::util
+}}  // namespace cfacter::util

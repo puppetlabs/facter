@@ -1,5 +1,5 @@
-#ifndef __EXECUTION_HPP__
-#define	__EXECUTION_HPP__
+#ifndef LIB_INC_EXECUTION_EXECUTION_HPP_
+#define LIB_INC_EXECUTION_EXECUTION_HPP_
 
 #include <string>
 #include <vector>
@@ -78,7 +78,7 @@ namespace cfacter { namespace execution {
          */
         std::string const& output() const { return _output; }
 
-    private:
+     private:
         std::string _output;
     };
 
@@ -105,7 +105,7 @@ namespace cfacter { namespace execution {
          */
         int status_code() const { return _status_code; }
 
-    private:
+     private:
         int _status_code;
     };
 
@@ -132,7 +132,7 @@ namespace cfacter { namespace execution {
          */
         int signal() const { return _signal; }
 
-    private:
+     private:
         int _signal;
     };
 
@@ -144,8 +144,7 @@ namespace cfacter { namespace execution {
      */
     std::string execute(
         std::string const& file,
-        cfacter::util::option_set<execution_options> const& options = { execution_options::defaults }
-    );
+        cfacter::util::option_set<execution_options> const& options = { execution_options::defaults });
 
     /**
      * Executes the given program.
@@ -157,8 +156,7 @@ namespace cfacter { namespace execution {
     std::string execute(
         std::string const& file,
         std::vector<std::string> const& arguments,
-        cfacter::util::option_set<execution_options> const& options  = { execution_options::defaults }
-    );
+        cfacter::util::option_set<execution_options> const& options  = { execution_options::defaults });
 
     /**
      * Executes the given program.
@@ -172,10 +170,9 @@ namespace cfacter { namespace execution {
         std::string const& file,
         std::vector<std::string> const& arguments,
         std::vector<std::string> const& environment,
-        cfacter::util::option_set<execution_options> const& options = { execution_options::defaults }
-    );
+        cfacter::util::option_set<execution_options> const& options = { execution_options::defaults });
 
-} } // namespace cfacter::execution
+}}  // namespace cfacter::execution
 
-#endif
+#endif  // LIB_INC_EXECUTION_EXECUTION_HPP_
 

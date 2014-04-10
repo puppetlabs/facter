@@ -104,4 +104,4 @@ namespace cfacter { namespace facts {
         }
     }
 
-}} // namespace cfacter::facts
+}}  // namespace cfacter::facts

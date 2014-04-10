@@ -12,4 +12,4 @@ namespace cfacter { namespace facts {
         facts.add_fact(fact("cfacterversion", make_value<string_value>(CFACTER_VERSION)));
     }
 
-}} // namespace cfacter::facts
+}}  // namespace cfacter::facts

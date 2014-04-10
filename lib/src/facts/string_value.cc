@@ -9,4 +9,4 @@ namespace cfacter { namespace facts {
         return "\"" + _value + "\"";
     }
 
-} } // namespace cfacter::facts
+}}  // namespace cfacter::facts

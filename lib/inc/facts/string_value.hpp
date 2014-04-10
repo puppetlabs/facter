@@ -1,5 +1,5 @@
-#ifndef __STRING_VALUE_HPP__
-#define	__STRING_VALUE_HPP__
+#ifndef LIB_INC_FACTS_STRING_VALUE_HPP_
+#define LIB_INC_FACTS_STRING_VALUE_HPP_
 
 #include "value.hpp"
 
@@ -48,11 +48,11 @@ namespace cfacter { namespace facts {
          */
         std::string const& value() const { return _value; }
 
-    private:
+     private:
         std::string _value;
     };
 
-} } // namespace cfacter::facts
+}}  // namespace cfacter::facts
 
-#endif
+#endif  // LIB_INC_FACTS_STRING_VALUE_HPP_
 

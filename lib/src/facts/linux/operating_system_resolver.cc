@@ -171,4 +171,4 @@ namespace cfacter { namespace facts { namespace linux {
         return string();
     }
 
-}}} // namespace cfacter::facts::linux
+}}}  // namespace cfacter::facts::linux

@@ -1,5 +1,5 @@
-#ifndef __POSIX_OPERATING_SYSTEM_RESOLVER_HPP__
-#define	__POSIX_OPERATING_SYSTEM_RESOLVER_HPP__
+#ifndef LIB_INC_FACTS_POSIX_OPERATING_SYSTEM_RESOLVER_HPP_
+#define LIB_INC_FACTS_POSIX_OPERATING_SYSTEM_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
 
@@ -23,7 +23,7 @@ namespace cfacter { namespace facts { namespace posix {
         {
         }
 
-    protected:
+     protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact map that is resolving facts.
@@ -36,7 +36,7 @@ namespace cfacter { namespace facts { namespace posix {
         virtual void resolve_operating_system(fact_map& facts);
     };
 
-}}} // namespace cfacter::facts::posix
+}}}  // namespace cfacter::facts::posix
 
-#endif
+#endif  // LIB_INC_FACTS_POSIX_OPERATING_SYSTEM_RESOLVER_HPP_
 

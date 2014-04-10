@@ -128,8 +128,7 @@ namespace cfacter { namespace execution {
                 if (dup2(stdout_write, STDERR_FILENO) == -1) {
                     throw execution_exception("failed to redirect child stderr.");
                 }
-            }
-            else {
+            } else {
                 // Redirect to null
                 scoped_descriptor dev_null(open("/dev/null", O_RDONLY));
                 if (dev_null < 0 || dup2(dev_null, STDERR_FILENO) == -1) {
@@ -172,4 +171,4 @@ namespace cfacter { namespace execution {
         // CHILD DOES NOT RETURN
     }
 
-} } // namespace cfacter::executions
+}}  // namespace cfacter::executions

@@ -1,5 +1,5 @@
-#ifndef __VALUE_HPP__
-#define	__VALUE_HPP__
+#ifndef LIB_INC_FACTS_VALUE_HPP_
+#define LIB_INC_FACTS_VALUE_HPP_
 
 #include <string>
 #include <functional>
@@ -40,7 +40,7 @@ namespace cfacter { namespace facts {
         return std::unique_ptr<value>(new T(std::forward<Args>(args)...));
     }
 
-} } // namespace cfacter::facts
+}}  // namespace cfacter::facts
 
-#endif
+#endif  // LIB_INC_FACTS_VALUE_HPP_
 

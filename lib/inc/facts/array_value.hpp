@@ -1,5 +1,5 @@
-#ifndef __ARRAY_VALUE_HPP__
-#define	__ARRAY_VALUE_HPP__
+#ifndef LIB_INC_FACTS_ARRAY_VALUE_HPP_
+#define LIB_INC_FACTS_ARRAY_VALUE_HPP_
 
 #include "value.hpp"
 #include <vector>
@@ -23,7 +23,7 @@ namespace cfacter { namespace facts {
          * Constructs an array value.
          * @param elements The elements that make up the array.
          */
-        array_value(std::vector<std::unique_ptr<value>>&& elements) :
+        explicit array_value(std::vector<std::unique_ptr<value>>&& elements) :
             _elements(std::move(elements))
         {
         }
@@ -54,11 +54,11 @@ namespace cfacter { namespace facts {
          */
         std::vector<std::unique_ptr<value>> const& elements() const { return _elements; }
 
-    private:
+     private:
         std::vector<std::unique_ptr<value>> _elements;
     };
 
-} } // namespace cfacter::facts
+}}  // namespace cfacter::facts
 
-#endif
+#endif  // LIB_INC_FACTS_ARRAY_VALUE_HPP_
 

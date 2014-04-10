@@ -1,5 +1,5 @@
-#ifndef __FACT_HPP__
-#define	__FACT_HPP__
+#ifndef LIB_INC_FACTS_FACT_HPP_
+#define LIB_INC_FACTS_FACT_HPP_
 
 #include "value.hpp"
 #include <map>
@@ -42,7 +42,7 @@ namespace cfacter { namespace facts {
         fact(fact&&) = default;
         fact& operator=(fact&&) = default;
 
-    private:
+     private:
         std::string _name;
         std::unique_ptr<value> _value;
     };
@@ -53,7 +53,7 @@ namespace cfacter { namespace facts {
     void populate_common_facts();
     void populate_platform_facts();
 
-} } // namespace cfacter:facts
+}}  // namespace cfacter:facts
 
-#endif
+#endif  // LIB_INC_FACTS_FACT_HPP_
 

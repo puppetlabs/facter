@@ -1,5 +1,5 @@
-#ifndef __LINUX_LSB_RESOLVER_HPP__
-#define __LINUX_LSB_RESOLVER_HPP__
+#ifndef LIB_INC_FACTS_LINUX_LSB_RESOLVER_HPP_
+#define LIB_INC_FACTS_LINUX_LSB_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
 
@@ -23,7 +23,7 @@ namespace cfacter { namespace facts { namespace linux {
         {
         }
 
-    protected:
+     protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact map that is resolving facts.
@@ -37,7 +37,7 @@ namespace cfacter { namespace facts { namespace linux {
         virtual void resolve_dist_id(fact_map& facts);
     };
 
-}}} // namespace cfacter::facts::linux
+}}}  // namespace cfacter::facts::linux
 
-#endif
+#endif  // LIB_INC_FACTS_LINUX_LSB_RESOLVER_HPP_
 

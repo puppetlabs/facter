@@ -1,5 +1,5 @@
-#ifndef __FILE_HPP__
-#define	__FILE_HPP__
+#ifndef LIB_INC_UTIL_FILE_HPP_
+#define LIB_INC_UTIL_FILE_HPP_
 
 #include <string>
 
@@ -25,6 +25,6 @@ namespace cfacter { namespace util {
         static std::string read(std::string const& path);
     };
 
-}} // namespace cfacter::util
+}}  // namespace cfacter::util
 
-#endif
+#endif  // LIB_INC_UTIL_FILE_HPP_

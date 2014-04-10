@@ -1,5 +1,5 @@
-#ifndef __SCOPED_RESOURCE_HPP__
-#define __SCOPED_RESOURCE_HPP__
+#ifndef LIB_INC_UTIL_SCOPED_RESOURCE_HPP_
+#define LIB_INC_UTIL_SCOPED_RESOURCE_HPP_
 
 #include <functional>
 
@@ -25,7 +25,7 @@ namespace cfacter { namespace util {
         }
 
         // Force non-copyable
-        scoped_resource(scoped_resource<T> const&) = delete;
+        explicit scoped_resource(scoped_resource<T> const&) = delete;
         scoped_resource& operator=(scoped_resource<T> const&) = delete;
 
         // Allow moving
@@ -69,11 +69,11 @@ namespace cfacter { namespace util {
             }
         }
 
-    private:
+     private:
         T _resource;
         std::function<void(T&)> _deleter;
     };
 
-} } // namespace cfacter::util
+}}  // namespace cfacter::util
 
-#endif
+#endif  // LIB_INC_UTIL_SCOPED_RESOURCE_HPP_

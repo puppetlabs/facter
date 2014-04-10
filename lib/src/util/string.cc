@@ -99,4 +99,4 @@ namespace cfacter { namespace util {
         return to_upper(str);
     }
 
-}} // namespace cfacter::util
+}}  // namespace cfacter::util

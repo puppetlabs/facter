@@ -1,5 +1,5 @@
-#ifndef __RESOLVER_HPP__
-#define	__RESOLVER_HPP__
+#ifndef LIB_INC_FACTS_FACT_RESOLVER_HPP_
+#define LIB_INC_FACTS_FACT_RESOLVER_HPP_
 
 #include <vector>
 #include <memory>
@@ -37,7 +37,7 @@ namespace cfacter { namespace facts {
             _value = false;
         }
 
-    private:
+     private:
         bool& _value;
     };
 
@@ -53,7 +53,7 @@ namespace cfacter { namespace facts {
          * Constructs a fact_resolver.
          * @param names The fact names the resolver is responsible for.
          */
-        fact_resolver(std::initializer_list<std::string> const& names) :
+        explicit fact_resolver(std::initializer_list<std::string> const& names) :
             _names(names.begin(), names.end()),
             _resolving(false)
         {
@@ -84,19 +84,19 @@ namespace cfacter { namespace facts {
          */
         void resolve(fact_map& facts);
 
-    protected:
+     protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact map that is resolving facts.
          */
         virtual void resolve_facts(fact_map& facts) = 0;
 
-    private:
+     private:
         std::vector<std::string> _names;
         bool _resolving;
     };
 
-}} // namespace cfacter::facts
+}}  // namespace cfacter::facts
 
-#endif
+#endif  // LIB_INC_FACTS_FACT_RESOLVER_HPP_
 

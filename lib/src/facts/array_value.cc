@@ -15,8 +15,7 @@ namespace cfacter { namespace facts {
         for (auto const& element : _elements) {
             if (!first) {
                 result << ", ";
-            }
-            else {
+            } else {
                 first = true;
             }
             result << element->to_string();
@@ -25,4 +24,4 @@ namespace cfacter { namespace facts {
         return result.str();
     }
 
-} } // namespace cfacter::facts
+}}  // namespace cfacter::facts
