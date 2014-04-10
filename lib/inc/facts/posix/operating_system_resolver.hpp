@@ -12,6 +12,7 @@ namespace cfacter { namespace facts { namespace posix {
     {
         // Constants for responsible facts
         constexpr static char const* operating_system_name = "operatingsystem";
+        constexpr static char const* os_family_name = "osfamily";
 
         /**
          * Constructs the operating_system_resolver.
@@ -19,6 +20,7 @@ namespace cfacter { namespace facts { namespace posix {
         operating_system_resolver() :
             fact_resolver({
                 operating_system_name,
+                os_family_name
             })
         {
         }
@@ -34,6 +36,11 @@ namespace cfacter { namespace facts { namespace posix {
          * @param facts The fact map that is resolving facts.
          */
         virtual void resolve_operating_system(fact_map& facts);
+        /**
+         * Called to resolve the os family fact.
+         * @param facts The fact map that is resolving facts.
+         */
+        virtual void resolve_os_family(fact_map& facts);
     };
 
 }}}  // namespace cfacter::facts::posix
