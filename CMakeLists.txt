@@ -42,23 +42,25 @@ else()
         "-legal/copyright"        # Not yet
         "-runtime/references"     # Not sure about this religion
         "-readability/streams"    # What?
+        "-readability/namespace"  # Ignore nested namespace comment formatting
         "-whitespace/braces"      # Is there a k&r setting?
         "-whitespace/line_length" # Well yeah, but ... not just now
         "-runtime/arrays"         # Sizing an array with a 'const int' doesn't make it variable sized
         "-readability/todo"       # Seriously? todo comments need to identify an owner? pffft
+        "-whitespace/empty_loop_body" # Can't handle do { ... } while(expr);
     )
 
-    file(GLOB ALL_SOURCES lib/*.cc exe/*.cc)
+    file(GLOB_RECURSE ALL_SOURCES lib/*.cc lib/*.h lib/*.hpp exe/*.cc exe/*.h exe/*.hpp)
 
-    set(CPPLINT_PATH "ext/cpplint.py")
+    set(CPPLINT_PATH "${PROJECT_SOURCE_DIR}/ext/cpplint.py")
 
-    set(CPPLINT_ARGS "")
+    set(CPPLINT_ARGS "--extensions=cc,hpp,h")
     if (CPPLINT_FILTER)
         string(REPLACE ";" "," CPPLINT_FILTER "${CPPLINT_FILTER}")
-        set(CPPLINT_ARGS "${CPPLINT_ARGS}--filter=${CPPLINT_FILTER}")
+        set(CPPLINT_ARGS "${CPPLINT_ARGS};--filter=${CPPLINT_FILTER}")
     endif()
     if (MSVC)
-        set(CPPLINT_ARGS "${CPPLINT_ARGS} --output=vs7")
+        set(CPPLINT_ARGS "${CPPLINT_ARGS};--output=vs7")
     endif()
 
     add_custom_target(cpplint
