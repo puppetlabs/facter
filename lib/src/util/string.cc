@@ -9,6 +9,16 @@ namespace cfacter { namespace util {
 
     initializer_list<char> default_trim_set = { '\r', '\n', ' ', '\t', '\v', '\f' };
 
+    bool starts_with(string const& str, string const& prefix)
+    {
+        return prefix.size() <= str.size() && equal(prefix.begin(), prefix.end(), str.begin());
+    }
+
+    bool ends_with(string const& str, string const& suffix)
+    {
+        return suffix.size() <= str.size() && equal(suffix.rbegin(), suffix.rend(), str.rbegin());
+    }
+
     string& ltrim(string& str, initializer_list<char> const& set)
     {
         str.erase(str.begin(), find_if(str.begin(), str.end(), [&set](char c) {
