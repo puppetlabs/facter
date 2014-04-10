@@ -147,7 +147,7 @@ namespace cfacter { namespace execution {
             // The first element is the program name
             // The given program arguments then follow
             // The last element is a null to terminate the array
-            vector<char const*> args((arguments ? arguments->size() : 1) + 2 /* argv[0] + null */);
+            vector<char const*> args((arguments ? arguments->size() : 0) + 2 /* argv[0] + null */);
             args[0] = file.c_str();
             if (arguments) {
                 for (size_t i = 0; i < arguments->size(); ++i) {
