@@ -7,25 +7,23 @@ module Facter::Manufacturer
   def self.get_dmi_table()
     case Facter.value(:kernel)
     when 'Linux', 'GNU/kFreeBSD'
-      return nil unless FileTest.exists?("/usr/sbin/dmidecode")
-
-      output=%x{/usr/sbin/dmidecode 2>/dev/null}
+      cmd = '/usr/sbin/dmidecode'
     when 'FreeBSD'
-      return nil unless FileTest.exists?("/usr/local/sbin/dmidecode")
-
-      output=%x{/usr/local/sbin/dmidecode 2>/dev/null}
+      cmd = '/usr/local/sbin/dmidecode'
     when 'NetBSD', 'DragonFly'
-      return nil unless FileTest.exists?("/usr/pkg/sbin/dmidecode")
-
-      output=%x{/usr/pkg/sbin/dmidecode 2>/dev/null}
+      cmd = '/usr/pkg/sbin/dmidecode'
     when 'SunOS'
-      return nil unless FileTest.exists?("/usr/sbin/smbios")
-
-      output=%x{/usr/sbin/smbios 2>/dev/null}
-    else
-      output=nil
+      cmd = '/usr/sbin/smbios'
     end
-    return output
+
+    if cmd and (output = Facter::Core::Execution.exec("#{cmd} 2>/dev/null"))
+
+      if output.respond_to?(:force_encoding)
+        output.force_encoding(Encoding::ASCII_8BIT)
+      end
+
+      return output
+    end
   end
 
   def self.dmi_find_system_info(name)

@@ -63,6 +63,17 @@ describe Facter::Manufacturer do
     Facter.value(:reldate).should == "12/01/2006"
   end
 
+  it "can parse smbios output that contains non-UTF8 characters" do
+    smbios_output = my_fixture_read("smartos_smbios")
+    Facter::Core::Execution.stubs(:exec).with('/usr/sbin/smbios 2>/dev/null').returns(smbios_output)
+    Facter.fact(:kernel).stubs(:value).returns("SunOS")
+
+    query = { 'BIOS information' => [ { 'Release Date:' => 'reldate' } ] }
+
+    Facter::Manufacturer.dmi_find_system_info(query)
+    Facter.value(:reldate).should == "06/11/2007"
+  end
+
   it "should not split on dmi keys containing the string Handle" do
     dmidecode_output = <<-eos
 Handle 0x1000, DMI type 16, 15 bytes
