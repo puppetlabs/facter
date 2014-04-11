@@ -15,6 +15,7 @@ namespace cfacter { namespace facts { namespace posix {
         constexpr static char const* operating_system = "operatingsystem";
         constexpr static char const* os_family = "osfamily";
         constexpr static char const* operating_system_release = "operatingsystemrelease";
+        constexpr static char const* operating_system_major_release = "operatingsystemmajrelease";
     };
 
 }}}  // namespace cfacter::facts::posix

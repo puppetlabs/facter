@@ -19,6 +19,7 @@ namespace cfacter { namespace facts { namespace posix {
                 fact::operating_system,
                 fact::os_family,
                 fact::operating_system_release,
+                fact::operating_system_major_release
             })
         {
         }
@@ -44,6 +45,11 @@ namespace cfacter { namespace facts { namespace posix {
          * @param facts The fact map that is resolving facts.
          */
         virtual void resolve_operating_system_release(fact_map& facts);
+        /**
+         * Called to resolve the operating system major release fact.
+         * @param facts The fact map that is resolving facts.
+         */
+        virtual void resolve_operating_system_major_release(fact_map& facts) {}
     };
 
 }}}  // namespace cfacter::facts::posix

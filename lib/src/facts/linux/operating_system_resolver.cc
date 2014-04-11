@@ -187,6 +187,37 @@ namespace cfacter { namespace facts { namespace linux {
         facts.add(posix::fact::operating_system_release, make_value<string_value>(std::move(value)));
     }
 
+    void operating_system_resolver::resolve_operating_system_major_release(fact_map& facts) {
+        auto operating_system = facts.get<string_value>(posix::fact::operating_system);
+        auto os_release = facts.get<string_value>(posix::fact::operating_system_release);
+
+        if (!operating_system ||
+            !os_release || !(
+            operating_system->value() == os::amazon ||
+            operating_system->value() == os::centos ||
+            operating_system->value() == os::cloud_linux ||
+            operating_system->value() == os::debian ||
+            operating_system->value() == os::fedora ||
+            operating_system->value() == os::oracle_enterprise_linux ||
+            operating_system->value() == os::oracle_vm_linux ||
+            operating_system->value() == os::redhat ||
+            operating_system->value() == os::scientific ||
+            operating_system->value() == os::scientific_cern ||
+            operating_system->value() == os::cumulus))
+        {
+            // Use the base implementation
+            posix::operating_system_resolver::resolve_operating_system_major_release(facts);
+            return;
+        }
+
+        string value = os_release->value();
+        auto pos = value.find('.');
+        if (pos != string::npos) {
+            value = value.substr(0, pos);
+        }
+        facts.add(posix::fact::operating_system_major_release, make_value<string_value>(std::move(value)));
+    }
+
     string operating_system_resolver::check_cumulus_linux()
     {
         // Check for Cumulus Linux in a generic os-release file

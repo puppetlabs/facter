@@ -16,6 +16,7 @@ namespace cfacter { namespace facts { namespace posix {
         resolve_operating_system(facts);
         resolve_os_family(facts);
         resolve_operating_system_release(facts);
+        resolve_operating_system_major_release(facts);
     }
 
     void operating_system_resolver::resolve_operating_system(fact_map& facts)
