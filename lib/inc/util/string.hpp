@@ -3,50 +3,60 @@
 
 #include <string>
 #include <vector>
+#include <functional>
+#include <initializer_list>
 
 // TODO: non-standard header
 #include "string.h"
 
 namespace cfacter { namespace util {
 
-    /**
-     * In-place trims whitespace from the start (left side) of a string.
-     * @param str The string to trim whitespace from.
-     * @return Returns the given string.
-     */
-    std::string& ltrim(std::string& str);
-    /**
-     * In-place trims whitespace from the start (left side) of a string.
-     * @param str The string to trim whitespace from.
-     * @return Returns the given string.
-     */
-    std::string& ltrim(std::string&& str);
+    extern std::initializer_list<char> default_trim_set;
 
     /**
-     * In-place trims whitespace from the end (right side) of a string.
-     * @param str The string to trim whitespace from.
+     * In-place trims characters from the start (left side) of a string.
+     * @param str The string to trim characters from.
+     * @param set The set of characters to trim.  Defaults to whitespace characters.
      * @return Returns the given string.
      */
-    std::string& rtrim(std::string& str);
+    std::string& ltrim(std::string& str, std::initializer_list<char> const& set = default_trim_set);
     /**
-     * In-place trims whitespace from the end (right side) of a string.
-     * @param str The string to trim whitespace from.
+     * In-place trims characters from the start (left side) of a string.
+     * @param str The string to trim characters from.
+     * @param set The set of characters to trim.  Defaults to whitespace characters.
      * @return Returns the given string.
      */
-    std::string& rtrim(std::string&& str);
+    std::string& ltrim(std::string&& str, std::initializer_list<char> const& set = default_trim_set);
 
     /**
-     * In-place trims whitespace from the the start and end (both sides) of a string.
-     * @param str The string to trim whitespace from.
+     * In-place trims characters from the end (right side) of a string.
+     * @param str The string to trim characters from.
+     * @param set The set of characters to trim.  Defaults to whitespace characters.
      * @return Returns the given string.
      */
-    std::string& trim(std::string& str);
+    std::string& rtrim(std::string& str, std::initializer_list<char> const& set = default_trim_set);
     /**
-     * In-place trims whitespace from the the start and end (both sides) of a string.
-     * @param str The string to trim whitespace from.
+     * In-place trims characters from the end (right side) of a string.
+     * @param str The string to trim characters from.
+     * @param set The set of characters to trim.  Defaults to whitespace characters.
      * @return Returns the given string.
      */
-    std::string& trim(std::string&& str);
+    std::string& rtrim(std::string&& str, std::initializer_list<char> const& set = default_trim_set);
+
+    /**
+     * In-place trims characters from the the start and end (both sides) of a string.
+     * @param str The string to trim characters from.
+     * @param set The set of characters to trim.  Defaults to whitespace characters.
+     * @return Returns the given string.
+     */
+    std::string& trim(std::string& str, std::initializer_list<char> const& set = default_trim_set);
+    /**
+     * In-place trims characters from the the start and end (both sides) of a string.
+     * @param str The string to trim characters from.
+     * @param set The set of characters to trim.  Defaults to whitespace characters.
+     * @return Returns the given string.
+     */
+    std::string& trim(std::string&& str, std::initializer_list<char> const& set = default_trim_set);
 
     /**
      * Tokenizes the given string.
