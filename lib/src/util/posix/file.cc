@@ -10,16 +10,19 @@ namespace cfacter { namespace util {
     bool file::exists(string const& path)
     {
         struct stat buffer;
-        return stat(path.c_str(), &buffer) == 0;
+        if (stat(path.c_str(), &buffer) != 0) {
+            return false;
+        }
+
+        return S_ISREG(buffer.st_mode);
     }
 
-    // TODO: this is standard-compliant, so it can be shared between POSIX and Windows
+    // TODO: this is standard-compliant, so it should shared between POSIX and Windows
     string file::read(string const& path)
     {
         ifstream in(path, std::ios::in | std::ios::binary);
         ostringstream contents;
-        if (in)
-        {
+        if (in) {
             contents << in.rdbuf();
         }
         return contents.str();

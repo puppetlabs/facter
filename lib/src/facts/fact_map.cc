@@ -17,7 +17,7 @@ namespace cfacter { namespace facts {
 
         // Remove any resolver for this fact and add the fact
         _resolvers.erase(name);
-        _facts.insert(it, std::make_pair(name, std::move(value)));
+        _facts.insert(it, std::make_pair(std::move(name), std::move(value)));
     }
 
     void fact_map::remove(string const& name)

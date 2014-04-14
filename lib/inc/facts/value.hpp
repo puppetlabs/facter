@@ -12,6 +12,9 @@ namespace cfacter { namespace facts {
      */
     struct value
     {
+        /**
+         * Constructs a value.
+         */
         value() {}
 
         /**
@@ -31,8 +34,10 @@ namespace cfacter { namespace facts {
 
     /**
      * Utility function for making a value.
+     * @tparam T The type of the value being constructed.
+     * @tparam Args The variadic types for the value's constructor.
      * @param args The arguments to the value's constructor.
-     * @return Returns a unique pointer to the value.
+     * @return Returns a unique pointer to the constructed value.
      */
     template<typename T, typename ...Args>
     std::unique_ptr<value> make_value(Args&& ...args)

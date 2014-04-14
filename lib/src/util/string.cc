@@ -99,4 +99,9 @@ namespace cfacter { namespace util {
         return to_upper(str);
     }
 
+    int ci_char_traits::compare(char const* s1, char const* s2, size_t n)
+    {
+        return strncasecmp(s1, s2, n);
+    }
+
 }}  // namespace cfacter::util

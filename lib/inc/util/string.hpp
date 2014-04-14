@@ -119,15 +119,11 @@ namespace cfacter { namespace util {
             return ::toupper(c1) < ::toupper(c2);
         }
 
-        static int compare(char const* s1, char const* s2, size_t n)
-        {
-            // TODO: this isn't a standard function; we'll need an #ifdef to support non-POSIX platforms
-            return strncasecmp(s1, s2, n);
-        }
+        static int compare(char const* s1, char const* s2, size_t n);
 
         static char const* find(char const* s, int n, char a)
         {
-            while (n-- > 0 && toupper(*s) != toupper(a)) {
+            while (n-- > 0 && ::toupper(*s) != ::toupper(a)) {
                 ++s;
             }
             return s;

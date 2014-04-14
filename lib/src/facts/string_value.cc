@@ -6,7 +6,7 @@ namespace cfacter { namespace facts {
 
     string string_value::to_string() const
     {
-        return "\"" + _value + "\"";
+        return _value;
     }
 
 }}  // namespace cfacter::facts

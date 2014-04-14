@@ -15,6 +15,7 @@ module CFacter
 
   public
   attach_function :clear,           [],                            :void
+  attach_function :loadfacts,       [],                            :void
 
   def self.to_hash
     ptr = FFI::MemoryPointer.new(:char, Constants::JSON_STRING_MAX_LEN)

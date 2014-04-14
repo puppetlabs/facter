@@ -43,7 +43,7 @@ namespace cfacter { namespace facts {
     struct resolver_exists_exception : std::runtime_error
     {
         /**
-         * Constructs a fact_exists_exception.
+         * Constructs a resolver_exists_exception.
          * @param message The exception message.
          */
         explicit resolver_exists_exception(std::string const& message) : std::runtime_error(message) {}

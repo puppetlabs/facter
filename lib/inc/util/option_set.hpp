@@ -10,7 +10,7 @@ namespace cfacter { namespace util {
     /**
      * Represents a set of options (flags).
      * Adapted from http://stackoverflow.com/a/4226975/530189
-     * @tparam T The enum class type that makes up the avilable options.
+     * @tparam T The enum class type that makes up the available options.
      */
     template <typename T>
     struct option_set
@@ -19,6 +19,7 @@ namespace cfacter { namespace util {
          * The underlying enum type for the option set.
          */
         typedef T enum_type;
+
         /**
          * The value type for the enum type.
          */
@@ -169,7 +170,7 @@ namespace cfacter { namespace util {
          */
         bool test(enum_type option) const
         {
-            return (_value & static_cast<value_type>(option)) > 0;
+            return _value & static_cast<value_type>(option);
         }
 
         /**
