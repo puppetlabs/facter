@@ -15,24 +15,24 @@ All examples start by assuming the current directory is the root of the repo.
 
 Before building cfacter, use `cmake` to generate build files:
 
-`$ mkdir release`
-`$ cd release`
-`$ cmake ..`
+    $ mkdir release
+    $ cd release
+    $ cmake ..
 
 Build
 -----
 
 To build cfacter, use 'make':
 
-`$ cd release`
-`$ make`
+    $ cd release
+    $ make
 
 To build cfacter with debug information:
 
-`$ mkdir debug`
-`$ cd debug`
-`$ cmake -DCMAKE_BUILD_TYPE=Debug ..`
-`$ make`
+    $ mkdir debug
+    $ cd debug
+    $ cmake -DCMAKE_BUILD_TYPE=Debug ..
+    $ make
 
 Run
 ---
@@ -50,16 +50,16 @@ Install
 
 You can install cfacter into your system:
 
-`$ cd release`
-`$ make && sudo make install`
+    $ cd release
+    $ make && sudo make install
 
 By default, this will install cfacter into `/opt/cfacter`.
 
 To install to a different location, set the install prefix:
 
-`$ cd release`
-`$ cmake -DCMAKE_INSTALL_PREFIX=~/cfacter ..`
-`$ make clean install`
+    $ cd release
+    $ cmake -DCMAKE_INSTALL_PREFIX=~/cfacter ..
+    $ make clean install
 
 This would install cfacter into `~/cfacter`.
 

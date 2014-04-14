@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.12)
 project(CFACTER)
 
 set(CFACTER_VERSION_MAJOR 0)
-set(CFACTER_VERSION_MINOR 0)
-set(CFACTER_VERSION_PATCH 1)
+set(CFACTER_VERSION_MINOR 1)
+set(CFACTER_VERSION_PATCH 0)
 
 # Generate a file containing the above version numbers
 configure_file (
@@ -19,7 +19,6 @@ elseif(UNIX)
     # Set the RPATH to be magic value $ORIGIN (where the loading executable is located)
     set(CMAKE_INSTALL_RPATH "$ORIGIN")
 endif()
-
 
 # Set the default install path
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -43,23 +42,25 @@ else()
         "-legal/copyright"        # Not yet
         "-runtime/references"     # Not sure about this religion
         "-readability/streams"    # What?
+        "-readability/namespace"  # Ignore nested namespace comment formatting
         "-whitespace/braces"      # Is there a k&r setting?
         "-whitespace/line_length" # Well yeah, but ... not just now
         "-runtime/arrays"         # Sizing an array with a 'const int' doesn't make it variable sized
         "-readability/todo"       # Seriously? todo comments need to identify an owner? pffft
+        "-whitespace/empty_loop_body" # Can't handle do { ... } while(expr);
     )
 
-    file(GLOB ALL_SOURCES lib/*.cc exe/*.cc)
+    file(GLOB_RECURSE ALL_SOURCES lib/*.cc lib/*.h lib/*.hpp exe/*.cc exe/*.h exe/*.hpp)
 
-    set(CPPLINT_PATH "ext/cpplint.py")
+    set(CPPLINT_PATH "${PROJECT_SOURCE_DIR}/ext/cpplint.py")
 
-    set(CPPLINT_ARGS "")
+    set(CPPLINT_ARGS "--extensions=cc,hpp,h")
     if (CPPLINT_FILTER)
         string(REPLACE ";" "," CPPLINT_FILTER "${CPPLINT_FILTER}")
-        set(CPPLINT_ARGS "${CPPLINT_ARGS}--filter=${CPPLINT_FILTER}")
+        set(CPPLINT_ARGS "${CPPLINT_ARGS};--filter=${CPPLINT_FILTER}")
     endif()
     if (MSVC)
-        set(CPPLINT_ARGS "${CPPLINT_ARGS} --output=vs7")
+        set(CPPLINT_ARGS "${CPPLINT_ARGS};--output=vs7")
     endif()
 
     add_custom_target(cpplint
