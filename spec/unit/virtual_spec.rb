@@ -279,6 +279,11 @@ describe "Virtual fact" do
       Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("HVM domU")
       Facter.fact(:virtual).value.should == "xenhvm"
     end
+
+    it "should be ovirt with oVirt Node product name from sysctl" do
+      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("oVirt Node")
+      Facter.fact(:virtual).value.should == "ovirt"
+    end
   end
 
   describe "on Windows" do
