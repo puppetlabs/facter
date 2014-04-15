@@ -105,6 +105,7 @@ Facter.add("virtual") do
       next "vmware"     if lines.any? {|l| l =~ /VMware/ }
       next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
       next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
+      next "ovirt"      if lines.any? {|l| l =~ /oVirt Node/ }
     end
   end
 end
