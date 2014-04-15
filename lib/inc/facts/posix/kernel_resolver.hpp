@@ -2,6 +2,7 @@
 #define LIB_INC_FACTS_POSIX_KERNEL_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
+#include "fact.hpp"
 #include <sys/utsname.h>
 
 namespace cfacter { namespace facts { namespace posix {
@@ -11,21 +12,15 @@ namespace cfacter { namespace facts { namespace posix {
      */
     struct kernel_resolver : fact_resolver
     {
-        // Constants for responsible facts
-        constexpr static char const* kernel_name = "kernel";
-        constexpr static char const* kernel_version_name = "kernelversion";
-        constexpr static char const* kernel_release_name = "kernelrelease";
-        constexpr static char const* kernel_maj_release_name = "kernelmajrelease";
-
         /**
          * Constructs the kernel_resolver.
          */
         kernel_resolver() :
             fact_resolver({
-                kernel_name,
-                kernel_version_name,
-                kernel_release_name,
-                kernel_maj_release_name
+                fact::kernel,
+                fact::kernel_version,
+                fact::kernel_release,
+                fact::kernel_major_release
             })
         {
         }

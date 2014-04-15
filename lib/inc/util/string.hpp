@@ -11,6 +11,22 @@
 
 namespace cfacter { namespace util {
 
+    /**
+     * Checks if the given string starts with the given prefix.
+     * @param str The string to check against.
+     * @param prefix The prefix to check with.
+     * @return Returns true if the given string starts with the given prefix or false if otherwise.
+     */
+    bool starts_with(std::string const& str, std::string const& prefix);
+
+    /**
+     * Checks if the given string ends with the given suffix.
+     * @param str The string to check against.
+     * @param suffix The suffix to check with.
+     * @return Returns true if the given string ends with the given suffix or false if otherwise.
+     */
+    bool ends_with(std::string const& str, std::string const& suffix);
+
     extern std::initializer_list<char> default_trim_set;
 
     /**

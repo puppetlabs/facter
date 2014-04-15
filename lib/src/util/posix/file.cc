@@ -28,4 +28,15 @@ namespace cfacter { namespace util {
         return contents.str();
     }
 
+    // TODO: this is standard-compliant, so it can be shared between POSIX and Windows
+    string file::read_first_line(string const& path)
+    {
+        ifstream in(path);
+        string value;
+        if (getline(in, value)) {
+            return value;
+        }
+        return string();
+    }
+
 }}  // namespace cfacter::util

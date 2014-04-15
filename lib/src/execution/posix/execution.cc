@@ -155,6 +155,7 @@ namespace cfacter { namespace execution {
             }
 
             // TODO: set up environment if specified (execvpe is a GNU extension)
+            // TODO: regardless of passed environment variables, we need to force a C locale
             exit(execvp(file.c_str(), const_cast<char* const*>(args.data())));
         }
         catch (exception& ex)

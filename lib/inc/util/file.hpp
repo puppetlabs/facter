@@ -23,6 +23,13 @@ namespace cfacter { namespace util {
          * @return Returns the file contents as a string or empty string if the file cannot be read.
          */
         static std::string read(std::string const& path);
+
+        /**
+         * Reads the first line of the given file into a string.
+         * @param path The path of the file to read.
+         * @return Returns the first line of the file or an empty string if the file cannot be read.
+         */
+        static std::string read_first_line(std::string const& path);
     };
 
 }}  // namespace cfacter::util

@@ -2,6 +2,7 @@
 #define LIB_INC_FACTS_LINUX_LSB_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
+#include "fact.hpp"
 
 namespace cfacter { namespace facts { namespace linux {
 
@@ -10,28 +11,18 @@ namespace cfacter { namespace facts { namespace linux {
      */
     struct lsb_resolver : fact_resolver
     {
-        // Constants for responsible facts
-        constexpr static char const* lsb_dist_id_name = "lsbdistid";
-        constexpr static char const* lsb_dist_release_name = "lsbdistrelease";
-        constexpr static char const* lsb_dist_codename_name = "lsbdistcodename";
-        constexpr static char const* lsb_dist_description_name = "lsbdistdescription";
-        constexpr static char const* lsb_dist_maj_release_name = "lsbmajdistrelease";
-        constexpr static char const* lsb_dist_minor_release_name = "lsbminordistrelease";
-        constexpr static char const* lsb_release_name = "lsbrelease";
-
-
         /**
          * Constructs the lsb_resolver.
          */
         lsb_resolver() :
             fact_resolver({
-                lsb_dist_id_name,
-                lsb_dist_release_name,
-                lsb_dist_codename_name,
-                lsb_dist_description_name,
-                lsb_dist_maj_release_name,
-                lsb_dist_minor_release_name,
-                lsb_release_name,
+                fact::lsb_dist_id,
+                fact::lsb_dist_release,
+                fact::lsb_dist_codename,
+                fact::lsb_dist_description,
+                fact::lsb_dist_major_release,
+                fact::lsb_dist_minor_release,
+                fact::lsb_release,
             })
         {
         }

@@ -18,6 +18,18 @@ namespace cfacter { namespace facts { namespace linux {
          */
         virtual void resolve_operating_system(fact_map& facts);
 
+        /**
+         * Called to resolve the operating system release fact.
+         * @param facts The fact map that is resolving facts.
+         */
+        virtual void resolve_operating_system_release(fact_map& facts);
+
+        /**
+         * Called to resolve the operating system major release fact.
+         * @param facts The fact map that is resolving facts.
+         */
+        virtual void resolve_operating_system_major_release(fact_map& facts);
+
      private:
         static std::string check_cumulus_linux();
         static std::string check_debian_linux(string_value const* dist_id);
