@@ -2,7 +2,7 @@
 #define LIB_INC_FACTS_LINUX_LSB_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
-#include "fact.hpp"
+#include "../fact.hpp"
 
 namespace cfacter { namespace facts { namespace linux {
 
