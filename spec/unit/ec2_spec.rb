@@ -13,7 +13,8 @@ describe "ec2 facts" do
       # This is an ec2 instance, not a eucalyptus instance
       Facter::Util::EC2.stubs(:has_euca_mac?).returns(false)
       Facter::Util::EC2.stubs(:has_openstack_mac?).returns(false)
-      Facter::Util::EC2.stubs(:has_ec2_arp?).returns(true)
+      Facter::Util::EC2.stubs(:has_ec2_arp?).returns(false)
+      Facter::Util::EC2.stubs(:amazon_hypervisor?).returns(true)
 
       # Assume we can connect
       Facter::Util::EC2.stubs(:can_connect?).returns(true)
