@@ -7,11 +7,14 @@ describe "ec2_metadata" do
   before do
     Facter::EC2::Metadata.stubs(:new).returns querier
     Facter.collection.internal_loader.load(:ec2)
+    # Prevent flattened facts from forcing evaluation of the ec2 metadata fact
+    Facter.stubs(:value).with(:ec2_metadata)
   end
 
   subject { Facter.fact(:ec2_metadata).resolution(:rest) }
 
   it "is unsuitable if the virtual fact is not xen" do
+    querier.stubs(:reachable?).returns false
     Facter.fact(:virtual).stubs(:value).returns "kvm"
     expect(subject).to_not be_suitable
   end
@@ -57,6 +60,7 @@ describe "ec2_userdata" do
   subject { Facter.fact(:ec2_userdata).resolution(:rest) }
 
   it "is unsuitable if the virtual fact is not xen" do
+    querier.stubs(:reachable?).returns(true)
     Facter.fact(:virtual).stubs(:value).returns "kvm"
     expect(subject).to_not be_suitable
   end
