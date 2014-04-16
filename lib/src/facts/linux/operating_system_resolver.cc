@@ -56,12 +56,12 @@ namespace cfacter { namespace facts { namespace linux {
         }
 
         // Add the fact
-        facts.add(posix::fact::operating_system, make_value<string_value>(value));
+        facts.add(fact::operating_system, make_value<string_value>(value));
     }
 
     void operating_system_resolver::resolve_operating_system_release(fact_map& facts)
     {
-        auto operating_system = facts.get<string_value>(posix::fact::operating_system);
+        auto operating_system = facts.get<string_value>(fact::operating_system);
         if (!operating_system) {
             // Use the base implementation
             posix::operating_system_resolver::resolve_operating_system_release(facts);
@@ -165,7 +165,7 @@ namespace cfacter { namespace facts { namespace linux {
 
         // For VMware ESX, execute the vmware tool
         if (value.empty() && operating_system->value() == os::vmware_esx) {
-            string output = execute("vmware", { "-v" }, { execution_options::trim_output });
+            string output = execute("vmware", { "-v" });
             RE2::PartialMatch(output, "VMware ESX .*?(\\d.*)", &value);
         }
 
@@ -173,7 +173,7 @@ namespace cfacter { namespace facts { namespace linux {
         if (value.empty() && operating_system->value() == os::amazon) {
             auto release = facts.get<string_value>(fact::lsb_dist_release);
             if (release) {
-                facts.add(posix::fact::operating_system_release, make_value<string_value>(release->value()));
+                facts.add(fact::operating_system_release, make_value<string_value>(release->value()));
                 return;
             }
         }
@@ -184,12 +184,12 @@ namespace cfacter { namespace facts { namespace linux {
             return;
         }
 
-        facts.add(posix::fact::operating_system_release, make_value<string_value>(std::move(value)));
+        facts.add(fact::operating_system_release, make_value<string_value>(std::move(value)));
     }
 
     void operating_system_resolver::resolve_operating_system_major_release(fact_map& facts) {
-        auto operating_system = facts.get<string_value>(posix::fact::operating_system);
-        auto os_release = facts.get<string_value>(posix::fact::operating_system_release);
+        auto operating_system = facts.get<string_value>(fact::operating_system);
+        auto os_release = facts.get<string_value>(fact::operating_system_release);
 
         if (!operating_system ||
             !os_release || !(
@@ -215,7 +215,7 @@ namespace cfacter { namespace facts { namespace linux {
         if (pos != string::npos) {
             value = value.substr(0, pos);
         }
-        facts.add(posix::fact::operating_system_major_release, make_value<string_value>(std::move(value)));
+        facts.add(fact::operating_system_major_release, make_value<string_value>(std::move(value)));
     }
 
     string operating_system_resolver::check_cumulus_linux()

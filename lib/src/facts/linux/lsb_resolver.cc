@@ -24,7 +24,7 @@ namespace cfacter { namespace facts { namespace linux {
 
     void lsb_resolver::resolve_dist_id(fact_map& facts)
     {
-        string value = execute("lsb_release", {"-i", "-s"}, { execution_options::trim_output });
+        string value = execute("lsb_release", {"-i", "-s"});
         if (value.empty()) {
             return;
         }
@@ -33,7 +33,7 @@ namespace cfacter { namespace facts { namespace linux {
 
     void lsb_resolver::resolve_dist_release(fact_map& facts)
     {
-        string value = execute("lsb_release", {"-r", "-s"}, { execution_options::trim_output });
+        string value = execute("lsb_release", {"-r", "-s"});
         if (value.empty()) {
             return;
         }
@@ -42,7 +42,7 @@ namespace cfacter { namespace facts { namespace linux {
 
     void lsb_resolver::resolve_dist_codename(fact_map& facts)
     {
-        string value = execute("lsb_release", {"-c", "-s"}, { execution_options::trim_output });
+        string value = execute("lsb_release", {"-c", "-s"});
         if (value.empty()) {
             return;
         }
@@ -51,7 +51,7 @@ namespace cfacter { namespace facts { namespace linux {
 
     void lsb_resolver::resolve_dist_description(fact_map& facts)
     {
-        string value = execute("lsb_release", {"-d", "-s"}, { execution_options::trim_output });
+        string value = execute("lsb_release", {"-d", "-s"});
         if (value.empty()) {
             return;
         }
@@ -80,7 +80,7 @@ namespace cfacter { namespace facts { namespace linux {
 
     void lsb_resolver::resolve_release(fact_map& facts)
     {
-        string value = execute("lsb_release", {"-v", "-s"}, { execution_options::trim_output });
+        string value = execute("lsb_release", {"-v", "-s"});
         if (value.empty()) {
             return;
         }

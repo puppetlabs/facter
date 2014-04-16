@@ -11,12 +11,9 @@ namespace cfacter { namespace facts {
 
         // Write out the elements in the array
         result << "[";
-        bool first = true;
         for (auto const& element : _elements) {
-            if (!first) {
+            if (result.tellp() != 0) {
                 result << ", ";
-            } else {
-                first = true;
             }
             result << element->to_string();
         }

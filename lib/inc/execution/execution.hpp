@@ -41,7 +41,7 @@ namespace cfacter { namespace execution {
         /**
          * The default execution options.
          */
-        defaults = redirect_stderr | trim_output| throw_on_failure,
+        defaults = trim_output,
     };
 
     /**

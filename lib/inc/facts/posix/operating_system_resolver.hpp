@@ -2,7 +2,7 @@
 #define LIB_INC_FACTS_POSIX_OPERATING_SYSTEM_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
-#include "fact.hpp"
+#include "../fact.hpp"
 
 namespace cfacter { namespace facts { namespace posix {
 
@@ -55,4 +55,3 @@ namespace cfacter { namespace facts { namespace posix {
 }}}  // namespace cfacter::facts::posix
 
 #endif  // LIB_INC_FACTS_POSIX_OPERATING_SYSTEM_RESOLVER_HPP_
-

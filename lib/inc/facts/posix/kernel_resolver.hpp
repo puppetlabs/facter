@@ -2,7 +2,7 @@
 #define LIB_INC_FACTS_POSIX_KERNEL_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
-#include "fact.hpp"
+#include "../fact.hpp"
 #include <sys/utsname.h>
 
 namespace cfacter { namespace facts { namespace posix {
