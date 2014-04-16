@@ -4,7 +4,6 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include <initializer_list>
 
 namespace cfacter { namespace facts {
 
@@ -52,8 +51,8 @@ namespace cfacter { namespace facts {
          * Constructs a fact_resolver.
          * @param names The fact names the resolver is responsible for.
          */
-        explicit fact_resolver(std::initializer_list<std::string> const& names) :
-            _names(names.begin(), names.end()),
+        explicit fact_resolver(std::vector<std::string>&& names) :
+            _names(std::move(names)),
             _resolving(false)
         {
         }
