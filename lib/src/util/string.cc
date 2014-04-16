@@ -80,12 +80,9 @@ namespace cfacter { namespace util {
     {
         ostringstream stream;
 
-        bool first = true;
         for (auto const& str : strings) {
-            if (!first) {
+            if (stream.tellp() != 0) {
                 stream << delimiter;
-            } else {
-                first = false;
             }
             stream << str;
         }
