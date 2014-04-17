@@ -128,4 +128,44 @@ describe Facter::Util::Values do
       end
     end
   end
+
+  describe "flatten_structure" do
+    it "converts a string to a hash containing that string" do
+      input = "foo"
+      output = described_class.flatten_structure("path", input)
+      expect(output).to eq({"path" => "foo"})
+    end
+
+    it "converts an array to a hash with the array elements with indexes" do
+      input = ["foo"]
+      output = described_class.flatten_structure("path", input)
+      expect(output).to eq({"path_0" => "foo"})
+    end
+
+    it "prefixes a non-nested hash with the given path" do
+      input = {"foo" => "bar"}
+      output = described_class.flatten_structure("path", input)
+      expect(output).to eq({"path_foo" => "bar"})
+    end
+
+    it "flattens elements till it reaches the first non-flattenable structure" do
+      input = {
+        "first" => "second",
+        "arr" => ["zero", "one"],
+        "nested_array" => [
+          "hash" => "string",
+        ],
+        "top" => {"middle" => ['bottom']},
+      }
+      output = described_class.flatten_structure("path", input)
+
+      expect(output).to eq({
+        "path_first" => "second",
+        "path_arr_0" => "zero",
+        "path_arr_1" => "one",
+        "path_nested_array_0_hash" => "string",
+        "path_top_middle_0" => "bottom"
+      })
+    end
+  end
 end
