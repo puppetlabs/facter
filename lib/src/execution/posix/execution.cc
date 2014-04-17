@@ -87,7 +87,7 @@ namespace cfacter { namespace execution {
             {
                 count = read(stdout_read, buffer, sizeof(buffer));
                 if (count < 0) {
-                    throw new execution_exception("failed to read child output.");
+                    throw execution_exception("failed to read child output.");
                 }
                 output.write(buffer, count);
             }
