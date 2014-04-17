@@ -28,7 +28,7 @@ namespace cfacter { namespace facts { namespace posix {
         if (value.empty()) {
             return;
         }
-        facts.add(fact::kernel, make_value<string_value>(std::move(value)));
+        facts.add(fact::kernel, make_value<string_value>(move(value)));
     }
 
     void kernel_resolver::resolve_kernel_release(fact_map& facts, utsname const& name)
@@ -37,7 +37,7 @@ namespace cfacter { namespace facts { namespace posix {
         if (value.empty()) {
             return;
         }
-        facts.add(fact::kernel_release, make_value<string_value>(std::move(value)));
+        facts.add(fact::kernel_release, make_value<string_value>(move(value)));
     }
 
     void kernel_resolver::resolve_kernel_version(fact_map& facts)
@@ -52,7 +52,7 @@ namespace cfacter { namespace facts { namespace posix {
         if (pos != string::npos) {
             value = value.substr(0, pos);
         }
-        facts.add(fact::kernel_version, make_value<string_value>(std::move(value)));
+        facts.add(fact::kernel_version, make_value<string_value>(move(value)));
     }
 
     void kernel_resolver::resolve_kernel_major_version(fact_map& facts)
@@ -71,7 +71,7 @@ namespace cfacter { namespace facts { namespace posix {
                 value = value.substr(0, pos);
             }
         }
-        facts.add(fact::kernel_major_release, make_value<string_value>(std::move(value)));
+        facts.add(fact::kernel_major_release, make_value<string_value>(move(value)));
     }
 
 }}}  // namespace cfacter::facts::posix

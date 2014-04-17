@@ -45,7 +45,7 @@ namespace cfacter { namespace util {
         return rtrim(str, set);
     }
 
-    string& trim(std::string& str, initializer_list<char> const& set)
+    string& trim(string& str, initializer_list<char> const& set)
     {
         return ltrim(rtrim(str, set), set);
     }
@@ -71,7 +71,7 @@ namespace cfacter { namespace util {
             if (part.empty()) {
                 continue;
             }
-            parts.push_back(std::move(part));
+            parts.push_back(move(part));
         }
         return parts;
     }

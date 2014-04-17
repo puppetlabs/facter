@@ -184,7 +184,7 @@ namespace cfacter { namespace facts { namespace linux {
             return;
         }
 
-        facts.add(fact::operating_system_release, make_value<string_value>(std::move(value)));
+        facts.add(fact::operating_system_release, make_value<string_value>(move(value)));
     }
 
     void operating_system_resolver::resolve_operating_system_major_release(fact_map& facts) {
@@ -215,7 +215,7 @@ namespace cfacter { namespace facts { namespace linux {
         if (pos != string::npos) {
             value = value.substr(0, pos);
         }
-        facts.add(fact::operating_system_major_release, make_value<string_value>(std::move(value)));
+        facts.add(fact::operating_system_major_release, make_value<string_value>(move(value)));
     }
 
     string operating_system_resolver::check_cumulus_linux()
@@ -231,7 +231,7 @@ namespace cfacter { namespace facts { namespace linux {
                 }
             }
         }
-        return string();
+        return {};
     }
 
     string operating_system_resolver::check_debian_linux(string_value const* dist_id)
@@ -245,7 +245,7 @@ namespace cfacter { namespace facts { namespace linux {
             }
             return os::debian;
         }
-        return string();
+        return {};
     }
 
     string operating_system_resolver::check_oracle_linux()
@@ -256,7 +256,7 @@ namespace cfacter { namespace facts { namespace linux {
             }
             return os::oracle_enterprise_linux;
         }
-        return string();
+        return {};
     }
 
     string operating_system_resolver::check_redhat_linux()
@@ -282,7 +282,7 @@ namespace cfacter { namespace facts { namespace linux {
             }
             return os::redhat;
         }
-        return string();
+        return {};
     }
 
     string operating_system_resolver::check_suse_linux()
@@ -302,7 +302,7 @@ namespace cfacter { namespace facts { namespace linux {
             }
             return os::suse;
         }
-        return string();
+        return {};
     }
 
     string operating_system_resolver::check_other_linux()
@@ -329,7 +329,7 @@ namespace cfacter { namespace facts { namespace linux {
                 return kvp.second;
             }
         }
-        return string();
+        return {};
     }
 
 }}}  // namespace cfacter::facts::linux

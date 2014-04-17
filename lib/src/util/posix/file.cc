@@ -20,7 +20,7 @@ namespace cfacter { namespace util {
     // TODO: this is standard-compliant, so it should shared between POSIX and Windows
     string file::read(string const& path)
     {
-        ifstream in(path, std::ios::in | std::ios::binary);
+        ifstream in(path, ios::in | ios::binary);
         ostringstream contents;
         if (in) {
             contents << in.rdbuf();
@@ -36,7 +36,7 @@ namespace cfacter { namespace util {
         if (getline(in, value)) {
             return value;
         }
-        return string();
+        return {};
     }
 
 }}  // namespace cfacter::util
