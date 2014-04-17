@@ -37,7 +37,7 @@ class Facter::Util::IP::Linux < Facter::Util::IP::Base
   # @return [Regexp]
   #
   # @api private
-  MTU_REGEX = /MTU:(\d+)/
+  MTU_REGEX = /MTU:?\s*(\d+)/i
 
   # Linux doesn't display netmask in hex.
   #
