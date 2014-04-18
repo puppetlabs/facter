@@ -1,7 +1,7 @@
 #ifndef LIB_INC_FACTS_FACT_MAP_HPP_
 #define LIB_INC_FACTS_FACT_MAP_HPP_
 
-#include <vector>
+#include <list>
 #include <map>
 #include <string>
 #include <memory>
@@ -10,20 +10,6 @@
 #include "fact_resolver.hpp"
 
 namespace cfacter { namespace facts {
-
-    struct fact_map;
-
-    /**
-     * Called to populate common facts.
-     * @param facts The fact map being populated.
-     */
-    void populate_common_facts(fact_map& facts);
-
-    /**
-     * Called to populate platform-specific facts.
-     * @param facts The fact map being populated.
-     */
-    void populate_platform_facts(fact_map& facts);
 
     /**
      * Thrown when a fact already exists in the map.
@@ -58,22 +44,11 @@ namespace cfacter { namespace facts {
         typedef std::map<std::string, std::shared_ptr<fact_resolver>> resolver_map_type;
 
         /**
-        * Adds a fact resolver to the fact map.
-        * @tparam T The fact resolver type to add to the map.  Must be default-constructable.
-        */
-        template <typename T>
-        void add_resolver()
-        {
-            std::shared_ptr<fact_resolver> resolver(new T());
+         * Adds a resolver to the fact map.
+         * @param resolver The resolver to add to the map.
+         */
+        void add(std::shared_ptr<fact_resolver> const& resolver);
 
-            for (auto const& fact_name : resolver->names()) {
-                auto const& it = _resolvers.lower_bound(fact_name);
-                if (it != _resolvers.end() && !(_resolvers.key_comp()(fact_name, it->first))) {
-                    throw resolver_exists_exception("a resolver for fact " + fact_name + " already exists.");
-                }
-                _resolvers.insert(it, make_pair(fact_name, resolver));
-            }
-        }
 
         /**
          * Adds a fact to the map.
@@ -81,6 +56,12 @@ namespace cfacter { namespace facts {
          * @param value The value of the fact.
          */
         void add(std::string&& name, std::unique_ptr<value>&& value);
+
+        /**
+         * Removes a resolver from the fact map.
+         * @param resolver The resolver to remove from the map.
+         */
+        void remove(std::shared_ptr<fact_resolver> const& resolver);
 
         /**
          * Removes a fact by name.
@@ -101,13 +82,15 @@ namespace cfacter { namespace facts {
 
         /**
          * Gets a fact value by name.
+         * @tparam T The expected type of the value.
          * @param name The name of the fact to get the value of.
+         * @param resolve True if resolution should take place or false if not.
          * @return Returns a pointer to the fact value or nullptr if the fact is not in the map or the value is not the expected type.
          */
         template <typename T>
-        T const* get(std::string const& name)
+        T const* get(std::string const& name, bool resolve = true)
         {
-            return dynamic_cast<T const*>(get_value(name));
+            return dynamic_cast<T const*>(get_value(name, resolve));
         }
 
         /**
@@ -124,14 +107,16 @@ namespace cfacter { namespace facts {
 
      private:
         fact_map() {}
-        void load();
+        void load_facts();
         void resolve_facts();
-        value const* get_value(std::string const& name);
+        std::shared_ptr<fact_resolver> find_resolver(std::string const& name);
+        value const* get_value(std::string const& name, bool resolve);
 
         static fact_map _instance;
 
         fact_map_type _facts;
-        resolver_map_type _resolvers;
+        std::list<std::shared_ptr<fact_resolver>> _resolvers;
+        resolver_map_type _resolver_map;
     };
 
 }}  // namespace cfacter::facts

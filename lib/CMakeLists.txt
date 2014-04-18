@@ -27,6 +27,7 @@ if (UNIX)
     set(LIBCFACTER_POSIX_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/execution/posix/execution.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/kernel_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/operating_system_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/file.cc"
     )
@@ -35,11 +36,15 @@ endif()
 # Set the platform-specific sources
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     set(LIBCFACTER_PLATFORM_SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/platform.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBCFACTER_PLATFORM_SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/lsb_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/operating_system_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/platform.cc"
     )
