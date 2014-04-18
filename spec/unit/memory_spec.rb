@@ -229,6 +229,7 @@ SVMON
     end
   end
 
+
   describe "on Solaris" do
     before(:each) do
       Facter.clear
@@ -265,6 +266,7 @@ SVMON
       it "should return the current swap size in MB" do
         Facter.fact(:swapsize_mb).value.should == "1023.99"
       end
+
     end
 
     describe "when multiple swaps exist" do
@@ -313,6 +315,22 @@ SVMON
         Facter.fact(:swapsize_mb).value.should == "0.00"
       end
     end
+
+    describe "when in a SmartOS zone" do
+      before(:each) do
+        Facter::Core::Execution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns my_fixture_read('smartos_zone_swap_l-single')
+        Facter.collection.internal_loader.load(:memory)
+      end
+
+      it "should return the current swap size in MB" do
+        Facter.fact(:swapsize_mb).value.should == "49152.00"
+      end
+
+      it "should return the current swap free in MB" do
+        Facter.fact(:swapfree_mb).value.should == "33676.06"
+      end
+    end
+
   end
 
     describe "on DragonFly BSD" do
