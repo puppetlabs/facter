@@ -205,7 +205,7 @@ module Facter::Memory
         0
       end
     when /SunOS/i
-      if line =~ /^\/\S+\s.*\s+(\d+)\s+(\d+)$/
+      if line =~ /^\S+\s.*\s+(\d+)\s+(\d+)$/
         (is_size) ? $1.to_i : $2.to_i
       else
         0
