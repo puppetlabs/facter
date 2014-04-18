@@ -2,6 +2,7 @@
 #include <sstream>
 #include <algorithm>
 #include <iterator>
+#include <cstring>
 
 using namespace std;
 

@@ -2,6 +2,7 @@
 #include <facts/fact_map.hpp>
 #include <facts/string_value.hpp>
 #include <util/string.hpp>
+#include <cstring>
 
 using namespace std;
 using namespace cfacter::util;

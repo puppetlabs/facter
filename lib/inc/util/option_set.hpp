@@ -1,7 +1,6 @@
 #ifndef LIB_INC_UTIL_OPTION_SET_HPP_
 #define LIB_INC_UTIL_OPTION_SET_HPP_
 
-#include <iostream>
 #include <numeric>
 #include <string>
 #include <initializer_list>
