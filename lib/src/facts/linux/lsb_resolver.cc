@@ -62,7 +62,7 @@ namespace cfacter { namespace facts { namespace linux {
 
     void lsb_resolver::resolve_dist_version(fact_map& facts)
     {
-        auto dist_release = facts.get<string_value>(fact::lsb_dist_release);
+        auto dist_release = facts.get<string_value>(fact::lsb_dist_release, false);
         if (!dist_release) {
             return;
         }

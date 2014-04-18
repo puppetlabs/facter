@@ -61,7 +61,7 @@ namespace cfacter { namespace facts { namespace linux {
 
     void operating_system_resolver::resolve_operating_system_release(fact_map& facts)
     {
-        auto operating_system = facts.get<string_value>(fact::operating_system);
+        auto operating_system = facts.get<string_value>(fact::operating_system, false);
         if (!operating_system) {
             // Use the base implementation
             posix::operating_system_resolver::resolve_operating_system_release(facts);
@@ -188,8 +188,8 @@ namespace cfacter { namespace facts { namespace linux {
     }
 
     void operating_system_resolver::resolve_operating_system_major_release(fact_map& facts) {
-        auto operating_system = facts.get<string_value>(fact::operating_system);
-        auto os_release = facts.get<string_value>(fact::operating_system_release);
+        auto operating_system = facts.get<string_value>(fact::operating_system, false);
+        auto os_release = facts.get<string_value>(fact::operating_system_release, false);
 
         if (!operating_system ||
             !os_release || !(
