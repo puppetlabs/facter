@@ -1,6 +1,4 @@
 cmake_minimum_required(VERSION 2.8.12)
-include(${VENDOR_DIRECTORY}/re2.cmake)
-include(${VENDOR_DIRECTORY}/rapidjson.cmake)
 
 # Set compiler-specific flags
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -60,12 +58,14 @@ include_directories(
     inc
     ${RE2_INCLUDE_DIRS}
     ${RAPIDJSON_INCLUDE_DIRS}
+    ${LOG4CXX_INCLUDE_DIRS}
 )
 
 # Link in additional libraries
 target_link_libraries(libcfacter
     pthread
     libre2
+    liblog4cxx
 )
 
 # Add a dependency on rapidjson

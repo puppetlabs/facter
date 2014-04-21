@@ -25,7 +25,11 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "/opt/cfacter" CACHE PATH "default install path" FORCE)
 endif()
 
+# Include vendor libraries
 set(VENDOR_DIRECTORY "${PROJECT_SOURCE_DIR}/vendor")
+include(${VENDOR_DIRECTORY}/re2.cmake)
+include(${VENDOR_DIRECTORY}/rapidjson.cmake)
+include(${VENDOR_DIRECTORY}/log4cxx.cmake)
 
 add_subdirectory(exe)
 
@@ -72,3 +76,5 @@ endif()
 add_custom_target(cppcheck
     COMMAND cppcheck lib exe
 )
+
+install(SCRIPT "${CMAKE_SOURCE_DIR}/PostInstall.cmake")
