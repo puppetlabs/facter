@@ -3,9 +3,15 @@
 #include <facts/string_value.hpp>
 #include <util/string.hpp>
 #include <cstring>
+#include <boost/format.hpp>
+#include <log4cxx/logger.h>
 
 using namespace std;
 using namespace cfacter::util;
+using namespace log4cxx;
+using boost::format;
+
+static LoggerPtr logger = Logger::getLogger("cfacter.facts.posix.kernel_resolver");
 
 namespace cfacter { namespace facts { namespace posix {
 
@@ -14,6 +20,7 @@ namespace cfacter { namespace facts { namespace posix {
         utsname name;
         memset(&name, 0, sizeof(name));
         if (uname(&name) != 0) {
+            LOG4CXX_WARN(logger, (format("uname failed with %1%: kernel facts unavailable.") % errno).str());
             return;
         }
         // Resolve all kernel-related facts

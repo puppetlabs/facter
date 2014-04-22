@@ -16,7 +16,9 @@ namespace cfacter { namespace facts { namespace posix {
          * Constructs the kernel_resolver.
          */
         kernel_resolver() :
-            fact_resolver({
+            fact_resolver(
+            "kernel",
+            {
                 fact::kernel,
                 fact::kernel_version,
                 fact::kernel_release,

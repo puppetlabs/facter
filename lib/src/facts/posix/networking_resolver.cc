@@ -10,8 +10,14 @@
 #include <iomanip>
 #include <vector>
 #include <string.h>
+#include <boost/format.hpp>
+#include <log4cxx/logger.h>
 
 using namespace std;
+using namespace log4cxx;
+using boost::format;
+
+static LoggerPtr logger = Logger::getLogger("cfacter.facts.posix.networking_resolver");
 
 namespace cfacter { namespace facts { namespace posix {
 
@@ -26,7 +32,7 @@ namespace cfacter { namespace facts { namespace posix {
         int max = sysconf(_SC_HOST_NAME_MAX);
         vector<char> name(max);
         if (gethostname(name.data(), max) != 0) {
-            // TODO: log
+            LOG4CXX_WARN(logger, (format("gethostname failed with %1%: hostname fact unavailable.") % errno).str());
             return;
         }
 
@@ -99,15 +105,10 @@ namespace cfacter { namespace facts { namespace posix {
             return {};
         }
 
-        ostringstream stream;
-        for (size_t i = 0; i < 6; ++i) {
-            if (stream.tellp() != 0) {
-                stream << ":";
-            }
-            stream << hex << setw(2) << setfill('0') << static_cast<int>(bytes[i]);
-        }
-
-        return stream.str();
+        return (format("%02x:%02x:%02x:%02x:%02x:%02x") %
+                static_cast<int>(bytes[0]) % static_cast<int>(bytes[1]) %
+                static_cast<int>(bytes[2]) % static_cast<int>(bytes[3]) %
+                static_cast<int>(bytes[4]) % static_cast<int>(bytes[5])).str();
     }
 
 }}}  // namespace cfacter::facts::posix

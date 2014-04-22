@@ -8,10 +8,16 @@
 #include <arpa/inet.h>
 #include <net/if.h>
 #include <ifaddrs.h>
+#include <boost/format.hpp>
+#include <log4cxx/logger.h>
 
 using namespace std;
 using namespace cfacter::util;
 using namespace cfacter::util::bsd;
+using namespace log4cxx;
+using boost::format;
+
+static LoggerPtr logger = Logger::getLogger("cfacter.facts.bsd.network_resolver");
 
 namespace cfacter { namespace facts { namespace bsd {
 
@@ -20,7 +26,7 @@ namespace cfacter { namespace facts { namespace bsd {
         // Scope the head ifaddrs ptr
         scoped_ifaddrs addrs;
         if (!addrs) {
-            // TODO: log failure
+            LOG4CXX_WARN(logger, (format("getifaddrs failed with %1%: interface facts unavailable.") % errno).str());
             return;
         }
 

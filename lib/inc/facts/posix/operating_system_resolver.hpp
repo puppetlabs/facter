@@ -15,7 +15,9 @@ namespace cfacter { namespace facts { namespace posix {
          * Constructs the operating_system_resolver.
          */
         operating_system_resolver() :
-            fact_resolver({
+            fact_resolver(
+            "operating system",
+            {
                 fact::operating_system,
                 fact::os_family,
                 fact::operating_system_release,

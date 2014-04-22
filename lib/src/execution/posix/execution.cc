@@ -4,14 +4,37 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-
 #include <sstream>
+#include <boost/format.hpp>
+#include <log4cxx/logger.h>
 
 using namespace std;
 using namespace cfacter::util;
 using namespace cfacter::util::posix;
+using namespace log4cxx;
+using boost::format;
+
+static LoggerPtr logger = Logger::getLogger("cfacter.execution.posix");
 
 namespace cfacter { namespace execution {
+
+    void log_execution(string const& file, vector<string> const* arguments)
+    {
+        if (!logger->isDebugEnabled()) {
+            return;
+        }
+
+        ostringstream command_line;
+        command_line << file;
+
+        if (arguments) {
+            for (auto const& argument : *arguments) {
+                command_line << ' ' << argument;
+            }
+        }
+
+        LOG4CXX_DEBUG(logger, (format("Executing command: %1%") % command_line.str()).str());
+    }
 
     static string execute(
         string const& file,
@@ -49,6 +72,8 @@ namespace cfacter { namespace execution {
         vector<string> const* environment,
         option_set<execution_options> const& options)
     {
+        log_execution(file, arguments);
+
         // Create the pipes for stdin/stdout/stderr redirection
         int pipes[2];
         if (pipe(pipes) < 0) {
@@ -94,23 +119,26 @@ namespace cfacter { namespace execution {
             while (count > 0);
 
             // Wait for the child to exit
+            string result = output.str();
             int status;
             waitpid(child, &status, 0);
             if (WIFEXITED(status)) {
-                status = WEXITSTATUS(status);
+                status = static_cast<char>(WEXITSTATUS(status));
+                LOG4CXX_DEBUG(logger, (format("Process exited with status code %1% and output: %2%") % status % result).str());
                 if (status != 0 && options[execution_options::throw_on_nonzero_exit]) {
-                    throw child_exit_exception(status, output.str(), "child process returned non-zero exit status.");
+                    throw child_exit_exception(status, result, "child process returned non-zero exit status.");
                 }
             } else if (WIFSIGNALED(status)) {
-                status = WTERMSIG(status);
+                status = static_cast<char>(WTERMSIG(status));
+                LOG4CXX_DEBUG(logger, (format("Process was signaled with signal %1% and output: %2%") % status % result).str());
                 if (options[execution_options::throw_on_signal]) {
-                    throw child_signal_exception(status, output.str(), "child process was terminated by signal.");
+                    throw child_signal_exception(status, result, "child process was terminated by signal.");
                 }
             }
             if (options[execution_options::trim_output]) {
-                return trim(output.str());
+                return trim(result);
             }
-            return output.str();
+            return result;
         }
 
         // Child continues here

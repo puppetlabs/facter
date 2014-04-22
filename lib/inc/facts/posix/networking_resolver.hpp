@@ -15,8 +15,10 @@ namespace cfacter { namespace facts { namespace posix {
         /**
          * Constructs the networking_resolver.
          */
-        networking_resolver() :
-            fact_resolver({
+        explicit networking_resolver() :
+            fact_resolver(
+            "networking",
+            {
                 fact::hostname,
                 fact::ipaddress,
                 fact::ipaddress6,
@@ -24,7 +26,8 @@ namespace cfacter { namespace facts { namespace posix {
                 fact::network,
                 fact::macaddress,
                 fact::interfaces,
-            }, {
+            },
+            {
                 std::string("^") + fact::ipaddress + "_",
                 std::string("^") + fact::ipaddress6 + "_",
                 std::string("^") + fact::mtu + "_",

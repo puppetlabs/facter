@@ -66,10 +66,11 @@ namespace cfacter { namespace facts {
     {
         /**
          * Constructs a fact_resolver.
+         * @param name The fact resolver name.
          * @param names The fact names the resolver is responsible for.
          * @param patterns Regular expression patterns for additional ("dynamic") facts the resolver is responsible for.
          */
-        fact_resolver(std::vector<std::string>&& names, std::vector<std::string> const& patterns = {});
+        fact_resolver(std::string&& name, std::vector<std::string>&& names, std::vector<std::string> const& patterns = {});
 
         /**
          * Destructs the fact_resolver.
@@ -83,6 +84,12 @@ namespace cfacter { namespace facts {
         // Allow movable
         fact_resolver(fact_resolver&&) = default;
         fact_resolver& operator=(fact_resolver&&) = default;
+
+        /**
+         * Gets the name of the fact resolver.
+         * @return Returns the fact resolver's name.
+         */
+        std::string const& name() const { return _name; }
 
         /**
          * Gets the fact names the resolver is responsible for resolving.
@@ -112,6 +119,7 @@ namespace cfacter { namespace facts {
         virtual void resolve_facts(fact_map& facts) = 0;
 
      private:
+        std::string _name;
         std::vector<std::string> _names;
         std::vector<std::unique_ptr<re2::RE2>> _regexes;
         bool _resolving;
