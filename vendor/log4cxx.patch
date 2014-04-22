@@ -20,3 +20,41 @@
  #include <cctype>
 +#include <cstdlib>
  #include <apr.h>
+
+
+--- a/src/main/cpp/inputstreamreader.cpp
++++ b/src/main/cpp/inputstreamreader.cpp
+@@ -20,7 +20,9 @@
+ #include <log4cxx/helpers/exception.h>
+ #include <log4cxx/helpers/pool.h>
+ #include <log4cxx/helpers/bytebuffer.h>
++#include <cstring>
+
++using namespace std;
+ using namespace log4cxx;
+ using namespace log4cxx::helpers;
+
+--- a/src/main/cpp/socketoutputstream.cpp
++++ b/src/main/cpp/socketoutputstream.cpp
+@@ -19,7 +19,9 @@
+ #include <log4cxx/helpers/socketoutputstream.h>
+ #include <log4cxx/helpers/socket.h>
+ #include <log4cxx/helpers/bytebuffer.h>
++#include <cstring>
+
++using namespace std;
+ using namespace log4cxx;
+ using namespace log4cxx::helpers;
+
+--- a/src/examples/cpp/console.cpp
++++ b/src/examples/cpp/console.cpp
+@@ -22,7 +22,10 @@
+ #include <log4cxx/logmanager.h>
+ #include <iostream>
+ #include <locale.h>
++#include <cstring>
++#include <cstdio>
+
++using namespace std;
+ using namespace log4cxx;
+ using namespace log4cxx::helpers;

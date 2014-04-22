@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 include(ExternalProject)
 include(${VENDOR_DIRECTORY}/apr.cmake)
 
-set(APR_UTIL_SHARED_OBJECT_FILE "libaprutil-1.0.so")
+set(APR_UTIL_SHARED_OBJECT_FILE "libaprutil-1.so.0.5.3")
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(APR_UTIL_SHARED_OBJECT_FILE "libaprutil-1.0.dylib")

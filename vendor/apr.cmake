@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 include(ExternalProject)
 
-set(APR_SHARED_OBJECT_FILE "libapr-1.0.so")
+set(APR_SHARED_OBJECT_FILE "libapr-1.so.0.5.0")
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(APR_SHARED_OBJECT_FILE "libapr-1.0.dylib")

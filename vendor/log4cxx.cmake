@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 include(ExternalProject)
 include(${VENDOR_DIRECTORY}/aprutil.cmake)
 
-set(LOG4CXX_SHARED_OBJECT_FILE "liblog4cxx.10.0.0.so")
+set(LOG4CXX_SHARED_OBJECT_FILE "liblog4cxx.so.10.0.0")
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(LOG4CXX_SHARED_OBJECT_FILE "liblog4cxx.10.0.0.dylib")

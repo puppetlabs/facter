@@ -35,7 +35,7 @@ endif()
 if (APPLE)
     set(BOOST_SO_EXT "dylib")
 else()
-    set(BOOST_SO_EXT "so")
+    set(BOOST_SO_EXT "so.1.55.0")
 endif()
 
 foreach(BOOST_LIBRARY ${BOOST_TO_BUILD})
