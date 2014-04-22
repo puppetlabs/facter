@@ -14,7 +14,7 @@ namespace cfacter { namespace facts {
          * Constructs a string_value.
          * @param value The string value.
          */
-        explicit string_value(std::string& value) :
+        explicit string_value(std::string&& value) :
             _value(std::move(value))
         {
         }

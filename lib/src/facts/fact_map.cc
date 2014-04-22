@@ -5,9 +5,37 @@ using namespace std;
 
 namespace cfacter { namespace facts {
 
+    /**
+     * Called to populate common facts.
+     * @param facts The fact map being populated.
+     */
+    extern void populate_common_facts(fact_map& facts);
+
+    /**
+     * Called to populate platform-specific facts.
+     * @param facts The fact map being populated.
+     */
+    extern void populate_platform_facts(fact_map& facts);
+
     fact_map fact_map::_instance;
 
-    void fact_map::add(std::string&& name, std::unique_ptr<value>&& value)
+    void fact_map::add(shared_ptr<fact_resolver> const& resolver)
+    {
+        if (!resolver) {
+            return;
+        }
+
+        for (auto const& fact_name : resolver->names()) {
+            auto const& it = _resolver_map.lower_bound(fact_name);
+            if (it != _resolver_map.end() && !(_resolver_map.key_comp()(fact_name, it->first))) {
+                throw resolver_exists_exception("a resolver for fact " + fact_name + " already exists.");
+            }
+            _resolver_map.insert(it, make_pair(fact_name, resolver));
+        }
+        _resolvers.push_back(resolver);
+    }
+
+    void fact_map::add(string&& name, unique_ptr<value>&& value)
     {
         // Search for the fact first
         auto const& it = _facts.lower_bound(name);
@@ -15,13 +43,27 @@ namespace cfacter { namespace facts {
             throw fact_exists_exception("fact " + name + " already exists.");
         }
 
-        // Remove any resolver for this fact and add the fact
-        _resolvers.erase(name);
-        _facts.insert(it, std::make_pair(std::move(name), std::move(value)));
+        // Remove any mapped resolver for this fact
+        _resolver_map.erase(name);
+        _facts.insert(it, make_pair(move(name), move(value)));
+    }
+
+    void fact_map::remove(shared_ptr<fact_resolver> const& resolver)
+    {
+        if (!resolver) {
+            return;
+        }
+
+        // Remove all fact associations
+        for (auto const& name : resolver->names()) {
+            _resolver_map.erase(name);
+        }
+        _resolvers.remove(resolver);
     }
 
     void fact_map::remove(string const& name)
     {
+        _resolver_map.erase(name);
         _facts.erase(name);
     }
 
@@ -29,6 +71,7 @@ namespace cfacter { namespace facts {
     {
         _facts.clear();
         _resolvers.clear();
+        _resolver_map.clear();
     }
 
     bool fact_map::empty() const
@@ -36,12 +79,12 @@ namespace cfacter { namespace facts {
         return _facts.empty() && _resolvers.empty();
     }
 
-    void fact_map::each(std::function<bool(std::string const&, value const*)> func)
+    void fact_map::each(function<bool(string const&, value const*)> func)
     {
-        load();
+        load_facts();
         resolve_facts();
 
-        std::find_if(begin(_facts), end(_facts), [&func](fact_map_type::value_type const& it) {
+        find_if(begin(_facts), end(_facts), [&func](fact_map_type::value_type const& it) {
             return func(it.first, it.second.get());
         });
     }
@@ -51,7 +94,7 @@ namespace cfacter { namespace facts {
         return fact_map::_instance;
     }
 
-    void fact_map::load()
+    void fact_map::load_facts()
     {
         if (!empty()) {
             return;
@@ -62,45 +105,51 @@ namespace cfacter { namespace facts {
 
     void fact_map::resolve_facts()
     {
-        // Go through every resolver and get each fact
-        while (!_resolvers.empty())
-        {
-            // Copy the string from the key as resolving the facts will
-            // destruct the resolver entry in the map
-            string name = _resolvers.begin()->first;
-            get_value(name);
+        for (auto& resolver : _resolvers) {
+            resolver->resolve(*this);
         }
+        _resolvers.clear();
+        _resolver_map.clear();
     }
 
-    value const* fact_map::get_value(std::string const& name)
+    value const* fact_map::get_value(string const& name, bool resolve)
     {
-        load();
+        load_facts();
 
+        // Lookup the fact
         auto it = _facts.find(name);
-        if (it == _facts.end()) {
-            // Check the resolvers
-            auto const& resolver_it = _resolvers.find(name);
-            if (resolver_it == _resolvers.end()) {
-                // Fact not found
+        while (it == _facts.end()) {
+            // Look for a resolver for this fact
+            auto resolver = resolve ? find_resolver(name) : nullptr;
+            if (!resolver) {
                 return nullptr;
             }
-            auto resolver = resolver_it->second;
 
             // Resolve the facts
             resolver->resolve(*this);
+            remove(resolver);
 
-            // Remove any associated facts that didn't resolve
-            for (auto const& name : resolver->names()) {
-                _resolvers.erase(name);
-            }
-
+            // Try to find the fact again
             it = _facts.find(name);
-            if (it == _facts.end()) {
-                // Fact not found after resolution
-                return nullptr;
-            }
         }
         return it->second.get();
+    }
+
+    shared_ptr<fact_resolver> fact_map::find_resolver(string const& name)
+    {
+        // Check the map first to see if we know the fact by name
+        auto const& it = _resolver_map.find(name);
+        if (it != _resolver_map.end()) {
+            return it->second;
+        }
+
+        // Otherwise, do a linear search for a resolver that can resolve the fact
+        for (auto const& resolver : _resolvers) {
+            if (resolver->can_resolve(name)) {
+                return resolver;
+            }
+        }
+        return nullptr;
     }
 
 }}  // namespace cfacter::facts

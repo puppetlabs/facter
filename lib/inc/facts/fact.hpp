@@ -24,6 +24,15 @@ namespace cfacter { namespace facts {
         constexpr static char const* lsb_dist_major_release = "lsbmajdistrelease";
         constexpr static char const* lsb_dist_minor_release = "lsbminordistrelease";
         constexpr static char const* lsb_release = "lsbrelease";
+        constexpr static char const* ipaddress = "ipaddress";
+        constexpr static char const* ipaddress6 = "ipaddress6";
+        constexpr static char const* mtu = "mtu";
+        constexpr static char const* netmask = "netmask";
+        constexpr static char const* netmask6 = "netmask6";
+        constexpr static char const* network = "network";
+        constexpr static char const* network6 = "network6";
+        constexpr static char const* macaddress = "macaddress";
+        constexpr static char const* interfaces = "interfaces";
     };
 
 }}  // namespace cfacter::facts

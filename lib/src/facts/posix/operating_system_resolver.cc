@@ -36,7 +36,7 @@ namespace cfacter { namespace facts { namespace posix {
         auto os = facts.get<string_value>(fact::operating_system);
         string value;
         if (os) {
-            static std::map<string, string> systems = {
+            static map<string, string> systems = {
                 { string(os::redhat),                   string(os_family::redhat) },
                 { string(os::fedora),                   string(os_family::redhat) },
                 { string(os::centos),                   string(os_family::redhat) },
@@ -82,7 +82,7 @@ namespace cfacter { namespace facts { namespace posix {
             }
             value = kernel->value();
         }
-        facts.add(fact::os_family, make_value<string_value>(std::move(value)));
+        facts.add(fact::os_family, make_value<string_value>(move(value)));
     }
 
     void operating_system_resolver::resolve_operating_system_release(fact_map& facts)

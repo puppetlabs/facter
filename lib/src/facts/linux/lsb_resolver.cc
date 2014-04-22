@@ -28,7 +28,7 @@ namespace cfacter { namespace facts { namespace linux {
         if (value.empty()) {
             return;
         }
-        facts.add(fact::lsb_dist_id, make_value<string_value>(std::move(value)));
+        facts.add(fact::lsb_dist_id, make_value<string_value>(move(value)));
     }
 
     void lsb_resolver::resolve_dist_release(fact_map& facts)
@@ -37,7 +37,7 @@ namespace cfacter { namespace facts { namespace linux {
         if (value.empty()) {
             return;
         }
-        facts.add(fact::lsb_dist_release, make_value<string_value>(std::move(value)));
+        facts.add(fact::lsb_dist_release, make_value<string_value>(move(value)));
     }
 
     void lsb_resolver::resolve_dist_codename(fact_map& facts)
@@ -46,7 +46,7 @@ namespace cfacter { namespace facts { namespace linux {
         if (value.empty()) {
             return;
         }
-        facts.add(fact::lsb_dist_codename, make_value<string_value>(std::move(value)));
+        facts.add(fact::lsb_dist_codename, make_value<string_value>(move(value)));
     }
 
     void lsb_resolver::resolve_dist_description(fact_map& facts)
@@ -57,12 +57,12 @@ namespace cfacter { namespace facts { namespace linux {
         }
 
         // The value may be quoted; trim the quotes
-        facts.add(fact::lsb_dist_description, make_value<string_value>(std::move(trim(value, { '\"' }))));
+        facts.add(fact::lsb_dist_description, make_value<string_value>(move(trim(value, { '\"' }))));
     }
 
     void lsb_resolver::resolve_dist_version(fact_map& facts)
     {
-        auto dist_release = facts.get<string_value>(fact::lsb_dist_release);
+        auto dist_release = facts.get<string_value>(fact::lsb_dist_release, false);
         if (!dist_release) {
             return;
         }
@@ -71,10 +71,10 @@ namespace cfacter { namespace facts { namespace linux {
         if (!RE2::PartialMatch(dist_release->value(), "(\\d+)\\.(\\d*)", &major, &minor)) {
             major = dist_release->value();
         }
-        facts.add(fact::lsb_dist_major_release, make_value<string_value>(std::move(major)));
+        facts.add(fact::lsb_dist_major_release, make_value<string_value>(move(major)));
 
         if (!minor.empty()) {
-            facts.add(fact::lsb_dist_minor_release, make_value<string_value>(std::move(minor)));
+            facts.add(fact::lsb_dist_minor_release, make_value<string_value>(move(minor)));
         }
     }
 
@@ -84,7 +84,7 @@ namespace cfacter { namespace facts { namespace linux {
         if (value.empty()) {
             return;
         }
-        facts.add(fact::lsb_release, make_value<string_value>(std::move(value)));
+        facts.add(fact::lsb_release, make_value<string_value>(move(value)));
     }
 
 }}}  // namespace cfacter::facts::linux

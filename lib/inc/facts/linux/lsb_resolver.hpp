@@ -32,7 +32,7 @@ namespace cfacter { namespace facts { namespace linux {
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact map that is resolving facts.
          */
-        void resolve_facts(fact_map& facts);
+        virtual void resolve_facts(fact_map& facts);
 
         /**
          * Called to resolve the LSB dist id fact.

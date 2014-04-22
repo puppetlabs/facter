@@ -3784,7 +3784,7 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
     if (matched_new is None and  # If new operator, then this isn't a cast
         not (Match(r'^\s*MOCK_(CONST_)?METHOD\d+(_T)?\(', line) or
              Search(r'\bMockCallback<.*>', line) or
-             Search(r'\bstd::function<.*>', line)) and
+             Search(r'\bfunction<.*>', line)) and
         not (matched_funcptr and
              Match(r'\((?:[^() ]+::\s*\*\s*)?[^() ]+\)\s*\(',
                    matched_funcptr))):

@@ -5,9 +5,7 @@
 #include <vector>
 #include <functional>
 #include <initializer_list>
-
-// TODO: non-standard header
-#include "string.h"
+#include <cctype>
 
 namespace cfacter { namespace util {
 
@@ -132,24 +130,24 @@ namespace cfacter { namespace util {
     {
         static bool eq(char c1, char c2)
         {
-            return ::toupper(c1) == ::toupper(c2);
+            return std::toupper(c1) == std::toupper(c2);
         }
 
         static bool ne(char c1, char c2)
         {
-            return ::toupper(c1) != ::toupper(c2);
+            return std::toupper(c1) != std::toupper(c2);
         }
 
         static bool lt(char c1, char c2)
         {
-            return ::toupper(c1) < ::toupper(c2);
+            return std::toupper(c1) < std::toupper(c2);
         }
 
         static int compare(char const* s1, char const* s2, size_t n);
 
         static char const* find(char const* s, int n, char a)
         {
-            while (n-- > 0 && ::toupper(*s) != ::toupper(a)) {
+            while (n-- > 0 && std::toupper(*s) != std::toupper(a)) {
                 ++s;
             }
             return s;
