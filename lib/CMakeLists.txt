@@ -59,6 +59,7 @@ include_directories(
     ${RE2_INCLUDE_DIRS}
     ${RAPIDJSON_INCLUDE_DIRS}
     ${LOG4CXX_INCLUDE_DIRS}
+    ${BOOST_INCLUDE_DIRS}
 )
 
 # Link in additional libraries

@@ -13,8 +13,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-un
 include_directories(
     ${LIBCFACTER_DIR}/inc
     ${LOG4CXX_INCLUDE_DIRS}
+    ${BOOST_INCLUDE_DIRS}
 )
 
 add_executable(cfacter ${CFACTER_SOURCES})
-target_link_libraries(cfacter libcfacter liblog4cxx)
+target_link_libraries(cfacter libcfacter liblog4cxx libboost_program_options)
 install(TARGETS cfacter DESTINATION .)
