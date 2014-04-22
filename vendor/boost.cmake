@@ -14,7 +14,6 @@ externalproject_add(
     BUILD_COMMAND ./b2
     BUILD_IN_SOURCE 1
     INSTALL_COMMAND ""
-    ALWAYS 1
 )
 
 # Set some useful variables based on the source directory
@@ -27,7 +26,6 @@ if(APPLE)
         installnames
         COMMAND ${PROJECT_SOURCE_DIR}/scripts/osx_boost_names.sh ${SOURCE_DIR}/stage/lib
         COMMENT "Fixing boost install names"
-        ALWAYS 1
         DEPENDEES build
     )
 endif()

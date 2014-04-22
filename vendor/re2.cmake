@@ -22,7 +22,6 @@ externalproject_add(
     BUILD_COMMAND make CPPFLAGS=${RE2_CPP_FLAGS} LDFLAGS=${RE2_LD_FLAGS}
     BUILD_IN_SOURCE 1
     INSTALL_COMMAND ""
-    ALWAYS 1
 )
 
 # Set some useful variables based on the source directory

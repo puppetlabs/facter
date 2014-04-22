@@ -22,7 +22,6 @@ externalproject_add(
     BUILD_COMMAND make
     BUILD_IN_SOURCE 1
     INSTALL_COMMAND ""
-    ALWAYS 1
 )
 add_dependencies(aprutil apr)
 
