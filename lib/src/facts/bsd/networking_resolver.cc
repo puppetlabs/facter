@@ -17,19 +17,16 @@ namespace cfacter { namespace facts { namespace bsd {
 
     void networking_resolver::resolve_interface_facts(fact_map& facts)
     {
-        // Get the linked list of interfaces
-        ifaddrs* ptr = nullptr;
-        if (getifaddrs(&ptr) != 0 || !ptr) {
+        // Scope the head ifaddrs ptr
+        scoped_ifaddrs addrs;
+        if (!addrs) {
             // TODO: log failure
             return;
         }
 
-        // Scope the head ifaddrs ptr
-        scoped_ifaddrs addrs(ptr);
-
         // Map an interface to entries describing that interface
         multimap<string, ifaddrs const*> interface_map;
-        for (; ptr; ptr = ptr->ifa_next) {
+        for (ifaddrs* ptr = addrs; ptr; ptr = ptr->ifa_next) {
             // We only support IPv4, IPv6, and link interfaces
             if (ptr->ifa_addr->sa_family != AF_INET &&
                 ptr->ifa_addr->sa_family != AF_INET6 &&
@@ -102,6 +99,9 @@ namespace cfacter { namespace facts { namespace bsd {
             factname = fact::ipaddress6;
         } else if (is_link_address(addr->ifa_addr)) {
             factname = fact::macaddress;
+        } else {
+            // Unsupported address
+            return;
         }
 
         string address = address_to_string(addr->ifa_addr);

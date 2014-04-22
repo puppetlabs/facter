@@ -39,13 +39,13 @@ namespace cfacter { namespace facts { namespace osx {
     {
         auto version = facts.get<string_value>(fact::kernel_release);
         if (!version || version->value() != "R7") {
-            posix::networking_resolver::resolve_hostname(facts);
+            bsd::networking_resolver::resolve_hostname(facts);
             return;
         }
 
         string value = execute("/usr/sbin/scutil", { "--get LocalHostName" });
         if (!value.empty()) {
-            posix::networking_resolver::resolve_hostname(facts);
+            bsd::networking_resolver::resolve_hostname(facts);
             return;
         }
 

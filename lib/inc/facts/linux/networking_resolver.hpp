@@ -7,6 +7,11 @@ namespace cfacter { namespace facts { namespace linux {
 
     /**
      * Responsible for resolving networking facts.
+     *
+     * The Linux networking_resolver inherits from the BSD networking_resolver.
+     * This is because getifaddrs is a BSD concept that was implemented in Linux.
+     * The only thing this resolver is responsible for is handing link-level
+     * addressing and MTU.
      */
     struct networking_resolver : bsd::networking_resolver
     {

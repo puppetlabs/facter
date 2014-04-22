@@ -67,6 +67,7 @@ namespace cfacter { namespace facts {
         /**
          * Constructs a fact_resolver.
          * @param names The fact names the resolver is responsible for.
+         * @param patterns Regular expression patterns for additional ("dynamic") facts the resolver is responsible for.
          */
         fact_resolver(std::vector<std::string>&& names, std::vector<std::string> const& patterns = {});
 

@@ -21,6 +21,10 @@ namespace cfacter { namespace facts {
 
     void fact_map::add(shared_ptr<fact_resolver> const& resolver)
     {
+        if (!resolver) {
+            return;
+        }
+
         for (auto const& fact_name : resolver->names()) {
             auto const& it = _resolver_map.lower_bound(fact_name);
             if (it != _resolver_map.end() && !(_resolver_map.key_comp()(fact_name, it->first))) {

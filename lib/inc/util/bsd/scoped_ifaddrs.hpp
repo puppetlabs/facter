@@ -12,6 +12,20 @@ namespace cfacter { namespace util { namespace bsd {
     struct scoped_ifaddrs : scoped_resource<ifaddrs*>
     {
         /**
+         * Default constructor.
+         * This constructor will handle calling getifaddrs.
+         */
+        scoped_ifaddrs()
+        {
+            // Get the linked list of interfaces
+            if (getifaddrs(&_resource) != 0) {
+                _resource = nullptr;
+            } else {
+                _deleter = free;
+            }
+        }
+
+        /**
          * Constructs a scoped_descriptor.
          * @param descriptor The file descriptor to close when destroyed.
          */
