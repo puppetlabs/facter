@@ -143,9 +143,7 @@ describe Facter::Util::IP::Linux do
         end
 
         it "extracts the mtu" do
-          pending "Resolution of Archlinux, which outputs BSD style output, getting parsed using Linux formatting" do
-            described_class.value_for_interface_and_label("em1", "mtu").should eq "1500"
-          end
+          described_class.value_for_interface_and_label("em1", "mtu").should eq "1500"
         end
 
         it "extracts the netmask" do
@@ -159,9 +157,7 @@ describe Facter::Util::IP::Linux do
         end
 
         it "extracts the mtu" do
-          pending "Resolution of Archlinux, which outputs BSD style output, getting parsed using Linux formatting" do
-            described_class.value_for_interface_and_label("lo", "mtu").should eq "16436"
-          end
+          described_class.value_for_interface_and_label("lo", "mtu").should eq "16436"
         end
 
         it "extracts the netmask" do
