@@ -1,13 +1,10 @@
 #include <facts/fact_map.hpp>
+#include <logging/logging.hpp>
 #include <algorithm>
-#include <boost/format.hpp>
-#include <log4cxx/logger.h>
 
 using namespace std;
-using namespace log4cxx;
-using boost::format;
 
-static LoggerPtr logger = Logger::getLogger("cfacter.facts.fact_map");
+LOG_DECLARE_NAMESPACE("facts");
 
 namespace cfacter { namespace facts {
 
@@ -49,7 +46,7 @@ namespace cfacter { namespace facts {
             throw fact_exists_exception("fact " + name + " already exists.");
         }
 
-        LOG4CXX_DEBUG(logger, (format("fact %1% has resolved to \"%2%\".") % name % (value ? value->to_string() : "<null>")).str());
+        LOG_DEBUG("fact %1% has resolved to \"%2%\".", name, value ? value->to_string() : "<null>");
 
         // Remove any mapped resolver for this fact
         _resolver_map.erase(name);

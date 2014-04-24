@@ -2,19 +2,16 @@
 #include <facts/fact_map.hpp>
 #include <facts/string_value.hpp>
 #include <util/posix/scoped_descriptor.hpp>
+#include <logging/logging.hpp>
 #include <cstring>
 #include <netpacket/packet.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
-#include <boost/format.hpp>
-#include <log4cxx/logger.h>
 
 using namespace std;
 using namespace cfacter::util::posix;
-using namespace log4cxx;
-using boost::format;
 
-static LoggerPtr logger = Logger::getLogger("cfacter.facts.linux.network_resolver");
+LOG_DECLARE_NAMESPACE("facts.linux.networking");
 
 namespace cfacter { namespace facts { namespace linux {
 
@@ -46,7 +43,7 @@ namespace cfacter { namespace facts { namespace linux {
         scoped_descriptor sock(socket(AF_INET, SOCK_DGRAM, 0));
 
         if (ioctl(sock, SIOCGIFMTU, &req) != 0) {
-            LOG4CXX_WARN(logger, (format("ioctl failed with %1%: interface MTU fact unavailable.") % errno).str());
+            LOG_WARNING("ioctl failed with %1%: interface MTU fact is unavailable for interface %2%.", errno, interface);
             return -1;
         }
         return req.ifr_mtu;

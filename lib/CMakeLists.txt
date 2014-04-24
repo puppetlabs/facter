@@ -18,6 +18,7 @@ set(LIBCFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/string_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/string.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/logging/logging.cc"
 )
 
 # Set the POSIX sources if on a POSIX platform

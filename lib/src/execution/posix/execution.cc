@@ -1,26 +1,23 @@
 #include <execution/execution.hpp>
 #include <util/posix/scoped_descriptor.hpp>
 #include <util/string.hpp>
+#include <logging/logging.hpp>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <sstream>
-#include <boost/format.hpp>
-#include <log4cxx/logger.h>
 
 using namespace std;
 using namespace cfacter::util;
 using namespace cfacter::util::posix;
-using namespace log4cxx;
-using boost::format;
 
-static LoggerPtr logger = Logger::getLogger("cfacter.execution.posix");
+LOG_DECLARE_NAMESPACE("execution.posix");
 
 namespace cfacter { namespace execution {
 
     void log_execution(string const& file, vector<string> const* arguments)
     {
-        if (!logger->isDebugEnabled()) {
+        if (!LOG_IS_DEBUG_ENABLED()) {
             return;
         }
 
@@ -32,8 +29,7 @@ namespace cfacter { namespace execution {
                 command_line << ' ' << argument;
             }
         }
-
-        LOG4CXX_DEBUG(logger, (format("Executing command: %1%") % command_line.str()).str());
+        LOG_DEBUG("Executing command: %1%", command_line.str());
     }
 
     static string execute(
@@ -124,13 +120,13 @@ namespace cfacter { namespace execution {
             waitpid(child, &status, 0);
             if (WIFEXITED(status)) {
                 status = static_cast<char>(WEXITSTATUS(status));
-                LOG4CXX_DEBUG(logger, (format("Process exited with status code %1% and output: %2%") % status % result).str());
+                LOG_DEBUG("Process exited with status code %1% and output: %2%", status, result);
                 if (status != 0 && options[execution_options::throw_on_nonzero_exit]) {
                     throw child_exit_exception(status, result, "child process returned non-zero exit status.");
                 }
             } else if (WIFSIGNALED(status)) {
                 status = static_cast<char>(WTERMSIG(status));
-                LOG4CXX_DEBUG(logger, (format("Process was signaled with signal %1% and output: %2%") % status % result).str());
+                LOG_DEBUG("Process was signaled with signal %1% and output: %2%", status, result);
                 if (options[execution_options::throw_on_signal]) {
                     throw child_signal_exception(status, result, "child process was terminated by signal.");
                 }

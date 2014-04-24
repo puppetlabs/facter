@@ -1,6 +1,7 @@
 #include <facts/posix/networking_resolver.hpp>
 #include <facts/fact_map.hpp>
 #include <facts/string_value.hpp>
+#include <logging/logging.hpp>
 #include <unistd.h>
 #include <limits.h>
 #include <limits>
@@ -11,13 +12,11 @@
 #include <vector>
 #include <string.h>
 #include <boost/format.hpp>
-#include <log4cxx/logger.h>
 
 using namespace std;
-using namespace log4cxx;
 using boost::format;
 
-static LoggerPtr logger = Logger::getLogger("cfacter.facts.posix.networking_resolver");
+LOG_DECLARE_NAMESPACE("facts.posix.networking");
 
 namespace cfacter { namespace facts { namespace posix {
 
@@ -32,7 +31,7 @@ namespace cfacter { namespace facts { namespace posix {
         int max = sysconf(_SC_HOST_NAME_MAX);
         vector<char> name(max);
         if (gethostname(name.data(), max) != 0) {
-            LOG4CXX_WARN(logger, (format("gethostname failed with %1%: hostname fact unavailable.") % errno).str());
+            LOG_WARNING("gethostname failed with %1%: hostname fact is unavailable.", errno);
             return;
         }
 

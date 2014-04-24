@@ -1,6 +1,7 @@
 #include "../version.h"
 #include <iostream>
 #include <facts/fact_map.hpp>
+#include <logging/logging.hpp>
 #include <util/file.hpp>
 #include <log4cxx/logger.h>
 #include <log4cxx/propertyconfigurator.h>
@@ -16,7 +17,7 @@ using namespace cfacter::facts;
 using boost::format;
 namespace po = boost::program_options;
 
-static LoggerPtr logger = Logger::getLogger("cfacter.main");
+LOG_DECLARE_NAMESPACE("main");
 
 void help(po::options_description& desc)
 {
@@ -63,7 +64,7 @@ void configure_logger(LevelPtr level, string const& properties_file)
 
 void log_command_line(int argc, char** argv)
 {
-    if (!logger->isInfoEnabled()) {
+    if (!LOG_IS_INFO_ENABLED()) {
         return;
     }
     ostringstream command_line;
@@ -73,12 +74,12 @@ void log_command_line(int argc, char** argv)
         }
         command_line << argv[i];
     }
-    LOG4CXX_INFO(logger, (format("Executed with command line: %1%") % command_line.str()).str());
+    LOG_INFO("Executed with command line: %1%.", command_line.str());
 }
 
 void log_requested_facts(vector<string> const& facts)
 {
-    if (!logger->isInfoEnabled()) {
+    if (!LOG_IS_INFO_ENABLED()) {
         return;
     }
     ostringstream requested_facts;
@@ -88,7 +89,7 @@ void log_requested_facts(vector<string> const& facts)
         }
         requested_facts << fact;
     }
-    LOG4CXX_INFO(logger, (format("Resolving requested facts: %1%") % requested_facts.str()).str());
+    LOG_INFO("Resolving requested facts: %1%.", requested_facts.str());
 }
 
 int main(int argc, char **argv)
@@ -171,7 +172,7 @@ int main(int argc, char **argv)
                 cout << format("%1% => %2%\n") % fact % value->to_string();
             }
         } else {
-            LOG4CXX_INFO(logger, "Resolving all facts.");
+            LOG_INFO("Resolving all facts.");
 
             // Print all facts in the map
             facts.each([](string const& name, value const* value) {
@@ -182,7 +183,7 @@ int main(int argc, char **argv)
             });
         }
     } catch (exception& ex) {
-        LOG4CXX_FATAL(logger, (format("Unhandled exception: %1%") % ex.what()).str());
+        LOG_FATAL("Unhandled exception: %1%.", ex.what());
         return EXIT_FAILURE;
     }
 }
