@@ -1,7 +1,10 @@
 #include <facts/fact_map.hpp>
+#include <logging/logging.hpp>
 #include <algorithm>
 
 using namespace std;
+
+LOG_DECLARE_NAMESPACE("facts");
 
 namespace cfacter { namespace facts {
 
@@ -42,6 +45,8 @@ namespace cfacter { namespace facts {
         if (it != _facts.end() && !(_facts.key_comp()(name, it->first))) {
             throw fact_exists_exception("fact " + name + " already exists.");
         }
+
+        LOG_DEBUG("fact %1% has resolved to \"%2%\".", name, value ? value->to_string() : "<null>");
 
         // Remove any mapped resolver for this fact
         _resolver_map.erase(name);

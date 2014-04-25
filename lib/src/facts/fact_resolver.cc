@@ -1,13 +1,17 @@
 #include <facts/fact_resolver.hpp>
 #include <facts/fact_map.hpp>
+#include <logging/logging.hpp>
 #include <re2/re2.h>
 
 using namespace std;
 using namespace re2;
 
+LOG_DECLARE_NAMESPACE("facts.resolver");
+
 namespace cfacter { namespace facts {
 
-    fact_resolver::fact_resolver(vector<string>&& names, vector<string> const& patterns) :
+    fact_resolver::fact_resolver(string&& name, vector<string>&& names, vector<string> const& patterns) :
+        _name(move(name)),
         _names(move(names)),
         _resolving(false)
     {
@@ -26,6 +30,7 @@ namespace cfacter { namespace facts {
 
     void fact_resolver::resolve(fact_map& facts)
     {
+        LOG_DEBUG("resolving %1% facts.", _name);
         if (_resolving) {
             throw circular_resolution_exception("a cycle in fact resolution was detected.");
         }

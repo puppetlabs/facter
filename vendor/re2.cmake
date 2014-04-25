@@ -5,7 +5,7 @@ set(RE2_SHARED_OBJECT_FILE "libre2.so.0")
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     # Fix the install name to be on the reference path
-    set(RE2_LD_FLAGS "-install_name @rpath/${RE2_SHARED_OBJECT_FILE}")
+    set(RE2_LD_FLAGS "-Wl,-install_name,@rpath/${RE2_SHARED_OBJECT_FILE}")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     set(RE2_CPP_FLAGS "-Wno-unused-local-typedefs")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
@@ -22,7 +22,6 @@ externalproject_add(
     BUILD_COMMAND make CPPFLAGS=${RE2_CPP_FLAGS} LDFLAGS=${RE2_LD_FLAGS}
     BUILD_IN_SOURCE 1
     INSTALL_COMMAND ""
-    ALWAYS 1
 )
 
 # Set some useful variables based on the source directory

@@ -3,6 +3,7 @@
 #include <facts/string_value.hpp>
 #include <util/string.hpp>
 #include <util/bsd/scoped_ifaddrs.hpp>
+#include <logging/logging.hpp>
 #include <sstream>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -13,6 +14,8 @@ using namespace std;
 using namespace cfacter::util;
 using namespace cfacter::util::bsd;
 
+LOG_DECLARE_NAMESPACE("facts.bsd.networking");
+
 namespace cfacter { namespace facts { namespace bsd {
 
     void networking_resolver::resolve_interface_facts(fact_map& facts)
@@ -20,7 +23,7 @@ namespace cfacter { namespace facts { namespace bsd {
         // Scope the head ifaddrs ptr
         scoped_ifaddrs addrs;
         if (!addrs) {
-            // TODO: log failure
+            LOG_WARNING("getifaddrs failed with %1%: interface facts are unavailable.", errno);
             return;
         }
 

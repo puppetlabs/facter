@@ -8,12 +8,21 @@ set(LIBCFACTER_DIR ../lib)
 
 add_subdirectory(${LIBCFACTER_DIR} ${LIBCFACTER_DIR})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter")
+# Set compiler-specific flags
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-tautological-constant-out-of-range-compare")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-local-typedefs")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+endif()
 
 include_directories(
     ${LIBCFACTER_DIR}/inc
+    ${LOG4CXX_INCLUDE_DIRS}
+    ${BOOST_INCLUDE_DIRS}
 )
 
 add_executable(cfacter ${CFACTER_SOURCES})
-target_link_libraries(cfacter libcfacter)
+target_link_libraries(cfacter libcfacter liblog4cxx libboost_program_options)
 install(TARGETS cfacter DESTINATION .)

@@ -1,6 +1,4 @@
 cmake_minimum_required(VERSION 2.8.12)
-include(${VENDOR_DIRECTORY}/re2.cmake)
-include(${VENDOR_DIRECTORY}/rapidjson.cmake)
 
 # Set compiler-specific flags
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -20,6 +18,7 @@ set(LIBCFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/string_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/string.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/logging/logging.cc"
 )
 
 # Set the POSIX sources if on a POSIX platform
@@ -60,12 +59,15 @@ include_directories(
     inc
     ${RE2_INCLUDE_DIRS}
     ${RAPIDJSON_INCLUDE_DIRS}
+    ${LOG4CXX_INCLUDE_DIRS}
+    ${BOOST_INCLUDE_DIRS}
 )
 
 # Link in additional libraries
 target_link_libraries(libcfacter
     pthread
     libre2
+    liblog4cxx
 )
 
 # Add a dependency on rapidjson

@@ -25,7 +25,12 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "/opt/cfacter" CACHE PATH "default install path" FORCE)
 endif()
 
+# Include vendor libraries
 set(VENDOR_DIRECTORY "${PROJECT_SOURCE_DIR}/vendor")
+include(${VENDOR_DIRECTORY}/re2.cmake)
+include(${VENDOR_DIRECTORY}/rapidjson.cmake)
+include(${VENDOR_DIRECTORY}/log4cxx.cmake)
+include(${VENDOR_DIRECTORY}/boost.cmake)
 
 add_subdirectory(exe)
 
@@ -52,7 +57,7 @@ else()
 
     file(GLOB_RECURSE ALL_SOURCES lib/*.cc lib/*.h lib/*.hpp exe/*.cc exe/*.h exe/*.hpp)
 
-    set(CPPLINT_PATH "${PROJECT_SOURCE_DIR}/ext/cpplint.py")
+    set(CPPLINT_PATH "${PROJECT_SOURCE_DIR}/scripts/cpplint.py")
 
     set(CPPLINT_ARGS "--extensions=cc,hpp,h")
     if (CPPLINT_FILTER)
@@ -72,3 +77,5 @@ endif()
 add_custom_target(cppcheck
     COMMAND cppcheck lib exe
 )
+
+install(SCRIPT "${CMAKE_SOURCE_DIR}/PostInstall.cmake")

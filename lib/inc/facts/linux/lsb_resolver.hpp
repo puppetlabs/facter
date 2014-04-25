@@ -15,7 +15,9 @@ namespace cfacter { namespace facts { namespace linux {
          * Constructs the lsb_resolver.
          */
         lsb_resolver() :
-            fact_resolver({
+            fact_resolver(
+            "Linux Standard Base",
+            {
                 fact::lsb_dist_id,
                 fact::lsb_dist_release,
                 fact::lsb_dist_codename,

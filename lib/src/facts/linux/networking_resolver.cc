@@ -2,6 +2,7 @@
 #include <facts/fact_map.hpp>
 #include <facts/string_value.hpp>
 #include <util/posix/scoped_descriptor.hpp>
+#include <logging/logging.hpp>
 #include <cstring>
 #include <netpacket/packet.h>
 #include <net/if.h>
@@ -9,6 +10,8 @@
 
 using namespace std;
 using namespace cfacter::util::posix;
+
+LOG_DECLARE_NAMESPACE("facts.linux.networking");
 
 namespace cfacter { namespace facts { namespace linux {
 
@@ -40,7 +43,7 @@ namespace cfacter { namespace facts { namespace linux {
         scoped_descriptor sock(socket(AF_INET, SOCK_DGRAM, 0));
 
         if (ioctl(sock, SIOCGIFMTU, &req) != 0) {
-            // TODO: log failure
+            LOG_WARNING("ioctl failed with %1%: interface MTU fact is unavailable for interface %2%.", errno, interface);
             return -1;
         }
         return req.ifr_mtu;

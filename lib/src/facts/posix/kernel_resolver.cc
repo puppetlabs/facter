@@ -2,10 +2,13 @@
 #include <facts/fact_map.hpp>
 #include <facts/string_value.hpp>
 #include <util/string.hpp>
+#include <logging/logging.hpp>
 #include <cstring>
 
 using namespace std;
 using namespace cfacter::util;
+
+LOG_DECLARE_NAMESPACE("facts.posix.kernel");
 
 namespace cfacter { namespace facts { namespace posix {
 
@@ -14,6 +17,7 @@ namespace cfacter { namespace facts { namespace posix {
         utsname name;
         memset(&name, 0, sizeof(name));
         if (uname(&name) != 0) {
+            LOG_WARNING("uname failed with %1%: kernel facts are unavailable.", errno);
             return;
         }
         // Resolve all kernel-related facts

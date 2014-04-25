@@ -94,6 +94,16 @@ namespace cfacter { namespace facts {
         }
 
         /**
+         * Gets a fact value by name
+         * @param name The name of the fact to get the value of.
+         * @return Returns a pointer to the fact value or nullptr if the fact is not in the map.
+         */
+        value const* operator[](std::string const& name)
+        {
+            return get_value(name, true);
+        }
+
+        /**
          * Enumerates all facts in the map.
          * @param func The callback function called for each fact in the map.
          */
