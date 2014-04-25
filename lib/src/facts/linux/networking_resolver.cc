@@ -1,19 +1,19 @@
-#include <facts/linux/networking_resolver.hpp>
-#include <facts/fact_map.hpp>
-#include <facts/string_value.hpp>
-#include <util/posix/scoped_descriptor.hpp>
-#include <logging/logging.hpp>
+#include <facter/facts/linux/networking_resolver.hpp>
+#include <facter/facts/fact_map.hpp>
+#include <facter/facts/string_value.hpp>
+#include <facter/util/posix/scoped_descriptor.hpp>
+#include <facter/logging/logging.hpp>
 #include <cstring>
 #include <netpacket/packet.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
 
 using namespace std;
-using namespace cfacter::util::posix;
+using namespace facter::util::posix;
 
 LOG_DECLARE_NAMESPACE("facts.linux.networking");
 
-namespace cfacter { namespace facts { namespace linux {
+namespace facter { namespace facts { namespace linux {
 
     bool networking_resolver::is_link_address(sockaddr const* addr) const
     {
@@ -49,4 +49,4 @@ namespace cfacter { namespace facts { namespace linux {
         return req.ifr_mtu;
     }
 
-}}}  // namespace cfacter::facts::linux
+}}}  // namespace facter::facts::linux

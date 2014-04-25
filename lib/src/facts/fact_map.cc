@@ -1,12 +1,12 @@
-#include <facts/fact_map.hpp>
-#include <logging/logging.hpp>
+#include <facter/facts/fact_map.hpp>
+#include <facter/logging/logging.hpp>
 #include <algorithm>
 
 using namespace std;
 
 LOG_DECLARE_NAMESPACE("facts");
 
-namespace cfacter { namespace facts {
+namespace facter { namespace facts {
 
     /**
      * Called to populate common facts.
@@ -157,4 +157,4 @@ namespace cfacter { namespace facts {
         return nullptr;
     }
 
-}}  // namespace cfacter::facts
+}}  // namespace facter::facts

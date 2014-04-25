@@ -1,16 +1,16 @@
-#include <facts/posix/kernel_resolver.hpp>
-#include <facts/fact_map.hpp>
-#include <facts/string_value.hpp>
-#include <util/string.hpp>
-#include <logging/logging.hpp>
+#include <facter/facts/posix/kernel_resolver.hpp>
+#include <facter/facts/fact_map.hpp>
+#include <facter/facts/string_value.hpp>
+#include <facter/util/string.hpp>
+#include <facter/logging/logging.hpp>
 #include <cstring>
 
 using namespace std;
-using namespace cfacter::util;
+using namespace facter::util;
 
 LOG_DECLARE_NAMESPACE("facts.posix.kernel");
 
-namespace cfacter { namespace facts { namespace posix {
+namespace facter { namespace facts { namespace posix {
 
     void kernel_resolver::resolve_facts(fact_map& facts)
     {
@@ -79,4 +79,4 @@ namespace cfacter { namespace facts { namespace posix {
         facts.add(fact::kernel_major_release, make_value<string_value>(move(value)));
     }
 
-}}}  // namespace cfacter::facts::posix
+}}}  // namespace facter::facts::posix

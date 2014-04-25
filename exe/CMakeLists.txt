@@ -4,9 +4,9 @@ set(CFACTER_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/cfacter.cc
 )
 
-set(LIBCFACTER_DIR ../lib)
+set(LIBFACTER_DIR ../lib)
 
-add_subdirectory(${LIBCFACTER_DIR} ${LIBCFACTER_DIR})
+add_subdirectory(${LIBFACTER_DIR} ${LIBFACTER_DIR})
 
 # Set compiler-specific flags
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -18,11 +18,11 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 include_directories(
-    ${LIBCFACTER_DIR}/inc
+    ${LIBFACTER_DIR}/inc
     ${LOG4CXX_INCLUDE_DIRS}
     ${BOOST_INCLUDE_DIRS}
 )
 
 add_executable(cfacter ${CFACTER_SOURCES})
-target_link_libraries(cfacter libcfacter liblog4cxx libboost_program_options)
+target_link_libraries(cfacter libfacter liblog4cxx libboost_program_options)
 install(TARGETS cfacter DESTINATION .)

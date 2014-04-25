@@ -1,19 +1,19 @@
-#include <execution/execution.hpp>
-#include <util/posix/scoped_descriptor.hpp>
-#include <util/string.hpp>
-#include <logging/logging.hpp>
+#include <facter/execution/execution.hpp>
+#include <facter/util/posix/scoped_descriptor.hpp>
+#include <facter/util/string.hpp>
+#include <facter/logging/logging.hpp>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <sstream>
 
 using namespace std;
-using namespace cfacter::util;
-using namespace cfacter::util::posix;
+using namespace facter::util;
+using namespace facter::util::posix;
 
 LOG_DECLARE_NAMESPACE("execution.posix");
 
-namespace cfacter { namespace execution {
+namespace facter { namespace execution {
 
     void log_execution(string const& file, vector<string> const* arguments)
     {
@@ -36,7 +36,7 @@ namespace cfacter { namespace execution {
         string const& file,
         vector<string> const* arguments,
         vector<string> const* environment,
-        option_set<cfacter::execution::execution_options> const& options);
+        option_set<execution_options> const& options);
 
     string execute(
         string const& file,
@@ -196,4 +196,4 @@ namespace cfacter { namespace execution {
         // CHILD DOES NOT RETURN
     }
 
-}}  // namespace cfacter::executions
+}}  // namespace facter::executions

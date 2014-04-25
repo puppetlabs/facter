@@ -59,7 +59,7 @@ else()
 
     set(CPPLINT_PATH "${PROJECT_SOURCE_DIR}/scripts/cpplint.py")
 
-    set(CPPLINT_ARGS "--extensions=cc,hpp,h")
+    set(CPPLINT_ARGS "--extensions=cc,hpp,h;--root=lib/inc")
     if (CPPLINT_FILTER)
         string(REPLACE ";" "," CPPLINT_FILTER "${CPPLINT_FILTER}")
         set(CPPLINT_ARGS "${CPPLINT_ARGS};--filter=${CPPLINT_FILTER}")

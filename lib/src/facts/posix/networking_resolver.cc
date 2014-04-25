@@ -1,7 +1,7 @@
-#include <facts/posix/networking_resolver.hpp>
-#include <facts/fact_map.hpp>
-#include <facts/string_value.hpp>
-#include <logging/logging.hpp>
+#include <facter/facts/posix/networking_resolver.hpp>
+#include <facter/facts/fact_map.hpp>
+#include <facter/facts/string_value.hpp>
+#include <facter/logging/logging.hpp>
 #include <unistd.h>
 #include <limits.h>
 #include <limits>
@@ -18,7 +18,7 @@ using boost::format;
 
 LOG_DECLARE_NAMESPACE("facts.posix.networking");
 
-namespace cfacter { namespace facts { namespace posix {
+namespace facter { namespace facts { namespace posix {
 
     void networking_resolver::resolve_facts(fact_map& facts)
     {
@@ -110,4 +110,4 @@ namespace cfacter { namespace facts { namespace posix {
                 static_cast<int>(bytes[4]) % static_cast<int>(bytes[5])).str();
     }
 
-}}}  // namespace cfacter::facts::posix
+}}}  // namespace facter::facts::posix

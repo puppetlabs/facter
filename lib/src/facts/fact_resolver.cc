@@ -1,6 +1,6 @@
-#include <facts/fact_resolver.hpp>
-#include <facts/fact_map.hpp>
-#include <logging/logging.hpp>
+#include <facter/facts/fact_resolver.hpp>
+#include <facter/facts/fact_map.hpp>
+#include <facter/logging/logging.hpp>
 #include <re2/re2.h>
 
 using namespace std;
@@ -8,7 +8,7 @@ using namespace re2;
 
 LOG_DECLARE_NAMESPACE("facts.resolver");
 
-namespace cfacter { namespace facts {
+namespace facter { namespace facts {
 
     fact_resolver::fact_resolver(string&& name, vector<string>&& names, vector<string> const& patterns) :
         _name(move(name)),
@@ -49,4 +49,4 @@ namespace cfacter { namespace facts {
         return false;
     }
 
-}}  // namespace cfacter::facts
+}}  // namespace facter::facts

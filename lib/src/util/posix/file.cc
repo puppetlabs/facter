@@ -1,11 +1,11 @@
-#include <util/file.hpp>
+#include <facter/util/file.hpp>
 #include <sys/stat.h>
 #include <sstream>
 #include <fstream>
 
 using namespace std;
 
-namespace cfacter { namespace util {
+namespace facter { namespace util {
 
     bool file::exists(string const& path)
     {
@@ -39,4 +39,4 @@ namespace cfacter { namespace util {
         return {};
     }
 
-}}  // namespace cfacter::util
+}}  // namespace facter::util
