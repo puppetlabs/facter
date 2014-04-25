@@ -26,6 +26,8 @@ namespace facter { namespace facts { namespace posix {
                 fact::network,
                 fact::macaddress,
                 fact::interfaces,
+                fact::domain,
+                fact::fqdn,
             },
             {
                 std::string("^") + fact::ipaddress + "_",
@@ -85,6 +87,11 @@ namespace facter { namespace facts { namespace posix {
          * @param facts The fact map that is resolving facts.
          */
         virtual void resolve_hostname(fact_map& facts);
+        /**
+         * Called to resolve the domain and fqdn facts.
+         * @param facts The fact map that is resolving facts.
+         */
+        virtual void resolve_domain(fact_map& facts);
         /**
          * Called to resolve interface facts.
          * @param facts The fact map that is resolving facts.
