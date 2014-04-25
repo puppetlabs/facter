@@ -1,14 +1,13 @@
-#include <facts/posix/kernel_resolver.hpp>
-#include <facts/posix/operating_system_resolver.hpp>
-#include <facts/posix/os.hpp>
-#include <facts/posix/os_family.hpp>
-#include <facts/string_value.hpp>
-#include <facts/fact_map.hpp>
+#include <facter/facts/posix/operating_system_resolver.hpp>
+#include <facter/facts/posix/os.hpp>
+#include <facter/facts/posix/os_family.hpp>
+#include <facter/facts/string_value.hpp>
+#include <facter/facts/fact_map.hpp>
 #include <map>
 
 using namespace std;
 
-namespace cfacter { namespace facts { namespace posix {
+namespace facter { namespace facts { namespace posix {
 
     void operating_system_resolver::resolve_facts(fact_map& facts)
     {
@@ -96,4 +95,4 @@ namespace cfacter { namespace facts { namespace posix {
         facts.add(fact::operating_system_release, make_value<string_value>(release->value()));
     }
 
-}}}  // namespace cfacter::facts::posix
+}}}  // namespace facter::facts::posix

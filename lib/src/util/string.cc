@@ -1,4 +1,4 @@
-#include <util/string.hpp>
+#include <facter/util/string.hpp>
 #include <sstream>
 #include <algorithm>
 #include <iterator>
@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace cfacter { namespace util {
+namespace facter { namespace util {
 
     initializer_list<char> default_trim_set = { '\r', '\n', ' ', '\t', '\v', '\f' };
 
@@ -117,4 +117,4 @@ namespace cfacter { namespace util {
         return strncasecmp(s1, s2, n);
     }
 
-}}  // namespace cfacter::util
+}}  // namespace facter::util

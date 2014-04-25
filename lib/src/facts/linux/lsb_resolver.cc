@@ -1,15 +1,15 @@
-#include <facts/fact_map.hpp>
-#include <facts/linux/lsb_resolver.hpp>
-#include <facts/string_value.hpp>
-#include <execution/execution.hpp>
-#include <util/string.hpp>
+#include <facter/facts/fact_map.hpp>
+#include <facter/facts/linux/lsb_resolver.hpp>
+#include <facter/facts/string_value.hpp>
+#include <facter/execution/execution.hpp>
+#include <facter/util/string.hpp>
 #include <re2/re2.h>
 
 using namespace std;
-using namespace cfacter::util;
-using namespace cfacter::execution;
+using namespace facter::util;
+using namespace facter::execution;
 
-namespace cfacter { namespace facts { namespace linux {
+namespace facter { namespace facts { namespace linux {
 
     void lsb_resolver::resolve_facts(fact_map& facts)
     {
@@ -87,4 +87,4 @@ namespace cfacter { namespace facts { namespace linux {
         facts.add(fact::lsb_release, make_value<string_value>(move(value)));
     }
 
-}}}  // namespace cfacter::facts::linux
+}}}  // namespace facter::facts::linux

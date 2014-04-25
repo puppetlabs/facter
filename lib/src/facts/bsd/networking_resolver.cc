@@ -1,9 +1,9 @@
-#include <facts/bsd/networking_resolver.hpp>
-#include <facts/fact_map.hpp>
-#include <facts/string_value.hpp>
-#include <util/string.hpp>
-#include <util/bsd/scoped_ifaddrs.hpp>
-#include <logging/logging.hpp>
+#include <facter/facts/bsd/networking_resolver.hpp>
+#include <facter/facts/fact_map.hpp>
+#include <facter/facts/string_value.hpp>
+#include <facter/util/string.hpp>
+#include <facter/util/bsd/scoped_ifaddrs.hpp>
+#include <facter/logging/logging.hpp>
 #include <sstream>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -11,12 +11,12 @@
 #include <ifaddrs.h>
 
 using namespace std;
-using namespace cfacter::util;
-using namespace cfacter::util::bsd;
+using namespace facter::util;
+using namespace facter::util::bsd;
 
 LOG_DECLARE_NAMESPACE("facts.bsd.networking");
 
-namespace cfacter { namespace facts { namespace bsd {
+namespace facter { namespace facts { namespace bsd {
 
     void networking_resolver::resolve_interface_facts(fact_map& facts)
     {
@@ -173,4 +173,4 @@ namespace cfacter { namespace facts { namespace bsd {
         facts.add(string(fact::mtu) + '_' + addr->ifa_name, make_value<string_value>(to_string(mtu)));
     }
 
-}}}  // namespace cfacter::facts::bsd
+}}}  // namespace facter::facts::bsd

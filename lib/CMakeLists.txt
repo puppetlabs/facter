@@ -10,8 +10,8 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 # Set the common (platform-independent) sources
-set(LIBCFACTER_COMMON_SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/src/cfacterlib.cc"
+set(LIBFACTER_COMMON_SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/src/facterlib.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/array_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact_map.cc"
@@ -23,7 +23,7 @@ set(LIBCFACTER_COMMON_SOURCES
 
 # Set the POSIX sources if on a POSIX platform
 if (UNIX)
-    set(LIBCFACTER_POSIX_SOURCES
+    set(LIBFACTER_POSIX_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/execution/posix/execution.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/kernel_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/networking_resolver.cc"
@@ -34,13 +34,13 @@ endif()
 
 # Set the platform-specific sources
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
-    set(LIBCFACTER_PLATFORM_SOURCES
+    set(LIBFACTER_PLATFORM_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/platform.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
-    set(LIBCFACTER_PLATFORM_SOURCES
+    set(LIBFACTER_PLATFORM_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/lsb_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/networking_resolver.cc"
@@ -50,9 +50,9 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
 endif()
 
 # Add the library target without a prefix (name already has the 'lib')
-add_library(libcfacter SHARED ${LIBCFACTER_COMMON_SOURCES} ${LIBCFACTER_POSIX_SOURCES} ${LIBCFACTER_PLATFORM_SOURCES})
-set_target_properties(libcfacter PROPERTIES PREFIX "")
-install(TARGETS libcfacter DESTINATION .)
+add_library(libfacter SHARED ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_POSIX_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
+set_target_properties(libfacter PROPERTIES PREFIX "")
+install(TARGETS libfacter DESTINATION .)
 
 # Set include directories
 include_directories(
@@ -64,11 +64,11 @@ include_directories(
 )
 
 # Link in additional libraries
-target_link_libraries(libcfacter
+target_link_libraries(libfacter
     pthread
     libre2
     liblog4cxx
 )
 
 # Add a dependency on rapidjson
-add_dependencies(libcfacter rapidjson)
+add_dependencies(libfacter rapidjson)

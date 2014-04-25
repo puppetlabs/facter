@@ -4,7 +4,7 @@ require 'json'
 module CFacter
   private
   extend FFI::Library
-  ffi_lib "libcfacter.so"
+  ffi_lib "libfacter.so"
 
   # to_json is used for to_hash but no need to make it public
   attach_function :to_json,         [:pointer, :size_t],           :int

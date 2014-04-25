@@ -1,21 +1,21 @@
-#include <execution/execution.hpp>
-#include <facts/linux/operating_system_resolver.hpp>
-#include <facts/linux/lsb_resolver.hpp>
-#include <facts/linux/release_file.hpp>
-#include <facts/posix/os.hpp>
-#include <facts/string_value.hpp>
-#include <facts/fact_map.hpp>
-#include <util/string.hpp>
-#include <util/file.hpp>
+#include <facter/execution/execution.hpp>
+#include <facter/facts/linux/operating_system_resolver.hpp>
+#include <facter/facts/linux/lsb_resolver.hpp>
+#include <facter/facts/linux/release_file.hpp>
+#include <facter/facts/posix/os.hpp>
+#include <facter/facts/string_value.hpp>
+#include <facter/facts/fact_map.hpp>
+#include <facter/util/string.hpp>
+#include <facter/util/file.hpp>
 #include <re2/re2.h>
 #include <map>
 
 using namespace std;
-using namespace cfacter::util;
-using namespace cfacter::execution;
-using namespace cfacter::facts::posix;
+using namespace facter::util;
+using namespace facter::execution;
+using namespace facter::facts::posix;
 
-namespace cfacter { namespace facts { namespace linux {
+namespace facter { namespace facts { namespace linux {
 
     void operating_system_resolver::resolve_operating_system(fact_map& facts)
     {
@@ -332,4 +332,4 @@ namespace cfacter { namespace facts { namespace linux {
         return {};
     }
 
-}}}  // namespace cfacter::facts::linux
+}}}  // namespace facter::facts::linux

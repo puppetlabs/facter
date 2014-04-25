@@ -1,10 +1,10 @@
-#include <logging/logging.hpp>
+#include <facter/logging/logging.hpp>
 
 using namespace std;
 using namespace log4cxx;
 using boost::format;
 
-namespace cfacter { namespace logging {
+namespace facter { namespace logging {
 
     bool is_log_enabled(LoggerPtr logger, log_level level) {
         if (level == log_level::debug) {
@@ -43,4 +43,4 @@ namespace cfacter { namespace logging {
         log(logger, level, message.str());
     }
 
-}}  // namespace cfacter::logging
+}}  // namespace facter::logging

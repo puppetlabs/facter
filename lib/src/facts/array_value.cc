@@ -1,9 +1,9 @@
-#include <facts/array_value.hpp>
+#include <facter/facts/array_value.hpp>
 #include <sstream>
 
 using namespace std;
 
-namespace cfacter { namespace facts {
+namespace facter { namespace facts {
 
     string array_value::to_string() const
     {
@@ -21,4 +21,4 @@ namespace cfacter { namespace facts {
         return result.str();
     }
 
-}}  // namespace cfacter::facts
+}}  // namespace facter::facts

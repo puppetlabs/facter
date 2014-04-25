@@ -1,12 +1,12 @@
-#include <facts/fact_map.hpp>
-#include <facts/posix/kernel_resolver.hpp>
-#include <facts/linux/operating_system_resolver.hpp>
-#include <facts/linux/lsb_resolver.hpp>
-#include <facts/linux/networking_resolver.hpp>
+#include <facter/facts/fact_map.hpp>
+#include <facter/facts/posix/kernel_resolver.hpp>
+#include <facter/facts/linux/operating_system_resolver.hpp>
+#include <facter/facts/linux/lsb_resolver.hpp>
+#include <facter/facts/linux/networking_resolver.hpp>
 
 using namespace std;
 
-namespace cfacter { namespace facts {
+namespace facter { namespace facts {
 
     void populate_platform_facts(fact_map& facts)
     {
@@ -16,4 +16,4 @@ namespace cfacter { namespace facts {
         facts.add(make_shared<linux::networking_resolver>());
     }
 
-}}  // namespace cfacter::facts
+}}  // namespace facter::facts

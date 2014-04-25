@@ -1,8 +1,8 @@
 #include "../version.h"
 #include <iostream>
-#include <facts/fact_map.hpp>
-#include <logging/logging.hpp>
-#include <util/file.hpp>
+#include <facter/facts/fact_map.hpp>
+#include <facter/logging/logging.hpp>
+#include <facter/util/file.hpp>
 #include <log4cxx/logger.h>
 #include <log4cxx/propertyconfigurator.h>
 #include <log4cxx/patternlayout.h>
@@ -12,8 +12,8 @@
 
 using namespace std;
 using namespace log4cxx;
-using namespace cfacter::util;
-using namespace cfacter::facts;
+using namespace facter::util;
+using namespace facter::facts;
 using boost::format;
 namespace po = boost::program_options;
 

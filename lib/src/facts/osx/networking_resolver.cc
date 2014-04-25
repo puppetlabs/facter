@@ -1,14 +1,14 @@
-#include <facts/osx/networking_resolver.hpp>
-#include <facts/fact_map.hpp>
-#include <facts/string_value.hpp>
-#include <execution/execution.hpp>
+#include <facter/facts/osx/networking_resolver.hpp>
+#include <facter/facts/fact_map.hpp>
+#include <facter/facts/string_value.hpp>
+#include <facter/execution/execution.hpp>
 #include <net/if_dl.h>
 #include <net/if.h>
 
 using namespace std;
-using namespace cfacter::execution;
+using namespace facter::execution;
 
-namespace cfacter { namespace facts { namespace osx {
+namespace facter { namespace facts { namespace osx {
 
     bool networking_resolver::is_link_address(sockaddr const* addr) const
     {
@@ -52,4 +52,4 @@ namespace cfacter { namespace facts { namespace osx {
         facts.add(fact::hostname, make_value<string_value>(move(value)));
     }
 
-}}}  // namespace cfacter::facts::osx
+}}}  // namespace facter::facts::osx
