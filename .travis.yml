@@ -18,4 +18,9 @@ before_install:
   - wget http://www.cmake.org/files/v2.8/cmake-2.8.12.2.tar.gz -O $HOME/cmake-2.8.12.2.tar.gz
   - pushd $HOME && tar xzf cmake-2.8.12.2.tar.gz && cd $HOME/cmake-2.8.12.2 && ./configure --prefix=$HOME && make && make install && popd
 
-script: mkdir release && cd release && $HOME/bin/cmake .. && make
+script: ./travis_target.sh
+
+env:
+  - TRAVIS_TARGET=CPPLINT
+  - TRAVIS_TARGET=RELEASE
+  - TRAVIS_TARGET=DEBUG
