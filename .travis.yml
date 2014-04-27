@@ -1,0 +1,21 @@
+language: cpp
+compiler:
+  - gcc
+
+before_install:
+  # 'python-software-properties' provides add-apt-repository
+  - sudo apt-get -y install python-software-properties
+  # which is needed to add the ppa that has gcc 4.8
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo apt-get update
+  # which is needed to install gcc 4.8
+  - sudo apt-get -y install gcc-4.8
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
+  # and g++ 4.8
+  - sudo apt-get -y install g++-4.8
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
+  # and we need a newer cmake, so build it ourselves (maybe should build this and host it somewhere)
+  - wget http://www.cmake.org/files/v2.8/cmake-2.8.12.2.tar.gz -O $HOME/cmake-2.8.12.2.tar.gz
+  - pushd $HOME && tar xzf cmake-2.8.12.2.tar.gz && cd $HOME/cmake-2.8.12.2 && ./configure --prefix=$HOME && make && make install && popd
+
+script: mkdir release && cd release && $HOME/bin/cmake .. && make
