@@ -61,6 +61,12 @@ namespace facter { namespace facts {
 
         // Remove all fact associations
         for (auto const& name : resolver->names()) {
+            if (LOG_IS_DEBUG_ENABLED()) {
+                auto it = _facts.find(name);
+                if (it == _facts.end()) {
+                    LOG_DEBUG("fact %1% was not resolved.", name);
+                }
+            }
             _resolver_map.erase(name);
         }
         _resolvers.remove(resolver);
@@ -114,6 +120,16 @@ namespace facter { namespace facts {
             resolver->resolve(*this);
         }
         _resolvers.clear();
+
+        // Log any facts that didn't resolve
+        if (LOG_IS_DEBUG_ENABLED()) {
+            for (auto kvp : _resolver_map) {
+                auto it = _facts.find(kvp.first);
+                if (it == _facts.end()) {
+                    LOG_DEBUG("fact %1% was not resolved.", kvp.first);
+                }
+            }
+        }
         _resolver_map.clear();
     }
 

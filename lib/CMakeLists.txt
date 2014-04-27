@@ -18,7 +18,6 @@ set(LIBFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/string_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/string.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/src/logging/logging.cc"
 )
 
 # Set the POSIX sources if on a POSIX platform
@@ -29,6 +28,7 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/operating_system_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/file.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/logging/posix/logging.cc"
     )
 endif()
 
