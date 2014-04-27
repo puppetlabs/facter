@@ -37,6 +37,12 @@ namespace facter { namespace facts {
         constexpr static char const* fqdn = "fqdn";
         constexpr static char const* block_device = "blockdevice";
         constexpr static char const* block_devices = "blockdevices";
+        constexpr static char const* processor = "processor";
+        constexpr static char const* processor_count = "processorcount";
+        constexpr static char const* physical_processor_count = "physicalprocessorcount";
+        constexpr static char const* hardware_isa = "hardwareisa";
+        constexpr static char const* hardware_model = "hardwaremodel";
+        constexpr static char const* architecture = "architecture";
     };
 
 }}  // namespace facter::facts

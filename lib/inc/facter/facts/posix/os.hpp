@@ -47,6 +47,7 @@ namespace facter { namespace facts { namespace posix {
         constexpr static char const* alpine = "Alpine";
         constexpr static char const* cumulus = "CumulusLinux";
         constexpr static char const* zen_cloud_platform = "XCP";
+        constexpr static char const* kfreebsd = "GNU/kFreeBSD";
     };
 
 }}}  // namespace facter::facts::posix
