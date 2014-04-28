@@ -76,7 +76,7 @@ namespace facter { namespace facts { namespace posix {
                 value = value.substr(0, pos);
             }
         }
-        facts.add(fact::kernel_major_release, make_value<string_value>(move(value)));
+        facts.add(fact::kernel_major_version, make_value<string_value>(move(value)));
     }
 
 }}}  // namespace facter::facts::posix
