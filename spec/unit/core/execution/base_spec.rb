@@ -62,17 +62,57 @@ describe Facter::Core::Execution::Base do
     end
   end
 
+  describe "#execute_with_env" do
+    it "executes command with given environment" do
+      Kernel.expects(:system).with({'FOO' => 'bar'}, '/bin/foo', anything, anything).returns true
+      subject.execute_with_env({'FOO' => 'bar'}, '/bin/foo')
+    end
+
+    it "returns command output" do
+      rout = mock('io_rout', :close => nil, :read => 'baz')
+      rerr = mock('io_rerr', :close => nil, :read => '')
+      wout = mock('io_wout', :close => nil)
+      werr = mock('io_werr', :close => nil)
+      IO.stubs(:pipe).returns [rout, wout], [rerr, werr]
+
+      Kernel.expects(:system).returns true
+      expect(subject.execute_with_env({}, '/bin/foo')).to eq('baz')
+    end
+
+    it "raises with stderr message on failure" do
+      rout = mock('io_rout', :close => nil, :read => '')
+      rerr = mock('io_rerr', :close => nil, :read => 'foo error')
+      wout = mock('io_wout', :close => nil)
+      werr = mock('io_werr', :close => nil)
+      IO.stubs(:pipe).returns [rout, wout], [rerr, werr]
+
+      Kernel.expects(:system).with({}, '/bin/foo', :err => werr, :out => wout).returns false
+      expect{subject.execute_with_env({}, '/bin/foo')}.to raise_error StandardError, 'foo error'
+    end
+
+    it "raises with message on unknown failure" do
+      Kernel.expects(:system).with({}, '/bin/foo', anything, anything).returns nil
+      expect{subject.execute_with_env({}, '/bin/foo')}.to raise_error StandardError, 'failed to execute command'
+    end
+  end
+
   describe "#execute" do
 
     it "switches LANG to C when executing the command" do
-      subject.expects(:with_env).with('LANG' => 'C')
+      subject.expects(:execute_with_env).with(has_entry('LANG','C'), '/bin/foo').returns ''
+      subject.expects(:expand_command).with('foo').returns '/bin/foo'
       subject.execute('foo')
     end
 
-    it "switches LC_ALL to C when executing the command"
+    #e.g. LANG is not enough to get consistent output from /bin/date
+    it "switches LC_ALL to C when executing the command" do
+      subject.expects(:execute_with_env).with(has_entry('LC_ALL','C'), '/bin/foo').returns ''
+      subject.expects(:expand_command).returns '/bin/foo'
+      subject.execute('foo')
+    end
 
     it "expands the command before running it" do
-      subject.stubs(:`).returns ''
+      subject.stubs(:execute_with_env).returns ''
       subject.expects(:expand_command).with('foo').returns '/bin/foo'
       subject.execute('foo')
     end
@@ -91,7 +131,7 @@ describe Facter::Core::Execution::Base do
 
     describe "when command execution fails" do
       before do
-        subject.expects(:`).with("/bin/foo").raises "kaboom!"
+        subject.expects(:execute_with_env).raises "kaboom!"
         subject.expects(:expand_command).with('foo').returns '/bin/foo'
       end
 
@@ -105,7 +145,7 @@ describe Facter::Core::Execution::Base do
     end
 
     it "launches a thread to wait on children if the command was interrupted" do
-      subject.expects(:`).with("/bin/foo").raises "kaboom!"
+      subject.expects(:execute_with_env).raises "kaboom!"
       subject.expects(:expand_command).with('foo').returns '/bin/foo'
 
       Facter.stubs(:warn)
@@ -116,14 +156,14 @@ describe Facter::Core::Execution::Base do
     end
 
     it "returns the output of the command" do
-      subject.expects(:`).with("/bin/foo").returns 'hi'
+      subject.expects(:execute_with_env).returns 'hi'
       subject.expects(:expand_command).with('foo').returns '/bin/foo'
 
       expect(subject.execute("foo")).to eq 'hi'
     end
 
     it "strips off trailing newlines" do
-      subject.expects(:`).with("/bin/foo").returns "hi\n"
+      subject.expects(:execute_with_env).returns "hi\n"
       subject.expects(:expand_command).with('foo').returns '/bin/foo'
 
       expect(subject.execute("foo")).to eq 'hi'
