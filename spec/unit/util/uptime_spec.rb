@@ -18,22 +18,30 @@ describe Facter::Util::Uptime do
     end
 
     describe "when /proc/uptime is not available" do
-      before :each do
-        @nonexistent_file = '/non/existent/file'
-        File.exists?(@nonexistent_file).should == false
-        Facter::Util::Uptime.stubs(:uptime_file).returns(@nonexistent_file)
+      it "should fall back to uptime_sysctl" do
+        Facter::Util::Uptime.stubs(:uptime_file).returns 'foo'
+        Facter::Util::Uptime.stubs(:uptime_sysctl).returns 12345
+        Facter::Util::Uptime.get_uptime_seconds_unix.should == 12345
       end
 
       it "should use 'sysctl -n kern.boottime' on OpenBSD" do
-        sysctl_output_file = my_fixture('sysctl_kern_boottime_openbsd') # Dec 09 21:11:46 +0000 2011
-        Facter::Util::Uptime.stubs(:uptime_sysctl_cmd).returns("cat \"#{sysctl_output_file}\"")
+        Facter::Util::Uptime.stubs(:uptime_proc_uptime).returns nil
+
+        Facter::Util::Uptime.stubs(:uptime_sysctl_cmd).returns("foo")
+        timestamp = IO.read(my_fixture('sysctl_kern_boottime_openbsd')) # Dec 09 21:11:46 +0000 2011
+        Facter::Core::Execution.stubs(:execute).with("foo 2>/dev/null", anything).returns(timestamp)
+
         Time.stubs(:now).returns Time.parse("Dec 09 22:11:46 +0000 2011") # one hour later
         Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60
       end
 
       it "should use 'sysctl -n kern.boottime' on Darwin, etc." do
-        sysctl_output_file = my_fixture('sysctl_kern_boottime_darwin') # Oct 30 21:52:27 +0000 2011
-        Facter::Util::Uptime.stubs(:uptime_sysctl_cmd).returns("cat \"#{sysctl_output_file}\"")
+        Facter::Util::Uptime.stubs(:uptime_proc_uptime).returns nil
+
+        Facter::Util::Uptime.stubs(:uptime_sysctl_cmd).returns("foo")
+        timestamp = IO.read(my_fixture('sysctl_kern_boottime_darwin')) # Oct 30 21:52:27 +0000 2011
+        Facter::Core::Execution.stubs(:execute).with("foo 2>/dev/null", anything).returns(timestamp)
+
         Time.stubs(:now).returns Time.parse("Oct 30 22:52:27 +0000 2011") # one hour later
         Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60
       end
