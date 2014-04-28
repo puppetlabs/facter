@@ -1,5 +1,7 @@
 class Facter::Core::Execution::Base
 
+  #TODO: this should be deprecated and removed from API
+  #(clobbers env of other threads)
   def with_env(values)
     old = {}
     values.each do |var, value|
@@ -12,7 +14,7 @@ class Facter::Core::Execution::Base
     end
     # execute the caller's block, capture the return value
     rv = yield
-  # use an ensure block to make absolutely sure we restore the variables
+    # use an ensure block to make absolutely sure we restore the variables
   ensure
     # restore the old values
     values.each do |var, value|
@@ -27,55 +29,72 @@ class Facter::Core::Execution::Base
     rv
   end
 
+
+  def execute_with_env(env, command)
+    out, wout = IO.pipe
+    errout, werr = IO.pipe
+
+    result = Kernel.system(env, command, :err => werr, :out => wout)
+    [werr, wout].map(&:close)
+
+    output, errors = out.read, errout.read
+    [out, errout].map(&:close)
+
+    raise StandardError, errors if result == false
+    raise StandardError, "failed to execute command" unless result == true
+    output
+  end
+
   def execute(command, options = {})
 
     on_fail = options.fetch(:on_fail, :raise)
 
     ## Set LANG to force i18n to C for the duration of this exec; this ensures that any code that parses the
     ## output of the command can expect it to be in a consistent / predictable format / locale
-    with_env "LANG" => "C" do
+    env = { 'LANG' => 'C', 'LC_ALL' => 'C' }
 
-      expanded_command = expand_command(command)
+    expanded_command = expand_command(command)
 
-      if expanded_command.nil?
-        if on_fail == :raise
-          raise Facter::Core::Execution::ExecutionFailure.new, "Could not execute '#{command}': command not found"
-        else
-          return on_fail
-        end
+    if expanded_command.nil?
+      if on_fail == :raise
+        raise Facter::Core::Execution::ExecutionFailure.new, "Could not execute '#{command}': command not found"
+      else
+        return on_fail
       end
-
-      out = ''
-
-      begin
-        wait_for_child = true
-        out = %x{#{expanded_command}}.chomp
-        wait_for_child = false
-      rescue => detail
-        if on_fail == :raise
-          raise Facter::Core::Execution::ExecutionFailure.new, "Failed while executing '#{expanded_command}': #{detail.message}"
-        else
-          return on_fail
-        end
-      ensure
-        if wait_for_child
-          # We need to ensure that if this command exits early then any spawned
-          # children will be reaped. Process execution is frequently
-          # terminated using Timeout.timeout but since the timeout isn't in
-          # this scope we can't rescue the raised exception. The best that
-          # we can do is determine if the child has exited, and if it hasn't
-          # then we need to spawn a thread to wait for the child.
-          #
-          # Due to the limitations of Ruby 1.8 there aren't good ways to
-          # asynchronously run a command and grab the PID of that command
-          # using the standard library. The best we can do is blindly wait
-          # on all processes and hope for the best. This issue is described
-          # at https://tickets.puppetlabs.com/browse/FACT-150
-          Thread.new { Process.waitall }
-        end
-      end
-
-      out
     end
+
+    out = ''
+
+    begin
+      wait_for_child = true
+
+      out = execute_with_env(env, expanded_command).chomp
+
+      wait_for_child = false
+    rescue => detail
+      if on_fail == :raise
+        raise Facter::Core::Execution::ExecutionFailure.new, "Failed while executing '#{expanded_command}': #{detail.message}"
+      else
+        return on_fail
+      end
+    ensure
+      if wait_for_child
+        # We need to ensure that if this command exits early then any spawned
+        # children will be reaped. Process execution is frequently
+        # terminated using Timeout.timeout but since the timeout isn't in
+        # this scope we can't rescue the raised exception. The best that
+        # we can do is determine if the child has exited, and if it hasn't
+        # then we need to spawn a thread to wait for the child.
+        #
+        # Due to the limitations of Ruby 1.8 there aren't good ways to
+        # asynchronously run a command and grab the PID of that command
+        # using the standard library. The best we can do is blindly wait
+        # on all processes and hope for the best. This issue is described
+        # at https://tickets.puppetlabs.com/browse/FACT-150
+        Thread.new { Process.waitall }
+      end
+    end
+
+    out
   end
 end
