@@ -22,7 +22,7 @@ namespace facter { namespace facts { namespace posix {
                 fact::kernel,
                 fact::kernel_version,
                 fact::kernel_release,
-                fact::kernel_major_release
+                fact::kernel_major_version
             })
         {
         }
