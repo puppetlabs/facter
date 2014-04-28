@@ -5,6 +5,7 @@
 #include <facter/util/bsd/scoped_ifaddrs.hpp>
 #include <facter/logging/logging.hpp>
 #include <sstream>
+#include <cstring>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <net/if.h>
@@ -23,7 +24,7 @@ namespace facter { namespace facts { namespace bsd {
         // Scope the head ifaddrs ptr
         scoped_ifaddrs addrs;
         if (!addrs) {
-            LOG_WARNING("getifaddrs failed with %1%: interface facts are unavailable.", errno);
+            LOG_WARNING("getifaddrs failed: %1% (%2%): interface facts are unavailable.", strerror(errno), errno);
             return;
         }
 

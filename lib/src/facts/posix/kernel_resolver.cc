@@ -17,7 +17,7 @@ namespace facter { namespace facts { namespace posix {
         utsname name;
         memset(&name, 0, sizeof(name));
         if (uname(&name) != 0) {
-            LOG_WARNING("uname failed with %1%: kernel facts are unavailable.", errno);
+            LOG_WARNING("uname failed: %1% (%2%): kernel facts are unavailable.", strerror(errno), errno);
             return;
         }
         // Resolve all kernel-related facts

@@ -2,6 +2,8 @@
 #include <facter/facts/fact_map.hpp>
 #include <facter/facts/string_value.hpp>
 #include <facter/logging/logging.hpp>
+#include <facter/util/posix/scoped_addrinfo.hpp>
+#include <facter/util/string.hpp>
 #include <unistd.h>
 #include <limits.h>
 #include <limits>
@@ -9,11 +11,13 @@
 #include <arpa/inet.h>
 #include <sstream>
 #include <iomanip>
+#include <cstring>
 #include <vector>
-#include <string.h>
 #include <boost/format.hpp>
 
 using namespace std;
+using namespace facter::util;
+using namespace facter::util::posix;
 using boost::format;
 
 LOG_DECLARE_NAMESPACE("facts.posix.networking");
@@ -23,6 +27,7 @@ namespace facter { namespace facts { namespace posix {
     void networking_resolver::resolve_facts(fact_map& facts)
     {
         resolve_hostname(facts);
+        resolve_domain(facts);
         resolve_interface_facts(facts);
     }
 
@@ -31,7 +36,7 @@ namespace facter { namespace facts { namespace posix {
         int max = sysconf(_SC_HOST_NAME_MAX);
         vector<char> name(max);
         if (gethostname(name.data(), max) != 0) {
-            LOG_WARNING("gethostname failed with %1%: hostname fact is unavailable.", errno);
+            LOG_WARNING("gethostname failed: %1% (%2%): hostname fact is unavailable.", strerror(errno), errno);
             return;
         }
 
@@ -46,6 +51,40 @@ namespace facter { namespace facts { namespace posix {
         }
 
         facts.add(fact::hostname, make_value<string_value>(move(value)));
+    }
+
+    void networking_resolver::resolve_domain(fact_map& facts)
+    {
+        auto hostname = facts.get<string_value>(fact::hostname, false);
+        if (!hostname) {
+            LOG_WARNING("domain and fqdn facts cannot be resolved without the hostname fact.");
+            return;
+        }
+
+        // Retrieve the fully-qualified domain name
+        scoped_addrinfo info(hostname->value());
+        if (info.result() != 0) {
+            if (info.result() == EAI_NONAME) {
+                LOG_WARNING("domain is unknown for host %1%: domain and fqdn facts are unavailable.", hostname->value());
+                return;
+            }
+            LOG_WARNING("getaddrinfo failed: %1% (%2%): domain and fqdn facts are unavailable.", gai_strerror(info.result()), info.result());
+            return;
+        }
+
+        if (!info) {
+            return;
+        }
+
+        // Add the FQDN fact
+        string domain = static_cast<addrinfo*>(info)->ai_canonname;
+        facts.add(fact::fqdn, make_value<string_value>(domain));
+
+        // Trim off the hostname from the FQDN to get the domain fact
+        if (starts_with(domain, hostname->value() + ".")) {
+            domain = domain.substr(hostname->value().length() + 1);
+        }
+        facts.add(fact::domain, make_value<string_value>(move(domain)));
     }
 
     string networking_resolver::address_to_string(sockaddr const* addr, sockaddr const* mask) const
