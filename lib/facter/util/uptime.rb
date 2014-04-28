@@ -20,7 +20,11 @@ module Facter::Util::Uptime
   private
 
   def self.uptime_proc_uptime
-    output = Facter::Core::Execution.execute("/bin/cat #{uptime_file} 2>/dev/null")
+    output = ''
+    begin
+      output = Facter::Core::Execution.execute("/bin/cat #{uptime_file} 2>/dev/null")
+    rescue Facter::Core::Execution::ExecutionFailure
+    end
 
     if not output.empty?
       output.chomp.split(" ").first.to_i
