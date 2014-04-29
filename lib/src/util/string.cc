@@ -12,11 +12,17 @@ namespace facter { namespace util {
 
     bool starts_with(string const& str, string const& prefix)
     {
+        if (prefix.size() == 0) {
+            return true;
+        }
         return prefix.size() <= str.size() && equal(prefix.begin(), prefix.end(), str.begin());
     }
 
     bool ends_with(string const& str, string const& suffix)
     {
+        if (suffix.size() == 0) {
+            return true;
+        }
         return suffix.size() <= str.size() && equal(suffix.rbegin(), suffix.rend(), str.rbegin());
     }
 
@@ -81,8 +87,11 @@ namespace facter { namespace util {
     {
         ostringstream stream;
 
+        bool first = true;
         for (auto const& str : strings) {
-            if (stream.tellp() != 0) {
+            if (first) {
+                first = false;
+            } else {
                 stream << delimiter;
             }
             stream << str;

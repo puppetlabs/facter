@@ -6,18 +6,28 @@ Tinkering with a C/C++ facter
 Build Requirements
 ------------------
 
-* CMake >= 2.8
+* CMake >= 2.8.12
+* Boost C++ Libraries >= 1.48
+* Apache log4cxx >= 10.0
+* Google's RE2 library
 
 Generating Build Files
 ----------------------
 
-All examples start by assuming the current directory is the root of the repo.
+All of the following examples start by assuming the current directory is the root of the repo.
 
 Before building cfacter, use `cmake` to generate build files:
 
     $ mkdir release
     $ cd release
     $ cmake ..
+
+To generate build files with debug information:
+
+    $ mkdir debug
+    $ cd debug
+    $ cmake -DCMAKE_BUILD_TYPE=Debug ..
+
 
 Build
 -----
@@ -29,9 +39,7 @@ To build cfacter, use 'make':
 
 To build cfacter with debug information:
 
-    $ mkdir debug
     $ cd debug
-    $ cmake -DCMAKE_BUILD_TYPE=Debug ..
     $ make
 
 Run

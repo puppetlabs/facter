@@ -94,7 +94,7 @@ namespace facter { namespace util {
      * @param delimiter The delimiter to use between strings.
      * @return Returns a string that is the join of the given string.
      */
-    std::string join(std::vector<std::string> const& strings, std::string const& delimiter);
+    std::string join(std::vector<std::string> const& strings, std::string const& delimiter = " ");
 
     /**
      * Converts the given string to lowercase.

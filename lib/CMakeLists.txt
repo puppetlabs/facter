@@ -66,9 +66,11 @@ include_directories(
 # Link in additional libraries
 target_link_libraries(libfacter
     pthread
-    libre2
-    liblog4cxx
+    ${RE2_LIBRARIES}
+    ${LOG4CXX_LIBRARIES}
 )
 
 # Add a dependency on rapidjson
 add_dependencies(libfacter rapidjson)
+
+add_subdirectory(tests)
