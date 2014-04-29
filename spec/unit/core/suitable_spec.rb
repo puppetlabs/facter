@@ -92,5 +92,15 @@ describe Facter::Core::Suitable do
 
       expect(subject).to_not be_suitable
     end
+
+    it "recalculates suitability on every invocation" do
+      subject.confine :kernel => 'Linux'
+
+      subject.confines.first.stubs(:true?).returns false
+      expect(subject).to_not be_suitable
+      subject.confines.first.unstub(:true?)
+      subject.confines.first.stubs(:true?).returns true
+      expect(subject).to be_suitable
+    end
   end
 end
