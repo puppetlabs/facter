@@ -35,6 +35,8 @@ namespace facter { namespace facts {
         constexpr static char const* interfaces = "interfaces";
         constexpr static char const* domain = "domain";
         constexpr static char const* fqdn = "fqdn";
+        constexpr static char const* block_device = "blockdevice";
+        constexpr static char const* block_devices = "blockdevices";
     };
 
 }}  // namespace facter::facts

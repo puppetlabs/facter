@@ -15,7 +15,7 @@ configure_file (
 )
 
 # Find Boost
-find_package(Boost 1.48 COMPONENTS program_options filesystem REQUIRED)
+find_package(Boost 1.48 COMPONENTS program_options system filesystem REQUIRED)
 if (NOT Boost_FOUND)
     message(FATAL_ERROR "Boost 1.48 or newer is required.  Please install it before building.")
 endif()

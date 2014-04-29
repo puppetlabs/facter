@@ -9,13 +9,16 @@
 #include <log4cxx/consoleappender.h>
 #include <boost/program_options.hpp>
 #include <boost/format.hpp>
+#include <boost/filesystem.hpp>
 
 using namespace std;
 using namespace log4cxx;
 using namespace facter::util;
 using namespace facter::facts;
+using namespace boost::filesystem;
 using boost::format;
 namespace po = boost::program_options;
+namespace bs = boost::system;
 
 LOG_DECLARE_NAMESPACE("main");
 
@@ -50,7 +53,8 @@ void help(po::options_description& desc)
 
 void configure_logger(LevelPtr level, string const& properties_file)
 {
-    if (!properties_file.empty() && file::exists(properties_file)) {
+    bs::error_code ec;
+    if (!properties_file.empty() && is_regular_file(properties_file, ec)) {
         PropertyConfigurator::configure(properties_file);
         return;
     }
