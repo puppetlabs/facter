@@ -18,6 +18,7 @@ using namespace facter::facts;
 using namespace boost::filesystem;
 using boost::format;
 namespace po = boost::program_options;
+namespace bs = boost::system;
 
 LOG_DECLARE_NAMESPACE("main");
 
@@ -52,7 +53,8 @@ void help(po::options_description& desc)
 
 void configure_logger(LevelPtr level, string const& properties_file)
 {
-    if (!properties_file.empty() && is_regular_file(properties_file)) {
+    bs::error_code ec;
+    if (!properties_file.empty() && is_regular_file(properties_file, ec)) {
         PropertyConfigurator::configure(properties_file);
         return;
     }
