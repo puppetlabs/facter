@@ -27,6 +27,17 @@ describe "The netmask fact" do
       "ifconfig_ubuntu_1204.txt"
   end
 
+  context "on AIX" do
+    before :each do
+      Facter.fact(:kernel).stubs(:value).returns("AIX")
+    end
+
+    example_behavior_for "netmask from ifconfig output",
+      "AIX 7", "255.255.255.0",
+      "ifconfig_aix_7.txt"
+
+  end
+
   context "on Darwin" do
     before :each do
       Facter.fact(:kernel).stubs(:value).returns("Darwin")
