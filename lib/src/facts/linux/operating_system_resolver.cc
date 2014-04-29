@@ -9,11 +9,13 @@
 #include <facter/util/file.hpp>
 #include <re2/re2.h>
 #include <map>
+#include <boost/filesystem.hpp>
 
 using namespace std;
 using namespace facter::util;
 using namespace facter::execution;
 using namespace facter::facts::posix;
+using namespace boost::filesystem;
 
 namespace facter { namespace facts { namespace linux {
 
@@ -221,7 +223,7 @@ namespace facter { namespace facts { namespace linux {
     string operating_system_resolver::check_cumulus_linux()
     {
         // Check for Cumulus Linux in a generic os-release file
-        if (file::exists(release_file::os)) {
+        if (is_regular_file(release_file::os)) {
             string contents = trim(file::read(release_file::os));
             string release;
             if (RE2::PartialMatch(contents, "(?m)^NAME=[\"']?(.+?)[\"']?$", &release)) {
@@ -237,7 +239,7 @@ namespace facter { namespace facts { namespace linux {
     string operating_system_resolver::check_debian_linux(string_value const* dist_id)
     {
         // Check for Debian variants
-        if (file::exists(release_file::debian)) {
+        if (is_regular_file(release_file::debian)) {
             if (dist_id) {
                 if (dist_id->value() == os::ubuntu || dist_id->value() == os::linux_mint) {
                     return dist_id->value();
@@ -250,8 +252,8 @@ namespace facter { namespace facts { namespace linux {
 
     string operating_system_resolver::check_oracle_linux()
     {
-        if (file::exists(release_file::oracle_enterprise_linux)) {
-            if (file::exists(release_file::oracle_vm_linux)) {
+        if (is_regular_file(release_file::oracle_enterprise_linux)) {
+            if (is_regular_file(release_file::oracle_vm_linux)) {
                 return os::oracle_vm_linux;
             }
             return os::oracle_enterprise_linux;
@@ -261,7 +263,7 @@ namespace facter { namespace facts { namespace linux {
 
     string operating_system_resolver::check_redhat_linux()
     {
-        if (file::exists(release_file::redhat)) {
+        if (is_regular_file(release_file::redhat)) {
             static map<string, string> regexs {
                 { "(?i)centos",                         string(os::centos) },
                 { "(?i)scientific linux CERN",          string(os::scientific_cern) },
@@ -287,7 +289,7 @@ namespace facter { namespace facts { namespace linux {
 
     string operating_system_resolver::check_suse_linux()
     {
-        if (file::exists(release_file::suse)) {
+        if (is_regular_file(release_file::suse)) {
             static map<string, string> regexs {
                 { "(?im)^SUSE LINUX Enterprise Server",  string(os::suse_enterprise_server) },
                 { "(?im)^SUSE LINUX Enterprise Desktop", string(os::suse_enterprise_desktop) },
@@ -325,7 +327,7 @@ namespace facter { namespace facts { namespace linux {
         };
 
         for (auto const& kvp : files) {
-            if (file::exists(kvp.first)) {
+            if (is_regular_file(kvp.first)) {
                 return kvp.second;
             }
         }
