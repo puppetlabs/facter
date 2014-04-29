@@ -34,6 +34,7 @@ endif()
 
 # Include vendor libraries
 include(${VENDOR_DIRECTORY}/rapidjson.cmake)
+include(${VENDOR_DIRECTORY}/gmock.cmake)
 
 if(APPLE)
     # Set the RPATH to OSX magic value @executable_path (where the loading executable is located)

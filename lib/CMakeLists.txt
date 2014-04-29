@@ -72,3 +72,5 @@ target_link_libraries(libfacter
 
 # Add a dependency on rapidjson
 add_dependencies(libfacter rapidjson)
+
+add_subdirectory(tests)

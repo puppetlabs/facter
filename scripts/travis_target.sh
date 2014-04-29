@@ -12,13 +12,34 @@ function travis_make()
 {
     mkdir $1 && cd $1
 
-    # cmake
+    # Generate build files
     [ $1 == "debug" ] && export CMAKE_VARS="  -DCMAKE_BUILD_TYPE=Debug "
     $HOME/bin/cmake $CMAKE_VARS ..
+    if [ $? -ne 0 ]; then
+        echo "cmake failed."
+        exit 1
+    fi
 
-    # make
+    # Build cfacter
     [ $1 == "cpplint" ] && export MAKE_TARGET=" cpplint "
     make $MAKE_TARGET
+    if [ $? -ne 0 ]; then
+        echo "build failed."
+        exit 1
+    fi
+
+    # Run library tests if not doing cpplint
+    if [ $1 != "cpplint" ]; then
+        lib/tests/libfacter_test
+        local lib_test_status=$?
+
+        # TODO: run executable tests
+
+        if [ $lib_test_status -ne 0 ]; then
+            echo "tests reported an error."
+            exit 1
+        fi
+    fi
 }
 
 case $TRAVIS_TARGET in
