@@ -20,9 +20,9 @@ endif()
 include_directories(
     ${LIBFACTER_DIR}/inc
     ${LOG4CXX_INCLUDE_DIRS}
-    ${BOOST_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
 )
 
 add_executable(cfacter ${CFACTER_SOURCES})
-target_link_libraries(cfacter libfacter liblog4cxx libboost_program_options)
+target_link_libraries(cfacter libfacter ${LOG4CXX_LIBRARIES} ${Boost_LIBRARIES})
 install(TARGETS cfacter DESTINATION .)

@@ -17,8 +17,12 @@ before_install:
   # and we need a newer cmake, so build it ourselves (maybe should build this and host it somewhere)
   - wget http://www.cmake.org/files/v2.8/cmake-2.8.12.2.tar.gz -O $HOME/cmake-2.8.12.2.tar.gz
   - pushd $HOME && tar xzf cmake-2.8.12.2.tar.gz && cd $HOME/cmake-2.8.12.2 && ./configure --prefix=$HOME > /dev/null && make > /dev/null && make install > /dev/null && popd
+  # Install dependencies of cfacter
+  - sudo apt-get -y install libboost-filesystem1.48-dev libboost-program-options1.48-dev liblog4cxx10-dev
+  - wget https://re2.googlecode.com/files/re2-20140304.tgz -O $HOME/re2-20140304.tgz
+  - pushd $HOME && tar xzf re2-20140304.tgz && cd $HOME/re2 && make > /dev/null && sudo make install > /dev/null && popd
 
-script: ./travis_target.sh
+script: ./scripts/travis_target.sh
 
 env:
   - TRAVIS_TARGET=CPPLINT
