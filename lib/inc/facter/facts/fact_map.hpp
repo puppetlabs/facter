@@ -8,6 +8,7 @@
 #include <functional>
 #include "value.hpp"
 #include "fact_resolver.hpp"
+#include <stdexcept>
 
 namespace facter { namespace facts {
 

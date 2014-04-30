@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 // Forward declare RE2 so users of this header don't have to include re2
