@@ -1,0 +1,37 @@
+GENERAL.DEVICE:                         wlan0
+GENERAL.TYPE:                           802-11-wireless
+GENERAL.VENDOR:                         Intel Corporation
+GENERAL.PRODUCT:                        Centrino Advanced-N 6235 AGN
+GENERAL.DRIVER:                         iwlwifi
+GENERAL.DRIVER-VERSION:                 3.11.0-12-generic
+GENERAL.FIRMWARE-VERSION:               18.168.6.1
+GENERAL.HWADDR:                         C4:85:08:06:2C:55
+GENERAL.STATE:                          100 (connected)
+GENERAL.REASON:                         0 (No reason given)
+GENERAL.UDI:                            /sys/devices/pci0000:00/0000:00:1c.2/0000:08:00.0/net/wlan0
+GENERAL.IP-IFACE:                       wlan0
+GENERAL.NM-MANAGED:                     yes
+GENERAL.AUTOCONNECT:                    yes
+GENERAL.FIRMWARE-MISSING:               no
+GENERAL.CONNECTION:                     /org/freedesktop/NetworkManager/ActiveConnection/10
+CAPABILITIES.CARRIER-DETECT:            no
+CAPABILITIES.SPEED:                     13 Mb/s
+CONNECTIONS.AVAILABLE-CONNECTION-PATHS: /org/freedesktop/NetworkManager/Settings/{3}
+CONNECTIONS.AVAILABLE-CONNECTIONS[1]:   7a82c94b-afba-498b-9a62-30ebb335b365 | Auto OptusCD3_80ac32
+WIFI-PROPERTIES.WEP:                    yes
+WIFI-PROPERTIES.WPA:                    yes
+WIFI-PROPERTIES.WPA2:                   yes
+WIFI-PROPERTIES.TKIP:                   yes
+WIFI-PROPERTIES.CCMP:                   yes
+WIFI-PROPERTIES.AP:                     yes
+WIFI-PROPERTIES.ADHOC:                  yes
+AP[1].SSID:                             'TestSSid'
+AP[1].BSSID:                            C8:F9:F9:BE:F1:4E
+AP[1].MODE:                             Infrastructure
+AP[1].FREQ:                             5745 MHz
+AP[1].RATE:                             54 MB/s
+AP[1].SIGNAL:                           72
+AP[1].SECURITY:                         WPA WPA2 Enterprise
+AP[1].ACTIVE:                           no
+IP4.ADDRESS[1]:                         ip = 192.168.2.10/24, gw = 192.168.2.1
+IP4.DNS[1]:                             192.168.2.1
