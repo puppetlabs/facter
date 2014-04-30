@@ -36,7 +36,7 @@ namespace facter { namespace facts { namespace posix {
         int max = sysconf(_SC_HOST_NAME_MAX);
         vector<char> name(max);
         if (gethostname(name.data(), max) != 0) {
-            LOG_WARNING("gethostname failed: %1% (%2%): hostname fact is unavailable.", strerror(errno), errno);
+            LOG_WARNING("gethostname failed: %1% (%2%): %3% fact is unavailable.", strerror(errno), errno, fact::hostname);
             return;
         }
 
@@ -57,7 +57,7 @@ namespace facter { namespace facts { namespace posix {
     {
         auto hostname = facts.get<string_value>(fact::hostname, false);
         if (!hostname) {
-            LOG_WARNING("domain and fqdn facts cannot be resolved without the hostname fact.");
+            LOG_WARNING("%1% and %2% facts cannot be resolved without the %3% fact.", fact::fqdn, fact::domain, fact::hostname);
             return;
         }
 
@@ -65,10 +65,10 @@ namespace facter { namespace facts { namespace posix {
         scoped_addrinfo info(hostname->value());
         if (info.result() != 0) {
             if (info.result() == EAI_NONAME) {
-                LOG_WARNING("domain is unknown for host %1%: domain and fqdn facts are unavailable.", hostname->value());
+                LOG_WARNING("domain is unknown for host %1%: %2% and %3% facts are unavailable.", hostname->value(), fact::fqdn, fact::domain);
                 return;
             }
-            LOG_WARNING("getaddrinfo failed: %1% (%2%): domain and fqdn facts are unavailable.", gai_strerror(info.result()), info.result());
+            LOG_WARNING("getaddrinfo failed: %1% (%2%): %3% and %4% facts are unavailable.", gai_strerror(info.result()), info.result(), fact::fqdn, fact::domain);
             return;
         }
 

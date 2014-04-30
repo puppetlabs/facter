@@ -116,6 +116,9 @@ namespace facter { namespace execution {
 
             // Wait for the child to exit
             string result = output.str();
+            if (options[execution_options::trim_output]) {
+                trim(result);
+            }
             int status;
             waitpid(child, &status, 0);
             if (WIFEXITED(status)) {
@@ -130,9 +133,6 @@ namespace facter { namespace execution {
                 if (options[execution_options::throw_on_signal]) {
                     throw child_signal_exception(status, result, "child process was terminated by signal.");
                 }
-            }
-            if (options[execution_options::trim_output]) {
-                return trim(result);
             }
             return result;
         }
