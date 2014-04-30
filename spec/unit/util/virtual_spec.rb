@@ -318,4 +318,34 @@ EOT
   context "on windows" do
     it_should_behave_like "virt-what", "windows", 'c:\windows\system32\virt-what', "NUL"
   end
+
+  describe '.lxc?' do
+    subject do
+      Facter::Util::Virtual.lxc?
+    end
+
+    fixture_path = fixtures('virtual', 'proc_1_cgroup')
+
+    context '/proc/1/cgroup has at least one hierarchy rooted in /lxc/' do
+      before :each do
+        fakepath = Pathname.new(File.join(fixture_path, 'in_a_container'))
+        Pathname.stubs(:new).with('/proc/1/cgroup').returns(fakepath)
+      end
+
+      it 'is true' do
+        subject.should be_true
+      end
+    end
+
+    context '/proc/1/cgroup has no hierarchies rooted in /lxc/' do
+      before :each do
+        fakepath = Pathname.new(File.join(fixture_path, 'not_in_a_container'))
+        Pathname.stubs(:new).with('/proc/1/cgroup').returns(fakepath)
+      end
+
+      it 'is false' do
+        subject.should be_false
+      end
+    end
+  end
 end
