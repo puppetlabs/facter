@@ -36,6 +36,7 @@ endif()
 # Set the platform-specific sources
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     set(LIBFACTER_PLATFORM_SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/dmi_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/platform.cc"
@@ -45,6 +46,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBFACTER_PLATFORM_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/block_device_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/dmi_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/lsb_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/operating_system_resolver.cc"

@@ -4,26 +4,42 @@
 
 using namespace std;
 
-namespace facter { namespace util {
+namespace facter { namespace util { namespace file {
 
-    string file::read(string const& path)
+    string read(string const& path)
+    {
+        string contents;
+        if (!read(path, contents)) {
+            return {};
+        }
+        return contents;
+    }
+
+    bool read(string const& path, string& contents)
     {
         ifstream in(path, ios::in | ios::binary);
-        ostringstream contents;
-        if (in) {
-            contents << in.rdbuf();
+        ostringstream buffer;
+        if (!in) {
+            return false;
         }
-        return contents.str();
+        buffer << in.rdbuf();
+        contents = buffer.str();
+        return true;
     }
 
-    string file::read_first_line(string const& path)
+    string read_first_line(string const& path)
+    {
+        string line;
+        if (!read_first_line(path, line)) {
+            return {};
+        }
+        return line;
+    }
+
+    bool read_first_line(string const& path, string& line)
     {
         ifstream in(path);
-        string value;
-        if (getline(in, value)) {
-            return value;
-        }
-        return {};
+        return static_cast<bool>(getline(in, line));
     }
 
-}}  // namespace facter::util
+}}}  // namespace facter::util::file

@@ -43,6 +43,17 @@ namespace facter { namespace facts {
         constexpr static char const* hardware_isa = "hardwareisa";
         constexpr static char const* hardware_model = "hardwaremodel";
         constexpr static char const* architecture = "architecture";
+        constexpr static char const* bios_vendor = "bios_vendor";
+        constexpr static char const* bios_version = "bios_version";
+        constexpr static char const* bios_release_date = "bios_release_date";
+        constexpr static char const* board_manufacturer = "boardmanufacturer";
+        constexpr static char const* board_product_name = "boardproductname";
+        constexpr static char const* board_serial_number = "boardserialnumber";
+        constexpr static char const* manufacturer = "manufacturer";
+        constexpr static char const* product_name = "productname";
+        constexpr static char const* serial_number = "serialnumber";
+        constexpr static char const* product_uuid = "productuuid";
+        constexpr static char const* chassis_type = "chassistype";
     };
 
 }}  // namespace facter::facts
