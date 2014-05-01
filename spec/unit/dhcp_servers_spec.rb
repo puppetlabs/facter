@@ -3,6 +3,7 @@ require 'spec_helper'
 describe "DHCP server facts" do
   describe "on Linux OS's" do
     before :each do
+      Facter.fact(:kernel).stubs(:value).returns 'Linux'
       Facter::Core::Execution.stubs(:exec).with("route -n").returns(my_fixture_read("route"))
     end
 
