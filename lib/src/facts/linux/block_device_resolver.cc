@@ -24,14 +24,22 @@ namespace facter { namespace facts { namespace linux {
 
         bs::error_code ec;
         if (!is_directory(devices_directory, ec)) {
-            LOG_DEBUG("directory %1%: %2%: block device facts are unavailable.", devices_directory, ec.message());
+            LOG_DEBUG("%1%: %2%: block device facts are unavailable.", devices_directory, ec.message());
             return;
         }
 
         // Enumerate all block devices
         ostringstream devices;
         directory_iterator end;
-        directory_iterator it(devices_directory);
+        directory_iterator it;
+
+        try {
+            it = directory_iterator(devices_directory);
+        } catch (filesystem_error& ex) {
+            LOG_DEBUG("%1%: %2%: block device facts are unavailable.", devices_directory, ex.what());
+            return;
+        }
+
         for (; it != end; ++it) {
             bs::error_code ec;
             if (!is_directory(it->status())) {
