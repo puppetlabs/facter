@@ -11,23 +11,32 @@ endif()
 
 # Set the common (platform-independent) sources
 set(LIBFACTER_TESTS_COMMON_SOURCES
+	"${CMAKE_CURRENT_LIST_DIR}/environment.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/integer_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/posix/uptime_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/util/string.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/util/file.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/util/option_set.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/fixtures.cc"
 )
 
 # Set the POSIX sources if on a POSIX platform
 if (UNIX)
     set(LIBFACTER_TESTS_POSIX_SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/execution/posix/execution.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_addrinfo.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_descriptor.cc"
     )
 endif()
 
 # Set the platform-specific sources
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     set(LIBFACTER_TESTS_PLATFORM_SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/util/bsd/scoped_ifaddrs.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBFACTER_TESTS_PLATFORM_SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/util/bsd/scoped_ifaddrs.cc"
     )
 endif()
 
@@ -40,3 +49,9 @@ include_directories(
 
 add_executable(libfacter_test ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_POSIX_SOURCES})
 target_link_libraries(libfacter_test libfacter ${LOG4CXX_LIBRARIES} ${Boost_LIBRARIES} ${GMOCK_LIBRARIES})
+
+# Generate a file containing the above version numbers
+configure_file (
+    "${CMAKE_CURRENT_LIST_DIR}/fixtures.hpp.in"
+    "${CMAKE_CURRENT_LIST_DIR}/fixtures.hpp"
+)

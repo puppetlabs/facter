@@ -90,7 +90,7 @@ namespace facter { namespace util {
          */
         option_set& set(enum_type option)
         {
-            _value |= option;
+            _value |= static_cast<value_type>(option);
             return *this;
         }
 
@@ -101,7 +101,7 @@ namespace facter { namespace util {
          */
         option_set& clear(enum_type option)
         {
-            _value &= ~option;
+            _value &= ~static_cast<value_type>(option);
             return *this;
         }
 
@@ -132,7 +132,7 @@ namespace facter { namespace util {
          */
         option_set& toggle(enum_type option)
         {
-            _value ^= option;
+            _value ^= static_cast<value_type>(option);
             return *this;
         }
 
@@ -194,7 +194,7 @@ namespace facter { namespace util {
     template<typename T>
     option_set<T> operator &(option_set<T> const& lhs, option_set<T> const& rhs)
     {
-        return option_set<T>(option_set<T>::value_type(lhs) & option_set<T>::value_type(rhs));
+        return option_set<T>(static_cast<typename option_set<T>::value_type>(lhs) & static_cast<typename option_set<T>::value_type>(rhs));
     }
 
     /**
@@ -206,7 +206,7 @@ namespace facter { namespace util {
     template<typename T>
     option_set<T> operator |(option_set<T> const& lhs, option_set<T> const& rhs)
     {
-        return option_set<T>(option_set<T>::value_type(lhs) | option_set<T>::value_type(rhs));
+        return option_set<T>(static_cast<typename option_set<T>::value_type>(lhs) | static_cast<typename option_set<T>::value_type>(rhs));
     }
 
     /**
@@ -215,11 +215,10 @@ namespace facter { namespace util {
      * @param rhs The righthand option_set.
      * @return Returns an option_set that is the bitwise XOR of the two given option_sets.
      */
-
     template<typename T>
     option_set<T> operator ^(option_set<T> const& lhs, option_set<T> const& rhs)
     {
-        return option_set<T>(option_set<T>::value_type(lhs) ^ option_set<T>::value_type(rhs));
+        return option_set<T>(static_cast<typename option_set<T>::value_type>(lhs) ^ static_cast<typename option_set<T>::value_type>(rhs));
     }
 
 }}  // namespace facter::util
