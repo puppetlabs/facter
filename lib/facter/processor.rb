@@ -7,8 +7,8 @@
 #   On Linux and kFreeBSD, parse '/proc/cpuinfo' for each processor.
 #   On AIX, parse the output of 'lsdev' for its processor section.
 #   On Solaris, parse the output of 'kstat' for each processor.
-#   On OpenBSD, use 'uname -p' and the sysctl variable for 'hw.ncpu' for CPU
-#   count.
+#   On OpenBSD, use the sysctl variables 'hw.model' and 'hw.ncpu'
+#   for the CPU model and the CPU count respectively.
 #
 # Caveats:
 #
@@ -89,11 +89,6 @@ Facter.add("ProcessorCount") do
   end
 end
 
-Facter.add("Processor") do
-  confine :kernel => :openbsd
-  setcode "uname -p"
-end
-
 Facter.add("ProcessorCount") do
   confine :kernel => :Darwin
   setcode do
@@ -138,7 +133,7 @@ if Facter.value(:kernel) == "windows"
 end
 
 Facter.add("Processor") do
-  confine :kernel => [:dragonfly,:freebsd]
+  confine :kernel => [:dragonfly,:freebsd,:openbsd]
   setcode do
     Facter::Util::POSIX.sysctl("hw.model")
   end
