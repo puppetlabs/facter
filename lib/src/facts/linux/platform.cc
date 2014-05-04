@@ -6,6 +6,7 @@
 #include <facter/facts/linux/block_device_resolver.hpp>
 #include <facter/facts/linux/dmi_resolver.hpp>
 #include <facter/facts/linux/processor_resolver.hpp>
+#include <facter/facts/linux/uptime_resolver.hpp>
 
 using namespace std;
 
@@ -20,6 +21,7 @@ namespace facter { namespace facts {
         facts.add(make_shared<linux::block_device_resolver>());
         facts.add(make_shared<linux::dmi_resolver>());
         facts.add(make_shared<linux::processor_resolver>());
+        facts.add(make_shared<linux::uptime_resolver>());
     }
 
 }}  // namespace facter::facts
