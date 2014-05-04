@@ -9,16 +9,6 @@ endif()
 set(VENDOR_DIRECTORY "${PROJECT_SOURCE_DIR}/vendor")
 list(APPEND CMAKE_MODULE_PATH ${VENDOR_DIRECTORY})
 
-set(CFACTER_VERSION_MAJOR 0)
-set(CFACTER_VERSION_MINOR 1)
-set(CFACTER_VERSION_PATCH 0)
-
-# Generate a file containing the above version numbers
-configure_file (
-    "${PROJECT_SOURCE_DIR}/version.h.in"
-    "${PROJECT_SOURCE_DIR}/version.h"
-)
-
 # Find Boost
 find_package(Boost 1.48 COMPONENTS program_options system filesystem REQUIRED)
 if (NOT Boost_FOUND)

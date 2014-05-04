@@ -1,5 +1,5 @@
-#include "../version.h"
 #include <iostream>
+#include <facter/facterlib.h>
 #include <facter/facts/fact_map.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/file.hpp>
@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 
         // Check for printing the version
         if (vm.count("version")) {
-            cout << CFACTER_VERSION << endl;
+            cout << get_facter_version() << endl;
             return EXIT_SUCCESS;
         }
 
@@ -179,7 +179,7 @@ int main(int argc, char **argv)
             LOG_INFO("Resolving all facts.");
 
             // Print all facts in the map
-            facts.each([](string const& name, value const* value) {
+            facts.each([](string const& name, facter::facts::value const* value) {
                 if (value) {
                     cout << format("%1% => %2%\n") % name % value->to_string();
                 }
