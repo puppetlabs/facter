@@ -71,7 +71,7 @@ endif()
 # Add the library target without a prefix (name already has the 'lib')
 add_library(libfacter SHARED ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_POSIX_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
 set_target_properties(libfacter PROPERTIES PREFIX "" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}")
-install(TARGETS libfacter DESTINATION .)
+install(TARGETS libfacter DESTINATION lib)
 
 # Set include directories
 include_directories(

@@ -31,20 +31,6 @@ endif()
 include(${VENDOR_DIRECTORY}/rapidjson.cmake)
 include(${VENDOR_DIRECTORY}/gmock.cmake)
 
-if(APPLE)
-    # Set the RPATH to OSX magic value @executable_path (where the loading executable is located)
-    set(CMAKE_INSTALL_RPATH "@executable_path/")
-    set(CMAKE_MACOSX_RPATH 1)
-elseif(UNIX)
-    # Set the RPATH to be magic value $ORIGIN (where the loading executable is located)
-    set(CMAKE_INSTALL_RPATH "$ORIGIN")
-endif()
-
-# Set the default install path
-if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set(CMAKE_INSTALL_PREFIX "/opt/cfacter" CACHE PATH "default install path" FORCE)
-endif()
-
 add_subdirectory(exe)
 
 #
