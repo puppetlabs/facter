@@ -1,24 +1,44 @@
 #include <facter/facts/array_value.hpp>
-#include <sstream>
+#include <rapidjson/document.h>
 
 using namespace std;
+using namespace rapidjson;
 
 namespace facter { namespace facts {
 
-    string array_value::to_string() const
+    void array_value::to_json(Allocator& allocator, Value& value) const
     {
-        ostringstream result;
+        value.SetArray();
 
-        // Write out the elements in the array
-        result << "[";
         for (auto const& element : _elements) {
-            if (result.tellp() != 0) {
-                result << ", ";
+            if (!element) {
+                continue;
             }
-            result << element->to_string();
+
+            Value child;
+            element->to_json(allocator, child);
+            value.PushBack(child, allocator);
         }
-        result << "]";
-        return result.str();
+    }
+
+    ostream& array_value::write(ostream& os) const
+    {
+        // Write out the elements in the array
+        os << "[ ";
+        bool first = true;
+        for (auto const& element : _elements) {
+            if (!element) {
+                continue;
+            }
+            if (first) {
+                first = false;
+            } else {
+                os << ", ";
+            }
+            os << *element;
+        }
+        os << " ]";
+        return os;
     }
 
 }}  // namespace facter::facts

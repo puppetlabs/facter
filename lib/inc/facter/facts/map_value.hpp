@@ -1,40 +1,41 @@
-#ifndef FACTER_FACTS_ARRAY_VALUE_HPP_
-#define FACTER_FACTS_ARRAY_VALUE_HPP_
+#ifndef FACTER_FACTS_MAP_VALUE_HPP_
+#define FACTER_FACTS_MAP_VALUE_HPP_
 
 #include "value.hpp"
-#include <vector>
+#include <map>
+#include <string>
 #include <memory>
 
 namespace facter { namespace facts {
 
     /**
-     * Represents an array of values.
+     * Represents a fact value that maps fact names to values.
      */
-    struct array_value : value
+    struct map_value : value
     {
         /**
-         * Constructs an array_value.
+         * Constructs a map value.
          */
-        array_value()
+        map_value()
         {
         }
 
         /**
-         * Constructs an array value.
-         * @param elements The elements that make up the array.
+         * Constructs a map value.
+         * @param elements The elements to store in the map value.
          */
-        explicit array_value(std::vector<std::unique_ptr<value>>&& elements) :
+        explicit map_value(std::map<std::string, std::unique_ptr<value>>&& elements) :
             _elements(std::move(elements))
         {
         }
 
         // Force non-copyable
-        array_value(array_value const&) = delete;
-        array_value& operator=(array_value const&) = delete;
+        map_value(map_value const&) = delete;
+        map_value& operator=(map_value const&) = delete;
 
         // Allow movable
-        array_value(array_value&&) = default;
-        array_value& operator=(array_value&&) = default;
+        map_value(map_value&&) = default;
+        map_value& operator=(map_value&&) = default;
 
         /**
          * Converts the value to a JSON value.
@@ -44,10 +45,10 @@ namespace facter { namespace facts {
         virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
 
         /**
-         * Gets the vector of elements in the array.
+         * Gets the map of elements in the value.
          * @return Returns the vector of elements in the array.
          */
-        std::vector<std::unique_ptr<value>> const& elements() const { return _elements; }
+        std::map<std::string, std::unique_ptr<value>> const& elements() const { return _elements; }
 
      protected:
         /**
@@ -58,9 +59,10 @@ namespace facter { namespace facts {
         virtual std::ostream& write(std::ostream& os) const;
 
      private:
-        std::vector<std::unique_ptr<value>> _elements;
+        std::map<std::string, std::unique_ptr<value>> _elements;
     };
 
 }}  // namespace facter::facts
 
-#endif  // FACTER_FACTS_ARRAY_VALUE_HPP_
+#endif  // FACTER_FACTS_MAP_VALUE_HPP_
+

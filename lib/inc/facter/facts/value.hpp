@@ -4,6 +4,19 @@
 #include <string>
 #include <functional>
 #include <memory>
+#include <iostream>
+
+// Forward delcare needed rapidjson classes.
+namespace rapidjson {
+    class CrtAllocator;
+    template <typename BaseAllocator> class MemoryPoolAllocator;
+    template <typename Encoding, typename Allocator> class GenericValue;
+    template<typename CharType> struct UTF8;
+    typedef GenericValue<UTF8<char>, MemoryPoolAllocator<CrtAllocator>> Value;
+    typedef MemoryPoolAllocator<CrtAllocator> Allocator;
+    template <typename Encoding, typename Allocator> class GenericDocument;
+    typedef GenericDocument<UTF8<char>, MemoryPoolAllocator<CrtAllocator>> Document;
+}
 
 namespace facter { namespace facts {
 
@@ -18,10 +31,9 @@ namespace facter { namespace facts {
         value() {}
 
         /**
-         * Converts the value to a string representation.
-         * @return Returns the string representation of the value.
+         * Destructs a value.
          */
-        virtual std::string to_string() const = 0;
+        virtual ~value() {}
 
         // Force non-copyable
         value(value const&) = delete;
@@ -30,6 +42,22 @@ namespace facter { namespace facts {
         // Allow movable
         value(value&&) = default;
         value& operator=(value&&) = default;
+
+        /**
+         * Converts the value to a JSON value.
+         * @param allocator The allocator to use for creating the JSON value.
+         * @param value The returned JSON value.
+         */
+        virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const = 0;
+
+     protected:
+        /**
+          * Writes the value to the given stream.
+          * @param os The stream to write to.
+          * @returns Returns the stream being written to.
+          */
+        virtual std::ostream& write(std::ostream& os) const = 0;
+        friend std::ostream& operator<<(std::ostream& os, value const& val);
     };
 
     /**
@@ -45,7 +73,14 @@ namespace facter { namespace facts {
         return std::unique_ptr<value>(new T(std::forward<Args>(args)...));
     }
 
+    /**
+     * Insertion operator for value.
+     * @param os The output stream to write to.
+     * @param val The value to write to the stream.
+     * @return Returns the given output stream.
+     */
+    std::ostream& operator<<(std::ostream& os, value const& val);
+
 }}  // namespace facter::facts
 
 #endif  // FACTER_FACTS_VALUE_HPP_
-

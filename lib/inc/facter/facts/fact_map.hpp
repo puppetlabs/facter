@@ -3,12 +3,14 @@
 
 #include <list>
 #include <map>
+#include <set>
 #include <string>
 #include <memory>
 #include <functional>
+#include <stdexcept>
+#include <iostream>
 #include "value.hpp"
 #include "fact_resolver.hpp"
-#include <stdexcept>
 
 namespace facter { namespace facts {
 
@@ -41,15 +43,16 @@ namespace facter { namespace facts {
      */
     struct fact_map
     {
-        typedef std::map<std::string, std::unique_ptr<value>> fact_map_type;
-        typedef std::map<std::string, std::shared_ptr<fact_resolver>> resolver_map_type;
+        /**
+         * Constructs a fact_map.
+         */
+        fact_map();
 
         /**
          * Adds a resolver to the fact map.
          * @param resolver The resolver to add to the map.
          */
         void add(std::shared_ptr<fact_resolver> const& resolver);
-
 
         /**
          * Adds a fact to the map.
@@ -72,6 +75,7 @@ namespace facter { namespace facts {
 
         /**
          * Clears the entire fact map.
+         * This will remove all built-in facts and resolvers from the map.
          */
         void clear();
 
@@ -80,6 +84,19 @@ namespace facter { namespace facts {
          * @return Returns true if the fact map is entry or false if it is not.
          */
         bool empty() const;
+
+        /**
+         * Checks to see if the fact map has been resolved.
+         * @return Returns true if all fact resolvers have been resolved or false if at least fact resolver remains unresolved.
+         */
+        bool resolved() const;
+
+        /**
+         * Resolves all facts.
+         * This forces each resolver in the map to resolve.
+         * @param facts The set of fact names to filter the resolution to.  If empty, all facts will be resolved.
+         */
+        void resolve(std::set<std::string> const& facts = std::set<std::string>());
 
         /**
          * Gets a fact value by name.
@@ -108,27 +125,35 @@ namespace facter { namespace facts {
          * Enumerates all facts in the map.
          * @param func The callback function called for each fact in the map.
          */
-        void each(std::function<bool(std::string const&, value const*)> func);
+        void each(std::function<bool(std::string const&, value const*)> func) const;
 
         /**
-         * Gets the singleton instance of the fact map.
-         * @return Returns the singleton instance of the fact map.
+         * Writes the contents of the fact map as JSON to the given stream.
+         * @param stream The stream to write the JSON to.
          */
-        static fact_map& instance();
+        void write_json(std::ostream& stream) const;
 
      private:
-        fact_map() {}
-        void load_facts();
-        void resolve_facts();
+        typedef std::map<std::string, std::unique_ptr<value>> fact_map_type;
+        typedef std::map<std::string, std::shared_ptr<fact_resolver>> resolver_map_type;
+
+        friend std::ostream& operator<<(std::ostream& os, fact_map const& facts);
+
         std::shared_ptr<fact_resolver> find_resolver(std::string const& name);
         value const* get_value(std::string const& name, bool resolve);
-
-        static fact_map _instance;
 
         fact_map_type _facts;
         std::list<std::shared_ptr<fact_resolver>> _resolvers;
         resolver_map_type _resolver_map;
     };
+
+    /**
+     * Insertion operator for fact_map.
+     * @param os The output stream to write to.
+     * @param facts The facts to write to the stream.
+     * @return Returns the given output stream.
+     */
+    std::ostream& operator<<(std::ostream& os, fact_map const& facts);
 
 }}  // namespace facter::facts
 
