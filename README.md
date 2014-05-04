@@ -53,6 +53,24 @@ For a debug build:
 
 `$ debug/exe/cfacter`
 
+Test
+----
+
+You can run cfacter tests using the test target:
+
+    $ cd release
+    $ make test
+
+For a debug build:
+
+    $ cd debug
+    $ make test
+
+For verbose test output, run `ctest` instead of using the test target:
+
+    $ cd release
+    $ ctest -V
+
 Install
 -------
 
