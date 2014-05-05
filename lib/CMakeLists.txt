@@ -29,6 +29,7 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/operating_system_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/processor_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/uptime_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/logging/posix/logging.cc"
     )
 endif()
@@ -38,6 +39,7 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     set(LIBFACTER_PLATFORM_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/dmi_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/uptime_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/platform.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/processor_resolver.cc"
@@ -50,6 +52,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/lsb_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/operating_system_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/uptime_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/platform.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/processor_resolver.cc"
     )

@@ -8,10 +8,13 @@ namespace facter { namespace facts {
      */
     struct fact
     {
+        // kernel facts
         constexpr static char const* kernel = "kernel";
         constexpr static char const* kernel_version = "kernelversion";
         constexpr static char const* kernel_release = "kernelrelease";
         constexpr static char const* kernel_major_version = "kernelmajversion";
+
+        // operating system facts
         constexpr static char const* operating_system = "operatingsystem";
         constexpr static char const* os_family = "osfamily";
         constexpr static char const* operating_system_release = "operatingsystemrelease";
@@ -24,6 +27,8 @@ namespace facter { namespace facts {
         constexpr static char const* lsb_dist_major_release = "lsbmajdistrelease";
         constexpr static char const* lsb_dist_minor_release = "lsbminordistrelease";
         constexpr static char const* lsb_release = "lsbrelease";
+
+        // network facts
         constexpr static char const* ipaddress = "ipaddress";
         constexpr static char const* ipaddress6 = "ipaddress6";
         constexpr static char const* mtu = "mtu";
@@ -35,11 +40,17 @@ namespace facter { namespace facts {
         constexpr static char const* interfaces = "interfaces";
         constexpr static char const* domain = "domain";
         constexpr static char const* fqdn = "fqdn";
+
+        // block device facts
         constexpr static char const* block_device = "blockdevice";
         constexpr static char const* block_devices = "blockdevices";
+
+        // processor facts
         constexpr static char const* processor = "processor";
         constexpr static char const* processor_count = "processorcount";
         constexpr static char const* physical_processor_count = "physicalprocessorcount";
+
+        // dmidecode facts
         constexpr static char const* hardware_isa = "hardwareisa";
         constexpr static char const* hardware_model = "hardwaremodel";
         constexpr static char const* architecture = "architecture";
@@ -54,6 +65,12 @@ namespace facter { namespace facts {
         constexpr static char const* serial_number = "serialnumber";
         constexpr static char const* product_uuid = "productuuid";
         constexpr static char const* chassis_type = "chassistype";
+
+        // uptime facts
+        constexpr static char const* uptime = "uptime";
+        constexpr static char const* uptime_days = "uptime_days";
+        constexpr static char const* uptime_hours = "uptime_hours";
+        constexpr static char const* uptime_seconds = "uptime_seconds";
     };
 
 }}  // namespace facter::facts
