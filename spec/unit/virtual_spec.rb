@@ -102,11 +102,6 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "virtualbox"
     end
 
-    it "should be kvm with Red Hat, Inc vendor name and Virtio driver family from lspci 2>/dev/null" do
-      Facter::Core::Execution.stubs(:exec).with('lspci 2>/dev/null').returns("00:03.0 Unclassified device [00ff]: Red Hat, Inc Virtio memory balloon")
-      Facter.fact(:virtual).value.should == "kvm"
-    end
-
     it "should be vmware with VMWare vendor name from dmidecode" do
       Facter::Core::Execution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Core::Execution.stubs(:exec).with('dmidecode 2> /dev/null').returns("On Board Device 1 Information\nType: Video\nStatus: Disabled\nDescription: VMware SVGA II")
@@ -174,12 +169,6 @@ describe "Virtual fact" do
       Facter::Core::Execution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Core::Execution.stubs(:exec).with('dmidecode 2> /dev/null').returns("System Information\nManufacturer: Microsoft Corporation\nProduct Name: Virtual Machine")
       Facter.fact(:virtual).value.should == "hyperv"
-    end
-
-    it "should be kvm with Bochs vendor name from dmidecode" do
-      Facter::Core::Execution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
-      Facter::Core::Execution.stubs(:exec).with('dmidecode 2> /dev/null').returns("Manufacturer: Bochs")
-      Facter.fact(:virtual).value.should == "kvm"
     end
 
     context "In a Linux Container (LXC)" do
@@ -272,23 +261,28 @@ describe "Virtual fact" do
     end
 
     it "should be parallels with Parallels product name from sysctl" do
-      Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("Parallels Virtual Platform")
+      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("Parallels Virtual Platform")
       Facter.fact(:virtual).value.should == "parallels"
     end
 
     it "should be vmware with VMware product name from sysctl" do
-      Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("VMware Virtual Platform")
+      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("VMware Virtual Platform")
       Facter.fact(:virtual).value.should == "vmware"
     end
 
     it "should be virtualbox with VirtualBox product name from sysctl" do
-      Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("VirtualBox")
+      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("VirtualBox")
       Facter.fact(:virtual).value.should == "virtualbox"
     end
 
     it "should be xenhvm with Xen HVM product name from sysctl" do
-      Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("HVM domU")
+      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("HVM domU")
       Facter.fact(:virtual).value.should == "xenhvm"
+    end
+
+    it "should be ovirt with oVirt Node product name from sysctl" do
+      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("oVirt Node")
+      Facter.fact(:virtual).value.should == "ovirt"
     end
   end
 

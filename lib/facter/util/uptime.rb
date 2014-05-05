@@ -20,12 +20,10 @@ module Facter::Util::Uptime
   private
 
   def self.uptime_proc_uptime
-    begin
-      if output = File.read(uptime_file)
-        output.chomp.split(" ").first.to_i
-      end
-    rescue Errno::ENOENT
-      nil
+    output = Facter::Core::Execution.execute("/bin/cat #{uptime_file} 2>/dev/null")
+
+    if not output.empty?
+      output.chomp.split(" ").first.to_i
     end
   end
 

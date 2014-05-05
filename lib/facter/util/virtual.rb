@@ -1,4 +1,3 @@
-require 'facter/util/posix'
 require 'facter/util/file_read'
 require 'pathname'
 
@@ -42,11 +41,11 @@ module Facter::Util::Virtual
     return false unless self.openvz?
     return false unless FileTest.exists?( '/proc/self/status' )
 
-    envid = File.read('/proc/self/status')
+    envid = Facter::Core::Execution.exec( 'grep "envID" /proc/self/status' )
     if envid =~ /^envID:\s+0$/i
-      return 'openvzhn'
+    return 'openvzhn'
     elsif envid =~ /^envID:\s+(\d+)$/i
-      return 'openvzve'
+    return 'openvzve'
     end
   end
 
@@ -94,12 +93,9 @@ module Facter::Util::Virtual
      txt = if FileTest.exists?("/proc/cpuinfo")
        File.read("/proc/cpuinfo")
      elsif ["FreeBSD", "OpenBSD"].include? Facter.value(:kernel)
-       Facter::Util::POSIX.sysctl("hw.model")
+       Facter::Core::Execution.exec("/sbin/sysctl -n hw.model")
      end
-     if txt =~ /QEMU Virtual CPU/ then true
-     elsif txt =~ /Common KVM processor/ then true
-       else false
-     end
+     (txt =~ /QEMU Virtual CPU/) ? true : false
   end
 
   def self.virtualbox?
@@ -149,16 +145,6 @@ module Facter::Util::Virtual
 
   def self.zlinux?
     "zlinux"
-  end
-
-  def self.parse_virtualization(output)
-    if output
-      lines = output.split("\n")
-      return "parallels"  if lines.any? {|l| l =~ /Parallels/ }
-      return "vmware"     if lines.any? {|l| l =~ /VM[wW]are/ }
-      return "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
-      return "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
-    end
   end
 
   ##

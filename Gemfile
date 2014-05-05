@@ -5,8 +5,7 @@ platforms :ruby do
   gem 'watchr', :group => :development
   gem 'pry', :group => :development
   gem 'yard', :group => :development
-  redcarpet_version = RUBY_VERSION =~ /^1\.8/ ? "< 3.0.0" : nil
-  gem 'redcarpet', redcarpet_version, :group => :development
+  gem 'redcarpet', '<= 2.3.0', :group => :development
 end
 
 group :development, :test do

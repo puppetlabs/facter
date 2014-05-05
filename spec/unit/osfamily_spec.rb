@@ -13,7 +13,6 @@ describe "OS Family fact" do
     'Solaris'      => 'Solaris',
     'Ubuntu'       => 'Debian',
     'Debian'       => 'Debian',
-    'LinuxMint'    => 'Debian',
     'CumulusLinux' => 'Debian',
     'Gentoo'       => 'Gentoo',
     'Fedora'       => 'RedHat',
@@ -33,9 +32,6 @@ describe "OS Family fact" do
     'SLED'         => 'Suse',
     'OpenSuSE'     => 'Suse',
     'SuSE'         => 'Suse',
-    'Mageia'       => 'Mandrake',
-    'Mandriva'     => 'Mandrake',
-    'Mandrake'     => 'Mandrake'
   }.each do |os,family|
     it "should return #{family} on operatingsystem #{os}" do
       Facter.fact(:operatingsystem).stubs(:value).returns os

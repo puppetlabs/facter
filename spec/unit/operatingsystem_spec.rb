@@ -57,6 +57,7 @@ describe "Operating System fact" do
     {
       "Debian"      => "/etc/debian_version",
       "Gentoo"      => "/etc/gentoo-release",
+      "Fedora"      => "/etc/fedora-release",
       "Mandriva"    => "/etc/mandriva-release",
       "Mandrake"    => "/etc/mandrake-release",
       "MeeGo"       => "/etc/meego-release",
@@ -68,7 +69,7 @@ describe "Operating System fact" do
       "Bluewhite64" => "/etc/bluewhite64-version",
       "Slamd64"     => "/etc/slamd64-version",
       "Slackware"   => "/etc/slackware-version",
-      "Amazon"      => "/etc/system-release"
+      "Amazon"      => "/etc/system-release",
     }.each_pair do |distribution, releasefile|
       it "should be #{distribution} if #{releasefile} exists" do
         FileTest.expects(:exists?).with(releasefile).returns true
@@ -82,17 +83,10 @@ describe "Operating System fact" do
       end
 
       it "on Ubuntu should use the lsbdistid fact" do
-        FileTest.stubs(:exists?).with("/etc/debian_version").returns true
+        FileUtils.stubs(:exists?).with("/etc/debian_version").returns true
 
         Facter.stubs(:value).with(:lsbdistid).returns("Ubuntu")
         Facter.fact(:operatingsystem).value.should == "Ubuntu"
-      end
-
-      it "on LinuxMint should use the lsbdistid fact" do
-        FileTest.stubs(:exists?).with("/etc/debian_version").returns true
-
-        Facter.stubs(:value).with(:lsbdistid).returns("LinuxMint")
-        Facter.fact(:operatingsystem).value.should == "LinuxMint"
       end
 
     end
@@ -107,8 +101,6 @@ describe "Operating System fact" do
       "Ascendos"   => "Ascendos release 6.0 (Nameless)",
       "CloudLinux" => "CloudLinux Server release 5.5",
       "XenServer"  => "XenServer release 5.6.0-31188p (xenenterprise)",
-      "XCP"        => "XCP release 1.6.10-61809c",
-      "Fedora"     => "Fedora release 18 (Spherical Cow)",
     }.each_pair do |operatingsystem, string|
       it "should be #{operatingsystem} based on /etc/redhat-release contents #{string}" do
         FileTest.expects(:exists?).with("/etc/redhat-release").returns true
@@ -144,15 +136,6 @@ describe "Operating System fact" do
       FileTest.expects(:exists?).with("/etc/redhat-release").returns true
       File.expects(:read).with("/etc/redhat-release").returns("Scientific Linux CERN SLC 5.7 (Boron)")
       Facter.fact(:operatingsystem).value.should == "SLC"
-    end
-
-    describe "CumulusLinux variant" do
-      it "should be CumulusLinux if /etc/os-release exist and NAME says it is Cumulus Linux" do
-        # Facter.fact(:kernel).stubs(:value).returns("Linux")
-        FileTest.expects(:exists?).with('/etc/os-release').returns true
-        File.expects(:read).with('/etc/os-release').returns 'NAME="Cumulus Linux"'
-        Facter.fact(:operatingsystem).value.should == "CumulusLinux"
-      end
     end
   end
 end

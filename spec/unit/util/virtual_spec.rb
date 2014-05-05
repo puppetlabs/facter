@@ -30,47 +30,20 @@ describe Facter::Util::Virtual do
   it "should identify openvzhn when /proc/self/status has envID of 0" do
     Facter::Util::Virtual.stubs(:openvz?).returns(true)
     FileTest.stubs(:exists?).with("/proc/self/status").returns(true)
-    File.stubs(:read).with('/proc/self/status').returns <<EOT
-Name:	cat
-State:	R (running)
-Tgid:	8418
-Pid:	8418
-PPid:	2354
-envID:  0
-TracerPid:	0
-Uid:	0	0	0	0
-EOT
+    Facter::Core::Execution.stubs(:exec).with('grep "envID" /proc/self/status').returns("envID:  0")
     Facter::Util::Virtual.openvz_type().should == "openvzhn"
   end
 
   it "should identify openvzve when /proc/self/status has envID of 0" do
     Facter::Util::Virtual.stubs(:openvz?).returns(true)
     FileTest.stubs(:exists?).with('/proc/self/status').returns(true)
-    File.stubs(:read).with('/proc/self/status').returns <<EOT
-Name:	cat
-State:	R (running)
-Tgid:	8418
-Pid:	8418
-PPid:	2354
-envID:  101
-TracerPid:	0
-Uid:	0	0	0	0
-EOT
+    Facter::Core::Execution.stubs(:exec).with('grep "envID" /proc/self/status').returns("envID:  666")
     Facter::Util::Virtual.openvz_type().should == "openvzve"
   end
 
   it "should not attempt to identify openvz when /proc/self/status has no envID" do
     Facter::Util::Virtual.stubs(:openvz?).returns(true)
     FileTest.stubs(:exists?).with('/proc/self/status').returns(true)
-    File.stubs(:read).with('/proc/self/status').returns <<EOT
-Name:	cat
-State:	R (running)
-Tgid:	8418
-Pid:	8418
-PPid:	2354
-TracerPid:	0
-Uid:	0	0	0	0
-EOT
     Facter::Core::Execution.stubs(:exec).with('grep "envID" /proc/self/status').returns("")
     Facter::Util::Virtual.openvz_type().should be_nil
   end
@@ -229,14 +202,14 @@ EOT
   it "should detect kvm on FreeBSD" do
     FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
     Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
-    Facter::Util::POSIX.stubs(:sysctl).with("hw.model").returns("QEMU Virtual CPU version 0.12.4")
+    Facter::Core::Execution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns("QEMU Virtual CPU version 0.12.4")
     Facter::Util::Virtual.should be_kvm
   end
 
   it "should detect kvm on OpenBSD" do
     FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
     Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
-    Facter::Util::POSIX.stubs(:sysctl).with("hw.model").returns('QEMU Virtual CPU version (cpu64-rhel6) ("AuthenticAMD" 686-class, 512KB L2 cache)')
+    Facter::Core::Execution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns('QEMU Virtual CPU version (cpu64-rhel6) ("AuthenticAMD" 686-class, 512KB L2 cache)')
     Facter::Util::Virtual.should be_kvm
   end
 

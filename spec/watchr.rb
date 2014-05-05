@@ -63,9 +63,7 @@ end
 def run_spec_files(files)
   files = Array(files)
   return if files.empty?
-  opts = if File.exist? '.rspec'
-    File.readlines('.rspec').collect { |l| l.chomp }.join(" ")
-  end
+  opts = File.readlines('.rspec').collect { |l| l.chomp }.join(" ")
   begin
     run_spec("rspec --tty #{opts} #{files.join(' ')}")
   rescue => detail
