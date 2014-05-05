@@ -1,0 +1,19 @@
+---
+inMenu: false
+directoryName: Facter
+---
+
+A cross-platform Ruby library for retrieving facts from operating systems.
+Supports multiple resolution mechanisms, any of which can be restricted to
+working only on certain operating systems or environments. Facter is especially
+useful for retrieving things like operating system names, IP addresses, MAC
+addresses, and SSH keys.
+
+It is easy to extend Facter to include your own [custom facts](custom.html) or
+to include additional mechanisms for retrieving facts.
+
+* [Downloads](/downloads/facter/)
+* [Bug Tracking](/cgi-bin/facter.cgi)
+* [API Documentation](/downloads/facter/apidocs/)
+
+*$Id$*

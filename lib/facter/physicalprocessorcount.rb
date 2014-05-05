@@ -9,8 +9,6 @@
 #
 # Caveats:
 #
-require 'facter/util/posix'
-
 Facter.add('physicalprocessorcount') do
   confine :kernel => :linux
 
@@ -41,7 +39,7 @@ Facter.add('physicalprocessorcount') do
       lookup_pattern = "#{sysfs_cpu_directory}" +
         "/cpu*/topology/physical_package_id"
 
-      Dir.glob(lookup_pattern).collect {|f| File.read(f) }.uniq.size.to_s
+      Dir.glob(lookup_pattern).collect { |f| Facter::Core::Execution.exec("cat #{f}")}.uniq.size.to_s
 
     else
       #
@@ -50,8 +48,9 @@ Facter.add('physicalprocessorcount') do
       # We assume that /proc/cpuinfo has what we need and is so then we need
       # to make sure that we only count unique entries ...
       #
-      n = File.read('/proc/cpuinfo').split(/\n/).grep(/^physical id/).uniq.length
-      n > 0 ? n.to_s : nil
+      str = Facter::Core::Execution.exec("grep 'physical.\\+:' /proc/cpuinfo")
+
+      if str then str.scan(/\d+/).uniq.size.to_s; end
     end
   end
 end
@@ -79,12 +78,5 @@ Facter.add('physicalprocessorcount') do
       output = Facter::Core::Execution.exec("/usr/sbin/psrinfo")
       output.split("\n").length.to_s
     end
-  end
-end
-
-Facter.add('physicalprocessorcount') do
-  confine :kernel => :openbsd
-  setcode do
-    Facter::Util::POSIX.sysctl("hw.ncpufound")
   end
 end

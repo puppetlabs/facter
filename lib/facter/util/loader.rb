@@ -98,7 +98,7 @@ class Facter::Util::Loader
   # @param path [String]
   # @return [Boolean]
   def valid_search_path?(path)
-    Pathname.new(path).absolute? or path.match(%r[^file:/])
+    Pathname.new(path).absolute?
   end
 
   # Load a file and record is paths to prevent duplicate loads.

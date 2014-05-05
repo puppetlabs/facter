@@ -18,7 +18,7 @@ Facter.add(:osfamily) do
     case Facter.value(:operatingsystem)
     when "RedHat", "Fedora", "CentOS", "Scientific", "SLC", "Ascendos", "CloudLinux", "PSBM", "OracleLinux", "OVS", "OEL", "Amazon", "XenServer"
       "RedHat"
-    when "LinuxMint", "Ubuntu", "Debian", "CumulusLinux"
+    when "Ubuntu", "Debian", "CumulusLinux"
       "Debian"
     when "SLES", "SLED", "OpenSuSE", "SuSE"
       "Suse"
@@ -28,8 +28,6 @@ Facter.add(:osfamily) do
       "Gentoo"
     when "Archlinux"
       "Archlinux"
-    when "Mandrake", "Mandriva", "Mageia"
-      "Mandrake"
     else
       Facter.value("kernel")
     end

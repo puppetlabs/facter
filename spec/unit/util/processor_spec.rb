@@ -1,8 +1,8 @@
 #! /usr/bin/env ruby
 
 require 'spec_helper'
-require 'facter_spec/cpuinfo'
 require 'facter/util/processor'
+require 'facter_spec/cpuinfo'
 
 describe Facter::Util::Processor do
   describe "on linux" do

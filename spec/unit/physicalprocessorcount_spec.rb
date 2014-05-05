@@ -1,119 +1,42 @@
 #! /usr/bin/env ruby
 
 require 'spec_helper'
-require 'facter_spec/cpuinfo'
-require 'facter/util/posix'
 
 describe "Physical processor count facts" do
 
   describe "on linux" do
-    include FacterSpec::Cpuinfo
-
     before :each do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
+      File.stubs(:exists?).with('/sys/devices/system/cpu').returns(true)
     end
-    context "with /sys/devices/system/cpu and not /proc/cpuinfo" do
-      before :each do
-        File.stubs(:exists?).with('/sys/devices/system/cpu').returns(true)
-      end
 
-      it "returns 1 when there is 1 CPU with 1 core" do
-        Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu*/topology/physical_package_id").returns(["/sys/devices/system/cpu/cpu0/topology/physical_package_id"])
-        File.stubs(:read).with("/sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
+    it "should return one physical CPU" do
+      Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu*/topology/physical_package_id").returns(["/sys/devices/system/cpu/cpu0/topology/physical_package_id"])
+      Facter::Core::Execution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
 
-        Facter.fact(:physicalprocessorcount).value.should == "1"
-      end
+      Facter.fact(:physicalprocessorcount).value.should == "1"
+    end
 
-      it "returns 1 when there is 1 CPU with 4 cores" do
-        Dir.expects(:glob).with("/sys/devices/system/cpu/cpu*/topology/physical_package_id").returns([
-          "/sys/devices/system/cpu/cpu0/topology/physical_package_id",
-          "/sys/devices/system/cpu/cpu1/topology/physical_package_id",
-          "/sys/devices/system/cpu/cpu2/topology/physical_package_id",
-          "/sys/devices/system/cpu/cpu3/topology/physical_package_id"
-        ])
-        File.expects(:read).with("/sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
-        File.expects(:read).with("/sys/devices/system/cpu/cpu1/topology/physical_package_id").returns("0")
-        File.expects(:read).with("/sys/devices/system/cpu/cpu2/topology/physical_package_id").returns("0")
-        File.expects(:read).with("/sys/devices/system/cpu/cpu3/topology/physical_package_id").returns("0")
-
-        Facter.fact(:physicalprocessorcount).value.should == "1"
-      end
-
-      it "returns 4 when there are 4 CPUs each with one core" do
-        Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu*/topology/physical_package_id").returns(%w{
+    it "should return four physical CPUs" do
+      Dir.stubs(:glob).with("/sys/devices/system/cpu/cpu*/topology/physical_package_id").returns(%w{
         /sys/devices/system/cpu/cpu0/topology/physical_package_id
         /sys/devices/system/cpu/cpu1/topology/physical_package_id
         /sys/devices/system/cpu/cpu2/topology/physical_package_id
         /sys/devices/system/cpu/cpu3/topology/physical_package_id
-                                                                                                   })
+      })
 
-        File.stubs(:read).with("/sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
-        File.stubs(:read).with("/sys/devices/system/cpu/cpu1/topology/physical_package_id").returns("1")
-        File.stubs(:read).with("/sys/devices/system/cpu/cpu2/topology/physical_package_id").returns("2")
-        File.stubs(:read).with("/sys/devices/system/cpu/cpu3/topology/physical_package_id").returns("3")
+      Facter::Core::Execution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
+      Facter::Core::Execution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu1/topology/physical_package_id").returns("1")
+      Facter::Core::Execution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu2/topology/physical_package_id").returns("2")
+      Facter::Core::Execution.stubs(:exec).with("cat /sys/devices/system/cpu/cpu3/topology/physical_package_id").returns("3")
 
-        Facter.fact(:physicalprocessorcount).value.should == "4"
-      end
-
-      it "returns 4 when there are 4 CPUs each with two cores" do
-        Dir.expects(:glob).with("/sys/devices/system/cpu/cpu*/topology/physical_package_id").returns(%w{
-          /sys/devices/system/cpu/cpu0/topology/physical_package_id
-          /sys/devices/system/cpu/cpu1/topology/physical_package_id
-          /sys/devices/system/cpu/cpu2/topology/physical_package_id
-          /sys/devices/system/cpu/cpu3/topology/physical_package_id
-          /sys/devices/system/cpu/cpu4/topology/physical_package_id
-          /sys/devices/system/cpu/cpu5/topology/physical_package_id
-          /sys/devices/system/cpu/cpu6/topology/physical_package_id
-          /sys/devices/system/cpu/cpu7/topology/physical_package_id
-        })
-        File.expects(:read).with("/sys/devices/system/cpu/cpu0/topology/physical_package_id").returns("0")
-        File.expects(:read).with("/sys/devices/system/cpu/cpu1/topology/physical_package_id").returns("0")
-        File.expects(:read).with("/sys/devices/system/cpu/cpu2/topology/physical_package_id").returns("1")
-        File.expects(:read).with("/sys/devices/system/cpu/cpu3/topology/physical_package_id").returns("1")
-        File.expects(:read).with("/sys/devices/system/cpu/cpu4/topology/physical_package_id").returns("2")
-        File.expects(:read).with("/sys/devices/system/cpu/cpu5/topology/physical_package_id").returns("2")
-        File.expects(:read).with("/sys/devices/system/cpu/cpu6/topology/physical_package_id").returns("3")
-        File.expects(:read).with("/sys/devices/system/cpu/cpu7/topology/physical_package_id").returns("3")
-
-        Facter.fact(:physicalprocessorcount).value.should == "4"
-      end
-    end
-
-    context "with /proc/cpuinfo and not /sys/devices/system/cpu" do
-      before :each do
-        File.stubs(:exists?).with('/sys/devices/system/cpu').returns(false)
-      end
-
-      it "returns 1 when there is 1 amd64 CPU with 2 cores" do
-        cpuinfo = cpuinfo_fixture_read('amd64dual')
-        File.stubs(:read).with("/proc/cpuinfo").returns(cpuinfo)
-        Facter.fact(:physicalprocessorcount).value.should == "1"
-      end
-
-      it "returns 2 when there are 2 CPUs each with 1 core" do
-        cpuinfo = cpuinfo_fixture_read('two_singlecore')
-        File.stubs(:read).with("/proc/cpuinfo").returns(cpuinfo)
-        Facter.fact(:physicalprocessorcount).value.should == "2"
-      end
-
-      it "returns 2 when there are 2 CPUS each with 2 cores" do
-        cpuinfo = cpuinfo_fixture_read('two_multicore')
-        File.stubs(:read).with("/proc/cpuinfo").returns(cpuinfo)
-        Facter.fact(:physicalprocessorcount).value.should == "2"
-      end
-
-      it "returns 2 when there are 2 CPUs each with 12 cores" do
-        cpuinfo = cpuinfo_fixture_read('amd64twentyfour')
-        File.stubs(:read).with("/proc/cpuinfo").returns(cpuinfo)
-        Facter.fact(:physicalprocessorcount).value.should == "2"
-      end
+      Facter.fact(:physicalprocessorcount).value.should == "4"
     end
   end
 
   describe "on windows" do
     it "should return 4 physical CPUs" do
       Facter.fact(:kernel).stubs(:value).returns("windows")
-      Facter.fact(:kernelrelease).stubs(:value).returns("6.1.7601")
 
       require 'facter/util/wmi'
       ole = stub 'WIN32OLE'
@@ -148,14 +71,6 @@ describe "Physical processor count facts" do
         Facter::Core::Execution.expects(:exec).with("/usr/sbin/psrinfo").returns(psrinfo)
         Facter.fact(:physicalprocessorcount).value.should == "2"
       end
-    end
-  end
-
-  describe "on openbsd" do
-    it "should return 4 physical CPUs" do
-      Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
-      Facter::Util::POSIX.expects(:sysctl).with("hw.ncpufound").returns("4")
-      Facter.fact(:physicalprocessorcount).value.should == "4"
     end
   end
 end

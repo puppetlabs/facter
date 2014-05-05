@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'spec_helper'
 
 def ldom_fixtures(filename)

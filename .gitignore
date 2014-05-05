@@ -1,6 +1,5 @@
 pkg/
 ext/packaging/
-*.swp
 # YARD generated documentation
 .yardoc
 doc
@@ -8,4 +7,3 @@ doc
 vendor/
 Gemfile.lock
 Gemfile.local
-.rspec

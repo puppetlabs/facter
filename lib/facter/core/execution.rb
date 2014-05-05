@@ -57,7 +57,7 @@ module Facter
 
       # Given a command line, this returns the command line with the
       # executable written as an absolute path. If the executable contains
-      # spaces, it has to be put in double quotes to be properly recognized.
+      # spaces, it has be put in double quotes to be properly recognized.
       #
       # @param command [String] the command line
       #

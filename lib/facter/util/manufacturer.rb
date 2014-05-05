@@ -1,9 +1,8 @@
 # mamufacturer.rb
 # Support methods for manufacturer specific facts
 
-require 'facter/util/posix'
-
 module Facter::Manufacturer
+
   def self.get_dmi_table()
     case Facter.value(:kernel)
     when 'Linux', 'GNU/kFreeBSD'
@@ -53,7 +52,7 @@ module Facter::Manufacturer
     name.each do |sysctlkey,facterkey|
       Facter.add(facterkey) do
         confine :kernel => [:openbsd, :darwin]
-        setcode { Facter::Util::POSIX.sysctl(sysctlkey) }
+        setcode "sysctl -n #{sysctlkey} 2>/dev/null"
       end
     end
   end
