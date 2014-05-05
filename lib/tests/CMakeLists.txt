@@ -26,6 +26,7 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/execution/posix/execution.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_addrinfo.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_descriptor.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/logging/posix/logging.cc"
     )
 endif()
 
