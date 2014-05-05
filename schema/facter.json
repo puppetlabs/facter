@@ -38,6 +38,11 @@
         "boardproductname" : { "type": "string" },
         "boardserialnumber" : { "type": "string" },
         "cfkey" : { "type": "string" },
+        "dhcp_servers" : { "type": "object",
+            "patternProperties": {
+                "^[A-Za-z0-9_]+$" : { "$ref" : "#/definitions/ipaddress" }
+            }
+        },
         "domain" : { "type": "string" },
         "facterversion" : { "type": "string" },
         "filesystems" : { "type": "string" },
