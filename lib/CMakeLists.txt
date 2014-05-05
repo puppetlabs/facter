@@ -29,6 +29,7 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/operating_system_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/processor_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/uptime_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/logging/posix/logging.cc"
     )
 endif()
