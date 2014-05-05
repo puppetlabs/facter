@@ -1,0 +1,8 @@
+9:perf_event:/
+8:blkio:/
+7:freezer:/
+6:devices:/docker/0e3c605ac1470c776c34a8eff362a0c816bcaac78559a43955173bd786281b7f
+5:memory:/
+4:cpuacct:/
+3:cpu:/docker/0e3c605ac1470c776c34a8eff362a0c816bcaac78559a43955173bd786281b7f
+2:cpuset:/
