@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(CFACTER)
 
+if (NOT CMAKE_BUILD_TYPE)
+    message(STATUS "Defaulting to a release build.")
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
+endif()
+
 set(VENDOR_DIRECTORY "${PROJECT_SOURCE_DIR}/vendor")
 list(APPEND CMAKE_MODULE_PATH ${VENDOR_DIRECTORY})
 
