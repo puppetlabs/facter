@@ -49,6 +49,13 @@ namespace facter { namespace facts {
          */
         std::vector<std::unique_ptr<value>> const& elements() const { return _elements; }
 
+        /**
+         * Gets the value at the given index.
+         * @param i The index in the array to get the element at.
+         * @return Returns the value at the given index.
+         */
+        value const* operator[](size_t i) const { return _elements.at(i).get(); }
+
      protected:
         /**
           * Writes the value to the given stream.

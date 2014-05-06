@@ -12,6 +12,7 @@ endif()
 # Set the common (platform-independent) sources
 set(LIBFACTER_TESTS_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/environment.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/facts/array_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/integer_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/posix/uptime_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/util/string.cc"
