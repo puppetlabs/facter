@@ -265,6 +265,17 @@ Facter.add("virtual") do
   end
 end
 
+##
+# virtual fact specific to docker containers.
+Facter.add("virtual") do
+  has_weight 750
+  confine :kernel => "Linux"
+
+  setcode do
+    "docker" if Facter::Util::Virtual.docker?
+  end
+end
+
 # Fact: is_virtual
 #
 # Purpose: returning true or false for if a machine is virtualised or not.

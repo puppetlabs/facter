@@ -138,8 +138,19 @@ module Facter::Util::Virtual
   def self.lxc?
     path = Pathname.new('/proc/1/cgroup')
     return false unless path.readable?
-    lxc_hierarchies = path.readlines.map {|l| l.split(":")[2].to_s.start_with? '/lxc/' }
-    return true if lxc_hierarchies.include?(true)
+    in_lxc = path.readlines.any? {|l| l.split(":")[2].to_s.start_with? '/lxc/' }
+    return true if in_lxc
+    return false
+  end
+
+  ##
+  # docker? returns true if the process is running inside of a docker container.
+  # Implementation derived from observation of a boot2docker system
+  def self.docker?
+    path = Pathname.new('/proc/1/cgroup')
+    return false unless path.readable?
+    in_docker = path.readlines.any? {|l| l.split(":")[2].to_s.start_with? '/docker/' }
+    return true if in_docker
     return false
   end
 
