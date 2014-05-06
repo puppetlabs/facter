@@ -6,6 +6,15 @@ using namespace rapidjson;
 
 namespace facter { namespace facts {
 
+    value const* map_value::operator[](string const& name) const
+    {
+        auto it = _elements.find(name);
+        if (it == _elements.end()) {
+            return nullptr;
+        }
+        return it->second.get();
+    }
+
     void map_value::to_json(Allocator& allocator, Value& value) const
     {
         value.SetObject();

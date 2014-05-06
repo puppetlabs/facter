@@ -50,6 +50,13 @@ namespace facter { namespace facts {
          */
         std::map<std::string, std::unique_ptr<value>> const& elements() const { return _elements; }
 
+        /**
+         * Gets the value in the map of the given name.
+         * @param name The name of the value in the map to get.
+         * @return Returns the value in the map or nullptr if the value is not in the map.
+         */
+        value const* operator[](std::string const& name) const;
+
      protected:
         /**
           * Writes the value to the given stream.
