@@ -67,7 +67,7 @@ namespace facter { namespace facts { namespace posix {
         string value;
         switch (days) {
             case 0:
-                value = (format("%%d:%02d hours") % hours % minutes).str();
+                value = (format("%d:%02d hours") % hours % minutes).str();
                 break;
             case 1:
                 value = "1 day";
