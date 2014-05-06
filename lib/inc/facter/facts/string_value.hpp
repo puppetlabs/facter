@@ -37,16 +37,25 @@ namespace facter { namespace facts {
         string_value& operator=(string_value&&) = default;
 
         /**
-         * Converts the value to a string representation.
-         * @return Returns the string representation of the value.
+         * Converts the value to a JSON value.
+         * @param allocator The allocator to use for creating the JSON value.
+         * @param value The returned JSON value.
          */
-        std::string to_string() const;
+        virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
 
         /**
          * Gets the string value.
          * @return Returns the string value.
          */
         std::string const& value() const { return _value; }
+
+     protected:
+        /**
+          * Writes the value to the given stream.
+          * @param os The stream to write to.
+          * @returns Returns the stream being written to.
+          */
+        virtual std::ostream& write(std::ostream& os) const;
 
      private:
         std::string _value;

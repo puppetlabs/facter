@@ -1,10 +1,15 @@
 #include <facter/facts/fact_map.hpp>
+#include <facter/facts/array_value.hpp>
+#include <facter/facts/string_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <algorithm>
+#include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
 
 using namespace std;
+using namespace rapidjson;
 
-LOG_DECLARE_NAMESPACE("facts");
+LOG_DECLARE_NAMESPACE("facts.map");
 
 namespace facter { namespace facts {
 
@@ -20,7 +25,11 @@ namespace facter { namespace facts {
      */
     extern void populate_platform_facts(fact_map& facts);
 
-    fact_map fact_map::_instance;
+    fact_map::fact_map()
+    {
+        populate_common_facts(*this);
+        populate_platform_facts(*this);
+    }
 
     void fact_map::add(shared_ptr<fact_resolver> const& resolver)
     {
@@ -46,7 +55,15 @@ namespace facter { namespace facts {
             throw fact_exists_exception("fact " + name + " already exists.");
         }
 
-        LOG_DEBUG("fact %1% has resolved to \"%2%\".", name, value ? value->to_string() : "<null>");
+        if (LOG_IS_DEBUG_ENABLED()) {
+            ostringstream ss;
+            if (value) {
+                ss << *value;
+            } else {
+                ss << "<null>";
+            }
+            LOG_DEBUG("fact %1% has resolved to \"%2%\".", name, ss.str());
+        }
 
         // Remove any mapped resolver for this fact
         _resolver_map.erase(name);
@@ -90,32 +107,38 @@ namespace facter { namespace facts {
         return _facts.empty() && _resolvers.empty();
     }
 
-    void fact_map::each(function<bool(string const&, value const*)> func)
+    bool fact_map::resolved() const
     {
-        load_facts();
-        resolve_facts();
-
-        find_if(begin(_facts), end(_facts), [&func](fact_map_type::value_type const& it) {
-            return func(it.first, it.second.get());
-        });
+        return _resolvers.empty();
     }
 
-    fact_map& fact_map::instance()
+    void fact_map::resolve(set<string> const& facts)
     {
-        return fact_map::_instance;
-    }
+        if (!facts.empty()) {
+            // Resolve the given facts
+            for (auto const& fact : facts) {
+                if (fact.empty()) {
+                    continue;
+                }
+                auto value = get_value(fact, true);
+                if (!value) {
+                    LOG_DEBUG("fact %1% was not resolved.", fact);
+                }
+            }
 
-    void fact_map::load_facts()
-    {
-        if (!empty()) {
+            // Remove facts that resolved but aren't in the filter
+            for (auto it = _facts.begin(); it != _facts.end();) {
+                if (facts.count(it->first)) {
+                    // In the requested set of facts so move next
+                    ++it;
+                    continue;
+                }
+                it = _facts.erase(it);
+            }
             return;
         }
-        populate_common_facts(*this);
-        populate_platform_facts(*this);
-    }
 
-    void fact_map::resolve_facts()
-    {
+        // No filter given, resolve all facts
         for (auto& resolver : _resolvers) {
             resolver->resolve(*this);
         }
@@ -133,10 +156,51 @@ namespace facter { namespace facts {
         _resolver_map.clear();
     }
 
+    void fact_map::each(function<bool(string const&, value const*)> func) const
+    {
+        find_if(begin(_facts), end(_facts), [&func](fact_map_type::value_type const& it) {
+            return func(it.first, it.second.get());
+        });
+    }
+
+    struct stream_adapter
+    {
+        explicit stream_adapter(ostream& stream) : _stream(stream)
+        {
+        }
+
+        void Put(char c)
+        {
+            _stream << c;
+        }
+
+     private:
+         ostream& _stream;
+    };
+
+    void fact_map::write_json(ostream& stream) const
+    {
+        Document document;
+        document.SetObject();
+
+        for (auto const& kvp : _facts) {
+            if (!kvp.second) {
+                continue;
+            }
+
+            Value value;
+            kvp.second->to_json(document.GetAllocator(), value);
+            document.AddMember(kvp.first.c_str(), value, document.GetAllocator());
+        }
+
+        stream_adapter adapter(stream);
+        PrettyWriter<stream_adapter> writer(adapter);
+        writer.SetIndent(' ', 2);
+        document.Accept(writer);
+    }
+
     value const* fact_map::get_value(string const& name, bool resolve)
     {
-        load_facts();
-
         // Lookup the fact
         auto it = _facts.find(name);
         while (it == _facts.end()) {
@@ -171,6 +235,25 @@ namespace facter { namespace facts {
             }
         }
         return nullptr;
+    }
+
+    ostream& operator<<(ostream& os, fact_map const& facts)
+    {
+        // Print all facts in the map
+        bool first = true;
+        for (auto const& kvp : facts._facts) {
+            if (!kvp.second) {
+                continue;
+            }
+
+            if (first) {
+                first = false;
+            } else {
+                os << '\n';
+            }
+            os << kvp.first << " => " << *kvp.second;
+        }
+        return os;
     }
 
 }}  // namespace facter::facts

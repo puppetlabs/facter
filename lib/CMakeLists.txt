@@ -1,5 +1,15 @@
 cmake_minimum_required(VERSION 2.8.12)
 
+set(LIBFACTER_VERSION_MAJOR 0)
+set(LIBFACTER_VERSION_MINOR 1)
+set(LIBFACTER_VERSION_PATCH 0)
+
+# Generate a file containing the above version numbers
+configure_file (
+    "${CMAKE_CURRENT_LIST_DIR}/version.h.in"
+    "${CMAKE_CURRENT_LIST_DIR}/inc/facter/version.h"
+)
+
 # Set compiler-specific flags
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-tautological-constant-out-of-range-compare")
@@ -16,7 +26,10 @@ set(LIBFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact_map.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact_resolver.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/facts/integer_value.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/facts/map_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/string_value.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/facts/value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/file.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/string.cc"
 )
@@ -60,8 +73,8 @@ endif()
 
 # Add the library target without a prefix (name already has the 'lib')
 add_library(libfacter SHARED ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_POSIX_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
-set_target_properties(libfacter PROPERTIES PREFIX "")
-install(TARGETS libfacter DESTINATION .)
+set_target_properties(libfacter PROPERTIES PREFIX "" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}")
+install(TARGETS libfacter DESTINATION lib)
 
 # Set include directories
 include_directories(

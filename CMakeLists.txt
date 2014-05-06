@@ -9,16 +9,6 @@ endif()
 set(VENDOR_DIRECTORY "${PROJECT_SOURCE_DIR}/vendor")
 list(APPEND CMAKE_MODULE_PATH ${VENDOR_DIRECTORY})
 
-set(CFACTER_VERSION_MAJOR 0)
-set(CFACTER_VERSION_MINOR 1)
-set(CFACTER_VERSION_PATCH 0)
-
-# Generate a file containing the above version numbers
-configure_file (
-    "${PROJECT_SOURCE_DIR}/version.h.in"
-    "${PROJECT_SOURCE_DIR}/version.h"
-)
-
 # Find Boost
 find_package(Boost 1.48 COMPONENTS program_options system filesystem REQUIRED)
 if (NOT Boost_FOUND)
@@ -40,20 +30,6 @@ endif()
 # Include vendor libraries
 include(${VENDOR_DIRECTORY}/rapidjson.cmake)
 include(${VENDOR_DIRECTORY}/gmock.cmake)
-
-if(APPLE)
-    # Set the RPATH to OSX magic value @executable_path (where the loading executable is located)
-    set(CMAKE_INSTALL_RPATH "@executable_path/")
-    set(CMAKE_MACOSX_RPATH 1)
-elseif(UNIX)
-    # Set the RPATH to be magic value $ORIGIN (where the loading executable is located)
-    set(CMAKE_INSTALL_RPATH "$ORIGIN")
-endif()
-
-# Set the default install path
-if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set(CMAKE_INSTALL_PREFIX "/opt/cfacter" CACHE PATH "default install path" FORCE)
-endif()
 
 add_subdirectory(exe)
 

@@ -61,15 +61,15 @@ You can install cfacter into your system:
     $ cd release
     $ make && sudo make install
 
-By default, this will install cfacter into `/opt/cfacter`.
+By default, cfacter will install into `/usr/local/bin` and `/usr/local/lib`.
 
 To install to a different location, set the install prefix:
 
     $ cd release
-    $ cmake -DCMAKE_INSTALL_PREFIX=~/cfacter ..
+    $ cmake -DCMAKE_INSTALL_PREFIX=~ ..
     $ make clean install
 
-This would install cfacter into `~/cfacter`.
+This would install cfacter into `~/bin` and `~/lib`.
 
 Uninstall
 ---------

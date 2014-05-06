@@ -6,12 +6,20 @@ using namespace facter::facts;
 TEST(facter_facts_integer_value, to_string) {
     // small integer
     integer_value foo(42);
-    ASSERT_EQ("42", foo.to_string());
+    ASSERT_EQ(42, foo.value());
+
+    // small integer string
+    integer_value foo2("42");
+    ASSERT_EQ(42, foo2.value());
 
     // very large integer but in range
     int64_t large_int = 1LL << 62;
-    integer_value large_int_value(large_int);
-    ASSERT_EQ("4611686018427387904", large_int_value.to_string());
+    integer_value foo3(large_int);
+    ASSERT_EQ(4611686018427387904LL, foo3.value());
+
+    // very large integer string
+    integer_value foo4("4611686018427387904");
+    ASSERT_EQ(4611686018427387904LL, foo4.value());
 }
 
 TEST(facter_facts_integer_value, string_constructor) {

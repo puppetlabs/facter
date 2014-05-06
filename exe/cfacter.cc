@@ -1,22 +1,24 @@
-#include "../version.h"
 #include <iostream>
+#include <facter/facterlib.h>
 #include <facter/facts/fact_map.hpp>
 #include <facter/logging/logging.hpp>
-#include <facter/util/file.hpp>
+#include <facter/util/string.hpp>
 #include <log4cxx/logger.h>
 #include <log4cxx/propertyconfigurator.h>
 #include <log4cxx/patternlayout.h>
 #include <log4cxx/consoleappender.h>
 #include <boost/program_options.hpp>
-#include <boost/format.hpp>
 #include <boost/filesystem.hpp>
+#include <iostream>
+#include <set>
+#include <algorithm>
+#include <iterator>
 
 using namespace std;
 using namespace log4cxx;
 using namespace facter::util;
 using namespace facter::facts;
 using namespace boost::filesystem;
-using boost::format;
 namespace po = boost::program_options;
 namespace bs = boost::system;
 
@@ -81,13 +83,22 @@ void log_command_line(int argc, char** argv)
     LOG_INFO("Executed with command line: %1%.", command_line.str());
 }
 
-void log_requested_facts(vector<string> const& facts)
+void log_requested_facts(set<string> const& facts)
 {
     if (!LOG_IS_INFO_ENABLED()) {
         return;
     }
+
+    if (facts.empty()) {
+        LOG_INFO("Resolving all facts.");
+        return;
+    }
+
     ostringstream requested_facts;
     for (auto const& fact : facts) {
+        if (fact.empty()) {
+            continue;
+        }
         if (requested_facts.tellp() != 0) {
             requested_facts << ' ';
         }
@@ -108,6 +119,7 @@ int main(int argc, char **argv)
         visible_options.add_options()
             ("debug,d", "Enable debug output.")
             ("help", "Print this help message.")
+            ("json,j", "Output in JSON format.")
             ("propfile,p", po::value<string>(&properties_file), "Configure logging with a log4cxx properties file.")
             ("verbose", "Enable verbose (info) output.")
             ("version,v", "Print the version and exit.");
@@ -146,7 +158,7 @@ int main(int argc, char **argv)
 
         // Check for printing the version
         if (vm.count("version")) {
-            cout << CFACTER_VERSION << endl;
+            cout << get_facter_version() << endl;
             return EXIT_SUCCESS;
         }
 
@@ -162,30 +174,35 @@ int main(int argc, char **argv)
         configure_logger(log_level, properties_file);
         log_command_line(argc, argv);
 
-        fact_map& facts = fact_map::instance();
+        set<string> requested_facts;
         if (vm.count("fact")) {
-            auto const& requested_facts = vm["fact"].as<vector<string>>();
-            log_requested_facts(requested_facts);
+            auto const& fact_parameters = vm["fact"].as<vector<string>>();
 
-            // Print only the given facts
-            for (auto const& fact : requested_facts) {
-                auto value = facts[fact];
-                if (!value) {
-                    continue;
-                }
-                cout << format("%1% => %2%\n") % fact % value->to_string();
-            }
-        } else {
-            LOG_INFO("Resolving all facts.");
-
-            // Print all facts in the map
-            facts.each([](string const& name, value const* value) {
-                if (value) {
-                    cout << format("%1% => %2%\n") % name % value->to_string();
-                }
-                return false;
-            });
+            // Convert the given strings into a set of unique lowercase fact names
+            transform(
+                fact_parameters.begin(),
+                fact_parameters.end(),
+                inserter(requested_facts, requested_facts.end()),
+                [](string const& s) {
+                    auto s2 = s;
+                    trim(to_lower(s2));
+                    return s2;
+                });
         }
+
+        log_requested_facts(requested_facts);
+
+        // Resolve the facts and output the result
+        fact_map facts;
+        facts.resolve(requested_facts);
+
+        // Output the facts
+        if (vm.count("json")) {
+            facts.write_json(cout);
+        } else {
+            cout << facts;
+        }
+        cout << '\n';
     } catch (exception& ex) {
         LOG_FATAL("Unhandled exception: %1%.", ex.what());
         return EXIT_FAILURE;

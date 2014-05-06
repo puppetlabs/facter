@@ -1,6 +1,7 @@
 #include <facter/facts/linux/block_device_resolver.hpp>
 #include <facter/facts/fact_map.hpp>
 #include <facter/facts/string_value.hpp>
+#include <facter/facts/integer_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/string.hpp>
@@ -62,7 +63,7 @@ namespace facter { namespace facts { namespace linux {
             if (is_regular_file(size_file, ec)) {
                 try {
                     uint64_t size = lexical_cast<uint64_t>(trim(file::read(size_file)));
-                    facts.add(string(fact::block_device) + "_" + device + "_size" , make_value<string_value>(to_string(size * 512)));
+                    facts.add(string(fact::block_device) + "_" + device + "_size" , make_value<integer_value>(static_cast<int64_t>(size * 512)));
                 } catch (bad_lexical_cast& ex) {
                     LOG_DEBUG("size of block device %1% is invalid: fact %2%_%1%_size is unavailable.", device, fact::block_device);
                 }
