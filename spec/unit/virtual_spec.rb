@@ -6,6 +6,7 @@ require 'facter/util/macosx'
 
 describe "Virtual fact" do
   before(:each) do
+    Facter::Util::Virtual.stubs(:docker?).returns(false)
     Facter::Util::Virtual.stubs(:lxc?).returns(false)
     Facter::Util::Virtual.stubs(:zone?).returns(false)
     Facter::Util::Virtual.stubs(:openvz?).returns(false)
@@ -179,6 +180,17 @@ describe "Virtual fact" do
       it 'is "lxc" when Facter::Util::Virtual.lxc? is true' do
         Facter::Util::Virtual.stubs(:lxc?).returns(true)
         Facter.fact(:virtual).value.should == 'lxc'
+      end
+    end
+
+    context "In a Docker Container (docker)" do
+      before :each do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+      end
+
+      it 'is "docker" when Facter::Util::Virtual.docker? is true' do
+        Facter::Util::Virtual.stubs(:docker?).returns(true)
+        Facter.fact(:virtual).value.should == 'docker'
       end
     end
 
@@ -483,6 +495,12 @@ describe "is_virtual fact" do
   it "should be true when running in LXC" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("lxc")
+    Facter.fact(:is_virtual).value.should == "true"
+  end
+
+  it "should be true when running in docker" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("docker")
     Facter.fact(:is_virtual).value.should == "true"
   end
 end
