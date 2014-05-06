@@ -188,7 +188,10 @@ namespace facter { namespace execution {
             if (options[execution_options::redirect_stderr]) {
                 string message = ex.what();
                 message += "\n";
-                write(stdout_write, message.c_str(), message.size());
+                int result = write(stdout_write, message.c_str(), message.size());
+                if (result == -1) {
+                    // We don't really care if writing the error message failed
+                }
             }
             exit(-1);
         }
