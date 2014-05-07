@@ -4,11 +4,9 @@
 #include <facter/facts/fact_map.hpp>
 #include <facter/facts/posix/os.hpp>
 #include <facter/util/string.hpp>
-#include <sys/types.h>
-#include <sys/sysctl.h>
+#include <facter/util/file.hpp>
+#include <boost/filesystem.hpp>
 #include <re2/re2.h>
-#include <fstream>
-#include <string>
 #include <unordered_set>
 
 using namespace std;
@@ -16,6 +14,7 @@ using namespace re2;
 using namespace facter::facts;
 using namespace facter::facts::posix;
 using namespace facter::util;
+using namespace boost::filesystem;
 
 LOG_DECLARE_NAMESPACE("facts.linux.processor");
 
@@ -60,41 +59,67 @@ namespace facter { namespace facts { namespace linux {
 
     void processor_resolver::resolve_processors(fact_map& facts)
     {
-        // For linux, we need to search through the output of /proc/cpuinfo
-        ifstream cpuinfo("/proc/cpuinfo", ifstream::in);
-
         unordered_set<string> cpus;
-        size_t logical_processor_count = 0;
+        size_t logical_count = 0;
+        size_t physical_count = 0;
 
-        // Search through each line of output
-        string line;
+        // To determine physical CPU count, we need to look at sysfs.
+        // The topology information may not be present in /proc/cpuinfo for older kernels
+        directory_iterator end;
+        try {
+            for (auto it = directory_iterator("/sys/devices/system/cpu"); it != end; ++it) {
+                if (!is_directory(it->status()) || !RE2::FullMatch(it->path().filename().string(), "^cpu\\d+$")) {
+                    continue;
+                }
+                ++logical_count;
+                string id = trim(file::read((it->path() / "/topology/physical_package_id").string()));
+                if (id.empty() || cpus.emplace(move(id)).second) {
+                    // Haven't seen this processor before
+                    ++physical_count;
+                }
+            }
+        } catch (filesystem_error&) {
+            // Couldn't determine counts; fall back to cpuinfo
+            logical_count = 0;
+            physical_count = 0;
+            cpus.clear();
+        }
+
+        // To determine model information, parse /proc/cpuinfo
+        bool have_counts = logical_count > 0;
         string id;
-        while (getline(cpuinfo, line)) {
-           auto pos = line.find(":");
-           string key = trim(line.substr(0, pos));
-           string value = trim(line.substr(pos + 1));
+        file::each_line("/proc/cpuinfo", [&](string& line) {
+            // Split the line on colon
+            auto pos = line.find(":");
+            if (pos == string::npos) {
+                return true;
+            }
+            string key = trim(line.substr(0, pos));
+            string value = trim(line.substr(pos + 1));
 
-           // If the key is processor, it's the start of a processor
-           if (key == "processor") {
-               id = move(value);
-               ++logical_processor_count;
-           } else if (key == "model name" && !id.empty()) {
-               // Add the processor description fact
-               facts.add(fact::processor + id, make_value<string_value>(move(value)));
-           } else if (key == "physical id") {
-               // Add the physical id to the set so we only count each one once
-               cpus.emplace(move(value));
-           }
-        }
-
-        // Logical count should be at least the physical count
-        if (logical_processor_count < cpus.size()) {
-            logical_processor_count = cpus.size();
-        }
+            if (key == "processor") {
+                // Start of a logical processor
+                id = move(value);
+                if (!have_counts) {
+                    ++logical_count;
+                }
+            } else if (!id.empty() && key == "model name") {
+                // Add the model name fact for this logical processor
+                facts.add(fact::processor + id, make_value<string_value>(move(value)));
+            } else if (!have_counts && key == "physical id" && cpus.emplace(move(value)).second) {
+                // Couldn't determine physical count from sysfs, but CPU topology is present, so use it
+                ++physical_count;
+            }
+            return true;
+        });
 
         // Add the count facts
-        facts.add(fact::physical_processor_count, make_value<string_value>(to_string(cpus.size())));
-        facts.add(fact::processor_count, make_value<string_value>(to_string(logical_processor_count)));
+        if (logical_count > 0) {
+            facts.add(fact::processor_count, make_value<string_value>(to_string(logical_count)));
+        }
+        if (physical_count > 0) {
+            facts.add(fact::physical_processor_count, make_value<string_value>(to_string(physical_count)));
+        }
     }
 
 }}}  // namespace facter::facts::linux

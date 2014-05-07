@@ -3,8 +3,17 @@
 
 #include <string>
 #include <stdexcept>
+#include <functional>
 
 namespace facter { namespace util { namespace file {
+
+    /**
+     * Reads each line from the given file.
+     * @param path The path to the file to read.
+     * @param callback The callback function that is passed each line in the file.
+     * @return Returns true if the file was opened successfully or false if it was not.
+     */
+    bool each_line(std::string const& path, std::function<bool(std::string&)> callback);
 
     /**
      * Reads the entire contents of the given file into a string.
