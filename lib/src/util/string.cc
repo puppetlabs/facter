@@ -35,9 +35,9 @@ namespace facter { namespace util {
         return str;
     }
 
-    string& ltrim(string&& str, initializer_list<char> const& set)
+    string&& ltrim(string&& str, initializer_list<char> const& set)
     {
-        return ltrim(str, set);
+        return move(ltrim(str, set));
     }
 
     string& rtrim(string& str, initializer_list<char> const& set)
@@ -48,9 +48,9 @@ namespace facter { namespace util {
         return str;
     }
 
-    string& rtrim(string&& str, initializer_list<char> const& set)
+    string&& rtrim(string&& str, initializer_list<char> const& set)
     {
-        return rtrim(str, set);
+        return move(rtrim(str, set));
     }
 
     string& trim(string& str, initializer_list<char> const& set)
@@ -58,9 +58,9 @@ namespace facter { namespace util {
         return ltrim(rtrim(str, set), set);
     }
 
-    string& trim(string&& str, initializer_list<char> const& set)
+    string&& trim(string&& str, initializer_list<char> const& set)
     {
-        return trim(str, set);
+        return move(trim(str, set));
     }
 
     vector<string> tokenize(string const& str)
@@ -106,9 +106,9 @@ namespace facter { namespace util {
         return str;
     }
 
-    string& to_lower(string&& str)
+    string&& to_lower(string&& str)
     {
-        return to_lower(str);
+        return move(to_lower(str));
     }
 
     string& to_upper(string& str)
@@ -117,9 +117,9 @@ namespace facter { namespace util {
         return str;
     }
 
-    string& to_upper(string&& str)
+    string&& to_upper(string&& str)
     {
-        return to_upper(str);
+        return move(to_upper(str));
     }
 
     string to_hex(uint8_t const* bytes, size_t length, bool uppercase)

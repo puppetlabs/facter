@@ -57,7 +57,7 @@ namespace facter { namespace facts { namespace linux {
         }
 
         // The value may be quoted; trim the quotes
-        facts.add(fact::lsb_dist_description, make_value<string_value>(move(trim(value, { '\"' }))));
+        facts.add(fact::lsb_dist_description, make_value<string_value>(trim(move(value), { '\"' })));
     }
 
     void lsb_resolver::resolve_dist_version(fact_map& facts)

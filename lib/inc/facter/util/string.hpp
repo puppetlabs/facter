@@ -41,7 +41,7 @@ namespace facter { namespace util {
      * @param set The set of characters to trim.  Defaults to whitespace characters.
      * @return Returns the given string.
      */
-    std::string& ltrim(std::string&& str, std::initializer_list<char> const& set = default_trim_set);
+    std::string&& ltrim(std::string&& str, std::initializer_list<char> const& set = default_trim_set);
 
     /**
      * In-place trims characters from the end (right side) of a string.
@@ -56,7 +56,7 @@ namespace facter { namespace util {
      * @param set The set of characters to trim.  Defaults to whitespace characters.
      * @return Returns the given string.
      */
-    std::string& rtrim(std::string&& str, std::initializer_list<char> const& set = default_trim_set);
+    std::string&& rtrim(std::string&& str, std::initializer_list<char> const& set = default_trim_set);
 
     /**
      * In-place trims characters from the the start and end (both sides) of a string.
@@ -71,7 +71,7 @@ namespace facter { namespace util {
      * @param set The set of characters to trim.  Defaults to whitespace characters.
      * @return Returns the given string.
      */
-    std::string& trim(std::string&& str, std::initializer_list<char> const& set = default_trim_set);
+    std::string&& trim(std::string&& str, std::initializer_list<char> const& set = default_trim_set);
 
     /**
      * Tokenizes the given string.
@@ -108,7 +108,7 @@ namespace facter { namespace util {
      * @param str The string to convert to lowercase.
      * @return Returns the given string.
      */
-    std::string& to_lower(std::string&& str);
+    std::string&& to_lower(std::string&& str);
 
     /**
      * Converts the given string to uppercase.
@@ -121,7 +121,7 @@ namespace facter { namespace util {
      * @param str The string to convert to uppercase.
      * @return Returns the given string.
      */
-    std::string& to_upper(std::string&& str);
+    std::string&& to_upper(std::string&& str);
 
     /**
      * Converts the given bytes to a hexadecimal string.
