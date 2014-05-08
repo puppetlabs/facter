@@ -28,14 +28,15 @@ module Facter
           if e.message.match /404 Not Found/i
             able_to_connect = false
           else
+            attempts = attempts + 1
             retry if attempts < retry_limit
           end
         rescue Timeout::Error
+          attempts = attempts + 1
           retry if attempts < retry_limit
         rescue *CONNECTION_ERRORS
-          retry if attempts < retry_limit
-        ensure
           attempts = attempts + 1
+          retry if attempts < retry_limit
         end
 
         able_to_connect
