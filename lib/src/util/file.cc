@@ -6,6 +6,22 @@ using namespace std;
 
 namespace facter { namespace util { namespace file {
 
+    bool each_line(string const& path, function<bool(string&)> callback)
+    {
+        ifstream in(path);
+        if (!in) {
+            return false;
+        }
+
+        string line;
+        while (getline(in, line)) {
+            if (!callback(line)) {
+                break;
+            }
+        }
+        return true;
+    }
+
     string read(string const& path)
     {
         string contents;
