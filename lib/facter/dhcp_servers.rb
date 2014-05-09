@@ -17,7 +17,7 @@ require 'facter/util/dhcp_servers'
 
 
 Facter.add(:dhcp_servers) do
-  confine :kernel => :linux
+  confine :operatingsystem => "Fedora", :operatingsystemrelease => "19"
   confine do
     Facter::Core::Execution.which('nmcli')
   end
