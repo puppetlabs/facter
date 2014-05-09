@@ -1,6 +1,6 @@
 # Fedora 17 ships with ruby 1.9, RHEL 7 with ruby 2.0, which use vendorlibdir instead
 # of sitelibdir
-%if 0%{?fedora} >= 17 || 0%{?rhel} >= 7
+%if 0%{?fedora} >= 17 || 0%{?rhel} >= 7 || 0%{?amzn} >= 1
 %global facter_libdir   %(ruby -rrbconfig -e 'puts RbConfig::CONFIG["vendorlibdir"]')
 %else
 %global facter_libdir   %(ruby -rrbconfig -e 'puts RbConfig::CONFIG["sitelibdir"]')
@@ -40,7 +40,7 @@ Requires:       ruby >= 1.8.7
 BuildRequires:  ruby >= 1.8.7
 
 # In Fedora 17+ or RHEL 7+ ruby-rdoc is called rubygem-rdoc
-%if 0%{?fedora} >= 17 || 0%{?rhel} >= 7
+%if 0%{?fedora} >= 17 || 0%{?rhel} >= 7 || 0%{?amzn} >= 1
 BuildRequires:  rubygem-rdoc
 %else
 BuildRequires:  ruby-rdoc
