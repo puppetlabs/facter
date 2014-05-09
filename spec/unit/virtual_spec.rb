@@ -6,6 +6,7 @@ require 'facter/util/macosx'
 
 describe "Virtual fact" do
   before(:each) do
+    Facter::Util::Virtual.stubs(:docker?).returns(false)
     Facter::Util::Virtual.stubs(:lxc?).returns(false)
     Facter::Util::Virtual.stubs(:zone?).returns(false)
     Facter::Util::Virtual.stubs(:openvz?).returns(false)
@@ -193,6 +194,17 @@ describe "Virtual fact" do
       end
     end
 
+    context "In a Docker Container (docker)" do
+      before :each do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+      end
+
+      it 'is "docker" when Facter::Util::Virtual.docker? is true' do
+        Facter::Util::Virtual.stubs(:docker?).returns(true)
+        Facter.fact(:virtual).value.should == 'docker'
+      end
+    end
+
     context "In Google Compute Engine" do
       before :each do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
@@ -289,6 +301,11 @@ describe "Virtual fact" do
     it "should be xenhvm with Xen HVM product name from sysctl" do
       Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("HVM domU")
       Facter.fact(:virtual).value.should == "xenhvm"
+    end
+
+    it "should be ovirt with oVirt Node product name from sysctl" do
+      Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("oVirt Node")
+      Facter.fact(:virtual).value.should == "ovirt"
     end
   end
 
@@ -489,6 +506,12 @@ describe "is_virtual fact" do
   it "should be true when running in LXC" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("lxc")
+    Facter.fact(:is_virtual).value.should == "true"
+  end
+
+  it "should be true when running in docker" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("docker")
     Facter.fact(:is_virtual).value.should == "true"
   end
 end
