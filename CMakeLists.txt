@@ -6,6 +6,8 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
 
+enable_testing()
+
 set(VENDOR_DIRECTORY "${PROJECT_SOURCE_DIR}/vendor")
 list(APPEND CMAKE_MODULE_PATH ${VENDOR_DIRECTORY})
 
@@ -76,3 +78,6 @@ endif()
 add_custom_target(cppcheck
     COMMAND cppcheck lib exe
 )
+
+# Add test executables for unit testing
+add_test("library\\ tests" "${PROJECT_BINARY_DIR}/lib/tests/libfacter_test" "--gtest_color=yes")

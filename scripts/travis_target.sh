@@ -30,12 +30,8 @@ function travis_make()
 
     # Run library tests if not doing cpplint
     if [ $1 != "cpplint" ]; then
-        lib/tests/libfacter_test
-        local lib_test_status=$?
-
-        # TODO: run executable tests
-
-        if [ $lib_test_status -ne 0 ]; then
+        ctest -V
+        if [ $? -ne 0 ]; then
             echo "tests reported an error."
             exit 1
         fi
