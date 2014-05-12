@@ -71,6 +71,14 @@ namespace facter { namespace facts {
         constexpr static char const* uptime_days = "uptime_days";
         constexpr static char const* uptime_hours = "uptime_hours";
         constexpr static char const* uptime_seconds = "uptime_seconds";
+
+        // selinux facts
+        constexpr static char const* selinux = "selinux";
+        constexpr static char const* selinux_enforced = "selinux_enforced";
+        constexpr static char const* selinux_policyversion = "selinux_policyversion";
+        constexpr static char const* selinux_current_mode = "selinux_current_mode";
+        constexpr static char const* selinux_config_mode = "selinux_config_mode";
+        constexpr static char const* selinux_config_policy = "selinux_config_policy";
     };
 
 }}  // namespace facter::facts

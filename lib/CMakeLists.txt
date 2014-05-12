@@ -68,6 +68,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/uptime_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/platform.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/processor_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/selinux_resolver.cc"
     )
 endif()
 
