@@ -1,6 +1,7 @@
 #! /usr/bin/env ruby
 
 require 'spec_helper'
+require 'facter/util/posix'
 
 describe "Physical processor count facts" do
 
@@ -71,6 +72,14 @@ describe "Physical processor count facts" do
         Facter::Core::Execution.expects(:exec).with("/usr/sbin/psrinfo").returns(psrinfo)
         Facter.fact(:physicalprocessorcount).value.should == "2"
       end
+    end
+  end
+
+  describe "on openbsd" do
+    it "should return 4 physical CPUs" do
+      Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
+      Facter::Util::POSIX.expects(:sysctl).with("hw.ncpufound").returns("4")
+      Facter.fact(:physicalprocessorcount).value.should == "4"
     end
   end
 end

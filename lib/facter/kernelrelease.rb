@@ -10,6 +10,7 @@
 #
 # Caveats:
 #
+require 'facter/util/posix'
 
 Facter.add(:kernelrelease) do
   setcode 'uname -r'
@@ -18,6 +19,13 @@ end
 Facter.add(:kernelrelease) do
   confine :kernel => "aix"
   setcode 'oslevel -s'
+end
+
+Facter.add("kernelrelease") do
+  confine :kernel => :openbsd
+  setcode do
+    Facter::Util::POSIX.sysctl("kern.version").split(' ')[1]
+  end
 end
 
 Facter.add(:kernelrelease) do

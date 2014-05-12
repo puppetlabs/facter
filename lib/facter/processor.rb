@@ -21,6 +21,7 @@
 
 require 'thread'
 require 'facter/util/processor'
+require 'facter/util/posix'
 
 # We have to enumerate these outside a Facter.add block to get the processorN
 # descriptions iteratively (but we need them inside the Facter.add block above
@@ -95,7 +96,9 @@ end
 
 Facter.add("ProcessorCount") do
   confine :kernel => :Darwin
-  setcode "sysctl -n hw.ncpu"
+  setcode do
+    Facter::Util::POSIX.sysctl("hw.ncpu")
+  end
 end
 
 if Facter.value(:kernel) == "windows"
@@ -138,12 +141,16 @@ end
 
 Facter.add("Processor") do
   confine :kernel => [:dragonfly,:freebsd]
-  setcode "sysctl -n hw.model"
+  setcode do
+    Facter::Util::POSIX.sysctl("hw.model")
+  end
 end
 
 Facter.add("ProcessorCount") do
   confine :kernel => [:dragonfly,:freebsd,:openbsd]
-  setcode "sysctl -n hw.ncpu"
+  setcode do
+    Facter::Util::POSIX.sysctl("hw.ncpu")
+  end
 end
 
 Facter.add("ProcessorCount") do
