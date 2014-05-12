@@ -1,3 +1,4 @@
+require 'facter/util/posix'
 require 'facter/util/file_read'
 require 'pathname'
 
@@ -93,7 +94,7 @@ module Facter::Util::Virtual
      txt = if FileTest.exists?("/proc/cpuinfo")
        File.read("/proc/cpuinfo")
      elsif ["FreeBSD", "OpenBSD"].include? Facter.value(:kernel)
-       Facter::Core::Execution.exec("/sbin/sysctl -n hw.model")
+       Facter::Util::POSIX.sysctl("hw.model")
      end
      (txt =~ /QEMU Virtual CPU/) ? true : false
   end

@@ -57,12 +57,12 @@ describe "Kernel release fact" do
     end
 
     it 'parses 5.3-current sysctl output' do
-      Facter::Util::Resolution.expects(:exec).with("/sbin/sysctl -n kern.version").returns(my_fixture_read('openbsd-5.3-current'))
+      Facter::Util::POSIX.stubs(:sysctl).with("kern.version").returns(my_fixture_read('openbsd-5.3-current'))
       Facter.value(:kernelrelease).should == '5.3-current'
     end
 
     it 'parses 5.3 sysctl output' do
-      Facter::Util::Resolution.expects(:exec).with("/sbin/sysctl -n kern.version").returns(my_fixture_read('openbsd-5.3'))
+      Facter::Util::POSIX.stubs(:sysctl).with("kern.version").returns(my_fixture_read('openbsd-5.3'))
       Facter.value(:kernelrelease).should == '5.3'
     end
   end

@@ -48,9 +48,9 @@ describe "Memory facts" do
     before(:each) do
       Facter.clear
       Facter.fact(:kernel).stubs(:value).returns("Darwin")
-      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.memsize').returns('8589934592')
+      Facter::Util::POSIX.stubs(:sysctl).with('hw.memsize').returns('8589934592')
       Facter::Core::Execution.stubs(:exec).with('vm_stat').returns(my_fixture_read('darwin-vm_stat'))
-      Facter::Core::Execution.stubs(:exec).with('sysctl vm.swapusage').returns("vm.swapusage: total = 64.00M  used = 1.00M  free = 63.00M  (encrypted)")
+      Facter::Util::POSIX.stubs(:sysctl).with('vm.swapusage').returns("vm.swapusage: total = 64.00M  used = 1.00M  free = 63.00M  (encrypted)")
 
       Facter.collection.internal_loader.load(:memory)
     end
@@ -183,8 +183,8 @@ describe "Memory facts" do
 
       Facter::Core::Execution.stubs(:exec).with('vmstat').returns(my_fixture_read('openbsd-vmstat'))
 
-      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.physmem').returns('267321344')
-      Facter::Core::Execution.stubs(:exec).with('sysctl -n vm.swapencrypt.enable').returns('1')
+      Facter::Util::POSIX.stubs(:sysctl).with('hw.physmem').returns('267321344')
+      Facter::Util::POSIX.stubs(:sysctl).with('vm.swapencrypt.enable').returns('1')
 
       Facter.collection.internal_loader.load(:memory)
     end
@@ -305,14 +305,14 @@ describe "Memory facts" do
         Facter.fact(:kernel).stubs(:value).returns("dragonfly")
 
         swapusage = "total: 148342k bytes allocated = 0k used, 148342k available"
-        Facter::Core::Execution.stubs(:exec).with('/sbin/sysctl -n hw.pagesize').returns("4096")
-        Facter::Core::Execution.stubs(:exec).with('/sbin/sysctl -n vm.swap_size').returns("128461")
-        Facter::Core::Execution.stubs(:exec).with('/sbin/sysctl -n vm.swap_anon_use').returns("2635")
-        Facter::Core::Execution.stubs(:exec).with('/sbin/sysctl -n vm.swap_cache_use').returns("0")
+        Facter::Util::POSIX.stubs(:sysctl).with('hw.pagesize').returns("4096")
+        Facter::Util::POSIX.stubs(:sysctl).with('vm.swap_size').returns("128461")
+        Facter::Util::POSIX.stubs(:sysctl).with('vm.swap_anon_use').returns("2635")
+        Facter::Util::POSIX.stubs(:sysctl).with('vm.swap_cache_use').returns("0")
 
         Facter::Core::Execution.stubs(:exec).with('vmstat').returns my_fixture_read('dragonfly-vmstat')
 
-        Facter::Core::Execution.stubs(:exec).with("sysctl -n hw.physmem").returns('248512512')
+        Facter::Util::POSIX.stubs(:sysctl).with("hw.physmem").returns('248512512')
 
         Facter.collection.internal_loader.load(:memory)
       end
@@ -344,7 +344,7 @@ describe "Memory facts" do
         Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
 
         Facter::Core::Execution.stubs(:exec).with('vmstat -H').returns my_fixture_read('freebsd-vmstat')
-        Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.physmem').returns '1056276480'
+        Facter::Util::POSIX.stubs(:sysctl).with('hw.physmem').returns '1056276480'
       end
 
       after(:each) do

@@ -98,7 +98,7 @@ Facter.add("virtual") do
   confine :kernel => 'OpenBSD'
   has_weight 10
   setcode do
-    output = Facter::Core::Execution.exec('sysctl -n hw.product 2>/dev/null')
+    output = Facter::Util::POSIX.sysctl("hw.product")
     if output
       lines = output.split("\n")
       next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
