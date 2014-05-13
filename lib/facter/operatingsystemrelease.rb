@@ -17,6 +17,7 @@
 # Caveats:
 #
 
+require 'facter/util/operatingsystem'
 require 'facter/util/file_read'
 
 Facter.add(:operatingsystemrelease) do
@@ -74,11 +75,7 @@ end
 Facter.add(:operatingsystemrelease) do
 confine :operatingsystem => 'CumulusLinux'
   setcode do
-    if release = Facter::Util::FileRead.read('/etc/os-release')
-      if match = release.match(/VERSION_ID=["']?(.+?)["']?$/)
-        match[1]
-      end
-    end
+    Facter::Util::Operatingsystem.os_release['VERSION_ID']
   end
 end
 
