@@ -225,4 +225,11 @@ describe "Operating System Release fact" do
       Facter.fact(:operatingsystemrelease).value.should == "10.04"
     end
   end
+
+  it "uses '/etc/os-release for Cumulus Linux" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:operatingsystem).stubs(:value).returns("CumulusLinux")
+    Facter::Util::Operatingsystem.expects(:os_release).returns({'VERSION_ID' => '1.5.0'})
+    Facter.fact(:operatingsystemrelease).value.should == "1.5.0"
+  end
 end

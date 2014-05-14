@@ -137,5 +137,16 @@ describe "Operating System fact" do
       File.expects(:read).with("/etc/redhat-release").returns("Scientific Linux CERN SLC 5.7 (Boron)")
       Facter.fact(:operatingsystem).value.should == "SLC"
     end
+
+    it "should identify Cumulus Linux" do
+      Facter::Util::Operatingsystem.expects(:os_release).returns({'NAME' => 'Cumulus Linux'})
+      Facter.fact(:operatingsystem).value.should == "CumulusLinux"
+    end
+
+    it "should not use '/etc/os-release' on platforms other than Cumulus Linux" do
+      Facter::Util::Operatingsystem.expects(:os_release).returns({'NAME' => 'Debian GNU/Linux'})
+      FileTest.expects(:exists?).with('/etc/debian_version').returns true
+      Facter.fact(:operatingsystem).value.should == "Debian"
+    end
   end
 end

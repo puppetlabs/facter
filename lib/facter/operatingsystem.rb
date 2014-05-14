@@ -11,6 +11,8 @@
 # Caveats:
 #
 
+require 'facter/util/operatingsystem'
+
 Facter.add(:operatingsystem) do
   confine :kernel => :sunos
   setcode do
@@ -27,6 +29,20 @@ Facter.add(:operatingsystem) do
       "Nexenta"
     else
       "Solaris"
+    end
+  end
+end
+
+Facter.add(:operatingsystem) do
+  # Cumulus Linux is a variant of Debian so this resolution needs to come
+  # before the Debian resolution.
+  has_weight(10)
+  confine :kernel => :linux
+
+  setcode do
+    release_info = Facter::Util::Operatingsystem.os_release
+    if release_info['NAME'] == "Cumulus Linux"
+      'CumulusLinux'
     end
   end
 end
