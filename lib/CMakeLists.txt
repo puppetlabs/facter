@@ -14,7 +14,7 @@ configure_file (
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-tautological-constant-out-of-range-compare")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-local-typedefs")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
@@ -42,6 +42,7 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/operating_system_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/processor_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/ssh_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/uptime_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/logging/posix/logging.cc"
     )
@@ -84,6 +85,7 @@ include_directories(
     ${RAPIDJSON_INCLUDE_DIRS}
     ${LOG4CXX_INCLUDE_DIRS}
     ${BOOST_INCLUDE_DIRS}
+    ${OPENSSL_INCLUDE_DIRS}
 )
 
 # Link in additional libraries
@@ -91,6 +93,8 @@ target_link_libraries(libfacter
     pthread
     ${RE2_LIBRARIES}
     ${LOG4CXX_LIBRARIES}
+    ${Boost_LIBRARIES}
+    ${OPENSSL_LIBRARIES}
 )
 
 # Add a dependency on rapidjson

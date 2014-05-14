@@ -9,6 +9,7 @@ Build Requirements
 * CMake >= 2.8.12
 * Boost C++ Libraries >= 1.48
 * Apache log4cxx >= 10.0
+* OpenSSL >= 1.0.1.g
 * Google's RE2 library
 
 Generating Build Files

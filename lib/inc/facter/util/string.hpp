@@ -6,6 +6,7 @@
 #include <functional>
 #include <initializer_list>
 #include <cctype>
+#include <cstdint>
 
 namespace facter { namespace util {
 
@@ -121,6 +122,15 @@ namespace facter { namespace util {
      * @return Returns the given string.
      */
     std::string& to_upper(std::string&& str);
+
+    /**
+     * Converts the given bytes to a hexadecimal string.
+     * @param bytes The pointer to the bytes to convert.
+     * @param length The number of bytes to convert.
+     * @param uppercase True if the hexadecimal string should be uppercase or false if it should be lowercase.
+     * @return Returns the hexadecimal string.
+     */
+    std::string to_hex(uint8_t const* bytes, size_t length, bool uppercase = false);
 
     /**
      * Character trait type for case-insensitive comparisons.

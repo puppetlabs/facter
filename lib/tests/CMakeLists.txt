@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8.12)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-tautological-constant-out-of-range-compare")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-local-typedefs")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
@@ -28,6 +28,7 @@ if (UNIX)
     set(LIBFACTER_TESTS_POSIX_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/execution/posix/execution.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_addrinfo.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_bio.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_descriptor.cc"
         "${CMAKE_CURRENT_LIST_DIR}/logging/posix/logging.cc"
     )
@@ -49,10 +50,11 @@ include_directories(
     ${LOG4CXX_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${GMOCK_INCLUDE_DIRS}
+    ${OPENSSL_INCLUDE_DIRS}
 )
 
 add_executable(libfacter_test ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_POSIX_SOURCES})
-target_link_libraries(libfacter_test libfacter ${LOG4CXX_LIBRARIES} ${Boost_LIBRARIES} ${GMOCK_LIBRARIES})
+target_link_libraries(libfacter_test libfacter ${LOG4CXX_LIBRARIES} ${Boost_LIBRARIES} ${GMOCK_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 # Generate a file containing the above version numbers
 configure_file (
