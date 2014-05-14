@@ -52,6 +52,7 @@ namespace facter { namespace facts { namespace posix {
                 { string(os::linux_mint),               string(os_family::debian) },
                 { string(os::ubuntu),                   string(os_family::debian) },
                 { string(os::debian),                   string(os_family::debian) },
+                { string(os::cumulus),                  string(os_family::debian) },
                 { string(os::suse_enterprise_server),   string(os_family::suse) },
                 { string(os::suse_enterprise_desktop),  string(os_family::suse) },
                 { string(os::open_suse),                string(os_family::suse) },

@@ -229,9 +229,8 @@ namespace facter { namespace facts { namespace linux {
             string contents = trim(file::read(release_file::os));
             string release;
             if (RE2::PartialMatch(contents, "(?m)^NAME=[\"']?(.+?)[\"']?$", &release)) {
-                RE2::GlobalReplace(&release, "[^a-zA-Z]", "");
-                if (release == os::cumulus) {
-                    return release;
+                if (release == "Cumulus Linux") {
+                    return os::cumulus;
                 }
             }
         }
