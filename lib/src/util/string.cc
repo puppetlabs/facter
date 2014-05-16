@@ -1,5 +1,6 @@
 #include <facter/util/string.hpp>
 #include <sstream>
+#include <iomanip>
 #include <algorithm>
 #include <iterator>
 #include <cstring>
@@ -119,6 +120,18 @@ namespace facter { namespace util {
     string& to_upper(string&& str)
     {
         return to_upper(str);
+    }
+
+    string to_hex(uint8_t const* bytes, size_t length, bool uppercase)
+    {
+        ostringstream ss;
+        if (bytes) {
+            ss << hex << (uppercase ? std::uppercase : std::nouppercase) << setfill('0');
+            for (size_t i = 0; i < length; ++i) {
+                ss << setw(2) << static_cast<int>(bytes[i]);
+            }
+        }
+        return ss.str();
     }
 
     int ci_char_traits::compare(char const* s1, char const* s2, size_t n)

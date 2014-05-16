@@ -88,6 +88,14 @@ TEST(facter_util_string, to_upper) {
     ASSERT_EQ("", to_upper(""));
 }
 
+TEST(facter_util_string, to_hex) {
+    uint8_t buffer[] = { 0xBA, 0xAD, 0xF0, 0x0D };
+    ASSERT_EQ("BAADF00D", to_hex(buffer, sizeof(buffer), true));
+    ASSERT_EQ("baadf00d", to_hex(buffer, sizeof(buffer)));
+    ASSERT_EQ("", to_hex(nullptr, 0));
+    ASSERT_EQ("", to_hex(buffer, 0));
+}
+
 TEST(facter_util_string, ci_string) {
     ASSERT_EQ("hello world!", ci_string("HELLO WORLD!"));
     ASSERT_EQ("HELLO world!", ci_string("hello WORLD!"));

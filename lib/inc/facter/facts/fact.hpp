@@ -79,6 +79,16 @@ namespace facter { namespace facts {
         constexpr static char const* selinux_current_mode = "selinux_current_mode";
         constexpr static char const* selinux_config_mode = "selinux_config_mode";
         constexpr static char const* selinux_config_policy = "selinux_config_policy";
+
+        // ssh facts
+        constexpr static char const* ssh_dsa_key = "sshdsakey";
+        constexpr static char const* ssh_rsa_key = "sshrsakey";
+        constexpr static char const* ssh_ecdsa_key = "sshecdsakey";
+        constexpr static char const* ssh_ed25519_key = "sshed25519key";
+        constexpr static char const* sshfp_dsa = "sshfp_dsa";
+        constexpr static char const* sshfp_rsa = "sshfp_rsa";
+        constexpr static char const* sshfp_ecdsa = "sshfp_ecdsa";
+        constexpr static char const* sshfp_ed25519 = "sshfp_ed25519";
     };
 
 }}  // namespace facter::facts

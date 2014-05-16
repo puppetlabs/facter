@@ -29,6 +29,12 @@ if (NOT RE2_FOUND)
     message(FATAL_ERROR "RE2 is required.  Please install it before building.")
 endif()
 
+# Find openssl
+find_package(OPENSSL)
+if (NOT OPENSSL_FOUND)
+    message(FATAL_ERROR "openssl is required.  Please install it before building.")
+endif()
+
 # Include vendor libraries
 include(${VENDOR_DIRECTORY}/rapidjson.cmake)
 include(${VENDOR_DIRECTORY}/gmock.cmake)
