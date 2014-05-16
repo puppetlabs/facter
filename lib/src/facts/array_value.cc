@@ -12,6 +12,7 @@ namespace facter { namespace facts {
     void array_value::to_json(Allocator& allocator, rapidjson::Value& value) const
     {
         value.SetArray();
+        value.Reserve(_elements.size(), allocator);
 
         for (auto const& element : _elements) {
             if (!element) {

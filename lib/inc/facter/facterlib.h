@@ -53,6 +53,12 @@ extern "C" {
         ///
         void(*boolean)(char const* name, uint8_t value);
         ///
+        /// Called when a double value is enumerated.
+        /// @param name The name of the fact for this value. May be empty if the value is a member of an array.
+        /// @param value The value of the double fact.
+        ///
+        void(*dbl)(char const* name, double value);
+        ///
         /// Called when an array value has started being enumerated.
         /// @param name The name of the fact for this value. May be empty if the value is a member of an array.
         ///

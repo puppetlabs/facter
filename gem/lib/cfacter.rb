@@ -15,6 +15,7 @@ module CFacter
     callback :string_callback,        [:string, :string],   :void
     callback :integer_callback,       [:string, :int64],    :void
     callback :boolean_callback,       [:string, :uint8],    :void
+    callback :double_callback,        [:string, :double],   :void
     callback :array_start_callback,   [:string],            :void
     callback :array_end_callback,     [],                   :void
     callback :map_start_callback,     [:string],            :void
@@ -24,6 +25,7 @@ module CFacter
       layout :string,       :string_callback,
              :integer,      :integer_callback,
              :boolean,      :boolean_callback,
+             :double,       :double_callback,
              :array_start,  :array_start_callback,
              :array_end,    :array_end_callback,
              :map_start,    :map_start_callback,
@@ -81,6 +83,10 @@ module CFacter
 
     callbacks[:boolean] = Proc.new do |name, value|
       add.call name, (value != 0)
+    end
+
+    callbacks[:double] = Proc.new do |name, value|
+      add.call name, value
     end
 
     callbacks[:array_start] = Proc.new do |name|

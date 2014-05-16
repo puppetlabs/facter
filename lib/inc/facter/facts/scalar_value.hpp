@@ -95,6 +95,8 @@ namespace facter { namespace facts {
     void scalar_value<int64_t>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
     template <>
     void scalar_value<bool>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
+    template <>
+    void scalar_value<double>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
 
     // Declare the specializations for notification
     template <>
@@ -103,6 +105,8 @@ namespace facter { namespace facts {
     void scalar_value<int64_t>::notify(std::string const& name, enumeration_callbacks const* callbacks) const;
     template <>
     void scalar_value<bool>::notify(std::string const& name, enumeration_callbacks const* callbacks) const;
+    template <>
+    void scalar_value<double>::notify(std::string const& name, enumeration_callbacks const* callbacks) const;
 
     // Declare the specializations for YAML output
     template <>
@@ -112,13 +116,14 @@ namespace facter { namespace facts {
     extern template struct scalar_value<std::string>;
     extern template struct scalar_value<int64_t>;
     extern template struct scalar_value<bool>;
+    extern template struct scalar_value<double>;
 
     // Typedef the common instantiation
     typedef scalar_value<std::string> string_value;
     typedef scalar_value<int64_t> integer_value;
     typedef scalar_value<bool> boolean_value;
+    typedef scalar_value<double> double_value;
 
 }}  // namespace facter::facts
 
 #endif  // FACTER_FACTS_SCALAR_VALUE_HPP_
-

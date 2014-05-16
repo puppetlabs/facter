@@ -10,6 +10,8 @@ shared_context "enumeration" do
         callbacks[:integer].call name, value
       elsif value.is_a?(TrueClass) || value.is_a?(FalseClass)
         callbacks[:boolean].call name, (if value then 1 else 0 end)
+      elsif value.is_a? Float
+        callbacks[:double].call name, value
       elsif value.is_a? Array
         callbacks[:array_start].call name
         value.each do |child|
@@ -95,6 +97,15 @@ describe CFacter do
       enumerate({
         'fact1' => true,
         'fact2' => false
+      })
+    end
+
+    it "double facts" do
+      enumerate({
+        'fact1' => 123.456,
+        'fact2' => 654.321,
+        'fact3' => Float::MIN,
+        'fact4' => Float::MAX
       })
     end
 
