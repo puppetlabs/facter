@@ -1,14 +1,15 @@
 #include <gmock/gmock.h>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/array_value.hpp>
-#include <facter/facts/string_value.hpp>
-#include <facter/facts/integer_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <rapidjson/document.h>
+#include <yaml-cpp/yaml.h>
 #include <sstream>
 
 using namespace std;
 using namespace facter::facts;
 using namespace rapidjson;
+using namespace YAML;
 
 TEST(facter_facts_map_value, default_constructor) {
     map_value value;
@@ -72,7 +73,7 @@ TEST(facter_facts_map_value, to_json) {
 
     map_value value(move(elements));
 
-    Value json_value;
+    rapidjson::Value json_value;
     MemoryPoolAllocator<> allocator;
     value.to_json(allocator, json_value);
     ASSERT_TRUE(json_value.IsObject());
@@ -114,4 +115,25 @@ TEST(facter_facts_map_value, insertion_operator) {
     ostringstream stream;
     stream << value;
     ASSERT_EQ("{ array => [ 1, 2 ], integer => 5, map => { foo => bar }, string => hello }", stream.str());
+}
+
+TEST(facter_facts_map_value, yaml_insertion_operator) {
+    map<string, unique_ptr<value>> elements;
+    elements["string"] = make_value<string_value>("hello");
+    elements["integer"] = make_value<integer_value>(5);
+
+    vector<unique_ptr<value>> array_elements;
+    array_elements.emplace_back(make_value<string_value>("1"));
+    array_elements.emplace_back(make_value<integer_value>(2));
+    elements["array"] = make_value<array_value>(move(array_elements));
+
+    map<string, unique_ptr<value>> submap;
+    submap["foo"] = make_value<string_value>("bar");
+    elements["map"] = make_value<map_value>(move(submap));
+
+    map_value value(move(elements));
+
+    Emitter emitter;
+    emitter << value;
+    ASSERT_EQ("array:\n  - \"1\"\n  - 2\ninteger: 5\nmap:\n  foo: \"bar\"\nstring: \"hello\"", string(emitter.c_str()));
 }

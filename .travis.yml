@@ -21,6 +21,8 @@ before_install:
   - sudo apt-get -y install libboost-filesystem1.48-dev libboost-program-options1.48-dev liblog4cxx10-dev
   - wget https://re2.googlecode.com/files/re2-20140304.tgz -O $HOME/re2-20140304.tgz
   - pushd $HOME && tar xzf re2-20140304.tgz && cd $HOME/re2 && make > /dev/null && sudo make install > /dev/null && popd
+  - wget https://yaml-cpp.googlecode.com/files/yaml-cpp-0.5.1.tar.gz -O $HOME/yaml-cpp-0.5.1.tgz
+  - pushd $HOME && tar xzf yaml-cpp-0.5.1.tgz && cd $HOME/yaml-cpp-0.5.1 && cmake -DBUILD_SHARED_LIBS=ON . && make > /dev/null && sudo make install > /dev/null && popd
 
 script: ./scripts/travis_target.sh
 

@@ -26,9 +26,8 @@ set(LIBFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact_map.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact_resolver.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/src/facts/integer_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/map_value.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/src/facts/string_value.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/facts/scalar_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/file.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/string.cc"
@@ -84,8 +83,9 @@ include_directories(
     ${RE2_INCLUDE_DIRS}
     ${RAPIDJSON_INCLUDE_DIRS}
     ${LOG4CXX_INCLUDE_DIRS}
-    ${BOOST_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
+    ${YAMLCPP_INCLUDE_DIRS}
 )
 
 # Link in additional libraries
@@ -95,6 +95,7 @@ target_link_libraries(libfacter
     ${LOG4CXX_LIBRARIES}
     ${Boost_LIBRARIES}
     ${OPENSSL_LIBRARIES}
+    ${YAMLCPP_LIBRARIES}
 )
 
 # Add a dependency on rapidjson

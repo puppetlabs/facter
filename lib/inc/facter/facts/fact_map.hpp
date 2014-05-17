@@ -9,10 +9,12 @@
 #include <functional>
 #include <stdexcept>
 #include <iostream>
-#include "value.hpp"
-#include "fact_resolver.hpp"
 
 namespace facter { namespace facts {
+
+    // Forward declare the value and resolver types
+    struct value;
+    struct fact_resolver;
 
     /**
      * Thrown when a fact already exists in the map.
@@ -47,6 +49,11 @@ namespace facter { namespace facts {
          * Constructs a fact_map.
          */
         fact_map();
+
+        /**
+         * Destructor for fact_map.
+         */
+        ~fact_map();
 
         /**
          * Adds a resolver to the fact map.
@@ -132,6 +139,12 @@ namespace facter { namespace facts {
          * @param stream The stream to write the JSON to.
          */
         void write_json(std::ostream& stream) const;
+
+        /**
+         * Writes the contents of the fact map as YAML to the given stream.
+         * @param stream The stream to write the YAML to.
+         */
+        void write_yaml(std::ostream& stream) const;
 
      private:
         typedef std::map<std::string, std::unique_ptr<value>> fact_map_type;

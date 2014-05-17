@@ -36,7 +36,7 @@ find_library(RE2_LIBRARY NAMES re2 ${RE2_LIBRARY_HINTS})
 find_package_handle_standard_args(RE2 DEFAULT_MSG RE2_LIBRARY RE2_INCLUDE_DIR)
 
 # Output variables
-if(RE2_FOUND)
+if (RE2_FOUND)
   # Include dirs
   set(RE2_INCLUDE_DIRS ${RE2_INCLUDE_DIR})
 

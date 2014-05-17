@@ -1,13 +1,15 @@
 #include <facter/facts/fact_map.hpp>
-#include <facter/facts/array_value.hpp>
-#include <facter/facts/string_value.hpp>
+#include <facter/facts/fact_resolver.hpp>
+#include <facter/facts/value.hpp>
 #include <facter/logging/logging.hpp>
 #include <algorithm>
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
+#include <yaml-cpp/yaml.h>
 
 using namespace std;
 using namespace rapidjson;
+using namespace YAML;
 
 LOG_DECLARE_NAMESPACE("facts.map");
 
@@ -29,6 +31,10 @@ namespace facter { namespace facts {
     {
         populate_common_facts(*this);
         populate_platform_facts(*this);
+    }
+
+    fact_map::~fact_map()
+    {
     }
 
     void fact_map::add(shared_ptr<fact_resolver> const& resolver)
@@ -188,7 +194,7 @@ namespace facter { namespace facts {
                 continue;
             }
 
-            Value value;
+            rapidjson::Value value;
             kvp.second->to_json(document.GetAllocator(), value);
             document.AddMember(kvp.first.c_str(), value, document.GetAllocator());
         }
@@ -197,6 +203,20 @@ namespace facter { namespace facts {
         PrettyWriter<stream_adapter> writer(adapter);
         writer.SetIndent(' ', 2);
         document.Accept(writer);
+    }
+
+    void fact_map::write_yaml(ostream& stream) const
+    {
+        Emitter emitter(stream);
+        emitter << BeginMap;
+        for (auto const& kvp : _facts) {
+            if (!kvp.second) {
+                continue;
+            }
+            emitter << Key << kvp.first;
+            emitter << YAML::Value << *kvp.second;
+        }
+        emitter << EndMap;
     }
 
     value const* fact_map::get_value(string const& name, bool resolve)

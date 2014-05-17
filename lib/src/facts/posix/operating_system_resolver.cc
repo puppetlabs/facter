@@ -1,7 +1,7 @@
 #include <facter/facts/posix/operating_system_resolver.hpp>
 #include <facter/facts/posix/os.hpp>
 #include <facter/facts/posix/os_family.hpp>
-#include <facter/facts/string_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <facter/facts/fact_map.hpp>
 #include <map>
 

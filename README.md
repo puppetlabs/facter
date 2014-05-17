@@ -10,6 +10,7 @@ Build Requirements
 * Boost C++ Libraries >= 1.48
 * Apache log4cxx >= 10.0
 * OpenSSL >= 1.0.1.g
+* yaml-cpp >= 0.5.1
 * Google's RE2 library
 
 Generating Build Files

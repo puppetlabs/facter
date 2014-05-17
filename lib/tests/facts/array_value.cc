@@ -1,13 +1,14 @@
 #include <gmock/gmock.h>
 #include <facter/facts/array_value.hpp>
-#include <facter/facts/string_value.hpp>
-#include <facter/facts/integer_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <rapidjson/document.h>
+#include <yaml-cpp/yaml.h>
 #include <sstream>
 
 using namespace std;
 using namespace facter::facts;
 using namespace rapidjson;
+using namespace YAML;
 
 TEST(facter_facts_array_value, default_constructor) {
     array_value value;
@@ -54,7 +55,7 @@ TEST(facter_facts_array_value, to_json) {
 
     array_value value(move(elements));
 
-    Value json_value;
+    rapidjson::Value json_value;
     MemoryPoolAllocator<> allocator;
     value.to_json(allocator, json_value);
     ASSERT_TRUE(json_value.IsArray());
@@ -86,4 +87,20 @@ TEST(facter_facts_array_value, insertion_operator) {
     ostringstream stream;
     stream << value;
     ASSERT_EQ("[ 1, 2, [ child ] ]", stream.str());
+}
+
+TEST(facter_facts_array_value, yaml_insertion_operator) {
+    vector<unique_ptr<value>> subelements;
+    subelements.emplace_back(make_value<string_value>("child"));
+
+    vector<unique_ptr<value>> elements;
+    elements.emplace_back(make_value<string_value>("1"));
+    elements.emplace_back(make_value<integer_value>(2));
+    elements.emplace_back(make_value<array_value>(move(subelements)));
+
+    array_value value(move(elements));
+
+    Emitter emitter;
+    emitter << value;
+    ASSERT_EQ("- \"1\"\n- 2\n-\n  - \"child\"", string(emitter.c_str()));
 }

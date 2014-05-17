@@ -1,8 +1,7 @@
 #include <boost/format.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/facts/fact_map.hpp>
-#include <facter/facts/integer_value.hpp>
-#include <facter/facts/string_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <facter/facts/posix/uptime_resolver.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/string.hpp>
@@ -32,29 +31,25 @@ namespace facter { namespace facts { namespace posix {
 
     void uptime_resolver::resolve_uptime_hours(fact_map& facts)
     {
-        auto uptime_seconds = facts.get<integer_value>(fact::uptime_seconds);
+        auto uptime_seconds = facts.get<integer_value>(fact::uptime_seconds, false);
         if (!uptime_seconds) {
             return;
         }
-        int uptime_hours = uptime_seconds->value() / (60 * 60);
-        string value = to_string(uptime_hours);
-        facts.add(fact::uptime_hours, make_value<integer_value>(value));
+        facts.add(fact::uptime_hours, make_value<integer_value>(uptime_seconds->value() / (60 * 60)));
     }
 
     void uptime_resolver::resolve_uptime_days(fact_map& facts)
     {
-        auto uptime_seconds = facts.get<integer_value>(fact::uptime_seconds);
+        auto uptime_seconds = facts.get<integer_value>(fact::uptime_seconds, false);
         if (!uptime_seconds) {
             return;
         }
-        int uptime_days = uptime_seconds->value() / (60 * 60 * 24);
-        string value = to_string(uptime_days);
-        facts.add(fact::uptime_days, make_value<integer_value>(value));
+        facts.add(fact::uptime_days, make_value<integer_value>(uptime_seconds->value() / (60 * 60 * 24)));
     }
 
     void uptime_resolver::resolve_uptime(fact_map& facts)
     {
-        auto uptime_seconds = facts.get<integer_value>(fact::uptime_seconds);
+        auto uptime_seconds = facts.get<integer_value>(fact::uptime_seconds, false);
         if (!uptime_seconds) {
             return;
         }

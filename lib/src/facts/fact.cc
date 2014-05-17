@@ -1,6 +1,6 @@
 #include <facter/version.h>
 #include <facter/facts/fact_map.hpp>
-#include <facter/facts/string_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 
 using namespace std;
 

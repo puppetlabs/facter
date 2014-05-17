@@ -2,7 +2,7 @@
 #include <sys/sysctl.h>
 #include <facter/facts/bsd/uptime_resolver.hpp>
 #include <facter/facts/fact_map.hpp>
-#include <facter/facts/integer_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 
 namespace facter { namespace facts { namespace bsd {
 
