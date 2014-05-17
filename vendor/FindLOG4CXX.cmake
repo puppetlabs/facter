@@ -14,19 +14,19 @@
 include(FindPackageHandleStandardArgs)
 
 # See if LOG4CXX_ROOT is not already set in CMake
-IF (NOT LOG4CXX_ROOT)
+if (NOT LOG4CXX_ROOT)
     # See if LOG4CXX_ROOT is set in process environment
-    IF ( NOT $ENV{LOG4CXX_ROOT} STREQUAL "" )
-        SET (LOG4CXX_ROOT "$ENV{LOG4CXX_ROOT}")
-	MESSAGE(STATUS "Detected LOG4CXX_ROOT set to '${LOG4CXX_ROOT}'")
-    ENDIF ()
-ENDIF ()
+    if (NOT $ENV{LOG4CXX_ROOT} STREQUAL "" )
+        set(LOG4CXX_ROOT "$ENV{LOG4CXX_ROOT}")
+        message(STATUS "Detected LOG4CXX_ROOT set to '${LOG4CXX_ROOT}'")
+    endif()
+endif()
 
 # If LOG4CXX_ROOT is available, set up our hints
-IF (LOG4CXX_ROOT)
-    SET (LOG4CXX_INCLUDE_HINTS HINTS "${LOG4CXX_ROOT}/include" "${LOG4CXX_ROOT}")
-    SET (LOG4CXX_LIBRARY_HINTS HINTS "${LOG4CXX_ROOT}/lib")
-ENDIF ()
+if (LOG4CXX_ROOT)
+    set(LOG4CXX_INCLUDE_HINTS HINTS "${LOG4CXX_ROOT}/include" "${LOG4CXX_ROOT}")
+    set(LOG4CXX_LIBRARY_HINTS HINTS "${LOG4CXX_ROOT}/lib")
+endif()
 
 # Find headers and libraries
 find_path(LOG4CXX_INCLUDE_DIR NAMES log4cxx/log4cxx.h ${LOG4CXX_INCLUDE_HINTS})
@@ -37,7 +37,7 @@ find_library(LOG4CXXD_LIBRARY NAMES log4cxx${CMAKE_DEBUG_POSTFIX} ${LOG4CXX_LIBR
 find_package_handle_standard_args(LOG4CXX DEFAULT_MSG LOG4CXX_LIBRARY LOG4CXX_INCLUDE_DIR)
 
 # Output variables
-if(LOG4CXX_FOUND)
+if (LOG4CXX_FOUND)
   # Include dirs
   set(LOG4CXX_INCLUDE_DIRS ${LOG4CXX_INCLUDE_DIR})
 
