@@ -1,4 +1,5 @@
 #include <facter/facts/array_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <facter/facterlib.h>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>
@@ -51,7 +52,7 @@ namespace facter { namespace facts {
     ostream& array_value::write(ostream& os) const
     {
         // Write out the elements in the array
-        os << "[ ";
+        os << "[";
         bool first = true;
         for (auto const& element : _elements) {
             if (!element) {
@@ -62,9 +63,16 @@ namespace facter { namespace facts {
             } else {
                 os << ", ";
             }
+            bool quote = dynamic_cast<string_value const*>(element.get());
+            if (quote) {
+                os << '"';
+            }
             os << *element;
+            if (quote) {
+                os << '"';
+            }
         }
-        os << " ]";
+        os << "]";
         return os;
     }
 

@@ -2,6 +2,7 @@
 #include <facter/facterlib.h>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>
+#include <iomanip>
 
 using namespace std;
 using namespace rapidjson;
@@ -74,6 +75,13 @@ namespace facter { namespace facts {
         // not as a string.
         emitter << DoubleQuoted << _value;
         return emitter;
+    }
+
+    template <>
+    ostream& scalar_value<bool>::write(ostream& os) const
+    {
+        os << boolalpha << _value;
+        return os;
     }
 
     template struct scalar_value<string>;

@@ -86,7 +86,7 @@ TEST(facter_facts_array_value, insertion_operator) {
 
     ostringstream stream;
     stream << value;
-    ASSERT_EQ("[ 1, 2, [ child ] ]", stream.str());
+    ASSERT_EQ("[\"1\", 2, [\"child\"]]", stream.str());
 }
 
 TEST(facter_facts_array_value, yaml_insertion_operator) {

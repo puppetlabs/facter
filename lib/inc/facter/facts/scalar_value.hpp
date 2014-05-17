@@ -88,7 +88,7 @@ namespace facter { namespace facts {
         T _value;
     };
 
-    // Declare the specializations for JSON output
+    // Declare the specializations for JSON outputc
     template <>
     void scalar_value<std::string>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
     template <>
@@ -111,6 +111,10 @@ namespace facter { namespace facts {
     // Declare the specializations for YAML output
     template <>
     YAML::Emitter& scalar_value<std::string>::write(YAML::Emitter& emitter) const;
+
+    // Declare the specializations for string output
+    template <>
+    std::ostream& scalar_value<bool>::write(std::ostream& os) const;
 
     // Declare the common instantiations as external; defined in scalar_value.cc
     extern template struct scalar_value<std::string>;

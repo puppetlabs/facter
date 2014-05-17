@@ -15,6 +15,8 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/facts/array_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/boolean_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/double_value.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/facts/external/yaml_resolver.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/facts/fact_map.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/integer_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/map_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/string_value.cc"

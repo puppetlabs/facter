@@ -114,7 +114,7 @@ TEST(facter_facts_map_value, insertion_operator) {
 
     ostringstream stream;
     stream << value;
-    ASSERT_EQ("{ array => [ 1, 2 ], integer => 5, map => { foo => bar }, string => hello }", stream.str());
+    ASSERT_EQ("{\"array\"=>[\"1\", 2], \"integer\"=>5, \"map\"=>{\"foo\"=>\"bar\"}, \"string\"=>\"hello\"}", stream.str());
 }
 
 TEST(facter_facts_map_value, yaml_insertion_operator) {

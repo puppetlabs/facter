@@ -1,9 +1,7 @@
 #include <facter/facterlib.h>
 #include <facter/version.h>
 #include <facter/facts/fact_map.hpp>
-#include <facter/facts/scalar_value.hpp>
-#include <facter/facts/array_value.hpp>
-#include <facter/facts/map_value.hpp>
+#include <facter/facts/value.hpp>
 #include <facter/util/string.hpp>
 #include <log4cxx/logger.h>
 #include <memory>

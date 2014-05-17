@@ -4,6 +4,7 @@
 #include <list>
 #include <map>
 #include <set>
+#include <vector>
 #include <string>
 #include <memory>
 #include <functional>
@@ -15,18 +16,6 @@ namespace facter { namespace facts {
     // Forward declare the value and resolver types
     struct value;
     struct fact_resolver;
-
-    /**
-     * Thrown when a fact already exists in the map.
-     */
-    struct fact_exists_exception : std::runtime_error
-    {
-        /**
-         * Constructs a fact_exists_exception.
-         * @param message The exception message.
-         */
-        explicit fact_exists_exception(std::string const& message) : std::runtime_error(message) {}
-    };
 
     /**
      * Thrown when a fact already has an associated resolver.
@@ -94,9 +83,15 @@ namespace facter { namespace facts {
 
         /**
          * Checks to see if the fact map has been resolved.
-         * @return Returns true if all fact resolvers have been resolved or false if at least fact resolver remains unresolved.
+         * @return Returns true if all fact resolvers have been resolved or false if at least one fact resolver remains unresolved.
          */
         bool resolved() const;
+
+        /**
+         * Gets the size of the fact map.
+         * @return Returns the number of resolved top-level facts in the fact map.
+         */
+        size_t size() const;
 
         /**
          * Resolves all facts.
@@ -104,6 +99,12 @@ namespace facter { namespace facts {
          * @param facts The set of fact names to filter the resolution to.  If empty, all facts will be resolved.
          */
         void resolve(std::set<std::string> const& facts = std::set<std::string>());
+
+        /**
+        * Resolves all external facts into the  fact map.
+        * @param directories The directories to search for external facts.
+        */
+        void resolve_external(std::vector<std::string> const& directories = {});
 
         /**
          * Gets a fact value by name.

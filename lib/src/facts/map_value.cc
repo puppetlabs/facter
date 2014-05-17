@@ -1,4 +1,5 @@
 #include <facter/facts/map_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <facter/facterlib.h>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>
@@ -26,7 +27,6 @@ namespace facter { namespace facts {
             if (!kvp.second) {
                 continue;
             }
-
             rapidjson::Value child;
             kvp.second->to_json(allocator, child);
             value.AddMember(kvp.first.c_str(), child, allocator);
@@ -59,7 +59,7 @@ namespace facter { namespace facts {
     ostream& map_value::write(ostream& os) const
     {
         // Write out the elements in the map
-        os << "{ ";
+        os << "{";
         bool first = true;
         for (auto const& kvp : _elements) {
             if (!kvp.second) {
@@ -70,9 +70,17 @@ namespace facter { namespace facts {
             } else {
                 os << ", ";
             }
-            os << kvp.first << " => " << *kvp.second;
+            os << '"' << kvp.first << "\"=>";
+            bool quote = dynamic_cast<string_value const*>(kvp.second.get());
+            if (quote) {
+                os << '"';
+            }
+            os << *kvp.second;
+            if (quote) {
+                os << '"';
+            }
         }
-        os << " }";
+        os << "}";
         return os;
     }
 
@@ -81,7 +89,12 @@ namespace facter { namespace facts {
         emitter << BeginMap;
         for (auto const& kvp : _elements) {
             emitter << Key << kvp.first;
-            emitter << YAML::Value << *kvp.second;
+            emitter << YAML::Value;
+            if (!kvp.second) {
+                emitter << Null;
+            } else {
+                emitter << *kvp.second;
+            }
         }
         emitter << EndMap;
         return emitter;

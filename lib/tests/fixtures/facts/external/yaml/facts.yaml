@@ -1,0 +1,11 @@
+yaml_fact1: foo
+yaml_fact2: 5
+yaml_fact3: true
+yaml_fact4: 5.1
+yaml_fact5:
+  - 1
+  - 2
+  - 3
+yaml_fact6:
+  element1: 1
+  element2: 2
