@@ -1,8 +1,7 @@
 #include <gmock/gmock.h>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/array_value.hpp>
-#include <facter/facts/string_value.hpp>
-#include <facter/facts/integer_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <rapidjson/document.h>
 #include <sstream>
 

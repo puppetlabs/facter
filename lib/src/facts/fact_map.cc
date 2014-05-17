@@ -1,6 +1,6 @@
 #include <facter/facts/fact_map.hpp>
-#include <facter/facts/array_value.hpp>
-#include <facter/facts/string_value.hpp>
+#include <facter/facts/fact_resolver.hpp>
+#include <facter/facts/value.hpp>
 #include <facter/logging/logging.hpp>
 #include <algorithm>
 #include <rapidjson/document.h>
@@ -29,6 +29,10 @@ namespace facter { namespace facts {
     {
         populate_common_facts(*this);
         populate_platform_facts(*this);
+    }
+
+    fact_map::~fact_map()
+    {
     }
 
     void fact_map::add(shared_ptr<fact_resolver> const& resolver)

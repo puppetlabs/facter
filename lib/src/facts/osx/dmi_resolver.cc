@@ -1,6 +1,6 @@
 #include <facter/facts/osx/dmi_resolver.hpp>
 #include <facter/facts/fact_map.hpp>
-#include <facter/facts/string_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <vector>
 #include <sys/types.h>

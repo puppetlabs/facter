@@ -2,7 +2,7 @@
 #define FACTER_FACTS_LINUX_OPERATING_SYSTEM_RESOLVER_HPP_
 
 #include "../posix/operating_system_resolver.hpp"
-#include "../string_value.hpp"
+#include "../scalar_value.hpp"
 
 namespace facter { namespace facts { namespace linux {
 

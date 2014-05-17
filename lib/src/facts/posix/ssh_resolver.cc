@@ -1,7 +1,7 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #include <facter/facts/posix/ssh_resolver.hpp>
 #include <facter/facts/fact_map.hpp>
-#include <facter/facts/string_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/string.hpp>
 #include <facter/util/posix/scoped_bio.hpp>

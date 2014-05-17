@@ -1,6 +1,6 @@
 #include <facter/facts/osx/processor_resolver.hpp>
 #include <facter/logging/logging.hpp>
-#include <facter/facts/string_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <facter/facts/fact_map.hpp>
 #include <sys/types.h>
 #include <sys/sysctl.h>

@@ -9,10 +9,12 @@
 #include <functional>
 #include <stdexcept>
 #include <iostream>
-#include "value.hpp"
-#include "fact_resolver.hpp"
 
 namespace facter { namespace facts {
+
+    // Forward declare the value and resolver types
+    struct value;
+    struct fact_resolver;
 
     /**
      * Thrown when a fact already exists in the map.
@@ -47,6 +49,11 @@ namespace facter { namespace facts {
          * Constructs a fact_map.
          */
         fact_map();
+
+        /**
+         * Destructor for fact_map.
+         */
+        ~fact_map();
 
         /**
          * Adds a resolver to the fact map.

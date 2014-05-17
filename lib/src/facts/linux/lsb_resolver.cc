@@ -1,6 +1,6 @@
 #include <facter/facts/fact_map.hpp>
 #include <facter/facts/linux/lsb_resolver.hpp>
-#include <facter/facts/string_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
 #include <re2/re2.h>

@@ -1,6 +1,6 @@
 #include <facter/facts/osx/networking_resolver.hpp>
 #include <facter/facts/fact_map.hpp>
-#include <facter/facts/string_value.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
 #include <net/if_dl.h>
 #include <net/if.h>
