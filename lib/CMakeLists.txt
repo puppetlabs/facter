@@ -83,8 +83,9 @@ include_directories(
     ${RE2_INCLUDE_DIRS}
     ${RAPIDJSON_INCLUDE_DIRS}
     ${LOG4CXX_INCLUDE_DIRS}
-    ${BOOST_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
+    ${YAMLCPP_INCLUDE_DIRS}
 )
 
 # Link in additional libraries
@@ -94,6 +95,7 @@ target_link_libraries(libfacter
     ${LOG4CXX_LIBRARIES}
     ${Boost_LIBRARIES}
     ${OPENSSL_LIBRARIES}
+    ${YAMLCPP_LIBRARIES}
 )
 
 # Add a dependency on rapidjson

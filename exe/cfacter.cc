@@ -1,4 +1,3 @@
-#include <iostream>
 #include <facter/facterlib.h>
 #include <facter/facts/fact_map.hpp>
 #include <facter/logging/logging.hpp>
@@ -122,7 +121,8 @@ int main(int argc, char **argv)
             ("json,j", "Output in JSON format.")
             ("propfile,p", po::value<string>(&properties_file), "Configure logging with a log4cxx properties file.")
             ("verbose", "Enable verbose (info) output.")
-            ("version,v", "Print the version and exit.");
+            ("version,v", "Print the version and exit.")
+            ("yaml,y", "Output in YAML format.");
 
         // Build a list of "hidden" options that are not visible on the command line
         po::options_description hidden_options("");
@@ -149,6 +149,11 @@ int main(int argc, char **argv)
             }
 
             po::notify(vm);
+
+            // Check for conflicting options
+            if (vm.count("json") && vm.count("yaml")) {
+                throw po::error("json and yaml options conflict. please specify one or the other.");
+            }
         }
         catch(po::error& ex) {
             cerr << "error: " << ex.what() << "\n\n";
@@ -199,6 +204,8 @@ int main(int argc, char **argv)
         // Output the facts
         if (vm.count("json")) {
             facts.write_json(cout);
+        } else if (vm.count("yaml")) {
+            facts.write_yaml(cout);
         } else {
             cout << facts;
         }

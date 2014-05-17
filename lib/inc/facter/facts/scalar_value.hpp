@@ -66,6 +66,17 @@ namespace facter { namespace facts {
             return os;
         }
 
+        /**
+          * Writes the value to the given YAML emitter.
+          * @param emitter The YAML emitter to write to.
+          * @returns Returns the given YAML emitter.
+          */
+        virtual YAML::Emitter& write(YAML::Emitter& emitter) const
+        {
+            emitter << _value;
+            return emitter;
+        }
+
      private:
         T _value;
     };
@@ -77,6 +88,10 @@ namespace facter { namespace facts {
     void scalar_value<int64_t>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
     template <>
     void scalar_value<bool>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
+
+    // Declare the specializations for YAML output
+    template <>
+    YAML::Emitter& scalar_value<std::string>::write(YAML::Emitter& emitter) const;
 
     // Declare the common instantiations as external; defined in scalar_value.cc
     extern template struct scalar_value<std::string>;

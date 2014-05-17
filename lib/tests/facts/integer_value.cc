@@ -1,13 +1,15 @@
 #include <gmock/gmock.h>
 #include <facter/facts/scalar_value.hpp>
 #include <rapidjson/document.h>
+#include <yaml-cpp/yaml.h>
 #include <sstream>
 
 using namespace std;
 using namespace facter::facts;
 using namespace rapidjson;
+using namespace YAML;
 
-TEST(facter_facts_integer_value, integer_constructor) {
+TEST(facter_facts_integer_value, constructor) {
     // small integer
     integer_value foo(42);
     ASSERT_EQ(42, foo.value());
@@ -21,7 +23,7 @@ TEST(facter_facts_integer_value, integer_constructor) {
 TEST(facter_facts_integer_value, to_json) {
     integer_value value(1337);
 
-    Value json_value;
+    rapidjson::Value json_value;
     MemoryPoolAllocator<> allocator;
     value.to_json(allocator, json_value);
     ASSERT_TRUE(json_value.IsNumber());
@@ -34,4 +36,12 @@ TEST(facter_facts_integer_value, insertion_operator) {
     ostringstream stream;
     stream << value;
     ASSERT_EQ("5", stream.str());
+}
+
+TEST(facter_facts_integer_value, yaml_insertion_operator) {
+    integer_value value(5);
+
+    Emitter emitter;
+    emitter << value;
+    ASSERT_EQ("5", string(emitter.c_str()));
 }

@@ -6,6 +6,11 @@
 #include <memory>
 #include <iostream>
 
+// Forward declare needed yaml-cpp classes.
+namespace YAML {
+    class Emitter;
+}
+
 // Forward delcare needed rapidjson classes.
 namespace rapidjson {
     class CrtAllocator;
@@ -58,6 +63,14 @@ namespace facter { namespace facts {
           */
         virtual std::ostream& write(std::ostream& os) const = 0;
         friend std::ostream& operator<<(std::ostream& os, value const& val);
+
+        /**
+          * Writes the value to the given YAML emitter.
+          * @param emitter The YAML emitter to write to.
+          * @returns Returns the given YAML emitter.
+          */
+        virtual YAML::Emitter& write(YAML::Emitter& emitter) const = 0;
+        friend YAML::Emitter& operator<<(YAML::Emitter& emitter, value const& val);
     };
 
     /**
@@ -80,6 +93,14 @@ namespace facter { namespace facts {
      * @return Returns the given output stream.
      */
     std::ostream& operator<<(std::ostream& os, value const& val);
+
+    /**
+     * Insertion operator for value.
+     * @param emitter The YAML emitter to write to.
+     * @param val The value to write to the YAML emitter.
+     * @return Returns the given YAML emitter.
+     */
+    YAML::Emitter& operator<<(YAML::Emitter& emitter, value const& val);
 
 }}  // namespace facter::facts
 

@@ -65,6 +65,13 @@ namespace facter { namespace facts {
           */
         virtual std::ostream& write(std::ostream& os) const;
 
+        /**
+          * Writes the value to the given YAML emitter.
+          * @param emitter The YAML emitter to write to.
+          * @returns Returns the given YAML emitter.
+          */
+        virtual YAML::Emitter& write(YAML::Emitter& emitter) const;
+
      private:
         std::map<std::string, std::unique_ptr<value>> _elements;
     };

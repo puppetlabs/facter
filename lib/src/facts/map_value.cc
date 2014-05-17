@@ -1,8 +1,10 @@
 #include <facter/facts/map_value.hpp>
 #include <rapidjson/document.h>
+#include <yaml-cpp/yaml.h>
 
 using namespace std;
 using namespace rapidjson;
+using namespace YAML;
 
 namespace facter { namespace facts {
 
@@ -15,7 +17,7 @@ namespace facter { namespace facts {
         return it->second.get();
     }
 
-    void map_value::to_json(Allocator& allocator, Value& value) const
+    void map_value::to_json(Allocator& allocator, rapidjson::Value& value) const
     {
         value.SetObject();
 
@@ -24,7 +26,7 @@ namespace facter { namespace facts {
                 continue;
             }
 
-            Value child;
+            rapidjson::Value child;
             kvp.second->to_json(allocator, child);
             value.AddMember(kvp.first.c_str(), child, allocator);
         }
@@ -48,6 +50,17 @@ namespace facter { namespace facts {
         }
         os << " }";
         return os;
+    }
+
+    Emitter& map_value::write(Emitter& emitter) const
+    {
+        emitter << BeginMap;
+        for (auto const& kvp : _elements) {
+            emitter << Key << kvp.first;
+            emitter << YAML::Value << *kvp.second;
+        }
+        emitter << EndMap;
+        return emitter;
     }
 
 }}  // namespace facter::facts

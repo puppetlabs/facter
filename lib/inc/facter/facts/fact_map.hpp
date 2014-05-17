@@ -140,6 +140,12 @@ namespace facter { namespace facts {
          */
         void write_json(std::ostream& stream) const;
 
+        /**
+         * Writes the contents of the fact map as YAML to the given stream.
+         * @param stream The stream to write the YAML to.
+         */
+        void write_yaml(std::ostream& stream) const;
+
      private:
         typedef std::map<std::string, std::unique_ptr<value>> fact_map_type;
         typedef std::map<std::string, std::shared_ptr<fact_resolver>> resolver_map_type;
