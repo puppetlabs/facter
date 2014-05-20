@@ -1,4 +1,5 @@
 #include <facter/facts/array_value.hpp>
+#include <facter/facterlib.h>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>
 
@@ -20,6 +21,29 @@ namespace facter { namespace facts {
             rapidjson::Value child;
             element->to_json(allocator, child);
             value.PushBack(child, allocator);
+        }
+    }
+
+    void array_value::notify(string const& name, enumeration_callbacks const* callbacks) const
+    {
+        if (!callbacks) {
+            return;
+        }
+
+        if (callbacks->array_start) {
+            callbacks->array_start(name.c_str());
+        }
+
+        // Call notify on each element in the array
+        for (auto const& element : _elements) {
+            if (!element) {
+                continue;
+            }
+            element->notify({}, callbacks);
+        }
+
+        if (callbacks->array_end) {
+            callbacks->array_end();
         }
     }
 

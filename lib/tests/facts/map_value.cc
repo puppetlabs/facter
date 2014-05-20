@@ -33,26 +33,26 @@ TEST(facter_facts_map_value, map_constructor) {
     map_value value(move(elements));
     ASSERT_EQ(4u, value.elements().size());
 
-    auto str = dynamic_cast<string_value const*>(value["string"]);
+    auto str = value.get<string_value>("string");
     ASSERT_NE(nullptr, str);
     ASSERT_EQ("hello", str->value());
 
-    auto integer = dynamic_cast<integer_value const*>(value["integer"]);
+    auto integer = value.get<integer_value>("integer");
     ASSERT_NE(nullptr, integer);
     ASSERT_EQ(5, integer->value());
 
-    auto array = dynamic_cast<array_value const*>(value["array"]);
+    auto array = value.get<array_value>("array");
     ASSERT_NE(nullptr, array);
     ASSERT_EQ(2u, array->elements().size());
-    str = dynamic_cast<string_value const*>((*array)[0]);
+    str = array->get<string_value>(0);
     ASSERT_EQ("1", str->value());
-    integer = dynamic_cast<integer_value const*>((*array)[1]);
+    integer = array->get<integer_value>(1);
     ASSERT_EQ(2u, integer->value());
 
-    auto mapval = dynamic_cast<map_value const*>(value["map"]);
+    auto mapval = value.get<map_value>("map");
     ASSERT_NE(nullptr, mapval);
     ASSERT_EQ(1u, mapval->elements().size());
-    str = dynamic_cast<string_value const*>((*mapval)["foo"]);
+    str = mapval->get<string_value>("foo");
     ASSERT_NE(nullptr, str);
     ASSERT_EQ("bar", str->value());
 }

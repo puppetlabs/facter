@@ -1,11 +1,19 @@
 #include <facter/facterlib.h>
 #include <facter/version.h>
-
-#include "rapidjson/document.h"
-#include "rapidjson/prettywriter.h"
-#include "rapidjson/stringbuffer.h"
+#include <facter/facts/fact_map.hpp>
+#include <facter/facts/scalar_value.hpp>
+#include <facter/facts/array_value.hpp>
+#include <facter/facts/map_value.hpp>
+#include <facter/util/string.hpp>
+#include <log4cxx/logger.h>
+#include <memory>
 
 using namespace std;
+using namespace facter::util;
+using namespace facter::facts;
+using namespace log4cxx;
+
+static unique_ptr<fact_map> g_facts;
 
 extern "C" {
     char const* get_facter_version()
@@ -13,27 +21,64 @@ extern "C" {
         return LIBFACTER_VERSION;
     }
 
-    void loadfacts()
+    void load_facts(char const* names)
     {
-        // This is a no-op of the fact map
+        // TODO: figure out a callback mechanism for log output
+        // Until then, disable logging when using the C interface
+        if (Logger::getRootLogger()->getAllAppenders().size() == 0) {
+            Logger::getRootLogger()->setLevel(Level::getOff());
+        }
+
+        g_facts.reset(new fact_map());
+
+        set<string> requested_facts;
+        if (names) {
+            for (auto& name : split(names, ',')) {
+                requested_facts.emplace(trim(to_lower(move(name))));
+            }
+        }
+        g_facts->resolve(requested_facts);
     }
 
-    int to_json(char *facts_json, size_t facts_len)
+    void clear_facts()
     {
-        // TODO: re-implement this with support for structured facts
-        strncpy(facts_json, "", facts_len);
-        return 0;
+        if (!g_facts) {
+            return;
+        }
+        g_facts.reset(nullptr);
     }
 
-    int value(const char *fact, char *value, size_t value_len)
+    void enumerate_facts(enumeration_callbacks* callbacks)
     {
-        // TODO: reimplement this with support for structured facts
-        strncpy(value, "", value_len);
-        return 0;
+        if (!g_facts || !callbacks) {
+            return;
+        }
+        g_facts->each([&](string const& name, value const* val) {
+            val->notify(name, callbacks);
+            return true;
+        });
     }
 
-    void search_external(const char *dirs)
+    bool get_fact_value(char const* name, enumeration_callbacks* callbacks)
     {
-        // TODO
+        if (!g_facts || !name || !callbacks) {
+            return false;
+        }
+
+        // Get the fact
+        string fact = trim(to_lower(name));
+        auto val = (*g_facts)[fact];
+        if (!val) {
+            return false;
+        }
+
+        // Notify of the fact value
+        val->notify(fact, callbacks);
+        return true;
+    }
+
+    void search_external(char const* directories)
+    {
+        // TODO: implement
     }
 }

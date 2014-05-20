@@ -44,17 +44,38 @@ namespace facter { namespace facts {
         virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
 
         /**
+         * Notifies the appropriate callback based on the type of the value.
+         * @param name The fact name to pass to the callback.
+         * @param callbacks The callbacks to use to notify.
+         */
+        virtual void notify(std::string const& name, enumeration_callbacks const* callbacks) const;
+
+        /**
          * Gets the vector of elements in the array.
          * @return Returns the vector of elements in the array.
          */
         std::vector<std::unique_ptr<value>> const& elements() const { return _elements; }
 
         /**
+         * Gets the element at the given index.
+         * @tparam T The expected type of the value.
+         * @param i The index in the array to get the element at.
+         * @return Returns the value at the given index or nullptr if the value is not of the expected type.
+         */
+        template <typename T> T const* get(size_t i) const
+        {
+            return dynamic_cast<T const*>(_elements.at(i).get());
+        }
+
+        /**
          * Gets the value at the given index.
          * @param i The index in the array to get the element at.
          * @return Returns the value at the given index.
          */
-        value const* operator[](size_t i) const { return _elements.at(i).get(); }
+        value const* operator[](size_t i) const
+        {
+            return _elements.at(i).get();
+        }
 
      protected:
         /**

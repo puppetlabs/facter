@@ -55,6 +55,11 @@ namespace facter { namespace facts {
 
     void fact_map::add(string&& name, unique_ptr<value>&& value)
     {
+        if (!value) {
+            LOG_DEBUG("fact %1% resolved to null and will be ignored.", name);
+            return;
+        }
+
         // Search for the fact first
         auto const& it = _facts.lower_bound(name);
         if (it != _facts.end() && !(_facts.key_comp()(name, it->first))) {
@@ -63,11 +68,7 @@ namespace facter { namespace facts {
 
         if (LOG_IS_DEBUG_ENABLED()) {
             ostringstream ss;
-            if (value) {
-                ss << *value;
-            } else {
-                ss << "<null>";
-            }
+            ss << *value;
             LOG_DEBUG("fact %1% has resolved to \"%2%\".", name, ss.str());
         }
 
@@ -120,6 +121,9 @@ namespace facter { namespace facts {
 
     void fact_map::resolve(set<string> const& facts)
     {
+        if (resolved()) {
+            return;
+        }
         if (!facts.empty()) {
             // Resolve the given facts
             for (auto const& fact : facts) {
@@ -165,7 +169,7 @@ namespace facter { namespace facts {
     void fact_map::each(function<bool(string const&, value const*)> func) const
     {
         find_if(begin(_facts), end(_facts), [&func](fact_map_type::value_type const& it) {
-            return func(it.first, it.second.get());
+            return !func(it.first, it.second.get());
         });
     }
 
@@ -190,10 +194,6 @@ namespace facter { namespace facts {
         document.SetObject();
 
         for (auto const& kvp : _facts) {
-            if (!kvp.second) {
-                continue;
-            }
-
             rapidjson::Value value;
             kvp.second->to_json(document.GetAllocator(), value);
             document.AddMember(kvp.first.c_str(), value, document.GetAllocator());
@@ -210,9 +210,6 @@ namespace facter { namespace facts {
         Emitter emitter(stream);
         emitter << BeginMap;
         for (auto const& kvp : _facts) {
-            if (!kvp.second) {
-                continue;
-            }
             emitter << Key << kvp.first;
             emitter << YAML::Value << *kvp.second;
         }
@@ -262,10 +259,6 @@ namespace facter { namespace facts {
         // Print all facts in the map
         bool first = true;
         for (auto const& kvp : facts._facts) {
-            if (!kvp.second) {
-                continue;
-            }
-
             if (first) {
                 first = false;
             } else {

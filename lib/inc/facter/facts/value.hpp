@@ -23,6 +23,10 @@ namespace rapidjson {
     typedef GenericDocument<UTF8<char>, MemoryPoolAllocator<CrtAllocator>> Document;
 }
 
+extern "C" {
+    typedef struct _enumeration_callbacks enumeration_callbacks;
+}
+
 namespace facter { namespace facts {
 
     /**
@@ -54,6 +58,13 @@ namespace facter { namespace facts {
          * @param value The returned JSON value.
          */
         virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const = 0;
+
+        /**
+         * Notifies the appropriate callback based on the type of the value.
+         * @param name The fact name to pass to the callback.
+         * @param callbacks The callbacks to use to notify.
+         */
+        virtual void notify(std::string const& name, enumeration_callbacks const* callbacks) const = 0;
 
      protected:
         /**
