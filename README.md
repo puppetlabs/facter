@@ -13,8 +13,8 @@ Build Requirements
 * yaml-cpp >= 0.5.1
 * Google's RE2 library
 
-Generating Build Files
-----------------------
+Pre-Build
+---------
 
 All of the following examples start by assuming the current directory is the root of the repo.
 
@@ -30,6 +30,10 @@ To generate build files with debug information:
     $ cd debug
     $ cmake -DCMAKE_BUILD_TYPE=Debug ..
 
+Before building the gem, install the cfacter bundle:
+
+    $ cd gem
+    $ bundle install
 
 Build
 -----
@@ -43,6 +47,13 @@ To build cfacter with debug information:
 
     $ cd debug
     $ make
+
+To build the cfacter gem:
+
+    $ cd gem
+    $ rake gem
+
+The gem will be created in the `gem/pkg` directory.
 
 Run
 ---
@@ -73,6 +84,11 @@ For verbose test output, run `ctest` instead of using the test target:
     $ cd release
     $ ctest -V
 
+To run gem tests:
+
+    $ cd gem
+    $ rspec
+
 Install
 -------
 
@@ -91,9 +107,18 @@ To install to a different location, set the install prefix:
 
 This would install cfacter into `~/bin` and `~/lib`.
 
+To install the gem (assumes gem is already built):
+
+    $ cd gem
+    $ gem install pkg/*.gem
+
 Uninstall
 ---------
 
 Run the following command to remove files that were previously installed:
 
-`$ sudo xargs rm < release/install_manifest.txt`
+    $ sudo xargs rm < release/install_manifest.txt
+
+To uninstall the gem:
+
+    $ gem uninstall cfacter

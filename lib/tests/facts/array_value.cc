@@ -27,19 +27,19 @@ TEST(facter_facts_array_value, vector_constructor) {
     array_value value(move(elements));
     ASSERT_EQ(3u, value.elements().size());
 
-    auto str = dynamic_cast<string_value const*>(value[0]);
+    auto str = value.get<string_value>(0);
     ASSERT_NE(nullptr, str);
     ASSERT_EQ("1", str->value());
 
-    auto integer = dynamic_cast<integer_value const*>(value[1]);
+    auto integer = value.get<integer_value>(1);
     ASSERT_NE(nullptr, integer);
     ASSERT_EQ(2, integer->value());
 
-    auto array = dynamic_cast<array_value const*>(value[2]);
+    auto array = value.get<array_value>(2);
     ASSERT_NE(nullptr, array);
     ASSERT_EQ(1u, array->elements().size());
 
-    str = dynamic_cast<string_value const*>((*array)[0]);
+    str = array->get<string_value>(0);
     ASSERT_NE(nullptr, str);
     ASSERT_EQ("child", str->value());
 }
