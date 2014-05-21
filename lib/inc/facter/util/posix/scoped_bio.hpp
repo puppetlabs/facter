@@ -16,9 +16,9 @@ namespace facter { namespace util { namespace posix {
          * Constructs a scoped_bio.
          * @param method The BIO_METHOD to use.
          */
-        explicit scoped_bio(BIO_METHOD* method)
+        explicit scoped_bio(BIO_METHOD* method) :
+            scoped_resource(BIO_new(method), free)
         {
-            _resource = BIO_new(method);
         }
 
         /**
