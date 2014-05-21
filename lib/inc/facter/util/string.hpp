@@ -133,6 +133,13 @@ namespace facter { namespace util {
     std::string to_hex(uint8_t const* bytes, size_t length, bool uppercase = false);
 
     /**
+     * Reads each line from the given string.
+     * @param s The string to read.
+     * @param callback The callback function that is passed each line in the string.
+     */
+    void each_line(std::string const& s, std::function<bool(std::string&)> callback);
+
+    /**
      * Character trait type for case-insensitive comparisons.
      * Based on Herb Sutter's post: http://www.gotw.ca/gotw/029.htm
      */

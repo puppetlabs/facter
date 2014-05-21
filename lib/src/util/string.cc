@@ -134,6 +134,17 @@ namespace facter { namespace util {
         return ss.str();
     }
 
+    void each_line(string const& s, function<bool(string&)> callback)
+    {
+        string line;
+        istringstream in(s);
+        while (getline(in, line)) {
+            if (!callback(line)) {
+                break;
+            }
+        }
+    }
+
     int ci_char_traits::compare(char const* s1, char const* s2, size_t n)
     {
         return strncasecmp(s1, s2, n);
