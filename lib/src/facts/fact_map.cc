@@ -209,6 +209,7 @@ namespace facter { namespace facts {
         }
 
         // Go through each search directory
+        vector<string> files;
         for (auto const& directory : search_directories) {
             directory_iterator end;
             directory_iterator it;
@@ -235,25 +236,32 @@ namespace facter { namespace facts {
                     continue;
                 }
 
-                // Search for a resolver that will process the file
-                try
-                {
-                    bool resolved = false;
-                    for (auto const& resolver : resolvers) {
-                        if (resolver->resolve(it->path().string(), *this)) {
-                            resolved = true;
-                            break;
-                        }
-                    }
+                files.push_back(it->path().string());
+            }
+        }
 
-                    if (!resolved) {
-                        LOG_DEBUG("file %1% is not supported for external facts.", it->path());
-                        continue;
+        // Sort the files so there is a deterministic ordering to the external facts
+        sort(files.begin(), files.end());
+
+        // For each file, find a resolver for it
+        for (auto const& file : files) {
+            try
+            {
+                bool resolved = false;
+                for (auto const& resolver : resolvers) {
+                    if (resolver->resolve(file, *this)) {
+                        resolved = true;
+                        break;
                     }
                 }
-                catch (external::external_fact_exception& ex) {
-                    LOG_ERROR("error while processing %1% for external facts: %2%", it->path(), ex.what());
+
+                if (!resolved) {
+                    LOG_DEBUG("file \"%1%\" is not supported for external facts.", file);
+                    continue;
                 }
+            }
+            catch (external::external_fact_exception& ex) {
+                LOG_ERROR("error while processing \"%1%\" for external facts: %2%", file, ex.what());
             }
         }
     }
