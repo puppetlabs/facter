@@ -28,13 +28,45 @@ function travis_make()
         exit 1
     fi
 
-    # Run library tests if not doing cpplint
+    # Run tests if not doing cpplint
     if [ $1 != "cpplint" ]; then
         ctest -V
         if [ $? -ne 0 ]; then
             echo "tests reported an error."
             exit 1
         fi
+
+        # Install into the system for the gem
+        sudo make install
+        if [ $? -ne 0 ]; then
+            echo "install failed."
+            exit 1
+        fi
+        sudo ldconfig
+
+        # Package, install, and test the gem
+        pushd ../gem
+        bundle install
+        if [ $? -ne 0 ]; then
+            echo "bundle install failed."
+            exit 1
+        fi
+        rake gem
+        if [ $? -ne 0 ]; then
+            echo "gem build failed."
+            exit 1
+        fi
+        gem install pkg/*.gem
+        if [ $? -ne 0 ]; then
+            echo "gem install failed."
+            exit 1
+        fi
+        rspec
+        if [ $? -ne 0 ]; then
+            echo "gem specs failed."
+            exit 1
+        fi
+        popd
     fi
 }
 
