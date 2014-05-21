@@ -89,16 +89,25 @@ TEST(facter_facts_fact_map, resolve_external) {
     facts.clear();
     ASSERT_TRUE(facts.empty());
     ASSERT_TRUE(facts.resolved());
-    facts.resolve_external({LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/yaml"});
+    facts.resolve_external({
+        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/yaml",
+        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json"
+    });
     ASSERT_FALSE(facts.empty());
     ASSERT_TRUE(facts.resolved());
-    ASSERT_EQ(6u, facts.size());
+    ASSERT_EQ(12u, facts.size());
     ASSERT_NE(nullptr, facts.get<string_value>("yaml_fact1"));
     ASSERT_NE(nullptr, facts.get<integer_value>("yaml_fact2"));
     ASSERT_NE(nullptr, facts.get<boolean_value>("yaml_fact3"));
     ASSERT_NE(nullptr, facts.get<double_value>("yaml_fact4"));
     ASSERT_NE(nullptr, facts.get<array_value>("yaml_fact5"));
     ASSERT_NE(nullptr, facts.get<map_value>("yaml_fact6"));
+    ASSERT_NE(nullptr, facts.get<string_value>("json_fact1"));
+    ASSERT_NE(nullptr, facts.get<integer_value>("json_fact2"));
+    ASSERT_NE(nullptr, facts.get<boolean_value>("json_fact3"));
+    ASSERT_NE(nullptr, facts.get<double_value>("json_fact4"));
+    ASSERT_NE(nullptr, facts.get<array_value>("json_fact5"));
+    ASSERT_NE(nullptr, facts.get<map_value>("json_fact6"));
 }
 
 TEST(facter_facts_fact_map, each) {

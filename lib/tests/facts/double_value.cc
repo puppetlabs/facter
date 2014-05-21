@@ -11,7 +11,7 @@ using namespace YAML;
 
 TEST(facter_facts_double_value, constructor) {
     double_value foo(42.0);
-    ASSERT_EQ(42.0, foo.value());
+    ASSERT_DOUBLE_EQ(42.0, foo.value());
 }
 
 TEST(facter_facts_double_value, to_json) {
@@ -21,7 +21,7 @@ TEST(facter_facts_double_value, to_json) {
     MemoryPoolAllocator<> allocator;
     value.to_json(allocator, json_value);
     ASSERT_TRUE(json_value.IsNumber());
-    ASSERT_EQ(1337.1337, json_value.GetDouble());
+    ASSERT_DOUBLE_EQ(1337.1337, json_value.GetDouble());
 }
 
 TEST(facter_facts_double_value, insertion_operator) {

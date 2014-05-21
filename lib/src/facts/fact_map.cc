@@ -2,6 +2,7 @@
 #include <facter/facts/fact_resolver.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <facter/facts/external/json_resolver.hpp>
 #include <facter/facts/external/yaml_resolver.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/filesystem.hpp>
@@ -198,7 +199,8 @@ namespace facter { namespace facts {
     void fact_map::resolve_external(vector<string> const& directories)
     {
         static unique_ptr<external::resolver> const resolvers[] = {
-            unique_ptr<external::resolver>(new external::yaml_resolver())
+            unique_ptr<external::resolver>(new external::json_resolver()),
+            unique_ptr<external::resolver>(new external::yaml_resolver()),
         };
 
         auto search_directories = directories;
