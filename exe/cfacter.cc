@@ -202,18 +202,18 @@ int main(int argc, char **argv)
 
         log_requested_facts(requested_facts);
 
-        // Resolve the facts and output the result
+        // Resolve the facts
         fact_map facts;
+        facts.resolve(requested_facts);
 
+        // Resolve external facts next; this allows external facts to take precedence over built-in facts
         if (!vm.count("no-external-dir")) {
             if (vm["external-dir"].empty()) {
-                facts.resolve_external();
+                facts.resolve_external({}, requested_facts);
             } else {
-                facts.resolve_external(vm["external-dir"].as<vector<string>>());
+                facts.resolve_external(vm["external-dir"].as<vector<string>>(), requested_facts);
             }
         }
-
-        facts.resolve(requested_facts);
 
         // Output the facts
         if (vm.count("json")) {

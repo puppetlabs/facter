@@ -2,8 +2,7 @@
 #include <facter/facts/fact_resolver.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/facts/external/json_resolver.hpp>
-#include <facter/facts/external/yaml_resolver.hpp>
+#include <facter/facts/external/resolver.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <algorithm>
@@ -34,10 +33,16 @@ namespace facter { namespace facts {
     extern void populate_platform_facts(fact_map& facts);
 
     /**
-     * Called to populate the external fact directories for the current platform.
-     * @param directories The vector of directories being populated.
+     * Called to get the external fact search directories for the current platform.
+     * @returns Returns the vector of search directories for external facts.
      */
-    extern void populate_external_directories(vector<string>& directories);
+    extern vector<string> get_external_directories();
+
+    /**
+     * Called to get the external fact resolvers for the current platform.
+     * @returns Returns the vector of external fact resolvers.
+     */
+    extern vector<unique_ptr<external::resolver>> get_external_resolvers();
 
     fact_map::fact_map()
     {
@@ -196,16 +201,13 @@ namespace facter { namespace facts {
         _resolver_map.clear();
     }
 
-    void fact_map::resolve_external(vector<string> const& directories)
+    void fact_map::resolve_external(vector<string> const& directories, set<string> const& facts)
     {
-        static unique_ptr<external::resolver> const resolvers[] = {
-            unique_ptr<external::resolver>(new external::json_resolver()),
-            unique_ptr<external::resolver>(new external::yaml_resolver()),
-        };
+        vector<unique_ptr<external::resolver>> resolvers = get_external_resolvers();
 
         auto search_directories = directories;
         if (search_directories.empty()) {
-            populate_external_directories(search_directories);
+            search_directories = get_external_directories();
         }
 
         // Go through each search directory
@@ -262,6 +264,18 @@ namespace facter { namespace facts {
             }
             catch (external::external_fact_exception& ex) {
                 LOG_ERROR("error while processing \"%1%\" for external facts: %2%", file, ex.what());
+            }
+        }
+
+        // Remove facts that resolved but aren't in the filter
+        if (!facts.empty()) {
+            for (auto it = _facts.begin(); it != _facts.end();) {
+                if (facts.count(it->first)) {
+                    // In the requested set of facts so move next
+                    ++it;
+                    continue;
+                }
+                it = _facts.erase(it);
             }
         }
     }

@@ -103,8 +103,9 @@ namespace facter { namespace facts {
         /**
         * Resolves all external facts into the  fact map.
         * @param directories The directories to search for external facts.
+        * @param facts The set of fact names to filter the resolution to.  If empty, all external facts will be resolved.
         */
-        void resolve_external(std::vector<std::string> const& directories = {});
+        void resolve_external(std::vector<std::string> const& directories = {}, std::set<std::string> const& facts = std::set<std::string>());
 
         /**
          * Gets a fact value by name.
