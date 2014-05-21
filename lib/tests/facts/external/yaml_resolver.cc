@@ -47,8 +47,8 @@ TEST(facter_facts_external_yaml_resolver, resolve_yaml) {
     ASSERT_EQ(5.1, facts.get<double_value>("yaml_fact4")->value());
     auto array = facts.get<array_value>("yaml_fact5");
     ASSERT_NE(nullptr, array);
-    ASSERT_EQ(3u, array->elements().size());
+    ASSERT_EQ(3u, array->size());
     auto map = facts.get<map_value>("yaml_fact6");
     ASSERT_NE(nullptr, map);
-    ASSERT_EQ(2u, map->elements().size());
+    ASSERT_EQ(2u, map->size());
 }

@@ -21,8 +21,8 @@ namespace facter { namespace facts { namespace external {
         string const& name,
         Node const& node,
         fact_map& facts,
-        vector<unique_ptr<value>>* array_parent = nullptr,
-        map<string, unique_ptr<value>>* map_parent = nullptr)
+        array_value* array_parent = nullptr,
+        map_value* map_parent = nullptr)
     {
         unique_ptr<value> val;
         // For scalars, code the value into a specific value type
@@ -40,20 +40,17 @@ namespace facter { namespace facts { namespace external {
                 val = make_value<string_value>(node.as<string>());
             }
         } else if (node.IsSequence()) {
-            // For sequences, convert to an array value
-            vector<unique_ptr<value>> members;
+            // For arrays, convert to a array value
+            val = make_value<array_value>();
             for (auto const& child : node) {
-                add_value({}, child, facts, &members);
+                add_value({}, child, facts, static_cast<array_value*>(val.get()));
             }
-
-            val = make_value<array_value>(move(members));
         } else if (node.IsMap()) {
             // For maps, convert to a map value
-            map<string, unique_ptr<value>> members;
+            val = make_value<map_value>();
             for (auto const& child : node) {
-                add_value(child.first.as<string>(), child.second, facts, nullptr, &members);
+                add_value(child.first.as<string>(), child.second, facts, nullptr, static_cast<map_value*>(val.get()));
             }
-            val = make_value<map_value>(move(members));
         } else if (!node.IsNull()) {
             // Ignore nodes we don't understand
             return;
@@ -61,15 +58,15 @@ namespace facter { namespace facts { namespace external {
 
         // Put the value in the array, map, or directly as a top-level fact
         if (array_parent) {
-            array_parent->emplace_back(move(val));
+            array_parent->add(move(val));
         } else if (map_parent) {
-            map_parent->emplace(name, move(val));
+            map_parent->add(string(name), move(val));
         } else {
             facts.add(string(name), move(val));
         }
     }
 
-    bool yaml_resolver::resolve(std::string const& path, fact_map& facts) const
+    bool yaml_resolver::resolve(string const& path, fact_map& facts) const
     {
         string full_path = path;
         if (!ends_with(to_lower(full_path), ".yaml")) {

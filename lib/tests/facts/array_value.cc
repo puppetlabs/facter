@@ -12,20 +12,24 @@ using namespace YAML;
 
 TEST(facter_facts_array_value, default_constructor) {
     array_value value;
-    ASSERT_EQ(0u, value.elements().size());
+    ASSERT_EQ(0u, value.size());
+}
+
+TEST(facter_facts_array_value, null_add) {
+    array_value value;
+    value.add(nullptr);
+    ASSERT_EQ(0u, value.size());
 }
 
 TEST(facter_facts_array_value, vector_constructor) {
-    vector<unique_ptr<value>> subelements;
-    subelements.emplace_back(make_value<string_value>("child"));
+    auto subarray = make_value<array_value>();
+    static_cast<array_value*>(subarray.get())->add(make_value<string_value>("child"));
 
-    vector<unique_ptr<value>> elements;
-    elements.emplace_back(make_value<string_value>("1"));
-    elements.emplace_back(make_value<integer_value>(2));
-    elements.emplace_back(make_value<array_value>(move(subelements)));
-
-    array_value value(move(elements));
-    ASSERT_EQ(3u, value.elements().size());
+    array_value value;
+    value.add(make_value<string_value>("1"));
+    value.add(make_value<integer_value>(2));
+    value.add(move(subarray));
+    ASSERT_EQ(3u, value.size());
 
     auto str = value.get<string_value>(0);
     ASSERT_NE(nullptr, str);
@@ -37,23 +41,48 @@ TEST(facter_facts_array_value, vector_constructor) {
 
     auto array = value.get<array_value>(2);
     ASSERT_NE(nullptr, array);
-    ASSERT_EQ(1u, array->elements().size());
+    ASSERT_EQ(1u, array->size());
 
     str = array->get<string_value>(0);
     ASSERT_NE(nullptr, str);
     ASSERT_EQ("child", str->value());
 }
 
+TEST(facter_facts_array_value, each) {
+    array_value value;
+    value.add(make_value<string_value>("1"));
+    value.add(make_value<string_value>("2"));
+    value.add(make_value<string_value>("3"));
+
+    size_t count = 0;
+    bool failed = false;
+    value.each([&](struct value const* val) {
+        auto string_val = dynamic_cast<string_value const*>(val);
+        if (!string_val) {
+            failed = true;
+            return false;
+        }
+        if ((count == 0 && string_val->value() != "1") ||
+            (count == 1 && string_val->value() != "2") ||
+            (count == 2 && string_val->value() != "3")) {
+            failed = true;
+            return false;
+        }
+        ++count;
+        return true;
+    });
+    ASSERT_FALSE(failed);
+    ASSERT_EQ(3u, count);
+}
+
 TEST(facter_facts_array_value, to_json) {
-    vector<unique_ptr<value>> subelements;
-    subelements.emplace_back(make_value<string_value>("child"));
+    auto subarray = make_value<array_value>();
+    static_cast<array_value*>(subarray.get())->add(make_value<string_value>("child"));
 
-    vector<unique_ptr<value>> elements;
-    elements.emplace_back(make_value<string_value>("1"));
-    elements.emplace_back(make_value<integer_value>(2));
-    elements.emplace_back(make_value<array_value>(move(subelements)));
-
-    array_value value(move(elements));
+    array_value value;
+    value.add(make_value<string_value>("1"));
+    value.add(make_value<integer_value>(2));
+    value.add(move(subarray));
 
     rapidjson::Value json_value;
     MemoryPoolAllocator<> allocator;
@@ -74,15 +103,13 @@ TEST(facter_facts_array_value, to_json) {
 }
 
 TEST(facter_facts_array_value, insertion_operator) {
-    vector<unique_ptr<value>> subelements;
-    subelements.emplace_back(make_value<string_value>("child"));
+    auto subarray = make_value<array_value>();
+    static_cast<array_value*>(subarray.get())->add(make_value<string_value>("child"));
 
-    vector<unique_ptr<value>> elements;
-    elements.emplace_back(make_value<string_value>("1"));
-    elements.emplace_back(make_value<integer_value>(2));
-    elements.emplace_back(make_value<array_value>(move(subelements)));
-
-    array_value value(move(elements));
+    array_value value;
+    value.add(make_value<string_value>("1"));
+    value.add(make_value<integer_value>(2));
+    value.add(move(subarray));
 
     ostringstream stream;
     stream << value;
@@ -90,15 +117,13 @@ TEST(facter_facts_array_value, insertion_operator) {
 }
 
 TEST(facter_facts_array_value, yaml_insertion_operator) {
-    vector<unique_ptr<value>> subelements;
-    subelements.emplace_back(make_value<string_value>("child"));
+    auto subarray = make_value<array_value>();
+    static_cast<array_value*>(subarray.get())->add(make_value<string_value>("child"));
 
-    vector<unique_ptr<value>> elements;
-    elements.emplace_back(make_value<string_value>("1"));
-    elements.emplace_back(make_value<integer_value>(2));
-    elements.emplace_back(make_value<array_value>(move(subelements)));
-
-    array_value value(move(elements));
+    array_value value;
+    value.add(make_value<string_value>("1"));
+    value.add(make_value<integer_value>(2));
+    value.add(move(subarray));
 
     Emitter emitter;
     emitter << value;

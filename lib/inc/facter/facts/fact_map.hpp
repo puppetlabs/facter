@@ -77,7 +77,7 @@ namespace facter { namespace facts {
 
         /**
          * Checks to see if the fact map is empty.
-         * @return Returns true if the fact map is entry or false if it is not.
+         * @return Returns true if the fact map is empty or false if it is not.
          */
         bool empty() const;
 
