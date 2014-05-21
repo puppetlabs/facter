@@ -62,7 +62,7 @@ void configure_logger(LevelPtr level, string const& properties_file)
 
     // If no configuration file given, use default settings
     LayoutPtr layout = new PatternLayout("%d %-5p %c - %m%n");
-    AppenderPtr appender = new ConsoleAppender(layout);
+    AppenderPtr appender = new ConsoleAppender(layout, "System.err");
     Logger::getRootLogger()->addAppender(appender);
     Logger::getRootLogger()->setLevel(level);
 }
