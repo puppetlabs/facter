@@ -46,7 +46,7 @@ module Facter::Util::Config
         @external_facts_dirs = [File.join(windows_dir, 'PuppetLabs', 'facter', 'facts.d')]
       end
     else
-      @external_facts_dirs = [File.expand_path(File.join("~", ".facter", "facts.d"))]
+      @external_facts_dirs = [File.expand_path(File.join("#{ENV['HOME']}", ".facter", "facts.d"))]
     end
   end
 
