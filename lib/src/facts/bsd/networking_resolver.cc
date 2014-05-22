@@ -32,9 +32,10 @@ namespace facter { namespace facts { namespace bsd {
         multimap<string, ifaddrs const*> interface_map;
         for (ifaddrs* ptr = addrs; ptr; ptr = ptr->ifa_next) {
             // We only support IPv4, IPv6, and link interfaces
-            if (ptr->ifa_addr->sa_family != AF_INET &&
-                ptr->ifa_addr->sa_family != AF_INET6 &&
-                !is_link_address(ptr->ifa_addr)) {
+            if (!ptr->ifa_addr || !ptr->ifa_name ||
+                (ptr->ifa_addr->sa_family != AF_INET &&
+                 ptr->ifa_addr->sa_family != AF_INET6 &&
+                 !is_link_address(ptr->ifa_addr))) {
                 continue;
             }
 
