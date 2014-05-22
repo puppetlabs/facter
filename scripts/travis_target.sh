@@ -30,8 +30,8 @@ function travis_make()
 
     # Run tests if not doing cpplint
     if [ $1 != "cpplint" ]; then
-        ctest -V
-        if [ $? -ne 0 ]; then
+        LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so ctest -V 2>&1 | c++filt
+        if [ ${PIPESTATUS[0]} -ne 0 ]; then
             echo "tests reported an error."
             exit 1
         fi
@@ -61,8 +61,8 @@ function travis_make()
             echo "gem install failed."
             exit 1
         fi
-        rspec
-        if [ $? -ne 0 ]; then
+        rspec 2>&1 | c++filt
+        if [ ${PIPESTATUS[0]} -ne 0 ]; then
             echo "gem specs failed."
             exit 1
         fi
