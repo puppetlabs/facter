@@ -39,6 +39,7 @@ set(LIBFACTER_COMMON_SOURCES
 if (UNIX)
     set(LIBFACTER_POSIX_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/execution/posix/execution.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/posix/execution_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/kernel_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/operating_system_resolver.cc"

@@ -134,6 +134,7 @@ describe CFacter do
     CFacter.search_external([
       File.expand_path('../../../lib/tests/fixtures/facts/external/yaml', File.dirname(__FILE__)),
       File.expand_path('../../../lib/tests/fixtures/facts/external/json', File.dirname(__FILE__)),
+      File.expand_path('../../../lib/tests/fixtures/facts/external/posix/execution', File.dirname(__FILE__)),
     ])
     CFacter.loadfacts
     facts = CFacter.to_hash
@@ -149,6 +150,9 @@ describe CFacter do
     facts["json_fact4"].should be_a Float
     facts["json_fact5"].should be_a Array
     facts["json_fact6"].should be_a Hash
+    facts["exe_fact1"].should be_a String
+    facts["exe_fact2"].should be_a String
+    facts["exe_fact3"].should be_nil
   end
 
 end
