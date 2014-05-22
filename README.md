@@ -97,7 +97,7 @@ You can install cfacter into your system:
     $ cd release
     $ make && sudo make install
 
-By default, cfacter will install into `/usr/local/bin` and `/usr/local/lib`.
+By default, cfacter will install files into `/usr/local/bin`, `/usr/local/lib`, and `/usr/local/include`.
 
 To install to a different location, set the install prefix:
 
@@ -105,7 +105,7 @@ To install to a different location, set the install prefix:
     $ cmake -DCMAKE_INSTALL_PREFIX=~ ..
     $ make clean install
 
-This would install cfacter into `~/bin` and `~/lib`.
+This would install cfacter into `~/bin`, `~/lib`, and `~/include`.
 
 To install the gem (assumes gem is already built):
 
@@ -122,3 +122,30 @@ Run the following command to remove files that were previously installed:
 To uninstall the gem:
 
     $ gem uninstall cfacter
+
+Using The C++11 API
+-------------------
+
+This section assumes that cfacter has been installed into the system.
+
+Here's a simple example of using the C++11 API to output all facts.
+
+```C++
+#include <facter/facts/fact_map.hpp>
+#include <iostream>
+
+using namespace std;
+using namespace facter::facts;
+
+int main() {
+    fact_map facts;
+    facts.resolve();
+    facts.resolve_external();
+    cout << facts << endl;
+}
+```
+
+To build the above, link with libfacter:
+
+    $ g++ example.cc -o myfacter --std=c++11 -lfacter
+    $ ./myfacter
