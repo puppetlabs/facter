@@ -23,7 +23,9 @@ namespace facter { namespace facts { namespace posix {
                 fact::ipaddress,
                 fact::ipaddress6,
                 fact::netmask,
+                fact::netmask6,
                 fact::network,
+                fact::network6,
                 fact::macaddress,
                 fact::interfaces,
                 fact::domain,
@@ -34,7 +36,9 @@ namespace facter { namespace facts { namespace posix {
                 std::string("^") + fact::ipaddress6 + "_",
                 std::string("^") + fact::mtu + "_",
                 std::string("^") + fact::netmask + "_",
+                std::string("^") + fact::netmask6 + "_",
                 std::string("^") + fact::network + "_",
+                std::string("^") + fact::network6 + "_",
                 std::string("^") + fact::macaddress + "_",
             })
         {
