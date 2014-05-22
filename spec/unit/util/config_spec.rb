@@ -6,7 +6,6 @@ describe Facter::Util::Config do
   include PuppetlabsSpec::Files
 
   it "should not crash when there's no $HOME set on the environment" do
-    # Facter::Util::Root.stubs(:root?).returns(false)
     ENV['HOME'] = nil
     Facter::Util::Config.setup_default_ext_facts_dirs
     Facter::Util::Config.external_facts_dirs.should == [File.expand_path(File.join("#{ENV['HOME']}", ".facter", "facts.d"))]
