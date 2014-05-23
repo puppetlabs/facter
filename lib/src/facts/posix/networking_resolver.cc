@@ -102,7 +102,8 @@ namespace facter { namespace facts { namespace posix {
             return;
         }
 
-        if (!info) {
+        if (!info || hostname->value() == static_cast<addrinfo*>(info)->ai_canonname) {
+            LOG_WARNING("network domain could not be determined: %1% and %2% facts are unavailable.", fact::fqdn, fact::domain);
             return;
         }
 
