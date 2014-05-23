@@ -108,6 +108,10 @@ module Facter::Core::Suitable
   #
   # @api private
   def suitable?
-    @confines.all? { |confine| confine.true? }
+    unless defined? @suitable
+      @suitable = ! @confines.detect { |confine| ! confine.true? }
+    end
+
+    return @suitable
   end
 end
