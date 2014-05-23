@@ -113,9 +113,9 @@ namespace facter { namespace facts {
      * @return Returns a unique pointer to the constructed value.
      */
     template<typename T, typename ...Args>
-    std::unique_ptr<value> make_value(Args&& ...args)
+    std::unique_ptr<T> make_value(Args&& ...args)
     {
-        return std::unique_ptr<value>(new T(std::forward<Args>(args)...));
+        return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
     }
 
     /**

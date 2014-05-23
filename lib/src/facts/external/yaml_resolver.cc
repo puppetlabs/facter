@@ -41,16 +41,18 @@ namespace facter { namespace facts { namespace external {
             }
         } else if (node.IsSequence()) {
             // For arrays, convert to a array value
-            val = make_value<array_value>();
+            auto array = make_value<array_value>();
             for (auto const& child : node) {
-                add_value({}, child, facts, static_cast<array_value*>(val.get()));
+                add_value({}, child, facts, array.get());
             }
+            val = move(array);
         } else if (node.IsMap()) {
             // For maps, convert to a map value
-            val = make_value<map_value>();
+            auto map = make_value<map_value>();
             for (auto const& child : node) {
-                add_value(child.first.as<string>(), child.second, facts, nullptr, static_cast<map_value*>(val.get()));
+                add_value(child.first.as<string>(), child.second, facts, nullptr, map.get());
             }
+            val = move(map);
         } else if (!node.IsNull()) {
             // Ignore nodes we don't understand
             return;
