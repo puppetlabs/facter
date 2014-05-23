@@ -1,44 +1,37 @@
-require 'facter/ec2/rest'
+require 'facter/util/ec2'
+require 'open-uri'
 
-Facter.define_fact(:ec2_metadata) do
-  define_resolution(:rest) do
-    confine do
-      Facter.value(:virtual).match /^xen/
+def metadata(id = "")
+  open("http://169.254.169.254/2008-02-01/meta-data/#{id||=''}").read.
+    split("\n").each do |o|
+    key = "#{id}#{o.gsub(/\=.*$/, '/')}"
+    if key[-1..-1] != '/'
+      value = open("http://169.254.169.254/2008-02-01/meta-data/#{key}").read.
+        split("\n")
+      symbol = "ec2_#{key.gsub(/\-|\//, '_')}".to_sym
+      Facter.add(symbol) { setcode { value.join(',') } }
+    else
+      metadata(key)
     end
+  end
+rescue => details
+  Facter.warn "Could not retrieve ec2 metadata: #{details.message}"
+end
 
-    @querier = Facter::EC2::Metadata.new
-    confine do
-      @querier.reachable?
-    end
-
+def userdata()
+  Facter.add(:ec2_userdata) do
     setcode do
-      @querier.fetch
+      if userdata = Facter::Util::EC2.userdata
+        userdata.split
+      end
     end
   end
 end
 
-Facter.define_fact(:ec2_userdata) do
-  define_resolution(:rest) do
-    confine do
-      Facter.value(:virtual).match /^xen/
-    end
-
-    @querier = Facter::EC2::Userdata.new
-    confine do
-      @querier.reachable?
-    end
-
-    setcode do
-      @querier.fetch
-    end
-  end
-end
-
-# The flattened version of the EC2 facts are deprecated and will be removed in
-# a future release of Facter.
-if (ec2_metadata = Facter.value(:ec2_metadata))
-  ec2_facts = Facter::Util::Values.flatten_structure("ec2", ec2_metadata)
-  ec2_facts.each_pair do |factname, factvalue|
-    Facter.add(factname, :value => factvalue)
-  end
+if (Facter::Util::EC2.has_euca_mac? || Facter::Util::EC2.has_openstack_mac? ||
+    Facter::Util::EC2.has_ec2_arp?) && Facter::Util::EC2.can_connect?
+  metadata
+  userdata
+else
+  Facter.debug "Not an EC2 host"
 end
