@@ -6,11 +6,9 @@ describe "ec2_metadata" do
 
   before do
     Facter::EC2::Metadata.stubs(:new).returns querier
-
+    Facter.collection.internal_loader.load(:ec2)
     # Prevent flattened facts from forcing evaluation of the ec2 metadata fact
     Facter.stubs(:value).with(:ec2_metadata)
-    Facter.collection.internal_loader.load(:ec2)
-    Facter.unstub(:value)
   end
 
   subject { Facter.fact(:ec2_metadata).resolution(:rest) }
@@ -56,11 +54,7 @@ describe "ec2_userdata" do
 
   before do
     Facter::EC2::Userdata.stubs(:new).returns querier
-
-    # Prevent flattened facts from forcing evaluation of the ec2 metadata fact
-    Facter.stubs(:value).with(:ec2_metadata)
     Facter.collection.internal_loader.load(:ec2)
-    Facter.unstub(:value)
   end
 
   subject { Facter.fact(:ec2_userdata).resolution(:rest) }
