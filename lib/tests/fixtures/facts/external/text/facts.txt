@@ -1,0 +1,3 @@
+txt_fact1=value1
+txt_fact2=
+not a fact

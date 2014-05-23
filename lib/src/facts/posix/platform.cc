@@ -1,4 +1,5 @@
 #include <facter/facts/external/json_resolver.hpp>
+#include <facter/facts/external/text_resolver.hpp>
 #include <facter/facts/external/yaml_resolver.hpp>
 #include <facter/facts/external/posix/execution_resolver.hpp>
 #include <vector>
@@ -33,6 +34,7 @@ namespace facter { namespace facts {
     vector<unique_ptr<resolver>> get_external_resolvers()
     {
         vector<unique_ptr<resolver>> resolvers;
+        resolvers.emplace_back(new text_resolver());
         resolvers.emplace_back(new yaml_resolver());
         resolvers.emplace_back(new json_resolver());
 
