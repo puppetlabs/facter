@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <memory>
+#include <functional>
 
 namespace facter { namespace facts {
 
@@ -16,18 +17,7 @@ namespace facter { namespace facts {
         /**
          * Constructs a map value.
          */
-        map_value()
-        {
-        }
-
-        /**
-         * Constructs a map value.
-         * @param elements The elements to store in the map value.
-         */
-        explicit map_value(std::map<std::string, std::unique_ptr<value>>&& elements) :
-            _elements(std::move(elements))
-        {
-        }
+        map_value();
 
         // Force non-copyable
         map_value(map_value const&) = delete;
@@ -36,6 +26,31 @@ namespace facter { namespace facts {
         // Allow movable
         map_value(map_value&&) = default;
         map_value& operator=(map_value&&) = default;
+
+        /**
+         * Adds a value to the map.
+         * @param name The name of map element.
+         * @param value The value of the map element.
+         */
+        void add(std::string&& name, std::unique_ptr<value>&& value);
+
+        /**
+         * Checks to see if the map is empty.
+         * @return Returns true if the map is empty or false if it is not.
+         */
+        bool empty() const;
+
+        /**
+         * Gets the size of the map.
+         * @return Returns the number of elements in the map.
+         */
+        size_t size() const;
+
+        /**
+         * Enumerates all facts in the map.
+         * @param func The callback function called for each element in the map.
+         */
+        void each(std::function<bool(std::string const&, value const*)> func) const;
 
         /**
          * Converts the value to a JSON value.
@@ -50,12 +65,6 @@ namespace facter { namespace facts {
          * @param callbacks The callbacks to use to notify.
          */
         virtual void notify(std::string const& name, enumeration_callbacks const* callbacks) const;
-
-        /**
-         * Gets the map of elements in the value.
-         * @return Returns the vector of elements in the array.
-         */
-        std::map<std::string, std::unique_ptr<value>> const& elements() const { return _elements; }
 
         /**
          * Gets the value in the map of the given name.

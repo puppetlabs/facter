@@ -3,6 +3,8 @@ require 'ffi'
 module CFacter
 
   # This module defines cfacter's C interface in Ruby.
+  #
+  # @api private
   module FacterLib
     extend FFI::Library
 
@@ -15,6 +17,7 @@ module CFacter
     callback :string_callback,        [:string, :string],   :void
     callback :integer_callback,       [:string, :int64],    :void
     callback :boolean_callback,       [:string, :uint8],    :void
+    callback :double_callback,        [:string, :double],   :void
     callback :array_start_callback,   [:string],            :void
     callback :array_end_callback,     [],                   :void
     callback :map_start_callback,     [:string],            :void
@@ -24,6 +27,7 @@ module CFacter
       layout :string,       :string_callback,
              :integer,      :integer_callback,
              :boolean,      :boolean_callback,
+             :double,       :double_callback,
              :array_start,  :array_start_callback,
              :array_end,    :array_end_callback,
              :map_start,    :map_start_callback,
@@ -38,26 +42,52 @@ module CFacter
     attach_function :get_fact_value,        [:string, :pointer],    :bool
   end
 
+  # The facter gem version.
   FACTER_VERSION = '0.1.0'
 
+  # Ensure the facter library that was loaded matches the gem version.
   raise LoadError.new("Expected cfacter #{FACTER_VERSION} but found #{FacterLib.get_facter_version}.") if FacterLib.get_facter_version != FACTER_VERSION
 
+  # Gets the version of the facter library that was loaded.
+  #
+  # @return [String] The facter library version string.
+  # @api public
   def self.version
     FacterLib.get_facter_version
   end
 
+  # Loads all facts.
+  #
+  # @return [void]
+  # @api public
   def self.loadfacts
     FacterLib.load_facts nil
   end
 
+  # Clears all cached values and removes all facts from memory.
+  #
+  # @return [void]
+  # @api public
   def self.clear
     FacterLib.clear_facts
   end
 
-  # This method creates the callbacks used when enumerating facts from cfacter.
+  # Registers directories to be searched for external facts.
+  #
+  # @param dirs [Array<String>] directories to search
+  # @return [void]
+  # @api public
+  def self.search_external(dirs)
+    FacterLib.search_external(dirs.join(':'))
+  end
+
+  # Creates callbacks used when enumerating facts from cfacter.
   # Each callback simply appends the corresponding Ruby type to the hash/array
   # being built up during the enumeration.  This allows us to effectively copy
   # the structure of the facts from cfacter into native Ruby types.
+  # @param initial The initial object to populate with facts.
+  # @return [EnumerationCallbacks] The enumeration callbacks.
+  # @api private
   def self.create_enumeration_callbacks(initial)
     callbacks = FacterLib::EnumerationCallbacks.new
     current = initial
@@ -83,6 +113,10 @@ module CFacter
       add.call name, (value != 0)
     end
 
+    callbacks[:double] = Proc.new do |name, value|
+      add.call name, value
+    end
+
     callbacks[:array_start] = Proc.new do |name|
       value = []
       add.call name, value
@@ -106,12 +140,21 @@ module CFacter
     callbacks
   end
 
+  # Gets a hash mapping fact names to their values
+  #
+  # @return [Hash{String => Object}] the hash of fact names and values
+  # @api public
   def self.to_hash
     result = {}
     FacterLib.enumerate_facts(self.create_enumeration_callbacks(result))
     result
   end
 
+  # Gets the value for a fact. Returns `nil` if no such fact exists.
+  #
+  # @param name [String] The fact name.
+  # @return [Object, nil] The value of the fact, or nil if no fact is found.
+  # @api public
   def self.value(name)
     # To share the enumeration callbacks with to_hash, pass in an array and return the
     # first element, which will be the value of the requested fact.

@@ -2,6 +2,7 @@
 #include <facter/facterlib.h>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>
+#include <iomanip>
 
 using namespace std;
 using namespace rapidjson;
@@ -25,6 +26,12 @@ namespace facter { namespace facts {
     void scalar_value<bool>::to_json(Allocator& allocator, rapidjson::Value& value) const
     {
         value.SetBool(_value);
+    }
+
+    template <>
+    void scalar_value<double>::to_json(Allocator& allocator, rapidjson::Value& value) const
+    {
+        value.SetDouble(_value);
     }
 
     template <>
@@ -52,6 +59,14 @@ namespace facter { namespace facts {
     }
 
     template <>
+    void scalar_value<double>::notify(string const& name, enumeration_callbacks const* callbacks) const
+    {
+        if (callbacks && callbacks->dbl) {
+            callbacks->dbl(name.c_str(), _value);
+        }
+    }
+
+    template <>
     Emitter& scalar_value<string>::write(Emitter& emitter) const
     {
         // Unfortunately, yaml-cpp doesn't handle quoting strings automatically that well
@@ -62,8 +77,16 @@ namespace facter { namespace facts {
         return emitter;
     }
 
+    template <>
+    ostream& scalar_value<bool>::write(ostream& os) const
+    {
+        os << boolalpha << _value;
+        return os;
+    }
+
     template struct scalar_value<string>;
     template struct scalar_value<int64_t>;
     template struct scalar_value<bool>;
+    template struct scalar_value<double>;
 
 }}  // namespace facter::facts

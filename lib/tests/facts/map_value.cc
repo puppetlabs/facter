@@ -13,25 +13,30 @@ using namespace YAML;
 
 TEST(facter_facts_map_value, default_constructor) {
     map_value value;
-    ASSERT_EQ(0u, value.elements().size());
+    ASSERT_EQ(0u, value.size());
+}
+
+TEST(facter_facts_map_value, null_add) {
+    map_value value;
+    value.add("null", nullptr);
+    ASSERT_EQ(0u, value.size());
 }
 
 TEST(facter_facts_map_value, map_constructor) {
-    map<string, unique_ptr<value>> elements;
-    elements["string"] = make_value<string_value>("hello");
-    elements["integer"] = make_value<integer_value>(5);
+    map_value value;
+    value.add("string", make_value<string_value>("hello"));
+    value.add("integer", make_value<integer_value>(5));
 
-    vector<unique_ptr<value>> array_elements;
-    array_elements.emplace_back(make_value<string_value>("1"));
-    array_elements.emplace_back(make_value<integer_value>(2));
-    elements["array"] = make_value<array_value>(move(array_elements));
+    auto array_element = make_value<array_value>();
+    static_cast<array_value*>(array_element.get())->add(make_value<string_value>("1"));
+    static_cast<array_value*>(array_element.get())->add(make_value<integer_value>(2));
+    value.add("array", move(array_element));
 
-    map<string, unique_ptr<value>> submap;
-    submap["foo"] = make_value<string_value>("bar");
-    elements["map"] = make_value<map_value>(move(submap));
+    auto map_element = make_value<map_value>();
+    static_cast<map_value*>(map_element.get())->add("foo", make_value<string_value>("bar"));
+    value.add("map", move(map_element));
 
-    map_value value(move(elements));
-    ASSERT_EQ(4u, value.elements().size());
+    ASSERT_EQ(4u, value.size());
 
     auto str = value.get<string_value>("string");
     ASSERT_NE(nullptr, str);
@@ -43,7 +48,7 @@ TEST(facter_facts_map_value, map_constructor) {
 
     auto array = value.get<array_value>("array");
     ASSERT_NE(nullptr, array);
-    ASSERT_EQ(2u, array->elements().size());
+    ASSERT_EQ(2u, array->size());
     str = array->get<string_value>(0);
     ASSERT_EQ("1", str->value());
     integer = array->get<integer_value>(1);
@@ -51,27 +56,52 @@ TEST(facter_facts_map_value, map_constructor) {
 
     auto mapval = value.get<map_value>("map");
     ASSERT_NE(nullptr, mapval);
-    ASSERT_EQ(1u, mapval->elements().size());
+    ASSERT_EQ(1u, mapval->size());
     str = mapval->get<string_value>("foo");
     ASSERT_NE(nullptr, str);
     ASSERT_EQ("bar", str->value());
 }
 
+TEST(facter_facts_map_value, each) {
+    map_value value;
+    value.add("fact1", make_value<string_value>("1"));
+    value.add("fact2", make_value<string_value>("2"));
+    value.add("fact3", make_value<string_value>("3"));
+
+    size_t count = 0;
+    bool failed = false;
+    value.each([&](string const& name, struct value const* val) {
+        auto string_val = dynamic_cast<string_value const*>(val);
+        if (!string_val) {
+            failed = true;
+            return false;
+        }
+        if ((name == "fact1" && string_val->value() != "1") ||
+            (name == "fact2" && string_val->value() != "2") ||
+            (name == "fact3" && string_val->value() != "3")) {
+            failed = true;
+            return false;
+        }
+        ++count;
+        return true;
+    });
+    ASSERT_FALSE(failed);
+    ASSERT_EQ(3u, count);
+}
+
 TEST(facter_facts_map_value, to_json) {
-    map<string, unique_ptr<value>> elements;
-    elements["string"] = make_value<string_value>("hello");
-    elements["integer"] = make_value<integer_value>(5);
+    map_value value;
+    value.add("string", make_value<string_value>("hello"));
+    value.add("integer", make_value<integer_value>(5));
 
-    vector<unique_ptr<value>> array_elements;
-    array_elements.emplace_back(make_value<string_value>("1"));
-    array_elements.emplace_back(make_value<integer_value>(2));
-    elements["array"] = make_value<array_value>(move(array_elements));
+    auto array_element = make_value<array_value>();
+    static_cast<array_value*>(array_element.get())->add(make_value<string_value>("1"));
+    static_cast<array_value*>(array_element.get())->add(make_value<integer_value>(2));
+    value.add("array", move(array_element));
 
-    map<string, unique_ptr<value>> submap;
-    submap["foo"] = make_value<string_value>("bar");
-    elements["map"] = make_value<map_value>(move(submap));
-
-    map_value value(move(elements));
+    auto map_element = make_value<map_value>();
+    static_cast<map_value*>(map_element.get())->add("foo", make_value<string_value>("bar"));
+    value.add("map", move(map_element));
 
     rapidjson::Value json_value;
     MemoryPoolAllocator<> allocator;
@@ -97,41 +127,37 @@ TEST(facter_facts_map_value, to_json) {
 }
 
 TEST(facter_facts_map_value, insertion_operator) {
-    map<string, unique_ptr<value>> elements;
-    elements["string"] = make_value<string_value>("hello");
-    elements["integer"] = make_value<integer_value>(5);
+    map_value value;
+    value.add("string", make_value<string_value>("hello"));
+    value.add("integer", make_value<integer_value>(5));
 
-    vector<unique_ptr<value>> array_elements;
-    array_elements.emplace_back(make_value<string_value>("1"));
-    array_elements.emplace_back(make_value<integer_value>(2));
-    elements["array"] = make_value<array_value>(move(array_elements));
+    auto array_element = make_value<array_value>();
+    static_cast<array_value*>(array_element.get())->add(make_value<string_value>("1"));
+    static_cast<array_value*>(array_element.get())->add(make_value<integer_value>(2));
+    value.add("array", move(array_element));
 
-    map<string, unique_ptr<value>> submap;
-    submap["foo"] = make_value<string_value>("bar");
-    elements["map"] = make_value<map_value>(move(submap));
-
-    map_value value(move(elements));
+    auto map_element = make_value<map_value>();
+    static_cast<map_value*>(map_element.get())->add("foo", make_value<string_value>("bar"));
+    value.add("map", move(map_element));
 
     ostringstream stream;
     stream << value;
-    ASSERT_EQ("{ array => [ 1, 2 ], integer => 5, map => { foo => bar }, string => hello }", stream.str());
+    ASSERT_EQ("{\"array\"=>[\"1\", 2], \"integer\"=>5, \"map\"=>{\"foo\"=>\"bar\"}, \"string\"=>\"hello\"}", stream.str());
 }
 
 TEST(facter_facts_map_value, yaml_insertion_operator) {
-    map<string, unique_ptr<value>> elements;
-    elements["string"] = make_value<string_value>("hello");
-    elements["integer"] = make_value<integer_value>(5);
+    map_value value;
+    value.add("string", make_value<string_value>("hello"));
+    value.add("integer", make_value<integer_value>(5));
 
-    vector<unique_ptr<value>> array_elements;
-    array_elements.emplace_back(make_value<string_value>("1"));
-    array_elements.emplace_back(make_value<integer_value>(2));
-    elements["array"] = make_value<array_value>(move(array_elements));
+    auto array_element = make_value<array_value>();
+    static_cast<array_value*>(array_element.get())->add(make_value<string_value>("1"));
+    static_cast<array_value*>(array_element.get())->add(make_value<integer_value>(2));
+    value.add("array", move(array_element));
 
-    map<string, unique_ptr<value>> submap;
-    submap["foo"] = make_value<string_value>("bar");
-    elements["map"] = make_value<map_value>(move(submap));
-
-    map_value value(move(elements));
+    auto map_element = make_value<map_value>();
+    static_cast<map_value*>(map_element.get())->add("foo", make_value<string_value>("bar"));
+    value.add("map", move(map_element));
 
     Emitter emitter;
     emitter << value;

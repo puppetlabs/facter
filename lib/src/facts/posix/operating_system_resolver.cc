@@ -35,7 +35,7 @@ namespace facter { namespace facts { namespace posix {
         auto os = facts.get<string_value>(fact::operating_system);
         string value;
         if (os) {
-            static map<string, string> systems = {
+            static map<string, string> const systems = {
                 { string(os::redhat),                   string(os_family::redhat) },
                 { string(os::fedora),                   string(os_family::redhat) },
                 { string(os::centos),                   string(os_family::redhat) },

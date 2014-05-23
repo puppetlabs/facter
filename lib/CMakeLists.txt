@@ -23,6 +23,9 @@ endif()
 set(LIBFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/facterlib.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/array_value.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/json_resolver.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/text_resolver.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/yaml_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact_map.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact_resolver.cc"
@@ -37,9 +40,11 @@ set(LIBFACTER_COMMON_SOURCES
 if (UNIX)
     set(LIBFACTER_POSIX_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/execution/posix/execution.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/posix/execution_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/kernel_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/operating_system_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/platform.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/processor_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/ssh_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/uptime_resolver.cc"

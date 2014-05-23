@@ -1,7 +1,10 @@
 #include <facter/facts/fact_map.hpp>
 #include <facter/facts/fact_resolver.hpp>
 #include <facter/facts/value.hpp>
+#include <facter/facts/scalar_value.hpp>
+#include <facter/facts/external/resolver.hpp>
 #include <facter/logging/logging.hpp>
+#include <boost/filesystem.hpp>
 #include <algorithm>
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
@@ -10,6 +13,8 @@
 using namespace std;
 using namespace rapidjson;
 using namespace YAML;
+using namespace boost::filesystem;
+namespace bs = boost::system;
 
 LOG_DECLARE_NAMESPACE("facts.map");
 
@@ -26,6 +31,18 @@ namespace facter { namespace facts {
      * @param facts The fact map being populated.
      */
     extern void populate_platform_facts(fact_map& facts);
+
+    /**
+     * Called to get the external fact search directories for the current platform.
+     * @returns Returns the vector of search directories for external facts.
+     */
+    extern vector<string> get_external_directories();
+
+    /**
+     * Called to get the external fact resolvers for the current platform.
+     * @returns Returns the vector of external fact resolvers.
+     */
+    extern vector<unique_ptr<external::resolver>> get_external_resolvers();
 
     fact_map::fact_map()
     {
@@ -46,7 +63,7 @@ namespace facter { namespace facts {
         for (auto const& fact_name : resolver->names()) {
             auto const& it = _resolver_map.lower_bound(fact_name);
             if (it != _resolver_map.end() && !(_resolver_map.key_comp()(fact_name, it->first))) {
-                throw resolver_exists_exception("a resolver for fact " + fact_name + " already exists.");
+                throw resolver_exists_exception("a resolver for fact \"" + fact_name + "\" already exists.");
             }
             _resolver_map.insert(it, make_pair(fact_name, resolver));
         }
@@ -55,26 +72,37 @@ namespace facter { namespace facts {
 
     void fact_map::add(string&& name, unique_ptr<value>&& value)
     {
-        if (!value) {
-            LOG_DEBUG("fact %1% resolved to null and will be ignored.", name);
-            return;
-        }
-
         // Search for the fact first
         auto const& it = _facts.lower_bound(name);
         if (it != _facts.end() && !(_facts.key_comp()(name, it->first))) {
-            throw fact_exists_exception("fact " + name + " already exists.");
-        }
-
-        if (LOG_IS_DEBUG_ENABLED()) {
-            ostringstream ss;
-            ss << *value;
-            LOG_DEBUG("fact %1% has resolved to \"%2%\".", name, ss.str());
+            if (!value) {
+                LOG_DEBUG("fact \"%1%\" resolved to null and the existing value will be removed.", name);
+                _facts.erase(it);
+                return;
+            }
+            if (LOG_IS_DEBUG_ENABLED()) {
+                ostringstream old_value;
+                ostringstream new_value;
+                old_value << *it->second;
+                new_value << *value;
+                LOG_DEBUG("fact \"%1%\" has changed from \"%2%\" to \"%3%\".", name, old_value.str(), new_value.str());
+            }
+            it->second = move(value);
+        } else {
+            if (!value) {
+                LOG_DEBUG("fact \"%1%\" resolved to null and will not be added.", name);
+                return;
+            }
+            if (LOG_IS_DEBUG_ENABLED()) {
+                ostringstream ss;
+                ss << *value;
+                LOG_DEBUG("fact \"%1%\" has resolved to \"%2%\".", name, ss.str());
+            }
+            _facts.insert(it, make_pair(move(name), move(value)));
         }
 
         // Remove any mapped resolver for this fact
         _resolver_map.erase(name);
-        _facts.insert(it, make_pair(move(name), move(value)));
     }
 
     void fact_map::remove(shared_ptr<fact_resolver> const& resolver)
@@ -88,7 +116,7 @@ namespace facter { namespace facts {
             if (LOG_IS_DEBUG_ENABLED()) {
                 auto it = _facts.find(name);
                 if (it == _facts.end()) {
-                    LOG_DEBUG("fact %1% was not resolved.", name);
+                    LOG_DEBUG("fact \"%1%\" was not resolved.", name);
                 }
             }
             _resolver_map.erase(name);
@@ -119,6 +147,11 @@ namespace facter { namespace facts {
         return _resolvers.empty();
     }
 
+    size_t fact_map::size() const
+    {
+        return _facts.size();
+    }
+
     void fact_map::resolve(set<string> const& facts)
     {
         if (resolved()) {
@@ -132,7 +165,9 @@ namespace facter { namespace facts {
                 }
                 auto value = get_value(fact, true);
                 if (!value) {
-                    LOG_DEBUG("fact %1% was not resolved.", fact);
+                    // For parity with Ruby facter, add an empty string
+                    LOG_DEBUG("fact \"%1%\" was requested but not resolved; adding empty string value.", fact);
+                    add(string(fact), make_value<string_value>(""));
                 }
             }
 
@@ -159,11 +194,90 @@ namespace facter { namespace facts {
             for (auto kvp : _resolver_map) {
                 auto it = _facts.find(kvp.first);
                 if (it == _facts.end()) {
-                    LOG_DEBUG("fact %1% was not resolved.", kvp.first);
+                    LOG_DEBUG("fact \"%1%\" was not resolved.", kvp.first);
                 }
             }
         }
         _resolver_map.clear();
+    }
+
+    void fact_map::resolve_external(vector<string> const& directories, set<string> const& facts)
+    {
+        vector<unique_ptr<external::resolver>> resolvers = get_external_resolvers();
+
+        auto search_directories = directories;
+        if (search_directories.empty()) {
+            search_directories = get_external_directories();
+        }
+
+        // Go through each search directory
+        vector<string> files;
+        for (auto const& directory : search_directories) {
+            directory_iterator end;
+            directory_iterator it;
+
+            // Attempt to iterate the directory
+            try {
+                it = directory_iterator(directory);
+            } catch (filesystem_error& ex) {
+                // Warn the user if not using the default search directories
+                if (!directories.empty()) {
+                    LOG_WARNING("skipping external facts for \"%1%\": %2%", directory, ex.code().message());
+                } else {
+                    LOG_DEBUG("skipping external facts for \"%1%\": %2%", directory, ex.code().message());
+                }
+                continue;
+            }
+
+            LOG_DEBUG("searching \"%1%\" for external facts.", directory);
+
+            // Search for regular files in the directory
+            for (; it != end; ++it) {
+                bs::error_code ec;
+                if (!is_regular_file(it->status())) {
+                    continue;
+                }
+
+                files.push_back(it->path().string());
+            }
+        }
+
+        // Sort the files so there is a deterministic ordering to the external facts
+        sort(files.begin(), files.end());
+
+        // For each file, find a resolver for it
+        for (auto const& file : files) {
+            try
+            {
+                bool resolved = false;
+                for (auto const& resolver : resolvers) {
+                    if (resolver->resolve(file, *this)) {
+                        resolved = true;
+                        break;
+                    }
+                }
+
+                if (!resolved) {
+                    LOG_DEBUG("file \"%1%\" is not supported for external facts.", file);
+                    continue;
+                }
+            }
+            catch (external::external_fact_exception& ex) {
+                LOG_ERROR("error while processing \"%1%\" for external facts: %2%", file, ex.what());
+            }
+        }
+
+        // Remove facts that resolved but aren't in the filter
+        if (!facts.empty()) {
+            for (auto it = _facts.begin(); it != _facts.end();) {
+                if (facts.count(it->first)) {
+                    // In the requested set of facts so move next
+                    ++it;
+                    continue;
+                }
+                it = _facts.erase(it);
+            }
+        }
     }
 
     void fact_map::each(function<bool(string const&, value const*)> func) const
@@ -256,6 +370,12 @@ namespace facter { namespace facts {
 
     ostream& operator<<(ostream& os, fact_map const& facts)
     {
+        // If there's only one fact, print it without the name
+        if (facts._facts.size() == 1) {
+            os << *facts._facts.begin()->second;
+            return os;
+        }
+
         // Print all facts in the map
         bool first = true;
         for (auto const& kvp : facts._facts) {

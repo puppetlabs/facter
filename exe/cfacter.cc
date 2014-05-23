@@ -62,7 +62,7 @@ void configure_logger(LevelPtr level, string const& properties_file)
 
     // If no configuration file given, use default settings
     LayoutPtr layout = new PatternLayout("%d %-5p %c - %m%n");
-    AppenderPtr appender = new ConsoleAppender(layout);
+    AppenderPtr appender = new ConsoleAppender(layout, "System.err");
     Logger::getRootLogger()->addAppender(appender);
     Logger::getRootLogger()->setLevel(level);
 }
@@ -117,8 +117,10 @@ int main(int argc, char **argv)
         po::options_description visible_options("");
         visible_options.add_options()
             ("debug,d", "Enable debug output.")
+            ("external-dir", po::value<vector<string>>()->multitoken(), "The directory to use for external facts.")
             ("help", "Print this help message.")
             ("json,j", "Output in JSON format.")
+            ("no-external-dir", "Turn off external facts")
             ("propfile,p", po::value<string>(&properties_file), "Configure logging with a log4cxx properties file.")
             ("verbose", "Enable verbose (info) output.")
             ("version,v", "Print the version and exit.")
@@ -153,6 +155,9 @@ int main(int argc, char **argv)
             // Check for conflicting options
             if (vm.count("json") && vm.count("yaml")) {
                 throw po::error("json and yaml options conflict. please specify one or the other.");
+            }
+            if (vm.count("no-external-dir") && vm.count("external-dir")) {
+                throw po::error("no-external-dir and external-dir options conflict. please specify one or the other.");
             }
         }
         catch(po::error& ex) {
@@ -197,9 +202,18 @@ int main(int argc, char **argv)
 
         log_requested_facts(requested_facts);
 
-        // Resolve the facts and output the result
+        // Resolve the facts
         fact_map facts;
         facts.resolve(requested_facts);
+
+        // Resolve external facts next; this allows external facts to take precedence over built-in facts
+        if (!vm.count("no-external-dir")) {
+            if (vm["external-dir"].empty()) {
+                facts.resolve_external({}, requested_facts);
+            } else {
+                facts.resolve_external(vm["external-dir"].as<vector<string>>(), requested_facts);
+            }
+        }
 
         // Output the facts
         if (vm.count("json")) {
@@ -211,7 +225,7 @@ int main(int argc, char **argv)
         }
         cout << '\n';
     } catch (exception& ex) {
-        LOG_FATAL("Unhandled exception: %1%.", ex.what());
+        LOG_FATAL("Unhandled exception: %1%", ex.what());
         return EXIT_FAILURE;
     }
 }

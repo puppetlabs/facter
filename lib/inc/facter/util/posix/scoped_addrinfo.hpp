@@ -20,7 +20,8 @@ namespace facter { namespace util { namespace posix {
          * Constructs a scoped_addrinfo.
          * @param info The address info to free when destroyed.
          */
-        explicit scoped_addrinfo(std::string const& hostname)
+        explicit scoped_addrinfo(std::string const& hostname) :
+            scoped_resource(nullptr, free)
         {
             addrinfo hints;
             std::memset(&hints, 0, sizeof hints);
@@ -31,8 +32,6 @@ namespace facter { namespace util { namespace posix {
             _result = getaddrinfo(hostname.c_str(), nullptr, &hints, &_resource);
             if (_result != 0) {
                 _resource = nullptr;
-            } else {
-                _deleter = free;
             }
         }
 

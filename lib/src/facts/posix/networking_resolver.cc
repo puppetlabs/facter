@@ -101,17 +101,21 @@ namespace facter { namespace facts { namespace posix {
             if (mask && mask->sa_family == addr->sa_family) {
                 ip.s_addr &= reinterpret_cast<sockaddr_in const*>(mask)->sin_addr.s_addr;
             }
-            return inet_ntoa(ip);
+
+            char buffer[INET_ADDRSTRLEN] = {};
+            inet_ntop(AF_INET, &ip, buffer, sizeof(buffer));
+            return buffer;
         } else if (addr->sa_family == AF_INET6) {
             in6_addr ip = reinterpret_cast<sockaddr_in6 const*>(addr)->sin6_addr;
 
             // Apply an IPv6 mask
             if (mask && mask->sa_family == addr->sa_family) {
-                in6_addr mask_ip = reinterpret_cast<sockaddr_in6 const*>(mask)->sin6_addr;
+                auto mask_ptr = reinterpret_cast<sockaddr_in6 const*>(mask);
                 for (size_t i = 0; i < 16; ++i) {
-                    ip.s6_addr[i] &= mask_ip.s6_addr[i];
+                    ip.s6_addr[i] &= mask_ptr->sin6_addr.s6_addr[i];
                 }
             }
+
             char buffer[INET6_ADDRSTRLEN] = {};
             inet_ntop(AF_INET6, &ip, buffer, sizeof(buffer));
             return buffer;

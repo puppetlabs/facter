@@ -15,13 +15,12 @@ namespace facter { namespace util { namespace bsd {
          * Default constructor.
          * This constructor will handle calling getifaddrs.
          */
-        scoped_ifaddrs()
+        scoped_ifaddrs() :
+            scoped_resource(nullptr, free)
         {
             // Get the linked list of interfaces
             if (getifaddrs(&_resource) != 0) {
                 _resource = nullptr;
-            } else {
-                _deleter = free;
             }
         }
 

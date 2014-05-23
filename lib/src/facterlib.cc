@@ -1,12 +1,12 @@
 #include <facter/facterlib.h>
 #include <facter/version.h>
 #include <facter/facts/fact_map.hpp>
-#include <facter/facts/scalar_value.hpp>
-#include <facter/facts/array_value.hpp>
-#include <facter/facts/map_value.hpp>
+#include <facter/facts/value.hpp>
 #include <facter/util/string.hpp>
 #include <log4cxx/logger.h>
 #include <memory>
+#include <vector>
+#include <string>
 
 using namespace std;
 using namespace facter::util;
@@ -14,6 +14,7 @@ using namespace facter::facts;
 using namespace log4cxx;
 
 static unique_ptr<fact_map> g_facts;
+static vector<string> g_external_directories;
 
 extern "C" {
     char const* get_facter_version()
@@ -37,7 +38,12 @@ extern "C" {
                 requested_facts.emplace(trim(to_lower(move(name))));
             }
         }
+
+        // Resolve facts
         g_facts->resolve(requested_facts);
+
+        // Load external facts
+        g_facts->resolve_external(g_external_directories, requested_facts);
     }
 
     void clear_facts()
@@ -79,6 +85,12 @@ extern "C" {
 
     void search_external(char const* directories)
     {
-        // TODO: implement
+        if (!directories) {
+            return;
+        }
+
+        for (auto& directory : split(directories, ':')) {
+            g_external_directories.emplace_back(move(directory));
+        }
     }
 }

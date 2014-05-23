@@ -88,13 +88,15 @@ namespace facter { namespace facts {
         T _value;
     };
 
-    // Declare the specializations for JSON output
+    // Declare the specializations for JSON outputc
     template <>
     void scalar_value<std::string>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
     template <>
     void scalar_value<int64_t>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
     template <>
     void scalar_value<bool>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
+    template <>
+    void scalar_value<double>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
 
     // Declare the specializations for notification
     template <>
@@ -103,22 +105,29 @@ namespace facter { namespace facts {
     void scalar_value<int64_t>::notify(std::string const& name, enumeration_callbacks const* callbacks) const;
     template <>
     void scalar_value<bool>::notify(std::string const& name, enumeration_callbacks const* callbacks) const;
+    template <>
+    void scalar_value<double>::notify(std::string const& name, enumeration_callbacks const* callbacks) const;
 
     // Declare the specializations for YAML output
     template <>
     YAML::Emitter& scalar_value<std::string>::write(YAML::Emitter& emitter) const;
 
+    // Declare the specializations for string output
+    template <>
+    std::ostream& scalar_value<bool>::write(std::ostream& os) const;
+
     // Declare the common instantiations as external; defined in scalar_value.cc
     extern template struct scalar_value<std::string>;
     extern template struct scalar_value<int64_t>;
     extern template struct scalar_value<bool>;
+    extern template struct scalar_value<double>;
 
     // Typedef the common instantiation
     typedef scalar_value<std::string> string_value;
     typedef scalar_value<int64_t> integer_value;
     typedef scalar_value<bool> boolean_value;
+    typedef scalar_value<double> double_value;
 
 }}  // namespace facter::facts
 
 #endif  // FACTER_FACTS_SCALAR_VALUE_HPP_
-

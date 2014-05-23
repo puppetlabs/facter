@@ -13,15 +13,6 @@ namespace facter { namespace util {
     template<typename T> struct scoped_resource
     {
         /**
-         * Default constructor for scoped_resource.
-         */
-        scoped_resource() :
-            _resource(),
-            _deleter()
-        {
-        }
-
-        /**
          * Constructs a scoped_resource.
          * Takes ownership of the given resource.
          * @param resource The resource to scope.

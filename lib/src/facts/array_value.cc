@@ -1,4 +1,6 @@
 #include <facter/facts/array_value.hpp>
+#include <facter/facts/scalar_value.hpp>
+#include <facter/logging/logging.hpp>
 #include <facter/facterlib.h>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>
@@ -7,17 +9,49 @@ using namespace std;
 using namespace rapidjson;
 using namespace YAML;
 
+LOG_DECLARE_NAMESPACE("facts.value.array");
+
 namespace facter { namespace facts {
+
+    array_value::array_value()
+    {
+    }
+
+    void array_value::add(unique_ptr<value>&& value)
+    {
+        if (!value) {
+            LOG_DEBUG("null value cannot be added to array.");
+            return;
+        }
+
+        _elements.emplace_back(move(value));
+    }
+
+    bool array_value::empty() const
+    {
+        return _elements.empty();
+    }
+
+    size_t array_value::size() const
+    {
+        return _elements.size();
+    }
+
+    void array_value::each(function<bool(value const*)> func) const
+    {
+        for (auto const& element : _elements) {
+            if (!func(element.get())) {
+                break;
+            }
+        }
+    }
 
     void array_value::to_json(Allocator& allocator, rapidjson::Value& value) const
     {
         value.SetArray();
+        value.Reserve(_elements.size(), allocator);
 
         for (auto const& element : _elements) {
-            if (!element) {
-                continue;
-            }
-
             rapidjson::Value child;
             element->to_json(allocator, child);
             value.PushBack(child, allocator);
@@ -36,9 +70,6 @@ namespace facter { namespace facts {
 
         // Call notify on each element in the array
         for (auto const& element : _elements) {
-            if (!element) {
-                continue;
-            }
             element->notify({}, callbacks);
         }
 
@@ -50,20 +81,24 @@ namespace facter { namespace facts {
     ostream& array_value::write(ostream& os) const
     {
         // Write out the elements in the array
-        os << "[ ";
+        os << "[";
         bool first = true;
         for (auto const& element : _elements) {
-            if (!element) {
-                continue;
-            }
             if (first) {
                 first = false;
             } else {
                 os << ", ";
             }
+            bool quote = dynamic_cast<string_value const*>(element.get());
+            if (quote) {
+                os << '"';
+            }
             os << *element;
+            if (quote) {
+                os << '"';
+            }
         }
-        os << " ]";
+        os << "]";
         return os;
     }
 
@@ -71,9 +106,6 @@ namespace facter { namespace facts {
     {
         emitter << BeginSeq;
         for (auto const& element : _elements) {
-            if (!element) {
-                continue;
-            }
             emitter << *element;
         }
         emitter << EndSeq;

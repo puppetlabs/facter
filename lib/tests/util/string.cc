@@ -1,6 +1,7 @@
 #include <gmock/gmock.h>
 #include <facter/util/string.hpp>
 
+using namespace std;
 using namespace facter::util;
 using testing::ElementsAre;
 
@@ -102,4 +103,21 @@ TEST(facter_util_string, ci_string) {
     ASSERT_EQ("hello WORLD!", ci_string("HELLO world!"));
     ASSERT_NE("not hello WORLD!", ci_string("hello WORLD!"));
     ASSERT_EQ("", ci_string(""));
+}
+
+TEST(facter_util_string, each_line) {
+    size_t count = 0;
+    bool failed = false;
+    each_line("line1\nline2\nline3", [&](string const& line) {
+        if ((count == 0 && line != "line1") ||
+            (count == 1 && line != "line2") ||
+            (count == 2 && line != "line3")) {
+            failed = true;
+            return false;
+        }
+        ++count;
+        return true;
+    });
+    ASSERT_FALSE(failed);
+    ASSERT_EQ(3u, count);
 }

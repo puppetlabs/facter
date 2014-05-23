@@ -36,7 +36,7 @@ namespace facter { namespace facts { namespace linux {
         try {
             it = directory_iterator(devices_directory);
         } catch (filesystem_error& ex) {
-            LOG_DEBUG("%1%: %2%: block device facts are unavailable.", devices_directory, ex.what());
+            LOG_DEBUG("%1%: %2%: block device facts are unavailable.", devices_directory, ex.code().message());
             return;
         }
 

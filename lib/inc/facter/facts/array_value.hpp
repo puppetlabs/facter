@@ -4,6 +4,7 @@
 #include "value.hpp"
 #include <vector>
 #include <memory>
+#include <functional>
 
 namespace facter { namespace facts {
 
@@ -15,18 +16,7 @@ namespace facter { namespace facts {
         /**
          * Constructs an array_value.
          */
-        array_value()
-        {
-        }
-
-        /**
-         * Constructs an array value.
-         * @param elements The elements that make up the array.
-         */
-        explicit array_value(std::vector<std::unique_ptr<value>>&& elements) :
-            _elements(std::move(elements))
-        {
-        }
+        array_value();
 
         // Force non-copyable
         array_value(array_value const&) = delete;
@@ -35,6 +25,30 @@ namespace facter { namespace facts {
         // Allow movable
         array_value(array_value&&) = default;
         array_value& operator=(array_value&&) = default;
+
+        /**
+         * Adds a value to the array.
+         * @param value The value to add to the array.
+         */
+        void add(std::unique_ptr<value>&& value);
+
+        /**
+         * Checks to see if the array is empty.
+         * @return Returns true if the array is empty or false if it is not.
+         */
+        bool empty() const;
+
+        /**
+         * Gets the size of the array.
+         * @return Returns the number of values in the array.
+         */
+        size_t size() const;
+
+        /**
+         * Enumerates all facts in the array.
+         * @param func The callback function called for each value in the array.
+         */
+        void each(std::function<bool(value const*)> func) const;
 
         /**
          * Converts the value to a JSON value.
@@ -49,12 +63,6 @@ namespace facter { namespace facts {
          * @param callbacks The callbacks to use to notify.
          */
         virtual void notify(std::string const& name, enumeration_callbacks const* callbacks) const;
-
-        /**
-         * Gets the vector of elements in the array.
-         * @return Returns the vector of elements in the array.
-         */
-        std::vector<std::unique_ptr<value>> const& elements() const { return _elements; }
 
         /**
          * Gets the element at the given index.

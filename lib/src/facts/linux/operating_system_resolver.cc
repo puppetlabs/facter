@@ -8,8 +8,10 @@
 #include <facter/util/string.hpp>
 #include <facter/util/file.hpp>
 #include <re2/re2.h>
-#include <map>
 #include <boost/filesystem.hpp>
+#include <map>
+#include <vector>
+#include <tuple>
 
 using namespace std;
 using namespace facter::util;
@@ -72,7 +74,7 @@ namespace facter { namespace facts { namespace linux {
         }
 
         // Map of release files that contain a "release X.X.X" on the first line
-        static map<string, string> release_files = {
+        static map<string, string> const release_files = {
             { string(os::centos),                   string(release_file::redhat) },
             { string(os::redhat),                   string(release_file::redhat) },
             { string(os::scientific),               string(release_file::redhat) },
@@ -268,22 +270,22 @@ namespace facter { namespace facts { namespace linux {
     {
         bs::error_code ec;
         if (is_regular_file(release_file::redhat, ec)) {
-            static map<string, string> regexs {
-                { "(?i)centos",                         string(os::centos) },
-                { "(?i)scientific linux CERN",          string(os::scientific_cern) },
-                { "(?i)scientific linux release",       string(os::scientific) },
-                { "(?im)^cloudlinux",                    string(os::cloud_linux) },
-                { "(?i)Ascendos",                       string(os::ascendos) },
-                { "(?im)^XenServer",                     string(os::xen_server) },
-                { "XCP",                                string(os::zen_cloud_platform) },
-                { "(?im)^Parallels Server Bare Metal",   string(os::psbm) },
-                { "(?m)^Fedora release",                    string(os::fedora) },
+            static vector<tuple<string, string>> const regexs {
+                make_tuple("(?i)centos",                        string(os::centos)),
+                make_tuple("(?i)scientific linux CERN",         string(os::scientific_cern)),
+                make_tuple("(?i)scientific linux release",      string(os::scientific)),
+                make_tuple("(?im)^cloudlinux",                  string(os::cloud_linux)),
+                make_tuple("(?i)Ascendos",                      string(os::ascendos)),
+                make_tuple("(?im)^XenServer",                   string(os::xen_server)),
+                make_tuple("XCP",                               string(os::zen_cloud_platform)),
+                make_tuple("(?im)^Parallels Server Bare Metal", string(os::psbm)),
+                make_tuple("(?m)^Fedora release",               string(os::fedora)),
             };
 
             string contents = trim(file::read(release_file::redhat));
-            for (auto const& kvp : regexs) {
-                if (RE2::PartialMatch(contents, kvp.first)) {
-                    return kvp.second;
+            for (auto const& regex : regexs) {
+                if (RE2::PartialMatch(contents, get<0>(regex))) {
+                    return get<1>(regex);
                 }
             }
             return os::redhat;
@@ -295,16 +297,16 @@ namespace facter { namespace facts { namespace linux {
     {
         bs::error_code ec;
         if (is_regular_file(release_file::suse, ec)) {
-            static map<string, string> regexs {
-                { "(?im)^SUSE LINUX Enterprise Server",  string(os::suse_enterprise_server) },
-                { "(?im)^SUSE LINUX Enterprise Desktop", string(os::suse_enterprise_desktop) },
-                { "(?im)^openSUSE",                      string(os::open_suse) },
+            static vector<tuple<string, string>> const regexs {
+                make_tuple("(?im)^SUSE LINUX Enterprise Server",  string(os::suse_enterprise_server)),
+                make_tuple("(?im)^SUSE LINUX Enterprise Desktop", string(os::suse_enterprise_desktop)),
+                make_tuple("(?im)^openSUSE",                      string(os::open_suse)),
             };
 
             string contents = trim(file::read(release_file::suse));
-            for (auto const& kvp : regexs) {
-                if (RE2::PartialMatch(contents, kvp.first)) {
-                    return kvp.second;
+            for (auto const& regex : regexs) {
+                if (RE2::PartialMatch(contents, get<0>(regex))) {
+                    return get<1>(regex);
                 }
             }
             return os::suse;
@@ -314,27 +316,27 @@ namespace facter { namespace facts { namespace linux {
 
     string operating_system_resolver::check_other_linux()
     {
-        static map<string, string> files {
-            { string(release_file::openwrt),        string(os::openwrt) },
-            { string(release_file::gentoo),         string(os::gentoo) },
-            { string(release_file::mandriva),       string(os::mandriva) },
-            { string(release_file::mandrake),       string(os::mandrake) },
-            { string(release_file::meego),          string(os::meego) },
-            { string(release_file::archlinux),      string(os::archlinux) },
-            { string(release_file::oracle_linux),   string(os::oracle_linux) },
-            { string(release_file::vmware_esx),     string(os::vmware_esx) },
-            { string(release_file::bluewhite),      string(os::bluewhite) },
-            { string(release_file::slack_amd64),    string(os::slack_amd64) },
-            { string(release_file::slackware),      string(os::slackware) },
-            { string(release_file::alpine),         string(os::alpine) },
-            { string(release_file::mageia),         string(os::mageia) },
-            { string(release_file::amazon),         string(os::amazon) },
+        static vector<tuple<string, string>> const files {
+            make_tuple(string(release_file::openwrt),        string(os::openwrt)),
+            make_tuple(string(release_file::gentoo),         string(os::gentoo)),
+            make_tuple(string(release_file::mandriva),       string(os::mandriva)),
+            make_tuple(string(release_file::mandrake),       string(os::mandrake)),
+            make_tuple(string(release_file::meego),          string(os::meego)),
+            make_tuple(string(release_file::archlinux),      string(os::archlinux)),
+            make_tuple(string(release_file::oracle_linux),   string(os::oracle_linux)),
+            make_tuple(string(release_file::vmware_esx),     string(os::vmware_esx)),
+            make_tuple(string(release_file::bluewhite),      string(os::bluewhite)),
+            make_tuple(string(release_file::slack_amd64),    string(os::slack_amd64)),
+            make_tuple(string(release_file::slackware),      string(os::slackware)),
+            make_tuple(string(release_file::alpine),         string(os::alpine)),
+            make_tuple(string(release_file::mageia),         string(os::mageia)),
+            make_tuple(string(release_file::amazon),         string(os::amazon)),
         };
 
-        for (auto const& kvp : files) {
+        for (auto const& file : files) {
             bs::error_code ec;
-            if (is_regular_file(kvp.first, ec)) {
-                return kvp.second;
+            if (is_regular_file(get<0>(file), ec)) {
+                return get<1>(file);
             }
         }
         return {};

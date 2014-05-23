@@ -14,6 +14,11 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/environment.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/array_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/boolean_value.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/facts/double_value.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/facts/external/json_resolver.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/facts/external/text_resolver.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/facts/external/yaml_resolver.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/facts/fact_map.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/integer_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/map_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/string_value.cc"
@@ -28,6 +33,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
 if (UNIX)
     set(LIBFACTER_TESTS_POSIX_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/execution/posix/execution.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/facts/external/posix/execution_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_addrinfo.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_bio.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_descriptor.cc"

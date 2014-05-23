@@ -59,7 +59,7 @@ namespace facter { namespace execution {
     /**
      * Base class for execution failures.
      */
-    struct execution_failure_exception : std::runtime_error
+    struct execution_failure_exception : execution_exception
     {
         /**
          * Constructs a execution_failure_exception.
@@ -67,7 +67,7 @@ namespace facter { namespace execution {
          * @param message The exception message.
          */
         execution_failure_exception(std::string const& output, std::string const& message) :
-            std::runtime_error(message),
+            execution_exception(message),
             _output(output)
         {
         }
