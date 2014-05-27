@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the fact value for scalar values like strings and integers.
+ */
 #ifndef FACTER_FACTS_SCALAR_VALUE_HPP_
 #define FACTER_FACTS_SCALAR_VALUE_HPP_
 
@@ -10,6 +14,7 @@ namespace facter { namespace facts {
 
     /**
      * Represents a simple scalar value.
+     * This type can be moved but cannot be copied.
      * @tparam T The underlying scalar type.
      */
     template <typename T>
@@ -33,13 +38,26 @@ namespace facter { namespace facts {
         {
         }
 
-        // Force non-copyable
+        /**
+         * Prevents the scalar_value from being copied.
+         */
         scalar_value(scalar_value const&) = delete;
+        /**
+         * Prevents the scalar_value from being copied.
+         * @returns Returns this scalar_value.
+         */
         scalar_value& operator=(scalar_value const&) = delete;
-
-        // Allow movable
-        scalar_value(scalar_value&&) = default;
-        scalar_value& operator=(scalar_value&&) = default;
+        /**
+         * Moves the given scalar_value into this scalar_value.
+         * @param other The scalar_value to move into this scalar_value.
+         */
+        scalar_value(scalar_value&& other) = default;
+        /**
+         * Moves the given scalar_value into this scalar_value.
+         * @param other The scalar_value to move into this scalar_value.
+         * @return Returns this scalar_value.
+         */
+        scalar_value& operator=(scalar_value&& other) = default;
 
         /**
          * Converts the value to a JSON value.
@@ -88,7 +106,7 @@ namespace facter { namespace facts {
         T _value;
     };
 
-    // Declare the specializations for JSON outputc
+    // Declare the specializations for JSON output
     template <>
     void scalar_value<std::string>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
     template <>
@@ -123,9 +141,21 @@ namespace facter { namespace facts {
     extern template struct scalar_value<double>;
 
     // Typedef the common instantiation
+    /**
+     * Represents a string fact value.
+     */
     typedef scalar_value<std::string> string_value;
+    /**
+     * Represents an integer fact value.
+     */
     typedef scalar_value<int64_t> integer_value;
+    /**
+     * Represents a boolean fact value.
+     */
     typedef scalar_value<bool> boolean_value;
+    /**
+     * Represents a double fact value.
+     */
     typedef scalar_value<double> double_value;
 
 }}  // namespace facter::facts

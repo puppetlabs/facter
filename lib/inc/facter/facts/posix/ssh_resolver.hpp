@@ -1,8 +1,11 @@
+/**
+ * @file
+ * Declares the POSIX SSH fact resolver.
+ */
 #ifndef FACTER_FACTS_POSIX_SSH_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_SSH_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
-#include "../fact.hpp"
 
 namespace facter { namespace facts { namespace posix {
 
@@ -14,21 +17,7 @@ namespace facter { namespace facts { namespace posix {
         /**
          * Constructs the ssh_resolver.
          */
-        ssh_resolver() :
-            fact_resolver(
-            "ssh",
-            {
-                fact::ssh_dsa_key,
-                fact::ssh_rsa_key,
-                fact::ssh_ecdsa_key,
-                fact::ssh_ed25519_key,
-                fact::sshfp_dsa,
-                fact::sshfp_rsa,
-                fact::sshfp_ecdsa,
-                fact::sshfp_ed25519,
-            })
-        {
-        }
+        ssh_resolver();
 
      protected:
         /**

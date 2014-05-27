@@ -1,8 +1,9 @@
-#include <time.h>
-#include <sys/sysctl.h>
 #include <facter/facts/bsd/uptime_resolver.hpp>
 #include <facter/facts/fact_map.hpp>
+#include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <time.h>
+#include <sys/sysctl.h>
 
 namespace facter { namespace facts { namespace bsd {
 

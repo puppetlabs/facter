@@ -10,6 +10,33 @@ LOG_DECLARE_NAMESPACE("facts.resolver");
 
 namespace facter { namespace facts {
 
+    struct cycle_guard
+    {
+        explicit cycle_guard(bool& value) :
+            _value(value)
+        {
+            _value = true;
+        }
+
+        ~cycle_guard()
+        {
+            _value = false;
+        }
+
+     private:
+        bool& _value;
+    };
+
+    circular_resolution_exception::circular_resolution_exception(string const& message) :
+        runtime_error(message)
+    {
+    }
+
+    invalid_name_pattern_exception::invalid_name_pattern_exception(string const& message) :
+        runtime_error(message)
+    {
+    }
+
     fact_resolver::fact_resolver(string&& name, vector<string>&& names, vector<string> const& patterns) :
         _name(move(name)),
         _names(move(names)),
@@ -26,6 +53,17 @@ namespace facter { namespace facts {
 
     fact_resolver::~fact_resolver()
     {
+        // This needs to be defined here since we use incomplete types in the header
+    }
+
+    string const& fact_resolver::name() const
+    {
+        return _name;
+    }
+
+    vector<string> const& fact_resolver::names() const
+    {
+        return _names;
     }
 
     void fact_resolver::resolve(fact_map& facts)

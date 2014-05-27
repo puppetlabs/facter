@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the scoped addrinfo resource.
+ */
 #ifndef FACTER_UTIL_POSIX_SCOPED_ADDRINFO_HPP_
 #define FACTER_UTIL_POSIX_SCOPED_ADDRINFO_HPP_
 
@@ -18,46 +22,24 @@ namespace facter { namespace util { namespace posix {
     {
         /**
          * Constructs a scoped_addrinfo.
-         * @param info The address info to free when destroyed.
+         * @param hostname The hostname to get the address information of.
          */
-        explicit scoped_addrinfo(std::string const& hostname) :
-            scoped_resource(nullptr, free)
-        {
-            addrinfo hints;
-            std::memset(&hints, 0, sizeof hints);
-            hints.ai_family = AF_UNSPEC;
-            hints.ai_socktype = SOCK_STREAM;
-            hints.ai_flags = AI_CANONNAME;
-
-            _result = getaddrinfo(hostname.c_str(), nullptr, &hints, &_resource);
-            if (_result != 0) {
-                _resource = nullptr;
-            }
-        }
+        explicit scoped_addrinfo(std::string const& hostname);
 
         /**
          * Constructs a scoped_addrinfo.
          * @param info The address info to free when destroyed.
          */
-        explicit scoped_addrinfo(addrinfo* info) :
-            scoped_resource(std::move(info), free),
-            _result(0)
-        {
-        }
+        explicit scoped_addrinfo(addrinfo* info);
 
         /**
          * Returns the result of any call to getaddrinfo.
          * @returns Returns the result of any call to getaddrinfo.
          */
-        int result() const { return _result; }
+        int result() const;
 
      private:
-        static void free(addrinfo* info)
-        {
-            if (info) {
-                ::freeaddrinfo(info);
-            }
-        }
+        static void free(addrinfo* info);
         int _result;
     };
 

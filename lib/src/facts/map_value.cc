@@ -13,10 +13,6 @@ LOG_DECLARE_NAMESPACE("facts.value.map");
 
 namespace facter { namespace facts {
 
-    map_value::map_value()
-    {
-    }
-
     void map_value::add(string&& name, unique_ptr<value>&& value)
     {
         if (!value) {

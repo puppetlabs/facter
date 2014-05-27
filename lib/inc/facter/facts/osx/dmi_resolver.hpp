@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the OSX Desktop Management Information (DMI) fact resolver.
+ */
 #ifndef FACTER_FACTS_OSX_DMI_RESOLVER_HPP_
 #define FACTER_FACTS_OSX_DMI_RESOLVER_HPP_
 

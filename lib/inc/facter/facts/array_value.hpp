@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the fact value for arrays.
+ */
 #ifndef FACTER_FACTS_ARRAY_VALUE_HPP_
 #define FACTER_FACTS_ARRAY_VALUE_HPP_
 
@@ -10,21 +14,35 @@ namespace facter { namespace facts {
 
     /**
      * Represents an array of values.
+     * This type can be moved but cannot be copied.
      */
     struct array_value : value
     {
         /**
          * Constructs an array_value.
          */
-        array_value();
+        array_value() = default;
 
-        // Force non-copyable
+        /**
+         * Prevents the array_value from being copied.
+         */
         array_value(array_value const&) = delete;
+        /**
+         * Prevents the array_value from being copied.
+         * @returns Returns this array_value.
+         */
         array_value& operator=(array_value const&) = delete;
-
-        // Allow movable
-        array_value(array_value&&) = default;
-        array_value& operator=(array_value&&) = default;
+        /**
+         * Moves the given array_value into this array_value.
+         * @param other The array_value to move into this array_value.
+         */
+        array_value(array_value&& other) = default;
+        /**
+         * Moves the given array_value into this array_value.
+         * @param other The array_value to move into this array_value.
+         * @return Returns this array_value.
+         */
+        array_value& operator=(array_value&& other) = default;
 
         /**
          * Adds a value to the array.
@@ -80,10 +98,7 @@ namespace facter { namespace facts {
          * @param i The index in the array to get the element at.
          * @return Returns the value at the given index.
          */
-        value const* operator[](size_t i) const
-        {
-            return _elements.at(i).get();
-        }
+        value const* operator[](size_t i) const;
 
      protected:
         /**

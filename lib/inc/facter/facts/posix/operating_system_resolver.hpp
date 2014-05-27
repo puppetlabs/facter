@@ -1,8 +1,11 @@
+/**
+ * @file
+ * Declares the POSIX operating system fact resolver.
+ */
 #ifndef FACTER_FACTS_POSIX_OPERATING_SYSTEM_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_OPERATING_SYSTEM_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
-#include "../fact.hpp"
 
 namespace facter { namespace facts { namespace posix {
 
@@ -14,24 +17,14 @@ namespace facter { namespace facts { namespace posix {
         /**
          * Constructs the operating_system_resolver.
          */
-        operating_system_resolver() :
-            fact_resolver(
-            "operating system",
-            {
-                fact::operating_system,
-                fact::os_family,
-                fact::operating_system_release,
-                fact::operating_system_major_release
-            })
-        {
-        }
+        operating_system_resolver();
 
      protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact map that is resolving facts.
          */
-        void resolve_facts(fact_map& facts);
+        virtual void resolve_facts(fact_map& facts);
         /**
          * Called to resolve the operating system fact.
          * @param facts The fact map that is resolving facts.

@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the OSX processor fact resolver.
+ */
 #ifndef FACTER_FACTS_OSX_PROCESSOR_RESOLVER_HPP_
 #define FACTER_FACTS_OSX_PROCESSOR_RESOLVER_HPP_
 

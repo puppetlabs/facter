@@ -67,6 +67,16 @@ function travis_make()
             exit 1
         fi
         popd
+    else
+        # Verify documentation
+        pushd ../lib
+        doxygen
+        if [[ -s html/warnings.txt ]]; then
+            cat html/warnings.txt
+            echo "documentation failed."
+            exit 1
+        fi
+        popd
     fi
 }
 

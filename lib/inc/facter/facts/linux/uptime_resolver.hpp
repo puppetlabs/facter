@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the Linux uptime fact resolver.
+ */
 #ifndef FACTER_FACTS_LINUX_UPTIME_RESOLVER_HPP_
 #define FACTER_FACTS_LINUX_UPTIME_RESOLVER_HPP_
 

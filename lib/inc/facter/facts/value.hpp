@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the base fact value type.
+ */
 #ifndef FACTER_FACTS_VALUE_HPP_
 #define FACTER_FACTS_VALUE_HPP_
 
@@ -24,6 +28,9 @@ namespace rapidjson {
 }
 
 extern "C" {
+    /**
+     * Simple structure to store enumeration callbacks.
+     */
     typedef struct _enumeration_callbacks enumeration_callbacks;
 }
 
@@ -31,26 +38,40 @@ namespace facter { namespace facts {
 
     /**
      * Base class for values.
+     * This type can be moved but cannot be copied.
      */
     struct value
     {
         /**
          * Constructs a value.
          */
-        value() {}
+        value() = default;
 
         /**
          * Destructs a value.
          */
-        virtual ~value() {}
+        virtual ~value() = default;
 
-        // Force non-copyable
+        /**
+         * Prevents the value from being copied.
+         */
         value(value const&) = delete;
+        /**
+         * Prevents the value from being copied.
+         * @returns Returns this value.
+         */
         value& operator=(value const&) = delete;
-
-        // Allow movable
-        value(value&&) = default;
-        value& operator=(value&&) = default;
+        /**
+         * Moves the given value into this value.
+         * @param other The value to move into this value.
+         */
+        value(value&& other) = default;
+        /**
+         * Moves the given value into this value.
+         * @param other The value to move into this value.
+         * @return Returns this value.
+         */
+        value& operator=(value&& other) = default;
 
         /**
          * Converts the value to a JSON value.

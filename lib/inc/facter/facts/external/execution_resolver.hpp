@@ -1,9 +1,13 @@
-#ifndef FACTER_FACTS_EXTERNAL_POSIX_EXECUTION_RESOLVER_HPP_
-#define FACTER_FACTS_EXTERNAL_POSIX_EXECUTION_RESOLVER_HPP_
+/**
+ * @file
+ * Declares the execution external fact resolver.
+ */
+#ifndef FACTER_FACTS_EXTERNAL_EXECUTION_RESOLVER_HPP_
+#define FACTER_FACTS_EXTERNAL_EXECUTION_RESOLVER_HPP_
 
-#include "../resolver.hpp"
+#include "resolver.hpp"
 
-namespace facter { namespace facts { namespace external { namespace posix {
+namespace facter { namespace facts { namespace external {
 
     /**
      * Responsible for resolving facts from executable files.
@@ -19,6 +23,6 @@ namespace facter { namespace facts { namespace external { namespace posix {
         virtual bool resolve(std::string const& path, fact_map& facts) const;
     };
 
-}}}}  // namespace facter::facts::external::posix
+}}}  // namespace facter::facts::external
 
-#endif  // FACTER_FACTS_EXTERNAL_POSIX_EXECUTION_RESOLVER_HPP_
+#endif  // FACTER_FACTS_EXTERNAL_EXECUTION_RESOLVER_HPP_

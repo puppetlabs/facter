@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the scoped file resource for managing FILE pointers.
+ */
 #ifndef FACTER_UTIL_SCOPED_FILE_HPP_
 #define FACTER_UTIL_SCOPED_FILE_HPP_
 
@@ -18,27 +22,16 @@ namespace facter { namespace util {
          * @param path The path to the file.
          * @param mode The open mode.
          */
-        explicit scoped_file(std::string const& path, std::string const& mode) :
-            scoped_resource(std::fopen(path.c_str(), mode.c_str()), close)
-        {
-        }
+        explicit scoped_file(std::string const& path, std::string const& mode);
 
         /**
          * Constructs a scoped_file.
          * @param file The existing file pointer.
          */
-        explicit scoped_file(std::FILE* file) :
-            scoped_resource(std::move(file), close)
-        {
-        }
+        explicit scoped_file(std::FILE* file);
 
      private:
-        static void close(std::FILE* file)
-        {
-            if (file) {
-                fclose(file);
-            }
-        }
+        static void close(std::FILE* file);
     };
 
 }}  // namespace facter::util

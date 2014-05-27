@@ -1,6 +1,7 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #include <facter/facts/posix/ssh_resolver.hpp>
 #include <facter/facts/fact_map.hpp>
+#include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/string.hpp>
@@ -24,6 +25,22 @@ namespace bs = boost::system;
 LOG_DECLARE_NAMESPACE("facts.posix.ssh");
 
 namespace facter { namespace facts { namespace posix {
+
+    ssh_resolver::ssh_resolver() :
+        fact_resolver(
+            "ssh",
+            {
+                fact::ssh_dsa_key,
+                fact::ssh_rsa_key,
+                fact::ssh_ecdsa_key,
+                fact::ssh_ed25519_key,
+                fact::sshfp_dsa,
+                fact::sshfp_rsa,
+                fact::sshfp_ecdsa,
+                fact::sshfp_ed25519,
+            })
+    {
+    }
 
     void ssh_resolver::resolve_facts(fact_map& facts)
     {

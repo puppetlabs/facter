@@ -1,8 +1,11 @@
+/**
+ * @file
+ * Declares the POSIX Desktop Management Information (DMI) fact resolver.
+ */
 #ifndef FACTER_FACTS_POSIX_DMI_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_DMI_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
-#include "../fact.hpp"
 
 namespace facter { namespace facts { namespace posix {
 
@@ -14,24 +17,7 @@ namespace facter { namespace facts { namespace posix {
         /**
          * Constructs the dmi_resolver.
          */
-        dmi_resolver() :
-            fact_resolver(
-            "desktop management information",
-            {
-                fact::bios_vendor,
-                fact::bios_version,
-                fact::bios_release_date,
-                fact::board_manufacturer,
-                fact::board_product_name,
-                fact::board_serial_number,
-                fact::manufacturer,
-                fact::product_name,
-                fact::serial_number,
-                fact::product_uuid,
-                fact::chassis_type,
-            })
-        {
-        }
+        dmi_resolver();
 
      protected:
         /**

@@ -1,5 +1,6 @@
-#include <facter/facts/fact_map.hpp>
 #include <facter/facts/linux/lsb_resolver.hpp>
+#include <facter/facts/fact_map.hpp>
+#include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
@@ -10,6 +11,21 @@ using namespace facter::util;
 using namespace facter::execution;
 
 namespace facter { namespace facts { namespace linux {
+
+    lsb_resolver::lsb_resolver() :
+        fact_resolver(
+            "Linux Standard Base",
+            {
+                fact::lsb_dist_id,
+                fact::lsb_dist_release,
+                fact::lsb_dist_codename,
+                fact::lsb_dist_description,
+                fact::lsb_dist_major_release,
+                fact::lsb_dist_minor_release,
+                fact::lsb_release,
+            })
+    {
+    }
 
     void lsb_resolver::resolve_facts(fact_map& facts)
     {

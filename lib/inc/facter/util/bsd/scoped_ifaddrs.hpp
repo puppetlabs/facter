@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the scoped ifaddrs resource.
+ */
 #ifndef FACTER_UTIL_BSD_SCOPED_IFADDRS_HPP_
 #define FACTER_UTIL_BSD_SCOPED_IFADDRS_HPP_
 
@@ -15,31 +19,16 @@ namespace facter { namespace util { namespace bsd {
          * Default constructor.
          * This constructor will handle calling getifaddrs.
          */
-        scoped_ifaddrs() :
-            scoped_resource(nullptr, free)
-        {
-            // Get the linked list of interfaces
-            if (getifaddrs(&_resource) != 0) {
-                _resource = nullptr;
-            }
-        }
+        scoped_ifaddrs();
 
         /**
          * Constructs a scoped_descriptor.
-         * @param descriptor The file descriptor to close when destroyed.
+         * @param addrs The ifaddrs pointer to free when destroyed
          */
-        explicit scoped_ifaddrs(ifaddrs* addrs) :
-            scoped_resource(std::move(addrs), free)
-        {
-        }
+        explicit scoped_ifaddrs(ifaddrs* addrs);
 
      private:
-        static void free(ifaddrs* addrs)
-        {
-            if (addrs) {
-                ::freeifaddrs(addrs);
-            }
-        }
+        static void free(ifaddrs* addrs);
     };
 
 }}}  // namespace facter::util::bsd

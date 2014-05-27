@@ -1,5 +1,6 @@
 #include <facter/facts/bsd/networking_resolver.hpp>
 #include <facter/facts/fact_map.hpp>
+#include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/string.hpp>
 #include <facter/util/bsd/scoped_ifaddrs.hpp>

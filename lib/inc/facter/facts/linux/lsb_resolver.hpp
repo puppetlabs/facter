@@ -1,8 +1,11 @@
+/**
+ * @file
+ * Declares the Linux Standard Base (LSB) fact resolver.
+ */
 #ifndef FACTER_FACTS_LINUX_LSB_RESOLVER_HPP_
 #define FACTER_FACTS_LINUX_LSB_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
-#include "../fact.hpp"
 
 namespace facter { namespace facts { namespace linux {
 
@@ -14,20 +17,7 @@ namespace facter { namespace facts { namespace linux {
         /**
          * Constructs the lsb_resolver.
          */
-        lsb_resolver() :
-            fact_resolver(
-            "Linux Standard Base",
-            {
-                fact::lsb_dist_id,
-                fact::lsb_dist_release,
-                fact::lsb_dist_codename,
-                fact::lsb_dist_description,
-                fact::lsb_dist_major_release,
-                fact::lsb_dist_minor_release,
-                fact::lsb_release,
-            })
-        {
-        }
+        lsb_resolver();
 
      protected:
         /**

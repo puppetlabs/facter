@@ -1,7 +1,7 @@
 #include <facter/facts/external/json_resolver.hpp>
 #include <facter/facts/external/text_resolver.hpp>
 #include <facter/facts/external/yaml_resolver.hpp>
-#include <facter/facts/external/posix/execution_resolver.hpp>
+#include <facter/facts/external/execution_resolver.hpp>
 #include <vector>
 #include <string>
 #include <cstdlib>
@@ -12,7 +12,6 @@
 using namespace std;
 using namespace boost::filesystem;
 using namespace facter::facts::external;
-using namespace facter::facts::external::posix;
 
 namespace facter { namespace facts {
 

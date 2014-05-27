@@ -1,8 +1,12 @@
+/**
+ * @file
+ * Declares the POSIX uptime fact resolver.
+ */
 #ifndef FACTER_FACTS_POSIX_UPTIME_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_UPTIME_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
-#include "../fact.hpp"
+#include <string>
 
 namespace facter { namespace facts { namespace posix {
 
@@ -14,17 +18,7 @@ namespace facter { namespace facts { namespace posix {
         /**
          * Constructs the uptime_resolver.
          */
-        uptime_resolver() :
-            fact_resolver(
-            "uptime",
-            {
-                fact::uptime,
-                fact::uptime_days,
-                fact::uptime_hours,
-                fact::uptime_seconds
-            })
-        {
-        }
+        uptime_resolver();
 
         /**
          * Utility function to convert the output of the uptime executable

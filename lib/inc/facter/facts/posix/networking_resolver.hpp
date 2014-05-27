@@ -1,8 +1,12 @@
+/**
+ * @file
+ * Declares the POSIX networking fact resolver.
+ */
 #ifndef FACTER_FACTS_POSIX_NETWORKING_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_NETWORKING_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
-#include "../fact.hpp"
+#include <string>
 #include <sys/socket.h>
 
 namespace facter { namespace facts { namespace posix {
@@ -15,34 +19,7 @@ namespace facter { namespace facts { namespace posix {
         /**
          * Constructs the networking_resolver.
          */
-        explicit networking_resolver() :
-            fact_resolver(
-            "networking",
-            {
-                fact::hostname,
-                fact::ipaddress,
-                fact::ipaddress6,
-                fact::netmask,
-                fact::netmask6,
-                fact::network,
-                fact::network6,
-                fact::macaddress,
-                fact::interfaces,
-                fact::domain,
-                fact::fqdn,
-            },
-            {
-                std::string("^") + fact::ipaddress + "_",
-                std::string("^") + fact::ipaddress6 + "_",
-                std::string("^") + fact::mtu + "_",
-                std::string("^") + fact::netmask + "_",
-                std::string("^") + fact::netmask6 + "_",
-                std::string("^") + fact::network + "_",
-                std::string("^") + fact::network6 + "_",
-                std::string("^") + fact::macaddress + "_",
-            })
-        {
-        }
+        networking_resolver();
 
         /**
          * Utility function to convert a socket address to a IPv4 or IPv6 string representation.
@@ -55,6 +32,7 @@ namespace facter { namespace facts { namespace posix {
         /**
          * Utility function to convert the bytes of a MAC address to a string.
          * @param bytes The bytes of the MAC address; expected to be 6 bytes long.
+         * @returns Returns the MAC address as a string or an empty string if the address is the "NULL" MAC address.
          */
         static std::string macaddress_to_string(uint8_t const* bytes);
 
@@ -85,7 +63,7 @@ namespace facter { namespace facts { namespace posix {
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact map that is resolving facts.
          */
-        void resolve_facts(fact_map& facts);
+        virtual void resolve_facts(fact_map& facts);
         /**
          * Called to resolve the hostname fact.
          * @param facts The fact map that is resolving facts.

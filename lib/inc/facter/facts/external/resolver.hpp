@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the base external fact resolver.
+ */
 #ifndef FACTER_FACTS_EXTERNAL_RESOLVER_HPP_
 #define FACTER_FACTS_EXTERNAL_RESOLVER_HPP_
 
@@ -19,7 +23,7 @@ namespace facter { namespace facts { namespace external {
          * Constructs a external_fact_exception.
          * @param message The exception message.
          */
-        explicit external_fact_exception(std::string const& message) : std::runtime_error(message) {}
+        explicit external_fact_exception(std::string const& message);
     };
 
     /**

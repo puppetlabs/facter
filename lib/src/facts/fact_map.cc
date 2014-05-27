@@ -44,6 +44,11 @@ namespace facter { namespace facts {
      */
     extern vector<unique_ptr<external::resolver>> get_external_resolvers();
 
+    resolver_exists_exception::resolver_exists_exception(string const& message) :
+        runtime_error(message)
+    {
+    }
+
     fact_map::fact_map()
     {
         populate_common_facts(*this);
@@ -52,6 +57,7 @@ namespace facter { namespace facts {
 
     fact_map::~fact_map()
     {
+        // This needs to be defined here since we use incomplete types in the header
     }
 
     void fact_map::add(shared_ptr<fact_resolver> const& resolver)
@@ -278,6 +284,11 @@ namespace facter { namespace facts {
                 it = _facts.erase(it);
             }
         }
+    }
+
+    value const* fact_map::operator[](string const& name)
+    {
+        return get_value(name, true);
     }
 
     void fact_map::each(function<bool(string const&, value const*)> func) const

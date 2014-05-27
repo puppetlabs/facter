@@ -1,4 +1,5 @@
 #include <facter/facts/posix/networking_resolver.hpp>
+#include <facter/facts/fact.hpp>
 #include <facter/facts/fact_map.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
@@ -23,6 +24,35 @@ using boost::format;
 LOG_DECLARE_NAMESPACE("facts.posix.networking");
 
 namespace facter { namespace facts { namespace posix {
+
+    networking_resolver::networking_resolver() :
+        fact_resolver(
+        "networking",
+            {
+                fact::hostname,
+                fact::ipaddress,
+                fact::ipaddress6,
+                fact::netmask,
+                fact::netmask6,
+                fact::network,
+                fact::network6,
+                fact::macaddress,
+                fact::interfaces,
+                fact::domain,
+                fact::fqdn,
+            },
+            {
+                string("^") + fact::ipaddress + "_",
+                string("^") + fact::ipaddress6 + "_",
+                string("^") + fact::mtu + "_",
+                string("^") + fact::netmask + "_",
+                string("^") + fact::netmask6 + "_",
+                string("^") + fact::network + "_",
+                string("^") + fact::network6 + "_",
+                string("^") + fact::macaddress + "_",
+            })
+    {
+    }
 
     void networking_resolver::resolve_facts(fact_map& facts)
     {

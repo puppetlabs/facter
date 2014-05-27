@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the C interface to the facter library.
+ */
 #ifndef FACTER_FACTERLIB_H_
 #define FACTER_FACTERLIB_H_
 
@@ -86,6 +90,7 @@ extern "C" {
 
     ///
     /// Gets the value of a single fact.
+    /// @param name The fact name to get the value of.
     /// @param callbacks The callback functions to use.
     /// @return Returns true if the fact exists or false if the fact does not.
     ///
