@@ -14,9 +14,9 @@ module Facter::Util::DHCPServers
   def self.device_dhcp_server(device)
     if Facter::Core::Execution.which('nmcli')
       if self.nmcli_version and self.nmcli_version >= 990
-        Facter::Core::Execution.exec("nmcli d show #{device}").scan(/dhcp_server_identifier.*?(\d+\.\d+\.\d+\.\d+)$/).flatten.first
+        Facter::Core::Execution.exec("nmcli -f all d show #{device}").scan(/dhcp_server_identifier.*?(\d+\.\d+\.\d+\.\d+)$/).flatten.first
       else
-        Facter::Core::Execution.exec("nmcli d list iface #{device}").scan(/dhcp_server_identifier.*?(\d+\.\d+\.\d+\.\d+)$/).flatten.first
+        Facter::Core::Execution.exec("nmcli -f all d list iface #{device}").scan(/dhcp_server_identifier.*?(\d+\.\d+\.\d+\.\d+)$/).flatten.first
       end
     end
   end
