@@ -41,6 +41,13 @@ if (NOT YAMLCPP_FOUND)
     message(FATAL_ERROR "yaml-cpp is required.  Please install it before building.")
 endif()
 
+# Set RPATH if not installing to a system library directory
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" INSTALL_IS_SYSTEM_DIR)
+if ("${INSTALL_IS_SYSTEM_DIR}" STREQUAL "-1")
+    set(CMAKE_MACOSX_RPATH 1)
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+endif()
+
 # Include vendor libraries
 include(${VENDOR_DIRECTORY}/rapidjson.cmake)
 include(${VENDOR_DIRECTORY}/gmock.cmake)
