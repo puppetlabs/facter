@@ -27,7 +27,7 @@ namespace facter { namespace facts { namespace posix {
 
     networking_resolver::networking_resolver() :
         fact_resolver(
-        "networking",
+            "networking",
             {
                 fact::hostname,
                 fact::ipaddress,
@@ -40,6 +40,7 @@ namespace facter { namespace facts { namespace posix {
                 fact::interfaces,
                 fact::domain,
                 fact::fqdn,
+                fact::dhcp_servers,
             },
             {
                 string("^") + fact::ipaddress + "_",

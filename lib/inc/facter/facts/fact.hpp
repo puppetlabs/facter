@@ -123,6 +123,10 @@ namespace facter { namespace facts {
          * The fact for fully-qualified domain name (FQDN).
          */
         constexpr static char const* fqdn = "fqdn";
+        /**
+         * The fact for DHCP servers.
+         */
+        constexpr static char const* dhcp_servers = "dhcp_servers";
 
         /**
          * The fact for block device.

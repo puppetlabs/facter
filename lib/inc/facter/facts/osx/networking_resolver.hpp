@@ -42,6 +42,26 @@ namespace facter { namespace facts { namespace osx {
          * @param facts The fact map that is resolving facts.
          */
         virtual void resolve_hostname(fact_map& facts);
+
+        /**
+         * Gets the primary interface.
+         * This is typically the interface of the default route.
+         * @return Returns the primary interface or empty string if one could not be determined.
+         */
+        virtual std::string get_primary_interface();
+
+        /**
+         * Finds known DHCP servers for all interfaces.
+         * @return Returns a map between interface name and DHCP server.
+         */
+        virtual std::map<std::string, std::string> find_dhcp_servers();
+
+        /**
+         * Finds the DHCP server for the given interface.
+         * @param interface The interface to find the DHCP server for.
+         * @returns Returns the DHCP server for the interface or empty string if one isn't found.
+         */
+        virtual std::string find_dhcp_server(std::string const& interface);
     };
 
 }}}  // namespace facter::facts::osx

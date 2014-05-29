@@ -41,6 +41,13 @@ namespace facter { namespace facts { namespace linux {
          * @return Returns The MTU of the interface or -1 if there's no MTU.
          */
         virtual int get_link_mtu(std::string const& interface, void* data) const;
+
+        /**
+         * Gets the primary interface.
+         * This is typically the interface of the default route.
+         * @return Returns the primary interface or empty string if one could not be determined.
+         */
+        virtual std::string get_primary_interface();
     };
 
 }}}  // namespace facter::facts::linux

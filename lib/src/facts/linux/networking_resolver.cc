@@ -2,6 +2,8 @@
 #include <facter/facts/fact_map.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/posix/scoped_descriptor.hpp>
+#include <facter/util/file.hpp>
+#include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
 #include <cstring>
 #include <netpacket/packet.h>
@@ -9,6 +11,7 @@
 #include <sys/ioctl.h>
 
 using namespace std;
+using namespace facter::util;
 using namespace facter::util::posix;
 
 LOG_DECLARE_NAMESPACE("facts.linux.networking");
@@ -41,12 +44,33 @@ namespace facter { namespace facts { namespace linux {
         strncpy(req.ifr_name, interface.c_str(), sizeof(req.ifr_name));
 
         scoped_descriptor sock(socket(AF_INET, SOCK_DGRAM, 0));
+        if (static_cast<int>(sock) < 0) {
+            LOG_WARNING("socket failed: %1% (%2%): interface MTU fact is unavailable for interface %3%.", strerror(errno), errno, interface);
+            return -1;
+        }
 
         if (ioctl(sock, SIOCGIFMTU, &req) != 0) {
             LOG_WARNING("ioctl failed: %1% (%2%): interface MTU fact is unavailable for interface %3%.", strerror(errno), errno, interface);
             return -1;
         }
         return req.ifr_mtu;
+    }
+
+    string networking_resolver::get_primary_interface()
+    {
+        // Read /proc/net/route to determine the primary interface
+        // We consider the primary interface to be the one that has 0.0.0.0 as the
+        // routing destination.
+        string interface;
+        file::each_line("/proc/net/route", [&interface](string& line) {
+            auto parts = tokenize(line);
+            if (parts.size() > 2 && parts[1] == "00000000") {
+                interface = move(parts[0]);
+                return false;
+            }
+            return true;
+        });
+        return interface;
     }
 
 }}}  // namespace facter::facts::linux
