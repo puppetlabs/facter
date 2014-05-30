@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the base class for fact resolvers.
+ */
 #ifndef FACTER_FACTS_FACT_RESOLVER_HPP_
 #define FACTER_FACTS_FACT_RESOLVER_HPP_
 
@@ -22,7 +26,7 @@ namespace facter { namespace facts {
          * Constructs a circular_resolution_exception.
          * @param message The exception message.
          */
-        explicit circular_resolution_exception(std::string const& message) : std::runtime_error(message) {}
+        explicit circular_resolution_exception(std::string const& message);
     };
 
     /**
@@ -34,27 +38,7 @@ namespace facter { namespace facts {
          * Constructs a invalid_name_pattern_exception.
          * @param message The exception message.
          */
-        explicit invalid_name_pattern_exception(std::string const& message) : std::runtime_error(message) {}
-    };
-
-    /**
-     * Utility type for managing resolution cycles.
-     */
-    struct cycle_guard
-    {
-        explicit cycle_guard(bool& value) :
-            _value(value)
-        {
-            _value = true;
-        }
-
-        ~cycle_guard()
-        {
-            _value = false;
-        }
-
-     private:
-        bool& _value;
+        explicit invalid_name_pattern_exception(std::string const& message);
     };
 
     struct fact_map;
@@ -62,6 +46,7 @@ namespace facter { namespace facts {
     /**
      * Base class for fact resolvers.
      * A fact resolver is responsible for resolving one or more facts.
+     * This type can be moved but cannot be copied.
      */
     struct fact_resolver
     {
@@ -78,25 +63,38 @@ namespace facter { namespace facts {
          */
         virtual ~fact_resolver();
 
-        // Force non-copyable
+        /**
+         * Prevents the fact_resolver from being copied.
+         */
         fact_resolver(fact_resolver const&) = delete;
+        /**
+         * Prevents the fact_resolver from being copied.
+         * @returns Returns this fact_resolver.
+         */
         fact_resolver& operator=(fact_resolver const&) = delete;
-
-        // Allow movable
-        fact_resolver(fact_resolver&&) = default;
-        fact_resolver& operator=(fact_resolver&&) = default;
+        /**
+         * Moves the given fact_resolver into this fact_resolver.
+         * @param other The fact_resolver to move into this fact_resolver.
+         */
+        fact_resolver(fact_resolver&& other) = default;
+        /**
+         * Moves the given fact_resolver into this fact_resolver.
+         * @param other The fact_resolver to move into this fact_resolver.
+         * @return Returns this fact_resolver.
+         */
+        fact_resolver& operator=(fact_resolver&& other) = default;
 
         /**
          * Gets the name of the fact resolver.
          * @return Returns the fact resolver's name.
          */
-        std::string const& name() const { return _name; }
+        std::string const& name() const;
 
         /**
          * Gets the fact names the resolver is responsible for resolving.
          * @return Returns a vector of fact names.
          */
-        std::vector<std::string> const& names() const { return _names; }
+        std::vector<std::string> const& names() const;
 
         /**
          * Called to resolve all facts the resolver is responsible for.

@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares utility type for passing a set of options.
+ */
 #ifndef FACTER_UTIL_OPTION_SET_HPP_
 #define FACTER_UTIL_OPTION_SET_HPP_
 

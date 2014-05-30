@@ -1,5 +1,6 @@
 #include <facter/facts/posix/kernel_resolver.hpp>
 #include <facter/facts/fact_map.hpp>
+#include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
@@ -11,6 +12,18 @@ using namespace facter::util;
 LOG_DECLARE_NAMESPACE("facts.posix.kernel");
 
 namespace facter { namespace facts { namespace posix {
+
+    kernel_resolver::kernel_resolver() :
+        fact_resolver(
+            "kernel",
+            {
+                fact::kernel,
+                fact::kernel_version,
+                fact::kernel_release,
+                fact::kernel_major_version
+            })
+    {
+    }
 
     void kernel_resolver::resolve_facts(fact_map& facts)
     {

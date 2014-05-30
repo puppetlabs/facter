@@ -110,7 +110,7 @@ This would install cfacter into `~/bin`, `~/lib`, and `~/include`.
 To install the gem (assumes gem is already built):
 
     $ cd gem
-    $ gem install pkg/*.gem
+    $ gem install pkg/cfacter*.gem
 
 Uninstall
 ---------
@@ -123,6 +123,17 @@ To uninstall the gem:
 
     $ gem uninstall cfacter
 
+Documentation
+-------------
+
+To generate API documentation, install doxygen 1.8.7 or later.
+
+    $ cd lib
+    $ doxygen
+
+To view the documentation, open `lib/html/index.html` in a web browser.
+
+
 Using The C++11 API
 -------------------
 
@@ -130,20 +141,18 @@ This section assumes that cfacter has been installed into the system.
 
 Here's a simple example of using the C++11 API to output all facts.
 
-```C++
-#include <facter/facts/fact_map.hpp>
-#include <iostream>
+    #include <facter/facts/fact_map.hpp>
+    #include <iostream>
 
-using namespace std;
-using namespace facter::facts;
+    using namespace std;
+    using namespace facter::facts;
 
-int main() {
-    fact_map facts;
-    facts.resolve();
-    facts.resolve_external();
-    cout << facts << endl;
-}
-```
+    int main() {
+        fact_map facts;
+        facts.resolve();
+        facts.resolve_external();
+        cout << facts << endl;
+    }
 
 To build the above, link with libfacter:
 

@@ -13,10 +13,6 @@ LOG_DECLARE_NAMESPACE("facts.value.array");
 
 namespace facter { namespace facts {
 
-    array_value::array_value()
-    {
-    }
-
     void array_value::add(unique_ptr<value>&& value)
     {
         if (!value) {
@@ -76,6 +72,11 @@ namespace facter { namespace facts {
         if (callbacks->array_end) {
             callbacks->array_end();
         }
+    }
+
+    value const* array_value::operator[](size_t i) const
+    {
+        return _elements.at(i).get();
     }
 
     ostream& array_value::write(ostream& os) const

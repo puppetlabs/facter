@@ -15,6 +15,44 @@ LOG_DECLARE_NAMESPACE("execution.posix");
 
 namespace facter { namespace execution {
 
+    execution_exception::execution_exception(string const& message) :
+        runtime_error(message)
+    {
+    }
+
+    execution_failure_exception::execution_failure_exception(string const& output, string const& message) :
+        execution_exception(message),
+        _output(output)
+    {
+    }
+
+    string const& execution_failure_exception::output() const
+    {
+        return _output;
+    }
+
+    child_exit_exception::child_exit_exception(int status_code, string const& output, string const& message) :
+        execution_failure_exception(output, message),
+        _status_code(status_code)
+    {
+    }
+
+    int child_exit_exception::status_code() const
+    {
+        return _status_code;
+    }
+
+    child_signal_exception::child_signal_exception(int signal, string const& output, string const& message) :
+        execution_failure_exception(output, message),
+        _signal(signal)
+    {
+    }
+
+    int child_signal_exception::signal() const
+    {
+        return _signal;
+    }
+
     void log_execution(string const& file, vector<string> const* arguments)
     {
         if (!LOG_IS_DEBUG_ENABLED()) {

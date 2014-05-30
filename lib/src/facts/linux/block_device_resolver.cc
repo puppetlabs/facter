@@ -1,5 +1,6 @@
 #include <facter/facts/linux/block_device_resolver.hpp>
 #include <facter/facts/fact_map.hpp>
+#include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/file.hpp>
@@ -17,6 +18,18 @@ namespace bs = boost::system;
 LOG_DECLARE_NAMESPACE("facts.linux.blockdevices");
 
 namespace facter { namespace facts { namespace linux {
+
+    block_device_resolver::block_device_resolver() :
+        fact_resolver(
+            "block device",
+            {
+                fact::block_devices,
+            },
+            {
+                string("^") + fact::block_device + "_",
+            })
+    {
+    }
 
     void block_device_resolver::resolve_facts(fact_map& facts)
     {

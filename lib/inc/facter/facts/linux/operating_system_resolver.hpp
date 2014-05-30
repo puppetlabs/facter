@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the Linux operating system fact resolver.
+ */
 #ifndef FACTER_FACTS_LINUX_OPERATING_SYSTEM_RESOLVER_HPP_
 #define FACTER_FACTS_LINUX_OPERATING_SYSTEM_RESOLVER_HPP_
 

@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares utility functions for reading data from files.
+ */
 #ifndef FACTER_UTIL_FILE_HPP_
 #define FACTER_UTIL_FILE_HPP_
 

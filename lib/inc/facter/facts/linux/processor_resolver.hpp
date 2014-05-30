@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the Linux processor fact resolver.
+ */
 #ifndef FACTER_FACTS_LINUX_PROCESSOR_RESOLVER_HPP_
 #define FACTER_FACTS_LINUX_PROCESSOR_RESOLVER_HPP_
 

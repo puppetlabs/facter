@@ -2,6 +2,7 @@
 #include <facter/logging/logging.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/fact_map.hpp>
+#include <facter/facts/fact.hpp>
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <cstring>

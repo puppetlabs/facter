@@ -17,6 +17,9 @@ before_install:
   # grab a pre-built cmake 2.8.12 from s3
   - wget https://s3.amazonaws.com/kylo_sandbox/cmake_install.tar.bz2
   - tar xjvf cmake_install.tar.bz2 --strip 1 -C $HOME
+  # Install doxygen
+  - wget https://github.com/doxygen/doxygen/archive/Release_1_8_7.tar.gz -O $HOME/doxygen-1.8.7.tgz
+  - pushd $HOME && tar xzf doxygen-1.8.7.tgz && cd $HOME/doxygen-Release_1_8_7 && ./configure > /dev/null && make > /dev/null && sudo make install > /dev/null && popd
   # Install dependencies of cfacter
   - sudo apt-get -y install libboost-filesystem1.48-dev libboost-program-options1.48-dev liblog4cxx10-dev
   - wget https://re2.googlecode.com/files/re2-20140304.tgz -O $HOME/re2-20140304.tgz

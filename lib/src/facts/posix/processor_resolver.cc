@@ -1,5 +1,6 @@
 #include <facter/facts/posix/processor_resolver.hpp>
 #include <facter/facts/fact_map.hpp>
+#include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
@@ -12,6 +13,21 @@ using namespace facter::execution;
 LOG_DECLARE_NAMESPACE("facts.posix.processor");
 
 namespace facter { namespace facts { namespace posix {
+
+    processor_resolver::processor_resolver() :
+        fact_resolver(
+            "processor",
+            {
+                fact::processor_count,
+                fact::physical_processor_count,
+                fact::hardware_isa,
+                fact::hardware_model,
+            },
+            {
+                string("^") + fact::processor + "[0-9]+$",
+            })
+    {
+    }
 
     void processor_resolver::resolve_facts(fact_map& facts)
     {

@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the fact value for maps (associative array).
+ */
 #ifndef FACTER_FACTS_MAP_VALUE_HPP_
 #define FACTER_FACTS_MAP_VALUE_HPP_
 
@@ -11,21 +15,35 @@ namespace facter { namespace facts {
 
     /**
      * Represents a fact value that maps fact names to values.
+     * This type can be moved but cannot be copied.
      */
     struct map_value : value
     {
         /**
          * Constructs a map value.
          */
-        map_value();
+        map_value() = default;
 
-        // Force non-copyable
+        /**
+         * Prevents the map_value from being copied.
+         */
         map_value(map_value const&) = delete;
+        /**
+         * Prevents the map_value from being copied.
+         * @returns Returns this map_value.
+         */
         map_value& operator=(map_value const&) = delete;
-
-        // Allow movable
-        map_value(map_value&&) = default;
-        map_value& operator=(map_value&&) = default;
+        /**
+         * Moves the given map_value into this map_value.
+         * @param other The map_value to move into this map_value.
+         */
+        map_value(map_value&& other) = default;
+        /**
+         * Moves the given map_value into this map_value.
+         * @param other The map_value to move into this map_value.
+         * @return Returns this map_value.
+         */
+        map_value& operator=(map_value&& other) = default;
 
         /**
          * Adds a value to the map.

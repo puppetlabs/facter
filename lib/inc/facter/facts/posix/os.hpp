@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the POSIX operating system constants.
+ */
 #ifndef FACTER_FACTS_POSIX_OS_HPP_
 #define FACTER_FACTS_POSIX_OS_HPP_
 
@@ -8,45 +12,165 @@ namespace facter { namespace facts { namespace posix {
      */
     struct os
     {
+        /**
+         * The RedHat operating system.
+         */
         constexpr static char const* redhat = "RedHat";
+        /**
+         * The Centos operating system.
+         */
         constexpr static char const* centos = "CentOS";
+        /**
+         * The Fedora operating system.
+         */
         constexpr static char const* fedora = "Fedora";
+        /**
+         * The Scientific Linux operating system.
+         */
         constexpr static char const* scientific = "Scientific";
+        /**
+         * The Scientific Linux CERN operating system.
+         */
         constexpr static char const* scientific_cern = "SLC";
+        /**
+         * The Ascendos Linux operating system.
+         */
         constexpr static char const* ascendos = "Ascendos";
+        /**
+         * The Cloud Linux operating system.
+         */
         constexpr static char const* cloud_linux = "CloudLinux";
+        /**
+         * The Parallels Server Bare Metal operating system.
+         */
         constexpr static char const* psbm = "PSBM";
+        /**
+         * The Oracle Linux operating system.
+         */
         constexpr static char const* oracle_linux = "OracleLinux";
+        /**
+         * The Oracle VM Linux operating system.
+         */
         constexpr static char const* oracle_vm_linux = "OVS";
+        /**
+         * The Oracle Enterprise Linux operating system.
+         */
         constexpr static char const* oracle_enterprise_linux = "OEL";
+        /**
+         * The Amazon Linux operating system.
+         */
         constexpr static char const* amazon = "Amazon";
+        /**
+         * The Xen Server Linux operating system.
+         */
         constexpr static char const* xen_server = "XenServer";
+        /**
+         * The Mint Linux operating system.
+         */
         constexpr static char const* linux_mint = "LinuxMint";
+        /**
+         * The Ubuntu Linux operating system.
+         */
         constexpr static char const* ubuntu = "Ubuntu";
+        /**
+         * The Debian Linux operating system.
+         */
         constexpr static char const* debian = "Debian";
+        /**
+         * The SuSE Linux Enterprise Server operating system.
+         */
         constexpr static char const* suse_enterprise_server = "SLES";
+        /**
+         * The SuSE Linux Enterprise Desktop operating system.
+         */
         constexpr static char const* suse_enterprise_desktop = "SLED";
+        /**
+         * The Open SuSE operating system.
+         */
         constexpr static char const* open_suse = "OpenSuSE";
+        /**
+         * The SuSE operating system.
+         */
         constexpr static char const* suse = "SuSE";
+        /**
+         * The Solaris operating system.
+         */
         constexpr static char const* solaris = "Solaris";
+        /**
+         * The Nexenta operating system.
+         */
         constexpr static char const* nexenta = "Nexenta";
+        /**
+         * The Omni operating system.
+         */
         constexpr static char const* omni = "OmniOS";
+        /**
+         * The Open Indiana operating system.
+         */
         constexpr static char const* open_indiana = "OpenIndiana";
+        /**
+         * The SmartOS operating system.
+         */
         constexpr static char const* smart = "SmartOS";
+        /**
+         * The Gentoo Linux operating system.
+         */
         constexpr static char const* gentoo = "Gentoo";
+        /**
+         * The Archlinux operating system.
+         */
         constexpr static char const* archlinux = "Archlinux";
+        /**
+         * The Mandrake Linux operating system.
+         */
         constexpr static char const* mandrake = "Mandrake";
+        /**
+         * The Mandriva Linux operating system.
+         */
         constexpr static char const* mandriva = "Mandriva";
+        /**
+         * The Mageia Linux operating system.
+         */
         constexpr static char const* mageia = "Mageia";
+        /**
+         * The Open WRT operating system.
+         */
         constexpr static char const* openwrt = "OpenWrt";
+        /**
+         * The Meego operating system.
+         */
         constexpr static char const* meego = "MeeGo";
+        /**
+         * The VMWare ESX operating system.
+         */
         constexpr static char const* vmware_esx = "VMWareESX";
+        /**
+         * The Bluewhite Linux operating system.
+         */
         constexpr static char const* bluewhite = "Bluewhite64";
+        /**
+         * The Slackware AMD64 Linux operating system.
+         */
         constexpr static char const* slack_amd64 = "Slamd64";
+        /**
+         * The Slackware Linux operating system.
+         */
         constexpr static char const* slackware = "Slackware";
+        /**
+         * The Alpine Linux operating system.
+         */
         constexpr static char const* alpine = "Alpine";
+        /**
+         * The Cumulus Linux operating system.
+         */
         constexpr static char const* cumulus = "CumulusLinux";
+        /**
+         * The Zen Cloud Platform linux operating system.
+         */
         constexpr static char const* zen_cloud_platform = "XCP";
+        /**
+         * The GNU/kFreeBSD operating system.
+         */
         constexpr static char const* kfreebsd = "GNU/kFreeBSD";
     };
 

@@ -3,11 +3,24 @@
 #include <facter/facts/posix/os_family.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/fact_map.hpp>
+#include <facter/facts/fact.hpp>
 #include <map>
 
 using namespace std;
 
 namespace facter { namespace facts { namespace posix {
+
+    operating_system_resolver::operating_system_resolver() :
+        fact_resolver(
+            "operating system",
+            {
+                fact::operating_system,
+                fact::os_family,
+                fact::operating_system_release,
+                fact::operating_system_major_release
+            })
+    {
+    }
 
     void operating_system_resolver::resolve_facts(fact_map& facts)
     {

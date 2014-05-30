@@ -1,4 +1,4 @@
-#include <facter/facts/external/posix/execution_resolver.hpp>
+#include <facter/facts/external/execution_resolver.hpp>
 #include <facter/facts/fact_map.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
@@ -14,9 +14,9 @@ using namespace facter::facts;
 using namespace facter::facts::external;
 using namespace facter::util;
 
-LOG_DECLARE_NAMESPACE("facts.external.posix.execution");
+LOG_DECLARE_NAMESPACE("facts.external.execution.posix");
 
-namespace facter { namespace facts { namespace external { namespace posix {
+namespace facter { namespace facts { namespace external {
 
     bool execution_resolver::resolve(string const& path, fact_map& facts) const
     {
@@ -49,4 +49,4 @@ namespace facter { namespace facts { namespace external { namespace posix {
         return true;
     }
 
-}}}}  // namespace facter::facts::external::posix
+}}}  // namespace facter::facts::external

@@ -1,9 +1,11 @@
+/**
+ * @file
+ * Declares the POSIX processor fact resolver.
+ */
 #ifndef FACTER_FACTS_POSIX_PROCESSOR_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_PROCESSOR_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
-#include "../fact.hpp"
-#include <string>
 #include <sys/utsname.h>
 
 namespace facter { namespace facts { namespace posix {
@@ -16,20 +18,7 @@ namespace facter { namespace facts { namespace posix {
         /**
          * Constructs the processor_resolver.
          */
-        processor_resolver() :
-            fact_resolver(
-            "processor",
-            {
-                fact::processor_count,
-                fact::physical_processor_count,
-                fact::hardware_isa,
-                fact::hardware_model,
-            },
-            {
-                std::string("^") + fact::processor + "[0-9]+$",
-            })
-        {
-        }
+        processor_resolver();
 
      protected:
         /**

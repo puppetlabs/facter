@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the Linux networking fact resolver.
+ */
 #ifndef FACTER_FACTS_LINUX_NETWORKING_RESOLVER_HPP_
 #define FACTER_FACTS_LINUX_NETWORKING_RESOLVER_HPP_
 

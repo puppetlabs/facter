@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares functions used for executing commands.
+ */
 #ifndef FACTER_EXECUTION_EXECUTION_HPP_
 #define FACTER_EXECUTION_EXECUTION_HPP_
 
@@ -53,7 +57,7 @@ namespace facter { namespace execution {
          * Constructs a execution_exception.
          * @param message The exception message.
          */
-        explicit execution_exception(std::string const& message) : std::runtime_error(message) {}
+        explicit execution_exception(std::string const& message);
     };
 
     /**
@@ -66,17 +70,13 @@ namespace facter { namespace execution {
          * @param output The child process output.
          * @param message The exception message.
          */
-        execution_failure_exception(std::string const& output, std::string const& message) :
-            execution_exception(message),
-            _output(output)
-        {
-        }
+        execution_failure_exception(std::string const& output, std::string const& message);
 
         /**
          * Gets the child process output.
          * @return Returns the child process output.
          */
-        std::string const& output() const { return _output; }
+        std::string const& output() const;
 
      private:
         std::string _output;
@@ -93,17 +93,13 @@ namespace facter { namespace execution {
          * @param output The child process output.
          * @param message The exception message.
          */
-        child_exit_exception(int status_code, std::string const& output, std::string const& message) :
-            execution_failure_exception(output, message),
-            _status_code(status_code)
-        {
-        }
+        child_exit_exception(int status_code, std::string const& output, std::string const& message);
 
         /**
          * Gets the child process exit status code.
          * @return Returns the child process exit status code.
          */
-        int status_code() const { return _status_code; }
+        int status_code() const;
 
      private:
         int _status_code;
@@ -120,17 +116,13 @@ namespace facter { namespace execution {
          * @param output The child process output.
          * @param message The exception message.
          */
-        child_signal_exception(int signal, std::string const& output, std::string const& message) :
-            execution_failure_exception(output, message),
-            _signal(signal)
-        {
-        }
+        child_signal_exception(int signal, std::string const& output, std::string const& message);
 
         /**
          * Gets the signal that terminated the child process.
          * @return Returns the signal that terminated the child process.
          */
-        int signal() const { return _signal; }
+        int signal() const;
 
      private:
         int _signal;

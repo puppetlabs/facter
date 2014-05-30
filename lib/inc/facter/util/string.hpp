@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the utility functions for parsing and manipulating strings.
+ */
 #ifndef FACTER_UTIL_STRING_HPP_
 #define FACTER_UTIL_STRING_HPP_
 
@@ -26,6 +30,10 @@ namespace facter { namespace util {
      */
     bool ends_with(std::string const& str, std::string const& suffix);
 
+    /**
+     * Represents the default set of characters to trim for the string trimming functions.
+     * By default, all whitespace characters are trimmed.
+     */
     extern std::initializer_list<char> default_trim_set;
 
     /**
@@ -145,23 +153,55 @@ namespace facter { namespace util {
      */
     struct ci_char_traits : public std::char_traits<char>
     {
+        /**
+         * Compares two characters for case-insensitive equality.
+         * @param c1 The first character to compare.
+         * @param c2 The second character to compare.
+         * @return Returns true if the two characters are equal or false if they are not equal.
+         */
         static bool eq(char c1, char c2)
         {
             return std::toupper(c1) == std::toupper(c2);
         }
 
+        /**
+         * Compares two characters for case-insensitive inequality.
+         * @param c1 The first character to compare.
+         * @param c2 The second character to compare.
+         * @return Returns true if the two characters are not equal or false if they are equal.
+         */
         static bool ne(char c1, char c2)
         {
             return std::toupper(c1) != std::toupper(c2);
         }
 
+        /**
+         * Compares two characters for case-insensitive "less-than".
+         * @param c1 The first character to compare.
+         * @param c2 The second character to compare.
+         * @return Returns true if the first character is less than the second character or false if not.
+         */
         static bool lt(char c1, char c2)
         {
             return std::toupper(c1) < std::toupper(c2);
         }
 
+        /**
+         * Case-insensitively compares two strings.
+         * @param s1 The first string to compare.
+         * @param s2 The second string to compare.
+         * @param n The number of characters to compare.
+         * @return Returns a negative value if the first string is less than the second string, zero if the two strings are equal, or a positive value if the first string is greater than the second string.
+         */
         static int compare(char const* s1, char const* s2, size_t n);
 
+        /**
+         * Searches for the first occurrence of a specified character in a range of characters.
+         * @param s The string to search.
+         * @param n The number of characters to search.
+         * @param a The character to search for.
+         * @return Returns a pointer to the first occurrence of the specified character in the range if a match is found; otherwise, a null pointer.
+         */
         static char const* find(char const* s, int n, char a)
         {
             while (n-- > 0 && std::toupper(*s) != std::toupper(a)) {

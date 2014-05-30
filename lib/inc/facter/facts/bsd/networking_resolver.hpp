@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the BSD networking fact resolver.
+ */
 #ifndef FACTER_FACTS_BSD_NETWORKING_RESOLVER_HPP_
 #define FACTER_FACTS_BSD_NETWORKING_RESOLVER_HPP_
 

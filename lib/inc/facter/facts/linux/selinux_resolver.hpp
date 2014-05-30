@@ -1,8 +1,11 @@
+/**
+ * @file
+ * Declares the Security-Enhanced Linux fact resolver.
+ */
 #ifndef FACTER_FACTS_LINUX_SELINUX_RESOLVER_HPP_
 #define FACTER_FACTS_LINUX_SELINUX_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
-#include "../fact.hpp"
 
 namespace facter { namespace facts { namespace linux {
 
@@ -14,19 +17,7 @@ namespace facter { namespace facts { namespace linux {
         /**
          * Constructs the selinux resolver.
          */
-        selinux_resolver() :
-            fact_resolver(
-            "selinux",
-            {
-                fact::selinux,
-                fact::selinux_enforced,
-                fact::selinux_policyversion,
-                fact::selinux_current_mode,
-                fact::selinux_config_mode,
-                fact::selinux_config_policy,
-            })
-        {
-        }
+        selinux_resolver();
 
      protected:
         /**
@@ -62,9 +53,11 @@ namespace facter { namespace facts { namespace linux {
         virtual void resolve_selinux_config_facts(fact_map& facts);
 
         /**
-         * Determine where the selinux pseudo filesystem is mounted.
+         * Gets the selinux pseudo file system mount point.
+         * @param selinux_mount Gets the selinux mount point.
+         * @returns Returns true if the selinux file system is mounted or false if it is not.
          */
-        bool selinux_fs_mountpoint(std::string& selinux_mount);
+        bool get_selinux_mountpoint(std::string& selinux_mount);
     };
 
 }}}  // namespace facter::facts::linux

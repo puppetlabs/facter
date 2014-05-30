@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the scoped descriptor resource for managing file/socket descriptors.
+ */
 #ifndef FACTER_UTIL_POSIX_SCOPED_DESCRIPTOR_HPP_
 #define FACTER_UTIL_POSIX_SCOPED_DESCRIPTOR_HPP_
 
@@ -15,18 +19,10 @@ namespace facter { namespace util { namespace posix {
          * Constructs a scoped_descriptor.
          * @param descriptor The file descriptor to close when destroyed.
          */
-        explicit scoped_descriptor(int descriptor) :
-            scoped_resource(std::move(descriptor), close)
-        {
-        }
+        explicit scoped_descriptor(int descriptor);
 
      private:
-        static void close(int descriptor)
-        {
-            if (descriptor >= 0) {
-                ::close(descriptor);
-            }
-        }
+        static void close(int descriptor);
     };
 
 }}}  // namespace facter::util::posix

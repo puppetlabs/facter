@@ -1,8 +1,11 @@
+/**
+ * @file
+ * Declares the Linux block device fact resolver.
+ */
 #ifndef FACTER_FACTS_LINUX_BLOCK_DEVICE_RESOLVER_HPP_
 #define FACTER_FACTS_LINUX_BLOCK_DEVICE_RESOLVER_HPP_
 
 #include "../fact_resolver.hpp"
-#include "../fact.hpp"
 
 namespace facter { namespace facts { namespace linux {
 
@@ -14,17 +17,7 @@ namespace facter { namespace facts { namespace linux {
         /**
          * Constructs the block_device_resolver.
          */
-        block_device_resolver() :
-            fact_resolver(
-            "block device",
-            {
-                fact::block_devices,
-            },
-            {
-                std::string("^") + fact::block_device + "_",
-            })
-        {
-        }
+        block_device_resolver();
 
      protected:
         /**

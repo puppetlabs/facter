@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the fact map.
+ */
 #ifndef FACTER_FACTS_FACT_MAP_HPP_
 #define FACTER_FACTS_FACT_MAP_HPP_
 
@@ -26,11 +30,12 @@ namespace facter { namespace facts {
          * Constructs a resolver_exists_exception.
          * @param message The exception message.
          */
-        explicit resolver_exists_exception(std::string const& message) : std::runtime_error(message) {}
+        explicit resolver_exists_exception(std::string const& message);
     };
 
     /**
      * Represents the fact map.
+     * The fact map is responsible for resolving and storing facts.
      */
     struct fact_map
     {
@@ -125,10 +130,7 @@ namespace facter { namespace facts {
          * @param name The name of the fact to get the value of.
          * @return Returns a pointer to the fact value or nullptr if the fact is not in the map.
          */
-        value const* operator[](std::string const& name)
-        {
-            return get_value(name, true);
-        }
+        value const* operator[](std::string const& name);
 
         /**
          * Enumerates all facts in the map.

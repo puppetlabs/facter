@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the scoped BIO (OpenSSL) resource.
+ */
 #ifndef FACTER_UTIL_POSIX_SCOPED_BIO_HPP_
 #define FACTER_UTIL_POSIX_SCOPED_BIO_HPP_
 
@@ -16,27 +20,16 @@ namespace facter { namespace util { namespace posix {
          * Constructs a scoped_bio.
          * @param method The BIO_METHOD to use.
          */
-        explicit scoped_bio(BIO_METHOD* method) :
-            scoped_resource(BIO_new(method), free)
-        {
-        }
+        explicit scoped_bio(BIO_METHOD* method);
 
         /**
          * Constructs a scoped_bio.
          * @param bio The BIO to free when destroyed.
          */
-        explicit scoped_bio(BIO* bio) :
-            scoped_resource(std::move(bio), free)
-        {
-        }
+        explicit scoped_bio(BIO* bio);
 
      private:
-        static void free(BIO* bio)
-        {
-            if (bio) {
-                BIO_free(bio);
-            }
-        }
+        static void free(BIO* bio);
     };
 
 }}}  // namespace facter::util::posix

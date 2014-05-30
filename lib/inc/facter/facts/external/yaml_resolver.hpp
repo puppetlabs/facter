@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the YAML external fact resolver.
+ */
 #ifndef FACTER_FACTS_EXTERNAL_YAML_RESOLVER_HPP_
 #define FACTER_FACTS_EXTERNAL_YAML_RESOLVER_HPP_
 

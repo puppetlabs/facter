@@ -1,6 +1,7 @@
 #include <boost/format.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/facts/fact_map.hpp>
+#include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/posix/uptime_resolver.hpp>
 #include <facter/util/file.hpp>
@@ -13,6 +14,18 @@ using namespace facter::util;
 using namespace facter::execution;
 
 namespace facter { namespace facts { namespace posix {
+
+    uptime_resolver::uptime_resolver() :
+        fact_resolver(
+            "uptime",
+            {
+                fact::uptime,
+                fact::uptime_days,
+                fact::uptime_hours,
+                fact::uptime_seconds
+            })
+    {
+    }
 
     void uptime_resolver::resolve_facts(fact_map& facts)
     {
@@ -70,7 +83,7 @@ namespace facter { namespace facts { namespace posix {
             default:
                 value = (format("%d days") % days).str();
         }
-        facts.add(fact::uptime, make_value<string_value>(std::move(value)));
+        facts.add(fact::uptime, make_value<string_value>(move(value)));
     }
 
     // call the uptime executable

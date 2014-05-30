@@ -1,5 +1,5 @@
 #include <gmock/gmock.h>
-#include <facter/facts/external/posix/execution_resolver.hpp>
+#include <facter/facts/external/execution_resolver.hpp>
 #include <facter/facts/fact_map.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include "../../../fixtures.hpp"
@@ -7,7 +7,6 @@
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::external;
-using namespace facter::facts::external::posix;
 
 TEST(facter_facts_external_posix_execution_resolver, default_constructor) {
     execution_resolver resolver;

@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares the JSON external fact resolver.
+ */
 #ifndef FACTER_FACTS_EXTERNAL_JSON_RESOLVER_HPP_
 #define FACTER_FACTS_EXTERNAL_JSON_RESOLVER_HPP_
 

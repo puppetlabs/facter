@@ -1,5 +1,6 @@
-#include <facter/facts/fact_map.hpp>
 #include <facter/facts/linux/selinux_resolver.hpp>
+#include <facter/facts/fact_map.hpp>
+#include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/file.hpp>
 #include <re2/re2.h>
@@ -8,6 +9,20 @@ using namespace std;
 using namespace facter::util;
 
 namespace facter { namespace facts { namespace linux {
+
+    selinux_resolver::selinux_resolver() :
+        fact_resolver(
+            "selinux",
+            {
+                fact::selinux,
+                fact::selinux_enforced,
+                fact::selinux_policyversion,
+                fact::selinux_current_mode,
+                fact::selinux_config_mode,
+                fact::selinux_config_policy,
+            })
+    {
+    }
 
     void selinux_resolver::resolve_facts(fact_map& facts)
     {
@@ -18,7 +33,7 @@ namespace facter { namespace facts { namespace linux {
     void selinux_resolver::resolve_selinux_fs_facts(fact_map& facts)
     {
         string selinux_mount;
-        if (selinux_fs_mountpoint(selinux_mount)) {
+        if (get_selinux_mountpoint(selinux_mount)) {
             facts.add(fact::selinux, make_value<string_value>("true"));
 
             resolve_selinux_enforce(facts, selinux_mount);
@@ -58,10 +73,6 @@ namespace facter { namespace facts { namespace linux {
         facts.add(fact::selinux_policyversion, make_value<string_value>(move(buffer)));
     }
 
-    /**
-     * Called to resolve all facts read from the SELinux configuration file.
-     * @param facts The fact map that is resolving facts.
-     */
     void selinux_resolver::resolve_selinux_config_facts(fact_map& facts)
     {
         string buffer = file::read("/etc/selinux/config");
@@ -81,11 +92,7 @@ namespace facter { namespace facts { namespace linux {
         }
     }
 
-    /**
-     * Determine if the selinux pseudo filesystem is mounted and where it's mounted.
-     * @param selinux_mount The selinux mountpoint
-     */
-    bool selinux_resolver::selinux_fs_mountpoint(string& selinux_mount)
+    bool selinux_resolver::get_selinux_mountpoint(string& selinux_mount)
     {
         RE2 regexp("\\S+ (\\S+) selinuxfs");
         bool is_mounted = false;
