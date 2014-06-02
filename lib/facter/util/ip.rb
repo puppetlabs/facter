@@ -9,7 +9,7 @@ module Facter::Util::IP
       :ipaddress6 => /inet6 (?:addr: )?((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
       :macaddress => /(?:ether|HWaddr)\s+((\w{1,2}:){5,}\w{1,2})/,
       :netmask  => /(?:Mask:|netmask )([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-      :mtu  => /MTU:(\d+)/
+      :mtu  => /MTU:?\s*(\d+)/i
     },
     :bsd   => {
       :aliases  => [:openbsd, :netbsd, :freebsd, :darwin, :"gnu/kfreebsd", :dragonfly],

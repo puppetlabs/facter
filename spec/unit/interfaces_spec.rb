@@ -4,15 +4,15 @@ require 'spec_helper'
 require 'shared_formats/parses'
 require 'facter/util/ip'
 
-shared_examples_for "netmask_* from ifconfig output" do |platform, interface, address, fixture|
-  it "correctly on #{platform} interface #{interface}" do
+shared_examples_for "interface netmask and mtu from ifconfig output" do |platform, interface, netmask, mtu, fixture|
+  it "should be correct on #{platform} for interface #{interface}" do
     Facter::Util::IP.stubs(:exec_ifconfig).returns(my_fixture_read(fixture))
     Facter::Util::IP.stubs(:get_output_for_interface_and_label).
       returns(my_fixture_read("#{fixture}.#{interface}"))
     Facter.collection.internal_loader.load(:interfaces)
 
-    fact = Facter.fact("netmask_#{interface}".intern)
-    fact.value.should eq(address)
+    Facter.fact("netmask_#{interface}".intern).value.should eq(netmask)
+    Facter.fact("mtu_#{interface}".intern).value.should eq(mtu)
   end
 end
 
@@ -43,15 +43,15 @@ describe "Per Interface IP facts" do
   end
 end
 
-describe "Netmask handling on Linux" do
+describe "Netmask and MTU handling on Linux" do
   before :each do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
   end
 
-  example_behavior_for "netmask_* from ifconfig output",
+  example_behavior_for "interface netmask and mtu from ifconfig output",
     "Archlinux (net-tools 1.60)", "em1",
-    "255.255.255.0", "ifconfig_net_tools_1.60.txt"
-  example_behavior_for "netmask_* from ifconfig output",
+    "255.255.255.0", "1500", "ifconfig_net_tools_1.60.txt"
+  example_behavior_for "interface netmask and mtu from ifconfig output",
     "Archlinux (net-tools 1.60)", "lo",
-    "255.0.0.0", "ifconfig_net_tools_1.60.txt"
+    "255.0.0.0", "16436", "ifconfig_net_tools_1.60.txt"
 end
