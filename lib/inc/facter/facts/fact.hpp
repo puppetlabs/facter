@@ -171,6 +171,10 @@ namespace facter { namespace facts {
          */
         constexpr static char const* bios_release_date = "bios_release_date";
         /**
+         * The fact for motherboard asset tag.
+         */
+        constexpr static char const* board_asset_tag = "boardassettag";
+        /**
          * The fact for motherboard manufacturer.
          */
         constexpr static char const* board_manufacturer = "boardmanufacturer";
@@ -182,6 +186,10 @@ namespace facter { namespace facts {
          * The fact for motherboard serial number.
          */
         constexpr static char const* board_serial_number = "boardserialnumber";
+        /**
+         * The fact for chassis asset tag.
+         */
+        constexpr static char const* chassis_asset_tag = "chassisassettag";
         /**
          * The fact for hardware manufacturer.
          */
