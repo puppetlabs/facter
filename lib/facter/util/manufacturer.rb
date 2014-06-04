@@ -60,7 +60,7 @@ module Facter::Manufacturer
 
   def self.prtdiag_sparc_find_system_info()
     # Parses prtdiag for a SPARC architecture string, won't work with Solaris x86
-    output = Facter::Core::Execution.exec('/usr/sbin/prtdiag 2>/dev/null')
+    output = Facter::Core::Execution.exec('/usr/sbin/prtdiag 2>/dev/null | /usr/bin/head -n 10')
 
     # System Configuration:  Sun Microsystems  sun4u Sun SPARC Enterprise M3000 Server
     if output and output =~ /^System Configuration:\s+(.+?)\s+(sun\d+\S+)\s+(.+)/
