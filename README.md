@@ -13,6 +13,12 @@ Build Requirements
 * yaml-cpp >= 0.5.1
 * Google's RE2 library
 
+### Setup on Fedora 20
+
+The following will pull all required tools and libraries in:
+
+    yum install cmake boost-devel log4cxx-devel openssl-devel yaml-cpp-devel re2-devel
+
 Pre-Build
 ---------
 
