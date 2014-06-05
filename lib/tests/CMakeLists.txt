@@ -58,10 +58,11 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
     ${GMOCK_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
+    ${YAMLCPP_INCLUDE_DIRS}
 )
 
 add_executable(libfacter_test ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_POSIX_SOURCES})
-target_link_libraries(libfacter_test libfacter ${LOG4CXX_LIBRARIES} ${Boost_LIBRARIES} ${GMOCK_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(libfacter_test libfacter ${YAMLCPP_LIBRARIES} ${LOG4CXX_LIBRARIES} ${Boost_LIBRARIES} ${GMOCK_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 # Generate a file containing the above version numbers
 configure_file (
