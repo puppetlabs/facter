@@ -161,13 +161,13 @@ namespace facter { namespace execution {
             waitpid(child, &status, 0);
             if (WIFEXITED(status)) {
                 status = static_cast<char>(WEXITSTATUS(status));
-                LOG_DEBUG("Process exited with status code %1% and output: %2%", status, result);
+                LOG_DEBUG("Process exited with status code %1% and output:\n%2%", status, result);
                 if (status != 0 && options[execution_options::throw_on_nonzero_exit]) {
                     throw child_exit_exception(status, result, "child process returned non-zero exit status.");
                 }
             } else if (WIFSIGNALED(status)) {
                 status = static_cast<char>(WTERMSIG(status));
-                LOG_DEBUG("Process was signaled with signal %1% and output: %2%", status, result);
+                LOG_DEBUG("Process was signaled with signal %1% and output:\n%2%", status, result);
                 if (options[execution_options::throw_on_signal]) {
                     throw child_signal_exception(status, result, "child process was terminated by signal.");
                 }
