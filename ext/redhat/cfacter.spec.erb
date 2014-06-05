@@ -1,0 +1,68 @@
+# Building debuginfo is pointless, as this has no symbols.
+%global debug_package %{nil}
+
+# VERSION is subbed out during rake srpm process
+%global realversion <%= @version %>
+%global rpmversion <%= @rpmversion %>
+
+Name:           facter
+Summary:        Ruby module for collecting simple facts about a host operating system
+Version:        %{rpmversion}
+Release:        <%= @rpmrelease -%>%{?dist}
+Vendor:         %{?_host_vendor}
+License:        ASL 2.0
+Group:          System Environment/Base
+URL:            http://www.puppetlabs.com/puppet/related-projects/%{name}
+# Note this     URL will only be valid at official tags from Puppet Labs
+Source0:        http://puppetlabs.com/downloads/%{name}/%{name}-%{realversion}.tar.gz
+
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
+
+BuildRequires:  pl-gcc
+BuildRequires:  pl-cmake
+BuildRequires:  pl-libre2-devel
+BuildRequires:  pl-libyaml-cpp-devel
+BuildRequires:  boost-devel
+BuildRequires:  log4cxx-devel
+BuildRequires:  openssl-devel
+
+
+%description
+Ruby module for collecting simple facts about a host Operating
+system. Some of the facts are preconfigured, such as the hostname and the
+operating system. Additional facts can be added through simple Ruby scripts
+
+%prep
+%setup -q  -n %{name}-%{realversion}
+mkdir release
+
+%build
+pushd release
+  LDFLAGS=-Wl,-rpath=/opt/pl-build-tools/lib,--enable-new-dtags /opt/pl-build-tools/bin/cmake ..
+  make
+popd
+
+%install
+pushd release
+  make install
+popd
+
+%clean
+rm -rf %{buildroot}
+
+
+%files
+%defattr(-,root,root,-)
+%{_bindir}/cfacter
+%{_libdir}/libfacter.co*
+%{_includedir}/facter
+%doc LICENSE README.md
+
+
+%changelog
+* <%= Time.now.strftime("%a %b %d %Y") %> Puppet Labs Release <info@puppetlabs.com> -  1:<%= @rpmversion %>-<%= @rpmrelease %>
+- Build for <%= @version %>
+
+* Thu Jun 05 2014 Melissa Stone <melissa@puppetlabs.com> - 1.7.2-1
+- Initial build of cFacter

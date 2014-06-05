@@ -9,3 +9,9 @@ compile_commands.json
 /lib/tests/fixtures.hpp
 /debug/
 /release/
+
+# Packaging files
+ext/packaging/
+
+# packages
+pkg/

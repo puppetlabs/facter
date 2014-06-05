@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/rules/buildcore.mk
+
+binary-install/facter::
+  export PATH=/opt/pl-build-tools/bin:$PATH ; \
+  export CC=/opt/pl-build-tools/bin/gcc ; \
+  export CXX=/opt/pl-build-tools/bin/g++ ; \
+  mkdir release ; \
+  cd release ; \
+  LDFLAGS=-Wl,-rpath=/opt/pl-build-tools/lib,--enable-new-dtags /opt/pl-build-tools/bin/cmake .. ; \
+  make ; \
+  make install
