@@ -28,12 +28,12 @@ TEST(facter_facts_map_value, map_constructor) {
     value.add("integer", make_value<integer_value>(5));
 
     auto array_element = make_value<array_value>();
-    static_cast<array_value*>(array_element.get())->add(make_value<string_value>("1"));
-    static_cast<array_value*>(array_element.get())->add(make_value<integer_value>(2));
+    array_element->add(make_value<string_value>("1"));
+    array_element->add(make_value<integer_value>(2));
     value.add("array", move(array_element));
 
     auto map_element = make_value<map_value>();
-    static_cast<map_value*>(map_element.get())->add("foo", make_value<string_value>("bar"));
+    map_element->add("foo", make_value<string_value>("bar"));
     value.add("map", move(map_element));
 
     ASSERT_EQ(4u, value.size());
@@ -95,12 +95,12 @@ TEST(facter_facts_map_value, to_json) {
     value.add("integer", make_value<integer_value>(5));
 
     auto array_element = make_value<array_value>();
-    static_cast<array_value*>(array_element.get())->add(make_value<string_value>("1"));
-    static_cast<array_value*>(array_element.get())->add(make_value<integer_value>(2));
+    array_element->add(make_value<string_value>("1"));
+    array_element->add(make_value<integer_value>(2));
     value.add("array", move(array_element));
 
     auto map_element = make_value<map_value>();
-    static_cast<map_value*>(map_element.get())->add("foo", make_value<string_value>("bar"));
+    map_element->add("foo", make_value<string_value>("bar"));
     value.add("map", move(map_element));
 
     rapidjson::Value json_value;
@@ -132,12 +132,12 @@ TEST(facter_facts_map_value, insertion_operator) {
     value.add("integer", make_value<integer_value>(5));
 
     auto array_element = make_value<array_value>();
-    static_cast<array_value*>(array_element.get())->add(make_value<string_value>("1"));
-    static_cast<array_value*>(array_element.get())->add(make_value<integer_value>(2));
+    array_element->add(make_value<string_value>("1"));
+    array_element->add(make_value<integer_value>(2));
     value.add("array", move(array_element));
 
     auto map_element = make_value<map_value>();
-    static_cast<map_value*>(map_element.get())->add("foo", make_value<string_value>("bar"));
+    map_element->add("foo", make_value<string_value>("bar"));
     value.add("map", move(map_element));
 
     ostringstream stream;
@@ -151,12 +151,12 @@ TEST(facter_facts_map_value, yaml_insertion_operator) {
     value.add("integer", make_value<integer_value>(5));
 
     auto array_element = make_value<array_value>();
-    static_cast<array_value*>(array_element.get())->add(make_value<string_value>("1"));
-    static_cast<array_value*>(array_element.get())->add(make_value<integer_value>(2));
+    array_element->add(make_value<string_value>("1"));
+    array_element->add(make_value<integer_value>(2));
     value.add("array", move(array_element));
 
     auto map_element = make_value<map_value>();
-    static_cast<map_value*>(map_element.get())->add("foo", make_value<string_value>("bar"));
+    map_element->add("foo", make_value<string_value>("bar"));
     value.add("map", move(map_element));
 
     Emitter emitter;

@@ -64,16 +64,19 @@ namespace facter { namespace facts { namespace posix {
          * @param facts The fact map that is resolving facts.
          */
         virtual void resolve_facts(fact_map& facts);
+
         /**
          * Called to resolve the hostname fact.
          * @param facts The fact map that is resolving facts.
          */
         virtual void resolve_hostname(fact_map& facts);
+
         /**
          * Called to resolve the domain and fqdn facts.
          * @param facts The fact map that is resolving facts.
          */
         virtual void resolve_domain(fact_map& facts);
+
         /**
          * Called to resolve interface facts.
          * @param facts The fact map that is resolving facts.

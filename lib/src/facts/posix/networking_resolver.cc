@@ -27,7 +27,7 @@ namespace facter { namespace facts { namespace posix {
 
     networking_resolver::networking_resolver() :
         fact_resolver(
-        "networking",
+            "networking",
             {
                 fact::hostname,
                 fact::ipaddress,
@@ -40,6 +40,7 @@ namespace facter { namespace facts { namespace posix {
                 fact::interfaces,
                 fact::domain,
                 fact::fqdn,
+                fact::dhcp_servers,
             },
             {
                 string("^") + fact::ipaddress + "_",
@@ -102,7 +103,8 @@ namespace facter { namespace facts { namespace posix {
             return;
         }
 
-        if (!info) {
+        if (!info || hostname->value() == static_cast<addrinfo*>(info)->ai_canonname) {
+            LOG_WARNING("network domain could not be determined: %1% and %2% facts are unavailable.", fact::fqdn, fact::domain);
             return;
         }
 

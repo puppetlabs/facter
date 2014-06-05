@@ -23,7 +23,7 @@ TEST(facter_facts_array_value, null_add) {
 
 TEST(facter_facts_array_value, vector_constructor) {
     auto subarray = make_value<array_value>();
-    static_cast<array_value*>(subarray.get())->add(make_value<string_value>("child"));
+    subarray->add(make_value<string_value>("child"));
 
     array_value value;
     value.add(make_value<string_value>("1"));
@@ -77,7 +77,7 @@ TEST(facter_facts_array_value, each) {
 
 TEST(facter_facts_array_value, to_json) {
     auto subarray = make_value<array_value>();
-    static_cast<array_value*>(subarray.get())->add(make_value<string_value>("child"));
+    subarray->add(make_value<string_value>("child"));
 
     array_value value;
     value.add(make_value<string_value>("1"));
@@ -104,7 +104,7 @@ TEST(facter_facts_array_value, to_json) {
 
 TEST(facter_facts_array_value, insertion_operator) {
     auto subarray = make_value<array_value>();
-    static_cast<array_value*>(subarray.get())->add(make_value<string_value>("child"));
+    subarray->add(make_value<string_value>("child"));
 
     array_value value;
     value.add(make_value<string_value>("1"));
@@ -118,7 +118,7 @@ TEST(facter_facts_array_value, insertion_operator) {
 
 TEST(facter_facts_array_value, yaml_insertion_operator) {
     auto subarray = make_value<array_value>();
-    static_cast<array_value*>(subarray.get())->add(make_value<string_value>("child"));
+    subarray->add(make_value<string_value>("child"));
 
     array_value value;
     value.add(make_value<string_value>("1"));

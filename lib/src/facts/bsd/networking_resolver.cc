@@ -2,9 +2,12 @@
 #include <facter/facts/fact_map.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <facter/execution/execution.hpp>
+#include <facter/util/file.hpp>
 #include <facter/util/string.hpp>
 #include <facter/util/bsd/scoped_ifaddrs.hpp>
 #include <facter/logging/logging.hpp>
+#include <boost/filesystem.hpp>
 #include <sstream>
 #include <cstring>
 #include <netinet/in.h>
@@ -15,10 +18,21 @@
 using namespace std;
 using namespace facter::util;
 using namespace facter::util::bsd;
+using namespace facter::execution;
+using namespace boost::filesystem;
+namespace bs = boost::system;
 
 LOG_DECLARE_NAMESPACE("facts.bsd.networking");
 
 namespace facter { namespace facts { namespace bsd {
+
+    vector<string> networking_resolver::_dhclient_search_directories = {
+        "/var/lib/dhclient",
+        "/var/lib/dhcp",
+        "/var/lib/dhcp3",
+        "/var/lib/NetworkManager",
+        "/var/db"
+    };
 
     void networking_resolver::resolve_interface_facts(fact_map& facts)
     {
@@ -44,18 +58,27 @@ namespace facter { namespace facts { namespace bsd {
         }
 
         ostringstream interfaces;
-        bool found_primary = false;
+
+        string primary_interface = get_primary_interface();
+        if (LOG_IS_DEBUG_ENABLED() && primary_interface.empty()) {
+            LOG_DEBUG("No primary interface found: using first interface with an assigned address.");
+        }
+
+        // Start by getting the DHCP servers
+        auto dhcp_servers_value = make_value<map_value>();
+        auto dhcp_servers = find_dhcp_servers();
 
         // Walk the interfaces
         decltype(interface_map.begin()) addr_it;
         for (auto it = interface_map.begin(); it != interface_map.end(); it = addr_it) {
             string const& interface = it->first;
-            bool primary = false;
+            bool primary = interface == primary_interface;
 
             auto range = interface_map.equal_range(it->first);
 
-            // Walk the the addresses for the interface to check if it's primary
-            if (!found_primary) {
+            // If we don't have a primary interface yet, walk the addresses
+            // If there's a non-loopback address assigned, treat it as primary
+            if (primary_interface.empty()) {
                 for (addr_it = range.first; addr_it != range.second; ++addr_it) {
                     ifaddrs const* addr = addr_it->second;
                     if (addr->ifa_addr->sa_family != AF_INET &&
@@ -64,9 +87,9 @@ namespace facter { namespace facts { namespace bsd {
                     }
 
                     string ip = address_to_string(addr->ifa_addr, addr->ifa_netmask);
-                    primary = !starts_with(ip, "127.") && ip != "::1";
-                    if (primary) {
-                        found_primary = true;
+                    if (!starts_with(ip, "127.") && ip != "::1") {
+                        primary_interface = interface;
+                        primary = true;
                     }
                 }
             }
@@ -79,12 +102,40 @@ namespace facter { namespace facts { namespace bsd {
                 resolve_mtu(facts, addr);
             }
 
+            // Populate the interface's DHCP server value
+            string dhcp_server;
+            auto dhcp_server_it = dhcp_servers.find(interface);
+            if (dhcp_server_it == dhcp_servers.end()) {
+                dhcp_server = find_dhcp_server(interface);
+            } else {
+                dhcp_server = move(dhcp_server_it->second);
+            }
+            if (!dhcp_server.empty()) {
+                if (primary) {
+                    dhcp_servers_value->add("system", make_value<string_value>(dhcp_server));
+                }
+                dhcp_servers_value->add(string(interface), make_value<string_value>(move(dhcp_server)));
+            }
+
             // Add the interface to the interfaces fact
             if (interfaces.tellp() != 0) {
                 interfaces << ",";
             }
 
             interfaces << interface;
+        }
+
+        if (LOG_IS_WARNING_ENABLED() && primary_interface.empty()) {
+            LOG_WARNING("No primary interface found: facts %1%, %2%, %3%, %4%, %5%, %6%, and %7% are unavailable.",
+                        fact::ipaddress, fact::ipaddress6,
+                        fact::netmask, fact::netmask6,
+                        fact::network, fact::network6,
+                        fact::macaddress);
+        }
+
+        // Add the DHCP servers fact
+        if (!dhcp_servers_value->empty()) {
+            facts.add(fact::dhcp_servers, move(dhcp_servers_value));
         }
 
         string value = interfaces.str();
@@ -121,10 +172,11 @@ namespace facter { namespace facts { namespace bsd {
             return;
         }
 
-        facts.add(move(interface_factname), make_value<string_value>(address));
         if (primary) {
-            facts.add(move(factname), make_value<string_value>(move(address)));
+            facts.add(move(factname), make_value<string_value>(address));
         }
+
+        facts.add(move(interface_factname), make_value<string_value>(move(address)));
     }
 
     void networking_resolver::resolve_network(fact_map& facts, ifaddrs const* addr, bool primary)
@@ -145,21 +197,22 @@ namespace facter { namespace facts { namespace bsd {
             return;
         }
 
-        facts.add(move(interface_factname), make_value<string_value>(netmask));
-
         if (primary) {
-            facts.add(move(factname), make_value<string_value>(move(netmask)));
+            facts.add(move(factname), make_value<string_value>(netmask));
         }
+
+        facts.add(move(interface_factname), make_value<string_value>(move(netmask)));
 
         // Set the network fact
         factname = addr->ifa_addr->sa_family == AF_INET ? fact::network : fact::network6;
         string network = address_to_string(addr->ifa_addr, addr->ifa_netmask);
         interface_factname = factname + "_" + addr->ifa_name;
-        facts.add(move(interface_factname), make_value<string_value>(network));
 
         if (primary) {
-            facts.add(move(factname), make_value<string_value>(move(network)));
+            facts.add(move(factname), make_value<string_value>(network));
         }
+
+        facts.add(move(interface_factname), make_value<string_value>(move(network)));
     }
 
     void networking_resolver::resolve_mtu(fact_map& facts, ifaddrs const* addr)
@@ -174,6 +227,75 @@ namespace facter { namespace facts { namespace bsd {
             return;
         }
         facts.add(string(fact::mtu) + '_' + addr->ifa_name, make_value<string_value>(to_string(mtu)));
+    }
+
+    string networking_resolver::get_primary_interface()
+    {
+        // By default, use the fallback logic of looking for the first interface
+        // that has a non-loopback address
+        return {};
+    }
+
+    map<string, string> networking_resolver::find_dhcp_servers()
+    {
+        map<string, string> servers;
+        for (auto const& directory : _dhclient_search_directories) {
+            directory_iterator end;
+            directory_iterator it;
+
+            try {
+                it = directory_iterator(directory);
+            } catch (filesystem_error& ex) {
+                continue;
+            }
+
+            LOG_DEBUG("Searching \"%1%\" for dhclient lease files.", directory);
+
+            for (; it != end; ++it) {
+                bs::error_code ec;
+                if (!is_regular_file(it->status())) {
+                    continue;
+                }
+
+                string filename = it->path().filename().string();
+
+                // The lease file should start with dhclient and have "lease" somewhere in the name
+                if (!starts_with(filename, "dhclient") || filename.find("lease") == string::npos) {
+                    continue;
+                }
+
+                LOG_DEBUG("Reading \"%1%\" for dhclient lease information.", filename);
+
+                // Each lease entry should have the interface declaration before the options
+                // We respect the last lease for an interface in the file
+                string interface;
+                file::each_line(it->path().string(), [&](string& line) {
+                    line = trim(line);
+                    if (starts_with(line, "interface \"")) {
+                        interface = rtrim(line.substr(11), { '\"', ';' });
+                    } else if (!interface.empty() && starts_with(line, "option dhcp-server-identifier ")) {
+                        servers.emplace(make_pair(move(interface), rtrim(line.substr(30), { ';' })));
+                    }
+                    return true;
+                });
+            }
+        }
+        return servers;
+    }
+
+    string networking_resolver::find_dhcp_server(string const& interface)
+    {
+        // Use dhcpcd if it's present to get the interface's DHCP lease information
+        // This assumes we've already searched for the interface with dhclient
+        string value;
+        each_line(execute("dhcpcd", { "-U", interface }), [&value](string& line) {
+            if (starts_with(line, "dhcp_server_identifier=")) {
+                value = trim(line.substr(23));
+                return false;
+            }
+            return true;
+        });
+        return value;
     }
 
 }}}  // namespace facter::facts::bsd

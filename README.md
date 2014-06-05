@@ -147,13 +147,29 @@ This section assumes that cfacter has been installed into the system.
 
 Here's a simple example of using the C++11 API to output all facts.
 
-    #include <facter/facts/fact_map.hpp>
     #include <iostream>
+    #include <facter/facts/fact_map.hpp>
+    #include <log4cxx/logger.h>
+    #include <log4cxx/propertyconfigurator.h>
+    #include <log4cxx/patternlayout.h>
+    #include <log4cxx/consoleappender.h>
 
     using namespace std;
     using namespace facter::facts;
+    using namespace log4cxx;
 
-    int main() {
+    void configure_logging()
+    {
+        LayoutPtr layout = new PatternLayout("%d %-5p %c - %m%n");
+        AppenderPtr appender = new ConsoleAppender(layout, "System.err");
+        Logger::getRootLogger()->addAppender(appender);
+        Logger::getRootLogger()->setLevel(Level::getWarn());
+    }
+
+    int main()
+    {
+        configure_logging();
+
         fact_map facts;
         facts.resolve();
         facts.resolve_external();
@@ -162,5 +178,5 @@ Here's a simple example of using the C++11 API to output all facts.
 
 To build the above, link with libfacter:
 
-    $ g++ example.cc -o myfacter --std=c++11 -lfacter
+    $ g++ example.cc -o myfacter -std=c++11 -lfacter -llog4cxx
     $ ./myfacter

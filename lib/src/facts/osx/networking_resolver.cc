@@ -3,10 +3,12 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
+#include <facter/util/string.hpp>
 #include <net/if_dl.h>
 #include <net/if.h>
 
 using namespace std;
+using namespace facter::util;
 using namespace facter::execution;
 
 namespace facter { namespace facts { namespace osx {
@@ -51,6 +53,32 @@ namespace facter { namespace facts { namespace osx {
         }
 
         facts.add(fact::hostname, make_value<string_value>(move(value)));
+    }
+
+    string networking_resolver::get_primary_interface()
+    {
+        string interface;
+        each_line(execute("route", { "-n", "get",  "default" }), [&interface](string& line){
+            trim(line);
+            if (starts_with(line, "interface: ")) {
+                interface = trim(line.substr(11));
+                return false;
+            }
+            return true;
+        });
+        return interface;
+    }
+
+    map<string, string> networking_resolver::find_dhcp_servers()
+    {
+        // We don't parse dhclient information on OSX
+        return map<string, string>();
+    }
+
+    string networking_resolver::find_dhcp_server(string const& interface)
+    {
+        // Use ipconfig to get the server identifier
+        return execute("ipconfig", { "getoption", interface, "server_identifier" });
     }
 
 }}}  // namespace facter::facts::osx
