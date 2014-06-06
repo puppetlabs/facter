@@ -17,6 +17,5 @@ tar_excludes: 'ext/packaging'
 # default to searching for any files in `ext` with the extension '.erb' and evaluate them. When this
 # key is supplied, its values override the defaults, and all desired erb files must be specified with a path or glob.
 templates:
-  - ext/redhat/facter.spec.erb
+  - ext/redhat/cfacter.spec.erb
   - ext/debian/changelog.erb
-  - ext/templates/**/*.erb

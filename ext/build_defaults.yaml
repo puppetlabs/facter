@@ -1,6 +1,8 @@
 ---
 packaging_url: 'git@github.com:puppetlabs/packaging --branch=master'
 packaging_repo: 'packaging'
+deb_build_mirrors:
+  - deb http://pl-build-tools.delivery.puppetlabs.net/debian __DIST__ main
 default_cow: 'base-wheezy-i386.cow'
 # Which debian distributions to build for. Noarch packages only need one arch of each cow.
 cows: 'base-wheezy-amd64.cow base-wheezy-i386.cow'

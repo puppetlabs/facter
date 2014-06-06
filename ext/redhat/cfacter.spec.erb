@@ -5,7 +5,9 @@
 %global realversion <%= @version %>
 %global rpmversion <%= @rpmversion %>
 
-Name:           facter
+%global _prefix /opt/pl-build-tools
+
+Name:           <%= @project %>
 Summary:        Ruby module for collecting simple facts about a host operating system
 Version:        %{rpmversion}
 Release:        <%= @rpmrelease -%>%{?dist}
@@ -35,18 +37,22 @@ operating system. Additional facts can be added through simple Ruby scripts
 
 %prep
 %setup -q  -n %{name}-%{realversion}
-mkdir release
 
 %build
-pushd release
-  LDFLAGS=-Wl,-rpath=/opt/pl-build-tools/lib,--enable-new-dtags /opt/pl-build-tools/bin/cmake ..
-  make
-popd
+export CC=%{_prefix}/bin/gcc
+export CXX=%{_prefix}/bin/g++
+LDFLAGS=-Wl,-rpath=%{_prefix}/lib,--enable-new-dtags %{_bindir}/cmake \
+  -DCMAKE_VERBOSE_MAKEFILE=ON \
+  -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
+  -DINCLUDE_INSTALL_DIR:PATH=%{_prefix}/include \
+  -DLIB_INSTALL_DIR:PATH=%{_prefix}/lib \
+  -DBUILD_SHARED_LIBS=ON \
+  .
+make DESTDIR=%{buildroot} prefix=%{_prefix}
 
 %install
-pushd release
-  make install
-popd
+rm -rf %{buildroot}
+make install DESTDIR=%{buildroot} prefix=%{_prefix}
 
 %clean
 rm -rf %{buildroot}
@@ -55,7 +61,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %{_bindir}/cfacter
-%{_libdir}/libfacter.co*
+%{_libdir}/libfacter.so*
 %{_includedir}/facter
 %doc LICENSE README.md
 
