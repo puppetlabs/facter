@@ -1,0 +1,34 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE=1
+
+PREFIX:=/opt/pl-build-tools
+NPROC:=$(shell nproc)
+CC:=$(PREFIX)/bin/gcc
+CXX:=$(PREFIX)/bin/g++
+CPPFLAGS :=$(shell dpkg-buildflags --get CPPFLAGS)
+CFLAGS   :=$(shell dpkg-buildflags --get CFLAGS)
+CXXFLAGS :=$(shell dpkg-buildflags --get CXXFLAGS)
+LDFLAGS  :=$(shell dpkg-buildflags --get LDFLAGS) -Wl,-rpath=/opt/pl-build-tools/lib,--enable-new-dtags
+
+export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
+
+clean:
+
+override_dh_auto_configure:
+	$(PREFIX)/bin/cmake \
+	-DCMAKE_VERBOSE_MAKEFILE=ON \
+	-DCMAKE_INSTALL_PREFIX:PATH=$(PREFIX) \
+	-DINCLUDE_INSTALL_DIR:PATH=$(PREFIX)/include \
+	-DLIB_INSTALL_DIR:PATH=$(PREFIX)/lib \
+	-DBUILD_SHARED_LIBS=ON \
+	.
+
+override_dh_auto_build:
+	$(MAKE) -j$(NPROC) DESTDIR=$(CURDIR)/debian/tmp prefix=$(PREFIX)
+
+override_dh_auto_install:
+	$(MAKE) -j$(NPROC) install DESTDIR=$(CURDIR)/debian/tmp prefix=$(PREFIX)
+
+%:
+	dh $@ --parallel=$(NPROC)
