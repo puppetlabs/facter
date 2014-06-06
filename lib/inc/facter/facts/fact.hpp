@@ -289,6 +289,91 @@ namespace facter { namespace facts {
          * The fact for SSH fingerprint of the ED25519 public key.
          */
         constexpr static char const* sshfp_ed25519 = "sshfp_ed25519";
+
+        /**
+         * The fact for OSX system profiler boot mode.
+         */
+        constexpr static char const* sp_boot_mode = "sp_boot_mode";
+        /**
+         * The fact for OSX system profiler boot ROM version.
+         */
+        constexpr static char const* sp_boot_rom_version = "sp_boot_rom_version";
+        /**
+         * The fact for OSX system profiler boot volume.
+         */
+        constexpr static char const* sp_boot_volume = "sp_boot_volume";
+        /**
+         * The fact for OSX system profiler CPU type (processor name).
+         */
+        constexpr static char const* sp_cpu_type = "sp_cpu_type";
+        /**
+         * The fact for OSX system profiler current CPU speed.
+         */
+        constexpr static char const* sp_current_processor_speed = "sp_current_processor_speed";
+        /**
+         * The fact for OSX system profiler kernel version.
+         */
+        constexpr static char const* sp_kernel_version = "sp_kernel_version";
+        /**
+         * The fact for OSX system profiler L2 cache (per core).
+         */
+        constexpr static char const* sp_l2_cache_core = "sp_l2_cache_core";
+        /**
+         * The fact for OSX system profiler L3 cache.
+         */
+        constexpr static char const* sp_l3_cache = "sp_l3_cache";
+        /**
+         * The fact for OSX system profiler local host name (computer name).
+         */
+        constexpr static char const* sp_local_host_name = "sp_local_host_name";
+        /**
+         * The fact for OSX system profiler machine model (model identifier).
+         */
+        constexpr static char const* sp_machine_model = "sp_machine_model";
+        /**
+         * The fact for OSX system profiler machine name (model name).
+         */
+        constexpr static char const* sp_machine_name = "sp_machine_name";
+        /**
+         * The fact for OSX system profiler number of processors (total number of cores).
+         */
+        constexpr static char const* sp_number_processors = "sp_number_processors";
+        /**
+         * The fact for OSX system profiler OS version (system version).
+         */
+        constexpr static char const* sp_os_version = "sp_os_version";
+        /**
+         * The fact for OSX system profiler number of CPU packages (number of physical processors).
+         */
+        constexpr static char const* sp_packages = "sp_packages";
+        /**
+         * The fact for OSX system profiler physical memory.
+         */
+        constexpr static char const* sp_physical_memory = "sp_physical_memory";
+        /**
+         * The fact for OSX system profiler platform UUID (hardware UUID).
+         */
+        constexpr static char const* sp_platform_uuid = "sp_platform_uuid";
+        /**
+         * The fact for OSX system profiler secure virtual memory.
+         */
+        constexpr static char const* sp_secure_vm = "sp_secure_vm";
+        /**
+         * The fact for OSX system profiler serial number (system).
+         */
+        constexpr static char const* sp_serial_number = "sp_serial_number";
+        /**
+         * The fact for OSX system profiler SMC version (system).
+         */
+        constexpr static char const* sp_smc_version_system = "sp_smc_version_system";
+        /**
+         * The fact for OSX system profiler uptime (since boot).
+         */
+        constexpr static char const* sp_uptime = "sp_uptime";
+        /**
+         * The fact for OSX system profiler user name.
+         */
+        constexpr static char const* sp_user_name = "sp_user_name";
     };
 
 }}  // namespace facter::facts
