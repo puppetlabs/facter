@@ -374,6 +374,27 @@ namespace facter { namespace facts {
          * The fact for OSX system profiler user name.
          */
         constexpr static char const* sp_user_name = "sp_user_name";
+
+        /**
+         * The fact for OSX build version.
+         */
+        constexpr static char const* macosx_buildversion = "macosx_buildversion";
+        /**
+         * The fact for OSX product name.
+         */
+        constexpr static char const* macosx_productname = "macosx_productname";
+        /**
+         * The fact for OSX product version.
+         */
+        constexpr static char const* macosx_productversion = "macosx_productversion";
+        /**
+         * The fact for OSX build major version.
+         */
+        constexpr static char const* macosx_productversion_major = "macosx_productversion_major";
+        /**
+         * The fact for OSX build minor version.
+         */
+        constexpr static char const* macosx_productversion_minor = "macosx_productversion_minor";
     };
 
 }}  // namespace facter::facts

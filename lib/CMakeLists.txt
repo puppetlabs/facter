@@ -68,6 +68,7 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/platform.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/processor_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/system_profiler_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/software_version_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/bsd/scoped_ifaddrs.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
