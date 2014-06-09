@@ -6,6 +6,7 @@
 #include <facter/facts/osx/dmi_resolver.hpp>
 #include <facter/facts/osx/system_profiler_resolver.hpp>
 #include <facter/facts/osx/software_version_resolver.hpp>
+#include <facter/facts/osx/virtualization_resolver.hpp>
 #include <facter/facts/bsd/uptime_resolver.hpp>
 #include <facter/facts/posix/ssh_resolver.hpp>
 
@@ -24,6 +25,7 @@ namespace facter { namespace facts {
         facts.add(make_shared<posix::ssh_resolver>());
         facts.add(make_shared<osx::system_profiler_resolver>());
         facts.add(make_shared<osx::software_version_resolver>());
+        facts.add(make_shared<osx::virtualization_resolver>());
     }
 
 }}  // namespace facter::facts
