@@ -8,6 +8,7 @@
 #include <facter/facts/linux/processor_resolver.hpp>
 #include <facter/facts/linux/uptime_resolver.hpp>
 #include <facter/facts/linux/selinux_resolver.hpp>
+#include <facter/facts/linux/virtualization_resolver.hpp>
 #include <facter/facts/posix/ssh_resolver.hpp>
 
 using namespace std;
@@ -26,6 +27,7 @@ namespace facter { namespace facts {
         facts.add(make_shared<linux::uptime_resolver>());
         facts.add(make_shared<linux::selinux_resolver>());
         facts.add(make_shared<posix::ssh_resolver>());
+        facts.add(make_shared<linux::virtualization_resolver>());
     }
 
 }}  // namespace facter::facts

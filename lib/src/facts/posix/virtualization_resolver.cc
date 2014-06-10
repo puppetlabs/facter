@@ -4,6 +4,8 @@
 #include <facter/facts/scalar_value.hpp>
 #include <set>
 
+#include "facter/facts/virtual_machine.hpp"
+
 using namespace std;
 using namespace facter::facts;
 
@@ -34,11 +36,11 @@ namespace facter { namespace facts { namespace posix {
         // Set of hypervisor values we consider to not be virtual
         static set<string> hypervisors = {
             "physical",
-            "xen0",
-            "vmware_server",
-            "vmware_workstation",
-            "openvzhn",
-            "vserver_host"
+            string(vm::xen_privileged),
+            string(vm::vmware_server),
+            string(vm::vmware_workstation),
+            string(vm::openvz_hn),
+            string(vm::vserver_host),
         };
         return hypervisors.count(hypervisor) == 0;
     }
