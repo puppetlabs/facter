@@ -58,6 +58,7 @@ describe "Operating System fact" do
       "Debian"      => "/etc/debian_version",
       "Gentoo"      => "/etc/gentoo-release",
       "Fedora"      => "/etc/fedora-release",
+      "Mageia"      => "/etc/mageia-release",
       "Mandriva"    => "/etc/mandriva-release",
       "Mandrake"    => "/etc/mandrake-release",
       "MeeGo"       => "/etc/meego-release",
