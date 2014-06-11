@@ -153,7 +153,7 @@ Facter.add("ProcessorCount") do
     (major_version, minor_version) = kernelrelease.split(".").map { |str| str.to_i }
     result = nil
 
-    if (major_version > 5) or (major_version == 5 and minor_version >= 8) then
+    if (major_version < 5) or (major_version == 5 and minor_version < 8) then
       if kstat = Facter::Core::Execution.exec("/usr/bin/kstat cpu_info")
         result = kstat.scan(/\bcore_id\b\s+\d+/).uniq.length
       end
