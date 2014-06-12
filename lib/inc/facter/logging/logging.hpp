@@ -13,11 +13,16 @@
 #include <boost/format.hpp>
 
 /**
+ * Defines the root logging namespace.
+ */
+#define LOG_ROOT_NAMESPACE "puppetlabs.facter."
+
+/**
  * Used to declare a logging namespace for a source file.
  * This macro must be used before any other logging macro.
  * @param ns The logging namespace name.
  */
-#define LOG_DECLARE_NAMESPACE(ns) static log4cxx::LoggerPtr g_logger = log4cxx::Logger::getLogger("puppetlabs.facter." ns);
+#define LOG_DECLARE_NAMESPACE(ns) static log4cxx::LoggerPtr g_logger = log4cxx::Logger::getLogger(LOG_ROOT_NAMESPACE ns);
 /**
  * Logs a message.
  * @param level The logging level for the message.
@@ -26,7 +31,9 @@
  */
 #define LOG_MESSAGE(level, format, ...) \
     do { \
-        facter::logging::log(g_logger, level, format, ##__VA_ARGS__); \
+        if (LOG4CXX_UNLIKELY(facter::logging::is_log_enabled(g_logger, level))) { \
+            facter::logging::log(g_logger, level, format, ##__VA_ARGS__); \
+        } \
     } while (0)
 /**
  * Logs a debug message.
@@ -62,7 +69,7 @@
  * Determines if the given logging level is enabled.
  * @param level The logging level to check.
  */
-#define LOG_IS_ENABLED(level) facter::logging::is_log_enabled(g_logger, level)
+#define LOG_IS_ENABLED(level) LOG4CXX_UNLIKELY(facter::logging::is_log_enabled(g_logger, level))
 /**
  * Determines if the debug logging level is enabled.
  * @returns Returns true if debug logging is enabled or false if it is not enabled.
