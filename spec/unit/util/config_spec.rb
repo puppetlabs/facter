@@ -5,9 +5,17 @@ require 'spec_helper'
 describe Facter::Util::Config do
   include PuppetlabsSpec::Files
 
-  it "should not crash when there's no $HOME set on the environment" do
-    ENV['HOME'] = nil
-    lambda { Facter::Util::Config.setup_default_ext_facts_dirs }.should_not raise_exception
+  describe "ENV['HOME'] is unset" do
+    around do |example|
+      Facter::Core::Execution.with_env('HOME' => nil) do
+        example.run
+      end
+    end
+
+    it "should not set @external_facts_dirs" do
+      Facter::Util::Config.setup_default_ext_facts_dirs
+      Facter::Util::Config.external_facts_dirs.should be_empty
+    end
   end
 
   describe "is_windows? function" do
