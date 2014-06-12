@@ -120,4 +120,14 @@ TEST(facter_util_string, each_line) {
     });
     ASSERT_FALSE(failed);
     ASSERT_EQ(3u, count);
+
+    // Test short-circuiting
+    count = 0;
+    each_line("line1\nline2\nline3", [&](string const& line) {
+        failed = line != "line1";
+        ++count;
+        return false;
+    });
+    ASSERT_FALSE(failed);
+    ASSERT_EQ(1u, count);
 }
