@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <functional>
 #include "../util/option_set.hpp"
 
 namespace facter { namespace execution {
@@ -162,6 +163,45 @@ namespace facter { namespace execution {
         std::string const& file,
         std::vector<std::string> const& arguments,
         std::vector<std::string> const& environment,
+        facter::util::option_set<execution_options> const& options = { execution_options::defaults });
+
+    /**
+     * Executes the given program and returns each line of output.
+     * @param file The name or path of the program to execute.
+     * @param callback The callback that is called with each line of output.
+     * @param options The execution options.
+     */
+    void each_line(
+        std::string const& file,
+        std::function<bool(std::string&)> callback,
+        facter::util::option_set<execution_options> const& options = { execution_options::defaults });
+
+    /**
+     * Executes the given program and returns each line of output.
+     * @param file The name or path of the program to execute.
+     * @param arguments The arguments to pass to the program.
+     * @param callback The callback that is called with each line of output.
+     * @param options The execution options.
+     */
+    void each_line(
+        std::string const& file,
+        std::vector<std::string> const& arguments,
+        std::function<bool(std::string&)> callback,
+        facter::util::option_set<execution_options> const& options = { execution_options::defaults });
+
+    /**
+     * Executes the given program and returns each line of output.
+     * @param file The name or path of the program to execute.
+     * @param arguments The arguments to pass to the program.
+     * @param environment The environment variables to pass to the child process.
+     * @param callback The callback that is called with each line of output.
+     * @param options The execution options.
+     */
+    void each_line(
+        std::string const& file,
+        std::vector<std::string> const& arguments,
+        std::vector<std::string> const& environment,
+        std::function<bool(std::string&)> callback,
         facter::util::option_set<execution_options> const& options = { execution_options::defaults });
 
 }}  // namespace facter::execution

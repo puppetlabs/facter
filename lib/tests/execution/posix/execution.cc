@@ -15,7 +15,7 @@ TEST(execution_posix, simple_execution) {
 
 TEST(execution_posix, simple_execution_with_args) {
     string output = execute("ls", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls" });
-    ASSERT_EQ("file1.txt\nfile2.txt\nfile3.txt", output);
+    ASSERT_EQ("file1.txt\nfile2.txt\nfile3.txt\nfile4.txt", output);
 }
 
 TEST(execution_posix, stderr_redirection) {
@@ -53,4 +53,33 @@ TEST(execution_posix, trim_output) {
     options.clear(execution_options::trim_output);
     output = execute("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file1.txt" }, options);
     ASSERT_EQ("   this is a test of trimming   ", output);
+}
+
+TEST(execution_posix, each_line) {
+    size_t count = 0;
+    bool failed = false;
+    each_line("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file4.txt" }, [&](string& line) {
+        cout << "|" << line << "|" << endl;
+        if ((count == 0 && line != "line1") ||
+            (count == 1 && line != "line2") ||
+            (count == 2 && line != "line3") ||
+            (count == 3 && line != "line4")) {
+            failed = true;
+            return false;
+        }
+        ++count;
+        return true;
+    });
+    ASSERT_FALSE(failed);
+    ASSERT_EQ(4u, count);
+
+     // Test short-circuiting
+    count = 0;
+    each_line("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file4.txt" }, [&](string& line) {
+        failed = line != "line1";
+        ++count;
+        return false;
+    });
+    ASSERT_FALSE(failed);
+    ASSERT_EQ(1u, count);
 }

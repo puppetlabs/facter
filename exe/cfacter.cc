@@ -52,7 +52,7 @@ void help(po::options_description& desc)
         "  cfacter kernel\n";
 }
 
-void configure_logger(LevelPtr level, string const& properties_file)
+void configure_logging(LevelPtr level, string const& properties_file)
 {
     bs::error_code ec;
     if (!properties_file.empty() && is_regular_file(properties_file, ec)) {
@@ -65,6 +65,13 @@ void configure_logger(LevelPtr level, string const& properties_file)
     AppenderPtr appender = new ConsoleAppender(layout, "System.err");
     Logger::getRootLogger()->addAppender(appender);
     Logger::getRootLogger()->setLevel(level);
+
+    // Configure the execution output logger
+    auto logger = Logger::getLogger(LOG_ROOT_NAMESPACE "execution.output");
+    logger->setAdditivity(false);
+    layout = new PatternLayout("%m%n");
+    appender = new ConsoleAppender(layout, "System.err");
+    logger->addAppender(appender);
 }
 
 void log_command_line(int argc, char** argv)
@@ -180,8 +187,8 @@ int main(int argc, char **argv)
             log_level = Level::getInfo();
         }
 
-        // Configure the logger
-        configure_logger(log_level, properties_file);
+        // Configure logging
+        configure_logging(log_level, properties_file);
         log_command_line(argc, argv);
 
         set<string> requested_facts;

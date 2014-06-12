@@ -69,7 +69,8 @@ namespace facter { namespace facts { namespace osx {
             { "User Name",              string(fact::sp_user_name) },
         };
 
-        each_line(execute("/usr/sbin/system_profiler", { "SPSoftwareDataType", "SPHardwareDataType" }), [&](string& line) {
+        size_t count = 0;
+        execution::each_line("/usr/sbin/system_profiler", { "SPSoftwareDataType", "SPHardwareDataType" }, [&](string& line) {
             // Split at the first ':'
             auto pos = line.find(':');
             if (pos == string::npos) {
@@ -84,7 +85,8 @@ namespace facter { namespace facts { namespace osx {
                 return true;
             }
             facts.add(string(fact_name->second), make_value<string_value>(move(value)));
-            return true;
+            // Continue only if we haven't added all the facts
+            return ++count < fact_names.size();
         });
     }
 

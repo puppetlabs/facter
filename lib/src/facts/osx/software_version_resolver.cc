@@ -35,7 +35,8 @@ namespace facter { namespace facts { namespace osx {
             { "BuildVersion",   string(fact::macosx_buildversion) },
         };
 
-        each_line(execute("/usr/bin/sw_vers"), [&](string& line) {
+        size_t count = 0;
+        execution::each_line("/usr/bin/sw_vers", [&](string& line) {
             // Split at the first ':'
             auto pos = line.find(':');
             if (pos == string::npos) {
@@ -68,7 +69,8 @@ namespace facter { namespace facts { namespace osx {
                 }
             }
             facts.add(string(fact_name->second), make_value<string_value>(move(value)));
-            return true;
+            // Continue only if we haven't added all the facts
+            return ++count < fact_names.size();
         });
     }
 

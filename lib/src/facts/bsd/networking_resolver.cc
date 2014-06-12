@@ -288,7 +288,7 @@ namespace facter { namespace facts { namespace bsd {
         // Use dhcpcd if it's present to get the interface's DHCP lease information
         // This assumes we've already searched for the interface with dhclient
         string value;
-        each_line(execute("dhcpcd", { "-U", interface }), [&value](string& line) {
+        execution::each_line("dhcpcd", { "-U", interface }, [&value](string& line) {
             if (starts_with(line, "dhcp_server_identifier=")) {
                 value = trim(line.substr(23));
                 return false;
