@@ -6,6 +6,7 @@ Tinkering with a C/C++ facter
 Build Requirements
 ------------------
 
+* GCC 4.8+ or Clang 5.0+ (OSX)
 * CMake >= 2.8.12
 * Boost C++ Libraries >= 1.48
 * Apache log4cxx >= 10.0
@@ -15,9 +16,25 @@ Build Requirements
 
 ### Setup on Fedora 20
 
-The following will pull all required tools and libraries in:
+The following will install all required tools and libraries:
 
     yum install cmake boost-devel log4cxx-devel openssl-devel yaml-cpp-devel re2-devel
+
+### Setup on Mac OSX Mavericks (homebrew)
+
+This assumes Clang is installed and the system OpenSSL libraries will be used.
+
+The following will install all required libraries:
+
+    brew install cmake boost log4cxx yaml-cpp re2
+
+### Setup on Ubuntu 14.04 (Trusty)
+
+The following will install most required tools and libraries:
+
+    apt-get install build-essential cmake libboost-all-dev liblog4cxx10-dev libssl-dev libyaml-cpp-dev
+
+Google's RE2 library will need to be installed from source.
 
 Pre-Build
 ---------

@@ -395,6 +395,15 @@ namespace facter { namespace facts {
          * The fact for OSX build minor version.
          */
         constexpr static char const* macosx_productversion_minor = "macosx_productversion_minor";
+
+        /**
+         * The fact for virtualization hypervisor.
+         */
+        constexpr static char const* virtualization = "virtual";
+        /**
+         * The fact for whether or not the machine is virtual or physical.
+         */
+        constexpr static char const* is_virtual = "is_virtual";
     };
 
 }}  // namespace facter::facts

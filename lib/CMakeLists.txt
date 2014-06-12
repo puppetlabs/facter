@@ -51,6 +51,7 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/processor_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/ssh_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/uptime_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/virtualization_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/logging/posix/logging.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_addrinfo.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_bio.cc"
@@ -69,6 +70,7 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/processor_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/system_profiler_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/software_version_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/virtualization_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/bsd/scoped_ifaddrs.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
@@ -83,6 +85,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/platform.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/processor_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/selinux_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/virtualization_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/bsd/scoped_ifaddrs.cc"
     )
 endif()
