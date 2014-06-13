@@ -84,6 +84,17 @@
         "operatingsystemrelease" : { "type": "string" },
         "osfamily" : { "type": "string" },
         "path" : { "type": "string" },
+        "partitions" : { "type": "object",
+            "patternProperties": {
+                "^[A-Za-z0-9_]+$" : { "type": "object",
+                    "properties": {
+                        "uuid": { "type": "string" },
+                        "size": { "type": "string" },
+                        "mount": { "type": "string" }
+                    }
+                }
+            }
+        },
         "physicalprocessorcount" : { "type": "string" },
         "processorcount" : { "type": "string" },
         "processor" : { "type": "string" },
@@ -123,8 +134,10 @@
         "sp_user_name" : { "type": "string" },
         "sshdsakey" : { "type": "string" },
         "sshecdsakey" : { "type": "string" },
+        "sshed25519key": { "type": "string" },
         "sshfp_dsa" : { "type": "string" },
         "sshfp_ecdsa" : { "type": "string" },
+        "sshfp_ed25519": { "type": "string" },
         "sshfp_rsa" : { "type": "string" },
         "sshrsakey" : { "type": "string" },
         "swapencrypted" : { "type": "boolean" },
