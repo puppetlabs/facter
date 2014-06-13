@@ -59,7 +59,6 @@ TEST(execution_posix, each_line) {
     size_t count = 0;
     bool failed = false;
     each_line("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file4.txt" }, [&](string& line) {
-        cout << "|" << line << "|" << endl;
         if ((count == 0 && line != "line1") ||
             (count == 1 && line != "line2") ||
             (count == 2 && line != "line3") ||
