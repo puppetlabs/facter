@@ -69,17 +69,21 @@ namespace facter { namespace util {
         return vector<string>(istream_iterator<string>(stream), istream_iterator<string>());
     }
 
-    vector<string> split(string const& str, char delim)
+    vector<string> split(string const& str, char delim, bool remove_empty)
     {
         vector<string> parts;
         istringstream stream(str);
 
         string part;
         while (getline(stream, part, delim)) {
-            if (part.empty()) {
+            if (remove_empty && part.empty()) {
                 continue;
             }
             parts.push_back(move(part));
+        }
+        // If the string ends in the delimiter (and isn't just the delimiter), add an empty string if not removing empty
+        if (!remove_empty && str.size() > 1 && *str.rbegin() == delim) {
+            parts.push_back("");
         }
         return parts;
     }

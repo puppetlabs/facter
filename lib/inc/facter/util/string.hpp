@@ -93,9 +93,10 @@ namespace facter { namespace util {
      * Splits a string into parts based on a delimiter.
      * @param str The string to split.
      * @param delim The delimiter to split on.
+     * @param remove_empty True if empty entries should be removed or false if empty entries should be included.
      * @return Returns a vector of parts.
      */
-    std::vector<std::string> split(std::string const& str, char delim = ' ');
+    std::vector<std::string> split(std::string const& str, char delim = ' ', bool remove_empty = true);
 
     /**
      * Joins a vector of strings together with the given delimiter.
