@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <stdexcept>
 #include <functional>
 #include "../util/option_set.hpp"
@@ -40,13 +41,17 @@ namespace facter { namespace execution {
          */
         trim_output = (1 << 4),
         /**
+         * Merge specified environment with the current process environment.
+         */
+        merge_environment = (1 << 5),
+        /**
          * A combination of all throw options.
          */
         throw_on_failure = throw_on_nonzero_exit |  throw_on_signal,
         /**
          * The default execution options.
          */
-        defaults = trim_output,
+        defaults = trim_output | merge_environment,
     };
 
     /**
@@ -162,7 +167,7 @@ namespace facter { namespace execution {
     std::string execute(
         std::string const& file,
         std::vector<std::string> const& arguments,
-        std::vector<std::string> const& environment,
+        std::map<std::string, std::string> const& environment,
         facter::util::option_set<execution_options> const& options = { execution_options::defaults });
 
     /**
@@ -200,7 +205,7 @@ namespace facter { namespace execution {
     void each_line(
         std::string const& file,
         std::vector<std::string> const& arguments,
-        std::vector<std::string> const& environment,
+        std::map<std::string, std::string> const& environment,
         std::function<bool(std::string&)> callback,
         facter::util::option_set<execution_options> const& options = { execution_options::defaults });
 

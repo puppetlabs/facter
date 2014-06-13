@@ -3,6 +3,7 @@
 #include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
 #include <unistd.h>
+#include <stdlib.h>
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <sstream>
@@ -14,6 +15,9 @@ using namespace facter::logging;
 using namespace log4cxx;
 
 LOG_DECLARE_NAMESPACE("execution.posix");
+
+// Declare environ for OSX
+extern char** environ;
 
 namespace facter { namespace execution {
 
@@ -75,7 +79,7 @@ namespace facter { namespace execution {
     static string execute(
         string const& file,
         vector<string> const* arguments,
-        vector<string> const* environment,
+        map<string, string> const* environment,
         function<bool(string&)>* callback,
         option_set<execution_options> const& options);
 
@@ -97,7 +101,7 @@ namespace facter { namespace execution {
     string execute(
         string const& file,
         vector<string> const& arguments,
-        vector<string> const& environment,
+        map<string, string> const& environment,
         option_set<execution_options> const& options)
     {
         return execute(file, &arguments, &environment, nullptr, options);
@@ -123,7 +127,7 @@ namespace facter { namespace execution {
     void each_line(
         string const& file,
         vector<string> const& arguments,
-        vector<string> const& environment,
+        map<string, string> const& environment,
         function<bool(string&)> callback,
         option_set<execution_options> const& options)
     {
@@ -133,7 +137,7 @@ namespace facter { namespace execution {
     string execute(
         string const& file,
         vector<string> const* arguments,
-        vector<string> const* environment,
+        map<string, string> const* environment,
         function<bool(string&)>* callback,
         option_set<execution_options> const& options)
     {
@@ -324,8 +328,25 @@ namespace facter { namespace execution {
                 }
             }
 
-            // TODO: set up environment if specified (execvpe is a GNU extension)
-            // TODO: regardless of passed environment variables, we need to force a C locale
+            // Clear the environment if not merging
+            if (!options[execution_options::merge_environment] && environ) {
+                *environ = nullptr;
+            }
+
+            // Set the locale to C unless specified in the given environment
+            if (!environment || environment->count("LC_ALL") == 0) {
+                setenv("LC_ALL", "C", 1);
+            }
+            if (!environment || environment->count("LANG") == 0) {
+                setenv("LANG", "C", 1);
+            }
+            if (environment) {
+                for (auto const& variable : *environment) {
+                    setenv(variable.first.c_str(), variable.second.c_str(), 1);
+                }
+            }
+
+            // Execute the given program and exit in case of failure
             exit(execvp(file.c_str(), const_cast<char* const*>(args.data())));
         }
         catch (exception& ex)
