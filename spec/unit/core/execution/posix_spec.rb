@@ -1,7 +1,7 @@
 require 'spec_helper'
+require 'facter/util/config'
 
-describe Facter::Core::Execution::Posix, :as_plaform => :posix do
-
+describe Facter::Core::Execution::Posix, :unless => Facter::Util::Config.is_windows? do
   describe "#search_paths" do
     it "should use the PATH environment variable plus /sbin and /usr/sbin on unix" do
       ENV.expects(:[]).with('PATH').returns "/bin:/usr/bin"
