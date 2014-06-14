@@ -90,7 +90,8 @@
                     "properties": {
                         "uuid": { "type": "string" },
                         "size": { "type": "string" },
-                        "mount": { "type": "string" }
+                        "mount": { "type": "string" },
+                        "filesystem": { "type": "string" }
                     }
                 }
             }
