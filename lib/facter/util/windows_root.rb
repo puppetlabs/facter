@@ -1,6 +1,6 @@
 require 'windows/system_info'
 require 'windows/security'
-require 'sys/admin'
+require 'win32/security'
 
 module Facter::Util::Root
   extend ::Windows::SystemInfo
