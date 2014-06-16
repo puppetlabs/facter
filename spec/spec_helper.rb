@@ -38,7 +38,7 @@ LogSpecOrder.log_spec_order
 RSpec.configure do |config|
   config.mock_with :mocha
 
-  if Facter::Util::Config.is_windows?
+  if Facter::Util::Config.is_windows? && RUBY_VERSION =~ /^1\./
     require 'win32console'
     config.output_stream = $stdout
     config.error_stream = $stderr
