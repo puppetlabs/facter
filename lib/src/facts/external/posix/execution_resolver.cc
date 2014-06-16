@@ -30,7 +30,7 @@ namespace facter { namespace facts { namespace external {
 
         try
         {
-            each_line(execute(path, { execution_options::defaults, execution_options::throw_on_failure }), [&facts](string const& line) {
+            execution::each_line(path, [&facts](string const& line) {
                 auto pos = line.find('=');
                 if (pos == string::npos) {
                     LOG_DEBUG("ignoring line in output: %1%", line);
@@ -39,7 +39,7 @@ namespace facter { namespace facts { namespace external {
                 // Add as a string fact
                 facts.add(line.substr(0, pos), make_value<string_value>(line.substr(pos+1)));
                 return true;
-            });
+            }, { execution_options::defaults, execution_options::throw_on_failure });
         }
         catch (execution_exception& ex) {
             throw external_fact_exception(ex.what());

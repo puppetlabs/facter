@@ -33,7 +33,7 @@ namespace facter { namespace facts { namespace osx {
 
         // Check for Parallels
         string value;
-        each_line(execute("/usr/sbin/system_profiler", { "SPEthernetDataType" }), [&](string& line) {
+        execution::each_line("/usr/sbin/system_profiler", { "SPEthernetDataType" }, [&](string& line) {
             if (trim(line) == "Subsystem Vendor ID: 0x1ab8") {
                 value = vm::parallels;
                 return false;

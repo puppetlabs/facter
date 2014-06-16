@@ -58,7 +58,7 @@ namespace facter { namespace facts { namespace osx {
     string networking_resolver::get_primary_interface()
     {
         string interface;
-        each_line(execute("route", { "-n", "get",  "default" }), [&interface](string& line){
+        execution::each_line("route", { "-n", "get",  "default" }, [&interface](string& line){
             trim(line);
             if (starts_with(line, "interface: ")) {
                 interface = trim(line.substr(11));

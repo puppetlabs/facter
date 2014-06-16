@@ -96,7 +96,7 @@ namespace facter { namespace facts { namespace linux {
     string virtualization_resolver::get_what_vm()
     {
         string value;
-        each_line(execute("virt-what"), [&](string& line) {
+        execution::each_line("virt-what", [&](string& line) {
             // Some versions of virt-what dump error/warning messages to stdout
             if (starts_with(line, "virt-what:")) {
                 return true;

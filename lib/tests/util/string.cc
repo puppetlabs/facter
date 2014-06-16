@@ -66,6 +66,13 @@ TEST(facter_util_string, split) {
     ASSERT_EQ(0u, split("").size());
 }
 
+TEST(facter_util_string, split_keep_empty) {
+    ASSERT_EQ(0u, split("", ' ', false).size());
+    ASSERT_THAT(split(" ", ' ', false), ElementsAre(""));
+    ASSERT_THAT(split("foo;bar;baz", ';', false), ElementsAre("foo", "bar", "baz"));
+    ASSERT_THAT(split(";foo;;bar;baz;", ';', false), ElementsAre("", "foo", "", "bar", "baz", ""));
+}
+
 TEST(facter_util_string, join) {
     ASSERT_EQ("hello world", join({"hello", "world"}));
     ASSERT_EQ("hello world", join({"hello", "world"}, " "));
@@ -120,4 +127,14 @@ TEST(facter_util_string, each_line) {
     });
     ASSERT_FALSE(failed);
     ASSERT_EQ(3u, count);
+
+    // Test short-circuiting
+    count = 0;
+    each_line("line1\nline2\nline3", [&](string const& line) {
+        failed = line != "line1";
+        ++count;
+        return false;
+    });
+    ASSERT_FALSE(failed);
+    ASSERT_EQ(1u, count);
 }
