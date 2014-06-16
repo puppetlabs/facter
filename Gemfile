@@ -41,7 +41,6 @@ mingw << :x64_mingw if Bundler::Dsl::VALID_PLATFORMS.include?(:x64_mingw)
 platform(*mingw) do
   gem 'ffi', '~> 1.9.3'
   gem 'win32-dir', '~> 0.4.8'
-  gem 'windows-pr', '~> 1.2'
   gem 'win32-security', '~> 0.2.5'
 end
 
