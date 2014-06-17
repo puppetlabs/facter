@@ -5,7 +5,9 @@
 %global realversion <%= @version %>
 %global rpmversion <%= @rpmversion %>
 
-%global _prefix /opt/pl-build-tools
+%global build_prefix /opt/pl-build-tools
+%global _prefix /usr
+%global _libdir %{_prefix}/lib
 
 Name:           <%= @project %>
 Summary:        Ruby module for collecting simple facts about a host operating system
@@ -29,6 +31,14 @@ BuildRequires:  boost-devel
 BuildRequires:  log4cxx-devel
 BuildRequires:  openssl-devel
 
+Requires: boost
+Requires: pl-libyaml-cpp
+Requires: log4cxx
+Requires: pl-libre2
+Requires: libicu
+Requires: pl-gcc-runtime
+
+AutoReqProv: 0
 
 %description
 Ruby module for collecting simple facts about a host Operating
@@ -39,20 +49,16 @@ operating system. Additional facts can be added through simple Ruby scripts
 %setup -q  -n %{name}-%{realversion}
 
 %build
-export CC=%{_prefix}/bin/gcc
-export CXX=%{_prefix}/bin/g++
-LDFLAGS=-Wl,-rpath=%{_prefix}/lib,--enable-new-dtags %{_bindir}/cmake \
+%{build_prefix}/bin/cmake \
+  -DCMAKE_TOOLCHAIN_FILE=%{build_prefix}/pl-build-toolchain.cmake \
   -DCMAKE_VERBOSE_MAKEFILE=ON \
-  -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
-  -DINCLUDE_INSTALL_DIR:PATH=%{_prefix}/include \
-  -DLIB_INSTALL_DIR:PATH=%{_prefix}/lib \
-  -DBUILD_SHARED_LIBS=ON \
+  -DCMAKE_INSTALL_PREFIX=%{_prefix} \
   .
-make DESTDIR=%{buildroot} prefix=%{_prefix}
+  make %{?_smp_mflags} DESTDIR=%{buildroot}
 
 %install
 rm -rf %{buildroot}
-make install DESTDIR=%{buildroot} prefix=%{_prefix}
+make %{?_smp_mflags} install DESTDIR=%{buildroot}
 
 %clean
 rm -rf %{buildroot}
