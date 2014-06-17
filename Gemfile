@@ -30,6 +30,20 @@ data['gem_platform_dependencies'].each_pair do |gem_platform, info|
   end
 end
 
+platform(:mingw_19) do
+  gem 'win32console', '~> 1.3.2'
+end
+
+mingw = [:mingw]
+mingw << :x64_mingw if Bundler::Dsl::VALID_PLATFORMS.include?(:x64_mingw)
+
+platform(*mingw) do
+  gem 'ffi', '~> 1.9.3'
+  gem 'win32-dir', '~> 0.4.8'
+  gem 'windows-pr', '~> 1.2'
+  gem 'win32-security', '>= 0.2.0'
+end
+
 gem 'facter', ">= 1.0.0", :path => File.expand_path("..", __FILE__)
 
 if File.exists? "#{__FILE__}.local"
