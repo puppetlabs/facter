@@ -20,6 +20,7 @@ require 'yaml'
 data = YAML.load_file(File.join(File.dirname(__FILE__), 'ext', 'project_data.yaml'))
 bundle_platforms = data['bundle_platforms']
 data['gem_platform_dependencies'].each_pair do |gem_platform, info|
+  next if gem_platform =~ /mingw/
   if bundle_deps = info['gem_runtime_dependencies']
     bundle_platform = bundle_platforms[gem_platform] or raise "Missing bundle_platform"
     platform(bundle_platform.intern) do
