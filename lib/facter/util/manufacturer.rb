@@ -53,7 +53,7 @@ module Facter::Manufacturer
     name.each do |sysctlkey,facterkey|
       Facter.add(facterkey) do
         confine :kernel => [:openbsd, :darwin]
-        setcode Facter::Util::POSIX.sysctl(sysctlkey)
+        setcode { Facter::Util::POSIX.sysctl(sysctlkey) }
       end
     end
   end
