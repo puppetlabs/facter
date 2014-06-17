@@ -15,7 +15,7 @@
 namespace facter { namespace util { namespace posix {
 
     /**
-     * Represents a scoped file descriptor for POSIX systems.
+     * Represents a scoped addrinfo for POSIX systems.
      * Automatically frees the address information pointer when it goes out of scope.
     */
     struct scoped_addrinfo : scoped_resource<addrinfo*>
