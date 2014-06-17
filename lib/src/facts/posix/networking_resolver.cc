@@ -92,31 +92,35 @@ namespace facter { namespace facts { namespace posix {
             return;
         }
 
-        // Retrieve the fully-qualified domain name
+        // Retrieve the FQDN by resolving the hostname
+        string fqdn;
+        string domain;
         scoped_addrinfo info(hostname->value());
-        if (info.result() != 0) {
-            if (info.result() == EAI_NONAME) {
-                LOG_WARNING("domain is unknown for host %1%: %2% and %3% facts are unavailable.", hostname->value(), fact::fqdn, fact::domain);
-                return;
-            }
-            LOG_WARNING("getaddrinfo failed: %1% (%2%): %3% and %4% facts are unavailable.", gai_strerror(info.result()), info.result(), fact::fqdn, fact::domain);
-            return;
+        if (info.result() != 0 && info.result() != EAI_NONAME) {
+            LOG_WARNING("getaddrinfo failed: %1% (%2%): defaulting to %3% for the %4% fact.", gai_strerror(info.result()), info.result(), fact::hostname, fact::fqdn);
+        } else if (!info || info.result() == EAI_NONAME) {
+            LOG_WARNING("hostname \"%1%\" could not be resolved: %2% fact may not be externally resolvable.", hostname->value(), fact::fqdn);
+        } else {
+            fqdn = static_cast<addrinfo*>(info)->ai_canonname;
         }
 
-        if (!info || hostname->value() == static_cast<addrinfo*>(info)->ai_canonname) {
-            LOG_WARNING("network domain could not be determined: %1% and %2% facts are unavailable.", fact::fqdn, fact::domain);
-            return;
+        // Default to the hostname for an empty FQDN
+        if (fqdn.empty()) {
+            fqdn = hostname->value();
         }
 
-        // Add the FQDN fact
-        string domain = static_cast<addrinfo*>(info)->ai_canonname;
-        facts.add(fact::fqdn, make_value<string_value>(domain));
-
-        // Trim off the hostname from the FQDN to get the domain fact
-        if (starts_with(domain, hostname->value() + ".")) {
-            domain = domain.substr(hostname->value().length() + 1);
+        // Set the domain name if the FQDN is prefixed with the hostname
+        if (starts_with(fqdn, hostname->value() + ".")) {
+            domain = fqdn.substr(hostname->value().length() + 1);
         }
-        facts.add(fact::domain, make_value<string_value>(move(domain)));
+
+        if (!domain.empty()) {
+            facts.add(fact::domain, make_value<string_value>(move(domain)));
+        }
+
+        if (!fqdn.empty()) {
+            facts.add(fact::fqdn, make_value<string_value>(move(fqdn)));
+        }
     }
 
     string networking_resolver::address_to_string(sockaddr const* addr, sockaddr const* mask) const
