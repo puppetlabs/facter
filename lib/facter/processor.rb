@@ -117,21 +117,19 @@ end
 if Facter.value(:kernel) == "windows"
   processor_list = []
 
-  Thread::exclusive do
-    require 'facter/util/wmi'
+  require 'facter/util/wmi'
 
-    # get each physical processor
-    Facter::Util::WMI.execquery("select * from Win32_Processor").each do |proc|
-      # not supported before 2008
-      if proc.respond_to?(:NumberOfLogicalProcessors)
-        processor_num = proc.NumberOfLogicalProcessors
-      else
-        processor_num = 1
-      end
+  # get each physical processor
+  Facter::Util::WMI.execquery("select * from Win32_Processor").each do |proc|
+    # not supported before 2008
+    if proc.respond_to?(:NumberOfLogicalProcessors)
+      processor_num = proc.NumberOfLogicalProcessors
+    else
+      processor_num = 1
+    end
 
-      processor_num.times do |i|
-        processor_list << proc.Name.squeeze(" ")
-      end
+    processor_num.times do |i|
+      processor_list << proc.Name.squeeze(" ")
     end
   end
 

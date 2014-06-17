@@ -127,20 +127,6 @@ describe "Memory facts" do
       Facter::Core::Execution.stubs(:exec).with('swap -l 2>/dev/null').returns(my_fixture_read('aix-swap_l'))
       Facter::Core::Execution.stubs(:exec).with('/usr/bin/svmon -O unit=KB').returns(my_fixture_read('aix-svmon'))
 
-      svmon = <<SVMON
-Unit: KB
---------------------------------------------------------------------------------------
-               size       inuse        free         pin     virtual  available   mmode
-memory     32768000     9948408    22819592     2432080     4448928   27231828     Ded
-pg space   34078720       15000
-
-               work        pers        clnt       other
-pin         1478228           0           0      953852
-in use      4448928           0     5499480
-SVMON
-
-      Facter::Core::Execution.stubs(:exec).with('/usr/bin/svmon -O unit=KB').returns(svmon)
-
       Facter.collection.internal_loader.load(:memory)
     end
 
@@ -196,9 +182,7 @@ SVMON
       Facter::Core::Execution.stubs(:exec).with('swapctl -s').returns(swapusage)
 
       Facter::Core::Execution.stubs(:exec).with('vmstat').returns(my_fixture_read('openbsd-vmstat'))
-
       Facter::Util::POSIX.stubs(:sysctl).with('hw.physmem').returns('267321344')
-
       Facter::Util::POSIX.stubs(:sysctl).with('vm.swapencrypt.enable').returns('1')
 
       Facter.collection.internal_loader.load(:memory)
@@ -235,7 +219,6 @@ SVMON
       Facter.fact(:kernel).stubs(:value).returns("SunOS")
 
       Facter::Core::Execution.stubs(:exec).with('/usr/sbin/prtconf 2>/dev/null').returns(my_fixture_read('solaris-prtconf'))
-
       Facter::Core::Execution.stubs(:exec).with('vmstat').returns(my_fixture_read('solaris-vmstat'))
     end
 

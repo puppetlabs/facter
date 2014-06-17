@@ -57,6 +57,7 @@ describe "Operating System fact" do
     {
       "Debian"      => "/etc/debian_version",
       "Gentoo"      => "/etc/gentoo-release",
+      "Mageia"      => "/etc/mageia-release",
       "Mandriva"    => "/etc/mandriva-release",
       "Mandrake"    => "/etc/mandrake-release",
       "MeeGo"       => "/etc/meego-release",
@@ -146,13 +147,15 @@ describe "Operating System fact" do
       Facter.fact(:operatingsystem).value.should == "SLC"
     end
 
-    describe "CumulusLinux variant" do
-      it "should be CumulusLinux if /etc/os-release exist and NAME says it is Cumulus Linux" do
-        # Facter.fact(:kernel).stubs(:value).returns("Linux")
-        FileTest.expects(:exists?).with('/etc/os-release').returns true
-        File.expects(:read).with('/etc/os-release').returns 'NAME="Cumulus Linux"'
-        Facter.fact(:operatingsystem).value.should == "CumulusLinux"
-      end
+    it "should identify Cumulus Linux" do
+      Facter::Util::Operatingsystem.expects(:os_release).returns({'NAME' => 'Cumulus Linux'})
+      Facter.fact(:operatingsystem).value.should == "CumulusLinux"
+    end
+
+    it "should not use '/etc/os-release' on platforms other than Cumulus Linux" do
+      Facter::Util::Operatingsystem.expects(:os_release).returns({'NAME' => 'Debian GNU/Linux'})
+      FileTest.expects(:exists?).with('/etc/debian_version').returns true
+      Facter.fact(:operatingsystem).value.should == "Debian"
     end
   end
 end

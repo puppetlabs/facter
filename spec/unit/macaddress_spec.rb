@@ -65,7 +65,6 @@ describe "macaddress fact" do
       Facter::Util::IP.stubs(:exec_ifconfig).
         returns(ifconfig_fixture('openbsd_bridge_rules'))
 
-      expect { Facter.value(:macaddress) }.to_not raise_error
       Facter.value(:macaddress).should be_nil
     end
   end

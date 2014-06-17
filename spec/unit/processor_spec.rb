@@ -1,5 +1,7 @@
 #! /usr/bin/env ruby
 
+require 'facter/util/posix'
+require 'facter/util/processor'
 require 'spec_helper'
 require 'facter_spec/cpuinfo'
 require 'facter/util/posix'
@@ -264,12 +266,12 @@ describe "Processor facts" do
             Facter.fact(:kernel).stubs(:value).returns(:sunos)
             Facter.stubs(:value).with(:kernelrelease).returns(release)
 
-          Facter::Core::Execution.expects(:exec).with("/usr/sbin/psrinfo").never
-          Facter::Core::Execution.expects(:exec).with("/usr/bin/kstat cpu_info").returns(self.send("kstat_#{arch}".intern))
-          Facter.fact(:processorcount).value.should == '8'
+            Facter::Core::Execution.expects(:exec).with("/usr/sbin/psrinfo").never
+            Facter::Core::Execution.expects(:exec).with("/usr/bin/kstat cpu_info").returns(self.send("kstat_#{arch}".intern))
+            Facter.fact(:processorcount).value.should == '8'
+          end
         end
       end
-    end
 
       %w{ 5.8 5.9 5.10 5.11 }.each do |release|
         it "uses psrinfo on release #{release}" do

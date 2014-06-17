@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 require 'facter/util/virtual'
-require 'facter/util/macosx'
+require 'facter/util/macosx' unless Facter::Util::Config.is_windows?
 
 describe "Virtual fact" do
   before(:each) do
@@ -49,7 +49,7 @@ describe "Virtual fact" do
     Facter.fact(:virtual).value.should == "zlinux"
   end
 
-  describe "on Darwin" do
+  describe "on Darwin", :unless => Facter::Util::Config.is_windows? do
     before do
       Facter.fact(:kernel).stubs(:value).returns("Darwin")
     end

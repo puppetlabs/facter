@@ -1,0 +1,7 @@
+NAME=Sabayon
+ID=sabayon
+PRETTY_NAME="Sabayon/Linux"
+ANSI_COLOR="1;32"
+HOME_URL="http://www.sabayon.org/"
+SUPPORT_URL="http://forum.sabayon.org/"
+BUG_REPORT_URL="https://bugs.sabayon.org/"

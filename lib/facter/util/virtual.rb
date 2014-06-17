@@ -98,7 +98,7 @@ module Facter::Util::Virtual
      end
      if txt =~ /QEMU Virtual CPU/ then true
      elsif txt =~ /Common KVM processor/ then true
-       else false
+     else false
      end
   end
 
@@ -181,9 +181,9 @@ module Facter::Util::Virtual
   #
   # @api public
   #
-  # @return [String] or nil if the path does not exist
+  # @return [String] or nil if the path does not exist or is unreadable
   def self.read_sysfs_dmi_entries(path="/sys/firmware/dmi/entries/1-0/raw")
-    if File.exists?(path)
+    if File.readable?(path)
       Facter::Util::FileRead.read_binary(path)
     end
   end

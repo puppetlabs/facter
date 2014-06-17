@@ -36,6 +36,20 @@ end
 
 # Resolution for Debian variants.
 Facter.add(:operatingsystem) do
+  # Cumulus Linux is a variant of Debian so this resolution needs to come
+  # before the Debian resolution.
+  has_weight(10)
+  confine :kernel => :linux
+
+  setcode do
+    release_info = Facter::Util::Operatingsystem.os_release
+    if release_info['NAME'] == "Cumulus Linux"
+      'CumulusLinux'
+    end
+  end
+end
+
+Facter.add(:operatingsystem) do
   confine :kernel => :linux
   has_weight 10
   setcode do
