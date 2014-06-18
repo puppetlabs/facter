@@ -17,6 +17,7 @@ describe "Operating System Release fact" do
     "OpenWrt"    => "/etc/openwrt_version",
     "CentOS"    => "/etc/redhat-release",
     "RedHat"    => "/etc/redhat-release",
+    "LinuxMint"   => "/etc/linuxmint/info",
     "Scientific"  => "/etc/redhat-release",
     "Fedora"    => "/etc/fedora-release",
     "MeeGo"     => "/etc/meego-release",
