@@ -20,6 +20,7 @@ require 'yaml'
 data = YAML.load_file(File.join(File.dirname(__FILE__), 'ext', 'project_data.yaml'))
 bundle_platforms = data['bundle_platforms']
 data['gem_platform_dependencies'].each_pair do |gem_platform, info|
+  next if gem_platform =~ /mingw/
   if bundle_deps = info['gem_runtime_dependencies']
     bundle_platform = bundle_platforms[gem_platform] or raise "Missing bundle_platform"
     platform(bundle_platform.intern) do
@@ -41,7 +42,7 @@ platform(*mingw) do
   gem 'ffi', '~> 1.9.3'
   gem 'win32-dir', '~> 0.4.8'
   gem 'windows-pr', '~> 1.2'
-  gem 'win32-security', '>= 0.2.0'
+  gem 'win32-security', '~> 0.2.5'
 end
 
 gem 'facter', ">= 1.0.0", :path => File.expand_path("..", __FILE__)
