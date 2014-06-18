@@ -8,8 +8,6 @@ endif()
 
 enable_testing()
 
-set(VENDOR_DIRECTORY "${PROJECT_SOURCE_DIR}/vendor")
-
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 # Find Boost
@@ -50,8 +48,8 @@ if ("${INSTALL_IS_SYSTEM_DIR}" STREQUAL "-1")
 endif()
 
 # Include vendor libraries
-include(${VENDOR_DIRECTORY}/rapidjson.cmake)
-include(${VENDOR_DIRECTORY}/gmock.cmake)
+add_subdirectory(vendor/gmock-1.7.0)
+set(RAPIDJSON_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/rapidjson-0.11/include")
 
 add_subdirectory(exe)
 
