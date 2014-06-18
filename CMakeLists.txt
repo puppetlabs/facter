@@ -9,7 +9,8 @@ endif()
 enable_testing()
 
 set(VENDOR_DIRECTORY "${PROJECT_SOURCE_DIR}/vendor")
-list(APPEND CMAKE_MODULE_PATH ${VENDOR_DIRECTORY})
+
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 # Find Boost
 find_package(Boost 1.48 COMPONENTS program_options system filesystem)
