@@ -32,16 +32,16 @@ data['gem_platform_dependencies'].each_pair do |gem_platform, info|
 end
 
 platform(:mingw_19) do
-  gem 'win32console', '~> 1.3.2'
+  gem 'win32console', '~> 1.3.2', :require => false
 end
 
 mingw = [:mingw]
 mingw << :x64_mingw if Bundler::Dsl::VALID_PLATFORMS.include?(:x64_mingw)
 
 platform(*mingw) do
-  gem 'ffi', '~> 1.9.3'
-  gem 'win32-dir', '~> 0.4.8'
-  gem 'win32-security', '~> 0.2.5'
+  gem 'ffi', '~> 1.9.3', :require => false
+  gem 'win32-dir', '~> 0.4.8', :require => false
+  gem 'win32-security', '~> 0.2.5', :require => false
 end
 
 gem 'facter', ">= 1.0.0", :path => File.expand_path("..", __FILE__)
