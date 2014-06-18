@@ -1,7 +1,10 @@
-cfacter
-=======
+Native Facter
+=============
 
-Tinkering with a C/C++ facter
+An implementation of facter functionality in C++11, providing:
+* a shared library which gather facts about the system
+* an executable for standalone command line usage
+* a gem with a facter-like interface, for use in ruby applications
 
 Build Requirements
 ------------------
