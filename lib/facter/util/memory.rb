@@ -186,8 +186,8 @@ module Facter::Memory
         0
       end
     when /OpenBSD/i
-      if line =~ /^total: (\d+)k bytes allocated = \d+k used, (\d+)k available$/
-        (is_size) ? $1.to_i : $2.to_i
+      if line =~ /^total: (\d+) (\d+)-blocks allocated, (\d+) used, (\d+) available$/
+        (is_size) ? ($1.to_i * $2.to_i) : ($4.to_i * $2.to_i)
       else
         0
       end
@@ -214,8 +214,10 @@ module Facter::Memory
 
   def self.scale_swap_value(value, kernel)
     case kernel
-    when /OpenBSD/i, /FreeBSD/i
+    when /FreeBSD/i
       value.to_f / 1024.0
+    when /OpenBSD/i
+      value.to_f / 1024.0 / 1024.0
     when /SunOS/i
       value.to_f / 2 / 1024.0
     else
