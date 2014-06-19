@@ -5,7 +5,7 @@ describe Facter::Core::Execution::Base do
 
   describe "#with_env" do
     it "should execute the caller's block with the specified env vars" do
-      test_env = { "LANG" => "C", "FOO" => "BAR" }
+      test_env = { 'LANG' => 'C', 'LC_ALL' => 'C', 'FOO' => 'BAR' }
       subject.with_env test_env do
         test_env.keys.each do |key|
           ENV[key].should == test_env[key]
@@ -64,12 +64,10 @@ describe Facter::Core::Execution::Base do
 
   describe "#execute" do
 
-    it "switches LANG to C when executing the command" do
-      subject.expects(:with_env).with('LANG' => 'C')
+    it "switches LANG and LC_ALL to C when executing the command" do
+      subject.expects(:with_env).with('LC_ALL' => 'C', 'LANG' => 'C')
       subject.execute('foo')
     end
-
-    it "switches LC_ALL to C when executing the command"
 
     it "expands the command before running it" do
       subject.stubs(:`).returns ''
