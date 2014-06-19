@@ -111,7 +111,4 @@ target_link_libraries(libfacter
     ${YAMLCPP_LIBRARIES}
 )
 
-# Add a dependency on rapidjson
-add_dependencies(libfacter rapidjson)
-
 add_subdirectory(tests)
