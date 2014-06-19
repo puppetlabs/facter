@@ -1,0 +1,69 @@
+{
+    "instance": {
+        "attributes": {},
+        "description": "",
+        "disks": [
+            {
+                "deviceName": "gce-facts",
+                "index": 0,
+                "mode": "READ_WRITE",
+                "type": "PERSISTENT"
+            }
+        ],
+        "hostname": "gce-facts.c.dev-sand-box.internal",
+        "id": 18287562037867659655,
+        "image": "projects/485161417235/images/centos6",
+        "machineType": "projects/485161417235/machineTypes/n1-standard-1",
+        "maintenanceEvent": "NONE",
+        "networkInterfaces": [
+            {
+                "accessConfigs": [
+                    {
+                        "externalIp": "23.251.145.218",
+                        "type": "ONE_TO_ONE_NAT"
+                    }
+                ],
+                "forwardedIps": [],
+                "ip": "10.240.193.246",
+                "network": "projects/485161417235/networks/default"
+            }
+        ],
+        "scheduling": {
+            "automaticRestart": "TRUE",
+            "onHostMaintenance": "MIGRATE"
+        },
+        "serviceAccounts": {
+            "485161417235-u737tauareitfc5ju1t5cbmdrasr4giv@developer.gserviceaccount.com": {
+                "aliases": [
+                    "default"
+                ],
+                "email": "485161417235-u737tauareitfc5ju1t5cbmdrasr4giv@developer.gserviceaccount.com",
+                "scopes": [
+                    "https://www.googleapis.com/auth/compute",
+                    "https://www.googleapis.com/auth/devstorage.full_control",
+                    "https://www.googleapis.com/auth/userinfo.email"
+                ]
+            },
+            "default": {
+                "aliases": [
+                    "default"
+                ],
+                "email": "485161417235-u737tauareitfc5ju1t5cbmdrasr4giv@developer.gserviceaccount.com",
+                "scopes": [
+                    "https://www.googleapis.com/auth/compute",
+                    "https://www.googleapis.com/auth/devstorage.full_control",
+                    "https://www.googleapis.com/auth/userinfo.email"
+                ]
+            }
+        },
+        "tags": [],
+        "zone": "projects/485161417235/zones/us-central1-b"
+    },
+    "project": {
+        "attributes": {
+            "sshKeys": "justin:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKTIyNpvkUHk71q79CfiMOiY9xL9bOazvDfsCLD1UaK+g6kugMRxxiFRIB7aOajOrQl/+ZJ3Cy16f/D6zmSLTMJSIQKiJsGFyCdfkbZ6YKDSKMOpqlZCSeErpJp74X4Olg37DLqkFH2MtuoclrkheY0f87CMTGc/ICr6zDF2DoYM7yCU7y8s6FckcDs6xBUYd+phduQLLuEiUxB95neESvV0ZiD4IoJsEMOj5Y5VLqvmbozlHVu8OqVtUxNj5iIwXMGG/hROvjtZQfFRYn64xhINDt/ozbesh5ah1zn6FosGwfuYM5WJeTsUN53iiXIsDDks2Kv3bLu4fOSQ/P9LEF justin@holguinj.wifi.puppetlabs.net\nadrien:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtYeE0mv03TdEZ/1Gd6SEOkG0QCFzBH/rGqji75WJpMrr9UKti7wAN3nFBWp6ElM1pxmnzGBqJPxFfsIkjRhm89hh123KlaorJQZU5pftGXGNMUo/cd/idqu3OXTMs149TGrZAlowKdzOPIx9ndNJQW6OtKmn8yFgxXFpB6kJRccjeh0erDk9Zdv+/PZL1UWmDBlNh9exPsUV9qTclih/jI1PAbA+/8Oj8MqlxrlsTltjczPe/TUbvpw/d/12d1EIF6F3f498Y4mAwB/ERQIKb55b3NwPjQJ+RwZIRpayQ8nvhxJmAn8xtbyTF4o5ORHICbGqLpbmc52h2pUieqJqf adrien@grey"
+        },
+        "numericProjectId": 485161417235,
+        "projectId": "dev-sand-box"
+    }
+}
