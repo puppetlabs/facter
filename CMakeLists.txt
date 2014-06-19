@@ -10,35 +10,12 @@ enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-# Find Boost
-find_package(Boost 1.48 COMPONENTS program_options system filesystem)
-if (NOT Boost_FOUND)
-    message(FATAL_ERROR "Boost 1.48 or newer is required.  Please install it before building.")
-endif()
-
-# Find Log4cxx
-find_package(LOG4CXX)
-if (NOT LOG4CXX_FOUND)
-    message(FATAL_ERROR "Log4cxx version 10.0 is required.  Please install it before building.")
-endif()
-
-# Find RE2
-find_package(RE2)
-if (NOT RE2_FOUND)
-    message(FATAL_ERROR "RE2 is required.  Please install it before building.")
-endif()
-
-# Find openssl
-find_package(OPENSSL)
-if (NOT OPENSSL_FOUND)
-    message(FATAL_ERROR "openssl is required.  Please install it before building.")
-endif()
-
-# Find YAMLCPP
-find_package(YAMLCPP)
-if (NOT YAMLCPP_FOUND)
-    message(FATAL_ERROR "yaml-cpp is required.  Please install it before building.")
-endif()
+# Find our dependency packages
+find_package(Boost 1.48 REQUIRED COMPONENTS program_options system filesystem)
+find_package(LOG4CXX REQUIRED)
+find_package(RE2 REQUIRED)
+find_package(OPENSSL REQUIRED)
+find_package(YAMLCPP REQUIRED)
 
 # Set RPATH if not installing to a system library directory
 list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" INSTALL_IS_SYSTEM_DIR)
