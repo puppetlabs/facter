@@ -28,8 +28,6 @@ endif()
 add_subdirectory(vendor/gmock-1.7.0)
 set(RAPIDJSON_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/rapidjson-0.11/include")
 
-add_subdirectory(exe)
-
 #
 # Add cpplint target
 #
@@ -73,6 +71,9 @@ endif()
 add_custom_target(cppcheck
     COMMAND cppcheck lib exe
 )
+
+add_subdirectory(lib)
+add_subdirectory(exe)
 
 # Add test executables for unit testing
 add_test("library\\ tests" "${PROJECT_BINARY_DIR}/lib/tests/libfacter_test" "--gtest_color=yes")
