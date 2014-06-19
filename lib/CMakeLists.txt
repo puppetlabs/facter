@@ -11,13 +11,7 @@ configure_file (
 )
 
 # Set compiler-specific flags
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-tautological-constant-out-of-range-compare")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-endif()
+set(CMAKE_CXX_FLAGS ${FACTER_CXX_FLAGS})
 
 # Set the common (platform-independent) sources
 set(LIBFACTER_COMMON_SOURCES
