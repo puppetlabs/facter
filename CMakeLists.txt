@@ -24,6 +24,17 @@ if ("${INSTALL_IS_SYSTEM_DIR}" STREQUAL "-1")
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
 
+# Set compiler-specific flags
+# Each of our project dirs sets CMAKE_CXX_FLAGS based on these. We do
+# not set CMAKE_CXX_FLAGS globally because gtest is not warning-clean.
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-tautological-constant-out-of-range-compare")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+endif()
+
 # Include vendor libraries
 add_subdirectory(vendor/gmock-1.7.0)
 set(RAPIDJSON_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/rapidjson-0.11/include")
