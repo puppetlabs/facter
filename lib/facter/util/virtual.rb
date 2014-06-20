@@ -174,6 +174,7 @@ module Facter::Util::Virtual
       return "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
       return "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
       return "ovirt"      if lines.any? {|l| l =~ /oVirt Node/ }
+      return "kvm"        if lines.any? {|l| l =~ /KVM/ }
     end
   end
 
