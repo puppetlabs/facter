@@ -178,7 +178,7 @@ describe "Memory facts" do
       Facter.clear
       Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
 
-      swapusage = "total: 148342k bytes allocated = 0k used, 148342k available"
+      swapusage = "total: 4080510 512-blocks allocated, 461832 used, 3618678 available"
       Facter::Core::Execution.stubs(:exec).with('swapctl -s').returns(swapusage)
 
       Facter::Core::Execution.stubs(:exec).with('vmstat').returns(my_fixture_read('openbsd-vmstat'))
@@ -194,11 +194,11 @@ describe "Memory facts" do
     end
 
     it "should return the current swap free in MB" do
-      Facter.fact(:swapfree_mb).value.should == "144.87"
+      Facter.fact(:swapfree_mb).value.should == "1766.93"
     end
 
     it "should return the current swap size in MB" do
-      Facter.fact(:swapsize_mb).value.should == "144.87"
+      Facter.fact(:swapsize_mb).value.should == "1992.44"
     end
 
     it "should return the current memory free in MB" do
