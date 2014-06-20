@@ -123,6 +123,10 @@ module Facter::Util::Virtual
     File.read("/sys/devices/virtual/dmi/id/product_name") =~ /oVirt Node/ rescue false
   end
 
+  def self.gce?
+    File.read("/sys/devices/virtual/dmi/id/product_name") =~ /Google/ rescue false
+  end
+
   def self.jail?
     path = case Facter.value(:kernel)
       when "FreeBSD" then "/sbin"

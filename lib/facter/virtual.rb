@@ -265,6 +265,15 @@ Facter.add("virtual") do
   end
 end
 
+Facter.add("virtual") do
+  has_weight 600
+  confine :kernel => "Linux"
+
+  setcode do
+    "gce" if Facter::Util::Virtual.gce?
+  end
+end
+
 # Fact: is_virtual
 #
 # Purpose: returning true or false for if a machine is virtualised or not.

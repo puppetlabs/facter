@@ -154,6 +154,16 @@ EOT
     Facter::Util::Virtual.should_not be_ovirt
   end
 
+  it "detects GCE if the DMI product name is Google" do
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").returns("Google")
+    expect(Facter::Util::Virtual.gce?).to be_true
+  end
+
+  it "does not detect GCE if the DMI product name is not Google" do
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").returns('')
+    expect(Facter::Util::Virtual.gce?).to be_false
+  end
+
   fixture_path = fixtures('virtual', 'proc_self_status')
 
   test_cases = [

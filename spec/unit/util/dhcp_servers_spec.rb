@@ -4,6 +4,19 @@ require 'spec_helper'
 require 'facter/util/dhcp_servers'
 
 describe Facter::Util::DHCPServers do
+
+  describe "retrieving the gateway device" do
+    it "returns nil when there are no default routes" do
+      Facter::Util::FileRead.stubs(:read).with('/proc/net/route').returns(my_fixture_read('route_nogw'))
+      described_class.gateway_device.should be_nil
+    end
+
+    it "returns the interface associated with the first default route" do
+      Facter::Util::FileRead.stubs(:read).with('/proc/net/route').returns(my_fixture_read('route'))
+      described_class.gateway_device.should eq "eth0"
+    end
+  end
+
   describe "nmcli_version" do
     {
       'nmcli tool, version 0.9.8.0' => [0, 9, 8, 0],

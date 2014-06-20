@@ -112,13 +112,22 @@ class Facter::Util::Loader
     begin
       # Store the file path so we don't try to reload it
       @loaded << file
-      Kernel.load(file)
+      kernel_load(file)
     rescue ScriptError => detail
       # Don't store the path if the file can't be loaded
       # in case it's loadable later on.
       @loaded.delete(file)
       Facter.log_exception(detail, "Error loading fact #{file}: #{detail.message}")
     end
+  end
+
+  # Load and execute the Ruby program specified in the file. This exists
+  # for testing purposes.
+  #
+  # @api private
+  # @return [Boolean]
+  def kernel_load(file)
+    Kernel.load(file)
   end
 
   # Load facts from the environment.  If no name is provided,

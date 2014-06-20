@@ -4,7 +4,7 @@ describe "DHCP server facts" do
   describe "on Linux OS's" do
     before :each do
       Facter.fact(:kernel).stubs(:value).returns 'Linux'
-      Facter::Core::Execution.stubs(:exec).with("route -n").returns(my_fixture_read("route"))
+      Facter::Util::FileRead.stubs(:read).with('/proc/net/route').returns(my_fixture_read('route'))
     end
 
     describe "with nmcli version <= 0.9.8 available" do
@@ -39,7 +39,7 @@ describe "DHCP server facts" do
 
       describe "with no default gateway" do
         before :each do
-          Facter::Core::Execution.stubs(:exec).with("route -n").returns(my_fixture_read("route_nogw"))
+          Facter::Util::FileRead.stubs(:read).with('/proc/net/route').returns(my_fixture_read('route_nogw'))
           Facter::Core::Execution.stubs(:exec).with("nmcli d").returns(my_fixture_read("nmcli_devices"))
           Facter::Core::Execution.stubs(:exec).with("nmcli -f all d list iface eth0").returns(my_fixture_read("nmcli_eth0_dhcp"))
           Facter::Core::Execution.stubs(:exec).with("nmcli -f all d list iface wlan0").returns(my_fixture_read("nmcli_wlan0_dhcp"))
@@ -105,7 +105,7 @@ describe "DHCP server facts" do
 
       describe "with no default gateway" do
         before :each do
-          Facter::Core::Execution.stubs(:exec).with("route -n").returns(my_fixture_read("route_nogw"))
+          Facter::Util::FileRead.stubs(:read).with('/proc/net/route').returns(my_fixture_read('route_nogw'))
           Facter::Core::Execution.stubs(:exec).with("nmcli d").returns(my_fixture_read("nmcli_devices"))
           Facter::Core::Execution.stubs(:exec).with("nmcli -f all d show eth0").returns(my_fixture_read("nmcli_eth0_dhcp"))
           Facter::Core::Execution.stubs(:exec).with("nmcli -f all d show wlan0").returns(my_fixture_read("nmcli_wlan0_dhcp"))
