@@ -18,6 +18,7 @@ describe "Virtual fact" do
     Facter::Util::Virtual.stubs(:virt_what).returns(nil)
     Facter::Util::Virtual.stubs(:rhev?).returns(false)
     Facter::Util::Virtual.stubs(:ovirt?).returns(false)
+    Facter::Util::Virtual.stubs(:gce?).returns(false)
     Facter::Util::Virtual.stubs(:virtualbox?).returns(false)
   end
 
@@ -159,6 +160,12 @@ describe "Virtual fact" do
       Facter::Core::Execution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Core::Execution.stubs(:exec).with('dmidecode 2> /dev/null').returns("Product Name: oVirt Node")
       Facter.fact(:virtual).value.should == "ovirt"
+    end
+
+    it "is gce based on DMI info" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter::Util::Virtual.stubs(:gce?).returns(true)
+      Facter.fact(:virtual).value.should == "gce"
     end
 
     it "should be hyperv with Microsoft vendor name from lspci 2>/dev/null" do
@@ -489,6 +496,12 @@ describe "is_virtual fact" do
   it "should be true when running on ovirt" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("ovirt")
+    Facter.fact(:is_virtual).value.should == "true"
+  end
+
+  it "should be true when running on ovirt" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("gce")
     Facter.fact(:is_virtual).value.should == "true"
   end
 
