@@ -5,7 +5,7 @@ require 'spec_helper'
 describe Facter::Util::Config do
   include PuppetlabsSpec::Files
 
-  describe "ENV['HOME'] is unset" do
+  describe "ENV['HOME'] is unset", :unless => Facter::Util::Root.root? do
     around do |example|
       Facter::Core::Execution.with_env('HOME' => nil) do
         example.run
