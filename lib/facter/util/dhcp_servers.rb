@@ -1,6 +1,18 @@
+require 'facter/util/file_read'
+
 module Facter::Util::DHCPServers
   def self.gateway_device
-    Facter::Core::Execution.exec("route -n").scan(/^0\.0\.0\.0.*?(\S+)$/).flatten.first
+    interface = nil
+    if routes = Facter::Util::FileRead.read('/proc/net/route')
+      routes.each_line do |line|
+        device, destination = line.split(' ')
+        if destination == '00000000'
+          interface = device
+          break
+        end
+      end
+    end
+    interface
   end
 
   def self.devices
