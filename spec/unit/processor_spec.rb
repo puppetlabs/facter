@@ -198,6 +198,13 @@ describe "Processor facts" do
       Facter.fact(:processorcount).value.should == "2"
     end
 
+    it "should print the correct CPU Model on OpenBSD" do
+      Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
+      Facter::Util::POSIX.stubs(:sysctl).with("hw.model").returns('SomeVendor CPU 4.2GHz')
+
+      Facter.fact(:processor).value.should == "SomeVendor CPU 4.2GHz"
+    end
+
     it "should be 2 on dual-processor FreeBSD box" do
       Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
       Facter::Util::POSIX.stubs(:sysctl).with("hw.ncpu").returns('2')
