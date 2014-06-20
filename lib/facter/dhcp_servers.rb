@@ -17,8 +17,8 @@ require 'facter/util/dhcp_servers'
 
 
 Facter.add(:dhcp_servers) do
+  confine :kernel => :linux
   confine do
-    confine :kernel => :linux
     Facter::Core::Execution.which('nmcli')
   end
 
