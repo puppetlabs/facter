@@ -20,6 +20,7 @@ require 'yaml'
 data = YAML.load_file(File.join(File.dirname(__FILE__), 'ext', 'project_data.yaml'))
 bundle_platforms = data['bundle_platforms']
 data['gem_platform_dependencies'].each_pair do |gem_platform, info|
+  next if gem_platform =~ /mingw/
   if bundle_deps = info['gem_runtime_dependencies']
     bundle_platform = bundle_platforms[gem_platform] or raise "Missing bundle_platform"
     platform(bundle_platform.intern) do
@@ -28,6 +29,19 @@ data['gem_platform_dependencies'].each_pair do |gem_platform, info|
       end
     end
   end
+end
+
+platform(:mingw_19) do
+  gem 'win32console', '~> 1.3.2', :require => false
+end
+
+mingw = [:mingw]
+mingw << :x64_mingw if Bundler::Dsl::VALID_PLATFORMS.include?(:x64_mingw)
+
+platform(*mingw) do
+  gem 'ffi', '~> 1.9.3', :require => false
+  gem 'win32-dir', '~> 0.4.8', :require => false
+  gem 'win32-security', '~> 0.2.5', :require => false
 end
 
 gem 'facter', ">= 1.0.0", :path => File.expand_path("..", __FILE__)

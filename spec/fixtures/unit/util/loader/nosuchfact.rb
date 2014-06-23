@@ -1,1 +1,0 @@
-Facter.value(:nosuchfact)

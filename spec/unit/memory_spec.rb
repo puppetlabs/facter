@@ -48,24 +48,9 @@ describe "Memory facts" do
     before(:each) do
       Facter.clear
       Facter.fact(:kernel).stubs(:value).returns("Darwin")
-      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.memsize').returns('8589934592')
-      sample_vm_stat = <<VMSTAT
-Mach Virtual Memory Statistics: (page size of 4096 bytes)
-Pages free:                          28430.
-Pages active:                      1152576.
-Pages inactive:                     489054.
-Pages speculative:                    7076.
-Pages wired down:                   418217.
-"Translation faults":           1340091228.
-Pages copy-on-write:              16851357.
-Pages zero filled:               665168768.
-Pages reactivated:                 3082708.
-Pageins:                          13862917.
-Pageouts:                          1384383.
-Object cache: 14 hits of 2619925 lookups (0% hit rate)
-VMSTAT
-      Facter::Core::Execution.stubs(:exec).with('vm_stat').returns(sample_vm_stat)
-      Facter::Core::Execution.stubs(:exec).with('sysctl vm.swapusage').returns("vm.swapusage: total = 64.00M  used = 1.00M  free = 63.00M  (encrypted)")
+      Facter::Util::POSIX.stubs(:sysctl).with('hw.memsize').returns('8589934592')
+      Facter::Core::Execution.stubs(:exec).with('vm_stat').returns(my_fixture_read('darwin-vm_stat'))
+      Facter::Util::POSIX.stubs(:sysctl).with('vm.swapusage').returns("vm.swapusage: total = 64.00M  used = 1.00M  free = 63.00M  (encrypted)")
 
       Facter.collection.internal_loader.load(:memory)
     end
@@ -104,20 +89,10 @@ VMSTAT
       before(:each) do
         Facter.clear
         Facter.fact(:kernel).stubs(:value).returns(kernel)
-        meminfo = <<INFO
-MemTotal:   255908 kB
-MemFree:     69936 kB
-Buffers:     15812 kB
-Cached:     115124 kB
-SwapCached:      0 kB
-Active:      92700 kB
-Inactive:    63792 kB
-SwapTotal:  524280 kB
-SwapFree:   524280 kB
-Dirty:           4 kB
-INFO
 
-        File.stubs(:readlines).with("/proc/meminfo").returns(meminfo.split("\n"))
+        meminfo_contents = my_fixture_read('linux-proc_meminfo').split("\n")
+
+        File.stubs(:readlines).with("/proc/meminfo").returns(meminfo_contents)
 
         Facter.collection.internal_loader.load(:memory)
       end
@@ -149,26 +124,8 @@ INFO
       Facter.clear
       Facter.fact(:kernel).stubs(:value).returns("AIX")
 
-      swapusage = <<SWAP
-device maj,min total free
-/dev/hd6 10, 2 512MB 508MB
-SWAP
-
-      Facter::Core::Execution.stubs(:exec).with('swap -l 2>/dev/null').returns(swapusage)
-
-      svmon = <<SVMON
-Unit: KB
---------------------------------------------------------------------------------------
-               size       inuse        free         pin     virtual  available   mmode
-memory     32768000     9948408    22819592     2432080     4448928   27231828     Ded
-pg space   34078720       15000
-
-               work        pers        clnt       other
-pin         1478228           0           0      953852
-in use      4448928           0     5499480
-SVMON
-
-      Facter::Core::Execution.stubs(:exec).with('/usr/bin/svmon -O unit=KB').returns(svmon)
+      Facter::Core::Execution.stubs(:exec).with('swap -l 2>/dev/null').returns(my_fixture_read('aix-swap_l'))
+      Facter::Core::Execution.stubs(:exec).with('/usr/bin/svmon -O unit=KB').returns(my_fixture_read('aix-svmon'))
 
       Facter.collection.internal_loader.load(:memory)
     end
@@ -221,17 +178,13 @@ SVMON
       Facter.clear
       Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
 
-      swapusage = "total: 148342k bytes allocated = 0k used, 148342k available"
+      swapusage = "total: 4080510 512-blocks allocated, 461832 used, 3618678 available"
       Facter::Core::Execution.stubs(:exec).with('swapctl -s').returns(swapusage)
 
-      vmstat = <<EOS
- procs  memory     page          disks  traps      cpu
- r b w  avm   fre  flt  re  pi  po  fr  sr cd0 sd0  int   sys   cs us sy id
- 0 0 0  11048  181028   39   0   0   0   0   0   0   1  3  90   17  0  0 100
-EOS
-      Facter::Core::Execution.stubs(:exec).with('vmstat').returns(vmstat)
+      Facter::Core::Execution.stubs(:exec).with('vmstat').returns(my_fixture_read('openbsd-vmstat'))
 
-      Facter::Core::Execution.stubs(:exec).with("sysctl hw.physmem | cut -d'=' -f2").returns('267321344')
+      Facter::Util::POSIX.stubs(:sysctl).with('hw.physmem').returns('267321344')
+      Facter::Util::POSIX.stubs(:sysctl).with('vm.swapencrypt.enable').returns('1')
 
       Facter.collection.internal_loader.load(:memory)
     end
@@ -241,11 +194,11 @@ EOS
     end
 
     it "should return the current swap free in MB" do
-      Facter.fact(:swapfree_mb).value.should == "144.87"
+      Facter.fact(:swapfree_mb).value.should == "1766.93"
     end
 
     it "should return the current swap size in MB" do
-      Facter.fact(:swapsize_mb).value.should == "144.87"
+      Facter.fact(:swapsize_mb).value.should == "1992.44"
     end
 
     it "should return the current memory free in MB" do
@@ -255,26 +208,20 @@ EOS
     it "should return the current memory size in MB" do
       Facter.fact(:memorysize_mb).value.should == "254.94"
     end
+
+    it "should return whether swap is encrypted" do
+      Facter.fact(:swapencrypted).value.should == true
+    end
   end
+
 
   describe "on Solaris" do
     before(:each) do
       Facter.clear
       Facter.fact(:kernel).stubs(:value).returns("SunOS")
-      sample_prtconf = <<PRTCONF
-System Configuration:  Sun Microsystems  sun4u
-Memory size: 2048 Megabytes
-System Peripherals (Software Nodes):
 
-PRTCONF
-      Facter::Core::Execution.stubs(:exec).with('/usr/sbin/prtconf 2>/dev/null').returns sample_prtconf
-
-      vmstat_lines = <<VMSTAT
- kthr      memory            page            disk          faults      cpu
- r b w   swap  free  re  mf pi po fr de sr s0 s3 -- --   in   sy   cs us sy id
- 0 0 0 1154552 476224 8  19  0  0  0  0  0  0  0  0  0  460  294  236  1  2 97
-VMSTAT
-      Facter::Core::Execution.stubs(:exec).with('vmstat').returns(vmstat_lines)
+      Facter::Core::Execution.stubs(:exec).with('/usr/sbin/prtconf 2>/dev/null').returns(my_fixture_read('solaris-prtconf'))
+      Facter::Core::Execution.stubs(:exec).with('vmstat').returns(my_fixture_read('solaris-vmstat'))
     end
 
     after(:each) do
@@ -283,11 +230,7 @@ VMSTAT
 
     describe "when single swap exists" do
       before(:each) do
-        sample_swap_line = <<SWAP
-swapfile             dev  swaplo blocks   free
-/dev/swap           4294967295,4294967295     16 2097136 2097136
-SWAP
-        Facter::Core::Execution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns sample_swap_line
+        Facter::Core::Execution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns my_fixture_read('solaris-swap_l-single')
 
         Facter.collection.internal_loader.load(:memory)
       end
@@ -307,16 +250,12 @@ SWAP
       it "should return the current swap size in MB" do
         Facter.fact(:swapsize_mb).value.should == "1023.99"
       end
+
     end
 
     describe "when multiple swaps exist" do
       before(:each) do
-        sample_swap_line = <<SWAP
-swapfile             dev  swaplo blocks   free
-/dev/swap           4294967295,4294967295     16 2097136 2097136
-/dev/swap2          4294967295,4294967295     16 2097136 2097136
-SWAP
-        Facter::Core::Execution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns sample_swap_line
+        Facter::Core::Execution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns my_fixture_read('solaris-swap_l-multiple')
         Facter.collection.internal_loader.load(:memory)
       end
 
@@ -360,6 +299,22 @@ SWAP
         Facter.fact(:swapsize_mb).value.should == "0.00"
       end
     end
+
+    describe "when in a SmartOS zone" do
+      before(:each) do
+        Facter::Core::Execution.stubs(:exec).with('/usr/sbin/swap -l 2>/dev/null').returns my_fixture_read('smartos_zone_swap_l-single')
+        Facter.collection.internal_loader.load(:memory)
+      end
+
+      it "should return the current swap size in MB" do
+        Facter.fact(:swapsize_mb).value.should == "49152.00"
+      end
+
+      it "should return the current swap free in MB" do
+        Facter.fact(:swapfree_mb).value.should == "33676.06"
+      end
+    end
+
   end
 
     describe "on DragonFly BSD" do
@@ -368,19 +323,14 @@ SWAP
         Facter.fact(:kernel).stubs(:value).returns("dragonfly")
 
         swapusage = "total: 148342k bytes allocated = 0k used, 148342k available"
-        Facter::Core::Execution.stubs(:exec).with('/sbin/sysctl -n hw.pagesize').returns("4096")
-        Facter::Core::Execution.stubs(:exec).with('/sbin/sysctl -n vm.swap_size').returns("128461")
-        Facter::Core::Execution.stubs(:exec).with('/sbin/sysctl -n vm.swap_anon_use').returns("2635")
-        Facter::Core::Execution.stubs(:exec).with('/sbin/sysctl -n vm.swap_cache_use').returns("0")
+        Facter::Util::POSIX.stubs(:sysctl).with('hw.pagesize').returns("4096")
+        Facter::Util::POSIX.stubs(:sysctl).with('vm.swap_size').returns("128461")
+        Facter::Util::POSIX.stubs(:sysctl).with('vm.swap_anon_use').returns("2635")
+        Facter::Util::POSIX.stubs(:sysctl).with('vm.swap_cache_use').returns("0")
 
-        vmstat = <<EOS
- procs    memory    page          disks   faults    cpu
- r b w   avm  fre  flt  re  pi  po  fr  sr da0 sg1   in   sy  cs us sy id
- 0 0 0   33152  13940 1902120 2198 53119 11642 6544597 5460994   0   0 6148243 7087927 3484264  0  1 9
-EOS
-        Facter::Core::Execution.stubs(:exec).with('vmstat').returns(vmstat)
+        Facter::Core::Execution.stubs(:exec).with('vmstat').returns my_fixture_read('dragonfly-vmstat')
 
-        Facter::Core::Execution.stubs(:exec).with("sysctl -n hw.physmem").returns('248512512')
+        Facter::Util::POSIX.stubs(:sysctl).with("hw.physmem").returns('248512512')
 
         Facter.collection.internal_loader.load(:memory)
       end
@@ -411,16 +361,8 @@ EOS
         Facter.clear
         Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
 
-        sample_vmstat = <<VM_STAT
- procs      memory      page                    disks     faults         cpu
- r b w     avm    fre   flt  re  pi  po    fr  sr da0 cd0   in   sy   cs us sy id
- 1 0 0  207600  656640    10   0   0   0    13   0   0   0   51  164  257  0  1 99
-VM_STAT
-        Facter::Core::Execution.stubs(:exec).with('vmstat -H').returns sample_vmstat
-        sample_physmem = <<PHYSMEM
-1056276480
-PHYSMEM
-        Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.physmem').returns sample_physmem
+        Facter::Core::Execution.stubs(:exec).with('vmstat -H').returns my_fixture_read('freebsd-vmstat')
+        Facter::Util::POSIX.stubs(:sysctl).with('hw.physmem').returns '1056276480'
       end
 
       after(:each) do
@@ -429,11 +371,9 @@ PHYSMEM
 
       describe "with no swap" do
         before(:each) do
-          sample_swapinfo = <<SWAP
-Device          1K-blocks     Used    Avail Capacity
-SWAP
-          Facter::Core::Execution.stubs(:exec).with('swapinfo -k').returns sample_swapinfo
+          sample_swapinfo = 'Device          1K-blocks     Used    Avail Capacity'
 
+          Facter::Core::Execution.stubs(:exec).with('swapinfo -k').returns sample_swapinfo
           Facter.collection.internal_loader.load(:memory)
         end
 
@@ -456,11 +396,7 @@ SWAP
 
       describe "with one swap" do
         before(:each) do
-          sample_swapinfo = <<SWAP
-Device          1K-blocks     Used    Avail Capacity
-/dev/da0p3        2048540        0  1048540     0%
-SWAP
-          Facter::Core::Execution.stubs(:exec).with('swapinfo -k').returns sample_swapinfo
+          Facter::Core::Execution.stubs(:exec).with('swapinfo -k').returns my_fixture_read('darwin-swapinfo-single')
 
           Facter.collection.internal_loader.load(:memory)
         end
@@ -484,12 +420,7 @@ SWAP
 
       describe "with multiple swaps" do
         before(:each) do
-          sample_swapinfo = <<SWAP
-Device          1K-blocks     Used    Avail Capacity
-/dev/da0p3        2048540        0  1048540     0%
-/dev/da0p4        3048540        0  1048540     0%
-SWAP
-          Facter::Core::Execution.stubs(:exec).with('swapinfo -k').returns sample_swapinfo
+          Facter::Core::Execution.stubs(:exec).with('swapinfo -k').returns my_fixture_read('darwin-swapinfo-multiple')
 
           Facter.collection.internal_loader.load(:memory)
         end

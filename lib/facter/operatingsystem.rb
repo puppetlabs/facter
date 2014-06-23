@@ -11,6 +11,8 @@
 # Caveats:
 #
 
+require 'facter/util/operatingsystem'
+
 Facter.add(:operatingsystem) do
   confine :kernel => :sunos
   setcode do
@@ -32,10 +34,26 @@ Facter.add(:operatingsystem) do
 end
 
 Facter.add(:operatingsystem) do
+  # Cumulus Linux is a variant of Debian so this resolution needs to come
+  # before the Debian resolution.
+  has_weight(10)
+  confine :kernel => :linux
+
+  setcode do
+    release_info = Facter::Util::Operatingsystem.os_release
+    if release_info['NAME'] == "Cumulus Linux"
+      'CumulusLinux'
+    end
+  end
+end
+
+Facter.add(:operatingsystem) do
   confine :kernel => :linux
   setcode do
     if Facter.value(:lsbdistid) == "Ubuntu"
        "Ubuntu"
+    elsif Facter.value(:lsbdistid) == "LinuxMint"
+       "LinuxMint"
     elsif FileTest.exists?("/etc/debian_version")
       "Debian"
     elsif FileTest.exists?("/etc/openwrt_release")
@@ -44,6 +62,8 @@ Facter.add(:operatingsystem) do
       "Gentoo"
     elsif FileTest.exists?("/etc/fedora-release")
       "Fedora"
+    elsif FileTest.exists?("/etc/mageia-release")
+      "Mageia"
     elsif FileTest.exists?("/etc/mandriva-release")
       "Mandriva"
     elsif FileTest.exists?("/etc/mandrake-release")

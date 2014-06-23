@@ -58,4 +58,16 @@ describe "macaddress fact" do
     end
   end
 
+  describe "when run on OpenBSD with bridge(4) rules" do
+    it "should return macaddress information" do
+      Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
+      Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
+      Facter::Util::IP.stubs(:exec_ifconfig).
+        returns(ifconfig_fixture('openbsd_bridge_rules'))
+
+      proc { Facter.value(:macaddress) }.should_not raise_error
+      Facter.value(:macaddress).should be_nil
+    end
+  end
+
 end

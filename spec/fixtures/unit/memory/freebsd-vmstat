@@ -1,0 +1,3 @@
+ procs      memory      page                    disks     faults         cpu
+ r b w     avm    fre   flt  re  pi  po    fr  sr da0 cd0   in   sy   cs us sy id
+ 1 0 0  207600  656640    10   0   0   0    13   0   0   0   51  164  257  0  1 99

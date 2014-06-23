@@ -7,8 +7,8 @@
 #   On Linux and kFreeBSD, parse '/proc/cpuinfo' for each processor.
 #   On AIX, parse the output of 'lsdev' for its processor section.
 #   On Solaris, parse the output of 'kstat' for each processor.
-#   On OpenBSD, use 'uname -p' and the sysctl variable for 'hw.ncpu' for CPU
-#   count.
+#   On OpenBSD, use the sysctl variables 'hw.model' and 'hw.ncpu'
+#   for the CPU model and the CPU count respectively.
 #
 # Caveats:
 #
@@ -21,6 +21,7 @@
 
 require 'thread'
 require 'facter/util/processor'
+require 'facter/util/posix'
 
 # We have to enumerate these outside a Facter.add block to get the processorN
 # descriptions iteratively (but we need them inside the Facter.add block above
@@ -88,34 +89,29 @@ Facter.add("ProcessorCount") do
   end
 end
 
-Facter.add("Processor") do
-  confine :kernel => :openbsd
-  setcode "uname -p"
-end
-
 Facter.add("ProcessorCount") do
   confine :kernel => :Darwin
-  setcode "sysctl -n hw.ncpu"
+  setcode do
+    Facter::Util::POSIX.sysctl("hw.ncpu")
+  end
 end
 
 if Facter.value(:kernel) == "windows"
   processor_list = []
 
-  Thread::exclusive do
-    require 'facter/util/wmi'
+  require 'facter/util/wmi'
 
-    # get each physical processor
-    Facter::Util::WMI.execquery("select * from Win32_Processor").each do |proc|
-      # not supported before 2008
-      if proc.respond_to?(:NumberOfLogicalProcessors)
-        processor_num = proc.NumberOfLogicalProcessors
-      else
-        processor_num = 1
-      end
+  # get each physical processor
+  Facter::Util::WMI.execquery("select * from Win32_Processor").each do |proc|
+    # not supported before 2008
+    if proc.respond_to?(:NumberOfLogicalProcessors)
+      processor_num = proc.NumberOfLogicalProcessors
+    else
+      processor_num = 1
+    end
 
-      processor_num.times do |i|
-        processor_list << proc.Name.squeeze(" ")
-      end
+    processor_num.times do |i|
+      processor_list << proc.Name.squeeze(" ")
     end
   end
 
@@ -137,13 +133,17 @@ if Facter.value(:kernel) == "windows"
 end
 
 Facter.add("Processor") do
-  confine :kernel => [:dragonfly,:freebsd]
-  setcode "sysctl -n hw.model"
+  confine :kernel => [:dragonfly,:freebsd,:openbsd]
+  setcode do
+    Facter::Util::POSIX.sysctl("hw.model")
+  end
 end
 
 Facter.add("ProcessorCount") do
   confine :kernel => [:dragonfly,:freebsd,:openbsd]
-  setcode "sysctl -n hw.ncpu"
+  setcode do
+    Facter::Util::POSIX.sysctl("hw.ncpu")
+  end
 end
 
 Facter.add("ProcessorCount") do

@@ -1,9 +1,10 @@
 #! /usr/bin/env ruby
 
 require 'spec_helper'
-require 'facter/util/macosx'
+require 'facter/util/config'
+require 'facter/util/macosx' unless Facter::Util::Config.is_windows?
 
-describe Facter::Util::Macosx do
+describe "Facter::Util::Macosx", :unless => Facter::Util::Config.is_windows? do
   let(:badplist) do
     '<?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC -//Apple Computer//DTD PLIST 1.0//EN http://www.apple.com/DTDs/PropertyList-1.0.dtd>

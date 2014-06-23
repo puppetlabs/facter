@@ -2,6 +2,8 @@
 ## Support module for memory related facts
 ##
 
+require 'facter/util/posix'
+
 module Facter::Memory
   def self.meminfo_number(tag)
     memsize = ""
@@ -111,14 +113,10 @@ module Facter::Memory
 
   def self.mem_size_info(kernel = Facter.value(:kernel))
     case kernel
-    when /OpenBSD/i
-      Facter::Core::Execution.exec("sysctl hw.physmem | cut -d'=' -f2")
-    when /FreeBSD/i
-      Facter::Core::Execution.exec("sysctl -n hw.physmem")
+    when /Dragonfly/i, /FreeBSD/i, /OpenBSD/i
+      Facter::Util::POSIX.sysctl("hw.physmem")
     when /Darwin/i
-      Facter::Core::Execution.exec("sysctl -n hw.memsize")
-    when /Dragonfly/i
-      Facter::Core::Execution.exec("sysctl -n hw.physmem")
+      Facter::Util::POSIX.sysctl("hw.memsize")
     when /AIX/i
       if Facter::Core::Execution.exec("/usr/bin/svmon -O unit=KB") =~ /^memory\s+(\d+)\s+/
         $1
@@ -156,7 +154,7 @@ module Facter::Memory
     when /FreeBSD/i
       Facter::Core::Execution.exec('swapinfo -k')
     when /Darwin/i
-      Facter::Core::Execution.exec('sysctl vm.swapusage')
+      Facter::Util::POSIX.sysctl('vm.swapusage')
     when /SunOS/i
       Facter::Core::Execution.exec('/usr/sbin/swap -l 2>/dev/null')
     end
@@ -189,8 +187,8 @@ module Facter::Memory
         0
       end
     when /OpenBSD/i
-      if line =~ /^total: (\d+)k bytes allocated = \d+k used, (\d+)k available$/
-        (is_size) ? $1.to_i : $2.to_i
+      if line =~ /^total: (\d+) (\d+)-blocks allocated, (\d+) used, (\d+) available$/
+        (is_size) ? ($1.to_i * $2.to_i) : ($4.to_i * $2.to_i)
       else
         0
       end
@@ -207,7 +205,7 @@ module Facter::Memory
         0
       end
     when /SunOS/i
-      if line =~ /^\/\S+\s.*\s+(\d+)\s+(\d+)$/
+      if line =~ /^\S+\s.*\s+(\d+)\s+(\d+)$/
         (is_size) ? $1.to_i : $2.to_i
       else
         0
@@ -217,8 +215,10 @@ module Facter::Memory
 
   def self.scale_swap_value(value, kernel)
     case kernel
-    when /OpenBSD/i, /FreeBSD/i
+    when /FreeBSD/i
       value.to_f / 1024.0
+    when /OpenBSD/i
+      value.to_f / 1024.0 / 1024.0
     when /SunOS/i
       value.to_f / 2 / 1024.0
     else

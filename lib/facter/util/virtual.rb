@@ -1,4 +1,6 @@
+require 'facter/util/posix'
 require 'facter/util/file_read'
+require 'pathname'
 
 module Facter::Util::Virtual
   ##
@@ -92,7 +94,7 @@ module Facter::Util::Virtual
      txt = if FileTest.exists?("/proc/cpuinfo")
        File.read("/proc/cpuinfo")
      elsif ["FreeBSD", "OpenBSD"].include? Facter.value(:kernel)
-       Facter::Core::Execution.exec("/sbin/sysctl -n hw.model")
+       Facter::Util::POSIX.sysctl("hw.model")
      end
      (txt =~ /QEMU Virtual CPU/) ? true : false
   end
@@ -118,6 +120,10 @@ module Facter::Util::Virtual
     File.read("/sys/devices/virtual/dmi/id/product_name") =~ /oVirt Node/ rescue false
   end
 
+  def self.gce?
+    File.read("/sys/devices/virtual/dmi/id/product_name") =~ /Google/ rescue false
+  end
+
   def self.jail?
     path = case Facter.value(:kernel)
       when "FreeBSD" then "/sbin"
@@ -128,6 +134,29 @@ module Facter::Util::Virtual
 
   def self.hpvm?
     Facter::Core::Execution.exec("/usr/bin/getconf MACHINE_MODEL").chomp =~ /Virtual Machine/
+  end
+
+  ##
+  # lxc? returns true if the process is running inside of a linux container.
+  # Implementation derived from
+  # http://stackoverflow.com/questions/20010199/determining-if-a-process-runs-inside-lxc-docker
+  def self.lxc?
+    path = Pathname.new('/proc/1/cgroup')
+    return false unless path.readable?
+    in_lxc = path.readlines.any? {|l| l.split(":")[2].to_s.start_with? '/lxc/' }
+    return true if in_lxc
+    return false
+  end
+
+  ##
+  # docker? returns true if the process is running inside of a docker container.
+  # Implementation derived from observation of a boot2docker system
+  def self.docker?
+    path = Pathname.new('/proc/1/cgroup')
+    return false unless path.readable?
+    in_docker = path.readlines.any? {|l| l.split(":")[2].to_s.start_with? '/docker/' }
+    return true if in_docker
+    return false
   end
 
   def self.zlinux?
@@ -142,9 +171,9 @@ module Facter::Util::Virtual
   #
   # @api public
   #
-  # @return [String] or nil if the path does not exist
+  # @return [String] or nil if the path does not exist or is unreadable
   def self.read_sysfs_dmi_entries(path="/sys/firmware/dmi/entries/1-0/raw")
-    if File.exists?(path)
+    if File.readable?(path)
       Facter::Util::FileRead.read_binary(path)
     end
   end
