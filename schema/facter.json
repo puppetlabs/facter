@@ -149,6 +149,15 @@
         "swapfree_mb" : { "type": "string" },
         "swapsize" : { "type": "string" },
         "swapsize_mb" : { "type": "string" },
+        "system_uptime" : { "type": "object",
+          "properties" : {
+            "seconds" : { "type": "integer" },
+            "hours" : { "type": "integer" },
+            "days" : { "type": "integer" },
+            "uptime" : { "type": "string" }
+          },
+          "required" : ["seconds", "hours", "days", "uptime"]
+        },
         "timezone" : { "type": "string" },
         "totalprocessorcount" : { "type": "string" },
         "type" : { "type": "string" },
