@@ -22,6 +22,7 @@ module CFacter
     callback :array_end_callback,     [],                   :void
     callback :map_start_callback,     [:string],            :void
     callback :map_end_callback,       [],                   :void
+    callback :path_callback,          [:string],            :void
 
     class EnumerationCallbacks < FFI::Struct
       layout :string,       :string_callback,
@@ -34,12 +35,27 @@ module CFacter
              :map_end,      :map_end_callback
     end
 
-    attach_function :get_facter_version,    [],                     :string
-    attach_function :load_facts,            [:string],              :void
-    attach_function :clear_facts,           [],                     :void
-    attach_function :search_external,       [:string],              :void
-    attach_function :enumerate_facts,       [:pointer],             :void
-    attach_function :get_fact_value,        [:string, :pointer],    :bool
+    attach_function :get_facter_version,              [],                     :string
+    attach_function :load_facts,                      [:string],              :void
+    attach_function :clear_facts,                     [],                     :void
+    attach_function :add_search_paths,                [:string, :string],     :void
+    attach_function :enumerate_search_paths,          [:path_callback],       :void
+    attach_function :clear_search_paths,              [],                     :void
+    attach_function :add_external_search_paths,       [:string, :string],     :void
+    attach_function :enumerate_external_search_paths, [:path_callback],       :void
+    attach_function :clear_external_search_paths,     [],                     :void
+    attach_function :enumerate_facts,                 [:pointer],             :void
+    attach_function :get_fact_value,                  [:string, :pointer],    :bool
+  end
+
+  # Utility class for returning a typed fact
+  class Fact
+    attr_reader :name, :value
+
+    def initialize(name, value)
+      @name = name
+      @value = value
+    end
   end
 
   # The facter gem version.
@@ -57,7 +73,7 @@ module CFacter
   end
 
   # Loads all facts.
-  #
+  # This is a no-op if facts have already been loaded.
   # @return [void]
   # @api public
   def self.loadfacts
@@ -72,13 +88,75 @@ module CFacter
     FacterLib.clear_facts
   end
 
+  # Clears all cached values and removes all facts from memory.
+  # Also removes all search directories.
+  #
+  # @return [void]
+  # @api public
+  def self.reset
+    FacterLib.clear_facts
+    reset_search_path!
+    reset_external_search_path!
+  end
+
+  # Register directories to be searched for facts.
+  # The registered directories must be absolute paths or they will be ignored.
+  # @param dirs [String] directories to search
+  # @return [void]
+  # @api public
+  def self.search(*dirs)
+    FacterLib.add_search_paths(dirs.join(File::PATH_SEPARATOR), File::PATH_SEPARATOR)
+  end
+
+  # Returns the registered search directories.
+  #
+  # @return [Array<String>] An array of the directories that will be searched.
+  # @api public
+  def self.search_path
+    paths = []
+    callback = Proc.new do |path|
+      paths << path
+    end
+    FacterLib.enumerate_search_paths(callback)
+    paths
+  end
+
+  # Reset the fact search directories.
+  #
+  # @return [void]
+  # @api private
+  def self.reset_search_path!
+    FacterLib.clear_search_paths
+  end
+
   # Registers directories to be searched for external facts.
   #
   # @param dirs [Array<String>] directories to search
   # @return [void]
   # @api public
   def self.search_external(dirs)
-    FacterLib.search_external(dirs.join(':'))
+    FacterLib.add_external_search_paths(dirs.join(File::PATH_SEPARATOR), File::PATH_SEPARATOR)
+  end
+
+  # Returns the registered external search directories.
+  #
+  # @return [Array<String>] An array of the directories that will be searched.
+  # @api public
+  def self.search_external_path
+    paths = []
+    callback = Proc.new do |path|
+      paths << path
+    end
+    FacterLib.enumerate_external_search_paths(callback)
+    paths
+  end
+
+  # Reset the external search directories.
+  #
+  # @return [void]
+  # @api private
+  def self.reset_external_search_path!
+    FacterLib.clear_external_search_paths
   end
 
   # Creates callbacks used when enumerating facts from cfacter.
@@ -145,6 +223,7 @@ module CFacter
   # @return [Hash{String => Object}] the hash of fact names and values
   # @api public
   def self.to_hash
+    FacterLib.load_facts nil
     result = {}
     FacterLib.enumerate_facts(self.create_enumeration_callbacks(result))
     result
@@ -156,10 +235,22 @@ module CFacter
   # @return [Object, nil] The value of the fact, or nil if no fact is found.
   # @api public
   def self.value(name)
+    FacterLib.load_facts nil
     # To share the enumeration callbacks with to_hash, pass in an array and return the
     # first element, which will be the value of the requested fact.
     result = []
-    return nil unless FacterLib.get_fact_value(name, self.create_enumeration_callbacks(result))
+    return unless FacterLib.get_fact_value(name.to_s, self.create_enumeration_callbacks(result))
     result[0]
+  end
+
+  # Gets a typed fact by name.
+  #
+  # @param name [String] The fact name.
+  # @return [Fact, nil] The typed fact, or nil if no fact is found.
+  # @api public
+  def self.[](name)
+    value = self.value(name)
+    return unless value
+    Fact.new(name.to_s, value)
   end
 end
