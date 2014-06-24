@@ -5,6 +5,19 @@ require 'spec_helper'
 describe Facter::Util::Config do
   include PuppetlabsSpec::Files
 
+  describe "ENV['HOME'] is unset", :unless => Facter::Util::Root.root? do
+    around do |example|
+      Facter::Core::Execution.with_env('HOME' => nil) do
+        example.run
+      end
+    end
+
+    it "should not set @external_facts_dirs" do
+      Facter::Util::Config.setup_default_ext_facts_dirs
+      Facter::Util::Config.external_facts_dirs.should be_empty
+    end
+  end
+
   describe "is_windows? function" do
     it "should detect windows if Ruby RbConfig::CONFIG['host_os'] returns a windows OS" do
       host_os = ["mswin","win32","dos","mingw","cygwin"]

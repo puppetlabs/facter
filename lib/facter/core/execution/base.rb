@@ -31,9 +31,9 @@ class Facter::Core::Execution::Base
 
     on_fail = options.fetch(:on_fail, :raise)
 
-    ## Set LANG to force i18n to C for the duration of this exec; this ensures that any code that parses the
-    ## output of the command can expect it to be in a consistent / predictable format / locale
-    with_env "LANG" => "C" do
+    # Set LC_ALL and LANG to force i18n to C for the duration of this exec; this ensures that any code that parses the
+    # output of the command can expect it to be in a consistent / predictable format / locale
+    with_env 'LC_ALL' => 'C', 'LANG' => 'C' do
 
       expanded_command = expand_command(command)
 

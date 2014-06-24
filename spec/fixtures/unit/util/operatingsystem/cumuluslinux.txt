@@ -1,0 +1,8 @@
+NAME="Cumulus Linux"
+VERSION_ID=1.5.2
+VERSION="1.5.2-28283a7-201311181623-final"
+PRETTY_NAME="Cumulus Linux"
+ID=cumulus-linux
+ID_LIKE=debian
+CPE_NAME=cpe:/o:cumulusnetworks:cumulus_linux:1.5.2-28283a7-201311181623-final
+HOME_URL="http://www.cumulusnetworks.com/"

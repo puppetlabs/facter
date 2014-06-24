@@ -23,10 +23,11 @@ module Facter
         # name and separated by "=>"
         if hash.length == 1
           if value = hash.values.first
-            output = value
+            output = value.is_a?(String) ? value : value.inspect
           end
         else
           hash.sort_by { |(name, value)| name }.each do |name,value|
+            value = value.is_a?(String) ? value : value.inspect
             output << "#{name} => #{value}\n"
           end
         end

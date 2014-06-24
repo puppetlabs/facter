@@ -58,6 +58,7 @@ describe "Operating System fact" do
       "Debian"      => "/etc/debian_version",
       "Gentoo"      => "/etc/gentoo-release",
       "Fedora"      => "/etc/fedora-release",
+      "Mageia"      => "/etc/mageia-release",
       "Mandriva"    => "/etc/mandriva-release",
       "Mandrake"    => "/etc/mandrake-release",
       "MeeGo"       => "/etc/meego-release",
@@ -87,6 +88,13 @@ describe "Operating System fact" do
 
         Facter.stubs(:value).with(:lsbdistid).returns("Ubuntu")
         Facter.fact(:operatingsystem).value.should == "Ubuntu"
+      end
+
+      it "on LinuxMint should use the lsbdistid fact" do
+        FileUtils.stubs(:exists?).with("/etc/debian_version").returns true
+
+        Facter.stubs(:value).with(:lsbdistid).returns("LinuxMint")
+        Facter.fact(:operatingsystem).value.should == "LinuxMint"
       end
 
     end
@@ -136,6 +144,17 @@ describe "Operating System fact" do
       FileTest.expects(:exists?).with("/etc/redhat-release").returns true
       File.expects(:read).with("/etc/redhat-release").returns("Scientific Linux CERN SLC 5.7 (Boron)")
       Facter.fact(:operatingsystem).value.should == "SLC"
+    end
+
+    it "should identify Cumulus Linux" do
+      Facter::Util::Operatingsystem.expects(:os_release).returns({'NAME' => 'Cumulus Linux'})
+      Facter.fact(:operatingsystem).value.should == "CumulusLinux"
+    end
+
+    it "should not use '/etc/os-release' on platforms other than Cumulus Linux" do
+      Facter::Util::Operatingsystem.expects(:os_release).returns({'NAME' => 'Debian GNU/Linux'})
+      FileTest.expects(:exists?).with('/etc/debian_version').returns true
+      Facter.fact(:operatingsystem).value.should == "Debian"
     end
   end
 end

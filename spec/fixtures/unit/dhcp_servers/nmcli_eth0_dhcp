@@ -1,0 +1,36 @@
+GENERAL.DEVICE:                         eth0
+GENERAL.TYPE:                           802-3-ethernet
+GENERAL.VENDOR:                         Realtek Semiconductor Co., Ltd.
+GENERAL.PRODUCT:                        RTL8111/8168 PCI Express Gigabit Ethernet controller
+GENERAL.DRIVER:                         r8169
+GENERAL.DRIVER-VERSION:                 2.3LK-NAPI
+GENERAL.FIRMWARE-VERSION:               
+GENERAL.HWADDR:                         D4:BE:D9:34:67:68
+GENERAL.STATE:                          100 (connected)
+GENERAL.REASON:                         0 (No reason given)
+GENERAL.UDI:                            /sys/devices/pci0000:00/0000:00:1c.0/0000:07:00.0/net/eth0
+GENERAL.IP-IFACE:                       eth0
+GENERAL.NM-MANAGED:                     yes
+GENERAL.AUTOCONNECT:                    yes
+GENERAL.FIRMWARE-MISSING:               no
+GENERAL.CONNECTION:                     /org/freedesktop/NetworkManager/ActiveConnection/9
+CAPABILITIES.CARRIER-DETECT:            yes
+CAPABILITIES.SPEED:                     1000 Mb/s
+CONNECTIONS.AVAILABLE-CONNECTION-PATHS: /org/freedesktop/NetworkManager/Settings/{1,2}
+CONNECTIONS.AVAILABLE-CONNECTIONS[1]:   acafdb99-23e4-49e5-a3e6-0a00575312b5 | Office
+CONNECTIONS.AVAILABLE-CONNECTIONS[2]:   d6aaee51-2ed8-4b05-82ac-365c9c74b44e | DHCP
+WIRED-PROPERTIES.CARRIER:               on
+IP4.ADDRESS[1]:                         ip = 192.168.1.10, gw = 192.168.1.1
+IP4.DNS[1]:                             192.168.1.1
+DHCP4.OPTION[1]:                        time_offset = 0
+DHCP4.OPTION[2]:                        expiry = 1401991971
+DHCP4.OPTION[3]:                        broadcast_address = 192.168.1.255
+DHCP4.OPTION[4]:                        dhcp_message_type = 5
+DHCP4.OPTION[5]:                        dhcp_lease_time = 9999999
+DHCP4.OPTION[6]:                        ip_address = 192.168.1.10
+DHCP4.OPTION[7]:                        subnet_mask = 255.255.255.0
+DHCP4.OPTION[8]:                        routers = 192.168.1.1
+DHCP4.OPTION[9]:                        domain_name_servers = 192.168.1.1
+DHCP4.OPTION[10]:                       network_number = 192.168.1.0
+DHCP4.OPTION[11]:                       default_ip_ttl = 64
+DHCP4.OPTION[12]:                       dhcp_server_identifier = 192.168.1.1

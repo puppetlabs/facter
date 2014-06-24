@@ -1,0 +1,4 @@
+DEVICE     TYPE              STATE        
+wlan0      802-11-wireless   connected    
+eth0       802-3-ethernet    connected
+eth1       802-3-ethernet    disconnected

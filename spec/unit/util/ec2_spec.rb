@@ -4,6 +4,10 @@ require 'spec_helper'
 require 'facter/util/ec2'
 
 describe Facter::Util::EC2 do
+  before do
+    # Squelch deprecation notices
+    Facter.stubs(:warnonce)
+  end
   # This is the standard prefix for making an API call in EC2 (or fake)
   # environments.
   let(:api_prefix) { "http://169.254.169.254" }

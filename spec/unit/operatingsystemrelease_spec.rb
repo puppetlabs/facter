@@ -17,6 +17,7 @@ describe "Operating System Release fact" do
     "OpenWrt"    => "/etc/openwrt_version",
     "CentOS"    => "/etc/redhat-release",
     "RedHat"    => "/etc/redhat-release",
+    "LinuxMint"   => "/etc/linuxmint/info",
     "Scientific"  => "/etc/redhat-release",
     "Fedora"    => "/etc/fedora-release",
     "MeeGo"     => "/etc/meego-release",
@@ -224,5 +225,12 @@ describe "Operating System Release fact" do
       Facter::Util::FileRead.stubs(:read).with("/etc/lsb-release").returns(lsbrelease)
       Facter.fact(:operatingsystemrelease).value.should == "10.04"
     end
+  end
+
+  it "uses '/etc/os-release for Cumulus Linux" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:operatingsystem).stubs(:value).returns("CumulusLinux")
+    Facter::Util::Operatingsystem.expects(:os_release).returns({'VERSION_ID' => '1.5.0'})
+    Facter.fact(:operatingsystemrelease).value.should == "1.5.0"
   end
 end

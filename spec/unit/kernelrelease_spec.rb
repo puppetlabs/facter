@@ -50,4 +50,20 @@ describe "Kernel release fact" do
       Facter.fact(:kernelrelease).value.should == "test_kernel"
     end
   end
+
+  describe 'on OpenBSD' do
+    before do
+      Facter.fact(:kernel).stubs(:value).returns :openbsd
+    end
+
+    it 'parses 5.3-current sysctl output' do
+      Facter::Util::POSIX.stubs(:sysctl).with("kern.version").returns(my_fixture_read('openbsd-5.3-current'))
+      Facter.value(:kernelrelease).should == '5.3-current'
+    end
+
+    it 'parses 5.3 sysctl output' do
+      Facter::Util::POSIX.stubs(:sysctl).with("kern.version").returns(my_fixture_read('openbsd-5.3'))
+      Facter.value(:kernelrelease).should == '5.3'
+    end
+  end
 end

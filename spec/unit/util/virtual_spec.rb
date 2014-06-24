@@ -127,6 +127,16 @@ describe Facter::Util::Virtual do
     Facter::Util::Virtual.should_not be_ovirt
   end
 
+  it "detects GCE if the DMI product name is Google" do
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").returns("Google")
+    expect(Facter::Util::Virtual.gce?).to be_true
+  end
+
+  it "does not detect GCE if the DMI product name is not Google" do
+    File.stubs(:read).with("/sys/devices/virtual/dmi/id/product_name").returns('')
+    expect(Facter::Util::Virtual.gce?).to be_false
+  end
+
   fixture_path = fixtures('virtual', 'proc_self_status')
 
   test_cases = [
@@ -202,14 +212,14 @@ describe Facter::Util::Virtual do
   it "should detect kvm on FreeBSD" do
     FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
     Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
-    Facter::Core::Execution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns("QEMU Virtual CPU version 0.12.4")
+    Facter::Util::POSIX.stubs(:sysctl).with("hw.model").returns("QEMU Virtual CPU version 0.12.4")
     Facter::Util::Virtual.should be_kvm
   end
 
   it "should detect kvm on OpenBSD" do
     FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
     Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
-    Facter::Core::Execution.stubs(:exec).with("/sbin/sysctl -n hw.model").returns('QEMU Virtual CPU version (cpu64-rhel6) ("AuthenticAMD" 686-class, 512KB L2 cache)')
+    Facter::Util::POSIX.stubs(:sysctl).with("hw.model").returns('QEMU Virtual CPU version (cpu64-rhel6) ("AuthenticAMD" 686-class, 512KB L2 cache)')
     Facter::Util::Virtual.should be_kvm
   end
 
@@ -290,5 +300,65 @@ describe Facter::Util::Virtual do
 
   context "on windows" do
     it_should_behave_like "virt-what", "windows", 'c:\windows\system32\virt-what', "NUL"
+  end
+
+  describe '.lxc?' do
+    subject do
+      Facter::Util::Virtual.lxc?
+    end
+
+    fixture_path = fixtures('virtual', 'proc_1_cgroup')
+
+    context '/proc/1/cgroup has at least one hierarchy rooted in /lxc/' do
+      before :each do
+        fakepath = Pathname.new(File.join(fixture_path, 'in_a_container'))
+        Pathname.stubs(:new).with('/proc/1/cgroup').returns(fakepath)
+      end
+
+      it 'is true' do
+        subject.should be_true
+      end
+    end
+
+    context '/proc/1/cgroup has no hierarchies rooted in /lxc/' do
+      before :each do
+        fakepath = Pathname.new(File.join(fixture_path, 'not_in_a_container'))
+        Pathname.stubs(:new).with('/proc/1/cgroup').returns(fakepath)
+      end
+
+      it 'is false' do
+        subject.should be_false
+      end
+    end
+  end
+
+  describe '.docker?' do
+    subject do
+      Facter::Util::Virtual.docker?
+    end
+
+    fixture_path = fixtures('virtual', 'proc_1_cgroup')
+
+    context '/proc/1/cgroup has at least one hierarchy rooted in /docker/' do
+      before :each do
+        fakepath = Pathname.new(File.join(fixture_path, 'in_a_docker_container'))
+        Pathname.stubs(:new).with('/proc/1/cgroup').returns(fakepath)
+      end
+
+      it 'is true' do
+        subject.should be_true
+      end
+    end
+
+    context '/proc/1/cgroup has no hierarchies rooted in /docker/' do
+      before :each do
+        fakepath = Pathname.new(File.join(fixture_path, 'not_in_a_container'))
+        Pathname.stubs(:new).with('/proc/1/cgroup').returns(fakepath)
+      end
+
+      it 'is false' do
+        subject.should be_false
+      end
+    end
   end
 end

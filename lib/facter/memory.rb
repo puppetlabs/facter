@@ -82,15 +82,21 @@ end
   end
 end
 
-if Facter.value(:kernel) == "Darwin"
-  Facter.add("SwapEncrypted") do
-    confine :kernel => :Darwin
-    setcode do
-      swap = Facter::Core::Execution.exec('sysctl vm.swapusage')
-      encrypted = false
-      if swap =~ /\(encrypted\)/ then encrypted = true; end
-      encrypted
-    end
+Facter.add("SwapEncrypted") do
+  confine :kernel => :openbsd
+  setcode do
+    sysctl_encrypted = Facter::Util::POSIX.sysctl("vm.swapencrypt.enable").to_i
+    !(sysctl_encrypted.zero?)
+  end
+end
+
+Facter.add("SwapEncrypted") do
+  confine :kernel => :Darwin
+  setcode do
+    swap = Facter::Util::POSIX.sysctl('vm.swapusage')
+    encrypted = false
+    if swap =~ /\(encrypted\)/ then encrypted = true; end
+    encrypted
   end
 end
 
@@ -143,8 +149,8 @@ end
 Facter.add("swapsize_mb") do
   confine :kernel => :dragonfly
   setcode do
-    page_size = Facter::Core::Execution.exec("/sbin/sysctl -n hw.pagesize").to_f
-    swaptotal = Facter::Core::Execution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
+    page_size = Facter::Util::POSIX.sysctl("hw.pagesize").to_f
+    swaptotal = Facter::Util::POSIX.sysctl("vm.swap_size").to_f * page_size
     "%.2f" % [(swaptotal.to_f / 1024.0) / 1024.0]
   end
 end
@@ -152,10 +158,10 @@ end
 Facter.add("swapfree_mb") do
   confine :kernel => :dragonfly
   setcode do
-    page_size = Facter::Core::Execution.exec("/sbin/sysctl -n hw.pagesize").to_f
-    swaptotal = Facter::Core::Execution.exec("/sbin/sysctl -n vm.swap_size").to_f * page_size
-    swap_anon_use = Facter::Core::Execution.exec("/sbin/sysctl -n vm.swap_anon_use").to_f * page_size
-    swap_cache_use = Facter::Core::Execution.exec("/sbin/sysctl -n vm.swap_cache_use").to_f * page_size
+    page_size = Facter::Util::POSIX.sysctl("hw.pagesize").to_f
+    swaptotal = Facter::Util::POSIX.sysctl("vm.swap_size").to_f * page_size
+    swap_anon_use = Facter::Util::POSIX.sysctl("vm.swap_anon_use").to_f * page_size
+    swap_cache_use = Facter::Util::POSIX.sysctl("vm.swap_cache_use").to_f * page_size
     swapfree = swaptotal - swap_anon_use - swap_cache_use
     "%.2f" % [(swapfree.to_f / 1024.0) / 1024.0]
   end

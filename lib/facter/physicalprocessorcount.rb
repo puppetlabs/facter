@@ -9,6 +9,8 @@
 #
 # Caveats:
 #
+require 'facter/util/posix'
+
 Facter.add('physicalprocessorcount') do
   confine :kernel => :linux
 
@@ -78,5 +80,12 @@ Facter.add('physicalprocessorcount') do
       output = Facter::Core::Execution.exec("/usr/sbin/psrinfo")
       output.split("\n").length.to_s
     end
+  end
+end
+
+Facter.add('physicalprocessorcount') do
+  confine :kernel => :openbsd
+  setcode do
+    Facter::Util::POSIX.sysctl("hw.ncpufound")
   end
 end

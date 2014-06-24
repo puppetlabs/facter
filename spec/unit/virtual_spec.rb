@@ -2,10 +2,12 @@
 
 require 'spec_helper'
 require 'facter/util/virtual'
-require 'facter/util/macosx'
+require 'facter/util/macosx' unless Facter::Util::Config.is_windows?
 
 describe "Virtual fact" do
   before(:each) do
+    Facter::Util::Virtual.stubs(:docker?).returns(false)
+    Facter::Util::Virtual.stubs(:lxc?).returns(false)
     Facter::Util::Virtual.stubs(:zone?).returns(false)
     Facter::Util::Virtual.stubs(:openvz?).returns(false)
     Facter::Util::Virtual.stubs(:vserver?).returns(false)
@@ -16,6 +18,7 @@ describe "Virtual fact" do
     Facter::Util::Virtual.stubs(:virt_what).returns(nil)
     Facter::Util::Virtual.stubs(:rhev?).returns(false)
     Facter::Util::Virtual.stubs(:ovirt?).returns(false)
+    Facter::Util::Virtual.stubs(:gce?).returns(false)
     Facter::Util::Virtual.stubs(:virtualbox?).returns(false)
   end
 
@@ -47,28 +50,23 @@ describe "Virtual fact" do
     Facter.fact(:virtual).value.should == "zlinux"
   end
 
-  describe "on Darwin" do
+  describe "on Darwin", :unless => Facter::Util::Config.is_windows? do
     before do
       Facter.fact(:kernel).stubs(:value).returns("Darwin")
     end
 
-    it "should be parallels with Parallels vendor id" do
-      Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor-id" => "0x1ab8" })
+    it "should be parallels with Parallels ethernet vendor id" do
+      Facter::Util::Macosx.stubs(:profiler_data).returns({ "spethernet_subsystem-vendor-id" => "0x1ab8" })
       Facter.fact(:virtual).value.should == "parallels"
     end
 
-    it "should be parallels with Parallels vendor name" do
-      Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor" => "Parallels" })
-      Facter.fact(:virtual).value.should == "parallels"
+    it "should be virtualbox with VirtualBox boot rom name" do
+      Facter::Util::Macosx.stubs(:profiler_data).returns({ "boot_rom_version" => "VirtualBox" })
+      Facter.fact(:virtual).value.should == "virtualbox"
     end
 
-    it "should be vmware with VMWare vendor id" do
-      Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor-id" => "0x15ad" })
-      Facter.fact(:virtual).value.should == "vmware"
-    end
-
-    it "should be vmware with VMWare vendor name" do
-      Facter::Util::Macosx.stubs(:profiler_data).returns({ "spdisplays_vendor" => "VMWare" })
+    it "should be vmware with VMware machine model" do
+      Facter::Util::Macosx.stubs(:profiler_data).returns({ "machine_model" => "VMware7,1" })
       Facter.fact(:virtual).value.should == "vmware"
     end
   end
@@ -164,6 +162,12 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "ovirt"
     end
 
+    it "is gce based on DMI info" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter::Util::Virtual.stubs(:gce?).returns(true)
+      Facter.fact(:virtual).value.should == "gce"
+    end
+
     it "should be hyperv with Microsoft vendor name from lspci 2>/dev/null" do
       Facter::Core::Execution.stubs(:exec).with('lspci 2>/dev/null').returns("00:08.0 VGA compatible controller: Microsoft Corporation Hyper-V virtual VGA")
       Facter.fact(:virtual).value.should == "hyperv"
@@ -173,6 +177,28 @@ describe "Virtual fact" do
       Facter::Core::Execution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Core::Execution.stubs(:exec).with('dmidecode 2> /dev/null').returns("System Information\nManufacturer: Microsoft Corporation\nProduct Name: Virtual Machine")
       Facter.fact(:virtual).value.should == "hyperv"
+    end
+
+    context "In a Linux Container (LXC)" do
+      before :each do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+      end
+
+      it 'is "lxc" when Facter::Util::Virtual.lxc? is true' do
+        Facter::Util::Virtual.stubs(:lxc?).returns(true)
+        Facter.fact(:virtual).value.should == 'lxc'
+      end
+    end
+
+    context "In a Docker Container (docker)" do
+      before :each do
+        Facter.fact(:kernel).stubs(:value).returns("Linux")
+      end
+
+      it 'is "docker" when Facter::Util::Virtual.docker? is true' do
+        Facter::Util::Virtual.stubs(:docker?).returns(true)
+        Facter.fact(:virtual).value.should == 'docker'
+      end
     end
 
     context "In Google Compute Engine" do
@@ -254,23 +280,28 @@ describe "Virtual fact" do
     end
 
     it "should be parallels with Parallels product name from sysctl" do
-      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("Parallels Virtual Platform")
+      Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("Parallels Virtual Platform")
       Facter.fact(:virtual).value.should == "parallels"
     end
 
     it "should be vmware with VMware product name from sysctl" do
-      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("VMware Virtual Platform")
+      Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("VMware Virtual Platform")
       Facter.fact(:virtual).value.should == "vmware"
     end
 
     it "should be virtualbox with VirtualBox product name from sysctl" do
-      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("VirtualBox")
+      Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("VirtualBox")
       Facter.fact(:virtual).value.should == "virtualbox"
     end
 
     it "should be xenhvm with Xen HVM product name from sysctl" do
-      Facter::Core::Execution.stubs(:exec).with('sysctl -n hw.product 2>/dev/null').returns("HVM domU")
+      Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("HVM domU")
       Facter.fact(:virtual).value.should == "xenhvm"
+    end
+
+    it "should be ovirt with oVirt Node product name from sysctl" do
+      Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("oVirt Node")
+      Facter.fact(:virtual).value.should == "ovirt"
     end
   end
 
@@ -465,6 +496,24 @@ describe "is_virtual fact" do
   it "should be true when running on ovirt" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("ovirt")
+    Facter.fact(:is_virtual).value.should == "true"
+  end
+
+  it "should be true when running on ovirt" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("gce")
+    Facter.fact(:is_virtual).value.should == "true"
+  end
+
+  it "should be true when running in LXC" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("lxc")
+    Facter.fact(:is_virtual).value.should == "true"
+  end
+
+  it "should be true when running in docker" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("docker")
     Facter.fact(:is_virtual).value.should == "true"
   end
 end

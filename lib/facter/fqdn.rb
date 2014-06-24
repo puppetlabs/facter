@@ -15,6 +15,8 @@ Facter.add(:fqdn) do
     domain = Facter.value(:domain)
     if host and domain
       [host, domain].join(".")
+    elsif host
+      host
     else
       nil
     end

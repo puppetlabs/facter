@@ -187,4 +187,37 @@ Handle 0x001F
     Facter.value(:serialnumber).should == "56 4d 40 2b 4d 81 94 d6-e6 c5 56 a4 56 0c 9e 9f"
     Facter.value(:productname).should == "VMware Virtual Platform"
   end
+
+  describe "using sysctl to look up manufacturer information" do
+    before do
+      Facter.fact(:kernel).stubs(:value).returns 'OpenBSD'
+    end
+
+    let(:mfg_keys) do
+      {
+        'hw.vendor'   => 'manufacturer',
+        'hw.product'  => 'productname',
+        'hw.serialno' => 'serialnumber'
+      }
+    end
+
+    it "creates a new fact for the each hash key" do
+      mfg_keys.values.each do |value|
+        Facter.expects(:add).with(value)
+      end
+      described_class.sysctl_find_system_info(mfg_keys)
+    end
+
+    it "uses sysctl to determine the value for that fact" do
+      mfg_keys.keys.each do |sysctl|
+        Facter::Util::POSIX.expects(:sysctl).with(sysctl).returns "sysctl #{sysctl}"
+      end
+
+      described_class.sysctl_find_system_info(mfg_keys)
+
+      mfg_keys.invert.each_pair do |factname, value|
+        expect(Facter.value(factname)).to eq "sysctl #{value}"
+      end
+    end
+  end
 end
