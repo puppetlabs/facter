@@ -7,7 +7,7 @@ module POSIX
   #
   # @api private
   def sysctl(mib)
-    Facter::Util::Resolution.exec("/sbin/sysctl -n #{mib} 2>/dev/null")
+    Facter::Util::Resolution.exec("sysctl -n #{mib} 2>/dev/null")
   end
 
   module_function :sysctl
