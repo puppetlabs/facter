@@ -75,19 +75,19 @@ if Facter.value(:kernel) == 'Linux'
 
       if File.exist?(sizefile)
         Facter.add("blockdevice_#{device}_size".to_sym) do
-          setcode { IO.read(sizefile).strip.to_i * 512 }
+          setcode { Facter::Util::Resolution.exec("cat #{sizefile}").strip.to_i * 512 }
         end
       end
 
       if File.exist?(vendorfile)
         Facter.add("blockdevice_#{device}_vendor".to_sym) do
-          setcode { IO.read(vendorfile).strip }
+          setcode { Facter::Util::Resolution.exec("cat #{vendorfile}").strip }
         end
       end
 
       if File.exist?(modelfile)
         Facter.add("blockdevice_#{device}_model".to_sym) do
-          setcode { IO.read(modelfile).strip }
+          setcode { Facter::Util::Resolution.exec("cat #{modelfile}").strip }
         end
       end
 
