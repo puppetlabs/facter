@@ -19,6 +19,11 @@ directories:
     owner: 'root'
     group: 'wheel'
     perms: '0644'
+  man/man8:
+    path: 'usr/share/man/man8'
+    owner: 'root'
+    group: 'wheel'
+    perms: '0755'
 files:
   '[A-Z]*':
     path: 'usr/share/doc/facter'
