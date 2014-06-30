@@ -59,6 +59,33 @@ namespace facter { namespace execution {
         return _signal;
     }
 
+    uint64_t get_max_descriptor_limit()
+    {
+#ifdef _SC_OPEN_MAX
+        {
+            auto open_max = sysconf(_SC_OPEN_MAX);
+            if (open_max > 0) {
+                return open_max;
+            }
+        }
+#endif  // _SC_OPEN_MAX
+
+#ifdef RLIMIT_NOFILE
+        {
+            rlimit lim;
+            if (getrlimit(RLIMIT_NOFILE, &lim) == 0) {
+                return lim.rlim_cur;
+            }
+        }
+#endif  // RLIMIT_NOFILE
+
+#ifdef OPEN_MAX
+        return OPEN_MAX;
+#else
+        return 256;
+#endif  // OPEN_MAX
+    }
+
     void log_execution(string const& file, vector<string> const* arguments)
     {
         if (!LOG_IS_DEBUG_ENABLED()) {
@@ -310,11 +337,10 @@ namespace facter { namespace execution {
                 }
             }
 
-            // Release the parent descriptors before the exec
-            stdin_read.release();
-            stdin_write.release();
-            stdout_read.release();
-            stdout_write.release();
+            // Close all open file descriptors up to the limit
+            for (decltype(get_max_descriptor_limit()) i = 3; i < get_max_descriptor_limit(); ++i) {
+                close(i);
+            }
 
             // Build a vector of pointers to the arguments
             // The first element is the program name
@@ -355,7 +381,7 @@ namespace facter { namespace execution {
             if (options[execution_options::redirect_stderr]) {
                 string message = ex.what();
                 message += "\n";
-                int result = write(stdout_write, message.c_str(), message.size());
+                int result = write(STDERR_FILENO, message.c_str(), message.size());
                 if (result == -1) {
                     // We don't really care if writing the error message failed
                 }
