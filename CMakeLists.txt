@@ -10,6 +10,13 @@ enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
+if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
+    # Allow searching in boxen installed homebrew directories
+    # http://stackoverflow.com/questions/1487752/how-do-i-instruct-cmake-to-look-for-libraries-installed-by-macports
+    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /opt/boxen/homebrew/lib)
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} /opt/boxen/homebrew/include)
+endif()
+
 # Find our dependency packages
 find_package(Boost 1.48 REQUIRED COMPONENTS program_options system filesystem)
 find_package(LOG4CXX REQUIRED)
