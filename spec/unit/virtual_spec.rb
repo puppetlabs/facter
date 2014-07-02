@@ -303,6 +303,11 @@ describe "Virtual fact" do
       Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("oVirt Node")
       Facter.fact(:virtual).value.should == "ovirt"
     end
+
+    it "should be kvm with KVM product name from sysctl" do
+      Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("KVM")
+      Facter.fact(:virtual).value.should == "kvm"
+    end
   end
 
   describe "on Windows" do
