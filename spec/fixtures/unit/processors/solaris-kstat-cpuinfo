@@ -1,0 +1,71 @@
+module: cpu_info                        instance: 0
+name:   cpu_info0                       class:    misc
+        brand                           Intel(r) Xeon(r) CPU E5-2609 0 @ 2.40GHz
+        cache_id                        0
+        chip_id                         0
+        clock_MHz                       2400
+        clog_id                         0
+        core_id                         0
+        cpu_type                        i386
+        crtime                          13.840457104
+        cstates_count                   1908299:1908300
+        cstates_nsec                    16421299444149:216475616441
+        current_clock_Hz                2399966360
+        current_cstate                  0
+        current_pstate                  0
+        family                          6
+        fpu_type                        i387 compatible
+        implementation                  x86 (chipid 0x0 GenuineIntel 206D2 family 6 model 45 step 2 clock 2400 MHz)
+        max_pwrcap                      0
+        model                           45
+        ncore_per_chip                  1
+        ncpu_per_chip                   1
+        pg_id                           -1
+        pkg_core_id                     0
+        pstates_count                   null
+        pstates_nsec                    null
+        snaptime                        16623.944697446
+        socket_type                     Unknown
+        state                           on-line
+        state_begin                     1404242034
+        stepping                        2
+        supported_frequencies_Hz        2399966360
+        supported_max_cstates           1
+        supported_max_pstates           0
+        vendor_id                       GenuineIntel
+
+module: cpu_info                        instance: 1
+name:   cpu_info1                       class:    misc
+        brand                           Intel(r) Xeon(r) CPU E5-2609 0 @ 2.40GHz
+        cache_id                        2
+        chip_id                         2
+        clock_MHz                       2400
+        clog_id                         0
+        core_id                         2
+        cpu_type                        i386
+        crtime                          14.468612119
+        cstates_count                   1027511:1027512
+        cstates_nsec                    16491789949616:147045972329
+        current_clock_Hz                2399966360
+        current_cstate                  0
+        current_pstate                  0
+        family                          6
+        fpu_type                        i387 compatible
+        implementation                  x86 (chipid 0x2 GenuineIntel 206D2 family 6 model 45 step 2 clock 2400 MHz)
+        max_pwrcap                      0
+        model                           45
+        ncore_per_chip                  1
+        ncpu_per_chip                   1
+        pg_id                           -1
+        pkg_core_id                     0
+        pstates_count                   null
+        pstates_nsec                    null
+        snaptime                        16623.946191797
+        socket_type                     Unknown
+        state                           on-line
+        state_begin                     1404242035
+        stepping                        2
+        supported_frequencies_Hz        2399966360
+        supported_max_cstates           1
+        supported_max_pstates           0
+        vendor_id                       GenuineIntel

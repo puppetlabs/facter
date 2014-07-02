@@ -99,6 +99,19 @@
         "physicalprocessorcount" : { "type": "string" },
         "processorcount" : { "type": "string" },
         "processor" : { "type": "string" },
+        "processors" : { "type": "object",
+          "properties" : {
+            "processorlist" : { "type": "object",
+              "patternProperties" : {
+                "processor[0-9]+" : { "type": "string" }
+              }
+            },
+            "physicalprocessorcount" : { "type": "string" },
+            "processorcount" : { "type": "string" },
+            "processorspeed" : { "type": "string" },
+            "processor" : { "type": "string" }
+          }
+        },
         "productname" : { "type": "string" },
         "ps" : { "type": "string" },
         "puppetversion" : { "type": "string" },
