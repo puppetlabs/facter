@@ -38,8 +38,6 @@ RSpec.configure do |config|
   config.mock_with :mocha
 
   config.before :each do
-    CFacter.clear
-
     # Store any environment variables away to be restored later
     @old_env = {}
     ENV.each_key {|k| @old_env[k] = ENV[k]}

@@ -24,12 +24,14 @@ extern "C" {
 
     ///
     /// Loads and resolves all facts.
+    /// This function does nothing if facts have already been loaded.
+    /// To reload facts, call clear_facts first.
     /// @param names The comma-delimited list of fact names to resolve.  If null, all facts are resolved.
     ///
     void load_facts(char const* names);
 
     ///
-    /// Clears the facts.
+    /// Clears cached fact values.
     ///
     void clear_facts();
 
@@ -97,10 +99,41 @@ extern "C" {
     bool get_fact_value(char const* name, enumeration_callbacks* callbacks);
 
     ///
-    /// Searches the given directories for external facts.
-    /// @param directories The directories to search for external facts.
+    /// Adds the given directories to the Ruby fact search paths.
     ///
-    void search_external(char const* directories);
+    /// @param directories The directories to search for external facts.
+    /// @param separator The path separator used to separate each directory.
+    ///
+    void add_search_paths(char const* directories, char const* separator);
+
+    ///
+    /// Enumerates the Ruby fact search paths.
+    /// @param callback The callback to call for each search path.
+    ///
+    void enumerate_search_paths(void(*callback)(char const* path));
+
+    ///
+    /// Clears the Ruby fact search paths.
+    ///
+    void clear_search_paths();
+
+    ///
+    /// Adds the given directories to the external fact search paths.
+    /// @param directories The directories to search for external facts.
+    /// @param separator The path separator used to separate each directory.
+    ///
+    void add_external_search_paths(char const* directories, char const* separator);
+
+    ///
+    /// Enumerates the external search paths.
+    /// @param callback The callback to call for each search path.
+    ///
+    void enumerate_external_search_paths(void(*callback)(char const* path));
+
+    ///
+    /// Clears the external search paths.
+    ///
+    void clear_external_search_paths();
 
 #ifdef __cplusplus
 }
