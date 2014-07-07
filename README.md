@@ -86,11 +86,11 @@ Run
 
 You can run cfacter from where it was built:
 
-`$ release/exe/cfacter`
+`$ release/bin/cfacter`
 
 For a debug build:
 
-`$ debug/exe/cfacter`
+`$ debug/bin/cfacter`
 
 Test
 ----
