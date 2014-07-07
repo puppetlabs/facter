@@ -13,6 +13,8 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
 )
 
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+
 add_executable(cfacter ${CFACTER_SOURCES})
 target_link_libraries(cfacter libfacter ${LOG4CXX_LIBRARIES} ${Boost_LIBRARIES})
 install(TARGETS cfacter DESTINATION bin)
