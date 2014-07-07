@@ -30,47 +30,20 @@ describe Facter::Util::Virtual do
   it "should identify openvzhn when /proc/self/status has envID of 0" do
     Facter::Util::Virtual.stubs(:openvz?).returns(true)
     FileTest.stubs(:exists?).with("/proc/self/status").returns(true)
-    File.stubs(:read).with('/proc/self/status').returns <<EOT
-Name:	cat
-State:	R (running)
-Tgid:	8418
-Pid:	8418
-PPid:	2354
-envID:  0
-TracerPid:	0
-Uid:	0	0	0	0
-EOT
+    Facter::Core::Execution.stubs(:exec).with('grep "envID" /proc/self/status').returns("envID:  0")
     Facter::Util::Virtual.openvz_type().should == "openvzhn"
   end
 
   it "should identify openvzve when /proc/self/status has envID of 0" do
     Facter::Util::Virtual.stubs(:openvz?).returns(true)
     FileTest.stubs(:exists?).with('/proc/self/status').returns(true)
-    File.stubs(:read).with('/proc/self/status').returns <<EOT
-Name:	cat
-State:	R (running)
-Tgid:	8418
-Pid:	8418
-PPid:	2354
-envID:  101
-TracerPid:	0
-Uid:	0	0	0	0
-EOT
+    Facter::Core::Execution.stubs(:exec).with('grep "envID" /proc/self/status').returns("envID:  666")
     Facter::Util::Virtual.openvz_type().should == "openvzve"
   end
 
   it "should not attempt to identify openvz when /proc/self/status has no envID" do
     Facter::Util::Virtual.stubs(:openvz?).returns(true)
     FileTest.stubs(:exists?).with('/proc/self/status').returns(true)
-    File.stubs(:read).with('/proc/self/status').returns <<EOT
-Name:	cat
-State:	R (running)
-Tgid:	8418
-Pid:	8418
-PPid:	2354
-TracerPid:	0
-Uid:	0	0	0	0
-EOT
     Facter::Core::Execution.stubs(:exec).with('grep "envID" /proc/self/status').returns("")
     Facter::Util::Virtual.openvz_type().should be_nil
   end

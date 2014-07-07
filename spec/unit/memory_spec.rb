@@ -182,6 +182,7 @@ describe "Memory facts" do
       Facter::Core::Execution.stubs(:exec).with('swapctl -s').returns(swapusage)
 
       Facter::Core::Execution.stubs(:exec).with('vmstat').returns(my_fixture_read('openbsd-vmstat'))
+
       Facter::Util::POSIX.stubs(:sysctl).with('hw.physmem').returns('267321344')
       Facter::Util::POSIX.stubs(:sysctl).with('vm.swapencrypt.enable').returns('1')
 

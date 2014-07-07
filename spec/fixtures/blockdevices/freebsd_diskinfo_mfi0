@@ -1,7 +1,0 @@
-mfi0
-        512             # sectorsize
-        1000000000000   # mediasize in bytes (1.0T)
-        123             # mediasize in sectors
-        321             # Cylinders according to firmware.
-        255             # Heads according to firmware.
-        63              # Sectors according to firmware.

@@ -14,7 +14,6 @@ describe "OS Family fact" do
     'Ubuntu'       => 'Debian',
     'Debian'       => 'Debian',
     'LinuxMint'    => 'Debian',
-    'CumulusLinux' => 'Debian',
     'Gentoo'       => 'Gentoo',
     'Fedora'       => 'RedHat',
     'Amazon'       => 'RedHat',

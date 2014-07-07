@@ -3,7 +3,6 @@
 # We need access to the Puppet.version method
 $LOAD_PATH.unshift(File.expand_path("lib"))
 require 'facter/version'
-require 'yaml'
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'tasks')
 
@@ -29,6 +28,7 @@ end
 build_defs_file = 'ext/build_defaults.yaml'
 if File.exist?(build_defs_file)
   begin
+    require 'yaml'
     @build_defaults ||= YAML.load_file(build_defs_file)
   rescue Exception => e
     STDERR.puts "Unable to load yaml from #{build_defs_file}:"

@@ -69,10 +69,6 @@ describe Facter::Util::Loader do
         loader.should be_valid_search_path dir
       end
     end
-
-    it "is true for paths with a file:/ uri scheme" do
-      loader.should be_valid_search_path 'file:/in/jar'
-    end
   end
 
   describe "when determining the search path" do
@@ -144,15 +140,11 @@ describe Facter::Util::Loader do
 
     describe "and the FACTERLIB environment variable is set" do
       it "should include all paths in FACTERLIB" do
-        File.stubs(:directory?).returns false
-        File.stubs(:directory?).with('/one/path').returns true
-        File.stubs(:directory?).with('/two/path').returns true
-
         loader = Facter::Util::Loader.new("FACTERLIB" => "/one/path#{File::PATH_SEPARATOR}/two/path")
 
-        File.stubs(:directory?).returns false
-        File.stubs(:directory?).with('/one/path').returns true
-        File.stubs(:directory?).with('/two/path').returns true
+      File.stubs(:directory?).returns false
+      File.stubs(:directory?).with('/one/path').returns true
+      File.stubs(:directory?).with('/two/path').returns true
 
         loader.stubs(:valid_search_path?).returns true
         paths = loader.search_path
@@ -186,7 +178,6 @@ describe Facter::Util::Loader do
 
     it 'should not load any ruby files from subdirectories matching the fact name in the search path' do
       loader = Facter::Util::Loader.new
-      loader.stubs(:search_path).returns %w{/one/dir}
       File.stubs(:file?).returns false
       File.expects(:file?).with("/one/dir/testing.rb").returns true
       Kernel.expects(:load).with("/one/dir/testing.rb")
@@ -269,12 +260,11 @@ describe Facter::Util::Loader do
     end
 
     it "should load all facts from the environment" do
-      loader = loader_from(:env => { "facter_one" => "yayness", "facter_two" => "boo" })
-
-      Facter.expects(:add).with('one')
-      Facter.expects(:add).with('two')
-
-      loader.load_all
+      Facter::Util::Resolution.with_env "facter_one" => "yayness", "facter_two" => "boo" do
+        loader.load_all
+      end
+      Facter.value(:one).should == 'yayness'
+      Facter.value(:two).should == 'boo'
     end
 
     it "should only load all facts one time" do
