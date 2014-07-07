@@ -28,7 +28,7 @@ namespace facter { namespace facts { namespace external {
                 return true;
             }
             // Add as a string fact
-            facts.add(line.substr(0, pos), make_value<string_value>(line.substr(pos+1)));
+            facts.add(to_lower(line.substr(0, pos)), make_value<string_value>(line.substr(pos+1)));
             return true;
         })) {
             throw external_fact_exception("file could not be opened.");

@@ -64,7 +64,7 @@ namespace facter { namespace facts { namespace external {
         } else if (map_parent) {
             map_parent->add(string(name), move(val));
         } else {
-            facts.add(string(name), move(val));
+            facts.add(to_lower(string(name)), move(val));
         }
     }
 
