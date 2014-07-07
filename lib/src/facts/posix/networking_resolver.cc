@@ -5,11 +5,12 @@
 #include <facter/logging/logging.hpp>
 #include <facter/util/posix/scoped_addrinfo.hpp>
 #include <facter/util/string.hpp>
+#include <facter/util/file.hpp>
 #include <unistd.h>
 #include <limits.h>
-#include <limits>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <limits>
 #include <sstream>
 #include <iomanip>
 #include <cstring>
@@ -86,32 +87,55 @@ namespace facter { namespace facts { namespace posix {
 
     void networking_resolver::resolve_domain(fact_map& facts)
     {
-        auto hostname = facts.get<string_value>(fact::hostname, false);
-        if (!hostname) {
-            LOG_WARNING("%1% and %2% facts cannot be resolved without the %3% fact.", fact::fqdn, fact::domain, fact::hostname);
-            return;
-        }
-
-        // Retrieve the FQDN by resolving the hostname
         string fqdn;
         string domain;
-        scoped_addrinfo info(hostname->value());
-        if (info.result() != 0 && info.result() != EAI_NONAME) {
-            LOG_WARNING("getaddrinfo failed: %1% (%2%): defaulting to %3% for the %4% fact.", gai_strerror(info.result()), info.result(), fact::hostname, fact::fqdn);
-        } else if (!info || info.result() == EAI_NONAME) {
-            LOG_WARNING("hostname \"%1%\" could not be resolved: %2% fact may not be externally resolvable.", hostname->value(), fact::fqdn);
-        } else {
-            fqdn = static_cast<addrinfo*>(info)->ai_canonname;
+
+        auto hostname = facts.get<string_value>(fact::hostname, false);
+        if (hostname) {
+            // Retrieve the FQDN by resolving the hostname
+            scoped_addrinfo info(hostname->value());
+            if (info.result() != 0 && info.result() != EAI_NONAME) {
+                LOG_ERROR("getaddrinfo failed: %1% (%2%): %3% fact may not be externally resolvable.", gai_strerror(info.result()), info.result(), fact::fqdn);
+            } else if (!info || info.result() == EAI_NONAME) {
+                LOG_INFO("hostname \"%1%\" could not be resolved: %2% fact may not be externally resolvable.", hostname->value(), fact::fqdn);
+            } else {
+                fqdn = static_cast<addrinfo*>(info)->ai_canonname;
+            }
+
+            // Set the domain name if the FQDN is prefixed with the hostname
+            if (starts_with(fqdn, hostname->value() + ".")) {
+                domain = fqdn.substr(hostname->value().length() + 1);
+            }
         }
 
-        // Default to the hostname for an empty FQDN
-        if (fqdn.empty()) {
-            fqdn = hostname->value();
+        // If no domain, look it up based on resolv.conf
+        if (domain.empty()) {
+            string search;
+            file::each_line("/etc/resolv.conf", [&](string& line) {
+                auto parts = tokenize(line);
+                if (parts.size() < 2) {
+                    return true;
+                }
+                if (parts[0] == "domain") {
+                    // Treat the first domain entry as the domain
+                    domain = move(parts[1]);
+                    return false;
+                }
+                if (parts[0] == "search") {
+                    // Found a "search" entry, but keep looking for other domain entries
+                    // We use the first search domain as the domain.
+                    search = move(parts[1]);
+                    return true;
+                }
+                return true;
+            });
+            if (domain.empty()) {
+                domain = move(search);
+            }
         }
 
-        // Set the domain name if the FQDN is prefixed with the hostname
-        if (starts_with(fqdn, hostname->value() + ".")) {
-            domain = fqdn.substr(hostname->value().length() + 1);
+        if (hostname && fqdn.empty()) {
+            fqdn = hostname->value() + (domain.empty() ? "" : ".") + domain;
         }
 
         if (!domain.empty()) {
