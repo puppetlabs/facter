@@ -1,6 +1,7 @@
 # Fact: macaddress
 #
 # Purpose:
+#   Returns the MAC address of the primary network interface.
 #
 # Resolution:
 #

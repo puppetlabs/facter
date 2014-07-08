@@ -2,10 +2,11 @@
 #
 # Purpose: Returns the netmask for the main interfaces.
 #
-# Resolution: Uses the facter/util/netmask library routines.
+# Resolution: Uses the `facter/util/netmask` library routines.
 #
 # Caveats:
 #
+
 # netmask.rb
 # Find the netmask of the primary ipaddress
 # Copyright (C) 2007 David Schmitt <david@schmitt.edv-bus.at>

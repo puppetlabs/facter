@@ -1,6 +1,6 @@
 # Fact: fqdn
 #
-# Purpose: Returns the fully qualified domain name of the host.
+# Purpose: Returns the fully-qualified domain name of the host.
 #
 # Resolution: Simply joins the hostname fact with the domain name fact.
 #

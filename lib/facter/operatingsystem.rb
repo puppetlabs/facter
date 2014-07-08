@@ -4,8 +4,8 @@
 #
 # Resolution:
 #   If the kernel is a Linux kernel, check for the existence of a selection of
-#   files in /etc/ to find the specific flavour.
-#   On SunOS based kernels, attempt to determine the flavour, otherwise return Solaris.
+#   files in `/etc/` to find the specific flavor.
+#   On SunOS based kernels, attempt to determine the flavor, otherwise return Solaris.
 #   On systems other than Linux, use the kernel value.
 #
 # Caveats:

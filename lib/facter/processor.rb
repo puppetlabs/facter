@@ -4,10 +4,10 @@
 #   Additional Facts about the machine's CPUs.
 #
 # Resolution:
-#   On Linux and kFreeBSD, parse '/proc/cpuinfo' for each processor.
-#   On AIX, parse the output of 'lsdev' for its processor section.
-#   On Solaris, parse the output of 'kstat' for each processor.
-#   On OpenBSD, use the sysctl variables 'hw.model' and 'hw.ncpu'
+#   On Linux and kFreeBSD, parse `/proc/cpuinfo` for each processor.
+#   On AIX, parse the output of `lsdev` for its processor section.
+#   On Solaris, parse the output of `kstat` for each processor.
+#   On OpenBSD, use the sysctl variables `hw.model` and`'hw.ncpu'`  
 #   for the CPU model and the CPU count respectively.
 #
 # Caveats:

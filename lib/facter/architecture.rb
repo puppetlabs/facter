@@ -4,8 +4,8 @@
 #   Return the CPU hardware architecture.
 #
 # Resolution:
-#   On non-AIX IBM, OpenBSD, Linux and Debian's kfreebsd, use the hardwaremodel fact.
-#   On AIX get the arch value from lsattr -El proc0 -a type
+#   On non-AIX IBM, OpenBSD, Linux, and Debian's kfreebsd, use the hardwaremodel fact.
+#   On AIX get the arch value from `lsattr -El proc0 -a type`.
 #   Gentoo and Debian call "x86_86" "amd64".
 #   Gentoo also calls "i386" "x86".
 #

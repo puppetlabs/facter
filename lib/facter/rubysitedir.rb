@@ -2,6 +2,9 @@
 #
 # Purpose: Returns Ruby's site library directory.
 #
+# Resolution:
+#   Uses the RbConfig module.
+#
 
 require 'rbconfig'
 

@@ -1,8 +1,8 @@
 # Fact: facterversion
 #
-# Purpose: returns the version of the facter module.
+# Purpose: Returns the version of the facter module.
 #
-# Resolution: Uses the Facter.version method.
+# Resolution: Uses the `Facter.version` method.
 #
 # Caveats:
 #

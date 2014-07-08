@@ -1,11 +1,14 @@
 # Fact: interfaces
 #
 # Purpose:
+#   Generates the following facts on supported platforms: `<interface>_ipaddress`,
+#   `<interface>_ipaddress6`, `<interface>_macaddress`, `<interface>_netmask`,
+#   and `<interface>_mtu`.
 #
 # Resolution:
 #
 # Caveats:
-#
+#   
 
 # interfaces.rb
 # Try to get additional Facts about the machine's network interfaces
