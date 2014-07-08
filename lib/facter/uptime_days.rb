@@ -1,8 +1,8 @@
 # Fact: uptime_days
 #
-# Purpose: Return purely number of days of uptime.
+# Purpose: Return just the number of days of uptime.
 #
-# Resolution: Divides uptime_hours fact by 24.
+# Resolution: Divides the uptime_hours fact by 24.
 #
 # Caveats:
 #

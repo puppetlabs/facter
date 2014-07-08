@@ -4,7 +4,7 @@
 #
 # Resolution:
 #   Takes the first 2 elements of the kernel version as delimited by periods.
-#   Takes the first element of the kernel version on FreeBSD
+#   Takes the first element of the kernel version on FreeBSD.
 #
 # Caveats:
 #

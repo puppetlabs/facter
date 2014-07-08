@@ -6,7 +6,7 @@
 #
 # Resolution:
 #   Uses util/macosx.rb to do the fact reconnaissance, then outputs them
-#   preceded by 'sp_'
+#   preceded by `sp_`
 #
 # Caveats:
 #

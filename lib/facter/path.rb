@@ -1,8 +1,8 @@
 # Fact: path
 #
-# Purpose: Returns the $PATH variable.
+# Purpose: Returns the `$PATH` variable.
 #
-# Resolution: Gets $PATH from the environment.
+# Resolution: Gets `$PATH` from the environment.
 #
 # Caveats:
 #

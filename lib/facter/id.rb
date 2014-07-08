@@ -4,9 +4,9 @@
 # running user id.
 #
 # Resolution:
-#   On all Unixes bar Solaris, just returns "whoami".
-#   On Solaris, parses the output of the "id" command to grab the username, as
-#   Solaris doesn't have the whoami command.
+#   On all Unixes bar Solaris, just returns `whoami`.
+#   On Solaris, parses the output of the `id` command to grab the username,
+#   as Solaris doesn't have the `whoami` command.
 #
 # Caveats:
 #
