@@ -51,4 +51,7 @@ TEST(facter_facts_external_yaml_resolver, resolve_yaml) {
     auto map = facts.get<map_value>("yaml_fact6");
     ASSERT_NE(nullptr, map);
     ASSERT_EQ(2u, map->size());
+    ASSERT_NE(nullptr, facts.get<string_value>("yaml_fact7"));
+    ASSERT_EQ(nullptr, facts.get<string_value>("YAML_faCt7"));
+    ASSERT_EQ("bar", facts.get<string_value>("yaml_fact7")->value());
 }

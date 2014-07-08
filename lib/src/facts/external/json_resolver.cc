@@ -135,7 +135,7 @@ namespace facter { namespace facts { namespace external {
                 if (_key.empty()) {
                     throw external::external_fact_exception("expected non-empty key in object.");
                 }
-                _facts.add(move(_key), move(val));
+                _facts.add(move(to_lower(_key)), move(val));
                 return;
             }
 

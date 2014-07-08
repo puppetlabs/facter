@@ -7,5 +7,6 @@
   "json_fact6": {
     "element1" : 1,
     "element2" : 2
-  }
+  },
+  "JSON_fact7" : "bar"
 }

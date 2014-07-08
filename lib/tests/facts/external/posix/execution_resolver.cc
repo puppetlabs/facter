@@ -40,4 +40,7 @@ TEST(facter_facts_external_posix_execution_resolver, resolve_execution) {
     ASSERT_NE(nullptr, facts.get<string_value>("exe_fact2"));
     ASSERT_EQ("", facts.get<string_value>("exe_fact2")->value());
     ASSERT_EQ(nullptr, facts.get<string_value>("exe_fact3"));
+    ASSERT_NE(nullptr, facts.get<string_value>("exe_fact4"));
+    ASSERT_EQ(nullptr, facts.get<string_value>("EXE_fact4"));
+    ASSERT_EQ("value2", facts.get<string_value>("exe_fact4")->value());
 }
