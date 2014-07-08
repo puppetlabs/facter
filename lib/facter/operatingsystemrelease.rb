@@ -42,6 +42,8 @@ Facter.add(:operatingsystemrelease) do
       line = release.split("\n").first.chomp
       if match = /\(Rawhide\)$/.match(line)
         "Rawhide"
+      elsif match = /release (\d.\d)(\.(\d))/.match(line)
+        match[1]
       elsif match = /release (\d[\d.]*)/.match(line)
         match[1]
       end
