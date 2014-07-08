@@ -22,7 +22,7 @@ set(LIBFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/text_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/yaml_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/src/facts/fact_map.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/facts/collection.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/map_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/scalar_value.cc"

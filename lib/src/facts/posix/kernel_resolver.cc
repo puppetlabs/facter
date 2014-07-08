@@ -1,5 +1,5 @@
 #include <facter/facts/posix/kernel_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/string.hpp>
@@ -25,7 +25,7 @@ namespace facter { namespace facts { namespace posix {
     {
     }
 
-    void kernel_resolver::resolve_facts(fact_map& facts)
+    void kernel_resolver::resolve_facts(collection& facts)
     {
         utsname name;
         memset(&name, 0, sizeof(name));
@@ -40,7 +40,7 @@ namespace facter { namespace facts { namespace posix {
         resolve_kernel_major_version(facts);
     }
 
-    void kernel_resolver::resolve_kernel(fact_map& facts, utsname const& name)
+    void kernel_resolver::resolve_kernel(collection& facts, utsname const& name)
     {
         string value = name.sysname;
         if (value.empty()) {
@@ -49,7 +49,7 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::kernel, make_value<string_value>(move(value)));
     }
 
-    void kernel_resolver::resolve_kernel_release(fact_map& facts, utsname const& name)
+    void kernel_resolver::resolve_kernel_release(collection& facts, utsname const& name)
     {
         string value = name.release;
         if (value.empty()) {
@@ -58,7 +58,7 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::kernel_release, make_value<string_value>(move(value)));
     }
 
-    void kernel_resolver::resolve_kernel_version(fact_map& facts)
+    void kernel_resolver::resolve_kernel_version(collection& facts)
     {
         auto version = facts.get<string_value>(fact::kernel_release);
         if (!version) {
@@ -73,7 +73,7 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::kernel_version, make_value<string_value>(move(value)));
     }
 
-    void kernel_resolver::resolve_kernel_major_version(fact_map& facts)
+    void kernel_resolver::resolve_kernel_major_version(collection& facts)
     {
         auto version = facts.get<string_value>(fact::kernel_release);
         if (!version) {

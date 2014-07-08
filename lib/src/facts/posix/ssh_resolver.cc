@@ -1,6 +1,6 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #include <facter/facts/posix/ssh_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/file.hpp>
@@ -42,7 +42,7 @@ namespace facter { namespace facts { namespace posix {
     {
     }
 
-    void ssh_resolver::resolve_facts(fact_map& facts)
+    void ssh_resolver::resolve_facts(collection& facts)
     {
         static vector<tuple<string, string, string, int>> const ssh_facts = {
             make_tuple(string(fact::ssh_rsa_key), string(fact::sshfp_rsa), "ssh_host_rsa_key.pub", 1),

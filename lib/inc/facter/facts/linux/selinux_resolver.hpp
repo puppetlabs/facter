@@ -22,35 +22,35 @@ namespace facter { namespace facts { namespace linux {
      protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(fact_map& facts);
+        virtual void resolve_facts(collection& facts);
 
         /**
          * Called to resolve all facts read from the SELinux pseudo filesystem.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_selinux_fs_facts(fact_map& facts);
+        virtual void resolve_selinux_fs_facts(collection& facts);
 
         /**
          * Called to resolve whether SELinux is enabled and enforcing.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          * @param mount The SELinux mount point
          */
-        virtual void resolve_selinux_enforce(fact_map& facts, const std::string& mount);
+        virtual void resolve_selinux_enforce(collection& facts, const std::string& mount);
 
         /**
          * Called to resolve the SELINUX policy version
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          * @param mount The SELinux mount point
          */
-        virtual void resolve_selinux_policyvers(fact_map& facts, const std::string& mount);
+        virtual void resolve_selinux_policyvers(collection& facts, const std::string& mount);
 
         /**
          * Called to resolve all facts read from the SELinux configuration file.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_selinux_config_facts(fact_map& facts);
+        virtual void resolve_selinux_config_facts(collection& facts);
 
         /**
          * Gets the selinux pseudo file system mount point.

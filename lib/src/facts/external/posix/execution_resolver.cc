@@ -1,5 +1,5 @@
 #include <facter/facts/external/execution_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -18,7 +18,7 @@ LOG_DECLARE_NAMESPACE("facts.external.execution.posix");
 
 namespace facter { namespace facts { namespace external {
 
-    bool execution_resolver::resolve(string const& path, fact_map& facts) const
+    bool execution_resolver::resolve(string const& path, collection& facts) const
     {
         if (access(path.c_str(), X_OK) == -1) {
             // Because this is the last resolver to execute, log a warning if it's not executable

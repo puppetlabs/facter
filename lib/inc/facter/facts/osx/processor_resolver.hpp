@@ -17,9 +17,9 @@ namespace facter { namespace facts { namespace osx {
      protected:
         /**
          * Called to resolve processor count, physical processor count, and description facts.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_processors(fact_map& facts);
+        virtual void resolve_processors(collection& facts);
     };
 
 }}}  // namespace facter::facts::osx

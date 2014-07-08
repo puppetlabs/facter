@@ -18,9 +18,9 @@ namespace facter { namespace facts { namespace linux {
      protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(fact_map& facts);
+        virtual void resolve_facts(collection& facts);
 
      private:
         static std::string get_chassis_description(std::string const& type);

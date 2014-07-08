@@ -9,7 +9,7 @@
 #include <string>
 
 namespace facter { namespace facts {
-    struct fact_map;
+    struct collection;
 }}  // namespace facter::facts
 
 namespace facter { namespace facts { namespace external {
@@ -34,10 +34,10 @@ namespace facter { namespace facts { namespace external {
         /**
          * Resolves facts from the given file.
          * @param path The path to the file to resolve facts from.
-         * @param facts The fact map to populate the external facts into.
+         * @param facts The fact collection to populate the external facts into.
          * @return Returns true if the facts were resolved or false if the given file is not supported.
          */
-        virtual bool resolve(std::string const& path, fact_map& facts) const = 0;
+        virtual bool resolve(std::string const& path, collection& facts) const = 0;
     };
 
 }}}  // namespace facter::facts::external

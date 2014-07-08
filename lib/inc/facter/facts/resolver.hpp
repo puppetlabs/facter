@@ -41,7 +41,7 @@ namespace facter { namespace facts {
         explicit invalid_name_pattern_exception(std::string const& message);
     };
 
-    struct fact_map;
+    struct collection;
 
     /**
      * Base class for fact resolvers.
@@ -98,9 +98,9 @@ namespace facter { namespace facts {
 
         /**
          * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        void resolve(fact_map& facts);
+        void resolve(collection& facts);
 
         /**
          * Checks whether or not the resolver can resolve the given fact name.
@@ -113,9 +113,9 @@ namespace facter { namespace facts {
      protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(fact_map& facts) = 0;
+        virtual void resolve_facts(collection& facts) = 0;
 
      private:
         std::string _name;

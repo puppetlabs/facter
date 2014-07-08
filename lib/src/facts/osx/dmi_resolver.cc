@@ -1,5 +1,5 @@
 #include <facter/facts/osx/dmi_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
@@ -13,13 +13,13 @@ LOG_DECLARE_NAMESPACE("facts.osx.dmi");
 
 namespace facter { namespace facts { namespace osx {
 
-    void dmi_resolver::resolve_facts(fact_map& facts)
+    void dmi_resolver::resolve_facts(collection& facts)
     {
         // We only support getting the product name on OSX
         resolve_product_name(facts);
     }
 
-    void dmi_resolver::resolve_product_name(fact_map& facts)
+    void dmi_resolver::resolve_product_name(collection& facts)
     {
         int mib[] = { CTL_HW, HW_MODEL };
         size_t length = 0;

@@ -31,29 +31,29 @@ namespace facter { namespace facts { namespace posix {
      protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(fact_map& facts);
+        virtual void resolve_facts(collection& facts);
         /**
          * Called to resolve the uptime fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_uptime(fact_map& facts);
+        virtual void resolve_uptime(collection& facts);
         /**
          * Called to resolve the uptime days fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_uptime_days(fact_map& facts);
+        virtual void resolve_uptime_days(collection& facts);
         /**
          * Called to resolve the uptime hours fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_uptime_hours(fact_map& facts);
+        virtual void resolve_uptime_hours(collection& facts);
         /**
          * Called to resolve the uptime seconds fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_uptime_seconds(fact_map& facts);
+        virtual void resolve_uptime_seconds(collection& facts);
 
      private:
         int executable_uptime();

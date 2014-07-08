@@ -1,5 +1,5 @@
 #include <facter/facterlib.h>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/string.hpp>
 #include <log4cxx/logger.h>
@@ -210,7 +210,7 @@ int main(int argc, char **argv)
         log_requested_facts(requested_facts);
 
         // Resolve the facts
-        fact_map facts;
+        collection facts;
         facts.resolve(requested_facts);
 
         // Resolve external facts next; this allows external facts to take precedence over built-in facts

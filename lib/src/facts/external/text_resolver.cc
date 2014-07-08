@@ -1,5 +1,5 @@
 #include <facter/facts/external/text_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/file.hpp>
@@ -12,7 +12,7 @@ LOG_DECLARE_NAMESPACE("facts.external.text");
 
 namespace facter { namespace facts { namespace external {
 
-    bool text_resolver::resolve(string const& path, fact_map& facts) const
+    bool text_resolver::resolve(string const& path, collection& facts) const
     {
         string full_path = path;
         if (!ends_with(to_lower(full_path), ".txt")) {

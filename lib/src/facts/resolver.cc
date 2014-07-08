@@ -1,5 +1,5 @@
 #include <facter/facts/resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/logging/logging.hpp>
 #include <re2/re2.h>
 
@@ -66,7 +66,7 @@ namespace facter { namespace facts {
         return _names;
     }
 
-    void resolver::resolve(fact_map& facts)
+    void resolver::resolve(collection& facts)
     {
         LOG_DEBUG("resolving %1% facts.", _name);
         if (_resolving) {

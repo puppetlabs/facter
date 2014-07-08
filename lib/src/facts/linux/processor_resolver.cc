@@ -1,7 +1,7 @@
 #include <facter/facts/linux/processor_resolver.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/posix/os.hpp>
 #include <facter/util/string.hpp>
@@ -21,7 +21,7 @@ LOG_DECLARE_NAMESPACE("facts.linux.processor");
 
 namespace facter { namespace facts { namespace linux {
 
-    void processor_resolver::resolve_architecture(fact_map& facts)
+    void processor_resolver::resolve_architecture(collection& facts)
     {
         // Get the hardware model
         auto model = facts.get<string_value>(fact::hardware_model, false);
@@ -58,7 +58,7 @@ namespace facter { namespace facts { namespace linux {
         facts.add(fact::architecture, make_value<string_value>(move(value)));
     }
 
-    void processor_resolver::resolve_processors(fact_map& facts)
+    void processor_resolver::resolve_processors(collection& facts)
     {
         unordered_set<string> cpus;
         size_t logical_count = 0;

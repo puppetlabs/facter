@@ -3,7 +3,7 @@
 #include <facter/facts/linux/release_file.hpp>
 #include <facter/facts/posix/os.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
@@ -23,7 +23,7 @@ namespace bs = boost::system;
 
 namespace facter { namespace facts { namespace linux {
 
-    void operating_system_resolver::resolve_operating_system(fact_map& facts)
+    void operating_system_resolver::resolve_operating_system(collection& facts)
     {
         auto dist_id = facts.get<string_value>(fact::lsb_dist_id);
 
@@ -65,7 +65,7 @@ namespace facter { namespace facts { namespace linux {
         facts.add(fact::operating_system, make_value<string_value>(value));
     }
 
-    void operating_system_resolver::resolve_operating_system_release(fact_map& facts)
+    void operating_system_resolver::resolve_operating_system_release(collection& facts)
     {
         auto operating_system = facts.get<string_value>(fact::operating_system, false);
         if (!operating_system) {
@@ -193,7 +193,7 @@ namespace facter { namespace facts { namespace linux {
         facts.add(fact::operating_system_release, make_value<string_value>(move(value)));
     }
 
-    void operating_system_resolver::resolve_operating_system_major_release(fact_map& facts) {
+    void operating_system_resolver::resolve_operating_system_major_release(collection& facts) {
         auto operating_system = facts.get<string_value>(fact::operating_system, false);
         auto os_release = facts.get<string_value>(fact::operating_system_release, false);
 

@@ -1,4 +1,4 @@
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -16,21 +16,21 @@ using namespace YAML;
 using namespace boost::filesystem;
 namespace bs = boost::system;
 
-LOG_DECLARE_NAMESPACE("facts.map");
+LOG_DECLARE_NAMESPACE("facts.collection");
 
 namespace facter { namespace facts {
 
     /**
      * Called to populate common facts.
-     * @param facts The fact map being populated.
+     * @param facts The fact collection being populated.
      */
-    extern void populate_common_facts(fact_map& facts);
+    extern void populate_common_facts(collection& facts);
 
     /**
      * Called to populate platform-specific facts.
-     * @param facts The fact map being populated.
+     * @param facts The fact collection being populated.
      */
-    extern void populate_platform_facts(fact_map& facts);
+    extern void populate_platform_facts(collection& facts);
 
     /**
      * Called to get the external fact search directories for the current platform.
@@ -49,18 +49,18 @@ namespace facter { namespace facts {
     {
     }
 
-    fact_map::fact_map()
+    collection::collection()
     {
         populate_common_facts(*this);
         populate_platform_facts(*this);
     }
 
-    fact_map::~fact_map()
+    collection::~collection()
     {
         // This needs to be defined here since we use incomplete types in the header
     }
 
-    void fact_map::add(shared_ptr<resolver> const& res)
+    void collection::add(shared_ptr<resolver> const& res)
     {
         if (!res) {
             return;
@@ -76,7 +76,7 @@ namespace facter { namespace facts {
         _resolvers.push_back(res);
     }
 
-    void fact_map::add(string&& name, unique_ptr<value>&& value)
+    void collection::add(string&& name, unique_ptr<value>&& value)
     {
         // Search for the fact first
         auto const& it = _facts.lower_bound(name);
@@ -111,7 +111,7 @@ namespace facter { namespace facts {
         _resolver_map.erase(name);
     }
 
-    void fact_map::remove(shared_ptr<resolver> const& res)
+    void collection::remove(shared_ptr<resolver> const& res)
     {
         if (!res) {
             return;
@@ -130,35 +130,35 @@ namespace facter { namespace facts {
         _resolvers.remove(res);
     }
 
-    void fact_map::remove(string const& name)
+    void collection::remove(string const& name)
     {
         _resolver_map.erase(name);
         _facts.erase(name);
     }
 
-    void fact_map::clear()
+    void collection::clear()
     {
         _facts.clear();
         _resolvers.clear();
         _resolver_map.clear();
     }
 
-    bool fact_map::empty() const
+    bool collection::empty() const
     {
         return _facts.empty() && _resolvers.empty();
     }
 
-    bool fact_map::resolved() const
+    bool collection::resolved() const
     {
         return _resolvers.empty();
     }
 
-    size_t fact_map::size() const
+    size_t collection::size() const
     {
         return _facts.size();
     }
 
-    void fact_map::resolve(set<string> const& facts)
+    void collection::resolve(set<string> const& facts)
     {
         if (resolved()) {
             return;
@@ -207,7 +207,7 @@ namespace facter { namespace facts {
         _resolver_map.clear();
     }
 
-    void fact_map::resolve_external(vector<string> const& directories, set<string> const& facts)
+    void collection::resolve_external(vector<string> const& directories, set<string> const& facts)
     {
         vector<unique_ptr<external::resolver>> resolvers = get_external_resolvers();
 
@@ -286,14 +286,14 @@ namespace facter { namespace facts {
         }
     }
 
-    value const* fact_map::operator[](string const& name)
+    value const* collection::operator[](string const& name)
     {
         return get_value(name, true);
     }
 
-    void fact_map::each(function<bool(string const&, value const*)> func) const
+    void collection::each(function<bool(string const&, value const*)> func) const
     {
-        find_if(begin(_facts), end(_facts), [&func](fact_map_type::value_type const& it) {
+        find_if(begin(_facts), end(_facts), [&func](map<string, unique_ptr<value>>::value_type const& it) {
             return !func(it.first, it.second.get());
         });
     }
@@ -313,7 +313,7 @@ namespace facter { namespace facts {
          ostream& _stream;
     };
 
-    void fact_map::write_json(ostream& stream) const
+    void collection::write_json(ostream& stream) const
     {
         Document document;
         document.SetObject();
@@ -330,7 +330,7 @@ namespace facter { namespace facts {
         document.Accept(writer);
     }
 
-    void fact_map::write_yaml(ostream& stream) const
+    void collection::write_yaml(ostream& stream) const
     {
         Emitter emitter(stream);
         emitter << BeginMap;
@@ -341,7 +341,7 @@ namespace facter { namespace facts {
         emitter << EndMap;
     }
 
-    value const* fact_map::get_value(string const& name, bool resolve)
+    value const* collection::get_value(string const& name, bool resolve)
     {
         // Lookup the fact
         auto it = _facts.find(name);
@@ -362,7 +362,7 @@ namespace facter { namespace facts {
         return it->second.get();
     }
 
-    shared_ptr<resolver> fact_map::find_resolver(string const& name)
+    shared_ptr<resolver> collection::find_resolver(string const& name)
     {
         // Check the map first to see if we know the fact by name
         auto const& it = _resolver_map.find(name);
@@ -379,7 +379,7 @@ namespace facter { namespace facts {
         return nullptr;
     }
 
-    ostream& operator<<(ostream& os, fact_map const& facts)
+    ostream& operator<<(ostream& os, collection const& facts)
     {
         // If there's only one fact, print it without the name
         if (facts._facts.size() == 1) {

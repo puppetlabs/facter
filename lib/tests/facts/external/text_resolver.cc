@@ -1,6 +1,6 @@
 #include <gmock/gmock.h>
 #include <facter/facts/external/text_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include "../../fixtures.hpp"
 
@@ -14,19 +14,19 @@ TEST(facter_facts_external_text_resolver, default_constructor) {
 
 TEST(facter_facts_external_text_resolver, resolve_non_text) {
     text_resolver resolver;
-    fact_map facts;
+    collection facts;
     ASSERT_FALSE(resolver.resolve("foo.json", facts));
 }
 
 TEST(facter_facts_external_text_resolver, resolve_nonexistent_text) {
     text_resolver resolver;
-    fact_map facts;
+    collection facts;
     ASSERT_THROW(resolver.resolve("doesnotexist.txt", facts), external_fact_exception);
 }
 
 TEST(facter_facts_external_text_resolver, resolve_text) {
     text_resolver resolver;
-    fact_map facts;
+    collection facts;
     ASSERT_TRUE(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/text/facts.txt", facts));
     ASSERT_TRUE(!facts.empty());
     ASSERT_NE(nullptr, facts.get<string_value>("txt_fact1"));

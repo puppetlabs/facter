@@ -1,6 +1,6 @@
 #include <boost/format.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/posix/uptime_resolver.hpp>
@@ -27,7 +27,7 @@ namespace facter { namespace facts { namespace posix {
     {
     }
 
-    void uptime_resolver::resolve_facts(fact_map& facts)
+    void uptime_resolver::resolve_facts(collection& facts)
     {
         // Resolve all uptime-related facts
         resolve_uptime_seconds(facts);  // must be first b/c the following facts are based on this
@@ -36,13 +36,13 @@ namespace facter { namespace facts { namespace posix {
         resolve_uptime(facts);
     }
 
-    void uptime_resolver::resolve_uptime_seconds(fact_map& facts)
+    void uptime_resolver::resolve_uptime_seconds(collection& facts)
     {
         int value = executable_uptime();
         facts.add(fact::uptime_seconds, make_value<integer_value>(value));
     }
 
-    void uptime_resolver::resolve_uptime_hours(fact_map& facts)
+    void uptime_resolver::resolve_uptime_hours(collection& facts)
     {
         auto uptime_seconds = facts.get<integer_value>(fact::uptime_seconds, false);
         if (!uptime_seconds) {
@@ -51,7 +51,7 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::uptime_hours, make_value<integer_value>(uptime_seconds->value() / (60 * 60)));
     }
 
-    void uptime_resolver::resolve_uptime_days(fact_map& facts)
+    void uptime_resolver::resolve_uptime_days(collection& facts)
     {
         auto uptime_seconds = facts.get<integer_value>(fact::uptime_seconds, false);
         if (!uptime_seconds) {
@@ -60,7 +60,7 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::uptime_days, make_value<integer_value>(uptime_seconds->value() / (60 * 60 * 24)));
     }
 
-    void uptime_resolver::resolve_uptime(fact_map& facts)
+    void uptime_resolver::resolve_uptime(collection& facts)
     {
         auto uptime_seconds = facts.get<integer_value>(fact::uptime_seconds, false);
         if (!uptime_seconds) {

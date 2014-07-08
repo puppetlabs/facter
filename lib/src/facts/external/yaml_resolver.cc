@@ -1,5 +1,5 @@
 #include <facter/facts/external/yaml_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -20,7 +20,7 @@ namespace facter { namespace facts { namespace external {
     static void add_value(
         string const& name,
         Node const& node,
-        fact_map& facts,
+        collection& facts,
         array_value* array_parent = nullptr,
         map_value* map_parent = nullptr)
     {
@@ -68,7 +68,7 @@ namespace facter { namespace facts { namespace external {
         }
     }
 
-    bool yaml_resolver::resolve(string const& path, fact_map& facts) const
+    bool yaml_resolver::resolve(string const& path, collection& facts) const
     {
         string full_path = path;
         if (!ends_with(to_lower(full_path), ".yaml")) {

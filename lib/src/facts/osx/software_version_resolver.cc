@@ -1,5 +1,5 @@
 #include <facter/facts/osx/software_version_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
@@ -27,7 +27,7 @@ namespace facter { namespace facts { namespace osx {
     {
     }
 
-    void software_version_resolver::resolve_facts(fact_map& facts)
+    void software_version_resolver::resolve_facts(collection& facts)
     {
         static map<string, string> fact_names = {
             { "ProductName",    string(fact::macosx_productname) },

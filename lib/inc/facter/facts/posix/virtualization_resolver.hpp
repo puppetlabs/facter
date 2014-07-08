@@ -23,16 +23,16 @@ namespace facter { namespace facts { namespace posix {
      protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(fact_map& facts);
+        virtual void resolve_facts(collection& facts);
 
         /**
          * Gets the name of the hypervisor.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          * @return Returns the name of the hypervisor or empty string if no hypervisor.
          */
-        virtual std::string get_hypervisor(fact_map& facts) = 0;
+        virtual std::string get_hypervisor(collection& facts) = 0;
 
         /**
          * Determines if the given hypervisor means the machine is virtual.

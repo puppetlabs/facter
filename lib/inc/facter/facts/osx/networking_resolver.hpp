@@ -39,9 +39,9 @@ namespace facter { namespace facts { namespace osx {
 
         /**
          * Called to resolve the hostname fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_hostname(fact_map& facts);
+        virtual void resolve_hostname(collection& facts);
 
         /**
          * Gets the primary interface.

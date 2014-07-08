@@ -23,31 +23,31 @@ namespace facter { namespace facts { namespace posix {
      protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(fact_map& facts);
+        virtual void resolve_facts(collection& facts);
         /**
          * Called to resolve the hardware ISA fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          * @param name The result of the uname call.
          */
-        virtual void resolve_hardware_isa(fact_map& facts, utsname const& name);
+        virtual void resolve_hardware_isa(collection& facts, utsname const& name);
         /**
          * Called to resolve the hardware model fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          * @param name The result of the uname call.
          */
-        virtual void resolve_hardware_model(fact_map& facts, utsname const& name);
+        virtual void resolve_hardware_model(collection& facts, utsname const& name);
         /**
          * Called to resolve the hardware architecture fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_architecture(fact_map& facts);
+        virtual void resolve_architecture(collection& facts);
         /**
          * Called to resolve processor count, physical processor count, and description facts.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_processors(fact_map& facts) = 0;
+        virtual void resolve_processors(collection& facts) = 0;
     };
 
 }}}  // namespace facter::facts::posix

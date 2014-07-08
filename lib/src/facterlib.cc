@@ -1,6 +1,6 @@
 #include <facter/facterlib.h>
 #include <facter/version.h>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/util/string.hpp>
 #include <log4cxx/logger.h>
@@ -13,7 +13,7 @@ using namespace facter::util;
 using namespace facter::facts;
 using namespace log4cxx;
 
-static unique_ptr<fact_map> g_facts;
+static unique_ptr<collection> g_facts;
 static vector<string> g_fact_directories;
 static vector<string> g_external_directories;
 
@@ -35,7 +35,7 @@ extern "C" {
             Logger::getRootLogger()->setLevel(Level::getOff());
         }
 
-        g_facts.reset(new fact_map());
+        g_facts.reset(new collection());
 
         set<string> requested_facts;
         if (names) {

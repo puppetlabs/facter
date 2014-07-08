@@ -1,5 +1,5 @@
 #include <facter/facts/osx/networking_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
@@ -38,7 +38,7 @@ namespace facter { namespace facts { namespace osx {
         return reinterpret_cast<if_data const*>(data)->ifi_mtu;
     }
 
-    void networking_resolver::resolve_hostname(fact_map& facts)
+    void networking_resolver::resolve_hostname(collection& facts)
     {
         auto version = facts.get<string_value>(fact::kernel_release);
         if (!version || version->value() != "R7") {

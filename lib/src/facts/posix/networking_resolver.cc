@@ -1,6 +1,6 @@
 #include <facter/facts/posix/networking_resolver.hpp>
 #include <facter/facts/fact.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/posix/scoped_addrinfo.hpp>
@@ -56,14 +56,14 @@ namespace facter { namespace facts { namespace posix {
     {
     }
 
-    void networking_resolver::resolve_facts(fact_map& facts)
+    void networking_resolver::resolve_facts(collection& facts)
     {
         resolve_hostname(facts);
         resolve_domain(facts);
         resolve_interface_facts(facts);
     }
 
-    void networking_resolver::resolve_hostname(fact_map& facts)
+    void networking_resolver::resolve_hostname(collection& facts)
     {
         int max = sysconf(_SC_HOST_NAME_MAX);
         vector<char> name(max);
@@ -85,7 +85,7 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::hostname, make_value<string_value>(move(value)));
     }
 
-    void networking_resolver::resolve_domain(fact_map& facts)
+    void networking_resolver::resolve_domain(collection& facts)
     {
         string fqdn;
         string domain;

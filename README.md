@@ -168,7 +168,7 @@ This section assumes that cfacter has been installed into the system.
 Here's a simple example of using the C++11 API to output all facts.
 
     #include <iostream>
-    #include <facter/facts/fact_map.hpp>
+    #include <facter/facts/collection.hpp>
     #include <log4cxx/logger.h>
     #include <log4cxx/propertyconfigurator.h>
     #include <log4cxx/patternlayout.h>
@@ -190,7 +190,7 @@ Here's a simple example of using the C++11 API to output all facts.
     {
         configure_logging();
 
-        fact_map facts;
+        collection facts;
         facts.resolve();
         facts.resolve_external();
         cout << facts << endl;

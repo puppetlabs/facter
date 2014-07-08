@@ -1,6 +1,6 @@
 #include <gmock/gmock.h>
 #include <facter/facts/external/json_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -16,25 +16,25 @@ TEST(facter_facts_external_json_resolver, default_constructor) {
 
 TEST(facter_facts_external_json_resolver, resolve_non_json) {
     json_resolver resolver;
-    fact_map facts;
+    collection facts;
     ASSERT_FALSE(resolver.resolve("notjson.txt", facts));
 }
 
 TEST(facter_facts_external_json_resolver, resolve_nonexistent_json) {
     json_resolver resolver;
-    fact_map facts;
+    collection facts;
     ASSERT_THROW(resolver.resolve("foo.json", facts), external_fact_exception);
 }
 
 TEST(facter_facts_external_json_resolver, resolve_invalid_json) {
     json_resolver resolver;
-    fact_map facts;
+    collection facts;
     ASSERT_THROW(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/invalid.json", facts), external_fact_exception);
 }
 
 TEST(facter_facts_external_json_resolver, resolve_json) {
     json_resolver resolver;
-    fact_map facts;
+    collection facts;
     ASSERT_TRUE(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/facts.json", facts));
     ASSERT_TRUE(!facts.empty());
     ASSERT_NE(nullptr, facts.get<string_value>("json_fact1"));

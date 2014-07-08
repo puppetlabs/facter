@@ -1,6 +1,6 @@
 #include <facter/facts/osx/virtualization_resolver.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/virtual_machine.hpp>
 #include <facter/execution/execution.hpp>
@@ -13,7 +13,7 @@ using namespace facter::execution;
 
 namespace facter { namespace facts { namespace osx {
 
-    string virtualization_resolver::get_hypervisor(fact_map& facts)
+    string virtualization_resolver::get_hypervisor(collection& facts)
     {
         // Check for VMWare
         auto machine_model = facts.get<string_value>(fact::sp_machine_model);
