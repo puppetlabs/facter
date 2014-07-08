@@ -2,9 +2,8 @@
 
 require 'facter/util/wmi'
 require 'facter/util/ip'
-require 'facter/util/ip/base'
 
-class Facter::Util::IP::Windows < Facter::Util::IP::Base
+class Facter::Util::IP::Windows
   # The WMI query used to return ip information
   #
   # @return [String]

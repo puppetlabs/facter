@@ -23,9 +23,11 @@ describe Facter::Util::IP::Windows do
   end
 
   describe ".bonding_master" do
-    let(:bonding_master) { described_class.bonding_master('Local Area Connection') }
+    let(:bonding_master) { described_class.bonding_master('eth0') }
 
-    it { bonding_master.should be_nil }
+    pending("porting to Windows") do
+      it { bonding_master.should be_nil }
+    end
   end
 
   describe ".interfaces" do

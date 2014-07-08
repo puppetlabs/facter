@@ -62,13 +62,19 @@ end
 Facter.add("virtual") do
   confine :kernel => 'SunOS'
   has_weight 10
-  self.timeout = 12
+  self.timeout = 6
 
   setcode do
     next "zone" if Facter::Util::Virtual.zone?
 
     output = Facter::Core::Execution.exec('prtdiag')
-    Facter::Util::Virtual.parse_virtualization(output)
+    if output
+      lines = output.split("\n")
+      next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
+      next "vmware"     if lines.any? {|l| l =~ /VM[wW]are/ }
+      next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
+      next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
+    end
   end
 end
 
@@ -93,7 +99,15 @@ Facter.add("virtual") do
   has_weight 10
   setcode do
     output = Facter::Util::POSIX.sysctl("hw.product")
-    Facter::Util::Virtual.parse_virtualization(output)
+    if output
+      lines = output.split("\n")
+      next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
+      next "vmware"     if lines.any? {|l| l =~ /VMware/ }
+      next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
+      next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
+      next "ovirt"      if lines.any? {|l| l =~ /oVirt Node/ }
+      next "kvm"        if lines.any? {|l| l =~ /KVM/ }
+    end
   end
 end
 
@@ -124,7 +138,6 @@ Facter.add("virtual") do
       next "xenhvm"     if lines.any? {|l| l =~ /XenSource/ }
       next "hyperv"     if lines.any? {|l| l =~ /Microsoft Corporation Hyper-V/ }
       next "gce"        if lines.any? {|l| l =~ /Class 8007: Google, Inc/ }
-      next "kvm"        if lines.any? {|l| l =~ /Red Hat, Inc Virtio/ }
     end
 
     # Parse dmidecode
@@ -138,7 +151,6 @@ Facter.add("virtual") do
       next "hyperv"     if lines.any? {|l| l =~ /Product Name: Virtual Machine/ }
       next "rhev"       if lines.any? {|l| l =~ /Product Name: RHEV Hypervisor/ }
       next "ovirt"      if lines.any? {|l| l =~ /Product Name: oVirt Node/ }
-      next "kvm"        if lines.any? {|l| l =~ /Manufacturer: Bochs/ }
     end
 
     # Default to 'physical'

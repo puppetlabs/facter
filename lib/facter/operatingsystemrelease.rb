@@ -49,17 +49,12 @@ Facter.add(:operatingsystemrelease) do
   end
 end
 
-{
-  :Debian  => '/etc/debian_version',
-  :Alpine => '/etc/alpine-release',
-}.each do |platform, file_name|
-  Facter.add(:operatingsystemrelease) do
-    confine :operatingsystem => platform
-    setcode do
-      if release = Facter::Util::FileRead.read(file_name)
-        release.sub!(/\s*$/, '')
-        release
-      end
+Facter.add(:operatingsystemrelease) do
+  confine :operatingsystem => %w{Debian}
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/debian_version')
+      release.sub!(/\s*$/, '')
+      release
     end
   end
 end
@@ -89,7 +84,7 @@ Facter.add(:operatingsystemrelease) do
 end
 
 Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => 'CumulusLinux'
+confine :operatingsystem => 'CumulusLinux'
   setcode do
     Facter::Util::Operatingsystem.os_release['VERSION_ID']
   end
@@ -116,35 +111,47 @@ Facter.add(:operatingsystemrelease) do
   end
 end
 
-{
-  :OpenWrt => {
-    :file => '/etc/openwrt_version',
-    :regexp => /^(\d+\.\d+.*)/
-  },
-  :Slackware => {
-    :file => '/etc/slackware-version',
-    :regexp  => /Slackware ([0-9.]+)/
-  },
-  :Mageia => {
-    :file => '/etc/mageia-release',
-    :regexp => /Mageia release ([0-9.]+)/
-  },
-  :Bluewhite64 => {
-    :file => '/etc/bluewhite64-version',
-    :regexp => /^\s*\w+\s+(\d+\.\d+)/
-  },
-  :Slamd64 => {
-    :file => '/etc/slamd64-version',
-    :regexp => /^\s*\w+\s+(\d+\.\d+)/
-  },
-}.each do |platform, platform_data|
-  Facter.add(:operatingsystemrelease) do
-    confine :operatingsystem => platform
-    setcode do
-      if release = Facter::Util::FileRead.read(platform_data[:file])
-        if match = platform_data[:regexp].match(release)
-          match[1]
-        end
+Facter.add(:operatingsystemrelease) do
+  confine :operatingsystem => %w{OpenWrt}
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/openwrt_version')
+      if match = /^(\d+\.\d+.*)/.match(release)
+        match[1]
+      end
+    end
+  end
+end
+
+Facter.add(:operatingsystemrelease) do
+  confine :operatingsystem => %w{Slackware}
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/slackware-version')
+      if match = /Slackware ([0-9.]+)/.match(release)
+        match[1]
+      end
+    end
+  end
+end
+
+Facter.add(:operatingsystemrelease) do
+  confine :operatingsystem => %w{Mageia}
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/mageia-release')
+      if match = /Mageia release ([0-9.]+)/.match(release)
+        match[1]
+      end
+    end
+  end
+end
+
+Facter.add(:operatingsystemrelease) do
+  confine :operatingsystem => %w{Bluewhite64}
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/bluewhite64-version')
+      if match = /^\s*\w+\s+(\d+)\.(\d+)/.match(release)
+        match[1] + "." + match[2]
+      else
+        "unknown"
       end
     end
   end
@@ -160,6 +167,28 @@ Facter.add(:operatingsystemrelease) do
   end
 end
 
+Facter.add(:operatingsystemrelease) do
+  confine :operatingsystem => %w{Slamd64}
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/slamd64-version')
+      if match = /^\s*\w+\s+(\d+)\.(\d+)/.match(release)
+        match[1] + "." + match[2]
+      else
+        "unknown"
+      end
+    end
+  end
+end
+
+Facter.add(:operatingsystemrelease) do
+  confine :operatingsystem => :Alpine
+  setcode do
+    if release = Facter::Util::FileRead.read('/etc/alpine-release')
+      release.sub!(/\s*$/, '')
+      release
+    end
+  end
+end
 
 Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %W{Amazon}
@@ -178,17 +207,6 @@ Facter.add(:operatingsystemrelease) do
         match.captures.join('')
       elsif match = /Solaris ([0-9\.]+(?:\s*[0-9\.\/]+))\s*(?:SPARC|X86)/.match(line)
         match.captures[0]
-      end
-    end
-  end
-end
-
-Facter.add(:operatingsystemrelease) do
-  confine :operatingsystem => %w{CumulusLinux}
-  setcode do
-    if release = Facter::Util::FileRead.read('/etc/os-release')
-      if match = /^VERSION_ID\s*=\s*(\d+\.\d+\.\d+)/.match(release)
-        match[1]
       end
     end
   end

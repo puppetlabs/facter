@@ -14,7 +14,8 @@ describe 'Filesystem facts' do
     before :each do
       Facter.fact(:kernel).stubs(:value).returns('Linux')
       fixture_data = my_fixture_read('linux')
-      File.expects(:read).with('/proc/filesystems').returns(fixture_data)
+      Facter::Core::Execution.expects(:exec) \
+        .with('cat /proc/filesystems 2> /dev/null').returns(fixture_data)
       Facter.collection.internal_loader.load(:filesystems)
     end
 

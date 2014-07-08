@@ -1,0 +1,22 @@
+---
+inMenu: true
+directoryName: Custom Facts
+---
+
+Facter does everything it can to make adding custom facts easy.  It will
+autoload any files it finds in a ``facter/`` directory in its search
+path, so you don't need to modify the package files.  Also, Facter will
+search through your environment for any variables whose names start with
+'FACTER_' (case insensitive) and automatically add those facts.
+
+As a simple example, here is how I publish my home directory to Puppet:
+
+   Facter.add("home") do
+     setcode do
+       ENV['HOME']
+     end
+   end
+
+I have ~/lib/ruby in my $RUBYLIB environment variable, so I just created
+~/lib/ruby/facter and dropped the above code into a ``home.rb`` file
+within that directory.

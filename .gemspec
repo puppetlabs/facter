@@ -1,4 +1,3 @@
-#
 # -*- encoding: utf-8 -*-
 #
 # PLEASE NOTE
@@ -14,7 +13,7 @@
 
 begin
   require 'facter/version'
-rescue LoadError => detail
+rescue LoadError
   $LOAD_PATH.unshift(File.expand_path("../lib", __FILE__))
   require 'facter/version'
 end

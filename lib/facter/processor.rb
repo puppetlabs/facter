@@ -46,42 +46,29 @@ processor_list.each_with_index do |desc, i|
   end
 end
 
-Facter.add(:activeprocessorcount) do
+Facter.add("ProcessorCount") do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]
   setcode do
     processor_list = Facter::Util::Processor.enum_cpuinfo
 
-    aprocs = processor_list.compact
     ## If this returned nothing, then don't resolve the fact
-    if aprocs.length != 0
-      aprocs.length.to_s
+    if processor_list.length != 0
+      processor_list.length.to_s
     end
   end
 end
 
-Facter.add(:totalprocessorcount) do
+Facter.add("ProcessorCount") do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]
   setcode do
-    Facter::Util::Processor.sysfs_proc_count
-  end
-end
-
-Facter.add(:processorcount) do
-  confine :kernel => [ :linux, :"gnu/kfreebsd" ]
-  has_weight 10
-  setcode do
-    output = Facter.value(:activeprocessorcount)
-    if output != 0
-      output
+    ## The method above is preferable since it provides the description of the CPU as well
+    ## but if that returned 0, then we enumerate sysfs
+    sysfs_cpu_directory = '/sys/devices/system/cpu'
+    if File.exists?(sysfs_cpu_directory)
+      lookup_pattern = "#{sysfs_cpu_directory}" + "/cpu[0-9]*"
+      cpuCount = Dir.glob(lookup_pattern).length
+      cpuCount.to_s
     end
-  end
-end
-
-Facter.add(:processorcount) do
-  confine :kernel => [ :linux, :"gnu/kfreebsd" ]
-  has_weight 1
-  setcode do
-    Facter.value(:totalprocessorcount)
   end
 end
 

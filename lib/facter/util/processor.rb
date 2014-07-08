@@ -211,15 +211,6 @@ module Processor
     Facter::Core::Execution.exec(command)
   end
 
-  def self.sysfs_proc_count
-    sysfs_cpu_directory = '/sys/devices/system/cpu'
-    if File.exists?(sysfs_cpu_directory)
-      lookup_pattern = "#{sysfs_cpu_directory}" + "/cpu[0-9]*"
-      cpuCount = Dir.glob(lookup_pattern).length
-      cpuCount.to_s
-    end
-  end
-
   def self.enum_cpuinfo
     processor_num = -1
     processor_list = []

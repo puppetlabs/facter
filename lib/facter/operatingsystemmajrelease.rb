@@ -12,10 +12,10 @@
 # are too many dependencies to use LSB
 #
 # List of operatingsystems at time of writing:
-#"Alpine" "Amazon" "Archlinux" "Ascendos" "Bluewhite64" "CentOS" "CloudLinux"
-#"Debian" "Fedora" "Gentoo" "Mandrake" "Mandriva" "MeeGo" "OEL" "OpenSuSE"
+#"Alpine" "Amazon" "Archlinux" "Ascendos" "Bluewhite64" "CentOS" "CloudLinux" 
+#"Debian" "Fedora" "Gentoo" "Mandrake" "Mandriva" "MeeGo" "OEL" "OpenSuSE" 
 #"OracleLinux" "OVS" "PSBM" "RedHat" "Scientific" "Slackware" "Slamd64" "SLC"
-#"SLED" "SLES" "SuSE" "Ubuntu" "VMWareESX" "CumulusLinux"
+#"SLED" "SLES" "SuSE" "Ubuntu" "VMWareESX"
 
 Facter.add(:operatingsystemmajrelease) do
   confine :operatingsystem => [

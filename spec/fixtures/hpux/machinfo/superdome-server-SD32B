@@ -49,5 +49,5 @@ OS info:
    version  = U (unlimited-user license)
    machine  = ia64
    idnumber = NUMBER
-   vmunix _release_version:
+   vmunix _release_version:               
 @(#) $Revision: vmunix:    B11.23_LR FLAVOR=perf Fri Aug 29 22:35:38 PDT 2003 $

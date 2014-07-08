@@ -57,6 +57,7 @@ describe "Operating System fact" do
     {
       "Debian"      => "/etc/debian_version",
       "Gentoo"      => "/etc/gentoo-release",
+      "Fedora"      => "/etc/fedora-release",
       "Mageia"      => "/etc/mageia-release",
       "Mandriva"    => "/etc/mandriva-release",
       "Mandrake"    => "/etc/mandrake-release",
@@ -69,7 +70,7 @@ describe "Operating System fact" do
       "Bluewhite64" => "/etc/bluewhite64-version",
       "Slamd64"     => "/etc/slamd64-version",
       "Slackware"   => "/etc/slackware-version",
-      "Amazon"      => "/etc/system-release"
+      "Amazon"      => "/etc/system-release",
     }.each_pair do |distribution, releasefile|
       it "should be #{distribution} if #{releasefile} exists" do
         FileTest.expects(:exists?).with(releasefile).returns true
@@ -83,14 +84,14 @@ describe "Operating System fact" do
       end
 
       it "on Ubuntu should use the lsbdistid fact" do
-        FileTest.stubs(:exists?).with("/etc/debian_version").returns true
+        FileUtils.stubs(:exists?).with("/etc/debian_version").returns true
 
         Facter.stubs(:value).with(:lsbdistid).returns("Ubuntu")
         Facter.fact(:operatingsystem).value.should == "Ubuntu"
       end
 
       it "on LinuxMint should use the lsbdistid fact" do
-        FileTest.stubs(:exists?).with("/etc/debian_version").returns true
+        FileUtils.stubs(:exists?).with("/etc/debian_version").returns true
 
         Facter.stubs(:value).with(:lsbdistid).returns("LinuxMint")
         Facter.fact(:operatingsystem).value.should == "LinuxMint"
@@ -108,8 +109,6 @@ describe "Operating System fact" do
       "Ascendos"   => "Ascendos release 6.0 (Nameless)",
       "CloudLinux" => "CloudLinux Server release 5.5",
       "XenServer"  => "XenServer release 5.6.0-31188p (xenenterprise)",
-      "XCP"        => "XCP release 1.6.10-61809c",
-      "Fedora"     => "Fedora release 18 (Spherical Cow)",
     }.each_pair do |operatingsystem, string|
       it "should be #{operatingsystem} based on /etc/redhat-release contents #{string}" do
         FileTest.expects(:exists?).with("/etc/redhat-release").returns true

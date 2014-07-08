@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'spec_helper'
 require 'facter'
 
@@ -21,12 +23,5 @@ describe "Uniqueid fact" do
     Facter::Core::Execution.stubs(:execute).with("hostid", anything).returns("Moe")
 
     Facter.fact(:uniqueid).value.should == "Moe"
-  end
-
-  it "should match kern.hostid on FreeBSD" do
-    Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
-    Facter::Util::POSIX.stubs(:sysctl).with("kern.hostid").returns("Shemp")
-
-    Facter.fact(:uniqueid).value.should == "Shemp"
   end
 end
