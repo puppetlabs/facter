@@ -153,7 +153,7 @@ TEST(facter_facts_collection, write_json) {
     facts.add(make_shared<multi_resolver>());
     facts.resolve();
     ostringstream ss;
-    facts.write_json(ss);
+    facts.write(ss, format::json);
     ASSERT_EQ("{\n  \"bar\": \"foo\",\n  \"foo\": \"bar\"\n}", ss.str());
 }
 
@@ -163,17 +163,17 @@ TEST(facter_facts_collection, write_yaml) {
     facts.add(make_shared<multi_resolver>());
     facts.resolve();
     ostringstream ss;
-    facts.write_yaml(ss);
+    facts.write(ss, format::yaml);
     ASSERT_EQ("bar: \"foo\"\nfoo: \"bar\"", ss.str());
 }
 
-TEST(facter_facts_collection, insertion_operator) {
+TEST(facter_facts_collection, write_hash) {
     collection facts;
     facts.clear();
     facts.add(make_shared<multi_resolver>());
     facts.resolve();
     ostringstream ss;
-    ss << facts;
+    facts.write(ss, format::hash);
     ASSERT_EQ("bar => foo\nfoo => bar", ss.str());
 }
 
@@ -183,6 +183,6 @@ TEST(facter_facts_collection, insertion_operator_simple) {
     facts.add(make_shared<simple_resolver>());
     facts.resolve();
     ostringstream ss;
-    ss << facts;
+    facts.write(ss);
     ASSERT_EQ("bar", ss.str());
 }

@@ -313,6 +313,59 @@ namespace facter { namespace facts {
          ostream& _stream;
     };
 
+    ostream& collection::write(ostream& stream, format fmt) const
+    {
+        if (fmt == format::hash) {
+            write_hash(stream);
+        } else if (fmt == format::json) {
+            write_json(stream);
+        } else if (fmt == format::yaml) {
+            write_yaml(stream);
+        }
+        return stream;
+    }
+
+    value const* collection::get_value(string const& name, bool resolve)
+    {
+        // Lookup the fact
+        auto it = _facts.find(name);
+        while (it == _facts.end()) {
+            // Look for a resolver for this fact
+            auto resolver = resolve ? find_resolver(name) : nullptr;
+            if (!resolver) {
+                return nullptr;
+            }
+
+            // Resolve the facts
+            resolver->resolve(*this);
+            remove(resolver);
+
+            // Try to find the fact again
+            it = _facts.find(name);
+        }
+        return it->second.get();
+    }
+
+    void collection::write_hash(ostream& stream) const
+    {
+        // If there's only one fact, print it without the name
+        if (_facts.size() == 1) {
+            stream << *_facts.begin()->second;
+            return;
+        }
+
+        // Print all facts in the map
+        bool first = true;
+        for (auto const& kvp : _facts) {
+            if (first) {
+                first = false;
+            } else {
+                stream << '\n';
+            }
+            stream << kvp.first << " => " << *kvp.second;
+        }
+    }
+
     void collection::write_json(ostream& stream) const
     {
         Document document;
@@ -341,27 +394,6 @@ namespace facter { namespace facts {
         emitter << EndMap;
     }
 
-    value const* collection::get_value(string const& name, bool resolve)
-    {
-        // Lookup the fact
-        auto it = _facts.find(name);
-        while (it == _facts.end()) {
-            // Look for a resolver for this fact
-            auto resolver = resolve ? find_resolver(name) : nullptr;
-            if (!resolver) {
-                return nullptr;
-            }
-
-            // Resolve the facts
-            resolver->resolve(*this);
-            remove(resolver);
-
-            // Try to find the fact again
-            it = _facts.find(name);
-        }
-        return it->second.get();
-    }
-
     shared_ptr<resolver> collection::find_resolver(string const& name)
     {
         // Check the map first to see if we know the fact by name
@@ -377,27 +409,6 @@ namespace facter { namespace facts {
             }
         }
         return nullptr;
-    }
-
-    ostream& operator<<(ostream& os, collection const& facts)
-    {
-        // If there's only one fact, print it without the name
-        if (facts._facts.size() == 1) {
-            os << *facts._facts.begin()->second;
-            return os;
-        }
-
-        // Print all facts in the map
-        bool first = true;
-        for (auto const& kvp : facts._facts) {
-            if (first) {
-                first = false;
-            } else {
-                os << '\n';
-            }
-            os << kvp.first << " => " << *kvp.second;
-        }
-        return os;
     }
 
 }}  // namespace facter::facts

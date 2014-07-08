@@ -34,6 +34,25 @@ namespace facter { namespace facts {
     };
 
     /**
+     * The supported output format for the fact collection.
+     */
+    enum class format
+    {
+        /**
+         * Use ruby "hash" as the format (default).
+         */
+        hash,
+        /**
+         * Use JSON as the format.
+         */
+        json,
+        /**
+         * Use YAML as the format.
+         */
+        yaml
+    };
+
+    /**
      * Represents the fact collection.
      * The fact collection is responsible for resolving and storing facts.
      */
@@ -139,35 +158,24 @@ namespace facter { namespace facts {
         void each(std::function<bool(std::string const&, value const*)> func) const;
 
         /**
-         * Writes the contents of the fact collection as JSON to the given stream.
-         * @param stream The stream to write the JSON to.
+         * Writes the contents of the fact collection to the given stream.
+         * @param stream The stream to write the facts to.
+         * @param fmt The output format to use.
+         * @return Returns the stream being written to.
          */
-        void write_json(std::ostream& stream) const;
-
-        /**
-         * Writes the contents of the fact collection as YAML to the given stream.
-         * @param stream The stream to write the YAML to.
-         */
-        void write_yaml(std::ostream& stream) const;
+        std::ostream& write(std::ostream& stream, format fmt = format::hash) const;
 
      private:
-        friend std::ostream& operator<<(std::ostream& os, collection const& facts);
-
         std::shared_ptr<resolver> find_resolver(std::string const& name);
         value const* get_value(std::string const& name, bool resolve);
+        void write_hash(std::ostream& stream) const;
+        void write_json(std::ostream& stream) const;
+        void write_yaml(std::ostream& stream) const;
 
         std::map<std::string, std::unique_ptr<value>> _facts;
         std::list<std::shared_ptr<resolver>> _resolvers;
         std::map<std::string, std::shared_ptr<resolver>> _resolver_map;
     };
-
-    /**
-     * Insertion operator for collection.
-     * @param os The output stream to write to.
-     * @param facts The facts to write to the stream.
-     * @return Returns the given output stream.
-     */
-    std::ostream& operator<<(std::ostream& os, collection const& facts);
 
 }}  // namespace facter::facts
 

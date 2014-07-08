@@ -19,7 +19,6 @@ using namespace facter::util;
 using namespace facter::util::posix;
 using namespace boost::system;
 using namespace boost::filesystem;
-using boost::format;
 namespace bs = boost::system;
 
 LOG_DECLARE_NAMESPACE("facts.posix.ssh");
@@ -127,7 +126,7 @@ namespace facter { namespace facts { namespace posix {
             // Add the key fingerprint fact
             facts.add(string(sshfp_fact_name),
                 make_value<string_value>(
-                    (format("SSHFP %1% 1 %2%\nSSHFP %1% 2 %3%") %
+                    (boost::format("SSHFP %1% 1 %2%\nSSHFP %1% 2 %3%") %
                         finger_print_type %
                         to_hex(hash, sizeof(hash)) %
                         to_hex(hash256, sizeof(hash256))).str()));

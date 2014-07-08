@@ -9,7 +9,6 @@
 #include <re2/re2.h>
 
 using namespace std;
-using boost::format;
 using namespace facter::util;
 using namespace facter::execution;
 
@@ -75,13 +74,13 @@ namespace facter { namespace facts { namespace posix {
         string value;
         switch (days) {
             case 0:
-                value = (format("%d:%02d hours") % hours % minutes).str();
+                value = (boost::format("%d:%02d hours") % hours % minutes).str();
                 break;
             case 1:
                 value = "1 day";
                 break;
             default:
-                value = (format("%d days") % days).str();
+                value = (boost::format("%d days") % days).str();
         }
         facts.add(fact::uptime, make_value<string_value>(move(value)));
     }

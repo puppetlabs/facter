@@ -20,7 +20,6 @@
 using namespace std;
 using namespace facter::util;
 using namespace facter::util::posix;
-using boost::format;
 
 LOG_DECLARE_NAMESPACE("facts.posix.networking");
 
@@ -207,7 +206,7 @@ namespace facter { namespace facts { namespace posix {
             return {};
         }
 
-        return (format("%02x:%02x:%02x:%02x:%02x:%02x") %
+        return (boost::format("%02x:%02x:%02x:%02x:%02x:%02x") %
                 static_cast<int>(bytes[0]) % static_cast<int>(bytes[1]) %
                 static_cast<int>(bytes[2]) % static_cast<int>(bytes[3]) %
                 static_cast<int>(bytes[4]) % static_cast<int>(bytes[5])).str();

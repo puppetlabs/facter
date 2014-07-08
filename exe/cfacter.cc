@@ -223,13 +223,13 @@ int main(int argc, char **argv)
         }
 
         // Output the facts
+        format fmt = format::hash;
         if (vm.count("json")) {
-            facts.write_json(cout);
+            fmt = format::json;
         } else if (vm.count("yaml")) {
-            facts.write_yaml(cout);
-        } else {
-            cout << facts;
+            fmt = format::yaml;
         }
+        facts.write(cout, fmt);
         cout << '\n';
     } catch (exception& ex) {
         LOG_FATAL("Unhandled exception: %1%", ex.what());
