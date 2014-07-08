@@ -2,7 +2,7 @@
 #
 # Purpose: Returns the version of Ruby facter is running under.
 #
-# Resolution: Returns RUBY_VERSION.
+# Resolution: Returns the value of the `RUBY_VERSION` constant.
 #
 # Caveats:
 #

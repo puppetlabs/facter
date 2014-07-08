@@ -2,14 +2,14 @@
 #
 # Purpose:
 #   Return the DHCP server addresses for all interfaces as a hash.
-#   If the interface that is the default gateway is dhcp assigned, there
-#   will also be a 'system' entry in the hash.
+#   If the interface that is the default gateway is DHCP assigned, there
+#   will also be a `"system"` entry in the hash.
 #
 # Resolution:
-#   Parses the output of nmcli to find the DHCP server for the interface if available
+#   Parses the output of `nmcli` to find the DHCP server for the interface if available.
 #
 # Caveats:
-#   Requires nmcli to be available and the interface must use network-manager.
+#   Requires `nmcli` to be available and the interface must use network-manager.
 #
 
 require 'facter'

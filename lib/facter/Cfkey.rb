@@ -1,9 +1,9 @@
-# Fact: Cfkey
+# Fact: cfkey
 #
 # Purpose: Return the public key(s) for CFengine.
 #
 # Resolution:
-#   Tries each file of standard localhost.pub & cfkey.pub locations,
+#   Tries each file of standard `localhost.pub` and `cfkey.pub` locations,
 #   checks if they appear to be a public key, and then join them all together.
 #
 # Caveats:

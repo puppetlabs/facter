@@ -3,9 +3,9 @@
 # Purpose: Return the operating system's kernel version.
 #
 # Resolution:
-#   On Solaris and SunOS based machines, returns the output of "uname -v".
-#   Otherwise returns the 'kernerlversion' fact up to the first '-'. This may be
-#   the entire 'kernelversion' fact in many cases.
+#   On Solaris and SunOS based machines, returns the output of `uname -v`.
+#   Otherwise returns the kernerlversion fact up to the first `-`. This may be
+#   the entire kernelversion fact in many cases.
 #
 # Caveats:
 #
