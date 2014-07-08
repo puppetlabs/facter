@@ -20,7 +20,7 @@ LOG_DECLARE_NAMESPACE("facts.linux.blockdevices");
 namespace facter { namespace facts { namespace linux {
 
     block_device_resolver::block_device_resolver() :
-        fact_resolver(
+        resolver(
             "block device",
             {
                 fact::block_devices,

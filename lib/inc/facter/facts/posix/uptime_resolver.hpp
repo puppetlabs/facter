@@ -5,7 +5,7 @@
 #ifndef FACTER_FACTS_POSIX_UPTIME_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_UPTIME_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 #include <string>
 
 namespace facter { namespace facts { namespace posix {
@@ -13,7 +13,7 @@ namespace facter { namespace facts { namespace posix {
     /**
      * Responsible for resolving uptime facts.
      */
-    struct uptime_resolver : fact_resolver
+    struct uptime_resolver : resolver
     {
         /**
          * Constructs the uptime_resolver.

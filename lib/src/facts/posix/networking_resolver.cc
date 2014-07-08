@@ -27,7 +27,7 @@ LOG_DECLARE_NAMESPACE("facts.posix.networking");
 namespace facter { namespace facts { namespace posix {
 
     networking_resolver::networking_resolver() :
-        fact_resolver(
+        resolver(
             "networking",
             {
                 fact::hostname,

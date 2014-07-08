@@ -5,14 +5,14 @@
 #ifndef FACTER_FACTS_LINUX_LSB_RESOLVER_HPP_
 #define FACTER_FACTS_LINUX_LSB_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 
 namespace facter { namespace facts { namespace linux {
 
     /**
      * Responsible for resolving Linux Standard Base facts.
      */
-    struct lsb_resolver : fact_resolver
+    struct lsb_resolver : resolver
     {
         /**
          * Constructs the lsb_resolver.

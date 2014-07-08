@@ -16,7 +16,7 @@ using namespace facter::execution;
 namespace facter { namespace facts { namespace posix {
 
     uptime_resolver::uptime_resolver() :
-        fact_resolver(
+        resolver(
             "uptime",
             {
                 fact::uptime,

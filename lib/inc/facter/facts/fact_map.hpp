@@ -19,7 +19,7 @@ namespace facter { namespace facts {
 
     // Forward declare the value and resolver types
     struct value;
-    struct fact_resolver;
+    struct resolver;
 
     /**
      * Thrown when a fact already has an associated resolver.
@@ -51,9 +51,9 @@ namespace facter { namespace facts {
 
         /**
          * Adds a resolver to the fact map.
-         * @param resolver The resolver to add to the map.
+         * @param res The resolver to add to the map.
          */
-        void add(std::shared_ptr<fact_resolver> const& resolver);
+        void add(std::shared_ptr<resolver> const& res);
 
         /**
          * Adds a fact to the map.
@@ -64,9 +64,9 @@ namespace facter { namespace facts {
 
         /**
          * Removes a resolver from the fact map.
-         * @param resolver The resolver to remove from the map.
+         * @param res The resolver to remove from the map.
          */
-        void remove(std::shared_ptr<fact_resolver> const& resolver);
+        void remove(std::shared_ptr<resolver> const& res);
 
         /**
          * Removes a fact by name.
@@ -152,15 +152,15 @@ namespace facter { namespace facts {
 
      private:
         typedef std::map<std::string, std::unique_ptr<value>> fact_map_type;
-        typedef std::map<std::string, std::shared_ptr<fact_resolver>> resolver_map_type;
+        typedef std::map<std::string, std::shared_ptr<resolver>> resolver_map_type;
 
         friend std::ostream& operator<<(std::ostream& os, fact_map const& facts);
 
-        std::shared_ptr<fact_resolver> find_resolver(std::string const& name);
+        std::shared_ptr<resolver> find_resolver(std::string const& name);
         value const* get_value(std::string const& name, bool resolve);
 
         fact_map_type _facts;
-        std::list<std::shared_ptr<fact_resolver>> _resolvers;
+        std::list<std::shared_ptr<resolver>> _resolvers;
         resolver_map_type _resolver_map;
     };
 

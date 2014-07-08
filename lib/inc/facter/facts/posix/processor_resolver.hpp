@@ -5,7 +5,7 @@
 #ifndef FACTER_FACTS_POSIX_PROCESSOR_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_PROCESSOR_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 #include <sys/utsname.h>
 
 namespace facter { namespace facts { namespace posix {
@@ -13,7 +13,7 @@ namespace facter { namespace facts { namespace posix {
     /**
      * Responsible for resolving processor-related facts.
      */
-    struct processor_resolver : fact_resolver
+    struct processor_resolver : resolver
     {
         /**
          * Constructs the processor_resolver.

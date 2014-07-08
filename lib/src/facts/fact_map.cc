@@ -1,5 +1,5 @@
 #include <facter/facts/fact_map.hpp>
-#include <facter/facts/fact_resolver.hpp>
+#include <facter/facts/resolver.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/external/resolver.hpp>
@@ -60,20 +60,20 @@ namespace facter { namespace facts {
         // This needs to be defined here since we use incomplete types in the header
     }
 
-    void fact_map::add(shared_ptr<fact_resolver> const& resolver)
+    void fact_map::add(shared_ptr<resolver> const& res)
     {
-        if (!resolver) {
+        if (!res) {
             return;
         }
 
-        for (auto const& fact_name : resolver->names()) {
+        for (auto const& fact_name : res->names()) {
             auto const& it = _resolver_map.lower_bound(fact_name);
             if (it != _resolver_map.end() && !(_resolver_map.key_comp()(fact_name, it->first))) {
                 throw resolver_exists_exception("a resolver for fact \"" + fact_name + "\" already exists.");
             }
-            _resolver_map.insert(it, make_pair(fact_name, resolver));
+            _resolver_map.insert(it, make_pair(fact_name, res));
         }
-        _resolvers.push_back(resolver);
+        _resolvers.push_back(res);
     }
 
     void fact_map::add(string&& name, unique_ptr<value>&& value)
@@ -111,14 +111,14 @@ namespace facter { namespace facts {
         _resolver_map.erase(name);
     }
 
-    void fact_map::remove(shared_ptr<fact_resolver> const& resolver)
+    void fact_map::remove(shared_ptr<resolver> const& res)
     {
-        if (!resolver) {
+        if (!res) {
             return;
         }
 
         // Remove all fact associations
-        for (auto const& name : resolver->names()) {
+        for (auto const& name : res->names()) {
             if (LOG_IS_DEBUG_ENABLED()) {
                 auto it = _facts.find(name);
                 if (it == _facts.end()) {
@@ -127,7 +127,7 @@ namespace facter { namespace facts {
             }
             _resolver_map.erase(name);
         }
-        _resolvers.remove(resolver);
+        _resolvers.remove(res);
     }
 
     void fact_map::remove(string const& name)
@@ -190,8 +190,8 @@ namespace facter { namespace facts {
         }
 
         // No filter given, resolve all facts
-        for (auto& resolver : _resolvers) {
-            resolver->resolve(*this);
+        for (auto& res : _resolvers) {
+            res->resolve(*this);
         }
         _resolvers.clear();
 
@@ -362,7 +362,7 @@ namespace facter { namespace facts {
         return it->second.get();
     }
 
-    shared_ptr<fact_resolver> fact_map::find_resolver(string const& name)
+    shared_ptr<resolver> fact_map::find_resolver(string const& name)
     {
         // Check the map first to see if we know the fact by name
         auto const& it = _resolver_map.find(name);
@@ -371,9 +371,9 @@ namespace facter { namespace facts {
         }
 
         // Otherwise, do a linear search for a resolver that can resolve the fact
-        for (auto const& resolver : _resolvers) {
-            if (resolver->can_resolve(name)) {
-                return resolver;
+        for (auto const& res : _resolvers) {
+            if (res->can_resolve(name)) {
+                return res;
             }
         }
         return nullptr;

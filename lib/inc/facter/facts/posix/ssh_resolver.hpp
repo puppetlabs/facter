@@ -5,14 +5,14 @@
 #ifndef FACTER_FACTS_POSIX_SSH_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_SSH_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 
 namespace facter { namespace facts { namespace posix {
 
     /**
      * Responsible for resolving ssh facts.
      */
-    struct ssh_resolver : fact_resolver
+    struct ssh_resolver : resolver
     {
         /**
          * Constructs the ssh_resolver.

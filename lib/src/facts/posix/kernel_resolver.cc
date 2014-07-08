@@ -14,7 +14,7 @@ LOG_DECLARE_NAMESPACE("facts.posix.kernel");
 namespace facter { namespace facts { namespace posix {
 
     kernel_resolver::kernel_resolver() :
-        fact_resolver(
+        resolver(
             "kernel",
             {
                 fact::kernel,

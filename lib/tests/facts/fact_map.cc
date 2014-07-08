@@ -1,6 +1,6 @@
 #include <gmock/gmock.h>
 #include <facter/facts/fact_map.hpp>
-#include <facter/facts/fact_resolver.hpp>
+#include <facter/facts/resolver.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -32,9 +32,9 @@ TEST(facter_facts_fact_map, simple_fact) {
     ASSERT_EQ("bar", fact->value());
 }
 
-struct simple_resolver : fact_resolver
+struct simple_resolver : resolver
 {
-    simple_resolver() : fact_resolver("test", { "foo" })
+    simple_resolver() : resolver("test", { "foo" })
     {
     }
 
@@ -57,9 +57,9 @@ TEST(facter_facts_fact_map, simple_resolver) {
     ASSERT_EQ(1u, facts.size());
 }
 
-struct multi_resolver : fact_resolver
+struct multi_resolver : resolver
 {
-    multi_resolver() : fact_resolver("test", { "foo", "bar" })
+    multi_resolver() : resolver("test", { "foo", "bar" })
     {
     }
 

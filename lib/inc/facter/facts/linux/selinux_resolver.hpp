@@ -5,14 +5,14 @@
 #ifndef FACTER_FACTS_LINUX_SELINUX_RESOLVER_HPP_
 #define FACTER_FACTS_LINUX_SELINUX_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 
 namespace facter { namespace facts { namespace linux {
 
     /**
      * Responsible for resolving SELinux facts
      */
-    struct selinux_resolver : fact_resolver
+    struct selinux_resolver : resolver
     {
         /**
          * Constructs the selinux resolver.

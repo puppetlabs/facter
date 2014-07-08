@@ -5,7 +5,7 @@
 #ifndef FACTER_FACTS_POSIX_VIRTUALIZATION_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_VIRTUALIZATION_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 #include <string>
 
 namespace facter { namespace facts { namespace posix {
@@ -13,7 +13,7 @@ namespace facter { namespace facts { namespace posix {
     /**
      * Responsible for resolving virtualization facts.
      */
-    struct virtualization_resolver : fact_resolver
+    struct virtualization_resolver : resolver
     {
         /**
          * Constructs the virtualization_resolver.

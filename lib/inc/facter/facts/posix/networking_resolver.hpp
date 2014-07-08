@@ -5,7 +5,7 @@
 #ifndef FACTER_FACTS_POSIX_NETWORKING_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_NETWORKING_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 #include <string>
 #include <sys/socket.h>
 
@@ -14,7 +14,7 @@ namespace facter { namespace facts { namespace posix {
     /**
      * Responsible for resolving networking facts.
      */
-    struct networking_resolver : fact_resolver
+    struct networking_resolver : resolver
     {
         /**
          * Constructs the networking_resolver.

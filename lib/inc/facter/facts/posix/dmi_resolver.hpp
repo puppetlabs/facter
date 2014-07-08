@@ -5,14 +5,14 @@
 #ifndef FACTER_FACTS_POSIX_DMI_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_DMI_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 
 namespace facter { namespace facts { namespace posix {
 
     /**
      * Responsible for resolving DMI facts.
      */
-    struct dmi_resolver : fact_resolver
+    struct dmi_resolver : resolver
     {
         /**
          * Constructs the dmi_resolver.

@@ -5,14 +5,14 @@
 #ifndef FACTER_FACTS_POSIX_OPERATING_SYSTEM_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_OPERATING_SYSTEM_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 
 namespace facter { namespace facts { namespace posix {
 
     /**
      * Responsible for resolving operating system facts.
      */
-    struct operating_system_resolver : fact_resolver
+    struct operating_system_resolver : resolver
     {
         /**
          * Constructs the operating_system_resolver.

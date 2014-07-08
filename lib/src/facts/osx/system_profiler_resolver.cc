@@ -15,7 +15,7 @@ using namespace facter::execution;
 namespace facter { namespace facts { namespace osx {
 
     system_profiler_resolver::system_profiler_resolver() :
-        fact_resolver(
+        resolver(
             "system profiler",
             {
                 fact::sp_boot_mode,

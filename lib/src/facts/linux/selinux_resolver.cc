@@ -11,7 +11,7 @@ using namespace facter::util;
 namespace facter { namespace facts { namespace linux {
 
     selinux_resolver::selinux_resolver() :
-        fact_resolver(
+        resolver(
             "selinux",
             {
                 fact::selinux,

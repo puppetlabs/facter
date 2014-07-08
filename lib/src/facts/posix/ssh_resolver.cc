@@ -27,7 +27,7 @@ LOG_DECLARE_NAMESPACE("facts.posix.ssh");
 namespace facter { namespace facts { namespace posix {
 
     ssh_resolver::ssh_resolver() :
-        fact_resolver(
+        resolver(
             "ssh",
             {
                 fact::ssh_dsa_key,

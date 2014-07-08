@@ -5,14 +5,14 @@
 #ifndef FACTER_FACTS_OSX_SOFTWARE_VERSION_RESOLVER_HPP_
 #define FACTER_FACTS_OSX_SOFTWARE_VERSION_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 
 namespace facter { namespace facts { namespace osx {
 
     /**
      * Responsible for resolving software (OSX) version facts.
      */
-    struct software_version_resolver : fact_resolver
+    struct software_version_resolver : resolver
     {
         /**
          * Constructs the software_version_resolver.

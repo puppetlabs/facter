@@ -2,8 +2,8 @@
  * @file
  * Declares the base class for fact resolvers.
  */
-#ifndef FACTER_FACTS_FACT_RESOLVER_HPP_
-#define FACTER_FACTS_FACT_RESOLVER_HPP_
+#ifndef FACTER_FACTS_RESOLVER_HPP_
+#define FACTER_FACTS_RESOLVER_HPP_
 
 #include <vector>
 #include <memory>
@@ -48,41 +48,41 @@ namespace facter { namespace facts {
      * A fact resolver is responsible for resolving one or more facts.
      * This type can be moved but cannot be copied.
      */
-    struct fact_resolver
+    struct resolver
     {
         /**
-         * Constructs a fact_resolver.
+         * Constructs a resolver.
          * @param name The fact resolver name.
          * @param names The fact names the resolver is responsible for.
          * @param patterns Regular expression patterns for additional ("dynamic") facts the resolver is responsible for.
          */
-        fact_resolver(std::string&& name, std::vector<std::string>&& names, std::vector<std::string> const& patterns = {});
+        resolver(std::string&& name, std::vector<std::string>&& names, std::vector<std::string> const& patterns = {});
 
         /**
-         * Destructs the fact_resolver.
+         * Destructs the resolver.
          */
-        virtual ~fact_resolver();
+        virtual ~resolver();
 
         /**
-         * Prevents the fact_resolver from being copied.
+         * Prevents the resolver from being copied.
          */
-        fact_resolver(fact_resolver const&) = delete;
+        resolver(resolver const&) = delete;
         /**
-         * Prevents the fact_resolver from being copied.
-         * @returns Returns this fact_resolver.
+         * Prevents the resolver from being copied.
+         * @returns Returns this resolver.
          */
-        fact_resolver& operator=(fact_resolver const&) = delete;
+        resolver& operator=(resolver const&) = delete;
         /**
-         * Moves the given fact_resolver into this fact_resolver.
-         * @param other The fact_resolver to move into this fact_resolver.
+         * Moves the given resolver into this resolver.
+         * @param other The resolver to move into this resolver.
          */
-        fact_resolver(fact_resolver&& other) = default;
+        resolver(resolver&& other) = default;
         /**
-         * Moves the given fact_resolver into this fact_resolver.
-         * @param other The fact_resolver to move into this fact_resolver.
-         * @return Returns this fact_resolver.
+         * Moves the given resolver into this resolver.
+         * @param other The resolver to move into this resolver.
+         * @return Returns this resolver.
          */
-        fact_resolver& operator=(fact_resolver&& other) = default;
+        resolver& operator=(resolver&& other) = default;
 
         /**
          * Gets the name of the fact resolver.
@@ -126,5 +126,5 @@ namespace facter { namespace facts {
 
 }}  // namespace facter::facts
 
-#endif  // FACTER_FACTS_FACT_RESOLVER_HPP_
+#endif  // FACTER_FACTS_RESOLVER_HPP_
 

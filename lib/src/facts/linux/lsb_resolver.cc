@@ -13,7 +13,7 @@ using namespace facter::execution;
 namespace facter { namespace facts { namespace linux {
 
     lsb_resolver::lsb_resolver() :
-        fact_resolver(
+        resolver(
             "Linux Standard Base",
             {
                 fact::lsb_dist_id,

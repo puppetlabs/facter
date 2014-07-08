@@ -15,7 +15,7 @@ LOG_DECLARE_NAMESPACE("facts.posix.processor");
 namespace facter { namespace facts { namespace posix {
 
     processor_resolver::processor_resolver() :
-        fact_resolver(
+        resolver(
             "processor",
             {
                 fact::processor_count,

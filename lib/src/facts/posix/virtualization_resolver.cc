@@ -12,7 +12,7 @@ using namespace facter::facts;
 namespace facter { namespace facts { namespace posix {
 
     virtualization_resolver::virtualization_resolver() :
-        fact_resolver(
+        resolver(
             "virtualization",
             {
                 fact::virtualization,

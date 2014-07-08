@@ -15,7 +15,7 @@ using namespace facter::execution;
 namespace facter { namespace facts { namespace osx {
 
     software_version_resolver::software_version_resolver() :
-        fact_resolver(
+        resolver(
             "software version",
             {
                 fact::macosx_buildversion,

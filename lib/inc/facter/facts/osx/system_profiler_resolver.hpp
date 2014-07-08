@@ -5,14 +5,14 @@
 #ifndef FACTER_FACTS_OSX_SYSTEM_PROFILER_RESOLVER_HPP_
 #define FACTER_FACTS_OSX_SYSTEM_PROFILER_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 
 namespace facter { namespace facts { namespace osx {
 
     /**
      * Responsible for resolving system profiler facts.
      */
-    struct system_profiler_resolver : fact_resolver
+    struct system_profiler_resolver : resolver
     {
         /**
          * Constructs the system_profiler_resolver.

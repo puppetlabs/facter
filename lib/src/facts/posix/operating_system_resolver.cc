@@ -11,7 +11,7 @@ using namespace std;
 namespace facter { namespace facts { namespace posix {
 
     operating_system_resolver::operating_system_resolver() :
-        fact_resolver(
+        resolver(
             "operating system",
             {
                 fact::operating_system,
