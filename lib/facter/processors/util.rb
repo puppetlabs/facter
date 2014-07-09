@@ -1,6 +1,6 @@
 module Facter
-module Util
 module Processor
+module Util
   ##
   # aix_processor_list is intended to generate a list of values for the
   # processorX facts.  The behavior is as follows from
@@ -44,6 +44,24 @@ module Processor
     end
 
     return_value
+  end
+
+  def self.windows_processor_list
+    processor_list = []
+    # get each physical processor
+    Facter::Util::WMI.execquery("select * from Win32_Processor").each do |proc|
+      # not supported before 2008
+      if proc.respond_to?(:NumberOfLogicalProcessors)
+        processor_num = proc.NumberOfLogicalProcessors
+      else
+        processor_num = 1
+      end
+
+      processor_num.times do |i|
+        processor_list << proc.Name.squeeze(" ")
+      end
+    end
+    processor_list
   end
 
   ##
