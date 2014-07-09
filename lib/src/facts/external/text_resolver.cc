@@ -12,13 +12,13 @@ LOG_DECLARE_NAMESPACE("facts.external.text");
 
 namespace facter { namespace facts { namespace external {
 
-    bool text_resolver::resolve(string const& path, collection& facts) const
+    bool text_resolver::can_resolve(string const& path) const
     {
-        string full_path = path;
-        if (!ends_with(to_lower(full_path), ".txt")) {
-            return false;
-        }
+        return ends_with(to_lower(string(path)), ".txt");
+    }
 
+    void text_resolver::resolve(string const& path, collection& facts) const
+    {
         LOG_DEBUG("resolving facts from text file \"%1%\".", path);
 
         if (!file::each_line(path, [&facts](string& line) {
@@ -35,7 +35,6 @@ namespace facter { namespace facts { namespace external {
         }
 
         LOG_DEBUG("completed resolving facts from text file \"%1%\".", path);
-        return true;
     }
 
 }}}  // namespace facter::facts::external

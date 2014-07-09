@@ -68,13 +68,13 @@ namespace facter { namespace facts { namespace external {
         }
     }
 
-    bool yaml_resolver::resolve(string const& path, collection& facts) const
+    bool yaml_resolver::can_resolve(string const& path) const
     {
-        string full_path = path;
-        if (!ends_with(to_lower(full_path), ".yaml")) {
-            return false;
-        }
+        return ends_with(to_lower(string(path)), ".yaml");
+    }
 
+    void yaml_resolver::resolve(string const& path, collection& facts) const
+    {
         LOG_DEBUG("resolving facts from YAML file \"%1%\".", path);
 
         ifstream stream(path);
@@ -92,7 +92,6 @@ namespace facter { namespace facts { namespace external {
         }
 
         LOG_DEBUG("completed resolving facts from YAML file \"%1%\".", path);
-        return true;
     }
 
 }}}  // namespace facter::facts::external

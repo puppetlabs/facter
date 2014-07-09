@@ -216,8 +216,8 @@ namespace facter { namespace facts {
             search_directories = get_external_directories();
         }
 
-        // Go through each search directory
-        vector<string> files;
+        // Build a map between a file and the resolver that can resolve it
+        map<string, external::resolver const*> files;
         for (auto const& directory : search_directories) {
             directory_iterator end;
             directory_iterator it;
@@ -244,32 +244,25 @@ namespace facter { namespace facts {
                     continue;
                 }
 
-                files.push_back(it->path().string());
-            }
-        }
+                string path = it->path().string();
 
-        // Sort the files so there is a deterministic ordering to the external facts
-        sort(files.begin(), files.end());
-
-        // For each file, find a resolver for it
-        for (auto const& file : files) {
-            try
-            {
-                bool resolved = false;
-                for (auto const& resolver : resolvers) {
-                    if (resolver->resolve(file, *this)) {
-                        resolved = true;
+                for (auto const& res : resolvers) {
+                    if (res->can_resolve(path)) {
+                        files.emplace(path, res.get());
                         break;
                     }
                 }
+            }
+        }
 
-                if (!resolved) {
-                    LOG_DEBUG("file \"%1%\" is not supported for external facts.", file);
-                    continue;
-                }
+        // Resolve the files
+        for (auto const& kvp : files) {
+            try
+            {
+                kvp.second->resolve(kvp.first, *this);
             }
             catch (external::external_fact_exception& ex) {
-                LOG_ERROR("error while processing \"%1%\" for external facts: %2%", file, ex.what());
+                LOG_ERROR("error while processing \"%1%\" for external facts: %2%", kvp.first, ex.what());
             }
         }
 

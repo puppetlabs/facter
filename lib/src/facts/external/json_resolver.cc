@@ -169,13 +169,13 @@ namespace facter { namespace facts { namespace external {
         stack<tuple<string, unique_ptr<value>>> _stack;
     };
 
-    bool json_resolver::resolve(string const& path, collection& facts) const
+    bool json_resolver::can_resolve(string const& path) const
     {
-        string full_path = path;
-        if (!ends_with(to_lower(full_path), ".json")) {
-            return false;
-        }
+        return ends_with(to_lower(string(path)), ".json");
+    }
 
+    void json_resolver::resolve(string const& path, collection& facts) const
+    {
         LOG_DEBUG("resolving facts from JSON file \"%1%\".", path);
 
         // Open the file
@@ -197,7 +197,6 @@ namespace facter { namespace facts { namespace external {
         }
 
         LOG_DEBUG("completed resolving facts from JSON file \"%1%\".", path);
-        return true;
     }
 
 }}}  // namespace facter::facts::external

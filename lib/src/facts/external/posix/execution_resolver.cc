@@ -18,14 +18,13 @@ LOG_DECLARE_NAMESPACE("facts.external.execution.posix");
 
 namespace facter { namespace facts { namespace external {
 
-    bool execution_resolver::resolve(string const& path, collection& facts) const
+    bool execution_resolver::can_resolve(string const& path) const
     {
-        if (access(path.c_str(), X_OK) == -1) {
-            // Because this is the last resolver to execute, log a warning if it's not executable
-            LOG_WARNING("file \"%1%\" is not executable.", path);
-            return false;
-        }
+        return access(path.c_str(), X_OK) == 0;
+    }
 
+    void execution_resolver::resolve(string const& path, collection& facts) const
+    {
         LOG_DEBUG("resolving facts from executable file \"%1%\".", path);
 
         try
@@ -46,7 +45,6 @@ namespace facter { namespace facts { namespace external {
         }
 
         LOG_DEBUG("completed resolving facts from executable file \"%1%\".", path);
-        return true;
     }
 
 }}}  // namespace facter::facts::external

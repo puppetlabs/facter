@@ -12,10 +12,11 @@ TEST(facter_facts_external_text_resolver, default_constructor) {
     text_resolver resolver;
 }
 
-TEST(facter_facts_external_text_resolver, resolve_non_text) {
+TEST(facter_facts_external_text_resolver, can_resolve) {
     text_resolver resolver;
-    collection facts;
-    ASSERT_FALSE(resolver.resolve("foo.json", facts));
+    ASSERT_FALSE(resolver.can_resolve("foo.json"));
+    ASSERT_TRUE(resolver.can_resolve("foo.txt"));
+    ASSERT_TRUE(resolver.can_resolve("FoO.TxT"));
 }
 
 TEST(facter_facts_external_text_resolver, resolve_nonexistent_text) {
@@ -27,7 +28,7 @@ TEST(facter_facts_external_text_resolver, resolve_nonexistent_text) {
 TEST(facter_facts_external_text_resolver, resolve_text) {
     text_resolver resolver;
     collection facts;
-    ASSERT_TRUE(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/text/facts.txt", facts));
+    resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/text/facts.txt", facts);
     ASSERT_TRUE(!facts.empty());
     ASSERT_NE(nullptr, facts.get<string_value>("txt_fact1"));
     ASSERT_EQ("value1", facts.get<string_value>("txt_fact1")->value());

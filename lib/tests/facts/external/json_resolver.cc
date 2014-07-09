@@ -14,10 +14,11 @@ TEST(facter_facts_external_json_resolver, default_constructor) {
     json_resolver resolver;
 }
 
-TEST(facter_facts_external_json_resolver, resolve_non_json) {
+TEST(facter_facts_external_json_resolver, can_resolve) {
     json_resolver resolver;
-    collection facts;
-    ASSERT_FALSE(resolver.resolve("notjson.txt", facts));
+    ASSERT_FALSE(resolver.can_resolve("foo.txt"));
+    ASSERT_TRUE(resolver.can_resolve("foo.json"));
+    ASSERT_TRUE(resolver.can_resolve("FoO.JsOn"));
 }
 
 TEST(facter_facts_external_json_resolver, resolve_nonexistent_json) {
@@ -35,7 +36,7 @@ TEST(facter_facts_external_json_resolver, resolve_invalid_json) {
 TEST(facter_facts_external_json_resolver, resolve_json) {
     json_resolver resolver;
     collection facts;
-    ASSERT_TRUE(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/facts.json", facts));
+    resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/facts.json", facts);
     ASSERT_TRUE(!facts.empty());
     ASSERT_NE(nullptr, facts.get<string_value>("json_fact1"));
     ASSERT_EQ("foo", facts.get<string_value>("json_fact1")->value());
