@@ -45,4 +45,34 @@ describe "Partition facts" do
       }
     end
   end
+
+  describe "on OpenBSD" do
+    it "should return a structured fact with size, mount point and filesystem for each partition" do
+      partitions = {
+        'sd2a' => {
+          'size'       => '1234',
+          'mount'      => '/',
+          'filesystem' => 'ffs',
+        },
+        'sd2d' => {
+          'size'       => '4321',
+          'mount'      => '/usr',
+          'filesystem' => 'ffs2',
+        },
+      }
+
+      Facter::Util::Partitions.stubs(:list).returns(partitions.keys)
+
+      partitions.each do |part,vals|
+        Facter::Util::Partitions.stubs(:size).with(part).returns(vals['size'])
+        Facter::Util::Partitions.stubs(:mount).with(part).returns(vals['mount'])
+        Facter::Util::Partitions.stubs(:filesystem).with(part).returns(vals['filesystem'])
+      end
+
+      Facter.fact(:partitions).value.should == {
+        'sd2a' => { 'size' => '1234', 'mount' => '/', 'filesystem' => 'ffs' },
+        'sd2d' => { 'size' => '4321', 'mount' => '/usr', 'filesystem' => 'ffs2' },
+      }
+    end
+  end
 end
