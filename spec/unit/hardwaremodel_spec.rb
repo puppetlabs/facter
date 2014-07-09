@@ -6,6 +6,7 @@ require 'facter'
 describe "Hardwaremodel fact" do
   it "should match uname -m by default" do
     Facter.fact(:kernel).stubs(:value).returns("Darwin")
+    Facter.fact(:operatingsystem).stubs(:value).returns("Darwin")
     Facter::Core::Execution.stubs(:execute).with("uname -m", anything).returns("Inky")
 
     Facter.fact(:hardwaremodel).value.should == "Inky"
@@ -15,6 +16,7 @@ describe "Hardwaremodel fact" do
     require 'facter/util/wmi'
     before :each do
       Facter.fact(:kernel).stubs(:value).returns("windows")
+      Facter.fact(:operatingsystem).stubs(:value).returns("windows")
     end
 
     it "should detect i486" do
