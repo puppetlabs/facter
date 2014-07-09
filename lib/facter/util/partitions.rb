@@ -1,8 +1,10 @@
 require 'facter/util/partitions/linux'
+require 'facter/util/partitions/openbsd'
 
 module Facter::Util::Partitions
   IMPLEMENTATIONS = {
-    'Linux' => Linux
+    'Linux'   => Linux,
+    'OpenBSD' => OpenBSD,
   }
 
   module NoImplementation
