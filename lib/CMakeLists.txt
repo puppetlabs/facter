@@ -152,6 +152,13 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBFACTER_PLATFORM_LIBRARIES
         ${BLKID_LIBRARIES}
     )
+elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
+    set(LIBFACTER_PLATFORM_SOURCES
+        "src/facts/bsd/collection.cc"
+        "src/facts/bsd/networking_resolver.cc"
+        "src/facts/bsd/uptime_resolver.cc"
+        "src/util/bsd/scoped_ifaddrs.cc"
+    )
 endif()
 
 # Set include directories
