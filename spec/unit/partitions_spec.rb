@@ -5,15 +5,19 @@ require 'facter'
 
 describe "Partition facts" do
 
-  describe "on non-Linux OS" do
+  describe "on unsupported platforms" do
 
-    it "should not exist when kernel isn't Linux" do
+    it "should not exist" do
       Facter.fact(:kernel).stubs(:value).returns("SunOS")
       Facter.fact(:partitions).value.should == nil
     end
   end
 
   describe "on Linux" do
+    before do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+    end
+
     it "should return a structured fact with uuid, size, mount point and filesytem for each partition" do
       partitions = {
         'sda1' => {
@@ -30,7 +34,7 @@ describe "Partition facts" do
         },
       }
 
-      Facter::Util::Partitions.stubs(:list).returns( partitions.keys )
+      Facter::Util::Partitions.stubs(:list).returns(partitions.keys)
 
       partitions.each do |part,vals|
         Facter::Util::Partitions.stubs(:uuid).with(part).returns(vals['uuid'])
@@ -47,6 +51,10 @@ describe "Partition facts" do
   end
 
   describe "on OpenBSD" do
+    before do
+      Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
+    end
+
     it "should return a structured fact with size, mount point and filesystem for each partition" do
       partitions = {
         'sd2a' => {
