@@ -45,7 +45,7 @@ namespace facter { namespace facts { namespace posix {
     void operating_system_resolver::resolve_os_family(collection& facts)
     {
         // Get the operating system fact
-        auto os = facts.get<string_value>(fact::operating_system);
+        auto os = facts.get<string_value>(fact::operating_system, false);
         string value;
         if (os) {
             static map<string, string> const systems = {
