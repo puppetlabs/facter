@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 require 'facter/util/uptime'
+require 'facter/util/posix'
 
 describe Facter::Util::Uptime do
 
@@ -26,15 +27,13 @@ describe Facter::Util::Uptime do
       end
 
       it "should use 'sysctl -n kern.boottime' on OpenBSD" do
-        sysctl_output_file = my_fixture('sysctl_kern_boottime_openbsd') # Dec 09 21:11:46 +0000 2011
-        Facter::Util::Uptime.stubs(:uptime_sysctl_cmd).returns("cat \"#{sysctl_output_file}\"")
+        Facter::Util::POSIX.stubs(:sysctl).returns(my_fixture_read("sysctl_kern_boottime_openbsd"))
         Time.stubs(:now).returns Time.parse("Dec 09 22:11:46 +0000 2011") # one hour later
         Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60
       end
 
       it "should use 'sysctl -n kern.boottime' on Darwin, etc." do
-        sysctl_output_file = my_fixture('sysctl_kern_boottime_darwin') # Oct 30 21:52:27 +0000 2011
-        Facter::Util::Uptime.stubs(:uptime_sysctl_cmd).returns("cat \"#{sysctl_output_file}\"")
+        Facter::Util::POSIX.stubs(:sysctl).returns(my_fixture_read("sysctl_kern_boottime_darwin"))
         Time.stubs(:now).returns Time.parse("Oct 30 22:52:27 +0000 2011") # one hour later
         Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60
       end
