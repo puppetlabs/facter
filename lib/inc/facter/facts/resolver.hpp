@@ -97,18 +97,23 @@ namespace facter { namespace facts {
         std::vector<std::string> const& names() const;
 
         /**
+         * Determines if the resolver has patterns.
+         * @return Returns true if the resolver has patterns or false if it does not.
+         */
+        bool has_patterns() const;
+
+        /**
+         * Determines if the given name matches a pattern for the resolver.
+         * @param name The fact name to check.
+         * @return Returns true if the name matches a pattern or returns false if it does not.
+         */
+        bool is_match(std::string const& name) const;
+
+        /**
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact collection that is resolving facts.
          */
         void resolve(collection& facts);
-
-        /**
-         * Checks whether or not the resolver can resolve the given fact name.
-         * Note that it is not required to return true if the given name is in the names vector.
-         * @param name The fact name to check.
-         * @return Returns true if the resolver can resolve the given name or false if it cannot.
-         */
-        bool can_resolve(std::string const& name) const;
 
      protected:
         /**

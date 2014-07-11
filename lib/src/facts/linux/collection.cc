@@ -15,19 +15,19 @@ using namespace std;
 
 namespace facter { namespace facts {
 
-    void populate_platform_facts(collection& facts)
+    void collection::add_platform_facts()
     {
-        facts.add(make_shared<posix::kernel_resolver>());
-        facts.add(make_shared<linux::operating_system_resolver>());
-        facts.add(make_shared<linux::lsb_resolver>());
-        facts.add(make_shared<linux::networking_resolver>());
-        facts.add(make_shared<linux::block_device_resolver>());
-        facts.add(make_shared<linux::dmi_resolver>());
-        facts.add(make_shared<linux::processor_resolver>());
-        facts.add(make_shared<linux::uptime_resolver>());
-        facts.add(make_shared<linux::selinux_resolver>());
-        facts.add(make_shared<posix::ssh_resolver>());
-        facts.add(make_shared<linux::virtualization_resolver>());
+        add(make_shared<posix::kernel_resolver>());
+        add(make_shared<linux::operating_system_resolver>());
+        add(make_shared<linux::lsb_resolver>());
+        add(make_shared<linux::networking_resolver>());
+        add(make_shared<linux::block_device_resolver>());
+        add(make_shared<linux::dmi_resolver>());
+        add(make_shared<linux::processor_resolver>());
+        add(make_shared<linux::uptime_resolver>());
+        add(make_shared<linux::selinux_resolver>());
+        add(make_shared<posix::ssh_resolver>());
+        add(make_shared<linux::virtualization_resolver>());
     }
 
 }}  // namespace facter::facts

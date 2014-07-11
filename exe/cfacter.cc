@@ -117,18 +117,22 @@ int main(int argc, char **argv)
 {
     try
     {
+        vector<string> external_directories;
+        vector<string> custom_directories;
         string properties_file;
 
         // Build a list of options visible on the command line
         // Keep this list sorted alphabetically
         po::options_description visible_options("");
         visible_options.add_options()
+            ("custom-dir", po::value<vector<string>>(&custom_directories), "A directory to use for custom facts.")
             ("debug,d", "Enable debug output.")
-            ("external-dir", po::value<vector<string>>()->multitoken(), "The directory to use for external facts.")
+            ("external-dir", po::value<vector<string>>(&external_directories), "A directory to use for external facts.")
             ("help", "Print this help message.")
             ("json,j", "Output in JSON format.")
-            ("no-external-dir", "Turn off external facts")
-            ("propfile,p", po::value<string>(&properties_file), "Configure logging with a log4cxx properties file.")
+            ("logprops", po::value<string>(&properties_file), "Configure logging with a log4cxx properties file.")
+            ("no-custom-facts", "Turn off custom facts")
+            ("no-external-facts", "Turn off external facts")
             ("verbose", "Enable verbose (info) output.")
             ("version,v", "Print the version and exit.")
             ("yaml,y", "Output in YAML format.");
@@ -191,6 +195,7 @@ int main(int argc, char **argv)
         configure_logging(log_level, properties_file);
         log_command_line(argc, argv);
 
+        // Build a set of requested facts from the command line
         set<string> requested_facts;
         if (vm.count("fact")) {
             auto const& fact_parameters = vm["fact"].as<vector<string>>();
@@ -200,26 +205,25 @@ int main(int argc, char **argv)
                 fact_parameters.begin(),
                 fact_parameters.end(),
                 inserter(requested_facts, requested_facts.end()),
-                [](string const& s) {
-                    auto s2 = s;
-                    trim(to_lower(s2));
-                    return s2;
-                });
+                [](string const& s) { return trim(to_lower(string(s))); });
         }
 
         log_requested_facts(requested_facts);
 
-        // Resolve the facts
         collection facts;
-        facts.resolve(requested_facts);
+        facts.add_default_facts();
 
-        // Resolve external facts next; this allows external facts to take precedence over built-in facts
-        if (!vm.count("no-external-dir")) {
-            if (vm["external-dir"].empty()) {
-                facts.resolve_external({}, requested_facts);
-            } else {
-                facts.resolve_external(vm["external-dir"].as<vector<string>>(), requested_facts);
-            }
+        if (!vm.count("no-external-facts")) {
+            facts.add_external_facts(external_directories);
+        }
+
+        if (!vm.count("no-custom-facts")) {
+            facts.add_custom_facts(custom_directories);
+        }
+
+        // Filter to only the requested facts
+        if (!requested_facts.empty()) {
+            facts.filter(requested_facts);
         }
 
         // Output the facts

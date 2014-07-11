@@ -1,3 +1,4 @@
+#include <facter/facts/collection.hpp>
 #include <facter/facts/external/json_resolver.hpp>
 #include <facter/facts/external/text_resolver.hpp>
 #include <facter/facts/external/yaml_resolver.hpp>
@@ -15,7 +16,7 @@ using namespace facter::facts::external;
 
 namespace facter { namespace facts {
 
-    vector<string> get_external_directories()
+    vector<string> collection::get_external_fact_directories()
     {
         vector<string> directories;
         if (getuid()) {
@@ -30,9 +31,9 @@ namespace facter { namespace facts {
         return directories;
     }
 
-    vector<unique_ptr<resolver>> get_external_resolvers()
+    vector<unique_ptr<external::resolver>> collection::get_external_resolvers()
     {
-        vector<unique_ptr<resolver>> resolvers;
+        vector<unique_ptr<external::resolver>> resolvers;
         resolvers.emplace_back(new text_resolver());
         resolvers.emplace_back(new yaml_resolver());
         resolvers.emplace_back(new json_resolver());

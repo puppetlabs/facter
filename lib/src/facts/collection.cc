@@ -2,13 +2,13 @@
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/facts/external/resolver.hpp>
 #include <facter/logging/logging.hpp>
+#include <facter/version.h>
 #include <boost/filesystem.hpp>
-#include <algorithm>
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
 #include <yaml-cpp/yaml.h>
+#include <algorithm>
 
 using namespace std;
 using namespace rapidjson;
@@ -20,44 +20,20 @@ LOG_DECLARE_NAMESPACE("facts.collection");
 
 namespace facter { namespace facts {
 
-    /**
-     * Called to populate common facts.
-     * @param facts The fact collection being populated.
-     */
-    extern void populate_common_facts(collection& facts);
-
-    /**
-     * Called to populate platform-specific facts.
-     * @param facts The fact collection being populated.
-     */
-    extern void populate_platform_facts(collection& facts);
-
-    /**
-     * Called to get the external fact search directories for the current platform.
-     * @returns Returns the vector of search directories for external facts.
-     */
-    extern vector<string> get_external_directories();
-
-    /**
-     * Called to get the external fact resolvers for the current platform.
-     * @returns Returns the vector of external fact resolvers.
-     */
-    extern vector<unique_ptr<external::resolver>> get_external_resolvers();
-
-    resolver_exists_exception::resolver_exists_exception(string const& message) :
-        runtime_error(message)
-    {
-    }
-
     collection::collection()
     {
-        populate_common_facts(*this);
-        populate_platform_facts(*this);
+        // This needs to be defined here since we use incomplete types in the header
     }
 
     collection::~collection()
     {
         // This needs to be defined here since we use incomplete types in the header
+    }
+
+    void collection::add_default_facts()
+    {
+        add("cfacterversion", make_value<string_value>(LIBFACTER_VERSION));
+        add_platform_facts();
     }
 
     void collection::add(shared_ptr<resolver> const& res)
@@ -66,154 +42,59 @@ namespace facter { namespace facts {
             return;
         }
 
-        for (auto const& fact_name : res->names()) {
-            auto const& it = _resolver_map.lower_bound(fact_name);
-            if (it != _resolver_map.end() && !(_resolver_map.key_comp()(fact_name, it->first))) {
-                throw resolver_exists_exception("a resolver for fact \"" + fact_name + "\" already exists.");
-            }
-            _resolver_map.insert(it, make_pair(fact_name, res));
+        for (auto const& name : res->names()) {
+            _resolver_map.insert({ name, res });
         }
+
+        if (res->has_patterns()) {
+            _pattern_resolvers.push_back(res);
+        }
+
         _resolvers.push_back(res);
     }
 
     void collection::add(string&& name, unique_ptr<value>&& value)
     {
-        // Search for the fact first
-        auto const& it = _facts.lower_bound(name);
-        if (it != _facts.end() && !(_facts.key_comp()(name, it->first))) {
-            if (!value) {
-                LOG_DEBUG("fact \"%1%\" resolved to null and the existing value will be removed.", name);
-                _facts.erase(it);
-                return;
-            }
-            if (LOG_IS_DEBUG_ENABLED()) {
-                ostringstream old_value;
-                ostringstream new_value;
-                old_value << *it->second;
-                new_value << *value;
-                LOG_DEBUG("fact \"%1%\" has changed from \"%2%\" to \"%3%\".", name, old_value.str(), new_value.str());
-            }
-            it->second = move(value);
-        } else {
-            if (!value) {
-                LOG_DEBUG("fact \"%1%\" resolved to null and will not be added.", name);
-                return;
-            }
-            if (LOG_IS_DEBUG_ENABLED()) {
-                ostringstream ss;
-                ss << *value;
-                LOG_DEBUG("fact \"%1%\" has resolved to \"%2%\".", name, ss.str());
-            }
-            _facts.insert(it, make_pair(move(name), move(value)));
-        }
+        // Ensure the fact is resolved before replacing it
+        auto old_value = get_value(name, true);
 
-        // Remove any mapped resolver for this fact
-        _resolver_map.erase(name);
-    }
-
-    void collection::remove(shared_ptr<resolver> const& res)
-    {
-        if (!res) {
-            return;
-        }
-
-        // Remove all fact associations
-        for (auto const& name : res->names()) {
-            if (LOG_IS_DEBUG_ENABLED()) {
-                auto it = _facts.find(name);
-                if (it == _facts.end()) {
-                    LOG_DEBUG("fact \"%1%\" was not resolved.", name);
-                }
-            }
-            _resolver_map.erase(name);
-        }
-        _resolvers.remove(res);
-    }
-
-    void collection::remove(string const& name)
-    {
-        _resolver_map.erase(name);
-        _facts.erase(name);
-    }
-
-    void collection::clear()
-    {
-        _facts.clear();
-        _resolvers.clear();
-        _resolver_map.clear();
-    }
-
-    bool collection::empty() const
-    {
-        return _facts.empty() && _resolvers.empty();
-    }
-
-    bool collection::resolved() const
-    {
-        return _resolvers.empty();
-    }
-
-    size_t collection::size() const
-    {
-        return _facts.size();
-    }
-
-    void collection::resolve(set<string> const& facts)
-    {
-        if (resolved()) {
-            return;
-        }
-        if (!facts.empty()) {
-            // Resolve the given facts
-            for (auto const& fact : facts) {
-                if (fact.empty()) {
-                    continue;
-                }
-                auto value = get_value(fact, true);
-                if (!value) {
-                    // For parity with Ruby facter, add an empty string
-                    LOG_DEBUG("fact \"%1%\" was requested but not resolved; adding empty string value.", fact);
-                    add(string(fact), make_value<string_value>(""));
-                }
-            }
-
-            // Remove facts that resolved but aren't in the filter
-            for (auto it = _facts.begin(); it != _facts.end();) {
-                if (facts.count(it->first)) {
-                    // In the requested set of facts so move next
-                    ++it;
-                    continue;
-                }
-                it = _facts.erase(it);
-            }
-            return;
-        }
-
-        // No filter given, resolve all facts
-        for (auto& res : _resolvers) {
-            res->resolve(*this);
-        }
-        _resolvers.clear();
-
-        // Log any facts that didn't resolve
         if (LOG_IS_DEBUG_ENABLED()) {
-            for (auto kvp : _resolver_map) {
-                auto it = _facts.find(kvp.first);
-                if (it == _facts.end()) {
-                    LOG_DEBUG("fact \"%1%\" was not resolved.", kvp.first);
+            if (old_value) {
+                ostringstream old_value_ss;
+                old_value_ss << *old_value;
+                if (!value) {
+                    LOG_DEBUG("fact \"%1%\" resolved to null and the existing value of \"%2%\" will be removed.", name, old_value_ss.str());
+                } else {
+                    ostringstream new_value_ss;
+                    new_value_ss << *value;
+                    LOG_DEBUG("fact \"%1%\" has changed from \"%2%\" to \"%3%\".", name, old_value_ss.str(), new_value_ss.str());
+                }
+            } else {
+                if (!value) {
+                    LOG_DEBUG("fact \"%1%\" resolved to null and will not be added.", name);
+                } else {
+                    ostringstream new_value_ss;
+                    new_value_ss << *value;
+                    LOG_DEBUG("fact \"%1%\" has resolved to \"%2%\".", name, new_value_ss.str());
                 }
             }
         }
-        _resolver_map.clear();
+
+        if (!value && old_value) {
+            remove(name);
+            return;
+        }
+
+        _facts[move(name)] = move(value);
     }
 
-    void collection::resolve_external(vector<string> const& directories, set<string> const& facts)
+    void collection::add_external_facts(vector<string> const& directories)
     {
-        vector<unique_ptr<external::resolver>> resolvers = get_external_resolvers();
+        auto resolvers = get_external_resolvers();
 
         auto search_directories = directories;
         if (search_directories.empty()) {
-            search_directories = get_external_directories();
+            search_directories = get_external_fact_directories();
         }
 
         // Build a map between a file and the resolver that can resolve it
@@ -255,28 +136,107 @@ namespace facter { namespace facts {
             }
         }
 
+        if (files.empty()) {
+            LOG_DEBUG("no external facts were found.");
+            return;
+        }
+
         // Resolve the files
         for (auto const& kvp : files) {
-            try
-            {
+            try {
                 kvp.second->resolve(kvp.first, *this);
             }
             catch (external::external_fact_exception& ex) {
                 LOG_ERROR("error while processing \"%1%\" for external facts: %2%", kvp.first, ex.what());
             }
         }
+    }
 
-        // Remove facts that resolved but aren't in the filter
-        if (!facts.empty()) {
-            for (auto it = _facts.begin(); it != _facts.end();) {
-                if (facts.count(it->first)) {
-                    // In the requested set of facts so move next
+    void collection::add_custom_facts(vector<string> const& directories)
+    {
+        // TODO: implement
+    }
+
+    void collection::remove(shared_ptr<resolver> const& res)
+    {
+        if (!res) {
+            return;
+        }
+
+        // Remove all name associations
+        for (auto const& name : res->names()) {
+            auto range = _resolver_map.equal_range(name);
+            auto it = range.first;
+            while (it != range.second) {
+                if (it->second != res) {
                     ++it;
                     continue;
                 }
-                it = _facts.erase(it);
+                _resolver_map.erase(it++);
             }
         }
+
+        _pattern_resolvers.remove(res);
+        _resolvers.remove(res);
+    }
+
+    void collection::remove(string const& name)
+    {
+        // Ensure the fact is in the collection
+        // This will properly resolve the fact prior to removing it
+        if (!get_value(name, true)) {
+            return;
+        }
+
+        _facts.erase(name);
+    }
+
+    void collection::clear()
+    {
+        _facts.clear();
+        _resolvers.clear();
+        _resolver_map.clear();
+        _pattern_resolvers.clear();
+    }
+
+    bool collection::empty()
+    {
+        resolve_facts();
+        return _facts.size() == 0;
+    }
+
+    size_t collection::size()
+    {
+        resolve_facts();
+        return _facts.size();
+    }
+
+    void collection::filter(set<string> names, bool add)
+    {
+        // First resolve all the facts that were named
+        for (auto const& name : names) {
+            // Ensure the value is resolved; if not, add an empty string fact
+            if (!get_value(name, true) && add) {
+                LOG_DEBUG("fact \"%1%\" was requested but not resolved; adding empty string value.", name);
+                this->add(string(name), make_value<string_value>(""));
+            }
+        }
+
+        // Next, move them into a new map
+        map<string, unique_ptr<value>> filtered_facts;
+        for (auto const& name : names) {
+            // Move the value into the filtered facts map
+            auto it = _facts.find(name);
+            if (it == _facts.end()) {
+                continue;
+            }
+
+            filtered_facts.emplace(make_pair(string(name), move(it->second)));
+        }
+
+        clear();
+
+        _facts = move(filtered_facts);
     }
 
     value const* collection::operator[](string const& name)
@@ -284,30 +244,19 @@ namespace facter { namespace facts {
         return get_value(name, true);
     }
 
-    void collection::each(function<bool(string const&, value const*)> func) const
+    void collection::each(function<bool(string const&, value const*)> func)
     {
+        resolve_facts();
+
         find_if(begin(_facts), end(_facts), [&func](map<string, unique_ptr<value>>::value_type const& it) {
             return !func(it.first, it.second.get());
         });
     }
 
-    struct stream_adapter
+    ostream& collection::write(ostream& stream, format fmt)
     {
-        explicit stream_adapter(ostream& stream) : _stream(stream)
-        {
-        }
+        resolve_facts();
 
-        void Put(char c)
-        {
-            _stream << c;
-        }
-
-     private:
-         ostream& _stream;
-    };
-
-    ostream& collection::write(ostream& stream, format fmt) const
-    {
         if (fmt == format::hash) {
             write_hash(stream);
         } else if (fmt == format::json) {
@@ -318,25 +267,59 @@ namespace facter { namespace facts {
         return stream;
     }
 
+    void collection::resolve_facts()
+    {
+        if (_resolvers.empty()) {
+            return;
+        }
+
+        // Copy the resolvers list
+        auto resolvers = _resolvers;
+
+        // Clear the resolvers now before resolving
+        _resolvers.clear();
+        _resolver_map.clear();
+        _pattern_resolvers.clear();
+
+        // Resolve all facts
+        for (auto& res : resolvers) {
+            res->resolve(*this);
+        }
+    }
+
+    void collection::resolve_fact(string const& name)
+    {
+        // Resolve every resolver mapped to this name first
+        auto range = _resolver_map.equal_range(name);
+        auto it = range.first;
+        while (it != range.second) {
+            auto resolver = (it++)->second;
+            remove(resolver);
+            resolver->resolve(*this);
+        }
+
+         // Resolve every resolver that matches the given name
+        auto pattern_it = _pattern_resolvers.begin();
+        while (pattern_it != _pattern_resolvers.end()) {
+            if (!(*pattern_it)->is_match(name)) {
+                ++pattern_it;
+                continue;
+            }
+            auto resolver = *(pattern_it++);
+            remove(resolver);
+            resolver->resolve(*this);
+        }
+    }
+
     value const* collection::get_value(string const& name, bool resolve)
     {
+        if (resolve) {
+            resolve_fact(name);
+        }
+
         // Lookup the fact
         auto it = _facts.find(name);
-        while (it == _facts.end()) {
-            // Look for a resolver for this fact
-            auto resolver = resolve ? find_resolver(name) : nullptr;
-            if (!resolver) {
-                return nullptr;
-            }
-
-            // Resolve the facts
-            resolver->resolve(*this);
-            remove(resolver);
-
-            // Try to find the fact again
-            it = _facts.find(name);
-        }
-        return it->second.get();
+        return it == _facts.end() ? nullptr : it->second.get();
     }
 
     void collection::write_hash(ostream& stream) const
@@ -358,6 +341,21 @@ namespace facter { namespace facts {
             stream << kvp.first << " => " << *kvp.second;
         }
     }
+
+    struct stream_adapter
+    {
+        explicit stream_adapter(ostream& stream) : _stream(stream)
+        {
+        }
+
+        void Put(char c)
+        {
+            _stream << c;
+        }
+
+     private:
+         ostream& _stream;
+    };
 
     void collection::write_json(ostream& stream) const
     {
@@ -385,23 +383,6 @@ namespace facter { namespace facts {
             emitter << YAML::Value << *kvp.second;
         }
         emitter << EndMap;
-    }
-
-    shared_ptr<resolver> collection::find_resolver(string const& name)
-    {
-        // Check the map first to see if we know the fact by name
-        auto const& it = _resolver_map.find(name);
-        if (it != _resolver_map.end()) {
-            return it->second;
-        }
-
-        // Otherwise, do a linear search for a resolver that can resolve the fact
-        for (auto const& res : _resolvers) {
-            if (res->can_resolve(name)) {
-                return res;
-            }
-        }
-        return nullptr;
     }
 
 }}  // namespace facter::facts

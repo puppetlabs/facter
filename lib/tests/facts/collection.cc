@@ -5,25 +5,22 @@
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include "../fixtures.hpp"
-#include <iostream>
+#include <sstream>
 
 using namespace std;
 using namespace facter::facts;
 
 TEST(facter_facts_collection, default_constructor) {
     collection facts;
-    ASSERT_FALSE(facts.empty());
-    ASSERT_FALSE(facts.resolved());
-    ASSERT_EQ(1u, facts.size());
+    ASSERT_TRUE(facts.empty());
+    ASSERT_EQ(0u, facts.size());
 }
 
 TEST(facter_facts_collection, simple_fact) {
     collection facts;
-    facts.clear();
     facts.add("foo", make_value<string_value>("bar"));
     ASSERT_EQ(1u, facts.size());
     ASSERT_FALSE(facts.empty());
-    ASSERT_TRUE(facts.resolved());
     auto fact = facts.get<string_value>("foo");
     ASSERT_NE(nullptr, fact);
     ASSERT_EQ("bar", fact->value());
@@ -47,14 +44,10 @@ struct simple_resolver : resolver
 
 TEST(facter_facts_collection, simple_resolver) {
     collection facts;
-    facts.clear();
     facts.add(make_shared<simple_resolver>());
     ASSERT_FALSE(facts.empty());
-    ASSERT_FALSE(facts.resolved());
-    ASSERT_EQ(0u, facts.size());
-    ASSERT_EQ("bar", facts.get<string_value>("foo")->value());
-    ASSERT_TRUE(facts.resolved());
     ASSERT_EQ(1u, facts.size());
+    ASSERT_EQ("bar", facts.get<string_value>("foo")->value());
 }
 
 struct multi_resolver : resolver
@@ -73,12 +66,10 @@ struct multi_resolver : resolver
 
 TEST(facter_facts_collection, resolve_specific) {
     collection facts;
-    facts.clear();
     facts.add(make_shared<multi_resolver>());
+    ASSERT_EQ(2u, facts.size());
     ASSERT_FALSE(facts.empty());
-    ASSERT_FALSE(facts.resolved());
-    facts.resolve({ "bar" });
-    ASSERT_TRUE(facts.resolved());
+    facts.filter({ "bar" });
     ASSERT_EQ(1u, facts.size());
     ASSERT_EQ(nullptr, facts.get<string_value>("foo"));
     ASSERT_EQ("foo", facts.get<string_value>("bar")->value());
@@ -86,17 +77,15 @@ TEST(facter_facts_collection, resolve_specific) {
 
 TEST(facter_facts_collection, resolve_external) {
     collection facts;
-    facts.clear();
+    ASSERT_EQ(0u, facts.size());
     ASSERT_TRUE(facts.empty());
-    ASSERT_TRUE(facts.resolved());
-    facts.resolve_external({
+    facts.add_external_facts({
         LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/yaml",
         LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json",
         LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/text",
         LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution",
     });
     ASSERT_FALSE(facts.empty());
-    ASSERT_TRUE(facts.resolved());
     ASSERT_EQ(20u, facts.size());
     ASSERT_NE(nullptr, facts.get<string_value>("yaml_fact1"));
     ASSERT_NE(nullptr, facts.get<integer_value>("yaml_fact2"));
@@ -124,12 +113,10 @@ TEST(facter_facts_collection, resolve_external) {
 
 TEST(facter_facts_collection, each) {
     collection facts;
-    facts.clear();
     facts.add(make_shared<multi_resolver>());
     size_t count = 0;
     bool failed_foo = true;
     bool failed_bar = true;
-    facts.resolve();
     facts.each([&](string const& name, value const* val) {
         auto string_val = dynamic_cast<string_value const*>(val);
         if (string_val) {
@@ -149,9 +136,7 @@ TEST(facter_facts_collection, each) {
 
 TEST(facter_facts_collection, write_json) {
     collection facts;
-    facts.clear();
     facts.add(make_shared<multi_resolver>());
-    facts.resolve();
     ostringstream ss;
     facts.write(ss, format::json);
     ASSERT_EQ("{\n  \"bar\": \"foo\",\n  \"foo\": \"bar\"\n}", ss.str());
@@ -159,9 +144,7 @@ TEST(facter_facts_collection, write_json) {
 
 TEST(facter_facts_collection, write_yaml) {
     collection facts;
-    facts.clear();
     facts.add(make_shared<multi_resolver>());
-    facts.resolve();
     ostringstream ss;
     facts.write(ss, format::yaml);
     ASSERT_EQ("bar: \"foo\"\nfoo: \"bar\"", ss.str());
@@ -169,9 +152,7 @@ TEST(facter_facts_collection, write_yaml) {
 
 TEST(facter_facts_collection, write_hash) {
     collection facts;
-    facts.clear();
     facts.add(make_shared<multi_resolver>());
-    facts.resolve();
     ostringstream ss;
     facts.write(ss, format::hash);
     ASSERT_EQ("bar => foo\nfoo => bar", ss.str());
@@ -179,9 +160,7 @@ TEST(facter_facts_collection, write_hash) {
 
 TEST(facter_facts_collection, insertion_operator_simple) {
     collection facts;
-    facts.clear();
     facts.add(make_shared<simple_resolver>());
-    facts.resolve();
     ostringstream ss;
     facts.write(ss);
     ASSERT_EQ("bar", ss.str());

@@ -66,17 +66,12 @@ namespace facter { namespace facts {
         return _names;
     }
 
-    void resolver::resolve(collection& facts)
+    bool resolver::has_patterns() const
     {
-        LOG_DEBUG("resolving %1% facts.", _name);
-        if (_resolving) {
-            throw circular_resolution_exception("a cycle in fact resolution was detected.");
-        }
-        cycle_guard guard(_resolving);
-        return resolve_facts(facts);
+        return _regexes.size() > 0;
     }
 
-    bool resolver::can_resolve(string const& name) const
+    bool resolver::is_match(string const& name) const
     {
         // Check to see if any of our regexes match
         for (auto const& regex : _regexes) {
@@ -85,6 +80,16 @@ namespace facter { namespace facts {
             }
         }
         return false;
+    }
+
+    void resolver::resolve(collection& facts)
+    {
+        LOG_DEBUG("resolving %1% facts.", _name);
+        if (_resolving) {
+            throw circular_resolution_exception("a cycle in fact resolution was detected.");
+        }
+        cycle_guard guard(_resolving);
+        return resolve_facts(facts);
     }
 
 }}  // namespace facter::facts

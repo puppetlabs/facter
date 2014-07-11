@@ -5,6 +5,9 @@
 #ifndef FACTER_FACTS_COLLECTION_HPP_
 #define FACTER_FACTS_COLLECTION_HPP_
 
+#include "resolver.hpp"
+#include "value.hpp"
+#include "external/resolver.hpp"
 #include <list>
 #include <map>
 #include <set>
@@ -16,22 +19,6 @@
 #include <iostream>
 
 namespace facter { namespace facts {
-
-    // Forward declare the value and resolver types
-    struct value;
-    struct resolver;
-
-    /**
-     * Thrown when a fact already has an associated resolver.
-     */
-    struct resolver_exists_exception : std::runtime_error
-    {
-        /**
-         * Constructs a resolver_exists_exception.
-         * @param message The exception message.
-         */
-        explicit resolver_exists_exception(std::string const& message);
-    };
 
     /**
      * The supported output format for the fact collection.
@@ -64,12 +51,39 @@ namespace facter { namespace facts {
         collection();
 
         /**
-         * Destructor for collection.
+         * Destructor for fact collection.
          */
         ~collection();
 
         /**
+         * Prevents the fact collection from being copied.
+         */
+        collection(collection const&) = delete;
+        /**
+         * Prevents the fact collection from being copied.
+         * @returns Returns this fact collection.
+         */
+        collection& operator=(collection const&) = delete;
+        /**
+         * Moves the given fact collection into this fact collection.
+         * @param other The fact collection to move into this fact collection.
+         */
+        collection(collection&& other) = default;
+        /**
+         * Moves the given fact collection into this fact collection.
+         * @param other The fact collection to move into this fact collection.
+         * @return Returns this fact collection.
+         */
+        collection& operator=(collection&& other) = default;
+
+        /**
+         * Adds the default facts to the collection.
+         */
+        void add_default_facts();
+
+        /**
          * Adds a resolver to the fact collection.
+         * The last resolver that was added for a particular name or pattern will "win" resolution.
          * @param res The resolver to add to the fact collection.
          */
         void add(std::shared_ptr<resolver> const& res);
@@ -80,6 +94,20 @@ namespace facter { namespace facts {
          * @param value The value of the fact.
          */
         void add(std::string&& name, std::unique_ptr<value>&& value);
+
+        /**
+         * Adds external facts to the fact collection.
+         * If external facts are present, all facts will be resolved prior to adding the external facts.
+         * @param directories The directories to search for external facts.  If empty, the default search paths will be used.
+         */
+        void add_external_facts(std::vector<std::string> const& directories = {});
+
+        /**
+         * Adds custom (Ruby) facts to the fact collection.
+         * If custom facts are present, all facts will be resolved prior to adding the custom facts.
+         * @param directories The directories to search for custom facts.  If empty, the default search paths will be used.
+         */
+        void add_custom_facts(std::vector<std::string> const& directories);
 
         /**
          * Removes a resolver from the fact collection.
@@ -101,35 +129,24 @@ namespace facter { namespace facts {
 
         /**
          * Checks to see if the fact collection is empty.
+         * All facts will be resolved to determine if the collection is empty.
          * @return Returns true if the fact collection is empty or false if it is not.
          */
-        bool empty() const;
+        bool empty();
 
         /**
-         * Checks to see if the fact collection has been resolved.
-         * @return Returns true if all fact resolvers have been resolved or false if at least one fact resolver remains unresolved.
+         * Gets the count of facts in the fact collection.
+         * All facts will be resolved to determine the size of the collection.
+         * @return Returns the number of facts in the fact collection.
          */
-        bool resolved() const;
+        size_t size();
 
         /**
-         * Gets the size of the fact collection.
-         * @return Returns the number of resolved top-level facts in the fact collection.
+         * Filters the collection to contain only facts with the given names.
+         * @param names The names of the facts to filter the collection by.
+         * @param add True if an empty string fact should be added for any missing facts in the set or false if not.
          */
-        size_t size() const;
-
-        /**
-         * Resolves all facts.
-         * This forces each resolver in the fact collection to resolve.
-         * @param facts The set of fact names to filter the resolution to.  If empty, all facts will be resolved.
-         */
-        void resolve(std::set<std::string> const& facts = std::set<std::string>());
-
-        /**
-        * Resolves all external facts into the fact collection.
-        * @param directories The directories to search for external facts.
-        * @param facts The set of fact names to filter the resolution to.  If empty, all external facts will be resolved.
-        */
-        void resolve_external(std::vector<std::string> const& directories = {}, std::set<std::string> const& facts = std::set<std::string>());
+        void filter(std::set<std::string> names, bool add = true);
 
         /**
          * Gets a fact value by name.
@@ -152,29 +169,38 @@ namespace facter { namespace facts {
         value const* operator[](std::string const& name);
 
         /**
-         * Enumerates all facts in the fact collection.
-         * @param func The callback function called for each fact in the fact collection.
+         * Enumerates all facts in the collection.
+         * All facts will be resolved prior to enumeration.
+         * @param func The callback function called for each fact in the collection.
          */
-        void each(std::function<bool(std::string const&, value const*)> func) const;
+        void each(std::function<bool(std::string const&, value const*)> func);
 
         /**
          * Writes the contents of the fact collection to the given stream.
+         * All facts will be resolved prior to writing.
          * @param stream The stream to write the facts to.
          * @param fmt The output format to use.
          * @return Returns the stream being written to.
          */
-        std::ostream& write(std::ostream& stream, format fmt = format::hash) const;
+        std::ostream& write(std::ostream& stream, format fmt = format::hash);
 
      private:
-        std::shared_ptr<resolver> find_resolver(std::string const& name);
+        void resolve_facts();
+        void resolve_fact(std::string const& name);
         value const* get_value(std::string const& name, bool resolve);
         void write_hash(std::ostream& stream) const;
         void write_json(std::ostream& stream) const;
         void write_yaml(std::ostream& stream) const;
 
+        // Platform specific members
+        void add_platform_facts();
+        std::vector<std::string> get_external_fact_directories();
+        std::vector<std::unique_ptr<external::resolver>> get_external_resolvers();
+
         std::map<std::string, std::unique_ptr<value>> _facts;
         std::list<std::shared_ptr<resolver>> _resolvers;
-        std::map<std::string, std::shared_ptr<resolver>> _resolver_map;
+        std::multimap<std::string, std::shared_ptr<resolver>> _resolver_map;
+        std::list<std::shared_ptr<resolver>> _pattern_resolvers;
     };
 
 }}  // namespace facter::facts
