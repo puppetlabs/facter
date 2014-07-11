@@ -28,6 +28,7 @@ module Facter::Util::Uptime
   end
 
   def self.uptime_sysctl
+    require 'facter/util/posix'
     output = Facter::Util::POSIX.sysctl(uptime_sysctl_variable)
     if output
       compute_uptime(Time.at(output.match(/\d+/)[0].to_i))
