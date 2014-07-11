@@ -22,6 +22,7 @@ module HarnessOptions
     :timesync => false,
     :repo_proxy => true,
     :add_el_extras => true,
+    :preserve_hosts => 'onfail',
   }
 
   class Aggregator
