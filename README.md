@@ -167,12 +167,12 @@ This section assumes that cfacter has been installed into the system.
 
 Here's a simple example of using the C++11 API to output all facts as YAML.
 
-    #include <iostream>
     #include <facter/facts/collection.hpp>
     #include <log4cxx/logger.h>
     #include <log4cxx/propertyconfigurator.h>
     #include <log4cxx/patternlayout.h>
     #include <log4cxx/consoleappender.h>
+    #include <iostream>
 
     using namespace std;
     using namespace facter::facts;
@@ -191,10 +191,10 @@ Here's a simple example of using the C++11 API to output all facts as YAML.
     {
         configure_logging();
 
-        // Create a fact collection, resolve it, and write it to cout
+        // Create a fact collection and write the collection out
         collection facts;
-        facts.resolve();
-        facts.resolve_external();
+        facts.add_default_facts();
+        facts.add_external_facts();
         facts.write(cout, format::yaml);
         cout << endl;
     }
