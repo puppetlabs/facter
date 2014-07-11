@@ -16,7 +16,7 @@ module HarnessOptions
     :color => false,
     :root_keys => true,
     :ssh => {
-      :keys => ["id_rsa-acceptance"],
+      :keys => ["~/.ssh/id_rsa-acceptance"],
     },
     :xml => true,
     :timesync => false,
