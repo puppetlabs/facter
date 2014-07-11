@@ -1,5 +1,5 @@
 #include <facter/facts/linux/selinux_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/file.hpp>
@@ -11,7 +11,7 @@ using namespace facter::util;
 namespace facter { namespace facts { namespace linux {
 
     selinux_resolver::selinux_resolver() :
-        fact_resolver(
+        resolver(
             "selinux",
             {
                 fact::selinux,
@@ -24,13 +24,13 @@ namespace facter { namespace facts { namespace linux {
     {
     }
 
-    void selinux_resolver::resolve_facts(fact_map& facts)
+    void selinux_resolver::resolve_facts(collection& facts)
     {
         resolve_selinux_fs_facts(facts);
         resolve_selinux_config_facts(facts);
     }
 
-    void selinux_resolver::resolve_selinux_fs_facts(fact_map& facts)
+    void selinux_resolver::resolve_selinux_fs_facts(collection& facts)
     {
         string selinux_mount;
         if (get_selinux_mountpoint(selinux_mount)) {
@@ -43,7 +43,7 @@ namespace facter { namespace facts { namespace linux {
         }
     }
 
-    void selinux_resolver::resolve_selinux_enforce(fact_map& facts, string const& mount)
+    void selinux_resolver::resolve_selinux_enforce(collection& facts, string const& mount)
     {
         string path = mount + "/enforce";
         string buffer = file::read(path);
@@ -61,7 +61,7 @@ namespace facter { namespace facts { namespace linux {
         }
     }
 
-    void selinux_resolver::resolve_selinux_policyvers(fact_map& facts, string const& mount)
+    void selinux_resolver::resolve_selinux_policyvers(collection& facts, string const& mount)
     {
         string path = mount + "/policyvers";
         string buffer = file::read(path);
@@ -73,7 +73,7 @@ namespace facter { namespace facts { namespace linux {
         facts.add(fact::selinux_policyversion, make_value<string_value>(move(buffer)));
     }
 
-    void selinux_resolver::resolve_selinux_config_facts(fact_map& facts)
+    void selinux_resolver::resolve_selinux_config_facts(collection& facts)
     {
         string buffer = file::read("/etc/selinux/config");
 

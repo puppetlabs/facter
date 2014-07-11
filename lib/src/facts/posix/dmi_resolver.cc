@@ -6,7 +6,7 @@ using namespace std;
 namespace facter { namespace facts { namespace posix {
 
     dmi_resolver::dmi_resolver() :
-        fact_resolver(
+        resolver(
             "desktop management information",
             {
                 fact::bios_vendor,

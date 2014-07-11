@@ -17,10 +17,10 @@ namespace facter { namespace facts { namespace osx {
      protected:
         /**
          * Gets the name of the hypervisor.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          * @return Returns the name of the hypervisor or empty string if no hypervisor.
          */
-        virtual std::string get_hypervisor(fact_map& facts);
+        virtual std::string get_hypervisor(collection& facts);
     };
 
 }}}  // namespace facter::facts::osx

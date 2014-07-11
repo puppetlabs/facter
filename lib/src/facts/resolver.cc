@@ -1,5 +1,5 @@
-#include <facter/facts/fact_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/resolver.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/logging/logging.hpp>
 #include <re2/re2.h>
 
@@ -37,7 +37,7 @@ namespace facter { namespace facts {
     {
     }
 
-    fact_resolver::fact_resolver(string&& name, vector<string>&& names, vector<string> const& patterns) :
+    resolver::resolver(string&& name, vector<string>&& names, vector<string> const& patterns) :
         _name(move(name)),
         _names(move(names)),
         _resolving(false)
@@ -51,32 +51,27 @@ namespace facter { namespace facts {
         }
     }
 
-    fact_resolver::~fact_resolver()
+    resolver::~resolver()
     {
         // This needs to be defined here since we use incomplete types in the header
     }
 
-    string const& fact_resolver::name() const
+    string const& resolver::name() const
     {
         return _name;
     }
 
-    vector<string> const& fact_resolver::names() const
+    vector<string> const& resolver::names() const
     {
         return _names;
     }
 
-    void fact_resolver::resolve(fact_map& facts)
+    bool resolver::has_patterns() const
     {
-        LOG_DEBUG("resolving %1% facts.", _name);
-        if (_resolving) {
-            throw circular_resolution_exception("a cycle in fact resolution was detected.");
-        }
-        cycle_guard guard(_resolving);
-        return resolve_facts(facts);
+        return _regexes.size() > 0;
     }
 
-    bool fact_resolver::can_resolve(string const& name) const
+    bool resolver::is_match(string const& name) const
     {
         // Check to see if any of our regexes match
         for (auto const& regex : _regexes) {
@@ -85,6 +80,16 @@ namespace facter { namespace facts {
             }
         }
         return false;
+    }
+
+    void resolver::resolve(collection& facts)
+    {
+        LOG_DEBUG("resolving %1% facts.", _name);
+        if (_resolving) {
+            throw circular_resolution_exception("a cycle in fact resolution was detected.");
+        }
+        cycle_guard guard(_resolving);
+        return resolve_facts(facts);
     }
 
 }}  // namespace facter::facts

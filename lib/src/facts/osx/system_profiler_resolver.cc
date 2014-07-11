@@ -1,5 +1,5 @@
 #include <facter/facts/osx/system_profiler_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
@@ -15,7 +15,7 @@ using namespace facter::execution;
 namespace facter { namespace facts { namespace osx {
 
     system_profiler_resolver::system_profiler_resolver() :
-        fact_resolver(
+        resolver(
             "system profiler",
             {
                 fact::sp_boot_mode,
@@ -43,7 +43,7 @@ namespace facter { namespace facts { namespace osx {
     {
     }
 
-    void system_profiler_resolver::resolve_facts(fact_map& facts)
+    void system_profiler_resolver::resolve_facts(collection& facts)
     {
         static map<string, string> fact_names = {
             { "Boot Mode",              string(fact::sp_boot_mode) },

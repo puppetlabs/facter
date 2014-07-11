@@ -5,7 +5,7 @@
 #ifndef FACTER_FACTS_POSIX_UPTIME_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_UPTIME_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 #include <string>
 
 namespace facter { namespace facts { namespace posix {
@@ -13,7 +13,7 @@ namespace facter { namespace facts { namespace posix {
     /**
      * Responsible for resolving uptime facts.
      */
-    struct uptime_resolver : fact_resolver
+    struct uptime_resolver : resolver
     {
         /**
          * Constructs the uptime_resolver.
@@ -31,29 +31,29 @@ namespace facter { namespace facts { namespace posix {
      protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(fact_map& facts);
+        virtual void resolve_facts(collection& facts);
         /**
          * Called to resolve the uptime fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_uptime(fact_map& facts);
+        virtual void resolve_uptime(collection& facts);
         /**
          * Called to resolve the uptime days fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_uptime_days(fact_map& facts);
+        virtual void resolve_uptime_days(collection& facts);
         /**
          * Called to resolve the uptime hours fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_uptime_hours(fact_map& facts);
+        virtual void resolve_uptime_hours(collection& facts);
         /**
          * Called to resolve the uptime seconds fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_uptime_seconds(fact_map& facts);
+        virtual void resolve_uptime_seconds(collection& facts);
 
      private:
         int executable_uptime();

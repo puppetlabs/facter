@@ -1,5 +1,5 @@
 #include <facter/facts/linux/dmi_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
@@ -19,7 +19,7 @@ LOG_DECLARE_NAMESPACE("facts.osx.dmi");
 
 namespace facter { namespace facts { namespace linux {
 
-    void dmi_resolver::resolve_facts(fact_map& facts)
+    void dmi_resolver::resolve_facts(collection& facts)
     {
         static vector<tuple<string, string>> const dmi_files {
             make_tuple(string(fact::bios_vendor),           "/sys/class/dmi/id/bios_vendor"),

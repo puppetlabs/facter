@@ -1,7 +1,7 @@
 #include <facter/facts/osx/processor_resolver.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -14,7 +14,7 @@ LOG_DECLARE_NAMESPACE("facts.osx.processor");
 
 namespace facter { namespace facts { namespace osx {
 
-    void processor_resolver::resolve_processors(fact_map& facts)
+    void processor_resolver::resolve_processors(collection& facts)
     {
         // Get the logical count of processors
         int logical_count = 0;

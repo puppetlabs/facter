@@ -1,5 +1,5 @@
 #include <facter/facts/linux/lsb_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
@@ -13,7 +13,7 @@ using namespace facter::execution;
 namespace facter { namespace facts { namespace linux {
 
     lsb_resolver::lsb_resolver() :
-        fact_resolver(
+        resolver(
             "Linux Standard Base",
             {
                 fact::lsb_dist_id,
@@ -27,7 +27,7 @@ namespace facter { namespace facts { namespace linux {
     {
     }
 
-    void lsb_resolver::resolve_facts(fact_map& facts)
+    void lsb_resolver::resolve_facts(collection& facts)
     {
         // Resolve all lsb-related facts
         resolve_dist_id(facts);
@@ -38,7 +38,7 @@ namespace facter { namespace facts { namespace linux {
         resolve_release(facts);
     }
 
-    void lsb_resolver::resolve_dist_id(fact_map& facts)
+    void lsb_resolver::resolve_dist_id(collection& facts)
     {
         string value = execute("lsb_release", {"-i", "-s"});
         if (value.empty()) {
@@ -47,7 +47,7 @@ namespace facter { namespace facts { namespace linux {
         facts.add(fact::lsb_dist_id, make_value<string_value>(move(value)));
     }
 
-    void lsb_resolver::resolve_dist_release(fact_map& facts)
+    void lsb_resolver::resolve_dist_release(collection& facts)
     {
         string value = execute("lsb_release", {"-r", "-s"});
         if (value.empty()) {
@@ -56,7 +56,7 @@ namespace facter { namespace facts { namespace linux {
         facts.add(fact::lsb_dist_release, make_value<string_value>(move(value)));
     }
 
-    void lsb_resolver::resolve_dist_codename(fact_map& facts)
+    void lsb_resolver::resolve_dist_codename(collection& facts)
     {
         string value = execute("lsb_release", {"-c", "-s"});
         if (value.empty()) {
@@ -65,7 +65,7 @@ namespace facter { namespace facts { namespace linux {
         facts.add(fact::lsb_dist_codename, make_value<string_value>(move(value)));
     }
 
-    void lsb_resolver::resolve_dist_description(fact_map& facts)
+    void lsb_resolver::resolve_dist_description(collection& facts)
     {
         string value = execute("lsb_release", {"-d", "-s"});
         if (value.empty()) {
@@ -76,7 +76,7 @@ namespace facter { namespace facts { namespace linux {
         facts.add(fact::lsb_dist_description, make_value<string_value>(trim(move(value), { '\"' })));
     }
 
-    void lsb_resolver::resolve_dist_version(fact_map& facts)
+    void lsb_resolver::resolve_dist_version(collection& facts)
     {
         auto dist_release = facts.get<string_value>(fact::lsb_dist_release, false);
         if (!dist_release) {
@@ -94,7 +94,7 @@ namespace facter { namespace facts { namespace linux {
         }
     }
 
-    void lsb_resolver::resolve_release(fact_map& facts)
+    void lsb_resolver::resolve_release(collection& facts)
     {
         string value = execute("lsb_release", {"-v", "-s"});
         if (value.empty()) {

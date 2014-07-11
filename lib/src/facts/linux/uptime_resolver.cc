@@ -1,12 +1,12 @@
 #include <facter/facts/linux/uptime_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <sys/sysinfo.h>
 
 namespace facter { namespace facts { namespace linux {
 
-    void uptime_resolver::resolve_uptime_seconds(fact_map& facts)
+    void uptime_resolver::resolve_uptime_seconds(collection& facts)
     {
         struct sysinfo info;
         if (sysinfo(&info) == 0) {

@@ -5,14 +5,14 @@
 #ifndef FACTER_FACTS_LINUX_BLOCK_DEVICE_RESOLVER_HPP_
 #define FACTER_FACTS_LINUX_BLOCK_DEVICE_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 
 namespace facter { namespace facts { namespace linux {
 
     /**
      * Responsible for resolving block device facts.
      */
-    struct block_device_resolver : fact_resolver
+    struct block_device_resolver : resolver
     {
         /**
          * Constructs the block_device_resolver.
@@ -22,9 +22,9 @@ namespace facter { namespace facts { namespace linux {
      protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(fact_map& facts);
+        virtual void resolve_facts(collection& facts);
     };
 
 }}}  // namespace facter::facts::linux

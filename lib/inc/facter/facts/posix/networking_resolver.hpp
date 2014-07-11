@@ -5,7 +5,7 @@
 #ifndef FACTER_FACTS_POSIX_NETWORKING_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_NETWORKING_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 #include <string>
 #include <sys/socket.h>
 
@@ -14,7 +14,7 @@ namespace facter { namespace facts { namespace posix {
     /**
      * Responsible for resolving networking facts.
      */
-    struct networking_resolver : fact_resolver
+    struct networking_resolver : resolver
     {
         /**
          * Constructs the networking_resolver.
@@ -61,27 +61,27 @@ namespace facter { namespace facts { namespace posix {
 
         /**
          * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(fact_map& facts);
+        virtual void resolve_facts(collection& facts);
 
         /**
          * Called to resolve the hostname fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_hostname(fact_map& facts);
+        virtual void resolve_hostname(collection& facts);
 
         /**
          * Called to resolve the domain and fqdn facts.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_domain(fact_map& facts);
+        virtual void resolve_domain(collection& facts);
 
         /**
          * Called to resolve interface facts.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_interface_facts(fact_map& facts) = 0;
+        virtual void resolve_interface_facts(collection& facts) = 0;
     };
 
 }}}  // namespace facter::facts::posix

@@ -1,5 +1,5 @@
 #include <facter/facts/posix/virtualization_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <set>
@@ -12,7 +12,7 @@ using namespace facter::facts;
 namespace facter { namespace facts { namespace posix {
 
     virtualization_resolver::virtualization_resolver() :
-        fact_resolver(
+        resolver(
             "virtualization",
             {
                 fact::virtualization,
@@ -21,7 +21,7 @@ namespace facter { namespace facts { namespace posix {
     {
     }
 
-    void virtualization_resolver::resolve_facts(fact_map& facts)
+    void virtualization_resolver::resolve_facts(collection& facts)
     {
         string hypervisor = get_hypervisor(facts);
         if (hypervisor.empty()) {

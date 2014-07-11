@@ -15,12 +15,18 @@ namespace facter { namespace facts { namespace external {
     struct yaml_resolver : resolver
     {
         /**
+         * Determines if the resolver can resolve the facts from the given file.
+         * @param path The path to the file to resolve facts from.
+         * @return Returns true if the resolver can resolve the facts in the given file or false if it cannot.
+         */
+        virtual bool can_resolve(std::string const& path) const;
+
+        /**
          * Resolves facts from the given file.
          * @param path The path to the file to resolve facts from.
-         * @param facts The fact map to populate the external facts into.
-         * @return Returns true if the facts were resolved or false if the given file is not supported.
+         * @param facts The fact collection to populate the external facts into.
          */
-        virtual bool resolve(std::string const& path, fact_map& facts) const;
+        virtual void resolve(std::string const& path, collection& facts) const;
     };
 
 }}}  // namespace facter::facts::external

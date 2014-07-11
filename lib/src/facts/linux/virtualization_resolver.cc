@@ -1,6 +1,6 @@
 #include <facter/facts/linux/virtualization_resolver.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/virtual_machine.hpp>
 #include <facter/execution/execution.hpp>
@@ -19,7 +19,7 @@ namespace bs = boost::system;
 
 namespace facter { namespace facts { namespace linux {
 
-    string virtualization_resolver::get_hypervisor(fact_map& facts)
+    string virtualization_resolver::get_hypervisor(collection& facts)
     {
         // First check for Docker/LXC
         string value = get_cgroup_vm();
@@ -84,7 +84,7 @@ namespace facter { namespace facts { namespace linux {
         return value;
     }
 
-    string virtualization_resolver::get_gce_vm(fact_map& facts)
+    string virtualization_resolver::get_gce_vm(collection& facts)
     {
         auto vendor = facts.get<string_value>(fact::bios_vendor);
         if (vendor && vendor->value().find("Google") != string::npos) {
@@ -209,7 +209,7 @@ namespace facter { namespace facts { namespace linux {
         return {};
     }
 
-    string virtualization_resolver::get_product_name_vm(fact_map& facts)
+    string virtualization_resolver::get_product_name_vm(collection& facts)
     {
         static vector<tuple<string, string>> vms = {
             make_tuple("VMware",            string(vm::vmware)),

@@ -17,14 +17,14 @@ namespace facter { namespace facts { namespace linux {
      protected:
         /**
          * Called to resolve the hardware architecture fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_architecture(fact_map& facts);
+        virtual void resolve_architecture(collection& facts);
         /**
          * Called to resolve processor count, physical processor count, and description facts.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_processors(fact_map& facts);
+        virtual void resolve_processors(collection& facts);
     };
 
 }}}  // namespace facter::facts::linux

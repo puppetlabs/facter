@@ -1,6 +1,6 @@
 #include <facter/facts/posix/networking_resolver.hpp>
 #include <facter/facts/fact.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/posix/scoped_addrinfo.hpp>
@@ -20,14 +20,13 @@
 using namespace std;
 using namespace facter::util;
 using namespace facter::util::posix;
-using boost::format;
 
 LOG_DECLARE_NAMESPACE("facts.posix.networking");
 
 namespace facter { namespace facts { namespace posix {
 
     networking_resolver::networking_resolver() :
-        fact_resolver(
+        resolver(
             "networking",
             {
                 fact::hostname,
@@ -56,14 +55,14 @@ namespace facter { namespace facts { namespace posix {
     {
     }
 
-    void networking_resolver::resolve_facts(fact_map& facts)
+    void networking_resolver::resolve_facts(collection& facts)
     {
         resolve_hostname(facts);
         resolve_domain(facts);
         resolve_interface_facts(facts);
     }
 
-    void networking_resolver::resolve_hostname(fact_map& facts)
+    void networking_resolver::resolve_hostname(collection& facts)
     {
         int max = sysconf(_SC_HOST_NAME_MAX);
         vector<char> name(max);
@@ -85,7 +84,7 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::hostname, make_value<string_value>(move(value)));
     }
 
-    void networking_resolver::resolve_domain(fact_map& facts)
+    void networking_resolver::resolve_domain(collection& facts)
     {
         string fqdn;
         string domain;
@@ -207,7 +206,7 @@ namespace facter { namespace facts { namespace posix {
             return {};
         }
 
-        return (format("%02x:%02x:%02x:%02x:%02x:%02x") %
+        return (boost::format("%02x:%02x:%02x:%02x:%02x:%02x") %
                 static_cast<int>(bytes[0]) % static_cast<int>(bytes[1]) %
                 static_cast<int>(bytes[2]) % static_cast<int>(bytes[3]) %
                 static_cast<int>(bytes[4]) % static_cast<int>(bytes[5])).str();

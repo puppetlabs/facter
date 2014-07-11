@@ -165,14 +165,14 @@ Using The C++11 API
 
 This section assumes that cfacter has been installed into the system.
 
-Here's a simple example of using the C++11 API to output all facts.
+Here's a simple example of using the C++11 API to output all facts as YAML.
 
-    #include <iostream>
-    #include <facter/facts/fact_map.hpp>
+    #include <facter/facts/collection.hpp>
     #include <log4cxx/logger.h>
     #include <log4cxx/propertyconfigurator.h>
     #include <log4cxx/patternlayout.h>
     #include <log4cxx/consoleappender.h>
+    #include <iostream>
 
     using namespace std;
     using namespace facter::facts;
@@ -180,6 +180,7 @@ Here's a simple example of using the C++11 API to output all facts.
 
     void configure_logging()
     {
+        // By default, only log warnings and errors
         LayoutPtr layout = new PatternLayout("%d %-5p %c - %m%n");
         AppenderPtr appender = new ConsoleAppender(layout, "System.err");
         Logger::getRootLogger()->addAppender(appender);
@@ -190,10 +191,12 @@ Here's a simple example of using the C++11 API to output all facts.
     {
         configure_logging();
 
-        fact_map facts;
-        facts.resolve();
-        facts.resolve_external();
-        cout << facts << endl;
+        // Create a fact collection and write the collection out
+        collection facts;
+        facts.add_default_facts();
+        facts.add_external_facts();
+        facts.write(cout, format::yaml);
+        cout << endl;
     }
 
 To build the above, link with libfacter:

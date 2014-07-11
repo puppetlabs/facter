@@ -1,5 +1,5 @@
 #include <facter/facts/posix/processor_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
@@ -15,7 +15,7 @@ LOG_DECLARE_NAMESPACE("facts.posix.processor");
 namespace facter { namespace facts { namespace posix {
 
     processor_resolver::processor_resolver() :
-        fact_resolver(
+        resolver(
             "processor",
             {
                 fact::processor_count,
@@ -29,7 +29,7 @@ namespace facter { namespace facts { namespace posix {
     {
     }
 
-    void processor_resolver::resolve_facts(fact_map& facts)
+    void processor_resolver::resolve_facts(collection& facts)
     {
         // Resolve the hardware related facts
         utsname name;
@@ -48,7 +48,7 @@ namespace facter { namespace facts { namespace posix {
         resolve_processors(facts);
     }
 
-    void processor_resolver::resolve_hardware_isa(fact_map& facts, utsname const& name)
+    void processor_resolver::resolve_hardware_isa(collection& facts, utsname const& name)
     {
         // The utsname struct doesn't have a member for "uname -p", so we need to execute
         string value = execute("uname", { "-p" });
@@ -58,7 +58,7 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::hardware_isa, make_value<string_value>(move(value)));
     }
 
-    void processor_resolver::resolve_hardware_model(fact_map& facts, utsname const& name)
+    void processor_resolver::resolve_hardware_model(collection& facts, utsname const& name)
     {
         // There is a corresponding field for "uname -m", so use it
         string value = name.machine;
@@ -68,7 +68,7 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::hardware_model, make_value<string_value>(move(value)));
     }
 
-    void processor_resolver::resolve_architecture(fact_map& facts)
+    void processor_resolver::resolve_architecture(collection& facts)
     {
         // By default, use the hardware model
         auto model = facts.get<string_value>(fact::hardware_model, false);

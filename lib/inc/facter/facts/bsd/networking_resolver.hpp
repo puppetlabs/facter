@@ -22,9 +22,9 @@ namespace facter { namespace facts { namespace bsd {
      protected:
         /**
          * Called to resolve interface facts.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_interface_facts(fact_map& facts);
+        virtual void resolve_interface_facts(collection& facts);
 
         /**
          * Resolves the address fact for the given interface.
@@ -32,7 +32,7 @@ namespace facter { namespace facts { namespace bsd {
          * @param addr The interface address.
          * @param primary True if the interface is considered to be the primary interface or false if not.
          */
-        virtual void resolve_address(fact_map& facts, ifaddrs const* addr, bool primary);
+        virtual void resolve_address(collection& facts, ifaddrs const* addr, bool primary);
 
         /**
          * Resolves the network fact for the given interface.
@@ -40,14 +40,14 @@ namespace facter { namespace facts { namespace bsd {
          * @param addr The interface address.
          * @param primary True if the interface is considered to be the primary interface or false if not.
          */
-        virtual void resolve_network(fact_map& facts, ifaddrs const* addr, bool primary);
+        virtual void resolve_network(collection& facts, ifaddrs const* addr, bool primary);
 
         /**
          * Resolves the MTU fact for the given interface.
          * @param facts The facts map to add the fact to.
          * @param addr The interface address.
          */
-        virtual void resolve_mtu(fact_map& facts, ifaddrs const* addr);
+        virtual void resolve_mtu(collection& facts, ifaddrs const* addr);
 
         /**
          * Gets the primary interface.

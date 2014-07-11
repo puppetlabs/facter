@@ -1,5 +1,5 @@
 #include <facter/facts/external/json_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -23,7 +23,7 @@ namespace facter { namespace facts { namespace external {
     // Helper event handler for parsing JSON data
     struct json_event_handler
     {
-        explicit json_event_handler(fact_map& facts) :
+        explicit json_event_handler(collection& facts) :
             _initialized(false),
             _facts(facts)
         {
@@ -164,18 +164,18 @@ namespace facter { namespace facts { namespace external {
         }
 
         bool _initialized;
-        fact_map& _facts;
+        collection& _facts;
         string _key;
         stack<tuple<string, unique_ptr<value>>> _stack;
     };
 
-    bool json_resolver::resolve(string const& path, fact_map& facts) const
+    bool json_resolver::can_resolve(string const& path) const
     {
-        string full_path = path;
-        if (!ends_with(to_lower(full_path), ".json")) {
-            return false;
-        }
+        return ends_with(to_lower(string(path)), ".json");
+    }
 
+    void json_resolver::resolve(string const& path, collection& facts) const
+    {
         LOG_DEBUG("resolving facts from JSON file \"%1%\".", path);
 
         // Open the file
@@ -197,7 +197,6 @@ namespace facter { namespace facts { namespace external {
         }
 
         LOG_DEBUG("completed resolving facts from JSON file \"%1%\".", path);
-        return true;
     }
 
 }}}  // namespace facter::facts::external

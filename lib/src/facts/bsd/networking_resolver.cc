@@ -1,5 +1,5 @@
 #include <facter/facts/bsd/networking_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
@@ -34,7 +34,7 @@ namespace facter { namespace facts { namespace bsd {
         "/var/db"
     };
 
-    void networking_resolver::resolve_interface_facts(fact_map& facts)
+    void networking_resolver::resolve_interface_facts(collection& facts)
     {
         // Scope the head ifaddrs ptr
         scoped_ifaddrs addrs;
@@ -145,7 +145,7 @@ namespace facter { namespace facts { namespace bsd {
         facts.add(fact::interfaces, make_value<string_value>(move(value)));
     }
 
-    void networking_resolver::resolve_address(fact_map& facts, ifaddrs const* addr, bool primary)
+    void networking_resolver::resolve_address(collection& facts, ifaddrs const* addr, bool primary)
     {
         string factname;
 
@@ -179,7 +179,7 @@ namespace facter { namespace facts { namespace bsd {
         facts.add(move(interface_factname), make_value<string_value>(move(address)));
     }
 
-    void networking_resolver::resolve_network(fact_map& facts, ifaddrs const* addr, bool primary)
+    void networking_resolver::resolve_network(collection& facts, ifaddrs const* addr, bool primary)
     {
         // Limit these facts to IPv4 and IPv6 with a netmask address
         if ((addr->ifa_addr->sa_family != AF_INET &&
@@ -215,7 +215,7 @@ namespace facter { namespace facts { namespace bsd {
         facts.add(move(interface_factname), make_value<string_value>(move(network)));
     }
 
-    void networking_resolver::resolve_mtu(fact_map& facts, ifaddrs const* addr)
+    void networking_resolver::resolve_mtu(collection& facts, ifaddrs const* addr)
     {
         // The MTU exists on link addresses
         if (!is_link_address(addr->ifa_addr) || !addr->ifa_data) {

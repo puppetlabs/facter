@@ -1,6 +1,6 @@
 #include <facter/facterlib.h>
 #include <facter/version.h>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/util/string.hpp>
 #include <log4cxx/logger.h>
@@ -13,8 +13,8 @@ using namespace facter::util;
 using namespace facter::facts;
 using namespace log4cxx;
 
-static unique_ptr<fact_map> g_facts;
-static vector<string> g_fact_directories;
+static unique_ptr<collection> g_facts;
+static vector<string> g_custom_directories;
 static vector<string> g_external_directories;
 
 extern "C" {
@@ -35,20 +35,23 @@ extern "C" {
             Logger::getRootLogger()->setLevel(Level::getOff());
         }
 
-        g_facts.reset(new fact_map());
+        g_facts.reset(new collection());
+        g_facts->add_default_facts();
 
-        set<string> requested_facts;
+        // Add the external and custom facts
+        g_facts->add_external_facts(g_external_directories);
+        g_facts->add_custom_facts(g_custom_directories);
+
+        // Filter to just the requested facts
         if (names) {
+            set<string> requested_facts;
             for (auto& name : split(names, ',')) {
                 requested_facts.emplace(trim(to_lower(move(name))));
             }
+            if (!requested_facts.empty()) {
+                g_facts->filter(requested_facts);
+            }
         }
-
-        // Resolve facts
-        g_facts->resolve(requested_facts);
-
-        // Load external facts
-        g_facts->resolve_external(g_external_directories, requested_facts);
     }
 
     void clear_facts()
@@ -96,7 +99,7 @@ extern "C" {
         }
 
         for (auto& directory : split(directories, *separator)) {
-            g_fact_directories.emplace_back(move(directory));
+            g_custom_directories.emplace_back(move(directory));
         }
     }
 
@@ -105,14 +108,14 @@ extern "C" {
         if (!callback) {
             return;
         }
-        for (auto const& directory : g_fact_directories) {
+        for (auto const& directory : g_custom_directories) {
             callback(directory.c_str());
         }
     }
 
     void clear_search_paths()
     {
-        g_fact_directories.clear();
+        g_custom_directories.clear();
     }
 
     void add_external_search_paths(char const* directories, char const* separator)

@@ -1,5 +1,5 @@
 #include <facter/facts/bsd/uptime_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <time.h>
@@ -7,7 +7,7 @@
 
 namespace facter { namespace facts { namespace bsd {
 
-    void uptime_resolver::resolve_uptime_seconds(fact_map& facts)
+    void uptime_resolver::resolve_uptime_seconds(collection& facts)
     {
         // this approach adapted from: http://stackoverflow.com/a/11676260/1004272
         timeval boottime;

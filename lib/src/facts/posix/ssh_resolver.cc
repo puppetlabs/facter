@@ -1,6 +1,6 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #include <facter/facts/posix/ssh_resolver.hpp>
-#include <facter/facts/fact_map.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/file.hpp>
@@ -19,7 +19,6 @@ using namespace facter::util;
 using namespace facter::util::posix;
 using namespace boost::system;
 using namespace boost::filesystem;
-using boost::format;
 namespace bs = boost::system;
 
 LOG_DECLARE_NAMESPACE("facts.posix.ssh");
@@ -27,7 +26,7 @@ LOG_DECLARE_NAMESPACE("facts.posix.ssh");
 namespace facter { namespace facts { namespace posix {
 
     ssh_resolver::ssh_resolver() :
-        fact_resolver(
+        resolver(
             "ssh",
             {
                 fact::ssh_dsa_key,
@@ -42,7 +41,7 @@ namespace facter { namespace facts { namespace posix {
     {
     }
 
-    void ssh_resolver::resolve_facts(fact_map& facts)
+    void ssh_resolver::resolve_facts(collection& facts)
     {
         static vector<tuple<string, string, string, int>> const ssh_facts = {
             make_tuple(string(fact::ssh_rsa_key), string(fact::sshfp_rsa), "ssh_host_rsa_key.pub", 1),
@@ -127,7 +126,7 @@ namespace facter { namespace facts { namespace posix {
             // Add the key fingerprint fact
             facts.add(string(sshfp_fact_name),
                 make_value<string_value>(
-                    (format("SSHFP %1% 1 %2%\nSSHFP %1% 2 %3%") %
+                    (boost::format("SSHFP %1% 1 %2%\nSSHFP %1% 2 %3%") %
                         finger_print_type %
                         to_hex(hash, sizeof(hash)) %
                         to_hex(hash256, sizeof(hash256))).str()));

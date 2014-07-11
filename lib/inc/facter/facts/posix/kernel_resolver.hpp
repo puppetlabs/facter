@@ -5,7 +5,7 @@
 #ifndef FACTER_FACTS_POSIX_KERNEL_RESOLVER_HPP_
 #define FACTER_FACTS_POSIX_KERNEL_RESOLVER_HPP_
 
-#include "../fact_resolver.hpp"
+#include "../resolver.hpp"
 #include <sys/utsname.h>
 
 namespace facter { namespace facts { namespace posix {
@@ -13,7 +13,7 @@ namespace facter { namespace facts { namespace posix {
     /**
      * Responsible for resolving kernel facts.
      */
-    struct kernel_resolver : fact_resolver
+    struct kernel_resolver : resolver
     {
         /**
          * Constructs the kernel_resolver.
@@ -23,31 +23,31 @@ namespace facter { namespace facts { namespace posix {
      protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(fact_map& facts);
+        virtual void resolve_facts(collection& facts);
         /**
          * Called to resolve the kernel fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          * @param name The result of the uname call.
          */
-        virtual void resolve_kernel(fact_map& facts, utsname const& name);
+        virtual void resolve_kernel(collection& facts, utsname const& name);
         /**
          * Called to resolve the kernel release fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          * @param name The result of the uname call.
          */
-        virtual void resolve_kernel_release(fact_map& facts, utsname const& name);
+        virtual void resolve_kernel_release(collection& facts, utsname const& name);
         /**
          * Called to resolve the kernel version fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_kernel_version(fact_map& facts);
+        virtual void resolve_kernel_version(collection& facts);
         /**
          * Called to resolve the kernel major version fact.
-         * @param facts The fact map that is resolving facts.
+         * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_kernel_major_version(fact_map& facts);
+        virtual void resolve_kernel_major_version(collection& facts);
     };
 
 }}}  // namespace facter::facts::posix
