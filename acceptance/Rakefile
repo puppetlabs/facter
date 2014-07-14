@@ -16,12 +16,13 @@ module HarnessOptions
     :color => false,
     :root_keys => true,
     :ssh => {
-      :keys => ["id_rsa-acceptance"],
+      :keys => ["~/.ssh/id_rsa-acceptance"],
     },
     :xml => true,
-    :timesync => true,
+    :timesync => false,
     :repo_proxy => true,
     :add_el_extras => true,
+    :preserve_hosts => 'onfail',
   }
 
   class Aggregator

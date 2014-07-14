@@ -2,9 +2,7 @@ HOSTS:
   centos-6-x86_64:
     roles:
       - master
-      - database
       - agent
-      - dashboard
     platform: el-6-x86_64
     hypervisor: vcloud
     template: centos-6-x86_64

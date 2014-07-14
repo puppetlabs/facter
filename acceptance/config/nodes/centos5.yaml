@@ -2,7 +2,6 @@ HOSTS:
   centos-55-64-1:
     roles:
       - master
-      - database
       - agent
     platform: el-5-x86_64
     template: centos-5-x86_64
