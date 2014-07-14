@@ -3,15 +3,15 @@
 # Purpose: Return information about memory and swap usage.
 #
 # Resolution:
-#   On Linuxes, uses Facter::Memory.meminfo_number from
-#   'facter/util/memory.rb'
-#   On AIX, parses "swap -l" for swap values only.
-#   On OpenBSD, it parses "swapctl -l" for swap values, vmstat via a module for
-#   free memory, and "sysctl hw.physmem" for maximum memory.
-#   On FreeBSD, it parses "swapinfo -k" for swap values, and parses sysctl for
+#   On Linuxes, uses `Facter::Memory.meminfo_number` from
+#   `facter/util/memory.rb`
+#   On AIX, parses `swap -l` for swap values only.
+#   On OpenBSD, it parses `swapctl -l` for swap values, `vmstat` via a module for
+#   free memory, and `sysctl hw.physmem` for maximum memory.
+#   On FreeBSD, it parses `swapinfo -k` for swap values, and parses `sysctl` for
 #   maximum memory.
-#   On Solaris, use "swap -l" for swap values, and parsing prtconf for maximum
-#   memory, and again, the vmstat module for free memory.
+#   On Solaris, use `swap -l` for swap values, and parsing `prtconf` for maximum
+#   memory, and again, the `vmstat` module for free memory.
 #
 # Caveats:
 #   Some BSD platforms aren't covered at all. AIX is missing memory values.

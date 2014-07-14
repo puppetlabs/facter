@@ -3,8 +3,8 @@
 # Purpose: Return the operating system's release number's major value.
 #
 # Resolution:
-#   Takes the first 2 elements of the kernel version as delimited by periods.
-#   Takes the first element of the kernel version on FreeBSD
+#   Takes the first two elements of the kernel version as delimited by periods.
+#   Takes the first element of the kernel version on FreeBSD.
 #
 # Caveats:
 #

@@ -1,6 +1,7 @@
 # Fact: ssh
 #
 # Purpose:
+#   Gather facts related to SSH.
 #
 # Resolution:
 #

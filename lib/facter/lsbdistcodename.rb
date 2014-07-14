@@ -3,12 +3,13 @@
 # Purpose: Return Linux Standard Base information for the host.
 #
 # Resolution:
-#   Uses the lsb_release system command
+#   Uses the `lsb_release` system command.
 #
 # Caveats:
 #   Only works on Linux (and the kfreebsd derivative) systems.
-#   Requires the lsb_release program, which may not be installed by default.
-#   Also is as only as accurate as that program outputs.
+#   Requires the `lsb_release` program, which may not be installed by default.
+#   Is only as accurate as the output of `lsb_release`.
+#
 
 Facter.add(:lsbdistcodename) do
   confine :kernel => [ :linux, :"gnu/kfreebsd" ]

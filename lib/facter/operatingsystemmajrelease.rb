@@ -6,16 +6,16 @@
 #   Splits down the operatingsystemrelease fact at decimal point for
 #   osfamily RedHat derivatives and Debian.
 #   Uses operatingsystemrelease to the first non decimal character for
-#   operatingsystem Solaris
+#   operatingsystem Solaris. This should be the same as lsbmajdistrelease,
+#   but on minimal systems there are too many dependencies to use LSB
 #
-# This should be the same as lsbmajdistrelease, but on minimal systems there
-# are too many dependencies to use LSB
+# Caveats:
+#   Supports the following operating systems: "Alpine" "Amazon" "Archlinux"
+#   "Ascendos" "Bluewhite64" "CentOS" "CloudLinux" 
+#   "Debian" "Fedora" "Gentoo" "Mandrake" "Mandriva" "MeeGo" "OEL" "OpenSuSE" 
+#   "OracleLinux" "OVS" "PSBM" "RedHat" "Scientific" "Slackware" "Slamd64" "SLC"
+#   "SLED" "SLES" "SuSE" "Ubuntu" "VMWareESX"
 #
-# List of operatingsystems at time of writing:
-#"Alpine" "Amazon" "Archlinux" "Ascendos" "Bluewhite64" "CentOS" "CloudLinux" 
-#"Debian" "Fedora" "Gentoo" "Mandrake" "Mandriva" "MeeGo" "OEL" "OpenSuSE" 
-#"OracleLinux" "OVS" "PSBM" "RedHat" "Scientific" "Slackware" "Slamd64" "SLC"
-#"SLED" "SLES" "SuSE" "Ubuntu" "VMWareESX"
 
 Facter.add(:operatingsystemmajrelease) do
   confine :operatingsystem => [

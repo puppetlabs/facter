@@ -3,10 +3,10 @@
 # Purpose: Return the hardware manufacturer information about the hardware.
 #
 # Resolution:
-#   On OpenBSD, queries sysctl values, via a util class.
-#   On SunOS Sparc, uses prtdiag via a util class.
+#   On OpenBSD, queries `sysctl` values, via a util class.
+#   On SunOS Sparc, uses `prtdiag` via a util class.
 #   On Windows, queries the system via a util class.
-#   Uses the 'util/manufacturer.rb' for fallback parsing.
+#   Uses `util/manufacturer.rb` for fallback parsing.
 #
 # Caveats:
 #
