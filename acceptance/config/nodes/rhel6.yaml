@@ -2,7 +2,6 @@ HOSTS:
   rhel-6-latest-64-1:
     roles:
       - master
-      - database
       - agent
     platform: el-6-x86_64
     template: redhat-6-x86_64

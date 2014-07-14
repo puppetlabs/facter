@@ -13,7 +13,6 @@ HOSTS:
     hypervisor: vcloud
     template: Delivery/Quality Assurance/Templates/vCloud/ubuntu-1004-i386
 CONFIG:
-  filecount: 12
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic
   folder: Delivery/Quality Assurance/FOSS/Dynamic

@@ -11,9 +11,8 @@ HOSTS:
       - agent
     platform: solaris-10-x86_64
     hypervisor: vcloud
-    template: Delivery/Quality Assurance/Templates/vCloud/solaris-10-x86_64 
+    template: Delivery/Quality Assurance/Templates/vCloud/solaris-10-x86_64
 CONFIG:
-  filecount: 12
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic
   folder: Delivery/Quality Assurance/FOSS/Dynamic

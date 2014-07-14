@@ -7,3 +7,4 @@ doc
 vendor/
 Gemfile.lock
 Gemfile.local
+.idea/

@@ -36,7 +36,13 @@ hosts.each do |host|
   case host['platform']
   when /windows/
     step "#{host} Install ruby from git"
-    revision = '1.9.3-x86'
+    ruby_arch = host[:ruby_arch] || 'x86'
+    revision = if ruby_arch == 'x64'
+                 '2.0.0-x64'
+               else
+                 '1.9.3-x86'
+               end
+
     install_from_git(host, "/opt/puppet-git-repos",
                     :name => 'puppet-win32-ruby',
                     :path => build_giturl('puppet-win32-ruby'),
