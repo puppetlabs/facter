@@ -211,7 +211,7 @@ namespace facter { namespace facts {
         return _facts.size();
     }
 
-    void collection::filter(set<string> names, bool add)
+    void collection::filter(set<string> const& names, bool add)
     {
         // First resolve all the facts that were named
         for (auto const& name : names) {
