@@ -146,7 +146,7 @@ namespace facter { namespace facts {
          * @param names The names of the facts to filter the collection by.
          * @param add True if an empty string fact should be added for any missing facts in the set or false if not.
          */
-        void filter(std::set<std::string> names, bool add = true);
+        void filter(std::set<std::string> const& names, bool add = true);
 
         /**
          * Gets a fact value by name.
