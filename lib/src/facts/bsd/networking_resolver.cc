@@ -59,7 +59,7 @@ namespace facter { namespace facts { namespace bsd {
 
         string primary_interface = get_primary_interface();
         if (LOG_IS_DEBUG_ENABLED() && primary_interface.empty()) {
-            LOG_DEBUG("No primary interface found: using first interface with an assigned address.");
+            LOG_DEBUG("no primary interface found: using first interface with an assigned address.");
         }
 
         // Start by getting the DHCP servers
@@ -124,7 +124,7 @@ namespace facter { namespace facts { namespace bsd {
         }
 
         if (LOG_IS_WARNING_ENABLED() && primary_interface.empty()) {
-            LOG_WARNING("No primary interface found: facts %1%, %2%, %3%, %4%, %5%, %6%, and %7% are unavailable.",
+            LOG_WARNING("no primary interface found: facts %1%, %2%, %3%, %4%, %5%, %6%, and %7% are unavailable.",
                         fact::ipaddress, fact::ipaddress6,
                         fact::netmask, fact::netmask6,
                         fact::network, fact::network6,
@@ -239,9 +239,9 @@ namespace facter { namespace facts { namespace bsd {
         map<string, string> servers;
 
         for (auto const& dir : _dhclient_search_directories) {
-            LOG_DEBUG("Searching \"%1%\" for dhclient lease files.", dir);
+            LOG_DEBUG("searching \"%1%\" for dhclient lease files.", dir);
             directory::each_file(dir, [&](string const& path) {
-                LOG_DEBUG("Reading \"%1%\" for dhclient lease information.", path);
+                LOG_DEBUG("reading \"%1%\" for dhclient lease information.", path);
 
                 // Each lease entry should have the interface declaration before the options
                 // We respect the last lease for an interface in the file

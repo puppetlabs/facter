@@ -86,7 +86,7 @@ void log_command_line(int argc, char** argv)
         }
         command_line << argv[i];
     }
-    LOG_INFO("Executed with command line: %1%.", command_line.str());
+    LOG_INFO("executed with command line: %1%.", command_line.str());
 }
 
 void log_requested_facts(set<string> const& facts)
@@ -96,7 +96,7 @@ void log_requested_facts(set<string> const& facts)
     }
 
     if (facts.empty()) {
-        LOG_INFO("Resolving all facts.");
+        LOG_INFO("resolving all facts.");
         return;
     }
 
@@ -110,7 +110,7 @@ void log_requested_facts(set<string> const& facts)
         }
         requested_facts << fact;
     }
-    LOG_INFO("Resolving requested facts: %1%.", requested_facts.str());
+    LOG_INFO("resolving requested facts: %1%.", requested_facts.str());
 }
 
 int main(int argc, char **argv)
@@ -236,7 +236,7 @@ int main(int argc, char **argv)
         facts.write(cout, fmt);
         cout << '\n';
     } catch (exception& ex) {
-        LOG_FATAL("Unhandled exception: %1%", ex.what());
+        LOG_FATAL("unhandled exception: %1%", ex.what());
         return EXIT_FAILURE;
     }
 }
