@@ -26,6 +26,7 @@ set(LIBFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/map_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/scalar_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/value.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/util/directory.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/file.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/scoped_file.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/string.cc"

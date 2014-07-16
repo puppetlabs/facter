@@ -3,18 +3,19 @@
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
+#include <facter/util/directory.hpp>
 #include <facter/version.h>
-#include <boost/filesystem.hpp>
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
 #include <yaml-cpp/yaml.h>
 #include <algorithm>
+#include <boost/filesystem.hpp>
 
 using namespace std;
+using namespace facter::util;
 using namespace rapidjson;
 using namespace YAML;
 using namespace boost::filesystem;
-namespace bs = boost::system;
 
 LOG_DECLARE_NAMESPACE("facts.collection");
 
@@ -99,41 +100,29 @@ namespace facter { namespace facts {
 
         // Build a map between a file and the resolver that can resolve it
         map<string, external::resolver const*> files;
-        for (auto const& directory : search_directories) {
-            directory_iterator end;
-            directory_iterator it;
-
-            // Attempt to iterate the directory
-            try {
-                it = directory_iterator(directory);
-            } catch (filesystem_error& ex) {
+        for (auto const& dir : search_directories) {
+            boost::system::error_code ec;
+            if (!is_directory(dir, ec)) {
                 // Warn the user if not using the default search directories
                 if (!directories.empty()) {
-                    LOG_WARNING("skipping external facts for \"%1%\": %2%", directory, ex.code().message());
+                    LOG_WARNING("skipping external facts for \"%1%\": %2%", dir, ec.message());
                 } else {
-                    LOG_DEBUG("skipping external facts for \"%1%\": %2%", directory, ex.code().message());
+                    LOG_DEBUG("skipping external facts for \"%1%\": %2%", dir, ec.message());
                 }
                 continue;
             }
 
-            LOG_DEBUG("searching \"%1%\" for external facts.", directory);
+            LOG_DEBUG("searching \"%1%\" for external facts.", dir);
 
-            // Search for regular files in the directory
-            for (; it != end; ++it) {
-                bs::error_code ec;
-                if (!is_regular_file(it->status())) {
-                    continue;
-                }
-
-                string path = it->path().string();
-
+            directory::each_file(dir, [&](string const& path) {
                 for (auto const& res : resolvers) {
                     if (res->can_resolve(path)) {
                         files.emplace(path, res.get());
                         break;
                     }
                 }
-            }
+                return true;
+            });
         }
 
         if (files.empty()) {
