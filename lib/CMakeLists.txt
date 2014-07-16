@@ -47,6 +47,7 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/uptime_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/virtualization_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/logging/posix/logging.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/environment.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_addrinfo.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_bio.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_descriptor.cc"

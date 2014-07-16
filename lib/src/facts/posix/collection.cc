@@ -3,15 +3,15 @@
 #include <facter/facts/external/text_resolver.hpp>
 #include <facter/facts/external/yaml_resolver.hpp>
 #include <facter/facts/external/execution_resolver.hpp>
+#include <facter/util/environment.hpp>
+#include <unistd.h>
 #include <vector>
 #include <string>
 #include <cstdlib>
-#include <unistd.h>
 #include <memory>
-#include <boost/filesystem.hpp>
 
 using namespace std;
-using namespace boost::filesystem;
+using namespace facter::util;
 using namespace facter::facts::external;
 
 namespace facter { namespace facts {
@@ -20,9 +20,9 @@ namespace facter { namespace facts {
     {
         vector<string> directories;
         if (getuid()) {
-            auto home_dir = getenv("HOME");
-            if (home_dir) {
-                directories.emplace_back(string(home_dir) + "/.facter/facts.d");
+            string home;
+            if (environment::get("HOME", home)) {
+                directories.emplace_back(home + "/.facter/facts.d");
             }
         } else {
             directories.emplace_back("/etc/facter/facts.d");

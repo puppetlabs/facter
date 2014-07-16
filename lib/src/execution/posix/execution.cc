@@ -1,4 +1,5 @@
 #include <facter/execution/execution.hpp>
+#include <facter/util/environment.hpp>
 #include <facter/util/posix/scoped_descriptor.hpp>
 #include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
@@ -371,14 +372,14 @@ namespace facter { namespace execution {
 
             // Set the locale to C unless specified in the given environment
             if (!environment || environment->count("LC_ALL") == 0) {
-                setenv("LC_ALL", "C", 1);
+                environment::set("LC_ALL", "C");
             }
             if (!environment || environment->count("LANG") == 0) {
-                setenv("LANG", "C", 1);
+                environment::set("LANG", "C");
             }
             if (environment) {
                 for (auto const& variable : *environment) {
-                    setenv(variable.first.c_str(), variable.second.c_str(), 1);
+                    environment::set(variable.first, variable.second);
                 }
             }
 
