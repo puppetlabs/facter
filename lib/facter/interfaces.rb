@@ -47,3 +47,16 @@ Facter::Util::IP.get_interfaces.each do |interface|
     end
   end
 end
+
+# Get aliases on *BSD 
+Facter::Util::IP.get_interfaces.each do |interface|
+  %w{ipaddress ipaddress6 netmask}.each do |label|
+    (0..Facter::Util::IP.get_alias_no(interface, label)).each do |a|
+      Facter.add(label + "_" + Facter::Util::IP.alphafy(interface) + "_alias#{a}") do
+        setcode do
+          Facter::Util::IP.get_interface_value(interface, label, a)
+        end
+      end
+    end
+  end
+end
