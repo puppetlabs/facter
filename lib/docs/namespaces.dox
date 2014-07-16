@@ -16,68 +16,63 @@ namespace facter {
     namespace facts {
 
         /**
-        * The namespace for BSD-related types and fact resolvers.
-        */
+         * The namespace for BSD-related types and fact resolvers.
+         */
         namespace bsd {
 
         }
 
         /**
-        * The namespace for external types and fact resolvers.
-        */
+         * The namespace for external types and fact resolvers.
+         */
         namespace external {
 
         }
 
         /**
-        * The namespace for Linux-related types and fact resolvers.
-        */
+         * The namespace for Linux-related types and fact resolvers.
+         */
         namespace linux {
 
         }
 
         /**
-        * The namespace for OSX-related types and fact resolvers.
-        */
+         * The namespace for OSX-related types and fact resolvers.
+         */
         namespace osx {
 
         }
 
         /**
-        * The namespace for POSIX-related types and fact resolvers.
-        */
+         * The namespace for POSIX-related types and fact resolvers.
+         */
         namespace posix {
 
         }
     }
 
     /**
-    * The namespace for logging functions and macros.
-    */
+     * The namespace for logging functions and macros.
+     */
     namespace logging {
+
     }
 
     /**
-    * The namespace for utilty functions and types.
-    */
+     * The namespace for utilty functions and types.
+     */
     namespace util {
 
         /**
-        * The namespace for utility types that are BSD-specific.
-        */
+         * The namespace for utility types that are BSD-specific.
+         */
         namespace bsd {
 
         }
 
         /**
-        * The namespace for utility functions for reading data from files.
-        */
-        namespace file {
-        }
-
-        /**
-        * The namespace for utility types that are POSIX-specific.
-        */
+         * The namespace for utility types that are POSIX-specific.
+         */
         namespace posix {
 
         }
