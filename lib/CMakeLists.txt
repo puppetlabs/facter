@@ -22,10 +22,11 @@ set(LIBFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/text_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/yaml_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/collection.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/src/facts/resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/map_value.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/facts/resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/scalar_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/value.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/ruby/api.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/directory.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/file.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/scoped_file.cc"
@@ -47,6 +48,8 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/uptime_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/virtualization_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/logging/posix/logging.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/ruby/posix/api.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/dynamic_library.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/environment.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_addrinfo.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_bio.cc"
@@ -56,6 +59,7 @@ endif()
 
 # Set the platform-specific sources
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
+    list(REMOVE_ITEM LIBFACTER_POSIX_SOURCES "${CMAKE_CURRENT_LIST_DIR}/src/ruby/posix/api.cc")
     set(LIBFACTER_PLATFORM_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/dmi_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
@@ -66,6 +70,7 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/system_profiler_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/software_version_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/virtualization_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/ruby/osx/api.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/bsd/scoped_ifaddrs.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
