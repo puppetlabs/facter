@@ -14,13 +14,9 @@
 require 'facter'
 
 Facter.add('lsbminordistrelease') do
-  confine :kernel => %w{Linux GNU/kFreeBSD}
-  setcode do
-    mdata = /(\d+).(\d+)/i.match(Facter.value(:lsbdistrelease))
-    if mdata == nil
-      result = nil
-    else
-      result = mdata[2]
-    end
+  confine do
+    !Facter.value("os")["lsb"].nil?
   end
+
+  setcode { Facter.value("os")["lsb"]["minordistrelease"] }
 end
