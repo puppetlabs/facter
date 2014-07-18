@@ -1,22 +1,11 @@
 HOSTS:
-  centos-6-x86_64:
-    roles:
-      - master
-      - database
-      - agent
-      - dashboard
-    platform: el-6-x86_64
-    hypervisor: vcloud
-    template: centos-6-x86_64
-  solaris-11-x86_64:
+  agent-solaris-11-x86_64:
     roles:
       - agent
     platform: solaris-11-x86_64
-    hypervisor: vcloud
     template: solaris-11-x86_64
+    hypervisor: vcloud
 CONFIG:
-  nfs_server: NONE
-  consoleport: 443
   datastore: instance0
   folder: Delivery/Quality Assurance/FOSS/Dynamic
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic

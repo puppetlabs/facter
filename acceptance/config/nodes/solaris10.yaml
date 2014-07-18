@@ -1,17 +1,10 @@
 HOSTS:
-  master:
-    roles:
-      - master
-      - agent
-    platform: solaris-10-x86_64
-    hypervisor: vcloud
-    template: Delivery/Quality Assurance/Templates/vCloud/solaris-10-x86_64
-  agent:
+  agent-solaris10-x86_64:
     roles:
       - agent
     platform: solaris-10-x86_64
+    template: solaris-10-x86_64
     hypervisor: vcloud
-    template: Delivery/Quality Assurance/Templates/vCloud/solaris-10-x86_64
 CONFIG:
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic

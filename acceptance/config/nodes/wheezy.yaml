@@ -1,17 +1,16 @@
 HOSTS:
-  master:
+  agent-wheezy-x86_64:
     roles:
-      - master
       - agent
     platform: debian-wheezy-x86_64
+    template: debian-7-x86_64
     hypervisor: vcloud
-    template: Delivery/Quality Assurance/Templates/vCloud/debian-7-x86_64
-  agent:
+  agent-wheezy-i386:
     roles:
       - agent
     platform: debian-wheezy-i386
+    template: debian-7-i386
     hypervisor: vcloud
-    template: Delivery/Quality Assurance/Templates/vCloud/debian-7-i386
 CONFIG:
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic
