@@ -1,20 +1,17 @@
 HOSTS:
-  rhel-6-latest-64-1:
+  agent-rhel6-x86_64:
     roles:
-      - master
       - agent
     platform: el-6-x86_64
     template: redhat-6-x86_64
     hypervisor: vcloud
-  rhel-6-latest-32-1:
+  agent-rhel6-i386:
     roles:
       - agent
     platform: el-6-i386
     template: redhat-6-i386
     hypervisor: vcloud
 CONFIG:
-  nfs_server: none
-  consoleport: 443
   datastore: instance0
   folder: Delivery/Quality Assurance/FOSS/Dynamic
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic

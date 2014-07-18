@@ -50,6 +50,8 @@ hosts.each do |host|
     on host, 'cd /opt/puppet-git-repos/puppet-win32-ruby; cp -r ruby/* /'
     on host, 'cd /lib; icacls ruby /grant "Everyone:(OI)(CI)(RX)"'
     on host, 'cd /lib; icacls ruby /reset /T'
+    on host, 'cd /; icacls bin /grant "Everyone:(OI)(CI)(RX)"'
+    on host, 'cd /; icacls bin /reset /T'
     on host, 'ruby --version'
     on host, 'cmd /c gem list'
   when /solaris/

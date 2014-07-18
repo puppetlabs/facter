@@ -1,17 +1,16 @@
 HOSTS:
-  master:
+  agent-lucid-x86_64:
     roles:
-      - master
       - agent
     platform: ubuntu-lucid-x86_64
+    template: ubuntu-1004-x86_64
     hypervisor: vcloud
-    template: Delivery/Quality Assurance/Templates/vCloud/ubuntu-1004-x86_64
-  agent:
+  agent-lucid-i386:
     roles:
       - agent
     platform: ubuntu-lucid-i386
+    template: ubuntu-1004-i386
     hypervisor: vcloud
-    template: Delivery/Quality Assurance/Templates/vCloud/ubuntu-1004-i386
 CONFIG:
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic

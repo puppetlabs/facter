@@ -1,17 +1,10 @@
 HOSTS:
-  master:
-    roles:
-      - master
-      - agent
-    platform: el-7-x86_64
-    hypervisor: vcloud
-    template: Delivery/Quality Assurance/Templates/vCloud/redhat-7-x86_64
-  agent:
+  agent-rhel7-x86_64:
     roles:
       - agent
     platform: el-7-x86_64
+    template: redhat-7-x86_64
     hypervisor: vcloud
-    template: Delivery/Quality Assurance/Templates/vCloud/redhat-7-x86_64
 CONFIG:
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic

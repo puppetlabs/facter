@@ -1,20 +1,17 @@
 HOSTS:
-  centos-55-64-1:
+  agent-centos-5-x86_64:
     roles:
-      - master
       - agent
     platform: el-5-x86_64
     template: centos-5-x86_64
     hypervisor: vcloud
-  centos-55-386-1:
+  agent-centos-5-i386:
     roles:
       - agent
     platform: el-5-i386
     template: centos-5-i386
     hypervisor: vcloud
 CONFIG:
-  nfs_server: none
-  consoleport: 443
   datastore: instance0
   folder: Delivery/Quality Assurance/FOSS/Dynamic
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic
