@@ -1,10 +1,11 @@
 HOSTS:
-  agent-solaris10-x86_64:
+  agent-2003-i386:
     roles:
       - agent
-    platform: solaris-10-x86_64
-    template: solaris-10-x86_64
+    platform: windows-2003-32
+    ruby_arch: x86
     hypervisor: vcloud
+    template: Delivery/Quality Assurance/Templates/vCloud/win-2003-i386
 CONFIG:
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic
