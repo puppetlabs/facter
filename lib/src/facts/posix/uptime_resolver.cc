@@ -3,6 +3,7 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <facter/facts/map_value.hpp>
 #include <facter/facts/posix/uptime_resolver.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/string.hpp>
@@ -18,6 +19,7 @@ namespace facter { namespace facts { namespace posix {
         resolver(
             "uptime",
             {
+                fact::system_uptime,
                 fact::uptime,
                 fact::uptime_days,
                 fact::uptime_hours,
@@ -29,60 +31,77 @@ namespace facter { namespace facts { namespace posix {
     void uptime_resolver::resolve_facts(collection& facts)
     {
         // Resolve all uptime-related facts
-        resolve_uptime_seconds(facts);  // must be first b/c the following facts are based on this
+        resolve_system_uptime(facts);  // Must be first b/c the following facts are based on this
+        resolve_uptime_seconds(facts);
         resolve_uptime_hours(facts);
         resolve_uptime_days(facts);
         resolve_uptime(facts);
     }
 
+    void uptime_resolver::resolve_system_uptime(collection& facts)
+    {
+        int seconds = executable_uptime();
+        if (!seconds) {
+          return;
+        }
+
+        int minutes = (seconds / 60) % 60;
+        int hours   = seconds / (60 * 60);
+        int days    = seconds / (60 * 60 * 24);
+        string uptime;
+
+        switch (days) {
+            case 0:
+                uptime = (boost::format("%d:%02d hours") % hours % minutes).str();
+                break;
+            case 1:
+                uptime = "1 day";
+                break;
+            default:
+                uptime = (boost::format("%d days") % days).str();
+        }
+        auto system_uptime_value = make_value<map_value>();
+        system_uptime_value->add("seconds", make_value<integer_value>(seconds));
+        system_uptime_value->add("hours", make_value<integer_value>(hours));
+        system_uptime_value->add("days", make_value<integer_value>(days));
+        system_uptime_value->add("uptime", make_value<string_value>(uptime));
+        facts.add(fact::system_uptime, move(system_uptime_value));
+    }
+
     void uptime_resolver::resolve_uptime_seconds(collection& facts)
     {
-        int value = executable_uptime();
-        facts.add(fact::uptime_seconds, make_value<integer_value>(value));
+        auto system_uptime   = facts.get<map_value>(fact::system_uptime, false);
+        if (!system_uptime) {
+            return;
+        }
+        facts.add(fact::uptime_seconds, make_value<integer_value>(system_uptime->get<integer_value>("seconds")->value()));
     }
 
     void uptime_resolver::resolve_uptime_hours(collection& facts)
     {
-        auto uptime_seconds = facts.get<integer_value>(fact::uptime_seconds, false);
-        if (!uptime_seconds) {
+        auto system_uptime = facts.get<map_value>(fact::system_uptime, false);
+        if (!system_uptime) {
             return;
         }
-        facts.add(fact::uptime_hours, make_value<integer_value>(uptime_seconds->value() / (60 * 60)));
+        facts.add(fact::uptime_hours, make_value<integer_value>(system_uptime->get<integer_value>("hours")->value()));
     }
 
     void uptime_resolver::resolve_uptime_days(collection& facts)
     {
-        auto uptime_seconds = facts.get<integer_value>(fact::uptime_seconds, false);
-        if (!uptime_seconds) {
+        auto system_uptime = facts.get<map_value>(fact::system_uptime, false);
+        if (!system_uptime) {
             return;
         }
-        facts.add(fact::uptime_days, make_value<integer_value>(uptime_seconds->value() / (60 * 60 * 24)));
+        facts.add(fact::uptime_days, make_value<integer_value>(system_uptime->get<integer_value>("days")->value()));
     }
 
     void uptime_resolver::resolve_uptime(collection& facts)
     {
-        auto uptime_seconds = facts.get<integer_value>(fact::uptime_seconds, false);
-        if (!uptime_seconds) {
+        auto system_uptime = facts.get<map_value>(fact::system_uptime, false);
+        if (!system_uptime) {
             return;
         }
-        int seconds = uptime_seconds->value();
-
-        int days    = seconds / (60 * 60 * 24);
-        int hours   = (seconds / (60 * 60)) % 24;
-        int minutes = (seconds / 60) % 60;
-
-        string value;
-        switch (days) {
-            case 0:
-                value = (boost::format("%d:%02d hours") % hours % minutes).str();
-                break;
-            case 1:
-                value = "1 day";
-                break;
-            default:
-                value = (boost::format("%d days") % days).str();
-        }
-        facts.add(fact::uptime, make_value<string_value>(move(value)));
+        facts.add(fact::uptime, make_value<string_value>(move(system_uptime->get<string_value>("uptime")->value())));
     }
 
     // call the uptime executable
