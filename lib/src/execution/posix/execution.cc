@@ -7,6 +7,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <sstream>
+#include <cstring>
 
 using namespace std;
 using namespace facter::util;
@@ -213,6 +214,15 @@ namespace facter { namespace execution {
                     continue;
                 }
                 if (count < 0) {
+                    if (errno == EINTR) {
+                        // The call to read was interrupted by a signal before any data was read. Retry read.
+                        // See http://www.gnu.org/software/libc/manual/html_node/Interrupted-Primitives.html
+                        // This happens in Xcode's debugging.
+                        LOG_DEBUG("child pipe read was interrupted and will be retried: %1% (%2%).", strerror(errno), errno);
+                        errno = 0;
+                        continue;
+                    }
+
                     throw execution_exception("failed to read child output.");
                 }
 
