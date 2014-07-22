@@ -32,7 +32,10 @@ Requires:       dmidecode
 Requires:       pciutils
 %endif
 Requires:       virt-what
-Requires:       ruby >= 1.8.7
+# In Fedora 19+ or RHEL 7+ net-tools is required for interface facts
+%if 0%{?fedora} >= 19 || 0%{?rhel} >= 7
+Requires:       net-tools
+%endif
 BuildRequires:  ruby >= 1.8.7
 
 # In Fedora 17+ or RHEL 7+ ruby-rdoc is called rubygem-rdoc
