@@ -39,6 +39,11 @@ namespace facter { namespace facts { namespace posix {
          * @param facts The fact collection that is resolving facts.
          */
         virtual void resolve_uptime(collection& facts);
+         /**
+         * Called to resolve the system_uptime fact.
+         * @param facts The fact collection that is resolving facts
+         */
+        virtual void resolve_system_uptime(collection& facts);
         /**
          * Called to resolve the uptime days fact.
          * @param facts The fact collection that is resolving facts.

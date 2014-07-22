@@ -216,6 +216,10 @@ namespace facter { namespace facts {
         constexpr static char const* chassis_type = "chassistype";
 
         /**
+         * The structured uptime fact
+         */
+        constexpr static char const* system_uptime = "system_uptime";
+        /**
          * The fact for system uptime.
          */
         constexpr static char const* uptime = "uptime";
