@@ -80,7 +80,7 @@ namespace facter { namespace facts {
     template <>
     ostream& scalar_value<bool>::write(ostream& os) const
     {
-        os << boolalpha << _value;
+        os << boolalpha << _value << noboolalpha;
         return os;
     }
 
