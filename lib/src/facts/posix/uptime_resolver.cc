@@ -40,7 +40,7 @@ namespace facter { namespace facts { namespace posix {
 
     void uptime_resolver::resolve_system_uptime(collection& facts)
     {
-        int seconds = executable_uptime();
+        int seconds = uptime_in_seconds();
         if (!seconds) {
           return;
         }
@@ -104,18 +104,16 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::uptime, make_value<string_value>(move(system_uptime->get<string_value>("uptime")->value())));
     }
 
-    // call the uptime executable
-    int uptime_resolver::executable_uptime()
+    int uptime_resolver::uptime_in_seconds()
     {
         string uptime_output = execute("uptime");
         if (uptime_output.empty()) {
             return 0;
         }
-        return parse_executable_uptime(uptime_output);
+        return parse_uptime(uptime_output);
     }
 
-    // parse the output from the uptime executable
-    int uptime_resolver::parse_executable_uptime(string const& output)
+    int uptime_resolver::parse_uptime(string const& output)
     {
         // This regex parsing is directly ported from facter:
         // https://github.com/puppetlabs/facter/blob/2.0.1/lib/facter/util/uptime.rb#L42-L60

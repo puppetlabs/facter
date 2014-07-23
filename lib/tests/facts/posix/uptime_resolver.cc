@@ -42,6 +42,6 @@ TEST(uptime_resolver, parse_executable_uptime) {
         {" 13:36:05 up 118 days,  1:15,  1 user,  load average: 0.00, 0.00, 0.00",        118*24*60*60 +  1*60*60 + 15*60}
     };
     for (auto t : test_cases) {
-        EXPECT_EQ(uptime_resolver::parse_executable_uptime(t.first), t.second);
+        EXPECT_EQ(uptime_resolver::parse_uptime(t.first), t.second);
     }
 }

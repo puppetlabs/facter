@@ -7,7 +7,7 @@
 
 namespace facter { namespace facts { namespace bsd {
 
-    void uptime_resolver::resolve_uptime_seconds(collection& facts)
+    int uptime_resolver::uptime_in_seconds()
     {
         // this approach adapted from: http://stackoverflow.com/a/11676260/1004272
         timeval boottime;
@@ -16,10 +16,9 @@ namespace facter { namespace facts { namespace bsd {
         if (sysctl(mib, 2, &boottime, &len, NULL, 0) == 0) {
             time_t bsec = boottime.tv_sec;
             time_t now = time(NULL);
-            int uptime = now - bsec;
-            facts.add(fact::uptime_seconds, make_value<integer_value>(uptime));
+            return now - bsec;
         } else {
-            facter::facts::posix::uptime_resolver::resolve_uptime_seconds(facts);
+            return facter::facts::posix::uptime_resolver::uptime_in_seconds();
         }
     }
 

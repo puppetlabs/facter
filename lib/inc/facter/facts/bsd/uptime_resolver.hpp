@@ -15,11 +15,11 @@ namespace facter { namespace facts { namespace bsd {
     struct uptime_resolver : posix::uptime_resolver
     {
      protected:
-        /**
-         * Resolves the uptime in seconds on bsd.
-         * @param facts The fact collection that is resolving facts.
+         /**
+         * Gets the uptime in seconds.
+         * @return Returns the system uptime in seconds.
          */
-        virtual void resolve_uptime_seconds(collection& facts);
+        virtual int uptime_in_seconds();
     };
 
 }}}  // namespace facter::facts::bsd

@@ -21,12 +21,11 @@ namespace facter { namespace facts { namespace posix {
         uptime_resolver();
 
         /**
-         * Utility function to convert the output of the uptime executable
-         * to an int number of seconds.
+         * Utility function to parse the output of the uptime executable.
          * @param output The output of the uptime executable.
          * @return Returns the number of uptime seconds.
          */
-        static int parse_executable_uptime(std::string const& output);
+        static int parse_uptime(std::string const& output);
 
      protected:
         /**
@@ -60,8 +59,11 @@ namespace facter { namespace facts { namespace posix {
          */
         virtual void resolve_uptime_seconds(collection& facts);
 
-     private:
-        int executable_uptime();
+        /**
+         * Gets the uptime in seconds.
+         * @return Returns the system uptime in seconds.
+         */
+        virtual int uptime_in_seconds();
     };
 
 }}}  // namespace facter::facts::posix

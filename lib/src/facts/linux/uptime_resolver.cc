@@ -6,13 +6,13 @@
 
 namespace facter { namespace facts { namespace linux {
 
-    void uptime_resolver::resolve_uptime_seconds(collection& facts)
+    int uptime_resolver::uptime_in_seconds()
     {
         struct sysinfo info;
         if (sysinfo(&info) == 0) {
-            facts.add(fact::uptime_seconds, make_value<integer_value>(info.uptime));
+            return info.uptime;
         } else {
-            facter::facts::posix::uptime_resolver::resolve_uptime_seconds(facts);
+            return facter::facts::posix::uptime_resolver::uptime_in_seconds();
         }
     }
 
