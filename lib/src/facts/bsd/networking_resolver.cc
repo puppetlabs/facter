@@ -4,10 +4,10 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/file.hpp>
+#include <facter/util/directory.hpp>
 #include <facter/util/string.hpp>
 #include <facter/util/bsd/scoped_ifaddrs.hpp>
 #include <facter/logging/logging.hpp>
-#include <boost/filesystem.hpp>
 #include <sstream>
 #include <cstring>
 #include <netinet/in.h>
@@ -19,8 +19,6 @@ using namespace std;
 using namespace facter::util;
 using namespace facter::util::bsd;
 using namespace facter::execution;
-using namespace boost::filesystem;
-namespace bs = boost::system;
 
 LOG_DECLARE_NAMESPACE("facts.bsd.networking");
 
@@ -61,7 +59,7 @@ namespace facter { namespace facts { namespace bsd {
 
         string primary_interface = get_primary_interface();
         if (LOG_IS_DEBUG_ENABLED() && primary_interface.empty()) {
-            LOG_DEBUG("No primary interface found: using first interface with an assigned address.");
+            LOG_DEBUG("no primary interface found: using first interface with an assigned address.");
         }
 
         // Start by getting the DHCP servers
@@ -126,7 +124,7 @@ namespace facter { namespace facts { namespace bsd {
         }
 
         if (LOG_IS_WARNING_ENABLED() && primary_interface.empty()) {
-            LOG_WARNING("No primary interface found: facts %1%, %2%, %3%, %4%, %5%, %6%, and %7% are unavailable.",
+            LOG_WARNING("no primary interface found: facts %1%, %2%, %3%, %4%, %5%, %6%, and %7% are unavailable.",
                         fact::ipaddress, fact::ipaddress6,
                         fact::netmask, fact::netmask6,
                         fact::network, fact::network6,
@@ -239,37 +237,16 @@ namespace facter { namespace facts { namespace bsd {
     map<string, string> networking_resolver::find_dhcp_servers()
     {
         map<string, string> servers;
-        for (auto const& directory : _dhclient_search_directories) {
-            directory_iterator end;
-            directory_iterator it;
 
-            try {
-                it = directory_iterator(directory);
-            } catch (filesystem_error& ex) {
-                continue;
-            }
-
-            LOG_DEBUG("Searching \"%1%\" for dhclient lease files.", directory);
-
-            for (; it != end; ++it) {
-                bs::error_code ec;
-                if (!is_regular_file(it->status())) {
-                    continue;
-                }
-
-                string filename = it->path().filename().string();
-
-                // The lease file should start with dhclient and have "lease" somewhere in the name
-                if (!starts_with(filename, "dhclient") || filename.find("lease") == string::npos) {
-                    continue;
-                }
-
-                LOG_DEBUG("Reading \"%1%\" for dhclient lease information.", filename);
+        for (auto const& dir : _dhclient_search_directories) {
+            LOG_DEBUG("searching \"%1%\" for dhclient lease files.", dir);
+            directory::each_file(dir, [&](string const& path) {
+                LOG_DEBUG("reading \"%1%\" for dhclient lease information.", path);
 
                 // Each lease entry should have the interface declaration before the options
                 // We respect the last lease for an interface in the file
                 string interface;
-                file::each_line(it->path().string(), [&](string& line) {
+                file::each_line(path, [&](string& line) {
                     line = trim(line);
                     if (starts_with(line, "interface \"")) {
                         interface = rtrim(line.substr(11), { '\"', ';' });
@@ -278,7 +255,8 @@ namespace facter { namespace facts { namespace bsd {
                     }
                     return true;
                 });
-            }
+                return true;
+            }, "^dhclient.*lease.*$");
         }
         return servers;
     }

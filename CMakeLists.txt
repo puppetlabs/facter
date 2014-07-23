@@ -65,6 +65,7 @@ else()
         "-runtime/arrays"         # Sizing an array with a 'const int' doesn't make it variable sized
         "-readability/todo"       # Seriously? todo comments need to identify an owner? pffft
         "-whitespace/empty_loop_body" # Can't handle do { ... } while(expr);
+        "-runtime/int"            # Some C types are needed for library interop
     )
 
     file(GLOB_RECURSE ALL_SOURCES lib/*.cc lib/*.h lib/*.hpp exe/*.cc exe/*.h exe/*.hpp)

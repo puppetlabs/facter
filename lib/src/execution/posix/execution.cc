@@ -1,4 +1,5 @@
 #include <facter/execution/execution.hpp>
+#include <facter/util/environment.hpp>
 #include <facter/util/posix/scoped_descriptor.hpp>
 #include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
@@ -101,7 +102,7 @@ namespace facter { namespace execution {
                 command_line << ' ' << argument;
             }
         }
-        LOG_DEBUG("Executing command: %1%", command_line.str());
+        LOG_DEBUG("executing command: %1%", command_line.str());
     }
 
     static string execute(
@@ -274,7 +275,7 @@ namespace facter { namespace execution {
 
                     // Pass the line to the callback
                     if (!((*callback)(line))) {
-                        LOG_DEBUG("Completed processing output; closing child pipe.");
+                        LOG_DEBUG("completed processing output; closing child pipe.");
                         reading = false;
                         break;
                     }
@@ -310,13 +311,13 @@ namespace facter { namespace execution {
             waitpid(child, &status, 0);
             if (WIFEXITED(status)) {
                 status = static_cast<char>(WEXITSTATUS(status));
-                LOG_DEBUG("Process exited with status code %1%.", status);
+                LOG_DEBUG("process exited with status code %1%.", status);
                 if (status != 0 && options[execution_options::throw_on_nonzero_exit]) {
                     throw child_exit_exception(status, result, "child process returned non-zero exit status.");
                 }
             } else if (WIFSIGNALED(status)) {
                 status = static_cast<char>(WTERMSIG(status));
-                LOG_DEBUG("Process was signaled with signal %1%.", status);
+                LOG_DEBUG("process was signaled with signal %1%.", status);
                 if (options[execution_options::throw_on_signal]) {
                     throw child_signal_exception(status, result, "child process was terminated by signal.");
                 }
@@ -371,14 +372,14 @@ namespace facter { namespace execution {
 
             // Set the locale to C unless specified in the given environment
             if (!environment || environment->count("LC_ALL") == 0) {
-                setenv("LC_ALL", "C", 1);
+                environment::set("LC_ALL", "C");
             }
             if (!environment || environment->count("LANG") == 0) {
-                setenv("LANG", "C", 1);
+                environment::set("LANG", "C");
             }
             if (environment) {
                 for (auto const& variable : *environment) {
-                    setenv(variable.first.c_str(), variable.second.c_str(), 1);
+                    environment::set(variable.first, variable.second);
                 }
             }
 

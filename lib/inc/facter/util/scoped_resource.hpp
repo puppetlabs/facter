@@ -42,13 +42,25 @@ namespace facter { namespace util {
          * Moves the given scoped_resource into this scoped_resource.
          * @param other The scoped_resource to move into this scoped_resource.
          */
-        scoped_resource(scoped_resource<T>&& other) = default;
+        scoped_resource(scoped_resource<T>&& other)
+        {
+            *this = std::move(other);
+        }
+
         /**
          * Moves the given scoped_resource into this scoped_resource.
          * @param other The scoped_resource to move into this scoped_resource.
          * @return Returns this scoped_resource.
          */
-        scoped_resource& operator=(scoped_resource<T>&& other) = default;
+        scoped_resource& operator=(scoped_resource<T>&& other)
+        {
+            release();
+            _resource = other._resource;
+            _deleter = other._deleter;
+            other._deleter = std::function<void(T&)>();
+            other._resource = T();
+            return *this;
+        }
 
         /**
          * Destructs a scoped_resource.

@@ -2,7 +2,10 @@
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <facter/ruby/api.hpp>
 #include <facter/logging/logging.hpp>
+#include <facter/util/directory.hpp>
+#include <facter/util/dynamic_library.hpp>
 #include <facter/version.h>
 #include <boost/filesystem.hpp>
 #include <rapidjson/document.h>
@@ -11,10 +14,11 @@
 #include <algorithm>
 
 using namespace std;
+using namespace facter::ruby;
+using namespace facter::util;
 using namespace rapidjson;
 using namespace YAML;
 using namespace boost::filesystem;
-namespace bs = boost::system;
 
 LOG_DECLARE_NAMESPACE("facts.collection");
 
@@ -99,41 +103,29 @@ namespace facter { namespace facts {
 
         // Build a map between a file and the resolver that can resolve it
         map<string, external::resolver const*> files;
-        for (auto const& directory : search_directories) {
-            directory_iterator end;
-            directory_iterator it;
-
-            // Attempt to iterate the directory
-            try {
-                it = directory_iterator(directory);
-            } catch (filesystem_error& ex) {
+        for (auto const& dir : search_directories) {
+            boost::system::error_code ec;
+            if (!is_directory(dir, ec)) {
                 // Warn the user if not using the default search directories
                 if (!directories.empty()) {
-                    LOG_WARNING("skipping external facts for \"%1%\": %2%", directory, ex.code().message());
+                    LOG_WARNING("skipping external facts for \"%1%\": %2%", dir, ec.message());
                 } else {
-                    LOG_DEBUG("skipping external facts for \"%1%\": %2%", directory, ex.code().message());
+                    LOG_DEBUG("skipping external facts for \"%1%\": %2%", dir, ec.message());
                 }
                 continue;
             }
 
-            LOG_DEBUG("searching \"%1%\" for external facts.", directory);
+            LOG_DEBUG("searching \"%1%\" for external facts.", dir);
 
-            // Search for regular files in the directory
-            for (; it != end; ++it) {
-                bs::error_code ec;
-                if (!is_regular_file(it->status())) {
-                    continue;
-                }
-
-                string path = it->path().string();
-
+            directory::each_file(dir, [&](string const& path) {
                 for (auto const& res : resolvers) {
                     if (res->can_resolve(path)) {
                         files.emplace(path, res.get());
                         break;
                     }
                 }
-            }
+                return true;
+            });
         }
 
         if (files.empty()) {
@@ -154,7 +146,36 @@ namespace facter { namespace facts {
 
     void collection::add_custom_facts(vector<string> const& directories)
     {
-        // TODO: implement
+        dynamic_library library = api::load();
+        if (!library.loaded()) {
+            return;
+        }
+
+        // Ensure the API is destructed before unloading the library
+        try {
+            api ruby(library);
+
+            for (auto const& dir : ruby.get_load_path()) {
+                // Ensure we're not loading anything from Ruby facter if it's on the load path
+                if (dir.find("facter") != string::npos) {
+                    continue;
+                }
+                directory::each_file((path(dir) / "facter").string(), [&](string const& file) {
+                    load_ruby_file(ruby, file);
+                    return true;
+                }, "\\.rb$");
+            }
+            for (auto const& dir : directories) {
+                directory::each_file(dir, [&](string const& file) {
+                    load_ruby_file(ruby, file);
+                    return true;
+                }, "\\.rb$");
+            }
+        }
+        catch (missing_import_exception& ex) {
+            LOG_WARNING("%1%: custom facts will not be resolved.", ex.what());
+            return;
+        }
     }
 
     void collection::remove(shared_ptr<resolver> const& res)
@@ -383,6 +404,24 @@ namespace facter { namespace facts {
             emitter << YAML::Value << *kvp.second;
         }
         emitter << EndMap;
+    }
+
+    void collection::load_ruby_file(api& ruby, string const& path)
+    {
+        LOG_INFO("loading custom facts from %1%.", path);
+
+        ruby.rescue([&]() {
+            // Do not construct C++ objects in a rescue callback
+            // C++ stack unwinding will not take place if a Ruby exception is thrown!
+             ruby.rb_load(ruby.rb_str_new_cstr(path.c_str()), 0);
+            return 0;
+        }, [&](VALUE ex) {
+            LOG_ERROR("error while resolving custom facts in %1%: %2%.\nbacktrace:\n%3%",
+                path,
+                ruby.to_string(ex),
+                ruby.exception_backtrace(ex));
+            return 0;
+        });
     }
 
 }}  // namespace facter::facts

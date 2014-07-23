@@ -6,6 +6,7 @@
 #include <facter/facts/posix/os.hpp>
 #include <facter/util/string.hpp>
 #include <facter/util/file.hpp>
+#include <facter/util/directory.hpp>
 #include <boost/filesystem.hpp>
 #include <re2/re2.h>
 #include <unordered_set>
@@ -64,27 +65,15 @@ namespace facter { namespace facts { namespace linux {
         size_t logical_count = 0;
         size_t physical_count = 0;
 
-        // To determine physical CPU count, we need to look at sysfs.
-        // The topology information may not be present in /proc/cpuinfo for older kernels
-        directory_iterator end;
-        try {
-            for (auto it = directory_iterator("/sys/devices/system/cpu"); it != end; ++it) {
-                if (!is_directory(it->status()) || !RE2::FullMatch(it->path().filename().string(), "^cpu\\d+$")) {
-                    continue;
-                }
-                ++logical_count;
-                string id = trim(file::read((it->path() / "/topology/physical_package_id").string()));
-                if (id.empty() || cpus.emplace(move(id)).second) {
-                    // Haven't seen this processor before
-                    ++physical_count;
-                }
+        directory::each_subdirectory("/sys/devices/system/cpu", [&](string const& cpu_directory) {
+            ++logical_count;
+            string id = trim(file::read((path(cpu_directory) / "/topology/physical_package_id").string()));
+            if (id.empty() || cpus.emplace(move(id)).second) {
+                // Haven't seen this processor before
+                ++physical_count;
             }
-        } catch (filesystem_error&) {
-            // Couldn't determine counts; fall back to cpuinfo
-            logical_count = 0;
-            physical_count = 0;
-            cpus.clear();
-        }
+            return true;
+        }, "^cpu\\d+$");
 
         // To determine model information, parse /proc/cpuinfo
         bool have_counts = logical_count > 0;
