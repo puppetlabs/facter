@@ -10,6 +10,7 @@
 #include <vector>
 #include <functional>
 #include <memory>
+#include <initializer_list>
 #include "../util/dynamic_library.hpp"
 
 namespace facter { namespace facts {
@@ -32,6 +33,11 @@ namespace facter {  namespace ruby {
      * See MRI documentation.
      */
     typedef uintptr_t ID;
+
+    /**
+     * Macro to cast function pointers to a Ruby method
+     */
+    #define RUBY_METHOD_FUNC(x) reinterpret_cast<VALUE(*)(...)>(x)
 
     /**
      * Contains utility functions and the pointers to the Ruby API.
@@ -94,7 +100,15 @@ namespace facter {  namespace ruby {
         /**
          * See MRI documentation.
          */
+        int (* const rb_const_defined)(VALUE, ID);
+        /**
+         * See MRI documentation.
+         */
         VALUE (* const rb_define_module)(char const*);
+        /**
+         * See MRI documentation.
+         */
+        VALUE (* const rb_define_module_under)(VALUE, char const*);
         /**
          * See MRI documentation.
          */
@@ -219,6 +233,26 @@ namespace facter {  namespace ruby {
          * See MRI documentation.
          */
         VALUE (* const rb_hash_aset)(VALUE, VALUE, VALUE);
+        /**
+         * See MRI documentation.
+         */
+        VALUE (* const rb_hash_lookup)(VALUE, VALUE);
+        /**
+         * See MRI documentation.
+         */
+        VALUE (* const rb_obj_freeze)(VALUE);
+        /**
+         * See MRI documentation.
+         */
+        VALUE (* const rb_sym_to_s)(VALUE);
+        /**
+         * See MRI documentation.
+         */
+        ID (* const rb_to_id)(VALUE);
+        /**
+         * See MRI documentation.
+         */
+        char const* (* const rb_id2name)(ID);
 
         /**
          * See MRI documentation.
@@ -261,6 +295,14 @@ namespace facter {  namespace ruby {
          * See MRI documentation.
          */
         VALUE* const rb_eTypeError;
+        /**
+         * See MRI documentation.
+         */
+        VALUE* const rb_eStandardError;
+        /**
+         * See MRI documentation.
+         */
+        VALUE* const rb_eRuntimeError;
 
         /**
          * Gets the load path being used by Ruby.
@@ -405,6 +447,21 @@ namespace facter {  namespace ruby {
          * @return Returns a pointer to the value or nullptr if nil.
          */
         std::unique_ptr<facter::facts::value> to_value(VALUE obj) const;
+
+        /**
+         * Looks up a constant based on the given names.
+         * @param names The names to lookup.
+         * @return Returns the value or raises a NameError.
+         */
+        VALUE lookup(std::initializer_list<std::string> const& names) const;
+
+        /**
+         * Determines if two values are equal.
+         * @param first The first value to compare.
+         * @param second The second value to compare.
+         * @return Returns true if eql? returns true for the first and second values.
+         */
+        bool equals(VALUE first, VALUE second) const;
 
      private:
         explicit api(facter::util::dynamic_library&& library);

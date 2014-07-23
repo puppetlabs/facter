@@ -13,7 +13,7 @@ using namespace facter::facts;
 using namespace facter::util;
 using namespace boost::filesystem;
 
-LOG_DECLARE_NAMESPACE("ruby.api");
+LOG_DECLARE_NAMESPACE("ruby");
 
 namespace facter { namespace ruby {
 
@@ -26,7 +26,9 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(rb_const_get),
         LOAD_SYMBOL(rb_const_set),
         LOAD_SYMBOL(rb_const_remove),
+        LOAD_SYMBOL(rb_const_defined),
         LOAD_SYMBOL(rb_define_module),
+        LOAD_SYMBOL(rb_define_module_under),
         LOAD_SYMBOL(rb_define_class_under),
         LOAD_SYMBOL(rb_define_method),
         LOAD_SYMBOL(rb_define_singleton_method),
@@ -58,6 +60,11 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(rb_ary_entry),
         LOAD_SYMBOL(rb_hash_new),
         LOAD_SYMBOL(rb_hash_aset),
+        LOAD_SYMBOL(rb_hash_lookup),
+        LOAD_SYMBOL(rb_obj_freeze),
+        LOAD_SYMBOL(rb_sym_to_s),
+        LOAD_SYMBOL(rb_to_id),
+        LOAD_SYMBOL(rb_id2name),
         LOAD_SYMBOL(rb_cObject),
         LOAD_SYMBOL(rb_cArray),
         LOAD_SYMBOL(rb_cHash),
@@ -68,12 +75,14 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(rb_eException),
         LOAD_SYMBOL(rb_eArgError),
         LOAD_SYMBOL(rb_eTypeError),
+        LOAD_SYMBOL(rb_eStandardError),
+        LOAD_SYMBOL(rb_eRuntimeError),
         LOAD_OPTIONAL_SYMBOL(ruby_setup),
         LOAD_SYMBOL(ruby_init),
         LOAD_SYMBOL(ruby_options),
         LOAD_SYMBOL(ruby_cleanup),
         _library(move(library)),
-        _cleanup(library.first_load())
+        _cleanup(_library.first_load())
     {
         // Prefer ruby_setup over ruby_init if present (2.0+)
         // If ruby is already initialized, this is a no-op
@@ -85,7 +94,7 @@ namespace facter { namespace ruby {
 
         LOG_INFO("using ruby version %1% to resolve custom facts.", to_string(rb_const_get(*rb_cObject, rb_intern("RUBY_VERSION"))));
 
-        if (library.first_load()) {
+        if (_library.first_load()) {
             // Run an empty script evaluation
             // ruby_options is a required call as it sets up some important stuff (unfortunately)
             char const* opts[] = {
@@ -223,9 +232,9 @@ namespace facter { namespace ruby {
     VALUE api::rescue(function<VALUE()> callback, function<VALUE(VALUE)> rescue) const
     {
         return rb_rescue2(
-            reinterpret_cast<VALUE(*)(...)>(callback_thunk),
+            RUBY_METHOD_FUNC(callback_thunk),
             reinterpret_cast<VALUE>(&callback),
-            reinterpret_cast<VALUE(*)(...)>(rescue_thunk),
+            RUBY_METHOD_FUNC(rescue_thunk),
             reinterpret_cast<VALUE>(&rescue),
             *rb_eException,
             0);
@@ -257,7 +266,7 @@ namespace facter { namespace ruby {
 
         for (long i = 0; i < size; ++i) {
             if (!callback(rb_ary_entry(array, i))) {
-                return;
+                break;
             }
         }
     }
@@ -421,6 +430,21 @@ namespace facter { namespace ruby {
             return move(hash);
         }
         return nullptr;
+    }
+
+    VALUE api::lookup(std::initializer_list<std::string> const& names) const
+    {
+        volatile VALUE current = *rb_cObject;
+
+        for (auto const& name : names) {
+            current = rb_const_get(current, rb_intern(name.c_str()));
+        }
+        return current;
+    }
+
+    bool api::equals(VALUE first, VALUE second) const
+    {
+        return is_true(rb_funcall(first, rb_intern("eql?"), 1, second));
     }
 
 }}  // namespace facter::ruby

@@ -3,6 +3,7 @@
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/ruby/api.hpp>
+#include <facter/ruby/module.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/dynamic_library.hpp>
@@ -151,12 +152,24 @@ namespace facter { namespace facts {
             return;
         }
 
+        module facter(*ruby, *this);
+
         vector<string> files;
         for (auto const& dir : ruby->get_load_path()) {
-            // If there is a facter.rb in this directory, ignore it so that we don't load facter itself
-            path p = dir;
             boost::system::error_code ec;
-            if (exists(p / "facter.rb", ec)) {
+
+            // Get the canonical directory name
+            path p = dir;
+            p = canonical(p, ec);
+            if (ec) {
+                continue;
+            }
+
+            path facter = p / "facter.rb";
+            if (exists(facter, ec)) {
+                // Add the file to loaded features to treat facter as already required
+                // This will prevent a fact from doing a "require 'facter'" and overwriting our module
+                ruby->rb_ary_push(ruby->rb_gv_get("$LOADED_FEATURES"), ruby->rb_str_new_cstr(facter.string().c_str()));
                 continue;
             }
             directory::each_file((p / "facter").string(), [&](string const& file) {
@@ -165,7 +178,15 @@ namespace facter { namespace facts {
             }, "\\.rb$");
         }
         for (auto const& dir : directories) {
-            directory::each_file(dir, [&](string const& file) {
+            // Get the canonical directory name
+            path p = dir;
+            boost::system::error_code ec;
+            p = canonical(p, ec);
+            if (ec) {
+                continue;
+            }
+
+            directory::each_file(p.string(), [&](string const& file) {
                 files.push_back(file);
                 return true;
             }, "\\.rb$");
@@ -176,6 +197,9 @@ namespace facter { namespace facts {
         for (auto const& file : files) {
             load_ruby_file(file);
         }
+
+        // Resolve all facts into the collection
+        facter.resolve();
     }
 
     void collection::remove(shared_ptr<resolver> const& res)
