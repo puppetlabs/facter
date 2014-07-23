@@ -33,18 +33,22 @@ TEST(facter_facts_string_value, to_json) {
     ASSERT_EQ("hello world", string(json_value.GetString()));
 }
 
-TEST(facter_facts_string_value, insertion_operator) {
+TEST(facter_facts_string_value, write_stream) {
     string_value value("hello world");
 
     ostringstream stream;
-    stream << value;
+    value.write(stream);
+    ASSERT_EQ("\"hello world\"", stream.str());
+
+    stream.str("");
+    value.write(stream, false);
     ASSERT_EQ("hello world", stream.str());
 }
 
-TEST(facter_facts_string_value, yaml_insertion_operator) {
+TEST(facter_facts_string_value, write_yaml) {
     string_value value("hello world");
 
     Emitter emitter;
-    emitter << value;
+    value.write(emitter);
     ASSERT_EQ("\"hello world\"", string(emitter.c_str()));
 }

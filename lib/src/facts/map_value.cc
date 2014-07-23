@@ -82,7 +82,7 @@ namespace facter { namespace facts {
         }
     }
 
-    ostream& map_value::write(ostream& os) const
+    ostream& map_value::write(ostream& os, bool quoted) const
     {
         // Write out the elements in the map
         os << "{";
@@ -94,14 +94,7 @@ namespace facter { namespace facts {
                 os << ", ";
             }
             os << '"' << kvp.first << "\"=>";
-            bool quote = dynamic_cast<string_value const*>(kvp.second.get());
-            if (quote) {
-                os << '"';
-            }
-            os << *kvp.second;
-            if (quote) {
-                os << '"';
-            }
+            kvp.second->write(os, true /* always quote strings in an array */);
         }
         os << "}";
         return os;
@@ -111,8 +104,8 @@ namespace facter { namespace facts {
     {
         emitter << BeginMap;
         for (auto const& kvp : _elements) {
-            emitter << Key << kvp.first;
-            emitter << YAML::Value << *kvp.second;
+            emitter << Key << kvp.first << YAML::Value;
+            kvp.second->write(emitter);
         }
         emitter << EndMap;
         return emitter;

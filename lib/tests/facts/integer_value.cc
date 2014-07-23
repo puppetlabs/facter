@@ -30,18 +30,18 @@ TEST(facter_facts_integer_value, to_json) {
     ASSERT_EQ(1337, json_value.GetInt64());
 }
 
-TEST(facter_facts_integer_value, insertion_operator) {
+TEST(facter_facts_integer_value, write_stream) {
     integer_value value(5);
 
     ostringstream stream;
-    stream << value;
+    value.write(stream);
     ASSERT_EQ("5", stream.str());
 }
 
-TEST(facter_facts_integer_value, yaml_insertion_operator) {
+TEST(facter_facts_integer_value, write_yaml) {
     integer_value value(5);
 
     Emitter emitter;
-    emitter << value;
+    value.write(emitter);
     ASSERT_EQ("5", string(emitter.c_str()));
 }

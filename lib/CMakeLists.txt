@@ -25,7 +25,6 @@ set(LIBFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/map_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/scalar_value.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/src/facts/value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/ruby/api.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/ruby/confine.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/ruby/fact.cc"

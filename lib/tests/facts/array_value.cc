@@ -102,7 +102,7 @@ TEST(facter_facts_array_value, to_json) {
     ASSERT_EQ("child", string(json_value[2u][0u].GetString()));
 }
 
-TEST(facter_facts_array_value, insertion_operator) {
+TEST(facter_facts_array_value, write_stream) {
     auto subarray = make_value<array_value>();
     subarray->add(make_value<string_value>("child"));
 
@@ -112,11 +112,11 @@ TEST(facter_facts_array_value, insertion_operator) {
     value.add(move(subarray));
 
     ostringstream stream;
-    stream << value;
+    value.write(stream);
     ASSERT_EQ("[\"1\", 2, [\"child\"]]", stream.str());
 }
 
-TEST(facter_facts_array_value, yaml_insertion_operator) {
+TEST(facter_facts_array_value, write_yaml) {
     auto subarray = make_value<array_value>();
     subarray->add(make_value<string_value>("child"));
 
@@ -126,6 +126,6 @@ TEST(facter_facts_array_value, yaml_insertion_operator) {
     value.add(move(subarray));
 
     Emitter emitter;
-    emitter << value;
+    value.write(emitter);
     ASSERT_EQ("- \"1\"\n- 2\n-\n  - \"child\"", string(emitter.c_str()));
 }

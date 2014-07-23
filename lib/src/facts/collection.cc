@@ -66,21 +66,21 @@ namespace facter { namespace facts {
         if (LOG_IS_DEBUG_ENABLED()) {
             if (old_value) {
                 ostringstream old_value_ss;
-                old_value_ss << *old_value;
+                old_value->write(old_value_ss);
                 if (!value) {
-                    LOG_DEBUG("fact \"%1%\" resolved to null and the existing value of \"%2%\" will be removed.", name, old_value_ss.str());
+                    LOG_DEBUG("fact \"%1%\" resolved to null and the existing value of %2% will be removed.", name, old_value_ss.str());
                 } else {
                     ostringstream new_value_ss;
-                    new_value_ss << *value;
-                    LOG_DEBUG("fact \"%1%\" has changed from \"%2%\" to \"%3%\".", name, old_value_ss.str(), new_value_ss.str());
+                    value->write(new_value_ss);
+                    LOG_DEBUG("fact \"%1%\" has changed from %2% to %3%.", name, old_value_ss.str(), new_value_ss.str());
                 }
             } else {
                 if (!value) {
                     LOG_DEBUG("fact \"%1%\" resolved to null and will not be added.", name);
                 } else {
                     ostringstream new_value_ss;
-                    new_value_ss << *value;
-                    LOG_DEBUG("fact \"%1%\" has resolved to \"%2%\".", name, new_value_ss.str());
+                    value->write(new_value_ss);
+                    LOG_DEBUG("fact \"%1%\" has resolved to %2%.", name, new_value_ss.str());
                 }
             }
         }
@@ -371,7 +371,7 @@ namespace facter { namespace facts {
     {
         // If there's only one fact, print it without the name
         if (_facts.size() == 1) {
-            stream << *_facts.begin()->second;
+            _facts.begin()->second->write(stream, false);
             return;
         }
 
@@ -383,7 +383,8 @@ namespace facter { namespace facts {
             } else {
                 stream << '\n';
             }
-            stream << kvp.first << " => " << *kvp.second;
+            stream << kvp.first << " => ";
+            kvp.second->write(stream, false);
         }
     }
 
@@ -424,8 +425,8 @@ namespace facter { namespace facts {
         Emitter emitter(stream);
         emitter << BeginMap;
         for (auto const& kvp : _facts) {
-            emitter << Key << kvp.first;
-            emitter << YAML::Value << *kvp.second;
+            emitter << Key << kvp.first << YAML::Value;
+            kvp.second->write(emitter);
         }
         emitter << EndMap;
     }

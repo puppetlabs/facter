@@ -158,7 +158,7 @@ TEST(facter_facts_collection, write_hash) {
     ASSERT_EQ("bar => foo\nfoo => bar", ss.str());
 }
 
-TEST(facter_facts_collection, insertion_operator_simple) {
+TEST(facter_facts_collection, write_hash_single) {
     collection facts;
     facts.add(make_shared<simple_resolver>());
     ostringstream ss;
