@@ -27,12 +27,17 @@ describe Facter::Util::Formatter do
       expect(described_class.format_plaintext({"foo" => "bar"})).to eq "bar"
     end
 
+    it "can return false:FalseClass as a single fact value" do
+      expect(described_class.format_plaintext({"foo" => false})).to eq "false"
+    end
+
     it "formats a structured value with #inspect" do
       value = ["bar"]
       value.expects(:inspect).returns %Q(["bar"])
       hash = {"foo" => value, "baz" => "quux"}
       expect(described_class.format_plaintext(hash)).to match(%Q([bar]))
     end
+
     it "formats multiple string values as key/value pairs" do
       hash = {"foo" => "bar", "baz" => "quux"}
       expect(described_class.format_plaintext(hash)).to match(/foo => bar/)
