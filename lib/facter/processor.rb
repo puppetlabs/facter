@@ -33,7 +33,7 @@ end
 
 Facter.add("ProcessorCount") do
   confine :kernel => [ :linux, :"gnu/kfreebsd", :Darwin, :aix, :"hp-ux", :dragonfly, :freebsd, :openbsd, :sunos, :windows ]
-  setcode { Facter.fact(:processors).value["processorcount"] }
+  setcode { Facter.fact(:processors).value["processorcount"].to_s }
 end
 
 Facter.add("Processor") do

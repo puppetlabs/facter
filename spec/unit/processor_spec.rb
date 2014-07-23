@@ -23,7 +23,7 @@ describe "Processor facts" do
       Facter.fact(:kernel).stubs(:value).returns("linux")
       Facter.fact("processors").stubs(:value).returns({"processorcount" => 8, "physicalprocessorcount" => 4 })
       Facter.collection.internal_loader.load(:processor)
-      Facter.fact(:processorcount).value.should eq 8
+      Facter.fact(:processorcount).value.should eq "8"
     end
   end
 
