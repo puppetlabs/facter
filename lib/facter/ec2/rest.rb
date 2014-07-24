@@ -78,7 +78,7 @@ module Facter
       # @return [Array, NilClass]
       def fetch_endpoint(path)
         uri = @baseurl + path
-        body = open(uri).read
+        body = open(uri, :proxy => nil).read
         parse_results(body)
       rescue OpenURI::HTTPError => e
         if e.message.match /404 Not Found/i
