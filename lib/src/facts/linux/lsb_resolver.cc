@@ -40,40 +40,40 @@ namespace facter { namespace facts { namespace linux {
 
     void lsb_resolver::resolve_dist_id(collection& facts)
     {
-        string value = execute("lsb_release", {"-i", "-s"});
-        if (value.empty()) {
+        auto result = execute("lsb_release", {"-i", "-s"});
+        if (!result.first || result.second.empty()) {
             return;
         }
-        facts.add(fact::lsb_dist_id, make_value<string_value>(move(value)));
+        facts.add(fact::lsb_dist_id, make_value<string_value>(move(result.second)));
     }
 
     void lsb_resolver::resolve_dist_release(collection& facts)
     {
-        string value = execute("lsb_release", {"-r", "-s"});
-        if (value.empty()) {
+        auto result = execute("lsb_release", {"-r", "-s"});
+        if (!result.first || result.second.empty()) {
             return;
         }
-        facts.add(fact::lsb_dist_release, make_value<string_value>(move(value)));
+        facts.add(fact::lsb_dist_release, make_value<string_value>(move(result.second)));
     }
 
     void lsb_resolver::resolve_dist_codename(collection& facts)
     {
-        string value = execute("lsb_release", {"-c", "-s"});
-        if (value.empty()) {
+        auto result = execute("lsb_release", {"-c", "-s"});
+        if (!result.first || result.second.empty()) {
             return;
         }
-        facts.add(fact::lsb_dist_codename, make_value<string_value>(move(value)));
+        facts.add(fact::lsb_dist_codename, make_value<string_value>(move(result.second)));
     }
 
     void lsb_resolver::resolve_dist_description(collection& facts)
     {
-        string value = execute("lsb_release", {"-d", "-s"});
-        if (value.empty()) {
+        auto result = execute("lsb_release", {"-d", "-s"});
+        if (!result.first || result.second.empty()) {
             return;
         }
 
         // The value may be quoted; trim the quotes
-        facts.add(fact::lsb_dist_description, make_value<string_value>(trim(move(value), { '\"' })));
+        facts.add(fact::lsb_dist_description, make_value<string_value>(trim(move(result.second), { '\"' })));
     }
 
     void lsb_resolver::resolve_dist_version(collection& facts)
@@ -96,11 +96,11 @@ namespace facter { namespace facts { namespace linux {
 
     void lsb_resolver::resolve_release(collection& facts)
     {
-        string value = execute("lsb_release", {"-v", "-s"});
-        if (value.empty()) {
+        auto result = execute("lsb_release", {"-v", "-s"});
+        if (!result.first || result.second.empty()) {
             return;
         }
-        facts.add(fact::lsb_release, make_value<string_value>(move(value)));
+        facts.add(fact::lsb_release, make_value<string_value>(move(result.second)));
     }
 
 }}}  // namespace facter::facts::linux

@@ -106,11 +106,11 @@ namespace facter { namespace facts { namespace posix {
 
     int uptime_resolver::uptime_in_seconds()
     {
-        string uptime_output = execute("uptime");
-        if (uptime_output.empty()) {
+        auto result = execute("uptime");
+        if (!result.first || result.second.empty()) {
             return 0;
         }
-        return parse_uptime(uptime_output);
+        return parse_uptime(result.second);
     }
 
     int uptime_resolver::parse_uptime(string const& output)

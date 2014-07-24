@@ -8,9 +8,11 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <utility>
 #include <stdexcept>
 #include <functional>
 #include "../util/option_set.hpp"
+#include "../util/environment.hpp"
 
 namespace facter { namespace execution {
 
@@ -135,12 +137,28 @@ namespace facter { namespace execution {
     };
 
     /**
+     * Searches the given paths for the given executable file.
+     * @param file The file to search for.
+     * @param directories The directories to search.
+     * @return Returns the full path or empty if the file could not be found.
+     */
+    std::string which(std::string const& file, std::vector<std::string> const& directories = facter::util::environment::search_paths());
+
+    /**
+     * Expands the executable in the command to the full path.
+     * @param command The command to expand.
+     * @param directories The directories to search.
+     * @return Returns the expanded command if the executable was found or the original command if not.
+     */
+    std::string expand_command(std::string const& command, std::vector<std::string> const& directories = facter::util::environment::search_paths());
+
+    /**
      * Executes the given program.
      * @param file The name or path of the program to execute.
      * @param options The execution options.
-     * @return Returns the child process output.
+     * @return Returns whether or not the execution succeeded paired with the child process output.
      */
-    std::string execute(
+    std::pair<bool, std::string> execute(
         std::string const& file,
         facter::util::option_set<execution_options> const& options = { execution_options::defaults });
 
@@ -149,9 +167,9 @@ namespace facter { namespace execution {
      * @param file The name or path of the program to execute.
      * @param arguments The arguments to pass to the program.
      * @param options The execution options.
-     * @return Returns the child process output.
+     * @return Returns whether or not the execution succeeded paired with the child process output.
      */
-    std::string execute(
+    std::pair<bool, std::string> execute(
         std::string const& file,
         std::vector<std::string> const& arguments,
         facter::util::option_set<execution_options> const& options  = { execution_options::defaults });
@@ -162,9 +180,9 @@ namespace facter { namespace execution {
      * @param arguments The arguments to pass to the program.
      * @param environment The environment variables to pass to the child process.
      * @param options The execution options.
-     * @return Returns the child process output.
+     * @return Returns whether or not the execution succeeded paired with the child process output.
      */
-    std::string execute(
+    std::pair<bool, std::string> execute(
         std::string const& file,
         std::vector<std::string> const& arguments,
         std::map<std::string, std::string> const& environment,
@@ -175,8 +193,9 @@ namespace facter { namespace execution {
      * @param file The name or path of the program to execute.
      * @param callback The callback that is called with each line of output.
      * @param options The execution options.
+     * @return Returns true if the execution succeeded or false if it did not.
      */
-    void each_line(
+    bool each_line(
         std::string const& file,
         std::function<bool(std::string&)> callback,
         facter::util::option_set<execution_options> const& options = { execution_options::defaults });
@@ -187,8 +206,9 @@ namespace facter { namespace execution {
      * @param arguments The arguments to pass to the program.
      * @param callback The callback that is called with each line of output.
      * @param options The execution options.
+     * @return Returns true if the execution succeeded or false if it did not.
      */
-    void each_line(
+    bool each_line(
         std::string const& file,
         std::vector<std::string> const& arguments,
         std::function<bool(std::string&)> callback,
@@ -201,8 +221,9 @@ namespace facter { namespace execution {
      * @param environment The environment variables to pass to the child process.
      * @param callback The callback that is called with each line of output.
      * @param options The execution options.
+     * @return Returns true if the execution succeeded or false if it did not.
      */
-    void each_line(
+    bool each_line(
         std::string const& file,
         std::vector<std::string> const& arguments,
         std::map<std::string, std::string> const& environment,

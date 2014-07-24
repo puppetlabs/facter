@@ -171,8 +171,10 @@ namespace facter { namespace facts { namespace linux {
 
         // For VMware ESX, execute the vmware tool
         if (value.empty() && operating_system->value() == os::vmware_esx) {
-            string output = execute("vmware", { "-v" });
-            RE2::PartialMatch(output, "VMware ESX .*?(\\d.*)", &value);
+            auto result = execute("vmware", { "-v" });
+            if (result.first) {
+                RE2::PartialMatch(result.second, "VMware ESX .*?(\\d.*)", &value);
+            }
         }
 
         // For Amazon, use the lsbdistrelease fact

@@ -51,11 +51,11 @@ namespace facter { namespace facts { namespace posix {
     void processor_resolver::resolve_hardware_isa(collection& facts, utsname const& name)
     {
         // The utsname struct doesn't have a member for "uname -p", so we need to execute
-        string value = execute("uname", { "-p" });
-        if (value.empty()) {
+        auto result = execute("uname", { "-p" });
+        if (!result.first || result.second.empty()) {
             return;
         }
-        facts.add(fact::hardware_isa, make_value<string_value>(move(value)));
+        facts.add(fact::hardware_isa, make_value<string_value>(move(result.second)));
     }
 
     void processor_resolver::resolve_hardware_model(collection& facts, utsname const& name)

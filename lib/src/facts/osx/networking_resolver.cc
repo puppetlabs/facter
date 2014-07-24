@@ -46,13 +46,13 @@ namespace facter { namespace facts { namespace osx {
             return;
         }
 
-        string value = execute("/usr/sbin/scutil", { "--get LocalHostName" });
-        if (!value.empty()) {
+        auto result = execute("/usr/sbin/scutil", { "--get LocalHostName" });
+        if (!result.first || result.second.empty()) {
             bsd::networking_resolver::resolve_hostname(facts);
             return;
         }
 
-        facts.add(fact::hostname, make_value<string_value>(move(value)));
+        facts.add(fact::hostname, make_value<string_value>(move(result.second)));
     }
 
     string networking_resolver::get_primary_interface()
@@ -78,7 +78,11 @@ namespace facter { namespace facts { namespace osx {
     string networking_resolver::find_dhcp_server(string const& interface)
     {
         // Use ipconfig to get the server identifier
-        return execute("ipconfig", { "getoption", interface, "server_identifier" });
+        auto result = execute("ipconfig", { "getoption", interface, "server_identifier" });
+        if (!result.first) {
+            return {};
+        }
+        return result.second;
     }
 
 }}}  // namespace facter::facts::osx
