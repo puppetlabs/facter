@@ -16,8 +16,10 @@
 
 require 'facter/processors/os'
 
-os = Facter::Processor.implementation
 Facter.add(:processors, :type => :aggregate) do
+  def os
+    @os ||= Facter::Processor.implementation
+  end
 
   chunk(:processorlist) do
     processor_hash = {}
