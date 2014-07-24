@@ -35,6 +35,7 @@ if (UNIX)
     set(LIBFACTER_TESTS_POSIX_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/execution/posix/execution.cc"
         "${CMAKE_CURRENT_LIST_DIR}/facts/external/posix/execution_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/util/posix/environment.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_addrinfo.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_bio.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_descriptor.cc"

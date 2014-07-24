@@ -1,9 +1,32 @@
 #include <facter/util/environment.hpp>
+#include <facter/util/string.hpp>
 #include <cstdlib>
 
 using namespace std;
 
 namespace facter { namespace util {
+
+    struct search_path_helper
+    {
+        search_path_helper()
+        {
+            string paths;
+            if (environment::get("PATH", paths)) {
+                _paths = split(paths, environment::get_path_separator());
+            }
+            // Ruby Facter expects /sbin and /usr/sbin to be searched for programs
+            _paths.push_back("/sbin");
+            _paths.push_back("/usr/sbin");
+        }
+
+        vector<string> const& search_paths() const
+        {
+            return _paths;
+        }
+
+     private:
+         vector<string> _paths;
+    };
 
     bool environment::get(string const& name, string& value)
     {
@@ -24,6 +47,12 @@ namespace facter { namespace util {
     char environment::get_path_separator()
     {
         return ':';
+    }
+
+    vector<string> const& environment::search_paths()
+    {
+        static search_path_helper helper;
+        return helper.search_paths();
     }
 
 }}  // namespace facter::util

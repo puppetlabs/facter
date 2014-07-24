@@ -119,16 +119,11 @@ namespace facter { namespace ruby {
 
     dynamic_library api::load(string const& version)
     {
-        dynamic_library library;
-
         // Get the library name based on the given version
         string name = get_library_name(version);
 
         // Search the path directories for a matching ruby library
-        string paths;
-        if (environment::get("PATH", paths)) {
-            library = search(name, split(paths, environment::get_path_separator()));
-        }
+        dynamic_library library = search(name, environment::search_paths());
 
         // Fall back to using the load path
         if (!library.loaded()) {
