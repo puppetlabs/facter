@@ -259,7 +259,7 @@ describe Facter::Processor::Windows do
   end
 end
 
-describe Facter::Processor::Darwin do
+describe Facter::Processor::Darwin, :unless => Facter::Util::Config.is_windows? do
   subject { described_class.new }
   include_context "processor list"
 
