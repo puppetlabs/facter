@@ -22,7 +22,8 @@
 # descriptions iteratively (but we need them inside the Facter.add block above
 # for tests on processorcount to work)
 Facter.collection.internal_loader.load(:processors)
-if processor_list = Facter.fact(:processors).value["processorlist"]
+processors = Facter.value(:processors)
+if processors and (processor_list = processors["processorlist"])
   processor_list.each do |processor, desc|
     Facter.add("#{processor}") do
       confine :kernel => [ :aix, :"hp-ux", :sunos, :linux, :"gnu/kfreebsd" ]
