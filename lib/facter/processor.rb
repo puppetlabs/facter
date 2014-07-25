@@ -21,7 +21,6 @@
 # We have to enumerate these outside a Facter.add block to get the processorN
 # descriptions iteratively (but we need them inside the Facter.add block above
 # for tests on processorcount to work)
-Facter.collection.internal_loader.load(:processors)
 processors = Facter.value(:processors)
 if processors and (processor_list = processors["processorlist"])
   processor_list.each do |processor, desc|
