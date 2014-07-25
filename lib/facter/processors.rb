@@ -23,13 +23,9 @@ Facter.add(:processors, :type => :aggregate) do
 
   chunk(:models) do
     processor_hash = {}
-    processor_hash["models"] = {}
-    processorlist = os.get_processor_list
-
-    if processorlist.length > 0
-      processorlist.each_with_index do |processor, i|
-        processor_hash["models"]["processor#{i}"] = processor
-      end
+    processor_list = os.get_processor_list
+    if processor_list.length > 0
+      processor_hash["models"] = processor_list
       processor_hash
     end
   end

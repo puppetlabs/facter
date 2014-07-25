@@ -101,14 +101,14 @@
         "processor" : { "type": "string" },
         "processors" : { "type": "object",
           "properties": {
-            "processorlist" : { "type": "object",
+            "models" : { "type": "object",
               "patternProperties" : {
-                "processor[0-9]+$" : { "type": "string" }
+                "^[A-Za-z0-9_]+$" : { "type": "string" }
               }
             },
-            "processorcount" : { "type": "integer" },
-            "physicalprocessorcount" : { "type": "integer" },
-            "processorspeed" : { "type": "string" }
+            "count" : { "type": "integer" },
+            "physicalcount" : { "type": "integer" },
+            "speed" : { "type": "string" }
           }
         },
         "productname" : { "type": "string" },

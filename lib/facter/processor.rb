@@ -23,13 +23,13 @@
 # for tests on processorcount to work)
 processors = Facter.value(:processors)
 if processors and (processor_list = processors["models"])
-  processor_list.each do |processor, desc|
-    Facter.add("#{processor}") do
+  processor_list.each_with_index do |processor, i|
+    Facter.add("processor#{i}") do
       confine do
         !Facter.value(:processors).nil?
       end
 
-      setcode { desc }
+      setcode { processor }
     end
   end
 end

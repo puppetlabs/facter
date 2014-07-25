@@ -6,11 +6,10 @@ describe "processors" do
   subject { Facter.fact(:processors) }
   let(:os) { stub('OS Object') }
   let(:proc_list_array) { ["Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz", "Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz"] }
-  let(:expected_proc_list) { {"processor0"=>"Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz", "processor1"=>"Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz"} }
 
   shared_examples "all operating systems" do
     it "should include a models key with all processors" do
-      expect(subject.value["models"]).to eq expected_proc_list
+      expect(subject.value["models"]).to eq proc_list_array
     end
 
     it "should include a count key with the number of processors" do

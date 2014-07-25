@@ -4,15 +4,15 @@ require 'spec_helper'
 
 describe "Processor facts" do
   describe "processorX facts" do
-    expected_proc_list = {"processor0"=>"Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz", "processor1"=>"Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz"}
+    expected_proc_list = ["Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz", "Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz"]
 
     ["aix", "hp-ux", "sunos", "linux", "gnu/kfreebsd"].each do |kernel|
       it "should use the 'models' key from the 'processors' fact on #{kernel}" do
         Facter.fact(:kernel).stubs(:value).returns("#{kernel}")
         Facter.fact("processors").stubs(:value).returns({"count" => 8, "physicalcount" => 4, "models" => expected_proc_list})
         Facter.collection.internal_loader.load(:processor)
-        expected_proc_list.each_with_index do |(key, value), i|
-          Facter.fact("processor#{i}").value.should eq value
+        expected_proc_list.each_with_index do |processor, i|
+          Facter.fact("processor#{i}").value.should eq processor
         end
       end
     end
