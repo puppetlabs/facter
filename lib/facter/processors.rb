@@ -18,7 +18,7 @@ require 'facter/processors/os'
 
 Facter.add(:processors, :type => :aggregate) do
   def os
-    @os ||= Facter::Processor.implementation
+    @os ||= Facter::Processors.implementation
   end
 
   chunk(:processorlist) do

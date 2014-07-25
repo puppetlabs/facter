@@ -20,7 +20,7 @@ describe "processors" do
 
   describe "In OSX" do
     before do
-      Facter::Processor::Darwin.stubs(:new).returns os
+      Facter::Processors::Darwin.stubs(:new).returns os
     end
 
     before :each do
@@ -41,7 +41,7 @@ describe "processors" do
 
   describe "In Linux" do
     before do
-      Facter::Processor::Linux.stubs(:new).returns os
+      Facter::Processors::Linux.stubs(:new).returns os
     end
 
     before :each do
@@ -62,7 +62,7 @@ describe "processors" do
 
   describe "In Windows" do
     before do
-      Facter::Processor::Windows.stubs(:new).returns os
+      Facter::Processors::Windows.stubs(:new).returns os
     end
 
     before :each do
@@ -83,7 +83,7 @@ describe "processors" do
 
   describe "In SunOS" do
     before do
-      Facter::Processor::SunOS.stubs(:new).returns os
+      Facter::Processors::SunOS.stubs(:new).returns os
     end
 
     before :each do
@@ -104,7 +104,7 @@ describe "processors" do
 
   describe "In Dragonfly and FreeBSD" do
     before do
-      Facter::Processor::BSD.stubs(:new).returns os
+      Facter::Processors::BSD.stubs(:new).returns os
     end
 
     before :each do
@@ -121,7 +121,7 @@ describe "processors" do
 
   describe "OpenBSD" do
     before do
-      Facter::Processor::OpenBSD.stubs(:new).returns os
+      Facter::Processors::OpenBSD.stubs(:new).returns os
     end
 
     before :each do
@@ -142,7 +142,7 @@ describe "processors" do
 
   describe "In AIX" do
     before do
-      Facter::Processor::AIX.stubs(:new).returns os
+      Facter::Processors::AIX.stubs(:new).returns os
     end
 
     before :each do
@@ -159,7 +159,7 @@ describe "processors" do
 
   describe "In HP-UX" do
     before do
-      Facter::Processor::HP_UX.stubs(:new).returns os
+      Facter::Processors::HP_UX.stubs(:new).returns os
     end
 
     before :each do
