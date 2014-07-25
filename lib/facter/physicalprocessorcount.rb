@@ -12,6 +12,16 @@
 #
 
 Facter.add('physicalprocessorcount') do
-  confine :kernel => [:linux, :windows, :sunos, :openbsd]
-  setcode { Facter.fact(:processors).value["physicalprocessorcount"].to_s }
+  setcode do
+    confine do
+      !Facter.value(:processors).nil?
+    end
+
+    processors = Facter.value(:processors)
+    if processors and (physicalprocessorcount = processors["physicalprocessorcount"])
+      physicalprocessorcount.to_s
+    else
+      nil
+    end
+  end
 end

@@ -25,15 +25,27 @@ processors = Facter.value(:processors)
 if processors and (processor_list = processors["processorlist"])
   processor_list.each do |processor, desc|
     Facter.add("#{processor}") do
-      confine :kernel => [ :aix, :"hp-ux", :sunos, :linux, :"gnu/kfreebsd" ]
+      confine do
+        !Facter.value(:processors).nil?
+      end
+
       setcode { desc }
     end
   end
 end
 
 Facter.add("ProcessorCount") do
-  confine :kernel => [ :linux, :"gnu/kfreebsd", :Darwin, :aix, :"hp-ux", :dragonfly, :freebsd, :openbsd, :sunos, :windows ]
-  setcode { Facter.fact(:processors).value["processorcount"].to_s }
+  confine do
+    !Facter.value(:processors).nil?
+  end
+
+  setcode do
+    if processors and (processorcount = processors["processorcount"])
+      processorcount.to_s
+    else
+      nil
+    end
+  end
 end
 
 Facter.add("Processor") do
