@@ -146,35 +146,35 @@ namespace facter { namespace facts {
 
     void collection::add_custom_facts(vector<string> const& directories)
     {
-        dynamic_library library = api::load();
-        if (!library.loaded()) {
+        auto ruby = api::instance();
+        if (!ruby) {
             return;
         }
 
-        // Ensure the API is destructed before unloading the library
-        try {
-            api ruby(library);
-
-            for (auto const& dir : ruby.get_load_path()) {
-                // Ensure we're not loading anything from Ruby facter if it's on the load path
-                if (dir.find("facter") != string::npos) {
-                    continue;
-                }
-                directory::each_file((path(dir) / "facter").string(), [&](string const& file) {
-                    load_ruby_file(ruby, file);
-                    return true;
-                }, "\\.rb$");
+        vector<string> files;
+        for (auto const& dir : ruby->get_load_path()) {
+            // If there is a facter.rb in this directory, ignore it so that we don't load facter itself
+            path p = dir;
+            boost::system::error_code ec;
+            if (exists(p / "facter.rb", ec)) {
+                continue;
             }
-            for (auto const& dir : directories) {
-                directory::each_file(dir, [&](string const& file) {
-                    load_ruby_file(ruby, file);
-                    return true;
-                }, "\\.rb$");
-            }
+            directory::each_file((p / "facter").string(), [&](string const& file) {
+                files.push_back(file);
+                return true;
+            }, "\\.rb$");
         }
-        catch (missing_import_exception& ex) {
-            LOG_WARNING("%1%: custom facts will not be resolved.", ex.what());
-            return;
+        for (auto const& dir : directories) {
+            directory::each_file(dir, [&](string const& file) {
+                files.push_back(file);
+                return true;
+            }, "\\.rb$");
+        }
+
+        sort(files.begin(), files.end());
+
+        for (auto const& file : files) {
+            load_ruby_file(file);
         }
     }
 
@@ -406,20 +406,25 @@ namespace facter { namespace facts {
         emitter << EndMap;
     }
 
-    void collection::load_ruby_file(api& ruby, string const& path)
+    void collection::load_ruby_file(string const& path)
     {
+        auto ruby = api::instance();
+        if (!ruby) {
+            return;
+        }
+
         LOG_INFO("loading custom facts from %1%.", path);
 
-        ruby.rescue([&]() {
+        ruby->rescue([&]() {
             // Do not construct C++ objects in a rescue callback
             // C++ stack unwinding will not take place if a Ruby exception is thrown!
-             ruby.rb_load(ruby.rb_str_new_cstr(path.c_str()), 0);
+             ruby->rb_load(ruby->rb_str_new_cstr(path.c_str()), 0);
             return 0;
         }, [&](VALUE ex) {
             LOG_ERROR("error while resolving custom facts in %1%: %2%.\nbacktrace:\n%3%",
                 path,
-                ruby.to_string(ex),
-                ruby.exception_backtrace(ex));
+                ruby->to_string(ex),
+                ruby->exception_backtrace(ex));
             return 0;
         });
     }

@@ -21,9 +21,11 @@ namespace facter { namespace ruby {
 #define LOAD_ALIASED_SYMBOL(x, y) x(reinterpret_cast<decltype(x)>(library.find_symbol(#x, true, #y)))
 #define LOAD_OPTIONAL_SYMBOL(x) x(reinterpret_cast<decltype(x)>(library.find_symbol(#x)))
 
-    api::api(dynamic_library const& library) :
+    api::api(dynamic_library&& library) :
         LOAD_SYMBOL(rb_intern),
         LOAD_SYMBOL(rb_const_get),
+        LOAD_SYMBOL(rb_const_set),
+        LOAD_SYMBOL(rb_const_remove),
         LOAD_SYMBOL(rb_define_module),
         LOAD_SYMBOL(rb_define_class_under),
         LOAD_SYMBOL(rb_define_method),
@@ -70,6 +72,7 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(ruby_init),
         LOAD_SYMBOL(ruby_options),
         LOAD_SYMBOL(ruby_cleanup),
+        _library(move(library)),
         _cleanup(library.first_load())
     {
         // Prefer ruby_setup over ruby_init if present (2.0+)
@@ -117,10 +120,16 @@ namespace facter { namespace ruby {
         }
     }
 
-    dynamic_library api::load(string const& version)
+    api const* api::instance()
+    {
+        static unique_ptr<api> instance = create();
+        return instance.get();
+    }
+
+    unique_ptr<api> api::create()
     {
         // Get the library name based on the given version
-        string name = get_library_name(version);
+        string name = get_library_name();
 
         // Search the path directories for a matching ruby library
         dynamic_library library = search(name, environment::search_paths());
@@ -137,7 +146,12 @@ namespace facter { namespace ruby {
         } else {
             LOG_INFO("ruby was already loaded from \"%1%\".", library.name());
         }
-        return library;
+        try {
+            return unique_ptr<api>(new api(move(library)));
+        } catch (missing_import_exception& ex) {
+            LOG_WARNING("%1%: custom facts will not be resolved.", ex.what());
+            return nullptr;
+        }
     }
 
     dynamic_library api::search(string const& name, vector<string> const& directories)
@@ -182,7 +196,7 @@ namespace facter { namespace ruby {
         return library;
     }
 
-    vector<string> api::get_load_path()
+    vector<string> api::get_load_path() const
     {
         vector<string> directories;
 
@@ -199,14 +213,14 @@ namespace facter { namespace ruby {
         return directories;
     }
 
-    string api::to_string(VALUE v)
+    string api::to_string(VALUE v) const
     {
         v = rb_funcall(v, rb_intern("to_s"), 0);
         size_t size = static_cast<size_t>(rb_num2ulong(rb_funcall(v, rb_intern("size"), 0)));
         return string(rb_string_value_ptr(&v), size);
     }
 
-    VALUE api::rescue(function<VALUE()> callback, function<VALUE(VALUE)> rescue)
+    VALUE api::rescue(function<VALUE()> callback, function<VALUE(VALUE)> rescue) const
     {
         return rb_rescue2(
             reinterpret_cast<VALUE(*)(...)>(callback_thunk),
@@ -217,7 +231,7 @@ namespace facter { namespace ruby {
             0);
     }
 
-    VALUE api::protect(int& tag, function<VALUE()> callback)
+    VALUE api::protect(int& tag, function<VALUE()> callback) const
     {
         return rb_protect(
             callback_thunk,
@@ -237,7 +251,7 @@ namespace facter { namespace ruby {
         return (*rescue)(exception);
     }
 
-    void api::array_for_each(VALUE array, std::function<bool(VALUE)> callback)
+    void api::array_for_each(VALUE array, std::function<bool(VALUE)> callback) const
     {
         long size = rb_num2ulong(rb_funcall(array, rb_intern("size"), 0));
 
@@ -248,7 +262,7 @@ namespace facter { namespace ruby {
         }
     }
 
-    void api::hash_for_each(VALUE hash, function<bool(VALUE, VALUE)> callback)
+    void api::hash_for_each(VALUE hash, function<bool(VALUE, VALUE)> callback) const
     {
         rb_hash_foreach(hash, reinterpret_cast<int(*)(...)>(hash_for_each_thunk), reinterpret_cast<VALUE>(&callback));
     }
@@ -259,7 +273,7 @@ namespace facter { namespace ruby {
         return (*callback)(key, value) ? 0 /* continue */ : 1 /* stop */;
     }
 
-    string api::exception_backtrace(VALUE ex)
+    string api::exception_backtrace(VALUE ex) const
     {
         return to_string(
             rb_funcall(
@@ -269,52 +283,52 @@ namespace facter { namespace ruby {
                 rb_str_new_cstr("\n")));
     }
 
-    bool api::is_a(VALUE value, VALUE klass)
+    bool api::is_a(VALUE value, VALUE klass) const
     {
         return rb_funcall(value, rb_intern("is_a?"), 1, klass) != 0;
     }
 
-    bool api::is_nil(VALUE value)
+    bool api::is_nil(VALUE value) const
     {
         return value == _nil;
     }
 
-    bool api::is_true(VALUE value)
+    bool api::is_true(VALUE value) const
     {
         return value == _true;
     }
 
-    bool api::is_false(VALUE value)
+    bool api::is_false(VALUE value) const
     {
         return value == _false;
     }
 
-    bool api::is_hash(VALUE value)
+    bool api::is_hash(VALUE value) const
     {
         return is_a(value, *rb_cHash);
     }
 
-    bool api::is_array(VALUE value)
+    bool api::is_array(VALUE value) const
     {
         return is_a(value, *rb_cArray);
     }
 
-    bool api::is_string(VALUE value)
+    bool api::is_string(VALUE value) const
     {
         return is_a(value, *rb_cString);
     }
 
-    bool api::is_symbol(VALUE value)
+    bool api::is_symbol(VALUE value) const
     {
         return is_a(value, *rb_cSymbol);
     }
 
-    bool api::is_fixednum(VALUE value)
+    bool api::is_fixednum(VALUE value) const
     {
         return is_a(value, *rb_cFixnum);
     }
 
-    bool api::is_float(VALUE value)
+    bool api::is_float(VALUE value) const
     {
         return is_a(value, *rb_cFloat);
     }
@@ -334,7 +348,7 @@ namespace facter { namespace ruby {
         return _false;
     }
 
-    VALUE api::to_ruby(value const* val)
+    VALUE api::to_ruby(value const* val) const
     {
         if (!val) {
             return _nil;
@@ -370,7 +384,7 @@ namespace facter { namespace ruby {
         return _nil;
     }
 
-    unique_ptr<value> api::to_value(VALUE obj)
+    unique_ptr<value> api::to_value(VALUE obj) const
     {
         if (is_nil(obj)) {
             return nullptr;
