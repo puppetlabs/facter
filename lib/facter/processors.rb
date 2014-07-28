@@ -32,7 +32,7 @@ Facter.add(:processors, :type => :aggregate) do
 
   chunk(:count) do
     processor_hash = {}
-    if processor_count = os.get_processor_count
+    if (processor_count = os.get_processor_count)
       processor_hash["count"] = processor_count
       processor_hash
     end
@@ -40,7 +40,7 @@ Facter.add(:processors, :type => :aggregate) do
 
   chunk(:physicalcount) do
     processor_hash = {}
-    if physical_processor_count = os.get_physical_processor_count
+    if (physical_processor_count = os.get_physical_processor_count)
       processor_hash["physicalcount"] = physical_processor_count
       processor_hash
     end
@@ -48,7 +48,7 @@ Facter.add(:processors, :type => :aggregate) do
 
   chunk(:speed) do
     processor_hash = {}
-    if processor_speed = os.get_processor_speed
+    if (processor_speed = os.get_processor_speed)
       processor_hash["speed"] = processor_speed
       processor_hash
     end

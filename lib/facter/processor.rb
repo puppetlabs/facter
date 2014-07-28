@@ -22,13 +22,9 @@
 # descriptions iteratively (but we need them inside the Facter.add block above
 # for tests on processorcount to work)
 processors = Facter.value(:processors)
-if processors and (processor_list = processors["models"])
+if processors && (processor_list = processors["models"])
   processor_list.each_with_index do |processor, i|
     Facter.add("processor#{i}") do
-      confine do
-        !Facter.value(:processors).nil?
-      end
-
       setcode { processor }
     end
   end
@@ -40,7 +36,7 @@ Facter.add("ProcessorCount") do
   end
 
   setcode do
-    if processors and (processorcount = processors["count"])
+    if (processorcount = processors["count"])
       processorcount.to_s
     else
       nil

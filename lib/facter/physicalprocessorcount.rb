@@ -12,13 +12,13 @@
 #
 
 Facter.add('physicalprocessorcount') do
-  setcode do
-    confine do
-      !Facter.value(:processors).nil?
-    end
+  confine do
+    !Facter.value(:processors).nil?
+  end
 
+  setcode do
     processors = Facter.value(:processors)
-    if processors and (physicalprocessorcount = processors["physicalcount"])
+    if (physicalprocessorcount = processors["physicalcount"])
       physicalprocessorcount.to_s
     else
       nil
