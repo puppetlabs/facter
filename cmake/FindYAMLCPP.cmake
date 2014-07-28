@@ -30,7 +30,11 @@ endif()
 
 # Find headers and libraries
 find_path(YAMLCPP_INCLUDE_DIR NAMES yaml-cpp/yaml.h ${YAMLCPP_INCLUDE_HINTS})
-find_library(YAMLCPP_LIBRARY NAMES yaml-cpp ${YAMLCPP_LIBRARY_HINTS})
+if (WIN32)
+  find_library(YAMLCPP_LIBRARY NAMES libyaml-cppmd yaml-cpp ${YAMLCPP_LIBRARY_HINTS})
+else()
+  find_library(YAMLCPP_LIBRARY NAMES yaml-cpp ${YAMLCPP_LIBRARY_HINTS})
+endif()
 
 # Set YAMLCPP_FOUND honoring the QUIET and REQUIRED arguments
 find_package_handle_standard_args(YAMLCPP DEFAULT_MSG YAMLCPP_LIBRARY YAMLCPP_INCLUDE_DIR)

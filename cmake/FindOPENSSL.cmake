@@ -30,7 +30,11 @@ endif()
 
 # Find headers and libraries
 find_path(OPENSSL_INCLUDE_DIR NAMES openssl/ssl.h ${OPENSSL_INCLUDE_HINTS})
-find_library(OPENSSL_LIBRARY NAMES crypto ${OPENSSL_LIBRARY_HINTS})
+if (WIN32)
+  find_library(OPENSSL_LIBRARY NAMES libeay32 ${OPENSSL_LIBRARY_HINTS})
+else()
+  find_library(OPENSSL_LIBRARY NAMES crypto ${OPENSSL_LIBRARY_HINTS})
+endif()
 
 # Set OPENSSL_FOUND honoring the QUIET and REQUIRED arguments
 find_package_handle_standard_args(OPENSSL DEFAULT_MSG OPENSSL_LIBRARY OPENSSL_INCLUDE_DIR)
