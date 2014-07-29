@@ -68,13 +68,34 @@ namespace facter { namespace facts {
          * Moves the given fact collection into this fact collection.
          * @param other The fact collection to move into this fact collection.
          */
+#ifdef _MSC_VER
+        // Visual Studio 12 still doesn't allow default for move constructor.
+        collection(collection&& other) {
+            *this = std::move(other);
+        }
+#else
         collection(collection&& other) = default;
+#endif
+
         /**
          * Moves the given fact collection into this fact collection.
          * @param other The fact collection to move into this fact collection.
          * @return Returns this fact collection.
          */
+#ifdef _MSC_VER
+        // Visual Studio 12 still doesn't allow default for move assignment.
+        collection& operator=(collection&& other) {
+            if (this != &other) {
+                _facts = std::move(other._facts);
+                _resolvers = std::move(other._resolvers);
+                _resolver_map = std::move(other._resolver_map);
+                _pattern_resolvers = std::move(other._pattern_resolvers);
+            }
+            return *this;
+        }
+#else
         collection& operator=(collection&& other) = default;
+#endif
 
         /**
          * Adds the default facts to the collection.

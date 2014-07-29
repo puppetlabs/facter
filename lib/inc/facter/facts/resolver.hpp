@@ -9,11 +9,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-
-// Forward declare RE2 so users of this header don't have to include re2
-namespace re2 {
-    class RE2;
-}
+#include <re2/re2.h>
 
 namespace facter { namespace facts {
 
@@ -76,13 +72,33 @@ namespace facter { namespace facts {
          * Moves the given resolver into this resolver.
          * @param other The resolver to move into this resolver.
          */
+#ifdef _MSC_VER
+        // Visual Studio 12 still doesn't allow default for move constructor.
+        resolver(resolver&& other) {
+            *this = std::move(other);
+        }
+#else
         resolver(resolver&& other) = default;
+#endif
         /**
          * Moves the given resolver into this resolver.
          * @param other The resolver to move into this resolver.
          * @return Returns this resolver.
          */
+#ifdef _MSC_VER
+        // Visual Studio 12 still doesn't allow default for move assignment.
+        resolver& operator=(resolver&& other) {
+            if (this != &other) {
+                _name = std::move(other._name);
+                _names = std::move(other._names);
+                _regexes = std::move(other._regexes);
+                _resolving = std::move(other._resolving);
+            }
+            return *this;
+        }
+#else
         resolver& operator=(resolver&& other) = default;
+#endif
 
         /**
          * Gets the name of the fact resolver.

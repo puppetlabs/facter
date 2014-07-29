@@ -51,13 +51,31 @@ namespace facter { namespace facts {
          * Moves the given scalar_value into this scalar_value.
          * @param other The scalar_value to move into this scalar_value.
          */
+#ifdef _MSC_VER
+        // Visual Studio 12 still doesn't allow default for move constructor.
+        scalar_value(scalar_value&& other) {
+            *this = std::move(other);
+        }
+#else
         scalar_value(scalar_value&& other) = default;
+#endif
         /**
          * Moves the given scalar_value into this scalar_value.
          * @param other The scalar_value to move into this scalar_value.
          * @return Returns this scalar_value.
          */
+#ifdef _MSC_VER
+        // Visual Studio 12 still doesn't allow default for move assignment.
+        scalar_value& operator=(scalar_value&& other) {
+            value::operator=(static_cast<class value&&>(other));
+            if (this != &other) {
+                _value = std::move(other._value);
+            }
+            return *this;
+        }
+#else
         scalar_value& operator=(scalar_value&& other) = default;
+#endif
 
         /**
          * Converts the value to a JSON value.

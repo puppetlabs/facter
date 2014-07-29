@@ -36,13 +36,31 @@ namespace facter { namespace facts {
          * Moves the given array_value into this array_value.
          * @param other The array_value to move into this array_value.
          */
+#ifdef _MSC_VER
+        // Visual Studio 12 still doesn't allow default for move constructor.
+        array_value(array_value&& other) {
+            *this = std::move(other);
+        }
+#else
         array_value(array_value&& other) = default;
+#endif
         /**
          * Moves the given array_value into this array_value.
          * @param other The array_value to move into this array_value.
          * @return Returns this array_value.
          */
+#ifdef _MSC_VER
+        // Visual Studio 12 still doesn't allow default for move assignment.
+        array_value& operator=(array_value&& other) {
+            value::operator=(static_cast<value&&>(other));
+            if (this != &other) {
+                _elements = std::move(other._elements);
+            }
+            return *this;
+        }
+#else
         array_value& operator=(array_value&& other) = default;
+#endif
 
         /**
          * Adds a value to the array.

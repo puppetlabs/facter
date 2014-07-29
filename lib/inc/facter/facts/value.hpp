@@ -9,11 +9,7 @@
 #include <functional>
 #include <memory>
 #include <iostream>
-
-// Forward declare needed yaml-cpp classes.
-namespace YAML {
-    class Emitter;
-}
+#include <yaml-cpp/yaml.h>
 
 // Forward delcare needed rapidjson classes.
 namespace rapidjson {
@@ -65,13 +61,25 @@ namespace facter { namespace facts {
          * Moves the given value into this value.
          * @param other The value to move into this value.
          */
+#ifdef _MSC_VER
+        // Visual Studio 12 still doesn't allow default for move constructor.
+        value(value&& other) {}
+#else
         value(value&& other) = default;
+#endif
         /**
          * Moves the given value into this value.
          * @param other The value to move into this value.
          * @return Returns this value.
          */
+#ifdef _MSC_VER
+        // Visual Studio 12 still doesn't allow default for move assignment.
+        value& operator=(value&& other) {
+            return *this;
+        }
+#else
         value& operator=(value&& other) = default;
+#endif
 
         /**
          * Converts the value to a JSON value.
