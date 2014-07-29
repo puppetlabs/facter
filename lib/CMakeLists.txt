@@ -59,6 +59,7 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_bio.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_descriptor.cc"
     )
+    set(THREAD_LIBS pthread)
 endif()
 
 # Set the platform-specific sources
@@ -94,12 +95,6 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     )
 endif()
 
-# Add the library target without a prefix (name already has the 'lib')
-add_library(libfacter SHARED ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_POSIX_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
-set_target_properties(libfacter PROPERTIES PREFIX "" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}")
-install(TARGETS libfacter DESTINATION lib)
-install(DIRECTORY inc/facter DESTINATION include)
-
 # Set include directories
 include_directories(
     inc
@@ -111,14 +106,29 @@ include_directories(
     ${YAMLCPP_INCLUDE_DIRS}
 )
 
+link_directories(
+    ${RE2_LIBRARY_DIRS}
+    ${LOG4CXX_LIBRARY_DIRS}
+    ${Boost_LIBRARY_DIRS}
+    ${OPENSSL_LIBRARY_DIRS}
+    ${YAMLCPP_LIBRARY_DIRS}
+)
+
+# Add the library target without a prefix (name already has the 'lib')
+add_library(libfacter SHARED ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_POSIX_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
+
 # Link in additional libraries
 target_link_libraries(libfacter
-    pthread
+    ${THREAD_LIBS}
     ${RE2_LIBRARIES}
     ${LOG4CXX_LIBRARIES}
     ${Boost_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
 )
+
+set_target_properties(libfacter PROPERTIES PREFIX "" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}")
+install(TARGETS libfacter DESTINATION lib)
+install(DIRECTORY inc/facter DESTINATION include)
 
 add_subdirectory(tests)
