@@ -101,11 +101,7 @@
         "processor" : { "type": "string" },
         "processors" : { "type": "object",
           "properties": {
-            "models" : { "type": "object",
-              "patternProperties" : {
-                "^[A-Za-z0-9_]+$" : { "type": "string" }
-              }
-            },
+            "models" : { "type": "array" },
             "count" : { "type": "integer" },
             "physicalcount" : { "type": "integer" },
             "speed" : { "type": "string" }
