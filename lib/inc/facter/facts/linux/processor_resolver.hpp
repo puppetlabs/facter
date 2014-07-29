@@ -21,10 +21,10 @@ namespace facter { namespace facts { namespace linux {
          */
         virtual void resolve_architecture(collection& facts);
         /**
-         * Called to resolve processor count, physical processor count, and description facts.
+         * Called to resolve the processors structured fact.
          * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_processors(collection& facts);
+        virtual void resolve_structured_processors(collection& facts);
     };
 
 }}}  // namespace facter::facts::linux

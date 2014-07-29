@@ -1,6 +1,8 @@
 #include <facter/facts/linux/processor_resolver.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <facter/facts/map_value.hpp>
+#include <facter/facts/array_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/posix/os.hpp>
@@ -59,8 +61,9 @@ namespace facter { namespace facts { namespace linux {
         facts.add(fact::architecture, make_value<string_value>(move(value)));
     }
 
-    void processor_resolver::resolve_processors(collection& facts)
+    void processor_resolver::resolve_structured_processors(collection& facts)
     {
+        auto processors_value = make_value<map_value>();
         unordered_set<string> cpus;
         size_t logical_count = 0;
         size_t physical_count = 0;
@@ -76,6 +79,7 @@ namespace facter { namespace facts { namespace linux {
         }, "^cpu\\d+$");
 
         // To determine model information, parse /proc/cpuinfo
+        auto processor_list = make_value<array_value>();
         bool have_counts = logical_count > 0;
         string id;
         file::each_line("/proc/cpuinfo", [&](string& line) {
@@ -95,7 +99,7 @@ namespace facter { namespace facts { namespace linux {
                 }
             } else if (!id.empty() && key == "model name") {
                 // Add the model name fact for this logical processor
-                facts.add(fact::processor + id, make_value<string_value>(move(value)));
+                processor_list->add(make_value<string_value>(move(value)));
             } else if (!have_counts && key == "physical id" && cpus.emplace(move(value)).second) {
                 // Couldn't determine physical count from sysfs, but CPU topology is present, so use it
                 ++physical_count;
@@ -103,12 +107,20 @@ namespace facter { namespace facts { namespace linux {
             return true;
         });
 
+        // Add the model facts
+        if (processor_list->size() > 0) {
+            processors_value->add("models", move(processor_list));
+        }
         // Add the count facts
         if (logical_count > 0) {
-            facts.add(fact::processor_count, make_value<string_value>(to_string(logical_count)));
+            processors_value->add("count", make_value<integer_value>(logical_count));
         }
         if (physical_count > 0) {
-            facts.add(fact::physical_processor_count, make_value<string_value>(to_string(physical_count)));
+            processors_value->add("physicalcount", make_value<integer_value>(physical_count));
+        }
+
+        if (!processors_value->empty()) {
+            facts.add(fact::processors, move(processors_value));
         }
     }
 

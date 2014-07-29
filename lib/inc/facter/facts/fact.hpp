@@ -138,6 +138,10 @@ namespace facter { namespace facts {
         constexpr static char const* block_devices = "blockdevices";
 
         /**
+         * The structured processor fact
+         */
+        constexpr static char const* processors = "processors";
+        /**
          * The fact for processor descriptions.
          */
         constexpr static char const* processor = "processor";
