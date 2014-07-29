@@ -18,42 +18,38 @@ require 'facter/processors/os'
 
 Facter.add(:processors, :type => :aggregate) do
   def os
-    @os ||= Facter::Processor.implementation
+    @os ||= Facter::Processors.implementation
   end
 
-  chunk(:processorlist) do
+  chunk(:models) do
     processor_hash = {}
-    processor_hash["processorlist"] = {}
-    processorlist = os.get_processor_list
-
-    if processorlist.length > 0
-      processorlist.each_with_index do |processor, i|
-        processor_hash["processorlist"]["processor#{i}"] = processor
-      end
+    processor_list = os.get_processor_list
+    if processor_list.length > 0
+      processor_hash["models"] = processor_list
       processor_hash
     end
   end
 
-  chunk(:processorcount) do
+  chunk(:count) do
     processor_hash = {}
-    if processor_count = os.get_processor_count
-      processor_hash["processorcount"] = processor_count
+    if (processor_count = os.get_processor_count)
+      processor_hash["count"] = processor_count
       processor_hash
     end
   end
 
-  chunk(:physicalprocessorcount) do
+  chunk(:physicalcount) do
     processor_hash = {}
-    if physical_processor_count = os.get_physical_processor_count
-      processor_hash["physicalprocessorcount"] = physical_processor_count
+    if (physical_processor_count = os.get_physical_processor_count)
+      processor_hash["physicalcount"] = physical_processor_count
       processor_hash
     end
   end
 
-  chunk(:processorspeed) do
+  chunk(:speed) do
     processor_hash = {}
-    if processor_speed = os.get_processor_speed
-      processor_hash["processorspeed"] = processor_speed
+    if (processor_speed = os.get_processor_speed)
+      processor_hash["speed"] = processor_speed
       processor_hash
     end
   end

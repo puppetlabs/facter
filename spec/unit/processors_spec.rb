@@ -6,21 +6,20 @@ describe "processors" do
   subject { Facter.fact(:processors) }
   let(:os) { stub('OS Object') }
   let(:proc_list_array) { ["Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz", "Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz"] }
-  let(:expected_proc_list) { {"processor0"=>"Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz", "processor1"=>"Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz"} }
 
   shared_examples "all operating systems" do
-    it "should include a processorlist key with all processors" do
-      expect(subject.value["processorlist"]).to eq expected_proc_list
+    it "should include a models key with all processors" do
+      expect(subject.value["models"]).to eq proc_list_array
     end
 
-    it "should include a processorcount key with the number of processors" do
-      expect(subject.value["processorcount"]).to eq 8
+    it "should include a count key with the number of processors" do
+      expect(subject.value["count"]).to eq 8
     end
   end
 
   describe "In OSX" do
     before do
-      Facter::Processor::Darwin.stubs(:new).returns os
+      Facter::Processors::Darwin.stubs(:new).returns os
     end
 
     before :each do
@@ -34,14 +33,14 @@ describe "processors" do
 
     it_behaves_like "all operating systems"
 
-    it "should include a processor speed key with the processor speed" do
-      expect(subject.value["processorspeed"]).to eq "2.4 GHz"
+    it "should include a speed key with the processor speed" do
+      expect(subject.value["speed"]).to eq "2.4 GHz"
     end
   end
 
   describe "In Linux" do
     before do
-      Facter::Processor::Linux.stubs(:new).returns os
+      Facter::Processors::Linux.stubs(:new).returns os
     end
 
     before :each do
@@ -55,14 +54,14 @@ describe "processors" do
 
     it_behaves_like "all operating systems"
 
-    it "should include a physicalprocessorcount key with the number of physical processors" do
-      expect(subject.value["physicalprocessorcount"]).to eq 4
+    it "should include a physicalcount key with the number of physical processors" do
+      expect(subject.value["physicalcount"]).to eq 4
     end
   end
 
   describe "In Windows" do
     before do
-      Facter::Processor::Windows.stubs(:new).returns os
+      Facter::Processors::Windows.stubs(:new).returns os
     end
 
     before :each do
@@ -76,14 +75,14 @@ describe "processors" do
 
     it_behaves_like "all operating systems"
 
-    it "should include a physicalprocessorcount key with the number of physical processors" do
-      expect(subject.value["physicalprocessorcount"]).to eq 4
+    it "should include a physicalcount key with the number of physical processors" do
+      expect(subject.value["physicalcount"]).to eq 4
     end
   end
 
   describe "In SunOS" do
     before do
-      Facter::Processor::SunOS.stubs(:new).returns os
+      Facter::Processors::SunOS.stubs(:new).returns os
     end
 
     before :each do
@@ -97,14 +96,14 @@ describe "processors" do
 
     it_behaves_like "all operating systems"
 
-    it "should include a physicalprocessorcount key with the number of physical processors" do
-      expect(subject.value["physicalprocessorcount"]).to eq 4
+    it "should include a physicalcount key with the number of physical processors" do
+      expect(subject.value["physicalcount"]).to eq 4
     end
   end
 
   describe "In Dragonfly and FreeBSD" do
     before do
-      Facter::Processor::BSD.stubs(:new).returns os
+      Facter::Processors::BSD.stubs(:new).returns os
     end
 
     before :each do
@@ -121,7 +120,7 @@ describe "processors" do
 
   describe "OpenBSD" do
     before do
-      Facter::Processor::OpenBSD.stubs(:new).returns os
+      Facter::Processors::OpenBSD.stubs(:new).returns os
     end
 
     before :each do
@@ -135,14 +134,14 @@ describe "processors" do
 
     it_behaves_like "all operating systems"
 
-    it "should include a physicalprocessorcount key with the number of physical processors" do
-      expect(subject.value["physicalprocessorcount"]).to eq 4
+    it "should include a physicalcount key with the number of physical processors" do
+      expect(subject.value["physicalcount"]).to eq 4
     end
   end
 
   describe "In AIX" do
     before do
-      Facter::Processor::AIX.stubs(:new).returns os
+      Facter::Processors::AIX.stubs(:new).returns os
     end
 
     before :each do
@@ -159,7 +158,7 @@ describe "processors" do
 
   describe "In HP-UX" do
     before do
-      Facter::Processor::HP_UX.stubs(:new).returns os
+      Facter::Processors::HP_UX.stubs(:new).returns os
     end
 
     before :each do

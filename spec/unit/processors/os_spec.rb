@@ -7,7 +7,7 @@ shared_context "processor list" do
   let(:proc_list_array) { ["Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz", "Intel(R) Xeon(R) CPU E5-2609 0 @ 2.40GHz"] }
 end
 
-describe Facter::Processor::Linux do
+describe Facter::Processors::Linux do
   include FacterSpec::Cpuinfo
   subject { described_class.new }
   include_context "processor list"
@@ -194,7 +194,7 @@ describe Facter::Processor::Linux do
   end
 end
 
-describe Facter::Processor::Windows do
+describe Facter::Processors::Windows do
   subject { described_class.new }
   include_context "processor list"
 
@@ -259,7 +259,7 @@ describe Facter::Processor::Windows do
   end
 end
 
-describe Facter::Processor::Darwin, :unless => Facter::Util::Config.is_windows? do
+describe Facter::Processors::Darwin, :unless => Facter::Util::Config.is_windows? do
   subject { described_class.new }
   include_context "processor list"
 
@@ -294,7 +294,7 @@ describe Facter::Processor::Darwin, :unless => Facter::Util::Config.is_windows? 
   end
 end
 
-describe Facter::Processor::AIX do
+describe Facter::Processors::AIX do
   subject { described_class.new }
   include_context "processor list"
 
@@ -315,7 +315,7 @@ describe Facter::Processor::AIX do
   end
 end
 
-describe Facter::Processor::HP_UX do
+describe Facter::Processors::HP_UX do
   subject { described_class.new }
   include_context "processor list"
 
@@ -336,7 +336,7 @@ describe Facter::Processor::HP_UX do
   end
 end
 
-describe Facter::Processor::BSD do
+describe Facter::Processors::BSD do
   subject { described_class.new }
   include_context "processor list"
 
@@ -357,7 +357,7 @@ describe Facter::Processor::BSD do
   end
 end
 
-describe Facter::Processor::OpenBSD do
+describe Facter::Processors::OpenBSD do
   subject { described_class.new }
   include_context "processor list"
 
@@ -370,7 +370,7 @@ describe Facter::Processor::OpenBSD do
   end
 end
 
-describe Facter::Processor::SunOS do
+describe Facter::Processors::SunOS do
   subject { described_class.new }
   include_context "processor list"
 

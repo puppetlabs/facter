@@ -7,28 +7,28 @@ require 'facter/util/processor'
 require 'facter/util/posix'
 
 module Facter
-  module Processor
+  module Processors
 
     def self.implementation(kernel = Facter.value(:kernel))
       case kernel
       when "Linux"
-        Facter::Processor::Linux.new
+        Facter::Processors::Linux.new
       when "gnu/kfreebsd"
-        Facter::Processor::GNU.new
+        Facter::Processors::GNU.new
       when "Darwin"
-        Facter::Processor::Darwin.new
+        Facter::Processors::Darwin.new
       when "aix"
-        Facter::Processor::AIX.new
+        Facter::Processors::AIX.new
       when "hp-ux"
-        Facter::Processor::HP_UX.new
+        Facter::Processors::HP_UX.new
       when "DragonFly", "FreeBSD"
-        Facter::Processor::BSD.new
+        Facter::Processors::BSD.new
       when "OpenBSD"
-        Facter::Processor::OpenBSD.new
+        Facter::Processors::OpenBSD.new
       when "SunOS"
-        Facter::Processor::SunOS.new
+        Facter::Processors::SunOS.new
       when "windows"
-        Facter::Processor::Windows.new
+        Facter::Processors::Windows.new
       end
     end
 
