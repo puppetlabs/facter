@@ -32,6 +32,16 @@ describe Facter::Util::IP do
     Facter::Util::IP.get_interfaces().should == ["eth0", "lo"]
   end
 
+  it "should return a list with several interfaces with no taps on a Linux OpenStack controller" do
+    expected = ["bond0", "bond0.3401", "br-ex", "br-int", "br-tun", 
+                "eth0", "eth1", "eth2", "eth3", "eth4", "int-br-ex", 
+                "lo", "ovs-system", "phy-br-ex", "virbr0", "vtep0"]
+    linux_ifconfig = my_fixture_read("linux_ifconfig_all_openstack_controller")
+    Facter.stubs(:value).with(:kernel).returns("Linux")
+    Facter::Util::IP.stubs(:get_all_interface_output).returns(linux_ifconfig)
+    Facter::Util::IP.get_interfaces().should == expected
+  end
+
   it "should return a list two interfaces on Darwin with two interfaces" do
     darwin_ifconfig = my_fixture_read("darwin_ifconfig_all_with_multiple_interfaces")
     Facter::Util::IP.stubs(:get_all_interface_output).returns(darwin_ifconfig)
