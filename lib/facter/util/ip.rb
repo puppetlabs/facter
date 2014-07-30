@@ -68,7 +68,14 @@ module Facter::Util::IP
     # at the end of interfaces.  So, we have to trim those trailing
     # characters.  I tried making the regex better but supporting all
     # platforms with a single regex is probably a bit too much.
-    output.scan(/^\S+/).collect { |i| i.sub(/:$/, '') }.uniq
+    ints = output.scan(/^\S+/).collect { |i| i.sub(/:$/, '') }.uniq
+    if Facter.value(:kernel) == 'Linux'
+      # On Linux we want to ignore tap interfaces.  In environments that use
+      # them, there are frequently thousands of tap interfaces, which makes
+      # facter unacceptably slow.
+      ints = ints.select { |int| int !~ /^tap/ }
+    end
+    ints
   end
 
   def self.get_all_interface_output
