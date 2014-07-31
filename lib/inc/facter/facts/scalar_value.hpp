@@ -79,13 +79,13 @@ namespace facter { namespace facts {
          */
         T const& value() const { return _value; }
 
-     protected:
         /**
           * Writes the value to the given stream.
           * @param os The stream to write to.
+          * @param quoted True if string values should be quoted or false if not.
           * @returns Returns the stream being written to.
           */
-        virtual std::ostream& write(std::ostream& os) const
+        virtual std::ostream& write(std::ostream& os, bool quoted = true) const
         {
             os << _value;
             return os;
@@ -130,9 +130,11 @@ namespace facter { namespace facts {
     template <>
     YAML::Emitter& scalar_value<std::string>::write(YAML::Emitter& emitter) const;
 
-    // Declare the specializations for string output
+    // Declare the specializations for stream output
     template <>
-    std::ostream& scalar_value<bool>::write(std::ostream& os) const;
+    std::ostream& scalar_value<bool>::write(std::ostream& os, bool quoted) const;
+    template <>
+    std::ostream& scalar_value<std::string>::write(std::ostream& os, bool quoted) const;
 
     // Declare the common instantiations as external; defined in scalar_value.cc
     extern template struct scalar_value<std::string>;

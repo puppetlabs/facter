@@ -10,6 +10,7 @@
 #include <vector>
 #include <functional>
 #include <memory>
+#include <initializer_list>
 #include "../util/dynamic_library.hpp"
 
 namespace facter { namespace facts {
@@ -34,16 +35,15 @@ namespace facter {  namespace ruby {
     typedef uintptr_t ID;
 
     /**
+     * Macro to cast function pointers to a Ruby method
+     */
+    #define RUBY_METHOD_FUNC(x) reinterpret_cast<VALUE(*)(...)>(x)
+
+    /**
      * Contains utility functions and the pointers to the Ruby API.
      */
     struct api
     {
-        /**
-         * Constructs a Ruby API from the given Ruby library.
-         * @param library The Ruby library.
-         */
-        explicit api(facter::util::dynamic_library const& library);
-
         /**
          * Destructs the Ruby API.
          */
@@ -69,11 +69,10 @@ namespace facter {  namespace ruby {
         api& operator=(api&&) = delete;
 
         /**
-         * Finds the Ruby library.
-         * @param version The Ruby version for the library name or empty if the default version.
-         * @return Returns the loaded Ruby library or an unloaded library if not found.
+         * Gets the Ruby API instance.
+         * @return Returns the Ruby API instance or nullptr if the Ruby API is unavailable.
          */
-        static facter::util::dynamic_library load(std::string const& version = {});
+        static api const* instance();
 
         /**
          * Gets the platform-specific Ruby library file name.
@@ -93,7 +92,23 @@ namespace facter {  namespace ruby {
         /**
          * See MRI documentation.
          */
+        void (* const rb_const_set)(VALUE, ID, VALUE);
+        /**
+         * See MRI documentation.
+         */
+        void (* const rb_const_remove)(VALUE, ID);
+        /**
+         * See MRI documentation.
+         */
+        int (* const rb_const_defined)(VALUE, ID);
+        /**
+         * See MRI documentation.
+         */
         VALUE (* const rb_define_module)(char const*);
+        /**
+         * See MRI documentation.
+         */
+        VALUE (* const rb_define_module_under)(VALUE, char const*);
         /**
          * See MRI documentation.
          */
@@ -218,6 +233,26 @@ namespace facter {  namespace ruby {
          * See MRI documentation.
          */
         VALUE (* const rb_hash_aset)(VALUE, VALUE, VALUE);
+        /**
+         * See MRI documentation.
+         */
+        VALUE (* const rb_hash_lookup)(VALUE, VALUE);
+        /**
+         * See MRI documentation.
+         */
+        VALUE (* const rb_obj_freeze)(VALUE);
+        /**
+         * See MRI documentation.
+         */
+        VALUE (* const rb_sym_to_s)(VALUE);
+        /**
+         * See MRI documentation.
+         */
+        ID (* const rb_to_id)(VALUE);
+        /**
+         * See MRI documentation.
+         */
+        char const* (* const rb_id2name)(ID);
 
         /**
          * See MRI documentation.
@@ -260,19 +295,27 @@ namespace facter {  namespace ruby {
          * See MRI documentation.
          */
         VALUE* const rb_eTypeError;
+        /**
+         * See MRI documentation.
+         */
+        VALUE* const rb_eStandardError;
+        /**
+         * See MRI documentation.
+         */
+        VALUE* const rb_eRuntimeError;
 
         /**
          * Gets the load path being used by Ruby.
          * @return Returns the load path being used by Ruby.
          */
-        std::vector<std::string> get_load_path();
+        std::vector<std::string> get_load_path() const;
 
         /**
          * Converts a Ruby value into a C++ string.
          * @param v The Ruby value to convert.
          * @return Returns the Ruby value as a string.
          */
-        std::string to_string(VALUE v);
+        std::string to_string(VALUE v) const;
 
         /**
          * A utility function for wrapping a callback with a rescue clause.
@@ -280,7 +323,7 @@ namespace facter {  namespace ruby {
          * @param rescue The rescue function to call if there is an exception.
          * @return Returns the VALUE returned from either the callback or the rescue function.
          */
-        VALUE rescue(std::function<VALUE()> callback, std::function<VALUE(VALUE)> rescue);
+        VALUE rescue(std::function<VALUE()> callback, std::function<VALUE(VALUE)> rescue) const;
 
         /**
          * A utility function for wrapping a callback with protection.
@@ -288,28 +331,28 @@ namespace facter {  namespace ruby {
          * @param callback The callback to call in the context of protection.
          * @return Returns the VALUE returned from the callback if successful or nil otherwise.
          */
-        VALUE protect(int& tag, std::function<VALUE()> callback);
+        VALUE protect(int& tag, std::function<VALUE()> callback) const;
 
         /**
          * Enumerates an array.
          * @param array The array to enumerate.
          * @param callback The callback to call for every element in the array.
          */
-        void array_for_each(VALUE array, std::function<bool(VALUE)> callback);
+        void array_for_each(VALUE array, std::function<bool(VALUE)> callback) const;
 
         /**
          * Enumerates a hash.
          * @param hash The hash to enumerate.
          * @param callback The callback to call for every element in the hash.
          */
-        void hash_for_each(VALUE hash, std::function<bool(VALUE, VALUE)> callback);
+        void hash_for_each(VALUE hash, std::function<bool(VALUE, VALUE)> callback) const;
 
         /**
          * Gets the given exception's backtrace as a string.
          * @param ex The exception to get the backtrace for.
          * @return Returns the exception's backtrace as a string.
          */
-        std::string exception_backtrace(VALUE ex);
+        std::string exception_backtrace(VALUE ex) const;
 
         /**
          * Determines if the given value is an instance of the given class (or superclass).
@@ -317,61 +360,61 @@ namespace facter {  namespace ruby {
          * @param klass The class to check.
          * @return Returns true if the value is an instance of the given class (or a superclass) or false if it is not.
          */
-        bool is_a(VALUE value, VALUE klass);
+        bool is_a(VALUE value, VALUE klass) const;
         /**
          * Determines if the given value is nil.
          * @param value The value to check.
          * @return Returns true if the given value is nil or false if it is not.
          */
-        bool is_nil(VALUE value);
+        bool is_nil(VALUE value) const;
         /**
          * Determines if the given value is true.
          * @param value The value to check.
          * @return Returns true if the given value is true or false if it is not.
          */
-        bool is_true(VALUE value);
+        bool is_true(VALUE value) const;
         /**
          * Determines if the given value is false.
          * @param value The value to check.
          * @return Returns true if the given value is false or false if it is not.
          */
-        bool is_false(VALUE value);
+        bool is_false(VALUE value) const;
         /**
          * Determines if the given value is a hash.
          * @param value The value to check.
          * @return Returns true if the given value is a hash or false if it is not.
          */
-        bool is_hash(VALUE value);
+        bool is_hash(VALUE value) const;
         /**
          * Determines if the given value is an array.
          * @param value The value to check.
          * @return Returns true if the given value is an array or false if it is not.
          */
-        bool is_array(VALUE value);
+        bool is_array(VALUE value) const;
         /**
          * Determines if the given value is a string.
          * @param value The value to check.
          * @return Returns true if the given value is a string or false if it is not.
          */
-        bool is_string(VALUE value);
+        bool is_string(VALUE value) const;
         /**
          * Determines if the given value is a symbol.
          * @param value The value to check.
          * @return Returns true if the given value is a symbol or false if it is not.
          */
-        bool is_symbol(VALUE value);
+        bool is_symbol(VALUE value) const;
         /**
          * Determines if the given value is a fixed number (Fixnum).
          * @param value The value to check.
          * @return Returns true if the given value is a fixed number (Fixnum) or false if it is not.
          */
-        bool is_fixednum(VALUE value);
+        bool is_fixednum(VALUE value) const;
         /**
          * Determines if the given value is a float.
          * @param value The value to check.
          * @return Returns true if the given value is a float or false if it is not.
          */
-        bool is_float(VALUE value);
+        bool is_float(VALUE value) const;
 
         /**
          * Gets the VALUE for nil.
@@ -396,22 +439,39 @@ namespace facter {  namespace ruby {
          * @param val The value to convert.
          * @return Returns a Ruby object for the value.
          */
-        VALUE to_ruby(facter::facts::value const* val);
+        VALUE to_ruby(facter::facts::value const* val) const;
 
         /**
          * Converts the given Ruby object to a corresponding value.
          * @param obj The object to convert.
          * @return Returns a pointer to the value or nullptr if nil.
          */
-        std::unique_ptr<facter::facts::value> to_value(VALUE obj);
+        std::unique_ptr<facter::facts::value> to_value(VALUE obj) const;
+
+        /**
+         * Looks up a constant based on the given names.
+         * @param names The names to lookup.
+         * @return Returns the value or raises a NameError.
+         */
+        VALUE lookup(std::initializer_list<std::string> const& names) const;
+
+        /**
+         * Determines if two values are equal.
+         * @param first The first value to compare.
+         * @param second The second value to compare.
+         * @return Returns true if eql? returns true for the first and second values.
+         */
+        bool equals(VALUE first, VALUE second) const;
 
      private:
+        explicit api(facter::util::dynamic_library&& library);
         // Imported Ruby functions that should not be called externally
         int (* const ruby_setup)();
         void (* const ruby_init)();
         void (* const ruby_options)(int, char**);
         int (* const ruby_cleanup)(volatile int);
 
+        static std::unique_ptr<api> create();
         static facter::util::dynamic_library search(std::string const& name, std::vector<std::string> const& directories);
         static VALUE callback_thunk(VALUE parameter);
         static VALUE rescue_thunk(VALUE parameter, VALUE exception);

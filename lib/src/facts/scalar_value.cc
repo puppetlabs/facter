@@ -78,9 +78,22 @@ namespace facter { namespace facts {
     }
 
     template <>
-    ostream& scalar_value<bool>::write(ostream& os) const
+    ostream& scalar_value<bool>::write(ostream& os, bool quoted) const
     {
-        os << boolalpha << _value;
+        os << boolalpha << _value << noboolalpha;
+        return os;
+    }
+
+    template <>
+    ostream& scalar_value<string>::write(ostream& os, bool quoted) const
+    {
+        if (quoted) {
+            os << '"';
+        }
+        os << _value;
+        if (quoted) {
+            os << '"';
+        }
         return os;
     }
 

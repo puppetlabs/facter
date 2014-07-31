@@ -9,51 +9,115 @@ using namespace facter::util;
 using namespace facter::execution;
 using namespace facter::testing;
 
+TEST(execution_posix, which_absolute) {
+    ASSERT_EQ(
+        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts",
+        which(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts"));
+}
+
+TEST(execution_posix, which) {
+    ASSERT_EQ(
+        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts",
+        which("facts", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }));
+}
+
+TEST(execution_posix, which_partial) {
+    ASSERT_EQ(
+        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts",
+        which("posix/execution/facts", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external" }));
+}
+
+TEST(execution_posix, which_not_found) {
+    ASSERT_EQ("", which("not_on_the_path"));
+}
+
+TEST(execution_posix, which_not_executable) {
+    ASSERT_EQ(
+        "",
+        which("not_executable", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }));
+}
+
+TEST(execution_posix, expand_command) {
+    ASSERT_EQ(
+        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts 1 2 3",
+        expand_command("facts 1 2 3", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }));
+}
+
+TEST(execution_posix, expand_command_single_quote) {
+    ASSERT_EQ(
+        "'" LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts' 1 2 3",
+        expand_command("'facts' 1 2 3", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }));
+}
+
+TEST(execution_posix, expand_command_double_quote) {
+    ASSERT_EQ(
+        "\"" LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts\" 1 2 3",
+        expand_command("\"facts\" 1 2 3", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }));
+}
+
+TEST(execution_posix, expand_command_not_found) {
+    ASSERT_EQ("not_on_the_path", expand_command("not_on_the_path"));
+}
+
+TEST(execution_posix, expand_command_not_executable) {
+    ASSERT_EQ(
+        "not_executable",
+        expand_command("not_executable", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }));
+}
+
 TEST(execution_posix, simple_execution) {
-    string output = execute("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file3.txt" });
-    ASSERT_EQ("file3", output);
+    auto result = execute("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file3.txt" });
+    ASSERT_TRUE(result.first);
+    ASSERT_EQ("file3", result.second);
 }
 
 TEST(execution_posix, simple_execution_with_args) {
-    string output = execute("ls", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls" });
-    ASSERT_EQ("file1.txt\nfile2.txt\nfile3.txt\nfile4.txt", output);
+    auto result = execute("ls", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls" });
+    ASSERT_TRUE(result.first);
+    ASSERT_EQ("file1.txt\nfile2.txt\nfile3.txt\nfile4.txt", result.second);
 }
 
 TEST(execution_posix, stderr_redirection) {
     // By default, we don't return stderr
-    string output = execute("ls", { "does_not_exist" });
-    ASSERT_EQ("", output);
+    auto result = execute("ls", { "does_not_exist" });
+    ASSERT_FALSE(result.first);
+    ASSERT_EQ("", result.second);
 
-    output = execute("ls", { "does_not_exist" }, option_set<execution_options>({ execution_options::defaults, execution_options::redirect_stderr }));
-    ASSERT_TRUE(ends_with(output, "No such file or directory"));
+    result = execute("ls", { "does_not_exist" }, option_set<execution_options>({ execution_options::defaults, execution_options::redirect_stderr }));
+    ASSERT_FALSE(result.first);
+    ASSERT_TRUE(ends_with(result.second, "No such file or directory"));
 }
 
 TEST(execution_posix, throw_on_nonzero_exit) {
     // By default, we don't throw an exception
-    string output = execute("ls", { "does_not_exist" });
-    ASSERT_EQ("", output);
+    auto result = execute("ls", { "does_not_exist" });
+    ASSERT_FALSE(result.first);
+    ASSERT_EQ("", result.second);
 
     ASSERT_THROW(execute("ls", { "does_not_exist" }, option_set<execution_options>({ execution_options::defaults, execution_options::throw_on_nonzero_exit })), child_exit_exception);
 }
 
 TEST(execution_posix, throw_on_signal) {
     // By default, we don't throw an exception
-    string output = execute("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/selfkill.sh" });
-    ASSERT_EQ("", output);
+    auto result = execute("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/selfkill.sh" });
+    ASSERT_FALSE(result.first);
+    ASSERT_EQ("", result.second);
 
     ASSERT_THROW(execute("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/selfkill.sh" },  option_set<execution_options>({ execution_options::defaults, execution_options::throw_on_signal })), child_signal_exception);
 }
 
 TEST(execution_posix, trim_output) {
     // We should trim output by default
-    string output = execute("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file1.txt" });
-    ASSERT_EQ("this is a test of trimming", output);
+    auto result = execute("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file1.txt" });
+    ASSERT_TRUE(result.first);
+    ASSERT_EQ("this is a test of trimming", result.second);
 
     // Now try again without any execution options
     option_set<execution_options> options = { execution_options::defaults };
     options.clear(execution_options::trim_output);
-    output = execute("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file1.txt" }, options);
-    ASSERT_EQ("   this is a test of trimming   ", output);
+    result = execute("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file1.txt" }, options);
+    ASSERT_TRUE(result.first);
+    ASSERT_EQ("   this is a test of trimming   ", result.second);
 }
 
 TEST(execution_posix, each_line) {
@@ -86,13 +150,14 @@ TEST(execution_posix, each_line) {
 
 TEST(execution_posix, execute_with_merged_environment) {
     setenv("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE", 1);
-    string output = execute("env", {}, {
+    auto result = execute("env", {}, {
         {"TEST_VARIABLE1", "TEST_VALUE1" },
         {"TEST_VARIABLE2", "TEST_VALUE2" }
     });
+    ASSERT_TRUE(result.first);
     unsetenv("TEST_INHERITED_VARIABLE");
     map<string, string> variables;
-    facter::util::each_line(output, [&](string& line) {
+    facter::util::each_line(result.second, [&](string& line) {
         auto parts = split(line, '=', false);
         if (parts.size() != 2) {
             return true;
@@ -117,13 +182,14 @@ TEST(execution_posix, execute_with_specified_environment) {
     options.clear(execution_options::merge_environment);
 
     setenv("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE", 1);
-    string output = execute("env", {}, {
+    auto result = execute("env", {}, {
         {"TEST_VARIABLE1", "TEST_VALUE1" },
         {"TEST_VARIABLE2", "TEST_VALUE2" }
     }, options);
+    ASSERT_TRUE(result.first);
     unsetenv("TEST_INHERITED_VARIABLE");
     map<string, string> variables;
-    facter::util::each_line(output, [&](string& line) {
+    facter::util::each_line(result.second, [&](string& line) {
         auto parts = split(line, '=', false);
         if (parts.size() != 2) {
             return true;
@@ -144,9 +210,10 @@ TEST(execution_posix, execute_with_specified_environment) {
 }
 
 TEST(execution_posix, execute_with_lang_environment) {
-    string output = execute("env", {}, { {"LANG", "FOO" }, { "LC_ALL", "BAR" } });
+    auto result = execute("env", {}, { {"LANG", "FOO" }, { "LC_ALL", "BAR" } });
+    ASSERT_TRUE(result.first);
     map<string, string> variables;
-    facter::util::each_line(output, [&](string& line) {
+    facter::util::each_line(result.second, [&](string& line) {
         auto parts = split(line, '=', false);
         if (parts.size() != 2) {
             return true;

@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
+find_package(Ruby)
+
 # Set compiler-specific flags
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-tautological-constant-out-of-range-compare")
@@ -30,11 +32,17 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/fixtures.cc"
 )
 
+# Add the ruby tests if there's a ruby installed
+if (RUBY_VERSION VERSION_GREATER '1.8.7')
+    set(LIBFACTER_TESTS_COMMON_SOURCES ${LIBFACTER_TESTS_COMMON_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/ruby/ruby.cc")
+endif()
+
 # Set the POSIX sources if on a POSIX platform
 if (UNIX)
     set(LIBFACTER_TESTS_POSIX_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/execution/posix/execution.cc"
         "${CMAKE_CURRENT_LIST_DIR}/facts/external/posix/execution_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/util/posix/environment.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_addrinfo.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_bio.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_descriptor.cc"

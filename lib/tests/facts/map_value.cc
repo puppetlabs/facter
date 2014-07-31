@@ -126,7 +126,7 @@ TEST(facter_facts_map_value, to_json) {
     ASSERT_EQ("bar", string(json_value["map"]["foo"].GetString()));
 }
 
-TEST(facter_facts_map_value, insertion_operator) {
+TEST(facter_facts_map_value, write_stream) {
     map_value value;
     value.add("string", make_value<string_value>("hello"));
     value.add("integer", make_value<integer_value>(5));
@@ -141,11 +141,11 @@ TEST(facter_facts_map_value, insertion_operator) {
     value.add("map", move(map_element));
 
     ostringstream stream;
-    stream << value;
+    value.write(stream);
     ASSERT_EQ("{\"array\"=>[\"1\", 2], \"integer\"=>5, \"map\"=>{\"foo\"=>\"bar\"}, \"string\"=>\"hello\"}", stream.str());
 }
 
-TEST(facter_facts_map_value, yaml_insertion_operator) {
+TEST(facter_facts_map_value, write_yaml) {
     map_value value;
     value.add("string", make_value<string_value>("hello"));
     value.add("integer", make_value<integer_value>(5));
@@ -160,6 +160,6 @@ TEST(facter_facts_map_value, yaml_insertion_operator) {
     value.add("map", move(map_element));
 
     Emitter emitter;
-    emitter << value;
+    value.write(emitter);
     ASSERT_EQ("array:\n  - \"1\"\n  - 2\ninteger: 5\nmap:\n  foo: \"bar\"\nstring: \"hello\"", string(emitter.c_str()));
 }

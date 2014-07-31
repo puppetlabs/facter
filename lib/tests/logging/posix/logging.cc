@@ -1,9 +1,7 @@
 #include <gmock/gmock.h>
 #include <facter/logging/logging.hpp>
 #include <log4cxx/logger.h>
-#include <log4cxx/propertyconfigurator.h>
-#include <log4cxx/patternlayout.h>
-#include <log4cxx/consoleappender.h>
+#include <log4cxx/appenderskeleton.h>
 
 using namespace std;
 using namespace facter::logging;
@@ -16,6 +14,11 @@ bool g_color = isatty(fileno(stdout));
 struct custom_log_appender : AppenderSkeleton
 {
  public:
+    custom_log_appender()
+    {
+        setName("test appender");
+    }
+
     DECLARE_LOG4CXX_OBJECT(custom_log_appender)
     BEGIN_LOG4CXX_CAST_MAP()
         LOG4CXX_CAST_ENTRY(custom_log_appender)
@@ -50,9 +53,6 @@ struct facter_logging : ::testing::Test {
         _level = root->getLevel();
         root->setLevel(Level::getDebug());
 
-        _appenders = root->getAllAppenders();
-        root->removeAllAppenders();
-
         _appender = new custom_log_appender();
         root->addAppender(_appender);
     }
@@ -61,16 +61,11 @@ struct facter_logging : ::testing::Test {
     {
         auto root = Logger::getRootLogger();
 
-        Logger::getRootLogger()->setLevel(_level);
-
-        root->removeAllAppenders();
-        for (auto const& appender : _appenders) {
-            root->addAppender(appender);
-        }
+        root->setLevel(_level);
+        root->removeAppender(_appender);
     }
 
     custom_log_appender* _appender;
-    AppenderList _appenders;
     LevelPtr _level;
 };
 

@@ -3,6 +3,7 @@
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/ruby/api.hpp>
+#include <facter/ruby/module.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/dynamic_library.hpp>
@@ -65,21 +66,21 @@ namespace facter { namespace facts {
         if (LOG_IS_DEBUG_ENABLED()) {
             if (old_value) {
                 ostringstream old_value_ss;
-                old_value_ss << *old_value;
+                old_value->write(old_value_ss);
                 if (!value) {
-                    LOG_DEBUG("fact \"%1%\" resolved to null and the existing value of \"%2%\" will be removed.", name, old_value_ss.str());
+                    LOG_DEBUG("fact \"%1%\" resolved to null and the existing value of %2% will be removed.", name, old_value_ss.str());
                 } else {
                     ostringstream new_value_ss;
-                    new_value_ss << *value;
-                    LOG_DEBUG("fact \"%1%\" has changed from \"%2%\" to \"%3%\".", name, old_value_ss.str(), new_value_ss.str());
+                    value->write(new_value_ss);
+                    LOG_DEBUG("fact \"%1%\" has changed from %2% to %3%.", name, old_value_ss.str(), new_value_ss.str());
                 }
             } else {
                 if (!value) {
                     LOG_DEBUG("fact \"%1%\" resolved to null and will not be added.", name);
                 } else {
                     ostringstream new_value_ss;
-                    new_value_ss << *value;
-                    LOG_DEBUG("fact \"%1%\" has resolved to \"%2%\".", name, new_value_ss.str());
+                    value->write(new_value_ss);
+                    LOG_DEBUG("fact \"%1%\" has resolved to %2%.", name, new_value_ss.str());
                 }
             }
         }
@@ -146,36 +147,59 @@ namespace facter { namespace facts {
 
     void collection::add_custom_facts(vector<string> const& directories)
     {
-        dynamic_library library = api::load();
-        if (!library.loaded()) {
+        auto ruby = api::instance();
+        if (!ruby) {
             return;
         }
 
-        // Ensure the API is destructed before unloading the library
-        try {
-            api ruby(library);
+        module facter(*ruby, *this);
 
-            for (auto const& dir : ruby.get_load_path()) {
-                // Ensure we're not loading anything from Ruby facter if it's on the load path
-                if (dir.find("facter") != string::npos) {
-                    continue;
-                }
-                directory::each_file((path(dir) / "facter").string(), [&](string const& file) {
-                    load_ruby_file(ruby, file);
-                    return true;
-                }, "\\.rb$");
+        vector<string> files;
+        for (auto const& dir : ruby->get_load_path()) {
+            boost::system::error_code ec;
+
+            // Get the canonical directory name
+            path p = dir;
+            p = canonical(p, ec);
+            if (ec) {
+                continue;
             }
-            for (auto const& dir : directories) {
-                directory::each_file(dir, [&](string const& file) {
-                    load_ruby_file(ruby, file);
-                    return true;
-                }, "\\.rb$");
+
+            path facter = p / "facter.rb";
+            if (exists(facter, ec)) {
+                // Add the file to loaded features to treat facter as already required
+                // This will prevent a fact from doing a "require 'facter'" and overwriting our module
+                ruby->rb_ary_push(ruby->rb_gv_get("$LOADED_FEATURES"), ruby->rb_str_new_cstr(facter.string().c_str()));
+                continue;
             }
+            directory::each_file((p / "facter").string(), [&](string const& file) {
+                files.push_back(file);
+                return true;
+            }, "\\.rb$");
         }
-        catch (missing_import_exception& ex) {
-            LOG_WARNING("%1%: custom facts will not be resolved.", ex.what());
-            return;
+        for (auto const& dir : directories) {
+            // Get the canonical directory name
+            path p = dir;
+            boost::system::error_code ec;
+            p = canonical(p, ec);
+            if (ec) {
+                continue;
+            }
+
+            directory::each_file(p.string(), [&](string const& file) {
+                files.push_back(file);
+                return true;
+            }, "\\.rb$");
         }
+
+        sort(files.begin(), files.end());
+
+        for (auto const& file : files) {
+            load_ruby_file(file);
+        }
+
+        // Resolve all facts into the collection
+        facter.resolve();
     }
 
     void collection::remove(shared_ptr<resolver> const& res)
@@ -347,7 +371,7 @@ namespace facter { namespace facts {
     {
         // If there's only one fact, print it without the name
         if (_facts.size() == 1) {
-            stream << *_facts.begin()->second;
+            _facts.begin()->second->write(stream, false);
             return;
         }
 
@@ -359,7 +383,8 @@ namespace facter { namespace facts {
             } else {
                 stream << '\n';
             }
-            stream << kvp.first << " => " << *kvp.second;
+            stream << kvp.first << " => ";
+            kvp.second->write(stream, false);
         }
     }
 
@@ -400,26 +425,31 @@ namespace facter { namespace facts {
         Emitter emitter(stream);
         emitter << BeginMap;
         for (auto const& kvp : _facts) {
-            emitter << Key << kvp.first;
-            emitter << YAML::Value << *kvp.second;
+            emitter << Key << kvp.first << YAML::Value;
+            kvp.second->write(emitter);
         }
         emitter << EndMap;
     }
 
-    void collection::load_ruby_file(api& ruby, string const& path)
+    void collection::load_ruby_file(string const& path)
     {
+        auto ruby = api::instance();
+        if (!ruby) {
+            return;
+        }
+
         LOG_INFO("loading custom facts from %1%.", path);
 
-        ruby.rescue([&]() {
+        ruby->rescue([&]() {
             // Do not construct C++ objects in a rescue callback
             // C++ stack unwinding will not take place if a Ruby exception is thrown!
-             ruby.rb_load(ruby.rb_str_new_cstr(path.c_str()), 0);
+             ruby->rb_load(ruby->rb_str_new_cstr(path.c_str()), 0);
             return 0;
         }, [&](VALUE ex) {
             LOG_ERROR("error while resolving custom facts in %1%: %2%.\nbacktrace:\n%3%",
                 path,
-                ruby.to_string(ex),
-                ruby.exception_backtrace(ex));
+                ruby->to_string(ex),
+                ruby->exception_backtrace(ex));
             return 0;
         });
     }

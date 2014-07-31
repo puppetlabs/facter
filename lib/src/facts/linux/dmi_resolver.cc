@@ -15,7 +15,7 @@ using namespace facter::util;
 using namespace boost::filesystem;
 namespace bs = boost::system;
 
-LOG_DECLARE_NAMESPACE("facts.osx.dmi");
+LOG_DECLARE_NAMESPACE("facts.linux.dmi");
 
 namespace facter { namespace facts { namespace linux {
 

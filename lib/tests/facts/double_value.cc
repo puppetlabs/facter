@@ -24,18 +24,18 @@ TEST(facter_facts_double_value, to_json) {
     ASSERT_DOUBLE_EQ(1337.1337, json_value.GetDouble());
 }
 
-TEST(facter_facts_double_value, insertion_operator) {
+TEST(facter_facts_double_value, write_stream) {
     double_value value(123.456);
 
     ostringstream stream;
-    stream << value;
+    value.write(stream);
     ASSERT_EQ("123.456", stream.str());
 }
 
-TEST(facter_facts_double_value, yaml_insertion_operator) {
+TEST(facter_facts_double_value, write_yaml) {
     double_value value(123.456);
 
     Emitter emitter;
-    emitter << value;
+    value.write(emitter);
     ASSERT_EQ("123.456", string(emitter.c_str()));
 }

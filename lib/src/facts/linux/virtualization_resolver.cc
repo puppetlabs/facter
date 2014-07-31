@@ -153,7 +153,11 @@ namespace facter { namespace facts { namespace linux {
 
     string virtualization_resolver::get_vmware_vm()
     {
-        auto parts = split(execute("vmware -v"));
+        auto result = execute("vmware -v");
+        if (!result.first) {
+            return {};
+        }
+        auto parts = split(result.second);
         if (parts.size() < 2) {
             return {};
         }

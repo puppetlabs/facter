@@ -87,14 +87,13 @@ namespace facter { namespace facts {
          */
         virtual void notify(std::string const& name, enumeration_callbacks const* callbacks) const = 0;
 
-     protected:
         /**
           * Writes the value to the given stream.
           * @param os The stream to write to.
+          * @param quoted True if string values should be quoted or false if not.
           * @returns Returns the stream being written to.
           */
-        virtual std::ostream& write(std::ostream& os) const = 0;
-        friend std::ostream& operator<<(std::ostream& os, value const& val);
+        virtual std::ostream& write(std::ostream& os, bool quoted = true) const = 0;
 
         /**
           * Writes the value to the given YAML emitter.
@@ -102,7 +101,6 @@ namespace facter { namespace facts {
           * @returns Returns the given YAML emitter.
           */
         virtual YAML::Emitter& write(YAML::Emitter& emitter) const = 0;
-        friend YAML::Emitter& operator<<(YAML::Emitter& emitter, value const& val);
     };
 
     /**
@@ -117,22 +115,6 @@ namespace facter { namespace facts {
     {
         return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
     }
-
-    /**
-     * Insertion operator for value.
-     * @param os The output stream to write to.
-     * @param val The value to write to the stream.
-     * @return Returns the given output stream.
-     */
-    std::ostream& operator<<(std::ostream& os, value const& val);
-
-    /**
-     * Insertion operator for value.
-     * @param emitter The YAML emitter to write to.
-     * @param val The value to write to the YAML emitter.
-     * @return Returns the given YAML emitter.
-     */
-    YAML::Emitter& operator<<(YAML::Emitter& emitter, value const& val);
 
 }}  // namespace facter::facts
 

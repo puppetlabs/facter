@@ -22,7 +22,9 @@ namespace facter { namespace util {
         close();
     }
 
-    dynamic_library::dynamic_library(dynamic_library&& other)
+    dynamic_library::dynamic_library(dynamic_library&& other) :
+        _handle(nullptr),
+        _first_load(false)
     {
         *this = move(other);
     }

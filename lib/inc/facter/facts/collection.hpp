@@ -18,12 +18,6 @@
 #include <stdexcept>
 #include <iostream>
 
-namespace facter { namespace ruby {
-
-    struct api;
-
-}}  // namespace facter::ruby
-
 namespace facter { namespace facts {
 
     /**
@@ -110,7 +104,6 @@ namespace facter { namespace facts {
 
         /**
          * Adds custom (Ruby) facts to the fact collection.
-         * If custom facts are present, all facts will be resolved prior to adding the custom facts.
          * @param directories The directories to search for custom facts.  If empty, the default search paths will be used.
          */
         void add_custom_facts(std::vector<std::string> const& directories);
@@ -197,7 +190,7 @@ namespace facter { namespace facts {
         void write_hash(std::ostream& stream) const;
         void write_json(std::ostream& stream) const;
         void write_yaml(std::ostream& stream) const;
-        void load_ruby_file(facter::ruby::api& ruby, std::string const& path);
+        void load_ruby_file(std::string const& path);
 
         // Platform specific members
         void add_platform_facts();

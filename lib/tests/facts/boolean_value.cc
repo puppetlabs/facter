@@ -41,17 +41,32 @@ TEST(facter_facts_boolean_value, to_json) {
     }
 }
 
-TEST(facter_facts_boolean_value, insertion_operator) {
+TEST(facter_facts_boolean_value, write_stream) {
+    {
+        boolean_value value(true);
+        ostringstream stream;
+        value.write(stream);
+        ASSERT_EQ("true", stream.str());
+    }
+    {
+        boolean_value value(false);
+        ostringstream stream;
+        value.write(stream);
+        ASSERT_EQ("false", stream.str());
+    }
+}
+
+TEST(facter_facts_boolean_value, write_yaml) {
     {
         boolean_value value(true);
         Emitter emitter;
-        emitter << value;
+        value.write(emitter);
         ASSERT_EQ("true", string(emitter.c_str()));
     }
     {
         boolean_value value(false);
         Emitter emitter;
-        emitter << value;
+        value.write(emitter);
         ASSERT_EQ("false", string(emitter.c_str()));
     }
 }

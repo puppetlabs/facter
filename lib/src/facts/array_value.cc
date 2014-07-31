@@ -79,7 +79,7 @@ namespace facter { namespace facts {
         return _elements.at(i).get();
     }
 
-    ostream& array_value::write(ostream& os) const
+    ostream& array_value::write(ostream& os, bool quoted) const
     {
         // Write out the elements in the array
         os << "[";
@@ -90,14 +90,7 @@ namespace facter { namespace facts {
             } else {
                 os << ", ";
             }
-            bool quote = dynamic_cast<string_value const*>(element.get());
-            if (quote) {
-                os << '"';
-            }
-            os << *element;
-            if (quote) {
-                os << '"';
-            }
+            element->write(os, true /* always quote strings in an array */);
         }
         os << "]";
         return os;
@@ -107,7 +100,7 @@ namespace facter { namespace facts {
     {
         emitter << BeginSeq;
         for (auto const& element : _elements) {
-            emitter << *element;
+            element->write(emitter);
         }
         emitter << EndSeq;
         return emitter;

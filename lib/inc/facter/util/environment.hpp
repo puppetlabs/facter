@@ -2,6 +2,7 @@
 #define FACTER_UTIL_ENVIRONMENT_HPP_
 
 #include <string>
+#include <vector>
 
 namespace facter { namespace util {
 
@@ -30,6 +31,12 @@ namespace facter { namespace util {
          * @return Returns the platform-specific path separator.
          */
         static char get_path_separator();
+
+        /**
+         * Gets the platform-specific search program paths.
+         * @return Returns the platform-specific program search paths.
+         */
+        static std::vector<std::string> const& search_paths();
     };
 
 }}

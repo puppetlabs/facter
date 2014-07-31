@@ -102,13 +102,13 @@ namespace facter { namespace facts {
          */
         value const* operator[](std::string const& name) const;
 
-     protected:
         /**
           * Writes the value to the given stream.
           * @param os The stream to write to.
+          * @param quoted True if string values should be quoted or false if not.
           * @returns Returns the stream being written to.
           */
-        virtual std::ostream& write(std::ostream& os) const;
+        virtual std::ostream& write(std::ostream& os, bool quoted = true) const;
 
         /**
           * Writes the value to the given YAML emitter.

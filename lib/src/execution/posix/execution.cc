@@ -1,19 +1,23 @@
 #include <facter/execution/execution.hpp>
-#include <facter/util/environment.hpp>
+#include <facter/util/directory.hpp>
 #include <facter/util/posix/scoped_descriptor.hpp>
 #include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
+#include <boost/filesystem.hpp>
+#include <cstdlib>
+#include <cstdio>
+#include <sstream>
+#include <cstring>
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-#include <sstream>
-#include <cstring>
 
 using namespace std;
 using namespace facter::util;
 using namespace facter::util::posix;
 using namespace facter::logging;
+using namespace boost::filesystem;
 using namespace log4cxx;
 
 LOG_DECLARE_NAMESPACE("execution.posix");
@@ -105,21 +109,79 @@ namespace facter { namespace execution {
         LOG_DEBUG("executing command: %1%", command_line.str());
     }
 
-    static string execute(
+    string which(string const& file, vector<string> const& directories)
+    {
+        // If the file is already absolute, return it if it's executable
+        path p = file;
+        boost::system::error_code ec;
+        if (p.is_absolute()) {
+            return is_regular_file(p, ec) && access(p.c_str(), X_OK) == 0 ? p.string() : string();
+        }
+
+        // Otherwise, check for an executable file under the given search paths
+        for (auto const& dir : directories) {
+            path p = path(dir) / file;
+            if (is_regular_file(p, ec) && access(p.c_str(), X_OK) == 0) {
+                return p.string();
+            }
+        }
+        return {};
+    }
+
+    string expand_command(string const& command, vector<string> const& directories)
+    {
+        string result = command;
+        trim(result);
+
+        if (result.empty()) {
+            return result;
+        }
+
+        string quote = result[0] == '"' || result[0] == '\'' ? string(1, result[0]) : "";
+        string file;
+        string remainder;
+        if (!quote.empty()) {
+            // Look for the ending quote for the command
+            auto pos = result.find(result[0], 1);
+            if (pos == string::npos) {
+                // No closing quote
+                file = result.substr(1);
+            } else {
+                file = result.substr(1, pos - 1);
+                remainder = result.substr(pos);
+            }
+        } else {
+            auto pos = command.find(' ');
+            if (pos == string::npos) {
+                file = result;
+            } else {
+                file = result.substr(0, pos);
+                remainder = result.substr(pos);
+            }
+        }
+
+        file = which(file, directories);
+        if (file.empty()) {
+            return result;
+        }
+        return quote + file + remainder;
+    }
+
+    static pair<bool, string> execute(
         string const& file,
         vector<string> const* arguments,
         map<string, string> const* environment,
-        function<bool(string&)>* callback,
+        function<bool(string&)> callback,
         option_set<execution_options> const& options);
 
-    string execute(
+    pair<bool, string> execute(
         string const& file,
         option_set<execution_options> const& options)
     {
         return execute(file, nullptr, nullptr, nullptr, options);
     }
 
-    string execute(
+    pair<bool, string> execute(
         string const& file,
         vector<string> const& arguments,
         option_set<execution_options> const& options)
@@ -127,7 +189,7 @@ namespace facter { namespace execution {
         return execute(file, &arguments, nullptr, nullptr, options);
     }
 
-    string execute(
+    pair<bool, string> execute(
         string const& file,
         vector<string> const& arguments,
         map<string, string> const& environment,
@@ -136,41 +198,50 @@ namespace facter { namespace execution {
         return execute(file, &arguments, &environment, nullptr, options);
     }
 
-    void each_line(
+    bool each_line(
         string const& file,
         function<bool(string&)> callback,
         option_set<execution_options> const& options)
     {
-        execute(file, nullptr, nullptr, &callback, options);
+        return execute(file, nullptr, nullptr, callback, options).first;
     }
 
-    void each_line(
+    bool each_line(
         string const& file,
         vector<string> const& arguments,
         function<bool(string&)> callback,
         option_set<execution_options> const& options)
     {
-        execute(file, &arguments, nullptr, &callback, options);
+        return execute(file, &arguments, nullptr, callback, options).first;
     }
 
-    void each_line(
+    bool each_line(
         string const& file,
         vector<string> const& arguments,
         map<string, string> const& environment,
         function<bool(string&)> callback,
         option_set<execution_options> const& options)
     {
-        execute(file, &arguments, &environment, &callback, options);
+        return execute(file, &arguments, &environment, callback, options).first;
     }
 
-    string execute(
+    pair<bool, string> execute(
         string const& file,
         vector<string> const* arguments,
         map<string, string> const* environment,
-        function<bool(string&)>* callback,
+        function<bool(string&)> callback,
         option_set<execution_options> const& options)
     {
-        log_execution(file, arguments);
+        // Search for the executable
+        string executable = which(file);
+        log_execution(executable.empty() ? file : executable, arguments);
+        if (executable.empty()) {
+            LOG_DEBUG("%1% was not found on the PATH.", file);
+            if (options[execution_options::throw_on_nonzero_exit]) {
+                throw child_exit_exception(127, "", "child process returned non-zero exit status.");
+            }
+            return { false, "" };
+        }
 
         // Create the pipes for stdin/stdout/stderr redirection
         int pipes[2];
@@ -274,7 +345,7 @@ namespace facter { namespace execution {
                     }
 
                     // Pass the line to the callback
-                    if (!((*callback)(line))) {
+                    if (!callback(line)) {
                         LOG_DEBUG("completed processing output; closing child pipe.");
                         reading = false;
                         break;
@@ -301,12 +372,13 @@ namespace facter { namespace execution {
                     log(logger, log_level::debug, result);
                 }
                 if (callback) {
-                    (*callback)(result);
+                    callback(result);
                     result.clear();
                 }
             }
 
             // Wait for the child to exit
+            bool success = false;
             int status = 0;
             waitpid(child, &status, 0);
             if (WIFEXITED(status)) {
@@ -315,6 +387,7 @@ namespace facter { namespace execution {
                 if (status != 0 && options[execution_options::throw_on_nonzero_exit]) {
                     throw child_exit_exception(status, result, "child process returned non-zero exit status.");
                 }
+                success = status == 0;
             } else if (WIFSIGNALED(status)) {
                 status = static_cast<char>(WTERMSIG(status));
                 LOG_DEBUG("process was signaled with signal %1%.", status);
@@ -322,7 +395,7 @@ namespace facter { namespace execution {
                     throw child_signal_exception(status, result, "child process was terminated by signal.");
                 }
             }
-            return result;
+            return { success, move(result) };
         }
 
         // Child continues here
@@ -384,7 +457,7 @@ namespace facter { namespace execution {
             }
 
             // Execute the given program and exit in case of failure
-            exit(execvp(file.c_str(), const_cast<char* const*>(args.data())));
+            exit(execv(executable.c_str(), const_cast<char* const*>(args.data())));
         }
         catch (exception& ex)
         {
