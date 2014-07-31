@@ -18,9 +18,8 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
 endif()
 
 # Find our dependency packages
-find_package(Boost 1.48 REQUIRED COMPONENTS program_options system filesystem)
+find_package(Boost 1.48 REQUIRED COMPONENTS program_options system filesystem regex)
 find_package(LOG4CXX REQUIRED)
-find_package(RE2 REQUIRED)
 find_package(OPENSSL REQUIRED)
 find_package(YAMLCPP REQUIRED)
 
@@ -66,6 +65,7 @@ else()
         "-readability/todo"       # Seriously? todo comments need to identify an owner? pffft
         "-whitespace/empty_loop_body" # Can't handle do { ... } while(expr);
         "-runtime/int"            # Some C types are needed for library interop
+        "-runtime/explicit"       # Using implicit conversion from string to regex for regex calls.
     )
 
     file(GLOB_RECURSE ALL_SOURCES lib/*.cc lib/*.h lib/*.hpp exe/*.cc exe/*.h exe/*.hpp)

@@ -8,7 +8,7 @@
 #include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
 #include <facter/util/file.hpp>
-#include <re2/re2.h>
+#include <facter/util/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <map>
 #include <vector>
@@ -98,7 +98,7 @@ namespace facter { namespace facts { namespace linux {
             if (ends_with(contents, "(Rawhide)")) {
                 value = "Rawhide";
             } else {
-                RE2::PartialMatch(contents, "release (\\d[\\d.]*)", &value);
+                re_search(contents, "release (\\d[\\d.]*)", &value);
             }
         }
 
@@ -121,10 +121,10 @@ namespace facter { namespace facts { namespace linux {
             string contents = file::read(release_file::suse);
             string major;
             string minor;
-            if (RE2::PartialMatch(contents, "(?m)^VERSION\\s*=\\s*(\\d+)\\.?(\\d+)?", &major, &minor)) {
+            if (re_search(contents, "(?m)^VERSION\\s*=\\s*(\\d+)\\.?(\\d+)?", &major, &minor)) {
                 // Check that we have a minor version; if not, use the patch level
                 if (minor.empty()) {
-                    if (!RE2::PartialMatch(contents, "(?m)^PATCHLEVEL\\s*=\\s*(\\d+)", &minor)) {
+                    if (!re_search(contents, "(?m)^PATCHLEVEL\\s*=\\s*(\\d+)", &minor)) {
                         minor = "0";
                     }
                 }
@@ -165,7 +165,7 @@ namespace facter { namespace facts { namespace linux {
             }
             if (file) {
                 string contents = file::read(file);
-                RE2::PartialMatch(contents, regex, &value);
+                re_search(contents, regex, &value);
             }
         }
 
@@ -173,7 +173,7 @@ namespace facter { namespace facts { namespace linux {
         if (value.empty() && operating_system->value() == os::vmware_esx) {
             auto result = execute("vmware", { "-v" });
             if (result.first) {
-                RE2::PartialMatch(result.second, "VMware ESX .*?(\\d.*)", &value);
+                re_search(result.second, "VMware ESX .*?(\\d.*)", &value);
             }
         }
 
@@ -233,7 +233,7 @@ namespace facter { namespace facts { namespace linux {
         if (is_regular_file(release_file::os, ec)) {
             string contents = trim(file::read(release_file::os));
             string release;
-            if (RE2::PartialMatch(contents, "(?m)^NAME=[\"']?(.+?)[\"']?$", &release)) {
+            if (re_search(contents, "(?m)^NAME=[\"']?(.+?)[\"']?$", &release)) {
                 if (release == "Cumulus Linux") {
                     return os::cumulus;
                 }
@@ -287,7 +287,7 @@ namespace facter { namespace facts { namespace linux {
 
             string contents = trim(file::read(release_file::redhat));
             for (auto const& regex : regexs) {
-                if (RE2::PartialMatch(contents, get<0>(regex))) {
+                if (re_search(contents, get<0>(regex))) {
                     return get<1>(regex);
                 }
             }
@@ -308,7 +308,7 @@ namespace facter { namespace facts { namespace linux {
 
             string contents = trim(file::read(release_file::suse));
             for (auto const& regex : regexs) {
-                if (RE2::PartialMatch(contents, get<0>(regex))) {
+                if (re_search(contents, get<0>(regex))) {
                     return get<1>(regex);
                 }
             }

@@ -21,7 +21,6 @@ class Cfacter < Formula
   depends_on "log4cxx"
   depends_on "openssl"
   depends_on "yaml-cpp"
-  depends_on "re2"
 
   def install
     system "cmake", ".", *std_cmake_args

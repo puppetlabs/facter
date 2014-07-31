@@ -7,7 +7,7 @@
 #include <facter/facts/posix/uptime_resolver.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/string.hpp>
-#include <re2/re2.h>
+#include <facter/util/regex.hpp>
 
 using namespace std;
 using namespace facter::util;
@@ -120,19 +120,19 @@ namespace facter { namespace facts { namespace posix {
 
         int days, hours, minutes;
 
-        if (RE2::PartialMatch(output, "(\\d+) day(?:s|\\(s\\))?,\\s+(\\d+):(\\d+)", &days, &hours, &minutes)) {
+        if (re_search(output, "(\\d+) day(?:s|\\(s\\))?,\\s+(\\d+):(\\d+)", &days, &hours, &minutes)) {
             return 86400 * days + 3600 * hours + 60 * minutes;
-        } else if (RE2::PartialMatch(output, "(\\d+) day(?:s|\\(s\\))?,\\s+(\\d+) hr(?:s|\\(s\\))?,", &days, &hours)) {
+        } else if (re_search(output, "(\\d+) day(?:s|\\(s\\))?,\\s+(\\d+) hr(?:s|\\(s\\))?,", &days, &hours)) {
             return 86400 * days + 3600 * hours;
-        } else if (RE2::PartialMatch(output, "(\\d+) day(?:s|\\(s\\))?,\\s+(\\d+) min(?:s|\\(s\\))?,", &days, &minutes)) {
+        } else if (re_search(output, "(\\d+) day(?:s|\\(s\\))?,\\s+(\\d+) min(?:s|\\(s\\))?,", &days, &minutes)) {
             return 86400 * days + 60 * minutes;
-        } else if (RE2::PartialMatch(output, "(\\d+) day(?:s|\\(s\\))?,", &days)) {
+        } else if (re_search(output, "(\\d+) day(?:s|\\(s\\))?,", &days)) {
             return 86400 * days;
-        } else if (RE2::PartialMatch(output, "up\\s+(\\d+):(\\d+),", &hours, &minutes)) {
+        } else if (re_search(output, "up\\s+(\\d+):(\\d+),", &hours, &minutes)) {
             return 3600 * hours + 60 * minutes;
-        } else if (RE2::PartialMatch(output, "(\\d+) hr(?:s|\\(s\\))?,", &hours)) {
+        } else if (re_search(output, "(\\d+) hr(?:s|\\(s\\))?,", &hours)) {
             return 3600 * hours;
-        } else if (RE2::PartialMatch(output, "(\\d+) min(?:s|\\(s\\))?,", &minutes)) {
+        } else if (re_search(output, "(\\d+) min(?:s|\\(s\\))?,", &minutes)) {
             return 60 * minutes;
         } else {
            return 0;

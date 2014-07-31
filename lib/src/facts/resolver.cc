@@ -1,10 +1,9 @@
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/logging/logging.hpp>
-#include <re2/re2.h>
+#include <facter/util/regex.hpp>
 
 using namespace std;
-using namespace re2;
 
 LOG_DECLARE_NAMESPACE("facts.resolver");
 
@@ -43,7 +42,7 @@ namespace facter { namespace facts {
         _resolving(false)
     {
         for (auto const& pattern : patterns) {
-            auto regex = unique_ptr<RE2>(new RE2(pattern));
+            auto regex = unique_ptr<util::re_adapter>(new util::re_adapter(pattern));
             if (!regex->error().empty()) {
                 throw invalid_name_pattern_exception(regex->error());
             }
@@ -91,7 +90,7 @@ namespace facter { namespace facts {
     {
         // Check to see if any of our regexes match
         for (auto const& regex : _regexes) {
-            if (RE2::PartialMatch(name, *regex)) {
+            if (re_search(name, *regex)) {
                 return true;
             }
         }

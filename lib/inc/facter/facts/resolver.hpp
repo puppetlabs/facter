@@ -9,11 +9,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-
-// Forward declare RE2 so users of this header don't have to include re2
-namespace re2 {
-    class RE2;
-}
+#include <facter/util/regex.hpp>
 
 namespace facter { namespace facts {
 
@@ -130,7 +126,7 @@ namespace facter { namespace facts {
      private:
         std::string _name;
         std::vector<std::string> _names;
-        std::vector<std::unique_ptr<re2::RE2>> _regexes;
+        std::vector<std::unique_ptr<facter::util::re_adapter>> _regexes;
         bool _resolving;
     };
 

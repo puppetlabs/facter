@@ -8,11 +8,10 @@
 #include <facter/util/file.hpp>
 #include <facter/util/directory.hpp>
 #include <boost/filesystem.hpp>
-#include <re2/re2.h>
+#include <facter/util/regex.hpp>
 #include <unordered_set>
 
 using namespace std;
-using namespace re2;
 using namespace facter::facts;
 using namespace facter::facts::posix;
 using namespace facter::util;
@@ -48,7 +47,7 @@ namespace facter { namespace facts { namespace linux {
                 value = "amd64";
             }
         // For 32-bit, use "x86" for Gentoo and "i386" for everyone else
-        } else if (RE2::PartialMatch(model->value(), "i[3456]86|pentium")) {
+        } else if (re_search(model->value(), "i[3456]86|pentium")) {
             if (os->value() == os::gentoo) {
                 value = "x86";
             } else {

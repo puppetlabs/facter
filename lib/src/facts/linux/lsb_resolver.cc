@@ -4,7 +4,7 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
-#include <re2/re2.h>
+#include <facter/util/regex.hpp>
 
 using namespace std;
 using namespace facter::util;
@@ -84,7 +84,7 @@ namespace facter { namespace facts { namespace linux {
         }
         string major;
         string minor;
-        if (!RE2::PartialMatch(dist_release->value(), "(\\d+)\\.(\\d*)", &major, &minor)) {
+        if (!re_search(dist_release->value(), "(\\d+)\\.(\\d*)", &major, &minor)) {
             major = dist_release->value();
         }
         facts.add(fact::lsb_dist_major_release, make_value<string_value>(move(major)));

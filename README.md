@@ -15,13 +15,12 @@ Build Requirements
 * Apache log4cxx >= 10.0
 * OpenSSL >= 1.0.1.g
 * yaml-cpp >= 0.5.1
-* Google's RE2 library
 
 ### Setup on Fedora 20
 
 The following will install all required tools and libraries:
 
-    yum install cmake boost-devel log4cxx-devel openssl-devel yaml-cpp-devel re2-devel
+    yum install cmake boost-devel log4cxx-devel openssl-devel yaml-cpp-devel
 
 ### Setup on Mac OSX Mavericks (homebrew)
 
@@ -29,7 +28,7 @@ This assumes Clang is installed and the system OpenSSL libraries will be used.
 
 The following will install all required libraries:
 
-    brew install cmake boost log4cxx yaml-cpp re2
+    brew install cmake boost log4cxx yaml-cpp
 
 ### Setup on Ubuntu 14.04 (Trusty)
 
@@ -37,7 +36,6 @@ The following will install most required tools and libraries:
 
     apt-get install build-essential cmake libboost-all-dev liblog4cxx10-dev libssl-dev libyaml-cpp-dev
 
-Google's RE2 library will need to be installed from source.
 
 Pre-Build
 ---------

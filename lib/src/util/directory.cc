@@ -1,16 +1,15 @@
 #include <facter/util/directory.hpp>
 #include <boost/filesystem.hpp>
-#include <re2/re2.h>
+#include <facter/util/regex.hpp>
 
 using namespace std;
-using namespace re2;
 using namespace boost::filesystem;
 
 namespace facter { namespace util {
 
     void directory::each_file(string const& directory, function<bool(string const&)> callback, string const& pattern)
     {
-        RE2 regex(pattern);
+        re_adapter regex(pattern);
         if (!regex.ok()) {
             return;
         }
@@ -29,7 +28,7 @@ namespace facter { namespace util {
             if (!is_regular_file(it->status(ec))) {
                 continue;
             }
-            if (RE2::PartialMatch(it->path().filename().string(), regex)) {
+            if (re_search(it->path().filename().string(), regex)) {
                 if (!callback(it->path().string())) {
                     break;
                 }
@@ -39,7 +38,7 @@ namespace facter { namespace util {
 
     void directory::each_subdirectory(string const& directory, function<bool(string const&)> callback, string const& pattern)
     {
-        RE2 regex(pattern);
+        re_adapter regex(pattern);
         if (!regex.ok()) {
             return;
         }
@@ -58,7 +57,7 @@ namespace facter { namespace util {
             if (!is_directory(it->status(ec))) {
                 continue;
             }
-            if (RE2::PartialMatch(it->path().filename().string(), regex)) {
+            if (re_search(it->path().filename().string(), regex)) {
                 if (!callback(it->path().string())) {
                     break;
                 }
