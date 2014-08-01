@@ -314,21 +314,11 @@ namespace facter { namespace facts {
 
     void collection::resolve_facts()
     {
-        if (_resolvers.empty()) {
-            return;
-        }
-
-        // Copy the resolvers list
-        auto resolvers = _resolvers;
-
-        // Clear the resolvers now before resolving
-        _resolvers.clear();
-        _resolver_map.clear();
-        _pattern_resolvers.clear();
-
-        // Resolve all facts
-        for (auto& res : resolvers) {
-            res->resolve(*this);
+        // Remove the front of the resolvers list and resolve until no resolvers are left
+        while (!_resolvers.empty()) {
+            auto resolver = _resolvers.front();
+            remove(resolver);
+            resolver->resolve(*this);
         }
     }
 
