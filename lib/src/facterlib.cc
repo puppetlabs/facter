@@ -11,6 +11,7 @@
 using namespace std;
 using namespace facter::util;
 using namespace facter::facts;
+using namespace facter::ruby;
 using namespace log4cxx;
 
 static unique_ptr<collection> g_facts;
@@ -35,12 +36,19 @@ extern "C" {
             Logger::getRootLogger()->setLevel(Level::getOff());
         }
 
+        auto ruby = api::instance();
+        if (ruby) {
+            ruby->initialize();
+        }
+
         g_facts.reset(new collection());
         g_facts->add_default_facts();
 
         // Add the external and custom facts
         g_facts->add_external_facts(g_external_directories);
-        g_facts->add_custom_facts(g_custom_directories);
+        if (ruby) {
+            g_facts->add_custom_facts(*ruby, g_custom_directories);
+        }
 
         // Filter to just the requested facts
         if (names) {

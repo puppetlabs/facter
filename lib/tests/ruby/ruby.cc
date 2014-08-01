@@ -143,27 +143,15 @@ ostream& operator<<(ostream& stream, const ruby_test_parameters& p)
 
 struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
 {
-    static void SetUpTestCase()
-    {
-        auto ruby = api::instance();
-        if (!ruby) {
-            return;
-        }
-        _module.reset(new module(*ruby, _facts));
-    }
-
-    static void TearDownTestCase()
-    {
-        _module.reset(nullptr);
-    }
-
  protected:
     string load()
     {
         auto ruby = api::instance();
-        if (!ruby) {
-            return "could not load ruby.";
+        if (!ruby || !ruby->initialized()) {
+            return "ruby has not been initialized.";
         }
+
+        module mod(*ruby, _facts);
 
         ostringstream error;
         ruby->rescue([&]() {
@@ -180,14 +168,13 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
             }
             return 0;
         });
+
+        mod.resolve();
         return error.str();
     }
 
     virtual void SetUp()
     {
-        if (_module) {
-            _module->clear();
-        }
         _facts.clear();
         for (auto const& kvp : GetParam().facts) {
             _facts.add(to_lower(string(kvp.first)), make_value<string_value>(kvp.second));
@@ -210,26 +197,19 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
         root->removeAppender(_appender);
     }
 
-    static unique_ptr<module> _module;
-    static collection _facts;
+    collection _facts;
     ruby_log_appender* _appender;
     LevelPtr _level;
 };
 
-unique_ptr<module> facter_ruby::_module;
-collection facter_ruby::_facts;
-
 TEST_P(facter_ruby, load)
 {
-    ASSERT_NE(nullptr, _module);
-
     string error = load();
     if (GetParam().failure_expected && error.empty()) {
         FAIL() << "a failure was expected but the file successfully loaded.";
     } else if (!GetParam().failure_expected && !error.empty()) {
         FAIL() << error;
     }
-    _module->resolve();
 
     auto const& expected_messages = GetParam().messages;
     auto const& messages = _appender->messages();

@@ -82,8 +82,59 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(ruby_options),
         LOAD_SYMBOL(ruby_cleanup),
         _library(move(library)),
-        _cleanup(_library.first_load())
+        _cleanup(_library.first_load()),
+        _initialized(false)
     {
+    }
+
+    api::~api()
+    {
+        if (_initialized && _cleanup) {
+            ruby_cleanup(0);
+        }
+    }
+
+    api* api::instance()
+    {
+        static unique_ptr<api> instance = create();
+        return instance.get();
+    }
+
+    unique_ptr<api> api::create()
+    {
+        // Get the library name based on the given version
+        string name = get_library_name();
+
+        // Search the path directories for a matching ruby library
+        dynamic_library library = search(name, environment::search_paths());
+
+        // Fall back to using the load path
+        if (!library.loaded()) {
+            library.load(name);
+        }
+
+        if (!library.loaded()) {
+            LOG_WARNING("could not locate a ruby library: custom facts will not be resolved.");
+            return nullptr;
+        } else if (library.first_load()) {
+            LOG_INFO("ruby loaded from \"%1%\".", library.name());
+        } else {
+            LOG_INFO("ruby was already loaded from \"%1%\".", library.name());
+        }
+        try {
+            return unique_ptr<api>(new api(move(library)));
+        } catch (missing_import_exception& ex) {
+            LOG_WARNING("%1%: custom facts will not be resolved.", ex.what());
+            return nullptr;
+        }
+    }
+
+    void api::initialize()
+    {
+        if (_initialized) {
+            return;
+        }
+
         // Prefer ruby_setup over ruby_init if present (2.0+)
         // If ruby is already initialized, this is a no-op
         if (ruby_setup) {
@@ -120,47 +171,13 @@ namespace facter { namespace ruby {
         _nil = rb_ivar_get(*rb_cObject, rb_intern("@facter_nil"));
         _true = rb_funcall(_nil, rb_intern("nil?"), 0);
         _false = rb_funcall(_true, rb_intern("nil?"), 0);
+
+        _initialized = true;
     }
 
-    api::~api()
+    bool api::initialized() const
     {
-        if (_cleanup) {
-            ruby_cleanup(0);
-        }
-    }
-
-    api const* api::instance()
-    {
-        static unique_ptr<api> instance = create();
-        return instance.get();
-    }
-
-    unique_ptr<api> api::create()
-    {
-        // Get the library name based on the given version
-        string name = get_library_name();
-
-        // Search the path directories for a matching ruby library
-        dynamic_library library = search(name, environment::search_paths());
-
-        // Fall back to using the load path
-        if (!library.loaded()) {
-            library.load(name);
-        }
-
-        if (!library.loaded()) {
-            LOG_WARNING("could not locate a ruby library: custom facts will not be resolved.");
-        } else if (library.first_load()) {
-            LOG_INFO("ruby loaded from \"%1%\".", library.name());
-        } else {
-            LOG_INFO("ruby was already loaded from \"%1%\".", library.name());
-        }
-        try {
-            return unique_ptr<api>(new api(move(library)));
-        } catch (missing_import_exception& ex) {
-            LOG_WARNING("%1%: custom facts will not be resolved.", ex.what());
-            return nullptr;
-        }
+        return _initialized;
     }
 
     dynamic_library api::search(string const& name, vector<string> const& directories)

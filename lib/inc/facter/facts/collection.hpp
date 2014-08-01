@@ -8,6 +8,7 @@
 #include "resolver.hpp"
 #include "value.hpp"
 #include "external/resolver.hpp"
+#include "../ruby/api.hpp"
 #include <list>
 #include <map>
 #include <set>
@@ -109,9 +110,10 @@ namespace facter { namespace facts {
 
         /**
          * Adds custom (Ruby) facts to the fact collection.
+         * @param ruby The Ruby API to use.
          * @param directories The directories to search for custom facts.  If empty, the default search paths will be used.
          */
-        void add_custom_facts(std::vector<std::string> const& directories);
+        void add_custom_facts(facter::ruby::api& ruby, std::vector<std::string> const& directories);
 
         /**
          * Removes a resolver from the fact collection.
@@ -195,7 +197,7 @@ namespace facter { namespace facts {
         void write_hash(std::ostream& stream) const;
         void write_json(std::ostream& stream) const;
         void write_yaml(std::ostream& stream) const;
-        void load_ruby_file(std::string const& path);
+        void load_ruby_file(facter::ruby::api& ruby, std::string const& path);
 
         // Platform specific members
         void add_platform_facts();
