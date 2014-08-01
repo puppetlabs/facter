@@ -35,6 +35,22 @@ namespace facter { namespace facts {
         // This needs to be defined here since we use incomplete types in the header
     }
 
+    collection::collection(collection&& other)
+    {
+        *this = std::move(other);
+    }
+
+    collection& collection::operator=(collection&& other)
+    {
+        if (this != &other) {
+            _facts = std::move(other._facts);
+            _resolvers = std::move(other._resolvers);
+            _resolver_map = std::move(other._resolver_map);
+            _pattern_resolvers = std::move(other._pattern_resolvers);
+        }
+        return *this;
+    }
+
     void collection::add_default_facts()
     {
         add("cfacterversion", make_value<string_value>(LIBFACTER_VERSION));

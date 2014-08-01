@@ -13,6 +13,20 @@ LOG_DECLARE_NAMESPACE("facts.value.array");
 
 namespace facter { namespace facts {
 
+    array_value::array_value(array_value&& other)
+    {
+        *this = std::move(other);
+    }
+
+    array_value& array_value::operator=(array_value&& other)
+    {
+        value::operator=(static_cast<value&&>(other));
+        if (this != &other) {
+            _elements = std::move(other._elements);
+        }
+        return *this;
+    }
+
     void array_value::add(unique_ptr<value>&& value)
     {
         if (!value) {

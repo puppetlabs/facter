@@ -13,6 +13,20 @@ LOG_DECLARE_NAMESPACE("facts.value.map");
 
 namespace facter { namespace facts {
 
+    map_value::map_value(map_value&& other)
+    {
+        *this = std::move(other);
+    }
+
+    map_value& map_value::operator=(map_value&& other)
+    {
+        value::operator=(static_cast<value&&>(other));
+        if (this != &other) {
+            _elements = std::move(other._elements);
+        }
+        return *this;
+    }
+
     void map_value::add(string&& name, unique_ptr<value>&& value)
     {
         if (!value) {

@@ -28,40 +28,27 @@ namespace facter { namespace facts {
          * Prevents the map_value from being copied.
          */
         map_value(map_value const&) = delete;
+
         /**
          * Prevents the map_value from being copied.
          * @returns Returns this map_value.
          */
         map_value& operator=(map_value const&) = delete;
+
         /**
          * Moves the given map_value into this map_value.
          * @param other The map_value to move into this map_value.
          */
-#ifdef _MSC_VER
         // Visual Studio 12 still doesn't allow default for move constructor.
-        map_value(map_value&& other) {
-            *this = std::move(other);
-        }
-#else
-        map_value(map_value&& other) = default;
-#endif
+        map_value(map_value&& other);
+
         /**
          * Moves the given map_value into this map_value.
          * @param other The map_value to move into this map_value.
          * @return Returns this map_value.
          */
-#ifdef _MSC_VER
         // Visual Studio 12 still doesn't allow default for move assignment.
-        map_value& operator=(map_value&& other) {
-            value::operator=(static_cast<value&&>(other));
-            if (this != &other) {
-                _elements = std::move(other._elements);
-            }
-            return *this;
-        }
-#else
-        map_value& operator=(map_value&& other) = default;
-#endif
+        map_value& operator=(map_value&& other);
 
         /**
          * Adds a value to the map.
