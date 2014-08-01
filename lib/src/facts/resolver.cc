@@ -46,7 +46,7 @@ namespace facter { namespace facts {
             if (!regex->error().empty()) {
                 throw invalid_name_pattern_exception(regex->error());
             }
-            _regexes.push_back(move(regex));
+            _regexes.push_back(std::move(regex));
         }
     }
 

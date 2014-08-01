@@ -18,8 +18,8 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
 endif()
 
 # Find our dependency packages
-find_package(Boost 1.48 REQUIRED COMPONENTS program_options system filesystem regex)
-find_package(LOG4CXX REQUIRED)
+# We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
+find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time thread regex log)
 find_package(OPENSSL REQUIRED)
 find_package(YAMLCPP REQUIRED)
 

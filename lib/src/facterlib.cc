@@ -5,9 +5,7 @@
 #include <facter/ruby/api.hpp>
 #include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
-#include <log4cxx/logger.h>
-#include <log4cxx/patternlayout.h>
-#include <log4cxx/consoleappender.h>
+
 #include <memory>
 #include <vector>
 #include <string>
@@ -16,27 +14,10 @@ using namespace std;
 using namespace facter::util;
 using namespace facter::facts;
 using namespace facter::ruby;
-using namespace log4cxx;
 
 static unique_ptr<collection> g_facts;
 static vector<string> g_custom_directories;
 static vector<string> g_external_directories;
-
-void configure_logging(LevelPtr level)
-{
-    // If no configuration file given, use default settings
-    LayoutPtr layout = new PatternLayout("%d %-5p %c - %m%n");
-    AppenderPtr appender = new ConsoleAppender(layout, "System.err");
-    Logger::getRootLogger()->addAppender(appender);
-    Logger::getRootLogger()->setLevel(level);
-
-    // Configure the execution output logger
-    auto logger = Logger::getLogger(LOG_ROOT_NAMESPACE "execution.output");
-    logger->setAdditivity(false);
-    layout = new PatternLayout("%m%n");
-    appender = new ConsoleAppender(layout, "System.err");
-    logger->addAppender(appender);
-}
 
 extern "C" {
     char const* get_facter_version()
@@ -50,10 +31,11 @@ extern "C" {
             return;
         }
 
-        // Configure for warning level if logging is not yet configured
-        if (Logger::getRootLogger()->getAllAppenders().size() == 0) {
-            configure_logging(Level::getWarn());
-        }
+        // Configure for warning level if logging is not yet configured.
+        // This overrides any existing console sink. Other sinks may still
+        // be set. This should probably be changed to depend on an optional
+        // argument, so callers can configure their own logging.
+        configure_logging(facter::logging::log_level::warning);
 
         auto ruby = api::instance();
         if (ruby) {

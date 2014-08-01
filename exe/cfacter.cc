@@ -3,24 +3,20 @@
 #include <facter/logging/logging.hpp>
 #include <facter/ruby/api.hpp>
 #include <facter/util/string.hpp>
-#include <log4cxx/logger.h>
 #include <boost/program_options.hpp>
+
 #include <iostream>
 #include <set>
 #include <algorithm>
 #include <iterator>
 
 using namespace std;
-using namespace log4cxx;
 using namespace facter::util;
 using namespace facter::facts;
 using namespace facter::ruby;
 namespace po = boost::program_options;
 
 LOG_DECLARE_NAMESPACE("main");
-
-// Forward declaration from libfacter
-void configure_logging(LevelPtr level);
 
 void help(po::options_description& desc)
 {
@@ -159,15 +155,15 @@ int main(int argc, char **argv)
         }
 
         // Get the logging level
-        LevelPtr log_level = Level::getWarn();
+        facter::logging::log_level level = facter::logging::log_level::warning;
         if (vm.count("debug")) {
-            log_level = Level::getDebug();
+            level = facter::logging::log_level::debug;
         } else if (vm.count("verbose")) {
-            log_level = Level::getInfo();
+            level = facter::logging::log_level::info;
         }
 
         // Configure logging
-        configure_logging(log_level);
+        configure_logging(level);
         log_command_line(argc, argv);
 
         // Initialize Ruby in main

@@ -18,7 +18,6 @@ using namespace facter::util;
 using namespace facter::util::posix;
 using namespace facter::logging;
 using namespace boost::filesystem;
-using namespace log4cxx;
 
 LOG_DECLARE_NAMESPACE("execution.posix");
 
@@ -267,7 +266,7 @@ namespace facter { namespace execution {
         if (child)
         {
             // Get a special logger used specifically for child process output
-            auto logger = Logger::getLogger(LOG_ROOT_NAMESPACE "execution.output");
+            std::string logger = LOG_ROOT_NAMESPACE "execution.output";
 
             // Close the unused descriptors
             stdin_read.release();
@@ -340,9 +339,7 @@ namespace facter { namespace execution {
                     }
 
                     // Log the line to the output logger
-                    if (logger->isDebugEnabled()) {
-                        log(logger, log_level::debug, line);
-                    }
+                    log(logger, log_level::debug, line);
 
                     // Pass the line to the callback
                     if (!callback(line)) {
@@ -368,9 +365,7 @@ namespace facter { namespace execution {
 
             // Log the result and do a final callback call if needed
             if (!result.empty()) {
-                if (logger->isDebugEnabled()) {
-                    log(logger, log_level::debug, result);
-                }
+                log(logger, log_level::debug, result);
                 if (callback) {
                     callback(result);
                     result.clear();

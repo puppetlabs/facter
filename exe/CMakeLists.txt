@@ -9,7 +9,6 @@ set(CMAKE_CXX_FLAGS ${FACTER_CXX_FLAGS})
 
 include_directories(
     ../lib/inc # the libfacter headers
-    ${LOG4CXX_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
 )
@@ -17,5 +16,5 @@ include_directories(
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 add_executable(cfacter ${CFACTER_SOURCES})
-target_link_libraries(cfacter libfacter ${LOG4CXX_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(cfacter libfacter ${Boost_LIBRARIES})
 install(TARGETS cfacter DESTINATION bin)

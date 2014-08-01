@@ -26,6 +26,7 @@ set(LIBFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/scalar_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/ruby/aggregate_resolution.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/logging/configure_logging.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/ruby/api.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/ruby/chunk.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/ruby/confine.cc"

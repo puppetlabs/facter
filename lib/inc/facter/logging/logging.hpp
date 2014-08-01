@@ -6,10 +6,12 @@
 #define FACTER_LOGGING_LOGGING_HPP_
 
 // To use this header, you must:
-// - Have log4cxx and Boost on the include path
-// - Link in log4cxx
-// - Configure log4cxx at runtime before any logging takes place
-#include <log4cxx/logger.h>
+// - Have Boost on the include path
+// - Link in Boost.Log
+// - Configure Boost.Log at runtime before any logging takes place
+#define BOOST_LOG_DYN_LINK
+#include <boost/log/core.hpp>
+#include <boost/log/expressions.hpp>
 #include <boost/format.hpp>
 
 /**
@@ -22,7 +24,7 @@
  * This macro must be used before any other logging macro.
  * @param ns The logging namespace name.
  */
-#define LOG_DECLARE_NAMESPACE(ns) static log4cxx::LoggerPtr g_logger = log4cxx::Logger::getLogger(LOG_ROOT_NAMESPACE ns);
+#define LOG_DECLARE_NAMESPACE(ns) static const std::string g_logger = LOG_ROOT_NAMESPACE ns;
 /**
  * Logs a message.
  * @param level The logging level for the message.
@@ -30,11 +32,9 @@
  * @param ... The format message parameters.
  */
 #define LOG_MESSAGE(level, format, ...) \
-    do { \
-        if (LOG4CXX_UNLIKELY(facter::logging::is_log_enabled(g_logger, level))) { \
-            facter::logging::log(g_logger, level, format, ##__VA_ARGS__); \
-        } \
-    } while (0)
+    if (facter::logging::is_log_enabled(g_logger, level)) { \
+        facter::logging::log(g_logger, level, format, ##__VA_ARGS__); \
+    }
 /**
  * Logs a debug message.
  * @param format The format message.
@@ -69,7 +69,7 @@
  * Determines if the given logging level is enabled.
  * @param level The logging level to check.
  */
-#define LOG_IS_ENABLED(level) LOG4CXX_UNLIKELY(facter::logging::is_log_enabled(g_logger, level))
+#define LOG_IS_ENABLED(level) facter::logging::is_log_enabled(g_logger, level)
 /**
  * Determines if the debug logging level is enabled.
  * @returns Returns true if debug logging is enabled or false if it is not enabled.
@@ -101,8 +101,9 @@ namespace facter { namespace logging {
     /**
      * Represents the supported logging levels.
      */
-    enum class log_level
+    enum log_level
     {
+        trace,
         debug,
         info,
         warning,
@@ -110,13 +111,29 @@ namespace facter { namespace logging {
         fatal
     };
 
+    // These attributes may be used to define a logging format.
+    // They're constants, added to the log when a message is logged.
+    // The BOOST_LOG_SEV macro implicitly adds a source-specific attribute
+    // 'Severity' of the template type on construction, so the attribute
+    // name 'Severity' of log_level_attr is tied to BOOST_LOG_SEV.
+    BOOST_LOG_ATTRIBUTE_KEYWORD(log_level_attr, "Severity", log_level);
+    BOOST_LOG_ATTRIBUTE_KEYWORD(namespace_attr, "Namespace", std::string);
+
+    std::ostream& operator<<(std::ostream& strm, log_level level);
+
+    /**
+     * Configures default logging to stderr.
+     * @param level The logging level to allow on the console.
+     */
+    void configure_logging(log_level level);
+
     /**
      * Determines if the given log level is enabled for the given logger.
      * @param logger The logger to check.
      * @param level The logging level to check.
      * @return Returns true if the logging level is enabled or false if it is not.
      */
-    bool is_log_enabled(log4cxx::LoggerPtr logger, log_level level);
+    bool is_log_enabled(const std::string &logger, log_level level);
 
     /**
      * Logs a given message to the given logger.
@@ -124,7 +141,7 @@ namespace facter { namespace logging {
      * @param level The logging level to log with.
      * @param message The message to log.
      */
-    void log(log4cxx::LoggerPtr logger, log_level level, std::string const& message);
+    void log(const std::string &logger, log_level level, std::string const& message);
 
     /**
      * Logs a given format message to the given logger.
@@ -132,7 +149,7 @@ namespace facter { namespace logging {
      * @param level The logging level to log with.
      * @param message The message being formatted.
      */
-    void log(log4cxx::LoggerPtr logger, log_level level, boost::format& message);
+    void log(const std::string &logger, log_level level, boost::format& message);
 
     /**
      * Logs a given format message to the given logger.
@@ -145,7 +162,7 @@ namespace facter { namespace logging {
      * @param args The remaining arguments to the message.
      */
     template <typename T, typename... TArgs>
-    void log(log4cxx::LoggerPtr logger, log_level level, boost::format& message, T arg, TArgs... args)
+    void log(const std::string &logger, log_level level, boost::format& message, T arg, TArgs... args)
     {
         message % arg;
         log(logger, level, message, std::forward<TArgs>(args)...);
@@ -160,7 +177,7 @@ namespace facter { namespace logging {
      * @param args The remaining arguments to the message.
      */
     template <typename... TArgs>
-    void log(log4cxx::LoggerPtr logger, log_level level, std::string const& format, TArgs... args)
+    void log(const std::string &logger, log_level level, std::string const& format, TArgs... args)
     {
         boost::format message(format);
         log(logger, level, message, std::forward<TArgs>(args)...);

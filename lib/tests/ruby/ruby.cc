@@ -4,10 +4,8 @@
 #include <facter/ruby/api.hpp>
 #include <facter/ruby/module.hpp>
 #include <facter/util/string.hpp>
-#include <facter/logging/logging.hpp>
-#include <log4cxx/logger.h>
-#include <log4cxx/appenderskeleton.h>
 #include <facter/util/regex.hpp>
+#include <facter/logging/logging.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <memory>
 #include <tuple>
@@ -17,52 +15,46 @@
 #include <map>
 #include "../fixtures.hpp"
 
+#include <boost/log/sinks/sync_frontend.hpp>
+#include <boost/log/sinks/basic_sink_backend.hpp>
+
 using namespace std;
 using namespace facter::facts;
 using namespace facter::ruby;
 using namespace facter::util;
 using namespace facter::testing;
-using namespace log4cxx;
+using namespace facter::logging;
 using testing::ElementsAre;
+namespace sinks = boost::log::sinks;
 
 LOG_DECLARE_NAMESPACE("ruby.test");
 
-struct ruby_log_appender : AppenderSkeleton
+class ruby_log_appender :
+    public sinks::basic_formatted_sink_backend<char, sinks::synchronized_feeding>
 {
  public:
-    ruby_log_appender()
+    void consume(boost::log::record_view const& rec, string_type const& msg)
     {
-        setName("ruby appender");
-    }
-
-    DECLARE_LOG4CXX_OBJECT(ruby_log_appender)
-    BEGIN_LOG4CXX_CAST_MAP()
-        LOG4CXX_CAST_ENTRY(ruby_log_appender)
-        LOG4CXX_CAST_ENTRY_CHAIN(AppenderSkeleton)
-    END_LOG4CXX_CAST_MAP()
-
-    void append(const spi::LoggingEventPtr& event, log4cxx::helpers::Pool& p)
-    {
-        string message = event->getMessage();
-
         // Strip color codes
+        string_type message = msg;
         boost::replace_all(message, "\x1B[0;33m", "");
         boost::replace_all(message, "\x1B[0;36m", "");
         boost::replace_all(message, "\x1B[0;31m", "");
         boost::replace_all(message, "\x1B[0m", "");
-        _messages.push_back({ event->getLevel()->toString(), message});
-    }
 
-    void close() {}
-    bool requiresLayout() const { return false; }
+        stringstream s;
+        s << rec[log_level_attr];
+
+        _messages.push_back({s.str(), message});
+    }
 
     vector<pair<string, string>> const& messages() const { return _messages; }
 
  private:
-     vector<pair<string, string>> _messages;
+    vector<pair<string, string>> _messages;
 };
 
-IMPLEMENT_LOG4CXX_OBJECT(ruby_log_appender);
+using sink_t = sinks::synchronous_sink<ruby_log_appender>;
 
 struct ruby_test_parameters
 {
@@ -174,26 +166,27 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
             _facts.add(to_lower(string(kvp.first)), make_value<string_value>(kvp.second));
         }
 
-        auto root = Logger::getRootLogger();
+        _appender.reset(new ruby_log_appender());
+        _sink.reset(new sink_t(_appender));
 
-        _level = root->getLevel();
-        root->setLevel(Level::getDebug());
-
-        _appender = new ruby_log_appender();
-        root->addAppender(_appender);
+        auto core = boost::log::core::get();
+        core->set_filter(log_level_attr >= log_level::debug);
+        core->add_sink(_sink);
     }
 
     virtual void TearDown()
     {
-        auto root = Logger::getRootLogger();
+        auto core = boost::log::core::get();
+        core->reset_filter();
+        core->remove_sink(_sink);
 
-        root->setLevel(_level);
-        root->removeAppender(_appender);
+        _sink.reset();
+        _appender.reset();
     }
 
     collection _facts;
-    ruby_log_appender* _appender;
-    LevelPtr _level;
+    boost::shared_ptr<ruby_log_appender> _appender;
+    boost::shared_ptr<sink_t> _sink;
 };
 
 TEST_P(facter_ruby, load)
