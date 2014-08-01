@@ -11,6 +11,7 @@ include_directories(
     ../lib/inc # the libfacter headers
     ${LOG4CXX_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
+    ${YAMLCPP_INCLUDE_DIRS}
 )
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)

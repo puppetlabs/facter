@@ -67,22 +67,27 @@ namespace facter { namespace facts {
          * Prevents the resolver from being copied.
          */
         resolver(resolver const&) = delete;
+
         /**
          * Prevents the resolver from being copied.
          * @returns Returns this resolver.
          */
         resolver& operator=(resolver const&) = delete;
+
         /**
          * Moves the given resolver into this resolver.
          * @param other The resolver to move into this resolver.
          */
-        resolver(resolver&& other) = default;
+        // Visual Studio 12 still doesn't allow default for move constructor.
+        resolver(resolver&& other);
+
         /**
          * Moves the given resolver into this resolver.
          * @param other The resolver to move into this resolver.
          * @return Returns this resolver.
          */
-        resolver& operator=(resolver&& other) = default;
+        // Visual Studio 12 still doesn't allow default for move assignment.
+        resolver& operator=(resolver&& other);
 
         /**
          * Gets the name of the fact resolver.

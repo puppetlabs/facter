@@ -56,6 +56,22 @@ namespace facter { namespace facts {
         // This needs to be defined here since we use incomplete types in the header
     }
 
+    resolver::resolver(resolver&& other)
+    {
+        *this = std::move(other);
+    }
+
+    resolver& resolver::operator=(resolver&& other)
+    {
+        if (this != &other) {
+            _name = std::move(other._name);
+            _names = std::move(other._names);
+            _regexes = std::move(other._regexes);
+            _resolving = std::move(other._resolving);
+        }
+        return *this;
+    }
+
     string const& resolver::name() const
     {
         return _name;

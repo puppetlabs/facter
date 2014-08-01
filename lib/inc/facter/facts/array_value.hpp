@@ -27,22 +27,27 @@ namespace facter { namespace facts {
          * Prevents the array_value from being copied.
          */
         array_value(array_value const&) = delete;
+
         /**
          * Prevents the array_value from being copied.
          * @returns Returns this array_value.
          */
         array_value& operator=(array_value const&) = delete;
+
         /**
          * Moves the given array_value into this array_value.
          * @param other The array_value to move into this array_value.
          */
-        array_value(array_value&& other) = default;
+        // Visual Studio 12 still doesn't allow default for move constructor.
+        array_value(array_value&& other);
+
         /**
          * Moves the given array_value into this array_value.
          * @param other The array_value to move into this array_value.
          * @return Returns this array_value.
          */
-        array_value& operator=(array_value&& other) = default;
+        // Visual Studio 12 still doesn't allow default for move assignment.
+        array_value& operator=(array_value&& other);
 
         /**
          * Adds a value to the array.

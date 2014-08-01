@@ -3,9 +3,10 @@
 #include <iomanip>
 #include <algorithm>
 #include <iterator>
-#include <cstring>
+#include <boost/algorithm/string/predicate.hpp>
 
 using namespace std;
+using namespace boost::algorithm;
 
 namespace facter { namespace util {
 
@@ -151,7 +152,7 @@ namespace facter { namespace util {
 
     int ci_char_traits::compare(char const* s1, char const* s2, size_t n)
     {
-        return strncasecmp(s1, s2, n);
+        return ilexicographical_compare(make_pair(s1, s1+n), make_pair(s2, s2+n));
     }
 
 }}  // namespace facter::util

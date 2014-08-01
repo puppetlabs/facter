@@ -56,22 +56,27 @@ namespace facter { namespace facts {
          * Prevents the value from being copied.
          */
         value(value const&) = delete;
+
         /**
          * Prevents the value from being copied.
          * @returns Returns this value.
          */
         value& operator=(value const&) = delete;
+
         /**
          * Moves the given value into this value.
          * @param other The value to move into this value.
          */
-        value(value&& other) = default;
+        // Visual Studio 12 still doesn't allow default for move constructor.
+        value(value&& other) {}
+
         /**
          * Moves the given value into this value.
          * @param other The value to move into this value.
          * @return Returns this value.
          */
-        value& operator=(value&& other) = default;
+        // Visual Studio 12 still doesn't allow default for move assignment.
+        value& operator=(value&& other) { return *this; }
 
         /**
          * Converts the value to a JSON value.

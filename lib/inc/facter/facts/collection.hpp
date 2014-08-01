@@ -59,22 +59,27 @@ namespace facter { namespace facts {
          * Prevents the fact collection from being copied.
          */
         collection(collection const&) = delete;
+
         /**
          * Prevents the fact collection from being copied.
          * @returns Returns this fact collection.
          */
         collection& operator=(collection const&) = delete;
+
         /**
          * Moves the given fact collection into this fact collection.
          * @param other The fact collection to move into this fact collection.
          */
-        collection(collection&& other) = default;
+        // Visual Studio 12 still doesn't allow default for move constructor.
+        collection(collection&& other);
+
         /**
          * Moves the given fact collection into this fact collection.
          * @param other The fact collection to move into this fact collection.
          * @return Returns this fact collection.
          */
-        collection& operator=(collection&& other) = default;
+        // Visual Studio 12 still doesn't allow default for move assignment.
+        collection& operator=(collection&& other);
 
         /**
          * Adds the default facts to the collection.
