@@ -1,6 +1,7 @@
 #include <facter/facterlib.h>
 #include <facter/facts/collection.hpp>
 #include <facter/logging/logging.hpp>
+#include <facter/ruby/api.hpp>
 #include <facter/util/string.hpp>
 #include <log4cxx/logger.h>
 #include <log4cxx/propertyconfigurator.h>
@@ -17,6 +18,7 @@ using namespace std;
 using namespace log4cxx;
 using namespace facter::util;
 using namespace facter::facts;
+using namespace facter::ruby;
 using namespace boost::filesystem;
 namespace po = boost::program_options;
 namespace bs = boost::system;
@@ -195,6 +197,13 @@ int main(int argc, char **argv)
         configure_logging(log_level, properties_file);
         log_command_line(argc, argv);
 
+        // Initialize Ruby in main
+        // This needs to be done here to ensure the stack is at the appropriate depth for the Ruby VM
+        auto ruby = api::instance();
+        if (ruby) {
+            ruby->initialize();
+        }
+
         // Build a set of requested facts from the command line
         set<string> requested_facts;
         if (vm.count("fact")) {
@@ -217,8 +226,8 @@ int main(int argc, char **argv)
             facts.add_external_facts(external_directories);
         }
 
-        if (!vm.count("no-custom-facts")) {
-            facts.add_custom_facts(custom_directories);
+        if (!vm.count("no-custom-facts") && ruby) {
+            facts.add_custom_facts(*ruby, custom_directories);
         }
 
         // Filter to only the requested facts

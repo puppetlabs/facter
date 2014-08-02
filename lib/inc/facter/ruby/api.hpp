@@ -72,7 +72,7 @@ namespace facter {  namespace ruby {
          * Gets the Ruby API instance.
          * @return Returns the Ruby API instance or nullptr if the Ruby API is unavailable.
          */
-        static api const* instance();
+        static api* instance();
 
         /**
          * Gets the platform-specific Ruby library file name.
@@ -80,6 +80,18 @@ namespace facter {  namespace ruby {
          * @return Returns the platform-specific ruby library file name.
          */
         static std::string get_library_name(std::string const& version = {});
+
+        /**
+         * Called to initialize the API.
+         * This should be done at the same stack frame where code is loaded into the Ruby VM.
+         */
+        void initialize();
+
+        /**
+         * Gets whether or not the API has been initialized.
+         * @return Returns true if the API has been initialized or false if it has not been initialized.
+         */
+        bool initialized() const;
 
         /**
          * See MRI documentation.
@@ -483,6 +495,7 @@ namespace facter {  namespace ruby {
         VALUE _true;
         VALUE _false;
         bool _cleanup;
+        bool _initialized;
     };
 
 }}  // namespace facter::ruby
