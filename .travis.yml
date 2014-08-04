@@ -21,9 +21,7 @@ before_install:
   - wget https://github.com/doxygen/doxygen/archive/Release_1_8_7.tar.gz -O $HOME/doxygen-1.8.7.tgz
   - pushd $HOME && tar xzf doxygen-1.8.7.tgz && cd $HOME/doxygen-Release_1_8_7 && ./configure > /dev/null && make > /dev/null && sudo make install > /dev/null && popd
   # Install dependencies of cfacter
-  - sudo apt-get -y install libboost-filesystem1.48-dev libboost-program-options1.48-dev liblog4cxx10-dev
-  - wget https://re2.googlecode.com/files/re2-20140304.tgz -O $HOME/re2-20140304.tgz
-  - pushd $HOME && tar xzf re2-20140304.tgz && cd $HOME/re2 && make > /dev/null && sudo make install > /dev/null && popd
+  - sudo apt-get -y install libboost-filesystem1.48-dev libboost-program-options1.48-dev libboost-regex1.48-dev liblog4cxx10-dev
   - wget https://yaml-cpp.googlecode.com/files/yaml-cpp-0.5.1.tar.gz -O $HOME/yaml-cpp-0.5.1.tgz
   - pushd $HOME && tar xzf yaml-cpp-0.5.1.tgz && cd $HOME/yaml-cpp-0.5.1 && cmake -DBUILD_SHARED_LIBS=ON . && make > /dev/null && sudo make install > /dev/null && popd
 

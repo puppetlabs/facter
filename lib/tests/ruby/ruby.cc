@@ -6,7 +6,7 @@
 #include <facter/util/string.hpp>
 #include <log4cxx/logger.h>
 #include <log4cxx/appenderskeleton.h>
-#include <re2/re2.h>
+#include <facter/util/regex.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <memory>
 #include <tuple>
@@ -22,7 +22,6 @@ using namespace facter::ruby;
 using namespace facter::util;
 using namespace facter::testing;
 using namespace log4cxx;
-using namespace re2;
 using testing::ElementsAre;
 
 struct ruby_log_appender : AppenderSkeleton
@@ -217,7 +216,7 @@ TEST_P(facter_ruby, load)
         ASSERT_EQ(expected_messages.size(), messages.size());
         for (size_t i = 0; i < expected_messages.size(); ++i) {
             ASSERT_EQ(expected_messages[i].first, messages[i].first);
-            ASSERT_TRUE(RE2::PartialMatch(messages[i].second, expected_messages[i].second));
+            ASSERT_TRUE(re_search(messages[i].second, expected_messages[i].second));
         }
         return;
     }

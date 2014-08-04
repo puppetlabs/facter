@@ -98,7 +98,6 @@ endif()
 # Set include directories
 include_directories(
     inc
-    ${RE2_INCLUDE_DIRS}
     ${RAPIDJSON_INCLUDE_DIRS}
     ${LOG4CXX_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
@@ -120,7 +119,6 @@ add_library(libfacter SHARED ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_POSIX_SOURC
 # Link in additional libraries
 target_link_libraries(libfacter
     ${THREAD_LIBS}
-    ${RE2_LIBRARIES}
     ${LOG4CXX_LIBRARIES}
     ${Boost_LIBRARIES}
     ${OPENSSL_LIBRARIES}

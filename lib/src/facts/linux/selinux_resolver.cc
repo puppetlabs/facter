@@ -3,7 +3,7 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/file.hpp>
-#include <re2/re2.h>
+#include <facter/util/regex.hpp>
 
 using namespace std;
 using namespace facter::util;
@@ -82,23 +82,23 @@ namespace facter { namespace facts { namespace linux {
         }
 
         string mode;
-        if (RE2::PartialMatch(buffer, "(?m)^SELINUX=(\\w+)$" , &mode)) {
+        if (re_search(buffer, "(?m)^SELINUX=(\\w+)$", &mode)) {
             facts.add(fact::selinux_config_mode, make_value<string_value>(move(mode)));
         }
 
         string type;
-        if (RE2::PartialMatch(buffer, "(?m)^SELINUXTYPE=(\\w+)$" , &type)) {
+        if (re_search(buffer, "(?m)^SELINUXTYPE=(\\w+)$", &type)) {
             facts.add(fact::selinux_config_policy, make_value<string_value>(move(type)));
         }
     }
 
     bool selinux_resolver::get_selinux_mountpoint(string& selinux_mount)
     {
-        RE2 regexp("\\S+ (\\S+) selinuxfs");
+        re_adapter regexp("\\S+ (\\S+) selinuxfs");
         bool is_mounted = false;
         file::each_line("/proc/self/mounts", [&](string& line) {
             string mountpoint;
-            if (RE2::PartialMatch(line, regexp, &mountpoint)) {
+            if (re_search(line, regexp, &mountpoint)) {
                 selinux_mount = mountpoint;
                 is_mounted = true;
                 return false;
