@@ -108,7 +108,7 @@ namespace facter {  namespace ruby {
         /**
          * See MRI documentation.
          */
-        void (* const rb_const_remove)(VALUE, ID);
+        VALUE (* const rb_const_remove)(VALUE, ID);
         /**
          * See MRI documentation.
          */
@@ -480,7 +480,7 @@ namespace facter {  namespace ruby {
         // Imported Ruby functions that should not be called externally
         int (* const ruby_setup)();
         void (* const ruby_init)();
-        void (* const ruby_options)(int, char**);
+        void* (* const ruby_options)(int, char**);
         int (* const ruby_cleanup)(volatile int);
 
         static std::unique_ptr<api> create();
