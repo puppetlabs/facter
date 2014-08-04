@@ -139,6 +139,23 @@ describe "processors" do
     end
   end
 
+  describe "In GNU/kFreeBSD" do
+    before do
+      Facter::Processors::GNU.stubs(:new).returns os
+    end
+
+    before :each do
+      Facter.clear
+      Facter.fact(:kernel).stubs(:value).returns("GNU/kFreeBSD")
+      os.stubs(:get_processor_list).returns(proc_list_array)
+      os.stubs(:get_processor_count).returns(8)
+      os.stubs(:get_physical_processor_count).returns(nil)
+      os.stubs(:get_processor_speed).returns(nil)
+    end
+
+    it_behaves_like "all operating systems"
+  end
+
   describe "In AIX" do
     before do
       Facter::Processors::AIX.stubs(:new).returns os
@@ -146,7 +163,7 @@ describe "processors" do
 
     before :each do
       Facter.clear
-      Facter.fact(:kernel).stubs(:value).returns("aix")
+      Facter.fact(:kernel).stubs(:value).returns("AIX")
       os.stubs(:get_processor_list).returns(proc_list_array)
       os.stubs(:get_processor_count).returns(8)
       os.stubs(:get_physical_processor_count).returns(nil)
@@ -163,7 +180,7 @@ describe "processors" do
 
     before :each do
       Facter.clear
-      Facter.fact(:kernel).stubs(:value).returns("hp-ux")
+      Facter.fact(:kernel).stubs(:value).returns("HP-UX")
       os.stubs(:get_processor_list).returns(proc_list_array)
       os.stubs(:get_processor_count).returns(8)
       os.stubs(:get_physical_processor_count).returns(nil)
