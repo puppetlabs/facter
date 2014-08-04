@@ -47,7 +47,12 @@ namespace facter { namespace facts { namespace posix {
          * Called to resolve processor count, physical processor count, and description facts.
          * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_processors(collection& facts) = 0;
+        virtual void resolve_processors(collection& facts);
+        /**
+         * Called to resolve the processors structured fact.
+         * @param facts The fact collection that is resolving facts.
+         */
+        virtual void resolve_structured_processors(collection& facts) = 0;
     };
 
 }}}  // namespace facter::facts::posix

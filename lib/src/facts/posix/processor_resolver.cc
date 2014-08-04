@@ -2,6 +2,8 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <facter/facts/map_value.hpp>
+#include <facter/facts/array_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
 #include <cstring>
@@ -18,6 +20,7 @@ namespace facter { namespace facts { namespace posix {
         resolver(
             "processor",
             {
+                fact::processors,
                 fact::processor_count,
                 fact::physical_processor_count,
                 fact::hardware_isa,
@@ -43,6 +46,9 @@ namespace facter { namespace facts { namespace posix {
 
         // Resolve the architecture
         resolve_architecture(facts);
+
+        // Resolve the processors structured fact
+        resolve_structured_processors(facts);  // Must be before processors b/c several processor facts are based on this
 
         // Resolve the processors facts
         resolve_processors(facts);
@@ -76,6 +82,40 @@ namespace facter { namespace facts { namespace posix {
             return;
         }
         facts.add(fact::architecture, make_value<string_value>(model->value()));
+    }
+
+    void processor_resolver::resolve_processors(collection& facts)
+    {
+        auto processors = facts.get<map_value>(fact::processors, false);
+        if (!processors) {
+            return;
+        }
+
+        auto count = processors->get<integer_value>("count");
+        auto physicalcount = processors->get<integer_value>("physicalcount");
+        if (count) {
+            string test = to_string(count->value());
+            facts.add(fact::processor_count, make_value<string_value>(to_string(count->value())));
+        }
+
+        if (physicalcount) {
+            facts.add(fact::physical_processor_count, make_value<string_value>(to_string(physicalcount->value())));
+        }
+
+        auto processor_list = processors->get<array_value>("models");
+        if (!processor_list) {
+            return;
+        }
+
+        int length = processor_list->size();
+        for (int i = 0; i < length; ++i) {
+            auto description = processor_list->get<string_value>(i);
+            if (!description) {
+                return;
+            }
+
+            facts.add(string(fact::processor) + to_string(i), make_value<string_value>(description->value()));
+        }
     }
 
 }}}  // namespace facter::facts::posix
