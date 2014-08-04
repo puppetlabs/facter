@@ -246,11 +246,9 @@ module CFacter
   # Gets a typed fact by name.
   #
   # @param name [String] The fact name.
-  # @return [Fact, nil] The typed fact, or nil if no fact is found.
+  # @return [Fact] The typed fact.
   # @api public
   def self.[](name)
-    value = self.value(name)
-    return unless value
-    Fact.new(name.to_s, value)
+    Fact.new(name.to_s, self.value(name))
   end
 end

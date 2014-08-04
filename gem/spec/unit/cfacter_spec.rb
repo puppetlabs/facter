@@ -64,8 +64,8 @@ describe CFacter do
       fact.value.should eq CFacter.version
     end
 
-    it 'should return nil for [] with unknown fact' do
-      CFacter[:not_a_fact].should be_nil
+    it 'should return nil value for [] with unknown fact' do
+      CFacter[:not_a_fact].value.should be_nil
     end
 
     it 'should return nil for value with unknown fact' do
