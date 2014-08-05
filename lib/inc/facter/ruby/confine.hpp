@@ -1,6 +1,6 @@
 /**
  * @file
- * Declares the base class for Ruby fact confines.
+ * Declares the class for Ruby fact confines.
  */
 #ifndef FACTER_RUBY_CONFINE_HPP_
 #define FACTER_RUBY_CONFINE_HPP_

@@ -1,5 +1,6 @@
 #include <facter/ruby/fact.hpp>
 #include <facter/ruby/module.hpp>
+#include <facter/ruby/aggregate_resolution.hpp>
 #include <facter/ruby/simple_resolution.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/util/string.hpp>
@@ -150,10 +151,20 @@ namespace facter { namespace ruby {
         auto res = resolution::to_instance(find_resolution(name));
         if (!res) {
             if (aggregate) {
-                // TODO: create aggregate resolution
+                _resolutions.emplace_back(unique_ptr<resolution>(new aggregate_resolution(_ruby)));
             } else {
-                 _resolutions.emplace_back(unique_ptr<resolution>(new simple_resolution(_ruby)));
-                 res = _resolutions.back().get();
+                _resolutions.emplace_back(unique_ptr<resolution>(new simple_resolution(_ruby)));
+            }
+            res = _resolutions.back().get();
+        } else {
+            if (aggregate && !dynamic_cast<aggregate_resolution*>(res)) {
+                _ruby.rb_raise(*_ruby.rb_eArgError,
+                    "cannot define an aggregate resolution with name \"%s\": a simple resolution with the same name already exists",
+                    _ruby.rb_string_value_ptr(&name));
+            } else if (!aggregate && !dynamic_cast<simple_resolution*>(res)) {
+                _ruby.rb_raise(*_ruby.rb_eArgError,
+                    "cannot define a simple resolution with name \"%s\": an aggregate resolution with the same name already exists",
+                    _ruby.rb_string_value_ptr(&name));
             }
         }
 
