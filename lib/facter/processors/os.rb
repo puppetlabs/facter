@@ -13,13 +13,13 @@ module Facter
       case kernel
       when "Linux"
         Facter::Processors::Linux.new
-      when "gnu/kfreebsd"
+      when "GNU/kFreeBSD"
         Facter::Processors::GNU.new
       when "Darwin"
         Facter::Processors::Darwin.new
-      when "aix"
+      when "AIX"
         Facter::Processors::AIX.new
-      when "hp-ux"
+      when "HP-UX"
         Facter::Processors::HP_UX.new
       when "DragonFly", "FreeBSD"
         Facter::Processors::BSD.new
