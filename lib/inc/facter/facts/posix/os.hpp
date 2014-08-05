@@ -145,10 +145,6 @@ namespace facter { namespace facts { namespace posix {
          */
         constexpr static char const* vmware_esx = "VMWareESX";
         /**
-         * The Bluewhite Linux operating system.
-         */
-        constexpr static char const* bluewhite = "Bluewhite64";
-        /**
          * The Slackware Linux operating system.
          */
         constexpr static char const* slackware = "Slackware";
