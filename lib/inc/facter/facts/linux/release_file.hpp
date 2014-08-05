@@ -85,10 +85,6 @@ namespace facter { namespace facts { namespace linux {
          */
         constexpr static char const* vmware_esx = "/etc/vmware-release";
         /**
-         * Version file for Bluewhite Linux
-         */
-        constexpr static char const* bluewhite = "/etc/bluewhite64-version";
-        /**
          * Version file for Slackware Linux.
          */
         constexpr static char const* slackware = "/etc/slackware-version";
