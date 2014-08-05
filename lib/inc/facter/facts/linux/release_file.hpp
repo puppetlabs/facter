@@ -89,10 +89,6 @@ namespace facter { namespace facts { namespace linux {
          */
         constexpr static char const* bluewhite = "/etc/bluewhite64-version";
         /**
-         * Version file for Slackware AMD64 Linux.
-         */
-        constexpr static char const* slack_amd64 = "/etc/slamd64-version";
-        /**
          * Version file for Slackware Linux.
          */
         constexpr static char const* slackware = "/etc/slackware-version";
