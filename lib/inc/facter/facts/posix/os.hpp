@@ -149,10 +149,6 @@ namespace facter { namespace facts { namespace posix {
          */
         constexpr static char const* bluewhite = "Bluewhite64";
         /**
-         * The Slackware AMD64 Linux operating system.
-         */
-        constexpr static char const* slack_amd64 = "Slamd64";
-        /**
          * The Slackware Linux operating system.
          */
         constexpr static char const* slackware = "Slackware";

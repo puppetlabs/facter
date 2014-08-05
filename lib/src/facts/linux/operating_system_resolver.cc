@@ -150,9 +150,6 @@ namespace facter { namespace facts { namespace linux {
             } else if (operating_system->value() == os::bluewhite) {
                 file = release_file::bluewhite;
                 regex = "(?m)^\\s*\\w+\\s+(\\d+\\.\\d+)";
-            } else if (operating_system->value() == os::slack_amd64) {
-                file = release_file::slack_amd64;
-                regex = "(?m)^\\s*\\w+\\s+(\\d+\\.\\d+)";
             } else if (operating_system->value() == os::cumulus) {
                 file = release_file::os;
                 regex = "(?m)^VERSION_ID\\s*=\\s*(\\d+\\.\\d+\\.\\d+)";
@@ -329,7 +326,6 @@ namespace facter { namespace facts { namespace linux {
             make_tuple(string(release_file::oracle_linux),   string(os::oracle_linux)),
             make_tuple(string(release_file::vmware_esx),     string(os::vmware_esx)),
             make_tuple(string(release_file::bluewhite),      string(os::bluewhite)),
-            make_tuple(string(release_file::slack_amd64),    string(os::slack_amd64)),
             make_tuple(string(release_file::slackware),      string(os::slackware)),
             make_tuple(string(release_file::alpine),         string(os::alpine)),
             make_tuple(string(release_file::mageia),         string(os::mageia)),
