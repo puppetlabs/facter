@@ -70,6 +70,7 @@ namespace facter { namespace ruby {
         VALUE normalize(VALUE name) const;
 
      private:
+        static VALUE version_thunk(VALUE self);
         static VALUE add_thunk(int argc, VALUE* argv, VALUE self);
         static VALUE define_fact_thunk(int argc, VALUE* argv, VALUE self);
         static VALUE value_thunk(VALUE self, VALUE name);

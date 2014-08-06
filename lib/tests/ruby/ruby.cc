@@ -6,6 +6,7 @@
 #include <facter/util/string.hpp>
 #include <facter/util/regex.hpp>
 #include <facter/logging/logging.hpp>
+#include <facter/version.h>
 #include <boost/algorithm/string/replace.hpp>
 #include <memory>
 #include <tuple>
@@ -275,6 +276,7 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("define_aggregate_fact.rb", "foo", "[\"foo\", \"bar\"]"),
     ruby_test_parameters("existing_simple_resolution.rb", { { "ERROR", "cannot define an aggregate resolution with name \"bar\": a simple resolution with the same name already exists" } }, true),
     ruby_test_parameters("existing_aggregate_resolution.rb", { { "ERROR", "cannot define a simple resolution with name \"bar\": an aggregate resolution with the same name already exists" } }, true),
+    ruby_test_parameters("version.rb", "foo", { { "DEBUG", LIBFACTER_VERSION } }),
 };
 
 INSTANTIATE_TEST_CASE_P(run, facter_ruby, testing::ValuesIn(single_fact_tests));
