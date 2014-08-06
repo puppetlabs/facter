@@ -20,11 +20,13 @@ namespace facter { namespace ruby {
 
     module::module(api const& ruby, collection& facts) :
         object<module>(ruby),
-        _collection(facts)
+        _collection(facts),
+        _old_facter(ruby.nil_value())
     {
         // Undefine Facter if it's already defined
+        _ruby.rb_gc_register_address(&_old_facter);
         if (ruby.is_true(ruby.rb_const_defined(*_ruby.rb_cObject, _ruby.rb_intern("Facter")))) {
-            _ruby.rb_const_remove(*_ruby.rb_cObject, _ruby.rb_intern("Facter"));
+            _old_facter = _ruby.rb_const_remove(*_ruby.rb_cObject, _ruby.rb_intern("Facter"));
         }
 
         // Define the Facter modules
@@ -67,9 +69,13 @@ namespace facter { namespace ruby {
     {
         clear();
 
-        // Undefine the module
-        // This will remove everything under the Facter module
+        // Undefine the module and restore the previous value
         _ruby.rb_const_remove(*_ruby.rb_cObject, _ruby.rb_intern("Facter"));
+        if (!_ruby.is_nil(_old_facter)) {
+            _ruby.rb_const_set(*_ruby.rb_cObject, _ruby.rb_intern("Facter"), _old_facter);
+        }
+
+        _ruby.rb_gc_unregister_address(&_old_facter);
     }
 
     VALUE module::find(VALUE name, bool create)

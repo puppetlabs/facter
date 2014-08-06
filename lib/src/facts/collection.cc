@@ -7,6 +7,8 @@
 #include <facter/logging/logging.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/dynamic_library.hpp>
+#include <facter/util/environment.hpp>
+#include <facter/util/string.hpp>
 #include <facter/version.h>
 #include <boost/filesystem.hpp>
 #include <rapidjson/document.h>
@@ -170,7 +172,11 @@ namespace facter { namespace facts {
 
         module facter(ruby, *this);
 
-        vector<string> files;
+        // Store a vector of files to process in order of discovery and a set to exclude duplicates
+        vector<string> files_to_load;
+        set<string> found_files;
+
+        // First search the Ruby load path
         for (auto const& dir : ruby.get_load_path()) {
             boost::system::error_code ec;
 
@@ -189,11 +195,25 @@ namespace facter { namespace facts {
                 continue;
             }
             directory::each_file((p / "facter").string(), [&](string const& file) {
-                files.push_back(file);
+                if (found_files.insert(file).second) {
+                    files_to_load.push_back(file);
+                }
                 return true;
             }, "\\.rb$");
         }
-        for (auto const& dir : directories) {
+
+        // Start the search paths with the FACTERLIB environment variable
+        vector<string> search_paths;
+        string variable;
+        if (environment::get("FACTERLIB", variable)) {
+            search_paths = split(variable, environment::get_path_separator());
+        }
+
+        // Append the given search directories
+        search_paths.insert(search_paths.end(), directories.begin(), directories.end());
+
+        // Search through the user supplied directories
+        for (auto const& dir : search_paths) {
             // Get the canonical directory name
             path p = dir;
             boost::system::error_code ec;
@@ -203,14 +223,15 @@ namespace facter { namespace facts {
             }
 
             directory::each_file(p.string(), [&](string const& file) {
-                files.push_back(file);
+                if (found_files.insert(file).second) {
+                    files_to_load.push_back(file);
+                }
                 return true;
             }, "\\.rb$");
         }
 
-        sort(files.begin(), files.end());
-
-        for (auto const& file : files) {
+        // Load all of the files that were found
+        for (auto const& file : files_to_load) {
             load_ruby_file(ruby, file);
         }
 

@@ -88,6 +88,7 @@ namespace facter { namespace ruby {
         std::map<std::string, fact> _facts;
         std::set<std::string> _debug_messages;
         std::set<std::string> _warning_messages;
+        VALUE _old_facter;
     };
 
 }}  // namespace facter::ruby

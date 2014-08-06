@@ -4,11 +4,7 @@
 #include <facter/ruby/api.hpp>
 #include <facter/util/string.hpp>
 #include <log4cxx/logger.h>
-#include <log4cxx/propertyconfigurator.h>
-#include <log4cxx/patternlayout.h>
-#include <log4cxx/consoleappender.h>
 #include <boost/program_options.hpp>
-#include <boost/filesystem.hpp>
 #include <iostream>
 #include <set>
 #include <algorithm>
@@ -19,11 +15,12 @@ using namespace log4cxx;
 using namespace facter::util;
 using namespace facter::facts;
 using namespace facter::ruby;
-using namespace boost::filesystem;
 namespace po = boost::program_options;
-namespace bs = boost::system;
 
 LOG_DECLARE_NAMESPACE("main");
+
+// Forward declaration from libfacter
+void configure_logging(LevelPtr level);
 
 void help(po::options_description& desc)
 {
@@ -52,28 +49,6 @@ void help(po::options_description& desc)
         "Example\n"
         "=======\n\n"
         "  cfacter kernel\n";
-}
-
-void configure_logging(LevelPtr level, string const& properties_file)
-{
-    bs::error_code ec;
-    if (!properties_file.empty() && is_regular_file(properties_file, ec)) {
-        PropertyConfigurator::configure(properties_file);
-        return;
-    }
-
-    // If no configuration file given, use default settings
-    LayoutPtr layout = new PatternLayout("%d %-5p %c - %m%n");
-    AppenderPtr appender = new ConsoleAppender(layout, "System.err");
-    Logger::getRootLogger()->addAppender(appender);
-    Logger::getRootLogger()->setLevel(level);
-
-    // Configure the execution output logger
-    auto logger = Logger::getLogger(LOG_ROOT_NAMESPACE "execution.output");
-    logger->setAdditivity(false);
-    layout = new PatternLayout("%m%n");
-    appender = new ConsoleAppender(layout, "System.err");
-    logger->addAppender(appender);
 }
 
 void log_command_line(int argc, char** argv)
@@ -121,7 +96,6 @@ int main(int argc, char **argv)
     {
         vector<string> external_directories;
         vector<string> custom_directories;
-        string properties_file;
 
         // Build a list of options visible on the command line
         // Keep this list sorted alphabetically
@@ -132,7 +106,6 @@ int main(int argc, char **argv)
             ("external-dir", po::value<vector<string>>(&external_directories), "A directory to use for external facts.")
             ("help", "Print this help message.")
             ("json,j", "Output in JSON format.")
-            ("logprops", po::value<string>(&properties_file), "Configure logging with a log4cxx properties file.")
             ("no-custom-facts", "Turn off custom facts")
             ("no-external-facts", "Turn off external facts")
             ("verbose", "Enable verbose (info) output.")
@@ -194,7 +167,7 @@ int main(int argc, char **argv)
         }
 
         // Configure logging
-        configure_logging(log_level, properties_file);
+        configure_logging(log_level);
         log_command_line(argc, argv);
 
         // Initialize Ruby in main
