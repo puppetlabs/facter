@@ -164,7 +164,13 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
     {
         _facts.clear();
         for (auto const& kvp : GetParam().facts) {
-            _facts.add(to_lower(string(kvp.first)), make_value<string_value>(kvp.second));
+            if (kvp.second == "true") {
+                _facts.add(to_lower(string(kvp.first)), make_value<boolean_value>(true));
+            } else if (kvp.second == "false") {
+                _facts.add(to_lower(string(kvp.first)), make_value<boolean_value>(false));
+            } else {
+                _facts.add(to_lower(string(kvp.first)), make_value<string_value>(kvp.second));
+            }
         }
 
         _appender.reset(new ruby_log_appender());
@@ -277,6 +283,8 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("existing_simple_resolution.rb", { { "ERROR", "cannot define an aggregate resolution with name \"bar\": a simple resolution with the same name already exists" } }, true),
     ruby_test_parameters("existing_aggregate_resolution.rb", { { "ERROR", "cannot define a simple resolution with name \"bar\": an aggregate resolution with the same name already exists" } }, true),
     ruby_test_parameters("version.rb", "foo", { { "DEBUG", LIBFACTER_VERSION } }),
+    ruby_test_parameters("boolean_false_confine.rb", "foo", { { "fact", "true" } }),
+    ruby_test_parameters("boolean_true_confine.rb", "foo", "\"bar\"", { { "fact", "true" } }),
 };
 
 INSTANTIATE_TEST_CASE_P(run, facter_ruby, testing::ValuesIn(single_fact_tests));
