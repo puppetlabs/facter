@@ -61,6 +61,8 @@ namespace facter { namespace ruby {
 
      private:
         static VALUE setcode_thunk(int argc, VALUE* argv, VALUE self);
+        static VALUE which_thunk(VALUE self, VALUE binary);
+        static VALUE exec_thunk(VALUE self, VALUE command);
 
         std::string _command;
         VALUE _block;

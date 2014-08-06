@@ -59,15 +59,7 @@ using sink_t = sinks::synchronous_sink<ruby_log_appender>;
 
 struct ruby_test_parameters
 {
-    ruby_test_parameters(string const& file, string const& fact, string const& value) :
-        file(file),
-        failure_expected(false),
-        fact(fact),
-        expected(value)
-    {
-    }
-
-    ruby_test_parameters(string const& file, string const& fact, string const& value, map<string, string> const& facts) :
+    ruby_test_parameters(string const& file, string const& fact, string const& value, map<string, string> const& facts = map<string, string>()) :
         file(file),
         failure_expected(false),
         fact(fact),
@@ -285,6 +277,7 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("version.rb", "foo", { { "DEBUG", LIBFACTER_VERSION } }),
     ruby_test_parameters("boolean_false_confine.rb", "foo", { { "fact", "true" } }),
     ruby_test_parameters("boolean_true_confine.rb", "foo", "\"bar\"", { { "fact", "true" } }),
+    ruby_test_parameters("exec.rb", "foo", "\"bar\""),
 };
 
 INSTANTIATE_TEST_CASE_P(run, facter_ruby, testing::ValuesIn(single_fact_tests));

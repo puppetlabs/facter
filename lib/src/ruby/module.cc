@@ -58,6 +58,7 @@ namespace facter { namespace ruby {
         _ruby.rb_define_singleton_method(execution, "which", RUBY_METHOD_FUNC(which_thunk), 1);
         _ruby.rb_define_singleton_method(execution, "exec", RUBY_METHOD_FUNC(exec_thunk), 1);
         _ruby.rb_define_singleton_method(execution, "execute", RUBY_METHOD_FUNC(execute_thunk), -1);
+
         _ruby.rb_define_class_under(execution, "ExecutionFailure", *_ruby.rb_eStandardError);
         ruby.rb_obj_freeze(execution);
         associate(execution);
