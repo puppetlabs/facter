@@ -11,8 +11,7 @@ Build Requirements
 
 * GCC 4.8+ or Clang 5.0+ (OSX)
 * CMake >= 2.8.12
-* Boost C++ Libraries >= 1.48
-* Apache log4cxx >= 10.0
+* Boost C++ Libraries >= 1.54
 * OpenSSL >= 1.0.1.g
 * yaml-cpp >= 0.5.1
 
@@ -20,7 +19,7 @@ Build Requirements
 
 The following will install all required tools and libraries:
 
-    yum install cmake boost-devel log4cxx-devel openssl-devel yaml-cpp-devel
+    yum install cmake boost-devel openssl-devel yaml-cpp-devel
 
 ### Setup on Mac OSX Mavericks (homebrew)
 
@@ -28,13 +27,13 @@ This assumes Clang is installed and the system OpenSSL libraries will be used.
 
 The following will install all required libraries:
 
-    brew install cmake boost log4cxx yaml-cpp
+    brew install cmake boost yaml-cpp
 
 ### Setup on Ubuntu 14.04 (Trusty)
 
 The following will install most required tools and libraries:
 
-    apt-get install build-essential cmake libboost-all-dev liblog4cxx10-dev libssl-dev libyaml-cpp-dev
+    apt-get install build-essential cmake libboost-all-dev libssl-dev libyaml-cpp-dev
 
 
 Pre-Build
@@ -166,28 +165,16 @@ This section assumes that cfacter has been installed into the system.
 Here's a simple example of using the C++11 API to output all facts as YAML.
 
     #include <facter/facts/collection.hpp>
-    #include <log4cxx/logger.h>
-    #include <log4cxx/propertyconfigurator.h>
-    #include <log4cxx/patternlayout.h>
-    #include <log4cxx/consoleappender.h>
+    #include <facter/logging/logging.hpp>
     #include <iostream>
 
     using namespace std;
     using namespace facter::facts;
-    using namespace log4cxx;
-
-    void configure_logging()
-    {
-        // By default, only log warnings and errors
-        LayoutPtr layout = new PatternLayout("%d %-5p %c - %m%n");
-        AppenderPtr appender = new ConsoleAppender(layout, "System.err");
-        Logger::getRootLogger()->addAppender(appender);
-        Logger::getRootLogger()->setLevel(Level::getWarn());
-    }
+    using namespace facter::logging;
 
     int main()
     {
-        configure_logging();
+        configure_logging(log_level::info);
 
         // Create a fact collection and write the collection out
         collection facts;
@@ -199,5 +186,5 @@ Here's a simple example of using the C++11 API to output all facts as YAML.
 
 To build the above, link with libfacter:
 
-    $ g++ example.cc -o myfacter -std=c++11 -lfacter -llog4cxx
+    $ g++ example.cc -o myfacter -std=c++11 -lfacter
     $ ./myfacter

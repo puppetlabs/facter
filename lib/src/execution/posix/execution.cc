@@ -266,7 +266,7 @@ namespace facter { namespace execution {
         if (child)
         {
             // Get a special logger used specifically for child process output
-            std::string logger = LOG_ROOT_NAMESPACE "execution.output";
+            std::string logger = "|";
 
             // Close the unused descriptors
             stdin_read.release();

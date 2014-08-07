@@ -13,6 +13,7 @@
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/format.hpp>
+#include <cstdio>
 
 /**
  * Defines the root logging namespace.
@@ -35,6 +36,12 @@
     if (facter::logging::is_log_enabled(g_logger, level)) { \
         facter::logging::log(g_logger, level, format, ##__VA_ARGS__); \
     }
+/**
+ * Logs a trace message.
+ * @param format The format message.
+ * @param ... The format message parameters.
+ */
+#define LOG_TRACE(format, ...) LOG_MESSAGE(facter::logging::log_level::trace, format, ##__VA_ARGS__)
 /**
  * Logs a debug message.
  * @param format The format message.
@@ -70,6 +77,11 @@
  * @param level The logging level to check.
  */
 #define LOG_IS_ENABLED(level) facter::logging::is_log_enabled(g_logger, level)
+/**
+ * Determines if the trace logging level is enabled.
+ * @returns Returns true if trace logging is enabled or false if it is not enabled.
+ */
+#define LOG_IS_TRACE_ENABLED() LOG_IS_ENABLED(facter::logging::log_level::trace)
 /**
  * Determines if the debug logging level is enabled.
  * @returns Returns true if debug logging is enabled or false if it is not enabled.
@@ -119,7 +131,23 @@ namespace facter { namespace logging {
     BOOST_LOG_ATTRIBUTE_KEYWORD(log_level_attr, "Severity", log_level);
     BOOST_LOG_ATTRIBUTE_KEYWORD(namespace_attr, "Namespace", std::string);
 
+    /*
+     * Produces the printed representation of logging level.
+     * @param strm The stream to write.
+     * @param level The logging level to print.
+     * @return Returns the stream after writing to it.
+     */
     std::ostream& operator<<(std::ostream& strm, log_level level);
+
+    /*
+     * Add color control characters to the message if color is allowed on the
+     * specified logging stream.
+     * @param message The original message.
+     * @param level The logging level of the message.
+     * @param log The FILE handle for the logging stream.
+     * @return Returns the colorized message.
+     */
+    std::string colorize(std::string const& message, log_level level, FILE *log);
 
     /**
      * Configures default logging to stderr.
