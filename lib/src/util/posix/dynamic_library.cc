@@ -41,6 +41,35 @@ namespace facter { namespace util {
         return *this;
     }
 
+    dynamic_library dynamic_library::find_by_name(std::string const& name)
+    {
+        // POSIX doesn't have this capability
+        return dynamic_library();
+    }
+
+    dynamic_library dynamic_library::find_by_symbol(std::string const& symbol)
+    {
+        dynamic_library library;
+
+        // Load the "null" library; this will cause dlsym to search for the symbol
+        void* handle = dlopen(nullptr, RTLD_GLOBAL | RTLD_LAZY);
+        if (!handle) {
+            return library;
+        }
+
+        // Check to see if a search for the symbol succeeds
+        if (!dlsym(handle, symbol.c_str())) {
+            dlclose(handle);
+            return library;
+        }
+
+        // At least one loaded module will resolve the given symbol
+        // Return this handle to allow the caller to search for other symbols
+        library._handle = handle;
+        library._first_load = false;
+        return library;
+    }
+
     bool dynamic_library::load(string const& name)
     {
         close();
