@@ -1,23 +1,31 @@
 #include <gmock/gmock.h>
-#include <log4cxx/logger.h>
-#include <log4cxx/propertyconfigurator.h>
-#include <log4cxx/patternlayout.h>
-#include <log4cxx/consoleappender.h>
+#include <facter/logging/logging.hpp>
+
+#include <boost/log/support/date_time.hpp>
+#include <boost/log/expressions/formatters/date_time.hpp>
+#include <boost/log/utility/setup/console.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+namespace expr = boost::log::expressions;
+namespace logging = boost::log;
 
 using namespace std;
-using namespace log4cxx;
 
 struct Environment : testing::Environment
 {
     virtual void SetUp()
     {
-        // Setup log4cxx
-        LayoutPtr layout = new PatternLayout("%d %-5p %c - %m%n");
-        AppenderPtr appender = new ConsoleAppender(layout);
-        Logger::getRootLogger()->addAppender(appender);
+        // Setup Boost.Log
+        auto sink = logging::add_console_log();
 
-        // To change logging output, set this to your desired level
-        Logger::getRootLogger()->setLevel(Level::getWarn());
+        sink->set_formatter(
+            expr::stream
+                << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f")
+                << " " << left << setfill(' ') << setw(5) << facter::logging::log_level_attr
+                << " " << facter::logging::namespace_attr
+                << " - " << expr::smessage);
+
+        sink->set_filter(facter::logging::log_level_attr >= facter::logging::warning);
+        logging::add_common_attributes();
     }
 
     virtual void TearDown()

@@ -1,72 +1,62 @@
 #include <gmock/gmock.h>
 #include <facter/logging/logging.hpp>
-#include <log4cxx/logger.h>
-#include <log4cxx/appenderskeleton.h>
+#include <boost/log/sinks/sync_frontend.hpp>
+#include <boost/log/sinks/basic_sink_backend.hpp>
 
 using namespace std;
 using namespace facter::logging;
-using namespace log4cxx;
+namespace sinks = boost::log::sinks;
 
 LOG_DECLARE_NAMESPACE("logging.test");
 
 bool g_color = isatty(fileno(stdout));
 
-struct custom_log_appender : AppenderSkeleton
+class custom_log_appender :
+    public sinks::basic_formatted_sink_backend<char, sinks::synchronized_feeding>
 {
  public:
-    custom_log_appender()
+    void consume(boost::log::record_view const& rec, string_type const& message)
     {
-        setName("test appender");
+        stringstream s;
+        s << rec[log_level_attr];
+        _level = s.str();
+        _message = message;
     }
-
-    DECLARE_LOG4CXX_OBJECT(custom_log_appender)
-    BEGIN_LOG4CXX_CAST_MAP()
-        LOG4CXX_CAST_ENTRY(custom_log_appender)
-        LOG4CXX_CAST_ENTRY_CHAIN(AppenderSkeleton)
-    END_LOG4CXX_CAST_MAP()
-
-    void append(const spi::LoggingEventPtr& event, log4cxx::helpers::Pool& p)
-    {
-        _level = event->getLevel()->toString();
-        _message = event->getMessage();
-    }
-
-    void close() {}
-    bool requiresLayout() const { return false; }
 
     string const& last_level() const { return _level; }
     string const& last_message() const { return _message; }
 
  private:
-     string _level;
-     string _message;
+    string _level;
+    string _message;
 };
 
-IMPLEMENT_LOG4CXX_OBJECT(custom_log_appender);
+using sink_t = sinks::synchronous_sink<custom_log_appender>;
 
 struct facter_logging : ::testing::Test {
  protected:
     virtual void SetUp()
     {
-        auto root = Logger::getRootLogger();
+        _appender.reset(new custom_log_appender());
+        _sink.reset(new sink_t(_appender));
 
-        _level = root->getLevel();
-        root->setLevel(Level::getDebug());
-
-        _appender = new custom_log_appender();
-        root->addAppender(_appender);
+        auto core = boost::log::core::get();
+        core->set_filter(log_level_attr >= log_level::debug);
+        core->add_sink(_sink);
     }
 
     virtual void TearDown()
     {
-        auto root = Logger::getRootLogger();
+        auto core = boost::log::core::get();
+        core->reset_filter();
+        core->remove_sink(_sink);
 
-        root->setLevel(_level);
-        root->removeAppender(_appender);
+        _sink.reset();
+        _appender.reset();
     }
 
-    custom_log_appender* _appender;
-    LevelPtr _level;
+    boost::shared_ptr<custom_log_appender> _appender;
+    boost::shared_ptr<sink_t> _sink;
 };
 
 TEST_F(facter_logging, debug) {
