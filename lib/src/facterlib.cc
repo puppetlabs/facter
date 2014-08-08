@@ -2,6 +2,7 @@
 #include <facter/version.h>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/value.hpp>
+#include <facter/ruby/api.hpp>
 #include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
 #include <log4cxx/logger.h>

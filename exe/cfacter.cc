@@ -172,9 +172,12 @@ int main(int argc, char **argv)
 
         // Initialize Ruby in main
         // This needs to be done here to ensure the stack is at the appropriate depth for the Ruby VM
-        auto ruby = api::instance();
-        if (ruby) {
-            ruby->initialize();
+        api* ruby = nullptr;
+        if (!vm.count("no-custom-facts")) {
+            ruby = api::instance();
+            if (ruby) {
+                ruby->initialize();
+            }
         }
 
         // Build a set of requested facts from the command line
@@ -199,7 +202,7 @@ int main(int argc, char **argv)
             facts.add_external_facts(external_directories);
         }
 
-        if (!vm.count("no-custom-facts") && ruby) {
+        if (ruby) {
             facts.add_custom_facts(*ruby, custom_directories);
         }
 

@@ -1,5 +1,6 @@
 #include <facter/ruby/module.hpp>
 #include <facter/ruby/api.hpp>
+#include <facter/ruby/aggregate_resolution.hpp>
 #include <facter/ruby/simple_resolution.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/logging/logging.hpp>
@@ -63,6 +64,7 @@ namespace facter { namespace ruby {
         // Define the Fact and resolution classes
         fact::define(_ruby);
         simple_resolution::define(_ruby);
+        aggregate_resolution::define(_ruby);
     }
 
     module::~module()
@@ -217,7 +219,17 @@ namespace facter { namespace ruby {
 
         // Call the block if one was given
         if (ruby.rb_block_given_p()) {
-            ruby.rb_funcall_passing_block(resolution_self, ruby.rb_intern("instance_eval"), 0, nullptr);
+            int tag = 0;
+            ruby.protect(tag, [&]() {
+                ruby.rb_funcall_passing_block(resolution_self, ruby.rb_intern("instance_eval"), 0, nullptr);
+                return ruby.nil_value();
+            });
+
+            // If we've failed, set the value to nil
+            if (tag) {
+                f->set_value(ruby.nil_value());
+                ruby.rb_jump_tag(tag);
+            }
         }
         return f->self();
     }

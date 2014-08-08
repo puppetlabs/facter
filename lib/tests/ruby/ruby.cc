@@ -4,6 +4,7 @@
 #include <facter/ruby/api.hpp>
 #include <facter/ruby/module.hpp>
 #include <facter/util/string.hpp>
+#include <facter/logging/logging.hpp>
 #include <log4cxx/logger.h>
 #include <log4cxx/appenderskeleton.h>
 #include <facter/util/regex.hpp>
@@ -23,6 +24,8 @@ using namespace facter::util;
 using namespace facter::testing;
 using namespace log4cxx;
 using testing::ElementsAre;
+
+LOG_DECLARE_NAMESPACE("ruby.test");
 
 struct ruby_log_appender : AppenderSkeleton
 {
@@ -63,12 +66,6 @@ IMPLEMENT_LOG4CXX_OBJECT(ruby_log_appender);
 
 struct ruby_test_parameters
 {
-    explicit ruby_test_parameters(string const& file) :
-        file(file),
-        failure_expected(true)
-    {
-    }
-
     ruby_test_parameters(string const& file, string const& fact, string const& value) :
         file(file),
         failure_expected(false),
@@ -86,9 +83,9 @@ struct ruby_test_parameters
     {
     }
 
-    ruby_test_parameters(string const& file, vector<pair<string, string>> const& messages) :
+    ruby_test_parameters(string const& file, vector<pair<string, string>> const& messages, bool failure = false) :
         file(file),
-        failure_expected(false),
+        failure_expected(failure),
         messages(messages)
     {
     }
@@ -143,33 +140,31 @@ ostream& operator<<(ostream& stream, const ruby_test_parameters& p)
 struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
 {
  protected:
-    string load()
+    bool load()
     {
         auto ruby = api::instance();
         if (!ruby || !ruby->initialized()) {
-            return "ruby has not been initialized.";
+            LOG_ERROR("ruby is not initialized");
+            return false;
         }
 
         module mod(*ruby, _facts);
 
-        ostringstream error;
-        ruby->rescue([&]() {
+        VALUE result = ruby->rescue([&]() {
             // Do not construct C++ objects in a rescue callback
             // C++ stack unwinding will not take place if a Ruby exception is thrown!
             ruby->rb_load(ruby->rb_str_new_cstr((LIBFACTER_TESTS_DIRECTORY "/fixtures/ruby/" + GetParam().file).c_str()), 0);
-            return 0;
+            return ruby->true_value();
         }, [&](VALUE ex) {
-            string backtrace = ruby->exception_backtrace(ex);
-            error << "error while resolving custom facts in " << GetParam().file << ": "
-                  << ruby->to_string(ex) << ".";
-            if (!backtrace.empty()) {
-                error << "\nbacktrace:\n" << backtrace;
-            }
-            return 0;
+            LOG_ERROR("error while resolving custom facts in %1%: %2%.\nbacktrace:\n%3%",
+                GetParam().file,
+                ruby->to_string(ex),
+                ruby->exception_backtrace(ex));
+            return ruby->false_value();
         });
 
         mod.resolve();
-        return error.str();
+        return ruby->is_true(result);
     }
 
     virtual void SetUp()
@@ -203,11 +198,11 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
 
 TEST_P(facter_ruby, load)
 {
-    string error = load();
-    if (GetParam().failure_expected && error.empty()) {
+    bool success = load();
+    if (GetParam().failure_expected && success) {
         FAIL() << "a failure was expected but the file successfully loaded.";
-    } else if (!GetParam().failure_expected && !error.empty()) {
-        FAIL() << error;
+    } else if (!GetParam().failure_expected && !success) {
+        FAIL() << "a failure was not expected but the file failed to load.";
     }
 
     auto const& expected_messages = GetParam().messages;
@@ -239,7 +234,7 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("simple_resolution.rb", "foo", "\"bar\""),
     ruby_test_parameters("empty_fact.rb", "foo"),
     ruby_test_parameters("empty_fact_with_value.rb", "foo", "{\"array\"=>[1, 2, 3], \"bool_false\"=>false, \"bool_true\"=>true, \"double\"=>12.34, \"int\"=>1, \"string\"=>\"foo\"}"),
-    ruby_test_parameters("empty_command.rb"),
+    ruby_test_parameters("empty_command.rb", { { "ERROR", "expected a non-empty String for first argument" } }, true),
     ruby_test_parameters("simple_command.rb", "foo", "\"bar\""),
     ruby_test_parameters("confine_missing_fact.rb", "foo", { { "kernel", "linux" } }),
     ruby_test_parameters("bad_command.rb", "foo"),
@@ -247,7 +242,7 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("simple_confine.rb", "foo"),
     ruby_test_parameters("multi_confine.rb", "foo", "\"bar\"", { {"FACT1", "VALUE1"}, { "Fact2", "Value2" }, { "fact3", "value3" } }),
     ruby_test_parameters("multi_confine.rb", "foo"),
-    ruby_test_parameters("bad_syntax.rb"),
+    ruby_test_parameters("bad_syntax.rb", { { "ERROR", "undefined method `foo' for Facter:Module" } }, true),
     ruby_test_parameters("block_confine.rb", "foo"),
     ruby_test_parameters("block_confine.rb", "foo", "\"bar\"", { { "fact1", "value1" } }),
     ruby_test_parameters("block_nil_confine.rb", "foo"),
@@ -277,6 +272,16 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("named_resolution.rb", "foo", "\"value2\""),
     ruby_test_parameters("define_fact.rb", "foo", "\"bar\""),
     ruby_test_parameters("cycle.rb", { { "ERROR", "cycle detected while requesting value of fact \"bar\"" } }),
+    ruby_test_parameters("aggregate.rb", "foo", "[\"foo\", \"bar\"]"),
+    ruby_test_parameters("aggregate_with_require.rb", "foo", "[\"foo\", \"bar\", \"foo\", \"baz\", \"foo\", \"bar\", \"foo\"]"),
+    ruby_test_parameters("aggregate_invalid_require.rb", { { "ERROR", "expected a Symbol or Array of Symbol for require option" } }, true),
+    ruby_test_parameters("aggregate_with_block.rb", "foo", "10"),
+    ruby_test_parameters("aggregate_with_merge.rb", "foo", "{\"array\"=>[1, 2, 3, 4, 5, 6], \"baz\"=>\"jam\", \"foo\"=>\"bar\", \"hash\"=>{\"foo\"=>\"bar\", \"jam\"=>\"cakes\", \"subarray\"=>[\"hello\", \"world\"]}}"),
+    ruby_test_parameters("aggregate_with_invalid_merge.rb", { { "ERROR", "cannot merge \"hello\":String and \"world\":String" } }),
+    ruby_test_parameters("aggregate_with_cycle.rb", { { "ERROR", "chunk dependency cycle detected" } }),
+    ruby_test_parameters("define_aggregate_fact.rb", "foo", "[\"foo\", \"bar\"]"),
+    ruby_test_parameters("existing_simple_resolution.rb", { { "ERROR", "cannot define an aggregate resolution with name \"bar\": a simple resolution with the same name already exists" } }, true),
+    ruby_test_parameters("existing_aggregate_resolution.rb", { { "ERROR", "cannot define a simple resolution with name \"bar\": an aggregate resolution with the same name already exists" } }, true),
 };
 
 INSTANTIATE_TEST_CASE_P(run, facter_ruby, testing::ValuesIn(single_fact_tests));

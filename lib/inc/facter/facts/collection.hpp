@@ -8,7 +8,6 @@
 #include "resolver.hpp"
 #include "value.hpp"
 #include "external/resolver.hpp"
-#include "../ruby/api.hpp"
 #include <list>
 #include <map>
 #include <set>
@@ -18,6 +17,10 @@
 #include <functional>
 #include <stdexcept>
 #include <iostream>
+
+namespace facter { namespace ruby {
+    struct api;
+}}  // namespace facter::ruby
 
 namespace facter { namespace facts {
 
