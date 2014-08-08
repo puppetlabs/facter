@@ -34,7 +34,7 @@ namespace facter { namespace ruby {
             auto it = _instances.find(self);
             if (it == _instances.end()) {
                 auto const& ruby = *api::instance();
-                ruby.rb_raise(*ruby.rb_eArgError, "unexpected self value");
+                ruby.rb_raise(*ruby.rb_eArgError, "unexpected self value %d", self);
                 return nullptr;
             }
             return it->second;

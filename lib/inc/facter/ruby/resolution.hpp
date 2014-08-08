@@ -76,6 +76,11 @@ namespace facter { namespace ruby {
          */
         void confine(VALUE confines);
 
+        /**
+         * Calls the on_flush block for the resolution, if there is one.
+         */
+        void flush() const;
+
      protected:
         /**
          * Constructs the resolution.
@@ -110,9 +115,11 @@ namespace facter { namespace ruby {
         static VALUE ruby_has_weight(VALUE self, VALUE value);
         static VALUE ruby_name(VALUE self);
         static VALUE ruby_timeout(VALUE self, VALUE timeout);
+        static VALUE ruby_on_flush(VALUE self);
 
         VALUE _name;
         VALUE _value;
+        VALUE _flush_block;
         std::vector<ruby::confine> _confines;
         bool _has_weight;
         size_t _weight;

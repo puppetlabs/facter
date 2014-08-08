@@ -1,13 +1,12 @@
 #include <facter/ruby/fact.hpp>
-#include <facter/ruby/module.hpp>
 #include <facter/ruby/aggregate_resolution.hpp>
+#include <facter/ruby/module.hpp>
 #include <facter/ruby/simple_resolution.hpp>
-#include <facter/facts/value.hpp>
+#include <facter/ruby/ruby_value.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
 #include <algorithm>
-
-#include "facter/facterlib.h"
 
 using namespace std;
 using namespace facter::facts;
@@ -21,8 +20,7 @@ namespace facter { namespace ruby {
 
     fact::fact() :
         _resolved(false),
-        _resolving(false),
-        _added(false)
+        _resolving(false)
     {
         auto const& ruby = *api::instance();
         _name = ruby.nil_value();
@@ -40,6 +38,7 @@ namespace facter { namespace ruby {
         ruby.rb_define_method(klass, "value", RUBY_METHOD_FUNC(ruby_value), 0);
         ruby.rb_define_method(klass, "resolution", RUBY_METHOD_FUNC(ruby_resolution), 1);
         ruby.rb_define_method(klass, "define_resolution", RUBY_METHOD_FUNC(ruby_define_resolution), -1);
+        ruby.rb_define_method(klass, "flush", RUBY_METHOD_FUNC(ruby_flush), 0);
         ruby.rb_obj_freeze(klass);
         return klass;
     }
@@ -58,6 +57,7 @@ namespace facter { namespace ruby {
     VALUE fact::value()
     {
         auto const& ruby = *api::instance();
+        collection& facts =  module::from_self(ruby.lookup({"Facter"}))->facts();
 
         // Prevent cycles by raising an exception
         if (_resolving) {
@@ -110,6 +110,17 @@ namespace facter { namespace ruby {
             _resolved = true;
             return 0;
         });
+
+        if (ruby.is_nil(_value)) {
+            // Check to see the value is in the collection
+            auto value = facts[ruby.to_string(_name)];
+            if (value) {
+                _value = ruby.to_ruby(value);
+            }
+        }
+
+        facts.add(ruby.to_string(_name), ruby.is_nil(_value) ? nullptr : make_value<ruby::ruby_value>(_value));
+
         _resolving = false;
         return _value;
     }
@@ -240,14 +251,18 @@ namespace facter { namespace ruby {
         return resolution_self;
     }
 
-    bool fact::added() const
+    void fact::flush()
     {
-        return _added;
-    }
+        auto const& ruby = *api::instance();
 
-    void fact::added(bool value)
-    {
-        _added = value;
+        // Call flush on every resolution
+        for (auto r : _resolutions) {
+            resolution::from_self(r)->flush();
+        }
+
+        // Reset the value
+        _resolved = false;
+        _value = ruby.nil_value();
     }
 
     VALUE fact::alloc(VALUE klass)
@@ -307,6 +322,11 @@ namespace facter { namespace ruby {
         return from_self(self)->value();
     }
 
+    VALUE fact::ruby_resolution(VALUE self, VALUE name)
+    {
+        return from_self(self)->find_resolution(name);
+    }
+
     VALUE fact::ruby_define_resolution(int argc, VALUE* argv, VALUE self)
     {
         auto const& ruby = *api::instance();
@@ -318,9 +338,11 @@ namespace facter { namespace ruby {
         return from_self(self)->define_resolution(argv[0], argc > 1 ? argv[1] : ruby.nil_value());
     }
 
-    VALUE fact::ruby_resolution(VALUE self, VALUE name)
+    VALUE fact::ruby_flush(VALUE self)
     {
-        return from_self(self)->find_resolution(name);
+        auto const& ruby = *api::instance();
+        from_self(self)->flush();
+        return ruby.nil_value();
     }
 
 }}  // namespace facter::ruby

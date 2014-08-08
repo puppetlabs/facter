@@ -28,8 +28,9 @@ namespace facter { namespace ruby {
         /**
          * Constructs the Ruby Facter module.
          * @param facts The collection of facts to populate.
+         * @param paths The search paths for loading custom facts.
          */
-        module(facter::facts::collection& facts);
+        module(facter::facts::collection& facts, std::vector<std::string> const& paths = {});
 
         /**
          * Destructs the Facter module.
@@ -37,12 +38,20 @@ namespace facter { namespace ruby {
         ~module();
 
         /**
-         * Finds a fact with the given name.
-         * @param name The name of the fact to find.
-         * @param create True if a missing fact should be created or false if nil should be returned.
-         * @return Returns the Fact's self or nil.
+         * Loads all custom facts.
          */
-        VALUE find_fact(VALUE name, bool create = false);
+        void load_facts();
+
+        /**
+         * Resolves all custom facts.
+         */
+        void resolve_facts();
+
+        /**
+         * Clears the facts.
+         * @param clear_collection True if the underlying collection should be cleared or false if not.
+         */
+        void clear_facts(bool clear_collection = true);
 
         /**
          * Gets the value of the given fact name.
@@ -52,21 +61,17 @@ namespace facter { namespace ruby {
         VALUE fact_value(VALUE name);
 
         /**
-         * Resolves all facts in the Facter module.
-         */
-        void resolve_facts();
-
-        /**
-         * Clears the facts in the module.
-         */
-        void clear_facts();
-
-        /**
          * Normalizes the given fact name.
          * @param name The fact name to normalize.
          * @return Returns the normalized fact name.
          */
         VALUE normalize(VALUE name) const;
+
+        /**
+         * Gets the collection associated with the module.
+         * @return Returns the collection associated with the Facter module.
+         */
+        facter::facts::collection& facts();
 
      private:
          // Methods called from Ruby
@@ -80,6 +85,17 @@ namespace facter { namespace ruby {
         static VALUE ruby_warn(VALUE self, VALUE message);
         static VALUE ruby_warnonce(VALUE self, VALUE message);
         static VALUE ruby_log_exception(int argc, VALUE* argv, VALUE self);
+        static VALUE ruby_flush(VALUE self);
+        static VALUE ruby_list(VALUE self);
+        static VALUE ruby_to_hash(VALUE self);
+        static VALUE ruby_each(VALUE self);
+        static VALUE ruby_clear(VALUE self);
+        static VALUE ruby_reset(VALUE self);
+        static VALUE ruby_loadfacts(VALUE self);
+        static VALUE ruby_search(int argc, VALUE* argv, VALUE self);
+        static VALUE ruby_search_path(VALUE self);
+        static VALUE ruby_search_external(VALUE self, VALUE paths);
+        static VALUE ruby_search_external_path(VALUE self);
         static VALUE ruby_which(VALUE self, VALUE binary);
         static VALUE ruby_exec(VALUE self, VALUE command);
         static VALUE ruby_execute(int argc, VALUE* argv, VALUE self);
@@ -87,10 +103,20 @@ namespace facter { namespace ruby {
         // Helper functions
         static VALUE execute_command(std::string const& command, VALUE failure_default, bool raise);
 
+        void initialize_search_paths(std::vector<std::string> const& paths);
+        VALUE load_fact(VALUE value);
+        void load_file(std::string const& path);
+        VALUE create_fact(VALUE name);
+
         facter::facts::collection& _collection;
         std::map<std::string, VALUE> _facts;
         std::set<std::string> _debug_messages;
         std::set<std::string> _warning_messages;
+        std::vector<std::string> _search_paths;
+        std::vector<std::string> _additional_search_paths;
+        std::vector<std::string> _external_search_paths;
+        std::set<std::string> _loaded_files;
+        bool _loaded_all;
         VALUE _previous_facter;
     };
 

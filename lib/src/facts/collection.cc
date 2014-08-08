@@ -2,8 +2,6 @@
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/ruby/api.hpp>
-#include <facter/ruby/module.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/dynamic_library.hpp>
@@ -17,7 +15,6 @@
 #include <algorithm>
 
 using namespace std;
-using namespace facter::ruby;
 using namespace facter::util;
 using namespace rapidjson;
 using namespace YAML;
@@ -103,8 +100,10 @@ namespace facter { namespace facts {
             }
         }
 
-        if (!value && old_value) {
-            remove(name);
+        if (!value) {
+            if (old_value) {
+                remove(name);
+            }
             return;
         }
 
@@ -163,86 +162,6 @@ namespace facter { namespace facts {
         }
     }
 
-    void collection::add_custom_facts(api& ruby, vector<string> const& directories)
-    {
-        if (!ruby.initialized()) {
-            LOG_ERROR("ruby API is not yet initialized: custom facts will not be resolved.");
-            return;
-        }
-
-        module facter(*this);
-
-        // Store a vector of files to process in order of discovery and a set to exclude duplicates
-        vector<string> files_to_load;
-        set<string> found_files;
-
-        // First search the Ruby load path
-        for (auto const& dir : ruby.get_load_path()) {
-            boost::system::error_code ec;
-
-            // Get the canonical directory name
-            path p = dir;
-            p = canonical(p, ec);
-            if (ec) {
-                continue;
-            }
-
-            path facter = p / "facter.rb";
-            if (exists(facter, ec)) {
-                // Add the file to loaded features to treat facter as already required
-                // This will prevent a fact from doing a "require 'facter'" and overwriting our module
-                volatile VALUE features = ruby.rb_gv_get("$LOADED_FEATURES");
-                ruby.rb_ary_push(features, ruby.rb_str_new_cstr(facter.string().c_str()));
-                ruby.rb_ary_push(features, ruby.rb_str_new_cstr((p / "facter" / "util" / "resolution.rb").string().c_str()));
-                ruby.rb_ary_push(features, ruby.rb_str_new_cstr((p / "facter" / "core" / "aggregate.rb").string().c_str()));
-                ruby.rb_ary_push(features, ruby.rb_str_new_cstr((p / "facter" / "core" / "execution.rb").string().c_str()));
-                continue;
-            }
-            directory::each_file((p / "facter").string(), [&](string const& file) {
-                if (found_files.insert(file).second) {
-                    files_to_load.push_back(file);
-                }
-                return true;
-            }, "\\.rb$");
-        }
-
-        // Start the search paths with the FACTERLIB environment variable
-        vector<string> search_paths;
-        string variable;
-        if (environment::get("FACTERLIB", variable)) {
-            search_paths = split(variable, environment::get_path_separator());
-        }
-
-        // Append the given search directories
-        search_paths.insert(search_paths.end(), directories.begin(), directories.end());
-
-        // Search through the user supplied directories
-        for (auto const& dir : search_paths) {
-            // Get the canonical directory name
-            path p = dir;
-            boost::system::error_code ec;
-            p = canonical(p, ec);
-            if (ec) {
-                continue;
-            }
-
-            directory::each_file(p.string(), [&](string const& file) {
-                if (found_files.insert(file).second) {
-                    files_to_load.push_back(file);
-                }
-                return true;
-            }, "\\.rb$");
-        }
-
-        // Load all of the files that were found
-        for (auto const& file : files_to_load) {
-            load_ruby_file(ruby, file);
-        }
-
-        // Resolve all facts into the collection
-        facter.resolve_facts();
-    }
-
     void collection::remove(shared_ptr<resolver> const& res)
     {
         if (!res) {
@@ -287,8 +206,7 @@ namespace facter { namespace facts {
 
     bool collection::empty()
     {
-        resolve_facts();
-        return _facts.size() == 0;
+        return _facts.empty() && _resolvers.empty();
     }
 
     size_t collection::size()
@@ -460,24 +378,6 @@ namespace facter { namespace facts {
             kvp.second->write(emitter);
         }
         emitter << EndMap;
-    }
-
-    void collection::load_ruby_file(api& ruby, string const& path)
-    {
-        LOG_INFO("loading custom facts from %1%.", path);
-
-        ruby.rescue([&]() {
-            // Do not construct C++ objects in a rescue callback
-            // C++ stack unwinding will not take place if a Ruby exception is thrown!
-             ruby.rb_load(ruby.rb_str_new_cstr(path.c_str()), 0);
-            return 0;
-        }, [&](VALUE ex) {
-            LOG_ERROR("error while resolving custom facts in %1%: %2%.\nbacktrace:\n%3%",
-                path,
-                ruby.to_string(ex),
-                ruby.exception_backtrace(ex));
-            return 0;
-        });
     }
 
 }}  // namespace facter::facts

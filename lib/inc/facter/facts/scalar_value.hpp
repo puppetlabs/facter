@@ -75,20 +75,12 @@ namespace facter { namespace facts {
             return *this;
         }
 
-
         /**
          * Converts the value to a JSON value.
          * @param allocator The allocator to use for creating the JSON value.
          * @param value The returned JSON value.
          */
         virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
-
-        /**
-         * Notifies the appropriate callback based on the type of the value.
-         * @param name The fact name to pass to the callback.
-         * @param callbacks The callbacks to use to notify.
-         */
-        virtual void notify(std::string const& name, enumeration_callbacks const* callbacks) const;
 
         /**
          * Gets the underlying scalar value.
@@ -132,16 +124,6 @@ namespace facter { namespace facts {
     void scalar_value<bool>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
     template <>
     void scalar_value<double>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
-
-    // Declare the specializations for notification
-    template <>
-    void scalar_value<std::string>::notify(std::string const& name, enumeration_callbacks const* callbacks) const;
-    template <>
-    void scalar_value<int64_t>::notify(std::string const& name, enumeration_callbacks const* callbacks) const;
-    template <>
-    void scalar_value<bool>::notify(std::string const& name, enumeration_callbacks const* callbacks) const;
-    template <>
-    void scalar_value<double>::notify(std::string const& name, enumeration_callbacks const* callbacks) const;
 
     // Declare the specializations for YAML output
     template <>

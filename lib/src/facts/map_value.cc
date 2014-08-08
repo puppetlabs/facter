@@ -1,7 +1,6 @@
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
-#include <facter/facterlib.h>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>
 
@@ -73,26 +72,6 @@ namespace facter { namespace facts {
             rapidjson::Value child;
             kvp.second->to_json(allocator, child);
             value.AddMember(kvp.first.c_str(), child, allocator);
-        }
-    }
-
-    void map_value::notify(string const& name, enumeration_callbacks const* callbacks) const
-    {
-        if (!callbacks) {
-            return;
-        }
-
-        if (callbacks->map_start) {
-            callbacks->map_start(name.c_str());
-        }
-
-        // Call notify on each element in the array
-        for (auto const& element : _elements) {
-            element.second->notify(element.first, callbacks);
-        }
-
-        if (callbacks->map_end) {
-            callbacks->map_end();
         }
     }
 

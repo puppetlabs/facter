@@ -297,6 +297,10 @@ namespace facter {  namespace ruby {
          * See MRI documentation.
          */
         void (* const rb_gc_mark)(VALUE);
+        /**
+         * See MRI documentation.
+         */
+        VALUE (* const rb_yield_values)(int n, ...);
 
         /**
          * See MRI documentation.
@@ -484,13 +488,6 @@ namespace facter {  namespace ruby {
          * @return Returns a Ruby object for the value.
          */
         VALUE to_ruby(facter::facts::value const* val) const;
-
-        /**
-         * Converts the given Ruby object to a corresponding value.
-         * @param obj The object to convert.
-         * @return Returns a pointer to the value or nullptr if nil.
-         */
-        std::unique_ptr<facter::facts::value> to_value(VALUE obj) const;
 
         /**
          * Looks up a constant based on the given names.

@@ -17,6 +17,7 @@ namespace facter { namespace ruby {
         auto const& ruby = *api::instance();
         _name = ruby.nil_value();
         _value = ruby.nil_value();
+        _flush_block = ruby.nil_value();
     }
 
     resolution::~resolution()
@@ -66,6 +67,17 @@ namespace facter { namespace ruby {
             }
         }
         return true;
+    }
+
+    void resolution::flush() const
+    {
+        auto const& ruby = *api::instance();
+
+        if (ruby.is_nil(_flush_block)) {
+            return;
+        }
+
+        ruby.rb_funcall(_flush_block, ruby.rb_intern("call"), 0);
     }
 
     void resolution::confine(VALUE confines)
@@ -131,6 +143,7 @@ namespace facter { namespace ruby {
         ruby.rb_define_method(klass, "has_weight", RUBY_METHOD_FUNC(ruby_has_weight), 1);
         ruby.rb_define_method(klass, "name", RUBY_METHOD_FUNC(ruby_name), 0);
         ruby.rb_define_method(klass, "timeout=", RUBY_METHOD_FUNC(ruby_timeout), 1);
+        ruby.rb_define_method(klass, "on_flush", RUBY_METHOD_FUNC(ruby_on_flush), 0);
     }
 
     void resolution::mark() const
@@ -140,6 +153,7 @@ namespace facter { namespace ruby {
         // Mark the name and value
         ruby.rb_gc_mark(_name);
         ruby.rb_gc_mark(_value);
+        ruby.rb_gc_mark(_flush_block);
 
         // Mark all of the confines
         for (auto const& confine : _confines) {
@@ -177,6 +191,18 @@ namespace facter { namespace ruby {
     VALUE resolution::ruby_timeout(VALUE self, VALUE timeout)
     {
         // Do nothing as we don't support timeouts
+        return self;
+    }
+
+    VALUE resolution::ruby_on_flush(VALUE self)
+    {
+        auto const& ruby = *api::instance();
+
+        if (!ruby.rb_block_given_p()) {
+            ruby.rb_raise(*ruby.rb_eArgError, "a block must be provided");
+        }
+
+        from_self(self)->_flush_block = ruby.rb_block_proc();
         return self;
     }
 

@@ -73,16 +73,9 @@ namespace facter { namespace ruby {
         VALUE define_resolution(VALUE name, VALUE options);
 
         /**
-         * Determines if the fact was added as part of the Ruby API or internally.
-         * @return Returns true if the fact was added as part of the Ruby API or false if it was internally added.
+         * Flushes all resolutions for the fact and resets the value.
          */
-        bool added() const;
-
-        /**
-         * Sets whether or not the fact was added as part of the Ruby API or internally.
-         * @param value The new added value.
-         */
-        void added(bool value);
+        void flush();
 
      private:
         // Construction and assignment
@@ -103,13 +96,13 @@ namespace facter { namespace ruby {
         static VALUE ruby_value(VALUE self);
         static VALUE ruby_resolution(VALUE self, VALUE name);
         static VALUE ruby_define_resolution(int argc, VALUE* argv, VALUE self);
+        static VALUE ruby_flush(VALUE self);
 
         VALUE _name;
         VALUE _value;
         std::vector<VALUE> _resolutions;
         bool _resolved;
         bool _resolving;
-        bool _added;
     };
 
 }}  // namespace facter::ruby
