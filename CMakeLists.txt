@@ -34,7 +34,8 @@ endif()
 # Each of our project dirs sets CMAKE_CXX_FLAGS based on these. We do
 # not set CMAKE_CXX_FLAGS globally because gtest is not warning-clean.
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-tautological-constant-out-of-range-compare")
+    # Clang warns that 'register' is deprecated; 'register' is used throughout boost, so it can't be an error yet.
+    set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-tautological-constant-out-of-range-compare -Wno-deprecated-register")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
