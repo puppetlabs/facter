@@ -20,7 +20,6 @@ namespace facter { namespace util {
 
     /**
      * Searches the given text for the given pattern.
-     * @tparam Text The type of the text.
      * @tparam Args The variadic type of the match group arguments.
      * @param txt The text to search.
      * @param r The pattern to search the text with.
