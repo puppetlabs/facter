@@ -504,7 +504,7 @@ describe "is_virtual fact" do
     Facter.fact(:is_virtual).value.should == "true"
   end
 
-  it "should be true when running on ovirt" do
+  it "should be true when running on gce" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("gce")
     Facter.fact(:is_virtual).value.should == "true"
