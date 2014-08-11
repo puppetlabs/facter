@@ -189,4 +189,15 @@ describe "processors" do
 
     it_behaves_like "all operating systems"
   end
+
+  describe "In non-supported kernels" do
+    before do
+      Facter.fact(:kernel).stubs(:value).returns("Foo")
+    end
+
+    it "should not resolve the processors fact" do
+      Facter::Processors.expects(:implementation).returns(nil)
+      expect(subject.value).to be_nil
+    end
+  end
 end
