@@ -277,6 +277,26 @@ namespace facter {  namespace ruby {
          * See MRI documentation.
          */
         char const* (* const rb_id2name)(ID);
+        /**
+         * See MRI documentation.
+         */
+        void (* const rb_define_alloc_func)(VALUE, VALUE (*)(VALUE));
+        /**
+         * See MRI documentation.
+         */
+        void (* const rb_undef_alloc_func)(VALUE);
+        /**
+         * See MRI documentation.
+         */
+        typedef void (*RUBY_DATA_FUNC)(void*);
+        /**
+         * See MRI documentation.
+         */
+        VALUE (* const rb_data_object_alloc)(VALUE, void*, RUBY_DATA_FUNC, RUBY_DATA_FUNC);
+        /**
+         * See MRI documentation.
+         */
+        void (* const rb_gc_mark)(VALUE);
 
         /**
          * See MRI documentation.

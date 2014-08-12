@@ -1,6 +1,6 @@
 /**
  * @file
- * Declares the Ruby simple resolution class.
+ * Declares the Ruby Facter::Util::Resolution class.
  */
 #ifndef FACTER_RUBY_SIMPLE_RESOLUTION_HPP_
 #define FACTER_RUBY_SIMPLE_RESOLUTION_HPP_
@@ -10,62 +10,47 @@
 namespace facter { namespace ruby {
 
     /**
-     * Represents the "simple" resolution that uses "setcode".
+     * Represents the Ruby Facter::Util::Resolution class.
      */
     struct simple_resolution : resolution
     {
         /**
-         * Constructs a simple resolution.
-         * @param ruby The Ruby API to use.
+         * Defines the Facter::Util::Resolution class.
+         * @return Returns theFacter::Util::Resolution class.
          */
-        explicit simple_resolution(api const& ruby);
+        static VALUE define();
 
         /**
-         * Destructs the simple resolution.
+         * Creates an instance of the Facter::Util::Resolution class.
+         * @return Returns the new instance.
          */
-        ~simple_resolution();
+        static VALUE create();
 
         /**
-         * Prevents the simple_resolution from being copied.
+         * Gets the value of the resolution.
+         * @return Returns the value of the resolution or nil if the value did not resolve.
          */
-        simple_resolution(simple_resolution const&) = delete;
-        /**
-         * Prevents the simple_resolution from being copied.
-         * @returns Returns this simple_resolution.
-         */
-        simple_resolution& operator=(simple_resolution const&) = delete;
-        /**
-         * Moves the given simple_resolution into this simple_resolution.
-         * @param other The simple_resolution to move into this simple_resolution.
-         */
-        simple_resolution(simple_resolution&& other);
-        /**
-         * Moves the given simple_resolution into this simple_resolution.
-         * @param other The simple_resolution to move into this simple_resolution.
-         * @return Returns this simple_resolution.
-         */
-        simple_resolution& operator=(simple_resolution&& other);
-
-        /**
-         * Defines the Ruby simple resolution class.
-         * @param ruby the Ruby API to use.
-         * @return Returns the Ruby class that defines the simple resolution.
-         */
-        static VALUE define(api const& ruby);
-
-        /**
-         * Resolves to a value.
-         * @return Returns the resolved value or nil if the fact was not resolved.
-         */
-        virtual VALUE resolve();
+        virtual VALUE value();
 
      private:
-        static VALUE setcode_thunk(int argc, VALUE* argv, VALUE self);
-        static VALUE which_thunk(VALUE self, VALUE binary);
-        static VALUE exec_thunk(VALUE self, VALUE command);
+        // Construction and assignment
+        simple_resolution();
+        simple_resolution(simple_resolution const&) = delete;
+        simple_resolution& operator=(simple_resolution const&) = delete;
+        simple_resolution(simple_resolution&& other) = delete;
+        simple_resolution& operator=(simple_resolution&& other) = delete;
 
-        std::string _command;
+        // Ruby lifecycle functions
+        static VALUE alloc(VALUE klass);
+        static void mark(void* data);
+        static void free(void* data);
+
+        static VALUE ruby_setcode(int argc, VALUE* argv, VALUE self);
+        static VALUE ruby_which(VALUE self, VALUE binary);
+        static VALUE ruby_exec(VALUE self, VALUE command);
+
         VALUE _block;
+        std::string _command;
     };
 
 }}  // namespace facter::ruby

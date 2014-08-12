@@ -1,4 +1,5 @@
 #include <gmock/gmock.h>
+#include <facter/version.h>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/ruby/api.hpp>
@@ -133,7 +134,7 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
             return false;
         }
 
-        module mod(*ruby, _facts);
+        module mod(_facts);
 
         VALUE result = ruby->rescue([&]() {
             // Do not construct C++ objects in a rescue callback
@@ -148,7 +149,7 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
             return ruby->false_value();
         });
 
-        mod.resolve();
+        mod.resolve_facts();
         return ruby->is_true(result);
     }
 

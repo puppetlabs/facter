@@ -170,7 +170,7 @@ namespace facter { namespace facts {
             return;
         }
 
-        module facter(ruby, *this);
+        module facter(*this);
 
         // Store a vector of files to process in order of discovery and a set to exclude duplicates
         vector<string> files_to_load;
@@ -191,7 +191,11 @@ namespace facter { namespace facts {
             if (exists(facter, ec)) {
                 // Add the file to loaded features to treat facter as already required
                 // This will prevent a fact from doing a "require 'facter'" and overwriting our module
-                ruby.rb_ary_push(ruby.rb_gv_get("$LOADED_FEATURES"), ruby.rb_str_new_cstr(facter.string().c_str()));
+                volatile VALUE features = ruby.rb_gv_get("$LOADED_FEATURES");
+                ruby.rb_ary_push(features, ruby.rb_str_new_cstr(facter.string().c_str()));
+                ruby.rb_ary_push(features, ruby.rb_str_new_cstr((p / "facter" / "util" / "resolution.rb").string().c_str()));
+                ruby.rb_ary_push(features, ruby.rb_str_new_cstr((p / "facter" / "core" / "aggregate.rb").string().c_str()));
+                ruby.rb_ary_push(features, ruby.rb_str_new_cstr((p / "facter" / "core" / "execution.rb").string().c_str()));
                 continue;
             }
             directory::each_file((p / "facter").string(), [&](string const& file) {
@@ -236,7 +240,7 @@ namespace facter { namespace facts {
         }
 
         // Resolve all facts into the collection
-        facter.resolve();
+        facter.resolve_facts();
     }
 
     void collection::remove(shared_ptr<resolver> const& res)
