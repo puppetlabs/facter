@@ -102,15 +102,12 @@ endif()
 include_directories(
     inc
     ${RAPIDJSON_INCLUDE_DIRS}
-    ${LOG4CXX_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
 )
 
 link_directories(
-    ${RE2_LIBRARY_DIRS}
-    ${LOG4CXX_LIBRARY_DIRS}
     ${Boost_LIBRARY_DIRS}
     ${OPENSSL_LIBRARY_DIRS}
     ${YAMLCPP_LIBRARY_DIRS}
@@ -122,7 +119,6 @@ add_library(libfacter SHARED ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_POSIX_SOURC
 # Link in additional libraries
 target_link_libraries(libfacter
     ${THREAD_LIBS}
-    ${LOG4CXX_LIBRARIES}
     ${Boost_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
