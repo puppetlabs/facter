@@ -54,6 +54,7 @@ describe "zfs_version fact" do
   end
 
   it "should return correct version on Linux with zfsonlinux" do
+    Facter::Core::Execution.stubs(:exec).with("zfs -? 2> /dev/null").returns(my_fixture_read('zfs_new'))
     Facter::Core::Execution.stubs(:exec).with("zfs upgrade -v").returns(my_fixture_read('zfsonlinux_0.6.1'))
     Facter.fact(:zfs_version).value.should == "5"
   end
