@@ -145,6 +145,13 @@ namespace facter { namespace execution {
     std::string which(std::string const& file, std::vector<std::string> const& directories = facter::util::environment::search_paths());
 
     /**
+     * Helper for logging execution commands.
+     * @param file The command being executed.
+     * @param arguments Arguments to the command being executed.
+     */
+    void log_execution(std::string const& file, std::vector<std::string> const* arguments);
+
+    /**
      * Expands the executable in the command to the full path.
      * @param command The command to expand.
      * @param directories The directories to search.

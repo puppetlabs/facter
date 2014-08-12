@@ -26,7 +26,6 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/facts/integer_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/map_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/facts/string_value.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/facts/posix/uptime_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/main.cc"
     "${CMAKE_CURRENT_LIST_DIR}/util/directory.cc"
     "${CMAKE_CURRENT_LIST_DIR}/util/file.cc"
@@ -44,6 +43,7 @@ endif()
 if (UNIX)
     set(LIBFACTER_TESTS_POSIX_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/execution/posix/execution.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/facts/posix/uptime_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/facts/external/posix/execution_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/environment.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_addrinfo.cc"

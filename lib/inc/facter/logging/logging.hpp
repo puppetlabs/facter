@@ -116,7 +116,7 @@ namespace facter { namespace logging {
     /**
      * Represents the supported logging levels.
      */
-    enum log_level
+    enum class log_level
     {
         trace,
         debug,
@@ -147,20 +147,11 @@ namespace facter { namespace logging {
     std::ostream& operator<<(std::ostream& strm, log_level level);
 
     /**
-     * Add color control characters to the message if color is allowed on the
-     * specified logging stream.
-     * @param message The original message.
-     * @param level The logging level of the message.
-     * @param log The FILE handle for the logging stream.
-     * @return Returns the colorized message.
-     */
-    std::string colorize(std::string const& message, log_level level, FILE *log);
-
-    /**
-     * Configures default logging to stderr.
+     * Configures default logging to the specified stream.
      * @param level The logging level to allow on the console.
+     * @param dst Destination stream for logging output.
      */
-    void configure_logging(log_level level);
+    void configure_logging(log_level level, std::ostream &dst);
 
     /**
      * Determines if the given log level is enabled for the given logger.

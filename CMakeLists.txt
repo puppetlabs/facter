@@ -19,6 +19,8 @@ endif()
 
 # Find our dependency packages
 # We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
+set(Boost_USE_STATIC_LIBS OFF)
+add_definitions(-DBOOST_ALL_DYN_LINK)
 find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time thread regex log)
 find_package(YAMLCPP REQUIRED)
 if (NOT WITHOUT_OPENSSL)
@@ -56,10 +58,14 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas")
     if (NOT "${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
+        set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -Wextra")
+    endif()
+    if ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
+        set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -Wno-missing-field-initializers")
     endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    #set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wall")
 endif()
 
 # Include vendor libraries

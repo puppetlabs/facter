@@ -6,7 +6,6 @@
 #include <facter/logging/logging.hpp>
 #include <facter/util/string.hpp>
 #include <facter/execution/execution.hpp>
-#include <unistd.h>
 
 using namespace std;
 using namespace facter::execution;
@@ -20,7 +19,8 @@ namespace facter { namespace facts { namespace external {
 
     bool execution_resolver::can_resolve(string const& path) const
     {
-        return access(path.c_str(), X_OK) == 0;
+        // TODO WINDOWS: Implement function.
+        return false;
     }
 
 }}}  // namespace facter::facts::external

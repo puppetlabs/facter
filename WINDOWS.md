@@ -39,12 +39,15 @@ To set an environment variable in PowerShell, use $env:VARIABLE = "value".
 
     * Source at <https://code.google.com/p/yaml-cpp/>
 
-    * cmake -G "Visual Studio 12 Win64" -DCMAKE_INSTALL_PREFIX=\<install path\> .. (use Win32 for 32-bit builds)
+    * mkdir build && cd build && cmake -G "Visual Studio 12 Win64" -DCMAKE_INSTALL_PREFIX=\<install path\> .. (use Win32 for 32-bit builds)
 
     * If using yaml-cpp-0.5.1, add #include \<algorithm\> to ostream_wrapper.cpp; you can avoid this by cloning the latest code from the yaml-cpp repo
 
     * $env:YAMLCPP_ROOT = "\<install path\>"
 
+*   Build CFACTER
+
+    * mkdir release && cd release && cmake -G "Visual Studio 12 Win64" ..
 
 ## MinGW
 
@@ -52,30 +55,26 @@ Boost builds with MinGW work best with MSYS, so we install it here. All commands
 
 *   Install tools
 
-    * Install mingw and msys (for make) using [mingw-get-setup](http://sourceforge.net/projects/mingw/files/)
+    * TDM64 MinGW bundle (<http://tdm-gcc.tdragon.net/>), recommended by the MinGW-w64 project for building Boost (<http://sourceforge.net/p/mingw-w64/wiki2/BuildingBoost/>). TDM installer updates PATH.
 
-    * Install [mingw-w64 4.8.2](http://win-builds.org/download.html) on top of msys
-
-    * export PATH = "$PATH:/c/MinGW/msys/1.0/bin:/c/MinGW/bin"
-    
-    * Use '. /opt/windows_64/bin/win-builds-switch 64' for 64-bit builds
-    
-    * Use '. /opt/windows_32/bin/win-builds-switch 32' for 32-bit builds
+    * The following commands are executed in cmd.exe
 
 *   Build and install boost for mingw
 
-    * ./boostrap
+    * .\boostrap
 
-    * ./b2 toolset=gcc variant=release link=shared install --prefix=\<install path\>
+    * .\b2 toolset=gcc variant=release link=shared install --prefix=\<boost install path\>
 
     * Note that some libraries will fail to build.
-
-    * $env:BOOST_ROOT = "\<install path\>"
 
 *   Build and install yaml-cpp
 
     * Relies on boost
 
-    * cmake -G "MinGW Makefiles Win64" -DCMAKE_INSTALL_PREFIX=\<install path\> && mingw32-make && mingw32-make install (use Win32 for 32-bit builds)
+    * mkdir build && cd build && cmake -G "MinGW Makefiles" -DBOOST_ROOT=\<boost install path\> -DCMAKE_INSTALL_PREFIX=\<install path\> && mingw32-make install
 
-    * $env:YAMLCPP_ROOT = "\<install path\>"
+    * set YAMLCPP_ROOT "\<install path\>"
+
+*   Build CFACTER
+
+    * mkdir release && cd release && cmake -G "MinGW Makefiles" -DBOOST_ROOT=\<boost install path\> -DOPENSSL_ROOT=\<openssl install path\> -DYAMLCPP_ROOT=\<yaml-cpp install path\> .. && mingw32-make

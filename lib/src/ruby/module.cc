@@ -95,7 +95,7 @@ extern "C" {
     void initialize_facter(unsigned int level)
     {
         // Start by configuring logging
-        configure_logging(static_cast<log_level>(level));
+        configure_logging(static_cast<log_level>(level), std::cerr);
 
         // Initialize ruby
         auto ruby = facter::ruby::api::instance();

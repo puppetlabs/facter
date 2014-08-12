@@ -4,7 +4,13 @@
 #include <facter/ruby/api.hpp>
 #include <facter/ruby/module.hpp>
 #include <facter/util/string.hpp>
+
+// boost includes are not always warning-clean. Disable warnings that
+// cause problems before including the headers, then re-enable the warnings.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
 #include <boost/program_options.hpp>
+#pragma GCC diagnostic pop
 
 #include <iostream>
 #include <set>
@@ -55,7 +61,7 @@ void log_command_line(int argc, char** argv)
     }
     ostringstream command_line;
     for (int i = 1; i < argc; ++i) {
-        if (command_line.tellp() != 0) {
+        if (command_line.tellp() != static_cast<streampos>(0)) {
             command_line << ' ';
         }
         command_line << argv[i];
@@ -79,7 +85,7 @@ void log_requested_facts(set<string> const& facts)
         if (fact.empty()) {
             continue;
         }
-        if (requested_facts.tellp() != 0) {
+        if (requested_facts.tellp() != static_cast<streampos>(0)) {
             requested_facts << ' ';
         }
         requested_facts << fact;
@@ -164,7 +170,7 @@ int main(int argc, char **argv)
         }
 
         // Configure logging
-        configure_logging(level);
+        configure_logging(level, std::cerr);
         log_command_line(argc, argv);
 
         // Initialize Ruby in main
