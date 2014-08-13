@@ -17,7 +17,7 @@ module Facter
         Timeout::Error,
       ]
 
-      METADATA_URL = "http://metadata/computeMetadata/v1beta1/?recursive=true&alt=json"
+      METADATA_URL = 'http://metadata/computeMetadata/v1beta1/?recursive=true&alt=json'
 
       def initialize(url = METADATA_URL)
         @url = url
@@ -68,9 +68,9 @@ module Facter
         when Hash
           data.keys.each do |key|
             value = data[key]
-            if ["image", "machineType", "zone", "network"].include? key
+            if ['image', 'machineType', 'zone', 'network'].include? key
               data[key] = value.split('/').last
-            elsif key == "sshKeys"
+            elsif key == 'sshKeys'
               data['sshKeys'] = value.split("\n")
             end
             transform_metadata!(value)

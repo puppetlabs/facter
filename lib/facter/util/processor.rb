@@ -26,7 +26,7 @@ module Processor
       end
     end
 
-    # Generalized alphanumeric sort to put "proc12" behind "proc4"
+    # Generalized alphanumeric sort to put 'proc12' behind 'proc4'
     padding = 8
     aix_proc_id_list = aix_proc_id_list.sort do |a,b|
       a,b = [a,b].map do |s|
@@ -50,7 +50,7 @@ module Processor
   # lsdev is intended to directly delegate to Facter::Core::Execution.exec in an
   # effort to make the processorX facts easier to test by stubbing only the
   # behaviors we need to stub to get the output of the system command.
-  def self.lsdev(command="lsdev -Cc processor")
+  def self.lsdev(command='lsdev -Cc processor')
     Facter::Core::Execution.exec(command)
   end
 
@@ -58,7 +58,7 @@ module Processor
   # lsattr is intended to directly delegate to Facter::Core::Execution.exec in
   # an effort to make the processorX facts easier to test.  See also the
   # {lsdev} method.
-  def self.lsattr(command="lsattr -El proc0 -a type")
+  def self.lsattr(command='lsattr -El proc0 -a type')
     Facter::Core::Execution.exec(command)
   end
 
@@ -76,7 +76,7 @@ module Processor
   def self.hpux_processor_list
     return_value = []
     hpux_proc_id_list = []
-    cpu = ""
+    cpu = ''
 
     ##
     # first, try parsing machinfo output.
@@ -86,7 +86,7 @@ module Processor
           cpu = $1.to_s
         elsif line.match(/\d+\s+((?:PA-RISC|Intel).*processors.*)/) then
           cpu = $1.to_s
-          cpu.sub!(/processors/, "processor")
+          cpu.sub!(/processors/, 'processor')
         elsif line.match(/\s+(Intel.*Processor.*)/) then
           cpu = $1.to_s
         end
@@ -99,9 +99,9 @@ module Processor
     # PA-RISC. Unfortunately, the file is not up to date sometimes.
     if cpu.empty? then
       m = model
-      m.sub!(/\s+$/, "")
-      m.sub!(/.*\//, "")
-      m.sub!(/.*\s+/, "")
+      m.sub!(/\s+$/, '')
+      m.sub!(/.*\//, '')
+      m.sub!(/.*\s+/, '')
 
       if sched_models_lines = read_sched_models
         sched_models_lines.each do |l|
@@ -118,9 +118,9 @@ module Processor
     if cpu.empty? then
       cpu_version = getconf_cpu_version
       cpu_chip_type = getconf_cpu_chip_type
-      cpu_string = ""
+      cpu_string = ''
 
-      if lines = read_unistd_h("/usr/include/sys/unistd.h") then
+      if lines = read_unistd_h('/usr/include/sys/unistd.h') then
         lines.each do |l|
           if l.match(/define.*0x#{cpu_version.to_i.to_s(16)}.*\/\*\s+(.*)\s+\*\//) then
             cpu_string = $1.to_s
@@ -130,10 +130,10 @@ module Processor
       end
 
       if cpu_string.empty? then
-        cpu_string = "CPU v" + cpu_version
+        cpu_string = 'CPU v' + cpu_version
       end
 
-      cpu = cpu_string + " CHIP TYPE #" + cpu_chip_type
+      cpu = cpu_string + ' CHIP TYPE #' + cpu_chip_type
     end
 
     ##
@@ -156,12 +156,12 @@ module Processor
   # @return [Array] of strings containing the lines of the file or nil if the
   # sched.models file could not be located.
   def self.read_sched_models
-    path = if File.exists?("/usr/lib/sched.models")
-             "/usr/lib/sched.models"
-           elsif File.exists?("/usr/sam/lib/mo/sched.models")
-             "/usr/sam/lib/mo/sched.models"
-           elsif File.exists?("/opt/langtools/lib/sched.models")
-             "/opt/langtools/lib/sched.models"
+    path = if File.exists?('/usr/lib/sched.models')
+             '/usr/lib/sched.models'
+           elsif File.exists?('/usr/sam/lib/mo/sched.models')
+             '/usr/sam/lib/mo/sched.models'
+           elsif File.exists?('/opt/langtools/lib/sched.models')
+             '/opt/langtools/lib/sched.models'
            end
 
     if path
@@ -183,43 +183,43 @@ module Processor
   ##
   # machinfo delegates directly to Facter::Core::Execution.exec, as with lsdev
   # above.
-  def self.machinfo(command="/usr/contrib/bin/machinfo")
+  def self.machinfo(command='/usr/contrib/bin/machinfo')
     Facter::Core::Execution.exec(command)
   end
 
   ##
   # model delegates directly to Facter::Core::Execution.exec.
-  def self.model(command="model")
+  def self.model(command='model')
     Facter::Core::Execution.exec(command)
   end
 
   ##
   # ioscan delegates directly to Facter::Core::Execution.exec.
-  def self.ioscan(command="ioscan -fknCprocessor")
+  def self.ioscan(command='ioscan -fknCprocessor')
     Facter::Core::Execution.exec(command)
   end
 
   ##
   # getconf_cpu_version delegates directly to Facter::Core::Execution.exec.
-  def self.getconf_cpu_version(command="getconf CPU_VERSION")
+  def self.getconf_cpu_version(command='getconf CPU_VERSION')
     Facter::Core::Execution.exec(command)
   end
 
   ##
   # getconf_cpu_chip_type delegates directly to Facter::Core::Execution.exec.
-  def self.getconf_cpu_chip_type(command="getconf CPU_CHIP_TYPE")
+  def self.getconf_cpu_chip_type(command='getconf CPU_CHIP_TYPE')
     Facter::Core::Execution.exec(command)
   end
 
   def self.enum_cpuinfo
     processor_num = -1
     processor_list = []
-    cpuinfo = "/proc/cpuinfo"
+    cpuinfo = '/proc/cpuinfo'
 
     if File.exists?(cpuinfo)
       model = Facter.value(:architecture)
       case model
-      when "x86_64", "amd64", "i386", "x86", /parisc/, "hppa", "ia64"
+      when 'x86_64', 'amd64', 'i386', 'x86', /parisc/, 'hppa', 'ia64'
         File.readlines(cpuinfo).each do |l|
           if l =~ /processor\s+:\s+(\d+)/
             processor_num = $1.to_i
@@ -232,7 +232,7 @@ module Processor
           end
         end
 
-      when "ppc64"
+      when 'ppc64'
         File.readlines(cpuinfo).each do |l|
           if l =~ /processor\s+:\s+(\d+)/
             processor_num = $1.to_i

@@ -35,7 +35,7 @@ Facter.add(:domain) do
 
     hostname_command = if Facter.value(:kernel) =~ can_do_hostname_f
                          full_hostname
-                       elsif Facter.value(:kernel) == "windows"
+                       elsif Facter.value(:kernel) == 'windows'
                          windows_hostname
                        else
                          basic_hostname
@@ -45,14 +45,14 @@ Facter.add(:domain) do
       and name =~ /.*?\.(.+$)/
 
       return_value = $1
-    elsif Facter.value(:kernel) != "windows" and domain = Facter::Core::Execution.exec('dnsdomainname 2> /dev/null') \
+    elsif Facter.value(:kernel) != 'windows' and domain = Facter::Core::Execution.exec('dnsdomainname 2> /dev/null') \
       and domain =~ /.+/
 
       return_value = domain
-    elsif FileTest.exists?("/etc/resolv.conf")
+    elsif FileTest.exists?('/etc/resolv.conf')
       domain = nil
       search = nil
-      File.open("/etc/resolv.conf") { |file|
+      File.open('/etc/resolv.conf') { |file|
         file.each { |line|
           if line =~ /^\s*domain\s+(\S+)/
             domain = $1
@@ -83,7 +83,7 @@ Facter.add(:domain) do
       domain = regvalue
     else
       require 'facter/util/wmi'
-      Facter::Util::WMI.execquery("select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True").each { |nic|
+      Facter::Util::WMI.execquery('select DNSDomain from Win32_NetworkAdapterConfiguration where IPEnabled = True').each { |nic|
         if nic.DNSDomain && nic.DNSDomain.length > 0
           domain = nic.DNSDomain
           break

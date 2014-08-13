@@ -159,7 +159,7 @@ module Plist
       when Fixnum, Bignum, Integer; 'integer'
       when Float;           'real'
       else
-        raise "Don't know about this data type... something must be wrong!"
+        raise 'Don\'t know about this data type... something must be wrong!'
       end
     end
 

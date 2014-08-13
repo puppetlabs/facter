@@ -12,7 +12,7 @@ module Facter::Util::EC2
     #
     def can_connect?(wait_sec=2)
       Facter.warnonce("#{self}.#{__method__} is deprecated; see the Facter::EC2 classes instead")
-      url = "http://169.254.169.254:80/"
+      url = 'http://169.254.169.254:80/'
       Timeout::timeout(wait_sec) {open(url)}
       return true
     rescue Timeout::Error
@@ -51,9 +51,9 @@ module Facter::Util::EC2
 
       arp_command = case kernel
                     when /Windows/i, /SunOS/i
-                      "arp -a"
+                      'arp -a'
                     else
-                      "arp -an"
+                      'arp -an'
                     end
 
       if arp_table = Facter::Core::Execution.exec(arp_command)
@@ -70,13 +70,13 @@ module Facter::Util::EC2
   # retuns `nil`.
   #
   # @param version [String] containing the API version for the request.
-  # Defaults to "latest" and other examples are documented at
+  # Defaults to 'latest' and other examples are documented at
   # http://aws.amazon.com/archives/Amazon%20EC2
   #
   # @api public
   #
   # @return [String] containing the response body or `nil`
-  def self.userdata(version="latest")
+  def self.userdata(version='latest')
     Facter.warnonce("#{self}.#{__method__} is deprecated; see the Facter::EC2 classes instead")
     uri = "http://169.254.169.254/#{version}/user-data/"
     begin

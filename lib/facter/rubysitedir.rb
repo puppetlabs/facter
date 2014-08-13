@@ -10,6 +10,6 @@ require 'rbconfig'
 
 Facter.add :rubysitedir do
   setcode do
-    RbConfig::CONFIG["sitelibdir"]
+    RbConfig::CONFIG['sitelibdir']
   end
 end

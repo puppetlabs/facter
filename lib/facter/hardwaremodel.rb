@@ -36,10 +36,10 @@ Facter.add(:hardwaremodel) do
     # Also, arm and neutral are included because they are valid for the upcoming
     # windows 8 release.  --jeffweiss 23 May 2012
     require 'facter/util/wmi'
-    model = ""
+    model = ''
     architecture_level = nil
 
-    Facter::Util::WMI.execquery("select Architecture, Level, AddressWidth from Win32_Processor").each do |cpu|
+    Facter::Util::WMI.execquery('select Architecture, Level, AddressWidth from Win32_Processor').each do |cpu|
       architecture_level = (cpu.Level > 5) ? 6 : cpu.Level;
 
       model =

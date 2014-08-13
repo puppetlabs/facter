@@ -2,7 +2,7 @@
 #
 # Purpose: Return just the number of hours of uptime.
 #
-# Resolution: Uses the "hours" key of the system_uptime fact, which divides
+# Resolution: Uses the 'hours' key of the system_uptime fact, which divides
 #   its own 'seconds' key by 3600.
 #
 # Caveats:

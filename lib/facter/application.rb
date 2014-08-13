@@ -138,40 +138,40 @@ COPYRIGHT
 OPTIONS
 -------
         BANNER
-        opts.on("-y",
-                "--yaml",
-                "Emit facts in YAML format.")   { |v| options[:yaml]   = v }
-        opts.on("-j",
-                "--json",
-                "Emit facts in JSON format.")   { |v| options[:json]   = v }
-        opts.on("--plaintext",
-                "Emit facts in plaintext format.") { |v| options[:plaintext] = v }
-        opts.on("--trace",
-                "Enable backtraces.")  { |v| Facter.trace(true) }
-        opts.on("--external-dir DIR",
-                "The directory to use for external facts.") { |v| create_directory_loader(v) }
-        opts.on("--no-external-dir",
-                "Turn off external facts.") { |v| create_nothing_loader }
-        opts.on("-d",
-                "--debug",
-                "Enable debugging.")  { |v| Facter.debugging(1) }
-        opts.on("-t",
-                "--timing",
-                "Enable timing.") { |v| Facter.timing(1) }
-        opts.on("-p",
-                "--puppet",
-                "Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.") { |v| load_puppet }
+        opts.on('-y',
+                '--yaml',
+                'Emit facts in YAML format.')   { |v| options[:yaml]   = v }
+        opts.on('-j',
+                '--json',
+                'Emit facts in JSON format.')   { |v| options[:json]   = v }
+        opts.on('--plaintext',
+                'Emit facts in plaintext format.') { |v| options[:plaintext] = v }
+        opts.on('--trace',
+                'Enable backtraces.')  { |v| Facter.trace(true) }
+        opts.on('--external-dir DIR',
+                'The directory to use for external facts.') { |v| create_directory_loader(v) }
+        opts.on('--no-external-dir',
+                'Turn off external facts.') { |v| create_nothing_loader }
+        opts.on('-d',
+                '--debug',
+                'Enable debugging.')  { |v| Facter.debugging(1) }
+        opts.on('-t',
+                '--timing',
+                'Enable timing.') { |v| Facter.timing(1) }
+        opts.on('-p',
+                '--puppet',
+                'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.') { |v| load_puppet }
 
-        opts.on_tail("-v",
-                     "--version",
-                     "Print the version and exit.") do
+        opts.on_tail('-v',
+                     '--version',
+                     'Print the version and exit.') do
           puts Facter.version
           exit(0)
         end
 
-        opts.on_tail("-h",
-                     "--help",
-                     "Print this help message.") do
+        opts.on_tail('-h',
+                     '--help',
+                     'Print this help message.') do
           puts parser
           exit(0)
         end

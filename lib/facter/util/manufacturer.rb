@@ -27,7 +27,7 @@ module Facter::Manufacturer
   end
 
   def self.dmi_find_system_info(name)
-    splitstr=  Facter.value(:kernel) ==  'SunOS' ? "ID  SIZE TYPE" : /^Handle/
+    splitstr=  Facter.value(:kernel) ==  'SunOS' ? 'ID  SIZE TYPE' : /^Handle/
     output = self.get_dmi_table()
     return if output.nil?
     name.each_pair do |key,v|
@@ -37,7 +37,7 @@ module Facter::Manufacturer
             if line =~ /#{key}/ and line =~ /\n\s+#{value} (.+)\n/
               result = $1.strip
               Facter.add(facterkey) do
-                confine :kernel => [ :linux, :freebsd, :netbsd, :sunos, :"gnu/kfreebsd", :dragonfly ]
+                confine :kernel => [ :linux, :freebsd, :netbsd, :sunos, :'gnu/kfreebsd', :dragonfly ]
                 setcode do
                   result
                 end
@@ -77,7 +77,7 @@ module Facter::Manufacturer
     end
 
     Facter.add('serialnumber') do
-      setcode "/usr/sbin/sneep"
+      setcode '/usr/sbin/sneep'
     end
   end
 

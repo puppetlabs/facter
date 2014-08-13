@@ -5,9 +5,9 @@ module Facter::Core::Logging
   extend self
 
   # @api private
-  GREEN = "[0;32m"
+  GREEN = '[0;32m'
   # @api private
-  RESET = "[0m"
+  RESET = '[0m'
 
   # @api private
   @@debug = false

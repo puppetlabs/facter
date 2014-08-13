@@ -16,12 +16,12 @@
 Facter.add(:Cfkey) do
   setcode do
     value = nil
-    ["/usr/local/etc/cfkey.pub",
-      "/etc/cfkey.pub",
-      "/var/cfng/keys/localhost.pub",
-      "/var/cfengine/ppkeys/localhost.pub",
-      "/var/lib/cfengine/ppkeys/localhost.pub",
-      "/var/lib/cfengine2/ppkeys/localhost.pub"
+    ['/usr/local/etc/cfkey.pub',
+      '/etc/cfkey.pub',
+      '/var/cfng/keys/localhost.pub',
+      '/var/cfengine/ppkeys/localhost.pub',
+      '/var/lib/cfengine/ppkeys/localhost.pub',
+      '/var/lib/cfengine2/ppkeys/localhost.pub'
     ].each do |file|
       if FileTest.file?(file)
         File.open(file) { |openfile|
@@ -29,7 +29,7 @@ Facter.add(:Cfkey) do
             line =~ /PUBLIC KEY/
           }.collect { |line|
             line.chomp
-          }.join("")
+          }.join('')
         }
       end
       if value

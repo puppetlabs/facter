@@ -10,7 +10,7 @@
 #
 require 'facter/util/xendomains'
 
-Facter.add("xendomains") do
+Facter.add('xendomains') do
   confine :kernel => %w{Linux FreeBSD OpenBSD SunOS}
   confine :virtual => 'xen0'
 

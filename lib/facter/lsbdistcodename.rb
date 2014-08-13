@@ -12,6 +12,6 @@
 #
 
 Facter.add(:lsbdistcodename) do
-  confine :kernel => [ :linux, :"gnu/kfreebsd" ]
+  confine :kernel => [ :linux, :'gnu/kfreebsd' ]
   setcode 'lsb_release -c -s 2>/dev/null'
 end

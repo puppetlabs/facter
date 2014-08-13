@@ -13,7 +13,7 @@ module Facter::Util::Virtual
   # and later versions of virt-what may emit this message on stderr. This
   # method ensures stderr is redirected and that error messages are stripped
   # from stdout.
-  def self.virt_what(command = "virt-what")
+  def self.virt_what(command = 'virt-what')
     command = Facter::Core::Execution.which(command)
     return unless command
 
@@ -29,12 +29,12 @@ module Facter::Util::Virtual
   ##
   # lspci is a delegating helper method intended to make it easier to stub the
   # system call without affecting other calls to Facter::Core::Execution.exec
-  def self.lspci(command = "lspci 2>/dev/null")
+  def self.lspci(command = 'lspci 2>/dev/null')
     Facter::Core::Execution.exec command
   end
 
   def self.openvz?
-    FileTest.directory?("/proc/vz") and not self.openvz_cloudlinux?
+    FileTest.directory?('/proc/vz') and not self.openvz_cloudlinux?
   end
 
   # So one can either have #6728 work on OpenVZ or Cloudlinux. Whoo.
@@ -53,19 +53,19 @@ module Facter::Util::Virtual
   # Cloudlinux uses OpenVZ to a degree, but always has an empty /proc/vz/ and
   # has /proc/lve/list present
   def self.openvz_cloudlinux?
-    FileTest.file?("/proc/lve/list") or Dir.glob('/proc/vz/*').empty?
+    FileTest.file?('/proc/lve/list') or Dir.glob('/proc/vz/*').empty?
   end
 
   def self.zone?
-    return true if FileTest.directory?("/.SUNWnative")
-    z = Facter::Core::Execution.exec("/sbin/zonename")
+    return true if FileTest.directory?('/.SUNWnative')
+    z = Facter::Core::Execution.exec('/sbin/zonename')
     return false unless z
     return z.chomp != 'global'
   end
 
   def self.vserver?
-    return false unless FileTest.exists?("/proc/self/status")
-    txt = File.open("/proc/self/status", "rb").read
+    return false unless FileTest.exists?('/proc/self/status')
+    txt = File.open('/proc/self/status', 'rb').read
     if txt.respond_to?(:encode!)
       txt.encode!('UTF-16', 'UTF-8', :invalid => :replace)
       txt.encode!('UTF-8', 'UTF-16')
@@ -76,31 +76,31 @@ module Facter::Util::Virtual
 
   def self.vserver_type
     if self.vserver?
-      if FileTest.exists?("/proc/virtual")
-        "vserver_host"
+      if FileTest.exists?('/proc/virtual')
+        'vserver_host'
       else
-        "vserver"
+        'vserver'
       end
     end
   end
 
   def self.xen?
-    ["/proc/sys/xen", "/sys/bus/xen", "/proc/xen" ].detect do |f|
+    ['/proc/sys/xen', '/sys/bus/xen', '/proc/xen' ].detect do |f|
       FileTest.exists?(f)
     end
   end
 
   def self.kvm?
-     txt = if FileTest.exists?("/proc/cpuinfo")
-       File.read("/proc/cpuinfo")
-     elsif ["FreeBSD", "OpenBSD"].include? Facter.value(:kernel)
-       Facter::Util::POSIX.sysctl("hw.model")
+     txt = if FileTest.exists?('/proc/cpuinfo')
+       File.read('/proc/cpuinfo')
+     elsif ['FreeBSD', 'OpenBSD'].include? Facter.value(:kernel)
+       Facter::Util::POSIX.sysctl('hw.model')
      end
      (txt =~ /QEMU Virtual CPU/) ? true : false
   end
 
   def self.virtualbox?
-    File.read("/sys/devices/virtual/dmi/id/product_name") =~ /VirtualBox/ rescue false
+    File.read('/sys/devices/virtual/dmi/id/product_name') =~ /VirtualBox/ rescue false
   end
 
   def self.kvm_type
@@ -108,32 +108,32 @@ module Facter::Util::Virtual
     # Can't work out a way to do this at the moment that doesn't
     # require a special binary
     if self.kvm?
-      "kvm"
+      'kvm'
     end
   end
 
   def self.rhev?
-    File.read("/sys/devices/virtual/dmi/id/product_name") =~ /RHEV Hypervisor/ rescue false
+    File.read('/sys/devices/virtual/dmi/id/product_name') =~ /RHEV Hypervisor/ rescue false
   end
 
   def self.ovirt?
-    File.read("/sys/devices/virtual/dmi/id/product_name") =~ /oVirt Node/ rescue false
+    File.read('/sys/devices/virtual/dmi/id/product_name') =~ /oVirt Node/ rescue false
   end
 
   def self.gce?
-    File.read("/sys/devices/virtual/dmi/id/product_name") =~ /Google/ rescue false
+    File.read('/sys/devices/virtual/dmi/id/product_name') =~ /Google/ rescue false
   end
 
   def self.jail?
     path = case Facter.value(:kernel)
-      when "FreeBSD" then "/sbin"
-      when "GNU/kFreeBSD" then "/bin"
+      when 'FreeBSD' then '/sbin'
+      when 'GNU/kFreeBSD' then '/bin'
     end
-    Facter::Core::Execution.exec("#{path}/sysctl -n security.jail.jailed") == "1"
+    Facter::Core::Execution.exec("#{path}/sysctl -n security.jail.jailed") == '1'
   end
 
   def self.hpvm?
-    Facter::Core::Execution.exec("/usr/bin/getconf MACHINE_MODEL").chomp =~ /Virtual Machine/
+    Facter::Core::Execution.exec('/usr/bin/getconf MACHINE_MODEL').chomp =~ /Virtual Machine/
   end
 
   ##
@@ -143,7 +143,7 @@ module Facter::Util::Virtual
   def self.lxc?
     path = Pathname.new('/proc/1/cgroup')
     return false unless path.readable?
-    in_lxc = path.readlines.any? {|l| l.split(":")[2].to_s.start_with? '/lxc/' }
+    in_lxc = path.readlines.any? {|l| l.split(':')[2].to_s.start_with? '/lxc/' }
     return true if in_lxc
     return false
   end
@@ -154,13 +154,13 @@ module Facter::Util::Virtual
   def self.docker?
     path = Pathname.new('/proc/1/cgroup')
     return false unless path.readable?
-    in_docker = path.readlines.any? {|l| l.split(":")[2].to_s.start_with? '/docker/' }
+    in_docker = path.readlines.any? {|l| l.split(':')[2].to_s.start_with? '/docker/' }
     return true if in_docker
     return false
   end
 
   def self.zlinux?
-    "zlinux"
+    'zlinux'
   end
 
   ##
@@ -172,7 +172,7 @@ module Facter::Util::Virtual
   # @api public
   #
   # @return [String] or nil if the path does not exist or is unreadable
-  def self.read_sysfs_dmi_entries(path="/sys/firmware/dmi/entries/1-0/raw")
+  def self.read_sysfs_dmi_entries(path='/sys/firmware/dmi/entries/1-0/raw')
     if File.readable?(path)
       Facter::Util::FileRead.read_binary(path)
     end

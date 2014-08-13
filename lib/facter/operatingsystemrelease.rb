@@ -23,24 +23,24 @@ Facter.add(:operatingsystemrelease) do
   confine :operatingsystem => %w{CentOS Fedora oel ovs OracleLinux RedHat MeeGo Scientific SLC Ascendos CloudLinux PSBM}
   setcode do
     case Facter.value(:operatingsystem)
-    when "CentOS", "RedHat", "Scientific", "SLC", "Ascendos", "CloudLinux", "PSBM", "XenServer"
-      releasefile = "/etc/redhat-release"
-    when "Fedora"
-      releasefile = "/etc/fedora-release"
-    when "MeeGo"
-      releasefile = "/etc/meego-release"
-    when "OracleLinux"
-      releasefile = "/etc/oracle-release"
-    when "OEL", "oel"
-      releasefile = "/etc/enterprise-release"
-    when "OVS", "ovs"
-      releasefile = "/etc/ovs-release"
+    when 'CentOS', 'RedHat', 'Scientific', 'SLC', 'Ascendos', 'CloudLinux', 'PSBM', 'XenServer'
+      releasefile = '/etc/redhat-release'
+    when 'Fedora'
+      releasefile = '/etc/fedora-release'
+    when 'MeeGo'
+      releasefile = '/etc/meego-release'
+    when 'OracleLinux'
+      releasefile = '/etc/oracle-release'
+    when 'OEL', 'oel'
+      releasefile = '/etc/enterprise-release'
+    when 'OVS', 'ovs'
+      releasefile = '/etc/ovs-release'
     end
 
     if release = Facter::Util::FileRead.read(releasefile)
       line = release.split("\n").first.chomp
       if match = /\(Rawhide\)$/.match(line)
-        "Rawhide"
+        'Rawhide'
       elsif match = /release (\d[\d.]*)/.match(line)
         match[1]
       end
@@ -100,11 +100,11 @@ Facter.add(:operatingsystemrelease) do
         elsif match = /^VERSION\s=.*.(\d+)/.match(release)
           releaseminor = match[1]
         else
-          releaseminor = "0"
+          releaseminor = '0'
         end
-        releasemajor + "." + releaseminor
+        releasemajor + '.' + releaseminor
       else
-        "unknown"
+        'unknown'
       end
     end
   end
@@ -148,9 +148,9 @@ Facter.add(:operatingsystemrelease) do
   setcode do
     if release = Facter::Util::FileRead.read('/etc/bluewhite64-version')
       if match = /^\s*\w+\s+(\d+)\.(\d+)/.match(release)
-        match[1] + "." + match[2]
+        match[1] + '.' + match[2]
       else
-        "unknown"
+        'unknown'
       end
     end
   end
@@ -171,9 +171,9 @@ Facter.add(:operatingsystemrelease) do
   setcode do
     if release = Facter::Util::FileRead.read('/etc/slamd64-version')
       if match = /^\s*\w+\s+(\d+)\.(\d+)/.match(release)
-        match[1] + "." + match[2]
+        match[1] + '.' + match[2]
       else
-        "unknown"
+        'unknown'
       end
     end
   end
@@ -216,23 +216,23 @@ Facter.add(:operatingsystemrelease) do
   setcode do
     require 'facter/util/wmi'
     result = nil
-    Facter::Util::WMI.execquery("SELECT version, producttype FROM Win32_OperatingSystem").each do |os|
+    Facter::Util::WMI.execquery('SELECT version, producttype FROM Win32_OperatingSystem').each do |os|
       result =
         case os.version
         when /^6\.2/
-          os.producttype == 1 ? "8" : "2012"
+          os.producttype == 1 ? '8' : '2012'
         when /^6\.1/
-          os.producttype == 1 ? "7" : "2008 R2"
+          os.producttype == 1 ? '7' : '2008 R2'
         when /^6\.0/
-          os.producttype == 1 ? "Vista" : "2008"
+          os.producttype == 1 ? 'Vista' : '2008'
         when /^5\.2/
           if os.producttype == 1
-            "XP"
+            'XP'
           else
             begin
-              os.othertypedescription == "R2" ? "2003 R2" : "2003"
+              os.othertypedescription == 'R2' ? '2003 R2' : '2003'
             rescue NoMethodError
-              "2003"
+              '2003'
             end
           end
         else

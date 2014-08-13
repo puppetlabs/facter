@@ -39,90 +39,90 @@
 
 require 'facter/util/virtual'
 
-Facter.add("virtual") do
-  confine :kernel => "Darwin"
+Facter.add('virtual') do
+  confine :kernel => 'Darwin'
 
   setcode do
     require 'facter/util/macosx'
-    result = "physical"
+    result = 'physical'
     # use SPHardwareDataType for VMware and VirtualBox, since it is the most
     # reliable source.
-    output = Facter::Util::Macosx.profiler_data("SPHardwareDataType")
+    output = Facter::Util::Macosx.profiler_data('SPHardwareDataType')
     if output.is_a?(Hash)
-      result = "vmware" if output["machine_model"] =~ /VMware/
-      result = "virtualbox" if output["boot_rom_version"] =~ /VirtualBox/
+      result = 'vmware' if output['machine_model'] =~ /VMware/
+      result = 'virtualbox' if output['boot_rom_version'] =~ /VirtualBox/
     end
     # Parallels passes through almost all of the host's hardware info to the
     # virtual machine, so use a different field.
-    output = Facter::Util::Macosx.profiler_data("SPEthernetDataType")
+    output = Facter::Util::Macosx.profiler_data('SPEthernetDataType')
     if output.is_a?(Hash)
-      result = "parallels" if output["spethernet_subsystem-vendor-id"] =~ /0x1ab8/
+      result = 'parallels' if output['spethernet_subsystem-vendor-id'] =~ /0x1ab8/
     end
     result
   end
 end
 
-Facter.add("virtual") do
-  confine :kernel => ["FreeBSD", "GNU/kFreeBSD"]
+Facter.add('virtual') do
+  confine :kernel => ['FreeBSD', 'GNU/kFreeBSD']
   has_weight 10
   setcode do
-    "jail" if Facter::Util::Virtual.jail?
+    'jail' if Facter::Util::Virtual.jail?
   end
 end
 
-Facter.add("virtual") do
+Facter.add('virtual') do
   confine :kernel => 'SunOS'
   has_weight 10
   self.timeout = 6
 
   setcode do
-    next "zone" if Facter::Util::Virtual.zone?
+    next 'zone' if Facter::Util::Virtual.zone?
 
     output = Facter::Core::Execution.exec('prtdiag')
     if output
       lines = output.split("\n")
-      next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
-      next "vmware"     if lines.any? {|l| l =~ /VM[wW]are/ }
-      next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
-      next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
+      next 'parallels'  if lines.any? {|l| l =~ /Parallels/ }
+      next 'vmware'     if lines.any? {|l| l =~ /VM[wW]are/ }
+      next 'virtualbox' if lines.any? {|l| l =~ /VirtualBox/ }
+      next 'xenhvm'     if lines.any? {|l| l =~ /HVM domU/ }
     end
   end
 end
 
-Facter.add("virtual") do
+Facter.add('virtual') do
   confine :kernel => 'HP-UX'
   has_weight 10
   setcode do
-    "hpvm" if Facter::Util::Virtual.hpvm?
+    'hpvm' if Facter::Util::Virtual.hpvm?
   end
 end
 
-Facter.add("virtual") do
+Facter.add('virtual') do
   confine :architecture => 's390x'
   has_weight 10
   setcode do
-    "zlinux" if Facter::Util::Virtual.zlinux?
+    'zlinux' if Facter::Util::Virtual.zlinux?
   end
 end
 
-Facter.add("virtual") do
+Facter.add('virtual') do
   confine :kernel => 'OpenBSD'
   has_weight 10
   setcode do
-    output = Facter::Util::POSIX.sysctl("hw.product")
+    output = Facter::Util::POSIX.sysctl('hw.product')
     if output
       lines = output.split("\n")
-      next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
-      next "vmware"     if lines.any? {|l| l =~ /VMware/ }
-      next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
-      next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
-      next "ovirt"      if lines.any? {|l| l =~ /oVirt Node/ }
-      next "kvm"        if lines.any? {|l| l =~ /KVM/ }
+      next 'parallels'  if lines.any? {|l| l =~ /Parallels/ }
+      next 'vmware'     if lines.any? {|l| l =~ /VMware/ }
+      next 'virtualbox' if lines.any? {|l| l =~ /VirtualBox/ }
+      next 'xenhvm'     if lines.any? {|l| l =~ /HVM domU/ }
+      next 'ovirt'      if lines.any? {|l| l =~ /oVirt Node/ }
+      next 'kvm'        if lines.any? {|l| l =~ /KVM/ }
     end
   end
 end
 
-Facter.add("virtual") do
+Facter.add('virtual') do
   confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX GNU/kFreeBSD}
 
   setcode do
@@ -130,38 +130,38 @@ Facter.add("virtual") do
     next Facter::Util::Virtual.vserver_type if Facter::Util::Virtual.vserver?
 
     if Facter::Util::Virtual.xen?
-      next "xen0" if FileTest.exists?("/dev/xen/evtchn")
-      next "xenu" if FileTest.exists?("/proc/xen")
+      next 'xen0' if FileTest.exists?('/dev/xen/evtchn')
+      next 'xenu' if FileTest.exists?('/proc/xen')
     end
 
-    next "virtualbox" if Facter::Util::Virtual.virtualbox?
+    next 'virtualbox' if Facter::Util::Virtual.virtualbox?
     next Facter::Util::Virtual.kvm_type if Facter::Util::Virtual.kvm?
-    next "rhev" if Facter::Util::Virtual.rhev?
-    next "ovirt" if Facter::Util::Virtual.ovirt?
+    next 'rhev' if Facter::Util::Virtual.rhev?
+    next 'ovirt' if Facter::Util::Virtual.ovirt?
 
     # Parse lspci
     output = Facter::Util::Virtual.lspci
     if output
       lines = output.split("\n")
-      next "vmware"     if lines.any? {|l| l =~ /VM[wW]are/ }
-      next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
-      next "parallels"  if lines.any? {|l| l =~ /1ab8:|[Pp]arallels/ }
-      next "xenhvm"     if lines.any? {|l| l =~ /XenSource/ }
-      next "hyperv"     if lines.any? {|l| l =~ /Microsoft Corporation Hyper-V/ }
-      next "gce"        if lines.any? {|l| l =~ /Class 8007: Google, Inc/ }
+      next 'vmware'     if lines.any? {|l| l =~ /VM[wW]are/ }
+      next 'virtualbox' if lines.any? {|l| l =~ /VirtualBox/ }
+      next 'parallels'  if lines.any? {|l| l =~ /1ab8:|[Pp]arallels/ }
+      next 'xenhvm'     if lines.any? {|l| l =~ /XenSource/ }
+      next 'hyperv'     if lines.any? {|l| l =~ /Microsoft Corporation Hyper-V/ }
+      next 'gce'        if lines.any? {|l| l =~ /Class 8007: Google, Inc/ }
     end
 
     # Parse dmidecode
     output = Facter::Core::Execution.exec('dmidecode 2> /dev/null')
     if output
       lines = output.split("\n")
-      next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
-      next "vmware"     if lines.any? {|l| l =~ /VMware/ }
-      next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
-      next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
-      next "hyperv"     if lines.any? {|l| l =~ /Product Name: Virtual Machine/ }
-      next "rhev"       if lines.any? {|l| l =~ /Product Name: RHEV Hypervisor/ }
-      next "ovirt"      if lines.any? {|l| l =~ /Product Name: oVirt Node/ }
+      next 'parallels'  if lines.any? {|l| l =~ /Parallels/ }
+      next 'vmware'     if lines.any? {|l| l =~ /VMware/ }
+      next 'virtualbox' if lines.any? {|l| l =~ /VirtualBox/ }
+      next 'xenhvm'     if lines.any? {|l| l =~ /HVM domU/ }
+      next 'hyperv'     if lines.any? {|l| l =~ /Product Name: Virtual Machine/ }
+      next 'rhev'       if lines.any? {|l| l =~ /Product Name: RHEV Hypervisor/ }
+      next 'ovirt'      if lines.any? {|l| l =~ /Product Name: oVirt Node/ }
     end
 
     # Default to 'physical'
@@ -169,14 +169,14 @@ Facter.add("virtual") do
   end
 end
 
-Facter.add("virtual") do
+Facter.add('virtual') do
   confine do
     Facter::Core::Execution.which('vmware')
   end
 
   setcode do
     # Sample output of vmware -v `VMware Server 1.0.5 build-80187`
-    output = Facter::Core::Execution.exec("vmware -v")
+    output = Facter::Core::Execution.exec('vmware -v')
     if output
       mdata = output.match /(\S+)\s+(\S+)/
       next "#{mdata[1]}_#{mdata[2]}".downcase if mdata
@@ -184,32 +184,32 @@ Facter.add("virtual") do
   end
 end
 
-Facter.add("virtual") do
-  confine :kernel => "windows"
+Facter.add('virtual') do
+  confine :kernel => 'windows'
   setcode do
       require 'facter/util/wmi'
       result = nil
-      Facter::Util::WMI.execquery("SELECT manufacturer, model FROM Win32_ComputerSystem").each do |computersystem|
+      Facter::Util::WMI.execquery('SELECT manufacturer, model FROM Win32_ComputerSystem').each do |computersystem|
         case computersystem.model
         when /VirtualBox/
-          result = "virtualbox"
+          result = 'virtualbox'
         when /Virtual Machine/
-          result = "hyperv" if computersystem.manufacturer =~ /Microsoft/
+          result = 'hyperv' if computersystem.manufacturer =~ /Microsoft/
         when /VMware/
-          result = "vmware"
+          result = 'vmware'
         when /KVM/
-          result = "kvm"
+          result = 'kvm'
         when /Bochs/
-          result = "bochs"
+          result = 'bochs'
         end
 
         if result.nil? and computersystem.manufacturer =~ /Xen/
-          result = "xen"
+          result = 'xen'
         end
 
         break
       end
-      result ||= "physical"
+      result ||= 'physical'
 
       result
   end
@@ -226,7 +226,7 @@ end
 # value and lower-weight virtual facts will be attempted.
 #
 # Only the last line of the virt-what command is returned
-Facter.add("virtual") do
+Facter.add('virtual') do
   has_weight 500
 
   setcode do
@@ -251,15 +251,15 @@ end
 
 ##
 # virtual fact specific to Google Compute Engine's Linux sysfs entry.
-Facter.add("virtual") do
+Facter.add('virtual') do
   has_weight 600
-  confine :kernel => "Linux"
+  confine :kernel => 'Linux'
 
   setcode do
     if dmi_data = Facter::Util::Virtual.read_sysfs_dmi_entries
       case dmi_data
       when /Google/
-        "gce"
+        'gce'
       end
     end
   end
@@ -268,45 +268,45 @@ end
 ##
 # virtual fact specific to linux containers.  This also works for Docker
 # containers running in lxc.
-Facter.add("virtual") do
+Facter.add('virtual') do
   has_weight 700
-  confine :kernel => "Linux"
+  confine :kernel => 'Linux'
 
   setcode do
-    "lxc" if Facter::Util::Virtual.lxc?
+    'lxc' if Facter::Util::Virtual.lxc?
   end
 end
 
 ##
 # virtual fact specific to docker containers.
-Facter.add("virtual") do
+Facter.add('virtual') do
   has_weight 750
-  confine :kernel => "Linux"
+  confine :kernel => 'Linux'
 
   setcode do
-    "docker" if Facter::Util::Virtual.docker?
+    'docker' if Facter::Util::Virtual.docker?
   end
 end
 
-Facter.add("virtual") do
+Facter.add('virtual') do
   has_weight 600
-  confine :kernel => "Linux"
+  confine :kernel => 'Linux'
 
   setcode do
-    "gce" if Facter::Util::Virtual.gce?
+    'gce' if Facter::Util::Virtual.gce?
   end
 end
 
-Facter.add("is_virtual") do
+Facter.add('is_virtual') do
   confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin GNU/kFreeBSD windows}
 
   setcode do
     physical_types = %w{physical xen0 vmware_server vmware_workstation openvzhn vserver_host}
 
     if physical_types.include? Facter.value(:virtual)
-      "false"
+      'false'
     else
-      "true"
+      'true'
     end
   end
 end

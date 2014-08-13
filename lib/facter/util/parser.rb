@@ -21,7 +21,7 @@ module Facter::Util::Parser
   end
 
   def self.file_extension(filename)
-    File.extname(filename).sub(".", '')
+    File.extname(filename).sub('.', '')
   end
 
   def self.register(klass, &suitable)
@@ -60,7 +60,7 @@ module Facter::Util::Parser
     end
 
     def parse_results
-      raise ArgumentError, "Subclasses must respond to parse_results"
+      raise ArgumentError, 'Subclasses must respond to parse_results'
     end
   end
 
@@ -86,7 +86,7 @@ module Facter::Util::Parser
   end
 
   register(YamlParser) do |filename|
-    extension_matches?(filename, "yaml")
+    extension_matches?(filename, 'yaml')
   end
 
   class TextParser < Base
@@ -96,7 +96,7 @@ module Facter::Util::Parser
   end
 
   register(TextParser) do |filename|
-    extension_matches?(filename, "txt")
+    extension_matches?(filename, 'txt')
   end
 
   class JsonParser < Base
@@ -105,14 +105,14 @@ module Facter::Util::Parser
         JSON.load(content)
       else
         Facter.warnonce "Cannot parse JSON data file #{filename} without the json library."
-        Facter.warnonce "Suggested next step is `gem install json` to install the json library."
+        Facter.warnonce 'Suggested next step is `gem install json` to install the json library.'
         nil
       end
     end
   end
 
   register(JsonParser) do |filename|
-    extension_matches?(filename, "json")
+    extension_matches?(filename, 'json')
   end
 
   class ScriptParser < Base
@@ -145,7 +145,7 @@ module Facter::Util::Parser
   end
 
   register(PowershellParser) do |filename|
-    Facter::Util::Config.is_windows? && extension_matches?(filename, "ps1") && File.file?(filename)
+    Facter::Util::Config.is_windows? && extension_matches?(filename, 'ps1') && File.file?(filename)
   end
 
   # A parser that is used when there is no other parser that can handle the file

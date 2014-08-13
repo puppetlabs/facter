@@ -123,7 +123,7 @@ class Facter::Util::Fact
   # @deprecated
   def extract_ldapname_option!(options)
     if options[:ldapname]
-      Facter.warnonce("ldapname is deprecated and will be removed in a future version")
+      Facter.warnonce('ldapname is deprecated and will be removed in a future version')
       self.ldapname = options.delete(:ldapname)
     end
   end

@@ -6,7 +6,7 @@ module Facter::Util::Partitions
 
     def self.list
       if File.exist?(SYSFS_BLOCK_DIRECTORY)
-        devices = Dir.entries(SYSFS_BLOCK_DIRECTORY).select { |d| File.exist?( SYSFS_BLOCK_DIRECTORY + d + "/device" ) }
+        devices = Dir.entries(SYSFS_BLOCK_DIRECTORY).select { |d| File.exist?( SYSFS_BLOCK_DIRECTORY + d + '/device' ) }
   
         if devices.empty?
           []

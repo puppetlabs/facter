@@ -15,7 +15,7 @@ Facter.add(:macaddress) do
   confine :kernel => 'Linux'
   setcode do
     ether = []
-    output = Facter::Util::IP.exec_ifconfig(["-a","2>/dev/null"])
+    output = Facter::Util::IP.exec_ifconfig(['-a','2>/dev/null'])
 
     String(output).each_line do |s|
       ether.push($1) if s =~ /(?:ether|HWaddr) ((\w{1,2}:){5,}\w{1,2})/
@@ -28,7 +28,7 @@ Facter.add(:macaddress) do
   confine :kernel => %w{SunOS GNU/kFreeBSD}
   setcode do
     ether = []
-    output = Facter::Util::IP.exec_ifconfig(["-a"])
+    output = Facter::Util::IP.exec_ifconfig(['-a'])
     output.each_line do |s|
       ether.push($1) if s =~ /(?:ether|HWaddr) ((\w{1,2}:){5,}\w{1,2})/
     end
@@ -37,10 +37,10 @@ Facter.add(:macaddress) do
 end
 
 Facter.add(:macaddress) do
-  confine :osfamily => "Solaris"
+  confine :osfamily => 'Solaris'
   setcode do
     ether = []
-    output = Facter::Core::Execution.exec("/usr/bin/netstat -np")
+    output = Facter::Core::Execution.exec('/usr/bin/netstat -np')
     output.each_line do |s|
       ether.push($1) if s =~ /(?:SPLA)\s+(\w{2}:\w{2}:\w{2}:\w{2}:\w{2}:\w{2})/
     end
@@ -72,7 +72,7 @@ Facter.add(:macaddress) do
   setcode do
     ether = []
     ip = nil
-    output = Facter::Util::IP.exec_ifconfig(["-a"])
+    output = Facter::Util::IP.exec_ifconfig(['-a'])
     output.each_line do |str|
       if str =~ /([a-z]+\d+): flags=/
         devname = $1

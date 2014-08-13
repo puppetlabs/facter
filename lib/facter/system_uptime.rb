@@ -31,7 +31,7 @@ Facter.add(:system_uptime) do
 
       case system_uptime['days']
       when 0 then system_uptime['uptime'] = "#{system_uptime['hours']}:#{"%02d" % minutes} hours"
-      when 1 then system_uptime['uptime'] = "1 day"
+      when 1 then system_uptime['uptime'] = '1 day'
       else system_uptime['uptime']        = "#{system_uptime['days']} days"
       end
     else

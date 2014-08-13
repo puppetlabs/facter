@@ -11,23 +11,23 @@ module Facter
 
     def self.implementation(kernel = Facter.value(:kernel))
       case kernel
-      when "Linux"
+      when 'Linux'
         Facter::Processors::Linux.new
-      when "GNU/kFreeBSD"
+      when 'GNU/kFreeBSD'
         Facter::Processors::GNU.new
-      when "Darwin"
+      when 'Darwin'
         Facter::Processors::Darwin.new
-      when "AIX"
+      when 'AIX'
         Facter::Processors::AIX.new
-      when "HP-UX"
+      when 'HP-UX'
         Facter::Processors::HP_UX.new
-      when "DragonFly", "FreeBSD"
+      when 'DragonFly', 'FreeBSD'
         Facter::Processors::BSD.new
-      when "OpenBSD"
+      when 'OpenBSD'
         Facter::Processors::OpenBSD.new
-      when "SunOS"
+      when 'SunOS'
         Facter::Processors::SunOS.new
-      when "windows"
+      when 'windows'
         Facter::Processors::Windows.new
       end
     end
@@ -63,9 +63,9 @@ module Facter
       private
 
       def count_cpu_from_sysfs
-        sysfs_cpu_directory = "/sys/devices/system/cpu"
+        sysfs_cpu_directory = '/sys/devices/system/cpu'
         if File.exists?(sysfs_cpu_directory)
-          lookup_pattern = "#{sysfs_cpu_directory}" + "/cpu[0-9]*"
+          lookup_pattern = "#{sysfs_cpu_directory}" + '/cpu[0-9]*'
           Dir.glob(lookup_pattern).length
         end
       end
@@ -83,9 +83,9 @@ module Facter
       private
 
       def count_physical_cpu_from_sysfs
-        sysfs_cpu_directory = "/sys/devices/system/cpu"
+        sysfs_cpu_directory = '/sys/devices/system/cpu'
         if File.exists?(sysfs_cpu_directory)
-          lookup_pattern = "#{sysfs_cpu_directory}" + "/cpu*/topology/physical_package_id"
+          lookup_pattern = "#{sysfs_cpu_directory}" + '/cpu*/topology/physical_package_id'
           Dir.glob(lookup_pattern).collect { |f| Facter::Core::Execution.exec("cat #{f}")}.uniq.size
         else
           nil
@@ -110,7 +110,7 @@ module Facter
       def get_processor_list
         processor_list = []
         # get each physical processor
-        Facter::Util::WMI.execquery("select * from Win32_Processor").each do |proc|
+        Facter::Util::WMI.execquery('select * from Win32_Processor').each do |proc|
           # not supported before 2008
           if proc.respond_to?(:NumberOfLogicalProcessors)
             processor_num = proc.NumberOfLogicalProcessors
@@ -119,14 +119,14 @@ module Facter
           end
 
           processor_num.times do |i|
-            processor_list << proc.Name.squeeze(" ")
+            processor_list << proc.Name.squeeze(' ')
           end
         end
         processor_list
       end
 
       def get_physical_processor_count
-         Facter::Util::WMI.execquery("select Name from Win32_Processor").Count
+         Facter::Util::WMI.execquery('select Name from Win32_Processor').Count
       end
     end
 
@@ -144,22 +144,22 @@ module Facter
 
     class Darwin < Base
       def initialize
-        require "cfpropertylist"
+        require 'cfpropertylist'
         @system_hardware_data = query_system_profiler
       end
 
       def get_processor_count
-        Facter::Util::POSIX.sysctl("hw.ncpu").to_i
+        Facter::Util::POSIX.sysctl('hw.ncpu').to_i
       end
 
       def get_processor_speed
-        @system_hardware_data["current_processor_speed"]
+        @system_hardware_data['current_processor_speed']
       end
 
       private
 
       def query_system_profiler
-        output = Facter::Core::Execution.exec("/usr/sbin/system_profiler -xml SPHardwareDataType")
+        output = Facter::Core::Execution.exec('/usr/sbin/system_profiler -xml SPHardwareDataType')
         plist  = CFPropertyList::List.new
         plist.load_str(output)
         parsed_xml = CFPropertyList.native_types(plist.value)
@@ -169,21 +169,21 @@ module Facter
 
     class BSD < Base
       def get_processor_count
-        Facter::Util::POSIX.sysctl("hw.ncpu").to_i
+        Facter::Util::POSIX.sysctl('hw.ncpu').to_i
       end
     end
 
     class OpenBSD < BSD
       def get_physical_processor_count
-        Facter::Util::POSIX.sysctl("hw.ncpufound").to_i
+        Facter::Util::POSIX.sysctl('hw.ncpufound').to_i
       end
     end
 
     class SunOS < Base
       def initialize
         kernelrelease = Facter.value(:kernelrelease)
-        @major_version = kernelrelease.split(".")[0].to_i
-        @minor_version = kernelrelease.split(".")[1].to_i
+        @major_version = kernelrelease.split('.')[0].to_i
+        @minor_version = kernelrelease.split('.')[1].to_i
       end
 
       def get_processor_list
@@ -204,7 +204,7 @@ module Facter
 
       def get_physical_processor_count
         if @major_version > 5 or (@major_version == 5 and @minor_version >= 8)
-          if output = Facter::Core::Execution.exec("/usr/sbin/psrinfo -p")
+          if output = Facter::Core::Execution.exec('/usr/sbin/psrinfo -p')
             output.to_i
           end
         else
@@ -215,7 +215,7 @@ module Facter
       private
 
       def count_cpu_with_kstat
-        if output = Facter::Core::Execution.exec("/usr/bin/kstat cpu_info")
+        if output = Facter::Core::Execution.exec('/usr/bin/kstat cpu_info')
           output.scan(/\bcore_id\b\s+\d+/).uniq.length
         else
           nil
@@ -223,7 +223,7 @@ module Facter
       end
 
       def count_cpu_with_psrinfo
-        if output = Facter::Core::Execution.exec("/usr/sbin/psrinfo")
+        if output = Facter::Core::Execution.exec('/usr/sbin/psrinfo')
           output.split("\n").length
         else
           nil

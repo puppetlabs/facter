@@ -62,7 +62,7 @@ module Facter
         else
           msg = "Cannot merge #{left.inspect}:#{left.class} and #{right.inspect}:#{right.class}"
           if not path.empty?
-            msg << " at root"
+            msg << ' at root'
             msg << path.map { |part| "[#{part.inspect}]" }.join
           end
           raise DeepMergeError, msg

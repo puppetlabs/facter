@@ -17,19 +17,19 @@ Facter.add(:kernelrelease) do
 end
 
 Facter.add(:kernelrelease) do
-  confine :kernel => "aix"
+  confine :kernel => 'aix'
   setcode 'oslevel -s'
 end
 
-Facter.add("kernelrelease") do
+Facter.add('kernelrelease') do
   confine :kernel => :openbsd
   setcode do
-    Facter::Util::POSIX.sysctl("kern.version").split(' ')[1]
+    Facter::Util::POSIX.sysctl('kern.version').split(' ')[1]
   end
 end
 
 Facter.add(:kernelrelease) do
-  confine :kernel => "hp-ux"
+  confine :kernel => 'hp-ux'
   setcode do
     version = Facter::Core::Execution.execute('uname -r')
     version[2..-1]
@@ -37,11 +37,11 @@ Facter.add(:kernelrelease) do
 end
 
 Facter.add(:kernelrelease) do
-  confine :kernel => "windows"
+  confine :kernel => 'windows'
   setcode do
     require 'facter/util/wmi'
-    version = ""
-    Facter::Util::WMI.execquery("SELECT Version from Win32_OperatingSystem").each do |ole|
+    version = ''
+    Facter::Util::WMI.execquery('SELECT Version from Win32_OperatingSystem').each do |ole|
       version = "#{ole.Version}"
       break
     end
