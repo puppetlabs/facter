@@ -30,7 +30,11 @@ Facter.add(:operatingsystemmajrelease) do
     :RedHat,
     :Scientific,
     :SLC,
-    :CumulusLinux
+    :CumulusLinux,
+    :SLED,
+    :SLES,
+    :OpenSuSE,
+    :SuSE
   ]
   setcode do
     Facter.value('operatingsystemrelease').split('.').first
