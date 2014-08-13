@@ -20,16 +20,16 @@
   Facter.add(name) do
     setcode do
       value = nil
-      
+
       [ '/etc/ssh',
         '/usr/local/etc/ssh',
         '/etc',
         '/usr/local/etc',
         '/etc/opt/ssh',
       ].each do |dir|
-      
+
         filepath = File.join(dir,key[:file])
-      
+
         if FileTest.file?(filepath)
           begin
             value = File.read(filepath).chomp.split(/\s+/)[1]
@@ -39,16 +39,16 @@
           end
         end
       end
-      
+
       value
     end
   end
-  
+
   Facter.add('SSHFP_' + name[3..-4]) do
     setcode do
       ssh = Facter.fact(name).value
       value = nil
-      
+
       if ssh && key[:sshfprrtype]
         begin
           require 'digest/sha1'
@@ -64,10 +64,10 @@
           value = nil
         end
       end
-      
+
       value
     end
-    
+
   end
-  
+
 end

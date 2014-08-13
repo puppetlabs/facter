@@ -1,6 +1,6 @@
 # Fact: ps
 #
-# Purpose: 
+# Purpose:
 #   Internal fact for what to use to list all processes. Used by
 #   the Service type in Puppet.
 #
