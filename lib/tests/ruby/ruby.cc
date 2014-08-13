@@ -6,6 +6,7 @@
 #include <facter/util/string.hpp>
 #include <facter/util/regex.hpp>
 #include <facter/logging/logging.hpp>
+#include <facter/version.h>
 #include <boost/algorithm/string/replace.hpp>
 #include <memory>
 #include <tuple>
@@ -58,15 +59,7 @@ using sink_t = sinks::synchronous_sink<ruby_log_appender>;
 
 struct ruby_test_parameters
 {
-    ruby_test_parameters(string const& file, string const& fact, string const& value) :
-        file(file),
-        failure_expected(false),
-        fact(fact),
-        expected(value)
-    {
-    }
-
-    ruby_test_parameters(string const& file, string const& fact, string const& value, map<string, string> const& facts) :
+    ruby_test_parameters(string const& file, string const& fact, string const& value, map<string, string> const& facts = map<string, string>()) :
         file(file),
         failure_expected(false),
         fact(fact),
@@ -163,7 +156,13 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
     {
         _facts.clear();
         for (auto const& kvp : GetParam().facts) {
-            _facts.add(to_lower(string(kvp.first)), make_value<string_value>(kvp.second));
+            if (kvp.second == "true") {
+                _facts.add(to_lower(string(kvp.first)), make_value<boolean_value>(true));
+            } else if (kvp.second == "false") {
+                _facts.add(to_lower(string(kvp.first)), make_value<boolean_value>(false));
+            } else {
+                _facts.add(to_lower(string(kvp.first)), make_value<string_value>(kvp.second));
+            }
         }
 
         _appender.reset(new ruby_log_appender());
@@ -275,6 +274,10 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("define_aggregate_fact.rb", "foo", "[\"foo\", \"bar\"]"),
     ruby_test_parameters("existing_simple_resolution.rb", { { "ERROR", "cannot define an aggregate resolution with name \"bar\": a simple resolution with the same name already exists" } }, true),
     ruby_test_parameters("existing_aggregate_resolution.rb", { { "ERROR", "cannot define a simple resolution with name \"bar\": an aggregate resolution with the same name already exists" } }, true),
+    ruby_test_parameters("version.rb", "foo", { { "DEBUG", LIBFACTER_VERSION } }),
+    ruby_test_parameters("boolean_false_confine.rb", "foo", { { "fact", "true" } }),
+    ruby_test_parameters("boolean_true_confine.rb", "foo", "\"bar\"", { { "fact", "true" } }),
+    ruby_test_parameters("exec.rb", "foo", "\"bar\""),
 };
 
 INSTANTIATE_TEST_CASE_P(run, facter_ruby, testing::ValuesIn(single_fact_tests));

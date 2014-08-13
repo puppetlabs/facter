@@ -73,6 +73,11 @@ namespace facter { namespace ruby {
         // Define the Resolution class
         VALUE klass = ruby.rb_define_class_under(ruby.lookup({"Facter", "Util"}), "Resolution", *ruby.rb_cObject);
         ruby.rb_define_method(klass, "setcode", RUBY_METHOD_FUNC(setcode_thunk), -1);
+
+        // Deprecated in Facter 2.0; implementing for backwards compatibility
+        ruby.rb_define_singleton_method(klass, "which", RUBY_METHOD_FUNC(which_thunk), 1);
+        ruby.rb_define_singleton_method(klass, "exec", RUBY_METHOD_FUNC(exec_thunk), 1);
+
         resolution::define_methods(ruby, klass);
         ruby.rb_obj_freeze(klass);
         return klass;
@@ -133,6 +138,28 @@ namespace facter { namespace ruby {
         // Now that the above block has exited, it's safe to jump to the given tag
         ruby.rb_jump_tag(tag);
         return self;
+    }
+
+    VALUE simple_resolution::which_thunk(VALUE klass, VALUE binary)
+    {
+        // As this is a singleton method, we don't have a self to get the instance from; get the api instance instead
+        auto ruby = api::instance();
+        if (!ruby) {
+            return klass;
+        }
+
+        return ruby->rb_funcall(ruby->lookup({ "Facter", "Core", "Execution" }), ruby->rb_intern("which"), 1, binary);
+    }
+
+    VALUE simple_resolution::exec_thunk(VALUE klass, VALUE command)
+    {
+        // As this is a singleton method, we don't have a self to get the instance from; get the api instance instead
+        auto ruby = api::instance();
+        if (!ruby) {
+            return klass;
+        }
+
+        return ruby->rb_funcall(ruby->lookup({ "Facter", "Core", "Execution" }), ruby->rb_intern("exec"), 1, command);
     }
 
 }}  // namespace facter::ruby

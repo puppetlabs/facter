@@ -42,6 +42,7 @@ namespace facter { namespace ruby {
         volatile VALUE version = _ruby.rb_str_new_cstr(LIBFACTER_VERSION);
         _ruby.rb_const_set(_self, _ruby.rb_intern("CFACTERVERSION"), version);
         _ruby.rb_const_set(_self, _ruby.rb_intern("FACTERVERSION"), version);
+        _ruby.rb_define_singleton_method(_self, "version", RUBY_METHOD_FUNC(version_thunk), 0);
         _ruby.rb_define_singleton_method(_self, "add", RUBY_METHOD_FUNC(add_thunk), -1);
         _ruby.rb_define_singleton_method(_self, "define_fact", RUBY_METHOD_FUNC(define_fact_thunk), -1);
         _ruby.rb_define_singleton_method(_self, "value", RUBY_METHOD_FUNC(value_thunk), 1);
@@ -57,6 +58,7 @@ namespace facter { namespace ruby {
         _ruby.rb_define_singleton_method(execution, "which", RUBY_METHOD_FUNC(which_thunk), 1);
         _ruby.rb_define_singleton_method(execution, "exec", RUBY_METHOD_FUNC(exec_thunk), 1);
         _ruby.rb_define_singleton_method(execution, "execute", RUBY_METHOD_FUNC(execute_thunk), -1);
+
         _ruby.rb_define_class_under(execution, "ExecutionFailure", *_ruby.rb_eStandardError);
         ruby.rb_obj_freeze(execution);
         associate(execution);
@@ -180,6 +182,17 @@ namespace facter { namespace ruby {
             name = _ruby.rb_funcall(name, _ruby.rb_intern("downcase"), 0);
         }
         return name;
+    }
+
+    VALUE module::version_thunk(VALUE self)
+    {
+         auto instance = to_instance(self);
+        if (!instance) {
+            return self;
+        }
+
+        auto const& ruby = instance->_ruby;
+        return ruby.lookup({ "Facter", "FACTERVERSION" });
     }
 
     VALUE module::add_thunk(int argc, VALUE* argv, VALUE self)

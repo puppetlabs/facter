@@ -167,8 +167,8 @@ namespace facter { namespace ruby {
                                     }
                                     return true;
                                 });
-                            } else if (!ruby.is_string(value)) {
-                                ruby.rb_raise(*ruby.rb_eTypeError, "expected a Symbol, String, or Array of String/Symbol for Hash value");
+                            } else if (!ruby.is_true(value) && !ruby.is_false(value) &&!ruby.is_string(value)) {
+                                ruby.rb_raise(*ruby.rb_eTypeError, "expected true, false, Symbol, String, or Array of String/Symbol for Hash value");
                             }
 
                             // Temporarily register with GC since we may have converted values above that nothing is referencing
