@@ -108,8 +108,16 @@ namespace facter { namespace ruby {
         // Get the library name based on the given version
         string name = get_library_name();
 
+        // First look for an already loaded library
+        dynamic_library library = dynamic_library::find_by_name(name);
+        if (!library.loaded()) {
+            library = dynamic_library::find_by_symbol("ruby_init");
+        }
+
         // Search the path directories for a matching ruby library
-        dynamic_library library = search(name, environment::search_paths());
+        if (!library.loaded()) {
+            library = search(name, environment::search_paths());
+        }
 
         // Fall back to using the load path
         if (!library.loaded()) {
@@ -122,7 +130,7 @@ namespace facter { namespace ruby {
         } else if (library.first_load()) {
             LOG_INFO("ruby loaded from \"%1%\".", library.name());
         } else {
-            LOG_INFO("ruby was already loaded from \"%1%\".", library.name());
+            LOG_INFO("ruby was already loaded.");
         }
         try {
             return unique_ptr<api>(new api(move(library)));
