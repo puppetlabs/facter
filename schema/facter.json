@@ -63,6 +63,7 @@
         "lsbdistcodename" : { "type": "string" },
         "lsbdistdescription" : { "type": "string" },
         "lsbdistid" : { "type": "string" },
+        "lsbminordistrelease" : { "type": "string" },
         "lsbdistrelease" : { "type": "string" },
         "lsbmajdistrelease" : { "type": "string" },
         "lsbrelease" : { "type": "string" },
