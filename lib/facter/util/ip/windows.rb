@@ -188,7 +188,7 @@ class Facter::Util::IP::Windows
       # excluding 169.254.x.x in Windows - this is the DHCP APIPA
       #  meaning that if the node cannot get an ip address from the dhcp server,
       #  it auto-assigns a private ip address
-      unless match == "127.0.0.1" or match =~ /^169.254.*/
+      unless match == '127.0.0.1' or match =~ /^169.254.*/
         return !!match
       end
     end
@@ -204,7 +204,7 @@ class Facter::Util::IP::Windows
   # @api private
   def self.valid_ipv6_address?(ip_address)
     String(ip_address).scan(/(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4}/).each do |match|
-      unless match =~ /fe80.*/ or match == "::1"
+      unless match =~ /fe80.*/ or match == '::1'
         return !!match
       end
     end

@@ -23,7 +23,7 @@ module Facter::Util::Macosx
     bad_xml_doctype = /^.*<!DOCTYPE plist PUBLIC -\/\/Apple Computer.*$/
     if xml =~ bad_xml_doctype
       xml.gsub!( bad_xml_doctype, Plist_Xml_Doctype )
-      Facter.debug("Had to fix plist with incorrect DOCTYPE declaration")
+      Facter.debug('Had to fix plist with incorrect DOCTYPE declaration')
     end
     plist = CFPropertyList::List.new
     begin
@@ -47,26 +47,26 @@ module Facter::Util::Macosx
   end
 
   def self.hardware_overview
-    profiler_data("SPHardwareDataType")
+    profiler_data('SPHardwareDataType')
   end
 
   def self.os_overview
-    profiler_data("SPSoftwareDataType")
+    profiler_data('SPSoftwareDataType')
   end
 
   def self.sw_vers
     ver = Hash.new
-    [ "productName", "productVersion", "buildVersion" ].each do |option|
+    [ 'productName', 'productVersion', 'buildVersion' ].each do |option|
       ver["macosx_#{option}"] = Facter::Core::Execution.exec("/usr/bin/sw_vers -#{option}").strip
     end
-    productversion = ver["macosx_productVersion"]
+    productversion = ver['macosx_productVersion']
     if not productversion.nil?
       versions = productversion.scan(/(\d+)\.(\d+)\.*(\d*)/)[0]
-      ver["macosx_productversion_major"] = "#{versions[0]}.#{versions[1]}"
+      ver['macosx_productversion_major'] = "#{versions[0]}.#{versions[1]}"
       if versions[2].empty?  # 10.x should be treated as 10.x.0
-        versions[2] = "0"
+        versions[2] = '0'
       end
-      ver["macosx_productversion_minor"] = versions[2]
+      ver['macosx_productversion_minor'] = versions[2]
     end
     ver
   end

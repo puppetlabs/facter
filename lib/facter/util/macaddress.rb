@@ -4,13 +4,13 @@ module Facter::Util::Macaddress
 
   def self.standardize(macaddress)
     return nil unless macaddress
-    macaddress.split(":").map{|x| "0#{x}"[-2..-1]}.join(":")
+    macaddress.split(':').map{|x| "0#{x}"[-2..-1]}.join(':')
   end
 
   module Darwin
     def self.macaddress
       iface = default_interface
-      Facter.warn "Could not find a default route. Using first non-loopback interface" if iface.empty?
+      Facter.warn 'Could not find a default route. Using first non-loopback interface' if iface.empty?
 
       macaddress = `#{ifconfig_command} #{iface} | /usr/bin/awk '/ether/{print $2;exit}'`.chomp
       macaddress.empty? ? nil : macaddress

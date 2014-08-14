@@ -45,7 +45,7 @@ module Facter
 
     class Metadata < Base
 
-      DEFAULT_URI = "http://169.254.169.254/latest/meta-data/"
+      DEFAULT_URI = 'http://169.254.169.254/latest/meta-data/'
 
       def initialize(uri = DEFAULT_URI)
         @baseurl = uri
@@ -109,7 +109,7 @@ module Facter
     end
 
     class Userdata < Base
-      DEFAULT_URI = "http://169.254.169.254/latest/user-data/"
+      DEFAULT_URI = 'http://169.254.169.254/latest/user-data/'
 
       def initialize(uri = DEFAULT_URI)
         @baseurl = uri

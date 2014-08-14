@@ -20,15 +20,15 @@ Facter.add(:operatingsystem) do
     # It's apparently not trustworthy enough to rely on for this fact.
     output = Facter::Core::Execution.exec('uname -v')
     if output =~ /^joyent_/
-      "SmartOS"
+      'SmartOS'
     elsif output =~ /^oi_/
-      "OpenIndiana"
+      'OpenIndiana'
     elsif output =~ /^omnios-/
-      "OmniOS"
-    elsif FileTest.exists?("/etc/debian_version")
-      "Nexenta"
+      'OmniOS'
+    elsif FileTest.exists?('/etc/debian_version')
+      'Nexenta'
     else
-      "Solaris"
+      'Solaris'
     end
   end
 end
@@ -41,7 +41,7 @@ Facter.add(:operatingsystem) do
 
   setcode do
     release_info = Facter::Util::Operatingsystem.os_release
-    if release_info['NAME'] == "Cumulus Linux"
+    if release_info['NAME'] == 'Cumulus Linux'
       'CumulusLinux'
     end
   end
@@ -50,90 +50,90 @@ end
 Facter.add(:operatingsystem) do
   confine :kernel => :linux
   setcode do
-    if Facter.value(:lsbdistid) == "Ubuntu"
-       "Ubuntu"
-    elsif Facter.value(:lsbdistid) == "LinuxMint"
-       "LinuxMint"
-    elsif FileTest.exists?("/etc/debian_version")
-      "Debian"
-    elsif FileTest.exists?("/etc/openwrt_release")
-      "OpenWrt"
-    elsif FileTest.exists?("/etc/gentoo-release")
-      "Gentoo"
-    elsif FileTest.exists?("/etc/fedora-release")
-      "Fedora"
-    elsif FileTest.exists?("/etc/mageia-release")
-      "Mageia"
-    elsif FileTest.exists?("/etc/mandriva-release")
-      "Mandriva"
-    elsif FileTest.exists?("/etc/mandrake-release")
-      "Mandrake"
-    elsif FileTest.exists?("/etc/meego-release")
-      "MeeGo"
-    elsif FileTest.exists?("/etc/arch-release")
-      "Archlinux"
-    elsif FileTest.exists?("/etc/oracle-release")
-      "OracleLinux"
-    elsif FileTest.exists?("/etc/enterprise-release")
-      if FileTest.exists?("/etc/ovs-release")
-        "OVS"
+    if Facter.value(:lsbdistid) == 'Ubuntu'
+       'Ubuntu'
+    elsif Facter.value(:lsbdistid) == 'LinuxMint'
+       'LinuxMint'
+    elsif FileTest.exists?('/etc/debian_version')
+      'Debian'
+    elsif FileTest.exists?('/etc/openwrt_release')
+      'OpenWrt'
+    elsif FileTest.exists?('/etc/gentoo-release')
+      'Gentoo'
+    elsif FileTest.exists?('/etc/fedora-release')
+      'Fedora'
+    elsif FileTest.exists?('/etc/mageia-release')
+      'Mageia'
+    elsif FileTest.exists?('/etc/mandriva-release')
+      'Mandriva'
+    elsif FileTest.exists?('/etc/mandrake-release')
+      'Mandrake'
+    elsif FileTest.exists?('/etc/meego-release')
+      'MeeGo'
+    elsif FileTest.exists?('/etc/arch-release')
+      'Archlinux'
+    elsif FileTest.exists?('/etc/oracle-release')
+      'OracleLinux'
+    elsif FileTest.exists?('/etc/enterprise-release')
+      if FileTest.exists?('/etc/ovs-release')
+        'OVS'
       else
-        "OEL"
+        'OEL'
       end
-    elsif FileTest.exists?("/etc/vmware-release")
-      "VMWareESX"
-    elsif FileTest.exists?("/etc/redhat-release")
-      txt = File.read("/etc/redhat-release")
+    elsif FileTest.exists?('/etc/vmware-release')
+      'VMWareESX'
+    elsif FileTest.exists?('/etc/redhat-release')
+      txt = File.read('/etc/redhat-release')
       if txt =~ /centos/i
-        "CentOS"
+        'CentOS'
       elsif txt =~ /CERN/
-        "SLC"
+        'SLC'
       elsif txt =~ /scientific/i
-        "Scientific"
+        'Scientific'
       elsif txt =~ /^cloudlinux/i
-        "CloudLinux"
+        'CloudLinux'
       elsif txt =~ /^Parallels Server Bare Metal/i
-        "PSBM"
+        'PSBM'
       elsif txt =~ /Ascendos/i
-        "Ascendos"
+        'Ascendos'
       elsif txt =~ /^XenServer/i
-        "XenServer"
+        'XenServer'
       elsif txt =~ /XCP/
-        "XCP"
+        'XCP'
       else
-        "RedHat"
+        'RedHat'
       end
-    elsif FileTest.exists?("/etc/SuSE-release")
-      txt = File.read("/etc/SuSE-release")
+    elsif FileTest.exists?('/etc/SuSE-release')
+      txt = File.read('/etc/SuSE-release')
       if txt =~ /^SUSE LINUX Enterprise Server/i
-        "SLES"
+        'SLES'
       elsif txt =~ /^SUSE LINUX Enterprise Desktop/i
-        "SLED"
+        'SLED'
       elsif txt =~ /^openSUSE/i
-        "OpenSuSE"
+        'OpenSuSE'
       else
-        "SuSE"
+        'SuSE'
       end
-    elsif FileTest.exists?("/etc/bluewhite64-version")
-      "Bluewhite64"
-    elsif FileTest.exists?("/etc/slamd64-version")
-      "Slamd64"
-    elsif FileTest.exists?("/etc/slackware-version")
-      "Slackware"
-    elsif FileTest.exists?("/etc/alpine-release")
-      "Alpine"
-    elsif FileTest.exists?("/etc/mageia-release")
-      "Mageia"
-    elsif FileTest.exists?("/etc/system-release")
-      "Amazon"
+    elsif FileTest.exists?('/etc/bluewhite64-version')
+      'Bluewhite64'
+    elsif FileTest.exists?('/etc/slamd64-version')
+      'Slamd64'
+    elsif FileTest.exists?('/etc/slackware-version')
+      'Slackware'
+    elsif FileTest.exists?('/etc/alpine-release')
+      'Alpine'
+    elsif FileTest.exists?('/etc/mageia-release')
+      'Mageia'
+    elsif FileTest.exists?('/etc/system-release')
+      'Amazon'
     end
   end
 end
 
 Facter.add(:operatingsystem) do
-  confine :kernel => "VMkernel"
+  confine :kernel => 'VMkernel'
   setcode do
-    "ESXi"
+    'ESXi'
   end
 end
 

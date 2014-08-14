@@ -30,7 +30,7 @@ module FileRead
   end
 
   def self.read_binary(path)
-    File.open(path, "rb") { |contents| contents.read }
+    File.open(path, 'rb') { |contents| contents.read }
   end
 end
 end

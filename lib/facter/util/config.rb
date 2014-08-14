@@ -41,12 +41,12 @@ module Facter::Util::Config
     if Facter::Util::Root.root?
       windows_dir = windows_data_dir
       if windows_dir.nil? then
-        @external_facts_dirs = ["/etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"]
+        @external_facts_dirs = ['/etc/facter/facts.d', '/etc/puppetlabs/facter/facts.d']
       else
         @external_facts_dirs = [File.join(windows_dir, 'PuppetLabs', 'facter', 'facts.d')]
       end
     elsif ENV['HOME']
-      @external_facts_dirs = [File.expand_path(File.join(ENV['HOME'], ".facter", "facts.d"))]
+      @external_facts_dirs = [File.expand_path(File.join(ENV['HOME'], '.facter', 'facts.d'))]
     else
       @external_facts_dirs = []
     end

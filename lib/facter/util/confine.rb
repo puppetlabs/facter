@@ -18,9 +18,9 @@ class Facter::Util::Confine
   #   value will be passed as the argument to the block.  If the block returns
   #   true then the fact will be enabled, otherwise it will be disabled.
   def initialize(fact = nil, *values, &block)
-    raise ArgumentError, "The fact name must be provided" unless fact or block_given?
+    raise ArgumentError, 'The fact name must be provided' unless fact or block_given?
     if values.empty? and not block_given?
-      raise ArgumentError, "One or more values or a block must be provided"
+      raise ArgumentError, 'One or more values or a block must be provided'
     end
     @fact = fact
     @values = values
@@ -29,7 +29,7 @@ class Facter::Util::Confine
 
   def to_s
     return @block.to_s if @block
-    return "'%s' '%s'" % [@fact, @values.join(",")]
+    return "'%s' '%s'" % [@fact, @values.join(',')]
   end
 
   # Evaluate the fact, returning true or false.

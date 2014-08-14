@@ -14,7 +14,7 @@ Facter.add(:fqdn) do
     host = Facter.value(:hostname)
     domain = Facter.value(:domain)
     if host and domain
-      [host, domain].join(".")
+      [host, domain].join('.')
     elsif host
       host
     else

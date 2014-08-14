@@ -31,7 +31,7 @@ module Util
       model = new
       model.refresh
       model.add_dynamic_facts
-      Facter.add("zones") do
+      Facter.add('zones') do
         setcode do
           model.refresh if model.flushed?
           model.add_dynamic_facts

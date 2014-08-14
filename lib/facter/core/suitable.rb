@@ -41,7 +41,7 @@ module Facter::Core::Suitable
   #   @example Confining to Linux
   #       Facter.add(:powerstates) do
   #         # This resolution only makes sense on linux systems
-  #         confine :kernel => "Linux"
+  #         confine :kernel => 'Linux'
   #         setcode do
   #           File.read('/sys/power/states')
   #         end

@@ -10,8 +10,8 @@ module Facter::Util::Uptime
   def self.get_uptime_seconds_win
     require 'facter/util/wmi'
 
-    last_boot = ""
-    Facter::Util::WMI.execquery("select * from Win32_OperatingSystem").each do |x|
+    last_boot = ''
+    Facter::Util::WMI.execquery('select * from Win32_OperatingSystem').each do |x|
       last_boot = x.LastBootupTime
     end
     self.compute_uptime(Time.parse(last_boot.split('.').first))
@@ -23,7 +23,7 @@ module Facter::Util::Uptime
     output = Facter::Core::Execution.execute("/bin/cat #{uptime_file} 2>/dev/null")
 
     if not output.empty?
-      output.chomp.split(" ").first.to_i
+      output.chomp.split(' ').first.to_i
     end
   end
 
@@ -69,7 +69,7 @@ module Facter::Util::Uptime
   end
 
   def self.uptime_file
-    "/proc/uptime"
+    '/proc/uptime'
   end
 
   def self.uptime_sysctl_variable
@@ -77,6 +77,6 @@ module Facter::Util::Uptime
   end
 
   def self.uptime_executable_cmd
-    "uptime"
+    'uptime'
   end
 end

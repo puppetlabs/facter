@@ -101,7 +101,7 @@ module Plist
         elsif @scanner.scan(end_tag)
           @listener.tag_end(@scanner[1])
         else
-          raise "Unimplemented element"
+          raise 'Unimplemented element'
         end
       end
     end
@@ -116,7 +116,7 @@ module Plist
     def PTag::inherited( sub_class )
       key = sub_class.to_s.downcase
       key.gsub!(/^plist::/, '' )
-      key.gsub!(/^p/, '')  unless key == "plist"
+      key.gsub!(/^p/, '')  unless key == 'plist'
 
       @@mappings[key] = sub_class
     end
@@ -127,7 +127,7 @@ module Plist
     end
 
     def to_ruby
-      raise "Unimplemented: " + self.class.to_s + "#to_ruby on #{self.inspect}"
+      raise 'Unimplemented: ' + self.class.to_s + "#to_ruby on #{self.inspect}"
     end
   end
 

@@ -11,8 +11,8 @@
 #
 # Caveats:
 #   Supports the following operating systems: "Alpine" "Amazon" "Archlinux"
-#   "Ascendos" "Bluewhite64" "CentOS" "CloudLinux" 
-#   "Debian" "Fedora" "Gentoo" "Mandrake" "Mandriva" "MeeGo" "OEL" "OpenSuSE" 
+#   "Ascendos" "Bluewhite64" "CentOS" "CloudLinux"
+#   "Debian" "Fedora" "Gentoo" "Mandrake" "Mandriva" "MeeGo" "OEL" "OpenSuSE"
 #   "OracleLinux" "OVS" "PSBM" "RedHat" "Scientific" "Slackware" "Slamd64" "SLC"
 #   "SLED" "SLES" "SuSE" "Ubuntu" "VMWareESX"
 #

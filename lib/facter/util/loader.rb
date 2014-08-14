@@ -19,7 +19,7 @@ class Facter::Util::Loader
     shortname = fact.to_s.downcase
     load_env(shortname)
 
-    filename = shortname + ".rb"
+    filename = shortname + '.rb'
 
     paths = search_path
     unless paths.nil?
@@ -71,8 +71,8 @@ class Facter::Util::Loader
     search_paths = []
     search_paths += $LOAD_PATH.map { |path| File.expand_path('facter', path) }
 
-    if @environment_vars.include?("FACTERLIB")
-      search_paths += @environment_vars["FACTERLIB"].split(File::PATH_SEPARATOR)
+    if @environment_vars.include?('FACTERLIB')
+      search_paths += @environment_vars['FACTERLIB'].split(File::PATH_SEPARATOR)
     end
 
     search_paths.delete_if { |path| ! valid_search_path?(path) }

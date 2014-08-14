@@ -18,7 +18,7 @@
 
 require 'facter/util/manufacturer'
 
-if Facter.value(:kernel) == "OpenBSD"
+if Facter.value(:kernel) == 'OpenBSD'
   mfg_keys = {
     'hw.vendor'   => 'manufacturer',
     'hw.product'  => 'productname',
@@ -26,14 +26,14 @@ if Facter.value(:kernel) == "OpenBSD"
   }
 
   Facter::Manufacturer.sysctl_find_system_info(mfg_keys)
-elsif Facter.value(:kernel) == "Darwin"
+elsif Facter.value(:kernel) == 'Darwin'
   mfg_keys = {
     'hw.model'   => 'productname'
   }
   Facter::Manufacturer.sysctl_find_system_info(mfg_keys)
-elsif Facter.value(:kernel) == "SunOS" and Facter.value(:hardwareisa) == "sparc"
+elsif Facter.value(:kernel) == 'SunOS' and Facter.value(:hardwareisa) == 'sparc'
   Facter::Manufacturer.prtdiag_sparc_find_system_info()
-elsif Facter.value(:kernel) == "windows"
+elsif Facter.value(:kernel) == 'windows'
   win32_keys = {
     'manufacturer' => ['Manufacturer', 'Bios'],
     'serialNumber' => ['Serialnumber', 'Bios'],

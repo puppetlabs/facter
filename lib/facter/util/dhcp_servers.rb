@@ -17,7 +17,7 @@ module Facter::Util::DHCPServers
 
   def self.devices
     if Facter::Core::Execution.which('nmcli')
-      Facter::Core::Execution.exec("nmcli d").split("\n").select {|d| d =~ /\sconnected/i }.collect{ |line| line.split[0] }
+      Facter::Core::Execution.exec('nmcli d').split("\n").select {|d| d =~ /\sconnected/i }.collect{ |line| line.split[0] }
     else
       []
     end
@@ -36,7 +36,7 @@ module Facter::Util::DHCPServers
   end
 
   def self.nmcli_version
-    if version = Facter::Core::Execution.exec("nmcli --version")
+    if version = Facter::Core::Execution.exec('nmcli --version')
       version.scan(/version\s(\d+)\.?(\d+)?\.?(\d+)?\.?(\d+)?/).flatten.map(&:to_i)
     end
   end

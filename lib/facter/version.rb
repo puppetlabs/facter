@@ -27,7 +27,7 @@ module Facter
   #   the nearest parent version that is an officially released version.  That is
   #   to say, if a branch named 3.1.x contains 25 patches on top of the most
   #   recent official release of 3.1.1, then the version method must return the
-  #   string "3.1.1" if no "VERSION" file is present.
+  #   string '3.1.1' if no 'VERSION' file is present.
   #
   #   By design the version identifier is _not_ intended to vary during the life of
   #   a process.  There is no guarantee provided that writing to the VERSION file
@@ -51,7 +51,7 @@ module Facter
   #
   # @api public
   #
-  # @return [String] containing the facter version, e.g. "1.6.14"
+  # @return [String] containing the facter version, e.g. '1.6.14'
   def self.version
     version_file = File.join(File.dirname(__FILE__), 'VERSION')
     return @facter_version if @facter_version
@@ -70,12 +70,12 @@ module Facter
     @facter_version = version
   end
 
-  # This reads the content of the "VERSION" file that lives in the
+  # This reads the content of the 'VERSION' file that lives in the
   # same directory as this source code file.
   #
   # @api private
   #
-  # @return [String] the version -- for example: "1.6.14-6-gea42046" or nil if the VERSION
+  # @return [String] the version -- for example: '1.6.14-6-gea42046' or nil if the VERSION
   #   file does not exist.
   def self.read_version_file(path)
     if File.exists?(path)

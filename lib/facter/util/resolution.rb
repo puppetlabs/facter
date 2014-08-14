@@ -74,7 +74,7 @@ class Facter::Util::Resolution
     if @last_evaluated
       msg = "Already evaluated #{@name}"
       msg << " at #{@last_evaluated}" if msg.is_a? String
-      msg << ", reevaluating anyways"
+      msg << ', reevaluating anyways'
       Facter.warn msg
     end
 
@@ -142,7 +142,7 @@ class Facter::Util::Resolution
     elsif block_given?
       @code = block
     else
-      raise ArgumentError, "You must pass either code or a block"
+      raise ArgumentError, 'You must pass either code or a block'
     end
   end
 

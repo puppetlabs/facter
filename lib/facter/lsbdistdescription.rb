@@ -12,9 +12,9 @@
 #
 
 Facter.add(:lsbdistdescription) do
-  confine :kernel => [ :linux, :"gnu/kfreebsd" ]
+  confine :kernel => [ :linux, :'gnu/kfreebsd' ]
   confine do
-    Facter::Core::Execution.which("lsb_release")
+    Facter::Core::Execution.which('lsb_release')
   end
 
   setcode do

@@ -9,13 +9,13 @@
 # Caveats:
 #
 
-Facter.add("kernelmajversion") do
+Facter.add('kernelmajversion') do
   setcode do
     Facter.value(:kernelversion).split('.')[0..1].join('.')
   end
 end
 
-Facter.add("kernelmajversion") do
+Facter.add('kernelmajversion') do
   confine :kernel => :FreeBSD
   setcode do
     Facter.value(:kernelversion).split('.')[0]

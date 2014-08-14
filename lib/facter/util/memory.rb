@@ -6,11 +6,11 @@ require 'facter/util/posix'
 
 module Facter::Memory
   def self.meminfo_number(tag)
-    memsize = ""
+    memsize = ''
     size = [0]
-    File.readlines("/proc/meminfo").each do |l|
+    File.readlines('/proc/meminfo').each do |l|
       size = $1.to_f if l =~ /^#{tag}:\s+(\d+)\s+\S+/
-      if tag == "MemFree" &&
+      if tag == 'MemFree' &&
           l =~ /^(?:Buffers|Cached):\s+(\d+)\s+\S+/
         size += $1.to_f
       end
@@ -45,7 +45,7 @@ module Facter::Memory
 
   # Darwin had to be different. It's generally opaque with how much RAM it is
   # using, and this figure could be improved upon too I fear.
-  # Parses the output of "vm_stat", takes the pages free & pages speculative
+  # Parses the output of 'vm_stat', takes the pages free & pages speculative
   # and multiples that by the page size (also given in output). Ties in with
   # what activity monitor outputs for free memory.
   def self.vmstat_darwin_find_free_memory()
@@ -73,7 +73,7 @@ module Facter::Memory
   # it's the third value on the line starting with memory
   # svmon can be run by non root users
   def self.svmon_aix_find_free_memory()
-    Facter::Core::Execution.exec("/usr/bin/svmon -O unit=KB") =~ /^memory\s+\d+\s+\d+\s+(\d+)\s+/
+    Facter::Core::Execution.exec('/usr/bin/svmon -O unit=KB') =~ /^memory\s+\d+\s+\d+\s+(\d+)\s+/
     $1
   end
 
@@ -87,7 +87,7 @@ module Facter::Memory
     when /OpenBSD/i, /SunOS/i, /Dragonfly/i
       vmstat_find_free_memory()
     when /FreeBSD/i
-      vmstat_find_free_memory(["-H"])
+      vmstat_find_free_memory(['-H'])
     when /Darwin/i
       vmstat_darwin_find_free_memory()
     when /AIX/i
@@ -114,11 +114,11 @@ module Facter::Memory
   def self.mem_size_info(kernel = Facter.value(:kernel))
     case kernel
     when /Dragonfly/i, /FreeBSD/i, /OpenBSD/i
-      Facter::Util::POSIX.sysctl("hw.physmem")
+      Facter::Util::POSIX.sysctl('hw.physmem')
     when /Darwin/i
-      Facter::Util::POSIX.sysctl("hw.memsize")
+      Facter::Util::POSIX.sysctl('hw.memsize')
     when /AIX/i
-      if Facter::Core::Execution.exec("/usr/bin/svmon -O unit=KB") =~ /^memory\s+(\d+)\s+/
+      if Facter::Core::Execution.exec('/usr/bin/svmon -O unit=KB') =~ /^memory\s+(\d+)\s+/
         $1
       end
     end
@@ -148,7 +148,7 @@ module Facter::Memory
   def self.swap_info(kernel = Facter.value(:kernel))
     case kernel
     when /AIX/i
-      (Facter.value(:id) == "root") ? Facter::Core::Execution.exec('swap -l 2>/dev/null') : nil
+      (Facter.value(:id) == 'root') ? Facter::Core::Execution.exec('swap -l 2>/dev/null') : nil
     when /OpenBSD/i
       Facter::Core::Execution.exec('swapctl -s')
     when /FreeBSD/i
@@ -168,7 +168,7 @@ module Facter::Memory
       output.each_line do |line|
         value += parse_swap_line(line, kernel, is_size)
       end
-    end      
+    end
     value_in_mb = scale_swap_value(value, kernel)
   end
 
@@ -177,7 +177,7 @@ module Facter::Memory
   # regex corresponds to the swap size value and the second corresponds to the swap
   # free value, but this may not always be the case. In Ruby 1.9.3 it is possible
   # to give these names, but sadly 1.8.7 does not support this.
- 
+
   def self.parse_swap_line(line, kernel, is_size)
     case kernel
     when /AIX/i

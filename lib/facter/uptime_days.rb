@@ -2,7 +2,7 @@
 #
 # Purpose: Return just the number of days of uptime.
 #
-# Resolution: Uses the "days" key of the system_uptime fact, which divides
+# Resolution: Uses the 'days' key of the system_uptime fact, which divides
 #   its own "hours" key by 24
 #
 # Caveats:

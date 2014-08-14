@@ -6,8 +6,8 @@ module Facter::Util::Partitions
 
     def self.list
       if File.exist?(SYSFS_BLOCK_DIRECTORY)
-        devices = Dir.entries(SYSFS_BLOCK_DIRECTORY).select { |d| File.exist?( SYSFS_BLOCK_DIRECTORY + d + "/device" ) }
-  
+        devices = Dir.entries(SYSFS_BLOCK_DIRECTORY).select { |d| File.exist?( SYSFS_BLOCK_DIRECTORY + d + '/device' ) }
+
         if devices.empty?
           []
         else
@@ -54,7 +54,7 @@ module Facter::Util::Partitions
         Facter::Core::Execution.exec("blkid #{File.join('/dev', partition)}").scan(/TYPE="(.+)"/).flatten.first
       end
     end
-    
+
     private
     def self.read_size(partition)
       if device = partition.match(/(\D+)/)[1] and File.readable?(File.join(SYSFS_BLOCK_DIRECTORY, device, partition, 'size'))

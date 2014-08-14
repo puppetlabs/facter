@@ -1,6 +1,6 @@
 # Fact: ipaddress6
 #
-# Purpose: Returns the "main" IPv6 IP address of a system.
+# Purpose: Returns the 'main' IPv6 IP address of a system.
 #
 # Resolution:
 #   OS-dependent code that parses the output of various networking
@@ -28,7 +28,7 @@ def get_address_after_token(output, token, return_first=false)
 
   String(output).scan(/#{token}\s?((?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/).each do |match|
     match = match.first
-    unless match =~ /fe80.*/ or match == "::1"
+    unless match =~ /fe80.*/ or match == '::1'
       ip = match
       break if return_first
     end
@@ -40,7 +40,7 @@ end
 Facter.add(:ipaddress6) do
   confine :kernel => :linux
   setcode do
-    output = Facter::Util::IP.exec_ifconfig(["2>/dev/null"])
+    output = Facter::Util::IP.exec_ifconfig(['2>/dev/null'])
     get_address_after_token(output, 'inet6(?: addr:)?')
   end
 end
@@ -48,7 +48,7 @@ end
 Facter.add(:ipaddress6) do
   confine :kernel => %w{SunOS}
   setcode do
-    output = Facter::Util::IP.exec_ifconfig(["-a"])
+    output = Facter::Util::IP.exec_ifconfig(['-a'])
 
     get_address_after_token(output, 'inet6')
   end
@@ -57,7 +57,7 @@ end
 Facter.add(:ipaddress6) do
   confine :kernel => %w{Darwin FreeBSD OpenBSD}
   setcode do
-    output = Facter::Util::IP.exec_ifconfig(["-a"])
+    output = Facter::Util::IP.exec_ifconfig(['-a'])
 
     get_address_after_token(output, 'inet6', true)
   end
