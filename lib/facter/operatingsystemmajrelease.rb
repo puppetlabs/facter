@@ -28,6 +28,7 @@ Facter.add(:operatingsystemmajrelease) do
     :OracleLinux,
     :OVS,
     :RedHat,
+    :Ubuntu,
     :Scientific,
     :SLC,
     :CumulusLinux
