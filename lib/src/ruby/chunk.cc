@@ -60,8 +60,8 @@ namespace facter { namespace ruby {
                 } else if (ruby.is_array(_dependencies)) {
                     // Resize the vector now to ensure it is fully allocated before registering with GC
                     values.resize(static_cast<size_t>(ruby.rb_num2ulong(ruby.rb_funcall(_dependencies, ruby.rb_intern("size"), 0))), ruby.nil_value());
-                    for (auto it = values.begin(); it != values.end(); ++it) {
-                        ruby.rb_gc_register_address(&*it);
+                    for (auto& v : values) {
+                        ruby.rb_gc_register_address(&v);
                     }
 
                     int i = 0;
@@ -76,8 +76,8 @@ namespace facter { namespace ruby {
             });
 
             // Unregister all the values from the GC
-            for (auto it = values.begin(); it != values.end(); ++it) {
-                ruby.rb_gc_unregister_address(&*it);
+            for (auto& v : values) {
+                ruby.rb_gc_unregister_address(&v);
             }
         }
 

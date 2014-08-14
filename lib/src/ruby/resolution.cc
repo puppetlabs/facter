@@ -60,13 +60,33 @@ namespace facter { namespace ruby {
 
     bool resolution::suitable(module& facter) const
     {
-        // If any confine is not allowed, the resolution is not allowed
-        for (auto const& confine : _confines) {
-            if (!confine.suitable(facter)) {
-                return false;
+        auto const& ruby = *api::instance();
+
+        int tag = 0;
+        {
+            // Declare all C++ objects here
+            vector<ruby::confine>::const_iterator it;
+
+            VALUE result = ruby.protect(tag, [&]() {
+                // Do not declare any C++ objects inside the protect
+                // Their destructors will not be invoked if there is a Ruby exception
+                for (it = _confines.begin(); it != _confines.end(); ++it) {
+                    if (!it->suitable(facter)) {
+                        return ruby.false_value();
+                    }
+                }
+                return ruby.true_value();
+            });
+
+            // If all confines were suitable, the resolution is considered to be suitable
+            if (!tag) {
+                return ruby.is_true(result);
             }
         }
-        return true;
+
+        // Now that the above block has exited, it's safe to jump to the given tag
+        ruby.rb_jump_tag(tag);
+        return false;
     }
 
     void resolution::flush() const

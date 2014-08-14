@@ -70,7 +70,6 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(rb_to_id),
         LOAD_SYMBOL(rb_id2name),
         LOAD_SYMBOL(rb_define_alloc_func),
-        LOAD_SYMBOL(rb_undef_alloc_func),
         LOAD_SYMBOL(rb_data_object_alloc),
         LOAD_SYMBOL(rb_gc_mark),
         LOAD_SYMBOL(rb_yield_values),

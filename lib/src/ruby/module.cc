@@ -695,6 +695,7 @@ namespace facter { namespace ruby {
             boost::system::error_code ec;
             path dir = canonical(directory, ec);
             if (ec) {
+                LOG_DEBUG("path \"%1%\" will not be searched for custom facts: %2%.", directory, ec.message());
                 return {};
             }
             return dir.string();
