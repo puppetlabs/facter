@@ -7,6 +7,13 @@ like the output of `uname`, public ssh keys, the number of processors, etc.
 
 See `bin/facter` for an example of the interface.
 
+Installation
+------------
+
+Generally, you need the following things installed:
+
+* A supported Ruby version. Ruby 1.8.7, 1.9.3, and 2.0.0 (at least p195) are fully supported.
+
 Running Facter
 --------------
 
