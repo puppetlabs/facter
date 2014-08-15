@@ -1,4 +1,5 @@
 #include <facter/ruby/api.hpp>
+#include <facter/ruby/ruby_value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/array_value.hpp>
@@ -68,6 +69,10 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(rb_sym_to_s),
         LOAD_SYMBOL(rb_to_id),
         LOAD_SYMBOL(rb_id2name),
+        LOAD_SYMBOL(rb_define_alloc_func),
+        LOAD_SYMBOL(rb_data_object_alloc),
+        LOAD_SYMBOL(rb_gc_mark),
+        LOAD_SYMBOL(rb_yield_values),
         LOAD_SYMBOL(rb_cObject),
         LOAD_SYMBOL(rb_cArray),
         LOAD_SYMBOL(rb_cHash),
@@ -390,6 +395,9 @@ namespace facter { namespace ruby {
         if (!val) {
             return _nil;
         }
+        if (auto ptr = dynamic_cast<ruby_value const*>(val)) {
+            return ptr->value();
+        }
         if (auto ptr = dynamic_cast<string_value const*>(val)) {
             return rb_str_new_cstr(ptr->value().c_str());
         }
@@ -419,45 +427,6 @@ namespace facter { namespace ruby {
             return hash;
         }
         return _nil;
-    }
-
-    unique_ptr<value> api::to_value(VALUE obj) const
-    {
-        if (is_nil(obj)) {
-            return nullptr;
-        }
-        if (is_true(obj)) {
-            return make_value<boolean_value>(true);
-        }
-        if (is_false(obj)) {
-            return make_value<boolean_value>(false);
-        }
-        if (is_string(obj) || is_symbol(obj)) {
-            return make_value<string_value>(to_string(obj));
-        }
-        if (is_fixednum(obj)) {
-            return make_value<integer_value>(rb_num2ulong(obj));
-        }
-        if (is_float(obj)) {
-            return make_value<double_value>(rb_num2dbl(obj));
-        }
-        if (is_array(obj)) {
-            auto array = make_value<array_value>();
-            array_for_each(obj, [&](VALUE element) {
-                 array->add(to_value(element));
-                 return true;
-            });
-            return move(array);
-        }
-        if (is_hash(obj)) {
-            auto hash = make_value<map_value>();
-            hash_for_each(obj, [&](VALUE key, VALUE element) {
-                hash->add(to_string(key), to_value(element));
-                return true;
-            });
-            return move(hash);
-        }
-        return nullptr;
     }
 
     VALUE api::lookup(std::initializer_list<std::string> const& names) const

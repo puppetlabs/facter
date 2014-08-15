@@ -86,13 +86,6 @@ namespace facter { namespace facts {
         virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const = 0;
 
         /**
-         * Notifies the appropriate callback based on the type of the value.
-         * @param name The fact name to pass to the callback.
-         * @param callbacks The callbacks to use to notify.
-         */
-        virtual void notify(std::string const& name, enumeration_callbacks const* callbacks) const = 0;
-
-        /**
           * Writes the value to the given stream.
           * @param os The stream to write to.
           * @param quoted True if string values should be quoted or false if not.

@@ -1,5 +1,4 @@
 #include <facter/facts/scalar_value.hpp>
-#include <facter/facterlib.h>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>
 #include <iomanip>
@@ -32,38 +31,6 @@ namespace facter { namespace facts {
     void scalar_value<double>::to_json(Allocator& allocator, rapidjson::Value& value) const
     {
         value.SetDouble(_value);
-    }
-
-    template <>
-    void scalar_value<string>::notify(string const& name, enumeration_callbacks const* callbacks) const
-    {
-        if (callbacks && callbacks->string) {
-            callbacks->string(name.c_str(), _value.c_str());
-        }
-    }
-
-    template <>
-    void scalar_value<int64_t>::notify(string const& name, enumeration_callbacks const* callbacks) const
-    {
-        if (callbacks && callbacks->integer) {
-            callbacks->integer(name.c_str(), _value);
-        }
-    }
-
-    template <>
-    void scalar_value<bool>::notify(string const& name, enumeration_callbacks const* callbacks) const
-    {
-        if (callbacks && callbacks->boolean) {
-            callbacks->boolean(name.c_str(), _value ? 1 : 0);
-        }
-    }
-
-    template <>
-    void scalar_value<double>::notify(string const& name, enumeration_callbacks const* callbacks) const
-    {
-        if (callbacks && callbacks->dbl) {
-            callbacks->dbl(name.c_str(), _value);
-        }
     }
 
     template <>

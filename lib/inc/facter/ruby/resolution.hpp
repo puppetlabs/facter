@@ -27,45 +27,6 @@ namespace facter { namespace ruby {
     struct resolution : object<resolution>
     {
         /**
-         * Constructs a resolution.
-         * @param ruby The Ruby API to use.
-         * @param self The self value for the resolution.
-         */
-        resolution(api const& ruby, VALUE self);
-
-        /**
-         * Destructs a resolution.
-         */
-        ~resolution();
-
-        /**
-         * Prevents the resolution from being copied.
-         */
-        resolution(resolution const&) = delete;
-        /**
-         * Prevents the resolution from being copied.
-         * @returns Returns this resolution.
-         */
-        resolution& operator=(resolution const&) = delete;
-        /**
-         * Moves the given resolution into this resolution.
-         * @param other The resolution to move into this resolution.
-         */
-        resolution(resolution&& other);
-        /**
-         * Moves the given resolution into this resolution.
-         * @param other The resolution to move into this resolution.
-         * @return Returns this resolution.
-         */
-        resolution& operator=(resolution&& other);
-
-        /**
-         * Resolves to a value.
-         * @return Returns the resolved value or nil if the fact was not resolved.
-         */
-        virtual VALUE resolve() = 0;
-
-        /**
          * Gets the name of the resolution.
          * @return Returns the name of the resolution or nil if the resolution has no name.
          */
@@ -75,7 +36,7 @@ namespace facter { namespace ruby {
          * Sets the name of the resolution.
          * @param name The name of the resolution.
          */
-        void set_name(VALUE name);
+        void name(VALUE name);
 
         /**
          * Gets the weight of the resolution.
@@ -84,49 +45,84 @@ namespace facter { namespace ruby {
          */
         size_t weight() const;
 
-        /** Sets the weight of the resolution.
+        /**
+         * Sets the weight of the resolution.
          * @param weight The weight of the resolution.
          */
-        void set_weight(size_t weight);
+        void weight(size_t weight);
 
         /**
-         * Gets the value of the resolution or nil if the resolution has no value.
-         * @return Returns the value of the resolution or nil if the resolution has no value.
+         * Gets the value of the resolution.
+         * @return Returns the value of the resolution or nil if the value did not resolve.
          */
-        VALUE value() const;
+        virtual VALUE value();
 
         /**
          * Sets the value of the resolution.
-         * @param value The value of the resolution.
+         * @param v The value of the resolution.
          */
-        void set_value(VALUE value);
+        void value(VALUE v);
 
         /**
-         * Determines if the resolution is allowed.
+         * Determines if the resolution is suitable.
          * @param facter The Ruby facter module to resolve facts with.
          * @returns Returns true if the resolution is allowed or false if it is not.
          */
-        bool allowed(module& facter) const;
+        bool suitable(module& facter) const;
+
+        /**
+         * Confines the resolution.
+         * @param confines The confines for the resolution.
+         */
+        void confine(VALUE confines);
+
+        /**
+         * Calls the on_flush block for the resolution, if there is one.
+         */
+        void flush() const;
 
      protected:
         /**
-         * Defines the common resolution methods on the given Ruby class.
-         * @param ruby The Ruby API to use.
-         * @param klass The Ruby class to define the methods on.
+         * Constructs the resolution.
          */
-        static void define_methods(api const& ruby, VALUE klass);
+        resolution();
+
+        /**
+         * Destructs the resolution.
+         */
+        virtual ~resolution();
+
+        /**
+         * Defines the base methods on the given class.
+         * @param klass The Ruby class to define the base methods on.
+         */
+        static void define(VALUE klass);
+
+        /**
+         * Called to mark this object's values during GC.
+         */
+        void mark() const;
 
      private:
-        static VALUE confine_thunk(int argc, VALUE* argv, VALUE self);
-        static VALUE has_weight_thunk(VALUE self, VALUE value);
-        static VALUE name_thunk(VALUE self);
-        static VALUE timeout_thunk(VALUE self, VALUE timeout);
+        // Construction and assignment
+        resolution(resolution const&) = delete;
+        resolution& operator=(resolution const&) = delete;
+        resolution(resolution&& other) = delete;
+        resolution& operator=(resolution&& other) = delete;
+
+        // Methods called from Ruby
+        static VALUE ruby_confine(int argc, VALUE* argv, VALUE self);
+        static VALUE ruby_has_weight(VALUE self, VALUE value);
+        static VALUE ruby_name(VALUE self);
+        static VALUE ruby_timeout(VALUE self, VALUE timeout);
+        static VALUE ruby_on_flush(VALUE self);
 
         VALUE _name;
+        VALUE _value;
+        VALUE _flush_block;
         std::vector<ruby::confine> _confines;
         bool _has_weight;
         size_t _weight;
-        VALUE _value;
     };
 
 }}  // namespace facter::ruby

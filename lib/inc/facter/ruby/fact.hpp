@@ -1,6 +1,6 @@
 /**
  * @file
- * Declares the Ruby Fact class.
+ * Declares the Ruby Facter::Util::Fact class.
  */
 #ifndef FACTER_RUBY_FACT_HPP_
 #define FACTER_RUBY_FACT_HPP_
@@ -22,99 +22,87 @@ namespace facter { namespace ruby {
     struct module;
 
     /**
-     * Represents a Ruby fact containing resolutions.
+     * Represents the Ruby Facter::Util::Fact class.
      */
     struct fact : object<fact>
     {
         /**
-         * Constructs the fact.
-         * @param ruby The Ruby API to use.
+         * Defines the Facter::Util::Fact class.
+         * @return Returns the Facter::Util::Fact class.
+         */
+        static VALUE define();
+
+        /**
+         * Creates an instance of the Facter::Util::Fact class.
          * @param name The name of the fact.
+         * @return Returns the new instance.
          */
-        fact(api const& ruby, std::string const& name);
+        static VALUE create(VALUE name);
 
         /**
-         * Destructs the fact.
+         * Gets the name of the fact.
+         * @return Returns the name of the fact.
          */
-        ~fact();
+        VALUE name() const;
 
         /**
-         * Prevents the fact from being copied.
+         * Gets the value of the fact.
+         * @return Returns the value of the fact.
          */
-        fact(fact const&) = delete;
-        /**
-         * Prevents the fact from being copied.
-         * @returns Returns this fact.
-         */
-        fact& operator=(fact const&) = delete;
-        /**
-         * Moves the given fact into this fact.
-         * @param other The fact to move into this fact.
-         */
-        fact(fact&& other);
-        /**
-         * Moves the given fact into this fact.
-         * @param other The fact to move into this fact.
-         * @return Returns this fact.
-         */
-        fact& operator=(fact&& other);
+        VALUE value();
 
         /**
-         * Defines the Ruby Fact class.
-         * @param ruby the Ruby API to use.
-         * @return Returns the Ruby class that defines the fact.
+         * Sets the value of the fact.
+         * @param v The value of the fact.
          */
-        static VALUE define(api const& ruby);
+        void value(VALUE v);
 
         /**
-         * Finds the resolution by name.
+         * Finds a resolution.
          * @param name The name of the resolution.
-         * @return Returns the resolution's self or nil if no such resolution exists.
+         * @return Returns the resolution or nil if the resolution was not found.
          */
-        VALUE find_resolution(VALUE name);
+        VALUE find_resolution(VALUE name) const;
 
         /**
          * Defines a resolution.
-         * @param name The name of the resolution to define.
-         * @param options The options for defining the resolution.
-         * @return Returns the resolution's self.
+         * @param name The name of the resolution.
+         * @param options The resolution options.
+         * @return Returns the resolution instance.
          */
         VALUE define_resolution(VALUE name, VALUE options);
 
         /**
-         * Gets the value of the fact.
-         * @param facter The Facter module to resolve the fact with.
-         * @return Returns the fact's value or nil if the fact did not resolve.
+         * Flushes all resolutions for the fact and resets the value.
          */
-        VALUE value(module& facter);
-
-        /**
-         * Sets the fact's value.
-         * @param value The value of the fact.
-         */
-        void set_value(VALUE value);
-
-        /**
-         * Determines if the fact was added as part of the Ruby API or internally.
-         * @return Returns true if the fact was added as part of the Ruby API or false if it was internally added.
-         */
-        bool added() const;
-
-        /**
-         * Marks the fact as being added through the Ruby API.
-         */
-        void set_added();
+        void flush();
 
      private:
-        static VALUE value_thunk(VALUE self);
-        static VALUE resolution_thunk(VALUE self, VALUE name);
-        static VALUE define_resolution_thunk(int argc, VALUE* argv, VALUE self);
+        // Construction and assignment
+        fact();
+        fact(fact const&) = delete;
+        fact& operator=(fact const&) = delete;
+        fact(fact&& other) = delete;
+        fact& operator=(fact&& other) = delete;
 
-        std::vector<std::unique_ptr<resolution>> _resolutions;
+        // Ruby lifecycle functions
+        static VALUE alloc(VALUE klass);
+        static void mark(void* data);
+        static void free(void* data);
+
+        // Methods called from Ruby
+        static VALUE ruby_initialize(VALUE self, VALUE name);
+        static VALUE ruby_name(VALUE self);
+        static VALUE ruby_value(VALUE self);
+        static VALUE ruby_resolution(VALUE self, VALUE name);
+        static VALUE ruby_define_resolution(int argc, VALUE* argv, VALUE self);
+        static VALUE ruby_flush(VALUE self);
+
+        VALUE _name;
         VALUE _value;
+        std::vector<VALUE> _resolutions;
         bool _resolved;
         bool _resolving;
-        bool _added;
     };
 
 }}  // namespace facter::ruby

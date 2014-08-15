@@ -15,7 +15,6 @@ set(CMAKE_CXX_FLAGS ${FACTER_CXX_FLAGS})
 
 # Set the common (platform-independent) sources
 set(LIBFACTER_COMMON_SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/src/facterlib.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/array_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/json_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/resolver.cc"
@@ -33,6 +32,7 @@ set(LIBFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/ruby/fact.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/ruby/module.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/ruby/resolution.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/ruby/ruby_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/ruby/simple_resolution.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/directory.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/file.cc"

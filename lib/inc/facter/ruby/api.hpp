@@ -21,8 +21,25 @@ namespace facter { namespace facts {
 
 namespace facter {  namespace ruby {
 
+    /*
+     * Parts of the MRI (Matz's Ruby Interpreter; a.k.a. CRuby) we use is documented here:
+     * https://github.com/ruby/ruby/blob/trunk/README.EXT
+     *
+     * Otherwise, the canonical documentation is unfortunately the MRI source code itself.
+     * A useful index of the various MRI versions can be found here:
+     * http://rxr.whitequark.org/mri/source
+     *
+     */
+
     /**
-     * See MRI documentation.
+     * Represents a MRI VALUE (a Ruby object).
+     * VALUEs can be constants denoting things like true, false, or nil.
+     * They can also be encoded numerical values (Fixnum, for example).
+     * They can also be pointers to a heap-allocated Ruby object (class, module, etc).
+     * The Ruby garbage collector scans the main thread's stack for VALUEs to mark during garbage collection.
+     * Therefore, you may encounter "volatile" VALUES. These are marked simply to ensure the compiler
+     * does not do any optimizations that may prevent the garbage collector from finding them.
+     * This is likely not needed, but it isn't hurting us to do.
      */
     typedef uintptr_t VALUE;
     /**
@@ -35,7 +52,7 @@ namespace facter {  namespace ruby {
     typedef uintptr_t ID;
 
     /**
-     * Macro to cast function pointers to a Ruby method
+     * Macro to cast function pointers to a Ruby method.
      */
     #define RUBY_METHOD_FUNC(x) reinterpret_cast<VALUE(*)(...)>(x)
 
@@ -277,6 +294,26 @@ namespace facter {  namespace ruby {
          * See MRI documentation.
          */
         char const* (* const rb_id2name)(ID);
+        /**
+         * See MRI documentation.
+         */
+        void (* const rb_define_alloc_func)(VALUE, VALUE (*)(VALUE));
+        /**
+         * See MRI documentation.
+         */
+        typedef void (*RUBY_DATA_FUNC)(void*);
+        /**
+         * See MRI documentation.
+         */
+        VALUE (* const rb_data_object_alloc)(VALUE, void*, RUBY_DATA_FUNC, RUBY_DATA_FUNC);
+        /**
+         * See MRI documentation.
+         */
+        void (* const rb_gc_mark)(VALUE);
+        /**
+         * See MRI documentation.
+         */
+        VALUE (* const rb_yield_values)(int n, ...);
 
         /**
          * See MRI documentation.
@@ -464,13 +501,6 @@ namespace facter {  namespace ruby {
          * @return Returns a Ruby object for the value.
          */
         VALUE to_ruby(facter::facts::value const* val) const;
-
-        /**
-         * Converts the given Ruby object to a corresponding value.
-         * @param obj The object to convert.
-         * @return Returns a pointer to the value or nullptr if nil.
-         */
-        std::unique_ptr<facter::facts::value> to_value(VALUE obj) const;
 
         /**
          * Looks up a constant based on the given names.

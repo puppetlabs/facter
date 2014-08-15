@@ -8,33 +8,16 @@ using namespace facter::util;
 
 namespace facter { namespace ruby {
 
-    confine::confine(api const& ruby, VALUE fact, VALUE expected, VALUE block) :
-        _ruby(ruby),
+    confine::confine(VALUE fact, VALUE expected, VALUE block) :
         _fact(fact),
         _expected(expected),
         _block(block)
     {
-        _ruby.rb_gc_register_address(&_fact);
-        _ruby.rb_gc_register_address(&_expected);
-        _ruby.rb_gc_register_address(&_block);
     }
 
-    confine::~confine()
+    confine::confine(confine&& other)
     {
-        _ruby.rb_gc_unregister_address(&_fact);
-        _ruby.rb_gc_unregister_address(&_expected);
-        _ruby.rb_gc_unregister_address(&_block);
-    }
-
-    confine::confine(confine&& other) :
-        _ruby(other._ruby),
-        _fact(other._fact),
-        _expected(other._expected),
-        _block(other._block)
-    {
-        _ruby.rb_gc_register_address(&_fact);
-        _ruby.rb_gc_register_address(&_expected);
-        _ruby.rb_gc_register_address(&_block);
+        *this = move(other);
     }
 
     confine& confine::operator=(confine&& other)
@@ -45,39 +28,50 @@ namespace facter { namespace ruby {
         return *this;
     }
 
-    bool confine::allowed(module& facter) const
+    bool confine::suitable(module& facter) const
     {
+        auto const& ruby = *api::instance();
+
         // If given a fact, either call the block or check the values
-        if (!_ruby.is_nil(_fact)) {
-            volatile VALUE value = facter.normalize(facter.value(_fact));
-            if (_ruby.is_nil(value)) {
+        if (!ruby.is_nil(_fact)) {
+            volatile VALUE value = facter.normalize(facter.fact_value(_fact));
+            if (ruby.is_nil(value)) {
                 return false;
             }
             // Pass the value to the block if given one
-            if (!_ruby.is_nil(_block)) {
-                volatile VALUE result = _ruby.rb_funcall(_block, _ruby.rb_intern("call"), 1, value);
-                return !_ruby.is_nil(result) && !_ruby.is_false(result);
+            if (!ruby.is_nil(_block)) {
+                volatile VALUE result = ruby.rb_funcall(_block, ruby.rb_intern("call"), 1, value);
+                return !ruby.is_nil(result) && !ruby.is_false(result);
             }
 
             // Otherwise, if it's an array, search for the value
-            if (_ruby.is_array(_expected)) {
+            if (ruby.is_array(_expected)) {
                 bool found = false;
-                _ruby.array_for_each(_expected, [&](VALUE expected_value) {
+                ruby.array_for_each(_expected, [&](VALUE expected_value) {
                     expected_value = facter.normalize(expected_value);
-                    found = _ruby.equals(facter.normalize(expected_value), value);
+                    found = ruby.equals(facter.normalize(expected_value), value);
                     return !found;
                 });
                 return found;
             }
             // Compare the value directly
-            return _ruby.equals(facter.normalize(_expected), value);
+            return ruby.equals(facter.normalize(_expected), value);
         }
         // If we have only a block, execute it
-        if (!_ruby.is_nil(_block)) {
-            volatile VALUE result = _ruby.rb_funcall(_block, _ruby.rb_intern("call"), 0);
-            return !_ruby.is_nil(result) && !_ruby.is_false(result);
+        if (!ruby.is_nil(_block)) {
+            volatile VALUE result = ruby.rb_funcall(_block, ruby.rb_intern("call"), 0);
+            return !ruby.is_nil(result) && !ruby.is_false(result);
         }
         return false;
+    }
+
+    void confine::mark() const
+    {
+        // Mark all VALUEs contained in the confine
+        auto const& ruby = *api::instance();
+        ruby.rb_gc_mark(_fact);
+        ruby.rb_gc_mark(_expected);
+        ruby.rb_gc_mark(_block);
     }
 
 }}  // namespace facter::ruby

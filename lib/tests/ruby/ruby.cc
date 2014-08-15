@@ -1,4 +1,5 @@
 #include <gmock/gmock.h>
+#include <facter/version.h>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/ruby/api.hpp>
@@ -8,6 +9,8 @@
 #include <facter/logging/logging.hpp>
 #include <facter/version.h>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/log/sinks/sync_frontend.hpp>
+#include <boost/log/sinks/basic_sink_backend.hpp>
 #include <memory>
 #include <tuple>
 #include <vector>
@@ -15,9 +18,6 @@
 #include <string>
 #include <map>
 #include "../fixtures.hpp"
-
-#include <boost/log/sinks/sync_frontend.hpp>
-#include <boost/log/sinks/basic_sink_backend.hpp>
 
 using namespace std;
 using namespace facter::facts;
@@ -61,6 +61,7 @@ struct ruby_test_parameters
 {
     ruby_test_parameters(string const& file, string const& fact, string const& value, map<string, string> const& facts = map<string, string>()) :
         file(file),
+        level(log_level::fatal),
         failure_expected(false),
         fact(fact),
         expected(value),
@@ -68,8 +69,9 @@ struct ruby_test_parameters
     {
     }
 
-    ruby_test_parameters(string const& file, vector<pair<string, string>> const& messages, bool failure = false) :
+    ruby_test_parameters(string const& file, log_level level, vector<pair<string, string>> const& messages, bool failure = false) :
         file(file),
+        level(level),
         failure_expected(failure),
         messages(messages)
     {
@@ -77,6 +79,7 @@ struct ruby_test_parameters
 
     ruby_test_parameters(string const& file, string const& fact) :
         file(file),
+        level(log_level::fatal),
         failure_expected(false),
         fact(fact)
     {
@@ -84,6 +87,7 @@ struct ruby_test_parameters
 
     ruby_test_parameters(string const& file, string const& fact, map<string, string> const& facts) :
         file(file),
+        level(log_level::fatal),
         failure_expected(false),
         fact(fact),
         facts(facts)
@@ -91,6 +95,7 @@ struct ruby_test_parameters
     }
 
     string file;
+    log_level level;
     bool failure_expected;
     string fact;
     string expected;
@@ -133,7 +138,7 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
             return false;
         }
 
-        module mod(*ruby, _facts);
+        module mod(_facts);
 
         VALUE result = ruby->rescue([&]() {
             // Do not construct C++ objects in a rescue callback
@@ -148,7 +153,8 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
             return ruby->false_value();
         });
 
-        mod.resolve();
+        mod.resolve_facts();
+
         return ruby->is_true(result);
     }
 
@@ -169,7 +175,7 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
         _sink.reset(new sink_t(_appender));
 
         auto core = boost::log::core::get();
-        core->set_filter(log_level_attr >= log_level::debug);
+        core->set_filter(log_level_attr >= GetParam().level);
         core->add_sink(_sink);
     }
 
@@ -200,10 +206,10 @@ TEST_P(facter_ruby, load)
     auto const& expected_messages = GetParam().messages;
     auto const& messages = _appender->messages();
     if (!expected_messages.empty()) {
-        ASSERT_EQ(expected_messages.size(), messages.size());
-        for (size_t i = 0; i < expected_messages.size(); ++i) {
-            ASSERT_EQ(expected_messages[i].first, messages[i].first);
-            ASSERT_TRUE(re_search(messages[i].second, expected_messages[i].second));
+        for (auto const& expected : expected_messages) {
+            ASSERT_TRUE(find_if(messages.begin(), messages.end(), [&](pair<string, string> const& m) {
+                return m.first == expected.first && re_search(m.second, expected.second);
+            }) != messages.end());
         }
         return;
     }
@@ -225,8 +231,8 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("simple.rb", "foo", "\"bar\""),
     ruby_test_parameters("simple_resolution.rb", "foo", "\"bar\""),
     ruby_test_parameters("empty_fact.rb", "foo"),
-    ruby_test_parameters("empty_fact_with_value.rb", "foo", "{\"array\"=>[1, 2, 3], \"bool_false\"=>false, \"bool_true\"=>true, \"double\"=>12.34, \"int\"=>1, \"string\"=>\"foo\"}"),
-    ruby_test_parameters("empty_command.rb", { { "ERROR", "expected a non-empty String for first argument" } }, true),
+    ruby_test_parameters("empty_fact_with_value.rb", "foo", "{\"int\"=>1, \"bool_true\"=>true, \"bool_false\"=>false, \"double\"=>12.34, \"string\"=>\"foo\", \"array\"=>[1, 2, 3]}"),
+    ruby_test_parameters("empty_command.rb", log_level::error, { { "ERROR", "expected a non-empty String for first argument" } }, true),
     ruby_test_parameters("simple_command.rb", "foo", "\"bar\""),
     ruby_test_parameters("confine_missing_fact.rb", "foo", { { "kernel", "linux" } }),
     ruby_test_parameters("bad_command.rb", "foo"),
@@ -234,7 +240,7 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("simple_confine.rb", "foo"),
     ruby_test_parameters("multi_confine.rb", "foo", "\"bar\"", { {"FACT1", "VALUE1"}, { "Fact2", "Value2" }, { "fact3", "value3" } }),
     ruby_test_parameters("multi_confine.rb", "foo"),
-    ruby_test_parameters("bad_syntax.rb", { { "ERROR", "undefined method `foo' for Facter:Module" } }, true),
+    ruby_test_parameters("bad_syntax.rb", log_level::error, { { "ERROR", "undefined method `foo' for Facter:Module" } }, true),
     ruby_test_parameters("block_confine.rb", "foo"),
     ruby_test_parameters("block_confine.rb", "foo", "\"bar\"", { { "fact1", "value1" } }),
     ruby_test_parameters("block_nil_confine.rb", "foo"),
@@ -251,29 +257,29 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("boolean_false_fact.rb", "foo", "false"),
     ruby_test_parameters("double_fact.rb", "foo", "12.34"),
     ruby_test_parameters("array_fact.rb", "foo", "[1, true, false, \"foo\", 12.4, [1], {\"foo\"=>\"bar\"}]"),
-    ruby_test_parameters("hash_fact.rb", "foo", "{\"array\"=>[1, 2, 3], \"bool_false\"=>false, \"bool_true\"=>true, \"double\"=>12.34, \"int\"=>1, \"string\"=>\"foo\"}"),
+    ruby_test_parameters("hash_fact.rb", "foo", "{\"int\"=>1, \"bool_true\"=>true, \"bool_false\"=>false, \"double\"=>12.34, \"string\"=>\"foo\", \"array\"=>[1, 2, 3]}"),
     ruby_test_parameters("value.rb", "foo", "\"baz\"", { { "bar", "baz" } }),
     ruby_test_parameters("fact.rb", "foo", "\"baz\"", { { "bar", "baz" } }),
     ruby_test_parameters("lookup.rb", "foo", "\"baz\"", { { "bar", "baz" } }),
     ruby_test_parameters("which.rb", "foo", "\"bar\""),
-    ruby_test_parameters("debug.rb", { { "DEBUG", "^message1$" }, { "DEBUG", "^message2$" } }),
-    ruby_test_parameters("debugonce.rb", { { "DEBUG", "^unique debug1$" }, { "DEBUG", "^unique debug2$" } }),
-    ruby_test_parameters("warn.rb", { { "WARN", "^message1$" }, { "WARN", "^message2$" } }),
-    ruby_test_parameters("warnonce.rb", { { "WARN", "^unique warning1$" }, { "WARN", "^unique warning2$" } }),
-    ruby_test_parameters("log_exception.rb", { { "ERROR", "^what's up doc\\?" } }),
+    ruby_test_parameters("debug.rb", log_level::debug, { { "DEBUG", "^message1$" }, { "DEBUG", "^message2$" } }),
+    ruby_test_parameters("debugonce.rb", log_level::debug, { { "DEBUG", "^unique debug1$" }, { "DEBUG", "^unique debug2$" } }),
+    ruby_test_parameters("warn.rb", log_level::warning, { { "WARN", "^message1$" }, { "WARN", "^message2$" } }),
+    ruby_test_parameters("warnonce.rb", log_level::warning, { { "WARN", "^unique warning1$" }, { "WARN", "^unique warning2$" } }),
+    ruby_test_parameters("log_exception.rb", log_level::error, { { "ERROR", "^what's up doc\\?" } }),
     ruby_test_parameters("named_resolution.rb", "foo", "\"value2\""),
     ruby_test_parameters("define_fact.rb", "foo", "\"bar\""),
-    ruby_test_parameters("cycle.rb", { { "ERROR", "cycle detected while requesting value of fact \"bar\"" } }),
+    ruby_test_parameters("cycle.rb", log_level::error, { { "ERROR", "cycle detected while requesting value of fact \"bar\"" } }),
     ruby_test_parameters("aggregate.rb", "foo", "[\"foo\", \"bar\"]"),
     ruby_test_parameters("aggregate_with_require.rb", "foo", "[\"foo\", \"bar\", \"foo\", \"baz\", \"foo\", \"bar\", \"foo\"]"),
-    ruby_test_parameters("aggregate_invalid_require.rb", { { "ERROR", "expected a Symbol or Array of Symbol for require option" } }, true),
+    ruby_test_parameters("aggregate_invalid_require.rb", log_level::error, { { "ERROR", "expected a Symbol or Array of Symbol for require option" } }, true),
     ruby_test_parameters("aggregate_with_block.rb", "foo", "10"),
-    ruby_test_parameters("aggregate_with_merge.rb", "foo", "{\"array\"=>[1, 2, 3, 4, 5, 6], \"baz\"=>\"jam\", \"foo\"=>\"bar\", \"hash\"=>{\"foo\"=>\"bar\", \"jam\"=>\"cakes\", \"subarray\"=>[\"hello\", \"world\"]}}"),
-    ruby_test_parameters("aggregate_with_invalid_merge.rb", { { "ERROR", "cannot merge \"hello\":String and \"world\":String" } }),
-    ruby_test_parameters("aggregate_with_cycle.rb", { { "ERROR", "chunk dependency cycle detected" } }),
+    ruby_test_parameters("aggregate_with_merge.rb", "foo", "{\"foo\"=>\"bar\", \"array\"=>[1, 2, 3, 4, 5, 6], \"hash\"=>{\"jam\"=>\"cakes\", \"subarray\"=>[\"hello\", \"world\"], \"foo\"=>\"bar\"}, \"baz\"=>\"jam\"}"),
+    ruby_test_parameters("aggregate_with_invalid_merge.rb", log_level::error, { { "ERROR", "cannot merge \"hello\":String and \"world\":String" } }),
+    ruby_test_parameters("aggregate_with_cycle.rb", log_level::error, { { "ERROR", "chunk dependency cycle detected" } }),
     ruby_test_parameters("define_aggregate_fact.rb", "foo", "[\"foo\", \"bar\"]"),
-    ruby_test_parameters("existing_simple_resolution.rb", { { "ERROR", "cannot define an aggregate resolution with name \"bar\": a simple resolution with the same name already exists" } }, true),
-    ruby_test_parameters("existing_aggregate_resolution.rb", { { "ERROR", "cannot define a simple resolution with name \"bar\": an aggregate resolution with the same name already exists" } }, true),
+    ruby_test_parameters("existing_simple_resolution.rb", log_level::error, { { "ERROR", "cannot define an aggregate resolution with name \"bar\": a simple resolution with the same name already exists" } }, true),
+    ruby_test_parameters("existing_aggregate_resolution.rb", log_level::error, { { "ERROR", "cannot define a simple resolution with name \"bar\": an aggregate resolution with the same name already exists" } }, true),
     ruby_test_parameters("version.rb", "foo", { { "DEBUG", LIBFACTER_VERSION } }),
     ruby_test_parameters("boolean_false_confine.rb", "foo", { { "fact", "true" } }),
     ruby_test_parameters("boolean_true_confine.rb", "foo", "\"bar\"", { { "fact", "true" } }),

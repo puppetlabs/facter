@@ -17,32 +17,18 @@ namespace facter { namespace ruby {
     struct chunk
     {
         /**
-         * Constructs a chunk.
-         * @param ruby The Ruby API to use.
+         * Constructs an aggregate resolution chunk.
          * @param dependencies The symbol or array of symbols this chunk depends on.
          * @param block The block to run to resolve the chunk.
          */
-        chunk(api const& ruby, VALUE dependencies, VALUE block);
+        chunk(VALUE dependencies, VALUE block);
 
-        /**
-         * Destructs a chunk.
-         */
-        ~chunk();
-
-        /**
-         * Prevents the chunk from being copied.
-         */
-        chunk(chunk const&) = delete;
-        /**
-         * Prevents the chunk from being copied.
-         * @returns Returns this chunk.
-         */
-        chunk& operator=(chunk const&) = delete;
         /**
          * Moves the given chunk into this chunk.
          * @param other The chunk to move into this chunk.
          */
         chunk(chunk&& other);
+
         /**
          * Moves the given chunk into this chunk.
          * @param other The chunk to move into this chunk.
@@ -67,7 +53,7 @@ namespace facter { namespace ruby {
          * Sets the chunk's dependencies.
          * @param dependencies The chunk's dependencies.
          */
-        void set_dependencies(VALUE dependencies);
+        void dependencies(VALUE dependencies);
 
         /**
          * Gets the chunk's block.
@@ -79,10 +65,15 @@ namespace facter { namespace ruby {
          * Sets the chunk's block.
          * @param block The chunk's block.
          */
-        void set_block(VALUE block);
+        void block(VALUE block);
 
      private:
-        api const& _ruby;
+        chunk(chunk const&) = delete;
+        chunk& operator=(chunk const&) = delete;
+        void mark() const;
+
+        friend struct aggregate_resolution;
+
         VALUE _dependencies;
         VALUE _block;
         VALUE _value;

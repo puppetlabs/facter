@@ -1,6 +1,6 @@
 /**
  * @file
- * Declares the Ruby aggregate resolution class.
+ * Declares the Ruby Facter::Core::Aggregate class.
  */
 #ifndef FACTER_RUBY_AGGREGATE_RESOLUTION_HPP_
 #define FACTER_RUBY_AGGREGATE_RESOLUTION_HPP_
@@ -13,70 +13,65 @@
 namespace facter { namespace ruby {
 
     /**
-     * Represents the "aggregate" resolution that uses "chunk" and "aggregate".
+     * Represents the Ruby Facter::Core::Aggregate class.
      */
     struct aggregate_resolution : resolution
     {
         /**
-         * Constructs a aggregate resolution.
-         * @param ruby The Ruby API to use.
+         * Defines the Facter::Core::Aggregate class.
+         * @return Returns the Facter::Core::Aggregate class.
          */
-        explicit aggregate_resolution(api const& ruby);
+        static VALUE define();
 
         /**
-         * Destructs the aggregate resolution.
+         * Creates an instance of the Facter::Core::Aggregate class.
+         * @return Returns the new instance.
          */
-        ~aggregate_resolution();
+        static VALUE create();
 
         /**
-         * Prevents the aggregate_resolution from being copied.
+         * Gets the value of the resolution.
+         * @return Returns the value of the resolution or nil if the value did not resolve.
          */
-        aggregate_resolution(aggregate_resolution const&) = delete;
-        /**
-         * Prevents the aggregate_resolution from being copied.
-         * @returns Returns this aggregate_resolution.
-         */
-        aggregate_resolution& operator=(aggregate_resolution const&) = delete;
-        /**
-         * Moves the given aggregate_resolution into this aggregate_resolution.
-         * @param other The aggregate_resolution to move into this aggregate_resolution.
-         */
-        aggregate_resolution(aggregate_resolution&& other);
-        /**
-         * Moves the given aggregate_resolution into this aggregate_resolution.
-         * @param other The aggregate_resolution to move into this aggregate_resolution.
-         * @return Returns this aggregate_resolution.
-         */
-        aggregate_resolution& operator=(aggregate_resolution&& other);
-
-        /**
-         * Defines the Ruby aggregate resolution class.
-         * @param ruby the Ruby API to use.
-         * @return Returns the Ruby class that defines the aggregate resolution.
-         */
-        static VALUE define(api const& ruby);
-
-        /**
-         * Resolves to a value.
-         * @return Returns the resolved value or nil if the fact was not resolved.
-         */
-        virtual VALUE resolve();
+        virtual VALUE value();
 
         /**
          * Finds the value of the given chunk.
          * @param name The name of the chunk to find the value of.
          * @return Returns the value of the chunk or nil if the chunk is not found.
          */
-        VALUE find_chunk(std::string const& name);
+        VALUE find_chunk(VALUE name);
+
+        /**
+         * Defines a chunk.
+         * @param name The name of the chunk.
+         * @param options The options for defining the chunk.
+         */
+        void define_chunk(VALUE name, VALUE options);
 
      private:
-        static VALUE chunk_thunk(int argc, VALUE* argv, VALUE self);
-        static VALUE aggregate_thunk(VALUE self);
-        static VALUE deep_merge(api const& ruby, VALUE left, VALUE right);
-        static VALUE merge_hashes(VALUE proc, VALUE proc_value, int argc, VALUE* argv);
+        // Construction and assignment
+        aggregate_resolution();
+        aggregate_resolution(aggregate_resolution const&) = delete;
+        aggregate_resolution& operator=(aggregate_resolution const&) = delete;
+        aggregate_resolution(aggregate_resolution&& other) = delete;
+        aggregate_resolution& operator=(aggregate_resolution&& other) = delete;
 
-        VALUE _aggregate;
-        std::map<std::string, chunk> _chunks;
+        // Ruby lifecycle functions
+        static VALUE alloc(VALUE klass);
+        static void mark(void* data);
+        static void free(void* data);
+
+        // Methods called from Ruby
+        static VALUE ruby_chunk(int argc, VALUE* argv, VALUE self);
+        static VALUE ruby_aggregate(VALUE self);
+        static VALUE ruby_merge_hashes(VALUE proc, VALUE proc_value, int argc, VALUE* argv);
+
+        // Helper functions
+        static VALUE deep_merge(api const& ruby, VALUE left, VALUE right);
+
+        VALUE _block;
+        std::map<VALUE, ruby::chunk> _chunks;
     };
 
 }}  // namespace facter::ruby

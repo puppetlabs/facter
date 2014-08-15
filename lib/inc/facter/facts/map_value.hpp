@@ -83,13 +83,6 @@ namespace facter { namespace facts {
         virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
 
         /**
-         * Notifies the appropriate callback based on the type of the value.
-         * @param name The fact name to pass to the callback.
-         * @param callbacks The callbacks to use to notify.
-         */
-        virtual void notify(std::string const& name, enumeration_callbacks const* callbacks) const;
-
-        /**
          * Gets the value in the map of the given name.
          * @tparam T The expected type of the value.
          * @param name The name of the value in the map to get.

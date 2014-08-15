@@ -1,7 +1,8 @@
-#include <facter/facterlib.h>
+#include <facter/version.h>
 #include <facter/facts/collection.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/ruby/api.hpp>
+#include <facter/ruby/module.hpp>
 #include <facter/util/string.hpp>
 #include <boost/program_options.hpp>
 
@@ -150,7 +151,7 @@ int main(int argc, char **argv)
 
         // Check for printing the version
         if (vm.count("version")) {
-            cout << get_facter_version() << endl;
+            cout << LIBFACTER_VERSION << endl;
             return EXIT_SUCCESS;
         }
 
@@ -199,7 +200,8 @@ int main(int argc, char **argv)
         }
 
         if (ruby) {
-            facts.add_custom_facts(*ruby, custom_directories);
+            module mod(facts, custom_directories);
+            mod.resolve_facts();
         }
 
         // Filter to only the requested facts
