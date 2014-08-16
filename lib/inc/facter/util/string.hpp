@@ -217,6 +217,21 @@ namespace facter { namespace util {
      */
     typedef std::basic_string<char, ci_char_traits> ci_string;
 
+    /**
+     * Converts a size, in bytes, to a corresponding string using SI-prefixed units.
+     * @param size The size in bytes.
+     * @return Returns the size in largest SI unit greater than 1 (e.g. 4.05 GiB, 5.20 MiB, etc).
+     */
+    std::string si_string(uint64_t size);
+
+    /**
+     * Converts an amount used to a percentage.
+     * @param used The amount used out of the total.
+     * @param total The total amount.
+     * @return Returns the percentage (e.g. "41.53%"), to two decimal places, as a string.
+     */
+    std::string percentage(uint64_t used, uint64_t total);
+
 }}  // namespace facter::util
 
 #endif  // FACTER_UTIL_STRING_HPP_
