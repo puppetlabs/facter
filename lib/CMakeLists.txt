@@ -47,6 +47,7 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/posix/execution_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/dmi_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/id_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/filesystem_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/kernel_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/operating_system_resolver.cc"
@@ -71,9 +72,10 @@ endif()
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     list(REMOVE_ITEM LIBFACTER_POSIX_SOURCES "${CMAKE_CURRENT_LIST_DIR}/src/ruby/posix/api.cc")
     set(LIBFACTER_PLATFORM_SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/dmi_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/filesystem_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/uptime_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/dmi_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/collection.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/processor_resolver.cc"
