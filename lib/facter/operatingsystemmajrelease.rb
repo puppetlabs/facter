@@ -11,12 +11,11 @@
 #
 # Caveats:
 #   Supports the following operating systems: "Alpine" "Amazon" "Archlinux"
-#   "Ascendos" "Bluewhite64" "CentOS" "CloudLinux" 
-#   "Debian" "Fedora" "Gentoo" "Mandrake" "Mandriva" "MeeGo" "OEL" "OpenSuSE" 
-#   "OracleLinux" "OVS" "PSBM" "RedHat" "Scientific" "Slackware" "Slamd64" "SLC"
-#   "SLED" "SLES" "SuSE" "Ubuntu" "VMWareESX"
+#   "Ascendos" "Bluewhite64" "CentOS" "CloudLinux" "Debian" "Fedora" "Gentoo"
+#   "Mandrake" "Mandriva" "MeeGo" "OEL" "OpenSuSE" "OracleLinux" "OVS" "PSBM"
+#   "RedHat" "Scientific" "Slackware" "Slamd64" "SLC" "SLED" "SLES" "SuSE"
+#   "Ubuntu" "VMWareESX"
 #
-
 Facter.add(:operatingsystemmajrelease) do
   confine :operatingsystem => [
     :Amazon,
@@ -30,7 +29,11 @@ Facter.add(:operatingsystemmajrelease) do
     :RedHat,
     :Scientific,
     :SLC,
-    :CumulusLinux
+    :CumulusLinux,
+    :SLED,
+    :SLES,
+    :OpenSuSE,
+    :SuSE
   ]
   setcode do
     Facter.value('operatingsystemrelease').split('.').first
