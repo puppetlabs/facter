@@ -84,6 +84,30 @@
         "operatingsystemmajrelease" : { "type": "string" },
         "operatingsystemrelease" : { "type": "string" },
         "osfamily" : { "type": "string" },
+        "os" : { "type": "object",
+          "properties": {
+            "name" : { "type": "string" },
+            "family" : { "type": "string" },
+            "release" : { "type": "object",
+              "properties": {
+                "major" : { "type": "string" },
+                "minor" : { "type": "string" },
+                "full" : { "type": "string" }
+              }
+            },
+            "lsb" : { "type": "object",
+              "properties": {
+                "distcodename" : { "type": "string" },
+                "distid" : { "type": "string" },
+                "distdescription" : { "type": "string" },
+                "distrelease" : { "type": "string" },
+                "release": { "type": "string" },
+                "majdistrelease" : { "type": "string" },
+                "minordistrelease" : { "type": "string" }
+              }
+            }
+          }
+        },
         "path" : { "type": "string" },
         "partitions" : { "type": "object",
             "patternProperties": {

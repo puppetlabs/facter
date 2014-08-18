@@ -3,23 +3,28 @@
 require 'spec_helper'
 
 describe "lsbdistrelease fact" do
+  let(:os_hash) { { "name"          => "SomeOS",
+                    "family"        => "SomeFamily",
+                    "release"       => {
+                      "major" => "1",
+                      "minor" => "2",
+                      "full"  => "1.2.3"
+                    },
+                    "lsb"           => {
+                       "distcodename"      => "SomeCodeName",
+                       "distid"            => "SomeID",
+                       "distdescription"   => "SomeDesc",
+                       "distrelease"       => "1.2.3",
+                       "release"           => "1.2.3",
+                       "majdistrelease"    => "1",
+                       "minordistrelease"  => "2"
+                    },
+                  }
+                }
 
-  [ "Linux", "GNU/kFreeBSD"].each do |kernel|
-    describe "on #{kernel}" do
-      before :each do
-        Facter.fact(:kernel).stubs(:value).returns kernel
-      end
-
-      it "should return the release through lsb_release -r -s 2>/dev/null" do
-        Facter::Core::Execution.stubs(:execute).with('lsb_release -r -s 2>/dev/null', anything).returns '2.1'
-        Facter.fact(:lsbdistrelease).value.should == '2.1'
-      end
-
-      it "should return nil if lsb_release is not installed" do
-        Facter::Core::Execution.stubs(:execute).with('lsb_release -r -s 2>/dev/null', anything).returns nil
-        Facter.fact(:lsbdistrelease).value.should be_nil
-      end
-    end
+  it "should use the 'distrelease' key of the 'os' fact" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact("os").stubs(:value).returns(os_hash)
+    Facter.fact(:lsbdistrelease).value.should eq "1.2.3"
   end
-
 end
