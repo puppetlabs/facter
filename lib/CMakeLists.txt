@@ -95,6 +95,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/block_device_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/dmi_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/filesystem_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/lsb_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/operating_system_resolver.cc"
