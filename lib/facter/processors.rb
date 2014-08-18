@@ -17,6 +17,10 @@
 require 'facter/processors/os'
 
 Facter.add(:processors, :type => :aggregate) do
+  confine do
+    !os.nil?
+  end
+
   def os
     @os ||= Facter::Processors.implementation
   end
