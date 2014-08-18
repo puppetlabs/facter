@@ -106,6 +106,9 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/virtualization_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/bsd/scoped_ifaddrs.cc"
     )
+    set(LIBFACTER_PLATFORM_LIBRARIES
+        ${BLKID_LIBRARIES}
+    )
 endif()
 
 # Set include directories
@@ -132,6 +135,7 @@ target_link_libraries(libfacter
     ${Boost_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
+    ${LIBFACTER_PLATFORM_LIBRARIES}
 )
 
 set_target_properties(libfacter PROPERTIES PREFIX "" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}")

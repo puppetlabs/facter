@@ -14,12 +14,13 @@ Build Requirements
 * Boost C++ Libraries >= 1.54
 * OpenSSL >= 1.0.1.g
 * yaml-cpp >= 0.5.1
+* libblkid (Linux only)
 
 ### Setup on Fedora 20
 
 The following will install all required tools and libraries:
 
-    yum install cmake boost-devel openssl-devel yaml-cpp-devel
+    yum install cmake boost-devel openssl-devel yaml-cpp-devel libblkid-devel
 
 ### Setup on Mac OSX Mavericks (homebrew)
 
@@ -33,7 +34,7 @@ The following will install all required libraries:
 
 The following will install most required tools and libraries:
 
-    apt-get install build-essential cmake libboost-all-dev libssl-dev libyaml-cpp-dev
+    apt-get install build-essential cmake libboost-all-dev libssl-dev libyaml-cpp-dev libblkid-dev
 
 
 Pre-Build
