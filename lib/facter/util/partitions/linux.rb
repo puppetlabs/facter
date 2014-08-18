@@ -51,7 +51,7 @@ module Facter::Util::Partitions
 
     def self.filesystem(partition)
       if Facter::Core::Execution.which('blkid')
-        Facter::Core::Execution.exec("blkid #{File.join('/dev', partition)}").scan(/TYPE="(.+)"/).flatten.first
+        Facter::Core::Execution.exec("blkid #{File.join('/dev', partition)}").scan(/TYPE="([^"]*)"/).flatten.first
       end
     end
     
