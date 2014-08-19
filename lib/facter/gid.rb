@@ -1,11 +1,12 @@
 # Fact: gid
 #
-# Purpose: Return the gid of the user running Puppet
+# Purpose: Return the GID (group identifier) of the user running puppet.
 #
 # Resolution:
 #
 # Caveats:
-# Not supported in windows yet.
+#   Not supported in Windows yet.
+#
 
 Facter.add(:gid) do
   confine do
