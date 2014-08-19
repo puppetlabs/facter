@@ -1,29 +1,29 @@
 # Fact: os
 #
-#  Purpose:
-#     Return various facts related to the machine's operating system.
+# Purpose:
+#   Return various facts related to the machine's operating system.
 #
-#  Resolution:
-#    For operatingsystem, if the kernel is a Linux kernel, check for the
-#    existence of a selection of files in `/etc` to find the specific flavor.
-#    On SunOS based kernels, attempt to determine the flavor, otherwise return Solaris.
-#    On systems other than Linux, use the kernel value.
+# Resolution:
+#   For operatingsystem, if the kernel is a Linux kernel, check for the
+#   existence of a selection of files in `/etc` to find the specific flavor.
+#   On SunOS based kernels, attempt to determine the flavor, otherwise return Solaris.
+#   On systems other than Linux, use the kernel value.
 #
-#    For operatingsystemrelease, on RedHat derivatives, we return their `/etc/<varient>-release` file.
-#    On Debian, returns `/etc/debian_version`.
-#    On Ubuntu, parses `/etc/lsb-release` for the release version
-#    On Suse and derivatives, parses `/etc/SuSE-release` for a selection of version information.
-#    On Slackware, parses `/etc/slackware-version`.
-#    On Amazon Linux, returns the lsbdistrelease fact's value.
-#    On Mageia, parses `/etc/mageia-release` for the release version.
-#    On all remaining systems, returns the kernelrelease fact's value.
+#   For operatingsystemrelease, on RedHat derivatives, we return their `/etc/<varient>-release` file.
+#   On Debian, returns `/etc/debian_version`.
+#   On Ubuntu, parses `/etc/lsb-release` for the release version
+#   On Suse and derivatives, parses `/etc/SuSE-release` for a selection of version information.
+#   On Slackware, parses `/etc/slackware-version`.
+#   On Amazon Linux, returns the lsbdistrelease fact's value.
+#   On Mageia, parses `/etc/mageia-release` for the release version.
+#   On all remaining systems, returns the kernelrelease fact's value.
 #
-#    For the lsb facts, uses the `lsb_release` system command.
+#   For the lsb facts, uses the `lsb_release` system command.
 #
-#   Caveats:
-#     Lsb facts only work on Linux (and the kfreebsd derivative) systems.
-#     Requires the `lsb_release` program, which may not be installed by default.
-#     It is only as accurate as the ourput of lsb_release.
+# Caveats:
+#   Lsb facts only work on Linux (and the kfreebsd derivative) systems.
+#   Requires the `lsb_release` program, which may not be installed by default.
+#   It is only as accurate as the ourput of lsb_release.
 #
 
 require 'facter/operatingsystem/implementation'

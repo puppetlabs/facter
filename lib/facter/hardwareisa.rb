@@ -4,7 +4,7 @@
 #   Returns hardware processor type.
 #
 # Resolution:
-#   On Solaris, AIX, Linux and the BSDs simply uses the output of `uname -p`
+#   On Solaris, AIX, Linux and the BSDs simply uses the output of `uname -p`.
 #   On HP-UX, `uname -m` gives us the same information.
 #
 # Caveats:
