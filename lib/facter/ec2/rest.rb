@@ -21,7 +21,7 @@ module Facter
 
         begin
           Timeout.timeout(timeout) do
-            open(@baseurl).read
+            open(@baseurl, :proxy => nil).read
           end
           able_to_connect = true
         rescue OpenURI::HTTPError => e

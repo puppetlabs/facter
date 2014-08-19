@@ -15,7 +15,7 @@ shared_examples_for "an ec2 rest querier" do
     end
 
     it "is false if the given uri returns a 404" do
-      subject.expects(:open).with(anything).once.raises(OpenURI::HTTPError.new("404 Not Found", StringIO.new("woo")))
+      subject.expects(:open).with(anything, :proxy => nil).once.raises(OpenURI::HTTPError.new("404 Not Found", StringIO.new("woo")))
       expect(subject).to_not be_reachable
     end
 
