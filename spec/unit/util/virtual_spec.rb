@@ -223,6 +223,14 @@ describe Facter::Util::Virtual do
     Facter::Util::Virtual.should be_kvm
   end
 
+  it "should detect kvm on SunOS" do
+    FileTest.stubs(:exists?).with("/proc/cpuinfo").returns(false)
+    Facter.fact(:kernel).stubs(:value).returns("SunOS")
+    FileTest.stubs(:exists?).with("/usr/sbin/prtconf").returns(true)
+    Facter::Core::Execution.stubs(:exec).with("/usr/sbin/prtconf -v").returns("Qemu virtual machine")
+    Facter::Util::Virtual.should be_kvm
+  end
+
   it "should identify FreeBSD jail when in jail" do
     Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
     Facter::Core::Execution.stubs(:exec).with("/sbin/sysctl -n security.jail.jailed").returns("1")

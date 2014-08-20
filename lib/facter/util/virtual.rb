@@ -95,8 +95,10 @@ module Facter::Util::Virtual
        File.read("/proc/cpuinfo")
      elsif ["FreeBSD", "OpenBSD"].include? Facter.value(:kernel)
        Facter::Util::POSIX.sysctl("hw.model")
+     elsif Facter.value(:kernel) == "SunOS" and FileTest.exists?("/usr/sbin/prtconf")
+       Facter::Core::Execution.exec("/usr/sbin/prtconf -v")
      end
-     (txt =~ /QEMU Virtual CPU/) ? true : false
+     (txt =~ /QEMU Virtual (CPU|Machine)/i) ? true : false
   end
 
   def self.virtualbox?
