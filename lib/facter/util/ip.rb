@@ -206,11 +206,13 @@ module Facter::Util::IP
   # @param label [String] the attribute of the interface to obtain a value for,
   # e.g. "netmask" or "ipaddress"
   #
+  # @param intalias [Integer] the alias number to obtain a value for
+  #
   # @api private
   #
   # @return [String] representing the requested value.  An empty array is
   # returned if the kernel is not supported by the REGEX_MAP constant.
-  def self.get_interface_value(interface, label)
+  def self.get_interface_value(interface, label, intalias = -1)
     if Facter.value(:kernel) == 'windows'
       require 'facter/util/ip/windows'
       return Facter::Util::IP::Windows.value_for_interface_and_label(interface, label)
@@ -252,11 +254,65 @@ module Facter::Util::IP
       end
 
       if tmp1
-        value = tmp1.shift
+        (-1..intalias).each do |i|
+          value = tmp1.shift
+        end
+        value
       end
     end
   end
 
+  ##
+  # get_alias_no obtains alias count for a specified interface and label
+  #
+  # @param interface [String] the interface identifier, e.g. "eth0" or "bond0"
+  #
+  # @param label [String] the attribute of the interface to obtain a value for,
+  # e.g. "netmask" or "ipaddress" (note eg. ipaddress and ipaddress6 can have different
+  # number of aliases, so label does make sense here)
+  #
+  # @api private
+  #
+  # @return [Integer] representing the requested value.  0 is returned if the
+  # kernel is not supported by the REGEX_MAP constant and on Windows.
+  def self.get_alias_no(interface, label)
+    if Facter.value(:kernel) == 'windows'
+      # No handling of aliases in util/ip/windows as yet
+      return 0
+    end
+
+    tmp1 = []
+
+    kernel = Facter.value(:kernel).downcase.to_sym
+
+    # If it's not directly in the map or aliased in the map, then we don't know how to deal with it.
+    unless map = REGEX_MAP[kernel] || REGEX_MAP.values.find { |tmp| tmp[:aliases] and tmp[:aliases].include?(kernel) }
+      return 0
+    end
+
+    # Pull the correct regex out of the map.
+    regex = map[label.to_sym]
+
+    output_int = get_output_for_interface_and_label(interface, label)
+
+    output_int.each_line do |s|
+      if s =~ regex
+        value = $1
+          if label == 'netmask' && convert_from_hex?(kernel)
+            value = value.scan(/../).collect do |byte| byte.to_i(16) end.join('.')
+          end
+        tmp1.push(value)
+      end
+    end
+
+    if tmp1
+      value = tmp1.length
+    else
+      value = 0
+    end
+    value
+  end
+ 
   ##
   # read_proc_net_bonding is a seam method for mocking purposes.
   #
