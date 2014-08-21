@@ -1,5 +1,6 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/posix/kernel_resolver.hpp>
+#include <facter/facts/posix/id_resolver.hpp>
 #include <facter/facts/linux/operating_system_resolver.hpp>
 #include <facter/facts/linux/lsb_resolver.hpp>
 #include <facter/facts/linux/networking_resolver.hpp>
@@ -28,6 +29,7 @@ namespace facter { namespace facts {
         add(make_shared<linux::selinux_resolver>());
         add(make_shared<posix::ssh_resolver>());
         add(make_shared<linux::virtualization_resolver>());
+        add(make_shared<posix::id_resolver>());
     }
 
 }}  // namespace facter::facts

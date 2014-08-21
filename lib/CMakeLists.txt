@@ -46,6 +46,7 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/execution/posix/execution.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/posix/execution_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/dmi_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/id_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/kernel_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/operating_system_resolver.cc"

@@ -26,6 +26,7 @@ namespace facter { namespace facts {
         add(make_shared<osx::system_profiler_resolver>());
         add(make_shared<osx::software_version_resolver>());
         add(make_shared<osx::virtualization_resolver>());
+        add(make_shared<posix::id_resolver>());
     }
 
 }}  // namespace facter::facts
