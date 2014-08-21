@@ -84,6 +84,7 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
     set(LIBFACTER_PLATFORM_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/solaris/collection.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/solaris/kernel_resolver.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBFACTER_PLATFORM_SOURCES
