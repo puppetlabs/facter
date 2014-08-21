@@ -31,13 +31,13 @@ namespace facter { namespace facts { namespace posix {
          * @param facts The fact collection that is resolving facts.
          * @param name The result of the uname call.
          */
-        virtual void resolve_hardware_isa(collection& facts, utsname const& name);
+        virtual void resolve_hardware_isa(collection& facts, struct utsname const& name);
         /**
          * Called to resolve the hardware model fact.
          * @param facts The fact collection that is resolving facts.
          * @param name The result of the uname call.
          */
-        virtual void resolve_hardware_model(collection& facts, utsname const& name);
+        virtual void resolve_hardware_model(collection& facts, struct utsname const& name);
         /**
          * Called to resolve the hardware architecture fact.
          * @param facts The fact collection that is resolving facts.
