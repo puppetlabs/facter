@@ -11,6 +11,7 @@
 #include <facter/facts/linux/selinux_resolver.hpp>
 #include <facter/facts/linux/virtualization_resolver.hpp>
 #include <facter/facts/posix/ssh_resolver.hpp>
+#include <facter/facts/posix/timezone_resolver.hpp>
 
 using namespace std;
 
@@ -30,6 +31,7 @@ namespace facter { namespace facts {
         add(make_shared<posix::ssh_resolver>());
         add(make_shared<linux::virtualization_resolver>());
         add(make_shared<posix::id_resolver>());
+        add(make_shared<posix::timezone_resolver>());
     }
 
 }}  // namespace facter::facts
