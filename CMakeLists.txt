@@ -23,6 +23,14 @@ find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem da
 find_package(OPENSSL REQUIRED)
 find_package(YAMLCPP REQUIRED)
 
+if ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
+    find_library(SOCKET_LIBRARY socket)
+    if(SOCKET_LIBRARY)
+        SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${SOCKET_LIBRARY})
+        LINK_LIBRARIES(socket)
+    endif()
+endif()
+
 # Set RPATH if not installing to a system library directory
 list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" INSTALL_IS_SYSTEM_DIR)
 if ("${INSTALL_IS_SYSTEM_DIR}" STREQUAL "-1")
