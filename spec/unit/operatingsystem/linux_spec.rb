@@ -37,6 +37,7 @@ describe Facter::Operatingsystem::Linux do
         "Mandrake"    => "/etc/mandrake-release",
         "MeeGo"       => "/etc/meego-release",
         "Archlinux"   => "/etc/arch-release",
+        "Manjarolinux"=> "/etc/manjaro-release",
         "OracleLinux" => "/etc/oracle-release",
         "OpenWrt"     => "/etc/openwrt_release",
         "Alpine"      => "/etc/alpine-release",
@@ -152,6 +153,7 @@ describe Facter::Operatingsystem::Linux do
   describe "Osfamily fact" do
     {
       'Archlinux'    => 'Archlinux',
+      "Manjarolinux" => "Archlinux",
       'Ubuntu'       => 'Debian',
       'Debian'       => 'Debian',
       'LinuxMint'    => 'Debian',
