@@ -35,7 +35,7 @@ namespace facter { namespace facts { namespace posix {
     void processor_resolver::resolve_facts(collection& facts)
     {
         // Resolve the hardware related facts
-        utsname name;
+        struct utsname name;
         memset(&name, 0, sizeof(name));
         if (uname(&name) != 0) {
             LOG_WARNING("uname failed: %1% (%2%): %3% and %4% facts are unavailable.", strerror(errno), errno, fact::hardware_isa, fact::hardware_model);
@@ -54,7 +54,7 @@ namespace facter { namespace facts { namespace posix {
         resolve_processors(facts);
     }
 
-    void processor_resolver::resolve_hardware_isa(collection& facts, utsname const& name)
+    void processor_resolver::resolve_hardware_isa(collection& facts, struct utsname const& name)
     {
         // The utsname struct doesn't have a member for "uname -p", so we need to execute
         auto result = execute("uname", { "-p" });
@@ -64,7 +64,7 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::hardware_isa, make_value<string_value>(move(result.second)));
     }
 
-    void processor_resolver::resolve_hardware_model(collection& facts, utsname const& name)
+    void processor_resolver::resolve_hardware_model(collection& facts, struct utsname const& name)
     {
         // There is a corresponding field for "uname -m", so use it
         string value = name.machine;

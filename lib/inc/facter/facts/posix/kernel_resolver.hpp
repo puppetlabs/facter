@@ -31,13 +31,13 @@ namespace facter { namespace facts { namespace posix {
          * @param facts The fact collection that is resolving facts.
          * @param name The result of the uname call.
          */
-        virtual void resolve_kernel(collection& facts, utsname const& name);
+        virtual void resolve_kernel(collection& facts, struct utsname const& name);
         /**
          * Called to resolve the kernel release fact.
          * @param facts The fact collection that is resolving facts.
          * @param name The result of the uname call.
          */
-        virtual void resolve_kernel_release(collection& facts, utsname const& name);
+        virtual void resolve_kernel_release(collection& facts, struct utsname const& name);
         /**
          * Called to resolve the kernel version fact.
          * @param facts The fact collection that is resolving facts.

@@ -23,6 +23,14 @@ find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem da
 find_package(OPENSSL REQUIRED)
 find_package(YAMLCPP REQUIRED)
 
+if ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
+    find_library(SOCKET_LIBRARY socket)
+    if(SOCKET_LIBRARY)
+        SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${SOCKET_LIBRARY})
+        LINK_LIBRARIES(socket)
+    endif()
+endif()
+
 # Set RPATH if not installing to a system library directory
 list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" INSTALL_IS_SYSTEM_DIR)
 if ("${INSTALL_IS_SYSTEM_DIR}" STREQUAL "-1")
@@ -37,7 +45,10 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     # Clang warns that 'register' is deprecated; 'register' is used throughout boost, so it can't be an error yet.
     set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-tautological-constant-out-of-range-compare -Wno-deprecated-register")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas")
+    set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas")
+    if (NOT "${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
+    endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()

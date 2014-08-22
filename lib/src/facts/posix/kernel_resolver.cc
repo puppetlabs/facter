@@ -27,7 +27,7 @@ namespace facter { namespace facts { namespace posix {
 
     void kernel_resolver::resolve_facts(collection& facts)
     {
-        utsname name;
+        struct utsname name;
         memset(&name, 0, sizeof(name));
         if (uname(&name) != 0) {
             LOG_WARNING("uname failed: %1% (%2%): kernel facts are unavailable.", strerror(errno), errno);
@@ -40,7 +40,7 @@ namespace facter { namespace facts { namespace posix {
         resolve_kernel_major_version(facts);
     }
 
-    void kernel_resolver::resolve_kernel(collection& facts, utsname const& name)
+    void kernel_resolver::resolve_kernel(collection& facts, struct utsname const& name)
     {
         string value = name.sysname;
         if (value.empty()) {
@@ -49,7 +49,7 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::kernel, make_value<string_value>(move(value)));
     }
 
-    void kernel_resolver::resolve_kernel_release(collection& facts, utsname const& name)
+    void kernel_resolver::resolve_kernel_release(collection& facts, struct utsname const& name)
     {
         string value = name.release;
         if (value.empty()) {
