@@ -73,15 +73,6 @@ TEST(facter_util_string, split_keep_empty) {
     ASSERT_THAT(split(";foo;;bar;baz;", ';', false), ElementsAre("", "foo", "", "bar", "baz", ""));
 }
 
-TEST(facter_util_string, join) {
-    ASSERT_EQ("hello world", join({"hello", "world"}));
-    ASSERT_EQ("hello world", join({"hello", "world"}, " "));
-    ASSERT_EQ("foo!!!bar!!!baz", join({"foo", "bar", "baz"}, "!!!"));
-    ASSERT_EQ("", join({""}, "!!"));
-    ASSERT_EQ("!!", join({"", ""}, "!!"));
-    ASSERT_EQ("", join({}, " "));
-}
-
 TEST(facter_util_string, to_lower) {
     ASSERT_EQ("hello world!", to_lower("Hello World!"));
     ASSERT_EQ("hello world!", to_lower("HELLO WORLD!"));

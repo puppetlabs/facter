@@ -99,14 +99,6 @@ namespace facter { namespace util {
     std::vector<std::string> split(std::string const& str, char delim = ' ', bool remove_empty = true);
 
     /**
-     * Joins a vector of strings together with the given delimiter.
-     * @param strings The vector of strings to join.
-     * @param delimiter The delimiter to use between strings.
-     * @return Returns a string that is the join of the given string.
-     */
-    std::string join(std::vector<std::string> const& strings, std::string const& delimiter = " ");
-
-    /**
      * Converts the given string to lowercase.
      * @param str The string to convert to lowercase.
      * @return Returns the given string.

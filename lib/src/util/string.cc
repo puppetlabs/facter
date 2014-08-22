@@ -91,22 +91,6 @@ namespace facter { namespace util {
         return parts;
     }
 
-    string join(vector<string> const& strings, string const& delimiter)
-    {
-        ostringstream stream;
-
-        bool first = true;
-        for (auto const& str : strings) {
-            if (first) {
-                first = false;
-            } else {
-                stream << delimiter;
-            }
-            stream << str;
-        }
-        return stream.str();
-    }
-
     string& to_lower(string& str)
     {
         transform(str.begin(), str.end(), str.begin(), ::tolower);
