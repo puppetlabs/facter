@@ -9,6 +9,7 @@
 #include <facter/facts/osx/virtualization_resolver.hpp>
 #include <facter/facts/bsd/uptime_resolver.hpp>
 #include <facter/facts/posix/ssh_resolver.hpp>
+#include <facter/facts/posix/id_resolver.hpp>
 
 using namespace std;
 
