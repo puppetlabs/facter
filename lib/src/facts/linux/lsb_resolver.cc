@@ -79,12 +79,20 @@ namespace facter { namespace facts { namespace linux {
     void lsb_resolver::resolve_dist_version(collection& facts)
     {
         auto dist_release = facts.get<string_value>(fact::lsb_dist_release, false);
+        auto dist_id = facts.get<string_value>(fact::lsb_dist_id, false);
         if (!dist_release) {
             return;
         }
+
         string major;
         string minor;
-        if (!re_search(dist_release->value(), "(\\d+)\\.(\\d*)", &major, &minor)) {
+        string regex;
+        if (dist_id && dist_id->value() == "Ubuntu") {
+            regex = "(\\d+\\.\\d*)\\.?(\\d*)";
+        } else {
+            regex = "(\\d+)\\.(\\d*)";
+        }
+        if (!re_search(dist_release->value(), regex, &major, &minor)) {
             major = dist_release->value();
         }
         facts.add(fact::lsb_dist_major_release, make_value<string_value>(move(major)));
