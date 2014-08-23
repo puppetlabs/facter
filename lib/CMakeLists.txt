@@ -55,6 +55,7 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/ssh_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/uptime_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/virtualization_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/timezone_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/logging/posix/colorize.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/ruby/posix/api.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/dynamic_library.cc"

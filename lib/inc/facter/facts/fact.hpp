@@ -422,6 +422,11 @@ namespace facter { namespace facts {
          * The fact for the running group ID
          */
         constexpr static char const* gid = "gid";
+
+        /**
+         * The fact for the system timezone
+         */
+        constexpr static char const* timezone = "timezone";
     };
 
 }}  // namespace facter::facts
