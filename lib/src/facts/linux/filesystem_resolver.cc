@@ -13,9 +13,12 @@
 #include <boost/lexical_cast.hpp>
 #include <mntent.h>
 #include <sys/vfs.h>
-#include <blkid/blkid.h>
 #include <set>
 #include <map>
+
+#ifdef USE_BLKID
+#include <blkid/blkid.h>
+#endif  // USE_BLKID
 
 using namespace std;
 using namespace facter::facts;
@@ -105,6 +108,8 @@ namespace facter { namespace facts { namespace linux {
 
     void filesystem_resolver::resolve_partitions(collection& facts)
     {
+        // Only resolve the partition fact if we're using libblkid
+#ifdef USE_BLKID
         auto partitions = make_value<map_value>();
 
         // Get a default cache
@@ -196,6 +201,9 @@ namespace facter { namespace facts { namespace linux {
         if (partitions->size() > 0) {
             facts.add(fact::partitions, move(partitions));
         }
+#else
+        LOG_INFO("fact \"%1%\" is unavailable: facter was built without blkid support.", fact::partitions);
+#endif  // USE_BLKID
     }
 
 }}}  // namespace facter::facts::linux

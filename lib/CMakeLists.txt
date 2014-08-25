@@ -62,9 +62,12 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/dynamic_library.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/environment.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_addrinfo.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_bio.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_descriptor.cc"
     )
+    if (OPENSSL_FOUND)
+        set(LIBFACTER_POSIX_SOURCES ${LIBFACTER_POSIX_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_bio.cc")
+    endif()
+
     set(THREAD_LIBS pthread)
 endif()
 
