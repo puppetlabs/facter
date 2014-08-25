@@ -417,7 +417,6 @@ namespace facter { namespace facts {
          * The fact for the running user ID
          */
         constexpr static char const* id = "id";
-
         /**
          * The fact for the running group ID
          */
@@ -427,6 +426,19 @@ namespace facter { namespace facts {
          * The fact for the system timezone
          */
         constexpr static char const* timezone = "timezone";
+
+        /**
+         * The fact for mountpoints.
+         */
+        constexpr static char const* mountpoints = "mountpoints";
+        /**
+         * The fact for filesystems.
+         */
+        constexpr static char const* filesystems = "filesystems";
+        /**
+         * The fact for partitions.
+         */
+        constexpr static char const* partitions = "partitions";
     };
 
 }}  // namespace facter::facts

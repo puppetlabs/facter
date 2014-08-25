@@ -47,6 +47,7 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/posix/execution_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/dmi_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/id_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/filesystem_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/kernel_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/operating_system_resolver.cc"
@@ -61,9 +62,12 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/dynamic_library.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/environment.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_addrinfo.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_bio.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_descriptor.cc"
     )
+    if (OPENSSL_FOUND)
+        set(LIBFACTER_POSIX_SOURCES ${LIBFACTER_POSIX_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_bio.cc")
+    endif()
+
     set(THREAD_LIBS pthread)
 endif()
 
@@ -71,9 +75,10 @@ endif()
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     list(REMOVE_ITEM LIBFACTER_POSIX_SOURCES "${CMAKE_CURRENT_LIST_DIR}/src/ruby/posix/api.cc")
     set(LIBFACTER_PLATFORM_SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/dmi_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/filesystem_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/uptime_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/dmi_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/collection.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/processor_resolver.cc"
@@ -93,6 +98,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/block_device_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/dmi_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/filesystem_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/lsb_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/operating_system_resolver.cc"
@@ -102,6 +108,9 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/selinux_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/linux/virtualization_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/bsd/scoped_ifaddrs.cc"
+    )
+    set(LIBFACTER_PLATFORM_LIBRARIES
+        ${BLKID_LIBRARIES}
     )
 endif()
 
@@ -129,6 +138,7 @@ target_link_libraries(libfacter
     ${Boost_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
+    ${LIBFACTER_PLATFORM_LIBRARIES}
 )
 
 set_target_properties(libfacter PROPERTIES PREFIX "" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}")

@@ -20,14 +20,23 @@ endif()
 # Find our dependency packages
 # We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
 find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time thread regex log)
-find_package(OPENSSL REQUIRED)
 find_package(YAMLCPP REQUIRED)
+if (NOT WITHOUT_OPENSSL)
+    find_package(OPENSSL)
+endif()
+if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" AND NOT WITHOUT_BLKID)
+    find_package(BLKID)
+endif()
+
+# Display a summary of the features
+include(FeatureSummary)
+feature_summary(WHAT ALL)
 
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
     find_library(SOCKET_LIBRARY socket)
-    if(SOCKET_LIBRARY)
-        SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${SOCKET_LIBRARY})
-        LINK_LIBRARIES(socket)
+    if (SOCKET_LIBRARY)
+        set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${SOCKET_LIBRARY})
+        link_libraries(socket)
     endif()
 endif()
 

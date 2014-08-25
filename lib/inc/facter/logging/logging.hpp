@@ -9,6 +9,9 @@
 // - Have Boost on the include path
 // - Link in Boost.Log
 // - Configure Boost.Log at runtime before any logging takes place
+/**
+ * See Boost.Log's documentation.
+ */
 #define BOOST_LOG_DYN_LINK
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
@@ -123,15 +126,19 @@ namespace facter { namespace logging {
         fatal
     };
 
-    // These attributes may be used to define a logging format.
-    // They're constants, added to the log when a message is logged.
-    // The BOOST_LOG_SEV macro implicitly adds a source-specific attribute
-    // 'Severity' of the template type on construction, so the attribute
-    // name 'Severity' of log_level_attr is tied to BOOST_LOG_SEV.
+    /**
+     * The Boost.Log attribute for log level (severity).
+     * The BOOST_LOG_SEV macro implicitly adds a source-specific attribute
+     * "Severity" of the template type on construction, so the attribute
+     * name "Severity" of log_level_attr is tied to BOOST_LOG_SEV.
+     */
     BOOST_LOG_ATTRIBUTE_KEYWORD(log_level_attr, "Severity", log_level);
+    /**
+     * The Boost.Log attribute for namespace.
+     */
     BOOST_LOG_ATTRIBUTE_KEYWORD(namespace_attr, "Namespace", std::string);
 
-    /*
+    /**
      * Produces the printed representation of logging level.
      * @param strm The stream to write.
      * @param level The logging level to print.
@@ -139,7 +146,7 @@ namespace facter { namespace logging {
      */
     std::ostream& operator<<(std::ostream& strm, log_level level);
 
-    /*
+    /**
      * Add color control characters to the message if color is allowed on the
      * specified logging stream.
      * @param message The original message.

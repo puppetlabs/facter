@@ -5,18 +5,21 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/string.hpp>
-#include <facter/util/posix/scoped_bio.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <tuple>
 #include <vector>
+
+#ifdef USE_OPENSSL
+#include <facter/util/posix/scoped_bio.hpp>
 #include <openssl/sha.h>
 #include <openssl/evp.h>
+using namespace facter::util::posix;
+#endif  // USE_OPENSSL
 
 using namespace std;
 using namespace facter::util;
-using namespace facter::util::posix;
 using namespace boost::system;
 using namespace boost::filesystem;
 namespace bs = boost::system;
@@ -63,7 +66,6 @@ namespace facter { namespace facts { namespace posix {
             auto const& ssh_fact_name = get<0>(ssh_fact);
             auto const& sshfp_fact_name = get<1>(ssh_fact);
             auto const& key_filename = get<2>(ssh_fact);
-            auto finger_print_type = get<3>(ssh_fact);
 
             // Search the directories for the fact's key file
             path key_file;
@@ -103,6 +105,10 @@ namespace facter { namespace facts { namespace posix {
             key = move(parts[1]);
             facts.add(string(ssh_fact_name), make_value<string_value>(key));
 
+            // Only fingerprint if we are using OpenSSL
+#ifdef USE_OPENSSL
+            auto finger_print_type = get<3>(ssh_fact);
+
             // Decode the key which is expected to be base64 encoded
             vector<uint8_t> key_bytes(key.size());
             scoped_bio b64((BIO_f_base64()));
@@ -130,6 +136,9 @@ namespace facter { namespace facts { namespace posix {
                         finger_print_type %
                         to_hex(hash, sizeof(hash)) %
                         to_hex(hash256, sizeof(hash256))).str()));
+#else
+            LOG_INFO("fact \"%1%\" is unavailable: facter was built without OpenSSL support.", sshfp_fact_name);
+#endif  // USE_OPENSSL
         }
     }
 
