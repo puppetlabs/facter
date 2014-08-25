@@ -1,10 +1,13 @@
 #include <facter/ruby/resolution.hpp>
 #include <facter/ruby/module.hpp>
+#include <facter/logging/logging.hpp>
 #include <facter/util/string.hpp>
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::util;
+
+LOG_DECLARE_NAMESPACE("ruby");
 
 namespace facter { namespace ruby {
 
@@ -210,6 +213,11 @@ namespace facter { namespace ruby {
 
     VALUE resolution::ruby_timeout(VALUE self, VALUE timeout)
     {
+        static bool timeout_warning = true;
+        if (timeout_warning) {
+            LOG_WARNING("timeout= is not supported for custom facts and will be ignored.")
+            timeout_warning = false;
+        }
         // Do nothing as we don't support timeouts
         return self;
     }

@@ -284,6 +284,7 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("boolean_false_confine.rb", "foo", { { "fact", "true" } }),
     ruby_test_parameters("boolean_true_confine.rb", "foo", "\"bar\"", { { "fact", "true" } }),
     ruby_test_parameters("exec.rb", "foo", "\"bar\""),
+    ruby_test_parameters("timeout.rb", log_level::debug, { { "WARN", "timeout option is not supported for custom facts and will be ignored." }, { "WARN", "timeout= is not supported for custom facts and will be ignored." } }),
 };
 
 INSTANTIATE_TEST_CASE_P(run, facter_ruby, testing::ValuesIn(single_fact_tests));
