@@ -1,8 +1,60 @@
 # Fact: selinux
 #
 # Purpose:
+#   Determine whether SE Linux is enabled on the node.
 #
 # Resolution:
+#   Checks for the existence of the enforce file under the SE Linux mount
+#   point (e.g. `/selinux/enforce`) and returns true if `/proc/self/attr/current`
+#   does not contain the kernel.
+#
+# Caveats:
+#
+
+# Fact: selinux_config_mode
+#
+# Purpose:
+#   Returns the configured SE Linux mode (e.g., `enforcing`, `permissive`, or `disabled`).
+#
+# Resolution:
+#   Parses the output of `sestatus_cmd` and returns the value of the line beginning
+#   with `Mode from config file:`.
+#
+# Caveats:
+#
+
+# Fact: selinux_config_policy
+#
+# Purpose:
+#   Returns the configured SE Linux policy (e.g., `targeted`, `MLS`, or `minimum`).
+#
+# Resolution:
+#   Parses the output of `sestatus_cmd` and returns the value of the line beginning
+#   with `Policy from config file:`.
+#
+# Caveats:
+#
+
+# Fact: selinux_enforced
+#
+# Purpose:
+#   Returns whether SE Linux is enabled (`true`) or not (`false`).
+#
+# Resolution:
+#   Returns the value found in the `enforce` file under the SE Linux mount
+#   point (e.g. `/selinux/enforce`).
+#
+# Caveats:
+#
+
+# Fact: selinux_policyversion
+#
+# Purpose:
+#   Returns the current SE Linux policy version.
+#
+# Resolution:
+#   Reads the content of the `policyvers` file found under the SE Linux mount point,
+#   e.g. `/selinux/policyvers`.
 #
 # Caveats:
 #
@@ -36,8 +88,11 @@ Facter.add("selinux") do
     result = "false"
     if FileTest.exists?("#{selinux_mount_point}/enforce")
       if FileTest.exists?("/proc/self/attr/current")
-        if (File.read("/proc/self/attr/current") != "kernel\0")
-          result = "true"
+        begin
+          if (File.read("/proc/self/attr/current") != "kernel\0")
+            result = "true"
+          end
+        rescue
         end
       end
     end

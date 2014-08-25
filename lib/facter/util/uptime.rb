@@ -28,7 +28,8 @@ module Facter::Util::Uptime
   end
 
   def self.uptime_sysctl
-    output = Facter::Core::Execution.execute("#{uptime_sysctl_cmd} 2>/dev/null", :on_fail => nil)
+    require 'facter/util/posix'
+    output = Facter::Util::POSIX.sysctl(uptime_sysctl_variable)
     if output
       compute_uptime(Time.at(output.match(/\d+/)[0].to_i))
     end
@@ -71,8 +72,8 @@ module Facter::Util::Uptime
     "/proc/uptime"
   end
 
-  def self.uptime_sysctl_cmd
-    'sysctl -n kern.boottime'
+  def self.uptime_sysctl_variable
+    'kern.boottime'
   end
 
   def self.uptime_executable_cmd

@@ -3,23 +3,19 @@
 # Purpose: Return Linux Standard Base information for the host.
 #
 # Resolution:
-#   Uses the lsb_release system command
+#   Uses the lsbdistdescription key of the os structured fact, which itself
+#   uses the `lsb_release` system command.
 #
 # Caveats:
 #   Only works on Linux (and the kfreebsd derivative) systems.
-#   Requires the lsb_release program, which may not be installed by default.
+#   Requires the `lsb_release` program, which may not be installed by default.
 #   Also is as only as accurate as that program outputs.
+#
 
 Facter.add(:lsbdistdescription) do
-  confine :kernel => [ :linux, :"gnu/kfreebsd" ]
   confine do
-    Facter::Core::Execution.which("lsb_release")
+    !Facter.value(:os)["lsb"].nil?
   end
 
-  setcode do
-    if output = Facter::Core::Execution.exec('lsb_release -d -s 2>/dev/null')
-      # the output may be quoted (at least it is on gentoo)
-      output.sub(/^"(.*)"$/,'\1')
-    end
-  end
+  setcode { Facter.value("os")["lsb"]["distdescription"] }
 end

@@ -7,8 +7,9 @@ Standards-Version: 3.9.1
 Homepage: http://www.puppetlabs.com
 
 Package: facter
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, ruby | ruby-interpreter, dmidecode [i386 amd64 ia64], virt-what, pciutils
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, ruby | ruby-interpreter, virt-what, pciutils
+Recommends: lsb-release, dmidecode
 Description: Ruby module for collecting simple facts about a host operating system
  Some of the facts are preconfigured, such as the hostname and the operating
  system. Additional facts can be added through simple Ruby scripts.

@@ -5,7 +5,7 @@ We would like to make it easier for community members to contribute to facter
 using pull requests, even if it makes the task of reviewing and committing
 these changes a little harder.  Pull requests are only ever based on a single
 branch, however, we maintain more than one active branch.  As a result
-contributors should target their changes at the facter-2 branch. This makes the
+contributors should target their changes at the master branch. This makes the
 process of contributing a little easier for the contributor since they don't
 need to concern themselves with the question, "What branch do I base my changes
 on?"  This is already called out in the [CONTRIBUTING.md](http://goo.gl/XRH2J).
@@ -37,7 +37,8 @@ making the decision what base branch to merge the change set into.
 
 **base branch** - A branch in Git that contains an active history of changes
 and will eventually be released using semantic version guidelines.  The branch
-named master will always exist as a base branch.
+named master will always exist as a base branch.  All other base branches will
+be associated with a specific released version of facter, e.g. 1.6.x and 1.7.x.
 
 Committer Guide
 ====
@@ -96,7 +97,7 @@ branch:
    documentation being kept up to date?
  * Does the change set include clean code?  (software code that is formatted
    correctly and in an organized manner so that another coder can easily read
-   or modify it.)  HINT: `git diff --check`
+   or modify it.)  HINT: `git diff master --check`
  * Does the change set conform to the contributing guide?
 
 
@@ -112,9 +113,9 @@ paying attention to our automated build tools.
  * Watch the build until your changes have gone through green
  * Update the ticket status and target version.  The target version field in
    our issue tracker should be updated to be the next release of facter.  For
-   example, if the most recent release of facter is 2.0.1 and you merge a
-   backwards compatible change set into facter-2, then the target version should
-   be 2.1.0 in the issue tracker.)
+   example, if the most recent release of facter is 1.6.17 and you merge a
+   backwards compatible change set into master, then the target version should
+   be 1.7.0 in the issue tracker.)
  * Ensure the pull request is closed (Hint: amend your merge commit to contain
    the string `closes #123` where 123 is the pull request number.
 
@@ -125,11 +126,11 @@ This section helps a committer rebase a contribution onto an earlier base
 branch, then merge into the base branch and up through all active base
 branches.
 
-Suppose a contributor submits a pull request based on facter-2.  The change set
-fixes a bug reported against facter 2.0.1 which is the most recently released
+Suppose a contributor submits a pull request based on master.  The change set
+fixes a bug reported against facter 1.7.1 which is the most recently released
 version of facter.
 
-In this example the committer should rebase the change set onto the stable
+In this example the committer should rebase the change set onto the 1.7.x
 branch since this is a bug rather than new functionality.
 
 First, the committer pulls down the branch using the `hub` gem.  This tool
@@ -140,55 +141,45 @@ branch to track the remote branch.
     Branch jeffmccune-fix_foo_error set up to track remote branch fix_foo_error from jeffmccune.
     Switched to a new branch 'jeffmccune-fix_foo_error'
 
-At this point the topic branch is a descendant of facter-2, but we want it to
-descend from stable.  The committer creates a new branch then re-bases the
+At this point the topic branch is a descendant of master, but we want it to
+descend from 1.7.x.  The committer creates a new branch then re-bases the
 change set:
 
-    $ git branch bug/stable/fix_foo_error
-    $ git rebase --onto stable master bug/stable/fix_foo_error
+    $ git branch bug/1.7.x/fix_foo_error
+    $ git rebase --onto 1.7.x master bug/1.7.x/fix_foo_error
     First, rewinding head to replay your work on top of it...
-    Applying: (#23456) Fix FooError that always bites users in 2.0.1
+    Applying: (#23456) Fix FooError that always bites users in 1.7.1
 
 The `git rebase` command may be interpreted as, "First, check out the branch
-named `bug/stable/fix_foo_error`, then take the changes that were previously
-based on `facter-2` and re-base them onto `stable`.
+named `bug/1.7.x/fix_foo_error`, then take the changes that were previously
+based on `master` and re-base them onto `1.7.x`.
 
 Now that we have a topic branch containing the change set based on the correct
 release branch, the committer merges in:
 
-    $ git checkout stable
-    Switched to branch 'stable'
-    $ git merge --no-ff --log bug/stable/fix_foo_error
+    $ git checkout 1.7.x
+    Switched to branch '1.7.x'
+    $ git merge --no-ff --log bug/1.7.x/fix_foo_error
     Merge made by the 'recursive' strategy.
      foo | 0
      1 file changed, 0 insertions(+), 0 deletions(-)
      create mode 100644 foo
 
-Once merged into the first base branch, the committer merges up to facter-2:
-
-    $ git checkout facter-2
-    Switched to branch 'facter-2'
-    $ git merge --no-ff --log stable
-    Merge made by the 'recursive' strategy.
-     foo | 0
-     1 file changed, 0 insertions(+), 0 deletions(-)
-     create mode 100644 foo
-
-And then merges up to master:
+Once merged into the first base branch, the committer merges up:
 
     $ git checkout master
     Switched to branch 'master'
-    $ git merge --no-ff --log stable
+    $ git merge --no-ff --log 1.7.x
     Merge made by the 'recursive' strategy.
      foo | 0
      1 file changed, 0 insertions(+), 0 deletions(-)
      create mode 100644 foo
 
 Once the change set has been merged "in and up." the committer pushes.  (Note,
-the checklist should be complete at this point.)  Note that the stable,
-facter-2 and master branches are being pushed at the same time.
+the checklist should be complete at this point.)  Note that both the 1.7.x and
+master branches are being pushed at the same time.
 
-    $ git push puppetlabs master:master facter-2:facter-2 stable:stable
+    $ git push puppetlabs master:master 1.7.x:1.7.x
 
 That's it!  The committer then updates the pull request, updates the issue in
 our issue tracker, and keeps an eye on the build status.

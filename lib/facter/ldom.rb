@@ -1,3 +1,14 @@
+# Fact: ldom
+#
+# Purpose:
+#   Returns a list of dynamic facts that describe the attributes of
+#   a Solaris logical domain. The facts returned will include: domainrole,
+#   domainname, domainuuid, domaincontrol, and domainchassis.
+#
+# Resolution:
+#   Uses the output of `virtinfo -ap`.
+#
+
 if Facter.value(:kernel) == 'SunOS' and Facter::Core::Execution.which('virtinfo')
   virtinfo = Facter::Core::Execution.exec('virtinfo -ap')
 

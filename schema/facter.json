@@ -7,11 +7,11 @@
     "definitions": {
          "ipaddress" : {
              "type": "string",
-             "pattern" : "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+             "pattern" : "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
          },
         "macaddress" : {
             "type": "string",
-            "pattern" : "^(([0-9a-fA-F]){2}\:){5}([0-9a-fA-F]){2}$"
+            "pattern" : "^(([0-9a-fA-F]){2}\\:){5}([0-9a-fA-F]){2}$"
         }
     },
     "patternProperties": {
@@ -63,6 +63,7 @@
         "lsbdistcodename" : { "type": "string" },
         "lsbdistdescription" : { "type": "string" },
         "lsbdistid" : { "type": "string" },
+        "lsbminordistrelease" : { "type": "string" },
         "lsbdistrelease" : { "type": "string" },
         "lsbmajdistrelease" : { "type": "string" },
         "lsbrelease" : { "type": "string" },
@@ -83,6 +84,30 @@
         "operatingsystemmajrelease" : { "type": "string" },
         "operatingsystemrelease" : { "type": "string" },
         "osfamily" : { "type": "string" },
+        "os" : { "type": "object",
+          "properties": {
+            "name" : { "type": "string" },
+            "family" : { "type": "string" },
+            "release" : { "type": "object",
+              "properties": {
+                "major" : { "type": "string" },
+                "minor" : { "type": "string" },
+                "full" : { "type": "string" }
+              }
+            },
+            "lsb" : { "type": "object",
+              "properties": {
+                "distcodename" : { "type": "string" },
+                "distid" : { "type": "string" },
+                "distdescription" : { "type": "string" },
+                "distrelease" : { "type": "string" },
+                "release": { "type": "string" },
+                "majdistrelease" : { "type": "string" },
+                "minordistrelease" : { "type": "string" }
+              }
+            }
+          }
+        },
         "path" : { "type": "string" },
         "partitions" : { "type": "object",
             "patternProperties": {
@@ -99,6 +124,14 @@
         "physicalprocessorcount" : { "type": "string" },
         "processorcount" : { "type": "string" },
         "processor" : { "type": "string" },
+        "processors" : { "type": "object",
+          "properties": {
+            "models" : { "type": "array" },
+            "count" : { "type": "integer" },
+            "physicalcount" : { "type": "integer" },
+            "speed" : { "type": "string" }
+          }
+        },
         "productname" : { "type": "string" },
         "ps" : { "type": "string" },
         "puppetversion" : { "type": "string" },
@@ -146,6 +179,15 @@
         "swapfree_mb" : { "type": "string" },
         "swapsize" : { "type": "string" },
         "swapsize_mb" : { "type": "string" },
+        "system_uptime" : { "type": "object",
+          "properties" : {
+            "seconds" : { "type": "integer" },
+            "hours" : { "type": "integer" },
+            "days" : { "type": "integer" },
+            "uptime" : { "type": "string" }
+          },
+          "required" : ["seconds", "hours", "days", "uptime"]
+        },
         "timezone" : { "type": "string" },
         "totalprocessorcount" : { "type": "string" },
         "type" : { "type": "string" },

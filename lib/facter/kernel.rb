@@ -3,8 +3,8 @@
 # Purpose: Returns the operating system's name.
 #
 # Resolution:
-#   Uses Ruby's rbconfig to find host_os, if that is a Windows derivative, the
-#   returns 'windows', otherwise returns "uname -s" verbatim.
+#   Uses Ruby's RbConfig to find host_os, if that is a Windows derivative, then
+#   returns `windows`, otherwise returns the output of `uname -s` verbatim.
 #
 # Caveats:
 #

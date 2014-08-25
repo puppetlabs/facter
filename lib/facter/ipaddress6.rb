@@ -3,15 +3,15 @@
 # Purpose: Returns the "main" IPv6 IP address of a system.
 #
 # Resolution:
-#  OS dependant code that parses the output of various networking
-#  tools and currently not very intelligent. Returns the first
-#  non-loopback and non-linklocal address found in the ouput unless
-#  a default route can be mapped to a routeable interface. Guessing
-#  an interface is currently only possible with BSD type systems
-#  to many assumptions have to be made on other platforms to make
-#  this work with the current code. Most code ported or modeled
-#  after the ipaddress fact for the sake of similar functionality
-#  and familiar mechanics.
+#   OS-dependent code that parses the output of various networking
+#   tools and currently not very intelligent. Returns the first
+#   non-loopback and non-linklocal address found in the ouput unless
+#   a default route can be mapped to a routable interface. Guessing
+#   an interface is currently only possible with BSD-type systems;
+#   too many assumptions have to be made on other platforms to make
+#   this work with the current code. Most of this code is ported or
+#   modeled after the ipaddress fact for the sake of similar
+#   functionality and familiar mechanics.
 #
 # Caveats:
 #

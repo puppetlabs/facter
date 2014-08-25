@@ -2,7 +2,7 @@
 #
 # Purpose: Return the machine's time zone.
 #
-# Resolution: Uses's Ruby's Time module's Time.new call.
+# Resolution: Uses Ruby's Time module.
 #
 # Caveats:
 #

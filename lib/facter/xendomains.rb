@@ -3,7 +3,7 @@
 # Purpose: Return the list of Xen domains on the Dom0.
 #
 # Resolution:
-#   On a Xen Dom0 host, return a list of Xen domains using the 'util/xendomains'
+#   On a Xen Dom0 host, return a list of Xen domains using the `util/xendomains`
 #   library.
 #
 # Caveats:

@@ -22,7 +22,7 @@ module Facter
         # Print the value of a single fact, otherwise print a list sorted by fact
         # name and separated by "=>"
         if hash.length == 1
-          if value = hash.values.first
+          if !(value = hash.values.first).nil?
             output = value.is_a?(String) ? value : value.inspect
           end
         else

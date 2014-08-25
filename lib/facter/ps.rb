@@ -1,11 +1,12 @@
 # Fact: ps
 #
-# Purpose: Internal fact for what to use to list all processes. Used by
-# Service{} type in Puppet.
+# Purpose: 
+#   Internal fact for what to use to list all processes. Used by
+#   the Service type in Puppet.
 #
 # Resolution:
-#   Assumes "ps -ef" for all operating systems other than BSD derivatives, where
-#   it uses "ps auxwww"
+#   Assumes `ps -ef` for all operating systems other than BSD derivatives, where
+#   it uses `ps auxwww`.
 #
 # Caveats:
 #

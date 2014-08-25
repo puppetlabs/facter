@@ -24,6 +24,7 @@ describe "Virtual fact" do
 
   it "should be zone on Solaris when a zone" do
     Facter.fact(:kernel).stubs(:value).returns("SunOS")
+    Facter.fact(:operatingsystem).stubs(:value).returns("Solaris")
     Facter::Util::Virtual.stubs(:zone?).returns(true)
     Facter::Util::Virtual.stubs(:vserver?).returns(false)
     Facter::Util::Virtual.stubs(:xen?).returns(false)
@@ -39,6 +40,7 @@ describe "Virtual fact" do
 
   it "should be hpvm on HP-UX when in HP-VM" do
     Facter.fact(:kernel).stubs(:value).returns("HP-UX")
+    Facter.fact(:operatingsystem).stubs(:value).returns("HP-UX")
     Facter::Util::Virtual.stubs(:hpvm?).returns(true)
     Facter.fact(:virtual).value.should == "hpvm"
   end
@@ -303,6 +305,11 @@ describe "Virtual fact" do
       Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("oVirt Node")
       Facter.fact(:virtual).value.should == "ovirt"
     end
+
+    it "should be kvm with KVM product name from sysctl" do
+      Facter::Util::POSIX.stubs(:sysctl).with('hw.product').returns("KVM")
+      Facter.fact(:virtual).value.should == "kvm"
+    end
   end
 
   describe "on Windows" do
@@ -499,7 +506,7 @@ describe "is_virtual fact" do
     Facter.fact(:is_virtual).value.should == "true"
   end
 
-  it "should be true when running on ovirt" do
+  it "should be true when running on gce" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("gce")
     Facter.fact(:is_virtual).value.should == "true"

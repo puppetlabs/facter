@@ -1,0 +1,43 @@
+usage: zfs command args ...
+where 'command' is one of the following:
+
+        create [[-o property=value] ... ] <filesystem>
+        create [-s] [-b blocksize] [[-o property=value] ...]
+            -V <size> <volume>
+        destroy [-rRf] <filesystem|volume|snapshot>
+
+        snapshot [-r] <filesystem@name|volume@name>
+        rollback [-rRf] <snapshot>
+        clone <snapshot> <filesystem|volume>
+        promote <clone filesystem>
+        rename <filesystem|volume|snapshot> <filesystem|volume|snapshot>
+
+        list [-rH] [-o property[,property]...] [-t type[,type]...]
+            [-s property [-s property]...] [-S property [-S property]...]
+            [filesystem|volume|snapshot] ...
+
+        set <property=value> <filesystem|volume> ...
+        get [-rHp] [-o field[,field]...] [-s source[,source]...]
+            <all | property[,property]...> [filesystem|volume|snapshot] ...
+        inherit [-r] <property> <filesystem|volume> ...
+
+        mount
+        mount [-o opts] [-O] -a
+        mount [-o opts] [-O] <filesystem>
+
+        unmount [-f] -a
+        unmount [-f] <filesystem|mountpoint>
+
+        share -a
+        share <filesystem>
+
+        unshare [-f] -a
+        unshare [-f] <filesystem|mountpoint>
+
+        send [-i <snapshot>] <snapshot>
+        receive [-vnF] <filesystem|volume|snapshot>
+        receive [-vnF] -d <filesystem>
+
+Each dataset is of the form: pool/[dataset/]*dataset[@name]
+
+For the property list, run: zfs set|get

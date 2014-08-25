@@ -3,7 +3,7 @@
 # Purpose: Return the version of puppet installed.
 #
 # Resolution:
-#   Requres puppet via Ruby and returns it's version constant.
+#   Requires puppet via Ruby and returns the value of its version constant.
 #
 # Caveats:
 #

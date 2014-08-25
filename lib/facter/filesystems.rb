@@ -1,9 +1,16 @@
+# Fact: filesystems
 #
-# filesystems.rb
+# Purpose:
+#   This fact provides an alphabetic list of usable file systems that can
+#   be used for block devices like hard drives, media cards, etc.
 #
-# This fact provides an alphabetic list of usable file systems that can
-# be used for block devices like hard drives, media cards and so on ...
+# Resolution:
+#   Checks `/proc/filesystems`.
 #
+# Caveats:
+#   Only supports Linux.
+#
+
 Facter.add('filesystems') do
   confine :kernel => :linux
   setcode do

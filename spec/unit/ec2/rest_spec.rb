@@ -15,7 +15,7 @@ shared_examples_for "an ec2 rest querier" do
     end
 
     it "is false if the given uri returns a 404" do
-      subject.expects(:open).with(anything).once.raises(OpenURI::HTTPError.new("404 Not Found", StringIO.new("woo")))
+      subject.expects(:open).with(anything, :proxy => nil).once.raises(OpenURI::HTTPError.new("404 Not Found", StringIO.new("woo")))
       expect(subject).to_not be_reachable
     end
 
@@ -36,7 +36,7 @@ describe Facter::EC2::Metadata do
   describe "fetching a metadata endpoint" do
     it "splits the body into an array" do
       response.string = my_fixture_read("meta-data/root")
-      subject.stubs(:open).with("http://0.0.0.0/latest/meta-data/").returns response
+      subject.stubs(:open).with("http://0.0.0.0/latest/meta-data/", {:proxy => nil}).returns response
       output = subject.fetch_endpoint('')
 
       expect(output).to eq %w[
@@ -49,7 +49,7 @@ describe Facter::EC2::Metadata do
 
     it "reformats keys that are array indices" do
       response.string = "0=adrien@grey/"
-      subject.stubs(:open).with("http://0.0.0.0/latest/meta-data/public-keys/").returns response
+      subject.stubs(:open).with("http://0.0.0.0/latest/meta-data/public-keys/", {:proxy => nil}).returns response
       output = subject.fetch_endpoint("public-keys/")
 
       expect(output).to eq %w[0/]
@@ -57,7 +57,7 @@ describe Facter::EC2::Metadata do
 
     it "returns nil if the endpoint returns a 404" do
       Facter.expects(:log_exception).never
-      subject.stubs(:open).with("http://0.0.0.0/latest/meta-data/public-keys/1/").raises OpenURI::HTTPError.new("404 Not Found", response)
+      subject.stubs(:open).with("http://0.0.0.0/latest/meta-data/public-keys/1/", {:proxy => nil}).raises OpenURI::HTTPError.new("404 Not Found", response)
       output = subject.fetch_endpoint('public-keys/1/')
 
       expect(output).to be_nil
@@ -66,7 +66,7 @@ describe Facter::EC2::Metadata do
     it "logs an error if the endpoint raises a non-404 HTTPError" do
       Facter.expects(:log_exception).with(instance_of(OpenURI::HTTPError), anything)
 
-      subject.stubs(:open).with("http://0.0.0.0/latest/meta-data/").raises OpenURI::HTTPError.new("418 I'm a Teapot", response)
+      subject.stubs(:open).with("http://0.0.0.0/latest/meta-data/", {:proxy => nil}).raises OpenURI::HTTPError.new("418 I'm a Teapot", response)
       output = subject.fetch_endpoint("")
 
       expect(output).to be_nil
@@ -75,7 +75,7 @@ describe Facter::EC2::Metadata do
     it "logs an error if the endpoint raises a connection error" do
       Facter.expects(:log_exception).with(instance_of(Errno::ECONNREFUSED), anything)
 
-      subject.stubs(:open).with("http://0.0.0.0/latest/meta-data/").raises Errno::ECONNREFUSED
+      subject.stubs(:open).with("http://0.0.0.0/latest/meta-data/", {:proxy => nil}).raises Errno::ECONNREFUSED
       output = subject.fetch_endpoint('')
 
       expect(output).to be_nil

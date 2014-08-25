@@ -1,14 +1,15 @@
 # Fact: partitions
 #
 # Purpose:
-#   Return the details of the disk partitions
+#   Return the details of the disk partitions.
 #
 # Resolution:
-#   Parse the contents of /sys/block/<device>/size to receive the size (multiplying by 512 to correct for blocks-to-bytes)
+#   Parse the contents of `/sys/block/<device>/size` to receive the size (multiplying by 512 to correct for blocks-to-bytes).
 #
 # Caveats:
-#   Only supports Linux 2.6+ at this time, due to the reliance on sysfs
+#   For Linux, only 2.6+ is supported at this time due to the reliance on sysfs.
 #
+
 # Author: Chris Portman <chris@portman.net.au>
 
 require 'facter'

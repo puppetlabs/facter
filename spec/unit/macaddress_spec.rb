@@ -50,6 +50,7 @@ describe "macaddress fact" do
   describe "when run on BSD" do
     it "should return macaddress information" do
       Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
+      Facter.fact(:operatingsystem).stubs(:value).returns("FreeBSD")
       Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
       Facter::Util::IP.stubs(:exec_ifconfig).
         returns(ifconfig_fixture('bsd_ifconfig_all_with_multiple_interfaces'))
@@ -61,6 +62,8 @@ describe "macaddress fact" do
   describe "when run on OpenBSD with bridge(4) rules" do
     it "should return macaddress information" do
       Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
+      Facter.fact(:operatingsystem).stubs(:value).returns("OpenBSD")
+      Facter.fact(:osfamily).stubs(:value).returns("OpenBSD")
       Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
       Facter::Util::IP.stubs(:exec_ifconfig).
         returns(ifconfig_fixture('openbsd_bridge_rules'))

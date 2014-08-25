@@ -1,29 +1,40 @@
 # Fact: virtual
 #
-# Purpose: Determine if the system's hardware is real or virtualised.
+# Purpose: Determine if the system's hardware is real or virtualized.
 #
 # Resolution:
 #   Assumes physical unless proven otherwise.
 #
-#   On Darwin, use the macosx util module to acquire the SPHardwareDataType and
-#   SPEthernetDataType, from which it is possible to determine if the host is a
-#   VMware, Parallels, or VirtualBox.  This previously used SPDisplaysDataType
+#   On Darwin, use the macosx util module to acquire the SPHardwareDataType
+#   and SPEthernetDataType, from which it is possible to determine if the host is
+#   a VMware, Parallels, or VirtualBox. This previously used SPDisplaysDataType,
 #   which was not reliable if running headless, and also caused lagging issues
 #   on actual Macs.
 #
-#   On Linux, BSD, Solaris and HPUX:
-#   Much of the logic here is obscured behind util/virtual.rb, which rather
-#   than document here, which would encourage drift, just refer to it.
-#   The Xen tests in here rely on /sys and /proc, and check for the presence and
+#   On Linux, BSD, Solaris and HPUX: Much of the logic here is obscured behind
+#   `util/virtual.rb`, which you can consult directly for more detailed resolution
+#   information.
+#   The Xen tests in here rely on `/sys` and `/proc,` and check for the presence and
 #   contents of files in there.
-#   If after all the other tests, it's still seen as physical, then it tries to
-#   parse the output of the "lspci", "dmidecode" and "prtdiag" and parses them
+#   If after all the other tests it's still seen as physical, then it tries to
+#   parse the output of the `lspci`, `dmidecode`, and `prtdiag` and parses them
 #   for obvious signs of being under VMware, Parallels or VirtualBox.
-#   Finally it checks for the existence of vmware-vmx, which would hint it's
-#   VMware.
+#   Finally, it checks for the existence of `vmware-vmx`, which would hint that
+#   it's VMware.
 #
 # Caveats:
 #   Many checks rely purely on existence of files.
+#
+
+# Fact: is_virtual
+#
+# Purpose: Return `true` or `false` depending on whether a machine is virtualized or not.
+#
+# Resolution: Hypervisors and the like may be detected as a virtual type, but
+#   are not actual virtual machines, or should not be treated as such. This
+#   determines if the host is actually virtualized.
+#
+# Caveats:
 #
 
 require 'facter/util/virtual'
@@ -106,6 +117,7 @@ Facter.add("virtual") do
       next "virtualbox" if lines.any? {|l| l =~ /VirtualBox/ }
       next "xenhvm"     if lines.any? {|l| l =~ /HVM domU/ }
       next "ovirt"      if lines.any? {|l| l =~ /oVirt Node/ }
+      next "kvm"        if lines.any? {|l| l =~ /KVM/ }
     end
   end
 end
@@ -284,17 +296,6 @@ Facter.add("virtual") do
     "gce" if Facter::Util::Virtual.gce?
   end
 end
-
-# Fact: is_virtual
-#
-# Purpose: returning true or false for if a machine is virtualised or not.
-#
-# Resolution: Hypervisors and the like may be detected as a virtual type, but
-# are not actual virtual machines, or should not be treated as such. This
-# determines if the host is actually virtualized.
-#
-# Caveats:
-#
 
 Facter.add("is_virtual") do
   confine :kernel => %w{Linux FreeBSD OpenBSD SunOS HP-UX Darwin GNU/kFreeBSD windows}

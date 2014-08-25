@@ -1,9 +1,9 @@
 # Fact: augeasversion
 #
-# Purpose: Report the version of the Augeas library
+# Purpose: Report the version of the Augeas library.
 #
 # Resolution:
-#   Loads ruby-augeas and reports the value of /augeas/version, the version of
+#   Loads ruby-augeas and reports the value of `/augeas/version`, the version of
 #   the underlying Augeas library.
 #
 # Caveats:
