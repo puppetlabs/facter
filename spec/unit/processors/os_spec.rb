@@ -368,6 +368,20 @@ describe Facter::Processors::OpenBSD do
       expect(count).to eq 2
     end
   end
+
+  describe "getting the processor speed" do
+    it "should delegate to the sysctl utility (GHz)" do
+      Facter::Util::POSIX.expects(:sysctl).with("hw.cpuspeed").once.returns("2501")
+      speed = subject.get_processor_speed
+      expect(speed).to eq "2.5 GHz"
+    end
+
+    it "should delegate to the sysctl utility (MHz)" do
+      Facter::Util::POSIX.expects(:sysctl).with("hw.cpuspeed").once.returns("123")
+      speed = subject.get_processor_speed
+      expect(speed).to eq "123 MHz"
+    end
+  end
 end
 
 describe Facter::Processors::SunOS do

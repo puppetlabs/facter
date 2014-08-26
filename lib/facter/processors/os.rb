@@ -177,6 +177,16 @@ module Facter
       def get_physical_processor_count
         Facter::Util::POSIX.sysctl("hw.ncpufound").to_i
       end
+
+      def get_processor_speed
+        speed = Facter::Util::POSIX.sysctl("hw.cpuspeed").to_i
+        if speed < 1000
+          "#{speed} MHz"
+        else
+          speed = speed.to_f / 1000
+          "#{(speed * 100).round.to_f / 100.0} GHz"
+        end
+      end
     end
 
     class SunOS < Base
