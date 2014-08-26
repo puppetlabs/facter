@@ -328,7 +328,7 @@ namespace facter { namespace ruby {
         fact* f = fact::from_self(from_self(self)->create_fact(argv[0]));
 
         // Read the resolution name from the options hash, if present
-        VALUE name = ruby.nil_value();
+        volatile VALUE name = ruby.nil_value();
         VALUE options = argc == 2 ? argv[1] : ruby.nil_value();
         if (!ruby.is_nil(options)) {
             name = ruby.rb_funcall(
@@ -338,24 +338,7 @@ namespace facter { namespace ruby {
                     ruby.rb_funcall(ruby.rb_str_new_cstr("name"), ruby.rb_intern("to_sym"), 0));
         }
 
-        int tag = 0;
-        ruby.protect(tag, [&]() {
-            // Define a resolution
-            VALUE resolution_self = f->define_resolution(name, options);
-
-            // Call the block if one was given
-            if (ruby.rb_block_given_p()) {
-                ruby.rb_funcall_passing_block(resolution_self, ruby.rb_intern("instance_eval"), 0, nullptr);
-                return ruby.nil_value();
-            }
-            return ruby.nil_value();
-        });
-
-        // If we've failed, set the value to nil
-        if (tag) {
-            f->value(ruby.nil_value());
-            ruby.rb_jump_tag(tag);
-        }
+        f->define_resolution(name, options);
         return f->self();
     }
 

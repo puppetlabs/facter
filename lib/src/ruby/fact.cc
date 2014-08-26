@@ -208,6 +208,11 @@ namespace facter { namespace ruby {
                     weight = static_cast<size_t>(ruby.rb_num2ulong(value));
                 } else if (key_id == timeout_id) {
                     // Ignore timeout as it isn't supported
+                    static bool timeout_warning = true;
+                    if (timeout_warning) {
+                        LOG_WARNING("timeout option is not supported for custom facts and will be ignored.")
+                        timeout_warning = false;
+                    }
                 } else {
                     ruby.rb_raise(*ruby.rb_eArgError, "unexpected option %s", ruby.rb_id2name(key_id));
                 }
