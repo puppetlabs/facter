@@ -40,18 +40,25 @@ namespace facter { namespace logging {
         switch (level) {
             case log_level::trace:
                 BOOST_LOG_SEV(slg, level) << cyan(message);
+                break;
             case log_level::debug:
                 BOOST_LOG_SEV(slg, level) << cyan(message);
+                break;
             case log_level::info:
                 BOOST_LOG_SEV(slg, level) << green(message);
+                break;
             case log_level::warning:
                 BOOST_LOG_SEV(slg, level) << yellow(message);
+                break;
             case log_level::error:
                 BOOST_LOG_SEV(slg, level) << red(message);
+                break;
             case log_level::fatal:
                 BOOST_LOG_SEV(slg, level) << red(message);
+                break;
             default:
                 BOOST_LOG_SEV(slg, level) << "Invalid logging level used.";
+                break;
         }
     }
 
