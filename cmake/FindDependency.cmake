@@ -5,9 +5,23 @@ function(find_dependency)
 
     set(FIND_DEPENDENCY_NAME ${ARGV0})
 
+    # Setup the include path hint
+    if (${FIND_DEPENDENCY_NAME}_INCLUDEDIR)
+        set(INCLUDE_HINTS "${${FIND_DEPENDENCY_NAME}_INCLUDEDIR}")
+    elseif (${FIND_DEPENDENCY_NAME}_ROOT)
+        set(INCLUDE_HINTS "${${FIND_DEPENDENCY_NAME}_ROOT}/include" "${${FIND_DEPENDENCY_NAME}_ROOT}")
+    endif()
+
+    # Setup the library path hint
+    if (${FIND_DEPENDENCY_NAME}_LIBRARYDIR)
+        set(LIBRARY_HINTS "${${FIND_DEPENDENCY_NAME}_LIBRARYDIR}")
+    elseif (${FIND_DEPENDENCY_NAME}_ROOT)
+        set(LIBRARY_HINTS "${${FIND_DEPENDENCY_NAME}_ROOT}/lib")
+    endif()
+
     # Find headers and libraries
-    find_path(${FIND_DEPENDENCY_NAME}_INCLUDE_DIR NAMES ${FIND_DEPENDENCY_HEADERS} HINTS ENV ${FIND_DEPENDENCY_NAME}_INCLUDE_HINT)
-    find_library(${FIND_DEPENDENCY_NAME}_LIBRARY NAMES ${FIND_DEPENDENCY_LIBRARIES} HINTS ENV ${FIND_DEPENDENCY_NAME}_LIBRARY_HINT)
+    find_path(${FIND_DEPENDENCY_NAME}_INCLUDE_DIR NAMES ${FIND_DEPENDENCY_HEADERS} HINTS ${INCLUDE_HINTS})
+    find_library(${FIND_DEPENDENCY_NAME}_LIBRARY NAMES ${FIND_DEPENDENCY_LIBRARIES} HINTS ${LIBRARY_HINTS})
 
     # Handle the find_package arguments
     include(FindPackageHandleStandardArgs)

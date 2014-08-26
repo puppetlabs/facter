@@ -9,6 +9,9 @@
 
 namespace facter { namespace facts { namespace posix {
 
+    /**
+     * Responsible for resolving time zone facts.
+     */
     struct timezone_resolver : resolver
     {
         /**
