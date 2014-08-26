@@ -15,6 +15,8 @@ set(CMAKE_CXX_FLAGS ${FACTER_CXX_FLAGS})
 
 # Set the common (platform-independent) sources
 set(LIBFACTER_COMMON_SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/src/execution/execution.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/execution_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/array_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/json_resolver.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/resolver.cc"
@@ -35,6 +37,7 @@ set(LIBFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/ruby/ruby_value.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/ruby/simple_resolution.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/directory.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/util/dynamic_library.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/file.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/scoped_file.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/string.cc"
@@ -42,7 +45,7 @@ set(LIBFACTER_COMMON_SOURCES
 
 # Set the POSIX sources if on a POSIX platform
 if (UNIX)
-    set(LIBFACTER_POSIX_SOURCES
+    set(LIBFACTER_STANDARD_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/execution/posix/execution.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/posix/execution_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/dmi_resolver.cc"
@@ -57,7 +60,7 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/uptime_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/virtualization_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/timezone_resolver.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/src/logging/posix/colorize.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/logging/posix/log.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/ruby/posix/api.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/dynamic_library.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/environment.cc"
@@ -65,15 +68,27 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_descriptor.cc"
     )
     if (OPENSSL_FOUND)
-        set(LIBFACTER_POSIX_SOURCES ${LIBFACTER_POSIX_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_bio.cc")
+        set(LIBFACTER_STANDARD_SOURCES ${LIBFACTER_STANDARD_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/src/util/posix/scoped_bio.cc")
     endif()
 
     set(THREAD_LIBS pthread)
 endif()
 
+if (WIN32)
+    set(LIBFACTER_STANDARD_SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/src/execution/windows/execution.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/windows/execution_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/windows/collection.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/logging/windows/log.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/ruby/windows/api.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/util/windows/dynamic_library.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/util/windows/environment.cc"
+    )
+endif()
+
 # Set the platform-specific sources
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
-    list(REMOVE_ITEM LIBFACTER_POSIX_SOURCES "${CMAKE_CURRENT_LIST_DIR}/src/ruby/posix/api.cc")
+    list(REMOVE_ITEM LIBFACTER_STANDARD_SOURCES "${CMAKE_CURRENT_LIST_DIR}/src/ruby/posix/api.cc")
     set(LIBFACTER_PLATFORM_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/filesystem_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
@@ -130,7 +145,7 @@ link_directories(
 )
 
 # Add the library target without a prefix (name already has the 'lib')
-add_library(libfacter SHARED ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_POSIX_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
+add_library(libfacter SHARED ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_STANDARD_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
 
 # Link in additional libraries
 target_link_libraries(libfacter
