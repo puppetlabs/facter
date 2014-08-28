@@ -88,7 +88,6 @@ endif()
 
 # Set the platform-specific sources
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
-    list(REMOVE_ITEM LIBFACTER_STANDARD_SOURCES "${CMAKE_CURRENT_LIST_DIR}/src/ruby/posix/api.cc")
     set(LIBFACTER_PLATFORM_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/filesystem_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/bsd/networking_resolver.cc"
@@ -100,7 +99,6 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/system_profiler_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/software_version_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/virtualization_resolver.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/src/ruby/osx/api.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/bsd/scoped_ifaddrs.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
