@@ -31,7 +31,7 @@ module Facter
           "Suse"
         when "Gentoo"
           "Gentoo"
-        when "Archlinux"
+        when "Archlinux", "Manjarolinux"
           "Archlinux"
         when "Mageia", "Mandriva", "Mandrake"
           "Mandrake"
@@ -247,6 +247,7 @@ module Facter
           "Mandrake"    => "/etc/mandrake-release",
           "MeeGo"       => "/etc/meego-release",
           "Archlinux"   => "/etc/arch-release",
+          "Manjarolinux"=> "/etc/manjaro-release",
           "OracleLinux" => "/etc/oracle-release",
           "OpenWrt"     => "/etc/openwrt_release",
           "Alpine"      => "/etc/alpine-release",
