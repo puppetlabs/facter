@@ -34,10 +34,11 @@ namespace facter { namespace facts { namespace posix {
 
     void processor_resolver::resolve_facts(collection& facts)
     {
+
         // Resolve the hardware related facts
         struct utsname name;
         memset(&name, 0, sizeof(name));
-        if (uname(&name) != 0) {
+        if (uname(&name) == -1) {
             LOG_WARNING("uname failed: %1% (%2%): %3% and %4% facts are unavailable.", strerror(errno), errno, fact::hardware_isa, fact::hardware_model);
         } else {
             resolve_hardware_model(facts, name);
