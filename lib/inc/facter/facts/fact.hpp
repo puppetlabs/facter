@@ -439,6 +439,47 @@ namespace facter { namespace facts {
          * The fact for partitions.
          */
         constexpr static char const* partitions = "partitions";
+
+        /**
+         * The fact for system memory.
+         */
+        constexpr static char const* memory = "memory";
+        /**
+         * The fact for free system memory.
+         */
+        constexpr static char const* memoryfree = "memoryfree";
+        /**
+         * The fact for free system memory in megabytes.
+         */
+        constexpr static char const* memoryfree_mb = "memoryfree_mb";
+        /**
+         * The fact for total system memory.
+         */
+        constexpr static char const* memorysize = "memorysize";
+        /**
+         * The fact for total system memory in megabytes.
+         */
+        constexpr static char const* memorysize_mb = "memorysize_mb";
+        /**
+         * The fact for free swap.
+         */
+        constexpr static char const* swapfree = "swapfree";
+        /**
+         * The fact for free swap in megabytes.
+         */
+        constexpr static char const* swapfree_mb = "swapfree_mb";
+        /**
+         * The fact for total swap.
+         */
+        constexpr static char const* swapsize = "swapsize";
+        /**
+         * The fact for total swap in megabytes.
+         */
+        constexpr static char const* swapsize_mb = "swapsize_mb";
+        /**
+         * The fact for the swap being encrypted or not.
+         */
+        constexpr static char const* swapencrypted = "swapencrypted";
     };
 
 }}  // namespace facter::facts
