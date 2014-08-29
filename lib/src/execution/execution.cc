@@ -13,7 +13,7 @@ using namespace facter::util;
 using namespace facter::logging;
 using namespace boost::filesystem;
 
-LOG_DECLARE_NAMESPACE("execution.windows");
+LOG_DECLARE_NAMESPACE("execution");
 
 namespace facter { namespace execution {
 

@@ -19,7 +19,7 @@ using namespace facter::util::posix;
 using namespace facter::logging;
 using namespace boost::filesystem;
 
-LOG_DECLARE_NAMESPACE("execution.posix");
+LOG_DECLARE_NAMESPACE("execution");
 
 // Declare environ for OSX
 extern char** environ;
