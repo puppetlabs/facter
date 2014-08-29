@@ -65,10 +65,16 @@ describe "ec2_userdata" do
 
   subject { Facter.fact(:ec2_userdata).resolution(:rest) }
 
-  it "is unsuitable if the virtual fact is not xen" do
+  it "is suitable if the virtual fact is kvm" do
     querier.stubs(:reachable?).returns(true)
     Facter.fact(:virtual).stubs(:value).returns "kvm"
-    expect(subject).to_not be_suitable
+    expect(subject).to be_suitable
+  end
+
+  it "is suitable if the virtual fact is openvz" do
+    querier.stubs(:reachable?).returns(true)
+    Facter.fact(:virtual).stubs(:value).returns "openvz"
+    expect(subject).to be_suitable
   end
 
   it "is unsuitable if ec2 endpoint is not reachable" do
