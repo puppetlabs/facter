@@ -34,7 +34,6 @@ namespace facter { namespace facts { namespace posix {
 
     void processor_resolver::resolve_facts(collection& facts)
     {
-
         // Resolve the hardware related facts
         struct utsname name;
         memset(&name, 0, sizeof(name));
