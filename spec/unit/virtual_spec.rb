@@ -38,7 +38,6 @@ describe "Virtual fact" do
     Facter.fact(:virtual).value.should == "jail"
   end
 
-
   it "should be hpvm on HP-UX when in HP-VM" do
     Facter.fact(:kernel).stubs(:value).returns("HP-UX")
     Facter.fact(:operatingsystem).stubs(:value).returns("HP-UX")
