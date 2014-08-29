@@ -29,7 +29,15 @@ module Facter::Util::Virtual
   ##
   # lspci is a delegating helper method intended to make it easier to stub the
   # system call without affecting other calls to Facter::Core::Execution.exec
-  def self.lspci(command = "lspci 2>/dev/null")
+  def self.lspci(command = nil)
+    if command.nil?
+      if ["FreeBSD", "OpenBSD"].include? Facter.value(:kernel)
+        command = "pciconf -lv 2>/dev/null"
+      else
+        command = "lspci 2>/dev/null"
+      end
+    end
+
     Facter::Core::Execution.exec command
   end
 
