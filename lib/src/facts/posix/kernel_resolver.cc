@@ -29,7 +29,7 @@ namespace facter { namespace facts { namespace posix {
     {
         struct utsname name;
         memset(&name, 0, sizeof(name));
-        if (uname(&name) != 0) {
+        if (uname(&name) == -1) {
             LOG_WARNING("uname failed: %1% (%2%): kernel facts are unavailable.", strerror(errno), errno);
             return;
         }
