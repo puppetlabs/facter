@@ -4,11 +4,10 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/virtual_machine.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/string.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::util;
 using namespace facter::execution;
 
 namespace facter { namespace facts { namespace osx {
@@ -18,7 +17,7 @@ namespace facter { namespace facts { namespace osx {
         // Check for VMWare
         auto machine_model = facts.get<string_value>(fact::sp_machine_model);
         if (machine_model) {
-            if (starts_with(machine_model->value(), "VMware")) {
+            if (boost::starts_with(machine_model->value(), "VMware")) {
                 return vm::vmware;
             }
         }
@@ -34,7 +33,8 @@ namespace facter { namespace facts { namespace osx {
         // Check for Parallels
         string value;
         execution::each_line("/usr/sbin/system_profiler", { "SPEthernetDataType" }, [&](string& line) {
-            if (trim(line) == "Subsystem Vendor ID: 0x1ab8") {
+            boost::trim(line);
+            if (line == "Subsystem Vendor ID: 0x1ab8") {
                 value = vm::parallels;
                 return false;
             }

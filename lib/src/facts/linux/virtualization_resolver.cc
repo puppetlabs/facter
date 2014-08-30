@@ -4,9 +4,9 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/virtual_machine.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/string.hpp>
 #include <facter/util/file.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 #include <vector>
 #include <tuple>
 
@@ -66,16 +66,16 @@ namespace facter { namespace facts { namespace linux {
     {
         string value;
         file::each_line("/proc/1/cgroup", [&](string& line) {
-            auto parts = split(line, ':');
+            vector<boost::iterator_range<string::iterator>> parts;
+            boost::split(parts, line, boost::is_any_of(":"), boost::token_compress_on);
             if (parts.size() < 3) {
                 return true;
             }
-            auto& root = parts[2];
-            if (starts_with(root, "/docker/")) {
+            if (boost::starts_with(parts[2], boost::as_literal("/docker/"))) {
                 value = vm::docker;
                 return false;
             }
-            if (starts_with(root, "/lxc/")) {
+            if (boost::starts_with(parts[2], boost::as_literal("/lxc/"))) {
                 value = vm::lxc;
                 return false;
             }
@@ -98,7 +98,7 @@ namespace facter { namespace facts { namespace linux {
         string value;
         execution::each_line("virt-what", [&](string& line) {
             // Some versions of virt-what dump error/warning messages to stdout
-            if (starts_with(line, "virt-what:")) {
+            if (boost::starts_with(line, "virt-what:")) {
                 return true;
             }
             // Take the first line that isn't an error/warning
@@ -108,7 +108,7 @@ namespace facter { namespace facts { namespace linux {
 
         // Do some normalization of virt-what's output
         if (!value.empty()) {
-            to_lower(value);
+            boost::to_lower(value);
             if (value == "linux_vserver") {
                 return get_vserver_vm();
             }
@@ -132,14 +132,13 @@ namespace facter { namespace facts { namespace linux {
     {
         string value;
         file::each_line("/proc/self/status", [&](string& line) {
-            auto parts = split(line, ':');
+            vector<boost::iterator_range<string::iterator>> parts;
+            boost::split(parts, line, boost::is_space(), boost::token_compress_on);
             if (parts.size() != 2) {
                 return true;
             }
-            auto& key = trim(parts[0]);
-            auto& value = trim(parts[1]);
-            if (key == "s_context" || key == "VxID") {
-                if (value == "0") {
+            if (parts[0] == boost::as_literal("s_context:") || parts[0] == boost::as_literal("VxID:")) {
+                if (parts[1] == boost::as_literal("0")) {
                     value = vm::vserver_host;
                 } else {
                     value = vm::vserver;
@@ -157,11 +156,14 @@ namespace facter { namespace facts { namespace linux {
         if (!result.first) {
             return {};
         }
-        auto parts = split(result.second);
+        vector<string> parts;
+        boost::split(parts, result.second, boost::is_space(), boost::token_compress_on);
         if (parts.size() < 2) {
             return {};
         }
-        return to_lower(parts[0] + '_' + parts[1]);
+        boost::to_lower(parts[0]);
+        boost::to_lower(parts[1]);
+        return parts[0] + '_' + parts[1];
     }
 
     string virtualization_resolver::get_openvz_vm()
@@ -175,14 +177,13 @@ namespace facter { namespace facts { namespace linux {
         }
         string value;
         file::each_line("/proc/self/status", [&](string& line) {
-            auto parts = split(line, ':');
+            vector<boost::iterator_range<string::iterator>> parts;
+            boost::split(parts, line, boost::is_space(), boost::token_compress_on);
             if (parts.size() != 2) {
                 return true;
             }
-            auto& key = trim(parts[0]);
-            auto& value = trim(parts[1]);
-            if (key == "envID") {
-                if (value == "0") {
+            if (parts[0] == boost::as_literal("envID:")) {
+                if (parts[1] == boost::as_literal("0")) {
                     value = vm::openvz_hn;
                 } else {
                     value = vm::openvz_ve;

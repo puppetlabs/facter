@@ -1,7 +1,7 @@
 #include <facter/execution/execution.hpp>
 #include <facter/util/directory.hpp>
-#include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <cstdlib>
 #include <cstdio>
@@ -75,7 +75,7 @@ namespace facter { namespace execution {
     string expand_command(string const& command, vector<string> const& directories)
     {
         string result = command;
-        trim(result);
+        boost::trim(result);
 
         if (result.empty()) {
             return result;

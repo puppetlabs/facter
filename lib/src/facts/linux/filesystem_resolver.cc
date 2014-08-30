@@ -46,7 +46,7 @@ namespace facter { namespace facts { namespace linux {
         char buffer[4096];
         while (mntent* ptr = getmntent_r(file, &entry, buffer, sizeof(buffer))) {
             // Skip over anything that doesn't map to a device
-            if (!starts_with(ptr->mnt_fsname, "/dev/")) {
+            if (!boost::starts_with(ptr->mnt_fsname, "/dev/")) {
                 continue;
             }
 
@@ -72,11 +72,13 @@ namespace facter { namespace facts { namespace linux {
             value->add("device", make_value<string_value>(ptr->mnt_fsname));
 
             // Split the options based on ','
-            auto options = make_value<array_value>();
-            for (auto& option : split(ptr->mnt_opts, ',')) {
-                options->add(make_value<string_value>(move(option)));
+            auto options_value = make_value<array_value>();
+            vector<string> options;
+            boost::split(options, ptr->mnt_opts, boost::is_any_of(","), boost::token_compress_on);
+            for (auto& option : options) {
+                options_value->add(make_value<string_value>(move(option)));
             }
-            value->add("options", move(options));
+            value->add("options", move(options_value));
 
             mountpoints->add(ptr->mnt_dir, move(value));
         }
@@ -90,10 +92,10 @@ namespace facter { namespace facts { namespace linux {
     {
         set<string> filesystems;
         file::each_line("/proc/filesystems", [&](string& line) {
-            trim(line);
+            boost::trim(line);
 
             // Ignore lines without devices or fuseblk
-            if (starts_with(line, "nodev") || line == "fuseblk") {
+            if (boost::starts_with(line, "nodev") || line == "fuseblk") {
                 return true;
             }
 
@@ -167,7 +169,8 @@ namespace facter { namespace facts { namespace linux {
                 const char* tag_name;
                 const char* tag_value;
                 while (blkid_tag_next(tag_iter, &tag_name, &tag_value) == 0) {
-                    string attribute = to_lower(tag_name);
+                    string attribute = tag_value;
+                    boost::to_lower(attribute);
                     if (attribute == "type") {
                         attribute = "filesystem";
                     } else if (attribute == "partlabel") {
@@ -179,7 +182,8 @@ namespace facter { namespace facts { namespace linux {
             }
 
             // Populate the size
-            string size = trim(file::read((path("/sys/class/block") / path(device_name).filename() / "/size").string()));
+            string size = file::read((path("/sys/class/block") / path(device_name).filename() / "/size").string());
+            boost::trim(size);
             if (!size.empty()) {
                 try {
                     partition->add("size", make_value<integer_value>(lexical_cast<uint64_t>(size)));

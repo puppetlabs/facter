@@ -3,8 +3,8 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/posix/scoped_descriptor.hpp>
 #include <facter/util/file.hpp>
-#include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
+#include <boost/algorithm/string.hpp>
 #include <cstring>
 #include <netpacket/packet.h>
 #include <net/if.h>
@@ -63,9 +63,10 @@ namespace facter { namespace facts { namespace linux {
         // routing destination.
         string interface;
         file::each_line("/proc/net/route", [&interface](string& line) {
-            auto parts = tokenize(line);
-            if (parts.size() > 2 && parts[1] == "00000000") {
-                interface = move(parts[0]);
+            vector<boost::iterator_range<string::iterator>> parts;
+            boost::split(parts, line, boost::is_space(), boost::token_compress_on);
+            if (parts.size() > 1 && parts[1] == boost::as_literal("00000000")) {
+                interface.assign(parts[0].begin(), parts[0].end());
                 return false;
             }
             return true;

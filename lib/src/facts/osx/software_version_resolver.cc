@@ -3,12 +3,11 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/string.hpp>
+#include <boost/algorithm/string.hpp>
 #include <map>
 #include <string>
 
 using namespace std;
-using namespace facter::util;
 using namespace facter::facts;
 using namespace facter::execution;
 
@@ -42,8 +41,10 @@ namespace facter { namespace facts { namespace osx {
             if (pos == string::npos) {
                 return true;
             }
-            string key = trim(line.substr(0, pos));
-            string value = trim(line.substr(pos + 1));
+            string key = line.substr(0, pos);
+            boost::trim(key);
+            string value = line.substr(pos + 1);
+            boost::trim(value);
 
             // Lookup the fact name based on the "key"
             auto fact_name = fact_names.find(key);

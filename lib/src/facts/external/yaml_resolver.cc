@@ -4,13 +4,12 @@
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
-#include <facter/util/string.hpp>
+#include <boost/algorithm/string.hpp>
 #include <yaml-cpp/yaml.h>
 #include <yaml-cpp/eventhandler.h>
 #include <fstream>
 
 using namespace std;
-using namespace facter::util;
 using namespace YAML;
 
 LOG_DECLARE_NAMESPACE("facts.external.yaml");
@@ -64,13 +63,13 @@ namespace facter { namespace facts { namespace external {
         } else if (map_parent) {
             map_parent->add(string(name), move(val));
         } else {
-            facts.add(to_lower(string(name)), move(val));
+            facts.add(boost::to_lower_copy(name), move(val));
         }
     }
 
     bool yaml_resolver::can_resolve(string const& path) const
     {
-        return ends_with(to_lower(string(path)), ".yaml");
+        return boost::ends_with(boost::to_lower_copy(path), ".yaml");
     }
 
     void yaml_resolver::resolve(string const& path, collection& facts) const

@@ -6,7 +6,6 @@
 #include <facter/util/directory.hpp>
 #include <facter/util/dynamic_library.hpp>
 #include <facter/util/environment.hpp>
-#include <facter/util/string.hpp>
 #include <facter/version.h>
 #include <boost/filesystem.hpp>
 #include <rapidjson/document.h>

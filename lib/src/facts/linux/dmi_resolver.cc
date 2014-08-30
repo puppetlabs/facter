@@ -4,8 +4,8 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/file.hpp>
-#include <facter/util/string.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 #include <map>
 #include <vector>
 #include <tuple>
@@ -53,7 +53,7 @@ namespace facter { namespace facts { namespace linux {
                 continue;
             }
 
-            trim(value);
+            boost::trim(value);
 
             // If this is the chassis fact, get the description string
             if (fact_name == fact::chassis_type) {

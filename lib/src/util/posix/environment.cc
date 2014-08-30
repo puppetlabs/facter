@@ -1,6 +1,7 @@
 #include <facter/util/environment.hpp>
-#include <facter/util/string.hpp>
+#include <boost/algorithm/string.hpp>
 #include <cstdlib>
+#include <functional>
 
 using namespace std;
 
@@ -12,7 +13,7 @@ namespace facter { namespace util {
         {
             string paths;
             if (environment::get("PATH", paths)) {
-                _paths = split(paths, environment::get_path_separator());
+                boost::split(_paths, paths, bind(equal_to<char>(), placeholders::_1, environment::get_path_separator()), boost::token_compress_on);
             }
             // Ruby Facter expects /sbin and /usr/sbin to be searched for programs
             _paths.push_back("/sbin");

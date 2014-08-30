@@ -5,9 +5,9 @@
 #include <facter/execution/execution.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/directory.hpp>
-#include <facter/util/string.hpp>
 #include <facter/util/bsd/scoped_ifaddrs.hpp>
 #include <facter/logging/logging.hpp>
+#include <boost/algorithm/string.hpp>
 #include <sstream>
 #include <cstring>
 #include <netinet/in.h>
@@ -85,7 +85,7 @@ namespace facter { namespace facts { namespace bsd {
                     }
 
                     string ip = address_to_string(addr->ifa_addr, addr->ifa_netmask);
-                    if (!starts_with(ip, "127.") && ip != "::1") {
+                    if (!boost::starts_with(ip, "127.") && ip != "::1") {
                         primary_interface = interface;
                         primary = true;
                     }
@@ -247,11 +247,14 @@ namespace facter { namespace facts { namespace bsd {
                 // We respect the last lease for an interface in the file
                 string interface;
                 file::each_line(path, [&](string& line) {
-                    line = trim(line);
-                    if (starts_with(line, "interface \"")) {
-                        interface = rtrim(line.substr(11), { '\"', ';' });
-                    } else if (!interface.empty() && starts_with(line, "option dhcp-server-identifier ")) {
-                        servers.emplace(make_pair(move(interface), rtrim(line.substr(30), { ';' })));
+                    boost::trim(line);
+                    if (boost::starts_with(line, "interface ")) {
+                        interface = line.substr(10);
+                        trim_if(interface, boost::is_any_of("\";"));
+                    } else if (!interface.empty() && boost::starts_with(line, "option dhcp-server-identifier ")) {
+                        string server = line.substr(30);
+                        trim_if(server, boost::is_any_of("\";"));
+                        servers.emplace(make_pair(move(interface), move(server)));
                     }
                     return true;
                 });
@@ -267,8 +270,9 @@ namespace facter { namespace facts { namespace bsd {
         // This assumes we've already searched for the interface with dhclient
         string value;
         execution::each_line("dhcpcd", { "-U", interface }, [&value](string& line) {
-            if (starts_with(line, "dhcp_server_identifier=")) {
-                value = trim(line.substr(23));
+            if (boost::starts_with(line, "dhcp_server_identifier=")) {
+                value = line.substr(23);
+                boost::trim(value);
                 return false;
             }
             return true;

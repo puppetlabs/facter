@@ -1,11 +1,9 @@
 #include <facter/ruby/resolution.hpp>
 #include <facter/ruby/module.hpp>
 #include <facter/logging/logging.hpp>
-#include <facter/util/string.hpp>
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::util;
 
 LOG_DECLARE_NAMESPACE("ruby");
 

@@ -1,8 +1,8 @@
 #include <facter/execution/execution.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/posix/scoped_descriptor.hpp>
-#include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <cstdlib>
 #include <cstdio>
@@ -178,7 +178,7 @@ namespace facter { namespace execution {
                     output.str({});
 
                     if (options[execution_options::trim_output]) {
-                        trim(line);
+                        boost::trim(line);
                     }
 
                     // Skip empty lines
@@ -208,7 +208,7 @@ namespace facter { namespace execution {
 
             string result = output.str();
             if (options[execution_options::trim_output]) {
-                trim(result);
+                boost::trim(result);
             }
 
             // Log the result and do a final callback call if needed

@@ -1,6 +1,7 @@
 #include <gmock/gmock.h>
 #include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
+#include <boost/algorithm/string.hpp>
 #include "../../fixtures.hpp"
 #include <stdlib.h>
 
@@ -85,7 +86,7 @@ TEST(execution_posix, stderr_redirection) {
 
     result = execute("ls", { "does_not_exist" }, option_set<execution_options>({ execution_options::defaults, execution_options::redirect_stderr }));
     ASSERT_FALSE(result.first);
-    ASSERT_TRUE(ends_with(result.second, "No such file or directory"));
+    ASSERT_TRUE(boost::ends_with(result.second, "No such file or directory"));
 }
 
 TEST(execution_posix, throw_on_nonzero_exit) {
@@ -158,7 +159,8 @@ TEST(execution_posix, execute_with_merged_environment) {
     unsetenv("TEST_INHERITED_VARIABLE");
     map<string, string> variables;
     facter::util::each_line(result.second, [&](string& line) {
-        auto parts = split(line, '=', false);
+        vector<string> parts;
+        boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
         if (parts.size() != 2) {
             return true;
         }
@@ -190,7 +192,8 @@ TEST(execution_posix, execute_with_specified_environment) {
     unsetenv("TEST_INHERITED_VARIABLE");
     map<string, string> variables;
     facter::util::each_line(result.second, [&](string& line) {
-        auto parts = split(line, '=', false);
+        vector<string> parts;
+        boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
         if (parts.size() != 2) {
             return true;
         }
@@ -214,7 +217,8 @@ TEST(execution_posix, execute_with_lang_environment) {
     ASSERT_TRUE(result.first);
     map<string, string> variables;
     facter::util::each_line(result.second, [&](string& line) {
-        auto parts = split(line, '=', false);
+        vector<string> parts;
+        boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
         if (parts.size() != 2) {
             return true;
         }
@@ -234,7 +238,8 @@ TEST(execution_posix, each_line_with_merged_environment) {
         {"TEST_VARIABLE1", "TEST_VALUE1" },
         {"TEST_VARIABLE2", "TEST_VALUE2" }
     }, [&](string& line) {
-        auto parts = split(line, '=', false);
+        vector<string> parts;
+        boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
         if (parts.size() != 2) {
             return true;
         }
@@ -263,7 +268,8 @@ TEST(execution_posix, each_line_with_specified_environment) {
         {"TEST_VARIABLE1", "TEST_VALUE1" },
         {"TEST_VARIABLE2", "TEST_VALUE2" }
     }, [&](string& line) {
-        auto parts = split(line, '=', false);
+        vector<string> parts;
+        boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
         if (parts.size() != 2) {
             return true;
         }
@@ -286,7 +292,8 @@ TEST(execution_posix, each_line_with_specified_environment) {
 TEST(execution_posix, each_line_with_lang_environment) {
     map<string, string> variables;
     each_line("env", {}, { {"LANG", "FOO" }, { "LC_ALL", "BAR" } }, [&](string& line) {
-        auto parts = split(line, '=', false);
+        vector<string> parts;
+        boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
         if (parts.size() != 2) {
             return true;
         }

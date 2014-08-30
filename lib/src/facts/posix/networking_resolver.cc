@@ -4,8 +4,9 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/posix/scoped_addrinfo.hpp>
-#include <facter/util/string.hpp>
 #include <facter/util/file.hpp>
+#include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
 #include <unistd.h>
 #include <limits.h>
 #include <netinet/in.h>
@@ -15,7 +16,6 @@
 #include <iomanip>
 #include <cstring>
 #include <vector>
-#include <boost/format.hpp>
 
 using namespace std;
 using namespace facter::util;
@@ -102,7 +102,7 @@ namespace facter { namespace facts { namespace posix {
             }
 
             // Set the domain name if the FQDN is prefixed with the hostname
-            if (starts_with(fqdn, hostname->value() + ".")) {
+            if (boost::starts_with(fqdn, hostname->value() + ".")) {
                 domain = fqdn.substr(hostname->value().length() + 1);
             }
         }
@@ -111,19 +111,20 @@ namespace facter { namespace facts { namespace posix {
         if (domain.empty()) {
             string search;
             file::each_line("/etc/resolv.conf", [&](string& line) {
-                auto parts = tokenize(line);
+                vector<boost::iterator_range<string::iterator>> parts;
+                boost::split(parts, line, boost::is_space(), boost::token_compress_on);
                 if (parts.size() < 2) {
                     return true;
                 }
-                if (parts[0] == "domain") {
+                if (parts[0] == boost::as_literal("domain")) {
                     // Treat the first domain entry as the domain
-                    domain = move(parts[1]);
+                    domain.assign(parts[1].begin(), parts[1].end());
                     return false;
                 }
-                if (parts[0] == "search") {
+                if (parts[0] == boost::as_literal("search")) {
                     // Found a "search" entry, but keep looking for other domain entries
                     // We use the first search domain as the domain.
-                    search = move(parts[1]);
+                    search.assign(parts[1].begin(), parts[1].end());
                     return true;
                 }
                 return true;
