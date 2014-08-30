@@ -304,9 +304,9 @@ Facter.add("is_virtual") do
     physical_types = %w{physical xen0 vmware_server vmware_workstation openvzhn vserver_host}
 
     if physical_types.include? Facter.value(:virtual)
-      "false"
+      false
     else
-      "true"
+      true
     end
   end
 end

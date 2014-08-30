@@ -19,7 +19,7 @@ Facter.add('physicalprocessorcount') do
   setcode do
     processors = Facter.value(:processors)
     if (physicalprocessorcount = processors["physicalcount"])
-      physicalprocessorcount.to_s
+      physicalprocessorcount
     else
       nil
     end

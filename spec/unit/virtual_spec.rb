@@ -388,139 +388,139 @@ describe "is_virtual fact" do
   it "should be virtual when running on xen" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("xenu")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be false when running on xen0" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("xen0")
-    Facter.fact(:is_virtual).value.should == "false"
+    Facter.fact(:is_virtual).value.should == false
   end
 
   it "should be true when running on xenhvm" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("xenhvm")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be false when running on physical" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("physical")
-    Facter.fact(:is_virtual).value.should == "false"
+    Facter.fact(:is_virtual).value.should == false
   end
 
   it "should be true when running on vmware" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("vmware")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running on virtualbox" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("virtualbox")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running on openvzve" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("openvzve")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running on vserver" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("vserver")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running on kvm" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("kvm")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running in jail" do
     Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
     Facter.fact(:virtual).stubs(:value).returns("jail")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running in zone" do
     Facter.fact(:kernel).stubs(:value).returns("SunOS")
     Facter.fact(:virtual).stubs(:value).returns("zone")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running on hp-vm" do
     Facter.fact(:kernel).stubs(:value).returns("HP-UX")
     Facter.fact(:virtual).stubs(:value).returns("hpvm")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running on S390" do
     Facter.fact(:architecture).stubs(:value).returns("s390x")
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("zlinux")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running on parallels" do
     Facter.fact(:kernel).stubs(:value).returns("Darwin")
     Facter.fact(:virtual).stubs(:value).returns("parallels")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be false on vmware_server" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("vmware_server")
-    Facter.fact(:is_virtual).value.should == "false"
+    Facter.fact(:is_virtual).value.should == false
   end
 
   it "should be false on openvz host nodes" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("openvzhn")
-    Facter.fact(:is_virtual).value.should == "false"
+    Facter.fact(:is_virtual).value.should == false
   end
 
   it "should be false on vserver host nodes" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("vserver_host")
-    Facter.fact(:is_virtual).value.should == "false"
+    Facter.fact(:is_virtual).value.should == false
   end
 
   it "should be true when running on hyperv" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("hyperv")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running on rhev" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("rhev")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running on ovirt" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("ovirt")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running on gce" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("gce")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running in LXC" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("lxc")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 
   it "should be true when running in docker" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("docker")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 end
