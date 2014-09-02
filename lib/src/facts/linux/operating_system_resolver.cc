@@ -202,17 +202,23 @@ namespace facter { namespace facts { namespace linux {
             operating_system == os::redhat ||
             operating_system == os::scientific ||
             operating_system == os::scientific_cern ||
+            operating_system == os::ubuntu ||
             operating_system == os::cumulus))
         {
             return {};
         }
 
         string value = os_release;
-        auto pos = value.find('.');
-        if (pos != string::npos) {
-            value = value.substr(0, pos);
+        if (operating_system == os::ubuntu) {
+            re_search(value, "(\\d+\\.\\d*)\\.?\\d*", &value);
+            return value;
+        } else {
+            auto pos = value.find('.');
+            if (pos != string::npos) {
+                value = value.substr(0, pos);
+            }
+            return value;
         }
-        return value;
     }
 
     string operating_system_resolver::determine_operating_system_minor_release(collection& facts, string const& operating_system, string const& os_release)
