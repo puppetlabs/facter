@@ -19,8 +19,11 @@ endif()
 
 # Find our dependency packages
 # We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
-set(Boost_USE_STATIC_LIBS OFF)
-add_definitions(-DBOOST_ALL_DYN_LINK)
+if (NOT WIN32)
+  # Boost.Log has what I assume is a bug, where it links dynamically by default but doesn't configure the headers
+  # correctly for dynamic linking. This addresses this on non-Windows platforms, where we link dynamically.
+  add_definitions(-DBOOST_LOG_DYN_LINK)
+endif()
 find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time thread regex log)
 find_package(YAMLCPP REQUIRED)
 if (NOT WITHOUT_OPENSSL)
@@ -66,6 +69,16 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     #set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wall")
+endif()
+
+# On Windows, DLL paths aren't hardcoded in the executable. We place all the executables and libraries
+# in the same directory to avoid having to setup the DLL search path in the dev environment.
+if (WIN32)
+    set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+    set(LIBRARY_OUTPUT_PATH    ${PROJECT_BINARY_DIR}/bin)
+    set(LIBFACTER_TEST_PATH    ${PROJECT_BINARY_DIR}/bin)
+else()
+    set(LIBFACTER_TEST_PATH    ${PROJECT_BINARY_DIR}/lib/tests)
 endif()
 
 # Include vendor libraries
@@ -122,4 +135,4 @@ add_subdirectory(lib)
 add_subdirectory(exe)
 
 # Add test executables for unit testing
-add_test("library\\ tests" "${PROJECT_BINARY_DIR}/lib/tests/libfacter_test" "--gtest_color=yes")
+add_test("library\\ tests" "${LIBFACTER_TEST_PATH}/libfacter_test" "--gtest_color=yes")

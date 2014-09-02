@@ -12,7 +12,6 @@
 /**
  * See Boost.Log's documentation.
  */
-#define BOOST_LOG_DYN_LINK
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/format.hpp>

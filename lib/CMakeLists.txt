@@ -155,8 +155,12 @@ target_link_libraries(libfacter
     ${LIBFACTER_PLATFORM_LIBRARIES}
 )
 
-set_target_properties(libfacter PROPERTIES PREFIX "" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}")
-install(TARGETS libfacter DESTINATION lib)
+set_target_properties(libfacter PROPERTIES PREFIX "" IMPORT_PREFIX "" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}")
+if (WIN32)
+    install(TARGETS libfacter DESTINATION bin)
+else()
+    install(TARGETS libfacter DESTINATION lib)
+endif()
 install(DIRECTORY inc/facter DESTINATION include)
 
 add_subdirectory(tests)
