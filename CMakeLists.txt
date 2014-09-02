@@ -40,6 +40,11 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
         set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${SOCKET_LIBRARY})
         link_libraries(socket)
     endif()
+    find_library(KSTAT_LIBRARY kstat)
+    if (KSTAT_LIBRARY)
+      set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${KSTAT_LIBRARY})
+        link_libraries(kstat)
+    endif()
 endif()
 
 # Set RPATH if not installing to a system library directory
