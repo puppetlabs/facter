@@ -4,10 +4,14 @@ using namespace std;
 
 namespace facter { namespace ruby {
 
-    string api::get_library_name(string const& version)
+    dynamic_library api::find_library()
     {
-        // TODO WINDOWS: Implement function.
-        return "libruby.dll";
+        // WINDOWS TODO: implement this function
+        // It should go something like this:
+        // 1. Use dynamic_library::find_by_name (change it to support regex pattern and use CreateToolhelp32Snapshot to implement)
+        // 2. Check the FACTER_RUBY environment variable
+        // 3. Search the path for ruby.exe and then look in ..\lib for a ruby library to use.
+        return dynamic_library();
     }
 
 }}  // namespace facter::ruby

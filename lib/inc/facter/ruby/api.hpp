@@ -92,13 +92,6 @@ namespace facter {  namespace ruby {
         static api* instance();
 
         /**
-         * Gets the platform-specific Ruby library file name.
-         * @param version The requested version.  If empty, the default library name will be returned.
-         * @return Returns the platform-specific ruby library file name.
-         */
-        static std::string get_library_name(std::string const& version = {});
-
-        /**
          * Called to initialize the API.
          * This should be done at the same stack frame where code is loaded into the Ruby VM.
          */
@@ -526,7 +519,7 @@ namespace facter {  namespace ruby {
         int (* const ruby_cleanup)(volatile int);
 
         static std::unique_ptr<api> create();
-        static facter::util::dynamic_library search(std::string const& name, std::vector<std::string> const& directories);
+        static facter::util::dynamic_library find_library();
         static VALUE callback_thunk(VALUE parameter);
         static VALUE rescue_thunk(VALUE parameter, VALUE exception);
         static VALUE protect_thunk(VALUE parameter);

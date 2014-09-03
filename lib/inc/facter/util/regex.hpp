@@ -43,20 +43,26 @@ namespace facter { namespace util {
          * Constructs a new re_adapter with the given pattern text.
          * @param pattern The regular expression pattern text.
          */
-        re_adapter(const char* pattern) try : boost::regex(pattern)
+        re_adapter(const char* pattern)
         {
-        } catch (const boost::regex_error &e) {
-            _err = e.what();
+            try {
+                assign(pattern);
+            } catch (const boost::regex_error &e) {
+                _err = e.what();
+            }
         }
 
         /**
          * Constructs a new re_adapter with the given pattern text.
          * @param pattern The regular expression pattern text.
          */
-        re_adapter(const std::string &pattern) try : boost::regex(pattern)
+        re_adapter(const std::string &pattern)
         {
-        } catch (const boost::regex_error &e) {
-            _err = e.what();
+            try {
+                assign(pattern);
+            } catch (const boost::regex_error &e) {
+                _err = e.what();
+            }
         }
 
         /**

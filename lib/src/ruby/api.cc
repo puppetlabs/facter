@@ -110,25 +110,7 @@ namespace facter { namespace ruby {
 
     unique_ptr<api> api::create()
     {
-        // Get the library name based on the given version
-        string name = get_library_name();
-
-        // First look for an already loaded library
-        dynamic_library library = dynamic_library::find_by_name(name);
-        if (!library.loaded()) {
-            library = dynamic_library::find_by_symbol("ruby_init");
-        }
-
-        // Search the path directories for a matching ruby library
-        if (!library.loaded()) {
-            library = search(name, environment::search_paths());
-        }
-
-        // Fall back to using the load path
-        if (!library.loaded()) {
-            library.load(name);
-        }
-
+        dynamic_library library = find_library();
         if (!library.loaded()) {
             LOG_WARNING("could not locate a ruby library: custom facts will not be resolved.");
             return nullptr;
@@ -194,48 +176,6 @@ namespace facter { namespace ruby {
     bool api::initialized() const
     {
         return _initialized;
-    }
-
-    dynamic_library api::search(string const& name, vector<string> const& directories)
-    {
-        dynamic_library library;
-
-        for (auto const& directory : directories) {
-            directory::each_file(directory, [&](string const& path) {
-                if (library.load(path)) {
-                    return false;
-                }
-                return true;
-            }, name);
-
-            if (library.loaded()) {
-                break;
-            }
-
-            // Try a "lib" directory in the parent directory
-            // This will make version managers like RVM work
-            path lib_directory(directory);
-            lib_directory /= "..";
-            lib_directory /= "lib";
-
-            boost::system::error_code ec;
-            lib_directory = canonical(lib_directory, ec);
-            if (ec) {
-                continue;
-            }
-
-            directory::each_file(lib_directory.string(), [&](string const& path) {
-                if (library.load(path)) {
-                    return false;
-                }
-                return true;
-            }, name);
-
-            if (library.loaded()) {
-                break;
-            }
-        }
-        return library;
     }
 
     vector<string> api::get_load_path() const
