@@ -70,6 +70,7 @@ namespace facter { namespace facts { namespace posix {
                 { string(os::suse_enterprise_desktop),  string(os_family::suse) },
                 { string(os::open_suse),                string(os_family::suse) },
                 { string(os::suse),                     string(os_family::suse) },
+                { string(os::sunos),                    string(os_family::solaris) },
                 { string(os::solaris),                  string(os_family::solaris) },
                 { string(os::nexenta),                  string(os_family::solaris) },
                 { string(os::omni),                     string(os_family::solaris) },
