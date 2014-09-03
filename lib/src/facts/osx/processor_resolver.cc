@@ -23,7 +23,7 @@ namespace facter { namespace facts { namespace osx {
         // Get the logical count of processors
         int logical_count = 0;
         size_t size = sizeof(logical_count);
-        if (sysctlbyname("hw.logicalcpu_max", &logical_count, &size, nullptr, 0) != 0) {
+        if (sysctlbyname("hw.logicalcpu_max", &logical_count, &size, nullptr, 0) == -1) {
             LOG_DEBUG("sysctlbyname failed: %1% (%2%): %3% fact is unavailable.", strerror(errno), errno, fact::processor_count);
         } else {
             processors_value->add("count", make_value<integer_value>(logical_count));
@@ -32,7 +32,7 @@ namespace facter { namespace facts { namespace osx {
         // Get the physical count of processors
         int physical_count = 0;
         size = sizeof(physical_count);
-        if (sysctlbyname("hw.physicalcpu_max", &physical_count, &size, nullptr, 0) != 0) {
+        if (sysctlbyname("hw.physicalcpu_max", &physical_count, &size, nullptr, 0) == -1) {
             LOG_DEBUG("sysctlbyname failed: %1% (%2%): %3% fact is unavailable.", strerror(errno), errno, fact::physical_processor_count);
         } else {
             processors_value->add("physicalcount", make_value<integer_value>(physical_count));
