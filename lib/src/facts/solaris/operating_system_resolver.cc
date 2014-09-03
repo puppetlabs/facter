@@ -25,7 +25,7 @@ namespace facter { namespace facts { namespace solaris {
             return;
         }
         // Add the fact
-        facts.add(fact::operating_system, make_value<string_value>(value));
+        facts.add(fact::operating_system, make_value<string_value>(move(value)));
     }
 
     void operating_system_resolver::resolve_operating_system_release(collection& facts)
@@ -55,7 +55,7 @@ namespace facter { namespace facts { namespace solaris {
             } else if (re_search(line, regexp_s11b, &major)) {
                 value = major + "_u0";
             }
-            return true;
+            return value.empty();
         });
 
         // Use the base implementation if we have no value
@@ -67,13 +67,12 @@ namespace facter { namespace facts { namespace solaris {
     }
 
     void operating_system_resolver::resolve_operating_system_major_release(collection& facts) {
-        resolve_operating_system_release(facts);
-        auto kernel = facts.get<string_value>(fact::operating_system_release)->value();
+        auto kernel = facts.get<string_value>(fact::operating_system_release, false)->value();
         auto pos = kernel.find('_');
         if (pos != string::npos) {
             kernel = kernel.substr(0, pos);
         }
-        facts.add(fact::operating_system_major_release, make_value<string_value>(kernel));
+        facts.add(fact::operating_system_major_release, make_value<string_value>(move(kernel)));
     }
 
 }}}  // namespace facter::facts::solaris
