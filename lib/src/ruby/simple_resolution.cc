@@ -62,7 +62,8 @@ namespace facter { namespace ruby {
         }
 
         // Otherwise, we were given a command so execute it
-        auto result = execute("sh", {"-c", expand_command(_command)},
+        auto result = execute(command_shell,
+            {command_args, expand_command(_command)},
             option_set<execution_options> {
                 execution_options::defaults,
                 execution_options::redirect_stderr

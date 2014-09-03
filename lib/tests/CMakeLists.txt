@@ -41,9 +41,10 @@ endif()
 
 # Set the POSIX sources if on a POSIX platform
 if (UNIX)
-    set(LIBFACTER_TESTS_POSIX_SOURCES
+    set(LIBFACTER_TESTS_CATEGORY_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/execution/posix/execution.cc"
         "${CMAKE_CURRENT_LIST_DIR}/facts/posix/uptime_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/facts/posix/collection.cc"
         "${CMAKE_CURRENT_LIST_DIR}/facts/external/posix/execution_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/environment.cc"
         "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_addrinfo.cc"
@@ -51,8 +52,16 @@ if (UNIX)
         "${CMAKE_CURRENT_LIST_DIR}/logging/posix/logging.cc"
     )
     if (OPENSSL_FOUND)
-        set(LIBFACTER_TESTS_POSIX_SOURCES ${LIBFACTER_TESTS_POSIX_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_bio.cc")
+        set(LIBFACTER_TESTS_CATEGORY_SOURCES ${LIBFACTER_TESTS_CATEGORY_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_bio.cc")
     endif()
+endif()
+
+if (WIN32)
+    set(LIBFACTER_TESTS_CATEGORY_SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/execution/windows/execution.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/facts/windows/collection.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/facts/external/windows/execution_resolver.cc"
+    )
 endif()
 
 # Set the platform-specific sources
@@ -74,7 +83,7 @@ include_directories(
     ${YAMLCPP_INCLUDE_DIRS}
 )
 
-add_executable(libfacter_test ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_POSIX_SOURCES})
+add_executable(libfacter_test ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_CATEGORY_SOURCES})
 target_link_libraries(libfacter_test libfacter ${YAMLCPP_LIBRARIES} ${Boost_LIBRARIES} ${GMOCK_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 # Generate a file containing the above version numbers

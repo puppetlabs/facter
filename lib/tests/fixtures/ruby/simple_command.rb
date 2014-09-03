@@ -1,7 +1,7 @@
 Facter.add(:foo) do
-    setcode 'echo bar 2>&1'
+    setcode 'echo bar'
 end
 
 Facter.add(:foo) do
-    setcode 'echo baz 2>&1'
+    setcode 'echo baz'
 end

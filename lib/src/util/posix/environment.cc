@@ -40,9 +40,14 @@ namespace facter { namespace util {
         return true;
     }
 
-    void environment::set(string const& name, string const& value)
+    bool environment::set(string const& name, string const& value)
     {
-        setenv(name.c_str(), value.c_str(), 1);
+        return setenv(name.c_str(), value.c_str(), 1) == 0;
+    }
+
+    bool environment::clear(string const& name)
+    {
+        return unsetenv(name.c_str()) == 0;
     }
 
     char environment::get_path_separator()

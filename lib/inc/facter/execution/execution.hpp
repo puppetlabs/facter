@@ -55,6 +55,9 @@ namespace facter { namespace execution {
         defaults = trim_output | merge_environment,
     };
 
+    extern const char *const command_shell;
+    extern const char *const command_args;
+
     /**
      * Base class for execution exceptions.
      */

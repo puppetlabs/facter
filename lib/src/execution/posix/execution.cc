@@ -26,6 +26,9 @@ extern char** environ;
 
 namespace facter { namespace execution {
 
+    const char *const command_shell = "sh";
+    const char *const command_args = "-c";
+
     uint64_t get_max_descriptor_limit()
     {
 #ifdef _SC_OPEN_MAX

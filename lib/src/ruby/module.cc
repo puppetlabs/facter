@@ -620,7 +620,8 @@ namespace facter { namespace ruby {
 
         // Block to ensure that result is destructed before raising.
         {
-            auto result = execution::execute("sh", {"-c", expand_command(command)},
+            auto result = execution::execute(execution::command_shell,
+                {execution::command_args, expand_command(command)},
                 option_set<execution_options> {
                     execution_options::defaults,
                     execution_options::redirect_stderr

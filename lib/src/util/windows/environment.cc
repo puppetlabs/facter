@@ -1,8 +1,12 @@
 #include <facter/util/environment.hpp>
 #include <boost/algorithm/string.hpp>
+#include <facter/logging/logging.hpp>
 #include <cstdlib>
+#include <windows.h>
 
 using namespace std;
+
+LOG_DECLARE_NAMESPACE("util.windows.environment")
 
 namespace facter { namespace util {
 
@@ -36,9 +40,14 @@ namespace facter { namespace util {
         return true;
     }
 
-    void environment::set(string const& name, string const& value)
+    bool environment::set(string const& name, string const& value)
     {
-        // TODO WINDOWS: Implement function.
+        return SetEnvironmentVariable(name.c_str(), value.c_str()) != 0;
+    }
+
+    bool environment::clear(string const& name)
+    {
+        return SetEnvironmentVariable(name.c_str(), nullptr) != 0;
     }
 
     char environment::get_path_separator()

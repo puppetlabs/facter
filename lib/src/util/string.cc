@@ -29,6 +29,10 @@ namespace facter { namespace util {
         string line;
         istringstream in(s);
         while (getline(in, line)) {
+            // Handle Windows CR in the string.
+            if (line.size() && line.back() == '\r') {
+                line.pop_back();
+            }
             if (!callback(line)) {
                 break;
             }
