@@ -10,7 +10,16 @@
 
 Facter.add(:gid) do
   confine do
-    Facter::Core::Execution.which('id')
+    Facter::Core::Execution.which('id') && Facter.value(:kernel) != "SunOS"
   end
   setcode { Facter::Core::Execution.exec('id -ng') }
+end
+
+Facter.add(:gid) do
+  confine :kernel => :SunOS
+  setcode do
+    if File.exist? '/usr/xpg4/bin/id'
+        Facter::Core::Execution.exec('/usr/xpg4/bin/id -ng')
+    end
+  end
 end
