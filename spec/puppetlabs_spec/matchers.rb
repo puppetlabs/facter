@@ -1,5 +1,6 @@
 require 'stringio'
 
+=begin
 ########################################################################
 # Backward compatibility for Jenkins outdated environment.
 module RSpec
@@ -11,6 +12,7 @@ module RSpec
     end
   end
 end
+=end
 
 
 ########################################################################
