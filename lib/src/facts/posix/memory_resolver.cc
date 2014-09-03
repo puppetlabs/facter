@@ -54,7 +54,7 @@ namespace facter { namespace facts { namespace posix {
         mem_stats->add("available", make_value<string_value>(si_string(mem_free)));
         mem_stats->add("available_bytes", make_value<integer_value>(mem_free));
         mem_stats->add("capacity", make_value<string_value>(percentage(mem_used, mem_total)));
-        value->add("ram", move(mem_stats));
+        value->add("system", move(mem_stats));
 
         auto swap_stats = make_value<map_value>();
         swap_stats->add("total", make_value<string_value>(si_string(swap_total)));

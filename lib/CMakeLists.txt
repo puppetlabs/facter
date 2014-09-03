@@ -96,6 +96,7 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/dmi_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/networking_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/collection.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/memory_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/processor_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/system_profiler_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/osx/software_version_resolver.cc"
