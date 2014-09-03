@@ -61,9 +61,10 @@ Boost builds with MinGW work best with MSYS, so we install it here. All commands
 
 *   Build and install boost for mingw
 
-    * .\boostrap
+    * .\boostrap mingw
 
-    * .\b2 toolset=gcc variant=release link=shared install --prefix=\<boost install path\>
+    * .\b2 toolset=gcc address-model=64 --build-type=minimal install --prefix=\<boost install path\> -j
+        * --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log can be used for a fast minimal build
 
     * Note that some libraries will fail to build.
 
@@ -77,4 +78,4 @@ Boost builds with MinGW work best with MSYS, so we install it here. All commands
 
 *   Build CFACTER
 
-    * mkdir release && cd release && cmake -G "MinGW Makefiles" -DBOOST_ROOT=\<boost install path\> -DOPENSSL_ROOT=\<openssl install path\> -DYAMLCPP_ROOT=\<yaml-cpp install path\> .. && mingw32-make
+    * mkdir release && cd release && cmake -G "MinGW Makefiles" -DBOOST_ROOT=\<boost install path\> -DOPENSSL_ROOT=\<openssl install path\> -DYAMLCPP_ROOT=\<yaml-cpp install path\> .. && mingw32-make -j
