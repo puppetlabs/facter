@@ -12,7 +12,7 @@ namespace facter { namespace util {
         {
             string paths;
             if (environment::get("PATH", paths)) {
-                _paths = split(paths, environment::get_path_separator());
+                boost::split(_paths, paths, bind(equal_to<char>(), placeholders::_1, environment::get_path_separator()), boost::token_compress_on);
             }
         }
 

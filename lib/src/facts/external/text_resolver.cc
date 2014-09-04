@@ -14,7 +14,7 @@ namespace facter { namespace facts { namespace external {
 
     bool text_resolver::can_resolve(string const& path) const
     {
-        return boost::ends_with(boost::to_lower_copy(path), ".txt");
+        return boost::iends_with(path, ".txt");
     }
 
     void text_resolver::resolve(string const& path, collection& facts) const

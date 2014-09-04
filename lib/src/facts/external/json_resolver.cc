@@ -172,7 +172,7 @@ namespace facter { namespace facts { namespace external {
 
     bool json_resolver::can_resolve(string const& path) const
     {
-        return boost::ends_with(boost::to_lower_copy(path), ".json");
+        return boost::iends_with(path, ".json");
     }
 
     void json_resolver::resolve(string const& path, collection& facts) const
