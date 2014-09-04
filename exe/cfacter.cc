@@ -3,7 +3,8 @@
 #include <facter/logging/logging.hpp>
 #include <facter/ruby/api.hpp>
 #include <facter/ruby/module.hpp>
-#include <facter/util/string.hpp>
+
+#include <boost/algorithm/string.hpp>
 
 // boost includes are not always warning-clean. Disable warnings that
 // cause problems before including the headers, then re-enable the warnings.
@@ -193,7 +194,11 @@ int main(int argc, char **argv)
                 fact_parameters.begin(),
                 fact_parameters.end(),
                 inserter(requested_facts, requested_facts.end()),
-                [](string const& s) { return trim(to_lower(string(s))); });
+                [](string const& s) {
+                    string fact = boost::trim_copy(s);
+                    boost::to_lower(fact);
+                    return fact;
+                });
         }
 
         log_requested_facts(requested_facts);

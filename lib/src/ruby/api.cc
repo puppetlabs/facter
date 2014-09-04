@@ -6,8 +6,8 @@
 #include <facter/logging/logging.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/environment.hpp>
-#include <facter/util/string.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace facter::facts;
@@ -154,7 +154,7 @@ namespace facter { namespace ruby {
 
             // Check for bundler; this is the only ruby option we support
             string ruby_opt;
-            if (environment::get("RUBYOPT", ruby_opt) && starts_with(ruby_opt, "-rbundler/setup")) {
+            if (environment::get("RUBYOPT", ruby_opt) && boost::starts_with(ruby_opt, "-rbundler/setup")) {
                 environment::set("RUBYOPT", "-rbundler/setup");
             } else {
                 // Clear RUBYOPT so that only our options are used.

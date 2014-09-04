@@ -4,16 +4,16 @@
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
-#include <facter/util/string.hpp>
 #include <facter/util/scoped_file.hpp>
 #include <rapidjson/reader.h>
 #include <rapidjson/filestream.h>
+#include <boost/algorithm/string.hpp>
 #include <stack>
 #include <tuple>
 
 using namespace std;
-using namespace facter::util;
 using namespace facter::facts;
+using namespace facter::util;
 using namespace rapidjson;
 
 LOG_DECLARE_NAMESPACE("facts.external.json");
@@ -135,7 +135,8 @@ namespace facter { namespace facts { namespace external {
                 if (_key.empty()) {
                     throw external::external_fact_exception("expected non-empty key in object.");
                 }
-                _facts.add(move(to_lower(_key)), move(val));
+                boost::to_lower(_key);
+                _facts.add(move(_key), move(val));
                 return;
             }
 
@@ -171,7 +172,7 @@ namespace facter { namespace facts { namespace external {
 
     bool json_resolver::can_resolve(string const& path) const
     {
-        return ends_with(to_lower(string(path)), ".json");
+        return boost::ends_with(boost::to_lower_copy(path), ".json");
     }
 
     void json_resolver::resolve(string const& path, collection& facts) const

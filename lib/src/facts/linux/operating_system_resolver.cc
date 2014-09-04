@@ -6,10 +6,10 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/string.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/regex.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 #include <map>
 #include <vector>
 #include <tuple>
@@ -95,7 +95,7 @@ namespace facter { namespace facts { namespace linux {
         auto it = release_files.find(operating_system->value());
         if (it != release_files.end()) {
             string contents = file::read_first_line(it->second);
-            if (ends_with(contents, "(Rawhide)")) {
+            if (boost::ends_with(contents, "(Rawhide)")) {
                 value = "Rawhide";
             } else {
                 re_search(contents, "release (\\d[\\d.]*)", &value);
@@ -104,12 +104,14 @@ namespace facter { namespace facts { namespace linux {
 
         // Debian uses the entire contents of the release file as the version
         if (value.empty() && operating_system->value() == os::debian) {
-            value = rtrim(file::read(release_file::debian));
+            value = file::read(release_file::debian);
+            boost::trim_right(value);
         }
 
         // Alpine uses the entire contents of the release file as the version
         if (value.empty() && operating_system->value() == os::alpine) {
-            value = rtrim(file::read(release_file::alpine));
+            value = file::read(release_file::alpine);
+            boost::trim_right(value);
         }
 
         // Check for SuSE related distros, read the release file
@@ -225,7 +227,9 @@ namespace facter { namespace facts { namespace linux {
         // Check for Cumulus Linux in a generic os-release file
         bs::error_code ec;
         if (is_regular_file(release_file::os, ec)) {
-            string contents = trim(file::read(release_file::os));
+            string contents = file::read(release_file::os);
+            boost::trim(contents);
+
             string release;
             if (re_search(contents, "(?m)^NAME=[\"']?(.+?)[\"']?$", &release)) {
                 if (release == "Cumulus Linux") {
@@ -279,7 +283,8 @@ namespace facter { namespace facts { namespace linux {
                 make_tuple("(?m)^Fedora release",               string(os::fedora)),
             };
 
-            string contents = trim(file::read(release_file::redhat));
+            string contents = file::read(release_file::redhat);
+            boost::trim(contents);
             for (auto const& regex : regexs) {
                 if (re_search(contents, get<0>(regex))) {
                     return get<1>(regex);
@@ -300,7 +305,8 @@ namespace facter { namespace facts { namespace linux {
                 make_tuple("(?im)^openSUSE",                      string(os::open_suse)),
             };
 
-            string contents = trim(file::read(release_file::suse));
+            string contents = file::read(release_file::suse);
+            boost::trim(contents);
             for (auto const& regex : regexs) {
                 if (re_search(contents, get<0>(regex))) {
                     return get<1>(regex);

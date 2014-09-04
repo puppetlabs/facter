@@ -3,8 +3,8 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/string.hpp>
 #include <facter/util/regex.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace facter::util;
@@ -73,7 +73,8 @@ namespace facter { namespace facts { namespace linux {
         }
 
         // The value may be quoted; trim the quotes
-        facts.add(fact::lsb_dist_description, make_value<string_value>(trim(move(result.second), { '\"' })));
+        boost::trim_if(result.second, boost::is_any_of("\""));
+        facts.add(fact::lsb_dist_description, make_value<string_value>(move(result.second)));
     }
 
     void lsb_resolver::resolve_dist_version(collection& facts)

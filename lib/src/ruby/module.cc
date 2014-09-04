@@ -6,11 +6,12 @@
 #include <facter/facts/collection.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/directory.hpp>
-#include <facter/util/string.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/version.h>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 #include <stdexcept>
+#include <functional>
 
 using namespace std;
 using namespace facter::facts;
@@ -665,7 +666,8 @@ namespace facter { namespace ruby {
         // Append the FACTERLIB paths
         string variable;
         if (environment::get("FACTERLIB", variable)) {
-            vector<string> env_paths = split(variable, environment::get_path_separator());
+            vector<string> env_paths;
+            boost::split(env_paths, variable, bind(equal_to<char>(), placeholders::_1, environment::get_path_separator()), boost::token_compress_on);
             _search_paths.insert(_search_paths.end(), make_move_iterator(env_paths.begin()), make_move_iterator(env_paths.end()));
         }
 

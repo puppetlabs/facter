@@ -1,10 +1,8 @@
 #include <facter/ruby/confine.hpp>
 #include <facter/ruby/module.hpp>
-#include <facter/util/string.hpp>
 #include <algorithm>
 
 using namespace std;
-using namespace facter::util;
 
 namespace facter { namespace ruby {
 

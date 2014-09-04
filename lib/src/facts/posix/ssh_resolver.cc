@@ -3,9 +3,10 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <facter/logging/logging.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/string.hpp>
-#include <facter/logging/logging.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <tuple>
@@ -20,7 +21,6 @@ using namespace facter::util::posix;
 
 using namespace std;
 using namespace facter::util;
-using namespace boost::system;
 using namespace boost::filesystem;
 namespace bs = boost::system;
 
@@ -95,14 +95,15 @@ namespace facter { namespace facts { namespace posix {
             }
 
             // The SSH file format should be <algo> <key> <hostname>
-            auto parts = split(key, ' ');
+            vector<boost::iterator_range<string::iterator>> parts;
+            boost::split(parts, key, boost::is_any_of(" "), boost::token_compress_on);
             if (parts.size() < 2) {
                 LOG_DEBUG("unexpected contents for %1%: fact %2% is unavailable.", key_file, ssh_fact_name);
                 continue;
             }
 
             // Add the key fact
-            key = move(parts[1]);
+            key.assign(parts[1].begin(), parts[1].end());
             facts.add(string(ssh_fact_name), make_value<string_value>(key));
 
             // Only fingerprint if we are using OpenSSL

@@ -6,11 +6,11 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/posix/os.hpp>
-#include <facter/util/string.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/directory.hpp>
-#include <boost/filesystem.hpp>
 #include <facter/util/regex.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 #include <unordered_set>
 
 using namespace std;
@@ -69,7 +69,8 @@ namespace facter { namespace facts { namespace linux {
 
         directory::each_subdirectory("/sys/devices/system/cpu", [&](string const& cpu_directory) {
             ++logical_count;
-            string id = trim(file::read((path(cpu_directory) / "/topology/physical_package_id").string()));
+            string id = file::read((path(cpu_directory) / "/topology/physical_package_id").string());
+            boost::trim(id);
             if (id.empty() || cpus.emplace(move(id)).second) {
                 // Haven't seen this processor before
                 ++physical_count;
@@ -87,8 +88,10 @@ namespace facter { namespace facts { namespace linux {
             if (pos == string::npos) {
                 return true;
             }
-            string key = trim(line.substr(0, pos));
-            string value = trim(line.substr(pos + 1));
+            string key = line.substr(0, pos);
+            boost::trim(key);
+            string value = line.substr(pos + 1);
+            boost::trim(value);
 
             if (key == "processor") {
                 // Start of a logical processor

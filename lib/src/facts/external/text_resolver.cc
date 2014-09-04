@@ -3,7 +3,7 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/file.hpp>
-#include <facter/util/string.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace facter::util;
@@ -14,7 +14,7 @@ namespace facter { namespace facts { namespace external {
 
     bool text_resolver::can_resolve(string const& path) const
     {
-        return ends_with(to_lower(string(path)), ".txt");
+        return boost::ends_with(boost::to_lower_copy(path), ".txt");
     }
 
     void text_resolver::resolve(string const& path, collection& facts) const
@@ -28,7 +28,9 @@ namespace facter { namespace facts { namespace external {
                 return true;
             }
             // Add as a string fact
-            facts.add(to_lower(line.substr(0, pos)), make_value<string_value>(line.substr(pos+1)));
+            string fact = line.substr(0, pos);
+            boost::to_lower(fact);
+            facts.add(move(fact), make_value<string_value>(line.substr(pos+1)));
             return true;
         })) {
             throw external_fact_exception("file could not be opened.");

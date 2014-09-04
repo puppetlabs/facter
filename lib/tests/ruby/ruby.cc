@@ -4,11 +4,10 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/ruby/api.hpp>
 #include <facter/ruby/module.hpp>
-#include <facter/util/string.hpp>
 #include <facter/util/regex.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/version.h>
-#include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/log/sinks/sync_frontend.hpp>
 #include <boost/log/sinks/basic_sink_backend.hpp>
 #include <memory>
@@ -162,12 +161,14 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
     {
         _facts.clear();
         for (auto const& kvp : GetParam().facts) {
+            string fact = kvp.first;
+            boost::to_lower(fact);
             if (kvp.second == "true") {
-                _facts.add(to_lower(string(kvp.first)), make_value<boolean_value>(true));
+                _facts.add(move(fact), make_value<boolean_value>(true));
             } else if (kvp.second == "false") {
-                _facts.add(to_lower(string(kvp.first)), make_value<boolean_value>(false));
+                _facts.add(move(fact), make_value<boolean_value>(false));
             } else {
-                _facts.add(to_lower(string(kvp.first)), make_value<string_value>(kvp.second));
+                _facts.add(move(fact), make_value<string_value>(kvp.second));
             }
         }
 

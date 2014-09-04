@@ -3,12 +3,11 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/string.hpp>
+#include <boost/algorithm/string.hpp>
 #include <net/if_dl.h>
 #include <net/if.h>
 
 using namespace std;
-using namespace facter::util;
 using namespace facter::execution;
 
 namespace facter { namespace facts { namespace osx {
@@ -59,9 +58,10 @@ namespace facter { namespace facts { namespace osx {
     {
         string interface;
         execution::each_line("route", { "-n", "get",  "default" }, [&interface](string& line){
-            trim(line);
-            if (starts_with(line, "interface: ")) {
-                interface = trim(line.substr(11));
+            boost::trim(line);
+            if (boost::starts_with(line, "interface: ")) {
+                interface = line.substr(11);
+                boost::trim(interface);
                 return false;
             }
             return true;
