@@ -42,7 +42,7 @@ module Facter
         end
       end
 
-      def get_operatingsystemmajrelease
+      def get_operatingsystemmajorrelease
         if get_operatingsystem == "Solaris"
           if match = get_operatingsystemrelease.match(/^(\d+)/)
             match.captures[0]
