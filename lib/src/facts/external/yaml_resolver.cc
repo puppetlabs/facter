@@ -69,7 +69,7 @@ namespace facter { namespace facts { namespace external {
 
     bool yaml_resolver::can_resolve(string const& path) const
     {
-        return boost::ends_with(boost::to_lower_copy(path), ".yaml");
+        return boost::iends_with(path, ".yaml");
     }
 
     void yaml_resolver::resolve(string const& path, collection& facts) const
