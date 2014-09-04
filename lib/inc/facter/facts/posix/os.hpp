@@ -97,6 +97,10 @@ namespace facter { namespace facts { namespace posix {
          */
         constexpr static char const* solaris = "Solaris";
         /**
+         * The SunOS operating system.
+         */
+        constexpr static char const* sunos = "SunOS";
+        /**
          * The Nexenta operating system.
          */
         constexpr static char const* nexenta = "Nexenta";

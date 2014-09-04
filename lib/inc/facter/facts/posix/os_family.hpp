@@ -29,6 +29,10 @@ namespace facter { namespace facts { namespace posix {
          */
         constexpr static char const* solaris = "Solaris";
         /**
+         * The SunOS family of operating systems.
+         */
+        constexpr static char const* sunos = "SunOS";
+        /**
          * The Gentoo family of operating systems.
          */
         constexpr static char const* gentoo = "Gentoo";

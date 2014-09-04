@@ -41,13 +41,15 @@ namespace facter { namespace facts { namespace posix {
         /**
          * Called to resolve the kernel version fact.
          * @param facts The fact collection that is resolving facts.
+         * @param name The result of the uname call.
          */
-        virtual void resolve_kernel_version(collection& facts);
+        virtual void resolve_kernel_version(collection& facts, struct utsname const& name);
         /**
          * Called to resolve the kernel major version fact.
          * @param facts The fact collection that is resolving facts.
+         * @param name The result of the uname call.
          */
-        virtual void resolve_kernel_major_version(collection& facts);
+        virtual void resolve_kernel_major_version(collection& facts, struct utsname const& name);
     };
 
 }}}  // namespace facter::facts::posix

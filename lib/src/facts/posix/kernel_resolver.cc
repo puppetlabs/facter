@@ -36,8 +36,8 @@ namespace facter { namespace facts { namespace posix {
         // Resolve all kernel-related facts
         resolve_kernel(facts, name);
         resolve_kernel_release(facts, name);
-        resolve_kernel_version(facts);
-        resolve_kernel_major_version(facts);
+        resolve_kernel_version(facts, name);
+        resolve_kernel_major_version(facts, name);
     }
 
     void kernel_resolver::resolve_kernel(collection& facts, struct utsname const& name)
@@ -58,7 +58,7 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::kernel_release, make_value<string_value>(move(value)));
     }
 
-    void kernel_resolver::resolve_kernel_version(collection& facts)
+    void kernel_resolver::resolve_kernel_version(collection& facts, struct utsname const& name)
     {
         auto version = facts.get<string_value>(fact::kernel_release);
         if (!version) {
@@ -73,7 +73,7 @@ namespace facter { namespace facts { namespace posix {
         facts.add(fact::kernel_version, make_value<string_value>(move(value)));
     }
 
-    void kernel_resolver::resolve_kernel_major_version(collection& facts)
+    void kernel_resolver::resolve_kernel_major_version(collection& facts, struct utsname const& name)
     {
         auto version = facts.get<string_value>(fact::kernel_release);
         if (!version) {
