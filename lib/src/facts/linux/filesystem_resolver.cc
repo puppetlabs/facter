@@ -169,7 +169,7 @@ namespace facter { namespace facts { namespace linux {
                 const char* tag_name;
                 const char* tag_value;
                 while (blkid_tag_next(tag_iter, &tag_name, &tag_value) == 0) {
-                    string attribute = tag_value;
+                    string attribute = tag_name;
                     boost::to_lower(attribute);
                     if (attribute == "type") {
                         attribute = "filesystem";
