@@ -18,6 +18,8 @@ PACKAGES = {
   :debian => [
     ['git', 'git-core'],
     'ruby',
+  ],
+  :debian_ruby18 => [
     'libjson-ruby',
   ],
   :solaris => [
@@ -27,6 +29,7 @@ PACKAGES = {
   ],
   :windows => [
     'git',
+    # there isn't a need for json on windows because it is bundled in ruby 1.9
   ],
 }
 
