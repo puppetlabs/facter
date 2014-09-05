@@ -24,13 +24,13 @@ namespace facter { namespace facts { namespace osx {
         int mib[] = { CTL_HW, HW_MODEL };
         size_t length = 0;
 
-        if (sysctl(mib, sizeof(mib) / sizeof(mib[0]), nullptr, &length, nullptr, 0) != 0) {
+        if (sysctl(mib, sizeof(mib) / sizeof(mib[0]), nullptr, &length, nullptr, 0) == -1) {
             LOG_DEBUG("sysctl failed: %1% (%2%): %3% fact is unavailable.", strerror(errno), errno, fact::product_name);
             return;
         }
 
         vector<char> model_name(length);
-        if (sysctl(mib, sizeof(mib) / sizeof(mib[0]), model_name.data(), &length, nullptr, 0) != 0) {
+        if (sysctl(mib, sizeof(mib) / sizeof(mib[0]), model_name.data(), &length, nullptr, 0) == -1) {
             LOG_DEBUG("sysctl failed: %1% (%2%): %3% fact is unavailable.", strerror(errno), errno, fact::product_name);
             return;
         }

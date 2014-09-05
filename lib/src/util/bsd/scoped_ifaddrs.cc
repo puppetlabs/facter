@@ -8,7 +8,7 @@ namespace facter { namespace util { namespace bsd {
         scoped_resource(nullptr, free)
     {
         // Get the linked list of interfaces
-        if (getifaddrs(&_resource) != 0) {
+        if (getifaddrs(&_resource) == -1) {
             _resource = nullptr;
         }
     }

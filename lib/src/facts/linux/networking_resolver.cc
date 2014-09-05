@@ -49,7 +49,7 @@ namespace facter { namespace facts { namespace linux {
             return -1;
         }
 
-        if (ioctl(sock, SIOCGIFMTU, &req) != 0) {
+        if (ioctl(sock, SIOCGIFMTU, &req) == -1) {
             LOG_WARNING("ioctl failed: %1% (%2%): interface MTU fact is unavailable for interface %3%.", strerror(errno), errno, interface);
             return -1;
         }
