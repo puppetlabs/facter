@@ -94,7 +94,6 @@ namespace facter { namespace facts { namespace posix {
         auto count = processors->get<integer_value>("count");
         auto physicalcount = processors->get<integer_value>("physicalcount");
         if (count) {
-            string test = to_string(count->value());
             facts.add(fact::processor_count, make_value<string_value>(to_string(count->value())));
         }
 
