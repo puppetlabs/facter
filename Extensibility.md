@@ -2,6 +2,7 @@ Extensibility
 =============
 
 Native Facter has the following extensibility goals:
+
 * Clear guidelines for what facts are supported in-project
 * Compatibility with 90+% of existing Facter custom facts
 * Compatibility with 100% of existing Facter external facts
@@ -15,30 +16,97 @@ Built-in facts
 --------------
 
 These are the criteria for Native Facter pull requests:
+
 * Additional resolutions for existing built-in facts (e.g. the operatingsystem facts for new Linux Distros) must conform to the facter.json schema.
 * New facts must be accompanied by support in the facter.json schema.
-* For [SemVer](http://semver.org) purposes, a change in fact value is only considered breaking if a) the fact is documented in the schema, and b) the fact is applicable on a platform we test againt in [Puppet CI](http://jenkins.puppetlabs.com).
+* For [SemVer](http://semver.org) purposes, a change in fact value is only considered breaking if a) the fact is documented in the schema, and b) the fact is applicable on a platform we test against in [Puppet CI](http://jenkins.puppetlabs.com).
 
-Legacy Custom Facts Compatibility
----------------------------------
+Custom Facts Compatibility
+--------------------------
 
-The Ruby Facter project supports "custom facts" which are fact implementations written using the internal Facter API. For compatibility purposes, Native Facter will support the most commonly used subset of that API specifically:
-```
-Facter.value
-Facter.add
-confine
-setcode
-has_weight (maybe?)
-```
+Ruby Facter supports "custom facts" that are facts implemented using the public Facter API.
 
-It is TBD whether Native Facter will support custom facts which rely on other custom facts. (See New Features for External Facts below for possible mitigation.)
+Native Facter implements a Ruby compatibility layer to support simple and aggregate fact resolutions.
+Native Facter searches for a MRI Ruby library to load and initializes a Ruby VM as needed
+to resolve custom facts.
 
-In terms of implementation, there are two avenues we may pursue:
-* A standalone ruby shim which executes existing custom facts. This might be able to run as just another external fact.
-* A custom fact resolver which calls the Ruby C API to execute custom facts.
-We will decide between these two approaches after some spiking to see which will be most robust and maintainable.
+The environment variable `FACTER_RUBY` can be used to explicitly instruct native Facter to use
+a particular Ruby library (e.g. `FACTER_RUBY=/usr/local/lib/libruby.so.1.9.3`).  If not set, native Facter will search for and load the highest
+version Ruby library on the system.
 
-Long-term, the new features for external facts should encourage users to port their legacy custom facts to external facts, so at some point (e.g. a couple major versions down the line) this shim logic should be retired.
+**Ruby 1.8.x is not supported by native Facter.  Please use Ruby 1.9.3 or later.**
+
+Native Facter will load custom facts from the following locations:
+
+* Any Ruby source file in a `facter` subdirectory on the Ruby load path.
+* Any Ruby source file in a directory specified by the `FACTERLIB` environment variable (delimited by the platform PATH separator).
+* Any Ruby source file in a directory specified by the `--custom-dir` option to cfacter.
+
+The following methods from the Facter API are currently supported by native Facter:
+
+From the `Facter` module:
+
+* []
+* add
+* clear
+* debug
+* debugonce
+* define_fact
+* each
+* fact
+* flush
+* list
+* loadfacts
+* log_exception
+* reset
+* search
+* search_path
+* search_external
+* search_external_path
+* to_hash
+* value
+* version
+* warn
+* warnonce
+
+From the `Facter::Core::Execution` module:
+
+* which
+* exec
+* execute
+* ExecutionFailure
+
+From the `Facter::Util::Fact` class:
+
+* define_resolution
+* flush
+* name
+* resolution
+* value
+
+From the `Facter::Util::Resolution` module:
+
+* confine
+* exec
+* has_weight
+* name
+* on_flush
+* setcode
+* which
+
+From the `Facter::Core::Aggregate` module:
+
+* aggregate
+* chunk
+* confine
+* has_weight
+* name
+* on_flush
+
+Please note: the timeout option is not currently supported on resolutions.  Setting a timeout will result in a warning
+and the timeout will be ignored.
+
+Please see the [Facter Custom Facts Walkthrough](https://docs.puppetlabs.com/facter/2.2/custom_facts.html) for more information on using the Facter API.
 
 External Facts Compatiblity
 ---------------------------
