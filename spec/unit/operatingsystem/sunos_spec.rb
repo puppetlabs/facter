@@ -125,19 +125,19 @@ describe Facter::Operatingsystem::SunOS do
 
     it "should correctly derive from operatingsystemrelease on solaris 10" do
       subject.expects(:get_operatingsystemrelease).returns("10_u8")
-      release = subject.get_operatingsystemmajrelease
+      release = subject.get_operatingsystemmajorrelease
       expect(release).to eq "10"
     end
 
     it "should correctly derive from operatingsystemrelease on solaris 11 (old version scheme)" do
       subject.expects(:get_operatingsystemrelease).returns("11 11/11")
-      release = subject.get_operatingsystemmajrelease
+      release = subject.get_operatingsystemmajorrelease
       expect(release).to eq "11"
     end
 
     it "should correctly derive from operatingsystemrelease on solaris 11 (new version scheme)" do
       subject.expects(:get_operatingsystemrelease).returns("11.1")
-      release = subject.get_operatingsystemmajrelease
+      release = subject.get_operatingsystemmajorrelease
       expect(release).to eq "11"
     end
   end
