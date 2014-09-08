@@ -17,22 +17,34 @@ namespace facter { namespace facts { namespace linux {
     {
      protected:
         /**
-         * Called to resolve the operating system fact.
+         * Called to determine the operating system name.
          * @param facts The fact collection that is resolving facts.
+         * @returns Returns a string representing the operating system name.
          */
-        virtual void resolve_operating_system(collection& facts);
-
+        virtual std::string determine_operating_system(collection &facts);
         /**
-         * Called to resolve the operating system release fact.
+         * Called to determine the operating system release.
          * @param facts The fact collection that is resolving facts.
+         * @param operating_system The name of the operating system.
+         * @returns Returns a string representing the operating system release.
          */
-        virtual void resolve_operating_system_release(collection& facts);
-
+        virtual std::string determine_operating_system_release(collection& facts, std::string const& operating_system);
         /**
-         * Called to resolve the operating system major release fact.
+         * Called to determine the operating system major release.
          * @param facts The fact collection that is resolving facts.
+         * @param operating_system The name of the operating system.
+         * @param os_release The version of the operating system.
+         * @returns Returns a string representing the operating system major release.
          */
-        virtual void resolve_operating_system_major_release(collection& facts);
+        virtual std::string determine_operating_system_major_release(collection& facts, std::string const& operating_system, std::string const& os_release);
+        /**
+         * Called to determine the operating system minor release.
+         * @param facts The fact collection that is resolving facts.
+         * @param operating_system The name of the operating system.
+         * @param os_release The version of the operating system.
+         * @returns Returns a string representing the operating system minor release.
+         */
+        virtual std::string determine_operating_system_minor_release(collection& facts, std::string const& operating_system, std::string const& os_release);
 
      private:
         static std::string check_cumulus_linux();
