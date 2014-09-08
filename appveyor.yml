@@ -1,0 +1,34 @@
+install:
+  - ps: (New-Object net.webclient).DownloadFile('http://downloads.sourceforge.net/project/mingwbuilds/host-windows/releases/4.8.1/64-bit/threads-win32/seh/x64-4.8.1-release-win32-seh-rev5.7z', "$pwd\x64-4.8.1-release-win32-seh-rev5.7z")
+
+  - ps: $env:PATH += ";C:\Program Files\7-Zip"
+  - ps: 7z x x64-4.8.1-release-win32-seh-rev5.7z | FIND /V "ing  "
+  - ps: $env:PATH += ";$pwd\mingw64\bin"
+
+  - ps: (New-Object net.webclient).DownloadFile('https://drive.google.com/uc?export=&confirm=no_antivirus&id=0B2Q7JbsIQE9FdTBKVW1NT2ltT0U', "$pwd\boost_1.55.0_mingw-w64_4.8.1.7z")
+  - ps: 7z x boost_1.55.0_mingw-w64_4.8.1.7z | FIND /V "ing  "
+
+  - ps: mkdir -force C:\tools
+  - ps: mv boost_1.55.0_mingw-w64_4.8.1 C:\tools\boost_1.55.0_mingw-w64_4.8.1
+
+  - ps: (New-Object net.webclient).DownloadFile('https://yaml-cpp.googlecode.com/files/yaml-cpp-0.5.1.tar.gz', "$pwd\yaml-cpp-0.5.1.tar.gz")
+  - ps: 7z x yaml-cpp-0.5.1.tar.gz
+  - ps: 7z x yaml-cpp-0.5.1.tar | FIND /V "ing  "
+
+  - ps: cd yaml-cpp-0.5.1
+  - ps: mkdir build
+  - ps: cd build
+
+  - ps: mv "C:\Program Files (x86)\Git\bin\sh.exe" "C:\Program Files (x86)\Git\bin\shxx.exe"
+  - ps: cmake -G "MinGW Makefiles" -DBOOST_ROOT=C:\tools\boost_1.55.0_mingw-w64_4.8.1 -DCMAKE_INSTALL_PREFIX=C:\tools\yamlcpp ..
+  - ps: mv "C:\Program Files (x86)\Git\bin\shxx.exe" "C:\Program Files (x86)\Git\bin\sh.exe"
+
+  - ps: mingw32-make install
+  - ps: cd ../..
+
+build_script:
+  - ps: mv "C:\Program Files (x86)\Git\bin\sh.exe" "C:\Program Files (x86)\Git\bin\shxx.exe"
+  - ps: cmake -G "MinGW Makefiles" -DBOOST_ROOT=C:\tools\boost_1.55.0_mingw-w64_4.8.1 -DYAMLCPP_ROOT=C:\tools\yamlcpp .
+  - ps: mv "C:\Program Files (x86)\Git\bin\shxx.exe" "C:\Program Files (x86)\Git\bin\sh.exe"
+  - ps: mingw32-make
+
