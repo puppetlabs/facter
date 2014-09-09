@@ -1,5 +1,5 @@
 #include <facter/util/environment.hpp>
-#include <facter/util/string.hpp>
+#include <boost/algorithm/string.hpp>
 #include <cstdlib>
 
 using namespace std;
