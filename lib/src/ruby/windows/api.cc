@@ -1,6 +1,6 @@
 #include <facter/ruby/api.hpp>
 
-using namespace std;
+using namespace facter::util;
 
 namespace facter { namespace ruby {
 

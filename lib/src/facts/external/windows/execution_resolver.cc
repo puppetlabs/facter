@@ -2,7 +2,7 @@
 
 namespace facter { namespace facts { namespace external {
 
-    bool execution_resolver::can_resolve(string const& path) const
+    bool execution_resolver::can_resolve(std::string const& path) const
     {
         // TODO WINDOWS: Implement function.
         return false;
