@@ -7,6 +7,7 @@
 #include <facter/facts/solaris/processor_resolver.hpp>
 #include <facter/facts/posix/timezone_resolver.hpp>
 #include <facter/facts/solaris/filesystem_resolver.hpp>
+#include <facter/facts/solaris/dmi_resolver.hpp>
 
 using namespace std;
 
@@ -22,6 +23,7 @@ namespace facter { namespace facts {
         add(make_shared<posix::id_resolver>());
         add(make_shared<posix::timezone_resolver>());
         add(make_shared<solaris::filesystem_resolver>());
+        add(make_shared<solaris::dmi_resolver>());
     }
 
 }}  // namespace facter::facts
