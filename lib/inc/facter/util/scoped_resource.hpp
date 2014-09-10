@@ -14,7 +14,8 @@ namespace facter { namespace util {
      * This type can be moved but cannot be copied.
      * @tparam T The type of resource being scoped.
     */
-    template<typename T> struct scoped_resource
+    template<typename T>
+    struct scoped_resource
     {
         /**
          * Constructs an uninitialized scoped_resource.
@@ -31,7 +32,7 @@ namespace facter { namespace util {
          * @param deleter The function to call when the resource goes out of scope.
          */
         scoped_resource(T&& resource, std::function<void(T&)> deleter) :
-            _resource(resource),
+            _resource(std::move(resource)),
             _deleter(deleter)
         {
         }
@@ -62,17 +63,15 @@ namespace facter { namespace util {
         scoped_resource& operator=(scoped_resource<T>&& other)
         {
             release();
-            _resource = other._resource;
-            _deleter = other._deleter;
-            other._deleter = std::function<void(T&)>();
-            other._resource = T();
+            _resource = std::move(other._resource);
+            _deleter = std::move(other._deleter);
             return *this;
         }
 
         /**
          * Destructs a scoped_resource.
          */
-        virtual ~scoped_resource()
+        ~scoped_resource()
         {
             release();
         }
@@ -115,6 +114,12 @@ namespace facter { namespace util {
          * Stores the function to call when the resource goes out of scope.
          */
         std::function<void(T&)> _deleter;
+
+     private:
+        void* operator new(size_t) = delete;
+        void operator delete(void*) = delete;
+        void* operator new[](size_t) = delete;
+        void operator delete[](void* ptr) = delete;
     };
 
 }}  // namespace facter::util
