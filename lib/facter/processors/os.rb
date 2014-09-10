@@ -48,6 +48,10 @@ module Facter
       def get_processor_speed
         nil
       end
+
+      def get_processor_virtualization_capacities
+        nil
+      end
     end
 
     class GNU < Base
@@ -79,6 +83,16 @@ module Facter
           count_physical_cpu_from_cpuinfo
         end
       end
+
+      def get_processor_virtualization_capacities
+        virt_flag = Facter::Core::Execution.exec("grep '\(vmx\|svm\)' /proc/cpuinfo")
+        if virt_flag
+          true
+        else
+          false
+        end
+      end
+
 
       private
 

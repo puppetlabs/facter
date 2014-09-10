@@ -129,7 +129,8 @@
             "models" : { "type": "array" },
             "count" : { "type": "integer" },
             "physicalcount" : { "type": "integer" },
-            "speed" : { "type": "string" }
+            "speed" : { "type": "string" },
+            "virtualization" : { "type": "boolean" }
           }
         },
         "productname" : { "type": "string" },
