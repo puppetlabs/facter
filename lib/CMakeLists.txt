@@ -106,6 +106,8 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
     set(LIBFACTER_PLATFORM_SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/src/util/solaris/k_stat.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/util/solaris/scoped_kstat.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/solaris/collection.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/solaris/uptime_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/solaris/processor_resolver.cc"
