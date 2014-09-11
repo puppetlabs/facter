@@ -111,6 +111,14 @@ namespace facter { namespace facts {
          * The name for oVirt virtual machine.
          */
         constexpr static char const* ovirt = "ovirt";
+        /**
+         * The name for Solaris zones
+         */
+        constexpr static char const* zone = "zone";
+        /**
+         * The name for Solaris ldom
+         */
+        constexpr static char const* ldom = "ldom";
     };
 
 }}  // namespace facter::facts
