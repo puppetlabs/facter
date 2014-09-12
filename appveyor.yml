@@ -5,7 +5,7 @@ install:
   - ps: 7z x x64-4.8.1-release-win32-seh-rev5.7z | FIND /V "ing  "
   - ps: $env:PATH += ";$pwd\mingw64\bin"
 
-  - ps: (New-Object net.webclient).DownloadFile('https://drive.google.com/uc?export=&confirm=no_antivirus&id=0B2Q7JbsIQE9FdTBKVW1NT2ltT0U', "$pwd\boost_1.55.0_mingw-w64_4.8.1.7z")
+  - ps: (New-Object net.webclient).DownloadFile('https://s3.amazonaws.com/kylo-pl-bucket/boost_1.55.0_mingw-w64_4.8.1.7z', "$pwd\boost_1.55.0_mingw-w64_4.8.1.7z")
   - ps: 7z x boost_1.55.0_mingw-w64_4.8.1.7z | FIND /V "ing  "
 
   - ps: mkdir -force C:\tools
