@@ -7,6 +7,7 @@
 #include <facter/logging/logging.hpp>
 #include <facter/util/scoped_file.hpp>
 #include <facter/util/file.hpp>
+#include <facter/util/solaris/k_stat.hpp>
 #include <facter/util/string.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
@@ -20,6 +21,7 @@
 using namespace std;
 using namespace facter::facts;
 using namespace facter::util;
+using namespace facter::util::solaris;
 using namespace boost::filesystem;
 
 LOG_DECLARE_NAMESPACE("facts.solaris.filesystem");
@@ -123,7 +125,53 @@ namespace facter { namespace facts { namespace solaris {
 
     void filesystem_resolver::resolve_partitions(collection& facts)
     {
-        // TODO
+        try {
+            k_stat ks;
+            multimap<string, string> partmap;
+            auto ke = ks["sd"];
+            for (auto& kv : ke) {
+                string klass = kv.klass();
+                if (klass != "partition") {
+                    continue;
+                }
+                string val = kv.name();
+                auto pos = val.find(',');
+                if (pos != val.npos) {
+                    string key = val.substr(0, pos);
+                    partmap.insert({key, val.substr(pos +1)});
+                }
+            }
+
+            auto disk = make_value<map_value>();
+            set<string> disks;
+            ke = ks["sderr"];
+            for (auto& kv : ke) {
+                auto value = make_value<map_value>();
+                string dname = kv.name();
+                auto pos = dname.find(',');
+                const string name = dname.substr(0, pos);
+
+                string product = kv.value<string>("Product");
+                string vendor = kv.value<string>("Vendor");
+                string size = si_string(kv.value<uint64_t>("Size"));
+
+                vector<string> parts;
+                auto ret = partmap.equal_range(name);
+                for (auto it = ret.first; it != ret.second; it++) {
+                    parts.push_back(it->second);
+                }
+                value->add("partitions", make_value<string_value>(boost::join(parts, ",")));
+                value->add("product", make_value<string_value>(move(product)));
+                value->add("vendor", make_value<string_value>(move(vendor)));
+                value->add("size", make_value<string_value>(move(size)));
+                disk->add(name.c_str(), move(value));
+                disks.insert(name);
+            }
+            facts.add(fact::disks, make_value<string_value>(boost::join(disks, ",")));
+            facts.add(fact::disk, move(disk));
+        } catch (kstat_exception& ex) {
+            LOG_DEBUG("partition resolver failed (%1%)", ex.what());
+        }
     }
 
 }}}  // namespace facter::facts::solaris
