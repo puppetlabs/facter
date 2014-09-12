@@ -7,12 +7,12 @@
 #include <facter/facts/fact.hpp>
 #include <unordered_set>
 #include <sys/processor.h>
-#include <kstat.h>
+#include <facter/util/solaris/k_stat.hpp>
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::posix;
-using namespace facter::util;
+using namespace facter::util::solaris;
 
 LOG_DECLARE_NAMESPACE("facts.solaris.processor");
 /*
@@ -56,77 +56,44 @@ namespace facter { namespace facts { namespace solaris {
 
     void processor_resolver::resolve_structured_processors(collection& facts)
     {
-        auto processors_value = make_value<map_value>();
-        auto processor_list = make_value<array_value>();
+        try {
+            auto processors_value = make_value<map_value>();
+            auto processor_list = make_value<array_value>();
 
-        size_t hardware_thread_count = 0;
-        unordered_set<int> cores;
-        unordered_set<int> chips;
+            size_t hardware_thread_count = 0;
+            unordered_set<int> cores;
+            unordered_set<int> chips;
 
-        kstat_ctl_t *kc = nullptr;
-        kstat_named_t *knp = nullptr;
+            k_stat kc;
+            auto kv = kc[string("cpu_info")];
+            for (auto const& ke : kv) {
+                try {
+                    // we have a valid hardware thread so let us account for it.
+                    ++hardware_thread_count;
 
-        if ((kc = kstat_open()) == nullptr) {
-            LOG_DEBUG("kstat_open failed: %1% (%2%): processor facts are unavailable.", strerror(errno), errno);
-            return;
-        }
-
-        // man p_online(2) suggests that we have to iterate upto
-        // SC_CPUID_MAX to determine the valid cpus.
-        long max_cpuid = sysconf(_SC_CPUID_MAX);
-
-        kstat_t *cpu_info;
-        for (processorid_t p_id = 0; p_id < max_cpuid; ++p_id) {
-            if (!(cpu_info = kstat_lookup(kc, const_cast<char*>("cpu_info"), p_id, nullptr))) {
-                // This isn't an error. The cpu id we looked up was not present in the system.
-                continue;
-            }
-            // we have a valid hardware thread so let us account for it.
-            ++hardware_thread_count;
-
-            if (kstat_read(kc, cpu_info, nullptr) == -1) {
-                LOG_DEBUG("kstat_read failed: %1% (%2%): cpu-info for %3% thread is unavailable.", strerror(errno), errno, p_id);
-                continue;
+                    auto brand = ke.value<string>("brand");
+                    processor_list->add(make_value<string_value>(move(brand)));
+                    auto chip_id = ke.value<int32_t>("chip_id");
+                    chips.insert(chip_id);
+                    auto core_id = ke.value<int32_t>("core_id");
+                    cores.insert(core_id);
+                } catch (kstat_exception& ex) {
+                    LOG_DEBUG("processor_resolver failed: (%1%)", ex.what());
+                }
             }
 
-            if ((knp = reinterpret_cast<kstat_named_t *>(kstat_data_lookup(cpu_info, const_cast<char *>("brand")))) == nullptr) {
-                LOG_DEBUG("kstat_read failed: %1% (%2%): brand name for %3% thread is unavailable.", strerror(errno), errno, p_id);
-                continue;
+            // Add the model facts
+            if (!processor_list->empty()) {
+                processors_value->add("models", move(processor_list));
             }
-            processor_list->add(make_value<string_value>(knp->value.str.addr.ptr));
-
-            if ((knp = reinterpret_cast<kstat_named_t *>(kstat_data_lookup(cpu_info, const_cast<char *>("chip_id")))) == nullptr) {
-                LOG_DEBUG("kstat_read failed: %1% (%2%): chip_id for %3% thread is unavailable.", strerror(errno), errno, p_id);
-                continue;
-            }
-            chips.insert(knp->value.ui32);
-
-            if ((knp = reinterpret_cast<kstat_named_t *>(kstat_data_lookup(cpu_info, const_cast<char *>("core_id")))) == nullptr) {
-                LOG_DEBUG("kstat_read failed: %1% (%2%): core_id for %3% thread is unavailable.", strerror(errno), errno, p_id);
-                continue;
-            }
-            cores.insert(knp->value.ui32);
-        }
-
-        kstat_close(kc);
-        // Add the model facts
-        if (!processor_list->empty()) {
-            processors_value->add("models", move(processor_list));
-        }
-        // Add the count facts
-        if (!cores.empty()) {
             processors_value->add("count", make_value<integer_value>(cores.size()));
-        }
-        if (!chips.empty()) {
             processors_value->add("physicalcount", make_value<integer_value>(chips.size()));
-        }
-        if (hardware_thread_count> 0) {
             processors_value->add("hardwarethreads", make_value<integer_value>(hardware_thread_count));
-        }
-
-        if (!processors_value->empty()) {
-            facts.add(fact::processors, move(processors_value));
+            if (!processors_value->empty()) {
+                facts.add(fact::processors, move(processors_value));
+            }
+        } catch (kstat_exception& ex) {
+            LOG_DEBUG("processor_resolver failed (%1%)", ex.what());
         }
     }
-
 }}}  // namespace facter::facts::solaris
