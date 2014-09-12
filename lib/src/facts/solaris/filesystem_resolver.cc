@@ -9,6 +9,7 @@
 #include <facter/util/file.hpp>
 #include <facter/util/solaris/k_stat.hpp>
 #include <facter/util/string.hpp>
+#include <facter/execution/execution.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <sys/mnttab.h>
@@ -21,6 +22,7 @@
 using namespace std;
 using namespace facter::facts;
 using namespace facter::util;
+using namespace facter::execution;
 using namespace facter::util::solaris;
 using namespace boost::filesystem;
 
@@ -91,28 +93,14 @@ namespace facter { namespace facts { namespace solaris {
         }
 
         // Build a list of mounted filesystems
-        // Similar to the BSD resolver, and different from solaris
-        // because it only lists actively mounted filesystems
-        // The solaris fact displays what filesystems are supported by the kernel
-        // from oracle documentation
-        // disk: zfs, ufs, hsfs, pcfs, udfs
-        // virtual: ctfs, fifofs, fdfs, mntfs, namefs, objfs, sharefs, specfs, swapfs
-        // network: nfs
-        // Should we return a list of these instead?
 
         set<string> filesystems;
-        mountpoints->each([&](string const&, value const* val) {
-            auto mountpoint = dynamic_cast<map_value const*>(val);
-            if (!mountpoint) {
-                return true;
+        re_adapter fs_re("^fs/.*/(.*)$");
+        string fs;
+        execution::each_line("/usr/sbin/sysdef", [&] (string& line) {
+            if (re_search(line, fs_re, &fs)) {
+                filesystems.insert(fs);
             }
-
-            auto filesystem = mountpoint->get<string_value>("filesystem");
-            if (!filesystem) {
-                return true;
-            }
-
-            filesystems.insert(filesystem->value());
             return true;
         });
 

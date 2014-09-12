@@ -446,7 +446,7 @@ namespace facter { namespace facts {
         constexpr static char const* disks = "disks";
 
         /**
-         * The fact for disks.
+         * The fact for structured disk fact.
          */
         constexpr static char const* disk = "disk";
 
@@ -454,11 +454,6 @@ namespace facter { namespace facts {
          * The fact for partitions.
          */
         constexpr static char const* partitions = "partitions";
-
-        /**
-         * The fact for partitions.
-         */
-        constexpr static char const* partition = "partition";
 
         /**
          * The fact for system memory.
