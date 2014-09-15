@@ -25,16 +25,12 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  pl-gcc
 BuildRequires:  pl-cmake
-BuildRequires:  pl-libre2-devel
 BuildRequires:  pl-libyaml-cpp-devel
-BuildRequires:  boost-devel
-BuildRequires:  log4cxx-devel
+BuildRequires:  pl-libboost
 BuildRequires:  openssl-devel
 
-Requires: boost
+Requires: pl-libboost
 Requires: pl-libyaml-cpp
-Requires: log4cxx
-Requires: pl-libre2
 Requires: libicu
 Requires: pl-gcc-runtime
 
