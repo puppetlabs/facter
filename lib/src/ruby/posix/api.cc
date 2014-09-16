@@ -94,6 +94,8 @@ namespace facter { namespace ruby {
                 if (!libruby.empty() && library.load(libruby)) {
                     return library;
                 }
+            } else {
+              LOG_DEBUG("ruby library not found at %1%: %2%", path(ruby).remove_filename() / ".." / "lib", ec.message());
             }
         } else {
             LOG_DEBUG("ruby could not be found on the PATH.");

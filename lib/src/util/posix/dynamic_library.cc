@@ -1,8 +1,11 @@
 #include <facter/util/dynamic_library.hpp>
 #include <dlfcn.h>
 #include <boost/format.hpp>
+#include <facter/logging/logging.hpp>
 
 using namespace std;
+
+LOG_DECLARE_NAMESPACE("util.posix.dynamic_library");
 
 namespace facter { namespace util {
 
@@ -45,6 +48,7 @@ namespace facter { namespace util {
             // Load now
             _handle = dlopen(name.c_str(), RTLD_LAZY);
             if (!_handle) {
+                LOG_DEBUG("library %1% not found %2% (%3%).", name.c_str(), strerror(errno), errno);
                 return false;
             }
             _first_load = true;
@@ -68,17 +72,25 @@ namespace facter { namespace util {
         if (!_handle) {
             if (throw_if_missing) {
                 throw missing_import_exception("library is not loaded.");
+            } else {
+                LOG_DEBUG("library %1% is not loaded when attempting to load symbol %2%.", _name.c_str(), name.c_str());
             }
             return nullptr;
         }
         void* symbol = dlsym(_handle, name.c_str());
         if (!symbol && !alias.empty()) {
+            LOG_DEBUG("symbol %1% not found in library %2%, trying alias %3%.", name.c_str(), _name.c_str(), alias.c_str());
             symbol = dlsym(_handle, alias.c_str());
         }
-        if (throw_if_missing && !symbol) {
-            throw missing_import_exception((boost::format("symbol %1% was not found in %2%.") % name %_name).str());
+        if (!symbol) {
+            if (throw_if_missing) {
+                throw missing_import_exception((boost::format("symbol %1% was not found in %2%.") % name %_name).str());
+            } else {
+                LOG_DEBUG("symbol %1% not found in library %2%.", name.c_str(), _name.c_str());
+            }
         }
         return symbol;
     }
 
 }}  // namespace facter::util
+
