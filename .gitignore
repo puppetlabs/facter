@@ -9,6 +9,7 @@ compile_commands.json
 /lib/tests/fixtures.hpp
 /debug/
 /release/
+/.idea/
 
 # Packaging files
 ext/packaging/
