@@ -1,8 +1,7 @@
 install:
-  - ps: (New-Object net.webclient).DownloadFile('http://downloads.sourceforge.net/project/mingwbuilds/host-windows/releases/4.8.1/64-bit/threads-win32/seh/x64-4.8.1-release-win32-seh-rev5.7z', "$pwd\x64-4.8.1-release-win32-seh-rev5.7z")
-
+  - ps: (New-Object net.webclient).DownloadFile('http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/4.8.2/threads-win32/seh/x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z', "$pwd\x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z")
   - ps: $env:PATH += ";C:\Program Files\7-Zip"
-  - ps: 7z x x64-4.8.1-release-win32-seh-rev5.7z | FIND /V "ing  "
+  - ps: 7z x x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z | FIND /V "ing  "
   - ps: $env:PATH += ";$pwd\mingw64\bin"
 
   - ps: (New-Object net.webclient).DownloadFile('https://s3.amazonaws.com/kylo-pl-bucket/boost_1.55.0_mingw-w64_4.8.1.7z', "$pwd\boost_1.55.0_mingw-w64_4.8.1.7z")
