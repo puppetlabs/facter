@@ -17,13 +17,6 @@ namespace facter { namespace ruby {
 
     dynamic_library api::find_library()
     {
-#if __APPLE__ && __MACH__
-        re_adapter regex("libruby(?:[-.](\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?\\.dylib$");
-#else
-        // Matches either libruby.so<version> or libruby-*.so<version>
-        re_adapter regex("libruby(?:-.*)?\\.so(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?$");
-#endif
-
         // First search for an already loaded Ruby
         dynamic_library library = dynamic_library::find_by_symbol("ruby_init");
         if (library.loaded()) {
@@ -50,10 +43,13 @@ namespace facter { namespace ruby {
                 LOG_DEBUG("searching %1% for ruby libraries.", libdir);
 
                 // Search the library directory for the "latest" libruby
-                string major;
-                string minor;
-                string patch;
-                string libruby;
+#if __APPLE__ && __MACH__
+                re_adapter regex("libruby(?:[-.](\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?\\.dylib$");
+#else
+                // Matches either libruby.so<version> or libruby-*.so<version>
+                re_adapter regex("libruby(?:-.*)?\\.so(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?$");
+#endif
+                string major, minor, patch, libruby;
                 directory::each_file(libdir.string(), [&](string const& file) {
                     // Ignore symlinks
                     if (is_symlink(file, ec)) {
@@ -62,9 +58,7 @@ namespace facter { namespace ruby {
 
                     // Extract the version from the file name
                     // These are strings and not integers because the match groups are optional
-                    string current_major;
-                    string current_minor;
-                    string current_patch;
+                    string current_major, current_minor, current_patch;
                     if (!re_search(file, regex, &current_major, &current_minor, &current_patch)) {
                         return true;
                     }
@@ -77,12 +71,8 @@ namespace facter { namespace ruby {
                     // Check to see if the given version is greater than or equal to the current version
                     // This is done so that if all strings are empty (i.e. we've found only libruby.so),
                     // we set libruby to the file that was found.
-                    if ((current_major > major) ||
-                        (current_major == major && current_minor > minor) ||
-                        (current_major == major && current_minor == minor && current_patch >= patch)) {
-                        major = current_major;
-                        minor = current_minor;
-                        patch = current_patch;
+                    if (tie(current_major, current_minor, current_patch) >= tie(major, minor, patch)) {
+                        tie(major, minor, patch) = tie(current_major, current_minor, current_patch);
                         libruby = file;
                         LOG_DEBUG("found candidate ruby library %1%.", file);
                     } else {

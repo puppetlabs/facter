@@ -107,6 +107,7 @@ int main(int argc, char **argv)
         visible_options.add_options()
             ("custom-dir", po::value<vector<string>>(&custom_directories), "A directory to use for custom facts.")
             ("debug,d", "Enable debug output.")
+            ("trace", "Enable detailed execution trace.")
             ("external-dir", po::value<vector<string>>(&external_directories), "A directory to use for external facts.")
             ("help", "Print this help message.")
             ("json,j", "Output in JSON format.")
@@ -164,7 +165,9 @@ int main(int argc, char **argv)
 
         // Get the logging level
         facter::logging::log_level level = facter::logging::log_level::warning;
-        if (vm.count("debug")) {
+        if (vm.count("trace")) {
+            level = facter::logging::log_level::trace;
+        } else if (vm.count("debug")) {
             level = facter::logging::log_level::debug;
         } else if (vm.count("verbose")) {
             level = facter::logging::log_level::info;
