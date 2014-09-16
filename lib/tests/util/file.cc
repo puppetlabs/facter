@@ -16,17 +16,7 @@ TEST(facter_util_file, each_line) {
     string data;
     ASSERT_TRUE(load_fixture(fixture_path, data));
     vector<string> fixture_lines;
-    boost::split(fixture_lines, data, boost::is_any_of("\n"), boost::token_compress_on);
-
-    // Ensure there's no carriage returns
-     transform(
-        fixture_lines.begin(),
-        fixture_lines.end(),
-        fixture_lines.begin(),
-        [](string& s) {
-            boost::trim_right_if(s, boost::is_any_of("\r"));
-            return s;
-        });
+    boost::split(fixture_lines, data, boost::is_any_of("\n\r"), boost::token_compress_on);
 
     // Test non-existent file
     bool failed = false;
@@ -94,7 +84,8 @@ TEST(facter_util_file, read_first_line) {
     ASSERT_TRUE(load_fixture(fixture_path, fixture));
 
     vector<string> lines;
-    boost::split(lines, fixture, boost::is_any_of("\n"), boost::token_compress_on);
+    boost::split(lines, fixture, boost::is_any_of("\n\r"), boost::token_compress_on);
+
     ASSERT_EQ(3u, lines.size());
 
     ASSERT_EQ(lines[0], file::read_first_line(fixture_file_path));

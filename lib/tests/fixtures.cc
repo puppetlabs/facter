@@ -10,7 +10,7 @@ namespace facter { namespace testing {
     bool load_fixture(string const& name, string& data)
     {
         string path = string(LIBFACTER_TESTS_DIRECTORY) + "/fixtures/" + name;
-        ifstream in(path);
+        ifstream in(path, ios_base::in | ios_base::binary);
         if (!in) {
             return false;
         }
