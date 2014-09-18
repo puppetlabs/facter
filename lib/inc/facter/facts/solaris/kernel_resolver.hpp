@@ -2,8 +2,7 @@
  * @file
  * Declares the SOLARIS kernel fact resolver.
  */
-#ifndef FACTER_FACTS_SOLARIS_KERNEL_RESOLVER_HPP_
-#define FACTER_FACTS_SOLARIS_KERNEL_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/kernel_resolver.hpp"
 #include <sys/utsname.h>
@@ -32,6 +31,3 @@ namespace facter { namespace facts { namespace solaris {
     };
 
 }}}  // namespace facter::facts::solaris
-
-#endif  // FACTER_FACTS_SOLARIS_KERNEL_RESOLVER_HPP_
-

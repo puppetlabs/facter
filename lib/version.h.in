@@ -2,8 +2,7 @@
 /// @file
 /// Declares macros for the facter library version.
 ///
-#ifndef FACTER_VERSION_H_
-#define FACTER_VERSION_H_
+#pragma once
 
 ///
 /// The facter library major version.
@@ -22,5 +21,3 @@
 /// The facter library version as a string.
 ///
 #define LIBFACTER_VERSION "@LIBFACTER_VERSION_MAJOR@.@LIBFACTER_VERSION_MINOR@.@LIBFACTER_VERSION_PATCH@"
-
-#endif  // FACTER_VERSION_H_

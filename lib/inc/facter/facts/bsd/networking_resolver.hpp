@@ -2,8 +2,7 @@
  * @file
  * Declares the BSD networking fact resolver.
  */
-#ifndef FACTER_FACTS_BSD_NETWORKING_RESOLVER_HPP_
-#define FACTER_FACTS_BSD_NETWORKING_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/networking_resolver.hpp"
 #include "../map_value.hpp"
@@ -74,5 +73,3 @@ namespace facter { namespace facts { namespace bsd {
     };
 
 }}}  // namespace facter::facts::bsd
-
-#endif  // FACTER_FACTS_BSD_NETWORKING_RESOLVER_HPP_

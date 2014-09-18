@@ -2,8 +2,7 @@
  * @file
  * Declares the class for Ruby fact confines.
  */
-#ifndef FACTER_RUBY_CONFINE_HPP_
-#define FACTER_RUBY_CONFINE_HPP_
+#pragma once
 
 #include "api.hpp"
 #include <string>
@@ -59,5 +58,3 @@ namespace facter { namespace ruby {
     };
 
 }}  // namespace facter::ruby
-
-#endif  // FACTER_RUBY_CONFINE_HPP_

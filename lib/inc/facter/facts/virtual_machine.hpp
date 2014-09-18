@@ -2,8 +2,7 @@
  * @file
  * Declares the virtual machine name constants.
  */
-#ifndef FACTER_FACTS_VIRTUAL_MACHINE_HPP_
-#define FACTER_FACTS_VIRTUAL_MACHINE_HPP_
+#pragma once
 
 namespace facter { namespace facts {
 
@@ -122,5 +121,3 @@ namespace facter { namespace facts {
     };
 
 }}  // namespace facter::facts
-
-#endif  // FACTER_FACTS_VIRTUAL_MACHINE_HPP_

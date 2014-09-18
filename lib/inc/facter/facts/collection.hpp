@@ -2,8 +2,7 @@
  * @file
  * Declares the fact collection.
  */
-#ifndef FACTER_FACTS_COLLECTION_HPP_
-#define FACTER_FACTS_COLLECTION_HPP_
+#pragma once
 
 #include "resolver.hpp"
 #include "value.hpp"
@@ -202,6 +201,3 @@ namespace facter { namespace facts {
     };
 
 }}  // namespace facter::facts
-
-#endif  // FACTER_FACTS_COLLECTION_HPP_
-

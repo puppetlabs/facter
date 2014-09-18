@@ -1,5 +1,4 @@
-#ifndef LIB_TESTS_FIXTURES_HPP_
-#define LIB_TESTS_FIXTURES_HPP_
+#pragma once
 
 #include <string>
 
@@ -10,6 +9,3 @@ namespace facter { namespace testing {
     bool load_fixture(std::string const& name, std::string& data);
 
 }}  // namespace facter::testing
-
-#endif  // LIB_TESTS_FIXTURES_HPP_
-

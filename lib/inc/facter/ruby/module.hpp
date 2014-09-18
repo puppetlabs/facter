@@ -2,8 +2,7 @@
  * @file
  * Declares the Ruby Facter module.
  */
-#ifndef FACTER_RUBY_MODULE_HPP_
-#define FACTER_RUBY_MODULE_HPP_
+#pragma once
 
 #include "api.hpp"
 #include "object.hpp"
@@ -121,5 +120,3 @@ namespace facter { namespace ruby {
     };
 
 }}  // namespace facter::ruby
-
-#endif  // FACTER_RUBY_MODULE_HPP_

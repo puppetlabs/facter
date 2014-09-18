@@ -2,8 +2,7 @@
  * @file
  * Declares the fact value for arrays.
  */
-#ifndef FACTER_FACTS_ARRAY_VALUE_HPP_
-#define FACTER_FACTS_ARRAY_VALUE_HPP_
+#pragma once
 
 #include "value.hpp"
 #include <vector>
@@ -118,5 +117,3 @@ namespace facter { namespace facts {
     };
 
 }}  // namespace facter::facts
-
-#endif  // FACTER_FACTS_ARRAY_VALUE_HPP_

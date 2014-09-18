@@ -2,8 +2,7 @@
  * @file
  * Declares the Linux memory fact resolver.
  */
-#ifndef FACTER_FACTS_LINUX_MEMORY_RESOLVER_HPP_
-#define FACTER_FACTS_LINUX_MEMORY_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/memory_resolver.hpp"
 
@@ -33,5 +32,3 @@ namespace facter { namespace facts { namespace linux {
     };
 
 }}}  // namespace facter::facts::linux
-
-#endif  // FACTER_FACTS_LINUX_MEMORY_RESOLVER_HPP_

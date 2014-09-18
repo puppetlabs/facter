@@ -2,8 +2,7 @@
  * @file
  * Declares the Linux block device fact resolver.
  */
-#ifndef FACTER_FACTS_LINUX_BLOCK_DEVICE_RESOLVER_HPP_
-#define FACTER_FACTS_LINUX_BLOCK_DEVICE_RESOLVER_HPP_
+#pragma once
 
 #include "../resolver.hpp"
 
@@ -28,5 +27,3 @@ namespace facter { namespace facts { namespace linux {
     };
 
 }}}  // namespace facter::facts::linux
-
-#endif  // FACTER_FACTS_LINUX_BLOCK_DEVICE_RESOLVER_HPP_

@@ -2,8 +2,7 @@
  * @file
  * Declares the Linux Standard Base (LSB) fact resolver.
  */
-#ifndef FACTER_FACTS_LINUX_LSB_RESOLVER_HPP_
-#define FACTER_FACTS_LINUX_LSB_RESOLVER_HPP_
+#pragma once
 
 #include "../resolver.hpp"
 
@@ -59,6 +58,3 @@ namespace facter { namespace facts { namespace linux {
     };
 
 }}}  // namespace facter::facts::linux
-
-#endif  // FACTER_FACTS_LINUX_LSB_RESOLVER_HPP_
-

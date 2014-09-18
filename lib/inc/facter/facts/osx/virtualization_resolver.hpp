@@ -2,8 +2,7 @@
  * @file
  * Declares the OSX virtualization fact resolver.
  */
-#ifndef FACTER_FACTS_OSX_VIRTUALIZATION_RESOLVER_HPP_
-#define FACTER_FACTS_OSX_VIRTUALIZATION_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/virtualization_resolver.hpp"
 
@@ -24,6 +23,3 @@ namespace facter { namespace facts { namespace osx {
     };
 
 }}}  // namespace facter::facts::osx
-
-#endif  // FACTER_FACTS_OSX_VIRTUALIZATION_RESOLVER_HPP_
-

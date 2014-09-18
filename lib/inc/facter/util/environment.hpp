@@ -1,5 +1,8 @@
-#ifndef FACTER_UTIL_ENVIRONMENT_HPP_
-#define FACTER_UTIL_ENVIRONMENT_HPP_
+/**
+* @file
+* Declares utility functions for environment variables.
+*/
+#pragma once
 
 #include <string>
 #include <vector>
@@ -40,6 +43,3 @@ namespace facter { namespace util {
     };
 
 }}
-
-#endif  // FACTER_UTIL_ENVIRONMENT_HPP_
-

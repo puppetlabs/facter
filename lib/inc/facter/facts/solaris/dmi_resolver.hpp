@@ -2,8 +2,7 @@
  * @file
  * Declares the Solaris Desktop Management Information (DMI) fact resolver.
  */
-#ifndef FACTER_FACTS_SOLARIS_DMI_RESOLVER_HPP_
-#define FACTER_FACTS_SOLARIS_DMI_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/dmi_resolver.hpp"
 
@@ -27,6 +26,3 @@ namespace facter { namespace facts { namespace solaris {
     };
 
 }}}  // namespace facter::facts::solaris
-
-#endif  // FACTER_FACTS_SOLARIS_DMI_RESOLVER_HPP_
-

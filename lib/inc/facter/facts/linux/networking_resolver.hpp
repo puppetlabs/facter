@@ -2,8 +2,7 @@
  * @file
  * Declares the Linux networking fact resolver.
  */
-#ifndef FACTER_FACTS_LINUX_NETWORKING_RESOLVER_HPP_
-#define FACTER_FACTS_LINUX_NETWORKING_RESOLVER_HPP_
+#pragma once
 
 #include "../bsd/networking_resolver.hpp"
 
@@ -51,5 +50,3 @@ namespace facter { namespace facts { namespace linux {
     };
 
 }}}  // namespace facter::facts::linux
-
-#endif  // FACTER_FACTS_LINUX_NETWORKING_RESOLVER_HPP_

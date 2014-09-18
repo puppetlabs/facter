@@ -2,8 +2,7 @@
  * @file
  * Declares the POSIX operating system family constants.
  */
-#ifndef FACTER_FACTS_POSIX_OS_FAMILY_HPP_
-#define FACTER_FACTS_POSIX_OS_FAMILY_HPP_
+#pragma once
 
 namespace facter { namespace facts { namespace posix {
 
@@ -47,5 +46,3 @@ namespace facter { namespace facts { namespace posix {
     };
 
 }}}  // namespace facter::facts::posix
-
-#endif  // FACTER_FACTS_POSIX_OS_FAMILY_HPP_

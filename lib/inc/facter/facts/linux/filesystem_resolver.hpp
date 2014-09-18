@@ -2,8 +2,7 @@
  * @file
  * Declares the Linux file system fact resolver.
  */
-#ifndef FACTER_FACTS_LINUX_FILESYSTEM_RESOLVER_HPP_
-#define FACTER_FACTS_LINUX_FILESYSTEM_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/filesystem_resolver.hpp"
 
@@ -33,6 +32,3 @@ namespace facter { namespace facts { namespace linux {
     };
 
 }}}  // namespace facter::facts::linux
-
-#endif  // FACTER_FACTS_LINUX_FILESYSTEM_RESOLVER_HPP_
-

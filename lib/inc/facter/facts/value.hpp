@@ -2,8 +2,7 @@
  * @file
  * Declares the base fact value type.
  */
-#ifndef FACTER_FACTS_VALUE_HPP_
-#define FACTER_FACTS_VALUE_HPP_
+#pragma once
 
 #include <string>
 #include <functional>
@@ -115,5 +114,3 @@ namespace facter { namespace facts {
     }
 
 }}  // namespace facter::facts
-
-#endif  // FACTER_FACTS_VALUE_HPP_

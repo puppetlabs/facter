@@ -2,8 +2,7 @@
  * @file
  * Declares the base class for Ruby resolution classes.
  */
-#ifndef FACTER_RUBY_RESOLUTION_HPP_
-#define FACTER_RUBY_RESOLUTION_HPP_
+#pragma once
 
 #include "api.hpp"
 #include "object.hpp"
@@ -126,5 +125,3 @@ namespace facter { namespace ruby {
     };
 
 }}  // namespace facter::ruby
-
-#endif  // FACTER_RUBY_RESOLUTION_HPP_

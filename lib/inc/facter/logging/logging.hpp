@@ -2,8 +2,7 @@
  * @file
  * Declares the logging functions and macros.
  */
-#ifndef FACTER_LOGGING_LOGGING_HPP_
-#define FACTER_LOGGING_LOGGING_HPP_
+#pragma once
 
 // To use this header, you must:
 // - Have Boost on the include path
@@ -209,5 +208,3 @@ namespace facter { namespace logging {
     }
 
 }}  // namespace facter::logging
-
-#endif  // FACTER_LOGGING_LOGGING_HPP_

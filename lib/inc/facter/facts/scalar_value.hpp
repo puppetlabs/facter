@@ -2,8 +2,7 @@
  * @file
  * Declares the fact value for scalar values like strings and integers.
  */
-#ifndef FACTER_FACTS_SCALAR_VALUE_HPP_
-#define FACTER_FACTS_SCALAR_VALUE_HPP_
+#pragma once
 
 #include "value.hpp"
 #include <cstdint>
@@ -160,5 +159,3 @@ namespace facter { namespace facts {
     typedef scalar_value<double> double_value;
 
 }}  // namespace facter::facts
-
-#endif  // FACTER_FACTS_SCALAR_VALUE_HPP_

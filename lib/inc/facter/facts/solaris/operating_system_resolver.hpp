@@ -2,8 +2,7 @@
  * @file
  * Declares the solaris operating system fact resolver.
  */
-#ifndef FACTER_FACTS_SOLARIS_OPERATING_SYSTEM_RESOLVER_HPP_
-#define FACTER_FACTS_SOLARIS_OPERATING_SYSTEM_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/operating_system_resolver.hpp"
 #include "../scalar_value.hpp"
@@ -36,6 +35,3 @@ namespace facter { namespace facts { namespace solaris {
     };
 
 }}}  // namespace facter::facts::solaris
-
-#endif  // FACTER_FACTS_SOLARIS_OPERATING_SYSTEM_RESOLVER_HPP_
-

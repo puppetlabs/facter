@@ -2,8 +2,7 @@
  * @file
  * Declares the scoped ifaddrs resource.
  */
-#ifndef FACTER_UTIL_BSD_SCOPED_IFADDRS_HPP_
-#define FACTER_UTIL_BSD_SCOPED_IFADDRS_HPP_
+#pragma once
 
 #include "../scoped_resource.hpp"
 #include <ifaddrs.h>
@@ -32,5 +31,3 @@ namespace facter { namespace util { namespace bsd {
     };
 
 }}}  // namespace facter::util::bsd
-
-#endif  // FACTER_UTIL_BSD_SCOPED_IFADDRS_HPP_

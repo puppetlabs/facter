@@ -2,8 +2,7 @@
  * @file
  * Declares the Ruby Facter::Util::Fact class.
  */
-#ifndef FACTER_RUBY_FACT_HPP_
-#define FACTER_RUBY_FACT_HPP_
+#pragma once
 
 #include "api.hpp"
 #include "object.hpp"
@@ -106,5 +105,3 @@ namespace facter { namespace ruby {
     };
 
 }}  // namespace facter::ruby
-
-#endif  // FACTER_RUBY_FACT_HPP_

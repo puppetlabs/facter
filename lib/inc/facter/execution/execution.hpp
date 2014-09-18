@@ -2,8 +2,7 @@
  * @file
  * Declares functions used for executing commands.
  */
-#ifndef FACTER_EXECUTION_EXECUTION_HPP_
-#define FACTER_EXECUTION_EXECUTION_HPP_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -238,6 +237,3 @@ namespace facter { namespace execution {
         facter::util::option_set<execution_options> const& options = { execution_options::defaults });
 
 }}  // namespace facter::execution
-
-#endif  // FACTER_EXECUTION_EXECUTION_HPP_
-

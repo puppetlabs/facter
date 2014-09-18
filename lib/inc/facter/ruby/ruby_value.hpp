@@ -2,8 +2,7 @@
  * @file
  * Declares the Ruby fact value.
  */
-#ifndef FACTER_RUBY_RUBY_VALUE_HPP_
-#define FACTER_RUBY_RUBY_VALUE_HPP_
+#pragma once
 
 #include "api.hpp"
 #include "fact.hpp"
@@ -88,5 +87,3 @@ namespace facter { namespace ruby {
     };
 
 }}  // namespace facter::ruby
-
-#endif  // FACTER_RUBY_RUBY_VALUE_HPP_

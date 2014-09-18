@@ -2,8 +2,7 @@
  * @file
  * Declares the scoped kstat resource.
  */
-#ifndef FACTER_UTIL_SOLARIS_SCOPED_KSTAT_HPP_
-#define FACTER_UTIL_SOLARIS_SCOPED_KSTAT_HPP_
+#pragma once
 
 #include "../scoped_resource.hpp"
 #include <kstat.h>
@@ -45,5 +44,3 @@ namespace facter { namespace util { namespace solaris {
     };
 
 }}}  // namespace facter::util::solaris
-
-#endif  // FACTER_UTIL_SOLARIS_SCOPED_KSTAT_HPP_

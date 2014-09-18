@@ -2,8 +2,7 @@
  * @file
  * Declares the BSD uptime fact resolver.
  */
-#ifndef FACTER_FACTS_BSD_UPTIME_RESOLVER_HPP_
-#define FACTER_FACTS_BSD_UPTIME_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/uptime_resolver.hpp"
 
@@ -23,5 +22,3 @@ namespace facter { namespace facts { namespace bsd {
     };
 
 }}}  // namespace facter::facts::bsd
-
-#endif  // FACTER_FACTS_BSD_UPTIME_RESOLVER_HPP_

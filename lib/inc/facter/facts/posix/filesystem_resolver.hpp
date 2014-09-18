@@ -2,8 +2,7 @@
  * @file
  * Declares the POSIX file system fact resolver.
  */
-#ifndef FACTER_FACTS_POSIX_FILESYSTEM_RESOLVER_HPP_
-#define FACTER_FACTS_POSIX_FILESYSTEM_RESOLVER_HPP_
+#pragma once
 
 #include "../resolver.hpp"
 #include "../array_value.hpp"
@@ -46,6 +45,3 @@ namespace facter { namespace facts { namespace posix {
     };
 
 }}}  // namespace facter::facts::posix
-
-#endif  // FACTER_FACTS_POSIX_FILESYSTEM_RESOLVER_HPP_
-

@@ -2,8 +2,7 @@
  * @file
  * Declares utility functions for reading data from files.
  */
-#ifndef FACTER_UTIL_FILE_HPP_
-#define FACTER_UTIL_FILE_HPP_
+#pragma once
 
 #include <string>
 #include <stdexcept>
@@ -56,5 +55,3 @@ namespace facter { namespace util {
     };
 
 }}  // namespace facter::util
-
-#endif  // FACTER_UTIL_FILE_HPP_

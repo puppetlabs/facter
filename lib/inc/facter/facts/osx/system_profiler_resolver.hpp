@@ -2,8 +2,7 @@
  * @file
  * Declares the system profiler fact resolver.
  */
-#ifndef FACTER_FACTS_OSX_SYSTEM_PROFILER_RESOLVER_HPP_
-#define FACTER_FACTS_OSX_SYSTEM_PROFILER_RESOLVER_HPP_
+#pragma once
 
 #include "../resolver.hpp"
 
@@ -28,5 +27,3 @@ namespace facter { namespace facts { namespace osx {
     };
 
 }}}  // namespace facter::facts::osx
-
-#endif  // FACTER_FACTS_OSX_SYSTEM_PROFILER_RESOLVER_HPP_
