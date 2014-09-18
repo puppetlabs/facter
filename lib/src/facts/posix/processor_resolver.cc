@@ -25,6 +25,7 @@ namespace facter { namespace facts { namespace posix {
                 fact::physical_processor_count,
                 fact::hardware_isa,
                 fact::hardware_model,
+                fact::architecture,
             },
             {
                 string("^") + fact::processor + "[0-9]+$",
