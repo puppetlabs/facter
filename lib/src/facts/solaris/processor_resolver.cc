@@ -86,7 +86,8 @@ namespace facter { namespace facts { namespace solaris {
             if (!processor_list->empty()) {
                 processors_value->add("models", move(processor_list));
             }
-            processors_value->add("count", make_value<integer_value>(cores.size()));
+            processors_value->add("count", make_value<integer_value>(hardware_thread_count));
+            processors_value->add("corescount", make_value<integer_value>(cores.size()));
             processors_value->add("physicalcount", make_value<integer_value>(chips.size()));
             processors_value->add("hardwarethreads", make_value<integer_value>(hardware_thread_count));
             if (!processors_value->empty()) {
