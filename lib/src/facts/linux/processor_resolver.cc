@@ -5,7 +5,7 @@
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
-#include <facter/facts/posix/os.hpp>
+#include <facter/facts/os.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/regex.hpp>

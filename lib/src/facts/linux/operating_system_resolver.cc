@@ -1,7 +1,7 @@
 #include <facter/facts/linux/operating_system_resolver.hpp>
 #include <facter/facts/linux/lsb_resolver.hpp>
 #include <facter/facts/linux/release_file.hpp>
-#include <facter/facts/posix/os.hpp>
+#include <facter/facts/os.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/collection.hpp>
