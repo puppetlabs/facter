@@ -115,24 +115,9 @@ namespace facter { namespace facts { namespace solaris {
     {
         try {
             k_stat ks;
-            multimap<string, string> partmap;
-            auto ke = ks["sd"];
-            for (auto& kv : ke) {
-                string klass = kv.klass();
-                if (klass != "partition") {
-                    continue;
-                }
-                string val = kv.name();
-                auto pos = val.find(',');
-                if (pos != val.npos) {
-                    string key = val.substr(0, pos);
-                    partmap.insert({key, val.substr(pos +1)});
-                }
-            }
-
+            auto ke = ks["sderr"];
             auto disk = make_value<map_value>();
             set<string> disks;
-            ke = ks["sderr"];
             for (auto& kv : ke) {
                 auto value = make_value<map_value>();
                 string dname = kv.name();
@@ -142,13 +127,6 @@ namespace facter { namespace facts { namespace solaris {
                 string product = kv.value<string>("Product");
                 string vendor = kv.value<string>("Vendor");
                 string size = si_string(kv.value<uint64_t>("Size"));
-
-                vector<string> parts;
-                auto ret = partmap.equal_range(name);
-                for (auto it = ret.first; it != ret.second; it++) {
-                    parts.push_back(it->second);
-                }
-                value->add("partitions", make_value<string_value>(boost::join(parts, ",")));
                 value->add("product", make_value<string_value>(move(product)));
                 value->add("vendor", make_value<string_value>(move(vendor)));
                 value->add("size", make_value<string_value>(move(size)));
