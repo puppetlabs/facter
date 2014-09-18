@@ -1,6 +1,9 @@
 require 'rake/clean'
 require 'pp'
 require 'yaml'
+$LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), 'lib'))
+require 'puppet/acceptance/git_utils'
+extend Puppet::Acceptance::GitUtils
 
 ONE_DAY_IN_SECS = 24 * 60 * 60
 REPO_CONFIGS_DIR = "repo-configs"
@@ -70,10 +73,8 @@ def beaker_test(mode = :packages, options = {})
   final_options = HarnessOptions.options(mode, options)
 
   if mode == :git
-    puppet_fork = ENV['FORK'] || 'puppetlabs'
-    git_server  = ENV['GIT_SERVER'] || 'github.com'
     final_options[:install] ||= []
-    final_options[:install] << "git://#{git_server}/#{puppet_fork}/facter.git##{sha}"
+    final_options[:install] << "#{build_giturl('facter')}##{sha}"
   end
 
   options_file = 'merged_options.rb'
