@@ -2,8 +2,7 @@
  * @file
  * Declares the text external fact resolver.
  */
-#ifndef FACTER_FACTS_EXTERNAL_TEXT_RESOLVER_HPP_
-#define FACTER_FACTS_EXTERNAL_TEXT_RESOLVER_HPP_
+#pragma once
 
 #include "resolver.hpp"
 
@@ -30,5 +29,3 @@ namespace facter { namespace facts { namespace external {
     };
 
 }}}  // namespace facter::facts::external
-
-#endif  // FACTER_FACTS_EXTERNAL_TEXT_RESOLVER_HPP_

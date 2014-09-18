@@ -2,8 +2,7 @@
  * @file
  * Declares the base external fact resolver.
  */
-#ifndef FACTER_FACTS_EXTERNAL_RESOLVER_HPP_
-#define FACTER_FACTS_EXTERNAL_RESOLVER_HPP_
+#pragma once
 
 #include <stdexcept>
 #include <string>
@@ -47,5 +46,3 @@ namespace facter { namespace facts { namespace external {
     };
 
 }}}  // namespace facter::facts::external
-
-#endif  // FACTER_FACTS_EXTERNAL_RESOLVER_HPP_

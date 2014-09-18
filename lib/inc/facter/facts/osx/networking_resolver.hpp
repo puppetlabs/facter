@@ -2,8 +2,7 @@
  * @file
  * Declares the OSX networking fact resolver.
  */
-#ifndef FACTER_FACTS_OSX_NETWORKING_RESOLVER_HPP_
-#define FACTER_FACTS_OSX_NETWORKING_RESOLVER_HPP_
+#pragma once
 
 #include "../bsd/networking_resolver.hpp"
 
@@ -65,5 +64,3 @@ namespace facter { namespace facts { namespace osx {
     };
 
 }}}  // namespace facter::facts::osx
-
-#endif  // FACTER_FACTS_OSX_NETWORKING_RESOLVER_HPP_

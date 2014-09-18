@@ -2,8 +2,7 @@
  * @file
  * Declares the Linux release file constants.
  */
-#ifndef FACTER_FACTS_LINUX_RELEASE_FILE_HPP_
-#define FACTER_FACTS_LINUX_RELEASE_FILE_HPP_
+#pragma once
 
 namespace facter { namespace facts { namespace linux {
 
@@ -103,5 +102,3 @@ namespace facter { namespace facts { namespace linux {
     };
 
 }}}  // namespace facter::facts::linux
-
-#endif  // FACTER_FACTS_LINUX_RELEASE_FILE_HPP_

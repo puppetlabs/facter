@@ -2,8 +2,7 @@
  * @file
  * Declares the API imported from Ruby.
  */
-#ifndef FACTER_RUBY_API_HPP_
-#define FACTER_RUBY_API_HPP_
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -534,5 +533,3 @@ namespace facter {  namespace ruby {
     };
 
 }}  // namespace facter::ruby
-
-#endif  // FACTER_RUBY_API_HPP_

@@ -2,8 +2,7 @@
  * @file
  * Declares the scoped addrinfo resource.
  */
-#ifndef FACTER_UTIL_POSIX_SCOPED_ADDRINFO_HPP_
-#define FACTER_UTIL_POSIX_SCOPED_ADDRINFO_HPP_
+#pragma once
 
 #include "../scoped_resource.hpp"
 #include <netdb.h>
@@ -44,5 +43,3 @@ namespace facter { namespace util { namespace posix {
     };
 
 }}}  // namespace facter::util::posix
-
-#endif  // FACTER_UTIL_POSIX_SCOPED_ADDRINFO_HPP_

@@ -2,8 +2,7 @@
  * @file
  * Declares the fact name constants.
  */
-#ifndef FACTER_FACTS_FACT_HPP_
-#define FACTER_FACTS_FACT_HPP_
+#pragma once
 
 namespace facter { namespace facts {
 
@@ -498,5 +497,3 @@ namespace facter { namespace facts {
     };
 
 }}  // namespace facter::facts
-
-#endif  // FACTER_FACTS_FACT_HPP_

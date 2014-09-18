@@ -2,8 +2,7 @@
  * @file
  * Declares the fact value for maps (associative array).
  */
-#ifndef FACTER_FACTS_MAP_VALUE_HPP_
-#define FACTER_FACTS_MAP_VALUE_HPP_
+#pragma once
 
 #include "value.hpp"
 #include <map>
@@ -120,6 +119,3 @@ namespace facter { namespace facts {
     };
 
 }}  // namespace facter::facts
-
-#endif  // FACTER_FACTS_MAP_VALUE_HPP_
-

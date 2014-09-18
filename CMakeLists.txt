@@ -111,13 +111,14 @@ else()
         "-whitespace/empty_loop_body" # Can't handle do { ... } while(expr);
         "-runtime/int"            # Some C types are needed for library interop
         "-runtime/explicit"       # Using implicit conversion from string to regex for regex calls.
+        "-build/header_guard"     # Disable header guards (cpplint doesn't yet support enforcing #pragma once)
     )
 
     file(GLOB_RECURSE ALL_SOURCES lib/*.cc lib/*.h lib/*.hpp exe/*.cc exe/*.h exe/*.hpp)
 
     set(CPPLINT_PATH "${PROJECT_SOURCE_DIR}/scripts/cpplint.py")
 
-    set(CPPLINT_ARGS "--extensions=cc,hpp,h;--root=lib/inc")
+    set(CPPLINT_ARGS "--extensions=cc,hpp,h")
     if (CPPLINT_FILTER)
         string(REPLACE ";" "," CPPLINT_FILTER "${CPPLINT_FILTER}")
         set(CPPLINT_ARGS "${CPPLINT_ARGS};--filter=${CPPLINT_FILTER}")

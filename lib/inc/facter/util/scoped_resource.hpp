@@ -2,8 +2,7 @@
  * @file
  * Declares the base class for scoped resources.
  */
-#ifndef FACTER_UTIL_SCOPED_RESOURCE_HPP_
-#define FACTER_UTIL_SCOPED_RESOURCE_HPP_
+#pragma once
 
 #include <functional>
 
@@ -111,5 +110,3 @@ namespace facter { namespace util {
     };
 
 }}  // namespace facter::util
-
-#endif  // FACTER_UTIL_SCOPED_RESOURCE_HPP_

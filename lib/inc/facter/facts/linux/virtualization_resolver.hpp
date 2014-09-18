@@ -2,8 +2,7 @@
  * @file
  * Declares the Linux virtualization fact resolver.
  */
-#ifndef FACTER_FACTS_LINUX_VIRTUALIZATION_RESOLVER_HPP_
-#define FACTER_FACTS_LINUX_VIRTUALIZATION_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/virtualization_resolver.hpp"
 #include <string>
@@ -35,6 +34,3 @@ namespace facter { namespace facts { namespace linux {
     };
 
 }}}  // namespace facter::facts::linux
-
-#endif  // FACTER_FACTS_LINUX_VIRTUALIZATION_RESOLVER_HPP_
-

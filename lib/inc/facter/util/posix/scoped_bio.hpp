@@ -2,8 +2,7 @@
  * @file
  * Declares the scoped BIO (OpenSSL) resource.
  */
-#ifndef FACTER_UTIL_POSIX_SCOPED_BIO_HPP_
-#define FACTER_UTIL_POSIX_SCOPED_BIO_HPP_
+#pragma once
 
 #include "../scoped_resource.hpp"
 #include <openssl/bio.h>
@@ -33,5 +32,3 @@ namespace facter { namespace util { namespace posix {
     };
 
 }}}  // namespace facter::util::posix
-
-#endif  // FACTER_UTIL_POSIX_SCOPED_BIO_HPP_

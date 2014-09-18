@@ -2,8 +2,7 @@
  * @file
  * Declares the Ruby Facter::Util::Resolution class.
  */
-#ifndef FACTER_RUBY_SIMPLE_RESOLUTION_HPP_
-#define FACTER_RUBY_SIMPLE_RESOLUTION_HPP_
+#pragma once
 
 #include "resolution.hpp"
 
@@ -54,5 +53,3 @@ namespace facter { namespace ruby {
     };
 
 }}  // namespace facter::ruby
-
-#endif  // FACTER_RUBY_SIMPLE_RESOLUTION_HPP_

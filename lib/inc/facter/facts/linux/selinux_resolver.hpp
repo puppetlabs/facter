@@ -2,8 +2,7 @@
  * @file
  * Declares the Security-Enhanced Linux fact resolver.
  */
-#ifndef FACTER_FACTS_LINUX_SELINUX_RESOLVER_HPP_
-#define FACTER_FACTS_LINUX_SELINUX_RESOLVER_HPP_
+#pragma once
 
 #include "../resolver.hpp"
 
@@ -61,6 +60,3 @@ namespace facter { namespace facts { namespace linux {
     };
 
 }}}  // namespace facter::facts::linux
-
-#endif  // FACTER_FACTS_LINUX_SELINUX_RESOLVER_HPP_
-

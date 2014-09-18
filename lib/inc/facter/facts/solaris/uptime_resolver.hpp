@@ -2,8 +2,7 @@
  * @file
  * Declares the solaris uptime fact resolver.
  */
-#ifndef FACTER_FACTS_SOLARIS_UPTIME_RESOLVER_HPP_
-#define FACTER_FACTS_SOLARIS_UPTIME_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/uptime_resolver.hpp"
 
@@ -23,5 +22,3 @@ namespace facter { namespace facts { namespace solaris {
     };
 
 }}}  // namespace facter::facts::solaris
-
-#endif  // FACTER_FACTS_SOLARIS_UPTIME_RESOLVER_HPP_

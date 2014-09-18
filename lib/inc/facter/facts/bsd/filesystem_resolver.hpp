@@ -2,8 +2,7 @@
  * @file
  * Declares the BSD file system fact resolver.
  */
-#ifndef FACTER_FACTS_BSD_FILESYSTEM_RESOLVER_HPP_
-#define FACTER_FACTS_BSD_FILESYSTEM_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/filesystem_resolver.hpp"
 #include "../array_value.hpp"
@@ -39,5 +38,3 @@ namespace facter { namespace facts { namespace bsd {
     };
 
 }}}  // namespace facter::facts::bsd
-
-#endif  // FACTER_FACTS_BSD_FILESYSTEM_RESOLVER_HPP_

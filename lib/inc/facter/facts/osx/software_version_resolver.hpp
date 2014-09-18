@@ -2,8 +2,7 @@
  * @file
  * Declares the software (OSX) version fact resolver.
  */
-#ifndef FACTER_FACTS_OSX_SOFTWARE_VERSION_RESOLVER_HPP_
-#define FACTER_FACTS_OSX_SOFTWARE_VERSION_RESOLVER_HPP_
+#pragma once
 
 #include "../resolver.hpp"
 
@@ -28,5 +27,3 @@ namespace facter { namespace facts { namespace osx {
     };
 
 }}}  // namespace facter::facts::osx
-
-#endif  // FACTER_FACTS_OSX_SOFTWARE_VERSION_RESOLVER_HPP_

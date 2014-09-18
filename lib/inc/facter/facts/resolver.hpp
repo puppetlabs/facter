@@ -2,8 +2,7 @@
  * @file
  * Declares the base class for fact resolvers.
  */
-#ifndef FACTER_FACTS_RESOLVER_HPP_
-#define FACTER_FACTS_RESOLVER_HPP_
+#pragma once
 
 #include <vector>
 #include <memory>
@@ -131,6 +130,3 @@ namespace facter { namespace facts {
     };
 
 }}  // namespace facter::facts
-
-#endif  // FACTER_FACTS_RESOLVER_HPP_
-

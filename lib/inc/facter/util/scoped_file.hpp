@@ -2,8 +2,7 @@
  * @file
  * Declares the scoped file resource for managing FILE pointers.
  */
-#ifndef FACTER_UTIL_SCOPED_FILE_HPP_
-#define FACTER_UTIL_SCOPED_FILE_HPP_
+#pragma once
 
 #include "scoped_resource.hpp"
 #include <string>
@@ -35,5 +34,3 @@ namespace facter { namespace util {
     };
 
 }}  // namespace facter::util
-
-#endif  // FACTER_UTIL_SCOPED_FILE_HPP_

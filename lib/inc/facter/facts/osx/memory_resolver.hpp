@@ -2,8 +2,7 @@
  * @file
  * Declares the OSX memory fact resolver.
  */
-#ifndef FACTER_FACTS_OSX_MEMORY_RESOLVER_HPP_
-#define FACTER_FACTS_OSX_MEMORY_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/memory_resolver.hpp"
 
@@ -39,5 +38,3 @@ namespace facter { namespace facts { namespace osx {
     };
 
 }}}  // namespace facter::facts::osx
-
-#endif  // FACTER_FACTS_OSX_MEMORY_RESOLVER_HPP_

@@ -2,8 +2,7 @@
  * @file
  * Declares the Linux operating system fact resolver.
  */
-#ifndef FACTER_FACTS_LINUX_OPERATING_SYSTEM_RESOLVER_HPP_
-#define FACTER_FACTS_LINUX_OPERATING_SYSTEM_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/operating_system_resolver.hpp"
 #include "../scalar_value.hpp"
@@ -56,6 +55,3 @@ namespace facter { namespace facts { namespace linux {
     };
 
 }}}  // namespace facter::facts::linux
-
-#endif  // FACTER_FACTS_LINUX_OPERATING_SYSTEM_RESOLVER_HPP_
-

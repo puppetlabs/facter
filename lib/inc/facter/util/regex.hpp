@@ -4,8 +4,7 @@
  * It should be extended when new match methods are needed, and allows easily
  * switching between regex libraries.
  */
-#ifndef FACTER_UTIL_REGEX_HPP_
-#define FACTER_UTIL_REGEX_HPP_
+#pragma once
 
 #ifdef USE_RE2
 #include <re2/re2.h>
@@ -154,6 +153,3 @@ namespace facter { namespace util {
 #endif
 
 }}  // namespace facter::util
-
-#endif  // FACTER_UTIL_REGEX_HPP_
-

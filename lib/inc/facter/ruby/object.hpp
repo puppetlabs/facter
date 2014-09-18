@@ -2,8 +2,7 @@
  * @file
  * Declares the base class for instantiated Ruby objects.
  */
-#ifndef FACTER_RUBY_OBJECT_HPP_
-#define FACTER_RUBY_OBJECT_HPP_
+#pragma once
 
 #include "api.hpp"
 #include <map>
@@ -85,5 +84,3 @@ namespace facter { namespace ruby {
     extern template struct object<struct confine>;
 
 }}  // namespace facter::ruby
-
-#endif  // FACTER_RUBY_OBJECT_HPP_

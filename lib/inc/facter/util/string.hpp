@@ -2,8 +2,7 @@
  * @file
  * Declares the utility functions for parsing and manipulating strings.
  */
-#ifndef FACTER_UTIL_STRING_HPP_
-#define FACTER_UTIL_STRING_HPP_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -46,5 +45,3 @@ namespace facter { namespace util {
     std::string percentage(uint64_t used, uint64_t total);
 
 }}  // namespace facter::util
-
-#endif  // FACTER_UTIL_STRING_HPP_

@@ -2,8 +2,7 @@
  * @file
  * Declares utility functions for enumerating directories.
  */
-#ifndef FACTER_UTIL_DIRECTORY_HPP_
-#define FACTER_UTIL_DIRECTORY_HPP_
+#pragma once
 
 #include <string>
 #include <functional>
@@ -33,5 +32,3 @@ namespace facter { namespace util {
     };
 
 }}  // namespace facter::util
-
-#endif  // FACTER_UTIL_DIRECTORY_HPP_

@@ -2,8 +2,7 @@
  * @file
  * Declares the OSX operating system fact resolver.
  */
-#ifndef FACTER_FACTS_OSX_OPERATING_SYSTEM_RESOLVER_HPP_
-#define FACTER_FACTS_OSX_OPERATING_SYSTEM_RESOLVER_HPP_
+#pragma once
 
 #include "../posix/operating_system_resolver.hpp"
 
@@ -34,5 +33,3 @@ namespace facter { namespace facts { namespace osx {
     };
 
 }}}  // namespace facter::facts::osx
-
-#endif  // FACTER_FACTS_OSX_OPERATING_SYSTEM_RESOLVER_HPP_

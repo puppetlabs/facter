@@ -2,8 +2,7 @@
  * @file
  * Declares the scoped descriptor resource for managing file/socket descriptors.
  */
-#ifndef FACTER_UTIL_POSIX_SCOPED_DESCRIPTOR_HPP_
-#define FACTER_UTIL_POSIX_SCOPED_DESCRIPTOR_HPP_
+#pragma once
 
 #include "../scoped_resource.hpp"
 #include <unistd.h>
@@ -26,5 +25,3 @@ namespace facter { namespace util { namespace posix {
     };
 
 }}}  // namespace facter::util::posix
-
-#endif  // FACTER_UTIL_POSIX_SCOPED_DESCRIPTOR_HPP_

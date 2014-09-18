@@ -2,8 +2,7 @@
  * @file
  * Declares the POSIX SSH fact resolver.
  */
-#ifndef FACTER_FACTS_POSIX_SSH_RESOLVER_HPP_
-#define FACTER_FACTS_POSIX_SSH_RESOLVER_HPP_
+#pragma once
 
 #include "../resolver.hpp"
 
@@ -28,5 +27,3 @@ namespace facter { namespace facts { namespace posix {
     };
 
 }}}  // namespace facter::facts::posix
-
-#endif  // FACTER_FACTS_POSIX_SSH_RESOLVER_HPP_

@@ -2,8 +2,7 @@
  * @file
  * Declares the Ruby Facter::Core::Aggregate class.
  */
-#ifndef FACTER_RUBY_AGGREGATE_RESOLUTION_HPP_
-#define FACTER_RUBY_AGGREGATE_RESOLUTION_HPP_
+#pragma once
 
 #include "resolution.hpp"
 #include "chunk.hpp"
@@ -75,5 +74,3 @@ namespace facter { namespace ruby {
     };
 
 }}  // namespace facter::ruby
-
-#endif  // FACTER_RUBY_AGGREGATE_RESOLUTION_HPP_
