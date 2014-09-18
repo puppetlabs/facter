@@ -16,66 +16,66 @@ endif()
 
 # Set the common (platform-independent) sources
 set(LIBFACTER_TESTS_COMMON_SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/facts/array_value.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/facts/boolean_value.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/facts/double_value.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/facts/external/json_resolver.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/facts/external/text_resolver.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/facts/external/yaml_resolver.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/facts/collection.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/facts/integer_value.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/facts/map_value.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/facts/string_value.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/main.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/util/directory.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/util/file.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/util/option_set.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/util/scoped_env.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/util/string.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/fixtures.cc"
+    "facts/array_value.cc"
+    "facts/boolean_value.cc"
+    "facts/double_value.cc"
+    "facts/external/json_resolver.cc"
+    "facts/external/text_resolver.cc"
+    "facts/external/yaml_resolver.cc"
+    "facts/collection.cc"
+    "facts/integer_value.cc"
+    "facts/map_value.cc"
+    "facts/string_value.cc"
+    "main.cc"
+    "util/directory.cc"
+    "util/file.cc"
+    "util/option_set.cc"
+    "util/scoped_env.cc"
+    "util/string.cc"
+    "fixtures.cc"
 )
 
 # Add the ruby tests if there's a ruby installed
 if (RUBY_VERSION VERSION_GREATER '1.8.7')
-    set(LIBFACTER_TESTS_COMMON_SOURCES ${LIBFACTER_TESTS_COMMON_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/ruby/ruby.cc")
+    set(LIBFACTER_TESTS_COMMON_SOURCES ${LIBFACTER_TESTS_COMMON_SOURCES} "ruby/ruby.cc")
 endif()
 
 # Set the POSIX sources if on a POSIX platform
 if (UNIX)
     set(LIBFACTER_TESTS_CATEGORY_SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/execution/posix/execution.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/facts/posix/uptime_resolver.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/facts/posix/collection.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/facts/external/posix/execution_resolver.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/util/posix/environment.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_addrinfo.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_descriptor.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/logging/posix/logging.cc"
+        "execution/posix/execution.cc"
+        "facts/posix/collection.cc"
+        "facts/posix/uptime_resolver.cc"
+        "facts/external/posix/execution_resolver.cc"
+        "util/posix/environment.cc"
+        "util/posix/scoped_addrinfo.cc"
+        "util/posix/scoped_descriptor.cc"
+        "logging/posix/logging.cc"
     )
     if (OPENSSL_FOUND)
-        set(LIBFACTER_TESTS_CATEGORY_SOURCES ${LIBFACTER_TESTS_CATEGORY_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/util/posix/scoped_bio.cc")
+        set(LIBFACTER_TESTS_CATEGORY_SOURCES ${LIBFACTER_TESTS_CATEGORY_SOURCES} "util/posix/scoped_bio.cc")
     endif()
 endif()
 
 if (WIN32)
     set(LIBFACTER_TESTS_CATEGORY_SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/execution/windows/execution.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/facts/windows/collection.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/facts/external/windows/execution_resolver.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/facts/external/windows/powershell_resolver.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/util/windows/environment.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/logging/windows/logging.cc"
+        "execution/windows/execution.cc"
+        "facts/windows/collection.cc"
+        "facts/external/windows/execution_resolver.cc"
+        "facts/external/windows/powershell_resolver.cc"
+        "util/windows/environment.cc"
+        "logging/windows/logging.cc"
     )
 endif()
 
 # Set the platform-specific sources
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     set(LIBFACTER_TESTS_PLATFORM_SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/util/bsd/scoped_ifaddrs.cc"
+        "util/bsd/scoped_ifaddrs.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBFACTER_TESTS_PLATFORM_SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/util/bsd/scoped_ifaddrs.cc"
+        "util/bsd/scoped_ifaddrs.cc"
     )
 endif()
 
@@ -92,6 +92,6 @@ target_link_libraries(libfacter_test libfacter ${YAMLCPP_LIBRARIES} ${Boost_LIBR
 
 # Generate a file containing the above version numbers
 configure_file (
-    "${CMAKE_CURRENT_LIST_DIR}/fixtures.hpp.in"
+    "fixtures.hpp.in"
     "${CMAKE_CURRENT_LIST_DIR}/fixtures.hpp"
 )
