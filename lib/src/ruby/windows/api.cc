@@ -17,8 +17,9 @@ namespace facter { namespace ruby {
 
     dynamic_library api::find_library()
     {
-        // 1. Use dynamic_library::find_by_name (change it to support regex pattern and use CreateToolhelp32Snapshot to implement)
-        dynamic_library library = dynamic_library::find_by_symbol("ruby_init");
+        const string libruby_pattern = ".*ruby(\\d)?(\\d)?(\\d)?\\.dll";
+        // 1. Use dynamic_library::find_by_pattern to see if a DLL is already loaded
+        dynamic_library library = dynamic_library::find_by_pattern(libruby_pattern);
         if (library.loaded()) {
             return library;
         }
@@ -43,8 +44,9 @@ namespace facter { namespace ruby {
 
                 // Search the library directory for the "latest" libruby
                 // Windows ruby builds use xxx for major/minor/patch versions, i.e. ruby193.dll
-                re_adapter regex(".*ruby(\\d)?(\\d)?(\\d)?\\.dll");
-                string major, minor, patch, libruby;
+                re_adapter regex(libruby_pattern);
+                int major = 0, minor = 0, patch = 0;
+                string libruby;
                 directory::each_file(libdir.string(), [&](string const& file) {
                     // Ignore symlinks
                     if (is_symlink(file, ec)) {
@@ -52,12 +54,12 @@ namespace facter { namespace ruby {
                     }
 
                     // Extract the version from the file name
-                    string current_major, current_minor, current_patch;
+                    int current_major = 0, current_minor = 0, current_patch = 0;
                     if (!re_search(file, regex, &current_major, &current_minor, &current_patch)) {
                         return true;
                     }
 
-                    if (current_major == "1" && current_minor == "8") {
+                    if (current_major == 1 && current_minor == 8) {
                         LOG_DEBUG("ruby library at %1% will be skipped: ruby 1.8 is not supported.", file);
                         return true;
                     }
@@ -71,7 +73,7 @@ namespace facter { namespace ruby {
                         LOG_DEBUG("ruby library %1% has a higher version number than %2%.", libruby, file);
                     }
                     return true;
-                }, ".*ruby.*\\.dll");
+                }, libruby_pattern);
 
                 if (!libruby.empty() && library.load(libruby)) {
                     return library;

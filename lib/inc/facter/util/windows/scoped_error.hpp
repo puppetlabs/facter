@@ -1,6 +1,4 @@
 #pragma once
-#ifndef FACTER_UTIL_WINDOWS_SCOPED_ERROR_HPP_
-#define FACTER_UTIL_WINDOWS_SCOPED_ERROR_HPP_
 
 #include "../scoped_resource.hpp"
 #include <windows.h>
@@ -33,5 +31,3 @@ namespace facter { namespace util {
         DWORD _err;
     };
 }}  // namespace facter::util
-
-#endif  // FACTER_UTIL_WINDOWS_SCOPED_ERROR_HPP_

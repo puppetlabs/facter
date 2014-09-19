@@ -59,11 +59,11 @@ namespace facter { namespace util {
         dynamic_library& operator=(dynamic_library&& other);
 
         /**
-         * Finds an already loaded library by file name.
-         * @param name The name of the library to find.
+         * Finds an already loaded library by file name regex pattern.
+         * @param pattern The regex pattern of the library to find.
          * @return Returns the already loaded library if found or an unloaded library if not found.
          */
-        static dynamic_library find_by_name(std::string const& name);
+        static dynamic_library find_by_pattern(std::string const& pattern);
         /**
          * Finds an already loaded library by symbol.
          * @param symbol The symbol to find.

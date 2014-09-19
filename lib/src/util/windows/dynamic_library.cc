@@ -1,8 +1,10 @@
 #include <facter/util/dynamic_library.hpp>
 #include <boost/format.hpp>
-#include <windows.h>
 #include <facter/logging/logging.hpp>
+#include <facter/util/regex.hpp>
 #include <facter/util/windows/scoped_error.hpp>
+#include <windows.h>
+#include <tlhelp32.h>
 
 using namespace std;
 
@@ -10,16 +12,53 @@ LOG_DECLARE_NAMESPACE("util.windows.dynamic_library");
 
 namespace facter { namespace util {
 
-    dynamic_library dynamic_library::find_by_name(std::string const& name)
+    dynamic_library dynamic_library::find_by_pattern(std::string const& pattern)
     {
-        // TODO WINDOWS: Implement function.
-        return dynamic_library();
+        dynamic_library library;
+
+        // Check to see if the library is loaded. Walk the list of loaded modules and match against pattern.
+        // See http://msdn.microsoft.com/en-us/library/windows/desktop/ms686849(v=vs.85).aspx for details on
+        // the Tool Help library.
+        HANDLE hModuleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, GetCurrentProcessId());
+        if (hModuleSnap == INVALID_HANDLE_VALUE) {
+            auto err = GetLastError();
+            LOG_DEBUG("library matching pattern %1% not found, CreateToolhelp32Snapshot failed: %2% (%3%).", pattern.c_str(), scoped_error(err), err);
+            return library;
+        }
+        scoped_resource<HANDLE> hModSnap(std::move(hModuleSnap), CloseHandle);
+
+        MODULEENTRY32 me32 = {};
+        me32.dwSize = sizeof(MODULEENTRY32);
+        if (!Module32First(hModSnap, &me32)) {
+            auto err = GetLastError();
+            LOG_DEBUG("library matching pattern %1% not found, Module32First failed: %2% (%3%).", pattern.c_str(), scoped_error(err), err);
+            return library;
+        }
+
+        re_adapter rx(pattern);
+        do {
+            if (re_search(string(me32.szModule), rx)) {
+                // Use GetModuleHandleEx to ensure the reference count is incremented. If the module has been
+                // unloaded since the snapshot was made, this may fail and we should return an empty library.
+                HMODULE hMod;
+                if (GetModuleHandleEx(0, me32.szModule, &hMod)) {
+                    library._handle = hMod;
+                    library._first_load = false;
+                    LOG_DEBUG("library %1% found from pattern %2%", me32.szModule, pattern);
+                } else {
+                    LOG_DEBUG("library %1% found from pattern %2%, but unloaded before handle was acquired", me32.szModule, pattern);
+                }
+                return library;
+            }
+        } while (Module32Next(hModSnap, &me32));
+
+        LOG_DEBUG("no loaded libraries found matching pattern %1%", pattern);
+        return library;
     }
 
     dynamic_library dynamic_library::find_by_symbol(std::string const& symbol)
     {
-        // TODO WINDOWS: Implement function with SymFromName.
-        // http://msdn.microsoft.com/en-us/library/windows/desktop/ms680580(v=vs.85).aspx
+        // Windows doesn't have this capability.
         return dynamic_library();
     }
 

@@ -49,7 +49,8 @@ namespace facter { namespace ruby {
                 // Matches either libruby.so<version> or libruby-*.so<version>
                 re_adapter regex("libruby(?:-.*)?\\.so(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?$");
 #endif
-                string major, minor, patch, libruby;
+                int major = 0, minor = 0, patch = 0;
+                string libruby;
                 directory::each_file(libdir.string(), [&](string const& file) {
                     // Ignore symlinks
                     if (is_symlink(file, ec)) {
@@ -58,12 +59,12 @@ namespace facter { namespace ruby {
 
                     // Extract the version from the file name
                     // These are strings and not integers because the match groups are optional
-                    string current_major, current_minor, current_patch;
+                    int current_major = 0, current_minor = 0, current_patch = 0;
                     if (!re_search(file, regex, &current_major, &current_minor, &current_patch)) {
                         return true;
                     }
 
-                    if (current_major == "1" && current_minor == "8") {
+                    if (current_major == 1 && current_minor == 8) {
                         LOG_DEBUG("ruby library at %1% will be skipped: ruby 1.8 is not supported.", file);
                         return true;
                     }

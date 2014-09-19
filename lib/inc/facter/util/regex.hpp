@@ -110,25 +110,29 @@ namespace facter { namespace util {
      * @return Returns true if the match group was found or false if it was not.
      */
     template <typename Text, typename Arg, typename... Args>
-    inline bool re_search_helper(Text &txt, const boost::smatch &what, size_t depth, Arg arg, Args&&... args)
+    inline bool re_search_helper(Text const& txt, const boost::smatch &what, size_t depth, Arg arg, Args&&... args)
     {
         if (depth >= what.size()) {
             return false;
         }
 
-        try {
-            using ArgType = typename std::pointer_traits<Arg>::element_type;
-            auto val = boost::lexical_cast<ArgType>(what[depth]);
-            *arg = val;
-        } catch (const boost::bad_lexical_cast &e) {
-            return false;
+        // If the match was optional and unmatched, skip it and leave the variable uninitialized.
+        if (what[depth].matched) {
+            try {
+                using ArgType = typename std::pointer_traits<Arg>::element_type;
+                auto val = boost::lexical_cast<ArgType>(what[depth]);
+                *arg = val;
+            } catch (const boost::bad_lexical_cast &e) {
+                return false;
+            }
         }
 
         return re_search_helper(txt, what, depth+1, std::forward<Args>(args)...);
     }
 
     /**
-     * Searches the given text for the given pattern.
+     * Searches the given text for the given pattern. Optional variadic arguments return matched
+     * subgroups. If a subgroup is optional and unmatched, leaves the argument uninitialized.
      * @tparam Text The type of the text.
      * @tparam Args The variadic type of the match group arguments.
      * @param txt The text to search.
@@ -137,7 +141,7 @@ namespace facter { namespace util {
      * @return Returns true if the text matches the given pattern or false if it does not.
      */
     template <typename Text, typename... Args>
-    inline bool re_search(Text &txt, const re_adapter &r, Args&&... args)
+    inline bool re_search(Text const& txt, const re_adapter &r, Args&&... args)
     {
         if (!r.ok()) {
             return false;
