@@ -22,8 +22,11 @@ namespace facter { namespace facts { namespace solaris {
 
     void dmi_resolver::resolve_bios(collection& facts)
     {
-        auto arch = facts.get<string_value>(fact::architecture)->value();
-        if (arch == "i86pc") {
+        auto arch = facts.get<string_value>(fact::architecture);
+        if (!arch) {
+            return;
+        }
+        if (arch->value() == "i86pc") {
             string bios_vendor;
             string bios_version;
             string bios_release;
@@ -51,15 +54,18 @@ namespace facter { namespace facts { namespace solaris {
             if (!bios_vendor.empty()) {
                 facts.add(fact::bios_vendor, make_value<string_value>(move(bios_vendor)));
             }
-        } else if (arch == "sparc") {
+        } else if (arch->value() == "sparc") {
             // not impl
         }
     }
 
     void dmi_resolver::resolve_manufacturer(collection& facts)
     {
-        auto arch = facts.get<string_value>(fact::architecture)->value();
-        if (arch == "i86pc") {
+        auto arch = facts.get<string_value>(fact::architecture);
+        if (!arch) {
+            return;
+        }
+        if (arch->value() == "i86pc") {
             string manufacturer;
             string product;
             string uuid;
@@ -97,7 +103,7 @@ namespace facter { namespace facts { namespace solaris {
                 facts.add(fact::product_uuid, make_value<string_value>(move(uuid)));
             }
 
-        } else if (arch == "sparc") {
+        } else if (arch->value() == "sparc") {
             string manufacturer;
             string product;
             re_adapter line_re("System Configuration: (.+) sun\\d.");
