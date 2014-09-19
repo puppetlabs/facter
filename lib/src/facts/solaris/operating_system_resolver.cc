@@ -11,7 +11,7 @@ using namespace facter::util;
 using namespace facter::facts::posix;
 namespace facter { namespace facts { namespace solaris {
 
-    void operating_system_resolver::resolve_operating_system(collection& facts)
+    string operating_system_resolver::determine_operating_system(collection& facts)
     {
         auto kernel = facts.get<string_value>(fact::kernel);
         string value;
@@ -21,14 +21,13 @@ namespace facter { namespace facts { namespace solaris {
 
         // If no value, default to the base implementation
         if (value.empty()) {
-            posix::operating_system_resolver::resolve_operating_system(facts);
-            return;
+            return posix::operating_system_resolver::determine_operating_system(facts);
         }
         // Add the fact
-        facts.add(fact::operating_system, make_value<string_value>(move(value)));
+        return value;
     }
 
-    void operating_system_resolver::resolve_operating_system_release(collection& facts)
+    string operating_system_resolver::determine_operating_system_release(collection& facts, string const& operating_system)
     {
         /*
          Oracle Solaris 10 1/13 s10x_u11wos_24a X86
@@ -60,19 +59,18 @@ namespace facter { namespace facts { namespace solaris {
 
         // Use the base implementation if we have no value
         if (value.empty()) {
-            posix::operating_system_resolver::resolve_operating_system_release(facts);
-            return;
+            return posix::operating_system_resolver::determine_operating_system_release(facts, operating_system);
         }
-        facts.add(fact::operating_system_release, make_value<string_value>(move(value)));
+        return value;
     }
 
-    void operating_system_resolver::resolve_operating_system_major_release(collection& facts) {
-        auto kernel = facts.get<string_value>(fact::operating_system_release, false)->value();
+    string operating_system_resolver::determine_operating_system_major_release(collection& facts, string const& operating_system, string const& os_release) {
+        auto kernel = os_release;
         auto pos = kernel.find('_');
         if (pos != string::npos) {
             kernel = kernel.substr(0, pos);
         }
-        facts.add(fact::operating_system_major_release, make_value<string_value>(move(kernel)));
+        return kernel;
     }
 
 }}}  // namespace facter::facts::solaris
