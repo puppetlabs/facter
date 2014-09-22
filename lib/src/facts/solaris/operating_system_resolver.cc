@@ -50,9 +50,9 @@ namespace facter { namespace facts { namespace solaris {
             if (re_search(line, regexp_s10, &major, &minor)) {
                 value = major + "_u" + minor;
             } else if (re_search(line, regexp_s11, &major, &minor)) {
-                value = major + "_u" + minor;
+                value = major + "." + minor;
             } else if (re_search(line, regexp_s11b, &major)) {
-                value = major + "_u0";
+                value = major + ".0";
             }
             return value.empty();
         });
@@ -65,12 +65,14 @@ namespace facter { namespace facts { namespace solaris {
     }
 
     string operating_system_resolver::determine_operating_system_major_release(collection& facts, string const& operating_system, string const& os_release) {
-        auto kernel = os_release;
-        auto pos = kernel.find('_');
-        if (pos != string::npos) {
-            kernel = kernel.substr(0, pos);
+        auto release = os_release;
+        string major;
+        re_adapter regexp("^(\\d+)(_u|\\.)");
+
+        if (re_search(release, regexp, &major)) {
+            release = major;
         }
-        return kernel;
+        return release;
     }
 
 }}}  // namespace facter::facts::solaris
