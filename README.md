@@ -27,7 +27,7 @@ Initial Setup
 
 The following will install all required tools and libraries:
 
-    yum install cmake boost-devel openssl-devel yaml-cpp-devel libblkid-devel
+    yum install cmake boost-devel openssl-devel yaml-cpp-devel libblkid-devel gcc-c++ make
 
 ### Setup on Mac OSX Mavericks (homebrew)
 
