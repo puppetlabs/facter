@@ -141,7 +141,7 @@ namespace facter { namespace facts { namespace solaris {
         }
 
         string factname = addr->lifr_addr.ss_family == AF_INET ? fact::ipaddress : fact::ipaddress6;
-        string address = address_to_string((const sockaddr*)&addr->lifr_addr);
+        string address = address_to_string(reinterpret_cast<const sockaddr*>(&addr->lifr_addr));
 
         string interface_factname = factname + "_" + addr->lifr_name;
 
@@ -172,7 +172,7 @@ namespace facter { namespace facts { namespace solaris {
         }
         // Set the netmask fact
         string factname = addr->lifr_addr.ss_family == AF_INET ? fact::netmask : fact::netmask6;
-        string netmask = address_to_string((const struct sockaddr*) &addr->lifr_addr);
+        string netmask = address_to_string(reinterpret_cast<const struct sockaddr*>(&addr->lifr_addr));
 
         string interface_factname = factname + "_" + addr->lifr_name;
 
@@ -184,7 +184,7 @@ namespace facter { namespace facts { namespace solaris {
 
         // Set the network fact
         factname = addr->lifr_addr.ss_family == AF_INET ? fact::network : fact::network6;
-        string network = address_to_string( (const struct sockaddr*)&ipaddr, (const struct sockaddr*)&addr->lifr_addr);
+        string network = address_to_string(reinterpret_cast<const struct sockaddr*>(&ipaddr), reinterpret_cast<const struct sockaddr*>(&addr->lifr_addr));
         interface_factname = factname + "_" + addr->lifr_name;
 
         if (primary) {
