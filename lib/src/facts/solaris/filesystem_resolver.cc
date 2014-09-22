@@ -87,11 +87,6 @@ namespace facter { namespace facts { namespace solaris {
 
     void filesystem_resolver::resolve_filesystems(collection& facts)
     {
-        auto mountpoints = facts.get<map_value>(fact::mountpoints, false);
-        if (!mountpoints) {
-            return;
-        }
-
         // Build a list of mounted filesystems
 
         set<string> filesystems;
