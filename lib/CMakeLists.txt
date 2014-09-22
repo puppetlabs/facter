@@ -25,6 +25,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/external/yaml_resolver.cc"
     "src/facts/map_value.cc"
     "src/facts/resolver.cc"
+    "src/facts/resolvers/kernel_resolver.cc"
     "src/facts/scalar_value.cc"
     "src/logging/logging.cc"
     "src/ruby/aggregate_resolution.cc"

@@ -104,7 +104,7 @@ namespace facter { namespace facts {
             throw circular_resolution_exception("a cycle in fact resolution was detected.");
         }
         cycle_guard guard(_resolving);
-        return resolve_facts(facts);
+        resolve_facts(facts);
     }
 
 }}  // namespace facter::facts
