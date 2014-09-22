@@ -21,10 +21,9 @@ namespace facter { namespace util { namespace solaris {
         explicit kstat_exception(std::string const& message);
     };
 
-
     /**
      * Represents a scoped kstat pointer that automatically is freed when it goes out of scope.
-    */
+     */
     struct scoped_kstat : scoped_resource<kstat_ctl*>
     {
         /**
@@ -35,7 +34,7 @@ namespace facter { namespace util { namespace solaris {
 
         /**
          * Constructs a scoped_descriptor.
-         * @param stat The kstat pointer to free when destroyed
+         * @param ctrl The kstat pointer to free when destroyed
          */
         explicit scoped_kstat(kstat_ctl* ctrl);
 

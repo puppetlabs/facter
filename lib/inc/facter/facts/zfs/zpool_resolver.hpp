@@ -10,7 +10,11 @@
 
 namespace facter { namespace facts { namespace zfs {
 
-    struct zpool {
+    /**
+     * Represents a zpool.
+     */
+    struct zpool
+    {
         /**
          * The name of this zpool
          */
@@ -31,6 +35,7 @@ namespace facter { namespace facts { namespace zfs {
          */
         std::vector<std::string> disks;
     };
+
     /**
      * Responsible for resolving Zpool facts.
      */

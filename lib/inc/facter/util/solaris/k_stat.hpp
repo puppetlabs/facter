@@ -22,7 +22,7 @@ namespace facter { namespace util { namespace solaris {
          */
         k_stat_entry(kstat_t* kp);
 
-        /*
+        /**
          * Get a value out of our kstat_named_t
          * @param attrib The attribute we are looking up
          * @tparam T the datatype of the attribute result
@@ -31,23 +31,27 @@ namespace facter { namespace util { namespace solaris {
         template <typename T>
         T value(const std::string& attrib) const;
 
-        /*
-         * @return Returns the name of entry
+        /**
+         * Gets the name of the entry.
+         * @return Returns the name of entry.
          */
         std::string name();
 
-        /*
-         * @return Returns the class of entry
+        /**
+         * Gets the class of the entry.
+         * @return Returns the class of entry.
          */
         std::string klass();
 
-        /*
-         * @return Returns the module of entry
+        /**
+         * Gets the module of the entry.
+         * @return Returns the module of entry.
          */
         std::string module();
 
-        /*
-         * @return Returns the instance of entry
+        /**
+         * Gets the instance of the entry.
+         * @return Returns the instance of entry.
          */
         int instance();
 
@@ -75,26 +79,58 @@ namespace facter { namespace util { namespace solaris {
     };
 
     /**
-     * The template specializations for k_stat_entry::value
+     * The template specializations for k_stat_entry::value with ulong_t.
+     * @param attrib The attribute we are looking up.
+     * @return Returns the looked up value.
      */
     template<>
     ulong_t k_stat_entry::value(const std::string& attrib) const;
 
+    /**
+     * The template specializations for k_stat_entry::value with long.
+     * @param attrib The attribute we are looking up.
+     * @return Returns the looked up value.
+     */
     template<>
     long k_stat_entry::value(const std::string& attrib) const;
 
+    /**
+     * The template specializations for k_stat_entry::value with int32_t.
+     * @param attrib The attribute we are looking up.
+     * @return Returns the looked up value.
+     */
     template<>
     int32_t k_stat_entry::value(const std::string& attrib) const;
 
+    /**
+     * The template specializations for k_stat_entry::value with uint32_t.
+     * @param attrib The attribute we are looking up.
+     * @return Returns the looked up value.
+     */
     template<>
     uint32_t k_stat_entry::value(const std::string& attrib) const;
 
+    /**
+     * The template specializations for k_stat_entry::value with int64_t.
+     * @param attrib The attribute we are looking up.
+     * @return Returns the looked up value.
+     */
     template<>
     int64_t k_stat_entry::value(const std::string& attrib) const;
 
+    /**
+     * The template specializations for k_stat_entry::value with uint64_t.
+     * @param attrib The attribute we are looking up.
+     * @return Returns the looked up value.
+     */
     template<>
     uint64_t k_stat_entry::value(const std::string& attrib) const;
 
+    /**
+     * The template specializations for k_stat_entry::value with string.
+     * @param attrib The attribute we are looking up.
+     * @return Returns the looked up value.
+     */
     template<>
     std::string k_stat_entry::value(const std::string& attrib) const;
 
