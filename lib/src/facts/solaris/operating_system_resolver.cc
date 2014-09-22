@@ -1,34 +1,21 @@
 #include <facter/facts/solaris/operating_system_resolver.hpp>
 #include <facter/facts/os.hpp>
-#include <facter/facts/os_family.hpp>
-#include <facter/facts/collection.hpp>
-#include <facter/facts/fact.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/regex.hpp>
 
 using namespace std;
 using namespace facter::util;
-using namespace facter::facts::posix;
+
 namespace facter { namespace facts { namespace solaris {
 
-    string operating_system_resolver::determine_operating_system(collection& facts)
+    operating_system_resolver::data operating_system_resolver::collect_data(collection& facts)
     {
-        auto kernel = facts.get<string_value>(fact::kernel);
-        string value;
-        if (kernel && kernel->value() == os::sunos) {
-            value = os_family::solaris;
+        // Default to the base implementation
+        auto result = resolvers::operating_system_resolver::collect_data(facts);
+        if (result.name == os::sunos) {
+            result.name = os::solaris;
         }
 
-        // If no value, default to the base implementation
-        if (value.empty()) {
-            return posix::operating_system_resolver::determine_operating_system(facts);
-        }
-        // Add the fact
-        return value;
-    }
-
-    string operating_system_resolver::determine_operating_system_release(collection& facts, string const& operating_system)
-    {
         /*
          Oracle Solaris 10 1/13 s10x_u11wos_24a X86
          Oracle Solaris 10 9/10 s10s_u9wos_14a SPARC
@@ -40,7 +27,6 @@ namespace facter { namespace facts { namespace solaris {
          to be resolved further using the `pkg info kernel` command (TODO).
          */
 
-        string value;
         re_adapter regexp_s10("Solaris \\d+ \\d+/\\d+ s(\\d+)x_u(\\d+)wos_");
         re_adapter regexp_s11("Solaris (\\d+)[.](\\d+)");
         re_adapter regexp_s11b("Solaris (\\d+) ");
@@ -48,31 +34,25 @@ namespace facter { namespace facts { namespace solaris {
             string major;
             string minor;
             if (re_search(line, regexp_s10, &major, &minor)) {
-                value = major + "_u" + minor;
+                result.release = major + "_u" + minor;
+                return false;
             } else if (re_search(line, regexp_s11, &major, &minor)) {
-                value = major + "." + minor;
+                result.release = major + "." + minor;
+                return false;
             } else if (re_search(line, regexp_s11b, &major)) {
-                value = major + ".0";
+                result.release = major + ".0";
+                return false;
             }
-            return value.empty();
+            return true;
         });
-
-        // Use the base implementation if we have no value
-        if (value.empty()) {
-            return posix::operating_system_resolver::determine_operating_system_release(facts, operating_system);
-        }
-        return value;
+        return result;
     }
 
-    string operating_system_resolver::determine_operating_system_major_release(collection& facts, string const& operating_system, string const& os_release) {
-        auto release = os_release;
-        string major;
-        re_adapter regexp("^(\\d+)(_u|\\.)");
-
-        if (re_search(release, regexp, &major)) {
-            release = major;
-        }
-        return release;
+    tuple<string, string> operating_system_resolver::parse_release(string const& name, string const& release) const
+    {
+        string major, minor;
+        re_search(release, "^(\\d+)(?:_u|\\.)(\\d+)", &major, &minor);
+        return make_tuple(major, minor);
     }
 
 }}}  // namespace facter::facts::solaris

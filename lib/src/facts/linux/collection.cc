@@ -2,7 +2,6 @@
 #include <facter/facts/posix/kernel_resolver.hpp>
 #include <facter/facts/posix/identity_resolver.hpp>
 #include <facter/facts/linux/operating_system_resolver.hpp>
-#include <facter/facts/linux/lsb_resolver.hpp>
 #include <facter/facts/linux/networking_resolver.hpp>
 #include <facter/facts/linux/block_device_resolver.hpp>
 #include <facter/facts/linux/dmi_resolver.hpp>
@@ -23,7 +22,6 @@ namespace facter { namespace facts {
     {
         add(make_shared<posix::kernel_resolver>());
         add(make_shared<linux::operating_system_resolver>());
-        add(make_shared<linux::lsb_resolver>());
         add(make_shared<linux::networking_resolver>());
         add(make_shared<linux::block_device_resolver>());
         add(make_shared<linux::dmi_resolver>());
