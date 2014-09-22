@@ -11,6 +11,8 @@
 #include <facter/facts/solaris/dmi_resolver.hpp>
 #include <facter/facts/solaris/virtualization_resolver.hpp>
 #include <facter/facts/solaris/memory_resolver.hpp>
+#include <facter/facts/solaris/zpool_resolver.hpp>
+#include <facter/facts/solaris/zfs_resolver.hpp>
 
 using namespace std;
 
@@ -30,6 +32,10 @@ namespace facter { namespace facts {
         add(make_shared<solaris::dmi_resolver>());
         add(make_shared<solaris::virtualization_resolver>());
         add(make_shared<solaris::memory_resolver>());
+
+        // solaris specific
+        add(make_shared<solaris::zpool_resolver>());
+        add(make_shared<solaris::zfs_resolver>());
     }
 
 }}  // namespace facter::facts

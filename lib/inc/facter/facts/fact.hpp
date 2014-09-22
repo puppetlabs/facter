@@ -494,6 +494,40 @@ namespace facter { namespace facts {
          * The fact for the swap being encrypted or not.
          */
         constexpr static char const* swapencrypted = "swapencrypted";
+
+        /**
+         * The zfs version fact
+         */
+        constexpr static char const* zfs_version = "zfs_version";
+
+        /**
+         * The zfs supported feature numbers for solaris
+         */
+        constexpr static char const* zfs_featurenumbers = "zfs_featurenumbers";
+
+        /**
+         * The zpool version fact
+         */
+        constexpr static char const* zpool_version = "zpool_version";
+
+        /**
+         * The zpool supported feature numbers for solaris
+         */
+        constexpr static char const* zpool_featurenumbers = "zpool_featurenumbers";
+
+         /**
+         * The zpool features fact for openzfs
+         */
+        constexpr static char const* zpool_features = "zpool_features";
+
+         /**
+         * The zpools for openzfs
+         */
+        constexpr static char const* zpools = "zpools";
+         /**
+         * The zfs data-sets for openzfs
+         */
+        constexpr static char const* zfs_datasets = "zfs_datasets";
     };
 
 }}  // namespace facter::facts
