@@ -158,6 +158,8 @@ namespace facter { namespace facts { namespace solaris {
 
     void networking_resolver::resolve_network(collection& facts, lifreq const* addr, bool primary)
     {
+        // save our ip first
+        auto ipaddr = addr->lifr_addr;
         scoped_descriptor ctl(socket(addr->lifr_addr.ss_family, SOCK_DGRAM, 0));
         if (static_cast<int>(ctl) == -1) {
             LOG_DEBUG("socket failed: %1% (%2%): netmask and network for interface %3% are unavailable", strerror(errno), errno, addr->lifr_name);
@@ -182,7 +184,7 @@ namespace facter { namespace facts { namespace solaris {
 
         // Set the network fact
         factname = addr->lifr_addr.ss_family == AF_INET ? fact::network : fact::network6;
-        string network = address_to_string((const struct sockaddr*)&addr->lifr_addr, (const struct sockaddr*)&addr->lifr_broadaddr);
+        string network = address_to_string( (const struct sockaddr*)&ipaddr, (const struct sockaddr*)&addr->lifr_addr);
         interface_factname = factname + "_" + addr->lifr_name;
 
         if (primary) {
