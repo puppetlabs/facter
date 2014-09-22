@@ -1,10 +1,5 @@
 #include <facter/facts/osx/dmi_resolver.hpp>
-#include <facter/facts/collection.hpp>
-#include <facter/facts/fact.hpp>
-#include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
-#include <vector>
-#include <sys/types.h>
 #include <sys/sysctl.h>
 
 using namespace std;
@@ -13,29 +8,27 @@ LOG_DECLARE_NAMESPACE("facts.osx.dmi");
 
 namespace facter { namespace facts { namespace osx {
 
-    void dmi_resolver::resolve_facts(collection& facts)
+    dmi_resolver::data dmi_resolver::collect_data(collection& facts)
     {
-        // We only support getting the product name on OSX
-        resolve_product_name(facts);
-    }
+        data result;
 
-    void dmi_resolver::resolve_product_name(collection& facts)
-    {
         int mib[] = { CTL_HW, HW_MODEL };
         size_t length = 0;
 
+        // OSX only supports the product name
         if (sysctl(mib, sizeof(mib) / sizeof(mib[0]), nullptr, &length, nullptr, 0) == -1) {
-            LOG_DEBUG("sysctl failed: %1% (%2%): %3% fact is unavailable.", strerror(errno), errno, fact::product_name);
-            return;
+            LOG_DEBUG("sysctl failed: %1% (%2%): DMI facts are unavailable.", strerror(errno), errno);
+            return result;
         }
 
         vector<char> model_name(length);
         if (sysctl(mib, sizeof(mib) / sizeof(mib[0]), model_name.data(), &length, nullptr, 0) == -1) {
-            LOG_DEBUG("sysctl failed: %1% (%2%): %3% fact is unavailable.", strerror(errno), errno, fact::product_name);
-            return;
+            LOG_DEBUG("sysctl failed: %1% (%2%): DMI facts are unavailable.", strerror(errno), errno);
+            return result;
         }
 
-        facts.add(fact::product_name, make_value<string_value>(model_name.data()));
+        result.product_name = model_name.data();
+        return result;
     }
 
 }}}  // namespace facter::facts::osx

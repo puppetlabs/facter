@@ -25,6 +25,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/external/yaml_resolver.cc"
     "src/facts/map_value.cc"
     "src/facts/resolver.cc"
+    "src/facts/resolvers/dmi_resolver.cc"
     "src/facts/resolvers/kernel_resolver.cc"
     "src/facts/scalar_value.cc"
     "src/logging/logging.cc"
@@ -50,7 +51,6 @@ if (UNIX)
     set(LIBFACTER_STANDARD_SOURCES
         "src/execution/posix/execution.cc"
         "src/facts/posix/collection.cc"
-        "src/facts/posix/dmi_resolver.cc"
         "src/facts/posix/filesystem_resolver.cc"
         "src/facts/posix/id_resolver.cc"
         "src/facts/posix/kernel_resolver.cc"

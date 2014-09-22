@@ -1,28 +1,25 @@
 /**
  * @file
- * Declares the Solaris Desktop Management Information (DMI) fact resolver.
+ * Declares the Solaris Desktop Management Interface (DMI) fact resolver.
  */
 #pragma once
 
-#include "../posix/dmi_resolver.hpp"
+#include "../resolvers/dmi_resolver.hpp"
 
 namespace facter { namespace facts { namespace solaris {
 
     /**
      * Responsible for resolving DMI facts.
      */
-    struct dmi_resolver : posix::dmi_resolver
+    struct dmi_resolver : resolvers::dmi_resolver
     {
      protected:
         /**
-         * Called to resolve all facts the resolver is responsible for.
+         * Collects the resolver data.
          * @param facts The fact collection that is resolving facts.
+         * @return Returns the resolver data.
          */
-        virtual void resolve_facts(collection& facts);
-
-     private:
-        void resolve_bios(collection& facts);
-        void resolve_manufacturer(collection& facts);
+        virtual data collect_data(collection& facts) override;
     };
 
 }}}  // namespace facter::facts::solaris
