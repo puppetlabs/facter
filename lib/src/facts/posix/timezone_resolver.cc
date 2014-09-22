@@ -22,14 +22,14 @@ namespace facter { namespace facts { namespace posix {
     {
         time_t since_epoch = time(NULL);
         struct tm localtime;
-        struct tm *result;
-        result = localtime_r(&since_epoch, &localtime);
+        char buffer[16];
 
-        if (result) {
-            int is_dst = daylight && localtime.tm_isdst;
-            facts.add(fact::timezone, make_value<string_value>(tzname[is_dst]));
-        } else {
+        if (!::localtime_r(&since_epoch, &localtime)) {
             LOG_WARNING("localtime_r failed: %1% fact is unavailable", fact::timezone);
+        } else if (::strftime(buffer, sizeof(buffer), "%Z", &localtime) == 0) {
+            LOG_WARNING("strftime failed: %1% fact is unavailable", fact::timezone);
+        } else {
+            facts.add(fact::timezone, make_value<string_value>(buffer));
         }
     }
 }}}  // facter::facts::posix
