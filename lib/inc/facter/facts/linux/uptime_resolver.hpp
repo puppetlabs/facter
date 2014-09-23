@@ -15,10 +15,10 @@ namespace facter { namespace facts { namespace linux {
     {
      protected:
         /**
-         * Gets the uptime in seconds.
+         * Gets the system uptime in seconds.
          * @return Returns the system uptime in seconds.
          */
-        virtual int uptime_in_seconds();
+        virtual int64_t get_uptime() override;
     };
 
 }}}  // namespace facter::facts::linux

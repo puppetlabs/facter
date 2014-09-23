@@ -31,6 +31,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/kernel_resolver.cc"
     "src/facts/resolvers/memory_resolver.cc"
     "src/facts/resolvers/operating_system_resolver.cc"
+    "src/facts/resolvers/uptime_resolver.cc"
     "src/facts/scalar_value.cc"
     "src/logging/logging.cc"
     "src/ruby/aggregate_resolution.cc"

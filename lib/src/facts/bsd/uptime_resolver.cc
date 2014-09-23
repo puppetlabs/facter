@@ -1,13 +1,12 @@
 #include <facter/facts/bsd/uptime_resolver.hpp>
-#include <facter/facts/collection.hpp>
-#include <facter/facts/fact.hpp>
-#include <facter/facts/scalar_value.hpp>
-#include <time.h>
+#include <ctime>
 #include <sys/sysctl.h>
+
+using namespace std;
 
 namespace facter { namespace facts { namespace bsd {
 
-    int uptime_resolver::uptime_in_seconds()
+    int64_t uptime_resolver::get_uptime()
     {
         // this approach adapted from: http://stackoverflow.com/a/11676260/1004272
         timeval boottime;
@@ -17,9 +16,8 @@ namespace facter { namespace facts { namespace bsd {
             time_t bsec = boottime.tv_sec;
             time_t now = time(NULL);
             return now - bsec;
-        } else {
-            return facter::facts::posix::uptime_resolver::uptime_in_seconds();
         }
+        return posix::uptime_resolver::get_uptime();
     }
 
 }}}  // namespace facter::facts::bsd
