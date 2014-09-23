@@ -1,31 +1,24 @@
 /**
  * @file
- * Declares the timezone fact resolver
+ * Declares the POSIX timezone fact resolver.
  */
 #pragma once
 
-#include "../resolver.hpp"
+#include "../resolvers/timezone_resolver.hpp"
 
 namespace facter { namespace facts { namespace posix {
 
     /**
      * Responsible for resolving time zone facts.
      */
-    struct timezone_resolver : resolver
+    struct timezone_resolver : resolvers::timezone_resolver
     {
-        /**
-         * Constructs the timezone resolver.
-         */
-        timezone_resolver();
-
      protected:
         /**
-         * Called to resolve all facts the resolver is responsible for.
-         * Implementations should set the timezone fact to the abbreviated form
-         * of the system timezone.
-         * @param facts The fact collection that is resolving facts.
+         * Gets the system timezone.
+         * @return Returns the system timezone.
          */
-        virtual void resolve_facts(collection& facts);
+        virtual std::string get_timezone() override;
     };
 
 }}}  // namespace facter::facts::posix
