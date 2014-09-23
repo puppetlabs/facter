@@ -78,7 +78,7 @@ Facter.add("virtual") do
   setcode do
     next "zone" if Facter::Util::Virtual.zone?
 
-    output = Facter::Core::Execution.exec('prtdiag')
+    output = Facter::Core::Execution.exec('/usr/sbin/prtdiag 2> /dev/null')
     if output
       lines = output.split("\n")
       next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
