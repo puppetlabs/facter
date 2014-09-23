@@ -528,6 +528,38 @@ namespace facter { namespace facts {
          * The zfs data-sets for openzfs
          */
         constexpr static char const* zfs_datasets = "zfs_datasets";
+        /**
+         * The fact for number of zones
+         */
+        constexpr static char const* zones = "zones";
+        /**
+         * The fact for name of zone
+         */
+        constexpr static char const* zonename = "zonename";
+        /**
+         * The fact for zone brand 
+         */
+        constexpr static char const* zone_brand = "brand";
+        /**
+         * The fact for zone iptype 
+         */
+        constexpr static char const* zone_iptype = "iptype";
+        /**
+         * The fact for zone uuid 
+         */
+        constexpr static char const* zone_uuid = "uuid";
+        /**
+         * The fact for zone id 
+         */
+        constexpr static char const* zone_id = "zoneid";
+        /**
+         * The fact for zone path 
+         */
+        constexpr static char const* zone_path = "zonepath";
+        /**
+         * The fact for zone state 
+         */
+        constexpr static char const* zone_state = "zonestate";
     };
 
 }}  // namespace facter::facts
