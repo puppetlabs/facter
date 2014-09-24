@@ -251,7 +251,7 @@ describe "Virtual fact" do
       Facter.fact(:hardwaremodel).stubs(:value).returns(nil)
       Facter::Core::Execution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Core::Execution.stubs(:exec).with('dmidecode 2> /dev/null').returns(nil)
-      Facter::Core::Execution.stubs(:exec).with('prtdiag').returns("System Configuration: VMware, Inc. VMware Virtual Platform")
+      Facter::Core::Execution.stubs(:exec).with('prtdiag 2>/dev/null').returns("System Configuration: VMware, Inc. VMware Virtual Platform")
       Facter.fact(:virtual).value.should == "vmware"
     end
 
@@ -259,7 +259,7 @@ describe "Virtual fact" do
       Facter.fact(:hardwaremodel).stubs(:value).returns(nil)
       Facter::Core::Execution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Core::Execution.stubs(:exec).with('dmidecode 2> /dev/null').returns(nil)
-      Facter::Core::Execution.stubs(:exec).with('prtdiag').returns("System Configuration: Parallels Virtual Platform")
+      Facter::Core::Execution.stubs(:exec).with('prtdiag 2>/dev/null').returns("System Configuration: Parallels Virtual Platform")
       Facter.fact(:virtual).value.should == "parallels"
     end
 
@@ -267,7 +267,7 @@ describe "Virtual fact" do
       Facter.fact(:hardwaremodel).stubs(:value).returns(nil)
       Facter::Core::Execution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
       Facter::Core::Execution.stubs(:exec).with('dmidecode 2> /dev/null').returns(nil)
-      Facter::Core::Execution.stubs(:exec).with('prtdiag').returns("System Configuration: innotek GmbH VirtualBox")
+      Facter::Core::Execution.stubs(:exec).with('prtdiag 2>/dev/null').returns("System Configuration: innotek GmbH VirtualBox")
       Facter.fact(:virtual).value.should == "virtualbox"
     end
   end
