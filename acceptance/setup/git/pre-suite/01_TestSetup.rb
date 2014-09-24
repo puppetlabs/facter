@@ -1,3 +1,8 @@
+begin
+  require 'puppet/acceptance/git_utils'
+  extend Puppet::Acceptance::GitUtils
+end
+
 test_name "Install packages and repositories on target machines..." do
   extend Beaker::DSL::InstallUtils
 
@@ -7,8 +12,15 @@ test_name "Install packages and repositories on target machines..." do
 
   tmp_repositories = []
   options[:install].each do |uri|
-    raise(ArgumentError, "#{uri} is not recognized.") unless(uri =~ GitURI)
-    tmp_repositories << extract_repo_info_from(uri)
+    if uri !~ GitURI
+      # Build up project git urls based on git server and fork env variables or defaults
+      project = uri.split('#')
+      newURI = "#{build_giturl(project[0])}#{newURI}##{project[1]}"
+      tmp_repositories << extract_repo_info_from(newURI)
+    else
+      raise(ArgumentError, "#{uri} is not recognized.") unless(uri =~ GitURI)
+      tmp_repositories << extract_repo_info_from(uri)
+    end
   end
 
   repositories = order_packages(tmp_repositories)
