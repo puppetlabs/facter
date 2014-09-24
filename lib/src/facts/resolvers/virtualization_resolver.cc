@@ -1,4 +1,4 @@
-#include <facter/facts/posix/virtualization_resolver.hpp>
+#include <facter/facts/resolvers/virtualization_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -8,7 +8,7 @@
 using namespace std;
 using namespace facter::facts;
 
-namespace facter { namespace facts { namespace posix {
+namespace facter { namespace facts { namespace resolvers {
 
     virtualization_resolver::virtualization_resolver() :
         resolver(
@@ -22,7 +22,8 @@ namespace facter { namespace facts { namespace posix {
 
     void virtualization_resolver::resolve_facts(collection& facts)
     {
-        string hypervisor = get_hypervisor(facts);
+        auto hypervisor = get_hypervisor(facts);
+
         if (hypervisor.empty()) {
             hypervisor = "physical";
         }
@@ -44,4 +45,4 @@ namespace facter { namespace facts { namespace posix {
         return hypervisors.count(hypervisor) == 0;
     }
 
-}}}  // namespace facter::facts::posix
+}}}  // namespace facter::facts::resolvers
