@@ -269,6 +269,10 @@ namespace facter { namespace facts {
         constexpr static char const* selinux_config_policy = "selinux_config_policy";
 
         /**
+         * The structured fact for SSH.
+         */
+        constexpr static char const* ssh = "ssh";
+        /**
          * The fact for SSH DSA public key.
          */
         constexpr static char const* ssh_dsa_key = "sshdsakey";

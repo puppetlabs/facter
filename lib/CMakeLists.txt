@@ -32,6 +32,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/kernel_resolver.cc"
     "src/facts/resolvers/memory_resolver.cc"
     "src/facts/resolvers/operating_system_resolver.cc"
+    "src/facts/resolvers/ssh_resolver.cc"
     "src/facts/resolvers/timezone_resolver.cc"
     "src/facts/resolvers/uptime_resolver.cc"
     "src/facts/resolvers/virtualization_resolver.cc"
