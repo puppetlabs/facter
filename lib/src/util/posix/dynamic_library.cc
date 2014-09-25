@@ -9,7 +9,7 @@ LOG_DECLARE_NAMESPACE("util.posix.dynamic_library");
 
 namespace facter { namespace util {
 
-    dynamic_library dynamic_library::find_by_name(std::string const& name)
+    dynamic_library dynamic_library::find_by_pattern(std::string const& pattern)
     {
         // POSIX doesn't have this capability
         return dynamic_library();

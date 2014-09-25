@@ -84,6 +84,7 @@ if (WIN32)
         "${CMAKE_CURRENT_LIST_DIR}/src/ruby/windows/api.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/windows/dynamic_library.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/util/windows/environment.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/util/windows/scoped_error.cc"
     )
 endif()
 
