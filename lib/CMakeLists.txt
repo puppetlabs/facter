@@ -25,6 +25,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/external/yaml_resolver.cc"
     "src/facts/map_value.cc"
     "src/facts/resolver.cc"
+    "src/facts/resolvers/disk_resolver.cc"
     "src/facts/resolvers/dmi_resolver.cc"
     "src/facts/resolvers/filesystem_resolver.cc"
     "src/facts/resolvers/identity_resolver.cc"
@@ -114,6 +115,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
         "src/util/solaris/k_stat.cc"
         "src/util/solaris/scoped_kstat.cc"
         "src/facts/solaris/collection.cc"
+        "src/facts/solaris/disk_resolver.cc"
         "src/facts/solaris/uptime_resolver.cc"
         "src/facts/solaris/processor_resolver.cc"
         "src/facts/solaris/operating_system_resolver.cc"
@@ -132,7 +134,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBFACTER_PLATFORM_SOURCES
         "src/facts/bsd/networking_resolver.cc"
-        "src/facts/linux/block_device_resolver.cc"
+        "src/facts/linux/disk_resolver.cc"
         "src/facts/linux/dmi_resolver.cc"
         "src/facts/linux/filesystem_resolver.cc"
         "src/facts/linux/memory_resolver.cc"

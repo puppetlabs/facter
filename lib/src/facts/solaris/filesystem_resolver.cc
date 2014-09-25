@@ -78,35 +78,4 @@ namespace facter { namespace facts { namespace solaris {
         });
     }
 
-    // TODO: this seems more like a "block device" fact
-    // We need a structured fact for that anyway
-//    void filesystem_resolver::resolve_partitions(collection& facts)
-//    {
-//        try {
-//            k_stat ks;
-//            auto ke = ks["sderr"];
-//            auto disk = make_value<map_value>();
-//            set<string> disks;
-//            for (auto& kv : ke) {
-//                auto value = make_value<map_value>();
-//                string dname = kv.name();
-//                auto pos = dname.find(',');
-//                const string name = dname.substr(0, pos);
-//
-//                string product = kv.value<string>("Product");
-//                string vendor = kv.value<string>("Vendor");
-//                string size = si_string(kv.value<uint64_t>("Size"));
-//                value->add("product", make_value<string_value>(move(product)));
-//                value->add("vendor", make_value<string_value>(move(vendor)));
-//                value->add("size", make_value<string_value>(move(size)));
-//                disk->add(name.c_str(), move(value));
-//                disks.insert(name);
-//            }
-//            facts.add(fact::disks, make_value<string_value>(boost::join(disks, ",")));
-//            facts.add(fact::disk, move(disk));
-//        } catch (kstat_exception& ex) {
-//            LOG_DEBUG("partition resolver failed (%1%)", ex.what());
-//        }
-//    }
-
 }}}  // namespace facter::facts::solaris
