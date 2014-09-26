@@ -1,21 +1,12 @@
 #include <facter/facts/posix/networking_resolver.hpp>
-#include <facter/facts/fact.hpp>
-#include <facter/facts/collection.hpp>
-#include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/posix/scoped_addrinfo.hpp>
 #include <facter/util/file.hpp>
-#include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include <unistd.h>
 #include <limits.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <limits>
-#include <sstream>
-#include <iomanip>
-#include <cstring>
-#include <vector>
 
 using namespace std;
 using namespace facter::util;
@@ -24,128 +15,6 @@ using namespace facter::util::posix;
 LOG_DECLARE_NAMESPACE("facts.posix.networking");
 
 namespace facter { namespace facts { namespace posix {
-
-    networking_resolver::networking_resolver() :
-        resolver(
-            "networking",
-            {
-                fact::hostname,
-                fact::ipaddress,
-                fact::ipaddress6,
-                fact::netmask,
-                fact::netmask6,
-                fact::network,
-                fact::network6,
-                fact::macaddress,
-                fact::interfaces,
-                fact::domain,
-                fact::fqdn,
-                fact::dhcp_servers,
-            },
-            {
-                string("^") + fact::ipaddress + "_",
-                string("^") + fact::ipaddress6 + "_",
-                string("^") + fact::mtu + "_",
-                string("^") + fact::netmask + "_",
-                string("^") + fact::netmask6 + "_",
-                string("^") + fact::network + "_",
-                string("^") + fact::network6 + "_",
-                string("^") + fact::macaddress + "_",
-            })
-    {
-    }
-
-    void networking_resolver::resolve_facts(collection& facts)
-    {
-        resolve_hostname(facts);
-        resolve_domain(facts);
-        resolve_interface_facts(facts);
-    }
-
-    void networking_resolver::resolve_hostname(collection& facts)
-    {
-        int max = sysconf(_SC_HOST_NAME_MAX);
-        vector<char> name(max);
-        if (gethostname(name.data(), max) != 0) {
-            LOG_WARNING("gethostname failed: %1% (%2%): %3% fact is unavailable.", strerror(errno), errno, fact::hostname);
-            return;
-        }
-
-        // Use everything up to the first period
-        string value = name.data();
-        size_t pos = value.find('.');
-        if (pos != string::npos) {
-           value = value.substr(0, pos);
-        }
-        if (value.empty()) {
-            return;
-        }
-
-        facts.add(fact::hostname, make_value<string_value>(move(value)));
-    }
-
-    void networking_resolver::resolve_domain(collection& facts)
-    {
-        string fqdn;
-        string domain;
-
-        auto hostname = facts.get<string_value>(fact::hostname, false);
-        if (hostname) {
-            // Retrieve the FQDN by resolving the hostname
-            scoped_addrinfo info(hostname->value());
-            if (info.result() != 0 && info.result() != EAI_NONAME) {
-                LOG_ERROR("getaddrinfo failed: %1% (%2%): %3% fact may not be externally resolvable.", gai_strerror(info.result()), info.result(), fact::fqdn);
-            } else if (!info || info.result() == EAI_NONAME) {
-                LOG_INFO("hostname \"%1%\" could not be resolved: %2% fact may not be externally resolvable.", hostname->value(), fact::fqdn);
-            } else {
-                fqdn = static_cast<addrinfo*>(info)->ai_canonname;
-            }
-
-            // Set the domain name if the FQDN is prefixed with the hostname
-            if (boost::starts_with(fqdn, hostname->value() + ".")) {
-                domain = fqdn.substr(hostname->value().length() + 1);
-            }
-        }
-
-        // If no domain, look it up based on resolv.conf
-        if (domain.empty()) {
-            string search;
-            file::each_line("/etc/resolv.conf", [&](string& line) {
-                vector<boost::iterator_range<string::iterator>> parts;
-                boost::split(parts, line, boost::is_space(), boost::token_compress_on);
-                if (parts.size() < 2) {
-                    return true;
-                }
-                if (parts[0] == boost::as_literal("domain")) {
-                    // Treat the first domain entry as the domain
-                    domain.assign(parts[1].begin(), parts[1].end());
-                    return false;
-                }
-                if (parts[0] == boost::as_literal("search")) {
-                    // Found a "search" entry, but keep looking for other domain entries
-                    // We use the first search domain as the domain.
-                    search.assign(parts[1].begin(), parts[1].end());
-                    return true;
-                }
-                return true;
-            });
-            if (domain.empty()) {
-                domain = move(search);
-            }
-        }
-
-        if (hostname && fqdn.empty()) {
-            fqdn = hostname->value() + (domain.empty() ? "" : ".") + domain;
-        }
-
-        if (!domain.empty()) {
-            facts.add(fact::domain, make_value<string_value>(move(domain)));
-        }
-
-        if (!fqdn.empty()) {
-            facts.add(fact::fqdn, make_value<string_value>(move(fqdn)));
-        }
-    }
 
     string networking_resolver::address_to_string(sockaddr const* addr, sockaddr const* mask) const
     {
@@ -179,7 +48,7 @@ namespace facter { namespace facts { namespace posix {
             char buffer[INET6_ADDRSTRLEN] = {};
             inet_ntop(AF_INET6, &ip, buffer, sizeof(buffer));
             return buffer;
-        } else {
+        } else if (is_link_address(addr)) {
             auto link_addr = get_link_address_bytes(addr);
             if (link_addr) {
                 return macaddress_to_string(reinterpret_cast<uint8_t const*>(link_addr));
@@ -189,28 +58,68 @@ namespace facter { namespace facts { namespace posix {
         return {};
     }
 
-    string networking_resolver::macaddress_to_string(uint8_t const* bytes)
+    networking_resolver::data networking_resolver::collect_data(collection& facts)
     {
-        if (!bytes) {
-            return {};
-        }
+        data result;
 
-        // Ignore MAC address "0"
-        bool nonzero = false;
-        for (size_t i = 0; i < 6; ++i) {
-            if (bytes[i] != 0) {
-                nonzero = true;
-                break;
+        // Get the hostname
+        int size = sysconf(_SC_HOST_NAME_MAX);
+        vector<char> name(size == -1 ? 1024 : size);
+        if (gethostname(name.data(), name.size()) != 0) {
+            LOG_WARNING("gethostname failed: %1% (%2%): hostname is unavailable.", strerror(errno), errno);
+        } else {
+            // Use everything up to the first period
+            result.hostname = name.data();
+            auto pos = result.hostname.find('.');
+            if (pos != string::npos) {
+                result.hostname = result.hostname.substr(0, pos);
             }
         }
-        if (!nonzero) {
-            return {};
+
+        if (!result.hostname.empty()) {
+            // Retrieve the FQDN by resolving the hostname
+            scoped_addrinfo info(result.hostname);
+            if (info.result() != 0 && info.result() != EAI_NONAME) {
+                LOG_ERROR("getaddrinfo failed: %1% (%2%): hostname may not be externally resolvable.", gai_strerror(info.result()), info.result());
+            } else if (!info || info.result() == EAI_NONAME) {
+                LOG_INFO("hostname \"%1%\" could not be resolved: hostname may not be externally resolvable.", result.hostname);
+            } else {
+                result.fqdn = static_cast<addrinfo*>(info)->ai_canonname;
+            }
+
+            // Set the domain name if the FQDN is prefixed with the hostname
+            if (boost::starts_with(result.fqdn, result.hostname + ".")) {
+                result.domain = result.fqdn.substr(result.hostname.size() + 1);
+            }
         }
 
-        return (boost::format("%02x:%02x:%02x:%02x:%02x:%02x") %
-                static_cast<int>(bytes[0]) % static_cast<int>(bytes[1]) %
-                static_cast<int>(bytes[2]) % static_cast<int>(bytes[3]) %
-                static_cast<int>(bytes[4]) % static_cast<int>(bytes[5])).str();
+        // If no domain, look it up based on resolv.conf
+        if (result.domain.empty()) {
+            string search;
+            file::each_line("/etc/resolv.conf", [&](string& line) {
+                vector<boost::iterator_range<string::iterator>> parts;
+                boost::split(parts, line, boost::is_space(), boost::token_compress_on);
+                if (parts.size() < 2) {
+                    return true;
+                }
+                if (parts[0] == boost::as_literal("domain")) {
+                    // Treat the first domain entry as the domain
+                    result.domain.assign(parts[1].begin(), parts[1].end());
+                    return false;
+                }
+                if (parts[0] == boost::as_literal("search")) {
+                    // Found a "search" entry, but keep looking for other domain entries
+                    // We use the first search domain as the domain.
+                    search.assign(parts[1].begin(), parts[1].end());
+                    return true;
+                }
+                return true;
+            });
+            if (result.domain.empty()) {
+                result.domain = move(search);
+            }
+        }
+        return result;
     }
 
 }}}  // namespace facter::facts::posix

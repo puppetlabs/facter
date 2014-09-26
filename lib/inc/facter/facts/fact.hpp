@@ -79,6 +79,10 @@ namespace facter { namespace facts {
         constexpr static char const* lsb_release = "lsbrelease";
 
         /**
+         * The structured fact for networking.
+         */
+        constexpr static char const* networking = "networking";
+        /**
          * The fact for network hostname.
          */
         constexpr static char const* hostname = "hostname";

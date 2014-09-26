@@ -4,8 +4,7 @@
  */
 #pragma once
 
-#include "../resolver.hpp"
-#include <string>
+#include "../resolvers/networking_resolver.hpp"
 #include <sys/socket.h>
 
 namespace facter { namespace facts { namespace posix {
@@ -13,13 +12,8 @@ namespace facter { namespace facts { namespace posix {
     /**
      * Responsible for resolving networking facts.
      */
-    struct networking_resolver : resolver
+    struct networking_resolver : resolvers::networking_resolver
     {
-        /**
-         * Constructs the networking_resolver.
-         */
-        networking_resolver();
-
         /**
          * Utility function to convert a socket address to a IPv4 or IPv6 string representation.
          * @param addr The socket address to convert to a string.
@@ -27,13 +21,6 @@ namespace facter { namespace facts { namespace posix {
          * @return Returns the IPv4 or IPv6 representation or an empty string if the family isn't supported.
          */
         std::string address_to_string(sockaddr const* addr, sockaddr const* mask = nullptr) const;
-
-        /**
-         * Utility function to convert the bytes of a MAC address to a string.
-         * @param bytes The bytes of the MAC address; expected to be 6 bytes long.
-         * @returns Returns the MAC address as a string or an empty string if the address is the "NULL" MAC address.
-         */
-        static std::string macaddress_to_string(uint8_t const* bytes);
 
      protected:
         /**
@@ -51,36 +38,11 @@ namespace facter { namespace facts { namespace posix {
         virtual uint8_t const* get_link_address_bytes(sockaddr const* addr) const = 0;
 
         /**
-         * Gets the MTU of the link layer data.
-         * @param interface The name of the link layer interface.
-         * @param data The data pointer from the link layer interface.
-         * @return Returns The MTU of the interface or -1 if there's no MTU.
-         */
-        virtual int get_link_mtu(std::string const& interface, void* data) const = 0;
-
-        /**
-         * Called to resolve all facts the resolver is responsible for.
+         * Collects the resolver data.
          * @param facts The fact collection that is resolving facts.
+         * @return Returns the resolver data.
          */
-        virtual void resolve_facts(collection& facts);
-
-        /**
-         * Called to resolve the hostname fact.
-         * @param facts The fact collection that is resolving facts.
-         */
-        virtual void resolve_hostname(collection& facts);
-
-        /**
-         * Called to resolve the domain and fqdn facts.
-         * @param facts The fact collection that is resolving facts.
-         */
-        virtual void resolve_domain(collection& facts);
-
-        /**
-         * Called to resolve interface facts.
-         * @param facts The fact collection that is resolving facts.
-         */
-        virtual void resolve_interface_facts(collection& facts) = 0;
+        virtual data collect_data(collection& facts) override;
     };
 
 }}}  // namespace facter::facts::posix

@@ -1,6 +1,4 @@
 #include <facter/facts/linux/networking_resolver.hpp>
-#include <facter/facts/collection.hpp>
-#include <facter/facts/scalar_value.hpp>
 #include <facter/util/posix/scoped_descriptor.hpp>
 #include <facter/util/file.hpp>
 #include <facter/logging/logging.hpp>
@@ -35,7 +33,7 @@ namespace facter { namespace facts { namespace linux {
         return reinterpret_cast<uint8_t const*>(link_addr->sll_addr);
     }
 
-    int networking_resolver::get_link_mtu(string const& interface, void* data) const
+    boost::optional<uint64_t> networking_resolver::get_link_mtu(string const& interface, void* data) const
     {
         // Unfortunately in Linux, the data points at interface statistics
         // Nothing useful for us, so we need to use ioctl to query the MTU
@@ -46,17 +44,17 @@ namespace facter { namespace facts { namespace linux {
         scoped_descriptor sock(socket(AF_INET, SOCK_DGRAM, 0));
         if (static_cast<int>(sock) < 0) {
             LOG_WARNING("socket failed: %1% (%2%): interface MTU fact is unavailable for interface %3%.", strerror(errno), errno, interface);
-            return -1;
+            return {};
         }
 
         if (ioctl(sock, SIOCGIFMTU, &req) == -1) {
             LOG_WARNING("ioctl failed: %1% (%2%): interface MTU fact is unavailable for interface %3%.", strerror(errno), errno, interface);
-            return -1;
+            return {};
         }
         return req.ifr_mtu;
     }
 
-    string networking_resolver::get_primary_interface()
+    string networking_resolver::get_primary_interface() const
     {
         // Read /proc/net/route to determine the primary interface
         // We consider the primary interface to be the one that has 0.0.0.0 as the

@@ -29,32 +29,15 @@ namespace facter { namespace facts { namespace osx {
         return reinterpret_cast<uint8_t const*>(LLADDR(link_addr));
     }
 
-    int networking_resolver::get_link_mtu(string const& interface, void* data) const
+    boost::optional<uint64_t> networking_resolver::get_link_mtu(string const& interface, void* data) const
     {
         if (!data) {
-            return -1;
+            return {};
         }
         return reinterpret_cast<if_data const*>(data)->ifi_mtu;
     }
 
-    void networking_resolver::resolve_hostname(collection& facts)
-    {
-        auto version = facts.get<string_value>(fact::kernel_release);
-        if (!version || version->value() != "R7") {
-            bsd::networking_resolver::resolve_hostname(facts);
-            return;
-        }
-
-        auto result = execute("/usr/sbin/scutil", { "--get LocalHostName" });
-        if (!result.first || result.second.empty()) {
-            bsd::networking_resolver::resolve_hostname(facts);
-            return;
-        }
-
-        facts.add(fact::hostname, make_value<string_value>(move(result.second)));
-    }
-
-    string networking_resolver::get_primary_interface()
+    string networking_resolver::get_primary_interface() const
     {
         string interface;
         execution::each_line("route", { "-n", "get",  "default" }, [&interface](string& line){
@@ -69,13 +52,13 @@ namespace facter { namespace facts { namespace osx {
         return interface;
     }
 
-    map<string, string> networking_resolver::find_dhcp_servers()
+    map<string, string> networking_resolver::find_dhcp_servers() const
     {
         // We don't parse dhclient information on OSX
         return map<string, string>();
     }
 
-    string networking_resolver::find_dhcp_server(string const& interface)
+    string networking_resolver::find_dhcp_server(string const& interface) const
     {
         // Use ipconfig to get the server identifier
         auto result = execute("ipconfig", { "getoption", interface, "server_identifier" });

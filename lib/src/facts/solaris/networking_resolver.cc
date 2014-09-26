@@ -1,14 +1,9 @@
 #include <facter/facts/solaris/networking_resolver.hpp>
-#include <facter/facts/collection.hpp>
-#include <facter/facts/fact.hpp>
 #include <facter/util/posix/scoped_descriptor.hpp>
-#include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
-#include <sstream>
-#include <cstring>
 #include <sys/sockio.h>
 #include <net/if_arp.h>
 
@@ -20,27 +15,29 @@ using namespace facter::execution;
 LOG_DECLARE_NAMESPACE("facts.solaris.networking");
 
 namespace facter { namespace facts { namespace solaris {
-    void networking_resolver::resolve_interface_facts(collection& facts)
+
+    networking_resolver::data networking_resolver::collect_data(collection& facts)
     {
-        struct lifnum ifnr{AF_UNSPEC, 0, 0};
+        auto data = posix::networking_resolver::collect_data(facts);
+
         scoped_descriptor ctl(socket(AF_INET, SOCK_DGRAM, 0));
         if (static_cast<int>(ctl) == -1) {
-            LOG_DEBUG("socket failed %1% (%2%): networking facts are unavailable", strerror(errno), errno);
-            return;
+            LOG_DEBUG("socket failed %1% (%2%): interface information is unavailable.", strerror(errno), errno);
+            return data;
         }
 
         // (patterned on bsd impl)
+        lifnum ifnr{AF_UNSPEC, 0, 0};
         if (ioctl(ctl, SIOCGLIFNUM, &ifnr) == -1) {
-            LOG_DEBUG("ioctl with SIOCGLIFNUM failed: %1% (%2%): networking facts are unavailable", strerror(errno), errno);
-            return;
+            LOG_DEBUG("ioctl with SIOCGLIFNUM failed: %1% (%2%): interface information is unavailable.", strerror(errno), errno);
+            return data;
         }
-        vector<lifreq> buffer(ifnr.lifn_count);
-        struct lifconf lifc = {AF_UNSPEC, 0, static_cast<int>(buffer.size() * sizeof(struct lifreq)),
-            reinterpret_cast<caddr_t>(buffer.data())};
 
+        vector<lifreq> buffer(ifnr.lifn_count);
+        lifconf lifc = {AF_UNSPEC, 0, static_cast<int>(buffer.size() * sizeof(lifreq)), reinterpret_cast<caddr_t>(buffer.data())};
         if (ioctl(ctl, SIOCGLIFCONF, &lifc) == -1) {
-            LOG_DEBUG("ioctl with SIOCGLIFCONF failed: %1% (%2%): networking facts are unavailable", strerror(errno), errno);
-            return;
+            LOG_DEBUG("ioctl with SIOCGLIFCONF failed: %1% (%2%): interface information is unavailable.", strerror(errno), errno);
+            return data;
         }
 
         // put them in a multimap so that similar address can be
@@ -50,172 +47,118 @@ namespace facter { namespace facts { namespace solaris {
             interface_map.insert({lreq.lifr_name, &lreq});
         }
 
-        string primary_interface = get_primary_interface();
-        if (primary_interface.empty()) {
+        data.primary_interface = get_primary_interface();
+        if (data.primary_interface.empty()) {
             LOG_DEBUG("no primary interface found.");
         }
 
-        auto dhcp_servers_value = make_value<map_value>();
-
-        vector<string> interfaces;
         // Walk the interfaces
         decltype(interface_map.begin()) it = interface_map.begin();
         while (it != interface_map.end()) {
-            string const& interface = it->first;
-            bool primary = interface == primary_interface;
+            string const& name = it->first;
 
-            // Walk the addresses again and resolve facts
+            interface iface;
+            iface.name = name;
+
+            // Populate the MAC address and MTU once per interface
+            populate_macaddress(iface, it->second);
+            populate_mtu(iface, it->second);
+
+            // Walk the addresses for this interface
             do {
-                auto addr = it->second;
-                resolve_address(facts, addr, primary);
-                resolve_network(facts, addr, primary);
-                resolve_mtu(facts, addr);
+                populate_address(iface, it->second);
+                populate_network(iface, it->second);
                 ++it;
-            } while (it != interface_map.end() && it->first == interface);
+            } while (it != interface_map.end() && it->first == name);
 
-            string dhcp_server = find_dhcp_server(interface);
-            if (!dhcp_server.empty()) {
-                if (primary) {
-                    dhcp_servers_value->add("system", make_value<string_value>(dhcp_server));
-                }
-                dhcp_servers_value->add(string(interface), make_value<string_value>(move(dhcp_server)));
-            }
+            // Find the DCHP server for the interface
+            iface.dhcp_server = find_dhcp_server(name);
 
-            interfaces.push_back(interface);
+            data.interfaces.emplace_back(move(iface));
         }
-
-        if (LOG_IS_WARNING_ENABLED() && primary_interface.empty()) {
-            LOG_WARNING("no primary interface found: facts %1%, %2%, %3%, %4%, %5%, %6%, and %7% are unavailable.",
-                    fact::ipaddress, fact::ipaddress6,
-                    fact::netmask, fact::netmask6,
-                    fact::network, fact::network6,
-                    fact::macaddress);
-        }
-
-        // Add the DHCP servers fact
-        if (!dhcp_servers_value->empty()) {
-            facts.add(fact::dhcp_servers, move(dhcp_servers_value));
-        }
-
-        if (!interfaces.empty()) {
-            facts.add(fact::interfaces, make_value<string_value>(boost::join(interfaces, ",")));
-        }
+        return data;
     }
 
-    void networking_resolver::resolve_links(collection& facts, lifreq const* naddr, bool primary)
+    void networking_resolver::populate_address(interface& iface, lifreq const* addr) const
     {
-        lifreq addr = *naddr;
-        scoped_descriptor ctl(socket(addr.lifr_addr.ss_family, SOCK_DGRAM, 0));
+        string* address = nullptr;
+        if (addr->lifr_addr.ss_family == AF_INET) {
+            address = &iface.address.v4;
+        } else if (addr->lifr_addr.ss_family == AF_INET6) {
+            address = &iface.address.v6;
+        }
+
+        if (!address) {
+            // Unsupported address
+            return;
+        }
+
+        *address = address_to_string(reinterpret_cast<sockaddr const*>(&addr->lifr_addr));
+    }
+
+    void networking_resolver::populate_macaddress(interface& iface, lifreq const* addr) const
+    {
+        scoped_descriptor ctl(socket(addr->lifr_addr.ss_family, SOCK_DGRAM, 0));
         if (static_cast<int>(ctl) == -1) {
-            LOG_DEBUG("socket failed: %1% (%2%): link level address for %3% is unavailable", strerror(errno), errno, addr.lifr_name);
+            LOG_DEBUG("socket failed: %1% (%2%): link level address for interface %3% is unavailable.", strerror(errno), errno, addr->lifr_name);
             return;
         }
 
         arpreq arp;
-        struct sockaddr_in *arp_addr = reinterpret_cast<struct sockaddr_in*>(&arp.arp_pa);
-        const struct sockaddr_in *laddr = reinterpret_cast<const struct sockaddr_in*>(&naddr->lifr_addr);
-
-        arp_addr->sin_addr.s_addr = laddr->sin_addr.s_addr;
-
+        sockaddr_in* arp_addr = reinterpret_cast<sockaddr_in*>(&arp.arp_pa);
+        arp_addr->sin_addr.s_addr = reinterpret_cast<sockaddr_in const*>(&addr->lifr_addr)->sin_addr.s_addr;
         if (ioctl(ctl, SIOCGARP, &arp) == -1) {
-            LOG_DEBUG("ioctl with SIOCGARP failed: %1% (%2%): link level address for %3% is unavailable", strerror(errno), errno, addr.lifr_name);
+            LOG_DEBUG("ioctl with SIOCGARP failed: %1% (%2%): link level address for %3% is unavailable.", strerror(errno), errno, addr->lifr_name);
             return;
         }
 
-        unsigned char* bytes = reinterpret_cast<unsigned char*>(arp.arp_ha.sa_data);
-        address_map.insert({reinterpret_cast<const sockaddr*>(&addr.lifr_addr), bytes});
-
-        string address = macaddress_to_string(bytes);
-        string factname = fact::macaddress;
-        string interface_factname = factname + "_" + addr.lifr_name;
-
-        if (primary) {
-            facts.add(move(factname), make_value<string_value>(address));
-        }
-        facts.add(move(interface_factname), make_value<string_value>(move(address)));
+        iface.macaddress = macaddress_to_string(reinterpret_cast<uint8_t const*>(arp.arp_ha.sa_data));
     }
 
-    void networking_resolver::resolve_address(collection& facts, lifreq const* addr, bool primary)
+    void networking_resolver::populate_network(interface& iface, lifreq const* addr) const
     {
+        scoped_descriptor ctl(socket(addr->lifr_addr.ss_family, SOCK_DGRAM, 0));
+        if (static_cast<int>(ctl) == -1) {
+            LOG_DEBUG("socket failed: %1% (%2%): netmask and network for interface %3% are unavailable.", strerror(errno), errno, addr->lifr_name);
+            return;
+        }
+
+        lifreq netmask_addr = *addr;
+        if (ioctl(ctl, SIOCGLIFNETMASK, &netmask_addr) == -1) {
+            LOG_DEBUG("ioctl with SIOCGLIFNETMASK failed: %1% (%2%): netmask and network for interface %3% are unavailable.", strerror(errno), errno, addr->lifr_name);
+            return;
+        }
+
+        string netmask = address_to_string(reinterpret_cast<sockaddr const*>(&netmask_addr.lifr_addr));
+        string network = address_to_string(reinterpret_cast<sockaddr const*>(&addr->lifr_addr), reinterpret_cast<sockaddr const*>(&netmask_addr.lifr_addr));
+
         if (addr->lifr_addr.ss_family == AF_INET) {
-            resolve_links(facts, addr, primary);
+            iface.netmask.v4 = move(netmask);
+            iface.network.v4 = move(network);
+        } else if (addr->lifr_addr.ss_family == AF_INET6) {
+            iface.netmask.v6 = move(netmask);
+            iface.network.v6 = move(network);
         }
-
-        string factname = addr->lifr_addr.ss_family == AF_INET ? fact::ipaddress : fact::ipaddress6;
-        string address = address_to_string(reinterpret_cast<const sockaddr*>(&addr->lifr_addr));
-
-        string interface_factname = factname + "_" + addr->lifr_name;
-
-        if (address.empty()) {
-            return;
-        }
-
-        if (primary) {
-            facts.add(move(factname), make_value<string_value>(address));
-        }
-
-        facts.add(move(interface_factname), make_value<string_value>(move(address)));
     }
 
-    void networking_resolver::resolve_network(collection& facts, lifreq const* naddr, bool primary)
+    void networking_resolver::populate_mtu(interface& iface, lifreq const* addr) const
     {
-        lifreq addr = *naddr;
-        scoped_descriptor ctl(socket(addr.lifr_addr.ss_family, SOCK_DGRAM, 0));
+        scoped_descriptor ctl(socket(addr->lifr_addr.ss_family, SOCK_DGRAM, 0));
         if (static_cast<int>(ctl) == -1) {
-            LOG_DEBUG("socket failed: %1% (%2%): netmask and network for interface %3% are unavailable", strerror(errno), errno, addr.lifr_name);
+            LOG_DEBUG("socket failed: %1% (%2%): MTU for interface %3% is unavailable.", strerror(errno), errno, addr->lifr_name);
             return;
         }
 
-        if (ioctl(ctl, SIOCGLIFNETMASK, &addr) == -1) {
-            LOG_DEBUG("ioctl with SIOCGLIFNETMASK failed: %1% (%2%): netmask and network for interface %3% are unavailable", strerror(errno), errno, addr.lifr_name);
+        lifreq mtu = *addr;
+        if (ioctl(ctl, SIOCGLIFMTU, &mtu) == -1) {
+            LOG_DEBUG("ioctl with SIOCGLIFMTU failed: %1% (%2%): MTU for interface %3% is unavailable.", strerror(errno), errno, addr->lifr_name);
             return;
         }
-        // Set the netmask fact
-        string factname = addr.lifr_addr.ss_family == AF_INET ? fact::netmask : fact::netmask6;
-        string netmask = address_to_string(reinterpret_cast<const struct sockaddr*>(&addr.lifr_addr));
 
-        string interface_factname = factname + "_" + addr.lifr_name;
-
-        if (primary) {
-            facts.add(move(factname), make_value<string_value>(netmask));
-        }
-
-        facts.add(move(interface_factname), make_value<string_value>(move(netmask)));
-
-        // Set the network fact
-        factname = addr.lifr_addr.ss_family == AF_INET ? fact::network : fact::network6;
-        string network = address_to_string(reinterpret_cast<const struct sockaddr*>(&naddr->lifr_addr), reinterpret_cast<const struct sockaddr*>(&addr.lifr_addr));
-        interface_factname = factname + "_" + addr.lifr_name;
-
-        if (primary) {
-            facts.add(move(factname), make_value<string_value>(network));
-        }
-
-        facts.add(move(interface_factname), make_value<string_value>(move(network)));
+        iface.mtu = mtu.lifr_metric;
     }
 
-    void networking_resolver::resolve_mtu(collection& facts, lifreq const* naddr)
-    {
-        lifreq addr = *naddr;
-        scoped_descriptor ctl(socket(addr.lifr_addr.ss_family, SOCK_DGRAM, 0));
-        if (static_cast<int>(ctl) == -1) {
-            LOG_DEBUG("socket failed: %1% (%2%): MTU for interface %3% is unavailable", strerror(errno), errno, addr.lifr_name);
-            return;
-        }
-
-        if (ioctl(ctl, SIOCGLIFMTU, &addr) == -1) {
-            LOG_DEBUG("ioctl with SIOCGLIFMTU failed: %1% (%2%): MTU for interface %3% is unavailable", strerror(errno), errno, addr.lifr_name);
-            return;
-        }
-
-        int mtu = get_link_mtu(string(addr.lifr_name), const_cast<lifreq*>(&addr));
-        if (mtu == -1) {
-            return;
-        }
-        facts.add(string(fact::mtu) + '_' + addr.lifr_name, make_value<string_value>(move(to_string(mtu))));
-    }
-
-    string networking_resolver::get_primary_interface()
+    string networking_resolver::get_primary_interface() const
     {
         string value;
         execution::each_line("netstat", { "-rn"}, [&value](string& line) {
@@ -233,25 +176,16 @@ namespace facter { namespace facts { namespace solaris {
 
     bool networking_resolver::is_link_address(const sockaddr* addr) const
     {
-        return address_map.count(addr);
+        // We explicitly populate the MAC address; we don't need address_to_string to support link layer addresses
+        return false;
     }
 
     uint8_t const* networking_resolver::get_link_address_bytes(const sockaddr * addr) const
     {
-        auto ibytes = address_map.find(addr);
-        if (ibytes != address_map.end()) {
-            return ibytes->second;
-        } else {
-            return nullptr;
-        }
+        return nullptr;
     }
 
-    int networking_resolver::get_link_mtu(std::string const& interface, void* data) const
-    {
-        return reinterpret_cast<lifreq*>(data)->lifr_metric;
-    }
-
-    string networking_resolver::find_dhcp_server(string const& interface)
+    string networking_resolver::find_dhcp_server(string const& interface) const
     {
         auto result = execute("dhcpinfo", { "-i", interface, "ServerID" });
         if (!result.first) {
