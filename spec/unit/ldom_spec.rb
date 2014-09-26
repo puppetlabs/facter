@@ -15,6 +15,7 @@ describe "ldom fact" do
     before :each do
       # For virtinfo documentation:
       # http://docs.oracle.com/cd/E23824_01/html/821-1462/virtinfo-1m.html
+      Facter.fact(:hardwareisa).stubs(:value).returns("sparc")
       Facter::Core::Execution.stubs(:which).with("virtinfo").returns 'virtinfo'
       Facter::Core::Execution.stubs(:exec).with("virtinfo -ap").
         returns(ldom_fixtures('ldom_v1'))
@@ -64,11 +65,23 @@ describe "ldom fact" do
 
   describe "when running on non ldom hardware" do
     before :each do
+      Facter.fact(:hardwareisa).stubs(:value).returns("sparc")
       Facter::Core::Execution.stubs(:which).with("virtinfo").returns(nil)
       Facter.collection.internal_loader.load(:ldom)
     end
 
     it "should return correct virtual" do
+      Facter.fact(:ldom_domainrole_impl).should == nil
+    end
+  end
+
+  describe "when running on non-sparc hardware" do
+    before :each do
+      Facter.fact(:hardwareisa).stubs(:value).returns("i386")
+      Facter::Core::Execution.stubs(:which).with("virtinfo").returns 'virtinfo'
+    end
+
+    it "should not try to resolve the ldom facts" do
       Facter.fact(:ldom_domainrole_impl).should == nil
     end
   end

@@ -9,7 +9,10 @@
 #   Uses the output of `virtinfo -ap`.
 #
 
-if Facter.value(:kernel) == 'SunOS' and Facter::Core::Execution.which('virtinfo')
+if Facter.value(:kernel) == 'SunOS' &&
+   Facter.value(:hardwareisa) == 'sparc' &&
+   Facter::Core::Execution.which('virtinfo')
+
   virtinfo = Facter::Core::Execution.exec('virtinfo -ap')
 
   # Convert virtinfo parseable output format to array of arrays.
