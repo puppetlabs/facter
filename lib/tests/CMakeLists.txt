@@ -30,6 +30,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/util/directory.cc"
     "${CMAKE_CURRENT_LIST_DIR}/util/file.cc"
     "${CMAKE_CURRENT_LIST_DIR}/util/option_set.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/util/scoped_env.cc"
     "${CMAKE_CURRENT_LIST_DIR}/util/string.cc"
     "${CMAKE_CURRENT_LIST_DIR}/fixtures.cc"
 )

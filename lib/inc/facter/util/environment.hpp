@@ -24,6 +24,8 @@ namespace facter { namespace util {
 
         /**
          * Sets an environment variable.
+         * Note that on Windows, setting an environment variable to an empty string is
+         * equivalent to clearing it.
          * @param name The name of the environment variable to set.
          * @param value The value of the environment variable to set.
          * @return Returns true if the environment variable could be changed.
