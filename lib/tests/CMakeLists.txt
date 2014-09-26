@@ -61,6 +61,8 @@ if (WIN32)
         "${CMAKE_CURRENT_LIST_DIR}/execution/windows/execution.cc"
         "${CMAKE_CURRENT_LIST_DIR}/facts/windows/collection.cc"
         "${CMAKE_CURRENT_LIST_DIR}/facts/external/windows/execution_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/util/windows/environment.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/logging/windows/logging.cc"
     )
 endif()
 
