@@ -31,20 +31,21 @@ TEST(facter_facts_external_windows_powershell_resolver, resolve_execution) {
     collection facts;
     resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/facts.ps1", facts);
     ASSERT_TRUE(!facts.empty());
-    ASSERT_NE(nullptr, facts.get<string_value>("exe_fact1"));
-    ASSERT_EQ("value1", facts.get<string_value>("exe_fact1")->value());
-    ASSERT_NE(nullptr, facts.get<string_value>("exe_fact2"));
-    ASSERT_EQ("", facts.get<string_value>("exe_fact2")->value());
-    ASSERT_EQ(nullptr, facts.get<string_value>("exe_fact3"));
-    ASSERT_NE(nullptr, facts.get<string_value>("exe_fact4"));
-    ASSERT_EQ(nullptr, facts.get<string_value>("EXE_fact4"));
-    ASSERT_EQ("value2", facts.get<string_value>("exe_fact4")->value());
+    ASSERT_NE(nullptr, facts.get<string_value>("ps1_fact1"));
+    ASSERT_EQ("value1", facts.get<string_value>("ps1_fact1")->value());
+    ASSERT_NE(nullptr, facts.get<string_value>("ps1_fact2"));
+    ASSERT_EQ("", facts.get<string_value>("ps1_fact2")->value());
+    ASSERT_EQ(nullptr, facts.get<string_value>("ps1_fact3"));
+    ASSERT_NE(nullptr, facts.get<string_value>("ps1_fact4"));
+    ASSERT_EQ(nullptr, facts.get<string_value>("PS1_fact4"));
+    ASSERT_EQ("value2", facts.get<string_value>("ps1_fact4")->value());
 }
 
 TEST(facter_facts_external_windows_powershell_resolver, test_arch) {
     powershell_resolver resolver;
     collection facts;
     resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/arch-bits.ps1", facts);
+    ASSERT_NE(nullptr, facts.get<string_value>("arch_bits"));
 #if _WIN64
     ASSERT_EQ("x86_64", facts.get<string_value>("arch_bits")->value());
 #else
