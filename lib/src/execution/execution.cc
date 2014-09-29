@@ -12,6 +12,7 @@ using namespace std;
 using namespace facter::util;
 using namespace facter::logging;
 using namespace boost::filesystem;
+using namespace boost::algorithm;
 
 LOG_DECLARE_NAMESPACE("execution");
 
@@ -167,6 +168,93 @@ namespace facter { namespace execution {
         option_set<execution_options> const& options)
     {
         return execute(file, &arguments, &environment, callback, options).first;
+    }
+
+    constexpr static unsigned int BUFSIZE = 4096;
+
+    string process_stream(
+        function<int(char*, int)> input,
+        function<bool(string&)> callback,
+        option_set<execution_options> const& options)
+    {
+        // Get a special logger used specifically for child process output
+        const std::string logger = "|";
+
+        // Read output until it stops.
+        string output;
+        char buffer[BUFSIZE] = {};
+        bool reading = true;
+        while (reading) {
+            int count = input(buffer, BUFSIZE);
+            if (count == 0) {
+                // Nothing to read, processing is complete.
+                break;
+            } else if (count < 0) {
+                // Allowed error, continue. If it were a halting error, an exception was thrown.
+                continue;
+            }
+
+            if (!callback) {
+                // If given no callback, buffer the entire output
+                output.append(buffer, count);
+                continue;
+            }
+
+            // Find the last newline and buffer everything after to output, because
+            // it may not be a complete line.
+            auto endIt = buffer+count;
+            auto lastNL = std::find_if(reverse_iterator<decltype(endIt)>(endIt), reverse_iterator<decltype(endIt)>(buffer),
+                [](char c) { return c == '\n' || c == '\r'; });
+            if (lastNL.base() == buffer) {
+                // No newline found, so keep appending and continue.
+                output.append(buffer, count);
+                continue;
+            }
+
+            // Copying to a vector of strings is efficient because we modify the string with boost::trim anyway.
+            vector<string> contents;
+            auto str = make_pair(buffer, lastNL.base());
+            split(contents, str, is_any_of("\n\r"), token_compress_on);
+
+            // Prepend the previous trailing data, and save the new trailing data.
+            contents[0] = move(output) + contents[0];
+            output = string(lastNL.base(), endIt-lastNL.base());
+
+            for (auto &line : contents) {
+                if (options[execution_options::trim_output]) {
+                    boost::trim(line);
+                }
+
+                // Skip empty lines
+                if (line.empty()) {
+                    continue;
+                }
+
+                // Log the line to the output logger
+                log(logger, log_level::debug, line);
+
+                // Pass the line to the callback
+                if (!callback(line)) {
+                    LOG_DEBUG("completed processing output; closing child pipe.");
+                    reading = false;
+                    break;
+                }
+            }
+        }
+
+        // Log the result and do a final callback if needed.
+        if (options[execution_options::trim_output]) {
+            boost::trim(output);
+        }
+
+        if (!output.empty()) {
+            log(logger, log_level::debug, output);
+            if (callback) {
+                callback(output);
+                return {};
+            }
+        }
+        return output;
     }
 
 }}  // namespace facter::executions

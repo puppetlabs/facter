@@ -31,8 +31,6 @@ namespace facter { namespace execution {
     const char *const command_shell = "cmd.exe";
     const char *const command_args = "/c";
 
-    constexpr static unsigned int BUFSIZE = 4096;
-
     struct extpath_helper
     {
         extpath_helper()
@@ -146,6 +144,7 @@ namespace facter { namespace execution {
             return { false, "" };
         }
 
+        // Setup the execution environment
         vector<char> modified_environ;
         vector<scoped_env> scoped_environ;
         if (options[execution_options::merge_environment]) {
@@ -192,7 +191,6 @@ namespace facter { namespace execution {
             }
             modified_environ.push_back('\0');
         }
-
 
         // Execute the command, reading the results into a buffer until there's no more to read.
         // See http://msdn.microsoft.com/en-us/library/windows/desktop/ms682499(v=vs.85).aspx
@@ -263,10 +261,10 @@ namespace facter { namespace execution {
                 stdErrHandler = boost::thread([&stdErrRd, &stdErrExcept]() {
                     // Get a special logger used specifically for child stderr output
                     const std::string logger = "!";
-                    CHAR buffer[BUFSIZE] = {};
+                    CHAR buffer[4096] = {};
                     while (!boost::this_thread::interruption_requested()) {
                         DWORD count;
-                        auto readSucceeded = ReadFile(stdErrRd, buffer, BUFSIZE, &count, NULL);
+                        auto readSucceeded = ReadFile(stdErrRd, buffer, sizeof(buffer), &count, NULL);
                         if (count == 0) {
                             break;
                         }
@@ -288,85 +286,21 @@ namespace facter { namespace execution {
                 });
             }
 
-            // Get a special logger used specifically for child process output
-            const std::string logger = "|";
-
-            // Read output until it stops.
-            ostringstream output;
-            CHAR buffer[BUFSIZE] = {};
-            bool reading = true;
-            while (reading) {
+            string result = process_stream([&](char *buffer, int bufsize) {
                 // Check whether the stderr handler encountered an exception. If so, throw for it.
                 if (stdErrExcept) {
                     throw execution_exception("failed to read child stderr");
                 }
 
-                // Read from the pipe
                 DWORD count;
-                auto readSucceeded = ReadFile(stdOutRd, buffer, BUFSIZE, &count, NULL);
-                if (count == 0) {
-                    reading = false;
-                    continue;
+                auto readSucceeded = ReadFile(stdOutRd, buffer, bufsize, &count, NULL);
+                if (count != 0 && !readSucceeded) {
+                    // Not an asynchronous read, so it won't return with pending IO.
+                    assert(GetLastError() != ERROR_IO_PENDING);
+                    throw execution_exception("failed to read child stdout");
                 }
-
-                if (!readSucceeded) {
-                    auto err = GetLastError();
-                    if (err == ERROR_IO_PENDING) {
-                        LOG_DEBUG("child pipe read pending on stdout: %1%", scoped_error(err));
-                        continue;
-                    } else {
-                        throw execution_exception("failed to read child stdout");
-                    }
-                }
-
-                if (!callback) {
-                    // If given no callback, buffer the entire output
-                    output.write(buffer, count);
-                    continue;
-                }
-
-                // Find the last newline and buffer everything after to output, because
-                // it may not be a complete line.
-                auto endIt = buffer+count;
-                auto lastNL = std::find_if(reverse_iterator<decltype(endIt)>(endIt), reverse_iterator<decltype(endIt)>(buffer),
-                    [](char c) { return c == '\n' || c == '\r'; });
-                if (lastNL.base() == buffer) {
-                    // No newline found, so keep appending and continue.
-                    output.write(buffer, count);
-                    continue;
-                }
-                // Save the previous trailing data and reset with the new trailing data.
-                string lastOutput = output.str();
-                output.str(string(lastNL.base(), endIt-lastNL.base()));
-                endIt = lastNL.base();
-
-                // This is efficient because we modify the string with boost::trim anyway.
-                vector<string> contents;
-                auto str = make_pair(buffer, endIt);
-                split(contents, str, is_any_of("\n\r"), token_compress_on);
-                contents[0] = lastOutput + contents[0];
-
-                for (auto &line : contents) {
-                    if (options[execution_options::trim_output]) {
-                        boost::trim(line);
-                    }
-
-                    // Skip empty lines
-                    if (line.empty()) {
-                        continue;
-                    }
-
-                    // Log the line to the output logger
-                    log(logger, log_level::debug, line);
-
-                    // Pass the line to the callback
-                    if (!callback(line)) {
-                        LOG_DEBUG("completed processing output; closing child pipe.");
-                        reading = false;
-                        break;
-                    }
-                }
-            }
+                return count;
+            }, callback, options);
 
             // Close the read pipe; this may be done before all data is read when the callback returns false
             // If the child hasn't sent all the data yet, this may signal SIGPIPE on next write
@@ -375,20 +309,6 @@ namespace facter { namespace execution {
             // Halt reading stderr. The thread doesn't actually trigger throwing thread_interrupted; instead
             // when interrupt has been called it releases stdErrRd and exits.
             stdErrHandler.interrupt();
-
-            // Log the result and do a final callback if needed.
-            string result = output.str();
-            if (options[execution_options::trim_output]) {
-                boost::trim(result);
-            }
-
-            if (!result.empty()) {
-                log(logger, log_level::debug, result);
-                if (callback) {
-                    callback(result);
-                    result.clear();
-                }
-            }
 
             if (options[execution_options::redirect_stderr]) {
                 // Wait for stderr reading to complete so we don't invalidate memory it's using by exiting the function.
