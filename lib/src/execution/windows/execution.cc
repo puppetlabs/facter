@@ -261,10 +261,11 @@ namespace facter { namespace execution {
                 stdErrHandler = boost::thread([&stdErrRd, &stdErrExcept]() {
                     // Get a special logger used specifically for child stderr output
                     const std::string logger = "!";
-                    CHAR buffer[4096] = {};
+                    string buffer;
                     while (!boost::this_thread::interruption_requested()) {
                         DWORD count;
-                        auto readSucceeded = ReadFile(stdErrRd, buffer, sizeof(buffer), &count, NULL);
+                        buffer.resize(4096);
+                        auto readSucceeded = ReadFile(stdErrRd, &buffer[0], buffer.size(), &count, NULL);
                         if (count == 0) {
                             break;
                         }
@@ -280,26 +281,30 @@ namespace facter { namespace execution {
                             }
                         }
 
+                        buffer.resize(count);
                         log(logger, log_level::debug, buffer);
                     }
                     stdErrRd.release();
                 });
             }
 
-            string result = process_stream([&](char *buffer, int bufsize) {
+            string result = process_stream([&](string &buffer) {
                 // Check whether the stderr handler encountered an exception. If so, throw for it.
                 if (stdErrExcept) {
                     throw execution_exception("failed to read child stderr");
                 }
 
                 DWORD count;
-                auto readSucceeded = ReadFile(stdOutRd, buffer, bufsize, &count, NULL);
+                buffer.resize(4096);
+                auto readSucceeded = ReadFile(stdOutRd, &buffer[0], buffer.size(), &count, NULL);
                 if (count != 0 && !readSucceeded) {
                     // Not an asynchronous read, so it won't return with pending IO.
                     assert(GetLastError() != ERROR_IO_PENDING);
                     throw execution_exception("failed to read child stdout");
                 }
-                return count;
+                buffer.resize(count);
+                // Halt if nothing was read.
+                return count != 0;
             }, callback, options);
 
             // Close the read pipe; this may be done before all data is read when the callback returns false

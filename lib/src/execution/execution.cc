@@ -170,10 +170,8 @@ namespace facter { namespace execution {
         return execute(file, &arguments, &environment, callback, options).first;
     }
 
-    constexpr static unsigned int BUFSIZE = 4096;
-
     string process_stream(
-        function<int(char*, int)> input,
+        function<bool(string&)> yield_input,
         function<bool(string&)> callback,
         option_set<execution_options> const& options)
     {
@@ -181,44 +179,40 @@ namespace facter { namespace execution {
         const std::string logger = "|";
 
         // Read output until it stops.
-        string output;
-        char buffer[BUFSIZE] = {};
+        string output, buffer;
         bool reading = true;
         while (reading) {
-            int count = input(buffer, BUFSIZE);
-            if (count == 0) {
+            if (!yield_input(buffer)) {
                 // Nothing to read, processing is complete.
                 break;
-            } else if (count < 0) {
-                // Allowed error, continue. If it were a halting error, an exception was thrown.
+            } else if (buffer.size() == 0) {
+                // No data read, but continue. If it were a halting error, an exception was thrown.
                 continue;
             }
 
             if (!callback) {
                 // If given no callback, buffer the entire output
-                output.append(buffer, count);
+                output.append(buffer);
                 continue;
             }
 
             // Find the last newline and buffer everything after to output, because
             // it may not be a complete line.
-            auto endIt = buffer+count;
-            auto lastNL = std::find_if(reverse_iterator<decltype(endIt)>(endIt), reverse_iterator<decltype(endIt)>(buffer),
-                [](char c) { return c == '\n' || c == '\r'; });
-            if (lastNL.base() == buffer) {
+            auto lastNL = buffer.find_last_of("\n\r");
+            if (lastNL == string::npos) {
                 // No newline found, so keep appending and continue.
-                output.append(buffer, count);
+                output.append(buffer);
                 continue;
             }
 
             // Copying to a vector of strings is efficient because we modify the string with boost::trim anyway.
             vector<string> contents;
-            auto str = make_pair(buffer, lastNL.base());
+            auto str = make_pair(buffer.begin(), buffer.begin()+lastNL);
             split(contents, str, is_any_of("\n\r"), token_compress_on);
 
             // Prepend the previous trailing data, and save the new trailing data.
             contents[0] = move(output) + contents[0];
-            output = string(lastNL.base(), endIt-lastNL.base());
+            output = buffer.substr(lastNL);
 
             for (auto &line : contents) {
                 if (options[execution_options::trim_output]) {

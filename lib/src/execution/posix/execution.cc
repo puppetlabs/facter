@@ -124,8 +124,9 @@ namespace facter { namespace execution {
             stdout_write.release();
             stdin_write.release();
 
-            string result = process_stream([&](char *buffer, int bufsize) {
-                auto count = read(stdout_read, buffer, bufsize);
+            string result = process_stream([&](string &buffer) {
+                buffer.resize(4096);
+                auto count = read(stdout_read, &buffer[0], buffer.size());
                 if (count < 0) {
                     if (errno != EINTR) {
                         throw execution_exception("failed to read child output.");
@@ -136,8 +137,12 @@ namespace facter { namespace execution {
                     // This happens in Xcode's debugging.
                     LOG_DEBUG("child pipe read was interrupted and will be retried: %1% (%2%).", strerror(errno), errno);
                     errno = 0;
+                    buffer.resize(0);
+                    return true;
                 }
-                return count;
+                buffer.resize(count);
+                // Halt if nothing was read.
+                return count != 0;
             }, callback, options);
 
             // Close the read pipe
