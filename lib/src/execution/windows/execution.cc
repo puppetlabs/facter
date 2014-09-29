@@ -4,8 +4,14 @@
 #include <facter/util/windows/scoped_error.hpp>
 #include <facter/util/scoped_env.hpp>
 #include <facter/logging/logging.hpp>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/thread.hpp>
+#pragma GCC diagnostic pop
+
 #include <cstdlib>
 #include <cstdio>
 #include <sstream>
@@ -250,14 +256,51 @@ namespace facter { namespace execution {
             scoped_resource<HANDLE> hProcess(move(procInfo.hProcess), CloseHandle);
             scoped_resource<HANDLE> hThread(move(procInfo.hThread), CloseHandle);
 
+            // Setup separate thread to redirect stderr to log.
+            bool stdErrExcept = false;
+            boost::thread stdErrHandler;
+            if (options[execution_options::redirect_stderr]) {
+                stdErrHandler = boost::thread([&stdErrRd, &stdErrExcept]() {
+                    // Get a special logger used specifically for child stderr output
+                    const std::string logger = "!";
+                    CHAR buffer[BUFSIZE] = {};
+                    while (!boost::this_thread::interruption_requested()) {
+                        DWORD count;
+                        auto readSucceeded = ReadFile(stdErrRd, buffer, BUFSIZE, &count, NULL);
+                        if (count == 0) {
+                            break;
+                        }
+
+                        if (!readSucceeded) {
+                            auto err = GetLastError();
+                            if (err == ERROR_IO_PENDING) {
+                                LOG_DEBUG("child pipe read pending on stderr: %1%", scoped_error(err));
+                                continue;
+                            } else {
+                                stdErrExcept = true;
+                                return;
+                            }
+                        }
+
+                        log(logger, log_level::debug, buffer);
+                    }
+                    stdErrRd.release();
+                });
+            }
+
             // Get a special logger used specifically for child process output
-            std::string logger = "|";
+            const std::string logger = "|";
 
             // Read output until it stops.
             ostringstream output;
             CHAR buffer[BUFSIZE] = {};
             bool reading = true;
             while (reading) {
+                // Check whether the stderr handler encountered an exception. If so, throw for it.
+                if (stdErrExcept) {
+                    throw execution_exception("failed to read child stderr");
+                }
+
                 // Read from the pipe
                 DWORD count;
                 auto readSucceeded = ReadFile(stdOutRd, buffer, BUFSIZE, &count, NULL);
@@ -329,6 +372,10 @@ namespace facter { namespace execution {
             // If the child hasn't sent all the data yet, this may signal SIGPIPE on next write
             stdOutRd.release();
 
+            // Halt reading stderr. The thread doesn't actually trigger throwing thread_interrupted; instead
+            // when interrupt has been called it releases stdErrRd and exits.
+            stdErrHandler.interrupt();
+
             // Log the result and do a final callback if needed.
             string result = output.str();
             if (options[execution_options::trim_output]) {
@@ -343,30 +390,13 @@ namespace facter { namespace execution {
                 }
             }
 
-            // Also read any errors from stderr.
-            if (!options[execution_options::redirect_stderr]) {
-                reading = true;
-                do {
-                    DWORD count;
-                    auto readSucceeded = ReadFile(stdErrRd, buffer, BUFSIZE, &count, NULL);
-                    if (count == 0) {
-                        reading = false;
-                        continue;
-                    }
-
-                    if (!readSucceeded) {
-                        auto err = GetLastError();
-                        if (err == ERROR_IO_PENDING) {
-                            LOG_DEBUG("child pipe read pending on stderr: %1%", scoped_error(err));
-                            continue;
-                        } else {
-                            throw execution_exception("failed to read child stderr");
-                        }
-                    }
-
-                    log(logger, log_level::debug, buffer);
-                } while (reading);
-                stdErrRd.release();
+            if (options[execution_options::redirect_stderr]) {
+                // Wait for stderr reading to complete so we don't invalidate memory it's using by exiting the function.
+                stdErrHandler.join();
+                // Final check whether the stderr handler encountered an exception.
+                if (stdErrExcept) {
+                    throw execution_exception("failed to read child stderr");
+                }
             }
 
             auto waitStatus = WaitForSingleObject(hProcess, INFINITE);
@@ -396,9 +426,6 @@ namespace facter { namespace execution {
                 LOG_DEBUG("%1% (%2%): %3% (%4%)", e.what(), e.status_code(), scoped_error(err), err);
                 return { false, move(e.output()) };
             }
-        } catch (std::exception &e) {
-            LOG_ERROR("exception caught: %1%", e.what());
-            throw e;
         }
     }
 
