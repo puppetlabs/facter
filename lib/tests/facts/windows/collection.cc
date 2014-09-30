@@ -19,7 +19,7 @@ TEST(facter_facts_windows_collection, resolve_external) {
         LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell",
     });
     ASSERT_FALSE(facts.empty());
-    ASSERT_EQ(7u, facts.size());
+    ASSERT_EQ(6u, facts.size());
     ASSERT_NE(nullptr, facts.get<string_value>("exe_fact1"));
     ASSERT_NE(nullptr, facts.get<string_value>("exe_fact2"));
     ASSERT_EQ(nullptr, facts.get<string_value>("exe_fact3"));
@@ -28,5 +28,4 @@ TEST(facter_facts_windows_collection, resolve_external) {
     ASSERT_NE(nullptr, facts.get<string_value>("ps1_fact2"));
     ASSERT_EQ(nullptr, facts.get<string_value>("ps1_fact3"));
     ASSERT_NE(nullptr, facts.get<string_value>("ps1_fact4"));
-    ASSERT_NE(nullptr, facts.get<string_value>("arch_bits"));
 }

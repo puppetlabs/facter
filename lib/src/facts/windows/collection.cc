@@ -10,7 +10,7 @@
 #include <facter/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <windows.h>
-#include "Shlobj.h"
+#include <Shlobj.h>
 
 using namespace std;
 using namespace facter::util;

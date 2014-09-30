@@ -40,15 +40,3 @@ TEST(facter_facts_external_windows_powershell_resolver, resolve_execution) {
     ASSERT_EQ(nullptr, facts.get<string_value>("PS1_fact4"));
     ASSERT_EQ("value2", facts.get<string_value>("ps1_fact4")->value());
 }
-
-TEST(facter_facts_external_windows_powershell_resolver, test_arch) {
-    powershell_resolver resolver;
-    collection facts;
-    resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/arch-bits.ps1", facts);
-    ASSERT_NE(nullptr, facts.get<string_value>("arch_bits"));
-#if _WIN64
-    ASSERT_EQ("x86_64", facts.get<string_value>("arch_bits")->value());
-#else
-    ASSERT_EQ("x86_32", facts.get<string_value>("arch_bits")->value());
-#endif
-}
