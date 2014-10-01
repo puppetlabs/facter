@@ -12,9 +12,16 @@ using namespace facter::execution;
 using namespace facter::facts;
 using namespace facter::facts::external;
 
-LOG_DECLARE_NAMESPACE("facts.external.execution.posix");
+LOG_DECLARE_NAMESPACE("facts.external.execution");
 
 namespace facter { namespace facts { namespace external {
+
+    bool execution_resolver::can_resolve(string const& path) const
+    {
+        // If the path can be resolved as an executable, this resolver can handle it.
+        LOG_DEBUG("checking execution on %1%", path);
+        return !execution::which(path, {"."}).empty();
+    }
 
     void execution_resolver::resolve(string const& path, collection& facts) const
     {

@@ -39,6 +39,7 @@ set(LIBFACTER_COMMON_SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/src/util/directory.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/dynamic_library.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/file.cc"
+    "${CMAKE_CURRENT_LIST_DIR}/src/util/scoped_env.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/scoped_file.cc"
     "${CMAKE_CURRENT_LIST_DIR}/src/util/string.cc"
 )
@@ -47,7 +48,6 @@ set(LIBFACTER_COMMON_SOURCES
 if (UNIX)
     set(LIBFACTER_STANDARD_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/execution/posix/execution.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/posix/execution_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/collection.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/dmi_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/posix/filesystem_resolver.cc"
@@ -78,7 +78,7 @@ endif()
 if (WIN32)
     set(LIBFACTER_STANDARD_SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/src/execution/windows/execution.cc"
-        "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/windows/execution_resolver.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/facts/external/windows/powershell_resolver.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/facts/windows/collection.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/logging/windows/log.cc"
         "${CMAKE_CURRENT_LIST_DIR}/src/ruby/windows/api.cc"

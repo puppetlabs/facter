@@ -26,6 +26,9 @@ extern char** environ;
 
 namespace facter { namespace execution {
 
+    const char *const command_shell = "sh";
+    const char *const command_args = "-c";
+
     uint64_t get_max_descriptor_limit()
     {
 #ifdef _SC_OPEN_MAX
@@ -121,104 +124,30 @@ namespace facter { namespace execution {
             stdout_write.release();
             stdin_write.release();
 
-            ostringstream output;
-            char buffer[4096];
-            bool reading = true;
-            while (reading)
-            {
-                // Read from the pipe
-                auto count = read(stdout_read, buffer, sizeof(buffer));
-                if (count == 0) {
-                    reading = false;
-                    continue;
-                }
+            string result = process_stream([&](string &buffer) {
+                buffer.resize(4096);
+                auto count = read(stdout_read, &buffer[0], buffer.size());
                 if (count < 0) {
-                    if (errno == EINTR) {
-                        // The call to read was interrupted by a signal before any data was read. Retry read.
-                        // See http://www.gnu.org/software/libc/manual/html_node/Interrupted-Primitives.html
-                        // This happens in Xcode's debugging.
-                        LOG_DEBUG("child pipe read was interrupted and will be retried: %1% (%2%).", strerror(errno), errno);
-                        errno = 0;
-                        continue;
+                    if (errno != EINTR) {
+                        throw execution_exception("failed to read child output.");
                     }
 
-                    throw execution_exception("failed to read child output.");
+                    // The call to read was interrupted by a signal before any data was read. Retry read.
+                    // See http://www.gnu.org/software/libc/manual/html_node/Interrupted-Primitives.html
+                    // This happens in Xcode's debugging.
+                    LOG_DEBUG("child pipe read was interrupted and will be retried: %1% (%2%).", strerror(errno), errno);
+                    errno = 0;
+                    buffer.resize(0);
+                    return true;
                 }
-
-                // If given no callback, buffer the entire output
-                if (!callback) {
-                    output.write(buffer, count);
-                    continue;
-                }
-
-                // Otherwise, scan the output for lines
-                streamsize size = 0;
-                streamsize offset = 0;
-                for (decltype(count) i = 0; reading && i < count; ++i) {
-                    // If not a newline character, increment the size of the data to write
-                    if (buffer[i] != '\n') {
-                        ++size;
-                        continue;
-                    }
-
-                    // Skip empty lines
-                    if (size == 0) {
-                        offset = i + 1;
-                        continue;
-                    }
-
-                    // Write everything up to the newline to the output stream
-                    output.write(buffer + offset, size);
-
-                    // Adjust the offset to continue after the new line character
-                    // and reset the output stream
-                    offset = i + 1;
-                    size = 0;
-                    string line = output.str();
-                    output.str({});
-
-                    if (options[execution_options::trim_output]) {
-                        boost::trim(line);
-                    }
-
-                    // Skip empty lines
-                    if (line.empty()) {
-                        continue;
-                    }
-
-                    // Log the line to the output logger
-                    log(logger, log_level::debug, line);
-
-                    // Pass the line to the callback
-                    if (!callback(line)) {
-                        LOG_DEBUG("completed processing output; closing child pipe.");
-                        reading = false;
-                        break;
-                    }
-                }
-                // Add the remainder of the buffer to the output stream
-                if (size > 0) {
-                    output.write(buffer + offset, size);
-                }
-            }
+                buffer.resize(count);
+                // Halt if nothing was read.
+                return count != 0;
+            }, callback, options);
 
             // Close the read pipe
             // If the child hasn't sent all the data yet, this may signal SIGPIPE on next write
             stdout_read.release();
-
-            string result = output.str();
-            if (options[execution_options::trim_output]) {
-                boost::trim(result);
-            }
-
-            // Log the result and do a final callback call if needed
-            if (!result.empty()) {
-                log(logger, log_level::debug, result);
-                if (callback) {
-                    callback(result);
-                    result.clear();
-                }
-            }
 
             // Wait for the child to exit
             bool success = false;

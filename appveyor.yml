@@ -1,4 +1,7 @@
 install:
+  - ps: choco install ruby
+  - ps: $env:PATH = "C:\tools\ruby200\bin;" + $env:PATH
+
   - ps: (New-Object net.webclient).DownloadFile('http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/4.8.2/threads-win32/seh/x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z', "$pwd\x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z")
   - ps: $env:PATH += ";C:\Program Files\7-Zip"
   - ps: 7z x x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z | FIND /V "ing  "
@@ -31,3 +34,5 @@ build_script:
   - ps: mv "C:\Program Files (x86)\Git\bin\shxx.exe" "C:\Program Files (x86)\Git\bin\sh.exe"
   - ps: mingw32-make
 
+test_script:
+  - ps: mingw32-make test

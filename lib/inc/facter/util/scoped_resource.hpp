@@ -17,6 +17,14 @@ namespace facter { namespace util {
     template<typename T> struct scoped_resource
     {
         /**
+         * Constructs an uninitialized scoped_resource.
+         * Can be initialized via move assignment.
+         */
+        scoped_resource() : _deleter(nullptr)
+        {
+        }
+
+        /**
          * Constructs a scoped_resource.
          * Takes ownership of the given resource.
          * @param resource The resource to scope.

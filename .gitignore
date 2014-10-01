@@ -7,8 +7,8 @@ compile_commands.json
 # Generated files
 /lib/inc/facter/version.h
 /lib/tests/fixtures.hpp
-/debug/
-/release/
+/debug*/
+/release*/
 /.idea/
 
 # Packaging files

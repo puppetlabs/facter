@@ -24,10 +24,22 @@ namespace facter { namespace util {
 
         /**
          * Sets an environment variable.
+         * Note that on Windows, setting an environment variable to an empty string is
+         * equivalent to clearing it.
          * @param name The name of the environment variable to set.
          * @param value The value of the environment variable to set.
+         * @return Returns true if the environment variable could be changed.
+         *         If false, it sets the system error state.
          */
-        static void set(std::string const& name, std::string const& value);
+        static bool set(std::string const& name, std::string const& value);
+
+        /**
+         * Unsets an environment variable.
+         * @param name The name of the environment variable to unset.
+         * @return Returns true if the environment variable could be unset.
+         *         If false, it sets the system error state.
+         */
+        static bool clear(std::string const& name);
 
         /**
          * Gets the platform-specific path separator.

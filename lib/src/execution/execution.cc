@@ -12,6 +12,7 @@ using namespace std;
 using namespace facter::util;
 using namespace facter::logging;
 using namespace boost::filesystem;
+using namespace boost::algorithm;
 
 LOG_DECLARE_NAMESPACE("execution");
 
@@ -167,6 +168,93 @@ namespace facter { namespace execution {
         option_set<execution_options> const& options)
     {
         return execute(file, &arguments, &environment, callback, options).first;
+    }
+
+    string process_stream(
+        function<bool(string&)> yield_input,
+        function<bool(string&)> callback,
+        option_set<execution_options> const& options)
+    {
+        // Get a special logger used specifically for child process output
+        const std::string logger = "|";
+
+        // Read output until it stops.
+        string output, buffer;
+        bool reading = true;
+        while (reading) {
+            if (!yield_input(buffer)) {
+                // Nothing to read, processing is complete.
+                break;
+            } else if (buffer.size() == 0) {
+                // No data read, but continue. If it were a halting error, an exception was thrown.
+                continue;
+            }
+
+            if (!callback) {
+                // If given no callback, buffer the entire output
+                output.append(buffer);
+                continue;
+            }
+
+            // Find the last newline, because anything after may not be a complete line.
+            auto lastNL = buffer.find_last_of("\n\r");
+            if (lastNL == string::npos) {
+                // No newline found, so keep appending and continue.
+                output.append(buffer);
+                continue;
+            }
+
+            // Make a range for iterating through lines.
+            auto str_range = make_pair(buffer.begin(), buffer.begin()+lastNL);
+            auto line_iterator = boost::make_iterator_range(
+                make_split_iterator(str_range, token_finder(is_any_of("\n\r"), token_compress_on)),
+                split_iterator<string::iterator>());
+
+            for (auto &line : line_iterator) {
+                // The previous trailing data is picked up by default.
+                output.append(line.begin(), line.end());
+
+                if (options[execution_options::trim_output]) {
+                    boost::trim(output);
+                }
+
+                // Skip empty lines
+                if (output.empty()) {
+                    continue;
+                }
+
+                // Log the line to the output logger
+                log(logger, log_level::debug, output);
+
+                // Pass the line to the callback
+                if (!callback(output)) {
+                    LOG_DEBUG("completed processing output; closing child pipe.");
+                    reading = false;
+                    break;
+                }
+
+                // Clear the line for the next iteration. Doing this allows us to
+                // append in the 1st iteration without a conditional check.
+                output.clear();
+            }
+
+            // Save the new trailing data
+            output.assign(buffer.begin()+lastNL, buffer.end());
+        }
+
+        // Log the result and do a final callback if needed.
+        if (options[execution_options::trim_output]) {
+            boost::trim(output);
+        }
+
+        if (!output.empty()) {
+            log(logger, log_level::debug, output);
+            if (callback) {
+                callback(output);
+                return {};
+            }
+        }
+        return output;
     }
 
 }}  // namespace facter::executions

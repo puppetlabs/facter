@@ -56,6 +56,18 @@ namespace facter { namespace execution {
     };
 
     /**
+     * System command shell available for executing shell scripts.
+     * Uses 'cmd' on Windows and 'sh' on *nix systems.
+     */
+    extern const char *const command_shell;
+
+    /**
+     * System command shell arguments to accept a script as an argument.
+     * Uses '/c' on Windows and '-c' on *nix systems.
+     */
+    extern const char *const command_args;
+
+    /**
      * Base class for execution exceptions.
      */
     struct execution_exception : std::runtime_error
@@ -233,6 +245,20 @@ namespace facter { namespace execution {
         std::string const& file,
         std::vector<std::string> const& arguments,
         std::map<std::string, std::string> const& environment,
+        std::function<bool(std::string&)> callback,
+        facter::util::option_set<execution_options> const& options = { execution_options::defaults });
+
+    /**
+     * Reads from a stream closure until there is no more data to read.
+     * If a callback is supplied, buffers each line and passes it to the callback.
+     * Otherwise, returns the concatenation of the stream.
+     * @param yield_input The input stream closure; it expects a mutable string buffer, and returns whether the closure should be invoked again for more input.
+     * @param callback The callback that is called with each line of output.
+     * @param options The execution options.
+     * @return Returns the stream results concatenated together, or an empty string if callback is not null.
+     */
+    std::string process_stream(
+        std::function<bool(std::string&)> yield_input,
         std::function<bool(std::string&)> callback,
         facter::util::option_set<execution_options> const& options = { execution_options::defaults });
 

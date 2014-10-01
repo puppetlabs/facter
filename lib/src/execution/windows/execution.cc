@@ -1,9 +1,13 @@
 #include <facter/execution/execution.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/environment.hpp>
+#include <facter/util/windows/scoped_error.hpp>
+#include <facter/util/scoped_env.hpp>
 #include <facter/logging/logging.hpp>
+
 #include <boost/filesystem.hpp>
-#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string.hpp>
+
 #include <cstdlib>
 #include <cstdio>
 #include <sstream>
@@ -14,43 +18,42 @@ using namespace std;
 using namespace facter::util;
 using namespace facter::logging;
 using namespace boost::filesystem;
+using namespace boost::algorithm;
 
 LOG_DECLARE_NAMESPACE("execution");
 
 namespace facter { namespace execution {
 
-    uint64_t get_max_descriptor_limit()
-    {
-        // TODO WINDOWS: implement function.
-        return 0;
-    }
+    const char *const command_shell = "cmd.exe";
+    const char *const command_args = "/c";
 
     struct extpath_helper
     {
         extpath_helper()
         {
+            // Enforce lower-case operations to ignore case.
             string extpaths;
             if (environment::get("PATHEXT", extpaths)) {
-                wstring wextpaths(extpaths.begin(), extpaths.end());
-                boost::split(_extpaths, wextpaths, bind(equal_to<char>(), placeholders::_1, environment::get_path_separator()), boost::token_compress_on);
+                boost::split(_extpaths, extpaths, bind(equal_to<char>(), placeholders::_1, environment::get_path_separator()), boost::token_compress_on);
             } else {
-                _extpaths = {L".BAT", L".CMD", L".COM", L".EXE"};
+                _extpaths = {".bat", ".cmd", ".com", ".exe"};
             }
             sort(_extpaths.begin(), _extpaths.end());
+            for_each(_extpaths.begin(), _extpaths.end(), [](string &s) { to_lower(s); });
         }
 
-        vector<wstring> const& ext_paths() const
+        vector<string> const& ext_paths() const
         {
             return _extpaths;
         }
 
-        bool contains(const wstring & ext) const
+        bool contains(const string & ext) const
         {
-            return binary_search(_extpaths.begin(), _extpaths.end(), ext);
+            return binary_search(_extpaths.begin(), _extpaths.end(), to_lower_copy(ext));
         }
 
      private:
-         vector<wstring> _extpaths;
+         vector<string> _extpaths;
     };
 
     static bool is_executable(path const& p, extpath_helper const* helper = nullptr)
@@ -66,7 +69,7 @@ namespace facter { namespace execution {
         if (helper) {
             // Checking extensions aren't needed if we explicitly specified it.
             // If helper was passed, then we haven't and should check the ext.
-            isfile &= helper->contains(p.extension().native());
+            isfile &= helper->contains(p.extension().string());
         }
         return isfile;
     }
@@ -103,6 +106,22 @@ namespace facter { namespace execution {
         return {};
     }
 
+    // Create a pipe, throwing if there's an error. Returns {read, write} handles.
+    static tuple<scoped_resource<HANDLE>, scoped_resource<HANDLE>> CreatePipeThrow()
+    {
+        SECURITY_ATTRIBUTES saAttr = {};
+        saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
+        saAttr.bInheritHandle = TRUE;
+        saAttr.lpSecurityDescriptor = NULL;
+
+        HANDLE tmpHandleRd = NULL, tmpHandleWr = NULL;
+        if (!CreatePipe(&tmpHandleRd, &tmpHandleWr, &saAttr, 0)) {
+            throw execution_exception("pipe could not be created");
+        }
+        return make_tuple(scoped_resource<HANDLE>(move(tmpHandleRd), CloseHandle),
+            scoped_resource<HANDLE>(move(tmpHandleWr), CloseHandle));
+    }
+
     pair<bool, string> execute(
         string const& file,
         vector<string> const* arguments,
@@ -110,8 +129,169 @@ namespace facter { namespace execution {
         function<bool(string&)> callback,
         option_set<execution_options> const& options)
     {
-        // TODO WINDOWS: implement function.
-        return { false, "" };
+        // Search for the executable
+        string executable = which(file);
+        log_execution(executable.empty() ? file : executable, arguments);
+        if (executable.empty()) {
+            LOG_DEBUG("%1% was not found on the PATH.", file);
+            if (options[execution_options::throw_on_nonzero_exit]) {
+                throw child_exit_exception(127, "", "child process returned non-zero exit status.");
+            }
+            return { false, "" };
+        }
+
+        // Setup the execution environment
+        vector<char> modified_environ;
+        vector<scoped_env> scoped_environ;
+        if (options[execution_options::merge_environment]) {
+            // Modify the existing environment, then restore it after. There's no way to modify environment variables
+            // after the child has started. An alternative would be to use GetEnvironmentStrings and add/modify the block,
+            // but searching for and modifying existing environment strings to update would be cumbersome in that form.
+            // See http://msdn.microsoft.com/en-us/library/windows/desktop/ms682009(v=vs.85).aspx
+            if (!environment || environment->count("LC_ALL") == 0) {
+                scoped_environ.emplace_back("LC_ALL", "C");
+            }
+            if (!environment || environment->count("LANG") == 0) {
+                scoped_environ.emplace_back("LANG", "C");
+            }
+            if (environment) {
+                for (auto const& kv : *environment) {
+                    // Use scoped_env to save the old state and restore it on return.
+                    LOG_DEBUG("child environment %1%=%2%", kv.first, kv.second);
+                    scoped_environ.emplace_back(kv.first, kv.second);
+                }
+            }
+        } else {
+            // We aren't inheriting the environment, so create an environment block instead of changing existing env.
+            // Environment variables must be sorted alphabetically and case-insensitive,
+            // so copy them all into the same map with case-insensitive key compare:
+            //   http://msdn.microsoft.com/en-us/library/windows/desktop/ms682009(v=vs.85).aspx
+            std::map<string, string, bool(*)(string const&, string const&)> sortedEnvironment(
+                [](string const& a, string const& b) { return ilexicographical_compare(a, b); });
+            if (environment) {
+                sortedEnvironment.insert(environment->begin(), environment->end());
+            }
+
+            // Insert LANG and LC_ALL if they aren't already present. Emplace ensures this behavior.
+            sortedEnvironment.emplace("LANG", "C");
+            sortedEnvironment.emplace("LC_ALL", "C");
+
+            // An environment block is a NULL-terminated list of NULL-terminated strings.
+            for (auto const& variable : sortedEnvironment) {
+                LOG_DEBUG("child environment %1%=%2%", variable.first, variable.second);
+                string var = variable.first + "=" + variable.second;
+                for (auto c : var) {
+                    modified_environ.push_back(c);
+                }
+                modified_environ.push_back('\0');
+            }
+            modified_environ.push_back('\0');
+        }
+
+        // Execute the command, reading the results into a buffer until there's no more to read.
+        // See http://msdn.microsoft.com/en-us/library/windows/desktop/ms682499(v=vs.85).aspx
+        // for details on redirecting input/output.
+        try {
+            scoped_resource<HANDLE> stdInRd, stdInWr;
+            tie(stdInRd, stdInWr) = CreatePipeThrow();
+            if (!SetHandleInformation(stdInWr, HANDLE_FLAG_INHERIT, 0)) {
+                throw execution_exception("pipe could not be modified");
+            }
+
+            scoped_resource<HANDLE> stdOutRd, stdOutWr;
+            tie(stdOutRd, stdOutWr) = CreatePipeThrow();
+            if (!SetHandleInformation(stdOutRd, HANDLE_FLAG_INHERIT, 0)) {
+                throw execution_exception("pipe could not be modified");
+            }
+
+            scoped_resource<HANDLE> stdErrRd, stdErrWr;
+
+            // Execute the command with arguments.
+            string commandLine = (arguments ? boost::join(*arguments, " ") : "");
+
+            STARTUPINFO startupInfo = {};
+            startupInfo.cb = sizeof(startupInfo);
+            startupInfo.dwFlags |= STARTF_USESTDHANDLES;
+            startupInfo.hStdInput = stdInRd;
+            startupInfo.hStdOutput = stdOutWr;
+            if (options[execution_options::redirect_stderr]) {
+                startupInfo.hStdError = stdOutWr;
+            } else {
+                startupInfo.hStdError = INVALID_HANDLE_VALUE;
+            }
+
+            PROCESS_INFORMATION procInfo = {};
+
+            bool success = CreateProcess(
+                    executable.c_str(),
+                    const_cast<LPTSTR>(commandLine.c_str()),
+                    NULL,           /* Don't allow child process to inherit process handle */
+                    NULL,           /* Don't allow child process to inherit thread handle */
+                    TRUE,           /* Inherit handles from the calling process for communication */
+                    CREATE_NO_WINDOW,
+                    options[execution_options::merge_environment] ? NULL : modified_environ.data(),
+                    NULL,           /* Use existing current directory */
+                    &startupInfo,   /* STARTUPINFO for child process */
+                    &procInfo);     /* PROCESS_INFORMATION pointer for output */
+
+            // Release unused pipes, to avoid any races in process completion.
+            stdInWr.release();
+            stdInRd.release();
+            stdOutWr.release();
+            stdErrWr.release();
+
+            if (!success) {
+                throw execution_exception("child process failed to start");
+            }
+            scoped_resource<HANDLE> hProcess(move(procInfo.hProcess), CloseHandle);
+            scoped_resource<HANDLE> hThread(move(procInfo.hThread), CloseHandle);
+
+            string result = process_stream([&](string &buffer) {
+                DWORD count;
+                buffer.resize(4096);
+                auto readSucceeded = ReadFile(stdOutRd, &buffer[0], buffer.size(), &count, NULL);
+                if (count != 0 && !readSucceeded) {
+                    // Not an asynchronous read, so it won't return with pending IO.
+                    assert(GetLastError() != ERROR_IO_PENDING);
+                    throw execution_exception("failed to read child stdout");
+                }
+                buffer.resize(count);
+                // Halt if nothing was read.
+                return count != 0;
+            }, callback, options);
+
+            // Close the read pipe; this may be done before all data is read when the callback returns false
+            // If the child hasn't sent all the data yet, this may signal SIGPIPE on next write
+            stdOutRd.release();
+
+            auto waitStatus = WaitForSingleObject(hProcess, INFINITE);
+            if (waitStatus != WAIT_OBJECT_0) {
+                // Not a mutex, and specified INFINITE timeout, so only WAIT_FAILED should be possible.
+                assert(waitStatus == WAIT_FAILED);
+                throw execution_exception("error waiting on execution");
+            }
+
+            // Now check the process return status.
+            DWORD exitCode;
+            if (!GetExitCodeProcess(hProcess, &exitCode)) {
+                throw execution_exception("error retrieving exit code of completed process");
+            }
+
+            if (exitCode != 0) {
+                // Process signaled finished, so it should not return STILL_ACTIVE.
+                assert(exitCode != STILL_ACTIVE);
+                throw child_exit_exception(exitCode, result, "child process returned non-zero exit status.");
+            }
+            return { true, move(result) };
+        } catch (child_exit_exception &e) {
+            if (options[execution_options::throw_on_nonzero_exit]) {
+                throw e;
+            } else {
+                auto err = GetLastError();
+                LOG_DEBUG("%1% (%2%): %3% (%4%)", e.what(), e.status_code(), scoped_error(err), err);
+                return { false, move(e.output()) };
+            }
+        }
     }
 
 }}  // namespace facter::executions

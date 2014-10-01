@@ -44,7 +44,7 @@ TEST(facter_util_directory, each_subdirectory) {
 
     sort(subdirectories.begin(), subdirectories.end());
 
-    ASSERT_THAT(subdirectories, ElementsAre("json", "posix", "text", "yaml"));
+    ASSERT_THAT(subdirectories, ElementsAre("json", "posix", "text", "windows", "yaml"));
 }
 
 TEST(facter_util_directory, each_subdirectory_pattern) {
