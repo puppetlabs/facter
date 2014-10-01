@@ -73,6 +73,27 @@ describe "Virtual fact" do
     end
   end
 
+  describe "on FreeBSD" do
+    before(:each) do
+      Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
+      Facter.fact(:operatingsystem).stubs(:value).returns("FreeBSD")
+    end
+
+    it "should be kvm with virtio device pciconf -lv 2>/dev/null" do
+      Facter::Core::Execution.stubs(:exec).with('/sbin/sysctl -n security.jail.jailed').returns('0')
+      Facter::Util::Virtual.stubs(:lspci).returns("virtio_pci4@pci0:0:8:0:	class=0x020000 card=0x00011af4 chip=0x10001af4 rev=0x00 hdr=0x00")
+      Facter.fact(:virtual).value.should == "kvm"
+    end
+
+    it "should be bochs with Bochs vendor name from dmidecode" do
+      Facter::Core::Execution.stubs(:exec).with('/sbin/sysctl -n security.jail.jailed').returns('0')
+      Facter::Core::Execution.stubs(:exec).with('pciconf -lv 2>/dev/null').returns(nil)
+      Facter::Core::Execution.stubs(:exec).with('dmidecode 2> /dev/null').returns("Manufacturer: Bochs")
+      Facter.fact(:virtual).value.should == "bochs"
+    end
+
+  end
+
   describe "on Linux" do
     before(:each) do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
@@ -521,6 +542,12 @@ describe "is_virtual fact" do
   it "should be true when running in docker" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("docker")
+    Facter.fact(:is_virtual).value.should == "true"
+  end
+
+  it "should be true when running in bochs" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter.fact(:virtual).stubs(:value).returns("bochs")
     Facter.fact(:is_virtual).value.should == "true"
   end
 end

@@ -149,6 +149,7 @@ Facter.add("virtual") do
       next "xenhvm"     if lines.any? {|l| l =~ /XenSource/ }
       next "hyperv"     if lines.any? {|l| l =~ /Microsoft Corporation Hyper-V/ }
       next "gce"        if lines.any? {|l| l =~ /Class 8007: Google, Inc/ }
+      next "kvm"        if lines.any? {|l| l =~ /virtio/ }
     end
 
     # Parse dmidecode
@@ -162,6 +163,7 @@ Facter.add("virtual") do
       next "hyperv"     if lines.any? {|l| l =~ /Product Name: Virtual Machine/ }
       next "rhev"       if lines.any? {|l| l =~ /Product Name: RHEV Hypervisor/ }
       next "ovirt"      if lines.any? {|l| l =~ /Product Name: oVirt Node/ }
+      next "bochs"      if lines.any? {|l| l =~ /Bochs/ }
     end
 
     # Default to 'physical'
