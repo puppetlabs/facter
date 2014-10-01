@@ -10,13 +10,13 @@ describe "rackspace facts" do
     end
 
     it "should set is_rsc to true" do
-      Facter::Util::Resolution.stubs(:exec).with("/usr/bin/xenstore-read vm-data/provider_data/provider").returns("Rackspace")
+      Facter::Util::Resolution.stubs(:exec).with("/usr/bin/xenstore-read vm-data/provider_data/provider 2> /dev/null").returns("Rackspace")
       Facter.fact(:is_rsc).value.should == "true"
     end
 
     it "should set the region to dfw" do
       Facter.fact(:is_rsc).stubs(:value).returns("true")
-      Facter::Util::Resolution.stubs(:exec).with("/usr/bin/xenstore-read vm-data/provider_data/region").returns("dfw")
+      Facter::Util::Resolution.stubs(:exec).with("/usr/bin/xenstore-read vm-data/provider_data/region 2> /dev/null").returns("dfw")
       Facter.fact(:rsc_region).value.should == "dfw"
     end
 
@@ -33,7 +33,7 @@ describe "rackspace facts" do
     end
 
     it "shouldn't set is_rsc" do
-      Facter::Util::Resolution.stubs(:exec).with("/usr/bin/xenstore-read vm-data/provider_data/provider").returns("other")
+      Facter::Util::Resolution.stubs(:exec).with("/usr/bin/xenstore-read vm-data/provider_data/provider 2> /dev/null").returns("other")
       Facter.fact(:is_rsc).value.should == nil
     end
   end
