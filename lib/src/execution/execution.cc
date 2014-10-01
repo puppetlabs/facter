@@ -180,7 +180,6 @@ namespace facter { namespace execution {
 
         // Read output until it stops.
         string output, buffer;
-        vector<boost::iterator_range<string::iterator>> contents;
         bool reading = true;
         while (reading) {
             if (!yield_input(buffer)) {
@@ -205,10 +204,13 @@ namespace facter { namespace execution {
                 continue;
             }
 
+            // Make a range for iterating through lines.
             auto str_range = make_pair(buffer.begin(), buffer.begin()+lastNL);
+            auto line_iterator = boost::make_iterator_range(
+                make_split_iterator(str_range, token_finder(is_any_of("\n\r"), token_compress_on)),
+                split_iterator<string::iterator>());
 
-            // Populate a vector of ranges, each entry bounding a line of text.
-            for (auto &line : split(contents, str_range, is_any_of("\n\r"), token_compress_on)) {
+            for (auto &line : line_iterator) {
                 // The previous trailing data is picked up by default.
                 output.append(line.begin(), line.end());
 
