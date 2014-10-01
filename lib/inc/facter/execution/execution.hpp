@@ -55,7 +55,16 @@ namespace facter { namespace execution {
         defaults = trim_output | merge_environment,
     };
 
+    /**
+     * System command shell available for executing shell scripts.
+     * Uses 'cmd' on Windows and 'sh' on *nix systems.
+     */
     extern const char *const command_shell;
+
+    /**
+     * System command shell arguments to accept a script as an argument.
+     * Uses '/c' on Windows and '-c' on *nix systems.
+     */
     extern const char *const command_args;
 
     /**
