@@ -239,7 +239,7 @@ namespace facter { namespace execution {
             }
 
             // Save the new trailing data
-            output = buffer.substr(lastNL);
+            output.assign(buffer.begin()+lastNL, buffer.end());
         }
 
         // Log the result and do a final callback if needed.
