@@ -5,12 +5,8 @@
 #include <facter/util/scoped_env.hpp>
 #include <facter/logging/logging.hpp>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/thread.hpp>
-#pragma GCC diagnostic pop
 
 #include <cstdlib>
 #include <cstdio>
@@ -221,11 +217,7 @@ namespace facter { namespace execution {
             if (options[execution_options::redirect_stderr]) {
                 startupInfo.hStdError = stdOutWr;
             } else {
-                tie(stdErrRd, stdErrWr) = CreatePipeThrow();
-                if (!SetHandleInformation(stdErrRd, HANDLE_FLAG_INHERIT, 0)) {
-                    throw execution_exception("pipe could not be modified");
-                }
-                startupInfo.hStdError = stdErrWr;
+                startupInfo.hStdError = INVALID_HANDLE_VALUE;
             }
 
             PROCESS_INFORMATION procInfo = {};
@@ -254,46 +246,7 @@ namespace facter { namespace execution {
             scoped_resource<HANDLE> hProcess(move(procInfo.hProcess), CloseHandle);
             scoped_resource<HANDLE> hThread(move(procInfo.hThread), CloseHandle);
 
-            // Setup separate thread to redirect stderr to log.
-            bool stdErrExcept = false;
-            boost::thread stdErrHandler;
-            if (options[execution_options::redirect_stderr]) {
-                stdErrHandler = boost::thread([&stdErrRd, &stdErrExcept]() {
-                    // Get a special logger used specifically for child stderr output
-                    const std::string logger = "!";
-                    string buffer;
-                    while (!boost::this_thread::interruption_requested()) {
-                        DWORD count;
-                        buffer.resize(4096);
-                        auto readSucceeded = ReadFile(stdErrRd, &buffer[0], buffer.size(), &count, NULL);
-                        if (count == 0) {
-                            break;
-                        }
-
-                        if (!readSucceeded) {
-                            auto err = GetLastError();
-                            if (err == ERROR_IO_PENDING) {
-                                LOG_DEBUG("child pipe read pending on stderr: %1%", scoped_error(err));
-                                continue;
-                            } else {
-                                stdErrExcept = true;
-                                return;
-                            }
-                        }
-
-                        buffer.resize(count);
-                        log(logger, log_level::debug, buffer);
-                    }
-                    stdErrRd.release();
-                });
-            }
-
             string result = process_stream([&](string &buffer) {
-                // Check whether the stderr handler encountered an exception. If so, throw for it.
-                if (stdErrExcept) {
-                    throw execution_exception("failed to read child stderr");
-                }
-
                 DWORD count;
                 buffer.resize(4096);
                 auto readSucceeded = ReadFile(stdOutRd, &buffer[0], buffer.size(), &count, NULL);
@@ -310,19 +263,6 @@ namespace facter { namespace execution {
             // Close the read pipe; this may be done before all data is read when the callback returns false
             // If the child hasn't sent all the data yet, this may signal SIGPIPE on next write
             stdOutRd.release();
-
-            // Halt reading stderr. The thread doesn't actually trigger throwing thread_interrupted; instead
-            // when interrupt has been called it releases stdErrRd and exits.
-            stdErrHandler.interrupt();
-
-            if (options[execution_options::redirect_stderr]) {
-                // Wait for stderr reading to complete so we don't invalidate memory it's using by exiting the function.
-                stdErrHandler.join();
-                // Final check whether the stderr handler encountered an exception.
-                if (stdErrExcept) {
-                    throw execution_exception("failed to read child stderr");
-                }
-            }
 
             auto waitStatus = WaitForSingleObject(hProcess, INFINITE);
             if (waitStatus != WAIT_OBJECT_0) {
