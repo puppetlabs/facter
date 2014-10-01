@@ -10,15 +10,14 @@ require "formula"
 
 class Cfacter < Formula
   homepage "https://github.com/puppetlabs/cfacter"
-  url "https://github.com/puppetlabs/cfacter/archive/0.1.0.tar.gz"
-  version '0.1.0'
-  sha1 "20a3eab0a35a1bfb1283b2832f9bd668a790c36a"
+  url "https://github.com/puppetlabs/cfacter/archive/0.2.0.tar.gz"
+  version '0.2.0'
+  sha1 "d0996773e3e6640c4e031509e6832cae8b74e774"
 
   head "git@github.com:puppetlabs/cfacter.git", :using => :git
 
   depends_on "cmake"
   depends_on "boost"
-  depends_on "log4cxx"
   depends_on "openssl"
   depends_on "yaml-cpp"
 
