@@ -21,7 +21,7 @@ namespace facter { namespace util {
          * @param var    The environment variable to update.
          * @param newval The value to set it to during existence of this object.
          */
-        explicit scoped_env(std::string var, std::string newval);
+        explicit scoped_env(std::string var, std::string const& newval);
 
      private:
         static void restore(std::tuple<std::string, boost::optional<std::string>> &);

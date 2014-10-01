@@ -5,14 +5,14 @@ using namespace std;
 
 namespace facter { namespace util {
 
-    scoped_env::scoped_env(string var, string val) : scoped_resource()
+    scoped_env::scoped_env(string var, string const& val) : scoped_resource()
     {
         string oldval;
         bool was_set = environment::get(var, oldval);
-        _resource = make_tuple(var, was_set ? boost::optional<std::string>(oldval) : boost::none);
-        _deleter = scoped_env::restore;
-
         environment::set(var, val);
+
+        _resource = make_tuple(move(var), was_set ? boost::optional<std::string>(oldval) : boost::none);
+        _deleter = scoped_env::restore;
     }
 
     void scoped_env::restore(tuple<string, boost::optional<std::string>> & old)

@@ -180,6 +180,7 @@ namespace facter { namespace execution {
 
         // Read output until it stops.
         string output, buffer;
+        vector<boost::iterator_range<string::iterator>> contents;
         bool reading = true;
         while (reading) {
             if (!yield_input(buffer)) {
@@ -196,8 +197,7 @@ namespace facter { namespace execution {
                 continue;
             }
 
-            // Find the last newline and buffer everything after to output, because
-            // it may not be a complete line.
+            // Find the last newline, because anything after may not be a complete line.
             auto lastNL = buffer.find_last_of("\n\r");
             if (lastNL == string::npos) {
                 // No newline found, so keep appending and continue.
@@ -205,35 +205,39 @@ namespace facter { namespace execution {
                 continue;
             }
 
-            // Copying to a vector of strings is efficient because we modify the string with boost::trim anyway.
-            vector<string> contents;
-            auto str = make_pair(buffer.begin(), buffer.begin()+lastNL);
-            split(contents, str, is_any_of("\n\r"), token_compress_on);
+            auto str_range = make_pair(buffer.begin(), buffer.begin()+lastNL);
 
-            // Prepend the previous trailing data, and save the new trailing data.
-            contents[0] = move(output) + contents[0];
-            output = buffer.substr(lastNL);
+            // Populate a vector of ranges, each entry bounding a line of text.
+            for (auto &line : split(contents, str_range, is_any_of("\n\r"), token_compress_on)) {
+                // The previous trailing data is picked up by default.
+                output.append(line.begin(), line.end());
 
-            for (auto &line : contents) {
                 if (options[execution_options::trim_output]) {
-                    boost::trim(line);
+                    boost::trim(output);
                 }
 
                 // Skip empty lines
-                if (line.empty()) {
+                if (output.empty()) {
                     continue;
                 }
 
                 // Log the line to the output logger
-                log(logger, log_level::debug, line);
+                log(logger, log_level::debug, output);
 
                 // Pass the line to the callback
-                if (!callback(line)) {
+                if (!callback(output)) {
                     LOG_DEBUG("completed processing output; closing child pipe.");
                     reading = false;
                     break;
                 }
+
+                // Clear the line for the next iteration. Doing this allows us to
+                // append in the 1st iteration without a conditional check.
+                output.clear();
             }
+
+            // Save the new trailing data
+            output = buffer.substr(lastNL);
         }
 
         // Log the result and do a final callback if needed.
