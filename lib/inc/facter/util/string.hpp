@@ -44,4 +44,11 @@ namespace facter { namespace util {
      */
     std::string percentage(uint64_t used, uint64_t total);
 
+    /**
+     * Converts the given frequency, in Hz, to a string.
+     * @param freq The frequency to convert, in Hz.
+     * @return Returns the frequency as a string (e.g. "1.24 GHz").
+     */
+    std::string frequency(int64_t freq);
+
 }}  // namespace facter::util
