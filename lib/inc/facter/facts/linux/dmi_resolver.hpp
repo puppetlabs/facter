@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include "../posix/dmi_resolver.hpp"
+#include "../resolvers/dmi_resolver.hpp"
 #include <string>
 
 namespace facter { namespace facts { namespace linux {
@@ -12,17 +12,18 @@ namespace facter { namespace facts { namespace linux {
     /**
      * Responsible for resolving DMI facts.
      */
-    struct dmi_resolver : posix::dmi_resolver
+    struct dmi_resolver : resolvers::dmi_resolver
     {
      protected:
         /**
-         * Called to resolve all facts the resolver is responsible for.
+         * Collects the resolver data.
          * @param facts The fact collection that is resolving facts.
+         * @return Returns the resolver data.
          */
-        virtual void resolve_facts(collection& facts);
+        virtual data collect_data(collection& facts) override;
 
      private:
-        static std::string get_chassis_description(std::string const& type);
+        std::string read(std::string const& path);
     };
 
 }}}  // namespace facter::facts::linux

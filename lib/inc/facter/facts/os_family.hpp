@@ -1,10 +1,10 @@
 /**
  * @file
- * Declares the POSIX operating system family constants.
+ * Declares the operating system family constants.
  */
 #pragma once
 
-namespace facter { namespace facts { namespace posix {
+namespace facter { namespace facts {
 
     /**
      * Stores the constant operating system family names.
@@ -45,4 +45,4 @@ namespace facter { namespace facts { namespace posix {
         constexpr static char const* mandrake = "Mandrake";
     };
 
-}}}  // namespace facter::facts::posix
+}}  // namespace facter::facts

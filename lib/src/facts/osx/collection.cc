@@ -1,6 +1,6 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/posix/kernel_resolver.hpp>
-#include <facter/facts/osx/operating_system_resolver.hpp>
+#include <facter/facts/resolvers/operating_system_resolver.hpp>
 #include <facter/facts/osx/networking_resolver.hpp>
 #include <facter/facts/osx/processor_resolver.hpp>
 #include <facter/facts/osx/dmi_resolver.hpp>
@@ -9,7 +9,7 @@
 #include <facter/facts/osx/virtualization_resolver.hpp>
 #include <facter/facts/bsd/uptime_resolver.hpp>
 #include <facter/facts/posix/ssh_resolver.hpp>
-#include <facter/facts/posix/id_resolver.hpp>
+#include <facter/facts/posix/identity_resolver.hpp>
 #include <facter/facts/posix/timezone_resolver.hpp>
 #include <facter/facts/bsd/filesystem_resolver.hpp>
 #include <facter/facts/osx/memory_resolver.hpp>
@@ -21,7 +21,7 @@ namespace facter { namespace facts {
     void collection::add_platform_facts()
     {
         add(make_shared<posix::kernel_resolver>());
-        add(make_shared<osx::operating_system_resolver>());
+        add(make_shared<resolvers::operating_system_resolver>());
         add(make_shared<bsd::uptime_resolver>());
         add(make_shared<osx::networking_resolver>());
         add(make_shared<osx::processor_resolver>());
@@ -30,7 +30,7 @@ namespace facter { namespace facts {
         add(make_shared<osx::system_profiler_resolver>());
         add(make_shared<osx::software_version_resolver>());
         add(make_shared<osx::virtualization_resolver>());
-        add(make_shared<posix::id_resolver>());
+        add(make_shared<posix::identity_resolver>());
         add(make_shared<posix::timezone_resolver>());
         add(make_shared<bsd::filesystem_resolver>());
         add(make_shared<osx::memory_resolver>());

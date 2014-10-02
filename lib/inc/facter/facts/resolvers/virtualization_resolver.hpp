@@ -1,13 +1,13 @@
 /**
- * @file
- * Declares the POSIX virtualization fact resolver.
- */
+* @file
+* Declares the base virtualization fact resolver.
+*/
 #pragma once
 
 #include "../resolver.hpp"
 #include <string>
 
-namespace facter { namespace facts { namespace posix {
+namespace facter { namespace facts { namespace resolvers {
 
     /**
      * Responsible for resolving virtualization facts.
@@ -24,7 +24,7 @@ namespace facter { namespace facts { namespace posix {
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(collection& facts);
+        virtual void resolve_facts(collection& facts) override;
 
         /**
          * Gets the name of the hypervisor.
@@ -34,11 +34,11 @@ namespace facter { namespace facts { namespace posix {
         virtual std::string get_hypervisor(collection& facts) = 0;
 
         /**
-         * Determines if the given hypervisor means the machine is virtual.
-         * @param hypervisor The name of the hypervisor.
-         * @return Returns true if the machine is virtual or false if it is physical.
+         * Determines if the given hypervisor is considered to be virtual.
+         * @param hypervisor The hypervisor to check.
+         * @return Returns true if the hypervisor is virtual or false if it is physical.
          */
         virtual bool is_virtual(std::string const& hypervisor);
     };
 
-}}}  // namespace facter::facts::posix
+}}}  // namespace facter::facts::resolvers

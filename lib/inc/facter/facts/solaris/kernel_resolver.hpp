@@ -1,33 +1,25 @@
 /**
  * @file
- * Declares the SOLARIS kernel fact resolver.
+ * Declares the Solaris kernel fact resolver.
  */
 #pragma once
 
-#include "../posix/kernel_resolver.hpp"
-#include <sys/utsname.h>
+#include "../resolvers/kernel_resolver.hpp"
 
 namespace facter { namespace facts { namespace solaris {
 
     /**
      * Responsible for resolving kernel facts.
      */
-    struct kernel_resolver : posix::kernel_resolver
+    struct kernel_resolver : resolvers::kernel_resolver
     {
      protected:
         /**
-         * Called to resolve the kernel version fact.
+         * Collects the resolver data.
          * @param facts The fact collection that is resolving facts.
-         * @param name The result of the uname call.
-         *
+         * @return Returns the resolver data.
          */
-        virtual void resolve_kernel_version(collection& facts, struct utsname const& name);
-        /**
-         * Called to resolve the kernel major version fact.
-         * @param facts The fact collection that is resolving facts.
-         * @param name The result of the uname call.
-         */
-        virtual void resolve_kernel_major_version(collection& facts, struct utsname const& name);
+        virtual data collect_data(collection& facts) override;
     };
 
 }}}  // namespace facter::facts::solaris

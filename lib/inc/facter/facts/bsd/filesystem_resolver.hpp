@@ -4,8 +4,7 @@
  */
 #pragma once
 
-#include "../posix/filesystem_resolver.hpp"
-#include "../array_value.hpp"
+#include "../resolvers/filesystem_resolver.hpp"
 
 struct statfs;
 
@@ -14,27 +13,18 @@ namespace facter { namespace facts { namespace bsd {
     /**
      * Responsible for resolving BSD file system facts.
      */
-    struct filesystem_resolver : posix::filesystem_resolver
+    struct filesystem_resolver : resolvers::filesystem_resolver
     {
      protected:
         /**
-         * Called to resolve the mountpoints fact.
+         * Collects the file system data.
          * @param facts The fact collection that is resolving facts.
+         * @return Returns the file system data.
          */
-        virtual void resolve_mountpoints(collection& facts);
-        /**
-         * Called to resolve the filesystems fact.
-         * @param facts The fact collection that is resolving facts.
-         */
-        virtual void resolve_filesystems(collection& facts);
-        /**
-         * Called to resolve the partitions fact.
-         * @param facts The fact collection that is resolving facts.
-         */
-        virtual void resolve_partitions(collection& facts);
+        virtual data collect_data(collection& facts) override;
 
      private:
-         std::unique_ptr<facter::facts::array_value> make_options_value(struct statfs const& fs);
+        static std::vector<std::string> to_options(struct statfs const& fs);
     };
 
 }}}  // namespace facter::facts::bsd

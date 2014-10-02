@@ -10,7 +10,11 @@
 
 namespace facter { namespace facts { namespace zfs {
 
-    struct zfs {
+    /**
+     * Represents a ZFS.
+     */
+    struct zfs
+    {
         /**
          * The name of this zfs
          */
@@ -26,6 +30,7 @@ namespace facter { namespace facts { namespace zfs {
          */
         std::map<std::string, std::string> props;
     };
+
     /**
      * Responsible for resolving ZFS facts.
      */

@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include "../posix/virtualization_resolver.hpp"
+#include "../resolvers/virtualization_resolver.hpp"
 #include <string>
 
 namespace facter { namespace facts { namespace linux {
@@ -12,7 +12,7 @@ namespace facter { namespace facts { namespace linux {
     /**
      * Responsible for resolving virtualization facts.
      */
-    struct virtualization_resolver : posix::virtualization_resolver
+    struct virtualization_resolver : resolvers::virtualization_resolver
     {
      protected:
         /**
@@ -20,7 +20,7 @@ namespace facter { namespace facts { namespace linux {
          * @param facts The fact collection that is resolving facts.
          * @return Returns the name of the hypervisor or empty string if no hypervisor.
          */
-        virtual std::string get_hypervisor(collection& facts);
+        virtual std::string get_hypervisor(collection& facts) override;
 
      private:
         static std::string get_cgroup_vm();

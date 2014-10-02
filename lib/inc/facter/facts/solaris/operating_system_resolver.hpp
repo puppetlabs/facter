@@ -4,38 +4,30 @@
  */
 #pragma once
 
-#include "../posix/operating_system_resolver.hpp"
-#include "../scalar_value.hpp"
+#include "../resolvers/operating_system_resolver.hpp"
 
 namespace facter { namespace facts { namespace solaris {
 
     /**
      * Responsible for resolving operating system facts.
      */
-    struct operating_system_resolver : posix::operating_system_resolver
+    struct operating_system_resolver : resolvers::operating_system_resolver
     {
      protected:
         /**
-         * Called to determine the operating system name.
+         * Collects the resolver data.
          * @param facts The fact collection that is resolving facts.
-         * @returns Returns a string representing the operating system name.
+         * @return Returns the resolver data.
          */
-        virtual std::string determine_operating_system(collection& facts);
+        virtual data collect_data(collection& facts) override;
+
         /**
-         * Called to determine the operating system release.
-         * @param facts The fact collection that is resolving facts.
-         * @param operating_system The name of the operating system.
-         * @returns Returns a string representing the operating system release.
+         * Parses the major and minor OS release versions.
+         * @param name The name of the OS.
+         * @param release The release to parse.
+         * @return Returns a tuple of major and minor release versions.
          */
-        virtual std::string determine_operating_system_release(collection& facts, std::string const& operating_system);
-        /**
-         * Called to determine the operating system major release.
-         * @param facts The fact collection that is resolving facts.
-         * @param operating_system The name of the operating system.
-         * @param os_release The version of the operating system.
-         * @returns Returns a string representing the operating system major release.
-         */
-        virtual std::string determine_operating_system_major_release(collection& facts, std::string const& operating_system, std::string const& os_release);
+        virtual std::tuple<std::string, std::string> parse_release(std::string const& name, std::string const& release) const override;
     };
 
 }}}  // namespace facter::facts::solaris

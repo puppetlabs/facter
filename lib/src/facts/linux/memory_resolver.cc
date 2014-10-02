@@ -11,25 +11,21 @@ using boost::bad_lexical_cast;
 
 namespace facter { namespace facts { namespace linux {
 
-    bool memory_resolver::get_memory_statistics(
-            collection& facts,
-            uint64_t& mem_free,
-            uint64_t& mem_total,
-            uint64_t& swap_free,
-            uint64_t& swap_total)
+    memory_resolver::data memory_resolver::collect_data(collection& facts)
     {
-        return file::each_line("/proc/meminfo", [&](string& line) {
+        data result;
+        file::each_line("/proc/meminfo", [&](string& line) {
             uint64_t* variable = nullptr;
             if (boost::starts_with(line, "MemTotal:")) {
-                variable = &mem_total;
+                variable = &result.mem_total;
             } else if (boost::starts_with(line, "MemFree:") ||
                        boost::starts_with(line, "Buffers:") ||
                        boost::starts_with(line, "Cached:")) {
-                variable = &mem_free;
+                variable = &result.mem_free;
             } else if (boost::starts_with(line, "SwapTotal:")) {
-                variable = &swap_total;
+                variable = &result.swap_total;
             } else if (boost::starts_with(line, "SwapFree:")) {
-                variable = &swap_free;
+                variable = &result.swap_free;
             }
             if (!variable) {
                 return true;
@@ -41,12 +37,13 @@ namespace facter { namespace facts { namespace linux {
                 return true;
             }
 
-             try {
+            try {
                 *variable += lexical_cast<uint64_t>(parts[1]) * 1024;
             } catch (bad_lexical_cast&) {
             }
             return true;
         });
+        return result;
     }
 
 }}}  // namespace facter::facts::linux

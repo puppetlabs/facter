@@ -4,31 +4,22 @@
  */
 #pragma once
 
-#include "../posix/memory_resolver.hpp"
+#include "../resolvers/memory_resolver.hpp"
 
 namespace facter { namespace facts { namespace solaris {
 
     /**
      * Responsible for resolving memory facts.
      */
-    struct memory_resolver : posix::memory_resolver
+    struct memory_resolver : resolvers::memory_resolver
     {
      protected:
         /**
-         * Called to get the memory statistics.
+         * Collects the resolver data.
          * @param facts The fact collection that is resolving facts.
-         * @param mem_free The returned free memory amount.
-         * @param mem_total The returned total memory amount.
-         * @param swap_free The returned free swap amount.
-         * @param swap_total The returned total swap amount.
-         * @return Returns true if memory statistics is available or false if it is not.
+         * @return Returns the resolver data.
          */
-        virtual bool get_memory_statistics(
-            collection& facts,
-            uint64_t& mem_free,
-            uint64_t& mem_total,
-            uint64_t& swap_free,
-            uint64_t& swap_total);
+        virtual data collect_data(collection& facts) override;
     };
 
 }}}  // namespace facter::facts::solaris

@@ -24,14 +24,14 @@ namespace facter { namespace facts { namespace linux {
          * @param addr The socket address to check.
          * @returns Returns true if the socket address is a link layer address or false if it is not.
          */
-        virtual bool is_link_address(sockaddr const* addr) const;
+        virtual bool is_link_address(sockaddr const* addr) const override;
 
         /**
          * Gets the bytes of the link address.
          * @param addr The socket address representing the link address.
          * @return Returns a pointer to the address bytes or nullptr if not a link address.
          */
-        virtual uint8_t const* get_link_address_bytes(sockaddr const* addr) const;
+        virtual uint8_t const* get_link_address_bytes(sockaddr const* addr) const override;
 
         /**
          * Gets the MTU of the link layer data.
@@ -39,14 +39,14 @@ namespace facter { namespace facts { namespace linux {
          * @param data The data pointer from the link layer interface.
          * @return Returns The MTU of the interface or -1 if there's no MTU.
          */
-        virtual int get_link_mtu(std::string const& interface, void* data) const;
+        virtual boost::optional<uint64_t> get_link_mtu(std::string const& interface, void* data) const override;
 
         /**
          * Gets the primary interface.
          * This is typically the interface of the default route.
          * @return Returns the primary interface or empty string if one could not be determined.
          */
-        virtual std::string get_primary_interface();
+        virtual std::string get_primary_interface() const override;
     };
 
 }}}  // namespace facter::facts::linux

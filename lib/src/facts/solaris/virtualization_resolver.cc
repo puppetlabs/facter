@@ -1,5 +1,5 @@
-#include <facter/facts/virtual_machine.hpp>
 #include <facter/facts/solaris/virtualization_resolver.hpp>
+#include <facter/facts/vm.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>

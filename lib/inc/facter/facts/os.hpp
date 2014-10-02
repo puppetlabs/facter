@@ -1,10 +1,10 @@
 /**
  * @file
- * Declares the POSIX operating system constants.
+ * Declares the operating system constants.
  */
 #pragma once
 
-namespace facter { namespace facts { namespace posix {
+namespace facter { namespace facts {
 
     /**
      * Stores the constant operating system names.
@@ -169,4 +169,4 @@ namespace facter { namespace facts { namespace posix {
         constexpr static char const* kfreebsd = "GNU/kFreeBSD";
     };
 
-}}}  // namespace facter::facts::posix
+}}

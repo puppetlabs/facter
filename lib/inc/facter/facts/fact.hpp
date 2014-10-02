@@ -79,6 +79,10 @@ namespace facter { namespace facts {
         constexpr static char const* lsb_release = "lsbrelease";
 
         /**
+         * The structured fact for networking.
+         */
+        constexpr static char const* networking = "networking";
+        /**
          * The fact for network hostname.
          */
         constexpr static char const* hostname = "hostname";
@@ -269,6 +273,10 @@ namespace facter { namespace facts {
         constexpr static char const* selinux_config_policy = "selinux_config_policy";
 
         /**
+         * The structured fact for SSH.
+         */
+        constexpr static char const* ssh = "ssh";
+        /**
          * The fact for SSH DSA public key.
          */
         constexpr static char const* ssh_dsa_key = "sshdsakey";
@@ -443,11 +451,6 @@ namespace facter { namespace facts {
          * The fact for disks.
          */
         constexpr static char const* disks = "disks";
-
-        /**
-         * The fact for structured disk fact.
-         */
-        constexpr static char const* disk = "disk";
 
         /**
          * The fact for partitions.

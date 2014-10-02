@@ -1,11 +1,9 @@
 #include <facter/facts/linux/operating_system_resolver.hpp>
-#include <facter/facts/linux/lsb_resolver.hpp>
 #include <facter/facts/linux/release_file.hpp>
-#include <facter/facts/posix/os.hpp>
+#include <facter/facts/os.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/collection.hpp>
-#include <facter/facts/fact.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/regex.hpp>
@@ -18,78 +16,114 @@
 using namespace std;
 using namespace facter::util;
 using namespace facter::execution;
-using namespace facter::facts::posix;
 using namespace boost::filesystem;
 namespace bs = boost::system;
 
 namespace facter { namespace facts { namespace linux {
 
-    string operating_system_resolver::determine_operating_system(collection& facts)
+    operating_system_resolver::data operating_system_resolver::collect_data(collection& facts)
     {
-        auto dist_id = facts.get<string_value>(fact::lsb_dist_id);
+        // Default to the base implementation
+        data result = resolvers::operating_system_resolver::collect_data(facts);
 
+        // Populate distro info
+        execution::each_line("lsb_release", {"-a"}, [&](string& line) {
+            string* variable = nullptr;
+            size_t offset = 0;
+            if (boost::starts_with(line, "LSB Version:")) {
+                variable = &result.specification_version;
+                offset = 12;
+            } else if (boost::starts_with(line, "Distributor ID:")) {
+                variable = &result.distro.id;
+                offset = 15;
+            } else if (boost::starts_with(line, "Description:")) {
+                variable = &result.distro.description;
+                offset = 12;
+            } else if (boost::starts_with(line, "Codename:")) {
+                variable = &result.distro.codename;
+                offset = 9;
+            } else if (boost::starts_with(line, "Release:")) {
+                variable = &result.distro.release;
+                offset = 8;
+            }
+            if (!variable) {
+                return true;
+            }
+            *variable = line.substr(offset);
+            boost::trim(*variable);
+            return true;
+        });
+
+        auto name = get_name(result.distro.id);
+        if (!name.empty()) {
+            result.name = move(name);
+        }
+
+        auto release = get_release(result.name, result.distro.release);
+        if (!release.empty()) {
+            result.release = move(release);
+        }
+
+        return result;
+    }
+
+    string operating_system_resolver::get_name(string const& distro_id)
+    {
         // Start by checking for Cumulus Linux
         string value = check_cumulus_linux();
+        if (!value.empty()) {
+            return value;
+        }
 
         // Check for Debian next
-        if (value.empty()) {
-            value = check_debian_linux(dist_id);
+        value = check_debian_linux(distro_id);
+        if (!value.empty()) {
+            return value;
         }
 
         // Check for Oracle Enterprise Linux next
-        if (value.empty()) {
-            value = check_oracle_linux();
+        value = check_oracle_linux();
+        if (!value.empty()) {
+            return value;
         }
 
         // Check for RedHat next
-        if (value.empty()) {
-            value = check_redhat_linux();
+        value = check_redhat_linux();
+        if (!value.empty()) {
+            return value;
         }
 
         // Check for SuSE next
-        if (value.empty()) {
-            value = check_suse_linux();
+        value = check_suse_linux();
+        if (!value.empty()) {
+            return value;
         }
 
-        // Check for some other Linux next
-        if (value.empty()) {
-            value = check_other_linux();
-        }
-
-        // If no value, default to the base implementation
-        if (value.empty()) {
-            return posix::operating_system_resolver::determine_operating_system(facts);
-        }
-
-        return value;
+        // Check for some other Linux last
+        return check_other_linux();
     }
 
-    string operating_system_resolver::determine_operating_system_release(collection& facts, string const& operating_system)
+    string operating_system_resolver::get_release(string const& name, string const& distro_release)
     {
-        if (operating_system.empty()) {
-            // Use the base implementation
-            return posix::operating_system_resolver::determine_operating_system_release(facts, operating_system);
-        }
-
         // Map of release files that contain a "release X.X.X" on the first line
         static map<string, string> const release_files = {
-            { string(os::centos),                   string(release_file::redhat) },
-            { string(os::redhat),                   string(release_file::redhat) },
-            { string(os::scientific),               string(release_file::redhat) },
-            { string(os::scientific_cern),          string(release_file::redhat) },
-            { string(os::ascendos),                 string(release_file::redhat) },
-            { string(os::cloud_linux),              string(release_file::redhat) },
-            { string(os::psbm),                     string(release_file::redhat) },
-            { string(os::xen_server),               string(release_file::redhat) },
-            { string(os::fedora),                   string(release_file::fedora) },
-            { string(os::meego),                    string(release_file::meego) },
-            { string(os::oracle_linux),             string(release_file::oracle_linux) },
-            { string(os::oracle_enterprise_linux),  string(release_file::oracle_enterprise_linux) },
-            { string(os::oracle_vm_linux),          string(release_file::oracle_vm_linux) },
+                { string(os::centos),                   string(release_file::redhat) },
+                { string(os::redhat),                   string(release_file::redhat) },
+                { string(os::scientific),               string(release_file::redhat) },
+                { string(os::scientific_cern),          string(release_file::redhat) },
+                { string(os::ascendos),                 string(release_file::redhat) },
+                { string(os::cloud_linux),              string(release_file::redhat) },
+                { string(os::psbm),                     string(release_file::redhat) },
+                { string(os::xen_server),               string(release_file::redhat) },
+                { string(os::fedora),                   string(release_file::fedora) },
+                { string(os::meego),                    string(release_file::meego) },
+                { string(os::oracle_linux),             string(release_file::oracle_linux) },
+                { string(os::oracle_enterprise_linux),  string(release_file::oracle_enterprise_linux) },
+                { string(os::oracle_vm_linux),          string(release_file::oracle_vm_linux) },
         };
 
         string value;
-        auto it = release_files.find(operating_system);
+        auto it = release_files.find(name);
         if (it != release_files.end()) {
             string contents = file::read_first_line(it->second);
             if (boost::ends_with(contents, "(Rawhide)")) {
@@ -100,23 +134,23 @@ namespace facter { namespace facts { namespace linux {
         }
 
         // Debian uses the entire contents of the release file as the version
-        if (value.empty() && operating_system == os::debian) {
+        if (value.empty() && name == os::debian) {
             value = file::read(release_file::debian);
             boost::trim_right(value);
         }
 
         // Alpine uses the entire contents of the release file as the version
-        if (value.empty() && operating_system == os::alpine) {
+        if (value.empty() && name == os::alpine) {
             value = file::read(release_file::alpine);
             boost::trim_right(value);
         }
 
         // Check for SuSE related distros, read the release file
         if (value.empty() && (
-            operating_system == os::suse ||
-            operating_system == os::suse_enterprise_server ||
-            operating_system == os::suse_enterprise_desktop ||
-            operating_system == os::open_suse)) {
+                name == os::suse ||
+                name == os::suse_enterprise_server ||
+                name == os::suse_enterprise_desktop ||
+                name == os::open_suse)) {
             string contents = file::read(release_file::suse);
             string major;
             string minor;
@@ -137,22 +171,22 @@ namespace facter { namespace facts { namespace linux {
         if (value.empty()) {
             const char* file = nullptr;
             string regex;
-            if (operating_system == os::ubuntu) {
+            if (name == os::ubuntu) {
                 file = release_file::lsb;
                 regex = "(?m)^DISTRIB_RELEASE=(\\d+\\.\\d+)(?:\\.\\d+)*";
-            } else if (operating_system == os::slackware) {
+            } else if (name == os::slackware) {
                 file = release_file::slackware;
                 regex = "Slackware ([0-9.]+)";
-            } else if (operating_system == os::mageia) {
+            } else if (name == os::mageia) {
                 file = release_file::mageia;
                 regex = "Mageia release ([0-9.]+)";
-            } else if (operating_system == os::cumulus) {
+            } else if (name == os::cumulus) {
                 file = release_file::os;
                 regex = "(?m)^VERSION_ID\\s*=\\s*(\\d+\\.\\d+\\.\\d+)";
-            } else if (operating_system == os::linux_mint) {
+            } else if (name == os::linux_mint) {
                 file = release_file::linux_mint_info;
                 regex = "(?m)^RELEASE=(\\d+)";
-            } else if (operating_system == os::openwrt) {
+            } else if (name == os::openwrt) {
                 file = release_file::openwrt_version;
                 regex = "(?m)^(\\d+\\.\\d+.*)";
             }
@@ -163,87 +197,30 @@ namespace facter { namespace facts { namespace linux {
         }
 
         // For VMware ESX, execute the vmware tool
-        if (value.empty() && operating_system == os::vmware_esx) {
+        if (value.empty() && name == os::vmware_esx) {
             auto result = execute("vmware", { "-v" });
             if (result.first) {
                 re_search(result.second, "VMware ESX .*?(\\d.*)", &value);
             }
         }
 
-        // For Amazon, use the lsbdistrelease fact
-        if (value.empty() && operating_system == os::amazon) {
-            auto release = facts.get<string_value>(fact::lsb_dist_release);
-            if (release) {
-                return release->value();
-            } else {
-                return {};
-            }
-        }
-
-        // Use the base implementation if we have no value
-        if (value.empty()) {
-            return posix::operating_system_resolver::determine_operating_system_release(facts, operating_system);
+        // For Amazon, use the distro release
+        if (value.empty() && name == os::amazon) {
+            return distro_release;
         }
 
         return value;
     }
 
-    string operating_system_resolver::determine_operating_system_major_release(collection& facts, string const& operating_system, string const& os_release)
+    tuple<string, string> operating_system_resolver::parse_release(string const& name, string const& release) const
     {
-        if (operating_system.empty() ||
-            os_release.empty() || !(
-            operating_system == os::amazon ||
-            operating_system == os::centos ||
-            operating_system == os::cloud_linux ||
-            operating_system == os::debian ||
-            operating_system == os::fedora ||
-            operating_system == os::oracle_enterprise_linux ||
-            operating_system == os::oracle_vm_linux ||
-            operating_system == os::redhat ||
-            operating_system == os::scientific ||
-            operating_system == os::scientific_cern ||
-            operating_system == os::ubuntu ||
-            operating_system == os::cumulus))
-        {
-            return {};
+        if (name != os::ubuntu) {
+            return resolvers::operating_system_resolver::parse_release(name, release);
         }
 
-        string value = os_release;
-        if (operating_system == os::ubuntu) {
-            re_search(value, "(\\d+\\.\\d*)\\.?\\d*", &value);
-            return value;
-        } else {
-            auto pos = value.find('.');
-            if (pos != string::npos) {
-                value = value.substr(0, pos);
-            }
-            return value;
-        }
-    }
-
-    string operating_system_resolver::determine_operating_system_minor_release(collection& facts, string const& operating_system, string const& os_release)
-    {
-        if (operating_system.empty() ||
-            os_release.empty() || !(
-            operating_system == os::amazon ||
-            operating_system == os::centos ||
-            operating_system == os::debian ||
-            operating_system == os::fedora ||
-            operating_system == os::redhat ||
-            operating_system == os::scientific ||
-            operating_system == os::ubuntu))
-        {
-            return {};
-        }
-
-        string value;
-        if (operating_system == os::ubuntu) {
-            re_search(os_release, "\\d+\\.\\d+\\.(\\d+)", &value);
-            return value;
-        } else {
-            re_search(os_release, "\\d+\\.(\\d+)", &value);
-            return value;
-        }
+        string major, minor;
+        re_search(release, "(\\d+\\.\\d*)\\.?(\\d*)", &major, &minor);
+        return make_tuple(move(major), move(minor));
     }
 
     string operating_system_resolver::check_cumulus_linux()
@@ -264,15 +241,13 @@ namespace facter { namespace facts { namespace linux {
         return {};
     }
 
-    string operating_system_resolver::check_debian_linux(string_value const* dist_id)
+    string operating_system_resolver::check_debian_linux(string const& distro_id)
     {
         // Check for Debian variants
         bs::error_code ec;
         if (is_regular_file(release_file::debian, ec)) {
-            if (dist_id) {
-                if (dist_id->value() == os::ubuntu || dist_id->value() == os::linux_mint) {
-                    return dist_id->value();
-                }
+            if (distro_id == os::ubuntu || distro_id == os::linux_mint) {
+                return distro_id;
             }
             return os::debian;
         }

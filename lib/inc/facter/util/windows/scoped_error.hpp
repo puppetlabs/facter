@@ -24,6 +24,7 @@ namespace facter { namespace util {
 
         /**
          * Return the error code for the scoped_error.
+         * @return Returns the error code.
          */
         DWORD error() const { return _err; }
 

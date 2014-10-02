@@ -49,12 +49,40 @@ namespace facter {
         namespace posix {
 
         }
+
+        /**
+         * The namespace for base resolvers.
+         */
+        namespace resolvers {
+
+        }
+
+        /**
+         * The namespace for Solaris-related types and fact resolvers.
+         */
+        namespace solaris {
+
+        }
+
+        /**
+         * The namespace for ZFS fact resolvers.
+         */
+        namespace zfs {
+
+        }
     }
 
     /**
      * The namespace for logging functions and macros.
      */
     namespace logging {
+
+    }
+
+    /**
+     * The namespace for the Ruby compatibility layer.
+     */
+    namespace ruby {
 
     }
 
@@ -74,6 +102,13 @@ namespace facter {
          * The namespace for utility types that are POSIX-specific.
          */
         namespace posix {
+
+        }
+
+        /**
+         * The namespace for utility types that are Solaris-specific.
+         */
+        namespace solaris {
 
         }
     }

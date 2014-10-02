@@ -5,11 +5,8 @@
 #pragma once
 
 #include "../posix/networking_resolver.hpp"
-#include "../map_value.hpp"
-#include <ifaddrs.h>
-#include <vector>
 #include <map>
-#include <string>
+#include <ifaddrs.h>
 
 namespace facter { namespace facts { namespace bsd {
 
@@ -20,56 +17,44 @@ namespace facter { namespace facts { namespace bsd {
     {
      protected:
         /**
-         * Called to resolve interface facts.
+         * Collects the resolver data.
          * @param facts The fact collection that is resolving facts.
+         * @return Returns the resolver data.
          */
-        virtual void resolve_interface_facts(collection& facts);
+        virtual data collect_data(collection& facts) override;
 
         /**
-         * Resolves the address fact for the given interface.
-         * @param facts The facts map to add the fact to.
-         * @param addr The interface address.
-         * @param primary True if the interface is considered to be the primary interface or false if not.
+         * Gets the MTU of the link layer data.
+         * @param interface The name of the link layer interface.
+         * @param data The data pointer from the link layer interface.
+         * @return Returns The MTU of the interface.
          */
-        virtual void resolve_address(collection& facts, ifaddrs const* addr, bool primary);
-
-        /**
-         * Resolves the network fact for the given interface.
-         * @param facts The facts map to add the fact to.
-         * @param addr The interface address.
-         * @param primary True if the interface is considered to be the primary interface or false if not.
-         */
-        virtual void resolve_network(collection& facts, ifaddrs const* addr, bool primary);
-
-        /**
-         * Resolves the MTU fact for the given interface.
-         * @param facts The facts map to add the fact to.
-         * @param addr The interface address.
-         */
-        virtual void resolve_mtu(collection& facts, ifaddrs const* addr);
+        virtual boost::optional<uint64_t> get_link_mtu(std::string const& interface, void* data) const = 0;
 
         /**
          * Gets the primary interface.
          * This is typically the interface of the default route.
          * @return Returns the primary interface or empty string if one could not be determined.
          */
-        virtual std::string get_primary_interface();
+        virtual std::string get_primary_interface() const;
 
         /**
          * Finds known DHCP servers for all interfaces.
          * @return Returns a map between interface name and DHCP server.
          */
-        virtual std::map<std::string, std::string> find_dhcp_servers();
+        virtual std::map<std::string, std::string> find_dhcp_servers() const;
 
         /**
          * Finds the DHCP server for the given interface.
          * @param interface The interface to find the DHCP server for.
          * @returns Returns the DHCP server for the interface or empty string if one isn't found.
          */
-        virtual std::string find_dhcp_server(std::string const& interface);
+        virtual std::string find_dhcp_server(std::string const& interface) const;
 
      private:
-        static std::vector<std::string> _dhclient_search_directories;
+        void populate_address(interface& iface, ifaddrs const* addr) const;
+        void populate_network(interface& iface, ifaddrs const* addr) const;
+        void populate_mtu(interface& iface, ifaddrs const* addr) const;
     };
 
 }}}  // namespace facter::facts::bsd

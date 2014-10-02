@@ -1,6 +1,6 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/solaris/kernel_resolver.hpp>
-#include <facter/facts/posix/id_resolver.hpp>
+#include <facter/facts/posix/identity_resolver.hpp>
 #include <facter/facts/solaris/operating_system_resolver.hpp>
 #include <facter/facts/solaris/networking_resolver.hpp>
 #include <facter/facts/solaris/processor_resolver.hpp>
@@ -8,6 +8,7 @@
 #include <facter/facts/posix/ssh_resolver.hpp>
 #include <facter/facts/posix/timezone_resolver.hpp>
 #include <facter/facts/solaris/filesystem_resolver.hpp>
+#include <facter/facts/solaris/disk_resolver.hpp>
 #include <facter/facts/solaris/dmi_resolver.hpp>
 #include <facter/facts/solaris/virtualization_resolver.hpp>
 #include <facter/facts/solaris/memory_resolver.hpp>
@@ -27,10 +28,11 @@ namespace facter { namespace facts {
         add(make_shared<solaris::processor_resolver>());
         add(make_shared<solaris::uptime_resolver>());
         add(make_shared<posix::ssh_resolver>());
-        add(make_shared<posix::id_resolver>());
+        add(make_shared<posix::identity_resolver>());
         add(make_shared<posix::timezone_resolver>());
         add(make_shared<solaris::filesystem_resolver>());
         add(make_shared<solaris::dmi_resolver>());
+        add(make_shared<solaris::disk_resolver>());
         add(make_shared<solaris::virtualization_resolver>());
         add(make_shared<solaris::memory_resolver>());
 

@@ -1,26 +1,26 @@
 #include <facter/facts/solaris/kernel_resolver.hpp>
-#include <facter/facts/collection.hpp>
-#include <facter/facts/fact.hpp>
-#include <facter/facts/scalar_value.hpp>
-#include <facter/util/string.hpp>
 #include <facter/logging/logging.hpp>
-#include <cstring>
+#include <sys/utsname.h>
 
 using namespace std;
-using namespace facter::util;
 
 LOG_DECLARE_NAMESPACE("facts.solaris.kernel");
 
 namespace facter { namespace facts { namespace solaris {
 
-    void kernel_resolver::resolve_kernel_version(collection& facts, struct utsname const& name)
+    kernel_resolver::data kernel_resolver::collect_data(collection& facts)
     {
-        facts.add(fact::kernel_version, make_value<string_value>(name.version));
-    }
+        data result;
+        struct utsname name;
+        if (uname(&name) == -1) {
+            LOG_WARNING("uname failed: %1% (%2%): kernel facts are unavailable.", strerror(errno), errno);
+            return result;
+        }
 
-    void kernel_resolver::resolve_kernel_major_version(collection& facts, struct utsname const& name)
-    {
-        facts.add(fact::kernel_major_version, make_value<string_value>(name.version));
+        result.name = name.sysname;
+        result.release = name.release;
+        result.version = name.version;
+        return result;
     }
 
 }}}  // namespace facter::facts::solaris
