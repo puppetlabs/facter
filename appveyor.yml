@@ -1,5 +1,7 @@
 install:
-  - ps: choco install ruby 7zip.commandline
+  - ps: choco install 7zip.commandline
+
+  - ps: choco install ruby -Version 2.0.0.57600
   - ps: $env:PATH = "C:\tools\ruby200\bin;" + $env:PATH
 
   - ps: (New-Object net.webclient).DownloadFile('http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/4.8.2/threads-win32/seh/x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z', "$pwd\x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z")
