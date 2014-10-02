@@ -19,7 +19,7 @@ namespace facter { namespace facts { namespace posix {
          * @param facts The fact collection that is resolving facts.
          * @return Returns the resolver data.
          */
-        virtual data collect_data(collection& facts);
+        virtual data collect_data(collection& facts) override;
 
      private:
         void populate_key(std::string const& filename, int type, ssh_key& key);

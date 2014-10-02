@@ -1,20 +1,14 @@
 #include <facter/facts/solaris/processor_resolver.hpp>
 #include <facter/logging/logging.hpp>
-#include <facter/facts/scalar_value.hpp>
-#include <facter/facts/map_value.hpp>
-#include <facter/facts/array_value.hpp>
-#include <facter/facts/collection.hpp>
-#include <facter/facts/fact.hpp>
+#include <facter/util/solaris/k_stat.hpp>
 #include <unordered_set>
 #include <sys/processor.h>
-#include <facter/util/solaris/k_stat.hpp>
 
 using namespace std;
-using namespace facter::facts;
-using namespace facter::facts::posix;
 using namespace facter::util::solaris;
 
 LOG_DECLARE_NAMESPACE("facts.solaris.processor");
+
 /*
  * https://blogs.oracle.com/mandalika/entry/solaris_show_me_the_cpu
  * What we want to do is to count the distinct number of chip_id (#nproc),
@@ -52,49 +46,36 @@ LOG_DECLARE_NAMESPACE("facts.solaris.processor");
            supported_max_cstates           1
            vendor_id                       GenuineIntel
  */
+
 namespace facter { namespace facts { namespace solaris {
 
-    void processor_resolver::resolve_structured_processors(collection& facts)
+    processor_resolver::data processor_resolver::collect_data(collection& facts)
     {
-        try {
-            auto processors_value = make_value<map_value>();
-            auto processor_list = make_value<array_value>();
+        auto result = posix::processor_resolver::collect_data(facts);
 
-            size_t hardware_thread_count = 0;
-            unordered_set<int> cores;
+        try {
             unordered_set<int> chips;
 
             k_stat kc;
-            auto kv = kc[string("cpu_info")];
+            auto kv = kc["cpu_info"];
             for (auto const& ke : kv) {
                 try {
-                    // we have a valid hardware thread so let us account for it.
-                    ++hardware_thread_count;
+                    ++result.logical_count;
+                    result.models.emplace_back(ke.value<string>("brand"));
+                    chips.insert(ke.value<int32_t>("chip_id"));
 
-                    auto brand = ke.value<string>("brand");
-                    processor_list->add(make_value<string_value>(move(brand)));
-                    auto chip_id = ke.value<int32_t>("chip_id");
-                    chips.insert(chip_id);
-                    auto core_id = ke.value<int32_t>("core_id");
-                    cores.insert(core_id);
+                    // Get the speed of the first processor
+                    if (result.speed == 0) {
+                        result.speed = static_cast<int64_t>(ke.value<uint64_t>("current_clock_Hz"));
+                    }
                 } catch (kstat_exception& ex) {
-                    LOG_DEBUG("processor_resolver failed: (%1%)", ex.what());
+                    LOG_DEBUG("failed to read processor data: %1%.", ex.what());
                 }
             }
-
-            // Add the model facts
-            if (!processor_list->empty()) {
-                processors_value->add("models", move(processor_list));
-            }
-            processors_value->add("count", make_value<integer_value>(hardware_thread_count));
-            processors_value->add("corescount", make_value<integer_value>(cores.size()));
-            processors_value->add("physicalcount", make_value<integer_value>(chips.size()));
-            processors_value->add("hardwarethreads", make_value<integer_value>(hardware_thread_count));
-            if (!processors_value->empty()) {
-                facts.add(fact::processors, move(processors_value));
-            }
+            result.physical_count = chips.size();
         } catch (kstat_exception& ex) {
-            LOG_DEBUG("processor_resolver failed (%1%)", ex.what());
+            LOG_DEBUG("failed to read processor data: %1%.", ex.what());
         }
+        return result;
     }
 }}}  // namespace facter::facts::solaris
