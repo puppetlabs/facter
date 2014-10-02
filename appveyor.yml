@@ -34,4 +34,4 @@ build_script:
   - ps: mingw32-make
 
 test_script:
-  - ps: mingw32-make test
+  - ps: ctest -V 2>&1 | c++filt
