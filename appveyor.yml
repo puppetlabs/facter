@@ -1,21 +1,20 @@
 install:
-  - ps: choco install ruby
+  - ps: choco install ruby 7zip.commandline
   - ps: $env:PATH = "C:\tools\ruby200\bin;" + $env:PATH
 
   - ps: (New-Object net.webclient).DownloadFile('http://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/4.8.2/threads-win32/seh/x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z', "$pwd\x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z")
-  - ps: $env:PATH += ";C:\Program Files\7-Zip"
-  - ps: 7z x x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z | FIND /V "ing  "
+  - ps: 7za x x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z | FIND /V "ing  "
   - ps: $env:PATH += ";$pwd\mingw64\bin"
 
   - ps: (New-Object net.webclient).DownloadFile('https://s3.amazonaws.com/kylo-pl-bucket/boost_1.55.0_mingw-w64_4.8.1.7z', "$pwd\boost_1.55.0_mingw-w64_4.8.1.7z")
-  - ps: 7z x boost_1.55.0_mingw-w64_4.8.1.7z | FIND /V "ing  "
+  - ps: 7za x boost_1.55.0_mingw-w64_4.8.1.7z | FIND /V "ing  "
 
   - ps: mkdir -force C:\tools
   - ps: mv boost_1.55.0_mingw-w64_4.8.1 C:\tools\boost_1.55.0_mingw-w64_4.8.1
 
   - ps: (New-Object net.webclient).DownloadFile('https://yaml-cpp.googlecode.com/files/yaml-cpp-0.5.1.tar.gz', "$pwd\yaml-cpp-0.5.1.tar.gz")
-  - ps: 7z x yaml-cpp-0.5.1.tar.gz
-  - ps: 7z x yaml-cpp-0.5.1.tar | FIND /V "ing  "
+  - ps: 7za x yaml-cpp-0.5.1.tar.gz
+  - ps: 7za x yaml-cpp-0.5.1.tar | FIND /V "ing  "
 
   - ps: cd yaml-cpp-0.5.1
   - ps: mkdir build
