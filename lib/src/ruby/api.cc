@@ -170,6 +170,10 @@ namespace facter { namespace ruby {
         _true = rb_funcall(_nil, rb_intern("nil?"), 0);
         _false = rb_funcall(_true, rb_intern("nil?"), 0);
 
+        // Set SIGINT handling to system default
+        // This prevents ruby from raising an interrupt exception.
+        rb_funcall(*rb_cObject, rb_intern("trap"), 2, rb_str_new_cstr("INT"), rb_str_new_cstr("SYSTEM_DEFAULT"));
+
         _initialized = true;
     }
 
