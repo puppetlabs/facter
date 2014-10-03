@@ -122,20 +122,24 @@ namespace facter { namespace facts {
         // Build a map between a file and the resolver that can resolve it
         map<string, external::resolver const*> files;
         for (auto const& dir : search_directories) {
+            // If dir is relative, make it an absolute path before passing to can_resolve.
             boost::system::error_code ec;
-            if (!is_directory(dir, ec)) {
+            path search_dir = canonical(dir, ec);
+
+            if (ec || !is_directory(search_dir, ec)) {
                 // Warn the user if not using the default search directories
+                string msg = ec ? ec.message() : "not a directory";
                 if (!directories.empty()) {
-                    LOG_WARNING("skipping external facts for \"%1%\": %2%", dir, ec.message());
+                    LOG_WARNING("skipping external facts for \"%1%\": %2%", dir, msg);
                 } else {
-                    LOG_DEBUG("skipping external facts for \"%1%\": %2%", dir, ec.message());
+                    LOG_DEBUG("skipping external facts for \"%1%\": %2%", dir, msg);
                 }
                 continue;
             }
 
-            LOG_DEBUG("searching \"%1%\" for external facts.", dir);
+            LOG_DEBUG("searching %1% for external facts.", search_dir);
 
-            directory::each_file(dir, [&](string const& path) {
+            directory::each_file(search_dir.string(), [&](string const& path) {
                 for (auto const& res : resolvers) {
                     if (res->can_resolve(path)) {
                         files.emplace(path, res.get());
