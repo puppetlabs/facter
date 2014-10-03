@@ -388,4 +388,9 @@ namespace facter { namespace ruby {
         return is_true(rb_funcall(first, rb_intern("eql?"), 1, second));
     }
 
+    void api::disable_cleanup()
+    {
+        _cleanup = false;
+    }
+
 }}  // namespace facter::ruby
