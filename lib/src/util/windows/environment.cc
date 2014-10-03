@@ -17,7 +17,9 @@ namespace facter { namespace util {
         {
             string paths;
             if (environment::get("PATH", paths)) {
-                boost::split(_paths, paths, bind(equal_to<char>(), placeholders::_1, environment::get_path_separator()), boost::token_compress_on);
+                auto is_sep = bind(equal_to<char>(), placeholders::_1, environment::get_path_separator());
+                boost::trim_if(paths, is_sep);
+                boost::split(_paths, paths, is_sep, boost::token_compress_on);
             }
         }
 
@@ -67,10 +69,16 @@ namespace facter { namespace util {
         return ';';
     }
 
+    static search_path_helper helper;
+
     vector<string> const& environment::search_paths()
     {
-        static search_path_helper helper;
         return helper.search_paths();
+    }
+
+    void environment::reload_search_paths()
+    {
+        helper = search_path_helper();
     }
 
 }}  // namespace facter::util
