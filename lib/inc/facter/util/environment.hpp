@@ -52,6 +52,11 @@ namespace facter { namespace util {
          * @return Returns the platform-specific program search paths.
          */
         static std::vector<std::string> const& search_paths();
+
+        /**
+         * Force search program paths to be reloaded.
+         */
+        static void reload_search_paths();
     };
 
 }}

@@ -9,6 +9,7 @@
 
 using namespace std;
 using namespace facter::facts;
+using namespace facter::testing;
 
 TEST(facter_facts_windows_collection, resolve_external) {
     collection facts;
@@ -28,4 +29,17 @@ TEST(facter_facts_windows_collection, resolve_external) {
     ASSERT_NE(nullptr, facts.get<string_value>("ps1_fact2"));
     ASSERT_EQ(nullptr, facts.get<string_value>("ps1_fact3"));
     ASSERT_NE(nullptr, facts.get<string_value>("ps1_fact4"));
+}
+
+TEST(facter_facts_posix_collection, resolve_external_relative) {
+    test_with_relative_path fixture("foo.bat", "@echo local_exec_fact=value");
+
+    collection facts;
+    ASSERT_EQ(0u, facts.size());
+    ASSERT_TRUE(facts.empty());
+    facts.add_external_facts({fixture.dirname()});
+    ASSERT_FALSE(facts.empty());
+    ASSERT_EQ(1u, facts.size());
+    ASSERT_NE(nullptr, facts.get<string_value>("local_exec_fact"));
+    ASSERT_EQ("value", facts.get<string_value>("local_exec_fact")->value());
 }

@@ -19,8 +19,9 @@ namespace facter { namespace facts { namespace external {
     bool execution_resolver::can_resolve(string const& path) const
     {
         // If the path can be resolved as an executable, this resolver can handle it.
+        // However, only allow absolute paths.
         LOG_DEBUG("checking execution on %1%", path);
-        return !execution::which(path, {"."}).empty();
+        return !execution::which(path, {}).empty();
     }
 
     void execution_resolver::resolve(string const& path, collection& facts) const

@@ -2,8 +2,11 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <gmock/gmock.h>
+#include <boost/filesystem.hpp>
 
 using namespace std;
+using namespace boost::filesystem;
 
 namespace facter { namespace testing {
 
@@ -18,6 +21,33 @@ namespace facter { namespace testing {
         buffer << in.rdbuf();
         data = buffer.str();
         return true;
+    }
+
+    test_with_relative_path::test_with_relative_path(string filename, string contents)
+    {
+        path dir("test_with_relative_path");
+        if (exists(dir)) {
+            throw runtime_error(dir.string()+" already exists");
+        }
+        if (!create_directory(dir)) {
+            throw runtime_error(dir.string()+" could not be created");
+        }
+        _dir = dir.string();
+
+        path exec = dir / filename;
+        {
+            ofstream exec_file(exec.string());
+            exec_file << contents << endl;
+        }
+        permissions(exec, add_perms | owner_exe | group_exe);
+        _file = exec.string();
+    }
+
+    test_with_relative_path::~test_with_relative_path()
+    {
+        if (!_dir.empty()) {
+            remove_all(_dir);
+        }
     }
 
 }}  // namespace facter::testing
