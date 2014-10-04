@@ -2,20 +2,17 @@
 #include <facter/util/directory.hpp>
 #include <facter/util/posix/scoped_descriptor.hpp>
 #include <facter/logging/logging.hpp>
+#include <facter/ruby/api.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
-#include <cstdlib>
-#include <cstdio>
-#include <sstream>
-#include <cstring>
 #include <unistd.h>
-#include <stdlib.h>
 #include <sys/wait.h>
 #include <fcntl.h>
 
 using namespace std;
 using namespace facter::util;
 using namespace facter::util::posix;
+using namespace facter::ruby;
 using namespace facter::logging;
 using namespace boost::filesystem;
 
@@ -173,6 +170,14 @@ namespace facter { namespace execution {
         // Child continues here
         try
         {
+            // Disable Ruby cleanup
+            // Ruby doesn't play nice with being forked
+            // The VM records the parent pid, so it doesn't like having ruby_cleanup called from a child process
+            auto ruby = api::instance();
+            if (ruby) {
+                ruby->disable_cleanup();
+            }
+
             if (dup2(stdin_read, STDIN_FILENO) == -1) {
                throw execution_exception("failed to redirect child stdin.");
             }
@@ -229,7 +234,8 @@ namespace facter { namespace execution {
             }
 
             // Execute the given program and exit in case of failure
-            exit(execv(executable.c_str(), const_cast<char* const*>(args.data())));
+            execv(executable.c_str(), const_cast<char* const*>(args.data()));
+            exit(errno == 0 ? EXIT_FAILURE : errno);
         }
         catch (exception& ex)
         {
@@ -242,7 +248,7 @@ namespace facter { namespace execution {
                     // We don't really care if writing the error message failed
                 }
             }
-            exit(-1);
+            exit(EXIT_FAILURE);
         }
 
         // CHILD DOES NOT RETURN

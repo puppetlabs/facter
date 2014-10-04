@@ -509,6 +509,12 @@ namespace facter {  namespace ruby {
          */
         bool equals(VALUE first, VALUE second) const;
 
+        /**
+         * Disables cleanup of the Ruby VM.
+         * This is only needed in forked child processes.
+         */
+        void disable_cleanup();
+
      private:
         explicit api(facter::util::dynamic_library&& library);
         // Imported Ruby functions that should not be called externally
