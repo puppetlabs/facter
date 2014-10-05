@@ -135,9 +135,9 @@ namespace facter { namespace facts { namespace resolvers {
             if (!interface.dhcp_server.empty()) {
                 if (primary) {
                     dhcp_servers->add("system", make_value<string_value>(interface.dhcp_server));
+                    networking->add("dhcp", make_value<string_value>(interface.dhcp_server));
                 }
                 dhcp_servers->add(string(interface.name), make_value<string_value>(interface.dhcp_server));
-                networking->add("dhcp", make_value<string_value>(interface.dhcp_server));
                 value->add("dhcp", make_value<string_value>(move(interface.dhcp_server)));
             }
             if (interface.mtu) {
@@ -155,9 +155,7 @@ namespace facter { namespace facts { namespace resolvers {
             }
             interface_names << interface.name;
 
-            if (!value->empty()) {
-                interfaces->add(move(interface.name), move(value));
-            }
+            interfaces->add(move(interface.name), move(value));
         }
 
         // TODO: remove flat fact
