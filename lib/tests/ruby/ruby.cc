@@ -58,7 +58,20 @@ using sink_t = sinks::synchronous_sink<ruby_log_appender>;
 
 struct ruby_test_parameters
 {
-    ruby_test_parameters(string const& file, string const& fact, string const& value, map<string, string> const& facts = map<string, string>()) :
+    // This constructor and the one following should be (and once were) collapsed into one like so:
+    //   ruby_test_parameters(string const& file, string const& fact, string const& value, map<string, string> const& facts = map<string, string>())
+    // However, this gave CLang 3.3 on FreeBSD 10.0 compiler errors.  So keeping them separate for now.
+    ruby_test_parameters(string const& file, string const& fact, string const& value) :
+        file(file),
+        level(log_level::fatal),
+        failure_expected(false),
+        fact(fact),
+        expected(value),
+        facts(map<string, string>())
+    {
+    }
+
+    ruby_test_parameters(string const& file, string const& fact, string const& value, map<string, string> const& facts) :
         file(file),
         level(log_level::fatal),
         failure_expected(false),
