@@ -56,17 +56,20 @@ namespace facter { namespace facts { namespace bsd {
             { MNT_SYNCHRONOUS,  "noasync" },
             { MNT_NOEXEC,       "noexec" },
             { MNT_NOSUID,       "nosuid" },
-            { MNT_NODEV,        "nodev" },
             { MNT_UNION,        "union" },
             { MNT_ASYNC,        "async" },
             { MNT_EXPORTED,     "exported" },
             { MNT_LOCAL,        "local" },
             { MNT_QUOTA,        "quota" },
             { MNT_ROOTFS,       "root" },
+#ifndef __FreeBSD__
+            // the following constants aren't defined on FreeBSD 10
+            { MNT_NODEV,        "nodev" },
             { MNT_DONTBROWSE,   "nobrowse" },
             { MNT_AUTOMOUNTED,  "automounted" },
             { MNT_JOURNALED,    "journaled" },
             { MNT_DEFWRITE,     "deferwrites" },
+#endif
         };
 
         vector<string> options;
