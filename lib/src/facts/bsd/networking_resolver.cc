@@ -12,7 +12,10 @@ using namespace facter::util;
 using namespace facter::util::bsd;
 using namespace facter::execution;
 
-LOG_DECLARE_NAMESPACE("facts.bsd.networking");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.bsd.networking"
 
 namespace facter { namespace facts { namespace bsd {
 

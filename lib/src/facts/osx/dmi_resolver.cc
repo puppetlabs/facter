@@ -4,7 +4,10 @@
 
 using namespace std;
 
-LOG_DECLARE_NAMESPACE("facts.osx.dmi");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.osx.dmi"
 
 namespace facter { namespace facts { namespace osx {
 

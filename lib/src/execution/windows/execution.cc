@@ -20,7 +20,10 @@ using namespace facter::logging;
 using namespace boost::filesystem;
 using namespace boost::algorithm;
 
-LOG_DECLARE_NAMESPACE("execution");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "execution"
 
 namespace facter { namespace execution {
 

@@ -9,7 +9,10 @@ using namespace facter::util;
 using namespace boost::filesystem;
 namespace bs = boost::system;
 
-LOG_DECLARE_NAMESPACE("facts.linux.dmi");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.linux.dmi"
 
 namespace facter { namespace facts { namespace linux {
 

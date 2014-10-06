@@ -4,7 +4,10 @@
 
 using namespace std;
 
-LOG_DECLARE_NAMESPACE("facts.solaris.kernel");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.solaris.kernel"
 
 namespace facter { namespace facts { namespace solaris {
 

@@ -14,7 +14,10 @@ using namespace std;
 using namespace facter::util;
 using namespace boost::filesystem;
 
-LOG_DECLARE_NAMESPACE("facts.linux.processor");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.linux.processor"
 
 namespace facter { namespace facts { namespace linux {
 

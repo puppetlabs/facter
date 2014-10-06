@@ -15,7 +15,10 @@ using namespace facter::facts;
 using namespace facter::util;
 using namespace facter::execution;
 
-LOG_DECLARE_NAMESPACE("facts.solaris.zfs");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.solaris.zfs"
 
 namespace facter { namespace facts { namespace solaris {
 

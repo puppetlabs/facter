@@ -6,7 +6,10 @@
 using namespace std;
 using namespace facter::util::solaris;
 
-LOG_DECLARE_NAMESPACE("facts.solaris.disk");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.solaris.disk"
 
 namespace facter { namespace facts { namespace solaris {
 

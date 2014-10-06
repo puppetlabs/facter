@@ -12,7 +12,10 @@
 using namespace std;
 using namespace YAML;
 
-LOG_DECLARE_NAMESPACE("facts.external.yaml");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.external.yaml"
 
 namespace facter { namespace facts { namespace external {
 

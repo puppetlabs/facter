@@ -24,7 +24,10 @@ using namespace facter::facts;
 using namespace facter::ruby;
 namespace po = boost::program_options;
 
-LOG_DECLARE_NAMESPACE("main");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "main"
 
 void help(po::options_description& desc)
 {

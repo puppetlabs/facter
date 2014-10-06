@@ -22,7 +22,10 @@ using namespace boost::filesystem;
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
 
-LOG_DECLARE_NAMESPACE("facts.linux.filesystem");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.linux.filesystem"
 
 namespace facter { namespace facts { namespace linux {
 

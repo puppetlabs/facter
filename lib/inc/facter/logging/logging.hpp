@@ -23,10 +23,10 @@
 
 /**
  * Used to declare a logging namespace for a source file.
- * This macro must be used before any other logging macro.
- * @param ns The logging namespace name.
+ * This macro should be redefined before using any logging macro.
  */
-#define LOG_DECLARE_NAMESPACE(ns) //static const std::string g_logger = LOG_ROOT_NAMESPACE ns;
+#define LOG_NAMESPACE "default"
+
 /**
  * Logs a message.
  * @param level The logging level for the message.
@@ -34,8 +34,8 @@
  * @param ... The format message parameters.
  */
 #define LOG_MESSAGE(level, format, ...) \
-    if (facter::logging::is_log_enabled("", level)) { \
-        facter::logging::log("", level, format, ##__VA_ARGS__); \
+    if (facter::logging::is_log_enabled(LOG_ROOT_NAMESPACE LOG_NAMESPACE, level)) { \
+        facter::logging::log(LOG_ROOT_NAMESPACE LOG_NAMESPACE, level, format, ##__VA_ARGS__); \
     }
 /**
  * Logs a trace message.
@@ -77,7 +77,7 @@
  * Determines if the given logging level is enabled.
  * @param level The logging level to check.
  */
-#define LOG_IS_ENABLED(level) facter::logging::is_log_enabled("", level)
+#define LOG_IS_ENABLED(level) facter::logging::is_log_enabled(LOG_ROOT_NAMESPACE LOG_NAMESPACE, level)
 /**
  * Determines if the trace logging level is enabled.
  * @returns Returns true if trace logging is enabled or false if it is not enabled.

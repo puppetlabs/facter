@@ -19,7 +19,10 @@ using namespace rapidjson;
 using namespace YAML;
 using namespace boost::filesystem;
 
-LOG_DECLARE_NAMESPACE("facts.collection");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.collection"
 
 namespace facter { namespace facts {
 

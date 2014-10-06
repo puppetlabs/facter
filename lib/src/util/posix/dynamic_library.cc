@@ -5,7 +5,10 @@
 
 using namespace std;
 
-LOG_DECLARE_NAMESPACE("util.posix.dynamic_library");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "util.posix.dynamic_library"
 
 namespace facter { namespace util {
 
