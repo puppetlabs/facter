@@ -40,14 +40,20 @@ namespace facter { namespace facts { namespace external {
             // values from the registry, it will read the 32-bit view of the registry. Also 32 and 64-bit versions have different
             // modules available (since PSModulePath is in system32). In those circumstances, Windows invisibly redirects to
             // 32-bit executables; it also provides a link at %SYSTEMROOT%\sysnative for the 64-bit versions. So explicitly look
-            // for Powershell at sysnative before trying PATH lookup.
+            // for Powershell at sysnative before trying system32 and PATH lookup.
             TCHAR szPath[MAX_PATH];
             if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_WINDOWS, NULL, 0, szPath))) {
                 auto err = GetLastError();
                 LOG_DEBUG("error finding SYSTEMROOT: %1% (%2%)", scoped_error(err), err);
             }
-            auto p = path(szPath) / "sysnative" / "WindowsPowerShell" / "v1.0" / "powershell.exe";
-            auto pwrshell = which(p.string());
+            auto pathNative = path(szPath) / "sysnative" / "WindowsPowerShell" / "v1.0" / "powershell.exe";
+            auto pwrshell = which(pathNative.string());
+
+            if (pwrshell.empty()) {
+                auto path32 = path(szPath) / "system32" / "WindowsPowerShell" / "v1.0" / "powershell.exe";
+                pwrshell = which(path32.string());
+            }
+
             if (pwrshell.empty()) {
                 pwrshell = "powershell";
             }
