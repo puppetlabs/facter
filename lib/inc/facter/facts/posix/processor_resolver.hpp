@@ -4,54 +4,22 @@
  */
 #pragma once
 
-#include "../resolver.hpp"
-#include <sys/utsname.h>
+#include "../resolvers/processor_resolver.hpp"
 
 namespace facter { namespace facts { namespace posix {
 
     /**
      * Responsible for resolving processor-related facts.
      */
-    struct processor_resolver : resolver
+    struct processor_resolver : resolvers::processor_resolver
     {
-        /**
-         * Constructs the processor_resolver.
-         */
-        processor_resolver();
-
      protected:
         /**
-         * Called to resolve all facts the resolver is responsible for.
+         * Collects the resolver data.
          * @param facts The fact collection that is resolving facts.
+         * @return Returns the resolver data.
          */
-        virtual void resolve_facts(collection& facts);
-        /**
-         * Called to resolve the hardware ISA fact.
-         * @param facts The fact collection that is resolving facts.
-         * @param name The result of the uname call.
-         */
-        virtual void resolve_hardware_isa(collection& facts, struct utsname const& name);
-        /**
-         * Called to resolve the hardware model fact.
-         * @param facts The fact collection that is resolving facts.
-         * @param name The result of the uname call.
-         */
-        virtual void resolve_hardware_model(collection& facts, struct utsname const& name);
-        /**
-         * Called to resolve the hardware architecture fact.
-         * @param facts The fact collection that is resolving facts.
-         */
-        virtual void resolve_architecture(collection& facts);
-        /**
-         * Called to resolve processor count, physical processor count, and description facts.
-         * @param facts The fact collection that is resolving facts.
-         */
-        virtual void resolve_processors(collection& facts);
-        /**
-         * Called to resolve the processors structured fact.
-         * @param facts The fact collection that is resolving facts.
-         */
-        virtual void resolve_structured_processors(collection& facts) = 0;
+        virtual data collect_data(collection& facts) override;
     };
 
 }}}  // namespace facter::facts::posix

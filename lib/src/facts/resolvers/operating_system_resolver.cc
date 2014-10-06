@@ -87,7 +87,7 @@ namespace facter { namespace facts { namespace resolvers {
             string major, minor;
             tie(major, minor) = parse_release(data.name, data.distro.release);
 
-            if (!major.empty()) {
+            if (major.empty()) {
                 major = data.distro.release;
             }
             // TODO: remove flat fact

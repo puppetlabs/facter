@@ -53,3 +53,17 @@ TEST(fact_util_string, percentage) {
     ASSERT_EQ("99.99%", percentage(numeric_limits<uint64_t>::max() - 1, numeric_limits<uint64_t>::max()));
     ASSERT_EQ("100%", percentage(numeric_limits<uint64_t>::max(), numeric_limits<uint64_t>::max()));
 }
+
+TEST(facter_util_string, frequency) {
+    ASSERT_EQ("0 Hz", frequency(0));
+    ASSERT_EQ("100 Hz", frequency(100));
+    ASSERT_EQ("999 Hz", frequency(999));
+    ASSERT_EQ("1.00 kHz", frequency(1000));
+    ASSERT_EQ("999.00 kHz", frequency(1000 * 999));
+    ASSERT_EQ("1.00 MHz", frequency((1000 * 1000) - 1));
+    ASSERT_EQ("1.00 MHz", frequency(1000 * 1000));
+    ASSERT_EQ("5.25 MHz", frequency(5250000));
+    ASSERT_EQ("999.00 MHz", frequency(1000 * 1000 * 999));
+    ASSERT_EQ("1.00 GHz", frequency((1000 * 1000 * 1000) - 1));
+    ASSERT_EQ("5.25 GHz", frequency(5250000000));
+}

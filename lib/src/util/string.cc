@@ -46,7 +46,7 @@ namespace facter { namespace util {
         if (size < 1024) {
             return to_string(size) + " bytes";
         }
-        unsigned int exp = floor(log2(size) / log2(1024.0));
+        unsigned int exp = floor(log2(size) / 10.0);
         double converted = round(100.0 * (size / pow(1024.0, exp))) / 100.0;
 
         // Check to see if rounding up gets us to 1024; if so, move to the next unit
@@ -80,6 +80,32 @@ namespace facter { namespace util {
         }
         ostringstream ss;
         ss << fixed << setprecision(2) << converted << "%";
+        return ss.str();
+    }
+
+    string frequency(int64_t freq)
+    {
+        static char prefixes[] = { 'k', 'M', 'G', 'T'  };
+
+        if (freq < 1000) {
+            return to_string(freq) + " Hz";
+        }
+        unsigned int exp = floor(log10(freq) / 3.0);
+        double converted = round(100.0 * (freq / pow(1000.0, exp))) / 100.0;
+
+        // Check to see if rounding up gets us to 1000; if so, move to the next unit
+        if (fabs(converted - 1000.0) < numeric_limits<double>::epsilon()) {
+            converted = 1.00;
+            ++exp;
+        }
+
+        // If we exceed the SI prefix (we shouldn't, but just in case), just return the speed in Hz
+        if (exp - 1 >= sizeof(prefixes)) {
+            return to_string(freq) + " Hz";
+        }
+
+        ostringstream ss;
+        ss  << fixed << setprecision(2) << converted << " " << prefixes[exp - 1] << "Hz";
         return ss.str();
     }
 

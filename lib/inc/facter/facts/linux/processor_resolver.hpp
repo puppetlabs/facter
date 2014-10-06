@@ -15,15 +15,11 @@ namespace facter { namespace facts { namespace linux {
     {
      protected:
         /**
-         * Called to resolve the hardware architecture fact.
+         * Collects the resolver data.
          * @param facts The fact collection that is resolving facts.
+         * @return Returns the resolver data.
          */
-        virtual void resolve_architecture(collection& facts);
-        /**
-         * Called to resolve the processors structured fact.
-         * @param facts The fact collection that is resolving facts.
-         */
-        virtual void resolve_structured_processors(collection& facts);
+        virtual data collect_data(collection& facts) override;
     };
 
 }}}  // namespace facter::facts::linux
