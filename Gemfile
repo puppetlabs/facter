@@ -13,6 +13,7 @@ group :development, :test do
   gem 'rspec', "~> 2.11.0"
   gem 'mocha', "~> 0.10.5"
   gem 'json', "~> 1.7", :platforms => :ruby
+  gem 'json-schema', :platforms => :ruby
   gem 'puppetlabs_spec_helper'
 end
 
