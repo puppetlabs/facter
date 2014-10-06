@@ -21,7 +21,11 @@ function travis_make()
     fi
 
     # Build cfacter
-    [ $1 == "cpplint" ] && export MAKE_TARGET=" cpplint "
+    if [ $1 == "cpplint" ]; then
+        export MAKE_TARGET="cpplint"
+    else
+        export MAKE_TARGET="all_unity"
+    fi
     make $MAKE_TARGET
     if [ $? -ne 0 ]; then
         echo "build failed."
@@ -37,7 +41,9 @@ function travis_make()
         fi
 
         # Install into the system for the gem
-        sudo make install
+        # Use install fast to avoid dependency checks that don't
+        # co-operate with the unity build.
+        sudo make install/fast
         if [ $? -ne 0 ]; then
             echo "install failed."
             exit 1

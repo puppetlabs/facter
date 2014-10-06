@@ -17,4 +17,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 add_executable(cfacter ${CFACTER_SOURCES})
 target_link_libraries(cfacter libfacter ${Boost_LIBRARIES})
+set_target_properties(cfacter PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY")
+cotire(cfacter)
+
 install(TARGETS cfacter DESTINATION bin)

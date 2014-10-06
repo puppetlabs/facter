@@ -29,10 +29,10 @@ class custom_log_appender :
     string _message;
 };
 
-using sink_t = sinks::synchronous_sink<custom_log_appender>;
-
 struct facter_logging : ::testing::Test {
  protected:
+    using sink_t = sinks::synchronous_sink<custom_log_appender>;
+
     virtual void SetUp()
     {
         _appender.reset(new custom_log_appender());

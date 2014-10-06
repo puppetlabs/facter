@@ -9,6 +9,7 @@ endif()
 enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+include(cotire)
 
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     # Allow searching in boxen installed homebrew directories

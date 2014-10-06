@@ -54,8 +54,6 @@ class ruby_log_appender :
     vector<pair<string, string>> _messages;
 };
 
-using sink_t = sinks::synchronous_sink<ruby_log_appender>;
-
 struct ruby_test_parameters
 {
     ruby_test_parameters(string const& file, string const& fact, string const& value, map<string, string> const& facts = map<string, string>()) :
@@ -129,6 +127,8 @@ ostream& operator<<(ostream& stream, const ruby_test_parameters& p)
 struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
 {
  protected:
+    using sink_t = sinks::synchronous_sink<ruby_log_appender>;
+
     bool load()
     {
         auto ruby = api::instance();

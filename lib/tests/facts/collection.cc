@@ -29,7 +29,7 @@ TEST(facter_facts_collection, simple_fact) {
     ASSERT_EQ("bar", fact->value());
 }
 
-struct simple_resolver : resolver
+struct simple_resolver : facter::facts::resolver
 {
     simple_resolver() : resolver("test", { "foo" })
     {
@@ -50,7 +50,7 @@ TEST(facter_facts_collection, simple_resolver) {
     ASSERT_EQ("bar", facts.get<string_value>("foo")->value());
 }
 
-struct multi_resolver : resolver
+struct multi_resolver : facter::facts::resolver
 {
     multi_resolver() : resolver("test", { "foo", "bar" })
     {
