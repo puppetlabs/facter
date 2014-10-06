@@ -6,6 +6,8 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
 
+option(BOOST_STATIC "Use Boost's static libraries" OFF)
+
 enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
@@ -18,12 +20,15 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
 endif()
 
 # Find our dependency packages
-# We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
-if (NOT WIN32)
-  # Boost.Log has what I assume is a bug, where it links dynamically by default but doesn't configure the headers
-  # correctly for dynamic linking. This addresses this on non-Windows platforms, where we link dynamically.
-  add_definitions(-DBOOST_LOG_DYN_LINK)
+if (BOOST_STATIC)
+    set(Boost_USE_STATIC_LIBS ON)
+else()
+    # Boost.Log requires that BOOST_LOG_DYN_LINK is set when using dynamic linking. We set ALL for consistency.
+    add_definitions(-DBOOST_ALL_DYN_LINK)
+    set(Boost_USE_STATIC_LIBS OFF)
 endif()
+
+# We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
 find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time thread regex log)
 find_package(YAMLCPP REQUIRED)
 if (NOT WITHOUT_OPENSSL)
