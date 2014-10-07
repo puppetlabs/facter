@@ -75,7 +75,7 @@ Commands are expected to be executed in cmd.exe or Powershell. MinGW and Cygwin 
 
     * cd cfacter && mkdir release && cd release
 
-    * cmake -G "MinGW Makefiles" -DBOOST_ROOT=\<boost install path\> -DOPENSSL_ROOT=\<openssl install path\> -DYAMLCPP_ROOT=\<yaml-cpp install path\> .. && mingw32-make
+    * cmake -G "MinGW Makefiles" -DBOOST_ROOT=\<boost install path\> -DOPENSSL_ROOT=\<openssl install path\> -DYAMLCPP_ROOT=\<yaml-cpp install path\> -DBOOST_STATIC=ON .. && mingw32-make
 
 
 ## Visual Studio Express 2013 for Windows Desktop (not currently supported)
