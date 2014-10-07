@@ -63,7 +63,10 @@ namespace facter { namespace facts { namespace resolvers {
         }
 
         auto models = make_value<array_value>();
+        int processor = 0;
         for (auto& model : data.models) {
+            // TODO: remove flat fact
+            facts.add(fact::processor + to_string(processor++), make_value<string_value>(model));
             models->add(make_value<string_value>(move(model)));
         }
 

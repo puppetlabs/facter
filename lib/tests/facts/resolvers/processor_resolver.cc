@@ -72,7 +72,7 @@ TEST(facter_facts_resolvers_processor_resolver, facts)
 {
     collection facts;
     facts.add(make_shared<test_processor_resolver>());
-    ASSERT_EQ(6u, facts.size());
+    ASSERT_EQ(10u, facts.size());
 
     auto count = facts.get<integer_value>(fact::physical_processor_count);
     ASSERT_NE(nullptr, count);
@@ -93,6 +93,12 @@ TEST(facter_facts_resolvers_processor_resolver, facts)
     auto hardware = facts.get<string_value>(fact::hardware_model);
     ASSERT_NE(nullptr, hardware);
     ASSERT_EQ("hardware", hardware->value());
+
+    for (size_t i = 0; i < 4; ++i) {
+        auto model = facts.get<string_value>(fact::processor + to_string(i));
+        ASSERT_NE(nullptr, model);
+        ASSERT_EQ("processor" + to_string(i + 1), model->value());
+    }
 
     auto processors = facts.get<map_value>(fact::processors);
     ASSERT_NE(nullptr, processors);
