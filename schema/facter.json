@@ -18,7 +18,7 @@
         "^blockdevice_[A-Za-z0-9]+_size$" : { "type": "integer" },
         "^blockdevice_[A-Za-z0-9]+_vendor$" : { "type": "string" },
         "^blockdevice_[A-Za-z0-9]+_model$" : { "type": "string" },
-        "^mtu_[A-Za-z0-9]+$" : { "type": "integer" },
+        "^mtu_[A-Za-z0-9_]+$" : { "type": "integer" },
         "^netmask_[A-Za-z0-9_]+$" : { "$ref" : "#/definitions/ipaddress" },
         "^network_[A-Za-z0-9_]+$" : { "$ref" : "#/definitions/ipaddress" },
         "^ipaddress_[A-Za-z0-9_]+$" : { "$ref" : "#/definitions/ipaddress" },
