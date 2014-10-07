@@ -42,29 +42,25 @@ end
 
 Facter.add("swapsize_mb") do
   setcode do
-    swaptotal = Facter::Memory.swap_size
-    "%.2f" % [swaptotal] if swaptotal
+    Facter::Memory.swap_size
   end
 end
 
 Facter.add("swapfree_mb") do
   setcode do
-    swapfree = Facter::Memory.swap_free
-    "%.2f" % [swapfree] if swapfree
+    Facter::Memory.swap_free
   end
 end
 
 Facter.add("memorysize_mb") do
   setcode do
-    memtotal = Facter::Memory.mem_size
-    "%.2f" % [memtotal] if memtotal
+    Facter::Memory.mem_size
   end
 end
 
 Facter.add("memoryfree_mb") do
   setcode do
-    memfree = Facter::Memory.mem_free
-    "%.2f" % [memfree] if memfree
+    Facter::Memory.mem_free
   end
 end
 
@@ -76,8 +72,7 @@ end
   Facter.add(fact) do
     confine :kernel => [ :linux, :"gnu/kfreebsd" ]
     setcode do
-      meminfo = Facter::Memory.meminfo_number(name)
-      "%.2f" % [meminfo]
+      Facter::Memory.meminfo_number(name)
     end
   end
 end
@@ -113,7 +108,7 @@ if Facter.value(:kernel) == "SunOS"
       end
     end
     setcode do
-      "%.2f" % [phymem.to_f]
+      phymem.to_f
     end
   end
 end
@@ -129,7 +124,7 @@ if Facter.value(:kernel) == "windows"
         mem = comp.TotalPhysicalMemory
         break
       end
-      "%.2f" % [(mem.to_f / 1024.0) / 1024.0]
+      mem.to_f / 1024.0 / 1024.0
     end
   end
 
@@ -141,7 +136,7 @@ if Facter.value(:kernel) == "windows"
         mem = os.FreePhysicalMemory
         break
       end
-      "%.2f" % [mem.to_f / 1024.0]
+      mem.to_f / 1024.0
     end
   end
 end
@@ -151,7 +146,7 @@ Facter.add("swapsize_mb") do
   setcode do
     page_size = Facter::Util::POSIX.sysctl("hw.pagesize").to_f
     swaptotal = Facter::Util::POSIX.sysctl("vm.swap_size").to_f * page_size
-    "%.2f" % [(swaptotal.to_f / 1024.0) / 1024.0]
+    swaptotal.to_f / 1024.0 / 1024.0
   end
 end
 
@@ -163,6 +158,6 @@ Facter.add("swapfree_mb") do
     swap_anon_use = Facter::Util::POSIX.sysctl("vm.swap_anon_use").to_f * page_size
     swap_cache_use = Facter::Util::POSIX.sysctl("vm.swap_cache_use").to_f * page_size
     swapfree = swaptotal - swap_anon_use - swap_cache_use
-    "%.2f" % [(swapfree.to_f / 1024.0) / 1024.0]
+    swapfree.to_f / 1024.0 / 1024.0
   end
 end

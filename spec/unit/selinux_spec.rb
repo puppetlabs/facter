@@ -17,7 +17,7 @@ describe "SELinux facts" do
 
       FileTest.expects(:exists?).with("/selinux/enforce").returns true
 
-      Facter.fact(:selinux).value.should == "true"
+      Facter.fact(:selinux).value.should == true
     end
 
     it "and return true with selinuxfs path from /proc" do
@@ -29,7 +29,7 @@ describe "SELinux facts" do
       FileTest.expects(:exists?).with("/proc/self/attr/current").returns true
       File.expects(:read).with("/proc/self/attr/current").returns("kernel")
 
-      Facter.fact(:selinux).value.should == "true"
+      Facter.fact(:selinux).value.should == true
     end
 
     it "and return true with multiple selinuxfs mounts from /proc" do
@@ -44,13 +44,13 @@ describe "SELinux facts" do
       FileTest.expects(:exists?).with("/proc/self/attr/current").returns true
       File.expects(:read).with("/proc/self/attr/current").returns("kernel")
 
-      Facter.fact(:selinux).value.should == "true"
+      Facter.fact(:selinux).value.should == true
     end
   end
 
   describe "when selinux is present" do
     before :each do
-      Facter.fact(:selinux).stubs(:value).returns("true")
+      Facter.fact(:selinux).stubs(:value).returns(true)
     end
 
     it "should return true if SELinux policy enabled" do
@@ -59,7 +59,7 @@ describe "SELinux facts" do
       FileTest.expects(:exists?).with("/selinux/enforce").returns true
       File.expects(:read).with("/selinux/enforce").returns("1")
 
-      Facter.fact(:selinux_enforced).value.should == "true"
+      Facter.fact(:selinux_enforced).value.should == true
     end
 
     it "should return an SELinux policy version" do
