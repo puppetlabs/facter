@@ -547,6 +547,6 @@ describe "is_virtual fact" do
   it "should be true when running in bochs" do
     Facter.fact(:kernel).stubs(:value).returns("Linux")
     Facter.fact(:virtual).stubs(:value).returns("bochs")
-    Facter.fact(:is_virtual).value.should == "true"
+    Facter.fact(:is_virtual).value.should == true
   end
 end
