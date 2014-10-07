@@ -12,6 +12,8 @@
 #include <windows.h>
 #include <Shlobj.h>
 
+#include <facter/facts/windows/memory_resolver.hpp>
+
 using namespace std;
 using namespace facter::util;
 using namespace facter::facts::external;
@@ -52,6 +54,7 @@ namespace facter { namespace facts {
     void collection::add_platform_facts()
     {
         // TODO WINDOWS: Add facts as created.
+        add(make_shared<windows::memory_resolver>());
     }
 
 }}  // namespace facter::facts

@@ -161,6 +161,10 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
         "src/facts/bsd/uptime_resolver.cc"
         "src/util/bsd/scoped_ifaddrs.cc"
     )
+elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
+    set(LIBFACTER_PLATFORM_SOURCES
+        "src/facts/windows/memory_resolver.cc"
+    )
 endif()
 
 # Set include directories
