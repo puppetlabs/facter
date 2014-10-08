@@ -3,7 +3,10 @@
 #include <facter/logging/logging.hpp>
 #include <windows.h>
 
-LOG_DECLARE_NAMESPACE("facts.windows.memory_resolver");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.windows.memory_resolver"
 
 using namespace facter::util;
 

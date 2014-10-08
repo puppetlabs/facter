@@ -4,6 +4,7 @@
 #include <facter/facts/external/yaml_resolver.hpp>
 #include <facter/facts/external/execution_resolver.hpp>
 #include <facter/facts/external/windows/powershell_resolver.hpp>
+#include <facter/facts/windows/memory_resolver.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/util/scoped_resource.hpp>
 #include <facter/util/windows/scoped_error.hpp>
@@ -11,8 +12,6 @@
 #include <boost/filesystem.hpp>
 #include <windows.h>
 #include <Shlobj.h>
-
-#include <facter/facts/windows/memory_resolver.hpp>
 
 using namespace std;
 using namespace facter::util;
