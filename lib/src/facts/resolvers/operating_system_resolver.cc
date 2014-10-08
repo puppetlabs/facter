@@ -190,6 +190,7 @@ namespace facter { namespace facts { namespace resolvers {
                 { string(os::mandrake),                 string(os_family::mandrake) },
                 { string(os::mandriva),                 string(os_family::mandrake) },
                 { string(os::mageia),                   string(os_family::mandrake) },
+                { string(os::windows),                  string(os_family::windows) },
             };
             auto const& it = systems.find(name);
             if (it != systems.end()) {

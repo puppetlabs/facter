@@ -5,6 +5,7 @@
 #include <facter/facts/external/execution_resolver.hpp>
 #include <facter/facts/external/windows/powershell_resolver.hpp>
 #include <facter/facts/windows/memory_resolver.hpp>
+#include <facter/facts/windows/operating_system_resolver.hpp>
 #include <facter/facts/windows/processor_resolver.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/util/scoped_resource.hpp>
@@ -55,6 +56,7 @@ namespace facter { namespace facts {
     {
         // TODO WINDOWS: Add facts as created.
         add(make_shared<windows::memory_resolver>());
+        add(make_shared<windows::operating_system_resolver>());
         add(make_shared<windows::processor_resolver>());
     }
 
