@@ -2,6 +2,7 @@
 #include <facter/util/windows/scoped_error.hpp>
 #include <facter/logging/logging.hpp>
 #include <windows.h>
+#include <psapi.h>
 
 #ifdef LOG_NAMESPACE
   #undef LOG_NAMESPACE
@@ -14,18 +15,17 @@ namespace facter { namespace facts { namespace windows {
 
     memory_resolver::data memory_resolver::collect_data(collection& facts)
     {
-        data result;
-
-        MEMORYSTATUSEX statex;
-        statex.dwLength = sizeof(statex);
-        if (!GlobalMemoryStatusEx(&statex)) {
+        PERFORMANCE_INFORMATION statex;
+        if (!GetPerformanceInfo(&statex, sizeof(statex))) {
             auto err = GetLastError();
-            LOG_WARNING("resolving memory facts failed: %1% (%2%)", scoped_error(err), err);
-            return result;
+            LOG_DEBUG("resolving memory facts failed: %1% (%2%)", scoped_error(err), err);
+            return {};
         }
 
-        result.mem_total = statex.ullTotalPhys;
-        result.mem_free = statex.ullAvailPhys;
+        data result;
+        result.mem_total = statex.PhysicalTotal*statex.PageSize;
+        result.mem_free = statex.PhysicalAvailable*statex.PageSize;
+        result.swap_total = (statex.CommitLimit - statex.PhysicalTotal)*statex.PageSize;
         return result;
     }
 
