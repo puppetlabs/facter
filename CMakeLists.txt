@@ -12,6 +12,13 @@ enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 include(cotire)
+if (MINGW)
+    # MinGW crashes with large pre-compiled headers; ours definitely exceeds the limit.
+    # See http://stackoverflow.com/questions/10841306/cc1plus-exe-crash-when-using-large-precompiled-header-file
+    set(PRECOMPILED_HEADERS FALSE)
+else()
+    set(PRECOMPILED_HEADERS TRUE)
+endif()
 
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     # Allow searching in boxen installed homebrew directories
