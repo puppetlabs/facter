@@ -7,7 +7,10 @@
 using namespace std;
 using namespace facter::util::solaris;
 
-LOG_DECLARE_NAMESPACE("facts.solaris.processor");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.solaris.processor"
 
 /*
  * https://blogs.oracle.com/mandalika/entry/solaris_show_me_the_cpu

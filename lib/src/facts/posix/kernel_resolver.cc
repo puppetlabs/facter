@@ -5,7 +5,10 @@
 
 using namespace std;
 
-LOG_DECLARE_NAMESPACE("facts.posix.kernel");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.posix.kernel"
 
 namespace facter { namespace facts { namespace posix {
 

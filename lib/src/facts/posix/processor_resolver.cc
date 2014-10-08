@@ -6,7 +6,10 @@
 using namespace std;
 using namespace facter::execution;
 
-LOG_DECLARE_NAMESPACE("facts.posix.processor");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.posix.processor"
 
 namespace facter { namespace facts { namespace posix {
 

@@ -11,7 +11,10 @@ using namespace facter::util;
 using namespace facter::execution;
 using namespace boost::filesystem;
 
-LOG_DECLARE_NAMESPACE("ruby");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "ruby"
 
 namespace facter { namespace ruby {
 

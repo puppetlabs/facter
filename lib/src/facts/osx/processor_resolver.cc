@@ -5,7 +5,10 @@
 
 using namespace std;
 
-LOG_DECLARE_NAMESPACE("facts.osx.processor");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.osx.processor"
 
 namespace facter { namespace facts { namespace osx {
 

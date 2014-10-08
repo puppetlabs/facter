@@ -14,7 +14,10 @@ using namespace facter::execution;
 using namespace facter::util;
 using namespace boost::filesystem;
 
-LOG_DECLARE_NAMESPACE("facts.external.powershell");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.external.powershell"
 
 namespace facter { namespace facts { namespace external {
 

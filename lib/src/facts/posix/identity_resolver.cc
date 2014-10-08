@@ -4,7 +4,10 @@
 #include <pwd.h>
 #include <grp.h>
 
-LOG_DECLARE_NAMESPACE("facts.posix.identity");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.posix.identity"
 
 using namespace std;
 using namespace facter::util;

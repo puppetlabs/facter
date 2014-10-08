@@ -8,7 +8,10 @@
 using namespace std;
 using namespace facter::util;
 
-LOG_DECLARE_NAMESPACE("facts.external.text");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.external.text"
 
 namespace facter { namespace facts { namespace external {
 

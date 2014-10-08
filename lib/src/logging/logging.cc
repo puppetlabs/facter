@@ -61,7 +61,7 @@ namespace facter { namespace logging {
         return strm;
     }
 
-    void log(const string &logger, log_level level, format& message)
+    void log(const string &logger, log_level level, boost::format& message)
     {
         log(logger, level, message.str());
     }

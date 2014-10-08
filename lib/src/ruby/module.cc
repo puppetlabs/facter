@@ -20,7 +20,10 @@ using namespace facter::execution;
 using namespace facter::logging;
 using namespace boost::filesystem;
 
-LOG_DECLARE_NAMESPACE("ruby");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "ruby"
 
 /**
  * Helper for maintaining context when initialized via the Ruby gem.

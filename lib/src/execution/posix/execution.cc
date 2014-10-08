@@ -16,7 +16,10 @@ using namespace facter::ruby;
 using namespace facter::logging;
 using namespace boost::filesystem;
 
-LOG_DECLARE_NAMESPACE("execution");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "execution"
 
 // Declare environ for OSX
 extern char** environ;

@@ -8,7 +8,10 @@ using namespace std;
 using namespace facter::facts;
 using namespace facter::util;
 
-LOG_DECLARE_NAMESPACE("facts.bsd.filesystem");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.bsd.filesystem"
 
 namespace facter { namespace facts { namespace bsd {
 

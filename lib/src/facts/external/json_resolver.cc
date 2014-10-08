@@ -16,7 +16,10 @@ using namespace facter::facts;
 using namespace facter::util;
 using namespace rapidjson;
 
-LOG_DECLARE_NAMESPACE("facts.external.json");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.external.json"
 
 namespace facter { namespace facts { namespace external {
 

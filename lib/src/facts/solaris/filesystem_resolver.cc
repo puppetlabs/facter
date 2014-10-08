@@ -21,7 +21,10 @@ using namespace facter::execution;
 using namespace facter::util::solaris;
 using namespace boost::filesystem;
 
-LOG_DECLARE_NAMESPACE("facts.solaris.filesystem");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.solaris.filesystem"
 
 namespace facter { namespace facts { namespace solaris {
 

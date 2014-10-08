@@ -10,7 +10,10 @@
 using namespace std;
 using namespace facter::facts;
 
-LOG_DECLARE_NAMESPACE("ruby");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "ruby"
 
 namespace facter { namespace ruby {
 

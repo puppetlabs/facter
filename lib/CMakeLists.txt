@@ -180,6 +180,7 @@ link_directories(
 
 # Add the library target without a prefix (name already has the 'lib')
 add_library(libfacter SHARED ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_STANDARD_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
+set_target_properties(libfacter PROPERTIES PREFIX "" IMPORT_PREFIX "" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}" COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY")
 
 # Link in additional libraries
 target_link_libraries(libfacter
@@ -190,12 +191,13 @@ target_link_libraries(libfacter
     ${LIBFACTER_PLATFORM_LIBRARIES}
 )
 
-set_target_properties(libfacter PROPERTIES PREFIX "" IMPORT_PREFIX "" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}")
 if (WIN32)
     install(TARGETS libfacter DESTINATION bin)
 else()
     install(TARGETS libfacter DESTINATION lib)
 endif()
 install(DIRECTORY inc/facter DESTINATION include)
+
+cotire(libfacter)
 
 add_subdirectory(tests)

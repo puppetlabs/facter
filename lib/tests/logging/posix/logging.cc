@@ -7,7 +7,10 @@ using namespace std;
 using namespace facter::logging;
 namespace sinks = boost::log::sinks;
 
-LOG_DECLARE_NAMESPACE("logging.test");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "logging.test"
 
 bool g_color = isatty(fileno(stdout));
 
@@ -31,10 +34,10 @@ class custom_log_appender :
     string _message;
 };
 
-using sink_t = sinks::synchronous_sink<custom_log_appender>;
-
 struct facter_logging : ::testing::Test {
  protected:
+    using sink_t = sinks::synchronous_sink<custom_log_appender>;
+
     virtual void SetUp()
     {
         _appender.reset(new custom_log_appender());
@@ -64,7 +67,7 @@ TEST_F(facter_logging, debug) {
     LOG_DEBUG("testing %1% %2% %3%", 1, "2", 3.0);
     ASSERT_EQ("DEBUG", _appender->last_level());
     ASSERT_EQ(g_color ? "\x1B[0;36mtesting 1 2 3\x1B[0m" : "testing 1 2 3", _appender->last_message());
-    log(g_logger, log_level::debug, "testing %1% %2% %3%", 1, "2", 3.0);
+    log(LOG_ROOT_NAMESPACE LOG_NAMESPACE, log_level::debug, "testing %1% %2% %3%", 1, "2", 3.0);
     ASSERT_EQ("DEBUG", _appender->last_level());
     ASSERT_EQ(g_color ? "\x1B[0;36mtesting 1 2 3\x1B[0m" : "testing 1 2 3", _appender->last_message());
 }
@@ -74,7 +77,7 @@ TEST_F(facter_logging, info) {
     LOG_INFO("testing %1% %2% %3%", 1, "2", 3.0);
     ASSERT_EQ("INFO", _appender->last_level());
     ASSERT_EQ(g_color ? "\x1B[0;32mtesting 1 2 3\x1B[0m" : "testing 1 2 3", _appender->last_message());
-    log(g_logger, log_level::info, "testing %1% %2% %3%", 1, "2", 3.0);
+    log(LOG_ROOT_NAMESPACE LOG_NAMESPACE, log_level::info, "testing %1% %2% %3%", 1, "2", 3.0);
     ASSERT_EQ("INFO", _appender->last_level());
     ASSERT_EQ(g_color ? "\x1B[0;32mtesting 1 2 3\x1B[0m" : "testing 1 2 3", _appender->last_message());
 }
@@ -84,7 +87,7 @@ TEST_F(facter_logging, warning) {
     LOG_WARNING("testing %1% %2% %3%", 1, "2", 3.0);
     ASSERT_EQ("WARN", _appender->last_level());
     ASSERT_EQ(g_color ? "\x1B[0;33mtesting 1 2 3\x1B[0m" : "testing 1 2 3", _appender->last_message());
-    log(g_logger, log_level::warning, "testing %1% %2% %3%", 1, "2", 3.0);
+    log(LOG_ROOT_NAMESPACE LOG_NAMESPACE, log_level::warning, "testing %1% %2% %3%", 1, "2", 3.0);
     ASSERT_EQ("WARN", _appender->last_level());
     ASSERT_EQ(g_color ? "\x1B[0;33mtesting 1 2 3\x1B[0m" : "testing 1 2 3", _appender->last_message());
 }
@@ -94,7 +97,7 @@ TEST_F(facter_logging, error) {
     LOG_ERROR("testing %1% %2% %3%", 1, "2", 3.0);
     ASSERT_EQ("ERROR", _appender->last_level());
     ASSERT_EQ(g_color ? "\x1B[0;31mtesting 1 2 3\x1B[0m" : "testing 1 2 3", _appender->last_message());
-    log(g_logger, log_level::error, "testing %1% %2% %3%", 1, "2", 3.0);
+    log(LOG_ROOT_NAMESPACE LOG_NAMESPACE, log_level::error, "testing %1% %2% %3%", 1, "2", 3.0);
     ASSERT_EQ("ERROR", _appender->last_level());
     ASSERT_EQ(g_color ? "\x1B[0;31mtesting 1 2 3\x1B[0m" : "testing 1 2 3", _appender->last_message());
 }
@@ -104,7 +107,7 @@ TEST_F(facter_logging, fatal) {
     LOG_FATAL("testing %1% %2% %3%", 1, "2", 3.0);
     ASSERT_EQ("FATAL", _appender->last_level());
     ASSERT_EQ(g_color ? "\x1B[0;31mtesting 1 2 3\x1B[0m" : "testing 1 2 3", _appender->last_message());
-    log(g_logger, log_level::fatal, "testing %1% %2% %3%", 1, "2", 3.0);
+    log(LOG_ROOT_NAMESPACE LOG_NAMESPACE, log_level::fatal, "testing %1% %2% %3%", 1, "2", 3.0);
     ASSERT_EQ("FATAL", _appender->last_level());
     ASSERT_EQ(g_color ? "\x1B[0;31mtesting 1 2 3\x1B[0m" : "testing 1 2 3", _appender->last_message());
 }

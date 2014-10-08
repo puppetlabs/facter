@@ -27,7 +27,10 @@ using namespace facter::logging;
 using testing::ElementsAre;
 namespace sinks = boost::log::sinks;
 
-LOG_DECLARE_NAMESPACE("ruby.test");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "ruby.test"
 
 class ruby_log_appender :
     public sinks::basic_formatted_sink_backend<char, sinks::synchronized_feeding>
@@ -53,8 +56,6 @@ class ruby_log_appender :
  private:
     vector<pair<string, string>> _messages;
 };
-
-using sink_t = sinks::synchronous_sink<ruby_log_appender>;
 
 struct ruby_test_parameters
 {
@@ -142,6 +143,8 @@ ostream& operator<<(ostream& stream, const ruby_test_parameters& p)
 struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
 {
  protected:
+    using sink_t = sinks::synchronous_sink<ruby_log_appender>;
+
     bool load()
     {
         auto ruby = api::instance();

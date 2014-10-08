@@ -21,7 +21,10 @@ using namespace facter::util;
 using namespace boost::filesystem;
 namespace bs = boost::system;
 
-LOG_DECLARE_NAMESPACE("facts.posix.ssh");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.posix.ssh"
 
 namespace facter { namespace facts { namespace posix {
 

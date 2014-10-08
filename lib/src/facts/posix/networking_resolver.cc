@@ -12,7 +12,10 @@ using namespace std;
 using namespace facter::util;
 using namespace facter::util::posix;
 
-LOG_DECLARE_NAMESPACE("facts.posix.networking");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.posix.networking"
 
 namespace facter { namespace facts { namespace posix {
 

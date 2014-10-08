@@ -8,7 +8,10 @@ using namespace std;
 using namespace rapidjson;
 using namespace YAML;
 
-LOG_DECLARE_NAMESPACE("facts.value.map");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.value.map"
 
 namespace facter { namespace facts {
 

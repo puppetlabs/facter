@@ -8,7 +8,10 @@ using namespace std;
 using namespace facter::execution;
 using namespace facter::util;
 
-LOG_DECLARE_NAMESPACE("facts.osx.memory");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.osx.memory"
 
 namespace facter { namespace facts { namespace osx {
 

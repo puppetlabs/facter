@@ -5,7 +5,10 @@
 
 using namespace std;
 
-LOG_DECLARE_NAMESPACE("facts.resolver");
+#ifdef LOG_NAMESPACE
+  #undef LOG_NAMESPACE
+#endif
+#define LOG_NAMESPACE "facts.resolver"
 
 namespace facter { namespace facts {
 
