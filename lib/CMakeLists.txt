@@ -161,6 +161,15 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
         "src/facts/bsd/uptime_resolver.cc"
         "src/util/bsd/scoped_ifaddrs.cc"
     )
+elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
+    set(LIBFACTER_PLATFORM_SOURCES
+        "src/facts/windows/memory_resolver.cc"
+    )
+
+    # The GetPerformanceInfo symbol has moved around a lot between Windows versions;
+    # these options tie it to the backwards-compatible version.
+    set(LIBFACTER_PLATFORM_LIBRARIES "Psapi.lib")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSAPI_VERSION=1")
 endif()
 
 # Set include directories

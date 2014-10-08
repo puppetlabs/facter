@@ -4,6 +4,7 @@
 #include <facter/facts/external/yaml_resolver.hpp>
 #include <facter/facts/external/execution_resolver.hpp>
 #include <facter/facts/external/windows/powershell_resolver.hpp>
+#include <facter/facts/windows/memory_resolver.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/util/scoped_resource.hpp>
 #include <facter/util/windows/scoped_error.hpp>
@@ -52,6 +53,7 @@ namespace facter { namespace facts {
     void collection::add_platform_facts()
     {
         // TODO WINDOWS: Add facts as created.
+        add(make_shared<windows::memory_resolver>());
     }
 
 }}  // namespace facter::facts
