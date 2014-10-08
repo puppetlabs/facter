@@ -174,9 +174,9 @@ describe Facter::Util::Parser do
     describe "powershell parser" do
       let(:ps1) { "/tmp/foo.ps1" }
 
-      def expects_to_parse_powershell(cmd, content, result)
+      def expects_to_parse_powershell(cmd, result)
         Facter::Util::Config.stubs(:is_windows?).returns(true)
-        Facter::Core::Execution.stubs(:exec).returns(content)
+
         File.stubs(:file?).with(ps1).returns(true)
 
         Facter::Util::Parser.parser_for(cmd).results.should == result
@@ -187,7 +187,40 @@ describe Facter::Util::Parser do
       end
 
       it "should parse output from powershell" do
-        expects_to_parse_powershell(ps1, data_in_txt, data)
+        Facter::Core::Execution.stubs(:exec).returns(data_in_txt)
+        expects_to_parse_powershell(ps1, data)
+      end
+
+      describe "when executing powershell", :if => Facter::Util::Config.is_windows? do
+        let(:sysnative_powershell) { "#{ENV['SYSTEMROOT']}\\sysnative\\WindowsPowershell\\v1.0\\powershell.exe" }
+        let(:system32_powershell)  { "#{ENV['SYSTEMROOT']}\\system32\\WindowsPowershell\\v1.0\\powershell.exe" }
+
+        let(:sysnative_regexp)  { /^\"#{Regexp.escape(sysnative_powershell)}\"/ }
+        let(:system32_regexp)   { /^\"#{Regexp.escape(system32_powershell)}\"/ }
+        let(:powershell_regexp) { /^\"#{Regexp.escape("powershell.exe")}\"/ }
+
+        it "prefers the sysnative alias to resolve 64-bit powershell on 32-bit ruby" do
+          File.expects(:exists?).with(sysnative_powershell).returns(true)
+          Facter::Core::Execution.expects(:exec).with(regexp_matches(sysnative_regexp)).returns(data_in_txt)
+
+          expects_to_parse_powershell(ps1, data)
+        end
+
+        it "uses system32 if sysnative alias doesn't exist on 64-bit ruby" do
+          File.expects(:exists?).with(sysnative_powershell).returns(false)
+          File.expects(:exists?).with(system32_powershell).returns(true)
+          Facter::Core::Execution.expects(:exec).with(regexp_matches(system32_regexp)).returns(data_in_txt)
+
+          expects_to_parse_powershell(ps1, data)
+        end
+
+        it "uses 'powershell' as a last resort" do
+          File.expects(:exists?).with(sysnative_powershell).returns(false)
+          File.expects(:exists?).with(system32_powershell).returns(false)
+          Facter::Core::Execution.expects(:exec).with(regexp_matches(powershell_regexp)).returns(data_in_txt)
+
+          expects_to_parse_powershell(ps1, data)
+        end
       end
     end
   end
