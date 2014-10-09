@@ -135,6 +135,7 @@
         "productname" : { "type": "string" },
         "ps" : { "type": "string" },
         "puppetversion" : { "type": "string" },
+        "rubyplatform" : { "type": "string" },
         "rubysitedir" : { "type": "string" },
         "rubyversion" : { "type": "string" },
         "selinux" : { "type": "string" },
@@ -179,6 +180,7 @@
         "swapfree_mb" : { "type": "string" },
         "swapsize" : { "type": "string" },
         "swapsize_mb" : { "type": "string" },
+        "system32" : { "type": "string" },
         "system_uptime" : { "type": "object",
           "properties" : {
             "seconds" : { "type": "integer" },
