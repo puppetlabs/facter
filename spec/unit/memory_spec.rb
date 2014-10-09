@@ -56,11 +56,11 @@ describe "Memory facts" do
     end
 
     it "should return the current swap size in MB" do
-      Facter.fact(:swapsize_mb).value.should == 64.0
+      Facter.fact(:swapsize_mb).value.should == "64.00"
     end
 
     it "should return the current swap free in MB" do
-      Facter.fact(:swapfree_mb).value.should == 63.0
+      Facter.fact(:swapfree_mb).value.should == "63.00"
     end
 
     it "should return whether swap is encrypted" do
@@ -68,11 +68,11 @@ describe "Memory facts" do
     end
 
     it "should return the memory size in MB" do
-      Facter.fact(:memorysize_mb).value.should == 8192.0
+      Facter.fact(:memorysize_mb).value.should == "8192.00"
     end
 
     it "should return the memory free in MB" do
-      Facter.fact(:memoryfree_mb).value.should == 138.6953125
+      Facter.fact(:memoryfree_mb).value.should == "138.70"
     end
 
     after(:each) do
@@ -102,19 +102,19 @@ describe "Memory facts" do
       end
 
       it "should return the current memory size in MB" do
-        Facter.fact(:memorysize_mb).value.should == 249.91015625
+        Facter.fact(:memorysize_mb).value.should == "249.91"
       end
 
       it "should return the current memory free in MB" do
-        Facter.fact(:memoryfree_mb).value.should == 196.1640625
+        Facter.fact(:memoryfree_mb).value.should == "196.16"
       end
 
       it "should return the current swap size in MB" do
-        Facter.fact(:swapsize_mb).value.should == 511.9921875
+        Facter.fact(:swapsize_mb).value.should == "511.99"
       end
 
       it "should return the current swap free in MB" do
-        Facter.fact(:swapfree_mb).value.should == 511.9921875
+        Facter.fact(:swapfree_mb).value.should == "511.99"
       end
     end
   end
@@ -154,20 +154,20 @@ describe "Memory facts" do
       end
 
       it "should return the current swap size in MB" do
-        Facter.fact(:swapsize_mb).value.should == 512.0
+        Facter.fact(:swapsize_mb).value.should == "512.00"
       end
 
       it "should return the current swap free in MB" do
-        Facter.fact(:swapfree_mb).value.should == 508.0
+        Facter.fact(:swapfree_mb).value.should == "508.00"
       end
     end
 
     it "should return the current memory free in MB" do
-      Facter.fact(:memoryfree_mb).value.should == 22284.7578125
+      Facter.fact(:memoryfree_mb).value.should == "22284.76"
     end
 
     it "should return the current memory size in MB" do
-      Facter.fact(:memorysize_mb).value.should == 32000.0
+      Facter.fact(:memorysize_mb).value.should == "32000.00"
     end
 
   end
@@ -194,19 +194,19 @@ describe "Memory facts" do
     end
 
     it "should return the current swap free in MB" do
-      Facter.fact(:swapfree_mb).value.should == 1766.9326171875
+      Facter.fact(:swapfree_mb).value.should == "1766.93"
     end
 
     it "should return the current swap size in MB" do
-      Facter.fact(:swapsize_mb).value.should == 1992.4365234375
+      Facter.fact(:swapsize_mb).value.should == "1992.44"
     end
 
     it "should return the current memory free in MB" do
-      Facter.fact(:memoryfree_mb).value.should == 176.78515625
+      Facter.fact(:memoryfree_mb).value.should == "176.79"
     end
 
     it "should return the current memory size in MB" do
-      Facter.fact(:memorysize_mb).value.should == 254.9375
+      Facter.fact(:memorysize_mb).value.should == "254.94"
     end
 
     it "should return whether swap is encrypted" do
@@ -236,19 +236,19 @@ describe "Memory facts" do
       end
 
       it "should return the current memory size in MB" do
-        Facter.fact(:memorysize_mb).value.should == 2048.0
+        Facter.fact(:memorysize_mb).value.should == "2048.00"
       end
 
       it "should return the current memory free in MB" do
-        Facter.fact(:memoryfree_mb).value.should == 465.0625
+        Facter.fact(:memoryfree_mb).value.should == "465.06"
       end
 
       it "should return the current swap free in MB" do
-        Facter.fact(:swapfree_mb).value.should == 1023.9921875
+        Facter.fact(:swapfree_mb).value.should == "1023.99"
       end
 
       it "should return the current swap size in MB" do
-        Facter.fact(:swapsize_mb).value.should == 1023.9921875
+        Facter.fact(:swapsize_mb).value.should == "1023.99"
       end
 
     end
@@ -260,19 +260,19 @@ describe "Memory facts" do
       end
 
       it "should return the current memory size in MB" do
-        Facter.fact(:memorysize_mb).value.should == 2048.0
+        Facter.fact(:memorysize_mb).value.should == "2048.00"
       end
 
       it "should return the current memory free in MB" do
-        Facter.fact(:memoryfree_mb).value.should == 465.0625
+        Facter.fact(:memoryfree_mb).value.should == "465.06"
       end
 
       it "should return the current swap free in MB" do
-        Facter.fact(:swapfree_mb).value.should == 2047.984375
+        Facter.fact(:swapfree_mb).value.should == "2047.98"
       end
 
       it "should return the current swap size in MB" do
-        Facter.fact(:swapsize_mb).value.should == 2047.984375
+        Facter.fact(:swapsize_mb).value.should == "2047.98"
       end
     end
 
@@ -284,19 +284,19 @@ describe "Memory facts" do
       end
 
       it "should return the current memory size in MB" do
-        Facter.fact(:memorysize_mb).value.should == 2048.0
+        Facter.fact(:memorysize_mb).value.should == "2048.00"
       end
 
       it "should return the current memory free in MB" do
-        Facter.fact(:memoryfree_mb).value.should == 465.0625
+        Facter.fact(:memoryfree_mb).value.should == "465.06"
       end
 
       it "should return 0 for the swap free in MB" do
-        Facter.fact(:swapfree_mb).value.should == 0.0
+        Facter.fact(:swapfree_mb).value.should == "0.00"
       end
 
       it "should return 0 for the swap size in MB" do
-        Facter.fact(:swapsize_mb).value.should == 0.0
+        Facter.fact(:swapsize_mb).value.should == "0.00"
       end
     end
 
@@ -307,11 +307,11 @@ describe "Memory facts" do
       end
 
       it "should return the current swap size in MB" do
-        Facter.fact(:swapsize_mb).value.should == 49152.0
+        Facter.fact(:swapsize_mb).value.should == "49152.00"
       end
 
       it "should return the current swap free in MB" do
-        Facter.fact(:swapfree_mb).value.should == 33676.05859375
+        Facter.fact(:swapfree_mb).value.should == "33676.06"
       end
     end
 
@@ -340,19 +340,19 @@ describe "Memory facts" do
       end
 
       it "should return the current swap free in MB" do
-        Facter.fact(:swapfree_mb).value.should == 491.5078125
+        Facter.fact(:swapfree_mb).value.should == "491.51"
       end
 
       it "should return the current swap size in MB" do
-        Facter.fact(:swapsize_mb).value.should == 501.80078125
+        Facter.fact(:swapsize_mb).value.should == "501.80"
       end
 
       it "should return the current memory size in MB" do
-        Facter.fact(:memorysize_mb).value.should == 237.0
+        Facter.fact(:memorysize_mb).value.should == "237.00"
       end
 
       it "should return the current memory free in MB" do
-        Facter.fact(:memoryfree_mb).value.should == 13.61328125
+        Facter.fact(:memoryfree_mb).value.should == "13.61"
       end
     end
 
@@ -378,19 +378,19 @@ describe "Memory facts" do
         end
 
         it "should return the current swap free in MB" do
-          Facter.fact(:swapfree_mb).value.should == 0.0
+          Facter.fact(:swapfree_mb).value.should == "0.00"
         end
 
         it "should return the current swap size in MB" do
-          Facter.fact(:swapsize_mb).value.should == 0.0
+          Facter.fact(:swapsize_mb).value.should == "0.00"
         end
 
         it "should return the current memory size in MB" do
-          Facter.fact(:memorysize_mb).value.should == 1007.34375
+          Facter.fact(:memorysize_mb).value.should == "1007.34"
         end
 
         it "should return the current memory free in MB" do
-          Facter.fact(:memoryfree_mb).value.should == 641.25
+          Facter.fact(:memoryfree_mb).value.should == "641.25"
         end
       end
 
@@ -402,19 +402,19 @@ describe "Memory facts" do
         end
 
         it "should return the current swap free in MB" do
-          Facter.fact(:swapfree_mb).value.should == 1023.96484375
+          Facter.fact(:swapfree_mb).value.should == "1023.96"
         end
 
         it "should return the current swap size in MB" do
-          Facter.fact(:swapsize_mb).value.should == 2000.52734375
+          Facter.fact(:swapsize_mb).value.should == "2000.53"
         end
 
         it "should return the current memory size in MB" do
-          Facter.fact(:memorysize_mb).value.should == 1007.34375
+          Facter.fact(:memorysize_mb).value.should == "1007.34"
         end
 
         it "should return the current memory free in MB" do
-          Facter.fact(:memoryfree_mb).value.should == 641.25
+          Facter.fact(:memoryfree_mb).value.should == "641.25"
         end
       end
 
@@ -426,19 +426,19 @@ describe "Memory facts" do
         end
 
         it "should return the current swap free in MB" do
-          Facter.fact(:swapfree_mb).value.should == 2047.9296875
+          Facter.fact(:swapfree_mb).value.should == "2047.93"
         end
 
         it "should return the current swap size in MB" do
-          Facter.fact(:swapsize_mb).value.should == 4977.6171875
+          Facter.fact(:swapsize_mb).value.should == "4977.62"
         end
 
         it "should return the current memory size in MB" do
-          Facter.fact(:memorysize_mb).value.should == 1007.34375
+          Facter.fact(:memorysize_mb).value.should == "1007.34"
         end
 
         it "should return the current memory free in MB" do
-          Facter.fact(:memoryfree_mb).value.should == 641.25
+          Facter.fact(:memoryfree_mb).value.should == "641.25"
         end
       end
     end
@@ -456,7 +456,7 @@ describe "Memory facts" do
         os.stubs(:FreePhysicalMemory).returns("3415624")
         Facter::Util::WMI.stubs(:execquery).returns([os])
 
-        Facter.fact(:memoryfree_mb).value.should == 3335.5703125
+        Facter.fact(:memoryfree_mb).value.should == '3335.57'
       end
 
       it "should return total memory in MB" do
@@ -464,7 +464,7 @@ describe "Memory facts" do
         computer.stubs(:TotalPhysicalMemory).returns("4193837056")
         Facter::Util::WMI.stubs(:execquery).returns([computer])
 
-        Facter.fact(:memorysize_mb).value.should == 3999.5546875
+        Facter.fact(:memorysize_mb).value.should == '3999.55'
     end
   end
 end
