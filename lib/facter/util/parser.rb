@@ -139,8 +139,18 @@ module Facter::Util::Parser
   class PowershellParser < Base
     # Returns a hash of facts from powershell output
     def parse_results
-      shell_command = "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File \"#{filename}\""
-      KeyValuePairOutputFormat.parse Facter::Core::Execution.exec(shell_command)
+      powershell =
+        if File.exists?("#{ENV['SYSTEMROOT']}\\sysnative\\WindowsPowershell\\v1.0\\powershell.exe")
+          "#{ENV['SYSTEMROOT']}\\sysnative\\WindowsPowershell\\v1.0\\powershell.exe"
+        elsif File.exists?("#{ENV['SYSTEMROOT']}\\system32\\WindowsPowershell\\v1.0\\powershell.exe")
+          "#{ENV['SYSTEMROOT']}\\system32\\WindowsPowershell\\v1.0\\powershell.exe"
+        else
+          'powershell.exe'
+        end
+
+      shell_command = "\"#{powershell}\" -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File \"#{filename}\""
+      output = Facter::Core::Execution.exec(shell_command)
+      KeyValuePairOutputFormat.parse(output)
     end
   end
 
