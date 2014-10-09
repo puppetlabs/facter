@@ -16,6 +16,10 @@ top of things.
   * Make sure you fill in the earliest version that you know has the issue.
 * Fork the repository on GitHub
 
+## New Facts
+
+All new facts should also be included in `schema/facter.json`. Without this facts won't pass acceptance tests.
+
 ## Making Changes
 
 * Create a topic branch from where you want to base your work.
