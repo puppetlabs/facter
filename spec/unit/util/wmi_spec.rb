@@ -16,14 +16,4 @@ describe Facter::Util::WMI do
 
     Facter::Util::WMI.execquery("select * from Win32_OperatingSystem")
   end
-
-  it "re-queries WMI after facter is reset" do
-    query = "select FreePhysicalMemory from Win32_OperatingSystem"
-    Facter::Util::WMI.stubs(:connect).returns(connection)
-    connection.expects(:execquery).with(query).returns("1048640").twice
-
-    Facter::Util::WMI.execquery(query)
-    Facter.reset
-    Facter::Util::WMI.execquery(query)
-  end
 end
