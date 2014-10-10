@@ -86,18 +86,23 @@ namespace facter { namespace facts { namespace windows {
             return make_tuple(true, 0, 0, models, 0);
         }
 
-        assert(returnLongth % sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) == 0);
+        if (returnLength % sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) != 0) {
+            LOG_DEBUG("unexpected length %1% returned by GetLogicalProcessorInformation", returnLength);
+        }
+
         vector<SYSTEM_LOGICAL_PROCESSOR_INFORMATION> buffer(returnLength/sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION));
         if (!GetLogicalProcessorInformation(buffer.data(), &returnLength)) {
             return make_tuple(true, 0, 0, models, 0);
         }
 
-        for (auto &ptr : buffer) {
-            switch (ptr.Relationship) {
+        for (auto &procInfoEntry : buffer) {
+            switch (procInfoEntry.Relationship) {
                 case RelationProcessorCore:
                     ++physical_count;
                     // A hyperthreaded core supplies more than one logical processor.
-                    logical_count += bitset<sizeof(decltype(ptr.ProcessorMask))*8>(ptr.ProcessorMask).count();
+                    // Use std::bitset::count for optimized counting of the number of toggled bits.
+                    logical_count += bitset<sizeof(decltype(procInfoEntry.ProcessorMask))*8>
+                        (procInfoEntry.ProcessorMask).count();
                     break;
                 case RelationNumaNode:
                     LOG_TRACE("skipping NUMA node in SYSTEM_LOGICAL_PROCESSOR_INFORMATION");
