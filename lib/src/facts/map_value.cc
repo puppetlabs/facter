@@ -78,20 +78,28 @@ namespace facter { namespace facts {
         }
     }
 
-    ostream& map_value::write(ostream& os, bool quoted) const
+    ostream& map_value::write(ostream& os, bool quoted, unsigned int level) const
     {
+        if (_elements.empty()) {
+            os << "{}";
+            return os;
+        }
+
         // Write out the elements in the map
-        os << "{";
+        os << "{\n";
         bool first = true;
         for (auto const& kvp : _elements) {
             if (first) {
                 first = false;
             } else {
-                os << ", ";
+                os << ",\n";
             }
-            os << '"' << kvp.first << "\"=>";
-            kvp.second->write(os, true /* always quote strings in an array */);
+            fill_n(ostream_iterator<char>(os), level * 2, ' ');
+            os << kvp.first << " => ";
+            kvp.second->write(os, true /* always quote strings in a map */, level + 1);
         }
+        os << "\n";
+        fill_n(ostream_iterator<char>(os), (level > 0 ? (level - 1) : 0) * 2, ' ');
         os << "}";
         return os;
     }

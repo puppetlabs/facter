@@ -79,7 +79,7 @@ namespace facter { namespace facts {
          * @param allocator The allocator to use for creating the JSON value.
          * @param value The returned JSON value.
          */
-        virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
+        virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const override;
 
         /**
          * Gets the underlying scalar value.
@@ -91,9 +91,10 @@ namespace facter { namespace facts {
           * Writes the value to the given stream.
           * @param os The stream to write to.
           * @param quoted True if string values should be quoted or false if not.
+          * @param level The current indentation level.
           * @returns Returns the stream being written to.
           */
-        virtual std::ostream& write(std::ostream& os, bool quoted = true) const
+        virtual std::ostream& write(std::ostream& os, bool quoted = true, unsigned int level = 1) const override
         {
             os << _value;
             return os;
@@ -104,7 +105,7 @@ namespace facter { namespace facts {
           * @param emitter The YAML emitter to write to.
           * @returns Returns the given YAML emitter.
           */
-        virtual YAML::Emitter& write(YAML::Emitter& emitter) const
+        virtual YAML::Emitter& write(YAML::Emitter& emitter) const override
         {
             emitter << _value;
             return emitter;
@@ -130,9 +131,9 @@ namespace facter { namespace facts {
 
     // Declare the specializations for stream output
     template <>
-    std::ostream& scalar_value<bool>::write(std::ostream& os, bool quoted) const;
+    std::ostream& scalar_value<bool>::write(std::ostream& os, bool quoted, unsigned int level) const;
     template <>
-    std::ostream& scalar_value<std::string>::write(std::ostream& os, bool quoted) const;
+    std::ostream& scalar_value<std::string>::write(std::ostream& os, bool quoted, unsigned int level) const;
 
     // Declare the common instantiations as external; defined in scalar_value.cc
     extern template struct scalar_value<std::string>;

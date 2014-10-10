@@ -42,10 +42,10 @@ namespace facter { namespace ruby {
         to_json(ruby, _value, allocator, value);
     }
 
-    ostream& ruby_value::write(ostream& os, bool quoted) const
+    ostream& ruby_value::write(ostream& os, bool quoted, unsigned int level) const
     {
         auto const& ruby = *api::instance();
-        write(ruby, _value, os, quoted);
+        write(ruby, _value, os, quoted, level);
         return os;
     }
 
@@ -119,7 +119,7 @@ namespace facter { namespace ruby {
         json.SetNull();
     }
 
-    void ruby_value::write(api const& ruby, VALUE value, ostream& os, bool quoted)
+    void ruby_value::write(api const& ruby, VALUE value, ostream& os, bool quoted, unsigned int level)
     {
         if (ruby.is_true(value)) {
             os << boolalpha << true << noboolalpha;
@@ -157,28 +157,42 @@ namespace facter { namespace ruby {
             return;
         }
         if (ruby.is_array(value)) {
-            os << "[";
+            auto size = ruby.rb_num2ulong(ruby.rb_funcall(value, ruby.rb_intern("size"), 0));
+            if (size == 0) {
+                os << "[]";
+                return;
+            }
+
+            os << "[\n";
             bool first = true;
             ruby.array_for_each(value, [&](VALUE element) {
                 if (first) {
                     first = false;
                 } else {
-                    os << ", ";
+                    os << ",\n";
                 }
-                write(ruby, element, os, true);
+                fill_n(ostream_iterator<char>(os), level * 2, ' ');
+                write(ruby, element, os, true, level + 1);
                 return true;
             });
+            os << "\n";
+            fill_n(ostream_iterator<char>(os), (level > 0 ? (level - 1) : 0) * 2, ' ');
             os << "]";
             return;
         }
         if (ruby.is_hash(value)) {
-            os << "{";
+            auto size = ruby.rb_num2ulong(ruby.rb_funcall(value, ruby.rb_intern("size"), 0));
+            if (size == 0) {
+                os << "{}";
+                return;
+            }
+            os << "{\n";
             bool first = true;
             ruby.hash_for_each(value, [&](VALUE key, VALUE element) {
                 if (first) {
                     first = false;
                 } else {
-                    os << ", ";
+                    os << ",\n";
                 }
 
                 // If the key isn't a string, convert to string
@@ -189,12 +203,14 @@ namespace facter { namespace ruby {
                 size_t size = static_cast<size_t>(ruby.rb_num2ulong(ruby.rb_funcall(key, ruby.rb_intern("size"), 0)));
                 char const* str = ruby.rb_string_value_ptr(&key);
 
-                os << '"';
+                fill_n(ostream_iterator<char>(os), level * 2, ' ');
                 os.write(str, size);
-                os << "\"=>";
-                write(ruby, element, os, true);
+                os << " => ";
+                write(ruby, element, os, true, level + 1);
                 return true;
             });
+            os << "\n";
+            fill_n(ostream_iterator<char>(os), (level > 0 ? (level - 1) : 0) * 2, ' ');
             os << "}";
             return;
         }

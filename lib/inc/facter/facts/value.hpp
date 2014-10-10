@@ -88,9 +88,10 @@ namespace facter { namespace facts {
           * Writes the value to the given stream.
           * @param os The stream to write to.
           * @param quoted True if string values should be quoted or false if not.
+          * @param level The current indentation level.
           * @returns Returns the stream being written to.
           */
-        virtual std::ostream& write(std::ostream& os, bool quoted = true) const = 0;
+        virtual std::ostream& write(std::ostream& os, bool quoted = true, unsigned int level = 1) const = 0;
 
         /**
           * Writes the value to the given YAML emitter.
