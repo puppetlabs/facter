@@ -81,7 +81,7 @@ if (UNIX)
         set(LIBFACTER_STANDARD_SOURCES ${LIBFACTER_STANDARD_SOURCES} "src/util/posix/scoped_bio.cc")
     endif()
 
-    set(THREAD_LIBS pthread)
+    set(POSIX_LIBRARIES pthread dl)
 endif()
 
 if (WIN32)
@@ -193,7 +193,7 @@ set_target_properties(libfacter PROPERTIES PREFIX "" IMPORT_PREFIX "" VERSION "$
 
 # Link in additional libraries
 target_link_libraries(libfacter
-    ${THREAD_LIBS}
+    ${POSIX_LIBRARIES}
     ${Boost_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
