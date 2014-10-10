@@ -3,12 +3,13 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
+#include <facter/util/windows/wmi.hpp>
 #include <vector>
 #include <tuple>
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::util;
+using namespace facter::util::windows;
 
 namespace facter { namespace facts { namespace windows {
 
@@ -19,27 +20,31 @@ namespace facter { namespace facts { namespace windows {
         // Explore whether it can work, or if we need another wmi query
         static vector<tuple<string, string>> vms = {
             make_tuple("VirtualBox",        string(vm::virtualbox)),
-            make_tuple("Virtual Machine",   string(vm::hyperv)),
             make_tuple("VMware",            string(vm::vmware)),
             make_tuple("KVM",               string(vm::kvm)),
             make_tuple("Bochs",             string(vm::bochs)),
-            make_tuple("Parallels",         string(vm::parallels)),
-            make_tuple("RHEV Hypervisor",   string(vm::redhat_ev)),
-            make_tuple("oVirt Node",        string(vm::ovirt)),
-            make_tuple("HVM domU",          string(vm::xen_hardware)),
         };
 
-        auto product_name = facts.get<string_value>(fact::product_name);
-        if (!product_name) {
+        auto vals = wmi::query(wmi::computersystem, {wmi::manufacturer, wmi::model});
+        if (vals.empty()) {
             return {};
         }
 
-        auto const& value = product_name->value();
+        auto &manufacturer = vals[wmi::manufacturer];
+        auto &model = vals[wmi::model];
 
         for (auto const& vm : vms) {
-            if (value.find(get<0>(vm)) != string::npos) {
+            if (model.find(get<0>(vm)) != string::npos) {
                 return get<1>(vm);
             }
+        }
+
+        if (model.find("Virtual Machine") != string::npos && manufacturer.find("Microsoft") != string::npos) {
+            return vm::hyperv;
+        }
+
+        if (manufacturer.find("Xen") != string::npos) {
+            return vm::xen;
         }
 
         return {};

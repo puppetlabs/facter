@@ -94,6 +94,7 @@ if (WIN32)
         "src/util/windows/dynamic_library.cc"
         "src/util/windows/environment.cc"
         "src/util/windows/scoped_error.cc"
+        "src/util/windows/wmi.cc"
     )
 endif()
 
