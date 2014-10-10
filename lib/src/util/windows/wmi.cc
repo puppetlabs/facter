@@ -1,32 +1,140 @@
 #include <facter/util/windows/wmi.hpp>
+#include <facter/util/scoped_resource.hpp>
+#include <facter/logging/logging.hpp>
+
+#define _WIN32_DCOM
+#include <comdef.h>
+#include <wbemidl.h>
+
 #include <facter/execution/execution.hpp>
 #include <boost/algorithm/string/join.hpp>
 
 using namespace std;
 using namespace facter::execution;
 
+#undef LOG_NAMESPACE
+#define LOG_NAMESPACE "facter.util.windows.wmi"
+
 namespace facter { namespace util { namespace windows { namespace wmi {
 
-    // query is implemented as a straight exec of wmic for simplicity.
-    // The COM support in MinGW is deficient, so calling WMI from C++ requires
-    // some convoluted setup to link the correct libraries. This should only
-    // introduce a little additional overhead, as setting up the COM connection
-    // is also not a simple process.
+    // GUID taken from a Windows installation and unaccepted change to MinGW-w64. The MinGW-w64 library
+    // doesn't define it, but obscures the Windows Platform SDK version of wbemuuid.lib.
+    static CLSID MyCLSID_WbemLocator = {0x4590f811, 0x1d3a, 0x11d0, 0x89,0x1f,0x00,0xaa,0x00,0x4b,0x2e,0x24};
+
+    class WMIQuery {
+        WMIQuery()
+        {
+            // TODO: Make sure this is all safe.
+            auto hres = CoInitializeEx(0, COINIT_MULTITHREADED);
+            if (FAILED(hres)) {
+                throw runtime_error("failed to initialize COM library");
+            }
+            _coInit = true;
+
+            hres = CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT,
+                RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE, NULL);
+            if (FAILED(hres)) {
+                throw runtime_error("failed to initialize security");
+            }
+
+            hres = CoCreateInstance(MyCLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator,
+                reinterpret_cast<LPVOID *>(&_pLoc));
+            if (FAILED(hres)) {
+                throw runtime_error("failed to create IWbemLocator object");
+            }
+
+            hres = _pLoc->ConnectServer(_bstr_t(L"ROOT\\CIMV2"), nullptr, nullptr, nullptr, 0, nullptr, nullptr, &_pSvc);
+            if (FAILED(hres)) {
+                throw runtime_error("could not connect to WMI server");
+            }
+
+            hres = CoSetProxyBlanket(_pSvc, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, NULL,
+                RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE);
+            if (FAILED(hres)) {
+                throw runtime_error("could not set proxy blanket");
+            }
+        }
+
+        ~WMIQuery()
+        {
+            if (_coInit) {
+                CoUninitialize();
+            }
+
+            if (_pLoc) {
+                _pLoc->Release();
+            }
+
+            if (_pSvc) {
+                _pSvc->Release();
+            }
+        }
+
+        bool _coInit = false;
+        IWbemLocator *_pLoc = nullptr;
+        IWbemServices *_pSvc = nullptr;
+
+     public:
+        imap query(string const& group, vector<string> const& keys) const
+        {
+            // TODO: Cleanup string/wstring conversions.
+            IEnumWbemClassObject *_pEnum = NULL;
+            string qry = "SELECT " + boost::join(keys, ",") + " FROM " + group;
+            wstring wqry(qry.begin(), qry.end());
+
+            auto hres = _pSvc->ExecQuery(_bstr_t(L"WQL"), _bstr_t(wqry.c_str()),
+                WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, NULL, &_pEnum);
+            if (FAILED(hres)) {
+                LOG_DEBUG("query %1% failed", qry);
+                return {};
+            }
+            scoped_resource<IEnumWbemClassObject *> pEnum(move(_pEnum),
+                [](IEnumWbemClassObject *rsc) { if (rsc) rsc->Release(); });
+
+            imap vals;
+
+            IWbemClassObject *pclsObj;
+            ULONG uReturn = 0;
+            while (pEnum) {
+                auto hr = (*pEnum).Next(WBEM_INFINITE, 1, &pclsObj, &uReturn);
+                if (FAILED(hr) || 0 == uReturn) {
+                    break;
+                }
+
+                for (auto &s : keys) {
+                    wstring ws(s.begin(), s.end());
+                    VARIANT vtProp;
+                    hr = pclsObj->Get(_bstr_t(ws.c_str()), 0, &vtProp, 0, 0);
+                    if (FAILED(hr)) {
+                        break;
+                    }
+                    ws = vtProp.bstrVal;
+                    string ss(ws.begin(), ws.end());
+                    vals.emplace(s, ss);
+                    VariantClear(&vtProp);
+                }
+
+                pclsObj->Release();
+            }
+
+            return vals;
+        }
+
+        static WMIQuery const& get()
+        {
+            static WMIQuery obj;
+            return obj;
+        }
+    };
+
     imap query(string const& group, vector<string> const& keys)
     {
-        imap vals;
-
-        each_line("wmic",
-            {"wmic", group, "GET", boost::join(keys, ","), "/format:textvaluelist.xsl"},
-            [&](string &line) {
-                auto eq = line.find('=');
-                if (eq != string::npos) {
-                    vals.emplace(line.substr(0, eq), line.substr(eq+1));
-                }
-                return true;
-            }, {execution_options::defaults, execution_options::redirect_stderr});
-
-        return vals;
+        try {
+            return WMIQuery::get().query(group, keys);
+        } catch (runtime_error &e) {
+            LOG_DEBUG(e.what());
+            return {};
+        }
     }
 
 }}}}  // namespace facter::util::windows::wmi

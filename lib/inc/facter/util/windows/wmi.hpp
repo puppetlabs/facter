@@ -10,17 +10,17 @@ namespace facter { namespace util { namespace windows { namespace wmi {
     /*
      * Identifier for the WMI class Win32_ComputerSystem
      */
-    constexpr static char const* computersystem = "ComputerSystem";
+    constexpr static char const* computersystem = "Win32_ComputerSystem";
 
     /*
      * Identifier for the WMI class Win32_ComputerSystemProduct
      */
-    constexpr static char const* computersystemproduct = "CSProduct";
+    constexpr static char const* computersystemproduct = "Win32_ComputerSystemProduct";
 
     /*
      * Identifier for the WMI class Win32_BIOS
      */
-    constexpr static char const* bios = "Bios";
+    constexpr static char const* bios = "Win32_Bios";
 
     /*
      * Identifier fot the WMI property Name
