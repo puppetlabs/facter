@@ -10,7 +10,13 @@ module Facter::Util::WMI
     end
 
     def execquery(query)
-      connect().execquery(query)
+      @results ||= {}
+      @results[query] ||= connect().execquery(query)
+      @results[query]
+    end
+
+    def reset
+      @results = nil
     end
   end
 end

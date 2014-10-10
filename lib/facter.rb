@@ -196,6 +196,7 @@ module Facter
   # @api public
   def self.reset
     @collection = nil
+    Facter::Util::WMI.reset
     reset_search_path!
   end
 
