@@ -67,6 +67,11 @@ namespace facter { namespace facts {
         constexpr static char const* xen_hardware = "xenhvm";
 
         /**
+         * The name for Xen virtual machine (on Windows)
+         */
+        constexpr static char const* xen = "xen";
+
+        /**
          * The name for IBM System Z virtual machine.
          */
         constexpr static char const* zlinux = "zlinux";
@@ -97,6 +102,11 @@ namespace facter { namespace facts {
         constexpr static char const* kvm = "kvm";
 
         /**
+         * The name for Bochs virtual machine.
+         */
+        constexpr static char const* bochs = "bochs";
+
+        /**
          * The name for Microsoft Hyper-V virtual machine.
          */
         constexpr static char const* hyperv = "hyperv";
@@ -110,10 +120,12 @@ namespace facter { namespace facts {
          * The name for oVirt virtual machine.
          */
         constexpr static char const* ovirt = "ovirt";
+
         /**
          * The name for Solaris zones
          */
         constexpr static char const* zone = "zone";
+
         /**
          * The name for Solaris ldom
          */

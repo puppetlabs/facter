@@ -9,6 +9,7 @@
 #include <facter/facts/windows/memory_resolver.hpp>
 #include <facter/facts/resolvers/operating_system_resolver.hpp>
 #include <facter/facts/windows/processor_resolver.hpp>
+#include <facter/facts/windows/virtualization_resolver.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/util/scoped_resource.hpp>
 #include <facter/util/windows/scoped_error.hpp>
@@ -62,6 +63,7 @@ namespace facter { namespace facts {
         add(make_shared<windows::memory_resolver>());
         add(make_shared<resolvers::operating_system_resolver>());
         add(make_shared<windows::processor_resolver>());
+        add(make_shared<windows::virtualization_resolver>());
     }
 
 }}  // namespace facter::facts

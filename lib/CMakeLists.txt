@@ -167,6 +167,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
         "src/facts/windows/kernel_resolver.cc"
         "src/facts/windows/memory_resolver.cc"
         "src/facts/windows/processor_resolver.cc"
+        "src/facts/windows/virtualization_resolver.cc"
     )
 
     # The GetPerformanceInfo symbol has moved around a lot between Windows versions;
