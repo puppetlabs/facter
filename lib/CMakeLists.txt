@@ -163,6 +163,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
     set(LIBFACTER_PLATFORM_SOURCES
+        "src/facts/windows/dmi_resolver.cc"
         "src/facts/windows/kernel_resolver.cc"
         "src/facts/windows/memory_resolver.cc"
         "src/facts/windows/processor_resolver.cc"
