@@ -72,7 +72,10 @@ namespace facter { namespace facts {
 
     value const* array_value::operator[](size_t i) const
     {
-        return _elements.at(i).get();
+        if (i >= _elements.size()) {
+            return nullptr;
+        }
+        return _elements[i].get();
     }
 
     ostream& array_value::write(ostream& os, bool quoted) const
