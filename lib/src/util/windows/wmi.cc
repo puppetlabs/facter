@@ -1,4 +1,5 @@
 #include <facter/util/windows/wmi.hpp>
+#include <facter/util/windows/string_conv.hpp>
 #include <facter/util/scoped_resource.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
@@ -20,12 +21,11 @@ namespace facter { namespace util { namespace windows { namespace wmi {
 
     // GUID taken from a Windows installation and unaccepted change to MinGW-w64. The MinGW-w64 library
     // doesn't define it, but obscures the Windows Platform SDK version of wbemuuid.lib.
-    static CLSID MyCLSID_WbemLocator = {0x4590f811, 0x1d3a, 0x11d0, 0x89,0x1f,0x00,0xaa,0x00,0x4b,0x2e,0x24};
+    static CLSID MyCLSID_WbemLocator = {0x4590f811, 0x1d3a, 0x11d0, 0x89, 0x1f, 0x00, 0xaa, 0x00, 0x4b, 0x2e, 0x24};
 
     class WMIQuery {
         WMIQuery()
         {
-            // TODO: Make sure this is all safe.
             auto hres = CoInitializeEx(0, COINIT_MULTITHREADED);
             if (FAILED(hres)) {
                 throw runtime_error("failed to initialize COM library");
@@ -80,12 +80,10 @@ namespace facter { namespace util { namespace windows { namespace wmi {
      public:
         imap query(string const& group, vector<string> const& keys) const
         {
-            // TODO: Cleanup string/wstring conversions.
             IEnumWbemClassObject *_pEnum = NULL;
             string qry = "SELECT " + boost::join(keys, ",") + " FROM " + group;
-            wstring wqry(qry.begin(), qry.end());
 
-            auto hres = _pSvc->ExecQuery(_bstr_t(L"WQL"), _bstr_t(wqry.c_str()),
+            auto hres = _pSvc->ExecQuery(_bstr_t(L"WQL"), _bstr_t(to_utf16(qry).c_str()),
                 WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, NULL, &_pEnum);
             if (FAILED(hres)) {
                 LOG_DEBUG("query %1% failed", qry);
@@ -105,15 +103,12 @@ namespace facter { namespace util { namespace windows { namespace wmi {
                 }
 
                 for (auto &s : keys) {
-                    wstring ws(s.begin(), s.end());
                     VARIANT vtProp;
-                    hr = pclsObj->Get(_bstr_t(ws.c_str()), 0, &vtProp, 0, 0);
+                    hr = pclsObj->Get(_bstr_t(to_utf16(s).c_str()), 0, &vtProp, 0, 0);
                     if (FAILED(hr)) {
                         break;
                     }
-                    ws = vtProp.bstrVal;
-                    string ss(ws.begin(), ws.end());
-                    vals.emplace(s, ss);
+                    vals.emplace(s, to_utf8(vtProp.bstrVal));
                     VariantClear(&vtProp);
                 }
 
