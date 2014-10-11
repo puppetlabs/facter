@@ -13,6 +13,7 @@
 #include <facter/util/environment.hpp>
 #include <facter/util/scoped_resource.hpp>
 #include <facter/util/windows/scoped_error.hpp>
+#include <facter/util/windows/wmi.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <windows.h>
@@ -64,6 +65,9 @@ namespace facter { namespace facts {
         add(make_shared<resolvers::operating_system_resolver>());
         add(make_shared<windows::processor_resolver>());
         add(make_shared<windows::virtualization_resolver>());
+
+        // Release COM resources, we're done making requests for now.
+        facter::util::windows::wmi::release();
     }
 
 }}  // namespace facter::facts

@@ -1,13 +1,14 @@
 #include <facter/util/windows/wmi.hpp>
 #include <facter/util/scoped_resource.hpp>
 #include <facter/logging/logging.hpp>
+#include <facter/execution/execution.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
 
 #define _WIN32_DCOM
 #include <comdef.h>
 #include <wbemidl.h>
-
-#include <facter/execution/execution.hpp>
-#include <boost/algorithm/string/join.hpp>
 
 using namespace std;
 using namespace facter::execution;
@@ -73,6 +74,8 @@ namespace facter { namespace util { namespace windows { namespace wmi {
         bool _coInit = false;
         IWbemLocator *_pLoc = nullptr;
         IWbemServices *_pSvc = nullptr;
+        static WMIQuery *_instance;
+        static boost::mutex _instMutex;
 
      public:
         imap query(string const& group, vector<string> const& keys) const
@@ -122,10 +125,25 @@ namespace facter { namespace util { namespace windows { namespace wmi {
 
         static WMIQuery const& get()
         {
-            static WMIQuery obj;
-            return obj;
+            boost::lock_guard<boost::mutex> instLock(_instMutex);
+            if (!_instance) {
+                _instance = new WMIQuery();
+            }
+            return *_instance;
+        }
+
+        static void release()
+        {
+            boost::lock_guard<boost::mutex> instLock(_instMutex);
+            if (_instance) {
+                delete _instance;
+                _instance = nullptr;
+            }
         }
     };
+
+    WMIQuery *WMIQuery::_instance = nullptr;
+    boost::mutex WMIQuery::_instMutex;
 
     imap query(string const& group, vector<string> const& keys)
     {
@@ -135,6 +153,11 @@ namespace facter { namespace util { namespace windows { namespace wmi {
             LOG_DEBUG(e.what());
             return {};
         }
+    }
+
+    void release()
+    {
+        WMIQuery::release();
     }
 
 }}}}  // namespace facter::util::windows::wmi
