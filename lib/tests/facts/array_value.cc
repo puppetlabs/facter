@@ -113,7 +113,7 @@ TEST(facter_facts_array_value, write_stream) {
 
     ostringstream stream;
     value.write(stream);
-    ASSERT_EQ("[\"1\", 2, [\"child\"]]", stream.str());
+    ASSERT_EQ("[\n  \"1\",\n  2,\n  [\n    \"child\"\n  ]\n]", stream.str());
 }
 
 TEST(facter_facts_array_value, write_yaml) {

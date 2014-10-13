@@ -142,7 +142,7 @@ TEST(facter_facts_map_value, write_stream) {
 
     ostringstream stream;
     value.write(stream);
-    ASSERT_EQ("{\"array\"=>[\"1\", 2], \"integer\"=>5, \"map\"=>{\"foo\"=>\"bar\"}, \"string\"=>\"hello\"}", stream.str());
+    ASSERT_EQ("{\n  array => [\n    \"1\",\n    2\n  ],\n  integer => 5,\n  map => {\n    foo => \"bar\"\n  },\n  string => \"hello\"\n}", stream.str());
 }
 
 TEST(facter_facts_map_value, write_yaml) {

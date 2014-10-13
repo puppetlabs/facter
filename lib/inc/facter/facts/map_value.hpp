@@ -79,7 +79,7 @@ namespace facter { namespace facts {
          * @param allocator The allocator to use for creating the JSON value.
          * @param value The returned JSON value.
          */
-        virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
+        virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const override;
 
         /**
          * Gets the value in the map of the given name.
@@ -87,7 +87,7 @@ namespace facter { namespace facts {
          * @param name The name of the value in the map to get.
          * @return Returns the value in the map or nullptr if the value is not in the map or expected type.
          */
-        template <typename T> T const* get(std::string const& name) const
+        template <typename T = value> T const* get(std::string const& name) const
         {
             return dynamic_cast<T const*>(this->operator [](name));
         }
@@ -103,16 +103,17 @@ namespace facter { namespace facts {
           * Writes the value to the given stream.
           * @param os The stream to write to.
           * @param quoted True if string values should be quoted or false if not.
+          * @param level The current indentation level.
           * @returns Returns the stream being written to.
           */
-        virtual std::ostream& write(std::ostream& os, bool quoted = true) const;
+        virtual std::ostream& write(std::ostream& os, bool quoted = true, unsigned int level = 1) const override;
 
         /**
           * Writes the value to the given YAML emitter.
           * @param emitter The YAML emitter to write to.
           * @returns Returns the given YAML emitter.
           */
-        virtual YAML::Emitter& write(YAML::Emitter& emitter) const;
+        virtual YAML::Emitter& write(YAML::Emitter& emitter) const override;
 
      private:
         std::map<std::string, std::unique_ptr<value>> _elements;
