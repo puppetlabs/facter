@@ -2,13 +2,13 @@ Source: cfacter
 Section: devel
 Priority: optional
 Maintainer: Puppet Labs <info@puppetlabs.com>
-Build-Depends: debhelper (>> 7), pl-cmake, pl-gcc, pl-libre2-devel, pl-libyaml-cpp-devel, libboost1.49-all-dev, openssl
+Build-Depends: debhelper (>> 7), pl-cmake, pl-gcc, pl-libyaml-cpp-devel, pl-libboost-devel, openssl
 Standards-Version: 3.9.1
 Homepage: http://www.puppetlabs.com
 
 Package: cfacter
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, openssl, pl-libre2, pl-libyaml-cpp, libboost-filesystem1.49.0, libboost-program-options1.49.0
+Depends: ${shlibs:Depends}, ${misc:Depends}, openssl, pl-libyaml-cpp, pl-libboost
 Description: Ruby module for collecting simple facts about a host operating system
  Some of the facts are preconfigured, such as the hostname and the operating
  system. Additional facts can be added through simple Ruby scripts.
