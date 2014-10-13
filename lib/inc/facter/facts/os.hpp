@@ -167,6 +167,10 @@ namespace facter { namespace facts {
          * The GNU/kFreeBSD operating system.
          */
         constexpr static char const* kfreebsd = "GNU/kFreeBSD";
+        /**
+         * The Windows operating system.
+         */
+        constexpr static char const* windows = "windows";
     };
 
 }}

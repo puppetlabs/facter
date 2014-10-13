@@ -43,6 +43,10 @@ namespace facter { namespace facts {
          * The Mandrake family of operating systems.
          */
         constexpr static char const* mandrake = "Mandrake";
+        /**
+         * The Windows family of operating systems.
+         */
+        constexpr static char const* windows = "windows";
     };
 
 }}  // namespace facter::facts
