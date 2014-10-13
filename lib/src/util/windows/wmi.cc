@@ -4,8 +4,6 @@
 #include <facter/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
 #include <boost/algorithm/string/join.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
 
 #define _WIN32_DCOM
 #include <comdef.h>
@@ -30,7 +28,7 @@ namespace facter { namespace util { namespace windows { namespace wmi {
             if (FAILED(hres)) {
                 throw runtime_error("failed to initialize COM library");
             }
-            _coInit = true;
+            _coInit = scoped_resource<bool>(true, [](bool b) { CoUninitialize(); });
 
             hres = CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT,
                 RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE, NULL);
@@ -38,16 +36,22 @@ namespace facter { namespace util { namespace windows { namespace wmi {
                 throw runtime_error("failed to initialize security");
             }
 
+            IWbemLocator *pLoc;
             hres = CoCreateInstance(MyCLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator,
-                reinterpret_cast<LPVOID *>(&_pLoc));
+                reinterpret_cast<LPVOID *>(&pLoc));
             if (FAILED(hres)) {
                 throw runtime_error("failed to create IWbemLocator object");
             }
+            _pLoc = scoped_resource<IWbemLocator *>(move(pLoc),
+                [](IWbemLocator *loc) { if (loc) loc->Release(); });
 
-            hres = _pLoc->ConnectServer(_bstr_t(L"ROOT\\CIMV2"), nullptr, nullptr, nullptr, 0, nullptr, nullptr, &_pSvc);
+            IWbemServices *pSvc;
+            hres = (*_pLoc).ConnectServer(_bstr_t(L"ROOT\\CIMV2"), nullptr, nullptr, nullptr, 0, nullptr, nullptr, &pSvc);
             if (FAILED(hres)) {
                 throw runtime_error("could not connect to WMI server");
             }
+            _pSvc = scoped_resource<IWbemServices *>(move(pSvc),
+                [](IWbemServices *svc) { if (svc) svc->Release(); });
 
             hres = CoSetProxyBlanket(_pSvc, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, NULL,
                 RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE);
@@ -56,26 +60,9 @@ namespace facter { namespace util { namespace windows { namespace wmi {
             }
         }
 
-        ~WMIQuery()
-        {
-            if (_coInit) {
-                CoUninitialize();
-            }
-
-            if (_pLoc) {
-                _pLoc->Release();
-            }
-
-            if (_pSvc) {
-                _pSvc->Release();
-            }
-        }
-
-        bool _coInit = false;
-        IWbemLocator *_pLoc = nullptr;
-        IWbemServices *_pSvc = nullptr;
-        static WMIQuery *_instance;
-        static boost::mutex _instMutex;
+        scoped_resource<bool> _coInit;
+        scoped_resource<IWbemLocator *> _pLoc;
+        scoped_resource<IWbemServices *> _pSvc;
 
      public:
         imap query(string const& group, vector<string> const& keys) const
@@ -83,7 +70,7 @@ namespace facter { namespace util { namespace windows { namespace wmi {
             IEnumWbemClassObject *_pEnum = NULL;
             string qry = "SELECT " + boost::join(keys, ",") + " FROM " + group;
 
-            auto hres = _pSvc->ExecQuery(_bstr_t(L"WQL"), _bstr_t(to_utf16(qry).c_str()),
+            auto hres = (*_pSvc).ExecQuery(_bstr_t(L"WQL"), _bstr_t(to_utf16(qry).c_str()),
                 WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, NULL, &_pEnum);
             if (FAILED(hres)) {
                 LOG_DEBUG("query %1% failed", qry);
@@ -120,25 +107,10 @@ namespace facter { namespace util { namespace windows { namespace wmi {
 
         static WMIQuery const& get()
         {
-            boost::lock_guard<boost::mutex> instLock(_instMutex);
-            if (!_instance) {
-                _instance = new WMIQuery();
-            }
-            return *_instance;
-        }
-
-        static void release()
-        {
-            boost::lock_guard<boost::mutex> instLock(_instMutex);
-            if (_instance) {
-                delete _instance;
-                _instance = nullptr;
-            }
+            static WMIQuery _instance;
+            return _instance;
         }
     };
-
-    WMIQuery *WMIQuery::_instance = nullptr;
-    boost::mutex WMIQuery::_instMutex;
 
     imap query(string const& group, vector<string> const& keys)
     {
@@ -148,11 +120,6 @@ namespace facter { namespace util { namespace windows { namespace wmi {
             LOG_DEBUG(e.what());
             return {};
         }
-    }
-
-    void release()
-    {
-        WMIQuery::release();
     }
 
 }}}}  // namespace facter::util::windows::wmi

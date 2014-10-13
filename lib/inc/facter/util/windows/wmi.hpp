@@ -67,9 +67,4 @@ namespace facter { namespace util { namespace windows { namespace wmi {
      */
     imap query(std::string const& group, std::vector<std::string> const& keys);
 
-    /**
-     * Releases COM resources acquired on the first call to query.
-     */
-    void release();
-
 }}}}  // namespace facter::util::windows::wmi
