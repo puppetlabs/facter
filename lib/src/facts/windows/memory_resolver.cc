@@ -25,7 +25,6 @@ namespace facter { namespace facts { namespace windows {
         data result;
         result.mem_total = statex.PhysicalTotal*statex.PageSize;
         result.mem_free = statex.PhysicalAvailable*statex.PageSize;
-        result.swap_total = (statex.CommitLimit - statex.PhysicalTotal)*statex.PageSize;
         return result;
     }
 
