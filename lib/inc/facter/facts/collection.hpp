@@ -139,20 +139,13 @@ namespace facter { namespace facts {
         size_t size();
 
         /**
-         * Filters the collection to contain only facts with the given names.
-         * @param names The names of the facts to filter the collection by.
-         * @param add True if an empty string fact should be added for any missing facts in the set or false if not.
-         */
-        void filter(std::set<std::string> const& names, bool add = true);
-
-        /**
          * Gets a fact value by name.
          * @tparam T The expected type of the value.
          * @param name The name of the fact to get the value of.
          * @param resolve True if resolution should take place or false if not.
          * @return Returns a pointer to the fact value or nullptr if the fact is not in the fact collection or the value is not the expected type.
          */
-        template <typename T>
+        template <typename T = value>
         T const* get(std::string const& name, bool resolve = true)
         {
             return dynamic_cast<T const*>(get_value(name, resolve));
@@ -166,6 +159,19 @@ namespace facter { namespace facts {
         value const* operator[](std::string const& name);
 
         /**
+         * Query the collection.
+         * @tparam T The expected type of the value.
+         * @param query The query to run.
+         * @param resolve True if resolution should take place or false if not.
+         * @return Returns the result of the query or nullptr if the query returned no value.
+         */
+        template <typename T = value>
+        T const* query(std::string const& query, bool resolve = true)
+        {
+            return dynamic_cast<T const*>(query_value(query, resolve));
+        }
+
+        /**
          * Enumerates all facts in the collection.
          * All facts will be resolved prior to enumeration.
          * @param func The callback function called for each fact in the collection.
@@ -177,17 +183,20 @@ namespace facter { namespace facts {
          * All facts will be resolved prior to writing.
          * @param stream The stream to write the facts to.
          * @param fmt The output format to use.
+         * @param queries The set of queries to filter the output to. If empty, all facts will be output.
          * @return Returns the stream being written to.
          */
-        std::ostream& write(std::ostream& stream, format fmt = format::hash);
+        std::ostream& write(std::ostream& stream, format fmt = format::hash, std::set<std::string> const& queries = std::set<std::string>());
 
      private:
         void resolve_facts();
         void resolve_fact(std::string const& name);
-        value const* get_value(std::string const& name, bool resolve);
-        void write_hash(std::ostream& stream) const;
-        void write_json(std::ostream& stream) const;
-        void write_yaml(std::ostream& stream) const;
+        value const* get_value(std::string const& name, bool resolve = true);
+        value const* query_value(std::string const& query, bool resolve = true);
+        value const* lookup(value const* value, std::string const& name, bool resolve = true);
+        void write_hash(std::ostream& stream, std::set<std::string> const& queries);
+        void write_json(std::ostream& stream, std::set<std::string> const& queries);
+        void write_yaml(std::ostream& stream, std::set<std::string> const& queries);
 
         // Platform specific members
         void add_platform_facts();

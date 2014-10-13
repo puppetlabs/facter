@@ -2,6 +2,8 @@
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <facter/facts/array_value.hpp>
+#include <facter/facts/map_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/dynamic_library.hpp>
@@ -79,7 +81,7 @@ namespace facter { namespace facts {
     void collection::add(string&& name, unique_ptr<value>&& value)
     {
         // Ensure the fact is resolved before replacing it
-        auto old_value = get_value(name, true);
+        auto old_value = get_value(name);
 
         if (LOG_IS_DEBUG_ENABLED()) {
             if (old_value) {
@@ -196,7 +198,7 @@ namespace facter { namespace facts {
     {
         // Ensure the fact is in the collection
         // This will properly resolve the fact prior to removing it
-        if (!get_value(name, true)) {
+        if (!get_value(name)) {
             return;
         }
 
@@ -222,37 +224,9 @@ namespace facter { namespace facts {
         return _facts.size();
     }
 
-    void collection::filter(set<string> const& names, bool add)
-    {
-        // First resolve all the facts that were named
-        for (auto const& name : names) {
-            // Ensure the value is resolved; if not, add an empty string fact
-            if (!get_value(name, true) && add) {
-                LOG_DEBUG("fact \"%1%\" was requested but not resolved; adding empty string value.", name);
-                this->add(string(name), make_value<string_value>(""));
-            }
-        }
-
-        // Next, move them into a new map
-        map<string, unique_ptr<value>> filtered_facts;
-        for (auto const& name : names) {
-            // Move the value into the filtered facts map
-            auto it = _facts.find(name);
-            if (it == _facts.end()) {
-                continue;
-            }
-
-            filtered_facts.emplace(make_pair(string(name), move(it->second)));
-        }
-
-        clear();
-
-        _facts = move(filtered_facts);
-    }
-
     value const* collection::operator[](string const& name)
     {
-        return get_value(name, true);
+        return get_value(name);
     }
 
     void collection::each(function<bool(string const&, value const*)> func)
@@ -264,16 +238,19 @@ namespace facter { namespace facts {
         });
     }
 
-    ostream& collection::write(ostream& stream, format fmt)
+    ostream& collection::write(ostream& stream, format fmt, set<string> const& queries)
     {
-        resolve_facts();
+        if (queries.empty()) {
+            // Resolve all facts
+            resolve_facts();
+        }
 
         if (fmt == format::hash) {
-            write_hash(stream);
+            write_hash(stream, queries);
         } else if (fmt == format::json) {
-            write_json(stream);
+            write_json(stream, queries);
         } else if (fmt == format::yaml) {
-            write_yaml(stream);
+            write_yaml(stream, queries);
         }
         return stream;
     }
@@ -323,16 +300,111 @@ namespace facter { namespace facts {
         return it == _facts.end() ? nullptr : it->second.get();
     }
 
-    void collection::write_hash(ostream& stream) const
+    value const* collection::query_value(string const& query, bool resolve)
     {
-        // If there's only one fact, print it without the name
-        if (_facts.size() == 1) {
-            _facts.begin()->second->write(stream, false);
+        // First attempt to lookup a fact with the exact name of the query
+        value const* current = get_value(query, resolve);
+        if (current) {
+            return current;
+        }
+
+        bool in_quotes = false;
+        string segment;
+        for (auto const& c : query) {
+            if (c == '"') {
+                in_quotes = !in_quotes;
+                continue;
+            }
+            if (in_quotes || c != '.') {
+                segment += c;
+                continue;
+            }
+            current = lookup(current, segment, resolve);
+            if (!current) {
+                return nullptr;
+            }
+            segment.clear();
+        }
+
+        if (!segment.empty()) {
+            current = lookup(current, segment, resolve);
+        }
+        return current;
+    }
+
+    value const* collection::lookup(value const* value, string const& name, bool resolve)
+    {
+        if (!value) {
+            value = get_value(name, resolve);
+            if (!value) {
+                LOG_DEBUG("fact \"%1%\" does not exist.", name);
+            }
+            return value;
+        }
+
+        auto map = dynamic_cast<map_value const*>(value);
+        if (map) {
+            value = (*map)[name];
+            if (!value) {
+                LOG_DEBUG("cannot lookup a hash element with \"%1%\": element does not exist.", name);
+            }
+            return value;
+        }
+
+        auto array = dynamic_cast<array_value const*>(value);
+        if (array) {
+            int index;
+            try {
+                index = stoi(name);
+            } catch (logic_error&) {
+                LOG_DEBUG("cannot lookup an array element with \"%1%\": expected an integral value.", name);
+                return nullptr;
+            }
+            if (index < 0) {
+                LOG_DEBUG("cannot lookup an array element with \"%1%\": expected a non-negative value.", name);
+                return nullptr;
+            }
+            if (array->empty()) {
+                LOG_DEBUG("cannot lookup an array element with \"%1%\": the array is empty.", name);
+                return nullptr;
+            }
+            if (static_cast<size_t>(index) >= array->size()) {
+                LOG_DEBUG("cannot lookup an array element with \"%1%\": expected an integral value between 0 and %2% (inclusive).", name, array->size() - 1);
+                return nullptr;
+            }
+            return (*array)[index];
+        }
+        return nullptr;
+    }
+
+    void collection::write_hash(ostream& stream, set<string> const& queries)
+    {
+        bool first = true;
+        if (!queries.empty()) {
+            // If there's only one query, print the result without the name
+            if (queries.size() == 1) {
+                auto value = query_value(*queries.begin());
+                if (value) {
+                    value->write(stream, false);
+                }
+                return;
+            }
+            for (auto const& query : queries) {
+                if (first) {
+                    first = false;
+                } else {
+                    stream << '\n';
+                }
+                auto value = this->query_value(query);
+                stream << query << " => ";
+                if (value) {
+                    value->write(stream, false);
+                }
+            }
             return;
         }
 
         // Print all facts in the map
-        bool first = true;
         for (auto const& kvp : _facts) {
             if (first) {
                 first = false;
@@ -359,15 +431,28 @@ namespace facter { namespace facts {
          ostream& _stream;
     };
 
-    void collection::write_json(ostream& stream) const
+    void collection::write_json(ostream& stream, set<string> const& queries)
     {
         Document document;
         document.SetObject();
 
-        for (auto const& kvp : _facts) {
-            rapidjson::Value value;
-            kvp.second->to_json(document.GetAllocator(), value);
-            document.AddMember(kvp.first.c_str(), value, document.GetAllocator());
+        if (!queries.empty()) {
+            for (auto const& query : queries) {
+                auto v = this->query_value(query);
+                rapidjson::Value value;
+                if (v) {
+                    v->to_json(document.GetAllocator(), value);
+                } else {
+                    value.SetString("", 0);
+                }
+                document.AddMember(query.c_str(), value, document.GetAllocator());
+            }
+        } else {
+            for (auto const &kvp : _facts) {
+                rapidjson::Value value;
+                kvp.second->to_json(document.GetAllocator(), value);
+                document.AddMember(kvp.first.c_str(), value, document.GetAllocator());
+            }
         }
 
         stream_adapter adapter(stream);
@@ -376,13 +461,26 @@ namespace facter { namespace facts {
         document.Accept(writer);
     }
 
-    void collection::write_yaml(ostream& stream) const
+    void collection::write_yaml(ostream& stream, set<string> const& queries)
     {
         Emitter emitter(stream);
         emitter << BeginMap;
-        for (auto const& kvp : _facts) {
-            emitter << Key << kvp.first << YAML::Value;
-            kvp.second->write(emitter);
+
+        if (!queries.empty()) {
+            for (auto const& query : queries) {
+                auto v = this->query_value(query);
+                emitter << Key << query << YAML::Value;
+                if (v) {
+                    v->write(emitter);
+                } else {
+                    emitter << DoubleQuoted << "";
+                }
+            }
+        } else {
+            for (auto const &kvp : _facts) {
+                emitter << Key << kvp.first << YAML::Value;
+                kvp.second->write(emitter);
+            }
         }
         emitter << EndMap;
     }

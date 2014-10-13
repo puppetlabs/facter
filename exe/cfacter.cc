@@ -40,7 +40,7 @@ void help(po::options_description& desc)
         "Usage\n"
         "=====\n"
         "\n"
-        "  cfacter [options] [fact] [fact] [...]\n"
+        "  cfacter [options] [query] [query] [...]\n"
         "\n"
         "Options\n"
         "=======\n\n" << desc <<
@@ -48,14 +48,16 @@ void help(po::options_description& desc)
         "===========\n"
         "\n"
         "Collect and display facts about the current system.  The library behind\n"
-        "cfacter is easy to expand, making cfacter an easy way to collect information\n"
+        "cfacter is easy to extend, making cfacter an easy way to collect information\n"
         "about a system.\n"
         "\n"
-        "If no facts are specifically asked for, then all facts will be returned.\n"
+        "If no queries are given, then all facts will be returned.\n"
         "\n"
-        "Example\n"
-        "=======\n\n"
-        "  cfacter kernel\n";
+        "Example Queries\n"
+        "===============\n\n"
+        "  cfacter kernel\n"
+        "  cfacter networking.ip\n"
+        "  cfacter processors.models.0\n";
 }
 
 void log_command_line(int argc, char** argv)
@@ -73,28 +75,28 @@ void log_command_line(int argc, char** argv)
     LOG_INFO("executed with command line: %1%.", command_line.str());
 }
 
-void log_requested_facts(set<string> const& facts)
+void log_queries(set<string> const& queries)
 {
     if (!LOG_IS_INFO_ENABLED()) {
         return;
     }
 
-    if (facts.empty()) {
+    if (queries.empty()) {
         LOG_INFO("resolving all facts.");
         return;
     }
 
-    ostringstream requested_facts;
-    for (auto const& fact : facts) {
-        if (fact.empty()) {
+    ostringstream output;
+    for (auto const& query : queries) {
+        if (query.empty()) {
             continue;
         }
-        if (requested_facts.tellp() != static_cast<streampos>(0)) {
-            requested_facts << ' ';
+        if (output.tellp() != static_cast<streampos>(0)) {
+            output << ' ';
         }
-        requested_facts << fact;
+        output << query;
     }
-    LOG_INFO("resolving requested facts: %1%.", requested_facts.str());
+    LOG_INFO("requested queries: %1%.", output.str());
 }
 
 int main(int argc, char **argv)
@@ -123,15 +125,15 @@ int main(int argc, char **argv)
         // Build a list of "hidden" options that are not visible on the command line
         po::options_description hidden_options("");
         hidden_options.add_options()
-            ("fact", po::value<vector<string>>());
+            ("query", po::value<vector<string>>());
 
         // Create the supported command line options (visible + hidden)
         po::options_description command_line_options;
         command_line_options.add(visible_options).add(hidden_options);
 
-        // Build a list of positional options (in our case, just fact names)
+        // Build a list of positional options (in our case, just queries)
         po::positional_options_description positional_options;
-        positional_options.add("fact", -1);
+        positional_options.add("query", -1);
 
         po::variables_map vm;
         try {
@@ -190,24 +192,24 @@ int main(int argc, char **argv)
             }
         }
 
-        // Build a set of requested facts from the command line
-        set<string> requested_facts;
-        if (vm.count("fact")) {
-            auto const& fact_parameters = vm["fact"].as<vector<string>>();
+        // Build a set of queries from the command line
+        set<string> queries;
+        if (vm.count("query")) {
+            auto const& parameters = vm["query"].as<vector<string>>();
 
-            // Convert the given strings into a set of unique lowercase fact names
+            // Convert the given strings into a set of unique lowercase queries
             transform(
-                fact_parameters.begin(),
-                fact_parameters.end(),
-                inserter(requested_facts, requested_facts.end()),
+                parameters.begin(),
+                parameters.end(),
+                inserter(queries, queries.end()),
                 [](string const& s) {
-                    string fact = boost::trim_copy(s);
-                    boost::to_lower(fact);
-                    return fact;
+                    string query = boost::trim_copy(s);
+                    boost::to_lower(query);
+                    return query;
                 });
         }
 
-        log_requested_facts(requested_facts);
+        log_queries(queries);
 
         collection facts;
         facts.add_default_facts();
@@ -221,11 +223,6 @@ int main(int argc, char **argv)
             mod.resolve_facts();
         }
 
-        // Filter to only the requested facts
-        if (!requested_facts.empty()) {
-            facts.filter(requested_facts);
-        }
-
         // Output the facts
         format fmt = format::hash;
         if (vm.count("json")) {
@@ -233,7 +230,7 @@ int main(int argc, char **argv)
         } else if (vm.count("yaml")) {
             fmt = format::yaml;
         }
-        facts.write(cout, fmt);
+        facts.write(cout, fmt, queries);
         cout << '\n';
     } catch (exception& ex) {
         LOG_FATAL("unhandled exception: %1%", ex.what());
