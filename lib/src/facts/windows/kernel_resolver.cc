@@ -4,8 +4,8 @@
 #include <facter/logging/logging.hpp>
 #include <boost/optional.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include <boost/format.hpp>
 #include <windows.h>
-#include <strsafe.h>
 
 using namespace std;
 using namespace facter::util;
@@ -43,15 +43,12 @@ namespace facter { namespace facts { namespace windows {
         }
 
         // Use the 1st language found, as ProductVersion should be language-independent.
-        TCHAR subBlock[50];
-        if (FAILED(StringCchPrintf(subBlock, 50, TEXT("\\StringFileInfo\\%04x%04x\\ProductVersion"),
-            lpTranslate->wLanguage, lpTranslate->wCodePage))) {
-            return boost::none;
-        }
+        string subBlock = str(boost::format("\\StringFileInfo\\%04x%04x\\ProductVersion")
+            % lpTranslate->wLanguage % lpTranslate->wCodePage);
 
         char *version;
         UINT versionLen;
-        if (!VerQueryValue(buffer.data(), subBlock, reinterpret_cast<LPVOID*>(&version), &versionLen)) {
+        if (!VerQueryValue(buffer.data(), subBlock.c_str(), reinterpret_cast<LPVOID*>(&version), &versionLen)) {
             return boost::none;
         }
 

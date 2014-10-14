@@ -17,15 +17,11 @@ namespace facter { namespace facts { namespace windows {
         data result;
 
         auto vals = wmi::query(wmi::computersystemproduct, {wmi::name});
-        if (!vals.empty()) {
-            result.product_name = vals[wmi::name];
-        }
+        result.product_name = wmi::get(vals, wmi::name);
 
         vals = wmi::query(wmi::bios, {wmi::manufacturer, wmi::serialnumber});
-        if (!vals.empty()) {
-            result.serial_number = vals[wmi::serialnumber];
-            result.manufacturer = vals[wmi::manufacturer];
-        }
+        result.serial_number = wmi::get(vals, wmi::name);
+        result.manufacturer = wmi::get(vals, wmi::manufacturer);
 
         return result;
     }

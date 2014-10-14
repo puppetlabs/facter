@@ -4,6 +4,7 @@
 #include <facter/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
 #include <boost/algorithm/string/join.hpp>
+#include <boost/range/iterator_range.hpp>
 
 #define _WIN32_DCOM
 #include <comdef.h>
@@ -81,25 +82,49 @@ namespace facter { namespace util { namespace windows { namespace wmi {
 
             imap vals;
 
-            IWbemClassObject *pclsObj;
+            IWbemClassObject *pclsObjs[256];
             ULONG uReturn = 0;
             while (pEnum) {
-                auto hr = (*pEnum).Next(WBEM_INFINITE, 1, &pclsObj, &uReturn);
+                auto hr = (*pEnum).Next(WBEM_INFINITE, 256, pclsObjs, &uReturn);
                 if (FAILED(hr) || 0 == uReturn) {
                     break;
                 }
 
-                for (auto &s : keys) {
-                    VARIANT vtProp;
-                    hr = pclsObj->Get(_bstr_t(to_utf16(s).c_str()), 0, &vtProp, 0, 0);
-                    if (FAILED(hr)) {
-                        break;
-                    }
-                    vals.emplace(s, to_utf8(vtProp.bstrVal));
-                    VariantClear(&vtProp);
-                }
+                for (auto pclsObj : boost::make_iterator_range(pclsObjs, pclsObjs+uReturn)) {
+                    for (auto &s : keys) {
+                        VARIANT vtProp;
+                        CIMTYPE vtType;
+                        hr = pclsObj->Get(_bstr_t(to_utf16(s).c_str()), 0, &vtProp, &vtType, 0);
+                        if (FAILED(hr)) {
+                            break;
+                        }
 
-                pclsObj->Release();
+                        // This handles the return types we expect to get - ints, reals, strings - but not all possibilities.
+                        switch (V_VT(&vtProp)) {
+                            case VT_I2:
+                                vals.emplace(s, to_string(V_I2(&vtProp)));
+                                break;
+                            case VT_I4:
+                                vals.emplace(s, to_string(V_I4(&vtProp)));
+                                break;
+                            case VT_R4:
+                                vals.emplace(s, to_string(V_R4(&vtProp)));
+                                break;
+                            case VT_R8:
+                                vals.emplace(s, to_string(V_R8(&vtProp)));
+                                break;
+                            case VT_BSTR:
+                                vals.emplace(s, to_utf8(V_BSTR(&vtProp)));
+                                break;
+                            default:
+                                LOG_DEBUG("unexpected return type %1% for WMI query %2%.%3%", V_VT(&vtProp), group, s);
+                                break;
+                        }
+
+                        VariantClear(&vtProp);
+                    }
+                    pclsObj->Release();
+                }
             }
 
             return vals;
@@ -119,6 +144,17 @@ namespace facter { namespace util { namespace windows { namespace wmi {
         } catch (runtime_error &e) {
             LOG_DEBUG(e.what());
             return {};
+        }
+    }
+
+    string const& get(imap const& kvmap, string const& key)
+    {
+        static string empty = {};
+        auto valIt = kvmap.find(key);
+        if (valIt == kvmap.end()) {
+            return empty;
+        } else {
+            return valIt->second;
         }
     }
 
