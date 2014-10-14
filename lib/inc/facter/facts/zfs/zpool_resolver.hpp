@@ -11,32 +11,6 @@
 namespace facter { namespace facts { namespace zfs {
 
     /**
-     * Represents a zpool.
-     */
-    struct zpool
-    {
-        /**
-         * The name of this zpool
-         */
-        std::string name;
-
-        /**
-         * The size of this zpool
-         */
-        std::string size;
-
-        /**
-         * The size available in this zpool
-         */
-        std::string available;
-
-        /**
-         * The disks within the poool
-         */
-        std::vector<std::string> disks;
-    };
-
-    /**
      * Responsible for resolving Zpool facts.
      */
     struct zpool_resolver : resolver
@@ -58,13 +32,6 @@ namespace facter { namespace facts { namespace zfs {
          * @return Returns command path
          */
         virtual std::string zpool_cmd() = 0;
-
-        /**
-         * The zpools configured
-         * @return Returns a vector of configured zpools
-         */
-
-        virtual std::vector<zpool> zpool_list();
     };
 
 }}}  // namespace facter::facts::zfs

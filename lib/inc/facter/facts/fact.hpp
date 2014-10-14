@@ -523,14 +523,6 @@ namespace facter { namespace facts {
          */
         constexpr static char const* zpool_features = "zpool_features";
 
-         /**
-         * The zpools for openzfs
-         */
-        constexpr static char const* zpools = "zpools";
-         /**
-         * The zfs data-sets for openzfs
-         */
-        constexpr static char const* zfs_datasets = "zfs_datasets";
         /**
          * The fact for number of zones
          */
