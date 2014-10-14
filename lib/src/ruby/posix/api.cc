@@ -5,6 +5,7 @@
 #include <facter/util/environment.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace facter::util;
@@ -83,9 +84,15 @@ namespace facter { namespace ruby {
         re_adapter regex("libruby(?:-.*)?\\.so(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?$");
 #endif
 
-       directory::each_file(search_path.string(), [&](string const &file) {
+        directory::each_file(search_path.string(), [&](string const &file) {
             // Ignore symlinks
             if (is_symlink(file, ec)) {
+                return true;
+            }
+
+            // Ignore static libs, but notify the user
+            if (boost::ends_with(file, ".a")) {
+                LOG_DEBUG("ruby library \"%1%\" is not supported: ensure ruby was built with the --enable-shared configuration option.", file);
                 return true;
             }
 
@@ -111,7 +118,7 @@ namespace facter { namespace ruby {
                 LOG_DEBUG("ruby library \"%1%\" has a higher version number than \"%2%\".", libruby, file);
             }
             return true;
-        }, "libruby.*\\.(?:so|dylib)");
+        }, "libruby.*\\.(?:so|dylib|a)");
 
         // If we found a ruby, attempt to load it
         if (!libruby.empty()) {
