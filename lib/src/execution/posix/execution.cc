@@ -12,7 +12,6 @@
 using namespace std;
 using namespace facter::util;
 using namespace facter::util::posix;
-using namespace facter::ruby;
 using namespace facter::logging;
 using namespace boost::filesystem;
 
@@ -176,10 +175,7 @@ namespace facter { namespace execution {
             // Disable Ruby cleanup
             // Ruby doesn't play nice with being forked
             // The VM records the parent pid, so it doesn't like having ruby_cleanup called from a child process
-            auto ruby = api::instance();
-            if (ruby) {
-                ruby->disable_cleanup();
-            }
+            ruby::api::cleanup = false;
 
             if (dup2(stdin_read, STDIN_FILENO) == -1) {
                throw execution_exception("failed to redirect child stdin.");
