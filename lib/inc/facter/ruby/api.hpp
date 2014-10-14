@@ -510,10 +510,10 @@ namespace facter {  namespace ruby {
         bool equals(VALUE first, VALUE second) const;
 
         /**
-         * Disables cleanup of the Ruby VM.
-         * This is only needed in forked child processes.
+         * Global flag to disable Ruby VM cleanup.
+         * This should be set to false in any forked child processes.
          */
-        void disable_cleanup();
+        static bool cleanup;
 
      private:
         explicit api(facter::util::dynamic_library&& library);
@@ -534,7 +534,6 @@ namespace facter {  namespace ruby {
         VALUE _nil;
         VALUE _true;
         VALUE _false;
-        bool _cleanup;
         bool _initialized;
     };
 

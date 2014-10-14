@@ -25,6 +25,9 @@ namespace facter { namespace ruby {
 #define LOAD_ALIASED_SYMBOL(x, y) x(reinterpret_cast<decltype(x)>(library.find_symbol(#x, true, #y)))
 #define LOAD_OPTIONAL_SYMBOL(x) x(reinterpret_cast<decltype(x)>(library.find_symbol(#x)))
 
+    // Default to cleaning up the VM on shutdown
+    bool api::cleanup = true;
+
     api::api(dynamic_library&& library) :
         LOAD_SYMBOL(rb_intern),
         LOAD_SYMBOL(rb_const_get),
@@ -93,14 +96,13 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(ruby_options),
         LOAD_SYMBOL(ruby_cleanup),
         _library(move(library)),
-        _cleanup(_library.first_load()),
         _initialized(false)
     {
     }
 
     api::~api()
     {
-        if (_initialized && _cleanup) {
+        if (_initialized && _library.first_load() && cleanup) {
             ruby_cleanup(0);
         }
     }
@@ -389,11 +391,6 @@ namespace facter { namespace ruby {
     bool api::equals(VALUE first, VALUE second) const
     {
         return is_true(rb_funcall(first, rb_intern("eql?"), 1, second));
-    }
-
-    void api::disable_cleanup()
-    {
-        _cleanup = false;
     }
 
 }}  // namespace facter::ruby
