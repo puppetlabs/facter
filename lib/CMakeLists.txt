@@ -94,6 +94,8 @@ if (WIN32)
         "src/util/windows/dynamic_library.cc"
         "src/util/windows/environment.cc"
         "src/util/windows/scoped_error.cc"
+        "src/util/windows/string_conv.cc"
+        "src/util/windows/wmi.cc"
     )
 endif()
 
@@ -163,9 +165,11 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
     set(LIBFACTER_PLATFORM_SOURCES
+        "src/facts/windows/dmi_resolver.cc"
         "src/facts/windows/kernel_resolver.cc"
         "src/facts/windows/memory_resolver.cc"
         "src/facts/windows/processor_resolver.cc"
+        "src/facts/windows/virtualization_resolver.cc"
     )
 
     # The GetPerformanceInfo symbol has moved around a lot between Windows versions;
@@ -173,7 +177,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
     set(LIBFACTER_PLATFORM_LIBRARIES
         "Psapi.lib"
         "Version.lib"
-        )
+        "Wbemuuid.lib")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSAPI_VERSION=1")
 endif()
 
