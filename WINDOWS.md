@@ -21,9 +21,6 @@ Setup Instructions
 
     * Note that the OpenSSL.Light package in Chocolatey will not work, as it does not include header files.
 
-	* Set the environment variable OPENSSL_ROOT = "\<install path\>"
-        * eg: export OPENSSL_ROOT=C:\OpenSSL-Win64\bin
-
 *   Install Python for cpplint
 
     * choco install python
