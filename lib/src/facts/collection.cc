@@ -379,40 +379,38 @@ namespace facter { namespace facts {
 
     void collection::write_hash(ostream& stream, set<string> const& queries)
     {
-        bool first = true;
-        if (!queries.empty()) {
-            // If there's only one query, print the result without the name
-            if (queries.size() == 1) {
-                auto value = query_value(*queries.begin());
-                if (value) {
-                    value->write(stream, false);
-                }
-                return;
-            }
-            for (auto const& query : queries) {
-                if (first) {
-                    first = false;
-                } else {
-                    stream << '\n';
-                }
-                auto value = this->query_value(query);
-                stream << query << " => ";
-                if (value) {
-                    value->write(stream, false);
-                }
+        // If there's only one query, print the result without the name
+        if (queries.size() == 1) {
+            auto value = query_value(*queries.begin());
+            if (value) {
+                value->write(stream, false);
             }
             return;
         }
 
-        // Print all facts in the map
-        for (auto const& kvp : _facts) {
+        bool first = true;
+        auto writer = ([&](string const& key, value const* val) {
             if (first) {
                 first = false;
             } else {
                 stream << '\n';
             }
-            stream << kvp.first << " => ";
-            kvp.second->write(stream, false);
+            stream << key << " => ";
+            if (val) {
+                val->write(stream, false);
+            }
+        });
+
+        if (!queries.empty()) {
+            // Print queried facts
+            for (auto const& query : queries) {
+                writer(query, this->query_value(query));
+            }
+        } else {
+            // Print all facts in the map
+            for (auto const& kvp : _facts) {
+                writer(kvp.first, kvp.second.get());
+            }
         }
     }
 
@@ -436,22 +434,23 @@ namespace facter { namespace facts {
         Document document;
         document.SetObject();
 
+        auto builder = ([&](string const& key, value const* val) {
+            rapidjson::Value value;
+            if (val) {
+                val->to_json(document.GetAllocator(), value);
+            } else {
+                value.SetString("", 0);
+            }
+            document.AddMember(key.c_str(), value, document.GetAllocator());
+        });
+
         if (!queries.empty()) {
             for (auto const& query : queries) {
-                auto v = this->query_value(query);
-                rapidjson::Value value;
-                if (v) {
-                    v->to_json(document.GetAllocator(), value);
-                } else {
-                    value.SetString("", 0);
-                }
-                document.AddMember(query.c_str(), value, document.GetAllocator());
+                builder(query, this->query_value(query));
             }
         } else {
-            for (auto const &kvp : _facts) {
-                rapidjson::Value value;
-                kvp.second->to_json(document.GetAllocator(), value);
-                document.AddMember(kvp.first.c_str(), value, document.GetAllocator());
+            for (auto const& kvp : _facts) {
+                builder(kvp.first, kvp.second.get());
             }
         }
 
@@ -466,20 +465,22 @@ namespace facter { namespace facts {
         Emitter emitter(stream);
         emitter << BeginMap;
 
+        auto writer = ([&](string const& key, value const* val) {
+            emitter << Key << key << YAML::Value;
+            if (val) {
+                val->write(emitter);
+            } else {
+                emitter << DoubleQuoted << "";
+            }
+        });
+
         if (!queries.empty()) {
             for (auto const& query : queries) {
-                auto v = this->query_value(query);
-                emitter << Key << query << YAML::Value;
-                if (v) {
-                    v->write(emitter);
-                } else {
-                    emitter << DoubleQuoted << "";
-                }
+                writer(query, this->query_value(query));
             }
         } else {
-            for (auto const &kvp : _facts) {
-                emitter << Key << kvp.first << YAML::Value;
-                kvp.second->write(emitter);
+            for (auto const& kvp : _facts) {
+                writer(kvp.first, kvp.second.get());
             }
         }
         emitter << EndMap;
