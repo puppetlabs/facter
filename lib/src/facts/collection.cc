@@ -403,8 +403,13 @@ namespace facter { namespace facts {
 
         if (!queries.empty()) {
             // Print queried facts
+            vector<pair<string, value const*>> facts;
             for (auto const& query : queries) {
-                writer(query, this->query_value(query));
+                facts.push_back(make_pair(query, this->query_value(query)));
+            }
+
+            for (auto const& kvp : facts) {
+                writer(kvp.first, kvp.second);
             }
         } else {
             // Print all facts in the map
@@ -475,8 +480,13 @@ namespace facter { namespace facts {
         });
 
         if (!queries.empty()) {
+            vector<pair<string, value const*>> facts;
             for (auto const& query : queries) {
-                writer(query, this->query_value(query));
+                facts.push_back(make_pair(query, this->query_value(query)));
+            }
+
+            for (auto const& kvp : facts) {
+                writer(kvp.first, kvp.second);
             }
         } else {
             for (auto const& kvp : _facts) {
