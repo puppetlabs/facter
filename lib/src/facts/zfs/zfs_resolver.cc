@@ -30,8 +30,7 @@ namespace facter { namespace facts { namespace zfs {
             "ZFS information",
             {
                 string(fact::zfs_version),
-                string(fact::zfs_featurenumbers),
-                string(fact::zfs_datasets)
+                string(fact::zfs_featurenumbers)
             })
     {
     }
@@ -96,55 +95,6 @@ namespace facter { namespace facts { namespace zfs {
            facts.add(move(string(fact::zfs_version)), make_value<string_value>(version));
          }
          facts.add(move(string(fact::zfs_featurenumbers)), make_value<string_value>(boost::join(nver, ",")));
-
-         auto sets = make_value<array_value>();
-         for (auto const& zp : zfs_list()) {
-             auto value = make_value<map_value>();
-             auto zset = make_value<map_value>();
-             value->add("size", make_value<string_value>(zp.size));
-             for (auto & prop : zp.props) {
-                value->add(string(prop.first), make_value<string_value>(prop.second));
-             }
-             zset->add(string(zp.name), move(value));
-             sets->add(move(zset));
-         }
-         facts.add(fact::zfs_datasets, move(sets));
-     }
-
-     vector<zfs> zfs_resolver::zfs_list()
-     {
-         string val;
-         vector<zfs> zvec;
-         execution::each_line(zfs_cmd(), {"list", "-H"}, [&] (string& line) {
-            vector<string> lst;
-            boost::split(lst, line, boost::is_any_of(" \t"), boost::token_compress_on);
-            if (lst.size() < 2) {
-                // The list -H all seems to have failed for some reason, or
-                // the format of the get -H all output has changed. In
-                // either case, we dont want to continue processing
-
-                LOG_DEBUG("zfs_resolver 'zfs list -H' failed");
-                return false;
-            }
-            // name, used, avail, refer, mount
-            map<string, string> props;
-            execution::each_line(zfs_cmd(), {"get", "-H", "all", lst[0]}, [&] (string& zline) {
-                vector<string> plst;
-                boost::split(plst, zline, boost::is_any_of(" \t"), boost::token_compress_on);
-                if (plst.size() < 2) {
-                    // The get -H all seems to have failed for some reason, or
-                    // the format of the get -H all output has changed. In
-                    // either case, we dont want to continue processing
-                    LOG_DEBUG("zfs_resolver 'zfs get -H all' failed");
-                    return false;
-                }
-                props.insert({move(plst[1]), move(plst[2])});
-                return true;
-            });
-            zvec.push_back(zfs{move(lst[0]), move(lst[1]), move(props)});
-            return true;
-         });
-         return zvec;
      }
 
 }}}  // namespace facter::facts::zfs

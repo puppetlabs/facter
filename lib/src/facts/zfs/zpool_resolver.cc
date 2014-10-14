@@ -31,7 +31,6 @@ namespace facter { namespace facts { namespace zfs {
             {
                 string(fact::zpool_version),
                 string(fact::zpool_featurenumbers),
-                string(fact::zpools),
             })
     {
     }
@@ -151,66 +150,6 @@ namespace facter { namespace facts { namespace zfs {
                return true;
          });
          facts.add(fact::zpool_featurenumbers, make_value<string_value>(boost::join(nver, ",")));
-         auto pools = make_value<array_value>();
-         for (auto const& zp : zpool_list()) {
-             auto value = make_value<map_value>();
-             auto pool = make_value<map_value>();
-             value->add("size", make_value<string_value>(zp.size));
-             value->add("available", make_value<string_value>(zp.available));
-             value->add("disks", make_value<string_value>(boost::join(zp.disks, ",")));
-             pool->add(string(zp.name), move(value));
-             pools->add(move(pool));
-         }
-         facts.add(fact::zpools, move(pools));
-     }
-
-     vector<zpool> zpool_resolver::zpool_list()
-     {
-         string val;
-         vector<zpool> zvec;
-         execution::each_line(zpool_cmd(), {"list", "-H"}, [&] (string& line) {
-            vector<string> lst;
-            boost::split(lst, line, boost::is_any_of(" \t"), boost::token_compress_on);
-            if (lst.size() < 1) {
-                // Either the zpool list has failed, or the format of output has changed
-                // in either case we should not continue.
-                LOG_DEBUG("zpool_resolver 'zpool list -H' failed");
-                return false;
-            }
-            vector<string> disks;
-            bool parse = false;
-            execution::each_line(zpool_cmd(), {"status", lst[0]}, [&] (string& sline) {
-               // begin parsing from config:, and end at errors:
-               if (boost::starts_with(sline, "config:")) {
-                  parse = true;
-                  return true;
-               }
-               if (boost::starts_with(sline, "errors:")) {
-                  parse = false;
-                  return false;
-               }
-               if (boost::starts_with(sline, "NAME")) {
-                  return true;
-               }
-               if (boost::starts_with(sline, lst[0])) {
-                  return true;
-               }
-
-               if (parse) {
-                  vector<string> slst;
-                  boost::split(slst, sline, boost::is_any_of(" \t"), boost::token_compress_on);
-                  if (slst.size() > 0) {
-                      disks.push_back(move(slst[0]));
-                  } else {
-                     LOG_DEBUG("zpool_resolver 'zpool status' failed: invalid line");
-                  }
-               }
-               return true;
-            });
-            zvec.push_back(zpool{move(lst[0]), move(lst[1]), move(lst[3]), move(disks)});
-            return true;
-         });
-         return zvec;
      }
 
 }}}  // namespace facter::facts::zfs
