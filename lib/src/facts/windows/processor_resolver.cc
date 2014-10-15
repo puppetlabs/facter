@@ -1,13 +1,17 @@
 #include <facter/facts/windows/processor_resolver.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/windows/scoped_error.hpp>
+#include <facter/util/windows/wmi.hpp>
 #include <boost/range/irange.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <windows.h>
 #include <intrin.h>
 #include <winnt.h>
 
 using namespace std;
 using namespace facter::util;
+using namespace facter::util::windows;
 
 #ifdef LOG_NAMESPACE
   #undef LOG_NAMESPACE
@@ -73,84 +77,29 @@ namespace facter { namespace facts { namespace windows {
         }
     }
 
-    // Returns error, physical_count, logical_count, models, speed
-    static tuple<bool, int, int, vector<string>, int64_t> get_processors()
+    // Returns physical_count, logical_count, models, speed
+    static tuple<int, int, vector<string>, int64_t> get_processors()
     {
+        auto vals = wmi::query(wmi::processor, {wmi::numberoflogicalprocessors, wmi::name});
+
         vector<string> models;
-        int physical_count = 0, logical_count = 0;
+        int logical_count = 0;
 
-        DWORD returnLength = 0;
-        GetLogicalProcessorInformation(nullptr, &returnLength);
-
-        if (GetLastError() != ERROR_INSUFFICIENT_BUFFER) {
-            return make_tuple(true, 0, 0, models, 0);
-        }
-
-        if (returnLength % sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) != 0) {
-            LOG_DEBUG("unexpected length %1% returned by GetLogicalProcessorInformation", returnLength);
-        }
-
-        vector<SYSTEM_LOGICAL_PROCESSOR_INFORMATION> buffer(returnLength/sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION));
-        if (!GetLogicalProcessorInformation(buffer.data(), &returnLength)) {
-            return make_tuple(true, 0, 0, models, 0);
-        }
-
-        for (auto &procInfoEntry : buffer) {
-            switch (procInfoEntry.Relationship) {
-                case RelationProcessorCore:
-                    ++physical_count;
-                    // A hyperthreaded core supplies more than one logical processor.
-                    // Use std::bitset::count for optimized counting of the number of toggled bits.
-                    logical_count += bitset<sizeof(decltype(procInfoEntry.ProcessorMask))*8>
-                        (procInfoEntry.ProcessorMask).count();
-                    break;
-                case RelationNumaNode:
-                    LOG_TRACE("skipping NUMA node in SYSTEM_LOGICAL_PROCESSOR_INFORMATION");
-                    break;
-                case RelationCache:
-                    LOG_TRACE("skipping relation cache in SYSTEM_LOGICAL_PROCESSOR_INFORMATION");
-                    break;
-                case RelationProcessorPackage:
-                    LOG_TRACE("skipping processor package in SYSTEM_LOGICAL_PROCESSOR_INFORMATION");
-                    break;
-                default:
-                    LOG_TRACE("unsupported LOGICAL_PROCESSOR_RELATIONSHIP value");
-                    break;
-            }
-        }
-
-        // Query __cpuid for model names; this seems to be black magic dependent on the instruction set.
-        // We follow the example at http://msdn.microsoft.com/en-US/library/hskdteyh(v=vs.80).aspx, which supports x86/x64.
-        // We only need the brand string to fill models.
-        int cpui[4] = {-1};
-        __cpuid(cpui, 0x80000000);
-        char cpu_brand_string[0x40] = {};
-
-        unsigned int nExIds = cpui[0];
-        for (auto i : boost::irange(0x80000000, nExIds+1u)) {
-            __cpuid(cpui, i);
-            switch (i) {
-                case 0x80000002:
-                    memcpy(cpu_brand_string, cpui, sizeof(cpui));
-                    break;
-                case 0x80000003:
-                    memcpy(cpu_brand_string+16, cpui, sizeof(cpui));
-                    break;
-                case 0x80000004:
-                    memcpy(cpu_brand_string+32, cpui, sizeof(cpui));
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        if (nExIds >= 0x80000002) {
-            models.assign(physical_count, cpu_brand_string);
+        auto num_logical_procs = boost::make_iterator_range(vals.equal_range(wmi::numberoflogicalprocessors));
+        if (num_logical_procs.empty()) {
+            logical_count = 1;
         } else {
-            LOG_DEBUG("processor models could not be determined using __cpuid");
+            for (auto const& kv : num_logical_procs) {
+                logical_count += stoi(kv.second);
+            }
         }
 
-        return make_tuple(false, physical_count, logical_count, move(models), 0);
+        auto proc_names = boost::make_iterator_range(vals.equal_range(wmi::name));
+        for (auto const& kv : proc_names) {
+            models.emplace_back(boost::trim_copy(kv.second));
+        }
+
+        return make_tuple(models.size(), logical_count, move(models), 0);
     }
 
     processor_resolver::data processor_resolver::collect_data(collection& facts)
@@ -159,12 +108,7 @@ namespace facter { namespace facts { namespace windows {
 
         result.hardware = get_hardware();
         result.architecture = get_architecture(result.hardware);
-        bool errored;
-        tie(errored, result.physical_count, result.logical_count, result.models, result.speed) = get_processors();
-        if (errored) {
-            auto err = GetLastError();
-            LOG_DEBUG("failure querying logical processor information: %1% (%2%)", scoped_error(err), err);
-        }
+        tie(result.physical_count, result.logical_count, result.models, result.speed) = get_processors();
 
         return result;
     }

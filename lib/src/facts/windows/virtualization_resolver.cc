@@ -30,8 +30,8 @@ namespace facter { namespace facts { namespace windows {
             return {};
         }
 
-        auto &manufacturer = vals[wmi::manufacturer];
-        auto &model = vals[wmi::model];
+        auto &manufacturer = wmi::get(vals, wmi::manufacturer);
+        auto &model = wmi::get(vals, wmi::model);
 
         for (auto const& vm : vms) {
             if (model.find(get<0>(vm)) != string::npos) {

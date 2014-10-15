@@ -18,6 +18,8 @@ namespace facter { namespace util { namespace windows {
         if (numChars > 0) {
             wstring ws(numChars, '\0');
             if (MultiByteToWideChar(CP_UTF8, 0, s.c_str(), -1, &ws[0], numChars) > 0) {
+                // MultiByteToWideChar required allocating space for the \0 char; resize to account for it.
+                ws.resize(numChars-1);
                 return ws;
             }
         }
@@ -33,6 +35,8 @@ namespace facter { namespace util { namespace windows {
         if (numChars > 0) {
             string s(numChars, '\0');
             if (WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), -1, &s[0], numChars, NULL, NULL) > 0) {
+                // WideCharToMultiByte required allocating space for the \0 char; resize to account for it.
+                s.resize(numChars-1);
                 return s;
             }
         }
