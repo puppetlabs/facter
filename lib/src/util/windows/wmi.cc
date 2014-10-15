@@ -149,7 +149,7 @@ namespace facter { namespace util { namespace windows { namespace wmi {
 
     string const& get(imap const& kvmap, string const& key)
     {
-        static string empty = {};
+        static const string empty = {};
         auto valIt = kvmap.find(key);
         if (valIt == kvmap.end()) {
             return empty;
