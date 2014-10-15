@@ -5,6 +5,8 @@
 #pragma once
 
 #include "../resolvers/processor_resolver.hpp"
+#include <facter/util/windows/wmi.hpp>
+#include <memory>
 
 namespace facter { namespace facts { namespace windows {
 
@@ -13,6 +15,11 @@ namespace facter { namespace facts { namespace windows {
      */
     struct processor_resolver : resolvers::processor_resolver
     {
+        /**
+         * Constructs the processor_resolver, specifying the WMI connection to use
+         */
+        processor_resolver(std::shared_ptr<util::windows::wmi> wmi_conn = std::make_shared<util::windows::wmi>());
+
      protected:
         /**
          * Collects the resolver data.
@@ -20,6 +27,9 @@ namespace facter { namespace facts { namespace windows {
          * @return Returns the resolver data.
          */
         virtual data collect_data(collection& facts) override;
+
+     private:
+        std::shared_ptr<util::windows::wmi> _wmi;
     };
 
 }}}  // namespace facter::facts::windows

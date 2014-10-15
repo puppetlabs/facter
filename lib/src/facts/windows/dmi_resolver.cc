@@ -12,14 +12,20 @@ using namespace facter::util::windows;
 
 namespace facter { namespace facts { namespace windows {
 
+    dmi_resolver::dmi_resolver(shared_ptr<wmi> wmi_conn) :
+        resolvers::dmi_resolver(),
+        _wmi(move(wmi_conn))
+    {
+    }
+
     dmi_resolver::data dmi_resolver::collect_data(collection& facts)
     {
         data result;
 
-        auto vals = wmi::query(wmi::computersystemproduct, {wmi::name});
+        auto vals = _wmi->query(wmi::computersystemproduct, {wmi::name});
         result.product_name = wmi::get(vals, wmi::name);
 
-        vals = wmi::query(wmi::bios, {wmi::manufacturer, wmi::serialnumber});
+        vals = _wmi->query(wmi::bios, {wmi::manufacturer, wmi::serialnumber});
         result.serial_number = wmi::get(vals, wmi::name);
         result.manufacturer = wmi::get(vals, wmi::manufacturer);
 

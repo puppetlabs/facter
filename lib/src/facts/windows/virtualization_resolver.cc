@@ -4,6 +4,7 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
 #include <facter/util/windows/wmi.hpp>
+#include <facter/logging/logging.hpp>
 #include <vector>
 #include <tuple>
 
@@ -11,7 +12,16 @@ using namespace std;
 using namespace facter::facts;
 using namespace facter::util::windows;
 
+#undef LOG_NAMESPACE
+#define LOG_NAMESPACE "facts.windows.virtualization"
+
 namespace facter { namespace facts { namespace windows {
+
+    virtualization_resolver::virtualization_resolver(shared_ptr<wmi> wmi_conn) :
+        resolvers::virtualization_resolver(),
+        _wmi(move(wmi_conn))
+    {
+    }
 
     string virtualization_resolver::get_hypervisor(collection& facts)
     {
@@ -25,7 +35,7 @@ namespace facter { namespace facts { namespace windows {
             make_tuple("Bochs",             string(vm::bochs)),
         };
 
-        auto vals = wmi::query(wmi::computersystem, {wmi::manufacturer, wmi::model});
+        auto vals = _wmi->query(wmi::computersystem, {wmi::manufacturer, wmi::model});
         if (vals.empty()) {
             return {};
         }
