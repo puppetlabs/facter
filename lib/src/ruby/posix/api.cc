@@ -57,14 +57,21 @@ namespace facter { namespace ruby {
         LOG_DEBUG("ruby was found at \"%1%\".", ruby);
 
         path parent_path = path(ruby).remove_filename() / "..";
-        path lib_path = parent_path / "lib64";
+        path search_path;
 
         boost::system::error_code ec;
-        path search_path  = canonical(lib_path, ec);
-        if (ec) {
-            LOG_DEBUG("ruby library was not found at %1%: %2%.", lib_path, ec.message());
-            lib_path = parent_path / "lib";
-            search_path  = canonical(lib_path, ec);
+        if (sizeof(void*) == 8) {
+            // 64-bit build, check for lib64 first
+            path lib_path = parent_path / "lib64";
+            search_path = canonical(lib_path, ec);
+            if (ec) {
+                LOG_DEBUG("ruby library was not found at %1%: %2%.", lib_path, ec.message());
+            }
+        }
+
+        if (search_path.empty()) {
+            path lib_path = parent_path / "lib";
+            search_path = canonical(lib_path, ec);
             if (ec) {
                 LOG_DEBUG("ruby library was not found at %1%: %2%.", lib_path, ec.message());
                 return library;
