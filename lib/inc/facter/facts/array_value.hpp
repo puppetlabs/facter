@@ -52,7 +52,7 @@ namespace facter { namespace facts {
          * Adds a value to the array.
          * @param value The value to add to the array.
          */
-        void add(std::unique_ptr<value>&& value);
+        void add(std::unique_ptr<value> value);
 
         /**
          * Checks to see if the array is empty.

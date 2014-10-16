@@ -54,7 +54,7 @@ namespace facter { namespace facts {
          * @param name The name of map element.
          * @param value The value of the map element.
          */
-        void add(std::string&& name, std::unique_ptr<value>&& value);
+        void add(std::string name, std::unique_ptr<value> value);
 
         /**
          * Checks to see if the map is empty.

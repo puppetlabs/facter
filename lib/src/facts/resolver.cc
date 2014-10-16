@@ -39,7 +39,7 @@ namespace facter { namespace facts {
     {
     }
 
-    resolver::resolver(string&& name, vector<string>&& names, vector<string> const& patterns) :
+    resolver::resolver(string name, vector<string> names, vector<string> const& patterns) :
         _name(move(name)),
         _names(move(names)),
         _resolving(false)

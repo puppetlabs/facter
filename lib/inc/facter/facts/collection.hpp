@@ -97,7 +97,7 @@ namespace facter { namespace facts {
          * @param name The name of the fact.
          * @param value The value of the fact.
          */
-        void add(std::string&& name, std::unique_ptr<value>&& value);
+        void add(std::string name, std::unique_ptr<value> value);
 
         /**
          * Adds external facts to the fact collection.

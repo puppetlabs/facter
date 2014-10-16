@@ -78,7 +78,7 @@ namespace facter { namespace facts {
         _resolvers.push_back(res);
     }
 
-    void collection::add(string&& name, unique_ptr<value>&& value)
+    void collection::add(string name, unique_ptr<value> value)
     {
         // Ensure the fact is resolved before replacing it
         auto old_value = get_value(name);

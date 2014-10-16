@@ -51,7 +51,7 @@ namespace facter { namespace facts {
          * @param names The fact names the resolver is responsible for.
          * @param patterns Regular expression patterns for additional ("dynamic") facts the resolver is responsible for.
          */
-        resolver(std::string&& name, std::vector<std::string>&& names, std::vector<std::string> const& patterns = {});
+        resolver(std::string name, std::vector<std::string> names, std::vector<std::string> const& patterns = {});
 
         /**
          * Destructs the resolver.

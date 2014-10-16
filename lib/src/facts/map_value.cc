@@ -29,7 +29,7 @@ namespace facter { namespace facts {
         return *this;
     }
 
-    void map_value::add(string&& name, unique_ptr<value>&& value)
+    void map_value::add(string name, unique_ptr<value> value)
     {
         if (!value) {
             LOG_DEBUG("null value cannot be added to map.");
