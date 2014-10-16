@@ -16,7 +16,8 @@ namespace facter { namespace facts { namespace windows {
     struct processor_resolver : resolvers::processor_resolver
     {
         /**
-         * Constructs the processor_resolver, specifying the WMI connection to use
+         * Constructs the processor_resolver.
+         * @param wmi_conn The WMI connection to use when resolving facts.
          */
         processor_resolver(std::shared_ptr<util::windows::wmi> wmi_conn = std::make_shared<util::windows::wmi>());
 
