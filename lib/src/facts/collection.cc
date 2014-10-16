@@ -289,21 +289,19 @@ namespace facter { namespace facts {
         }
     }
 
-    value const* collection::get_value(string const& name, bool resolve)
+    value const* collection::get_value(string const& name)
     {
-        if (resolve) {
-            resolve_fact(name);
-        }
+        resolve_fact(name);
 
         // Lookup the fact
         auto it = _facts.find(name);
         return it == _facts.end() ? nullptr : it->second.get();
     }
 
-    value const* collection::query_value(string const& query, bool resolve)
+    value const* collection::query_value(string const& query)
     {
         // First attempt to lookup a fact with the exact name of the query
-        value const* current = get_value(query, resolve);
+        value const* current = get_value(query);
         if (current) {
             return current;
         }
@@ -319,7 +317,7 @@ namespace facter { namespace facts {
                 segment += c;
                 continue;
             }
-            current = lookup(current, segment, resolve);
+            current = lookup(current, segment);
             if (!current) {
                 return nullptr;
             }
@@ -327,15 +325,15 @@ namespace facter { namespace facts {
         }
 
         if (!segment.empty()) {
-            current = lookup(current, segment, resolve);
+            current = lookup(current, segment);
         }
         return current;
     }
 
-    value const* collection::lookup(value const* value, string const& name, bool resolve)
+    value const* collection::lookup(value const* value, string const& name)
     {
         if (!value) {
-            value = get_value(name, resolve);
+            value = get_value(name);
             if (!value) {
                 LOG_DEBUG("fact \"%1%\" does not exist.", name);
             }
