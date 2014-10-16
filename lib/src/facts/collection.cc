@@ -261,6 +261,7 @@ namespace facter { namespace facts {
         while (!_resolvers.empty()) {
             auto resolver = _resolvers.front();
             remove(resolver);
+            LOG_DEBUG("resolving %1% facts.", resolver->name());
             resolver->resolve(*this);
         }
     }
@@ -273,6 +274,7 @@ namespace facter { namespace facts {
         while (it != range.second) {
             auto resolver = (it++)->second;
             remove(resolver);
+            LOG_DEBUG("resolving %1% facts.", resolver->name());
             resolver->resolve(*this);
         }
 
@@ -285,6 +287,7 @@ namespace facter { namespace facts {
             }
             auto resolver = *(pattern_it++);
             remove(resolver);
+            LOG_DEBUG("resolving %1% facts.", resolver->name());
             resolver->resolve(*this);
         }
     }

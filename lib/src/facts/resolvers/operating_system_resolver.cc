@@ -30,7 +30,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void operating_system_resolver::resolve_facts(collection& facts)
+    void operating_system_resolver::resolve(collection& facts)
     {
         auto data = collect_data(facts);
 

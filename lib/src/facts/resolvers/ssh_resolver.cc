@@ -24,7 +24,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void ssh_resolver::resolve_facts(collection& facts)
+    void ssh_resolver::resolve(collection& facts)
     {
         auto data = collect_data(facts);
 

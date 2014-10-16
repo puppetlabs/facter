@@ -17,7 +17,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void identity_resolver::resolve_facts(collection &facts)
+    void identity_resolver::resolve(collection &facts)
     {
         // TODO: this (and the ids) should be in a structured fact called something like "identity"
         auto data = collect_data(facts);

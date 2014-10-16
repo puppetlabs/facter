@@ -68,7 +68,7 @@ namespace facter { namespace facts { namespace resolvers {
         return "Unknown";
     }
 
-    void dmi_resolver::resolve_facts(collection& facts)
+    void dmi_resolver::resolve(collection& facts)
     {
         // TODO: replace this with a structured fact
         auto dmi = collect_data(facts);

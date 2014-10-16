@@ -28,7 +28,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void processor_resolver::resolve_facts(collection& facts)
+    void processor_resolver::resolve(collection& facts)
     {
         auto data = collect_data(facts);
 

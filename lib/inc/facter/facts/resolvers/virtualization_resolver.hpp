@@ -19,13 +19,13 @@ namespace facter { namespace facts { namespace resolvers {
          */
         virtualization_resolver();
 
-     protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(collection& facts) override;
+        virtual void resolve(collection& facts) override;
 
+     protected:
         /**
          * Gets the name of the hypervisor.
          * @param facts The fact collection that is resolving facts.

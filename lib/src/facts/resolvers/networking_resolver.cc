@@ -41,7 +41,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void networking_resolver::resolve_facts(collection& facts)
+    void networking_resolver::resolve(collection& facts)
     {
         auto data = collect_data(facts);
 

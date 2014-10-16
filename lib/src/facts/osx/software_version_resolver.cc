@@ -26,7 +26,7 @@ namespace facter { namespace facts { namespace osx {
     {
     }
 
-    void software_version_resolver::resolve_facts(collection& facts)
+    void software_version_resolver::resolve(collection& facts)
     {
         static map<string, string> fact_names = {
             { "ProductName",    string(fact::macosx_productname) },

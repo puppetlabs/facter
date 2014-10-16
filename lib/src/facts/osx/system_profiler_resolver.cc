@@ -42,7 +42,7 @@ namespace facter { namespace facts { namespace osx {
     {
     }
 
-    void system_profiler_resolver::resolve_facts(collection& facts)
+    void system_profiler_resolver::resolve(collection& facts)
     {
         static map<string, string> fact_names = {
             { "Boot Mode",              string(fact::sp_boot_mode) },
