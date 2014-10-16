@@ -20,6 +20,7 @@
 
 using namespace std;
 using namespace facter::util;
+using namespace facter::util::windows;
 using namespace facter::facts::external;
 using namespace boost::filesystem;
 
@@ -58,12 +59,18 @@ namespace facter { namespace facts {
     void collection::add_platform_facts()
     {
         // TODO WINDOWS: Add facts as created.
-        add(make_shared<windows::dmi_resolver>());
         add(make_shared<windows::kernel_resolver>());
         add(make_shared<windows::memory_resolver>());
         add(make_shared<resolvers::operating_system_resolver>());
-        add(make_shared<windows::processor_resolver>());
-        add(make_shared<windows::virtualization_resolver>());
+
+        try {
+            shared_ptr<wmi> shared_wmi = make_shared<wmi>();
+            add(make_shared<windows::dmi_resolver>(shared_wmi));
+            add(make_shared<windows::processor_resolver>(shared_wmi));
+            add(make_shared<windows::virtualization_resolver>(shared_wmi));
+        } catch (wmi_exception &e) {
+            LOG_ERROR("failed adding platform facts that require WMI: %1%", e.what());
+        }
     }
 
 }}  // namespace facter::facts
