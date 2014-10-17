@@ -310,6 +310,10 @@ namespace facter { namespace facts {
         constexpr static char const* sshfp_ed25519 = "sshfp_ed25519";
 
         /**
+         * The structured fact for OSX system profiler facts.
+         */
+        constexpr static char const* system_profiler = "system_profiler";
+        /**
          * The fact for OSX system profiler boot mode.
          */
         constexpr static char const* sp_boot_mode = "sp_boot_mode";

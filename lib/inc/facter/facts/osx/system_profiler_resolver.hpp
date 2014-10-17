@@ -4,25 +4,22 @@
  */
 #pragma once
 
-#include "../resolver.hpp"
+#include "../resolvers/system_profiler_resolver.hpp"
 
 namespace facter { namespace facts { namespace osx {
 
     /**
      * Responsible for resolving system profiler facts.
      */
-    struct system_profiler_resolver : resolver
+    struct system_profiler_resolver : resolvers::system_profiler_resolver
     {
+     protected:
         /**
-         * Constructs the system_profiler_resolver.
-         */
-        system_profiler_resolver();
-
-        /**
-         * Called to resolve all facts the resolver is responsible for.
+         * Collects the resolver data.
          * @param facts The fact collection that is resolving facts.
+         * @return Returns the resolver data.
          */
-        virtual void resolve(collection& facts) override;
+        virtual data collect_data(collection& facts) override;
     };
 
 }}}  // namespace facter::facts::osx
