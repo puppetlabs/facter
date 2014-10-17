@@ -173,6 +173,11 @@ namespace facter { namespace facts {
          * The fact for hardware architecture.
          */
         constexpr static char const* architecture = "architecture";
+
+        /**
+         * The structured fact for DMI data.
+         */
+        constexpr static char const* dmi = "dmi";
         /**
          * The fact for BIOS vendor.
          */
