@@ -46,11 +46,11 @@ namespace facter { namespace facts { namespace resolvers {
                 break;
         }
 
-        // TODO: remove the flat facts
-        facts.add(fact::uptime_seconds, make_value<integer_value>(seconds));
-        facts.add(fact::uptime_hours, make_value<integer_value>(hours));
-        facts.add(fact::uptime_days, make_value<integer_value>(days));
-        facts.add(fact::uptime, make_value<string_value>(uptime));
+        // Add hidden facts
+        facts.add(fact::uptime_seconds, make_value<integer_value>(seconds, true));
+        facts.add(fact::uptime_hours, make_value<integer_value>(hours, true));
+        facts.add(fact::uptime_days, make_value<integer_value>(days, true));
+        facts.add(fact::uptime, make_value<string_value>(uptime, true));
 
         auto value = make_value<map_value>();
         value->add("seconds", make_value<integer_value>(seconds));

@@ -19,8 +19,12 @@ namespace facter { namespace facts {
     {
         /**
          * Constructs an array_value.
+         * @param hidden True if the fact is hidden from output by default or false if not.
          */
-        array_value() = default;
+        array_value(bool hidden = false) :
+            value(hidden)
+        {
+        }
 
         /**
          * Prevents the array_value from being copied.

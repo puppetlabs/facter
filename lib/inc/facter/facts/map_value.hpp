@@ -20,8 +20,12 @@ namespace facter { namespace facts {
     {
         /**
          * Constructs a map value.
+         * @param hidden True if the fact is hidden from output by default or false if not.
          */
-        map_value() = default;
+        map_value(bool hidden = false) :
+            value(hidden)
+        {
+        }
 
         /**
          * Prevents the map_value from being copied.

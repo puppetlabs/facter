@@ -37,8 +37,7 @@ namespace facter { namespace facts { namespace resolvers {
         auto os = make_value<map_value>();
         auto family = determine_os_family(facts, data.name);
         if (!family.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::os_family, make_value<string_value>(family));
+            facts.add(fact::os_family, make_value<string_value>(family, true));
             os->add("family", make_value<string_value>(move(family)));
         }
 
@@ -49,16 +48,14 @@ namespace facter { namespace facts { namespace resolvers {
             tie(major, minor) = parse_release(data.name, data.release);
 
             if (!major.empty()) {
-                // TODO: remove flat fact
-                facts.add(fact::operating_system_major_release, make_value<string_value>(major));
+                facts.add(fact::operating_system_major_release, make_value<string_value>(major, true));
                 value->add("major", make_value<string_value>(move(major)));
             }
             if (!minor.empty()) {
                 value->add("minor", make_value<string_value>(move(minor)));
             }
 
-            // TODO: remove flat fact
-            facts.add(fact::operating_system_release, make_value<string_value>(data.release));
+            facts.add(fact::operating_system_release, make_value<string_value>(data.release, true));
             value->add("full", make_value<string_value>(move(data.release)));
 
             os->add("release", move(value));
@@ -67,18 +64,15 @@ namespace facter { namespace facts { namespace resolvers {
         // Add distro facts
         auto distro = make_value<map_value>();
         if (!data.distro.id.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::lsb_dist_id, make_value<string_value>(data.distro.id));
+            facts.add(fact::lsb_dist_id, make_value<string_value>(data.distro.id, true));
             distro->add("id", make_value<string_value>(move(data.distro.id)));
         }
         if (!data.distro.codename.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::lsb_dist_codename, make_value<string_value>(data.distro.codename));
+            facts.add(fact::lsb_dist_codename, make_value<string_value>(data.distro.codename, true));
             distro->add("codename", make_value<string_value>(move(data.distro.codename)));
         }
         if (!data.distro.description.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::lsb_dist_description, make_value<string_value>(data.distro.description));
+            facts.add(fact::lsb_dist_description, make_value<string_value>(data.distro.description, true));
             distro->add("description", make_value<string_value>(move(data.distro.description)));
         }
         if (!data.distro.release.empty()) {
@@ -90,31 +84,26 @@ namespace facter { namespace facts { namespace resolvers {
             if (major.empty()) {
                 major = data.distro.release;
             }
-            // TODO: remove flat fact
-            facts.add(fact::lsb_dist_major_release, make_value<string_value>(major));
+            facts.add(fact::lsb_dist_major_release, make_value<string_value>(major, true));
             value->add("major", make_value<string_value>(move(major)));
 
             if (!minor.empty()) {
-                // TODO: remove flat fact
-                facts.add(fact::lsb_dist_minor_release, make_value<string_value>(minor));
+                facts.add(fact::lsb_dist_minor_release, make_value<string_value>(minor, true));
                 value->add("minor", make_value<string_value>(move(minor)));
             }
 
-            // TODO: remove flat fact
-            facts.add(fact::lsb_dist_release, make_value<string_value>(data.distro.release));
+            facts.add(fact::lsb_dist_release, make_value<string_value>(data.distro.release, true));
             value->add("full", make_value<string_value>(move(data.distro.release)));
             distro->add("release", move(value));
         }
         if (!data.specification_version.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::lsb_release, make_value<string_value>(data.specification_version));
+            facts.add(fact::lsb_release, make_value<string_value>(data.specification_version, true));
             distro->add("specification", make_value<string_value>(move(data.specification_version)));
         }
 
         // Add the name last since the above release parsing is dependent on it
         if (!data.name.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::operating_system, make_value<string_value>(data.name));
+            facts.add(fact::operating_system, make_value<string_value>(data.name, true));
             os->add("name", make_value<string_value>(move(data.name)));
         }
 

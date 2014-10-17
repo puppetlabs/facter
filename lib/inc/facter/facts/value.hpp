@@ -43,8 +43,12 @@ namespace facter { namespace facts {
     {
         /**
          * Constructs a value.
+         * @param hidden True if the fact is hidden from output by default or false if not.
          */
-        value() = default;
+        value(bool hidden = false) :
+            _hidden(hidden)
+        {
+        }
 
         /**
          * Destructs a value.
@@ -52,22 +56,14 @@ namespace facter { namespace facts {
         virtual ~value() = default;
 
         /**
-         * Prevents the value from being copied.
-         */
-        value(value const&) = delete;
-
-        /**
-         * Prevents the value from being copied.
-         * @returns Returns this value.
-         */
-        value& operator=(value const&) = delete;
-
-        /**
          * Moves the given value into this value.
          * @param other The value to move into this value.
          */
         // Visual Studio 12 still doesn't allow default for move constructor.
-        value(value&& other) {}
+        value(value&& other)
+        {
+            _hidden = other._hidden;
+        }
 
         /**
          * Moves the given value into this value.
@@ -75,7 +71,20 @@ namespace facter { namespace facts {
          * @return Returns this value.
          */
         // Visual Studio 12 still doesn't allow default for move assignment.
-        value& operator=(value&& other) { return *this; }
+        value& operator=(value&& other)
+        {
+            _hidden = other._hidden;
+            return *this;
+        }
+
+        /**
+         * Determines if the value is hidden from output by default.
+         * @return Returns true if the value is hidden from output by default or false if it is not.
+         */
+        bool hidden() const
+        {
+            return _hidden;
+        }
 
         /**
          * Converts the value to a JSON value.
@@ -99,6 +108,12 @@ namespace facter { namespace facts {
           * @returns Returns the given YAML emitter.
           */
         virtual YAML::Emitter& write(YAML::Emitter& emitter) const = 0;
+
+     private:
+        value(value const&) = delete;
+        value& operator=(value const&) = delete;
+
+        bool _hidden;
     };
 
     /**

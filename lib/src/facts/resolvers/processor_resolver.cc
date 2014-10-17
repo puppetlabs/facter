@@ -35,27 +35,22 @@ namespace facter { namespace facts { namespace resolvers {
         auto cpus = make_value<map_value>();
 
         if (!data.isa.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::hardware_isa, make_value<string_value>(data.isa));
+            facts.add(fact::hardware_isa, make_value<string_value>(data.isa, true));
             cpus->add("isa", make_value<string_value>(move(data.isa)));
         }
         if (!data.hardware.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::hardware_model, make_value<string_value>(data.hardware));
+            facts.add(fact::hardware_model, make_value<string_value>(data.hardware, true));
             cpus->add("hardware", make_value<string_value>(move(data.hardware)));
         }
         if (!data.architecture.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::architecture, make_value<string_value>(data.architecture));
+            facts.add(fact::architecture, make_value<string_value>(data.architecture, true));
             cpus->add("architecture", make_value<string_value>(move(data.architecture)));
         }
 
-        // TODO: remove flat fact
-        facts.add(fact::processor_count, make_value<integer_value>(data.logical_count));
+        facts.add(fact::processor_count, make_value<integer_value>(data.logical_count, true));
         cpus->add("count", make_value<integer_value>(data.logical_count));
 
-        // TODO: remove flat fact
-        facts.add(fact::physical_processor_count, make_value<integer_value>(data.physical_count));
+        facts.add(fact::physical_processor_count, make_value<integer_value>(data.physical_count, true));
         cpus->add("physicalcount", make_value<integer_value>(data.physical_count));
 
         if (data.speed > 0) {
@@ -65,8 +60,7 @@ namespace facter { namespace facts { namespace resolvers {
         auto models = make_value<array_value>();
         int processor = 0;
         for (auto& model : data.models) {
-            // TODO: remove flat fact
-            facts.add(fact::processor + to_string(processor++), make_value<string_value>(model));
+            facts.add(fact::processor + to_string(processor++), make_value<string_value>(model, true));
             models->add(make_value<string_value>(move(model)));
         }
 

@@ -391,6 +391,10 @@ namespace facter { namespace facts {
 
         bool first = true;
         auto writer = ([&](string const& key, value const* val) {
+            // Ignore facts with hidden values
+            if (queries.empty() && val && val->hidden()) {
+                return;
+            }
             if (first) {
                 first = false;
             } else {
@@ -441,6 +445,10 @@ namespace facter { namespace facts {
         document.SetObject();
 
         auto builder = ([&](string const& key, value const* val) {
+            // Ignore facts with hidden values
+            if (queries.empty() && val && val->hidden()) {
+                return;
+            }
             rapidjson::Value value;
             if (val) {
                 val->to_json(document.GetAllocator(), value);
@@ -472,6 +480,10 @@ namespace facter { namespace facts {
         emitter << BeginMap;
 
         auto writer = ([&](string const& key, value const* val) {
+            // Ignore facts with hidden values
+            if (queries.empty() && val && val->hidden()) {
+                return;
+            }
             emitter << Key << key << YAML::Value;
             if (val) {
                 val->write(emitter);
