@@ -26,6 +26,11 @@ namespace facter { namespace facts { namespace resolvers {
                 fact::lsb_dist_major_release,
                 fact::lsb_dist_minor_release,
                 fact::lsb_release,
+                fact::macosx_buildversion,
+                fact::macosx_productname,
+                fact::macosx_productversion,
+                fact::macosx_productversion_major,
+                fact::macosx_productversion_minor
             })
     {
     }
@@ -109,6 +114,50 @@ namespace facter { namespace facts { namespace resolvers {
 
         if (!distro->empty()) {
              os->add("distro", move(distro));
+        }
+
+        // Populate OSX-specific data
+        auto macosx = make_value<map_value>();
+        if (!data.osx.product.empty()) {
+            facts.add(fact::macosx_productname, make_value<string_value>(data.osx.product, true));
+            macosx->add("product", make_value<string_value>(move(data.osx.product)));
+        }
+        if (!data.osx.build.empty()) {
+            facts.add(fact::macosx_buildversion, make_value<string_value>(data.osx.build, true));
+            macosx->add("build", make_value<string_value>(move(data.osx.build)));
+        }
+
+        if (!data.osx.version.empty()) {
+            // Look for the last '.' for major/minor
+            auto version = make_value<map_value>();
+            auto pos = data.osx.version.rfind('.');
+            if (pos != string::npos) {
+                string major = data.osx.version.substr(0, pos);
+                string minor = data.osx.version.substr(pos + 1);
+
+                // If the major doesn't have a '.', treat the entire version as the major
+                // and use a minor of "0"
+                if (major.find('.') == string::npos) {
+                    major = data.osx.version;
+                    minor = "0";
+                }
+
+                if (!major.empty()) {
+                    facts.add(fact::macosx_productversion_major, make_value<string_value>(major, true));
+                    version->add("major", make_value<string_value>(move(major)));
+                }
+                if (!minor.empty()) {
+                    facts.add(fact::macosx_productversion_minor, make_value<string_value>(minor, true));
+                    version->add("minor", make_value<string_value>(move(minor)));
+                }
+            }
+            facts.add(fact::macosx_productversion, make_value<string_value>(data.osx.version, true));
+            version->add("full", make_value<string_value>(move(data.osx.version)));
+            macosx->add("version", move(version));
+        }
+
+        if (!macosx->empty()) {
+            os->add("macosx", move(macosx));
         }
 
         if (!os->empty()) {

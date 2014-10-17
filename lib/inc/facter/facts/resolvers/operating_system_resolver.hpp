@@ -53,6 +53,25 @@ namespace facter { namespace facts { namespace resolvers {
         };
 
         /**
+         * Represents information about Mac OSX.
+         */
+        struct mac
+        {
+            /**
+             * Stores the OSX product name.
+             */
+            std::string product;
+            /**
+             * Stores the OSX build number.
+             */
+            std::string build;
+            /**
+             * Stores the OSX version.
+             */
+            std::string version;
+        };
+
+        /**
          * Represents operating system data.
          */
         struct data
@@ -76,6 +95,11 @@ namespace facter { namespace facts { namespace resolvers {
              * Stores information about the OS distribution.
              */
             distribution distro;
+
+            /**
+             * Stores information about Mac OSX.
+             */
+            mac osx;
         };
 
         /**
