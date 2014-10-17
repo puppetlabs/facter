@@ -51,7 +51,7 @@ Commands are expected to be executed in cmd.exe or Powershell. MinGW and Cygwin 
 
     * Download Boost 1.56 (<http://sourceforge.net/projects/boost/files/boost/1.56.0/>)
 
-    * .\boostrap mingw
+    * .\bootstrap mingw
 
     * .\b2 toolset=gcc address-model=64 --build-type=minimal install --prefix=\<boost install path\>
         * --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log can be used for a fast minimal build
