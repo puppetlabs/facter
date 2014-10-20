@@ -1,8 +1,15 @@
 include(FindDependency)
+
+if(YAMLCPP_STATIC)
+  set(yaml_lib "libyaml-cpp.a")
+else()
+  set(yaml_lib "yaml-cpp")
+endif()
+
 if (WIN32)
   find_dependency(YAMLCPP DISPLAY "yaml-cpp" HEADERS "yaml-cpp/yaml.h" LIBRARIES "libyaml-cppmd" "yaml-cpp")
 else()
-  find_dependency(YAMLCPP DISPLAY "yaml-cpp" HEADERS "yaml-cpp/yaml.h" LIBRARIES "yaml-cpp")
+  find_dependency(YAMLCPP DISPLAY "yaml-cpp" HEADERS "yaml-cpp/yaml.h" LIBRARIES ${yaml_lib})
 endif()
 
 include(FeatureSummary)

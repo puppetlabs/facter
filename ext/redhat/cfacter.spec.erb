@@ -22,19 +22,19 @@ Source0:        http://puppetlabs.com/downloads/%{name}/%{name}-%{realversion}.t
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-
 BuildRequires:  pl-gcc
 BuildRequires:  pl-cmake
 BuildRequires:  pl-libyaml-cpp-devel
 BuildRequires:  pl-libboost-devel
 BuildRequires:  openssl-devel
+BuildRequires:  libblkid-devel
 
-Requires: pl-libboost
-Requires: pl-libyaml-cpp
-Requires: libicu
-Requires: pl-gcc-runtime
+Requires: glibc
+Requires: openssl-libs
+Requires: libblkid
 
-AutoReqProv: 0
+AutoReq:  0
+AutoProv: 0
 
 %description
 Ruby module for collecting simple facts about a host Operating
@@ -49,6 +49,8 @@ operating system. Additional facts can be added through simple Ruby scripts
   -DCMAKE_TOOLCHAIN_FILE=%{build_prefix}/pl-build-toolchain.cmake \
   -DCMAKE_VERBOSE_MAKEFILE=ON \
   -DCMAKE_INSTALL_PREFIX=%{_prefix} \
+  -DBOOST_STATIC=ON \
+  -DYAMLCPP_STATIC=ON \
   .
   make %{?_smp_mflags} DESTDIR=%{buildroot}
 
