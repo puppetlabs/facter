@@ -7,6 +7,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 option(BOOST_STATIC "Use Boost's static libraries" OFF)
+option(YAMLCPP_STATIC "Use yaml-cpp's static libraries" OFF)
 
 enable_testing()
 
