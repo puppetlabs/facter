@@ -24,7 +24,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void ssh_resolver::resolve_facts(collection& facts)
+    void ssh_resolver::resolve(collection& facts)
     {
         auto data = collect_data(facts);
 
@@ -48,8 +48,7 @@ namespace facter { namespace facts { namespace resolvers {
         auto key_value = make_value<map_value>();
         auto fingerprint_value = make_value<map_value>();
 
-        // TODO: remove flat fact
-        facts.add(string(key_fact_name), make_value<string_value>(key.key));
+        facts.add(string(key_fact_name), make_value<string_value>(key.key, true));
         key_value->add("key", make_value<string_value>(move(key.key)));
 
         string fingerprint;
@@ -65,8 +64,7 @@ namespace facter { namespace facts { namespace resolvers {
             fingerprint_value->add("sha256", make_value<string_value>(move(key.digest.sha256)));
         }
         if (!fingerprint.empty()) {
-            // TODO: remove flat fact
-            facts.add(string(fingerprint_fact_name), make_value<string_value>(move(fingerprint)));
+            facts.add(string(fingerprint_fact_name), make_value<string_value>(move(fingerprint), true));
         }
         if (!fingerprint_value->empty()) {
             key_value->add("fingerprints", move(fingerprint_value));

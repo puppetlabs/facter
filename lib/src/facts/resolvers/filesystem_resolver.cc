@@ -23,7 +23,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void filesystem_resolver::resolve_facts(collection& facts)
+    void filesystem_resolver::resolve(collection& facts)
     {
         auto data = collect_data(facts);
 

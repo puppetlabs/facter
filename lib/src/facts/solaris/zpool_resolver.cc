@@ -77,11 +77,9 @@ namespace facter { namespace facts { namespace solaris {
      */
 
 
-    void zpool_resolver::resolve_facts(collection& facts)
+    void zpool_resolver::resolve(collection& facts)
     {
-      /*
-       * Solaris ZFS still follows a simple linear versioning
-       */
+        // Solaris ZFS still follows a simple linear versioning
         string val;
         string version;
         vector<string> nver;
@@ -95,6 +93,6 @@ namespace facter { namespace facts { namespace solaris {
         facts.add(fact::zpool_featurenumbers, make_value<string_value>(boost::join(nver, ",")));
         facts.add(fact::zpool_version, make_value<string_value>(move(version)));
 
-        zfs::zpool_resolver::resolve_facts(facts);
+        zfs::zpool_resolver::resolve(facts);
     }
 }}}  // namespace facter::facts::solaris

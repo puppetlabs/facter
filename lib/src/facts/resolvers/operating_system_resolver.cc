@@ -26,19 +26,23 @@ namespace facter { namespace facts { namespace resolvers {
                 fact::lsb_dist_major_release,
                 fact::lsb_dist_minor_release,
                 fact::lsb_release,
+                fact::macosx_buildversion,
+                fact::macosx_productname,
+                fact::macosx_productversion,
+                fact::macosx_productversion_major,
+                fact::macosx_productversion_minor
             })
     {
     }
 
-    void operating_system_resolver::resolve_facts(collection& facts)
+    void operating_system_resolver::resolve(collection& facts)
     {
         auto data = collect_data(facts);
 
         auto os = make_value<map_value>();
         auto family = determine_os_family(facts, data.name);
         if (!family.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::os_family, make_value<string_value>(family));
+            facts.add(fact::os_family, make_value<string_value>(family, true));
             os->add("family", make_value<string_value>(move(family)));
         }
 
@@ -49,16 +53,14 @@ namespace facter { namespace facts { namespace resolvers {
             tie(major, minor) = parse_release(data.name, data.release);
 
             if (!major.empty()) {
-                // TODO: remove flat fact
-                facts.add(fact::operating_system_major_release, make_value<string_value>(major));
+                facts.add(fact::operating_system_major_release, make_value<string_value>(major, true));
                 value->add("major", make_value<string_value>(move(major)));
             }
             if (!minor.empty()) {
                 value->add("minor", make_value<string_value>(move(minor)));
             }
 
-            // TODO: remove flat fact
-            facts.add(fact::operating_system_release, make_value<string_value>(data.release));
+            facts.add(fact::operating_system_release, make_value<string_value>(data.release, true));
             value->add("full", make_value<string_value>(move(data.release)));
 
             os->add("release", move(value));
@@ -67,18 +69,15 @@ namespace facter { namespace facts { namespace resolvers {
         // Add distro facts
         auto distro = make_value<map_value>();
         if (!data.distro.id.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::lsb_dist_id, make_value<string_value>(data.distro.id));
+            facts.add(fact::lsb_dist_id, make_value<string_value>(data.distro.id, true));
             distro->add("id", make_value<string_value>(move(data.distro.id)));
         }
         if (!data.distro.codename.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::lsb_dist_codename, make_value<string_value>(data.distro.codename));
+            facts.add(fact::lsb_dist_codename, make_value<string_value>(data.distro.codename, true));
             distro->add("codename", make_value<string_value>(move(data.distro.codename)));
         }
         if (!data.distro.description.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::lsb_dist_description, make_value<string_value>(data.distro.description));
+            facts.add(fact::lsb_dist_description, make_value<string_value>(data.distro.description, true));
             distro->add("description", make_value<string_value>(move(data.distro.description)));
         }
         if (!data.distro.release.empty()) {
@@ -90,36 +89,75 @@ namespace facter { namespace facts { namespace resolvers {
             if (major.empty()) {
                 major = data.distro.release;
             }
-            // TODO: remove flat fact
-            facts.add(fact::lsb_dist_major_release, make_value<string_value>(major));
+            facts.add(fact::lsb_dist_major_release, make_value<string_value>(major, true));
             value->add("major", make_value<string_value>(move(major)));
 
             if (!minor.empty()) {
-                // TODO: remove flat fact
-                facts.add(fact::lsb_dist_minor_release, make_value<string_value>(minor));
+                facts.add(fact::lsb_dist_minor_release, make_value<string_value>(minor, true));
                 value->add("minor", make_value<string_value>(move(minor)));
             }
 
-            // TODO: remove flat fact
-            facts.add(fact::lsb_dist_release, make_value<string_value>(data.distro.release));
+            facts.add(fact::lsb_dist_release, make_value<string_value>(data.distro.release, true));
             value->add("full", make_value<string_value>(move(data.distro.release)));
             distro->add("release", move(value));
         }
         if (!data.specification_version.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::lsb_release, make_value<string_value>(data.specification_version));
+            facts.add(fact::lsb_release, make_value<string_value>(data.specification_version, true));
             distro->add("specification", make_value<string_value>(move(data.specification_version)));
         }
 
         // Add the name last since the above release parsing is dependent on it
         if (!data.name.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::operating_system, make_value<string_value>(data.name));
+            facts.add(fact::operating_system, make_value<string_value>(data.name, true));
             os->add("name", make_value<string_value>(move(data.name)));
         }
 
         if (!distro->empty()) {
              os->add("distro", move(distro));
+        }
+
+        // Populate OSX-specific data
+        auto macosx = make_value<map_value>();
+        if (!data.osx.product.empty()) {
+            facts.add(fact::macosx_productname, make_value<string_value>(data.osx.product, true));
+            macosx->add("product", make_value<string_value>(move(data.osx.product)));
+        }
+        if (!data.osx.build.empty()) {
+            facts.add(fact::macosx_buildversion, make_value<string_value>(data.osx.build, true));
+            macosx->add("build", make_value<string_value>(move(data.osx.build)));
+        }
+
+        if (!data.osx.version.empty()) {
+            // Look for the last '.' for major/minor
+            auto version = make_value<map_value>();
+            auto pos = data.osx.version.rfind('.');
+            if (pos != string::npos) {
+                string major = data.osx.version.substr(0, pos);
+                string minor = data.osx.version.substr(pos + 1);
+
+                // If the major doesn't have a '.', treat the entire version as the major
+                // and use a minor of "0"
+                if (major.find('.') == string::npos) {
+                    major = data.osx.version;
+                    minor = "0";
+                }
+
+                if (!major.empty()) {
+                    facts.add(fact::macosx_productversion_major, make_value<string_value>(major, true));
+                    version->add("major", make_value<string_value>(move(major)));
+                }
+                if (!minor.empty()) {
+                    facts.add(fact::macosx_productversion_minor, make_value<string_value>(minor, true));
+                    version->add("minor", make_value<string_value>(move(minor)));
+                }
+            }
+            facts.add(fact::macosx_productversion, make_value<string_value>(data.osx.version, true));
+            version->add("full", make_value<string_value>(move(data.osx.version)));
+            macosx->add("version", move(version));
+        }
+
+        if (!macosx->empty()) {
+            os->add("macosx", move(macosx));
         }
 
         if (!os->empty()) {

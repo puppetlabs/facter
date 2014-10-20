@@ -173,6 +173,11 @@ namespace facter { namespace facts {
          * The fact for hardware architecture.
          */
         constexpr static char const* architecture = "architecture";
+
+        /**
+         * The structured fact for DMI data.
+         */
+        constexpr static char const* dmi = "dmi";
         /**
          * The fact for BIOS vendor.
          */
@@ -310,6 +315,10 @@ namespace facter { namespace facts {
         constexpr static char const* sshfp_ed25519 = "sshfp_ed25519";
 
         /**
+         * The structured fact for OSX system profiler facts.
+         */
+        constexpr static char const* system_profiler = "system_profiler";
+        /**
          * The fact for OSX system profiler boot mode.
          */
         constexpr static char const* sp_boot_mode = "sp_boot_mode";
@@ -425,6 +434,10 @@ namespace facter { namespace facts {
         constexpr static char const* is_virtual = "is_virtual";
 
         /**
+         * The structured fact for identity information.
+         */
+        constexpr static char const* identity = "identity";
+        /**
          * The fact for the running user ID
          */
         constexpr static char const* id = "id";
@@ -524,35 +537,35 @@ namespace facter { namespace facts {
         constexpr static char const* zpool_features = "zpool_features";
 
         /**
-         * The fact for number of zones
+         * The fact for number of zones.
          */
         constexpr static char const* zones = "zones";
         /**
-         * The fact for name of zone
+         * The fact for name of zone.
          */
         constexpr static char const* zonename = "zonename";
         /**
-         * The fact for zone brand 
+         * The fact for zone brand.
          */
         constexpr static char const* zone_brand = "brand";
         /**
-         * The fact for zone iptype 
+         * The fact for zone iptype.
          */
         constexpr static char const* zone_iptype = "iptype";
         /**
-         * The fact for zone uuid 
+         * The fact for zone uuid.
          */
         constexpr static char const* zone_uuid = "uuid";
         /**
-         * The fact for zone id 
+         * The fact for zone id.
          */
         constexpr static char const* zone_id = "zoneid";
         /**
-         * The fact for zone path 
+         * The fact for zone path.
          */
         constexpr static char const* zone_path = "zonepath";
         /**
-         * The fact for zone state 
+         * The fact for zone state.
          */
         constexpr static char const* zone_state = "zonestate";
     };

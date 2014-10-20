@@ -41,93 +41,83 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void networking_resolver::resolve_facts(collection& facts)
+    void networking_resolver::resolve(collection& facts)
     {
         auto data = collect_data(facts);
 
         auto networking = make_value<map_value>();
 
         if (!data.hostname.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::hostname, make_value<string_value>(data.hostname));
+            facts.add(fact::hostname, make_value<string_value>(data.hostname, true));
             networking->add("hostname", make_value<string_value>(move(data.hostname)));
         }
         if (!data.domain.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::domain, make_value<string_value>(data.domain));
+            facts.add(fact::domain, make_value<string_value>(data.domain, true));
             networking->add("domain", make_value<string_value>(move(data.domain)));
         }
         if (!data.fqdn.empty()) {
-            // TODO: remove flat fact
-            facts.add(fact::fqdn, make_value<string_value>(data.fqdn));
+            facts.add(fact::fqdn, make_value<string_value>(data.fqdn, true));
             networking->add("fqdn", make_value<string_value>(move(data.fqdn)));
         }
 
         ostringstream interface_names;
-        auto dhcp_servers = make_value<map_value>();
+        auto dhcp_servers = make_value<map_value>(true);
         auto interfaces = make_value<map_value>();
         for (auto& interface : data.interfaces) {
             bool primary = interface.name == data.primary_interface;
             auto value = make_value<map_value>();
             if (!interface.address.v4.empty()) {
-                // TODO: remove flat facts
-                facts.add(string(fact::ipaddress) + "_" + interface.name, make_value<string_value>(interface.address.v4));
+                facts.add(string(fact::ipaddress) + "_" + interface.name, make_value<string_value>(interface.address.v4, true));
                 if (primary) {
-                    facts.add(fact::ipaddress, make_value<string_value>(interface.address.v4));
+                    facts.add(fact::ipaddress, make_value<string_value>(interface.address.v4, true));
                     networking->add("ip", make_value<string_value>(interface.address.v4));
                 }
                 value->add("ip", make_value<string_value>(move(interface.address.v4)));
             }
             if (!interface.address.v6.empty()) {
-                // TODO: remove flat facts
-                facts.add(string(fact::ipaddress6) + "_" + interface.name, make_value<string_value>(interface.address.v6));
+                facts.add(string(fact::ipaddress6) + "_" + interface.name, make_value<string_value>(interface.address.v6, true));
                 if (primary) {
-                    facts.add(fact::ipaddress6, make_value<string_value>(interface.address.v6));
+                    facts.add(fact::ipaddress6, make_value<string_value>(interface.address.v6, true));
                     networking->add("ip6", make_value<string_value>(interface.address.v6));
                 }
                 value->add("ip6", make_value<string_value>(move(interface.address.v6)));
             }
             if (!interface.netmask.v4.empty()) {
-                // TODO: remove flat facts
-                facts.add(string(fact::netmask) + "_" + interface.name, make_value<string_value>(interface.netmask.v4));
+                facts.add(string(fact::netmask) + "_" + interface.name, make_value<string_value>(interface.netmask.v4, true));
                 if (primary) {
-                    facts.add(fact::netmask, make_value<string_value>(interface.netmask.v4));
+                    facts.add(fact::netmask, make_value<string_value>(interface.netmask.v4, true));
                     networking->add("netmask", make_value<string_value>(interface.netmask.v4));
                 }
                 value->add("netmask", make_value<string_value>(move(interface.netmask.v4)));
             }
             if (!interface.netmask.v6.empty()) {
-                // TODO: remove flat facts
-                facts.add(string(fact::netmask6) + "_" + interface.name, make_value<string_value>(interface.netmask.v6));
+                facts.add(string(fact::netmask6) + "_" + interface.name, make_value<string_value>(interface.netmask.v6, true));
                 if (primary) {
-                    facts.add(fact::netmask6, make_value<string_value>(interface.netmask.v6));
+                    facts.add(fact::netmask6, make_value<string_value>(interface.netmask.v6, true));
                     networking->add("netmask6", make_value<string_value>(interface.netmask.v6));
                 }
                 value->add("netmask6", make_value<string_value>(move(interface.netmask.v6)));
             }
             if (!interface.network.v4.empty()) {
-                // TODO: remove flat facts
-                facts.add(string(fact::network) + "_" + interface.name, make_value<string_value>(interface.network.v4));
+                facts.add(string(fact::network) + "_" + interface.name, make_value<string_value>(interface.network.v4, true));
                 if (primary) {
-                    facts.add(fact::network, make_value<string_value>(interface.network.v4));
+                    facts.add(fact::network, make_value<string_value>(interface.network.v4, true));
                     networking->add("network", make_value<string_value>(interface.network.v4));
                 }
                 value->add("network", make_value<string_value>(move(interface.network.v4)));
             }
             if (!interface.network.v6.empty()) {
-                // TODO: remove flat facts
-                facts.add(string(fact::network6) + "_" + interface.name, make_value<string_value>(interface.network.v6));
+                facts.add(string(fact::network6) + "_" + interface.name, make_value<string_value>(interface.network.v6, true));
                 if (primary) {
-                    facts.add(fact::network6, make_value<string_value>(interface.network.v6));
+                    facts.add(fact::network6, make_value<string_value>(interface.network.v6, true));
                     networking->add("network6", make_value<string_value>(interface.network.v6));
                 }
                 value->add("network6", make_value<string_value>(move(interface.network.v6)));
             }
             if (!interface.macaddress.empty()) {
-                // TODO: remove flat facts
-                facts.add(string(fact::macaddress) + "_" + interface.name, make_value<string_value>(interface.macaddress));
+                facts.add(string(fact::macaddress) + "_" + interface.name, make_value<string_value>(interface.macaddress, true));
                 if (primary) {
-                    facts.add(fact::macaddress, make_value<string_value>(interface.macaddress));
+                    facts.add(fact::macaddress, make_value<string_value>(interface.macaddress, true));
                     networking->add("mac", make_value<string_value>(interface.macaddress));
                 }
                 value->add("mac", make_value<string_value>(move(interface.macaddress)));
@@ -141,8 +131,7 @@ namespace facter { namespace facts { namespace resolvers {
                 value->add("dhcp", make_value<string_value>(move(interface.dhcp_server)));
             }
             if (interface.mtu) {
-                // TODO: remove flat fact
-                facts.add(string(fact::mtu) + "_" + interface.name, make_value<integer_value>(*interface.mtu));
+                facts.add(string(fact::mtu) + "_" + interface.name, make_value<integer_value>(*interface.mtu, true));
                 if (primary) {
                     networking->add("mtu", make_value<integer_value>(*interface.mtu));
                 }
@@ -158,12 +147,10 @@ namespace facter { namespace facts { namespace resolvers {
             interfaces->add(move(interface.name), move(value));
         }
 
-        // TODO: remove flat fact
         if (interface_names.tellp() != 0) {
-            facts.add(fact::interfaces, make_value<string_value>(interface_names.str()));
+            facts.add(fact::interfaces, make_value<string_value>(interface_names.str(), true));
         }
 
-        // TODO: remove duplicate structured fact
         if (!dhcp_servers->empty()) {
             facts.add(fact::dhcp_servers, move(dhcp_servers));
         }

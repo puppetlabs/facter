@@ -28,7 +28,7 @@ namespace facter { namespace ruby {
     // Default to cleaning up the VM on shutdown
     bool api::cleanup = true;
 
-    api::api(dynamic_library&& library) :
+    api::api(dynamic_library library) :
         LOAD_SYMBOL(rb_intern),
         LOAD_SYMBOL(rb_const_get),
         LOAD_SYMBOL(rb_const_set),

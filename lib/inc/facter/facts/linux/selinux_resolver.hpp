@@ -18,13 +18,13 @@ namespace facter { namespace facts { namespace linux {
          */
         selinux_resolver();
 
-     protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(collection& facts);
+        virtual void resolve(collection& facts) override;
 
+     protected:
         /**
          * Called to resolve all facts read from the SELinux pseudo filesystem.
          * @param facts The fact collection that is resolving facts.

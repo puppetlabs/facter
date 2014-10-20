@@ -23,7 +23,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void disk_resolver::resolve_facts(collection& facts)
+    void disk_resolver::resolve(collection& facts)
     {
         auto data = collect_data(facts);
 
@@ -35,20 +35,17 @@ namespace facter { namespace facts { namespace resolvers {
             }
             auto value = make_value<map_value>();
             if (!disk.vendor.empty()) {
-                // TODO: remove flat fact
-                facts.add(string(fact::block_device) + "_" + disk.name + "_vendor" , make_value<string_value>(disk.vendor));
+                facts.add(string(fact::block_device) + "_" + disk.name + "_vendor" , make_value<string_value>(disk.vendor, true));
                 value->add("vendor", make_value<string_value>(move(disk.vendor)));
             }
             if (!disk.model.empty()) {
-                // TODO: remove flat fact
-                facts.add(string(fact::block_device) + "_" + disk.name + "_model" , make_value<string_value>(disk.model));
+                facts.add(string(fact::block_device) + "_" + disk.name + "_model" , make_value<string_value>(disk.model, true));
                 value->add("model", make_value<string_value>(move(disk.model)));
             }
             if (!disk.product.empty()) {
                 value->add("product", make_value<string_value>(move(disk.product)));
             }
-            // TODO: remove flat fact
-            facts.add(string(fact::block_device) + "_" + disk.name + "_size" , make_value<integer_value>(static_cast<int64_t>(disk.size)));
+            facts.add(string(fact::block_device) + "_" + disk.name + "_size" , make_value<integer_value>(static_cast<int64_t>(disk.size), true));
             value->add("size_bytes", make_value<integer_value>(disk.size));
             value->add("size", make_value<string_value>(si_string(disk.size)));
 
@@ -60,9 +57,8 @@ namespace facter { namespace facts { namespace resolvers {
             disks->add(move(disk.name), move(value));
         }
 
-        // TODO: remove flat fact
         if (names.tellp() > 0) {
-            facts.add(fact::block_devices, make_value<string_value>(names.str()));
+            facts.add(fact::block_devices, make_value<string_value>(names.str(), true));
         }
 
         if (!disks->empty()) {

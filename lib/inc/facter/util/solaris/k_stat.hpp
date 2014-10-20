@@ -148,34 +148,28 @@ namespace facter { namespace util { namespace solaris {
         k_stat();
 
         /**
-         * Function for looking up a module
-         * @param module The module name
-         * @return Returns the vector containing all entries
+         * Function for looking up a module.
+         * @param module The module name.
+         * @return Returns the vector containing all entries.
          */
-        std::vector<k_stat_entry> operator[](std::string&& module);
+        std::vector<k_stat_entry> operator[](std::string const& module);
 
         /**
-         * Function for looking up a module, and an entry name
-         * @param entry A pair containing module name an entry name
-         * @return Returns the vector containing all entries
+         * Function for looking up a module, and an entry name.
+         * @param entry A pair containing module name an entry name.
+         * @return Returns the vector containing all entries.
          */
-        std::vector<k_stat_entry> operator[](std::pair<std::string, std::string>&& entry);
+        std::vector<k_stat_entry> operator[](std::pair<std::string, std::string> const& entry);
 
         /**
-         * Function for looking up a module, and an instance id
-         * @param entry A pair containing module name an instance id
-         * @return Returns the vector containing all entries
+         * Function for looking up a module, and an instance id.
+         * @param entry A pair containing module name an instance id.
+         * @return Returns the vector containing all entries.
          */
-        std::vector<k_stat_entry> operator[](std::pair<std::string, int>&& entry);
-
-        /**
-         * Function for looking up a module, and an instance id, instance id and entry name
-         * @param entry A tuple containing module name, instance id, and entry name
-         * @return Returns the vector containing all entries
-         */
-        std::vector<k_stat_entry> operator[](std::tuple<std::string, int, std::string>&& entry);
+        std::vector<k_stat_entry> operator[](std::pair<std::string, int> const& entry);
 
      private:
+        std::vector<k_stat_entry> lookup(std::string const& module, int instance, std::string const& name);
         scoped_kstat ctrl;
     };
 

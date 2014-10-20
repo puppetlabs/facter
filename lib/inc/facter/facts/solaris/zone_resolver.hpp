@@ -18,12 +18,11 @@ namespace facter { namespace facts { namespace solaris {
          */
         zone_resolver();
 
-     protected:
         /**
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact collection that is resolving facts.
          */
-        virtual void resolve_facts(collection& facts);
+        virtual void resolve(collection& facts) override;
     };
 
 }}}  // namespace facter::facts::solaris

@@ -31,6 +31,9 @@ struct test_os_resolver : operating_system_resolver
         result.distro.release = "1.2.3";
         result.distro.codename = "awesomesauce";
         result.distro.description = "best distro ever";
+        result.osx.product = "Mac OS X";
+        result.osx.build = "14A388b";
+        result.osx.version = "10.10";
         return result;
     }
 
@@ -51,7 +54,7 @@ TEST(facter_facts_resolvers_os_resolver, facts)
 {
     collection facts;
     facts.add(make_shared<test_os_resolver>());
-    ASSERT_EQ(12u, facts.size());
+    ASSERT_EQ(17u, facts.size());
 
     auto name = facts.get<string_value>(fact::operating_system);
     ASSERT_NE(nullptr, name);
@@ -99,7 +102,7 @@ TEST(facter_facts_resolvers_os_resolver, facts)
 
     auto os = facts.get<map_value>(fact::os);
     ASSERT_NE(nullptr, os);
-    ASSERT_EQ(4u, os->size());
+    ASSERT_EQ(5u, os->size());
 
     auto distro = os->get<map_value>("distro");
     ASSERT_NE(nullptr, distro);
@@ -160,4 +163,52 @@ TEST(facter_facts_resolvers_os_resolver, facts)
     minor = release_attribute->get<string_value>("minor");
     ASSERT_NE(nullptr, minor);
     ASSERT_EQ("3", minor->value());
+
+    auto macosx = os->get<map_value>("macosx");
+    ASSERT_NE(nullptr, macosx);
+    ASSERT_EQ(3u, macosx->size());
+
+    auto product = macosx->get<string_value>("product");
+    ASSERT_NE(nullptr, product);
+    ASSERT_EQ("Mac OS X", product->value());
+
+    auto build = macosx->get<string_value>("build");
+    ASSERT_NE(nullptr, build);
+    ASSERT_EQ("14A388b", build->value());
+
+    release_attribute = macosx->get<map_value>("version");
+    ASSERT_NE(nullptr, release_attribute);
+    ASSERT_EQ(3u, release_attribute->size());
+
+    release = release_attribute->get<string_value>("full");
+    ASSERT_NE(nullptr, release);
+    ASSERT_EQ("10.10", release->value());
+
+    major = release_attribute->get<string_value>("major");
+    ASSERT_NE(nullptr, major);
+    ASSERT_EQ("10.10", major->value());
+
+    minor = release_attribute->get<string_value>("minor");
+    ASSERT_NE(nullptr, minor);
+    ASSERT_EQ("0", minor->value());
+
+    build = facts.get<string_value>(fact::macosx_buildversion);
+    ASSERT_NE(nullptr, build);
+    ASSERT_EQ("14A388b", build->value());
+
+    product = facts.get<string_value>(fact::macosx_productname);
+    ASSERT_NE(nullptr, product);
+    ASSERT_EQ("Mac OS X", product->value());
+
+    release = facts.get<string_value>(fact::macosx_productversion);
+    ASSERT_NE(nullptr, release);
+    ASSERT_EQ("10.10", release->value());
+
+    major = facts.get<string_value>(fact::macosx_productversion_major);
+    ASSERT_NE(nullptr, major);
+    ASSERT_EQ("10.10", major->value());
+
+    minor = facts.get<string_value>(fact::macosx_productversion_minor);
+    ASSERT_NE(nullptr, minor);
+    ASSERT_EQ("0", minor->value());
 }

@@ -69,7 +69,7 @@ namespace facter { namespace facts { namespace zfs {
 
      */
 
-     void zfs_resolver::resolve_facts(collection& facts)
+     void zfs_resolver::resolve(collection& facts)
      {
        /*
         * Solaris ZFS still follows a simple linear versioning

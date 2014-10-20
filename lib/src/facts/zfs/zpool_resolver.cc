@@ -48,7 +48,7 @@ namespace facter { namespace facts { namespace zfs {
              Destroy filesystems asynchronously.
         empty_bpobj                           (read-only compatible)
              Snapshots use less space.
-        lz4_compress                         
+        lz4_compress
              LZ4 compression algorithm support.
 
         The following legacy versions are also supported:
@@ -134,7 +134,7 @@ namespace facter { namespace facts { namespace zfs {
 
      */
 
-     void zpool_resolver::resolve_facts(collection& facts)
+     void zpool_resolver::resolve(collection& facts)
      {
        /*
         * Solaris ZFS still follows a simple linear versioning

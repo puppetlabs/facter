@@ -29,7 +29,7 @@ namespace facter { namespace facts {
         return *this;
     }
 
-    void array_value::add(unique_ptr<value>&& value)
+    void array_value::add(unique_ptr<value> value)
     {
         if (!value) {
             LOG_DEBUG("null value cannot be added to array.");

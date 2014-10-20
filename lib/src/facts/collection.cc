@@ -78,7 +78,7 @@ namespace facter { namespace facts {
         _resolvers.push_back(res);
     }
 
-    void collection::add(string&& name, unique_ptr<value>&& value)
+    void collection::add(string name, unique_ptr<value> value)
     {
         // Ensure the fact is resolved before replacing it
         auto old_value = get_value(name);
@@ -261,6 +261,7 @@ namespace facter { namespace facts {
         while (!_resolvers.empty()) {
             auto resolver = _resolvers.front();
             remove(resolver);
+            LOG_DEBUG("resolving %1% facts.", resolver->name());
             resolver->resolve(*this);
         }
     }
@@ -273,6 +274,7 @@ namespace facter { namespace facts {
         while (it != range.second) {
             auto resolver = (it++)->second;
             remove(resolver);
+            LOG_DEBUG("resolving %1% facts.", resolver->name());
             resolver->resolve(*this);
         }
 
@@ -285,25 +287,24 @@ namespace facter { namespace facts {
             }
             auto resolver = *(pattern_it++);
             remove(resolver);
+            LOG_DEBUG("resolving %1% facts.", resolver->name());
             resolver->resolve(*this);
         }
     }
 
-    value const* collection::get_value(string const& name, bool resolve)
+    value const* collection::get_value(string const& name)
     {
-        if (resolve) {
-            resolve_fact(name);
-        }
+        resolve_fact(name);
 
         // Lookup the fact
         auto it = _facts.find(name);
         return it == _facts.end() ? nullptr : it->second.get();
     }
 
-    value const* collection::query_value(string const& query, bool resolve)
+    value const* collection::query_value(string const& query)
     {
         // First attempt to lookup a fact with the exact name of the query
-        value const* current = get_value(query, resolve);
+        value const* current = get_value(query);
         if (current) {
             return current;
         }
@@ -319,7 +320,7 @@ namespace facter { namespace facts {
                 segment += c;
                 continue;
             }
-            current = lookup(current, segment, resolve);
+            current = lookup(current, segment);
             if (!current) {
                 return nullptr;
             }
@@ -327,15 +328,15 @@ namespace facter { namespace facts {
         }
 
         if (!segment.empty()) {
-            current = lookup(current, segment, resolve);
+            current = lookup(current, segment);
         }
         return current;
     }
 
-    value const* collection::lookup(value const* value, string const& name, bool resolve)
+    value const* collection::lookup(value const* value, string const& name)
     {
         if (!value) {
-            value = get_value(name, resolve);
+            value = get_value(name);
             if (!value) {
                 LOG_DEBUG("fact \"%1%\" does not exist.", name);
             }
@@ -390,6 +391,10 @@ namespace facter { namespace facts {
 
         bool first = true;
         auto writer = ([&](string const& key, value const* val) {
+            // Ignore facts with hidden values
+            if (queries.empty() && val && val->hidden()) {
+                return;
+            }
             if (first) {
                 first = false;
             } else {
@@ -440,6 +445,10 @@ namespace facter { namespace facts {
         document.SetObject();
 
         auto builder = ([&](string const& key, value const* val) {
+            // Ignore facts with hidden values
+            if (queries.empty() && val && val->hidden()) {
+                return;
+            }
             rapidjson::Value value;
             if (val) {
                 val->to_json(document.GetAllocator(), value);
@@ -471,6 +480,10 @@ namespace facter { namespace facts {
         emitter << BeginMap;
 
         auto writer = ([&](string const& key, value const* val) {
+            // Ignore facts with hidden values
+            if (queries.empty() && val && val->hidden()) {
+                return;
+            }
             emitter << Key << key << YAML::Value;
             if (val) {
                 val->write(emitter);

@@ -35,6 +35,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/operating_system_resolver.cc"
     "src/facts/resolvers/processor_resolver.cc"
     "src/facts/resolvers/ssh_resolver.cc"
+    "src/facts/resolvers/system_profiler_resolver.cc"
     "src/facts/resolvers/timezone_resolver.cc"
     "src/facts/resolvers/uptime_resolver.cc"
     "src/facts/resolvers/virtualization_resolver.cc"
@@ -109,9 +110,9 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
         "src/facts/osx/networking_resolver.cc"
         "src/facts/osx/collection.cc"
         "src/facts/osx/memory_resolver.cc"
+        "src/facts/osx/operating_system_resolver.cc"
         "src/facts/osx/processor_resolver.cc"
         "src/facts/osx/system_profiler_resolver.cc"
-        "src/facts/osx/software_version_resolver.cc"
         "src/facts/osx/virtualization_resolver.cc"
         "src/util/bsd/scoped_ifaddrs.cc"
     )

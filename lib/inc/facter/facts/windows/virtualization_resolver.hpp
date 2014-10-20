@@ -17,7 +17,8 @@ namespace facter { namespace facts { namespace windows {
     struct virtualization_resolver : resolvers::virtualization_resolver
     {
         /**
-         * Constructs the virtualization_resolver, specifying the WMI connection to use
+         * Constructs the virtualization_resolver.
+         * @param wmi_conn The WMI connection to use when resolving facts.
          */
         virtualization_resolver(std::shared_ptr<util::windows::wmi> wmi_conn = std::make_shared<util::windows::wmi>());
 

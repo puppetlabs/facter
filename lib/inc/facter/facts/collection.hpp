@@ -97,7 +97,7 @@ namespace facter { namespace facts {
          * @param name The name of the fact.
          * @param value The value of the fact.
          */
-        void add(std::string&& name, std::unique_ptr<value>&& value);
+        void add(std::string name, std::unique_ptr<value> value);
 
         /**
          * Adds external facts to the fact collection.
@@ -142,13 +142,12 @@ namespace facter { namespace facts {
          * Gets a fact value by name.
          * @tparam T The expected type of the value.
          * @param name The name of the fact to get the value of.
-         * @param resolve True if resolution should take place or false if not.
          * @return Returns a pointer to the fact value or nullptr if the fact is not in the fact collection or the value is not the expected type.
          */
         template <typename T = value>
-        T const* get(std::string const& name, bool resolve = true)
+        T const* get(std::string const& name)
         {
-            return dynamic_cast<T const*>(get_value(name, resolve));
+            return dynamic_cast<T const*>(get_value(name));
         }
 
         /**
@@ -162,13 +161,12 @@ namespace facter { namespace facts {
          * Query the collection.
          * @tparam T The expected type of the value.
          * @param query The query to run.
-         * @param resolve True if resolution should take place or false if not.
          * @return Returns the result of the query or nullptr if the query returned no value.
          */
         template <typename T = value>
-        T const* query(std::string const& query, bool resolve = true)
+        T const* query(std::string const& query)
         {
-            return dynamic_cast<T const*>(query_value(query, resolve));
+            return dynamic_cast<T const*>(query_value(query));
         }
 
         /**
@@ -191,9 +189,9 @@ namespace facter { namespace facts {
      private:
         void resolve_facts();
         void resolve_fact(std::string const& name);
-        value const* get_value(std::string const& name, bool resolve = true);
-        value const* query_value(std::string const& query, bool resolve = true);
-        value const* lookup(value const* value, std::string const& name, bool resolve = true);
+        value const* get_value(std::string const& name);
+        value const* query_value(std::string const& query);
+        value const* lookup(value const* value, std::string const& name);
         void write_hash(std::ostream& stream, std::set<std::string> const& queries);
         void write_json(std::ostream& stream, std::set<std::string> const& queries);
         void write_yaml(std::ostream& stream, std::set<std::string> const& queries);

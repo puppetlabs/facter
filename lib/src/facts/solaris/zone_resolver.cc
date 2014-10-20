@@ -44,7 +44,7 @@ namespace facter { namespace facts { namespace solaris {
     {
     }
 
-    void zone_resolver::resolve_facts(collection& facts)
+    void zone_resolver::resolve(collection& facts)
     {
         auto res = execution::execute("/bin/zonename");
         if (!res.first) {

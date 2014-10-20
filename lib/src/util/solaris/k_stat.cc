@@ -11,27 +11,23 @@ namespace facter { namespace util { namespace solaris {
         }
     }
 
-    vector<k_stat_entry> k_stat::operator[](string&& module)
+    vector<k_stat_entry> k_stat::operator[](string const& module)
     {
-        return operator[](std::tuple<string, int, string>(module, -1, ""));
+        return lookup(module, -1, {});
     }
 
-    vector<k_stat_entry> k_stat::operator[](pair<string, int>&& entry)
+    vector<k_stat_entry> k_stat::operator[](pair<string, int> const& entry)
     {
-        return operator[](std::tuple<string, int, string>(entry.first, entry.second, ""));
+        return lookup(entry.first, entry.second, {});
     }
 
-    vector<k_stat_entry> k_stat::operator[](pair<string, string>&& entry)
+    vector<k_stat_entry> k_stat::operator[](pair<string, string> const& entry)
     {
-        return operator[](std::tuple<string, int, string>(entry.first, -1, entry.second));
+        return lookup(entry.first, -1, entry.second);
     }
 
-    vector<k_stat_entry> k_stat::operator[](tuple<string, int, string>&& entry)
+    vector<k_stat_entry> k_stat::lookup(string const& module, int instance, string const& name)
     {
-        auto module = get<0>(entry);
-        auto instance = get<1>(entry);
-        auto name = get<2>(entry);
-
         kstat_t* kp = kstat_lookup(ctrl, const_cast<char*>(module.c_str()), instance, name.empty() ? nullptr : const_cast<char *>(name.c_str()));
         if (kp == nullptr) {
             throw kstat_exception("kstat_lookup failed m:" + module + " i:" + to_string(instance) + " n:" + name + " err:" + strerror(errno));

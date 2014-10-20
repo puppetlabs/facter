@@ -13,18 +13,6 @@
 namespace facter { namespace facts {
 
     /**
-     * Thrown when a circular fact resolution is detected.
-     */
-    struct circular_resolution_exception : std::runtime_error
-    {
-        /**
-         * Constructs a circular_resolution_exception.
-         * @param message The exception message.
-         */
-        explicit circular_resolution_exception(std::string const& message);
-    };
-
-    /**
      * Thrown when a resolver is constructed with an invalid fact name pattern.
      */
     struct invalid_name_pattern_exception : std::runtime_error
@@ -51,7 +39,7 @@ namespace facter { namespace facts {
          * @param names The fact names the resolver is responsible for.
          * @param patterns Regular expression patterns for additional ("dynamic") facts the resolver is responsible for.
          */
-        resolver(std::string&& name, std::vector<std::string>&& names, std::vector<std::string> const& patterns = {});
+        resolver(std::string name, std::vector<std::string> names, std::vector<std::string> const& patterns = {});
 
         /**
          * Destructs the resolver.
@@ -113,20 +101,12 @@ namespace facter { namespace facts {
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact collection that is resolving facts.
          */
-        void resolve(collection& facts);
-
-     protected:
-        /**
-         * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact collection that is resolving facts.
-         */
-        virtual void resolve_facts(collection& facts) = 0;
+        virtual void resolve(collection& facts) = 0;
 
      private:
         std::string _name;
         std::vector<std::string> _names;
         std::vector<std::unique_ptr<facter::util::re_adapter>> _regexes;
-        bool _resolving;
     };
 
 }}  // namespace facter::facts

@@ -3,6 +3,7 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <facter/facts/map_value.hpp>
 
 using namespace std;
 using namespace facter::facts;
@@ -51,7 +52,7 @@ TEST(facter_facts_resolvers_dmi_resolver, facts)
 {
     collection facts;
     facts.add(make_shared<test_dmi_resolver>());
-    ASSERT_EQ(13u, facts.size());
+    ASSERT_EQ(14u, facts.size());
 
     static vector<string> const names = {
         fact::bios_vendor,
@@ -74,4 +75,76 @@ TEST(facter_facts_resolvers_dmi_resolver, facts)
         ASSERT_NE(nullptr, fact);
         ASSERT_EQ(name, fact->value());
     }
+
+    auto dmi = facts.get<map_value>(fact::dmi);
+    ASSERT_NE(nullptr, dmi);
+    ASSERT_EQ(5u, dmi->size());
+
+    auto bios = dmi->get<map_value>("bios");
+    ASSERT_NE(nullptr, bios);
+    ASSERT_EQ(3u, bios->size());
+
+    auto value = bios->get<string_value>("release_date");
+    ASSERT_NE(nullptr, value);
+    ASSERT_EQ(string(fact::bios_release_date), value->value());
+
+    value = bios->get<string_value>("vendor");
+    ASSERT_NE(nullptr, value);
+    ASSERT_EQ(string(fact::bios_vendor), value->value());
+
+    value = bios->get<string_value>("version");
+    ASSERT_NE(nullptr, value);
+    ASSERT_EQ(string(fact::bios_version), value->value());
+
+    auto board = dmi->get<map_value>("board");
+    ASSERT_NE(nullptr, board);
+    ASSERT_EQ(4u, board->size());
+
+    value = board->get<string_value>("asset_tag");
+    ASSERT_NE(nullptr, value);
+    ASSERT_EQ(string(fact::board_asset_tag), value->value());
+
+    value = board->get<string_value>("manufacturer");
+    ASSERT_NE(nullptr, value);
+    ASSERT_EQ(string(fact::board_manufacturer), value->value());
+
+    value = board->get<string_value>("product");
+    ASSERT_NE(nullptr, value);
+    ASSERT_EQ(string(fact::board_product_name), value->value());
+
+    value = board->get<string_value>("serial_number");
+    ASSERT_NE(nullptr, value);
+    ASSERT_EQ(string(fact::board_serial_number), value->value());
+
+    auto chassis = dmi->get<map_value>("chassis");
+    ASSERT_NE(nullptr, chassis);
+    ASSERT_EQ(2u, chassis->size());
+
+    value = chassis->get<string_value>("asset_tag");
+    ASSERT_NE(nullptr, value);
+    ASSERT_EQ(string(fact::chassis_asset_tag), value->value());
+
+    value = chassis->get<string_value>("type");
+    ASSERT_NE(nullptr, value);
+    ASSERT_EQ(string(fact::chassis_type), value->value());
+
+    value = dmi->get<string_value>("manufacturer");
+    ASSERT_NE(nullptr, value);
+    ASSERT_EQ(string(fact::manufacturer), value->value());
+
+    auto product = dmi->get<map_value>("product");
+    ASSERT_NE(nullptr, product);
+    ASSERT_EQ(3u, product->size());
+
+    value = product->get<string_value>("name");
+    ASSERT_NE(nullptr, value);
+    ASSERT_EQ(string(fact::product_name), value->value());
+
+    value = product->get<string_value>("serial_number");
+    ASSERT_NE(nullptr, value);
+    ASSERT_EQ(string(fact::serial_number), value->value());
+
+    value = product->get<string_value>("uuid");
+    ASSERT_NE(nullptr, value);
+    ASSERT_EQ(string(fact::product_uuid), value->value());
 }

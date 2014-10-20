@@ -12,37 +12,14 @@ using namespace std;
 
 namespace facter { namespace facts {
 
-    struct cycle_guard
-    {
-        explicit cycle_guard(bool& value) :
-            _value(value)
-        {
-            _value = true;
-        }
-
-        ~cycle_guard()
-        {
-            _value = false;
-        }
-
-     private:
-        bool& _value;
-    };
-
-    circular_resolution_exception::circular_resolution_exception(string const& message) :
-        runtime_error(message)
-    {
-    }
-
     invalid_name_pattern_exception::invalid_name_pattern_exception(string const& message) :
         runtime_error(message)
     {
     }
 
-    resolver::resolver(string&& name, vector<string>&& names, vector<string> const& patterns) :
+    resolver::resolver(string name, vector<string> names, vector<string> const& patterns) :
         _name(move(name)),
-        _names(move(names)),
-        _resolving(false)
+        _names(move(names))
     {
         for (auto const& pattern : patterns) {
             auto regex = unique_ptr<util::re_adapter>(new util::re_adapter(pattern));
@@ -69,7 +46,6 @@ namespace facter { namespace facts {
             _name = std::move(other._name);
             _names = std::move(other._names);
             _regexes = std::move(other._regexes);
-            _resolving = std::move(other._resolving);
         }
         return *this;
     }
@@ -98,16 +74,6 @@ namespace facter { namespace facts {
             }
         }
         return false;
-    }
-
-    void resolver::resolve(collection& facts)
-    {
-        LOG_DEBUG("resolving %1% facts.", _name);
-        if (_resolving) {
-            throw circular_resolution_exception("a cycle in fact resolution was detected.");
-        }
-        cycle_guard guard(_resolving);
-        resolve_facts(facts);
     }
 
 }}  // namespace facter::facts

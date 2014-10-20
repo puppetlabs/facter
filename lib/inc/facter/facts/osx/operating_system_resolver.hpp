@@ -1,17 +1,17 @@
 /**
  * @file
- * Declares the system profiler fact resolver.
+ * Declares the OSX operating system fact resolver.
  */
 #pragma once
 
-#include "../resolvers/system_profiler_resolver.hpp"
+#include "../resolvers/operating_system_resolver.hpp"
 
 namespace facter { namespace facts { namespace osx {
 
     /**
-     * Responsible for resolving system profiler facts.
+     * Responsible for resolving operating system facts.
      */
-    struct system_profiler_resolver : resolvers::system_profiler_resolver
+    struct operating_system_resolver : resolvers::operating_system_resolver
     {
      protected:
         /**

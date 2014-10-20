@@ -516,7 +516,7 @@ namespace facter {  namespace ruby {
         static bool cleanup;
 
      private:
-        explicit api(facter::util::dynamic_library&& library);
+        explicit api(facter::util::dynamic_library library);
         // Imported Ruby functions that should not be called externally
         int (* const ruby_setup)();
         void (* const ruby_init)();

@@ -31,7 +31,7 @@ namespace facter { namespace util {
          * @param resource The resource to scope.
          * @param deleter The function to call when the resource goes out of scope.
          */
-        scoped_resource(T&& resource, std::function<void(T&)> deleter) :
+        scoped_resource(T resource, std::function<void(T&)> deleter) :
             _resource(std::move(resource)),
             _deleter(deleter)
         {

@@ -20,7 +20,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void kernel_resolver::resolve_facts(collection& facts)
+    void kernel_resolver::resolve(collection& facts)
     {
         auto data = collect_data(facts);
         if (!data.name.empty()) {

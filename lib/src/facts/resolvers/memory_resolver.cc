@@ -28,7 +28,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void memory_resolver::resolve_facts(collection& facts)
+    void memory_resolver::resolve(collection& facts)
     {
         data result = collect_data(facts);
 
@@ -47,11 +47,11 @@ namespace facter { namespace facts { namespace resolvers {
             stats->add("capacity", make_value<string_value>(percentage(mem_used, result.mem_total)));
             value->add("system", move(stats));
 
-            // TODO: remove the flat facts
-            facts.add(fact::memoryfree, make_value<string_value>(si_string(result.mem_free)));
-            facts.add(fact::memoryfree_mb, make_value<double_value>(result.mem_free / (1024.0 * 1024.0)));
-            facts.add(fact::memorysize, make_value<string_value>(si_string(result.mem_total)));
-            facts.add(fact::memorysize_mb, make_value<double_value>(result.mem_total / (1024.0 * 1024.0)));
+            // Add hidden facts
+            facts.add(fact::memoryfree, make_value<string_value>(si_string(result.mem_free), true));
+            facts.add(fact::memoryfree_mb, make_value<double_value>(result.mem_free / (1024.0 * 1024.0), true));
+            facts.add(fact::memorysize, make_value<string_value>(si_string(result.mem_total), true));
+            facts.add(fact::memorysize_mb, make_value<double_value>(result.mem_total / (1024.0 * 1024.0), true));
         }
 
         if (result.swap_total > 0) {
@@ -70,13 +70,13 @@ namespace facter { namespace facts { namespace resolvers {
             }
             value->add("swap", move(stats));
 
-            // TODO: remove the flat facts
-            facts.add(fact::swapfree, make_value<string_value>(si_string(result.swap_free)));
-            facts.add(fact::swapfree_mb, make_value<double_value>(result.swap_free / (1024.0 * 1024.0)));
-            facts.add(fact::swapsize, make_value<string_value>(si_string(result.swap_total)));
-            facts.add(fact::swapsize_mb, make_value<double_value>(result.swap_total / (1024.0 * 1024.0)));
+            // Add hidden facts
+            facts.add(fact::swapfree, make_value<string_value>(si_string(result.swap_free), true));
+            facts.add(fact::swapfree_mb, make_value<double_value>(result.swap_free / (1024.0 * 1024.0), true));
+            facts.add(fact::swapsize, make_value<string_value>(si_string(result.swap_total), true));
+            facts.add(fact::swapsize_mb, make_value<double_value>(result.swap_total / (1024.0 * 1024.0), true));
             if (result.swap_encryption != encryption_status::unknown) {
-                facts.add(fact::swapencrypted, make_value<boolean_value>(result.swap_encryption == encryption_status::encrypted));
+                facts.add(fact::swapencrypted, make_value<boolean_value>(result.swap_encryption == encryption_status::encrypted, true));
             }
         }
 

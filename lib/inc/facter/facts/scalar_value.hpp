@@ -22,32 +22,14 @@ namespace facter { namespace facts {
     {
         /**
          * Constructs a scalar_value.
-         * @param value The scalar value to move into this object.
+         * @param value The scalar value.
+         * @param hidden True if the fact is hidden from output by default or false if not.
          */
-        explicit scalar_value(T&& value) :
+        scalar_value(T value, bool hidden = false) :
+            facter::facts::value(hidden),
             _value(std::move(value))
         {
         }
-
-        /**
-         * Constructs a scalar_value.
-         * @param value The scalar value to copy into this object.
-         */
-        explicit scalar_value(T const& value) :
-            _value(value)
-        {
-        }
-
-        /**
-         * Prevents the scalar_value from being copied.
-         */
-        scalar_value(scalar_value const&) = delete;
-
-        /**
-         * Prevents the scalar_value from being copied.
-         * @returns Returns this scalar_value.
-         */
-        scalar_value& operator=(scalar_value const&) = delete;
 
         /**
          * Moves the given scalar_value into this scalar_value.
@@ -112,6 +94,9 @@ namespace facter { namespace facts {
         }
 
      private:
+        scalar_value(scalar_value const&) = delete;
+        scalar_value& operator=(scalar_value const&) = delete;
+
         T _value;
     };
 

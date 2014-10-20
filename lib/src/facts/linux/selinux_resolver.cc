@@ -24,7 +24,7 @@ namespace facter { namespace facts { namespace linux {
     {
     }
 
-    void selinux_resolver::resolve_facts(collection& facts)
+    void selinux_resolver::resolve(collection& facts)
     {
         resolve_selinux_fs_facts(facts);
         resolve_selinux_config_facts(facts);

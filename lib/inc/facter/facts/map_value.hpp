@@ -20,8 +20,12 @@ namespace facter { namespace facts {
     {
         /**
          * Constructs a map value.
+         * @param hidden True if the fact is hidden from output by default or false if not.
          */
-        map_value() = default;
+        map_value(bool hidden = false) :
+            value(hidden)
+        {
+        }
 
         /**
          * Prevents the map_value from being copied.
@@ -54,7 +58,7 @@ namespace facter { namespace facts {
          * @param name The name of map element.
          * @param value The value of the map element.
          */
-        void add(std::string&& name, std::unique_ptr<value>&& value);
+        void add(std::string name, std::unique_ptr<value> value);
 
         /**
          * Checks to see if the map is empty.
