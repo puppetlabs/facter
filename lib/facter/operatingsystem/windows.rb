@@ -9,6 +9,13 @@ module Facter
         Facter::Util::WMI.execquery("SELECT version, producttype FROM Win32_OperatingSystem").each do |os|
           result =
             case os.version
+            when /^6\.4/
+              # As of October 2014, there are no Win server releases with kernel 6.4.x.
+              # This case prevents future releases from resolving to nil before we
+              # can update the fact regexes.
+              os.producttype == 1 ? "10" : Facter[:kernelrelease].value
+            when /^6\.3/
+              os.producttype == 1 ? "8.1" : "2012 R2"
             when /^6\.2/
               os.producttype == 1 ? "8" : "2012"
             when /^6\.1/
