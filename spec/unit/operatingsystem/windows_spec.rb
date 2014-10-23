@@ -21,8 +21,29 @@ describe Facter::Operatingsystem::Windows do
       ['6.2.9200', 1] => "8",
       ['6.2.9200', 2] => "2012",
       ['6.2.9200', 3] => "2012",
+      ['6.3.9600', 1] => "8.1",
+      ['6.3.9600', 2] => "2012 R2",
+      ['6.3.9600', 3] => "2012 R2",
+      ['6.4.9841', 1] => "10",     # Kernel version for Windows 10 preview. Subject to change.
     }.each do |os_values, expected_output|
       it "should be #{expected_output}  with Version #{os_values[0]}  and ProductType #{os_values[1]}" do
+        os = mock('os', :version => os_values[0], :producttype => os_values[1])
+        Facter::Util::WMI.expects(:execquery).returns([os])
+        release = subject.get_operatingsystemrelease
+        expect(release).to eq expected_output
+      end
+    end
+
+    {
+      # Note: this is the kernel version for the Windows 10 technical preview,
+      # which is subject to change. These tests cover any future Windows server
+      # releases with a kernel version of 6.4.x, none of which have been released
+      # as of October 2014.
+      ['6.4.9841', 2] => "6.4.9841",
+      ['6.4.9841', 3] => "6.4.9841",
+    }.each do |os_values, expected_output|
+      it "should be the kernel release for unknown future server releases" do
+        Facter.fact(:kernelrelease).stubs(:value).returns("6.4.9841")
         os = mock('os', :version => os_values[0], :producttype => os_values[1])
         Facter::Util::WMI.expects(:execquery).returns([os])
         release = subject.get_operatingsystemrelease
