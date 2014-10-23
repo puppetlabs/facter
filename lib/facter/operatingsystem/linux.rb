@@ -46,6 +46,8 @@ module Facter
           get_alpine_release_with_release_file
         when "Amazon"
           get_amazon_release_with_lsb
+        when "AristaEOS"
+          get_arista_release_with_release_file
         when "BlueWhite64"
           get_bluewhite_release_with_release_file
         when "CentOS", "RedHat", "Scientific", "SLC", "Ascendos", "CloudLinux", "PSBM",
@@ -239,6 +241,7 @@ module Facter
       def get_operatingsystem_with_release_files
         operatingsystem = nil
         release_files = {
+          "AristaEOS"   => "/etc/Eos-release",
           "Debian"      => "/etc/debian_version",
           "Gentoo"      => "/etc/gentoo-release",
           "Fedora"      => "/etc/fedora-release",
@@ -343,6 +346,14 @@ module Facter
         if release = Facter::Util::FileRead.read('/etc/alpine-release')
           release.sub!(/\s*$/, '')
           release
+        end
+      end
+
+      def get_arista_release_with_release_file
+        if release = Facter::Util::FileRead.read('/etc/Eos-release')
+          if match = /\d+\.\d+(:?\.\d+)?[A-M]?$/.match(release)
+            match[0]
+          end
         end
       end
 

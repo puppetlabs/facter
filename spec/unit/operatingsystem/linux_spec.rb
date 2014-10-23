@@ -29,6 +29,7 @@ describe Facter::Operatingsystem::Linux do
 
     describe "When lsbdistid is not available" do
      {
+        "AristaEOS"   => "/etc/Eos-release",
         "Debian"      => "/etc/debian_version",
         "Gentoo"      => "/etc/gentoo-release",
         "Fedora"      => "/etc/fedora-release",
@@ -193,6 +194,7 @@ describe Facter::Operatingsystem::Linux do
       'Slamd64',
       'Slackware',
       'Alpine',
+      'AristaEOS',
     ].each do |os|
       it "should return the kernel fact on operatingsystem #{os}" do
         Facter.expects(:value).with("kernel").returns "Linux"
@@ -212,17 +214,18 @@ describe Facter::Operatingsystem::Linux do
 
   describe "Operatingsystemrelease fact" do
     test_cases = {
-      "OpenWrt"    => "/etc/openwrt_version",
-      "CentOS"    => "/etc/redhat-release",
-      "RedHat"    => "/etc/redhat-release",
+      "AristaEOS"   => "/etc/Eos-release",
+      "OpenWrt"     => "/etc/openwrt_version",
+      "CentOS"      => "/etc/redhat-release",
+      "RedHat"      => "/etc/redhat-release",
       "LinuxMint"   => "/etc/linuxmint/info",
       "Scientific"  => "/etc/redhat-release",
-      "Fedora"    => "/etc/fedora-release",
-      "MeeGo"     => "/etc/meego-release",
-      "OEL"     => "/etc/enterprise-release",
-      "oel"     => "/etc/enterprise-release",
-      "OVS"     => "/etc/ovs-release",
-      "ovs"     => "/etc/ovs-release",
+      "Fedora"      => "/etc/fedora-release",
+      "MeeGo"       => "/etc/meego-release",
+      "OEL"         => "/etc/enterprise-release",
+      "oel"         => "/etc/enterprise-release",
+      "OVS"         => "/etc/ovs-release",
+      "ovs"         => "/etc/ovs-release",
       "OracleLinux" => "/etc/oracle-release",
       "Ascendos"    => "/etc/redhat-release",
     }
@@ -260,6 +263,13 @@ describe Facter::Operatingsystem::Linux do
       expect(release).to eq "foo"
     end
 
+    it "should use the contents of /etc/Eos-release in AristaEOS" do
+      subject.expects(:get_operatingsystem).returns("AristaEOS")
+      File.expects(:read).with("/etc/Eos-release").returns("Arista Networks EOS 4.13.7M")
+      release = subject.get_operatingsystemrelease
+      expect(release).to eq "4.13.7M"
+    end
+
     it "should fall back to parsing /etc/system-release if lsb facts are not available in Amazon" do
       subject.expects(:get_operatingsystem).returns("Amazon")
       subject.expects(:get_lsbdistrelease).returns(nil)
@@ -288,7 +298,7 @@ describe Facter::Operatingsystem::Linux do
   end
 
   describe "Operatingsystemmajrelease key" do
-    ['Amazon','CentOS','CloudLinux','Debian','Fedora','OEL','OracleLinux','OVS','RedHat','Scientific','SLC','CumulusLinux'].each do |operatingsystem|
+    ['Amazon' 'AristaEOS', 'CentOS','CloudLinux','Debian','Fedora','OEL','OracleLinux','OVS','RedHat','Scientific','SLC','CumulusLinux'].each do |operatingsystem|
       describe "on #{operatingsystem} operatingsystems" do
         it "should be derived from operatingsystemrelease" do
           subject.stubs(:get_operatingsystem).returns(operatingsystem)
