@@ -59,11 +59,15 @@ namespace facter { namespace facts { namespace solaris {
             });
 
             re_adapter chassis_type_re("(?:Chassis )?Type: (.+)");
+            re_adapter chassis_asset_tag_re("Asset Tag: (.+)");
             execution::each_line("/usr/sbin/smbios", {"-t", "SMB_TYPE_CHASSIS"}, [&](string& line) {
                 if (result.chassis_type.empty()) {
                     re_search(line, chassis_type_re, &result.chassis_type);
                 }
-                return result.chassis_type.empty();
+                if (result.chassis_asset_tag.empty()) {
+                    re_search(line, chassis_asset_tag_re, &result.chassis_asset_tag);
+                }
+                return result.chassis_type.empty() || result.chassis_asset_tag.empty();
             });
         } else if (arch && arch->value() == "sparc") {
             re_adapter line_re("System Configuration: (.+) sun\\d.");
