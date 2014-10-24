@@ -57,6 +57,14 @@ namespace facter { namespace facts { namespace solaris {
                 }
                 return result.manufacturer.empty() || result.product_name.empty() || result.product_uuid.empty() || result.serial_number.empty();
             });
+
+            re_adapter chassis_type_re("(?:Chassis )?Type: (.+)");
+            execution::each_line("/usr/sbin/smbios", {"-t", "SMB_TYPE_CHASSIS"}, [&](string& line) {
+                if (result.chassis_type.empty()) {
+                    re_search(line, chassis_type_re, &result.chassis_type);
+                }
+                return result.chassis_type.empty();
+            });
         } else if (arch && arch->value() == "sparc") {
             re_adapter line_re("System Configuration: (.+) sun\\d.");
             // prtdiag is not implemented in all sparc machines, so we cant get product name this way.
