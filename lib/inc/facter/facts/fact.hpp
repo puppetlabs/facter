@@ -568,6 +568,10 @@ namespace facter { namespace facts {
          * The fact for zone state.
          */
         constexpr static char const* zone_state = "zonestate";
+        /**
+         * The fact for zone name.
+         */
+        constexpr static char const* zone_name = "name";
     };
 
 }}  // namespace facter::facts
