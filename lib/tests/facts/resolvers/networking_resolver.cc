@@ -51,6 +51,18 @@ struct test_fqdn_resolver : networking_resolver
     }
 };
 
+struct test_missing_fqdn_resolver : networking_resolver
+{
+ protected:
+    virtual data collect_data(collection& facts) override
+    {
+        data result;
+        result.hostname = "hostname";
+        result.domain = "domain.com";
+        return result;
+    }
+};
+
 struct test_interface_resolver : networking_resolver
 {
  protected:
@@ -89,19 +101,27 @@ TEST(facter_facts_resolvers_networking_resolver, hostname)
 {
     collection facts;
     facts.add(make_shared<test_hostname_resolver>());
-    ASSERT_EQ(2u, facts.size());
+    ASSERT_EQ(3u, facts.size());
 
     auto hostname = facts.get<string_value>(fact::hostname);
     ASSERT_NE(nullptr, hostname);
     ASSERT_EQ("hostname", hostname->value());
 
+    auto fqdn = facts.get<string_value>(fact::fqdn);
+    ASSERT_NE(nullptr, fqdn);
+    ASSERT_EQ("hostname", fqdn->value());
+
     auto networking = facts.get<map_value>(fact::networking);
     ASSERT_NE(nullptr, networking);
-    ASSERT_EQ(1u, networking->size());
+    ASSERT_EQ(2u, networking->size());
 
     hostname = networking->get<string_value>("hostname");
     ASSERT_NE(nullptr, hostname);
     ASSERT_EQ("hostname", hostname->value());
+
+    fqdn = networking->get<string_value>("fqdn");
+    ASSERT_NE(nullptr, fqdn);
+    ASSERT_EQ("hostname", fqdn->value());
 }
 
 TEST(facter_facts_resolvers_networking_resolver, domain)
@@ -140,6 +160,41 @@ TEST(facter_facts_resolvers_networking_resolver, fqdn)
     fqdn = networking->get<string_value>("fqdn");
     ASSERT_NE(nullptr, fqdn);
     ASSERT_EQ("fqdn", fqdn->value());
+}
+
+TEST(facter_facts_resolvers_networking_resolver, missing_fqdn)
+{
+    collection facts;
+    facts.add(make_shared<test_missing_fqdn_resolver>());
+    ASSERT_EQ(4u, facts.size());
+
+    auto svalue = facts.get<string_value>(fact::hostname);
+    ASSERT_NE(nullptr, svalue);
+    ASSERT_EQ("hostname", svalue->value());
+
+    svalue = facts.get<string_value>(fact::domain);
+    ASSERT_NE(nullptr, svalue);
+    ASSERT_EQ("domain.com", svalue->value());
+
+    svalue = facts.get<string_value>(fact::fqdn);
+    ASSERT_NE(nullptr, svalue);
+    ASSERT_EQ("hostname.domain.com", svalue->value());
+
+    auto networking = facts.get<map_value>(fact::networking);
+    ASSERT_NE(nullptr, networking);
+    ASSERT_EQ(3u, networking->size());
+
+    svalue = networking->get<string_value>("hostname");
+    ASSERT_NE(nullptr, svalue);
+    ASSERT_EQ("hostname", svalue->value());
+
+    svalue = networking->get<string_value>("domain");
+    ASSERT_NE(nullptr, svalue);
+    ASSERT_EQ("domain.com", svalue->value());
+
+    svalue = networking->get<string_value>("fqdn");
+    ASSERT_NE(nullptr, svalue);
+    ASSERT_EQ("hostname.domain.com", svalue->value());
 }
 
 TEST(facter_facts_resolvers_networking_resolver, interfaces)

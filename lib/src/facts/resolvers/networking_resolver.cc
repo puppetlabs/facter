@@ -45,6 +45,11 @@ namespace facter { namespace facts { namespace resolvers {
     {
         auto data = collect_data(facts);
 
+        // If no FQDN, set it to the hostname + domain
+        if (!data.hostname.empty() && data.fqdn.empty()) {
+            data.fqdn = data.hostname + (data.domain.empty() ? "" : ".") + data.domain;
+        }
+
         auto networking = make_value<map_value>();
 
         if (!data.hostname.empty()) {
