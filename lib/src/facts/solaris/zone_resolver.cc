@@ -34,6 +34,7 @@ namespace facter { namespace facts { namespace solaris {
             },
             {
                 string("^zone_.+") + fact::zone_id,
+                string("^zone_.+") + fact::zone_name,
                 string("^zone_.+") + fact::zone_state,
                 string("^zone_.+") + fact::zone_path,
                 string("^zone_.+") + fact::zone_uuid,
@@ -65,6 +66,7 @@ namespace facter { namespace facts { namespace solaris {
         for (auto& zone : zones) {
             string property = "zone_" + get<1>(zone) + "_";
             facts.add(property + fact::zone_id, make_value<string_value>(move(get<0>(zone))));
+            facts.add(property + fact::zone_name, make_value<string_value>(move(get<1>(zone))));
             facts.add(property + fact::zone_state, make_value<string_value>(move(get<2>(zone))));
             facts.add(property + fact::zone_path, make_value<string_value>(move(get<3>(zone))));
             facts.add(property + fact::zone_uuid, make_value<string_value>(move(get<4>(zone))));
