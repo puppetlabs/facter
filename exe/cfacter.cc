@@ -164,7 +164,7 @@ int main(int argc, char **argv)
 
         // Check for printing the version
         if (vm.count("version")) {
-            cout << LIBFACTER_VERSION << endl;
+            cout << LIBFACTER_VERSION_WITH_COMMIT << endl;
             return EXIT_SUCCESS;
         }
 
