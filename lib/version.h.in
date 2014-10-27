@@ -16,8 +16,17 @@
 /// The facter library patch version.
 ///
 #define LIBFACTER_VERSION_PATCH @LIBFACTER_VERSION_PATCH@
+///
+/// The facter library Git SHA1.
+///
+#define LIBFACTER_GIT_SHA1 "@LIBFACTER_GIT_SHA1@"
 
 ///
-/// The facter library version as a string.
+/// The facter library version as a string (without commit SHA1).
 ///
 #define LIBFACTER_VERSION "@LIBFACTER_VERSION_MAJOR@.@LIBFACTER_VERSION_MINOR@.@LIBFACTER_VERSION_PATCH@"
+
+///
+/// The facter library version as a string (with commit SHA1).
+///
+#define LIBFACTER_VERSION_WITH_COMMIT "@LIBFACTER_VERSION_MAJOR@.@LIBFACTER_VERSION_MINOR@.@LIBFACTER_VERSION_PATCH@ (commit @LIBFACTER_GIT_SHA1@)"

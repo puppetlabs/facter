@@ -4,6 +4,10 @@ set(LIBFACTER_VERSION_MAJOR 0)
 set(LIBFACTER_VERSION_MINOR 2)
 set(LIBFACTER_VERSION_PATCH 0)
 
+# Get the HEAD SHA1
+include(GetGitRevisionDescription)
+get_git_head_revision(GIT_REFSPEC LIBFACTER_GIT_SHA1)
+
 # Generate a file containing the above version numbers
 configure_file (
     "version.h.in"
