@@ -9,6 +9,7 @@
 #include <facter/facts/windows/memory_resolver.hpp>
 #include <facter/facts/resolvers/operating_system_resolver.hpp>
 #include <facter/facts/windows/processor_resolver.hpp>
+#include <facter/facts/windows/uptime_resolver.hpp>
 #include <facter/facts/windows/virtualization_resolver.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/util/scoped_resource.hpp>
@@ -68,6 +69,7 @@ namespace facter { namespace facts {
             add(make_shared<windows::dmi_resolver>(shared_wmi));
             add(make_shared<windows::processor_resolver>(shared_wmi));
             add(make_shared<windows::virtualization_resolver>(shared_wmi));
+            add(make_shared<windows::uptime_resolver>(shared_wmi));
         } catch (wmi_exception &e) {
             LOG_ERROR("failed adding platform facts that require WMI: %1%", e.what());
         }
