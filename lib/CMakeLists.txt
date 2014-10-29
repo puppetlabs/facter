@@ -62,6 +62,14 @@ set(LIBFACTER_COMMON_SOURCES
     "src/util/string.cc"
 )
 
+if (CURL_FOUND)
+    set(LIBFACTER_COMMON_SOURCES ${LIBFACTER_COMMON_SOURCES}
+       "src/http/client.cc"
+       "src/http/request.cc"
+       "src/http/response.cc"
+    )
+endif()
+
 # Set the POSIX sources if on a POSIX platform
 if (UNIX)
     set(LIBFACTER_STANDARD_SOURCES
@@ -194,12 +202,14 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
+    ${CURL_INCLUDE_DIRS}
 )
 
 link_directories(
     ${Boost_LIBRARY_DIRS}
     ${OPENSSL_LIBRARY_DIRS}
     ${YAMLCPP_LIBRARY_DIRS}
+    ${CURL_LIBRARY_DIRS}
 )
 
 # Add the library target without a prefix (name already has the 'lib')
@@ -209,10 +219,11 @@ set_target_properties(libfacter PROPERTIES PREFIX "" IMPORT_PREFIX "" VERSION "$
 # Link in additional libraries
 target_link_libraries(libfacter
     ${POSIX_LIBRARIES}
+    ${LIBFACTER_PLATFORM_LIBRARIES}
     ${Boost_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
-    ${LIBFACTER_PLATFORM_LIBRARIES}
+    ${CURL_LIBRARIES}
 )
 
 if (WIN32)

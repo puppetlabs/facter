@@ -47,6 +47,12 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" AND NOT WITHOUT_BLKID)
     find_package(BLKID)
 endif()
 
+if (NOT WITHOUT_CURL)
+    find_package(CURL)
+    set_package_properties(CURL PROPERTIES DESCRIPTION "A free and easy-to-use client-side URL transfer library" URL "http://curl.haxx.se/libcurl/")
+    set_package_properties(CURL PROPERTIES TYPE OPTIONAL PURPOSE "Enables facts that require HTTP.")
+endif()
+
 # Display a summary of the features
 include(FeatureSummary)
 feature_summary(WHAT ALL)
