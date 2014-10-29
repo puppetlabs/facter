@@ -19,6 +19,7 @@ Optional Build Libraries
 
 * OpenSSL >= 1.0.1.g - enables SSH fingerprinting facts.
 * libblkid (Linux only) - enables the partitions fact.
+* libcurl >= 7.18.0 - enables facts that perform HTTP requests.
 
 Initial Setup
 -------------
