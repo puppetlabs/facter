@@ -40,6 +40,11 @@ namespace facter { namespace util { namespace windows {
         constexpr static char const* computersystemproduct = "Win32_ComputerSystemProduct";
 
         /**
+         * Identifier for the WMI class Win32_OperatingSystem
+         */
+        constexpr static char const* operatingsystem = "Win32_OperatingSystem";
+
+        /**
          * Identifier for the WMI class Win32_BIOS
          */
         constexpr static char const* bios = "Win32_Bios";
@@ -73,6 +78,16 @@ namespace facter { namespace util { namespace windows {
          * Identifier for the WMI property NumberOfLogicalProcessors
          */
         constexpr static char const* numberoflogicalprocessors = "NumberOfLogicalProcessors";
+
+        /**
+         * Identifier fot the WMI property LastBootUpTime
+         */
+        constexpr static char const* lastbootuptime = "LastBootUpTime";
+
+        /**
+         * Identifier fot the WMI property LocalDateTime
+         */
+        constexpr static char const* localdatetime = "LocalDateTime";
 
         /**
          * Case-insensitive string comparison.
