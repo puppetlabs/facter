@@ -264,7 +264,7 @@ describe Facter::Processors::Darwin, :unless => Facter::Util::Config.is_windows?
   include_context "processor list"
 
   before :each do
-    Facter::Core::Execution.expects(:exec).with("/usr/sbin/system_profiler -xml SPHardwareDataType").returns(my_fixture_read("darwin-system-profiler"))
+    Facter::Core::Execution.expects(:exec).with("/usr/sbin/system_profiler -xml SPHardwareDataType 2>/dev/null").returns(my_fixture_read("darwin-system-profiler"))
     subject.stubs(:query_system_profiler).returns({"number_processors" => 4, "current_processor_speed" => "2.3 GHz"})
     subject.instance_variable_set :@system_hardware_data, {"number_processors" => 4, "current_processor_speed" => "2.3 GHz"}
   end
