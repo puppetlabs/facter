@@ -5,6 +5,7 @@
 #include <facter/facts/external/execution_resolver.hpp>
 #include <facter/facts/external/windows/powershell_resolver.hpp>
 #include <facter/facts/windows/dmi_resolver.hpp>
+#include <facter/facts/windows/identity_resolver.hpp>
 #include <facter/facts/windows/kernel_resolver.hpp>
 #include <facter/facts/windows/memory_resolver.hpp>
 #include <facter/facts/windows/operating_system_resolver.hpp>
@@ -60,6 +61,7 @@ namespace facter { namespace facts {
     void collection::add_platform_facts()
     {
         // TODO WINDOWS: Add facts as created.
+        add(make_shared<windows::identity_resolver>());
         add(make_shared<windows::kernel_resolver>());
         add(make_shared<windows::memory_resolver>());
 
