@@ -90,6 +90,16 @@ namespace facter { namespace util { namespace windows {
         constexpr static char const* localdatetime = "LocalDateTime";
 
         /**
+         * Identifier for the WMI property ProductType
+         */
+        constexpr static char const* producttype = "ProductType";
+
+        /**
+         * Identifier for the WMI property OtherTypeDescription
+         */
+        constexpr static char const* othertypedescription = "OtherTypeDescription";
+
+        /**
          * Case-insensitive string comparison.
          */
         struct ciless : std::binary_function<std::string, std::string, bool>
