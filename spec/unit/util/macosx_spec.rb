@@ -28,7 +28,7 @@ describe "Facter::Util::Macosx", :unless => Facter::Util::Config.is_windows? do
   end
 
   it "should be able to retrieve profiler data as xml for a given data field" do
-    Facter::Core::Execution.expects(:exec).with("/usr/sbin/system_profiler -xml foo").returns "yay"
+    Facter::Core::Execution.expects(:exec).with("/usr/sbin/system_profiler -xml foo 2>/dev/null").returns "yay"
     Facter::Util::Macosx.profiler_xml("foo").should == "yay"
   end
 

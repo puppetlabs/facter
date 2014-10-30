@@ -48,6 +48,8 @@ Facter::Util::IP.get_interfaces.each do |interface|
         value = Facter::Util::IP.get_interface_value(interface, label)
         if label == "macaddress"
           value = Facter::Util::Macaddress.standardize(value)
+        elsif label == "mtu"
+          value = value.to_i
         end
         value
       end

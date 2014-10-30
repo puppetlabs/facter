@@ -31,7 +31,7 @@ if Facter.value(:kernel) == "Darwin"
     Facter.add("sp_#{fact}") do
       confine :kernel => :darwin
       setcode do
-        value.to_s
+        value
       end
     end
   end
@@ -40,7 +40,7 @@ if Facter.value(:kernel) == "Darwin"
     Facter.add("sp_#{fact}") do
       confine :kernel => :darwin
       setcode do
-        value.to_s
+        value
       end
     end
   end

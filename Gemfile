@@ -13,6 +13,7 @@ group :development, :test do
   gem 'rspec', "~> 2.11.0"
   gem 'mocha', "~> 0.10.5"
   gem 'json', "~> 1.7", :platforms => :ruby
+  gem 'json-schema', :platforms => :ruby
   gem 'puppetlabs_spec_helper'
 end
 
@@ -39,7 +40,7 @@ mingw = [:mingw]
 mingw << :x64_mingw if Bundler::Dsl::VALID_PLATFORMS.include?(:x64_mingw)
 
 platform(*mingw) do
-  gem 'ffi', '~> 1.9.3', :require => false
+  gem 'ffi', '~> 1.9.5', :require => false
   gem 'win32-dir', '~> 0.4.8', :require => false
   gem 'win32-security', '~> 0.2.5', :require => false
 end

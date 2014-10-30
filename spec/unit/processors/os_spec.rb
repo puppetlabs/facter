@@ -264,7 +264,7 @@ describe Facter::Processors::Darwin, :unless => Facter::Util::Config.is_windows?
   include_context "processor list"
 
   before :each do
-    Facter::Core::Execution.expects(:exec).with("/usr/sbin/system_profiler -xml SPHardwareDataType").returns(my_fixture_read("darwin-system-profiler"))
+    Facter::Core::Execution.expects(:exec).with("/usr/sbin/system_profiler -xml SPHardwareDataType 2>/dev/null").returns(my_fixture_read("darwin-system-profiler"))
     subject.stubs(:query_system_profiler).returns({"number_processors" => 4, "current_processor_speed" => "2.3 GHz"})
     subject.instance_variable_set :@system_hardware_data, {"number_processors" => 4, "current_processor_speed" => "2.3 GHz"}
   end
@@ -366,6 +366,20 @@ describe Facter::Processors::OpenBSD do
       Facter::Util::POSIX.expects(:sysctl).with("hw.ncpufound").once.returns("2")
       count = subject.get_physical_processor_count
       expect(count).to eq 2
+    end
+  end
+
+  describe "getting the processor speed" do
+    it "should delegate to the sysctl utility (GHz)" do
+      Facter::Util::POSIX.expects(:sysctl).with("hw.cpuspeed").once.returns("2501")
+      speed = subject.get_processor_speed
+      expect(speed).to eq "2.5 GHz"
+    end
+
+    it "should delegate to the sysctl utility (MHz)" do
+      Facter::Util::POSIX.expects(:sysctl).with("hw.cpuspeed").once.returns("123")
+      speed = subject.get_processor_speed
+      expect(speed).to eq "123 MHz"
     end
   end
 end

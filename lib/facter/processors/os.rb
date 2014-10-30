@@ -159,7 +159,7 @@ module Facter
       private
 
       def query_system_profiler
-        output = Facter::Core::Execution.exec("/usr/sbin/system_profiler -xml SPHardwareDataType")
+        output = Facter::Core::Execution.exec("/usr/sbin/system_profiler -xml SPHardwareDataType 2>/dev/null")
         plist  = CFPropertyList::List.new
         plist.load_str(output)
         parsed_xml = CFPropertyList.native_types(plist.value)
@@ -176,6 +176,16 @@ module Facter
     class OpenBSD < BSD
       def get_physical_processor_count
         Facter::Util::POSIX.sysctl("hw.ncpufound").to_i
+      end
+
+      def get_processor_speed
+        speed = Facter::Util::POSIX.sysctl("hw.cpuspeed").to_i
+        if speed < 1000
+          "#{speed} MHz"
+        else
+          speed = speed.to_f / 1000
+          "#{(speed * 100).round.to_f / 100.0} GHz"
+        end
       end
     end
 

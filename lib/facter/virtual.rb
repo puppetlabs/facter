@@ -78,7 +78,7 @@ Facter.add("virtual") do
   setcode do
     next "zone" if Facter::Util::Virtual.zone?
 
-    output = Facter::Core::Execution.exec('prtdiag')
+    output = Facter::Core::Execution.exec('prtdiag 2>/dev/null')
     if output
       lines = output.split("\n")
       next "parallels"  if lines.any? {|l| l =~ /Parallels/ }
@@ -149,6 +149,7 @@ Facter.add("virtual") do
       next "xenhvm"     if lines.any? {|l| l =~ /XenSource/ }
       next "hyperv"     if lines.any? {|l| l =~ /Microsoft Corporation Hyper-V/ }
       next "gce"        if lines.any? {|l| l =~ /Class 8007: Google, Inc/ }
+      next "kvm"        if lines.any? {|l| l =~ /virtio/ }
     end
 
     # Parse dmidecode
@@ -162,6 +163,7 @@ Facter.add("virtual") do
       next "hyperv"     if lines.any? {|l| l =~ /Product Name: Virtual Machine/ }
       next "rhev"       if lines.any? {|l| l =~ /Product Name: RHEV Hypervisor/ }
       next "ovirt"      if lines.any? {|l| l =~ /Product Name: oVirt Node/ }
+      next "bochs"      if lines.any? {|l| l =~ /Bochs/ }
     end
 
     # Default to 'physical'
@@ -304,9 +306,9 @@ Facter.add("is_virtual") do
     physical_types = %w{physical xen0 vmware_server vmware_workstation openvzhn vserver_host}
 
     if physical_types.include? Facter.value(:virtual)
-      "false"
+      false
     else
-      "true"
+      true
     end
   end
 end

@@ -98,14 +98,14 @@ describe Facter::Util::Uptime do
 
           test_cases.each do |uptime, expected|
             it "should return #{expected} for #{uptime}" do
-              Facter::Core::Execution.stubs(:execute).with('uptime 2>/dev/null', {:on_fail => nil}).returns(uptime)
+              Facter::Core::Execution.stubs(:execute).with('/usr/bin/uptime 2>/dev/null', {:on_fail => nil}).returns(uptime)
               Facter.fact(:uptime_seconds).value.should == expected
             end
           end
 
           describe "nor is 'uptime' command" do
             before :each do
-              Facter::Core::Execution.stubs(:execute).with('uptime 2>/dev/null', {:on_fail => nil}).returns(nil)
+              Facter::Core::Execution.stubs(:execute).with('/usr/bin/uptime 2>/dev/null', {:on_fail => nil}).returns(nil)
             end
 
             it "should return nil" do

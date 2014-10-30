@@ -50,8 +50,8 @@ describe "Netmask and MTU handling on Linux" do
 
   example_behavior_for "interface netmask and mtu from ifconfig output",
     "Archlinux (net-tools 1.60)", "em1",
-    "255.255.255.0", "1500", "ifconfig_net_tools_1.60.txt"
+    "255.255.255.0", 1500, "ifconfig_net_tools_1.60.txt"
   example_behavior_for "interface netmask and mtu from ifconfig output",
     "Archlinux (net-tools 1.60)", "lo",
-    "255.0.0.0", "16436", "ifconfig_net_tools_1.60.txt"
+    "255.0.0.0", 16436, "ifconfig_net_tools_1.60.txt"
 end

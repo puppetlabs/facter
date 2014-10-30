@@ -77,6 +77,6 @@ module Facter::Util::Uptime
   end
 
   def self.uptime_executable_cmd
-    "uptime"
+    "/usr/bin/uptime"
   end
 end

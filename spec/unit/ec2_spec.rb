@@ -15,14 +15,14 @@ describe "ec2_metadata" do
 
   subject { Facter.fact(:ec2_metadata).resolution(:rest) }
 
-  it "is unsuitable if the virtual fact is not xen" do
+  it "is unsuitable if the virtual fact is not xen,xenu or kvm" do
     querier.stubs(:reachable?).returns false
-    Facter.fact(:virtual).stubs(:value).returns "kvm"
+    Facter.fact(:virtual).stubs(:value).returns("Not kvm","Not xen","Not xenu")
     expect(subject).to_not be_suitable
   end
 
   it "is unsuitable if ec2 endpoint is not reachable" do
-    Facter.fact(:virtual).stubs(:value).returns "xen"
+    Facter.fact(:virtual).stubs(:value).returns("xen","kvm")
     querier.stubs(:reachable?).returns false
     expect(subject).to_not be_suitable
   end
@@ -34,6 +34,13 @@ describe "ec2_metadata" do
 
     it "is suitable if the virtual fact is xen" do
       Facter.fact(:virtual).stubs(:value).returns "xen"
+      subject.suitable?
+
+      expect(subject).to be_suitable
+    end
+
+    it "is suitable if the virtual fact is kvm" do
+      Facter.fact(:virtual).stubs(:value).returns "kvm"
       subject.suitable?
 
       expect(subject).to be_suitable
@@ -65,14 +72,14 @@ describe "ec2_userdata" do
 
   subject { Facter.fact(:ec2_userdata).resolution(:rest) }
 
-  it "is unsuitable if the virtual fact is not xen" do
+  it "is unsuitable if the virtual fact is not xen,xenu or kvm" do
     querier.stubs(:reachable?).returns(true)
-    Facter.fact(:virtual).stubs(:value).returns "kvm"
+    Facter.fact(:virtual).stubs(:value).returns("Not kvm","Not xen","Not xenu")
     expect(subject).to_not be_suitable
   end
 
   it "is unsuitable if ec2 endpoint is not reachable" do
-    Facter.fact(:virtual).stubs(:value).returns "xen"
+    Facter.fact(:virtual).stubs(:value).returns("xen","kvm")
     querier.stubs(:reachable?).returns false
     expect(subject).to_not be_suitable
   end
@@ -84,6 +91,11 @@ describe "ec2_userdata" do
 
     it "is suitable if the virtual fact is xen" do
       Facter.fact(:virtual).stubs(:value).returns "xen"
+      expect(subject).to be_suitable
+    end
+
+    it "is suitable if the virtual fact is kvm" do
+      Facter.fact(:virtual).stubs(:value).returns "kvm"
       expect(subject).to be_suitable
     end
 

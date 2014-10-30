@@ -85,12 +85,12 @@ end
 Facter.add("selinux") do
   confine :kernel => :linux
   setcode do
-    result = "false"
+    result = false
     if FileTest.exists?("#{selinux_mount_point}/enforce")
       if FileTest.exists?("/proc/self/attr/current")
         begin
           if (File.read("/proc/self/attr/current") != "kernel\0")
-            result = "true"
+            result = true
           end
         rescue
         end
@@ -101,19 +101,19 @@ Facter.add("selinux") do
 end
 
 Facter.add("selinux_enforced") do
-  confine :selinux => :true
+  confine :selinux => true
   setcode do
-    result = "false"
+    result = false
     if FileTest.exists?("#{selinux_mount_point}/enforce") and
        File.read("#{selinux_mount_point}/enforce") =~ /1/i
-      result = "true"
+      result = true
     end
     result
   end
 end
 
 Facter.add("selinux_policyversion") do
-  confine :selinux => :true
+  confine :selinux => true
   setcode do
     result = 'unknown'
     if FileTest.exists?("#{selinux_mount_point}/policyvers")
@@ -124,7 +124,7 @@ Facter.add("selinux_policyversion") do
 end
 
 Facter.add("selinux_current_mode") do
-  confine :selinux => :true
+  confine :selinux => true
   setcode do
     result = 'unknown'
     mode = Facter::Core::Execution.exec(sestatus_cmd)
@@ -134,7 +134,7 @@ Facter.add("selinux_current_mode") do
 end
 
 Facter.add("selinux_config_mode") do
-  confine :selinux => :true
+  confine :selinux => true
   setcode do
     result = 'unknown'
     mode = Facter::Core::Execution.exec(sestatus_cmd)
@@ -144,7 +144,7 @@ Facter.add("selinux_config_mode") do
 end
 
 Facter.add("selinux_config_policy") do
-  confine :selinux => :true
+  confine :selinux => true
   setcode do
     result = 'unknown'
     mode = Facter::Core::Execution.exec(sestatus_cmd)
