@@ -7,7 +7,7 @@
 #include <facter/facts/windows/dmi_resolver.hpp>
 #include <facter/facts/windows/kernel_resolver.hpp>
 #include <facter/facts/windows/memory_resolver.hpp>
-#include <facter/facts/resolvers/operating_system_resolver.hpp>
+#include <facter/facts/windows/operating_system_resolver.hpp>
 #include <facter/facts/windows/processor_resolver.hpp>
 #include <facter/facts/windows/uptime_resolver.hpp>
 #include <facter/facts/windows/virtualization_resolver.hpp>
@@ -62,11 +62,11 @@ namespace facter { namespace facts {
         // TODO WINDOWS: Add facts as created.
         add(make_shared<windows::kernel_resolver>());
         add(make_shared<windows::memory_resolver>());
-        add(make_shared<resolvers::operating_system_resolver>());
 
         try {
             shared_ptr<wmi> shared_wmi = make_shared<wmi>();
             add(make_shared<windows::dmi_resolver>(shared_wmi));
+            add(make_shared<windows::operating_system_resolver>(shared_wmi));
             add(make_shared<windows::processor_resolver>(shared_wmi));
             add(make_shared<windows::virtualization_resolver>(shared_wmi));
             add(make_shared<windows::uptime_resolver>(shared_wmi));
