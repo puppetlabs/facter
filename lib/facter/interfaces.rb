@@ -1,9 +1,16 @@
 # Fact: interfaces
 #
 # Purpose:
-#   Generates the following facts on supported platforms: `<interface>_ipaddress`,
-#   `<interface>_ipaddress6`, `<interface>_macaddress`, `<interface>_netmask`,
-#   and `<interface>_mtu`.
+#   Returns a comma-separated list of the system's network interfaces.
+#
+#   In addition to the main `interfaces` fact, this code will generate the
+#   following facts for each interface:
+#
+#   * `ipaddress_<INTERFACE>`
+#   * `ipaddress6_<INTERFACE>`
+#   * `macaddress_<INTERFACE>`
+#   * `netmask_<INTERFACE>`
+#   * `mtu_<INTERFACE>`
 #
 # Resolution:
 #
