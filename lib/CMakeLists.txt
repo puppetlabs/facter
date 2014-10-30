@@ -184,6 +184,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
         "src/facts/windows/memory_resolver.cc"
         "src/facts/windows/operating_system_resolver.cc"
         "src/facts/windows/processor_resolver.cc"
+        "src/facts/windows/timezone_resolver.cc"
         "src/facts/windows/uptime_resolver.cc"
         "src/facts/windows/virtualization_resolver.cc"
     )

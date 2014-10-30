@@ -10,6 +10,7 @@
 #include <facter/facts/windows/memory_resolver.hpp>
 #include <facter/facts/windows/operating_system_resolver.hpp>
 #include <facter/facts/windows/processor_resolver.hpp>
+#include <facter/facts/windows/timezone_resolver.hpp>
 #include <facter/facts/windows/uptime_resolver.hpp>
 #include <facter/facts/windows/virtualization_resolver.hpp>
 #include <facter/util/environment.hpp>
@@ -64,6 +65,7 @@ namespace facter { namespace facts {
         add(make_shared<windows::identity_resolver>());
         add(make_shared<windows::kernel_resolver>());
         add(make_shared<windows::memory_resolver>());
+        add(make_shared<windows::timezone_resolver>());
 
         try {
             shared_ptr<wmi> shared_wmi = make_shared<wmi>();
