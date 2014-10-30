@@ -1,6 +1,6 @@
 #include <facter/facts/windows/identity_resolver.hpp>
 #include <facter/logging/logging.hpp>
-#include <facter/util/windows/scoped_error.hpp>
+#include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/string_conv.hpp>
 #define SECURITY_WIN32
 #include <security.h>
@@ -24,16 +24,14 @@ namespace facter { namespace facts { namespace windows {
         auto nameformat = NameSamCompatible;
         GetUserNameExW(nameformat, nullptr, &size);
         if (GetLastError() != ERROR_MORE_DATA) {
-            auto err = GetLastError();
-            LOG_DEBUG("failure resolving identity facts: %1% (%2%)", scoped_error(err), err);
+            LOG_DEBUG("failure resolving identity facts: %1% (%2%)", system_error());
             return result;
         }
 
         // Use the string as a raw buffer that supports move and ref operations.
         wstring buffer(size, '\0');
         if (!GetUserNameExW(nameformat, &buffer[0], &size)) {
-            auto err = GetLastError();
-            LOG_DEBUG("failure resolving identity facts: %1% (%2%)", scoped_error(err), err);
+            LOG_DEBUG("failure resolving identity facts: %1% (%2%)", system_error());
             return result;
         }
 

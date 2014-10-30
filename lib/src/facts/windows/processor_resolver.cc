@@ -1,7 +1,8 @@
 #include <facter/facts/windows/processor_resolver.hpp>
 #include <facter/logging/logging.hpp>
-#include <facter/util/windows/scoped_error.hpp>
+#include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/wmi.hpp>
+#include <facter/util/regex.hpp>
 #include <boost/range/irange.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <boost/algorithm/string/trim.hpp>
@@ -38,9 +39,8 @@ namespace facter { namespace facts { namespace windows {
             GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
         if (nullptr != fnIsWow64Process) {
             if (!fnIsWow64Process(GetCurrentProcess(), &isWow64)) {
-                auto err = GetLastError();
                 LOG_DEBUG("failure determining whether current process is WOW64, defaulting to false"
-                    ": %1% (%2%)", scoped_error(err), err);
+                    ": %1%", system_error());
             }
         }
 

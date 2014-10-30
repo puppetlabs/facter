@@ -17,7 +17,7 @@ namespace facter { namespace util {
     struct scoped_env : scoped_resource<std::tuple<std::string, boost::optional<std::string>>>
     {
         /**
-         * Constructs a scoped_error from the specified error code.
+         * Constructs a scoped_env from the specified error code.
          * @param var    The environment variable to update.
          * @param newval The value to set it to during existence of this object.
          */

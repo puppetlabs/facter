@@ -3,7 +3,7 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/windows/scoped_error.hpp>
+#include <facter/util/windows/system_error.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <windows.h>
@@ -11,7 +11,7 @@
 
 using namespace std;
 using namespace facter::execution;
-using namespace facter::util;
+using namespace facter::util::windows;
 using namespace boost::filesystem;
 
 #ifdef LOG_NAMESPACE
@@ -46,8 +46,7 @@ namespace facter { namespace facts { namespace external {
             // for Powershell at sysnative before trying system32 and PATH lookup.
             TCHAR szPath[MAX_PATH];
             if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_WINDOWS, NULL, 0, szPath))) {
-                auto err = GetLastError();
-                LOG_DEBUG("error finding SYSTEMROOT: %1% (%2%)", scoped_error(err), err);
+                LOG_DEBUG("error finding SYSTEMROOT: %1%", system_error());
             }
             auto pathNative = path(szPath) / "sysnative" / "WindowsPowerShell" / "v1.0" / "powershell.exe";
             auto pwrshell = which(pathNative.string());

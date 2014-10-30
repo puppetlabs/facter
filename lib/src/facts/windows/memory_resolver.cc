@@ -1,5 +1,5 @@
 #include <facter/facts/windows/memory_resolver.hpp>
-#include <facter/util/windows/scoped_error.hpp>
+#include <facter/util/windows/system_error.hpp>
 #include <facter/logging/logging.hpp>
 #include <windows.h>
 #include <psapi.h>
@@ -9,7 +9,7 @@
 #endif
 #define LOG_NAMESPACE "facts.windows.memory_resolver"
 
-using namespace facter::util;
+using namespace facter::util::windows;
 
 namespace facter { namespace facts { namespace windows {
 
@@ -17,8 +17,7 @@ namespace facter { namespace facts { namespace windows {
     {
         PERFORMANCE_INFORMATION statex;
         if (!GetPerformanceInfo(&statex, sizeof(statex))) {
-            auto err = GetLastError();
-            LOG_DEBUG("resolving memory facts failed: %1% (%2%)", scoped_error(err), err);
+            LOG_DEBUG("resolving memory facts failed: %1%", system_error());
             return {};
         }
 

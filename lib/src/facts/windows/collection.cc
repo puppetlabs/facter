@@ -15,7 +15,7 @@
 #include <facter/facts/windows/virtualization_resolver.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/util/scoped_resource.hpp>
-#include <facter/util/windows/scoped_error.hpp>
+#include <facter/util/windows/system_error.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <windows.h>
@@ -39,8 +39,7 @@ namespace facter { namespace facts {
         // Get the user data path
         TCHAR szPath[MAX_PATH];
         if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, szPath))) {
-            auto err = GetLastError();
-            LOG_DEBUG("error finding COMMON_APPDATA: %1% (%2%)", scoped_error(err), err);
+            LOG_DEBUG("error finding COMMON_APPDATA: %1%", system_error());
         }
         path p = path(szPath) / "PuppetLabs" / "facter" / "facts.d";
         return vector<string>{p.string()};
