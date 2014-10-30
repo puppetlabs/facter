@@ -159,7 +159,7 @@ module Facter
       private
 
       def query_system_profiler
-        output = Facter::Core::Execution.exec("/usr/sbin/system_profiler -xml SPHardwareDataType")
+        output = Facter::Core::Execution.exec("/usr/sbin/system_profiler -xml SPHardwareDataType 2>/dev/null")
         plist  = CFPropertyList::List.new
         plist.load_str(output)
         parsed_xml = CFPropertyList.native_types(plist.value)

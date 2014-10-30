@@ -15,7 +15,7 @@ module Facter::Util::Macosx
   # by looking at the _name key of the _items dict for each _dataType
 
   def self.profiler_xml(data_field)
-    Facter::Core::Execution.exec("/usr/sbin/system_profiler -xml #{data_field}")
+    Facter::Core::Execution.exec("/usr/sbin/system_profiler -xml #{data_field} 2>/dev/null")
   end
 
   def self.intern_xml(xml)
