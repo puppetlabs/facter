@@ -1,7 +1,7 @@
 #include <facter/util/windows/string_conv.hpp>
 #include <facter/util/windows/system_error.hpp>
+#include <facter/util/windows/windows.hpp>
 #include <boost/format.hpp>
-#include <windows.h>
 
 using namespace std;
 

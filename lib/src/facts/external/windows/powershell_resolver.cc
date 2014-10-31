@@ -4,9 +4,9 @@
 #include <facter/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/windows/system_error.hpp>
+#include <facter/util/windows/windows.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
-#include <windows.h>
 #include <Shlobj.h>
 
 using namespace std;

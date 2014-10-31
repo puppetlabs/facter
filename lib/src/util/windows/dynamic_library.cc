@@ -4,7 +4,7 @@
 #include <facter/util/regex.hpp>
 #include <facter/util/scoped_resource.hpp>
 #include <facter/util/windows/system_error.hpp>
-#include <windows.h>
+#include <facter/util/windows/windows.hpp>
 #include <tlhelp32.h>
 
 using namespace std;

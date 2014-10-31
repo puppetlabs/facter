@@ -1,11 +1,11 @@
 #include <gmock/gmock.h>
 #include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
+#include <facter/util/windows/windows.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include "../../fixtures.hpp"
 #include <stdlib.h>
-#include <windows.h>
 
 using namespace std;
 using namespace facter::util;

@@ -75,6 +75,7 @@ if (WIN32)
     set(LIBFACTER_TESTS_CATEGORY_SOURCES
         "execution/windows/execution.cc"
         "facts/windows/collection.cc"
+        "facts/windows/networking_resolver.cc"
         "facts/external/windows/execution_resolver.cc"
         "facts/external/windows/powershell_resolver.cc"
         "util/windows/environment.cc"

@@ -1,8 +1,8 @@
-#include <facter/util/windows/system_error.hpp>
-#include <facter/util/windows/string_conv.hpp>
 #include <facter/util/scoped_resource.hpp>
+#include <facter/util/windows/string_conv.hpp>
+#include <facter/util/windows/system_error.hpp>
+#include <facter/util/windows/windows.hpp>
 #include <boost/format.hpp>
-#include <windows.h>
 
 using namespace std;
 
@@ -18,6 +18,11 @@ namespace facter { namespace util { namespace windows {
         scoped_resource<LPWSTR> pBuffer(move(_pBuffer), [](LPWSTR pbuf) { if (pbuf) LocalFree(pbuf); });
 
         return (boost::format("%1% (%2%)") % to_utf8(wstring(pBuffer)) % err).str();
+    }
+
+    string system_error()
+    {
+        return system_error(GetLastError());
     }
 
 }}}  // namespace facter::util::windows

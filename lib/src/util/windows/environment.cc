@@ -2,8 +2,8 @@
 #include <boost/algorithm/string.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/windows/system_error.hpp>
+#include <facter/util/windows/windows.hpp>
 #include <cstdlib>
-#include <windows.h>
 
 using namespace std;
 using namespace facter::util::windows;

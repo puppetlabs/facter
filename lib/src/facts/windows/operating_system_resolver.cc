@@ -4,7 +4,7 @@
 #include <facter/util/regex.hpp>
 #include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/wmi.hpp>
-#include <windows.h>
+#include <facter/util/windows/windows.hpp>
 #include <intrin.h>
 #include <winnt.h>
 #include <map>

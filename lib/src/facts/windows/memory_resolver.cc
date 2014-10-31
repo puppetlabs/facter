@@ -1,7 +1,7 @@
 #include <facter/facts/windows/memory_resolver.hpp>
 #include <facter/util/windows/system_error.hpp>
+#include <facter/util/windows/windows.hpp>
 #include <facter/logging/logging.hpp>
-#include <windows.h>
 #include <psapi.h>
 
 #ifdef LOG_NAMESPACE
