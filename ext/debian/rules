@@ -3,13 +3,13 @@
 export DH_VERBOSE=1
 export VERBOSE=1
 
-PREFIX:=/usr
-BUILDPREFIX:=/opt/pl-build-tools
-NPROC:=$(shell nproc)
-CPPFLAGS :=$(shell dpkg-buildflags --get CPPFLAGS)
-CFLAGS   :=$(shell dpkg-buildflags --get CFLAGS)
-CXXFLAGS :=$(shell dpkg-buildflags --get CXXFLAGS)
-LDFLAGS  :=$(shell dpkg-buildflags --get LDFLAGS)
+PREFIX      :=/usr
+BUILDPREFIX :=/opt/pl-build-tools
+NPROC       :=$(shell nproc)
+CPPFLAGS    :=$(shell dpkg-buildflags --get CPPFLAGS)
+CFLAGS      :=$(shell dpkg-buildflags --get CFLAGS)
+CXXFLAGS    :=$(shell dpkg-buildflags --get CXXFLAGS)
+LDFLAGS     :=$(shell dpkg-buildflags --get LDFLAGS)
 
 export CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
 
@@ -20,6 +20,8 @@ override_dh_auto_configure:
 	-DCMAKE_TOOLCHAIN_FILE=$(BUILDPREFIX)/pl-build-toolchain.cmake \
 	-DCMAKE_VERBOSE_MAKEFILE=ON \
 	-DCMAKE_INSTALL_PREFIX=$(PREFIX) \
+	-DBOOST_STATIC=ON \
+	-DYAMLCPP_STATIC=ON \
 	.
 
 override_dh_auto_build:

@@ -22,10 +22,10 @@ Source0:        http://puppetlabs.com/downloads/%{name}/%{name}-%{realversion}.t
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  pl-gcc
-BuildRequires:  pl-cmake
-BuildRequires:  pl-libyaml-cpp-devel
-BuildRequires:  pl-libboost-devel
+BuildRequires:  pl-gcc >= 4.8.2-4
+BuildRequires:  pl-cmake >= 2.8.12-6
+BuildRequires:  pl-libyaml-cpp-devel >= 0.5.1-4
+BuildRequires:  pl-libboost-devel >= 1.55.0-3
 BuildRequires:  openssl-devel
 BuildRequires:  libblkid-devel
 
