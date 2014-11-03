@@ -3,13 +3,13 @@
 export DH_VERBOSE=1
 export VERBOSE=1
 
-PREFIX:=/usr
-BUILDPREFIX:=/opt/pl-build-tools
-NPROC:=$(shell nproc)
-CPPFLAGS :=$(shell dpkg-buildflags --get CPPFLAGS)
-CFLAGS   :=$(shell dpkg-buildflags --get CFLAGS)
-CXXFLAGS :=$(shell dpkg-buildflags --get CXXFLAGS)
-LDFLAGS  :=$(shell dpkg-buildflags --get LDFLAGS)
+PREFIX      :=/usr
+BUILDPREFIX :=/opt/pl-build-tools
+NPROC       :=$(shell nproc)
+CPPFLAGS    :=$(shell dpkg-buildflags --get CPPFLAGS)
+CFLAGS      :=$(shell dpkg-buildflags --get CFLAGS)
+CXXFLAGS    :=$(shell dpkg-buildflags --get CXXFLAGS)
+LDFLAGS     :=$(shell dpkg-buildflags --get LDFLAGS)
 
 export CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
 
