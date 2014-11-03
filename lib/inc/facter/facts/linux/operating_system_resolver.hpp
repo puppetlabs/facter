@@ -4,14 +4,14 @@
  */
 #pragma once
 
-#include "../resolvers/operating_system_resolver.hpp"
+#include "../posix/operating_system_resolver.hpp"
 
 namespace facter { namespace facts { namespace linux {
 
     /**
      * Responsible for resolving operating system facts.
      */
-    struct operating_system_resolver : resolvers::operating_system_resolver
+    struct operating_system_resolver : posix::operating_system_resolver
     {
      protected:
         /**

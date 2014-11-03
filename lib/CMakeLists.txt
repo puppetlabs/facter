@@ -78,7 +78,7 @@ if (UNIX)
         "src/facts/posix/identity_resolver.cc"
         "src/facts/posix/kernel_resolver.cc"
         "src/facts/posix/networking_resolver.cc"
-        "src/facts/posix/processor_resolver.cc"
+        "src/facts/posix/operatingsystem_resolver.cc"
         "src/facts/posix/processor_resolver.cc"
         "src/facts/posix/ssh_resolver.cc"
         "src/facts/posix/timezone_resolver.cc"

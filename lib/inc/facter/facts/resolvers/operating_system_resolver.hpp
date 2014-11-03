@@ -87,6 +87,16 @@ namespace facter { namespace facts { namespace resolvers {
             std::string release;
 
             /**
+             * Stores the processor hardware model.
+             */
+            std::string hardware;
+
+            /**
+             * Stores the system architecture.
+             */
+            std::string architecture;
+
+            /**
              * Stores the distribution specification version.
              */
             std::string specification_version;

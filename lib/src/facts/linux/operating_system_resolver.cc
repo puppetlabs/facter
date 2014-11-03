@@ -24,7 +24,24 @@ namespace facter { namespace facts { namespace linux {
     operating_system_resolver::data operating_system_resolver::collect_data(collection& facts)
     {
         // Default to the base implementation
-        data result = resolvers::operating_system_resolver::collect_data(facts);
+        data result = posix::operating_system_resolver::collect_data(facts);
+
+        // Convert the hardware model value depending on distro
+        // For certain distros, use "amd64" for x86_64
+        if (result.hardware == "x86_64" && (
+             result.name == os::debian ||
+             result.name == os::gentoo ||
+             result.name == os::kfreebsd ||
+             result.name == os::ubuntu)) {
+            result.hardware = "amd64";
+        } else if (re_search(result.hardware, "i[3456]86|pentium")) {
+            // For 32-bit, use "x86" for Gentoo and "i386" for everyone else
+            if (result.name == os::gentoo) {
+                result.hardware = "x86";
+            } else {
+                result.hardware = "i386";
+            }
+        }
 
         // Populate distro info
         execution::each_line("lsb_release", {"-a"}, [&](string& line) {
