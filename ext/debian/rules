@@ -20,6 +20,8 @@ override_dh_auto_configure:
 	-DCMAKE_TOOLCHAIN_FILE=$(BUILDPREFIX)/pl-build-toolchain.cmake \
 	-DCMAKE_VERBOSE_MAKEFILE=ON \
 	-DCMAKE_INSTALL_PREFIX=$(PREFIX) \
+	-DBOOST_STATIC=ON \
+	-DYAMLCPP_STATIC=ON \
 	.
 
 override_dh_auto_build:
