@@ -1,5 +1,5 @@
 #include <facter/util/windows/string_conv.hpp>
-#include <facter/util/windows/scoped_error.hpp>
+#include <facter/util/windows/system_error.hpp>
 #include <boost/format.hpp>
 #include <windows.h>
 
@@ -24,9 +24,8 @@ namespace facter { namespace util { namespace windows {
             }
         }
 
-        auto err = GetLastError();
         throw string_conv_exception(str(boost::format
-            ("translation to utf16 of \"%1%\" failed: %2% (%3%)") % s % scoped_error(err) % err));
+            ("translation to utf16 of \"%1%\" failed: %2%") % s % system_error()));
     }
 
     string to_utf8(wstring const& ws)
@@ -41,11 +40,10 @@ namespace facter { namespace util { namespace windows {
             }
         }
 
-        auto err = GetLastError();
         // Do a raw byte copy from ws to string for exception/logging, as we don't have wide-string versions.
         string raw_ws(ws.begin(), ws.end());
         throw string_conv_exception(str(boost::format
-            ("translation to utf8 of \"%1%\" failed: %2% (%3%)") % raw_ws % scoped_error(err) % err));
+            ("translation to utf8 of \"%1%\" failed: %2%") % raw_ws % system_error()));
     }
 
 }}}  // namespace facter::util::windows

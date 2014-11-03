@@ -1,7 +1,8 @@
 #include <facter/execution/execution.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/environment.hpp>
-#include <facter/util/windows/scoped_error.hpp>
+#include <facter/util/scoped_resource.hpp>
+#include <facter/util/windows/system_error.hpp>
 #include <facter/util/scoped_env.hpp>
 #include <facter/logging/logging.hpp>
 
@@ -16,6 +17,7 @@
 
 using namespace std;
 using namespace facter::util;
+using namespace facter::util::windows;
 using namespace facter::logging;
 using namespace boost::filesystem;
 using namespace boost::algorithm;
@@ -290,8 +292,7 @@ namespace facter { namespace execution {
             if (options[execution_options::throw_on_nonzero_exit]) {
                 throw e;
             } else {
-                auto err = GetLastError();
-                LOG_DEBUG("%1% (%2%): %3% (%4%)", e.what(), e.status_code(), scoped_error(err), err);
+                LOG_DEBUG("%1% (%2%): %3%", e.what(), e.status_code(), system_error());
                 return { false, move(e.output()) };
             }
         }

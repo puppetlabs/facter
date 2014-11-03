@@ -2,11 +2,14 @@
 #include <boost/format.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/regex.hpp>
-#include <facter/util/windows/scoped_error.hpp>
+#include <facter/util/scoped_resource.hpp>
+#include <facter/util/windows/system_error.hpp>
 #include <windows.h>
 #include <tlhelp32.h>
 
 using namespace std;
+using namespace facter::util;
+using namespace facter::util::windows;
 
 #ifdef LOG_NAMESPACE
   #undef LOG_NAMESPACE
@@ -24,8 +27,7 @@ namespace facter { namespace util {
         // the Tool Help library.
         HANDLE hModuleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, GetCurrentProcessId());
         if (hModuleSnap == INVALID_HANDLE_VALUE) {
-            auto err = GetLastError();
-            LOG_DEBUG("library matching pattern %1% not found, CreateToolhelp32Snapshot failed: %2% (%3%).", pattern.c_str(), scoped_error(err), err);
+            LOG_DEBUG("library matching pattern %1% not found, CreateToolhelp32Snapshot failed: %2%.", pattern.c_str(), system_error());
             return library;
         }
         scoped_resource<HANDLE> hModSnap(std::move(hModuleSnap), CloseHandle);
@@ -33,8 +35,7 @@ namespace facter { namespace util {
         MODULEENTRY32 me32 = {};
         me32.dwSize = sizeof(MODULEENTRY32);
         if (!Module32First(hModSnap, &me32)) {
-            auto err = GetLastError();
-            LOG_DEBUG("library matching pattern %1% not found, Module32First failed: %2% (%3%).", pattern.c_str(), scoped_error(err), err);
+            LOG_DEBUG("library matching pattern %1% not found, Module32First failed: %2%.", pattern.c_str(), system_error());
             return library;
         }
 
@@ -75,8 +76,7 @@ namespace facter { namespace util {
             // Load now
             hMod = LoadLibrary(TEXT(name.c_str()));
             if (!hMod) {
-                auto err = GetLastError();
-                LOG_DEBUG("library %1% not found %2% (%3%).", name.c_str(), scoped_error(err), err);
+                LOG_DEBUG("library %1% not found %2%.", name.c_str(), system_error());
                 return false;
             }
             _first_load = true;

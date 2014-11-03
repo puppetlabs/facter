@@ -1,11 +1,12 @@
 #include <facter/util/environment.hpp>
 #include <boost/algorithm/string.hpp>
 #include <facter/logging/logging.hpp>
-#include <facter/util/windows/scoped_error.hpp>
+#include <facter/util/windows/system_error.hpp>
 #include <cstdlib>
 #include <windows.h>
 
 using namespace std;
+using namespace facter::util::windows;
 
 #ifdef LOG_NAMESPACE
   #undef LOG_NAMESPACE
@@ -48,7 +49,7 @@ namespace facter { namespace util {
         if (numChars == 0) {
             auto err = GetLastError();
             if (err != ERROR_ENVVAR_NOT_FOUND) {
-                LOG_DEBUG("failure reading environment variable %1%: %2% (%3%)", name, scoped_error(err), err);
+                LOG_DEBUG("failure reading environment variable %1%: %2%", name, system_error(err));
             }
             return false;
         }

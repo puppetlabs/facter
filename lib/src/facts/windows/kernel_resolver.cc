@@ -1,6 +1,6 @@
 #include <facter/facts/windows/kernel_resolver.hpp>
 #include <facter/facts/os.hpp>
-#include <facter/util/windows/scoped_error.hpp>
+#include <facter/util/windows/system_error.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/optional.hpp>
 #include <boost/algorithm/string/trim.hpp>
@@ -8,7 +8,7 @@
 #include <windows.h>
 
 using namespace std;
-using namespace facter::util;
+using namespace facter::util::windows;
 
 #undef LOG_NAMESPACE
 #define LOG_NAMESPACE "facts.windows.kernel"
@@ -69,8 +69,7 @@ namespace facter { namespace facts { namespace windows {
             result.release = move(*release);
             result.version = result.release;
         } else {
-            auto err = GetLastError();
-            LOG_DEBUG("failed to retrieve kernel facts: %1% (%2%)", scoped_error(err), err);
+            LOG_DEBUG("failed to retrieve kernel facts: %1%", system_error());
         }
 
         result.name = os::windows;

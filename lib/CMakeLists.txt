@@ -106,7 +106,7 @@ if (WIN32)
         "src/ruby/windows/api.cc"
         "src/util/windows/dynamic_library.cc"
         "src/util/windows/environment.cc"
-        "src/util/windows/scoped_error.cc"
+        "src/util/windows/system_error.cc"
         "src/util/windows/string_conv.cc"
         "src/util/windows/wmi.cc"
     )
