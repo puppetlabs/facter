@@ -152,7 +152,7 @@ namespace facter { namespace facts { namespace linux {
 
     string virtualization_resolver::get_vmware_vm()
     {
-        auto result = execute("vmware -v");
+        auto result = execute("vmware", { "-v" });
         if (!result.first) {
             return {};
         }
