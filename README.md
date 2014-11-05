@@ -28,7 +28,7 @@ Initial Setup
 
 The following will install all required tools and libraries:
 
-    yum install cmake boost-devel openssl-devel yaml-cpp-devel libblkid-devel gcc-c++ make
+    yum install cmake boost-devel openssl-devel yaml-cpp-devel libblkid-devel libcurl-devel gcc-c++ make
 
 ### Setup on Mac OSX Mavericks (homebrew)
 
@@ -42,7 +42,7 @@ The following will install all required libraries:
 
 The following will install most required tools and libraries:
 
-    apt-get install build-essential cmake libboost-all-dev libssl-dev libyaml-cpp-dev libblkid-dev
+    apt-get install build-essential cmake libboost-all-dev libssl-dev libyaml-cpp-dev libblkid-dev libcurl4-openssl-dev
 
 Pre-Build
 ---------

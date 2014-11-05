@@ -6,6 +6,7 @@
 
 #include <string>
 #include <functional>
+#include <map>
 
 namespace facter { namespace http {
 
