@@ -3,7 +3,6 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/logging/logging.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/directory.hpp>
 #include <boost/algorithm/string.hpp>
@@ -14,37 +13,11 @@ using namespace std;
 using namespace facter::util;
 using namespace boost::filesystem;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.linux.processor"
-
 namespace facter { namespace facts { namespace linux {
 
     processor_resolver::data processor_resolver::collect_data(collection& facts)
     {
         auto result = posix::processor_resolver::collect_data(facts);
-
-        // Convert the hardware model value depending on distro
-        auto os = facts.get<string_value>(fact::operating_system);
-        if (!os) {
-            // For certain distros, use "amd64" for x86_64
-            if (result.hardware == "x86_64") {
-                if (os->value() == os::debian ||
-                    os->value() == os::gentoo ||
-                    os->value() == os::kfreebsd ||
-                    os->value() == os::ubuntu) {
-                    result.hardware = "amd64";
-                }
-            } else if (re_search(result.hardware, "i[3456]86|pentium")) {
-                // For 32-bit, use "x86" for Gentoo and "i386" for everyone else
-                if (os->value() == os::gentoo) {
-                    result.hardware = "x86";
-                } else {
-                    result.hardware = "i386";
-                }
-            }
-        }
 
         unordered_set<string> cpus;
         directory::each_subdirectory("/sys/devices/system/cpu", [&](string const& cpu_directory) {

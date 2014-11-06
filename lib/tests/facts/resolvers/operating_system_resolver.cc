@@ -34,6 +34,8 @@ struct test_os_resolver : operating_system_resolver
         result.osx.product = "Mac OS X";
         result.osx.build = "14A388b";
         result.osx.version = "10.10";
+        result.architecture = "amd64";
+        result.hardware = "x86-64";
         return result;
     }
 
@@ -54,11 +56,19 @@ TEST(facter_facts_resolvers_os_resolver, facts)
 {
     collection facts;
     facts.add(make_shared<test_os_resolver>());
-    ASSERT_EQ(17u, facts.size());
+    ASSERT_EQ(19u, facts.size());
 
     auto name = facts.get<string_value>(fact::operating_system);
     ASSERT_NE(nullptr, name);
     ASSERT_EQ("Archlinux", name->value());
+
+    auto architecture = facts.get<string_value>(fact::architecture);
+    ASSERT_NE(nullptr, architecture);
+    ASSERT_EQ("amd64", architecture->value());
+
+    auto hardware = facts.get<string_value>(fact::hardware_model);
+    ASSERT_NE(nullptr, hardware);
+    ASSERT_EQ("x86-64", hardware->value());
 
     auto release = facts.get<string_value>(fact::operating_system_release);
     ASSERT_NE(nullptr, release);
@@ -102,7 +112,7 @@ TEST(facter_facts_resolvers_os_resolver, facts)
 
     auto os = facts.get<map_value>(fact::os);
     ASSERT_NE(nullptr, os);
-    ASSERT_EQ(5u, os->size());
+    ASSERT_EQ(7u, os->size());
 
     auto distro = os->get<map_value>("distro");
     ASSERT_NE(nullptr, distro);
@@ -147,6 +157,14 @@ TEST(facter_facts_resolvers_os_resolver, facts)
     name = os->get<string_value>("name");
     ASSERT_NE(nullptr, name);
     ASSERT_EQ("Archlinux", name->value());
+
+    architecture = os->get<string_value>("architecture");
+    ASSERT_NE(nullptr, architecture);
+    ASSERT_EQ("amd64", architecture->value());
+
+    hardware = os->get<string_value>("hardware");
+    ASSERT_NE(nullptr, hardware);
+    ASSERT_EQ("x86-64", hardware->value());
 
     release_attribute = os->get<map_value>("release");
     ASSERT_NE(nullptr, release_attribute);

@@ -19,6 +19,8 @@ namespace facter { namespace facts { namespace resolvers {
                 fact::os_family,
                 fact::operating_system_release,
                 fact::operating_system_major_release,
+                fact::hardware_model,
+                fact::architecture,
                 fact::lsb_dist_id,
                 fact::lsb_dist_release,
                 fact::lsb_dist_codename,
@@ -64,6 +66,16 @@ namespace facter { namespace facts { namespace resolvers {
             value->add("full", make_value<string_value>(move(data.release)));
 
             os->add("release", move(value));
+        }
+
+        // Add the OS hardware and architecture facts
+        if (!data.hardware.empty()) {
+            facts.add(fact::hardware_model, make_value<string_value>(data.hardware, true));
+            os->add("hardware", make_value<string_value>(move(data.hardware)));
+        }
+        if (!data.architecture.empty()) {
+            facts.add(fact::architecture, make_value<string_value>(data.architecture, true));
+            os->add("architecture", make_value<string_value>(move(data.architecture)));
         }
 
         // Add distro facts

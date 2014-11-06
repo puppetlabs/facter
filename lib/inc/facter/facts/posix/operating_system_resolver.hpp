@@ -1,17 +1,17 @@
 /**
  * @file
- * Declares the OSX operating system fact resolver.
+ * Declares the POSIX operating system fact resolver.
  */
 #pragma once
 
-#include "../posix/operating_system_resolver.hpp"
+#include "../resolvers/operating_system_resolver.hpp"
 
-namespace facter { namespace facts { namespace osx {
+namespace facter { namespace facts { namespace posix {
 
     /**
      * Responsible for resolving operating system facts.
      */
-    struct operating_system_resolver : posix::operating_system_resolver
+    struct operating_system_resolver : resolvers::operating_system_resolver
     {
      protected:
         /**
@@ -22,4 +22,4 @@ namespace facter { namespace facts { namespace osx {
         virtual data collect_data(collection& facts) override;
     };
 
-}}}  // namespace facter::facts::osx
+}}}  // namespace facter::facts::posix

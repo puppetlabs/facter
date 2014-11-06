@@ -19,8 +19,6 @@ namespace facter { namespace facts { namespace resolvers {
                 fact::processor_count,
                 fact::physical_processor_count,
                 fact::hardware_isa,
-                fact::hardware_model,
-                fact::architecture,
             },
             {
                 string("^") + fact::processor + "[0-9]+$",
@@ -37,14 +35,6 @@ namespace facter { namespace facts { namespace resolvers {
         if (!data.isa.empty()) {
             facts.add(fact::hardware_isa, make_value<string_value>(data.isa, true));
             cpus->add("isa", make_value<string_value>(move(data.isa)));
-        }
-        if (!data.hardware.empty()) {
-            facts.add(fact::hardware_model, make_value<string_value>(data.hardware, true));
-            cpus->add("hardware", make_value<string_value>(move(data.hardware)));
-        }
-        if (!data.architecture.empty()) {
-            facts.add(fact::architecture, make_value<string_value>(data.architecture, true));
-            cpus->add("architecture", make_value<string_value>(move(data.architecture)));
         }
 
         facts.add(fact::processor_count, make_value<integer_value>(data.logical_count, true));

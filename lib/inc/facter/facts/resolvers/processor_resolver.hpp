@@ -67,16 +67,6 @@ namespace facter { namespace facts { namespace resolvers {
              * Stores the processor instruction set architecture.
              */
             std::string isa;
-
-            /**
-             * Stores the processor hardware model.
-             */
-            std::string hardware;
-
-            /**
-             * Stores the system architecture.
-             */
-            std::string architecture;
         };
 
         /**
