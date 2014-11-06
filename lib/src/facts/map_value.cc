@@ -1,10 +1,12 @@
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
+#include <facter/util/string.hpp>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>
 
 using namespace std;
+using namespace facter::util;
 using namespace rapidjson;
 using namespace YAML;
 
@@ -108,7 +110,11 @@ namespace facter { namespace facts {
     {
         emitter << BeginMap;
         for (auto const& kvp : _elements) {
-            emitter << Key << kvp.first << YAML::Value;
+            emitter << Key;
+            if (needs_quotation(kvp.first)) {
+                emitter << DoubleQuoted;
+            }
+            emitter << kvp.first << YAML::Value;
             kvp.second->write(emitter);
         }
         emitter << EndMap;

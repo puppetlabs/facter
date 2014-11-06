@@ -5,10 +5,8 @@
 #include <iterator>
 #include <cmath>
 #include <limits>
-#include <boost/algorithm/string/predicate.hpp>
 
 using namespace std;
-using namespace boost::algorithm;
 
 namespace facter { namespace util {
 
@@ -107,6 +105,39 @@ namespace facter { namespace util {
         ostringstream ss;
         ss  << fixed << setprecision(2) << converted << " " << prefixes[exp - 1] << "Hz";
         return ss.str();
+    }
+
+    bool needs_quotation(string const& str)
+    {
+        // Empty strings should be quoted
+        if (str.empty()) {
+            return true;
+        }
+
+        // Poor man's check for a numerical string
+        // May start with - or +
+        // May contain at most one . or ,
+        // All other characters should be digits
+        bool has_separator = false;
+        for (size_t i = 0; i < str.size(); ++i) {
+            char c = str[i];
+            if (i == 0 && (c == '+' || c == '-')) {
+                continue;
+            }
+            if (c == '.' || c == ',') {
+                if (has_separator) {
+                    return false;
+                }
+                has_separator = true;
+                continue;
+            }
+            if (!isdigit(c)) {
+                return false;
+            }
+        }
+
+        // Numerical strings should be quoted
+        return true;
     }
 
 }}  // namespace facter::util

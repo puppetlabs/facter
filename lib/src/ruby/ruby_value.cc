@@ -1,10 +1,12 @@
 #include <facter/ruby/ruby_value.hpp>
+#include <facter/util/string.hpp>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>
 #include <iomanip>
 
 using namespace std;
 using namespace facter::facts;
+using namespace facter::util;
 using namespace rapidjson;
 using namespace YAML;
 
@@ -227,7 +229,11 @@ namespace facter { namespace ruby {
             return;
         }
         if (ruby.is_string(value) || ruby.is_symbol(value)) {
-            emitter << DoubleQuoted << ruby.to_string(value);
+            auto str = ruby.to_string(value);
+            if (needs_quotation(str)) {
+                emitter << DoubleQuoted;
+            }
+            emitter << str;
             return;
         }
         if (ruby.is_fixednum(value)) {

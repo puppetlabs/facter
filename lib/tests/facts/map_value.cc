@@ -161,5 +161,5 @@ TEST(facter_facts_map_value, write_yaml) {
 
     Emitter emitter;
     value.write(emitter);
-    ASSERT_EQ("array:\n  - \"1\"\n  - 2\ninteger: 5\nmap:\n  foo: \"bar\"\nstring: \"hello\"", string(emitter.c_str()));
+    ASSERT_EQ("array:\n  - \"1\"\n  - 2\ninteger: 5\nmap:\n  foo: bar\nstring: hello", string(emitter.c_str()));
 }

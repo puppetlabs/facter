@@ -46,9 +46,16 @@ TEST(facter_facts_string_value, write_stream) {
 }
 
 TEST(facter_facts_string_value, write_yaml) {
-    string_value value("hello world");
-
-    Emitter emitter;
-    value.write(emitter);
-    ASSERT_EQ("\"hello world\"", string(emitter.c_str()));
+    {
+        string_value value("hello world");
+        Emitter emitter;
+        value.write(emitter);
+        ASSERT_EQ("hello world", string(emitter.c_str()));
+    }
+    {
+        string_value value("+100.233");
+        Emitter emitter;
+        value.write(emitter);
+        ASSERT_EQ("\"+100.233\"", string(emitter.c_str()));
+    }
 }
