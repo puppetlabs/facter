@@ -5,6 +5,8 @@
 #   If the interface that is the default gateway is DHCP assigned, there
 #   will also be a `"system"` entry in the hash.
 #
+#   This fact is structured. Values are returned as a group of key-value pairs.
+#
 # Resolution:
 #   Parses the output of `nmcli` to find the DHCP server for the interface if available.
 #
