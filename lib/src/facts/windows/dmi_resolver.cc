@@ -26,7 +26,7 @@ namespace facter { namespace facts { namespace windows {
         result.product_name = wmi::get(vals, wmi::name);
 
         vals = _wmi->query(wmi::bios, {wmi::manufacturer, wmi::serialnumber});
-        result.serial_number = wmi::get(vals, wmi::name);
+        result.serial_number = wmi::get(vals, wmi::serialnumber);
         result.manufacturer = wmi::get(vals, wmi::manufacturer);
 
         return result;
