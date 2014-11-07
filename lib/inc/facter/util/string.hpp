@@ -51,4 +51,12 @@ namespace facter { namespace util {
      */
     std::string frequency(int64_t freq);
 
+    /**
+     * Checks to see if the given string definitely needs to be quoted for YAML.
+     * This exists as a workaround to yaml-cpp's poor handling of maintaining numerical string types in the output.
+     * @param str The string to check.
+     * @return Returns true if the string needs to be quoted or false if it may not need to be.
+     */
+    bool needs_quotation(std::string const& str);
+
 }}  // namespace facter::util

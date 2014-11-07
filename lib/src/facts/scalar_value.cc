@@ -1,9 +1,11 @@
 #include <facter/facts/scalar_value.hpp>
+#include <facter/util/string.hpp>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>
 #include <iomanip>
 
 using namespace std;
+using namespace facter::util;
 using namespace rapidjson;
 using namespace YAML;
 
@@ -36,11 +38,10 @@ namespace facter { namespace facts {
     template <>
     Emitter& scalar_value<string>::write(Emitter& emitter) const
     {
-        // Unfortunately, yaml-cpp doesn't handle quoting strings automatically that well
-        // For instance, if the string is an integer, no quotes are written out
-        // This will cause someone parsing the YAML to see the type as an integer and
-        // not as a string.
-        emitter << DoubleQuoted << _value;
+        if (needs_quotation(_value)) {
+            emitter << DoubleQuoted;
+        }
+        emitter << _value;
         return emitter;
     }
 

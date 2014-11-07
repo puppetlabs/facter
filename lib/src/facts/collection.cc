@@ -8,6 +8,7 @@
 #include <facter/util/directory.hpp>
 #include <facter/util/dynamic_library.hpp>
 #include <facter/util/environment.hpp>
+#include <facter/util/string.hpp>
 #include <facter/version.h>
 #include <boost/filesystem.hpp>
 #include <rapidjson/document.h>
@@ -484,7 +485,11 @@ namespace facter { namespace facts {
             if (queries.empty() && val && val->hidden()) {
                 return;
             }
-            emitter << Key << key << YAML::Value;
+            emitter << Key;
+            if (needs_quotation(key)) {
+                emitter << DoubleQuoted;
+            }
+            emitter << key << YAML::Value;
             if (val) {
                 val->write(emitter);
             } else {

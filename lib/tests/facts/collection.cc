@@ -96,9 +96,10 @@ TEST(facter_facts_collection, write_json) {
 TEST(facter_facts_collection, write_yaml) {
     collection facts;
     facts.add(make_shared<multi_resolver>());
+    facts.add("baz", make_value<string_value>("12345"));
     ostringstream ss;
     facts.write(ss, format::yaml);
-    ASSERT_EQ("bar: \"foo\"\nfoo: \"bar\"", ss.str());
+    ASSERT_EQ("bar: foo\nbaz: \"12345\"\nfoo: bar", ss.str());
 }
 
 TEST(facter_facts_collection, write_hash) {

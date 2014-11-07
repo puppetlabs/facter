@@ -199,16 +199,11 @@ namespace facter { namespace facts { namespace linux {
     {
         // Check for a required Xen file
         bs::error_code ec;
-        if (!is_regular_file("/proc/sys/xen", ec) &&
-            !is_regular_file("/sys/bus/xen", ec) &&
-            !is_regular_file("/proc/xen", ec)) {
-            return {};
-        }
-
-        if (is_regular_file("/dev/xen/evtchn", ec)) {
+        if (exists("/dev/xen/evtchn", ec) && !ec) {
             return vm::xen_privileged;
         }
-        if (is_regular_file("/proc/xen", ec)) {
+        ec.clear();
+        if (exists("/proc/xen", ec) && !ec) {
             return vm::xen_unprivileged;
         }
         return {};

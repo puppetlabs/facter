@@ -572,6 +572,15 @@ namespace facter { namespace facts {
          * The fact for zone name.
          */
         constexpr static char const* zone_name = "name";
+
+        /**
+         * The fact for EC2 metadata.
+         */
+        constexpr static char const* ec2_metadata = "ec2_metadata";
+        /**
+         * The fact for EC2 user data.
+         */
+        constexpr static char const* ec2_userdata = "ec2_userdata";
     };
 
 }}  // namespace facter::facts

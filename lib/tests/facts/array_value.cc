@@ -127,5 +127,5 @@ TEST(facter_facts_array_value, write_yaml) {
 
     Emitter emitter;
     value.write(emitter);
-    ASSERT_EQ("- \"1\"\n- 2\n-\n  - \"child\"", string(emitter.c_str()));
+    ASSERT_EQ("- \"1\"\n- 2\n-\n  - child", string(emitter.c_str()));
 }
