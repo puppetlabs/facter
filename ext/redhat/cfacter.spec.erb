@@ -24,14 +24,27 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  pl-gcc >= 4.8.2-4
 BuildRequires:  pl-cmake >= 2.8.12-6
-BuildRequires:  pl-libyaml-cpp-devel >= 0.5.1-4
-BuildRequires:  pl-libboost-devel >= 1.55.0-3
+BuildRequires:  pl-libboost-devel >= 1.55.0-4
+BuildRequires:  pl-libboost-static >= 1.55.0-4
+BuildRequires:  pl-libyaml-cpp-devel >= 0.5.1-5
+BuildRequires:  pl-libyaml-cpp-static >= 0.5.1-5
+
 BuildRequires:  openssl-devel
 BuildRequires:  libblkid-devel
+BuildRequires:  libcurl-devel
 
 Requires: glibc
-Requires: openssl-libs
 Requires: libblkid
+Requires: libcurl
+# If we're linking against openssl, we need to ensure those libraries are available
+# during runtime. On EL7, those dependency libraries are available via the openssl-libs
+# package, but we don't have that package on earlier versions. We want to install as
+# few extra packages as possible, which is why we're installing openssl-libs when available.
+%if 0%{rhel} >= 7
+Requires: openssl-libs
+%else
+Requires: openssl
+%endif
 
 AutoReq:  0
 AutoProv: 0
@@ -45,6 +58,7 @@ operating system. Additional facts can be added through simple Ruby scripts
 %setup -q  -n %{name}-%{realversion}
 
 %build
+rm -rf %{buildroot}
 %{build_prefix}/bin/cmake \
   -DCMAKE_TOOLCHAIN_FILE=%{build_prefix}/pl-build-toolchain.cmake \
   -DCMAKE_VERBOSE_MAKEFILE=ON \
@@ -55,7 +69,6 @@ operating system. Additional facts can be added through simple Ruby scripts
   make %{?_smp_mflags} DESTDIR=%{buildroot}
 
 %install
-rm -rf %{buildroot}
 make %{?_smp_mflags} install DESTDIR=%{buildroot}
 
 %clean
