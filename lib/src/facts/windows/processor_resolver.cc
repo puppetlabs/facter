@@ -1,5 +1,4 @@
 #include <facter/facts/windows/processor_resolver.hpp>
-#include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/wmi.hpp>
 #include <facter/util/regex.hpp>
 #include <boost/range/irange.hpp>
