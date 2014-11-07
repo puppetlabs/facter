@@ -3,6 +3,8 @@
 # Purpose:
 #   Return the details of the disk partitions.
 #
+#   This fact is structured. Values are returned as a group of key-value pairs.
+#
 # Resolution:
 #   Parse the contents of `/sys/block/<device>/size` to receive the size (multiplying by 512 to correct for blocks-to-bytes).
 #

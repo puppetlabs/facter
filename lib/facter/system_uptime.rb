@@ -5,6 +5,8 @@
 #   seconds, hours, days and a general, human
 #   readable uptime.
 #
+#   This fact is structured. These values are returned as a group of key-value pairs.
+#
 # Resolution:
 #   Does basic math on the get_uptime_seconds utility
 #   to calculate seconds, hours and days.
