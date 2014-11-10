@@ -191,7 +191,7 @@ namespace facter { namespace execution {
                 }
             } else {
                 // Redirect to null
-                scoped_descriptor dev_null(open("/dev/null", O_RDONLY));
+                scoped_descriptor dev_null(open("/dev/null", O_RDWR));
                 if (dev_null < 0 || dup2(dev_null, STDERR_FILENO) == -1) {
                     throw execution_exception("failed to redirect child stderr to null.");
                 }
