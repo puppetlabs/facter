@@ -131,7 +131,7 @@ Facter.add("virtual") do
 
     if Facter::Util::Virtual.xen?
       next "xen0" if FileTest.exists?("/dev/xen/evtchn")
-      next "xenu" if FileTest.exists?("/proc/xen")
+      next "xenu" if FileTest.exists?("/proc/xen") || FileTest.exists?("/dev/xvda1")
     end
 
     next "virtualbox" if Facter::Util::Virtual.virtualbox?
