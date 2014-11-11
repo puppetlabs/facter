@@ -1,6 +1,6 @@
 include(FindDependency)
 if (WIN32)
-    find_dependency(OPENSSL DISPLAY "OpenSSL" HEADERS "openssl/ssl.h" LIBRARIES "libeay32" REQUIRED)
+    find_dependency(OPENSSL DISPLAY "OpenSSL" HEADERS "openssl/ssl.h" LIBRARIES "crypto" "libeay32" REQUIRED)
 else()
     find_dependency(OPENSSL DISPLAY "OpenSSL" HEADERS "openssl/ssl.h" LIBRARIES "crypto" REQUIRED)
 endif()
