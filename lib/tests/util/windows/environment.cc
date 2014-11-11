@@ -1,7 +1,7 @@
 #include <gmock/gmock.h>
 #include <facter/util/environment.hpp>
+#include <facter/util/windows/windows.hpp>
 #include <unistd.h>
-#include <windows.h>
 
 using namespace std;
 using namespace facter::util;

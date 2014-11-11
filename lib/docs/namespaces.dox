@@ -65,6 +65,13 @@ namespace facter {
         }
 
         /**
+         * The namespace for Windows-related types and fact resolvers.
+         */
+        namespace windows {
+
+        }
+
+        /**
          * The namespace for ZFS fact resolvers.
          */
         namespace zfs {
@@ -109,6 +116,13 @@ namespace facter {
          * The namespace for utility types that are Solaris-specific.
          */
         namespace solaris {
+
+        }
+
+        /**
+         * The namespace for utility types that are Windows-specific.
+         */
+        namespace windows {
 
         }
     }

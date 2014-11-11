@@ -2,7 +2,8 @@
 #include <facter/logging/logging.hpp>
 #include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/string_conv.hpp>
-#define SECURITY_WIN32
+
+#include <facter/util/windows/windows.hpp>
 #include <security.h>
 
 #undef LOG_NAMESPACE

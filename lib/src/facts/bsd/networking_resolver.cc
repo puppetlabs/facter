@@ -67,7 +67,7 @@ namespace facter { namespace facts { namespace bsd {
                     }
 
                     string ip = address_to_string(addr->ifa_addr, addr->ifa_netmask);
-                    if (!boost::starts_with(ip, "127.") && ip != "::1") {
+                    if (!boost::starts_with(ip, "127.") && ip != "::1" && !boost::starts_with(ip, "fe80")) {
                         data.primary_interface = name;
                         break;
                     }

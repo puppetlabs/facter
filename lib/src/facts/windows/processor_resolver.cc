@@ -1,9 +1,6 @@
 #include <facter/facts/windows/processor_resolver.hpp>
 #include <facter/util/windows/wmi.hpp>
 #include <facter/util/regex.hpp>
-#include <boost/range/irange.hpp>
-#include <boost/range/iterator_range.hpp>
-#include <boost/algorithm/string/trim.hpp>
 
 using namespace std;
 using namespace facter::util;
@@ -25,18 +22,9 @@ namespace facter { namespace facts { namespace windows {
 
         auto vals = _wmi.query(wmi::processor, {wmi::numberoflogicalprocessors, wmi::name});
 
-        auto num_logical_procs = boost::make_iterator_range(vals.equal_range(wmi::numberoflogicalprocessors));
-        if (num_logical_procs.empty()) {
-            logical_count = 1;
-        } else {
-            for (auto const& kv : num_logical_procs) {
-                logical_count += stoi(kv.second);
-            }
-        }
-
-        auto proc_names = boost::make_iterator_range(vals.equal_range(wmi::name));
-        for (auto const& kv : proc_names) {
-            models.emplace_back(boost::trim_copy(kv.second));
+        for (auto const& objs : vals) {
+            logical_count += stoi(wmi::get(objs, wmi::numberoflogicalprocessors));
+            models.emplace_back(wmi::get(objs, wmi::name));
         }
 
         return make_tuple(models.size(), logical_count, move(models), 0);

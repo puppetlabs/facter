@@ -8,6 +8,7 @@
 #include <facter/facts/windows/identity_resolver.hpp>
 #include <facter/facts/windows/kernel_resolver.hpp>
 #include <facter/facts/windows/memory_resolver.hpp>
+#include <facter/facts/windows/networking_resolver.hpp>
 #include <facter/facts/windows/operating_system_resolver.hpp>
 #include <facter/facts/windows/processor_resolver.hpp>
 #include <facter/facts/windows/timezone_resolver.hpp>
@@ -16,9 +17,9 @@
 #include <facter/util/environment.hpp>
 #include <facter/util/scoped_resource.hpp>
 #include <facter/util/windows/system_error.hpp>
+#include <facter/util/windows/windows.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/filesystem.hpp>
-#include <windows.h>
 #include <Shlobj.h>
 
 using namespace std;
@@ -64,6 +65,7 @@ namespace facter { namespace facts {
         add(make_shared<windows::identity_resolver>());
         add(make_shared<windows::kernel_resolver>());
         add(make_shared<windows::memory_resolver>());
+        add(make_shared<windows::networking_resolver>());
         add(make_shared<windows::timezone_resolver>());
 
         try {

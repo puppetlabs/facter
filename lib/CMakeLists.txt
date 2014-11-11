@@ -107,6 +107,7 @@ if (WIN32)
         "src/ruby/windows/api.cc"
         "src/util/windows/dynamic_library.cc"
         "src/util/windows/environment.cc"
+        "src/util/windows/registry.cc"
         "src/util/windows/system_error.cc"
         "src/util/windows/string_conv.cc"
         "src/util/windows/wmi.cc"
@@ -183,6 +184,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
         "src/facts/windows/identity_resolver.cc"
         "src/facts/windows/kernel_resolver.cc"
         "src/facts/windows/memory_resolver.cc"
+        "src/facts/windows/networking_resolver.cc"
         "src/facts/windows/operating_system_resolver.cc"
         "src/facts/windows/processor_resolver.cc"
         "src/facts/windows/timezone_resolver.cc"
@@ -196,7 +198,9 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
         "Psapi.lib"
         "Version.lib"
         "Wbemuuid.lib"
-        "Secur32.lib")
+        "Secur32.lib"
+        "Ws2_32.lib"
+        "iphlpapi.lib")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSAPI_VERSION=1")
 endif()
 

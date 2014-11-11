@@ -3,6 +3,7 @@
 #include <facter/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
 #include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/range/iterator_range.hpp>
 
 #define _WIN32_DCOM
@@ -59,10 +60,43 @@ namespace facter { namespace util { namespace windows {
         }
     }
 
-    wmi::imap wmi::query(string const& group, vector<string> const& keys) const
+    static void wmi_add_result(wmi::imap &vals, string const& group, string const& s, VARIANT *vtProp)
+    {
+        if (V_VT(vtProp) == (VT_ARRAY | VT_BSTR)) {
+            // It's an array of elements; serialize the array as elements with the same key in the imap.
+            // To keep this simple, ignore multi-dimensional arrays.
+            SAFEARRAY *arr = V_ARRAY(vtProp);
+            if (arr->cDims != 1) {
+                LOG_DEBUG("ignoring %1%-dimensional array in query %2%.%3%", arr->cDims, group, s);
+                return;
+            }
+
+            BSTR *pbstr;
+            if (FAILED(SafeArrayAccessData(arr, reinterpret_cast<void **>(&pbstr)))) {
+                return;
+            }
+
+            for (auto i = 0u; i < arr->rgsabound[0].cElements; ++i) {
+                vals.emplace(s, boost::trim_copy(to_utf8(pbstr[i])));
+            }
+            SafeArrayUnaccessData(arr);
+        } else if (FAILED(VariantChangeType(vtProp, vtProp, 0, VT_BSTR)) || V_VT(vtProp) != VT_BSTR) {
+            // Uninitialized (null) values can just be ignored. Any others get reported.
+            if (V_VT(vtProp) != VT_NULL) {
+                LOG_DEBUG("WMI query %1%.%2% result could not be converted from type %3% to a string", group, s, V_VT(vtProp));
+            }
+        } else {
+            vals.emplace(s, boost::trim_copy(to_utf8(V_BSTR(vtProp))));
+        }
+    }
+
+    wmi::imaps wmi::query(string const& group, vector<string> const& keys, string const& extended) const
     {
         IEnumWbemClassObject *_pEnum = NULL;
         string qry = "SELECT " + boost::join(keys, ",") + " FROM " + group;
+        if (!extended.empty()) {
+            qry += " " + extended;
+        }
 
         auto hres = (*_pSvc).ExecQuery(_bstr_t(L"WQL"), _bstr_t(to_utf16(qry).c_str()),
             WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, NULL, &_pEnum);
@@ -73,7 +107,7 @@ namespace facter { namespace util { namespace windows {
         scoped_resource<IEnumWbemClassObject *> pEnum(move(_pEnum),
             [](IEnumWbemClassObject *rsc) { if (rsc) rsc->Release(); });
 
-        imap vals;
+        imaps array_of_vals;
 
         IWbemClassObject *pclsObjs[256];
         ULONG uReturn = 0;
@@ -84,43 +118,25 @@ namespace facter { namespace util { namespace windows {
             }
 
             for (auto pclsObj : boost::make_iterator_range(pclsObjs, pclsObjs+uReturn)) {
+                imap vals;
                 for (auto &s : keys) {
                     VARIANT vtProp;
                     CIMTYPE vtType;
                     hr = pclsObj->Get(_bstr_t(to_utf16(s).c_str()), 0, &vtProp, &vtType, 0);
                     if (FAILED(hr)) {
+                        LOG_DEBUG("query %1%.%2% could not be found", group, s);
                         break;
                     }
 
-                    // This handles the return types we expect to get - ints, reals, strings - but not all possibilities.
-                    switch (V_VT(&vtProp)) {
-                        case VT_I2:
-                            vals.emplace(s, to_string(V_I2(&vtProp)));
-                            break;
-                        case VT_I4:
-                            vals.emplace(s, to_string(V_I4(&vtProp)));
-                            break;
-                        case VT_R4:
-                            vals.emplace(s, to_string(V_R4(&vtProp)));
-                            break;
-                        case VT_R8:
-                            vals.emplace(s, to_string(V_R8(&vtProp)));
-                            break;
-                        case VT_BSTR:
-                            vals.emplace(s, to_utf8(V_BSTR(&vtProp)));
-                            break;
-                        default:
-                            LOG_DEBUG("unexpected return type %1% for WMI query %2%.%3%", V_VT(&vtProp), group, s);
-                            break;
-                    }
-
+                    wmi_add_result(vals, group, s, &vtProp);
                     VariantClear(&vtProp);
                 }
                 pclsObj->Release();
+                array_of_vals.emplace_back(move(vals));
             }
         }
 
-        return vals;
+        return array_of_vals;
     }
 
     string const& wmi::get(wmi::imap const& kvmap, string const& key)
@@ -130,7 +146,39 @@ namespace facter { namespace util { namespace windows {
         if (valIt == kvmap.end()) {
             return empty;
         } else {
+            if (kvmap.count(key) > 1) {
+                LOG_DEBUG("only single value requested from array for key %1%", key);
+            }
             return valIt->second;
+        }
+    }
+
+    wmi::kv_range wmi::get_range(wmi::imap const& kvmap, string const& key)
+    {
+        return kv_range(kvmap.equal_range(key));
+    }
+
+    string const& wmi::get(wmi::imaps const& kvmaps, string const& key)
+    {
+        if (kvmaps.size() > 0) {
+            if (kvmaps.size() > 1) {
+                LOG_DEBUG("only single entry requested from array of entries for key %1%", key);
+            }
+            return get(kvmaps[0], key);
+        } else {
+            throw wmi_exception("unable to get from empty array of objects");
+        }
+    }
+
+    wmi::kv_range wmi::get_range(wmi::imaps const& kvmaps, string const& key)
+    {
+        if (kvmaps.size() > 0) {
+            if (kvmaps.size() > 1) {
+                LOG_DEBUG("only single entry requested from array of entries for key %1%", key);
+            }
+            return get_range(kvmaps[0], key);
+        } else {
+            throw wmi_exception("unable to get_range from empty array of objects");
         }
     }
 

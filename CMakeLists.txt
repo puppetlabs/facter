@@ -114,12 +114,25 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     #set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wall")
 endif()
 
-# On Windows, DLL paths aren't hardcoded in the executable. We place all the executables and libraries
-# in the same directory to avoid having to setup the DLL search path in the dev environment.
 if (WIN32)
+    # On Windows, DLL paths aren't hardcoded in the executable. We place all the executables and libraries
+    # in the same directory to avoid having to setup the DLL search path in the dev environment.
     set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
     set(LIBRARY_OUTPUT_PATH    ${PROJECT_BINARY_DIR}/bin)
     set(LIBFACTER_TEST_PATH    ${PROJECT_BINARY_DIR}/bin)
+
+    # We use networking APIs that require Windows Vista as a minimum. See
+    # http://msdn.microsoft.com/en-us/library/windows/desktop/aa383745(v=vs.85).aspx
+    # for version strings.
+    # Supporting Windows Server 2003 requires
+    # - using GetAdaptersInfo to get the network mask and Dhcp server; IPv6 mask may not be supported.
+    # - Use WSA functions for sockaddr to string conversion, which includes more costly WSAStartup.
+    # We currently load IsWow64Process from a DLL, but with these definitions that could be statically linked.
+    add_definitions(-DWINVER=0x0600 -D_WIN32_WINNT=0x0600)
+
+    # The GetUserNameEx function requires the application have a defined security level.
+    # We define security sufficient to get the current user's info.
+    add_definitions(-DSECURITY_WIN32)
 else()
     set(LIBFACTER_TEST_PATH    ${PROJECT_BINARY_DIR}/lib/tests)
 endif()
