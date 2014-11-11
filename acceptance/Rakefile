@@ -272,7 +272,7 @@ Defaults to a packages run, but you can set it to 'git' with TYPE='git'.
 #{USAGE}
   EOS
   task :test_and_preserve_hosts => 'ci:check_env'  do
-    beaker_test(beaker_run_type, :preserve_hosts => true)
+    beaker_test(beaker_run_type, :preserve_hosts => 'always', :__preserve_config__ => true)
   end
 
   desc "List acceptance runs from the past day which had hosts preserved."
@@ -310,7 +310,7 @@ Defaults to a packages run, but you can set it to 'git' with TYPE='git'.
     beaker_test(beaker_run_type,
       :hosts_file => "#{config_path}/preserved_config.yaml",
       :no_provision => true,
-      :preserve_hosts => true,
+      :preserve_hosts => 'always',
       :pre_suite => ['setup/rsync/pre-suite']
     )
   end
