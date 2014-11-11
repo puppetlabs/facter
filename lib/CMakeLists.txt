@@ -33,6 +33,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/dmi_resolver.cc"
     "src/facts/resolvers/ec2_resolver.cc"
     "src/facts/resolvers/filesystem_resolver.cc"
+    "src/facts/resolvers/gce_resolver.cc"
     "src/facts/resolvers/identity_resolver.cc"
     "src/facts/resolvers/kernel_resolver.cc"
     "src/facts/resolvers/memory_resolver.cc"
