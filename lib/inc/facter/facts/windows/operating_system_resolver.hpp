@@ -29,6 +29,14 @@ namespace facter { namespace facts { namespace windows {
          */
         virtual data collect_data(collection& facts) override;
 
+        /**
+         * Returns the major release version on Windows; it has no consistent minor release naming scheme.
+         * @param name The name of the OS.
+         * @param release The release to parse.
+         * @return Returns a tuple of major and minor release versions.
+         */
+        virtual std::tuple<std::string, std::string> parse_release(std::string const& name, std::string const& release) const;
+
      private:
         std::shared_ptr<util::windows::wmi> _wmi;
     };
