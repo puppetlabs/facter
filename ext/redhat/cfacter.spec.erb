@@ -39,15 +39,16 @@ Requires: glibc
 %if 0%{?rhel} > 5
 Requires: libblkid
 Requires: libcurl
+%endif
 # If we're linking against openssl, we need to ensure those libraries are available
 # during runtime. On EL7, those dependency libraries are available via the openssl-libs
 # package, but we don't have that package on earlier versions. We want to install as
 # few extra packages as possible, which is why we're installing openssl-libs when available.
 %if 0%{?rhel} >= 7
 Requires: openssl-libs
-%else
-Requires: openssl
 %endif
+%if 0%{?rhel} == 6
+Requires: openssl
 %endif
 
 AutoReq:  0
