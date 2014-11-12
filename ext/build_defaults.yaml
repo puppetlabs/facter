@@ -17,7 +17,7 @@ gpg_key: '4BD6EC30'
 # Whether to require tarball signing as a prerequisite of other package building
 sign_tar: FALSE
 # a space separated list of mock configs. These are the rpm distributions to package for. If a noarch package, only one arch of each is needed.
-final_mocks: 'pl-el-6-x86_64 pl-el-6-i386 pl-el-7-x86_64'
+final_mocks: 'pl-el-5-x86_64 pl-el-5-i386 pl-el-6-x86_64 pl-el-6-i386 pl-el-7-x86_64'
 # The host that contains the yum repository to ship to
 yum_host: 'yum.puppetlabs.com'
 # The remote path the repository on the yum\_host

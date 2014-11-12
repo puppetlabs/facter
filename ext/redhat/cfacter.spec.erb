@@ -29,21 +29,25 @@ BuildRequires:  pl-libboost-static >= 1.55.0-4
 BuildRequires:  pl-libyaml-cpp-devel >= 0.5.1-5
 BuildRequires:  pl-libyaml-cpp-static >= 0.5.1-5
 
+%if 0%{?rhel} > 5
 BuildRequires:  openssl-devel
 BuildRequires:  libblkid-devel
 BuildRequires:  libcurl-devel
+%endif
 
 Requires: glibc
+%if 0%{?rhel} > 5
 Requires: libblkid
 Requires: libcurl
 # If we're linking against openssl, we need to ensure those libraries are available
 # during runtime. On EL7, those dependency libraries are available via the openssl-libs
 # package, but we don't have that package on earlier versions. We want to install as
 # few extra packages as possible, which is why we're installing openssl-libs when available.
-%if 0%{rhel} >= 7
+%if 0%{?rhel} >= 7
 Requires: openssl-libs
 %else
 Requires: openssl
+%endif
 %endif
 
 AutoReq:  0
