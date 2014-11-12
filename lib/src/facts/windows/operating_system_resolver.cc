@@ -123,4 +123,9 @@ namespace facter { namespace facts { namespace windows {
         return result;
     }
 
+    tuple<string, string> operating_system_resolver::parse_release(string const& name, string const& release) const
+    {
+        return make_tuple(release, string());
+    }
+
 }}}  // namespace facter::facts::windows
