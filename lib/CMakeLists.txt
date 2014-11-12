@@ -95,7 +95,7 @@ if (UNIX)
         set(LIBFACTER_STANDARD_SOURCES ${LIBFACTER_STANDARD_SOURCES} "src/util/posix/scoped_bio.cc")
     endif()
 
-    set(POSIX_LIBRARIES pthread dl)
+    set(POSIX_LIBRARIES pthread dl rt)
 endif()
 
 if (WIN32)
