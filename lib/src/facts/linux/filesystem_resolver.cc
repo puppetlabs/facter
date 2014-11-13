@@ -62,8 +62,8 @@ namespace facter { namespace facts { namespace linux {
 
             struct statfs stats;
             if (statfs(ptr->mnt_dir, &stats) != -1) {
-                point.size = stats.f_bsize * stats.f_blocks;
-                point.available = stats.f_bsize * stats.f_bfree;
+                point.size = stats.f_frsize * stats.f_blocks;
+                point.available = stats.f_frsize * stats.f_bfree;
             }
 
             result.mountpoints.emplace_back(move(point));
