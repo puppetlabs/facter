@@ -3,7 +3,6 @@
 #include <facter/logging/logging.hpp>
 #include <facter/ruby/api.hpp>
 #include <facter/ruby/module.hpp>
-
 #include <boost/algorithm/string.hpp>
 
 // boost includes are not always warning-clean. Disable warnings that
@@ -195,18 +194,22 @@ int main(int argc, char **argv)
         // Build a set of queries from the command line
         set<string> queries;
         if (vm.count("query")) {
-            auto const& parameters = vm["query"].as<vector<string>>();
+            for (auto const &q : vm["query"].as<vector<string>>()) {
+                // Strip whitespace and query delimiter
+                string query = boost::trim_copy_if(q, boost::is_any_of(".") || boost::is_space());
 
-            // Convert the given strings into a set of unique lowercase queries
-            transform(
-                parameters.begin(),
-                parameters.end(),
-                inserter(queries, queries.end()),
-                [](string const& s) {
-                    string query = boost::trim_copy(s);
-                    boost::to_lower(query);
-                    return query;
-                });
+                // Erase any duplicate consecutive delimiters
+                query.erase(unique(query.begin(), query.end(), [](char a, char b) {
+                    return a == b && a == '.';
+                }), query.end());
+
+                // Don't insert empty queries
+                if (query.empty()) {
+                    continue;
+                }
+
+                queries.emplace(move(query));
+            }
         }
 
         log_queries(queries);

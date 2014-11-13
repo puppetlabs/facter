@@ -581,6 +581,11 @@ namespace facter { namespace facts {
          * The fact for EC2 user data.
          */
         constexpr static char const* ec2_userdata = "ec2_userdata";
+
+        /**
+         * The fact for GCE instance metadata.
+         */
+        constexpr static char const* gce = "gce";
     };
 
 }}  // namespace facter::facts

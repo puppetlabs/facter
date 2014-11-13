@@ -47,22 +47,22 @@ namespace facter { namespace facts { namespace external {
 
         void Int(int i)
         {
-            Uint64(static_cast<uint64_t>(i));
+            Int64(static_cast<uint64_t>(i));
         }
 
         void Uint(unsigned int i)
         {
-            Uint64(static_cast<uint64_t>(i));
+            Int64(static_cast<uint64_t>(i));
         }
 
         void Int64(int64_t i)
         {
-            Uint64(static_cast<uint64_t>(i));
+            add_value(make_value<integer_value>(i));
         }
 
         void Uint64(uint64_t i)
         {
-            add_value(make_value<integer_value>(i));
+            Int64(static_cast<uint64_t>(i));
         }
 
         void Double(double d)
