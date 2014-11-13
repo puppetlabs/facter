@@ -34,6 +34,7 @@ struct test_os_resolver : operating_system_resolver
         result.osx.product = "Mac OS X";
         result.osx.build = "14A388b";
         result.osx.version = "10.10";
+        result.win.system32 = "C:\\WINDOWS\\sysnative";
         result.architecture = "amd64";
         result.hardware = "x86-64";
         return result;
@@ -56,7 +57,7 @@ TEST(facter_facts_resolvers_os_resolver, facts)
 {
     collection facts;
     facts.add(make_shared<test_os_resolver>());
-    ASSERT_EQ(19u, facts.size());
+    ASSERT_EQ(20u, facts.size());
 
     auto name = facts.get<string_value>(fact::operating_system);
     ASSERT_NE(nullptr, name);
@@ -112,7 +113,7 @@ TEST(facter_facts_resolvers_os_resolver, facts)
 
     auto os = facts.get<map_value>(fact::os);
     ASSERT_NE(nullptr, os);
-    ASSERT_EQ(7u, os->size());
+    ASSERT_EQ(8u, os->size());
 
     auto distro = os->get<map_value>("distro");
     ASSERT_NE(nullptr, distro);
@@ -229,4 +230,16 @@ TEST(facter_facts_resolvers_os_resolver, facts)
     minor = facts.get<string_value>(fact::macosx_productversion_minor);
     ASSERT_NE(nullptr, minor);
     ASSERT_EQ("0", minor->value());
+
+    auto windows = os->get<map_value>("windows");
+    ASSERT_NE(nullptr, windows);
+    ASSERT_EQ(1u, windows->size());
+
+    auto system32 = windows->get<string_value>("system32");
+    ASSERT_NE(nullptr, system32);
+    ASSERT_EQ("C:\\WINDOWS\\sysnative", system32->value());
+
+    system32 = facts.get<string_value>(fact::windows_system32);
+    ASSERT_NE(nullptr, system32);
+    ASSERT_EQ("C:\\WINDOWS\\sysnative", system32->value());
 }
