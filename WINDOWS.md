@@ -9,24 +9,16 @@ Setup Instructions
     * http://www.cmake.org/download/
     * or: choco install cmake
 
-*   Install OpenSSL (Optional)
-
-    * Download and install "Visual C++ 2008 Redistributables (x64)" from <http://slproweb.com/products/Win32OpenSSL.html> (use non-x86 for 32-bit builds)
-        * eg: http://www.microsoft.com/en-us/download/confirmation.aspx?id=15336
-
-    * Download and install "Win64 OpenSSL <version>" from <http://slproweb.com/products/Win32OpenSSL.html> (use Win32 for 32-bit builds)
-        * eg: http://slproweb.com/download/Win64OpenSSL-1_0_0n.exe
-
-    * Install OpenSSL: choose install path; choose to copy files to OpenSSL /bin directory (not system dir).
-
-    * Note that the OpenSSL.Light package in Chocolatey will not work, as it does not include header files.
-
 *   Install Python for cpplint
 
     * choco install python
 
 	* or: Install from python.org
         * eg: https://www.python.org/ftp/python/3.4.1/python-3.4.1.amd64.msi
+
+*   Install Doxygen for document generation
+
+    * choco install doxygen.install
 
 *   A script for bootstrapping a system following the MinGW instructions below can be found at https://gist.github.com/MikaelSmith/d885c72dd87e61e3f969
 
@@ -41,6 +33,7 @@ Commands are expected to be executed in cmd.exe or Powershell. MinGW and Cygwin 
 
     * choco install mingw
         * restart your shell or it won't get the new path
+        * note that the mingw version on Chocolatey won't work for Ruby facts, as sjlj exception handling conflicts with libruby's error handling
 
     * or: MinGW-w64 installer (<http://sourceforge.net/projects/mingw-w64/>); select Version=4.8.2, Architecture based on 32 or 64-bit target, Threads=win32
         * The MinGW-w64 project provides a shortcut to open a cmd shell with GCC in the PATH
