@@ -64,7 +64,7 @@ namespace facter { namespace ruby {
         // Methods called from Ruby
         static VALUE ruby_chunk(int argc, VALUE* argv, VALUE self);
         static VALUE ruby_aggregate(VALUE self);
-        static VALUE ruby_merge_hashes(VALUE proc, VALUE proc_value, int argc, VALUE* argv);
+        static VALUE ruby_merge_hashes(VALUE obj, VALUE context, int argc, VALUE* argv);
 
         // Helper functions
         static VALUE deep_merge(api const& ruby, VALUE left, VALUE right);

@@ -44,7 +44,7 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(rb_funcall),
         LOAD_ALIASED_SYMBOL(rb_funcallv, rb_funcall2),
         LOAD_SYMBOL(rb_proc_new),
-        LOAD_SYMBOL(rb_funcall_with_block),
+        LOAD_SYMBOL(rb_block_call),
         LOAD_SYMBOL(rb_funcall_passing_block),
         LOAD_SYMBOL(rb_num2ulong),
         LOAD_SYMBOL(rb_num2dbl),

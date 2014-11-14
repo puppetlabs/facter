@@ -165,7 +165,7 @@ namespace facter {  namespace ruby {
         /**
          * See MRI documentation.
          */
-        VALUE (* const rb_funcall_with_block)(VALUE, ID, int, VALUE const*, VALUE);
+        VALUE (* const rb_block_call)(VALUE, ID, int, VALUE*, VALUE(*)(...), VALUE);
         /**
          * See MRI documentation.
          */

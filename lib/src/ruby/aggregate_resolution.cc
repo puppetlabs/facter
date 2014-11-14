@@ -193,9 +193,9 @@ namespace facter { namespace ruby {
         return self;
     }
 
-    VALUE aggregate_resolution::ruby_merge_hashes(VALUE proc, VALUE proc_value, int argc, VALUE* argv)
+    VALUE aggregate_resolution::ruby_merge_hashes(VALUE obj, VALUE context, int argc, VALUE argv[])
     {
-        api const* ruby = reinterpret_cast<api const*>(proc_value);
+        api const* ruby = reinterpret_cast<api const*>(context);
         if (argc != 3) {
             ruby->rb_raise(*ruby->rb_eArgError, "wrong number of arguments (%d for 3)", argc);
         }
@@ -209,7 +209,7 @@ namespace facter { namespace ruby {
         volatile VALUE result = ruby.nil_value();
 
         if (ruby.is_hash(left) && ruby.is_hash(right)) {
-            result = ruby.rb_funcall_with_block(left, ruby.rb_intern("merge"), 1, &right, ruby.rb_proc_new(RUBY_METHOD_FUNC(ruby_merge_hashes), reinterpret_cast<VALUE>(&ruby)));
+            result = ruby.rb_block_call(left, ruby.rb_intern("merge"), 1, &right, RUBY_METHOD_FUNC(ruby_merge_hashes), reinterpret_cast<VALUE>(&ruby));
         } else if (ruby.is_array(left) && ruby.is_array(right)) {
             result = ruby.rb_funcall(left, ruby.rb_intern("+"), 1, right);
         } else if (ruby.is_nil(right)) {
