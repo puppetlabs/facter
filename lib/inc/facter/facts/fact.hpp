@@ -425,6 +425,11 @@ namespace facter { namespace facts {
         constexpr static char const* macosx_productversion_minor = "macosx_productversion_minor";
 
         /**
+         * The fact for Windows native system32 directory.
+         */
+        constexpr static char const* windows_system32 = "system32";
+
+        /**
          * The fact for virtualization hypervisor.
          */
         constexpr static char const* virtualization = "virtual";

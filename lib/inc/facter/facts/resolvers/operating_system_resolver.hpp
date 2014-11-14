@@ -72,6 +72,20 @@ namespace facter { namespace facts { namespace resolvers {
         };
 
         /**
+         * Represents information about Windows.
+         */
+        struct windows
+        {
+            /**
+             * Stores the native system32 directory, the location native OS executables can be found.
+             * For 32-bit facter on 32-bit Windows, typically: 'C:\Windows\system32'.
+             * For 32-bit facter on 64-bit Windows, typically: 'C:\Windows\sysnative'.
+             * For 64-bit facter on 64-bit Windows, typically: 'C:\Windows\system32'.
+             */
+            std::string system32;
+        };
+
+        /**
          * Represents operating system data.
          */
         struct data
@@ -110,6 +124,11 @@ namespace facter { namespace facts { namespace resolvers {
              * Stores information about Mac OSX.
              */
             mac osx;
+
+            /**
+             * Stores information about Windows.
+             */
+            windows win;
         };
 
         /**

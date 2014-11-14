@@ -32,7 +32,8 @@ namespace facter { namespace facts { namespace resolvers {
                 fact::macosx_productname,
                 fact::macosx_productversion,
                 fact::macosx_productversion_major,
-                fact::macosx_productversion_minor
+                fact::macosx_productversion_minor,
+                fact::windows_system32
             })
     {
     }
@@ -170,6 +171,17 @@ namespace facter { namespace facts { namespace resolvers {
 
         if (!macosx->empty()) {
             os->add("macosx", move(macosx));
+        }
+
+        // Populate Windows-specific data
+        auto windows = make_value<map_value>();
+        if (!data.win.system32.empty()) {
+            facts.add(fact::windows_system32, make_value<string_value>(data.win.system32, true));
+            windows->add("system32", make_value<string_value>(move(data.win.system32)));
+        }
+
+        if (!windows->empty()) {
+            os->add("windows", move(windows));
         }
 
         if (!os->empty()) {

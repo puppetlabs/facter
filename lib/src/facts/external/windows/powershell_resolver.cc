@@ -1,13 +1,13 @@
 #include <facter/facts/external/windows/powershell_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <facter/facts/fact.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/windows.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
-#include <Shlobj.h>
 
 using namespace std;
 using namespace facter::execution;
@@ -38,26 +38,20 @@ namespace facter { namespace facts { namespace external {
 
         try
         {
-            // When facter is a 32-bit process running on 64-bit windows (such as in a 32-bit puppet installation that includes
-            // native facter), this executes the 32-bit powershell and leads to problems. For example, if using powershell to read
-            // values from the registry, it will read the 32-bit view of the registry. Also 32 and 64-bit versions have different
-            // modules available (since PSModulePath is in system32). In those circumstances, Windows invisibly redirects to
-            // 32-bit executables; it also provides a link at %SYSTEMROOT%\sysnative for the 64-bit versions. So explicitly look
-            // for Powershell at sysnative before trying system32 and PATH lookup.
-            TCHAR szPath[MAX_PATH];
-            if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_WINDOWS, NULL, 0, szPath))) {
-                LOG_DEBUG("error finding SYSTEMROOT: %1%", system_error());
-            }
-            auto pathNative = path(szPath) / "sysnative" / "WindowsPowerShell" / "v1.0" / "powershell.exe";
-            auto pwrshell = which(pathNative.string());
+            string pwrshell = "powershell";
 
-            if (pwrshell.empty()) {
-                auto path32 = path(szPath) / "system32" / "WindowsPowerShell" / "v1.0" / "powershell.exe";
-                pwrshell = which(path32.string());
-            }
-
-            if (pwrshell.empty()) {
-                pwrshell = "powershell";
+            // When facter is a 32-bit process running on 64-bit windows (such as in a 32-bit puppet installation that
+            // includes native facter), PATH-lookp finds the 32-bit powershell and leads to problems. For example, if
+            // using powershell to read values from the registry, it will read the 32-bit view of the registry. Also 32
+            // and 64-bit versions have different modules available (since PSModulePath is in system32). Use the
+            // system32 fact to find the correct powershell executable.
+            auto system32 = facts.get<string_value>(fact::windows_system32);
+            if (system32) {
+                auto pathNative = path(system32->value()) / "WindowsPowerShell" / "v1.0" / "powershell.exe";
+                auto pwrshellNative = which(pathNative.string());
+                if (!pwrshellNative.empty()) {
+                    pwrshell = move(pwrshellNative);
+                }
             }
 
             execution::each_line(pwrshell, {"-NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File ", "\"" + file + "\""},

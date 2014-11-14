@@ -7,11 +7,14 @@
 #include <facter/util/windows/windows.hpp>
 #include <intrin.h>
 #include <winnt.h>
+#include <Shlobj.h>
 #include <map>
+#include <boost/filesystem.hpp>
 
 using namespace std;
 using namespace facter::util;
 using namespace facter::util::windows;
+using namespace boost::filesystem;
 
 #ifdef LOG_NAMESPACE
   #undef LOG_NAMESPACE
@@ -75,6 +78,28 @@ namespace facter { namespace facts { namespace windows {
         return hardware;
     }
 
+    static string get_system32()
+    {
+        // When facter is a 32-bit process running on 64-bit windows (such as in a 32-bit puppet installation that
+        // includes native facter), system32 points to 32-bit executables; Windows invisibly redirects it. It also
+        // provides a link at %SYSTEMROOT%\sysnative for the 64-bit versions. Return the system path where OS-native
+        // executables can be found.
+        TCHAR szPath[MAX_PATH];
+        if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_WINDOWS, NULL, 0, szPath))) {
+            LOG_DEBUG("error finding SYSTEMROOT: %1%", system_error());
+        }
+
+        auto pathNative = path(szPath) / "sysnative";
+        boost::system::error_code ec;
+        if (is_directory(pathNative, ec)) {
+            return pathNative.string();
+        }
+
+        LOG_TRACE("sysnative path does not exist");
+        auto path32 = path(szPath) / "system32";
+        return path32.string();
+    }
+
     operating_system_resolver::operating_system_resolver(shared_ptr<wmi> wmi_conn) :
         resolvers::operating_system_resolver(),
         _wmi(move(wmi_conn))
@@ -88,6 +113,7 @@ namespace facter { namespace facts { namespace windows {
 
         result.hardware = get_hardware();
         result.architecture = get_architecture(result.hardware);
+        result.win.system32 = get_system32();
 
         auto lastDot = result.release.rfind('.');
         if (lastDot == string::npos) {
