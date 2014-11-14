@@ -79,6 +79,7 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(rb_data_object_alloc),
         LOAD_SYMBOL(rb_gc_mark),
         LOAD_SYMBOL(rb_yield_values),
+        LOAD_SYMBOL(rb_require),
         LOAD_SYMBOL(rb_cObject),
         LOAD_SYMBOL(rb_cArray),
         LOAD_SYMBOL(rb_cHash),

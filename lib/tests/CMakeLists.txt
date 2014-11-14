@@ -34,6 +34,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/resolvers/networking_resolver.cc"
     "facts/resolvers/operating_system_resolver.cc"
     "facts/resolvers/processor_resolver.cc"
+    "facts/resolvers/ruby_resolver.cc"
     "facts/resolvers/ssh_resolver.cc"
     "facts/resolvers/system_profiler_resolver.cc"
     "facts/resolvers/timezone_resolver.cc"
