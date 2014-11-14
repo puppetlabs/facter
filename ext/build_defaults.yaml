@@ -5,7 +5,7 @@ deb_build_mirrors:
   - deb http://pl-build-tools.delivery.puppetlabs.net/debian __DIST__ main
 default_cow: 'base-wheezy-i386.cow'
 # Which debian distributions to build for. Noarch packages only need one arch of each cow.
-cows: 'base-wheezy-amd64.cow base-wheezy-i386.cow'
+cows: 'base-trusty-amd64.cow base-trusty-i386.cow base-wheezy-amd64.cow base-wheezy-i386.cow'
 # The pbuilder configuration file to use
 pbuild_conf: '/etc/pbuilderrc'
 # Who is packaging. Turns up in various packaging artifacts
