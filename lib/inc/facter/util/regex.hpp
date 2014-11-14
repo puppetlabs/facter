@@ -9,13 +9,8 @@
 #ifdef USE_RE2
 #include <re2/re2.h>
 #else
-// boost includes are not always warning-clean. Disable warnings that
-// cause problems before including the headers, then re-enable the warnings.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #include <boost/regex.hpp>
 #include <boost/lexical_cast.hpp>
-#pragma GCC diagnostic pop
 #endif
 
 namespace facter { namespace util {

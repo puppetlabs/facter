@@ -105,7 +105,8 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # missing-field-initializers is disabled because GCC can't make up their mind how to treat C++11 initializers
-    set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas -Wno-missing-field-initializers")
+    # maybe-uninitialized is a relatively new GCC warning that Boost 1.57 violates; disable it for now until it's available in Clang as well
+    set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas -Wno-missing-field-initializers -Wno-maybe-uninitialized")
     if (NOT "${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
         set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -Wextra")
     endif()
