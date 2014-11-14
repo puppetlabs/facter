@@ -15,6 +15,7 @@
 #include <facter/facts/linux/memory_resolver.hpp>
 #include <facter/facts/resolvers/ec2_resolver.hpp>
 #include <facter/facts/resolvers/gce_resolver.hpp>
+#include <facter/facts/resolvers/ruby_resolver.hpp>
 
 using namespace std;
 
@@ -38,6 +39,7 @@ namespace facter { namespace facts {
         add(make_shared<linux::memory_resolver>());
         add(make_shared<resolvers::ec2_resolver>());
         add(make_shared<resolvers::gce_resolver>());
+        add(make_shared<resolvers::ruby_resolver>());
     }
 
 }}  // namespace facter::facts

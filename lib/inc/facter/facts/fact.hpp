@@ -591,6 +591,26 @@ namespace facter { namespace facts {
          * The fact for GCE instance metadata.
          */
         constexpr static char const* gce = "gce";
+
+        /**
+         * The fact for Ruby metadata.
+         */
+        constexpr static char const* ruby = "ruby";
+
+        /**
+         * The fact for ruby platform.
+         */
+        constexpr static char const* rubyplatform = "rubyplatform";
+
+        /**
+         * The fact for ruby sitedir.
+         */
+        constexpr static char const* rubysitedir = "rubysitedir";
+
+        /**
+         * The fact for ruby version.
+         */
+        constexpr static char const* rubyversion = "rubyversion";
     };
 
 }}  // namespace facter::facts

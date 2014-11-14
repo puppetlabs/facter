@@ -15,6 +15,7 @@
 #include <facter/facts/solaris/zpool_resolver.hpp>
 #include <facter/facts/solaris/zfs_resolver.hpp>
 #include <facter/facts/solaris/zone_resolver.hpp>
+#include <facter/facts/resolvers/ruby_resolver.hpp>
 
 using namespace std;
 
@@ -35,6 +36,7 @@ namespace facter { namespace facts {
         add(make_shared<solaris::disk_resolver>());
         add(make_shared<solaris::virtualization_resolver>());
         add(make_shared<solaris::memory_resolver>());
+        add(make_shared<resolvers::ruby_resolver>());
 
         // solaris specific
         add(make_shared<solaris::zpool_resolver>());

@@ -306,6 +306,10 @@ namespace facter {  namespace ruby {
          * See MRI documentation.
          */
         VALUE (* const rb_yield_values)(int n, ...);
+        /**
+         * See MRI documentation.
+         */
+        VALUE (* const rb_require)(char const*);
 
         /**
          * See MRI documentation.
@@ -495,7 +499,8 @@ namespace facter {  namespace ruby {
         VALUE to_ruby(facter::facts::value const* val) const;
 
         /**
-         * Looks up a constant based on the given names.
+         * Looks up a constant based on the given names. The individual entries correspond to
+         * namespaces, as in {"A", "B", "C"} => A::B::C.
          * @param names The names to lookup.
          * @return Returns the value or raises a NameError.
          */
