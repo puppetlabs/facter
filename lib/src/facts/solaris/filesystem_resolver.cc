@@ -46,17 +46,12 @@ namespace facter { namespace facts { namespace solaris {
 
         mnttab entry;
         while (getmntent(file, &entry) == 0) {
-            // Skip over anything that doesn't map to a device
-            if (!boost::starts_with(entry.mnt_special, "/dev/")) {
-                continue;
-            }
-
             mountpoint point;
 
-            struct statvfs stats;
-            if (statvfs(entry.mnt_mountp, &stats) != -1) {
-                point.size = stats.f_bsize * stats.f_blocks;
-                point.available = stats.f_bsize * stats.f_bfree;
+            struct statvfs64 stats;
+            if (statvfs64(entry.mnt_mountp, &stats) != -1) {
+                point.size = stats.f_frsize * stats.f_blocks;
+                point.available = stats.f_frsize * stats.f_bfree;
             }
 
             point.name = entry.mnt_mountp;
