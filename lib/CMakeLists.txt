@@ -96,7 +96,7 @@ if (UNIX)
         set(LIBFACTER_STANDARD_SOURCES ${LIBFACTER_STANDARD_SOURCES} "src/util/posix/scoped_bio.cc")
     endif()
 
-    set(POSIX_LIBRARIES pthread dl rt)
+    set(POSIX_LIBRARIES pthread dl)
 endif()
 
 if (WIN32)
@@ -170,6 +170,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     )
     set(LIBFACTER_PLATFORM_LIBRARIES
         ${BLKID_LIBRARIES}
+        rt
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
     set(LIBFACTER_PLATFORM_SOURCES
