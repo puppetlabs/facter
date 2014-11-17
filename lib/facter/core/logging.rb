@@ -21,6 +21,22 @@ module Facter::Core::Logging
   # @api private
   @@debug_messages = {}
 
+  # @api private
+  @@message_callback = nil
+
+  # Used to register a callback that is called when a message is logged.
+  # If a block is given, Facter will not log messages.
+  # If a block is not given, Facter will resume logging messages.
+  # @param block [Proc] the callback to call when a message is logged.
+  #   The first argument to the callback will be a symbol representing a level. The supported
+  #   levels are: :trace, :debug, :info, :warn, :error, and :fatal.
+  #   The second argument to the callback will be a string containing the message
+  #   that was logged.
+  # @api public
+  def on_message(&block)
+    @@message_callback = block
+  end
+
   # Prints a debug message if debugging is turned on
   #
   # @param msg [String] the debug message
@@ -30,6 +46,8 @@ module Facter::Core::Logging
       if msg.nil? or msg.empty?
         invoker = caller[0].slice(/.*:\d+/)
         self.warn "#{self.class}#debug invoked with invalid message #{msg.inspect}:#{msg.class} at #{invoker}"
+      elsif @@message_callback
+        @@message_callback.call(:debug, msg)
       else
         puts GREEN + msg + RESET
       end
@@ -59,7 +77,10 @@ module Facter::Core::Logging
   def warn(msg)
     if msg.nil? or msg.empty?
       invoker = caller[0].slice(/.*:\d+/)
-      Kernel.warn "#{self.class}#debug invoked with invalid message #{msg.inspect}:#{msg.class} at #{invoker}"
+      msg = "#{self.class}#debug invoked with invalid message #{msg.inspect}:#{msg.class} at #{invoker}"
+    end
+    if @@message_callback
+      @@message_callback.call(:warn, msg)
     else
       Kernel.warn msg
     end
@@ -111,7 +132,13 @@ module Facter::Core::Logging
   #
   # @api private
   def show_time(string)
-    $stderr.puts "#{GREEN}#{string}#{RESET}" if string and self.timing?
+    return unless string && self.timing?
+
+    if @@message_callback
+      @@message_callback.call(:info, string)
+    else
+      $stderr.puts "#{GREEN}#{string}#{RESET}"
+    end
   end
 
   # Enable or disable logging of debug messages
@@ -158,12 +185,13 @@ module Facter::Core::Logging
     @@trace
   end
 
-  # Clears the seen state of warning messages. See {warnonce}.
+  # Clears the seen state of debug and warning messages. See {debugonce} and {warnonce}.
   #
   # @return [void]
   #
   # @api private
   def clear_messages
+    @@debug_messages.clear
     @@warn_messages.clear
   end
 end

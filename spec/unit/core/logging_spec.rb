@@ -8,6 +8,7 @@ describe Facter::Core::Logging do
   after(:all) do
     subject.debugging(false)
     subject.timing(false)
+    subject.on_message
   end
 
   describe "emitting debug messages" do
@@ -99,6 +100,124 @@ describe Facter::Core::Logging do
     it "is disabled when the given value is nil" do
       subject.timing(nil)
       expect(subject.timing?).to be_false
+    end
+  end
+
+  describe 'without a logging callback' do
+    before :each do
+      subject.timing(true)
+      subject.debugging(true)
+      subject.on_message
+    end
+
+    it 'calls puts for debug' do
+      subject.expects(:puts).with(subject::GREEN + 'foo' + subject::RESET).once
+      subject.debug('foo')
+    end
+
+    it 'calls puts for debugonce' do
+      subject.expects(:puts).with(subject::GREEN + 'foo' + subject::RESET).once
+      subject.debugonce('foo')
+      subject.debugonce('foo')
+    end
+
+    it 'calls Kernel.warn for warn' do
+      Kernel.expects(:warn).with('foo').once
+      subject.warn('foo')
+    end
+
+    it 'calls Kernel.warn for warnonce' do
+      Kernel.expects(:warn).with('foo').once
+      subject.warnonce('foo')
+      subject.warnonce('foo')
+    end
+
+    it 'calls $stderr.puts for timing' do
+      $stderr.expects(:puts).with(subject::GREEN + 'foo' + subject::RESET).once
+      subject.show_time('foo')
+    end
+  end
+
+  describe 'with a logging callback' do
+    before :each do
+      subject.debugging(true)
+      subject.timing(true)
+      subject.on_message
+    end
+
+    def log_message(level, message)
+      called = false
+      subject.on_message do |lvl, msg|
+        called = true
+        expect(lvl).to eq(level)
+        expect(msg).to eq(message)
+      end
+      case level
+      when :debug
+        Facter.debug(message)
+      when :warn
+        Facter.warn(message)
+      when :info
+        Facter.show_time(message)
+      else
+        raise 'unexpected logging level'
+      end
+      subject.on_message
+      expect(called).to be_true
+    end
+
+    def log_message_once(level, message)
+      calls = 0
+      subject.on_message do |lvl, msg|
+        expect(lvl).to eq(level)
+        expect(msg).to eq(message)
+        calls += 1
+      end
+      case level
+      when :debug
+        Facter.debugonce(message)
+        Facter.debugonce(message)
+      when :warn
+        Facter.warnonce(message)
+        Facter.warnonce(message)
+      else
+        raise 'unexpected logging level'
+      end
+      expect(calls).to eq(1)
+    end
+
+    it 'does not call puts for debug or debugonce' do
+      subject.on_message {}
+      subject.expects(:puts).never
+      subject.debug('debug message')
+      subject.debugonce('debug once message')
+    end
+
+    it 'passes debug messages to callback' do
+      log_message(:debug, 'debug message')
+      log_message_once(:debug, 'debug once message')
+    end
+
+    it 'does not call Kernel.warn for warn or warnonce' do
+      subject.on_message {}
+      Kernel.expects(:warn).never
+      subject.warn('warn message')
+      subject.warnonce('warn once message')
+    end
+
+    it 'passes warning messages to callback' do
+      log_message(:warn, 'warn message')
+      log_message_once(:warn, 'warn once message')
+    end
+
+    it 'does not call $stderr.puts for show_time' do
+      subject.on_message {}
+      $stderr.expects(:puts).never
+      subject.show_time('debug message')
+    end
+
+    it 'passes info messages to callback' do
+      log_message(:info, 'timing message')
     end
   end
 end
