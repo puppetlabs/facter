@@ -1,6 +1,6 @@
 #include <facter/util/file.hpp>
 #include <sstream>
-#include <fstream>
+#include <boost/nowide/fstream.hpp>
 
 using namespace std;
 
@@ -8,7 +8,7 @@ namespace facter { namespace util {
 
     bool file::each_line(string const& path, function<bool(string&)> callback)
     {
-        ifstream in(path);
+        boost::nowide::ifstream in(path.c_str());
         if (!in) {
             return false;
         }
@@ -33,7 +33,7 @@ namespace facter { namespace util {
 
     bool file::read(string const& path, string& contents)
     {
-        ifstream in(path, ios::in | ios::binary);
+        boost::nowide::ifstream in(path.c_str(), ios::in | ios::binary);
         ostringstream buffer;
         if (!in) {
             return false;
@@ -54,7 +54,7 @@ namespace facter { namespace util {
 
     bool file::read_first_line(string const& path, string& line)
     {
-        ifstream in(path);
+        boost::nowide::ifstream in(path.c_str());
         return static_cast<bool>(getline(in, line));
     }
 

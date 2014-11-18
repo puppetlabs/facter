@@ -60,6 +60,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/ruby/simple_resolution.cc"
     "src/util/directory.cc"
     "src/util/dynamic_library.cc"
+    "src/util/environment.cc"
     "src/util/file.cc"
     "src/util/scoped_env.cc"
     "src/util/scoped_file.cc"
@@ -110,7 +111,6 @@ if (WIN32)
         "src/util/windows/environment.cc"
         "src/util/windows/registry.cc"
         "src/util/windows/system_error.cc"
-        "src/util/windows/string_conv.cc"
         "src/util/windows/wmi.cc"
     )
 endif()
@@ -211,6 +211,7 @@ include_directories(
     inc
     ${RAPIDJSON_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
+    ${NOWIDE_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
     ${CURL_INCLUDE_DIRS}

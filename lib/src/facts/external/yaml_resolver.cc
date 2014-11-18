@@ -5,9 +5,9 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/nowide/fstream.hpp>
 #include <yaml-cpp/yaml.h>
 #include <yaml-cpp/eventhandler.h>
-#include <fstream>
 
 using namespace std;
 using namespace YAML;
@@ -79,7 +79,7 @@ namespace facter { namespace facts { namespace external {
     {
         LOG_DEBUG("resolving facts from YAML file \"%1%\".", path);
 
-        ifstream stream(path);
+        boost::nowide::ifstream stream(path.c_str());
         if (!stream) {
             throw external_fact_exception("file could not be opened.");
         }

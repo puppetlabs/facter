@@ -6,44 +6,6 @@
 using namespace std;
 using namespace facter::util;
 
-TEST(facter_util_environment, get) {
-    string value;
-    ASSERT_FALSE(environment::get("FACTER_ENV_TEST", value));
-    ASSERT_EQ("", value);
-    SetEnvironmentVariableW(L"FACTER_ENV_TEST", L"FOO");
-    ASSERT_TRUE(environment::get("FACTER_ENV_TEST", value));
-    ASSERT_EQ("FOO", value);
-    SetEnvironmentVariableW(L"FACTER_ENV_TEST", nullptr);
-    value = "";
-    ASSERT_FALSE(environment::get("FACTER_ENV_TEST", value));
-    ASSERT_EQ("", value);
-}
-
-TEST(facter_util_environment, set) {
-    wchar_t buf[12];
-    ASSERT_EQ(0, GetEnvironmentVariableW(L"FACTER_ENV_TEST", buf, 12));
-    ASSERT_TRUE(environment::set("FACTER_ENV_TEST", "FOO"));
-    GetEnvironmentVariableW(L"FACTER_ENV_TEST", buf, 12);
-    ASSERT_EQ(wstring(L"FOO"), wstring(buf, 3));
-    SetEnvironmentVariableW(L"FACTER_ENV_TEST", nullptr);
-}
-
-TEST(facter_util_environment, set_empty) {
-    ASSERT_TRUE(environment::set("FACTER_ENV_TEST", ""));
-
-    string value;
-    ASSERT_FALSE(environment::get("FACTER_ENV_TEST", value));
-}
-
-TEST(facter_util_environment, clear) {
-    SetEnvironmentVariableW(L"FACTER_ENV_TEST", L"FOO");
-    ASSERT_TRUE(environment::clear("FACTER_ENV_TEST"));
-
-    wchar_t buf[12];
-    ASSERT_EQ(0, GetEnvironmentVariableW(L"FACTER_ENV_TEST", buf, 12));
-    ASSERT_EQ(ERROR_ENVVAR_NOT_FOUND, GetLastError());
-}
-
 TEST(facter_util_environment, get_path_separator) {
     ASSERT_EQ(';', environment::get_path_separator());
 }

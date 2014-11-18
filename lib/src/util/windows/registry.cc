@@ -1,8 +1,8 @@
 #include <facter/util/windows/registry.hpp>
-#include <facter/util/windows/string_conv.hpp>
 #include <facter/util/windows/system_error.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include <boost/nowide/convert.hpp>
 #include <facter/util/windows/windows.hpp>
 
 using namespace std;
@@ -35,8 +35,8 @@ namespace facter { namespace util { namespace windows {
     static wstring get_regvalue(registry::HKEY hkey, string const& lpSubKey, string const& lpValue, DWORD flags)
     {
         auto hk = get_hkey(hkey);
-        auto lpSubKeyW = to_utf16(lpSubKey);
-        auto lpValueW = to_utf16(lpValue);
+        auto lpSubKeyW = boost::nowide::widen(lpSubKey);
+        auto lpValueW = boost::nowide::widen(lpValue);
 
         DWORD size = 0u;
         auto err = RegGetValueW(hk, lpSubKeyW.c_str(), lpValueW.c_str(), flags, nullptr, nullptr, &size);
@@ -60,7 +60,7 @@ namespace facter { namespace util { namespace windows {
         // From http://msdn.microsoft.com/en-us/library/windows/desktop/ms724868(v=vs.85).aspx
         // "RRF_RT_REG_SZV automatically converts REG_EXPAND_SZ to REG_SZ unless RRF_NOEXPAND is specified."
         // This seems like the desired behavior most of the time.
-        return to_utf8(get_regvalue(hkey, subkey, value, RRF_RT_REG_SZ));
+        return boost::nowide::narrow(get_regvalue(hkey, subkey, value, RRF_RT_REG_SZ));
     }
 
     vector<string> registry::get_registry_strings(registry::HKEY hkey, string const& subkey, string const& value)
@@ -72,7 +72,7 @@ namespace facter { namespace util { namespace windows {
         wstring accum;
         for (auto c : buffer) {
             if (c == L'\0') {
-                string val = boost::trim_copy(to_utf8(accum));
+                string val = boost::trim_copy(boost::nowide::narrow(accum));
                 if (!val.empty()) {
                     strings.emplace_back(move(val));
                 }

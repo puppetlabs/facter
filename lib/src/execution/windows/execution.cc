@@ -5,11 +5,11 @@
 #include <facter/util/windows/system_error.hpp>
 #include <facter/util/scoped_env.hpp>
 #include <facter/util/windows/windows.hpp>
-#include <facter/util/windows/string_conv.hpp>
 #include <facter/logging/logging.hpp>
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/nowide/convert.hpp>
 
 #include <cstdlib>
 #include <cstdio>
@@ -213,7 +213,7 @@ namespace facter { namespace execution {
             scoped_resource<HANDLE> stdErrRd, stdErrWr;
 
             // Execute the command with arguments.
-            auto commandLine = to_utf16(arguments ? boost::join(*arguments, " ") : "");
+            auto commandLine = boost::nowide::widen(arguments ? boost::join(*arguments, " ") : "");
 
             STARTUPINFO startupInfo = {};
             startupInfo.cb = sizeof(startupInfo);
@@ -229,7 +229,7 @@ namespace facter { namespace execution {
             PROCESS_INFORMATION procInfo = {};
 
             bool success = CreateProcessW(
-                    to_utf16(executable).c_str(),
+                    boost::nowide::widen(executable).c_str(),
                     &commandLine[0], /* Pass a modifiable string buffer; the contents may be modified */
                     NULL,           /* Don't allow child process to inherit process handle */
                     NULL,           /* Don't allow child process to inherit thread handle */

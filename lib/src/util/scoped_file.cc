@@ -1,11 +1,12 @@
 #include <facter/util/scoped_file.hpp>
+#include <boost/nowide/cstdio.hpp>
 
 using namespace std;
 
 namespace facter { namespace util {
 
     scoped_file::scoped_file(string const& path, string const& mode) :
-       scoped_resource(fopen(path.c_str(), mode.c_str()), close)
+       scoped_resource(boost::nowide::fopen(path.c_str(), mode.c_str()), close)
     {
     }
 

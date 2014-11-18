@@ -2,11 +2,11 @@
 #include <facter/facts/os.hpp>
 #include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/windows.hpp>
-#include <facter/util/windows/string_conv.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/optional.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/format.hpp>
+#include <boost/nowide/convert.hpp>
 
 using namespace std;
 using namespace facter::util::windows;
@@ -55,7 +55,7 @@ namespace facter { namespace facts { namespace windows {
 
         // Strip the last (file version) token to get just the OS version.
         wstring versionStrW(version, versionLen);
-        auto versionStr = to_utf8(versionStrW);
+        auto versionStr = boost::nowide::narrow(versionStrW);
         boost::trim_right_if(versionStr, [](char c) { return c != '.'; });  // Remove everything after '.'
         boost::trim_right_if(versionStr, [](char c) { return c == '.'; });  // Remove '.'
 

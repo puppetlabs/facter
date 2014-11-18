@@ -30,7 +30,7 @@ namespace po = boost::program_options;
 
 void help(po::options_description& desc)
 {
-    cout <<
+    std::cout <<
         "Synopsis\n"
         "========\n"
         "\n"
@@ -173,14 +173,14 @@ int main(int argc, char **argv)
             }
         }
         catch (exception& ex) {
-            cerr << colorize(log_level::error) << "error: " << ex.what() << colorize() << "\n\n";
+            std::cerr << colorize(log_level::error) << "error: " << ex.what() << colorize() << "\n\n";
             help(visible_options);
             return EXIT_FAILURE;
         }
 
         // Check for printing the version
         if (vm.count("version")) {
-            cout << LIBFACTER_VERSION_WITH_COMMIT << endl;
+            std::cout << LIBFACTER_VERSION_WITH_COMMIT << endl;
             return EXIT_SUCCESS;
         }
 
@@ -255,8 +255,8 @@ int main(int argc, char **argv)
         } else if (vm.count("yaml")) {
             fmt = format::yaml;
         }
-        facts.write(cout, fmt, queries);
-        cout << '\n';
+        facts.write(std::cout, fmt, queries);
+        std::cout << '\n';
     } catch (exception& ex) {
         LOG_FATAL("unhandled exception: %1%", ex.what());
         return EXIT_FAILURE;

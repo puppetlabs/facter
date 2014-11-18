@@ -44,6 +44,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "logging/logging.cc"
     "main.cc"
     "util/directory.cc"
+    "util/environment.cc"
     "util/file.cc"
     "util/option_set.cc"
     "util/scoped_env.cc"
@@ -97,6 +98,7 @@ endif()
 include_directories(
     ../inc
     ${Boost_INCLUDE_DIRS}
+    ${NOWIDE_INCLUDE_DIRS}
     ${GMOCK_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}

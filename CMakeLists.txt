@@ -39,6 +39,8 @@ endif()
 
 # We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
 find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time thread regex log)
+include_directories(${Boost_INCLUDE_DIRS})
+
 find_package(YAMLCPP REQUIRED)
 if (NOT WITHOUT_OPENSSL)
     find_package(OPENSSL)
@@ -145,6 +147,7 @@ endif()
 # Include vendor libraries
 add_subdirectory(vendor/gmock-1.7.0)
 set(RAPIDJSON_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/rapidjson-0.11/include")
+set(NOWIDE_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/boost-nowide")
 
 #
 # Add cpplint target

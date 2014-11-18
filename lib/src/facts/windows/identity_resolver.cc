@@ -1,7 +1,7 @@
 #include <facter/facts/windows/identity_resolver.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/util/windows/system_error.hpp>
-#include <facter/util/windows/string_conv.hpp>
+#include <boost/nowide/convert.hpp>
 
 #include <facter/util/windows/windows.hpp>
 #include <security.h>
@@ -38,7 +38,7 @@ namespace facter { namespace facts { namespace windows {
 
         // Resize the buffer to the returned string size.
         buffer.resize(size);
-        result.user_name = to_utf8(buffer);
+        result.user_name = boost::nowide::narrow(buffer);
         return result;
     }
 }}}  // facter::facts::windows
