@@ -39,6 +39,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/memory_resolver.cc"
     "src/facts/resolvers/networking_resolver.cc"
     "src/facts/resolvers/operating_system_resolver.cc"
+    "src/facts/resolvers/path_resolver.cc"
     "src/facts/resolvers/processor_resolver.cc"
     "src/facts/resolvers/ruby_resolver.cc"
     "src/facts/resolvers/ssh_resolver.cc"

@@ -12,7 +12,6 @@
 #include <facter/facts/posix/timezone_resolver.hpp>
 #include <facter/facts/bsd/filesystem_resolver.hpp>
 #include <facter/facts/osx/memory_resolver.hpp>
-#include <facter/facts/resolvers/ruby_resolver.hpp>
 
 using namespace std;
 
@@ -33,7 +32,6 @@ namespace facter { namespace facts {
         add(make_shared<posix::timezone_resolver>());
         add(make_shared<bsd::filesystem_resolver>());
         add(make_shared<osx::memory_resolver>());
-        add(make_shared<resolvers::ruby_resolver>());
     }
 
 }}  // namespace facter::facts
