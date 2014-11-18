@@ -32,7 +32,7 @@ namespace facter { namespace facts { namespace windows {
 
         BOOL isWow64 = FALSE;
         LPFN_ISWOW64PROCESS fnIsWow64Process = (LPFN_ISWOW64PROCESS)
-                GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
+                GetProcAddress(GetModuleHandleW(L"kernel32"), "IsWow64Process");
         if (nullptr != fnIsWow64Process) {
             if (!fnIsWow64Process(GetCurrentProcess(), &isWow64)) {
                 LOG_DEBUG("failure determining whether current process is WOW64, defaulting to false"

@@ -40,10 +40,8 @@ namespace facter { namespace util { namespace windows {
             }
         }
 
-        // Do a raw byte copy from ws to string for exception/logging, as we don't have wide-string versions.
-        string raw_ws(ws.begin(), ws.end());
         throw string_conv_exception(str(boost::format
-            ("translation to utf8 of \"%1%\" failed: %2%") % raw_ws % system_error()));
+            ("translation to utf8 of \"%ls\" failed: %s") % ws.c_str() % system_error()));
     }
 
 }}}  // namespace facter::util::windows

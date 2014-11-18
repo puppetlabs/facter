@@ -153,13 +153,13 @@ TEST(execution_windows, each_line) {
 }
 
 TEST(execution_windows, execute_with_merged_environment) {
-    SetEnvironmentVariable("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE");
+    SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", L"TEST_INHERITED_VALUE");
     auto result = execute("cmd.exe", { "/c set" }, {
         {"TEST_VARIABLE1", "TEST_VALUE1" },
         {"TEST_VARIABLE2", "TEST_VALUE2" }
     });
     ASSERT_TRUE(result.first);
-    SetEnvironmentVariable("TEST_INHERITED_VARIABLE", nullptr);
+    SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", nullptr);
     map<string, string> variables;
     facter::util::each_line(result.second, [&](string& line) {
         vector<string> parts;
@@ -186,13 +186,13 @@ TEST(execution_windows, execute_with_specified_environment) {
     option_set<execution_options> options = { execution_options::defaults };
     options.clear(execution_options::merge_environment);
 
-    SetEnvironmentVariable("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE");
+    SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", L"TEST_INHERITED_VALUE");
     auto result = execute("cmd.exe", { "/c set" }, {
         {"TEST_VARIABLE1", "TEST_VALUE1" },
         {"TEST_VARIABLE2", "TEST_VALUE2" }
     }, options);
     ASSERT_TRUE(result.first);
-    SetEnvironmentVariable("TEST_INHERITED_VARIABLE", nullptr);
+    SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", nullptr);
     map<string, string> variables;
     facter::util::each_line(result.second, [&](string& line) {
         vector<string> parts;
@@ -238,7 +238,7 @@ TEST(execution_windows, execute_with_lang_environment) {
 
 TEST(execution_windows, each_line_with_merged_environment) {
     map<string, string> variables;
-    SetEnvironmentVariable("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE");
+    SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", L"TEST_INHERITED_VALUE");
     each_line("cmd.exe", { "/c set" }, {
         {"TEST_VARIABLE1", "TEST_VALUE1" },
         {"TEST_VARIABLE2", "TEST_VALUE2" }
@@ -251,7 +251,7 @@ TEST(execution_windows, each_line_with_merged_environment) {
         variables.emplace(make_pair(move(parts[0]), move(parts[1])));
         return true;
     });
-    SetEnvironmentVariable("TEST_INHERITED_VARIABLE", nullptr);
+    SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", nullptr);
     ASSERT_EQ(1u, variables.count("TEST_VARIABLE1"));
     ASSERT_EQ("TEST_VALUE1", variables["TEST_VARIABLE1"]);
     ASSERT_EQ(1u, variables.count("TEST_VARIABLE2"));
@@ -268,7 +268,7 @@ TEST(execution_windows, each_line_with_specified_environment) {
     map<string, string> variables;
     option_set<execution_options> options = { execution_options::defaults };
     options.clear(execution_options::merge_environment);
-    SetEnvironmentVariable("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE");
+    SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", L"TEST_INHERITED_VALUE");
     each_line("cmd.exe", { "/c set" }, {
         {"TEST_VARIABLE1", "TEST_VALUE1" },
         {"TEST_VARIABLE2", "TEST_VALUE2" }
@@ -281,7 +281,7 @@ TEST(execution_windows, each_line_with_specified_environment) {
         variables.emplace(make_pair(move(parts[0]), move(parts[1])));
         return true;
     }, options);
-    SetEnvironmentVariable("TEST_INHERITED_VARIABLE", nullptr);
+    SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", nullptr);
     // Windows cmd.exe adds 3 extra environment variables on startup: COMSPEC, PATHEXT, and PROMPT.
     // I'm not aware of another simple way to print the startup environment.
     ASSERT_EQ(7u, variables.size());

@@ -2,6 +2,7 @@
 #include <facter/facts/os.hpp>
 #include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/windows.hpp>
+#include <facter/util/windows/string_conv.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/optional.hpp>
 #include <boost/algorithm/string/trim.hpp>
@@ -21,14 +22,14 @@ namespace facter { namespace facts { namespace windows {
         // Another method of getting the OS version can be found at
         // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724429(v=vs.85).aspx
         // and is what we use here.
-        auto fileName = "Kernel32.dll";
-        auto fileVerSize = GetFileVersionInfoSize(fileName, nullptr);
+        auto fileName = L"Kernel32.dll";
+        auto fileVerSize = GetFileVersionInfoSizeW(fileName, nullptr);
         if (fileVerSize == 0) {
             return boost::none;
         }
 
-        vector<char> buffer(fileVerSize);
-        if (!GetFileVersionInfo(fileName, 0, fileVerSize, buffer.data())) {
+        vector<wchar_t> buffer(fileVerSize);
+        if (!GetFileVersionInfoW(fileName, 0, fileVerSize, buffer.data())) {
             return boost::none;
         }
 
@@ -37,23 +38,24 @@ namespace facter { namespace facts { namespace windows {
         } *lpTranslate;
         UINT cbTranslate;
 
-        if (!VerQueryValue(buffer.data(), TEXT("\\VarFileinfo\\Translation"),
+        if (!VerQueryValueW(buffer.data(), L"\\VarFileinfo\\Translation",
             reinterpret_cast<LPVOID*>(&lpTranslate), &cbTranslate)) {
             return boost::none;
         }
 
         // Use the 1st language found, as ProductVersion should be language-independent.
-        string subBlock = str(boost::format("\\StringFileInfo\\%04x%04x\\ProductVersion")
+        wstring subBlock = str(boost::wformat(L"\\StringFileInfo\\%04x%04x\\ProductVersion")
             % lpTranslate->wLanguage % lpTranslate->wCodePage);
 
-        char *version;
+        wchar_t *version;
         UINT versionLen;
-        if (!VerQueryValue(buffer.data(), subBlock.c_str(), reinterpret_cast<LPVOID*>(&version), &versionLen)) {
+        if (!VerQueryValueW(buffer.data(), subBlock.c_str(), reinterpret_cast<LPVOID*>(&version), &versionLen)) {
             return boost::none;
         }
 
         // Strip the last (file version) token to get just the OS version.
-        string versionStr(version, versionLen);
+        wstring versionStrW(version, versionLen);
+        auto versionStr = to_utf8(versionStrW);
         boost::trim_right_if(versionStr, [](char c) { return c != '.'; });  // Remove everything after '.'
         boost::trim_right_if(versionStr, [](char c) { return c == '.'; });  // Remove '.'
 

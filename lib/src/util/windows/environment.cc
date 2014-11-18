@@ -3,6 +3,7 @@
 #include <facter/logging/logging.hpp>
 #include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/windows.hpp>
+#include <facter/util/windows/string_conv.hpp>
 #include <cstdlib>
 
 using namespace std;
@@ -39,11 +40,12 @@ namespace facter { namespace util {
     bool environment::get(string const& name, string& value)
     {
         // getenv on Windows won't get vars set by SetEnvironmentVariable in the same process.
-        vector<char> buf(256);
-        auto numChars = GetEnvironmentVariable(name.c_str(), buf.data(), buf.size());
+        vector<wchar_t> buf(256);
+        auto wname = to_utf16(name);
+        auto numChars = GetEnvironmentVariableW(wname.c_str(), buf.data(), buf.size());
         if (numChars > buf.size()) {
             buf.resize(numChars);
-            numChars = GetEnvironmentVariable(name.c_str(), buf.data(), buf.size());
+            numChars = GetEnvironmentVariableW(wname.c_str(), buf.data(), buf.size());
         }
 
         if (numChars == 0) {
@@ -54,18 +56,19 @@ namespace facter { namespace util {
             return false;
         }
 
-        value.assign(buf.data(), numChars);
+        wname.assign(buf.data(), numChars);
+        value = to_utf8(wname);
         return true;
     }
 
     bool environment::set(string const& name, string const& value)
     {
-        return SetEnvironmentVariable(name.c_str(), value.c_str()) != 0;
+        return SetEnvironmentVariableW(to_utf16(name).c_str(), to_utf16(value).c_str()) != 0;
     }
 
     bool environment::clear(string const& name)
     {
-        return SetEnvironmentVariable(name.c_str(), nullptr) != 0;
+        return SetEnvironmentVariableW(to_utf16(name).c_str(), nullptr) != 0;
     }
 
     char environment::get_path_separator()

@@ -134,6 +134,9 @@ if (WIN32)
     # The GetUserNameEx function requires the application have a defined security level.
     # We define security sufficient to get the current user's info.
     add_definitions(-DSECURITY_WIN32)
+
+    # Use UNICODE APIs on Windows
+    add_definitions(-DUNICODE -D_UNICODE)
 else()
     set(LIBFACTER_TEST_PATH    ${PROJECT_BINARY_DIR}/lib/tests)
     add_definitions(-DUSE_POSIX_FUNCTIONS)
