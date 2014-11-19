@@ -84,6 +84,8 @@ namespace facter { namespace ruby {
         static VALUE ruby_warn(VALUE self, VALUE message);
         static VALUE ruby_warnonce(VALUE self, VALUE message);
         static VALUE ruby_log_exception(int argc, VALUE* argv, VALUE self);
+        static VALUE ruby_set_trace(VALUE self, VALUE value);
+        static VALUE ruby_get_trace(VALUE self);
         static VALUE ruby_flush(VALUE self);
         static VALUE ruby_list(VALUE self);
         static VALUE ruby_to_hash(VALUE self);

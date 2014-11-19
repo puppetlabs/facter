@@ -103,6 +103,18 @@ namespace facter {  namespace ruby {
         bool initialized() const;
 
         /**
+         * Gets whether or not exception stack traces are included when formatting exception messages.
+         * @return Returns true if stack traces will be included in exception messages or false if they will not be.
+         */
+        bool include_stack_trace() const;
+
+        /**
+         * Sets whether or not exception stack traces are included when formatting exception messages.
+         * @param value True if stack traces will be included in exception messages or false if they will not be.
+         */
+        void include_stack_trace(bool value);
+
+        /**
          * See MRI documentation.
          */
         ID (* const rb_intern)(char const*);
@@ -405,11 +417,12 @@ namespace facter {  namespace ruby {
         void hash_for_each(VALUE hash, std::function<bool(VALUE, VALUE)> callback) const;
 
         /**
-         * Gets the given exception's backtrace as a string.
-         * @param ex The exception to get the backtrace for.
-         * @return Returns the exception's backtrace as a string.
+         * Converts the given exception into a string.
+         * @param ex The exception to get the string representation of.
+         * @param message The optional message to use instead of the exception's message.
+         * @return Returns the string representation of the exception.
          */
-        std::string exception_backtrace(VALUE ex) const;
+        std::string exception_to_string(VALUE ex, std::string const& message = std::string()) const;
 
         /**
          * Determines if the given value is an instance of the given class (or superclass).
@@ -540,6 +553,7 @@ namespace facter {  namespace ruby {
         VALUE _true;
         VALUE _false;
         bool _initialized;
+        bool _include_stack_trace;
     };
 
 }}  // namespace facter::ruby

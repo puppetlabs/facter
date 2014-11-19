@@ -175,6 +175,8 @@ namespace facter { namespace ruby {
         ruby.rb_define_singleton_method(facter, "warn", RUBY_METHOD_FUNC(ruby_warn), 1);
         ruby.rb_define_singleton_method(facter, "warnonce", RUBY_METHOD_FUNC(ruby_warnonce), 1);
         ruby.rb_define_singleton_method(facter, "log_exception", RUBY_METHOD_FUNC(ruby_log_exception), -1);
+        ruby.rb_define_singleton_method(facter, "trace", RUBY_METHOD_FUNC(ruby_set_trace), 1);
+        ruby.rb_define_singleton_method(facter, "trace?", RUBY_METHOD_FUNC(ruby_get_trace), 0);
         ruby.rb_define_singleton_method(facter, "flush", RUBY_METHOD_FUNC(ruby_flush), 0);
         ruby.rb_define_singleton_method(facter, "list", RUBY_METHOD_FUNC(ruby_list), 0);
         ruby.rb_define_singleton_method(facter, "to_hash", RUBY_METHOD_FUNC(ruby_to_hash), 0);
@@ -409,6 +411,19 @@ namespace facter { namespace ruby {
         return ruby.nil_value();
     }
 
+    VALUE module::ruby_set_trace(VALUE self, VALUE value)
+    {
+        auto& ruby = *api::instance();
+        ruby.include_stack_trace(ruby.is_true(value));
+        return ruby_get_trace(self);
+    }
+
+    VALUE module::ruby_get_trace(VALUE self)
+    {
+        auto const& ruby = *api::instance();
+        return ruby.include_stack_trace() ? ruby.true_value() : ruby.false_value();
+    }
+
     VALUE module::ruby_log_exception(int argc, VALUE* argv, VALUE self)
     {
         auto const& ruby = *api::instance();
@@ -417,9 +432,15 @@ namespace facter { namespace ruby {
             ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
         }
 
-        LOG_ERROR("%1%.\nbacktrace:\n%2%",
-            argc == 1 ? ruby.to_string(argv[0]) : ruby.to_string(argv[1]),
-            ruby.exception_backtrace(argv[0]));
+        string message;
+        if (argc == 2) {
+            // Use the given argument provided it is not a symbol equal to :default
+            if (!ruby.is_symbol(argv[1]) || ruby.rb_to_id(argv[1]) != ruby.rb_intern("default")) {
+                message = ruby.to_string(argv[1]);
+            }
+        }
+
+        LOG_ERROR(ruby.exception_to_string(argv[0], message));
         return ruby.nil_value();
     }
 
@@ -772,10 +793,7 @@ namespace facter { namespace ruby {
              ruby.rb_load(ruby.rb_str_new_cstr(path.c_str()), 0);
             return 0;
         }, [&](VALUE ex) {
-            LOG_ERROR("error while resolving custom facts in %1%: %2%.\nbacktrace:\n%3%",
-                path,
-                ruby.to_string(ex),
-                ruby.exception_backtrace(ex));
+            LOG_ERROR("error while resolving custom facts in %1%: %2%", path, ruby.exception_to_string(ex));
             return 0;
         });
     }

@@ -117,8 +117,9 @@ int main(int argc, char **argv)
             ("help", "Print this help message.")
             ("json,j", "Output in JSON format.")
             ("log-level,l", po::value<log_level>()->default_value(log_level::warning, "warn"), "Set logging level.\nSupported levels are: trace, debug, info, warn, error, and fatal.")
-            ("no-custom-facts", "Turn off custom facts")
-            ("no-external-facts", "Turn off external facts")
+            ("no-custom-facts", "Turn off custom facts.")
+            ("no-external-facts", "Turn off external facts.")
+            ("trace", "Enable backtraces for custom facts.")
             ("verbose", "Enable verbose (info) output.")
             ("version,v", "Print the version and exit.")
             ("yaml,y", "Output in YAML format.");
@@ -196,6 +197,8 @@ int main(int argc, char **argv)
             if (ruby) {
                 ruby->initialize();
             }
+
+            ruby->include_stack_trace(vm.count("trace") == 1);
         }
 
         // Build a set of queries from the command line
