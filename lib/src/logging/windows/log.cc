@@ -10,6 +10,20 @@ namespace attrs = boost::log::attributes;
 
 namespace facter { namespace logging {
 
+    string const& colorize(log_level level)
+    {
+        // Windows doesn't natively support colorization
+        static string none = "";
+        return none;
+    }
+
+    string const& colorize()
+    {
+        // Windows doesn't natively support colorization
+        static string none = "";
+        return none;
+    }
+
     void log(const string &logger, log_level level, string const& message)
     {
         src::severity_logger<log_level> slg;

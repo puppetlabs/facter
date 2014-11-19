@@ -50,13 +50,43 @@ namespace facter { namespace logging {
         boost::log::add_common_attributes();
     }
 
-    std::ostream& operator<<(std::ostream& strm, log_level level)
+    istream& operator>>(istream& in, log_level& level)
     {
-        std::vector<std::string> strings = {"TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
+        string value;
+        if (in >> value) {
+            if (value == "trace") {
+                level = log_level::trace;
+                return in;
+            }
+            if (value == "debug") {
+                level = log_level::debug;
+                return in;
+            }
+            if (value == "info") {
+                level = log_level::info;
+                return in;
+            }
+            if (value == "warn") {
+                level = log_level::warning;
+                return in;
+            }
+            if (value == "error") {
+                level = log_level::error;
+                return in;
+            }
+            if (value == "fatal") {
+                level = log_level::fatal;
+                return in;
+            }
+        }
+        throw runtime_error("invalid log level: expected trace, debug, info, warn, error, or fatal.");
+    }
+
+    ostream& operator<<(ostream& strm, log_level level)
+    {
+        static const vector<string> strings = {"TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
         if (static_cast<size_t>(level) < strings.size()) {
             strm << strings[static_cast<size_t>(level)];
-        } else {
-            strm << static_cast<int>(level);
         }
         return strm;
     }

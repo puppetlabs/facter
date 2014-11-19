@@ -137,6 +137,15 @@ namespace facter { namespace logging {
     BOOST_LOG_ATTRIBUTE_KEYWORD(namespace_attr, "Namespace", std::string);
 
     /**
+     * Reads a log level from an input stream.
+     * This is used in boost::lexical_cast<log_level>.
+     * @param in The input stream.
+     * @param level The returned log level.
+     * @returns Returns the input stream.
+     */
+    std::istream& operator>>(std::istream& in, log_level& level);
+
+    /**
      * Produces the printed representation of logging level.
      * @param strm The stream to write.
      * @param level The logging level to print.
@@ -206,5 +215,20 @@ namespace facter { namespace logging {
         boost::format message(format);
         log(logger, level, message, std::forward<TArgs>(args)...);
     }
+
+    /**
+     * Starts colorizing for the given log level.
+     * This is a no-op on platforms that don't natively support terminal colors.
+     * @param level The log level to colorize for.
+     * @return Returns the start code for colorization or an empty string if not supported.
+     */
+    const std::string& colorize(log_level level);
+
+    /**
+     * Resets the colorization.
+     * This is a no-op on platforms that don't natively support terminal colors.
+     * @return Returns the reset code for colorization or an empty string if not supported.
+     */
+    const std::string& colorize();
 
 }}  // namespace facter::logging

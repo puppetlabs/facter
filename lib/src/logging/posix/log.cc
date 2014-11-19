@@ -10,20 +10,30 @@ namespace attrs = boost::log::attributes;
 
 namespace facter { namespace logging {
 
-    static string cyan(string const& message) {
-        return "\33[0;36m" + message + "\33[0m";
+    string const& colorize(log_level level)
+    {
+        static const string none = "";
+        static const string cyan = "\33[0;36m";
+        static const string green = "\33[0;32m";
+        static const string yellow = "\33[0;33m";
+        static const string red = "\33[0;31m";
+
+        if (level == log_level::trace || level == log_level::debug) {
+            return cyan;
+        } else if (level == log_level::info) {
+            return green;
+        } else if (level == log_level::warning) {
+            return yellow;
+        } else if (level == log_level::error || level == log_level::fatal) {
+            return red;
+        }
+        return none;
     }
 
-    static string green(string const& message) {
-        return "\33[0;32m" + message + "\33[0m";
-    }
-
-    static string yellow(string const& message) {
-        return "\33[0;33m" + message + "\33[0m";
-    }
-
-    static string red(string const& message) {
-        return "\33[0;31m" + message + "\33[0m";
+    string const& colorize()
+    {
+        static const string reset = "\33[0m";
+        return reset;
     }
 
     void log(const string &logger, log_level level, string const& message)
@@ -34,31 +44,8 @@ namespace facter { namespace logging {
         static bool color = isatty(fileno(stderr));
         if (!color) {
             BOOST_LOG_SEV(slg, level) << message;
-            return;
-        }
-
-        switch (level) {
-            case log_level::trace:
-                BOOST_LOG_SEV(slg, level) << cyan(message);
-                break;
-            case log_level::debug:
-                BOOST_LOG_SEV(slg, level) << cyan(message);
-                break;
-            case log_level::info:
-                BOOST_LOG_SEV(slg, level) << green(message);
-                break;
-            case log_level::warning:
-                BOOST_LOG_SEV(slg, level) << yellow(message);
-                break;
-            case log_level::error:
-                BOOST_LOG_SEV(slg, level) << red(message);
-                break;
-            case log_level::fatal:
-                BOOST_LOG_SEV(slg, level) << red(message);
-                break;
-            default:
-                BOOST_LOG_SEV(slg, level) << "Invalid logging level used.";
-                break;
+        } else {
+            BOOST_LOG_SEV(slg, level) << colorize(level) << message << colorize();
         }
     }
 
