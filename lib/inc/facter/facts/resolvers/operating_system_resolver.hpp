@@ -78,9 +78,9 @@ namespace facter { namespace facts { namespace resolvers {
         {
             /**
              * Stores the native system32 directory, the location native OS executables can be found.
-             * For 32-bit facter on 32-bit Windows, typically: 'C:\Windows\system32'.
-             * For 32-bit facter on 64-bit Windows, typically: 'C:\Windows\sysnative'.
-             * For 64-bit facter on 64-bit Windows, typically: 'C:\Windows\system32'.
+             * For 32-bit facter on 32-bit Windows, typically: 'C:\\Windows\\system32'.
+             * For 32-bit facter on 64-bit Windows, typically: 'C:\\Windows\\sysnative'.
+             * For 64-bit facter on 64-bit Windows, typically: 'C:\\Windows\\system32'.
              */
             std::string system32;
         };
