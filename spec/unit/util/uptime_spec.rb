@@ -52,6 +52,9 @@ describe Facter::Util::Uptime do
           # Solaris differs from all other Unices (and Linux) in that the plural/singular case of minutes/hours/days are
           #   written min(s)/hr(s)/day(s) instead of min/mins/hr/hrs etc., e.g. 1 min(s), 2 min(s) as opposed to
           #   1 min, 2 mins, etc.
+          # The coreutils package can be installed in Solaris, which brings in a GNU version of uptime. The output
+          #   from this binary differs in that is is missing the comma after "day(s)"
+          # Some versions of uptime in Solaris may also include a '-' character in the minutes field.
           # AIX (4.3.3, 5.2, 5.3, 6.1) differs from other SysV Unices in that times are padded with a leading 0 in the
           #   hour column where necessary, and have AM/PM in uppercase, and there are three spaces before 'up'.
           # Tru64 (4.0, 5.1) differs from other SysV Unices in that times are in 24 hour format, and there are no
@@ -93,7 +96,10 @@ describe Facter::Util::Uptime do
             ['  3:01pm  up 4496 day(s), 21:19,  32 users,  load average: 0.61, 0.62, 0.62',  4496*24*60*60 + 21*60*60 + 19*60],
             ['  02:42PM   up 41 days,   2:38,  0 users,  load average: 0.38, 0.70, 0.55',      41*24*60*60 +  2*60*60 + 38*60],
             [' 18:13:29  up 25 days, 21:36,  0 users,  load average: 0.00, 0.00, 0.00',        25*24*60*60 + 21*60*60 + 36*60],
-            [' 13:36:05 up 118 days,  1:15,  1 user,  load average: 0.00, 0.00, 0.00',        118*24*60*60 +  1*60*60 + 15*60]
+            [' 13:36:05 up 118 days,  1:15,  1 user,  load average: 0.00, 0.00, 0.00',        118*24*60*60 +  1*60*60 + 15*60],
+            ['10:27am  up 1 day  7:26,  1 user,  load average: 0.00, 0.00, 0.00',               1*24*60*60 +  7*60*60 + 26*60],
+            ['22:45pm up 0:-6, 1 user, load average: 0.00, 0.00, 0.00',                                                  6*60],
+            ['22:45pm up 1 day 0:-6, 1 user, load average: 0.00, 0.00, 0.00',                   1*24*60*60 +             6*60]
           ]
 
           test_cases.each do |uptime, expected|
