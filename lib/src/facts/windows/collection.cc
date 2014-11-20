@@ -14,7 +14,6 @@
 #include <facter/facts/windows/timezone_resolver.hpp>
 #include <facter/facts/windows/uptime_resolver.hpp>
 #include <facter/facts/windows/virtualization_resolver.hpp>
-#include <facter/facts/resolvers/ruby_resolver.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/util/scoped_resource.hpp>
 #include <facter/util/windows/system_error.hpp>
@@ -62,13 +61,11 @@ namespace facter { namespace facts {
 
     void collection::add_platform_facts()
     {
-        // TODO WINDOWS: Add facts as created.
         add(make_shared<windows::identity_resolver>());
         add(make_shared<windows::kernel_resolver>());
         add(make_shared<windows::memory_resolver>());
         add(make_shared<windows::networking_resolver>());
         add(make_shared<windows::timezone_resolver>());
-        add(make_shared<resolvers::ruby_resolver>());
 
         try {
             shared_ptr<wmi> shared_wmi = make_shared<wmi>();

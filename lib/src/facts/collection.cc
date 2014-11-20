@@ -10,6 +10,10 @@
 #include <facter/util/environment.hpp>
 #include <facter/util/string.hpp>
 #include <facter/version.h>
+#include <facter/facts/resolvers/ruby_resolver.hpp>
+#include <facter/facts/resolvers/path_resolver.hpp>
+#include <facter/facts/resolvers/ec2_resolver.hpp>
+#include <facter/facts/resolvers/gce_resolver.hpp>
 #include <boost/filesystem.hpp>
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
@@ -57,8 +61,7 @@ namespace facter { namespace facts {
 
     void collection::add_default_facts()
     {
-        add("cfacterversion", make_value<string_value>(LIBFACTER_VERSION));
-        add("facterversion", make_value<string_value>(LIBFACTER_VERSION));
+        add_common_facts();
         add_platform_facts();
     }
 
@@ -512,6 +515,16 @@ namespace facter { namespace facts {
             }
         }
         emitter << EndMap;
+    }
+
+    void collection::add_common_facts()
+    {
+        add("cfacterversion", make_value<string_value>(LIBFACTER_VERSION));
+        add("facterversion", make_value<string_value>(LIBFACTER_VERSION));
+        add(make_shared<resolvers::ruby_resolver>());
+        add(make_shared<resolvers::path_resolver>());
+        add(make_shared<resolvers::ec2_resolver>());
+        add(make_shared<resolvers::gce_resolver>());
     }
 
 }}  // namespace facter::facts

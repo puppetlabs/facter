@@ -611,6 +611,11 @@ namespace facter { namespace facts {
          * The fact for ruby version.
          */
         constexpr static char const* rubyversion = "rubyversion";
+
+        /**
+         * The fact for the PATH environment variable.
+         */
+        constexpr static char const* path = "path";
     };
 
 }}  // namespace facter::facts

@@ -195,6 +195,7 @@ namespace facter { namespace facts {
         void write_hash(std::ostream& stream, std::set<std::string> const& queries);
         void write_json(std::ostream& stream, std::set<std::string> const& queries);
         void write_yaml(std::ostream& stream, std::set<std::string> const& queries);
+        void add_common_facts();
 
         // Platform specific members
         void add_platform_facts();
