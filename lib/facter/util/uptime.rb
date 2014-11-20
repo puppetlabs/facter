@@ -40,7 +40,7 @@ module Facter::Util::Uptime
 
     if output
       up=0
-      if output =~ /(\d+) day(?:s|\(s\))?,\s+(\d+):(\d+)/
+      if output =~ /(\d+) day(?:s|\(s\))?,?\s+(\d+):-?(\d+)/
         # Regexp handles Solaris, AIX, HP-UX, and Tru64.
         # 'day(?:s|\(s\))?' says maybe 'day', 'days',
         #   or 'day(s)', and don't set $2.
@@ -51,9 +51,10 @@ module Facter::Util::Uptime
         up=86400*$1.to_i + 60*$2.to_i
       elsif output =~ /(\d+) day(?:s|\(s\))?,/
         up=86400*$1.to_i
-      elsif output =~ /up\s+(\d+):(\d+),/
+      elsif output =~ /up\s+(\d+):-?(\d+),/
         # must anchor to 'up' to avoid matching time of day
-        # at beginning of line.
+        # at beginning of line. Certain versions of uptime on
+        # Solaris may insert a '-' into the minutes field.
         up=3600*$1.to_i + 60*$2.to_i
       elsif output =~ /(\d+) hr(?:s|\(s\))?,/
         up=3600*$1.to_i
