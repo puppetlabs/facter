@@ -33,7 +33,7 @@ install:
 
 build_script:
   - ps: mv "C:\Program Files (x86)\Git\bin\sh.exe" "C:\Program Files (x86)\Git\bin\shxx.exe"
-  - ps: cmake -G "MinGW Makefiles" -DBOOST_ROOT=C:\tools\boost_1.55.0_mingw-w64_4.8.1 -DYAMLCPP_ROOT=C:\tools\yamlcpp -DBOOST_STATIC=ON .
+  - ps: cmake -G "MinGW Makefiles" -DBOOST_ROOT=C:\tools\boost_1.55.0_mingw-w64_4.8.1 -DYAMLCPP_ROOT=C:\tools\yamlcpp -DBOOST_STATIC=ON -DBOOST_NOWIDE_SKIP_TESTS=ON .
   - ps: mv "C:\Program Files (x86)\Git\bin\shxx.exe" "C:\Program Files (x86)\Git\bin\sh.exe"
   - ps: mingw32-make all_unity
 

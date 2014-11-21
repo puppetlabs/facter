@@ -2,18 +2,6 @@ cmake_minimum_required(VERSION 2.8.12)
 
 find_package(Ruby)
 
-# Set compiler-specific flags
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-tautological-constant-out-of-range-compare")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas")
-    if (NOT "${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
-    endif()
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-endif()
-
 # Set the common (platform-independent) sources
 set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/array_value.cc"
@@ -51,6 +39,9 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "util/string.cc"
     "fixtures.cc"
 )
+
+# Set compiler-specific flags
+set(CMAKE_CXX_FLAGS ${FACTER_CXX_FLAGS})
 
 # Add the ruby tests if there's a ruby installed
 if (RUBY_VERSION VERSION_GREATER '1.8.7')
@@ -106,7 +97,7 @@ include_directories(
 
 add_executable(libfacter_test ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_CATEGORY_SOURCES})
 set_target_properties(libfacter_test PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS})
-target_link_libraries(libfacter_test libfacter ${YAMLCPP_LIBRARIES} ${Boost_LIBRARIES} ${GMOCK_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(libfacter_test libfacter ${YAMLCPP_LIBRARIES} ${Boost_LIBRARIES} ${GMOCK_LIBRARIES} ${OPENSSL_LIBRARIES} ${NOWIDE_SHARED})
 
 cotire(libfacter_test)
 

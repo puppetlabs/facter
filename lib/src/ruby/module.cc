@@ -10,6 +10,7 @@
 #include <facter/version.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/nowide/iostream.hpp>
 #include <stdexcept>
 #include <functional>
 
@@ -98,7 +99,7 @@ extern "C" {
      */
     void initialize_facter(unsigned int level)
     {
-        setup_logging(std::cerr);
+        setup_logging(boost::nowide::cerr);
         set_level(static_cast<log_level>(level));
 
         // Initialize ruby

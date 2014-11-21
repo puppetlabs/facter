@@ -236,6 +236,7 @@ target_link_libraries(libfacter
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
     ${CURL_LIBRARIES}
+    ${NOWIDE_LIBRARIES}
 )
 
 if (WIN32)

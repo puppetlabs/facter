@@ -61,7 +61,7 @@ Commands are expected to be executed in cmd.exe or Powershell. MinGW and Cygwin 
 
 *   Build CFACTER
 
-    * git clone https://github.com/puppetlabs/cfacter.git
+    * git clone --recursive https://github.com/puppetlabs/cfacter.git
 
     * cd cfacter && mkdir release && cd release
 
