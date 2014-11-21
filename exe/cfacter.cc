@@ -104,6 +104,9 @@ int main(int argc, char **argv)
 
     try
     {
+        // Setup logging
+        setup_logging(std::cerr);
+
         vector<string> external_directories;
         vector<string> custom_directories;
 
@@ -111,14 +114,16 @@ int main(int argc, char **argv)
         // Keep this list sorted alphabetically
         po::options_description visible_options("");
         visible_options.add_options()
+            ("color", "Enables color output.")
             ("custom-dir", po::value<vector<string>>(&custom_directories), "A directory to use for custom facts.")
             ("debug,d", "Enable debug output.")
             ("external-dir", po::value<vector<string>>(&external_directories), "A directory to use for external facts.")
             ("help", "Print this help message.")
             ("json,j", "Output in JSON format.")
-            ("log-level,l", po::value<log_level>()->default_value(log_level::warning, "warn"), "Set logging level.\nSupported levels are: trace, debug, info, warn, error, and fatal.")
-            ("no-custom-facts", "Turn off custom facts.")
-            ("no-external-facts", "Turn off external facts.")
+            ("log-level,l", po::value<log_level>()->default_value(log_level::warning, "warn"), "Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.")
+            ("no-color", "Disables color output.")
+            ("no-custom-facts", "Disables custom facts.")
+            ("no-external-facts", "Disables external facts.")
             ("trace", "Enable backtraces for custom facts.")
             ("verbose", "Enable verbose (info) output.")
             ("version,v", "Print the version and exit.")
@@ -151,6 +156,9 @@ int main(int argc, char **argv)
             po::notify(vm);
 
             // Check for conflicting options
+            if (vm.count("color") && vm.count("no-color")) {
+                throw po::error("color and no-color options conflict: please specify only one.");
+            }
             if (vm.count("json") && vm.count("yaml")) {
                 throw po::error("json and yaml options conflict: please specify only one.");
             }
@@ -165,7 +173,6 @@ int main(int argc, char **argv)
             }
         }
         catch (exception& ex) {
-            // Write directly to cerr as logging is not yet configured
             cerr << colorize(log_level::error) << "error: " << ex.what() << colorize() << "\n\n";
             help(visible_options);
             return EXIT_FAILURE;
@@ -177,6 +184,13 @@ int main(int argc, char **argv)
             return EXIT_SUCCESS;
         }
 
+        // Set colorization; if no option was specified, use the default
+        if (vm.count("color")) {
+            set_colorization(true);
+        } else if (vm.count("no-color")) {
+            set_colorization(false);
+        }
+
         // Get the logging level
         auto level = vm["log-level"].as<log_level>();
         if (vm.count("debug")) {
@@ -184,9 +198,8 @@ int main(int argc, char **argv)
         } else if (vm.count("verbose")) {
             level = log_level::info;
         }
+        set_level(level);
 
-        // Configure logging
-        configure_logging(level, std::cerr);
         log_command_line(argc, argv);
 
         // Initialize Ruby in main

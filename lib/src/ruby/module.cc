@@ -80,7 +80,7 @@ struct ruby_context
     facter::ruby::VALUE _canary;
 };
 
-ruby_context* g_context = nullptr;
+static ruby_context* g_context = nullptr;
 
 // Exports for the Ruby cfacter gem.
 extern "C" {
@@ -98,8 +98,8 @@ extern "C" {
      */
     void initialize_facter(unsigned int level)
     {
-        // Start by configuring logging
-        configure_logging(static_cast<log_level>(level), std::cerr);
+        setup_logging(std::cerr);
+        set_level(static_cast<log_level>(level));
 
         // Initialize ruby
         auto ruby = facter::ruby::api::instance();
@@ -144,6 +144,29 @@ namespace facter { namespace ruby {
         // Initialize the search paths
         initialize_search_paths(paths);
 
+        // Register the block for logging callback with the GC
+        _on_message_block = ruby.nil_value();
+        ruby.rb_gc_register_address(&_on_message_block);
+
+        // Install a logging message handler
+        logging::on_message([this](log_level level, string const& message) {
+            auto const& ruby = *api::instance();
+            if (ruby.is_nil(_on_message_block)) {
+                return true;
+            }
+
+            // Call the block and don't log messages
+            ruby.rescue([&]() {
+                ruby.rb_funcall(_on_message_block, ruby.rb_intern("call"), 2, level_to_symbol(level), ruby.rb_str_new_cstr(message.c_str()));
+                return ruby.nil_value();
+            }, [&](VALUE) {
+                // Logging can take place from locations where we do not expect Ruby exceptions to be raised
+                // Therefore, intentionally swallow any exceptions.
+                return ruby.nil_value();
+            });
+            return false;
+        });
+
         // Undefine Facter if it's already defined
         ruby.rb_gc_register_address(&_previous_facter);
         if (ruby.is_true(ruby.rb_const_defined(*ruby.rb_cObject, ruby.rb_intern("Facter")))) {
@@ -175,6 +198,8 @@ namespace facter { namespace ruby {
         ruby.rb_define_singleton_method(facter, "warn", RUBY_METHOD_FUNC(ruby_warn), 1);
         ruby.rb_define_singleton_method(facter, "warnonce", RUBY_METHOD_FUNC(ruby_warnonce), 1);
         ruby.rb_define_singleton_method(facter, "log_exception", RUBY_METHOD_FUNC(ruby_log_exception), -1);
+        ruby.rb_define_singleton_method(facter, "debugging", RUBY_METHOD_FUNC(ruby_set_debugging), 1);
+        ruby.rb_define_singleton_method(facter, "debugging?", RUBY_METHOD_FUNC(ruby_get_debugging), 0);
         ruby.rb_define_singleton_method(facter, "trace", RUBY_METHOD_FUNC(ruby_set_trace), 1);
         ruby.rb_define_singleton_method(facter, "trace?", RUBY_METHOD_FUNC(ruby_get_trace), 0);
         ruby.rb_define_singleton_method(facter, "flush", RUBY_METHOD_FUNC(ruby_flush), 0);
@@ -188,6 +213,7 @@ namespace facter { namespace ruby {
         ruby.rb_define_singleton_method(facter, "search_path", RUBY_METHOD_FUNC(ruby_search_path), 0);
         ruby.rb_define_singleton_method(facter, "search_external", RUBY_METHOD_FUNC(ruby_search_external), 1);
         ruby.rb_define_singleton_method(facter, "search_external_path", RUBY_METHOD_FUNC(ruby_search_external_path), 0);
+        ruby.rb_define_singleton_method(facter, "on_message", RUBY_METHOD_FUNC(ruby_on_message), 0);
 
         // Define the execution module
         ruby.rb_define_singleton_method(execution, "which", RUBY_METHOD_FUNC(ruby_which), 1);
@@ -223,6 +249,10 @@ namespace facter { namespace ruby {
             // Ruby has been uninitialized
             return;
         }
+
+        // Unregister the on message block
+        ruby->rb_gc_unregister_address(&_on_message_block);
+        logging::on_message(nullptr);
 
         // Undefine the module and restore the previous value
         ruby->rb_const_remove(*ruby->rb_cObject, ruby->rb_intern("Facter"));
@@ -409,6 +439,24 @@ namespace facter { namespace ruby {
             LOG_WARNING(msg);
         }
         return ruby.nil_value();
+    }
+
+    VALUE module::ruby_set_debugging(VALUE self, VALUE value)
+    {
+        auto const& ruby = *api::instance();
+
+        if (ruby.is_true(value)) {
+            set_level(log_level::debug);
+        } else {
+            set_level(log_level::warning);
+        }
+        return ruby_get_debugging(self);
+    }
+
+    VALUE module::ruby_get_debugging(VALUE self)
+    {
+        auto const& ruby = *api::instance();
+        return is_enabled(log_level::debug) ? ruby.true_value() : ruby.false_value();
     }
 
     VALUE module::ruby_set_trace(VALUE self, VALUE value)
@@ -638,6 +686,14 @@ namespace facter { namespace ruby {
         return execute_command(ruby.to_string(argv[0]), option, false);
     }
 
+    VALUE module::ruby_on_message(VALUE self)
+    {
+        auto const& ruby = *api::instance();
+
+        from_self(self)->_on_message_block = ruby.rb_block_given_p() ? ruby.rb_block_proc() : ruby.nil_value();
+        return ruby.nil_value();
+    }
+
     VALUE module::execute_command(std::string const& command, VALUE failure_default, bool raise)
     {
         auto const& ruby = *api::instance();
@@ -818,6 +874,31 @@ namespace facter { namespace ruby {
             ruby.rb_gc_register_address(&it->second);
         }
         return it->second;
+    }
+
+    VALUE module::level_to_symbol(log_level level)
+    {
+        auto const& ruby = *api::instance();
+
+        char const* name = nullptr;
+
+        if (level == log_level::trace) {
+            name = "trace";
+        } else if (level == log_level::debug) {
+            name = "debug";
+        } else if (level == log_level::info) {
+            name = "info";
+        } else if (level == log_level::warning) {
+            name = "warn";
+        } else if (level == log_level::error) {
+            name = "error";
+        } else if (level == log_level::fatal) {
+            name = "fatal";
+        }
+        if (!name) {
+            ruby.rb_raise(*ruby.rb_eArgError, "invalid log level specified.", 0);
+        }
+        return ruby.rb_funcall(ruby.rb_str_new_cstr(name), ruby.rb_intern("to_sym"), 0);
     }
 
 }}  // namespace facter::ruby

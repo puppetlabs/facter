@@ -207,7 +207,11 @@ Here's a simple example of using the C++11 API to output all facts as YAML.
 
     int main()
     {
-        configure_logging(log_level::info, std::cout);
+        // Setup logging to cout
+        setup_logging(cout);
+
+        // Override the default log level (warning) with the info level
+        set_level(log_level::info);
 
         // Create a fact collection and write the collection out
         collection facts;

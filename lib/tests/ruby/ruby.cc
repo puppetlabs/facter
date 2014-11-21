@@ -153,6 +153,8 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
             return false;
         }
 
+        ruby->include_stack_trace(true);
+
         module mod(_facts);
 
         VALUE result = ruby->rescue([&]() {
@@ -185,6 +187,8 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
             }
         }
 
+        set_level(log_level::debug);
+
         _appender.reset(new ruby_log_appender());
         _sink.reset(new sink_t(_appender));
 
@@ -195,6 +199,8 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
 
     virtual void TearDown()
     {
+        set_level(log_level::none);
+
         auto core = boost::log::core::get();
         core->reset_filter();
         core->remove_sink(_sink);
@@ -300,6 +306,8 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("exec.rb", "foo", "\"bar\""),
     ruby_test_parameters("timeout.rb", log_level::debug, { { "WARN", "timeout option is not supported for custom facts and will be ignored." }, { "WARN", "timeout= is not supported for custom facts and will be ignored." } }),
     ruby_test_parameters("trace.rb", log_level::error, { { "ERROR", "^first$" }, { "ERROR", "^second\nbacktrace:" } }),
+    ruby_test_parameters("debugging.rb", log_level::debug, { { "DEBUG", "^yep$" } }),
+    ruby_test_parameters("on_message.rb", log_level::debug, {}),
 };
 
 INSTANTIATE_TEST_CASE_P(run, facter_ruby, testing::ValuesIn(single_fact_tests));

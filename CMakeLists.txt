@@ -136,6 +136,7 @@ if (WIN32)
     add_definitions(-DSECURITY_WIN32)
 else()
     set(LIBFACTER_TEST_PATH    ${PROJECT_BINARY_DIR}/lib/tests)
+    add_definitions(-DUSE_POSIX_FUNCTIONS)
 endif()
 
 # Include vendor libraries

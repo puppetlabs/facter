@@ -1,8 +1,6 @@
 begin
-    # Defaults to false
-    raise 'nope' if Facter.trace?
-
     # Log without tracing
+    Facter.trace false
     begin
         raise 'first'
     rescue Exception => ex
