@@ -53,18 +53,19 @@ MinGW-w64 is used for full C++11 support, and Chocolatey to install some tools. 
 
 For the remaining tasks, build commands can be executed in the shell from Start > MinGW-w64 project > Run Terminal
 
+*   select an install location for dependencies, such as C:\tools or cmake\release\ext; we'll refer to it as $install
+
 *   build Boost - http://sourceforge.net/projects/boost/files/latest/download
 
         .\bootstrap mingw
-        .\b2 toolset=gcc --build-type=minimal install --prefix=<boost install path> --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log
+        .\b2 toolset=gcc --build-type=minimal install --prefix=$install --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log
 
 *   build yaml-cpp - https://code.google.com/p/yaml-cpp/downloads
 
-        mkdir build && cd build
-        cmake -G "MinGW Makefiles" -DBOOST_INCLUDEDIR=<boost install path>\include\boost-<version> -DCMAKE_INSTALL_PREFIX=<yamlcpp install path>
+        cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=$install -DCMAKE_INSTALL_PREFIX=$install .
         mingw32-make install
 
-Note that OpenSSL, libblkid, and libcurl aren't needed on Windows. More detailed notes are available in WINDOWS.md.
+Note that OpenSSL isn't needed on Windows. More detailed notes are available in WINDOWS.md.
 
 
 Pre-Build
@@ -72,7 +73,7 @@ Pre-Build
 
 All of the following examples start by assuming the current directory is the root of the repo.
 
-On Windows, add `-G "MinGW Makefiles" -DBOOST_ROOT=\<boost install path\> -DYAMLCPP_ROOT=\<yamlcpp install path\> -DBOOST_STATIC=ON` to the `cmake` invocation. You may have to explicily specify BOOST_INCLUDEDIR or BOOST_LIBRARYDIR.
+On Windows, add `-G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=\<binary install path\> -DBOOST_STATIC=ON` to the `cmake` invocation.
 
 Before building cfacter, use `cmake` to generate build files:
 
