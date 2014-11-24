@@ -209,9 +209,8 @@ int main(int argc, char **argv)
             ruby = api::instance();
             if (ruby) {
                 ruby->initialize();
+                ruby->include_stack_trace(vm.count("trace") == 1);
             }
-
-            ruby->include_stack_trace(vm.count("trace") == 1);
         }
 
         // Build a set of queries from the command line
