@@ -8,6 +8,7 @@
 #include <facter/util/environment.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <sstream>
 
 using namespace std;
 using namespace facter::facts;
@@ -97,7 +98,8 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(ruby_options),
         LOAD_SYMBOL(ruby_cleanup),
         _library(move(library)),
-        _initialized(false)
+        _initialized(false),
+        _include_stack_trace(false)
     {
     }
 
@@ -188,6 +190,16 @@ namespace facter { namespace ruby {
         return _initialized;
     }
 
+    bool api::include_stack_trace() const
+    {
+        return _include_stack_trace;
+    }
+
+    void api::include_stack_trace(bool value)
+    {
+        _include_stack_trace = value;
+    }
+
     vector<string> api::get_load_path() const
     {
         vector<string> directories;
@@ -265,14 +277,24 @@ namespace facter { namespace ruby {
         return (*callback)(key, value) ? 0 /* continue */ : 1 /* stop */;
     }
 
-    string api::exception_backtrace(VALUE ex) const
+    string api::exception_to_string(VALUE ex, string const& message) const
     {
-        return to_string(
-            rb_funcall(
-                rb_funcall(ex, rb_intern("backtrace"), 0),
-                rb_intern("join"),
-                1,
-                rb_str_new_cstr("\n")));
+        ostringstream result;
+
+        if (message.empty()) {
+            result << to_string(ex);
+        } else {
+            result << message;
+        }
+
+        if (_include_stack_trace) {
+            result << "\nbacktrace:\n";
+
+            // Append ex.backtrace.join('\n')
+            result << to_string(rb_funcall(rb_funcall(ex, rb_intern("backtrace"), 0), rb_intern("join"), 1, rb_str_new_cstr("\n")));
+        }
+
+        return result.str();
     }
 
     bool api::is_a(VALUE value, VALUE klass) const

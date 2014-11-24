@@ -101,10 +101,7 @@ namespace facter { namespace ruby {
             _resolved = true;
             return 0;
         }, [&](VALUE ex) {
-            LOG_ERROR("error while resolving custom fact \"%1%\": %2%.\nbacktrace:\n%3%",
-                ruby.rb_string_value_ptr(&_name),
-                ruby.to_string(ex),
-                ruby.exception_backtrace(ex));
+            LOG_ERROR("error while resolving custom fact \"%1%\": %2%", ruby.rb_string_value_ptr(&_name), ruby.exception_to_string(ex));
 
             // Failed, so set to nil
             _value = ruby.nil_value();

@@ -1,9 +1,21 @@
 Facter.add(:foo) do
     setcode do
         begin
-            raise "what's up doc?"
+            raise "first"
         rescue Exception => ex
             Facter.log_exception ex
+        end
+
+        begin
+            raise "second"
+        rescue Exception => ex
+            Facter.log_exception ex, :default
+        end
+
+        begin
+            raise "nope"
+        rescue Exception => ex
+            Facter.log_exception ex, 'third'
         end
     end
 end

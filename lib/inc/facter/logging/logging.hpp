@@ -15,6 +15,7 @@
 #include <boost/log/expressions.hpp>
 #include <boost/format.hpp>
 #include <cstdio>
+#include <functional>
 
 /**
  * Defines the root logging namespace.
@@ -34,7 +35,7 @@
  * @param ... The format message parameters.
  */
 #define LOG_MESSAGE(level, format, ...) \
-    if (facter::logging::is_log_enabled(LOG_ROOT_NAMESPACE LOG_NAMESPACE, level)) { \
+    if (facter::logging::is_enabled(level)) { \
         facter::logging::log(LOG_ROOT_NAMESPACE LOG_NAMESPACE, level, format, ##__VA_ARGS__); \
     }
 /**
@@ -74,40 +75,35 @@
  */
 #define LOG_FATAL(format, ...) LOG_MESSAGE(facter::logging::log_level::fatal, format, ##__VA_ARGS__)
 /**
- * Determines if the given logging level is enabled.
- * @param level The logging level to check.
- */
-#define LOG_IS_ENABLED(level) facter::logging::is_log_enabled(LOG_ROOT_NAMESPACE LOG_NAMESPACE, level)
-/**
  * Determines if the trace logging level is enabled.
  * @returns Returns true if trace logging is enabled or false if it is not enabled.
  */
-#define LOG_IS_TRACE_ENABLED() LOG_IS_ENABLED(facter::logging::log_level::trace)
+#define LOG_IS_TRACE_ENABLED() facter::logging::is_enabled(facter::logging::log_level::trace)
 /**
  * Determines if the debug logging level is enabled.
  * @returns Returns true if debug logging is enabled or false if it is not enabled.
  */
-#define LOG_IS_DEBUG_ENABLED() LOG_IS_ENABLED(facter::logging::log_level::debug)
+#define LOG_IS_DEBUG_ENABLED() facter::logging::is_enabled(facter::logging::log_level::debug)
 /**
  * Determines if the info logging level is enabled.
  * @returns Returns true if info logging is enabled or false if it is not enabled.
  */
-#define LOG_IS_INFO_ENABLED() LOG_IS_ENABLED(facter::logging::log_level::info)
+#define LOG_IS_INFO_ENABLED() facter::logging::is_enabled(facter::logging::log_level::info)
 /**
  * Determines if the warning logging level is enabled.
  * @returns Returns true if warning logging is enabled or false if it is not enabled.
  */
-#define LOG_IS_WARNING_ENABLED() LOG_IS_ENABLED(facter::logging::log_level::warning)
+#define LOG_IS_WARNING_ENABLED() facter::logging::is_enabled(facter::logging::log_level::warning)
 /**
  * Determines if the error logging level is enabled.
  * @returns Returns true if error logging is enabled or false if it is not enabled.
  */
-#define LOG_IS_ERROR_ENABLED() LOG_IS_ENABLED(facter::logging::log_level::error)
+#define LOG_IS_ERROR_ENABLED() facter::logging::is_enabled(facter::logging::log_level::error)
 /**
  * Determines if the fatal logging level is enabled.
  * @returns Returns true if fatal logging is enabled or false if it is not enabled.
  */
-#define LOG_IS_FATAL_ENABLED() LOG_IS_ENABLED(facter::logging::log_level::fatal)
+#define LOG_IS_FATAL_ENABLED() facter::logging::is_enabled(facter::logging::log_level::fatal)
 
 namespace facter { namespace logging {
 
@@ -116,6 +112,7 @@ namespace facter { namespace logging {
      */
     enum class log_level
     {
+        none,
         trace,
         debug,
         info,
@@ -137,6 +134,15 @@ namespace facter { namespace logging {
     BOOST_LOG_ATTRIBUTE_KEYWORD(namespace_attr, "Namespace", std::string);
 
     /**
+     * Reads a log level from an input stream.
+     * This is used in boost::lexical_cast<log_level>.
+     * @param in The input stream.
+     * @param level The returned log level.
+     * @returns Returns the input stream.
+     */
+    std::istream& operator>>(std::istream& in, log_level& level);
+
+    /**
      * Produces the printed representation of logging level.
      * @param strm The stream to write.
      * @param level The logging level to print.
@@ -145,19 +151,49 @@ namespace facter { namespace logging {
     std::ostream& operator<<(std::ostream& strm, log_level level);
 
     /**
-     * Configures default logging to the specified stream.
-     * @param level The logging level to allow on the console.
+     * Sets up logging for the given stream.
+     * The logging level is set to warning by default.
      * @param dst Destination stream for logging output.
      */
-    void configure_logging(log_level level, std::ostream &dst);
+    void setup_logging(std::ostream &dst);
+
+    /**
+     * Sets the current log level.
+     * @param level The new current log level to set.
+     */
+    void set_level(log_level level);
+
+    /**
+     * Gets the current log level.
+     * @return Returns the current log level.
+     */
+    log_level get_level();
+
+    /**
+     * Sets whether or not log output is colorized.
+     * @param color Pass true if log output is colorized or false if it is not colorized.
+     */
+    void set_colorization(bool color);
+
+    /**
+     * Gets whether or not the log output is colorized.
+     * @return Returns true if log output is colorized or false if it is not colorized.
+     */
+    bool get_colorization();
+
+    /**
+     * Provides a callback for when a message is logged.
+     * If the callback returns false, the message will not be logged.
+     * @param callback The callback to call when a message is about to be logged.
+     */
+    void on_message(std::function<bool(log_level, std::string const&)> callback);
 
     /**
      * Determines if the given log level is enabled for the given logger.
-     * @param logger The logger to check.
      * @param level The logging level to check.
      * @return Returns true if the logging level is enabled or false if it is not.
      */
-    bool is_log_enabled(const std::string &logger, log_level level);
+    bool is_enabled(log_level level);
 
     /**
      * Logs a given message to the given logger.
@@ -206,5 +242,20 @@ namespace facter { namespace logging {
         boost::format message(format);
         log(logger, level, message, std::forward<TArgs>(args)...);
     }
+
+    /**
+     * Starts colorizing for the given log level.
+     * This is a no-op on platforms that don't natively support terminal colors.
+     * @param level The log level to colorize for.
+     * @return Returns the start code for colorization or an empty string if not supported.
+     */
+    const std::string& colorize(log_level level);
+
+    /**
+     * Resets the colorization.
+     * This is a no-op on platforms that don't natively support terminal colors.
+     * @return Returns the reset code for colorization or an empty string if not supported.
+     */
+    const std::string& colorize();
 
 }}  // namespace facter::logging

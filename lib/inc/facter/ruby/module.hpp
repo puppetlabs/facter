@@ -17,6 +17,12 @@ namespace facter { namespace facts {
 
 }}  // namespace facter::facts
 
+namespace facter { namespace logging {
+
+    enum class log_level;
+
+}}  // namespace facter::logging
+
 namespace facter { namespace ruby {
 
     /**
@@ -84,6 +90,10 @@ namespace facter { namespace ruby {
         static VALUE ruby_warn(VALUE self, VALUE message);
         static VALUE ruby_warnonce(VALUE self, VALUE message);
         static VALUE ruby_log_exception(int argc, VALUE* argv, VALUE self);
+        static VALUE ruby_set_debugging(VALUE self, VALUE value);
+        static VALUE ruby_get_debugging(VALUE self);
+        static VALUE ruby_set_trace(VALUE self, VALUE value);
+        static VALUE ruby_get_trace(VALUE self);
         static VALUE ruby_flush(VALUE self);
         static VALUE ruby_list(VALUE self);
         static VALUE ruby_to_hash(VALUE self);
@@ -98,6 +108,7 @@ namespace facter { namespace ruby {
         static VALUE ruby_which(VALUE self, VALUE binary);
         static VALUE ruby_exec(VALUE self, VALUE command);
         static VALUE ruby_execute(int argc, VALUE* argv, VALUE self);
+        static VALUE ruby_on_message(VALUE self);
 
         // Helper functions
         static VALUE execute_command(std::string const& command, VALUE failure_default, bool raise);
@@ -106,6 +117,7 @@ namespace facter { namespace ruby {
         VALUE load_fact(VALUE value);
         void load_file(std::string const& path);
         VALUE create_fact(VALUE name);
+        static VALUE level_to_symbol(facter::logging::log_level level);
 
         facter::facts::collection& _collection;
         std::map<std::string, VALUE> _facts;
@@ -117,6 +129,7 @@ namespace facter { namespace ruby {
         std::set<std::string> _loaded_files;
         bool _loaded_all;
         VALUE _previous_facter;
+        VALUE _on_message_block;
     };
 
 }}  // namespace facter::ruby

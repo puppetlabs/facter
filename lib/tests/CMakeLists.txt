@@ -41,6 +41,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/resolvers/uptime_resolver.cc"
     "facts/resolvers/virtualization_resolver.cc"
     "facts/string_value.cc"
+    "logging/logging.cc"
     "main.cc"
     "util/directory.cc"
     "util/file.cc"
@@ -65,7 +66,6 @@ if (UNIX)
         "util/posix/environment.cc"
         "util/posix/scoped_addrinfo.cc"
         "util/posix/scoped_descriptor.cc"
-        "logging/posix/logging.cc"
     )
     if (OPENSSL_FOUND)
         set(LIBFACTER_TESTS_CATEGORY_SOURCES ${LIBFACTER_TESTS_CATEGORY_SOURCES} "util/posix/scoped_bio.cc")
@@ -80,7 +80,6 @@ if (WIN32)
         "facts/external/windows/execution_resolver.cc"
         "facts/external/windows/powershell_resolver.cc"
         "util/windows/environment.cc"
-        "logging/windows/logging.cc"
     )
 endif()
 

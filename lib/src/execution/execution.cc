@@ -227,7 +227,9 @@ namespace facter { namespace execution {
                 }
 
                 // Log the line to the output logger
-                log(logger, log_level::debug, output);
+                if (LOG_IS_DEBUG_ENABLED()) {
+                    log(logger, log_level::debug, output);
+                }
 
                 // Pass the line to the callback
                 if (!callback(output)) {
@@ -251,7 +253,9 @@ namespace facter { namespace execution {
         }
 
         if (!output.empty()) {
-            log(logger, log_level::debug, output);
+            if (LOG_IS_DEBUG_ENABLED()) {
+                log(logger, log_level::debug, output);
+            }
             if (callback) {
                 callback(output);
                 return {};

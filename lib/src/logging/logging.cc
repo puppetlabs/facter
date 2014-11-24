@@ -10,33 +10,35 @@
 #include <boost/log/expressions/formatters/date_time.hpp>
 #include <boost/log/utility/setup/console.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
-
+#include <boost/log/attributes/scoped_attribute.hpp>
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
-#include <boost/log/attributes/scoped_attribute.hpp>
 
 #pragma GCC diagnostic pop
+
+#ifdef USE_POSIX_FUNCTIONS
+#include <unistd.h>
+#endif
 
 using namespace std;
 using boost::format;
 namespace expr = boost::log::expressions;
 namespace src = boost::log::sources;
+namespace attrs = boost::log::attributes;
 namespace keywords = boost::log::keywords;
 
 namespace facter { namespace logging {
 
-    bool is_log_enabled(const std::string &logger, log_level level) {
-        // If the severity_logger returns a record for the specified
-        // level, logging is enabled. Otherwise it isn't.
-        // This is the guard call used in BOOST_LOG_SEV; see
-        // http://www.boost.org/doc/libs/1_54_0/libs/log/doc/html/log/detailed/sources.html
-        src::severity_logger<log_level> slg;
-        return (slg.open_record(keywords::severity = level) ? true : false);
-    }
+    static function<bool(log_level, string const&)> g_callback;
+    static log_level g_level = log_level::none;
+    static bool g_colorize = false;
 
-    void configure_logging(facter::logging::log_level level, ostream &dst)
+    void setup_logging(ostream &dst)
     {
-        // Set filtering based on log_level (info, warning, debug, etc).
+        // Remove existing sinks before adding a new one
+        auto core = boost::log::core::get();
+        core->remove_all_sinks();
+
         auto sink = boost::log::add_console_log(dst);
 
         sink->set_formatter(
@@ -46,24 +48,146 @@ namespace facter { namespace logging {
                 << " " << facter::logging::namespace_attr
                 << " - " << expr::smessage);
 
-        sink->set_filter(facter::logging::log_level_attr >= level);
         boost::log::add_common_attributes();
+
+        // Default to the warning level
+        set_level(log_level::warning);
+
+        // Set whether or not to use colorization depending if the destination is a tty
+#ifdef USE_POSIX_FUNCTIONS
+        g_colorize = (&dst == &cout && isatty(fileno(stdout))) || (&dst == &cerr && isatty(fileno(stderr)));
+#else
+        g_colorize = false;
+#endif
     }
 
-    std::ostream& operator<<(std::ostream& strm, log_level level)
+    void set_level(log_level level)
     {
-        std::vector<std::string> strings = {"TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
-        if (static_cast<size_t>(level) < strings.size()) {
-            strm << strings[static_cast<size_t>(level)];
-        } else {
-            strm << static_cast<int>(level);
+        auto core = boost::log::core::get();
+        core->set_logging_enabled(level != log_level::none);
+        g_level = level;
+    }
+
+    log_level get_level()
+    {
+        return g_level;
+    }
+
+    void set_colorization(bool color)
+    {
+        g_colorize = color;
+    }
+
+    bool get_colorization()
+    {
+        return g_colorize;
+    }
+
+    bool is_enabled(log_level level)
+    {
+        return g_level != log_level::none && static_cast<int>(level) >= static_cast<int>(g_level);
+    }
+
+    void on_message(function<bool(log_level, string const&)> callback)
+    {
+        g_callback = callback;
+    }
+
+    string const& colorize(log_level level)
+    {
+        static const string none = "";
+        static const string cyan = "\33[0;36m";
+        static const string green = "\33[0;32m";
+        static const string yellow = "\33[0;33m";
+        static const string red = "\33[0;31m";
+
+        if (!g_colorize) {
+            return none;
         }
-        return strm;
+
+        if (level == log_level::trace || level == log_level::debug) {
+            return cyan;
+        } else if (level == log_level::info) {
+            return green;
+        } else if (level == log_level::warning) {
+            return yellow;
+        } else if (level == log_level::error || level == log_level::fatal) {
+            return red;
+        }
+        return none;
+    }
+
+    string const& colorize()
+    {
+        static const string none = "";
+        static const string reset = "\33[0m";
+        return g_colorize ? reset : none;
     }
 
     void log(const string &logger, log_level level, boost::format& message)
     {
         log(logger, level, message.str());
+    }
+
+    void log(const string &logger, log_level level, string const& message)
+    {
+        if (!is_enabled(level) || (g_callback && !g_callback(level, message))) {
+            return;
+        }
+
+        src::severity_logger<log_level> slg;
+        slg.add_attribute("Namespace", attrs::constant<string>(logger));
+        BOOST_LOG_SEV(slg, level) << colorize(level) << message << colorize();
+    }
+
+    istream& operator>>(istream& in, log_level& level)
+    {
+        string value;
+        if (in >> value) {
+            if (value == "none") {
+                level = log_level::none;
+                return in;
+            }
+            if (value == "trace") {
+                level = log_level::trace;
+                return in;
+            }
+            if (value == "debug") {
+                level = log_level::debug;
+                return in;
+            }
+            if (value == "info") {
+                level = log_level::info;
+                return in;
+            }
+            if (value == "warn") {
+                level = log_level::warning;
+                return in;
+            }
+            if (value == "error") {
+                level = log_level::error;
+                return in;
+            }
+            if (value == "fatal") {
+                level = log_level::fatal;
+                return in;
+            }
+        }
+        throw runtime_error("invalid log level: expected none, trace, debug, info, warn, error, or fatal.");
+    }
+
+    ostream& operator<<(ostream& strm, log_level level)
+    {
+        static const vector<string> strings = {"TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
+
+        if (level != log_level::none) {
+            size_t index = static_cast<size_t>(level) - 1;
+            if (index < strings.size()) {
+                strm << strings[index];
+            }
+        }
+
+        return strm;
     }
 
 }}  // namespace facter::logging
