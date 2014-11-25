@@ -10,6 +10,7 @@ CPPFLAGS    :=$(shell dpkg-buildflags --get CPPFLAGS)
 CFLAGS      :=$(shell dpkg-buildflags --get CFLAGS)
 CXXFLAGS    :=$(shell dpkg-buildflags --get CXXFLAGS)
 LDFLAGS     :=$(shell dpkg-buildflags --get LDFLAGS)
+NUMPROC     :=$(shell expr $$(nproc) + 1)
 
 export CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
 
@@ -25,10 +26,10 @@ override_dh_auto_configure:
 	.
 
 override_dh_auto_build:
-	$(MAKE) -j$(NPROC) DESTDIR=$(CURDIR)/debian/tmp
+	$(MAKE) -j$(NUMPROC) DESTDIR=$(CURDIR)/debian/tmp
 
 override_dh_auto_install:
-	$(MAKE) -j$(NPROC) install DESTDIR=$(CURDIR)/debian/tmp
+	$(MAKE) -j$(NUMPROC) install DESTDIR=$(CURDIR)/debian/tmp
 
 %:
-	dh $@ --parallel=$(NPROC)
+	dh $@ --parallel=$(NUMPROC)
