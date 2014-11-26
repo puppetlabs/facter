@@ -23,6 +23,9 @@ Facter.add(:dhcp_servers) do
   confine do
     Facter::Core::Execution.which('nmcli')
   end
+  confine do
+    Facter::Core::Execution.exec('nmcli -t -f STATE g').strip != 'unknown'
+  end
 
   setcode do
     gwdev   = Facter::Util::DHCPServers.gateway_device
