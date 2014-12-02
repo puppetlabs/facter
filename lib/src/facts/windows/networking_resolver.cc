@@ -2,9 +2,9 @@
 #include <facter/logging/logging.hpp>
 #include <facter/util/windows/registry.hpp>
 #include <facter/util/windows/system_error.hpp>
-#include <facter/util/windows/string_conv.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/range/combine.hpp>
+#include <boost/nowide/convert.hpp>
 #include <iomanip>
 
 #include <facter/util/windows/windows.hpp>
@@ -41,7 +41,7 @@ namespace facter { namespace facts { namespace windows {
         }
 
         buffer.resize(size);
-        return to_utf8(buffer);
+        return boost::nowide::narrow(buffer);
     }
 
     bool networking_resolver::ignored_ipv4_address(string const& addr)
@@ -163,11 +163,11 @@ namespace facter { namespace facts { namespace windows {
 
             if (result.domain.empty()) {
                 // If domain isn't set in the registry, fall back to the first DnsDomain encountered in the adapters.
-                result.domain = to_utf8(pCurAddr->DnsSuffix);
+                result.domain = boost::nowide::narrow(pCurAddr->DnsSuffix);
             }
 
             interface net_interface;
-            net_interface.name = to_utf8(pCurAddr->FriendlyName);
+            net_interface.name = boost::nowide::narrow(pCurAddr->FriendlyName);
 
             // http://support.microsoft.com/kb/894564 talks about how binding order is determined.
             // GetAdaptersAddresses returns adapters in binding order. This way, the domain and primary_interface match.

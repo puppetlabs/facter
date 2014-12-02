@@ -9,6 +9,7 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/nowide/convert.hpp>
 
 #include <cstdlib>
 #include <cstdio>
@@ -212,7 +213,7 @@ namespace facter { namespace execution {
             scoped_resource<HANDLE> stdErrRd, stdErrWr;
 
             // Execute the command with arguments.
-            string commandLine = (arguments ? boost::join(*arguments, " ") : "");
+            auto commandLine = boost::nowide::widen(arguments ? boost::join(*arguments, " ") : "");
 
             STARTUPINFO startupInfo = {};
             startupInfo.cb = sizeof(startupInfo);
@@ -227,9 +228,9 @@ namespace facter { namespace execution {
 
             PROCESS_INFORMATION procInfo = {};
 
-            bool success = CreateProcess(
-                    executable.c_str(),
-                    const_cast<LPTSTR>(commandLine.c_str()),
+            bool success = CreateProcessW(
+                    boost::nowide::widen(executable).c_str(),
+                    &commandLine[0], /* Pass a modifiable string buffer; the contents may be modified */
                     NULL,           /* Don't allow child process to inherit process handle */
                     NULL,           /* Don't allow child process to inherit thread handle */
                     TRUE,           /* Inherit handles from the calling process for communication */

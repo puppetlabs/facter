@@ -1,6 +1,6 @@
 #include "fixtures.hpp"
 #include <iostream>
-#include <fstream>
+#include <boost/nowide/fstream.hpp>
 #include <sstream>
 #include <gmock/gmock.h>
 #include <boost/filesystem.hpp>
@@ -13,7 +13,7 @@ namespace facter { namespace testing {
     bool load_fixture(string const& name, string& data)
     {
         string path = string(LIBFACTER_TESTS_DIRECTORY) + "/fixtures/" + name;
-        ifstream in(path, ios_base::in | ios_base::binary);
+        boost::nowide::ifstream in(path.c_str(), ios_base::in | ios_base::binary);
         if (!in) {
             return false;
         }
@@ -36,7 +36,7 @@ namespace facter { namespace testing {
 
         path exec = dir / filename;
         {
-            ofstream exec_file(exec.string());
+            boost::nowide::ofstream exec_file(exec.string().c_str());
             exec_file << contents << endl;
         }
         permissions(exec, add_perms | owner_exe | group_exe);

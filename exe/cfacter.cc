@@ -4,6 +4,10 @@
 #include <facter/ruby/api.hpp>
 #include <facter/ruby/module.hpp>
 #include <boost/algorithm/string.hpp>
+// Note the caveats in nowide::cout/cerr; they're not synchronized with stdio.
+// Thus they can't be relied on to flush before program exit.
+// Use endl/ends or flush to force synchronization when necessary.
+#include <boost/nowide/iostream.hpp>
 
 // boost includes are not always warning-clean. Disable warnings that
 // cause problems before including the headers, then re-enable the warnings.
@@ -30,7 +34,7 @@ namespace po = boost::program_options;
 
 void help(po::options_description& desc)
 {
-    cout <<
+    boost::nowide::cout <<
         "Synopsis\n"
         "========\n"
         "\n"
@@ -56,7 +60,7 @@ void help(po::options_description& desc)
         "===============\n\n"
         "  cfacter kernel\n"
         "  cfacter networking.ip\n"
-        "  cfacter processors.models.0\n";
+        "  cfacter processors.models.0" << endl;
 }
 
 void log_command_line(int argc, char** argv)
@@ -105,7 +109,7 @@ int main(int argc, char **argv)
     try
     {
         // Setup logging
-        setup_logging(std::cerr);
+        setup_logging(boost::nowide::cerr);
 
         vector<string> external_directories;
         vector<string> custom_directories;
@@ -173,14 +177,14 @@ int main(int argc, char **argv)
             }
         }
         catch (exception& ex) {
-            cerr << colorize(log_level::error) << "error: " << ex.what() << colorize() << "\n\n";
+            boost::nowide::cerr << colorize(log_level::error) << "error: " << ex.what() << colorize() << "\n" << endl;
             help(visible_options);
             return EXIT_FAILURE;
         }
 
         // Check for printing the version
         if (vm.count("version")) {
-            cout << LIBFACTER_VERSION_WITH_COMMIT << endl;
+            boost::nowide::cout << LIBFACTER_VERSION_WITH_COMMIT << endl;
             return EXIT_SUCCESS;
         }
 
@@ -255,8 +259,8 @@ int main(int argc, char **argv)
         } else if (vm.count("yaml")) {
             fmt = format::yaml;
         }
-        facts.write(cout, fmt, queries);
-        cout << '\n';
+        facts.write(boost::nowide::cout, fmt, queries);
+        boost::nowide::cout << endl;
     } catch (exception& ex) {
         LOG_FATAL("unhandled exception: %1%", ex.what());
         return EXIT_FAILURE;

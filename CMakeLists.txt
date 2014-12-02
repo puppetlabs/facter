@@ -104,9 +104,12 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -Wno-deprecated")
     endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    # missing-field-initializers is disabled because GCC can't make up their mind how to treat C++11 initializers
     # maybe-uninitialized is a relatively new GCC warning that Boost 1.57 violates; disable it for now until it's available in Clang as well
-    set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas -Wno-missing-field-initializers -Wno-maybe-uninitialized")
+    # it's also sometimes wrong
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-maybe-uninitialized")
+
+    # missing-field-initializers is disabled because GCC can't make up their mind how to treat C++11 initializers
+    set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas -Wno-missing-field-initializers")
     if (NOT "${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
         set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -Wextra")
     endif()
@@ -115,12 +118,12 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     #set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wall")
 endif()
 
+# Force all binaries to be created in the same location.
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 if (WIN32)
     # On Windows, DLL paths aren't hardcoded in the executable. We place all the executables and libraries
     # in the same directory to avoid having to setup the DLL search path in the dev environment.
-    set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
     set(LIBRARY_OUTPUT_PATH    ${PROJECT_BINARY_DIR}/bin)
-    set(LIBFACTER_TEST_PATH    ${PROJECT_BINARY_DIR}/bin)
 
     # We use networking APIs that require Windows Vista as a minimum. See
     # http://msdn.microsoft.com/en-us/library/windows/desktop/aa383745(v=vs.85).aspx
@@ -134,14 +137,25 @@ if (WIN32)
     # The GetUserNameEx function requires the application have a defined security level.
     # We define security sufficient to get the current user's info.
     add_definitions(-DSECURITY_WIN32)
+
+    # Use UNICODE APIs on Windows
+    add_definitions(-DUNICODE -D_UNICODE)
 else()
-    set(LIBFACTER_TEST_PATH    ${PROJECT_BINARY_DIR}/lib/tests)
     add_definitions(-DUSE_POSIX_FUNCTIONS)
+
+    # On non-Windows platforms, this just tests the local implementations.
+    set(BOOST_NOWIDE_SKIP_TESTS ON CACHE BOOL "Disable tests in Boost.Nowide")
 endif()
 
 # Include vendor libraries
 add_subdirectory(vendor/gmock-1.7.0)
 set(RAPIDJSON_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/rapidjson-0.11/include")
+add_subdirectory(vendor/boost-nowide)
+set(NOWIDE_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/boost-nowide")
+if (WIN32)
+    # Library only built on Windows, it would be empty on other platforms.
+    set(NOWIDE_LIBRARIES nowide-shared)
+endif()
 
 #
 # Add cpplint target
@@ -194,4 +208,4 @@ add_subdirectory(lib)
 add_subdirectory(exe)
 
 # Add test executables for unit testing
-add_test("library\\ tests" "${LIBFACTER_TEST_PATH}/libfacter_test" "--gtest_color=yes")
+add_test(NAME "library\\ tests" COMMAND libfacter_test --gtest_color=yes)

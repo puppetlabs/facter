@@ -1,6 +1,5 @@
 #include <facter/util/environment.hpp>
 #include <boost/algorithm/string.hpp>
-#include <cstdlib>
 #include <functional>
 
 using namespace std;
@@ -30,27 +29,6 @@ namespace facter { namespace util {
      private:
          vector<string> _paths;
     };
-
-    bool environment::get(string const& name, string& value)
-    {
-        auto variable = getenv(name.c_str());
-        if (!variable) {
-            return false;
-        }
-
-        value = variable;
-        return true;
-    }
-
-    bool environment::set(string const& name, string const& value)
-    {
-        return setenv(name.c_str(), value.c_str(), 1) == 0;
-    }
-
-    bool environment::clear(string const& name)
-    {
-        return unsetenv(name.c_str()) == 0;
-    }
 
     char environment::get_path_separator()
     {

@@ -1,7 +1,6 @@
 #include <gmock/gmock.h>
 #include <facter/ruby/api.hpp>
 #include <facter/logging/logging.hpp>
-#include "../inc/facter/logging/logging.hpp"
 
 using namespace std;
 using namespace facter::ruby;

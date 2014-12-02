@@ -5,6 +5,7 @@
 #include <facter/util/scoped_resource.hpp>
 #include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/windows.hpp>
+#include <boost/nowide/convert.hpp>
 #include <tlhelp32.h>
 
 using namespace std;
@@ -41,7 +42,7 @@ namespace facter { namespace util {
 
         re_adapter rx(pattern);
         do {
-            if (re_search(string(me32.szModule), rx)) {
+            if (re_search(boost::nowide::narrow(me32.szModule), rx)) {
                 // Use GetModuleHandleEx to ensure the reference count is incremented. If the module has been
                 // unloaded since the snapshot was made, this may fail and we should return an empty library.
                 HMODULE hMod;
@@ -72,9 +73,10 @@ namespace facter { namespace util {
 
         // Check if the module has already been loaded (and increment the ref count).
         HMODULE hMod;
-        if (!GetModuleHandleEx(0, TEXT(name.c_str()), &hMod)) {
+        auto wname = boost::nowide::widen(name);
+        if (!GetModuleHandleExW(0, wname.c_str(), &hMod)) {
             // Load now
-            hMod = LoadLibrary(TEXT(name.c_str()));
+            hMod = LoadLibraryW(wname.c_str());
             if (!hMod) {
                 LOG_DEBUG("library %1% not found %2%.", name.c_str(), system_error());
                 return false;

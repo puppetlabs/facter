@@ -1,10 +1,10 @@
 #include <facter/util/windows/wmi.hpp>
-#include <facter/util/windows/string_conv.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/range/iterator_range.hpp>
+#include <boost/nowide/convert.hpp>
 
 #define _WIN32_DCOM
 #include <comdef.h>
@@ -77,7 +77,7 @@ namespace facter { namespace util { namespace windows {
             }
 
             for (auto i = 0u; i < arr->rgsabound[0].cElements; ++i) {
-                vals.emplace(s, boost::trim_copy(to_utf8(pbstr[i])));
+                vals.emplace(s, boost::trim_copy(boost::nowide::narrow(pbstr[i])));
             }
             SafeArrayUnaccessData(arr);
         } else if (FAILED(VariantChangeType(vtProp, vtProp, 0, VT_BSTR)) || V_VT(vtProp) != VT_BSTR) {
@@ -86,7 +86,7 @@ namespace facter { namespace util { namespace windows {
                 LOG_DEBUG("WMI query %1%.%2% result could not be converted from type %3% to a string", group, s, V_VT(vtProp));
             }
         } else {
-            vals.emplace(s, boost::trim_copy(to_utf8(V_BSTR(vtProp))));
+            vals.emplace(s, boost::trim_copy(boost::nowide::narrow(V_BSTR(vtProp))));
         }
     }
 
@@ -98,7 +98,7 @@ namespace facter { namespace util { namespace windows {
             qry += " " + extended;
         }
 
-        auto hres = (*_pSvc).ExecQuery(_bstr_t(L"WQL"), _bstr_t(to_utf16(qry).c_str()),
+        auto hres = (*_pSvc).ExecQuery(_bstr_t(L"WQL"), _bstr_t(boost::nowide::widen(qry).c_str()),
             WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, NULL, &_pEnum);
         if (FAILED(hres)) {
             LOG_DEBUG("query %1% failed", qry);
@@ -122,7 +122,7 @@ namespace facter { namespace util { namespace windows {
                 for (auto &s : keys) {
                     VARIANT vtProp;
                     CIMTYPE vtType;
-                    hr = pclsObj->Get(_bstr_t(to_utf16(s).c_str()), 0, &vtProp, &vtType, 0);
+                    hr = pclsObj->Get(_bstr_t(boost::nowide::widen(s).c_str()), 0, &vtProp, &vtType, 0);
                     if (FAILED(hr)) {
                         LOG_DEBUG("query %1%.%2% could not be found", group, s);
                         break;
