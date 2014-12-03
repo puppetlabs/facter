@@ -23,12 +23,13 @@ module CFacter
   #
   # @api public
   module LogLevel
-    TRACE   = 0
-    DEBUG   = 1
-    INFO    = 2
-    WARNING = 3
-    ERROR   = 4
-    FATAL   = 5
+    NONE    = 0
+    TRACE   = 1
+    DEBUG   = 2
+    INFO    = 3
+    WARNING = 4
+    ERROR   = 5
+    FATAL   = 6
   end
 
   # The version of the gem.
