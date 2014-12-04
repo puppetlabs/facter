@@ -87,15 +87,13 @@ Facter.add(:ipaddress) do
   confine :kernel => %w{AIX}
   setcode do
     ip = nil
-    output = Facter::Util::IP.exec_ifconfig(["-a"])
+
+    default_interface = Facter::Util::IP.exec_netstat(["-rn | grep default | awk '{ print $6 }'"])
+    output = Facter::Util::IP.exec_ifconfig([default_interface])
 
     output.split(/^\S/).each { |str|
       if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-        tmp = $1
-        unless tmp =~ /^127\./
-          ip = tmp
-          break
-        end
+        ip = $1
       end
     }
 

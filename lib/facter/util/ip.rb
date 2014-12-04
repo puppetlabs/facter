@@ -106,6 +106,23 @@ module Facter::Util::IP
     common_paths=["/bin/ifconfig","/sbin/ifconfig","/usr/sbin/ifconfig"]
     common_paths.select{|path| File.executable?(path)}.first
   end
+
+  ##
+  # exec_netstat uses the netstat command
+  #
+  # @return [String] the output of `netstat #{arguments} 2>/dev/null` or nil
+  def self.exec_netstat(additional_arguments=[])
+    Facter::Core::Execution.exec("#{self.get_netstat} #{additional_arguments.join(' ')}")
+  end
+  ##
+  # get_netstat looks up the netstat binary
+  #
+  # @return [String] path to the netstat binary
+  def self.get_netstat
+    common_paths=["/bin/netstat","/sbin/netstat","/usr/sbin/netstat","/usr/bin/netstat"]
+    common_paths.select{|path| File.executable?(path)}.first
+  end
+  
   ##
   # hpux_netstat_in is a delegate method that allows us to stub netstat -in
   # without stubbing exec.
