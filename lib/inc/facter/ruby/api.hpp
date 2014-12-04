@@ -51,6 +51,11 @@ namespace facter {  namespace ruby {
     typedef uintptr_t ID;
 
     /**
+     * See MRI documentation. This is a complex struct type; we only use it as an opaque object.
+     */
+    typedef void * rb_encoding_p;
+
+    /**
      * Macro to cast function pointers to a Ruby method.
      */
     #define RUBY_METHOD_FUNC(x) reinterpret_cast<VALUE(*)(...)>(x)
@@ -213,7 +218,11 @@ namespace facter {  namespace ruby {
         /**
          * See MRI documentation.
          */
-        VALUE (* const rb_str_new_cstr)(char const*);
+        VALUE (* const rb_enc_str_new)(char const*, long, rb_encoding_p);
+        /**
+         * See MRI documentation.
+         */
+        rb_encoding_p (* const rb_utf8_encoding)(void);
         /**
          * See MRI documentation.
          */
@@ -385,6 +394,28 @@ namespace facter {  namespace ruby {
          * @return Returns the Ruby value as a string.
          */
         std::string to_string(VALUE v) const;
+
+        /**
+         * Converts a C string to a Ruby UTF-8 encoded string value.
+         * @param s The C string.
+         * @param len The number of bytes in the C string.
+         * @return Returns the string as a UTF-8 encoded Ruby value.
+         */
+        VALUE utf8_value(char const* s, size_t len) const;
+
+        /**
+         * Converts a C string to a Ruby UTF-8 encoded string value.
+         * @param s The C string.
+         * @return Returns the string as a UTF-8 encoded Ruby value.
+         */
+        VALUE utf8_value(char const* s) const;
+
+        /**
+         * Converts a C++ string to a Ruby UTF-8 encoded string value.
+         * @param s The C++ string.
+         * @return Returns the string as a UTF-8 encoded Ruby value.
+         */
+        VALUE utf8_value(std::string const& s) const;
 
         /**
          * A utility function for wrapping a callback with a rescue clause.

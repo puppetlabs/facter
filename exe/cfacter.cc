@@ -8,6 +8,7 @@
 // Thus they can't be relied on to flush before program exit.
 // Use endl/ends or flush to force synchronization when necessary.
 #include <boost/nowide/iostream.hpp>
+#include <boost/nowide/args.hpp>
 
 // boost includes are not always warning-clean. Disable warnings that
 // cause problems before including the headers, then re-enable the warnings.
@@ -105,6 +106,9 @@ void log_queries(set<string> const& queries)
 int main(int argc, char **argv)
 {
     using namespace facter::logging;
+
+    // Fix args on Windows to be UTF-8
+    boost::nowide::args arg_utf8(argc, argv);
 
     try
     {

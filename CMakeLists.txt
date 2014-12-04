@@ -38,7 +38,7 @@ else()
 endif()
 
 # We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
-find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time thread regex log)
+find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time thread regex log locale)
 find_package(YAMLCPP REQUIRED)
 if (NOT WITHOUT_OPENSSL)
     find_package(OPENSSL)
@@ -146,6 +146,9 @@ else()
     # On non-Windows platforms, this just tests the local implementations.
     set(BOOST_NOWIDE_SKIP_TESTS ON CACHE BOOL "Disable tests in Boost.Nowide")
 endif()
+
+# Boost compilation options
+add_definitions(-DBOOST_LOG_WITHOUT_WCHAR_T)
 
 # Include vendor libraries
 add_subdirectory(vendor/gmock-1.7.0)

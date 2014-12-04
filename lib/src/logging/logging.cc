@@ -1,4 +1,5 @@
 #include <facter/logging/logging.hpp>
+#include <facter/util/locale.hpp>
 #include <vector>
 
 // boost includes are not always warning-clean. Disable warnings that
@@ -21,7 +22,6 @@
 #endif
 
 using namespace std;
-using boost::format;
 namespace expr = boost::log::expressions;
 namespace src = boost::log::sources;
 namespace attrs = boost::log::attributes;
@@ -35,11 +35,14 @@ namespace facter { namespace logging {
 
     void setup_logging(ostream &dst)
     {
+        // Initialize locale
+        facter::util::set_locale();
+
         // Remove existing sinks before adding a new one
         auto core = boost::log::core::get();
         core->remove_all_sinks();
 
-        auto sink = boost::log::add_console_log(dst);
+        auto sink = boost::log::add_console_log(dst, keywords::auto_flush = true);
 
         sink->set_formatter(
             expr::stream

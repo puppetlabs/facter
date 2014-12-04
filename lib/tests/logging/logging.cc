@@ -2,6 +2,8 @@
 #include <facter/logging/logging.hpp>
 #include <boost/log/sinks/sync_frontend.hpp>
 #include <boost/log/sinks/basic_sink_backend.hpp>
+#include <boost/nowide/convert.hpp>
+#include <boost/nowide/iostream.hpp>
 
 using namespace std;
 using namespace facter::logging;
@@ -147,4 +149,21 @@ TEST_F(facter_logging, on_message) {
     LOG_FATAL("fatal message");
     ASSERT_EQ(log_level::fatal, _last_callback_level);
     ASSERT_EQ("fatal message", _last_callback_message);
+}
+
+TEST_F(facter_logging, unicode) {
+    on_message([this](log_level level, string const& message) {
+        _last_callback_level = level;
+        _last_callback_message = message;
+        return false;
+    });
+
+    // Test various Unicode characters
+    const wstring symbols[] = {L"\u2122", L"\u2744", L"\u039b"};
+    for (auto s : symbols) {
+        auto utf8 = boost::nowide::narrow(s);
+        LOG_INFO(utf8);
+        ASSERT_EQ(log_level::info, _last_callback_level);
+        ASSERT_EQ(utf8, _last_callback_message);
+    }
 }

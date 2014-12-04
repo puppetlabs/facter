@@ -54,7 +54,8 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(rb_protect),
         LOAD_SYMBOL(rb_jump_tag),
         LOAD_SYMBOL(rb_int2inum),
-        LOAD_ALIASED_SYMBOL(rb_str_new_cstr, rb_str_new2),
+        LOAD_SYMBOL(rb_enc_str_new),
+        LOAD_SYMBOL(rb_utf8_encoding),
         LOAD_SYMBOL(rb_load),
         LOAD_SYMBOL(rb_raise),
         LOAD_SYMBOL(rb_block_proc),
@@ -180,7 +181,7 @@ namespace facter { namespace ruby {
 
         // Set SIGINT handling to system default
         // This prevents ruby from raising an interrupt exception.
-        rb_funcall(*rb_cObject, rb_intern("trap"), 2, rb_str_new_cstr("INT"), rb_str_new_cstr("SYSTEM_DEFAULT"));
+        rb_funcall(*rb_cObject, rb_intern("trap"), 2, utf8_value("INT"), utf8_value("SYSTEM_DEFAULT"));
 
         _initialized = true;
     }
@@ -220,8 +221,23 @@ namespace facter { namespace ruby {
     string api::to_string(VALUE v) const
     {
         v = rb_funcall(v, rb_intern("to_s"), 0);
-        size_t size = static_cast<size_t>(rb_num2ulong(rb_funcall(v, rb_intern("size"), 0)));
+        size_t size = static_cast<size_t>(rb_num2ulong(rb_funcall(v, rb_intern("bytesize"), 0)));
         return string(rb_string_value_ptr(&v), size);
+    }
+
+    VALUE api::utf8_value(char const* s, size_t len) const
+    {
+        return rb_enc_str_new(s, len, rb_utf8_encoding());
+    }
+
+    VALUE api::utf8_value(char const* s) const
+    {
+        return utf8_value(s, strlen(s));
+    }
+
+    VALUE api::utf8_value(std::string const& s) const
+    {
+        return utf8_value(s.c_str(), s.size());
     }
 
     VALUE api::rescue(function<VALUE()> callback, function<VALUE(VALUE)> rescue) const
@@ -291,7 +307,7 @@ namespace facter { namespace ruby {
             result << "\nbacktrace:\n";
 
             // Append ex.backtrace.join('\n')
-            result << to_string(rb_funcall(rb_funcall(ex, rb_intern("backtrace"), 0), rb_intern("join"), 1, rb_str_new_cstr("\n")));
+            result << to_string(rb_funcall(rb_funcall(ex, rb_intern("backtrace"), 0), rb_intern("join"), 1, utf8_value("\n")));
         }
 
         return result.str();
@@ -371,7 +387,7 @@ namespace facter { namespace ruby {
             return ptr->value();
         }
         if (auto ptr = dynamic_cast<string_value const*>(val)) {
-            return rb_str_new_cstr(ptr->value().c_str());
+            return utf8_value(ptr->value());
         }
         if (auto ptr = dynamic_cast<integer_value const*>(val)) {
             return rb_int2inum(static_cast<SIGNED_VALUE>(ptr->value()));
@@ -393,7 +409,7 @@ namespace facter { namespace ruby {
         if (auto ptr = dynamic_cast<map_value const*>(val)) {
             volatile VALUE hash = rb_hash_new();
             ptr->each([&](string const& name, value const* element) {
-                rb_hash_aset(hash, rb_str_new_cstr(name.c_str()), to_ruby(element));
+                rb_hash_aset(hash, utf8_value(name), to_ruby(element));
                 return true;
             });
             return hash;

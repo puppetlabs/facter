@@ -22,7 +22,7 @@ before_install:
   - wget https://github.com/doxygen/doxygen/archive/Release_1_8_7.tar.gz -O $HOME/doxygen-1.8.7.tgz
   - pushd $HOME && tar xzf doxygen-1.8.7.tgz && cd $HOME/doxygen-Release_1_8_7 && ./configure > /dev/null && make > /dev/null && sudo make install > /dev/null && popd
   # Install dependencies of cfacter
-  - sudo apt-get -y install libboost-filesystem1.55-dev libboost-program-options1.55-dev libboost-regex1.55-dev libboost-date-time1.55-dev libboost-thread1.55-dev libboost-log1.55-dev
+  - sudo apt-get -y install libboost-filesystem1.55-dev libboost-program-options1.55-dev libboost-regex1.55-dev libboost-date-time1.55-dev libboost-thread1.55-dev libboost-log1.55-dev libboost-locale1.55-dev
   - wget https://yaml-cpp.googlecode.com/files/yaml-cpp-0.5.1.tar.gz -O $HOME/yaml-cpp-0.5.1.tgz
   - pushd $HOME && tar xzf yaml-cpp-0.5.1.tgz && cd $HOME/yaml-cpp-0.5.1 && cmake -DBUILD_SHARED_LIBS=ON . && make > /dev/null && sudo make install > /dev/null && popd
   # Install libblkid-dev

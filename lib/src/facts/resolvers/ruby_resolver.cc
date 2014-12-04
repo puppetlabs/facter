@@ -55,7 +55,7 @@ namespace facter { namespace facts { namespace resolvers {
         ruby_fact_rescue(rb, [&]() {
             rb.rb_require("rbconfig");
             auto config = rb.lookup({"RbConfig", "CONFIG"});
-            auto val = rb.rb_hash_lookup(config, rb.rb_str_new_cstr("sitelibdir"));
+            auto val = rb.rb_hash_lookup(config, rb.utf8_value("sitelibdir"));
             sitedir = rb.to_string(val);
             return 0;
         }, "sitedir");
