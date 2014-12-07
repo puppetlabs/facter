@@ -43,8 +43,8 @@ class Facter::Util::IP::Windows
     interface_names = []
 
     network_adapter_configurations.map do |nic|
-      Facter::Util::WMI.execquery("SELECT * FROM Win32_NetworkAdapter WHERE Index = #{nic.Index} AND NetEnabled = TRUE").each do |nic|
-        interface_names << nic.NetConnectionId unless nic.NetConnectionId.nil? or nic.NetConnectionId.empty?
+      Facter::Util::WMI.execquery("SELECT * FROM Win32_NetworkAdapter WHERE Index = #{nic.Index} AND NetEnabled = TRUE").each do |sub_nic|
+        interface_names << sub_nic.NetConnectionId unless sub_nic.NetConnectionId.nil? or sub_nic.NetConnectionId.empty?
       end
     end
 
