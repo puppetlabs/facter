@@ -16,8 +16,8 @@ module Facter::Util::DHCPServers
   end
 
   def self.devices
-    if Facter::Core::Execution.which('nmcli')
-      Facter::Core::Execution.exec("nmcli d").split("\n").select {|d| d =~ /\sconnected/i }.collect{ |line| line.split[0] }
+    if Facter::Core::Execution.which('nmcli') and Facter::Core::Execution.exec("nmcli -t --fields RUNNING g status").strip() != "not running"
+      Facter::Core::Execution.exec("nmcli d 2>/dev/null").split("\n").select {|d| d =~ /\sconnected/i }.collect{ |line| line.split[0] }
     else
       []
     end
