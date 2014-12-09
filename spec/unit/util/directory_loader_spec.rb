@@ -71,7 +71,7 @@ describe Facter::Util::DirectoryLoader do
     end
 
     it "external facts should almost always precedence over all other facts" do
-      Facter.add("f1", :value => "lower_weight_fact") { has_weight(Facter::Util::DirectoryLoader::EXTERNAL_FACT_WEIGHT - 1) }
+      collection.add("f1", :value => "lower_weight_fact") { has_weight(Facter::Util::DirectoryLoader::EXTERNAL_FACT_WEIGHT - 1) }
       data = {"f1" => "external_fact"}
       write_to_file("data.yaml", YAML.dump(data))
 
