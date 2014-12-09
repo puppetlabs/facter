@@ -79,6 +79,20 @@ describe Facter::Util::DirectoryLoader do
 
       collection.value("f1").should == "external_fact"
     end
+
+    describe "given a custom weight" do
+      subject { Facter::Util::DirectoryLoader.new(tmpdir('directory_loader'), 10) }
+
+      it "should set that weight for loaded external facts" do
+        collection.add("f1", :value => "higher_weight_fact") { has_weight(11) }
+        data = {"f1" => "external_fact"}
+        write_to_file("data.yaml", YAML.dump(data))
+
+        subject.load(collection)
+
+        collection.value("f1").should == "higher_weight_fact"
+      end
+    end
   end
 
   def write_to_file(file_name, to_write)
