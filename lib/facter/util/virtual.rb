@@ -153,7 +153,13 @@ module Facter::Util::Virtual
   def self.lxc?
     path = Pathname.new('/proc/1/cgroup')
     return false unless path.readable?
-    in_lxc = path.readlines.any? {|l| l.split(":")[2].to_s.start_with? '/lxc/' }
+    begin
+      in_lxc = path.readlines.any? {|l| l.split(":")[2].to_s.start_with? '/lxc/' }
+    rescue Errno::EPERM => exc
+      # If we get "operation not permitted" here, it probably means we are
+      # running OpenVZ. We are not running LXC anyway, so...
+      return false
+    end
     return true if in_lxc
     return false
   end
@@ -164,7 +170,12 @@ module Facter::Util::Virtual
   def self.docker?
     path = Pathname.new('/proc/1/cgroup')
     return false unless path.readable?
-    in_docker = path.readlines.any? {|l| l.split(":")[2].to_s.start_with? '/docker/' }
+    begin
+      in_docker = path.readlines.any? {|l| l.split(":")[2].to_s.start_with? '/docker/' }
+    rescue Errno::EPERM => exc
+      # This can fail under OpenVZ, just like in .lxc?
+      return false
+    end
     return true if in_docker
     return false
   end
