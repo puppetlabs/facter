@@ -2,9 +2,13 @@ Native Facter
 =============
 
 An implementation of facter functionality in C++11, providing:
+
 * a shared library which gather facts about the system
 * an executable for standalone command line usage
 * a gem with a facter-like interface, for use in ruby applications
+
+Please see our [extensibility document](https://github.com/puppetlabs/cfacter/blob/master/Extensibility.md) to learn more
+about extending native facter using custom and external facts.
 
 Build Requirements
 ------------------
@@ -191,40 +195,3 @@ To generate API documentation, install doxygen 1.8.7 or later.
     $ doxygen
 
 To view the documentation, open `lib/html/index.html` in a web browser.
-
-
-Using The C++11 API
--------------------
-
-This section assumes that cfacter has been installed into the system.
-
-Here's a simple example of using the C++11 API to output all facts as YAML.
-
-    #include <facter/facts/collection.hpp>
-    #include <facter/logging/logging.hpp>
-    #include <iostream>
-
-    using namespace std;
-    using namespace facter::facts;
-    using namespace facter::logging;
-
-    int main()
-    {
-        // Setup logging to cout
-        setup_logging(cout);
-
-        // Override the default log level (warning) with the info level
-        set_level(log_level::info);
-
-        // Create a fact collection and write the collection out
-        collection facts;
-        facts.add_default_facts();
-        facts.add_external_facts();
-        facts.write(cout, format::yaml);
-        cout << endl;
-    }
-
-To build the above, link with libfacter:
-
-    $ g++ example.cc -o myfacter -std=c++11 -lfacter
-    $ ./myfacter
