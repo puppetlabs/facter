@@ -158,9 +158,7 @@ module Facter::Util::Virtual
     rescue Errno::EPERM => exc
       # If we get "operation not permitted" here, it probably means we are
       # running OpenVZ. We are not running LXC anyway, so...
-      if exc.to_s == "Operation not permitted - /proc/1/cgroup"
-        return false
-      end
+      return false
     end
     return true if in_lxc
     return false
@@ -176,9 +174,7 @@ module Facter::Util::Virtual
       in_docker = path.readlines.any? {|l| l.split(":")[2].to_s.start_with? '/docker/' }
     rescue Errno::EPERM => exc
       # This can fail under OpenVZ, just like in .lxc?
-      if exc.to_s == "Operation not permitted - /proc/1/cgroup"
-        return false
-      end
+      return false
     end
     return true if in_docker
     return false
