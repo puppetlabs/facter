@@ -46,8 +46,8 @@ Commands are expected to be executed in cmd.exe or Powershell. MinGW and Cygwin 
 
     * .\bootstrap mingw
 
-    * .\b2 toolset=gcc address-model=64 --build-type=minimal install --prefix=\<boost install path\>
-        * --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log can be used for a fast minimal build
+    * .\b2 toolset=gcc address-model=64 --build-type=minimal install --prefix=\<boost install path\> boost.locale.iconv=off
+        * --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log --with-locale can be used for a fast minimal build
 
     * Note that some libraries are expected to fail to build.
 

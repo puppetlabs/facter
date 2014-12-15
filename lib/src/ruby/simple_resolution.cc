@@ -71,7 +71,7 @@ namespace facter { namespace ruby {
         if (!result.first) {
             return ruby.nil_value();
         }
-        return ruby.rb_str_new_cstr(result.second.c_str());
+        return ruby.utf8_value(result.second);
     }
 
     VALUE simple_resolution::alloc(VALUE klass)

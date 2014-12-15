@@ -157,10 +157,11 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
 
         module mod(_facts);
 
+        string dir = LIBFACTER_TESTS_DIRECTORY "/fixtures/ruby/" + GetParam().file;
         VALUE result = ruby->rescue([&]() {
             // Do not construct C++ objects in a rescue callback
             // C++ stack unwinding will not take place if a Ruby exception is thrown!
-            ruby->rb_load(ruby->rb_str_new_cstr((LIBFACTER_TESTS_DIRECTORY "/fixtures/ruby/" + GetParam().file).c_str()), 0);
+            ruby->rb_load(ruby->utf8_value(dir), 0);
             return ruby->true_value();
         }, [&](VALUE ex) {
             LOG_ERROR("error while resolving custom facts in %1%: %2%", GetParam().file, ruby->exception_to_string(ex));
@@ -254,6 +255,7 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("empty_fact_with_value.rb", "foo", "{\n  int => 1,\n  bool_true => true,\n  bool_false => false,\n  double => 12.34,\n  string => \"foo\",\n  array => [\n    1,\n    2,\n    3\n  ]\n}"),
     ruby_test_parameters("empty_command.rb", log_level::error, { { "ERROR", "expected a non-empty String for first argument" } }, true),
     ruby_test_parameters("simple_command.rb", "foo", "\"bar\""),
+    ruby_test_parameters("uni\u1401dir/customfacts\u2122.rb", "somefact", "\"other\""),
     ruby_test_parameters("confine_missing_fact.rb", "foo", { { "kernel", "linux" } }),
     ruby_test_parameters("bad_command.rb", "foo"),
     ruby_test_parameters("simple_confine.rb", "foo", "\"bar\"", { { "someFact", "someValue" } }),

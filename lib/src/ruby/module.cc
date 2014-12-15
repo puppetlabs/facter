@@ -11,6 +11,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/nowide/iostream.hpp>
+#include <boost/nowide/convert.hpp>
 #include <stdexcept>
 #include <functional>
 
@@ -158,7 +159,7 @@ namespace facter { namespace ruby {
 
             // Call the block and don't log messages
             ruby.rescue([&]() {
-                ruby.rb_funcall(_on_message_block, ruby.rb_intern("call"), 2, level_to_symbol(level), ruby.rb_str_new_cstr(message.c_str()));
+                ruby.rb_funcall(_on_message_block, ruby.rb_intern("call"), 2, level_to_symbol(level), ruby.utf8_value(message));
                 return ruby.nil_value();
             }, [&](VALUE) {
                 // Logging can take place from locations where we do not expect Ruby exceptions to be raised
@@ -185,7 +186,7 @@ namespace facter { namespace ruby {
         ruby.rb_define_module_under(facter, "Util");
 
         // Define the methods on the Facter module
-        volatile VALUE version = ruby.rb_str_new_cstr(LIBFACTER_VERSION);
+        volatile VALUE version = ruby.utf8_value(LIBFACTER_VERSION);
         ruby.rb_const_set(facter, ruby.rb_intern("CFACTERVERSION"), version);
         ruby.rb_const_set(facter, ruby.rb_intern("FACTERVERSION"), version);
         ruby.rb_define_singleton_method(facter, "version", RUBY_METHOD_FUNC(ruby_version), 0);
@@ -234,10 +235,10 @@ namespace facter { namespace ruby {
         if (!ruby.is_nil(first)) {
             volatile VALUE features = ruby.rb_gv_get("$LOADED_FEATURES");
             path p = ruby.to_string(first);
-            ruby.rb_ary_push(features, ruby.rb_str_new_cstr((p / "facter.rb").string().c_str()));
-            ruby.rb_ary_push(features, ruby.rb_str_new_cstr((p / "facter" / "util" / "resolution.rb").string().c_str()));
-            ruby.rb_ary_push(features, ruby.rb_str_new_cstr((p / "facter" / "core" / "aggregate.rb").string().c_str()));
-            ruby.rb_ary_push(features, ruby.rb_str_new_cstr((p / "facter" / "core" / "execution.rb").string().c_str()));
+            ruby.rb_ary_push(features, ruby.utf8_value((p / "facter.rb").string()));
+            ruby.rb_ary_push(features, ruby.utf8_value((p / "facter" / "util" / "resolution.rb").string()));
+            ruby.rb_ary_push(features, ruby.utf8_value((p / "facter" / "core" / "aggregate.rb").string()));
+            ruby.rb_ary_push(features, ruby.utf8_value((p / "facter" / "core" / "execution.rb").string()));
         }
     }
 
@@ -372,7 +373,7 @@ namespace facter { namespace ruby {
                     options,
                     ruby.rb_intern("delete"),
                     1,
-                    ruby.rb_funcall(ruby.rb_str_new_cstr("name"), ruby.rb_intern("to_sym"), 0));
+                    ruby.rb_funcall(ruby.utf8_value("name"), ruby.rb_intern("to_sym"), 0));
         }
 
         f->define_resolution(name, options);
@@ -514,7 +515,7 @@ namespace facter { namespace ruby {
         volatile VALUE array = ruby.rb_ary_new_capa(instance->facts().size());
 
         instance->facts().each([&](string const& name, value const*) {
-            ruby.rb_ary_push(array, ruby.rb_str_new_cstr(name.c_str()));
+            ruby.rb_ary_push(array, ruby.utf8_value(name));
             return true;
         });
         return array;
@@ -530,7 +531,7 @@ namespace facter { namespace ruby {
         volatile VALUE hash = ruby.rb_hash_new();
 
         instance->facts().each([&](string const& name, value const* val) {
-            ruby.rb_hash_aset(hash, ruby.rb_str_new_cstr(name.c_str()), ruby.to_ruby(val));
+            ruby.rb_hash_aset(hash, ruby.utf8_value(name), ruby.to_ruby(val));
             return true;
         });
         return hash;
@@ -544,7 +545,7 @@ namespace facter { namespace ruby {
         instance->resolve_facts();
 
         instance->facts().each([&](string const& name, value const* val) {
-            ruby.rb_yield_values(2, ruby.rb_str_new_cstr(name.c_str()), ruby.to_ruby(val));
+            ruby.rb_yield_values(2, ruby.utf8_value(name), ruby.to_ruby(val));
             return true;
         });
         return self;
@@ -613,7 +614,7 @@ namespace facter { namespace ruby {
         volatile VALUE array = ruby.rb_ary_new_capa(instance->_additional_search_paths.size());
 
         for (auto const& path : instance->_additional_search_paths) {
-            ruby.rb_ary_push(array, ruby.rb_str_new_cstr(path.c_str()));
+            ruby.rb_ary_push(array, ruby.utf8_value(path));
         }
         return array;
     }
@@ -641,7 +642,7 @@ namespace facter { namespace ruby {
         volatile VALUE array = ruby.rb_ary_new_capa(instance->_external_search_paths.size());
 
         for (auto const& path : instance->_external_search_paths) {
-            ruby.rb_ary_push(array, ruby.rb_str_new_cstr(path.c_str()));
+            ruby.rb_ary_push(array, ruby.utf8_value(path));
         }
         return array;
     }
@@ -656,7 +657,7 @@ namespace facter { namespace ruby {
             return ruby.nil_value();
         }
 
-        return ruby.rb_str_new_cstr(path.c_str());
+        return ruby.utf8_value(path);
     }
 
     VALUE module::ruby_exec(VALUE self, VALUE command)
@@ -680,7 +681,7 @@ namespace facter { namespace ruby {
         }
 
         // Unfortunately we have to call to_sym rather than using ID2SYM, which is Ruby version dependent
-        volatile VALUE option = ruby.rb_hash_lookup(argv[1], ruby.rb_funcall(ruby.rb_str_new_cstr("on_fail"), ruby.rb_intern("to_sym"), 0));
+        volatile VALUE option = ruby.rb_hash_lookup(argv[1], ruby.rb_funcall(ruby.utf8_value("on_fail"), ruby.rb_intern("to_sym"), 0));
         if (ruby.is_symbol(option) && ruby.to_string(option) == "raise") {
             return execute_command(ruby.to_string(argv[0]), ruby.nil_value(), true);
         }
@@ -708,7 +709,7 @@ namespace facter { namespace ruby {
                     execution_options::redirect_stderr
                 });
             if (result.first) {
-                return ruby.rb_str_new_cstr(result.second.c_str());
+                return ruby.utf8_value(result.second);
             }
         }
         if (raise) {
@@ -847,7 +848,7 @@ namespace facter { namespace ruby {
         ruby.rescue([&]() {
             // Do not construct C++ objects in a rescue callback
             // C++ stack unwinding will not take place if a Ruby exception is thrown!
-             ruby.rb_load(ruby.rb_str_new_cstr(path.c_str()), 0);
+            ruby.rb_load(ruby.utf8_value(path), 0);
             return 0;
         }, [&](VALUE ex) {
             LOG_ERROR("error while resolving custom facts in %1%: %2%", path, ruby.exception_to_string(ex));
@@ -899,7 +900,7 @@ namespace facter { namespace ruby {
         if (!name) {
             ruby.rb_raise(*ruby.rb_eArgError, "invalid log level specified.", 0);
         }
-        return ruby.rb_funcall(ruby.rb_str_new_cstr(name), ruby.rb_intern("to_sym"), 0);
+        return ruby.rb_funcall(ruby.utf8_value(name), ruby.rb_intern("to_sym"), 0);
     }
 
 }}  // namespace facter::ruby
