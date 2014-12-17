@@ -62,7 +62,6 @@ set(LIBFACTER_COMMON_SOURCES
     "src/util/dynamic_library.cc"
     "src/util/environment.cc"
     "src/util/file.cc"
-    "src/util/locale.cc"
     "src/util/scoped_env.cc"
     "src/util/scoped_file.cc"
     "src/util/string.cc"
@@ -92,6 +91,7 @@ if (UNIX)
         "src/ruby/posix/api.cc"
         "src/util/posix/dynamic_library.cc"
         "src/util/posix/environment.cc"
+        "src/util/posix/locale.cc"
         "src/util/posix/scoped_addrinfo.cc"
         "src/util/posix/scoped_descriptor.cc"
     )
@@ -110,6 +110,7 @@ if (WIN32)
         "src/ruby/windows/api.cc"
         "src/util/windows/dynamic_library.cc"
         "src/util/windows/environment.cc"
+        "src/util/windows/locale.cc"
         "src/util/windows/registry.cc"
         "src/util/windows/system_error.cc"
         "src/util/windows/wmi.cc"

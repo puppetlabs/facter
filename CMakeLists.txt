@@ -38,7 +38,13 @@ else()
 endif()
 
 # We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
-find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time thread regex log locale)
+# For Windows, we've added locale to correctly generate a UTF-8 compatible default locale.
+set(BOOST_PKGS program_options system filesystem date_time thread regex log)
+if (WIN32)
+    list(APPEND BOOST_PKGS locale)
+endif()
+find_package(Boost 1.54 REQUIRED COMPONENTS ${BOOST_PKGS})
+
 find_package(YAMLCPP REQUIRED)
 if (NOT WITHOUT_OPENSSL)
     find_package(OPENSSL)
