@@ -11,7 +11,7 @@ namespace facter { namespace facts { namespace solaris {
     operating_system_resolver::data operating_system_resolver::collect_data(collection& facts)
     {
         // Default to the base implementation
-        auto result = resolvers::operating_system_resolver::collect_data(facts);
+        auto result = posix::operating_system_resolver::collect_data(facts);
         if (result.name == os::sunos) {
             result.name = os::solaris;
         }
