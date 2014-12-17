@@ -30,6 +30,7 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	$(MAKE) -j$(NUMPROC) install DESTDIR=$(CURDIR)/debian/tmp
+	rm -r $(CURDIR)/debian/tmp$(PREFIX)/include/boost
 
 %:
 	dh $@ --parallel=$(NUMPROC)

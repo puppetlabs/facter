@@ -76,6 +76,9 @@ rm -rf %{buildroot}
 %install
 make %{?_smp_mflags} install DESTDIR=%{buildroot}
 
+# These files are needed at buildtime, but not at runtime
+rm -r %{buildroot}%{_includedir}/boost
+
 %clean
 rm -rf %{buildroot}
 
