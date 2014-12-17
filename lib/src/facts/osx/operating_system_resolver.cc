@@ -12,7 +12,7 @@ namespace facter { namespace facts { namespace osx {
     operating_system_resolver::data operating_system_resolver::collect_data(collection& facts)
     {
         // Default to the base implementation
-        data result = resolvers::operating_system_resolver::collect_data(facts);
+        data result = posix::operating_system_resolver::collect_data(facts);
 
         execution::each_line("/usr/bin/sw_vers", [&](string& line) {
             // Split at the first ':'
