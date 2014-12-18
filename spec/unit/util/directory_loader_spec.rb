@@ -71,13 +71,27 @@ describe Facter::Util::DirectoryLoader do
     end
 
     it "external facts should almost always precedence over all other facts" do
-      Facter.add("f1", :value => "lower_weight_fact") { has_weight(Facter::Util::DirectoryLoader::EXTERNAL_FACT_WEIGHT - 1) }
+      collection.add("f1", :value => "lower_weight_fact") { has_weight(Facter::Util::DirectoryLoader::EXTERNAL_FACT_WEIGHT - 1) }
       data = {"f1" => "external_fact"}
       write_to_file("data.yaml", YAML.dump(data))
 
       subject.load(collection)
 
       collection.value("f1").should == "external_fact"
+    end
+
+    describe "given a custom weight" do
+      subject { Facter::Util::DirectoryLoader.new(tmpdir('directory_loader'), 10) }
+
+      it "should set that weight for loaded external facts" do
+        collection.add("f1", :value => "higher_weight_fact") { has_weight(11) }
+        data = {"f1" => "external_fact"}
+        write_to_file("data.yaml", YAML.dump(data))
+
+        subject.load(collection)
+
+        collection.value("f1").should == "higher_weight_fact"
+      end
     end
   end
 
