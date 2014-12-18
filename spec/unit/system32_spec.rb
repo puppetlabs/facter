@@ -12,7 +12,7 @@ describe "system32 fact" do
 
   describe "when running in 32-bit ruby" do
     it "resolves to sysnative" do
-      File.expects(:exists?).with(sysnative).returns(true)
+      File.expects(:exist?).with(sysnative).returns(true)
 
       expect(Facter.fact(:system32).value).to eq(sysnative)
     end
@@ -20,7 +20,7 @@ describe "system32 fact" do
 
   describe "when running in 64-bit ruby" do
     it "resolves to system32" do
-      File.expects(:exists?).with(sysnative).returns(false)
+      File.expects(:exist?).with(sysnative).returns(false)
 
       expect(Facter.fact(:system32).value).to eq(system32)
     end
