@@ -31,6 +31,13 @@ module Facter::Util::IP
       :macaddress => /(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/,
       :netmask  => /.*\s+netmask (\S+)\s.*/
     },
+    :aix   => {
+      :ipaddress  => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
+      :ipaddress6 => /inet6 ((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
+      :netmask  => /netmask\s+0x(\w{8})/,
+      :mtu => /mtu\s+(\d+)/,
+      :macaddress => /^Hardware\sAddress:\s(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
+    },
     :windows => {}
   }
 
@@ -40,7 +47,7 @@ module Facter::Util::IP
   end
 
   def self.convert_from_hex?(kernel)
-    kernels_to_convert = [:sunos, :openbsd, :netbsd, :freebsd, :darwin, :"hp-ux", :"gnu/kfreebsd", :dragonfly]
+    kernels_to_convert = [:sunos, :openbsd, :netbsd, :freebsd, :darwin, :"hp-ux", :"gnu/kfreebsd", :dragonfly, :aix]
     kernels_to_convert.include?(kernel)
   end
 
@@ -73,7 +80,7 @@ module Facter::Util::IP
 
   def self.get_all_interface_output
     case Facter.value(:kernel)
-    when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
+    when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly', 'AIX'
       output = Facter::Util::IP.exec_ifconfig(["-a","2>/dev/null"])
     when 'SunOS'
       output = Facter::Util::IP.exec_ifconfig(["-a"])
@@ -106,6 +113,23 @@ module Facter::Util::IP
     common_paths=["/bin/ifconfig","/sbin/ifconfig","/usr/sbin/ifconfig"]
     common_paths.select{|path| File.executable?(path)}.first
   end
+
+  ##
+  # exec_netstat uses the netstat command
+  #
+  # @return [String] the output of `netstat #{arguments} 2>/dev/null` or nil
+  def self.exec_netstat(additional_arguments=[])
+    Facter::Core::Execution.exec("#{self.get_netstat} #{additional_arguments.join(' ')}")
+  end
+  ##
+  # get_netstat looks up the netstat binary
+  #
+  # @return [String] path to the netstat binary
+  def self.get_netstat
+    common_paths=["/bin/netstat","/sbin/netstat","/usr/sbin/netstat","/usr/bin/netstat"]
+    common_paths.select{|path| File.executable?(path)}.first
+  end
+  
   ##
   # hpux_netstat_in is a delegate method that allows us to stub netstat -in
   # without stubbing exec.
@@ -151,6 +175,9 @@ module Facter::Util::IP
        hpux_lanscan.scan(/(\dx\S+).*UP\s+(\w+\d+)/).each {|i| mac = i[0] if i.include?(interface) }
        mac = mac.sub(/0x(\S+)/,'\1').scan(/../).join(":")
        output = ifc + "\n" + mac
+    when 'AIX'
+        output = Facter::Util::IP.ifconfig_interface(interface) + "\n" + aix_get_mtu(interface) + "\n" + aix_get_macadress(interface)
+        output
     end
     output
   end
@@ -161,6 +188,34 @@ module Facter::Util::IP
 
   def self.hpux_lanscan
     Facter::Core::Execution.exec("/usr/sbin/lanscan")
+  end
+
+  def self.aix_lsattr_interface(interface)
+    Facter::Core::Execution.exec("/usr/sbin/lsattr -El #{interface}")
+  end
+
+  def self.aix_entstat_interface(interface)
+    if interface[0..1] != "lo"
+      Facter::Core::Execution.exec("/usr/bin/entstat #{interface}")
+    else
+      return ""
+    end
+  end
+
+  def self.aix_get_mtu(interface)
+    aix_lsattr_interface(interface).each_line do |s|
+      if s =~ /mtu\s+(\d+)/
+        return s
+      end
+    end
+  end
+
+  def self.aix_get_macadress(interface)
+    aix_entstat_interface(interface).each_line do |s|
+      if s =~ /^Hardware\sAddress:\s(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
+        return s
+      end
+    end
   end
 
   def self.get_output_for_interface_and_label(interface, label)
