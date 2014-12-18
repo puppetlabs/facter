@@ -1,1 +1,3 @@
-usr/
+usr/include/facter
+usr/lib/
+usr/bin/
