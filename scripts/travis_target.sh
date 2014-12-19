@@ -24,7 +24,7 @@ function travis_make()
     if [ $1 == "cpplint" ]; then
         export MAKE_TARGET="cpplint"
     else
-        export MAKE_TARGET="all_unity"
+        export MAKE_TARGET="all"
     fi
     make $MAKE_TARGET
     if [ $? -ne 0 ]; then
@@ -40,10 +40,12 @@ function travis_make()
             exit 1
         fi
 
+        if [ $1 == "debug" ]; then
+            coveralls --gcov-options '\-lp' -r ..
+        fi
+
         # Install into the system for the gem
-        # Use install fast to avoid dependency checks that don't
-        # co-operate with the unity build.
-        sudo make install/fast
+        sudo make install
         if [ $? -ne 0 ]; then
             echo "install failed."
             exit 1
