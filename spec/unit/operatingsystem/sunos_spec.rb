@@ -84,7 +84,6 @@ describe Facter::Operatingsystem::SunOS do
       'Solaris 10 5/09 s10x_u7wos_08 X86'            => '10_u7',
       'Solaris 10 10/09 s10x_u8wos_08a X86'          => '10_u8',
       'Oracle Solaris 10 9/10 s10x_u9wos_14a X86'    => '10_u9',
-      'Oracle Solaris 10 9/10 s10x_u9wos_14a X86'    => '10_u9',
       'Oracle Solaris 10 8/11 s10x_u10wos_17b X86'   => '10_u10',
       'Oracle Solaris 11 11/11 X86'                  => '11 11/11',
       'Oracle Solaris 11.1 SPARC'                    => '11.1'
