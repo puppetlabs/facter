@@ -39,7 +39,10 @@ TEST(uptime_resolver, parse_executable_uptime) {
         {"  3:01pm  up 4496 day(s), 21:19,  32 users,  load average: 0.61, 0.62, 0.62",  4496*24*60*60 + 21*60*60 + 19*60},
         {"  02:42PM   up 41 days,   2:38,  0 users,  load average: 0.38, 0.70, 0.55",      41*24*60*60 +  2*60*60 + 38*60},
         {" 18:13:29  up 25 days, 21:36,  0 users,  load average: 0.00, 0.00, 0.00",        25*24*60*60 + 21*60*60 + 36*60},
-        {" 13:36:05 up 118 days,  1:15,  1 user,  load average: 0.00, 0.00, 0.00",        118*24*60*60 +  1*60*60 + 15*60}
+        {" 13:36:05 up 118 days,  1:15,  1 user,  load average: 0.00, 0.00, 0.00",        118*24*60*60 +  1*60*60 + 15*60},
+        {"10:27am  up 1 day  7:26,  1 user,  load average: 0.00, 0.00, 0.00",               1*24*60*60 +  7*60*60 + 26*60},
+        {"22:45pm up 0:-6, 1 user, load average: 0.00, 0.00, 0.00",                                                  6*60},
+        {"22:45pm up 1 day 0:-6, 1 user, load average: 0.00, 0.00, 0.00",                   1*24*60*60 +             6*60}
     };
     for (auto t : test_cases) {
         EXPECT_EQ(posix::uptime_resolver::parse_uptime(t.first), t.second);
