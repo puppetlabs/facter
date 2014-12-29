@@ -66,7 +66,7 @@ class Facter::Util::DirectoryLoader
       elsif data == {} or data == nil
         Facter.warn "Fact file #{file} was parsed but returned an empty data set"
       else
-        data.each { |p,v| collection.add(p, :value => v) { p(weight); has_weight(weight) } }
+        data.each { |p,v| collection.add(p, :value => v) { has_weight(weight) } }
       end
     end
   end
