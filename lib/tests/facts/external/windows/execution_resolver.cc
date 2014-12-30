@@ -21,7 +21,7 @@ TEST(facter_facts_external_windows_execution_resolver, can_resolve) {
     ASSERT_TRUE(resolver.can_resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/facts.bat"));
 }
 
-TEST(facter_facts_external_posix_execution_resolver, can_resolve_relative_fails) {
+TEST(facter_facts_external_windows_execution_resolver, can_resolve_relative_fails) {
     test_with_relative_path fixture("foo.bat", "");
 
     execution_resolver resolver;
@@ -49,7 +49,7 @@ TEST(facter_facts_external_windows_execution_resolver, resolve_execution) {
     ASSERT_EQ("value2", facts.get<string_value>("exe_fact4")->value());
 }
 
-TEST(facter_facts_external_posix_execution_resolver, resolve_execution_relative_fails) {
+TEST(facter_facts_external_windows_execution_resolver, resolve_execution_relative_fails) {
     test_with_relative_path fixture("foo.bat", "");
 
     execution_resolver resolver;

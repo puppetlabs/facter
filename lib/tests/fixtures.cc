@@ -25,7 +25,7 @@ namespace facter { namespace testing {
 
     test_with_relative_path::test_with_relative_path(string filename, string contents)
     {
-        path dir("test_with_relative_path");
+        path dir(::testing::UnitTest::GetInstance()->current_test_info()->name());
         if (exists(dir)) {
             throw runtime_error(dir.string()+" already exists");
         }
