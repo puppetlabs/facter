@@ -107,11 +107,11 @@ int main(int argc, char **argv)
 {
     using namespace facter::logging;
 
-    // Fix args on Windows to be UTF-8
-    boost::nowide::args arg_utf8(argc, argv);
-
     try
     {
+        // Fix args on Windows to be UTF-8
+        boost::nowide::args arg_utf8(argc, argv);
+
         // Setup logging
         setup_logging(boost::nowide::cerr);
 
@@ -265,6 +265,8 @@ int main(int argc, char **argv)
         }
         facts.write(boost::nowide::cout, fmt, queries);
         boost::nowide::cout << endl;
+
+        return EXIT_SUCCESS;
     } catch (exception& ex) {
         LOG_FATAL("unhandled exception: %1%", ex.what());
         return EXIT_FAILURE;

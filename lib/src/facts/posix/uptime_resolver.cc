@@ -16,19 +16,19 @@ namespace facter { namespace facts { namespace posix {
         int days, hours, minutes;
 
         if (re_search(output, "(\\d+) day(?:s|\\(s\\))?,?\\s+(\\d+):-?(\\d+)", &days, &hours, &minutes)) {
-            return 86400 * days + 3600 * hours + 60 * minutes;
+            return 86400ll * days + 3600ll * hours + 60ll * minutes;
         } else if (re_search(output, "(\\d+) day(?:s|\\(s\\))?,\\s+(\\d+) hr(?:s|\\(s\\))?,", &days, &hours)) {
-            return 86400 * days + 3600 * hours;
+            return 86400ll * days + 3600ll * hours;
         } else if (re_search(output, "(\\d+) day(?:s|\\(s\\))?,\\s+(\\d+) min(?:s|\\(s\\))?,", &days, &minutes)) {
-            return 86400 * days + 60 * minutes;
+            return 86400ll * days + 60ll * minutes;
         } else if (re_search(output, "(\\d+) day(?:s|\\(s\\))?,", &days)) {
-            return 86400 * days;
+            return 86400ll * days;
         } else if (re_search(output, "up\\s+(\\d+):-?(\\d+),", &hours, &minutes)) {
-            return 3600 * hours + 60 * minutes;
+            return 3600ll * hours + 60ll * minutes;
         } else if (re_search(output, "(\\d+) hr(?:s|\\(s\\))?,", &hours)) {
-            return 3600 * hours;
+            return 3600ll * hours;
         } else if (re_search(output, "(\\d+) min(?:s|\\(s\\))?,", &minutes)) {
-            return 60 * minutes;
+            return 60ll * minutes;
         }
         return -1;
     }
