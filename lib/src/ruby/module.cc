@@ -769,10 +769,10 @@ namespace facter { namespace ruby {
             return dir.string();
         });
 
-        // Remove anything that is empty
-        remove_if(_search_paths.begin(), _search_paths.end(), [](string const& path) {
-            return path.empty();
-        });
+        // Remove anything that is empty using the erase-remove idiom.
+        _search_paths.erase(
+            remove_if(begin(_search_paths), end(_search_paths), [](string const& path) { return path.empty(); }),
+            end(_search_paths));
     }
 
     VALUE module::load_fact(VALUE name)
