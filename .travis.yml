@@ -28,11 +28,15 @@ before_install:
   - pushd $HOME && tar xzf yaml-cpp-0.5.1.tgz && cd $HOME/yaml-cpp-0.5.1 && cmake -DBUILD_SHARED_LIBS=ON . && make > /dev/null && sudo make install > /dev/null && popd
   # Install libblkid-dev
   - sudo apt-get -y install libblkid-dev
+  # Install coveralls.io update utility
   - sudo pip install cpp-coveralls
+  # Install cppcheck
+  - sudo apt-get -y install cppcheck
 
 script: ./scripts/travis_target.sh
 
 env:
   - TRAVIS_TARGET=CPPLINT
+  - TRAVIS_TARGET=CPPCHECK
   - TRAVIS_TARGET=RELEASE
   - TRAVIS_TARGET=DEBUG
