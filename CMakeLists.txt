@@ -8,6 +8,7 @@ endif()
 
 option(BOOST_STATIC "Use Boost's static libraries" OFF)
 option(YAMLCPP_STATIC "Use yaml-cpp's static libraries" OFF)
+option(COVERALLS "Generate code coverage for Coveralls.io" OFF)
 
 enable_testing()
 
@@ -109,11 +110,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     else()
         set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -Wno-deprecated")
     endif()
-
-    # Add Code Coverage
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-    endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # maybe-uninitialized is a relatively new GCC warning that Boost 1.57 violates; disable it for now until it's available in Clang as well
     # it's also sometimes wrong
@@ -124,14 +120,14 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     if (NOT "${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
         set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -Wextra")
     endif()
-
-    # Add Code Coverage
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-    endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     #set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wall")
+endif()
+
+# Add Code Coverage
+if (COVERALLS)
+    set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 endif()
 
 # Force all binaries to be created in the same location.
