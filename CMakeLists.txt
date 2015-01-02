@@ -109,6 +109,11 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     else()
         set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -Wno-deprecated")
     endif()
+
+    # Add Code Coverage
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+    endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # maybe-uninitialized is a relatively new GCC warning that Boost 1.57 violates; disable it for now until it's available in Clang as well
     # it's also sometimes wrong
@@ -118,6 +123,11 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas -Wno-missing-field-initializers")
     if (NOT "${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
         set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -Wextra")
+    endif()
+
+    # Add Code Coverage
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
     endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
