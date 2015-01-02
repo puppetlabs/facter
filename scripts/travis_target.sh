@@ -13,7 +13,7 @@ function travis_make()
     mkdir $1 && cd $1
 
     # Generate build files
-    [ $1 == "debug" ] && export CMAKE_VARS="  -DCMAKE_BUILD_TYPE=Debug "
+    [ $1 == "debug" ] && export CMAKE_VARS="-DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=ON"
     $HOME/bin/cmake $CMAKE_VARS ..
     if [ $? -ne 0 ]; then
         echo "cmake failed."
