@@ -19,6 +19,11 @@ before_install:
   # grab a pre-built cmake 2.8.12 from s3
   - wget https://s3.amazonaws.com/kylo-pl-bucket/cmake_install.tar.bz2
   - tar xjvf cmake_install.tar.bz2 --strip 1 -C $HOME
+  # grab a pre-built cppcheck from s3
+  - wget https://s3.amazonaws.com/kylo-pl-bucket/pcre-8.36_install.tar.bz2
+  - sudo tar xjvf pcre-8.36_install.tar.bz2 --strip 1 -C /usr/local
+  - wget https://s3.amazonaws.com/kylo-pl-bucket/cppcheck-1.67_install.tar.bz2
+  - sudo tar xjvf cppcheck-1.67_install.tar.bz2 --strip 1 -C /usr/local
   # Install doxygen
   - wget https://github.com/doxygen/doxygen/archive/Release_1_8_7.tar.gz -O $HOME/doxygen-1.8.7.tgz
   - pushd $HOME && tar xzf doxygen-1.8.7.tgz && cd $HOME/doxygen-Release_1_8_7 && ./configure > /dev/null && make > /dev/null && sudo make install > /dev/null && popd
@@ -30,8 +35,6 @@ before_install:
   - sudo apt-get -y install libblkid-dev
   # Install coveralls.io update utility
   - sudo pip install cpp-coveralls
-  # Install cppcheck
-  - sudo apt-get -y install cppcheck
 
 script: ./scripts/travis_target.sh
 

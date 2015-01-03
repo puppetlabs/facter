@@ -216,7 +216,7 @@ else()
 endif()
 
 add_custom_target(cppcheck
-    COMMAND cppcheck --enable=performance "${PROJECT_SOURCE_DIR}/lib" "${PROJECT_SOURCE_DIR}/exe"
+    COMMAND cppcheck --enable=performance --error-exitcode=2 --quiet "${PROJECT_SOURCE_DIR}/lib" "${PROJECT_SOURCE_DIR}/exe"
 )
 
 add_subdirectory(lib)
