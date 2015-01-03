@@ -2,8 +2,8 @@
 
 # Travis cpp jobs construct a matrix based on environment variables
 # (and the value of 'compiler'). In order to test multiple builds
-# (release/debug/cpplint), this uses a TRAVIS_TARGET env var to
-# do the right thing.
+# (release/debug/cpplint/cppcheck), this uses a TRAVIS_TARGET env
+# var to do the right thing.
 #
 # Note that it assumes cmake is at $HOME/bin which is an artifact
 # of the before_install step in this project's .travis.yml.
@@ -23,6 +23,8 @@ function travis_make()
     # Build cfacter
     if [ $1 == "cpplint" ]; then
         export MAKE_TARGET="cpplint"
+    elif [ $1 == "cppcheck" ]; then
+        export MAKE_TARGET="cppcheck"
     else
         export MAKE_TARGET="all"
     fi
@@ -32,8 +34,18 @@ function travis_make()
         exit 1
     fi
 
-    # Run tests if not doing cpplint
-    if [ $1 != "cpplint" ]; then
+    # Run tests if not doing cpplint/cppcheck
+    if [ $1 == "cpplint" ]; then
+        # Verify documentation
+        pushd ../lib
+        doxygen
+        if [[ -s html/warnings.txt ]]; then
+            cat html/warnings.txt
+            echo "documentation failed."
+            exit 1
+        fi
+        popd
+    elif [ $1 != "cppcheck" ]; then
         LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so ctest -V 2>&1 | c++filt
         if [ ${PIPESTATUS[0]} -ne 0 ]; then
             echo "tests reported an error."
@@ -75,22 +87,13 @@ function travis_make()
             exit 1
         fi
         popd
-    else
-        # Verify documentation
-        pushd ../lib
-        doxygen
-        if [[ -s html/warnings.txt ]]; then
-            cat html/warnings.txt
-            echo "documentation failed."
-            exit 1
-        fi
-        popd
     fi
 }
 
 case $TRAVIS_TARGET in
-  "CPPLINT" ) travis_make cpplint ;;
-  "RELEASE" ) travis_make release ;;
-  "DEBUG" )   travis_make debug ;;
-  *)          echo "Nothing to do!"
+  "CPPLINT" )  travis_make cpplint ;;
+  "CPPCHECK" ) travis_make cppcheck ;;
+  "RELEASE" )  travis_make release ;;
+  "DEBUG" )    travis_make debug ;;
+  *)           echo "Nothing to do!"
 esac
