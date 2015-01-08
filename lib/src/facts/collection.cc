@@ -190,7 +190,7 @@ namespace facter { namespace facts {
                     ++it;
                     continue;
                 }
-                _resolver_map.erase(it++);
+                it = _resolver_map.erase(it);
             }
         }
 
