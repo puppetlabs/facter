@@ -1,4 +1,6 @@
-$env:TEMP='C:\cygwin64\tmp'
+if (!(Test-Path $env:TEMP)) {
+    $env:TEMP='C:\cygwin64\tmp'
+}
 
 # Starting from a base Windows Server 2008r2 or 2012r2 installation, install required tools, setup the PATH, and download and build software.
 # This script can be run directly from the web using "iex ((new-object net.webclient).DownloadString('<url_to_raw>'))"
@@ -28,8 +30,7 @@ if ($arch -eq 64) {
 }
 $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExceptions}"
 
-$boostVerNum = "1.55.0"
-$boostVer = "boost_$(${boostVerNum}.Replace('.', '_'))"
+$boostVer = "boost_1_55_0"
 $boostPkg = "${boostVer}-${mingwVer}"
 
 $yamlCppVerNum = "0.5.1"
@@ -61,7 +62,7 @@ mkdir -Force $toolsDir
 
 if ($buildSource) {
   ## Download, build, and install Boost
-  (New-Object net.webclient).DownloadFile("http://iweb.dl.sourceforge.net/project/boost/boost/$boostVerNum/$boostVer.7z", "$toolsDir\$boostVer.7z")
+  (New-Object net.webclient).DownloadFile("http://downloads.sourceforge.net/boost/$boostVer.7z", "$toolsDir\$boostVer.7z")
   & 7za x "${boostVer}.7z" | FIND /V "ing "
   cd $boostVer
 
