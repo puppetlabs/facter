@@ -32,6 +32,8 @@ Optional Build Libraries
 Initial Setup
 -------------
 
+Note: Testing custom facts requires Ruby 1.9+ with libruby built as a dynamic library; that often implies development builds of Ruby.
+
 ### Setup on Fedora 20
 
 The following will install all required tools and libraries:
@@ -164,7 +166,7 @@ You can install cfacter into your system:
     $ cd release
     $ make && sudo make install
 
-By default, cfacter will install files into `/usr/local/bin`, `/usr/local/lib`, and `/usr/local/include`.
+By default, cfacter will install files into `/usr/local/bin`, `/usr/local/lib`, and `/usr/local/include`. If the project is configured with Ruby in the PATH, cfacter.rb will be installed to that Ruby's vendor dir.
 
 To install to a different location, set the install prefix:
 

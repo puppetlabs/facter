@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.12)
 
-find_package(Ruby)
+find_package(Ruby 1.9)
 
 # Set the common (platform-independent) sources
 set(LIBFACTER_TESTS_COMMON_SOURCES
@@ -44,7 +44,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
 set(CMAKE_CXX_FLAGS ${FACTER_CXX_FLAGS})
 
 # Add the ruby tests if there's a ruby installed
-if (RUBY_VERSION VERSION_GREATER '1.8.7')
+if (RUBY_FOUND)
     set(LIBFACTER_TESTS_COMMON_SOURCES ${LIBFACTER_TESTS_COMMON_SOURCES} "ruby/ruby.cc")
 endif()
 
