@@ -80,7 +80,6 @@ namespace facter { namespace facts { namespace solaris {
     void zpool_resolver::resolve(collection& facts)
     {
         // Solaris ZFS still follows a simple linear versioning
-        string val;
         string version;
         vector<string> nver;
         re_adapter re_zpool_version("ZFS pool version (\\d+)[.]");

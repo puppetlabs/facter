@@ -291,7 +291,7 @@ namespace facter { namespace execution {
             return { true, move(result) };
         } catch (child_exit_exception &e) {
             if (options[execution_options::throw_on_nonzero_exit]) {
-                throw e;
+                throw;
             } else {
                 LOG_DEBUG("%1% (%2%): %3%", e.what(), e.status_code(), system_error());
                 return { false, move(e.output()) };

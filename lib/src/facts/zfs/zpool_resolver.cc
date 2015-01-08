@@ -140,7 +140,6 @@ namespace facter { namespace facts { namespace zfs {
         * Solaris ZFS still follows a simple linear versioning
         */
          string val;
-         string version;
          vector<string> nver;
          re_adapter re_zpool_nversion("\\s*(\\d+)[ ]");
          execution::each_line(zpool_cmd(), {"upgrade", "-v"}, [&] (string& line) {
