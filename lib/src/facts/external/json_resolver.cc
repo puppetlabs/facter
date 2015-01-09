@@ -160,7 +160,7 @@ namespace facter { namespace facts { namespace external {
             }
         }
 
-        void check_initialized()
+        void check_initialized() const
         {
             if (!_initialized) {
                 throw external::external_fact_exception("expected document to contain an object.");

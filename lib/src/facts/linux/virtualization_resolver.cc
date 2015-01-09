@@ -192,7 +192,7 @@ namespace facter { namespace facts { namespace linux {
             }
             return true;
         });
-        return {};
+        return value;
     }
 
     string virtualization_resolver::get_xen_vm()
