@@ -98,9 +98,7 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(ruby_init),
         LOAD_SYMBOL(ruby_options),
         LOAD_SYMBOL(ruby_cleanup),
-        _library(move(library)),
-        _initialized(false),
-        _include_stack_trace(false)
+        _library(move(library))
     {
     }
 

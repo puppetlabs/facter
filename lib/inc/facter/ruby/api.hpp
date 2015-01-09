@@ -580,11 +580,11 @@ namespace facter {  namespace ruby {
         static int hash_for_each_thunk(VALUE key, VALUE value, VALUE arg);
 
         facter::util::dynamic_library _library;
-        VALUE _nil;
-        VALUE _true;
-        VALUE _false;
-        bool _initialized;
-        bool _include_stack_trace;
+        VALUE _nil = 0u;
+        VALUE _true = 0u;
+        VALUE _false = 0u;
+        bool _initialized = false;
+        bool _include_stack_trace = false;
     };
 
 }}  // namespace facter::ruby
