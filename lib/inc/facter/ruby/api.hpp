@@ -583,8 +583,8 @@ namespace facter {  namespace ruby {
         VALUE _nil = 0u;
         VALUE _true = 0u;
         VALUE _false = 0u;
-        bool _initialized;
-        bool _include_stack_trace;
+        bool _initialized = false;
+        bool _include_stack_trace = false;
     };
 
 }}  // namespace facter::ruby
