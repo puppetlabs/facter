@@ -8,5 +8,5 @@ Gem::Specification.new do |s|
   s.homepage    = "http://puppetlabs.com"
   s.license     = 'Apache-2.0'
   s.files       = ['lib/cfacter.rb']
-  s.add_runtime_dependency 'ffi', '1.9.3'
+  s.add_runtime_dependency 'ffi', '~> 1.9.6'
 end
