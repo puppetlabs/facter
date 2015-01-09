@@ -55,6 +55,12 @@ module Facter::Util::Partitions
       end
     end
     
+    def self.label(partition)
+      if Facter::Core::Execution.which('blkid')
+        Facter::Core::Execution.exec("blkid #{File.join('/dev', partition)}").scan(/LABEL="([^"]*)"/).flatten.first
+      end
+    end
+    
     private
     def self.read_size(partition)
       if device = partition.match(/(\D+)/)[1] and File.readable?(File.join(SYSFS_BLOCK_DIRECTORY, device, partition, 'size'))
