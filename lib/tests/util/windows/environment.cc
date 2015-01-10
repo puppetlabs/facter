@@ -23,7 +23,7 @@ TEST(facter_util_environment, search_paths_empty_path) {
     environment::reload_search_paths();
 
     auto paths = environment::search_paths();
-    ASSERT_EQ(0u, count(paths.begin(), paths.end(), ""));
+    ASSERT_EQ(0u, static_cast<unsigned int>(count(paths.begin(), paths.end(), "")));
 
     ASSERT_TRUE(environment::set("PATH", value));
     environment::reload_search_paths();

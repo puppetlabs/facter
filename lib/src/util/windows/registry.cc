@@ -10,7 +10,7 @@ using namespace std;
 namespace facter { namespace util { namespace windows {
 
     registry_exception::registry_exception(string const& message) :
-        registry_exception(message)
+        runtime_error(message)
     {
     }
 
