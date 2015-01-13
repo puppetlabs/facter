@@ -187,7 +187,7 @@ OPTIONS
 
     def self.load_puppet
       require 'puppet'
-      Puppet.parse_config
+      Puppet.initialize_settings
 
       # If you've set 'vardir' but not 'libdir' in your
       # puppet.conf, then the hook to add libdir to $:
