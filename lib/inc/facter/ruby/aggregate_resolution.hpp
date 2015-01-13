@@ -69,6 +69,7 @@ namespace facter { namespace ruby {
         // Helper functions
         static VALUE deep_merge(api const& ruby, VALUE left, VALUE right);
 
+        VALUE _self;
         VALUE _block;
         std::map<VALUE, ruby::chunk> _chunks;
     };

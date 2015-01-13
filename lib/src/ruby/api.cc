@@ -29,6 +29,8 @@ namespace facter { namespace ruby {
     // Default to cleaning up the VM on shutdown
     bool api::cleanup = true;
 
+    set<VALUE> api::_data_objects;
+
     api::api(dynamic_library library) :
         LOAD_SYMBOL(rb_intern),
         LOAD_SYMBOL(rb_const_get),
@@ -104,6 +106,16 @@ namespace facter { namespace ruby {
 
     api::~api()
     {
+        // API is shutting down; free all remaining data objects
+        // Destructors may unregister the data object, so increment the iterator before freeing
+        for (auto it = _data_objects.begin(); it != _data_objects.end();) {
+            auto data = reinterpret_cast<RData*>(*it);
+            ++it;
+            if (data->dfree) {
+                data->dfree(data->data);
+                data->dfree = nullptr;
+            }
+        }
         if (_initialized && _library.first_load() && cleanup) {
             ruby_cleanup(0);
         }

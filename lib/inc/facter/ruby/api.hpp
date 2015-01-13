@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <set>
 #include <functional>
 #include <memory>
 #include <initializer_list>
@@ -559,6 +560,38 @@ namespace facter {  namespace ruby {
         bool equals(VALUE first, VALUE second) const;
 
         /**
+         * Gets the underlying native instance from a Ruby data object.
+         * The Ruby object must have been allocated with rb_data_object_alloc.
+         * @tparam T The underlying native type.
+         * @param obj The Ruby data object to get the native instance for.
+         * @return Returns a pointer to the underlying native type.
+         */
+        template <typename T>
+        T* to_native(VALUE obj) const
+        {
+            return reinterpret_cast<T*>(reinterpret_cast<RData*>(obj)->data);
+        }
+
+        /**
+         * Registers a data object for cleanup when the API is destructed.
+         * The object must have been created with rb_data_object_alloc.
+         * @param obj The data object to register.
+         */
+        void register_data_object(VALUE obj) const
+        {
+            _data_objects.insert(obj);
+        }
+
+        /**
+         * Unregisters a data object.
+         * @param obj The data object to unregister.
+         */
+        void unregister_data_object(VALUE obj) const
+        {
+            _data_objects.erase(obj);
+        }
+
+        /**
          * Global flag to disable Ruby VM cleanup.
          * This should be set to false in any forked child processes.
          */
@@ -578,6 +611,23 @@ namespace facter {  namespace ruby {
         static VALUE rescue_thunk(VALUE parameter, VALUE exception);
         static VALUE protect_thunk(VALUE parameter);
         static int hash_for_each_thunk(VALUE key, VALUE value, VALUE arg);
+
+        static std::set<VALUE> _data_objects;
+
+        // Represents object data
+        // This definition comes from Ruby (unfortunately)
+        struct RData
+        {
+            VALUE flags;
+            const VALUE klass;
+            void (*dmark)(void*);
+            void (*dfree)(void*);
+            void *data;
+#ifdef __GNUC__
+        } __attribute__((aligned(sizeof(VALUE))));
+#else
+        };
+#endif
 
         facter::util::dynamic_library _library;
         VALUE _nil = 0u;

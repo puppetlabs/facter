@@ -5,7 +5,6 @@
 #pragma once
 
 #include "api.hpp"
-#include "object.hpp"
 #include "confine.hpp"
 #include <vector>
 #include <memory>
@@ -23,7 +22,7 @@ namespace facter { namespace ruby {
     /**
      * The base class for Ruby resolution classes.
      */
-    struct resolution : object<resolution>
+    struct resolution
     {
         /**
          * Gets the name of the resolution.

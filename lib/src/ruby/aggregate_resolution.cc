@@ -8,6 +8,7 @@ namespace facter { namespace ruby {
     aggregate_resolution::aggregate_resolution()
     {
         auto const& ruby = *api::instance();
+        _self = ruby.nil_value();
         _block = ruby.nil_value();
     }
 
@@ -137,10 +138,12 @@ namespace facter { namespace ruby {
 
         // Create a resolution and wrap with a Ruby data object
         unique_ptr<aggregate_resolution> r(new aggregate_resolution());
-        r->self(ruby.rb_data_object_alloc(klass, r.get(), mark, free));
+        VALUE self = r->_self = ruby.rb_data_object_alloc(klass, r.get(), mark, free);
+        ruby.register_data_object(self);
 
         // Release the smart pointer; ownership is now with Ruby's GC
-        return r.release()->self();
+        r.release();
+        return self;
     }
 
     void aggregate_resolution::mark(void* data)
@@ -164,8 +167,13 @@ namespace facter { namespace ruby {
 
     void aggregate_resolution::free(void* data)
     {
-        // Delete the aggregate resolution
         auto instance = reinterpret_cast<aggregate_resolution*>(data);
+
+        // Unregister the data object
+        auto const& ruby = *api::instance();
+        ruby.unregister_data_object(instance->_self);
+
+        // Delete the aggregate resolution
         delete instance;
     }
 
@@ -176,7 +184,7 @@ namespace facter { namespace ruby {
             ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
         }
 
-        static_cast<aggregate_resolution*>(from_self(self))->define_chunk(argv[0], argc > 1 ? argv[1] : ruby.nil_value());
+        ruby.to_native<aggregate_resolution>(self)->define_chunk(argv[0], argc > 1 ? argv[1] : ruby.nil_value());
         return self;
     }
 
@@ -189,7 +197,7 @@ namespace facter { namespace ruby {
             ruby.rb_raise(*ruby.rb_eArgError, "a block must be provided");
         }
 
-        static_cast<aggregate_resolution*>(from_self(self))->_block = ruby.rb_block_proc();
+        ruby.to_native<aggregate_resolution>(self)->_block = ruby.rb_block_proc();
         return self;
     }
 

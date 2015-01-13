@@ -27,67 +27,86 @@ using namespace boost::filesystem;
 #endif
 #define LOG_NAMESPACE "ruby"
 
-/**
- * Helper for maintaining context when initialized via the Ruby gem.
- */
-struct ruby_context
-{
-    /**
-     * Constructs a new Ruby context.
-     */
-    ruby_context()
-    {
-        // Create a collection and a Ruby module
-        _facts.reset(new collection());
-        _module.reset(new facter::ruby::module(*_facts));
-
-        // Ruby doesn't have a proper way of notifying extensions that the VM is shutting down
-        // The easiest way to get notified is to have a global data object that never gets collected
-        // until the VM shuts down
-        auto const& ruby = *facter::ruby::api::instance();
-        _canary = ruby.rb_data_object_alloc(*ruby.rb_cObject, this, nullptr, cleanup);
-        ruby.rb_gc_register_address(&_canary);
-    }
+namespace facter { namespace ruby {
 
     /**
-     * Destructs the Ruby context.
+     * Helper for maintaining context when initialized via the facter gem.
      */
-    ~ruby_context()
+    struct gem_context
     {
-        release();
-    }
+        /**
+         * Constructs a new gem context.
+         */
+        gem_context()
+        {
+            // Create a collection and a facter module
+            _facts.reset(new collection());
+            _module.reset(new module(*_facts));
 
-    /**
-     * Releases the Ruby context.
-     */
-    void release()
-    {
-        _module.reset();
-        _facts.reset();
+            // Ruby doesn't have a proper way of notifying extensions that the VM is shutting down
+            // The easiest way to get notified is to have a global data object that never gets collected
+            // until the VM shuts down
+            auto const& ruby = *api::instance();
+            _canary = ruby.rb_data_object_alloc(*ruby.rb_cObject, this, nullptr, cleanup);
+            ruby.rb_gc_register_address(&_canary);
+            ruby.register_data_object(_canary);
+        }
 
-        // Unregister the canary; the context will be deleted on next GC or VM shutdown
-        auto const& ruby = *facter::ruby::api::instance();
-        ruby.rb_gc_unregister_address(&_canary);
-    }
+        /**
+         * Destructs the gem context.
+         */
+        ~gem_context()
+        {
+            _module.reset();
+            _facts.reset();
 
- private:
-    static void cleanup(void* ptr)
-    {
-        ruby_context* instance = reinterpret_cast<ruby_context*>(ptr);
-        delete instance;
-    }
+            // Remove the finalizer and let Ruby collect the object
+            auto const& ruby = *api::instance();
+            ruby.rb_gc_unregister_address(&_canary);
+            ruby.unregister_data_object(_canary);
+        }
 
-    unique_ptr<collection> _facts;
-    unique_ptr<facter::ruby::module> _module;
-    facter::ruby::VALUE _canary;
-};
+        /**
+         * Creates the gem context.
+         */
+        static void create()
+        {
+            // Reset first before allocating a new context
+            reset();
 
-static ruby_context* g_context = nullptr;
+            _instance.reset(new gem_context());
+        }
 
-// Exports for the Ruby cfacter gem.
+        /**
+         * Resets the gem context.
+         */
+        static void reset()
+        {
+           _instance.reset();
+        }
+
+     private:
+        static void cleanup(void* ptr)
+        {
+            if (ptr == _instance.get()) {
+                reset();
+            }
+        }
+
+        unique_ptr<collection> _facts;
+        unique_ptr<module> _module;
+        VALUE _canary;
+
+        static unique_ptr<gem_context> _instance;
+    };
+
+    unique_ptr<gem_context> gem_context::_instance;
+}}
+
+// Exports for the Ruby facter gem.
 extern "C" {
     /**
-     * Gets the cfacter gem version.
+     * Gets the facter version for the gem.
      */
     char const* facter_version()
     {
@@ -95,7 +114,7 @@ extern "C" {
     }
 
     /**
-     * Initializes the cfacter gem.
+     * Initializes the facter gem.
      * @param level The logging level to use.
      */
     void initialize_facter(unsigned int level)
@@ -110,26 +129,23 @@ extern "C" {
         }
         ruby->initialize();
 
-        // The lifetime of the context object is tied to Ruby VM
-        g_context = new ruby_context();
+        // Create the gem context
+        facter::ruby::gem_context::create();
     }
 
     /**
-     * Shuts down the cfacter gem.
+     * Shuts down the facter gem.
      */
     void shutdown_facter()
     {
-        if (g_context) {
-            // Just reset the context; it will be deleted by the Ruby VM
-            g_context->release();
-            g_context = nullptr;
-        }
+        // Reset the gem context
+        facter::ruby::gem_context::reset();
     }
 }
 
 namespace facter { namespace ruby {
 
-    template struct object<module>;
+    map<VALUE, module*> module::_instances;
 
     module::module(collection& facts, vector<string> const& paths) :
         _collection(facts),
@@ -178,44 +194,44 @@ namespace facter { namespace ruby {
         }
 
         // Define the Facter module
-        self(ruby.rb_define_module("Facter"));
-        VALUE facter = self();
+        _self = ruby.rb_define_module("Facter");
+        _instances[_self] = this;
 
-        VALUE core = ruby.rb_define_module_under(facter, "Core");
+        VALUE core = ruby.rb_define_module_under(_self, "Core");
         VALUE execution = ruby.rb_define_module_under(core, "Execution");
-        ruby.rb_define_module_under(facter, "Util");
+        ruby.rb_define_module_under(_self, "Util");
 
         // Define the methods on the Facter module
         volatile VALUE version = ruby.utf8_value(LIBFACTER_VERSION);
-        ruby.rb_const_set(facter, ruby.rb_intern("CFACTERVERSION"), version);
-        ruby.rb_const_set(facter, ruby.rb_intern("FACTERVERSION"), version);
-        ruby.rb_define_singleton_method(facter, "version", RUBY_METHOD_FUNC(ruby_version), 0);
-        ruby.rb_define_singleton_method(facter, "add", RUBY_METHOD_FUNC(ruby_add), -1);
-        ruby.rb_define_singleton_method(facter, "define_fact", RUBY_METHOD_FUNC(ruby_define_fact), -1);
-        ruby.rb_define_singleton_method(facter, "value", RUBY_METHOD_FUNC(ruby_value), 1);
-        ruby.rb_define_singleton_method(facter, "[]", RUBY_METHOD_FUNC(ruby_fact), 1);
-        ruby.rb_define_singleton_method(facter, "fact", RUBY_METHOD_FUNC(ruby_fact), 1);
-        ruby.rb_define_singleton_method(facter, "debug", RUBY_METHOD_FUNC(ruby_debug), 1);
-        ruby.rb_define_singleton_method(facter, "debugonce", RUBY_METHOD_FUNC(ruby_debugonce), 1);
-        ruby.rb_define_singleton_method(facter, "warn", RUBY_METHOD_FUNC(ruby_warn), 1);
-        ruby.rb_define_singleton_method(facter, "warnonce", RUBY_METHOD_FUNC(ruby_warnonce), 1);
-        ruby.rb_define_singleton_method(facter, "log_exception", RUBY_METHOD_FUNC(ruby_log_exception), -1);
-        ruby.rb_define_singleton_method(facter, "debugging", RUBY_METHOD_FUNC(ruby_set_debugging), 1);
-        ruby.rb_define_singleton_method(facter, "debugging?", RUBY_METHOD_FUNC(ruby_get_debugging), 0);
-        ruby.rb_define_singleton_method(facter, "trace", RUBY_METHOD_FUNC(ruby_set_trace), 1);
-        ruby.rb_define_singleton_method(facter, "trace?", RUBY_METHOD_FUNC(ruby_get_trace), 0);
-        ruby.rb_define_singleton_method(facter, "flush", RUBY_METHOD_FUNC(ruby_flush), 0);
-        ruby.rb_define_singleton_method(facter, "list", RUBY_METHOD_FUNC(ruby_list), 0);
-        ruby.rb_define_singleton_method(facter, "to_hash", RUBY_METHOD_FUNC(ruby_to_hash), 0);
-        ruby.rb_define_singleton_method(facter, "each", RUBY_METHOD_FUNC(ruby_each), 0);
-        ruby.rb_define_singleton_method(facter, "clear", RUBY_METHOD_FUNC(ruby_clear), 0);
-        ruby.rb_define_singleton_method(facter, "reset", RUBY_METHOD_FUNC(ruby_reset), 0);
-        ruby.rb_define_singleton_method(facter, "loadfacts", RUBY_METHOD_FUNC(ruby_loadfacts), 0);
-        ruby.rb_define_singleton_method(facter, "search", RUBY_METHOD_FUNC(ruby_search), -1);
-        ruby.rb_define_singleton_method(facter, "search_path", RUBY_METHOD_FUNC(ruby_search_path), 0);
-        ruby.rb_define_singleton_method(facter, "search_external", RUBY_METHOD_FUNC(ruby_search_external), 1);
-        ruby.rb_define_singleton_method(facter, "search_external_path", RUBY_METHOD_FUNC(ruby_search_external_path), 0);
-        ruby.rb_define_singleton_method(facter, "on_message", RUBY_METHOD_FUNC(ruby_on_message), 0);
+        ruby.rb_const_set(_self, ruby.rb_intern("CFACTERVERSION"), version);
+        ruby.rb_const_set(_self, ruby.rb_intern("FACTERVERSION"), version);
+        ruby.rb_define_singleton_method(_self, "version", RUBY_METHOD_FUNC(ruby_version), 0);
+        ruby.rb_define_singleton_method(_self, "add", RUBY_METHOD_FUNC(ruby_add), -1);
+        ruby.rb_define_singleton_method(_self, "define_fact", RUBY_METHOD_FUNC(ruby_define_fact), -1);
+        ruby.rb_define_singleton_method(_self, "value", RUBY_METHOD_FUNC(ruby_value), 1);
+        ruby.rb_define_singleton_method(_self, "[]", RUBY_METHOD_FUNC(ruby_fact), 1);
+        ruby.rb_define_singleton_method(_self, "fact", RUBY_METHOD_FUNC(ruby_fact), 1);
+        ruby.rb_define_singleton_method(_self, "debug", RUBY_METHOD_FUNC(ruby_debug), 1);
+        ruby.rb_define_singleton_method(_self, "debugonce", RUBY_METHOD_FUNC(ruby_debugonce), 1);
+        ruby.rb_define_singleton_method(_self, "warn", RUBY_METHOD_FUNC(ruby_warn), 1);
+        ruby.rb_define_singleton_method(_self, "warnonce", RUBY_METHOD_FUNC(ruby_warnonce), 1);
+        ruby.rb_define_singleton_method(_self, "log_exception", RUBY_METHOD_FUNC(ruby_log_exception), -1);
+        ruby.rb_define_singleton_method(_self, "debugging", RUBY_METHOD_FUNC(ruby_set_debugging), 1);
+        ruby.rb_define_singleton_method(_self, "debugging?", RUBY_METHOD_FUNC(ruby_get_debugging), 0);
+        ruby.rb_define_singleton_method(_self, "trace", RUBY_METHOD_FUNC(ruby_set_trace), 1);
+        ruby.rb_define_singleton_method(_self, "trace?", RUBY_METHOD_FUNC(ruby_get_trace), 0);
+        ruby.rb_define_singleton_method(_self, "flush", RUBY_METHOD_FUNC(ruby_flush), 0);
+        ruby.rb_define_singleton_method(_self, "list", RUBY_METHOD_FUNC(ruby_list), 0);
+        ruby.rb_define_singleton_method(_self, "to_hash", RUBY_METHOD_FUNC(ruby_to_hash), 0);
+        ruby.rb_define_singleton_method(_self, "each", RUBY_METHOD_FUNC(ruby_each), 0);
+        ruby.rb_define_singleton_method(_self, "clear", RUBY_METHOD_FUNC(ruby_clear), 0);
+        ruby.rb_define_singleton_method(_self, "reset", RUBY_METHOD_FUNC(ruby_reset), 0);
+        ruby.rb_define_singleton_method(_self, "loadfacts", RUBY_METHOD_FUNC(ruby_loadfacts), 0);
+        ruby.rb_define_singleton_method(_self, "search", RUBY_METHOD_FUNC(ruby_search), -1);
+        ruby.rb_define_singleton_method(_self, "search_path", RUBY_METHOD_FUNC(ruby_search_path), 0);
+        ruby.rb_define_singleton_method(_self, "search_external", RUBY_METHOD_FUNC(ruby_search_external), 1);
+        ruby.rb_define_singleton_method(_self, "search_external_path", RUBY_METHOD_FUNC(ruby_search_external_path), 0);
+        ruby.rb_define_singleton_method(_self, "on_message", RUBY_METHOD_FUNC(ruby_on_message), 0);
 
         // Define the execution module
         ruby.rb_define_singleton_method(execution, "which", RUBY_METHOD_FUNC(ruby_which), 1);
@@ -244,6 +260,8 @@ namespace facter { namespace ruby {
 
     module::~module()
     {
+        _instances.erase(_self);
+
         clear_facts(false);
 
         auto ruby = api::instance();
@@ -291,19 +309,23 @@ namespace facter { namespace ruby {
 
         load_facts();
 
+        auto const& ruby = *api::instance();
+
         // Get the value from all facts
         for (auto const& kvp : _facts) {
-            fact::from_self(kvp.second)->value();
+            ruby.to_native<fact>(kvp.second)->value();
         }
     }
 
     void module::clear_facts(bool clear_collection)
     {
-        auto const& ruby = *api::instance();
+        auto ruby = api::instance();
 
         // Unregister all the facts
-        for (auto& kvp : _facts) {
-            ruby.rb_gc_unregister_address(&kvp.second);
+        if (ruby) {
+            for (auto& kvp : _facts) {
+                ruby->rb_gc_unregister_address(&kvp.second);
+            }
         }
 
         // Clear the custom facts
@@ -324,7 +346,7 @@ namespace facter { namespace ruby {
             return ruby.nil_value();
         }
 
-        return fact::from_self(fact_self)->value();
+        return ruby.to_native<fact>(fact_self)->value();
     }
 
     VALUE module::normalize(VALUE name) const
@@ -349,6 +371,12 @@ namespace facter { namespace ruby {
         return _collection;
     }
 
+    module* module::current()
+    {
+        auto const& ruby = *api::instance();
+        return from_self(ruby.lookup({"Facter"}));
+    }
+
     VALUE module::ruby_version(VALUE self)
     {
         auto const& ruby = *api::instance();
@@ -363,7 +391,7 @@ namespace facter { namespace ruby {
             ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
         }
 
-        fact* f = fact::from_self(from_self(self)->create_fact(argv[0]));
+        VALUE fact_self = from_self(self)->create_fact(argv[0]);
 
         // Read the resolution name from the options hash, if present
         volatile VALUE name = ruby.nil_value();
@@ -376,8 +404,8 @@ namespace facter { namespace ruby {
                     ruby.rb_funcall(ruby.utf8_value("name"), ruby.rb_intern("to_sym"), 0));
         }
 
-        f->define_resolution(name, options);
-        return f->self();
+        ruby.to_native<fact>(fact_self)->define_resolution(name, options);
+        return fact_self;
     }
 
     VALUE module::ruby_define_fact(int argc, VALUE* argv, VALUE self)
@@ -388,13 +416,13 @@ namespace facter { namespace ruby {
             ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
         }
 
-        fact* f = fact::from_self(from_self(self)->create_fact(argv[0]));
+        VALUE fact_self = from_self(self)->create_fact(argv[0]);
 
         // Call the block if one was given
         if (ruby.rb_block_given_p()) {
-            ruby.rb_funcall_passing_block(f->self(), ruby.rb_intern("instance_eval"), 0, nullptr);
+            ruby.rb_funcall_passing_block(fact_self, ruby.rb_intern("instance_eval"), 0, nullptr);
         }
-        return f->self();
+        return fact_self;
     }
 
     VALUE module::ruby_value(VALUE self, VALUE name)
@@ -500,7 +528,7 @@ namespace facter { namespace ruby {
 
         for (auto& kvp : from_self(self)->_facts)
         {
-            fact::from_self(kvp.second)->flush();
+            ruby.to_native<fact>(kvp.second)->flush();
         }
         return ruby.nil_value();
     }
@@ -694,6 +722,17 @@ namespace facter { namespace ruby {
 
         from_self(self)->_on_message_block = ruby.rb_block_given_p() ? ruby.rb_block_proc() : ruby.nil_value();
         return ruby.nil_value();
+    }
+
+    module* module::from_self(VALUE self)
+    {
+        auto it = _instances.find(self);
+        if (it == _instances.end()) {
+            auto const& ruby = *api::instance();
+            ruby.rb_raise(*ruby.rb_eArgError, "unexpected self value %d", self);
+            return nullptr;
+        }
+        return it->second;
     }
 
     VALUE module::execute_command(std::string const& command, VALUE failure_default, bool raise)

@@ -5,7 +5,6 @@
 #pragma once
 
 #include "api.hpp"
-#include "object.hpp"
 #include "resolution.hpp"
 #include <vector>
 #include <memory>
@@ -23,7 +22,7 @@ namespace facter { namespace ruby {
     /**
      * Represents the Ruby Facter::Util::Fact class.
      */
-    struct fact : object<fact>
+    struct fact
     {
         /**
          * Defines the Facter::Util::Fact class.
@@ -97,6 +96,7 @@ namespace facter { namespace ruby {
         static VALUE ruby_define_resolution(int argc, VALUE* argv, VALUE self);
         static VALUE ruby_flush(VALUE self);
 
+        VALUE _self;
         VALUE _name;
         VALUE _value;
         std::vector<VALUE> _resolutions;

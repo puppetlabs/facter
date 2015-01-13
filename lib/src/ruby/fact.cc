@@ -17,13 +17,12 @@ using namespace facter::facts;
 
 namespace facter { namespace ruby {
 
-    template struct object<fact>;
-
     fact::fact() :
         _resolved(false),
         _resolving(false)
     {
         auto const& ruby = *api::instance();
+        _self = ruby.nil_value();
         _name = ruby.nil_value();
         _value = ruby.nil_value();
     }
@@ -58,7 +57,9 @@ namespace facter { namespace ruby {
     VALUE fact::value()
     {
         auto const& ruby = *api::instance();
-        collection& facts =  module::from_self(ruby.lookup({"Facter"}))->facts();
+        auto facter = module::current();
+
+        collection& facts = facter->facts();
 
         // Prevent cycles by raising an exception
         if (_resolving) {
@@ -70,13 +71,11 @@ namespace facter { namespace ruby {
         }
 
         // Sort the resolutions by weight (descending)
-        sort(_resolutions.begin(), _resolutions.end(), [](VALUE first, VALUE second) {
-            auto res_first = resolution::from_self(first);
-            auto res_second = resolution::from_self(second);
+        sort(_resolutions.begin(), _resolutions.end(), [&](VALUE first, VALUE second) {
+            auto res_first = ruby.to_native<resolution>(first);
+            auto res_second = ruby.to_native<resolution>(second);
             return res_first->weight() > res_second->weight();
         });
-
-        auto facter = module::from_self(ruby.lookup({"Facter"}));
 
         vector<VALUE>::iterator it;
 
@@ -86,7 +85,7 @@ namespace facter { namespace ruby {
 
             // Look through the resolutions and find the first allowed resolution that resolves
             for (it = _resolutions.begin(); it != _resolutions.end(); ++it) {
-                auto res = resolution::from_self(*it);
+                auto res = ruby.to_native<resolution>(*it);
                 if (!res->suitable(*facter)) {
                     continue;
                 }
@@ -143,7 +142,7 @@ namespace facter { namespace ruby {
 
         // Search for the resolution by name
         auto it = find_if(_resolutions.begin(), _resolutions.end(), [&](VALUE self) {
-            return ruby.equals(resolution::from_self(self)->name(), name);
+            return ruby.equals(ruby.to_native<resolution>(self)->name(), name);
         });
         if (it == _resolutions.end()) {
             return ruby.nil_value();
@@ -240,11 +239,11 @@ namespace facter { namespace ruby {
         }
 
         // Set the name, value, and weight
-        auto resolution = resolution::from_self(resolution_self);
-        resolution->name(name);
-        resolution->value(resolution_value);
+        auto res = ruby.to_native<resolution>(resolution_self);
+        res->name(name);
+        res->value(resolution_value);
         if (has_weight) {
-            resolution->weight(weight);
+            res->weight(weight);
         }
 
         // Call the block if one was given
@@ -260,7 +259,7 @@ namespace facter { namespace ruby {
 
         // Call flush on every resolution
         for (auto r : _resolutions) {
-            resolution::from_self(r)->flush();
+            ruby.to_native<resolution>(r)->flush();
         }
 
         // Reset the value
@@ -274,10 +273,12 @@ namespace facter { namespace ruby {
 
         // Create a fact and wrap with a Ruby data object
         unique_ptr<fact> f(new fact());
-        f->self(ruby.rb_data_object_alloc(klass, f.get(), mark, free));
+        VALUE self = f->_self = ruby.rb_data_object_alloc(klass, f.get(), mark, free);
+        ruby.register_data_object(self);
 
         // Release the smart pointer; ownership is now with Ruby's GC
-        return f.release()->self();
+        f.release();
+        return self;
     }
 
     void fact::mark(void* data)
@@ -298,8 +299,13 @@ namespace facter { namespace ruby {
 
     void fact::free(void* data)
     {
-        // Delete the fact
         auto instance = reinterpret_cast<fact*>(data);
+
+        // Unregister the data object
+        auto const& ruby = *api::instance();
+        ruby.unregister_data_object(instance->_self);
+
+        // Delete the fact
         delete instance;
     }
 
@@ -311,23 +317,26 @@ namespace facter { namespace ruby {
             ruby.rb_raise(*ruby.rb_eTypeError, "expected a String or Symbol for fact name");
         }
 
-        from_self(self)->_name = name;
+        ruby.to_native<fact>(self)->_name = name;
         return self;
     }
 
     VALUE fact::ruby_name(VALUE self)
     {
-        return from_self(self)->name();
+        auto const& ruby = *api::instance();
+        return ruby.to_native<fact>(self)->name();
     }
 
     VALUE fact::ruby_value(VALUE self)
     {
-        return from_self(self)->value();
+        auto const& ruby = *api::instance();
+        return ruby.to_native<fact>(self)->value();
     }
 
     VALUE fact::ruby_resolution(VALUE self, VALUE name)
     {
-        return from_self(self)->find_resolution(name);
+        auto const& ruby = *api::instance();
+        return ruby.to_native<fact>(self)->find_resolution(name);
     }
 
     VALUE fact::ruby_define_resolution(int argc, VALUE* argv, VALUE self)
@@ -338,13 +347,13 @@ namespace facter { namespace ruby {
             ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
         }
 
-        return from_self(self)->define_resolution(argv[0], argc > 1 ? argv[1] : ruby.nil_value());
+        return ruby.to_native<fact>(self)->define_resolution(argv[0], argc > 1 ? argv[1] : ruby.nil_value());
     }
 
     VALUE fact::ruby_flush(VALUE self)
     {
         auto const& ruby = *api::instance();
-        from_self(self)->flush();
+        ruby.to_native<fact>(self)->flush();
         return ruby.nil_value();
     }
 
