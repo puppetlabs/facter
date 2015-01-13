@@ -19,7 +19,7 @@ using namespace facter::execution;
 namespace facter { namespace util { namespace windows {
 
     wmi_exception::wmi_exception(string const& message) :
-        wmi_exception(message)
+        runtime_error(message)
     {
     }
 
