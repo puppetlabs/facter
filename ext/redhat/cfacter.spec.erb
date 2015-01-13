@@ -82,6 +82,8 @@ rm -r %{buildroot}%{_includedir}/boost
 %clean
 rm -rf %{buildroot}
 
+%check
+%{build_prefix}/bin/ctest -V
 
 %files
 %defattr(-,root,root,-)
