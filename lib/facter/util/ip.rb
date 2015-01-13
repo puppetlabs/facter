@@ -80,7 +80,10 @@ module Facter::Util::IP
 
   def self.get_all_interface_output
     case Facter.value(:kernel)
-    when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly', 'AIX'
+    when 'Linux'
+      output = Facter::Util::IP.exec_ip(["link"])
+      output.gsub!(/^\d+:\s*/, "")				# delete leading number
+    when 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly', 'AIX'
       output = Facter::Util::IP.exec_ifconfig(["-a","2>/dev/null"])
     when 'SunOS'
       output = Facter::Util::IP.exec_ifconfig(["-a"])
@@ -97,6 +100,13 @@ module Facter::Util::IP
     output
   end
 
+  ##
+  # exec_ip uses the Linux ip command
+  #
+  # @return [String] the output of `ip #{arguments} 2>/dev/null` or nil
+  def self.exec_ip(additional_arguments=[])
+    Facter::Core::Execution.exec("/bin/ip #{additional_arguments.join(' ')}")
+  end
 
   ##
   # exec_ifconfig uses the ifconfig command
