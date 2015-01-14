@@ -43,7 +43,7 @@ module Facter::Util::IP
 
   # Convert an interface name into purely alphanumeric characters.
   def self.alphafy(interface)
-    interface.gsub(/[^a-z0-9_]/i, '_')
+    interface.gsub(/[^a-z0-9_\.]/i, '_')
   end
 
   def self.convert_from_hex?(kernel)
