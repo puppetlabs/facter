@@ -5,7 +5,6 @@
 #pragma once
 
 #include "api.hpp"
-#include "object.hpp"
 #include "fact.hpp"
 #include <map>
 #include <set>
@@ -28,7 +27,7 @@ namespace facter { namespace ruby {
     /**
      * Represents the Ruby Facter module.
      */
-    struct module : object<module>
+    struct module
     {
         /**
          * Constructs the Ruby Facter module.
@@ -78,6 +77,12 @@ namespace facter { namespace ruby {
          */
         facter::facts::collection& facts();
 
+        /**
+         * Gets the current module.
+         * @return Returns the current module.
+         */
+        static module* current();
+
      private:
          // Methods called from Ruby
         static VALUE ruby_version(VALUE self);
@@ -111,6 +116,7 @@ namespace facter { namespace ruby {
         static VALUE ruby_on_message(VALUE self);
 
         // Helper functions
+        static module* from_self(VALUE self);
         static VALUE execute_command(std::string const& command, VALUE failure_default, bool raise);
 
         void initialize_search_paths(std::vector<std::string> const& paths);
@@ -128,8 +134,11 @@ namespace facter { namespace ruby {
         std::vector<std::string> _external_search_paths;
         std::set<std::string> _loaded_files;
         bool _loaded_all;
+        VALUE _self;
         VALUE _previous_facter;
         VALUE _on_message_block;
+
+        static std::map<VALUE, module*> _instances;
     };
 
 }}  // namespace facter::ruby

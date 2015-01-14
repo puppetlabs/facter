@@ -46,12 +46,17 @@ describe Facter do
     end
 
     it 'should load external facts' do
+      # Check for windows vs posix for executable external facts
+      windows = Facter.value('osfamily') == 'windows'
+      Facter.reset
+
       Facter.search_external([
         File.expand_path('../../../lib/tests/fixtures/facts/external/yaml', File.dirname(__FILE__)),
         File.expand_path('../../../lib/tests/fixtures/facts/external/json', File.dirname(__FILE__)),
         File.expand_path('../../../lib/tests/fixtures/facts/external/text', File.dirname(__FILE__)),
-        File.expand_path('../../../lib/tests/fixtures/facts/external/posix/execution', File.dirname(__FILE__)),
+        File.expand_path("../../../lib/tests/fixtures/facts/external/#{ if windows then 'windows' else 'posix' end }/execution", File.dirname(__FILE__))
       ])
+
       facts = Facter.to_hash
       facts['yaml_fact1'].should be_a String
       facts['yaml_fact2'].should be_a Integer

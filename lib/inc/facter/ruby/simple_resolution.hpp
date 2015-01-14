@@ -48,6 +48,7 @@ namespace facter { namespace ruby {
         static VALUE ruby_which(VALUE self, VALUE binary);
         static VALUE ruby_exec(VALUE self, VALUE command);
 
+        VALUE _self;
         VALUE _block;
         std::string _command;
     };

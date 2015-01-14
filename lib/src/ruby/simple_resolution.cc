@@ -14,6 +14,7 @@ namespace facter { namespace ruby {
     simple_resolution::simple_resolution()
     {
         auto const& ruby = *api::instance();
+        _self = ruby.nil_value();
         _block = ruby.nil_value();
     }
 
@@ -80,10 +81,12 @@ namespace facter { namespace ruby {
 
         // Create a resolution and wrap with a Ruby data object
         unique_ptr<simple_resolution> r(new simple_resolution());
-        r->self(ruby.rb_data_object_alloc(klass, r.get(), mark, free));
+        VALUE self = r->_self = ruby.rb_data_object_alloc(klass, r.get(), mark, free);
+        ruby.register_data_object(self);
 
         // Release the smart pointer; ownership is now with Ruby's GC
-        return r.release()->self();
+        r.release();
+        return self;
     }
 
     void simple_resolution::mark(void* data)
@@ -101,8 +104,13 @@ namespace facter { namespace ruby {
 
     void simple_resolution::free(void* data)
     {
-        // Delete the simple resolution
         auto instance = reinterpret_cast<simple_resolution*>(data);
+
+        // Unregister the data object
+        auto const& ruby = *api::instance();
+        ruby.unregister_data_object(instance->_self);
+
+        // Delete the simple resolution
         delete instance;
     }
 
@@ -143,7 +151,7 @@ namespace facter { namespace ruby {
             });
 
             if (!tag) {
-                auto instance = static_cast<simple_resolution*>(from_self(self));
+                auto instance = ruby.to_native<simple_resolution>(self);
                 if (!ruby.is_nil(block)) {
                     instance->_block = block;
                 } else {
