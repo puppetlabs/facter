@@ -1,3 +1,8 @@
+# Only >=el7 and fedora have a sufficient version of ruby available
+%if 0%{?rhel} >= 7 || 0%{?fedora}
+%{!?vendor_ruby: %global vendor_ruby %(ruby -rrbconfig -e "puts RbConfig::CONFIG['vendordir']")}
+%endif
+
 # Building debuginfo is pointless, as this has no symbols.
 %global debug_package %{nil}
 
@@ -22,6 +27,11 @@ Source0:        http://puppetlabs.com/downloads/%{name}/%{name}-%{realversion}.t
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+# Only >=el7 and fedora have a sufficient version of ruby available
+%if 0%{?rhel} >= 7 || 0%{?fedora}
+BuildRequires:  ruby
+BuildRequires:  ruby-devel
+%endif
 BuildRequires:  pl-gcc >= 4.8.2-4
 BuildRequires:  pl-cmake >= 2.8.12-6
 BuildRequires:  pl-libboost-devel >= 1.55.0-4
@@ -82,12 +92,17 @@ rm -r %{buildroot}%{_includedir}/boost
 %clean
 rm -rf %{buildroot}
 
+%check
+%{build_prefix}/bin/ctest -V
 
 %files
 %defattr(-,root,root,-)
 %{_bindir}/cfacter
 %{_libdir}/libfacter.so*
 %{_includedir}/facter
+%if 0%{?rhel} >= 7 || 0%{?fedora}
+%{vendor_ruby}/cfacter.rb
+%endif
 %doc LICENSE README.md
 
 
