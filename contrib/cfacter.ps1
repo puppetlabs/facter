@@ -43,10 +43,10 @@ iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.p
 choco install 7zip.commandline -Version 9.20.0.20130618
 choco install cmake -Version 3.0.2
 choco install git.install -Version 1.9.5
-choco install ruby -Version 2.1.3.0
+choco install ruby -Version 2.1.5
 choco install python -Version 3.4.2
 choco install doxygen.install -Version 1.8.8
-choco install mingw -Version "${mingwVerChoco}"
+choco install mingw -Version "${mingwVerChoco}" -params "/exception:${mingwExceptions} /threads:${mingwThreads}"
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 $env:PATH += [Environment]::GetFolderPath('ProgramFilesX86') + "\git\cmd"
 echo $env:PATH
@@ -59,6 +59,7 @@ cd cfacter\release
 $buildDir=$pwd
 $toolsDir="${sourceDir}\deps"
 mkdir -Force $toolsDir
+cd $toolsDir
 
 if ($buildSource) {
   ## Download, build, and install Boost
@@ -104,7 +105,6 @@ if ($buildSource) {
   cmake $args
   mingw32-make install -j $cores
 } else {
-  cd $toolsDir
   ## Download and unpack Boost from a pre-built package in S3
   (New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${boostPkg}.7z", "$toolsDir\${boostPkg}.7z")
   & 7za x "${boostPkg}.7z" | FIND /V "ing "
