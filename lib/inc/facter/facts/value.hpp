@@ -22,8 +22,6 @@ namespace rapidjson {
     template<typename CharType> struct UTF8;
     typedef GenericValue<UTF8<char>, MemoryPoolAllocator<CrtAllocator>> Value;
     typedef MemoryPoolAllocator<CrtAllocator> Allocator;
-    template <typename Encoding, typename Allocator> class GenericDocument;
-    typedef GenericDocument<UTF8<char>, MemoryPoolAllocator<CrtAllocator>> Document;
 }
 
 extern "C" {
