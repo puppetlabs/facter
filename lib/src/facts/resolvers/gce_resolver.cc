@@ -23,11 +23,6 @@ using namespace std;
 using namespace facter::util;
 using namespace rapidjson;
 
-#ifdef LOG_NAMESPACE
-    #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.gce"
-
 namespace facter { namespace facts { namespace resolvers {
 
     // Helper event handler for parsing JSON data

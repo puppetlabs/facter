@@ -12,11 +12,6 @@ using namespace facter::util;
 using namespace facter::util::bsd;
 using namespace facter::execution;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.bsd.networking"
-
 namespace facter { namespace facts { namespace bsd {
 
     networking_resolver::data networking_resolver::collect_data(collection& facts)

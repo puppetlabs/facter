@@ -15,11 +15,6 @@ using namespace facter::facts;
 using namespace facter::util;
 using namespace boost::filesystem;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "ruby"
-
 namespace facter { namespace ruby {
 
 #define LOAD_SYMBOL(x) x(reinterpret_cast<decltype(x)>(library.find_symbol(#x, true)))

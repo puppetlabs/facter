@@ -22,11 +22,6 @@ using namespace facter::execution;
 using namespace facter::logging;
 using namespace boost::filesystem;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "ruby"
-
 namespace facter { namespace ruby {
 
     /**

@@ -5,11 +5,6 @@
 
 using namespace std;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.osx.processor"
-
 namespace facter { namespace facts { namespace osx {
 
     processor_resolver::data processor_resolver::collect_data(collection& facts)

@@ -18,15 +18,9 @@
 #include <functional>
 
 /**
- * Defines the root logging namespace.
+ * Defines the logging namespace.
  */
-#define LOG_ROOT_NAMESPACE "puppetlabs.facter."
-
-/**
- * Used to declare a logging namespace for a source file.
- * This macro should be redefined before using any logging macro.
- */
-#define LOG_NAMESPACE "default"
+#define LOG_NAMESPACE "puppetlabs.facter"
 
 /**
  * Logs a message.
@@ -36,7 +30,7 @@
  */
 #define LOG_MESSAGE(level, format, ...) \
     if (facter::logging::is_enabled(level)) { \
-        facter::logging::log(LOG_ROOT_NAMESPACE LOG_NAMESPACE, level, format, ##__VA_ARGS__); \
+        facter::logging::log(LOG_NAMESPACE, level, format, ##__VA_ARGS__); \
     }
 /**
  * Logs a trace message.

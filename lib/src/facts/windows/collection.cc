@@ -28,11 +28,6 @@ using namespace facter::util::windows;
 using namespace facter::facts::external;
 using namespace boost::filesystem;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.collection"
-
 namespace facter { namespace facts {
 
     vector<string> collection::get_external_fact_directories()

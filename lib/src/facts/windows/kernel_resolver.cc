@@ -11,9 +11,6 @@
 using namespace std;
 using namespace facter::util::windows;
 
-#undef LOG_NAMESPACE
-#define LOG_NAMESPACE "facts.windows.kernel"
-
 namespace facter { namespace facts { namespace windows {
 
     static boost::optional<string> get_release()

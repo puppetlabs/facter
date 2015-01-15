@@ -8,11 +8,6 @@ using namespace std;
 using namespace facter::facts;
 using namespace facter::util;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.bsd.filesystem"
-
 namespace facter { namespace facts { namespace bsd {
 
     filesystem_resolver::data filesystem_resolver::collect_data(collection& facts)

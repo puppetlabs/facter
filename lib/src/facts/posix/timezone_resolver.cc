@@ -2,11 +2,6 @@
 #include <facter/logging/logging.hpp>
 #include <time.h>
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.posix.timezone"
-
 using namespace std;
 
 namespace facter { namespace facts { namespace posix {

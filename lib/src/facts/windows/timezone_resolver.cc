@@ -2,9 +2,6 @@
 #include <facter/logging/logging.hpp>
 #include <ctime>
 
-#undef LOG_NAMESPACE
-#define LOG_NAMESPACE "facts.windows.timezone"
-
 using namespace std;
 
 namespace facter { namespace facts { namespace windows {

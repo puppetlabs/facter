@@ -12,11 +12,6 @@ using namespace boost::filesystem;
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.linux.disk"
-
 namespace facter { namespace facts { namespace linux {
 
     disk_resolver::data disk_resolver::collect_data(collection& facts)

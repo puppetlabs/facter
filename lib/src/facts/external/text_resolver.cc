@@ -8,11 +8,6 @@
 using namespace std;
 using namespace facter::util;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.external.text"
-
 namespace facter { namespace facts { namespace external {
 
     bool text_resolver::can_resolve(string const& path) const

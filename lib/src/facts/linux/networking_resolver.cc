@@ -12,11 +12,6 @@ using namespace std;
 using namespace facter::util;
 using namespace facter::util::posix;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.linux.networking"
-
 namespace facter { namespace facts { namespace linux {
 
     bool networking_resolver::is_link_address(sockaddr const* addr) const

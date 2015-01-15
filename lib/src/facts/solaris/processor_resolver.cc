@@ -7,11 +7,6 @@
 using namespace std;
 using namespace facter::util::solaris;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.solaris.processor"
-
 /*
  * https://blogs.oracle.com/mandalika/entry/solaris_show_me_the_cpu
  * What we want to do is to count the distinct number of chip_id (#nproc),

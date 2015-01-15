@@ -5,11 +5,6 @@
 
 using namespace std;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.resolver"
-
 namespace facter { namespace facts {
 
     invalid_name_pattern_exception::invalid_name_pattern_exception(string const& message) :

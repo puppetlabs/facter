@@ -12,11 +12,6 @@ using namespace facter::execution;
 using namespace facter::facts;
 using namespace facter::facts::external;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.external.execution"
-
 namespace facter { namespace facts { namespace external {
 
     bool execution_resolver::can_resolve(string const& path) const

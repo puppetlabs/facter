@@ -6,11 +6,6 @@
 using namespace std;
 using namespace facter::util::solaris;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.solaris.disk"
-
 namespace facter { namespace facts { namespace solaris {
 
     disk_resolver::data disk_resolver::collect_data(collection& facts)

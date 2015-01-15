@@ -5,11 +5,6 @@
 using namespace std;
 using namespace facter::util::windows;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.windows.dmi"
-
 namespace facter { namespace facts { namespace windows {
 
     dmi_resolver::dmi_resolver(shared_ptr<wmi> wmi_conn) :

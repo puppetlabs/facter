@@ -8,11 +8,6 @@ using namespace std;
 using namespace rapidjson;
 using namespace YAML;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.value.array"
-
 namespace facter { namespace facts {
 
     array_value::array_value(array_value&& other)

@@ -5,11 +5,6 @@
 using namespace std;
 using namespace facter::execution;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.posix.processor"
-
 namespace facter { namespace facts { namespace posix {
 
     processor_resolver::data processor_resolver::collect_data(collection& facts)
