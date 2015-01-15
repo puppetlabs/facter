@@ -29,6 +29,7 @@ Facter.add(:partitions) do
       details['uuid']       = Facter::Util::Partitions.uuid(part)
       details['size']       = Facter::Util::Partitions.size(part)
       details['mount']      = Facter::Util::Partitions.mount(part)
+      details['label']      = Facter::Util::Partitions.label(part)
       details['filesystem'] = Facter::Util::Partitions.filesystem(part)
       details.reject! {|k,v| v.nil? || v.to_s.empty? }
       partitions[part] = details

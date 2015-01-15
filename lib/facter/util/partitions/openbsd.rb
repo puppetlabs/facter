@@ -22,6 +22,11 @@ module Facter::Util::Partitions
     def self.filesystem(partition)
       scan_mount(/\/dev\/#{partition}\son\s\S+\stype\s(\S+)/)
     end
+   
+    # On OpenBSD there are no labels for partitions
+    def self.label(partition)
+      nil
+    end
 
     private
     def self.scan_mount(scan_regex)

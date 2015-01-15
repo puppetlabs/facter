@@ -37,6 +37,10 @@ module Facter::Util::Partitions
     implementation.filesystem(partition)
   end
 
+  def self.label(partition)
+    implementation.label(partition)
+  end
+
   def self.available?
     !self.list.empty?
   end
