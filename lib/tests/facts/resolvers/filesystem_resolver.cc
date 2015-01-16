@@ -38,15 +38,16 @@ struct test_filesystem_resolver : filesystem_resolver
         filesystems.emplace(move(filesystem));
     }
 
-    void add_partition(string name, string filesystem, uint64_t size, string uuid, string partuuid, string label, string mount)
+    void add_partition(string name, string filesystem, uint64_t size, string uuid, string partuuid, string label, string partlabel, string mount)
     {
         partition p;
         p.name = move(name);
         p.filesystem = move(filesystem);
         p.size = size;
         p.uuid = move(uuid);
-        p.partuuid = move(partuuid);
+        p.partition_uuid = move(partuuid);
         p.label = move(label);
+        p.partition_label = move(partlabel);
         p.mount = move(mount);
         partitions.emplace_back(move(p));
     }
@@ -172,7 +173,7 @@ TEST(facter_facts_resolvers_filesystem_resolver, partitions)
 
     for (unsigned int i = 0; i < count; ++i) {
         string num = to_string(i);
-        resolver->add_partition("partition" + num, "filesystem" + num, 12345 + i, "uuid" + num, "partuuid" + num, "label" + num, "mount" + num);
+        resolver->add_partition("partition" + num, "filesystem" + num, 12345 + i, "uuid" + num, "partuuid" + num, "label" + num, "partlabel" + num, "mount" + num);
     }
 
     facts.add(move(resolver));
@@ -186,7 +187,7 @@ TEST(facter_facts_resolvers_filesystem_resolver, partitions)
 
         auto partition = partitions->get<map_value>("partition" + num);
         ASSERT_NE(nullptr, partition);
-        ASSERT_EQ(7u, partition->size());
+        ASSERT_EQ(8u, partition->size());
 
         auto filesystem = partition->get<string_value>("filesystem");
         ASSERT_NE(nullptr, filesystem);
@@ -195,6 +196,10 @@ TEST(facter_facts_resolvers_filesystem_resolver, partitions)
         auto label = partition->get<string_value>("label");
         ASSERT_NE(nullptr, label);
         ASSERT_EQ("label" + num, label->value());
+
+        auto partlabel = partition->get<string_value>("partlabel");
+        ASSERT_NE(nullptr, partlabel);
+        ASSERT_EQ("partlabel" + num, partlabel->value());
 
         auto mount = partition->get<string_value>("mount");
         ASSERT_NE(nullptr, mount);
