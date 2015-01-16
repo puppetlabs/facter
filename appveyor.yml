@@ -12,11 +12,29 @@ install:
   - ps: (New-Object net.webclient).DownloadFile('https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_posix_seh.7z', "$pwd\yaml-cpp.7z")
   - ps: 7za x yaml-cpp.7z -oC:\tools | FIND /V "ing  "
 
+  - ps: (New-Object Net.WebClient).DownloadFile('https://github.com/rubygems/rubygems/releases/download/v2.2.3/rubygems-update-2.2.3.gem', "$pwd\rubygems-update-2.2.3.gem")
+  - ps: gem install --local "$pwd\rubygems-update-2.2.3.gem"
+  - ps: update_rubygems --no-ri --no-rdoc
+
+  - ps: (Get-Content C:\tools\ruby215\lib\ruby\2.1.0\dl.rb) | Foreach-Object {$_ -replace "warn ", "puts "} | Set-Content C:\tools\ruby215\lib\ruby\2.1.0\dl.rb
+  - ps: gem install bundler -q --no-ri --no-rdoc
+  - ps: bundle install --gemfile=gem/Gemfile --quiet 2>&1 | out-null
+
 build_script:
   - ps: mv "C:\Program Files (x86)\Git\bin\sh.exe" "C:\Program Files (x86)\Git\bin\shxx.exe"
   - ps: cmake -G "MinGW Makefiles" -DBOOST_ROOT="C:\tools\boost_1_55_0-x86_64_mingw-w64_4.8.3_posix_seh" -DYAMLCPP_ROOT="C:\tools\yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_posix_seh" -DBOOST_STATIC=ON -DBOOST_NOWIDE_SKIP_TESTS=ON .
   - ps: mv "C:\Program Files (x86)\Git\bin\shxx.exe" "C:\Program Files (x86)\Git\bin\sh.exe"
-  - ps: mingw32-make all_unity
+  - ps: mingw32-make all_unity nowide-static
+
+  - ps: cd gem
+  - ps: rake -s gem
+  - ps: gem install pkg/*.gem --local -q
+  - ps: cd ..
 
 test_script:
   - ps: ctest -V 2>&1 | c++filt
+
+  - ps: mingw32-make install/fast
+  - ps: $env:PATH += ";C:\Program Files (x86)\CFACTER\bin"
+  - ps: cd gem
+  - ps: rspec 2>&1 | c++filt
