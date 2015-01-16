@@ -93,7 +93,7 @@ namespace facter { namespace facts { namespace resolvers {
             std::string name;
 
             /**
-             * Stores the filename of the partition.
+             * Stores the file system of the partition.
              */
             std::string filesystem;
 
@@ -103,19 +103,24 @@ namespace facter { namespace facts { namespace resolvers {
             uint64_t size;
 
             /**
-             * Stores the UUID of the partition.
+             * Stores the UUID of the file system.
              */
             std::string uuid;
 
             /**
-             * Stores the PARTUUID of the partition.
+             * Stores the UUID of the GPT partition.
              */
-            std::string partuuid;
+            std::string partition_uuid;
 
             /**
-             * Stores the partition label.
+             * Stores the label of the file system.
              */
             std::string label;
+
+            /**
+             * Stores the label of the GPT partition.
+             */
+            std::string partition_label;
 
             /**
              * Stores the partition mountpoint.

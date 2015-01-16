@@ -84,17 +84,20 @@ namespace facter { namespace facts { namespace resolvers {
                 if (!partition.filesystem.empty()) {
                     value->add("filesystem", make_value<string_value>(move(partition.filesystem)));
                 }
-                if (!partition.label.empty()) {
-                    value->add("label", make_value<string_value>(move(partition.label)));
-                }
                 if (!partition.mount.empty()) {
                     value->add("mount", make_value<string_value>(move(partition.mount)));
                 }
-                if (!partition.partuuid.empty()) {
-                    value->add("partuuid", make_value<string_value>(move(partition.partuuid)));
+                if (!partition.label.empty()) {
+                    value->add("label", make_value<string_value>(move(partition.label)));
+                }
+                if (!partition.partition_label.empty()) {
+                    value->add("partlabel", make_value<string_value>(move(partition.partition_label)));
                 }
                 if (!partition.uuid.empty()) {
                     value->add("uuid", make_value<string_value>(move(partition.uuid)));
+                }
+                if (!partition.partition_uuid.empty()) {
+                    value->add("partuuid", make_value<string_value>(move(partition.partition_uuid)));
                 }
                 value->add("size_bytes", make_value<integer_value>(partition.size));
                 value->add("size", make_value<string_value>(si_string(partition.size)));

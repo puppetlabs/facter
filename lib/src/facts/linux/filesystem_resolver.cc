@@ -134,12 +134,14 @@ namespace facter { namespace facts { namespace linux {
                     boost::to_lower(attribute);
                     if (attribute == "type") {
                         ptr = &part.filesystem;
-                    } else if (attribute == "partlabel") {
+                    } else if (attribute == "label") {
                         ptr = &part.label;
+                    } else if (attribute == "partlabel") {
+                        ptr = &part.partition_label;
                     } else if (attribute == "uuid") {
                         ptr = &part.uuid;
                     } else if (attribute == "partuuid") {
-                        ptr = &part.partuuid;
+                        ptr = &part.partition_uuid;
                     }
                     if (!ptr) {
                         continue;
