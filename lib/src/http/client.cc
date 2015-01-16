@@ -7,11 +7,6 @@
 #include <boost/algorithm/string.hpp>
 #include <sstream>
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "http.client"
-
 using namespace std;
 using namespace facter::util;
 

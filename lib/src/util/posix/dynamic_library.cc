@@ -5,11 +5,6 @@
 
 using namespace std;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "util.posix.dynamic_library"
-
 namespace facter { namespace util {
 
     dynamic_library dynamic_library::find_by_pattern(std::string const& pattern)

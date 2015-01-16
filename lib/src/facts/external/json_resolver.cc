@@ -16,11 +16,6 @@ using namespace facter::facts;
 using namespace facter::util;
 using namespace rapidjson;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.external.json"
-
 namespace facter { namespace facts { namespace external {
 
     // Helper event handler for parsing JSON data

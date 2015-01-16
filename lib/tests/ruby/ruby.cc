@@ -27,11 +27,6 @@ using namespace facter::logging;
 using testing::ElementsAre;
 namespace sinks = boost::log::sinks;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "ruby.test"
-
 class ruby_log_appender :
     public sinks::basic_formatted_sink_backend<char, sinks::synchronized_feeding>
 {

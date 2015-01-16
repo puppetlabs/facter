@@ -20,9 +20,6 @@ using namespace facter::util;
 using namespace facter::util::windows;
 using namespace boost::algorithm;
 
-#undef LOG_NAMESPACE
-#define LOG_NAMESPACE "facts.windows.networking"
-
 namespace facter { namespace facts { namespace windows {
 
     static string get_computername(COMPUTER_NAME_FORMAT nameFormat)

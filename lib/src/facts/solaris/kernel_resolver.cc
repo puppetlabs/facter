@@ -4,11 +4,6 @@
 
 using namespace std;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.solaris.kernel"
-
 namespace facter { namespace facts { namespace solaris {
 
     kernel_resolver::data kernel_resolver::collect_data(collection& facts)

@@ -11,9 +11,6 @@ using namespace std;
 using namespace facter::util;
 using namespace facter::ruby;
 
-#undef LOG_NAMESPACE
-#define LOG_NAMESPACE "facts.ruby"
-
 namespace facter { namespace facts { namespace resolvers {
 
     ruby_resolver::ruby_resolver() :

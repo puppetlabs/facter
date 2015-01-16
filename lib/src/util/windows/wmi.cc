@@ -13,9 +13,6 @@
 using namespace std;
 using namespace facter::execution;
 
-#undef LOG_NAMESPACE
-#define LOG_NAMESPACE "facter.util.windows.wmi"
-
 namespace facter { namespace util { namespace windows {
 
     wmi_exception::wmi_exception(string const& message) :

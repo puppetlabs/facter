@@ -16,11 +16,6 @@ using namespace facter::util;
 using namespace facter::util::windows;
 using namespace boost::filesystem;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.windows.os"
-
 namespace facter { namespace facts { namespace windows {
 
     static string get_hardware()

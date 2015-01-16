@@ -10,11 +10,6 @@ using namespace facter::util;
 using namespace rapidjson;
 using namespace YAML;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.value.map"
-
 namespace facter { namespace facts {
 
     map_value::map_value(map_value&& other)

@@ -12,9 +12,6 @@ using namespace std;
 using namespace facter::facts;
 using namespace facter::util::windows;
 
-#undef LOG_NAMESPACE
-#define LOG_NAMESPACE "facts.windows.virtualization"
-
 namespace facter { namespace facts { namespace windows {
 
     virtualization_resolver::virtualization_resolver(shared_ptr<wmi> wmi_conn) :

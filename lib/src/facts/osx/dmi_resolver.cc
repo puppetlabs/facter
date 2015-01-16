@@ -4,11 +4,6 @@
 
 using namespace std;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.osx.dmi"
-
 namespace facter { namespace facts { namespace osx {
 
     dmi_resolver::data dmi_resolver::collect_data(collection& facts)

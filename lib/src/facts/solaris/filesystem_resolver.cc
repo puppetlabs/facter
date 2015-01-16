@@ -21,11 +21,6 @@ using namespace facter::execution;
 using namespace facter::util::solaris;
 using namespace boost::filesystem;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.solaris.filesystem"
-
 namespace facter { namespace facts { namespace solaris {
 
     filesystem_resolver::data filesystem_resolver::collect_data(collection& facts)

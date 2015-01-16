@@ -12,11 +12,6 @@
 using namespace std;
 using namespace YAML;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.external.yaml"
-
 namespace facter { namespace facts { namespace external {
 
     static void add_value(

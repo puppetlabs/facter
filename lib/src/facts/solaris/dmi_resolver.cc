@@ -9,11 +9,6 @@ using namespace std;
 using namespace facter::util;
 using namespace facter::execution;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.solaris.dmi"
-
 namespace facter { namespace facts { namespace solaris {
 
     dmi_resolver::data dmi_resolver::collect_data(collection& facts)

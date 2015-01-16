@@ -19,11 +19,6 @@ using namespace facter::http;
 using namespace std;
 using namespace facter::util;
 
-#ifdef LOG_NAMESPACE
-    #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.ec2"
-
 namespace facter { namespace facts { namespace resolvers {
 
     ec2_resolver::ec2_resolver() :

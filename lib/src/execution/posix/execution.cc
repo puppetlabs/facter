@@ -15,11 +15,6 @@ using namespace facter::util::posix;
 using namespace facter::logging;
 using namespace boost::filesystem;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "execution"
-
 // Declare environ for OSX
 extern char** environ;
 

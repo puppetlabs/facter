@@ -8,11 +8,6 @@ using namespace std;
 using namespace facter::execution;
 using namespace facter::util;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.osx.memory"
-
 namespace facter { namespace facts { namespace osx {
 
     memory_resolver::data memory_resolver::collect_data(collection& facts)

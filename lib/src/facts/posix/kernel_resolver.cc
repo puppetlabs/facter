@@ -5,11 +5,6 @@
 
 using namespace std;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.posix.kernel"
-
 namespace facter { namespace facts { namespace posix {
 
     kernel_resolver::data kernel_resolver::collect_data(collection& facts)

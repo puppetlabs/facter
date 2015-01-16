@@ -6,9 +6,6 @@
 #include <facter/util/windows/windows.hpp>
 #include <security.h>
 
-#undef LOG_NAMESPACE
-#define LOG_NAMESPACE "facts.windows.identity"
-
 using namespace std;
 using namespace facter::util;
 using namespace facter::util::windows;

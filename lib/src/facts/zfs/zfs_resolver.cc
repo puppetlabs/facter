@@ -12,16 +12,10 @@
 #include <string>
 #include <map>
 
-
 using namespace std;
 using namespace facter::facts;
 using namespace facter::util;
 using namespace facter::execution;
-
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.zfs.zfs"
 
 namespace facter { namespace facts { namespace zfs {
 

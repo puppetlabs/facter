@@ -14,11 +14,6 @@ using namespace facter::execution;
 using namespace facter::util::windows;
 using namespace boost::filesystem;
 
-#ifdef LOG_NAMESPACE
-  #undef LOG_NAMESPACE
-#endif
-#define LOG_NAMESPACE "facts.external.powershell"
-
 namespace facter { namespace facts { namespace external {
 
     bool powershell_resolver::can_resolve(string const& file) const
