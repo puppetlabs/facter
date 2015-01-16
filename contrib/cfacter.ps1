@@ -25,7 +25,7 @@ if ($arch -eq 64) {
   $mingwExceptions = "seh"
   $mingwArch = "x86_64"
 } else {
-  $mingwExceptions = "dwarf"
+  $mingwExceptions = "sjlj"
   $mingwArch = "i686"
 }
 $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExceptions}"
@@ -46,7 +46,11 @@ choco install git.install -Version 1.9.5
 choco install ruby -Version 2.1.5
 choco install python -Version 3.4.2
 choco install doxygen.install -Version 1.8.8
-choco install mingw -Version "${mingwVerChoco}" -params "/exception:${mingwExceptions} /threads:${mingwThreads}"
+if ($arch -eq 64) {
+  choco install mingw -Version "${mingwVerChoco}" -params "/exception:${mingwExceptions} /threads:${mingwThreads}"
+} else {
+  choco install mingw -Version "${mingwVerChoco}" -params "/exception:${mingwExceptions} /threads:${mingwThreads}" -x86
+}
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 $env:PATH += [Environment]::GetFolderPath('ProgramFilesX86') + "\git\cmd"
 echo $env:PATH
