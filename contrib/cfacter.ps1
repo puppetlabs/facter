@@ -1,3 +1,13 @@
+### Set variables from command line
+# $arch => Choose 32 or 64-bit build
+# $cores => Set the number of cores to use for parallel builds
+# $buildSource => Choose whether to download pre-built libraries or build from source
+param (
+[string] $arch=64,
+[string] $cores=2,
+[string] $buildSource=$FALSE
+)
+
 if (!(Test-Path $env:TEMP)) {
     $env:TEMP='C:\cygwin64\tmp'
 }
@@ -9,14 +19,10 @@ if (!(Test-Path $env:TEMP)) {
 ## Setup the working directory
 $sourceDir=$pwd
 
-## Set the number of cores to use for parallel builds
-$cores=2
+echo $arch
+echo $cores
+echo $buildSource
 
-## Choose whether to download pre-built libraries or build from source
-$buildSource=$FALSE
-
-## Choose 32 or 64-bit build
-$arch=64
 
 $mingwVerNum = "4.8.3"
 $mingwVerChoco = "${mingwVerNum}.20141208"
@@ -52,6 +58,9 @@ if ($arch -eq 64) {
   choco install mingw -Version "${mingwVerChoco}" -params "/exception:${mingwExceptions} /threads:${mingwThreads}" -x86
 }
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+if ($arch -eq 32) {
+  $env:PATH += "C:\tools\mingw32\bin;"
+}
 $env:PATH += [Environment]::GetFolderPath('ProgramFilesX86') + "\git\cmd"
 echo $env:PATH
 cd $sourceDir
