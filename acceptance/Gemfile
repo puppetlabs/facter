@@ -1,6 +1,6 @@
 source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
-gem "beaker", "~> 1.17.2"
+gem "beaker", "~> 2.2.0"
 gem 'rake', "~> 10.1.0"
 
 # json-schema does not support windows, so use the 'ruby' platform to exclude it on windows

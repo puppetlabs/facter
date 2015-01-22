@@ -25,7 +25,7 @@ class Facter::Util::Resolution
 
   class << self
     # Expose command execution methods that were extracted into
-    # Facter::Util::Execution from Facter::Util::Resolution in Facter 2.0.0 for
+    # Facter::Core::Execution from Facter::Util::Resolution in Facter 2.0.0 for
     # compatibility.
     #
     # @deprecated

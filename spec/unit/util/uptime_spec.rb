@@ -28,13 +28,13 @@ describe Facter::Util::Uptime do
 
       it "should use 'sysctl -n kern.boottime' on OpenBSD" do
         Facter::Util::POSIX.stubs(:sysctl).returns(my_fixture_read("sysctl_kern_boottime_openbsd"))
-        Time.stubs(:now).returns Time.parse("Dec 09 22:11:46 +0000 2011") # one hour later
+        Time.stubs(:now).returns Time.utc(2011,12,9,22,11,46) # one hour later
         Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60
       end
 
       it "should use 'sysctl -n kern.boottime' on Darwin, etc." do
         Facter::Util::POSIX.stubs(:sysctl).returns(my_fixture_read("sysctl_kern_boottime_darwin"))
-        Time.stubs(:now).returns Time.parse("Oct 30 22:52:27 +0000 2011") # one hour later
+        Time.stubs(:now).returns Time.utc(2011,10,30,22,52,27) # one hour later
         Facter::Util::Uptime.get_uptime_seconds_unix.should == 60 * 60
       end
 

@@ -103,6 +103,7 @@ EOS
       generate_config_for_latest_hosts if final_options[:preserve_hosts] || overriding_options =~ /--preserve-hosts/
     end
     mv(options_file, "log/latest")
+    puts "\n\n"
   end
 end
 
@@ -116,15 +117,19 @@ def generate_config_for_latest_hosts
 
   pre_suite_log = File.read('log/latest/pre_suite-run.log')
   nodes.each do |node_info|
-    hostname = /^(\w+) \(#{node_info[:node_label]}\)/.match(pre_suite_log)[1]
-    fqdn = "#{hostname}.delivery.puppetlabs.net"
+    possible_hostname_match = /^(\w+) \(#{node_info[:node_label]}\)/.match(pre_suite_log)
+    hostname = (possible_hostname_match || Array.new)[1]
+    fqdn = hostname ? "#{hostname}.delivery.puppetlabs.net" : "unknown"
     preserved_config_hash['HOSTS'][fqdn] = {
       'roles' => [ 'agent'],
       'platform' => node_info[:platform],
     }
     preserved_config_hash['HOSTS'][fqdn]['roles'].unshift('master') if node_info[:node_label] =~ /master/
   end
+
+  puts "\n\n"
   pp preserved_config_hash
+  puts "\n\n"
 
   File.open('log/latest/preserved_config.yaml', 'w') do |config_file|
     YAML.dump(preserved_config_hash, config_file)
@@ -250,6 +255,14 @@ Run the acceptance tests through Beaker and install packages on the configuratio
 EOS
     task :packages => 'ci:check_env' do
       beaker_test
+    end
+
+    desc <<-EOS
+Run the acceptance tests through Beaker and install packages as part of the AIO puppet-agent installation.
+#{USAGE}
+EOS
+    task :aio => 'ci:check_env' do
+      beaker_test(:aio)
     end
 
     desc <<-EOS

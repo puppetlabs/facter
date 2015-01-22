@@ -12,7 +12,7 @@
 Facter.add(:system32) do
   confine :kernel => :windows
   setcode do
-    if File.exists?("#{ENV['SYSTEMROOT']}\\sysnative")
+    if File.exist?("#{ENV['SYSTEMROOT']}\\sysnative")
       "#{ENV['SYSTEMROOT']}\\sysnative"
     else
       "#{ENV['SYSTEMROOT']}\\system32"

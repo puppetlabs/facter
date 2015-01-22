@@ -41,7 +41,11 @@ module Facter::Util::Config
     if Facter::Util::Root.root?
       windows_dir = windows_data_dir
       if windows_dir.nil? then
-        @external_facts_dirs = ["/etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"]
+        # Note: Beginning with Facter 3, /opt/puppetlabs/agent/facts.d will be the only
+        # default external fact directory.
+        @external_facts_dirs = ["/opt/puppetlabs/agent/facts.d",
+                                "/etc/facter/facts.d",
+                                "/etc/puppetlabs/facter/facts.d"]
       else
         @external_facts_dirs = [File.join(windows_dir, 'PuppetLabs', 'facter', 'facts.d')]
       end

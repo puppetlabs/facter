@@ -147,6 +147,15 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "xenu"
     end
 
+    it "should be xenu with xvda1 device in /dev" do
+      Facter.fact(:hardwaremodel).stubs(:value).returns("i386")
+      Facter::Util::Virtual.expects(:xen?).returns(true)
+      FileTest.expects(:exists?).with("/dev/xen/evtchn").returns(false)
+      FileTest.expects(:exists?).with("/proc/xen").returns(false)
+      FileTest.expects(:exists?).with("/dev/xvda1").returns(true)
+      Facter.fact(:virtual).value.should == "xenu"
+    end
+
     it "should be xenhvm with Xen HVM vendor name from lspci 2>/dev/null" do
       Facter::Core::Execution.stubs(:exec).with('lspci 2>/dev/null').returns("00:03.0 Unassigned class [ff80]: XenSource, Inc. Xen Platform Device (rev 01)")
       Facter.fact(:virtual).value.should == "xenhvm"

@@ -72,7 +72,8 @@ Facter.add(:macaddress) do
   setcode do
     ether = []
     ip = nil
-    output = Facter::Util::IP.exec_ifconfig(["-a"])
+    default_interface = Facter::Util::IP.exec_netstat(["-rn | grep default | awk '{ print $6 }'"])
+    output = Facter::Util::IP.exec_ifconfig([default_interface])
     output.each_line do |str|
       if str =~ /([a-z]+\d+): flags=/
         devname = $1

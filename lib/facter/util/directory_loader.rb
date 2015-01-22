@@ -1,7 +1,10 @@
 # A Facter plugin that loads external facts.
 #
 # Default Unix Directories:
-# /etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"
+# /opt/puppetlabs/agent/facts.d, /etc/facter/facts.d, /etc/puppetlabs/facter/facts.d
+#
+# Beginning with Facter 3, only /opt/puppetlabs/agent/facts.d will be a default external fact
+# directory in Unix.
 #
 # Default Windows Direcotires:
 # C:\ProgramData\Puppetlabs\facter\facts.d (2008)
@@ -30,8 +33,9 @@ class Facter::Util::DirectoryLoader
   # Directory for fact loading
   attr_reader :directory
 
-  def initialize(dir)
+  def initialize(dir, weight = nil)
     @directory = dir
+    @weight = weight || EXTERNAL_FACT_WEIGHT
   end
 
   def self.loader_for(dir)
@@ -52,6 +56,7 @@ class Facter::Util::DirectoryLoader
   # Load facts from files in fact directory using the relevant parser classes to
   # parse them.
   def load(collection)
+    weight = @weight
     entries.each do |file|
       parser = Facter::Util::Parser.parser_for(file)
       if parser == nil
@@ -64,7 +69,7 @@ class Facter::Util::DirectoryLoader
       elsif data == {} or data == nil
         Facter.warn "Fact file #{file} was parsed but returned an empty data set"
       else
-        data.each { |p,v| collection.add(p, :value => v) { has_weight(EXTERNAL_FACT_WEIGHT) } }
+        data.each { |p,v| collection.add(p, :value => v) { has_weight(weight) } }
       end
     end
   end

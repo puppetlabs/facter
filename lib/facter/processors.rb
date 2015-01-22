@@ -1,18 +1,24 @@
 # Fact: processors
 #
 # Purpose:
-#   Additional facts about the machine's CPU's, including
-#   processor lists, models, counts, and speeds.
+#   Provide additional facts about the machine's CPUs, including:
+#   Models: A list of processors present on the system.
+#   Count:  The number of hardware threads.
+#   Physicalcount: The number of physical processors.
+#   Speed: The speed of the processors on the system.
+#
+#   This fact is structured. These values are returned as a group of key-value pairs.
 #
 # Resolution:
-#   Each kernel utilizes its own implementation object to collect
-#   processor data. Linux and kFreeBSD parse `/proc/cpuinfo` for each
-#   processor. AIX parses the output of `lsdev` for its processor section.
-#   For Solaris, we parse the output of `kstat` for each processor. OpenBSD uses
-#   the sysctl variables 'hw.model' and 'hw.ncpu' for the CPU model and 
-#   the CPU count respectively. Darwin utilizes the system profiler to collect
-#   the physical CPU count and speed.
+#   Linux and kFreeBSD parse `/proc/cpuinfo` for each processor.
+#   AIX parses the output of `lsdev` for its processor section.
+#   Solaris parses the output of `kstat` for each processor.
+#   OpenBSD uses the sysctl variables `hw.model` and `hw.ncpu` for the CPU model
+#   and the CPU count respectively.
+#   Darwin utilizes the system profiler to collect the physical CPU count and speed.
 #
+# Caveats:
+#   The 'speed' sub-fact is not currently supported on all platforms.
 
 require 'facter/processors/os'
 
