@@ -1,5 +1,6 @@
-Facter.add('somefact') do
+# encoding: utf-8
+Facter.add('somefact™') do
   setcode do
-    'other'
+    'other™'
   end
 end
