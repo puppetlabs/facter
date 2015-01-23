@@ -5,10 +5,12 @@
 #include <facter/ruby/ruby_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/logging/logging.hpp>
+#include <facter/util/environment.hpp>
 #include <algorithm>
 
 using namespace std;
 using namespace facter::facts;
+using namespace facter::util;
 
 namespace facter { namespace ruby {
 
@@ -72,9 +74,9 @@ namespace facter { namespace ruby {
             return res_first->weight() > res_second->weight();
         });
 
-        vector<VALUE>::iterator it;
-
         _resolving = true;
+
+        vector<VALUE>::iterator it;
         ruby.rescue([&]() {
             volatile VALUE value = ruby.nil_value();
 
@@ -103,15 +105,20 @@ namespace facter { namespace ruby {
             return 0;
         });
 
+        bool add = true;
         if (ruby.is_nil(_value)) {
             // Check to see the value is in the collection
             auto value = facts[ruby.to_string(_name)];
             if (value) {
+                // Already in collection, do not add
+                add = false;
                 _value = ruby.to_ruby(value);
             }
         }
 
-        facts.add(ruby.to_string(_name), ruby.is_nil(_value) ? nullptr : make_value<ruby::ruby_value>(_value));
+        if (add) {
+            facts.add(ruby.to_string(_name), ruby.is_nil(_value) ? nullptr : make_value<ruby::ruby_value>(_value));
+        }
 
         _resolving = false;
         return _value;

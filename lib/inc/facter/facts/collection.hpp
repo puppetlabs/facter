@@ -101,10 +101,15 @@ namespace facter { namespace facts {
 
         /**
          * Adds external facts to the fact collection.
-         * If external facts are present, all facts will be resolved prior to adding the external facts.
          * @param directories The directories to search for external facts.  If empty, the default search paths will be used.
          */
         void add_external_facts(std::vector<std::string> const& directories = {});
+
+        /**
+         * Adds facts defined via "FACTER_xyz" environment variables.
+         * @param callback The callback that is called with the name of each fact added from the environment.
+         */
+        void add_environment_facts(std::function<void(std::string const&)> callback = nullptr);
 
         /**
          * Removes a resolver from the fact collection.

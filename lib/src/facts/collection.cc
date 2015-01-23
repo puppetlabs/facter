@@ -170,6 +170,27 @@ namespace facter { namespace facts {
         }
     }
 
+    void collection::add_environment_facts(function<void(string const& name)> callback)
+    {
+        environment::each([&](string& name, string& value) {
+            // If the variable starts with "FACTER_", the remainder of the variable is the fact name
+            if (!boost::istarts_with(name, "FACTER_")) {
+                return true;
+            }
+
+            auto fact_name = name.substr(7);
+            boost::to_lower(fact_name);
+            LOG_DEBUG("setting fact \"%1%\" based on the value of environment variable \"%2%\".", fact_name, name);
+
+            // Add the value based on the environment variable
+            add(fact_name, make_value<string_value>(move(value)));
+            if (callback) {
+                callback(fact_name);
+            }
+            return true;
+        });
+    }
+
     void collection::remove(shared_ptr<resolver> const& res)
     {
         if (!res) {

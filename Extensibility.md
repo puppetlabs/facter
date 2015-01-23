@@ -30,8 +30,8 @@ Native Facter implements a Ruby compatibility layer to support simple and aggreg
 Native Facter searches for a MRI Ruby library to load and initializes a Ruby VM as needed
 to resolve custom facts.
 
-The environment variable `FACTER_RUBY` can be used to explicitly instruct native Facter to use
-a particular Ruby library (e.g. `FACTER_RUBY=/usr/local/lib/libruby.so.1.9.3`).  If not set, native Facter will search for and load the highest
+The environment variable `FACTERRUBY` can be used to explicitly instruct native Facter to use
+a particular Ruby library (e.g. `FACTERRUBY=/usr/local/lib/libruby.so.1.9.3`).  If not set, native Facter will search for and load the highest
 version Ruby library on the system.
 
 **Ruby 1.8.x is not supported by native Facter.  Please use Ruby 1.9.3 or later.**

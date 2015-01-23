@@ -25,7 +25,7 @@ namespace facter { namespace ruby {
         // Next try an environment variable
         // This allows users to directly specify the ruby version to use
         string value;
-        if (environment::get("FACTER_RUBY", value)) {
+        if (environment::get("FACTERRUBY", value)) {
             if (library.load(value)) {
                 return library;
             } else {
