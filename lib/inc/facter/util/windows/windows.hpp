@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Utility header for including Windows API headers.
+ */
 #pragma once
 
 // Windows has several header files with fixed dependency ordering. Include interdependent headers here,

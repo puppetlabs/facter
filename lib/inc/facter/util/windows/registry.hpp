@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares utility functions for interacting with the Windows registry.
+ */
 #pragma once
 
 #include <string>

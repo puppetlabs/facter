@@ -63,7 +63,7 @@ MinGW-w64 is used for full C++11 support, and Chocolatey to install some tools. 
 
 For the remaining tasks, build commands can be executed in the shell from Start > MinGW-w64 project > Run Terminal
 
-*   select an install location for dependencies, such as C:\tools or cmake\release\ext; we'll refer to it as $install
+*   select an install location for dependencies, such as C:\\tools or cmake\\release\\ext; we'll refer to it as $install
 
 *   build Boost - http://sourceforge.net/projects/boost/files/latest/download
 
