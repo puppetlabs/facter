@@ -4,11 +4,13 @@
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <facter/util/environment.hpp>
 #include "../fixtures.hpp"
 #include <sstream>
 
 using namespace std;
 using namespace facter::facts;
+using namespace facter::util;
 
 TEST(facter_facts_collection, default_constructor) {
     collection facts;
@@ -252,4 +254,63 @@ TEST(facter_facts_collection, query) {
     svalue = facts.query<string_value>("map.\"name.with.dots\".jam");
     ASSERT_NE(nullptr, svalue);
     ASSERT_EQ("cakes", svalue->value());
+}
+
+TEST(facter_facts_collection, add_environment_facts) {
+    struct env_var
+    {
+        env_var(string name, string const& value) :
+            _name(move(name))
+        {
+            environment::set(_name, value);
+        }
+
+        ~env_var()
+        {
+            environment::clear(_name);
+        }
+
+        string _name;
+    };
+
+    collection facts;
+    ASSERT_EQ(0u, facts.size());
+
+    // Nothing in environment
+    facts.add_environment_facts();
+    ASSERT_EQ(0u, facts.size());
+
+    {
+        auto var = env_var("FACTER_Foo", "bar");
+
+        bool added = false;
+        facts.add_environment_facts([&](string const& name) {
+            added = name == "foo";
+        });
+
+        ASSERT_EQ(true, added);
+        ASSERT_EQ(1u, facts.size());
+
+        auto value = facts.get<string_value>("foo");
+        ASSERT_NE(nullptr, value);
+        ASSERT_EQ("bar", value->value());
+    }
+
+    // Environment variables override built-in values
+    facts.clear();
+    facts.add_default_facts();
+    {
+        auto var = env_var("FACTER_KERNEL", "overridden");
+
+        bool added = false;
+        facts.add_environment_facts([&](string const& name) {
+            added = name == "kernel";
+        });
+
+        ASSERT_EQ(true, added);
+
+        auto value = facts.get<string_value>("kernel");
+        ASSERT_NE(nullptr, value);
+        ASSERT_EQ("overridden", value->value());
+    }
 }

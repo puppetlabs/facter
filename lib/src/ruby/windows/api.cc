@@ -22,9 +22,9 @@ namespace facter { namespace ruby {
             return library;
         }
 
-        // 2. Check the FACTER_RUBY environment variable
+        // 2. Check the FACTERRUBY environment variable
         string value;
-        if (environment::get("FACTER_RUBY", value)) {
+        if (environment::get("FACTERRUBY", value)) {
             if (library.load(value)) {
                 return library;
             } else {

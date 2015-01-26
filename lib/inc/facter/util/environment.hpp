@@ -57,6 +57,12 @@ namespace facter { namespace util {
          * Force search program paths to be reloaded.
          */
         static void reload_search_paths();
+
+        /**
+         * Enumerates the environment variables for the current process.
+         * @param callback The callback to call for each environment variable (passes the variable name and value).
+         */
+        static void each(std::function<bool(std::string&, std::string&)> callback);
     };
 
 }}

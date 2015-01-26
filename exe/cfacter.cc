@@ -246,6 +246,9 @@ int main(int argc, char **argv)
             facts.add_external_facts(external_directories);
         }
 
+        // Add the environment facts
+        facts.add_environment_facts();
+
         if (ruby) {
             module mod(facts, custom_directories);
             mod.resolve_facts();

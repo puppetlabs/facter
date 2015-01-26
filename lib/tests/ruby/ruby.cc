@@ -5,6 +5,7 @@
 #include <facter/ruby/api.hpp>
 #include <facter/ruby/module.hpp>
 #include <facter/util/regex.hpp>
+#include <facter/util/environment.hpp>
 #include <facter/logging/logging.hpp>
 #include <facter/version.h>
 #include <boost/algorithm/string.hpp>
@@ -102,11 +103,23 @@ struct ruby_test_parameters
     {
     }
 
+    ruby_test_parameters(string const& file, string const& fact, string const& value, pair<string, string> var) :
+        file(file),
+        level(log_level::fatal),
+        failure_expected(false),
+        fact(fact),
+        expected(value),
+        variable(move(var)),
+        facts(map<string, string>())
+    {
+    }
+
     string file;
     log_level level;
     bool failure_expected;
     string fact;
     string expected;
+    pair<string, string> variable;
     map<string, string> facts;
     vector<pair<string, string>> messages;
 };
@@ -191,6 +204,10 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
         auto core = boost::log::core::get();
         core->set_filter(log_level_attr >= GetParam().level);
         core->add_sink(_sink);
+
+        if (!GetParam().variable.first.empty()) {
+            environment::set(GetParam().variable.first, GetParam().variable.second);
+        }
     }
 
     virtual void TearDown()
@@ -203,6 +220,10 @@ struct facter_ruby : testing::TestWithParam<ruby_test_parameters>
 
         _sink.reset();
         _appender.reset();
+
+        if (!GetParam().variable.first.empty()) {
+            environment::clear(GetParam().variable.first);
+        }
     }
 
     collection _facts;
@@ -305,6 +326,9 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("trace.rb", log_level::error, { { "ERROR", "^first$" }, { "ERROR", "^second\nbacktrace:" } }),
     ruby_test_parameters("debugging.rb", log_level::debug, { { "DEBUG", "^yep$" } }),
     ruby_test_parameters("on_message.rb", log_level::debug, {}),
+    ruby_test_parameters("ruby.rb", "ruby", "\"override\""),
+    ruby_test_parameters("facterversion.rb", "facterversion", string("\"") + LIBFACTER_VERSION + "\""),
+    ruby_test_parameters("ruby.rb", "ruby", "\"from environment!\"", make_pair("FACTER_RuBy", "from environment!")),
 };
 
 INSTANTIATE_TEST_CASE_P(run, facter_ruby, testing::ValuesIn(single_fact_tests));

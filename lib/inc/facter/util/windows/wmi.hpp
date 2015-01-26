@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Declares utility functions for interacting with Windows Management Instrumentation.
+ */
 #pragma once
 
 #include <facter/util/scoped_resource.hpp>

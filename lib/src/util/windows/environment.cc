@@ -1,4 +1,5 @@
 #include <facter/util/environment.hpp>
+#include <facter/util/windows/windows.hpp>
 #include <boost/algorithm/string.hpp>
 #include <functional>
 
@@ -42,6 +43,31 @@ namespace facter { namespace util {
     void environment::reload_search_paths()
     {
         helper = search_path_helper();
+    }
+
+    void environment::each(function<bool(string&, string&)> callback)
+    {
+        // Enumerate all environment variables
+        auto ptr = GetEnvironmentStringsW();
+        for (auto variables = ptr; variables && *variables; variables += wcslen(variables) + 1) {
+            string pair = boost::nowide::narrow(variables);
+            string name;
+            string value;
+
+            auto pos = pair.find('=');
+            if (pos == string::npos) {
+                name = move(pair);
+            } else {
+                name = pair.substr(0, pos);
+                value = pair.substr(pos + 1);
+            }
+            if (!callback(name, value)) {
+                break;
+            }
+        }
+        if (ptr) {
+            FreeEnvironmentStringsW(ptr);
+        }
     }
 
 }}  // namespace facter::util
