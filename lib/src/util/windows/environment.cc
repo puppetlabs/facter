@@ -1,6 +1,7 @@
 #include <facter/util/environment.hpp>
 #include <facter/util/windows/windows.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/nowide/convert.hpp>
 #include <functional>
 
 using namespace std;

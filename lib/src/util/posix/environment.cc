@@ -5,6 +5,9 @@
 
 using namespace std;
 
+// Some platforms need environ explicitly declared
+extern char** environ;
+
 namespace facter { namespace util {
 
     struct search_path_helper
