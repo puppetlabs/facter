@@ -15,6 +15,7 @@
 #include <facter/facts/resolvers/ec2_resolver.hpp>
 #include <facter/facts/resolvers/gce_resolver.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
 #include <yaml-cpp/yaml.h>
