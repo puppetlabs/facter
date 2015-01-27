@@ -9,6 +9,7 @@ platforms :ruby do
 end
 
 group :development, :test do
+  gem 'yarjuf', "~> 1.0"
   gem 'rake', "~> 10.1.0"
   gem 'rspec', "~> 2.11.0"
   gem 'mocha', "~> 0.10.5"
