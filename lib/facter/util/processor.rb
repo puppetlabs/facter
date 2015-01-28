@@ -229,6 +229,9 @@ module Processor
           elsif l =~ /processor\s+(\d+):\s+(.*)/
             processor_num = $1.to_i
             processor_list[processor_num] = $2 unless processor_num == -1
+          elsif l =~ /flags\s+:\s+(.*)\s*$/
+            processor_list[processor_num] = $1 unless processor_num == -1
+            processor_num = -1
           end
         end
 

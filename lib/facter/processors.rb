@@ -63,4 +63,13 @@ Facter.add(:processors, :type => :aggregate) do
       processor_hash
     end
   end
+
+  chunk(:virtualization) do
+    processor_hash = {}
+    if (processor_virtualization = os.get_processor_virtualization_capacities)
+      processor_hash["virtualization"] = processor_virtualization
+      processor_hash
+    end
+  end
+
 end

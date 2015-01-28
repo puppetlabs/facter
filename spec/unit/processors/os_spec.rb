@@ -161,6 +161,26 @@ describe Facter::Processors::Linux do
       end
     end
 
+    describe "getting processor virtualization capacities" do
+      include FacterSpec::Cpuinfo
+
+      it 'returns true when vmx is part of /proc/cpuinfo output on Intel plateforms' do
+        Facter::Core::Execution.expects(:exec).with("grep ''\(vmx\|svm\)'' /proc/cpuinfo").returns(cpuinfo_fixture_read("vmx-grep"))
+        vtx = subject.get_processor_virtualization_capacities
+        expect(vtx).to eq true
+      end
+      it 'returns true when svm is part of /proc/cpuinfo output on AMD plateforms' do
+        Facter::Core::Execution.expects(:exec).with("grep '\(vmx\|svm\)' /proc/cpuinfo").returns(cpuinfo_fixture_read("svm-grep"))
+        vtx = subject.get_processor_virtualization_capacities
+        expect(vtx).to eq true
+      end
+      it 'returns false to /proc/cpuinfo output on Intel plateforms' do
+        Facter::Core::Execution.expects(:exec).with("grep '\(vmx\|svm\)' /proc/cpuinfo").returns(cpuinfo_fixture_read("novirt-grep"))
+        vtx = subject.get_processor_virtualization_capacities
+        expect(vtx).to eq false
+      end
+    end
+
     describe "when the sysfs cpu directory is not available" do
       include FacterSpec::Cpuinfo
       before :each do
