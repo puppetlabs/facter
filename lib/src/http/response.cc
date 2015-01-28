@@ -9,19 +9,6 @@ namespace facter { namespace http {
     {
     }
 
-    response::response(response&& other)
-    {
-        *this = std::move(other);
-    }
-
-    response& response::operator=(response&& other)
-    {
-        _status_code = other._status_code;
-        _body = move(other._body);
-        _headers = move(other._headers);
-        return *this;
-    }
-
     void response::add_header(string name, string value)
     {
         _headers.emplace(make_pair(move(name), move(value)));

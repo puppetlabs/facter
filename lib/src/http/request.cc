@@ -11,22 +11,6 @@ namespace facter { namespace http {
     {
     }
 
-    request::request(request&& other)
-    {
-        *this = std::move(other);
-    }
-
-    request& request::operator=(request&& other)
-    {
-        _url = move(other._url);
-        _body = move(other._body);
-        _timeout = other._timeout;
-        _connection_timeout = other._connection_timeout;
-        _headers = move(other._headers);
-        _cookies = move(other._cookies);
-        return *this;
-    }
-
     string const& request::url() const
     {
         return _url;
