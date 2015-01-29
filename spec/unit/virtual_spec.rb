@@ -210,6 +210,11 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "hyperv"
     end
 
+    it "should be kvm with virtio device lspci 2>/dev/null" do
+      Facter::Util::Virtual.expects(:lspci).returns("00:03.0 Ethernet controller: Red Hat, Inc Virtio network device")
+      Facter.fact(:virtual).value.should == "kvm"
+    end
+
     context "In a Linux Container (LXC)" do
       before :each do
         Facter.fact(:kernel).stubs(:value).returns("Linux")
