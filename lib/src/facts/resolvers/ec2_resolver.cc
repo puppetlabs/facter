@@ -8,6 +8,7 @@
 #include <facter/util/regex.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
+#include <set>
 
 #ifdef USE_CURL
 #include <facter/http/client.hpp>
@@ -52,6 +53,11 @@ namespace facter { namespace facts { namespace resolvers {
 
     void query_metadata(client& cli, map_value& value, string const& url)
     {
+        // Stores the metadata names to filter out
+        static set<string> filter = {
+            "security-credentials/"
+        };
+
         request req(url);
         req.timeout(200);
 
@@ -70,6 +76,11 @@ namespace facter { namespace facts { namespace resolvers {
             string index;
             if (re_search(name, array_regex, &index)) {
                 name = index + "/";
+            }
+
+            // Check the filter for this name
+            if (filter.count(name) != 0) {
+                return true;
             }
 
             // If the name does not end with a '/', then it is a key name; request the value
