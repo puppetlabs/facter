@@ -15,20 +15,10 @@ namespace facter { namespace http {
      */
     struct response
     {
+        /**
+         * Constructs a HTTP response.
+         */
         response();
-
-        /**
-         * Moves the given response into this response.
-         * @param other The response to move into this response.
-         */
-        response(response&& other);
-
-        /**
-         * Moves the given response into this response.
-         * @param other The response to move into this response.
-         * @return Returns this response.
-         */
-        response& operator=(response&& other);
 
         /**
          * Adds a header to the response.
@@ -81,9 +71,6 @@ namespace facter { namespace http {
         int status_code() const;
 
      private:
-        response(response const&) = delete;
-        response& operator=(response const&) = delete;
-
         int _status_code;
         std::string _body;
         std::map<std::string, std::string> _headers;

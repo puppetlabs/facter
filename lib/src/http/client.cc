@@ -132,11 +132,11 @@ namespace facter { namespace http {
         // Set common options
         auto result = curl_easy_setopt(_handle, CURLOPT_NOPROGRESS, 1);
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(req, curl_easy_strerror(result));
         }
         result = curl_easy_setopt(_handle, CURLOPT_FOLLOWLOCATION, 1);
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(req, curl_easy_strerror(result));
         }
 
         // Set tracing from libcurl if enabled (we don't care if this fails)
@@ -146,7 +146,7 @@ namespace facter { namespace http {
         }
 
         // Setup the request
-        set_method(method);
+        set_method(ctx, method);
         set_url(ctx);
         set_headers(ctx);
         set_cookies(ctx);
@@ -157,7 +157,7 @@ namespace facter { namespace http {
         // Perform the request
         result = curl_easy_perform(_handle);
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(req, curl_easy_strerror(result));
         }
 
         LOG_DEBUG("request completed (status %1%).", res.status_code());
@@ -167,7 +167,7 @@ namespace facter { namespace http {
         return res;
     }
 
-    void client::set_method(http_method method)
+    void client::set_method(context& ctx, http_method method)
     {
         switch (method) {
             case http_method::get:
@@ -177,7 +177,7 @@ namespace facter { namespace http {
             case http_method::post: {
                 auto result = curl_easy_setopt(_handle, CURLOPT_POST, 1);
                 if (result != CURLE_OK) {
-                    throw http_exception(curl_easy_strerror(result));
+                    throw http_request_exception(ctx.req, curl_easy_strerror(result));
                 }
                 break;
             }
@@ -185,13 +185,13 @@ namespace facter { namespace http {
             case http_method::put: {
                 auto result = curl_easy_setopt(_handle, CURLOPT_PUT, 1);
                 if (result != CURLE_OK) {
-                    throw http_exception(curl_easy_strerror(result));
+                    throw http_request_exception(ctx.req, curl_easy_strerror(result));
                 }
                 break;
             }
 
             default:
-                throw http_exception("unexpected HTTP method specified.");
+                throw http_request_exception(ctx.req, "unexpected HTTP method specified.");
         }
     }
 
@@ -200,7 +200,7 @@ namespace facter { namespace http {
         // TODO: support an easy interface for setting escaped query parameters
         auto result = curl_easy_setopt(_handle, CURLOPT_URL, ctx.req.url().c_str());
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(ctx.req, curl_easy_strerror(result));
         }
 
         LOG_DEBUG("requesting %1%.", ctx.req.url());
@@ -214,7 +214,7 @@ namespace facter { namespace http {
         });
         auto result = curl_easy_setopt(_handle, CURLOPT_HTTPHEADER, static_cast<curl_slist*>(ctx.request_headers));
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(ctx.req, curl_easy_strerror(result));
         }
     }
 
@@ -230,7 +230,7 @@ namespace facter { namespace http {
         });
         auto result = curl_easy_setopt(_handle, CURLOPT_COOKIE, cookies.str().c_str());
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(ctx.req, curl_easy_strerror(result));
         }
     }
 
@@ -238,11 +238,11 @@ namespace facter { namespace http {
     {
         auto result = curl_easy_setopt(_handle, CURLOPT_READFUNCTION, read_body);
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(ctx.req, curl_easy_strerror(result));
         }
         result = curl_easy_setopt(_handle, CURLOPT_READDATA, &ctx);
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(ctx.req, curl_easy_strerror(result));
         }
     }
 
@@ -250,11 +250,11 @@ namespace facter { namespace http {
     {
         auto result = curl_easy_setopt(_handle, CURLOPT_CONNECTTIMEOUT_MS, ctx.req.connection_timeout());
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(ctx.req, curl_easy_strerror(result));
         }
         result = curl_easy_setopt(_handle, CURLOPT_TIMEOUT_MS, ctx.req.timeout());
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(ctx.req, curl_easy_strerror(result));
         }
     }
 
@@ -262,19 +262,19 @@ namespace facter { namespace http {
     {
         auto result = curl_easy_setopt(_handle, CURLOPT_HEADERFUNCTION, write_header);
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(ctx.req, curl_easy_strerror(result));
         }
         result = curl_easy_setopt(_handle, CURLOPT_HEADERDATA, &ctx);
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(ctx.req, curl_easy_strerror(result));
         }
         result = curl_easy_setopt(_handle, CURLOPT_WRITEFUNCTION, write_body);
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(ctx.req, curl_easy_strerror(result));
         }
         result = curl_easy_setopt(_handle, CURLOPT_WRITEDATA, &ctx);
         if (result != CURLE_OK) {
-            throw http_exception(curl_easy_strerror(result));
+            throw http_request_exception(ctx.req, curl_easy_strerror(result));
         }
     }
 

@@ -11,8 +11,6 @@
 
 #ifdef USE_CURL
 #include <facter/http/client.hpp>
-#include <facter/http/request.hpp>
-#include <facter/http/response.hpp>
 using namespace facter::http;
 #endif
 
@@ -32,6 +30,9 @@ namespace facter { namespace facts { namespace resolvers {
     }
 
 #ifdef USE_CURL
+    static const char* EC2_METADATA_ROOT_URL = "http://169.254.169.254/latest/meta-data/";
+    static const char* EC2_USERDATA_ROOT_URL = "http://169.254.169.254/latest/user-data/";
+
     void query_metadata_value(client& cli, map_value& value, string const& url, string const& name)
     {
         request req(url + name);
@@ -89,40 +90,45 @@ namespace facter { namespace facts { namespace resolvers {
 
     void ec2_resolver::resolve(collection& facts)
     {
-        bool ec2 = false;
-        auto virtualization = facts.get<string_value>(fact::virtualization);
-        if (virtualization && (virtualization->value() == vm::kvm || boost::starts_with(virtualization->value(), "xen"))) {
-            auto bios_version = facts.get<string_value>(fact::bios_version);
-            ec2 = bios_version && boost::icontains(bios_version->value(), "amazon");
-        }
-        if (!ec2) {
-            LOG_DEBUG("not running under an EC2 instance.");
-            return;
-        }
 #ifndef USE_CURL
         LOG_INFO("EC2 facts are unavailable: facter was built without libcurl support.");
         return;
 #else
+        auto virtualization = facts.get<string_value>(fact::virtualization);
+        if (!virtualization || (virtualization->value() != vm::kvm && !boost::starts_with(virtualization->value(), "xen"))) {
+            LOG_DEBUG("EC2 facts are unavailable: not running under an EC2 instance.");
+            return;
+        }
+
+        LOG_DEBUG("querying EC2 instance metadata at %1%.", EC2_METADATA_ROOT_URL);
+
         client cli;
         auto metadata = make_value<map_value>();
 
-        LOG_DEBUG("querying EC2 instance metadata.");
-
         try
         {
-            query_metadata(cli, *metadata, "http://169.254.169.254/latest/meta-data/");
+            query_metadata(cli, *metadata, EC2_METADATA_ROOT_URL);
 
             if (!metadata->empty()) {
                 facts.add(fact::ec2_metadata, move(metadata));
             }
-        } catch (runtime_error& ex) {
+        }
+        catch (http_request_exception& ex) {
+            if (ex.req().url() == EC2_METADATA_ROOT_URL) {
+                // The very first query failed; most likely not an EC2 instance
+                LOG_DEBUG("EC2 facts are unavailable: not running under an EC2 instance.");
+                return;
+            }
+            LOG_ERROR("EC2 metadata request failed: %1%", ex.what());
+        }
+        catch (runtime_error& ex) {
             LOG_ERROR("EC2 metadata request failed: %1%", ex.what());
         }
 
-        LOG_DEBUG("querying EC2 instance user data.");
+        LOG_DEBUG("querying EC2 instance user data at %1%.", EC2_USERDATA_ROOT_URL);
 
         try {
-            request req("http://169.254.169.254/latest/user-data/");
+            request req(EC2_USERDATA_ROOT_URL);
             req.timeout(200);
 
             auto response = cli.get(req);

@@ -22,19 +22,6 @@ namespace facter { namespace http {
         explicit request(std::string url);
 
         /**
-         * Moves the given request into this request.
-         * @param other The request to move into this request.
-         */
-        request(request&& other);
-
-        /**
-         * Moves the given request into this request.
-         * @param other The request to move into this request.
-         * @return Returns this request.
-         */
-        request& operator=(request&& other);
-
-        /**
          * Gets the URL for the request.
          * @return Returns the URL for the request.
          */
@@ -131,9 +118,6 @@ namespace facter { namespace http {
         void connection_timeout(long value);
 
      private:
-        request(request const&) = delete;
-        request& operator=(request const&) = delete;
-
         std::string _url;
         std::string _body;
         long _timeout;

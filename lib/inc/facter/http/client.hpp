@@ -5,13 +5,11 @@
 #pragma once
 
 #include "../util/scoped_resource.hpp"
+#include "request.hpp"
+#include "response.hpp"
 #include <curl/curl.h>
 
 namespace facter { namespace http {
-
-    // Forward declare the request and response
-    struct request;
-    struct response;
 
     /**
      * Resource for a cURL handle.
@@ -76,6 +74,35 @@ namespace facter { namespace http {
             runtime_error(message)
         {
         }
+    };
+
+    /**
+     * The exception for HTTP requests.
+     */
+    struct http_request_exception : http_exception
+    {
+        /**
+         * Constructs an http_request_exception.
+         * @param req The HTTP request that caused the exception.
+         * @param message The exception message.
+         */
+        http_request_exception(request req, std::string const &message) :
+            http_exception(message),
+            _req(std::move(req))
+        {
+        }
+
+        /**
+         * Gets the request associated with the exception
+         * @return Returns the request associated with the exception.
+         */
+        request const& req() const
+        {
+            return _req;
+        }
+
+     private:
+        request _req;
     };
 
     /**
@@ -151,7 +178,7 @@ namespace facter { namespace http {
         };
 
         response perform(http_method method, request const& req);
-        void set_method(http_method method);
+        void set_method(context& ctx, http_method method);
         void set_url(context& ctx);
         void set_headers(context& ctx);
         void set_cookies(context& ctx);
