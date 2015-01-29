@@ -114,6 +114,23 @@ describe Facter::EC2::Metadata do
     end
   end
 
+  it 'filters out IAM security credentials' do
+    subject.expects(:fetch_endpoint).with('').returns(['iam/'])
+    subject.expects(:fetch_endpoint).with('iam/').returns(['foo', 'security-credentials/', 'bar/'])
+    subject.expects(:fetch_endpoint).with('iam/foo').returns(['baz'])
+    subject.expects(:fetch_endpoint).with('iam/bar/').returns(['baz'])
+    subject.expects(:fetch_endpoint).with('iam/bar/baz').returns(['foo'])
+    output = subject.fetch
+    expect(output).to eq({
+      'iam' => {
+        'foo' => 'baz',
+        'bar' => {
+          'baz' => 'foo'
+        }
+      }
+    })
+  end
+
   it_behaves_like "an ec2 rest querier"
 end
 

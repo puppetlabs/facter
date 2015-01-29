@@ -13,6 +13,11 @@ module Facter
       Errno::ETIMEDOUT,
     ]
 
+    # Contains metadata keys that should not be collected
+    FILTERED_KEYS = [
+      'security-credentials/'
+    ].freeze
+
     class Base
       def reachable?(retry_limit = 3)
         timeout = 0.2
@@ -56,6 +61,7 @@ module Facter
 
         keys = fetch_endpoint(path)
         keys.each do |key|
+          next if FILTERED_KEYS.include? key
           if key.match(%r[/$])
             # If a metadata key is suffixed with '/' then it's a general metadata
             # resource, so we have to recursively look up all the keys in the given
