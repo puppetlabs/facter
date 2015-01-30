@@ -149,7 +149,7 @@ Facter.add("virtual") do
       next "xenhvm"     if lines.any? {|l| l =~ /XenSource/ }
       next "hyperv"     if lines.any? {|l| l =~ /Microsoft Corporation Hyper-V/ }
       next "gce"        if lines.any? {|l| l =~ /Class 8007: Google, Inc/ }
-      next "kvm"        if lines.any? {|l| l =~ /virtio/ }
+      next "kvm"        if lines.any? {|l| l =~ /virtio/i }
     end
 
     # Parse dmidecode
