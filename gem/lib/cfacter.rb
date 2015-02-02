@@ -33,7 +33,7 @@ module CFacter
   end
 
   # The version of the gem.
-  GEM_VERSION = '0.2.0'
+  GEM_VERSION = '0.3.0'
 
   # Ensure the facter library that was loaded matches the gem version.
   raise LoadError.new("Expected cfacter #{GEM_VERSION} but found #{FacterLib.facter_version}.") if FacterLib.facter_version != GEM_VERSION

@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'cfacter'
-  s.version     = '0.2.0'
+  s.version     = '0.3.0'
   s.summary     = 'cfacter'
   s.description = 'A lightweight facter replacement'
   s.authors     = ["Puppet Labs"]
