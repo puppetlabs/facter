@@ -21,7 +21,7 @@ final_mocks: 'pl-el-5-x86_64 pl-el-5-i386 pl-el-6-x86_64 pl-el-6-i386 pl-el-7-x8
 # The host that contains the yum repository to ship to
 yum_host: 'yum.puppetlabs.com'
 # The remote path the repository on the yum\_host
-yum_repo_path: '/some/repo/'
+yum_repo_path: '/opt/repository/yum/'
 # The host that contains the apt repository to ship to
 apt_host: 'apt.puppetlabs.com'
 # The URL to use for the apt dependencies in cow building
