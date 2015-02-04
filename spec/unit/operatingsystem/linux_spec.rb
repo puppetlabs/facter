@@ -298,7 +298,7 @@ describe Facter::Operatingsystem::Linux do
   end
 
   describe "Operatingsystemmajrelease key" do
-    ['Amazon' 'AristaEOS', 'CentOS','CloudLinux','Debian','Fedora','OEL','OracleLinux','OVS','RedHat','Scientific','SLC','CumulusLinux'].each do |operatingsystem|
+    ['Amazon' 'AristaEOS', 'CentOS','CloudLinux','Debian','Fedora','OEL','OracleLinux','OVS','RedHat','Scientific','SLC','CumulusLinux','CoreOS'].each do |operatingsystem|
       describe "on #{operatingsystem} operatingsystems" do
         it "should be derived from operatingsystemrelease" do
           subject.stubs(:get_operatingsystem).returns(operatingsystem)
