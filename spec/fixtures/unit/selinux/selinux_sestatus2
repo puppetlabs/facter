@@ -1,0 +1,9 @@
+SELinux status: enabled
+SELinuxfs mount: /sys/fs/selinux
+SELinux root directory: /etc/selinux
+Loaded policy name: default
+Current mode: enforcing
+Mode from config file: permissive
+Policy MLS status: enabled
+Policy deny_unknown status: denied
+Max kernel policy version: 29
