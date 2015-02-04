@@ -19,6 +19,21 @@ describe Facter::Util::Operatingsystem do
       })
     end
 
+    it "correctly parses the file on CoreOS Linux"  do
+      values = described_class.os_release(my_fixture('coreos.txt'))
+
+      expect(values).to eq({
+        'NAME' => "CoreOS",
+        'VERSION_ID' => "575.0.0",
+        'VERSION' => "575.0.0",
+        'PRETTY_NAME' => "CoreOS 575.0.0",
+        'ID' => "coreos",
+        'HOME_URL' => "https://coreos.com/",
+        'BUG_REPORT_URL' => "https://github.com/coreos/bugs/issues",
+        'ANSI_COLOR' => "1;32",
+      })
+    end
+
     it "correctly parses the file on Sabayon" do
       values = described_class.os_release(my_fixture('sabayon.txt'))
 
