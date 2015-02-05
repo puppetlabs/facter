@@ -110,6 +110,10 @@ namespace facter { namespace ruby {
             json.SetObject();
 
             ruby.hash_for_each(value, [&](VALUE key, VALUE element) {
+                // If the key isn't a string, convert to string
+                if (!ruby.is_string(key)) {
+                    key = ruby.rb_funcall(key, ruby.rb_intern("to_s"), 0);
+                }
                 rapidjson::Value e;
                 to_json(ruby, element, allocator, e);
                 json.AddMember(ruby.rb_string_value_ptr(&key), e, allocator);
