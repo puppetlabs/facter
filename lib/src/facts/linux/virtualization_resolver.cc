@@ -206,6 +206,10 @@ namespace facter { namespace facts { namespace linux {
         if (exists("/proc/xen", ec) && !ec) {
             return vm::xen_unprivileged;
         }
+        ec.clear();
+        if (exists("/dev/xvda1", ec) && !ec) {
+            return vm::xen_unprivileged;
+        }
         return {};
     }
 
