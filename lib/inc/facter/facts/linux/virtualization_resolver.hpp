@@ -31,6 +31,7 @@ namespace facter { namespace facts { namespace linux {
         static std::string get_openvz_vm();
         static std::string get_xen_vm();
         static std::string get_product_name_vm(collection& facts);
+        static std::string get_lspci_vm();
     };
 
 }}}  // namespace facter::facts::linux
