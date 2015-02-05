@@ -224,6 +224,7 @@ namespace facter { namespace facts { namespace linux {
             make_tuple("RHEV Hypervisor",   string(vm::redhat_ev)),
             make_tuple("oVirt Node",        string(vm::ovirt)),
             make_tuple("HVM domU",          string(vm::xen_hardware)),
+            make_tuple("Bochs",             string(vm::bochs)),
         };
 
         auto product_name = facts.get<string_value>(fact::product_name);
