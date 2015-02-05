@@ -26,7 +26,7 @@ echo $buildSource
 
 $mingwVerNum = "4.8.3"
 $mingwVerChoco = "${mingwVerNum}.20141208"
-$mingwThreads = "posix"
+$mingwThreads = "win32"
 if ($arch -eq 64) {
   $mingwExceptions = "seh"
   $mingwArch = "x86_64"
@@ -59,7 +59,7 @@ if ($arch -eq 64) {
 }
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 if ($arch -eq 32) {
-  $env:PATH += "C:\tools\mingw32\bin;"
+  $env:PATH = "C:\tools\mingw32\bin;" + $env:PATH
 }
 $env:PATH += [Environment]::GetFolderPath('ProgramFilesX86') + "\git\cmd"
 echo $env:PATH
