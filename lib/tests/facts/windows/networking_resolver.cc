@@ -1,35 +1,60 @@
 #include <gmock/gmock.h>
 #include <facter/facts/windows/networking_resolver.hpp>
 #include <facter/util/windows/windows.hpp>
+#include <facter/util/windows/wsa.hpp>
 #include <Ws2tcpip.h>
 
 using namespace std;
-using namespace facter::facts;
 
 // Test address manipulation utilities.
 
-struct networking_utilities : windows::networking_resolver
+struct networking_utilities : facter::facts::windows::networking_resolver
 {
  public:
     using networking_resolver::ignored_ipv4_address;
     using networking_resolver::ignored_ipv6_address;
     using networking_resolver::create_ipv4_mask;
     using networking_resolver::create_ipv6_mask;
+    using networking_resolver::mask_ipv4_address;
+    using networking_resolver::mask_ipv6_address;
 
     template <typename T>
-    static std::string address_to_string(T const* addr, T const* mask = nullptr)
+    std::string address_to_string(T const& addr)
     {
-        return networking_resolver::address_to_string(
-            reinterpret_cast<sockaddr const*>(addr),
-            reinterpret_cast<sockaddr const*>(mask));
+        return winsock.address_to_string(const_cast<T&>(addr));
     }
+
+    template <typename T>
+    std::string address_to_string(T const* addr, T const* mask) { return {}; }
+
+    bool test_mask()
+    {
+        return static_cast<bool>(_convertLengthToIpv4Mask);
+    }
+
+    facter::util::windows::wsa winsock;
 };
 
+template <>
+std::string networking_utilities::address_to_string<sockaddr_in>(sockaddr_in const* addr, sockaddr_in const* mask)
+{
+    auto masked = mask_ipv4_address(reinterpret_cast<sockaddr const*>(addr), *mask);
+    return address_to_string(masked);
+}
+
+template <>
+std::string networking_utilities::address_to_string<sockaddr_in6>(sockaddr_in6 const* addr, sockaddr_in6 const* mask)
+{
+    auto masked = mask_ipv6_address(reinterpret_cast<sockaddr const*>(addr), *mask);
+    return address_to_string(masked);
+}
 
 // IPv4 Tests
 
 TEST(facter_facts_windows_networking_resolver, ignored_ipv4_address)
 {
+    networking_utilities util;
+
     // These don't check the validity of the address; that's handled by using system APIs to generate the addresses.
     constexpr char const* ignored_addresses[] = { "127.0.0.1", "169.254.7.14", "169.254.0.0", "169.254.255.255" };
     for (auto s : ignored_addresses) {
@@ -70,19 +95,25 @@ static const ipv4_case ip4_masks[] = {
 
 TEST(facter_facts_windows_networking_resolver, create_ipv4_mask)
 {
-    // Test various valid masklen, too large masklen, verify output.
-    for (auto const& item : ip4_masks) {
-        auto mask = networking_utilities::create_ipv4_mask(item.masklen);
-        ASSERT_EQ(item.addr, mask) << "mask of length " << static_cast<int>(item.masklen) << " != " << item.str;
-    }
+    networking_utilities util;
 
-    // Verify the boolean operator behaves as expected.
-    ASSERT_NE(ip4_masks[0].addr, ip4_masks[1].addr);
-    ASSERT_NE(ip4_masks[0].addr, ip4_masks[6].addr);
+    if (util.test_mask()) {
+        // Test various valid masklen, too large masklen, verify output.
+        for (auto const& item : ip4_masks) {
+            auto mask = util.create_ipv4_mask(item.masklen);
+            ASSERT_EQ(item.addr, mask) << "mask of length " << static_cast<int>(item.masklen) << " != " << item.str;
+        }
+
+        // Verify the boolean operator behaves as expected.
+        ASSERT_NE(ip4_masks[0].addr, ip4_masks[1].addr);
+        ASSERT_NE(ip4_masks[0].addr, ip4_masks[6].addr);
+    }
 }
 
 TEST(facter_facts_windows_networking_resolver, address_to_ipv4_string)
 {
+    networking_utilities util;
+
     const pair<sockaddr_in, string> ip4_cases[] = {
         {make_sockaddr_in(192u, 168u, 0u, 1u), "192.168.0.1"},
         {make_sockaddr_in(200u, 0u, 154u, 12u), "200.0.154.12"},
@@ -91,17 +122,19 @@ TEST(facter_facts_windows_networking_resolver, address_to_ipv4_string)
 
     // Test various valid addresses to string.
     for (auto const& item : ip4_cases) {
-        ASSERT_EQ(item.second, networking_utilities::address_to_string(&item.first));
+        ASSERT_EQ(item.second, util.address_to_string(item.first));
     }
 
     // Test various mask addresses to string.
     for (auto const& item : ip4_masks) {
-        ASSERT_EQ(item.str, networking_utilities::address_to_string(&item.addr));
+        ASSERT_EQ(item.str, util.address_to_string(item.addr));
     }
 }
 
 TEST(facter_facts_windows_networking_resolver, address_to_string_with_ipv4_mask)
 {
+    networking_utilities util;
+
     // Test address_to_string with masks applied.
     auto min = make_sockaddr_in(0u, 0u, 0u, 0u);
     auto max = make_sockaddr_in(255u, 255u, 255u, 255u);
@@ -111,21 +144,22 @@ TEST(facter_facts_windows_networking_resolver, address_to_string_with_ipv4_mask)
     auto local = make_sockaddr_in(192u, 168u, 0u, 1u);
     auto outer = make_sockaddr_in(200u, 0u, 154u, 12u);
 
-    ASSERT_EQ("0.0.0.0", networking_utilities::address_to_string(&local, &min));
-    ASSERT_EQ("192.168.0.1", networking_utilities::address_to_string(&local, &max));
-    ASSERT_EQ("192.168.0.0", networking_utilities::address_to_string(&local, &zoro));
-    ASSERT_EQ("128.0.0.0", networking_utilities::address_to_string(&local, &v));
-    ASSERT_EQ("0.0.0.0", networking_utilities::address_to_string(&outer, &min));
-    ASSERT_EQ("200.0.154.12", networking_utilities::address_to_string(&outer, &max));
-    ASSERT_EQ("200.0.128.0", networking_utilities::address_to_string(&outer, &zoro));
-    ASSERT_EQ("128.0.0.0", networking_utilities::address_to_string(&outer, &v));
+    ASSERT_EQ("0.0.0.0", util.address_to_string(&local, &min));
+    ASSERT_EQ("192.168.0.1", util.address_to_string(&local, &max));
+    ASSERT_EQ("192.168.0.0", util.address_to_string(&local, &zoro));
+    ASSERT_EQ("128.0.0.0", util.address_to_string(&local, &v));
+    ASSERT_EQ("0.0.0.0", util.address_to_string(&outer, &min));
+    ASSERT_EQ("200.0.154.12", util.address_to_string(&outer, &max));
+    ASSERT_EQ("200.0.128.0", util.address_to_string(&outer, &zoro));
+    ASSERT_EQ("128.0.0.0", util.address_to_string(&outer, &v));
 }
-
 
 // IPv6 Tests
 
 TEST(facter_facts_windows_networking_resolver, ignored_ipv6_address)
 {
+    networking_utilities util;
+
     constexpr char const* ignored_addresses[] = { "::1", "fe80::9c84:7ca1:794b:12ed", "fe80::75f2:2f55:823b:a513%10" };
     for (auto s : ignored_addresses) {
         ASSERT_TRUE(networking_utilities::ignored_ipv6_address(s)) << s << " not ignored";
@@ -174,21 +208,27 @@ static const ipv6_case ip6_masks[] = {
 
 TEST(facter_facts_windows_networking_resolver, create_ipv6_mask)
 {
-    // Test various valid masklen, too large masklen, verify output.
-    for (auto const& item : ip6_masks) {
-        auto mask = networking_utilities::create_ipv6_mask(item.masklen);
-        ASSERT_EQ(item.addr, mask) <<
-            "mask[" << static_cast<int>(item.masklen) << "] " << networking_utilities::address_to_string(&mask) <<
-            " != [" << item.str << "] " << networking_utilities::address_to_string(&item.addr);
-    }
+    networking_utilities util;
 
-    // Verify the boolean operator behaves as expected.
-    ASSERT_NE(ip6_masks[0].addr, ip6_masks[1].addr);
-    ASSERT_NE(ip6_masks[0].addr, ip6_masks[6].addr);
+    if (util.test_mask()) {
+        // Test various valid masklen, too large masklen, verify output.
+        for (auto const& item : ip6_masks) {
+            auto mask = util.create_ipv6_mask(item.masklen);
+            ASSERT_EQ(item.addr, mask) <<
+                "mask[" << static_cast<int>(item.masklen) << "] " << util.address_to_string(mask) <<
+                " != [" << item.str << "] " << util.address_to_string(item.addr);
+        }
+
+        // Verify the boolean operator behaves as expected.
+        ASSERT_NE(ip6_masks[0].addr, ip6_masks[1].addr);
+        ASSERT_NE(ip6_masks[0].addr, ip6_masks[6].addr);
+    }
 }
 
 TEST(facter_facts_windows_networking_resolver, address_to_ipv6_string)
 {
+    networking_utilities util;
+
     const pair<sockaddr_in6, string> ip6_cases[] = {
         {make_sockaddr_in6({0u, 0u, 0u, 0u, 0xffu, 0xe9u, 0xffu, 0xffu, 0xffu, 0xabu, 1u}), "::ffe9:ffff:ffab:100:0:0"},
         {make_sockaddr_in6({0u, 0xffu, 0xe9u, 0xffu, 0xffu, 0xffu, 0xabu, 1u}), "ff:e9ff:ffff:ab01::"},
@@ -199,17 +239,19 @@ TEST(facter_facts_windows_networking_resolver, address_to_ipv6_string)
 
     // Test various valid addresses to string.
     for (auto const& item : ip6_cases) {
-        ASSERT_EQ(item.second, networking_utilities::address_to_string(&item.first));
+        ASSERT_EQ(item.second, util.address_to_string(item.first));
     }
 
     // Test various mask addresses to string.
     for (auto const& item : ip6_masks) {
-        ASSERT_EQ(item.str, networking_utilities::address_to_string(&item.addr));
+        ASSERT_EQ(item.str, util.address_to_string(item.addr));
     }
 }
 
 TEST(facter_facts_windows_networking_resolver, address_to_string_with_ipv6_mask)
 {
+    networking_utilities util;
+
     // Test address_to_string with masks applied.
     auto min = make_sockaddr_in6({});
     auto max = make_sockaddr_in6({0xffu, 0xffu, 0xffu, 0xffu, 0xffu, 0xffu, 0xffu, 0xffu,
@@ -220,12 +262,12 @@ TEST(facter_facts_windows_networking_resolver, address_to_string_with_ipv6_mask)
     auto local = make_sockaddr_in6({0xfeu, 0x80u, 0x01u, 0x23u, 0u, 0u, 0u, 0u, 0x45u, 0x67u, 0x89u, 0xabu});
     auto outer = make_sockaddr_in6({0u, 0xffu, 0xe9u, 0xffu, 0xffu, 0xffu, 0xabu, 1u});
 
-    ASSERT_EQ("::", networking_utilities::address_to_string(&local, &min));
-    ASSERT_EQ("fe80:123::4567:89ab:0:0", networking_utilities::address_to_string(&local, &max));
-    ASSERT_EQ("fe80:123::", networking_utilities::address_to_string(&local, &zoro));
-    ASSERT_EQ("f800::", networking_utilities::address_to_string(&local, &v));
-    ASSERT_EQ("::", networking_utilities::address_to_string(&outer, &min));
-    ASSERT_EQ("ff:e9ff:ffff:ab01::", networking_utilities::address_to_string(&outer, &max));
-    ASSERT_EQ("ff:e9ff:ffff:ab01::", networking_utilities::address_to_string(&outer, &zoro));
-    ASSERT_EQ("::", networking_utilities::address_to_string(&outer, &v));
+    ASSERT_EQ("::", util.address_to_string(&local, &min));
+    ASSERT_EQ("fe80:123::4567:89ab:0:0", util.address_to_string(&local, &max));
+    ASSERT_EQ("fe80:123::", util.address_to_string(&local, &zoro));
+    ASSERT_EQ("f800::", util.address_to_string(&local, &v));
+    ASSERT_EQ("::", util.address_to_string(&outer, &min));
+    ASSERT_EQ("ff:e9ff:ffff:ab01::", util.address_to_string(&outer, &max));
+    ASSERT_EQ("ff:e9ff:ffff:ab01::", util.address_to_string(&outer, &zoro));
+    ASSERT_EQ("::", util.address_to_string(&outer, &v));
 }

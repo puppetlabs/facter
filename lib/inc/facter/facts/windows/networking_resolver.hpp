@@ -7,6 +7,7 @@
 #include "../resolvers/networking_resolver.hpp"
 #include <vector>
 #include <string>
+#include <functional>
 
 /*
  * Forward declarations from winsock2.h, ws2tcpip.h, windows.h
@@ -24,6 +25,11 @@ namespace facter { namespace facts { namespace windows {
      */
     struct networking_resolver : resolvers::networking_resolver
     {
+        /**
+         * Constructs a Windows networking resolver.
+         */
+        networking_resolver();
+
      protected:
         /**
          * Collects the resolver data.
@@ -53,7 +59,7 @@ namespace facter { namespace facts { namespace windows {
          * @param masklen Length of the contiguous mask.
          * @return The sockaddr_in representation of the mask.
          */
-        static sockaddr_in create_ipv4_mask(uint8_t masklen);
+        sockaddr_in create_ipv4_mask(uint8_t masklen);
 
         /**
          * Creates an IPv6 sockaddr_in6 of the mask. If masklen is too large, returns a full mask.
@@ -61,16 +67,28 @@ namespace facter { namespace facts { namespace windows {
          * @param masklen Length of the contiguous mask.
          * @return The sockaddr_in6 representation of the mask.
          */
-        static sockaddr_in6 create_ipv6_mask(uint8_t masklen);
+        sockaddr_in6 create_ipv6_mask(uint8_t masklen);
 
         /**
-         * Translates a binary address representation to an IPv4 or IPv6 string.
-         * If a mask is specified, applies the mask before translation.
-         * @param addr A SOCKADDR structure defining a valid IPv4 or IPv6 address.
-         * @param mask A SOCKADDR structure defining a valid IPv4 or IPv6 mask.
-         * @return A string representation of the address.
+         * Applies a mask to an IPv4 address, returning a new sockaddr_in.
+         * @param addr A sockaddr structure defining a valid IPv4 address.
+         * @param mask A sockaddr_in structure defining a valid IPv4 mask.
+         * @return A new sockaddr_in structure representing the masked IPv4 address.
          */
-        static std::string address_to_string(sockaddr const* addr, sockaddr const* mask = nullptr);
+        static sockaddr_in mask_ipv4_address(sockaddr const* addr, sockaddr_in const& mask);
+
+        /**
+         * Applies a mask to an IPv6 address, returning a new sockaddr_in6.
+         * @param addr A sockaddr structure defining a valid IPv6 address.
+         * @param mask A sockaddr_in6 structure defining a valid IPv6 mask.
+         * @return A new sockaddr_in6 structure representing the masked IPv6 address.
+         */
+        static sockaddr_in6 mask_ipv6_address(sockaddr const* addr, sockaddr_in6 const& mask);
+
+        /**
+         * Stores a pointer to ConvertLengthToIpv4Mask, which is used post-Windows Server 2003.
+         */
+        std::function<int(unsigned long, unsigned long*)> _convertLengthToIpv4Mask;
     };
 
 }}}  // namespace facter::facts::windows
