@@ -20,6 +20,11 @@ namespace facter { namespace util { namespace windows {
     {
     }
 
+    string format_hresult(char const* s, HRESULT hres)
+    {
+        return str(boost::format("%1% (%2%)") % s % boost::io::group(hex, showbase, hres));
+    }
+
     // GUID taken from a Windows installation and unaccepted change to MinGW-w64. The MinGW-w64 library
     // doesn't define it, but obscures the Windows Platform SDK version of wbemuuid.lib.
     constexpr static CLSID MyCLSID_WbemLocator = {0x4590f811, 0x1d3a, 0x11d0, 0x89, 0x1f, 0x00, 0xaa, 0x00, 0x4b, 0x2e, 0x24};
@@ -29,15 +34,20 @@ namespace facter { namespace util { namespace windows {
         LOG_DEBUG("initializing WMI");
         auto hres = CoInitializeEx(0, COINIT_MULTITHREADED);
         if (FAILED(hres)) {
-            throw wmi_exception("failed to initialize COM library");
+            if (hres == RPC_E_CHANGED_MODE) {
+                LOG_DEBUG("using prior COM concurrency model");
+            } else {
+                throw wmi_exception(format_hresult("failed to initialize COM library", hres));
+            }
+        } else {
+            _coInit = scoped_resource<bool>(true, [](bool b) { CoUninitialize(); });
         }
-        _coInit = scoped_resource<bool>(true, [](bool b) { CoUninitialize(); });
 
         IWbemLocator *pLoc;
         hres = CoCreateInstance(MyCLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator,
             reinterpret_cast<LPVOID *>(&pLoc));
         if (FAILED(hres)) {
-            throw wmi_exception("failed to create IWbemLocator object");
+            throw wmi_exception(format_hresult("failed to create IWbemLocator object", hres));
         }
         _pLoc = scoped_resource<IWbemLocator *>(move(pLoc),
             [](IWbemLocator *loc) { if (loc) loc->Release(); });
@@ -45,7 +55,7 @@ namespace facter { namespace util { namespace windows {
         IWbemServices *pSvc;
         hres = (*_pLoc).ConnectServer(_bstr_t(L"ROOT\\CIMV2"), nullptr, nullptr, nullptr, 0, nullptr, nullptr, &pSvc);
         if (FAILED(hres)) {
-            throw wmi_exception("could not connect to WMI server");
+            throw wmi_exception(format_hresult("could not connect to WMI server", hres));
         }
         _pSvc = scoped_resource<IWbemServices *>(move(pSvc),
             [](IWbemServices *svc) { if (svc) svc->Release(); });
@@ -53,7 +63,7 @@ namespace facter { namespace util { namespace windows {
         hres = CoSetProxyBlanket(_pSvc, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, NULL,
             RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE);
         if (FAILED(hres)) {
-            throw wmi_exception("could not set proxy blanket");
+            throw wmi_exception(format_hresult("could not set proxy blanket", hres));
         }
     }
 
