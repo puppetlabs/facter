@@ -329,6 +329,7 @@ vector<ruby_test_parameters> single_fact_tests = {
     ruby_test_parameters("ruby.rb", "ruby", "\"override\""),
     ruby_test_parameters("facterversion.rb", "facterversion", string("\"") + LIBFACTER_VERSION + "\""),
     ruby_test_parameters("ruby.rb", "ruby", "\"from environment!\"", make_pair("FACTER_RuBy", "from environment!")),
+    ruby_test_parameters("hash_with_non_string_key.rb", "foo", "{\n  foo => \"bar\"\n}"),
 };
 
 INSTANTIATE_TEST_CASE_P(run, facter_ruby, testing::ValuesIn(single_fact_tests));
