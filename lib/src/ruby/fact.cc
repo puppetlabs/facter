@@ -76,37 +76,10 @@ namespace facter { namespace ruby {
 
         _resolving = true;
 
-        vector<VALUE>::iterator it;
-        ruby.rescue([&]() {
-            volatile VALUE value = ruby.nil_value();
-
-            // Look through the resolutions and find the first allowed resolution that resolves
-            for (it = _resolutions.begin(); it != _resolutions.end(); ++it) {
-                auto res = ruby.to_native<resolution>(*it);
-                if (!res->suitable(*facter)) {
-                    continue;
-                }
-                value = res->value();
-                if (!ruby.is_nil(value)) {
-                    break;
-                }
-            }
-
-            // Set the value to what was resolved
-            _value = value;
-            _resolved = true;
-            return 0;
-        }, [&](VALUE ex) {
-            LOG_ERROR("error while resolving custom fact \"%1%\": %2%", ruby.rb_string_value_ptr(&_name), ruby.exception_to_string(ex));
-
-            // Failed, so set to nil
-            _value = ruby.nil_value();
-            _resolved = true;
-            return 0;
-        });
-
+        // If no resolutions or the top resolution has a weight of 0, first check the native collection for the fact
+        // This way we treat the "built-in" as implicitly having a resolution with weight 0
         bool add = true;
-        if (ruby.is_nil(_value)) {
+        if (_resolutions.empty() || ruby.to_native<resolution>(_resolutions.front())->weight() == 0) {
             // Check to see the value is in the collection
             auto value = facts[ruby.to_string(_name)];
             if (value) {
@@ -114,6 +87,37 @@ namespace facter { namespace ruby {
                 add = false;
                 _value = ruby.to_ruby(value);
             }
+        }
+
+        if (ruby.is_nil(_value)) {
+            vector<VALUE>::iterator it;
+            ruby.rescue([&]() {
+                volatile VALUE value = ruby.nil_value();
+
+                // Look through the resolutions and find the first allowed resolution that resolves
+                for (it = _resolutions.begin(); it != _resolutions.end(); ++it) {
+                    auto res = ruby.to_native<resolution>(*it);
+                    if (!res->suitable(*facter)) {
+                        continue;
+                    }
+                    value = res->value();
+                    if (!ruby.is_nil(value)) {
+                        break;
+                    }
+                }
+
+                // Set the value to what was resolved
+                _value = value;
+                _resolved = true;
+                return 0;
+            }, [&](VALUE ex) {
+                LOG_ERROR("error while resolving custom fact \"%1%\": %2%", ruby.rb_string_value_ptr(&_name), ruby.exception_to_string(ex));
+
+                // Failed, so set to nil
+                _value = ruby.nil_value();
+                _resolved = true;
+                return 0;
+            });
         }
 
         if (add) {
