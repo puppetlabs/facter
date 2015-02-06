@@ -9,7 +9,7 @@ An implementation of facter functionality in C++11, providing:
 
 * a shared library which gather facts about the system
 * an executable for standalone command line usage
-* a gem with a facter-like interface, for use in ruby applications
+* a ruby file to enable `requre 'cfacter'`.
 
 Please see our [extensibility document](https://github.com/puppetlabs/cfacter/blob/master/Extensibility.md) to learn more
 about extending native facter using custom and external facts.
@@ -99,11 +99,6 @@ To generate build files with debug information:
     $ cd debug
     $ cmake -DCMAKE_BUILD_TYPE=Debug ..
 
-Before building the gem, install the cfacter bundle:
-
-    $ cd gem
-    $ bundle install
-
 Build
 -----
 
@@ -116,13 +111,6 @@ To build cfacter with debug information:
 
     $ cd debug
     $ make
-
-To build the cfacter gem:
-
-    $ cd gem
-    $ rake gem
-
-The gem will be created in the `gem/pkg` directory.
 
 Run
 ---
@@ -153,9 +141,9 @@ For verbose test output, run `ctest` instead of using the test target:
     $ cd release
     $ ctest -V
 
-To run gem tests:
+To run ruby tests (`make install` required):
 
-    $ cd gem
+    $ cd lib
     $ rspec
 
 Install
@@ -166,7 +154,8 @@ You can install cfacter into your system:
     $ cd release
     $ make && sudo make install
 
-By default, cfacter will install files into `/usr/local/bin`, `/usr/local/lib`, and `/usr/local/include`. If the project is configured with Ruby in the PATH, cfacter.rb will be installed to that Ruby's vendor dir.
+By default, cfacter will install files into `/usr/local/bin`, `/usr/local/lib`, and `/usr/local/include`.
+If the project is configured with Ruby in the PATH, cfacter.rb will be installed to that Ruby's vendor dir.
 
 To install to a different location, set the install prefix:
 
@@ -176,10 +165,21 @@ To install to a different location, set the install prefix:
 
 This would install cfacter into `~/bin`, `~/lib`, and `~/include`.
 
-To install the gem (assumes gem is already built):
+Ruby Usage
+----------
 
-    $ cd gem
-    $ gem install pkg/cfacter*.gem
+Currently cfacter doesn't automatically define the Facter API when required.
+This is to prevent cfacter from colliding with the Ruby version of Facter.
+
+To use the Facter API from Ruby, call the `CFacter#initialize` method:
+
+```ruby
+    require 'cfacter'
+    CFacter.initialize
+    
+    # Now use the Facter API...
+    puts "kernel: #{Facter.value(:kernel)}"
+```
 
 Uninstall
 ---------
@@ -187,10 +187,6 @@ Uninstall
 Run the following command to remove files that were previously installed:
 
     $ sudo xargs rm < release/install_manifest.txt
-
-To uninstall the gem:
-
-    $ gem uninstall cfacter
 
 Documentation
 -------------

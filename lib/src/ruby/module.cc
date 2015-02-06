@@ -25,14 +25,14 @@ using namespace boost::filesystem;
 namespace facter { namespace ruby {
 
     /**
-     * Helper for maintaining context when initialized via the facter gem.
+     * Helper for maintaining context when initialized via a Ruby require.
      */
-    struct gem_context
+    struct require_context
     {
         /**
-         * Constructs a new gem context.
+         * Constructs a new require context.
          */
-        gem_context()
+        require_context()
         {
             // Create a collection and a facter module
             _facts.reset(new collection());
@@ -48,9 +48,9 @@ namespace facter { namespace ruby {
         }
 
         /**
-         * Destructs the gem context.
+         * Destructs the require context.
          */
-        ~gem_context()
+        ~require_context()
         {
             _module.reset();
             _facts.reset();
@@ -62,18 +62,18 @@ namespace facter { namespace ruby {
         }
 
         /**
-         * Creates the gem context.
+         * Creates the require context.
          */
         static void create()
         {
             // Reset first before allocating a new context
             reset();
 
-            _instance.reset(new gem_context());
+            _instance.reset(new require_context());
         }
 
         /**
-         * Resets the gem context.
+         * Resets the require context.
          */
         static void reset()
         {
@@ -92,30 +92,21 @@ namespace facter { namespace ruby {
         unique_ptr<module> _module;
         VALUE _canary;
 
-        static unique_ptr<gem_context> _instance;
+        static unique_ptr<require_context> _instance;
     };
 
-    unique_ptr<gem_context> gem_context::_instance;
+    unique_ptr<require_context> require_context::_instance;
 }}
 
-// Exports for the Ruby facter gem.
+// Exports for a Ruby extension.
 extern "C" {
     /**
-     * Gets the facter version for the gem.
+     * Called by the Ruby VM when native facter is required.
      */
-    char const* facter_version()
-    {
-        return LIBFACTER_VERSION;
-    }
-
-    /**
-     * Initializes the facter gem.
-     * @param level The logging level to use.
-     */
-    void initialize_facter(unsigned int level)
+    void Init_libfacter()
     {
         setup_logging(boost::nowide::cerr);
-        set_level(static_cast<log_level>(level));
+        set_level(log_level::warning);
 
         // Initialize ruby
         auto ruby = facter::ruby::api::instance();
@@ -124,17 +115,8 @@ extern "C" {
         }
         ruby->initialize();
 
-        // Create the gem context
-        facter::ruby::gem_context::create();
-    }
-
-    /**
-     * Shuts down the facter gem.
-     */
-    void shutdown_facter()
-    {
-        // Reset the gem context
-        facter::ruby::gem_context::reset();
+        // Create the context
+        facter::ruby::require_context::create();
     }
 }
 

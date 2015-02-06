@@ -56,7 +56,7 @@ function travis_make()
             coveralls --gcov-options '\-lp' -r ..
         fi
 
-        # Install into the system for the gem
+        # Install into the system for the spec tests 
         sudo make install
         if [ $? -ne 0 ]; then
             echo "install failed."
@@ -64,26 +64,15 @@ function travis_make()
         fi
         sudo ldconfig
 
-        # Package, install, and test the gem
-        pushd ../gem
+        pushd ../lib
         bundle install
         if [ $? -ne 0 ]; then
             echo "bundle install failed."
             exit 1
         fi
-        rake gem
-        if [ $? -ne 0 ]; then
-            echo "gem build failed."
-            exit 1
-        fi
-        gem install pkg/*.gem
-        if [ $? -ne 0 ]; then
-            echo "gem install failed."
-            exit 1
-        fi
         rspec 2>&1 | c++filt
         if [ ${PIPESTATUS[0]} -ne 0 ]; then
-            echo "gem specs failed."
+            echo "ruby specs failed."
             exit 1
         fi
         popd

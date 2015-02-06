@@ -47,12 +47,6 @@ endif()
 find_package(Boost 1.54 REQUIRED COMPONENTS ${BOOST_PKGS})
 
 find_package(Ruby 1.9)
-if (RUBY_FOUND)
-    execute_process(COMMAND ${RUBY_EXECUTABLE} -rrbconfig -e "puts RbConfig::CONFIG['vendordir']" OUTPUT_VARIABLE RUBY_VENDORDIR_OUT)
-    string(STRIP ${RUBY_VENDORDIR_OUT} RUBY_VENDORDIR)
-    message(STATUS "Ruby ${RUBY_VERSION} found, `make install` puts cfacter.rb in ${RUBY_VENDORDIR}")
-    install(FILES gem/lib/cfacter.rb DESTINATION ${RUBY_VENDORDIR})
-endif()
 
 find_package(YAMLCPP REQUIRED)
 if (NOT WITHOUT_OPENSSL)
