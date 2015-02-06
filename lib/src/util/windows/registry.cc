@@ -45,13 +45,19 @@ namespace facter { namespace util { namespace windows {
                 lpSubKey % lpValue % system_error(err)));
         }
 
-        wstring buffer(size, '\0');
+        // Size is the number of bytes needed.
+        wstring buffer((size*sizeof(char))/sizeof(wchar_t), '\0');
         err = RegGetValueW(hk, lpSubKeyW.c_str(), lpValueW.c_str(), flags, nullptr, &buffer[0], &size);
         if (err != ERROR_SUCCESS) {
             throw registry_exception(str(boost::format("error reading registry key %1% %2%: %3%") %
                 lpSubKey % lpValue % system_error(err)));
         }
-        buffer.resize(size);
+
+        // Size now represents bytes copied (which can be less than we allocated). Resize, and also remove the
+        // extraneous null-terminator from RegGetValueW (wstring handles termination internally).
+        auto numwchars = (size*sizeof(char))/sizeof(wchar_t);
+        buffer.resize(numwchars > 0u ? numwchars - 1u : 0u);
+
         return buffer;
     }
 
