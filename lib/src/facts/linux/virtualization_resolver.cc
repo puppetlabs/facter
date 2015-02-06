@@ -5,6 +5,7 @@
 #include <facter/facts/vm.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/file.hpp>
+#include <facter/util/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <vector>
@@ -57,6 +58,11 @@ namespace facter { namespace facts { namespace linux {
         // Next check the DMI product name for the VM
         if (value.empty()) {
             value = get_product_name_vm(facts);
+        }
+
+        // Lastly, resort to lspci to look for hardware related to certain VMs
+        if (value.empty()) {
+            value = get_lspci_vm();
         }
 
         return value;
@@ -206,6 +212,10 @@ namespace facter { namespace facts { namespace linux {
         if (exists("/proc/xen", ec) && !ec) {
             return vm::xen_unprivileged;
         }
+        ec.clear();
+        if (exists("/dev/xvda1", ec) && !ec) {
+            return vm::xen_unprivileged;
+        }
         return {};
     }
 
@@ -220,6 +230,7 @@ namespace facter { namespace facts { namespace linux {
             make_tuple("RHEV Hypervisor",   string(vm::redhat_ev)),
             make_tuple("oVirt Node",        string(vm::ovirt)),
             make_tuple("HVM domU",          string(vm::xen_hardware)),
+            make_tuple("Bochs",             string(vm::bochs)),
         };
 
         auto product_name = facts.get<string_value>(fact::product_name);
@@ -235,6 +246,31 @@ namespace facter { namespace facts { namespace linux {
             }
         }
         return {};
+    }
+
+    string virtualization_resolver::get_lspci_vm()
+    {
+        static vector<tuple<re_adapter, string>> vms = {
+            make_tuple("VM[wW]are",                               string(vm::vmware)),
+            make_tuple("VirtualBox",                              string(vm::virtualbox)),
+            make_tuple("1ab8:|[Pp]arallels",                      string(vm::parallels)),
+            make_tuple("XenSource",                               string(vm::xen_hardware)),
+            make_tuple("Microsoft Corporation Hyper-V",           string(vm::hyperv)),
+            make_tuple("Class 8007: Google, Inc",                 string(vm::gce)),
+            make_tuple(re_adapter("virtio", boost::regex::icase), string(vm::kvm)),
+        };
+
+        string value;
+        execution::each_line("lspci", [&](string& line) {
+            for (auto const& vm : vms) {
+                if (re_search(line, get<0>(vm))) {
+                    value = get<1>(vm);
+                    return false;
+                }
+            }
+            return true;
+        });
+        return value;
     }
 
 }}}  // namespace facter::facts::linux
