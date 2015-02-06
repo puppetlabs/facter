@@ -8,10 +8,6 @@ param (
 [string] $buildSource=$FALSE
 )
 
-if (!(Test-Path $env:TEMP)) {
-    $env:TEMP='C:\cygwin64\tmp'
-}
-
 # Starting from a base Windows Server 2008r2 or 2012r2 installation, install required tools, setup the PATH, and download and build software.
 # This script can be run directly from the web using "iex ((new-object net.webclient).DownloadString('<url_to_raw>'))"
 
