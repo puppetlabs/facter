@@ -8,10 +8,6 @@ param (
 [string] $buildSource=$FALSE
 )
 
-if (!(Test-Path $env:TEMP)) {
-    $env:TEMP='C:\cygwin64\tmp'
-}
-
 # Starting from a base Windows Server 2008r2 or 2012r2 installation, install required tools, setup the PATH, and download and build software.
 # This script can be run directly from the web using "iex ((new-object net.webclient).DownloadString('<url_to_raw>'))"
 
@@ -49,12 +45,13 @@ iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.p
 choco install 7zip.commandline -Version 9.20.0.20130618
 choco install cmake -Version 3.0.2
 choco install git.install -Version 1.9.5
-choco install ruby -Version 2.1.5
 choco install python -Version 3.4.2
 choco install doxygen.install -Version 1.8.8
 if ($arch -eq 64) {
+  choco install ruby -Version 2.1.5
   choco install mingw -Version "${mingwVerChoco}" -params "/exception:${mingwExceptions} /threads:${mingwThreads}"
 } else {
+  choco install ruby -Version 2.1.5 -x86
   choco install mingw -Version "${mingwVerChoco}" -params "/exception:${mingwExceptions} /threads:${mingwThreads}" -x86
 }
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
