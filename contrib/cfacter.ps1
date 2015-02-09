@@ -3,9 +3,9 @@
 # $cores => Set the number of cores to use for parallel builds
 # $buildSource => Choose whether to download pre-built libraries or build from source
 param (
-[string] $arch=64,
-[string] $cores=2,
-[string] $buildSource=$FALSE
+[int] $arch=64,
+[int] $cores=2,
+[bool] $buildSource=$FALSE
 )
 
 # Ensure TEMP directory is set and exists. Git.install can fail otherwise.
