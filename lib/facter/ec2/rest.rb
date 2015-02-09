@@ -90,6 +90,9 @@ module Facter
       rescue *CONNECTION_ERRORS => e
         Facter.log_exception(e, "Failed to fetch ec2 uri #{uri}: #{e.message}")
         return nil
+      rescue Timeout::Error => e
+        Facter.log_exception(e, "Failed to fetch ec2 uri #{uri}: #{e.message}")
+        return nil
       end
 
       private
