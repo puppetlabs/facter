@@ -142,3 +142,6 @@ $args = @(
 )
 cmake $args
 mingw32-make -j $cores
+
+## Test the results.
+ctest -V 2>&1 | c++filt
