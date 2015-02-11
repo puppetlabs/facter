@@ -1,6 +1,9 @@
 require 'spec_helper'
 
-CFacter.initialize CFacter::LogLevel::FATAL
+CFacter.initialize
+Facter.on_message do |level, message|
+    puts message if level == :fatal
+end
 
 describe Facter do
 

@@ -1,8 +1,5 @@
 source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
-gem 'ffi', '~> 1.9.6', :require => false
-gem 'cfacter', :path => File.expand_path("..", __FILE__), :require => false
-
 group :development, :test do
     gem 'rake', "~> 10.1.0"
     gem 'rspec', "~> 2.11.0"

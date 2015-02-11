@@ -233,9 +233,9 @@ link_directories(
     ${CURL_LIBRARY_DIRS}
 )
 
-# Add the library target without a prefix (name already has the 'lib')
+# Add the library target without a prefix (name already has the 'lib') and use '.so' for all platforms (Ruby extension file extension)
 add_library(libfacter SHARED ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_STANDARD_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
-set_target_properties(libfacter PROPERTIES PREFIX "" IMPORT_PREFIX "" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}" COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS})
+set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX "" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}" COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS})
 
 # Link in additional libraries
 target_link_libraries(libfacter
@@ -249,11 +249,36 @@ target_link_libraries(libfacter
 )
 
 if (WIN32)
-    install(TARGETS libfacter DESTINATION bin)
+    set(LIBFACTER_INSTALL_DESTINATION bin)
 else()
-    install(TARGETS libfacter DESTINATION lib)
+    # TODO: lib64 for certain operating systems?
+    set(LIBFACTER_INSTALL_DESTINATION lib)
 endif()
+
+install(TARGETS libfacter DESTINATION ${LIBFACTER_INSTALL_DESTINATION})
 install(DIRECTORY inc/facter DESTINATION include)
+
+if (RUBY_FOUND)
+    configure_file (
+        "cfacter.rb.in"
+        "${CMAKE_BINARY_DIR}/lib/cfacter.rb"
+    )
+
+    message(STATUS "Ruby ${RUBY_VERSION} found.")
+
+    if (APPLE)
+        # Unfortunately the default DLEXT for most rubies on OSX is "bundle"
+        # Ruby calls dlopen for the extension, which doesn't care if the "bundle" really is a dylib
+        # Therefore, workaround this by symlinking "libfacter.bundle" to "libfacter.so"
+        message(STATUS "\"make install\" will create a symlink from ${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.bundle to ${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so")
+        install(CODE "EXECUTE_PROCESS(COMMAND ln -sf libfacter.so libfacter.bundle WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION})")
+    endif()
+
+    execute_process(COMMAND ${RUBY_EXECUTABLE} -rrbconfig -e "puts RbConfig::CONFIG['vendordir']" OUTPUT_VARIABLE RUBY_VENDORDIR_OUT)
+    string(STRIP ${RUBY_VENDORDIR_OUT} RUBY_VENDORDIR)
+    message(STATUS "\"make install\" will install cfacter.rb to ${RUBY_VENDORDIR}")
+    install(FILES ${CMAKE_BINARY_DIR}/lib/cfacter.rb DESTINATION ${RUBY_VENDORDIR})
+endif()
 
 cotire(libfacter)
 
