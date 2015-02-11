@@ -96,6 +96,11 @@ describe "SELinux facts" do
 
       Facter.fact(:selinux_config_policy).value.should == "targeted"
     end
+    it "should return the loaded SELinux policy" do
+      sestatus_is(my_fixture_read("selinux_sestatus2"))
+
+      Facter.fact(:selinux_config_policy).value.should == "default"
+    end
   end
 
   def sestatus_is(status)

@@ -148,7 +148,7 @@ Facter.add("selinux_config_policy") do
   setcode do
     result = 'unknown'
     mode = Facter::Core::Execution.exec(sestatus_cmd)
-    mode.each_line { |l| result = $1 if l =~ /^Policy from config file\:\s+(\w+)$/i }
+    mode.each_line { |l| result = $2 if l =~ /^(Policy from config file|Loaded policy name)\:\s+(\w+)$/i }
     result.chomp
   end
 end
