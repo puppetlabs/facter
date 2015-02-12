@@ -188,6 +188,8 @@ if (NOT PYTHONINTERP_FOUND)
     message(STATUS "Python not found; 'cpplint' target will not be available")
 else()
     set(CPPLINT_FILTER
+        "-build/c++11"            # <thread>, <condvar>, etc...
+        "-whitespace/indent"      # We use 4 space indentation
         "-build/include"          # Why?
         "-build/namespaces"       # What's a namespace to do
         "-legal/copyright"        # Not yet
