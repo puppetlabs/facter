@@ -230,3 +230,4 @@ add_subdirectory(exe)
 
 # Add test executables for unit testing
 add_test(NAME "library\\ tests" COMMAND libfacter_test --gtest_color=yes)
+add_test(NAME "cfacter\\ smoke" COMMAND cfacter)
