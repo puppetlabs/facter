@@ -1,34 +1,44 @@
 install:
+  - ps: Get-Date
   - git submodule update --init --recursive
+  - ps: Get-Date
 
   - ps: choco install 7zip.commandline -source https://www.myget.org/F/puppetlabs
   - ps: choco install ruby -Version 2.1.5 -source https://www.myget.org/F/puppetlabs
   - ps: choco install mingw-w64 -Version 4.8.3 -source https://www.myget.org/F/puppetlabs
   - ps: $env:PATH = "C:\tools\ruby215\bin;C:\tools\mingw64\bin;" + $env:PATH
+  - ps: Get-Date
 
   - ps: (New-Object net.webclient).DownloadFile('https://s3.amazonaws.com/kylo-pl-bucket/boost_1_55_0-x86_64_mingw-w64_4.8.3_posix_seh.7z', "$pwd\boost.7z")
   - ps: 7za x boost.7z -oC:\tools | FIND /V "ing  "
+  - ps: Get-Date
 
   - ps: (New-Object net.webclient).DownloadFile('https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_posix_seh.7z', "$pwd\yaml-cpp.7z")
   - ps: 7za x yaml-cpp.7z -oC:\tools | FIND /V "ing  "
+  - ps: Get-Date
 
   - ps: (New-Object Net.WebClient).DownloadFile('https://github.com/rubygems/rubygems/releases/download/v2.2.3/rubygems-update-2.2.3.gem', "$pwd\rubygems-update-2.2.3.gem")
   - ps: gem install --local "$pwd\rubygems-update-2.2.3.gem"
   - ps: update_rubygems --no-ri --no-rdoc
+  - ps: Get-Date
 
   - ps: (Get-Content C:\tools\ruby215\lib\ruby\2.1.0\dl.rb) | Foreach-Object {$_ -replace "warn ", "puts "} | Set-Content C:\tools\ruby215\lib\ruby\2.1.0\dl.rb
   - ps: gem install bundler -q --no-ri --no-rdoc
   - ps: bundle install --gemfile=lib/Gemfile --quiet 2>&1 | out-null
+  - ps: Get-Date
 
 build_script:
   - ps: mv "C:\Program Files (x86)\Git\bin\sh.exe" "C:\Program Files (x86)\Git\bin\shxx.exe"
   - ps: cmake -G "MinGW Makefiles" -DBOOST_ROOT="C:\tools\boost_1_55_0-x86_64_mingw-w64_4.8.3_posix_seh" -DYAMLCPP_ROOT="C:\tools\yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_posix_seh" -DBOOST_STATIC=ON -DBOOST_NOWIDE_SKIP_TESTS=ON .
   - ps: mv "C:\Program Files (x86)\Git\bin\shxx.exe" "C:\Program Files (x86)\Git\bin\sh.exe"
   - ps: mingw32-make all_unity
+  - ps: Get-Date
 
 test_script:
   - ps: ctest -V 2>&1 | c++filt
   - ps: mingw32-make install/fast
+  - ps: Get-Date
+
   - ps: $env:PATH += ";C:\Program Files (x86)\CFACTER\bin"
   - ps: cd lib
   - ps: rspec 2>&1 | c++filt
