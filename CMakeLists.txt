@@ -161,6 +161,9 @@ else()
     set(BOOST_NOWIDE_SKIP_TESTS ON CACHE BOOL "Disable tests in Boost.Nowide")
 endif()
 
+# Disable installing Boost.Nowide so we don't pollute the installation.
+set(BOOST_NOWIDE_SKIP_INSTALL ON CACHE BOOL "Disable installing Boost.Nowide")
+
 # Boost compilation options
 add_definitions(-DBOOST_LOG_WITHOUT_WCHAR_T)
 
@@ -172,6 +175,10 @@ set(NOWIDE_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/boost-nowide")
 if (WIN32)
     # Library only built on Windows, it would be empty on other platforms.
     set(NOWIDE_LIBRARIES nowide-shared)
+
+    # We disabled installing Boost.Nowide; add back the library we use.
+    # CMake doesn't allow install targets in a different directory, so get the file.
+    install(FILES ${CMAKE_BINARY_DIR}/bin/libnowide.dll DESTINATION bin)
 endif()
 
 #
