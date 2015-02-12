@@ -1,9 +1,9 @@
 install:
   - git submodule update --init --recursive
 
-  - ps: choco install 7zip.commandline
-  - ps: choco install ruby -Version 2.1.5
-  - ps: choco install mingw -Version 4.8.3.20141208
+  - ps: choco install 7zip.commandline -source https://www.myget.org/F/puppetlabs
+  - ps: choco install ruby -Version 2.1.5 -source https://www.myget.org/F/puppetlabs
+  - ps: choco install mingw-w64 -Version 4.8.3 -source https://www.myget.org/F/puppetlabs
   - ps: $env:PATH = "C:\tools\ruby215\bin;C:\tools\mingw64\bin;" + $env:PATH
 
   - ps: (New-Object net.webclient).DownloadFile('https://s3.amazonaws.com/kylo-pl-bucket/boost_1_55_0-x86_64_mingw-w64_4.8.3_posix_seh.7z', "$pwd\boost.7z")
