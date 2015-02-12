@@ -121,6 +121,7 @@ if (WIN32)
         "src/util/windows/registry.cc"
         "src/util/windows/system_error.cc"
         "src/util/windows/wmi.cc"
+        "src/util/windows/wsa.cc"
     )
 endif()
 

@@ -20,11 +20,20 @@ namespace facter { namespace facts { namespace windows {
         vector<string> models;
         int logical_count = 0;
 
-        auto vals = _wmi.query(wmi::processor, {wmi::numberoflogicalprocessors, wmi::name});
+        auto names = _wmi.query(wmi::processor, {wmi::name});
+        for (auto const& nameobj : names) {
+            models.emplace_back(wmi::get(nameobj, wmi::name));
+        }
 
-        for (auto const& objs : vals) {
+        // Query number of logical processors separately; it's not supported on Server 2003, and will cause
+        // the entire query to return empty if used.
+        auto logicalprocs = _wmi.query(wmi::processor, {wmi::numberoflogicalprocessors});
+        for (auto const& objs : logicalprocs) {
             logical_count += stoi(wmi::get(objs, wmi::numberoflogicalprocessors));
-            models.emplace_back(wmi::get(objs, wmi::name));
+        }
+
+        if (logical_count == 0) {
+            logical_count = models.size();
         }
 
         return make_tuple(models.size(), logical_count, move(models), 0);
