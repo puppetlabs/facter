@@ -50,17 +50,19 @@ $yamlPkg = "${yamlCppVer}-${mingwVer}"
 ## Install Chocolatey, then use it to install required tools.
 iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
 $plmirror = "https://www.myget.org/F/puppetlabs"
-choco install -y 7zip.commandline -version 9.20.0.20150210 -source $plmirror -debug
-choco install -y cmake -version 3.0.2.20150210 -source $plmirror -debug
-choco install -y git.install -version 1.9.5.20150210 -source $plmirror -debug
-choco install -y python -version 3.4.2.20150210 -source $plmirror -debug
-choco install -y doxygen.install -version 1.8.9.101 -source $plmirror -debug
+$chocoDefaultArgs = @('-y', '-debug','-source', "$plmirror")
+
+choco install 7zip.commandline -version 9.20.0.20150210 $chocoDefaultArgs
+choco install cmake -version 3.0.2.20150210 $chocoDefaultArgs
+choco install git.install -version 1.9.5.20150210 $chocoDefaultArgs
+choco install python -version 3.4.2.20150210 $chocoDefaultArgs
+choco install doxygen.install -version 1.8.9.101 $chocoDefaultArgs
 if ($arch -eq 64) {
-  choco install -y ruby -version 2.1.5.20150210 -source $plmirror -debug
-  choco install -y mingw-w64 -version "${mingwVerChoco}" -source $plmirror -debug
+  choco install ruby -version 2.1.5.20150210 $chocoDefaultArgs
+  choco install mingw-w64 -version "${mingwVerChoco}" $chocoDefaultArgs
 } else {
-  choco install -y ruby -version 2.1.5.20150210 -x86 -source $plmirror -debug
-  choco install -y mingw-w32 -version "${mingwVerChoco}" -source $plmirror -debug
+  choco install ruby -version 2.1.5.20150210 -x86 $chocoDefaultArgs
+  choco install mingw-w32 -version "${mingwVerChoco}" $chocoDefaultArgs
 }
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 if ($arch -eq 32) {
