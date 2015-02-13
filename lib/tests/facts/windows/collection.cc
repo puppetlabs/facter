@@ -31,7 +31,7 @@ TEST(facter_facts_windows_collection, resolve_external) {
     ASSERT_NE(nullptr, facts.get<string_value>("ps1_fact4"));
 }
 
-TEST(facter_facts_posix_collection, resolve_external_relative) {
+TEST(facter_facts_windows_collection, resolve_external_relative) {
     test_with_relative_path fixture("foo.bat", "@echo local_exec_fact=value");
 
     collection facts;
