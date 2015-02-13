@@ -30,19 +30,6 @@ namespace facter { namespace execution {
 
     struct extpath_helper
     {
-        extpath_helper()
-        {
-            // Enforce lower-case operations to ignore case.
-            string extpaths;
-            if (environment::get("PATHEXT", extpaths)) {
-                boost::split(_extpaths, extpaths, bind(equal_to<char>(), placeholders::_1, environment::get_path_separator()), boost::token_compress_on);
-            } else {
-                _extpaths = {".bat", ".cmd", ".com", ".exe"};
-            }
-            sort(_extpaths.begin(), _extpaths.end());
-            for_each(_extpaths.begin(), _extpaths.end(), [](string &s) { to_lower(s); });
-        }
-
         vector<string> const& ext_paths() const
         {
             return _extpaths;
@@ -54,7 +41,8 @@ namespace facter { namespace execution {
         }
 
      private:
-         vector<string> _extpaths;
+        // Use sorted, lower-case operations to ignore case and use binary search.
+        vector<string> _extpaths = {".bat", ".cmd", ".com", ".exe"};;
     };
 
     static bool is_executable(path const& p, extpath_helper const* helper = nullptr)
