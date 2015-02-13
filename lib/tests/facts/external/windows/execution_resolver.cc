@@ -18,6 +18,7 @@ TEST(facter_facts_external_windows_execution_resolver, default_constructor) {
 TEST(facter_facts_external_windows_execution_resolver, can_resolve) {
     execution_resolver resolver;
     ASSERT_FALSE(resolver.can_resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/not_executable"));
+    ASSERT_FALSE(resolver.can_resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/ruby_script.rb"));
     ASSERT_TRUE(resolver.can_resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/facts.bat"));
 }
 
