@@ -11,9 +11,20 @@ param (
 )
 
 # Ensure TEMP directory is set and exists. Git.install can fail otherwise.
-try { if (!(Test-Path $env:TEMP)) { throw } }
-catch { $env:TEMP = Join-Path $env:SystemDrive 'temp' }
-if (!(Test-Path $env:TEMP)) { mkdir -Path $env:TEMP }
+try {
+    if (!(Test-Path $env:TEMP)) { throw }
+} catch {
+    $env:TEMP = Join-Path $env:SystemDrive 'temp'
+    echo "TEMP not correct, setting to $env:TEMP"
+}
+if (!(Test-Path $env:TEMP)) {
+    mkdir -Path $env:TEMP
+    echo "TEMP dir $env:TEMP created"
+}
+
+if ($env:Path -eq $null) {
+    echo "Path is null?"
+}
 
 # Starting from a base Windows Server 2008r2 or 2012r2 installation, install required tools, setup the PATH, and download and build software.
 # This script can be run directly from the web using "iex ((new-object net.webclient).DownloadString('<url_to_raw>'))"
@@ -28,7 +39,7 @@ echo $buildSource
 
 
 $mingwVerNum = "4.8.3"
-$mingwVerChoco = "${mingwVerNum}"
+$mingwVerChoco = $mingwVerNum
 $mingwThreads = "win32"
 if ($arch -eq 64) {
   $mingwExceptions = "seh"
@@ -42,33 +53,39 @@ $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExcept
 $boostVer = "boost_1_55_0"
 $boostPkg = "${boostVer}-${mingwVer}"
 
-$yamlCppVerNum = "0.5.1"
-$yamlCppVer = "yaml-cpp-${yamlCppVerNum}"
+$yamlCppVer = "yaml-cpp-0.5.1"
 $yamlPkg = "${yamlCppVer}-${mingwVer}"
 
 ### Setup, build, and install
 ## Install Chocolatey, then use it to install required tools.
-iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
-$plmirror = "https://www.myget.org/F/puppetlabs"
-$chocoDefaultArgs = @('-y', '-debug','-source', "$plmirror")
+Function Install-Choco ($pkg, $ver, $opts = "") {
+    echo "Installing $pkg $ver from https://www.myget.org/F/puppetlabs"
+    try {
+        choco install -y $pkg -version $ver -source https://www.myget.org/F/puppetlabs -debug $opts
+    } catch {
+        echo "Error: $_, trying again."
+        choco install -y $pkg -version $ver -source https://www.myget.org/F/puppetlabs -debug $opts
+    }
+}
 
-choco install 7zip.commandline -version 9.20.0.20150210 $chocoDefaultArgs
-choco install cmake -version 3.0.2.20150210 $chocoDefaultArgs
-choco install git.install -version 1.9.5.20150210 $chocoDefaultArgs
-choco install python -version 3.4.2.20150210 $chocoDefaultArgs
-choco install doxygen.install -version 1.8.9.101 $chocoDefaultArgs
+if (!(Get-Command choco -ErrorAction SilentlyContinue)) {
+    iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+}
+Install-Choco 7zip.commandline 9.20.0.20150210
+Install-Choco cmake 3.0.2.20150210
+Install-Choco git.install 1.9.5.20150210
 if ($arch -eq 64) {
-  choco install ruby -version 2.1.5.20150210 $chocoDefaultArgs
-  choco install mingw-w64 -version "${mingwVerChoco}" $chocoDefaultArgs
+  Install-Choco ruby 2.1.5.20150210
+  Install-Choco mingw-w64 $mingwVerChoco
 } else {
-  choco install ruby -version 2.1.5.20150210 -x86 $chocoDefaultArgs
-  choco install mingw-w32 -version "${mingwVerChoco}" $chocoDefaultArgs
+  Install-Choco ruby 2.1.5.20150210 @('-x86')
+  Install-Choco mingw-w32 $mingwVerChoco @('-x86')
 }
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 if ($arch -eq 32) {
   $env:PATH = "C:\tools\mingw32\bin;" + $env:PATH
 }
-$env:PATH += [Environment]::GetFolderPath('ProgramFilesX86') + "\git\cmd"
+$env:PATH += [Environment]::GetFolderPath('ProgramFilesX86') + "\Git\cmd"
 echo $env:PATH
 cd $sourceDir
 
