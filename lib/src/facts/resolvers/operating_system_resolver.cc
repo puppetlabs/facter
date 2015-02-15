@@ -220,6 +220,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
         if (!name.empty()) {
             static map<string, string> const systems = {
+                { string(os::coreos),                   string(os_family::coreos) },
                 { string(os::redhat),                   string(os_family::redhat) },
                 { string(os::fedora),                   string(os_family::redhat) },
                 { string(os::centos),                   string(os_family::redhat) },

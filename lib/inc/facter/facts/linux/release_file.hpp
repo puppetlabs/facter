@@ -49,6 +49,9 @@ namespace facter { namespace facts { namespace linux {
         constexpr static char const* suse = "/etc/SuSE-release";
         /**
          * Release file for generic Linux distros.
+         * Also used for:
+         * - CoreOS
+         * - Cumulus
          */
         constexpr static char const* os = "/etc/os-release";
         /**

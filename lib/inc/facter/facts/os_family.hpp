@@ -16,6 +16,10 @@ namespace facter { namespace facts {
          */
         constexpr static char const* redhat = "RedHat";
         /**
+         * The CoreOS family of operating systems.
+         */
+        constexpr static char const* coreos = "CoreOS";
+        /**
          * The Debian family of operating systems.
          */
         constexpr static char const* debian = "Debian";
