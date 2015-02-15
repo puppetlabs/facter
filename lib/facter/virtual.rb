@@ -164,6 +164,7 @@ Facter.add("virtual") do
       next "rhev"       if lines.any? {|l| l =~ /Product Name: RHEV Hypervisor/ }
       next "ovirt"      if lines.any? {|l| l =~ /Product Name: oVirt Node/ }
       next "bochs"      if lines.any? {|l| l =~ /Bochs/ }
+      next "kvm"        if lines.any? {|l| l =~ /Manufacturer: QEMU/ }
     end
 
     # Default to 'physical'
