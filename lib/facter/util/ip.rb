@@ -286,8 +286,8 @@ module Facter::Util::IP
     # Linux changes the MAC address reported via ifconfig when an ethernet interface
     # becomes a slave of a bonding device to the master MAC address.
     # We have to dig a bit to get the original/real MAC address of the interface.
-    bonddev = get_bonding_master(interface)
-    if label == 'macaddress' and bonddev
+    bonddev = get_bonding_master(interface) if label == 'macaddress'
+    if bonddev
       bondinfo = read_proc_net_bonding("/proc/net/bonding/#{bonddev}")
       re = /^Slave Interface: #{interface}\b.*?\bPermanent HW addr: (([0-9A-F]{2}:?)*)$/im
       if match = re.match(bondinfo)
