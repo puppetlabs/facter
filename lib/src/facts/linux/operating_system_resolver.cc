@@ -86,8 +86,8 @@ namespace facter { namespace facts { namespace linux {
 
     string operating_system_resolver::get_name(string const& distro_id)
     {
-        // Start by checking for Cumulus Linux
-        string value = check_cumulus_linux();
+        // Start by checking for Cumulus Linux or CoreOS
+        string value = check_os_release_linux();
         if (!value.empty()) {
             return value;
         }
@@ -197,7 +197,7 @@ namespace facter { namespace facts { namespace linux {
             } else if (name == os::mageia) {
                 file = release_file::mageia;
                 regex = "Mageia release ([0-9.]+)";
-            } else if (name == os::cumulus) {
+            } else if (name == os::cumulus || name == os::coreos) {
                 file = release_file::os;
                 regex = "(?m)^VERSION_ID\\s*=\\s*(\\d+\\.\\d+\\.\\d+)";
             } else if (name == os::linux_mint) {
@@ -240,9 +240,10 @@ namespace facter { namespace facts { namespace linux {
         return make_tuple(move(major), move(minor));
     }
 
-    string operating_system_resolver::check_cumulus_linux()
+    string operating_system_resolver::check_os_release_linux()
     {
-        // Check for Cumulus Linux in a generic os-release file
+        // Check for NAME in /etc/os-release
+        // Both cfacter and ruby facter should use the same field.
         bs::error_code ec;
         if (is_regular_file(release_file::os, ec)) {
             string contents = file::read(release_file::os);
@@ -252,6 +253,8 @@ namespace facter { namespace facts { namespace linux {
             if (re_search(contents, "(?m)^NAME=[\"']?(.+?)[\"']?$", &release)) {
                 if (release == "Cumulus Linux") {
                     return os::cumulus;
+                } else if (release == "CoreOS") {
+                    return os::coreos;
                 }
             }
         }

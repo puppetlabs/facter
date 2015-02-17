@@ -32,7 +32,7 @@ namespace facter { namespace facts { namespace linux {
      private:
         static std::string get_name(std::string const& distro_id);
         static std::string get_release(std::string const& name, std::string const& distro_release);
-        static std::string check_cumulus_linux();
+        static std::string check_os_release_linux();
         static std::string check_debian_linux(std::string const& distro_id);
         static std::string check_oracle_linux();
         static std::string check_redhat_linux();

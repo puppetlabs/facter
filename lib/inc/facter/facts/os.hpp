@@ -156,6 +156,10 @@ namespace facter { namespace facts {
          */
         constexpr static char const* alpine = "Alpine";
         /**
+         * The CoreOS Linux operating system.
+         */
+        constexpr static char const* coreos = "CoreOS";
+        /**
          * The Cumulus Linux operating system.
          */
         constexpr static char const* cumulus = "CumulusLinux";
