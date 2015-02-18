@@ -15,7 +15,7 @@
 %global _libdir %{_prefix}/lib
 
 Name:           <%= @project %>
-Summary:        Ruby module for collecting simple facts about a host operating system
+Summary:        A command line tool and library for collecting simple facts about a host operating system
 Version:        %{rpmversion}
 Release:        <%= @rpmrelease -%>%{?dist}
 Vendor:         %{?_host_vendor}
@@ -65,7 +65,7 @@ AutoReq:  0
 AutoProv: 0
 
 %description
-Ruby module for collecting simple facts about a host Operating
+A command line tool and library for collecting simple facts about a host Operating
 system. Some of the facts are preconfigured, such as the hostname and the
 operating system. Additional facts can be added through simple Ruby scripts
 
