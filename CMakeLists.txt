@@ -10,6 +10,14 @@ option(BOOST_STATIC "Use Boost's static libraries" OFF)
 option(YAMLCPP_STATIC "Use yaml-cpp's static libraries" OFF)
 option(COVERALLS "Generate code coverage for Coveralls.io" OFF)
 
+set(FACTER_PATH "" CACHE PATH "Specify the location to look for specific binaries before trying PATH.")
+if (FACTER_PATH)
+    # Specify a preferred location for binary lookup that will be prioritized over PATH.
+    file(TO_CMAKE_PATH ${FACTER_PATH} FACTER_PATH_FIXED)
+    add_definitions(-DFACTER_PATH="${FACTER_PATH_FIXED}")
+    message(STATUS "Prioritizing binary lookup in ${FACTER_PATH_FIXED}")
+endif()
+
 enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
