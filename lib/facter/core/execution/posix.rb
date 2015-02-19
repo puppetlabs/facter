@@ -6,7 +6,7 @@ class Facter::Core::Execution::Posix < Facter::Core::Execution::Base
     # Make sure facter is usable even for non-root users. Most commands
     # in /sbin (like ifconfig) can be run as non privileged users as
     # long as they do not modify anything - which we do not do with facter
-    ENV['PATH'].split(File::PATH_SEPARATOR) + DEFAULT_SEARCH_PATHS
+    ["/opt/puppetlabs/puppet/bin"] + ENV['PATH'].split(File::PATH_SEPARATOR) + DEFAULT_SEARCH_PATHS
   end
 
   def which(bin)
