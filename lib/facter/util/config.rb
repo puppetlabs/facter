@@ -64,4 +64,22 @@ module Facter::Util::Config
   end
 
   setup_default_ext_facts_dirs
+
+  def self.override_binary_dir=(dir)
+    @override_binary_dir = dir
+  end
+
+  def self.override_binary_dir
+    @override_binary_dir
+  end
+
+  def self.setup_default_override_binary_dir
+    if Facter::Util::Config.is_windows?
+      @override_binary_dir = nil
+    else
+      @override_binary_dir = "/opt/puppetlabs/puppet/bin"
+    end
+  end
+
+  setup_default_override_binary_dir
 end
