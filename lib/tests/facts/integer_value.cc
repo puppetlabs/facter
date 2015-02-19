@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>
@@ -9,39 +9,61 @@ using namespace facter::facts;
 using namespace rapidjson;
 using namespace YAML;
 
-TEST(facter_facts_integer_value, constructor) {
-    // small integer
-    integer_value foo(42);
-    ASSERT_EQ(42, foo.value());
-
-    // very large integer but in range
-    int64_t large_int = 1LL << 62;
-    integer_value foo3(large_int);
-    ASSERT_EQ(4611686018427387904LL, foo3.value());
-}
-
-TEST(facter_facts_integer_value, to_json) {
-    integer_value value(1337);
-
-    rapidjson::Value json_value;
-    MemoryPoolAllocator<> allocator;
-    value.to_json(allocator, json_value);
-    ASSERT_TRUE(json_value.IsNumber());
-    ASSERT_EQ(1337, json_value.GetInt64());
-}
-
-TEST(facter_facts_integer_value, write_stream) {
-    integer_value value(5);
-
-    ostringstream stream;
-    value.write(stream);
-    ASSERT_EQ("5", stream.str());
-}
-
-TEST(facter_facts_integer_value, write_yaml) {
-    integer_value value(5);
-
-    Emitter emitter;
-    value.write(emitter);
-    ASSERT_EQ("5", string(emitter.c_str()));
+SCENARIO("using an integer fact value") {
+    GIVEN("a small integer value") {
+        int expected_value = 42;
+        integer_value value(expected_value);
+        REQUIRE(value.value() == expected_value);
+        WHEN("serialized to JSON") {
+            THEN("it should have the same value") {
+                rapidjson::Value json_value;
+                MemoryPoolAllocator<> allocator;
+                value.to_json(allocator, json_value);
+                REQUIRE(json_value.IsNumber());
+                REQUIRE(json_value.GetInt64() == expected_value);
+            }
+        }
+        WHEN("serialized to YAML") {
+            THEN("it should have the same value") {
+                Emitter emitter;
+                value.write(emitter);
+                REQUIRE(string(emitter.c_str()) == "42");
+            }
+        }
+        WHEN("serialized to text") {
+            THEN("it should have the same value") {
+                ostringstream stream;
+                value.write(stream);
+                REQUIRE(stream.str() == "42");
+            }
+        }
+    }
+    GIVEN("a very large integer value") {
+        int64_t expected_value = 1LL << 62;
+        integer_value value(expected_value);
+        REQUIRE(value.value() == expected_value);
+        WHEN("serialized to JSON") {
+            THEN("it should have the same value") {
+                rapidjson::Value json_value;
+                MemoryPoolAllocator<> allocator;
+                value.to_json(allocator, json_value);
+                REQUIRE(json_value.IsNumber());
+                REQUIRE(json_value.GetInt64() == expected_value);
+            }
+        }
+        WHEN("serialized to YAML") {
+            THEN("it should have the same value") {
+                Emitter emitter;
+                value.write(emitter);
+                REQUIRE(string(emitter.c_str()) == "4611686018427387904");
+            }
+        }
+        WHEN("serialized to text") {
+            THEN("it should have the same value") {
+                ostringstream stream;
+                value.write(stream);
+                REQUIRE(stream.str() == "4611686018427387904");
+            }
+        }
+    }
 }

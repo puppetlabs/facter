@@ -1,11 +1,11 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/util/posix/scoped_addrinfo.hpp>
 
 using namespace std;
 using namespace facter::util::posix;
 
-TEST(facter_util_posix_scoped_addrinfo, construction) {
+SCENARIO("constructing a scoped_addrinfo") {
     scoped_addrinfo info("localhost");
-    ASSERT_EQ(0, info.result());
-    ASSERT_NE(nullptr, static_cast<addrinfo*>(info));
+    REQUIRE(info.result() == 0);
+    REQUIRE(static_cast<addrinfo*>(info));
 }

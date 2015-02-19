@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/resolvers/kernel_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
@@ -30,32 +30,30 @@ struct test_kernel_resolver : kernel_resolver
     }
 };
 
-TEST(facter_facts_resolvers_kernel_resolver, empty)
-{
+SCENARIO("using the kernel resolver") {
     collection facts;
-    facts.add(make_shared<empty_kernel_resolver>());
-    ASSERT_EQ(0u, facts.size());
-}
-
-TEST(facter_facts_resolvers_kernel_resolver, facts)
-{
-    collection facts;
-    facts.add(make_shared<test_kernel_resolver>());
-    ASSERT_EQ(4u, facts.size());
-
-    auto kernel = facts.get<string_value>(fact::kernel);
-    ASSERT_NE(nullptr, kernel);
-    ASSERT_EQ("foo", kernel->value());
-
-    auto release = facts.get<string_value>(fact::kernel_release);
-    ASSERT_NE(nullptr, release);
-    ASSERT_EQ("1.2.3-foo", release->value());
-
-    auto version = facts.get<string_value>(fact::kernel_version);
-    ASSERT_NE(nullptr, version);
-    ASSERT_EQ("1.2.3", version->value());
-
-    auto major = facts.get<string_value>(fact::kernel_major_version);
-    ASSERT_NE(nullptr, major);
-    ASSERT_EQ("1.2", major->value());
+    WHEN("data is not present") {
+        facts.add(make_shared<empty_kernel_resolver>());
+        THEN("facts should not be added") {
+            REQUIRE(facts.size() == 0);
+        }
+    }
+    WHEN("data is present") {
+        facts.add(make_shared<test_kernel_resolver>());
+        THEN("flat facts are added") {
+            REQUIRE(facts.size() == 4);
+            auto kernel = facts.get<string_value>(fact::kernel);
+            REQUIRE(kernel);
+            REQUIRE(kernel->value() == "foo");
+            auto release = facts.get<string_value>(fact::kernel_release);
+            REQUIRE(release);
+            REQUIRE(release->value() == "1.2.3-foo");
+            auto version = facts.get<string_value>(fact::kernel_version);
+            REQUIRE(version);
+            REQUIRE(version->value() == "1.2.3");
+            auto major = facts.get<string_value>(fact::kernel_major_version);
+            REQUIRE(major);
+            REQUIRE(major->value() == "1.2");
+        }
+    }
 }

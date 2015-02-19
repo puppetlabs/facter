@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/util/option_set.hpp>
 
 using namespace std;
@@ -6,277 +6,229 @@ using namespace facter::util;
 
 enum class options
 {
-    foo = (1 << 1),
-    bar = (1 << 2),
-    baz = (1 << 3)
+    foo = (1 << 0),
+    bar = (1 << 1),
+    baz = (1 << 2)
 };
 
-TEST(facter_util_option_set, construction) {
-    option_set<options> s1;
-    ASSERT_EQ(0u, s1.count());
-    ASSERT_FALSE(s1[options::foo]);
-    ASSERT_FALSE(s1[options::bar]);
-    ASSERT_FALSE(s1[options::baz]);
-
-    option_set<options> s2 = { options::foo };
-    ASSERT_EQ(1u, s2.count());
-    ASSERT_TRUE(s2[options::foo]);
-    ASSERT_FALSE(s2[options::bar]);
-    ASSERT_FALSE(s2[options::baz]);
-
-    option_set<options> s3 = { options::bar, options::foo };
-    ASSERT_EQ(2u, s3.count());
-    ASSERT_TRUE(s3[options::foo]);
-    ASSERT_TRUE(s3[options::bar]);
-    ASSERT_FALSE(s3[options::baz]);
-
-    option_set<options> s4 = { options::baz, options::foo, options::bar };
-    ASSERT_EQ(3u, s4.count());
-    ASSERT_TRUE(s4[options::foo]);
-    ASSERT_TRUE(s4[options::bar]);
-    ASSERT_TRUE(s4[options::baz]);
-
-    option_set<options> s5(1 | 2 | 4);
-    ASSERT_EQ(3u, s4.count());
-    ASSERT_TRUE(s4[options::foo]);
-    ASSERT_TRUE(s4[options::bar]);
-    ASSERT_TRUE(s4[options::baz]);
-}
-
-TEST(facter_util_option_set, set_all) {
-    option_set<options> s;
-    ASSERT_EQ(0u, s.count());
-    ASSERT_FALSE(s[options::foo]);
-    ASSERT_FALSE(s[options::bar]);
-    ASSERT_FALSE(s[options::baz]);
-
-    s.set_all();
-    ASSERT_EQ(s.size(), s.count());
-    ASSERT_TRUE(s[options::foo]);
-    ASSERT_TRUE(s[options::bar]);
-    ASSERT_TRUE(s[options::baz]);
-}
-
-TEST(facter_util_option_set, set) {
-    option_set<options> s;
-    ASSERT_EQ(0u, s.count());
-    ASSERT_FALSE(s[options::foo]);
-    ASSERT_FALSE(s[options::bar]);
-    ASSERT_FALSE(s[options::baz]);
-
-    s.set(options::foo);
-    ASSERT_EQ(1u, s.count());
-    ASSERT_TRUE(s[options::foo]);
-    ASSERT_FALSE(s[options::bar]);
-    ASSERT_FALSE(s[options::baz]);
-
-    s.set(options::bar);
-    ASSERT_EQ(2u, s.count());
-    ASSERT_TRUE(s[options::foo]);
-    ASSERT_TRUE(s[options::bar]);
-    ASSERT_FALSE(s[options::baz]);
-
-    s.set(options::baz);
-    ASSERT_EQ(3u, s.count());
-    ASSERT_TRUE(s[options::foo]);
-    ASSERT_TRUE(s[options::bar]);
-    ASSERT_TRUE(s[options::baz]);
-}
-
-TEST(facter_util_option_set, clear) {
-    option_set<options> s = { options::foo, options::bar, options::baz };
-    ASSERT_EQ(3u, s.count());
-    ASSERT_TRUE(s[options::foo]);
-    ASSERT_TRUE(s[options::bar]);
-    ASSERT_TRUE(s[options::baz]);
-
-    s.clear(options::foo);
-    ASSERT_EQ(2u, s.count());
-    ASSERT_FALSE(s[options::foo]);
-    ASSERT_TRUE(s[options::bar]);
-    ASSERT_TRUE(s[options::baz]);
-
-    s.clear(options::bar);
-    ASSERT_EQ(1u, s.count());
-    ASSERT_FALSE(s[options::foo]);
-    ASSERT_FALSE(s[options::bar]);
-    ASSERT_TRUE(s[options::baz]);
-
-    s.clear(options::baz);
-    ASSERT_EQ(0u, s.count());
-    ASSERT_FALSE(s[options::foo]);
-    ASSERT_FALSE(s[options::bar]);
-    ASSERT_FALSE(s[options::baz]);
-}
-
-TEST(facter_util_option_set, reset) {
-    option_set<options> s;
-    ASSERT_EQ(0u, s.count());
-    ASSERT_FALSE(s[options::foo]);
-    ASSERT_FALSE(s[options::bar]);
-    ASSERT_FALSE(s[options::baz]);
-
-    s.reset();
-    ASSERT_EQ(0u, s.count());
-    ASSERT_FALSE(s[options::foo]);
-    ASSERT_FALSE(s[options::bar]);
-    ASSERT_FALSE(s[options::baz]);
-
-    s.set(options::foo).set(options::bar).set(options::baz);
-    ASSERT_EQ(3u, s.count());
-    ASSERT_TRUE(s[options::foo]);
-    ASSERT_TRUE(s[options::bar]);
-    ASSERT_TRUE(s[options::baz]);
-
-    s.reset();
-    ASSERT_EQ(0u, s.count());
-    ASSERT_FALSE(s[options::foo]);
-    ASSERT_FALSE(s[options::bar]);
-    ASSERT_FALSE(s[options::baz]);
-}
-
-TEST(facter_util_option_set, toggle) {
-    option_set<options> s;
-    ASSERT_EQ(0u, s.count());
-    ASSERT_FALSE(s[options::foo]);
-    ASSERT_FALSE(s[options::bar]);
-    ASSERT_FALSE(s[options::baz]);
-
-    s.toggle();
-    ASSERT_EQ(s.size(), s.count());
-    ASSERT_TRUE(s[options::foo]);
-    ASSERT_TRUE(s[options::bar]);
-    ASSERT_TRUE(s[options::baz]);
-
-    s.reset();
-    s.set(options::foo).set(options::bar).set(options::baz);
-    ASSERT_EQ(3u, s.count());
-    ASSERT_TRUE(s[options::foo]);
-    ASSERT_TRUE(s[options::bar]);
-    ASSERT_TRUE(s[options::baz]);
-
-    s.toggle();
-    ASSERT_EQ(s.size() - 3, s.count());
-    ASSERT_FALSE(s[options::foo]);
-    ASSERT_FALSE(s[options::bar]);
-    ASSERT_FALSE(s[options::baz]);
-}
-
-TEST(facter_util_option_set, toggle_option) {
-    option_set<options> s;
-    ASSERT_EQ(0u, s.count());
-    ASSERT_FALSE(s[options::foo]);
-
-    s.toggle(options::foo);
-    ASSERT_EQ(1u, s.count());
-    ASSERT_TRUE(s[options::foo]);
-
-    s.toggle(options::foo);
-    ASSERT_EQ(0u, s.count());
-    ASSERT_FALSE(s[options::foo]);
-}
-
-TEST(facter_util_option_set, count) {
-    option_set<options> s;
-    ASSERT_EQ(0u, s.count());
-
-    s.toggle();
-    ASSERT_EQ(s.size(), s.count());
-
-    s.reset();
-    s.set(options::foo);
-    ASSERT_EQ(1u, s.count());
-
-    s.set(options::bar);
-    ASSERT_EQ(2u, s.count());
-
-    s.set(options::baz);
-    ASSERT_EQ(3u, s.count());
-}
-
-TEST(facter_util_option_set, size) {
-    option_set<options> s;
-    ASSERT_EQ(sizeof(int) * 8, s.size());
-}
-
-TEST(facter_util_option_set, test) {
-    option_set<options> s;
-    ASSERT_EQ(0u, s.count());
-    ASSERT_FALSE(s.test(options::foo));
-    ASSERT_FALSE(s.test(options::bar));
-    ASSERT_FALSE(s.test(options::baz));
-
-    s.set(options::bar);
-    ASSERT_EQ(1u, s.count());
-    ASSERT_FALSE(s.test(options::foo));
-    ASSERT_TRUE(s.test(options::bar));
-    ASSERT_FALSE(s.test(options::baz));
-}
-
-TEST(facter_util_option_set, empty) {
-    option_set<options> s;
-    ASSERT_TRUE(s.empty());
-
-    s.set(options::bar);
-    ASSERT_FALSE(s.empty());
-}
-
-TEST(facter_util_option_set, bitwise_and) {
-    option_set<options> s1 = { options::foo, options::bar };
-    ASSERT_EQ(2u, s1.count());
-    ASSERT_TRUE(s1[options::foo]);
-    ASSERT_TRUE(s1[options::bar]);
-    ASSERT_FALSE(s1[options::baz]);
-
-    option_set<options> s2 = { options::bar, options::baz };
-    ASSERT_EQ(2u, s2.count());
-    ASSERT_FALSE(s2[options::foo]);
-    ASSERT_TRUE(s2[options::bar]);
-    ASSERT_TRUE(s2[options::baz]);
-
-    option_set<options> s3 = s1 & s2;
-    ASSERT_EQ(1u, s3.count());
-    ASSERT_FALSE(s3[options::foo]);
-    ASSERT_TRUE(s3[options::bar]);
-    ASSERT_FALSE(s3[options::baz]);
-}
-
-TEST(facter_util_option_set, bitwise_or) {
-    option_set<options> s1 = { options::foo, options::bar };
-    ASSERT_EQ(2u, s1.count());
-    ASSERT_TRUE(s1[options::foo]);
-    ASSERT_TRUE(s1[options::bar]);
-    ASSERT_FALSE(s1[options::baz]);
-
-    option_set<options> s2 = { options::baz };
-    ASSERT_EQ(1u, s2.count());
-    ASSERT_FALSE(s2[options::foo]);
-    ASSERT_FALSE(s2[options::bar]);
-    ASSERT_TRUE(s2[options::baz]);
-
-    option_set<options> s3 = s1 | s2;
-    ASSERT_EQ(3u, s3.count());
-    ASSERT_TRUE(s3[options::foo]);
-    ASSERT_TRUE(s3[options::bar]);
-    ASSERT_TRUE(s3[options::baz]);
-}
-
-TEST(facter_util_option_set, bitwise_xor) {
-    option_set<options> s1 = { options::foo, options::bar };
-    ASSERT_EQ(2u, s1.count());
-    ASSERT_TRUE(s1[options::foo]);
-    ASSERT_TRUE(s1[options::bar]);
-    ASSERT_FALSE(s1[options::baz]);
-
-    option_set<options> s2 = { options::bar, options::baz };
-    ASSERT_EQ(2u, s2.count());
-    ASSERT_FALSE(s2[options::foo]);
-    ASSERT_TRUE(s2[options::bar]);
-    ASSERT_TRUE(s2[options::baz]);
-
-    option_set<options> s3 = s1 ^ s2;
-    ASSERT_EQ(2u, s3.count());
-    ASSERT_TRUE(s3[options::foo]);
-    ASSERT_FALSE(s3[options::bar]);
-    ASSERT_TRUE(s3[options::baz]);
+SCENARIO("using an option set") {
+    GIVEN("a default constructed option set") {
+        option_set<options> set;
+        THEN("no options are set") {
+            REQUIRE(set.count() == 0);
+            REQUIRE_FALSE(set[options::foo]);
+            REQUIRE_FALSE(set[options::bar]);
+            REQUIRE_FALSE(set[options::baz]);
+        }
+    }
+    GIVEN("option foo is set") {
+        option_set<options> set = { options::foo };
+        THEN("only foo is set") {
+            REQUIRE(set.count() == 1);
+            REQUIRE(set[options::foo]);
+            REQUIRE_FALSE(set[options::bar]);
+            REQUIRE_FALSE(set[options::baz]);
+        }
+    }
+    GIVEN("options foo and bar are set") {
+        option_set<options> set = { options::bar, options::foo };
+        THEN("only foo and bar are set") {
+            REQUIRE(set.count() == 2);
+            REQUIRE(set[options::foo]);
+            REQUIRE(set[options::bar]);
+            REQUIRE_FALSE(set[options::baz]);
+        }
+    }
+    GIVEN("all options are specified") {
+        option_set<options> set = { options::baz, options::foo, options::bar };
+        THEN("all options are set") {
+            REQUIRE(set.count() == 3);
+            REQUIRE(set[options::foo]);
+            REQUIRE(set[options::bar]);
+            REQUIRE(set[options::baz]);
+        }
+    }
+    GIVEN("all options are set by numeric value") {
+        option_set<options> set(1 | 2 | 4);
+        THEN("all options are set") {
+            REQUIRE(set.count() == 3);
+            REQUIRE(set[options::foo]);
+            REQUIRE(set[options::bar]);
+            REQUIRE(set[options::baz]);
+        }
+    }
+    GIVEN("all options are set with set_all") {
+        option_set<options> set;
+        set.set_all();
+        THEN("all options are set") {
+            REQUIRE(set.count() == set.size());
+            REQUIRE(set[options::foo]);
+            REQUIRE(set[options::bar]);
+            REQUIRE(set[options::baz]);
+        }
+    }
+    GIVEN("an empty set") {
+        option_set<options> set;
+        REQUIRE(set.empty());
+        WHEN("set is called with foo") {
+            set.set(options::foo);
+            THEN("foo is set") {
+                REQUIRE(set[options::foo]);
+                REQUIRE_FALSE(set[options::bar]);
+                REQUIRE_FALSE(set[options::baz]);
+            }
+        }
+        WHEN("set is called with bar") {
+            set.set(options::bar);
+            THEN("bar is set") {
+                REQUIRE_FALSE(set[options::foo]);
+                REQUIRE(set[options::bar]);
+                REQUIRE_FALSE(set[options::baz]);
+            }
+        }
+        WHEN("set is called with baz") {
+            set.set(options::baz);
+            THEN("baz is set") {
+                REQUIRE_FALSE(set[options::foo]);
+                REQUIRE_FALSE(set[options::bar]);
+                REQUIRE(set[options::baz]);
+            }
+        }
+        WHEN("reset is called") {
+            set.reset();
+            THEN("the set is still empty") {
+                REQUIRE(set.count() == 0);
+                REQUIRE_FALSE(set[options::foo]);
+                REQUIRE_FALSE(set[options::bar]);
+                REQUIRE_FALSE(set[options::baz]);
+            }
+        }
+        WHEN("toggle is called") {
+            set.toggle();
+            THEN("all options are set") {
+                REQUIRE(set[options::foo]);
+                REQUIRE(set[options::bar]);
+                REQUIRE(set[options::baz]);
+            }
+        }
+        WHEN("toggle is called on a particular option") {
+            set.toggle(options::foo);
+            THEN("the option should be set") {
+                REQUIRE(set[options::foo]);
+            }
+            THEN("the count is one") {
+                REQUIRE(set.count() == 1);
+            }
+        }
+        WHEN("toggle is called twice on a particular option") {
+            set.toggle(options::foo);
+            set.toggle(options::foo);
+            THEN("the option should not be set") {
+                REQUIRE_FALSE(set[options::foo]);
+            }
+            THEN("the count is zero") {
+                REQUIRE(set.count() == 0);
+            }
+        }
+        THEN("the count is zero") {
+            REQUIRE(set.count() == 0);
+        }
+        THEN("the set is reports as empty") {
+            REQUIRE(set.empty());
+        }
+        THEN("the size is the number of bits in an integer") {
+            REQUIRE(set.size() == sizeof(int) * 8);
+        }
+        THEN("no option is set") {
+            REQUIRE_FALSE(set.test(options::foo));
+            REQUIRE_FALSE(set.test(options::bar));
+            REQUIRE_FALSE(set.test(options::baz));
+        }
+    }
+    GIVEN("an option set with all values set") {
+        option_set<options> set = { options::foo, options::bar, options::baz };
+        WHEN("clear is called with foo") {
+            set.clear(options::foo);
+            THEN("foo is not set") {
+                REQUIRE_FALSE(set[options::foo]);
+                REQUIRE(set[options::bar]);
+                REQUIRE(set[options::baz]);
+            }
+        }
+        WHEN("clear is called with bar") {
+            set.clear(options::bar);
+            THEN("bar is not set") {
+                REQUIRE(set[options::foo]);
+                REQUIRE_FALSE(set[options::bar]);
+                REQUIRE(set[options::baz]);
+            }
+        }
+        WHEN("clear is called with baz") {
+            set.clear(options::baz);
+            THEN("baz is not set") {
+                REQUIRE(set[options::foo]);
+                REQUIRE(set[options::bar]);
+                REQUIRE_FALSE(set[options::baz]);
+            }
+        }
+        WHEN("reset is called") {
+            set.reset();
+            THEN("the set is empty") {
+                REQUIRE(set.count() == 0);
+                REQUIRE_FALSE(set[options::foo]);
+                REQUIRE_FALSE(set[options::bar]);
+                REQUIRE_FALSE(set[options::baz]);
+            }
+        }
+        WHEN("toggle is called") {
+            set.toggle();
+            THEN("the set is empty options are set") {
+                REQUIRE_FALSE(set[options::foo]);
+                REQUIRE_FALSE(set[options::bar]);
+                REQUIRE_FALSE(set[options::baz]);
+            }
+        }
+        THEN("the count is three") {
+            REQUIRE(set.count() == 3);
+        }
+        THEN("the set is not empty") {
+            REQUIRE_FALSE(set.empty());
+        }
+        THEN("all options are set") {
+            REQUIRE(set.test(options::foo));
+            REQUIRE(set.test(options::bar));
+            REQUIRE(set.test(options::baz));
+        }
+    }
+    GIVEN("two option sets") {
+        option_set<options> set1 = { options::foo, options::bar };
+        option_set<options> set2 = { options::bar, options::baz };
+        WHEN("a third set is the result of bitwise AND") {
+            option_set<options> set3 = set1 & set2;
+            THEN("only the intersecting options are set") {
+                REQUIRE(set3.count() == 1);
+                REQUIRE_FALSE(set3[options::foo]);
+                REQUIRE(set3[options::bar]);
+                REQUIRE_FALSE(set3[options::baz]);
+            }
+        }
+        WHEN("a third set is the result of bitwise OR") {
+            option_set<options> set3 = set1 | set2;
+            THEN("the union of the options are set") {
+                REQUIRE(set3.count() == 3);
+                REQUIRE(set3[options::foo]);
+                REQUIRE(set3[options::bar]);
+                REQUIRE(set3[options::baz]);
+            }
+        }
+        WHEN("a third set is the result of bitwise XOR") {
+            option_set<options> set3 = set1 ^ set2;
+            THEN("options that are in one set but not the other are set") {
+                REQUIRE(set3.count() == 2);
+                REQUIRE(set3[options::foo]);
+                REQUIRE_FALSE(set3[options::bar]);
+                REQUIRE(set3[options::baz]);
+            }
+        }
+    }
 }

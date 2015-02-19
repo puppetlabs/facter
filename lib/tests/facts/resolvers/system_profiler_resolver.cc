@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/resolvers/system_profiler_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
@@ -49,80 +49,85 @@ struct test_system_profiler_resolver : system_profiler_resolver
     }
 };
 
-TEST(facter_facts_resolvers_system_profiler_resolver, empty)
-{
+SCENARIO("using the system profiler resolver") {
     collection facts;
-    facts.add(make_shared<empty_system_profiler_resolver>());
-    ASSERT_EQ(0u, facts.size());
-}
-
-TEST(facter_facts_resolvers_system_profiler_resolver, facts)
-{
-    collection facts;
-    facts.add(make_shared<test_system_profiler_resolver>());
-    ASSERT_EQ(22u, facts.size());
-
-    map<string, string> check = {
-        { string(fact::sp_boot_mode), "boot_mode" },
-        { string(fact::sp_boot_rom_version), "boot_rom_version" },
-        { string(fact::sp_boot_volume), "boot_volume" },
-        { string(fact::sp_cpu_type), "processor_name" },
-        { string(fact::sp_current_processor_speed), "processor_speed" },
-        { string(fact::sp_kernel_version), "kernel_version" },
-        { string(fact::sp_l2_cache_core), "l2_cache_per_core" },
-        { string(fact::sp_l3_cache), "l3_cache" },
-        { string(fact::sp_local_host_name), "computer_name" },
-        { string(fact::sp_machine_model), "model_identifier" },
-        { string(fact::sp_machine_name), "model_name" },
-        { string(fact::sp_number_processors), "cores" },
-        { string(fact::sp_os_version), "system_version" },
-        { string(fact::sp_packages), "processors" },
-        { string(fact::sp_physical_memory), "memory" },
-        { string(fact::sp_platform_uuid), "hardware_uuid" },
-        { string(fact::sp_secure_vm), "secure_virtual_memory" },
-        { string(fact::sp_serial_number), "serial_number" },
-        { string(fact::sp_smc_version_system), "smc_version" },
-        { string(fact::sp_uptime), "uptime" },
-        { string(fact::sp_user_name), "username" }
-    };
-
-    for (auto const& kvp : check) {
-        auto sval = facts.get<string_value>(kvp.first);
-        ASSERT_NE(nullptr, sval);
-        ASSERT_EQ(kvp.second, sval->value());
+    WHEN("data is not present") {
+        facts.add(make_shared<empty_system_profiler_resolver>());
+        THEN("facts should not be added") {
+            REQUIRE(facts.size() == 0);
+        }
     }
-
-    auto system_profiler = facts.get<map_value>(fact::system_profiler);
-    ASSERT_NE(nullptr, system_profiler);
-    ASSERT_EQ(21u, system_profiler->size());
-
-    vector<string> names = {
-        "boot_mode",
-        "boot_rom_version",
-        "boot_volume",
-        "processor_name",
-        "processor_speed",
-        "kernel_version",
-        "l2_cache_per_core" ,
-        "l3_cache",
-        "computer_name",
-        "model_identifier",
-        "model_name",
-        "cores",
-        "system_version",
-        "processors",
-        "memory",
-        "hardware_uuid",
-        "secure_virtual_memory",
-        "serial_number",
-        "smc_version",
-        "uptime",
-        "username"
-    };
-
-    for (auto const& name : names) {
-        auto sval = system_profiler->get<string_value>(name);
-        ASSERT_NE(nullptr, sval);
-        ASSERT_EQ(name, sval->value());
+    WHEN("data is present") {
+        static const vector<string> algorithms = {
+            "dsa",
+            "ecdsa",
+            "ed25519",
+            "rsa"
+        };
+        facts.add(make_shared<test_system_profiler_resolver>());
+        THEN("a structured fact is added") {
+            auto system_profiler = facts.get<map_value>(fact::system_profiler);
+            REQUIRE(system_profiler);
+            REQUIRE(system_profiler->size() == 21);
+            static const vector<string> names = {
+                "boot_mode",
+                "boot_rom_version",
+                "boot_volume",
+                "processor_name",
+                "processor_speed",
+                "kernel_version",
+                "l2_cache_per_core" ,
+                "l3_cache",
+                "computer_name",
+                "model_identifier",
+                "model_name",
+                "cores",
+                "system_version",
+                "processors",
+                "memory",
+                "hardware_uuid",
+                "secure_virtual_memory",
+                "serial_number",
+                "smc_version",
+                "uptime",
+                "username"
+            };
+            for (auto const& name : names) {
+                auto sval = system_profiler->get<string_value>(name);
+                REQUIRE(sval);
+                REQUIRE(sval->value() == name);
+            }
+        }
+        THEN("flat facts are added") {
+            REQUIRE(facts.size() == 22);
+            static const map<string, string> check = {
+                { string(fact::sp_boot_mode), "boot_mode" },
+                { string(fact::sp_boot_rom_version), "boot_rom_version" },
+                { string(fact::sp_boot_volume), "boot_volume" },
+                { string(fact::sp_cpu_type), "processor_name" },
+                { string(fact::sp_current_processor_speed), "processor_speed" },
+                { string(fact::sp_kernel_version), "kernel_version" },
+                { string(fact::sp_l2_cache_core), "l2_cache_per_core" },
+                { string(fact::sp_l3_cache), "l3_cache" },
+                { string(fact::sp_local_host_name), "computer_name" },
+                { string(fact::sp_machine_model), "model_identifier" },
+                { string(fact::sp_machine_name), "model_name" },
+                { string(fact::sp_number_processors), "cores" },
+                { string(fact::sp_os_version), "system_version" },
+                { string(fact::sp_packages), "processors" },
+                { string(fact::sp_physical_memory), "memory" },
+                { string(fact::sp_platform_uuid), "hardware_uuid" },
+                { string(fact::sp_secure_vm), "secure_virtual_memory" },
+                { string(fact::sp_serial_number), "serial_number" },
+                { string(fact::sp_smc_version_system), "smc_version" },
+                { string(fact::sp_uptime), "uptime" },
+                { string(fact::sp_user_name), "username" }
+            };
+            for (auto const& kvp : check) {
+                auto sval = facts.get<string_value>(kvp.first);
+                REQUIRE(sval);
+                REQUIRE(sval->value() == kvp.second);
+            }
+        }
     }
 }

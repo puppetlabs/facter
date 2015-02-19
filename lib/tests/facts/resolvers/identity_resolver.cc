@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/resolvers/identity_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
@@ -32,44 +32,45 @@ struct test_identity_resolver : identity_resolver
     }
 };
 
-TEST(facter_facts_resolvers_identity_resolver, empty)
-{
+SCENARIO("using the identity resolver") {
     collection facts;
-    facts.add(make_shared<empty_identity_resolver>());
-    ASSERT_EQ(0u, facts.size());
-}
+    WHEN("data is not present") {
+        facts.add(make_shared<empty_identity_resolver>());
+        THEN("facts should not be added") {
+            REQUIRE(facts.size() == 0);
+        }
+    }
+    WHEN("data is present") {
+        facts.add(make_shared<test_identity_resolver>());
+        THEN("a structured fact is added") {
+            auto identity = facts.get<map_value>(fact::identity);
+            REQUIRE(identity);
+            REQUIRE(identity->size() == 4);
 
-TEST(facter_facts_resolvers_identity_resolver, facts)
-{
-    collection facts;
-    facts.add(make_shared<test_identity_resolver>());
-    ASSERT_EQ(3u, facts.size());
+            auto name = identity->get<string_value>("group");
+            REQUIRE(name);
+            REQUIRE(name->value() == "foo");
 
-    auto name = facts.get<string_value>(fact::gid);
-    ASSERT_NE(nullptr, name);
-    ASSERT_EQ("foo", name->value());
+            auto id = identity->get<integer_value>("gid");
+            REQUIRE(id);
+            REQUIRE(id->value() == 123);
 
-    name = facts.get<string_value>(fact::id);
-    ASSERT_NE(nullptr, name);
-    ASSERT_EQ("bar", name->value());
+            name = identity->get<string_value>("user");
+            REQUIRE(name);
+            REQUIRE(name->value() == "bar");
 
-    auto identity = facts.get<map_value>(fact::identity);
-    ASSERT_NE(nullptr, identity);
-    ASSERT_EQ(4u, identity->size());
+            id = identity->get<integer_value>("uid");
+            REQUIRE(id);
+            REQUIRE(id->value() == 456);
+        }
+        THEN("flat facts are added") {
+            auto name = facts.get<string_value>(fact::gid);
+            REQUIRE(name);
+            REQUIRE(name->value() == "foo");
 
-    name = identity->get<string_value>("group");
-    ASSERT_NE(nullptr, name);
-    ASSERT_EQ("foo", name->value());
-
-    auto id = identity->get<integer_value>("gid");
-    ASSERT_NE(nullptr, id);
-    ASSERT_EQ(123, id->value());
-
-    name = identity->get<string_value>("user");
-    ASSERT_NE(nullptr, name);
-    ASSERT_EQ("bar", name->value());
-
-    id = identity->get<integer_value>("uid");
-    ASSERT_NE(nullptr, id);
-    ASSERT_EQ(456, id->value());
+            name = facts.get<string_value>(fact::id);
+            REQUIRE(name);
+            REQUIRE(name->value() == "bar");
+        }
+    }
 }

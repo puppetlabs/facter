@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -11,155 +11,106 @@ using namespace facter::facts;
 using namespace rapidjson;
 using namespace YAML;
 
-TEST(facter_facts_map_value, default_constructor) {
+SCENARIO("using a map fact value") {
     map_value value;
-    ASSERT_EQ(0u, value.size());
-}
-
-TEST(facter_facts_map_value, null_add) {
-    map_value value;
-    value.add("null", nullptr);
-    ASSERT_EQ(0u, value.size());
-}
-
-TEST(facter_facts_map_value, map_constructor) {
-    map_value value;
-    value.add("string", make_value<string_value>("hello"));
-    value.add("integer", make_value<integer_value>(5));
-
-    auto array_element = make_value<array_value>();
-    array_element->add(make_value<string_value>("1"));
-    array_element->add(make_value<integer_value>(2));
-    value.add("array", move(array_element));
-
-    auto map_element = make_value<map_value>();
-    map_element->add("foo", make_value<string_value>("bar"));
-    value.add("map", move(map_element));
-
-    ASSERT_EQ(4u, value.size());
-
-    auto str = value.get<string_value>("string");
-    ASSERT_NE(nullptr, str);
-    ASSERT_EQ("hello", str->value());
-
-    auto integer = value.get<integer_value>("integer");
-    ASSERT_NE(nullptr, integer);
-    ASSERT_EQ(5, integer->value());
-
-    auto array = value.get<array_value>("array");
-    ASSERT_NE(nullptr, array);
-    ASSERT_EQ(2u, array->size());
-    str = array->get<string_value>(0);
-    ASSERT_EQ("1", str->value());
-    integer = array->get<integer_value>(1);
-    ASSERT_EQ(2u, integer->value());
-
-    auto mapval = value.get<map_value>("map");
-    ASSERT_NE(nullptr, mapval);
-    ASSERT_EQ(1u, mapval->size());
-    str = mapval->get<string_value>("foo");
-    ASSERT_NE(nullptr, str);
-    ASSERT_EQ("bar", str->value());
-}
-
-TEST(facter_facts_map_value, each) {
-    map_value value;
-    value.add("fact1", make_value<string_value>("1"));
-    value.add("fact2", make_value<string_value>("2"));
-    value.add("fact3", make_value<string_value>("3"));
-
-    size_t count = 0;
-    bool failed = false;
-    value.each([&](string const& name, struct value const* val) {
-        auto string_val = dynamic_cast<string_value const*>(val);
-        if (!string_val) {
-            failed = true;
-            return false;
+    REQUIRE(value.empty());
+    GIVEN("a null value to add") {
+        value.add("key", nullptr);
+        THEN("it should still be empty") {
+            REQUIRE(value.empty());
         }
-        if ((name == "fact1" && string_val->value() != "1") ||
-            (name == "fact2" && string_val->value() != "2") ||
-            (name == "fact3" && string_val->value() != "3")) {
-            failed = true;
-            return false;
+    }
+    GIVEN("elements to insert") {
+        value.add("string", make_value<string_value>("hello"));
+        value.add("integer", make_value<integer_value>(5));
+        auto array_element = make_value<array_value>();
+        array_element->add(make_value<string_value>("1"));
+        array_element->add(make_value<integer_value>(2));
+        value.add("array", move(array_element));
+        auto map_element = make_value<map_value>();
+        map_element->add("foo", make_value<string_value>("bar"));
+        value.add("map", move(map_element));
+
+        THEN("it should contain the elements that were added") {
+            REQUIRE(value.size() == 4);
+            auto str = value.get<string_value>("string");
+            REQUIRE(str);
+            REQUIRE(str->value() == "hello");
+
+            auto integer = value.get<integer_value>("integer");
+            REQUIRE(integer);
+            REQUIRE(integer->value() == 5);
+
+            auto array = value.get<array_value>("array");
+            REQUIRE(array);
+            REQUIRE(array->size() == 2);
+            str = array->get<string_value>(0);
+            REQUIRE(str);
+            REQUIRE(str->value() == "1");
+            integer = array->get<integer_value>(1);
+            REQUIRE(integer);
+            REQUIRE(integer->value() == 2);
+
+            auto mapval = value.get<map_value>("map");
+            REQUIRE(mapval);
+            REQUIRE(mapval->size() == 1);
+            str = mapval->get<string_value>("foo");
+            REQUIRE(str);
+            REQUIRE(str->value() == "bar");
         }
-        ++count;
-        return true;
-    });
-    ASSERT_FALSE(failed);
-    ASSERT_EQ(3u, count);
-}
-
-TEST(facter_facts_map_value, to_json) {
-    map_value value;
-    value.add("string", make_value<string_value>("hello"));
-    value.add("integer", make_value<integer_value>(5));
-
-    auto array_element = make_value<array_value>();
-    array_element->add(make_value<string_value>("1"));
-    array_element->add(make_value<integer_value>(2));
-    value.add("array", move(array_element));
-
-    auto map_element = make_value<map_value>();
-    map_element->add("foo", make_value<string_value>("bar"));
-    value.add("map", move(map_element));
-
-    rapidjson::Value json_value;
-    MemoryPoolAllocator<> allocator;
-    value.to_json(allocator, json_value);
-    ASSERT_TRUE(json_value.IsObject());
-
-    ASSERT_TRUE(json_value["string"].IsString());
-    ASSERT_EQ("hello", string(json_value["string"].GetString()));
-
-    ASSERT_TRUE(json_value["integer"].IsNumber());
-    ASSERT_EQ(5ll, json_value["integer"].GetInt64());
-
-    ASSERT_TRUE(json_value["array"].IsArray());
-    ASSERT_EQ(2u, json_value["array"].Size());
-    ASSERT_TRUE(json_value["array"][0u].IsString());
-    ASSERT_EQ("1", string(json_value["array"][0u].GetString()));
-    ASSERT_TRUE(json_value["array"][1u].IsNumber());
-    ASSERT_EQ(2ll, json_value["array"][1u].GetInt64());
-
-    ASSERT_TRUE(json_value["map"].IsObject());
-    ASSERT_TRUE(json_value["map"]["foo"].IsString());
-    ASSERT_EQ("bar", string(json_value["map"]["foo"].GetString()));
-}
-
-TEST(facter_facts_map_value, write_stream) {
-    map_value value;
-    value.add("string", make_value<string_value>("hello"));
-    value.add("integer", make_value<integer_value>(5));
-
-    auto array_element = make_value<array_value>();
-    array_element->add(make_value<string_value>("1"));
-    array_element->add(make_value<integer_value>(2));
-    value.add("array", move(array_element));
-
-    auto map_element = make_value<map_value>();
-    map_element->add("foo", make_value<string_value>("bar"));
-    value.add("map", move(map_element));
-
-    ostringstream stream;
-    value.write(stream);
-    ASSERT_EQ("{\n  array => [\n    \"1\",\n    2\n  ],\n  integer => 5,\n  map => {\n    foo => \"bar\"\n  },\n  string => \"hello\"\n}", stream.str());
-}
-
-TEST(facter_facts_map_value, write_yaml) {
-    map_value value;
-    value.add("string", make_value<string_value>("hello"));
-    value.add("integer", make_value<integer_value>(5));
-
-    auto array_element = make_value<array_value>();
-    array_element->add(make_value<string_value>("1"));
-    array_element->add(make_value<integer_value>(2));
-    value.add("array", move(array_element));
-
-    auto map_element = make_value<map_value>();
-    map_element->add("foo", make_value<string_value>("bar"));
-    value.add("map", move(map_element));
-
-    Emitter emitter;
-    value.write(emitter);
-    ASSERT_EQ("array:\n  - \"1\"\n  - 2\ninteger: 5\nmap:\n  foo: bar\nstring: hello", string(emitter.c_str()));
+        THEN("elements should be in sort order") {
+            int index = 0;
+            value.each([&](string const& name, struct value const* val) {
+                if (index == 0) {
+                    REQUIRE(name == "array");
+                } else if (index == 1) {
+                    REQUIRE(name == "integer");
+                } else if (index == 2) {
+                    REQUIRE(name == "map");
+                } else if (index == 3) {
+                    REQUIRE(name == "string");
+                } else {
+                    FAIL("should not be reached");
+                    return false;
+                }
+                ++index;
+                return true;
+            });
+        }
+        WHEN("serialized to JSON") {
+            THEN("it should contain the same values") {
+                rapidjson::Value json_value;
+                MemoryPoolAllocator<> allocator;
+                value.to_json(allocator, json_value);
+                REQUIRE(json_value.IsObject());
+                REQUIRE(json_value["string"].IsString());
+                REQUIRE(string(json_value["string"].GetString()) == "hello");
+                REQUIRE(json_value["integer"].IsNumber());
+                REQUIRE(json_value["integer"].GetInt64() == 5);
+                REQUIRE(json_value["array"].IsArray());
+                REQUIRE(json_value["array"].Size() == 2);
+                REQUIRE(json_value["array"][0u].IsString());
+                REQUIRE(string(json_value["array"][0u].GetString()) == "1");
+                REQUIRE(json_value["array"][1u].IsNumber());
+                REQUIRE(json_value["array"][1u].GetInt64() == 2);
+                REQUIRE(json_value["map"].IsObject());
+                REQUIRE(json_value["map"]["foo"].IsString());
+                REQUIRE(string(json_value["map"]["foo"].GetString()) == "bar");
+            }
+        }
+        WHEN("serialized to text") {
+            THEN("it should contain the same values") {
+                ostringstream stream;
+                value.write(stream);
+                REQUIRE(stream.str() == "{\n  array => [\n    \"1\",\n    2\n  ],\n  integer => 5,\n  map => {\n    foo => \"bar\"\n  },\n  string => \"hello\"\n}");
+            }
+        }
+        WHEN("serialized to text") {
+            THEN("it should contain the same values") {
+                Emitter emitter;
+                value.write(emitter);
+                REQUIRE(string(emitter.c_str()) == "array:\n  - \"1\"\n  - 2\ninteger: 5\nmap:\n  foo: bar\nstring: hello");
+            }
+        }
+    }
 }

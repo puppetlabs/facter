@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/resolvers/timezone_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
@@ -26,20 +26,21 @@ struct test_timezone_resolver : timezone_resolver
     }
 };
 
-TEST(facter_facts_resolvers_timezone_resolver, empty)
-{
+SCENARIO("using the timezone resolver") {
     collection facts;
-    facts.add(make_shared<empty_timezone_resolver>());
-    ASSERT_EQ(0u, facts.size());
-}
-
-TEST(facter_facts_resolvers_timezone_resolver, facts)
-{
-    collection facts;
-    facts.add(make_shared<test_timezone_resolver>());
-    ASSERT_EQ(1u, facts.size());
-
-    auto timezone = facts.get<string_value>(fact::timezone);
-    ASSERT_NE(nullptr, timezone);
-    ASSERT_EQ("PDT", timezone->value());
+    WHEN("data is not present") {
+        facts.add(make_shared<empty_timezone_resolver>());
+        THEN("facts should not be added") {
+            REQUIRE(facts.size() == 0);
+        }
+    }
+    WHEN("data is present") {
+        facts.add(make_shared<test_timezone_resolver>());
+        THEN("a flat fact is added") {
+            REQUIRE(facts.size() == 1);
+            auto timezone = facts.get<string_value>(fact::timezone);
+            REQUIRE(timezone);
+            REQUIRE(timezone->value() == "PDT");
+        }
+    }
 }

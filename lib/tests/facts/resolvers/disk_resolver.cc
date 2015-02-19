@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/resolvers/disk_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
@@ -34,83 +34,79 @@ struct test_disk_resolver : disk_resolver
     vector<disk> disks;
 };
 
-TEST(facter_facts_resolvers_disk_resolver, empty)
-{
-    collection facts;
-    facts.add(make_shared<test_disk_resolver>());
-    ASSERT_EQ(0u, facts.size());
-}
-
-TEST(facter_facts_resolvers_disk_resolver, disks)
-{
+SCENARIO("using the disk resolver") {
     collection facts;
     auto resolver = make_shared<test_disk_resolver>();
-
-    const unsigned int count = 5;
-
-    for (unsigned int i = 0; i < count; ++i) {
-        string num = to_string(i);
-        resolver->add_disk("disk" + num, "vendor" + num, "model" + num, "product" + num, 12345 + i);
-    }
-
-    facts.add(move(resolver));
-    ASSERT_EQ(2u + (3u * count), facts.size());
-
-    string names;
-    for (unsigned int i = 0; i < count; ++i) {
-        string num = to_string(i);
-
-        auto model = facts.get<string_value>("blockdevice_disk" + num + "_model");
-        ASSERT_NE(nullptr, model);
-        ASSERT_EQ("model" + num, model->value());
-
-        auto size = facts.get<integer_value>("blockdevice_disk" + num + "_size");
-        ASSERT_NE(nullptr, size);
-        ASSERT_EQ(12345 + i, size->value());
-
-        auto vendor = facts.get<string_value>("blockdevice_disk" + num + "_vendor");
-        ASSERT_NE(nullptr, vendor);
-        ASSERT_EQ("vendor" + num, vendor->value());
-
-        if (names.size() > 0) {
-            names += ",";
+    facts.add(resolver);
+    GIVEN("no disks present") {
+        THEN("facts should not be added") {
+            REQUIRE(facts.size() == 0);
         }
-        names += "disk" + num;
     }
+    GIVEN("five present disks") {
+        const unsigned int count = 5;
+        for (unsigned int i = 0; i < count; ++i) {
+            string num = to_string(i);
+            resolver->add_disk("disk" + num, "vendor" + num, "model" + num, "product" + num, 12345 + i);
+        }
+        THEN("a structured fact should be added") {
+            auto disks = facts.get<map_value>(fact::disks);
+            REQUIRE(disks);
+            REQUIRE(disks->size() == count);
 
-    auto devices = facts.get<string_value>(fact::block_devices);
-    ASSERT_NE(nullptr, devices);
-    ASSERT_EQ(names, devices->value());
+            for (unsigned int i = 0; i < count; ++i) {
+                string num = to_string(i);
 
-    auto disks = facts.get<map_value>(fact::disks);
-    ASSERT_NE(nullptr, disks);
-    ASSERT_EQ(count, disks->size());
+                auto disk = disks->get<map_value>("disk" + num);
+                REQUIRE(disk);
+                REQUIRE(disk->size() == 5);
 
-    for (unsigned int i = 0; i < count; ++i) {
-        string num = to_string(i);
+                auto model = disk->get<string_value>("model");
+                REQUIRE(model);
+                REQUIRE(model->value() == "model" + num);
 
-        auto disk = disks->get<map_value>("disk" + num);
-        ASSERT_NE(nullptr, disk);
-        ASSERT_EQ(5u, disk->size());
+                auto product = disk->get<string_value>("product");
+                REQUIRE(product);
+                REQUIRE(product->value() == "product" + num);
 
-        auto model = disk->get<string_value>("model");
-        ASSERT_NE(nullptr, model);
-        ASSERT_EQ("model" + num, model->value());
+                auto size = disk->get<string_value>("size");
+                REQUIRE(size);
+                REQUIRE(size->value() == "12.06 KiB");
 
-        auto product = disk->get<string_value>("product");
-        ASSERT_NE(nullptr, product);
-        ASSERT_EQ("product" + num, product->value());
+                auto size_bytes = disk->get<integer_value>("size_bytes");
+                REQUIRE(size_bytes);
+                REQUIRE(size_bytes->value() == 12345 + i);
 
-        auto size = disk->get<string_value>("size");
-        ASSERT_NE(nullptr, size);
-        ASSERT_EQ("12.06 KiB", size->value());
+                auto vendor = disk->get<string_value>("vendor");
+                REQUIRE(vendor);
+                REQUIRE(vendor->value() == "vendor" + num);
+            }
+        }
+        THEN("flat facts should be added") {
+            string names;
+            for (unsigned int i = 0; i < count; ++i) {
+                string num = to_string(i);
 
-        auto size_bytes = disk->get<integer_value>("size_bytes");
-        ASSERT_NE(nullptr, size_bytes);
-        ASSERT_EQ(12345 + i, size_bytes->value());
+                auto model = facts.get<string_value>("blockdevice_disk" + num + "_model");
+                REQUIRE(model);
+                REQUIRE(model->value() == "model" + num);
 
-        auto vendor = disk->get<string_value>("vendor");
-        ASSERT_NE(nullptr, vendor);
-        ASSERT_EQ("vendor" + num, vendor->value());
+                auto size = facts.get<integer_value>("blockdevice_disk" + num + "_size");
+                REQUIRE(size);
+                REQUIRE(size->value() == 12345 + i);
+
+                auto vendor = facts.get<string_value>("blockdevice_disk" + num + "_vendor");
+                REQUIRE(vendor);
+                REQUIRE(vendor->value() == "vendor" + num);
+
+                if (names.size() > 0) {
+                    names += ",";
+                }
+                names += "disk" + num;
+            }
+            auto devices = facts.get<string_value>(fact::block_devices);
+            REQUIRE(devices);
+            REQUIRE(devices->value() == names);
+        }
     }
 }

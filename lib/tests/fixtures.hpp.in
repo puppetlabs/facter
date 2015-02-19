@@ -11,14 +11,13 @@ namespace facter { namespace testing {
 
     // Creates a local directory and adds a file <filename> to it containing <contents>.
     // When destroyed, it deletes the directory.
-    struct test_with_relative_path {
-        test_with_relative_path(std::string filename, std::string contents);
+    struct test_with_relative_path
+    {
+        test_with_relative_path(std::string const& dirname, std::string const& filename, std::string const& contents);
         ~test_with_relative_path();
 
-        const std::string &filename() const { return _file; }
-        const std::string &dirname() const { return _dir; }
      private:
-        std::string _file, _dir;
+        std::string _dir;
     };
 
 }}  // namespace facter::testing

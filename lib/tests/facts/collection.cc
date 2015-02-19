@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/array_value.hpp>
@@ -12,25 +12,6 @@ using namespace std;
 using namespace facter::facts;
 using namespace facter::util;
 
-TEST(facter_facts_collection, default_constructor) {
-    collection facts;
-    ASSERT_TRUE(facts.empty());
-    ASSERT_EQ(0u, facts.size());
-}
-
-TEST(facter_facts_collection, simple_fact) {
-    collection facts;
-    facts.add("foo", make_value<string_value>("bar"));
-    ASSERT_EQ(1u, facts.size());
-    ASSERT_FALSE(facts.empty());
-    auto fact = facts.get<string_value>("foo");
-    ASSERT_NE(nullptr, fact);
-    ASSERT_EQ("bar", fact->value());
-    fact = dynamic_cast<string_value const*>(facts["foo"]);
-    ASSERT_NE(nullptr, fact);
-    ASSERT_EQ("bar", fact->value());
-}
-
 struct simple_resolver : facter::facts::resolver
 {
     simple_resolver() : resolver("test", { "foo" })
@@ -42,14 +23,6 @@ struct simple_resolver : facter::facts::resolver
         facts.add("foo", make_value<string_value>("bar"));
     }
 };
-
-TEST(facter_facts_collection, simple_resolver) {
-    collection facts;
-    facts.add(make_shared<simple_resolver>());
-    ASSERT_FALSE(facts.empty());
-    ASSERT_EQ(1u, facts.size());
-    ASSERT_EQ("bar", facts.get<string_value>("foo")->value());
-}
 
 struct multi_resolver : facter::facts::resolver
 {
@@ -64,253 +37,304 @@ struct multi_resolver : facter::facts::resolver
     }
 };
 
-TEST(facter_facts_collection, each) {
+struct temp_variable
+{
+    temp_variable(string name, string const& value) :
+        _name(move(name))
+    {
+        environment::set(_name, value);
+    }
+
+    ~temp_variable()
+    {
+        environment::clear(_name);
+    }
+
+    string _name;
+};
+
+SCENARIO("using the fact collection") {
     collection facts;
-    facts.add(make_shared<multi_resolver>());
-    size_t count = 0;
-    bool failed_foo = true;
-    bool failed_bar = true;
-    facts.each([&](string const& name, value const* val) {
-        auto string_val = dynamic_cast<string_value const*>(val);
-        if (string_val) {
-            if (name == "foo") {
-                failed_foo = string_val->value() != "bar";
-            } else if (name == "bar") {
-                failed_bar = string_val->value() != "foo";
+    REQUIRE(facts.size() == 0);
+    REQUIRE(facts.empty());
+
+    GIVEN("default facts") {
+        facts.add_default_facts();
+        THEN("facts should resolve") {
+            REQUIRE(facts.size() > 0);
+            REQUIRE_FALSE(facts.empty());
+        }
+    }
+    GIVEN("a single fact") {
+        facts.add("foo", make_value<string_value>("bar"));
+        THEN("it should be in the collection") {
+            REQUIRE(facts.size() == 1);
+            REQUIRE_FALSE(facts.empty());
+            auto fact = facts.get<string_value>("foo");
+            REQUIRE(fact);
+            REQUIRE(fact->value() == "bar");
+            fact = dynamic_cast<string_value const *>(facts["foo"]);
+            REQUIRE(fact);
+            REQUIRE(fact->value() == "bar");
+        }
+    }
+    GIVEN("a resolver that adds a single fact") {
+        facts.add(make_shared<simple_resolver>());
+        THEN("it should resolve facts into the collection") {
+            REQUIRE(facts.size() == 1);
+            REQUIRE_FALSE(facts.empty());
+            auto fact = facts.get<string_value>("foo");
+            REQUIRE(fact);
+            REQUIRE(fact->value() == "bar");
+            fact = dynamic_cast<string_value const *>(facts["foo"]);
+            REQUIRE(fact);
+            REQUIRE(fact->value() == "bar");
+        }
+        WHEN("serializing to JSON") {
+            THEN("it should contain the same values") {
+                ostringstream ss;
+                facts.write(ss, format::json);
+                REQUIRE(ss.str() == "{\n  \"foo\": \"bar\"\n}");
             }
         }
-        ++count;
-        return true;
-    });
-    ASSERT_EQ(2u, count);
-    ASSERT_FALSE(failed_foo);
-    ASSERT_FALSE(failed_bar);
-}
-
-TEST(facter_facts_collection, write_json) {
-    collection facts;
-    facts.add(make_shared<multi_resolver>());
-    ostringstream ss;
-    facts.write(ss, format::json);
-    ASSERT_EQ("{\n  \"bar\": \"foo\",\n  \"foo\": \"bar\"\n}", ss.str());
-}
-
-TEST(facter_facts_collection, write_yaml) {
-    collection facts;
-    facts.add(make_shared<multi_resolver>());
-    facts.add("baz", make_value<string_value>("12345"));
-    ostringstream ss;
-    facts.write(ss, format::yaml);
-    ASSERT_EQ("bar: foo\nbaz: \"12345\"\nfoo: bar", ss.str());
-}
-
-TEST(facter_facts_collection, write_hash) {
-    collection facts;
-    facts.add(make_shared<multi_resolver>());
-    ostringstream ss;
-    facts.write(ss, format::hash);
-    ASSERT_EQ("bar => foo\nfoo => bar", ss.str());
-}
-
-TEST(facter_facts_collection, write_hash_single) {
-    collection facts;
-    facts.add(make_shared<simple_resolver>());
-    ostringstream ss;
-    facts.write(ss, format::hash, { "foo" });
-    ASSERT_EQ("bar", ss.str());
-}
-
-TEST(facter_facts_collection, resolve_external) {
-    collection facts;
-    ASSERT_EQ(0u, facts.size());
-    ASSERT_TRUE(facts.empty());
-    facts.add_external_facts({
-        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/yaml",
-        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json",
-        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/text",
-    });
-    ASSERT_FALSE(facts.empty());
-    ASSERT_EQ(17u, facts.size());
-    ASSERT_NE(nullptr, facts.get<string_value>("yaml_fact1"));
-    ASSERT_NE(nullptr, facts.get<integer_value>("yaml_fact2"));
-    ASSERT_NE(nullptr, facts.get<boolean_value>("yaml_fact3"));
-    ASSERT_NE(nullptr, facts.get<double_value>("yaml_fact4"));
-    ASSERT_NE(nullptr, facts.get<array_value>("yaml_fact5"));
-    ASSERT_NE(nullptr, facts.get<map_value>("yaml_fact6"));
-    ASSERT_NE(nullptr, facts.get<string_value>("yaml_fact7"));
-    ASSERT_NE(nullptr, facts.get<string_value>("json_fact1"));
-    ASSERT_NE(nullptr, facts.get<integer_value>("json_fact2"));
-    ASSERT_NE(nullptr, facts.get<boolean_value>("json_fact3"));
-    ASSERT_NE(nullptr, facts.get<double_value>("json_fact4"));
-    ASSERT_NE(nullptr, facts.get<array_value>("json_fact5"));
-    ASSERT_NE(nullptr, facts.get<map_value>("json_fact6"));
-    ASSERT_NE(nullptr, facts.get<string_value>("json_fact7"));
-    ASSERT_NE(nullptr, facts.get<string_value>("txt_fact1"));
-    ASSERT_NE(nullptr, facts.get<string_value>("txt_fact2"));
-    ASSERT_EQ(nullptr, facts.get<string_value>("txt_fact3"));
-    ASSERT_NE(nullptr, facts.get<string_value>("txt_fact4"));
-}
-
-TEST(facter_facts_collection, query) {
-    collection facts;
-
-    auto map = make_value<map_value>();
-    map->add("string", make_value<string_value>("hello"));
-    map->add("integer", make_value<integer_value>(5));
-    map->add("double", make_value<double_value>(0.3));
-    map->add("boolean", make_value<boolean_value>(true));
-
-    auto submap = make_value<map_value>();
-    submap->add("foo", make_value<string_value>("bar"));
-    map->add("submap", move(submap));
-
-    submap = make_value<map_value>();
-    submap->add("jam", make_value<string_value>("cakes"));
-    map->add("name.with.dots", move(submap));
-
-    auto array = make_value<array_value>();
-    array->add(make_value<string_value>("foo"));
-    array->add(make_value<integer_value>(10));
-    array->add(make_value<double_value>(2.3));
-    array->add(make_value<boolean_value>(false));
-
-    submap = make_value<map_value>();
-    submap->add("bar", make_value<string_value>("baz"));
-    array->add(move(submap));
-    map->add("array", move(array));
-
-    facts.add("map", move(map));
-    facts.add("string", make_value<string_value>("world"));
-
-    auto mvalue = facts.query<map_value>("map");
-    ASSERT_NE(nullptr, mvalue);
-    ASSERT_EQ(7u, mvalue->size());
-
-    auto svalue = facts.query<string_value>("map.string");
-    ASSERT_NE(nullptr, svalue);
-    ASSERT_EQ("hello", svalue->value());
-
-    auto ivalue = facts.query<integer_value>("map.integer");
-    ASSERT_NE(nullptr, ivalue);
-    ASSERT_EQ(5, ivalue->value());
-
-    auto dvalue = facts.query<double_value>("map.double");
-    ASSERT_NE(nullptr, dvalue);
-    ASSERT_EQ(0.3, dvalue->value());
-
-    auto bvalue = facts.query<boolean_value>("map.boolean");
-    ASSERT_NE(nullptr, bvalue);
-    ASSERT_TRUE(bvalue->value());
-
-    mvalue = facts.query<map_value>("map.submap");
-    ASSERT_NE(nullptr, mvalue);
-    ASSERT_EQ(1u, mvalue->size());
-
-    svalue = facts.query<string_value>("map.submap.foo");
-    ASSERT_NE(nullptr, svalue);
-    ASSERT_EQ("bar", svalue->value());
-
-    auto avalue = facts.query<array_value>("map.array");
-    ASSERT_NE(nullptr, avalue);
-    ASSERT_EQ(5u, avalue->size());
-
-    svalue = facts.query<string_value>("map.array.0");
-    ASSERT_NE(nullptr, svalue);
-    ASSERT_EQ("foo", svalue->value());
-
-    ivalue = facts.query<integer_value>("map.array.1");
-    ASSERT_NE(nullptr, ivalue);
-    ASSERT_EQ(10, ivalue->value());
-
-    dvalue = facts.query<double_value>("map.array.2");
-    ASSERT_NE(nullptr, dvalue);
-    ASSERT_EQ(2.3, dvalue->value());
-
-    bvalue = facts.query<boolean_value>("map.array.3");
-    ASSERT_NE(nullptr, bvalue);
-    ASSERT_FALSE(bvalue->value());
-
-    mvalue = facts.query<map_value>("map.array.4");
-    ASSERT_NE(nullptr, mvalue);
-    ASSERT_EQ(1u, mvalue->size());
-
-    svalue = facts.query<string_value>("map.array.4.bar");
-    ASSERT_NE(nullptr, svalue);
-    ASSERT_EQ("baz", svalue->value());
-
-    auto value = facts.query("map.array.foo");
-    ASSERT_EQ(nullptr, value);
-
-    value = facts.query("map.array.5");
-    ASSERT_EQ(nullptr, value);
-
-    svalue = facts.query<string_value>("string");
-    ASSERT_NE(nullptr, svalue);
-    ASSERT_EQ("world", svalue->value());
-
-    value = facts.query("map.name.with.dots");
-    ASSERT_EQ(nullptr, value);
-
-    svalue = facts.query<string_value>("map.\"name.with.dots\".jam");
-    ASSERT_NE(nullptr, svalue);
-    ASSERT_EQ("cakes", svalue->value());
-}
-
-TEST(facter_facts_collection, add_environment_facts) {
-    struct env_var
-    {
-        env_var(string name, string const& value) :
-            _name(move(name))
-        {
-            environment::set(_name, value);
+        WHEN("serializing to YAML") {
+            THEN("it should contain the same values") {
+                ostringstream ss;
+                facts.write(ss, format::yaml);
+                REQUIRE(ss.str() == "foo: bar");
+            }
         }
-
-        ~env_var()
-        {
-            environment::clear(_name);
+        WHEN("serializing to text") {
+            GIVEN("only a single query") {
+                THEN("it should output only the value") {
+                    ostringstream ss;
+                    facts.write(ss, format::hash, {"foo"});
+                    REQUIRE(ss.str() == "bar");
+                }
+            }
+            GIVEN("no queries") {
+                THEN("it should contain the same values") {
+                    ostringstream ss;
+                    facts.write(ss, format::hash);
+                    REQUIRE(ss.str() == "foo => bar");
+                }
+            }
         }
+    }
+    GIVEN("a resolver that adds multiple facts") {
+        facts.add(make_shared<multi_resolver>());
+        THEN("it should enumerate the facts in order") {
+            int index = 0;
+            facts.each([&](string const &name, value const *val) {
+                auto string_val = dynamic_cast<string_value const *>(val);
+                REQUIRE(string_val);
+                if (index == 0) {
+                    REQUIRE(name == "bar");
+                    REQUIRE(string_val->value() == "foo");
+                } else if (index == 1) {
+                    REQUIRE(name == "foo");
+                    REQUIRE(string_val->value() == "bar");
+                } else {
+                    FAIL("should not be reached");
+                }
+                ++index;
+                return true;
+            });
+        }
+        WHEN("serializing to JSON") {
+            THEN("it should contain the same values") {
+                ostringstream ss;
+                facts.write(ss, format::json);
+                REQUIRE(ss.str() == "{\n  \"bar\": \"foo\",\n  \"foo\": \"bar\"\n}");
+            }
+        }
+        WHEN("serializing to YAML") {
+            THEN("it should contain the same values") {
+                ostringstream ss;
+                facts.write(ss, format::yaml);
+                REQUIRE(ss.str() == "bar: foo\nfoo: bar");
+            }
+        }
+        WHEN("serializing to text") {
+            THEN("it should contain the same values") {
+                ostringstream ss;
+                facts.write(ss, format::hash);
+                REQUIRE(ss.str() == "bar => foo\nfoo => bar");
+            }
+        }
+    }
+    GIVEN("external facts paths to search") {
+        facts.add_external_facts({
+                LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/yaml",
+                LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json",
+                LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/text",
+        });
+        REQUIRE_FALSE(facts.empty());
+        REQUIRE(facts.size() == 17);
+        WHEN("YAML files are present") {
+            THEN("facts should be added") {
+                REQUIRE(facts.get<string_value>("yaml_fact1"));
+                REQUIRE(facts.get<integer_value>("yaml_fact2"));
+                REQUIRE(facts.get<boolean_value>("yaml_fact3"));
+                REQUIRE(facts.get<double_value>("yaml_fact4"));
+                REQUIRE(facts.get<array_value>("yaml_fact5"));
+                REQUIRE(facts.get<map_value>("yaml_fact6"));
+                REQUIRE(facts.get<string_value>("yaml_fact7"));
+            }
+        }
+        WHEN("JSON files are present") {
+            THEN("facts should be added") {
+                REQUIRE(facts.get<string_value>("json_fact1"));
+                REQUIRE(facts.get<integer_value>("json_fact2"));
+                REQUIRE(facts.get<boolean_value>("json_fact3"));
+                REQUIRE(facts.get<double_value>("json_fact4"));
+                REQUIRE(facts.get<array_value>("json_fact5"));
+                REQUIRE(facts.get<map_value>("json_fact6"));
+                REQUIRE(facts.get<string_value>("json_fact7"));
+            }
+        }
+        WHEN("text files are present") {
+            THEN("facts should be added") {
+                REQUIRE(facts.get<string_value>("txt_fact1"));
+                REQUIRE(facts.get<string_value>("txt_fact2"));
+                REQUIRE_FALSE(facts.get<string_value>("txt_fact3"));
+                REQUIRE(facts.get<string_value>("txt_fact4"));
+            }
+        }
+    }
+    GIVEN("structured fact data") {
+        auto map = make_value<map_value>();
+        map->add("string", make_value<string_value>("hello"));
+        map->add("integer", make_value<integer_value>(5));
+        map->add("double", make_value<double_value>(0.3));
+        map->add("boolean", make_value<boolean_value>(true));
+        auto submap = make_value<map_value>();
+        submap->add("foo", make_value<string_value>("bar"));
+        map->add("submap", move(submap));
+        submap = make_value<map_value>();
+        submap->add("jam", make_value<string_value>("cakes"));
+        map->add("name.with.dots", move(submap));
+        auto array = make_value<array_value>();
+        array->add(make_value<string_value>("foo"));
+        array->add(make_value<integer_value>(10));
+        array->add(make_value<double_value>(2.3));
+        array->add(make_value<boolean_value>(false));
+        submap = make_value<map_value>();
+        submap->add("bar", make_value<string_value>("baz"));
+        array->add(move(submap));
+        map->add("array", move(array));
+        facts.add("map", move(map));
+        facts.add("string", make_value<string_value>("world"));
 
-        string _name;
-    };
-
-    collection facts;
-    ASSERT_EQ(0u, facts.size());
-
-    // Nothing in environment
-    facts.add_environment_facts();
-    ASSERT_EQ(0u, facts.size());
-
-    {
-        auto var = env_var("FACTER_Foo", "bar");
-
+        WHEN("queried with a matching top level name") {
+            THEN("a value should be returned") {
+                auto mvalue = facts.query<map_value>("map");
+                REQUIRE(mvalue);
+                REQUIRE(mvalue->size() == 7);
+            }
+        }
+        WHEN("queried with a non-matching top level name") {
+            THEN("it should return null") {
+                REQUIRE_FALSE(facts.query<string_value>("does not exist"));
+            }
+        }
+        WHEN("querying for a sub element of a type that is not a map") {
+            THEN("it should return null") {
+                REQUIRE_FALSE(facts.query<string_value>("string.foo"));
+            }
+        }
+        WHEN("queried with for a sub element") {
+            THEN("a value should be returned") {
+                auto svalue = facts.query<string_value>("map.string");
+                REQUIRE(svalue);
+                REQUIRE(svalue->value() == "hello");
+                auto ivalue = facts.query<integer_value>("map.integer");
+                REQUIRE(ivalue);
+                REQUIRE(ivalue->value() == 5);
+                auto dvalue = facts.query<double_value>("map.double");
+                REQUIRE(dvalue);
+                REQUIRE(dvalue->value() == Approx(0.3));
+                auto bvalue = facts.query<boolean_value>("map.boolean");
+                REQUIRE(bvalue);
+                REQUIRE(bvalue->value());
+                auto mvalue = facts.query<map_value>("map.submap");
+                REQUIRE(mvalue);
+                REQUIRE(mvalue->size() == 1);
+            }
+        }
+        WHEN("querying along a path of map values") {
+            THEN("a value should be returned") {
+                auto svalue = facts.query<string_value>("map.submap.foo");
+                REQUIRE(svalue);
+                REQUIRE(svalue->value() == "bar");
+            }
+        }
+        WHEN("querying into an array with an in-bounds index") {
+            THEN("a value should be returned") {
+                auto avalue = facts.query<array_value>("map.array");
+                REQUIRE(avalue);
+                REQUIRE(avalue->size() == 5);
+                for (size_t i = 0; i < avalue->size(); ++i) {
+                    REQUIRE(facts.query("map.array." + to_string(i)));
+                }
+            }
+        }
+        WHEN("querying into an array with a non-numeric index") {
+            THEN("it should return null") {
+                REQUIRE_FALSE(facts.query("map.array.foo"));
+            }
+        }
+        WHEN("uerying into an array with an out-of-bounds index") {
+            THEN("it should return null") {
+                REQUIRE_FALSE(facts.query("map.array.5"));
+            }
+        }
+        WHEN("querying into an element inside of an array") {
+            THEN("it should return a value") {
+                auto svalue = facts.query<string_value>("map.array.4.bar");
+                REQUIRE(svalue);
+                REQUIRE(svalue->value() == "baz");
+            }
+        }
+        WHEN("a fact name contains dots") {
+            THEN("it not reqturn a value unless quoted") {
+                REQUIRE_FALSE(facts.query("map.name.with.dots"));
+            }
+            THEN("it should return a value when quoted") {
+                auto svalue = facts.query<string_value>("map.\"name.with.dots\".jam");
+                REQUIRE(svalue);
+                REQUIRE(svalue->value() == "cakes");
+            }
+        }
+    }
+    GIVEN("a fact from an environment variable") {
+        auto var = temp_variable("FACTER_Foo", "bar");
         bool added = false;
         facts.add_environment_facts([&](string const& name) {
             added = name == "foo";
         });
+        REQUIRE(added);
 
-        ASSERT_EQ(true, added);
-        ASSERT_EQ(1u, facts.size());
-
-        auto value = facts.get<string_value>("foo");
-        ASSERT_NE(nullptr, value);
-        ASSERT_EQ("bar", value->value());
+        THEN("the fact should be present in the collection") {
+            REQUIRE(facts.size() == 1);
+            auto value = facts.get<string_value>("foo");
+            REQUIRE(value);
+            REQUIRE(value->value() == "bar");
+        }
     }
-
-    // Environment variables override built-in values
-    facts.clear();
-    facts.add_default_facts();
-    {
-        auto var = env_var("FACTER_KERNEL", "overridden");
-
+    GIVEN("a fact from an environment with the same name as a built-in fact") {
+        facts.add_default_facts();
+        auto var = temp_variable("FACTER_KERNEL", "overridden");
         bool added = false;
         facts.add_environment_facts([&](string const& name) {
             added = name == "kernel";
         });
+        REQUIRE(added);
 
-        ASSERT_EQ(true, added);
-
-        auto value = facts.get<string_value>("kernel");
-        ASSERT_NE(nullptr, value);
-        ASSERT_EQ("overridden", value->value());
+        THEN("it should override the built-in fact's value") {
+            auto value = facts.get<string_value>("kernel");
+            REQUIRE(value);
+            REQUIRE(value->value() == "overridden");
+        }
     }
 }

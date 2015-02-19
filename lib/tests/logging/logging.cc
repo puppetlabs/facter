@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/logging/logging.hpp>
 #include <boost/log/sinks/sync_frontend.hpp>
 #include <boost/log/sinks/basic_sink_backend.hpp>
@@ -9,10 +9,9 @@ using namespace std;
 using namespace facter::logging;
 namespace sinks = boost::log::sinks;
 
-class custom_log_appender :
-    public sinks::basic_formatted_sink_backend<char, sinks::synchronized_feeding>
+struct custom_log_appender :
+    sinks::basic_formatted_sink_backend<char, sinks::synchronized_feeding>
 {
- public:
     void consume(boost::log::record_view const& rec, string_type const& message)
     {
         stringstream s;
@@ -21,19 +20,15 @@ class custom_log_appender :
         _message = message;
     }
 
-    string const& last_level() const { return _level; }
-    string const& last_message() const { return _message; }
-
- private:
     string _level;
     string _message;
 };
 
-struct facter_logging : ::testing::Test {
- protected:
+struct logging_test_context
+{
     using sink_t = sinks::synchronous_sink<custom_log_appender>;
 
-    virtual void SetUp()
+    logging_test_context()
     {
         set_level(log_level::trace);
         _appender.reset(new custom_log_appender());
@@ -43,7 +38,7 @@ struct facter_logging : ::testing::Test {
         core->add_sink(_sink);
     }
 
-    virtual void TearDown()
+    ~logging_test_context()
     {
         set_level(log_level::none);
         on_message(nullptr);
@@ -58,107 +53,132 @@ struct facter_logging : ::testing::Test {
 
     boost::shared_ptr<custom_log_appender> _appender;
     boost::shared_ptr<sink_t> _sink;
-
-    log_level _last_callback_level;
-    string _last_callback_message;
 };
 
-TEST_F(facter_logging, trace) {
-    ASSERT_EQ(true, LOG_IS_TRACE_ENABLED());
+SCENARIO("logging with a TRACE level") {
+    logging_test_context context;
+    REQUIRE(LOG_IS_TRACE_ENABLED());
     LOG_TRACE("testing %1% %2% %3%", 1, "2", 3.0);
-    ASSERT_EQ("TRACE", _appender->last_level());
-    ASSERT_EQ(string(colorize(log_level::trace)) + "testing 1 2 3" + colorize(), _appender->last_message());
+    REQUIRE(context._appender->_level == "TRACE");
+    REQUIRE(context._appender->_message == string(colorize(log_level::trace)) + "testing 1 2 3" + colorize());
     log("test", log_level::trace, "testing %1% %2% %3%", 1, "2", 3.0);
-    ASSERT_EQ("TRACE", _appender->last_level());
-    ASSERT_EQ(string(colorize(log_level::trace)) + "testing 1 2 3" + colorize(), _appender->last_message());
+    REQUIRE(context._appender->_level == "TRACE");
+    REQUIRE(context._appender->_message == string(colorize(log_level::trace)) + "testing 1 2 3" + colorize());
 }
 
-TEST_F(facter_logging, debug) {
-    ASSERT_EQ(true, LOG_IS_DEBUG_ENABLED());
+SCENARIO("logging with a DEBUG level") {
+    logging_test_context context;
+    REQUIRE(LOG_IS_DEBUG_ENABLED());
     LOG_DEBUG("testing %1% %2% %3%", 1, "2", 3.0);
-    ASSERT_EQ("DEBUG", _appender->last_level());
-    ASSERT_EQ(string(colorize(log_level::debug)) + "testing 1 2 3" + colorize(), _appender->last_message());
+    REQUIRE(context._appender->_level == "DEBUG");
+    REQUIRE(context._appender->_message == string(colorize(log_level::debug)) + "testing 1 2 3" + colorize());
     log("test", log_level::debug, "testing %1% %2% %3%", 1, "2", 3.0);
-    ASSERT_EQ("DEBUG", _appender->last_level());
-    ASSERT_EQ(string(colorize(log_level::debug)) + "testing 1 2 3" + colorize(), _appender->last_message());
+    REQUIRE(context._appender->_level == "DEBUG");
+    REQUIRE(context._appender->_message == string(colorize(log_level::debug)) + "testing 1 2 3" + colorize());
 }
 
-TEST_F(facter_logging, info) {
-    ASSERT_EQ(true, LOG_IS_INFO_ENABLED());
+SCENARIO("logging with an INFO level") {
+    logging_test_context context;
+    REQUIRE(LOG_IS_INFO_ENABLED());
     LOG_INFO("testing %1% %2% %3%", 1, "2", 3.0);
-    ASSERT_EQ("INFO", _appender->last_level());
-    ASSERT_EQ(string(colorize(log_level::info)) + "testing 1 2 3" + colorize(), _appender->last_message());
+    REQUIRE(context._appender->_level == "INFO");
+    REQUIRE(context._appender->_message == string(colorize(log_level::info)) + "testing 1 2 3" + colorize());
     log("test", log_level::info, "testing %1% %2% %3%", 1, "2", 3.0);
-    ASSERT_EQ("INFO", _appender->last_level());
-    ASSERT_EQ(string(colorize(log_level::info)) + "testing 1 2 3" + colorize(), _appender->last_message());
+    REQUIRE(context._appender->_level == "INFO");
+    REQUIRE(context._appender->_message == string(colorize(log_level::info)) + "testing 1 2 3" + colorize());
 }
 
-TEST_F(facter_logging, warning) {
-    ASSERT_EQ(true, LOG_IS_WARNING_ENABLED());
+SCENARIO("logging with a WARNING level") {
+    logging_test_context context;
+    REQUIRE(LOG_IS_WARNING_ENABLED());
     LOG_WARNING("testing %1% %2% %3%", 1, "2", 3.0);
-    ASSERT_EQ("WARN", _appender->last_level());
-    ASSERT_EQ(string(colorize(log_level::warning)) + "testing 1 2 3" + colorize(), _appender->last_message());
+    REQUIRE(context._appender->_level == "WARN");
+    REQUIRE(context._appender->_message == string(colorize(log_level::warning)) + "testing 1 2 3" + colorize());
     log("test", log_level::warning, "testing %1% %2% %3%", 1, "2", 3.0);
-    ASSERT_EQ("WARN", _appender->last_level());
-    ASSERT_EQ(string(colorize(log_level::warning)) + "testing 1 2 3" + colorize(), _appender->last_message());
+    REQUIRE(context._appender->_level == "WARN");
+    REQUIRE(context._appender->_message == string(colorize(log_level::warning)) + "testing 1 2 3" + colorize());
 }
 
-TEST_F(facter_logging, error) {
-    ASSERT_EQ(true, LOG_IS_ERROR_ENABLED());
+SCENARIO("logging with an ERROR level") {
+    logging_test_context context;
+    REQUIRE(LOG_IS_ERROR_ENABLED());
     LOG_ERROR("testing %1% %2% %3%", 1, "2", 3.0);
-    ASSERT_EQ("ERROR", _appender->last_level());
-    ASSERT_EQ(string(colorize(log_level::error)) + "testing 1 2 3" + colorize(), _appender->last_message());
+    REQUIRE(context._appender->_level == "ERROR");
+    REQUIRE(context._appender->_message == string(colorize(log_level::error)) + "testing 1 2 3" + colorize());
     log("test", log_level::error, "testing %1% %2% %3%", 1, "2", 3.0);
-    ASSERT_EQ("ERROR", _appender->last_level());
-    ASSERT_EQ(string(colorize(log_level::error)) + "testing 1 2 3" + colorize(), _appender->last_message());
+    REQUIRE(context._appender->_level == "ERROR");
+    REQUIRE(context._appender->_message == string(colorize(log_level::error)) + "testing 1 2 3" + colorize());
 }
 
-TEST_F(facter_logging, fatal) {
-    ASSERT_EQ(true, LOG_IS_FATAL_ENABLED());
+SCENARIO("logging with a FATAL level") {
+    logging_test_context context;
+    REQUIRE(LOG_IS_FATAL_ENABLED());
     LOG_FATAL("testing %1% %2% %3%", 1, "2", 3.0);
-    ASSERT_EQ("FATAL", _appender->last_level());
-    ASSERT_EQ(string(colorize(log_level::fatal)) + "testing 1 2 3" + colorize(), _appender->last_message());
+    REQUIRE(context._appender->_level == "FATAL");
+    REQUIRE(context._appender->_message == string(colorize(log_level::fatal)) + "testing 1 2 3" + colorize());
     log("test", log_level::fatal, "testing %1% %2% %3%", 1, "2", 3.0);
-    ASSERT_EQ("FATAL", _appender->last_level());
-    ASSERT_EQ(string(colorize(log_level::fatal)) + "testing 1 2 3" + colorize(), _appender->last_message());
+    REQUIRE(context._appender->_level == "FATAL");
+    REQUIRE(context._appender->_message == string(colorize(log_level::fatal)) + "testing 1 2 3" + colorize());
 }
 
-TEST_F(facter_logging, on_message) {
-    on_message([this](log_level level, string const& message) {
-        _last_callback_level = level;
-        _last_callback_message = message;
+SCENARIO("logging with on_message") {
+    logging_test_context context;
+    string message;
+    log_level level;
+    on_message([&](log_level lvl, string const& msg) {
+        level = lvl;
+        message = msg;
         return false;
     });
-    LOG_DEBUG("debug message");
-    ASSERT_EQ(log_level::debug, _last_callback_level);
-    ASSERT_EQ("debug message", _last_callback_message);
-    LOG_INFO("info message");
-    ASSERT_EQ(log_level::info, _last_callback_level);
-    ASSERT_EQ("info message", _last_callback_message);
-    LOG_WARNING("warning message");
-    ASSERT_EQ(log_level::warning, _last_callback_level);
-    ASSERT_EQ("warning message", _last_callback_message);
-    LOG_ERROR("error message");
-    ASSERT_EQ(log_level::error, _last_callback_level);
-    ASSERT_EQ("error message", _last_callback_message);
-    LOG_FATAL("fatal message");
-    ASSERT_EQ(log_level::fatal, _last_callback_level);
-    ASSERT_EQ("fatal message", _last_callback_message);
-}
-
-TEST_F(facter_logging, unicode) {
-    on_message([this](log_level level, string const& message) {
-        _last_callback_level = level;
-        _last_callback_message = message;
-        return false;
-    });
-
-    // Test various Unicode characters
-    const wstring symbols[] = {L"\u2122", L"\u2744", L"\u039b"};
-    for (auto s : symbols) {
-        auto utf8 = boost::nowide::narrow(s);
-        LOG_INFO(utf8);
-        ASSERT_EQ(log_level::info, _last_callback_level);
-        ASSERT_EQ(utf8, _last_callback_message);
+    GIVEN("a TRACE message to log") {
+        LOG_TRACE("trace message");
+        THEN("on_message is called with the message") {
+            REQUIRE(level == log_level::trace);
+            REQUIRE(message == "trace message");
+        }
+    }
+    GIVEN("a DEBUG message to log") {
+        LOG_DEBUG("debug message");
+        THEN("on_message is called with the message") {
+            REQUIRE(level == log_level::debug);
+            REQUIRE(message == "debug message");
+        }
+    }
+    GIVEN("a INFO message to log") {
+        LOG_INFO("info message");
+        THEN("on_message is called with the message") {
+            REQUIRE(level == log_level::info);
+            REQUIRE(message == "info message");
+        }
+    }
+    GIVEN("a WARNING message to log") {
+        LOG_WARNING("warning message");
+        THEN("on_message is called with the message") {
+            REQUIRE(level == log_level::warning);
+            REQUIRE(message == "warning message");
+        }
+    }
+    GIVEN("a ERROR message to log") {
+        LOG_ERROR("error message");
+        THEN("on_message is called with the message") {
+            REQUIRE(level == log_level::error);
+            REQUIRE(message == "error message");
+        }
+    }
+    GIVEN("a FATAL message to log") {
+        LOG_FATAL("fatal message");
+        THEN("on_message is called with the message") {
+            REQUIRE(level == log_level::fatal);
+            REQUIRE(message == "fatal message");
+        }
+    }
+    GIVEN("a unicode characters to log") {
+        const wstring symbols[] = {L"\u2122", L"\u2744", L"\u039b"};
+        for (auto const& s : symbols) {
+            auto utf8 = boost::nowide::narrow(s);
+            LOG_INFO(utf8);
+            REQUIRE(level == log_level::info);
+            REQUIRE(message == utf8);
+        }
     }
 }

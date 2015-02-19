@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/array_value.hpp>
@@ -11,30 +11,28 @@ using namespace std;
 using namespace facter::facts;
 using namespace facter::testing;
 
-TEST(facter_facts_posix_collection, resolve_external) {
+SCENARIO("resolving external executable facts into a collection") {
     collection facts;
-    ASSERT_EQ(0u, facts.size());
-    ASSERT_TRUE(facts.empty());
-    facts.add_external_facts({
-        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution",
-    });
-    ASSERT_FALSE(facts.empty());
-    ASSERT_EQ(3u, facts.size());
-    ASSERT_NE(nullptr, facts.get<string_value>("exe_fact1"));
-    ASSERT_NE(nullptr, facts.get<string_value>("exe_fact2"));
-    ASSERT_EQ(nullptr, facts.get<string_value>("exe_fact3"));
-    ASSERT_NE(nullptr, facts.get<string_value>("exe_fact4"));
-}
-
-TEST(facter_facts_posix_collection, resolve_external_relative) {
-    test_with_relative_path fixture("foo", "#! /usr/bin/env sh\necho local_exec_fact=value");
-
-    collection facts;
-    ASSERT_EQ(0u, facts.size());
-    ASSERT_TRUE(facts.empty());
-    facts.add_external_facts({fixture.dirname()});
-    ASSERT_FALSE(facts.empty());
-    ASSERT_EQ(1u, facts.size());
-    ASSERT_NE(nullptr, facts.get<string_value>("local_exec_fact"));
-    ASSERT_EQ("value", facts.get<string_value>("local_exec_fact")->value());
+    REQUIRE(facts.size() == 0);
+    GIVEN("an absolute path") {
+        facts.add_external_facts({
+            LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution",
+        });
+        THEN("facts should resolve") {
+            REQUIRE(facts.size() == 3);
+            REQUIRE(facts.get<string_value>("exe_fact1"));
+            REQUIRE(facts.get<string_value>("exe_fact2"));
+            REQUIRE_FALSE(facts.get<string_value>("exe_fact3"));
+            REQUIRE(facts.get<string_value>("exe_fact4"));
+        }
+    }
+    GIVEN("a relative path") {
+        test_with_relative_path fixture("foo", "bar", "#! /usr/bin/env sh\necho local_exec_fact=value");
+        facts.add_external_facts({ "foo" });
+        THEN("facts should resolve") {
+            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.get<string_value>("local_exec_fact"));
+            REQUIRE(facts.get<string_value>("local_exec_fact")->value() == "value");
+        }
+    }
 }
