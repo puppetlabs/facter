@@ -167,7 +167,7 @@ cmake $args
 mingw32-make -j $cores
 
 ## Write out the version that was just built.
-git describe --long > bin/VERSION
+git describe --long | Out-File -FilePath 'bin/VERSION' -Encoding ASCII -Force
 
 ## Test the results.
 ctest -V 2>&1 | c++filt
