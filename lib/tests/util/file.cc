@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/string.hpp>
 #include <boost/algorithm/string.hpp>
@@ -7,88 +7,70 @@
 using namespace std;
 using namespace facter::util;
 using namespace facter::testing;
-using testing::ElementsAre;
 
-TEST(facter_util_file, each_line) {
+SCENARIO("reading each line of a file") {
     string fixture_path = "util/multiline_file.txt";
     string fixture_file_path = LIBFACTER_TESTS_DIRECTORY "/fixtures/" + fixture_path;
 
     string data;
-    ASSERT_TRUE(load_fixture(fixture_path, data));
+    REQUIRE(load_fixture(fixture_path, data));
     vector<string> fixture_lines;
     boost::split(fixture_lines, data, boost::is_any_of("\n\r"), boost::token_compress_on);
 
-    // Test non-existent file
-    bool failed = false;
-    ASSERT_FALSE(file::each_line("does_not_exist", [&failed](string& line) {
-        failed = true;
-        return true;
-    }));
-
-    if (failed) {
-        FAIL();
+    GIVEN("a file that does not exist") {
+        THEN("false is returned") {
+            REQUIRE_FALSE(file::each_line("does_not_exist", [](string& line) {
+                FAIL("should not be called");
+                return true;
+            }));
+        }
     }
-
-    // Test all lines
-    vector<string> lines;
-    ASSERT_TRUE(file::each_line(fixture_file_path, [&lines](string& line) {
-        lines.emplace_back(move(line));
-        return true;
-    }));
-    ASSERT_EQ(3u, lines.size());
-    ASSERT_THAT(lines, fixture_lines);
-
-    // Test short circuiting
-    int count = 0;
-    lines.clear();
-    ASSERT_TRUE(file::each_line(fixture_file_path, [&lines, &count](string& line) {
-        lines.emplace_back(move(line));
-        return ++count < 2;
-    }));
-    ASSERT_EQ(2u, lines.size());
-    ASSERT_THAT(lines, ElementsAre(lines[0], lines[1]));
+    GIVEN("a callback that returns true") {
+        THEN("all lines are returned") {
+            vector<string> lines;
+            REQUIRE(file::each_line(fixture_file_path, [&](string& line) {
+                lines.emplace_back(move(line));
+                return true;
+            }));
+            REQUIRE(lines.size() == 3);
+            REQUIRE(lines == fixture_lines);
+        }
+    }
+    GIVEN("a callback that returns false") {
+        THEN("only the first line is returned") {
+            vector<string> lines;
+            REQUIRE(file::each_line(fixture_file_path, [&](string& line) {
+                lines.emplace_back(move(line));
+                return false;
+            }));
+            REQUIRE(lines.size() == 1);
+            REQUIRE(lines[0] == fixture_lines[0]);
+        }
+    }
 }
 
-TEST(facter_util_file, read) {
+SCENARIO("reading the entire contents of a file") {
     string fixture_path = "util/multiline_file.txt";
     string fixture_file_path = LIBFACTER_TESTS_DIRECTORY "/fixtures/" + fixture_path;
 
-    // Test non-existent file
-    string data;
-    ASSERT_EQ("", file::read("does_not_exist"));
-    ASSERT_EQ("", file::read(""));
-    ASSERT_FALSE(file::read("does_not_exist", data));
-    ASSERT_FALSE(file::read("", data));
-
-    // Test read
-    string fixture;
-    ASSERT_TRUE(load_fixture(fixture_path, fixture));
-    ASSERT_EQ(fixture, file::read(fixture_file_path));
-    ASSERT_TRUE(file::read(fixture_file_path, data));
-    ASSERT_EQ(fixture, data);
-}
-
-TEST(facter_util_file, read_first_line) {
-    string fixture_path = "util/multiline_file.txt";
-    string fixture_file_path = LIBFACTER_TESTS_DIRECTORY "/fixtures/" + fixture_path;
-
-    // Test non-existent file
-    string data;
-    ASSERT_EQ("", file::read_first_line("does_not_exist"));
-    ASSERT_EQ("", file::read_first_line(""));
-    ASSERT_FALSE(file::read_first_line("does_not_exist", data));
-    ASSERT_FALSE(file::read_first_line("", data));
-
-    // Test read
-    string fixture;
-    ASSERT_TRUE(load_fixture(fixture_path, fixture));
-
-    vector<string> lines;
-    boost::split(lines, fixture, boost::is_any_of("\n\r"), boost::token_compress_on);
-
-    ASSERT_EQ(3u, lines.size());
-
-    ASSERT_EQ(lines[0], file::read_first_line(fixture_file_path));
-    ASSERT_TRUE(file::read_first_line(fixture_file_path, data));
-    ASSERT_EQ(lines[0], data);
+    GIVEN("a non-existent file") {
+        THEN("an empty string is returned") {
+            string data;
+            REQUIRE(file::read("does_not_exist") == "");
+            REQUIRE_FALSE(file::read("does_not_exist", data));
+            REQUIRE(data.empty());
+            REQUIRE_FALSE(file::read("", data));
+            REQUIRE(data.empty());
+        }
+    }
+    GIVEN("an existent file") {
+        string fixture;
+        REQUIRE(load_fixture(fixture_path, fixture));
+        THEN("the contents should be returned") {
+            string data;
+            REQUIRE(file::read(fixture_file_path) == fixture);
+            REQUIRE(file::read(fixture_file_path, data));
+            REQUIRE(data == fixture);
+        }
+    }
 }

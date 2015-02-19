@@ -1,42 +1,40 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/util/scoped_env.hpp>
 
 using namespace std;
 using namespace facter::util;
 
-TEST(facter_util_scoped_env, sets_environment) {
+SCENARIO("scoping an environment variable") {
     string value;
-    ASSERT_FALSE(environment::get("FACTER_ENV_TEST", value));
-    ASSERT_EQ("", value);
+    REQUIRE_FALSE(environment::get("FACTER_ENV_TEST", value));
+    REQUIRE(value.empty());
 
-    {
-        scoped_env foo("FACTER_ENV_TEST", "FOO");
-
-        ASSERT_TRUE(environment::get("FACTER_ENV_TEST", value));
-        ASSERT_EQ("FOO", value);
+    WHEN("the variable does not exist") {
+        AND_WHEN("the variable is scoped") {
+            scoped_env foo("FACTER_ENV_TEST", "FOO");
+            THEN("the new value is set") {
+                REQUIRE(environment::get("FACTER_ENV_TEST", value));
+                REQUIRE(value == "FOO");
+            }
+        }
     }
-
-    value = "";
-    ASSERT_FALSE(environment::get("FACTER_ENV_TEST", value));
-    ASSERT_EQ("", value);
-}
-
-TEST(facter_util_scoped_env, changes_environment) {
-    string value;
-    environment::set("FACTER_ENV_TEST", "bar");
-    ASSERT_TRUE(environment::get("FACTER_ENV_TEST", value));
-    ASSERT_EQ("bar", value);
-
+    WHEN("the variable exists")
     {
-        scoped_env foo("FACTER_ENV_TEST", "FOO");
+        environment::set("FACTER_ENV_TEST", "bar");
 
-        ASSERT_TRUE(environment::get("FACTER_ENV_TEST", value));
-        ASSERT_EQ("FOO", value);
+        AND_WHEN("the variable is scoped") {
+            scoped_env foo("FACTER_ENV_TEST", "FOO");
+            THEN("the new value is set") {
+                REQUIRE(environment::get("FACTER_ENV_TEST", value));
+                REQUIRE(value == "FOO");
+            }
+        }
+        THEN("the variable should be restored") {
+            REQUIRE(environment::get("FACTER_ENV_TEST", value));
+            REQUIRE(value == "bar");
+        }
+
+        environment::clear("FACTER_ENV_TEST");
     }
-
-    ASSERT_TRUE(environment::get("FACTER_ENV_TEST", value));
-    ASSERT_EQ("bar", value);
-
-    environment::clear("FACTER_ENV_TEST");
 }

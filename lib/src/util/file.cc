@@ -43,19 +43,4 @@ namespace facter { namespace util {
         return true;
     }
 
-    string file::read_first_line(string const& path)
-    {
-        string line;
-        if (!read_first_line(path, line)) {
-            return {};
-        }
-        return line;
-    }
-
-    bool file::read_first_line(string const& path, string& line)
-    {
-        boost::nowide::ifstream in(path.c_str());
-        return static_cast<bool>(getline(in, line));
-    }
-
 }}  // namespace facter::util

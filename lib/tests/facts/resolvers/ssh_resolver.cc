@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/resolvers/ssh_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
@@ -40,81 +40,55 @@ struct test_ssh_resolver : ssh_resolver
     }
 };
 
-TEST(facter_facts_resolvers_ssh_resolver, empty)
-{
+SCENARIO("using the ssh resolver") {
     collection facts;
-    facts.add(make_shared<empty_ssh_resolver>());
-    ASSERT_EQ(0u, facts.size());
-}
-
-TEST(facter_facts_resolvers_ssh_resolver, facts)
-{
-    collection facts;
-    facts.add(make_shared<test_ssh_resolver>());
-    ASSERT_EQ(9u, facts.size());
-
-    auto key = facts.get<string_value>(fact::ssh_dsa_key);
-    ASSERT_NE(nullptr, key);
-    ASSERT_EQ("dsa:key", key->value());
-
-    auto fingerprint = facts.get<string_value>(fact::sshfp_dsa);
-    ASSERT_NE(nullptr, fingerprint);
-    ASSERT_EQ("dsa:sha1\ndsa:sha256", fingerprint->value());
-
-    key = facts.get<string_value>(fact::ssh_ecdsa_key);
-    ASSERT_NE(nullptr, key);
-    ASSERT_EQ("ecdsa:key", key->value());
-
-    fingerprint = facts.get<string_value>(fact::sshfp_ecdsa);
-    ASSERT_NE(nullptr, fingerprint);
-    ASSERT_EQ("ecdsa:sha1\necdsa:sha256", fingerprint->value());
-
-    key = facts.get<string_value>(fact::ssh_ed25519_key);
-    ASSERT_NE(nullptr, key);
-    ASSERT_EQ("ed25519:key", key->value());
-
-    fingerprint = facts.get<string_value>(fact::sshfp_ed25519);
-    ASSERT_NE(nullptr, fingerprint);
-    ASSERT_EQ("ed25519:sha1\ned25519:sha256", fingerprint->value());
-
-    key = facts.get<string_value>(fact::ssh_rsa_key);
-    ASSERT_NE(nullptr, key);
-    ASSERT_EQ("rsa:key", key->value());
-
-    fingerprint = facts.get<string_value>(fact::sshfp_rsa);
-    ASSERT_NE(nullptr, fingerprint);
-    ASSERT_EQ("rsa:sha1\nrsa:sha256", fingerprint->value());
-
-    auto ssh = facts.get<map_value>(fact::ssh);
-    ASSERT_NE(nullptr, ssh);
-    ASSERT_EQ(4u, ssh->size());
-
-    vector<string> algorithms = {
-        "dsa",
-        "ecdsa",
-        "ed25519",
-        "rsa"
-    };
-
-    for (auto const &name : algorithms) {
-        auto algorithm = ssh->get<map_value>(name);
-        ASSERT_NE(nullptr, algorithm);
-        ASSERT_EQ(2u, algorithm->size());
-
-        key = algorithm->get<string_value>("key");
-        ASSERT_NE(nullptr, key);
-        ASSERT_EQ(name + ":key", key->value());
-
-        auto fingerprints = algorithm->get<map_value>("fingerprints");
-        ASSERT_NE(nullptr, fingerprints);
-        ASSERT_EQ(2u, fingerprints->size());
-
-        fingerprint = fingerprints->get<string_value>("sha1");
-        ASSERT_NE(nullptr, fingerprint);
-        ASSERT_EQ(name + ":sha1", fingerprint->value());
-
-        fingerprint = fingerprints->get<string_value>("sha256");
-        ASSERT_NE(nullptr, fingerprint);
-        ASSERT_EQ(name + ":sha256", fingerprint->value());
+    WHEN("data is not present") {
+        facts.add(make_shared<empty_ssh_resolver>());
+        THEN("facts should not be added") {
+            REQUIRE(facts.size() == 0);
+        }
+    }
+    WHEN("data is present") {
+        static const vector<string> algorithms = {
+            "dsa",
+            "ecdsa",
+            "ed25519",
+            "rsa"
+        };
+        facts.add(make_shared<test_ssh_resolver>());
+        THEN("a structured fact is added") {
+            REQUIRE(facts.size() == 9);
+            auto ssh = facts.get<map_value>(fact::ssh);
+            REQUIRE(ssh);
+            REQUIRE(ssh->size() == 4);
+            for (auto const& algorithm : algorithms) {
+                auto entry = ssh->get<map_value>(algorithm);
+                REQUIRE(entry);
+                REQUIRE(entry->size() == 2);
+                auto key = entry->get<string_value>("key");
+                REQUIRE(key);
+                REQUIRE(key->value() == algorithm + ":key");
+                auto fingerprints = entry->get<map_value>("fingerprints");
+                REQUIRE(fingerprints);
+                REQUIRE(fingerprints->size() == 2);
+                auto fingerprint = fingerprints->get<string_value>("sha1");
+                REQUIRE(fingerprint);
+                REQUIRE(fingerprint->value() == algorithm + ":sha1");
+                fingerprint = fingerprints->get<string_value>("sha256");
+                REQUIRE(fingerprint);
+                REQUIRE(fingerprint->value() == algorithm + ":sha256");
+            }
+        }
+        THEN("flat facts are added") {
+            REQUIRE(facts.size() == 9);
+            for (auto const& algorithm : algorithms) {
+                auto key = facts.get<string_value>("ssh" + algorithm + "key");
+                REQUIRE(key);
+                REQUIRE(key->value() == algorithm + ":key");
+                auto fingerprint = facts.get<string_value>("sshfp_" + algorithm);
+                REQUIRE(fingerprint);
+                REQUIRE(fingerprint->value() == algorithm + ":sha1\n" + algorithm + ":sha256");
+            }
+        }
     }
 }

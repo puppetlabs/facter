@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
 #include <boost/algorithm/string.hpp>
@@ -10,298 +10,361 @@ using namespace facter::util;
 using namespace facter::execution;
 using namespace facter::testing;
 
-TEST(execution_posix, which_absolute) {
-    ASSERT_EQ(
-        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts",
-        which(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts"));
-}
-
-TEST(execution_posix, which) {
-    ASSERT_EQ(
-        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts",
-        which("facts", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }));
-}
-
-TEST(execution_posix, which_partial) {
-    ASSERT_EQ(
-        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts",
-        which("posix/execution/facts", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external" }));
-}
-
-TEST(execution_posix, which_not_found) {
-    ASSERT_EQ("", which("not_on_the_path"));
-}
-
-TEST(execution_posix, which_not_executable) {
-    ASSERT_EQ(
-        "",
-        which("not_executable", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }));
-}
-
-TEST(execution_posix, expand_command) {
-    ASSERT_EQ(
-        LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts 1 2 3",
-        expand_command("facts 1 2 3", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }));
-}
-
-TEST(execution_posix, expand_command_single_quote) {
-    ASSERT_EQ(
-        "'" LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts' 1 2 3",
-        expand_command("'facts' 1 2 3", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }));
-}
-
-TEST(execution_posix, expand_command_double_quote) {
-    ASSERT_EQ(
-        "\"" LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts\" 1 2 3",
-        expand_command("\"facts\" 1 2 3", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }));
-}
-
-TEST(execution_posix, expand_command_not_found) {
-    ASSERT_EQ("not_on_the_path", expand_command("not_on_the_path"));
-}
-
-TEST(execution_posix, expand_command_not_executable) {
-    ASSERT_EQ(
-        "not_executable",
-        expand_command("not_executable", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }));
-}
-
-TEST(execution_posix, simple_execution) {
-    auto result = execute("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file3.txt" });
-    ASSERT_TRUE(result.first);
-    ASSERT_EQ("file3", result.second);
-}
-
-TEST(execution_posix, simple_execution_with_args) {
-    auto result = execute("ls", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls" });
-    ASSERT_TRUE(result.first);
-    ASSERT_EQ("file1.txt\nfile2.txt\nfile3.txt\nfile4.txt", result.second);
-}
-
-TEST(execution_posix, stderr_redirection) {
-    // By default, we don't return stderr
-    auto result = execute("ls", { "does_not_exist" });
-    ASSERT_FALSE(result.first);
-    ASSERT_EQ("", result.second);
-
-    result = execute("ls", { "does_not_exist" }, option_set<execution_options>({ execution_options::defaults, execution_options::redirect_stderr }));
-    ASSERT_FALSE(result.first);
-    ASSERT_TRUE(boost::ends_with(result.second, "No such file or directory"));
-}
-
-TEST(execution_posix, throw_on_nonzero_exit) {
-    // By default, we don't throw an exception
-    auto result = execute("ls", { "does_not_exist" });
-    ASSERT_FALSE(result.first);
-    ASSERT_EQ("", result.second);
-
-    ASSERT_THROW(execute("ls", { "does_not_exist" }, option_set<execution_options>({ execution_options::defaults, execution_options::throw_on_nonzero_exit })), child_exit_exception);
-}
-
-TEST(execution_posix, throw_on_signal) {
-    // By default, we don't throw an exception
-    auto result = execute("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/selfkill.sh" });
-    ASSERT_FALSE(result.first);
-    ASSERT_EQ("", result.second);
-
-    ASSERT_THROW(execute("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/selfkill.sh" },  option_set<execution_options>({ execution_options::defaults, execution_options::throw_on_signal })), child_signal_exception);
-}
-
-TEST(execution_posix, trim_output) {
-    // We should trim output by default
-    auto result = execute("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file1.txt" });
-    ASSERT_TRUE(result.first);
-    ASSERT_EQ("this is a test of trimming", result.second);
-
-    // Now try again without any execution options
-    option_set<execution_options> options = { execution_options::defaults };
-    options.clear(execution_options::trim_output);
-    result = execute("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file1.txt" }, options);
-    ASSERT_TRUE(result.first);
-    ASSERT_EQ("   this is a test of trimming   ", result.second);
-}
-
-TEST(execution_posix, each_line) {
-    size_t count = 0;
-    bool failed = false;
-    each_line("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file4.txt" }, [&](string& line) {
-        if ((count == 0 && line != "line1") ||
-            (count == 1 && line != "line2") ||
-            (count == 2 && line != "line3") ||
-            (count == 3 && line != "line4")) {
-            failed = true;
-            return false;
+SCENARIO("searching for programs with execution::which") {
+    GIVEN("an absolute path to an executable file") {
+        THEN("the same path should be returned") {
+            REQUIRE(
+                which(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts") ==
+                LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts"
+            );
         }
-        ++count;
-        return true;
-    });
-    ASSERT_FALSE(failed);
-    ASSERT_EQ(4u, count);
-
-     // Test short-circuiting
-    count = 0;
-    each_line("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file4.txt" }, [&](string& line) {
-        failed = line != "line1";
-        ++count;
-        return false;
-    });
-    ASSERT_FALSE(failed);
-    ASSERT_EQ(1u, count);
+    }
+    GIVEN("an absolute path to a non-executable file") {
+        THEN("an empty string should be returned") {
+            REQUIRE(
+                which(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/not_executable") ==
+                ""
+            );
+        }
+    }
+    GIVEN("an absolute path to a non-existant file") {
+        THEN("an empty string should be returned") {
+            REQUIRE(
+                which(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/does_not_exist") ==
+                ""
+            );
+        }
+    }
+    GIVEN("an executable file on the PATH") {
+        THEN("the full path should be returned") {
+            REQUIRE(
+                which("facts", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }) ==
+                LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts"
+            );
+        }
+    }
+    GIVEN("a path relative to a directory on PATH") {
+        THEN("the full path should be returned") {
+            REQUIRE(
+                which("posix/execution/facts", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external" }) ==
+                LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts"
+            );
+        }
+    }
+    GIVEN("a file that does not exist on PATH") {
+        THEN("an empty string should be returned") {
+            REQUIRE(
+                which("not_on_the_path") ==
+                ""
+            );
+        }
+    }
+    GIVEN("a file that is not executable") {
+        THEN("an empty string should be returned") {
+            REQUIRE(
+                which("not_executable", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }) ==
+                ""
+            );
+        }
+    }
 }
 
-TEST(execution_posix, execute_with_merged_environment) {
-    setenv("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE", 1);
-    auto result = execute("env", {}, {
-        {"TEST_VARIABLE1", "TEST_VALUE1" },
-        {"TEST_VARIABLE2", "TEST_VALUE2" }
-    });
-    ASSERT_TRUE(result.first);
-    unsetenv("TEST_INHERITED_VARIABLE");
-    map<string, string> variables;
-    facter::util::each_line(result.second, [&](string& line) {
-        vector<string> parts;
-        boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
-        if (parts.size() != 2) {
+SCENARIO("expanding command paths with execution::expand_command") {
+    GIVEN("an executable on the PATH") {
+        THEN("the executable is expanded to an absolute path") {
+            REQUIRE(
+                expand_command("facts 1 2 3", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }) ==
+                LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts 1 2 3"
+            );
+        }
+    }
+    GIVEN("a single-quoted command") {
+        THEN("the expanded path should be single-quoted") {
+            REQUIRE(
+                expand_command("'facts' 1 2 3", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }) ==
+                "'" LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts' 1 2 3"
+            );
+        }
+    }
+    GIVEN("a double-quoted command") {
+        THEN("the expanded path should be double-quoted") {
+            REQUIRE(
+                expand_command("\"facts\" 1 2 3", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }) ==
+                "\"" LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts\" 1 2 3"
+            );
+        }
+    }
+    GIVEN("a command not on PATH") {
+        THEN("the command is returned as given") {
+            REQUIRE(
+                expand_command("not_on_the_path") ==
+                "not_on_the_path"
+            );
+        }
+    }
+    GIVEN("a non-executable command on PATH") {
+        THEN("the command is returned as given") {
+            REQUIRE(
+                expand_command("not_executable", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }) ==
+                "not_executable"
+            );
+        }
+    }
+}
+
+SCENARIO("executing commands with execution::execute") {
+    auto get_variables = [](std::string const& input) {
+        map<string, string> variables;
+        facter::util::each_line(input, [&](string& line) {
+            vector<string> parts;
+            boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
+            if (parts.size() != 2) {
+                return true;
+            }
+            variables.emplace(make_pair(move(parts[0]), move(parts[1])));
             return true;
+        });
+        return variables;
+    };
+    GIVEN("a command that succeeds") {
+        THEN("the output should be returned") {
+            auto result = execute("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file3.txt" });
+            REQUIRE(result.first);
+            REQUIRE(result.second == "file3");
         }
-        variables.emplace(make_pair(move(parts[0]), move(parts[1])));
-        return true;
-    });
-    ASSERT_EQ(1u, variables.count("TEST_VARIABLE1"));
-    ASSERT_EQ("TEST_VALUE1", variables["TEST_VARIABLE1"]);
-    ASSERT_EQ(1u, variables.count("TEST_VARIABLE2"));
-    ASSERT_EQ("TEST_VALUE2", variables["TEST_VARIABLE2"]);
-    ASSERT_EQ(1u, variables.count("TEST_INHERITED_VARIABLE"));
-    ASSERT_EQ("TEST_INHERITED_VALUE", variables["TEST_INHERITED_VARIABLE"]);
-    ASSERT_EQ(1u, variables.count("LANG"));
-    ASSERT_EQ("C", variables["LANG"]);
-    ASSERT_EQ(1u, variables.count("LC_ALL"));
-    ASSERT_EQ("C", variables["LC_ALL"]);
+        WHEN("requested to merge the environment") {
+            setenv("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE", 1);
+            auto result = execute("env", {}, { {"TEST_VARIABLE1", "TEST_VALUE1" }, {"TEST_VARIABLE2", "TEST_VALUE2" } });
+            unsetenv("TEST_INHERITED_VARIABLE");
+            REQUIRE(result.first);
+            auto variables = get_variables(result.second);
+            THEN("the child environment should contain the given variables") {
+                REQUIRE(variables.size() > 4);
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
+            }
+            THEN("the child environment should have LC_ALL and LANG set to C") {
+                REQUIRE(variables.count("LC_ALL") == 1);
+                REQUIRE(variables["LC_ALL"] == "C");
+                REQUIRE(variables.count("LANG") == 1);
+                REQUIRE(variables["LANG"] == "C");
+            }
+        }
+        WHEN("requested to override the environment") {
+            option_set<execution_options> options = { execution_options::defaults };
+            options.clear(execution_options::merge_environment);
+            setenv("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE", 1);
+            auto result = execute("env", {}, { {"TEST_VARIABLE1", "TEST_VALUE1" }, {"TEST_VARIABLE2", "TEST_VALUE2" }}, options);
+            unsetenv("TEST_INHERITED_VARIABLE");
+            REQUIRE(result.first);
+            auto variables = get_variables(result.second);
+            THEN("the child environment should only contain the given variables") {
+                REQUIRE(variables.size() == 4);
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
+            }
+            THEN("the child environment should have LC_ALL and LANG set to C") {
+                REQUIRE(variables.count("LC_ALL") == 1);
+                REQUIRE(variables["LC_ALL"] == "C");
+                REQUIRE(variables.count("LANG") == 1);
+                REQUIRE(variables["LANG"] == "C");
+            }
+        }
+        WHEN("requested to override LC_ALL or LANG") {
+            auto result = execute("env", {}, { {"LANG", "FOO" }, { "LC_ALL", "BAR" } });
+            REQUIRE(result.first);
+            auto variables = get_variables(result.second);
+            THEN("the values should be passed to the child process") {
+                REQUIRE(variables.count("LC_ALL") == 1);
+                REQUIRE(variables["LC_ALL"] == "BAR");
+                REQUIRE(variables.count("LANG") == 1);
+                REQUIRE(variables["LANG"] == "FOO");
+            }
+        }
+    }
+    GIVEN("a command that fails") {
+        WHEN("default options are used") {
+            auto result = execute("ls", { "does_not_exist" });
+            THEN("no output is returned") {
+                REQUIRE_FALSE(result.first);
+                REQUIRE(result.second == "");
+            }
+        }
+        WHEN("the redirect STDERR option is used") {
+            auto result = execute("ls", { "does_not_exist" }, option_set<execution_options>({ execution_options::defaults, execution_options::redirect_stderr }));
+            THEN("error output is returned") {
+                REQUIRE_FALSE(result.first);
+                REQUIRE(boost::ends_with(result.second, "No such file or directory"));
+            }
+        }
+        WHEN("the 'throw on non-zero exit' option is used") {
+            THEN("a child exit exception is thrown") {
+                REQUIRE_THROWS_AS(execute("ls", {"does_not_exist"}, option_set<execution_options>({execution_options::defaults, execution_options::throw_on_nonzero_exit})), child_exit_exception);
+            }
+        }
+        WHEN("the 'throw on signal' option is used") {
+            THEN("a child signal exception is thrown") {
+                REQUIRE_THROWS_AS(execute("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/selfkill.sh" }, option_set<execution_options>({ execution_options::defaults, execution_options::throw_on_signal })), child_signal_exception);
+            }
+        }
+    }
+    GIVEN("a command that outputs leading/trailing whitespace") {
+        THEN("whitespace should be trimmed by default") {
+            auto result = execute("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file1.txt" });
+            REQUIRE(result.first);
+            REQUIRE(result.second == "this is a test of trimming");
+        }
+        WHEN("the 'trim whitespace' option is not used") {
+            option_set<execution_options> options = { execution_options::defaults };
+            options.clear(execution_options::trim_output);
+            auto result = execute("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file1.txt" }, options);
+            THEN("whitespace should not be trimmed") {
+                REQUIRE(result.second == "   this is a test of trimming   ");
+            }
+        }
+    }
 }
 
-TEST(execution_posix, execute_with_specified_environment) {
-    option_set<execution_options> options = { execution_options::defaults };
-    options.clear(execution_options::merge_environment);
-
-    setenv("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE", 1);
-    auto result = execute("env", {}, {
-        {"TEST_VARIABLE1", "TEST_VALUE1" },
-        {"TEST_VARIABLE2", "TEST_VALUE2" }
-    }, options);
-    ASSERT_TRUE(result.first);
-    unsetenv("TEST_INHERITED_VARIABLE");
-    map<string, string> variables;
-    facter::util::each_line(result.second, [&](string& line) {
-        vector<string> parts;
-        boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
-        if (parts.size() != 2) {
-            return true;
+SCENARIO("executing commands with execution::each_line") {
+    GIVEN("a command that succeeds") {
+        THEN("each line of output should be returned") {
+            vector<string> lines;
+            bool success = each_line("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file4.txt" }, [&](string& line) {
+                lines.push_back(line);
+                return true;
+            });
+            REQUIRE(success);
+            REQUIRE(lines.size() == 4);
+            REQUIRE(lines[0] == "line1");
+            REQUIRE(lines[1] == "line2");
+            REQUIRE(lines[2] == "line3");
+            REQUIRE(lines[3] == "line4");
         }
-        variables.emplace(make_pair(move(parts[0]), move(parts[1])));
-        return true;
-    });
-    ASSERT_EQ(4u, variables.size());
-    ASSERT_EQ(1u, variables.count("TEST_VARIABLE1"));
-    ASSERT_EQ("TEST_VALUE1", variables["TEST_VARIABLE1"]);
-    ASSERT_EQ(1u, variables.count("TEST_VARIABLE2"));
-    ASSERT_EQ("TEST_VALUE2", variables["TEST_VARIABLE2"]);
-    ASSERT_EQ(0u, variables.count("TEST_INHERITED_VARIABLE"));
-    ASSERT_EQ(1u, variables.count("LANG"));
-    ASSERT_EQ("C", variables["LANG"]);
-    ASSERT_EQ(1u, variables.count("LC_ALL"));
-    ASSERT_EQ("C", variables["LC_ALL"]);
-}
-
-TEST(execution_posix, execute_with_lang_environment) {
-    auto result = execute("env", {}, { {"LANG", "FOO" }, { "LC_ALL", "BAR" } });
-    ASSERT_TRUE(result.first);
-    map<string, string> variables;
-    facter::util::each_line(result.second, [&](string& line) {
-        vector<string> parts;
-        boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
-        if (parts.size() != 2) {
-            return true;
+        WHEN("output stops when false is returned from callback") {
+            vector<string> lines;
+            bool success = each_line("cat", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file4.txt" }, [&](string& line) {
+                lines.push_back(line);
+                return false;
+            });
+            REQUIRE(success);
+            REQUIRE(lines.size() == 1);
+            REQUIRE(lines[0] == "line1");
         }
-        variables.emplace(make_pair(move(parts[0]), move(parts[1])));
-        return true;
-    });
-    ASSERT_EQ(1u, variables.count("LANG"));
-    ASSERT_EQ("FOO", variables["LANG"]);
-    ASSERT_EQ(1u, variables.count("LC_ALL"));
-    ASSERT_EQ("BAR", variables["LC_ALL"]);
-}
-
-TEST(execution_posix, each_line_with_merged_environment) {
-    map<string, string> variables;
-    setenv("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE", 1);
-    each_line("env", {}, {
-        {"TEST_VARIABLE1", "TEST_VALUE1" },
-        {"TEST_VARIABLE2", "TEST_VALUE2" }
-    }, [&](string& line) {
-        vector<string> parts;
-        boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
-        if (parts.size() != 2) {
-            return true;
+        WHEN("requested to merge the environment") {
+            setenv("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE", 1);
+            map<string, string> variables;
+            bool success = each_line("env", {}, { {"TEST_VARIABLE1", "TEST_VALUE1" }, {"TEST_VARIABLE2", "TEST_VALUE2" } }, [&](string& line) {
+                vector<string> parts;
+                boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
+                if (parts.size() != 2) {
+                    return true;
+                }
+                variables.emplace(make_pair(move(parts[0]), move(parts[1])));
+                return true;
+            });
+            unsetenv("TEST_INHERITED_VARIABLE");
+            REQUIRE(success);
+            THEN("the child environment should contain the given variables") {
+                REQUIRE(variables.size() > 4);
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
+            }
+            THEN("the child environment should have LC_ALL and LANG set to C") {
+                REQUIRE(variables.count("LC_ALL") == 1);
+                REQUIRE(variables["LC_ALL"] == "C");
+                REQUIRE(variables.count("LANG") == 1);
+                REQUIRE(variables["LANG"] == "C");
+            }
         }
-        variables.emplace(make_pair(move(parts[0]), move(parts[1])));
-        return true;
-    });
-    unsetenv("TEST_INHERITED_VARIABLE");
-    ASSERT_EQ(1u, variables.count("TEST_VARIABLE1"));
-    ASSERT_EQ("TEST_VALUE1", variables["TEST_VARIABLE1"]);
-    ASSERT_EQ(1u, variables.count("TEST_VARIABLE2"));
-    ASSERT_EQ("TEST_VALUE2", variables["TEST_VARIABLE2"]);
-    ASSERT_EQ(1u, variables.count("TEST_INHERITED_VARIABLE"));
-    ASSERT_EQ("TEST_INHERITED_VALUE", variables["TEST_INHERITED_VARIABLE"]);
-    ASSERT_EQ(1u, variables.count("LANG"));
-    ASSERT_EQ("C", variables["LANG"]);
-    ASSERT_EQ(1u, variables.count("LC_ALL"));
-    ASSERT_EQ("C", variables["LC_ALL"]);
-}
-
-TEST(execution_posix, each_line_with_specified_environment) {
-    map<string, string> variables;
-    option_set<execution_options> options = { execution_options::defaults };
-    options.clear(execution_options::merge_environment);
-    setenv("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE", 1);
-    each_line("env", {}, {
-        {"TEST_VARIABLE1", "TEST_VALUE1" },
-        {"TEST_VARIABLE2", "TEST_VALUE2" }
-    }, [&](string& line) {
-        vector<string> parts;
-        boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
-        if (parts.size() != 2) {
-            return true;
+        WHEN("requested to override the environment") {
+            option_set<execution_options> options = { execution_options::defaults };
+            options.clear(execution_options::merge_environment);
+            setenv("TEST_INHERITED_VARIABLE", "TEST_INHERITED_VALUE", 1);
+            map<string, string> variables;
+            bool success = each_line("env", {}, { {"TEST_VARIABLE1", "TEST_VALUE1" }, {"TEST_VARIABLE2", "TEST_VALUE2" } }, [&](string& line) {
+                vector<string> parts;
+                boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
+                if (parts.size() != 2) {
+                    return true;
+                }
+                variables.emplace(make_pair(move(parts[0]), move(parts[1])));
+                return true;
+            }, options);
+            unsetenv("TEST_INHERITED_VARIABLE");
+            REQUIRE(success);
+            THEN("the child environment should only contain the given variables") {
+                REQUIRE(variables.size() == 4);
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
+            }
+            THEN("the child environment should have LC_ALL and LANG set to C") {
+                REQUIRE(variables.count("LC_ALL") == 1);
+                REQUIRE(variables["LC_ALL"] == "C");
+                REQUIRE(variables.count("LANG") == 1);
+                REQUIRE(variables["LANG"] == "C");
+            }
         }
-        variables.emplace(make_pair(move(parts[0]), move(parts[1])));
-        return true;
-    }, options);
-    unsetenv("TEST_INHERITED_VARIABLE");
-    ASSERT_EQ(4u, variables.size());
-    ASSERT_EQ(1u, variables.count("TEST_VARIABLE1"));
-    ASSERT_EQ("TEST_VALUE1", variables["TEST_VARIABLE1"]);
-    ASSERT_EQ(1u, variables.count("TEST_VARIABLE2"));
-    ASSERT_EQ("TEST_VALUE2", variables["TEST_VARIABLE2"]);
-    ASSERT_EQ(0u, variables.count("TEST_INHERITED_VARIABLE"));
-    ASSERT_EQ(1u, variables.count("LANG"));
-    ASSERT_EQ("C", variables["LANG"]);
-    ASSERT_EQ(1u, variables.count("LC_ALL"));
-    ASSERT_EQ("C", variables["LC_ALL"]);
-}
-
-TEST(execution_posix, each_line_with_lang_environment) {
-    map<string, string> variables;
-    each_line("env", {}, { {"LANG", "FOO" }, { "LC_ALL", "BAR" } }, [&](string& line) {
-        vector<string> parts;
-        boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
-        if (parts.size() != 2) {
-            return true;
+        WHEN("requested to override LC_ALL or LANG") {
+            map<string, string> variables;
+            bool success = each_line("env", {}, { {"LANG", "FOO" }, { "LC_ALL", "BAR" } }, [&](string& line) {
+                vector<string> parts;
+                boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
+                if (parts.size() != 2) {
+                    return true;
+                }
+                variables.emplace(make_pair(move(parts[0]), move(parts[1])));
+                return true;
+            });
+            REQUIRE(success);
+            THEN("the values should be passed to the child process") {
+                REQUIRE(variables.count("LC_ALL") == 1);
+                REQUIRE(variables["LC_ALL"] == "BAR");
+                REQUIRE(variables.count("LANG") == 1);
+                REQUIRE(variables["LANG"] == "FOO");
+            }
         }
-        variables.emplace(make_pair(move(parts[0]), move(parts[1])));
-        return true;
-    });
-    ASSERT_EQ(1u, variables.count("LANG"));
-    ASSERT_EQ("FOO", variables["LANG"]);
-    ASSERT_EQ(1u, variables.count("LC_ALL"));
-    ASSERT_EQ("BAR", variables["LC_ALL"]);
+    }
+    GIVEN("a command that fails") {
+        WHEN("default options are used") {
+            THEN("no output is returned") {
+                auto success = each_line("ls", { "does_not_exist" }, [](string& line) {
+                    FAIL("should not be called");
+                    return true;
+                });
+                REQUIRE_FALSE(success);
+            }
+        }
+        WHEN("the redirect STDERR option is used") {
+            string output;
+            auto result = each_line("ls", { "does_not_exist" }, [&](string& line) {
+                if (!output.empty()) {
+                    output += "\n";
+                }
+                output += line;
+                return true;
+            }, option_set<execution_options>({ execution_options::defaults, execution_options::redirect_stderr }));
+            THEN("error output is returned") {
+                REQUIRE_FALSE(result);
+                REQUIRE(boost::ends_with(output, "No such file or directory"));
+            }
+        }
+        WHEN("the 'throw on non-zero exit' option is used") {
+            THEN("a child exit exception is thrown") {
+                REQUIRE_THROWS_AS(each_line("ls", {"does_not_exist"}, [](string& line) { return true; }, option_set<execution_options>({execution_options::defaults, execution_options::throw_on_nonzero_exit})), child_exit_exception);
+            }
+        }
+        WHEN("the 'throw on signal' option is used") {
+            THEN("a child signal exception is thrown") {
+                REQUIRE_THROWS_AS(each_line("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/selfkill.sh" }, [](string& line) { return true; }, option_set<execution_options>({ execution_options::defaults, execution_options::throw_on_signal })), child_signal_exception);
+            }
+        }
+    }
 }

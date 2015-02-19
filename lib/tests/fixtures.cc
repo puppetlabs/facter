@@ -1,9 +1,8 @@
 #include "fixtures.hpp"
-#include <iostream>
-#include <boost/nowide/fstream.hpp>
-#include <sstream>
-#include <gmock/gmock.h>
 #include <boost/filesystem.hpp>
+#include <boost/nowide/fstream.hpp>
+#include <iostream>
+#include <sstream>
 
 using namespace std;
 using namespace boost::filesystem;
@@ -23,14 +22,14 @@ namespace facter { namespace testing {
         return true;
     }
 
-    test_with_relative_path::test_with_relative_path(string filename, string contents)
+    test_with_relative_path::test_with_relative_path(string const& dirname, string const& filename, string const& contents)
     {
-        path dir(::testing::UnitTest::GetInstance()->current_test_info()->name());
+        path dir(dirname);
         if (exists(dir)) {
-            throw runtime_error(dir.string()+" already exists");
+            throw runtime_error(dir.string() + " already exists");
         }
         if (!create_directory(dir)) {
-            throw runtime_error(dir.string()+" could not be created");
+            throw runtime_error(dir.string() + " could not be created");
         }
         _dir = dir.string();
 
@@ -40,7 +39,6 @@ namespace facter { namespace testing {
             exec_file << contents << endl;
         }
         permissions(exec, add_perms | owner_exe | group_exe);
-        _file = exec.string();
     }
 
     test_with_relative_path::~test_with_relative_path()

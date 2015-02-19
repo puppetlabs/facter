@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/resolvers/virtualization_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
@@ -50,62 +50,54 @@ struct known_hypervisor_resolver : virtualization_resolver
     }
 };
 
-TEST(facter_facts_resolvers_virtualization_resolver, empty)
-{
+SCENARIO("using the virtualization resolver") {
     collection facts;
-    facts.add(make_shared<empty_virtualization_resolver>());
-    ASSERT_EQ(2u, facts.size());
-
-    auto is_virt = facts.get<boolean_value>(fact::is_virtual);
-    ASSERT_NE(nullptr, is_virt);
-    ASSERT_FALSE(is_virt->value());
-
-    auto hypervisor = facts.get<string_value>(fact::virtualization);
-    ASSERT_NE(nullptr, hypervisor);
-    ASSERT_EQ("physical", hypervisor->value());
-}
-
-TEST(facter_facts_resolvers_virtualization_resolver, unknown_hypervisor)
-{
-    collection facts;
-    facts.add(make_shared<unknown_hypervisor_resolver>());
-    ASSERT_EQ(2u, facts.size());
-
-    auto is_virt = facts.get<boolean_value>(fact::is_virtual);
-    ASSERT_NE(nullptr, is_virt);
-    ASSERT_TRUE(is_virt->value());
-
-    auto hypervisor = facts.get<string_value>(fact::virtualization);
-    ASSERT_NE(nullptr, hypervisor);
-    ASSERT_EQ("foobar", hypervisor->value());
-}
-
-TEST(facter_facts_resolvers_virtualization_resolver, unknown_non_virtual_hypervisor)
-{
-    collection facts;
-    facts.add(make_shared<unknown_non_virtual_hypervisor_resolver>());
-    ASSERT_EQ(2u, facts.size());
-
-    auto is_virt = facts.get<boolean_value>(fact::is_virtual);
-    ASSERT_NE(nullptr, is_virt);
-    ASSERT_FALSE(is_virt->value());
-
-    auto hypervisor = facts.get<string_value>(fact::virtualization);
-    ASSERT_NE(nullptr, hypervisor);
-    ASSERT_EQ("foobar", hypervisor->value());
-}
-
-TEST(facter_facts_resolvers_virtualization_resolver, known_hypervisor)
-{
-    collection facts;
-    facts.add(make_shared<known_hypervisor_resolver>());
-    ASSERT_EQ(2u, facts.size());
-
-    auto is_virt = facts.get<boolean_value>(fact::is_virtual);
-    ASSERT_NE(nullptr, is_virt);
-    ASSERT_TRUE(is_virt->value());
-
-    auto hypervisor = facts.get<string_value>(fact::virtualization);
-    ASSERT_NE(nullptr, hypervisor);
-    ASSERT_EQ(string(vm::docker), hypervisor->value());
+    WHEN("no hypervisor is returned") {
+        facts.add(make_shared<empty_virtualization_resolver>());
+        THEN("the system is reported as physical") {
+            REQUIRE(facts.size() == 2);
+            auto is_virt = facts.get<boolean_value>(fact::is_virtual);
+            REQUIRE(is_virt);
+            REQUIRE_FALSE(is_virt->value());
+            auto hypervisor = facts.get<string_value>(fact::virtualization);
+            REQUIRE(hypervisor);
+            REQUIRE(hypervisor->value() == "physical");
+        }
+    }
+    WHEN("an unknown virtual hypervisor is returned") {
+        facts.add(make_shared<unknown_hypervisor_resolver>());
+        THEN("the system is reported as virtual") {
+            REQUIRE(facts.size() == 2);
+            auto is_virt = facts.get<boolean_value>(fact::is_virtual);
+            REQUIRE(is_virt);
+            REQUIRE(is_virt->value());
+            auto hypervisor = facts.get<string_value>(fact::virtualization);
+            REQUIRE(hypervisor);
+            REQUIRE(hypervisor->value() == "foobar");
+        }
+    }
+    WHEN("an unknown physical hypervisor is returned") {
+        facts.add(make_shared<unknown_non_virtual_hypervisor_resolver>());
+        THEN("the system is reported as virtual") {
+            REQUIRE(facts.size() == 2);
+            auto is_virt = facts.get<boolean_value>(fact::is_virtual);
+            REQUIRE(is_virt);
+            REQUIRE_FALSE(is_virt->value());
+            auto hypervisor = facts.get<string_value>(fact::virtualization);
+            REQUIRE(hypervisor);
+            REQUIRE(hypervisor->value() == "foobar");
+        }
+    }
+    WHEN("an known hypervisor is returned") {
+        facts.add(make_shared<known_hypervisor_resolver>());
+        THEN("the system is reported as virtual") {
+            REQUIRE(facts.size() == 2);
+            auto is_virt = facts.get<boolean_value>(fact::is_virtual);
+            REQUIRE(is_virt);
+            REQUIRE(is_virt->value());
+            auto hypervisor = facts.get<string_value>(fact::virtualization);
+            REQUIRE(hypervisor);
+            REQUIRE(hypervisor->value() == string(vm::docker));
+        }
+    }
 }

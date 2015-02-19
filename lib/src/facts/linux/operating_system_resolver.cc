@@ -142,11 +142,17 @@ namespace facter { namespace facts { namespace linux {
         string value;
         auto it = release_files.find(name);
         if (it != release_files.end()) {
-            string contents = file::read_first_line(it->second);
-            if (boost::ends_with(contents, "(Rawhide)")) {
-                value = "Rawhide";
-            } else {
-                re_search(contents, "release (\\d[\\d.]*)", &value);
+            string contents;
+            if (file::each_line(it->second, [&](string& line) {
+                // We only need the first line
+                contents = move(line);
+                return false;
+            })) {
+                if (boost::ends_with(contents, "(Rawhide)")) {
+                    value = "Rawhide";
+                } else {
+                    re_search(contents, "release (\\d[\\d.]*)", &value);
+                }
             }
         }
 

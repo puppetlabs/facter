@@ -165,7 +165,7 @@ set(BOOST_NOWIDE_SKIP_INSTALL ON CACHE BOOL "Disable installing Boost.Nowide")
 add_definitions(-DBOOST_LOG_WITHOUT_WCHAR_T)
 
 # Include vendor libraries
-add_subdirectory(vendor/gmock-1.7.0)
+set(CATCH_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/catch/include")
 set(RAPIDJSON_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/rapidjson-0.11/include")
 add_subdirectory(vendor/boost-nowide)
 set(NOWIDE_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/boost-nowide")
@@ -204,7 +204,7 @@ else()
         "-build/header_guard"     # Disable header guards (cpplint doesn't yet support enforcing #pragma once)
     )
 
-    file(GLOB_RECURSE ALL_SOURCES lib/*.cc lib/*.h lib/*.hpp exe/*.cc exe/*.h exe/*.hpp)
+    file(GLOB_RECURSE ALL_SOURCES lib/src/*.cc lib/src/*.h lib/src/*.hpp lib/inc/*.hpp lib/inc/*.h exe/*.cc exe/*.hpp exe/*.h)
 
     set(CPPLINT_PATH "${PROJECT_SOURCE_DIR}/scripts/cpplint.py")
 
@@ -231,5 +231,5 @@ add_subdirectory(lib)
 add_subdirectory(exe)
 
 # Add test executables for unit testing
-add_test(NAME "library\\ tests" COMMAND libfacter_test --gtest_color=yes)
+add_test(NAME "library\\ tests" COMMAND libfacter_test)
 add_test(NAME "cfacter\\ smoke" COMMAND cfacter)

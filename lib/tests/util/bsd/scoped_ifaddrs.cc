@@ -1,10 +1,10 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/util/bsd/scoped_ifaddrs.hpp>
 
 using namespace std;
 using namespace facter::util::bsd;
 
-TEST(facter_util_bsd_scoped_ifaddrs, construction) {
+SCENARIO("constructing a scoped_ifaddrs") {
     scoped_ifaddrs addrs;
-    ASSERT_NE(nullptr, static_cast<ifaddrs*>(addrs));
+    REQUIRE(static_cast<ifaddrs*>(addrs));
 }

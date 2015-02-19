@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/external/json_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/array_value.hpp>
@@ -10,49 +10,52 @@ using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::external;
 
-TEST(facter_facts_external_json_resolver, default_constructor) {
-    json_resolver resolver;
-}
-
-TEST(facter_facts_external_json_resolver, can_resolve) {
-    json_resolver resolver;
-    ASSERT_FALSE(resolver.can_resolve("foo.txt"));
-    ASSERT_TRUE(resolver.can_resolve("foo.json"));
-    ASSERT_TRUE(resolver.can_resolve("FoO.JsOn"));
-}
-
-TEST(facter_facts_external_json_resolver, resolve_nonexistent_json) {
-    json_resolver resolver;
+SCENARIO("resolving external JSON facts") {
     collection facts;
-    ASSERT_THROW(resolver.resolve("foo.json", facts), external_fact_exception);
-}
-
-TEST(facter_facts_external_json_resolver, resolve_invalid_json) {
     json_resolver resolver;
-    collection facts;
-    ASSERT_THROW(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/invalid.json", facts), external_fact_exception);
-}
 
-TEST(facter_facts_external_json_resolver, resolve_json) {
-    json_resolver resolver;
-    collection facts;
-    resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/facts.json", facts);
-    ASSERT_TRUE(!facts.empty());
-    ASSERT_NE(nullptr, facts.get<string_value>("json_fact1"));
-    ASSERT_EQ("foo", facts.get<string_value>("json_fact1")->value());
-    ASSERT_NE(nullptr, facts.get<integer_value>("json_fact2"));
-    ASSERT_EQ(5, facts.get<integer_value>("json_fact2")->value());
-    ASSERT_NE(nullptr, facts.get<boolean_value>("json_fact3"));
-    ASSERT_TRUE(facts.get<boolean_value>("json_fact3")->value());
-    ASSERT_NE(nullptr, facts.get<double_value>("json_fact4"));
-    ASSERT_DOUBLE_EQ(5.1, facts.get<double_value>("json_fact4")->value());
-    auto array = facts.get<array_value>("json_fact5");
-    ASSERT_NE(nullptr, array);
-    ASSERT_EQ(3u, array->size());
-    auto map = facts.get<map_value>("json_fact6");
-    ASSERT_NE(nullptr, map);
-    ASSERT_EQ(2u, map->size());
-    ASSERT_NE(nullptr, facts.get<string_value>("json_fact7"));
-    ASSERT_EQ(nullptr, facts.get<string_value>("JSON_fact7"));
-    ASSERT_EQ("bar", facts.get<string_value>("json_fact7")->value());
+    GIVEN("a non-JSON file extension") {
+        THEN("it should not be able to resolve") {
+            REQUIRE_FALSE(resolver.can_resolve("foo.txt"));
+        }
+    }
+    GIVEN("a JSON file extension") {
+        THEN("it should be able to resolve") {
+            REQUIRE(resolver.can_resolve("foo.json"));
+            REQUIRE(resolver.can_resolve("FoO.jsOn"));
+        }
+    }
+    GIVEN("a non-existent file to resolve") {
+        THEN("it should throw an exception") {
+            REQUIRE_THROWS_AS(resolver.resolve("doesnotexist.json", facts), external_fact_exception);
+        }
+    }
+    GIVEN("invalid JSON") {
+        THEN("it should throw an exception") {
+            REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/invalid.json", facts), external_fact_exception);
+        }
+    }
+    GIVEN("valid JSON") {
+        THEN("it should populate the facts") {
+            resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/facts.json", facts);
+            REQUIRE_FALSE(facts.empty());
+            REQUIRE(facts.get<string_value>("json_fact1"));
+            REQUIRE(facts.get<string_value>("json_fact1")->value() == "foo");
+            REQUIRE(facts.get<integer_value>("json_fact2"));
+            REQUIRE(facts.get<integer_value>("json_fact2")->value() == 5);
+            REQUIRE(facts.get<boolean_value>("json_fact3"));
+            REQUIRE(facts.get<boolean_value>("json_fact3")->value());
+            REQUIRE(facts.get<double_value>("json_fact4"));
+            REQUIRE(facts.get<double_value>("json_fact4")->value() == Approx(5.1));
+            auto array = facts.get<array_value>("json_fact5");
+            REQUIRE(array);
+            REQUIRE(array->size() == 3);
+            auto map = facts.get<map_value>("json_fact6");
+            REQUIRE(map);
+            REQUIRE(map->size() == 2);
+            REQUIRE(facts.get<string_value>("json_fact7"));
+            REQUIRE_FALSE(facts.get<string_value>("JSON_fact7"));
+            REQUIRE(facts.get<string_value>("json_fact7")->value() == "bar");
+        }
+    }
 }

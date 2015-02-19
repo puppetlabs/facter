@@ -90,18 +90,18 @@ include_directories(
     ../inc
     ${Boost_INCLUDE_DIRS}
     ${NOWIDE_INCLUDE_DIRS}
-    ${GMOCK_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
+    ${CATCH_INCLUDE_DIRS}
 )
 
 add_executable(libfacter_test ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_CATEGORY_SOURCES})
-set_target_properties(libfacter_test PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS})
-target_link_libraries(libfacter_test libfacter ${YAMLCPP_LIBRARIES} ${Boost_LIBRARIES} ${GMOCK_LIBRARIES} ${OPENSSL_LIBRARIES} ${NOWIDE_SHARED})
+set_target_properties(libfacter_test PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS} COTIRE_ADD_UNITY_BUILD FALSE)
+target_link_libraries(libfacter_test libfacter ${YAMLCPP_LIBRARIES} ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES} ${NOWIDE_SHARED})
 
 cotire(libfacter_test)
 
-# Generate a file containing the above version numbers
+# Generate a file containing the path to the fixtures
 configure_file (
     "fixtures.hpp.in"
     "${CMAKE_CURRENT_LIST_DIR}/fixtures.hpp"

@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/resolvers/dmi_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
@@ -41,110 +41,110 @@ struct test_dmi_resolver : dmi_resolver
     }
 };
 
-TEST(facter_facts_resolvers_dmi_resolver, empty)
-{
+SCENARIO("using the DMI resolver") {
     collection facts;
-    facts.add(make_shared<empty_dmi_resolver>());
-    ASSERT_EQ(0u, facts.size());
-}
-
-TEST(facter_facts_resolvers_dmi_resolver, facts)
-{
-    collection facts;
-    facts.add(make_shared<test_dmi_resolver>());
-    ASSERT_EQ(14u, facts.size());
-
-    static vector<string> const names = {
-        fact::bios_vendor,
-        fact::bios_version,
-        fact::bios_release_date,
-        fact::board_asset_tag,
-        fact::board_manufacturer,
-        fact::board_product_name,
-        fact::board_serial_number,
-        fact::chassis_asset_tag,
-        fact::manufacturer,
-        fact::product_name,
-        fact::serial_number,
-        fact::product_uuid,
-        fact::chassis_type,
-    };
-
-    for (auto const& name : names) {
-        auto fact = facts.get<string_value>(name);
-        ASSERT_NE(nullptr, fact);
-        ASSERT_EQ(name, fact->value());
+    WHEN("data is not present") {
+        facts.add(make_shared<empty_dmi_resolver>());
+        THEN("facts should not be added") {
+            REQUIRE(facts.size() == 0);
+        }
     }
+    WHEN("data is present") {
+        facts.add(make_shared<test_dmi_resolver>());
+        THEN("a structured fact is added") {
+            auto dmi = facts.get<map_value>(fact::dmi);
+            REQUIRE(dmi);
+            REQUIRE(dmi->size() == 5);
 
-    auto dmi = facts.get<map_value>(fact::dmi);
-    ASSERT_NE(nullptr, dmi);
-    ASSERT_EQ(5u, dmi->size());
+            auto bios = dmi->get<map_value>("bios");
+            REQUIRE(bios);
+            REQUIRE(bios->size() == 3);
 
-    auto bios = dmi->get<map_value>("bios");
-    ASSERT_NE(nullptr, bios);
-    ASSERT_EQ(3u, bios->size());
+            auto value = bios->get<string_value>("release_date");
+            REQUIRE(value);
+            REQUIRE(value->value() == string(fact::bios_release_date));
 
-    auto value = bios->get<string_value>("release_date");
-    ASSERT_NE(nullptr, value);
-    ASSERT_EQ(string(fact::bios_release_date), value->value());
+            value = bios->get<string_value>("vendor");
+            REQUIRE(value);
+            REQUIRE(value->value() == string(fact::bios_vendor));
 
-    value = bios->get<string_value>("vendor");
-    ASSERT_NE(nullptr, value);
-    ASSERT_EQ(string(fact::bios_vendor), value->value());
+            value = bios->get<string_value>("version");
+            REQUIRE(value);
+            REQUIRE(value->value() == string(fact::bios_version));
 
-    value = bios->get<string_value>("version");
-    ASSERT_NE(nullptr, value);
-    ASSERT_EQ(string(fact::bios_version), value->value());
+            auto board = dmi->get<map_value>("board");
+            REQUIRE(board);
+            REQUIRE(board->size() == 4);
 
-    auto board = dmi->get<map_value>("board");
-    ASSERT_NE(nullptr, board);
-    ASSERT_EQ(4u, board->size());
+            value = board->get<string_value>("asset_tag");
+            REQUIRE(value);
+            REQUIRE(value->value() == string(fact::board_asset_tag));
 
-    value = board->get<string_value>("asset_tag");
-    ASSERT_NE(nullptr, value);
-    ASSERT_EQ(string(fact::board_asset_tag), value->value());
+            value = board->get<string_value>("manufacturer");
+            REQUIRE(value);
+            REQUIRE(value->value() == string(fact::board_manufacturer));
 
-    value = board->get<string_value>("manufacturer");
-    ASSERT_NE(nullptr, value);
-    ASSERT_EQ(string(fact::board_manufacturer), value->value());
+            value = board->get<string_value>("product");
+            REQUIRE(value);
+            REQUIRE(value->value() == string(fact::board_product_name));
 
-    value = board->get<string_value>("product");
-    ASSERT_NE(nullptr, value);
-    ASSERT_EQ(string(fact::board_product_name), value->value());
+            value = board->get<string_value>("serial_number");
+            REQUIRE(value);
+            REQUIRE(value->value() == string(fact::board_serial_number));
 
-    value = board->get<string_value>("serial_number");
-    ASSERT_NE(nullptr, value);
-    ASSERT_EQ(string(fact::board_serial_number), value->value());
+            auto chassis = dmi->get<map_value>("chassis");
+            REQUIRE(chassis);
+            REQUIRE(chassis->size() == 2);
 
-    auto chassis = dmi->get<map_value>("chassis");
-    ASSERT_NE(nullptr, chassis);
-    ASSERT_EQ(2u, chassis->size());
+            value = chassis->get<string_value>("asset_tag");
+            REQUIRE(value);
+            REQUIRE(value->value() == string(fact::chassis_asset_tag));
 
-    value = chassis->get<string_value>("asset_tag");
-    ASSERT_NE(nullptr, value);
-    ASSERT_EQ(string(fact::chassis_asset_tag), value->value());
+            value = chassis->get<string_value>("type");
+            REQUIRE(value);
+            REQUIRE(value->value() == string(fact::chassis_type));
 
-    value = chassis->get<string_value>("type");
-    ASSERT_NE(nullptr, value);
-    ASSERT_EQ(string(fact::chassis_type), value->value());
+            value = dmi->get<string_value>("manufacturer");
+            REQUIRE(value);
+            REQUIRE(value->value() == string(fact::manufacturer));
 
-    value = dmi->get<string_value>("manufacturer");
-    ASSERT_NE(nullptr, value);
-    ASSERT_EQ(string(fact::manufacturer), value->value());
+            auto product = dmi->get<map_value>("product");
+            REQUIRE(product);
+            REQUIRE(product->size() == 3);
 
-    auto product = dmi->get<map_value>("product");
-    ASSERT_NE(nullptr, product);
-    ASSERT_EQ(3u, product->size());
+            value = product->get<string_value>("name");
+            REQUIRE(value);
+            REQUIRE(value->value() == string(fact::product_name));
 
-    value = product->get<string_value>("name");
-    ASSERT_NE(nullptr, value);
-    ASSERT_EQ(string(fact::product_name), value->value());
+            value = product->get<string_value>("serial_number");
+            REQUIRE(value);
+            REQUIRE(value->value() == string(fact::serial_number));
 
-    value = product->get<string_value>("serial_number");
-    ASSERT_NE(nullptr, value);
-    ASSERT_EQ(string(fact::serial_number), value->value());
-
-    value = product->get<string_value>("uuid");
-    ASSERT_NE(nullptr, value);
-    ASSERT_EQ(string(fact::product_uuid), value->value());
+            value = product->get<string_value>("uuid");
+            REQUIRE(value);
+            REQUIRE(value->value() == string(fact::product_uuid));
+        }
+        THEN("flat facts are added") {
+            static vector<string> const names = {
+                fact::bios_vendor,
+                fact::bios_version,
+                fact::bios_release_date,
+                fact::board_asset_tag,
+                fact::board_manufacturer,
+                fact::board_product_name,
+                fact::board_serial_number,
+                fact::chassis_asset_tag,
+                fact::manufacturer,
+                fact::product_name,
+                fact::serial_number,
+                fact::product_uuid,
+                fact::chassis_type,
+            };
+            for (auto const& name : names) {
+                auto fact = facts.get<string_value>(name);
+                REQUIRE(fact);
+                REQUIRE(fact->value() == name);
+            }
+        }
+    }
 }

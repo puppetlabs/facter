@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/resolvers/memory_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
@@ -33,123 +33,101 @@ struct test_memory_resolver : memory_resolver
     }
 };
 
-TEST(facter_facts_resolvers_memory_resolver, empty)
-{
+SCENARIO("using the memory resolver") {
     collection facts;
-    facts.add(make_shared<empty_memory_resolver>());
-    ASSERT_EQ(0u, facts.size());
-}
-
-TEST(facter_facts_resolvers_memory_resolver, memory)
-{
-    collection facts;
-    facts.add(make_shared<test_memory_resolver>());
-    ASSERT_EQ(10u, facts.size());
-
-    auto memoryfree = facts.get<string_value>(fact::memoryfree);
-    ASSERT_NE(nullptr, memoryfree);
-    ASSERT_EQ("5.00 MiB", memoryfree->value());
-
-    auto memoryfree_mb = facts.get<double_value>(fact::memoryfree_mb);
-    ASSERT_NE(nullptr, memoryfree_mb);
-    ASSERT_DOUBLE_EQ(5.0, memoryfree_mb->value());
-
-    auto memorysize = facts.get<string_value>(fact::memorysize);
-    ASSERT_NE(nullptr, memorysize);
-    ASSERT_EQ("10.00 MiB", memorysize->value());
-
-    auto memorysize_mb = facts.get<double_value>(fact::memorysize_mb);
-    ASSERT_NE(nullptr, memorysize_mb);
-    ASSERT_DOUBLE_EQ(10.0, memorysize_mb->value());
-
-    auto swapencrypted = facts.get<boolean_value>(fact::swapencrypted);
-    ASSERT_NE(nullptr, swapencrypted);
-    ASSERT_TRUE(swapencrypted->value());
-
-    auto swapfree = facts.get<string_value>(fact::swapfree);
-    ASSERT_NE(nullptr, swapfree);
-    ASSERT_EQ("4.00 MiB", swapfree->value());
-
-    auto swapfree_mb = facts.get<double_value>(fact::swapfree_mb);
-    ASSERT_NE(nullptr, swapfree_mb);
-    ASSERT_DOUBLE_EQ(4.0, swapfree_mb->value());
-
-    auto swapsize = facts.get<string_value>(fact::swapsize);
-    ASSERT_NE(nullptr, swapsize);
-    ASSERT_EQ("20.00 MiB", swapsize->value());
-
-    auto swapsize_mb = facts.get<double_value>(fact::swapsize_mb);
-    ASSERT_NE(nullptr, swapsize_mb);
-    ASSERT_DOUBLE_EQ(20.0, swapsize_mb->value());
-
-    auto memory = facts.get<map_value>(fact::memory);
-    ASSERT_NE(nullptr, memory);
-
-    auto info = memory->get<map_value>("swap");
-    ASSERT_NE(nullptr, info);
-    ASSERT_EQ(8u, info->size());
-
-    auto available = info->get<string_value>("available");
-    ASSERT_NE(nullptr, available);
-    ASSERT_EQ("4.00 MiB", available->value());
-
-    auto available_bytes = info->get<integer_value>("available_bytes");
-    ASSERT_NE(nullptr, available_bytes);
-    ASSERT_EQ(4194304, available_bytes->value());
-
-    auto capacity = info->get<string_value>("capacity");
-    ASSERT_NE(nullptr, capacity);
-    ASSERT_EQ("80.00%", capacity->value());
-
-    auto encrypted = info->get<boolean_value>("encrypted");
-    ASSERT_NE(nullptr, encrypted);
-    ASSERT_TRUE(encrypted->value());
-
-    auto total = info->get<string_value>("total");
-    ASSERT_NE(nullptr, total);
-    ASSERT_EQ("20.00 MiB", total->value());
-
-    auto total_bytes = info->get<integer_value>("total_bytes");
-    ASSERT_NE(nullptr, total_bytes);
-    ASSERT_EQ(20971520, total_bytes->value());
-
-    auto used = info->get<string_value>("used");
-    ASSERT_NE(nullptr, used);
-    ASSERT_EQ("16.00 MiB", used->value());
-
-    auto used_bytes = info->get<integer_value>("used_bytes");
-    ASSERT_NE(nullptr, used_bytes);
-    ASSERT_EQ(16777216, used_bytes->value());
-
-    info = memory->get<map_value>("system");
-    ASSERT_NE(nullptr, info);
-    ASSERT_EQ(7u, info->size());
-
-    available = info->get<string_value>("available");
-    ASSERT_NE(nullptr, available);
-    ASSERT_EQ("5.00 MiB", available->value());
-
-    available_bytes = info->get<integer_value>("available_bytes");
-    ASSERT_NE(nullptr, available_bytes);
-    ASSERT_EQ(5242880, available_bytes->value());
-
-    capacity = info->get<string_value>("capacity");
-    ASSERT_NE(nullptr, capacity);
-    ASSERT_EQ("50.00%", capacity->value());
-
-    total = info->get<string_value>("total");
-    ASSERT_NE(nullptr, total);
-    ASSERT_EQ("10.00 MiB", total->value());
-
-    total_bytes = info->get<integer_value>("total_bytes");
-    ASSERT_NE(nullptr, total_bytes);
-    ASSERT_EQ(10485760, total_bytes->value());
-
-    used = info->get<string_value>("used");
-    ASSERT_NE(nullptr, used);
-    ASSERT_EQ("5.00 MiB", used->value());
-
-    used_bytes = info->get<integer_value>("used_bytes");
-    ASSERT_NE(nullptr, used_bytes);
-    ASSERT_EQ(5242880, used_bytes->value());
+    WHEN("data is not present") {
+        facts.add(make_shared<empty_memory_resolver>());
+        THEN("facts should not be added") {
+            REQUIRE(facts.size() == 0);
+        }
+    }
+    WHEN("data is present") {
+        facts.add(make_shared<test_memory_resolver>());
+        THEN("a structured fact is added") {
+            REQUIRE(facts.size() == 10);
+            auto memory = facts.get<map_value>(fact::memory);
+            REQUIRE(memory);
+            auto info = memory->get<map_value>("swap");
+            REQUIRE(info);
+            REQUIRE(info->size() == 8);
+            auto available = info->get<string_value>("available");
+            REQUIRE(available);
+            REQUIRE(available->value() == "4.00 MiB");
+            auto available_bytes = info->get<integer_value>("available_bytes");
+            REQUIRE(available_bytes);
+            REQUIRE(available_bytes->value() == 4194304);
+            auto capacity = info->get<string_value>("capacity");
+            REQUIRE(capacity);
+            REQUIRE(capacity->value() == "80.00%");
+            auto encrypted = info->get<boolean_value>("encrypted");
+            REQUIRE(encrypted);
+            REQUIRE(encrypted->value());
+            auto total = info->get<string_value>("total");
+            REQUIRE(total);
+            REQUIRE(total->value() == "20.00 MiB");
+            auto total_bytes = info->get<integer_value>("total_bytes");
+            REQUIRE(total_bytes);
+            REQUIRE(total_bytes->value() == 20971520);
+            auto used = info->get<string_value>("used");
+            REQUIRE(used);
+            REQUIRE(used->value() == "16.00 MiB");
+            auto used_bytes = info->get<integer_value>("used_bytes");
+            REQUIRE(used_bytes);
+            REQUIRE(used_bytes->value() == 16777216);
+            info = memory->get<map_value>("system");
+            REQUIRE(info);
+            REQUIRE(info->size() == 7);
+            available = info->get<string_value>("available");
+            REQUIRE(available);
+            REQUIRE(available->value() == "5.00 MiB");
+            available_bytes = info->get<integer_value>("available_bytes");
+            REQUIRE(available_bytes);
+            REQUIRE(available_bytes->value() == 5242880);
+            capacity = info->get<string_value>("capacity");
+            REQUIRE(capacity);
+            REQUIRE(capacity->value() == "50.00%");
+            total = info->get<string_value>("total");
+            REQUIRE(total);
+            REQUIRE(total->value() == "10.00 MiB");
+            total_bytes = info->get<integer_value>("total_bytes");
+            REQUIRE(total_bytes);
+            REQUIRE(total_bytes->value() == 10485760);
+            used = info->get<string_value>("used");
+            REQUIRE(used);
+            REQUIRE(used->value() == "5.00 MiB");
+            used_bytes = info->get<integer_value>("used_bytes");
+            REQUIRE(used_bytes);
+            REQUIRE(used_bytes->value() == 5242880);
+        }
+        THEN("flat facts are added") {
+            REQUIRE(facts.size() == 10);
+            auto memoryfree = facts.get<string_value>(fact::memoryfree);
+            REQUIRE(memoryfree);
+            REQUIRE(memoryfree->value() == "5.00 MiB");
+            auto memoryfree_mb = facts.get<double_value>(fact::memoryfree_mb);
+            REQUIRE(memoryfree_mb);
+            REQUIRE(memoryfree_mb->value() == Approx(5.0));
+            auto memorysize = facts.get<string_value>(fact::memorysize);
+            REQUIRE(memorysize);
+            REQUIRE(memorysize->value() == "10.00 MiB");
+            auto memorysize_mb = facts.get<double_value>(fact::memorysize_mb);
+            REQUIRE(memorysize_mb);
+            REQUIRE(memorysize_mb->value() == Approx(10.0));
+            auto swapencrypted = facts.get<boolean_value>(fact::swapencrypted);
+            REQUIRE(swapencrypted);
+            REQUIRE(swapencrypted->value());
+            auto swapfree = facts.get<string_value>(fact::swapfree);
+            REQUIRE(swapfree);
+            REQUIRE(swapfree->value() == "4.00 MiB");
+            auto swapfree_mb = facts.get<double_value>(fact::swapfree_mb);
+            REQUIRE(swapfree_mb);
+            REQUIRE(swapfree_mb->value() == Approx(4.0));
+            auto swapsize = facts.get<string_value>(fact::swapsize);
+            REQUIRE(swapsize);
+            REQUIRE(swapsize->value() == "20.00 MiB");
+            auto swapsize_mb = facts.get<double_value>(fact::swapsize_mb);
+            REQUIRE(swapsize_mb);
+            REQUIRE(swapsize_mb->value() == Approx(20.0));
+        }
+    }
 }

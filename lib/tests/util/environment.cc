@@ -1,81 +1,90 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/util/environment.hpp>
 #include <boost/nowide/cenv.hpp>
-#include <unistd.h>
 
 using namespace std;
 using namespace facter::util;
 
-TEST(facter_util_environment, get) {
+SCENARIO("getting an environment variable") {
     string value;
-    ASSERT_FALSE(environment::get("FACTERTEST", value));
-    ASSERT_EQ("", value);
+    REQUIRE_FALSE(environment::get("FACTERTEST", value));
+    REQUIRE(value.empty());
     boost::nowide::setenv("FACTERTEST", "FOO", 1);
-    ASSERT_TRUE(environment::get("FACTERTEST", value));
-    ASSERT_EQ("FOO", value);
+    REQUIRE(environment::get("FACTERTEST", value));
+    REQUIRE(value == "FOO");
     boost::nowide::unsetenv("FACTERTEST");
     value = "";
-    ASSERT_FALSE(environment::get("FACTERTEST", value));
-    ASSERT_EQ("", value);
+    REQUIRE_FALSE(environment::get("FACTERTEST", value));
+    REQUIRE(value.empty());
 }
 
-TEST(facter_util_environment, set) {
-    ASSERT_EQ(nullptr, boost::nowide::getenv("FACTERTEST"));
-    ASSERT_TRUE(environment::set("FACTERTEST", "FOO"));
-    ASSERT_EQ(string("FOO"), boost::nowide::getenv("FACTERTEST"));
-    boost::nowide::unsetenv("FACTERTEST");
+SCENARIO("setting an environment variable") {
+    REQUIRE_FALSE(boost::nowide::getenv(""));
+    GIVEN("a non-empty value") {
+        REQUIRE(environment::set("FACTERTEST", "FOO"));
+        THEN("the value is set to the same value") {
+            REQUIRE(boost::nowide::getenv("FACTERTEST") == string("FOO"));
+        }
+        boost::nowide::unsetenv("FACTERTEST");
+    }
+    GIVEN("an empty value") {
+        REQUIRE(environment::set("FACTERTEST", ""));
+        THEN("the value is set to empty or not present") {
+            string value;
+            environment::get("FACTERTEST", value);
+            REQUIRE(value == "");
+        }
+        boost::nowide::unsetenv("FACTERTEST");
+    }
 }
 
-TEST(facter_util_environment, set_empty) {
-    ASSERT_TRUE(environment::set("FACTERTEST", ""));
-
-    string value;
-    ASSERT_TRUE(environment::get("FACTERTEST", value));
-    ASSERT_EQ("", value);
-
-    boost::nowide::unsetenv("FACTERTEST");
-}
-
-TEST(facter_util_environment, clear) {
+SCENARIO("clearing an environment variable") {
     boost::nowide::setenv("FACTERTEST", "FOO", 1);
-    ASSERT_TRUE(environment::clear("FACTERTEST"));
-    ASSERT_EQ(nullptr, boost::nowide::getenv("FACTERTEST"));
+    REQUIRE(environment::clear("FACTERTEST"));
+    REQUIRE_FALSE(boost::nowide::getenv("FACTERTEST"));
 }
 
-
-TEST(facter_util_environment, each) {
+SCENARIO("enumearing enviornment variables") {
     boost::nowide::setenv("FACTERTEST1", "FOO", 1);
     boost::nowide::setenv("FACTERTEST2", "BAR", 1);
     boost::nowide::setenv("FACTERTEST3", "BAZ", 1);
-
-    string value1;
-    string value2;
-    string value3;
-    environment::each([&](string& name, string& value) {
-        if (name == "FACTERTEST1") {
-            value1 = move(value);
-        } else if (name == "FACTERTEST2") {
-            value2 = move(value);
-        } else if (name == "FACTERTEST3") {
-            value3 = move(value);
+    WHEN("true is returned from the callback") {
+        THEN("all values are returned") {
+            string value1;
+            string value2;
+            string value3;
+            environment::each([&](string& name, string& value) {
+                if (name == "FACTERTEST1") {
+                    value1 = move(value);
+                } else if (name == "FACTERTEST2") {
+                    value2 = move(value);
+                } else if (name == "FACTERTEST3") {
+                    value3 = move(value);
+                }
+                return true;
+            });
+            REQUIRE(value1 == "FOO");
+            REQUIRE(value2 == "BAR");
+            REQUIRE(value3 == "BAZ");
         }
-        return true;
-    });
-
-    ASSERT_EQ("FOO", value1);
-    ASSERT_EQ("BAR", value2);
-    ASSERT_EQ("BAZ", value3);
-
-    int count_at_stop = 0;
-    int count = 0;
-    environment::each([&](string& name, string& value) {
-        if (name == "FACTERTEST1") {
-            count_at_stop = count;
-            return false;
+    }
+    WHEN("false is returned from the callback") {
+        THEN("enumeration stops") {
+            int count_at_stop = 0;
+            int count = 0;
+            environment::each([&](string& name, string& value) {
+                if (name == "FACTERTEST1") {
+                    count_at_stop = count;
+                    return false;
+                }
+                ++count;
+                return true;
+            });
+            REQUIRE(count != 0);
+            REQUIRE(count == count_at_stop);
         }
-        ++count;
-        return true;
-    });
-    ASSERT_NE(0, count);
-    ASSERT_EQ(count_at_stop, count);
+    }
+    boost::nowide::unsetenv("FACTERTEST1");
+    boost::nowide::unsetenv("FACTERTEST2");
+    boost::nowide::unsetenv("FACTERTEST3");
 }

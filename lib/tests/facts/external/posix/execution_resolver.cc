@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/facts/external/execution_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -11,48 +11,43 @@ using namespace facter::util;
 using namespace facter::facts::external;
 using namespace facter::testing;
 
-TEST(facter_facts_external_posix_execution_resolver, default_constructor) {
-    execution_resolver resolver;
-}
-
-TEST(facter_facts_external_posix_execution_resolver, can_resolve) {
-    execution_resolver resolver;
-    ASSERT_FALSE(resolver.can_resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/not_executable"));
-    ASSERT_TRUE(resolver.can_resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts"));
-}
-
-TEST(facter_facts_external_posix_execution_resolver, can_resolve_relative_fails) {
-    test_with_relative_path fixture("foo", "");
-
-    execution_resolver resolver;
-    ASSERT_FALSE(resolver.can_resolve(fixture.filename()));
-}
-
-TEST(facter_facts_external_posix_execution_resolver, resolve_failed_execution) {
-    execution_resolver resolver;
+SCENARIO("resolving external executable facts") {
     collection facts;
-    ASSERT_THROW(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/failed", facts), external_fact_exception);
-}
-
-TEST(facter_facts_external_posix_execution_resolver, resolve_execution) {
     execution_resolver resolver;
-    collection facts;
-    resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts", facts);
-    ASSERT_TRUE(!facts.empty());
-    ASSERT_NE(nullptr, facts.get<string_value>("exe_fact1"));
-    ASSERT_EQ("value1", facts.get<string_value>("exe_fact1")->value());
-    ASSERT_NE(nullptr, facts.get<string_value>("exe_fact2"));
-    ASSERT_EQ("", facts.get<string_value>("exe_fact2")->value());
-    ASSERT_EQ(nullptr, facts.get<string_value>("exe_fact3"));
-    ASSERT_NE(nullptr, facts.get<string_value>("exe_fact4"));
-    ASSERT_EQ(nullptr, facts.get<string_value>("EXE_fact4"));
-    ASSERT_EQ("value2", facts.get<string_value>("exe_fact4")->value());
-}
 
-TEST(facter_facts_external_posix_execution_resolver, resolve_execution_relative_fails) {
-    test_with_relative_path fixture("foo", "");
-
-    execution_resolver resolver;
-    collection facts;
-    ASSERT_THROW(resolver.resolve(fixture.filename(), facts), external_fact_exception);
+    GIVEN("a non-executable file") {
+        THEN("the file cannot be resolved") {
+            REQUIRE_FALSE(resolver.can_resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/not_executable"));
+        }
+    }
+    GIVEN("an executable file") {
+        WHEN("the execution fails") {
+            THEN("an exception is thrown") {
+                REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/failed", facts), external_fact_exception);
+            }
+        }
+        WHEN("the execution succeeds") {
+            THEN("it populates facts") {
+                resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts", facts);
+                REQUIRE(!facts.empty());
+                REQUIRE(facts.get<string_value>("exe_fact1"));
+                REQUIRE(facts.get<string_value>("exe_fact1")->value() == "value1");
+                REQUIRE(facts.get<string_value>("exe_fact2"));
+                REQUIRE(facts.get<string_value>("exe_fact2")->value() == "");
+                REQUIRE_FALSE(facts.get<string_value>("exe_fact3"));
+                REQUIRE(facts.get<string_value>("exe_fact4"));
+                REQUIRE_FALSE(facts.get<string_value>("EXE_fact4"));
+                REQUIRE(facts.get<string_value>("exe_fact4")->value() == "value2");
+            }
+        }
+        THEN("the file can be resolved") {
+            REQUIRE(resolver.can_resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/facts"));
+        }
+    }
+    GIVEN("a relative path not on PATH") {
+        test_with_relative_path fixture("foo", "bar", "");
+        THEN("the file cannot be resolved") {
+            REQUIRE_FALSE(resolver.can_resolve("foo/bar"));
+        }
+    }
 }

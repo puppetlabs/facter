@@ -1,12 +1,12 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#include <gmock/gmock.h>
+#include <catch.hpp>
 #include <facter/util/posix/scoped_bio.hpp>
 #include <openssl/evp.h>
 
 using namespace std;
 using namespace facter::util::posix;
 
-TEST(facter_util_posix_scoped_bio, construction) {
+SCENARIO("constructing a scoped_bio") {
     scoped_bio b64((BIO_f_base64()));
-    ASSERT_NE(nullptr, static_cast<BIO*>(b64));
+    REQUIRE(static_cast<BIO*>(b64));
 }

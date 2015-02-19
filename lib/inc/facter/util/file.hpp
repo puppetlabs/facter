@@ -37,21 +37,6 @@ namespace facter { namespace util {
          * @return Returns true if the contents were read or false if the file is not readable.
          */
         static bool read(std::string const& path, std::string& contents);
-
-        /**
-         * Reads the first line of the given file into a string.
-         * @param path The path of the file to read.
-         * @return Returns the first line of the file.
-         */
-        static std::string read_first_line(std::string const& path);
-
-        /**
-         * Reads the first line of the given file into a string.
-         * @param path The path of the file to read.
-         * @param line The returned first line of the file.
-         * @return Returns true if the line was read or false if the file is not readable.
-         */
-        static bool read_first_line(std::string const& path, std::string& line);
     };
 
 }}  // namespace facter::util
