@@ -263,10 +263,9 @@ int main(int argc, char **argv)
         }
         facts.write(boost::nowide::cout, fmt, queries);
         boost::nowide::cout << endl;
-
-        return EXIT_SUCCESS;
     } catch (exception& ex) {
         LOG_FATAL("unhandled exception: %1%", ex.what());
-        return EXIT_FAILURE;
     }
+
+    return error_has_been_logged() ? EXIT_FAILURE : EXIT_SUCCESS;
 }

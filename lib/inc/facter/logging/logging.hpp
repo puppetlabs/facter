@@ -190,6 +190,19 @@ namespace facter { namespace logging {
     bool is_enabled(log_level level);
 
     /**
+     * Determine if an error has been logged
+     * @return Returns true if an error or critical message has been logged
+     */
+    bool error_has_been_logged();
+
+    /**
+     * Clear the flag that indicates an error has been logged.
+     * This is necessary for testing the flagging functionality. This function should
+     * not be used by library consumers.
+     */
+    void clear_error_logged_flag();
+
+    /**
      * Logs a given message to the given logger.
      * @param logger The logger to log the message to.
      * @param level The logging level to log with.

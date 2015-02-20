@@ -32,6 +32,7 @@ namespace facter { namespace logging {
     static function<bool(log_level, string const&)> g_callback;
     static log_level g_level = log_level::none;
     static bool g_colorize = false;
+    static bool g_error_logged = false;
 
     void setup_logging(ostream &dst)
     {
@@ -91,6 +92,14 @@ namespace facter { namespace logging {
         return g_level != log_level::none && static_cast<int>(level) >= static_cast<int>(g_level);
     }
 
+    bool error_has_been_logged() {
+        return g_error_logged;
+    }
+
+    void clear_error_logged_flag() {
+        g_error_logged = false;
+    }
+
     void on_message(function<bool(log_level, string const&)> callback)
     {
         g_callback = callback;
@@ -134,6 +143,9 @@ namespace facter { namespace logging {
 
     void log(const string &logger, log_level level, string const& message)
     {
+        if (level >= log_level::error) {
+            g_error_logged = true;
+        }
         if (!is_enabled(level) || (g_callback && !g_callback(level, message))) {
             return;
         }
