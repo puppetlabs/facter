@@ -13,9 +13,17 @@ module Facter::Util::Virtual
   # and later versions of virt-what may emit this message on stderr. This
   # method ensures stderr is redirected and that error messages are stripped
   # from stdout.
-  def self.virt_what(command = "virt-what")
-    command = Facter::Core::Execution.which(command)
-    return unless command
+  def self.virt_what(cmd = "virt-what")
+    if bindir = Facter::Util::Config.override_binary_dir
+      command = Facter::Core::Execution.which(File.join(bindir, cmd))
+    else
+      command = nil
+    end
+
+    if !command
+      command = Facter::Core::Execution.which(cmd)
+      return unless command
+    end
 
     if Facter.value(:kernel) == 'windows'
       redirected_cmd = "#{command} 2>NUL"

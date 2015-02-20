@@ -94,4 +94,26 @@ describe Facter::Util::Config do
     end
 
   end
+
+  describe "override_binary_dir" do
+    it "should return the default value for linux" do
+      Facter::Util::Config.stubs(:is_windows?).returns(false)
+      Facter::Util::Config.setup_default_override_binary_dir
+      Facter::Util::Config.override_binary_dir.should == "/opt/puppetlabs/puppet/bin"
+    end
+
+    it "should return nil for windows" do
+      Facter::Util::Config.stubs(:is_windows?).returns(true)
+      Facter::Util::Config.setup_default_override_binary_dir
+      Facter::Util::Config.override_binary_dir.should == nil
+    end
+
+    it "should output new values when explicitly set" do
+      Facter::Util::Config.setup_default_override_binary_dir
+      new_value = '/usr/share/newdir'
+      Facter::Util::Config.override_binary_dir = new_value
+      Facter::Util::Config.override_binary_dir.should == new_value
+    end
+  end
+
 end
