@@ -278,10 +278,15 @@ describe Facter::Util::Virtual do
     mockfile
   end
 
-  shared_examples_for "virt-what" do |kernel, path, null_device|
+  shared_examples_for "virt-what" do |kernel, path, null_device, override_location|
     before(:each) do
       Facter.fact(:kernel).stubs(:value).returns(kernel)
-      Facter::Core::Execution.expects(:which).with("virt-what").returns(path)
+      if override_location
+        Facter::Core::Execution.expects(:which).with(File.join(Facter::Util::Config.override_binary_dir, "virt-what")).returns(path)
+      else
+        Facter::Core::Execution.expects(:which).with(File.join(Facter::Util::Config.override_binary_dir, "virt-what")).returns(nil)
+        Facter::Core::Execution.expects(:which).with("virt-what").returns(path)
+      end
       Facter::Core::Execution.expects(:exec).with("#{path} 2>#{null_device}")
     end
 
@@ -291,23 +296,28 @@ describe Facter::Util::Virtual do
   end
 
   context "on linux" do
-    it_should_behave_like "virt-what", "linux", "/usr/bin/virt-what", "/dev/null"
+    describe "override binary dir doesn't exist" do
+      it_should_behave_like "virt-what", "linux", "/usr/bin/virt-what", "/dev/null", true
+      it_should_behave_like "virt-what", "linux", "/usr/bin/virt-what", "/dev/null", false
 
-    it "should strip out warnings on stdout from virt-what" do
-      virt_what_warning = "virt-what: this script must be run as root"
-      Facter.fact(:kernel).stubs(:value).returns('linux')
-      Facter::Core::Execution.expects(:which).with('virt-what').returns "/usr/bin/virt-what"
-      Facter::Core::Execution.expects(:exec).with('/usr/bin/virt-what 2>/dev/null').returns virt_what_warning
-      Facter::Util::Virtual.virt_what.should_not match /^virt-what: /
+      it "should strip out warnings on stdout from virt-what" do
+        virt_what_warning = "virt-what: this script must be run as root"
+        Facter.fact(:kernel).stubs(:value).returns('linux')
+        Facter::Core::Execution.expects(:which).with(File.join(Facter::Util::Config.override_binary_dir, "virt-what")).returns(nil)
+        Facter::Core::Execution.expects(:which).with('virt-what').returns "/usr/bin/virt-what"
+        Facter::Core::Execution.expects(:exec).with('/usr/bin/virt-what 2>/dev/null').returns virt_what_warning
+        Facter::Util::Virtual.virt_what.should_not match /^virt-what: /
+      end
     end
   end
 
   context "on unix" do
-    it_should_behave_like "virt-what", "unix", "/usr/bin/virt-what", "/dev/null"
+    it_should_behave_like "virt-what", "unix", "/usr/bin/virt-what", "/dev/null", true
+    it_should_behave_like "virt-what", "unix", "/usr/bin/virt-what", "/dev/null", false
   end
 
   context "on windows" do
-    it_should_behave_like "virt-what", "windows", 'c:\windows\system32\virt-what', "NUL"
+    it_should_behave_like "virt-what", "windows", 'c:\windows\system32\virt-what', "NUL", false
   end
 
   describe '.lxc?' do
