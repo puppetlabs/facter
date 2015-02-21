@@ -4,6 +4,7 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
 #include <facter/execution/execution.hpp>
+#include <facter/logging/logging.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/regex.hpp>
 #include <boost/filesystem.hpp>
@@ -101,8 +102,19 @@ namespace facter { namespace facts { namespace linux {
 
     string virtualization_resolver::get_what_vm()
     {
+        string virt_what = [] {
+#ifdef FACTER_PATH
+            string fixed = execution::which("virt-what", {FACTER_PATH});
+            if (fixed.empty()) {
+                LOG_WARNING("virt-what not found at configured location %1%, using PATH instead", FACTER_PATH);
+            } else {
+                return fixed;
+            }
+#endif
+            return string("virt-what");
+        }();
         string value;
-        execution::each_line("virt-what", [&](string& line) {
+        execution::each_line(virt_what, [&](string& line) {
             // Some versions of virt-what dump error/warning messages to stdout
             if (boost::starts_with(line, "virt-what:")) {
                 return true;
