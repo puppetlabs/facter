@@ -31,6 +31,8 @@ struct logging_test_context
     logging_test_context()
     {
         set_level(log_level::trace);
+        clear_error_logged_flag();
+
         _appender.reset(new custom_log_appender());
         _sink.reset(new sink_t(_appender));
 
@@ -42,6 +44,7 @@ struct logging_test_context
     {
         set_level(log_level::none);
         on_message(nullptr);
+        clear_error_logged_flag();
 
         auto core = boost::log::core::get();
         core->reset_filter();
@@ -64,6 +67,7 @@ SCENARIO("logging with a TRACE level") {
     log("test", log_level::trace, "testing %1% %2% %3%", 1, "2", 3.0);
     REQUIRE(context._appender->_level == "TRACE");
     REQUIRE(context._appender->_message == string(colorize(log_level::trace)) + "testing 1 2 3" + colorize());
+    REQUIRE_FALSE(error_has_been_logged());
 }
 
 SCENARIO("logging with a DEBUG level") {
@@ -75,6 +79,7 @@ SCENARIO("logging with a DEBUG level") {
     log("test", log_level::debug, "testing %1% %2% %3%", 1, "2", 3.0);
     REQUIRE(context._appender->_level == "DEBUG");
     REQUIRE(context._appender->_message == string(colorize(log_level::debug)) + "testing 1 2 3" + colorize());
+    REQUIRE_FALSE(error_has_been_logged());
 }
 
 SCENARIO("logging with an INFO level") {
@@ -86,6 +91,7 @@ SCENARIO("logging with an INFO level") {
     log("test", log_level::info, "testing %1% %2% %3%", 1, "2", 3.0);
     REQUIRE(context._appender->_level == "INFO");
     REQUIRE(context._appender->_message == string(colorize(log_level::info)) + "testing 1 2 3" + colorize());
+    REQUIRE_FALSE(error_has_been_logged());
 }
 
 SCENARIO("logging with a WARNING level") {
@@ -97,6 +103,7 @@ SCENARIO("logging with a WARNING level") {
     log("test", log_level::warning, "testing %1% %2% %3%", 1, "2", 3.0);
     REQUIRE(context._appender->_level == "WARN");
     REQUIRE(context._appender->_message == string(colorize(log_level::warning)) + "testing 1 2 3" + colorize());
+    REQUIRE_FALSE(error_has_been_logged());
 }
 
 SCENARIO("logging with an ERROR level") {
@@ -108,6 +115,7 @@ SCENARIO("logging with an ERROR level") {
     log("test", log_level::error, "testing %1% %2% %3%", 1, "2", 3.0);
     REQUIRE(context._appender->_level == "ERROR");
     REQUIRE(context._appender->_message == string(colorize(log_level::error)) + "testing 1 2 3" + colorize());
+    REQUIRE(error_has_been_logged());
 }
 
 SCENARIO("logging with a FATAL level") {
@@ -119,6 +127,7 @@ SCENARIO("logging with a FATAL level") {
     log("test", log_level::fatal, "testing %1% %2% %3%", 1, "2", 3.0);
     REQUIRE(context._appender->_level == "FATAL");
     REQUIRE(context._appender->_message == string(colorize(log_level::fatal)) + "testing 1 2 3" + colorize());
+    REQUIRE(error_has_been_logged());
 }
 
 SCENARIO("logging with on_message") {
