@@ -225,7 +225,7 @@ namespace facter { namespace facts {
         /**
          * The fact for hardware UUID.
          */
-        constexpr static char const* product_uuid = "productuuid";
+        constexpr static char const* uuid = "uuid";
         /**
          * The fact for hardware chassis type.
          */

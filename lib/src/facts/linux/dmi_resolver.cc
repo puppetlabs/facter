@@ -25,7 +25,7 @@ namespace facter { namespace facts { namespace linux {
         result.manufacturer         = read("/sys/class/dmi/id/sys_vendor");
         result.product_name         = read("/sys/class/dmi/id/product_name");
         result.serial_number        = read("/sys/class/dmi/id/product_serial");
-        result.product_uuid         = read("/sys/class/dmi/id/product_uuid");
+        result.uuid                 = read("/sys/class/dmi/id/product_uuid");
         result.chassis_type         = to_chassis_description(read("/sys/class/dmi/id/chassis_type"));
         return result;
     }

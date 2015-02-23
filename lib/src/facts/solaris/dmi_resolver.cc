@@ -44,13 +44,13 @@ namespace facter { namespace facts { namespace solaris {
                 if (result.product_name.empty()) {
                     re_search(line, product_re, &result.product_name);
                 }
-                if (result.product_uuid.empty()) {
-                    re_search(line, uuid_re, &result.product_uuid);
+                if (result.uuid.empty()) {
+                    re_search(line, uuid_re, &result.uuid);
                 }
                 if (result.serial_number.empty()) {
                     re_search(line, serial_re, &result.serial_number);
                 }
-                return result.manufacturer.empty() || result.product_name.empty() || result.product_uuid.empty() || result.serial_number.empty();
+                return result.manufacturer.empty() || result.product_name.empty() || result.uuid.empty() || result.serial_number.empty();
             });
 
             re_adapter chassis_type_re("(?:Chassis )?Type: (.+)");

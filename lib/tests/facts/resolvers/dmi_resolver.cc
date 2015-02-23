@@ -35,7 +35,7 @@ struct test_dmi_resolver : dmi_resolver
         result.manufacturer = fact::manufacturer;
         result.product_name = fact::product_name;
         result.serial_number = fact::serial_number;
-        result.product_uuid = fact::product_uuid;
+        result.uuid = fact::uuid;
         result.chassis_type = fact::chassis_type;
         return result;
     }
@@ -122,7 +122,7 @@ SCENARIO("using the DMI resolver") {
 
             value = product->get<string_value>("uuid");
             REQUIRE(value);
-            REQUIRE(value->value() == string(fact::product_uuid));
+            REQUIRE(value->value() == string(fact::uuid));
         }
         THEN("flat facts are added") {
             static vector<string> const names = {
@@ -137,7 +137,7 @@ SCENARIO("using the DMI resolver") {
                 fact::manufacturer,
                 fact::product_name,
                 fact::serial_number,
-                fact::product_uuid,
+                fact::uuid,
                 fact::chassis_type,
             };
             for (auto const& name : names) {
