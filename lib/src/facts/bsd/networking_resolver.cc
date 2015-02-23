@@ -3,7 +3,7 @@
 #include <facter/util/file.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/bsd/scoped_ifaddrs.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <netinet/in.h>
 

@@ -1,6 +1,6 @@
 #include <facter/facts/osx/memory_resolver.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <mach/mach.h>
 #include <sys/sysctl.h>
 

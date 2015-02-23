@@ -1,6 +1,6 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #include <facter/facts/posix/ssh_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/string.hpp>
 #include <boost/algorithm/string.hpp>

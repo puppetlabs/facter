@@ -1,5 +1,5 @@
 #include <facter/facts/solaris/kernel_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <sys/utsname.h>
 
 using namespace std;

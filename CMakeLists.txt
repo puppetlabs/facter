@@ -28,6 +28,7 @@ endif()
 enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/vendor/leatherman/cmake")
 include(cotire)
 if (MINGW)
     # MinGW crashes with large pre-compiled headers; ours definitely exceeds the limit.
@@ -104,43 +105,9 @@ if ("${INSTALL_IS_SYSTEM_DIR}" STREQUAL "-1")
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
 
-# Set compiler-specific flags
-# Each of our project dirs sets CMAKE_CXX_FLAGS based on these. We do
-# not set CMAKE_CXX_FLAGS globally because gtest is not warning-clean.
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-tautological-constant-out-of-range-compare")
-
-    # Clang warns that 'register' is deprecated; 'register' is used throughout boost, so it can't be an error yet.
-    # The warning flag is different on different clang versions so we need to extract the clang version.
-    # And the Mavericks version of clang report its version in its own special way (at least on 10.9.5) - yay
-    EXECUTE_PROCESS( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
-    if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
-        string (REGEX REPLACE ".*based on LLVM ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
-    else()
-        string (REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
-    endif()
-    MESSAGE( STATUS "CLANG_VERSION_STRING:         " ${CLANG_VERSION_STRING} )
-
-    # Now based on clang version set the appropriate warning flag
-    if ("${CLANG_VERSION_STRING}" VERSION_GREATER "3.4")
-        set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -Wno-deprecated-register")
-    else()
-        set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -Wno-deprecated")
-    endif()
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    # maybe-uninitialized is a relatively new GCC warning that Boost 1.57 violates; disable it for now until it's available in Clang as well
-    # it's also sometimes wrong
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-maybe-uninitialized")
-
-    # missing-field-initializers is disabled because GCC can't make up their mind how to treat C++11 initializers
-    set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas -Wno-missing-field-initializers")
-    if (NOT "${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
-        set(FACTER_CXX_FLAGS "${FACTER_CXX_FLAGS} -Wextra")
-    endif()
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    #set(FACTER_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wall")
-endif()
+# Pull in common cflags setting from leatherman
+include(cflags)
+set(FACTER_CXX_FLAGS "${LEATHERMAN_CXX_FLAGS}")
 
 # Add Code Coverage
 if (COVERALLS)
@@ -168,26 +135,14 @@ if (WIN32)
     add_definitions(-DUNICODE -D_UNICODE)
 else()
     add_definitions(-DUSE_POSIX_FUNCTIONS)
-
-    # On non-Windows platforms, this just tests the local implementations.
-    set(BOOST_NOWIDE_SKIP_TESTS ON CACHE BOOL "Disable tests in Boost.Nowide")
 endif()
-
-# Disable installing Boost.Nowide so we don't pollute the installation.
-set(BOOST_NOWIDE_SKIP_INSTALL ON CACHE BOOL "Disable installing Boost.Nowide")
 
 # Boost compilation options
 add_definitions(-DBOOST_LOG_WITHOUT_WCHAR_T)
 
 # Include vendor libraries
-set(CATCH_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/catch/include")
 set(RAPIDJSON_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/rapidjson-0.11/include")
-add_subdirectory(vendor/boost-nowide)
-set(NOWIDE_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/boost-nowide")
 if (WIN32)
-    # Library only built on Windows, it would be empty on other platforms.
-    set(NOWIDE_LIBRARIES nowide-shared)
-
     # We disabled installing Boost.Nowide; add back the library we use.
     # CMake doesn't allow install targets in a different directory, so get the file.
     install(FILES ${CMAKE_BINARY_DIR}/bin/libnowide.dll DESTINATION bin)
@@ -241,6 +196,16 @@ endif()
 add_custom_target(cppcheck
     COMMAND cppcheck --enable=warning,performance --error-exitcode=2 --quiet "${PROJECT_SOURCE_DIR}/lib" "${PROJECT_SOURCE_DIR}/exe"
 )
+
+# Build against our leatherman tooling
+set(LEATHERMAN_USE_LOCALE TRUE)
+set(LEATHERMAN_USE_CATCH TRUE)
+set(LEATHERMAN_USE_NOWIDE TRUE)
+set(LEATHERMAN_USE_LOGGING TRUE)
+add_subdirectory("vendor/leatherman")
+
+# Pull in helper macros for working with leatherman libraries
+include(leatherman)
 
 add_subdirectory(lib)
 add_subdirectory(exe)

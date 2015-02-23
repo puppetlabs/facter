@@ -1,5 +1,5 @@
 #include <facter/facts/solaris/processor_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/solaris/k_stat.hpp>
 #include <unordered_set>
 #include <sys/processor.h>

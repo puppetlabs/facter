@@ -1,7 +1,7 @@
 #include <facter/execution/execution.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/posix/scoped_descriptor.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/ruby/api.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
@@ -12,7 +12,7 @@
 using namespace std;
 using namespace facter::util;
 using namespace facter::util::posix;
-using namespace facter::logging;
+using namespace leatherman::logging;
 using namespace boost::filesystem;
 
 // Declare environ for OSX

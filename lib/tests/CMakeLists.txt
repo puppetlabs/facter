@@ -33,7 +33,6 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/resolvers/zpool_resolver.cc"
     "facts/schema.cc"
     "facts/string_value.cc"
-    "logging/logging.cc"
     "main.cc"
     "util/directory.cc"
     "util/environment.cc"
@@ -93,15 +92,14 @@ endif()
 include_directories(
     ../inc
     ${Boost_INCLUDE_DIRS}
-    ${NOWIDE_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
-    ${CATCH_INCLUDE_DIRS}
+    ${LEATHERMAN_CATCH_INCLUDE}
 )
 
 add_executable(libfacter_test ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_CATEGORY_SOURCES})
 set_target_properties(libfacter_test PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS} COTIRE_ADD_UNITY_BUILD FALSE)
-target_link_libraries(libfacter_test libfacter ${YAMLCPP_LIBRARIES} ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES} ${NOWIDE_SHARED})
+target_link_libraries(libfacter_test libfacter ${YAMLCPP_LIBRARIES} ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES} ${LEATHERMAN_LIBRARIES})
 
 cotire(libfacter_test)
 

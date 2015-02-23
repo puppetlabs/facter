@@ -1,3 +1,3 @@
-[submodule "vendor/boost-nowide"]
-	path = vendor/boost-nowide
-	url = https://github.com/halex2005/boost-nowide
+[submodule "vendor/leatherman"]
+	path = vendor/leatherman
+	url = https://github.com/puppetlabs/leatherman

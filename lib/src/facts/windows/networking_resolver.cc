@@ -1,5 +1,5 @@
 #include <facter/facts/windows/networking_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/windows/registry.hpp>
 #include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/wsa.hpp>

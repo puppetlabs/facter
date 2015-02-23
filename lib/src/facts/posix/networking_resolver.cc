@@ -1,5 +1,5 @@
 #include <facter/facts/posix/networking_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/posix/scoped_addrinfo.hpp>
 #include <facter/util/file.hpp>
 #include <boost/algorithm/string.hpp>

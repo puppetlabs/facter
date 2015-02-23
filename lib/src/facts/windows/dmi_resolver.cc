@@ -1,5 +1,5 @@
 #include <facter/facts/windows/dmi_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/windows/wmi.hpp>
 
 using namespace std;

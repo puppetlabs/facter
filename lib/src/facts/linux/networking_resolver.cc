@@ -1,7 +1,7 @@
 #include <facter/facts/linux/networking_resolver.hpp>
 #include <facter/util/posix/scoped_descriptor.hpp>
 #include <facter/util/file.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <cstring>
 #include <netpacket/packet.h>

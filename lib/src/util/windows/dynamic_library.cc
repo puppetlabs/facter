@@ -1,6 +1,6 @@
 #include <facter/util/dynamic_library.hpp>
 #include <boost/format.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/regex.hpp>
 #include <facter/util/scoped_resource.hpp>
 #include <facter/util/windows/system_error.hpp>

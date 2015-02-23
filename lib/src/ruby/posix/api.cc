@@ -3,7 +3,7 @@
 #include <facter/util/directory.hpp>
 #include <facter/util/regex.hpp>
 #include <facter/util/environment.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 

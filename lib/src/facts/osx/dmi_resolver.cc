@@ -1,5 +1,5 @@
 #include <facter/facts/osx/dmi_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <sys/sysctl.h>
 
 using namespace std;

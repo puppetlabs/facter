@@ -1,6 +1,6 @@
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/collection.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/regex.hpp>
 
 using namespace std;

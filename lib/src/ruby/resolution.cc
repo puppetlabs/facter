@@ -1,6 +1,6 @@
 #include <facter/ruby/resolution.hpp>
 #include <facter/ruby/module.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 
 using namespace std;
 using namespace facter::facts;

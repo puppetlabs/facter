@@ -4,7 +4,7 @@
 #include <facter/ruby/confine.hpp>
 #include <facter/ruby/simple_resolution.hpp>
 #include <facter/facts/collection.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/version.h>
@@ -19,8 +19,9 @@ using namespace std;
 using namespace facter::facts;
 using namespace facter::util;
 using namespace facter::execution;
-using namespace facter::logging;
 using namespace boost::filesystem;
+
+using namespace leatherman::logging;
 
 namespace facter { namespace ruby {
 
@@ -144,7 +145,7 @@ namespace facter { namespace ruby {
         ruby.rb_gc_register_address(&_on_message_block);
 
         // Install a logging message handler
-        logging::on_message([this](log_level level, string const& message) {
+        on_message([this](log_level level, string const& message) {
             auto const& ruby = *api::instance();
             if (ruby.is_nil(_on_message_block)) {
                 return true;
@@ -249,7 +250,7 @@ namespace facter { namespace ruby {
 
         // Unregister the on message block
         ruby->rb_gc_unregister_address(&_on_message_block);
-        logging::on_message(nullptr);
+        on_message(nullptr);
 
         // Undefine the module and restore the previous value
         ruby->rb_const_remove(*ruby->rb_cObject, ruby->rb_intern("Facter"));
