@@ -18,6 +18,13 @@ if (FACTER_PATH)
     message(STATUS "Prioritizing binary lookup in ${FACTER_PATH_FIXED}")
 endif()
 
+set(FACTER_RUBY "" CACHE FILEPATH "Specify the location of libruby at compile-time, bypassing dynamic lookup.")
+if (FACTER_RUBY)
+    file(TO_CMAKE_PATH ${FACTER_RUBY} FACTER_RUBY_PATH)
+    add_definitions(-DFACTER_RUBY="${FACTER_RUBY_PATH}")
+    message(STATUS "Fixing lookup for libruby to ${FACTERPATH_PATH}")
+endif()
+
 enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
