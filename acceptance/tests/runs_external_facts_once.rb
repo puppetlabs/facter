@@ -24,7 +24,7 @@ agents.each do |agent|
     ext = '.bat'
     content = win_content
   else
-    factsd = '/opt/puppetlabs/agent/facts.d'
+    factsd = '/opt/puppetlabs/facter/facts.d'
     ext = '.sh'
     content = unix_content
   end
