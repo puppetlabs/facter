@@ -24,7 +24,7 @@ namespace facter { namespace facts { namespace resolvers {
                 fact::manufacturer,
                 fact::product_name,
                 fact::serial_number,
-                fact::product_uuid,
+                fact::uuid,
                 fact::chassis_type,
             })
     {
@@ -116,9 +116,9 @@ namespace facter { namespace facts { namespace resolvers {
             facts.add(fact::serial_number, make_value<string_value>(data.serial_number, true));
             product->add("serial_number", make_value<string_value>(move(data.serial_number)));
         }
-        if (!data.product_uuid.empty()) {
-            facts.add(fact::product_uuid, make_value<string_value>(data.product_uuid, true));
-            product->add("uuid", make_value<string_value>(move(data.product_uuid)));
+        if (!data.uuid.empty()) {
+            facts.add(fact::uuid, make_value<string_value>(data.uuid, true));
+            product->add("uuid", make_value<string_value>(move(data.uuid)));
         }
 
         auto chassis = make_value<map_value>();

@@ -96,7 +96,7 @@ namespace facter { namespace facts { namespace resolvers {
             /**
              * Stores the system product UUID.
              */
-            std::string product_uuid;
+            std::string uuid;
 
             /**
              * Stores the system chassis type.
