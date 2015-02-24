@@ -55,7 +55,7 @@ describe Facter::Util::Config do
       Facter::Util::Config.stubs(:is_windows?).returns(false)
       Facter::Util::Config.stubs(:windows_data_dir).returns(nil)
       Facter::Util::Config.setup_default_ext_facts_dirs
-      Facter::Util::Config.external_facts_dirs.should == ["/opt/puppetlabs/agent/facts.d", "/etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"]
+      Facter::Util::Config.external_facts_dirs.should == ["/opt/puppetlabs/facter/facts.d", "/etc/facter/facts.d", "/etc/puppetlabs/facter/facts.d"]
     end
 
     it "should return the default value for windows 2008" do
