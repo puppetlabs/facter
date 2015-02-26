@@ -29,6 +29,8 @@
 #include <facter/facts/resolvers/timezone_resolver.hpp>
 #include <facter/facts/resolvers/uptime_resolver.hpp>
 #include <facter/facts/resolvers/virtualization_resolver.hpp>
+#include <facter/facts/resolvers/zfs_resolver.hpp>
+#include <facter/facts/resolvers/zpool_resolver.hpp>
 
 using namespace std;
 using namespace facter::facts;
@@ -318,6 +320,41 @@ protected:
         return "hypervisor";
     }
 };
+
+struct zfs_resolver : resolvers::zfs_resolver
+{
+protected:
+    virtual string zfs_command()
+    {
+        return "";
+    }
+
+    virtual data collect_data(collection& facts) override
+    {
+        data result;
+        result.version = 1;
+        result.features = { "1", "2", "3" };
+        return result;
+    }
+};
+
+struct zpool_resolver : resolvers::zpool_resolver
+{
+protected:
+    virtual string zpool_command()
+    {
+        return "";
+    }
+
+    virtual data collect_data(collection& facts) override
+    {
+        data result;
+        result.version = 1;
+        result.features = { "1", "2", "3" };
+        return result;
+    }
+};
+
 void add_all_facts(collection& facts)
 {
     facts.add("cfacterversion", make_value<string_value>("version"));
@@ -350,9 +387,7 @@ void add_all_facts(collection& facts)
     facts.add(make_shared<timezone_resolver>());
     facts.add(make_shared<uptime_resolver>());
     facts.add(make_shared<virtualization_resolver>());
-    // TODO: refactor the zfs resolver to use the "collect_data" pattern
-    facts.add(fact::zfs_version, make_value<string_value>("version"));
-    facts.add(fact::zfs_featurenumbers, make_value<string_value>("numbers"));
+    facts.add(make_shared<zfs_resolver>());
     // TODO: refactor the zone resolver to use the "collect_data" pattern
     facts.add(string("zone_foo_") + fact::zone_id, make_value<string_value>("id"));
     facts.add(string("zone_foo_") + fact::zone_name, make_value<string_value>("name"));
@@ -363,9 +398,7 @@ void add_all_facts(collection& facts)
     facts.add(string("zone_foo_") + fact::zone_iptype, make_value<string_value>("iptype"));
     facts.add(fact::zones, make_value<integer_value>(1));
     facts.add(fact::zonename, make_value<string_value>("name"));
-    // TODO: refactor the zpool resolver to use the "collect_data" pattern
-    facts.add(fact::zpool_version, make_value<string_value>("version"));
-    facts.add(fact::zpool_featurenumbers, make_value<string_value>("numbers"));
+    facts.add(make_shared<zpool_resolver>());
 }
 
 void validate_attributes(YAML::Node const& node)

@@ -28,6 +28,8 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/resolvers/timezone_resolver.cc"
     "facts/resolvers/uptime_resolver.cc"
     "facts/resolvers/virtualization_resolver.cc"
+    "facts/resolvers/zfs_resolver.cc"
+    "facts/resolvers/zpool_resolver.cc"
     "facts/schema.cc"
     "facts/string_value.cc"
     "logging/logging.cc"

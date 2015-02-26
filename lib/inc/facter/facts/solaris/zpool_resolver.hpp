@@ -1,30 +1,24 @@
 /**
  * @file
- * Declares the Zpool fact resolver.
+ * Declares the Solaris ZFS storage pool (zpool) fact resolver.
  */
 #pragma once
 
-#include "../zfs/zpool_resolver.hpp"
+#include "../resolvers/zpool_resolver.hpp"
 
 namespace facter { namespace facts { namespace solaris {
 
     /**
-     * Responsible for resolving zpool facts.
+     * Responsible for resolving ZFS storage pool (zpool) facts.
      */
-    struct zpool_resolver : zfs::zpool_resolver
+    struct zpool_resolver : resolvers::zpool_resolver
     {
-        /**
-         * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact collection that is resolving facts.
-         */
-        virtual void resolve(collection& facts) override;
-
      protected:
         /**
-         * The zfs command map
-         * @return Returns command path
+         * Gets the platform's zpool command.
+         * @return Returns the platform's zpool command.
          */
-        virtual std::string zpool_cmd();
+        virtual std::string zpool_command();
     };
 
 }}}  // namespace facter::facts::solaris

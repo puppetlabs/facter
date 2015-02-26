@@ -517,29 +517,24 @@ namespace facter { namespace facts {
         constexpr static char const* swapencrypted = "swapencrypted";
 
         /**
-         * The zfs version fact
+         * The ZFS version fact.
          */
         constexpr static char const* zfs_version = "zfs_version";
 
         /**
-         * The zfs supported feature numbers for solaris
+         * The ZFS supported feature numbers.
          */
         constexpr static char const* zfs_featurenumbers = "zfs_featurenumbers";
 
         /**
-         * The zpool version fact
+         * The ZFS storage pool (zpool) version fact.
          */
         constexpr static char const* zpool_version = "zpool_version";
 
         /**
-         * The zpool supported feature numbers for solaris
+         * The ZFS storage pool supported feature numbers.
          */
         constexpr static char const* zpool_featurenumbers = "zpool_featurenumbers";
-
-         /**
-         * The zpool features fact for openzfs
-         */
-        constexpr static char const* zpool_features = "zpool_features";
 
         /**
          * The fact for number of zones.
