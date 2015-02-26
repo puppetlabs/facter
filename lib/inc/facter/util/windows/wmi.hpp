@@ -60,6 +60,11 @@ namespace facter { namespace util { namespace windows {
         constexpr static char const* processor = "Win32_Processor";
 
         /**
+         * Identifier for the WMI property Architecture
+         */
+        constexpr static char const* architecture = "Architecture";
+
+        /**
          * Identifier for the WMI property Name
          */
         constexpr static char const* name = "Name";
