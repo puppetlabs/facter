@@ -29,6 +29,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/resolvers/uptime_resolver.cc"
     "facts/resolvers/virtualization_resolver.cc"
     "facts/resolvers/zfs_resolver.cc"
+    "facts/resolvers/zone_resolver.cc"
     "facts/resolvers/zpool_resolver.cc"
     "facts/schema.cc"
     "facts/string_value.cc"

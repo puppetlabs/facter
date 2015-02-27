@@ -537,41 +537,45 @@ namespace facter { namespace facts {
         constexpr static char const* zpool_featurenumbers = "zpool_featurenumbers";
 
         /**
-         * The fact for number of zones.
+         * The fact for number of Solaris zones.
          */
         constexpr static char const* zones = "zones";
         /**
-         * The fact for name of zone.
+         * The fact for the current Solaris zone name.
          */
         constexpr static char const* zonename = "zonename";
         /**
-         * The fact for zone brand.
+         * The fact for Solaris zone brand.
          */
         constexpr static char const* zone_brand = "brand";
         /**
-         * The fact for zone iptype.
+         * The fact for Solaris zone iptype.
          */
         constexpr static char const* zone_iptype = "iptype";
         /**
-         * The fact for zone uuid.
+         * The fact for Solaris zone uuid.
          */
         constexpr static char const* zone_uuid = "uuid";
         /**
-         * The fact for zone id.
+         * The fact for Solaris zone id.
          */
-        constexpr static char const* zone_id = "zoneid";
+        constexpr static char const* zone_id = "id";
         /**
-         * The fact for zone path.
+         * The fact for Solaris zone path.
          */
-        constexpr static char const* zone_path = "zonepath";
+        constexpr static char const* zone_path = "path";
         /**
-         * The fact for zone state.
+         * The fact for Solaris zone status.
          */
-        constexpr static char const* zone_state = "zonestate";
+        constexpr static char const* zone_status = "status";
         /**
-         * The fact for zone name.
+         * The fact for Solaris zone name.
          */
         constexpr static char const* zone_name = "name";
+        /**
+         * The fact for the structured Solaris zone data.
+         */
+        constexpr static char const* solaris_zones = "solaris_zones";
 
         /**
          * The fact for EC2 metadata.

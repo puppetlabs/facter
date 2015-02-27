@@ -1324,6 +1324,43 @@ serialnumber:
     caveats: |
         Linux: kernel 2.6+ is required due to the reliance on sysfs.
 
+solaris_zones:
+    type: map
+    description: Return information about Solaris zones.
+    resolution: |
+        Solaris: use the `zoneadm` and `zonename` utilities to retrieve information about the Solaris zones.
+    elements:
+        current:
+            type: string
+            description: The name of the current Solaris zone.
+        zones:
+            type: map
+            description: Represents the Solaris zones.
+            elements:
+                <zonename>:
+                    pattern: .*
+                    type: map
+                    description: Represents a Solaris zone.
+                    elements:
+                        brand:
+                            type: string
+                            description: The brand of the Solaris zone.
+                        id:
+                            type: string
+                            description: The id of the Solaris zone.
+                        ip_type:
+                            type: string
+                            description: The IP type of the Solaris zone.
+                        path:
+                            type: string
+                            description: The path of the Solaris zone.
+                        status:
+                            type: string
+                            description: The status of the Solaris zone.
+                        uuid:
+                            type: string
+                            description: The unique identifier of the Solaris zone.
+
 sp_<name>:
     pattern: ^sp_\w+$
     hidden: true
@@ -1656,6 +1693,7 @@ zfs_version:
 zone_<name>_brand:
     pattern: ^zone_\w+_brand$
     type: string
+    hidden: true
     description: Return the brand for the Solaris zone.
     resolution: |
         Solaris: use the `zoneadm` utility to retrieve the brand for the Solaris zone.
@@ -1665,6 +1703,7 @@ zone_<name>_brand:
 zone_<name>_iptype:
     pattern: ^zone_\w+_iptype$
     type: string
+    hidden: true
     description: Return the IP type for the Solaris zone.
     resolution: |
         Solaris: use the `zoneadm` utility to retrieve the IP type for the Solaris zone.
@@ -1674,6 +1713,7 @@ zone_<name>_iptype:
 zone_<name>_name:
     pattern: ^zone_\w+_name$
     type: string
+    hidden: true
     description: Return the name for the Solaris zone.
     resolution: |
         Solaris: use the `zoneadm` utility to retrieve the name for the Solaris zone.
@@ -1683,33 +1723,37 @@ zone_<name>_name:
 zone_<name>_uuid:
     pattern: ^zone_\w+_uuid$
     type: string
+    hidden: true
     description: Return the unique identifier for the Solaris zone.
     resolution: |
         Solaris: use the `zoneadm` utility to retrieve the unique identifier for the Solaris zone.
     caveats: |
         Solaris: the `zoneadm` utility must be present.
 
-zone_<name>_zoneid:
-    pattern: ^zone_\w+_zoneid$
+zone_<name>_id:
+    pattern: ^zone_\w+_id$
     type: string
+    hidden: true
     description: Return the zone identifier for the Solaris zone.
     resolution: |
         Solaris: use the `zoneadm` utility to retrieve the zone identifier for the Solaris zone.
     caveats: |
         Solaris: the `zoneadm` utility must be present.
 
-zone_<name>_zonepath:
-    pattern: ^zone_\w+_zonepath$
+zone_<name>_path:
+    pattern: ^zone_\w+_path$
     type: string
+    hidden: true
     description: Return the zone path for the Solaris zone.
     resolution: |
         Solaris: use the `zoneadm` utility to retrieve the zone path for the Solaris zone.
     caveats: |
         Solaris: the `zoneadm` utility must be present.
 
-zone_<name>_zonestate:
-    pattern: ^zone_\w+_zonestate$
+zone_<name>_status:
+    pattern: ^zone_\w+_status$
     type: string
+    hidden: true
     description: Return the zone state for the Solaris zone.
     resolution: |
         Solaris: use the `zoneadm` utility to retrieve the zone state for the Solaris zone.
@@ -1718,6 +1762,7 @@ zone_<name>_zonestate:
 
 zonename:
     type: string
+    hidden: true
     description: Return the name of the current Solaris zone.
     resolution: |
         Solaris: use the `zonename` utility to retrieve the current zone name.
@@ -1726,6 +1771,7 @@ zonename:
 
 zones:
     type: integer
+    hidden: true
     description: Return the count of Solaris zones.
     resolution: |
         Solaris: use the `zoneadm` utility to retrieve the count of Solaris zones.

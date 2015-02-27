@@ -30,6 +30,7 @@
 #include <facter/facts/resolvers/uptime_resolver.hpp>
 #include <facter/facts/resolvers/virtualization_resolver.hpp>
 #include <facter/facts/resolvers/zfs_resolver.hpp>
+#include <facter/facts/resolvers/zone_resolver.hpp>
 #include <facter/facts/resolvers/zpool_resolver.hpp>
 
 using namespace std;
@@ -345,6 +346,26 @@ protected:
     }
 };
 
+struct zone_resolver : resolvers::zone_resolver
+{
+protected:
+    virtual data collect_data(collection& facts) override
+    {
+        data result;
+        zone z;
+        z.brand = "brand";
+        z.id = "id";
+        z.ip_type = "ip type";
+        z.name = "name";
+        z.path = "path";
+        z.status = "status";
+        z.uuid = "uuid";
+        result.zones.emplace_back(move(z));
+        result.current_zone_name = "name";
+        return result;
+    }
+};
+
 struct zpool_resolver : resolvers::zpool_resolver
 {
 protected:
@@ -388,16 +409,7 @@ void add_all_facts(collection& facts)
     facts.add(make_shared<uptime_resolver>());
     facts.add(make_shared<virtualization_resolver>());
     facts.add(make_shared<zfs_resolver>());
-    // TODO: refactor the zone resolver to use the "collect_data" pattern
-    facts.add(string("zone_foo_") + fact::zone_id, make_value<string_value>("id"));
-    facts.add(string("zone_foo_") + fact::zone_name, make_value<string_value>("name"));
-    facts.add(string("zone_foo_") + fact::zone_state, make_value<string_value>("state"));
-    facts.add(string("zone_foo_") + fact::zone_path, make_value<string_value>("path"));
-    facts.add(string("zone_foo_") + fact::zone_uuid, make_value<string_value>("uuid"));
-    facts.add(string("zone_foo_") + fact::zone_brand, make_value<string_value>("brand"));
-    facts.add(string("zone_foo_") + fact::zone_iptype, make_value<string_value>("iptype"));
-    facts.add(fact::zones, make_value<integer_value>(1));
-    facts.add(fact::zonename, make_value<string_value>("name"));
+    facts.add(make_shared<zone_resolver>());
     facts.add(make_shared<zpool_resolver>());
 }
 

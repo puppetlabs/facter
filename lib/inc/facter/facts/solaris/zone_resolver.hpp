@@ -1,28 +1,25 @@
 /**
- * @file
- * Declares the Solaris zone fact resolver.
- */
+* @file
+* Declares the Solaris zone fact resolver.
+*/
 #pragma once
 
-#include "../resolver.hpp"
+#include "../resolvers/zone_resolver.hpp"
 
 namespace facter { namespace facts { namespace solaris {
 
     /**
-     * Responsible for resolving memory facts.
+     * Responsible for resolving Solaris zone facts.
      */
-    struct zone_resolver : resolver
+    struct zone_resolver : resolvers::zone_resolver
     {
+     protected:
         /**
-         * Constructs the zone_resolver.
-         */
-        zone_resolver();
-
-        /**
-         * Called to resolve all facts the resolver is responsible for.
-         * @param facts The fact collection that is resolving facts.
-         */
-        virtual void resolve(collection& facts) override;
+        * Collects the resolver data.
+        * @param facts The fact collection that is resolving facts.
+        * @return Returns the resolver data.
+        */
+        virtual data collect_data(collection& facts);
     };
 
 }}}  // namespace facter::facts::solaris

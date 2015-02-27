@@ -55,6 +55,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/uptime_resolver.cc"
     "src/facts/resolvers/virtualization_resolver.cc"
     "src/facts/resolvers/zpool_resolver.cc"
+    "src/facts/resolvers/zone_resolver.cc"
     "src/facts/resolvers/zfs_resolver.cc"
     "src/facts/scalar_value.cc"
     "src/logging/logging.cc"
@@ -158,9 +159,9 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
         "src/facts/solaris/virtualization_resolver.cc"
         "src/facts/solaris/networking_resolver.cc"
         "src/facts/solaris/memory_resolver.cc"
-        "src/facts/solaris/zpool_resolver.cc"
         "src/facts/solaris/zfs_resolver.cc"
         "src/facts/solaris/zone_resolver.cc"
+        "src/facts/solaris/zpool_resolver.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBFACTER_PLATFORM_SOURCES
