@@ -44,6 +44,11 @@ function travis_make()
             echo "documentation failed."
             exit 1
         fi
+        ruby docs/generate.rb > /tmp/facts.md
+        if [ $? -ne 0 ]; then
+            echo "fact documentation failed."
+            exit 1
+        fi
         popd
     elif [ $1 != "cppcheck" ]; then
         LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so ctest -V 2>&1 | c++filt

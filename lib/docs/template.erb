@@ -1,0 +1,22 @@
+<%# This template is used to generate a markdown file documenting facts. -%>
+<%# Run 'ruby generate.rb > facts.md' to generate the markdown file. -%>
+<% facts.each do |name, schema| -%>
+## `<%= name %>`
+
+**Purpose:**
+
+<%= schema['description'] %>
+<% if schema['resolution'] %>
+**Resolution:**
+
+<%= schema['resolution'].split("\n").map { |line| "* " + line }.join("\n") %>
+<% end -%>
+<% if schema['caveats'] %>
+**Caveats:**
+
+<%= schema['caveats'].split("\n").map { |line| "* " + line }.join("\n") %>
+<% end -%>
+
+([↑ Back to top](#page-nav))
+
+<% end -%>
