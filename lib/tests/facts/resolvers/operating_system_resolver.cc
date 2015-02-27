@@ -37,6 +37,13 @@ struct test_os_resolver : operating_system_resolver
         result.win.system32 = "C:\\WINDOWS\\sysnative";
         result.architecture = "amd64";
         result.hardware = "x86-64";
+        result.selinux.supported = true;
+        result.selinux.enabled = true;
+        result.selinux.enforced = true;
+        result.selinux.current_mode = "current mode";
+        result.selinux.config_mode = "config mode";
+        result.selinux.config_policy = "config policy";
+        result.selinux.policy_version = "policy version";
         return result;
     }
 
@@ -56,11 +63,11 @@ SCENARIO("using the operating system resolver") {
     }
     WHEN("data is present") {
         facts.add(make_shared<test_os_resolver>());
-        REQUIRE(facts.size() == 20);
+        REQUIRE(facts.size() == 26);
         THEN("a structured fact is added") {
             auto os = facts.get<map_value>(fact::os);
             REQUIRE(os);
-            REQUIRE(os->size() == 8);
+            REQUIRE(os->size() == 9);
             auto distro = os->get<map_value>("distro");
             REQUIRE(distro);
             REQUIRE(distro->size() == 5);
@@ -139,6 +146,27 @@ SCENARIO("using the operating system resolver") {
             auto system32 = windows->get<string_value>("system32");
             REQUIRE(system32);
             REQUIRE(system32->value() == "C:\\WINDOWS\\sysnative");
+            auto selinux = os->get<map_value>("selinux");
+            REQUIRE(selinux);
+            REQUIRE(selinux->size() == 6);
+            auto bval = selinux->get<boolean_value>("enabled");
+            REQUIRE(bval);
+            REQUIRE(bval->value());
+            bval = selinux->get<boolean_value>("enforced");
+            REQUIRE(bval);
+            REQUIRE(bval->value());
+            auto sval = selinux->get<string_value>("policy_version");
+            REQUIRE(sval);
+            REQUIRE(sval->value() == "policy version");
+            sval = selinux->get<string_value>("current_mode");
+            REQUIRE(sval);
+            REQUIRE(sval->value() == "current mode");
+            sval = selinux->get<string_value>("config_mode");
+            REQUIRE(sval);
+            REQUIRE(sval->value() == "config mode");
+            sval = selinux->get<string_value>("config_policy");
+            REQUIRE(sval);
+            REQUIRE(sval->value() == "config policy");
         }
         THEN("flat facts are added") {
             auto name = facts.get<string_value>(fact::operating_system);
@@ -198,6 +226,24 @@ SCENARIO("using the operating system resolver") {
             auto system32 = facts.get<string_value>(fact::windows_system32);
             REQUIRE(system32);
             REQUIRE(system32->value() == "C:\\WINDOWS\\sysnative");
+            auto bval = facts.get<boolean_value>(fact::selinux);
+            REQUIRE(bval);
+            REQUIRE(bval->value());
+            bval = facts.get<boolean_value>(fact::selinux_enforced);
+            REQUIRE(bval);
+            REQUIRE(bval->value());
+            auto sval = facts.get<string_value>(fact::selinux_policyversion);
+            REQUIRE(sval);
+            REQUIRE(sval->value() == "policy version");
+            sval = facts.get<string_value>(fact::selinux_current_mode);
+            REQUIRE(sval);
+            REQUIRE(sval->value() == "current mode");
+            sval = facts.get<string_value>(fact::selinux_config_mode);
+            REQUIRE(sval);
+            REQUIRE(sval->value() == "config mode");
+            sval = facts.get<string_value>(fact::selinux_config_policy);
+            REQUIRE(sval);
+            REQUIRE(sval->value() == "config policy");
         }
     }
 }

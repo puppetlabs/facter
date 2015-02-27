@@ -199,6 +199,13 @@ struct operating_system_resolver : resolvers::operating_system_resolver
         result.win.system32 = "system32";
         result.architecture = "arch";
         result.hardware = "hardware";
+        result.selinux.supported = true;
+        result.selinux.enabled = true;
+        result.selinux.enforced = true;
+        result.selinux.current_mode = "current mode";
+        result.selinux.config_mode = "config mode";
+        result.selinux.config_policy = "config policy";
+        result.selinux.policy_version = "policy version";
         return result;
     }
 
@@ -375,13 +382,6 @@ void add_all_facts(collection& facts)
     facts.add(make_shared<resolvers::path_resolver>());
     facts.add(make_shared<processor_resolver>());
     facts.add(make_shared<ruby_resolver>());
-    // TODO: refactor the selinux resolver to use the "collect_data" pattern
-    facts.add(fact::selinux, make_value<string_value>("true"));
-    facts.add(fact::selinux_enforced, make_value<string_value>("true"));
-    facts.add(fact::selinux_policyversion, make_value<string_value>("123"));
-    facts.add(fact::selinux_current_mode, make_value<string_value>("1"));
-    facts.add(fact::selinux_config_mode, make_value<string_value>("2"));
-    facts.add(fact::selinux_config_policy, make_value<string_value>("3"));
     facts.add(make_shared<ssh_resolver>());
     facts.add(make_shared<system_profiler_resolver>());
     facts.add(make_shared<timezone_resolver>());

@@ -174,7 +174,6 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         "src/facts/linux/uptime_resolver.cc"
         "src/facts/linux/collection.cc"
         "src/facts/linux/processor_resolver.cc"
-        "src/facts/linux/selinux_resolver.cc"
         "src/facts/linux/virtualization_resolver.cc"
         "src/util/bsd/scoped_ifaddrs.cc"
     )

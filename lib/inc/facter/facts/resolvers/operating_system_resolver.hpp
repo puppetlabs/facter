@@ -86,6 +86,57 @@ namespace facter { namespace facts { namespace resolvers {
         };
 
         /**
+         * Represents information about SELinux.
+         */
+        struct selinux_data
+        {
+            /**
+             * Default constructor for selinux data.
+             */
+            selinux_data() :
+                supported(false),
+                enabled(false),
+                enforced(false)
+            {
+            }
+
+            /**
+             * Stores whether or not SELinux is supported.
+             */
+            bool supported;
+
+            /**
+             * Stores whether or not SELinux is enabled.
+             */
+            bool enabled;
+
+            /**
+             * Stores whether or not SELinux is enforced.
+             */
+            bool enforced;
+
+            /**
+             * Stores the SELinux policy version.
+             */
+            std::string policy_version;
+
+            /**
+             * Stores the current SELinux mode.
+             */
+            std::string current_mode;
+
+            /**
+             * Stores the configured SELinux mode.
+             */
+            std::string config_mode;
+
+            /**
+             * Stores the configured SELinux policy.
+             */
+            std::string config_policy;
+        };
+
+        /**
          * Represents operating system data.
          */
         struct data
@@ -129,6 +180,11 @@ namespace facter { namespace facts { namespace resolvers {
              * Stores information about Windows.
              */
             windows win;
+
+            /**
+             * Stores information about SELinux.
+             */
+            selinux_data selinux;
         };
 
         /**

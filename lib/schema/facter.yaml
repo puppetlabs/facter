@@ -1068,6 +1068,30 @@ os:
                 minor:
                     type: string
                     description: The minor release of the operating system.
+        selinux:
+            type: map
+            description: Represents information about Security-Enhanced Linux (SELinux).
+            resolution: |
+                Linux: parse the contents of `/proc/self/mounts`, `/etc/selinux/config`, and `<selinux_mountpoint>/enforce` to retrieve SELinux information.
+            elements:
+                config_mode:
+                    type: string
+                    description: The configured SELinux mode.
+                config_policy:
+                    type: string
+                    description: The configured SELinux policy.
+                current_mode:
+                    type: string
+                    description: The current SELinux mode.
+                enabled:
+                    type: boolean
+                    description: True if SELinux is enabled or false if not.
+                enforced:
+                    type: boolean
+                    description: True if SELinux policy is enforced or false if not.
+                policy_version:
+                    type: string
+                    description: The version of the SELinux policy.
         windows:
             type: map
             description: Represents information about Windows.
@@ -1248,37 +1272,43 @@ rubyversion:
         All platforms: facter must be able to locate `libruby`.
 
 selinux:
-    type: string
+    type: boolean
+    hidden: true
     description: Return whether Security-Enhanced Linux (SELinux) is enabled.
     resolution: |
         Linux: parse the contents of `/proc/self/mounts` to determine if SELinux is enabled.
 
 selinux_config_mode:
     type: string
+    hidden: true
     description: Return the configured Security-Enhanced Linux (SELinux) mode.
     resolution: |
         Linux: parse the contents of `/etc/selinux/config` to retrieve the configured SELinux mode.
 
 selinux_config_policy:
     type: string
+    hidden: true
     description: Return the configured Security-Enhanced Linux (SELinux) policy.
     resolution: |
         Linux: parse the contents of `/etc/selinux/config` to retrieve the configured SELinux policy.
 
 selinux_current_mode:
     type: string
+    hidden: true
     description: Return the current Security-Enhanced Linux (SELinux) mode.
     resolution: |
         Linux: parse the contents of `<mountpoint>/enforce` to retrieve the current SELinux mode.
 
 selinux_enforced:
-    type: string
+    type: boolean
+    hidden: true
     description: Return whether Security-Enhanced Linux (SELinux) is enforced.
     resolution: |
         Linux: parse the contents of `<mountpoint>/enforce` to retrieve the current SELinux mode.
 
 selinux_policyversion:
     type: string
+    hidden: true
     description: Return the Security-Enhanced Linux (SELinux) policy version.
     resolution: |
         Linux: parse the contents of `<mountpoint>/policyvers` to retrieve the SELinux policy version.
