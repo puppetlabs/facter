@@ -1,24 +1,24 @@
 /**
  * @file
- * Declares the Zfs fact resolver.
+ * Declares the ZFS fact resolver.
  */
 #pragma once
 
-#include "../zfs/zfs_resolver.hpp"
+#include "../resolvers/zfs_resolver.hpp"
 
 namespace facter { namespace facts { namespace solaris {
 
     /**
      * Responsible for resolving ZFS facts.
      */
-    struct zfs_resolver : zfs::zfs_resolver
+    struct zfs_resolver : resolvers::zfs_resolver
     {
      protected:
         /**
-         * The ZFS command map
-         * @return Returns command path
+         * Gets the platform's ZFS command.
+         * @return Returns the platform's ZFS command.
          */
-        virtual std::string zfs_cmd();
+        virtual std::string zfs_command();
     };
 
 }}}  // namespace facter::facts::solaris

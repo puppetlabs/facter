@@ -33,7 +33,13 @@ namespace facter { namespace facts { namespace resolvers {
                 fact::macosx_productversion,
                 fact::macosx_productversion_major,
                 fact::macosx_productversion_minor,
-                fact::windows_system32
+                fact::windows_system32,
+                fact::selinux,
+                fact::selinux_enforced,
+                fact::selinux_policyversion,
+                fact::selinux_current_mode,
+                fact::selinux_config_mode,
+                fact::selinux_config_policy,
             })
     {
     }
@@ -182,6 +188,33 @@ namespace facter { namespace facts { namespace resolvers {
 
         if (!windows->empty()) {
             os->add("windows", move(windows));
+        }
+
+        if (data.selinux.supported) {
+            auto selinux = make_value<map_value>();
+            facts.add(fact::selinux, make_value<boolean_value>(data.selinux.enabled, true));
+            selinux->add("enabled", make_value<boolean_value>(data.selinux.enabled));
+            if (data.selinux.enabled) {
+                facts.add(fact::selinux_enforced, make_value<boolean_value>(data.selinux.enforced, true));
+                selinux->add("enforced", make_value<boolean_value>(data.selinux.enforced));
+                if (!data.selinux.current_mode.empty()) {
+                    facts.add(fact::selinux_current_mode, make_value<string_value>(data.selinux.current_mode, true));
+                    selinux->add("current_mode", make_value<string_value>(move(data.selinux.current_mode)));
+                }
+                if (!data.selinux.config_mode.empty()) {
+                    facts.add(fact::selinux_config_mode, make_value<string_value>(data.selinux.config_mode, true));
+                    selinux->add("config_mode", make_value<string_value>(move(data.selinux.config_mode)));
+                }
+                if (!data.selinux.config_policy.empty()) {
+                    facts.add(fact::selinux_config_policy, make_value<string_value>(data.selinux.config_policy, true));
+                    selinux->add("config_policy", make_value<string_value>(move(data.selinux.config_policy)));
+                }
+                if (!data.selinux.policy_version.empty()) {
+                    facts.add(fact::selinux_policyversion, make_value<string_value>(data.selinux.policy_version, true));
+                    selinux->add("policy_version", make_value<string_value>(move(data.selinux.policy_version)));
+                }
+            }
+            os->add("selinux", move(selinux));
         }
 
         if (!os->empty()) {

@@ -38,6 +38,8 @@ namespace facter { namespace facts { namespace linux {
         static std::string check_redhat_linux();
         static std::string check_suse_linux();
         static std::string check_other_linux();
+        static selinux_data collect_selinux_data();
+        static std::string get_selinux_mountpoint();
     };
 
 }}}  // namespace facter::facts::linux

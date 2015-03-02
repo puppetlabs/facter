@@ -82,6 +82,8 @@ namespace facter { namespace facts { namespace linux {
             }
         }
 
+        result.selinux = collect_selinux_data();
+
         return result;
     }
 
@@ -368,4 +370,58 @@ namespace facter { namespace facts { namespace linux {
         }
         return {};
     }
+
+    operating_system_resolver::selinux_data operating_system_resolver::collect_selinux_data()
+    {
+        selinux_data result;
+        result.supported = true;
+
+        string mountpoint = get_selinux_mountpoint();
+        result.enabled = !mountpoint.empty();
+        if (!result.enabled) {
+            return result;
+        }
+
+        // Get the policy version
+        result.policy_version = file::read(mountpoint + "/policyvers");
+
+        // Check for enforcement
+        string enforce = file::read(mountpoint + "/enforce");
+        if (!enforce.empty()) {
+            if (enforce == "1") {
+                result.enforced = true;
+                result.current_mode = "enforcing";
+            } else {
+                result.current_mode = "permissive";
+            }
+        }
+
+        // Parse the SELinux config for mode and policy
+        static re_adapter mode_regex("(?m)^SELINUX=(\\w+)$");
+        static re_adapter policy_regex("(?m)^SELINUXTYPE=(\\w+)$");
+        file::each_line("/etc/selinux/config", [&](string& line) {
+            if (re_search(line, mode_regex, &result.config_mode)) {
+                return true;
+            }
+            if (re_search(line, policy_regex, &result.config_policy)) {
+                return true;
+            }
+            return true;
+        });
+        return result;
+    }
+
+    string operating_system_resolver::get_selinux_mountpoint()
+    {
+        static re_adapter regexp("\\S+ (\\S+) selinuxfs");
+        string mountpoint;
+        file::each_line("/proc/self/mounts", [&](string& line) {
+            if (re_search(line, regexp, &mountpoint)) {
+                return false;
+            }
+            return true;
+        });
+        return mountpoint;
+    }
+
 }}}  // namespace facter::facts::linux
