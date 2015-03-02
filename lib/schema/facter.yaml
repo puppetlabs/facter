@@ -176,7 +176,7 @@ dhcp_servers:
         Linux: parse `dhclient` lease files or use the `dhcpcd` utility to retrieve the DHCP servers.
         Mac OSX: use the `ipconfig` utility to retrieve the DHCP servers.
         Solaris: use the `dhcpinfo` utility to retrieve the DHCP servers.
-        Windows: use the `GetAdaptersAddresses` fundtion to retrieve the DHCP servers.
+        Windows: use the `GetAdaptersAddresses` (Windows Server 2003: `GetAdaptersInfo`) function to retrieve the DHCP servers.
     elements:
         <interface>:
             pattern: ^((?!system).+)*$
@@ -792,7 +792,7 @@ netmask:
         Linux: use the `getifaddrs` function to retrieve the network interface netmask.
         Mac OSX: use the `getifaddrs` function to retrieve the network interface netmask.
         Solaris: use the `ioctl` function to retrieve the network interface netmask.
-        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface netmask.
+        Windows: use the `GetAdaptersAddresses` (Windows Server 2003: `GetAdaptersInfo`) function to retrieve the network interface netmask.
 
 netmask6:
     type: ip6
@@ -803,6 +803,8 @@ netmask6:
         Mac OSX: use the `getifaddrs` function to retrieve the network interface netmask.
         Solaris: use the `ioctl` function to retrieve the network interface netmask.
         Windows: use the `GetAdaptersAddresses` function to retrieve the network interface netmask.
+    caveats: |
+        Windows Server 2003: IPv6 netmasks are not supported.
 
 netmask6_<interface>:
     pattern: ^netmask6_.+$
@@ -814,6 +816,8 @@ netmask6_<interface>:
         Mac OSX: use the `getifaddrs` function to retrieve the network interface netmask.
         Solaris: use the `ioctl` function to retrieve the network interface netmask.
         Windows: use the `GetAdaptersAddresses` function to retrieve the network interface netmask.
+    caveats: |
+        Windows Server 2003: IPv6 netmasks are not supported.
 
 netmask_<interface>:
     pattern: ^netmask_.+$
@@ -824,7 +828,7 @@ netmask_<interface>:
         Linux: use the `getifaddrs` function to retrieve the network interface netmask.
         Mac OSX: use the `getifaddrs` function to retrieve the network interface netmask.
         Solaris: use the `ioctl` function to retrieve the network interface netmask.
-        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface netmask.
+        Windows: use the `GetAdaptersAddresses` (Windows Server 2003: `GetAdaptersInfo`) function to retrieve the network interface netmask.
 
 network:
     type: ip
@@ -876,6 +880,8 @@ networking:
         Mac OSX: use the `getifaddrs` function to retrieve the network interfaces.
         Solaris: use the `ioctl` function to retrieve the network interfaces.
         Windows: use the `GetAdaptersAddresses` function to retrieve the network interfaces.
+    caveats: |
+        Windows Server 2003: the `GetAdaptersInfo` function is used for DHCP and netmask lookup. This function does not support IPv6 netmasks.
     elements:
         dhcp:
             type: ip
