@@ -22,9 +22,47 @@ namespace facter { namespace facts { namespace windows {
         string isa;
         int logical_count = 0;
 
-        auto names = _wmi.query(wmi::processor, {wmi::name});
-        for (auto const& nameobj : names) {
-            models.emplace_back(wmi::get(nameobj, wmi::name));
+        auto procs = _wmi.query(wmi::processor, {wmi::name, wmi::architecture});
+        if (procs.empty()) {
+            LOG_DEBUG("WMI processor Name, Architecture query returned no results.");
+        }
+
+        for (auto const& procobj : procs) {
+            models.emplace_back(wmi::get(procobj, wmi::name));
+
+            if (isa.empty()) {
+                // Query for architecture and transform numerical ID into a string based on
+                // https://msdn.microsoft.com/en-us/library/aa394373%28v=vs.85%29.aspx.
+                // Use the architecture of the first result.
+                int architecture = stoi(wmi::get(procobj, wmi::architecture));
+
+                switch (architecture) {
+                    case 0:
+                        isa = "x86";
+                        break;
+                    case 1:
+                        isa = "MIPS";
+                        break;
+                    case 2:
+                        isa = "Alpha";
+                        break;
+                    case 3:
+                        isa = "PowerPC";
+                        break;
+                    case 5:
+                        isa = "ARM";
+                        break;
+                    case 6:
+                        isa = "Itanium-based systems";
+                        break;
+                    case 9:
+                        isa = "x64";
+                        break;
+                    default:
+                        LOG_DEBUG("Unable to determine processor type: unknown architecture");
+                        break;
+                }
+            }
         }
 
         // Query number of logical processors separately; it's not supported on Server 2003, and will cause
@@ -36,45 +74,6 @@ namespace facter { namespace facts { namespace windows {
 
         if (logical_count == 0) {
             logical_count = models.size();
-        }
-
-        // Query for architecture and transform numerical ID into a string based on
-        // https://msdn.microsoft.com/en-us/library/aa394373%28v=vs.85%29.aspx.
-        // Use the architecture of the first result.
-        auto arch_id = _wmi.query(wmi::processor, {wmi::architecture});
-        if (!arch_id.empty()) {
-            int architecture = stoi(wmi::get(arch_id.front(), wmi::architecture));
-
-            switch (architecture) {
-                case 0:
-                    isa = "x86";
-                    break;
-                case 1:
-                    isa = "MIPS";
-                    break;
-                case 2:
-                    isa = "Alpha";
-                    break;
-                case 3:
-                    isa = "PowerPC";
-                    break;
-                case 5:
-                    isa = "ARM";
-                    break;
-                case 6:
-                    isa = "Itanium-based systems";
-                    break;
-                case 9:
-                    isa = "x64";
-                    break;
-                default:
-                    LOG_DEBUG("Unable to determine processor type: unknown architecture");
-                    isa = "";
-                    break;
-            }
-        } else {
-            LOG_DEBUG("WMI processor Architecture query returned no results.");
-            isa = "";
         }
 
         return make_tuple(models.size(), logical_count, move(models), move(isa), 0);
