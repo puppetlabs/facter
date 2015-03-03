@@ -1,4 +1,5 @@
 require 'facter/operatingsystem/base'
+require 'facter/operatingsystem/osreleaselinux'
 require 'facter/operatingsystem/cumuluslinux'
 require 'facter/operatingsystem/linux'
 require 'facter/operatingsystem/sunos'
@@ -13,6 +14,8 @@ module Facter
         release_info = Facter::Util::Operatingsystem.os_release
         if release_info['NAME'] == "Cumulus Linux"
           Facter::Operatingsystem::CumulusLinux.new
+        elsif release_info['NAME'] == "CoreOS"
+          Facter::Operatingsystem::OsReleaseLinux.new
         else
           Facter::Operatingsystem::Linux.new
         end
