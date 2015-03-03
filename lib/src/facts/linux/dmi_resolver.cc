@@ -1,5 +1,5 @@
 #include <facter/facts/linux/dmi_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/file.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>

@@ -1,5 +1,5 @@
 #include <facter/facts/posix/operating_system_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
 #include <sys/utsname.h>
 

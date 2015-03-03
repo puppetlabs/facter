@@ -6,7 +6,7 @@
 #include <facter/facts/vm.hpp>
 #include <facter/util/string.hpp>
 #include <facter/util/regex.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <set>
 

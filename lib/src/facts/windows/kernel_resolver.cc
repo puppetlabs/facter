@@ -2,7 +2,7 @@
 #include <facter/facts/os.hpp>
 #include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/windows.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/optional.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/format.hpp>

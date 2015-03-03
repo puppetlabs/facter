@@ -1,5 +1,5 @@
 #include <facter/facts/posix/identity_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>

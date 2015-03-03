@@ -16,11 +16,11 @@ namespace facter { namespace facts {
 
 }}  // namespace facter::facts
 
-namespace facter { namespace logging {
+namespace leatherman { namespace logging {
 
     enum class log_level;
 
-}}  // namespace facter::logging
+}}  // namespace leatherman::logging
 
 namespace facter { namespace ruby {
 
@@ -123,7 +123,7 @@ namespace facter { namespace ruby {
         VALUE load_fact(VALUE value);
         void load_file(std::string const& path);
         VALUE create_fact(VALUE name);
-        static VALUE level_to_symbol(facter::logging::log_level level);
+        static VALUE level_to_symbol(leatherman::logging::log_level level);
 
         facter::facts::collection& _collection;
         std::map<std::string, VALUE> _facts;

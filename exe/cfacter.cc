@@ -1,6 +1,6 @@
 #include <facter/version.h>
+#include <leatherman/logging/logging.hpp>
 #include <facter/facts/collection.hpp>
-#include <facter/logging/logging.hpp>
 #include <facter/ruby/api.hpp>
 #include <facter/ruby/module.hpp>
 #include <boost/algorithm/string.hpp>
@@ -100,7 +100,7 @@ void log_queries(set<string> const& queries)
 
 int main(int argc, char **argv)
 {
-    using namespace facter::logging;
+    using namespace leatherman::logging;
 
     try
     {

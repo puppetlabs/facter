@@ -18,7 +18,7 @@
 #include <facter/util/scoped_resource.hpp>
 #include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/windows.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <Shlobj.h>
 

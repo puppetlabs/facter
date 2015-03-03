@@ -3,7 +3,7 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/array_value.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/environment.hpp>
 #include <boost/filesystem.hpp>

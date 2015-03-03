@@ -5,7 +5,7 @@
 #include <facter/util/windows/system_error.hpp>
 #include <facter/util/scoped_env.hpp>
 #include <facter/util/windows/windows.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -19,7 +19,7 @@
 using namespace std;
 using namespace facter::util;
 using namespace facter::util::windows;
-using namespace facter::logging;
+using namespace leatherman::logging;
 using namespace boost::filesystem;
 using namespace boost::algorithm;
 

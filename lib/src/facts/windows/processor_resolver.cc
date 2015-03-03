@@ -1,7 +1,7 @@
 #include <facter/facts/windows/processor_resolver.hpp>
 #include <facter/util/windows/wmi.hpp>
 #include <facter/util/regex.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 
 using namespace std;
 using namespace facter::util;

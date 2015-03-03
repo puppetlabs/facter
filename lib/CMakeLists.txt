@@ -23,6 +23,7 @@ configure_file (
 
 # Set compiler-specific flags
 set(CMAKE_CXX_FLAGS ${FACTER_CXX_FLAGS})
+leatherman_logging_namespace("puppetlabs.facter")
 
 # Set the common (platform-independent) sources
 set(LIBFACTER_COMMON_SOURCES
@@ -58,7 +59,6 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/zone_resolver.cc"
     "src/facts/resolvers/zfs_resolver.cc"
     "src/facts/scalar_value.cc"
-    "src/logging/logging.cc"
     "src/ruby/aggregate_resolution.cc"
     "src/ruby/api.cc"
     "src/ruby/chunk.cc"
@@ -101,7 +101,6 @@ if (UNIX)
         "src/ruby/posix/api.cc"
         "src/util/posix/dynamic_library.cc"
         "src/util/posix/environment.cc"
-        "src/util/posix/locale.cc"
         "src/util/posix/scoped_addrinfo.cc"
         "src/util/posix/scoped_descriptor.cc"
     )
@@ -120,7 +119,6 @@ if (WIN32)
         "src/ruby/windows/api.cc"
         "src/util/windows/dynamic_library.cc"
         "src/util/windows/environment.cc"
-        "src/util/windows/locale.cc"
         "src/util/windows/registry.cc"
         "src/util/windows/system_error.cc"
         "src/util/windows/wmi.cc"
@@ -221,10 +219,10 @@ include_directories(
     inc
     ${RAPIDJSON_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-    ${NOWIDE_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
     ${CURL_INCLUDE_DIRS}
+    ${LEATHERMAN_INCLUDE_DIRS}
 )
 
 link_directories(
@@ -242,11 +240,11 @@ set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX 
 target_link_libraries(libfacter
     ${POSIX_LIBRARIES}
     ${LIBFACTER_PLATFORM_LIBRARIES}
+    ${LEATHERMAN_LIBRARIES}
     ${Boost_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
     ${CURL_LIBRARIES}
-    ${NOWIDE_LIBRARIES}
 )
 
 if (WIN32)

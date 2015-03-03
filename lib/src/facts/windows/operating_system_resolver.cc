@@ -1,6 +1,6 @@
 #include <facter/facts/windows/operating_system_resolver.hpp>
 #include <facter/facts/collection.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/regex.hpp>
 #include <facter/util/windows/system_error.hpp>
 #include <facter/util/windows/wmi.hpp>

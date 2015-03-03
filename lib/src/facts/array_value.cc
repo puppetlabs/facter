@@ -1,6 +1,6 @@
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>
 

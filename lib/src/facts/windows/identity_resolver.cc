@@ -1,5 +1,5 @@
 #include <facter/facts/windows/identity_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/windows/system_error.hpp>
 #include <boost/nowide/convert.hpp>
 

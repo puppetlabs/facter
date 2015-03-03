@@ -1,5 +1,5 @@
 #include <facter/util/windows/wsa.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/nowide/convert.hpp>
 #include <Ws2tcpip.h>
 

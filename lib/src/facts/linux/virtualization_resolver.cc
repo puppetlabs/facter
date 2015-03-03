@@ -4,7 +4,7 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/regex.hpp>
 #include <boost/filesystem.hpp>

@@ -1,5 +1,5 @@
 #include <facter/facts/osx/processor_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <sys/types.h>
 #include <sys/sysctl.h>
 

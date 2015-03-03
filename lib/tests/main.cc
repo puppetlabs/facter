@@ -1,12 +1,12 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 #include <facter/ruby/api.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/nowide/iostream.hpp>
 
 using namespace std;
 using namespace facter::ruby;
-using namespace facter::logging;
+using namespace leatherman::logging;
 
 int main(int argc, char **argv)
 {

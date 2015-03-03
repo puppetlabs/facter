@@ -1,6 +1,6 @@
 #include <facter/execution/execution.hpp>
 #include <facter/util/directory.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <cstdlib>
@@ -10,7 +10,7 @@
 
 using namespace std;
 using namespace facter::util;
-using namespace facter::logging;
+using namespace leatherman::logging;
 using namespace boost::filesystem;
 using namespace boost::algorithm;
 

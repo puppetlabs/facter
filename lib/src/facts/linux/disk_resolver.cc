@@ -1,5 +1,5 @@
 #include <facter/facts/linux/disk_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/directory.hpp>
 #include <boost/lexical_cast.hpp>

@@ -2,7 +2,7 @@
 #include <facter/util/posix/scoped_descriptor.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <sys/sockio.h>
 #include <net/if_arp.h>

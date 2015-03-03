@@ -3,7 +3,7 @@
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/nowide/fstream.hpp>
 #include <yaml-cpp/yaml.h>

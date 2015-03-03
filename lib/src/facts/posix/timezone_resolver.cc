@@ -1,5 +1,5 @@
 #include <facter/facts/posix/timezone_resolver.hpp>
-#include <facter/logging/logging.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <time.h>
 
 using namespace std;

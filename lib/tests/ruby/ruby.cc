@@ -1,4 +1,5 @@
 #include <catch.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <facter/version.h>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -7,7 +8,6 @@
 #include <facter/ruby/ruby_value.hpp>
 #include <facter/util/regex.hpp>
 #include <facter/util/scoped_env.hpp>
-#include <facter/logging/logging.hpp>
 #include <facter/version.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/log/sinks/sync_frontend.hpp>
@@ -23,7 +23,7 @@ using namespace facter::facts;
 using namespace facter::ruby;
 using namespace facter::util;
 using namespace facter::testing;
-using namespace facter::logging;
+using namespace leatherman::logging;
 namespace sinks = boost::log::sinks;
 
 class ruby_log_appender :
