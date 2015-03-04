@@ -6,13 +6,16 @@
 #include <leatherman/logging/logging.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/environment.hpp>
-#include <boost/filesystem.hpp>
+#include <facter/execution/execution.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <sstream>
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::util;
+using namespace facter::execution;
 using namespace boost::filesystem;
 
 namespace facter { namespace ruby {
@@ -440,6 +443,58 @@ namespace facter { namespace ruby {
     bool api::case_equals(VALUE first, VALUE second) const
     {
         return is_true(rb_funcall(first, rb_intern("==="), 1, second));
+    }
+
+    dynamic_library api::find_library()
+    {
+        // First search for an already loaded Ruby.
+        auto library = find_loaded_library();
+        if (library.loaded()) {
+            return library;
+        }
+
+#ifdef FACTER_RUBY
+        // Ruby lib location was specified at compile-time, fix to that.
+        if (library.load(FACTER_RUBY)) {
+            return library;
+        }
+        LOG_WARNING("preferred ruby library \"%1%\" could not be loaded.", FACTER_RUBY);
+#endif
+
+        // Next try an environment variable.
+        // This allows users to directly specify the ruby version to use.
+        string value;
+        if (environment::get("FACTERRUBY", value)) {
+            if (library.load(value)) {
+                return library;
+            } else {
+                LOG_WARNING("ruby library \"%1%\" could not be loaded.", value);
+            }
+        }
+
+        // Search the path for ruby.exe and query it for the location of its library.
+        string ruby = execution::which("ruby");
+        if (ruby.empty()) {
+            LOG_DEBUG("ruby could not be found on the PATH.");
+            return library;
+        }
+        LOG_DEBUG("ruby was found at \"%1%\".", ruby);
+
+        auto result = execute(ruby, { "-e", "print File.join(RbConfig::CONFIG['"+libruby_configdir()+"'], RbConfig::CONFIG['LIBRUBY_SO'])" },
+            option_set<execution_options>{ execution_options::defaults, execution_options::redirect_stderr });
+        if (!result.first) {
+            LOG_WARNING("ruby failed to run: %1%", result.second);
+            return library;
+        }
+
+        boost::system::error_code ec;
+        if (!exists(result.second, ec) || is_directory(result.second, ec)) {
+            LOG_DEBUG("ruby library \"%1%\" was not found: ensure ruby was built with the --enable-shared configuration option.", result.second);
+            return library;
+        }
+
+        library.load(result.second);
+        return library;
     }
 
 }}  // namespace facter::ruby

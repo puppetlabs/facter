@@ -615,6 +615,8 @@ namespace facter {  namespace ruby {
 
         static std::unique_ptr<api> create();
         static facter::util::dynamic_library find_library();
+        static facter::util::dynamic_library find_loaded_library();
+        static std::string libruby_configdir();
         static VALUE callback_thunk(VALUE parameter);
         static VALUE rescue_thunk(VALUE parameter, VALUE exception);
         static VALUE protect_thunk(VALUE parameter);
