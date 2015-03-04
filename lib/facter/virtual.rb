@@ -73,7 +73,7 @@ end
 Facter.add("virtual") do
   confine :kernel => 'SunOS'
   has_weight 10
-  self.timeout = 6
+  self.timeout = 20
 
   setcode do
     next "zone" if Facter::Util::Virtual.zone?
