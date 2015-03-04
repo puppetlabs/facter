@@ -74,6 +74,11 @@ if (!(Get-Command choco -ErrorAction SilentlyContinue)) {
 Install-Choco 7zip.commandline 9.20.0.20150210
 Install-Choco cmake 3.0.2.20150210
 Install-Choco git.install 1.9.5.20150210
+
+# For MinGW, we expect specific project defaults
+# - win32 threads, for Windows Server 2003 support
+# - seh exceptions on 64-bit, to work around an obscure bug loading Ruby in CFacter
+# These are the defaults on our myget feed.
 if ($arch -eq 64) {
   Install-Choco ruby 2.1.5.20150210
   Install-Choco mingw-w64 $mingwVerChoco

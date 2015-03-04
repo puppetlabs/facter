@@ -56,26 +56,26 @@ The following will install most required tools and libraries:
 
 ### Setup on Windows
 
-MinGW-w64 is used for full C++11 support, and Chocolatey to install some tools. You should have at least 2GB of memory.
+[MinGW-w64](http://mingw-w64.sourceforge.net/) is used for full C++11 support, and [Chocolatey](https://chocolatey.org) can be used to install. You should have at least 2GB of memory for compilation.
 
-*   install CMake - http://www.cmake.org/download/, choose the option to add it to the system PATH
-*   install MinGW-w64 - http://sourceforge.net/projects/mingw-w64/files/latest/download, recommended settings: 4.8.2, posix, seh/dwarf
+* install [CMake](https://chocolatey.org/packages/cmake)
+* install [MinGW-w64](https://chocolatey.org/packages/mingw)
 
 For the remaining tasks, build commands can be executed in the shell from Start > MinGW-w64 project > Run Terminal
 
-*   select an install location for dependencies, such as C:\\tools or cmake\\release\\ext; we'll refer to it as $install
+* select an install location for dependencies, such as C:\\tools or cmake\\release\\ext; we'll refer to it as $install
 
-*   build Boost - http://sourceforge.net/projects/boost/files/latest/download
+* build [Boost](http://sourceforge.net/projects/boost/files/latest/download)
 
         .\bootstrap mingw
         .\b2 toolset=gcc --build-type=minimal install --prefix=$install --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log --with-locale boost.locale.iconv=off
 
-*   build yaml-cpp - https://code.google.com/p/yaml-cpp/downloads
+* build [yaml-cpp](https://code.google.com/p/yaml-cpp/downloads)
 
         cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=$install -DCMAKE_INSTALL_PREFIX=$install .
         mingw32-make install
 
-Note that OpenSSL isn't needed on Windows. More detailed notes are available in WINDOWS.md.
+Note that OpenSSL isn't needed on Windows.
 
 
 Pre-Build
