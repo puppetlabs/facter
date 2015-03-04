@@ -1,89 +1,13 @@
 /**
  * @file
  * Defines an abstraction for using regular expression calls.
- * It should be extended when new match methods are needed, and allows easily
- * switching between regex libraries.
  */
 #pragma once
 
-#ifdef USE_RE2
-#include <re2/re2.h>
-#else
 #include <boost/regex.hpp>
 #include <boost/lexical_cast.hpp>
-#endif
 
 namespace facter { namespace util {
-#ifdef USE_RE2
-    using re_adapter = re2::RE2;
-
-    /**
-     * Searches the given text for the given pattern.
-     * @tparam Args The variadic type of the match group arguments.
-     * @param txt The text to search.
-     * @param r The pattern to search the text with.
-     * @param args The returned match groups.
-     * @return Returns true if the text matches the given pattern or false if it does not.
-     */
-    template <typename... Args>
-    inline bool re_search(const re2::StringPiece &txt, const re2::RE2 &r, Args&&... args)
-    {
-        return re2::RE2::PartialMatch(txt, r, std::forward<Args>(args)...);
-    }
-#else
-    /**
-     * Utility class for adapting Boost.Regex.
-     */
-    class re_adapter : public boost::regex
-    {
-        std::string _err;
-     public:
-        /**
-         * Constructs a new re_adapter with the given pattern text.
-         * @param pattern The regular expression pattern text.
-         * @param flags The regex flags.
-         */
-        re_adapter(const char* pattern, boost::regex::flag_type flags = boost::regex_constants::normal)
-        {
-            try {
-                assign(pattern, flags);
-            } catch (const boost::regex_error &e) {
-                _err = e.what();
-            }
-        }
-
-        /**
-         * Constructs a new re_adapter with the given pattern text.
-         * @param pattern The regular expression pattern text.
-         * @param flags The regex flags.
-         */
-        re_adapter(const std::string &pattern, boost::regex::flag_type flags = boost::regex_constants::normal)
-        {
-            try {
-                assign(pattern, flags);
-            } catch (const boost::regex_error &e) {
-                _err = e.what();
-            }
-        }
-
-        /**
-         * Gets the parse error if there was one.
-         * @return Returns the regular expression parse error if there was one.
-         */
-        const std::string& error() const
-        {
-            return _err;
-        }
-
-        /**
-         * Gets whether or not the regular expression has an error.
-         * @return Returns true if there was no error or false if there was an error.
-         */
-        bool ok() const
-        {
-            return error().empty();
-        }
-    };
 
     /**
      * Helper function for resolving variadic arguments to re_search.
@@ -138,24 +62,19 @@ namespace facter { namespace util {
      * @tparam Text The type of the text.
      * @tparam Args The variadic type of the match group arguments.
      * @param txt The text to search.
-     * @param r The pattern to search the text with.
+     * @param pattern The pattern to search the text with.
      * @param args The returned match groups.
      * @return Returns true if the text matches the given pattern or false if it does not.
      */
     template <typename Text, typename... Args>
-    inline bool re_search(Text const& txt, const re_adapter &r, Args&&... args)
+    inline bool re_search(Text const& txt, boost::regex const& pattern, Args&&... args)
     {
-        if (!r.ok()) {
-            return false;
-        }
-
         boost::smatch what;
-        if (!boost::regex_search(txt, what, r)) {
+        if (!boost::regex_search(txt, what, pattern)) {
             return false;
         }
 
         return re_search_helper(txt, what, 1, std::forward<Args>(args)...);
     }
-#endif
 
 }}  // namespace facter::util

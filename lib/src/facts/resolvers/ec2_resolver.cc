@@ -71,7 +71,7 @@ namespace facter { namespace facts { namespace resolvers {
                 return true;
             }
 
-            static re_adapter array_regex("^(\\d+)=.*$");
+            static boost::regex array_regex("^(\\d+)=.*$");
 
             string index;
             if (re_search(name, array_regex, &index)) {

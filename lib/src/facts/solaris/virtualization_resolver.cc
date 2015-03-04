@@ -31,14 +31,13 @@ namespace facter { namespace facts { namespace solaris {
         string guest_of;
 
         if (arch->value() == "i86pc") {
-            // taken from facter:lib/facter/virtual.rb
-            static map<re_adapter, string> virtual_map = {
-                {re_adapter("VMware"), string(vm::vmware)},
-                {re_adapter("VirtualBox"), string(vm::virtualbox)},
-                {re_adapter("Parallels"), string(vm::parallels)},
-                {re_adapter("KVM"), string(vm::kvm)},
-                {re_adapter("HVM domU"), string(vm::xen_hardware)},
-                {re_adapter("oVirt Node"), string(vm::ovirt)}
+            static map<boost::regex, string> virtual_map = {
+                {boost::regex("VMware"),     string(vm::vmware)},
+                {boost::regex("VirtualBox"), string(vm::virtualbox)},
+                {boost::regex("Parallels"),  string(vm::parallels)},
+                {boost::regex("KVM"),        string(vm::kvm)},
+                {boost::regex("HVM domU"),   string(vm::xen_hardware)},
+                {boost::regex("oVirt Node"), string(vm::ovirt)}
             };
 
             execution::each_line("/usr/sbin/prtdiag", [&](string& line) {
@@ -56,7 +55,7 @@ namespace facter { namespace facts { namespace solaris {
             // interface stability is uncommited. Should we use it?
             string role;
 
-            re_adapter domain_role_root("Domain role:.*(root|guest)");
+            static boost::regex domain_role_root("Domain role:.*(root|guest)");
             execution::each_line("/usr/sbin/virtinfo", [&] (string& line) {
                     if (re_search(line, domain_role_root, &role)) {
                         if (role != "root") {

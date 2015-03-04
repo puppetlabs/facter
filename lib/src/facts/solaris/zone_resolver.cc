@@ -16,7 +16,7 @@ namespace facter { namespace facts { namespace solaris {
         data result;
         result.current_zone_name = execution::execute("/bin/zonename").second;
 
-        static re_adapter zone_pattern("(\\d+):([^:]*):([^:]*):([^:]*):([^:]*):([^:]*):([^:]*)");
+        static boost::regex zone_pattern("(\\d+):([^:]*):([^:]*):([^:]*):([^:]*):([^:]*):([^:]*)");
 
         execution::each_line("/usr/sbin/zoneadm", {"list", "-p"}, [&](string& line) {
             zone z;

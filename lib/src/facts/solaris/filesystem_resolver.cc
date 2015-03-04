@@ -1,6 +1,7 @@
 #include <facter/facts/solaris/filesystem_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <facter/util/scoped_file.hpp>
+#include <facter/util/regex.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/solaris/k_stat.hpp>
 #include <facter/util/string.hpp>
@@ -61,7 +62,7 @@ namespace facter { namespace facts { namespace solaris {
     void filesystem_resolver::collect_filesystem_data(data& result)
     {
         // Build a list of mounted filesystems
-        re_adapter fs_re("^fs/.*/(.*)$");
+        static boost::regex fs_re("^fs/.*/(.*)$");
         execution::each_line("/usr/sbin/sysdef", [&](string& line) {
             string fs;
             if (re_search(line, fs_re, &fs)) {

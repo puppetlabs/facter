@@ -20,7 +20,6 @@ using namespace facter::http;
 #endif
 
 using namespace std;
-using namespace facter::util;
 using namespace rapidjson;
 
 namespace facter { namespace facts { namespace resolvers {

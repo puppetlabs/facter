@@ -35,7 +35,7 @@ namespace facter { namespace util {
             return library;
         }
 
-        re_adapter rx(pattern);
+        boost::regex rx(pattern);
         do {
             if (re_search(boost::nowide::narrow(me32.szModule), rx)) {
                 // Use GetModuleHandleEx to ensure the reference count is incremented. If the module has been

@@ -8,7 +8,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <facter/util/regex.hpp>
+#include <boost/regex.hpp>
 
 namespace facter { namespace facts {
 
@@ -106,7 +106,7 @@ namespace facter { namespace facts {
      private:
         std::string _name;
         std::vector<std::string> _names;
-        std::vector<std::unique_ptr<facter::util::re_adapter>> _regexes;
+        std::vector<boost::regex> _regexes;
     };
 
 }}  // namespace facter::facts

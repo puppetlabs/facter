@@ -86,7 +86,7 @@ bool has_message(ruby_log_appender& appender, string const& level, string const&
 {
     auto const& messages = appender.messages();
     return find_if(messages.begin(), messages.end(), [&](pair<string, string> const& m) {
-        return m.first == level && re_search(m.second, pattern);
+        return m.first == level && re_search(m.second, boost::regex(pattern));
     }) != messages.end();
 }
 

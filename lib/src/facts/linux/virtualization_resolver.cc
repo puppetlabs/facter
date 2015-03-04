@@ -262,14 +262,14 @@ namespace facter { namespace facts { namespace linux {
 
     string virtualization_resolver::get_lspci_vm()
     {
-        static vector<tuple<re_adapter, string>> vms = {
-            make_tuple("VM[wW]are",                               string(vm::vmware)),
-            make_tuple("VirtualBox",                              string(vm::virtualbox)),
-            make_tuple("1ab8:|[Pp]arallels",                      string(vm::parallels)),
-            make_tuple("XenSource",                               string(vm::xen_hardware)),
-            make_tuple("Microsoft Corporation Hyper-V",           string(vm::hyperv)),
-            make_tuple("Class 8007: Google, Inc",                 string(vm::gce)),
-            make_tuple(re_adapter("virtio", boost::regex::icase), string(vm::kvm)),
+        static vector<tuple<boost::regex, string>> vms = {
+            make_tuple(boost::regex("VM[wW]are"),                     string(vm::vmware)),
+            make_tuple(boost::regex("VirtualBox"),                    string(vm::virtualbox)),
+            make_tuple(boost::regex("1ab8:|[Pp]arallels"),            string(vm::parallels)),
+            make_tuple(boost::regex("XenSource"),                     string(vm::xen_hardware)),
+            make_tuple(boost::regex("Microsoft Corporation Hyper-V"), string(vm::hyperv)),
+            make_tuple(boost::regex("Class 8007: Google, Inc"),       string(vm::gce)),
+            make_tuple(boost::regex("virtio", boost::regex::icase),   string(vm::kvm)),
         };
 
         string value;
