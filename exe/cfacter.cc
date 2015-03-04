@@ -1,8 +1,8 @@
 #include <facter/version.h>
 #include <leatherman/logging/logging.hpp>
 #include <facter/facts/collection.hpp>
-#include <facter/ruby/api.hpp>
-#include <facter/ruby/module.hpp>
+#include <internal/ruby/api.hpp>
+#include <internal/ruby/module.hpp>
 #include <boost/algorithm/string.hpp>
 // Note the caveats in nowide::cout/cerr; they're not synchronized with stdio.
 // Thus they can't be relied on to flush before program exit.

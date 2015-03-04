@@ -1,4 +1,4 @@
-#include <facter/facts/linux/uptime_resolver.hpp>
+#include <internal/facts/linux/uptime_resolver.hpp>
 #include <sys/sysinfo.h>
 
 namespace facter { namespace facts { namespace linux {

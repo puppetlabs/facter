@@ -1,7 +1,7 @@
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/collection.hpp>
+#include <internal/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/util/regex.hpp>
 
 using namespace std;
 using namespace facter::util;

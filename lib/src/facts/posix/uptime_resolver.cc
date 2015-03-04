@@ -1,6 +1,6 @@
-#include <facter/facts/posix/uptime_resolver.hpp>
+#include <internal/facts/posix/uptime_resolver.hpp>
+#include <internal/util/regex.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/regex.hpp>
 
 using namespace std;
 using namespace facter::util;

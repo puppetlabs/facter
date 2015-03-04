@@ -1,4 +1,4 @@
-#include <facter/facts/osx/processor_resolver.hpp>
+#include <internal/facts/osx/processor_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <sys/types.h>
 #include <sys/sysctl.h>

@@ -1,10 +1,10 @@
-#include <facter/facts/windows/operating_system_resolver.hpp>
+#include <internal/facts/windows/operating_system_resolver.hpp>
+#include <internal/util/regex.hpp>
+#include <internal/util/windows/system_error.hpp>
+#include <internal/util/windows/wmi.hpp>
+#include <internal/util/windows/windows.hpp>
 #include <facter/facts/collection.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/util/regex.hpp>
-#include <facter/util/windows/system_error.hpp>
-#include <facter/util/windows/wmi.hpp>
-#include <facter/util/windows/windows.hpp>
 #include <intrin.h>
 #include <winnt.h>
 #include <Shlobj.h>
@@ -67,7 +67,7 @@ namespace facter { namespace facts { namespace windows {
     {
         // For most, the architecture is the same as the model.
         // For others /(i[3456]86|pentium)/, use x86
-        if (re_search(hardware, "i[3456]86|pentium")) {
+        if (re_search(hardware, boost::regex("i[3456]86|pentium"))) {
             return "x86";
         }
         return hardware;

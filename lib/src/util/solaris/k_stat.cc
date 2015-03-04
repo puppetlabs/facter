@@ -1,6 +1,6 @@
-#include <facter/util/solaris/k_stat.hpp>
+#include <internal/util/solaris/k_stat.hpp>
 #include <sys/kstat.h>
-#include <string.h>
+#include <cstring>
 
 using namespace std;
 

@@ -1,11 +1,11 @@
-#include <facter/facts/solaris/filesystem_resolver.hpp>
-#include <leatherman/logging/logging.hpp>
-#include <facter/util/scoped_file.hpp>
-#include <facter/util/regex.hpp>
+#include <internal/facts/solaris/filesystem_resolver.hpp>
+#include <internal/util/solaris/k_stat.hpp>
+#include <internal/util/scoped_file.hpp>
+#include <internal/util/regex.hpp>
 #include <facter/util/file.hpp>
-#include <facter/util/solaris/k_stat.hpp>
 #include <facter/util/string.hpp>
 #include <facter/execution/execution.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <sys/mnttab.h>

@@ -1,5 +1,5 @@
-#include <facter/facts/solaris/dmi_resolver.hpp>
-#include <facter/util/regex.hpp>
+#include <internal/facts/solaris/dmi_resolver.hpp>
+#include <internal/util/regex.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>

@@ -1,8 +1,8 @@
 #include <facter/http/client.hpp>
 #include <facter/http/request.hpp>
 #include <facter/http/response.hpp>
+#include <internal/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/util/regex.hpp>
 #include <boost/utility/string_ref.hpp>
 #include <boost/algorithm/string.hpp>
 #include <sstream>

@@ -1,20 +1,20 @@
 #include <facter/facts/collection.hpp>
-#include <facter/facts/solaris/kernel_resolver.hpp>
-#include <facter/facts/posix/identity_resolver.hpp>
-#include <facter/facts/solaris/operating_system_resolver.hpp>
-#include <facter/facts/solaris/networking_resolver.hpp>
-#include <facter/facts/solaris/processor_resolver.hpp>
-#include <facter/facts/solaris/uptime_resolver.hpp>
-#include <facter/facts/posix/ssh_resolver.hpp>
-#include <facter/facts/posix/timezone_resolver.hpp>
-#include <facter/facts/solaris/filesystem_resolver.hpp>
-#include <facter/facts/solaris/disk_resolver.hpp>
-#include <facter/facts/solaris/dmi_resolver.hpp>
-#include <facter/facts/solaris/virtualization_resolver.hpp>
-#include <facter/facts/solaris/memory_resolver.hpp>
-#include <facter/facts/solaris/zpool_resolver.hpp>
-#include <facter/facts/solaris/zfs_resolver.hpp>
-#include <facter/facts/solaris/zone_resolver.hpp>
+#include <internal/facts/solaris/kernel_resolver.hpp>
+#include <internal/facts/posix/identity_resolver.hpp>
+#include <internal/facts/solaris/operating_system_resolver.hpp>
+#include <internal/facts/solaris/networking_resolver.hpp>
+#include <internal/facts/solaris/processor_resolver.hpp>
+#include <internal/facts/solaris/uptime_resolver.hpp>
+#include <internal/facts/posix/ssh_resolver.hpp>
+#include <internal/facts/posix/timezone_resolver.hpp>
+#include <internal/facts/solaris/filesystem_resolver.hpp>
+#include <internal/facts/solaris/disk_resolver.hpp>
+#include <internal/facts/solaris/dmi_resolver.hpp>
+#include <internal/facts/solaris/virtualization_resolver.hpp>
+#include <internal/facts/solaris/memory_resolver.hpp>
+#include <internal/facts/solaris/zpool_resolver.hpp>
+#include <internal/facts/solaris/zfs_resolver.hpp>
+#include <internal/facts/solaris/zone_resolver.hpp>
 
 using namespace std;
 

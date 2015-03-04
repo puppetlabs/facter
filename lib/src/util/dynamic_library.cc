@@ -1,4 +1,4 @@
-#include <facter/util/dynamic_library.hpp>
+#include <internal/util/dynamic_library.hpp>
 #include <boost/format.hpp>
 
 using namespace std;

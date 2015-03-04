@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
-#include <facter/ruby/api.hpp>
+#include <internal/ruby/api.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/nowide/iostream.hpp>
 

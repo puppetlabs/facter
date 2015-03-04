@@ -5,33 +5,33 @@
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/util/regex.hpp>
+#include <internal/util/regex.hpp>
 #include <yaml-cpp/yaml.h>
 #include <boost/nowide/fstream.hpp>
 #include "../fixtures.hpp"
 
 // Include all base resolvers here
-#include <facter/facts/resolvers/disk_resolver.hpp>
-#include <facter/facts/resolvers/dmi_resolver.hpp>
-#include <facter/facts/resolvers/ec2_resolver.hpp>
-#include <facter/facts/resolvers/filesystem_resolver.hpp>
-#include <facter/facts/resolvers/gce_resolver.hpp>
-#include <facter/facts/resolvers/identity_resolver.hpp>
-#include <facter/facts/resolvers/kernel_resolver.hpp>
-#include <facter/facts/resolvers/memory_resolver.hpp>
-#include <facter/facts/resolvers/networking_resolver.hpp>
-#include <facter/facts/resolvers/operating_system_resolver.hpp>
-#include <facter/facts/resolvers/path_resolver.hpp>
-#include <facter/facts/resolvers/processor_resolver.hpp>
-#include <facter/facts/resolvers/ruby_resolver.hpp>
-#include <facter/facts/resolvers/ssh_resolver.hpp>
-#include <facter/facts/resolvers/system_profiler_resolver.hpp>
-#include <facter/facts/resolvers/timezone_resolver.hpp>
-#include <facter/facts/resolvers/uptime_resolver.hpp>
-#include <facter/facts/resolvers/virtualization_resolver.hpp>
-#include <facter/facts/resolvers/zfs_resolver.hpp>
-#include <facter/facts/resolvers/zone_resolver.hpp>
-#include <facter/facts/resolvers/zpool_resolver.hpp>
+#include <internal/facts/resolvers/disk_resolver.hpp>
+#include <internal/facts/resolvers/dmi_resolver.hpp>
+#include <internal/facts/resolvers/ec2_resolver.hpp>
+#include <internal/facts/resolvers/filesystem_resolver.hpp>
+#include <internal/facts/resolvers/gce_resolver.hpp>
+#include <internal/facts/resolvers/identity_resolver.hpp>
+#include <internal/facts/resolvers/kernel_resolver.hpp>
+#include <internal/facts/resolvers/memory_resolver.hpp>
+#include <internal/facts/resolvers/networking_resolver.hpp>
+#include <internal/facts/resolvers/operating_system_resolver.hpp>
+#include <internal/facts/resolvers/path_resolver.hpp>
+#include <internal/facts/resolvers/processor_resolver.hpp>
+#include <internal/facts/resolvers/ruby_resolver.hpp>
+#include <internal/facts/resolvers/ssh_resolver.hpp>
+#include <internal/facts/resolvers/system_profiler_resolver.hpp>
+#include <internal/facts/resolvers/timezone_resolver.hpp>
+#include <internal/facts/resolvers/uptime_resolver.hpp>
+#include <internal/facts/resolvers/virtualization_resolver.hpp>
+#include <internal/facts/resolvers/zfs_resolver.hpp>
+#include <internal/facts/resolvers/zone_resolver.hpp>
+#include <internal/facts/resolvers/zpool_resolver.hpp>
 
 using namespace std;
 using namespace facter::facts;

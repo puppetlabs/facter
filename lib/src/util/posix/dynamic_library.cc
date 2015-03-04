@@ -1,7 +1,7 @@
-#include <facter/util/dynamic_library.hpp>
-#include <dlfcn.h>
-#include <boost/format.hpp>
+#include <internal/util/dynamic_library.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <boost/format.hpp>
+#include <dlfcn.h>
 
 using namespace std;
 

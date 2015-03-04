@@ -1,11 +1,11 @@
-#include <facter/facts/external/windows/powershell_resolver.hpp>
+#include <internal/facts/external/windows/powershell_resolver.hpp>
+#include <internal/util/windows/system_error.hpp>
+#include <internal/util/windows/windows.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/fact.hpp>
-#include <leatherman/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/windows/system_error.hpp>
-#include <facter/util/windows/windows.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 

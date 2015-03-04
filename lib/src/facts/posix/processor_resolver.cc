@@ -1,6 +1,6 @@
-#include <facter/facts/posix/processor_resolver.hpp>
-#include <leatherman/logging/logging.hpp>
+#include <internal/facts/posix/processor_resolver.hpp>
 #include <facter/execution/execution.hpp>
+#include <leatherman/logging/logging.hpp>
 
 using namespace std;
 using namespace facter::execution;

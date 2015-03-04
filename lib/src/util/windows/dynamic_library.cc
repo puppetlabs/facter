@@ -1,10 +1,10 @@
-#include <facter/util/dynamic_library.hpp>
-#include <boost/format.hpp>
-#include <leatherman/logging/logging.hpp>
-#include <facter/util/regex.hpp>
 #include <facter/util/scoped_resource.hpp>
-#include <facter/util/windows/system_error.hpp>
-#include <facter/util/windows/windows.hpp>
+#include <internal/util/regex.hpp>
+#include <internal/util/dynamic_library.hpp>
+#include <internal/util/windows/system_error.hpp>
+#include <internal/util/windows/windows.hpp>
+#include <leatherman/logging/logging.hpp>
+#include <boost/format.hpp>
 #include <boost/nowide/convert.hpp>
 #include <tlhelp32.h>
 

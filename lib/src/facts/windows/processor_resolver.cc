@@ -1,6 +1,6 @@
-#include <facter/facts/windows/processor_resolver.hpp>
-#include <facter/util/windows/wmi.hpp>
-#include <facter/util/regex.hpp>
+#include <internal/facts/windows/processor_resolver.hpp>
+#include <internal/util/windows/wmi.hpp>
+#include <internal/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
 
 using namespace std;

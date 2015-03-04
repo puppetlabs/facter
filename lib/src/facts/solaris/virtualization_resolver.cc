@@ -1,9 +1,9 @@
-#include <facter/facts/solaris/virtualization_resolver.hpp>
+#include <internal/facts/solaris/virtualization_resolver.hpp>
+#include <internal/util/regex.hpp>
 #include <facter/facts/vm.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
-#include <facter/util/regex.hpp>
 #include <facter/execution/execution.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>

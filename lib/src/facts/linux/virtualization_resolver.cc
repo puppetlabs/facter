@@ -1,12 +1,12 @@
-#include <facter/facts/linux/virtualization_resolver.hpp>
+#include <internal/facts/linux/virtualization_resolver.hpp>
+#include <internal/util/regex.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
 #include <facter/execution/execution.hpp>
-#include <leatherman/logging/logging.hpp>
 #include <facter/util/file.hpp>
-#include <facter/util/regex.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <vector>

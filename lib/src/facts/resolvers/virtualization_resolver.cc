@@ -1,4 +1,4 @@
-#include <facter/facts/resolvers/virtualization_resolver.hpp>
+#include <internal/facts/resolvers/virtualization_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>

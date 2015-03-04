@@ -1,6 +1,6 @@
 #include <catch.hpp>
 #include <facter/util/environment.hpp>
-#include <facter/util/scoped_env.hpp>
+#include <internal/util/scoped_env.hpp>
 #include <unistd.h>
 
 using namespace std;

@@ -1,7 +1,7 @@
-#include <facter/facts/solaris/operating_system_resolver.hpp>
+#include <internal/facts/solaris/operating_system_resolver.hpp>
+#include <internal/util/regex.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/util/file.hpp>
-#include <facter/util/regex.hpp>
 
 using namespace std;
 using namespace facter::util;

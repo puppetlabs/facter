@@ -1,4 +1,4 @@
-#include <facter/ruby/ruby_value.hpp>
+#include <internal/ruby/ruby_value.hpp>
 #include <facter/util/string.hpp>
 #include <rapidjson/document.h>
 #include <yaml-cpp/yaml.h>

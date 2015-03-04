@@ -1,4 +1,4 @@
-#include <facter/facts/resolvers/kernel_resolver.hpp>
+#include <internal/facts/resolvers/kernel_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>

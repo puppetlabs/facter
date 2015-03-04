@@ -1,7 +1,7 @@
-#include <facter/facts/linux/disk_resolver.hpp>
-#include <leatherman/logging/logging.hpp>
+#include <internal/facts/linux/disk_resolver.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/directory.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>

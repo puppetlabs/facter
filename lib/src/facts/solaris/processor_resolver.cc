@@ -1,6 +1,6 @@
-#include <facter/facts/solaris/processor_resolver.hpp>
+#include <internal/facts/solaris/processor_resolver.hpp>
+#include <internal/util/solaris/k_stat.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/util/solaris/k_stat.hpp>
 #include <unordered_set>
 #include <sys/processor.h>
 

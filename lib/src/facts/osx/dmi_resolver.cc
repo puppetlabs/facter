@@ -1,4 +1,4 @@
-#include <facter/facts/osx/dmi_resolver.hpp>
+#include <internal/facts/osx/dmi_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <sys/sysctl.h>
 

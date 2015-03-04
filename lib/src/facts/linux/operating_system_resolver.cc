@@ -1,12 +1,12 @@
-#include <facter/facts/linux/operating_system_resolver.hpp>
-#include <facter/facts/linux/release_file.hpp>
+#include <internal/facts/linux/operating_system_resolver.hpp>
+#include <internal/facts/linux/release_file.hpp>
+#include <internal/util/regex.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/file.hpp>
-#include <facter/util/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>

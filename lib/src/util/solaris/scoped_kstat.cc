@@ -1,4 +1,4 @@
-#include <facter/util/solaris/scoped_kstat.hpp>
+#include <internal/util/solaris/scoped_kstat.hpp>
 
 using namespace std;
 

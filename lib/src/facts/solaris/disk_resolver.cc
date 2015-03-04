@@ -1,6 +1,6 @@
-#include <facter/facts/solaris/disk_resolver.hpp>
+#include <internal/facts/solaris/disk_resolver.hpp>
+#include <internal/util/solaris/k_stat.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/util/solaris/k_stat.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;

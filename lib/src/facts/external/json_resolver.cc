@@ -1,10 +1,10 @@
-#include <facter/facts/external/json_resolver.hpp>
+#include <internal/facts/external/json_resolver.hpp>
+#include <internal/util/scoped_file.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/util/scoped_file.hpp>
 #include <rapidjson/reader.h>
 #include <rapidjson/filestream.h>
 #include <boost/algorithm/string.hpp>

@@ -1,9 +1,9 @@
 #include <facter/facts/collection.hpp>
-#include <facter/facts/external/json_resolver.hpp>
-#include <facter/facts/external/text_resolver.hpp>
-#include <facter/facts/external/yaml_resolver.hpp>
-#include <facter/facts/external/execution_resolver.hpp>
 #include <facter/util/environment.hpp>
+#include <internal/facts/external/json_resolver.hpp>
+#include <internal/facts/external/text_resolver.hpp>
+#include <internal/facts/external/yaml_resolver.hpp>
+#include <internal/facts/external/execution_resolver.hpp>
 #include <unistd.h>
 #include <vector>
 #include <string>

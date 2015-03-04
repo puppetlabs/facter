@@ -1,8 +1,8 @@
 #include <facter/execution/execution.hpp>
 #include <facter/util/directory.hpp>
-#include <facter/util/posix/scoped_descriptor.hpp>
+#include <internal/util/posix/scoped_descriptor.hpp>
+#include <internal/ruby/api.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/ruby/api.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <unistd.h>

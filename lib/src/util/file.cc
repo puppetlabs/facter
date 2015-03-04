@@ -1,6 +1,6 @@
 #include <facter/util/file.hpp>
-#include <sstream>
 #include <boost/nowide/fstream.hpp>
+#include <sstream>
 
 using namespace std;
 

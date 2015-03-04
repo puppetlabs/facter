@@ -1,4 +1,4 @@
-#include <facter/facts/osx/memory_resolver.hpp>
+#include <internal/facts/osx/memory_resolver.hpp>
 #include <facter/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <mach/mach.h>

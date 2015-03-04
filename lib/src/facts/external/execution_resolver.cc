@@ -1,10 +1,10 @@
-#include <facter/facts/external/execution_resolver.hpp>
+#include <internal/facts/external/execution_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <leatherman/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;

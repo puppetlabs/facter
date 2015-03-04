@@ -1,6 +1,6 @@
 #include <facter/util/scoped_resource.hpp>
-#include <facter/util/windows/system_error.hpp>
-#include <facter/util/windows/windows.hpp>
+#include <internal/util/windows/system_error.hpp>
+#include <internal/util/windows/windows.hpp>
 #include <boost/format.hpp>
 
 using namespace std;

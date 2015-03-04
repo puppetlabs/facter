@@ -1,4 +1,4 @@
-#include <facter/facts/bsd/filesystem_resolver.hpp>
+#include <internal/facts/bsd/filesystem_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <facter/util/string.hpp>
 #include <sys/mount.h>

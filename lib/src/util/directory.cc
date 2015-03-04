@@ -1,6 +1,6 @@
 #include <facter/util/directory.hpp>
+#include <internal/util/regex.hpp>
 #include <boost/filesystem.hpp>
-#include <facter/util/regex.hpp>
 
 using namespace std;
 using namespace boost::filesystem;

@@ -1,4 +1,4 @@
-#include <facter/facts/linux/dmi_resolver.hpp>
+#include <internal/facts/linux/dmi_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <facter/util/file.hpp>
 #include <boost/filesystem.hpp>

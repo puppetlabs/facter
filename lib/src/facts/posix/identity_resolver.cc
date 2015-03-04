@@ -1,4 +1,4 @@
-#include <facter/facts/posix/identity_resolver.hpp>
+#include <internal/facts/posix/identity_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <sys/types.h>
 #include <pwd.h>

@@ -1,4 +1,4 @@
-#include <facter/facts/solaris/zpool_resolver.hpp>
+#include <internal/facts/solaris/zpool_resolver.hpp>
 
 using namespace std;
 

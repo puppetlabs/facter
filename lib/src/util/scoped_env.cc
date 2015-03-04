@@ -1,4 +1,4 @@
-#include <facter/util/scoped_env.hpp>
+#include <internal/util/scoped_env.hpp>
 #include <facter/util/environment.hpp>
 
 using namespace std;
@@ -11,7 +11,7 @@ namespace facter { namespace util {
         bool was_set = environment::get(var, oldval);
         environment::set(var, val);
 
-        _resource = make_tuple(move(var), was_set ? boost::optional<std::string>(oldval) : boost::none);
+        _resource = make_tuple(move(var), was_set ? boost::optional<std::string>(move(oldval)) : boost::none);
         _deleter = scoped_env::restore;
     }
 
