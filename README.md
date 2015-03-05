@@ -61,6 +61,8 @@ The following will install most required tools and libraries:
 * install [CMake](https://chocolatey.org/packages/cmake)
 * install [MinGW-w64](https://chocolatey.org/packages/mingw)
 
+        choco install mingw --params "/threads:win32"
+
 For the remaining tasks, build commands can be executed in the shell from Start > MinGW-w64 project > Run Terminal
 
 * select an install location for dependencies, such as C:\\tools or cmake\\release\\ext; we'll refer to it as $install
