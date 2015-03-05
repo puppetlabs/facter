@@ -150,7 +150,7 @@ SCENARIO("custom facts written in Ruby") {
     GIVEN("a fact with a command") {
         REQUIRE(load_custom_fact("simple_command.rb", facts));
         THEN("the value should be in the collection") {
-            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar\"");
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar baz\"");
         }
     }
     GIVEN("a fact with a bad command") {
@@ -518,7 +518,7 @@ SCENARIO("custom facts written in Ruby") {
     GIVEN("a fact resolution that uses Facter::Core::Execution#exec") {
         REQUIRE(load_custom_fact("exec.rb", facts));
         THEN("value should be in the collection") {
-            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar\"");
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar baz\"");
         }
     }
     GIVEN("a fact that uses timeout") {
