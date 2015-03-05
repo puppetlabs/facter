@@ -92,21 +92,21 @@ SCENARIO("executing commands with execution::execute") {
     };
      GIVEN("a command that succeeds") {
          THEN("the output should be returned") {
-            auto result = execute("cmd.exe", { "/c type", normalize(LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file3.txt") });
+            auto result = execute("cmd.exe", { "/c", "type", normalize(LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file3.txt") });
             REQUIRE(result.first);
             REQUIRE(result.second == "file3");
         }
      }
      GIVEN("a command that fails") {
         WHEN("default options are used") {
-            auto result = execute("cmd.exe", { "/c dir /B does_not_exist" });
+            auto result = execute("cmd.exe", { "/c", "dir", "/B", "does_not_exist" });
             THEN("no output is returned") {
                 REQUIRE_FALSE(result.first);
                 REQUIRE(result.second == "");
             }
         }
         WHEN("the redirect STDERR option is used") {
-            auto result = execute("cmd.exe", { "/c dir /B does_not_exist" }, option_set<execution_options>({ execution_options::defaults, execution_options::redirect_stderr }));
+            auto result = execute("cmd.exe", { "/c", "dir", "/B", "does_not_exist" }, option_set<execution_options>({ execution_options::defaults, execution_options::redirect_stderr }));
             THEN("error output is returned") {
                 REQUIRE_FALSE(result.first);
                 REQUIRE(result.second == "File Not Found");
@@ -114,12 +114,12 @@ SCENARIO("executing commands with execution::execute") {
         }
         WHEN("the 'throw on non-zero exit' option is used") {
             THEN("a child exit exception is thrown") {
-                REQUIRE_THROWS_AS(execute("cmd.exe", { "/c dir /B does_not_exist" }, option_set<execution_options>({ execution_options::defaults, execution_options::throw_on_nonzero_exit })), child_exit_exception);
+                REQUIRE_THROWS_AS(execute("cmd.exe", { "/c", "dir", "/B", "does_not_exist" }, option_set<execution_options>({ execution_options::defaults, execution_options::throw_on_nonzero_exit })), child_exit_exception);
             }
         }
         WHEN("requested to merge the environment") {
             SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", L"TEST_INHERITED_VALUE");
-            auto result = execute("cmd.exe", { "/c set" }, { {"TEST_VARIABLE1", "TEST_VALUE1" }, {"TEST_VARIABLE2", "TEST_VALUE2" } });
+            auto result = execute("cmd.exe", { "/c", "set" }, { {"TEST_VARIABLE1", "TEST_VALUE1" }, {"TEST_VARIABLE2", "TEST_VALUE2" } });
             SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", nullptr);
             REQUIRE(result.first);
             auto variables = get_variables(result.second);
@@ -141,7 +141,7 @@ SCENARIO("executing commands with execution::execute") {
             option_set<execution_options> options = { execution_options::defaults };
             options.clear(execution_options::merge_environment);
             SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", L"TEST_INHERITED_VALUE");
-            auto result = execute("cmd.exe", { "/c set" }, { {"TEST_VARIABLE1", "TEST_VALUE1" }, {"TEST_VARIABLE2", "TEST_VALUE2" } }, options);
+            auto result = execute("cmd.exe", { "/c", "set" }, { {"TEST_VARIABLE1", "TEST_VALUE1" }, {"TEST_VARIABLE2", "TEST_VALUE2" } }, options);
             SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", nullptr);
             REQUIRE(result.first);
             auto variables = get_variables(result.second);
@@ -159,7 +159,7 @@ SCENARIO("executing commands with execution::execute") {
             }
         }
         WHEN("requested to override LC_ALL or LANG") {
-            auto result = execute("cmd.exe", { "/c set" }, { {"LANG", "FOO" }, { "LC_ALL", "BAR" } });
+            auto result = execute("cmd.exe", { "/c", "set" }, { {"LANG", "FOO" }, { "LC_ALL", "BAR" } });
             REQUIRE(result.first);
             auto variables = get_variables(result.second);
             THEN("the values should be passed to the child process") {
@@ -172,14 +172,14 @@ SCENARIO("executing commands with execution::execute") {
      }
      GIVEN("a command that outputs leading/trailing whitespace") {
         THEN("whitespace should be trimmed by default") {
-            auto result = execute("cmd.exe", { "/c type", normalize(LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file1.txt") });
+            auto result = execute("cmd.exe", { "/c", "type", normalize(LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file1.txt") });
             REQUIRE(result.first);
             REQUIRE(result.second == "this is a test of trimming");
         }
         WHEN("the 'trim whitespace' option is not used") {
             option_set<execution_options> options = { execution_options::defaults };
             options.clear(execution_options::trim_output);
-            auto result = execute("cmd.exe", { "/c type", normalize(LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file1.txt") }, options);
+            auto result = execute("cmd.exe", { "/c", "type", normalize(LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file1.txt") }, options);
             THEN("whitespace should not be trimmed") {
                 REQUIRE(result.second == "   this is a test of trimming   ");
             }
@@ -191,7 +191,7 @@ SCENARIO("executing commands with execution::each_line") {
     GIVEN("a command that succeeds") {
         THEN("each line of output should be returned") {
             vector<string> lines;
-            bool success = each_line("cmd.exe", { "/c type", normalize(LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file4.txt") }, [&](string& line) {
+            bool success = each_line("cmd.exe", { "/c", "type", normalize(LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file4.txt") }, [&](string& line) {
                 lines.push_back(line);
                 return true;
             });
@@ -204,7 +204,7 @@ SCENARIO("executing commands with execution::each_line") {
         }
         WHEN("output stops when false is returned from callback") {
             vector<string> lines;
-            bool success = each_line("cmd.exe", { "/c type", normalize(LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file4.txt") }, [&](string& line) {
+            bool success = each_line("cmd.exe", { "/c", "type", normalize(LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/ls/file4.txt") }, [&](string& line) {
                 lines.push_back(line);
                 return false;
             });
@@ -215,7 +215,7 @@ SCENARIO("executing commands with execution::each_line") {
         WHEN("requested to merge the environment") {
             SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", L"TEST_INHERITED_VALUE");
             map<string, string> variables;
-            bool success = each_line("cmd.exe", { "/c set" }, { {"TEST_VARIABLE1", "TEST_VALUE1" }, {"TEST_VARIABLE2", "TEST_VALUE2" } }, [&](string& line) {
+            bool success = each_line("cmd.exe", { "/c", "set" }, { {"TEST_VARIABLE1", "TEST_VALUE1" }, {"TEST_VARIABLE2", "TEST_VALUE2" } }, [&](string& line) {
                 vector<string> parts;
                 boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
                 if (parts.size() != 2) {
@@ -245,7 +245,7 @@ SCENARIO("executing commands with execution::each_line") {
             options.clear(execution_options::merge_environment);
             SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", L"TEST_INHERITED_VALUE");
             map<string, string> variables;
-            bool success = each_line("cmd.exe", { "/c set" }, { {"TEST_VARIABLE1", "TEST_VALUE1" }, {"TEST_VARIABLE2", "TEST_VALUE2" } }, [&](string& line) {
+            bool success = each_line("cmd.exe", { "/c", "set" }, { {"TEST_VARIABLE1", "TEST_VALUE1" }, {"TEST_VARIABLE2", "TEST_VALUE2" } }, [&](string& line) {
                 vector<string> parts;
                 boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
                 if (parts.size() != 2) {
@@ -271,7 +271,7 @@ SCENARIO("executing commands with execution::each_line") {
         }
         WHEN("requested to override LC_ALL or LANG") {
             map<string, string> variables;
-            bool success = each_line("cmd.exe", { "/c set" }, { {"LANG", "FOO" }, { "LC_ALL", "BAR" } }, [&](string& line) {
+            bool success = each_line("cmd.exe", { "/c", "set" }, { {"LANG", "FOO" }, { "LC_ALL", "BAR" } }, [&](string& line) {
                 vector<string> parts;
                 boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
                 if (parts.size() != 2) {
@@ -292,7 +292,7 @@ SCENARIO("executing commands with execution::each_line") {
     GIVEN("a command that fails") {
         WHEN("default options are used") {
             THEN("no output is returned") {
-                auto success = each_line("cmd.exe", { "/c dir /B does_not_exist" }, [](string& line) {
+                auto success = each_line("cmd.exe", { "/c", "dir", "/B", "does_not_exist" }, [](string& line) {
                     FAIL("should not be called");
                     return true;
                 });
@@ -301,7 +301,7 @@ SCENARIO("executing commands with execution::each_line") {
         }
         WHEN("the redirect STDERR option is used") {
             string output;
-            auto result = each_line("cmd.exe", { "/c dir /B does_not_exist" }, [&](string& line) {
+            auto result = each_line("cmd.exe", { "/c", "dir", "/B", "does_not_exist" }, [&](string& line) {
                 if (!output.empty()) {
                     output += "\n";
                 }
@@ -315,7 +315,7 @@ SCENARIO("executing commands with execution::each_line") {
         }
         WHEN("the 'throw on non-zero exit' option is used") {
             THEN("a child exit exception is thrown") {
-                REQUIRE_THROWS_AS(each_line("cmd.exe", { "/c dir /B does_not_exist" }, [](string& line) { return true; }, option_set<execution_options>({execution_options::defaults, execution_options::throw_on_nonzero_exit})), child_exit_exception);
+                REQUIRE_THROWS_AS(each_line("cmd.exe", { "/c", "dir", "/B", "does_not_exist" }, [](string& line) { return true; }, option_set<execution_options>({execution_options::defaults, execution_options::throw_on_nonzero_exit})), child_exit_exception);
             }
         }
     }

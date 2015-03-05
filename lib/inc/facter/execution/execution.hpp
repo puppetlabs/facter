@@ -183,7 +183,7 @@ namespace facter { namespace execution {
     /**
      * Executes the given program.
      * @param file The name or path of the program to execute.
-     * @param arguments The arguments to pass to the program.
+     * @param arguments The arguments to pass to the program. On Windows they will be quoted as needed for spaces.
      * @param options The execution options.
      * @return Returns whether or not the execution succeeded paired with the child process output.
      */
@@ -195,7 +195,7 @@ namespace facter { namespace execution {
     /**
      * Executes the given program.
      * @param file The name or path of the program to execute.
-     * @param arguments The arguments to pass to the program.
+     * @param arguments The arguments to pass to the program. On Windows they will be quoted as needed for spaces.
      * @param environment The environment variables to pass to the child process.
      * @param options The execution options.
      * @return Returns whether or not the execution succeeded paired with the child process output.
@@ -221,7 +221,7 @@ namespace facter { namespace execution {
     /**
      * Executes the given program and returns each line of output.
      * @param file The name or path of the program to execute.
-     * @param arguments The arguments to pass to the program.
+     * @param arguments The arguments to pass to the program. On Windows they will be quoted as needed for spaces.
      * @param callback The callback that is called with each line of output.
      * @param options The execution options.
      * @return Returns true if the execution succeeded or false if it did not.
@@ -235,7 +235,7 @@ namespace facter { namespace execution {
     /**
      * Executes the given program and returns each line of output.
      * @param file The name or path of the program to execute.
-     * @param arguments The arguments to pass to the program.
+     * @param arguments The arguments to pass to the program. On Windows they will be quoted as needed for spaces.
      * @param environment The environment variables to pass to the child process.
      * @param callback The callback that is called with each line of output.
      * @param options The execution options.

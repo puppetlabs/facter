@@ -49,7 +49,8 @@ namespace facter { namespace facts { namespace external {
                 }
             }
 
-            execution::each_line(pwrshell, {"-NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File ", "\"" + file + "\""},
+            execution::each_line(pwrshell, {"-NoProfile", "-NonInteractive", "-NoLogo", "-ExecutionPolicy", "Bypass",
+                                            "-File", file},
             [&facts](string const& line) {
                 auto pos = line.find('=');
                 if (pos == string::npos) {

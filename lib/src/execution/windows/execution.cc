@@ -111,6 +111,51 @@ namespace facter { namespace execution {
             scoped_resource<HANDLE>(move(tmpHandleWr), CloseHandle));
     }
 
+    // Source: http://blogs.msdn.com/b/twistylittlepassagesallalike/archive/2011/04/23/everyone-quotes-arguments-the-wrong-way.aspx
+    static string ArgvToCommandLine(vector<string> const& arguments)
+    {
+        // Unless we're told otherwise, don't quote unless we actually need to do so - hopefully avoid problems if
+        // programs won't parse quotes properly.
+        string commandline;
+        for (auto const& arg : arguments) {
+            if (arg.empty()) {
+                continue;
+            } else if (arg.find_first_of(" \t\n\v\"") == arg.npos) {
+                commandline += arg;
+            } else {
+                commandline += '"';
+                for (auto it = arg.begin(); ; ++it) {
+                    unsigned num_back_slashes = 0;
+                    while (it != arg.end() && *it == '\\') {
+                        ++it;
+                        ++num_back_slashes;
+                    }
+
+                    if (it == arg.end()) {
+                        // Escape all backslashes, but let the terminating double quotation mark we add below be
+                        // interpreted as a metacharacter.
+                        commandline.append(num_back_slashes * 2, '\\');
+                        break;
+                    } else if (*it == '"') {
+                        // Escape all backslashes and the following double quotation mark.
+                        commandline.append(num_back_slashes * 2 + 1, '\\');
+                        commandline.push_back(*it);
+                    } else {
+                        // Backslashes aren't special here.
+                        commandline.append(num_back_slashes, '\\');
+                        commandline.push_back(*it);
+                    }
+                }
+                commandline += '"';
+            }
+            commandline += ' ';
+        }
+
+        // Strip the trailing space.
+        boost::trim_right(commandline);
+        return commandline;
+    }
+
     pair<bool, string> execute(
         string const& file,
         vector<string> const* arguments,
@@ -195,8 +240,9 @@ namespace facter { namespace execution {
 
             scoped_resource<HANDLE> stdErrRd, stdErrWr;
 
-            // Execute the command with arguments.
-            auto commandLine = boost::nowide::widen(arguments ? boost::join(*arguments, " ") : "");
+            // Execute the command with arguments. Prefix arguments with the executable, or quoted arguments won't work.
+            auto commandLine = arguments ?
+                boost::nowide::widen(ArgvToCommandLine({executable}) + " " + ArgvToCommandLine(*arguments)) : L"";
 
             STARTUPINFO startupInfo = {};
             startupInfo.cb = sizeof(startupInfo);
