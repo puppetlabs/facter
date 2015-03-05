@@ -77,6 +77,28 @@ For the remaining tasks, build commands can be executed in the shell from Start 
         cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=$install -DCMAKE_INSTALL_PREFIX=$install .
         mingw32-make install
 
+In Powershell:
+
+    choco install cmake 7zip.commandline -y
+    choco install mingw --params "/threads:win32" -y
+    $env:PATH = "C:\tools\mingw64\bin;$env:PATH"
+    $install = "C:\tools"
+
+    (New-Object Net.WebClient).DownloadFile("https://downloads.sourceforge.net/boost/boost_1_54_0.7z", "$pwd/boost_1_54_0.7z")
+    7za x boost_1_54_0.7z
+    pushd boost_1_54_0
+    .\bootstrap mingw
+    .\b2 toolset=gcc --build-type=minimal install --prefix=$install --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log --with-locale boost.locale.iconv=off
+    popd
+
+    (New-Object Net.WebClient).DownloadFile("https://yaml-cpp.googlecode.com/files/yaml-cpp-0.5.1.tar.gz", "$pwd/yaml-cpp-0.5.1.tar.gz")
+    7za x yaml-cpp-0.5.1.tar.gz
+    7za x yaml-cpp-0.5.1.tar
+    pushd yaml-cpp-0.5.1
+    cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="$install" -DCMAKE_INSTALL_PREFIX="$install" .
+    mingw32-make install
+    popd
+
 Note that OpenSSL isn't needed on Windows.
 
 
