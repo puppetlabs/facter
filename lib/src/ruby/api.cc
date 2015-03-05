@@ -437,4 +437,9 @@ namespace facter { namespace ruby {
         return is_true(rb_funcall(first, rb_intern("eql?"), 1, second));
     }
 
+    bool api::case_equals(VALUE first, VALUE second) const
+    {
+        return is_true(rb_funcall(first, rb_intern("==="), 1, second));
+    }
+
 }}  // namespace facter::ruby

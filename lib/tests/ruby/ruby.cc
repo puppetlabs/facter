@@ -245,6 +245,34 @@ SCENARIO("custom facts written in Ruby") {
                 REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar\"");
             }
         }
+        WHEN("the confine is a regular expression that evaluates to true") {
+            facts.add("fact", make_value<string_value>("foo"));
+            REQUIRE(load_custom_fact("regexp_confine.rb", facts));
+            THEN("the value should be in the collection") {
+              REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar\"");
+            }
+        }
+        WHEN("the confine is a regular expression that evaluates to false") {
+            facts.add("fact", make_value<string_value>("baz"));
+            REQUIRE(load_custom_fact("regexp_confine.rb", facts));
+            THEN("the value should not be in the collection") {
+              REQUIRE_FALSE(facts["foo"]);
+            }
+        }
+        WHEN("the confine is a range that evaluates to true") {
+            facts.add("fact", make_value<integer_value>(4));
+            REQUIRE(load_custom_fact("range_confine.rb", facts));
+            THEN("the value should be in the collection") {
+              REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar\"");
+            }
+        }
+        WHEN("the confine is a range that evaluates to false") {
+            facts.add("fact", make_value<integer_value>(10));
+            REQUIRE(load_custom_fact("range_confine.rb", facts));
+            THEN("the value should not be in the collection") {
+              REQUIRE_FALSE(facts["foo"]);
+            }
+        }
         WHEN("the confine evaluates to true") {
             facts.add("fact", make_value<boolean_value>(true));
             REQUIRE(load_custom_fact("boolean_true_confine.rb", facts));
