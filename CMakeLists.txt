@@ -43,6 +43,9 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} /opt/boxen/homebrew/include)
 endif()
 
+# Before we find any packages, we want to pull in the common leatherman options, as they can affect commonly-used packages.
+include(options)
+
 # We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
 # For Windows, we've added locale to correctly generate a UTF-8 compatible default locale.
 set(BOOST_PKGS program_options system filesystem date_time thread regex log)
