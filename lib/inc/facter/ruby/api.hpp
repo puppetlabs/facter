@@ -560,6 +560,14 @@ namespace facter {  namespace ruby {
         bool equals(VALUE first, VALUE second) const;
 
         /**
+         * Determines if the first value has case equality (===) with the second value.
+         * @param first The first value to compare.
+         * @param second The second value to compare.
+         * @return Returns true if === returns true for the first and second values.
+         */
+        bool case_equals(VALUE first, VALUE second) const;
+
+        /**
          * Gets the underlying native instance from a Ruby data object.
          * The Ruby object must have been allocated with rb_data_object_alloc.
          * @tparam T The underlying native type.

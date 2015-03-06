@@ -122,7 +122,6 @@ namespace facter { namespace ruby {
                 if (ruby.rb_block_given_p()) {
                     ruby.rb_raise(*ruby.rb_eArgError, "a block is unexpected when passing a Hash");
                 }
-                // Populate the above map based on the hash's contents
                 ruby.hash_for_each(confines, [&](VALUE key, VALUE value) {
                     if (ruby.is_symbol(key)) {
                         key = ruby.rb_sym_to_s(key);
@@ -133,17 +132,6 @@ namespace facter { namespace ruby {
                     if (ruby.is_symbol(value)) {
                         value = ruby.rb_sym_to_s(value);
                     }
-                    if (ruby.is_array(value)) {
-                        ruby.array_for_each(value, [&](VALUE value) {
-                            if (!ruby.is_string(value) && !ruby.is_symbol(value)) {
-                                ruby.rb_raise(*ruby.rb_eTypeError, "expected only Symbol or String for confine array elements");
-                            }
-                            return true;
-                        });
-                    } else if (!ruby.is_true(value) && !ruby.is_false(value) &&!ruby.is_string(value)) {
-                        ruby.rb_raise(*ruby.rb_eTypeError, "expected true, false, Symbol, String, or Array of String/Symbol for confine value");
-                    }
-
                     _confines.emplace_back(ruby::confine(key, value, ruby.nil_value()));
                     return true;
                 });

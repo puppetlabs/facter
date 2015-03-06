@@ -53,7 +53,7 @@ namespace facter { namespace ruby {
                 return found;
             }
             // Compare the value directly
-            return ruby.equals(facter.normalize(_expected), value);
+            return ruby.case_equals(facter.normalize(_expected), value);
         }
         // If we have only a block, execute it
         if (!ruby.is_nil(_block)) {
