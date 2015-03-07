@@ -6,6 +6,7 @@
 
 #include <stdexcept>
 #include <string>
+#include "../../export.h"
 
 namespace facter { namespace facts {
     struct collection;
@@ -16,7 +17,7 @@ namespace facter { namespace facts { namespace external {
     /**
      * Thrown when there is an error processing an external fact.
      */
-    struct external_fact_exception : std::runtime_error
+    struct LIBFACTER_EXPORT external_fact_exception : std::runtime_error
     {
         /**
          * Constructs a external_fact_exception.
@@ -28,7 +29,7 @@ namespace facter { namespace facts { namespace external {
     /**
      * Base class for external resolvers
      */
-    struct resolver
+    struct LIBFACTER_EXPORT resolver
     {
         /**
          * Determines if the resolver can resolve the facts from the given file.

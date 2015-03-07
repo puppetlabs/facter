@@ -12,6 +12,7 @@
 #include <functional>
 #include "../util/option_set.hpp"
 #include "../util/environment.hpp"
+#include "../export.h"
 
 namespace facter { namespace execution {
 
@@ -59,18 +60,18 @@ namespace facter { namespace execution {
      * System command shell available for executing shell scripts.
      * Uses 'cmd' on Windows and 'sh' on *nix systems.
      */
-    extern const char *const command_shell;
+    extern const char *const command_shell LIBFACTER_EXPORT;
 
     /**
      * System command shell arguments to accept a script as an argument.
      * Uses '/c' on Windows and '-c' on *nix systems.
      */
-    extern const char *const command_args;
+    extern const char *const command_args LIBFACTER_EXPORT;
 
     /**
      * Base class for execution exceptions.
      */
-    struct execution_exception : std::runtime_error
+    struct LIBFACTER_EXPORT execution_exception : std::runtime_error
     {
         /**
          * Constructs a execution_exception.
@@ -82,7 +83,7 @@ namespace facter { namespace execution {
     /**
      * Base class for execution failures.
      */
-    struct execution_failure_exception : execution_exception
+    struct LIBFACTER_EXPORT execution_failure_exception : execution_exception
     {
         /**
          * Constructs a execution_failure_exception.
@@ -104,7 +105,7 @@ namespace facter { namespace execution {
     /**
      * Exception that is thrown when a child exits with a non-zero status code.
      */
-    struct child_exit_exception : execution_failure_exception
+    struct LIBFACTER_EXPORT child_exit_exception : execution_failure_exception
     {
         /**
          * Constructs a child_exit_exception.
@@ -127,7 +128,7 @@ namespace facter { namespace execution {
     /**
      * Exception that is thrown when a child exists due to a signal.
      */
-    struct child_signal_exception : execution_failure_exception
+    struct LIBFACTER_EXPORT child_signal_exception : execution_failure_exception
     {
         /**
          * Constructs a child_signal_exception.
@@ -153,14 +154,7 @@ namespace facter { namespace execution {
      * @param directories The directories to search.
      * @return Returns the full path or empty if the file could not be found.
      */
-    std::string which(std::string const& file, std::vector<std::string> const& directories = facter::util::environment::search_paths());
-
-    /**
-     * Helper for logging execution commands.
-     * @param file The command being executed.
-     * @param arguments Arguments to the command being executed.
-     */
-    void log_execution(std::string const& file, std::vector<std::string> const* arguments);
+    std::string LIBFACTER_EXPORT which(std::string const& file, std::vector<std::string> const& directories = facter::util::environment::search_paths());
 
     /**
      * Expands the executable in the command to the full path.
@@ -168,7 +162,7 @@ namespace facter { namespace execution {
      * @param directories The directories to search.
      * @return Returns the expanded command if the executable was found or the original command if not.
      */
-    std::string expand_command(std::string const& command, std::vector<std::string> const& directories = facter::util::environment::search_paths());
+    std::string LIBFACTER_EXPORT expand_command(std::string const& command, std::vector<std::string> const& directories = facter::util::environment::search_paths());
 
     /**
      * Executes the given program.
@@ -176,7 +170,7 @@ namespace facter { namespace execution {
      * @param options The execution options.
      * @return Returns whether or not the execution succeeded paired with the child process output.
      */
-    std::pair<bool, std::string> execute(
+    std::pair<bool, std::string> LIBFACTER_EXPORT execute(
         std::string const& file,
         facter::util::option_set<execution_options> const& options = { execution_options::defaults });
 
@@ -187,7 +181,7 @@ namespace facter { namespace execution {
      * @param options The execution options.
      * @return Returns whether or not the execution succeeded paired with the child process output.
      */
-    std::pair<bool, std::string> execute(
+    std::pair<bool, std::string> LIBFACTER_EXPORT execute(
         std::string const& file,
         std::vector<std::string> const& arguments,
         facter::util::option_set<execution_options> const& options  = { execution_options::defaults });
@@ -200,7 +194,7 @@ namespace facter { namespace execution {
      * @param options The execution options.
      * @return Returns whether or not the execution succeeded paired with the child process output.
      */
-    std::pair<bool, std::string> execute(
+    std::pair<bool, std::string> LIBFACTER_EXPORT execute(
         std::string const& file,
         std::vector<std::string> const& arguments,
         std::map<std::string, std::string> const& environment,
@@ -213,7 +207,7 @@ namespace facter { namespace execution {
      * @param options The execution options.
      * @return Returns true if the execution succeeded or false if it did not.
      */
-    bool each_line(
+    bool LIBFACTER_EXPORT each_line(
         std::string const& file,
         std::function<bool(std::string&)> callback,
         facter::util::option_set<execution_options> const& options = { execution_options::defaults });
@@ -226,7 +220,7 @@ namespace facter { namespace execution {
      * @param options The execution options.
      * @return Returns true if the execution succeeded or false if it did not.
      */
-    bool each_line(
+    bool LIBFACTER_EXPORT each_line(
         std::string const& file,
         std::vector<std::string> const& arguments,
         std::function<bool(std::string&)> callback,
@@ -241,7 +235,7 @@ namespace facter { namespace execution {
      * @param options The execution options.
      * @return Returns true if the execution succeeded or false if it did not.
      */
-    bool each_line(
+    bool LIBFACTER_EXPORT each_line(
         std::string const& file,
         std::vector<std::string> const& arguments,
         std::map<std::string, std::string> const& environment,
@@ -257,7 +251,7 @@ namespace facter { namespace execution {
      * @param options The execution options.
      * @return Returns the stream results concatenated together, or an empty string if callback is not null.
      */
-    std::string process_stream(
+    std::string LIBFACTER_EXPORT process_stream(
         std::function<bool(std::string&)> yield_input,
         std::function<bool(std::string&)> callback,
         facter::util::option_set<execution_options> const& options = { execution_options::defaults });

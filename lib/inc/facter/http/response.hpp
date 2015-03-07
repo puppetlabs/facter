@@ -4,6 +4,7 @@
 */
 #pragma once
 
+#include "../export.h"
 #include <string>
 #include <functional>
 #include <map>
@@ -13,7 +14,7 @@ namespace facter { namespace http {
     /**
      * Implements the HTTP response.
      */
-    struct response
+    struct LIBFACTER_EXPORT response
     {
         /**
          * Constructs a HTTP response.

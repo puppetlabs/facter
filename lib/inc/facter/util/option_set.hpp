@@ -4,6 +4,7 @@
  */
 #pragma once
 
+#include "../export.h"
 #include <numeric>
 #include <string>
 #include <initializer_list>

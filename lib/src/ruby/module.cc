@@ -7,6 +7,7 @@
 #include <facter/util/directory.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/version.h>
+#include <facter/export.h>
 #include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -104,7 +105,7 @@ extern "C" {
     /**
      * Called by the Ruby VM when native facter is required.
      */
-    void Init_libfacter()
+    void LIBFACTER_EXPORT Init_libfacter()
     {
         setup_logging(boost::nowide::cerr);
         set_level(log_level::warning);

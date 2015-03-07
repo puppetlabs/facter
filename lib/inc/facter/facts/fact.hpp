@@ -4,12 +4,14 @@
  */
 #pragma once
 
+#include "../export.h"
+
 namespace facter { namespace facts {
 
     /**
      * Stores the constant fact names.
      */
-    struct fact
+    struct LIBFACTER_EXPORT fact
     {
         /**
          * The fact for kernel name.

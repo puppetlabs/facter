@@ -20,6 +20,8 @@ extern char** environ;
 
 namespace facter { namespace execution {
 
+    void log_execution(string const& file, vector<string> const* arguments);
+
     const char *const command_shell = "sh";
     const char *const command_args = "-c";
 

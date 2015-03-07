@@ -233,7 +233,9 @@ link_directories(
 )
 
 # Add the library target without a prefix (name already has the 'lib') and use '.so' for all platforms (Ruby extension file extension)
-add_library(libfacter SHARED ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_STANDARD_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
+add_library(libfactersrc OBJECT ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_STANDARD_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
+set_target_properties(libfactersrc PROPERTIES POSITION_INDEPENDENT_CODE true)
+add_library(libfacter SHARED $<TARGET_OBJECTS:libfactersrc>)
 set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX "" IMPORT_SUFFIX ".so.a" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}" COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS})
 
 # Link in additional libraries
@@ -246,6 +248,18 @@ target_link_libraries(libfacter
     ${YAMLCPP_LIBRARIES}
     ${CURL_LIBRARIES}
 )
+
+# Generate the export header
+include(GenerateExportHeader)
+generate_export_header(libfacter EXPORT_FILE_NAME "${CMAKE_CURRENT_LIST_DIR}/inc/facter/export.h")
+
+if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
+    add_compiler_export_flags()
+    set_target_properties(libfacter PROPERTIES LINK_FLAGS "-Wl,--exclude-libs=ALL")
+elseif (WIN32)
+    add_compiler_export_flags()
+    add_definitions("-Dlibfacter_EXPORTS")
+endif()
 
 if (WIN32)
     set(LIBFACTER_INSTALL_DESTINATION bin)

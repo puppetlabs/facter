@@ -4,12 +4,14 @@
  */
 #pragma once
 
+#include "../export.h"
+
 namespace facter { namespace facts {
 
     /**
      * Stores the constant operating system names.
      */
-    struct os
+    struct LIBFACTER_EXPORT os
     {
         /**
          * The RedHat operating system.

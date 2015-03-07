@@ -5,6 +5,7 @@
 #pragma once
 
 #include "value.hpp"
+#include "../export.h"
 #include <cstdint>
 #include <string>
 #include <iostream>
