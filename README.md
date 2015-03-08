@@ -9,7 +9,7 @@ An implementation of facter functionality in C++11, providing:
 
 * a shared library which gather facts about the system
 * an executable for standalone command line usage
-* a ruby file to enable `requre 'cfacter'`.
+* a ruby file to enable `require 'cfacter'`.
 
 Please see our [extensibility document](https://github.com/puppetlabs/cfacter/blob/master/Extensibility.md) to learn more
 about extending native facter using custom and external facts.
