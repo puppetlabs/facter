@@ -25,7 +25,8 @@ namespace facter { namespace util { namespace windows {
     /**
      * A class for initiating use of the Winsock DLL, providing wrappers for WSA calls.
      */
-    struct wsa {
+    struct wsa
+    {
         /**
          * Initializes Winsock. Throws a wsa_exception on failure.
          */
@@ -37,22 +38,13 @@ namespace facter { namespace util { namespace windows {
         ~wsa();
 
         /**
-         * Disable copy constructor; there's no reason to make a copy over a new instance.
-         */
-        wsa(wsa const&) = delete;
-
-        /**
-         * Disable copy assignment; there's no reason to make a copy over a new instance.
-         */
-        wsa& operator=(wsa const&) = delete;
-
-        /**
          * Use default move constructer.
          */
         wsa(wsa&&) = default;
 
         /**
          * Use default move assignment.
+         * @return Returns this instance.
          */
         wsa& operator=(wsa&&) = default;
 
@@ -92,6 +84,8 @@ namespace facter { namespace util { namespace windows {
         }
 
      private:
+        wsa(wsa const&) = delete;
+        wsa& operator=(wsa const&) = delete;
         void string_fill_sockaddr(sockaddr *sock, std::string const& addr, int size) const;
     };
 
