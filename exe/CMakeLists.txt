@@ -12,7 +12,6 @@ include_directories(
     ../lib/inc # the libfacter headers
     ${Boost_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
-    ${LEATHERMAN_LOGGING_INCLUDE}
     ${LEATHERMAN_NOWIDE_INCLUDE}
 )
 

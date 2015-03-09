@@ -33,6 +33,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/resolvers/zpool_resolver.cc"
     "facts/schema.cc"
     "facts/string_value.cc"
+    "logging/logging.cc"
     "main.cc"
     "util/directory.cc"
     "util/environment.cc"

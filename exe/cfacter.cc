@@ -1,5 +1,5 @@
 #include <facter/version.h>
-#include <leatherman/logging/logging.hpp>
+#include <facter/logging/logging.hpp>
 #include <facter/facts/collection.hpp>
 #include <internal/ruby/api.hpp>
 #include <internal/ruby/module.hpp>
@@ -26,6 +26,7 @@ using namespace std;
 using namespace facter::util;
 using namespace facter::facts;
 using namespace facter::ruby;
+using namespace facter::logging;
 namespace po = boost::program_options;
 
 void help(po::options_description& desc)
@@ -61,7 +62,7 @@ void help(po::options_description& desc)
 
 void log_command_line(int argc, char** argv)
 {
-    if (!LOG_IS_INFO_ENABLED()) {
+    if (!is_enabled(level::info)) {
         return;
     }
     ostringstream command_line;
@@ -71,17 +72,17 @@ void log_command_line(int argc, char** argv)
         }
         command_line << argv[i];
     }
-    LOG_INFO("executed with command line: %1%.", command_line.str());
+    log(level::info, "executed with command line: %1%.", command_line.str());
 }
 
 void log_queries(set<string> const& queries)
 {
-    if (!LOG_IS_INFO_ENABLED()) {
+    if (!is_enabled(level::info)) {
         return;
     }
 
     if (queries.empty()) {
-        LOG_INFO("resolving all facts.");
+        log(level::info, "resolving all facts.");
         return;
     }
 
@@ -95,13 +96,11 @@ void log_queries(set<string> const& queries)
         }
         output << query;
     }
-    LOG_INFO("requested queries: %1%.", output.str());
+    log(level::info, "requested queries: %1%.", output.str());
 }
 
 int main(int argc, char **argv)
 {
-    using namespace leatherman::logging;
-
     try
     {
         // Fix args on Windows to be UTF-8
@@ -123,7 +122,7 @@ int main(int argc, char **argv)
             ("external-dir", po::value<vector<string>>(&external_directories), "A directory to use for external facts.")
             ("help", "Print this help message.")
             ("json,j", "Output in JSON format.")
-            ("log-level,l", po::value<log_level>()->default_value(log_level::warning, "warn"), "Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.")
+            ("log-level,l", po::value<level>()->default_value(level::warning, "warn"), "Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.")
             ("no-color", "Disables color output.")
             ("no-custom-facts", "Disables custom facts.")
             ("no-external-facts", "Disables external facts.")
@@ -176,7 +175,7 @@ int main(int argc, char **argv)
             }
         }
         catch (exception& ex) {
-            boost::nowide::cerr << colorize(log_level::error) << "error: " << ex.what() << colorize() << "\n" << endl;
+            boost::nowide::cerr << colorize(level::error) << "error: " << ex.what() << colorize() << "\n" << endl;
             help(visible_options);
             return EXIT_FAILURE;
         }
@@ -195,13 +194,13 @@ int main(int argc, char **argv)
         }
 
         // Get the logging level
-        auto level = vm["log-level"].as<log_level>();
+        auto lvl= vm["log-level"].as<level>();
         if (vm.count("debug")) {
-            level = log_level::debug;
+            lvl = level::debug;
         } else if (vm.count("verbose")) {
-            level = log_level::info;
+            lvl = level::info;
         }
-        set_level(level);
+        set_level(lvl);
 
         log_command_line(argc, argv);
 
@@ -264,8 +263,8 @@ int main(int argc, char **argv)
         facts.write(boost::nowide::cout, fmt, queries);
         boost::nowide::cout << endl;
     } catch (exception& ex) {
-        LOG_FATAL("unhandled exception: %1%", ex.what());
+        log(level::fatal, "unhandled exception: %1%", ex.what());
     }
 
-    return error_has_been_logged() ? EXIT_FAILURE : EXIT_SUCCESS;
+    return error_logged() ? EXIT_FAILURE : EXIT_SUCCESS;
 }

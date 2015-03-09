@@ -59,6 +59,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/zone_resolver.cc"
     "src/facts/resolvers/zfs_resolver.cc"
     "src/facts/scalar_value.cc"
+    "src/logging/logging.cc"
     "src/ruby/aggregate_resolution.cc"
     "src/ruby/api.cc"
     "src/ruby/chunk.cc"
