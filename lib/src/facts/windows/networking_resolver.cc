@@ -59,12 +59,12 @@ namespace facter { namespace facts { namespace windows {
     {
         // Excluding localhost and 169.254.x.x in Windows - this is the DHCP APIPA, meaning that if the node cannot
         // get an ip address from the dhcp server, it auto-assigns a private ip address
-        return addr == "127.0.0.1" || boost::starts_with(addr, "169.254.");
+        return addr.empty() || addr == "127.0.0.1" || boost::starts_with(addr, "169.254.");
     }
 
     bool networking_resolver::ignored_ipv6_address(string const& addr)
     {
-        return addr == "::1" || boost::starts_with(addr, "fe80");
+        return addr.empty() || addr == "::1" || boost::starts_with(addr, "fe80");
     }
 
     sockaddr_in networking_resolver::create_ipv4_mask(uint8_t masklen)
@@ -204,13 +204,6 @@ namespace facter { namespace facts { namespace windows {
             interface net_interface;
             net_interface.name = boost::nowide::narrow(pCurAddr->FriendlyName);
 
-            // http://support.microsoft.com/kb/894564 talks about how binding order is determined.
-            // GetAdaptersAddresses returns adapters in binding order. This way, the domain and primary_interface match.
-            // The old facter behavior didn't make a lot of sense (it would pick the last in binding order, not 1st).
-            if (result.primary_interface.empty()) {
-                result.primary_interface = net_interface.name;
-            }
-
             // Only supported on platforms after Windows Server 2003.
             if (pCurAddr->Flags & IP_ADAPTER_DHCP_ENABLED && pCurAddr->Length >= sizeof(IP_ADAPTER_ADDRESSES_LH)) {
                 auto adapter = reinterpret_cast<IP_ADAPTER_ADDRESSES_LH&>(*pCurAddr);
@@ -239,7 +232,7 @@ namespace facter { namespace facts { namespace windows {
                 }
 #endif
 
-                if (it->Address.lpSockaddr->sa_family == AF_INET && !ignored_ipv4_address(addr)) {
+                if (it->Address.lpSockaddr->sa_family == AF_INET) {
                     net_interface.address.v4 = move(addr);
 
                     if (adapterInfoMasks.empty()) {
@@ -264,7 +257,7 @@ namespace facter { namespace facts { namespace windows {
                         }
 #endif
                     }
-                } else if (it->Address.lpSockaddr->sa_family == AF_INET6 && !ignored_ipv6_address(addr)) {
+                } else if (it->Address.lpSockaddr->sa_family == AF_INET6) {
                     net_interface.address.v6 = move(addr);
 
                     // Get mask if on a system later than Windows Server 2003. On 2003, we can't retrieve IPv6 masks.
@@ -281,6 +274,16 @@ namespace facter { namespace facts { namespace windows {
 #endif
                     }
                 }
+            }
+
+            // http://support.microsoft.com/kb/894564 talks about how binding order is determined.
+            // GetAdaptersAddresses returns adapters in binding order. This way, the domain and primary_interface match.
+            // The old facter behavior didn't make a lot of sense (it would pick the last in binding order, not 1st).
+            // Only accept this as a primary interface if it has a non-link-local address.
+            if (result.primary_interface.empty() &&
+                (!ignored_ipv4_address(net_interface.address.v4) ||
+                 !ignored_ipv6_address(net_interface.address.v6))) {
+                result.primary_interface = net_interface.name;
             }
 
             stringstream macaddr;
