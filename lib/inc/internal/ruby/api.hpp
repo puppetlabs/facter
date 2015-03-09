@@ -12,7 +12,6 @@
 #include <memory>
 #include <initializer_list>
 #include "../util/dynamic_library.hpp"
-#include <facter/export.h>
 
 namespace facter { namespace facts {
 
@@ -95,13 +94,13 @@ namespace facter {  namespace ruby {
          * Gets the Ruby API instance.
          * @return Returns the Ruby API instance or nullptr if the Ruby API is unavailable.
          */
-        LIBFACTER_EXPORT static api* instance();
+        static api* instance();
 
         /**
          * Called to initialize the API.
          * This should be done at the same stack frame where code is loaded into the Ruby VM.
          */
-        LIBFACTER_EXPORT void initialize();
+        void initialize();
 
         /**
          * Gets whether or not the API has been initialized.
@@ -119,7 +118,7 @@ namespace facter {  namespace ruby {
          * Sets whether or not exception stack traces are included when formatting exception messages.
          * @param value True if stack traces will be included in exception messages or false if they will not be.
          */
-        LIBFACTER_EXPORT void include_stack_trace(bool value);
+        void include_stack_trace(bool value);
 
         /**
          * See MRI documentation.

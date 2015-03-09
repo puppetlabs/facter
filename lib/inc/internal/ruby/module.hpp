@@ -9,7 +9,6 @@
 #include <map>
 #include <set>
 #include <string>
-#include <facter/export.h>
 
 namespace facter { namespace facts {
 
@@ -35,12 +34,12 @@ namespace facter { namespace ruby {
          * @param facts The collection of facts to populate.
          * @param paths The search paths for loading custom facts.
          */
-        LIBFACTER_EXPORT module(facter::facts::collection& facts, std::vector<std::string> const& paths = {});
+        module(facter::facts::collection& facts, std::vector<std::string> const& paths = {});
 
         /**
          * Destructs the Facter module.
          */
-        LIBFACTER_EXPORT ~module();
+        ~module();
 
         /**
          * Loads all custom facts.
@@ -50,7 +49,7 @@ namespace facter { namespace ruby {
         /**
          * Resolves all custom facts.
          */
-        LIBFACTER_EXPORT void resolve_facts();
+        void resolve_facts();
 
         /**
          * Clears the facts.

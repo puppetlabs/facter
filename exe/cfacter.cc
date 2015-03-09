@@ -1,8 +1,7 @@
 #include <facter/version.h>
 #include <facter/logging/logging.hpp>
 #include <facter/facts/collection.hpp>
-#include <internal/ruby/api.hpp>
-#include <internal/ruby/module.hpp>
+#include <facter/ruby/ruby.hpp>
 #include <boost/algorithm/string.hpp>
 // Note the caveats in nowide::cout/cerr; they're not synchronized with stdio.
 // Thus they can't be relied on to flush before program exit.
@@ -23,9 +22,7 @@
 #include <iterator>
 
 using namespace std;
-using namespace facter::util;
 using namespace facter::facts;
-using namespace facter::ruby;
 using namespace facter::logging;
 namespace po = boost::program_options;
 
@@ -205,15 +202,7 @@ int main(int argc, char **argv)
         log_command_line(argc, argv);
 
         // Initialize Ruby in main
-        // This needs to be done here to ensure the stack is at the appropriate depth for the Ruby VM
-        api* ruby = nullptr;
-        if (!vm.count("no-custom-facts")) {
-            ruby = api::instance();
-            if (ruby) {
-                ruby->initialize();
-                ruby->include_stack_trace(vm.count("trace") == 1);
-            }
-        }
+        bool ruby = facter::ruby::initialize(vm.count("trace") == 1);
 
         // Build a set of queries from the command line
         set<string> queries;
@@ -249,8 +238,7 @@ int main(int argc, char **argv)
         facts.add_environment_facts();
 
         if (ruby) {
-            module mod(facts, custom_directories);
-            mod.resolve_facts();
+            facter::ruby::load_custom_facts(facts, custom_directories);
         }
 
         // Output the facts

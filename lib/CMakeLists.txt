@@ -67,6 +67,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/ruby/fact.cc"
     "src/ruby/module.cc"
     "src/ruby/resolution.cc"
+    "src/ruby/ruby.cc"
     "src/ruby/ruby_value.cc"
     "src/ruby/simple_resolution.cc"
     "src/util/directory.cc"
