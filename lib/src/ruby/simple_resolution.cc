@@ -1,5 +1,5 @@
-#include <facter/ruby/simple_resolution.hpp>
-#include <facter/ruby/module.hpp>
+#include <internal/ruby/simple_resolution.hpp>
+#include <internal/ruby/module.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>

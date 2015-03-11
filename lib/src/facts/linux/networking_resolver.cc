@@ -1,5 +1,5 @@
-#include <facter/facts/linux/networking_resolver.hpp>
-#include <facter/util/posix/scoped_descriptor.hpp>
+#include <internal/facts/linux/networking_resolver.hpp>
+#include <internal/util/posix/scoped_descriptor.hpp>
 #include <facter/util/file.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>

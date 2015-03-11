@@ -1,9 +1,9 @@
-#include <facter/facts/windows/virtualization_resolver.hpp>
+#include <internal/facts/windows/virtualization_resolver.hpp>
+#include <internal/util/windows/wmi.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
-#include <facter/util/windows/wmi.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <vector>
 #include <tuple>

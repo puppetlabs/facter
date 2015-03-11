@@ -1,4 +1,4 @@
-#include <facter/util/bsd/scoped_ifaddrs.hpp>
+#include <internal/util/bsd/scoped_ifaddrs.hpp>
 
 using namespace std;
 

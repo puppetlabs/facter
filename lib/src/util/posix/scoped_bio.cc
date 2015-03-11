@@ -1,5 +1,5 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#include <facter/util/posix/scoped_bio.hpp>
+#include <internal/util/posix/scoped_bio.hpp>
 
 using namespace std;
 

@@ -1,7 +1,7 @@
-#include <facter/facts/linux/filesystem_resolver.hpp>
-#include <leatherman/logging/logging.hpp>
-#include <facter/util/scoped_file.hpp>
+#include <internal/facts/linux/filesystem_resolver.hpp>
+#include <internal/util/scoped_file.hpp>
 #include <facter/util/file.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>

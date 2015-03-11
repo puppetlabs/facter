@@ -1,8 +1,8 @@
 #include <facter/execution/execution.hpp>
 #include <facter/util/directory.hpp>
-#include <facter/util/posix/scoped_descriptor.hpp>
+#include <internal/util/posix/scoped_descriptor.hpp>
+#include <internal/ruby/api.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/ruby/api.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <unistd.h>
@@ -19,6 +19,8 @@ using namespace boost::filesystem;
 extern char** environ;
 
 namespace facter { namespace execution {
+
+    void log_execution(string const& file, vector<string> const* arguments);
 
     const char *const command_shell = "sh";
     const char *const command_args = "-c";

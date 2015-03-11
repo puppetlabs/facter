@@ -1,6 +1,6 @@
-#include <facter/facts/windows/memory_resolver.hpp>
-#include <facter/util/windows/system_error.hpp>
-#include <facter/util/windows/windows.hpp>
+#include <internal/facts/windows/memory_resolver.hpp>
+#include <internal/util/windows/system_error.hpp>
+#include <internal/util/windows/windows.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <psapi.h>
 

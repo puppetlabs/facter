@@ -5,6 +5,7 @@
 #pragma once
 
 #include "value.hpp"
+#include "../export.h"
 #include <vector>
 #include <memory>
 #include <functional>
@@ -15,7 +16,7 @@ namespace facter { namespace facts {
      * Represents an array of values.
      * This type can be moved but cannot be copied.
      */
-    struct array_value : value
+    struct LIBFACTER_EXPORT array_value : value
     {
         /**
          * Constructs an array_value.

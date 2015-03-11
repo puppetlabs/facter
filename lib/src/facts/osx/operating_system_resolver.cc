@@ -1,4 +1,4 @@
-#include <facter/facts/osx/operating_system_resolver.hpp>
+#include <internal/facts/osx/operating_system_resolver.hpp>
 #include <facter/execution/execution.hpp>
 #include <boost/algorithm/string.hpp>
 #include <string>

@@ -1,4 +1,4 @@
-#include <facter/facts/resolvers/gce_resolver.hpp>
+#include <internal/facts/resolvers/gce_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -20,7 +20,6 @@ using namespace facter::http;
 #endif
 
 using namespace std;
-using namespace facter::util;
 using namespace rapidjson;
 
 namespace facter { namespace facts { namespace resolvers {

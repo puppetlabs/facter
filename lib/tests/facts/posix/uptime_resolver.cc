@@ -1,5 +1,5 @@
 #include <catch.hpp>
-#include <facter/facts/posix/uptime_resolver.hpp>
+#include <internal/facts/posix/uptime_resolver.hpp>
 #include <map>
 
 using namespace std;

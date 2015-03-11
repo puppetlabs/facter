@@ -1,9 +1,8 @@
-#include <facter/facts/windows/identity_resolver.hpp>
+#include <internal/facts/windows/identity_resolver.hpp>
+#include <internal/util/windows/system_error.hpp>
+#include <internal/util/windows/windows.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/util/windows/system_error.hpp>
 #include <boost/nowide/convert.hpp>
-
-#include <facter/util/windows/windows.hpp>
 #include <security.h>
 
 using namespace std;

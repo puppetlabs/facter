@@ -1,6 +1,6 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #include <catch.hpp>
-#include <facter/util/posix/scoped_bio.hpp>
+#include <internal/util/posix/scoped_bio.hpp>
 #include <openssl/evp.h>
 
 using namespace std;

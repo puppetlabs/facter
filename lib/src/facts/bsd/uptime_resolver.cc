@@ -1,4 +1,4 @@
-#include <facter/facts/bsd/uptime_resolver.hpp>
+#include <internal/facts/bsd/uptime_resolver.hpp>
 #include <ctime>
 #include <sys/sysctl.h>
 

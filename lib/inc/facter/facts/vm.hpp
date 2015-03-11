@@ -4,12 +4,14 @@
  */
 #pragma once
 
+#include "../export.h"
+
 namespace facter { namespace facts {
 
     /**
      * Stores the constant virtual machine names.
      */
-    struct vm
+    struct LIBFACTER_EXPORT vm
     {
         /**
          * The name for VMWare virtual machine.

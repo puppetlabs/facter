@@ -4,18 +4,19 @@
  */
 #pragma once
 
+#include "../export.h"
 #include <vector>
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <facter/util/regex.hpp>
+#include <boost/regex.hpp>
 
 namespace facter { namespace facts {
 
     /**
      * Thrown when a resolver is constructed with an invalid fact name pattern.
      */
-    struct invalid_name_pattern_exception : std::runtime_error
+    struct LIBFACTER_EXPORT invalid_name_pattern_exception : std::runtime_error
     {
         /**
          * Constructs a invalid_name_pattern_exception.
@@ -31,7 +32,7 @@ namespace facter { namespace facts {
      * A fact resolver is responsible for resolving one or more facts.
      * This type can be moved but cannot be copied.
      */
-    struct resolver
+    struct LIBFACTER_EXPORT resolver
     {
         /**
          * Constructs a resolver.
@@ -106,7 +107,7 @@ namespace facter { namespace facts {
      private:
         std::string _name;
         std::vector<std::string> _names;
-        std::vector<std::unique_ptr<facter::util::re_adapter>> _regexes;
+        std::vector<boost::regex> _regexes;
     };
 
 }}  // namespace facter::facts

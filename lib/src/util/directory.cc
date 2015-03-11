@@ -1,6 +1,6 @@
 #include <facter/util/directory.hpp>
+#include <internal/util/regex.hpp>
 #include <boost/filesystem.hpp>
-#include <facter/util/regex.hpp>
 
 using namespace std;
 using namespace boost::filesystem;
@@ -9,10 +9,7 @@ namespace facter { namespace util {
 
     void directory::each_file(string const& directory, function<bool(string const&)> callback, string const& pattern)
     {
-        re_adapter regex(pattern);
-        if (!regex.ok()) {
-            return;
-        }
+        boost::regex regex(pattern);
 
         // Attempt to iterate the directory
         boost::system::error_code ec;
@@ -38,10 +35,7 @@ namespace facter { namespace util {
 
     void directory::each_subdirectory(string const& directory, function<bool(string const&)> callback, string const& pattern)
     {
-        re_adapter regex(pattern);
-        if (!regex.ok()) {
-            return;
-        }
+        boost::regex regex(pattern);
 
         // Attempt to iterate the directory
         boost::system::error_code ec;

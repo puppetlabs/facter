@@ -1,9 +1,10 @@
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/collection.hpp>
+#include <internal/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/util/regex.hpp>
 
 using namespace std;
+using namespace facter::util;
 
 namespace facter { namespace facts {
 
@@ -17,11 +18,11 @@ namespace facter { namespace facts {
         _names(move(names))
     {
         for (auto const& pattern : patterns) {
-            auto regex = unique_ptr<util::re_adapter>(new util::re_adapter(pattern));
-            if (!regex->error().empty()) {
-                throw invalid_name_pattern_exception(regex->error());
+            try {
+                _regexes.push_back(boost::regex(pattern));
+            } catch (boost::regex_error const& ex) {
+                throw invalid_name_pattern_exception(ex.what());
             }
-            _regexes.push_back(std::move(regex));
         }
     }
 
@@ -64,7 +65,7 @@ namespace facter { namespace facts {
     {
         // Check to see if any of our regexes match
         for (auto const& regex : _regexes) {
-            if (re_search(name, *regex)) {
+            if (re_search(name, regex)) {
                 return true;
             }
         }

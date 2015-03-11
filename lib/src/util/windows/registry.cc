@@ -1,9 +1,9 @@
-#include <facter/util/windows/registry.hpp>
-#include <facter/util/windows/system_error.hpp>
+#include <internal/util/windows/registry.hpp>
+#include <internal/util/windows/system_error.hpp>
+#include <internal/util/windows/windows.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/nowide/convert.hpp>
-#include <facter/util/windows/windows.hpp>
 
 using namespace std;
 

@@ -1,12 +1,12 @@
-#include <facter/ruby/api.hpp>
-#include <facter/ruby/ruby_value.hpp>
+#include <internal/ruby/api.hpp>
+#include <internal/ruby/ruby_value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/array_value.hpp>
-#include <leatherman/logging/logging.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/execution/execution.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>

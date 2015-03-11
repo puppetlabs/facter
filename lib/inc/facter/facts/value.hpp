@@ -4,6 +4,7 @@
  */
 #pragma once
 
+#include "../export.h"
 #include <string>
 #include <functional>
 #include <memory>
@@ -37,7 +38,7 @@ namespace facter { namespace facts {
      * Base class for values.
      * This type can be moved but cannot be copied.
      */
-    struct value
+    struct LIBFACTER_EXPORT value
     {
         /**
          * Constructs a value.

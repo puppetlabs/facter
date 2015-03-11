@@ -1,7 +1,7 @@
-#include <facter/facts/solaris/operating_system_resolver.hpp>
+#include <internal/facts/solaris/operating_system_resolver.hpp>
+#include <internal/util/regex.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/util/file.hpp>
-#include <facter/util/regex.hpp>
 
 using namespace std;
 using namespace facter::util;
@@ -27,9 +27,9 @@ namespace facter { namespace facts { namespace solaris {
          to be resolved further using the `pkg info kernel` command (TODO).
          */
 
-        re_adapter regexp_s10("Solaris \\d+ \\d+/\\d+ s(\\d+)x_u(\\d+)wos_");
-        re_adapter regexp_s11("Solaris (\\d+)[.](\\d+)");
-        re_adapter regexp_s11b("Solaris (\\d+) ");
+        static boost::regex regexp_s10("Solaris \\d+ \\d+/\\d+ s(\\d+)x_u(\\d+)wos_");
+        static boost::regex regexp_s11("Solaris (\\d+)[.](\\d+)");
+        static boost::regex regexp_s11b("Solaris (\\d+) ");
         file::each_line("/etc/release", [&](string& line) {
             string major;
             string minor;
@@ -51,7 +51,7 @@ namespace facter { namespace facts { namespace solaris {
     tuple<string, string> operating_system_resolver::parse_release(string const& name, string const& release) const
     {
         string major, minor;
-        re_search(release, "^(\\d+)(?:_u|\\.)(\\d+)", &major, &minor);
+        re_search(release, boost::regex("^(\\d+)(?:_u|\\.)(\\d+)"), &major, &minor);
         return make_tuple(major, minor);
     }
 

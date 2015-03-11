@@ -1,4 +1,4 @@
-#include <facter/facts/solaris/kernel_resolver.hpp>
+#include <internal/facts/solaris/kernel_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <sys/utsname.h>
 

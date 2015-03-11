@@ -1,5 +1,5 @@
 #include <catch.hpp>
-#include <facter/facts/external/windows/powershell_resolver.hpp>
+#include <internal/facts/external/windows/powershell_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/string.hpp>

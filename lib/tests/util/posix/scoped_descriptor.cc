@@ -1,5 +1,5 @@
 #include <catch.hpp>
-#include <facter/util/posix/scoped_descriptor.hpp>
+#include <internal/util/posix/scoped_descriptor.hpp>
 #include <sys/socket.h>
 #include <fcntl.h>
 

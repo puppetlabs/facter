@@ -1,17 +1,17 @@
 #include <facter/facts/collection.hpp>
-#include <facter/facts/posix/kernel_resolver.hpp>
-#include <facter/facts/posix/identity_resolver.hpp>
-#include <facter/facts/linux/operating_system_resolver.hpp>
-#include <facter/facts/linux/networking_resolver.hpp>
-#include <facter/facts/linux/disk_resolver.hpp>
-#include <facter/facts/linux/dmi_resolver.hpp>
-#include <facter/facts/linux/processor_resolver.hpp>
-#include <facter/facts/linux/uptime_resolver.hpp>
-#include <facter/facts/linux/virtualization_resolver.hpp>
-#include <facter/facts/posix/ssh_resolver.hpp>
-#include <facter/facts/posix/timezone_resolver.hpp>
-#include <facter/facts/linux/filesystem_resolver.hpp>
-#include <facter/facts/linux/memory_resolver.hpp>
+#include <internal/facts/posix/kernel_resolver.hpp>
+#include <internal/facts/posix/identity_resolver.hpp>
+#include <internal/facts/linux/operating_system_resolver.hpp>
+#include <internal/facts/linux/networking_resolver.hpp>
+#include <internal/facts/linux/disk_resolver.hpp>
+#include <internal/facts/linux/dmi_resolver.hpp>
+#include <internal/facts/linux/processor_resolver.hpp>
+#include <internal/facts/linux/uptime_resolver.hpp>
+#include <internal/facts/linux/virtualization_resolver.hpp>
+#include <internal/facts/posix/ssh_resolver.hpp>
+#include <internal/facts/posix/timezone_resolver.hpp>
+#include <internal/facts/linux/filesystem_resolver.hpp>
+#include <internal/facts/linux/memory_resolver.hpp>
 
 using namespace std;
 

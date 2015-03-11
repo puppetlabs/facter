@@ -1,5 +1,5 @@
-#include <facter/ruby/confine.hpp>
-#include <facter/ruby/module.hpp>
+#include <internal/ruby/confine.hpp>
+#include <internal/ruby/module.hpp>
 #include <algorithm>
 
 using namespace std;

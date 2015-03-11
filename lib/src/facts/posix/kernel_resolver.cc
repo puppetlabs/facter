@@ -1,4 +1,4 @@
-#include <facter/facts/posix/kernel_resolver.hpp>
+#include <internal/facts/posix/kernel_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <sys/utsname.h>

@@ -4,6 +4,7 @@
  */
 #pragma once
 
+#include "../export.h"
 #include <string>
 #include <stdexcept>
 #include <functional>
@@ -13,7 +14,7 @@ namespace facter { namespace util {
     /**
      * Contains utility functions for reading data from files.
      */
-    struct file
+    struct LIBFACTER_EXPORT file
     {
         /**
          * Reads each line from the given file.

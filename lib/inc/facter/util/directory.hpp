@@ -4,6 +4,7 @@
  */
 #pragma once
 
+#include "../export.h"
 #include <string>
 #include <functional>
 
@@ -12,7 +13,7 @@ namespace facter { namespace util {
     /**
      * Contains utility functions for enumerating directories.
      */
-    struct directory
+    struct LIBFACTER_EXPORT directory
     {
         /**
          * Enumerates the files that match the given pattern in the given directory.

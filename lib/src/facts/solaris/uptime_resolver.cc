@@ -1,5 +1,5 @@
-#include <facter/facts/solaris/uptime_resolver.hpp>
-#include <facter/util/solaris/k_stat.hpp>
+#include <internal/facts/solaris/uptime_resolver.hpp>
+#include <internal/util/solaris/k_stat.hpp>
 #include <sys/sysinfo.h>
 #include <ctime>
 #include <chrono>

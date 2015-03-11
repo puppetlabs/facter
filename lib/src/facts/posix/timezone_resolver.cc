@@ -1,4 +1,4 @@
-#include <facter/facts/posix/timezone_resolver.hpp>
+#include <internal/facts/posix/timezone_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <time.h>
 

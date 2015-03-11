@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
-#include <facter/util/windows/windows.hpp>
+#include <internal/util/windows/windows.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include "../../fixtures.hpp"

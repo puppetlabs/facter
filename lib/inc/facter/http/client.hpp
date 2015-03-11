@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../util/scoped_resource.hpp"
+#include "../export.h"
 #include "request.hpp"
 #include "response.hpp"
 #include <curl/curl.h>
@@ -14,7 +15,7 @@ namespace facter { namespace http {
     /**
      * Resource for a cURL handle.
      */
-    struct curl_handle : facter::util::scoped_resource<CURL*>
+    struct LIBFACTER_EXPORT curl_handle : facter::util::scoped_resource<CURL*>
     {
         /**
          * Constructs a cURL handle.
@@ -28,7 +29,7 @@ namespace facter { namespace http {
     /**
      * Resource for a cURL linked-list.
      */
-    struct curl_list : facter::util::scoped_resource<curl_slist*>
+    struct LIBFACTER_EXPORT curl_list : facter::util::scoped_resource<curl_slist*>
     {
         /**
          * Constructs a curl_list.
@@ -48,7 +49,7 @@ namespace facter { namespace http {
     /**
      * Resource for a cURL escaped string.
      */
-    struct curl_escaped_string : facter::util::scoped_resource<char const*>
+    struct LIBFACTER_EXPORT curl_escaped_string : facter::util::scoped_resource<char const*>
     {
         /**
          * Constructs a cURL escaped string.
@@ -64,7 +65,7 @@ namespace facter { namespace http {
     /**
      * The exception for HTTP.
      */
-    struct http_exception : std::runtime_error
+    struct LIBFACTER_EXPORT http_exception : std::runtime_error
     {
         /**
          * Constructs an http_exception.
@@ -79,7 +80,7 @@ namespace facter { namespace http {
     /**
      * The exception for HTTP requests.
      */
-    struct http_request_exception : http_exception
+    struct LIBFACTER_EXPORT http_request_exception : http_exception
     {
         /**
          * Constructs an http_request_exception.
@@ -109,7 +110,7 @@ namespace facter { namespace http {
      * Implements a client for HTTP.
      * Note: this class is not thread-safe.
      */
-    struct client
+    struct LIBFACTER_EXPORT client
     {
         /**
          * Constructs an HTTP client.
@@ -161,7 +162,7 @@ namespace facter { namespace http {
             post
         };
 
-        struct context
+        struct LIBFACTER_NO_EXPORT context
         {
             context(request const& req, response& res) :
                 req(req),
@@ -177,19 +178,19 @@ namespace facter { namespace http {
             std::string response_buffer;
         };
 
-        response perform(http_method method, request const& req);
-        void set_method(context& ctx, http_method method);
-        void set_url(context& ctx);
-        void set_headers(context& ctx);
-        void set_cookies(context& ctx);
-        void set_body(context& ctx);
-        void set_timeouts(context& ctx);
-        void set_write_callbacks(context& ctx);
+        LIBFACTER_NO_EXPORT response perform(http_method method, request const& req);
+        LIBFACTER_NO_EXPORT void set_method(context& ctx, http_method method);
+        LIBFACTER_NO_EXPORT void set_url(context& ctx);
+        LIBFACTER_NO_EXPORT void set_headers(context& ctx);
+        LIBFACTER_NO_EXPORT void set_cookies(context& ctx);
+        LIBFACTER_NO_EXPORT void set_body(context& ctx);
+        LIBFACTER_NO_EXPORT void set_timeouts(context& ctx);
+        LIBFACTER_NO_EXPORT void set_write_callbacks(context& ctx);
 
-        static size_t read_body(char* buffer, size_t size, size_t count, void* ptr);
-        static size_t write_header(char* buffer, size_t size, size_t count, void* ptr);
-        static size_t write_body(char* buffer, size_t size, size_t count, void* ptr);
-        static int debug(CURL* handle, curl_infotype type, char* data, size_t size, void* ptr);
+        static LIBFACTER_NO_EXPORT size_t read_body(char* buffer, size_t size, size_t count, void* ptr);
+        static LIBFACTER_NO_EXPORT size_t write_header(char* buffer, size_t size, size_t count, void* ptr);
+        static LIBFACTER_NO_EXPORT size_t write_body(char* buffer, size_t size, size_t count, void* ptr);
+        static LIBFACTER_NO_EXPORT int debug(CURL* handle, curl_infotype type, char* data, size_t size, void* ptr);
 
         curl_handle _handle;
     };

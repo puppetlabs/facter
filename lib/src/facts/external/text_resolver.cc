@@ -1,8 +1,8 @@
-#include <facter/facts/external/text_resolver.hpp>
+#include <internal/facts/external/text_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <leatherman/logging/logging.hpp>
 #include <facter/util/file.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;

@@ -1,4 +1,4 @@
-#include <facter/util/posix/scoped_descriptor.hpp>
+#include <internal/util/posix/scoped_descriptor.hpp>
 
 using namespace std;
 

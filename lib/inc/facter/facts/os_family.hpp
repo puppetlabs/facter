@@ -4,12 +4,14 @@
  */
 #pragma once
 
+#include "../export.h"
+
 namespace facter { namespace facts {
 
     /**
      * Stores the constant operating system family names.
      */
-    struct os_family
+    struct LIBFACTER_EXPORT os_family
     {
         /**
          * The RedHat family of operating systems.

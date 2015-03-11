@@ -1,4 +1,4 @@
-#include <facter/facts/resolvers/operating_system_resolver.hpp>
+#include <internal/facts/resolvers/operating_system_resolver.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/os_family.hpp>
 #include <facter/facts/scalar_value.hpp>

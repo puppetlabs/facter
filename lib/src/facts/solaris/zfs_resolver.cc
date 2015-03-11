@@ -1,4 +1,4 @@
-#include <facter/facts/solaris/zfs_resolver.hpp>
+#include <internal/facts/solaris/zfs_resolver.hpp>
 
 using namespace std;
 

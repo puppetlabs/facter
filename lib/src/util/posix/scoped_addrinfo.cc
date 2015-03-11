@@ -1,4 +1,4 @@
-#include <facter/util/posix/scoped_addrinfo.hpp>
+#include <internal/util/posix/scoped_addrinfo.hpp>
 
 using namespace std;
 

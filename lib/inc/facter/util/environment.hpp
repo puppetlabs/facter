@@ -4,6 +4,7 @@
 */
 #pragma once
 
+#include "../export.h"
 #include <string>
 #include <vector>
 #include <functional>
@@ -13,7 +14,7 @@ namespace facter { namespace util {
     /**
      * Represents a platform-agnostic way for manipulating environment variables.
      */
-    struct environment
+    struct LIBFACTER_EXPORT environment
     {
         /**
          * Gets an environment variable.

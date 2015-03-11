@@ -1,13 +1,14 @@
-#include <facter/ruby/module.hpp>
-#include <facter/ruby/api.hpp>
-#include <facter/ruby/aggregate_resolution.hpp>
-#include <facter/ruby/confine.hpp>
-#include <facter/ruby/simple_resolution.hpp>
+#include <internal/ruby/module.hpp>
+#include <internal/ruby/api.hpp>
+#include <internal/ruby/aggregate_resolution.hpp>
+#include <internal/ruby/confine.hpp>
+#include <internal/ruby/simple_resolution.hpp>
 #include <facter/facts/collection.hpp>
-#include <leatherman/logging/logging.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/version.h>
+#include <facter/export.h>
+#include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/nowide/iostream.hpp>
@@ -104,7 +105,7 @@ extern "C" {
     /**
      * Called by the Ruby VM when native facter is required.
      */
-    void Init_libfacter()
+    void LIBFACTER_EXPORT Init_libfacter()
     {
         setup_logging(boost::nowide::cerr);
         set_level(log_level::warning);

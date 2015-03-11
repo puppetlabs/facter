@@ -1,12 +1,12 @@
-#include <facter/facts/linux/operating_system_resolver.hpp>
-#include <facter/facts/linux/release_file.hpp>
+#include <internal/facts/linux/operating_system_resolver.hpp>
+#include <internal/facts/linux/release_file.hpp>
+#include <internal/util/regex.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/file.hpp>
-#include <facter/util/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
@@ -73,7 +73,7 @@ namespace facter { namespace facts { namespace linux {
              result.name == os::kfreebsd ||
              result.name == os::ubuntu)) {
             result.architecture = "amd64";
-        } else if (re_search(result.architecture, "i[3456]86|pentium")) {
+        } else if (re_search(result.architecture, boost::regex("i[3456]86|pentium"))) {
             // For 32-bit, use "x86" for Gentoo and "i386" for everyone else
             if (result.name == os::gentoo) {
                 result.architecture = "x86";
@@ -154,7 +154,7 @@ namespace facter { namespace facts { namespace linux {
                 if (boost::ends_with(contents, "(Rawhide)")) {
                     value = "Rawhide";
                 } else {
-                    re_search(contents, "release (\\d[\\d.]*)", &value);
+                    re_search(contents, boost::regex("release (\\d[\\d.]*)"), &value);
                 }
             }
         }
@@ -180,10 +180,10 @@ namespace facter { namespace facts { namespace linux {
             string contents = file::read(release_file::suse);
             string major;
             string minor;
-            if (re_search(contents, "(?m)^VERSION\\s*=\\s*(\\d+)\\.?(\\d+)?", &major, &minor)) {
+            if (re_search(contents, boost::regex("(?m)^VERSION\\s*=\\s*(\\d+)\\.?(\\d+)?"), &major, &minor)) {
                 // Check that we have a minor version; if not, use the patch level
                 if (minor.empty()) {
-                    if (!re_search(contents, "(?m)^PATCHLEVEL\\s*=\\s*(\\d+)", &minor)) {
+                    if (!re_search(contents, boost::regex("(?m)^PATCHLEVEL\\s*=\\s*(\\d+)"), &minor)) {
                         minor = "0";
                     }
                 }
@@ -196,29 +196,29 @@ namespace facter { namespace facts { namespace linux {
         // Read version files of particular operating systems
         if (value.empty()) {
             const char* file = nullptr;
-            string regex;
+            boost::regex pattern;
             if (name == os::ubuntu) {
                 file = release_file::lsb;
-                regex = "(?m)^DISTRIB_RELEASE=(\\d+\\.\\d+)(?:\\.\\d+)*";
+                pattern = "(?m)^DISTRIB_RELEASE=(\\d+\\.\\d+)(?:\\.\\d+)*";
             } else if (name == os::slackware) {
                 file = release_file::slackware;
-                regex = "Slackware ([0-9.]+)";
+                pattern = "Slackware ([0-9.]+)";
             } else if (name == os::mageia) {
                 file = release_file::mageia;
-                regex = "Mageia release ([0-9.]+)";
+                pattern = "Mageia release ([0-9.]+)";
             } else if (name == os::cumulus || name == os::coreos) {
                 file = release_file::os;
-                regex = "(?m)^VERSION_ID\\s*=\\s*(\\d+\\.\\d+\\.\\d+)";
+                pattern = "(?m)^VERSION_ID\\s*=\\s*(\\d+\\.\\d+\\.\\d+)";
             } else if (name == os::linux_mint) {
                 file = release_file::linux_mint_info;
-                regex = "(?m)^RELEASE=(\\d+)";
+                pattern = "(?m)^RELEASE=(\\d+)";
             } else if (name == os::openwrt) {
                 file = release_file::openwrt_version;
-                regex = "(?m)^(\\d+\\.\\d+.*)";
+                pattern = "(?m)^(\\d+\\.\\d+.*)";
             }
             if (file) {
                 string contents = file::read(file);
-                re_search(contents, regex, &value);
+                re_search(contents, pattern, &value);
             }
         }
 
@@ -226,7 +226,7 @@ namespace facter { namespace facts { namespace linux {
         if (value.empty() && name == os::vmware_esx) {
             auto result = execute("vmware", { "-v" });
             if (result.first) {
-                re_search(result.second, "VMware ESX .*?(\\d.*)", &value);
+                re_search(result.second, boost::regex("VMware ESX .*?(\\d.*)"), &value);
             }
         }
 
@@ -245,7 +245,7 @@ namespace facter { namespace facts { namespace linux {
         }
 
         string major, minor;
-        re_search(release, "(\\d+\\.\\d*)\\.?(\\d*)", &major, &minor);
+        re_search(release, boost::regex("(\\d+\\.\\d*)\\.?(\\d*)"), &major, &minor);
         return make_tuple(move(major), move(minor));
     }
 
@@ -259,7 +259,7 @@ namespace facter { namespace facts { namespace linux {
             boost::trim(contents);
 
             string release;
-            if (re_search(contents, "(?m)^NAME=[\"']?(.+?)[\"']?$", &release)) {
+            if (re_search(contents, boost::regex("(?m)^NAME=[\"']?(.+?)[\"']?$"), &release)) {
                 if (release == "Cumulus Linux") {
                     return os::cumulus;
                 } else if (release == "CoreOS") {
@@ -299,16 +299,16 @@ namespace facter { namespace facts { namespace linux {
     {
         bs::error_code ec;
         if (is_regular_file(release_file::redhat, ec)) {
-            static vector<tuple<string, string>> const regexs {
-                make_tuple("(?i)centos",                        string(os::centos)),
-                make_tuple("(?i)scientific linux CERN",         string(os::scientific_cern)),
-                make_tuple("(?i)scientific linux release",      string(os::scientific)),
-                make_tuple("(?im)^cloudlinux",                  string(os::cloud_linux)),
-                make_tuple("(?i)Ascendos",                      string(os::ascendos)),
-                make_tuple("(?im)^XenServer",                   string(os::xen_server)),
-                make_tuple("XCP",                               string(os::zen_cloud_platform)),
-                make_tuple("(?im)^Parallels Server Bare Metal", string(os::psbm)),
-                make_tuple("(?m)^Fedora release",               string(os::fedora)),
+            static vector<tuple<boost::regex, string>> const regexs {
+                make_tuple(boost::regex("(?i)centos"),                        string(os::centos)),
+                make_tuple(boost::regex("(?i)scientific linux CERN"),         string(os::scientific_cern)),
+                make_tuple(boost::regex("(?i)scientific linux release"),      string(os::scientific)),
+                make_tuple(boost::regex("(?im)^cloudlinux"),                  string(os::cloud_linux)),
+                make_tuple(boost::regex("(?i)Ascendos"),                      string(os::ascendos)),
+                make_tuple(boost::regex("(?im)^XenServer"),                   string(os::xen_server)),
+                make_tuple(boost::regex("XCP"),                               string(os::zen_cloud_platform)),
+                make_tuple(boost::regex("(?im)^Parallels Server Bare Metal"), string(os::psbm)),
+                make_tuple(boost::regex("(?m)^Fedora release"),               string(os::fedora)),
             };
 
             string contents = file::read(release_file::redhat);
@@ -327,10 +327,10 @@ namespace facter { namespace facts { namespace linux {
     {
         bs::error_code ec;
         if (is_regular_file(release_file::suse, ec)) {
-            static vector<tuple<string, string>> const regexs {
-                make_tuple("(?im)^SUSE LINUX Enterprise Server",  string(os::suse_enterprise_server)),
-                make_tuple("(?im)^SUSE LINUX Enterprise Desktop", string(os::suse_enterprise_desktop)),
-                make_tuple("(?im)^openSUSE",                      string(os::open_suse)),
+            static vector<tuple<boost::regex, string>> const regexs {
+                make_tuple(boost::regex("(?im)^SUSE LINUX Enterprise Server"),  string(os::suse_enterprise_server)),
+                make_tuple(boost::regex("(?im)^SUSE LINUX Enterprise Desktop"), string(os::suse_enterprise_desktop)),
+                make_tuple(boost::regex("(?im)^openSUSE"),                      string(os::open_suse)),
             };
 
             string contents = file::read(release_file::suse);
@@ -397,8 +397,8 @@ namespace facter { namespace facts { namespace linux {
         }
 
         // Parse the SELinux config for mode and policy
-        static re_adapter mode_regex("(?m)^SELINUX=(\\w+)$");
-        static re_adapter policy_regex("(?m)^SELINUXTYPE=(\\w+)$");
+        static boost::regex mode_regex("(?m)^SELINUX=(\\w+)$");
+        static boost::regex policy_regex("(?m)^SELINUXTYPE=(\\w+)$");
         file::each_line("/etc/selinux/config", [&](string& line) {
             if (re_search(line, mode_regex, &result.config_mode)) {
                 return true;
@@ -413,7 +413,7 @@ namespace facter { namespace facts { namespace linux {
 
     string operating_system_resolver::get_selinux_mountpoint()
     {
-        static re_adapter regexp("\\S+ (\\S+) selinuxfs");
+        static boost::regex regexp("\\S+ (\\S+) selinuxfs");
         string mountpoint;
         file::each_line("/proc/self/mounts", [&](string& line) {
             if (re_search(line, regexp, &mountpoint)) {

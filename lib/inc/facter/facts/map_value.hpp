@@ -5,6 +5,7 @@
 #pragma once
 
 #include "value.hpp"
+#include "../export.h"
 #include <map>
 #include <string>
 #include <memory>
@@ -16,7 +17,7 @@ namespace facter { namespace facts {
      * Represents a fact value that maps fact names to values.
      * This type can be moved but cannot be copied.
      */
-    struct map_value : value
+    struct LIBFACTER_EXPORT map_value : value
     {
         /**
          * Constructs a map value.

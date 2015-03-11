@@ -1,8 +1,8 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#include <facter/facts/posix/ssh_resolver.hpp>
-#include <leatherman/logging/logging.hpp>
+#include <internal/facts/posix/ssh_resolver.hpp>
 #include <facter/util/file.hpp>
 #include <facter/util/string.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
@@ -10,7 +10,7 @@
 #include <vector>
 
 #ifdef USE_OPENSSL
-#include <facter/util/posix/scoped_bio.hpp>
+#include <internal/util/posix/scoped_bio.hpp>
 #include <openssl/sha.h>
 #include <openssl/evp.h>
 using namespace facter::util::posix;

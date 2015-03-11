@@ -1,16 +1,16 @@
-#include <facter/facts/windows/networking_resolver.hpp>
+#include <internal/facts/windows/networking_resolver.hpp>
+#include <internal/util/windows/registry.hpp>
+#include <internal/util/windows/system_error.hpp>
+#include <internal/util/windows/wsa.hpp>
+#include <internal/util/windows/windows.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/util/windows/registry.hpp>
-#include <facter/util/windows/system_error.hpp>
-#include <facter/util/windows/wsa.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/range/combine.hpp>
 #include <boost/nowide/convert.hpp>
 #include <iomanip>
-
-#include <facter/util/windows/windows.hpp>
 #include <Ws2tcpip.h>
 #include <iphlpapi.h>
+
 #ifdef interface
   // Something's bleeding in and making it impossible to instantiate an interface object.
   #undef interface

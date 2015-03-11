@@ -33,6 +33,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/resolvers/zpool_resolver.cc"
     "facts/schema.cc"
     "facts/string_value.cc"
+    "logging/logging.cc"
     "main.cc"
     "util/directory.cc"
     "util/environment.cc"
@@ -65,6 +66,8 @@ if (UNIX)
     if (OPENSSL_FOUND)
         set(LIBFACTER_TESTS_CATEGORY_SOURCES ${LIBFACTER_TESTS_CATEGORY_SOURCES} "util/posix/scoped_bio.cc")
     endif()
+
+     set(POSIX_LIBRARIES pthread dl)
 endif()
 
 if (WIN32)
@@ -75,6 +78,19 @@ if (WIN32)
         "facts/external/windows/execution_resolver.cc"
         "facts/external/windows/powershell_resolver.cc"
         "util/windows/environment.cc"
+    )
+    set(LIBFACTER_TESTS_PLATFORM_LIBRARIES
+        Psapi.lib
+        Version.lib
+        Wbemuuid.lib
+        Secur32.lib
+        Ws2_32.lib
+        iphlpapi.lib
+    )
+elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
+    set(LIBFACTER_TESTS_PLATFORM_LIBRARIES
+        ${BLKID_LIBRARIES}
+        rt
     )
 endif()
 
@@ -97,9 +113,17 @@ include_directories(
     ${LEATHERMAN_CATCH_INCLUDE}
 )
 
-add_executable(libfacter_test ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_CATEGORY_SOURCES})
+add_executable(libfacter_test $<TARGET_OBJECTS:libfactersrc> ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_CATEGORY_SOURCES})
 set_target_properties(libfacter_test PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS} COTIRE_ADD_UNITY_BUILD FALSE)
-target_link_libraries(libfacter_test libfacter ${YAMLCPP_LIBRARIES} ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES} ${LEATHERMAN_LIBRARIES})
+target_link_libraries(libfacter_test
+    ${POSIX_LIBRARIES}
+    ${LIBFACTER_TESTS_PLATFORM_LIBRARIES}
+    ${YAMLCPP_LIBRARIES}
+    ${Boost_LIBRARIES}
+    ${OPENSSL_LIBRARIES}
+    ${LEATHERMAN_LIBRARIES}
+    ${CURL_LIBRARIES}
+)
 
 cotire(libfacter_test)
 

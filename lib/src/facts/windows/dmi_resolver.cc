@@ -1,6 +1,6 @@
-#include <facter/facts/windows/dmi_resolver.hpp>
+#include <internal/facts/windows/dmi_resolver.hpp>
+#include <internal/util/windows/wmi.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/util/windows/wmi.hpp>
 
 using namespace std;
 using namespace facter::util::windows;

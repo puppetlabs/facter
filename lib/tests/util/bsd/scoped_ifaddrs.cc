@@ -1,5 +1,5 @@
 #include <catch.hpp>
-#include <facter/util/bsd/scoped_ifaddrs.hpp>
+#include <internal/util/bsd/scoped_ifaddrs.hpp>
 
 using namespace std;
 using namespace facter::util::bsd;

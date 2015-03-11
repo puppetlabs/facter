@@ -1,5 +1,5 @@
-#include <facter/ruby/aggregate_resolution.hpp>
-#include <facter/ruby/chunk.hpp>
+#include <internal/ruby/aggregate_resolution.hpp>
+#include <internal/ruby/chunk.hpp>
 
 using namespace std;
 

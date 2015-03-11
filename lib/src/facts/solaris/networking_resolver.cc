@@ -1,5 +1,5 @@
-#include <facter/facts/solaris/networking_resolver.hpp>
-#include <facter/util/posix/scoped_descriptor.hpp>
+#include <internal/facts/solaris/networking_resolver.hpp>
+#include <internal/util/posix/scoped_descriptor.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
 #include <leatherman/logging/logging.hpp>

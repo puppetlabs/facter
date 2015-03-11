@@ -1,7 +1,7 @@
 #include <catch.hpp>
-#include <facter/facts/windows/networking_resolver.hpp>
-#include <facter/util/windows/windows.hpp>
-#include <facter/util/windows/wsa.hpp>
+#include <internal/facts/windows/networking_resolver.hpp>
+#include <internal/util/windows/windows.hpp>
+#include <internal/util/windows/wsa.hpp>
 #include <Ws2tcpip.h>
 
 using namespace std;

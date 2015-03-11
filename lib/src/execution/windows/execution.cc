@@ -2,15 +2,13 @@
 #include <facter/util/directory.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/util/scoped_resource.hpp>
-#include <facter/util/windows/system_error.hpp>
-#include <facter/util/scoped_env.hpp>
-#include <facter/util/windows/windows.hpp>
+#include <internal/util/scoped_env.hpp>
+#include <internal/util/windows/system_error.hpp>
+#include <internal/util/windows/windows.hpp>
 #include <leatherman/logging/logging.hpp>
-
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/nowide/convert.hpp>
-
 #include <cstdlib>
 #include <cstdio>
 #include <sstream>
@@ -24,6 +22,8 @@ using namespace boost::filesystem;
 using namespace boost::algorithm;
 
 namespace facter { namespace execution {
+
+    void log_execution(string const& file, vector<string> const* arguments);
 
     const char *const command_shell = "cmd.exe";
     const char *const command_args = "/c";

@@ -1,11 +1,11 @@
-#include <facter/ruby/fact.hpp>
-#include <facter/ruby/aggregate_resolution.hpp>
-#include <facter/ruby/module.hpp>
-#include <facter/ruby/simple_resolution.hpp>
-#include <facter/ruby/ruby_value.hpp>
+#include <internal/ruby/fact.hpp>
+#include <internal/ruby/aggregate_resolution.hpp>
+#include <internal/ruby/module.hpp>
+#include <internal/ruby/simple_resolution.hpp>
+#include <internal/ruby/ruby_value.hpp>
 #include <facter/facts/collection.hpp>
-#include <leatherman/logging/logging.hpp>
 #include <facter/util/environment.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <algorithm>
 
 using namespace std;

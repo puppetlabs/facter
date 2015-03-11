@@ -1,4 +1,4 @@
-#include <facter/ruby/api.hpp>
+#include <internal/ruby/api.hpp>
 
 using namespace std;
 using namespace facter::util;

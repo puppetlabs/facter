@@ -129,7 +129,7 @@ add_subdirectory("vendor/leatherman")
 #
 # Add cpplint and cppcheck targets
 #
-file(GLOB_RECURSE ALL_SOURCES lib/src/*.cc lib/src/*.h lib/src/*.hpp lib/inc/*.hpp lib/inc/*.h exe/*.cc exe/*.hpp exe/*.h)
+file(GLOB_RECURSE ALL_SOURCES lib/src/*.cc lib/inc/*.hpp lib/inc/version.h exe/*.cc exe/*.hpp exe/*.h)
 add_cpplint_files(${ALL_SOURCES})
 enable_cpplint()
 

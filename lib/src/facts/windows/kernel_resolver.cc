@@ -1,7 +1,7 @@
-#include <facter/facts/windows/kernel_resolver.hpp>
+#include <internal/facts/windows/kernel_resolver.hpp>
+#include <internal/util/windows/system_error.hpp>
+#include <internal/util/windows/windows.hpp>
 #include <facter/facts/os.hpp>
-#include <facter/util/windows/system_error.hpp>
-#include <facter/util/windows/windows.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/optional.hpp>
 #include <boost/algorithm/string/trim.hpp>

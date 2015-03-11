@@ -1,6 +1,6 @@
-#include <facter/util/windows/wmi.hpp>
-#include <leatherman/logging/logging.hpp>
+#include <internal/util/windows/wmi.hpp>
 #include <facter/execution/execution.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/range/iterator_range.hpp>

@@ -5,33 +5,33 @@
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/util/regex.hpp>
+#include <internal/util/regex.hpp>
 #include <yaml-cpp/yaml.h>
 #include <boost/nowide/fstream.hpp>
 #include "../fixtures.hpp"
 
 // Include all base resolvers here
-#include <facter/facts/resolvers/disk_resolver.hpp>
-#include <facter/facts/resolvers/dmi_resolver.hpp>
-#include <facter/facts/resolvers/ec2_resolver.hpp>
-#include <facter/facts/resolvers/filesystem_resolver.hpp>
-#include <facter/facts/resolvers/gce_resolver.hpp>
-#include <facter/facts/resolvers/identity_resolver.hpp>
-#include <facter/facts/resolvers/kernel_resolver.hpp>
-#include <facter/facts/resolvers/memory_resolver.hpp>
-#include <facter/facts/resolvers/networking_resolver.hpp>
-#include <facter/facts/resolvers/operating_system_resolver.hpp>
-#include <facter/facts/resolvers/path_resolver.hpp>
-#include <facter/facts/resolvers/processor_resolver.hpp>
-#include <facter/facts/resolvers/ruby_resolver.hpp>
-#include <facter/facts/resolvers/ssh_resolver.hpp>
-#include <facter/facts/resolvers/system_profiler_resolver.hpp>
-#include <facter/facts/resolvers/timezone_resolver.hpp>
-#include <facter/facts/resolvers/uptime_resolver.hpp>
-#include <facter/facts/resolvers/virtualization_resolver.hpp>
-#include <facter/facts/resolvers/zfs_resolver.hpp>
-#include <facter/facts/resolvers/zone_resolver.hpp>
-#include <facter/facts/resolvers/zpool_resolver.hpp>
+#include <internal/facts/resolvers/disk_resolver.hpp>
+#include <internal/facts/resolvers/dmi_resolver.hpp>
+#include <internal/facts/resolvers/ec2_resolver.hpp>
+#include <internal/facts/resolvers/filesystem_resolver.hpp>
+#include <internal/facts/resolvers/gce_resolver.hpp>
+#include <internal/facts/resolvers/identity_resolver.hpp>
+#include <internal/facts/resolvers/kernel_resolver.hpp>
+#include <internal/facts/resolvers/memory_resolver.hpp>
+#include <internal/facts/resolvers/networking_resolver.hpp>
+#include <internal/facts/resolvers/operating_system_resolver.hpp>
+#include <internal/facts/resolvers/path_resolver.hpp>
+#include <internal/facts/resolvers/processor_resolver.hpp>
+#include <internal/facts/resolvers/ruby_resolver.hpp>
+#include <internal/facts/resolvers/ssh_resolver.hpp>
+#include <internal/facts/resolvers/system_profiler_resolver.hpp>
+#include <internal/facts/resolvers/timezone_resolver.hpp>
+#include <internal/facts/resolvers/uptime_resolver.hpp>
+#include <internal/facts/resolvers/virtualization_resolver.hpp>
+#include <internal/facts/resolvers/zfs_resolver.hpp>
+#include <internal/facts/resolvers/zone_resolver.hpp>
+#include <internal/facts/resolvers/zpool_resolver.hpp>
 
 using namespace std;
 using namespace facter::facts;
@@ -530,7 +530,7 @@ YAML::Node find_child(YAML::Node const& node, string const& name, set<string>& f
     for (auto const& child : node) {
         auto child_name = child.first.as<string>();
         auto pattern_attribute = child.second["pattern"];
-        if ((pattern_attribute && re_search(name, pattern_attribute.as<string>())) ||
+        if ((pattern_attribute && re_search(name, boost::regex(pattern_attribute.as<string>()))) ||
             child_name == name) {
             found.insert(move(child_name));
             return child.second;
@@ -558,9 +558,9 @@ void validate_fact(YAML::Node const& node, value const* fact_value, bool require
         type = "string";
 
         // Check for special string types
-        static re_adapter ip_pattern("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
-        static re_adapter ip6_pattern("^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$");
-        static re_adapter mac_pattern("^(([0-9a-fA-F]){2}\\:){5}([0-9a-fA-F]){2}$");
+        static boost::regex ip_pattern("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
+        static boost::regex ip6_pattern("^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$");
+        static boost::regex mac_pattern("^(([0-9a-fA-F]){2}\\:){5}([0-9a-fA-F]){2}$");
 
         if (expected_type == "ip" && re_search(svalue->value(), ip_pattern)) {
             type = "ip";

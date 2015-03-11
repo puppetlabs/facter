@@ -1,7 +1,7 @@
-#include <facter/facts/windows/uptime_resolver.hpp>
-#include <facter/util/windows/wmi.hpp>
+#include <internal/facts/windows/uptime_resolver.hpp>
+#include <internal/util/windows/wmi.hpp>
+#include <internal/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/util/regex.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 
@@ -21,7 +21,7 @@ namespace facter { namespace facts { namespace windows {
 
     static ptime get_ptime(string const& wmitime)
     {
-        re_adapter wmi_regex("^(\\d{8,})(\\d{2})(\\d{2})(\\d{2})\\.");
+        static boost::regex wmi_regex("^(\\d{8,})(\\d{2})(\\d{2})(\\d{2})\\.");
         string iso_date;
         int hour, min, sec;
         if (!re_search(wmitime, wmi_regex, &iso_date, &hour, &min, &sec)) {

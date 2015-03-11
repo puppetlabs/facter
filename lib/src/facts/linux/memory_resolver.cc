@@ -1,4 +1,4 @@
-#include <facter/facts/linux/memory_resolver.hpp>
+#include <internal/facts/linux/memory_resolver.hpp>
 #include <facter/util/file.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>

@@ -1,9 +1,9 @@
-#include <facter/facts/resolvers/zfs_resolver.hpp>
+#include <internal/facts/resolvers/zfs_resolver.hpp>
+#include <internal/util/regex.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/regex.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
@@ -40,7 +40,7 @@ namespace facter { namespace facts { namespace resolvers {
         data result;
 
         // Get the ZFS version
-        re_adapter zfs_version("currently running ZFS filesystem version (\\d+)[.]");
+        static boost::regex zfs_version("currently running ZFS filesystem version (\\d+)[.]");
         execution::each_line(zfs_command(), {"upgrade"}, [&] (string& line) {
             if (re_search(line, zfs_version, &result.version)) {
                 return false;
@@ -49,7 +49,7 @@ namespace facter { namespace facts { namespace resolvers {
         });
 
         // Get the ZFS features
-        re_adapter zfs_feature("\\s*(\\d+)[ ]");
+        static boost::regex zfs_feature("\\s*(\\d+)[ ]");
         execution::each_line(zfs_command(), {"upgrade", "-v"}, [&] (string& line) {
             string feature;
             if (re_search(line, zfs_feature, &feature)) {

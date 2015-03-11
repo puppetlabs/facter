@@ -1,7 +1,7 @@
-#include <facter/facts/posix/networking_resolver.hpp>
-#include <leatherman/logging/logging.hpp>
-#include <facter/util/posix/scoped_addrinfo.hpp>
+#include <internal/facts/posix/networking_resolver.hpp>
+#include <internal/util/posix/scoped_addrinfo.hpp>
 #include <facter/util/file.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <unistd.h>
 #include <limits.h>

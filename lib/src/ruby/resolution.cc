@@ -1,5 +1,5 @@
-#include <facter/ruby/resolution.hpp>
-#include <facter/ruby/module.hpp>
+#include <internal/ruby/resolution.hpp>
+#include <internal/ruby/module.hpp>
 #include <leatherman/logging/logging.hpp>
 
 using namespace std;

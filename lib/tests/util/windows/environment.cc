@@ -1,6 +1,6 @@
 #include <catch.hpp>
 #include <facter/util/environment.hpp>
-#include <facter/util/windows/windows.hpp>
+#include <internal/util/windows/windows.hpp>
 #include <unistd.h>
 
 using namespace std;

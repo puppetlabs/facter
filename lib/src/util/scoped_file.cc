@@ -1,4 +1,4 @@
-#include <facter/util/scoped_file.hpp>
+#include <internal/util/scoped_file.hpp>
 #include <boost/nowide/cstdio.hpp>
 
 using namespace std;

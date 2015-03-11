@@ -7,6 +7,7 @@
 #include "resolver.hpp"
 #include "value.hpp"
 #include "external/resolver.hpp"
+#include "../export.h"
 #include <list>
 #include <map>
 #include <set>
@@ -42,7 +43,7 @@ namespace facter { namespace facts {
      * Represents the fact collection.
      * The fact collection is responsible for resolving and storing facts.
      */
-    struct collection
+    struct LIBFACTER_EXPORT collection
     {
         /**
          * Constructs a fact collection.
@@ -192,20 +193,20 @@ namespace facter { namespace facts {
         std::ostream& write(std::ostream& stream, format fmt = format::hash, std::set<std::string> const& queries = std::set<std::string>());
 
      private:
-        void resolve_facts();
-        void resolve_fact(std::string const& name);
-        value const* get_value(std::string const& name);
-        value const* query_value(std::string const& query);
-        value const* lookup(value const* value, std::string const& name);
-        void write_hash(std::ostream& stream, std::set<std::string> const& queries);
-        void write_json(std::ostream& stream, std::set<std::string> const& queries);
-        void write_yaml(std::ostream& stream, std::set<std::string> const& queries);
-        void add_common_facts();
+        LIBFACTER_NO_EXPORT void resolve_facts();
+        LIBFACTER_NO_EXPORT void resolve_fact(std::string const& name);
+        LIBFACTER_NO_EXPORT value const* get_value(std::string const& name);
+        LIBFACTER_NO_EXPORT value const* query_value(std::string const& query);
+        LIBFACTER_NO_EXPORT value const* lookup(value const* value, std::string const& name);
+        LIBFACTER_NO_EXPORT void write_hash(std::ostream& stream, std::set<std::string> const& queries);
+        LIBFACTER_NO_EXPORT void write_json(std::ostream& stream, std::set<std::string> const& queries);
+        LIBFACTER_NO_EXPORT void write_yaml(std::ostream& stream, std::set<std::string> const& queries);
+        LIBFACTER_NO_EXPORT void add_common_facts();
 
         // Platform specific members
-        void add_platform_facts();
-        std::vector<std::string> get_external_fact_directories();
-        std::vector<std::unique_ptr<external::resolver>> get_external_resolvers();
+        LIBFACTER_NO_EXPORT void add_platform_facts();
+        LIBFACTER_NO_EXPORT std::vector<std::string> get_external_fact_directories();
+        LIBFACTER_NO_EXPORT std::vector<std::unique_ptr<external::resolver>> get_external_resolvers();
 
         std::map<std::string, std::unique_ptr<value>> _facts;
         std::list<std::shared_ptr<resolver>> _resolvers;

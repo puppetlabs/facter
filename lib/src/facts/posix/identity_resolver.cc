@@ -1,11 +1,10 @@
-#include <facter/facts/posix/identity_resolver.hpp>
+#include <internal/facts/posix/identity_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
 
 using namespace std;
-using namespace facter::util;
 
 namespace facter { namespace facts { namespace posix {
 
@@ -13,7 +12,7 @@ namespace facter { namespace facts { namespace posix {
     {
         data result;
 
-        std::vector<char> buffer;
+        vector<char> buffer;
         long buffer_size = sysconf(_SC_GETPW_R_SIZE_MAX);
 
         if (buffer_size == -1) {
@@ -60,4 +59,5 @@ namespace facter { namespace facts { namespace posix {
 
         return result;
     }
+
 }}}  // facter::facts::posix

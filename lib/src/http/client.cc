@@ -1,8 +1,8 @@
 #include <facter/http/client.hpp>
 #include <facter/http/request.hpp>
 #include <facter/http/response.hpp>
+#include <internal/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/util/regex.hpp>
 #include <boost/utility/string_ref.hpp>
 #include <boost/algorithm/string.hpp>
 #include <sstream>
@@ -308,7 +308,7 @@ namespace facter { namespace http {
             ctx->response_buffer.clear();
 
             // Parse out the error code
-            re_adapter regex("HTTP/\\d\\.\\d (\\d\\d\\d).*");
+            static boost::regex regex("HTTP/\\d\\.\\d (\\d\\d\\d).*");
             int status_code = 0;
             if (re_search(input.to_string(), regex, &status_code)) {
                 ctx->res.status_code(status_code);

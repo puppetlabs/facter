@@ -1,4 +1,4 @@
-#include <facter/facts/osx/system_profiler_resolver.hpp>
+#include <internal/facts/osx/system_profiler_resolver.hpp>
 #include <facter/execution/execution.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
