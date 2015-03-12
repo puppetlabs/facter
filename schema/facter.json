@@ -181,6 +181,8 @@
         "swapsize" : { "type": "string" },
         "swapsize_mb" : { "type": "string" },
         "system32" : { "type": "string" },
+        "systemd" : { "type": "boolean" },
+        "systemd_version" : { "type": "string" },
         "system_uptime" : { "type": "object",
           "properties" : {
             "seconds" : { "type": "integer" },
