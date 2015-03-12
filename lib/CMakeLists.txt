@@ -241,7 +241,7 @@ add_library(libfacter SHARED $<TARGET_OBJECTS:libfactersrc>)
 set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX "" IMPORT_SUFFIX ".so.a" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}" COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS})
 
 # Link in additional libraries
-target_link_libraries(libfacter
+target_link_libraries(libfacter PRIVATE
     ${POSIX_LIBRARIES}
     ${LIBFACTER_PLATFORM_LIBRARIES}
     ${LEATHERMAN_LIBRARIES}
@@ -257,7 +257,6 @@ generate_export_header(libfacter EXPORT_FILE_NAME "${CMAKE_CURRENT_LIST_DIR}/inc
 
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     add_compiler_export_flags()
-    set_target_properties(libfacter PROPERTIES LINK_FLAGS "-Wl,--exclude-libs=ALL")
 elseif (WIN32)
     add_compiler_export_flags()
     add_definitions("-Dlibfacter_EXPORTS")
