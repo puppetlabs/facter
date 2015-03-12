@@ -1,7 +1,7 @@
-#include <facter/execution/execution.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/util/scoped_resource.hpp>
+#include <internal/execution/execution.hpp>
 #include <internal/util/scoped_env.hpp>
 #include <internal/util/windows/system_error.hpp>
 #include <internal/util/windows/windows.hpp>
