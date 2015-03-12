@@ -16,7 +16,7 @@ include_directories(
 )
 
 add_executable(cfacter ${CFACTER_SOURCES})
-target_link_libraries(cfacter libfacter ${Boost_LIBRARIES} ${LEATHERMAN_NOWIDE_LIB})
+target_link_libraries(cfacter libfacter ${Boost_PROGRAM_OPTIONS_LIBRARY} ${LEATHERMAN_NOWIDE_LIB})
 set_target_properties(cfacter PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS})
 cotire(cfacter)
 
