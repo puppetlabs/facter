@@ -149,6 +149,18 @@ namespace facter { namespace execution {
     };
 
     /**
+     * Exception that is thrown when a command times out.
+     */
+    struct LIBFACTER_EXPORT timeout_exception : execution_exception
+    {
+        /**
+         * Constructs a timeout_exception.
+         * @param message The exception message.
+         */
+        explicit timeout_exception(std::string const& message);
+    };
+
+    /**
      * Searches the given paths for the given executable file.
      * @param file The file to search for.
      * @param directories The directories to search.
@@ -168,23 +180,27 @@ namespace facter { namespace execution {
      * Executes the given program.
      * @param file The name or path of the program to execute.
      * @param options The execution options.
+     * @param timeout The timeout, in seconds.  Defaults to no timeout.
      * @return Returns whether or not the execution succeeded paired with the child process output.
      */
     std::pair<bool, std::string> LIBFACTER_EXPORT execute(
         std::string const& file,
-        facter::util::option_set<execution_options> const& options = { execution_options::defaults });
+        facter::util::option_set<execution_options> const& options = { execution_options::defaults },
+        uint32_t timeout = 0);
 
     /**
      * Executes the given program.
      * @param file The name or path of the program to execute.
      * @param arguments The arguments to pass to the program. On Windows they will be quoted as needed for spaces.
      * @param options The execution options.
+     * @param timeout The timeout, in seconds. Defaults to no timeout.
      * @return Returns whether or not the execution succeeded paired with the child process output.
      */
     std::pair<bool, std::string> LIBFACTER_EXPORT execute(
         std::string const& file,
         std::vector<std::string> const& arguments,
-        facter::util::option_set<execution_options> const& options  = { execution_options::defaults });
+        facter::util::option_set<execution_options> const& options  = { execution_options::defaults },
+        uint32_t timeout = 0);
 
     /**
      * Executes the given program.
@@ -192,25 +208,29 @@ namespace facter { namespace execution {
      * @param arguments The arguments to pass to the program. On Windows they will be quoted as needed for spaces.
      * @param environment The environment variables to pass to the child process.
      * @param options The execution options.
+     * @param timeout The timeout, in seconds. Defaults to no timeout.
      * @return Returns whether or not the execution succeeded paired with the child process output.
      */
     std::pair<bool, std::string> LIBFACTER_EXPORT execute(
         std::string const& file,
         std::vector<std::string> const& arguments,
         std::map<std::string, std::string> const& environment,
-        facter::util::option_set<execution_options> const& options = { execution_options::defaults });
+        facter::util::option_set<execution_options> const& options = { execution_options::defaults },
+        uint32_t timeout = 0);
 
     /**
      * Executes the given program and returns each line of output.
      * @param file The name or path of the program to execute.
      * @param callback The callback that is called with each line of output.
      * @param options The execution options.
+     * @param timeout The timeout, in seconds. Defaults to no timeout.
      * @return Returns true if the execution succeeded or false if it did not.
      */
     bool LIBFACTER_EXPORT each_line(
         std::string const& file,
         std::function<bool(std::string&)> callback,
-        facter::util::option_set<execution_options> const& options = { execution_options::defaults });
+        facter::util::option_set<execution_options> const& options = { execution_options::defaults },
+        uint32_t timeout = 0);
 
     /**
      * Executes the given program and returns each line of output.
@@ -218,13 +238,15 @@ namespace facter { namespace execution {
      * @param arguments The arguments to pass to the program. On Windows they will be quoted as needed for spaces.
      * @param callback The callback that is called with each line of output.
      * @param options The execution options.
+     * @param timeout The timeout, in seconds. Defaults to no timeout.
      * @return Returns true if the execution succeeded or false if it did not.
      */
     bool LIBFACTER_EXPORT each_line(
         std::string const& file,
         std::vector<std::string> const& arguments,
         std::function<bool(std::string&)> callback,
-        facter::util::option_set<execution_options> const& options = { execution_options::defaults });
+        facter::util::option_set<execution_options> const& options = { execution_options::defaults },
+        uint32_t timeout = 0);
 
     /**
      * Executes the given program and returns each line of output.
@@ -233,6 +255,7 @@ namespace facter { namespace execution {
      * @param environment The environment variables to pass to the child process.
      * @param callback The callback that is called with each line of output.
      * @param options The execution options.
+     * @param timeout The timeout, in seconds. Defaults to no timeout.
      * @return Returns true if the execution succeeded or false if it did not.
      */
     bool LIBFACTER_EXPORT each_line(
@@ -240,6 +263,7 @@ namespace facter { namespace execution {
         std::vector<std::string> const& arguments,
         std::map<std::string, std::string> const& environment,
         std::function<bool(std::string&)> callback,
-        facter::util::option_set<execution_options> const& options = { execution_options::defaults });
+        facter::util::option_set<execution_options> const& options = { execution_options::defaults },
+        uint32_t timeout = 0);
 
 }}  // namespace facter::execution

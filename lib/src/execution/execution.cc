@@ -54,6 +54,11 @@ namespace facter { namespace execution {
         return _signal;
     }
 
+    timeout_exception::timeout_exception(string const& message) :
+        execution_exception(message)
+    {
+    }
+
     void log_execution(string const& file, vector<string> const* arguments)
     {
         if (!LOG_IS_DEBUG_ENABLED()) {
@@ -115,47 +120,53 @@ namespace facter { namespace execution {
         vector<string> const* arguments,
         map<string, string> const* environment,
         function<bool(string&)> callback,
-        option_set<execution_options> const& options);
+        option_set<execution_options> const& options,
+        uint32_t timeout);
 
     pair<bool, string> execute(
         string const& file,
-        option_set<execution_options> const& options)
+        option_set<execution_options> const& options,
+        uint32_t timeout)
     {
-        return execute(file, nullptr, nullptr, nullptr, options);
+        return execute(file, nullptr, nullptr, nullptr, options, timeout);
     }
 
     pair<bool, string> execute(
         string const& file,
         vector<string> const& arguments,
-        option_set<execution_options> const& options)
+        option_set<execution_options> const& options,
+        uint32_t timeout)
     {
-        return execute(file, &arguments, nullptr, nullptr, options);
+        return execute(file, &arguments, nullptr, nullptr, options, timeout);
     }
 
     pair<bool, string> execute(
         string const& file,
         vector<string> const& arguments,
         map<string, string> const& environment,
-        option_set<execution_options> const& options)
+        option_set<execution_options> const& options,
+        uint32_t timeout)
     {
-        return execute(file, &arguments, &environment, nullptr, options);
+        return execute(file, &arguments, &environment, nullptr, options, timeout);
     }
 
     bool each_line(
         string const& file,
         function<bool(string&)> callback,
-        option_set<execution_options> const& options)
+        option_set<execution_options> const& options,
+        uint32_t timeout)
     {
-        return execute(file, nullptr, nullptr, callback, options).first;
+        return execute(file, nullptr, nullptr, callback, options, timeout).first;
     }
 
     bool each_line(
         string const& file,
         vector<string> const& arguments,
         function<bool(string&)> callback,
-        option_set<execution_options> const& options)
+        option_set<execution_options> const& options,
+        uint32_t timeout)
     {
-        return execute(file, &arguments, nullptr, callback, options).first;
+        return execute(file, &arguments, nullptr, callback, options, timeout).first;
     }
 
     bool each_line(
@@ -163,15 +174,13 @@ namespace facter { namespace execution {
         vector<string> const& arguments,
         map<string, string> const& environment,
         function<bool(string&)> callback,
-        option_set<execution_options> const& options)
+        option_set<execution_options> const& options,
+        uint32_t timeout)
     {
-        return execute(file, &arguments, &environment, callback, options).first;
+        return execute(file, &arguments, &environment, callback, options, timeout).first;
     }
 
-    string process_stream(
-        function<bool(string&)> yield_input,
-        function<bool(string&)> callback,
-        option_set<execution_options> const& options)
+    string process_stream(bool trim_output, function<bool(string&)> callback, function<bool(string&)> yield_input)
     {
         // Get a special logger used specifically for child process output
         const std::string logger = "|";
@@ -212,7 +221,7 @@ namespace facter { namespace execution {
                 // The previous trailing data is picked up by default.
                 output.append(line.begin(), line.end());
 
-                if (options[execution_options::trim_output]) {
+                if (trim_output) {
                     boost::trim(output);
                 }
 
@@ -243,10 +252,10 @@ namespace facter { namespace execution {
         }
 
         // Log the result and do a final callback if needed.
-        if (options[execution_options::trim_output]) {
+
+        if (trim_output) {
             boost::trim(output);
         }
-
         if (!output.empty()) {
             if (LOG_IS_DEBUG_ENABLED()) {
                 log(logger, log_level::debug, output);

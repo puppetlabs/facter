@@ -65,6 +65,9 @@ namespace facter { namespace util {
             release();
             _resource = std::move(other._resource);
             _deleter = std::move(other._deleter);
+
+            // Ensure the deleter is in a known "empty" state; we can't rely on default move semantics for that
+            other._deleter = nullptr;
             return *this;
         }
 

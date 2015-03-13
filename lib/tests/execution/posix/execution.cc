@@ -227,6 +227,14 @@ SCENARIO("executing commands with execution::execute") {
             }
         }
     }
+    GIVEN("a long-running command") {
+        WHEN("given a timeout") {
+            THEN("a timeout exception should be thrown") {
+                option_set<execution_options> options = { execution_options::defaults };
+                REQUIRE_THROWS_AS(execute("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/sleep.sh" }, options, 1), timeout_exception);
+            }
+        }
+    }
 }
 
 SCENARIO("executing commands with execution::each_line") {
@@ -364,6 +372,14 @@ SCENARIO("executing commands with execution::each_line") {
         WHEN("the 'throw on signal' option is used") {
             THEN("a child signal exception is thrown") {
                 REQUIRE_THROWS_AS(each_line("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/selfkill.sh" }, [](string& line) { return true; }, option_set<execution_options>({ execution_options::defaults, execution_options::throw_on_signal })), child_signal_exception);
+            }
+        }
+    }
+    GIVEN("a long-running command") {
+        WHEN("given a timeout") {
+            THEN("a timeout exception should be thrown") {
+                option_set<execution_options> options = { execution_options::defaults };
+                REQUIRE_THROWS_AS(each_line("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/sleep.sh" }, [](string& line) { return true; }, options, 1), timeout_exception);
             }
         }
     }

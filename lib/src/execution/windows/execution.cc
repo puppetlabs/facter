@@ -1,3 +1,4 @@
+#include <facter/execution/execution.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/util/scoped_resource.hpp>
@@ -161,7 +162,8 @@ namespace facter { namespace execution {
         vector<string> const* arguments,
         map<string, string> const* environment,
         function<bool(string&)> callback,
-        option_set<execution_options> const& options)
+        option_set<execution_options> const& options,
+        uint32_t timeout)
     {
         // Search for the executable
         string executable = which(file);
@@ -281,7 +283,7 @@ namespace facter { namespace execution {
             scoped_resource<HANDLE> hProcess(move(procInfo.hProcess), CloseHandle);
             scoped_resource<HANDLE> hThread(move(procInfo.hThread), CloseHandle);
 
-            string result = process_stream([&](string &buffer) {
+            string result = process_stream(options[execution_options::trim_output], callback, [&](string& buffer) {
                 DWORD count;
                 buffer.resize(4096);
                 auto readSucceeded = ReadFile(stdOutRd, &buffer[0], buffer.size(), &count, NULL);
@@ -293,7 +295,7 @@ namespace facter { namespace execution {
                 buffer.resize(count);
                 // Halt if nothing was read.
                 return count != 0;
-            }, callback, options);
+            });
 
             // Close the read pipe; this may be done before all data is read when the callback returns false
             // If the child hasn't sent all the data yet, this may signal SIGPIPE on next write

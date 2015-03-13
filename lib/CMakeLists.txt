@@ -74,6 +74,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/util/dynamic_library.cc"
     "src/util/environment.cc"
     "src/util/file.cc"
+    "src/util/scope_exit.cc"
     "src/util/scoped_env.cc"
     "src/util/scoped_file.cc"
     "src/util/string.cc"
