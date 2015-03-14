@@ -18,7 +18,7 @@ top of things.
 
 ## New Facts
 
-All new facts should also be included in `schema/facter.json`. Without this facts won't pass acceptance tests.
+All new facts should also be included in `lib/schema/facter.yaml`. Without this facts won't pass acceptance tests.
 
 Note that for now (until facter 3) the schema should be updated in the facter project. Once we release
 facter 3, it'll make sense to move the schema to this project since it will be the canonical source of
