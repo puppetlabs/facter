@@ -2,6 +2,7 @@
 #include <internal/util/windows/system_error.hpp>
 #include <internal/util/windows/windows.hpp>
 #include <boost/format.hpp>
+#include <boost/nowide/convert.hpp>
 
 using namespace std;
 
@@ -9,14 +10,16 @@ namespace facter { namespace util { namespace windows {
 
     string system_error(DWORD err)
     {
-        LPWSTR _pBuffer = nullptr;
-        FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS,
-            NULL, err, 0, (LPWSTR) &_pBuffer, 0, NULL);
+        LPWSTR buffer = nullptr;
+        if (FormatMessageW(
+            FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS,
+            nullptr, err, 0, reinterpret_cast<LPWSTR>(&buffer), 0, nullptr) == 0 || !buffer) {
+            return (boost::format("unknown error (%1%)") % err).str();
+        }
 
         // boost format could throw, so ensure the buffer is freed.
-        scoped_resource<LPWSTR> pBuffer(move(_pBuffer), [](LPWSTR pbuf) { if (pbuf) LocalFree(pbuf); });
-
-        return (boost::format("%ls (%s)") % pBuffer % err).str();
+        scoped_resource<LPWSTR> guard(buffer, [](LPWSTR ptr) { if (ptr) LocalFree(ptr); });
+        return (boost::format("%1% (%2%)") % boost::nowide::narrow(buffer) % err).str();
     }
 
     string system_error()

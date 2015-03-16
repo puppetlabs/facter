@@ -1,6 +1,7 @@
 #include <facter/execution/execution.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/util/environment.hpp>
+#include <facter/util/scope_exit.hpp>
 #include <facter/util/scoped_resource.hpp>
 #include <internal/execution/execution.hpp>
 #include <internal/util/scoped_env.hpp>
@@ -97,19 +98,56 @@ namespace facter { namespace execution {
     }
 
     // Create a pipe, throwing if there's an error. Returns {read, write} handles.
-    static tuple<scoped_resource<HANDLE>, scoped_resource<HANDLE>> CreatePipeThrow()
+    static tuple<scoped_resource<HANDLE>, scoped_resource<HANDLE>> CreatePipeThrow(DWORD read_mode = 0, DWORD write_mode = 0)
     {
-        SECURITY_ATTRIBUTES saAttr = {};
-        saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
-        saAttr.bInheritHandle = TRUE;
-        saAttr.lpSecurityDescriptor = NULL;
+        static LONG counter = 0;
 
-        HANDLE tmpHandleRd = NULL, tmpHandleWr = NULL;
-        if (!CreatePipe(&tmpHandleRd, &tmpHandleWr, &saAttr, 0)) {
-            throw execution_exception("pipe could not be created");
+        // The only supported flag is FILE_FLAG_OVERLAPPED
+        if ((read_mode | write_mode) & (~FILE_FLAG_OVERLAPPED)) {
+            throw execution_exception("cannot create output pipe: invalid flag specified.");
         }
-        return make_tuple(scoped_resource<HANDLE>(move(tmpHandleRd), CloseHandle),
-            scoped_resource<HANDLE>(move(tmpHandleWr), CloseHandle));
+
+        SECURITY_ATTRIBUTES attributes = {};
+        attributes.nLength = sizeof(SECURITY_ATTRIBUTES);
+        attributes.bInheritHandle = TRUE;
+        attributes.lpSecurityDescriptor = NULL;
+
+        // Format a name for the pipe based on the process and counter
+        wstring name = boost::nowide::widen((boost::format("\\\\.\\Pipe\\facter.%1%.%2%") %
+            GetCurrentProcessId() %
+            InterlockedIncrement(&counter)).str());
+
+        // Create the read pipe
+        scoped_resource<HANDLE> read_handle(CreateNamedPipeW(
+            name.c_str(),
+            PIPE_ACCESS_INBOUND | read_mode,
+            PIPE_TYPE_BYTE | PIPE_WAIT,
+            1,
+            4096,
+            4096,
+            0,
+            &attributes), CloseHandle);
+
+        if (read_handle == INVALID_HANDLE_VALUE) {
+            LOG_ERROR("failed to create read pipe: %1%.", system_error());
+            throw execution_exception("failed to create read pipe.");
+        }
+
+        // Open the write pipe
+        scoped_resource<HANDLE> write_handle(CreateFileW(
+            name.c_str(),
+            GENERIC_WRITE,
+            0,
+            &attributes,
+            OPEN_EXISTING,
+            FILE_ATTRIBUTE_NORMAL | write_mode,
+            nullptr), CloseHandle);
+
+        if (write_handle == INVALID_HANDLE_VALUE) {
+            LOG_ERROR("failed to create write pipe: %1%.", system_error());
+            throw execution_exception("failed to create write pipe.");
+        }
+        return make_tuple(move(read_handle), move(write_handle));
     }
 
     // Source: http://blogs.msdn.com/b/twistylittlepassagesallalike/archive/2011/04/23/everyone-quotes-arguments-the-wrong-way.aspx
@@ -227,107 +265,172 @@ namespace facter { namespace execution {
         // Execute the command, reading the results into a buffer until there's no more to read.
         // See http://msdn.microsoft.com/en-us/library/windows/desktop/ms682499(v=vs.85).aspx
         // for details on redirecting input/output.
-        try {
-            scoped_resource<HANDLE> stdInRd, stdInWr;
-            tie(stdInRd, stdInWr) = CreatePipeThrow();
-            if (!SetHandleInformation(stdInWr, HANDLE_FLAG_INHERIT, 0)) {
-                throw execution_exception("pipe could not be modified");
-            }
+        scoped_resource<HANDLE> stdInRd, stdInWr;
+        tie(stdInRd, stdInWr) = CreatePipeThrow();
+        if (!SetHandleInformation(stdInWr, HANDLE_FLAG_INHERIT, 0)) {
+            throw execution_exception("pipe could not be modified");
+        }
 
-            scoped_resource<HANDLE> stdOutRd, stdOutWr;
-            tie(stdOutRd, stdOutWr) = CreatePipeThrow();
-            if (!SetHandleInformation(stdOutRd, HANDLE_FLAG_INHERIT, 0)) {
-                throw execution_exception("pipe could not be modified");
-            }
+        scoped_resource<HANDLE> stdOutRd, stdOutWr;
+        tie(stdOutRd, stdOutWr) = CreatePipeThrow(FILE_FLAG_OVERLAPPED, 0);
+        if (!SetHandleInformation(stdOutRd, HANDLE_FLAG_INHERIT, 0)) {
+            throw execution_exception("pipe could not be modified");
+        }
 
-            scoped_resource<HANDLE> stdErrRd, stdErrWr;
+        scoped_resource<HANDLE> stdErrRd, stdErrWr;
 
-            // Execute the command with arguments. Prefix arguments with the executable, or quoted arguments won't work.
-            auto commandLine = arguments ?
-                boost::nowide::widen(ArgvToCommandLine({executable}) + " " + ArgvToCommandLine(*arguments)) : L"";
+        // Execute the command with arguments. Prefix arguments with the executable, or quoted arguments won't work.
+        auto commandLine = arguments ?
+            boost::nowide::widen(ArgvToCommandLine({ executable }) + " " + ArgvToCommandLine(*arguments)) : L"";
 
-            STARTUPINFO startupInfo = {};
-            startupInfo.cb = sizeof(startupInfo);
-            startupInfo.dwFlags |= STARTF_USESTDHANDLES;
-            startupInfo.hStdInput = stdInRd;
-            startupInfo.hStdOutput = stdOutWr;
-            if (options[execution_options::redirect_stderr]) {
-                startupInfo.hStdError = stdOutWr;
-            } else {
-                startupInfo.hStdError = INVALID_HANDLE_VALUE;
-            }
+        STARTUPINFO startupInfo = {};
+        startupInfo.cb = sizeof(startupInfo);
+        startupInfo.dwFlags |= STARTF_USESTDHANDLES;
+        startupInfo.hStdInput = stdInRd;
+        startupInfo.hStdOutput = stdOutWr;
+        if (options[execution_options::redirect_stderr]) {
+            startupInfo.hStdError = stdOutWr;
+        } else {
+            startupInfo.hStdError = INVALID_HANDLE_VALUE;
+        }
 
-            PROCESS_INFORMATION procInfo = {};
+        PROCESS_INFORMATION procInfo = {};
 
-            bool success = CreateProcessW(
-                    boost::nowide::widen(executable).c_str(),
-                    &commandLine[0], /* Pass a modifiable string buffer; the contents may be modified */
-                    NULL,           /* Don't allow child process to inherit process handle */
-                    NULL,           /* Don't allow child process to inherit thread handle */
-                    TRUE,           /* Inherit handles from the calling process for communication */
-                    CREATE_NO_WINDOW,
-                    options[execution_options::merge_environment] ? NULL : modified_environ.data(),
-                    NULL,           /* Use existing current directory */
-                    &startupInfo,   /* STARTUPINFO for child process */
-                    &procInfo);     /* PROCESS_INFORMATION pointer for output */
+        if (!CreateProcessW(
+            boost::nowide::widen(executable).c_str(),
+            &commandLine[0], /* Pass a modifiable string buffer; the contents may be modified */
+            NULL,           /* Don't allow child process to inherit process handle */
+            NULL,           /* Don't allow child process to inherit thread handle */
+            TRUE,           /* Inherit handles from the calling process for communication */
+            CREATE_NO_WINDOW,
+            options[execution_options::merge_environment] ? NULL : modified_environ.data(),
+            NULL,           /* Use existing current directory */
+            &startupInfo,   /* STARTUPINFO for child process */
+            &procInfo)) {   /* PROCESS_INFORMATION pointer for output */
+            LOG_ERROR("failed to create process: %1%.", system_error());
+            throw execution_exception("failed to create child process.");
+        }
 
-            // Release unused pipes, to avoid any races in process completion.
-            stdInWr.release();
-            stdInRd.release();
-            stdOutWr.release();
-            stdErrWr.release();
+        // Release unused pipes, to avoid any races in process completion.
+        stdInWr.release();
+        stdInRd.release();
+        stdOutWr.release();
+        stdErrWr.release();
 
-            if (!success) {
-                throw execution_exception("child process failed to start");
-            }
-            scoped_resource<HANDLE> hProcess(move(procInfo.hProcess), CloseHandle);
-            scoped_resource<HANDLE> hThread(move(procInfo.hThread), CloseHandle);
+        scoped_resource<HANDLE> hProcess(move(procInfo.hProcess), CloseHandle);
+        scoped_resource<HANDLE> hThread(move(procInfo.hThread), CloseHandle);
 
-            string result = process_stream(options[execution_options::trim_output], callback, [&](string& buffer) {
-                DWORD count;
-                buffer.resize(4096);
-                auto readSucceeded = ReadFile(stdOutRd, &buffer[0], buffer.size(), &count, NULL);
-                if (count != 0 && !readSucceeded) {
-                    // Not an asynchronous read, so it won't return with pending IO.
-                    assert(GetLastError() != ERROR_IO_PENDING);
-                    throw execution_exception("failed to read child stdout");
+        bool terminate = true;
+        scope_exit reaper([&]() {
+            if (terminate) {
+                // Terminate the process on an exception
+                if (!TerminateProcess(hProcess, -1)) {
+                    LOG_ERROR("failed to terminate process: %1%.", system_error());
                 }
-                buffer.resize(count);
-                // Halt if nothing was read.
-                return count != 0;
-            });
+            }
+        });
 
-            // Close the read pipe; this may be done before all data is read when the callback returns false
-            // If the child hasn't sent all the data yet, this may signal SIGPIPE on next write
-            stdOutRd.release();
-
-            auto waitStatus = WaitForSingleObject(hProcess, INFINITE);
-            if (waitStatus != WAIT_OBJECT_0) {
-                // Not a mutex, and specified INFINITE timeout, so only WAIT_FAILED should be possible.
-                assert(waitStatus == WAIT_FAILED);
-                throw execution_exception("error waiting on execution");
+        // Create a waitable timer if given a timeout
+        scoped_resource<HANDLE> timer;
+        if (timeout) {
+            timer = scoped_resource<HANDLE>(CreateWaitableTimer(nullptr, TRUE, nullptr), CloseHandle);
+            if (!timer) {
+                LOG_ERROR("failed to create waitable timer: %1%.", system_error());
+                throw execution_exception("failed to create waitable timer.");
             }
 
-            // Now check the process return status.
-            DWORD exitCode;
-            if (!GetExitCodeProcess(hProcess, &exitCode)) {
-                throw execution_exception("error retrieving exit code of completed process");
-            }
-
-            if (exitCode != 0) {
-                // Process signaled finished, so it should not return STILL_ACTIVE.
-                assert(exitCode != STILL_ACTIVE);
-                throw child_exit_exception(exitCode, result, "child process returned non-zero exit status.");
-            }
-            return { true, move(result) };
-        } catch (child_exit_exception &e) {
-            if (options[execution_options::throw_on_nonzero_exit]) {
-                throw;
-            } else {
-                LOG_DEBUG("%1% (%2%): %3%", e.what(), e.status_code(), system_error());
-                return { false, move(e.output()) };
+            // "timeout" in X intervals in the future (1 interval = 100 ns)
+            // The negative value indicates relative to the current time
+            LARGE_INTEGER future;
+            future.QuadPart = timeout * -10000000ll;
+            if (!SetWaitableTimer(timer, &future, 0, nullptr, nullptr, FALSE)) {
+                LOG_ERROR("failed to set waitable timer: %1%.", system_error());
+                throw execution_exception("failed to set waitable timer.");
             }
         }
+
+        // Create an event for handling overlapped I/O
+        scoped_resource<HANDLE> read_event(CreateEvent(nullptr, TRUE, FALSE, nullptr), CloseHandle);
+        if (!read_event) {
+            LOG_ERROR("failed to create read event: %1%.", system_error());
+            throw execution_exception("failed to create read event.");
+        }
+
+        OVERLAPPED overlapped = {};
+        overlapped.hEvent = read_event;
+
+        string result = process_stream(options[execution_options::trim_output], callback, [&](string& buffer) {
+            buffer.resize(4096);
+
+            // Before doing anything, check to see if there's been a timeout
+            // This is done pre-emptively in case ReadFile never returns ERROR_IO_PENDING
+            if (timer && WaitForSingleObject(timer, 0) == WAIT_OBJECT_0) {
+                throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str());
+            }
+
+            // Read the output pipe
+            DWORD count = 0;
+            if (ReadFile(stdOutRd, &buffer[0], buffer.size(), &count, &overlapped)) {
+                buffer.resize(count);
+                return count != 0;
+            }
+
+            // Check to see if it's a pending operation
+            if (GetLastError() != ERROR_IO_PENDING) {
+                LOG_ERROR("failed to read child output: %1%.", system_error());
+                throw execution_exception("failed to read child process output.");
+            }
+
+            // Operation is pending, wait for it (optionally with the timer)
+            HANDLE handles[2] = { read_event, timer };
+            auto result = WaitForMultipleObjects(timer ? 2 : 1, handles, FALSE, INFINITE);
+            if (result == WAIT_OBJECT_0) {
+                if (!GetOverlappedResult(stdOutRd, &overlapped, &count, FALSE)) {
+                    if (GetLastError() != ERROR_BROKEN_PIPE) {
+                        LOG_ERROR("failed to get asynchronous read result: %1%.", system_error());
+                        throw execution_exception("failed to get asynchronous read result.");
+                    }
+                    // Treat a broken pipe as nothing left to read
+                    count = 0;
+                }
+                buffer.resize(count);
+                return count != 0;
+            }
+            if (result == WAIT_OBJECT_0 + 1) {
+                // The timer has expired
+                throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str());
+            }
+            LOG_ERROR("failed to wait for child process output: %1%.", system_error());
+            throw execution_exception("failed to wait for child process output.");
+        });
+
+        stdOutRd.release();
+
+        HANDLE handles[2] = { hProcess, timer };
+        auto wait_result = WaitForMultipleObjects(timer ? 2 : 1, handles, FALSE, INFINITE);
+        if (wait_result == WAIT_OBJECT_0) {
+            // Process has terminated
+            terminate = false;
+        } else if (wait_result == WAIT_OBJECT_0 + 1) {
+            // Timeout while waiting on the process to complete
+            throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str());
+        } else {
+            LOG_ERROR("failed to wait for child process to terminate: %1%.", system_error());
+            throw execution_exception("failed to wait for child process to terminate.");
+        }
+
+        // Now check the process return status.
+        DWORD exit_code;
+        if (!GetExitCodeProcess(hProcess, &exit_code)) {
+            throw execution_exception("error retrieving exit code of completed process");
+        }
+
+        LOG_DEBUG("process exited with exit code %1%.", exit_code);
+
+        if (exit_code != 0 && options[execution_options::throw_on_nonzero_exit]) {
+            throw child_exit_exception(exit_code, result, "child process returned non-zero exit status.");
+        }
+        return { exit_code == 0, move(result) };
     }
 
 }}  // namespace facter::executions

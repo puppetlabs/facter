@@ -21,7 +21,9 @@ namespace facter { namespace util {
          * Constructs an uninitialized scoped_resource.
          * Can be initialized via move assignment.
          */
-        scoped_resource() : _deleter(nullptr)
+        scoped_resource() :
+            _resource(),
+            _deleter(nullptr)
         {
         }
 
