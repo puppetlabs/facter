@@ -36,6 +36,9 @@ core facts.
     `master` branch.
 * Make commits of logical units.
 * Check for unnecessary whitespace with `git diff --check` before committing.
+* If you have python 2 in your path you can run `make cpplint` to ensure your
+  code formatting is clean. The linter runs as part of Travis CI and could fail
+  the CI build.
 * Make sure your commit messages are in the proper format.
 
 ````
