@@ -40,17 +40,17 @@ RUN wget https://github.com/doxygen/doxygen/archive/Release_1_8_7.tar.gz -O doxy
     rm -r doxygen-1.8.7.tgz doxygen-Release_1_8_7
 
 # Build and install cppcheck
-RUN wget http://sourceforge.net/projects/pcre/files/pcre/8.36/pcre-8.36.tar.bz2/download -O pcre-8.36.tar.bz2 && \
+RUN wget http://sourceforge.net/projects/pcre/files/pcre/8.36/pcre-8.36.tar.bz2 -O pcre-8.36.tar.bz2 && \
     tar xjf pcre-8.36.tar.bz2 && \
     cd pcre-8.36 && \
     ./configure > /dev/null && \
     make install > /dev/null && \
     cd .. && \
     rm -r pcre-8.36.tar.bz2 pcre-8.36
-RUN wget http://sourceforge.net/projects/cppcheck/files/cppcheck/1.67/cppcheck-1.67.tar.bz2/download -O cppcheck-1.67.tar.bz2 && \
-    tar xjf cppcheck-1.67.tar.bz2 && \
-    cd cppcheck-1.67 && \
+RUN wget http://sourceforge.net/projects/cppcheck/files/cppcheck/1.68/cppcheck-1.68.tar.bz2 -O cppcheck-1.68.tar.bz2 && \
+    tar xjf cppcheck-1.68.tar.bz2 && \
+    cd cppcheck-1.68 && \
     make install SRCDIR=build CFGDIR=/usr/local/cfg HAVE_RULES=yes > /dev/null && \
     cd .. && \
-    rm -r cppcheck-1.67.tar.bz2 cppcheck-1.67
+    rm -r cppcheck-1.68.tar.bz2 cppcheck-1.68
 
