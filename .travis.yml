@@ -22,8 +22,8 @@ before_install:
   # grab a pre-built cppcheck from s3
   - wget https://s3.amazonaws.com/kylo-pl-bucket/pcre-8.36_install.tar.bz2
   - sudo tar xjvf pcre-8.36_install.tar.bz2 --strip 1 -C /usr/local
-  - wget https://s3.amazonaws.com/kylo-pl-bucket/cppcheck-1.67_install.tar.bz2
-  - sudo tar xjvf cppcheck-1.67_install.tar.bz2 --strip 1 -C /usr/local
+  - wget https://s3.amazonaws.com/kylo-pl-bucket/cppcheck-1.68_install.tar.bz2
+  - sudo tar xjvf cppcheck-1.68_install.tar.bz2 --strip 1 -C /usr/local
   # grab a pre-built doxygen 1.8.7 from s3
   - wget https://s3.amazonaws.com/kylo-pl-bucket/doxygen_install.tar.bz2
   - sudo tar xjvf doxygen_install.tar.bz2 --strip 1 -C /usr/local
