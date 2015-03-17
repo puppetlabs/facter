@@ -18,6 +18,7 @@
 #include <internal/facts/resolvers/gce_resolver.hpp>
 #include <internal/facts/resolvers/identity_resolver.hpp>
 #include <internal/facts/resolvers/kernel_resolver.hpp>
+#include <internal/facts/resolvers/load_average_resolver.hpp>
 #include <internal/facts/resolvers/memory_resolver.hpp>
 #include <internal/facts/resolvers/networking_resolver.hpp>
 #include <internal/facts/resolvers/operating_system_resolver.hpp>
@@ -135,6 +136,15 @@ struct kernel_resolver : resolvers::kernel_resolver
         result.release = "1.2.3-kernel";
         result.version = "1.2.3";
         return result;
+    }
+};
+
+struct load_average_resolver : resolvers::load_average_resolver
+{
+ protected:
+    virtual boost::optional<std::tuple<double, double, double> > get_load_averages() override
+    {
+        return make_tuple(0.12, 3.45, 6.78);
     }
 };
 
@@ -397,6 +407,7 @@ void add_all_facts(collection& facts)
     facts.add(fact::gce, make_value<map_value>());
     facts.add(make_shared<identity_resolver>());
     facts.add(make_shared<kernel_resolver>());
+    facts.add(make_shared<load_average_resolver>());
     facts.add(make_shared<memory_resolver>());
     facts.add(make_shared<networking_resolver>());
     facts.add(make_shared<operating_system_resolver>());

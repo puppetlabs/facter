@@ -496,6 +496,22 @@ kernelversion:
         POSIX platforms: use the `uname` function to retrieve the kernel's version.
         Windows: use the file version of `kernel32.dll` to retrieve the kernel's version.
 
+load_averages:
+    type: map
+    description: Return the load average over the last 1, 5 and 15 minutes.
+    resolution: |
+        POSIX platforms: use `getloadavg` function to retrieve the system load averages.
+    elements:
+        1m:
+            type: double
+            description: The system load average over the last minute.
+        5m:
+            type: double
+            description: The system load average over the last 5 minutes.
+        15m:
+            type: double
+            description: The system load average over the last 15 minutes.
+
 lsbdistcodename:
     type: string
     hidden: true

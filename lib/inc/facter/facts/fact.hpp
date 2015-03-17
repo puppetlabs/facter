@@ -617,6 +617,11 @@ namespace facter { namespace facts {
          * The fact for the PATH environment variable.
          */
         constexpr static char const* path = "path";
+
+        /**
+         * The facts for cpu load average.
+         */
+        constexpr static char const* load_averages    = "load_averages";
     };
 
 }}  // namespace facter::facts
