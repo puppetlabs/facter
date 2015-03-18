@@ -5,12 +5,13 @@ export VERBOSE=1
 
 PREFIX      :=/usr
 BUILDPREFIX :=/opt/pl-build-tools
-NPROC       :=$(shell nproc)
 CPPFLAGS    :=$(shell dpkg-buildflags --get CPPFLAGS)
 CFLAGS      :=$(shell dpkg-buildflags --get CFLAGS)
 CXXFLAGS    :=$(shell dpkg-buildflags --get CXXFLAGS)
 LDFLAGS     :=$(shell dpkg-buildflags --get LDFLAGS)
-NUMPROC     :=$(shell expr $$(nproc) + 1)
+
+# Hard-coded to 2. Our deb builders have a hard-limit at 4GB of memory.
+NUMPROC     :=2
 
 export CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
 
