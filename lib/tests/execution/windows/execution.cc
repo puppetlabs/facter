@@ -185,6 +185,19 @@ SCENARIO("executing commands with execution::execute") {
             }
         }
     }
+    GIVEN("a long-running command") {
+        WHEN("given a timeout") {
+            THEN("a timeout exception should be thrown") {
+                string ruby = which("ruby.exe");
+                if (ruby.empty()) {
+                    WARN("skipping command timeout test because no ruby was found on the PATH.");
+                    return;
+                }
+                option_set<execution_options> options = { execution_options::defaults };
+                REQUIRE_THROWS_AS(execute("ruby.exe", { "-e", "sleep 15" }, options, 1), timeout_exception);
+            }
+        }
+    }
 }
 
 SCENARIO("executing commands with execution::each_line") {
@@ -316,6 +329,19 @@ SCENARIO("executing commands with execution::each_line") {
         WHEN("the 'throw on non-zero exit' option is used") {
             THEN("a child exit exception is thrown") {
                 REQUIRE_THROWS_AS(each_line("cmd.exe", { "/c", "dir", "/B", "does_not_exist" }, [](string& line) { return true; }, option_set<execution_options>({execution_options::defaults, execution_options::throw_on_nonzero_exit})), child_exit_exception);
+            }
+        }
+    }
+    GIVEN("a long-running command") {
+        WHEN("given a timeout") {
+            THEN("a timeout exception should be thrown") {
+                string ruby = which("ruby.exe");
+                if (ruby.empty()) {
+                    WARN("skipping command timeout test because no ruby was found on the PATH.");
+                    return;
+                }
+                option_set<execution_options> options = { execution_options::defaults };
+                REQUIRE_THROWS_AS(each_line("ruby.exe", { "-e", "sleep 15" }, [&](string&) { return true; }, options, 1), timeout_exception);
             }
         }
     }

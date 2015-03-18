@@ -21,7 +21,9 @@ namespace facter { namespace util {
          * Constructs an uninitialized scoped_resource.
          * Can be initialized via move assignment.
          */
-        scoped_resource() : _deleter(nullptr)
+        scoped_resource() :
+            _resource(),
+            _deleter(nullptr)
         {
         }
 
@@ -65,6 +67,9 @@ namespace facter { namespace util {
             release();
             _resource = std::move(other._resource);
             _deleter = std::move(other._deleter);
+
+            // Ensure the deleter is in a known "empty" state; we can't rely on default move semantics for that
+            other._deleter = nullptr;
             return *this;
         }
 

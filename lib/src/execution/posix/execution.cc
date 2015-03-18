@@ -1,13 +1,18 @@
+#include <facter/execution/execution.hpp>
 #include <facter/util/directory.hpp>
+#include <facter/util/scope_exit.hpp>
 #include <internal/execution/execution.hpp>
 #include <internal/util/posix/scoped_descriptor.hpp>
 #include <internal/ruby/api.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/format.hpp>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 #include <fcntl.h>
+#include <signal.h>
 
 using namespace std;
 using namespace facter::util;
@@ -25,7 +30,7 @@ namespace facter { namespace execution {
     const char *const command_shell = "sh";
     const char *const command_args = "-c";
 
-    uint64_t get_max_descriptor_limit()
+    static uint64_t get_max_descriptor_limit()
     {
 #ifdef _SC_OPEN_MAX
         {
@@ -52,6 +57,13 @@ namespace facter { namespace execution {
 #endif  // OPEN_MAX
     }
 
+    static volatile bool command_timedout = false;
+
+    static void timer_handler(int signal)
+    {
+        command_timedout = true;
+    }
+
     string which(string const& file, vector<string> const& directories)
     {
         // If the file is already absolute, return it if it's executable
@@ -76,7 +88,8 @@ namespace facter { namespace execution {
         vector<string> const* arguments,
         map<string, string> const* environment,
         function<bool(string&)> callback,
-        option_set<execution_options> const& options)
+        option_set<execution_options> const& options,
+        uint32_t timeout)
     {
         // Search for the executable
         string executable = which(file);
@@ -117,46 +130,124 @@ namespace facter { namespace execution {
             stdout_write.release();
             stdin_write.release();
 
-            string result = process_stream([&](string &buffer) {
+            // Define a reaper that is invoked when we exit this scope
+            // This ensures that the child won't become a zombie if an exception is thrown
+            bool kill_child = true;
+            bool success = false;
+            bool signaled = false;
+            int status = 0;
+            scope_exit reaper([&]() {
+                if (kill_child) {
+                    kill(child, SIGKILL);
+                }
+                // Wait for the child to exit
+                if (waitpid(child, &status, 0) == -1) {
+                    LOG_DEBUG("waitpid failed: %1% (%2%).", strerror(errno), errno);
+                    return;
+                }
+                if (WIFEXITED(status)) {
+                    status = static_cast<char>(WEXITSTATUS(status));
+                    success = status == 0;
+                    return;
+                }
+                if (WIFSIGNALED(status)) {
+                    signaled = true;
+                    status = static_cast<char>(WTERMSIG(status));
+                    return;
+                }
+            });
+
+            // Set up an interval timer for timeouts
+            // Note: OSX doesn't implement POSIX per-process timers, so we're stuck with the obsolete POSIX timers API
+            scope_exit timer_reset;
+            if (timeout) {
+                struct sigaction sa = {};
+                sa.sa_handler = timer_handler;
+                if (sigaction(SIGALRM, &sa, nullptr) == -1) {
+                    LOG_ERROR("sigaction failed: %1% (%2%).", strerror(errno), errno);
+                    throw execution_exception("failed to setup timer");
+                }
+
+                itimerval timer = {};
+                timer.it_value.tv_sec = static_cast<decltype(timer.it_interval.tv_sec)>(timeout);
+                if (setitimer(ITIMER_REAL, &timer, nullptr) == -1) {
+                    LOG_ERROR("setitimer failed: %1% (%2%).", strerror(errno), errno);
+                    throw execution_exception("failed to setup timer");
+                }
+
+                // Set the resource to disable the timer
+                timer_reset = scope_exit([&]() {
+                    itimerval timer = {};
+                    setitimer(ITIMER_REAL, &timer, nullptr);
+                    command_timedout = false;
+                });
+            }
+
+            string result = process_stream(options[execution_options::trim_output], callback, [&](string& buffer) {
                 buffer.resize(4096);
-                auto count = read(stdout_read, &buffer[0], buffer.size());
-                if (count < 0) {
-                    if (errno != EINTR) {
-                        throw execution_exception("failed to read child output.");
+
+                while (!command_timedout) {
+                    fd_set set;
+                    FD_ZERO(&set);
+                    FD_SET(stdout_read, &set);
+
+                    // If using a timeout, timeout after 500ms to check whether or not the command itself timed out
+                    timeval read_timeout = {};
+                    read_timeout.tv_usec = 500000;
+                    int result = select(static_cast<int>(stdout_read) + 1, &set, nullptr, nullptr, timeout ? &read_timeout : nullptr);
+                    if (result == -1) {
+                        if (errno != EINTR) {
+                            LOG_ERROR("select failed: %1% (%2%).", strerror(errno), errno);
+                            throw execution_exception("failed to read child output.");
+                        }
+                        // Interrupted by signal
+                        LOG_DEBUG("child pipe read was interrupted and will be retried.");
+                        continue;
+                    }
+                    if (result == 0) {
+                        // Timeout, try again
+                        continue;
                     }
 
-                    // The call to read was interrupted by a signal before any data was read. Retry read.
-                    // See http://www.gnu.org/software/libc/manual/html_node/Interrupted-Primitives.html
-                    // This happens in Xcode's debugging.
-                    LOG_DEBUG("child pipe read was interrupted and will be retried.");
-                    errno = 0;
-                    buffer.resize(0);
-                    return true;
+                    // There is data to read
+                    auto count = read(stdout_read, &buffer[0], buffer.size());
+                    if (count < 0) {
+                        if (errno != EINTR) {
+                            LOG_ERROR("read failed: %1% (%2%).", strerror(errno), errno);
+                            throw execution_exception("failed to read child output.");
+                        }
+                        // Interrupted by signal
+                        LOG_DEBUG("child pipe read was interrupted and will be retried.");
+                        continue;
+                    }
+                    buffer.resize(count);
+                    return count != 0;
                 }
-                buffer.resize(count);
-                // Halt if nothing was read.
-                return count != 0;
-            }, callback, options);
+
+                // Should only reach here if the command timed out
+                throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str());
+            });
 
             // Close the read pipe
             // If the child hasn't sent all the data yet, this may signal SIGPIPE on next write
             stdout_read.release();
 
             // Wait for the child to exit
-            bool success = false;
-            int status = 0;
-            waitpid(child, &status, 0);
-            if (WIFEXITED(status)) {
-                status = static_cast<char>(WEXITSTATUS(status));
+            kill_child = false;
+            reaper.invoke();
+
+            if (signaled) {
+                LOG_DEBUG("process was signaled with signal %1%.", status);
+            } else {
                 LOG_DEBUG("process exited with status code %1%.", status);
-                if (status != 0 && options[execution_options::throw_on_nonzero_exit]) {
+            }
+
+            // Throw exception if needed
+            if (!success) {
+                if (!signaled && status != 0 && options[execution_options::throw_on_nonzero_exit]) {
                     throw child_exit_exception(status, result, "child process returned non-zero exit status.");
                 }
-                success = status == 0;
-            } else if (WIFSIGNALED(status)) {
-                status = static_cast<char>(WTERMSIG(status));
-                LOG_DEBUG("process was signaled with signal %1%.", status);
-                if (options[execution_options::throw_on_signal]) {
+                if (signaled && options[execution_options::throw_on_signal]) {
                     throw child_signal_exception(status, result, "child process was terminated by signal.");
                 }
             }
