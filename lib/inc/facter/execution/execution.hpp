@@ -156,8 +156,18 @@ namespace facter { namespace execution {
         /**
          * Constructs a timeout_exception.
          * @param message The exception message.
+         * @param pid The process id of the process that timed out and was killed.
          */
-        explicit timeout_exception(std::string const& message);
+        timeout_exception(std::string const& message, size_t pid);
+
+        /**
+         * Gets the process id of the process that timed out and was killed.
+         * @return Returns the process id of the process that timed out and was killed.
+         */
+        size_t pid() const;
+
+     private:
+        size_t _pid;
     };
 
     /**

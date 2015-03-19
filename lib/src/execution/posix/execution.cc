@@ -138,7 +138,7 @@ namespace facter { namespace execution {
             int status = 0;
             scope_exit reaper([&]() {
                 if (kill_child) {
-                    kill(child, SIGKILL);
+                    kill(-child, SIGKILL);
                 }
                 // Wait for the child to exit
                 if (waitpid(child, &status, 0) == -1) {
@@ -225,7 +225,7 @@ namespace facter { namespace execution {
                 }
 
                 // Should only reach here if the command timed out
-                throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str());
+                throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str(), static_cast<size_t>(child));
             });
 
             // Close the read pipe
@@ -257,6 +257,11 @@ namespace facter { namespace execution {
         // Child continues here
         try
         {
+            // Set the process group; this will be used by the parent if we need to kill the process and its children
+            if (setpgid(0, 0) == -1) {
+                throw execution_exception("failed to set child process group.");
+            }
+
             // Disable Ruby cleanup
             // Ruby doesn't play nice with being forked
             // The VM records the parent pid, so it doesn't like having ruby_cleanup called from a child process
