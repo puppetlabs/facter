@@ -320,11 +320,22 @@ namespace facter { namespace execution {
         scoped_resource<HANDLE> hProcess(move(procInfo.hProcess), CloseHandle);
         scoped_resource<HANDLE> hThread(move(procInfo.hThread), CloseHandle);
 
+        // Use a Job Object to group any child processes spawned by the CreateProcess invocation, so we can
+        // easily stop them in case of a timeout.
+        scoped_resource<HANDLE> hJob(CreateJobObjectW(nullptr, nullptr), CloseHandle);
+        if (hJob == NULL) {
+            LOG_ERROR("failed to create job object: %1%.", system_error());
+            throw execution_exception("failed to create job object.");
+        } else if (!AssignProcessToJobObject(hJob, hProcess)) {
+            LOG_ERROR("failed to associate process with job object: %1%.", system_error());
+            throw execution_exception("failed to associate process with job object.");
+        }
+
         bool terminate = true;
         scope_exit reaper([&]() {
             if (terminate) {
                 // Terminate the process on an exception
-                if (!TerminateProcess(hProcess, -1)) {
+                if (!TerminateJobObject(hJob, -1)) {
                     LOG_ERROR("failed to terminate process: %1%.", system_error());
                 }
             }
