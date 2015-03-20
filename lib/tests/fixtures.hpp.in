@@ -1,0 +1,23 @@
+#pragma once
+
+#include <string>
+#include <functional>
+
+#define LIBFACTER_TESTS_DIRECTORY "@CMAKE_CURRENT_LIST_DIR@"
+
+namespace facter { namespace testing {
+
+    bool load_fixture(std::string const& name, std::string& data);
+
+    // Creates a local directory and adds a file <filename> to it containing <contents>.
+    // When destroyed, it deletes the directory.
+    struct test_with_relative_path
+    {
+        test_with_relative_path(std::string const& dirname, std::string const& filename, std::string const& contents);
+        ~test_with_relative_path();
+
+     private:
+        std::string _dir;
+    };
+
+}}  // namespace facter::testing

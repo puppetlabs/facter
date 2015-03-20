@@ -1,10 +1,21 @@
-pkg/
-ext/packaging/
-# YARD generated documentation
-.yardoc
-doc
-.bundle/
-vendor/
-Gemfile.lock
+# Misc files
+*.swp
+.DS_Store
 Gemfile.local
-.idea/
+Gemfile.lock
+/nbproject
+compile_commands.json
+
+# Generated files
+/lib/inc/facter/export.h
+/lib/inc/facter/version.h
+/lib/tests/fixtures.hpp
+/debug*/
+/release*/
+/.idea/
+
+# Packaging files
+ext/packaging/
+
+# packages
+pkg/

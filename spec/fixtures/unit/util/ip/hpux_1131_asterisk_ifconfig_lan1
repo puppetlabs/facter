@@ -1,2 +1,0 @@
-lan1: flags=842<BROADCAST,RUNNING,MULTICAST>
-        inet 10.10.0.5 netmask ffffff00 broadcast 10.10.0.255

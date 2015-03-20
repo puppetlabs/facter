@@ -1,7 +1,0 @@
-#!/usr/bin/make -f
-
-LIBDIR=$(shell /usr/bin/ruby18 -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')
-DESTDIR=$(CURDIR)/pkg/ips/proto
-
-binary-install/facter::
-	/usr/bin/ruby18 install.rb --destdir=$(DESTDIR) --bindir=/usr/bin --sitelibdir=$(LIBDIR) --mandir=/usr/share/man
