@@ -193,8 +193,17 @@ SCENARIO("executing commands with execution::execute") {
                     WARN("skipping command timeout test because no ruby was found on the PATH.");
                     return;
                 }
+
                 option_set<execution_options> options = { execution_options::defaults };
-                REQUIRE_THROWS_AS(execute("ruby.exe", { "-e", "sleep 15" }, options, 1), timeout_exception);
+                try {
+                    execute("cmd.exe", { "/c", "ruby.exe", "-e", "sleep 60" }, options, 1);
+                    FAIL("did not throw timeout exception");
+                } catch (timeout_exception const& ex) {
+                    // Verify the process was killed
+                    REQUIRE(OpenProcess(0, FALSE, ex.pid()) == nullptr);
+                } catch (exception const&) {
+                    FAIL("unexpected exception thrown");
+                }
             }
         }
     }
@@ -340,8 +349,17 @@ SCENARIO("executing commands with execution::each_line") {
                     WARN("skipping command timeout test because no ruby was found on the PATH.");
                     return;
                 }
+
                 option_set<execution_options> options = { execution_options::defaults };
-                REQUIRE_THROWS_AS(each_line("ruby.exe", { "-e", "sleep 15" }, [&](string&) { return true; }, options, 1), timeout_exception);
+                try {
+                    each_line("cmd.exe", { "/c", "ruby.exe", "-e", "sleep 60" }, [&](string&) { return true; }, options, 1);
+                    FAIL("did not throw timeout exception");
+                } catch (timeout_exception const& ex) {
+                    // Verify the process was killed
+                    REQUIRE(OpenProcess(0, FALSE, ex.pid()) == nullptr);
+                } catch (exception const&) {
+                    FAIL("unexpected exception thrown");
+                }
             }
         }
     }
