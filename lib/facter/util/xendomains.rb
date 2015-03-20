@@ -4,7 +4,16 @@ module Facter::Util::Xendomains
   XEN_COMMANDS = ['/usr/sbin/xl', '/usr/sbin/xm']
 
   def self.xen_command
-    XEN_COMMANDS.find { |cmd| Facter::Util::Resolution.which(cmd) }
+    if File.file?('/usr/lib/xen-common/bin/xen-toolstack')
+      xen_toolstack_cmd = Facter::Util::Resolution.exec('/usr/lib/xen-common/bin/xen-toolstack')
+      if xen_toolstack_cmd
+        xen_toolstack_cmd.chomp
+      else
+        nil
+      end
+    else
+      XEN_COMMANDS.find { |cmd| Facter::Util::Resolution.which(cmd) }
+    end
   end
 
   def self.get_domains
