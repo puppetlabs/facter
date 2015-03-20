@@ -695,11 +695,20 @@ namespace facter { namespace ruby {
         }
 
         // Unfortunately we have to call to_sym rather than using ID2SYM, which is Ruby version dependent
-        volatile VALUE option = ruby.rb_hash_lookup(argv[1], ruby.rb_funcall(ruby.utf8_value("on_fail"), ruby.rb_intern("to_sym"), 0));
-        if (ruby.is_symbol(option) && ruby.to_string(option) == "raise") {
-            return execute_command(ruby.to_string(argv[0]), ruby.nil_value(), true);
+        uint32_t timeout = 0;
+        volatile VALUE timeout_option = ruby.rb_hash_lookup(argv[1], ruby.rb_funcall(ruby.utf8_value("timeout"), ruby.rb_intern("to_sym"), 0));
+        if (ruby.is_fixednum(timeout_option)) {
+            timeout = static_cast<uint32_t>(ruby.rb_num2ulong(timeout_option));
         }
-        return execute_command(ruby.to_string(argv[0]), option, false);
+
+        // Get the on_fail option
+        bool raise = false;
+        volatile VALUE fail_option = ruby.rb_hash_lookup(argv[1], ruby.rb_funcall(ruby.utf8_value("on_fail"), ruby.rb_intern("to_sym"), 0));
+        if (ruby.is_symbol(fail_option) && ruby.to_string(fail_option) == "raise") {
+            raise = true;
+            fail_option = ruby.nil_value();
+        }
+        return execute_command(ruby.to_string(argv[0]), fail_option, raise, timeout);
     }
 
     VALUE module::ruby_on_message(VALUE self)
@@ -721,21 +730,24 @@ namespace facter { namespace ruby {
         return it->second;
     }
 
-    VALUE module::execute_command(std::string const& command, VALUE failure_default, bool raise)
+    VALUE module::execute_command(std::string const& command, VALUE failure_default, bool raise, uint32_t timeout)
     {
         auto const& ruby = *api::instance();
 
         // Block to ensure that result is destructed before raising.
-        {
+        try {
             auto result = execution::execute(execution::command_shell,
                 {execution::command_args, expand_command(command)},
                 option_set<execution_options> {
                     execution_options::defaults,
                     execution_options::redirect_stderr
-                });
+                }, timeout);
             if (result.first) {
                 return ruby.utf8_value(result.second);
             }
+        } catch (timeout_exception const& ex) {
+            // Always raise for timeouts
+            ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), ex.what());
         }
         if (raise) {
             ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), "execution of command \"%s\" failed", command.c_str());

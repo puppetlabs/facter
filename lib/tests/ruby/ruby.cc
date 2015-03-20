@@ -520,6 +520,26 @@ SCENARIO("custom facts written in Ruby") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar baz\"");
         }
     }
+    GIVEN("Facter::Core::Execution#execute with on_fail => :raise") {
+        core->set_filter(log_level_attr >= log_level::error);
+        REQUIRE_FALSE(load_custom_fact("execute_on_fail_raise.rb", facts));
+        THEN("an error is logged") {
+            REQUIRE(has_message(*appender, "ERROR", "execution of command \"not a command\" failed"));
+        }
+    }
+    GIVEN("a fact resolution that uses Facter::Core::Execution#execute with a default value") {
+        REQUIRE(load_custom_fact("execute_on_fail_value.rb", facts));
+        THEN("value should be in the collection") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"default\"");
+        }
+    }
+    GIVEN("a fact resolution that uses Facter::Core::Execution#execute with a timeout") {
+        core->set_filter(log_level_attr >= log_level::error);
+        REQUIRE_FALSE(load_custom_fact("execute_timeout.rb", facts));
+        THEN("an error is logged") {
+            REQUIRE(has_message(*appender, "ERROR", "command timed out after 1 seconds."));
+        }
+    }
     GIVEN("a fact that uses timeout") {
         core->set_filter(log_level_attr >= log_level::warning);
         REQUIRE(load_custom_fact("timeout.rb", facts));
