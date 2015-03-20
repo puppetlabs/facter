@@ -54,9 +54,15 @@ namespace facter { namespace execution {
         return _signal;
     }
 
-    timeout_exception::timeout_exception(string const& message) :
-        execution_exception(message)
+    timeout_exception::timeout_exception(string const& message, size_t pid) :
+        execution_exception(message),
+        _pid(pid)
     {
+    }
+
+    size_t timeout_exception::pid() const
+    {
+        return _pid;
     }
 
     void log_execution(string const& file, vector<string> const* arguments)

@@ -365,7 +365,7 @@ namespace facter { namespace execution {
             // Before doing anything, check to see if there's been a timeout
             // This is done pre-emptively in case ReadFile never returns ERROR_IO_PENDING
             if (timer && WaitForSingleObject(timer, 0) == WAIT_OBJECT_0) {
-                throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str());
+                throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str(), static_cast<size_t>(procInfo.dwProcessId));
             }
 
             // Read the output pipe
@@ -398,7 +398,7 @@ namespace facter { namespace execution {
             }
             if (result == WAIT_OBJECT_0 + 1) {
                 // The timer has expired
-                throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str());
+                throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str(), static_cast<size_t>(procInfo.dwProcessId));
             }
             LOG_ERROR("failed to wait for child process output: %1%.", system_error());
             throw execution_exception("failed to wait for child process output.");
@@ -413,7 +413,7 @@ namespace facter { namespace execution {
             terminate = false;
         } else if (wait_result == WAIT_OBJECT_0 + 1) {
             // Timeout while waiting on the process to complete
-            throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str());
+            throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str(), static_cast<size_t>(procInfo.dwProcessId));
         } else {
             LOG_ERROR("failed to wait for child process to terminate: %1%.", system_error());
             throw execution_exception("failed to wait for child process to terminate.");

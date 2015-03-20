@@ -4,6 +4,8 @@
 #include <boost/algorithm/string.hpp>
 #include "../../fixtures.hpp"
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 using namespace std;
 using namespace facter::util;
@@ -231,7 +233,17 @@ SCENARIO("executing commands with execution::execute") {
         WHEN("given a timeout") {
             THEN("a timeout exception should be thrown") {
                 option_set<execution_options> options = { execution_options::defaults };
-                REQUIRE_THROWS_AS(execute("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/sleep.sh" }, options, 1), timeout_exception);
+                try {
+                    execute("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/sleep.sh" }, options, 1);
+                    FAIL("did not throw timeout exception");
+                } catch (timeout_exception const& ex) {
+                    // Verify the process group was killed by waiting for it
+                    int status = 0;
+                    REQUIRE(waitpid(-ex.pid(), &status, WNOHANG) == -1);
+                    REQUIRE(errno == ECHILD);
+                } catch (exception const&) {
+                    FAIL("unexpected exception thrown");
+                }
             }
         }
     }
@@ -378,8 +390,18 @@ SCENARIO("executing commands with execution::each_line") {
     GIVEN("a long-running command") {
         WHEN("given a timeout") {
             THEN("a timeout exception should be thrown") {
-                option_set<execution_options> options = { execution_options::defaults };
-                REQUIRE_THROWS_AS(each_line("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/sleep.sh" }, [](string& line) { return true; }, options, 1), timeout_exception);
+                try {
+                    option_set<execution_options> options = { execution_options::defaults };
+                    each_line("sh", { LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/sleep.sh" }, [](string& line) { return true; }, options, 1);
+                    FAIL("did not throw timeout exception");
+                } catch (timeout_exception const& ex) {
+                    // Verify the process group was killed by waiting for it
+                    int status = 0;
+                    REQUIRE(waitpid(-ex.pid(), &status, WNOHANG) == -1);
+                    REQUIRE(errno == ECHILD);
+                } catch (exception const&) {
+                    FAIL("unexpected exception thrown");
+                }
             }
         }
     }
