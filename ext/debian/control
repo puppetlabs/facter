@@ -1,4 +1,4 @@
-Source: cfacter
+Source: facter
 Section: devel
 Priority: optional
 Maintainer: Puppet Labs <info@puppetlabs.com>
@@ -6,7 +6,7 @@ Build-Depends: debhelper (>> 7), pl-gcc (>= 4.8.2-1puppetlabs3), pl-cmake (>= 2.
 Standards-Version: 3.9.1
 Homepage: http://www.puppetlabs.com
 
-Package: cfacter
+Package: facter
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libblkid1, libcurl3, libssl1.0.0 | libssl0.9.8
 Description: A command line tool and library for collecting simple facts about a host operating system
