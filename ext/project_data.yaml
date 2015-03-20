@@ -1,8 +1,8 @@
 ---
-project: 'cfacter'
+project: 'facter'
 author: 'Puppet Labs'
 email: 'info@puppetlabs.com'
-homepage: 'https://github.com/puppetlabs/cfacter'
+homepage: 'https://github.com/puppetlabs/facter'
 summary: 'Facter, a system inventory tool'
 description: 'You can prove anything with facts!'
 # files to be packaged into a tarball and released with deb/rpm
@@ -16,5 +16,5 @@ tar_excludes: 'ext/packaging'
 # default to searching for any files in `ext` with the extension '.erb' and evaluate them. When this
 # key is supplied, its values override the defaults, and all desired erb files must be specified with a path or glob.
 templates:
-  - ext/redhat/cfacter.spec.erb
+  - ext/redhat/facter.spec.erb
   - ext/debian/changelog.erb
