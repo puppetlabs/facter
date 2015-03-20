@@ -1,0 +1,3 @@
+[submodule "vendor/leatherman"]
+	path = vendor/leatherman
+	url = https://github.com/puppetlabs/leatherman

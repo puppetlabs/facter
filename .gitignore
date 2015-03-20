@@ -1,0 +1,21 @@
+# Misc files
+*.swp
+.DS_Store
+Gemfile.local
+Gemfile.lock
+/nbproject
+compile_commands.json
+
+# Generated files
+/lib/inc/facter/export.h
+/lib/inc/facter/version.h
+/lib/tests/fixtures.hpp
+/debug*/
+/release*/
+/.idea/
+
+# Packaging files
+ext/packaging/
+
+# packages
+pkg/
