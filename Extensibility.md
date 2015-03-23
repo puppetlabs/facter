@@ -40,7 +40,7 @@ Native Facter will load custom facts from the following locations:
 
 * Any Ruby source file in a `facter` subdirectory on the Ruby load path.
 * Any Ruby source file in a directory specified by the `FACTERLIB` environment variable (delimited by the platform PATH separator).
-* Any Ruby source file in a directory specified by the `--custom-dir` option to cfacter.
+* Any Ruby source file in a directory specified by the `--custom-dir` option to facter.
 
 The following methods from the Facter API are currently supported by native Facter:
 

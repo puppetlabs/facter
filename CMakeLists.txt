@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(CFACTER)
+project(FACTER)
 
 if (NOT CMAKE_BUILD_TYPE)
     message(STATUS "Defaulting to a release build.")
@@ -144,4 +144,4 @@ add_subdirectory(exe)
 
 # Add test executables for unit testing
 add_test(NAME "library\\ tests" COMMAND libfacter_test)
-add_test(NAME "cfacter\\ smoke" COMMAND cfacter)
+add_test(NAME "facter\\ smoke" COMMAND facter)

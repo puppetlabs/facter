@@ -6,8 +6,8 @@ param (
 [int] $arch=64,
 [int] $cores=2,
 [bool] $buildSource=$FALSE,
-[string] $cfacterRef='origin/master',
-[string] $cfacterFork='git://github.com/puppetlabs/cfacter'
+[string] $facterRef='origin/master',
+[string] $facterFork='git://github.com/puppetlabs/facter'
 )
 
 # Ensure TEMP directory is set and exists. Git.install can fail otherwise.
@@ -77,7 +77,7 @@ Install-Choco git.install 1.9.5.20150210
 
 # For MinGW, we expect specific project defaults
 # - win32 threads, for Windows Server 2003 support
-# - seh exceptions on 64-bit, to work around an obscure bug loading Ruby in CFacter
+# - seh exceptions on 64-bit, to work around an obscure bug loading Ruby in Facter
 # These are the defaults on our myget feed.
 if ($arch -eq 64) {
   Install-Choco ruby 2.1.5.20150210
@@ -94,10 +94,10 @@ $env:PATH += [Environment]::GetFolderPath('ProgramFilesX86') + "\Git\cmd"
 echo $env:PATH
 cd $sourceDir
 
-## Download cfacter and setup build directories
-git clone --recursive $cfacterFork cfacter
-cd cfacter
-git checkout $cfacterRef
+## Download facter and setup build directories
+git clone --recursive $facterFork facter
+cd facter
+git checkout $facterRef
 mkdir -Force release
 cd release
 $buildDir=$pwd
@@ -158,7 +158,7 @@ if ($buildSource) {
   & 7za x "${yamlPkg}.7z" | FIND /V "ing "
 }
 
-## Build CFacter
+## Build Facter
 cd $buildDir
 $args = @(
   '-G',

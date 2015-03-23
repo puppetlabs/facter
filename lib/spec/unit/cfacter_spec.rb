@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-CFacter.initialize
 Facter.on_message do |level, message|
     puts message if level == :fatal
 end
@@ -22,9 +21,9 @@ describe Facter do
     end
 
     it 'should return a fact for []' do
-      fact = Facter[:cfacterversion]
+      fact = Facter[:facterversion]
       fact.should_not be_nil
-      fact.name.should eq 'cfacterversion'
+      fact.name.should eq 'facterversion'
       fact.value.should eq Facter.version
     end
 
@@ -36,8 +35,8 @@ describe Facter do
       Facter.value(:not_a_fact).should be_nil
     end
 
-    it 'should contain a matching cfacter version' do
-      version = Facter.value('cfacterversion')
+    it 'should contain a matching facter version' do
+      version = Facter.value('facterversion')
       version.should eq Facter.version
       version.should eq Facter::FACTERVERSION
     end

@@ -1,5 +1,5 @@
 # This Dockerfile uses Coverity, which requires a project and authentication token.
-# Since it's based off the cfacter builder, we hard-code the project; the authentication
+# Since it's based off the facter builder, we hard-code the project; the authentication
 # token should remain secret, so it's required as an argument when starting the builder.
 # Other optional arguments also exist to select a branch to build.
 # Docker startup arguments (required if no default):
@@ -12,7 +12,7 @@
 # - COV_JOBS: number of parallel jobs to run for the build, defaults to 1
 
 # Setup environment
-FROM mikaelsmith/travis-cfacter-builder:12.04
+FROM mikaelsmith/travis-facter-builder:12.04
 MAINTAINER Michael Smith <michael.smith@puppetlabs.com>
 
 # Setup coverity scan
@@ -26,15 +26,15 @@ RUN cd coverity-submit &&\
 ADD _coverity-submit.erb /root/.coverity-submit.erb
 
 # Setup and run coverity build
-CMD wget --quiet https://scan.coverity.com/download/linux-64 --post-data "token=${COV_TOKEN}&project=puppetlabs%2Fcfacter" -O coverity_tool.tgz; \
+CMD wget --quiet https://scan.coverity.com/download/linux-64 --post-data "token=${COV_TOKEN}&project=puppetlabs%2Ffacter" -O coverity_tool.tgz; \
     tar xzf coverity_tool.tgz --strip 1 -C /usr/local; \
     rm coverity_tool.tgz; \
     erb /root/.coverity-submit.erb > /root/.coverity-submit; \
-    cd /root/cfacter; \
-    if [ -z "$COV_FORK" ]; then export COV_FORK=puppetlabs; else git remote set-url origin https://github.com/${COV_FORK}/cfacter; fi; \
+    cd /root/facter; \
+    if [ -z "$COV_FORK" ]; then export COV_FORK=puppetlabs; else git remote set-url origin https://github.com/${COV_FORK}/facter; fi; \
     git fetch origin; \
     if [ -z "$COV_BRANCH" ]; then export COV_BRANCH=master; else git checkout $COV_BRANCH; fi; \
     git pull origin $COV_BRANCH; \
     if [ -z "$COV_JOBS" ]; then export COV_JOBS=1; fi; \
-    coverity-submit puppetlabs%2Fcfacter
+    coverity-submit puppetlabs%2Ffacter
 

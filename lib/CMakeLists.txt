@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
-set(LIBFACTER_VERSION_MAJOR 0)
-set(LIBFACTER_VERSION_MINOR 4)
+set(LIBFACTER_VERSION_MAJOR 2)
+set(LIBFACTER_VERSION_MINOR 9)
 set(LIBFACTER_VERSION_PATCH 0)
 
 # Get the HEAD SHA1
@@ -277,8 +277,8 @@ install(DIRECTORY inc/facter DESTINATION include)
 
 if (RUBY_FOUND)
     configure_file (
-        "cfacter.rb.in"
-        "${CMAKE_BINARY_DIR}/lib/cfacter.rb"
+        "facter.rb.in"
+        "${CMAKE_BINARY_DIR}/lib/facter.rb"
     )
 
     message(STATUS "Ruby ${RUBY_VERSION} found.")
@@ -293,8 +293,8 @@ if (RUBY_FOUND)
 
     execute_process(COMMAND ${RUBY_EXECUTABLE} -rrbconfig -e "puts RbConfig::CONFIG['vendordir']" OUTPUT_VARIABLE RUBY_VENDORDIR_OUT)
     string(STRIP ${RUBY_VENDORDIR_OUT} RUBY_VENDORDIR)
-    message(STATUS "\"make install\" will install cfacter.rb to ${RUBY_VENDORDIR}")
-    install(FILES ${CMAKE_BINARY_DIR}/lib/cfacter.rb DESTINATION ${RUBY_VENDORDIR})
+    message(STATUS "\"make install\" will install facter.rb to ${RUBY_VENDORDIR}")
+    install(FILES ${CMAKE_BINARY_DIR}/lib/facter.rb DESTINATION ${RUBY_VENDORDIR})
 endif()
 
 cotire(libfacter)

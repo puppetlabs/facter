@@ -395,7 +395,6 @@ protected:
 
 void add_all_facts(collection& facts)
 {
-    facts.add("cfacterversion", make_value<string_value>("version"));
     facts.add("facterversion", make_value<string_value>("version"));
     facts.add(make_shared<disk_resolver>());
     facts.add(make_shared<dmi_resolver>());

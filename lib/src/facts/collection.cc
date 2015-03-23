@@ -536,7 +536,6 @@ namespace facter { namespace facts {
 
     void collection::add_common_facts()
     {
-        add("cfacterversion", make_value<string_value>(LIBFACTER_VERSION));
         add("facterversion", make_value<string_value>(LIBFACTER_VERSION));
         add(make_shared<resolvers::ruby_resolver>());
         add(make_shared<resolvers::path_resolver>());

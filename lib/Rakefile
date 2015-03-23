@@ -1,4 +1,4 @@
-# Rakefile for cfacter
+# Rakefile for facter
 
 require 'rake'
 Dir['tasks/**/*.rake'].each { |t| load t }

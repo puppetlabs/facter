@@ -252,7 +252,6 @@ namespace facter { namespace facts { namespace linux {
     string operating_system_resolver::check_os_release_linux()
     {
         // Check for NAME in /etc/os-release
-        // Both cfacter and ruby facter should use the same field.
         bs::error_code ec;
         if (is_regular_file(release_file::os, ec)) {
             string contents = file::read(release_file::os);

@@ -1,6 +1,6 @@
 require 'mocha'
 require 'rspec'
-require 'cfacter'
+require 'facter'
 
 RSpec.configure do |config|
   config.mock_with :mocha

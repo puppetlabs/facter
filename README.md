@@ -1,17 +1,17 @@
 Native Facter
 =============
 
-[![Linux Build Status](https://travis-ci.org/puppetlabs/cfacter.svg?branch=master)](https://travis-ci.org/puppetlabs/cfacter)
-[![Windows Build Status](https://ci.appveyor.com/api/projects/status/5kltn836jkic167w/branch/master?svg=true)](https://ci.appveyor.com/project/MikaelSmith/cfacter-735/branch/master)
-[![Unit Coverage Status](https://img.shields.io/coveralls/puppetlabs/cfacter.svg)](https://coveralls.io/r/puppetlabs/cfacter)
+[![Linux Build Status](https://travis-ci.org/puppetlabs/facter.svg?branch=master)](https://travis-ci.org/puppetlabs/facter)
+[![Windows Build Status](https://ci.appveyor.com/api/projects/status/b9aij3tine4oubk3/branch/master?svg=true)](https://ci.appveyor.com/project/puppetlabs/facter/branch/master)
+[![Unit Coverage Status](https://coveralls.io/repos/puppetlabs/facter/badge.svg)](https://coveralls.io/r/puppetlabs/facter)
 
 An implementation of facter functionality in C++11, providing:
 
 * a shared library which gather facts about the system
 * an executable for standalone command line usage
-* a ruby file to enable `require 'cfacter'`.
+* a ruby file to enable `require 'facter'`.
 
-Please see our [extensibility document](https://github.com/puppetlabs/cfacter/blob/master/Extensibility.md) to learn more
+Please see our [extensibility document](https://github.com/puppetlabs/facter/blob/master/Extensibility.md) to learn more
 about extending native facter using custom and external facts.
 
 Build Requirements
@@ -111,7 +111,7 @@ Note the use of git submodules, so use `git clone --recursive` to ensure the sub
 
 On Windows, add `-G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=\<binary install path\> -DBOOST_STATIC=ON` to the `cmake` invocation.
 
-Before building cfacter, use `cmake` to generate build files:
+Before building facter, use `cmake` to generate build files:
 
     $ mkdir release
     $ cd release
@@ -126,12 +126,12 @@ To generate build files with debug information:
 Build
 -----
 
-To build cfacter, use 'make':
+To build facter, use 'make':
 
     $ cd release
     $ make
 
-To build cfacter with debug information:
+To build facter with debug information:
 
     $ cd debug
     $ make
@@ -139,18 +139,18 @@ To build cfacter with debug information:
 Run
 ---
 
-You can run cfacter from where it was built:
+You can run facter from where it was built:
 
-`$ release/bin/cfacter`
+`$ release/bin/facter`
 
 For a debug build:
 
-`$ debug/bin/cfacter`
+`$ debug/bin/facter`
 
 Test
 ----
 
-You can run cfacter tests using the test target:
+You can run facter tests using the test target:
 
     $ cd release
     $ make test
@@ -173,13 +173,13 @@ To run ruby tests (`make install` required):
 Install
 -------
 
-You can install cfacter into your system:
+You can install facter into your system:
 
     $ cd release
     $ make && sudo make install
 
-By default, cfacter will install files into `/usr/local/bin`, `/usr/local/lib`, and `/usr/local/include`.
-If the project is configured with Ruby in the PATH, cfacter.rb will be installed to that Ruby's vendor dir.
+By default, facter will install files into `/usr/local/bin`, `/usr/local/lib`, and `/usr/local/include`.
+If the project is configured with Ruby in the PATH, facter.rb will be installed to that Ruby's vendor dir.
 
 To install to a different location, set the install prefix:
 
@@ -187,21 +187,17 @@ To install to a different location, set the install prefix:
     $ cmake -DCMAKE_INSTALL_PREFIX=~ ..
     $ make clean install
 
-This would install cfacter into `~/bin`, `~/lib`, and `~/include`.
+This would install facter into `~/bin`, `~/lib`, and `~/include`.
 
 Ruby Usage
 ----------
 
-Currently cfacter doesn't automatically define the Facter API when required.
-This is to prevent cfacter from colliding with the Ruby version of Facter.
-
-To use the Facter API from Ruby, call the `CFacter#initialize` method:
+Using the Ruby API requires that facter.rb is installed into the Ruby load path, as done in the previous install steps.
 
 ```ruby
-    require 'cfacter'
-    CFacter.initialize
+    require 'facter'
     
-    # Now use the Facter API...
+    # Use the Facter API...
     puts "kernel: #{Facter.value(:kernel)}"
 ```
 

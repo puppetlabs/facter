@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
-set(CFACTER_SOURCES
-    cfacter.cc
+set(FACTER_SOURCES
+    facter.cc
 )
 
 # Set compiler-specific flags
@@ -15,9 +15,9 @@ include_directories(
     ${LEATHERMAN_NOWIDE_INCLUDE}
 )
 
-add_executable(cfacter ${CFACTER_SOURCES})
-target_link_libraries(cfacter libfacter ${Boost_PROGRAM_OPTIONS_LIBRARY} ${LEATHERMAN_NOWIDE_LIB})
-set_target_properties(cfacter PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS})
-cotire(cfacter)
+add_executable(facter ${FACTER_SOURCES})
+target_link_libraries(facter libfacter ${Boost_PROGRAM_OPTIONS_LIBRARY} ${LEATHERMAN_NOWIDE_LIB})
+set_target_properties(facter PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS})
+cotire(facter)
 
-install(TARGETS cfacter DESTINATION bin)
+install(TARGETS facter DESTINATION bin)

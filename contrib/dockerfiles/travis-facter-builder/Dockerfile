@@ -18,6 +18,6 @@ RUN wget https://yaml-cpp.googlecode.com/files/yaml-cpp-0.5.1.tar.gz -O yaml-cpp
     cd .. && \
     rm -r yaml-cpp-0.5.1.tgz yaml-cpp-0.5.1
 
-# Setup cfacter project
-RUN git clone --recursive https://github.com/puppetlabs/cfacter /root/cfacter
+# Setup facter project
+RUN git clone --recursive https://github.com/puppetlabs/facter /root/facter
 

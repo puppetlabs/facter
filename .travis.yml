@@ -27,7 +27,7 @@ before_install:
   # grab a pre-built doxygen 1.8.7 from s3
   - wget https://s3.amazonaws.com/kylo-pl-bucket/doxygen_install.tar.bz2
   - sudo tar xjvf doxygen_install.tar.bz2 --strip 1 -C /usr/local
-  # Install dependencies of cfacter
+  # Install dependencies of facter
   - sudo apt-get -y install libboost-filesystem1.55-dev libboost-program-options1.55-dev libboost-regex1.55-dev libboost-date-time1.55-dev libboost-thread1.55-dev libboost-log1.55-dev libboost-locale1.55-dev
   - wget https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1_install.tar.bz2
   - sudo tar xjvf yaml-cpp-0.5.1_install.tar.bz2 --strip 1 -C /usr/local
