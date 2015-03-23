@@ -1,16 +1,11 @@
+---
 HOSTS:
-  agent-lucid-x86_64:
+  agent:
     roles:
-      - agent
-    platform: ubuntu-lucid-x86_64
-    template: ubuntu-1004-x86_64
+    - agent
+    platform: centos-6-i386
     hypervisor: vcloud
-  agent-lucid-i386:
-    roles:
-      - agent
-    platform: ubuntu-lucid-i386
-    template: ubuntu-1004-i386
-    hypervisor: vcloud
+    template: centos-6-i386
 CONFIG:
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic
