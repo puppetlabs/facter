@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-Facter.initialize
 Facter.on_message do |level, message|
     puts message if level == :fatal
 end

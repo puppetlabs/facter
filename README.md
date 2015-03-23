@@ -192,16 +192,12 @@ This would install facter into `~/bin`, `~/lib`, and `~/include`.
 Ruby Usage
 ----------
 
-Currently facter doesn't automatically define the Facter API when required.
-This is to prevent facter from colliding with the Ruby version of Facter.
-
-To use the Facter API from Ruby, call the `Facter#initialize` method:
+Using the Ruby API requires that facter.rb is installed into the Ruby load path, as done in the previous install steps.
 
 ```ruby
     require 'facter'
-    Facter.initialize
     
-    # Now use the Facter API...
+    # Use the Facter API...
     puts "kernel: #{Facter.value(:kernel)}"
 ```
 
