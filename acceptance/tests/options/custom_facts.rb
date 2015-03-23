@@ -1,5 +1,16 @@
 test_name "custom fact commandline options (--no-custom-facts and --custom-dir)"
 
+require 'facter/acceptance/user_fact_utils'
+extend Facter::Acceptance::UserFactUtils
+
+#
+# These tests are intended to ensure both custom fact related command-line options
+# work properly. The first step tests that an existing custom fact in Facter's
+# custom fact load path will not execute when the `--no-custom-facts` option is passed.
+# The second step checks that a custom fact in a directory specified by the `--custom-dir`
+# option is found by Facter and resolved.
+#
+
 content = <<EOM
 Facter.add('custom_fact') do
   setcode do
@@ -9,15 +20,8 @@ end
 EOM
 
 agents.each do |agent|
-  if agent['platform'] =~ /windows/
-    if on(agent, cfacter('kernelmajversion')).stdout.chomp.to_f < 6.0
-      custom_dir = 'C:/Documents and Settings/All Users/Application Data/PuppetLabs/facter/custom'
-    else
-      custom_dir = 'C:/ProgramData/PuppetLabs/facter/custom'
-    end
-  else
-    custom_dir  = '/opt/puppetlabs/facter/custom'
-  end
+
+  custom_dir = get_user_fact_dir(agent['platform'], on(agent, cfacter('kernelmajversion')).stdout.chomp.to_f)
 
   step "Agent #{agent}: create custom fact directory and executable custom fact"
   on(agent, "mkdir -p '#{custom_dir}'")

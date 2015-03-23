@@ -1,5 +1,16 @@
 test_name "external fact commandline options (--no-external-facts and --external-dir)"
 
+require 'facter/acceptance/user_fact_utils'
+extend Facter::Acceptance::UserFactUtils
+
+#
+# These tests are intended to ensure both external fact related command-line options
+# work properly. The first step tests that an existing external fact in the standard
+# facts.d directory will not execute when the `--no-external-facts` option is passed.
+# The second step checks that an external step in a directory specified by the 
+# `--external-dir` option is found by Facter and resolved.
+#
+
 unix_content = <<EOM
 #!/bin/sh
 echo "external_fact=testvalue"
@@ -10,20 +21,14 @@ echo "external_fact=testvalue"
 EOM
 
 agents.each do |agent|
+  os_version = on(agent, cfacter('kernelmajversion')).stdout.chomp.to_f
+  factsd = get_factsd_dir(agent['platform'], os_version)
+  custom_external_dir = get_user_fact_dir(agent['platform'], os_version)
+  ext = get_external_fact_script_extension(agent['platform'])
+
   if agent['platform'] =~ /windows/
-    if on(agent, cfacter('kernelmajversion')).stdout.chomp.to_f < 6.0
-      factsd = 'C:/Documents and Settings/All Users/Application Data/PuppetLabs/puppet/facts.d'
-      custom_external_dir = 'C:/Documents and Settings/All Users/Application Data/PuppetLabs/facter/custom'
-    else
-      factsd = 'C:/ProgramData/PuppetLabs/puppet/facts.d'
-      custom_external_dir = 'C:/ProgramData/PuppetLabs/facter/custom'
-    end
-    ext = '.bat'
     content = win_content
   else
-    factsd = '/opt/puppetlabs/facter/facts.d'
-    custom_external_dir = '/opt/puppetlabs/facter/custom'
-    ext = '.sh'
     content = unix_content
   end
 

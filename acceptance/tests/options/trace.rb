@@ -1,5 +1,14 @@
 test_name "--trace command-line option enables backtraces for custom facts"
 
+require 'facter/acceptance/user_fact_utils'
+extend Facter::Acceptance::UserFactUtils
+
+#
+# This test is intended to ensure that the --trace command-line option works
+# properly. This option provides backtraces for erroring custom Ruby facts.
+# To test, we try to resolve an erroneous custom fact and catch the backtrace.
+#
+
 content = <<EOM
 Facter.add('custom_fact') do
   setcode do
@@ -9,15 +18,7 @@ end
 EOM
 
 agents.each do |agent|
-  if agent['platform'] =~ /windows/
-    if on(agent, cfacter('kernelmajversion')).stdout.chomp.to_f < 6.0
-      custom_dir = 'C:/Documents and Settings/All Users/Application Data/PuppetLabs/facter/custom'
-    else
-      custom_dir = 'C:/ProgramData/PuppetLabs/facter/custom'
-    end
-  else
-    custom_dir  = '/opt/puppetlabs/facter/custom'
-  end
+  custom_dir = get_user_fact_dir(agent['platform'], on(agent, cfacter('kernelmajversion')).stdout.chomp.to_f)
 
   step "Agent #{agent}: create custom fact directory and executable custom fact"
   on(agent, "mkdir -p '#{custom_dir}'")

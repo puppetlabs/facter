@@ -1,7 +1,15 @@
-require 'yaml'
-
 test_name "--yaml command-line option results in valid YAML output"
 
+require 'yaml'
+require 'facter/acceptance/user_fact_utils'
+extend Facter::Acceptance::UserFactUtils
+
+#
+# This test is intended to ensure that the --yaml command-line option works
+# properly. This option causes Facter to output facts in YAML format.
+# A custom fact is used to test for parity between Facter's output and
+# the expected YAML output.
+#
 content = <<EOM
 Facter.add('structured_fact') do
   setcode do
@@ -11,15 +19,7 @@ end
 EOM
 
 agents.each do |agent|
-  if agent['platform'] =~ /windows/
-    if on(agent, cfacter('kernelmajversion')).stdout.chomp.to_f < 6.0
-      custom_dir = 'C:/Documents and Settings/All Users/Application Data/PuppetLabs/facter/custom'
-    else
-      custom_dir = 'C:/ProgramData/PuppetLabs/facter/custom'
-    end
-  else
-    custom_dir  = '/opt/puppetlabs/facter/custom'
-  end
+  custom_dir = get_user_fact_dir(agent['platform'], on(agent, cfacter('kernelmajversion')).stdout.chomp.to_f)
 
   step "Agent #{agent}: create a structured custom fact"
   custom_fact = "#{custom_dir}/custom_fact.rb"

@@ -1,5 +1,10 @@
 test_name "--version command-line option returns the version string"
 
+#
+# This test is intended to ensure that the --version command-line option works
+# properly. This option outputs the current Facter version.
+#
+
 agents.each do |agent|
   step "Agent #{agent}: retrieve version info using the --version option"
   on(agent, "cfacter --version") do
