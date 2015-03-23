@@ -386,6 +386,12 @@ namespace facter { namespace execution {
                 return count != 0;
             }
 
+            if (GetLastError() == ERROR_BROKEN_PIPE) {
+                // Treat a broken pipe as nothing left to read
+                buffer.resize(0);
+                return false;
+            }
+
             // Check to see if it's a pending operation
             if (GetLastError() != ERROR_IO_PENDING) {
                 LOG_ERROR("failed to read child output: %1%.", system_error());

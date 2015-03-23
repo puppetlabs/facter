@@ -117,7 +117,7 @@ namespace facter { namespace ruby {
 
         // Helper functions
         static module* from_self(VALUE self);
-        static VALUE execute_command(std::string const& command, VALUE failure_default, bool raise);
+        static VALUE execute_command(std::string const& command, VALUE failure_default, bool raise, uint32_t timeout = 0);
 
         void initialize_search_paths(std::vector<std::string> const& paths);
         VALUE load_fact(VALUE value);
