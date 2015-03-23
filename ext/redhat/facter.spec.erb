@@ -18,6 +18,7 @@ Name:           <%= @project %>
 Summary:        A command line tool and library for collecting simple facts about a host operating system
 Version:        %{rpmversion}
 Release:        <%= @rpmrelease -%>%{?dist}
+Epoch:          1
 Vendor:         %{?_host_vendor}
 License:        ASL 2.0
 Group:          System Environment/Base
@@ -104,7 +105,7 @@ rm -rf %{buildroot}
 
 
 %changelog
-* <%= Time.now.strftime("%a %b %d %Y") %> Puppet Labs Release <info@puppetlabs.com> - <%= @rpmversion %>-<%= @rpmrelease %>
+* <%= Time.now.strftime("%a %b %d %Y") %> Puppet Labs Release <info@puppetlabs.com> - 1:<%= @rpmversion %>-<%= @rpmrelease %>
 - Build for <%= @version %>
 
 * Fri Mar 20 2015 Michael Smith <michael.smith@puppetlabs.com> - 2.4.2-1
