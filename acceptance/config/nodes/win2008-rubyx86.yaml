@@ -1,12 +1,12 @@
 ---
 HOSTS:
-  agent-2003r2-x86_64-rubyx64:
+  agent-2008-x86_64-rubyx86:
     roles:
     - agent
-    platform: windows-2003r2-64
-    ruby_arch: x64
+    platform: windows-2008-64
+    ruby_arch: x86
     hypervisor: vcloud
-    template: win-2003r2-x86_64
+    template: win-2008-x86_64
 CONFIG:
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic
