@@ -1,16 +1,11 @@
+---
 HOSTS:
-  agent-fedora-20-x86_64:
+  agent:
     roles:
-      - agent
-    platform: fedora-20-x86_64
-    template: fedora-20-x86_64
+    - agent
+    platform: ubuntu-utopic-i386
     hypervisor: vcloud
-  agent-fedora-20-i386:
-    roles:
-      - agent
-    platform: fedora-20-i386
-    template: fedora-20-i386
-    hypervisor: vcloud
+    template: ubuntu-1410-i386
 CONFIG:
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic

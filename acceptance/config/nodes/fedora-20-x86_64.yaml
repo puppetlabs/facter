@@ -1,10 +1,11 @@
+---
 HOSTS:
-  agent-solaris10-x86_64:
+  agent:
     roles:
-      - agent
-    platform: solaris-10-x86_64
-    template: solaris-10-x86_64
+    - agent
+    platform: fedora-20-x86_64
     hypervisor: vcloud
+    template: fedora-20-x86_64
 CONFIG:
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic

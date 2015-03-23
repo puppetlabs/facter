@@ -1,16 +1,11 @@
+---
 HOSTS:
-  agent-squeeze-x86_64:
+  agent:
     roles:
-      - agent
-    platform: debian-squeeze-x86_64
-    template: debian-6-x86_64
-    hypervisor: vcloud
-  agent-squeeze-i386:
-    roles:
-      - agent
+    - agent
     platform: debian-squeeze-i386
-    template: debian-6-i386
     hypervisor: vcloud
+    template: debian-6-i386
 CONFIG:
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic
