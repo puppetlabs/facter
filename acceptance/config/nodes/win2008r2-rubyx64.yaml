@@ -1,11 +1,12 @@
+---
 HOSTS:
   agent-2008r2-x86_64-rubyx64:
     roles:
-      - agent
+    - agent
     platform: windows-2008r2-64
     ruby_arch: x64
     hypervisor: vcloud
-    template: Delivery/Quality Assurance/Templates/vCloud/win-2008r2-x86_64
+    template: win-2008r2-x86_64
 CONFIG:
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic

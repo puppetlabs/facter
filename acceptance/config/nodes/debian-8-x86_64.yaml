@@ -1,12 +1,11 @@
 ---
 HOSTS:
-  agent-2003r2-x86_64-rubyx64:
+  agent:
     roles:
     - agent
-    platform: windows-2003r2-64
-    ruby_arch: x64
+    platform: debian-jessie-x86_64
     hypervisor: vcloud
-    template: win-2003r2-x86_64
+    template: debian-8-x86_64
 CONFIG:
   datastore: instance0
   resourcepool: delivery/Quality Assurance/FOSS/Dynamic
