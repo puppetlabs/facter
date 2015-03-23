@@ -21,14 +21,14 @@ agents.each do |agent|
   env = { 'FACTERLIB' => dir }
 
   step "Agent: Verify test_fact1 from #{dir}/test_facts.rb"
-  on(agent, facter('--puppet', 'test_fact1', :environment => env)) do
-    fail_test "Fact 1 not returned by facter --puppet test_fact1" unless
+  on(agent, facter('test_fact1', :environment => env)) do
+    fail_test "Fact 1 not returned by facter test_fact1" unless
       stdout.include? 'test fact 1'
   end
 
   step "Agent: Verify test_fact2 from #{dir}/test_facts.rb"
-  on(agent, facter('--puppet', 'test_fact2', :environment => env)) do
-    fail_test "Fact 1 not returned by facter --puppet test_fact2" unless
+  on(agent, facter('test_fact2', :environment => env)) do
+    fail_test "Fact 2 not returned by facter test_fact2" unless
       stdout.include? 'test fact 2'
   end
 end
