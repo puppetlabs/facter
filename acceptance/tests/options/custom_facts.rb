@@ -21,7 +21,7 @@ EOM
 
 agents.each do |agent|
 
-  custom_dir = get_user_fact_dir(agent['platform'], on(agent, cfacter('kernelmajversion')).stdout.chomp.to_f)
+  custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
 
   step "Agent #{agent}: create custom fact directory and executable custom fact"
   on(agent, "mkdir -p '#{custom_dir}'")
@@ -34,12 +34,12 @@ agents.each do |agent|
   end
 
   step "--no-custom-facts option should disable custom facts"
-  on(agent, "FACTERLIB=#{custom_dir} cfacter --no-custom-facts custom_fact") do
+  on(agent, "FACTERLIB=#{custom_dir} facter --no-custom-facts custom_fact") do
     assert_equal("", stdout.chomp, "Expected custom fact to be disabled, but it resolved as #{stdout.chomp}")
   end
 
   step "--custom-dir option should allow custom facts to be resolved from a specific directory"
-  on(agent, "cfacter --custom-dir #{custom_dir} custom_fact") do
+  on(agent, "facter --custom-dir #{custom_dir} custom_fact") do
     assert_equal("testvalue", stdout.chomp, "Custom fact output does not match expected output")
   end
 end

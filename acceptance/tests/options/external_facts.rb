@@ -21,7 +21,7 @@ echo "external_fact=testvalue"
 EOM
 
 agents.each do |agent|
-  os_version = on(agent, cfacter('kernelmajversion')).stdout.chomp.to_f
+  os_version = on(agent, facter('kernelmajversion')).stdout.chomp.to_f
   factsd = get_factsd_dir(agent['platform'], os_version)
   custom_external_dir = get_user_fact_dir(agent['platform'], os_version)
   ext = get_external_fact_script_extension(agent['platform'])
@@ -48,12 +48,12 @@ agents.each do |agent|
   end
 
   step "--no-external-facts option should disable external facts"
-  on(agent, "cfacter --no-external-facts external_fact") do
+  on(agent, "facter --no-external-facts external_fact") do
     assert_equal("", stdout.chomp, "Expected external fact to be disabled, but it resolved as #{stdout.chomp}")
   end
 
   step "--external-dir option should allow external facts to be resolved from a specific directory"
-  on(agent, "cfacter --external-dir #{custom_external_dir} external_fact") do
+  on(agent, "facter --external-dir #{custom_external_dir} external_fact") do
     assert_equal("testvalue", stdout.chomp, "External fact output does not match expected output")
   end
 end

@@ -20,7 +20,7 @@ end
 EOM
 
 agents.each do |agent|
-  custom_dir = get_user_fact_dir(agent['platform'], on(agent, cfacter('kernelmajversion')).stdout.chomp.to_f)
+  custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
 
   step "Agent #{agent}: create a structured custom fact"
   custom_fact = "#{custom_dir}/custom_fact.rb"
@@ -33,7 +33,7 @@ agents.each do |agent|
   end
 
   step "Agent #{agent}: retrieve output using the --json option"
-  on(agent, "FACTERLIB=#{custom_dir} cfacter structured_fact --json") do
+  on(agent, "FACTERLIB=#{custom_dir} facter structured_fact --json") do
     begin
       expected = JSON.pretty_generate({"structured_fact" => {"foo" => {"nested" => "value1"}, "bar" => "value2", "baz" => "value3"}})
       assert_equal(expected, stdout.chomp, "JSON output does not match expected output")

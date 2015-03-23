@@ -18,7 +18,7 @@ end
 EOM
 
 agents.each do |agent|
-  custom_dir = get_user_fact_dir(agent['platform'], on(agent, cfacter('kernelmajversion')).stdout.chomp.to_f)
+  custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
 
   step "Agent #{agent}: create custom fact directory and executable custom fact"
   on(agent, "mkdir -p '#{custom_dir}'")
@@ -32,7 +32,7 @@ agents.each do |agent|
 
   step "--trace option should provide a backtrace for a custom fact with errors"
   begin
-    on(agent, "FACTERLIB=#{custom_dir} cfacter --trace custom_fact")
+    on(agent, "FACTERLIB=#{custom_dir} facter --trace custom_fact")
   rescue Exception => e
     assert_match(/backtrace:\s+#{custom_fact}/, e.message, "Expected a backtrace for erroneous custom fact")
   end
