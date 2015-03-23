@@ -4,7 +4,7 @@ userid: <%= ENV['COV_USERID'] %>
 email: <%= ENV['COV_EMAIL'] %>
 tools: /usr/local/bin
 
-[puppetlabs%2Fcfacter]
+[puppetlabs%2Ffacter]
 token: <%= ENV['COV_TOKEN'] %>
 prebuild: cmake -DCMAKE_BUILD_TYPE=Debug && make clean
 build: make -j <%= ENV['COV_JOBS'] %>

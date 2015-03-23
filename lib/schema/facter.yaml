@@ -160,14 +160,6 @@ chassistype:
     caveats: |
         Linux: kernel 2.6+ is required due to the reliance on sysfs.
 
-cfacterversion:
-    type: string
-    description: Return the version of facter.
-    resolution: |
-        All platforms: use the built-in version of libfacter.
-    caveats: |
-        This fact will be removed when cfacter is renamed to facter.
-
 dhcp_servers:
     type: map
     hidden: true

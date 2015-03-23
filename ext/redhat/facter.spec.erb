@@ -94,11 +94,11 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}/cfacter
+%{_bindir}/facter
 %{_libdir}/libfacter.so*
 %{_includedir}/facter
 %if 0%{?rhel} >= 7 || 0%{?fedora}
-%{vendor_ruby}/cfacter.rb
+%{vendor_ruby}/facter.rb
 %endif
 %doc LICENSE README.md
 

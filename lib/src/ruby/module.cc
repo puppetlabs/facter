@@ -182,7 +182,6 @@ namespace facter { namespace ruby {
 
         // Define the methods on the Facter module
         volatile VALUE version = ruby.utf8_value(LIBFACTER_VERSION);
-        ruby.rb_const_set(_self, ruby.rb_intern("CFACTERVERSION"), version);
         ruby.rb_const_set(_self, ruby.rb_intern("FACTERVERSION"), version);
         ruby.rb_define_singleton_method(_self, "version", RUBY_METHOD_FUNC(ruby_version), 0);
         ruby.rb_define_singleton_method(_self, "add", RUBY_METHOD_FUNC(ruby_add), -1);

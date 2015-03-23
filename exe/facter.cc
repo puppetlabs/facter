@@ -37,7 +37,7 @@ void help(po::options_description& desc)
         "Usage\n"
         "=====\n"
         "\n"
-        "  cfacter [options] [query] [query] [...]\n"
+        "  facter [options] [query] [query] [...]\n"
         "\n"
         "Options\n"
         "=======\n\n" << desc <<
@@ -45,16 +45,16 @@ void help(po::options_description& desc)
         "===========\n"
         "\n"
         "Collect and display facts about the current system.  The library behind\n"
-        "cfacter is easy to extend, making cfacter an easy way to collect information\n"
+        "facter is easy to extend, making facter an easy way to collect information\n"
         "about a system.\n"
         "\n"
         "If no queries are given, then all facts will be returned.\n"
         "\n"
         "Example Queries\n"
         "===============\n\n"
-        "  cfacter kernel\n"
-        "  cfacter networking.ip\n"
-        "  cfacter processors.models.0" << endl;
+        "  facter kernel\n"
+        "  facter networking.ip\n"
+        "  facter processors.models.0" << endl;
 }
 
 void log_command_line(int argc, char** argv)

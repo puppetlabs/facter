@@ -1,4 +1,4 @@
-module CFacter
+module Facter
   # Gets the version of native facter.
   # @return [String] The version of native facter.
   # @api public
@@ -11,7 +11,7 @@ module CFacter
   # @api public
   def self.initialize
     begin
-      require "#{ENV['CFACTER_DIR'] || '${CMAKE_INSTALL_PREFIX}'}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so"
+      require "#{ENV['FACTER_DIR'] || '${CMAKE_INSTALL_PREFIX}'}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so"
     rescue LoadError
       raise LoadError.new('libfacter was not found. Please make sure native facter is installed.')
     end
