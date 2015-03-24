@@ -1,5 +1,3 @@
-$ErrorActionPreference = 'Stop'
-
 ### Set variables from command line
 # $arch => Choose 32 or 64-bit build
 # $cores => Set the number of cores to use for parallel builds
@@ -11,6 +9,8 @@ param (
 [string] $facterRef='origin/master',
 [string] $facterFork='git://github.com/puppetlabs/facter'
 )
+
+$ErrorActionPreference = 'Stop'
 
 # Ensure TEMP directory is set and exists. Git.install can fail otherwise.
 try {
