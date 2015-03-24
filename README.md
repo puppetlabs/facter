@@ -1,10 +1,6 @@
 Native Facter
 =============
 
-[![Linux Build Status](https://travis-ci.org/puppetlabs/facter.svg?branch=master)](https://travis-ci.org/puppetlabs/facter)
-[![Windows Build Status](https://ci.appveyor.com/api/projects/status/b9aij3tine4oubk3/branch/master?svg=true)](https://ci.appveyor.com/project/puppetlabs/facter/branch/master)
-[![Unit Coverage Status](https://coveralls.io/repos/puppetlabs/facter/badge.svg)](https://coveralls.io/r/puppetlabs/facter)
-
 An implementation of facter functionality in C++11, providing:
 
 * a shared library which gather facts about the system
