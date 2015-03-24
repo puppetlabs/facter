@@ -43,7 +43,9 @@
                 "^[A-Za-z0-9_]+$" : { "$ref" : "#/definitions/ipaddress" }
             }
         },
+        "dir" : { "type": "string" },
         "domain" : { "type": "string" },
+        "env_windows_installdir" : { "type": "string" },
         "facterversion" : { "type": "string" },
         "filesystems" : { "type": "string" },
         "fqdn" : { "type": "string" },

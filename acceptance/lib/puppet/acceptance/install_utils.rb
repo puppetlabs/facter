@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'open3'
 require 'uri'
+require 'puppet/acceptance/common_utils'
 
 module Puppet
   module Acceptance
@@ -257,7 +258,8 @@ module Puppet
         # make sure install is sane, beaker has already added puppet and ruby
         # to PATH in ~/.ssh/environment
         on host, puppet('--version')
-        on host, 'ruby --version'
+        ruby = Puppet::Acceptance::CommandUtils.ruby_command(host)
+        on host, "#{ruby} --version"
       end
     end
   end
