@@ -1,5 +1,9 @@
 RAKE_ROOT = File.expand_path(File.dirname(__FILE__))
 
+$LOAD_PATH << File.join(RAKE_ROOT, 'tasks')
+require 'rake'
+Dir['tasks/**/*.rake'].each { |t| load t }
+
 build_defs_file = File.join(RAKE_ROOT, 'ext', 'build_defaults.yaml')
 if File.exist?(build_defs_file)
   begin
