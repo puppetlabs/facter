@@ -600,7 +600,7 @@ void validate_fact(YAML::Node const& node, value const* fact_value, bool require
     if (map) {
         auto elements = node["elements"];
 
-        // Validate the map's elements unless "validate" is missing or false
+        // Validate the map's elements "validate" is unset or true
         auto validate_attribute = node["validate"];
         if (!validate_attribute || validate_attribute.as<string>() == "true") {
             set<string> found;
