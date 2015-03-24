@@ -237,7 +237,7 @@ int main(int argc, char **argv)
         // Add the environment facts
         facts.add_environment_facts();
 
-        if (ruby) {
+        if (ruby && !vm.count("no-custom-facts")) {
             facter::ruby::load_custom_facts(facts, custom_directories);
         }
 
