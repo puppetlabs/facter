@@ -97,9 +97,10 @@ echo $env:PATH
 cd $sourceDir
 
 ## Download facter and setup build directories
-git clone --recursive $facterFork facter
+git clone $facterFork facter
 cd facter
 git checkout $facterRef
+git submodule update --init --recursive
 mkdir -Force release
 cd release
 $buildDir=$pwd
