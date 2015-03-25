@@ -114,6 +114,11 @@ namespace facter { namespace util {
             return true;
         }
 
+        // Check that it doesn't start with the ':' special character. This interferes with parsing.
+        if (str[0] == ':') {
+            return true;
+        }
+
         // Poor man's check for a numerical string
         // May start with - or +
         // May contain at most one . or ,
