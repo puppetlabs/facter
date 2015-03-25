@@ -63,16 +63,24 @@ namespace facter { namespace ruby {
         }
 
         // Otherwise, we were given a command so execute it
-        auto result = execute(command_shell,
-            {command_args, expand_command(_command)},
-            option_set<execution_options> {
-                execution_options::defaults,
-                execution_options::redirect_stderr
+        bool success;
+        string output, none;
+        tie(success, output, none) = execute(
+            command_shell,
+            {
+                command_args,
+                expand_command(_command)
+            },
+            0,
+            {
+                execution_options::trim_output,
+                execution_options::merge_environment,
+                execution_options::redirect_stderr_to_stdout
             });
-        if (!result.first) {
+        if (!success) {
             return ruby.nil_value();
         }
-        return ruby.utf8_value(result.second);
+        return ruby.utf8_value(output);
     }
 
     VALUE simple_resolution::alloc(VALUE klass)

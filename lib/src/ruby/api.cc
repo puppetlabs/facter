@@ -486,20 +486,21 @@ namespace facter { namespace ruby {
         }
         LOG_DEBUG("ruby was found at \"%1%\".", ruby);
 
-        auto result = execute(ruby, { "-e", "print File.join(RbConfig::CONFIG['"+libruby_configdir()+"'], RbConfig::CONFIG['LIBRUBY_SO'])" },
-            option_set<execution_options>{ execution_options::defaults, execution_options::redirect_stderr });
-        if (!result.first) {
-            LOG_WARNING("ruby failed to run: %1%", result.second);
+        bool success;
+        string output, none;
+        tie(success, output, none) = execute(ruby, { "-e", "print File.join(RbConfig::CONFIG['"+libruby_configdir()+"'], RbConfig::CONFIG['LIBRUBY_SO'])" });
+        if (!success) {
+            LOG_WARNING("ruby failed to run: %1%", output);
             return library;
         }
 
         boost::system::error_code ec;
-        if (!exists(result.second, ec) || is_directory(result.second, ec)) {
-            LOG_DEBUG("ruby library \"%1%\" was not found: ensure ruby was built with the --enable-shared configuration option.", result.second);
+        if (!exists(output, ec) || is_directory(output, ec)) {
+            LOG_DEBUG("ruby library \"%1%\" was not found: ensure ruby was built with the --enable-shared configuration option.", output);
             return library;
         }
 
-        library.load(result.second);
+        library.load(output);
         return library;
     }
 

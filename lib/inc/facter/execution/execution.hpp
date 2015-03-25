@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <tuple>
 #include <utility>
 #include <stdexcept>
 #include <functional>
@@ -26,10 +27,9 @@ namespace facter { namespace execution {
          */
         none = 0,
         /**
-         * Redirect stderr to stdout.  If not specified, stderr is redirected
-         * to null.
+         * Redirect stderr to stdout.  This will override redirect_stderr_to_null if both are set.
          */
-        redirect_stderr = (1 << 1),
+        redirect_stderr_to_stdout = (1 << 1),
         /**
          * Throw an exception if the child process exits with a nonzero status.
          */
@@ -47,13 +47,13 @@ namespace facter { namespace execution {
          */
         merge_environment = (1 << 5),
         /**
+         * Redirect stderr to "null".
+         */
+        redirect_stderr_to_null = (1 << 6),
+        /**
          * A combination of all throw options.
          */
-        throw_on_failure = throw_on_nonzero_exit |  throw_on_signal,
-        /**
-         * The default execution options.
-         */
-        defaults = trim_output | merge_environment,
+        throw_on_failure = throw_on_nonzero_exit | throw_on_signal,
     };
 
     /**
@@ -87,19 +87,27 @@ namespace facter { namespace execution {
     {
         /**
          * Constructs a execution_failure_exception.
-         * @param output The child process output.
          * @param message The exception message.
+         * @param output The child process stdout output.
+         * @param error The child process stderr output.
          */
-        execution_failure_exception(std::string const& output, std::string const& message);
+        execution_failure_exception(std::string const& message, std::string output, std::string error);
 
         /**
-         * Gets the child process output.
-         * @return Returns the child process output.
+         * Gets the child process stdout output.
+         * @return Returns the child process stdout output.
          */
         std::string const& output() const;
 
+        /**
+         * Gets the child process stderr output.
+         * @return Returns the child process stderr output.
+         */
+        std::string const& error() const;
+
      private:
         std::string _output;
+        std::string _error;
     };
 
     /**
@@ -109,11 +117,12 @@ namespace facter { namespace execution {
     {
         /**
          * Constructs a child_exit_exception.
-         * @param status_code The exit status code of the child process.
-         * @param output The child process output.
          * @param message The exception message.
+         * @param status_code The exit status code of the child process.
+         * @param output The child process stdout output.
+         * @param error The child process stderr output.
          */
-        child_exit_exception(int status_code, std::string const& output, std::string const& message);
+        child_exit_exception(std::string const& message, int status_code, std::string output, std::string error);
 
         /**
          * Gets the child process exit status code.
@@ -132,11 +141,12 @@ namespace facter { namespace execution {
     {
         /**
          * Constructs a child_signal_exception.
-         * @param signal The signal code that terminated the child process.
-         * @param output The child process output.
          * @param message The exception message.
+         * @param signal The signal code that terminated the child process.
+         * @param output The child process stdout output.
+         * @param error The child process stderr output.
          */
-        child_signal_exception(int signal, std::string const& output, std::string const& message);
+        child_signal_exception(std::string const& message, int signal, std::string output, std::string error);
 
         /**
          * Gets the signal that terminated the child process.
@@ -189,91 +199,97 @@ namespace facter { namespace execution {
     /**
      * Executes the given program.
      * @param file The name or path of the program to execute.
-     * @param options The execution options.
      * @param timeout The timeout, in seconds.  Defaults to no timeout.
-     * @return Returns whether or not the execution succeeded paired with the child process output.
+     * @param options The execution options.  Defaults to trimming output, merging the environment, and redirecting stderr to null.
+     * @return Returns a tuple of whether or not the command succeeded, output from stdout, and output from stderr (if not redirected).
      */
-    std::pair<bool, std::string> LIBFACTER_EXPORT execute(
+    std::tuple<bool, std::string, std::string> LIBFACTER_EXPORT execute(
         std::string const& file,
-        facter::util::option_set<execution_options> const& options = { execution_options::defaults },
-        uint32_t timeout = 0);
+        uint32_t timeout = 0,
+        facter::util::option_set<execution_options> const& options = { execution_options::trim_output, execution_options::merge_environment, execution_options::redirect_stderr_to_null });
 
     /**
      * Executes the given program.
      * @param file The name or path of the program to execute.
      * @param arguments The arguments to pass to the program. On Windows they will be quoted as needed for spaces.
-     * @param options The execution options.
      * @param timeout The timeout, in seconds. Defaults to no timeout.
-     * @return Returns whether or not the execution succeeded paired with the child process output.
+     * @param options The execution options.  Defaults to trimming output, merging the environment, and redirecting stderr to null.
+     * @return Returns a tuple of whether or not the command succeeded, output from stdout, and output from stderr (if not redirected).
      */
-    std::pair<bool, std::string> LIBFACTER_EXPORT execute(
+    std::tuple<bool, std::string, std::string> LIBFACTER_EXPORT execute(
         std::string const& file,
         std::vector<std::string> const& arguments,
-        facter::util::option_set<execution_options> const& options  = { execution_options::defaults },
-        uint32_t timeout = 0);
+        uint32_t timeout = 0,
+        facter::util::option_set<execution_options> const& options = { execution_options::trim_output, execution_options::merge_environment, execution_options::redirect_stderr_to_null });
 
     /**
      * Executes the given program.
      * @param file The name or path of the program to execute.
      * @param arguments The arguments to pass to the program. On Windows they will be quoted as needed for spaces.
      * @param environment The environment variables to pass to the child process.
-     * @param options The execution options.
      * @param timeout The timeout, in seconds. Defaults to no timeout.
-     * @return Returns whether or not the execution succeeded paired with the child process output.
+     * @param options The execution options.  Defaults to trimming output, merging the environment, and redirecting stderr to null.
+     * @return Returns a tuple of whether or not the command succeeded, output from stdout, and output from stderr (if not redirected).
      */
-    std::pair<bool, std::string> LIBFACTER_EXPORT execute(
+    std::tuple<bool, std::string, std::string> LIBFACTER_EXPORT execute(
         std::string const& file,
         std::vector<std::string> const& arguments,
         std::map<std::string, std::string> const& environment,
-        facter::util::option_set<execution_options> const& options = { execution_options::defaults },
-        uint32_t timeout = 0);
+        uint32_t timeout = 0,
+        facter::util::option_set<execution_options> const& options = { execution_options::trim_output, execution_options::merge_environment, execution_options::redirect_stderr_to_null });
 
     /**
      * Executes the given program and returns each line of output.
      * @param file The name or path of the program to execute.
-     * @param callback The callback that is called with each line of output.
-     * @param options The execution options.
+     * @param stdout_callback The callback that is called with each line of output on stdout.
+     * @param stderr_callback The callback that is called with each line of output on stderr. If nullptr, implies redirect_stderr_to_null unless redirect_stderr_to_stdout is set in options.
      * @param timeout The timeout, in seconds. Defaults to no timeout.
+     * @param options The execution options.  Defaults to trimming output and merging the environment.
      * @return Returns true if the execution succeeded or false if it did not.
      */
     bool LIBFACTER_EXPORT each_line(
         std::string const& file,
-        std::function<bool(std::string&)> callback,
-        facter::util::option_set<execution_options> const& options = { execution_options::defaults },
-        uint32_t timeout = 0);
+        std::function<bool(std::string&)> stdout_callback,
+        std::function<bool(std::string&)> stderr_callback = nullptr,
+        uint32_t timeout = 0,
+        facter::util::option_set<execution_options> const& options = { execution_options::trim_output, execution_options::merge_environment });
 
     /**
      * Executes the given program and returns each line of output.
      * @param file The name or path of the program to execute.
      * @param arguments The arguments to pass to the program. On Windows they will be quoted as needed for spaces.
-     * @param callback The callback that is called with each line of output.
-     * @param options The execution options.
+     * @param stdout_callback The callback that is called with each line of output on stdout.
+     * @param stderr_callback The callback that is called with each line of output on stderr. If nullptr, implies redirect_stderr_to_null unless redirect_stderr_to_stdout is set in options.
      * @param timeout The timeout, in seconds. Defaults to no timeout.
+     * @param options The execution options.  Defaults to trimming output and merging the environment.
      * @return Returns true if the execution succeeded or false if it did not.
      */
     bool LIBFACTER_EXPORT each_line(
         std::string const& file,
         std::vector<std::string> const& arguments,
-        std::function<bool(std::string&)> callback,
-        facter::util::option_set<execution_options> const& options = { execution_options::defaults },
-        uint32_t timeout = 0);
+        std::function<bool(std::string&)> stdout_callback,
+        std::function<bool(std::string&)> stderr_callback = nullptr,
+        uint32_t timeout = 0,
+        facter::util::option_set<execution_options> const& options = { execution_options::trim_output, execution_options::merge_environment });
 
     /**
      * Executes the given program and returns each line of output.
      * @param file The name or path of the program to execute.
      * @param arguments The arguments to pass to the program. On Windows they will be quoted as needed for spaces.
      * @param environment The environment variables to pass to the child process.
-     * @param callback The callback that is called with each line of output.
-     * @param options The execution options.
+     * @param stdout_callback The callback that is called with each line of output on stdout.
+     * @param stderr_callback The callback that is called with each line of output on stderr. If nullptr, implies redirect_stderr_to_null unless redirect_to_stdout is set in options.
      * @param timeout The timeout, in seconds. Defaults to no timeout.
+     * @param options The execution options.  Defaults to trimming output and merging the environment.
      * @return Returns true if the execution succeeded or false if it did not.
      */
     bool LIBFACTER_EXPORT each_line(
         std::string const& file,
         std::vector<std::string> const& arguments,
         std::map<std::string, std::string> const& environment,
-        std::function<bool(std::string&)> callback,
-        facter::util::option_set<execution_options> const& options = { execution_options::defaults },
-        uint32_t timeout = 0);
+        std::function<bool(std::string&)> stdout_callback,
+        std::function<bool(std::string&)> stderr_callback = nullptr,
+        uint32_t timeout = 0,
+        facter::util::option_set<execution_options> const& options = { execution_options::trim_output, execution_options::merge_environment });
 
 }}  // namespace facter::execution

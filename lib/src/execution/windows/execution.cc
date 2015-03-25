@@ -195,11 +195,161 @@ namespace facter { namespace execution {
         return commandline;
     }
 
-    pair<bool, string> execute(
+    // Represents information about a pipe
+    struct pipe
+    {
+        pipe(string pipe_name, HANDLE pipe_handle, function<bool(string const&)> const& cb) :
+            name(std::move(pipe_name)),
+            handle(pipe_handle),
+            overlapped{},
+            pending(false),
+            callback(cb)
+        {
+            if (handle != INVALID_HANDLE_VALUE) {
+                event = scoped_resource<HANDLE>(CreateEvent(nullptr, TRUE, FALSE, nullptr), CloseHandle);
+                if (!event) {
+                    LOG_ERROR("failed to create %1% read event: %2%.", name, system_error());
+                    throw execution_exception("failed to create read event.");
+                }
+                overlapped.hEvent = event;
+            }
+        }
+
+        const string name;
+        HANDLE handle;
+        OVERLAPPED overlapped;
+        scoped_resource<HANDLE> event;
+        bool pending;
+        string buffer;
+        function<bool(string const&)> const& callback;
+    };
+
+    static void read_from_child(DWORD child, array<pipe, 2>& pipes, uint32_t timeout, HANDLE timer)
+    {
+        vector<HANDLE> wait_handles;
+        while (true)
+        {
+            // Read from all pipes
+            for (auto& pipe : pipes) {
+                // If the handle is closed or is pending, skip
+                if (pipe.handle == INVALID_HANDLE_VALUE || pipe.pending) {
+                    break;
+                }
+
+                // Read the pipe until pending
+                while (true) {
+                    // Before doing anything, check to see if there's been a timeout
+                    // This is done pre-emptively in case ReadFile never returns ERROR_IO_PENDING
+                    if (timeout && WaitForSingleObject(timer, 0) == WAIT_OBJECT_0) {
+                        throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str(), static_cast<size_t>(child));
+                    }
+
+                    // Read the data
+                    pipe.buffer.resize(4096);
+                    DWORD count = 0;
+                    if (!ReadFile(pipe.handle, &pipe.buffer[0], pipe.buffer.size(), &count, &pipe.overlapped)) {
+                        // Treat broken pipes as closed pipes
+                        if (GetLastError() == ERROR_BROKEN_PIPE) {
+                            pipe.handle = INVALID_HANDLE_VALUE;
+                            break;
+                        }
+                        // Check to see if it's a pending operation
+                        if (GetLastError() == ERROR_IO_PENDING) {
+                            pipe.pending = true;
+                            break;
+                        }
+                        LOG_ERROR("failed to read child %1% output: %2%.", pipe.name, system_error());
+                        throw execution_exception("failed to read child process output.");
+                    }
+
+                    // Check for closed pipe
+                    if (count == 0) {
+                        pipe.handle = INVALID_HANDLE_VALUE;
+                        break;
+                    }
+
+                    // Read completed immediately, process the data
+                    pipe.buffer.resize(count);
+                    if (!pipe.callback(pipe.buffer)) {
+                        // Callback signaled that we're done
+                        return;
+                    }
+                }
+            }
+
+            // All pipes should be pending now
+            wait_handles.clear();
+            for (auto const& pipe : pipes) {
+                if (pipe.handle == INVALID_HANDLE_VALUE || !pipe.pending) {
+                    continue;
+                }
+                wait_handles.push_back(pipe.event);
+            }
+
+            // If no wait handles, then we're done processing
+            if (wait_handles.empty()) {
+                return;
+            }
+
+            if (timeout) {
+                wait_handles.push_back(timer);
+            }
+
+            // Wait for data (and, optionally, timeout)
+            auto result = WaitForMultipleObjects(wait_handles.size(), wait_handles.data(), FALSE, INFINITE);
+            if (result >= (WAIT_OBJECT_0 + wait_handles.size())) {
+                LOG_ERROR("failed to wait for child process output: %1%.", system_error());
+                throw execution_exception("failed to wait for child process output.");
+            }
+
+            // Check for timeout
+            DWORD index = result - WAIT_OBJECT_0;
+            if (timeout && wait_handles[index] == timer) {
+                throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str(), static_cast<size_t>(child));
+            }
+
+            // Find the pipe for the event that was signalled
+            for (auto& pipe : pipes) {
+                if (pipe.handle == INVALID_HANDLE_VALUE || !pipe.pending || pipe.event != wait_handles[index]) {
+                    continue;
+                }
+
+                // Pipe is no longer pending
+                pipe.pending = false;
+
+                // Get the overlapped result and process it
+                DWORD count = 0;
+                if (!GetOverlappedResult(pipe.handle, &pipe.overlapped, &count, FALSE)) {
+                    if (GetLastError() != ERROR_BROKEN_PIPE) {
+                        LOG_ERROR("failed to get asynchronous %1% read result: %2%.", pipe.name, system_error());
+                        throw execution_exception("failed to get asynchronous read result.");
+                    }
+                    // Treat a broken pipe as nothing left to read
+                    count = 0;
+                }
+                // Check for closed pipe
+                if (count == 0) {
+                    pipe.handle = INVALID_HANDLE_VALUE;
+                    break;
+                }
+
+                // Read completed, process the data
+                pipe.buffer.resize(count);
+                if (!pipe.callback(pipe.buffer)) {
+                    // Callback signaled that we're done
+                    return;
+                }
+                break;
+            }
+        }
+    }
+
+    tuple<bool, string, string> execute(
         string const& file,
         vector<string> const* arguments,
         map<string, string> const* environment,
-        function<bool(string&)> callback,
+        function<bool(string&)> const& stdout_callback,
+        function<bool(string&)> const& stderr_callback,
         option_set<execution_options> const& options,
         uint32_t timeout)
     {
@@ -209,9 +359,9 @@ namespace facter { namespace execution {
         if (executable.empty()) {
             LOG_DEBUG("%1% was not found on the PATH.", file);
             if (options[execution_options::throw_on_nonzero_exit]) {
-                throw child_exit_exception(127, "", "child process returned non-zero exit status.");
+                throw child_exit_exception("child process returned non-zero exit status.", 127, {}, {});
             }
-            return { false, "" };
+            return make_tuple(false, "", "");
         }
 
         // Setup the execution environment
@@ -277,7 +427,25 @@ namespace facter { namespace execution {
             throw execution_exception("pipe could not be modified");
         }
 
-        scoped_resource<HANDLE> stdErrRd, stdErrWr;
+        scoped_resource<HANDLE> stdErrRd(INVALID_HANDLE_VALUE, nullptr), stdErrWr(INVALID_HANDLE_VALUE, nullptr);
+        if (!options[execution_options::redirect_stderr_to_stdout]) {
+            // If redirecting to null, open the "NUL" device and inherit the handle
+            if (options[execution_options::redirect_stderr_to_null]) {
+                SECURITY_ATTRIBUTES attributes = {};
+                attributes.nLength = sizeof(SECURITY_ATTRIBUTES);
+                attributes.bInheritHandle = TRUE;
+                stdErrWr = scoped_resource<HANDLE>(CreateFileW(L"nul", GENERIC_WRITE, FILE_SHARE_WRITE, &attributes, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr), CloseHandle);
+                if (stdErrWr == INVALID_HANDLE_VALUE) {
+                    throw execution_exception("cannot open NUL device for redirecting stderr.");
+                }
+            } else {
+                // Otherwise, we're reading from stderr, so create a pipe
+                tie(stdErrRd, stdErrWr) = CreatePipeThrow(FILE_FLAG_OVERLAPPED, 0);
+                if (!SetHandleInformation(stdErrRd, HANDLE_FLAG_INHERIT, 0)) {
+                    throw execution_exception("pipe could not be modified");
+                }
+            }
+        }
 
         // Execute the command with arguments. Prefix arguments with the executable, or quoted arguments won't work.
         auto commandLine = arguments ?
@@ -288,10 +456,12 @@ namespace facter { namespace execution {
         startupInfo.dwFlags |= STARTF_USESTDHANDLES;
         startupInfo.hStdInput = stdInRd;
         startupInfo.hStdOutput = stdOutWr;
-        if (options[execution_options::redirect_stderr]) {
+
+        // Set up stderr redirection to out or the pipe (which may be INVALID_HANDLE_VALUE, i.e. "null")
+        if (options[execution_options::redirect_stderr_to_stdout]) {
             startupInfo.hStdError = stdOutWr;
         } else {
-            startupInfo.hStdError = INVALID_HANDLE_VALUE;
+            startupInfo.hStdError = stdErrWr;
         }
 
         PROCESS_INFORMATION procInfo = {};
@@ -360,71 +530,22 @@ namespace facter { namespace execution {
             }
         }
 
-        // Create an event for handling overlapped I/O
-        scoped_resource<HANDLE> read_event(CreateEvent(nullptr, TRUE, FALSE, nullptr), CloseHandle);
-        if (!read_event) {
-            LOG_ERROR("failed to create read event: %1%.", system_error());
-            throw execution_exception("failed to create read event.");
-        }
+        string output, error;
+        tie(output, error) = process_streams(options[execution_options::trim_output], stdout_callback, stderr_callback, [&](function<bool(string const&)> const& process_stdout, function<bool(string const&)> const& process_stderr) {
+            // Read the child output
+            array<pipe, 2> pipes = { {
+                pipe("stdout", stdOutRd, process_stdout),
+                pipe("stderr", stdErrRd, process_stderr)
+            } };
 
-        OVERLAPPED overlapped = {};
-        overlapped.hEvent = read_event;
-
-        string result = process_stream(options[execution_options::trim_output], callback, [&](string& buffer) {
-            buffer.resize(4096);
-
-            // Before doing anything, check to see if there's been a timeout
-            // This is done pre-emptively in case ReadFile never returns ERROR_IO_PENDING
-            if (timer && WaitForSingleObject(timer, 0) == WAIT_OBJECT_0) {
-                throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str(), static_cast<size_t>(procInfo.dwProcessId));
-            }
-
-            // Read the output pipe
-            DWORD count = 0;
-            if (ReadFile(stdOutRd, &buffer[0], buffer.size(), &count, &overlapped)) {
-                buffer.resize(count);
-                return count != 0;
-            }
-
-            if (GetLastError() == ERROR_BROKEN_PIPE) {
-                // Treat a broken pipe as nothing left to read
-                buffer.resize(0);
-                return false;
-            }
-
-            // Check to see if it's a pending operation
-            if (GetLastError() != ERROR_IO_PENDING) {
-                LOG_ERROR("failed to read child output: %1%.", system_error());
-                throw execution_exception("failed to read child process output.");
-            }
-
-            // Operation is pending, wait for it (optionally with the timer)
-            HANDLE handles[2] = { read_event, timer };
-            auto result = WaitForMultipleObjects(timer ? 2 : 1, handles, FALSE, INFINITE);
-            if (result == WAIT_OBJECT_0) {
-                if (!GetOverlappedResult(stdOutRd, &overlapped, &count, FALSE)) {
-                    if (GetLastError() != ERROR_BROKEN_PIPE) {
-                        LOG_ERROR("failed to get asynchronous read result: %1%.", system_error());
-                        throw execution_exception("failed to get asynchronous read result.");
-                    }
-                    // Treat a broken pipe as nothing left to read
-                    count = 0;
-                }
-                buffer.resize(count);
-                return count != 0;
-            }
-            if (result == WAIT_OBJECT_0 + 1) {
-                // The timer has expired
-                throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str(), static_cast<size_t>(procInfo.dwProcessId));
-            }
-            LOG_ERROR("failed to wait for child process output: %1%.", system_error());
-            throw execution_exception("failed to wait for child process output.");
+            read_from_child(procInfo.dwProcessId, pipes, timeout, timer);
         });
 
         stdOutRd.release();
+        stdErrRd.release();
 
         HANDLE handles[2] = { hProcess, timer };
-        auto wait_result = WaitForMultipleObjects(timer ? 2 : 1, handles, FALSE, INFINITE);
+        auto wait_result = WaitForMultipleObjects(timeout ? 2 : 1, handles, FALSE, INFINITE);
         if (wait_result == WAIT_OBJECT_0) {
             // Process has terminated
             terminate = false;
@@ -445,9 +566,9 @@ namespace facter { namespace execution {
         LOG_DEBUG("process exited with exit code %1%.", exit_code);
 
         if (exit_code != 0 && options[execution_options::throw_on_nonzero_exit]) {
-            throw child_exit_exception(exit_code, result, "child process returned non-zero exit status.");
+            throw child_exit_exception("child process returned non-zero exit status.", exit_code, output, error);
         }
-        return { exit_code == 0, move(result) };
+        return make_tuple(exit_code == 0, move(output), move(error));
     }
 
 }}  // namespace facter::executions

@@ -61,11 +61,13 @@ namespace facter { namespace facts { namespace osx {
     string networking_resolver::find_dhcp_server(string const& interface) const
     {
         // Use ipconfig to get the server identifier
-        auto result = execute("ipconfig", { "getoption", interface, "server_identifier" });
-        if (!result.first) {
+        bool success;
+        string output, none;
+        tie(success, output, none) = execute("ipconfig", { "getoption", interface, "server_identifier" });
+        if (!success) {
             return {};
         }
-        return result.second;
+        return output;
     }
 
 }}}  // namespace facter::facts::osx

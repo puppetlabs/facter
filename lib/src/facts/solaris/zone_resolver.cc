@@ -14,7 +14,7 @@ namespace facter { namespace facts { namespace solaris {
     zone_resolver::data zone_resolver::collect_data(collection& facts)
     {
         data result;
-        result.current_zone_name = execution::execute("/bin/zonename").second;
+        result.current_zone_name = get<1>(execution::execute("/bin/zonename"));
 
         static boost::regex zone_pattern("(\\d+):([^:]*):([^:]*):([^:]*):([^:]*):([^:]*):([^:]*)");
 

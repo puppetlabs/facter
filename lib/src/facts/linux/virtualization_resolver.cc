@@ -170,12 +170,14 @@ namespace facter { namespace facts { namespace linux {
 
     string virtualization_resolver::get_vmware_vm()
     {
-        auto result = execute("vmware", { "-v" });
-        if (!result.first) {
+        bool success;
+        string output, none;
+        tie(success, output, none) = execute("vmware", { "-v" });
+        if (!success) {
             return {};
         }
         vector<string> parts;
-        boost::split(parts, result.second, boost::is_space(), boost::token_compress_on);
+        boost::split(parts, output, boost::is_space(), boost::token_compress_on);
         if (parts.size() < 2) {
             return {};
         }

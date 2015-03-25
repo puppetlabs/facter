@@ -74,9 +74,11 @@ namespace facter { namespace facts { namespace solaris {
                 }
                 return true;
             });
-            auto output = execution::execute("/usr/sbin/uname", {"-a"});
-            if (output.first) {
-                re_search(output.second, boost::regex(".* sun\\d[vu] sparc SUNW,(.*)"), &result.product_name);
+            bool success;
+            string output, none;
+            tie(success, output, none) = execution::execute("/usr/sbin/uname", {"-a"});
+            if (success) {
+                re_search(output, boost::regex(".* sun\\d[vu] sparc SUNW,(.*)"), &result.product_name);
             }
         }
         return result;

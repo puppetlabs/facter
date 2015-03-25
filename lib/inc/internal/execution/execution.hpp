@@ -10,14 +10,17 @@
 namespace facter { namespace execution {
 
     /**
-     * Reads from a stream closure until there is no more data to read.
-     * If a callback is supplied, buffers each line and passes it to the callback.
-     * Otherwise, returns the concatenation of the stream.
-     * @param trim_output True if output should be trimmed or false if not.
-     * @param callback The callback that is called with each line of output.
-     * @param yield_input The input stream closure; it expects a mutable string buffer, and returns whether the closure should be invoked again for more input.
-     * @return Returns the stream results concatenated together, or an empty string if callback is not null.
+     * Processes stdout and stderror streams of a child process.
+     * @param trim True if output should be trimmed or false if not.
+     * @param stdout_callback The callback to use when a line is read for stdout.
+     * @param stderr_callback The callback to use when a line is read for stdout.
+     * @param read_streams The callback that is called to read stdout and stderr streams.
+     * @return Returns a tuple of stdout and stderr output.  If stdout_callback or stderr_callback is given, it will return empty strings.
      */
-    std::string process_stream(bool trim_output, std::function<bool(std::string&)> callback, std::function<bool(std::string&)> yield_input);
+    std::tuple<std::string, std::string> process_streams(
+        bool trim,
+        std::function<bool(std::string&)> const& stdout_callback,
+        std::function<bool(std::string&)> const& stderr_callback,
+        std::function<void(std::function<bool(std::string const&)>, std::function<bool(std::string const&)>)> const& read_streams);
 
 }}  // namespace facter::execution

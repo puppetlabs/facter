@@ -10,11 +10,8 @@ using namespace facter::logging;
 int main(int argc, char **argv)
 {
     // Disable logging for tests
+    setup_logging(boost::nowide::cout);
     set_level(level::none);
-
-    // Uncomment this to get debug output during a test run
-    // setup_logging(cout);
-    // set_level(level::debug);
 
     // Before running tests, initialize Ruby
     facter::ruby::initialize();

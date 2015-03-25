@@ -3,11 +3,15 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/string.hpp>
+#include <internal/util/regex.hpp>
 #include "../../../fixtures.hpp"
+#include "../../../log_capture.hpp"
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::util;
+using namespace facter::logging;
+using namespace facter::testing;
 using namespace facter::facts::external;
 
 SCENARIO("resolving external powershell facts") {
@@ -37,6 +41,18 @@ SCENARIO("resolving external powershell facts") {
                 REQUIRE(facts.get<string_value>("ps1_fact4"));
                 REQUIRE_FALSE(facts.get<string_value>("PS1_fact4"));
                 REQUIRE(facts.get<string_value>("ps1_fact4")->value() == "value2");
+            }
+        }
+        WHEN("messages are logged to stderr") {
+            THEN("a warning is generated") {
+                log_capture capture(level::warning);
+                resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/error_message.ps1", facts);
+                REQUIRE(facts.size() == 1);
+                REQUIRE(facts.get<string_value>("foo"));
+                REQUIRE(facts.get<string_value>("foo")->value() == "bar");
+                auto output = capture.result();
+                CAPTURE(output);
+                REQUIRE(re_search(output, boost::regex("WARN  puppetlabs\\.facter - external fact file \".*error_message.ps1\" had output on stderr: error message!")));
             }
         }
         THEN("the file can be resolved") {

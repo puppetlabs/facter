@@ -18,8 +18,10 @@ namespace facter { namespace facts { namespace solaris {
     string virtualization_resolver::get_hypervisor(collection& facts)
     {
         // works for both x86 & sparc.
-        auto result = execution::execute("/usr/bin/zonename");
-        if (result.first && result.second != "global") {
+        bool success;
+        string output, none;
+        tie(success, output, none) = execution::execute("/usr/bin/zonename");
+        if (success && output != "global") {
             return vm::zone;
         }
 

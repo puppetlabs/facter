@@ -60,9 +60,10 @@ namespace facter { namespace util {
         }
 
         /**
-         * Cast operator to value_type.
+         * Gets the underlying value of the set.
+         * @return Returns the underlying value of the set.
          */
-        operator value_type() const
+        value_type value() const
         {
             return _value;
         }
@@ -198,7 +199,7 @@ namespace facter { namespace util {
     template<typename T>
     option_set<T> operator &(option_set<T> const& lhs, option_set<T> const& rhs)
     {
-        return option_set<T>(static_cast<typename option_set<T>::value_type>(lhs) & static_cast<typename option_set<T>::value_type>(rhs));
+        return option_set<T>(lhs.value() & rhs.value());
     }
 
     /**
@@ -210,7 +211,7 @@ namespace facter { namespace util {
     template<typename T>
     option_set<T> operator |(option_set<T> const& lhs, option_set<T> const& rhs)
     {
-        return option_set<T>(static_cast<typename option_set<T>::value_type>(lhs) | static_cast<typename option_set<T>::value_type>(rhs));
+        return option_set<T>(lhs.value() | rhs.value());
     }
 
     /**
@@ -222,7 +223,7 @@ namespace facter { namespace util {
     template<typename T>
     option_set<T> operator ^(option_set<T> const& lhs, option_set<T> const& rhs)
     {
-        return option_set<T>(static_cast<typename option_set<T>::value_type>(lhs) ^ static_cast<typename option_set<T>::value_type>(rhs));
+        return option_set<T>(lhs.value() ^ rhs.value());
     }
 
 }}  // namespace facter::util

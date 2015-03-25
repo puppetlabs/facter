@@ -34,6 +34,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/schema.cc"
     "facts/string_value.cc"
     "logging/logging.cc"
+    "log_capture.cc"
     "main.cc"
     "util/directory.cc"
     "util/environment.cc"

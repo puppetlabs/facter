@@ -49,20 +49,48 @@ namespace facter { namespace facts { namespace external {
                 }
             }
 
-            execution::each_line(pwrshell, {"-NoProfile", "-NonInteractive", "-NoLogo", "-ExecutionPolicy", "Bypass",
-                                            "-File", file},
-            [&facts](string const& line) {
-                auto pos = line.find('=');
-                if (pos == string::npos) {
-                    LOG_DEBUG("ignoring line in output: %1%", line);
+            string error;
+            execution::each_line(
+                pwrshell,
+                {
+                    "-NoProfile",
+                    "-NonInteractive",
+                    "-NoLogo",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    file
+                },
+                [&facts](string const& line) {
+                    auto pos = line.find('=');
+                    if (pos == string::npos) {
+                        LOG_DEBUG("ignoring line in output: %1%", line);
+                        return true;
+                    }
+                    // Add as a string fact
+                    string fact = line.substr(0, pos);
+                    boost::to_lower(fact);
+                    facts.add(move(fact), make_value<string_value>(line.substr(pos+1)));
                     return true;
-                }
-                // Add as a string fact
-                string fact = line.substr(0, pos);
-                boost::to_lower(fact);
-                facts.add(move(fact), make_value<string_value>(line.substr(pos+1)));
-                return true;
-            }, { execution_options::defaults, execution_options::throw_on_failure });
+                },
+                [&](string const& line) {
+                    if (!error.empty()) {
+                        error += "\n";
+                    }
+                    error += line;
+                    return true;
+                },
+                0,
+                {
+                    execution_options::trim_output,
+                    execution_options::merge_environment,
+                    execution_options::throw_on_failure
+                });
+
+            // Log a warning if there is error output from the command
+            if (!error.empty()) {
+                LOG_WARNING("external fact file \"%1%\" had output on stderr: %2%", file, error);
+            }
         }
         catch (execution_exception& ex) {
             throw external_fact_exception(ex.what());
