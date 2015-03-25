@@ -73,6 +73,7 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(rb_hash_new),
         LOAD_SYMBOL(rb_hash_aset),
         LOAD_SYMBOL(rb_hash_lookup),
+        LOAD_SYMBOL(rb_hash_lookup2),
         LOAD_SYMBOL(rb_obj_freeze),
         LOAD_SYMBOL(rb_sym_to_s),
         LOAD_SYMBOL(rb_to_id),
@@ -231,6 +232,11 @@ namespace facter { namespace ruby {
         v = rb_funcall(v, rb_intern("to_s"), 0);
         size_t size = static_cast<size_t>(rb_num2ulong(rb_funcall(v, rb_intern("bytesize"), 0)));
         return string(rb_string_value_ptr(&v), size);
+    }
+
+    VALUE api::to_symbol(string const& s) const
+    {
+        return rb_funcall(utf8_value(s), rb_intern("to_sym"), 0);
     }
 
     VALUE api::utf8_value(char const* s, size_t len) const

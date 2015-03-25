@@ -383,11 +383,7 @@ namespace facter { namespace ruby {
         volatile VALUE name = ruby.nil_value();
         VALUE options = argc == 2 ? argv[1] : ruby.nil_value();
         if (!ruby.is_nil(options)) {
-            name = ruby.rb_funcall(
-                    options,
-                    ruby.rb_intern("delete"),
-                    1,
-                    ruby.rb_funcall(ruby.utf8_value("name"), ruby.rb_intern("to_sym"), 0));
+            name = ruby.rb_funcall(options, ruby.rb_intern("delete"), 1, ruby.to_symbol("name"));
         }
 
         ruby.to_native<fact>(fact_self)->define_resolution(name, options);
@@ -696,15 +692,16 @@ namespace facter { namespace ruby {
 
         // Unfortunately we have to call to_sym rather than using ID2SYM, which is Ruby version dependent
         uint32_t timeout = 0;
-        volatile VALUE timeout_option = ruby.rb_hash_lookup(argv[1], ruby.rb_funcall(ruby.utf8_value("timeout"), ruby.rb_intern("to_sym"), 0));
+        volatile VALUE timeout_option = ruby.rb_hash_lookup(argv[1], ruby.to_symbol("timeout"));
         if (ruby.is_fixednum(timeout_option)) {
             timeout = static_cast<uint32_t>(ruby.rb_num2ulong(timeout_option));
         }
 
-        // Get the on_fail option
+        // Get the on_fail option (defaults to :raise)
         bool raise = false;
-        volatile VALUE fail_option = ruby.rb_hash_lookup(argv[1], ruby.rb_funcall(ruby.utf8_value("on_fail"), ruby.rb_intern("to_sym"), 0));
-        if (ruby.is_symbol(fail_option) && ruby.to_string(fail_option) == "raise") {
+        volatile VALUE raise_value = ruby.to_symbol("raise");
+        volatile VALUE fail_option = ruby.rb_hash_lookup2(argv[1], ruby.to_symbol("on_fail"), raise_value);
+        if (ruby.equals(fail_option, raise_value)) {
             raise = true;
             fail_option = ruby.nil_value();
         }
@@ -937,7 +934,7 @@ namespace facter { namespace ruby {
         if (!name) {
             ruby.rb_raise(*ruby.rb_eArgError, "invalid log level specified.", 0);
         }
-        return ruby.rb_funcall(ruby.utf8_value(name), ruby.rb_intern("to_sym"), 0);
+        return ruby.to_symbol(name);
     }
 
 }}  // namespace facter::ruby

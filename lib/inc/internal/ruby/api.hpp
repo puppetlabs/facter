@@ -295,6 +295,10 @@ namespace facter {  namespace ruby {
         /**
          * See MRI documentation.
          */
+        VALUE (* const rb_hash_lookup2)(VALUE, VALUE, VALUE);
+        /**
+         * See MRI documentation.
+         */
         VALUE (* const rb_obj_freeze)(VALUE);
         /**
          * See MRI documentation.
@@ -395,6 +399,13 @@ namespace facter {  namespace ruby {
          * @return Returns the Ruby value as a string.
          */
         std::string to_string(VALUE v) const;
+
+        /**
+         * Converts the given string to a Ruby symbol.
+         * @param s The string to convert to a symbol.
+         * @return Returns the symbol.
+         */
+        VALUE to_symbol(std::string const& s) const;
 
         /**
          * Converts a C string to a Ruby UTF-8 encoded string value.
