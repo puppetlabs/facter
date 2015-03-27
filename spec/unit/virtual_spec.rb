@@ -193,6 +193,13 @@ describe "Virtual fact" do
       Facter.fact(:virtual).value.should == "ovirt"
     end
 
+    it "should be kvm with KVM Node manufacturer name from dmidecode" do
+      Facter.fact(:kernel).stubs(:value).returns("Linux")
+      Facter::Core::Execution.stubs(:exec).with('lspci 2>/dev/null').returns(nil)
+      Facter::Core::Execution.stubs(:exec).with('dmidecode 2> /dev/null').returns("Manufacturer: QEMU")
+      Facter.fact(:virtual).value.should == "kvm"
+    end
+
     it "is gce based on DMI info" do
       Facter.fact(:kernel).stubs(:value).returns("Linux")
       Facter::Util::Virtual.stubs(:gce?).returns(true)
