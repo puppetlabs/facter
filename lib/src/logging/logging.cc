@@ -1,5 +1,7 @@
 #include <facter/logging/logging.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/locale/locale.hpp>
+#include <boost/filesystem.hpp>
 
 using namespace std;
 namespace lm = leatherman::logging;
@@ -22,6 +24,9 @@ namespace facter { namespace logging {
 
     void setup_logging(ostream& os)
     {
+        // Initialize boost filesystem's locale to a UTF-8 default.
+        // Logging gets setup the same way via the default 2nd argument.
+        boost::filesystem::path::imbue(leatherman::locale::get_locale());
         lm::setup_logging(os);
     }
 
