@@ -22,9 +22,6 @@ namespace facter { namespace facts { namespace windows {
 
     string virtualization_resolver::get_hypervisor(collection& facts)
     {
-        // TODO: This is probably not equivalent to line 194 of
-        // https://github.com/puppetlabs/facter/blob/master/lib/facter/virtual.rb
-        // Explore whether it can work, or if we need another wmi query
         static vector<tuple<string, string>> vms = {
             make_tuple("VirtualBox",        string(vm::virtualbox)),
             make_tuple("VMware",            string(vm::vmware)),
