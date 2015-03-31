@@ -72,10 +72,11 @@ describe Facter::Util::Config do
       Facter::Util::Config.external_facts_dirs.should == [File.join("C:\\Documents", 'PuppetLabs', 'facter', 'facts.d')]
     end
 
-    it "returns the users home directory when not root" do
+    it "returns the old and new (AIO) paths under user's home directory when not root" do
       Facter::Util::Root.stubs(:root?).returns(false)
       Facter::Util::Config.setup_default_ext_facts_dirs
-      Facter::Util::Config.external_facts_dirs.should == [File.expand_path(File.join("~", ".facter", "facts.d"))]
+      Facter::Util::Config.external_facts_dirs.should == [File.expand_path(File.join("~", ".puppetlabs", "opt", "facter", "facts.d")),
+                                                          File.expand_path(File.join("~", ".facter", "facts.d"))]
     end
 
     it "includes additional values when user appends to the list" do

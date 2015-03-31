@@ -50,7 +50,10 @@ module Facter::Util::Config
         @external_facts_dirs = [File.join(windows_dir, 'PuppetLabs', 'facter', 'facts.d')]
       end
     elsif ENV['HOME']
-      @external_facts_dirs = [File.expand_path(File.join(ENV['HOME'], ".facter", "facts.d"))]
+      # Note: Beginning with Facter 3, ~/.puppetlabs/opt/facter/facts.d will be the only
+      # default external fact directory.
+      @external_facts_dirs = [File.expand_path(File.join(ENV['HOME'], ".puppetlabs", "opt", "facter", "facts.d")),
+                              File.expand_path(File.join(ENV['HOME'], ".facter", "facts.d"))]
     else
       @external_facts_dirs = []
     end
