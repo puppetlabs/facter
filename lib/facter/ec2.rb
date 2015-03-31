@@ -15,7 +15,7 @@
 #   Directly queries the EC2 metadata endpoint.
 #
 
-require 'facter/ec2/rest'
+require 'facter/ec2/rest' unless defined?(Facter::EC2)
 
 Facter.define_fact(:ec2_metadata) do
   define_resolution(:rest) do
