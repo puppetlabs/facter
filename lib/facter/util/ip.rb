@@ -191,7 +191,6 @@ module Facter::Util::IP
     when 'Linux'
       if Facter.value(:osfamily) == "RedHat" and Facter.value(:operatingsystemmajrelease).to_i == 7
         ip_output = Facter::Util::IP.ip_interface(interface)
-	# Add netmask to the output in a format that works with the existing regex
         mask = `ip addr show #{interface} | grep -w inet|awk {' print $2 '} | xargs -I {} ipcalc {} --netmask|awk -F '=' {' print "Mask:"$2 '}`
         output = ip_output + mask
       else
