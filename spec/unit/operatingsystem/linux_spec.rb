@@ -58,24 +58,6 @@ describe Facter::Operatingsystem::Linux do
       end
     end
 
-    describe "on distributions that rely on the contents of /etc/centos-release" do
-      before :each do
-        subject.expects(:get_lsbdistid).returns(nil)
-      end
-      {
-        "CentOS"     => "CentOS Linux release 7.1.1503 (Core)",
-      }.each_pair do |operatingsystem, string|
-        it "should be #{operatingsystem} based on /etc/centos-release contents #{string}" do
-          FileTest.expects(:exists?).at_least_once.returns false
-          FileTest.expects(:exists?).with("/etc/enterprise-release").returns false
-          FileTest.expects(:exists?).with("/etc/centos-release").returns true
-          FileTest.expects(:exists?).with("/etc/redhat-release").never
-          File.expects(:read).with("/etc/centos-release").at_least_once.returns string
-          os = subject.get_operatingsystem
-          expect(os).to eq operatingsystem
-        end
-      end
-    end
     describe "on distributions that rely on the contents of /etc/redhat-release" do
       before :each do
         subject.expects(:get_lsbdistid).returns(nil)
@@ -255,15 +237,6 @@ describe Facter::Operatingsystem::Linux do
           Facter::Util::FileRead.expects(:read).with(file).at_least_once
           release = subject.get_operatingsystemrelease
         end
-      end
-    end
-    describe "with operatingsystem reported as centos (new way)" do
-      it "should read /etc/centos-release" do
-        subject.expects(:get_operatingsystem).at_least_once.returns('CentOS')
-        File.expects(:exists?).with('/etc/centos-release').at_least_once.returns(true)
-        Facter::Util::FileRead.expects(:read).with('/etc/centos-release').at_least_once
-        Facter::Util::FileRead.expects(:read).with('/etc/redhat-release').never
-        release = subject.get_operatingsystemrelease
       end
     end
 

@@ -273,8 +273,6 @@ module Facter
             else
               operatingsystem = "OEL"
             end
-          elsif FileTest.exists?("/etc/centos-release")
-            operatingsystem = get_centos_operatingsystem_name
           elsif FileTest.exists?("/etc/redhat-release")
             operatingsystem = get_redhat_operatingsystem_name
           elsif FileTest.exists?("/etc/SuSE-release")
@@ -287,19 +285,6 @@ module Facter
         operatingsystem
       end
 
-      # Uses a regex search on /etc/centos-release to determine OS
-      #
-      # @return [String]
-      def get_centos_operatingsystem_name
-        txt = File.read("/etc/centos-release")
-        matches = {
-          "CentOS"     => "centos",
-        }
-        match = regex_search_release_file_for_operatingsystem(matches, txt)
-        match = "CentOS" if match == nil
-
-        match
-      end
       # Uses a regex search on /etc/redhat-release to determine OS
       #
       # @return [String]
@@ -396,13 +381,7 @@ module Facter
 
       def get_redhatish_release_with_release_file
         case get_operatingsystem
-        when "CentOS"
-          releasefile = if File.exists?('/etc/centos-release')
-            "/etc/centos-release"
-          else
-            "/etc/redhat-release"
-          end
-        when "RedHat", "Scientific", "SLC", "Ascendos", "CloudLinux", "PSBM", "XenServer"
+        when "CentOS", "RedHat", "Scientific", "SLC", "Ascendos", "CloudLinux", "PSBM", "XenServer"
           releasefile = "/etc/redhat-release"
         when "Fedora"
           releasefile = "/etc/fedora-release"
