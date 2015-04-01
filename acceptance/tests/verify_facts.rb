@@ -23,7 +23,10 @@ def validate_fact(node, fact_value, hidden)
             when 'integer'
               fact_value.is_a? Integer
             when 'double'
-              fact_value.is_a? Float
+              # http://www.yaml.org/spec/1.2/spec.html#id2804092 states the form of a double in YAML
+              # If a type isn't explicit, it's reasonable to output a single integer value for a double,
+              # as in 0 and 1, instead of 0.0 or 1.0.
+              fact_value.is_a? Float or fact_value.to_s =~ /^([0-9]|\.inf|\.nan|-\.inf)$/
             when 'string'
               fact_value.is_a? String
             when 'ip'
