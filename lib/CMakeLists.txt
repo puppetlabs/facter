@@ -124,8 +124,10 @@ if (WIN32)
         "src/ruby/windows/api.cc"
         "src/util/windows/dynamic_library.cc"
         "src/util/windows/environment.cc"
+        "src/util/windows/process.cc"
         "src/util/windows/registry.cc"
         "src/util/windows/system_error.cc"
+        "src/util/windows/user.cc"
         "src/util/windows/wmi.cc"
         "src/util/windows/wsa.cc"
     )
