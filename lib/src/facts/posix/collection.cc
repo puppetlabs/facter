@@ -22,7 +22,7 @@ namespace facter { namespace facts {
         if (getuid()) {
             string home;
             if (environment::get("HOME", home)) {
-                directories.emplace_back(home + "/.facter/facts.d");
+                directories.emplace_back(home + "/.puppetlabs/opt/facter/facts.d");
             }
         } else {
             directories.emplace_back("/opt/puppetlabs/facter/facts.d");
