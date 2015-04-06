@@ -125,7 +125,7 @@ namespace facter { namespace facts {
         }
 
         // Build a map between a file and the resolver that can resolve it
-        map<string, external::resolver const*> files;
+        bool found = false;
         for (auto const& dir : search_directories) {
             // If dir is relative, make it an absolute path before passing to can_resolve.
             boost::system::error_code ec;
@@ -147,7 +147,13 @@ namespace facter { namespace facts {
             directory::each_file(search_dir.string(), [&](string const& path) {
                 for (auto const& res : resolvers) {
                     if (res->can_resolve(path)) {
-                        files.emplace(path, res.get());
+                        try {
+                            found = true;
+                            res->resolve(path, *this);
+                        }
+                        catch (external::external_fact_exception& ex) {
+                            LOG_ERROR("error while processing \"%1%\" for external facts: %2%", path, ex.what());
+                        }
                         break;
                     }
                 }
@@ -155,19 +161,8 @@ namespace facter { namespace facts {
             });
         }
 
-        if (files.empty()) {
+        if (!found) {
             LOG_DEBUG("no external facts were found.");
-            return;
-        }
-
-        // Resolve the files
-        for (auto const& kvp : files) {
-            try {
-                kvp.second->resolve(kvp.first, *this);
-            }
-            catch (external::external_fact_exception& ex) {
-                LOG_ERROR("error while processing \"%1%\" for external facts: %2%", kvp.first, ex.what());
-            }
         }
     }
 

@@ -55,12 +55,13 @@ SCENARIO("listing directories in a directory") {
         });
         sort(subdirectories.begin(), subdirectories.end());
         THEN("all directories are returned") {
-            REQUIRE(subdirectories.size() == 5);
+            REQUIRE(subdirectories.size() == 6);
             REQUIRE(subdirectories[0] == "json");
-            REQUIRE(subdirectories[1] == "posix");
-            REQUIRE(subdirectories[2] == "text");
-            REQUIRE(subdirectories[3] == "windows");
-            REQUIRE(subdirectories[4] == "yaml");
+            REQUIRE(subdirectories[1] == "ordering");
+            REQUIRE(subdirectories[2] == "posix");
+            REQUIRE(subdirectories[3] == "text");
+            REQUIRE(subdirectories[4] == "windows");
+            REQUIRE(subdirectories[5] == "yaml");
         }
     }
     GIVEN("a directory pattern") {
