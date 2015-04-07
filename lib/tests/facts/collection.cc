@@ -337,4 +337,25 @@ SCENARIO("using the fact collection") {
             REQUIRE(value->value() == "overridden");
         }
     }
+    GIVEN("two external fact directories to search") {
+        facts.add_external_facts({
+            LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/ordering/foo",
+            LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/ordering/bar"
+        });
+        THEN("it should have the fact value from the last file loaded") {
+            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.get<string_value>("foo"));
+            REQUIRE(facts.get<string_value>("foo")->value() == "set in bar/foo.yaml");
+        }
+        facts.clear();
+        facts.add_external_facts({
+            LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/ordering/bar",
+            LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/ordering/foo"
+        });
+        THEN("it should have the fact value from the last file loaded") {
+            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.get<string_value>("foo"));
+            REQUIRE(facts.get<string_value>("foo")->value() == "set in foo/foo.yaml");
+        }
+    }
 }
