@@ -140,6 +140,7 @@ namespace facter { namespace facts { namespace linux {
                 { string(os::oracle_linux),             string(release_file::oracle_linux) },
                 { string(os::oracle_enterprise_linux),  string(release_file::oracle_enterprise_linux) },
                 { string(os::oracle_vm_linux),          string(release_file::oracle_vm_linux) },
+                { string(os::arista_eos),               string(release_file::arista_eos) },
         };
 
         string value;
@@ -215,6 +216,9 @@ namespace facter { namespace facts { namespace linux {
             } else if (name == os::openwrt) {
                 file = release_file::openwrt_version;
                 pattern = "(?m)^(\\d+\\.\\d+.*)";
+            } else if (name == os::arista_eos) {
+                file = release_file::arista_eos;
+                pattern = "Arista Networks EOS (\\d+\\.\\d+\\.\\d+[A-M]?)";
             }
             if (file) {
                 string contents = file::read(file);
@@ -361,6 +365,7 @@ namespace facter { namespace facts { namespace linux {
             make_tuple(string(release_file::alpine),         string(os::alpine)),
             make_tuple(string(release_file::mageia),         string(os::mageia)),
             make_tuple(string(release_file::amazon),         string(os::amazon)),
+            make_tuple(string(release_file::arista_eos),     string(os::arista_eos)),
         };
 
         for (auto const& file : files) {
