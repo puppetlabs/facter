@@ -168,6 +168,11 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
         "src/facts/solaris/zone_resolver.cc"
         "src/facts/solaris/zpool_resolver.cc"
     )
+    set(LIBFACTER_PLATFORM_LIBRARIES
+        kstat
+        socket
+        nsl
+    )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBFACTER_PLATFORM_SOURCES
         "src/facts/bsd/networking_resolver.cc"
