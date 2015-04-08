@@ -6,19 +6,18 @@ extend Facter::Acceptance::UserFactUtils
 agents.each do |agent|
   step "Agent #{agent}: create external executable fact"
 
-  outfile = agent.tmpfile('mark_calls')
   factsd = get_factsd_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
   ext = get_external_fact_script_extension(agent['platform'])
 
   if agent['platform'] =~ /windows/
     content = <<EOM
-echo "SCRIPT CALLED" >> #{outfile}
+echo "SCRIPT CALLED" >&2
 echo "test=value"
 EOM
   else
     content = <<EOM
 #!/bin/sh
-echo "SCRIPT CALLED" >> #{outfile}
+echo "SCRIPT CALLED" >&2
 echo "test=value"
 EOM
   end
@@ -39,14 +38,13 @@ EOM
   on(agent, "chmod +x '#{ext_fact}'")
 
   step "Agent #{agent}: ensure it only executes once"
-  on(agent, facter)
-  on(agent, "cat #{outfile}") do
-    lines = stdout.split('\n')
+  on(agent, facter) do
+    lines = stderr.split('\n')
     times = lines.count { |line| line =~ /SCRIPT CALLED/ }
     if times == 1
       step "External executable fact executed once"
     else
-      fail_test "External fact executed #{times} times, expected once: #{stdout}"
+      fail_test "External fact executed #{times} times, expected once: #{stderr}"
     end
   end
 end
