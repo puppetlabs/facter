@@ -4,6 +4,10 @@
 #include <boost/optional.hpp>
 #include <leatherman/logging/logging.hpp>
 
+#ifdef __sun
+#include <sys/loadavg.h>
+#endif
+
 using namespace std;
 
 namespace facter { namespace facts { namespace posix {
