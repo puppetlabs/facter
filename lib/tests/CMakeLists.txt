@@ -93,6 +93,12 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         ${BLKID_LIBRARIES}
         rt
     )
+elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
+    set(LIBFACTER_TESTS_PLATFORM_LIBRARIES
+        kstat
+        socket
+        nsl
+    )
 endif()
 
 # Set the platform-specific sources
