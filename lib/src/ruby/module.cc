@@ -732,14 +732,22 @@ namespace facter { namespace ruby {
 
         // Block to ensure that result is destructed before raising.
         try {
-            auto result = execution::execute(execution::command_shell,
-                {execution::command_args, expand_command(command)},
-                option_set<execution_options> {
-                    execution_options::defaults,
-                    execution_options::redirect_stderr
-                }, timeout);
-            if (result.first) {
-                return ruby.utf8_value(result.second);
+            bool success;
+            string output, none;
+            tie(success, output, none) = execution::execute(
+                execution::command_shell,
+                {
+                    execution::command_args,
+                    expand_command(command)
+                },
+                timeout,
+                {
+                    execution_options::trim_output,
+                    execution_options::merge_environment,
+                    execution_options::redirect_stderr_to_stdout
+                });
+            if (success) {
+                return ruby.utf8_value(output);
             }
         } catch (timeout_exception const& ex) {
             // Always raise for timeouts

@@ -8,6 +8,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
+#include <array>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/time.h>
@@ -83,11 +84,104 @@ namespace facter { namespace execution {
         return {};
     }
 
-    pair<bool, string> execute(
+    // Represents information about a pipe
+    struct pipe
+    {
+        pipe(string pipe_name, int desc, function<bool(string const&)> const& cb) :
+            name(std::move(pipe_name)),
+            descriptor(desc),
+            callback(cb)
+        {
+        }
+
+        const string name;
+        int descriptor;
+        string buffer;
+        function<bool(string const&)> const& callback;
+    };
+
+    static void read_from_child(pid_t child, array<pipe, 2>& pipes, uint32_t timeout)
+    {
+        // Each pipe is a tuple of descriptor, buffer to use to read data, and a callback to call when data is read
+        fd_set set;
+        while (!command_timedout) {
+            FD_ZERO(&set);
+
+            // Set up the descriptors and buffers to select upon
+            int max = -1;
+            for (auto& pipe : pipes) {
+                if (pipe.descriptor == -1) {
+                    continue;
+                }
+                FD_SET(pipe.descriptor, &set);
+                if (pipe.descriptor > max) {
+                    max = pipe.descriptor;
+                }
+                pipe.buffer.resize(4096);
+            }
+            if (max == -1) {
+                // All pipes closed; we're done
+                return;
+            }
+
+            // If using a timeout, timeout after 500ms to check whether or not the command itself timed out
+            timeval read_timeout = {};
+            read_timeout.tv_usec = 500000;
+            int result = select(max + 1, &set, nullptr, nullptr, timeout ? &read_timeout : nullptr);
+            if (result == -1) {
+                if (errno != EINTR) {
+                    LOG_ERROR("select call failed: %1% (%2%).", strerror(errno), errno);
+                    throw execution_exception("failed to read child output.");
+                }
+                // Interrupted by signal
+                LOG_DEBUG("select call was interrupted and will be retried.");
+                continue;
+            }
+            if (result == 0) {
+                // Read timeout, try again
+                continue;
+            }
+
+            for (auto& pipe : pipes) {
+                if (pipe.descriptor == -1 || !FD_ISSET(pipe.descriptor, &set)) {
+                    continue;
+                }
+
+                // There is data to read
+                auto count = read(pipe.descriptor, &pipe.buffer[0], pipe.buffer.size());
+                if (count < 0) {
+                    if (errno != EINTR) {
+                        LOG_ERROR("%1% pipe read failed: %2% (%3%).", pipe.name, strerror(errno), errno);
+                        throw execution_exception("failed to read child output.");
+                    }
+                    // Interrupted by signal
+                    LOG_DEBUG("%1% pipe read was interrupted and will be retried.", pipe.name);
+                    continue;
+                }
+                if (count == 0) {
+                    // Pipe has closed
+                    pipe.descriptor = -1;
+                    continue;
+                }
+                // Call the callback
+                pipe.buffer.resize(count);
+                if (!pipe.callback(pipe.buffer)) {
+                    // Callback signaled that we're done
+                    return;
+                }
+            }
+        }
+
+        // Should only reach here if the command timed out
+        throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str(), static_cast<size_t>(child));
+    }
+
+    tuple<bool, string, string> execute(
         string const& file,
         vector<string> const* arguments,
         map<string, string> const* environment,
-        function<bool(string&)> callback,
+        function<bool(string&)> const& stdout_callback,
+        function<bool(string&)> const& stderr_callback,
         option_set<execution_options> const& options,
         uint32_t timeout)
     {
@@ -97,24 +191,35 @@ namespace facter { namespace execution {
         if (executable.empty()) {
             LOG_DEBUG("%1% was not found on the PATH.", file);
             if (options[execution_options::throw_on_nonzero_exit]) {
-                throw child_exit_exception(127, "", "child process returned non-zero exit status.");
+                throw child_exit_exception("child process returned non-zero exit status.", 127, {}, {});
             }
-            return { false, "" };
+            return make_tuple(false, "", "");
         }
 
-        // Create the pipes for stdin/stdout/stderr redirection
+        // Create the pipes for stdin/stdout redirection
         int pipes[2];
-        if (pipe(pipes) < 0) {
-            throw execution_exception("failed to allocate pipe for input redirection.");
+        if (::pipe(pipes) < 0) {
+            throw execution_exception("failed to allocate pipe for stdin redirection.");
         }
         scoped_descriptor stdin_read(pipes[0]);
         scoped_descriptor stdin_write(pipes[1]);
 
-        if (pipe(pipes) < 0) {
-            throw execution_exception("failed to allocate pipe for output redirection.");
+        if (::pipe(pipes) < 0) {
+            throw execution_exception("failed to allocate pipe for stdout redirection.");
         }
         scoped_descriptor stdout_read(pipes[0]);
         scoped_descriptor stdout_write(pipes[1]);
+
+        // Create optional pipes for stderr redirection (if not redirecting stderr to stdout or null)
+        scoped_descriptor stderr_read(-1);
+        scoped_descriptor stderr_write(-1);
+        if (!options[execution_options::redirect_stderr_to_stdout] && !options[execution_options::redirect_stderr_to_null]) {
+            if (::pipe(pipes) < 0) {
+                throw execution_exception("failed to allocate pipe for stderr redirection.");
+            }
+            stderr_read = scoped_descriptor(pipes[0]);
+            stderr_write = scoped_descriptor(pipes[1]);
+        }
 
         // Fork the child process
         pid_t child = fork();
@@ -127,8 +232,9 @@ namespace facter { namespace execution {
         {
             // Close the unused descriptors
             stdin_read.release();
-            stdout_write.release();
             stdin_write.release();
+            stdout_write.release();
+            stderr_write.release();
 
             // Define a reaper that is invoked when we exit this scope
             // This ensures that the child won't become a zombie if an exception is thrown
@@ -183,54 +289,24 @@ namespace facter { namespace execution {
                 });
             }
 
-            string result = process_stream(options[execution_options::trim_output], callback, [&](string& buffer) {
-                buffer.resize(4096);
-
-                while (!command_timedout) {
-                    fd_set set;
-                    FD_ZERO(&set);
-                    FD_SET(stdout_read, &set);
-
-                    // If using a timeout, timeout after 500ms to check whether or not the command itself timed out
-                    timeval read_timeout = {};
-                    read_timeout.tv_usec = 500000;
-                    int result = select(static_cast<int>(stdout_read) + 1, &set, nullptr, nullptr, timeout ? &read_timeout : nullptr);
-                    if (result == -1) {
-                        if (errno != EINTR) {
-                            LOG_ERROR("select failed: %1% (%2%).", strerror(errno), errno);
-                            throw execution_exception("failed to read child output.");
-                        }
-                        // Interrupted by signal
-                        LOG_DEBUG("child pipe read was interrupted and will be retried.");
-                        continue;
-                    }
-                    if (result == 0) {
-                        // Timeout, try again
-                        continue;
-                    }
-
-                    // There is data to read
-                    auto count = read(stdout_read, &buffer[0], buffer.size());
-                    if (count < 0) {
-                        if (errno != EINTR) {
-                            LOG_ERROR("read failed: %1% (%2%).", strerror(errno), errno);
-                            throw execution_exception("failed to read child output.");
-                        }
-                        // Interrupted by signal
-                        LOG_DEBUG("child pipe read was interrupted and will be retried.");
-                        continue;
-                    }
-                    buffer.resize(count);
-                    return count != 0;
-                }
-
-                // Should only reach here if the command timed out
-                throw timeout_exception((boost::format("command timed out after %1% seconds.") % timeout).str(), static_cast<size_t>(child));
+            // This somewhat complicated construct performs the following:
+            // Calls a platform-agnostic implementation of processing stdout/stderr data
+            // The platform agnostic code calls back into the given lambda to do the actual reading
+            // It provides two callbacks of its own to call when there's data available on stdout/stderr
+            // We return from the lambda when all data has been read
+            string output, error;
+            tie(output, error) = process_streams(options[execution_options::trim_output], stdout_callback, stderr_callback, [&](function<bool(string const&)> const& process_stdout, function<bool(string const&)> const& process_stderr) {
+                array<pipe, 2> pipes = { {
+                    pipe("stdout", stdout_read, process_stdout),
+                    pipe("stderr", stderr_read, process_stderr)
+                }};
+                read_from_child(child, pipes, timeout);
             });
 
-            // Close the read pipe
+            // Close the read pipes
             // If the child hasn't sent all the data yet, this may signal SIGPIPE on next write
             stdout_read.release();
+            stderr_read.release();
 
             // Wait for the child to exit
             kill_child = false;
@@ -245,27 +321,27 @@ namespace facter { namespace execution {
             // Throw exception if needed
             if (!success) {
                 if (!signaled && status != 0 && options[execution_options::throw_on_nonzero_exit]) {
-                    throw child_exit_exception(status, result, "child process returned non-zero exit status.");
+                    throw child_exit_exception("child process returned non-zero exit status.", status, move(output), move(error));
                 }
                 if (signaled && options[execution_options::throw_on_signal]) {
-                    throw child_signal_exception(status, result, "child process was terminated by signal.");
+                    throw child_signal_exception("child process was terminated by signal.", status, move(output), move(error));
                 }
             }
-            return { success, move(result) };
+            return make_tuple(success, move(output), move(error));
         }
 
         // Child continues here
         try
         {
-            // Set the process group; this will be used by the parent if we need to kill the process and its children
-            if (setpgid(0, 0) == -1) {
-                throw execution_exception("failed to set child process group.");
-            }
-
             // Disable Ruby cleanup
             // Ruby doesn't play nice with being forked
             // The VM records the parent pid, so it doesn't like having ruby_cleanup called from a child process
             ruby::api::cleanup = false;
+
+            // Set the process group; this will be used by the parent if we need to kill the process and its children
+            if (setpgid(0, 0) == -1) {
+                throw execution_exception("failed to set child process group.");
+            }
 
             if (dup2(stdin_read, STDIN_FILENO) == -1) {
                throw execution_exception("failed to redirect child stdin.");
@@ -275,15 +351,19 @@ namespace facter { namespace execution {
                throw execution_exception("failed to redirect child stdout.");
             }
 
-            if (options[execution_options::redirect_stderr]) {
+            // Redirect stderr to stdout, null, or to the pipe to read
+            if (options[execution_options::redirect_stderr_to_stdout]) {
                 if (dup2(stdout_write, STDERR_FILENO) == -1) {
-                    throw execution_exception("failed to redirect child stderr.");
+                    throw execution_exception("failed to redirect child stderr to stdout.");
                 }
-            } else {
-                // Redirect to null
+            } else if (options[execution_options::redirect_stderr_to_null]) {
                 scoped_descriptor dev_null(open("/dev/null", O_RDWR));
                 if (dev_null < 0 || dup2(dev_null, STDERR_FILENO) == -1) {
                     throw execution_exception("failed to redirect child stderr to null.");
+                }
+            } else {
+                if (dup2(stderr_write, STDERR_FILENO) == -1) {
+                    throw execution_exception("failed to redirect child stderr.");
                 }
             }
 
@@ -329,13 +409,11 @@ namespace facter { namespace execution {
         catch (exception& ex)
         {
             // Write out any exception message to "stderr" and exit
-            if (options[execution_options::redirect_stderr]) {
-                string message = ex.what();
-                message += "\n";
-                int result = write(STDERR_FILENO, message.c_str(), message.size());
-                if (result == -1) {
-                    // We don't really care if writing the error message failed
-                }
+            string message = ex.what();
+            message += "\n";
+            int result = write(STDERR_FILENO, message.c_str(), message.size());
+            if (result == -1) {
+                // We don't really care if writing the error message failed
             }
             exit(EXIT_FAILURE);
         }

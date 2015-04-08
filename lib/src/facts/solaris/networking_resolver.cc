@@ -185,11 +185,13 @@ namespace facter { namespace facts { namespace solaris {
 
     string networking_resolver::find_dhcp_server(string const& interface) const
     {
-        auto result = execute("dhcpinfo", { "-i", interface, "ServerID" });
-        if (!result.first) {
+        bool success;
+        string output, none;
+        tie(success, output, none) = execute("dhcpinfo", { "-i", interface, "ServerID" });
+        if (!success) {
             return {};
         }
-        return result.second;
+        return output;
     }
 
 }}}  // namespace facter::facts::solaris

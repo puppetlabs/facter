@@ -20,7 +20,7 @@ SCENARIO("resolving external executable facts into a collection") {
             LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell",
         });
         THEN("facts should resolve") {
-            REQUIRE(facts.size() == 6);
+            REQUIRE(facts.size() == 7);
             REQUIRE(facts.get<string_value>("exe_fact1"));
             REQUIRE(facts.get<string_value>("exe_fact2"));
             REQUIRE_FALSE(facts.get<string_value>("exe_fact3"));

@@ -21,9 +21,10 @@ namespace facter { namespace execution {
     {
     }
 
-    execution_failure_exception::execution_failure_exception(string const& output, string const& message) :
+    execution_failure_exception::execution_failure_exception(string const& message, string output, string error) :
         execution_exception(message),
-        _output(output)
+        _output(move(output)),
+        _error(move(error))
     {
     }
 
@@ -32,8 +33,13 @@ namespace facter { namespace execution {
         return _output;
     }
 
-    child_exit_exception::child_exit_exception(int status_code, string const& output, string const& message) :
-        execution_failure_exception(output, message),
+    string const& execution_failure_exception::error() const
+    {
+        return _error;
+    }
+
+    child_exit_exception::child_exit_exception(string const& message, int status_code, string output, string error) :
+        execution_failure_exception(message, move(output), move(error)),
         _status_code(status_code)
     {
     }
@@ -43,8 +49,8 @@ namespace facter { namespace execution {
         return _status_code;
     }
 
-    child_signal_exception::child_signal_exception(int signal, string const& output, string const& message) :
-        execution_failure_exception(output, message),
+    child_signal_exception::child_signal_exception(string const& message, int signal, string output, string error) :
+        execution_failure_exception(message, move(output), move(error)),
         _signal(signal)
     {
     }
@@ -121,157 +127,240 @@ namespace facter { namespace execution {
         return quote + file + remainder;
     }
 
-    pair<bool, string> execute(
+    tuple<bool, string, string> execute(
         string const& file,
         vector<string> const* arguments,
         map<string, string> const* environment,
-        function<bool(string&)> callback,
+        function<bool(string&)> const& stdout_callback,
+        function<bool(string&)> const& stderr_callback,
         option_set<execution_options> const& options,
         uint32_t timeout);
 
-    pair<bool, string> execute(
-        string const& file,
-        option_set<execution_options> const& options,
-        uint32_t timeout)
+    static void setup_execute(function<bool(string&)>& stderr_callback, option_set<execution_options>& options)
     {
-        return execute(file, nullptr, nullptr, nullptr, options, timeout);
+        // If not redirecting stderr to stdout, but redirecting to null, use a do-nothing callback so that stderr is logged when the level is debug
+        if (LOG_IS_DEBUG_ENABLED() && !options[execution_options::redirect_stderr_to_stdout] && options[execution_options::redirect_stderr_to_null]) {
+            // Use a do-nothing callback so that stderr is logged
+            stderr_callback = ([&](string&) {
+                return true;
+            });
+            options.clear(execution_options::redirect_stderr_to_null);
+        }
     }
 
-    pair<bool, string> execute(
+    tuple<bool, string, string> execute(
         string const& file,
-        vector<string> const& arguments,
-        option_set<execution_options> const& options,
-        uint32_t timeout)
+        uint32_t timeout,
+        option_set<execution_options> const& options)
     {
-        return execute(file, &arguments, nullptr, nullptr, options, timeout);
+        auto actual_options = options;
+        function<bool(string&)> stderr_callback;
+        setup_execute(stderr_callback, actual_options);
+        return execute(file, nullptr, nullptr, nullptr, stderr_callback, actual_options, timeout);
     }
 
-    pair<bool, string> execute(
-        string const& file,
-        vector<string> const& arguments,
-        map<string, string> const& environment,
-        option_set<execution_options> const& options,
-        uint32_t timeout)
-    {
-        return execute(file, &arguments, &environment, nullptr, options, timeout);
-    }
-
-    bool each_line(
-        string const& file,
-        function<bool(string&)> callback,
-        option_set<execution_options> const& options,
-        uint32_t timeout)
-    {
-        return execute(file, nullptr, nullptr, callback, options, timeout).first;
-    }
-
-    bool each_line(
+    tuple<bool, string, string> execute(
         string const& file,
         vector<string> const& arguments,
-        function<bool(string&)> callback,
-        option_set<execution_options> const& options,
-        uint32_t timeout)
+        uint32_t timeout,
+        option_set<execution_options> const& options)
     {
-        return execute(file, &arguments, nullptr, callback, options, timeout).first;
+        auto actual_options = options;
+        function<bool(string&)> stderr_callback;
+        setup_execute(stderr_callback, actual_options);
+        return execute(file, &arguments, nullptr, nullptr, stderr_callback, actual_options, timeout);
     }
 
-    bool each_line(
+    tuple<bool, string, string> execute(
         string const& file,
         vector<string> const& arguments,
         map<string, string> const& environment,
-        function<bool(string&)> callback,
-        option_set<execution_options> const& options,
-        uint32_t timeout)
+        uint32_t timeout,
+        option_set<execution_options> const& options)
     {
-        return execute(file, &arguments, &environment, callback, options, timeout).first;
+        auto actual_options = options;
+        function<bool(string&)> stderr_callback;
+        setup_execute(stderr_callback, actual_options);
+        return execute(file, &arguments, &environment, nullptr, stderr_callback, actual_options, timeout);
     }
 
-    string process_stream(bool trim_output, function<bool(string&)> callback, function<bool(string&)> yield_input)
+    static void setup_each_line(function<bool(string&)>& stdout_callback, function<bool(string&)>& stderr_callback, option_set<execution_options>& options)
+    {
+        // If not given a stdout callback, use a no-op one to prevent execute from buffering stdout (also logs for debug level)
+        if (!stdout_callback) {
+            stdout_callback = ([&](string&) {
+                return true;
+            });
+        }
+        // If given no stderr callback and not redirecting to stdout, redirect stderr to null when not debug log level
+        if (!stderr_callback && !options[execution_options::redirect_stderr_to_stdout]) {
+            if (LOG_IS_DEBUG_ENABLED()) {
+                // Use a do-nothing callback so that stderr is logged
+                stderr_callback = ([&](string&) {
+                    return true;
+                });
+                options.clear(execution_options::redirect_stderr_to_null);
+            } else {
+                // Not debug level, redirect to null
+                options.set(execution_options::redirect_stderr_to_null);
+            }
+        }
+    }
+
+    bool each_line(
+        string const& file,
+        function<bool(string&)> stdout_callback,
+        function<bool(string&)> stderr_callback,
+        uint32_t timeout,
+        option_set<execution_options> const& options)
+    {
+        auto actual_options = options;
+        setup_each_line(stdout_callback, stderr_callback, actual_options);
+        return get<0>(execute(file, nullptr, nullptr, stdout_callback, stderr_callback, actual_options, timeout));
+    }
+
+    bool each_line(
+        string const& file,
+        vector<string> const& arguments,
+        function<bool(string&)> stdout_callback,
+        function<bool(string&)> stderr_callback,
+        uint32_t timeout,
+        option_set<execution_options> const& options)
+    {
+        auto actual_options = options;
+        setup_each_line(stdout_callback, stderr_callback, actual_options);
+        return get<0>(execute(file, &arguments, nullptr, stdout_callback, stderr_callback, actual_options, timeout));
+    }
+
+    bool each_line(
+        string const& file,
+        vector<string> const& arguments,
+        map<string, string> const& environment,
+        function<bool(string&)> stdout_callback,
+        function<bool(string&)> stderr_callback,
+        uint32_t timeout,
+        option_set<execution_options> const& options)
+    {
+        auto actual_options = options;
+        setup_each_line(stdout_callback, stderr_callback, actual_options);
+        return get<0>(execute(file, &arguments, &environment, stdout_callback, stderr_callback, actual_options, timeout));
+    }
+
+    static bool process_data(bool trim, string const& data, string& buffer, string const& logger, function<bool(string&)> const& callback)
+    {
+        // Do nothing if nothing was read
+        if (data.empty()) {
+            return true;
+        }
+
+        // If given no callback, buffer the entire output
+        if (!callback) {
+            buffer.append(data);
+            return true;
+        }
+
+        // Find the last newline, because anything after may not be a complete line.
+        auto lastNL = data.find_last_of("\n\r");
+        if (lastNL == string::npos) {
+            // No newline found, so keep appending and continue.
+            buffer.append(data);
+            return true;
+        }
+
+        // Make a range for iterating through lines.
+        auto str_range = make_pair(data.begin(), data.begin()+lastNL);
+        auto line_iterator = boost::make_iterator_range(
+                make_split_iterator(str_range, token_finder(is_any_of("\n\r"), token_compress_on)),
+                split_iterator<string::const_iterator>());
+
+        for (auto &line : line_iterator) {
+            // The previous trailing data is picked up by default.
+            buffer.append(line.begin(), line.end());
+
+            if (trim) {
+                boost::trim(buffer);
+            }
+
+            // Skip empty lines
+            if (buffer.empty()) {
+                continue;
+            }
+
+            // Log the line to the output logger
+            if (LOG_IS_DEBUG_ENABLED()) {
+                log(logger, log_level::debug, buffer);
+            }
+
+            // Pass the line to the callback
+            bool finished = !callback(buffer);
+
+            // Clear the line for the next iteration
+            buffer.clear();
+
+            // Break out if finished processing
+            if (finished) {
+                return false;
+            }
+        }
+
+        // Save the new trailing data
+        buffer.assign(data.begin()+lastNL, data.end());
+        return true;
+    }
+
+    tuple<string, string> process_streams(bool trim, function<bool(string&)> const& stdout_callback, function<bool(string&)> const& stderr_callback, function<void(function<bool(string const&)>, function<bool(string const&)>)> const& read_streams)
     {
         // Get a special logger used specifically for child process output
-        const std::string logger = "|";
+        static const string stdout_logger = "|";
+        static const string stderr_logger = "!!!";
 
-        // Read output until it stops.
-        string output, buffer;
-        bool reading = true;
-        while (reading) {
-            if (!yield_input(buffer)) {
-                // Nothing to read, processing is complete.
-                break;
-            } else if (buffer.size() == 0) {
-                // No data read, but continue. If it were a halting error, an exception was thrown.
-                continue;
-            }
+        // Buffers for all of the output or partial line output
+        string stdout_buffer;
+        string stderr_buffer;
 
-            if (!callback) {
-                // If given no callback, buffer the entire output
-                output.append(buffer);
-                continue;
-            }
-
-            // Find the last newline, because anything after may not be a complete line.
-            auto lastNL = buffer.find_last_of("\n\r");
-            if (lastNL == string::npos) {
-                // No newline found, so keep appending and continue.
-                output.append(buffer);
-                continue;
-            }
-
-            // Make a range for iterating through lines.
-            auto str_range = make_pair(buffer.begin(), buffer.begin()+lastNL);
-            auto line_iterator = boost::make_iterator_range(
-                make_split_iterator(str_range, token_finder(is_any_of("\n\r"), token_compress_on)),
-                split_iterator<string::iterator>());
-
-            for (auto &line : line_iterator) {
-                // The previous trailing data is picked up by default.
-                output.append(line.begin(), line.end());
-
-                if (trim_output) {
-                    boost::trim(output);
+        // Read the streams
+        read_streams(
+            [&](string const& data) {
+                if (!process_data(trim, data, stdout_buffer, stdout_logger, stdout_callback)) {
+                    LOG_DEBUG("completed processing output: closing child pipes.");
+                    return false;
                 }
-
-                // Skip empty lines
-                if (output.empty()) {
-                    continue;
+                return true;
+            },
+            [&](string const& data) {
+                if (!process_data(trim, data, stderr_buffer, stderr_logger, stderr_callback)) {
+                    LOG_DEBUG("completed processing output: closing child pipes.");
+                    return false;
                 }
-
-                // Log the line to the output logger
-                if (LOG_IS_DEBUG_ENABLED()) {
-                    log(logger, log_level::debug, output);
-                }
-
-                // Pass the line to the callback
-                if (!callback(output)) {
-                    LOG_DEBUG("completed processing output; closing child pipe.");
-                    reading = false;
-                    break;
-                }
-
-                // Clear the line for the next iteration. Doing this allows us to
-                // append in the 1st iteration without a conditional check.
-                output.clear();
-            }
-
-            // Save the new trailing data
-            output.assign(buffer.begin()+lastNL, buffer.end());
-        }
+                return true;
+            });
 
         // Log the result and do a final callback if needed.
-
-        if (trim_output) {
-            boost::trim(output);
+        if (trim) {
+            boost::trim(stdout_buffer);
+            boost::trim(stderr_buffer);
         }
-        if (!output.empty()) {
+        // Log the last line of output for stdout
+        if (!stdout_buffer.empty()) {
             if (LOG_IS_DEBUG_ENABLED()) {
-                log(logger, log_level::debug, output);
+                log(stdout_logger, log_level::debug, stdout_buffer);
             }
-            if (callback) {
-                callback(output);
-                return {};
+            if (stdout_callback) {
+                stdout_callback(stdout_buffer);
+                stdout_buffer.clear();
             }
         }
-        return output;
+        // Log the last line of output for stderr
+        if (!stderr_buffer.empty()) {
+            if (LOG_IS_DEBUG_ENABLED()) {
+                log(stderr_logger, log_level::debug, stderr_buffer);
+            }
+            if (stderr_callback) {
+                stderr_callback(stderr_buffer);
+                stderr_buffer.clear();
+            }
+        }
+        return make_tuple(move(stdout_buffer), move(stderr_buffer));
     }
 
 }}  // namespace facter::executions

@@ -19,11 +19,12 @@ SCENARIO("resolving external executable facts into a collection") {
             LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution",
         });
         THEN("facts should resolve") {
-            REQUIRE(facts.size() == 3);
+            REQUIRE(facts.size() == 4);
             REQUIRE(facts.get<string_value>("exe_fact1"));
             REQUIRE(facts.get<string_value>("exe_fact2"));
             REQUIRE_FALSE(facts.get<string_value>("exe_fact3"));
             REQUIRE(facts.get<string_value>("exe_fact4"));
+            REQUIRE(facts.get<string_value>("foo"));
         }
     }
     GIVEN("a relative path") {
