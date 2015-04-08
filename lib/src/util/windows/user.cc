@@ -2,8 +2,10 @@
 #include <internal/util/windows/process.hpp>
 #include <internal/util/windows/system_error.hpp>
 #include <internal/util/windows/windows.hpp>
-#include <facter/util/environment.hpp>
+#include <facter/util/scoped_resource.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <boost/nowide/convert.hpp>
+#include <userenv.h>
 
 using namespace std;
 
@@ -44,15 +46,31 @@ namespace facter { namespace util { namespace windows { namespace user {
 
     string home_dir()
     {
-        string home, alt;
-        if (environment::get("HOME", home)) {
-            return home;
-        } else if (environment::get("HOMEDRIVE", home) && environment::get("HOMEPATH", alt)) {
-            return home + alt;
-        } else if (environment::get("USERPROFILE", home)) {
-            return home;
+        HANDLE temp_token = INVALID_HANDLE_VALUE;
+        if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &temp_token)) {
+            LOG_DEBUG("OpenProcessToken call failed: %1%", system_error());
+            return {};
         }
-        return {};
+        scoped_resource<HANDLE> token(temp_token, CloseHandle);
+
+        DWORD pathLen = 0u;
+        if (GetUserProfileDirectoryW(token, nullptr, &pathLen)) {
+            LOG_DEBUG("GetUserProfileDirectoryW call returned unexpectedly");
+            return {};
+        } else if (GetLastError() != ERROR_INSUFFICIENT_BUFFER) {
+            LOG_DEBUG("GetUserProfileDirectoryW call failed: %1%", system_error());
+            return {};
+        }
+
+        wstring buffer(pathLen, '\0');
+        if (!GetUserProfileDirectoryW(token, &buffer[0], &pathLen)) {
+            LOG_DEBUG("GetUserProfileDirectoryW call failed: %1%", system_error());
+            return {};
+        }
+
+        // Strip the trailing null character.
+        buffer.resize(pathLen > 0u ? pathLen - 1u : 0u);
+        return boost::nowide::narrow(buffer);
     }
 
 }}}}

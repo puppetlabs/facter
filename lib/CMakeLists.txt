@@ -222,7 +222,8 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
         "Wbemuuid.lib"
         "Secur32.lib"
         "Ws2_32.lib"
-        "iphlpapi.lib")
+        "iphlpapi.lib"
+        "userenv.lib")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSAPI_VERSION=1")
 endif()
 

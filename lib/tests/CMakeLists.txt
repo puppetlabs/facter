@@ -87,6 +87,7 @@ if (WIN32)
         Secur32.lib
         Ws2_32.lib
         iphlpapi.lib
+        userenv.lib
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBFACTER_TESTS_PLATFORM_LIBRARIES
