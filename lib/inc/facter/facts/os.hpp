@@ -177,6 +177,10 @@ namespace facter { namespace facts {
          * The Windows operating system.
          */
         constexpr static char const* windows = "windows";
+        /**
+         * The AristaEOS operating system.
+         */
+        constexpr static char const* arista_eos = "AristaEOS";
     };
 
 }}
