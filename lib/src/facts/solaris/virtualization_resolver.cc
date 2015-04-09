@@ -5,6 +5,7 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/execution/execution.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
 
@@ -42,15 +43,25 @@ namespace facter { namespace facts { namespace solaris {
                 {boost::regex("oVirt Node"), string(vm::ovirt)}
             };
 
-            execution::each_line("/usr/sbin/prtdiag", [&](string& line) {
-                for (auto const& it : virtual_map) {
-                    if (re_search(line, it.first)) {
-                        guest_of = it.second;
-                        return false;
-                    }
-                }
-                return true;
-            });
+            // Use the same timeout as in Facter 2.x
+            const uint32_t timeout = 20;
+            try {
+                execution::each_line(
+                    "/usr/sbin/prtdiag",
+                    [&](string& line) {
+                        for (auto const& it : virtual_map) {
+                            if (re_search(line, it.first)) {
+                                guest_of = it.second;
+                                return false;
+                            }
+                        }
+                        return true;
+                    },
+                    nullptr,
+                    timeout);
+            } catch (timeout_exception const&) {
+                LOG_WARNING("execution of prtdiag has timed out after %1% seconds.", timeout);
+            }
         } else if (arch->value() == "sparc") {
             // Uses hints from
             // http://serverfault.com/questions/153179/how-to-find-out-if-a-solaris-machine-is-virtualized-or-not
