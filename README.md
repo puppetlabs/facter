@@ -66,7 +66,7 @@ For the remaining tasks, build commands can be executed in the shell from Start 
 * build [Boost](http://sourceforge.net/projects/boost/files/latest/download)
 
         .\bootstrap mingw
-        .\b2 toolset=gcc --build-type=minimal install --prefix=$install --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log --with-locale boost.locale.iconv=off
+        .\b2 toolset=gcc --build-type=minimal install --prefix=$install --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log --with-locale --with-chrono boost.locale.iconv=off
 
 * build [yaml-cpp](https://code.google.com/p/yaml-cpp/downloads)
 
@@ -84,7 +84,7 @@ In Powershell:
     7za x boost_1_54_0.7z
     pushd boost_1_54_0
     .\bootstrap mingw
-    .\b2 toolset=gcc --build-type=minimal install --prefix=$install --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log --with-locale boost.locale.iconv=off
+    .\b2 toolset=gcc --build-type=minimal install --prefix=$install --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log --with-locale --with-chrono boost.locale.iconv=off
     popd
 
     (New-Object Net.WebClient).DownloadFile("https://yaml-cpp.googlecode.com/files/yaml-cpp-0.5.1.tar.gz", "$pwd/yaml-cpp-0.5.1.tar.gz")
