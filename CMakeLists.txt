@@ -26,7 +26,6 @@ endif()
 enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/vendor/leatherman/cmake")
 include(cotire)
 if (MINGW)
     # MinGW crashes with large pre-compiled headers; ours definitely exceeds the limit.
@@ -44,6 +43,7 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
 endif()
 
 # Before we find any packages, we want to pull in the common leatherman options, as they can affect commonly-used packages.
+find_package(Leatherman COMPONENTS catch logging nowide REQUIRED)
 include(options)
 
 # We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
@@ -100,18 +100,6 @@ add_definitions(${LEATHERMAN_DEFINITIONS})
 
 # Include vendor libraries
 set(RAPIDJSON_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/rapidjson-0.11/include")
-if (WIN32)
-    # We disabled installing Boost.Nowide; add back the library we use.
-    # CMake doesn't allow install targets in a different directory, so get the file.
-    install(FILES ${CMAKE_BINARY_DIR}/bin/libnowide.dll DESTINATION bin)
-endif()
-
-# Build against our leatherman tooling
-set(LEATHERMAN_USE_LOCALE TRUE)
-set(LEATHERMAN_USE_CATCH TRUE)
-set(LEATHERMAN_USE_NOWIDE TRUE)
-set(LEATHERMAN_USE_LOGGING TRUE)
-add_subdirectory("vendor/leatherman")
 
 #
 # Add cpplint and cppcheck targets
