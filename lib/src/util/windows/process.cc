@@ -24,10 +24,7 @@ namespace facter { namespace util { namespace windows { namespace process {
     {
         HANDLE temp_token = INVALID_HANDLE_VALUE;
         if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &temp_token)) {
-            // pre-Vista will return ERROR_NO_SUCH_PRIVILEGE
-            if (GetLastError() != ERROR_NO_SUCH_PRIVILEGE) {
-                LOG_DEBUG("OpenProcessToken call failed: %1%", system_error());
-            }
+            LOG_DEBUG("OpenProcessToken call failed: %1%", system_error());
             return false;
         }
         scoped_resource<HANDLE> token(temp_token, CloseHandle);
