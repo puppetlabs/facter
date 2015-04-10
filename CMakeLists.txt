@@ -48,7 +48,7 @@ include(options)
 
 # We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
 # For Windows, we've added locale to correctly generate a UTF-8 compatible default locale.
-set(BOOST_PKGS program_options system filesystem date_time thread regex log)
+set(BOOST_PKGS program_options system filesystem date_time thread regex log chrono)
 if (WIN32)
     list(APPEND BOOST_PKGS locale)
 endif()
