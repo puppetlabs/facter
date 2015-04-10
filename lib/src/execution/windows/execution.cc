@@ -487,8 +487,8 @@ namespace facter { namespace execution {
         stdOutWr.release();
         stdErrWr.release();
 
-        scoped_resource<HANDLE> hProcess(move(procInfo.hProcess), CloseHandle);
-        scoped_resource<HANDLE> hThread(move(procInfo.hThread), CloseHandle);
+        scoped_resource<HANDLE> hProcess(procInfo.hProcess, CloseHandle);
+        scoped_resource<HANDLE> hThread(procInfo.hThread, CloseHandle);
 
         // Use a Job Object to group any child processes spawned by the CreateProcess invocation, so we can
         // easily stop them in case of a timeout.

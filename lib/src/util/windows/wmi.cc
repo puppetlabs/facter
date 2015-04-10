@@ -49,7 +49,7 @@ namespace facter { namespace util { namespace windows {
         if (FAILED(hres)) {
             throw wmi_exception(format_hresult("failed to create IWbemLocator object", hres));
         }
-        _pLoc = scoped_resource<IWbemLocator *>(move(pLoc),
+        _pLoc = scoped_resource<IWbemLocator *>(pLoc,
             [](IWbemLocator *loc) { if (loc) loc->Release(); });
 
         IWbemServices *pSvc;
@@ -57,7 +57,7 @@ namespace facter { namespace util { namespace windows {
         if (FAILED(hres)) {
             throw wmi_exception(format_hresult("could not connect to WMI server", hres));
         }
-        _pSvc = scoped_resource<IWbemServices *>(move(pSvc),
+        _pSvc = scoped_resource<IWbemServices *>(pSvc,
             [](IWbemServices *svc) { if (svc) svc->Release(); });
 
         hres = CoSetProxyBlanket(_pSvc, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, NULL,
@@ -111,7 +111,7 @@ namespace facter { namespace util { namespace windows {
             LOG_DEBUG("query %1% failed", qry);
             return {};
         }
-        scoped_resource<IEnumWbemClassObject *> pEnum(move(_pEnum),
+        scoped_resource<IEnumWbemClassObject *> pEnum(_pEnum,
             [](IEnumWbemClassObject *rsc) { if (rsc) rsc->Release(); });
 
         imaps array_of_vals;
