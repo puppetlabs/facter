@@ -24,7 +24,8 @@ Facter.add(:dhcp_servers) do
     Facter::Core::Execution.which('nmcli')
   end
   confine do
-    Facter::Util::DHCPServers.network_manager_state != 'unknown'
+    s = Facter::Util::DHCPServers.network_manager_state
+    !s.empty? && (s != 'unknown')
   end
 
   setcode do

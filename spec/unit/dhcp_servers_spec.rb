@@ -175,6 +175,28 @@ describe "DHCP server facts" do
           Facter.fact(:dhcp_servers).value.should be_nil
         end
       end
+      describe 'with nmcli version >= 0.9.9 available but printing an error to STDERR' do
+        before :each do
+          Facter::Core::Execution.stubs(:exec).with('nmcli -t -f STATE g 2>/dev/null').returns("\n")
+          Facter::Core::Execution.stubs(:exec).with('nmcli --version').returns('nmcli tool, version 0.9.9.0')
+        end
+
+        it 'should not produce a dhcp_servers fact' do
+          Facter.fact(:dhcp_servers).value.should be_nil
+        end
+      end
+
+      describe 'with nmcli version <= 0.9.8 available but printing an error to STDERR' do
+        before :each do
+          Facter::Core::Execution.stubs(:exec).with('nmcli -t -f STATE nm 2>/dev/null').returns("\n")
+          Facter::Core::Execution.stubs(:exec).with('nmcli --version').returns('nmcli tool, version 0.9.7.0')
+        end
+
+        it 'should not produce a dhcp_servers fact' do
+          Facter.fact(:dhcp_servers).value.should be_nil
+        end
+      end
+
     end
 
     describe "without nmcli available" do
