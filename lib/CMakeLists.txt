@@ -217,12 +217,14 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
     # The GetPerformanceInfo symbol has moved around a lot between Windows versions;
     # these options tie it to the backwards-compatible version.
     set(LIBFACTER_PLATFORM_LIBRARIES
-        "Psapi.lib"
-        "Version.lib"
-        "Wbemuuid.lib"
-        "Secur32.lib"
-        "Ws2_32.lib"
-        "iphlpapi.lib")
+        Psapi.lib
+        Version.lib
+        Wbemuuid.lib
+        Secur32.lib
+        Ws2_32.lib
+        iphlpapi.lib
+        userenv.lib
+    )
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSAPI_VERSION=1")
 endif()
 

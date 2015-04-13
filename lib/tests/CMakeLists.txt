@@ -68,8 +68,12 @@ if (UNIX)
         set(LIBFACTER_TESTS_CATEGORY_SOURCES ${LIBFACTER_TESTS_CATEGORY_SOURCES} "util/posix/scoped_bio.cc")
     endif()
 
-     set(POSIX_LIBRARIES pthread dl)
+     set(POSIX_TESTS_LIBRARIES ${POSIX_LIBRARIES})
 endif()
+
+set(LIBFACTER_TESTS_PLATFORM_LIBRARIES
+    ${LIBFACTER_PLATFORM_LIBRARIES}
+)
 
 if (WIN32)
     set(LIBFACTER_TESTS_CATEGORY_SOURCES
@@ -79,25 +83,6 @@ if (WIN32)
         "facts/external/windows/execution_resolver.cc"
         "facts/external/windows/powershell_resolver.cc"
         "util/windows/environment.cc"
-    )
-    set(LIBFACTER_TESTS_PLATFORM_LIBRARIES
-        Psapi.lib
-        Version.lib
-        Wbemuuid.lib
-        Secur32.lib
-        Ws2_32.lib
-        iphlpapi.lib
-    )
-elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
-    set(LIBFACTER_TESTS_PLATFORM_LIBRARIES
-        ${BLKID_LIBRARIES}
-        rt
-    )
-elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
-    set(LIBFACTER_TESTS_PLATFORM_LIBRARIES
-        kstat
-        socket
-        nsl
     )
 endif()
 
@@ -123,7 +108,7 @@ include_directories(
 add_executable(libfacter_test $<TARGET_OBJECTS:libfactersrc> ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_CATEGORY_SOURCES})
 set_target_properties(libfacter_test PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS} COTIRE_ADD_UNITY_BUILD FALSE)
 target_link_libraries(libfacter_test
-    ${POSIX_LIBRARIES}
+    ${POSIX_TESTS_LIBRARIES}
     ${LIBFACTER_TESTS_PLATFORM_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
     ${Boost_LIBRARIES}

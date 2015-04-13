@@ -26,7 +26,7 @@ namespace facter { namespace util {
             LOG_DEBUG("library matching pattern %1% not found, CreateToolhelp32Snapshot failed: %2%.", pattern.c_str(), system_error());
             return library;
         }
-        scoped_resource<HANDLE> hModSnap(std::move(hModuleSnap), CloseHandle);
+        scoped_resource<HANDLE> hModSnap(hModuleSnap, CloseHandle);
 
         MODULEENTRY32 me32 = {};
         me32.dwSize = sizeof(MODULEENTRY32);
