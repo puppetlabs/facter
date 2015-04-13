@@ -127,6 +127,7 @@ if ($buildSource) {
     "--with-regex",
     "--with-log",
     "--with-locale",
+    "--with-chrono",
     "--prefix=`"$toolsDir\$boostPkg`"",
     "boost.locale.iconv=off"
     "-j$cores"
