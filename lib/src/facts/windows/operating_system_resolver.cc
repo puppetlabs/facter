@@ -25,7 +25,7 @@ namespace facter { namespace facts { namespace windows {
 
         switch (sysInfo.wProcessorArchitecture) {
             case PROCESSOR_ARCHITECTURE_AMD64:
-                return "x64";
+                return "x86_64";
             case PROCESSOR_ARCHITECTURE_ARM:
                 return "arm";
             case PROCESSOR_ARCHITECTURE_IA64:
@@ -42,6 +42,8 @@ namespace facter { namespace facts { namespace windows {
         // Use "x86" for 32-bit systems
         if (re_search(hardware, boost::regex("i[3456]86"))) {
             return "x86";
+        } else if (hardware == "x86_64") {
+            return "x64";
         }
         return hardware;
     }
