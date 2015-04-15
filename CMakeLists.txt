@@ -132,3 +132,6 @@ add_subdirectory(exe)
 # Add test executables for unit testing
 add_test(NAME "library\\ tests" COMMAND libfacter_test)
 add_test(NAME "facter\\ smoke" COMMAND facter)
+
+# Install the man page
+install(FILES ${CMAKE_SOURCE_DIR}/man/man8/facter.8 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man8/)
