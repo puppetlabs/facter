@@ -98,6 +98,7 @@ rm -rf %{buildroot}
 %{_bindir}/facter
 %{_libdir}/libfacter.so*
 %{_includedir}/facter
+%{_mandir}/man8/facter.8.gz
 %if 0%{?rhel} >= 7 || 0%{?fedora}
 %{vendor_ruby}/facter.rb
 %endif
