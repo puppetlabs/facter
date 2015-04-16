@@ -99,7 +99,7 @@ endif()
 add_definitions(${LEATHERMAN_DEFINITIONS})
 
 # Include vendor libraries
-set(RAPIDJSON_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/rapidjson-0.11/include")
+set(RAPIDJSON_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/vendor/rapidjson-0.11/include")
 if (WIN32)
     # We disabled installing Boost.Nowide; add back the library we use.
     # CMake doesn't allow install targets in a different directory, so get the file.
@@ -134,4 +134,4 @@ add_test(NAME "library\\ tests" COMMAND libfacter_test)
 add_test(NAME "facter\\ smoke" COMMAND facter)
 
 # Install the man page
-install(FILES ${CMAKE_SOURCE_DIR}/man/man8/facter.8 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man8/)
+install(FILES ${PROJECT_SOURCE_DIR}/man/man8/facter.8 DESTINATION share/man/man8/)

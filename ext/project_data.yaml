@@ -6,7 +6,7 @@ homepage: 'https://github.com/puppetlabs/facter'
 summary: 'Facter, a system inventory tool'
 description: 'You can prove anything with facts!'
 # files to be packaged into a tarball and released with deb/rpm
-files: '[A-Z]* exe ext lib scripts vendor cmake'
+files: '[A-Z]* exe ext lib man scripts vendor cmake'
 # space separated list of files to *exclude* from the tarball
 # note that each listing in files, above, is recursively copied into the tarball, so
 # 'tar\_excludes' only needs to include any undesired subdirectories/files of the 'files'
