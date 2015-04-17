@@ -32,7 +32,7 @@ namespace facter { namespace facts { namespace osx {
     boost::optional<uint64_t> networking_resolver::get_link_mtu(string const& interface, void* data) const
     {
         if (!data) {
-            return {};
+            return boost::none;
         }
         return reinterpret_cast<if_data const*>(data)->ifi_mtu;
     }
