@@ -37,8 +37,8 @@ agents.each do |agent|
   on(agent, "mkdir -p '#{custom_external_dir}'")
 
   step "Agent #{agent}: create executable external facts in facts.d and custom external fact dir"
-  ext_fact_factsd     = "#{factsd}/external_fact#{ext}"
-  ext_fact_custom_dir = "#{custom_external_dir}/external_fact#{ext}"
+  ext_fact_factsd     = File.join(factsd, "external_fact#{ext}")
+  ext_fact_custom_dir = File.join(custom_external_dir, "external_fact#{ext}")
   create_remote_file(agent, ext_fact_factsd, content)
   create_remote_file(agent, ext_fact_custom_dir, content)
   on(agent, "chmod +x #{ext_fact_factsd} #{ext_fact_custom_dir}")

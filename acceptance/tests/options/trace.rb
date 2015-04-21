@@ -22,7 +22,7 @@ agents.each do |agent|
 
   step "Agent #{agent}: create custom fact directory and executable custom fact"
   on(agent, "mkdir -p '#{custom_dir}'")
-  custom_fact = "#{custom_dir}/custom_fact.rb"
+  custom_fact = File.join(custom_dir, 'custom_fact.rb')
   create_remote_file(agent, custom_fact, content)
   on(agent, "chmod +x #{custom_fact}")
 
