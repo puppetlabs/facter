@@ -17,7 +17,8 @@ echo "external_fact=testvalue"
 EOM
 
 win_content = <<EOM
-echo "external_fact=testvalue"
+@echo off
+echo external_fact=testvalue
 EOM
 
 agents.each do |agent|
@@ -48,12 +49,12 @@ agents.each do |agent|
   end
 
   step "--no-external-facts option should disable external facts"
-  on(agent, "facter --no-external-facts external_fact") do
+  on(agent, facter("--no-external-facts external_fact")) do
     assert_equal("", stdout.chomp, "Expected external fact to be disabled, but it resolved as #{stdout.chomp}")
   end
 
   step "--external-dir option should allow external facts to be resolved from a specific directory"
-  on(agent, "facter --external-dir #{custom_external_dir} external_fact") do
+  on(agent, facter("--external-dir #{custom_external_dir} external_fact")) do
     assert_equal("testvalue", stdout.chomp, "External fact output does not match expected output")
   end
 end

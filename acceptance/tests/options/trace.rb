@@ -32,7 +32,7 @@ agents.each do |agent|
 
   step "--trace option should provide a backtrace for a custom fact with errors"
   begin
-    on(agent, "FACTERLIB=#{custom_dir} facter --trace custom_fact")
+      on(agent, facter("--custom-dir #{custom_dir} --trace custom_fact"))
   rescue Exception => e
     assert_match(/backtrace:\s+#{custom_fact}/, e.message, "Expected a backtrace for erroneous custom fact")
   end

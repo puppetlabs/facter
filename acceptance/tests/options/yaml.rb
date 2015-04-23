@@ -32,7 +32,7 @@ agents.each do |agent|
   end
 
   step "Agent #{agent}: retrieve output using the --yaml option"
-  on(agent, "FACTERLIB=#{custom_dir} facter structured_fact --yaml") do
+  on(agent, facter("--custom-dir #{custom_dir} --yaml structured_fact")) do
     begin
       expected = {"structured_fact" => {"foo" => {"nested" => "value1"}, "bar" => "value2", "baz" => "value3" }}.to_yaml.gsub("---\n", '')
       assert_equal(expected, stdout, "YAML output does not match expected output")

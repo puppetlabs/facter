@@ -33,7 +33,7 @@ agents.each do |agent|
   end
 
   step "Agent #{agent}: retrieve output using the --json option"
-  on(agent, "FACTERLIB=#{custom_dir} facter structured_fact --json") do
+  on(agent, facter("--custom-dir #{custom_dir} --json structured_fact")) do
     begin
       expected = JSON.pretty_generate({"structured_fact" => {"foo" => {"nested" => "value1"}, "bar" => "value2", "baz" => "value3"}})
       assert_equal(expected, stdout.chomp, "JSON output does not match expected output")
