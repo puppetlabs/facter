@@ -395,6 +395,7 @@ protected:
 
 void add_all_facts(collection& facts)
 {
+    facts.add("env_windows_installdir", make_value<string_value>("C:\\Program Files\\Some\\Path"));
     facts.add("facterversion", make_value<string_value>("version"));
     facts.add(make_shared<disk_resolver>());
     facts.add(make_shared<dmi_resolver>());
