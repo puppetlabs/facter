@@ -58,7 +58,7 @@ function travis_make()
         fi
 
         if [ $1 == "debug" ]; then
-            coveralls --gcov-options '\-lp' -r .. >/dev/null
+            coveralls --gcov-options '\-lp' -r .. --exclude ../acceptance >/dev/null
         fi
 
         # Install into the system for the spec tests 
