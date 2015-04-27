@@ -25,7 +25,7 @@ agents.each do |agent|
 
   step "Agent #{agent}: create custom fact directory and executable custom fact"
   on(agent, "mkdir -p '#{custom_dir}'")
-  custom_fact = "#{custom_dir}/custom_fact.rb"
+  custom_fact = File.join(custom_dir, 'custom_fact.rb')
   create_remote_file(agent, custom_fact, content)
   on(agent, "chmod +x #{custom_fact}")
 
@@ -34,12 +34,12 @@ agents.each do |agent|
   end
 
   step "--no-custom-facts option should disable custom facts"
-  on(agent, "FACTERLIB=#{custom_dir} facter --no-custom-facts custom_fact") do
+  on(agent, facter("--no-custom-facts custom_fact")) do
     assert_equal("", stdout.chomp, "Expected custom fact to be disabled, but it resolved as #{stdout.chomp}")
   end
 
   step "--custom-dir option should allow custom facts to be resolved from a specific directory"
-  on(agent, "facter --custom-dir #{custom_dir} custom_fact") do
+  on(agent, facter("--custom-dir #{custom_dir} custom_fact")) do
     assert_equal("testvalue", stdout.chomp, "Custom fact output does not match expected output")
   end
 end

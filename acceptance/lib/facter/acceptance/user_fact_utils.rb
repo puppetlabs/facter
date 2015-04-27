@@ -10,12 +10,12 @@ module Facter
       def get_user_fact_dir(platform, version)
         if platform =~ /windows/
           if version < 6.0
-            'C:/Documents and Settings/All Users/Application Data/PuppetLabs/facter/custom'
+            File.join('C:', 'Documents and Settings', 'All Users', 'Application Data', 'PuppetLabs', 'facter', 'custom')
           else
-            'C:/ProgramData/PuppetLabs/facter/custom'
+            File.join('C:', 'ProgramData', 'PuppetLabs', 'facter', 'custom')
           end
         else
-          '/opt/puppetlabs/facter/custom'
+          File.join('/', 'opt', 'puppetlabs', 'facter', 'custom')
         end
       end
 
@@ -24,12 +24,12 @@ module Facter
       def get_factsd_dir(platform, version)
         if platform =~ /windows/
           if version < 6.0
-            'C:/Documents and Settings/All Users/Application Data/PuppetLabs/facter/facts.d'
+            File.join('C:', 'Documents and Settings', 'All Users', 'Application Data', 'PuppetLabs', 'facter', 'facts.d')
           else
-            'C:/ProgramData/PuppetLabs/facter/facts.d'
+            File.join('C:', 'ProgramData', 'PuppetLabs', 'facter', 'facts.d')
           end
         else
-          '/opt/puppetlabs/facter/facts.d'
+          File.join('/', 'opt', 'puppetlabs', 'facter', 'facts.d')
         end
       end
 
