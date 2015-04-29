@@ -1,8 +1,35 @@
 module Facter
-  # Initialize native facter.
-  begin
-    require "#{ENV['FACTER_DIR'] || '${CMAKE_INSTALL_PREFIX}'}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so"
-  rescue LoadError
-    raise LoadError.new('libfacter was not found. Please make sure it was installed to the expected location.')
+  if RUBY_PLATFORM == "java"
+    # For JRuby, require 'facter.jar'
+    begin
+      require 'facter.jar'
+    rescue LoadError
+      raise LoadError.new('libfacter was not built with JRuby support.')
+    end
+
+    # Pass value call through to JNI interface
+    def self.value(name)
+      com.puppetlabs.Facter.lookup(name)
+    end
+
+    def self.search(*paths)
+      # No-op; we don't support custom facts under JRuby
+    end
+
+    def self.version
+      com.puppetlabs.Facter.lookup("facterversion")
+    end
+
+    def self.add(*params)
+      raise 'adding facts under JRuby is not implemented.'
+    end
+
+  else
+    # Simply require libfacter.so; this will define all of the Facter API
+    begin
+      require "#{ENV['FACTER_DIR'] || '${CMAKE_INSTALL_PREFIX}'}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so"
+    rescue LoadError
+      raise LoadError.new('libfacter was not found. Please make sure it was installed to the expected location.')
+    end
   end
 end

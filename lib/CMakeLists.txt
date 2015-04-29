@@ -228,6 +228,28 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSAPI_VERSION=1")
 endif()
 
+if (WIN32)
+    set(LIBFACTER_INSTALL_DESTINATION bin)
+else()
+    # TODO: lib64 for certain operating systems?
+    set(LIBFACTER_INSTALL_DESTINATION lib)
+endif()
+
+if (JRUBY_SUPPORT)
+    include_directories(${JNI_INCLUDE_DIRS})
+    set(LIBFACTER_COMMON_SOURCES ${LIBFACTER_COMMON_SOURCES} src/java/facter.cc)
+
+    configure_file(
+        Facter.java.in
+        "${CMAKE_BINARY_DIR}/lib/com/puppetlabs/Facter.java"
+    )
+
+    include(UseJava)
+    add_jar(facter-jruby "${CMAKE_BINARY_DIR}/lib/com/puppetlabs/Facter.java" OUTPUT_NAME facter OUTPUT_DIR "${CMAKE_BINARY_DIR}/lib" ENTRY_POINT com/puppetlabs/Facter)
+
+    add_custom_command(TARGET facter-jruby POST_BUILD COMMAND javah ARGS -d "${CMAKE_CURRENT_LIST_DIR}/src/java" com.puppetlabs.Facter WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+endif()
+
 # Set include directories
 include_directories(
     inc
@@ -274,13 +296,6 @@ elseif (WIN32)
     add_definitions("-Dlibfacter_EXPORTS")
 endif()
 
-if (WIN32)
-    set(LIBFACTER_INSTALL_DESTINATION bin)
-else()
-    # TODO: lib64 for certain operating systems?
-    set(LIBFACTER_INSTALL_DESTINATION lib)
-endif()
-
 install(TARGETS libfacter DESTINATION ${LIBFACTER_INSTALL_DESTINATION})
 install(DIRECTORY inc/facter DESTINATION include)
 
@@ -304,6 +319,15 @@ if (RUBY_FOUND)
     string(STRIP ${RUBY_VENDORDIR_OUT} RUBY_VENDORDIR)
     message(STATUS "\"make install\" will install facter.rb to ${RUBY_VENDORDIR}")
     install(FILES ${CMAKE_BINARY_DIR}/lib/facter.rb DESTINATION ${RUBY_VENDORDIR})
+
+    if (JRUBY_SUPPORT)
+        message(STATUS "\"make install\" will install facter.jar to ${RUBY_VENDORDIR} to support JRuby")
+        install(FILES ${CMAKE_BINARY_DIR}/lib/facter.jar DESTINATION ${RUBY_VENDORDIR})
+    endif()
+endif()
+
+if (JRUBY_SUPPORT)
+    add_dependencies(libfacter facter-jruby)
 endif()
 
 cotire(libfacter)

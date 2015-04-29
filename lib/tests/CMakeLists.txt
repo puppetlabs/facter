@@ -97,6 +97,11 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     )
 endif()
 
+if (JRUBY_SUPPORT)
+    include_directories(${JNI_INCLUDE_DIRS})
+    set(LIBFACTER_TESTS_COMMON_SOURCES ${LIBFACTER_TESTS_COMMON_SOURCES} java/facter.cc)
+endif()
+
 include_directories(
     ../inc
     ${Boost_INCLUDE_DIRS}
