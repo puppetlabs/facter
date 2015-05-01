@@ -1,12 +1,10 @@
-version: 1.0.{build}
-clone_folder: c:\projects\facter
-platform:
-  - x64
+version: 3.0.0.{build}
+clone_depth: 10
 install:
   - git submodule update --init --recursive
 
-  - ps: choco install mingw-w64 -y -Version 4.8.3 -source https://www.myget.org/F/puppetlabs
-  - ps: $env:PATH = "C:\Ruby21-x64\bin;C:\tools\mingw64\bin;" + $env:PATH
+  - choco install mingw-w64 -y -Version 4.8.3 -source https://www.myget.org/F/puppetlabs
+  - SET PATH=C:\Ruby21-x64\bin;C:\tools\mingw64\bin;%PATH%
 
   - ps: wget 'https://s3.amazonaws.com/kylo-pl-bucket/boost_1_55_0-x86_64_mingw-w64_4.8.3_posix_seh.7z' -OutFile "$pwd\boost.7z"
   - ps: 7z.exe x boost.7z -oC:\tools | FIND /V "ing  "
@@ -14,9 +12,8 @@ install:
   - ps: wget 'https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_posix_seh.7z' -OutFile "$pwd\yaml-cpp.7z"
   - ps: 7z.exe x yaml-cpp.7z -oC:\tools | FIND /V "ing  "
 
-  - ps: (Get-Content C:\Ruby21-x64\lib\ruby\2.1.0\dl.rb) | Foreach-Object {$_ -replace "warn ", "puts "} | Set-Content C:\Ruby21-x64\lib\ruby\2.1.0\dl.rb
-  - ps: gem install bundler -q --no-ri --no-rdoc
-  - ps: bundle install --gemfile=lib/Gemfile --quiet 2>&1 | out-null
+  - gem install bundler --quiet --no-ri --no-rdoc
+  - bundle install --jobs 4 --retry 2 --gemfile=lib/Gemfile --quiet
 
 build_script:
   - ps: mv "C:\Program Files (x86)\Git\bin\sh.exe" "C:\Program Files (x86)\Git\bin\shxx.exe"
