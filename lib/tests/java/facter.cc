@@ -36,7 +36,7 @@ SCENARIO("using libfacter from Java") {
                     "os"
                 },
                 {
-                    { "FACTER_DIR", LIBFACTER_OUTPUT_DIRECTORY },
+                    { "FACTERDIR", LIBFACTER_OUTPUT_DIRECTORY },
                     { "PATH", string(LIBFACTER_OUTPUT_DIRECTORY) + environment::get_path_separator() + system_path }
                 },
                 0,

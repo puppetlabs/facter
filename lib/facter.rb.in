@@ -27,7 +27,7 @@ module Facter
   else
     # Simply require libfacter.so; this will define all of the Facter API
     begin
-      require "#{ENV['FACTER_DIR'] || '${CMAKE_INSTALL_PREFIX}'}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so"
+      require "#{ENV['FACTERDIR'] || '${CMAKE_INSTALL_PREFIX}'}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so"
     rescue LoadError
       raise LoadError.new('libfacter was not found. Please make sure it was installed to the expected location.')
     end

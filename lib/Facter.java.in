@@ -9,7 +9,7 @@ import java.util.TreeSet;
 public class Facter {
     static {
         // Look for libfacter in the same place as facter.rb does
-        String facterDir = System.getenv("FACTER_DIR");
+        String facterDir = System.getenv("FACTERDIR");
         if (facterDir == null) {
             facterDir = "${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION}";
         }
