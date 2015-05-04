@@ -3,6 +3,9 @@
 #include <string>
 #include <functional>
 
+#define JAVA_EXECUTABLE "@Java_JAVA_EXECUTABLE@"
+#define BINARY_DIRECTORY "@CMAKE_BINARY_DIR@"
+#define LIBFACTER_OUTPUT_DIRECTORY "@LIBRARY_OUTPUT_PATH@"
 #define LIBFACTER_TESTS_DIRECTORY "@CMAKE_CURRENT_LIST_DIR@"
 
 namespace facter { namespace testing {

@@ -1,0 +1,110 @@
+package com.puppetlabs;
+
+import java.util.HashMap;
+import java.util.TreeSet;
+
+/**
+ * The Java shim for libfacter.
+ */
+public class Facter {
+    static {
+        // Look for libfacter in the same place as facter.rb does
+        String facterDir = System.getenv("FACTERDIR");
+        if (facterDir == null) {
+            facterDir = "${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION}";
+        }
+
+        // Load the library
+        System.load(facterDir.replaceAll("/$", "") + "/libfacter.so");
+    }
+
+    /**
+     * Lookup a fact value by name.
+     * @param name The fact name.
+     * @return Returns the fact's value or null if not found.
+     */
+    public static native Object lookup(String name);
+
+    /**
+     * Entry point for testing.
+     * Expects one argument which is the fact to lookup.
+     * @param args The program arguments.
+     */
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            System.out.println("usage: Facter <fact>");
+            return;
+        }
+        print(lookup(args[0]), 1);
+        System.out.println();
+    }
+
+    private static void indent(int level) {
+        if (level < 1) {
+            return;
+        }
+        for (int i = 0; i < (level * 2); ++i) {
+            System.out.print(" ");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void print(Object value, int level) {
+        if (value == null) {
+            return;
+        }
+
+        // Check for arrays
+        if (value instanceof Object[]) {
+            Object[] array = (Object[])value;
+            System.out.print("[\n");
+            boolean first = true;
+            for (Object element : array) {
+                if (first) {
+                    first = false;
+                } else {
+                    System.out.print(",\n");
+                }
+                indent(level);
+                print(element, 0);
+            }
+            System.out.print("\n");
+            indent(level - 1);
+            System.out.print("]");
+            return;
+        }
+
+        // Check for maps
+        if (value instanceof HashMap) {
+            HashMap map = (HashMap)value;
+            System.out.print("{\n");
+
+            // Print out the keys in lexicographical order (like a std::map)
+            TreeSet<String> keys = new TreeSet<String>(map.keySet());
+            boolean first = true;
+            for (String key : keys) {
+                if (first) {
+                    first = false;
+                } else {
+                    System.out.print(",\n");
+                }
+                indent(level);
+                System.out.format("%s => ", key);
+                print(map.get(key), level + 1);
+            }
+            System.out.print("\n");
+            indent(level - 1);
+            System.out.print("}");
+            return;
+        }
+
+        // Check for strings (print with quotes)
+        if (value instanceof String) {
+            System.out.format("\"%s\"", value);
+            return;
+        }
+
+        // Output the value
+        System.out.print(value);
+    }
+}

@@ -10,6 +10,7 @@ compile_commands.json
 /lib/inc/facter/export.h
 /lib/inc/facter/version.h
 /lib/tests/fixtures.hpp
+/lib/src/java/com_puppetlabs_Facter.h
 /debug*/
 /release*/
 /.idea/

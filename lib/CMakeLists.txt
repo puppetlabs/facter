@@ -228,6 +228,28 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSAPI_VERSION=1")
 endif()
 
+if (WIN32)
+    set(LIBFACTER_INSTALL_DESTINATION bin)
+else()
+    # TODO: lib64 for certain operating systems?
+    set(LIBFACTER_INSTALL_DESTINATION lib)
+endif()
+
+if (JRUBY_SUPPORT)
+    include_directories(${JNI_INCLUDE_DIRS})
+    set(LIBFACTER_COMMON_SOURCES ${LIBFACTER_COMMON_SOURCES} src/java/facter.cc)
+
+    configure_file(
+        Facter.java.in
+        "${CMAKE_BINARY_DIR}/lib/com/puppetlabs/Facter.java"
+    )
+
+    include(UseJava)
+    add_jar(facter-jruby "${CMAKE_BINARY_DIR}/lib/com/puppetlabs/Facter.java" OUTPUT_NAME facter OUTPUT_DIR "${CMAKE_BINARY_DIR}/lib" ENTRY_POINT com/puppetlabs/Facter)
+
+    add_custom_command(TARGET facter-jruby POST_BUILD COMMAND javah ARGS -d "${CMAKE_CURRENT_LIST_DIR}/src/java" com.puppetlabs.Facter WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+endif()
+
 # Set include directories
 include_directories(
     inc
@@ -248,9 +270,9 @@ link_directories(
 
 # Add the library target without a prefix (name already has the 'lib') and use '.so' for all platforms (Ruby extension file extension)
 add_library(libfactersrc OBJECT ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_STANDARD_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
-set_target_properties(libfactersrc PROPERTIES POSITION_INDEPENDENT_CODE true)
+set_target_properties(libfactersrc PROPERTIES POSITION_INDEPENDENT_CODE true COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS} COTIRE_ADD_UNITY_BUILD FALSE)
 add_library(libfacter SHARED $<TARGET_OBJECTS:libfactersrc>)
-set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX "" IMPORT_SUFFIX ".so.a" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}" COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS})
+set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX "" IMPORT_SUFFIX ".so.a" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}" COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY")
 
 # Link in additional libraries
 target_link_libraries(libfacter PRIVATE
@@ -272,13 +294,6 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
 elseif (WIN32)
     add_compiler_export_flags()
     add_definitions("-Dlibfacter_EXPORTS")
-endif()
-
-if (WIN32)
-    set(LIBFACTER_INSTALL_DESTINATION bin)
-else()
-    # TODO: lib64 for certain operating systems?
-    set(LIBFACTER_INSTALL_DESTINATION lib)
 endif()
 
 install(TARGETS libfacter DESTINATION ${LIBFACTER_INSTALL_DESTINATION})
@@ -304,8 +319,17 @@ if (RUBY_FOUND)
     string(STRIP ${RUBY_VENDORDIR_OUT} RUBY_VENDORDIR)
     message(STATUS "\"make install\" will install facter.rb to ${RUBY_VENDORDIR}")
     install(FILES ${CMAKE_BINARY_DIR}/lib/facter.rb DESTINATION ${RUBY_VENDORDIR})
+
+    if (JRUBY_SUPPORT)
+        message(STATUS "\"make install\" will install facter.jar to ${RUBY_VENDORDIR} to support JRuby")
+        install(FILES ${CMAKE_BINARY_DIR}/lib/facter.jar DESTINATION ${RUBY_VENDORDIR})
+    endif()
 endif()
 
-cotire(libfacter)
+if (JRUBY_SUPPORT)
+    add_dependencies(libfacter facter-jruby)
+endif()
+
+cotire(libfactersrc)
 
 add_subdirectory(tests)
