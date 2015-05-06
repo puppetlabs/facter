@@ -159,25 +159,6 @@ module Puppet
         end
       end
 
-      # Configures gem sources on hosts to use a mirror, if specified
-      # This is a duplicate of the Gemfile logic.
-      def configure_gem_mirror(hosts)
-        hosts = [hosts] unless hosts.kind_of?(Array)
-        gem_source = ENV['GEM_SOURCE'] || 'https://rubygems.org'
-
-        hosts.each do |host|
-          case host['platform']
-          when /windows/
-            gem = 'cmd /c gem'
-          else
-            gem = 'gem'
-          end
-
-          on host, "#{gem} source --clear-all"
-          on host, "#{gem} source --add #{gem_source}"
-        end
-      end
-
       def install_puppet_from_msi( host, opts )
         if not link_exists?(opts[:url])
           raise "Puppet does not exist at #{opts[:url]}!"
