@@ -1,14 +1,8 @@
 source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
-gem "beaker", "~> 2.2.0"
+gem "beaker", "~> 2.8"
 gem 'rake', "~> 10.1.0"
-
-# json-schema does not support windows, so use the 'ruby' platform to exclude it on windows
-platforms :ruby do
-  # json-schema uses multi_json, but chokes with multi_json 1.7.9, so prefer 1.7.7
-  gem "multi_json", "1.7.7", :require => false
-  gem "json-schema", "2.1.1", :require => false
-end
+gem "multi_json", "~> 1.8"
 
 if File.exists? "#{__FILE__}.local"
   eval(File.read("#{__FILE__}.local"), binding)
