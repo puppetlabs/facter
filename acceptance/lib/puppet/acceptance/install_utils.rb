@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'open3'
 require 'uri'
+require 'puppet/acceptance/common_utils'
 
 module Puppet
   module Acceptance
@@ -156,6 +157,24 @@ module Puppet
           else
             host.logger.notify("No repository installation step for #{platform} yet...")
         end
+      end
+
+      def install_puppet_from_msi( host, opts )
+        if not link_exists?(opts[:url])
+          raise "Puppet does not exist at #{opts[:url]}!"
+        end
+
+        # `start /w` blocks until installation is complete, but needs to be wrapped in `cmd.exe /c`
+        on host, "cmd.exe /c start /w msiexec /qn /i #{opts[:url]} /L*V C:\\\\Windows\\\\Temp\\\\Puppet-Install.log"
+
+        # make sure the background service isn't running while the test executes
+        on host, "net stop puppet"
+
+        # make sure install is sane, beaker has already added puppet and ruby
+        # to PATH in ~/.ssh/environment
+        on host, puppet('--version')
+        ruby = Puppet::Acceptance::CommandUtils.ruby_command(host)
+        on host, "#{ruby} --version"
       end
     end
   end
