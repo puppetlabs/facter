@@ -36,7 +36,7 @@ agents.each do |agent|
   step "Agent #{agent}: create an executable external fact in default facts.d"
   ext_fact = File.join(factsd, "external_fact#{ext}")
   create_remote_file(agent, ext_fact, content)
-  on(agent, "chmod +x #{ext_fact}")
+  on(agent, "chmod +x '#{ext_fact}'")
 
   teardown do
     on(agent, "rm -f '#{ext_fact}'")
