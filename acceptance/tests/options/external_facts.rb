@@ -42,10 +42,10 @@ agents.each do |agent|
   ext_fact_custom_dir = File.join(custom_external_dir, "external_fact#{ext}")
   create_remote_file(agent, ext_fact_factsd, content)
   create_remote_file(agent, ext_fact_custom_dir, content)
-  on(agent, "chmod +x #{ext_fact_factsd} #{ext_fact_custom_dir}")
+  on(agent, "chmod +x '#{ext_fact_factsd}' '#{ext_fact_custom_dir}'")
 
   teardown do
-    on(agent, "rm -f '#{ext_fact_factsd} #{ext_fact_custom_dir}'")
+    on(agent, "rm -f '#{ext_fact_factsd}' '#{ext_fact_custom_dir}'")
   end
 
   step "--no-external-facts option should disable external facts"
@@ -54,7 +54,7 @@ agents.each do |agent|
   end
 
   step "--external-dir option should allow external facts to be resolved from a specific directory"
-  on(agent, facter("--external-dir #{custom_external_dir} external_fact")) do
+  on(agent, facter("--external-dir '#{custom_external_dir}' external_fact")) do
     assert_equal("testvalue", stdout.chomp, "External fact output does not match expected output")
   end
 end

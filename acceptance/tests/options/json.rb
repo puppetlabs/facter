@@ -26,14 +26,14 @@ agents.each do |agent|
   custom_fact = File.join(custom_dir, 'custom_fact.rb')
   on(agent, "mkdir -p '#{custom_dir}'")
   create_remote_file(agent, custom_fact, content)
-  on(agent, "chmod +x #{custom_fact}")
+  on(agent, "chmod +x '#{custom_fact}'")
 
   teardown do
     on(agent, "rm -f '#{custom_fact}'")
   end
 
   step "Agent #{agent}: retrieve output using the --json option"
-  on(agent, facter("--custom-dir #{custom_dir} --json structured_fact")) do
+  on(agent, facter("--custom-dir '#{custom_dir}' --json structured_fact")) do
     begin
       expected = JSON.pretty_generate({"structured_fact" => {"foo" => {"nested" => "value1"}, "bar" => "value2", "baz" => "value3"}})
       assert_equal(expected, stdout.chomp, "JSON output does not match expected output")

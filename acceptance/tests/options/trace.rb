@@ -24,7 +24,7 @@ agents.each do |agent|
   on(agent, "mkdir -p '#{custom_dir}'")
   custom_fact = File.join(custom_dir, 'custom_fact.rb')
   create_remote_file(agent, custom_fact, content)
-  on(agent, "chmod +x #{custom_fact}")
+  on(agent, "chmod +x '#{custom_fact}'")
 
   teardown do
     on(agent, "rm -f '#{custom_fact}'")
