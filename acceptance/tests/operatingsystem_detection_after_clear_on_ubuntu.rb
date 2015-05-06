@@ -14,5 +14,5 @@ agents.each do |agent|
 
   create_remote_file(agent, script_name, script_contents)
 
-  on(agent, "#{agent['privatebindir']}/ruby #{script_name}")
+  on(agent, "#{Puppet::Acceptance::CommandUtils.ruby_command(agent)} #{script_name}")
 end
