@@ -78,6 +78,12 @@ namespace facter { namespace ruby {
         facter::facts::collection& facts();
 
         /**
+         * Gets the module's self.
+         * @return Returns the module's self.
+         */
+        VALUE self() const;
+
+        /**
          * Gets the current module.
          * @return Returns the current module.
          */

@@ -356,6 +356,11 @@ namespace facter { namespace ruby {
         return _collection;
     }
 
+    VALUE module::self() const
+    {
+        return _self;
+    }
+
     module* module::current()
     {
         auto const& ruby = *api::instance();
