@@ -305,12 +305,19 @@ if (RUBY_FOUND)
         "${CMAKE_BINARY_DIR}/lib/facter.rb"
     )
 
+    # Generate a file for ruby testing
+    configure_file (
+        "spec_helper.rb.in"
+        "${CMAKE_CURRENT_LIST_DIR}/spec/spec_helper.rb"
+    )
+
     message(STATUS "Ruby ${RUBY_VERSION} found.")
 
     if (APPLE)
         # Unfortunately the default DLEXT for most rubies on OSX is "bundle"
         # Ruby calls dlopen for the extension, which doesn't care if the "bundle" really is a dylib
         # Therefore, workaround this by symlinking "libfacter.bundle" to "libfacter.so"
+        add_custom_command(TARGET libfacter POST_BUILD COMMAND ln -sf libfacter.so libfacter.bundle WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
         message(STATUS "\"make install\" will create a symlink from ${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.bundle to ${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so")
         install(CODE "EXECUTE_PROCESS(COMMAND ln -sf libfacter.so libfacter.bundle WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION})")
     endif()

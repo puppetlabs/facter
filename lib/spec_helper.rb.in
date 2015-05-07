@@ -1,6 +1,12 @@
+# Set FACTERDIR so that facter.rb can find libfacter.so
+ENV['FACTERDIR'] = '${CMAKE_BINARY_DIR}'
+
+# Add the location of libfacter.so to the path for Windows
+ENV['PATH'] = '${CMAKE_BINARY_DIR}/${LIBFACTER_INSTALL_DESTINATION}' + File::PATH_SEPARATOR + ENV['PATH']
+
 require 'mocha'
 require 'rspec'
-require 'facter'
+require '${CMAKE_BINARY_DIR}/lib/facter.rb'
 
 RSpec.configure do |config|
   config.mock_with :mocha
