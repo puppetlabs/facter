@@ -141,7 +141,6 @@ namespace facter { namespace ruby {
         std::set<std::string> _loaded_files;
         bool _loaded_all;
         VALUE _self;
-        VALUE _previous_facter;
         VALUE _on_message_block;
 
         static std::map<VALUE, module*> _instances;

@@ -164,14 +164,6 @@ namespace facter { namespace ruby {
             return false;
         });
 
-        // Undefine Facter if it's already defined
-        ruby.rb_gc_register_address(&_previous_facter);
-        if (ruby.is_true(ruby.rb_const_defined(*ruby.rb_cObject, ruby.rb_intern("Facter")))) {
-            _previous_facter = ruby.rb_const_remove(*ruby.rb_cObject, ruby.rb_intern("Facter"));
-        } else {
-            _previous_facter = ruby.nil_value();
-        }
-
         // Define the Facter module
         _self = ruby.rb_define_module("Facter");
         _instances[_self] = this;
@@ -222,18 +214,6 @@ namespace facter { namespace ruby {
         fact::define();
         simple_resolution::define();
         aggregate_resolution::define();
-
-        // To prevent custom facts from including parts of Ruby Facter and overriding the above definitions,
-        // grab the first directory on the load path and append certain files to $LOADED_FEATURES
-        volatile VALUE first = ruby.rb_ary_entry(ruby.rb_gv_get("$LOAD_PATH"), 0);
-        if (!ruby.is_nil(first)) {
-            volatile VALUE features = ruby.rb_gv_get("$LOADED_FEATURES");
-            path p = ruby.to_string(first);
-            ruby.rb_ary_push(features, ruby.utf8_value((p / "facter.rb").string()));
-            ruby.rb_ary_push(features, ruby.utf8_value((p / "facter" / "util" / "resolution.rb").string()));
-            ruby.rb_ary_push(features, ruby.utf8_value((p / "facter" / "core" / "aggregate.rb").string()));
-            ruby.rb_ary_push(features, ruby.utf8_value((p / "facter" / "core" / "execution.rb").string()));
-        }
     }
 
     module::~module()
@@ -252,13 +232,8 @@ namespace facter { namespace ruby {
         ruby->rb_gc_unregister_address(&_on_message_block);
         on_message(nullptr);
 
-        // Undefine the module and restore the previous value
+        // Undefine the module
         ruby->rb_const_remove(*ruby->rb_cObject, ruby->rb_intern("Facter"));
-        if (!ruby->is_nil(_previous_facter)) {
-            ruby->rb_const_set(*ruby->rb_cObject, ruby->rb_intern("Facter"), _previous_facter);
-        }
-
-        ruby->rb_gc_unregister_address(&_previous_facter);
     }
 
     void module::load_facts()
