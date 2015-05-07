@@ -36,7 +36,6 @@ namespace facter { namespace ruby {
         ruby.rb_define_method(klass, "resolution", RUBY_METHOD_FUNC(ruby_resolution), 1);
         ruby.rb_define_method(klass, "define_resolution", RUBY_METHOD_FUNC(ruby_define_resolution), -1);
         ruby.rb_define_method(klass, "flush", RUBY_METHOD_FUNC(ruby_flush), 0);
-        ruby.rb_obj_freeze(klass);
         return klass;
     }
 

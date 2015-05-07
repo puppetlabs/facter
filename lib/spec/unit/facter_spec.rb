@@ -103,6 +103,13 @@ describe Facter do
       end
       expect(Facter.value(:test)).to eq('bar')
     end
+
+    it 'should allow stubbing on which and exec' do
+      Facter::Util::Resolution.expects(:which).with("foo").returns('/usr/bin/foo')
+      Facter::Util::Resolution.expects(:exec).with("foo").returns('bar')
+      expect(Facter::Util::Resolution.which('foo')).to eq('/usr/bin/foo')
+      expect(Facter::Util::Resolution.exec('foo')).to eq('bar')
+    end
   end
 
 end

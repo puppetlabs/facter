@@ -299,10 +299,6 @@ namespace facter {  namespace ruby {
         /**
          * See MRI documentation.
          */
-        VALUE (* const rb_obj_freeze)(VALUE);
-        /**
-         * See MRI documentation.
-         */
         VALUE (* const rb_sym_to_s)(VALUE);
         /**
          * See MRI documentation.

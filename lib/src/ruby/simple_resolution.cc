@@ -32,7 +32,6 @@ namespace facter { namespace ruby {
         ruby.rb_define_singleton_method(klass, "exec", RUBY_METHOD_FUNC(ruby_exec), 1);
 
         resolution::define(klass);
-        ruby.rb_obj_freeze(klass);
         return klass;
     }
 

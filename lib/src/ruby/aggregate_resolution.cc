@@ -22,7 +22,6 @@ namespace facter { namespace ruby {
         ruby.rb_define_method(klass, "chunk", RUBY_METHOD_FUNC(ruby_chunk), -1);
         ruby.rb_define_method(klass, "aggregate", RUBY_METHOD_FUNC(ruby_aggregate), 0);
         resolution::define(klass);
-        ruby.rb_obj_freeze(klass);
         return klass;
     }
 

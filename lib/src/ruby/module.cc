@@ -208,7 +208,6 @@ namespace facter { namespace ruby {
         ruby.rb_define_singleton_method(execution, "exec", RUBY_METHOD_FUNC(ruby_exec), 1);
         ruby.rb_define_singleton_method(execution, "execute", RUBY_METHOD_FUNC(ruby_execute), -1);
         ruby.rb_define_class_under(execution, "ExecutionFailure", *ruby.rb_eStandardError);
-        ruby.rb_obj_freeze(execution);
 
         // Define the Fact and resolution classes
         fact::define();
