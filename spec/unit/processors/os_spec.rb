@@ -40,6 +40,13 @@ describe Facter::Processors::Linux do
         expect(count).to eq 2
       end
 
+      it "should be 2 in ppc64le fixture on Linux" do
+        Facter.fact(:architecture).stubs(:value).returns("ppc64le")
+        File.expects(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("ppc64le"))
+        count = subject.get_processor_count
+        expect(count).to eq 2
+      end
+
       it "should be 2 in panda-armel fixture on Linux" do
         Facter.fact(:architecture).stubs(:value).returns("arm")
         File.expects(:readlines).with("/proc/cpuinfo").returns(cpuinfo_fixture_readlines("panda-armel"))

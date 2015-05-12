@@ -1,0 +1,15 @@
+processor       : 0
+cpu             : POWER8E (raw), altivec supported
+clock           : 3690.000000MHz
+revision        : 2.1 (pvr 004b 0201)
+
+processor       : 1
+cpu             : POWER8E (raw), altivec supported
+clock           : 3690.000000MHz
+revision        : 2.1 (pvr 004b 0201)
+
+timebase        : 512000000
+platform        : PowerNV
+model           : 8247-22L
+machine         : PowerNV 8247-22L
+firmware        : OPAL v3

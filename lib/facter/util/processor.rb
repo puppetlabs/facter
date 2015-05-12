@@ -232,7 +232,7 @@ module Processor
           end
         end
 
-      when "ppc64"
+      when "ppc64", "ppc64le"
         File.readlines(cpuinfo).each do |l|
           if l =~ /processor\s+:\s+(\d+)/
             processor_num = $1.to_i
