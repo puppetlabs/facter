@@ -146,6 +146,10 @@ For a debug build:
 Test
 ----
 
+If a ruby was found during configuration, execute the following command before running tests:
+
+    $ bundle install --gemfile lib/Gemfile
+
 You can run facter tests using the test target:
 
     $ cd release
@@ -160,11 +164,6 @@ For verbose test output, run `ctest` instead of using the test target:
 
     $ cd release
     $ ctest -V
-
-To run ruby tests (`make install` required):
-
-    $ cd lib
-    $ rspec
 
 Install
 -------

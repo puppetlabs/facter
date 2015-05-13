@@ -78,6 +78,12 @@ namespace facter { namespace ruby {
         facter::facts::collection& facts();
 
         /**
+         * Gets the module's self.
+         * @return Returns the module's self.
+         */
+        VALUE self() const;
+
+        /**
          * Gets the current module.
          * @return Returns the current module.
          */
@@ -135,7 +141,6 @@ namespace facter { namespace ruby {
         std::set<std::string> _loaded_files;
         bool _loaded_all;
         VALUE _self;
-        VALUE _previous_facter;
         VALUE _on_message_block;
 
         static std::map<VALUE, module*> _instances;

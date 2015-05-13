@@ -74,7 +74,6 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(rb_hash_aset),
         LOAD_SYMBOL(rb_hash_lookup),
         LOAD_SYMBOL(rb_hash_lookup2),
-        LOAD_SYMBOL(rb_obj_freeze),
         LOAD_SYMBOL(rb_sym_to_s),
         LOAD_SYMBOL(rb_to_id),
         LOAD_SYMBOL(rb_id2name),

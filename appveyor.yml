@@ -27,7 +27,3 @@ build_script:
 test_script:
   - ps: ctest -V 2>&1 | %{ if ($_ -is [System.Management.Automation.ErrorRecord]) { $_ | c++filt } else { $_ } }
   - ps: mingw32-make install/fast
-
-  - ps: $env:PATH += ";C:\Program Files\FACTER\bin"
-  - ps: cd lib
-  - ps: rspec 2>&1 | %{ if ($_ -is [System.Management.Automation.ErrorRecord]) { $_ | c++filt } else { $_ } }

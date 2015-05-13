@@ -32,7 +32,15 @@ namespace facter { namespace ruby {
 
         // If given a fact, either call the block or check the values
         if (!ruby.is_nil(_fact)) {
-            volatile VALUE value = facter.normalize(facter.fact_value(_fact));
+            // Rather than calling facter.fact_value, we call through the Ruby API to get the fact value the same way Ruby Facter did
+            // This enables users to alter the behavior of confines during testing, like this:
+            // Facter.fact(:name).expects(:value).returns 'overrride'
+            volatile VALUE fact = ruby.rb_funcall(facter.self(), ruby.rb_intern("fact"), 1, _fact);
+            if (ruby.is_nil(fact)) {
+                return false;
+            }
+            // Get the value of the fact
+            volatile VALUE value = facter.normalize(ruby.rb_funcall(fact, ruby.rb_intern("value"), 0));
             if (ruby.is_nil(value)) {
                 return false;
             }

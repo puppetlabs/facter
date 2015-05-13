@@ -51,6 +51,13 @@ function travis_make()
         fi
         popd
     elif [ $1 != "cppcheck" ]; then
+        # Install the bundle before testing
+        bundle install --gemfile=../lib/Gemfile
+        if [ $? -ne 0 ]; then
+            echo "bundle install failed."
+            exit 1
+        fi
+
         LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so ctest -V 2>&1 | c++filt
         if [ ${PIPESTATUS[0]} -ne 0 ]; then
             echo "tests reported an error."
@@ -61,26 +68,13 @@ function travis_make()
             coveralls --gcov-options '\-lp' -r .. >/dev/null
         fi
 
-        # Install into the system for the spec tests 
+        # Make sure installation succeeds
         sudo make install
         if [ $? -ne 0 ]; then
             echo "install failed."
             exit 1
         fi
         sudo ldconfig
-
-        pushd ../lib
-        bundle install
-        if [ $? -ne 0 ]; then
-            echo "bundle install failed."
-            exit 1
-        fi
-        rspec 2>&1 | c++filt
-        if [ ${PIPESTATUS[0]} -ne 0 ]; then
-            echo "ruby specs failed."
-            exit 1
-        fi
-        popd
     fi
 }
 
