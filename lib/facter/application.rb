@@ -160,7 +160,9 @@ OPTIONS
                 "Enable timing.") { |v| Facter.timing(1) }
         opts.on("-p",
                 "--puppet",
-                "Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.") { |v| load_puppet }
+                "(Deprecated: use `puppet facts` instead) Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.") do |v|
+          load_puppet
+        end
 
         opts.on_tail("-v",
                      "--version",

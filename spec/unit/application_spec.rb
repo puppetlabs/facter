@@ -54,6 +54,15 @@ describe Facter::Application do
       end
     end
 
+    ['-h', '--help'].each do |option|
+      it "issues a deprecation message for `--puppet`" do
+        Facter::Application.stubs(:exit).with(0)
+        expect do
+          Facter::Application.parse([option])
+        end.to have_printed('Deprecated: use `puppet facts` instead')
+      end
+    end
+
     it 'mutates argv so that non-option arguments are left' do
       argv = ['-y', '--trace', 'uptime', 'virtual']
       Facter::Application.parse(argv)
