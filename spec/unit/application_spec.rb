@@ -49,6 +49,7 @@ describe Facter::Application do
 
     ['-p', '--puppet'].each do |option|
       it "calls load_puppet when given #{option}" do
+        Facter.expects(:warnonce).with("The --puppet option is deprecated; use `puppet facts find` instead.")
         Facter::Application.expects(:load_puppet)
         Facter::Application.parse([option])
       end
