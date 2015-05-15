@@ -2,6 +2,7 @@ require 'facter/operatingsystem/base'
 require 'facter/operatingsystem/osreleaselinux'
 require 'facter/operatingsystem/cumuluslinux'
 require 'facter/operatingsystem/linux'
+require 'facter/operatingsystem/ciscolinux'
 require 'facter/operatingsystem/sunos'
 require 'facter/operatingsystem/vmkernel'
 require 'facter/operatingsystem/windows'
@@ -16,6 +17,9 @@ module Facter
           Facter::Operatingsystem::CumulusLinux.new
         elsif release_info['NAME'] == "CoreOS"
           Facter::Operatingsystem::OsReleaseLinux.new
+        elsif !release_info['CISCO_RELEASE_INFO'].nil? &&
+              File.readable?(release_info['CISCO_RELEASE_INFO'])
+          Facter::Operatingsystem::CiscoLinux.new(release_info['CISCO_RELEASE_INFO'])
         else
           Facter::Operatingsystem::Linux.new
         end
