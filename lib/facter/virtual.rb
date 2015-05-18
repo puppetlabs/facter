@@ -90,6 +90,17 @@ Facter.add("virtual") do
 end
 
 Facter.add("virtual") do
+  confine :kernel => 'SunOS'
+  confine :hardwareisa => 'sparc'
+  confine :ldom_domainrole_control => 'false'
+  has_weight 20 # Weight this before the default solaris implementation
+  setcode do
+    Facter.value(:ldom_domainrole_impl)
+  end
+end
+
+
+Facter.add("virtual") do
   confine :kernel => 'HP-UX'
   has_weight 10
   setcode do
