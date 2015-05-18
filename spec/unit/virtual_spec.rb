@@ -31,6 +31,18 @@ describe "Virtual fact" do
     Facter.fact(:virtual).value.should == "zone"
   end
 
+  it "should be LDoms on Solaris when an ldom" do
+    ldom_fixture = File.read(fixtures('ldom', 'ldom_v1'))
+    Facter.fact(:kernel).stubs(:value).returns("SunOS")
+    Facter.fact(:operatingsystem).stubs(:value).returns("Solaris")
+    Facter.fact(:hardwareisa).stubs(:value).returns("sparc")
+    Facter::Core::Execution.stubs(:which).with("virtinfo").returns 'virtinfo'
+    Facter::Core::Execution.stubs(:which).with("vmware").returns nil
+    Facter::Core::Execution.stubs(:exec).with("virtinfo -ap").returns(ldom_fixture)
+    Facter.collection.internal_loader.load(:ldom)
+    Facter.fact(:virtual).value.should == "LDoms"
+  end
+
   it "should be jail on FreeBSD when a jail in kvm" do
     Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
     Facter::Util::Virtual.stubs(:jail?).returns(true)

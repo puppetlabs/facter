@@ -47,15 +47,5 @@ if Facter.value(:kernel) == 'SunOS' &&
         end
       end
     end
-
-    # When ldom domainrole control = false, the system is a guest, so we mark it
-    # as a virtual system:
-    Facter.add("virtual") do
-      confine :ldom_domainrole_control => 'false'
-      has_weight 10
-      setcode do
-        Facter.value(:ldom_domainrole_impl)
-      end
-    end
   end
 end
