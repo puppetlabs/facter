@@ -57,10 +57,6 @@ describe "ldom fact" do
     it "should return correct serial on version 1.0" do
       Facter.fact(:ldom_domainchassis).value.should == "0704RB0280"
     end
-
-    it "should return correct virtual on version 1.0" do
-      Facter.fact(:virtual).value.should == "LDoms"
-    end
   end
 
   describe "when running on non ldom hardware" do
