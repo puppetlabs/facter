@@ -44,7 +44,7 @@ SCENARIO("using the processor resolver") {
     WHEN("data is not present") {
         facts.add(make_shared<empty_processor_resolver>());
         THEN("only the processor counts are present and are zero") {
-            REQUIRE(facts.size() == 3);
+            REQUIRE(facts.size() == 3u);
             auto count = facts.get<integer_value>(fact::physical_processor_count);
             REQUIRE(count);
             REQUIRE(count->value() == 0);
@@ -53,7 +53,7 @@ SCENARIO("using the processor resolver") {
             REQUIRE(count->value() == 0);
             auto processors = facts.get<map_value>(fact::processors);
             REQUIRE(processors);
-            REQUIRE(processors->size() == 2);
+            REQUIRE(processors->size() == 2u);
             count = processors->get<integer_value>("count");
             REQUIRE(count);
             REQUIRE(count->value() == 0);
@@ -65,10 +65,10 @@ SCENARIO("using the processor resolver") {
     WHEN("data is present") {
         facts.add(make_shared<test_processor_resolver>());
         THEN("a structured fact is added") {
-            REQUIRE(facts.size() == 8);
+            REQUIRE(facts.size() == 8u);
             auto processors = facts.get<map_value>(fact::processors);
             REQUIRE(processors);
-            REQUIRE(processors->size() == 5);
+            REQUIRE(processors->size() == 5u);
             auto count = processors->get<integer_value>("count");
             REQUIRE(count);
             REQUIRE(count->value() == 4);
@@ -80,7 +80,7 @@ SCENARIO("using the processor resolver") {
             REQUIRE(isa->value() == "isa");
             auto models = processors->get<array_value>("models");
             REQUIRE(models);
-            REQUIRE(models->size() == 4);
+            REQUIRE(models->size() == 4u);
             for (size_t i = 0; i < 4; ++i) {
                 auto model = models->get<string_value>(i);
                 REQUIRE(model);
@@ -91,7 +91,7 @@ SCENARIO("using the processor resolver") {
             REQUIRE(speed->value() == "10.00 GHz");
         }
         THEN("flat facts are added") {
-            REQUIRE(facts.size() == 8);
+            REQUIRE(facts.size() == 8u);
             auto count = facts.get<integer_value>(fact::physical_processor_count);
             REQUIRE(count);
             REQUIRE(count->value() == 2);

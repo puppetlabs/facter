@@ -397,7 +397,7 @@ namespace facter { namespace facts {
     void collection::write_hash(ostream& stream, set<string> const& queries)
     {
         // If there's only one query, print the result without the name
-        if (queries.size() == 1) {
+        if (queries.size() == 1u) {
             auto value = query_value(*queries.begin());
             if (value) {
                 value->write(stream, false);

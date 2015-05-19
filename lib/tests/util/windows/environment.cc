@@ -13,7 +13,7 @@ SCENARIO("path separator on Windows") {
 SCENARIO("environment search paths") {
     GIVEN("paths from the environment") {
         auto paths = environment::search_paths();
-        REQUIRE(paths.size() > 0);
+        REQUIRE(paths.size() > 0u);
     }
     GIVEN("empty paths from the environment") {
         string value;

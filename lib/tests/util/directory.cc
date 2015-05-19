@@ -16,7 +16,7 @@ SCENARIO("listing files in a directory") {
         });
         sort(files.begin(), files.end());
         THEN("all files are returned") {
-            REQUIRE(files.size() == 4);
+            REQUIRE(files.size() == 4u);
             REQUIRE(files[0] == "file1.txt");
             REQUIRE(files[1] == "file2.txt");
             REQUIRE(files[2] == "file3.txt");
@@ -30,7 +30,7 @@ SCENARIO("listing files in a directory") {
         }, "^file[23].txt$");
         sort(files.begin(), files.end());
         THEN("only the matching files are returned") {
-            REQUIRE(files.size() == 2);
+            REQUIRE(files.size() == 2u);
             REQUIRE(files[0] == "file2.txt");
             REQUIRE(files[1] == "file3.txt");
         }
@@ -41,7 +41,7 @@ SCENARIO("listing files in a directory") {
             return false;
         });
         THEN("only one file is returned") {
-            REQUIRE(files.size() == 1);
+            REQUIRE(files.size() == 1u);
         }
     }
 }
@@ -55,7 +55,7 @@ SCENARIO("listing directories in a directory") {
         });
         sort(subdirectories.begin(), subdirectories.end());
         THEN("all directories are returned") {
-            REQUIRE(subdirectories.size() == 6);
+            REQUIRE(subdirectories.size() == 6u);
             REQUIRE(subdirectories[0] == "json");
             REQUIRE(subdirectories[1] == "ordering");
             REQUIRE(subdirectories[2] == "posix");
@@ -71,7 +71,7 @@ SCENARIO("listing directories in a directory") {
         }, "^[jy].*$");
         sort(subdirectories.begin(), subdirectories.end());
         THEN("only the matching directories are returned") {
-            REQUIRE(subdirectories.size() == 2);
+            REQUIRE(subdirectories.size() == 2u);
             REQUIRE(subdirectories[0] == "json");
             REQUIRE(subdirectories[1] == "yaml");
         }
@@ -82,7 +82,7 @@ SCENARIO("listing directories in a directory") {
             return false;
         });
         THEN("only one directory is returned") {
-            REQUIRE(subdirectories.size() == 1);
+            REQUIRE(subdirectories.size() == 1u);
         }
     }
 }

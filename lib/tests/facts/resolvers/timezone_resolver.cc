@@ -31,13 +31,13 @@ SCENARIO("using the timezone resolver") {
     WHEN("data is not present") {
         facts.add(make_shared<empty_timezone_resolver>());
         THEN("facts should not be added") {
-            REQUIRE(facts.size() == 0);
+            REQUIRE(facts.size() == 0u);
         }
     }
     WHEN("data is present") {
         facts.add(make_shared<test_timezone_resolver>());
         THEN("a flat fact is added") {
-            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.size() == 1u);
             auto timezone = facts.get<string_value>(fact::timezone);
             REQUIRE(timezone);
             REQUIRE(timezone->value() == "PDT");

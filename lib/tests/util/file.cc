@@ -32,7 +32,7 @@ SCENARIO("reading each line of a file") {
                 lines.emplace_back(move(line));
                 return true;
             }));
-            REQUIRE(lines.size() == 3);
+            REQUIRE(lines.size() == 3u);
             REQUIRE(lines == fixture_lines);
         }
     }
@@ -43,7 +43,7 @@ SCENARIO("reading each line of a file") {
                 lines.emplace_back(move(line));
                 return false;
             }));
-            REQUIRE(lines.size() == 1);
+            REQUIRE(lines.size() == 1u);
             REQUIRE(lines[0] == fixture_lines[0]);
         }
     }

@@ -35,13 +35,13 @@ SCENARIO("using the kernel resolver") {
     WHEN("data is not present") {
         facts.add(make_shared<empty_kernel_resolver>());
         THEN("facts should not be added") {
-            REQUIRE(facts.size() == 0);
+            REQUIRE(facts.size() == 0u);
         }
     }
     WHEN("data is present") {
         facts.add(make_shared<test_kernel_resolver>());
         THEN("flat facts are added") {
-            REQUIRE(facts.size() == 4);
+            REQUIRE(facts.size() == 4u);
             auto kernel = facts.get<string_value>(fact::kernel);
             REQUIRE(kernel);
             REQUIRE(kernel->value() == "foo");

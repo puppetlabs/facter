@@ -15,7 +15,7 @@ SCENARIO("using an option set") {
     GIVEN("a default constructed option set") {
         option_set<options> set;
         THEN("no options are set") {
-            REQUIRE(set.count() == 0);
+            REQUIRE(set.count() == 0u);
             REQUIRE_FALSE(set[options::foo]);
             REQUIRE_FALSE(set[options::bar]);
             REQUIRE_FALSE(set[options::baz]);
@@ -24,7 +24,7 @@ SCENARIO("using an option set") {
     GIVEN("option foo is set") {
         option_set<options> set = { options::foo };
         THEN("only foo is set") {
-            REQUIRE(set.count() == 1);
+            REQUIRE(set.count() == 1u);
             REQUIRE(set[options::foo]);
             REQUIRE_FALSE(set[options::bar]);
             REQUIRE_FALSE(set[options::baz]);
@@ -33,7 +33,7 @@ SCENARIO("using an option set") {
     GIVEN("options foo and bar are set") {
         option_set<options> set = { options::bar, options::foo };
         THEN("only foo and bar are set") {
-            REQUIRE(set.count() == 2);
+            REQUIRE(set.count() == 2u);
             REQUIRE(set[options::foo]);
             REQUIRE(set[options::bar]);
             REQUIRE_FALSE(set[options::baz]);
@@ -42,7 +42,7 @@ SCENARIO("using an option set") {
     GIVEN("all options are specified") {
         option_set<options> set = { options::baz, options::foo, options::bar };
         THEN("all options are set") {
-            REQUIRE(set.count() == 3);
+            REQUIRE(set.count() == 3u);
             REQUIRE(set[options::foo]);
             REQUIRE(set[options::bar]);
             REQUIRE(set[options::baz]);
@@ -51,7 +51,7 @@ SCENARIO("using an option set") {
     GIVEN("all options are set by numeric value") {
         option_set<options> set(1 | 2 | 4);
         THEN("all options are set") {
-            REQUIRE(set.count() == 3);
+            REQUIRE(set.count() == 3u);
             REQUIRE(set[options::foo]);
             REQUIRE(set[options::bar]);
             REQUIRE(set[options::baz]);
@@ -97,7 +97,7 @@ SCENARIO("using an option set") {
         WHEN("reset is called") {
             set.reset();
             THEN("the set is still empty") {
-                REQUIRE(set.count() == 0);
+                REQUIRE(set.count() == 0u);
                 REQUIRE_FALSE(set[options::foo]);
                 REQUIRE_FALSE(set[options::bar]);
                 REQUIRE_FALSE(set[options::baz]);
@@ -117,7 +117,7 @@ SCENARIO("using an option set") {
                 REQUIRE(set[options::foo]);
             }
             THEN("the count is one") {
-                REQUIRE(set.count() == 1);
+                REQUIRE(set.count() == 1u);
             }
         }
         WHEN("toggle is called twice on a particular option") {
@@ -127,11 +127,11 @@ SCENARIO("using an option set") {
                 REQUIRE_FALSE(set[options::foo]);
             }
             THEN("the count is zero") {
-                REQUIRE(set.count() == 0);
+                REQUIRE(set.count() == 0u);
             }
         }
         THEN("the count is zero") {
-            REQUIRE(set.count() == 0);
+            REQUIRE(set.count() == 0u);
         }
         THEN("the set is reports as empty") {
             REQUIRE(set.empty());
@@ -174,7 +174,7 @@ SCENARIO("using an option set") {
         WHEN("reset is called") {
             set.reset();
             THEN("the set is empty") {
-                REQUIRE(set.count() == 0);
+                REQUIRE(set.count() == 0u);
                 REQUIRE_FALSE(set[options::foo]);
                 REQUIRE_FALSE(set[options::bar]);
                 REQUIRE_FALSE(set[options::baz]);
@@ -189,7 +189,7 @@ SCENARIO("using an option set") {
             }
         }
         THEN("the count is three") {
-            REQUIRE(set.count() == 3);
+            REQUIRE(set.count() == 3u);
         }
         THEN("the set is not empty") {
             REQUIRE_FALSE(set.empty());
@@ -206,7 +206,7 @@ SCENARIO("using an option set") {
         WHEN("a third set is the result of bitwise AND") {
             option_set<options> set3 = set1 & set2;
             THEN("only the intersecting options are set") {
-                REQUIRE(set3.count() == 1);
+                REQUIRE(set3.count() == 1u);
                 REQUIRE_FALSE(set3[options::foo]);
                 REQUIRE(set3[options::bar]);
                 REQUIRE_FALSE(set3[options::baz]);
@@ -215,7 +215,7 @@ SCENARIO("using an option set") {
         WHEN("a third set is the result of bitwise OR") {
             option_set<options> set3 = set1 | set2;
             THEN("the union of the options are set") {
-                REQUIRE(set3.count() == 3);
+                REQUIRE(set3.count() == 3u);
                 REQUIRE(set3[options::foo]);
                 REQUIRE(set3[options::bar]);
                 REQUIRE(set3[options::baz]);
@@ -224,7 +224,7 @@ SCENARIO("using an option set") {
         WHEN("a third set is the result of bitwise XOR") {
             option_set<options> set3 = set1 ^ set2;
             THEN("options that are in one set but not the other are set") {
-                REQUIRE(set3.count() == 2);
+                REQUIRE(set3.count() == 2u);
                 REQUIRE(set3[options::foo]);
                 REQUIRE_FALSE(set3[options::bar]);
                 REQUIRE(set3[options::baz]);

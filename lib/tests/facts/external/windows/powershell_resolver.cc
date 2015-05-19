@@ -47,7 +47,7 @@ SCENARIO("resolving external powershell facts") {
             THEN("a warning is generated") {
                 log_capture capture(level::warning);
                 resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/error_message.ps1", facts);
-                REQUIRE(facts.size() == 1);
+                REQUIRE(facts.size() == 1u);
                 REQUIRE(facts.get<string_value>("foo"));
                 REQUIRE(facts.get<string_value>("foo")->value() == "bar");
                 auto output = capture.result();

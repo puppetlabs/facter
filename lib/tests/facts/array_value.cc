@@ -31,7 +31,7 @@ SCENARIO("using an array fact value") {
         value.add(make_value<string_value>("hello"));
         THEN("it should contain the string value") {
             REQUIRE_FALSE(value.empty());
-            REQUIRE(value.size() == 1);
+            REQUIRE(value.size() == 1u);
             REQUIRE(value.get<string_value>(0));
             REQUIRE(value.get<string_value>(0)->value() == "hello");
         }
@@ -40,7 +40,7 @@ SCENARIO("using an array fact value") {
         value.add(make_value<integer_value>(123));
         THEN("it should contain the string value") {
             REQUIRE_FALSE(value.empty());
-            REQUIRE(value.size() == 1);
+            REQUIRE(value.size() == 1u);
             REQUIRE(value.get<integer_value>(0));
             REQUIRE(value.get<integer_value>(0)->value() == 123);
         }
@@ -52,7 +52,7 @@ SCENARIO("using an array fact value") {
         value.add(make_value<integer_value>(2));
         value.add(move(subarray));
         THEN("it should contain the values in order they were added") {
-            REQUIRE(value.size() == 3);
+            REQUIRE(value.size() == 3u);
             auto string_val = value.get<string_value>(0);
             REQUIRE(string_val);
             REQUIRE(string_val->value() == "1");
@@ -61,26 +61,26 @@ SCENARIO("using an array fact value") {
             REQUIRE(int_val->value() == 2);
             auto subarray = value.get<array_value>(2);
             REQUIRE(subarray);
-            REQUIRE(subarray->size() == 1);
+            REQUIRE(subarray->size() == 1u);
             string_val = subarray->get<string_value>(0);
             REQUIRE(string_val);
             REQUIRE(string_val->value() == "element");
         }
         THEN("each is enumerated in order") {
-            int index = 0;
+            size_t index = 0u;
             value.each([&](struct value const* val) {
-                if (index == 0) {
+                if (index == 0u) {
                     auto string_val = dynamic_cast<string_value const*>(val);
                     REQUIRE(string_val);
                     REQUIRE(string_val->value() == "1");
-                } else if (index == 1) {
+                } else if (index == 1u) {
                     auto int_val = dynamic_cast<integer_value const*>(val);
                     REQUIRE(int_val);
                     REQUIRE(int_val->value() == 2);
-                } else if (index == 2) {
+                } else if (index == 2u) {
                     auto subarray = dynamic_cast<array_value const*>(val);
                     REQUIRE(subarray);
-                    REQUIRE(subarray->size() == 1);
+                    REQUIRE(subarray->size() == 1u);
                     auto string_val = subarray->get<string_value>(0);
                     REQUIRE(string_val);
                     REQUIRE(string_val->value() == "element");
@@ -129,12 +129,12 @@ SCENARIO("using an array fact value") {
             value.add(make_value<integer_value>(1));
             value.add(make_value<integer_value>(2));
             value.add(make_value<integer_value>(3));
-            int index = 0;
+            size_t index = 0u;
             value.each([&](struct value const* val) {
                 ++index;
                 return false;
             });
-            REQUIRE(index == 1);
+            REQUIRE(index == 1u);
         }
     }
 }
