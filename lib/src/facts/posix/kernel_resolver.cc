@@ -18,7 +18,12 @@ namespace facter { namespace facts { namespace posix {
 
         result.name = name.sysname;
         result.release = name.release;
+
+#ifdef _AIX  // On AIX, we actually want the uname 'version' field - everywhere else we parse release
+        result.version = name.version;
+#else
         result.version = result.release.substr(0, result.release.find('-'));
+#endif
         return result;
     }
 

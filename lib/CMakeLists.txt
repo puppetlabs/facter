@@ -133,9 +133,10 @@ if (WIN32)
 endif()
 
 # Set the platform-specific sources
-if ("${CMAKE_SYSTEM_NAME}" MATCHES "AIX")
+if (AIX)
     set(LIBFACTER_PLATFORM_SOURCES
         "src/facts/aix/collection.cc"
+        "src/facts/aix/operating_system_resolver.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     set(LIBFACTER_PLATFORM_SOURCES
