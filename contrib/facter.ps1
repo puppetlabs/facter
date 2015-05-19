@@ -52,7 +52,7 @@ if ($arch -eq 64) {
 }
 $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExceptions}"
 
-$boostVer = "boost_1_55_0"
+$boostVer = "boost_1_57_0"
 $boostPkg = "${boostVer}-${mingwVer}"
 
 $yamlCppVer = "yaml-cpp-0.5.1"
@@ -74,18 +74,18 @@ if (!(Get-Command choco -ErrorAction SilentlyContinue)) {
     iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 Install-Choco 7zip.commandline 9.20.0.20150210
-Install-Choco cmake 3.0.2.20150210
-Install-Choco git.install 1.9.5.20150210
+Install-Choco cmake 3.1.0
+Install-Choco git.install 1.9.5.20150320
 
 # For MinGW, we expect specific project defaults
 # - win32 threads, for Windows Server 2003 support
 # - seh exceptions on 64-bit, to work around an obscure bug loading Ruby in Facter
 # These are the defaults on our myget feed.
 if ($arch -eq 64) {
-  Install-Choco ruby 2.1.5.20150210
+  Install-Choco ruby 2.1.6
   Install-Choco mingw-w64 $mingwVerChoco
 } else {
-  Install-Choco ruby 2.1.5.20150210 @('-x86')
+  Install-Choco ruby 2.1.6 @('-x86')
   Install-Choco mingw-w32 $mingwVerChoco @('-x86')
 }
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
