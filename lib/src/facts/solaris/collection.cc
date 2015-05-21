@@ -15,6 +15,7 @@
 #include <internal/facts/solaris/zpool_resolver.hpp>
 #include <internal/facts/solaris/zfs_resolver.hpp>
 #include <internal/facts/solaris/zone_resolver.hpp>
+#include <internal/facts/glib/load_average_resolver.hpp>
 
 using namespace std;
 
@@ -35,6 +36,7 @@ namespace facter { namespace facts {
         add(make_shared<solaris::disk_resolver>());
         add(make_shared<solaris::virtualization_resolver>());
         add(make_shared<solaris::memory_resolver>());
+        add(make_shared<glib::load_average_resolver>());
 
         // solaris specific
         add(make_shared<solaris::zpool_resolver>());

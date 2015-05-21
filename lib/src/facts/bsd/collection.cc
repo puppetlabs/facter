@@ -6,6 +6,7 @@
 #include <internal/facts/posix/ssh_resolver.hpp>
 #include <internal/facts/posix/identity_resolver.hpp>
 #include <internal/facts/posix/timezone_resolver.hpp>
+#include <internal/facts/glib/load_average_resolver.hpp>
 
 using namespace std;
 
@@ -20,6 +21,7 @@ namespace facter { namespace facts {
         add(make_shared<posix::ssh_resolver>());
         add(make_shared<posix::identity_resolver>());
         add(make_shared<posix::timezone_resolver>());
+        add(make_shared<glib::load_average_resolver>());
     }
 
 }}  // namespace facter::facts
