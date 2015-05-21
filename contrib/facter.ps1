@@ -40,7 +40,7 @@ echo $cores
 echo $buildSource
 
 
-$mingwVerNum = "4.8.3"
+$mingwVerNum = "4.9.2"
 $mingwVerChoco = $mingwVerNum
 $mingwThreads = "win32"
 if ($arch -eq 64) {
@@ -52,11 +52,12 @@ if ($arch -eq 64) {
 }
 $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExceptions}"
 
-$boostVer = "boost_1_55_0"
+$boostVer = "boost_1_57_0"
 $boostPkg = "${boostVer}-${mingwVer}"
 
-$yamlCppVer = "yaml-cpp-0.5.1"
-$yamlPkg = "${yamlCppVer}-${mingwVer}"
+$yamlCppVer = "release-0.5.2"
+$yamlCppDir = "yaml-cpp-${yamlCppVer}"
+$yamlPkg = "${yamlCppDir}-${mingwVer}"
 
 ### Setup, build, and install
 ## Install Chocolatey, then use it to install required tools.
@@ -74,18 +75,18 @@ if (!(Get-Command choco -ErrorAction SilentlyContinue)) {
     iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 Install-Choco 7zip.commandline 9.20.0.20150210
-Install-Choco cmake 3.0.2.20150210
-Install-Choco git.install 1.9.5.20150210
+Install-Choco cmake 3.2.2
+Install-Choco git.install 1.9.5.20150320
 
 # For MinGW, we expect specific project defaults
 # - win32 threads, for Windows Server 2003 support
 # - seh exceptions on 64-bit, to work around an obscure bug loading Ruby in Facter
 # These are the defaults on our myget feed.
 if ($arch -eq 64) {
-  Install-Choco ruby 2.1.5.20150210
+  Install-Choco ruby 2.1.6
   Install-Choco mingw-w64 $mingwVerChoco
 } else {
-  Install-Choco ruby 2.1.5.20150210 @('-x86')
+  Install-Choco ruby 2.1.6 @('-x86')
   Install-Choco mingw-w32 $mingwVerChoco @('-x86')
 }
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
@@ -136,10 +137,9 @@ if ($buildSource) {
   cd $toolsDir
 
   ## Download, build, and install yaml-cpp
-  (New-Object net.webclient).DownloadFile("https://yaml-cpp.googlecode.com/files/${yamlCppVer}.tar.gz", "$toolsDir\${yamlCppVer}.tar.gz")
-  & 7za x "${yamlCppVer}.tar.gz"
-  & 7za x "${yamlCppVer}.tar" | FIND /V "ing "
-  cd $yamlCppVer
+  (New-Object net.webclient).DownloadFile("https://github.com/jbeder/yaml-cpp/archive/${yamlCppVer}.zip", "$toolsDir\${yamlCppDir}.zip")
+  & 7za x "${yamlCppDir}.zip" | FIND /V "ing "
+  cd $yamlCppDir
   mkdir build
   cd build
 

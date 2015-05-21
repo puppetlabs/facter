@@ -95,12 +95,12 @@ SCENARIO("using the networking resolver") {
     WHEN("data is not present") {
         facts.add(make_shared<empty_networking_resolver>());
         THEN("facts should not be added") {
-            REQUIRE(facts.size() == 0);
+            REQUIRE(facts.size() == 0u);
         }
     }
     WHEN("only hostname is present") {
         facts.add(make_shared<test_hostname_resolver>());
-        REQUIRE(facts.size() == 3);
+        REQUIRE(facts.size() == 3u);
         THEN("a flat fact is added") {
             auto hostname = facts.get<string_value>(fact::hostname);
             REQUIRE(hostname);
@@ -109,7 +109,7 @@ SCENARIO("using the networking resolver") {
         THEN("a structured fact is added") {
             auto networking = facts.get<map_value>(fact::networking);
             REQUIRE(networking);
-            REQUIRE(networking->size() == 2);
+            REQUIRE(networking->size() == 2u);
 
             auto hostname = networking->get<string_value>("hostname");
             REQUIRE(hostname);
@@ -127,7 +127,7 @@ SCENARIO("using the networking resolver") {
     }
     WHEN("only domain is present") {
         facts.add(make_shared<test_domain_resolver>());
-        REQUIRE(facts.size() == 2);
+        REQUIRE(facts.size() == 2u);
         THEN("a flat fact is added") {
             auto domain = facts.get<string_value>(fact::domain);
             REQUIRE(domain);
@@ -136,7 +136,7 @@ SCENARIO("using the networking resolver") {
         THEN("a structured fact is added") {
             auto networking = facts.get<map_value>(fact::networking);
             REQUIRE(networking);
-            REQUIRE(networking->size() == 1);
+            REQUIRE(networking->size() == 1u);
 
             auto domain = networking->get<string_value>("domain");
             REQUIRE(domain);
@@ -149,7 +149,7 @@ SCENARIO("using the networking resolver") {
     }
     WHEN("FQDN is present") {
         facts.add(make_shared<test_fqdn_resolver>());
-        REQUIRE(facts.size() == 2);
+        REQUIRE(facts.size() == 2u);
         THEN("a flat fact is added") {
             auto fqdn = facts.get<string_value>(fact::fqdn);
             REQUIRE(fqdn);
@@ -158,7 +158,7 @@ SCENARIO("using the networking resolver") {
         THEN("a structured fact is added") {
             auto networking = facts.get<map_value>(fact::networking);
             REQUIRE(networking);
-            REQUIRE(networking->size() == 1);
+            REQUIRE(networking->size() == 1u);
             auto fqdn = networking->get<string_value>("fqdn");
             REQUIRE(fqdn);
             REQUIRE(fqdn->value() == "fqdn");
@@ -171,7 +171,7 @@ SCENARIO("using the networking resolver") {
     }
     WHEN("FQDN is not present") {
         facts.add(make_shared<test_missing_fqdn_resolver>());
-        REQUIRE(facts.size() == 4);
+        REQUIRE(facts.size() == 4u);
         THEN("the FQDN fact is the combination of hostname and domain") {
             auto svalue = facts.get<string_value>(fact::hostname);
             REQUIRE(svalue);
@@ -186,7 +186,7 @@ SCENARIO("using the networking resolver") {
         THEN("the FQDN in the structured fact is the combination of hostname and domain") {
             auto networking = facts.get<map_value>(fact::networking);
             REQUIRE(networking);
-            REQUIRE(networking->size() == 3);
+            REQUIRE(networking->size() == 3u);
             auto svalue = networking->get<string_value>("hostname");
             REQUIRE(svalue);
             REQUIRE(svalue->value() == "hostname");
@@ -200,11 +200,11 @@ SCENARIO("using the networking resolver") {
     }
     WHEN("network interfaces are present") {
         facts.add(make_shared<test_interface_resolver>());
-        REQUIRE(facts.size() == 50);
+        REQUIRE(facts.size() == 50u);
         THEN("the DHCP servers fact is present") {
             auto dhcp_servers = facts.get<map_value>(fact::dhcp_servers);
             REQUIRE(dhcp_servers);
-            REQUIRE(dhcp_servers->size() == 6);
+            REQUIRE(dhcp_servers->size() == 6u);
             for (unsigned int i = 0; i < 5; ++i) {
                 string num = to_string(i);
                 auto server = dhcp_servers->get<string_value>("iface" + num);
@@ -275,7 +275,7 @@ SCENARIO("using the networking resolver") {
         THEN("the networking structured fact is present") {
             auto networking = facts.get<map_value>(fact::networking);
             REQUIRE(networking);
-            REQUIRE(networking->size() == 10);
+            REQUIRE(networking->size() == 10u);
             auto dhcp = networking->get<string_value>("dhcp");
             REQUIRE(dhcp);
             REQUIRE(dhcp->value() == "dhcp2");

@@ -58,19 +58,19 @@ SCENARIO("using the operating system resolver") {
     WHEN("data is not present") {
         facts.add(make_shared<empty_os_resolver>());
         THEN("facts should not be added") {
-            REQUIRE(facts.size() == 0);
+            REQUIRE(facts.size() == 0u);
         }
     }
     WHEN("data is present") {
         facts.add(make_shared<test_os_resolver>());
-        REQUIRE(facts.size() == 26);
+        REQUIRE(facts.size() == 26u);
         THEN("a structured fact is added") {
             auto os = facts.get<map_value>(fact::os);
             REQUIRE(os);
-            REQUIRE(os->size() == 9);
+            REQUIRE(os->size() == 9u);
             auto distro = os->get<map_value>("distro");
             REQUIRE(distro);
-            REQUIRE(distro->size() == 5);
+            REQUIRE(distro->size() == 5u);
             auto codename = distro->get<string_value>("codename");
             REQUIRE(codename);
             REQUIRE(codename->value() == "awesomesauce");
@@ -85,7 +85,7 @@ SCENARIO("using the operating system resolver") {
             REQUIRE(lsbrelease->value() == "1.4");
             auto release_attribute = distro->get<map_value>("release");
             REQUIRE(release_attribute);
-            REQUIRE(release_attribute->size() == 3);
+            REQUIRE(release_attribute->size() == 3u);
             auto release = release_attribute->get<string_value>("full");
             REQUIRE(release);
             REQUIRE(release->value() == "1.2.3");
@@ -109,7 +109,7 @@ SCENARIO("using the operating system resolver") {
             REQUIRE(hardware->value() == "x86-64");
             release_attribute = os->get<map_value>("release");
             REQUIRE(release_attribute);
-            REQUIRE(release_attribute->size() == 3);
+            REQUIRE(release_attribute->size() == 3u);
             release = release_attribute->get<string_value>("full");
             REQUIRE(release);
             REQUIRE(release->value() == "1.2.3");
@@ -121,7 +121,7 @@ SCENARIO("using the operating system resolver") {
             REQUIRE(minor->value() == "3");
             auto macosx = os->get<map_value>("macosx");
             REQUIRE(macosx);
-            REQUIRE(macosx->size() == 3);
+            REQUIRE(macosx->size() == 3u);
             auto product = macosx->get<string_value>("product");
             REQUIRE(product);
             REQUIRE(product->value() == "Mac OS X");
@@ -130,7 +130,7 @@ SCENARIO("using the operating system resolver") {
             REQUIRE(build->value() == "14A388b");
             release_attribute = macosx->get<map_value>("version");
             REQUIRE(release_attribute);
-            REQUIRE(release_attribute->size() == 3);
+            REQUIRE(release_attribute->size() == 3u);
             release = release_attribute->get<string_value>("full");
             REQUIRE(release);
             REQUIRE(release->value() == "10.10");
@@ -142,13 +142,13 @@ SCENARIO("using the operating system resolver") {
             REQUIRE(minor->value() == "0");
             auto windows = os->get<map_value>("windows");
             REQUIRE(windows);
-            REQUIRE(windows->size() == 1);
+            REQUIRE(windows->size() == 1u);
             auto system32 = windows->get<string_value>("system32");
             REQUIRE(system32);
             REQUIRE(system32->value() == "C:\\WINDOWS\\sysnative");
             auto selinux = os->get<map_value>("selinux");
             REQUIRE(selinux);
-            REQUIRE(selinux->size() == 6);
+            REQUIRE(selinux->size() == 6u);
             auto bval = selinux->get<boolean_value>("enabled");
             REQUIRE(bval);
             REQUIRE(bval->value());

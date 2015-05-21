@@ -45,7 +45,7 @@ SCENARIO("using the Solaris zone resolver") {
     WHEN("data is not present") {
         facts.add(make_shared<empty_zone_resolver>());
         THEN("only the zone count should be added") {
-            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.size() == 1u);
             auto value = facts.get<integer_value>(fact::zones);
             REQUIRE(value);
             REQUIRE(value->value() == 0);
@@ -54,19 +54,19 @@ SCENARIO("using the Solaris zone resolver") {
     WHEN("data is present") {
         facts.add(make_shared<test_zone_resolver>());
         THEN("a structured fact is added") {
-            REQUIRE(facts.size() == 10);
+            REQUIRE(facts.size() == 10u);
             auto mval = facts.get<map_value>(fact::solaris_zones);
             REQUIRE(mval);
-            REQUIRE(mval->size() == 2);
+            REQUIRE(mval->size() == 2u);
             auto sval = mval->get<string_value>("current");
             REQUIRE(sval);
             REQUIRE(sval->value() == "current");
             mval = mval->get<map_value>("zones");
             REQUIRE(mval);
-            REQUIRE(mval->size() == 1);
+            REQUIRE(mval->size() == 1u);
             mval = mval->get<map_value>("name");
             REQUIRE(mval);
-            REQUIRE(mval->size() == 6);
+            REQUIRE(mval->size() == 6u);
             sval = mval->get<string_value>("uuid");
             REQUIRE(sval);
             REQUIRE(sval->value() == "uuid");
@@ -87,7 +87,7 @@ SCENARIO("using the Solaris zone resolver") {
             REQUIRE(sval->value() == "ip type");
         }
         THEN("flat facts are added") {
-            REQUIRE(facts.size() == 10);
+            REQUIRE(facts.size() == 10u);
             auto ival = facts.get<integer_value>(fact::zones);
             REQUIRE(ival);
             REQUIRE(ival->value() == 1);

@@ -36,16 +36,16 @@ SCENARIO("using the ruby resolver") {
     WHEN("data is not present") {
         facts.add(make_shared<empty_ruby_resolver>());
         THEN("facts should not be added") {
-            REQUIRE(facts.size() == 0);
+            REQUIRE(facts.size() == 0u);
         }
     }
     WHEN("data is present") {
         facts.add(make_shared<test_ruby_resolver>());
         THEN("a structured fact is added") {
-            REQUIRE(facts.size() == 4);
+            REQUIRE(facts.size() == 4u);
             auto ruby = facts.get<map_value>(fact::ruby);
             REQUIRE(ruby);
-            REQUIRE(ruby->size() == 3);
+            REQUIRE(ruby->size() == 3u);
             auto platform = ruby->get<string_value>("platform");
             REQUIRE(platform);
             REQUIRE(platform->value() == "i386-mingw32");
@@ -57,7 +57,7 @@ SCENARIO("using the ruby resolver") {
             REQUIRE(version->value() == "2.1.4");
         }
         THEN("flat facts are added") {
-            REQUIRE(facts.size() == 4);
+            REQUIRE(facts.size() == 4u);
             auto platform = facts.get<string_value>(fact::rubyplatform);
             REQUIRE(platform);
             REQUIRE(platform->value() == "i386-mingw32");

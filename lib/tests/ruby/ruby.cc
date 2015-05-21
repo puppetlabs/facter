@@ -51,7 +51,7 @@ string ruby_value_to_string(value const* value)
 
 SCENARIO("custom facts written in Ruby") {
     collection facts;
-    REQUIRE(facts.size() == 0);
+    REQUIRE(facts.size() == 0u);
 
     // Setup ruby
     auto ruby = api::instance();

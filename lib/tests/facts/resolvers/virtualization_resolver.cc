@@ -55,7 +55,7 @@ SCENARIO("using the virtualization resolver") {
     WHEN("no hypervisor is returned") {
         facts.add(make_shared<empty_virtualization_resolver>());
         THEN("the system is reported as physical") {
-            REQUIRE(facts.size() == 2);
+            REQUIRE(facts.size() == 2u);
             auto is_virt = facts.get<boolean_value>(fact::is_virtual);
             REQUIRE(is_virt);
             REQUIRE_FALSE(is_virt->value());
@@ -67,7 +67,7 @@ SCENARIO("using the virtualization resolver") {
     WHEN("an unknown virtual hypervisor is returned") {
         facts.add(make_shared<unknown_hypervisor_resolver>());
         THEN("the system is reported as virtual") {
-            REQUIRE(facts.size() == 2);
+            REQUIRE(facts.size() == 2u);
             auto is_virt = facts.get<boolean_value>(fact::is_virtual);
             REQUIRE(is_virt);
             REQUIRE(is_virt->value());
@@ -79,7 +79,7 @@ SCENARIO("using the virtualization resolver") {
     WHEN("an unknown physical hypervisor is returned") {
         facts.add(make_shared<unknown_non_virtual_hypervisor_resolver>());
         THEN("the system is reported as virtual") {
-            REQUIRE(facts.size() == 2);
+            REQUIRE(facts.size() == 2u);
             auto is_virt = facts.get<boolean_value>(fact::is_virtual);
             REQUIRE(is_virt);
             REQUIRE_FALSE(is_virt->value());
@@ -91,7 +91,7 @@ SCENARIO("using the virtualization resolver") {
     WHEN("an known hypervisor is returned") {
         facts.add(make_shared<known_hypervisor_resolver>());
         THEN("the system is reported as virtual") {
-            REQUIRE(facts.size() == 2);
+            REQUIRE(facts.size() == 2u);
             auto is_virt = facts.get<boolean_value>(fact::is_virtual);
             REQUIRE(is_virt);
             REQUIRE(is_virt->value());

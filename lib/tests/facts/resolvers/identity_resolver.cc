@@ -37,7 +37,7 @@ SCENARIO("using the identity resolver") {
     WHEN("data is not present") {
         facts.add(make_shared<empty_identity_resolver>());
         THEN("facts should not be added") {
-            REQUIRE(facts.size() == 0);
+            REQUIRE(facts.size() == 0u);
         }
     }
     WHEN("data is present") {
@@ -45,7 +45,7 @@ SCENARIO("using the identity resolver") {
         THEN("a structured fact is added") {
             auto identity = facts.get<map_value>(fact::identity);
             REQUIRE(identity);
-            REQUIRE(identity->size() == 4);
+            REQUIRE(identity->size() == 4u);
 
             auto name = identity->get<string_value>("group");
             REQUIRE(name);

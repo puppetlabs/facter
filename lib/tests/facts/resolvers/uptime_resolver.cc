@@ -46,7 +46,7 @@ SCENARIO("using the uptime resolver") {
         THEN("a structured fact with 'hours' uptime is added") {
             auto system_uptime = facts.get<map_value>(fact::system_uptime);
             REQUIRE(system_uptime);
-            REQUIRE(system_uptime->size() == 4);
+            REQUIRE(system_uptime->size() == 4u);
             auto time = system_uptime->get<integer_value>("seconds");
             REQUIRE(time);
             REQUIRE(time->value() == 48906);
@@ -61,7 +61,7 @@ SCENARIO("using the uptime resolver") {
             REQUIRE(uptime->value() == "13:35 hours");
         }
         THEN("flat facts with 'hours' uptime is added") {
-            REQUIRE(facts.size() == 5);
+            REQUIRE(facts.size() == 5u);
             auto time = facts.get<integer_value>(fact::uptime_seconds);
             REQUIRE(time);
             REQUIRE(time->value() == 48906);
@@ -81,7 +81,7 @@ SCENARIO("using the uptime resolver") {
         THEN("a structured fact with '1 day' uptime is added") {
             auto system_uptime = facts.get<map_value>(fact::system_uptime);
             REQUIRE(system_uptime);
-            REQUIRE(system_uptime->size() == 4);
+            REQUIRE(system_uptime->size() == 4u);
             auto time = system_uptime->get<integer_value>("seconds");
             REQUIRE(time);
             REQUIRE(time->value() == 94342);
@@ -96,7 +96,7 @@ SCENARIO("using the uptime resolver") {
             REQUIRE(uptime->value() == "1 day");
         }
         THEN("flat facts with '1 day' uptime is added") {
-            REQUIRE(facts.size() == 5);
+            REQUIRE(facts.size() == 5u);
             auto time = facts.get<integer_value>(fact::uptime_seconds);
             REQUIRE(time);
             REQUIRE(time->value() == 94342);
@@ -116,7 +116,7 @@ SCENARIO("using the uptime resolver") {
         THEN("a structured fact with 'x days' uptime is added") {
             auto system_uptime = facts.get<map_value>(fact::system_uptime);
             REQUIRE(system_uptime);
-            REQUIRE(system_uptime->size() == 4);
+            REQUIRE(system_uptime->size() == 4u);
             auto time = system_uptime->get<integer_value>("seconds");
             REQUIRE(time);
             REQUIRE(time->value() == 274785);
@@ -131,7 +131,7 @@ SCENARIO("using the uptime resolver") {
             REQUIRE(uptime->value() == "3 days");
         }
         THEN("flat facts with 'x days' uptime is added") {
-            REQUIRE(facts.size() == 5);
+            REQUIRE(facts.size() == 5u);
             auto time = facts.get<integer_value>(fact::uptime_seconds);
             REQUIRE(time);
             REQUIRE(time->value() == 274785);
