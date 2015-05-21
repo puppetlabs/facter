@@ -12,7 +12,7 @@
 #include <internal/facts/posix/timezone_resolver.hpp>
 #include <internal/facts/linux/filesystem_resolver.hpp>
 #include <internal/facts/linux/memory_resolver.hpp>
-#include <internal/facts/posix/load_average_resolver.hpp>
+#include <internal/facts/glib/load_average_resolver.hpp>
 
 
 using namespace std;
@@ -34,7 +34,7 @@ namespace facter { namespace facts {
         add(make_shared<posix::timezone_resolver>());
         add(make_shared<linux::filesystem_resolver>());
         add(make_shared<linux::memory_resolver>());
-        add(make_shared<posix::load_average_resolver>());
+        add(make_shared<glib::load_average_resolver>());
     }
 
 }}  // namespace facter::facts

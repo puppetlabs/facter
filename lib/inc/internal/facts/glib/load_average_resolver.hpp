@@ -1,12 +1,12 @@
 /**
  * @file
- * Declares the posix load average fact resolver.
+ * Declares the glib load average fact resolver.
  */
 #pragma once
 
 #include "../resolvers/load_average_resolver.hpp"
 
-namespace facter { namespace facts { namespace posix {
+namespace facter { namespace facts { namespace glib {
 
     /**
      * Responsible for resolving the load average facts.
@@ -17,7 +17,7 @@ namespace facter { namespace facts { namespace posix {
         /**
          * Gets the load averages (for 1, 5 and 15 minutes period).
          */
-        virtual boost::optional<std::tuple<double, double, double> > get_load_averages() override;
+        virtual boost::optional<std::tuple<double, double, double>> get_load_averages() override;
     };
 
-}}}  // namespace facter::facts::posix
+}}}  // namespace facter::facts::glib

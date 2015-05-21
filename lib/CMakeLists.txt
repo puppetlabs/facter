@@ -96,7 +96,6 @@ if (UNIX)
         "src/facts/posix/collection.cc"
         "src/facts/posix/identity_resolver.cc"
         "src/facts/posix/kernel_resolver.cc"
-        "src/facts/posix/load_average_resolver.cc"
         "src/facts/posix/networking_resolver.cc"
         "src/facts/posix/operatingsystem_resolver.cc"
         "src/facts/posix/processor_resolver.cc"
@@ -139,6 +138,7 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
         "src/facts/bsd/filesystem_resolver.cc"
         "src/facts/bsd/networking_resolver.cc"
         "src/facts/bsd/uptime_resolver.cc"
+        "src/facts/glib/load_average_resolver.cc"
         "src/facts/osx/dmi_resolver.cc"
         "src/facts/osx/networking_resolver.cc"
         "src/facts/osx/collection.cc"
@@ -151,8 +151,7 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
     set(LIBFACTER_PLATFORM_SOURCES
-        "src/util/solaris/k_stat.cc"
-        "src/util/solaris/scoped_kstat.cc"
+        "src/facts/glib/load_average_resolver.cc"
         "src/facts/solaris/collection.cc"
         "src/facts/solaris/disk_resolver.cc"
         "src/facts/solaris/uptime_resolver.cc"
@@ -167,6 +166,8 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
         "src/facts/solaris/zfs_resolver.cc"
         "src/facts/solaris/zone_resolver.cc"
         "src/facts/solaris/zpool_resolver.cc"
+        "src/util/solaris/k_stat.cc"
+        "src/util/solaris/scoped_kstat.cc"
     )
     set(LIBFACTER_PLATFORM_LIBRARIES
         kstat
@@ -176,6 +177,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBFACTER_PLATFORM_SOURCES
         "src/facts/bsd/networking_resolver.cc"
+        "src/facts/glib/load_average_resolver.cc"
         "src/facts/linux/disk_resolver.cc"
         "src/facts/linux/dmi_resolver.cc"
         "src/facts/linux/filesystem_resolver.cc"
@@ -195,6 +197,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
     set(LIBFACTER_PLATFORM_SOURCES
         "src/facts/bsd/collection.cc"
+        "src/facts/glib/load_average_resolver.cc"
         "src/facts/bsd/filesystem_resolver.cc"
         "src/facts/bsd/networking_resolver.cc"
         "src/facts/bsd/uptime_resolver.cc"

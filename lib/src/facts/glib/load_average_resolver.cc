@@ -1,8 +1,6 @@
-#include <internal/facts/posix/load_average_resolver.hpp>
-#include <stdlib.h>
-#include <array>
-#include <boost/optional.hpp>
+#include <internal/facts/glib/load_average_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <cstdlib>
 
 #ifdef __sun
 #include <sys/loadavg.h>
@@ -10,7 +8,7 @@
 
 using namespace std;
 
-namespace facter { namespace facts { namespace posix {
+namespace facter { namespace facts { namespace glib {
 
     boost::optional<tuple<double, double, double> > load_average_resolver::get_load_averages()
     {
@@ -21,4 +19,4 @@ namespace facter { namespace facts { namespace posix {
         }
         return make_tuple(averages[0], averages[1], averages[2]);
     }
-}}}  // namespace facter::facts::posix
+}}}  // namespace facter::facts::glib
