@@ -13,7 +13,7 @@ using namespace boost::filesystem;
 
 SCENARIO("using libfacter from Java") {
     collection facts;
-    facts.add_default_facts();
+    facts.add_default_facts(true);
 
     path jar_path = path(BINARY_DIRECTORY) / "lib" / "facter.jar";
 

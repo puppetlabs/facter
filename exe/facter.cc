@@ -123,6 +123,7 @@ int main(int argc, char **argv)
             ("no-color", "Disables color output.")
             ("no-custom-facts", "Disables custom facts.")
             ("no-external-facts", "Disables external facts.")
+            ("no-ruby", "Disables loading Ruby, facts requiring Ruby, and custom facts.")
             ("trace", "Enable backtraces for custom facts.")
             ("verbose", "Enable verbose (info) output.")
             ("version,v", "Print the version and exit.")
@@ -170,6 +171,9 @@ int main(int argc, char **argv)
             if ((vm.count("debug") + vm.count("verbose") + (vm["log-level"].defaulted() ? 0 : 1)) > 1) {
                 throw po::error("debug, verbose, and log-level options conflict: please specify only one.");
             }
+            if (vm.count("no-ruby") && vm.count("custom-dir")) {
+              throw po::error("no-ruby and custom-dir options conflict: please specify only one.");
+            }
         }
         catch (exception& ex) {
             boost::nowide::cerr << colorize(level::error) << "error: " << ex.what() << colorize() << "\n" << endl;
@@ -202,7 +206,7 @@ int main(int argc, char **argv)
         log_command_line(argc, argv);
 
         // Initialize Ruby in main
-        bool ruby = facter::ruby::initialize(vm.count("trace") == 1);
+        bool ruby = (vm.count("no-ruby") == 0) && facter::ruby::initialize(vm.count("trace") == 1);
 
         // Build a set of queries from the command line
         set<string> queries;
@@ -228,7 +232,7 @@ int main(int argc, char **argv)
         log_queries(queries);
 
         collection facts;
-        facts.add_default_facts();
+        facts.add_default_facts(ruby);
 
         if (!vm.count("no-external-facts")) {
             facts.add_external_facts(external_directories);

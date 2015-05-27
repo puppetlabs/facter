@@ -126,7 +126,9 @@ extern "C" {
         set_level(level::warning);
 
         facts_collection.reset(new collection());
-        facts_collection->add_default_facts();
+
+        bool include_ruby_facts = true;
+        facts_collection->add_default_facts(include_ruby_facts);
         facts_collection->add_external_facts();
         return JNI_VERSION_1_6;
     }

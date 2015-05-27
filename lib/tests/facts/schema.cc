@@ -660,7 +660,7 @@ SCENARIO("validating schema") {
             REQUIRE(found.size() == schema.size());
         }
         THEN("the current platform's facts must conform to the schema") {
-            facts.add_default_facts();
+            facts.add_default_facts(true);
 
             set<string> found;
 

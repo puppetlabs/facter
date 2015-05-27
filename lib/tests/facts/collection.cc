@@ -59,7 +59,7 @@ SCENARIO("using the fact collection") {
     REQUIRE(facts.empty());
 
     GIVEN("default facts") {
-        facts.add_default_facts();
+        facts.add_default_facts(true);
         THEN("facts should resolve") {
             REQUIRE(facts.size() > 0);
             REQUIRE_FALSE(facts.empty());
@@ -323,7 +323,7 @@ SCENARIO("using the fact collection") {
         }
     }
     GIVEN("a fact from an environment with the same name as a built-in fact") {
-        facts.add_default_facts();
+        facts.add_default_facts(true);
         auto var = temp_variable("FACTER_KERNEL", "overridden");
         bool added = false;
         facts.add_environment_facts([&](string const& name) {

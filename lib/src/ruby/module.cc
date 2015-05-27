@@ -317,7 +317,8 @@ namespace facter { namespace ruby {
     collection& module::facts()
     {
         if (_collection.empty()) {
-            _collection.add_default_facts();
+            bool include_ruby_facts = true;
+            _collection.add_default_facts(include_ruby_facts);
             _collection.add_external_facts(_external_search_paths);
 
             auto const& ruby = *api::instance();

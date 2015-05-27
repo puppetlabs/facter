@@ -83,8 +83,9 @@ namespace facter { namespace facts {
 
         /**
          * Adds the default facts to the collection.
+         * @param include_ruby_facts Whether or not to include facts which require Ruby in the collection.
          */
-        void add_default_facts();
+        void add_default_facts(bool include_ruby_facts);
 
         /**
          * Adds a resolver to the fact collection.
@@ -201,7 +202,7 @@ namespace facter { namespace facts {
         LIBFACTER_NO_EXPORT void write_hash(std::ostream& stream, std::set<std::string> const& queries);
         LIBFACTER_NO_EXPORT void write_json(std::ostream& stream, std::set<std::string> const& queries);
         LIBFACTER_NO_EXPORT void write_yaml(std::ostream& stream, std::set<std::string> const& queries);
-        LIBFACTER_NO_EXPORT void add_common_facts();
+        LIBFACTER_NO_EXPORT void add_common_facts(bool include_ruby_facts);
 
         // Platform specific members
         LIBFACTER_NO_EXPORT void add_platform_facts();
