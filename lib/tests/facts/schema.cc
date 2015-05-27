@@ -198,6 +198,7 @@ struct operating_system_resolver : resolvers::operating_system_resolver
     {
         data result;
         result.name = "name";
+        result.family = "family";
         result.release = "1.2.3";
         result.specification_version = "1.4";
         result.distro.id = "id";

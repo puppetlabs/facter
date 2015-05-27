@@ -30,16 +30,7 @@ namespace facter { namespace facts { namespace linux {
         virtual std::tuple<std::string, std::string> parse_release(std::string const& name, std::string const& release) const override;
 
      private:
-        static std::string get_name(std::string const& distro_id);
-        static std::string get_release(std::string const& name, std::string const& distro_release);
-        static std::string check_os_release_linux();
-        static std::string check_debian_linux(std::string const& distro_id);
-        static std::string check_oracle_linux();
-        static std::string check_redhat_linux();
-        static std::string check_suse_linux();
-        static std::string check_other_linux();
         static selinux_data collect_selinux_data();
-        static std::string get_selinux_mountpoint();
     };
 
 }}}  // namespace facter::facts::linux

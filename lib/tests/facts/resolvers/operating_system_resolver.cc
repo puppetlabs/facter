@@ -25,6 +25,7 @@ struct test_os_resolver : operating_system_resolver
     {
         data result;
         result.name = "Archlinux";
+        result.family = "Archlinux";
         result.release = "1.2.3";
         result.specification_version = "1.4";
         result.distro.id = "Arch";

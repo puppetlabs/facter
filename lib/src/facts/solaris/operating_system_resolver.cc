@@ -1,6 +1,7 @@
 #include <internal/facts/solaris/operating_system_resolver.hpp>
 #include <internal/util/regex.hpp>
 #include <facter/facts/os.hpp>
+#include <facter/facts/os_family.hpp>
 #include <facter/util/file.hpp>
 
 using namespace std;
@@ -8,12 +9,36 @@ using namespace facter::util;
 
 namespace facter { namespace facts { namespace solaris {
 
+    static string get_family(string const& name)
+    {
+        if (!name.empty()) {
+            static map<string, string> const systems = {
+                { string(os::sunos),                    string(os_family::solaris) },
+                { string(os::solaris),                  string(os_family::solaris) },
+                { string(os::nexenta),                  string(os_family::solaris) },
+                { string(os::omni),                     string(os_family::solaris) },
+                { string(os::open_indiana),             string(os_family::solaris) },
+                { string(os::smart),                    string(os_family::solaris) },
+            };
+            auto const& it = systems.find(name);
+            if (it != systems.end()) {
+                return it->second;
+            }
+        }
+        return {};
+    }
+
     operating_system_resolver::data operating_system_resolver::collect_data(collection& facts)
     {
         // Default to the base implementation
         auto result = posix::operating_system_resolver::collect_data(facts);
         if (result.name == os::sunos) {
             result.name = os::solaris;
+        }
+
+        auto family = get_family(result.name);
+        if (!family.empty()) {
+            result.family = move(family);
         }
 
         /*
