@@ -65,7 +65,7 @@ SCENARIO("using the file system resolver") {
 
     WHEN("data is not present") {
         THEN("facts should not be added") {
-            REQUIRE(facts.size() == 0);
+            REQUIRE(facts.size() == 0u);
         }
     }
     WHEN("mount point data is present") {
@@ -75,16 +75,16 @@ SCENARIO("using the file system resolver") {
             resolver->add_mountpoint("mount" + num, "device" + num, "filesystem" + num, 12345, 1000, {"option1" + num, "option2" + num, "option3" + num});
         }
         THEN("a structured fact is added") {
-            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.size() == 1u);
             auto mountpoints = facts.get<map_value>(fact::mountpoints);
             REQUIRE(mountpoints);
-            REQUIRE(mountpoints->size() == 5);
+            REQUIRE(mountpoints->size() == 5u);
             for (unsigned int i = 0; i < count; ++i) {
                 string num = to_string(i);
 
                 auto mountpoint = mountpoints->get<map_value>("mount" + num);
                 REQUIRE(mountpoint);
-                REQUIRE(mountpoint->size() == 10);
+                REQUIRE(mountpoint->size() == 10u);
 
                 auto available = mountpoint->get<string_value>("available");
                 REQUIRE(available);
@@ -108,7 +108,7 @@ SCENARIO("using the file system resolver") {
 
                 auto options = mountpoint->get<array_value>("options");
                 REQUIRE(options);
-                REQUIRE(options->size() == 3);
+                REQUIRE(options->size() == 3u);
                 REQUIRE(options->get<string_value>(0)->value() == "option1" + num);
                 REQUIRE(options->get<string_value>(1)->value() == "option2" + num);
                 REQUIRE(options->get<string_value>(2)->value() == "option3" + num);
@@ -137,7 +137,7 @@ SCENARIO("using the file system resolver") {
         resolver->add_filesystem("baz");
 
         THEN("a flat fact is added") {
-            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.size() == 1u);
             auto filesystems = facts.get<string_value>(fact::filesystems);
             REQUIRE(filesystems);
             REQUIRE(filesystems->value() == "bar,baz,foo");
@@ -150,7 +150,7 @@ SCENARIO("using the file system resolver") {
             resolver->add_partition("partition" + num, "filesystem" + num, 12345 + i, "uuid" + num, "partuuid" + num, "label" + num, "partlabel" + num, "mount" + num);
         }
         THEN("a structured fact is added") {
-            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.size() == 1u);
 
             auto partitions = facts.get<map_value>(fact::partitions);
             REQUIRE(partitions);
@@ -160,7 +160,7 @@ SCENARIO("using the file system resolver") {
 
                 auto partition = partitions->get<map_value>("partition" + num);
                 REQUIRE(partition);
-                REQUIRE(partition->size() == 8);
+                REQUIRE(partition->size() == 8u);
 
                 auto filesystem = partition->get<string_value>("filesystem");
                 REQUIRE(filesystem);

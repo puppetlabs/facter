@@ -55,20 +55,20 @@ struct temp_variable
 
 SCENARIO("using the fact collection") {
     collection facts;
-    REQUIRE(facts.size() == 0);
+    REQUIRE(facts.size() == 0u);
     REQUIRE(facts.empty());
 
     GIVEN("default facts") {
         facts.add_default_facts();
         THEN("facts should resolve") {
-            REQUIRE(facts.size() > 0);
+            REQUIRE(facts.size() > 0u);
             REQUIRE_FALSE(facts.empty());
         }
     }
     GIVEN("a single fact") {
         facts.add("foo", make_value<string_value>("bar"));
         THEN("it should be in the collection") {
-            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.size() == 1u);
             REQUIRE_FALSE(facts.empty());
             auto fact = facts.get<string_value>("foo");
             REQUIRE(fact);
@@ -81,7 +81,7 @@ SCENARIO("using the fact collection") {
     GIVEN("a resolver that adds a single fact") {
         facts.add(make_shared<simple_resolver>());
         THEN("it should resolve facts into the collection") {
-            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.size() == 1u);
             REQUIRE_FALSE(facts.empty());
             auto fact = facts.get<string_value>("foo");
             REQUIRE(fact);
@@ -170,7 +170,7 @@ SCENARIO("using the fact collection") {
                 LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/text",
         });
         REQUIRE_FALSE(facts.empty());
-        REQUIRE(facts.size() == 17);
+        REQUIRE(facts.size() == 17u);
         WHEN("YAML files are present") {
             THEN("facts should be added") {
                 REQUIRE(facts.get<string_value>("yaml_fact1"));
@@ -230,7 +230,7 @@ SCENARIO("using the fact collection") {
             THEN("a value should be returned") {
                 auto mvalue = facts.query<map_value>("map");
                 REQUIRE(mvalue);
-                REQUIRE(mvalue->size() == 7);
+                REQUIRE(mvalue->size() == 7u);
             }
         }
         WHEN("queried with a non-matching top level name") {
@@ -259,7 +259,7 @@ SCENARIO("using the fact collection") {
                 REQUIRE(bvalue->value());
                 auto mvalue = facts.query<map_value>("map.submap");
                 REQUIRE(mvalue);
-                REQUIRE(mvalue->size() == 1);
+                REQUIRE(mvalue->size() == 1u);
             }
         }
         WHEN("querying along a path of map values") {
@@ -273,7 +273,7 @@ SCENARIO("using the fact collection") {
             THEN("a value should be returned") {
                 auto avalue = facts.query<array_value>("map.array");
                 REQUIRE(avalue);
-                REQUIRE(avalue->size() == 5);
+                REQUIRE(avalue->size() == 5u);
                 for (size_t i = 0; i < avalue->size(); ++i) {
                     REQUIRE(facts.query("map.array." + to_string(i)));
                 }
@@ -316,7 +316,7 @@ SCENARIO("using the fact collection") {
         REQUIRE(added);
 
         THEN("the fact should be present in the collection") {
-            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.size() == 1u);
             auto value = facts.get<string_value>("foo");
             REQUIRE(value);
             REQUIRE(value->value() == "bar");
@@ -343,7 +343,7 @@ SCENARIO("using the fact collection") {
             LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/ordering/bar"
         });
         THEN("it should have the fact value from the last file loaded") {
-            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.size() == 1u);
             REQUIRE(facts.get<string_value>("foo"));
             REQUIRE(facts.get<string_value>("foo")->value() == "set in bar/foo.yaml");
         }
@@ -353,7 +353,7 @@ SCENARIO("using the fact collection") {
             LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/ordering/foo"
         });
         THEN("it should have the fact value from the last file loaded") {
-            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.size() == 1u);
             REQUIRE(facts.get<string_value>("foo"));
             REQUIRE(facts.get<string_value>("foo")->value() == "set in foo/foo.yaml");
         }

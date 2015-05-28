@@ -45,7 +45,7 @@ SCENARIO("using the ssh resolver") {
     WHEN("data is not present") {
         facts.add(make_shared<empty_ssh_resolver>());
         THEN("facts should not be added") {
-            REQUIRE(facts.size() == 0);
+            REQUIRE(facts.size() == 0u);
         }
     }
     WHEN("data is present") {
@@ -57,20 +57,20 @@ SCENARIO("using the ssh resolver") {
         };
         facts.add(make_shared<test_ssh_resolver>());
         THEN("a structured fact is added") {
-            REQUIRE(facts.size() == 9);
+            REQUIRE(facts.size() == 9u);
             auto ssh = facts.get<map_value>(fact::ssh);
             REQUIRE(ssh);
-            REQUIRE(ssh->size() == 4);
+            REQUIRE(ssh->size() == 4u);
             for (auto const& algorithm : algorithms) {
                 auto entry = ssh->get<map_value>(algorithm);
                 REQUIRE(entry);
-                REQUIRE(entry->size() == 2);
+                REQUIRE(entry->size() == 2u);
                 auto key = entry->get<string_value>("key");
                 REQUIRE(key);
                 REQUIRE(key->value() == algorithm + ":key");
                 auto fingerprints = entry->get<map_value>("fingerprints");
                 REQUIRE(fingerprints);
-                REQUIRE(fingerprints->size() == 2);
+                REQUIRE(fingerprints->size() == 2u);
                 auto fingerprint = fingerprints->get<string_value>("sha1");
                 REQUIRE(fingerprint);
                 REQUIRE(fingerprint->value() == algorithm + ":sha1");
@@ -80,7 +80,7 @@ SCENARIO("using the ssh resolver") {
             }
         }
         THEN("flat facts are added") {
-            REQUIRE(facts.size() == 9);
+            REQUIRE(facts.size() == 9u);
             for (auto const& algorithm : algorithms) {
                 auto key = facts.get<string_value>("ssh" + algorithm + "key");
                 REQUIRE(key);

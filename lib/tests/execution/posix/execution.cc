@@ -166,7 +166,7 @@ SCENARIO("executing commands with execution::execute") {
             REQUIRE(success);
             auto variables = get_variables(output);
             THEN("the child environment should only contain the given variables") {
-                REQUIRE(variables.size() == 4);
+                REQUIRE(variables.size() == 4u);
                 REQUIRE(variables.count("TEST_VARIABLE1") == 1);
                 REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
                 REQUIRE(variables.count("TEST_VARIABLE1") == 1);
@@ -294,7 +294,7 @@ SCENARIO("executing commands with execution::each_line") {
                 return true;
             });
             REQUIRE(success);
-            REQUIRE(lines.size() == 4);
+            REQUIRE(lines.size() == 4u);
             REQUIRE(lines[0] == "line1");
             REQUIRE(lines[1] == "line2");
             REQUIRE(lines[2] == "line3");
@@ -307,7 +307,7 @@ SCENARIO("executing commands with execution::each_line") {
                 return false;
             });
             REQUIRE(success);
-            REQUIRE(lines.size() == 1);
+            REQUIRE(lines.size() == 1u);
             REQUIRE(lines[0] == "line1");
         }
         WHEN("requested to merge the environment") {
@@ -365,7 +365,7 @@ SCENARIO("executing commands with execution::each_line") {
             unsetenv("TEST_INHERITED_VARIABLE");
             REQUIRE(success);
             THEN("the child environment should only contain the given variables") {
-                REQUIRE(variables.size() == 4);
+                REQUIRE(variables.size() == 4u);
                 REQUIRE(variables.count("TEST_VARIABLE1") == 1);
                 REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
                 REQUIRE(variables.count("TEST_VARIABLE1") == 1);

@@ -85,7 +85,7 @@ SCENARIO("executing commands with execution::execute") {
         facter::util::each_line(input, [&](string& line) {
             vector<string> parts;
             boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
-            if (parts.size() != 2) {
+            if (parts.size() != 2u) {
                 return true;
             }
             variables.emplace(make_pair(move(parts[0]), move(parts[1])));
@@ -141,16 +141,16 @@ SCENARIO("executing commands with execution::execute") {
             REQUIRE(error == "");
             auto variables = get_variables(output);
             THEN("the child environment should contain the given variables") {
-                REQUIRE(variables.size() > 4);
-                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables.size() > 4u);
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1u);
                 REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
-                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1u);
                 REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
             }
             THEN("the child environment should have LC_ALL and LANG set to C") {
-                REQUIRE(variables.count("LC_ALL") == 1);
+                REQUIRE(variables.count("LC_ALL") == 1u);
                 REQUIRE(variables["LC_ALL"] == "C");
-                REQUIRE(variables.count("LANG") == 1);
+                REQUIRE(variables.count("LANG") == 1u);
                 REQUIRE(variables["LANG"] == "C");
             }
         }
@@ -162,15 +162,15 @@ SCENARIO("executing commands with execution::execute") {
             REQUIRE(error == "");
             auto variables = get_variables(output);
             THEN("the child environment should only contain the given variables") {
-                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1u);
                 REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
-                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1u);
                 REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
             }
             THEN("the child environment should have LC_ALL and LANG set to C") {
-                REQUIRE(variables.count("LC_ALL") == 1);
+                REQUIRE(variables.count("LC_ALL") == 1u);
                 REQUIRE(variables["LC_ALL"] == "C");
-                REQUIRE(variables.count("LANG") == 1);
+                REQUIRE(variables.count("LANG") == 1u);
                 REQUIRE(variables["LANG"] == "C");
             }
         }
@@ -180,9 +180,9 @@ SCENARIO("executing commands with execution::execute") {
             REQUIRE(error == "");
             auto variables = get_variables(output);
             THEN("the values should be passed to the child process") {
-                REQUIRE(variables.count("LC_ALL") == 1);
+                REQUIRE(variables.count("LC_ALL") == 1u);
                 REQUIRE(variables["LC_ALL"] == "BAR");
-                REQUIRE(variables.count("LANG") == 1);
+                REQUIRE(variables.count("LANG") == 1u);
                 REQUIRE(variables["LANG"] == "FOO");
             }
         }
@@ -268,7 +268,7 @@ SCENARIO("executing commands with execution::each_line") {
                     return true;
                 });
             REQUIRE(success);
-            REQUIRE(lines.size() == 4);
+            REQUIRE(lines.size() == 4u);
             REQUIRE(lines[0] == "line1");
             REQUIRE(lines[1] == "line2");
             REQUIRE(lines[2] == "line3");
@@ -288,7 +288,7 @@ SCENARIO("executing commands with execution::each_line") {
                     return false;
                 });
             REQUIRE(success);
-            REQUIRE(lines.size() == 1);
+            REQUIRE(lines.size() == 1u);
             REQUIRE(lines[0] == "line1");
         }
         WHEN("requested to merge the environment") {
@@ -307,7 +307,7 @@ SCENARIO("executing commands with execution::each_line") {
                 [&](string& line) {
                     vector<string> parts;
                     boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
-                    if (parts.size() != 2) {
+                    if (parts.size() != 2u) {
                         return true;
                     }
                     variables.emplace(make_pair(move(parts[0]), move(parts[1])));
@@ -316,16 +316,16 @@ SCENARIO("executing commands with execution::each_line") {
             SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", nullptr);
             REQUIRE(success);
             THEN("the child environment should contain the given variables") {
-                REQUIRE(variables.size() > 4);
-                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables.size() > 4u);
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1u);
                 REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
-                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1u);
                 REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
             }
             THEN("the child environment should have LC_ALL and LANG set to C") {
-                REQUIRE(variables.count("LC_ALL") == 1);
+                REQUIRE(variables.count("LC_ALL") == 1u);
                 REQUIRE(variables["LC_ALL"] == "C");
-                REQUIRE(variables.count("LANG") == 1);
+                REQUIRE(variables.count("LANG") == 1u);
                 REQUIRE(variables["LANG"] == "C");
             }
         }
@@ -345,7 +345,7 @@ SCENARIO("executing commands with execution::each_line") {
                 [&](string& line) {
                     vector<string> parts;
                     boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
-                    if (parts.size() != 2) {
+                    if (parts.size() != 2u) {
                         return true;
                     }
                     variables.emplace(make_pair(move(parts[0]), move(parts[1])));
@@ -359,15 +359,15 @@ SCENARIO("executing commands with execution::each_line") {
             SetEnvironmentVariableW(L"TEST_INHERITED_VARIABLE", nullptr);
             REQUIRE(success);
             THEN("the child environment should only contain the given variables") {
-                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1u);
                 REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
-                REQUIRE(variables.count("TEST_VARIABLE1") == 1);
+                REQUIRE(variables.count("TEST_VARIABLE1") == 1u);
                 REQUIRE(variables["TEST_VARIABLE1"] == "TEST_VALUE1");
             }
             THEN("the child environment should have LC_ALL and LANG set to C") {
-                REQUIRE(variables.count("LC_ALL") == 1);
+                REQUIRE(variables.count("LC_ALL") == 1u);
                 REQUIRE(variables["LC_ALL"] == "C");
-                REQUIRE(variables.count("LANG") == 1);
+                REQUIRE(variables.count("LANG") == 1u);
                 REQUIRE(variables["LANG"] == "C");
             }
         }
@@ -386,7 +386,7 @@ SCENARIO("executing commands with execution::each_line") {
                 [&](string& line) {
                     vector<string> parts;
                     boost::split(parts, line, boost::is_any_of("="), boost::token_compress_off);
-                    if (parts.size() != 2) {
+                    if (parts.size() != 2u) {
                         return true;
                     }
                     variables.emplace(make_pair(move(parts[0]), move(parts[1])));
@@ -394,9 +394,9 @@ SCENARIO("executing commands with execution::each_line") {
                 });
             REQUIRE(success);
             THEN("the values should be passed to the child process") {
-                REQUIRE(variables.count("LC_ALL") == 1);
+                REQUIRE(variables.count("LC_ALL") == 1u);
                 REQUIRE(variables["LC_ALL"] == "BAR");
-                REQUIRE(variables.count("LANG") == 1);
+                REQUIRE(variables.count("LANG") == 1u);
                 REQUIRE(variables["LANG"] == "FOO");
             }
         }

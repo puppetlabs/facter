@@ -40,7 +40,7 @@ SCENARIO("using the disk resolver") {
     facts.add(resolver);
     GIVEN("no disks present") {
         THEN("facts should not be added") {
-            REQUIRE(facts.size() == 0);
+            REQUIRE(facts.size() == 0u);
         }
     }
     GIVEN("five present disks") {
@@ -59,7 +59,7 @@ SCENARIO("using the disk resolver") {
 
                 auto disk = disks->get<map_value>("disk" + num);
                 REQUIRE(disk);
-                REQUIRE(disk->size() == 5);
+                REQUIRE(disk->size() == 5u);
 
                 auto model = disk->get<string_value>("model");
                 REQUIRE(model);
@@ -99,7 +99,7 @@ SCENARIO("using the disk resolver") {
                 REQUIRE(vendor);
                 REQUIRE(vendor->value() == "vendor" + num);
 
-                if (names.size() > 0) {
+                if (names.size() > 0u) {
                     names += ",";
                 }
                 names += "disk" + num;

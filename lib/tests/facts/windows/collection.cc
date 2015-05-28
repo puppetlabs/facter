@@ -13,14 +13,14 @@ using namespace facter::testing;
 
 SCENARIO("resolving external executable facts into a collection") {
     collection facts;
-    REQUIRE(facts.size() == 0);
+    REQUIRE(facts.size() == 0u);
     GIVEN("an absolute path") {
         facts.add_external_facts({
             LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution",
             LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell",
         });
         THEN("facts should resolve") {
-            REQUIRE(facts.size() == 7);
+            REQUIRE(facts.size() == 7u);
             REQUIRE(facts.get<string_value>("exe_fact1"));
             REQUIRE(facts.get<string_value>("exe_fact2"));
             REQUIRE_FALSE(facts.get<string_value>("exe_fact3"));
@@ -35,7 +35,7 @@ SCENARIO("resolving external executable facts into a collection") {
         test_with_relative_path fixture("foo", "bar.bat", "@echo local_exec_fact=value");
         facts.add_external_facts({ "foo" });
         THEN("facts should resolve") {
-            REQUIRE(facts.size() == 1);
+            REQUIRE(facts.size() == 1u);
             REQUIRE(facts.get<string_value>("local_exec_fact"));
             REQUIRE(facts.get<string_value>("local_exec_fact")->value() == "value");
         }

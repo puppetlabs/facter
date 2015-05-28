@@ -45,13 +45,13 @@ SCENARIO("using the ZFS resolver") {
     WHEN("data is not present") {
         facts.add(make_shared<empty_zfs_resolver>());
         THEN("facts should not be added") {
-            REQUIRE(facts.size() == 0);
+            REQUIRE(facts.size() == 0u);
         }
     }
     WHEN("data is present") {
         facts.add(make_shared<test_zfs_resolver>());
         THEN("flat facts are added") {
-            REQUIRE(facts.size() == 2);
+            REQUIRE(facts.size() == 2u);
             auto value = facts.get<string_value>(fact::zfs_version);
             REQUIRE(value);
             REQUIRE(value->value() == "1");

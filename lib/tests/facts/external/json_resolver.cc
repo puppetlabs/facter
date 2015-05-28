@@ -49,10 +49,10 @@ SCENARIO("resolving external JSON facts") {
             REQUIRE(facts.get<double_value>("json_fact4")->value() == Approx(5.1));
             auto array = facts.get<array_value>("json_fact5");
             REQUIRE(array);
-            REQUIRE(array->size() == 3);
+            REQUIRE(array->size() == 3u);
             auto map = facts.get<map_value>("json_fact6");
             REQUIRE(map);
-            REQUIRE(map->size() == 2);
+            REQUIRE(map->size() == 2u);
             REQUIRE(facts.get<string_value>("json_fact7"));
             REQUIRE_FALSE(facts.get<string_value>("JSON_fact7"));
             REQUIRE(facts.get<string_value>("json_fact7")->value() == "bar");

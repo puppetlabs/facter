@@ -32,7 +32,7 @@ SCENARIO("using a map fact value") {
         value.add("map", move(map_element));
 
         THEN("it should contain the elements that were added") {
-            REQUIRE(value.size() == 4);
+            REQUIRE(value.size() == 4u);
             auto str = value.get<string_value>("string");
             REQUIRE(str);
             REQUIRE(str->value() == "hello");
@@ -43,7 +43,7 @@ SCENARIO("using a map fact value") {
 
             auto array = value.get<array_value>("array");
             REQUIRE(array);
-            REQUIRE(array->size() == 2);
+            REQUIRE(array->size() == 2u);
             str = array->get<string_value>(0);
             REQUIRE(str);
             REQUIRE(str->value() == "1");
@@ -53,7 +53,7 @@ SCENARIO("using a map fact value") {
 
             auto mapval = value.get<map_value>("map");
             REQUIRE(mapval);
-            REQUIRE(mapval->size() == 1);
+            REQUIRE(mapval->size() == 1u);
             str = mapval->get<string_value>("foo");
             REQUIRE(str);
             REQUIRE(str->value() == "bar");
