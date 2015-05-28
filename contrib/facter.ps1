@@ -74,7 +74,7 @@ if (!(Get-Command choco -ErrorAction SilentlyContinue)) {
     iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 Install-Choco 7zip.commandline 9.20.0.20150210
-Install-Choco cmake 3.1.0
+Install-Choco cmake 3.2.2
 Install-Choco git.install 1.9.5.20150320
 
 # For MinGW, we expect specific project defaults
