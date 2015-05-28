@@ -1,8 +1,9 @@
 #include <internal/facts/linux/operating_system_resolver.hpp>
 #include <internal/facts/linux/release_file.hpp>
 #include <internal/facts/linux/os_linux.hpp>
-#include <internal/facts/linux/os_cumulus.hpp>
+#include <internal/facts/linux/os_cisco.hpp>
 #include <internal/facts/linux/os_coreos.hpp>
+#include <internal/facts/linux/os_cumulus.hpp>
 #include <internal/util/regex.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -26,12 +27,18 @@ namespace facter { namespace facts { namespace linux {
 
     static unique_ptr<os_linux> get_os()
     {
-        auto release_info = os_linux::key_value_file(release_file::os, {"NAME"});
+        auto release_info = os_linux::key_value_file(release_file::os, {"NAME", "CISCO_RELEASE_INFO"});
         auto const& name = release_info["NAME"];
         if (name == "Cumulus Linux") {
             return unique_ptr<os_linux>(new os_cumulus());
         } else if (name == "CoreOS") {
             return unique_ptr<os_linux>(new os_coreos());
+        } else {
+            auto const& cisco = release_info["CISCO_RELEASE_INFO"];
+            boost::system::error_code ec;
+            if (!cisco.empty() && is_regular_file(cisco, ec)) {
+                return unique_ptr<os_linux>(new os_cisco(cisco));
+            }
         }
         return unique_ptr<os_linux>(new os_linux());
     }
