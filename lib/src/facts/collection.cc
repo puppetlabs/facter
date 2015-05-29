@@ -55,9 +55,9 @@ namespace facter { namespace facts {
         return *this;
     }
 
-    void collection::add_default_facts()
+    void collection::add_default_facts(bool include_ruby_facts)
     {
-        add_common_facts();
+        add_common_facts(include_ruby_facts);
         add_platform_facts();
     }
 
@@ -529,10 +529,13 @@ namespace facter { namespace facts {
         emitter << EndMap;
     }
 
-    void collection::add_common_facts()
+    void collection::add_common_facts(bool include_ruby_facts)
     {
         add("facterversion", make_value<string_value>(LIBFACTER_VERSION));
-        add(make_shared<resolvers::ruby_resolver>());
+
+        if (include_ruby_facts) {
+            add(make_shared<resolvers::ruby_resolver>());
+        }
         add(make_shared<resolvers::path_resolver>());
         add(make_shared<resolvers::ec2_resolver>());
         add(make_shared<resolvers::gce_resolver>());

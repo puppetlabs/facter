@@ -129,7 +129,7 @@ namespace facter { namespace ruby {
     {
         dynamic_library library = find_library();
         if (!library.loaded()) {
-            LOG_WARNING("could not locate a ruby library: custom facts will not be resolved.");
+            LOG_WARNING("could not locate a ruby library: facts requiring Ruby will not be resolved.");
             return nullptr;
         } else if (library.first_load()) {
             LOG_INFO("ruby loaded from \"%1%\".", library.name());
