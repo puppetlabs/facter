@@ -34,7 +34,7 @@ agents.each do |agent|
   custom_fact = File.join(custom_dir, 'custom_fact.rb')
   create_remote_file(agent, custom_fact, content)
 
-  on(agent, facter("--no-ruby --custom-dir #{custom_dir} custom_fact")) do
+  on(agent, facter('--no-ruby custom_fact', :environment => { 'FACTERLIB' => custom_dir })) do
     assert_equal("", stdout.chomp, "Expected custom fact to be disabled while using --no-ruby option, but it resolved as #{stdout.chomp}")
   end
 end
