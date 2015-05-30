@@ -35,7 +35,6 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--title", "Facter - System Inventory Tool", "--main", "README", "--line-numbers"]
   s.require_paths = ["lib"]
   s.rubyforge_project = "facter"
-  s.rubygems_version = "1.8.24"
   s.summary = "Facter, a system inventory tool"
 
   if s.respond_to? :specification_version then
