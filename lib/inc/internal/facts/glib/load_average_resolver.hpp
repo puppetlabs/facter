@@ -16,6 +16,7 @@ namespace facter { namespace facts { namespace glib {
      protected:
         /**
          * Gets the load averages (for 1, 5 and 15 minutes period).
+         * @return The load averages.
          */
         virtual boost::optional<std::tuple<double, double, double>> get_load_averages() override;
     };
