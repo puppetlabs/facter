@@ -143,6 +143,7 @@ namespace facter { namespace facts { namespace linux {
         auto release = implementation->get_release(result.name, result.distro.release);
         if (!release.empty()) {
             result.release = move(release);
+            tie(result.major, result.minor) = implementation->parse_release(result.name, result.release);
         }
 
         // Convert the architecture value depending on distro
@@ -166,17 +167,6 @@ namespace facter { namespace facts { namespace linux {
         result.selinux = collect_selinux_data();
 
         return result;
-    }
-
-    tuple<string, string> operating_system_resolver::parse_release(string const& name, string const& release) const
-    {
-        if (name != os::ubuntu) {
-            return resolvers::operating_system_resolver::parse_release(name, release);
-        }
-
-        string major, minor;
-        re_search(release, boost::regex("(\\d+\\.\\d*)\\.?(\\d*)"), &major, &minor);
-        return make_tuple(move(major), move(minor));
     }
 
 }}}  // namespace facter::facts::linux

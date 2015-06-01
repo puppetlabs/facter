@@ -1,4 +1,5 @@
 #include <internal/facts/linux/os_linux.hpp>
+#include <internal/facts/resolvers/operating_system_resolver.hpp>
 #include <internal/util/regex.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/facts/os.hpp>
@@ -323,6 +324,11 @@ namespace facter { namespace facts { namespace linux {
         }
 
         return value;
+    }
+
+    tuple<string, string> os_linux::parse_release(string const& name, string const& release) const
+    {
+        return facter::facts::resolvers::operating_system_resolver::parse_distro(name, release);
     }
 
 }}}  // namespace facter::facts::linux

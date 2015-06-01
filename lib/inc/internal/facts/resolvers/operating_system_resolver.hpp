@@ -25,6 +25,14 @@ namespace facter { namespace facts { namespace resolvers {
          */
         virtual void resolve(collection& facts) override;
 
+        /**
+         * Parses the major and minor OS release versions for Linux distros.
+         * @param name The name of the OS.
+         * @param release The release to parse.
+         * @return Returns a tuple of major and minor release versions.
+         */
+        static std::tuple<std::string, std::string> parse_distro(std::string const& name, std::string const& release);
+
      protected:
         /**
          * Represents information about an operating system distribution.
@@ -157,6 +165,16 @@ namespace facter { namespace facts { namespace resolvers {
             std::string release;
 
             /**
+             * Stores the OS major release.
+             */
+            std::string major;
+
+            /**
+             * Stores the OS minor release.
+             */
+            std::string minor;
+
+            /**
              * Stores the processor hardware model.
              */
             std::string hardware;
@@ -198,14 +216,6 @@ namespace facter { namespace facts { namespace resolvers {
          * @return Returns the resolver data.
          */
         virtual data collect_data(collection& facts);
-
-        /**
-         * Parses the major and minor OS release versions.
-         * @param name The name of the OS.
-         * @param release The release to parse.
-         * @return Returns a tuple of major and minor release versions.
-         */
-        virtual std::tuple<std::string, std::string> parse_release(std::string const& name, std::string const& release) const;
     };
 
 }}}  // namespace facter::facts::resolvers

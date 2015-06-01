@@ -200,6 +200,8 @@ struct operating_system_resolver : resolvers::operating_system_resolver
         result.name = "name";
         result.family = "family";
         result.release = "1.2.3";
+        result.major = "1.2";
+        result.minor = "3";
         result.specification_version = "1.4";
         result.distro.id = "id";
         result.distro.release = "1.2.3";
@@ -219,11 +221,6 @@ struct operating_system_resolver : resolvers::operating_system_resolver
         result.selinux.config_policy = "config policy";
         result.selinux.policy_version = "policy version";
         return result;
-    }
-
-    virtual tuple<string, string> parse_release(string const& name, string const& release) const override
-    {
-        return make_tuple("1.2", "3");
     }
 };
 

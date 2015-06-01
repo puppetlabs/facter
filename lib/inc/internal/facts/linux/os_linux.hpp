@@ -7,6 +7,8 @@
 #include <internal/facts/linux/release_file.hpp>
 #include <set>
 #include <map>
+#include <tuple>
+#include <string>
 
 namespace facter { namespace facts { namespace linux {
 
@@ -43,6 +45,14 @@ namespace facter { namespace facts { namespace linux {
          * @return Returns the release version.
          */
         virtual std::string get_release(std::string const& name, std::string const& distro_release) const;
+
+        /**
+         * Parses the release version string to return the major version.
+         * @param name The release name determined using get_name.
+         * @param release The release version determined using get_release.
+         * @return Returns a tuple of the major and minor versions.
+         */
+        virtual std::tuple<std::string, std::string> parse_release(std::string const& name, std::string const& release) const;
 
         /**
          * Parses a file containing key-value pairs separated by an equal (=) sign, one pair per line.

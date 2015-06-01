@@ -56,28 +56,26 @@ namespace facter { namespace facts { namespace solaris {
         static boost::regex regexp_s11("Solaris (\\d+)[.](\\d+)");
         static boost::regex regexp_s11b("Solaris (\\d+) ");
         file::each_line("/etc/release", [&](string& line) {
-            string major;
-            string minor;
+            string major, minor;
             if (re_search(line, regexp_s10, &major, &minor)) {
                 result.release = major + "_u" + minor;
+                result.major = move(major);
+                result.minor = move(minor);
                 return false;
             } else if (re_search(line, regexp_s11, &major, &minor)) {
                 result.release = major + "." + minor;
+                result.major = move(major);
+                result.minor = move(minor);
                 return false;
             } else if (re_search(line, regexp_s11b, &major)) {
                 result.release = major + ".0";
+                result.major = move(major);
+                result.minor = "0";
                 return false;
             }
             return true;
         });
         return result;
-    }
-
-    tuple<string, string> operating_system_resolver::parse_release(string const& name, string const& release) const
-    {
-        string major, minor;
-        re_search(release, boost::regex("^(\\d+)(?:_u|\\.)(\\d+)"), &major, &minor);
-        return make_tuple(major, minor);
     }
 
 }}}  // namespace facter::facts::solaris

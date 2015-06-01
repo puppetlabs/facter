@@ -117,13 +117,9 @@ namespace facter { namespace facts { namespace windows {
                 result.release = (wmi::get(vals, wmi::othertypedescription) == "R2") ? "2003 R2" : "2003";
             }
         }
+        result.major = result.release;
 
         return result;
-    }
-
-    tuple<string, string> operating_system_resolver::parse_release(string const& name, string const& release) const
-    {
-        return make_tuple(release, string());
     }
 
 }}}  // namespace facter::facts::windows

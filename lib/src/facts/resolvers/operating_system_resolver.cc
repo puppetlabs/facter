@@ -1,8 +1,10 @@
 #include <internal/facts/resolvers/operating_system_resolver.hpp>
+#include <internal/util/regex.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
+#include <facter/facts/os.hpp>
 
 using namespace std;
 
@@ -55,15 +57,12 @@ namespace facter { namespace facts { namespace resolvers {
         if (!data.release.empty()) {
             auto value = make_value<map_value>();
 
-            string major, minor;
-            tie(major, minor) = parse_release(data.name, data.release);
-
-            if (!major.empty()) {
-                facts.add(fact::operating_system_major_release, make_value<string_value>(major, true));
-                value->add("major", make_value<string_value>(move(major)));
+            if (!data.major.empty()) {
+                facts.add(fact::operating_system_major_release, make_value<string_value>(data.major, true));
+                value->add("major", make_value<string_value>(move(data.major)));
             }
-            if (!minor.empty()) {
-                value->add("minor", make_value<string_value>(move(minor)));
+            if (!data.minor.empty()) {
+                value->add("minor", make_value<string_value>(move(data.minor)));
             }
 
             facts.add(fact::operating_system_release, make_value<string_value>(data.release, true));
@@ -100,7 +99,7 @@ namespace facter { namespace facts { namespace resolvers {
             auto value = make_value<map_value>();
 
             string major, minor;
-            tie(major, minor) = parse_release(data.name, data.distro.release);
+            tie(major, minor) = parse_distro(data.name, data.distro.release);
 
             if (major.empty()) {
                 major = data.distro.release;
@@ -237,14 +236,23 @@ namespace facter { namespace facts { namespace resolvers {
         return result;
     }
 
-    tuple<string, string> operating_system_resolver::parse_release(string const& name, string const& release) const
+    tuple<string, string> operating_system_resolver::parse_distro(string const& name, string const& release)
     {
-        auto pos = release.find('.');
-        if (pos != string::npos) {
-            auto second = release.find('.', pos + 1);
-            return make_tuple(release.substr(0, pos), release.substr(pos + 1, second - (pos + 1)));
+        // This implementation couples all known formats for lsb_dist and the Linux release versions. If that
+        // coupling becomes a problem, we'll probably need to push parsing distro major/minor to inheriting resolvers,
+        // as we've done for parsing the release version.
+        if (name != os::ubuntu) {
+            auto pos = release.find('.');
+            if (pos != string::npos) {
+                auto second = release.find('.', pos + 1);
+                return make_tuple(release.substr(0, pos), release.substr(pos + 1, second - (pos + 1)));
+            }
+            return make_tuple(release, string());
         }
-        return make_tuple(release, string());
+
+        string major, minor;
+        facter::util::re_search(release, boost::regex("(\\d+\\.\\d*)\\.?(\\d*)"), &major, &minor);
+        return make_tuple(move(major), move(minor));
     }
 
 }}}  // namespace facter::facts::resolvers
