@@ -52,6 +52,18 @@ namespace facter { namespace facts { namespace linux {
             auto val = _release_info.find("VERSION");
             return (val != _release_info.end()) ? val->second : std::string();
         }
+
+        /**
+         * Parses the release version string to return the major version.
+         * @param name Unused.
+         * @param release Unused.
+         * @return Returns a tuple of the major version and an empty string.
+         */
+        virtual std::tuple<std::string, std::string> parse_release(std::string const& name, std::string const& release) const override
+        {
+            auto pos = release.find('(');
+            return std::make_tuple(release.substr(0, pos), std::string());
+        }
     };
 
 }}}  // namespace facter::facts::linux
