@@ -213,6 +213,14 @@ namespace facter { namespace ruby {
         fact::define();
         simple_resolution::define();
         aggregate_resolution::define();
+
+        // Custom facts may `require 'facter'`
+        // To allow those custom facts to still function, add facter.rb to loaded features using the first directory in the load path
+        // Note: use forward slashes in the path even on Windows because that's what Ruby expects in $LOADED_FEATURES
+        volatile VALUE first = ruby.rb_ary_entry(ruby.rb_gv_get("$LOAD_PATH"), 0);
+        if (!ruby.is_nil(first)) {
+            ruby.rb_ary_push(ruby.rb_gv_get("$LOADED_FEATURES"), ruby.utf8_value(ruby.to_string(first) + "/facter.rb"));
+        }
     }
 
     module::~module()
