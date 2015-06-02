@@ -25,7 +25,10 @@ struct test_os_resolver : operating_system_resolver
     {
         data result;
         result.name = "Archlinux";
+        result.family = "Archlinux";
         result.release = "1.2.3";
+        result.major = "1";
+        result.minor = "2";
         result.specification_version = "1.4";
         result.distro.id = "Arch";
         result.distro.release = "1.2.3";
@@ -45,11 +48,6 @@ struct test_os_resolver : operating_system_resolver
         result.selinux.config_policy = "config policy";
         result.selinux.policy_version = "policy version";
         return result;
-    }
-
-    virtual tuple<string, string> parse_release(string const& name, string const& release) const override
-    {
-        return make_tuple("1.2", "3");
     }
 };
 
@@ -91,10 +89,10 @@ SCENARIO("using the operating system resolver") {
             REQUIRE(release->value() == "1.2.3");
             auto major = release_attribute->get<string_value>("major");
             REQUIRE(major);
-            REQUIRE(major->value() == "1.2");
+            REQUIRE(major->value() == "1");
             auto minor = release_attribute->get<string_value>("minor");
             REQUIRE(minor);
-            REQUIRE(minor->value() == "3");
+            REQUIRE(minor->value() == "2");
             auto family = os->get<string_value>("family");
             REQUIRE(family);
             REQUIRE(family->value() == "Archlinux");
@@ -115,10 +113,10 @@ SCENARIO("using the operating system resolver") {
             REQUIRE(release->value() == "1.2.3");
             major = release_attribute->get<string_value>("major");
             REQUIRE(major);
-            REQUIRE(major->value() == "1.2");
+            REQUIRE(major->value() == "1");
             minor = release_attribute->get<string_value>("minor");
             REQUIRE(minor);
-            REQUIRE(minor->value() == "3");
+            REQUIRE(minor->value() == "2");
             auto macosx = os->get<map_value>("macosx");
             REQUIRE(macosx);
             REQUIRE(macosx->size() == 3u);
@@ -183,7 +181,7 @@ SCENARIO("using the operating system resolver") {
             REQUIRE(release->value() == "1.2.3");
             auto major = facts.get<string_value>(fact::operating_system_major_release);
             REQUIRE(major);
-            REQUIRE(major->value() == "1.2");
+            REQUIRE(major->value() == "1");
             auto family = facts.get<string_value>(fact::os_family);
             REQUIRE(family);
             REQUIRE(family->value() == "Archlinux");
@@ -201,10 +199,10 @@ SCENARIO("using the operating system resolver") {
             REQUIRE(release->value() == "1.2.3");
             major = facts.get<string_value>(fact::lsb_dist_major_release);
             REQUIRE(major);
-            REQUIRE(major->value() == "1.2");
+            REQUIRE(major->value() == "1");
             auto minor = facts.get<string_value>(fact::lsb_dist_minor_release);
             REQUIRE(minor);
-            REQUIRE(minor->value() == "3");
+            REQUIRE(minor->value() == "2");
             auto lsbrelease = facts.get<string_value>(fact::lsb_release);
             REQUIRE(lsbrelease);
             REQUIRE(lsbrelease->value() == "1.4");

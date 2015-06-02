@@ -20,14 +20,6 @@ namespace facter { namespace facts { namespace solaris {
          * @return Returns the resolver data.
          */
         virtual data collect_data(collection& facts) override;
-
-        /**
-         * Parses the major and minor OS release versions.
-         * @param name The name of the OS.
-         * @param release The release to parse.
-         * @return Returns a tuple of major and minor release versions.
-         */
-        virtual std::tuple<std::string, std::string> parse_release(std::string const& name, std::string const& release) const override;
     };
 
 }}}  // namespace facter::facts::solaris

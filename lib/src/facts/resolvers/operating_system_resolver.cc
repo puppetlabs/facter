@@ -1,10 +1,10 @@
 #include <internal/facts/resolvers/operating_system_resolver.hpp>
-#include <facter/facts/os.hpp>
-#include <facter/facts/os_family.hpp>
+#include <internal/util/regex.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
+#include <facter/facts/os.hpp>
 
 using namespace std;
 
@@ -49,24 +49,20 @@ namespace facter { namespace facts { namespace resolvers {
         auto data = collect_data(facts);
 
         auto os = make_value<map_value>();
-        auto family = determine_os_family(facts, data.name);
-        if (!family.empty()) {
-            facts.add(fact::os_family, make_value<string_value>(family, true));
-            os->add("family", make_value<string_value>(move(family)));
+        if (!data.family.empty()) {
+            facts.add(fact::os_family, make_value<string_value>(data.family, true));
+            os->add("family", make_value<string_value>(move(data.family)));
         }
 
         if (!data.release.empty()) {
             auto value = make_value<map_value>();
 
-            string major, minor;
-            tie(major, minor) = parse_release(data.name, data.release);
-
-            if (!major.empty()) {
-                facts.add(fact::operating_system_major_release, make_value<string_value>(major, true));
-                value->add("major", make_value<string_value>(move(major)));
+            if (!data.major.empty()) {
+                facts.add(fact::operating_system_major_release, make_value<string_value>(data.major, true));
+                value->add("major", make_value<string_value>(move(data.major)));
             }
-            if (!minor.empty()) {
-                value->add("minor", make_value<string_value>(move(minor)));
+            if (!data.minor.empty()) {
+                value->add("minor", make_value<string_value>(move(data.minor)));
             }
 
             facts.add(fact::operating_system_release, make_value<string_value>(data.release, true));
@@ -103,7 +99,7 @@ namespace facter { namespace facts { namespace resolvers {
             auto value = make_value<map_value>();
 
             string major, minor;
-            tie(major, minor) = parse_release(data.name, data.distro.release);
+            tie(major, minor) = parse_distro(data.name, data.distro.release);
 
             if (major.empty()) {
                 major = data.distro.release;
@@ -229,6 +225,7 @@ namespace facter { namespace facts { namespace resolvers {
         auto kernel = facts.get<string_value>(fact::kernel);
         if (kernel) {
             result.name = kernel->value();
+            result.family = kernel->value();
         }
 
         auto release = facts.get<string_value>(fact::kernel_release);
@@ -239,67 +236,23 @@ namespace facter { namespace facts { namespace resolvers {
         return result;
     }
 
-    tuple<string, string> operating_system_resolver::parse_release(string const& name, string const& release) const
+    tuple<string, string> operating_system_resolver::parse_distro(string const& name, string const& release)
     {
-        auto pos = release.find('.');
-        if (pos != string::npos) {
-            auto second = release.find('.', pos + 1);
-            return make_tuple(release.substr(0, pos), release.substr(pos + 1, second - (pos + 1)));
-        }
-        return make_tuple(release, string());
-    }
-
-    string operating_system_resolver::determine_os_family(collection& facts, string const& name) const
-    {
-        if (!name.empty()) {
-            static map<string, string> const systems = {
-                { string(os::coreos),                   string(os_family::coreos) },
-                { string(os::redhat),                   string(os_family::redhat) },
-                { string(os::fedora),                   string(os_family::redhat) },
-                { string(os::centos),                   string(os_family::redhat) },
-                { string(os::scientific),               string(os_family::redhat) },
-                { string(os::scientific_cern),          string(os_family::redhat) },
-                { string(os::ascendos),                 string(os_family::redhat) },
-                { string(os::cloud_linux),              string(os_family::redhat) },
-                { string(os::psbm),                     string(os_family::redhat) },
-                { string(os::oracle_linux),             string(os_family::redhat) },
-                { string(os::oracle_vm_linux),          string(os_family::redhat) },
-                { string(os::oracle_enterprise_linux),  string(os_family::redhat) },
-                { string(os::amazon),                   string(os_family::redhat) },
-                { string(os::xen_server),               string(os_family::redhat) },
-                { string(os::linux_mint),               string(os_family::debian) },
-                { string(os::ubuntu),                   string(os_family::debian) },
-                { string(os::debian),                   string(os_family::debian) },
-                { string(os::cumulus),                  string(os_family::debian) },
-                { string(os::suse_enterprise_server),   string(os_family::suse) },
-                { string(os::suse_enterprise_desktop),  string(os_family::suse) },
-                { string(os::open_suse),                string(os_family::suse) },
-                { string(os::suse),                     string(os_family::suse) },
-                { string(os::sunos),                    string(os_family::solaris) },
-                { string(os::solaris),                  string(os_family::solaris) },
-                { string(os::nexenta),                  string(os_family::solaris) },
-                { string(os::omni),                     string(os_family::solaris) },
-                { string(os::open_indiana),             string(os_family::solaris) },
-                { string(os::smart),                    string(os_family::solaris) },
-                { string(os::gentoo),                   string(os_family::gentoo) },
-                { string(os::archlinux),                string(os_family::archlinux) },
-                { string(os::mandrake),                 string(os_family::mandrake) },
-                { string(os::mandriva),                 string(os_family::mandrake) },
-                { string(os::mageia),                   string(os_family::mandrake) },
-                { string(os::windows),                  string(os_family::windows) },
-            };
-            auto const& it = systems.find(name);
-            if (it != systems.end()) {
-                return it->second;
+        // This implementation couples all known formats for lsb_dist and the Linux release versions. If that
+        // coupling becomes a problem, we'll probably need to push parsing distro major/minor to inheriting resolvers,
+        // as we've done for parsing the release version.
+        if (name != os::ubuntu) {
+            auto pos = release.find('.');
+            if (pos != string::npos) {
+                auto second = release.find('.', pos + 1);
+                return make_tuple(release.substr(0, pos), release.substr(pos + 1, second - (pos + 1)));
             }
+            return make_tuple(release, string());
         }
 
-        // Default to the same value as the kernel
-        auto kernel = facts.get<string_value>(fact::kernel);
-        if (!kernel) {
-            return {};
-        }
-        return  kernel->value();
+        string major, minor;
+        facter::util::re_search(release, boost::regex("(\\d+\\.\\d*)\\.?(\\d*)"), &major, &minor);
+        return make_tuple(move(major), move(minor));
     }
 
 }}}  // namespace facter::facts::resolvers

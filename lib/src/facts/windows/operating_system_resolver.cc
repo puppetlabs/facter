@@ -4,6 +4,7 @@
 #include <internal/util/windows/wmi.hpp>
 #include <internal/util/windows/windows.hpp>
 #include <facter/facts/collection.hpp>
+#include <facter/facts/os_family.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <intrin.h>
 #include <winnt.h>
@@ -81,6 +82,7 @@ namespace facter { namespace facts { namespace windows {
         // Default to the base implementation
         data result = resolvers::operating_system_resolver::collect_data(facts);
 
+        result.family = os_family::windows;
         result.hardware = get_hardware();
         result.architecture = get_architecture(result.hardware);
         result.win.system32 = get_system32();
@@ -115,13 +117,9 @@ namespace facter { namespace facts { namespace windows {
                 result.release = (wmi::get(vals, wmi::othertypedescription) == "R2") ? "2003 R2" : "2003";
             }
         }
+        result.major = result.release;
 
         return result;
-    }
-
-    tuple<string, string> operating_system_resolver::parse_release(string const& name, string const& release) const
-    {
-        return make_tuple(release, string());
     }
 
 }}}  // namespace facter::facts::windows

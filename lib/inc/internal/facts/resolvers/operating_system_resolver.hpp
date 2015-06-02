@@ -25,6 +25,14 @@ namespace facter { namespace facts { namespace resolvers {
          */
         virtual void resolve(collection& facts) override;
 
+        /**
+         * Parses the major and minor OS release versions for Linux distros.
+         * @param name The name of the OS.
+         * @param release The release to parse.
+         * @return Returns a tuple of major and minor release versions.
+         */
+        static std::tuple<std::string, std::string> parse_distro(std::string const& name, std::string const& release);
+
      protected:
         /**
          * Represents information about an operating system distribution.
@@ -142,14 +150,29 @@ namespace facter { namespace facts { namespace resolvers {
         struct data
         {
             /**
-             * Stores the OS name (e.g. Archlinux).
+             * Stores the OS name (e.g. CentOS).
              */
             std::string name;
+
+            /**
+             * Stores the OS family name (e.g. Debian).
+             */
+            std::string family;
 
             /**
              * Stores the OS release.
              */
             std::string release;
+
+            /**
+             * Stores the OS major release.
+             */
+            std::string major;
+
+            /**
+             * Stores the OS minor release.
+             */
+            std::string minor;
 
             /**
              * Stores the processor hardware model.
@@ -193,22 +216,6 @@ namespace facter { namespace facts { namespace resolvers {
          * @return Returns the resolver data.
          */
         virtual data collect_data(collection& facts);
-
-        /**
-         * Parses the major and minor OS release versions.
-         * @param name The name of the OS.
-         * @param release The release to parse.
-         * @return Returns a tuple of major and minor release versions.
-         */
-        virtual std::tuple<std::string, std::string> parse_release(std::string const& name, std::string const& release) const;
-
-        /**
-         * Determines the OS family given an OS name.
-         * @param facts The fact collection that is resolving facts.
-         * @param name The name of the OS.
-         * @return Returns the OS family or empty string if there is no family.
-         */
-        virtual std::string determine_os_family(collection& facts, std::string const& name) const;
     };
 
 }}}  // namespace facter::facts::resolvers
