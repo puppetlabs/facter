@@ -1,38 +1,29 @@
 test_name "#22944: Facter executes external executable facts many times"
 
-unix_content = <<EOM
-#!/bin/sh
-echo "SCRIPT CALLED" >&2
-echo "test=value"
-EOM
-
-win_content = <<EOM
-echo "SCRIPT CALLED" >&2
-echo "test=value"
-EOM
+require 'facter/acceptance/user_fact_utils'
+extend Facter::Acceptance::UserFactUtils
 
 agents.each do |agent|
   step "Agent #{agent}: create external executable fact"
 
-  # assume we're running as root
-  if agent['platform'] =~ /windows/
-    if on(agent, facter('kernelmajversion')).stdout.chomp.to_f < 6.0
-      factsd = 'C:/Documents and Settings/All Users/Application Data/PuppetLabs/facter/facts.d'
-    else
-      factsd = 'C:/ProgramData/PuppetLabs/facter/facts.d'
-    end
-    ext = '.bat'
-    content = win_content
-  else
-    factsd = '/opt/puppetlabs/facter/facts.d'
-    ext = '.sh'
-    content = unix_content
-  end
+  factsd = get_factsd_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+  ext = get_external_fact_script_extension(agent['platform'])
 
+  if agent['platform'] =~ /windows/
+    content = <<EOM
+echo "SCRIPT CALLED" >&2
+echo "test=value"
+EOM
+  else
+    content = <<EOM
+#!/bin/sh
+echo "SCRIPT CALLED" >&2
+echo "test=value"
+EOM
+  end
 
   step "Agent #{agent}: create facts.d directory"
   on(agent, "mkdir -p '#{factsd}'")
-
 
   step "Agent #{agent}: create external fact"
   ext_fact = "#{factsd}/external_fact#{ext}"

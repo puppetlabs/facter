@@ -1,0 +1,1 @@
+Facter.add(:foo)

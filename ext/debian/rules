@@ -1,10 +1,39 @@
 #!/usr/bin/make -f
 
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/rules/buildcore.mk
+export DH_VERBOSE=1
+export VERBOSE=1
 
-LIBDIR=$(shell /usr/bin/ruby -rrbconfig -e 'puts RbConfig::CONFIG["vendordir"]')
-BINDIR=$(shell /usr/bin/ruby -rrbconfig -e 'puts RbConfig::CONFIG["bindir"]')
+PREFIX      :=/usr
+BUILDPREFIX :=/opt/pl-build-tools
+CPPFLAGS    :=$(shell dpkg-buildflags --get CPPFLAGS)
+CFLAGS      :=$(shell dpkg-buildflags --get CFLAGS)
+CXXFLAGS    :=$(shell dpkg-buildflags --get CXXFLAGS)
+LDFLAGS     :=$(shell dpkg-buildflags --get LDFLAGS)
 
-binary-install/facter::
-	 /usr/bin/ruby install.rb --sitelibdir=$(LIBDIR) --bindir=$(BINDIR) --ruby=/usr/bin/ruby --destdir=$(CURDIR)/debian/$(cdbs_curpkg) --quick --man
+# Hard-coded to 2. Our deb builders have a hard-limit at 4GB of memory.
+NUMPROC     :=2
+
+export CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
+
+clean:
+
+override_dh_auto_configure:
+	$(BUILDPREFIX)/bin/cmake \
+	-DCMAKE_TOOLCHAIN_FILE=$(BUILDPREFIX)/pl-build-toolchain.cmake \
+	-DCMAKE_VERBOSE_MAKEFILE=ON \
+	-DCMAKE_INSTALL_PREFIX=$(PREFIX) \
+	-DBOOST_STATIC=ON \
+	-DYAMLCPP_STATIC=ON \
+	.
+
+override_dh_auto_build:
+	$(MAKE) -j$(NUMPROC) DESTDIR=$(CURDIR)/debian/tmp
+
+override_dh_auto_install:
+	$(MAKE) -j$(NUMPROC) install DESTDIR=$(CURDIR)/debian/tmp
+
+override_dh_auto_test:
+	$(BUILDPREFIX)/bin/ctest -V
+
+%:
+	dh $@ --parallel=$(NUMPROC)

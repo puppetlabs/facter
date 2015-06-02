@@ -1,7 +1,0 @@
-PKG=CSWfacter
-NAME=facter - System Fact Gatherer
-VERSION=1.6.3rc1
-CATEGORY=application
-VENDOR=http://www.puppetlabs.com/puppet/related-projects/facter
-HOTLINE=http://puppetlabs.com/cgi-bin/facter.cgi
-EMAIL=luke@madstop.com

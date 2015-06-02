@@ -18,7 +18,11 @@ top of things.
 
 ## New Facts
 
-All new facts should also be included in `schema/facter.json`. Without this facts won't pass acceptance tests.
+All new facts should also be included in `lib/schema/facter.yaml`. Without this facts won't pass acceptance tests.
+
+Note that for now (until facter 3) the schema should be updated in the facter project. Once we release
+facter 3, it'll make sense to move the schema to this project since it will be the canonical source of
+core facts.
 
 ## Making Changes
 
@@ -32,10 +36,13 @@ All new facts should also be included in `schema/facter.json`. Without this fact
     `master` branch.
 * Make commits of logical units.
 * Check for unnecessary whitespace with `git diff --check` before committing.
+* If you have python 2 in your path you can run `make cpplint` to ensure your
+  code formatting is clean. The linter runs as part of Travis CI and could fail
+  the CI build.
 * Make sure your commit messages are in the proper format.
 
 ````
-    (#99999) Make the example in CONTRIBUTING imperative and concrete
+    (CFACT-1234) Make the example in CONTRIBUTING imperative and concrete
 
     Without this patch applied the example commit message in the CONTRIBUTING
     document is not a concrete example.  This is a problem because the
@@ -84,7 +91,7 @@ a ticket number.
 # Additional Resources
 
 * [More information on contributing](http://links.puppetlabs.com/contribute-to-puppet)
-* [Bug tracker (Jira)](http://tickets.puppetlabs.com)
+* [Bug tracker (Jira)](https://tickets.puppetlabs.com/browse/CFACT)
 * [Contributor License Agreement](http://links.puppetlabs.com/cla)
 * [General GitHub documentation](http://help.github.com/)
 * [GitHub pull request documentation](http://help.github.com/send-pull-requests/)

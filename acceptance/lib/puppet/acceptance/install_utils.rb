@@ -7,12 +7,11 @@ module Puppet
   module Acceptance
     module InstallUtils
       PLATFORM_PATTERNS = {
+        :redhat        => /fedora|el|centos/,
         :debian        => /debian|ubuntu/,
         :debian_ruby18 => /debian|ubuntu-lucid|ubuntu-precise/,
-        :redhat        => /fedora|el|centos/,
-        :sles          => /sles/,
         :solaris       => /solaris/,
-        :windows       => /windows/
+        :windows       => /windows/,
       }.freeze
 
       # Installs packages on the hosts.
@@ -120,8 +119,8 @@ module Puppet
         platform = host['platform'].with_version_codename
         platform_configs_dir = File.join(repo_configs_dir,platform)
         tld     = sha == 'nightly' ? 'nightlies.puppetlabs.com' : 'builds.puppetlabs.lan'
-        project = sha == 'nightly' ? project + '-latest'        :  project
-        sha     = sha == 'nightly' ? nil                        :  sha
+        project = sha == 'nightly' ? project + '-latest'        : project
+        sha     = sha == 'nightly' ? nil                        : sha
 
         case platform
           when /^(fedora|el|centos)-(\d+)-(.+)$/
@@ -130,14 +129,7 @@ module Puppet
             version = $2
             arch = $3
 
-            rpm = fetch(
-              "http://yum.puppetlabs.com",
-              "puppetlabs-release-%s-%s.noarch.rpm" % [variant, version],
-              platform_configs_dir
-            )
-
-            pattern = "pl-%s%s-%s-%s%s-%s.repo"
-            repo_filename = pattern % [
+            repo_filename = "pl-%s%s-%s-%s%s-%s.repo" % [
               project,
               sha ? '-' + sha : '',
               variant,
@@ -145,121 +137,25 @@ module Puppet
               version,
               arch
             ]
-            repo = fetch(
-              "http://%s/%s/%s/repo_configs/rpm/" % [tld, project, sha],
-              repo_filename,
-              platform_configs_dir
-            )
+            repo_url = "http://%s/%s/%s/repo_configs/rpm/%s" % [tld, project, sha, repo_filename]
 
-            link = "http://%s/%s/%s/repos/%s/%s%s/PC1/%s/" % [
-              tld,
-              project,
-              sha,
-              variant,
-              fedora_prefix,
-              version,
-              arch
-            ]
-
-            if not link_exists?(link)
-              link = "http://%s/%s/%s/repos/%s/%s%s/products/%s/" % [
-                tld,
-                project,
-                sha,
-                variant,
-                fedora_prefix,
-                version,
-                arch
-              ]
-            end
-
-            if not link_exists?(link)
-              link = "http://%s/%s/%s/repos/%s/%s%s/devel/%s/" % [
-                tld,
-                project,
-                sha,
-                variant,
-                fedora_prefix,
-                version,
-                arch
-              ]
-            end
-
-            if not link_exists?(link)
-              raise "Unable to reach a repo directory at #{link}"
-            end
-            repo_dir = fetch_remote_dir(link, platform_configs_dir)
-            repo_loc = "/root/#{project}"
-
-            on host, "rm -rf #{repo_loc}"
-            on host, "mkdir -p #{repo_loc}"
-
-            scp_to host, rpm, repo_loc
-            scp_to host, repo, repo_loc
-            scp_to host, repo_dir, repo_loc
-
-            on host, "cp #{repo_loc}/*.repo /etc/yum.repos.d"
-            on host, "find /etc/yum.repos.d/ -name \"*.repo\" -exec sed -i \"s/baseurl\\s*=\\s*http:\\/\\/#{tld}.*$/baseurl=file:\\/\\/\\/root\\/#{project}\\/#{arch}/\" {} \\;"
-            on host, "rpm -Uvh --force #{repo_loc}/*.rpm"
-
+            on host, "curl -o /etc/yum.repos.d/#{repo_filename} #{repo_url}"
           when /^(debian|ubuntu)-([^-]+)-(.+)$/
             variant = $1
             version = $2
             arch = $3
 
-            deb = fetch(
-              "http://apt.puppetlabs.com/",
-              "puppetlabs-release-%s.deb" % version,
-              platform_configs_dir
-            )
+            list_filename = "pl-%s%s-%s.list" % [
+              project,
+              sha ? '-' + sha : '',
+              version
+            ]
+            list_url = "http://%s/%s/%s/repo_configs/deb/%s" % [tld, project, sha, list_filename]
 
-            list = fetch(
-              "http://%s/%s/%s/repo_configs/deb/" % [tld, project, sha],
-              "pl-%s%s-%s.list" % [project, sha ? '-' + sha : '', version],
-              platform_configs_dir
-            )
-
-            repo_dir = fetch_remote_dir("http://%s/%s/%s/repos/apt/%s" % [tld, project, sha, version], platform_configs_dir)
-            repo_loc = "/root/#{project}"
-
-            on host, "rm -rf #{repo_loc}"
-            on host, "mkdir -p #{repo_loc}"
-
-            scp_to host, deb, repo_loc
-            scp_to host, list, repo_loc
-            scp_to host, repo_dir, repo_loc
-
-            pc1_check = on(host,
-                           "[[ -d /root/#{project}/#{version}/pool/PC1 ]]",
-                           :acceptable_exit_codes => [0,1])
-
-            repo_name =  pc1_check.exit_code == 0 ? 'PC1' : 'main'
-
-            on host, "cp #{repo_loc}/*.list /etc/apt/sources.list.d"
-            on host, "find /etc/apt/sources.list.d/ -name \"*.list\" -exec sed -i \"s/deb\\s\\+http:\\/\\/#{tld}.*$/deb file:\\/\\/\\/root\\/#{project}\\/#{version} #{version} #{repo_name}/\" {} \\;"
-            on host, "dpkg -i --force-all #{repo_loc}/*.deb"
+            on host, "curl -o /etc/apt/sources.list.d/#{list_filename} #{list_url}"
             on host, "apt-get update"
           else
             host.logger.notify("No repository installation step for #{platform} yet...")
-        end
-      end
-
-      # Configures gem sources on hosts to use a mirror, if specified
-      # This is a duplicate of the Gemfile logic.
-      def configure_gem_mirror(hosts)
-        hosts = [hosts] unless hosts.kind_of?(Array)
-        gem_source = ENV['GEM_SOURCE'] || 'https://rubygems.org'
-
-        hosts.each do |host|
-          case host['platform']
-          when /windows/
-            gem = 'cmd /c gem'
-          else
-            gem = 'gem'
-          end
-
-          on host, "#{gem} source --clear-all"
-          on host, "#{gem} source --add #{gem_source}"
         end
       end
 

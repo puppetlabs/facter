@@ -1,17 +1,45 @@
-language: ruby
-sudo: false
-bundler_args: --without development
-script: "bundle exec rake spec SPEC_OPTS='--color --format documentation'"
-notifications:
-  email: false
-rvm:
-  - 1.9.3
-  - 1.8.7-p374
-  - 2.0.0
-  - 2.1.5
-  - 2.2.0
-  - ruby-head
-matrix:
-  fast_finish: true
-  allow_failures:
-    - rvm: ruby-head
+language: cpp
+compiler:
+  - gcc
+
+before_install:
+  # 'python-software-properties' provides add-apt-repository
+  - sudo apt-get -y install python-software-properties
+  # which is needed to add the ppa that has gcc 4.8 and boost 1.55
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo add-apt-repository -y ppa:boost-latest/ppa
+  - sudo apt-get update
+  # which is needed to install gcc 4.8 (and gcov)
+  - sudo apt-get -y install gcc-4.8
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
+  - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.8 50
+  # and g++ 4.8
+  - sudo apt-get -y install g++-4.8
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
+  # grab a pre-built cmake 2.8.12 from s3
+  - wget https://s3.amazonaws.com/kylo-pl-bucket/cmake_install.tar.bz2
+  - tar xjvf cmake_install.tar.bz2 --strip 1 -C $HOME
+  # grab a pre-built cppcheck from s3
+  - wget https://s3.amazonaws.com/kylo-pl-bucket/pcre-8.36_install.tar.bz2
+  - sudo tar xjvf pcre-8.36_install.tar.bz2 --strip 1 -C /usr/local
+  - wget https://s3.amazonaws.com/kylo-pl-bucket/cppcheck-1.68_install.tar.bz2
+  - sudo tar xjvf cppcheck-1.68_install.tar.bz2 --strip 1 -C /usr/local
+  # grab a pre-built doxygen 1.8.7 from s3
+  - wget https://s3.amazonaws.com/kylo-pl-bucket/doxygen_install.tar.bz2
+  - sudo tar xjvf doxygen_install.tar.bz2 --strip 1 -C /usr/local
+  # Install dependencies of facter
+  - sudo apt-get -y install libboost-filesystem1.55-dev libboost-program-options1.55-dev libboost-regex1.55-dev libboost-date-time1.55-dev libboost-thread1.55-dev libboost-log1.55-dev libboost-locale1.55-dev libboost-chrono1.55-dev
+  - wget https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1_install.tar.bz2
+  - sudo tar xjvf yaml-cpp-0.5.1_install.tar.bz2 --strip 1 -C /usr/local
+  # Install libblkid-dev
+  - sudo apt-get -y install libblkid-dev
+  # Install coveralls.io update utility
+  - sudo pip install cpp-coveralls
+
+script: ./scripts/travis_target.sh
+
+env:
+  - TRAVIS_TARGET=CPPLINT
+  - TRAVIS_TARGET=CPPCHECK
+  - TRAVIS_TARGET=RELEASE
+  - TRAVIS_TARGET=DEBUG

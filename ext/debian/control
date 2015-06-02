@@ -1,15 +1,14 @@
 Source: facter
-Section: ruby
+Section: devel
 Priority: optional
 Maintainer: Puppet Labs <info@puppetlabs.com>
-Build-Depends: cdbs, debhelper (>> 7), ruby | ruby-interpreter
+Build-Depends: debhelper (>> 7), pl-gcc (>= 4.8.2-1puppetlabs3), pl-cmake (>= 2.8.12-1puppetlabs6), pl-libboost-devel (>= 1.55.0-1puppetlabs3), pl-libboost-static (>= 1.55.0-1puppetlabs3), pl-libyaml-cpp-devel (>= 0.5.1-1puppetlabs4), pl-libyaml-cpp-static (>= 0.5.1-1puppetlabs4), libblkid-dev, libcurl4-openssl-dev, libssl-dev, ruby1.9.1 | ruby (>= 1:1.9.3), ruby1.9.1-dev | ruby-dev (>= 1:1.9.3)
 Standards-Version: 3.9.1
 Homepage: http://www.puppetlabs.com
 
 Package: facter
-Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, ruby | ruby-interpreter, virt-what, pciutils
-Recommends: lsb-release, dmidecode
-Description: Ruby module for collecting simple facts about a host operating system
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libblkid1, libcurl3, libssl1.0.0 | libssl0.9.8
+Description: A command line tool and library for collecting simple facts about a host operating system
  Some of the facts are preconfigured, such as the hostname and the operating
  system. Additional facts can be added through simple Ruby scripts.

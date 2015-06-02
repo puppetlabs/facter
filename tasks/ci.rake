@@ -2,15 +2,10 @@ require 'yaml'
 require 'time'
 
 namespace "ci" do
-  task :spec do
-    ENV["LOG_SPEC_ORDER"] = "true"
-    sh %{rspec -r yarjuf -f JUnit -o result.xml -fp spec}
-  end
-
-  desc "Tar up the acceptance/ directory so that package test runs have tests to run against."
+ desc "Tar up the acceptance/ directory so that package test runs have tests to run against."
   task :acceptance_artifacts => :tag_creator do
     rm_f "acceptance/acceptance-artifacts.tar.gz"
-    sh "tar -czv --exclude acceptance/.bundle -f acceptance-artifacts.tar.gz acceptance schema"
+    sh "tar -czv --exclude acceptance/.bundle -f acceptance-artifacts.tar.gz acceptance lib/schema"
   end
 
   task :tag_creator do
