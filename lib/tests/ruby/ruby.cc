@@ -586,4 +586,10 @@ SCENARIO("custom facts written in Ruby") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "{\n  foo => \"bar\"\n}");
         }
     }
+    GIVEN("a fact that requires facter") {
+        REQUIRE(load_custom_fact("facter.rb", facts));
+        THEN("the require succeeds") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar\"");
+        }
+    }
 }
