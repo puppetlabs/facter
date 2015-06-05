@@ -9,7 +9,7 @@ module Facter
 
     # Pass value call through to JNI interface
     def self.value(name)
-      com.puppetlabs.Facter.lookup(name)
+      Java::ComPuppetlabs::Facter.lookup(name)
     end
 
     def self.search(*paths)
@@ -17,7 +17,7 @@ module Facter
     end
 
     def self.version
-      com.puppetlabs.Facter.lookup("facterversion")
+      Java::ComPuppetlabs::Facter.lookup("facterversion")
     end
 
     def self.add(*params)
