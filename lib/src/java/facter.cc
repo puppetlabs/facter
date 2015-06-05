@@ -15,7 +15,7 @@ using namespace facter::logging;
 
 static jclass object_class, long_class, double_class, boolean_class, hash_class;
 static jmethodID long_constructor, double_constructor, boolean_constructor, hash_constructor, hash_put;
-static std::unique_ptr<collection> facts_collection;
+static std::unique_ptr<collection const> facts_collection;
 
 static string to_string(JNIEnv* env, jstring str)
 {
@@ -125,11 +125,19 @@ extern "C" {
         setup_logging(boost::nowide::cerr);
         set_level(level::warning);
 
-        facts_collection.reset(new collection());
+        // Create a non-const collection to start; we'll move it to the const pointer at the end of initialization
+        unique_ptr<collection> facts(new collection());
 
-        bool include_ruby_facts = true;
-        facts_collection->add_default_facts(include_ruby_facts);
-        facts_collection->add_external_facts();
+        // Do not load the ruby facts as we're running under JRuby and not MRI
+        facts->add_default_facts(false);
+        facts->add_external_facts();
+
+        // Resolve all facts now for thread-safety
+        // We only support reading facts from JRuby, so the collection is assumed to be immutable after this
+        facts->resolve_facts();
+
+        // Move to the const pointer to prevent future modifications
+        facts_collection = std::move(facts);
         return JNI_VERSION_1_6;
     }
 
@@ -172,6 +180,6 @@ extern "C" {
             return nullptr;
         }
 
-        return to_object(env, (*facts_collection)[to_string(env, name)]);
+        return to_object(env, facts_collection->get_resolved(to_string(env, name)));
     }
 }  // extern "C"
