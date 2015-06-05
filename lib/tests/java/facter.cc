@@ -45,9 +45,10 @@ SCENARIO("using libfacter from Java") {
                     execution_options::merge_environment,
                     execution_options::throw_on_failure
                 });
+            CAPTURE(output);
+            CAPTURE(error);
             THEN("the value should match") {
                 REQUIRE(success);
-                REQUIRE(error.empty());
                 ostringstream ss;
                 auto value = facts["os"];
                 REQUIRE(value);
