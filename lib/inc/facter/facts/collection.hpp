@@ -158,6 +158,20 @@ namespace facter { namespace facts {
         }
 
         /**
+        * Gets a fact value by name without resolving the fact.
+        * @tparam T The expected type of the value.
+        * @param name The name of the fact to get the value of.
+        * @return Returns a pointer to the fact value or nullptr if the fact is not resolved or the value is not the expected type.
+        */
+        template <typename T = value>
+        T const* get_resolved(std::string const& name) const
+        {
+            // Lookup the fact without resolving
+            auto it = _facts.find(name);
+            return dynamic_cast<T const*>(it == _facts.end() ? nullptr : it->second.get());
+        }
+
+        /**
          * Gets a fact value by name
          * @param name The name of the fact to get the value of.
          * @return Returns a pointer to the fact value or nullptr if the fact is not in the fact collection.
@@ -193,8 +207,12 @@ namespace facter { namespace facts {
          */
         std::ostream& write(std::ostream& stream, format fmt = format::hash, std::set<std::string> const& queries = std::set<std::string>());
 
+        /**
+         * Resolves all facts in the collection.
+         */
+        void resolve_facts();
+
      private:
-        LIBFACTER_NO_EXPORT void resolve_facts();
         LIBFACTER_NO_EXPORT void resolve_fact(std::string const& name);
         LIBFACTER_NO_EXPORT value const* get_value(std::string const& name);
         LIBFACTER_NO_EXPORT value const* query_value(std::string const& query);
