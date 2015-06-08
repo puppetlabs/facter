@@ -1,17 +1,17 @@
 /**
  * @file
- * Declares the aix operating system fact resolver.
+ * Declares the AIX kernel fact resolver.
  */
 #pragma once
 
-#include "../posix/operating_system_resolver.hpp"
+#include "../resolvers/kernel_resolver.hpp"
 
 namespace facter { namespace facts { namespace aix {
 
     /**
-     * Responsible for resolving operating system facts.
+     * Responsible for resolving kernel facts.
      */
-    struct operating_system_resolver : posix::operating_system_resolver
+    struct kernel_resolver : resolvers::kernel_resolver
     {
      protected:
         /**
@@ -21,4 +21,5 @@ namespace facter { namespace facts { namespace aix {
          */
         virtual data collect_data(collection& facts) override;
     };
+
 }}}  // namespace facter::facts::aix

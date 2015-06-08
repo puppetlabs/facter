@@ -48,23 +48,6 @@ namespace facter { namespace facts { namespace aix {
         result.architecture = getattr("proc0", "type");
         result.hardware = getattr("sys0", "modelname");
 
-        // Get OS release stuff
-        static boost::regex regexp_release("(\\d+)\\.(\\d+\\.\\d+\\.\\d+)");
-        file::each_line("/usr/lpp/bos/aix_release.level", [&](string& line) {
-            string major, minor;
-            if (re_search(line, regexp_release, &major, &minor)) {
-                result.release = major + '.' + minor;
-                return false;
-            }
-            return true;
-        });
         return result;
-    }
-
-    tuple<string, string> operating_system_resolver::parse_release(string const& name, string const& release) const
-    {
-        string major, minor;
-        re_search(release, boost::regex("(\\d+)\\.(\\d+)\\.\\d+\\.\\d+"), &major, &minor);
-        return make_tuple(major, minor);
     }
 }}}
