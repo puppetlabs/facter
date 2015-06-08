@@ -11,7 +11,7 @@
 #include "../fixtures.hpp"
 
 // Include all base resolvers here
-#include <internal/facts/resolvers/augeasversion_resolver.hpp>
+#include <internal/facts/resolvers/augeas_resolver.hpp>
 #include <internal/facts/resolvers/disk_resolver.hpp>
 #include <internal/facts/resolvers/dmi_resolver.hpp>
 #include <internal/facts/resolvers/ec2_resolver.hpp>
@@ -42,7 +42,7 @@ using namespace facter::util;
 // For every base resolver, implement a resolver that outputs the minimum values to pass schema validation
 // We don't care about the actual data in the facts, only that it conforms to the schema
 
-struct augeasversion_resolver : resolvers::augeasversion_resolver
+struct augeas_resolver : resolvers::augeas_resolver
 {
  protected:
     virtual string get_version() override
@@ -406,7 +406,7 @@ void add_all_facts(collection& facts)
 {
     facts.add("env_windows_installdir", make_value<string_value>("C:\\Program Files\\Some\\Path"));
     facts.add("facterversion", make_value<string_value>("version"));
-    facts.add(make_shared<augeasversion_resolver>());
+    facts.add(make_shared<augeas_resolver>());
     facts.add(make_shared<disk_resolver>());
     facts.add(make_shared<dmi_resolver>());
     facts.add(make_shared<filesystem_resolver>());

@@ -1,6 +1,6 @@
 /**
 * @file
-* Declares the base augeasversion fact resolver.
+* Declares the base augeas fact resolver.
 */
 #pragma once
 
@@ -9,14 +9,14 @@
 namespace facter { namespace facts { namespace resolvers {
 
     /**
-    * Responsible for resolving augeasversion fact, when an augeas runtime is available.
+    * Responsible for resolving augeas fact, when an augeas runtime is available.
     */
-    struct augeasversion_resolver : resolver
+    struct augeas_resolver : resolver
     {
         /**
-         * Constructs the augeasversion_resolver.
+         * Constructs the augeas_resolver.
          */
-        augeasversion_resolver();
+        augeas_resolver();
 
         /**
          * Called to resolve all facts the resolver is responsible for.

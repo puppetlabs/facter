@@ -1,8 +1,9 @@
-#include <internal/facts/resolvers/augeasversion_resolver.hpp>
+#include <internal/facts/resolvers/augeas_resolver.hpp>
 #include <internal/util/regex.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <facter/facts/map_value.hpp>
 #include <facter/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>
 
@@ -11,16 +12,17 @@ using namespace facter::util;
 
 namespace facter { namespace facts { namespace resolvers {
 
-    augeasversion_resolver::augeasversion_resolver() :
+    augeas_resolver::augeas_resolver() :
         resolver(
-            "augeasversion",
+            "augeas",
             {
-                fact::augeasversion
+                fact::augeas,
+                fact::augeasversion,
             })
     {
     }
 
-    string augeasversion_resolver::get_version()
+    string augeas_resolver::get_version()
     {
         string augtool = [] {
 #ifdef FACTER_PATH
@@ -46,14 +48,17 @@ namespace facter { namespace facts { namespace resolvers {
         return value;
     }
 
-    void augeasversion_resolver::resolve(collection& facts)
+    void augeas_resolver::resolve(collection& facts)
     {
         auto version = get_version();
         if (version.empty()) {
             return;
         }
 
-        facts.add(fact::augeasversion, make_value<string_value>(move(version)));
+        auto augeas = make_value<map_value>();
+        augeas->add("version", make_value<string_value>(version));
+        facts.add(fact::augeasversion, make_value<string_value>(move(version), true));
+        facts.add(fact::augeas, move(augeas));
     }
 
 }}}  // namespace facter::facts::resolvers

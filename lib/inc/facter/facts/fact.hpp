@@ -619,14 +619,19 @@ namespace facter { namespace facts {
         constexpr static char const* path = "path";
 
         /**
-         * The facts for cpu load average.
+         * The fact for cpu load average.
          */
-        constexpr static char const* load_averages    = "load_averages";
+        constexpr static char const* load_averages = "load_averages";
 
         /**
-         * The fact for augeasversion.
+         * The fact for augeas metadata.
          */
-        constexpr static char const* augeasversion    = "augeasversion";
+        constexpr static char const* augeas = "augeas";
+
+        /**
+         * The fact for augeas version.
+         */
+        constexpr static char const* augeasversion = "augeasversion";
     };
 
 }}  // namespace facter::facts
