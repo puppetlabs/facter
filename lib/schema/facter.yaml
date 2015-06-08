@@ -31,6 +31,12 @@ architecture:
     caveats: |
         Linux: Debian, Gentoo, kFreeBSD, and Ubuntu use "amd64" for "x86_64" and Gentoo uses "x86" for "i386".
 
+augeasversion:
+    type: string
+    description: Return the version of augeas.
+    resolution: |
+        All platforms: query augtool for the augeas version.
+
 blockdevices:
     type: string
     hidden: true

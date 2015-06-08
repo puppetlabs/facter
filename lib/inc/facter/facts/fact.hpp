@@ -622,6 +622,11 @@ namespace facter { namespace facts {
          * The facts for cpu load average.
          */
         constexpr static char const* load_averages    = "load_averages";
+
+        /**
+         * The fact for augeasversion.
+         */
+        constexpr static char const* augeasversion    = "augeasversion";
     };
 
 }}  // namespace facter::facts

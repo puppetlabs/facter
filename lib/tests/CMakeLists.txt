@@ -13,6 +13,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/collection.cc"
     "facts/integer_value.cc"
     "facts/map_value.cc"
+    "facts/resolvers/augeasversion_resolver.cc"
     "facts/resolvers/disk_resolver.cc"
     "facts/resolvers/dmi_resolver.cc"
     "facts/resolvers/filesystem_resolver.cc"
