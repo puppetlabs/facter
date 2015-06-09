@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(FACTER)
 
+# Set this early, so it's available. AIX gets weird, man.
+if("${CMAKE_SYSTEM_NAME}" MATCHES "AIX")
+    set(AIX TRUE)
+endif()
+
 if (NOT CMAKE_BUILD_TYPE)
     message(STATUS "Defaulting to a release build.")
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
@@ -31,6 +36,11 @@ include(cotire)
 if (MINGW)
     # MinGW crashes with large pre-compiled headers; ours definitely exceeds the limit.
     # See http://stackoverflow.com/questions/10841306/cc1plus-exe-crash-when-using-large-precompiled-header-file
+    set(PRECOMPILED_HEADERS FALSE)
+elseif(AIX)
+    # On AIX, precompiled headers are causing crazy crazy failures
+    # with things that need to be extern "C". This seems to clear it
+    # all up.
     set(PRECOMPILED_HEADERS FALSE)
 else()
     set(PRECOMPILED_HEADERS TRUE)
