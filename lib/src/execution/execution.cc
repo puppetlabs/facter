@@ -288,7 +288,7 @@ namespace facter { namespace execution {
 
             // Log the line to the output logger
             if (LOG_IS_DEBUG_ENABLED()) {
-                log(logger, log_level::debug, buffer);
+                log(logger, log_level::debug, 0, buffer);
             }
 
             // Pass the line to the callback
@@ -343,7 +343,7 @@ namespace facter { namespace execution {
         // Log the last line of output for stdout
         if (!stdout_buffer.empty()) {
             if (LOG_IS_DEBUG_ENABLED()) {
-                log(stdout_logger, log_level::debug, stdout_buffer);
+                log(stdout_logger, log_level::debug, 0, stdout_buffer);
             }
             if (stdout_callback) {
                 stdout_callback(stdout_buffer);
@@ -353,7 +353,7 @@ namespace facter { namespace execution {
         // Log the last line of output for stderr
         if (!stderr_buffer.empty()) {
             if (LOG_IS_DEBUG_ENABLED()) {
-                log(stderr_logger, log_level::debug, stderr_buffer);
+                log(stderr_logger, log_level::debug, 0, stderr_buffer);
             }
             if (stderr_callback) {
                 stderr_callback(stderr_buffer);
