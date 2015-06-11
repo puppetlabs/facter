@@ -33,11 +33,14 @@ namespace facter { namespace facts { namespace resolvers {
 #ifdef USE_CURL
     static const char* EC2_METADATA_ROOT_URL = "http://169.254.169.254/latest/meta-data/";
     static const char* EC2_USERDATA_ROOT_URL = "http://169.254.169.254/latest/user-data/";
+    static const unsigned int EC2_CONNECTION_TIMEOUT = 200;
+    static const unsigned int EC2_SESSION_TIMEOUT = 5000;
 
     void query_metadata_value(client& cli, map_value& value, string const& url, string const& name)
     {
         request req(url + name);
-        req.timeout(200);
+        req.connection_timeout(EC2_CONNECTION_TIMEOUT);
+        req.timeout(EC2_SESSION_TIMEOUT);
 
         auto response = cli.get(req);
         if (response.status_code() != 200) {
@@ -59,7 +62,8 @@ namespace facter { namespace facts { namespace resolvers {
         };
 
         request req(url);
-        req.timeout(200);
+        req.connection_timeout(EC2_CONNECTION_TIMEOUT);
+        req.timeout(EC2_SESSION_TIMEOUT);
 
         auto response = cli.get(req);
         if (response.status_code() != 200) {
@@ -127,7 +131,8 @@ namespace facter { namespace facts { namespace resolvers {
         catch (http_request_exception& ex) {
             if (ex.req().url() == EC2_METADATA_ROOT_URL) {
                 // The very first query failed; most likely not an EC2 instance
-                LOG_DEBUG("EC2 facts are unavailable: not running under an EC2 instance.");
+                LOG_DEBUG("EC2 facts are unavailable: not running under an EC2 instance or EC2 is not responding in a timely manner.");
+                LOG_TRACE("EC2 metadata request failed: %1%", ex.what());
                 return;
             }
             LOG_ERROR("EC2 metadata request failed: %1%", ex.what());
@@ -140,7 +145,8 @@ namespace facter { namespace facts { namespace resolvers {
 
         try {
             request req(EC2_USERDATA_ROOT_URL);
-            req.timeout(200);
+            req.connection_timeout(EC2_CONNECTION_TIMEOUT);
+            req.timeout(EC2_SESSION_TIMEOUT);
 
             auto response = cli.get(req);
             if (response.status_code() != 200) {
