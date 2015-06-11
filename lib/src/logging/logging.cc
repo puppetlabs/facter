@@ -70,7 +70,7 @@ namespace facter { namespace logging {
 
     void log(level lvl, string const& message)
     {
-        lm::log(LOG_NAMESPACE, static_cast<lm::log_level>(lvl), message);
+        lm::log(LOG_NAMESPACE, static_cast<lm::log_level>(lvl), 0, message);
     }
 
     void log(level lvl, boost::format& message)
