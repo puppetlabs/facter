@@ -24,6 +24,11 @@ using namespace rapidjson;
 
 namespace facter { namespace facts { namespace resolvers {
 
+#ifdef USE_CURL
+    static const unsigned int GCE_CONNECTION_TIMEOUT = 1000;
+    static const unsigned int GCE_SESSION_TIMEOUT = 5000;
+#endif
+
     // Helper event handler for parsing JSON data
     struct gce_event_handler
     {
@@ -219,7 +224,8 @@ namespace facter { namespace facts { namespace resolvers {
         try
         {
             request req("http://metadata/computeMetadata/v1beta1/?recursive=true&alt=json");
-            req.timeout(1000);
+            req.connection_timeout(GCE_CONNECTION_TIMEOUT);
+            req.timeout(GCE_SESSION_TIMEOUT);
 
             client cli;
             auto response = cli.get(req);
