@@ -368,6 +368,17 @@ describe Facter::Util::Virtual do
       end
     end
 
+    context '/proc/1/cgroup has at least one hierarchy with docker underneath a systemd slice parent' do
+      before :each do
+        fakepath = Pathname.new(File.join(fixture_path, 'in_a_docker_container_with_systemd_slices'))
+        Pathname.stubs(:new).with('/proc/1/cgroup').returns(fakepath)
+      end
+
+      it 'is true' do
+        subject.should be_true
+      end
+    end
+
     context '/proc/1/cgroup has no hierarchies rooted in /docker/' do
       before :each do
         fakepath = Pathname.new(File.join(fixture_path, 'not_in_a_container'))
