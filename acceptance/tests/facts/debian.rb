@@ -7,10 +7,23 @@ test_name "Facts should resolve as expected in Debian 6 and 7"
 # Facts tested: os, processors, networking, identity, kernel
 #
 
-confine :to, :platform => /debian-squeeze|debian-wheezy/
+confine :to, :platform => /debian-squeeze|debian-wheezy|debian-jessie/
 
 agents.each do |agent|
-  os_version = agent['platform'] =~ /squeeze/ ? '6' : '7'
+  if agent['platform'] =~ /squeeze/
+    codename   = 'squeeze'
+    os_version = '6'
+    os_kernel = '2.6'
+  elsif agent['platform'] =~ /wheezy/
+    codename   = 'wheezy'
+    os_version = '7'
+    os_kernel = '3.2'
+  elsif agent['platform'] =~ /jessie/
+    codename   = 'jessie'
+    os_version = '8'
+    os_kernel = '3.16'
+  end
+
   if agent['platform'] =~ /x86_64/
     os_arch     = 'amd64'
     os_hardware = 'x86_64'
@@ -22,7 +35,7 @@ agents.each do |agent|
   step "Ensure the OS fact resolves as expected"
   expected_os = {
                   'os.architecture'         => os_arch,
-                  'os.distro.codename'      => os_version == '6' ? 'squeeze' : 'wheezy',
+                  'os.distro.codename'      => codename,
                   'os.distro.description'   => /Debian GNU\/Linux #{os_version}\.\d/,
                   'os.distro.id'            => 'Debian',
                   'os.distro.release.full'  => /#{os_version}\.\d/,
@@ -83,13 +96,11 @@ agents.each do |agent|
   end
 
   step "Ensure the kernel fact resolves as expected"
-  kernel_version = os_version == '7' ? '3.2' : '2.6'
-
   expected_kernel = {
                       'kernel'           => 'Linux',
-                      'kernelrelease'    => kernel_version,
-                      'kernelversion'    => kernel_version,
-                      'kernelmajversion' => kernel_version
+                      'kernelrelease'    => os_kernel,
+                      'kernelversion'    => os_kernel,
+                      'kernelmajversion' => os_kernel
                     }
 
   expected_kernel.each do |fact, value|
