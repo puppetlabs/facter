@@ -78,11 +78,11 @@ namespace facter { namespace facts { namespace linux {
             if (parts.size() < 3) {
                 return true;
             }
-            if (boost::starts_with(parts[2], boost::as_literal("/docker/"))) {
+            if (boost::contains(parts[2], boost::as_literal("/docker"))) {
                 value = vm::docker;
                 return false;
             }
-            if (boost::starts_with(parts[2], boost::as_literal("/lxc/"))) {
+            if (boost::contains(parts[2], boost::as_literal("/lxc"))) {
                 value = vm::lxc;
                 return false;
             }
