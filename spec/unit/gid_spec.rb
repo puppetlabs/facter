@@ -39,4 +39,13 @@ describe "gid fact" do
       Facter.fact(:gid).value.should == nil
     end
   end
+
+  describe "on windows systems" do
+    it "is not supported" do
+      Facter.fact(:kernel).stubs(:value).returns("windows")
+      Facter::Core::Execution.expects(:which).with('id').returns(true)
+
+      Facter.fact(:gid).value.should == nil
+    end
+  end
 end

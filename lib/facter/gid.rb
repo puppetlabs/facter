@@ -10,7 +10,7 @@
 
 Facter.add(:gid) do
   confine do
-    Facter::Core::Execution.which('id') && Facter.value(:kernel) != "SunOS"
+    Facter::Core::Execution.which('id') && !["SunOS", "windows"].include?(Facter.value(:kernel))
   end
   setcode { Facter::Core::Execution.exec('id -ng') }
 end
