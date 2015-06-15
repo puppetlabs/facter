@@ -1,6 +1,7 @@
 #include <internal/facts/windows/kernel_resolver.hpp>
 #include <internal/util/windows/system_error.hpp>
 #include <internal/util/windows/windows.hpp>
+#include <internal/util/version_parsing.hpp>
 #include <facter/facts/os.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/optional.hpp>
@@ -9,6 +10,7 @@
 #include <boost/nowide/convert.hpp>
 
 using namespace std;
+using namespace facter::util;
 using namespace facter::util::windows;
 
 namespace facter { namespace facts { namespace windows {
@@ -66,7 +68,10 @@ namespace facter { namespace facts { namespace windows {
         auto release = get_release();
         if (release) {
             result.release = move(*release);
-            result.version = result.release;
+            result.full_version = result.release;
+
+            string major, minor;
+            tie(result.major_version, result.minor_version) = version_parsing::parse_kernel_version(result.release);
         } else {
             LOG_DEBUG("failed to retrieve kernel facts: %1%", system_error());
         }

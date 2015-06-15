@@ -1,5 +1,6 @@
 #include <internal/facts/aix/kernel_resolver.hpp>
 #include <internal/util/regex.hpp>
+#include <internal/util/version_parsing.hpp>
 #include <facter/facts/collection.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
@@ -55,8 +56,10 @@ namespace facter { namespace facts { namespace aix   {
         }
 
         result.name = "AIX";
-        result.version = version.substr(0, 2)+"00";
+        result.full_version = version.substr(0, 2)+"00";
         result.release = version.substr(0, 2) + "00" + version.substr(2, 6) + "-" + version.substr(8, 4);
+        tie(result.major_version, result.minor_version) = version_parsing::parse_kernel_version(result.release);
+
         return result;
     }
 
