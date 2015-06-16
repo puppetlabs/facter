@@ -8,6 +8,8 @@ endif()
 
 option(YAMLCPP_STATIC "Use yaml-cpp's static libraries" OFF)
 
+option(CURL_STATIC "Use curl's static libraries" OFF)
+
 set(FACTER_PATH "" CACHE PATH "Specify the location to look for specific binaries before trying PATH.")
 if (FACTER_PATH)
     # Specify a preferred location for binary lookup that will be prioritized over PATH.
@@ -64,10 +66,17 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" AND NOT WITHOUT_BLKID)
     find_package(BLKID)
 endif()
 
-if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" AND NOT WITHOUT_CURL)
+if ((("${CMAKE_SYSTEM_NAME}" MATCHES "Linux") OR WIN32) AND NOT WITHOUT_CURL)
     find_package(CURL)
     if (CURL_FOUND)
         add_definitions(-DUSE_CURL)
+        if (CURL_STATIC)
+            add_definitions(-DCURL_STATICLIB)
+            if (WIN32)
+                # Linking statically on Windows requires some extra libraries.
+                list(APPEND CURL_LIBRARIES wldap32.lib ws2_32.lib)
+            endif()
+        endif()
     endif()
     set_package_properties(CURL PROPERTIES DESCRIPTION "A free and easy-to-use client-side URL transfer library" URL "http://curl.haxx.se/libcurl/")
     set_package_properties(CURL PROPERTIES TYPE OPTIONAL PURPOSE "Enables facts that require HTTP.")
