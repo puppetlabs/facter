@@ -14,6 +14,9 @@ using namespace facter::util;
 
 namespace facter { namespace ruby {
 
+    // The maximum number of resolutions allowed for a fact
+    static const size_t MAXIMUM_RESOLUTIONS = 100;
+
     fact::fact() :
         _resolved(false),
         _resolving(false)
@@ -225,6 +228,10 @@ namespace facter { namespace ruby {
         // Find or create the resolution
         VALUE resolution_self = find_resolution(name);
         if (ruby.is_nil(resolution_self)) {
+            if (_resolutions.size() == MAXIMUM_RESOLUTIONS) {
+                ruby.rb_raise(*ruby.rb_eRuntimeError, "fact \"%s\" already has the maximum number of resolutions allowed (%d).", ruby.rb_string_value_ptr(&_name), MAXIMUM_RESOLUTIONS);
+            }
+
             if (aggregate) {
                 _resolutions.push_back(aggregate_resolution::create());
             } else {

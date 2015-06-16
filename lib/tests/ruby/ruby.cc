@@ -592,4 +592,19 @@ SCENARIO("custom facts written in Ruby") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar\"");
         }
     }
+    GIVEN("a fact that has 100 resolutions") {
+        REQUIRE(load_custom_fact("100_resolutions.rb", facts));
+        THEN("the fact evaluates") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar\"");
+        }
+    }
+    GIVEN("a fact that has 101 resolutions") {
+        log_capture capture(level::error);
+        REQUIRE_FALSE(load_custom_fact("101_resolutions.rb", facts));
+        THEN("an error is logged") {
+            auto output = capture.result();
+            CAPTURE(output);
+            REQUIRE(re_search(output, boost::regex("ERROR puppetlabs\\.facter - .* fact \"foo\" already has the maximum number of resolutions allowed \\(100\\)")));
+        }
+    }
 }
