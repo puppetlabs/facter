@@ -116,13 +116,13 @@ include(cflags)
 set(FACTER_CXX_FLAGS "${LEATHERMAN_CXX_FLAGS}")
 
 # Force all binaries to be created in the same location.
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 if (WIN32)
     # On Windows, DLL paths aren't hardcoded in the executable. We place all the executables and libraries
     # in the same directory to avoid having to setup the DLL search path in the dev environment.
-    set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 else()
-    set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 endif()
 
 add_definitions(${LEATHERMAN_DEFINITIONS})
