@@ -1,11 +1,11 @@
 #include <internal/facts/windows/processor_resolver.hpp>
-#include <internal/util/windows/wmi.hpp>
+#include <leatherman/windows/wmi.hpp>
 #include <internal/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
 
 using namespace std;
 using namespace facter::util;
-using namespace facter::util::windows;
+using namespace leatherman::windows;
 
 namespace facter { namespace facts { namespace windows {
 

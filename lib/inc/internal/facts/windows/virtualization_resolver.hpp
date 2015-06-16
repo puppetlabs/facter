@@ -5,7 +5,7 @@
 #pragma once
 
 #include "../resolvers/virtualization_resolver.hpp"
-#include "../../util/windows/wmi.hpp"
+#include <leatherman/windows/wmi.hpp>
 #include <string>
 #include <memory>
 
@@ -20,7 +20,7 @@ namespace facter { namespace facts { namespace windows {
          * Constructs the virtualization_resolver.
          * @param wmi_conn The WMI connection to use when resolving facts.
          */
-        virtualization_resolver(std::shared_ptr<util::windows::wmi> wmi_conn = std::make_shared<util::windows::wmi>());
+        virtualization_resolver(std::shared_ptr<leatherman::windows::wmi> wmi_conn = std::make_shared<leatherman::windows::wmi>());
 
      protected:
         /**
@@ -31,7 +31,7 @@ namespace facter { namespace facts { namespace windows {
         virtual std::string get_hypervisor(collection& facts) override;
 
      private:
-        std::shared_ptr<util::windows::wmi> _wmi;
+        std::shared_ptr<leatherman::windows::wmi> _wmi;
     };
 
 }}}  // namespace facter::facts::windows

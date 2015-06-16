@@ -1,6 +1,6 @@
 #include <catch.hpp>
 #include <internal/facts/windows/networking_resolver.hpp>
-#include <internal/util/windows/windows.hpp>
+#include <leatherman/windows/windows.hpp>
 #include <internal/util/windows/wsa.hpp>
 #include <Ws2tcpip.h>
 

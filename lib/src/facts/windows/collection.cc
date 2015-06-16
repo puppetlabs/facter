@@ -16,16 +16,16 @@
 #include <internal/facts/windows/timezone_resolver.hpp>
 #include <internal/facts/windows/uptime_resolver.hpp>
 #include <internal/facts/windows/virtualization_resolver.hpp>
-#include <internal/util/windows/system_error.hpp>
-#include <internal/util/windows/user.hpp>
-#include <internal/util/windows/windows.hpp>
+#include <leatherman/windows/system_error.hpp>
+#include <leatherman/windows/user.hpp>
+#include <leatherman/windows/windows.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <Shlobj.h>
 
 using namespace std;
 using namespace facter::util;
-using namespace facter::util::windows;
+using namespace leatherman::windows;
 using namespace facter::facts::external;
 using namespace boost::filesystem;
 

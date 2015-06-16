@@ -1,5 +1,5 @@
 #include <facter/util/environment.hpp>
-#include <internal/util/windows/windows.hpp>
+#include <leatherman/windows/windows.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/nowide/convert.hpp>
 #include <functional>
