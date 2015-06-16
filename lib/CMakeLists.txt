@@ -80,6 +80,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/util/scoped_env.cc"
     "src/util/scoped_file.cc"
     "src/util/string.cc"
+    "src/util/version_parsing.cc"
 )
 
 if (CURL_FOUND)
@@ -202,6 +203,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         "src/facts/linux/collection.cc"
         "src/facts/linux/processor_resolver.cc"
         "src/facts/linux/virtualization_resolver.cc"
+        "src/facts/linux/kernel_resolver.cc"
         "src/util/bsd/scoped_ifaddrs.cc"
     )
     set(LIBFACTER_PLATFORM_LIBRARIES

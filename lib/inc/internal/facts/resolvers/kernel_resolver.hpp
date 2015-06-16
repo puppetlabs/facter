@@ -43,9 +43,19 @@ namespace facter { namespace facts { namespace resolvers {
             std::string release;
 
             /**
-             * Stores the version of the kernel.
+             * Stores the major version of the kernel.
              */
-            std::string version;
+            std::string major_version;
+
+            /**
+            * Stores the minor version of the kernel.
+            */
+            std::string minor_version;
+
+            /**
+             * Stores the full version of the kernel.
+             */
+            std::string full_version;
         };
 
         /**
@@ -54,13 +64,6 @@ namespace facter { namespace facts { namespace resolvers {
          * @return Returns the resolver data.
          */
         virtual data collect_data(collection& facts) = 0;
-
-        /**
-         * Parses the major and minor kernel versions.
-         * @param version The version to parse.
-         * @return Returns a tuple of major and minor versions.
-         */
-        virtual std::tuple<std::string, std::string> parse_version(std::string const& version) const;
     };
 
 }}}  // namespace facter::facts::resolvers

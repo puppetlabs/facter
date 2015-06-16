@@ -7,7 +7,7 @@ test_name "Facts should resolve as expected in Ubuntu 12.04, 14.04, and 14.10"
 # Facts tested: os, processors, networking, identity, kernel
 #
 
-confine :to, :platform => /ubuntu-precise|ubuntu-trusty|ubuntu-utopic/
+confine :to, :platform => /ubuntu-precise|ubuntu-trusty|ubuntu-utopic|ubuntu-vivid/
 
 agents.each do |agent|
   if agent['platform'] =~ /ubuntu-precise/
@@ -18,10 +18,14 @@ agents.each do |agent|
     os_name    = 'trusty'
     os_version = '14.04'
     os_kernel  = '3.13'
-  else
+  elsif agent['platform'] =~ /ubuntu-utopic/
     os_name    = 'utopic'
     os_version = '14.10'
     os_kernel  = '3.16'
+  elsif agent['platform'] =~ /ubuntu-vivid/
+    os_name    = 'vivid'
+    os_version = '15.04'
+    os_kernel  = '3.19'
   end
 
   if agent['platform'] =~ /x86_64/

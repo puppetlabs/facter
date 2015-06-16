@@ -145,7 +145,9 @@ struct kernel_resolver : resolvers::kernel_resolver
         data result;
         result.name = "kernel";
         result.release = "1.2.3-kernel";
-        result.version = "1.2.3";
+        result.full_version = "1.2.3";
+        result.major_version = "1.2";
+        result.minor_version = "3";
         return result;
     }
 };

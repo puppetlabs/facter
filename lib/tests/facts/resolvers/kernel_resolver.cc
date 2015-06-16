@@ -25,7 +25,9 @@ struct test_kernel_resolver : kernel_resolver
         data result;
         result.name = "foo";
         result.release = "1.2.3-foo";
-        result.version = "1.2.3";
+        result.full_version = "1.2.3";
+        result.major_version = "1.2";
+        result.minor_version = "3";
         return result;
     }
 };

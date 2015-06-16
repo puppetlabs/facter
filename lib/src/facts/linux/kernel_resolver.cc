@@ -1,4 +1,4 @@
-#include <internal/facts/posix/kernel_resolver.hpp>
+#include <internal/facts/linux/kernel_resolver.hpp>
 #include <internal/util/version_parsing.hpp>
 #include <facter/facts/collection.hpp>
 #include <leatherman/logging/logging.hpp>
@@ -7,7 +7,7 @@
 using namespace std;
 using namespace facter::util;
 
-namespace facter { namespace facts { namespace posix {
+namespace facter { namespace facts { namespace linux {
 
     kernel_resolver::data kernel_resolver::collect_data(collection& facts)
     {
@@ -23,7 +23,7 @@ namespace facter { namespace facts { namespace posix {
         result.full_version = result.release.substr(0, result.release.find('-'));
 
         string major, minor;
-        tie(result.major_version, result.minor_version) = version_parsing::parse_kernel_version(result.release);
+        tie(result.major_version, result.minor_version) = version_parsing::parse_linux_kernel_version(result.release);
 
         return result;
     }

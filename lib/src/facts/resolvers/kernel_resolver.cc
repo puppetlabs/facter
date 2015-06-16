@@ -31,32 +31,15 @@ namespace facter { namespace facts { namespace resolvers {
             facts.add(fact::kernel_release, make_value<string_value>(move(data.release)));
         }
 
-        if (!data.version.empty()) {
-            string major, minor;
-            tie(major, minor) = parse_version(data.version);
-
-            if (!major.empty()) {
-                facts.add(fact::kernel_major_version, make_value<string_value>(move(major)));
-            }
-            if (!minor.empty()) {
-                // TODO: for use in a structured fact; no point adding a new flat fact for it
-            }
-
-            facts.add(fact::kernel_version, make_value<string_value>(move(data.version)));
+        if(!data.full_version.empty()) {
+            facts.add(fact::kernel_version, make_value<string_value>(move(data.full_version)));
         }
-    }
 
-    tuple<string, string> kernel_resolver::parse_version(string const& version) const
-    {
-        auto pos = version.find('.');
-        if (pos != string::npos) {
-            auto second = version.find('.', pos + 1);
-            if (second != string::npos) {
-                pos = second;
-            }
-            return make_tuple(version.substr(0, pos), version.substr(pos + 1));
+        if (!data.major_version.empty()) {
+            facts.add(fact::kernel_major_version, make_value<string_value>(move(data.major_version)));
         }
-        return make_tuple(move(version), string());
+
+        // TODO: place minor_version in a structured fact; no point adding a new flat fact for it
     }
 
 }}}  // namespace facter::facts::resolvers

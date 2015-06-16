@@ -1,8 +1,10 @@
 #include <internal/facts/solaris/kernel_resolver.hpp>
+#include <internal/util/version_parsing.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <sys/utsname.h>
 
 using namespace std;
+using namespace facter::util;
 
 namespace facter { namespace facts { namespace solaris {
 
@@ -17,7 +19,9 @@ namespace facter { namespace facts { namespace solaris {
 
         result.name = name.sysname;
         result.release = name.release;
-        result.version = name.version;
+        result.full_version = name.version;
+        tie(result.major_version, result.minor_version) = version_parsing::parse_kernel_version(result.release);
+
         return result;
     }
 
