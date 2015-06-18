@@ -10,9 +10,4 @@ namespace facter { namespace ruby {
         return dynamic_library::find_by_symbol("ruby_init");
     }
 
-    string api::libruby_configdir()
-    {
-        return "libdir";
-    }
-
 }}  // namespace facter::ruby

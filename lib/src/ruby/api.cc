@@ -487,7 +487,13 @@ namespace facter { namespace ruby {
 
         bool success;
         string output, none;
-        tie(success, output, none) = execute(ruby, { "-e", "print File.join(RbConfig::CONFIG['"+libruby_configdir()+"'], RbConfig::CONFIG['LIBRUBY_SO'])" });
+
+        tie(success, output, none) = execute(ruby, { "-e", "print(['libdir', 'archlibdir', 'sitearchlibdir', 'bindir'].find do |name|"
+                                                                  "dir = RbConfig::CONFIG[name];"
+                                                                  "next unless dir;"
+                                                                  "file = File.join(dir, RbConfig::CONFIG['LIBRUBY_SO']);"
+                                                                  "break file if File.exist? file;"
+                                                                  "false end)" });
         if (!success) {
             LOG_WARNING("ruby failed to run: %1%", output);
             return library;

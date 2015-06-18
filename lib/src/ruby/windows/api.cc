@@ -11,9 +11,4 @@ namespace facter { namespace ruby {
         return dynamic_library::find_by_pattern(libruby_pattern);
     }
 
-    string api::libruby_configdir()
-    {
-        return "bindir";
-    }
-
 }}  // namespace facter::ruby
