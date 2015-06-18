@@ -1,6 +1,6 @@
 #include <internal/facts/linux/networking_resolver.hpp>
 #include <internal/util/posix/scoped_descriptor.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <cstring>
@@ -9,8 +9,9 @@
 #include <sys/ioctl.h>
 
 using namespace std;
-using namespace facter::util;
 using namespace facter::util::posix;
+
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace linux {
 
@@ -58,7 +59,7 @@ namespace facter { namespace facts { namespace linux {
         // We consider the primary interface to be the one that has 0.0.0.0 as the
         // routing destination.
         string interface;
-        file::each_line("/proc/net/route", [&interface](string& line) {
+        lth_file::each_line("/proc/net/route", [&interface](string& line) {
             vector<boost::iterator_range<string::iterator>> parts;
             boost::split(parts, line, boost::is_space(), boost::token_compress_on);
             if (parts.size() > 1 && parts[1] == boost::as_literal("00000000")) {

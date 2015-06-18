@@ -1,5 +1,4 @@
 #include <facter/execution/execution.hpp>
-#include <facter/util/directory.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>

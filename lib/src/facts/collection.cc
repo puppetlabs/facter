@@ -4,7 +4,7 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
-#include <facter/util/directory.hpp>
+#include <leatherman/file_util/directory.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/util/string.hpp>
 #include <facter/version.h>
@@ -27,6 +27,8 @@ using namespace facter::util;
 using namespace rapidjson;
 using namespace YAML;
 using namespace boost::filesystem;
+
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts {
 
@@ -136,7 +138,7 @@ namespace facter { namespace facts {
 
         LOG_DEBUG("searching %1% for external facts.", search_dir);
 
-        directory::each_file(search_dir.string(), [&](string const& path) {
+        lth_file::each_file(search_dir.string(), [&](string const& path) {
             for (auto const& res : resolvers) {
                 if (res->can_resolve(path)) {
                     try {

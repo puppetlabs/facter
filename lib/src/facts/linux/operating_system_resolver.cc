@@ -10,7 +10,7 @@
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
@@ -19,9 +19,11 @@
 #include <memory>
 
 using namespace std;
-using namespace facter::util;
 using namespace facter::execution;
 using namespace boost::filesystem;
+using namespace facter::util;
+
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace linux {
 
@@ -47,7 +49,7 @@ namespace facter { namespace facts { namespace linux {
     {
         static boost::regex regexp("\\S+ (\\S+) selinuxfs");
         string mountpoint;
-        file::each_line("/proc/self/mounts", [&](string& line) {
+        lth_file::each_line("/proc/self/mounts", [&](string& line) {
             if (re_search(line, regexp, &mountpoint)) {
                 return false;
             }
@@ -68,10 +70,10 @@ namespace facter { namespace facts { namespace linux {
         }
 
         // Get the policy version
-        result.policy_version = file::read(mountpoint + "/policyvers");
+        result.policy_version = lth_file::read(mountpoint + "/policyvers");
 
         // Check for enforcement
-        string enforce = file::read(mountpoint + "/enforce");
+        string enforce = lth_file::read(mountpoint + "/enforce");
         if (!enforce.empty()) {
             if (enforce == "1") {
                 result.enforced = true;
@@ -84,7 +86,7 @@ namespace facter { namespace facts { namespace linux {
         // Parse the SELinux config for mode and policy
         static boost::regex mode_regex("(?m)^SELINUX=(\\w+)$");
         static boost::regex policy_regex("(?m)^SELINUXTYPE=(\\w+)$");
-        file::each_line("/etc/selinux/config", [&](string& line) {
+        lth_file::each_line("/etc/selinux/config", [&](string& line) {
             if (re_search(line, mode_regex, &result.config_mode)) {
                 return true;
             }

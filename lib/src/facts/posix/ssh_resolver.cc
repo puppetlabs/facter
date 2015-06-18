@@ -1,6 +1,6 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #include <internal/facts/posix/ssh_resolver.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <facter/util/string.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
@@ -19,7 +19,9 @@ using namespace facter::util::posix;
 using namespace std;
 using namespace facter::util;
 using namespace boost::filesystem;
+
 namespace bs = boost::system;
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace posix {
 
@@ -64,7 +66,7 @@ namespace facter { namespace facts { namespace posix {
         }
 
         // Read the file's contents
-        string contents = file::read(key_file.string());
+        string contents = lth_file::read(key_file.string());
         if (contents.empty()) {
             LOG_DEBUG("%1% could not be read.", key_file);
             return;

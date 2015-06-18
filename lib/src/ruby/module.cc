@@ -4,7 +4,7 @@
 #include <internal/ruby/confine.hpp>
 #include <internal/ruby/simple_resolution.hpp>
 #include <facter/facts/collection.hpp>
-#include <facter/util/directory.hpp>
+#include <leatherman/file_util/directory.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/version.h>
 #include <facter/export.h>
@@ -23,6 +23,8 @@ using namespace facter::execution;
 using namespace boost::filesystem;
 
 using namespace leatherman::logging;
+
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace ruby {
 
@@ -253,7 +255,7 @@ namespace facter { namespace ruby {
 
         for (auto const& directory : _search_paths) {
             LOG_DEBUG("searching for custom facts in %1%.", directory);
-            directory::each_file(directory, [&](string const& file) {
+            lth_file::each_file(directory, [&](string const& file) {
                 load_file(file);
                 return true;
             }, "\\.rb$");

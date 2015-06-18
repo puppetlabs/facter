@@ -3,15 +3,16 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/util/file.hpp>
-#include <facter/util/directory.hpp>
+#include <leatherman/file_util/file.hpp>
+#include <leatherman/file_util/directory.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <unordered_set>
 
 using namespace std;
-using namespace facter::util;
 using namespace boost::filesystem;
+
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace linux {
 
@@ -20,9 +21,9 @@ namespace facter { namespace facts { namespace linux {
         auto result = posix::processor_resolver::collect_data(facts);
 
         unordered_set<string> cpus;
-        directory::each_subdirectory("/sys/devices/system/cpu", [&](string const& cpu_directory) {
+        lth_file::each_subdirectory("/sys/devices/system/cpu", [&](string const& cpu_directory) {
             ++result.logical_count;
-            string id = file::read((path(cpu_directory) / "/topology/physical_package_id").string());
+            string id = lth_file::read((path(cpu_directory) / "/topology/physical_package_id").string());
             boost::trim(id);
             if (id.empty() || cpus.emplace(move(id)).second) {
                 // Haven't seen this processor before
@@ -34,7 +35,7 @@ namespace facter { namespace facts { namespace linux {
         // To determine model information, parse /proc/cpuinfo
         bool have_counts = result.logical_count > 0;
         string id;
-        file::each_line("/proc/cpuinfo", [&](string& line) {
+        lth_file::each_line("/proc/cpuinfo", [&](string& line) {
             // Split the line on colon
             auto pos = line.find(":");
             if (pos == string::npos) {
@@ -63,7 +64,7 @@ namespace facter { namespace facts { namespace linux {
 
         // Read in the max speed from the first cpu
         // The speed is in kHz
-        string speed = file::read("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq");
+        string speed = lth_file::read("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq");
         if (!speed.empty()) {
             try {
                 result.speed = stoi(speed) * static_cast<int64_t>(1000);

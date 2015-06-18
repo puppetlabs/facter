@@ -4,16 +4,18 @@
 #include <facter/execution/execution.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/os_family.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <vector>
 
 using namespace std;
-using namespace facter::util;
 using namespace facter::execution;
 using namespace boost::filesystem;
+using namespace facter::util;
+
 namespace bs = boost::system;
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace linux {
 
@@ -25,7 +27,7 @@ namespace facter { namespace facts { namespace linux {
         bs::error_code ec;
         if (!items.empty() && is_regular_file(file, ec)) {
             string key, value;
-            file::each_line(file, [&](string& line) {
+            lth_file::each_line(file, [&](string& line) {
                 if (re_search(line, boost::regex("(?m)^(\\w+)=[\"']?(.+?)[\"']?$"), &key, &value)) {
                     if (items.count(key)) {
                         values.insert(make_pair(key, value));
@@ -81,7 +83,7 @@ namespace facter { namespace facts { namespace linux {
                 make_tuple(boost::regex("(?m)^Fedora release"),               string(os::fedora)),
             };
 
-            string contents = file::read(release_file::redhat);
+            string contents = lth_file::read(release_file::redhat);
             boost::trim(contents);
             for (auto const& regex : regexs) {
                 if (re_search(contents, get<0>(regex))) {
@@ -103,7 +105,7 @@ namespace facter { namespace facts { namespace linux {
                 make_tuple(boost::regex("(?im)^openSUSE"),                      string(os::open_suse)),
             };
 
-            string contents = file::read(release_file::suse);
+            string contents = lth_file::read(release_file::suse);
             boost::trim(contents);
             for (auto const& regex : regexs) {
                 if (re_search(contents, get<0>(regex))) {
@@ -232,7 +234,7 @@ namespace facter { namespace facts { namespace linux {
         auto it = release_files.find(name);
         if (it != release_files.end()) {
             string contents;
-            if (file::each_line(it->second, [&](string& line) {
+            if (lth_file::each_line(it->second, [&](string& line) {
                 // We only need the first line
                 contents = move(line);
                 return false;
@@ -247,13 +249,13 @@ namespace facter { namespace facts { namespace linux {
 
         // Debian uses the entire contents of the release file as the version
         if (value.empty() && name == os::debian) {
-            value = file::read(release_file::debian);
+            value = lth_file::read(release_file::debian);
             boost::trim_right(value);
         }
 
         // Alpine uses the entire contents of the release file as the version
         if (value.empty() && name == os::alpine) {
-            value = file::read(release_file::alpine);
+            value = lth_file::read(release_file::alpine);
             boost::trim_right(value);
         }
 
@@ -263,7 +265,7 @@ namespace facter { namespace facts { namespace linux {
                 name == os::suse_enterprise_server ||
                 name == os::suse_enterprise_desktop ||
                 name == os::open_suse)) {
-            string contents = file::read(release_file::suse);
+            string contents = lth_file::read(release_file::suse);
             string major;
             string minor;
             if (re_search(contents, boost::regex("(?m)^VERSION\\s*=\\s*(\\d+)\\.?(\\d+)?"), &major, &minor)) {
@@ -303,7 +305,7 @@ namespace facter { namespace facts { namespace linux {
                 pattern = "Arista Networks EOS (\\d+\\.\\d+\\.\\d+[A-M]?)";
             }
             if (file) {
-                string contents = file::read(file);
+                string contents = lth_file::read(file);
                 re_search(contents, pattern, &value);
             }
         }

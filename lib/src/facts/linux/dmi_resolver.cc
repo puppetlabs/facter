@@ -1,13 +1,14 @@
 #include <internal/facts/linux/dmi_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
-using namespace facter::util;
 using namespace boost::filesystem;
+
 namespace bs = boost::system;
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace linux {
 
@@ -39,7 +40,7 @@ namespace facter { namespace facts { namespace linux {
         }
 
         string value;
-        if (!file::read(path, value)) {
+        if (!lth_file::read(path, value)) {
             LOG_DEBUG("%1%: file could not be read.", path);
             return {};
         }

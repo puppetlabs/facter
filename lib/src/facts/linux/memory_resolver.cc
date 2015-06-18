@@ -1,20 +1,21 @@
 #include <internal/facts/linux/memory_resolver.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
 using namespace std;
-using namespace facter::util;
 
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
+
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace linux {
 
     memory_resolver::data memory_resolver::collect_data(collection& facts)
     {
         data result;
-        file::each_line("/proc/meminfo", [&](string& line) {
+        lth_file::each_line("/proc/meminfo", [&](string& line) {
             uint64_t* variable = nullptr;
             if (boost::starts_with(line, "MemTotal:")) {
                 variable = &result.mem_total;

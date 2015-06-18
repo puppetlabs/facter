@@ -2,10 +2,11 @@
 #include <internal/util/regex.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/os_family.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 
 using namespace std;
-using namespace facter::util;
+
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace solaris {
 
@@ -55,7 +56,7 @@ namespace facter { namespace facts { namespace solaris {
         static boost::regex regexp_s10("Solaris \\d+ \\d+/\\d+ s(\\d+)x_u(\\d+)wos_");
         static boost::regex regexp_s11("Solaris (\\d+)[.](\\d+)");
         static boost::regex regexp_s11b("Solaris (\\d+) ");
-        file::each_line("/etc/release", [&](string& line) {
+        lth_file::each_line("/etc/release", [&](string& line) {
             string major, minor;
             if (re_search(line, regexp_s10, &major, &minor)) {
                 result.release = major + "_u" + minor;

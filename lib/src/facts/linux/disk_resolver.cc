@@ -1,16 +1,17 @@
 #include <internal/facts/linux/disk_resolver.hpp>
-#include <facter/util/file.hpp>
-#include <facter/util/directory.hpp>
+#include <leatherman/file_util/file.hpp>
+#include <leatherman/file_util/directory.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
-using namespace facter::util;
 using namespace boost::filesystem;
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
+
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace linux {
 
@@ -29,7 +30,7 @@ namespace facter { namespace facts { namespace linux {
             return result;
         }
 
-        directory::each_subdirectory(root_directory, [&](string const& dir) {
+        lth_file::each_subdirectory(root_directory, [&](string const& dir) {
             path device_directory(dir);
 
             disk d;
@@ -50,7 +51,7 @@ namespace facter { namespace facts { namespace linux {
             // The size is in 512 byte blocks
             if (is_regular_file(size_file_path, ec)) {
                 try {
-                    string blocks = file::read(size_file_path);
+                    string blocks = lth_file::read(size_file_path);
                     boost::trim(blocks);
                     d.size = lexical_cast<uint64_t>(blocks) * block_size;
                 } catch (bad_lexical_cast& ex) {
@@ -60,13 +61,13 @@ namespace facter { namespace facts { namespace linux {
 
             // Read the vendor fact
             if (is_regular_file(vendor_file_path, ec)) {
-                d.vendor = file::read(vendor_file_path);
+                d.vendor = lth_file::read(vendor_file_path);
                 boost::trim(d.vendor);
             }
 
             // Read the model fact
             if (is_regular_file(model_file_path, ec)) {
-                d.model = file::read(model_file_path);
+                d.model = lth_file::read(model_file_path);
                 boost::trim(d.model);
             }
 

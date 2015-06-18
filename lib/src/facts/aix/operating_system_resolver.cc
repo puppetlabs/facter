@@ -2,13 +2,14 @@
 #include <internal/util/regex.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <leatherman/logging/logging.hpp>
 
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace facter::util;
+using namespace leatherman::file_util;
 using namespace boost;
 namespace execution = facter::execution;
 

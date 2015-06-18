@@ -1,5 +1,4 @@
 #include <facter/execution/execution.hpp>
-#include <facter/util/directory.hpp>
 #include <facter/util/environment.hpp>
 #include <facter/util/scope_exit.hpp>
 #include <facter/util/scoped_resource.hpp>

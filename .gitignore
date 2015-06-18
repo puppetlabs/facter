@@ -16,6 +16,8 @@ compile_commands.json
 /release*/
 /.idea/
 
+facts.md
+
 # Packaging files
 ext/packaging/
 
