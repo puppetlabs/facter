@@ -3,40 +3,14 @@ packaging_url: 'git@github.com:puppetlabs/packaging --branch=master'
 packaging_repo: 'packaging'
 deb_build_mirrors:
   - deb http://pl-build-tools.delivery.puppetlabs.net/debian __DIST__ main
-default_cow: 'base-wheezy-i386.cow'
-# Which debian distributions to build for. Noarch packages only need one arch of each cow.
-cows: 'base-precise-amd64.cow base-precise-i386.cow base-squeeze-amd64.cow base-squeeze-i386.cow base-trusty-amd64.cow base-trusty-i386.cow base-wheezy-amd64.cow base-wheezy-i386.cow'
-# The pbuilder configuration file to use
-pbuild_conf: '/etc/pbuilderrc'
-# Who is packaging. Turns up in various packaging artifacts
 packager: 'puppetlabs'
-# Who is signing packages
-gpg_name: 'info@puppetlabs.com'
-# GPG key ID of the signer
 gpg_key: '4BD6EC30'
-# Whether to require tarball signing as a prerequisite of other package building
-sign_tar: FALSE
-# a space separated list of mock configs. These are the rpm distributions to package for. If a noarch package, only one arch of each is needed.
-final_mocks: 'pl-el-5-x86_64 pl-el-5-i386 pl-el-6-x86_64 pl-el-6-i386 pl-el-7-x86_64 pl-fedora-20-i386 pl-fedora-20-x86_64 pl-fedora-21-i386 pl-fedora-21-x86_64'
-# The host that contains the yum repository to ship to
-yum_host: 'yum.puppetlabs.com'
-# The remote path the repository on the yum\_host
-yum_repo_path: '/opt/repository/yum/'
-# The host that contains the apt repository to ship to
-apt_host: 'apt.puppetlabs.com'
-# The URL to use for the apt dependencies in cow building
-apt_repo_url: 'http://apt.puppetlabs.com'
-# The path on the remote apt host that debs should ship to
-apt_repo_path: '/opt/repository/incoming'
-# The host that stores the tarballs for downloading
+
+# These are the build targets used by the packaging repo. Uncomment to allow use.
+#final_mocks: 'pl-el-5-x86_64 pl-el-5-i386 pl-el-6-x86_64 pl-el-6-i386 pl-el-7-x86_64'
+#default_cow: 'base-trusty-i386.cow'
+#cows: 'base-precise-amd64.cow base-precise-i386.cow base-trusty-amd64.cow base-trusty-i386.cow base-wheezy-amd64.cow base-wheezy-i386.cow'
+#pbuild_conf: '/etc/pbuilderrc'
+
 tar_host: 'downloads.puppetlabs.com'
-# Whether to present the gem and apple tasks
-build_gem: FALSE
-build_dmg: FALSE
-# Whether to execute the rdoc rake tasks prior to composing the tarball
-build_doc: FALSE
-# Whether to present the Solaris 11 IPS packaging tasks
-# This requires suitable IPS packaging artifacts in the project in ext/ips
-build_ips: FALSE
-# Whether this project is a PE project or not
-build_pe: FALSE
+sign_tar: FALSE
