@@ -78,14 +78,9 @@ namespace facter { namespace logging {
         log(lvl, message.str());
     }
 
-    string const& colorize(level lvl)
+    void colorize(ostream &os, level lvl)
     {
-        return lm::colorize(static_cast<lm::log_level>(lvl));
-    }
-
-    string const& colorize()
-    {
-        return lm::colorize();
+        lm::colorize(os, static_cast<lm::log_level>(lvl));
     }
 
 }}  // namespace facter::logging
