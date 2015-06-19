@@ -5,8 +5,8 @@
 #include <facter/util/scoped_resource.hpp>
 #include <internal/execution/execution.hpp>
 #include <internal/util/scoped_env.hpp>
-#include <internal/util/windows/system_error.hpp>
-#include <internal/util/windows/windows.hpp>
+#include <leatherman/windows/system_error.hpp>
+#include <leatherman/windows/windows.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -18,7 +18,7 @@
 
 using namespace std;
 using namespace facter::util;
-using namespace facter::util::windows;
+using namespace leatherman::windows;
 using namespace leatherman::logging;
 using namespace boost::filesystem;
 using namespace boost::algorithm;

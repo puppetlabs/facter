@@ -1,8 +1,8 @@
 #include <internal/facts/windows/networking_resolver.hpp>
-#include <internal/util/windows/registry.hpp>
-#include <internal/util/windows/system_error.hpp>
+#include <leatherman/windows/registry.hpp>
+#include <leatherman/windows/system_error.hpp>
 #include <internal/util/windows/wsa.hpp>
-#include <internal/util/windows/windows.hpp>
+#include <leatherman/windows/windows.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/range/combine.hpp>
@@ -20,8 +20,8 @@
 
 using namespace std;
 using namespace facter::util;
-using namespace facter::util::windows;
 using namespace boost::algorithm;
+using namespace leatherman::windows;
 
 namespace facter { namespace facts { namespace windows {
 
@@ -186,7 +186,7 @@ namespace facter { namespace facts { namespace windows {
             return result;
         }
 
-        wsa winsock;
+        facter::util::windows::wsa winsock;
 
         map<string, pair<string, string>> adapterInfoMasks;
         for (auto pCurAddr = reinterpret_cast<PIP_ADAPTER_ADDRESSES>(pAddresses.data());

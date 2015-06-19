@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
-#include <internal/util/windows/windows.hpp>
+#include <leatherman/windows/windows.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <internal/util/regex.hpp>

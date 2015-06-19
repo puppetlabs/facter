@@ -1,6 +1,6 @@
 #include <internal/facts/windows/kernel_resolver.hpp>
-#include <internal/util/windows/system_error.hpp>
-#include <internal/util/windows/windows.hpp>
+#include <leatherman/windows/system_error.hpp>
+#include <leatherman/windows/windows.hpp>
 #include <facter/facts/os.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/optional.hpp>
@@ -9,7 +9,7 @@
 #include <boost/nowide/convert.hpp>
 
 using namespace std;
-using namespace facter::util::windows;
+using namespace leatherman::windows;
 
 namespace facter { namespace facts { namespace windows {
 

@@ -1,6 +1,6 @@
 #include <internal/facts/external/windows/powershell_resolver.hpp>
-#include <internal/util/windows/system_error.hpp>
-#include <internal/util/windows/windows.hpp>
+#include <leatherman/windows/system_error.hpp>
+#include <leatherman/windows/windows.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/fact.hpp>
@@ -11,7 +11,7 @@
 
 using namespace std;
 using namespace facter::execution;
-using namespace facter::util::windows;
+using namespace leatherman::windows;
 using namespace boost::filesystem;
 
 namespace facter { namespace facts { namespace external {

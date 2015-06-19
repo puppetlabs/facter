@@ -5,7 +5,7 @@
 #pragma once
 
 #include "../resolvers/uptime_resolver.hpp"
-#include "../../util/windows/wmi.hpp"
+#include <leatherman/windows/wmi.hpp>
 #include <string>
 #include <memory>
 
@@ -20,7 +20,7 @@ namespace facter { namespace facts { namespace windows {
          * Constructs the uptime_resolver.
          * @param wmi_conn The WMI connection to use when resolving facts.
          */
-        uptime_resolver(std::shared_ptr<util::windows::wmi> wmi_conn = std::make_shared<util::windows::wmi>());
+        uptime_resolver(std::shared_ptr<leatherman::windows::wmi> wmi_conn = std::make_shared<leatherman::windows::wmi>());
 
      protected:
         /**
@@ -30,7 +30,7 @@ namespace facter { namespace facts { namespace windows {
         virtual int64_t get_uptime() override;
 
      private:
-        std::shared_ptr<util::windows::wmi> _wmi;
+        std::shared_ptr<leatherman::windows::wmi> _wmi;
     };
 
 }}}  // namespace facter::facts::windows

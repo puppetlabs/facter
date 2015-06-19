@@ -1,8 +1,8 @@
 #include <facter/util/scoped_resource.hpp>
 #include <internal/util/regex.hpp>
 #include <internal/util/dynamic_library.hpp>
-#include <internal/util/windows/system_error.hpp>
-#include <internal/util/windows/windows.hpp>
+#include <leatherman/windows/system_error.hpp>
+#include <leatherman/windows/windows.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/format.hpp>
 #include <boost/nowide/convert.hpp>
@@ -10,7 +10,7 @@
 
 using namespace std;
 using namespace facter::util;
-using namespace facter::util::windows;
+using namespace leatherman::windows;
 
 namespace facter { namespace util {
 

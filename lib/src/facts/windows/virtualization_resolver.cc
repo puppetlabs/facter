@@ -1,5 +1,5 @@
 #include <internal/facts/windows/virtualization_resolver.hpp>
-#include <internal/util/windows/wmi.hpp>
+#include <leatherman/windows/wmi.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
@@ -10,7 +10,7 @@
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::util::windows;
+using namespace leatherman::windows;
 
 namespace facter { namespace facts { namespace windows {
 

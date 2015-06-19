@@ -5,7 +5,7 @@
 #pragma once
 
 #include "../resolvers/processor_resolver.hpp"
-#include "../../util/windows/wmi.hpp"
+#include <leatherman/windows/wmi.hpp>
 #include <memory>
 
 namespace facter { namespace facts { namespace windows {
@@ -19,7 +19,7 @@ namespace facter { namespace facts { namespace windows {
          * Constructs the processor_resolver.
          * @param wmi_conn The WMI connection to use when resolving facts.
          */
-        processor_resolver(std::shared_ptr<util::windows::wmi> wmi_conn = std::make_shared<util::windows::wmi>());
+        processor_resolver(std::shared_ptr<leatherman::windows::wmi> wmi_conn = std::make_shared<leatherman::windows::wmi>());
 
      protected:
         /**
@@ -30,7 +30,7 @@ namespace facter { namespace facts { namespace windows {
         virtual data collect_data(collection& facts) override;
 
      private:
-        std::shared_ptr<util::windows::wmi> _wmi;
+        std::shared_ptr<leatherman::windows::wmi> _wmi;
     };
 
 }}}  // namespace facter::facts::windows
