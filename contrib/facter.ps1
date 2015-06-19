@@ -58,6 +58,9 @@ $boostPkg = "${boostVer}-${mingwVer}"
 $yamlCppVer = "yaml-cpp-0.5.1"
 $yamlPkg = "${yamlCppVer}-${mingwVer}"
 
+$curlVer = "curl-7.42.1"
+$curlPkg = "${curlVer}-${mingwVer}"
+
 ### Setup, build, and install
 ## Install Chocolatey, then use it to install required tools.
 Function Install-Choco ($pkg, $ver, $opts = "") {
@@ -152,6 +155,18 @@ if ($buildSource) {
   )
   cmake $args
   mingw32-make install -j $cores
+  cd $toolsDir
+
+  (New-Object net.webclient).DownloadFile("http://curl.haxx.se/download/${curlVer}.zip", "$toolsDir\${curlVer}.zip")
+  & 7za x "${curlVer}.zip" | FIND /V "ing "
+  cd $curlVer
+
+  mingw32-make mingw32
+  mkdir -Path $toolsDir\$curlPkg\include
+  cp -r include\curl $toolsDir\$curlPkg\include
+  mkdir -Path $toolsDir\$curlPkg\lib
+  cp lib\libcurl.a $toolsDir\$curlPkg\lib
+  cd $toolsDir
 } else {
   ## Download and unpack Boost from a pre-built package in S3
   (New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${boostPkg}.7z", "$toolsDir\${boostPkg}.7z")
@@ -160,6 +175,10 @@ if ($buildSource) {
   ## Download and unpack yaml-cpp from a pre-built package in S3
   (New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${yamlPkg}.7z", "$toolsDir\${yamlPkg}.7z")
   & 7za x "${yamlPkg}.7z" | FIND /V "ing "
+
+  ## Download and unpack curl from a pre-built package in S3
+  (New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${curlPkg}.7z", "$toolsDir\${curlPkg}.7z")
+  & 7za x "${curlPkg}.7z" | FIND /V "ing "
 }
 
 ## Build Facter
@@ -170,6 +189,8 @@ $args = @(
   "-DBOOST_ROOT=`"$toolsDir\$boostPkg`"",
   "-DBOOST_STATIC=ON",
   "-DYAMLCPP_ROOT=`"$toolsDir\$yamlPkg`"",
+  "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg`"",
+  "-DCURL_STATIC=ON",
   ".."
 )
 cmake $args

@@ -194,6 +194,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         "src/facts/linux/disk_resolver.cc"
         "src/facts/linux/dmi_resolver.cc"
         "src/facts/linux/filesystem_resolver.cc"
+        "src/facts/linux/kernel_resolver.cc"
         "src/facts/linux/memory_resolver.cc"
         "src/facts/linux/networking_resolver.cc"
         "src/facts/linux/operating_system_resolver.cc"
