@@ -2,10 +2,9 @@
 <%# Run 'ruby generate.rb > facts.md' to generate the markdown file. -%>
 <%
   def format_fact_element(name, info, indent = '')
-    subelements = info['elements'] ?
-      info['elements'].map{|n, i| format_fact_element(n, i, "#{indent}    ")}.join('')
-      : ''
-    "#{indent}* `#{name}` (#{info['type']}) --- #{info['description']}\n" << subelements
+    subelements = (info['elements'] || {}).map{|n, i| format_fact_element(n, i, "#{indent}    ")}.join('')
+
+    "#{indent}* `#{name}` (#{info['type']}) --- #{info['description']}\n#{subelements}"
   end
 -%>
 <% facts.each do |name, schema| -%>
