@@ -159,16 +159,9 @@ namespace facter { namespace logging {
     /**
      * Starts colorizing for the given logging level.
      * This is a no-op on platforms that don't natively support terminal colors.
-     * @param lvl The logging level to colorize for.
-     * @return Returns the start code for colorization or an empty string if not supported.
+     * @param dst The stream to colorize.
+     * @param lvl The logging level to colorize for. Defaults to none, which resets colorization.
      */
-    LIBFACTER_EXPORT std::string const& colorize(level lvl);
-
-    /**
-     * Resets the colorization.
-     * This is a no-op on platforms that don't natively support terminal colors.
-     * @return Returns the reset code for colorization or an empty string if not supported.
-     */
-    LIBFACTER_EXPORT std::string const& colorize();
+    LIBFACTER_EXPORT void colorize(std::ostream &os, level lvl = level::none);
 
 }}  // namespace facter::logging

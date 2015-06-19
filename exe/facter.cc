@@ -176,7 +176,9 @@ int main(int argc, char **argv)
             }
         }
         catch (exception& ex) {
-            boost::nowide::cerr << colorize(level::error) << "error: " << ex.what() << colorize() << "\n" << endl;
+            colorize(boost::nowide::cerr, level::error);
+            boost::nowide::cerr << "error: " << ex.what() << "\n" << endl;
+            colorize(boost::nowide::cerr);
             help(visible_options);
             return EXIT_FAILURE;
         }
