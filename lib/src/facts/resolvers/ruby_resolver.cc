@@ -5,10 +5,8 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <boost/algorithm/string.hpp>
 
 using namespace std;
-using namespace facter::util;
 using namespace facter::ruby;
 
 namespace facter { namespace facts { namespace resolvers {

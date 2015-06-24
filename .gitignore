@@ -13,7 +13,7 @@ compile_commands.json
 /lib/src/java/com_puppetlabs_Facter.h
 /lib/spec/spec_helper.rb
 /debug*/
-/release*/
+/*release*/
 /.idea/
 
 facts.md

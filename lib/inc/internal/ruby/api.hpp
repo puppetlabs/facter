@@ -11,7 +11,7 @@
 #include <functional>
 #include <memory>
 #include <initializer_list>
-#include "../util/dynamic_library.hpp"
+#include <leatherman/dynamic_library/dynamic_library.hpp>
 
 namespace facter { namespace facts {
 
@@ -613,7 +613,7 @@ namespace facter {  namespace ruby {
         static bool cleanup;
 
      private:
-        explicit api(facter::util::dynamic_library library);
+        explicit api(leatherman::dynamic_library::dynamic_library library);
         // Imported Ruby functions that should not be called externally
         int (* const ruby_setup)();
         void (* const ruby_init)();
@@ -621,8 +621,9 @@ namespace facter {  namespace ruby {
         int (* const ruby_cleanup)(volatile int);
 
         static std::unique_ptr<api> create();
-        static facter::util::dynamic_library find_library();
-        static facter::util::dynamic_library find_loaded_library();
+
+        static leatherman::dynamic_library::dynamic_library find_library();
+        static leatherman::dynamic_library::dynamic_library find_loaded_library();
         static VALUE callback_thunk(VALUE parameter);
         static VALUE rescue_thunk(VALUE parameter, VALUE exception);
         static VALUE protect_thunk(VALUE parameter);
@@ -645,7 +646,7 @@ namespace facter {  namespace ruby {
         };
 #endif
 
-        facter::util::dynamic_library _library;
+        leatherman::dynamic_library::dynamic_library _library;
         VALUE _nil = 0u;
         VALUE _true = 0u;
         VALUE _false = 0u;

@@ -16,6 +16,7 @@ using namespace facter::facts;
 using namespace facter::util;
 using namespace facter::execution;
 using namespace boost::filesystem;
+using namespace leatherman::dynamic_library;
 
 namespace facter { namespace ruby {
 

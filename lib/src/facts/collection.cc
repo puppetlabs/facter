@@ -8,7 +8,7 @@
 #include <facter/util/environment.hpp>
 #include <facter/util/string.hpp>
 #include <facter/version.h>
-#include <internal/util/dynamic_library.hpp>
+#include <leatherman/dynamic_library/dynamic_library.hpp>
 #include <internal/facts/resolvers/ruby_resolver.hpp>
 #include <internal/facts/resolvers/path_resolver.hpp>
 #include <internal/facts/resolvers/ec2_resolver.hpp>
