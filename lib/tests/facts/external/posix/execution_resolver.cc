@@ -15,7 +15,7 @@ using namespace facter::logging;
 using namespace facter::testing;
 
 SCENARIO("resolving external executable facts") {
-    collection facts;
+    collection_fixture facts;
     execution_resolver resolver;
 
     GIVEN("a non-executable file") {

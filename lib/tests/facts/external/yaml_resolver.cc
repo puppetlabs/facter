@@ -9,9 +9,10 @@
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::external;
+using namespace facter::testing;
 
 SCENARIO("resolving external YAML facts") {
-    collection facts;
+    collection_fixture facts;
     yaml_resolver resolver;
 
     GIVEN("a non-YAML file extension") {

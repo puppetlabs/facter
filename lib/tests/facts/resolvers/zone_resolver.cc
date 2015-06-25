@@ -4,10 +4,12 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
+#include "../../collection_fixture.hpp"
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::resolvers;
+using namespace facter::testing;
 
 struct empty_zone_resolver : zone_resolver
 {
@@ -41,7 +43,7 @@ struct test_zone_resolver : zone_resolver
 };
 
 SCENARIO("using the Solaris zone resolver") {
-    collection facts;
+    collection_fixture facts;
     WHEN("data is not present") {
         facts.add(make_shared<empty_zone_resolver>());
         THEN("only the zone count should be added") {

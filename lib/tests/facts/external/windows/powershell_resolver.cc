@@ -15,7 +15,7 @@ using namespace facter::testing;
 using namespace facter::facts::external;
 
 SCENARIO("resolving external powershell facts") {
-    collection facts;
+    collection_fixture facts;
     powershell_resolver resolver;
 
     GIVEN("a non-powershell file") {

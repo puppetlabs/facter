@@ -4,10 +4,12 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
+#include "../../collection_fixture.hpp"
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::resolvers;
+using namespace facter::testing;
 
 struct empty_dmi_resolver : dmi_resolver
 {
@@ -42,7 +44,7 @@ struct test_dmi_resolver : dmi_resolver
 };
 
 SCENARIO("using the DMI resolver") {
-    collection facts;
+    collection_fixture facts;
     WHEN("data is not present") {
         facts.add(make_shared<empty_dmi_resolver>());
         THEN("facts should not be added") {

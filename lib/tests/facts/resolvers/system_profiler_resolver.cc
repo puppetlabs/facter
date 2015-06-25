@@ -4,10 +4,12 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
+#include "../../collection_fixture.hpp"
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::resolvers;
+using namespace facter::testing;
 
 struct empty_system_profiler_resolver : system_profiler_resolver
 {
@@ -50,7 +52,7 @@ struct test_system_profiler_resolver : system_profiler_resolver
 };
 
 SCENARIO("using the system profiler resolver") {
-    collection facts;
+    collection_fixture facts;
     WHEN("data is not present") {
         facts.add(make_shared<empty_system_profiler_resolver>());
         THEN("facts should not be added") {

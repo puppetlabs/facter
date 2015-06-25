@@ -4,10 +4,12 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
+#include "../../collection_fixture.hpp"
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::resolvers;
+using namespace facter::testing;
 
 struct empty_ruby_resolver : ruby_resolver
 {
@@ -32,7 +34,7 @@ struct test_ruby_resolver : ruby_resolver
 };
 
 SCENARIO("using the ruby resolver") {
-    collection facts;
+    collection_fixture facts;
     WHEN("data is not present") {
         facts.add(make_shared<empty_ruby_resolver>());
         THEN("facts should not be added") {

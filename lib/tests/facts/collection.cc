@@ -11,6 +11,7 @@
 using namespace std;
 using namespace facter::facts;
 using namespace facter::util;
+using namespace facter::testing;
 
 struct simple_resolver : facter::facts::resolver
 {
@@ -54,7 +55,7 @@ struct temp_variable
 };
 
 SCENARIO("using the fact collection") {
-    collection facts;
+    collection_fixture facts;
     REQUIRE(facts.size() == 0u);
     REQUIRE(facts.empty());
 
@@ -356,6 +357,47 @@ SCENARIO("using the fact collection") {
             REQUIRE(facts.size() == 1u);
             REQUIRE(facts.get<string_value>("foo"));
             REQUIRE(facts.get<string_value>("foo")->value() == "set in foo/foo.yaml");
+        }
+    }
+}
+
+class collection_override : public collection
+{
+ protected:
+    virtual vector<string> get_external_fact_directories() const override
+    {
+        return {LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/ordering/foo"};
+    }
+};
+
+SCENARIO("using the fact collection with a default external fact path") {
+    collection_override facts;
+    REQUIRE(facts.size() == 0u);
+    REQUIRE(facts.empty());
+
+    GIVEN("a specified external fact directory with an overriding fact to search") {
+        facts.add_external_facts({
+            LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/ordering/bar"
+        });
+        THEN("it should have the fact value from the last file loaded") {
+            REQUIRE(facts.size() == 1u);
+            REQUIRE(facts.get<string_value>("foo"));
+            REQUIRE(facts.get<string_value>("foo")->value() == "set in bar/foo.yaml");
+        }
+    }
+
+    GIVEN("a specified external fact directory with new facts to search") {
+        facts.add_external_facts({
+            LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/text",
+        });
+        REQUIRE_FALSE(facts.empty());
+        REQUIRE(facts.size() == 4);
+        THEN("facts from both directories should be added") {
+            REQUIRE(facts.get<string_value>("foo"));
+            REQUIRE(facts.get<string_value>("txt_fact1"));
+            REQUIRE(facts.get<string_value>("txt_fact2"));
+            REQUIRE_FALSE(facts.get<string_value>("txt_fact3"));
+            REQUIRE(facts.get<string_value>("txt_fact4"));
         }
     }
 }

@@ -212,6 +212,9 @@ namespace facter { namespace facts {
          */
         void resolve_facts();
 
+     protected:
+        virtual std::vector<std::string> get_external_fact_directories() const;
+
      private:
         LIBFACTER_NO_EXPORT void resolve_fact(std::string const& name);
         LIBFACTER_NO_EXPORT value const* get_value(std::string const& name);
@@ -221,10 +224,10 @@ namespace facter { namespace facts {
         LIBFACTER_NO_EXPORT void write_json(std::ostream& stream, std::set<std::string> const& queries);
         LIBFACTER_NO_EXPORT void write_yaml(std::ostream& stream, std::set<std::string> const& queries);
         LIBFACTER_NO_EXPORT void add_common_facts(bool include_ruby_facts);
+        LIBFACTER_NO_EXPORT bool add_external_facts_dir(std::vector<std::unique_ptr<external::resolver>> const& resolvers, std::string const& directory, bool warn);
 
         // Platform specific members
         LIBFACTER_NO_EXPORT void add_platform_facts();
-        LIBFACTER_NO_EXPORT std::vector<std::string> get_external_fact_directories();
         LIBFACTER_NO_EXPORT std::vector<std::unique_ptr<external::resolver>> get_external_resolvers();
 
         std::map<std::string, std::unique_ptr<value>> _facts;
