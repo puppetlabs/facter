@@ -7,9 +7,10 @@
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::external;
+using namespace facter::testing;
 
 SCENARIO("resolving external text facts") {
-    collection facts;
+    collection_fixture facts;
     text_resolver resolver;
 
     GIVEN("a non-text file extension") {

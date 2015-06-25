@@ -116,50 +116,57 @@ namespace facter { namespace facts {
         _facts[move(name)] = move(value);
     }
 
+    bool collection::add_external_facts_dir(vector<unique_ptr<external::resolver>> const& resolvers, string const& dir, bool warn)
+    {
+        // If dir is relative, make it an absolute path before passing to can_resolve.
+        bool found = false;
+        boost::system::error_code ec;
+        path search_dir = canonical(dir, ec);
+
+        if (ec || !is_directory(search_dir, ec)) {
+            // Warn the user if not using the default search directories
+            string msg = ec ? ec.message() : "not a directory";
+            if (warn) {
+                LOG_WARNING("skipping external facts for \"%1%\": %2%", dir, msg);
+            } else {
+                LOG_DEBUG("skipping external facts for \"%1%\": %2%", dir, msg);
+            }
+            return found;
+        }
+
+        LOG_DEBUG("searching %1% for external facts.", search_dir);
+
+        directory::each_file(search_dir.string(), [&](string const& path) {
+            for (auto const& res : resolvers) {
+                if (res->can_resolve(path)) {
+                    try {
+                        found = true;
+                        res->resolve(path, *this);
+                    }
+                    catch (external::external_fact_exception& ex) {
+                        LOG_ERROR("error while processing \"%1%\" for external facts: %2%", path, ex.what());
+                    }
+                    break;
+                }
+            }
+            return true;
+        });
+        return found;
+    }
+
     void collection::add_external_facts(vector<string> const& directories)
     {
         auto resolvers = get_external_resolvers();
 
-        auto search_directories = directories;
-        if (search_directories.empty()) {
-            search_directories = get_external_fact_directories();
+        // Build a map between a file and the resolver that can resolve it
+        // Start with default Facter search directories, then user-specified directories.
+        bool found = false;
+        for (auto const& dir : get_external_fact_directories()) {
+            found |= add_external_facts_dir(resolvers, dir, false);
         }
 
-        // Build a map between a file and the resolver that can resolve it
-        bool found = false;
-        for (auto const& dir : search_directories) {
-            // If dir is relative, make it an absolute path before passing to can_resolve.
-            boost::system::error_code ec;
-            path search_dir = canonical(dir, ec);
-
-            if (ec || !is_directory(search_dir, ec)) {
-                // Warn the user if not using the default search directories
-                string msg = ec ? ec.message() : "not a directory";
-                if (!directories.empty()) {
-                    LOG_WARNING("skipping external facts for \"%1%\": %2%", dir, msg);
-                } else {
-                    LOG_DEBUG("skipping external facts for \"%1%\": %2%", dir, msg);
-                }
-                continue;
-            }
-
-            LOG_DEBUG("searching %1% for external facts.", search_dir);
-
-            directory::each_file(search_dir.string(), [&](string const& path) {
-                for (auto const& res : resolvers) {
-                    if (res->can_resolve(path)) {
-                        try {
-                            found = true;
-                            res->resolve(path, *this);
-                        }
-                        catch (external::external_fact_exception& ex) {
-                            LOG_ERROR("error while processing \"%1%\" for external facts: %2%", path, ex.what());
-                        }
-                        break;
-                    }
-                }
-                return true;
-            });
+        for (auto const& dir : directories) {
+            found |= add_external_facts_dir(resolvers, dir, true);
         }
 
         if (!found) {

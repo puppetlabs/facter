@@ -4,10 +4,12 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
+#include "../../collection_fixture.hpp"
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::resolvers;
+using namespace facter::testing;
 
 struct test_less_than_day_resolver : uptime_resolver
 {
@@ -40,7 +42,7 @@ struct test_more_than_day_resolver : uptime_resolver
 };
 
 SCENARIO("using the uptime resolver") {
-    collection facts;
+    collection_fixture facts;
     WHEN("the uptime is less than one day") {
         facts.add(make_shared<test_less_than_day_resolver>());
         THEN("a structured fact with 'hours' uptime is added") {

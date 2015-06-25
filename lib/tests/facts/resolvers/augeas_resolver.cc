@@ -4,10 +4,12 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
+#include "../../collection_fixture.hpp"
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::resolvers;
+using namespace facter::testing;
 
 struct empty_augeas_resolver : augeas_resolver
 {
@@ -28,7 +30,7 @@ struct fixed_augeas_resolver : augeas_resolver
 };
 
 SCENARIO("using the augeas resolver") {
-    collection facts;
+    collection_fixture facts;
     WHEN("no version is returned") {
         facts.add(make_shared<empty_augeas_resolver>());
         THEN("the fact is not present") {

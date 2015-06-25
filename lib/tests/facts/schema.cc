@@ -38,6 +38,7 @@
 using namespace std;
 using namespace facter::facts;
 using namespace facter::util;
+using namespace facter::testing;
 
 // For every base resolver, implement a resolver that outputs the minimum values to pass schema validation
 // We don't care about the actual data in the facts, only that it conforms to the schema
@@ -638,7 +639,7 @@ SCENARIO("validating schema") {
     boost::nowide::ifstream stream(LIBFACTER_TESTS_DIRECTORY "/../schema/facter.yaml");
 
     YAML::Node schema = YAML::Load(stream);
-    collection facts;
+    collection_fixture facts;
 
     WHEN("validating the schema itself") {
         THEN("all attributes must be valid") {

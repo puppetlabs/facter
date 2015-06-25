@@ -9,9 +9,10 @@
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::external;
+using namespace facter::testing;
 
 SCENARIO("resolving external JSON facts") {
-    collection facts;
+    collection_fixture facts;
     json_resolver resolver;
 
     GIVEN("a non-JSON file extension") {

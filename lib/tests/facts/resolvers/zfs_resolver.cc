@@ -3,10 +3,12 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include "../../collection_fixture.hpp"
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::resolvers;
+using namespace facter::testing;
 
 struct empty_zfs_resolver : zfs_resolver
 {
@@ -41,7 +43,7 @@ struct test_zfs_resolver : zfs_resolver
 };
 
 SCENARIO("using the ZFS resolver") {
-    collection facts;
+    collection_fixture facts;
     WHEN("data is not present") {
         facts.add(make_shared<empty_zfs_resolver>());
         THEN("facts should not be added") {

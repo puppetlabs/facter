@@ -4,10 +4,12 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/vm.hpp>
+#include "../../collection_fixture.hpp"
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::resolvers;
+using namespace facter::testing;
 
 struct empty_virtualization_resolver : virtualization_resolver
 {
@@ -51,7 +53,7 @@ struct known_hypervisor_resolver : virtualization_resolver
 };
 
 SCENARIO("using the virtualization resolver") {
-    collection facts;
+    collection_fixture facts;
     WHEN("no hypervisor is returned") {
         facts.add(make_shared<empty_virtualization_resolver>());
         THEN("the system is reported as physical") {
