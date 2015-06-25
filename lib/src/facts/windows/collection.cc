@@ -31,7 +31,7 @@ using namespace boost::filesystem;
 
 namespace facter { namespace facts {
 
-    vector<string> collection::get_external_fact_directories()
+    vector<string> collection::get_external_fact_directories() const
     {
         if (user::is_admin()) {
             // Get the common data path
@@ -45,8 +45,9 @@ namespace facter { namespace facts {
         } else {
             auto home = user::home_dir();
             if (!home.empty()) {
-                path p = path(home) / ".puppetlabs" / "opt" / "facter" / "facts.d";
-                return {p.string()};
+                path p1 = path(home) / ".puppetlabs" / "opt" / "facter" / "facts.d";
+                path p2 = path(home) / ".facter" / "facts.d";
+                return {p1.string(), p2.string()};
             }
 
             LOG_DEBUG("HOME environment variable not set, external facts unavailable");

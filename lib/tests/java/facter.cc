@@ -10,9 +10,10 @@ using namespace facter::facts;
 using namespace facter::execution;
 using namespace facter::util;
 using namespace boost::filesystem;
+using namespace facter::testing;
 
 SCENARIO("using libfacter from Java") {
-    collection facts;
+    collection_fixture facts;
     facts.add_default_facts(true);
 
     path jar_path = path(BINARY_DIRECTORY) / "lib" / "facter.jar";

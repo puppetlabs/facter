@@ -44,6 +44,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "util/scoped_env.cc"
     "util/string.cc"
     "fixtures.cc"
+    "collection_fixture.cc"
 )
 
 # Set compiler-specific flags

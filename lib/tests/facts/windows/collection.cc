@@ -12,7 +12,7 @@ using namespace facter::facts;
 using namespace facter::testing;
 
 SCENARIO("resolving external executable facts into a collection") {
-    collection facts;
+    collection_fixture facts;
     REQUIRE(facts.size() == 0u);
     GIVEN("an absolute path") {
         facts.add_external_facts({

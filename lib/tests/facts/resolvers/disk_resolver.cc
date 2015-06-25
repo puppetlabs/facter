@@ -4,10 +4,12 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
+#include "../../collection_fixture.hpp"
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::resolvers;
+using namespace facter::testing;
 
 struct test_disk_resolver : disk_resolver
 {
@@ -35,7 +37,7 @@ struct test_disk_resolver : disk_resolver
 };
 
 SCENARIO("using the disk resolver") {
-    collection facts;
+    collection_fixture facts;
     auto resolver = make_shared<test_disk_resolver>();
     facts.add(resolver);
     GIVEN("no disks present") {

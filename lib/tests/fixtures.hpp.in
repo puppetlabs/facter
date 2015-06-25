@@ -2,6 +2,7 @@
 
 #include <string>
 #include <functional>
+#include "collection_fixture.hpp"
 
 #define JAVA_EXECUTABLE "@Java_JAVA_EXECUTABLE@"
 #define BINARY_DIRECTORY "@CMAKE_BINARY_DIR@"

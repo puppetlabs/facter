@@ -50,7 +50,7 @@ string ruby_value_to_string(value const* value)
 }
 
 SCENARIO("custom facts written in Ruby") {
-    collection facts;
+    collection_fixture facts;
     REQUIRE(facts.size() == 0u);
 
     // Setup ruby

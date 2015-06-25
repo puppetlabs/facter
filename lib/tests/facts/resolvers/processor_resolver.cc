@@ -5,10 +5,12 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/array_value.hpp>
+#include "../../collection_fixture.hpp"
 
 using namespace std;
 using namespace facter::facts;
 using namespace facter::facts::resolvers;
+using namespace facter::testing;
 
 struct empty_processor_resolver : processor_resolver
 {
@@ -40,7 +42,7 @@ struct test_processor_resolver : processor_resolver
 };
 
 SCENARIO("using the processor resolver") {
-    collection facts;
+    collection_fixture facts;
     WHEN("data is not present") {
         facts.add(make_shared<empty_processor_resolver>());
         THEN("only the processor counts are present and are zero") {
