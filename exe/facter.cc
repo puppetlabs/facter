@@ -119,6 +119,7 @@ int main(int argc, char **argv)
             ("external-dir", po::value<vector<string>>(&external_directories), "A directory to use for external facts.")
             ("help", "Print this help message.")
             ("json,j", "Output in JSON format.")
+            ("show-legacy", "Show legacy facts when querying all facts.")
             ("log-level,l", po::value<level>()->default_value(level::warning, "warn"), "Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.")
             ("no-color", "Disables color output.")
             ("no-custom-facts", "Disables custom facts.")
@@ -252,7 +253,9 @@ int main(int argc, char **argv)
         } else if (vm.count("yaml")) {
             fmt = format::yaml;
         }
-        facts.write(boost::nowide::cout, fmt, queries);
+
+        bool show_legacy = vm.count("show-legacy");
+        facts.write(boost::nowide::cout, fmt, queries, show_legacy);
         boost::nowide::cout << endl;
     } catch (exception& ex) {
         log(level::fatal, "unhandled exception: %1%", ex.what());
