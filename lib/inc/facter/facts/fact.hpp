@@ -632,6 +632,16 @@ namespace facter { namespace facts {
          * The fact for augeas version.
          */
         constexpr static char const* augeasversion = "augeasversion";
+
+        /**
+         * The fact for Xen metadata.
+         */
+        constexpr static char const* xen = "xen";
+
+        /**
+         * The fact for Xen domains.
+         */
+        constexpr static char const* xendomains = "xendomains";
     };
 
 }}  // namespace facter::facts
