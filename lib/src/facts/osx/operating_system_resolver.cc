@@ -1,5 +1,8 @@
 #include <internal/facts/osx/operating_system_resolver.hpp>
+#include <facter/facts/collection.hpp>
 #include <facter/execution/execution.hpp>
+#include <facter/facts/fact.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <boost/algorithm/string.hpp>
 #include <string>
 
@@ -33,8 +36,21 @@ namespace facter { namespace facts { namespace osx {
                 result.osx.version = move(value);
             }
 
+            // Populate the major and minor version facts using kernel_release
+            auto release = facts.get<string_value>(fact::kernel_release);
+
+            if (!release->value().empty()) {
+                result.release = move(release->value());
+                auto pos = release->value().find('.');
+                if (pos != string::npos) {
+                    auto second = release->value().find('.', pos + 1);
+                    result.major = release->value().substr(0, pos);
+                    result.minor = release->value().substr(pos + 1, second - (pos + 1));
+                }
+            }
+
             // Continue only if we haven't populated the data
-            return result.osx.product.empty() || result.osx.build.empty() || result.osx.version.empty();
+            return result.osx.product.empty() || result.osx.build.empty() || result.osx.version.empty() || result.release.empty();
         });
 
         return result;
