@@ -10,6 +10,10 @@
 <% facts.each do |name, schema| -%>
 ## `<%= name %>`
 
+<% if schema['hidden'] -%>
+This fact is hidden in Facter's command-line output.
+
+<% end -%>
 **Type:** <%= schema['type'] %>
 
 **Purpose:**
