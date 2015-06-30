@@ -183,4 +183,10 @@ endif()
 add_test(NAME "facter\\ smoke" COMMAND facter)
 
 # Install the man page
-install(FILES ${PROJECT_SOURCE_DIR}/man/man8/facter.8 DESTINATION share/man/man8/)
+if ("${CMAKE_SYSTEM_NAME}" MATCHES "OpenBSD")
+    set(MANDIR man/man8/)
+else()
+    set(MANDIR share/man/man8/)
+endif()
+
+install(FILES ${PROJECT_SOURCE_DIR}/man/man8/facter.8 DESTINATION ${MANDIR})
