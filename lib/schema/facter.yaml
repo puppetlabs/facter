@@ -1715,6 +1715,27 @@ virtual:
         Solaris: use the `zonename` utility to retrieve virtual machine name.
         Windows: use WMI to retrieve virtual machine name.
 
+xen:
+    type: map
+    description: Return metadata for the Xen hypervisor.
+    resolution: |
+        POSIX platforms: use `/usr/lib/xen-common/bin/xen-toolstack` to locate xen admin commands if available, otherwise fallback to `/usr/sbin/xl` or `/usr/sbin/xm`. Use the found command to execute the `list` query.
+    caveats: |
+        POSIX platforms: confined to Xen privileged virtual machines
+    elements:
+        domains:
+            type: array
+            description: list of strings identifying active Xen domains
+
+xendomains:
+    type: string
+    hidden: true
+    description: Return a list of comma-separated active Xen domain names
+    resolution: |
+        POSIX platforms: see the `xen` structured fact
+    caveats: |
+        POSIX platforms: confined to Xen privileged virtual machines
+
 zfs_featurenumbers:
     type: string
     description: Return the comma-delimited feature numbers for ZFS.
