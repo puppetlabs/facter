@@ -66,10 +66,11 @@ SCENARIO("using the fact collection") {
             REQUIRE_FALSE(facts.empty());
         }
     }
-    GIVEN("a single fact") {
+    GIVEN("a hidden fact and a revealed fact") {
         facts.add("foo", make_value<string_value>("bar"));
-        THEN("it should be in the collection") {
-            REQUIRE(facts.size() == 1u);
+        facts.add("hidden_foo", make_value<string_value>("hidden_bar", true));
+        THEN("they should be in the collection") {
+            REQUIRE(facts.size() == 2u);
             REQUIRE_FALSE(facts.empty());
             auto fact = facts.get<string_value>("foo");
             REQUIRE(fact);
@@ -77,6 +78,80 @@ SCENARIO("using the fact collection") {
             fact = dynamic_cast<string_value const *>(facts["foo"]);
             REQUIRE(fact);
             REQUIRE(fact->value() == "bar");
+            auto hidden_fact = facts.get<string_value>("hidden_foo");
+            REQUIRE(hidden_fact);
+            REQUIRE(hidden_fact->value() == "hidden_bar");
+            hidden_fact = dynamic_cast<string_value const *>(facts["hidden_foo"]);
+            REQUIRE(hidden_fact);
+            REQUIRE(hidden_fact->value() == "hidden_bar");
+        }
+        WHEN("writing default facts") {
+            THEN("it should serialize the revealed fact to JSON") {
+                ostringstream ss;
+                facts.write(ss, format::json);
+                REQUIRE(ss.str() == "{\n  \"foo\": \"bar\"\n}");
+            }
+            THEN("it should serialize the revealed fact to YAML") {
+                ostringstream ss;
+                facts.write(ss, format::yaml);
+                REQUIRE(ss.str() == "foo: bar");
+            }
+            THEN("it should serialize the revealed fact to text") {
+                ostringstream ss;
+                facts.write(ss, format::hash);
+                REQUIRE(ss.str() == "foo => bar");
+            }
+        }
+        WHEN("writing all (hidden) facts") {
+            THEN("it should serialize both facts to JSON") {
+                ostringstream ss;
+                facts.write(ss, format::json, {}, true);
+                REQUIRE(ss.str() == "{\n  \"foo\": \"bar\",\n  \"hidden_foo\": \"hidden_bar\"\n}");
+            }
+            THEN("it should serialize both facts to YAML") {
+                ostringstream ss;
+                facts.write(ss, format::yaml, {}, true);
+                REQUIRE(ss.str() == "foo: bar\nhidden_foo: hidden_bar");
+            }
+            THEN("it should serialize both facts to text") {
+                ostringstream ss;
+                facts.write(ss, format::hash, {}, true);
+                REQUIRE(ss.str() == "foo => bar\nhidden_foo => hidden_bar");
+            }
+        }
+        WHEN("querying facts") {
+            THEN("it should serialize both facts to JSON") {
+                ostringstream ss;
+                facts.write(ss, format::json, {"foo", "hidden_foo"});
+                REQUIRE(ss.str() == "{\n  \"foo\": \"bar\",\n  \"hidden_foo\": \"hidden_bar\"\n}");
+            }
+            THEN("it should serialize both facts to YAML") {
+                ostringstream ss;
+                facts.write(ss, format::yaml, {"foo", "hidden_foo"});
+                REQUIRE(ss.str() == "foo: bar\nhidden_foo: hidden_bar");
+            }
+            THEN("it should serialize both facts to text") {
+                ostringstream ss;
+                facts.write(ss, format::hash, {"foo", "hidden_foo"});
+                REQUIRE(ss.str() == "foo => bar\nhidden_foo => hidden_bar");
+            }
+        }
+        WHEN("querying hidden facts") {
+            THEN("it should serialize both facts to JSON") {
+                ostringstream ss;
+                facts.write(ss, format::json, {"foo", "hidden_foo"}, true);
+                REQUIRE(ss.str() == "{\n  \"foo\": \"bar\",\n  \"hidden_foo\": \"hidden_bar\"\n}");
+            }
+            THEN("it should serialize both facts to YAML") {
+                ostringstream ss;
+                facts.write(ss, format::yaml, {"foo", "hidden_foo"}, true);
+                REQUIRE(ss.str() == "foo: bar\nhidden_foo: hidden_bar");
+            }
+            THEN("it should serialize both facts to text") {
+                ostringstream ss;
+                facts.write(ss, format::hash, {"foo", "hidden_foo"}, true);
+                REQUIRE(ss.str() == "foo => bar\nhidden_foo => hidden_bar");
+            }
         }
     }
     GIVEN("a resolver that adds a single fact") {
