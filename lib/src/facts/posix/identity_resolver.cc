@@ -1,6 +1,7 @@
 #include <internal/facts/posix/identity_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <sys/types.h>
+#include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
 
