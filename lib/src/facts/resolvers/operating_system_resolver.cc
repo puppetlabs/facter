@@ -1,5 +1,6 @@
 #include <internal/facts/resolvers/operating_system_resolver.hpp>
 #include <internal/util/regex.hpp>
+#include <internal/util/versions.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/collection.hpp>
@@ -7,6 +8,7 @@
 #include <facter/facts/os.hpp>
 
 using namespace std;
+using namespace facter::util;
 
 namespace facter { namespace facts { namespace resolvers {
 
@@ -56,6 +58,12 @@ namespace facter { namespace facts { namespace resolvers {
 
         if (!data.release.empty()) {
             auto value = make_value<map_value>();
+
+            // When we have no major or minor, do a 'trivial' parse of
+            // the release to try to get SOMETHING out of it.
+            if (data.minor.empty() && data.major.empty()) {
+                 std::tie(data.major, data.minor) = versions::major_minor(data.release);
+            }
 
             if (!data.major.empty()) {
                 facts.add(fact::operating_system_major_release, make_value<string_value>(data.major, true));
