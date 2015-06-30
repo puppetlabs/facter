@@ -13,10 +13,10 @@
 #include <stdexcept>
 
 #ifdef USE_CURL
-#include <facter/http/client.hpp>
-#include <facter/http/request.hpp>
-#include <facter/http/response.hpp>
-using namespace facter::http;
+#include <leatherman/curl/client.hpp>
+#include <leatherman/curl/request.hpp>
+#include <leatherman/curl/response.hpp>
+namespace lth_curl = leatherman::curl;
 #endif
 
 using namespace std;
@@ -223,11 +223,11 @@ namespace facter { namespace facts { namespace resolvers {
 
         try
         {
-            request req("http://metadata/computeMetadata/v1beta1/?recursive=true&alt=json");
+            lth_curl::request req("http://metadata/computeMetadata/v1beta1/?recursive=true&alt=json");
             req.connection_timeout(GCE_CONNECTION_TIMEOUT);
             req.timeout(GCE_SESSION_TIMEOUT);
 
-            client cli;
+            lth_curl::client cli;
             auto response = cli.get(req);
             if (response.status_code() != 200) {
                 LOG_DEBUG("request for %1% returned a status code of %2%.", req.url(), response.status_code());

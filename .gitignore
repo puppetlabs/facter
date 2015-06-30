@@ -15,6 +15,7 @@ compile_commands.json
 /debug*/
 /*release*/
 /.idea/
+/linux-release/
 
 facts.md
 

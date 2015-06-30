@@ -11,8 +11,8 @@
 #include <set>
 
 #ifdef USE_CURL
-#include <facter/http/client.hpp>
-using namespace facter::http;
+#include <leatherman/curl/client.hpp>
+namespace lth_curl = leatherman::curl;
 #endif
 
 using namespace std;
@@ -36,9 +36,9 @@ namespace facter { namespace facts { namespace resolvers {
     static const unsigned int EC2_CONNECTION_TIMEOUT = 200;
     static const unsigned int EC2_SESSION_TIMEOUT = 5000;
 
-    void query_metadata_value(client& cli, map_value& value, string const& url, string const& name)
+    void query_metadata_value(lth_curl::client& cli, map_value& value, string const& url, string const& name)
     {
-        request req(url + name);
+        lth_curl::request req(url + name);
         req.connection_timeout(EC2_CONNECTION_TIMEOUT);
         req.timeout(EC2_SESSION_TIMEOUT);
 
@@ -54,14 +54,14 @@ namespace facter { namespace facts { namespace resolvers {
         value.add(name, make_value<string_value>(move(body)));
     }
 
-    void query_metadata(client& cli, map_value& value, string const& url)
+    void query_metadata(lth_curl::client& cli, map_value& value, string const& url)
     {
         // Stores the metadata names to filter out
         static set<string> filter = {
             "security-credentials/"
         };
 
-        request req(url);
+        lth_curl::request req(url);
         req.connection_timeout(EC2_CONNECTION_TIMEOUT);
         req.timeout(EC2_SESSION_TIMEOUT);
 
@@ -117,7 +117,7 @@ namespace facter { namespace facts { namespace resolvers {
 
         LOG_DEBUG("querying EC2 instance metadata at %1%.", EC2_METADATA_ROOT_URL);
 
-        client cli;
+        lth_curl::client cli;
         auto metadata = make_value<map_value>();
 
         try
@@ -128,7 +128,7 @@ namespace facter { namespace facts { namespace resolvers {
                 facts.add(fact::ec2_metadata, move(metadata));
             }
         }
-        catch (http_request_exception& ex) {
+        catch (lth_curl::http_request_exception& ex) {
             if (ex.req().url() == EC2_METADATA_ROOT_URL) {
                 // The very first query failed; most likely not an EC2 instance
                 LOG_DEBUG("EC2 facts are unavailable: not running under an EC2 instance or EC2 is not responding in a timely manner.");
@@ -144,7 +144,7 @@ namespace facter { namespace facts { namespace resolvers {
         LOG_DEBUG("querying EC2 instance user data at %1%.", EC2_USERDATA_ROOT_URL);
 
         try {
-            request req(EC2_USERDATA_ROOT_URL);
+            lth_curl::request req(EC2_USERDATA_ROOT_URL);
             req.connection_timeout(EC2_CONNECTION_TIMEOUT);
             req.timeout(EC2_SESSION_TIMEOUT);
 

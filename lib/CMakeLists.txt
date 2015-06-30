@@ -72,14 +72,6 @@ set(LIBFACTER_COMMON_SOURCES
     "src/util/string.cc"
 )
 
-if (CURL_FOUND)
-    set(LIBFACTER_COMMON_SOURCES ${LIBFACTER_COMMON_SOURCES}
-       "src/http/client.cc"
-       "src/http/request.cc"
-       "src/http/response.cc"
-    )
-endif()
-
 # Set the POSIX sources if on a POSIX platform
 if (UNIX)
     set(LIBFACTER_STANDARD_SOURCES
