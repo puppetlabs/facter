@@ -44,6 +44,10 @@ elseif(AIX)
     # with things that need to be extern "C". This seems to clear it
     # all up.
     set(PRECOMPILED_HEADERS FALSE)
+elseif("${CMAKE_SYSTEM_NAME}" MATCHES "OpenBSD")
+    # On OpenBSD enabling precompiled headers result in cc1plus warnings:
+    # "had text segment at different address" due to PIE.
+    set(PRECOMPILED_HEADERS FALSE)
 else()
     set(PRECOMPILED_HEADERS TRUE)
 endif()
