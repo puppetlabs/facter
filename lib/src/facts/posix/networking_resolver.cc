@@ -1,6 +1,6 @@
 #include <internal/facts/posix/networking_resolver.hpp>
 #include <internal/util/posix/scoped_addrinfo.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <unistd.h>
@@ -9,8 +9,9 @@
 #include <arpa/inet.h>
 
 using namespace std;
-using namespace facter::util;
 using namespace facter::util::posix;
+
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace posix {
 
@@ -94,7 +95,7 @@ namespace facter { namespace facts { namespace posix {
         // If no domain, look it up based on resolv.conf
         if (result.domain.empty()) {
             string search;
-            file::each_line("/etc/resolv.conf", [&](string& line) {
+            lth_file::each_line("/etc/resolv.conf", [&](string& line) {
                 vector<boost::iterator_range<string::iterator>> parts;
                 boost::split(parts, line, boost::is_space(), boost::token_compress_on);
                 if (parts.size() < 2) {

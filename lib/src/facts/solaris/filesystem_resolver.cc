@@ -2,7 +2,7 @@
 #include <internal/util/solaris/k_stat.hpp>
 #include <internal/util/scoped_file.hpp>
 #include <internal/util/regex.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <facter/util/string.hpp>
 #include <facter/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>

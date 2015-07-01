@@ -1,16 +1,17 @@
 #include <internal/facts/bsd/networking_resolver.hpp>
 #include <internal/util/bsd/scoped_ifaddrs.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/file.hpp>
-#include <facter/util/directory.hpp>
+#include <leatherman/file_util/file.hpp>
+#include <leatherman/file_util/directory.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <netinet/in.h>
 
 using namespace std;
-using namespace facter::util;
 using namespace facter::util::bsd;
 using namespace facter::execution;
+
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace bsd {
 
@@ -167,13 +168,13 @@ namespace facter { namespace facts { namespace bsd {
 
         for (auto const& dir : dhclient_search_directories) {
             LOG_DEBUG("searching \"%1%\" for dhclient lease files.", dir);
-            directory::each_file(dir, [&](string const& path) {
+            lth_file::each_file(dir, [&](string const& path) {
                 LOG_DEBUG("reading \"%1%\" for dhclient lease information.", path);
 
                 // Each lease entry should have the interface declaration before the options
                 // We respect the last lease for an interface in the file
                 string interface;
-                file::each_line(path, [&](string& line) {
+                lth_file::each_line(path, [&](string& line) {
                     boost::trim(line);
                     if (boost::starts_with(line, "interface ")) {
                         interface = line.substr(10);

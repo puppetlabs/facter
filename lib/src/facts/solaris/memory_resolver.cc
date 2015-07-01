@@ -1,6 +1,6 @@
 #include <internal/facts/solaris/memory_resolver.hpp>
 #include <internal/util/solaris/k_stat.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <facter/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
@@ -10,7 +10,6 @@
 #include <sys/swap.h>
 
 using namespace std;
-using namespace facter::util;
 using namespace facter::util::solaris;
 
 namespace facter { namespace facts { namespace solaris {

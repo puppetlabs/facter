@@ -1,6 +1,6 @@
 #include <internal/facts/linux/filesystem_resolver.hpp>
 #include <internal/util/scoped_file.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
@@ -16,8 +16,10 @@
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::util;
 using namespace boost::filesystem;
+using namespace facter::util;
+
+namespace lth_file = leatherman::file_util;
 
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
@@ -68,7 +70,7 @@ namespace facter { namespace facts { namespace linux {
     void filesystem_resolver::collect_filesystem_data(data& result)
     {
         // Populate the partition data
-        file::each_line("/proc/filesystems", [&](string &line) {
+        lth_file::each_line("/proc/filesystems", [&](string &line) {
             boost::trim(line);
 
             // Ignore lines without devices or fuseblk
@@ -152,7 +154,7 @@ namespace facter { namespace facts { namespace linux {
             }
 
             // Populate the size (the size is given in 512 byte blocks)
-            string blocks = file::read((path("/sys/class/block") / path(part.name).filename() / "/size").string());
+            string blocks = lth_file::read((path("/sys/class/block") / path(part.name).filename() / "/size").string());
             boost::trim(blocks);
             if (!blocks.empty()) {
                 try {

@@ -3,17 +3,19 @@
 #include <facter/facts/collection.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <boost/regex.hpp>
 
 using namespace facter::util;
 using namespace facter::execution;
 using namespace std;
 
+namespace lth_file = leatherman::file_util;
+
 static std::string parse_rml_cache() {
     const auto regex = boost::regex("(\\d+-\\d+-\\d+)_SP.*Service Pack");
     string result;
-    file::each_line("/tmp/.oslevel.datafiles/.oslevel.rml.cache", [&](string& line) {
+    lth_file::each_line("/tmp/.oslevel.datafiles/.oslevel.rml.cache", [&](string& line) {
         string value;
         re_search(line, regex, &value);
         if (value > result) {

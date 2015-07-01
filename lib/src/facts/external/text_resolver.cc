@@ -1,12 +1,13 @@
 #include <internal/facts/external/text_resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
-using namespace facter::util;
+
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace external {
 
@@ -19,7 +20,7 @@ namespace facter { namespace facts { namespace external {
     {
         LOG_DEBUG("resolving facts from text file \"%1%\".", path);
 
-        if (!file::each_line(path, [&facts](string& line) {
+        if (!lth_file::each_line(path, [&facts](string& line) {
             auto pos = line.find('=');
             if (pos == string::npos) {
                 LOG_DEBUG("ignoring line in output: %1%", line);

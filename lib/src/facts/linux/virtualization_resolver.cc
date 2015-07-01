@@ -5,7 +5,7 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
 #include <facter/execution/execution.hpp>
-#include <facter/util/file.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -14,10 +14,12 @@
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::util;
 using namespace facter::execution;
 using namespace boost::filesystem;
+using namespace facter::util;
+
 namespace bs = boost::system;
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace linux {
 
@@ -72,7 +74,7 @@ namespace facter { namespace facts { namespace linux {
     string virtualization_resolver::get_cgroup_vm()
     {
         string value;
-        file::each_line("/proc/1/cgroup", [&](string& line) {
+        lth_file::each_line("/proc/1/cgroup", [&](string& line) {
             vector<boost::iterator_range<string::iterator>> parts;
             boost::split(parts, line, boost::is_any_of(":"), boost::token_compress_on);
             if (parts.size() < 3) {
@@ -149,7 +151,7 @@ namespace facter { namespace facts { namespace linux {
     string virtualization_resolver::get_vserver_vm()
     {
         string value;
-        file::each_line("/proc/self/status", [&](string& line) {
+        lth_file::each_line("/proc/self/status", [&](string& line) {
             vector<boost::iterator_range<string::iterator>> parts;
             boost::split(parts, line, boost::is_space(), boost::token_compress_on);
             if (parts.size() != 2) {
@@ -196,7 +198,7 @@ namespace facter { namespace facts { namespace linux {
             return {};
         }
         string value;
-        file::each_line("/proc/self/status", [&](string& line) {
+        lth_file::each_line("/proc/self/status", [&](string& line) {
             vector<boost::iterator_range<string::iterator>> parts;
             boost::split(parts, line, boost::is_space(), boost::token_compress_on);
             if (parts.size() != 2) {

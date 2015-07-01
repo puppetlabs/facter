@@ -1,5 +1,5 @@
 #include <facter/execution/execution.hpp>
-#include <facter/util/directory.hpp>
+#include <leatherman/file_util/directory.hpp>
 #include <facter/util/scope_exit.hpp>
 #include <internal/execution/execution.hpp>
 #include <internal/util/posix/scoped_descriptor.hpp>
@@ -20,6 +20,8 @@ using namespace facter::util;
 using namespace facter::util::posix;
 using namespace leatherman::logging;
 using namespace boost::filesystem;
+
+namespace lth_file = leatherman::file_util;
 
 // Declare environ for OSX
 extern char** environ;
