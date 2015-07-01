@@ -287,9 +287,9 @@ link_directories(
 
 # Add the library target without a prefix (name already has the 'lib') and use '.so' for all platforms (Ruby extension file extension)
 add_library(libfactersrc OBJECT ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_STANDARD_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
-set_target_properties(libfactersrc PROPERTIES POSITION_INDEPENDENT_CODE true COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS} COTIRE_ADD_UNITY_BUILD FALSE)
+set_target_properties(libfactersrc PROPERTIES POSITION_INDEPENDENT_CODE true)
 add_library(libfacter SHARED $<TARGET_OBJECTS:libfactersrc>)
-set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX "" IMPORT_SUFFIX ".so.a" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}" COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY")
+set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX "" IMPORT_SUFFIX ".so.a" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}")
 
 # Link in additional libraries
 target_link_libraries(libfacter PRIVATE
@@ -353,7 +353,5 @@ endif()
 if (JRUBY_SUPPORT)
     add_dependencies(libfacter facter-jruby)
 endif()
-
-cotire(libfactersrc)
 
 add_subdirectory(tests)

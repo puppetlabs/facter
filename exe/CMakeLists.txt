@@ -17,7 +17,5 @@ include_directories(
 
 add_executable(facter ${FACTER_SOURCES})
 target_link_libraries(facter libfacter ${Boost_PROGRAM_OPTIONS_LIBRARY} ${LEATHERMAN_NOWIDE_LIB})
-set_target_properties(facter PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS})
-cotire(facter)
 
 install(TARGETS facter DESTINATION bin)

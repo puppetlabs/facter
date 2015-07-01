@@ -113,7 +113,6 @@ include_directories(
 )
 
 add_executable(libfacter_test $<TARGET_OBJECTS:libfactersrc> ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_CATEGORY_SOURCES})
-set_target_properties(libfacter_test PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" COTIRE_ENABLE_PRECOMPILED_HEADER ${PRECOMPILED_HEADERS} COTIRE_ADD_UNITY_BUILD FALSE)
 target_link_libraries(libfacter_test
     ${POSIX_TESTS_LIBRARIES}
     ${LIBFACTER_TESTS_PLATFORM_LIBRARIES}
@@ -123,8 +122,6 @@ target_link_libraries(libfacter_test
     ${LEATHERMAN_LIBRARIES}
     ${CURL_LIBRARIES}
 )
-
-cotire(libfacter_test)
 
 # Generate a file containing the path to the fixtures
 configure_file (

@@ -34,23 +34,6 @@ enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/vendor/leatherman/cmake")
-include(cotire)
-if (MINGW)
-    # MinGW crashes with large pre-compiled headers; ours definitely exceeds the limit.
-    # See http://stackoverflow.com/questions/10841306/cc1plus-exe-crash-when-using-large-precompiled-header-file
-    set(PRECOMPILED_HEADERS FALSE)
-elseif(AIX)
-    # On AIX, precompiled headers are causing crazy crazy failures
-    # with things that need to be extern "C". This seems to clear it
-    # all up.
-    set(PRECOMPILED_HEADERS FALSE)
-elseif("${CMAKE_SYSTEM_NAME}" MATCHES "OpenBSD")
-    # On OpenBSD enabling precompiled headers result in cc1plus warnings:
-    # "had text segment at different address" due to PIE.
-    set(PRECOMPILED_HEADERS FALSE)
-else()
-    set(PRECOMPILED_HEADERS TRUE)
-endif()
 
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     # Allow searching in boxen installed homebrew directories
