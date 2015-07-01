@@ -53,7 +53,7 @@ namespace facter { namespace util { namespace windows {
          * Throws an exception if passed an IPv6 argument on Windows Server 2003 and IPv6 support isn't installed.
          * See https://social.technet.microsoft.com/Forums/windowsserver/en-US/7166dcbe-d493-4da1-8441-5b5d6aa0d21c/ipv6-and-windows-server-2003
          * @param addr The socket address structure.
-         * @return An IPv4 or IPv6 string.
+         * @return An IPv4 or IPv6 string, or an empty string if addr is uninitialized.
          */
         std::string saddress_to_string(SOCKET_ADDRESS const& addr) const;
 
