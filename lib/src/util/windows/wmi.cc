@@ -32,7 +32,7 @@ namespace facter { namespace util { namespace windows {
     wmi::wmi()
     {
         LOG_DEBUG("initializing WMI");
-        auto hres = CoInitializeEx(0, COINIT_MULTITHREADED);
+        auto hres = CoInitializeEx(0, COINIT_APARTMENTTHREADED);
         if (FAILED(hres)) {
             if (hres == RPC_E_CHANGED_MODE) {
                 LOG_DEBUG("using prior COM concurrency model");

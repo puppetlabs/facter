@@ -53,7 +53,16 @@ set(CMAKE_CXX_FLAGS ${FACTER_CXX_FLAGS})
 
 # Add the ruby tests if there's a ruby installed
 if (RUBY_FOUND)
-    set(LIBFACTER_TESTS_COMMON_SOURCES ${LIBFACTER_TESTS_COMMON_SOURCES} "ruby/ruby.cc")
+    set(LIBFACTER_TESTS_COMMON_SOURCES
+        ${LIBFACTER_TESTS_COMMON_SOURCES}
+        "ruby/ruby.cc"
+        "ruby/ruby_helper.cc")
+
+    if (WIN32)
+        set(LIBFACTER_TESTS_COMMON_SOURCES
+            ${LIBFACTER_TESTS_COMMON_SOURCES}
+            "ruby/windows/ruby.cc")
+    endif()
 endif()
 
 # Set the POSIX sources if on a POSIX platform
