@@ -67,6 +67,14 @@ namespace facter { namespace execution {
         command_timedout = true;
     }
 
+    static string format_error(string const& message = string(), int error = errno)
+    {
+        if (message.empty()) {
+            return (boost::format("%1% (%2%)") % strerror(error) % error).str();
+        }
+        return (boost::format("%1%: %2% (%3%).") % message % strerror(error) % error).str();
+    }
+
     string which(string const& file, vector<string> const& directories)
     {
         // If the file is already absolute, return it if it's executable
@@ -132,7 +140,7 @@ namespace facter { namespace execution {
             int result = select(max + 1, &set, nullptr, nullptr, timeout ? &read_timeout : nullptr);
             if (result == -1) {
                 if (errno != EINTR) {
-                    LOG_ERROR("select call failed: %1% (%2%).", strerror(errno), errno);
+                    LOG_ERROR(format_error("select call failed"));
                     throw execution_exception("failed to read child output.");
                 }
                 // Interrupted by signal
@@ -153,7 +161,7 @@ namespace facter { namespace execution {
                 auto count = read(pipe.descriptor, &pipe.buffer[0], pipe.buffer.size());
                 if (count < 0) {
                     if (errno != EINTR) {
-                        LOG_ERROR("%1% pipe read failed: %2% (%3%).", pipe.name, strerror(errno), errno);
+                        LOG_ERROR("%1% pipe read failed: %2%.", pipe.name, format_error());
                         throw execution_exception("failed to read child output.");
                     }
                     // Interrupted by signal
@@ -288,7 +296,7 @@ namespace facter { namespace execution {
         // Note: this uses vfork, which is inherently unsafe (the parent's address space is shared with the child)
         pid_t child = vfork();
         if (child < 0) {
-            throw execution_exception("failed to fork child process.");
+            throw execution_exception(format_error("failed to fork child process"));
         }
 
         // If this is the parent process, return
@@ -327,13 +335,13 @@ namespace facter { namespace execution {
         // Create the pipes for stdin/stdout redirection
         int pipes[2];
         if (::pipe(pipes) < 0) {
-            throw execution_exception("failed to allocate pipe for stdin redirection.");
+            throw execution_exception(format_error("failed to allocate pipe for stdin redirection"));
         }
         scoped_descriptor stdin_read(pipes[0]);
         scoped_descriptor stdin_write(pipes[1]);
 
         if (::pipe(pipes) < 0) {
-            throw execution_exception("failed to allocate pipe for stdout redirection.");
+            throw execution_exception(format_error("failed to allocate pipe for stdout redirection"));
         }
         scoped_descriptor stdout_read(pipes[0]);
         scoped_descriptor stdout_write(pipes[1]);
@@ -350,7 +358,7 @@ namespace facter { namespace execution {
             child_stderr = dev_null;
         } else {
             if (::pipe(pipes) < 0) {
-                throw execution_exception("failed to allocate pipe for stderr redirection.");
+                throw execution_exception(format_error("failed to allocate pipe for stderr redirection"));
             }
             stderr_read = scoped_descriptor(pipes[0]);
             stderr_write = scoped_descriptor(pipes[1]);
@@ -383,7 +391,7 @@ namespace facter { namespace execution {
             }
             // Wait for the child to exit
             if (waitpid(child, &status, 0) == -1) {
-                LOG_DEBUG("waitpid failed: %1% (%2%).", strerror(errno), errno);
+                LOG_DEBUG(format_error("waitpid failed"));
                 return;
             }
             if (WIFEXITED(status)) {
@@ -405,15 +413,15 @@ namespace facter { namespace execution {
             struct sigaction sa = {};
             sa.sa_handler = timer_handler;
             if (sigaction(SIGALRM, &sa, nullptr) == -1) {
-                LOG_ERROR("sigaction failed: %1% (%2%).", strerror(errno), errno);
-                throw execution_exception("failed to setup timer");
+                LOG_ERROR(format_error("sigaction failed"));
+                throw execution_exception(format_error("failed to setup timer"));
             }
 
             itimerval timer = {};
             timer.it_value.tv_sec = static_cast<decltype(timer.it_interval.tv_sec)>(timeout);
             if (setitimer(ITIMER_REAL, &timer, nullptr) == -1) {
-                LOG_ERROR("setitimer failed: %1% (%2%).", strerror(errno), errno);
-                throw execution_exception("failed to setup timer");
+                LOG_ERROR(format_error("setitimer failed"));
+                throw execution_exception(format_error("failed to setup timer"));
             }
 
             // Set the resource to disable the timer
@@ -456,10 +464,10 @@ namespace facter { namespace execution {
         // Throw exception if needed
         if (!success) {
             if (!signaled && status != 0 && options[execution_options::throw_on_nonzero_exit]) {
-                throw child_exit_exception("child process returned non-zero exit status.", status, move(output), move(error));
+                throw child_exit_exception((boost::format("child process returned non-zero exit status (%1%).") % status).str(), status, move(output), move(error));
             }
             if (signaled && options[execution_options::throw_on_signal]) {
-                throw child_signal_exception("child process was terminated by signal.", status, move(output), move(error));
+                throw child_signal_exception((boost::format("child process was terminated by signal (%1%).") % status).str(), status, move(output), move(error));
             }
         }
         return make_tuple(success, move(output), move(error));
