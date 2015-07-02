@@ -105,17 +105,17 @@ SCENARIO("using the fact collection") {
         WHEN("writing all (hidden) facts") {
             THEN("it should serialize both facts to JSON") {
                 ostringstream ss;
-                facts.write(ss, format::json, {}, true);
+                facts.write(ss, format::json, set<string>{}, true);
                 REQUIRE(ss.str() == "{\n  \"foo\": \"bar\",\n  \"hidden_foo\": \"hidden_bar\"\n}");
             }
             THEN("it should serialize both facts to YAML") {
                 ostringstream ss;
-                facts.write(ss, format::yaml, {}, true);
+                facts.write(ss, format::yaml, set<string>{}, true);
                 REQUIRE(ss.str() == "foo: bar\nhidden_foo: hidden_bar");
             }
             THEN("it should serialize both facts to text") {
                 ostringstream ss;
-                facts.write(ss, format::hash, {}, true);
+                facts.write(ss, format::hash, set<string>{}, true);
                 REQUIRE(ss.str() == "foo => bar\nhidden_foo => hidden_bar");
             }
         }
