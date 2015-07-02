@@ -65,7 +65,7 @@ namespace facter { namespace ruby {
         bool success;
         string output, none;
         tie(success, output, none) = execute(command_shell, { command_args, expand_command(_command) });
-        if (!success) {
+        if (!success || output.empty()) {
             return ruby.nil_value();
         }
         return ruby.utf8_value(output);

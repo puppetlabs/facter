@@ -566,4 +566,10 @@ SCENARIO("custom facts written in Ruby") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("second")) == "\"bar\"");
         }
     }
+    GIVEN("a fact that runs a setcode command that returns no output") {
+        REQUIRE(load_custom_fact("empty_setcode_command.rb", facts));
+        THEN("the fact should not resolve") {
+            REQUIRE_FALSE(facts["foo"]);
+        }
+    }
 }
