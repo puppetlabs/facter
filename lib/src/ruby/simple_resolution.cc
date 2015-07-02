@@ -64,18 +64,7 @@ namespace facter { namespace ruby {
         // Otherwise, we were given a command so execute it
         bool success;
         string output, none;
-        tie(success, output, none) = execute(
-            command_shell,
-            {
-                command_args,
-                expand_command(_command)
-            },
-            0,
-            {
-                execution_options::trim_output,
-                execution_options::merge_environment,
-                execution_options::redirect_stderr_to_stdout
-            });
+        tie(success, output, none) = execute(command_shell, { command_args, expand_command(_command) });
         if (!success) {
             return ruby.nil_value();
         }

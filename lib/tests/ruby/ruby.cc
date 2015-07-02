@@ -559,4 +559,11 @@ SCENARIO("custom facts written in Ruby") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar\"");
         }
     }
+    GIVEN("a fact that runs a command outputting to stderr") {
+        REQUIRE(load_custom_fact("stderr_output.rb", facts));
+        THEN("the values should only contain stdout output") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("first")) == "\"bar\"");
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("second")) == "\"bar\"");
+        }
+    }
 }

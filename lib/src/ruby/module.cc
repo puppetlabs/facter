@@ -722,18 +722,7 @@ namespace facter { namespace ruby {
         try {
             bool success;
             string output, none;
-            tie(success, output, none) = execution::execute(
-                execution::command_shell,
-                {
-                    execution::command_args,
-                    expand_command(command)
-                },
-                timeout,
-                {
-                    execution_options::trim_output,
-                    execution_options::merge_environment,
-                    execution_options::redirect_stderr_to_stdout
-                });
+            tie(success, output, none) = execution::execute(execution::command_shell, { execution::command_args, expand_command(command) }, timeout);
             if (success) {
                 return ruby.utf8_value(output);
             }
