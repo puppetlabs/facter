@@ -78,6 +78,11 @@ namespace facter { namespace execution {
             return is_executable(p, &helper) ? p.string() : string();
         }
 
+        // On Windows, treat 'echo' as a command that can be found
+        if (file == "echo") {
+            return "echo";
+        }
+
         // Otherwise, check for an executable file under the given search paths
         for (auto const& dir : directories) {
             path p = path(dir) / file;

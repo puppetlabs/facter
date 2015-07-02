@@ -94,7 +94,7 @@ namespace facter { namespace execution {
         boost::trim(result);
 
         if (result.empty()) {
-            return result;
+            return {};
         }
 
         string quote = result[0] == '"' || result[0] == '\'' ? string(1, result[0]) : "";
@@ -122,7 +122,7 @@ namespace facter { namespace execution {
 
         file = which(file, directories);
         if (file.empty()) {
-            return result;
+            return {};
         }
         return quote + file + remainder;
     }

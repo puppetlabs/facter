@@ -50,7 +50,7 @@ namespace facter { namespace ruby {
 
         VALUE _self;
         VALUE _block;
-        std::string _command;
+        VALUE _command;
     };
 
 }}  // namespace facter::ruby

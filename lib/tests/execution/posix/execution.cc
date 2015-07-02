@@ -100,19 +100,13 @@ SCENARIO("expanding command paths with execution::expand_command") {
         }
     }
     GIVEN("a command not on PATH") {
-        THEN("the command is returned as given") {
-            REQUIRE(
-                expand_command("not_on_the_path") ==
-                "not_on_the_path"
-            );
+        THEN("the returned command is empty") {
+            REQUIRE(expand_command("not_on_the_path") == "");
         }
     }
     GIVEN("a non-executable command on PATH") {
-        THEN("the command is returned as given") {
-            REQUIRE(
-                expand_command("not_executable", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }) ==
-                "not_executable"
-            );
+        THEN("the returned command is empty") {
+            REQUIRE(expand_command("not_executable", { LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution" }) == "");
         }
     }
 }
