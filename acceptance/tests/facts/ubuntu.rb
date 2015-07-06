@@ -7,10 +7,14 @@ test_name "Facts should resolve as expected in Ubuntu 12.04, 14.04, and 14.10"
 # Facts tested: os, processors, networking, identity, kernel
 #
 
-confine :to, :platform => /ubuntu-precise|ubuntu-trusty|ubuntu-utopic|ubuntu-vivid/
+confine :to, :platform => /ubuntu-lucid|ubuntu-precise|ubuntu-trusty|ubuntu-utopic|ubuntu-vivid/
 
 agents.each do |agent|
-  if agent['platform'] =~ /ubuntu-precise/
+  if agent['platform'] =~ /ubuntu-lucid/
+    os_name    = 'lucid'
+    os_version = '10.04'
+    os_kernel  = '2.6'
+  elsif agent['platform'] =~ /ubuntu-precise/
     os_name    = 'precise'
     os_version = '12.04'
     os_kernel  = '3.2'
@@ -28,7 +32,7 @@ agents.each do |agent|
     os_kernel  = '3.19'
   end
 
-  if agent['platform'] =~ /x86_64/
+  if agent['platform'] =~ /x86_64|amd64/
     os_arch     = 'amd64'
     os_hardware = 'x86_64'
   else
@@ -59,7 +63,7 @@ agents.each do |agent|
   expected_processors = {
                           'processors.count'         => /[1-9]/,
                           'processors.physicalcount' => /[1-9]/,
-                          'processors.isa'           => os_hardware,
+                          'processors.isa'           => os_name == 'lucid' ? 'unknown' : os_hardware,
                           'processors.models'        => /"Intel\(R\).*"/
                         }
 
