@@ -76,7 +76,7 @@ agents.each do |agent|
   on(agent, "chmod +x '#{ext_fact_2}'")
 
   step "Agent #{agent}: both external facts should resolve"
-  on(agent, facter("--external-dir #{custom_external_dir} external_fact_1 external_fact_2"))
+  on(agent, facter("--external-dir '#{custom_external_dir}' external_fact_1 external_fact_2"))
   assert_match(/external_fact_1 => foo/, stdout)
   assert_match(/external_fact_2 => bar/, stdout)
 
@@ -86,10 +86,10 @@ agents.each do |agent|
   on(agent, "chmod +x '#{ext_fact_3}'")
 
   step "Agent #{agent}: the fact value from the custom external dir should override that of facts.d"
-  on(agent, facter("--external-dir #{custom_external_dir} external_fact_1"))
+  on(agent, facter("--external-dir '#{custom_external_dir}' external_fact_1"))
   assert_match(/baz/, stdout)
 
   teardown do
-    on(agent, "rm -f '#{ext_fact_1} #{ext_fact_2} #{ext_fact_3}'")
+    on(agent, "rm -f '#{ext_fact_1}' '#{ext_fact_2}' '#{ext_fact_3}'")
   end
 end
