@@ -6,6 +6,14 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES "AIX")
     set(AIX TRUE)
 endif()
 
+# Pull in leatherman before we do much else. It will setup some helper paths for us.
+set(LEATHERMAN_COMPONENTS locale catch nowide logging util)
+if(WIN32)
+    list(APPEND LEATHERMAN_COMPONENTS windows)
+endif()
+list(APPEND LEATHERMAN_COMPONENTS file_util)
+find_package(Leatherman COMPONENTS ${LEATHERMAN_COMPONENTS} REQUIRED)
+
 if (NOT CMAKE_BUILD_TYPE)
     message(STATUS "Defaulting to a release build.")
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
@@ -33,8 +41,6 @@ endif()
 enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/vendor/leatherman/cmake")
-
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     # Allow searching in boxen installed homebrew directories
     # http://stackoverflow.com/questions/1487752/how-do-i-instruct-cmake-to-look-for-libraries-installed-by-macports
@@ -131,18 +137,6 @@ if (WIN32)
     # CMake doesn't allow install targets in a different directory, so get the file.
     install(FILES ${CMAKE_BINARY_DIR}/bin/libnowide.dll DESTINATION bin)
 endif()
-
-# Build against our leatherman tooling
-set(LEATHERMAN_USE_LOCALE TRUE)
-set(LEATHERMAN_USE_CATCH TRUE)
-set(LEATHERMAN_USE_NOWIDE TRUE)
-set(LEATHERMAN_USE_LOGGING TRUE)
-set(LEATHERMAN_USE_UTIL TRUE)
-if(WIN32)
-	set(LEATHERMAN_USE_WINDOWS TRUE)
-endif()
-set(LEATHERMAN_USE_FILE_UTIL TRUE)
-add_subdirectory("vendor/leatherman")
 
 #
 # Add cpplint and cppcheck targets
