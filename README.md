@@ -14,7 +14,7 @@ Build Requirements
 ------------------
 
 * GCC 4.8+ or Clang 5.0+ (OSX)
-* CMake >= 2.8.12
+* CMake >= 3.2.2
 * Boost C++ Libraries >= 1.54
 * yaml-cpp >= 0.5.1
 
@@ -34,7 +34,9 @@ Note: Testing custom facts requires Ruby 1.9+ with libruby built as a dynamic li
 
 The following will install all required tools and libraries:
 
-    yum install cmake boost-devel openssl-devel yaml-cpp-devel libblkid-devel libcurl-devel gcc-c++ make
+    yum install boost-devel openssl-devel yaml-cpp-devel libblkid-devel libcurl-devel gcc-c++ make wget tar
+    wget http://www.cmake.org/files/v3.2/cmake-3.2.3-Linux-x86_64.tar.gz
+    tar xzvf cmake-3.2.3-Linux-x86_64.tar.gz --strip 1 -C /usr/local
 
 ### Setup on Mac OSX Mavericks (homebrew)
 
@@ -48,7 +50,9 @@ The following will install all required libraries:
 
 The following will install most required tools and libraries:
 
-    apt-get install build-essential cmake libboost-all-dev libssl-dev libyaml-cpp-dev libblkid-dev libcurl4-openssl-dev
+    apt-get install build-essential libboost-all-dev libssl-dev libyaml-cpp-dev libblkid-dev libcurl4-openssl-dev wget tar
+    wget http://www.cmake.org/files/v3.2/cmake-3.2.3-Linux-x86_64.tar.gz
+    tar xzvf cmake-3.2.3-Linux-x86_64.tar.gz --strip 1 -C /usr/local
 
 ### Setup on Windows
 
