@@ -41,10 +41,10 @@ namespace facter { namespace util {
         close();
 
         // Don't actually perform a load to determine if it is already loaded
-#ifdef _AIX
+#if !defined(RTLD_NOLOAD)
         // HACK HACK HACK HACK HACK
 
-        // On AIX, RTLD_NOLOAD doesn't exist. This gets things to compile
+        // On AIX/OpenBSD, RTLD_NOLOAD doesn't exist. This gets things to compile
         // there, but is WRONG and will most likely BREAK at runtime.
         // FACT-891 needs to be resolved.
         _handle = dlopen(name.c_str(), RTLD_LAZY);
