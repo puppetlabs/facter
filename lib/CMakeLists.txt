@@ -109,10 +109,8 @@ if (UNIX)
         )
     endif()
 
-    if (CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
-        set(POSIX_LIBRARIES pthread)
-    else()
-        set(POSIX_LIBRARIES pthread dl)
+    if (NOT CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
+        set(POSIX_LIBRARIES dl)
     endif()
 endif()
 
