@@ -45,13 +45,8 @@ endif()
 # Before we find any packages, we want to pull in the common leatherman options, as they can affect commonly-used packages.
 include(options)
 
-# We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
-# For Windows, we've added locale to correctly generate a UTF-8 compatible default locale.
-set(BOOST_PKGS program_options system filesystem date_time thread regex log chrono)
-if (WIN32)
-    list(APPEND BOOST_PKGS locale)
-endif()
-find_package(Boost 1.54 REQUIRED COMPONENTS ${BOOST_PKGS})
+# We use program_options, system, filesystem, date_time, and regex directly.
+find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time regex)
 
 find_package(Ruby 1.9)
 
