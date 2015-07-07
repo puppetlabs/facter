@@ -40,8 +40,12 @@ namespace facter { namespace util { namespace windows {
 
     string wsa::saddress_to_string(SOCKET_ADDRESS const& addr) const
     {
-        DWORD size = INET6_ADDRSTRLEN;
-        wchar_t buffer[INET6_ADDRSTRLEN];
+        if (!addr.lpSockaddr) {
+            return {};
+        }
+
+        DWORD size = INET6_ADDRSTRLEN+1;
+        wchar_t buffer[INET6_ADDRSTRLEN+1];
         if (0 != WSAAddressToStringW(addr.lpSockaddr, addr.iSockaddrLength, NULL, buffer, &size)) {
             throw wsa_exception(format_err("address to string translation failed", WSAGetLastError()));
         }
