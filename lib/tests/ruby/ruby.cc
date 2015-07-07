@@ -559,4 +559,25 @@ SCENARIO("custom facts written in Ruby") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar\"");
         }
     }
+    GIVEN("a fact that runs a command outputting to stderr") {
+        REQUIRE(load_custom_fact("stderr_output.rb", facts));
+        THEN("the values should only contain stdout output") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("first")) == "\"bar\"");
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("second")) == "\"bar\"");
+        }
+    }
+    GIVEN("a fact that runs a setcode command that returns no output") {
+        REQUIRE(load_custom_fact("empty_setcode_command.rb", facts));
+        THEN("the fact should not resolve") {
+            REQUIRE_FALSE(facts["foo"]);
+        }
+    }
+    GIVEN("a fact that runs executes nonexistent commands") {
+        REQUIRE(load_custom_fact("nonexistent_command.rb", facts));
+        THEN("the fact should not resolve") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("first")) == "\"pass\"");
+            REQUIRE_FALSE(facts["second"]);
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("third")) == "\"pass\"");
+        }
+    }
 }

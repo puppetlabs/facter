@@ -16,6 +16,7 @@ namespace facter { namespace ruby {
         auto const& ruby = *api::instance();
         _self = ruby.nil_value();
         _block = ruby.nil_value();
+        _command = ruby.nil_value();
     }
 
     VALUE simple_resolution::define()
@@ -57,29 +58,16 @@ namespace facter { namespace ruby {
             return ruby.rb_funcall(_block, ruby.rb_intern("call"), 0);
         }
 
-        if (_command.empty()) {
+        if (ruby.is_nil(_command)) {
             return ruby.nil_value();
         }
 
         // Otherwise, we were given a command so execute it
-        bool success;
-        string output, none;
-        tie(success, output, none) = execute(
-            command_shell,
-            {
-                command_args,
-                expand_command(_command)
-            },
-            0,
-            {
-                execution_options::trim_output,
-                execution_options::merge_environment,
-                execution_options::redirect_stderr_to_stdout
-            });
-        if (!success) {
+        VALUE result = ruby.rb_funcall(ruby.lookup({ "Facter", "Core", "Execution" }), ruby.rb_intern("exec"), 1, _command);
+        if (ruby.is_nil(result) || ruby.is_true(ruby.rb_funcall(result, ruby.rb_intern("empty?"), 0))) {
             return ruby.nil_value();
         }
-        return ruby.utf8_value(output);
+        return result;
     }
 
     VALUE simple_resolution::alloc(VALUE klass)
@@ -105,8 +93,9 @@ namespace facter { namespace ruby {
         // Call the base first
         instance->resolution::mark();
 
-        // Mark the setcode block
+        // Mark the setcode block and command
         ruby.rb_gc_mark(instance->_block);
+        ruby.rb_gc_mark(instance->_command);
     }
 
     void simple_resolution::free(void* data)
@@ -129,47 +118,24 @@ namespace facter { namespace ruby {
             ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 1)", argc);
         }
 
-        int tag = 0;
-        {
-            // Declare all C++ objects here
-            string command;
-            volatile VALUE block = ruby.nil_value();
+        auto instance = ruby.to_native<simple_resolution>(self);
 
-            ruby.protect(tag, [&]{
-                // Do not declare any C++ objects inside the protect
-                // Their destructors will not be invoked if there is a Ruby exception
-                if (argc == 0) {
-                    // No arguments, only a block is required
-                    if (!ruby.rb_block_given_p()) {
-                        ruby.rb_raise(*ruby.rb_eArgError, "a block must be provided");
-                    }
-                    block = ruby.rb_block_proc();
-                } else if (argc == 1) {
-                    VALUE arg = argv[0];
-                    if (!ruby.is_string(arg) || ruby.is_true(ruby.rb_funcall(arg, ruby.rb_intern("empty?"), 0))) {
-                        ruby.rb_raise(*ruby.rb_eTypeError, "expected a non-empty String for first argument");
-                    }
-                    if (ruby.rb_block_given_p()) {
-                        ruby.rb_raise(*ruby.rb_eArgError, "a block is unexpected when passing a String");
-                    }
-                    command = ruby.to_string(arg);
-                }
-                return self;
-            });
-
-            if (!tag) {
-                auto instance = ruby.to_native<simple_resolution>(self);
-                if (!ruby.is_nil(block)) {
-                    instance->_block = block;
-                } else {
-                    instance->_command = move(command);
-                }
-                return self;
+        if (argc == 0) {
+            // No arguments, only a block is required
+            if (!ruby.rb_block_given_p()) {
+                ruby.rb_raise(*ruby.rb_eArgError, "a block must be provided");
             }
+            instance->_block = ruby.rb_block_proc();
+        } else if (argc == 1) {
+            VALUE arg = argv[0];
+            if (!ruby.is_string(arg) || ruby.is_true(ruby.rb_funcall(arg, ruby.rb_intern("empty?"), 0))) {
+                ruby.rb_raise(*ruby.rb_eTypeError, "expected a non-empty String for first argument");
+            }
+            if (ruby.rb_block_given_p()) {
+                ruby.rb_raise(*ruby.rb_eArgError, "a block is unexpected when passing a String");
+            }
+            instance->_command = arg;
         }
-
-        // Now that the above block has exited, it's safe to jump to the given tag
-        ruby.rb_jump_tag(tag);
         return self;
     }
 
