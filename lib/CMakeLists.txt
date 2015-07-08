@@ -1,19 +1,11 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.2.2)
 
 set(LIBFACTER_VERSION_MAJOR 3)
 set(LIBFACTER_VERSION_MINOR 0)
 set(LIBFACTER_VERSION_PATCH 1)
 
-# Get the HEAD SHA1
-include(GetGitRevisionDescription)
-get_git_head_revision(GIT_REFSPEC LIBFACTER_GIT_SHA1)
-
-if ("${LIBFACTER_GIT_SHA1}" STREQUAL "" OR "${LIBFACTER_GIT_SHA1}" STREQUAL "GITDIR-NOTFOUND")
-    set(LIBFACTER_GIT_SHA1 "")
-    set(LIBFACTER_COMMIT "")
-else()
-    set(LIBFACTER_COMMIT " (commit ${LIBFACTER_GIT_SHA1})")
-endif()
+# Get the HEAD SHA1 commit message
+get_commit_string(LIBFACTER_COMMIT)
 
 # Generate a file containing the above version numbers
 configure_file (
@@ -117,10 +109,8 @@ if (UNIX)
         )
     endif()
 
-    if (CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
-        set(POSIX_LIBRARIES pthread)
-    else()
-        set(POSIX_LIBRARIES pthread dl)
+    if (NOT CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
+        set(POSIX_LIBRARIES dl)
     endif()
 endif()
 

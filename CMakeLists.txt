@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.2.2)
 project(FACTER)
 
 # Set this early, so it's available. AIX gets weird, man.
@@ -45,13 +45,8 @@ endif()
 # Before we find any packages, we want to pull in the common leatherman options, as they can affect commonly-used packages.
 include(options)
 
-# We use system, filesystem, regex, and log directly. Log depends on system, filesystem, datetime, and thread.
-# For Windows, we've added locale to correctly generate a UTF-8 compatible default locale.
-set(BOOST_PKGS program_options system filesystem date_time thread regex log chrono)
-if (WIN32)
-    list(APPEND BOOST_PKGS locale)
-endif()
-find_package(Boost 1.54 REQUIRED COMPONENTS ${BOOST_PKGS})
+# We use program_options, system, filesystem, date_time, and regex directly.
+find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time regex)
 
 find_package(Ruby 1.9)
 
@@ -101,26 +96,9 @@ endif()
 include(FeatureSummary)
 feature_summary(WHAT ALL)
 
-# Set RPATH if not installing to a system library directory
-list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" INSTALL_IS_SYSTEM_DIR)
-if ("${INSTALL_IS_SYSTEM_DIR}" STREQUAL "-1")
-    set(CMAKE_MACOSX_RPATH 1)
-    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-endif()
-
 # Pull in common cflags setting from leatherman
 include(cflags)
 set(FACTER_CXX_FLAGS "${LEATHERMAN_CXX_FLAGS}")
-
-# Force all binaries to be created in the same location.
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-if (WIN32)
-    # On Windows, DLL paths aren't hardcoded in the executable. We place all the executables and libraries
-    # in the same directory to avoid having to setup the DLL search path in the dev environment.
-    set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-else()
-    set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
-endif()
 
 add_definitions(${LEATHERMAN_DEFINITIONS})
 
