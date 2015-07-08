@@ -24,9 +24,6 @@ namespace facter { namespace ruby {
 #define LOAD_ALIASED_SYMBOL(x, y) x(reinterpret_cast<decltype(x)>(library.find_symbol(#x, true, #y)))
 #define LOAD_OPTIONAL_SYMBOL(x) x(reinterpret_cast<decltype(x)>(library.find_symbol(#x)))
 
-    // Default to cleaning up the VM on shutdown
-    bool api::cleanup = true;
-
     set<VALUE> api::_data_objects;
 
     api::api(dynamic_library library) :
@@ -114,7 +111,7 @@ namespace facter { namespace ruby {
                 data->dfree = nullptr;
             }
         }
-        if (_initialized && _library.first_load() && cleanup) {
+        if (_initialized && _library.first_load()) {
             ruby_cleanup(0);
         }
     }
