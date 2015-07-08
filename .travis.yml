@@ -1,45 +1,58 @@
 language: cpp
 compiler:
   - gcc
+sudo: false
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - boost-latest
+    packages:
+      - gcc-4.8
+      - g++-4.8
+      - libboost-filesystem1.55-dev
+      - libboost-program-options1.55-dev
+      - libboost-regex1.55-dev
+      - libboost-date-time1.55-dev
+      - libboost-thread1.55-dev
+      - libboost-log1.55-dev
+      - libboost-locale1.55-dev
+      - libboost-chrono1.55-dev
+      - libblkid1
 
 before_install:
-  # 'python-software-properties' provides add-apt-repository
-  - sudo apt-get -y install python-software-properties
-  # which is needed to add the ppa that has gcc 4.8 and boost 1.55
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo add-apt-repository -y ppa:boost-latest/ppa
-  - sudo apt-get update
-  # which is needed to install gcc 4.8 (and gcov)
-  - sudo apt-get -y install gcc-4.8
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
-  - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.8 50
-  # and g++ 4.8
-  - sudo apt-get -y install g++-4.8
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
-  # grab a pre-built cmake 2.8.12 from s3
-  - wget https://s3.amazonaws.com/kylo-pl-bucket/cmake_install.tar.bz2
-  - tar xjvf cmake_install.tar.bz2 --strip 1 -C $HOME
+  # Use a predefined install location; cppcheck requires the cfg location is defined at compile-time.
+  - mkdir -p $USERDIR
+  # grab a pre-built cmake 3.2.3
+  - wget http://www.cmake.org/files/v3.2/cmake-3.2.3-Linux-x86_64.tar.gz
+  - tar xzvf cmake-3.2.3-Linux-x86_64.tar.gz --strip 1 -C $USERDIR
   # grab a pre-built cppcheck from s3
   - wget https://s3.amazonaws.com/kylo-pl-bucket/pcre-8.36_install.tar.bz2
-  - sudo tar xjvf pcre-8.36_install.tar.bz2 --strip 1 -C /usr/local
-  - wget https://s3.amazonaws.com/kylo-pl-bucket/cppcheck-1.68_install.tar.bz2
-  - sudo tar xjvf cppcheck-1.68_install.tar.bz2 --strip 1 -C /usr/local
+  - tar xjvf pcre-8.36_install.tar.bz2 --strip 1 -C $USERDIR
+  - wget https://s3.amazonaws.com/kylo-pl-bucket/cppcheck-1.69_install.tar.bz2
+  - tar xjvf cppcheck-1.69_install.tar.bz2 --strip 1 -C $USERDIR
   # grab a pre-built doxygen 1.8.7 from s3
   - wget https://s3.amazonaws.com/kylo-pl-bucket/doxygen_install.tar.bz2
-  - sudo tar xjvf doxygen_install.tar.bz2 --strip 1 -C /usr/local
-  # Install dependencies of facter
-  - sudo apt-get -y install libboost-filesystem1.55-dev libboost-program-options1.55-dev libboost-regex1.55-dev libboost-date-time1.55-dev libboost-thread1.55-dev libboost-log1.55-dev libboost-locale1.55-dev libboost-chrono1.55-dev
+  - tar xjvf doxygen_install.tar.bz2 --strip 1 -C $USERDIR
+  # Install dependencies of cfacter
   - wget https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1_install.tar.bz2
-  - sudo tar xjvf yaml-cpp-0.5.1_install.tar.bz2 --strip 1 -C /usr/local
-  # Install libblkid-dev
-  - sudo apt-get -y install libblkid-dev
+  - tar xjvf yaml-cpp-0.5.1_install.tar.bz2 --strip 1 -C $USERDIR
+  # Install dependencies of facter
+  - wget https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1_install.tar.bz2
+  - tar xjvf yaml-cpp-0.5.1_install.tar.bz2 --strip 1 -C $USERDIR
   # Install coveralls.io update utility
-  - sudo pip install cpp-coveralls
+  - pip install --user cpp-coveralls
 
 script: ./scripts/travis_target.sh
 
 env:
-  - TRAVIS_TARGET=CPPLINT
-  - TRAVIS_TARGET=CPPCHECK
-  - TRAVIS_TARGET=RELEASE
-  - TRAVIS_TARGET=DEBUG
+  global:
+    - USERDIR=/tmp/userdir
+    - PYTHONUSERBASE=$USERDIR
+    - PATH=$USERDIR/bin:$PATH
+    - LD_LIBRARY_PATH=$USERDIR/lib:$LD_LIBRARY_PATH
+  matrix:
+    - TRAVIS_TARGET=CPPLINT
+    - TRAVIS_TARGET=CPPCHECK
+    - TRAVIS_TARGET=RELEASE
+    - TRAVIS_TARGET=DEBUG
