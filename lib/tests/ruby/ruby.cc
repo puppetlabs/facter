@@ -580,4 +580,11 @@ SCENARIO("custom facts written in Ruby") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("third")) == "\"pass\"");
         }
     }
+    GIVEN("a fact that modifies $LOAD_PATH") {
+        REQUIRE(load_custom_fact("load_path.rb", facts));
+        THEN("should resolve facts on that $LOAD_PATH") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("named")) == "\"foo\"");
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("unnamed")) == "\"baz\"");
+        }
+    }
 }
