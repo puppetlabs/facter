@@ -208,21 +208,9 @@ namespace facter { namespace ruby {
         _include_stack_trace = value;
     }
 
-    vector<string> api::get_load_path() const
+    VALUE api::get_load_path() const
     {
-        vector<string> directories;
-
-        array_for_each(rb_gv_get("$LOAD_PATH"), [&](VALUE value) {
-            string path = to_string(value);
-            // Ignore "." as a load path (present in 1.8.7)
-            if (path == ".") {
-                return false;
-            }
-            directories.emplace_back(move(path));
-            return true;
-        });
-
-        return directories;
+        return rb_gv_get("$LOAD_PATH");
     }
 
     string api::to_string(VALUE v) const

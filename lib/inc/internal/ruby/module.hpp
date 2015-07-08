@@ -10,6 +10,12 @@
 #include <set>
 #include <string>
 
+namespace boost { namespace filesystem {
+
+    class path;
+
+}}  // namespace boost::filesystem
+
 namespace facter { namespace facts {
 
     struct collection;
@@ -130,6 +136,7 @@ namespace facter { namespace ruby {
         void load_file(std::string const& path);
         VALUE create_fact(VALUE name);
         static VALUE level_to_symbol(leatherman::logging::log_level level);
+        static void each_facter_path(std::function<bool(boost::filesystem::path&)> callback);
 
         facter::facts::collection& _collection;
         std::map<std::string, VALUE> _facts;
