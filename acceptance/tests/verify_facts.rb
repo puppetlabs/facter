@@ -82,16 +82,28 @@ hidden = schema.select { |k, v| v['hidden'] && k !~ /<.*>/ }.map { |k, v| k }
 
 agents.each do |agent|
   step "Agent #{agent}: verify facter output against schema"
+  facts = {}
   on(agent, facter('--yaml')) do
     # Validate stdout against the schema
     facts = YAML.load(stdout.chomp)
     validate_facts(facts, schema, false)
   end
 
-  if not hidden.empty?
-    on(agent, facter(*hidden, '--yaml')) do
-      facts = YAML.load(stdout.chomp)
-      validate_facts(facts, schema, true)
+  hidden_facts = {}
+  on(agent, facter('--yaml', '--show-legacy')) do
+    # Re-use facts to find just hidden facts
+    all_facts = YAML.load(stdout.chomp)
+    hidden_facts = all_facts.reject { |k, v| facts.include? k }
+    validate_facts(hidden_facts, schema, true)
+  end
+
+  # Confirm hidden_facts has all the hidden entries from the schema
+  if missing_hidden = hidden.reject { |k, v| hidden_facts.include? k }
+    on(agent, facter(*missing_hidden, '--yaml')) do
+      resolved_hidden = YAML.load(stdout.chomp)
+      resolved_hidden.each do |name, value|
+        fail "missing hidden fact #{name} with value #{value} from legacy output" unless value.empty?
+      end
     end
   end
 end

@@ -203,9 +203,10 @@ namespace facter { namespace facts {
          * @param stream The stream to write the facts to.
          * @param fmt The output format to use.
          * @param queries The set of queries to filter the output to. If empty, all facts will be output.
+         * @param show_legacy Show legacy facts when querying all facts.
          * @return Returns the stream being written to.
          */
-        std::ostream& write(std::ostream& stream, format fmt = format::hash, std::set<std::string> const& queries = std::set<std::string>());
+        std::ostream& write(std::ostream& stream, format fmt = format::hash, std::set<std::string> const& queries = std::set<std::string>(), bool show_legacy = false);
 
         /**
          * Resolves all facts in the collection.
@@ -220,9 +221,9 @@ namespace facter { namespace facts {
         LIBFACTER_NO_EXPORT value const* get_value(std::string const& name);
         LIBFACTER_NO_EXPORT value const* query_value(std::string const& query);
         LIBFACTER_NO_EXPORT value const* lookup(value const* value, std::string const& name);
-        LIBFACTER_NO_EXPORT void write_hash(std::ostream& stream, std::set<std::string> const& queries);
-        LIBFACTER_NO_EXPORT void write_json(std::ostream& stream, std::set<std::string> const& queries);
-        LIBFACTER_NO_EXPORT void write_yaml(std::ostream& stream, std::set<std::string> const& queries);
+        LIBFACTER_NO_EXPORT void write_hash(std::ostream& stream, std::set<std::string> const& queries, bool show_legacy);
+        LIBFACTER_NO_EXPORT void write_json(std::ostream& stream, std::set<std::string> const& queries, bool show_legacy);
+        LIBFACTER_NO_EXPORT void write_yaml(std::ostream& stream, std::set<std::string> const& queries, bool show_legacy);
         LIBFACTER_NO_EXPORT void add_common_facts(bool include_ruby_facts);
         LIBFACTER_NO_EXPORT bool add_external_facts_dir(std::vector<std::unique_ptr<external::resolver>> const& resolvers, std::string const& directory, bool warn);
 

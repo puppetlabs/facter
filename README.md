@@ -77,6 +77,12 @@ For the remaining tasks, build commands can be executed in the shell from Start 
         cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=$install -DCMAKE_INSTALL_PREFIX=$install .
         mingw32-make install
 
+* build [libcurl](http://curl.haxx.se/download)
+
+        mingw32-make mingw32
+        cp -r include\curl $install\include
+        cp -r lib\libcurl.a $install\lib
+
 In Powershell:
 
     choco install cmake 7zip.commandline -y
@@ -97,6 +103,14 @@ In Powershell:
     pushd yaml-cpp-0.5.1
     cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="$install" -DCMAKE_INSTALL_PREFIX="$install" .
     mingw32-make install
+    popd
+
+    (New-Object Net.WebClient).DownloadFile("http://curl.haxx.se/download/curl-7.42.1.zip", "$pwd/curl-7.42.1.zip")
+    7za x curl-7.42.1.zip
+    pushd curl-7.42.1
+    mingw32-make mingw32
+    cp -r include\curl $install\include
+    cp -r lib\libcurl.a $install\lib
     popd
 
 Note that OpenSSL isn't needed on Windows.

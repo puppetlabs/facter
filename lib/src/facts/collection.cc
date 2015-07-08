@@ -264,7 +264,7 @@ namespace facter { namespace facts {
         });
     }
 
-    ostream& collection::write(ostream& stream, format fmt, set<string> const& queries)
+    ostream& collection::write(ostream& stream, format fmt, set<string> const& queries, bool show_legacy)
     {
         if (queries.empty()) {
             // Resolve all facts
@@ -272,11 +272,11 @@ namespace facter { namespace facts {
         }
 
         if (fmt == format::hash) {
-            write_hash(stream, queries);
+            write_hash(stream, queries, show_legacy);
         } else if (fmt == format::json) {
-            write_json(stream, queries);
+            write_json(stream, queries, show_legacy);
         } else if (fmt == format::yaml) {
-            write_yaml(stream, queries);
+            write_yaml(stream, queries, show_legacy);
         }
         return stream;
     }
@@ -404,7 +404,7 @@ namespace facter { namespace facts {
         return nullptr;
     }
 
-    void collection::write_hash(ostream& stream, set<string> const& queries)
+    void collection::write_hash(ostream& stream, set<string> const& queries, bool show_legacy)
     {
         // If there's only one query, print the result without the name
         if (queries.size() == 1u) {
@@ -418,7 +418,7 @@ namespace facter { namespace facts {
         bool first = true;
         auto writer = ([&](string const& key, value const* val) {
             // Ignore facts with hidden values
-            if (queries.empty() && val && val->hidden()) {
+            if (!show_legacy && queries.empty() && val && val->hidden()) {
                 return;
             }
             if (first) {
@@ -465,14 +465,14 @@ namespace facter { namespace facts {
          ostream& _stream;
     };
 
-    void collection::write_json(ostream& stream, set<string> const& queries)
+    void collection::write_json(ostream& stream, set<string> const& queries, bool show_legacy)
     {
         Document document;
         document.SetObject();
 
         auto builder = ([&](string const& key, value const* val) {
             // Ignore facts with hidden values
-            if (queries.empty() && val && val->hidden()) {
+            if (!show_legacy && queries.empty() && val && val->hidden()) {
                 return;
             }
             rapidjson::Value value;
@@ -500,14 +500,14 @@ namespace facter { namespace facts {
         document.Accept(writer);
     }
 
-    void collection::write_yaml(ostream& stream, set<string> const& queries)
+    void collection::write_yaml(ostream& stream, set<string> const& queries, bool show_legacy)
     {
         Emitter emitter(stream);
         emitter << BeginMap;
 
         auto writer = ([&](string const& key, value const* val) {
             // Ignore facts with hidden values
-            if (queries.empty() && val && val->hidden()) {
+            if (!show_legacy && queries.empty() && val && val->hidden()) {
                 return;
             }
             emitter << Key;

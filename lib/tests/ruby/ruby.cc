@@ -1,14 +1,12 @@
 #include <catch.hpp>
 #include <facter/version.h>
-#include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <internal/ruby/api.hpp>
-#include <internal/ruby/module.hpp>
 #include <internal/ruby/ruby_value.hpp>
 #include <internal/util/regex.hpp>
 #include <internal/util/scoped_env.hpp>
-#include <leatherman/logging/logging.hpp>
-#include "../fixtures.hpp"
+#include "./ruby_helper.hpp"
+#include "../collection_fixture.hpp"
 #include "../log_capture.hpp"
 
 using namespace std;
@@ -17,37 +15,6 @@ using namespace facter::ruby;
 using namespace facter::util;
 using namespace facter::logging;
 using namespace facter::testing;
-
-bool load_custom_fact(string const& filename, collection& facts)
-{
-    auto ruby = api::instance();
-
-    module mod(facts);
-
-    string file = LIBFACTER_TESTS_DIRECTORY "/fixtures/ruby/" + filename;
-    VALUE result = ruby->rescue([&]() {
-        // Do not construct C++ objects in a rescue callback
-        // C++ stack unwinding will not take place if a Ruby exception is thrown!
-        ruby->rb_load(ruby->utf8_value(file), 0);
-        return ruby->true_value();
-    }, [&](VALUE ex) {
-        LOG_ERROR("error while resolving custom facts in %1%: %2%", file, ruby->exception_to_string(ex));
-        return ruby->false_value();
-    });
-
-    mod.resolve_facts();
-
-    return ruby->is_true(result);
-}
-
-string ruby_value_to_string(value const* value)
-{
-    ostringstream ss;
-    if (value) {
-        value->write(ss);
-    }
-    return ss.str();
-}
 
 SCENARIO("custom facts written in Ruby") {
     collection_fixture facts;
@@ -605,6 +572,27 @@ SCENARIO("custom facts written in Ruby") {
             auto output = capture.result();
             CAPTURE(output);
             REQUIRE(re_search(output, boost::regex("ERROR puppetlabs\\.facter - .* fact \"foo\" already has the maximum number of resolutions allowed \\(100\\)")));
+        }
+    }
+    GIVEN("a fact that runs a command outputting to stderr") {
+        REQUIRE(load_custom_fact("stderr_output.rb", facts));
+        THEN("the values should only contain stdout output") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("first")) == "\"bar\"");
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("second")) == "\"bar\"");
+        }
+    }
+    GIVEN("a fact that runs a setcode command that returns no output") {
+        REQUIRE(load_custom_fact("empty_setcode_command.rb", facts));
+        THEN("the fact should not resolve") {
+            REQUIRE_FALSE(facts["foo"]);
+        }
+    }
+    GIVEN("a fact that runs executes nonexistent commands") {
+        REQUIRE(load_custom_fact("nonexistent_command.rb", facts));
+        THEN("the fact should not resolve") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("first")) == "\"pass\"");
+            REQUIRE_FALSE(facts["second"]);
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("third")) == "\"pass\"");
         }
     }
 }

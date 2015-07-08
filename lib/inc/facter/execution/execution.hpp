@@ -192,7 +192,7 @@ namespace facter { namespace execution {
      * Expands the executable in the command to the full path.
      * @param command The command to expand.
      * @param directories The directories to search.
-     * @return Returns the expanded command if the executable was found or the original command if not.
+     * @return Returns the expanded command if the executable was found or empty if it was not found.
      */
     std::string LIBFACTER_EXPORT expand_command(std::string const& command, std::vector<std::string> const& directories = facter::util::environment::search_paths());
 

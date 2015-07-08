@@ -721,30 +721,28 @@ namespace facter { namespace ruby {
         auto const& ruby = *api::instance();
 
         // Block to ensure that result is destructed before raising.
+        bool found = false;
         try {
-            bool success;
-            string output, none;
-            tie(success, output, none) = execution::execute(
-                execution::command_shell,
-                {
-                    execution::command_args,
-                    expand_command(command)
-                },
-                timeout,
-                {
-                    execution_options::trim_output,
-                    execution_options::merge_environment,
-                    execution_options::redirect_stderr_to_stdout
-                });
-            if (success) {
-                return ruby.utf8_value(output);
+            auto expanded = execution::expand_command(command);
+            if (!expanded.empty()) {
+                found = true;
+
+                bool success;
+                string output, none;
+                tie(success, output, none) = execution::execute(execution::command_shell, {execution::command_args, expanded}, timeout);
+                if (success) {
+                    return ruby.utf8_value(output);
+                }
             }
         } catch (timeout_exception const& ex) {
             // Always raise for timeouts
             ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), ex.what());
         }
         if (raise) {
-            ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), "execution of command \"%s\" failed", command.c_str());
+            if (!found) {
+                ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), "execution of command \"%s\" failed: command not found.", command.c_str());
+            }
+            ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), "execution of command \"%s\" failed.", command.c_str());
         }
         return failure_default;
     }

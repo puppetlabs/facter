@@ -1,6 +1,7 @@
 #include <catch.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
+#include <facter/facts/vm.hpp>
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
@@ -31,6 +32,7 @@
 #include <internal/facts/resolvers/timezone_resolver.hpp>
 #include <internal/facts/resolvers/uptime_resolver.hpp>
 #include <internal/facts/resolvers/virtualization_resolver.hpp>
+#include <internal/facts/resolvers/xen_resolver.hpp>
 #include <internal/facts/resolvers/zfs_resolver.hpp>
 #include <internal/facts/resolvers/zone_resolver.hpp>
 #include <internal/facts/resolvers/zpool_resolver.hpp>
@@ -345,7 +347,24 @@ struct virtualization_resolver : resolvers::virtualization_resolver
 protected:
     virtual string get_hypervisor(collection& facts) override
     {
-        return "hypervisor";
+        // The xen fact only resolves if virtualization is xen_privileged.
+        return vm::xen_privileged;
+    }
+};
+
+struct xen_resolver : resolvers::xen_resolver
+{
+protected:
+    virtual string xen_command()
+    {
+        return "";
+    }
+
+    virtual data collect_data(collection& facts) override
+    {
+        data result;
+        result.domains = { "domain1", "domain2" };
+        return result;
     }
 };
 
@@ -430,6 +449,7 @@ void add_all_facts(collection& facts)
     facts.add(make_shared<timezone_resolver>());
     facts.add(make_shared<uptime_resolver>());
     facts.add(make_shared<virtualization_resolver>());
+    facts.add(make_shared<xen_resolver>());
     facts.add(make_shared<zfs_resolver>());
     facts.add(make_shared<zone_resolver>());
     facts.add(make_shared<zpool_resolver>());

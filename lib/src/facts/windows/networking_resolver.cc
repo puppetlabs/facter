@@ -207,11 +207,28 @@ namespace facter { namespace facts { namespace windows {
             // Only supported on platforms after Windows Server 2003.
             if (pCurAddr->Flags & IP_ADAPTER_DHCP_ENABLED && pCurAddr->Length >= sizeof(IP_ADAPTER_ADDRESSES_LH)) {
                 auto adapter = reinterpret_cast<IP_ADAPTER_ADDRESSES_LH&>(*pCurAddr);
-                net_interface.dhcp_server = winsock.saddress_to_string(adapter.Dhcpv4Server);
+                if (adapter.Flags & IP_ADAPTER_DHCP_ENABLED) {
+                    try {
+                        net_interface.dhcp_server = winsock.saddress_to_string(adapter.Dhcpv4Server);
+                    } catch (wsa_exception &e) {
+                        LOG_DEBUG("failed to retrieve dhcp v4 server address for %1%: %2%", net_interface.name, e.what());
+                    }
+                }
             }
 
             for (auto it = pCurAddr->FirstUnicastAddress; it; it = it->Next) {
-                string addr = winsock.saddress_to_string(it->Address);
+                string addr;
+                try {
+                    addr = winsock.saddress_to_string(it->Address);
+                } catch (wsa_exception &e) {
+                    string iptype =
+                        (it->Address.lpSockaddr->sa_family == AF_INET) ? " v4"
+                        : (it->Address.lpSockaddr->sa_family == AF_INET6) ? " v6"
+                        : "";
+                    LOG_DEBUG("failed to retrieve ip%1% address for %2%: %3%",
+                        iptype, net_interface.name, e.what());
+                }
+
                 if (addr.empty()) {
                     continue;
                 }
