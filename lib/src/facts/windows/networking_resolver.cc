@@ -20,6 +20,7 @@
 
 using namespace std;
 using namespace facter::util;
+using namespace facter::util::windows;
 using namespace boost::algorithm;
 using namespace leatherman::windows;
 
