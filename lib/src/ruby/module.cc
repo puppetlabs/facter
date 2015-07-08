@@ -251,6 +251,17 @@ namespace facter { namespace ruby {
 
         LOG_DEBUG("loading all custom facts.");
 
+        // Look for "facter" subdirectories on the load path
+        each_facter_path([&](path& dir) {
+            auto dirname = dir.string();
+            LOG_DEBUG("searching for custom facts in %1%.", dirname);
+            directory::each_file(dirname, [&](string const& file) {
+                load_file(file);
+                return true;
+            }, "\\.rb$");
+            return true;
+        });
+
         for (auto const& directory : _search_paths) {
             LOG_DEBUG("searching for custom facts in %1%.", directory);
             directory::each_file(directory, [&](string const& file) {
@@ -747,31 +758,11 @@ namespace facter { namespace ruby {
 
     void module::initialize_search_paths(vector<string> const& paths)
     {
-        auto const& ruby = *api::instance();
-
         _search_paths.clear();
         _additional_search_paths.clear();
 
-        // Look for "facter" subdirectories on the load path
-        for (auto const& directory : ruby.get_load_path()) {
-            // Get the canonical directory name
-            boost::system::error_code ec;
-            path dir = canonical(directory, ec);
-            if (ec) {
-                continue;
-            }
-
-            // Ignore facter itself if it's on the load path
-            if (is_regular_file(dir / "facter.rb", ec)) {
-                continue;
-            }
-
-            dir = dir / "facter";
-            if (!is_directory(dir, ec)) {
-                continue;
-            }
-            _search_paths.push_back(dir.string());
-        }
+        // Don't add LOAD_PATH here, as it could change before loading facts. Instead we prefix it
+        // each time we load facts.
 
         // Append the FACTERLIB paths
         string variable;
@@ -820,6 +811,21 @@ namespace facter { namespace ruby {
             // Next, attempt to load it by file
             string filename = fact_name + ".rb";
             LOG_DEBUG("searching for custom fact \"%1%\".", fact_name);
+
+            each_facter_path([&](path& dir) {
+                LOG_DEBUG("searching for %1% in %2%.", filename, dir.string());
+
+                // Check to see if there's a file of a matching name in this directory
+                path full_path = dir / filename;
+                boost::system::error_code ec;
+                if (!is_regular_file(full_path, ec)) {
+                    return true;
+                }
+
+                // Load the fact file
+                load_file(full_path.string());
+                return true;
+            });
 
             for (auto const& directory : _search_paths) {
                 LOG_DEBUG("searching for %1% in %2%.", filename, directory);
@@ -928,6 +934,37 @@ namespace facter { namespace ruby {
             ruby.rb_raise(*ruby.rb_eArgError, "invalid log level specified.", 0);
         }
         return ruby.to_symbol(name);
+    }
+
+    void module::each_facter_path(function<bool(path&)> callback)
+    {
+        auto const& ruby = *api::instance();
+        ruby.array_for_each(ruby.get_load_path(), [&](VALUE value) {
+            auto v = ruby.rb_funcall(value, ruby.rb_intern("to_s"), 0);
+            size_t size = static_cast<size_t>(ruby.rb_num2ulong(ruby.rb_funcall(v, ruby.rb_intern("bytesize"), 0)));
+            auto name = ruby.rb_string_value_ptr(&v);
+            auto p = path(name, name+size);
+
+            // Get the canonical directory name
+            boost::system::error_code ec;
+            path dir = canonical(p, ec);
+            if (ec) {
+                return true;
+            }
+
+            // Ignore facter itself if it's on the load path
+            if (is_regular_file(dir / "facter.rb", ec)) {
+                return true;
+            }
+
+            dir = dir / "facter";
+            if (!is_directory(dir, ec)) {
+                return true;
+            }
+
+            callback(dir);
+            return true;
+        });
     }
 
 }}  // namespace facter::ruby
