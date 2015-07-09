@@ -387,7 +387,7 @@ namespace facter {  namespace ruby {
          * Gets the load path being used by Ruby.
          * @return Returns the load path being used by Ruby.
          */
-        std::vector<std::string> get_load_path() const;
+        VALUE get_load_path() const;
 
         /**
          * Converts a Ruby value into a C++ string.
