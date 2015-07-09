@@ -11,9 +11,15 @@
 #include <utility>
 #include <stdexcept>
 #include <functional>
-#include "../util/option_set.hpp"
-#include "../util/environment.hpp"
 #include "../export.h"
+
+#include <leatherman/util/environment.hpp>
+#include <leatherman/util/option_set.hpp>
+#include <leatherman/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
+
+namespace lth_util = leatherman::util;
+namespace lth_exec = leatherman::execution;
 
 namespace facter { namespace execution {
 
@@ -186,7 +192,7 @@ namespace facter { namespace execution {
      * @param directories The directories to search.
      * @return Returns the full path or empty if the file could not be found.
      */
-    std::string LIBFACTER_EXPORT which(std::string const& file, std::vector<std::string> const& directories = facter::util::environment::search_paths());
+    std::string LIBFACTER_EXPORT which(std::string const& file, std::vector<std::string> const& directories = lth_util::environment::search_paths());
 
     /**
      * Expands the executable in the command to the full path.
@@ -194,7 +200,7 @@ namespace facter { namespace execution {
      * @param directories The directories to search.
      * @return Returns the expanded command if the executable was found or empty if it was not found.
      */
-    std::string LIBFACTER_EXPORT expand_command(std::string const& command, std::vector<std::string> const& directories = facter::util::environment::search_paths());
+    std::string LIBFACTER_EXPORT expand_command(std::string const& command, std::vector<std::string> const& directories = lth_util::environment::search_paths());
 
     /**
      * Executes the given program.
@@ -206,7 +212,7 @@ namespace facter { namespace execution {
     std::tuple<bool, std::string, std::string> LIBFACTER_EXPORT execute(
         std::string const& file,
         uint32_t timeout = 0,
-        facter::util::option_set<execution_options> const& options = { execution_options::trim_output, execution_options::merge_environment, execution_options::redirect_stderr_to_null });
+        lth_util::option_set<lth_exec::execution_options> const& options = { lth_exec::execution_options::trim_output, lth_exec::execution_options::merge_environment, lth_exec::execution_options::redirect_stderr_to_null });
 
     /**
      * Executes the given program.
@@ -220,7 +226,7 @@ namespace facter { namespace execution {
         std::string const& file,
         std::vector<std::string> const& arguments,
         uint32_t timeout = 0,
-        facter::util::option_set<execution_options> const& options = { execution_options::trim_output, execution_options::merge_environment, execution_options::redirect_stderr_to_null });
+        lth_util::option_set<lth_exec::execution_options> const& options = { lth_exec::execution_options::trim_output, lth_exec::execution_options::merge_environment, lth_exec::execution_options::redirect_stderr_to_null });
 
     /**
      * Executes the given program.
@@ -236,7 +242,7 @@ namespace facter { namespace execution {
         std::vector<std::string> const& arguments,
         std::map<std::string, std::string> const& environment,
         uint32_t timeout = 0,
-        facter::util::option_set<execution_options> const& options = { execution_options::trim_output, execution_options::merge_environment, execution_options::redirect_stderr_to_null });
+        lth_util::option_set<lth_exec::execution_options> const& options = { lth_exec::execution_options::trim_output, lth_exec::execution_options::merge_environment, lth_exec::execution_options::redirect_stderr_to_null });
 
     /**
      * Executes the given program and returns each line of output.
@@ -252,7 +258,7 @@ namespace facter { namespace execution {
         std::function<bool(std::string&)> stdout_callback,
         std::function<bool(std::string&)> stderr_callback = nullptr,
         uint32_t timeout = 0,
-        facter::util::option_set<execution_options> const& options = { execution_options::trim_output, execution_options::merge_environment });
+        lth_util::option_set<lth_exec::execution_options> const& options = { lth_exec::execution_options::trim_output, lth_exec::execution_options::merge_environment });
 
     /**
      * Executes the given program and returns each line of output.
@@ -270,7 +276,7 @@ namespace facter { namespace execution {
         std::function<bool(std::string&)> stdout_callback,
         std::function<bool(std::string&)> stderr_callback = nullptr,
         uint32_t timeout = 0,
-        facter::util::option_set<execution_options> const& options = { execution_options::trim_output, execution_options::merge_environment });
+        lth_util::option_set<lth_exec::execution_options> const& options = { lth_exec::execution_options::trim_output, lth_exec::execution_options::merge_environment });
 
     /**
      * Executes the given program and returns each line of output.
@@ -290,6 +296,6 @@ namespace facter { namespace execution {
         std::function<bool(std::string&)> stdout_callback,
         std::function<bool(std::string&)> stderr_callback = nullptr,
         uint32_t timeout = 0,
-        facter::util::option_set<execution_options> const& options = { execution_options::trim_output, execution_options::merge_environment });
+        lth_util::option_set<lth_exec::execution_options> const& options = { lth_exec::execution_options::trim_output, lth_exec::execution_options::merge_environment });
 
 }}  // namespace facter::execution

@@ -1,16 +1,16 @@
 #include <internal/facts/external/windows/powershell_resolver.hpp>
-#include <leatherman/windows/system_error.hpp>
-#include <leatherman/windows/windows.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/fact.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/windows/system_error.hpp>
+#include <leatherman/windows/windows.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
 using namespace std;
-using namespace facter::execution;
+using namespace leatherman::execution;
 using namespace leatherman::windows;
 using namespace boost::filesystem;
 
@@ -50,7 +50,7 @@ namespace facter { namespace facts { namespace external {
             }
 
             string error;
-            execution::each_line(
+            each_line(
                 pwrshell,
                 {
                     "-NoProfile",

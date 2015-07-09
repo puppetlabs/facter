@@ -1,12 +1,11 @@
 #include <internal/facts/osx/memory_resolver.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <mach/mach.h>
 #include <sys/sysctl.h>
 
 using namespace std;
-using namespace facter::execution;
-using namespace facter::util;
+using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace osx {
 

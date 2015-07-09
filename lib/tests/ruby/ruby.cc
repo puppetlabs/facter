@@ -3,8 +3,8 @@
 #include <facter/facts/scalar_value.hpp>
 #include <internal/ruby/api.hpp>
 #include <internal/ruby/ruby_value.hpp>
-#include <internal/util/regex.hpp>
-#include <internal/util/scoped_env.hpp>
+#include <leatherman/util/regex.hpp>
+#include <leatherman/util/scoped_env.hpp>
 #include "./ruby_helper.hpp"
 #include "../collection_fixture.hpp"
 #include "../log_capture.hpp"
@@ -12,9 +12,9 @@
 using namespace std;
 using namespace facter::facts;
 using namespace facter::ruby;
-using namespace facter::util;
 using namespace facter::logging;
 using namespace facter::testing;
+using namespace leatherman::util;
 
 SCENARIO("custom facts written in Ruby") {
     collection_fixture facts;

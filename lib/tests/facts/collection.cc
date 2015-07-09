@@ -4,13 +4,13 @@
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/util/environment.hpp>
+#include <leatherman/util/environment.hpp>
 #include "../fixtures.hpp"
 #include <sstream>
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::util;
+using namespace leatherman::util;
 using namespace facter::testing;
 
 struct simple_resolver : facter::facts::resolver

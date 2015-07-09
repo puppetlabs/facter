@@ -2,10 +2,10 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/fact.hpp>
-#include <facter/util/environment.hpp>
+#include <leatherman/util/environment.hpp>
 
 using namespace std;
-using namespace facter::util;
+using namespace leatherman::util;
 
 namespace facter { namespace facts { namespace resolvers {
 

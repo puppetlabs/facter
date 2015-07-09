@@ -1,9 +1,9 @@
 #include <facter/facts/collection.hpp>
-#include <facter/util/environment.hpp>
 #include <internal/facts/external/json_resolver.hpp>
 #include <internal/facts/external/text_resolver.hpp>
 #include <internal/facts/external/yaml_resolver.hpp>
 #include <internal/facts/external/execution_resolver.hpp>
+#include <leatherman/util/environment.hpp>
 #include <unistd.h>
 #include <vector>
 #include <string>
@@ -11,7 +11,7 @@
 #include <memory>
 
 using namespace std;
-using namespace facter::util;
+using namespace leatherman::util;
 using namespace facter::facts::external;
 
 namespace facter { namespace facts {

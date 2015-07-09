@@ -38,9 +38,6 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "logging/logging.cc"
     "log_capture.cc"
     "main.cc"
-    "util/environment.cc"
-    "util/option_set.cc"
-    "util/scoped_env.cc"
     "util/string.cc"
     "fixtures.cc"
     "collection_fixture.cc"
@@ -66,11 +63,9 @@ endif()
 # Set the POSIX sources if on a POSIX platform
 if (UNIX)
     set(LIBFACTER_TESTS_CATEGORY_SOURCES
-        "execution/posix/execution.cc"
         "facts/posix/collection.cc"
         "facts/posix/uptime_resolver.cc"
         "facts/external/posix/execution_resolver.cc"
-        "util/posix/environment.cc"
         "util/posix/scoped_addrinfo.cc"
         "util/posix/scoped_descriptor.cc"
     )
@@ -87,12 +82,10 @@ set(LIBFACTER_TESTS_PLATFORM_LIBRARIES
 
 if (WIN32)
     set(LIBFACTER_TESTS_CATEGORY_SOURCES
-        "execution/windows/execution.cc"
         "facts/windows/collection.cc"
         "facts/windows/networking_resolver.cc"
         "facts/external/windows/execution_resolver.cc"
         "facts/external/windows/powershell_resolver.cc"
-        "util/windows/environment.cc"
     )
 endif()
 
