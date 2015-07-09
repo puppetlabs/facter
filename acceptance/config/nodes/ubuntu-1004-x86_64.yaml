@@ -3,6 +3,8 @@ HOSTS:
   master:
     roles:
     - master
+    - database
+    - dashboard
     platform: el-7-x86_64
     hypervisor: vcloud
     template: redhat-7-x86_64
