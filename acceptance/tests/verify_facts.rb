@@ -29,7 +29,10 @@ def validate_fact(name, node, fact_value, hidden)
               # YAML-CPP seems to drop the decimal whenever it feels like it, so just match Int too.
               fact_value.is_a? Float or fact_value.is_a? Integer or fact_value.to_s =~ /^(\.inf|\.nan|-\.inf)$/
             when 'string'
-              fact_value.is_a? String
+              # YAML.load will automatically convert timestamp values to a Fixnum
+              # so relax validation for uptime related facts
+              #   YAML.load('foo: 1:23') => {"foo"=>4980}
+              fact_value.is_a? String or (fact_value.is_a? Fixnum and name =~ /.*uptime/)
             when 'ip'
               fact_value.is_a? String and fact_value =~ @ip_pattern
             when 'ip6'
@@ -46,7 +49,7 @@ def validate_fact(name, node, fact_value, hidden)
             else
               fail "unexpected type in schema at #{node}"
             end
-  fail "type of #{name} did not match schema, #{fact_value} is not a #{node['type']}" unless is_type
+  fail "type of #{name} did not match schema, #{fact_value} of type #{fact_value.class} is not a #{node['type']}" unless is_type
 
   hidden_attribute = node['hidden'] || false
   fail "hidden fact was displayed by default" if hidden_attribute != hidden

@@ -606,12 +606,6 @@ namespace facter {  namespace ruby {
             _data_objects.erase(obj);
         }
 
-        /**
-         * Global flag to disable Ruby VM cleanup.
-         * This should be set to false in any forked child processes.
-         */
-        static bool cleanup;
-
      private:
         explicit api(facter::util::dynamic_library library);
         // Imported Ruby functions that should not be called externally
