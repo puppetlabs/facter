@@ -1,7 +1,7 @@
 #include <internal/ruby/api.hpp>
 
 using namespace std;
-using namespace facter::util;
+using namespace leatherman::dynamic_library;
 
 namespace facter { namespace ruby {
 

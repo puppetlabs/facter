@@ -65,7 +65,6 @@ set(LIBFACTER_COMMON_SOURCES
     "src/ruby/ruby.cc"
     "src/ruby/ruby_value.cc"
     "src/ruby/simple_resolution.cc"
-    "src/util/dynamic_library.cc"
     "src/util/environment.cc"
     "src/util/scope_exit.cc"
     "src/util/scoped_env.cc"
@@ -95,7 +94,6 @@ if (UNIX)
         "src/facts/posix/uptime_resolver.cc"
         "src/facts/posix/xen_resolver.cc"
         "src/ruby/posix/api.cc"
-        "src/util/posix/dynamic_library.cc"
         "src/util/posix/environment.cc"
         "src/util/posix/scoped_addrinfo.cc"
         "src/util/posix/scoped_descriptor.cc"
@@ -122,7 +120,6 @@ if (WIN32)
         "src/facts/external/windows/powershell_resolver.cc"
         "src/facts/windows/collection.cc"
         "src/ruby/windows/api.cc"
-        "src/util/windows/dynamic_library.cc"
         "src/util/windows/environment.cc"
         "src/util/windows/wsa.cc"
     )
