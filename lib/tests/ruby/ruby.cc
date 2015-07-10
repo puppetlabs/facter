@@ -580,4 +580,10 @@ SCENARIO("custom facts written in Ruby") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("third")) == "\"pass\"");
         }
     }
+    GIVEN("a fact that executes a command that returns non-zero") {
+        REQUIRE(load_custom_fact("execution_failure.rb", facts));
+        THEN("the fact value should be the command's output") {
+            REQUIRE(re_search(ruby_value_to_string(facts.get<ruby_value>("foo")), boost::regex("not_a_command")));
+        }
+    }
 }
