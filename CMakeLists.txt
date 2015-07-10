@@ -96,6 +96,12 @@ endif()
 include(FeatureSummary)
 feature_summary(WHAT ALL)
 
+# Set RPATH if not installing to a system library directory
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" INSTALL_IS_SYSTEM_DIR)
+if ("${INSTALL_IS_SYSTEM_DIR}" STREQUAL "-1")
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+endif()
+
 # Pull in common cflags setting from leatherman
 include(cflags)
 set(FACTER_CXX_FLAGS "${LEATHERMAN_CXX_FLAGS}")
