@@ -39,6 +39,7 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(rb_define_singleton_method),
         LOAD_SYMBOL(rb_class_new_instance),
         LOAD_SYMBOL(rb_gv_get),
+        LOAD_SYMBOL(rb_eval_string),
         LOAD_SYMBOL(rb_funcall),
         LOAD_ALIASED_SYMBOL(rb_funcallv, rb_funcall2),
         LOAD_SYMBOL(rb_proc_new),
@@ -445,6 +446,25 @@ namespace facter { namespace ruby {
     bool api::case_equals(VALUE first, VALUE second) const
     {
         return is_true(rb_funcall(first, rb_intern("==="), 1, second));
+    }
+
+    void api::eval(const string& code)
+    {
+        std::string exception;
+
+        rescue(
+            [&]() {
+                rb_eval_string(code.c_str());
+                return nil_value();
+            },
+            [&](VALUE exc) {
+                exception = exception_to_string(exc);
+                return nil_value();
+            });
+
+        if (!exception.empty()) {
+            throw runtime_error(exception);
+        }
     }
 
     dynamic_library api::find_library()
