@@ -262,6 +262,11 @@ namespace facter { namespace facts {
         });
     }
 
+    ostream& collection::write(ostream& stream, format fmt, set<string> const& queries)
+    {
+        return write(stream, fmt, queries, false);
+    }
+
     ostream& collection::write(ostream& stream, format fmt, set<string> const& queries, bool show_legacy)
     {
         if (queries.empty()) {
