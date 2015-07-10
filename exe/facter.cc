@@ -125,6 +125,7 @@ int main(int argc, char **argv)
             ("no-custom-facts", "Disables custom facts.")
             ("no-external-facts", "Disables external facts.")
             ("no-ruby", "Disables loading Ruby, facts requiring Ruby, and custom facts.")
+            ("puppet,p", "(Deprecated: use `puppet facts` instead) Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.")
             ("trace", "Enable backtraces for custom facts.")
             ("verbose", "Enable verbose (info) output.")
             ("version,v", "Print the version and exit.")
@@ -173,7 +174,13 @@ int main(int argc, char **argv)
                 throw po::error("debug, verbose, and log-level options conflict: please specify only one.");
             }
             if (vm.count("no-ruby") && vm.count("custom-dir")) {
-              throw po::error("no-ruby and custom-dir options conflict: please specify only one.");
+                throw po::error("no-ruby and custom-dir options conflict: please specify only one.");
+            }
+            if (vm.count("puppet") && vm.count("no-custom-facts")) {
+                throw po::error("puppet and no-custom-facts options conflict: please specify only one.");
+            }
+            if (vm.count("puppet") && vm.count("no-ruby")) {
+                throw po::error("puppet and no-ruby options conflict: please specify only one.");
             }
         }
         catch (exception& ex) {
@@ -243,7 +250,7 @@ int main(int argc, char **argv)
         facts.add_environment_facts();
 
         if (ruby && !vm.count("no-custom-facts")) {
-            facter::ruby::load_custom_facts(facts, custom_directories);
+            facter::ruby::load_custom_facts(facts, vm.count("puppet"), custom_directories);
         }
 
         // Output the facts
