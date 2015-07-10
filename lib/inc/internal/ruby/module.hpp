@@ -42,6 +42,12 @@ namespace facter { namespace ruby {
         ~module();
 
         /**
+         * Add additional search paths for ruby custom facts
+         * @param paths The search paths for loading custom facts
+         */
+        void search(std::vector<std::string> const& paths);
+
+        /**
          * Loads all custom facts.
          */
         void load_facts();

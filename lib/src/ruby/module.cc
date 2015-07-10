@@ -243,6 +243,22 @@ namespace facter { namespace ruby {
         ruby->rb_const_remove(*ruby->rb_cObject, ruby->rb_intern("Facter"));
     }
 
+    void module::search(vector<string> const& paths)
+    {
+        for (auto dir : paths) {
+            _additional_search_paths.emplace_back(dir);
+
+            // Get the canonical directory name
+            boost::system::error_code ec;
+            path directory = canonical(_additional_search_paths.back(), ec);
+            if (ec) {
+                continue;
+            }
+
+            _search_paths.push_back(directory.string());
+        }
+    }
+
     void module::load_facts()
     {
         if (_loaded_all) {
