@@ -50,23 +50,23 @@ namespace facter { namespace facts { namespace bsd {
     vector<string> filesystem_resolver::to_options(struct statfs const& fs)
     {
         static vector<tuple<unsigned int, string>> const flags = {
-            { MNT_RDONLY,       "readonly" },
-            { MNT_SYNCHRONOUS,  "noasync" },
-            { MNT_NOEXEC,       "noexec" },
-            { MNT_NOSUID,       "nosuid" },
-            { MNT_UNION,        "union" },
-            { MNT_ASYNC,        "async" },
-            { MNT_EXPORTED,     "exported" },
-            { MNT_LOCAL,        "local" },
-            { MNT_QUOTA,        "quota" },
-            { MNT_ROOTFS,       "root" },
+            make_tuple<unsigned int, string>(MNT_RDONLY,       "readonly"),
+            make_tuple<unsigned int, string>(MNT_SYNCHRONOUS,  "noasync"),
+            make_tuple<unsigned int, string>(MNT_NOEXEC,       "noexec"),
+            make_tuple<unsigned int, string>(MNT_NOSUID,       "nosuid"),
+            make_tuple<unsigned int, string>(MNT_UNION,        "union"),
+            make_tuple<unsigned int, string>(MNT_ASYNC,        "async"),
+            make_tuple<unsigned int, string>(MNT_EXPORTED,     "exported"),
+            make_tuple<unsigned int, string>(MNT_LOCAL,        "local"),
+            make_tuple<unsigned int, string>(MNT_QUOTA,        "quota"),
+            make_tuple<unsigned int, string>(MNT_ROOTFS,       "root"),
 #ifndef __FreeBSD__
             // the following constants aren't defined on FreeBSD 10
-            { MNT_NODEV,        "nodev" },
-            { MNT_DONTBROWSE,   "nobrowse" },
-            { MNT_AUTOMOUNTED,  "automounted" },
-            { MNT_JOURNALED,    "journaled" },
-            { MNT_DEFWRITE,     "deferwrites" },
+            make_tuple<unsigned int, string>(MNT_NODEV,        "nodev"),
+            make_tuple<unsigned int, string>(MNT_DONTBROWSE,   "nobrowse"),
+            make_tuple<unsigned int, string>(MNT_AUTOMOUNTED,  "automounted"),
+            make_tuple<unsigned int, string>(MNT_JOURNALED,    "journaled"),
+            make_tuple<unsigned int, string>(MNT_DEFWRITE,     "deferwrites"),
 #endif
         };
 
