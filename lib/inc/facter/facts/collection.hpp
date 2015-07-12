@@ -198,6 +198,16 @@ namespace facter { namespace facts {
         void each(std::function<bool(std::string const&, value const*)> func);
 
         /**
+         * Writes the contents of the fact collection to the given stream, hiding legacy facts.
+         * All facts will be resolved prior to writing.
+         * @param stream The stream to write the facts to.
+         * @param fmt The output format to use.
+         * @param queries The set of queries to filter the output to. If empty, all facts will be output.
+         * @return Returns the stream being written to.
+         */
+        std::ostream& write(std::ostream& stream, format fmt = format::hash, std::set<std::string> const& queries = std::set<std::string>());
+
+        /**
          * Writes the contents of the fact collection to the given stream.
          * All facts will be resolved prior to writing.
          * @param stream The stream to write the facts to.
@@ -206,7 +216,7 @@ namespace facter { namespace facts {
          * @param show_legacy Show legacy facts when querying all facts.
          * @return Returns the stream being written to.
          */
-        std::ostream& write(std::ostream& stream, format fmt = format::hash, std::set<std::string> const& queries = std::set<std::string>(), bool show_legacy = false);
+        std::ostream& write(std::ostream& stream, format fmt, std::set<std::string> const& queries, bool show_legacy);
 
         /**
          * Resolves all facts in the collection.
