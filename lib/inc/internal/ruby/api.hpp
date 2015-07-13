@@ -171,6 +171,10 @@ namespace facter {  namespace ruby {
         /**
          * See MRI documentation.
          */
+         VALUE (* const rb_eval_string)(char const*);
+        /**
+         * See MRI documentation.
+         */
         VALUE (* const rb_funcall)(VALUE, ID, int, ...);
         /**
          * See MRI documentation.
@@ -573,6 +577,13 @@ namespace facter {  namespace ruby {
          * @return Returns true if === returns true for the first and second values.
          */
         bool case_equals(VALUE first, VALUE second) const;
+
+        /**
+         * Evalutes a string as ruby code.
+         * Any exception raised will be propagated as a C++ runtime_error
+         * @param code the ruby code to execute
+         */
+        void eval(const std::string& code);
 
         /**
          * Gets the underlying native instance from a Ruby data object.
