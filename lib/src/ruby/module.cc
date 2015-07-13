@@ -736,26 +736,23 @@ namespace facter { namespace ruby {
     {
         auto const& ruby = *api::instance();
 
-        // Block to ensure that result is destructed before raising.
-        bool found = false;
-        try {
-            auto expanded = execution::expand_command(command);
-            if (!expanded.empty()) {
-                found = true;
+        // Expand the command
+        auto expanded = execution::expand_command(command);
 
-                bool success;
+        if (!expanded.empty()) {
+            try {
+                bool success = false;
                 string output, none;
                 tie(success, output, none) = execution::execute(execution::command_shell, {execution::command_args, expanded}, timeout);
-                if (success) {
-                    return ruby.utf8_value(output);
-                }
+                return ruby.utf8_value(output);
+            } catch (timeout_exception const& ex) {
+                // Always raise for timeouts
+                ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), ex.what());
             }
-        } catch (timeout_exception const& ex) {
-            // Always raise for timeouts
-            ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), ex.what());
         }
+        // Command was not found
         if (raise) {
-            if (!found) {
+            if (expanded.empty()) {
                 ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), "execution of command \"%s\" failed: command not found.", command.c_str());
             }
             ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), "execution of command \"%s\" failed.", command.c_str());
