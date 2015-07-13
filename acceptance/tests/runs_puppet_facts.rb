@@ -8,15 +8,15 @@ agents.each do |agent|
   custom_file = "#{custom_dir}/custom.rb"
 
   teardown do
-    on agent, "rm -f #{external_file} #{custom_file}"
+    on agent, "rm -f '#{external_file}' '#{custom_file}'"
   end
 
   step "Agent #{agent}: create external fact"
-  agent.mkdir_p(external_dir)
+  on agent, "mkdir -p '#{external_dir}'"
   create_remote_file(agent, external_file, "external=external")
 
   step "Agent #{agent}: create custom fact"
-  agent.mkdir_p(custom_dir)
+  on agent, "mkdir -p '#{custom_dir}'"
   create_remote_file(agent, custom_file, "Facter.add(:custom) { setcode { 'custom' } }")
 
   step "Agent #{agent}: verify facts"
