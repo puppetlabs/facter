@@ -100,10 +100,6 @@ if (UNIX)
             "src/facts/posix/kernel_resolver.cc"
         )
     endif()
-
-    if (NOT CMAKE_SYSTEM_NAME MATCHES "OpenBSD|FreeBSD")
-        set(POSIX_LIBRARIES dl)
-    endif()
 endif()
 
 if (WIN32)
@@ -272,7 +268,6 @@ set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX 
 
 # Link in additional libraries
 target_link_libraries(libfacter PRIVATE
-    ${POSIX_LIBRARIES}
     ${LIBFACTER_PLATFORM_LIBRARIES}
     ${LEATHERMAN_LIBRARIES}
     ${Boost_LIBRARIES}
