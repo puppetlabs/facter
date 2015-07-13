@@ -101,7 +101,7 @@ if (UNIX)
         )
     endif()
 
-    if (NOT CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
+    if (NOT CMAKE_SYSTEM_NAME MATCHES "OpenBSD|FreeBSD")
         set(POSIX_LIBRARIES dl)
     endif()
 endif()
