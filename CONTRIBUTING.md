@@ -42,7 +42,7 @@ core facts.
 * Make sure your commit messages are in the proper format.
 
 ````
-    (CFACT-1234) Make the example in CONTRIBUTING imperative and concrete
+    (FACT-1234) Make the example in CONTRIBUTING imperative and concrete
 
     Without this patch applied the example commit message in the CONTRIBUTING
     document is not a concrete example.  This is a problem because the
@@ -91,7 +91,7 @@ a ticket number.
 # Additional Resources
 
 * [More information on contributing](http://links.puppetlabs.com/contribute-to-puppet)
-* [Bug tracker (Jira)](https://tickets.puppetlabs.com/browse/CFACT)
+* [Bug tracker (Jira)](https://tickets.puppetlabs.com/browse/FACT)
 * [Contributor License Agreement](http://links.puppetlabs.com/cla)
 * [General GitHub documentation](http://help.github.com/)
 * [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
