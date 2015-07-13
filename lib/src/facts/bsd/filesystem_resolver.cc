@@ -62,6 +62,7 @@ namespace facter { namespace facts { namespace bsd {
             make_tuple<unsigned int, string>(MNT_LOCAL,        "local"),
             make_tuple<unsigned int, string>(MNT_QUOTA,        "quota"),
             make_tuple<unsigned int, string>(MNT_ROOTFS,       "root"),
+            make_tuple<unsigned int, string>(MNT_NOATIME,      "noatime"),
 #if !defined(__FreeBSD__)
             make_tuple<unsigned int, string>(MNT_NODEV,        "nodev"),
 #endif
