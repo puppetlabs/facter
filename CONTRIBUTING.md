@@ -18,11 +18,8 @@ top of things.
 
 ## New Facts
 
-All new facts should also be included in `lib/schema/facter.yaml`. Without this facts won't pass acceptance tests.
-
-Note that for now (until facter 3) the schema should be updated in the facter project. Once we release
-facter 3, it'll make sense to move the schema to this project since it will be the canonical source of
-core facts.
+All new facts should also be included in `lib/schema/facter.yaml`. Without this
+facts won't pass acceptance tests.
 
 ## Making Changes
 
@@ -39,6 +36,9 @@ core facts.
 * If you have python 2 in your path you can run `make cpplint` to ensure your
   code formatting is clean. The linter runs as part of Travis CI and could fail
   the CI build.
+* If you have cppcheck in your path you can run `make cppcheck` to ensure your
+  code passes static analysis. cppcheck runs as part of Travis CI and could
+  fail the CI build.
 * Make sure your commit messages are in the proper format.
 
 ````
