@@ -51,7 +51,7 @@ agents.each do |agent|
   expected_networking = {
                           "networking.dhcp"     => /10\.\d+\.\d+\.\d+/,
                           "networking.ip"       => /10\.\d+\.\d+\.\d+/,
-                          "networking.mac"      => /[a-z0-9]{2}:/,
+                          "networking.mac"      => /[a-f0-9]{2}:/,
                           "networking.mtu"      => /\d+/,
                           "networking.netmask"  => /\d+\.\d+\.\d+\.\d+/,
                           "networking.network"  => /10\.\d+\.\d+\.\d+/,
