@@ -18,6 +18,10 @@ Build Requirements
 * Boost C++ Libraries >= 1.54
 * yaml-cpp >= 0.5.1
 
+Currently the leatherman library is vendored as a git submodule.  To ensure submodules are initialized, please run:
+
+**`git submodule update --init`**
+
 Optional Build Libraries
 ------------------------
 
@@ -120,8 +124,6 @@ Pre-Build
 ---------
 
 All of the following examples start by assuming the current directory is the root of the repo.
-
-Note the use of git submodules, so use `git submodule update --init` to ensure the submodules are populated.
 
 On Windows, add `-G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=\<binary install path\> -DBOOST_STATIC=ON` to the `cmake` invocation.
 
