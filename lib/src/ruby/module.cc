@@ -4,6 +4,7 @@
 #include <internal/ruby/confine.hpp>
 #include <internal/ruby/simple_resolution.hpp>
 #include <facter/facts/collection.hpp>
+#include <facter/logging/logging.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/version.h>
@@ -107,7 +108,7 @@ extern "C" {
      */
     void LIBFACTER_EXPORT Init_libfacter()
     {
-        setup_logging(boost::nowide::cerr);
+        facter::logging::setup_logging(boost::nowide::cerr);
         set_level(log_level::warning);
 
         // Initialize ruby
