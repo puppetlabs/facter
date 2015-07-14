@@ -75,13 +75,13 @@ agents.each do |agent|
   expected_networking = {
                           "networking.dhcp"     => /10\.\d+\.\d+\.\d+/,
                           "networking.ip"       => /10\.\d+\.\d+\.\d+/,
-                          "networking.ip6"      => /[a-z0-9]+:+/,
-                          "networking.mac"      => /[a-z0-9]{2}:/,
+                          "networking.ip6"      => /[a-f0-9]+:+/,
+                          "networking.mac"      => /[a-f0-9]{2}:/,
                           "networking.mtu"      => /\d+/,
                           "networking.netmask"  => /\d+\.\d+\.\d+\.\d+/,
-                          "networking.netmask6" => /[a-z0-9]+:/,
+                          "networking.netmask6" => /[a-f0-9]+:/,
                           "networking.network"  => /10\.\d+\.\d+\.\d+/,
-                          "networking.network6" => /([a-z0-9]+)?:([a-z0-9]+)?/
+                          "networking.network6" => /([a-f0-9]+)?:([a-f0-9]+)?/
                         }
 
   expected_networking.each do |fact, value|
