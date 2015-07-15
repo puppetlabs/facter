@@ -1,5 +1,4 @@
 #include <internal/ruby/module.hpp>
-#include <internal/ruby/api.hpp>
 #include <internal/ruby/aggregate_resolution.hpp>
 #include <internal/ruby/confine.hpp>
 #include <internal/ruby/simple_resolution.hpp>
@@ -16,6 +15,10 @@
 #include <boost/nowide/convert.hpp>
 #include <stdexcept>
 #include <functional>
+#include <facter/facts/scalar_value.hpp>
+#include <facter/facts/array_value.hpp>
+#include <facter/facts/map_value.hpp>
+#include <internal/ruby/ruby_value.hpp>
 
 using namespace std;
 using namespace facter::facts;
@@ -23,8 +26,8 @@ using namespace leatherman::execution;
 using namespace leatherman::file_util;
 using namespace leatherman::util;
 using namespace boost::filesystem;
-
 using namespace leatherman::logging;
+using namespace leatherman::ruby;
 
 namespace facter { namespace ruby {
 
@@ -113,7 +116,7 @@ extern "C" {
         set_level(log_level::warning);
 
         // Initialize ruby
-        auto ruby = facter::ruby::api::instance();
+        auto ruby = api::instance();
         if (!ruby) {
             return;
         }
@@ -132,6 +135,10 @@ namespace facter { namespace ruby {
         _collection(facts),
         _loaded_all(false)
     {
+#ifdef FACTER_RUBY
+        api::ruby_lib_location = FACTER_RUBY;
+#endif
+
         if (!api::instance()) {
             throw runtime_error("Ruby API is not present.");
         }
@@ -327,6 +334,47 @@ namespace facter { namespace ruby {
         return ruby.to_native<fact>(fact_self)->value();
     }
 
+    VALUE module::to_ruby(value const* val) const
+    {
+        auto ruby = api::instance();
+
+        if (!val) {
+            return ruby->nil_value();
+        }
+        if (auto ptr = dynamic_cast<facter::ruby::ruby_value const*>(val)) {
+            return ptr->value();
+        }
+        if (auto ptr = dynamic_cast<string_value const*>(val)) {
+            return ruby->utf8_value(ptr->value());
+        }
+        if (auto ptr = dynamic_cast<integer_value const*>(val)) {
+            return ruby->rb_int2inum(static_cast<SIGNED_VALUE>(ptr->value()));
+        }
+        if (auto ptr = dynamic_cast<boolean_value const*>(val)) {
+            return ptr->value() ? ruby->true_value() : ruby->false_value();
+        }
+        if (auto ptr = dynamic_cast<double_value const*>(val)) {
+            return ruby->rb_float_new_in_heap(ptr->value());
+        }
+        if (auto ptr = dynamic_cast<array_value const*>(val)) {
+            volatile VALUE array = ruby->rb_ary_new_capa(static_cast<long>(ptr->size()));
+            ptr->each([&](value const* element) {
+                ruby->rb_ary_push(array, to_ruby(element));
+                return true;
+            });
+            return array;
+        }
+        if (auto ptr = dynamic_cast<map_value const*>(val)) {
+            volatile VALUE hash = ruby->rb_hash_new();
+            ptr->each([&](string const& name, value const* element) {
+                ruby->rb_hash_aset(hash, ruby->utf8_value(name), to_ruby(element));
+                return true;
+            });
+            return hash;
+        }
+        return ruby->nil_value();
+    }
+
     VALUE module::normalize(VALUE name) const
     {
         auto const& ruby = *api::instance();
@@ -351,7 +399,7 @@ namespace facter { namespace ruby {
             _collection.add_environment_facts([&](string const& name) {
                 // Create a fact and explicitly set the value
                 // We honor environment variables above custom fact resolutions
-                ruby.to_native<fact>(create_fact(ruby.utf8_value(name)))->value(ruby.to_ruby(_collection[name]));
+                ruby.to_native<fact>(create_fact(ruby.utf8_value(name)))->value(to_ruby(_collection[name]));
             });
         }
         return _collection;
@@ -546,7 +594,7 @@ namespace facter { namespace ruby {
         volatile VALUE hash = ruby.rb_hash_new();
 
         instance->facts().each([&](string const& name, value const* val) {
-            ruby.rb_hash_aset(hash, ruby.utf8_value(name), ruby.to_ruby(val));
+            ruby.rb_hash_aset(hash, ruby.utf8_value(name), instance->to_ruby(val));
             return true;
         });
         return hash;
@@ -560,7 +608,7 @@ namespace facter { namespace ruby {
         instance->resolve_facts();
 
         instance->facts().each([&](string const& name, value const* val) {
-            ruby.rb_yield_values(2, ruby.utf8_value(name), ruby.to_ruby(val));
+            ruby.rb_yield_values(2, ruby.utf8_value(name), instance->to_ruby(val));
             return true;
         });
         return self;

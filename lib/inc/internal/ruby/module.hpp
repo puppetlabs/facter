@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include "api.hpp"
+#include <leatherman/ruby/api.hpp>
 #include "fact.hpp"
 #include <map>
 #include <set>
@@ -68,14 +68,21 @@ namespace facter { namespace ruby {
          * @param name The name of the fact to get the value of.
          * @return Returns the fact's value or nil if the fact isn't found.
          */
-        VALUE fact_value(VALUE name);
+        leatherman::ruby::VALUE fact_value(leatherman::ruby::VALUE name);
+
+        /**
+         * Converts the given value to a corresponding Ruby object.
+         * @param val The value to convert.
+         * @return Returns a Ruby object for the value.
+         */
+        leatherman::ruby::VALUE to_ruby(facter::facts::value const* val) const;
 
         /**
          * Normalizes the given fact name.
          * @param name The fact name to normalize.
          * @return Returns the normalized fact name.
          */
-        VALUE normalize(VALUE name) const;
+        leatherman::ruby::VALUE normalize(leatherman::ruby::VALUE name) const;
 
         /**
          * Gets the collection associated with the module.
@@ -87,7 +94,7 @@ namespace facter { namespace ruby {
          * Gets the module's self.
          * @return Returns the module's self.
          */
-        VALUE self() const;
+        leatherman::ruby::VALUE self() const;
 
         /**
          * Gets the current module.
@@ -97,48 +104,48 @@ namespace facter { namespace ruby {
 
      private:
          // Methods called from Ruby
-        static VALUE ruby_version(VALUE self);
-        static VALUE ruby_add(int argc, VALUE* argv, VALUE self);
-        static VALUE ruby_define_fact(int argc, VALUE* argv, VALUE self);
-        static VALUE ruby_value(VALUE self, VALUE name);
-        static VALUE ruby_fact(VALUE self, VALUE name);
-        static VALUE ruby_debug(VALUE self, VALUE message);
-        static VALUE ruby_debugonce(VALUE self, VALUE message);
-        static VALUE ruby_warn(VALUE self, VALUE message);
-        static VALUE ruby_warnonce(VALUE self, VALUE message);
-        static VALUE ruby_log_exception(int argc, VALUE* argv, VALUE self);
-        static VALUE ruby_set_debugging(VALUE self, VALUE value);
-        static VALUE ruby_get_debugging(VALUE self);
-        static VALUE ruby_set_trace(VALUE self, VALUE value);
-        static VALUE ruby_get_trace(VALUE self);
-        static VALUE ruby_flush(VALUE self);
-        static VALUE ruby_list(VALUE self);
-        static VALUE ruby_to_hash(VALUE self);
-        static VALUE ruby_each(VALUE self);
-        static VALUE ruby_clear(VALUE self);
-        static VALUE ruby_reset(VALUE self);
-        static VALUE ruby_loadfacts(VALUE self);
-        static VALUE ruby_search(int argc, VALUE* argv, VALUE self);
-        static VALUE ruby_search_path(VALUE self);
-        static VALUE ruby_search_external(VALUE self, VALUE paths);
-        static VALUE ruby_search_external_path(VALUE self);
-        static VALUE ruby_which(VALUE self, VALUE binary);
-        static VALUE ruby_exec(VALUE self, VALUE command);
-        static VALUE ruby_execute(int argc, VALUE* argv, VALUE self);
-        static VALUE ruby_on_message(VALUE self);
+        static leatherman::ruby::VALUE ruby_version(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_add(int argc, leatherman::ruby::VALUE* argv, leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_define_fact(int argc, leatherman::ruby::VALUE* argv, leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_value(leatherman::ruby::VALUE self, leatherman::ruby::VALUE name);
+        static leatherman::ruby::VALUE ruby_fact(leatherman::ruby::VALUE self, leatherman::ruby::VALUE name);
+        static leatherman::ruby::VALUE ruby_debug(leatherman::ruby::VALUE self, leatherman::ruby::VALUE message);
+        static leatherman::ruby::VALUE ruby_debugonce(leatherman::ruby::VALUE self, leatherman::ruby::VALUE message);
+        static leatherman::ruby::VALUE ruby_warn(leatherman::ruby::VALUE self, leatherman::ruby::VALUE message);
+        static leatherman::ruby::VALUE ruby_warnonce(leatherman::ruby::VALUE self, leatherman::ruby::VALUE message);
+        static leatherman::ruby::VALUE ruby_log_exception(int argc, leatherman::ruby::VALUE* argv, leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_set_debugging(leatherman::ruby::VALUE self, leatherman::ruby::VALUE value);
+        static leatherman::ruby::VALUE ruby_get_debugging(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_set_trace(leatherman::ruby::VALUE self, leatherman::ruby::VALUE value);
+        static leatherman::ruby::VALUE ruby_get_trace(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_flush(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_list(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_to_hash(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_each(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_clear(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_reset(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_loadfacts(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_search(int argc, leatherman::ruby::VALUE* argv, leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_search_path(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_search_external(leatherman::ruby::VALUE self, leatherman::ruby::VALUE paths);
+        static leatherman::ruby::VALUE ruby_search_external_path(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_which(leatherman::ruby::VALUE self, leatherman::ruby::VALUE binary);
+        static leatherman::ruby::VALUE ruby_exec(leatherman::ruby::VALUE self, leatherman::ruby::VALUE command);
+        static leatherman::ruby::VALUE ruby_execute(int argc, leatherman::ruby::VALUE* argv, leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_on_message(leatherman::ruby::VALUE self);
 
         // Helper functions
-        static module* from_self(VALUE self);
-        static VALUE execute_command(std::string const& command, VALUE failure_default, bool raise, uint32_t timeout = 0);
+        static module* from_self(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE execute_command(std::string const& command, leatherman::ruby::VALUE failure_default, bool raise, uint32_t timeout = 0);
 
         void initialize_search_paths(std::vector<std::string> const& paths);
-        VALUE load_fact(VALUE value);
+        leatherman::ruby::VALUE load_fact(leatherman::ruby::VALUE value);
         void load_file(std::string const& path);
-        VALUE create_fact(VALUE name);
-        static VALUE level_to_symbol(leatherman::logging::log_level level);
+        leatherman::ruby::VALUE create_fact(leatherman::ruby::VALUE name);
+        static leatherman::ruby::VALUE level_to_symbol(leatherman::logging::log_level level);
 
         facter::facts::collection& _collection;
-        std::map<std::string, VALUE> _facts;
+        std::map<std::string, leatherman::ruby::VALUE> _facts;
         std::set<std::string> _debug_messages;
         std::set<std::string> _warning_messages;
         std::vector<std::string> _search_paths;
@@ -146,10 +153,10 @@ namespace facter { namespace ruby {
         std::vector<std::string> _external_search_paths;
         std::set<std::string> _loaded_files;
         bool _loaded_all;
-        VALUE _self;
-        VALUE _on_message_block;
+        leatherman::ruby::VALUE _self;
+        leatherman::ruby::VALUE _on_message_block;
 
-        static std::map<VALUE, module*> _instances;
+        static std::map<leatherman::ruby::VALUE, module*> _instances;
     };
 
 }}  // namespace facter::ruby

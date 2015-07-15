@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include "api.hpp"
+#include <leatherman/ruby/api.hpp>
 #include "fact.hpp"
 #include <facter/facts/value.hpp>
 
@@ -19,7 +19,7 @@ namespace facter { namespace ruby {
          * Constructs a ruby_value.
          * @param value The Ruby value.
          */
-        ruby_value(VALUE value);
+        ruby_value(leatherman::ruby::VALUE value);
 
         /**
          * Destructs a ruby_value.
@@ -77,14 +77,14 @@ namespace facter { namespace ruby {
          * Gets the Ruby value.
          * @return Returns the Ruby value.
          */
-        VALUE value() const;
+        leatherman::ruby::VALUE value() const;
 
      private:
-        static void to_json(api const& ruby, VALUE value, rapidjson::Allocator& allocator, rapidjson::Value& json);
-        static void write(api const& ruby, VALUE value, std::ostream& os, bool quoted, unsigned int level);
-        static void write(api const& ruby, VALUE value, YAML::Emitter& emitter);
+        static void to_json(leatherman::ruby::api const& ruby, leatherman::ruby::VALUE value, rapidjson::Allocator& allocator, rapidjson::Value& json);
+        static void write(leatherman::ruby::api const& ruby, leatherman::ruby::VALUE value, std::ostream& os, bool quoted, unsigned int level);
+        static void write(leatherman::ruby::api const& ruby, leatherman::ruby::VALUE value, YAML::Emitter& emitter);
 
-        VALUE _value;
+        leatherman::ruby::VALUE _value;
     };
 
 }}  // namespace facter::ruby

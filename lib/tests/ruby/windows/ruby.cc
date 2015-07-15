@@ -1,5 +1,5 @@
 #include <catch.hpp>
-#include <internal/ruby/api.hpp>
+#include <leatherman/ruby/api.hpp>
 #include <internal/ruby/ruby_value.hpp>
 #include "../ruby_helper.hpp"
 #include "../../collection_fixture.hpp"
@@ -7,6 +7,7 @@
 using namespace std;
 using namespace facter::testing;
 using namespace facter::ruby;
+using namespace leatherman::ruby;
 
 SCENARIO("Windows custom facts written in Ruby") {
     collection_fixture facts;

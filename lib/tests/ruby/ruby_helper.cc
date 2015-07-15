@@ -1,12 +1,13 @@
 #include "ruby_helper.hpp"
 #include <leatherman/logging/logging.hpp>
-#include <internal/ruby/api.hpp>
+#include <leatherman/ruby/api.hpp>
 #include <internal/ruby/module.hpp>
 #include "../fixtures.hpp"
 
 using namespace std;
 using namespace facter::ruby;
 using namespace facter::facts;
+using namespace leatherman::ruby;
 
 bool load_custom_fact(string const& filename, collection& facts)
 {
