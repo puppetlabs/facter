@@ -1,12 +1,12 @@
 #include <internal/facts/osx/system_profiler_resolver.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
 #include <functional>
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::execution;
+using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace osx {
 
@@ -38,7 +38,7 @@ namespace facter { namespace facts { namespace osx {
 
         data result;
         size_t count = 0;
-        execution::each_line("/usr/sbin/system_profiler", { "SPSoftwareDataType", "SPHardwareDataType" }, [&](string& line) {
+        each_line("/usr/sbin/system_profiler", { "SPSoftwareDataType", "SPHardwareDataType" }, [&](string& line) {
             // Split at the first ':'
             auto pos = line.find(':');
             if (pos == string::npos) {

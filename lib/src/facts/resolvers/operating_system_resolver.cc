@@ -1,14 +1,15 @@
 #include <internal/facts/resolvers/operating_system_resolver.hpp>
-#include <internal/util/regex.hpp>
 #include <internal/util/versions.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/os.hpp>
+#include <leatherman/util/regex.hpp>
 
 using namespace std;
 using namespace facter::util;
+using namespace leatherman::util;
 
 namespace facter { namespace facts { namespace resolvers {
 
@@ -259,7 +260,7 @@ namespace facter { namespace facts { namespace resolvers {
         }
 
         string major, minor;
-        facter::util::re_search(release, boost::regex("(\\d+\\.\\d*)\\.?(\\d*)"), &major, &minor);
+        re_search(release, boost::regex("(\\d+\\.\\d*)\\.?(\\d*)"), &major, &minor);
         return make_tuple(move(major), move(minor));
     }
 

@@ -1,14 +1,14 @@
 #include <internal/facts/solaris/dmi_resolver.hpp>
-#include <internal/util/regex.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
+#include <leatherman/util/regex.hpp>
 
 using namespace std;
-using namespace facter::util;
-using namespace facter::execution;
+using namespace leatherman::util;
+using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace solaris {
 
@@ -21,7 +21,7 @@ namespace facter { namespace facts { namespace solaris {
             static boost::regex bios_vendor_re("Vendor: (.+)");
             static boost::regex bios_version_re("Version String: (.+)");
             static boost::regex bios_release_re("Release Date: (.+)");
-            execution::each_line("/usr/sbin/smbios", {"-t", "SMB_TYPE_BIOS"}, [&](string& line) {
+            each_line("/usr/sbin/smbios", {"-t", "SMB_TYPE_BIOS"}, [&](string& line) {
                 if (result.bios_vendor.empty()) {
                     re_search(line, bios_vendor_re, &result.bios_vendor);
                 }
@@ -38,7 +38,7 @@ namespace facter { namespace facts { namespace solaris {
             static boost::regex uuid_re("UUID: (.+)");
             static boost::regex serial_re("Serial Number: (.+)");
             static boost::regex product_re("Product: (.+)");
-            execution::each_line("/usr/sbin/smbios", {"-t", "SMB_TYPE_SYSTEM"}, [&](string& line) {
+            each_line("/usr/sbin/smbios", {"-t", "SMB_TYPE_SYSTEM"}, [&](string& line) {
                 if (result.manufacturer.empty()) {
                     re_search(line, manufacturer_re, &result.manufacturer);
                 }
@@ -56,7 +56,7 @@ namespace facter { namespace facts { namespace solaris {
 
             static boost::regex chassis_type_re("(?:Chassis )?Type: (.+)");
             static boost::regex chassis_asset_tag_re("Asset Tag: (.+)");
-            execution::each_line("/usr/sbin/smbios", {"-t", "SMB_TYPE_CHASSIS"}, [&](string& line) {
+            each_line("/usr/sbin/smbios", {"-t", "SMB_TYPE_CHASSIS"}, [&](string& line) {
                 if (result.chassis_type.empty()) {
                     re_search(line, chassis_type_re, &result.chassis_type);
                 }
@@ -68,7 +68,7 @@ namespace facter { namespace facts { namespace solaris {
         } else if (arch && arch->value() == "sparc") {
             static boost::regex line_re("System Configuration: (.+) sun\\d.");
             // prtdiag is not implemented in all sparc machines, so we cant get product name this way.
-            execution::each_line("/usr/sbin/prtconf", [&](string& line) {
+            each_line("/usr/sbin/prtconf", [&](string& line) {
                 if (re_search(line, line_re, &result.manufacturer)) {
                     return false;
                 }
@@ -76,7 +76,7 @@ namespace facter { namespace facts { namespace solaris {
             });
             bool success;
             string output, none;
-            tie(success, output, none) = execution::execute("/usr/sbin/uname", {"-a"});
+            tie(success, output, none) = execute("/usr/sbin/uname", {"-a"});
             if (success) {
                 re_search(output, boost::regex(".* sun\\d[vu] sparc SUNW,(.*)"), &result.product_name);
             }

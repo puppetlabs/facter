@@ -1,12 +1,12 @@
 #include <internal/facts/linux/virtualization_resolver.hpp>
-#include <internal/util/regex.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/file_util/file.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/util/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <vector>
@@ -14,9 +14,9 @@
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::execution;
+using namespace leatherman::util;
+using namespace leatherman::execution;
 using namespace boost::filesystem;
-using namespace facter::util;
 
 namespace bs = boost::system;
 namespace lth_file = leatherman::file_util;
@@ -116,7 +116,7 @@ namespace facter { namespace facts { namespace linux {
             return string("virt-what");
         }();
         string value;
-        execution::each_line(virt_what, [&](string& line) {
+        each_line(virt_what, [&](string& line) {
             // Some versions of virt-what dump error/warning messages to stdout
             if (boost::starts_with(line, "virt-what:")) {
                 return true;
@@ -277,7 +277,7 @@ namespace facter { namespace facts { namespace linux {
         };
 
         string value;
-        execution::each_line("lspci", [&](string& line) {
+        each_line("lspci", [&](string& line) {
             for (auto const& vm : vms) {
                 if (re_search(line, get<0>(vm))) {
                     value = get<1>(vm);

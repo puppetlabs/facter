@@ -19,7 +19,6 @@ leatherman_logging_namespace("puppetlabs.facter")
 
 # Set the common (platform-independent) sources
 set(LIBFACTER_COMMON_SOURCES
-    "src/execution/execution.cc"
     "src/facts/array_value.cc"
     "src/facts/collection.cc"
     "src/facts/external/execution_resolver.cc"
@@ -67,8 +66,6 @@ set(LIBFACTER_COMMON_SOURCES
     "src/ruby/simple_resolution.cc"
     "src/util/scoped_file.cc"
     "src/util/string.cc"
-    "src/util/environment.cc"
-    "src/util/scope_exit.cc"
 )
 
 # Set the POSIX sources if on a POSIX platform

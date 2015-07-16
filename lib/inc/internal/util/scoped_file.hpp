@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include <facter/util/scoped_resource.hpp>
+#include <leatherman/util/scoped_resource.hpp>
 #include <string>
 #include <cstdio>
 
@@ -14,7 +14,7 @@ namespace facter { namespace util {
      * Represents a scoped file.
      * Automatically closes the file when it goes out of scope.
     */
-    struct scoped_file : scoped_resource<std::FILE*>
+    struct scoped_file : leatherman::util::scoped_resource<std::FILE*>
     {
         /**
          * Constructs a scoped_file.

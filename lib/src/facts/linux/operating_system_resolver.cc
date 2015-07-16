@@ -4,13 +4,13 @@
 #include <internal/facts/linux/os_cisco.hpp>
 #include <internal/facts/linux/os_coreos.hpp>
 #include <internal/facts/linux/os_cumulus.hpp>
-#include <internal/util/regex.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/collection.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/file_util/file.hpp>
+#include <leatherman/util/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
@@ -19,9 +19,9 @@
 #include <memory>
 
 using namespace std;
-using namespace facter::execution;
+using namespace leatherman::execution;
 using namespace boost::filesystem;
-using namespace facter::util;
+using namespace leatherman::util;
 
 namespace lth_file = leatherman::file_util;
 
@@ -104,7 +104,7 @@ namespace facter { namespace facts { namespace linux {
         data result = posix::operating_system_resolver::collect_data(facts);
 
         // Populate distro info
-        execution::each_line("lsb_release", {"-a"}, [&](string& line) {
+        each_line("lsb_release", {"-a"}, [&](string& line) {
             string* variable = nullptr;
             size_t offset = 0;
             if (boost::starts_with(line, "LSB Version:")) {

@@ -1,17 +1,17 @@
 #include <internal/facts/aix/operating_system_resolver.hpp>
-#include <internal/util/regex.hpp>
 #include <facter/facts/os.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/file_util/file.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/util/regex.hpp>
 
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
-using namespace facter::util;
+using namespace leatherman::util;
 using namespace leatherman::file_util;
 using namespace boost;
-namespace execution = facter::execution;
+namespace execution = leatherman::execution;
 
 static string getattr(string object, string field)
 {

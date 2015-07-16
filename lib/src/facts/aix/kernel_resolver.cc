@@ -1,13 +1,13 @@
 #include <internal/facts/aix/kernel_resolver.hpp>
-#include <internal/util/regex.hpp>
 #include <facter/facts/collection.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
+#include <leatherman/util/regex.hpp>
 #include <leatherman/file_util/file.hpp>
 #include <boost/regex.hpp>
 
-using namespace facter::util;
-using namespace facter::execution;
+using namespace leatherman::util;
+using namespace leatherman::execution;
 using namespace std;
 
 namespace lth_file = leatherman::file_util;

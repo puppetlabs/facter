@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include <facter/util/scoped_resource.hpp>
+#include <leatherman/util/scoped_resource.hpp>
 #include <ifaddrs.h>
 
 namespace facter { namespace util { namespace bsd {
@@ -12,7 +12,7 @@ namespace facter { namespace util { namespace bsd {
     /**
      * Represents a scoped ifaddrs pointer that automatically is freed when it goes out of scope.
     */
-    struct scoped_ifaddrs : scoped_resource<ifaddrs*>
+    struct scoped_ifaddrs : leatherman::util::scoped_resource<ifaddrs*>
     {
         /**
          * Default constructor.

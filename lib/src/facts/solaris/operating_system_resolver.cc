@@ -1,10 +1,11 @@
 #include <internal/facts/solaris/operating_system_resolver.hpp>
-#include <internal/util/regex.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/os_family.hpp>
 #include <leatherman/file_util/file.hpp>
+#include <leatherman/util/regex.hpp>
 
 using namespace std;
+using namespace leatherman::util;
 
 namespace lth_file = leatherman::file_util;
 

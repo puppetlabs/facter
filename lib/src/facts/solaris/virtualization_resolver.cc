@@ -1,18 +1,18 @@
 #include <internal/facts/solaris/virtualization_resolver.hpp>
-#include <internal/util/regex.hpp>
 #include <facter/facts/vm.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
+#include <leatherman/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::util;
-using namespace facter::execution;
+using namespace leatherman::util;
+using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace solaris {
 
@@ -21,7 +21,7 @@ namespace facter { namespace facts { namespace solaris {
         // works for both x86 & sparc.
         bool success;
         string output, none;
-        tie(success, output, none) = execution::execute("/usr/bin/zonename");
+        tie(success, output, none) = execute("/usr/bin/zonename");
         if (success && output != "global") {
             return vm::zone;
         }
@@ -46,7 +46,7 @@ namespace facter { namespace facts { namespace solaris {
             // Use the same timeout as in Facter 2.x
             const uint32_t timeout = 20;
             try {
-                execution::each_line(
+                each_line(
                     "/usr/sbin/prtdiag",
                     [&](string& line) {
                         for (auto const& it : virtual_map) {
@@ -69,7 +69,7 @@ namespace facter { namespace facts { namespace solaris {
             string role;
 
             static boost::regex domain_role_root("Domain role:.*(root|guest)");
-            execution::each_line("/usr/sbin/virtinfo", [&] (string& line) {
+            each_line("/usr/sbin/virtinfo", [&] (string& line) {
                     if (re_search(line, domain_role_root, &role)) {
                         if (role != "root") {
                             guest_of = vm::ldom;

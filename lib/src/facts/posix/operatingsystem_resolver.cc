@@ -1,10 +1,10 @@
 #include <internal/facts/posix/operating_system_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <sys/utsname.h>
 
 using namespace std;
-using namespace facter::execution;
+using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace posix {
 
