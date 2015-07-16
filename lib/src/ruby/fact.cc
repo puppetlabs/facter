@@ -107,14 +107,12 @@ namespace facter { namespace ruby {
 
                 // Set the value to what was resolved
                 _value = value;
-                _resolved = true;
                 return 0;
             }, [&](VALUE ex) {
                 LOG_ERROR("error while resolving custom fact \"%1%\": %2%", ruby.rb_string_value_ptr(&_name), ruby.exception_to_string(ex));
 
                 // Failed, so set to nil
                 _value = ruby.nil_value();
-                _resolved = true;
                 return 0;
             });
         }
@@ -123,6 +121,7 @@ namespace facter { namespace ruby {
             facts.add(ruby.to_string(_name), ruby.is_nil(_value) ? nullptr : make_value<ruby::ruby_value>(_value));
         }
 
+        _resolved = true;
         _resolving = false;
         return _value;
     }
