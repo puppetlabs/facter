@@ -1,3 +1,5 @@
+require "puppet/acceptance/common_utils"
+
 test_name "#7670: Facter should properly detect operatingsystem on Ubuntu after a clear"
 
 script_contents = <<-OS_DETECT
