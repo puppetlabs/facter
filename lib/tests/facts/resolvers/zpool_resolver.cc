@@ -13,7 +13,7 @@ using namespace facter::testing;
 struct empty_zpool_resolver : zpool_resolver
 {
  protected:
-    virtual string zpool_command()
+    virtual string zpool_command() override
     {
         return "";
     }
@@ -28,7 +28,7 @@ struct empty_zpool_resolver : zpool_resolver
 struct test_zpool_resolver : zpool_resolver
 {
  protected:
-    virtual string zpool_command()
+    virtual string zpool_command() override
     {
         return "";
     }

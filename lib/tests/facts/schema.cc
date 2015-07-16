@@ -355,7 +355,7 @@ protected:
 struct xen_resolver : resolvers::xen_resolver
 {
 protected:
-    virtual string xen_command()
+    virtual string xen_command() override
     {
         return "";
     }
@@ -371,7 +371,7 @@ protected:
 struct zfs_resolver : resolvers::zfs_resolver
 {
 protected:
-    virtual string zfs_command()
+    virtual string zfs_command() override
     {
         return "";
     }
@@ -408,7 +408,7 @@ protected:
 struct zpool_resolver : resolvers::zpool_resolver
 {
 protected:
-    virtual string zpool_command()
+    virtual string zpool_command() override
     {
         return "";
     }
