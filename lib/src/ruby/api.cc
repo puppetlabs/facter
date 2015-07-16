@@ -96,6 +96,7 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(ruby_init),
         LOAD_SYMBOL(ruby_options),
         LOAD_SYMBOL(ruby_cleanup),
+        LOAD_SYMBOL(ruby_init_loadpath),
         _library(move(library))
     {
     }
@@ -155,6 +156,8 @@ namespace facter { namespace ruby {
         } else {
             ruby_init();
         }
+
+        ruby_init_loadpath();
 
         LOG_INFO("using ruby version %1% to resolve custom facts.", to_string(rb_const_get(*rb_cObject, rb_intern("RUBY_VERSION"))));
 

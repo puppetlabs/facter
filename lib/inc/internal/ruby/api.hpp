@@ -624,6 +624,7 @@ namespace facter {  namespace ruby {
         void (* const ruby_init)();
         void* (* const ruby_options)(int, char**);
         int (* const ruby_cleanup)(volatile int);
+        void (* const ruby_init_loadpath)();
 
         static std::unique_ptr<api> create();
 
