@@ -27,7 +27,7 @@ set(FACTER_RUBY "" CACHE FILEPATH "Specify the location of libruby at compile-ti
 if (FACTER_RUBY)
     file(TO_CMAKE_PATH ${FACTER_RUBY} FACTER_RUBY_PATH)
     add_definitions(-DFACTER_RUBY="${FACTER_RUBY_PATH}")
-    message(STATUS "Fixing lookup for libruby to ${FACTERPATH_PATH}")
+    message(STATUS "Fixing lookup for libruby to ${FACTER_RUBY_PATH}")
 endif()
 
 enable_testing()
