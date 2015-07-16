@@ -192,6 +192,16 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
         "src/facts/bsd/uptime_resolver.cc"
         "src/util/bsd/scoped_ifaddrs.cc"
     )
+elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "OpenBSD")
+    set(LIBFACTER_PLATFORM_SOURCES
+        "src/facts/openbsd/collection.cc"
+        "src/facts/glib/load_average_resolver.cc"
+        "src/facts/bsd/filesystem_resolver.cc"
+        "src/facts/bsd/uptime_resolver.cc"
+        "src/facts/openbsd/dmi_resolver.cc"
+        "src/facts/openbsd/networking_resolver.cc"
+        "src/util/bsd/scoped_ifaddrs.cc"
+    )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
     set(LIBFACTER_PLATFORM_SOURCES
         "src/facts/windows/dmi_resolver.cc"
