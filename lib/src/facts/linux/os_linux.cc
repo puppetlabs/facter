@@ -130,7 +130,6 @@ namespace facter { namespace facts { namespace linux {
             make_tuple(string(release_file::alpine),         string(os::alpine)),
             make_tuple(string(release_file::vmware_esx),     string(os::vmware_esx)),
             make_tuple(string(release_file::slackware),      string(os::slackware)),
-            make_tuple(string(release_file::amazon),         string(os::amazon)),
         };
 
         for (auto const& file : files) {
@@ -138,6 +137,15 @@ namespace facter { namespace facts { namespace linux {
             if (is_regular_file(get<0>(file), ec)) {
                 return get<1>(file);
             }
+        }
+        return {};
+    }
+
+    static string check_amazon()
+    {
+        bs::error_code ec;
+        if (is_regular_file(release_file::amazon, ec)) {
+            return os::amazon;
         }
         return {};
     }
@@ -170,7 +178,13 @@ namespace facter { namespace facts { namespace linux {
         }
 
         // Check for SuSE next
-        return check_suse_linux();
+        value = check_suse_linux();
+        if (!value.empty()) {
+            return value;
+        }
+
+        // This should happen after everything else because it's a relatively broad match
+        return check_amazon();
     }
 
     string os_linux::get_family(string const& name) const
