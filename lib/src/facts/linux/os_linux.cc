@@ -120,19 +120,18 @@ namespace facter { namespace facts { namespace linux {
     static string check_other_linux()
     {
         static vector<tuple<string, string>> const files {
-            make_tuple(string(release_file::openwrt),        string(os::openwrt)),
+            make_tuple(string(release_file::arista_eos),     string(os::arista_eos)),
             make_tuple(string(release_file::gentoo),         string(os::gentoo)),
+            make_tuple(string(release_file::mageia),         string(os::mageia)),
             make_tuple(string(release_file::mandriva),       string(os::mandriva)),
             make_tuple(string(release_file::mandrake),       string(os::mandrake)),
             make_tuple(string(release_file::meego),          string(os::meego)),
             make_tuple(string(release_file::archlinux),      string(os::archlinux)),
             make_tuple(string(release_file::oracle_linux),   string(os::oracle_linux)),
+            make_tuple(string(release_file::openwrt),        string(os::openwrt)),
+            make_tuple(string(release_file::alpine),         string(os::alpine)),
             make_tuple(string(release_file::vmware_esx),     string(os::vmware_esx)),
             make_tuple(string(release_file::slackware),      string(os::slackware)),
-            make_tuple(string(release_file::alpine),         string(os::alpine)),
-            make_tuple(string(release_file::mageia),         string(os::mageia)),
-            make_tuple(string(release_file::amazon),         string(os::amazon)),
-            make_tuple(string(release_file::arista_eos),     string(os::arista_eos)),
         };
 
         for (auto const& file : files) {
@@ -144,10 +143,26 @@ namespace facter { namespace facts { namespace linux {
         return {};
     }
 
+    static string check_amazon()
+    {
+        bs::error_code ec;
+        if (is_regular_file(release_file::amazon, ec)) {
+            return os::amazon;
+        }
+        return {};
+    }
+
     string os_linux::get_name(string const& distro_id) const
     {
-        // Check for Debian next
+        // Check for Debian first; this happens after AristaEOS in Facter 2.x
+        // but that platform is not a Debian so shouldn't matter.
         auto value = check_debian_linux(distro_id);
+        if (!value.empty()) {
+            return value;
+        }
+
+        // Check for specialized distributions next
+        value = check_other_linux();
         if (!value.empty()) {
             return value;
         }
@@ -170,8 +185,8 @@ namespace facter { namespace facts { namespace linux {
             return value;
         }
 
-        // Check for some other Linux last
-        return check_other_linux();
+        // This should happen after everything else because it's a relatively broad match
+        return check_amazon();
     }
 
     string os_linux::get_family(string const& name) const
