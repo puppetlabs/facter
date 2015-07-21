@@ -27,7 +27,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
         string augtool = [] {
 #ifdef FACTER_PATH
-            string fixed = execution::which("augtool", {FACTER_PATH});
+            string fixed = which("augtool", {FACTER_PATH});
             if (fixed.empty()) {
                 LOG_WARNING("augtool not found at configured location %1%, using PATH instead", FACTER_PATH);
             } else {
