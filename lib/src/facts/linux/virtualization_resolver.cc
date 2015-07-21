@@ -106,7 +106,7 @@ namespace facter { namespace facts { namespace linux {
     {
         string virt_what = [] {
 #ifdef FACTER_PATH
-            string fixed = execution::which("virt-what", {FACTER_PATH});
+            string fixed = which("virt-what", {FACTER_PATH});
             if (fixed.empty()) {
                 LOG_WARNING("virt-what not found at configured location %1%, using PATH instead", FACTER_PATH);
             } else {
