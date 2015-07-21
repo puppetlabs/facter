@@ -1,18 +1,18 @@
 #include <internal/facts/linux/os_linux.hpp>
 #include <internal/facts/resolvers/operating_system_resolver.hpp>
-#include <internal/util/regex.hpp>
-#include <facter/execution/execution.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/os_family.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/file_util/file.hpp>
+#include <leatherman/util/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <vector>
 
 using namespace std;
-using namespace facter::execution;
+using namespace leatherman::execution;
 using namespace boost::filesystem;
-using namespace facter::util;
+using namespace leatherman::util;
 
 namespace bs = boost::system;
 namespace lth_file = leatherman::file_util;

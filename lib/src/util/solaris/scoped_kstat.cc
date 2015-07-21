@@ -1,6 +1,7 @@
 #include <internal/util/solaris/scoped_kstat.hpp>
 
 using namespace std;
+using namespace leatherman::util;
 
 namespace facter { namespace util { namespace solaris {
 

@@ -1,17 +1,19 @@
 #include <internal/facts/resolvers/xen_resolver.hpp>
-#include <internal/util/regex.hpp>
-#include <leatherman/logging/logging.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
+#include <leatherman/util/regex.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace facter::facts;
+using namespace leatherman::execution;
+using namespace leatherman::util;
 
 namespace facter { namespace facts { namespace resolvers {
 
@@ -63,9 +65,9 @@ namespace facter { namespace facts { namespace resolvers {
         if (!command.empty()) {
             static boost::regex domain_header("^(Name|Domain-0)");
             static boost::regex domain_entry("^([^\\s]*)\\s");
-            execution::each_line(command, {"list"}, [&](string& line) {
+            each_line(command, {"list"}, [&](string& line) {
                 string domain;
-                if (!boost::regex_match(line, domain_header) && util::re_search(line, domain_entry, &domain)) {
+                if (!boost::regex_match(line, domain_header) && re_search(line, domain_entry, &domain)) {
                     result.domains.emplace_back(move(domain));
                 }
                 return true;

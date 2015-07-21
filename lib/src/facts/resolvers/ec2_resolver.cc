@@ -1,11 +1,11 @@
 #include <internal/facts/resolvers/ec2_resolver.hpp>
-#include <internal/util/regex.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
 #include <facter/util/string.hpp>
+#include <leatherman/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <set>
@@ -16,7 +16,7 @@ namespace lth_curl = leatherman::curl;
 #endif
 
 using namespace std;
-using namespace facter::util;
+using namespace leatherman::util;
 
 namespace facter { namespace facts { namespace resolvers {
 

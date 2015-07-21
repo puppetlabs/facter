@@ -2,13 +2,13 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <boost/algorithm/string.hpp>
 #include <net/if_dl.h>
 #include <net/if.h>
 
 using namespace std;
-using namespace facter::execution;
+using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace osx {
 
@@ -40,7 +40,7 @@ namespace facter { namespace facts { namespace osx {
     string networking_resolver::get_primary_interface() const
     {
         string interface;
-        execution::each_line("route", { "-n", "get",  "default" }, [&interface](string& line){
+        each_line("route", { "-n", "get",  "default" }, [&interface](string& line){
             boost::trim(line);
             if (boost::starts_with(line, "interface: ")) {
                 interface = line.substr(11);

@@ -4,13 +4,13 @@
 #include <internal/ruby/simple_resolution.hpp>
 #include <internal/ruby/ruby_value.hpp>
 #include <facter/facts/collection.hpp>
-#include <facter/util/environment.hpp>
+#include <leatherman/util/environment.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <algorithm>
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::util;
+using namespace leatherman::util;
 
 namespace facter { namespace ruby {
 

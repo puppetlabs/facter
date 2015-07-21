@@ -1,14 +1,14 @@
 #include <catch.hpp>
 #include <facter/facts/collection.hpp>
-#include <facter/execution/execution.hpp>
-#include <facter/util/environment.hpp>
+#include <leatherman/execution/execution.hpp>
+#include <leatherman/util/environment.hpp>
 #include <boost/filesystem.hpp>
 #include "../fixtures.hpp"
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::execution;
-using namespace facter::util;
+using namespace leatherman::execution;
+using namespace leatherman::util;
 using namespace boost::filesystem;
 using namespace facter::testing;
 

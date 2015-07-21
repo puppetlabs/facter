@@ -1,6 +1,6 @@
 #include <internal/facts/bsd/networking_resolver.hpp>
 #include <internal/util/bsd/scoped_ifaddrs.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/file_util/file.hpp>
 #include <leatherman/file_util/directory.hpp>
 #include <leatherman/logging/logging.hpp>
@@ -9,7 +9,7 @@
 
 using namespace std;
 using namespace facter::util::bsd;
-using namespace facter::execution;
+using namespace leatherman::execution;
 
 namespace lth_file = leatherman::file_util;
 
@@ -197,7 +197,7 @@ namespace facter { namespace facts { namespace bsd {
         // Use dhcpcd if it's present to get the interface's DHCP lease information
         // This assumes we've already searched for the interface with dhclient
         string value;
-        execution::each_line("dhcpcd", { "-U", interface }, [&value](string& line) {
+        each_line("dhcpcd", { "-U", interface }, [&value](string& line) {
             if (boost::starts_with(line, "dhcp_server_identifier=")) {
                 value = line.substr(23);
                 boost::trim(value);

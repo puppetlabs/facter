@@ -3,8 +3,8 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/array_value.hpp>
-#include <facter/util/environment.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
+#include <leatherman/util/environment.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem/path.hpp>
@@ -13,8 +13,8 @@
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::util;
-using namespace facter::execution;
+using namespace leatherman::execution;
+using namespace leatherman::util;
 using namespace boost::filesystem;
 using namespace leatherman::dynamic_library;
 
@@ -495,7 +495,7 @@ namespace facter { namespace ruby {
         }
 
         // Search the path for ruby.exe and query it for the location of its library.
-        string ruby = execution::which("ruby");
+        string ruby = which("ruby");
         if (ruby.empty()) {
             LOG_DEBUG("ruby could not be found on the PATH.");
             return library;

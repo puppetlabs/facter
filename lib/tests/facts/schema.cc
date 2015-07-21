@@ -6,7 +6,7 @@
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <internal/util/regex.hpp>
+#include <leatherman/util/regex.hpp>
 #include <yaml-cpp/yaml.h>
 #include <boost/nowide/fstream.hpp>
 #include "../fixtures.hpp"
@@ -39,7 +39,7 @@
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::util;
+using namespace leatherman::util;
 using namespace facter::testing;
 
 // For every base resolver, implement a resolver that outputs the minimum values to pass schema validation

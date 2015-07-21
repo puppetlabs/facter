@@ -3,7 +3,7 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/string.hpp>
-#include <internal/util/regex.hpp>
+#include <leatherman/util/regex.hpp>
 #include "../../../fixtures.hpp"
 #include "../../../log_capture.hpp"
 
@@ -13,6 +13,7 @@ using namespace facter::util;
 using namespace facter::facts::external;
 using namespace facter::logging;
 using namespace facter::testing;
+using namespace leatherman::util;
 
 SCENARIO("resolving external executable facts") {
     collection_fixture facts;

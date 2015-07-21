@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include <facter/util/scoped_resource.hpp>
+#include <leatherman/util/scoped_resource.hpp>
 #include <unistd.h>
 
 namespace facter { namespace util { namespace posix {
@@ -12,7 +12,7 @@ namespace facter { namespace util { namespace posix {
      * Represents a scoped file descriptor for POSIX systems.
      * Automatically closes the file descriptor when it goes out of scope.
     */
-    struct scoped_descriptor : scoped_resource<int>
+    struct scoped_descriptor : leatherman::util::scoped_resource<int>
     {
         /**
          * Constructs a scoped_descriptor.

@@ -130,6 +130,7 @@ if(WIN32)
 endif()
 set(LEATHERMAN_USE_FILE_UTIL TRUE)
 set(LEATHERMAN_USE_DYNAMIC_LIBRARY TRUE)
+set(LEATHERMAN_USE_EXECUTION TRUE)
 add_subdirectory("vendor/leatherman")
 
 #

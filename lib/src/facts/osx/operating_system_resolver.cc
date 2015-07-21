@@ -1,11 +1,11 @@
 #include <internal/facts/osx/operating_system_resolver.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <boost/algorithm/string.hpp>
 #include <string>
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::execution;
+using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace osx {
 
@@ -14,7 +14,7 @@ namespace facter { namespace facts { namespace osx {
         // Default to the base implementation
         data result = posix::operating_system_resolver::collect_data(facts);
 
-        execution::each_line("/usr/bin/sw_vers", [&](string& line) {
+        each_line("/usr/bin/sw_vers", [&](string& line) {
             // Split at the first ':'
             auto pos = line.find(':');
             if (pos == string::npos) {

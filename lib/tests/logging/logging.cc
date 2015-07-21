@@ -1,11 +1,11 @@
 #include <catch.hpp>
 #include <facter/logging/logging.hpp>
-#include <internal/util/regex.hpp>
+#include <leatherman/util/regex.hpp>
 #include "../log_capture.hpp"
 
 using namespace std;
 using namespace facter::logging;
-using namespace facter::util;
+using namespace leatherman::util;
 using namespace facter::testing;
 
 SCENARIO("logging with a TRACE level") {

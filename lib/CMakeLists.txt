@@ -19,7 +19,6 @@ leatherman_logging_namespace("puppetlabs.facter")
 
 # Set the common (platform-independent) sources
 set(LIBFACTER_COMMON_SOURCES
-    "src/execution/execution.cc"
     "src/facts/array_value.cc"
     "src/facts/collection.cc"
     "src/facts/external/execution_resolver.cc"
@@ -65,9 +64,6 @@ set(LIBFACTER_COMMON_SOURCES
     "src/ruby/ruby.cc"
     "src/ruby/ruby_value.cc"
     "src/ruby/simple_resolution.cc"
-    "src/util/environment.cc"
-    "src/util/scope_exit.cc"
-    "src/util/scoped_env.cc"
     "src/util/scoped_file.cc"
     "src/util/string.cc"
 )
@@ -75,7 +71,6 @@ set(LIBFACTER_COMMON_SOURCES
 # Set the POSIX sources if on a POSIX platform
 if (UNIX)
     set(LIBFACTER_STANDARD_SOURCES
-        "src/execution/posix/execution.cc"
         "src/facts/posix/collection.cc"
         "src/facts/posix/identity_resolver.cc"
         "src/facts/posix/networking_resolver.cc"
@@ -86,7 +81,6 @@ if (UNIX)
         "src/facts/posix/uptime_resolver.cc"
         "src/facts/posix/xen_resolver.cc"
         "src/ruby/posix/api.cc"
-        "src/util/posix/environment.cc"
         "src/util/posix/scoped_addrinfo.cc"
         "src/util/posix/scoped_descriptor.cc"
     )
@@ -104,11 +98,9 @@ endif()
 
 if (WIN32)
     set(LIBFACTER_STANDARD_SOURCES
-        "src/execution/windows/execution.cc"
         "src/facts/external/windows/powershell_resolver.cc"
         "src/facts/windows/collection.cc"
         "src/ruby/windows/api.cc"
-        "src/util/windows/environment.cc"
         "src/util/windows/wsa.cc"
     )
 endif()

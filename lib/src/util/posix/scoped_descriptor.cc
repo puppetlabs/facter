@@ -1,6 +1,7 @@
 #include <internal/util/posix/scoped_descriptor.hpp>
 
 using namespace std;
+using namespace leatherman::util;
 
 namespace facter { namespace util { namespace posix {
 

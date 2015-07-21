@@ -2,6 +2,7 @@
 #include <boost/nowide/cstdio.hpp>
 
 using namespace std;
+using namespace leatherman::util;
 
 namespace facter { namespace util {
 

@@ -1,10 +1,10 @@
 #include <internal/facts/posix/uptime_resolver.hpp>
-#include <internal/util/regex.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/util/regex.hpp>
+#include <leatherman/execution/execution.hpp>
 
 using namespace std;
-using namespace facter::util;
-using namespace facter::execution;
+using namespace leatherman::util;
+using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace posix {
 

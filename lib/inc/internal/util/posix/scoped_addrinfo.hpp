@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include <facter/util/scoped_resource.hpp>
+#include <leatherman/util/scoped_resource.hpp>
 #include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -17,7 +17,7 @@ namespace facter { namespace util { namespace posix {
      * Represents a scoped addrinfo for POSIX systems.
      * Automatically frees the address information pointer when it goes out of scope.
     */
-    struct scoped_addrinfo : scoped_resource<addrinfo*>
+    struct scoped_addrinfo : leatherman::util::scoped_resource<addrinfo*>
     {
         /**
          * Constructs a scoped_addrinfo.

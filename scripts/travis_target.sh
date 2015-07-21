@@ -4,17 +4,16 @@
 # (and the value of 'compiler'). In order to test multiple builds
 # (release/debug/cpplint/cppcheck), this uses a TRAVIS_TARGET env
 # var to do the right thing.
-#
-# Note that it assumes cmake is at $HOME/bin which is an artifact
-# of the before_install step in this project's .travis.yml.
 
 function travis_make()
 {
     mkdir $1 && cd $1
 
+    # Set compiler to GCC 4.8 here, as Travis overrides the global variables.
+    export CC=gcc-4.8 CXX=g++-4.8
     # Generate build files
     [ $1 == "debug" ] && export CMAKE_VARS="-DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=ON"
-    $HOME/bin/cmake $CMAKE_VARS ..
+    cmake $CMAKE_VARS ..
     if [ $? -ne 0 ]; then
         echo "cmake failed."
         exit 1
@@ -28,7 +27,7 @@ function travis_make()
     else
         export MAKE_TARGET="all"
     fi
-    make $MAKE_TARGET
+    make $MAKE_TARGET -j2
     if [ $? -ne 0 ]; then
         echo "build failed."
         exit 1
@@ -65,16 +64,15 @@ function travis_make()
         fi
 
         if [ $1 == "debug" ]; then
-            coveralls --gcov-options '\-lp' -r .. >/dev/null
+            coveralls --gcov gcov-4.8 --gcov-options '\-lp' -r .. >/dev/null
         fi
 
         # Make sure installation succeeds
-        sudo make install
+        make DESTDIR=$USERDIR install
         if [ $? -ne 0 ]; then
             echo "install failed."
             exit 1
         fi
-        sudo ldconfig
     fi
 }
 

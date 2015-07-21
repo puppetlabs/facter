@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include <facter/util/scoped_resource.hpp>
+#include <leatherman/util/scoped_resource.hpp>
 #include <openssl/bio.h>
 
 namespace facter { namespace util { namespace posix {
@@ -13,7 +13,7 @@ namespace facter { namespace util { namespace posix {
      * Represents a scoped OpenSSL BIO object.
      * Automatically frees the BIO when it goes out of scope.
     */
-    struct scoped_bio : scoped_resource<BIO*>
+    struct scoped_bio : leatherman::util::scoped_resource<BIO*>
     {
         /**
          * Constructs a scoped_bio.

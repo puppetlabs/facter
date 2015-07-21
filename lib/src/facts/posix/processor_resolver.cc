@@ -1,9 +1,9 @@
 #include <internal/facts/posix/processor_resolver.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>
 
 using namespace std;
-using namespace facter::execution;
+using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace posix {
 

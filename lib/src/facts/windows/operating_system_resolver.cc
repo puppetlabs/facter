@@ -1,11 +1,11 @@
 #include <internal/facts/windows/operating_system_resolver.hpp>
-#include <internal/util/regex.hpp>
 #include <leatherman/windows/system_error.hpp>
 #include <leatherman/windows/wmi.hpp>
 #include <leatherman/windows/windows.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/os_family.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/util/regex.hpp>
 #include <intrin.h>
 #include <winnt.h>
 #include <Shlobj.h>
@@ -13,7 +13,7 @@
 #include <boost/filesystem.hpp>
 
 using namespace std;
-using namespace facter::util;
+using namespace leatherman::util;
 using namespace leatherman::windows;
 using namespace boost::filesystem;
 

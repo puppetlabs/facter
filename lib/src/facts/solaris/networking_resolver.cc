@@ -1,7 +1,7 @@
 #include <internal/facts/solaris/networking_resolver.hpp>
 #include <internal/util/posix/scoped_descriptor.hpp>
-#include <facter/execution/execution.hpp>
 #include <facter/util/string.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <sys/sockio.h>
@@ -10,7 +10,7 @@
 using namespace std;
 using namespace facter::util::posix;
 using namespace facter::util;
-using namespace facter::execution;
+using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace solaris {
 
@@ -159,7 +159,7 @@ namespace facter { namespace facts { namespace solaris {
     string networking_resolver::get_primary_interface() const
     {
         string value;
-        execution::each_line("netstat", { "-rn"}, [&value](string& line) {
+        each_line("netstat", { "-rn"}, [&value](string& line) {
             boost::trim(line);
             if (boost::starts_with(line, "default")) {
                 vector<string> fields;

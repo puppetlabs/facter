@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include <facter/util/scoped_resource.hpp>
+#include <leatherman/util/scoped_resource.hpp>
 #include <kstat.h>
 
 namespace facter { namespace util { namespace solaris {
@@ -24,7 +24,7 @@ namespace facter { namespace util { namespace solaris {
     /**
      * Represents a scoped kstat pointer that automatically is freed when it goes out of scope.
      */
-    struct scoped_kstat : scoped_resource<kstat_ctl*>
+    struct scoped_kstat : leatherman::util::scoped_resource<kstat_ctl*>
     {
         /**
          * Default constructor.

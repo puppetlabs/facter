@@ -1,15 +1,15 @@
 #include <internal/facts/resolvers/zfs_resolver.hpp>
-#include <internal/util/regex.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
+#include <leatherman/util/regex.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::execution;
-using namespace facter::util;
+using namespace leatherman::execution;
+using namespace leatherman::util;
 
 namespace facter { namespace facts { namespace resolvers {
 
@@ -41,7 +41,7 @@ namespace facter { namespace facts { namespace resolvers {
 
         // Get the ZFS version
         static boost::regex zfs_version("currently running ZFS filesystem version (\\d+)[.]");
-        execution::each_line(zfs_command(), {"upgrade"}, [&] (string& line) {
+        each_line(zfs_command(), {"upgrade"}, [&] (string& line) {
             if (re_search(line, zfs_version, &result.version)) {
                 return false;
             }
@@ -50,7 +50,7 @@ namespace facter { namespace facts { namespace resolvers {
 
         // Get the ZFS features
         static boost::regex zfs_feature("\\s*(\\d+)[ ]");
-        execution::each_line(zfs_command(), {"upgrade", "-v"}, [&] (string& line) {
+        each_line(zfs_command(), {"upgrade", "-v"}, [&] (string& line) {
             string feature;
             if (re_search(line, zfs_feature, &feature)) {
                 result.features.emplace_back(move(feature));

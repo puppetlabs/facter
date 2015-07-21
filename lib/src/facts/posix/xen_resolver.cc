@@ -1,11 +1,11 @@
 #include <internal/facts/posix/xen_resolver.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::execution;
+using namespace leatherman::execution;
 using namespace boost::filesystem;
 namespace bs = boost::system;
 
@@ -31,7 +31,7 @@ namespace facter { namespace facts { namespace posix {
 
             static vector<string> xen_commands{"/usr/sbin/xl", "/usr/sbin/xm"};
             for (auto const& cmd : xen_commands) {
-                auto cmd_path = execution::which(cmd);
+                auto cmd_path = which(cmd);
                 if (!cmd_path.empty()) {
                     return cmd_path;
                 }

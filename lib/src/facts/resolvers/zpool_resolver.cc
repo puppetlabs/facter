@@ -1,15 +1,15 @@
 #include <internal/facts/resolvers/zpool_resolver.hpp>
-#include <internal/util/regex.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
+#include <leatherman/util/regex.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::execution;
-using namespace facter::util;
+using namespace leatherman::execution;
+using namespace leatherman::util;
 
 namespace facter { namespace facts { namespace resolvers {
 
@@ -42,7 +42,7 @@ namespace facter { namespace facts { namespace resolvers {
         // Get the zpool version and features
         static boost::regex zpool_version("ZFS pool version (\\d+)[.]");
         static boost::regex zpool_feature("\\s*(\\d+)[ ]");
-        execution::each_line(zpool_command(), {"upgrade", "-v"}, [&] (string& line) {
+        each_line(zpool_command(), {"upgrade", "-v"}, [&] (string& line) {
             if (re_search(line, zpool_version, &result.version)) {
                 return true;
             }

@@ -3,12 +3,13 @@
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/execution/execution.hpp>
+
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
-using namespace facter::execution;
+using namespace leatherman::execution;
 using namespace facter::facts;
 using namespace facter::facts::external;
 
@@ -19,7 +20,7 @@ namespace facter { namespace facts { namespace external {
         // If the path can be resolved as an executable, this resolver can handle it.
         // However, only allow absolute paths.
         LOG_DEBUG("checking execution on %1%", path);
-        return !execution::which(path, {}).empty();
+        return !which(path, {}).empty();
     }
 
     void execution_resolver::resolve(string const& path, collection& facts) const
@@ -29,7 +30,7 @@ namespace facter { namespace facts { namespace external {
         try
         {
             string error;
-            execution::each_line(
+            each_line(
                 path,
                 [&](string const& line) {
                     auto pos = line.find('=');

@@ -1,6 +1,7 @@
 #include <internal/util/bsd/scoped_ifaddrs.hpp>
 
 using namespace std;
+using namespace leatherman::util;
 
 namespace facter { namespace util { namespace bsd {
 

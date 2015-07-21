@@ -2,12 +2,11 @@
 #include <internal/ruby/module.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::util;
-using namespace facter::execution;
+using namespace leatherman::execution;
 
 namespace facter { namespace ruby {
 

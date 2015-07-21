@@ -4,10 +4,11 @@
 #include <internal/ruby/confine.hpp>
 #include <internal/ruby/simple_resolution.hpp>
 #include <facter/facts/collection.hpp>
-#include <leatherman/file_util/directory.hpp>
-#include <facter/execution/execution.hpp>
 #include <facter/version.h>
 #include <facter/export.h>
+#include <leatherman/util/environment.hpp>
+#include <leatherman/execution/execution.hpp>
+#include <leatherman/file_util/directory.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -18,13 +19,12 @@
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::util;
-using namespace facter::execution;
+using namespace leatherman::execution;
+using namespace leatherman::file_util;
+using namespace leatherman::util;
 using namespace boost::filesystem;
 
 using namespace leatherman::logging;
-
-namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace ruby {
 
@@ -271,7 +271,7 @@ namespace facter { namespace ruby {
 
         for (auto const& directory : _search_paths) {
             LOG_DEBUG("searching for custom facts in %1%.", directory);
-            lth_file::each_file(directory, [&](string const& file) {
+            each_file(directory, [&](string const& file) {
                 load_file(file);
                 return true;
             }, "\\.rb$");
@@ -667,7 +667,7 @@ namespace facter { namespace ruby {
         // Note: self is Facter::Core::Execution
         auto const& ruby = *api::instance();
 
-        string path = execution::which(ruby.to_string(binary));
+        string path = which(ruby.to_string(binary));
         if (path.empty()) {
             return ruby.nil_value();
         }
@@ -737,13 +737,13 @@ namespace facter { namespace ruby {
         auto const& ruby = *api::instance();
 
         // Expand the command
-        auto expanded = execution::expand_command(command);
+        auto expanded = expand_command(command);
 
         if (!expanded.empty()) {
             try {
                 bool success = false;
                 string output, none;
-                tie(success, output, none) = execution::execute(execution::command_shell, {execution::command_args, expanded}, timeout);
+                tie(success, output, none) = execute(command_shell, {command_args, expanded}, timeout);
                 return ruby.utf8_value(output);
             } catch (timeout_exception const& ex) {
                 // Always raise for timeouts

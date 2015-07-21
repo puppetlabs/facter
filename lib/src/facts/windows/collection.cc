@@ -1,6 +1,4 @@
 #include <facter/facts/collection.hpp>
-#include <facter/util/scoped_resource.hpp>
-#include <facter/util/environment.hpp>
 #include <internal/facts/external/json_resolver.hpp>
 #include <internal/facts/external/text_resolver.hpp>
 #include <internal/facts/external/yaml_resolver.hpp>
@@ -16,6 +14,7 @@
 #include <internal/facts/windows/timezone_resolver.hpp>
 #include <internal/facts/windows/uptime_resolver.hpp>
 #include <internal/facts/windows/virtualization_resolver.hpp>
+#include <leatherman/util/environment.hpp>
 #include <leatherman/windows/system_error.hpp>
 #include <leatherman/windows/user.hpp>
 #include <leatherman/windows/windows.hpp>
@@ -24,8 +23,8 @@
 #include <Shlobj.h>
 
 using namespace std;
-using namespace facter::util;
 using namespace leatherman::windows;
+using namespace leatherman::util;
 using namespace facter::facts::external;
 using namespace boost::filesystem;
 
