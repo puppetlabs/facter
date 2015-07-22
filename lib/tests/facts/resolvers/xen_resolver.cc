@@ -16,7 +16,7 @@ using namespace facter::testing;
 struct empty_xen_resolver : xen_resolver
 {
  protected:
-    virtual string xen_command()
+    virtual string xen_command() override
     {
         return "";
     }
@@ -31,7 +31,7 @@ struct empty_xen_resolver : xen_resolver
 struct test_xen_resolver : xen_resolver
 {
  protected:
-    virtual string xen_command()
+    virtual string xen_command() override
     {
         return "";
     }

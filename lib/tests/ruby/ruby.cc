@@ -601,4 +601,10 @@ SCENARIO("custom facts written in Ruby") {
             REQUIRE(re_search(ruby_value_to_string(facts.get<ruby_value>("foo")), boost::regex("not_a_command")));
         }
     }
+    GIVEN("a built-in fact requested multiple times") {
+        REQUIRE(load_custom_fact("single_allocation.rb", facts));
+        THEN("the value should be properly cached between Facter.value calls") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "true");
+        }
+    }
 }

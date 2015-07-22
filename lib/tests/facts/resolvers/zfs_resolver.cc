@@ -13,7 +13,7 @@ using namespace facter::testing;
 struct empty_zfs_resolver : zfs_resolver
 {
  protected:
-    virtual string zfs_command()
+    virtual string zfs_command() override
     {
         return "";
     }
@@ -28,7 +28,7 @@ struct empty_zfs_resolver : zfs_resolver
 struct test_zfs_resolver : zfs_resolver
 {
  protected:
-    virtual string zfs_command()
+    virtual string zfs_command() override
     {
         return "";
     }
