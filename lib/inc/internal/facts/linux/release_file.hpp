@@ -50,6 +50,7 @@ namespace facter { namespace facts { namespace linux {
         /**
          * Release file for generic Linux distros.
          * Also used for:
+         * - Cisco
          * - CoreOS
          * - Cumulus
          */
