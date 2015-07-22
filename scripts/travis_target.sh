@@ -20,7 +20,24 @@ elif [ ${TRAVIS_TARGET} == DEBUG ]; then
 fi
 
 # Generate build files
-if [ ${TRAVIS_TARGET} == DEBUG ]; then
+if [ ${TRAVIS_TARGET} == COMMITS ]; then
+  shopt -s nocasematch
+  git log --no-merges --pretty=%s master..$HEAD | while read line ; do
+    if [[ ! "$line" =~ ^\((maint|doc|packaging|fact-[0-9]+)\)|revert ]]; then
+      echo -e \
+          "\n\n\n\tThis commit summary didn't match CONTRIBUTING.md guidelines:\n" \
+          "\n\t\t$line\n" \
+          "\tThe commit summary (i.e. the first line of the commit message) should start with one of:\n" \
+          "\t\t(FACT-<digits>) # this is most common and should be a ticket at tickets.puppetlabs.com\n" \
+          "\t\t(doc)\n" \
+          "\t\t(maint)\n" \
+          "\t\t(packaging)\n" \
+          "\n\tThis test for the commit summary is case-insensitive.\n\n\n"
+      exit 1
+    fi
+  done
+  exit 0
+elif [ ${TRAVIS_TARGET} == DEBUG ]; then
   cmake -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=ON .
 else
   cmake .
