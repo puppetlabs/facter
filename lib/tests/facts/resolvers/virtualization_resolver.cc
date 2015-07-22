@@ -37,7 +37,7 @@ struct unknown_non_virtual_hypervisor_resolver : virtualization_resolver
         return "foobar";
     }
 
-    virtual bool is_virtual(string const& hypervisor)
+    virtual bool is_virtual(string const& hypervisor) override
     {
         return hypervisor != "foobar";
     }
