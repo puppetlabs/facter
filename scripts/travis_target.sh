@@ -37,9 +37,8 @@ function travis_make()
     if [ $1 == "cpplint" ]; then
         # Verify documentation
         pushd ../lib
-        doxygen
-        if [[ -s html/warnings.txt ]]; then
-            cat html/warnings.txt
+        doxygen 2>&1 | ( ! grep . )
+        if [ $? -ne 0 ]; then
             echo "documentation failed."
             exit 1
         fi
