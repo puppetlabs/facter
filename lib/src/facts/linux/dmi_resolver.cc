@@ -46,6 +46,14 @@ namespace facter { namespace facts { namespace linux {
         }
 
         boost::trim(value);
+
+        // Replace any non-printable ASCII characters with '.'
+        // This mimics the behavior of dmidecode
+        for (auto& c : value) {
+            if (c < 32 || c == 127) {
+                c = '.';
+            }
+        }
         return value;
     }
 
