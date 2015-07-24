@@ -64,7 +64,8 @@ else
   make DESTDIR=$USERDIR install
 
   if [ ${TRAVIS_TARGET} == DEBUG ]; then
-    coveralls --gcov gcov-4.8 --gcov-options '\-lp' -r .. >/dev/null
+    # Ignore coveralls failures, keep service success uncoupled
+    coveralls --gcov gcov-4.8 --gcov-options '\-lp' -r .. >/dev/null || true
   fi
 fi
 
