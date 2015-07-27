@@ -6,9 +6,9 @@ hosts.each do |host|
     host['type'] = 'aio'
 end
 
-install_puppet_agent_dev_repo_on(hosts, { :puppet_agent_version => options[:puppet_agent_version],
-                                          :puppet_agent_sha => options[:puppet_agent_sha],
-                                          :pe_ver => options[:pe_ver],
-                                          :puppet_collection => options[:puppet_collection] })
+install_puppet_agent_pe_promoted_repo_on(hosts, { :puppet_agent_version => options[:puppet_agent_version],
+                                                  :puppet_agent_sha => options[:puppet_agent_sha],
+                                                  :pe_ver => options[:pe_ver],
+                                                  :puppet_collection => options[:puppet_collection] })
 
 configure_pe_defaults_on(hosts)
