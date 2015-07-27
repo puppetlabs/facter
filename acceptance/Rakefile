@@ -77,11 +77,6 @@ def beaker_test(mode = :packages, options = {})
     final_options[:install] << "#{build_giturl('facter')}##{sha}"
   end
 
-  if mode == :peaio
-    final_options[:puppet_agent_sha] = sha
-    final_options[:puppet_agent_version] = sha
-  end
-
   options_file = 'merged_options.rb'
   File.open(options_file, 'w') do |merged|
     merged.puts <<-EOS
@@ -268,14 +263,6 @@ Run the acceptance tests through Beaker and install packages as part of the AIO 
 EOS
     task :aio => 'ci:check_env' do
       beaker_test(:aio)
-    end
-
-    desc <<-EOS
-Run the acceptance tests through Beaker and install PE packages as part of the PE AIO puppet-agent installation.
-#{USAGE}
-EOS
-    task :peaio => 'ci:check_env' do
-        beaker_test(:peaio)
     end
 
     desc <<-EOS
