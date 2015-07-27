@@ -22,8 +22,6 @@ using namespace facter::util::solaris;
 using namespace leatherman::util;
 using namespace boost::filesystem;
 
-using execution = leatherman::execution;
-
 namespace facter { namespace facts { namespace solaris {
 
     filesystem_resolver::data filesystem_resolver::collect_data(collection& facts)
@@ -65,7 +63,7 @@ namespace facter { namespace facts { namespace solaris {
     {
         // Build a list of mounted filesystems
         static boost::regex fs_re("^fs/.*/(.*)$");
-        each_line("/usr/sbin/sysdef", [&](string& line) {
+        leatherman::execution::each_line("/usr/sbin/sysdef", [&](string& line) {
             string fs;
             if (re_search(line, fs_re, &fs)) {
                 result.filesystems.insert(move(fs));
