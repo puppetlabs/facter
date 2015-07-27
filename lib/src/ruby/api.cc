@@ -92,6 +92,7 @@ namespace facter { namespace ruby {
         LOAD_SYMBOL(rb_eTypeError),
         LOAD_SYMBOL(rb_eStandardError),
         LOAD_SYMBOL(rb_eRuntimeError),
+        LOAD_SYMBOL(rb_eLoadError),
         LOAD_OPTIONAL_SYMBOL(ruby_setup),
         LOAD_SYMBOL(ruby_init),
         LOAD_SYMBOL(ruby_options),
