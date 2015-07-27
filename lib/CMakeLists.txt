@@ -55,7 +55,6 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/scalar_value.cc"
     "src/logging/logging.cc"
     "src/ruby/aggregate_resolution.cc"
-    "src/ruby/api.cc"
     "src/ruby/chunk.cc"
     "src/ruby/confine.cc"
     "src/ruby/fact.cc"
@@ -80,7 +79,6 @@ if (UNIX)
         "src/facts/posix/timezone_resolver.cc"
         "src/facts/posix/uptime_resolver.cc"
         "src/facts/posix/xen_resolver.cc"
-        "src/ruby/posix/api.cc"
         "src/util/posix/scoped_addrinfo.cc"
         "src/util/posix/scoped_descriptor.cc"
     )
@@ -100,7 +98,6 @@ if (WIN32)
     set(LIBFACTER_STANDARD_SOURCES
         "src/facts/external/windows/powershell_resolver.cc"
         "src/facts/windows/collection.cc"
-        "src/ruby/windows/api.cc"
         "src/util/windows/wsa.cc"
     )
 endif()

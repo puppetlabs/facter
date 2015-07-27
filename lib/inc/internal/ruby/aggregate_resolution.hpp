@@ -20,33 +20,33 @@ namespace facter { namespace ruby {
          * Defines the Facter::Core::Aggregate class.
          * @return Returns the Facter::Core::Aggregate class.
          */
-        static VALUE define();
+        static leatherman::ruby::VALUE define();
 
         /**
          * Creates an instance of the Facter::Core::Aggregate class.
          * @return Returns the new instance.
          */
-        static VALUE create();
+        static leatherman::ruby::VALUE create();
 
         /**
          * Gets the value of the resolution.
          * @return Returns the value of the resolution or nil if the value did not resolve.
          */
-        virtual VALUE value();
+        virtual leatherman::ruby::VALUE value();
 
         /**
          * Finds the value of the given chunk.
          * @param name The name of the chunk to find the value of.
          * @return Returns the value of the chunk or nil if the chunk is not found.
          */
-        VALUE find_chunk(VALUE name);
+        leatherman::ruby::VALUE find_chunk(leatherman::ruby::VALUE name);
 
         /**
          * Defines a chunk.
          * @param name The name of the chunk.
          * @param options The options for defining the chunk.
          */
-        void define_chunk(VALUE name, VALUE options);
+        void define_chunk(leatherman::ruby::VALUE name, leatherman::ruby::VALUE options);
 
      private:
         // Construction and assignment
@@ -57,21 +57,21 @@ namespace facter { namespace ruby {
         aggregate_resolution& operator=(aggregate_resolution&& other) = delete;
 
         // Ruby lifecycle functions
-        static VALUE alloc(VALUE klass);
+        static leatherman::ruby::VALUE alloc(leatherman::ruby::VALUE klass);
         static void mark(void* data);
         static void free(void* data);
 
         // Methods called from Ruby
-        static VALUE ruby_chunk(int argc, VALUE* argv, VALUE self);
-        static VALUE ruby_aggregate(VALUE self);
-        static VALUE ruby_merge_hashes(VALUE obj, VALUE context, int argc, VALUE* argv);
+        static leatherman::ruby::VALUE ruby_chunk(int argc, leatherman::ruby::VALUE* argv, leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_aggregate(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_merge_hashes(leatherman::ruby::VALUE obj, leatherman::ruby::VALUE context, int argc, leatherman::ruby::VALUE* argv);
 
         // Helper functions
-        static VALUE deep_merge(api const& ruby, VALUE left, VALUE right);
+        static leatherman::ruby::VALUE deep_merge(leatherman::ruby::api const& ruby, leatherman::ruby::VALUE left, leatherman::ruby::VALUE right);
 
-        VALUE _self;
-        VALUE _block;
-        std::map<VALUE, ruby::chunk> _chunks;
+        leatherman::ruby::VALUE _self;
+        leatherman::ruby::VALUE _block;
+        std::map<leatherman::ruby::VALUE, ruby::chunk> _chunks;
     };
 
 }}  // namespace facter::ruby

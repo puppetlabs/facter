@@ -9,6 +9,7 @@ using namespace facter::facts;
 using namespace facter::util;
 using namespace rapidjson;
 using namespace YAML;
+using namespace leatherman::ruby;
 
 namespace facter { namespace ruby {
 

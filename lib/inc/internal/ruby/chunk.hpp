@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include "api.hpp"
+#include <leatherman/ruby/api.hpp>
 
 namespace facter { namespace ruby {
 
@@ -20,7 +20,7 @@ namespace facter { namespace ruby {
          * @param dependencies The symbol or array of symbols this chunk depends on.
          * @param block The block to run to resolve the chunk.
          */
-        chunk(VALUE dependencies, VALUE block);
+        chunk(leatherman::ruby::VALUE dependencies, leatherman::ruby::VALUE block);
 
         /**
          * Moves the given chunk into this chunk.
@@ -40,31 +40,31 @@ namespace facter { namespace ruby {
          * @param resolution The aggregate resolution being resolved.
          * @return Returns the value of the chunk.
          */
-        VALUE value(aggregate_resolution& resolution);
+        leatherman::ruby::VALUE value(aggregate_resolution& resolution);
 
         /**
          * Gets the chunk's dependencies.
          * @return Returns the chunk's dependencies.
          */
-        VALUE dependencies() const;
+        leatherman::ruby::VALUE dependencies() const;
 
         /**
          * Sets the chunk's dependencies.
          * @param dependencies The chunk's dependencies.
          */
-        void dependencies(VALUE dependencies);
+        void dependencies(leatherman::ruby::VALUE dependencies);
 
         /**
          * Gets the chunk's block.
          * @return Returns the chunk's block.
          */
-        VALUE block() const;
+        leatherman::ruby::VALUE block() const;
 
         /**
          * Sets the chunk's block.
          * @param block The chunk's block.
          */
-        void block(VALUE block);
+        void block(leatherman::ruby::VALUE block);
 
      private:
         chunk(chunk const&) = delete;
@@ -73,9 +73,9 @@ namespace facter { namespace ruby {
 
         friend struct aggregate_resolution;
 
-        VALUE _dependencies;
-        VALUE _block;
-        VALUE _value;
+        leatherman::ruby::VALUE _dependencies;
+        leatherman::ruby::VALUE _block;
+        leatherman::ruby::VALUE _value;
         bool _resolved;
         bool _resolving;
     };

@@ -4,6 +4,7 @@
 
 using namespace std;
 using namespace facter::facts;
+using namespace leatherman::ruby;
 
 namespace facter { namespace ruby {
 

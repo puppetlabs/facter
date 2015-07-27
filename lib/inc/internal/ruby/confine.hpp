@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include "api.hpp"
+#include <leatherman/ruby/api.hpp>
 #include <string>
 #include <vector>
 
@@ -23,7 +23,7 @@ namespace facter { namespace ruby {
          * @param expected The expected value or values for the given fact.  Can be nil if no fact given.
          * @param block The block to call for the confine.  Can be nil.
          */
-        confine(VALUE fact, VALUE expected, VALUE block);
+        confine(leatherman::ruby::VALUE fact, leatherman::ruby::VALUE expected, leatherman::ruby::VALUE block);
 
         /**
          * Moves the given confine into this confine.
@@ -52,9 +52,9 @@ namespace facter { namespace ruby {
 
         friend struct resolution;
 
-        VALUE _fact;
-        VALUE _expected;
-        VALUE _block;
+        leatherman::ruby::VALUE _fact;
+        leatherman::ruby::VALUE _expected;
+        leatherman::ruby::VALUE _block;
     };
 
 }}  // namespace facter::ruby

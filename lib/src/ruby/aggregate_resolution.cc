@@ -2,6 +2,7 @@
 #include <internal/ruby/chunk.hpp>
 
 using namespace std;
+using namespace leatherman::ruby;
 
 namespace facter { namespace ruby {
 

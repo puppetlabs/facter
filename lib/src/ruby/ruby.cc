@@ -1,10 +1,11 @@
 #include <facter/ruby/ruby.hpp>
 #include <facter/logging/logging.hpp>
-#include <internal/ruby/api.hpp>
 #include <internal/ruby/module.hpp>
+#include <leatherman/ruby/api.hpp>
 
 using namespace std;
 using namespace facter::facts;
+using namespace leatherman::ruby;
 
 static const char load_puppet[] =
 "require 'puppet'\n"

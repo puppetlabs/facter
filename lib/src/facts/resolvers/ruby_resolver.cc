@@ -1,13 +1,13 @@
 #include <internal/facts/resolvers/ruby_resolver.hpp>
-#include <internal/ruby/api.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
+#include <leatherman/ruby/api.hpp>
 #include <leatherman/logging/logging.hpp>
 
 using namespace std;
-using namespace facter::ruby;
+using namespace leatherman::ruby;
 
 namespace facter { namespace facts { namespace resolvers {
 

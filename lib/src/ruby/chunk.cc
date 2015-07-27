@@ -2,6 +2,7 @@
 #include <internal/ruby/aggregate_resolution.hpp>
 
 using namespace std;
+using namespace leatherman::ruby;
 
 namespace facter { namespace ruby {
 

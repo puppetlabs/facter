@@ -11,6 +11,7 @@
 using namespace std;
 using namespace facter::facts;
 using namespace leatherman::util;
+using namespace leatherman::ruby;
 
 namespace facter { namespace ruby {
 
@@ -87,7 +88,7 @@ namespace facter { namespace ruby {
             if (value) {
                 // Already in collection, do not add
                 add = false;
-                _value = ruby.to_ruby(value);
+                _value = facter->to_ruby(value);
             }
         }
 

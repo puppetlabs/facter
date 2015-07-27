@@ -1,10 +1,10 @@
 #include <catch.hpp>
 #include <facter/version.h>
 #include <facter/facts/scalar_value.hpp>
-#include <internal/ruby/api.hpp>
 #include <internal/ruby/ruby_value.hpp>
 #include <leatherman/util/regex.hpp>
 #include <leatherman/util/scoped_env.hpp>
+#include <leatherman/ruby/api.hpp>
 #include "./ruby_helper.hpp"
 #include "../collection_fixture.hpp"
 #include "../log_capture.hpp"
@@ -15,6 +15,7 @@ using namespace facter::ruby;
 using namespace facter::logging;
 using namespace facter::testing;
 using namespace leatherman::util;
+using namespace leatherman::ruby;
 
 SCENARIO("custom facts written in Ruby") {
     collection_fixture facts;

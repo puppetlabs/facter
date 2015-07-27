@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include "api.hpp"
+#include <leatherman/ruby/api.hpp>
 #include "confine.hpp"
 #include <vector>
 #include <memory>
@@ -28,13 +28,13 @@ namespace facter { namespace ruby {
          * Gets the name of the resolution.
          * @return Returns the name of the resolution or nil if the resolution has no name.
          */
-        VALUE name() const;
+        leatherman::ruby::VALUE name() const;
 
         /**
          * Sets the name of the resolution.
          * @param name The name of the resolution.
          */
-        void name(VALUE name);
+        void name(leatherman::ruby::VALUE name);
 
         /**
          * Gets the weight of the resolution.
@@ -53,13 +53,13 @@ namespace facter { namespace ruby {
          * Gets the value of the resolution.
          * @return Returns the value of the resolution or nil if the value did not resolve.
          */
-        virtual VALUE value();
+        virtual leatherman::ruby::VALUE value();
 
         /**
          * Sets the value of the resolution.
          * @param v The value of the resolution.
          */
-        void value(VALUE v);
+        void value(leatherman::ruby::VALUE v);
 
         /**
          * Determines if the resolution is suitable.
@@ -72,7 +72,7 @@ namespace facter { namespace ruby {
          * Confines the resolution.
          * @param confines The confines for the resolution.
          */
-        void confine(VALUE confines);
+        void confine(leatherman::ruby::VALUE confines);
 
         /**
          * Calls the on_flush block for the resolution, if there is one.
@@ -94,7 +94,7 @@ namespace facter { namespace ruby {
          * Defines the base methods on the given class.
          * @param klass The Ruby class to define the base methods on.
          */
-        static void define(VALUE klass);
+        static void define(leatherman::ruby::VALUE klass);
 
         /**
          * Called to mark this object's values during GC.
@@ -109,15 +109,15 @@ namespace facter { namespace ruby {
         resolution& operator=(resolution&& other) = delete;
 
         // Methods called from Ruby
-        static VALUE ruby_confine(int argc, VALUE* argv, VALUE self);
-        static VALUE ruby_has_weight(VALUE self, VALUE value);
-        static VALUE ruby_name(VALUE self);
-        static VALUE ruby_timeout(VALUE self, VALUE timeout);
-        static VALUE ruby_on_flush(VALUE self);
+        static leatherman::ruby::VALUE ruby_confine(int argc, leatherman::ruby::VALUE* argv, leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_has_weight(leatherman::ruby::VALUE self, leatherman::ruby::VALUE value);
+        static leatherman::ruby::VALUE ruby_name(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_timeout(leatherman::ruby::VALUE self, leatherman::ruby::VALUE timeout);
+        static leatherman::ruby::VALUE ruby_on_flush(leatherman::ruby::VALUE self);
 
-        VALUE _name;
-        VALUE _value;
-        VALUE _flush_block;
+        leatherman::ruby::VALUE _name;
+        leatherman::ruby::VALUE _value;
+        leatherman::ruby::VALUE _flush_block;
         std::vector<ruby::confine> _confines;
         bool _has_weight;
         size_t _weight;
