@@ -32,12 +32,9 @@ before_install:
   - tar xjvf pcre-8.36_install.tar.bz2 --strip 1 -C $USERDIR
   - wget https://s3.amazonaws.com/kylo-pl-bucket/cppcheck-1.69_install.tar.bz2
   - tar xjvf cppcheck-1.69_install.tar.bz2 --strip 1 -C $USERDIR
-  # grab a pre-built doxygen 1.8.7 from s3
-  - wget https://s3.amazonaws.com/kylo-pl-bucket/doxygen_install.tar.bz2
-  - tar xjvf doxygen_install.tar.bz2 --strip 1 -C $USERDIR
-  # Install dependencies of cfacter
-  - wget https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1_install.tar.bz2
-  - tar xjvf yaml-cpp-0.5.1_install.tar.bz2 --strip 1 -C $USERDIR
+  # grab a pre-built doxygen 1.8.10
+  - wget https://s3.amazonaws.com/kylo-pl-bucket/doxygen-1.8.10.linux.bin.tar.gz
+  - tar xzvf doxygen-1.8.10.linux.bin.tar.gz --strip 1 -C $USERDIR
   # Install dependencies of facter
   - wget https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1_install.tar.bz2
   - tar xjvf yaml-cpp-0.5.1_install.tar.bz2 --strip 1 -C $USERDIR

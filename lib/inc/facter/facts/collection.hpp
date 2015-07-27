@@ -224,6 +224,10 @@ namespace facter { namespace facts {
         void resolve_facts();
 
      protected:
+        /**
+         *  Gets external fact directories for the current platform.
+         *  @return A list of file paths that will be searched for external facts.
+         */
         virtual std::vector<std::string> get_external_fact_directories() const;
 
      private:

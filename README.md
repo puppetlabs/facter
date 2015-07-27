@@ -7,7 +7,7 @@ An implementation of facter functionality in C++11, providing:
 * an executable for standalone command line usage
 * a ruby file to enable `require 'facter'`.
 
-Please see our [extensibility document](https://github.com/puppetlabs/facter/blob/master/Extensibility.md) to learn more
+Please see our [extensibility document](Extensibility.md) to learn more
 about extending native facter using custom and external facts.
 
 Build Requirements
