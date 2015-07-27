@@ -266,14 +266,6 @@ EOS
     end
 
     desc <<-EOS
-Run the acceptance tests through Beaker and install PE packages as part of the PE AIO puppet-agent installation.
-#{USAGE}
-EOS
-    task :peaio => 'ci:check_env' do
-        beaker_test(:peaio)
-    end
-
-    desc <<-EOS
 Run the acceptance tests through Beaker and install from git on the configuration targets.
 #{USAGE}
 EOS
