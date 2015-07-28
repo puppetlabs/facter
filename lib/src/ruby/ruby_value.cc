@@ -16,20 +16,20 @@ namespace facter { namespace ruby {
     ruby_value::ruby_value(VALUE value) :
         _value(value)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         ruby.rb_gc_register_address(&_value);
     }
 
     ruby_value::~ruby_value()
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         ruby.rb_gc_unregister_address(&_value);
     }
 
     ruby_value::ruby_value(ruby_value&& other) :
         _value(other._value)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         ruby.rb_gc_register_address(&_value);
     }
 
@@ -41,20 +41,20 @@ namespace facter { namespace ruby {
 
     void ruby_value::to_json(Allocator& allocator, rapidjson::Value& value) const
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         to_json(ruby, _value, allocator, value);
     }
 
     ostream& ruby_value::write(ostream& os, bool quoted, unsigned int level) const
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         write(ruby, _value, os, quoted, level);
         return os;
     }
 
     Emitter& ruby_value::write(Emitter& emitter) const
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         write(ruby, _value, emitter);
         return emitter;
     }

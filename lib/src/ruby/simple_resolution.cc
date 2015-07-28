@@ -13,7 +13,7 @@ namespace facter { namespace ruby {
 
     simple_resolution::simple_resolution()
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         _self = ruby.nil_value();
         _block = ruby.nil_value();
         _command = ruby.nil_value();
@@ -21,7 +21,7 @@ namespace facter { namespace ruby {
 
     VALUE simple_resolution::define()
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         // Define the Resolution class
         VALUE klass = ruby.rb_define_class_under(ruby.lookup({"Facter", "Util"}), "Resolution", *ruby.rb_cObject);
@@ -38,13 +38,13 @@ namespace facter { namespace ruby {
 
     VALUE simple_resolution::create()
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         return ruby.rb_class_new_instance(0, nullptr, ruby.lookup({"Facter", "Util", "Resolution"}));
     }
 
     VALUE simple_resolution::value()
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         volatile VALUE value = resolution::value();
 
@@ -72,7 +72,7 @@ namespace facter { namespace ruby {
 
     VALUE simple_resolution::alloc(VALUE klass)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         // Create a resolution and wrap with a Ruby data object
         unique_ptr<simple_resolution> r(new simple_resolution());
@@ -87,7 +87,7 @@ namespace facter { namespace ruby {
     void simple_resolution::mark(void* data)
     {
         // Mark all VALUEs contained in the simple resolution
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         auto instance = reinterpret_cast<simple_resolution*>(data);
 
         // Call the base first
@@ -103,7 +103,7 @@ namespace facter { namespace ruby {
         auto instance = reinterpret_cast<simple_resolution*>(data);
 
         // Unregister the data object
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         ruby.unregister_data_object(instance->_self);
 
         // Delete the simple resolution
@@ -112,7 +112,7 @@ namespace facter { namespace ruby {
 
     VALUE simple_resolution::ruby_setcode(int argc, VALUE* argv, VALUE self)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         if (argc > 1) {
             ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 1)", argc);
@@ -141,13 +141,13 @@ namespace facter { namespace ruby {
 
     VALUE simple_resolution::ruby_which(VALUE klass, VALUE binary)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         return ruby.rb_funcall(ruby.lookup({ "Facter", "Core", "Execution" }), ruby.rb_intern("which"), 1, binary);
     }
 
     VALUE simple_resolution::ruby_exec(VALUE klass, VALUE command)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         return ruby.rb_funcall(ruby.lookup({ "Facter", "Core", "Execution" }), ruby.rb_intern("exec"), 1, command);
     }
 

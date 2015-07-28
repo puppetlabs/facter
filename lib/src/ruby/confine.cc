@@ -29,7 +29,7 @@ namespace facter { namespace ruby {
 
     bool confine::suitable(module& facter) const
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         // If given a fact, either call the block or check the values
         if (!ruby.is_nil(_fact)) {
@@ -75,7 +75,7 @@ namespace facter { namespace ruby {
     void confine::mark() const
     {
         // Mark all VALUEs contained in the confine
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         ruby.rb_gc_mark(_fact);
         ruby.rb_gc_mark(_expected);
         ruby.rb_gc_mark(_block);

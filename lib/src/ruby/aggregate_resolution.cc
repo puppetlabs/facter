@@ -8,14 +8,14 @@ namespace facter { namespace ruby {
 
     aggregate_resolution::aggregate_resolution()
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         _self = ruby.nil_value();
         _block = ruby.nil_value();
     }
 
     VALUE aggregate_resolution::define()
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         // Define the Resolution class
         VALUE klass = ruby.rb_define_class_under(ruby.lookup({"Facter", "Core"}), "Aggregate", *ruby.rb_cObject);
@@ -28,13 +28,13 @@ namespace facter { namespace ruby {
 
     VALUE aggregate_resolution::create()
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         return ruby.rb_class_new_instance(0, nullptr, ruby.lookup({"Facter", "Core", "Aggregate"}));
     }
 
     VALUE aggregate_resolution::value()
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         // If given an aggregate block, build a hash and call the block
         if (!ruby.is_nil(_block)) {
@@ -64,7 +64,7 @@ namespace facter { namespace ruby {
 
     VALUE aggregate_resolution::find_chunk(VALUE name)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         if (ruby.is_nil(name)) {
             return ruby.nil_value();
@@ -83,7 +83,7 @@ namespace facter { namespace ruby {
 
     void aggregate_resolution::define_chunk(VALUE name, VALUE options)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         // A block is required
         if (!ruby.rb_block_given_p()) {
@@ -134,7 +134,7 @@ namespace facter { namespace ruby {
 
     VALUE aggregate_resolution::alloc(VALUE klass)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         // Create a resolution and wrap with a Ruby data object
         unique_ptr<aggregate_resolution> r(new aggregate_resolution());
@@ -149,7 +149,7 @@ namespace facter { namespace ruby {
     void aggregate_resolution::mark(void* data)
     {
         // Mark all VALUEs contained in the aggregate resolution
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         auto instance = reinterpret_cast<aggregate_resolution*>(data);
 
         // Mark the base first
@@ -170,7 +170,7 @@ namespace facter { namespace ruby {
         auto instance = reinterpret_cast<aggregate_resolution*>(data);
 
         // Unregister the data object
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         ruby.unregister_data_object(instance->_self);
 
         // Delete the aggregate resolution
@@ -179,7 +179,7 @@ namespace facter { namespace ruby {
 
     VALUE aggregate_resolution::ruby_chunk(int argc, VALUE* argv, VALUE self)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         if (argc == 0 || argc > 2) {
             ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
         }
@@ -190,7 +190,7 @@ namespace facter { namespace ruby {
 
     VALUE aggregate_resolution::ruby_aggregate(VALUE self)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         // A block is required
         if (!ruby.rb_block_given_p()) {

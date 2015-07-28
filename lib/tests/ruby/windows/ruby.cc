@@ -14,10 +14,9 @@ SCENARIO("Windows custom facts written in Ruby") {
     REQUIRE(facts.size() == 0u);
 
     // Setup ruby
-    auto ruby = api::instance();
-    REQUIRE(ruby);
-    REQUIRE(ruby->initialized());
-    ruby->include_stack_trace(true);
+    auto& ruby = api::instance();
+    REQUIRE(ruby.initialized());
+    ruby.include_stack_trace(true);
 
     GIVEN("a fact that loads win32ole") {
         REQUIRE(load_custom_fact("windows/ole.rb", facts));
