@@ -12,7 +12,7 @@ namespace facter { namespace ruby {
         _resolved(false),
         _resolving(false)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         _value = ruby.nil_value();
     }
 
@@ -33,7 +33,7 @@ namespace facter { namespace ruby {
 
     VALUE chunk::value(aggregate_resolution& resolution)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         // Prevent cycles by raising an exception
         if (_resolving) {
@@ -102,7 +102,7 @@ namespace facter { namespace ruby {
 
     void chunk::dependencies(VALUE dependencies)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         _dependencies = dependencies;
         _value = ruby.nil_value();
         _resolved = false;
@@ -115,7 +115,7 @@ namespace facter { namespace ruby {
 
     void chunk::block(VALUE block)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         _block = block;
         _value = ruby.nil_value();
         _resolved = false;
@@ -123,7 +123,7 @@ namespace facter { namespace ruby {
 
     void chunk::mark() const
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         ruby.rb_gc_mark(_dependencies);
         ruby.rb_gc_mark(_block);
         ruby.rb_gc_mark(_value);

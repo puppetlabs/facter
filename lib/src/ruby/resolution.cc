@@ -12,7 +12,7 @@ namespace facter { namespace ruby {
         _has_weight(false),
         _weight(0)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         _name = ruby.nil_value();
         _value = ruby.nil_value();
         _flush_block = ruby.nil_value();
@@ -58,7 +58,7 @@ namespace facter { namespace ruby {
 
     bool resolution::suitable(module& facter) const
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         int tag = 0;
         {
@@ -89,7 +89,7 @@ namespace facter { namespace ruby {
 
     void resolution::flush() const
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         if (ruby.is_nil(_flush_block)) {
             return;
@@ -100,7 +100,7 @@ namespace facter { namespace ruby {
 
     void resolution::confine(VALUE confines)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         if (ruby.is_nil(confines)) {
             // No confines, only a block is required
@@ -144,7 +144,7 @@ namespace facter { namespace ruby {
 
     void resolution::define(VALUE klass)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         ruby.rb_define_method(klass, "confine", RUBY_METHOD_FUNC(ruby_confine), -1);
         ruby.rb_define_method(klass, "has_weight", RUBY_METHOD_FUNC(ruby_has_weight), 1);
         ruby.rb_define_method(klass, "name", RUBY_METHOD_FUNC(ruby_name), 0);
@@ -154,7 +154,7 @@ namespace facter { namespace ruby {
 
     void resolution::mark() const
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         // Mark the name and value
         ruby.rb_gc_mark(_name);
@@ -169,7 +169,7 @@ namespace facter { namespace ruby {
 
     VALUE resolution::ruby_confine(int argc, VALUE* argv, VALUE self)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         if (argc > 1) {
             ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 1)", argc);
@@ -181,7 +181,7 @@ namespace facter { namespace ruby {
 
     VALUE resolution::ruby_has_weight(VALUE self, VALUE value)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         auto instance = ruby.to_native<resolution>(self);
         instance->_has_weight = true;
@@ -191,7 +191,7 @@ namespace facter { namespace ruby {
 
     VALUE resolution::ruby_name(VALUE self)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
         return ruby.to_native<resolution>(self)->name();
     }
 
@@ -208,7 +208,7 @@ namespace facter { namespace ruby {
 
     VALUE resolution::ruby_on_flush(VALUE self)
     {
-        auto const& ruby = *api::instance();
+        auto const& ruby = api::instance();
 
         if (!ruby.rb_block_given_p()) {
             ruby.rb_raise(*ruby.rb_eArgError, "a block must be provided");
