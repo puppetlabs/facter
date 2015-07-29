@@ -4,6 +4,7 @@
 */
 #pragma once
 
+#include <stdexcept>
 #include <ostream>
 #include <string>
 #include <boost/format.hpp>
@@ -170,5 +171,10 @@ namespace facter { namespace logging {
      * @return Returns the reset code for colorization or an empty string if not supported.
      */
     LIBFACTER_EXPORT std::string const& colorize();
+
+    class locale_error : public std::runtime_error {
+    public:
+         explicit locale_error(const std::string& msg) : std::runtime_error(msg) {}
+    };
 
 }}  // namespace facter::logging

@@ -264,6 +264,9 @@ int main(int argc, char **argv)
         bool show_legacy = vm.count("show-legacy");
         facts.write(boost::nowide::cout, fmt, queries, show_legacy);
         boost::nowide::cout << endl;
+    } catch (locale_error const& e) {
+        boost::nowide::cerr << "failed to initialize logging system due to a locale error: " << e.what() << "\n" << endl;
+        return 2;  // special error code to indicate we failed harder than normal
     } catch (exception& ex) {
         log(level::fatal, "unhandled exception: %1%", ex.what());
     }

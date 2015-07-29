@@ -1,13 +1,40 @@
 #include <facter/logging/logging.hpp>
+#include <facter/util/environment.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <leatherman/locale/locale.hpp>
 #include <boost/filesystem.hpp>
 
 using namespace std;
+using namespace facter::util;
 namespace lm = leatherman::logging;
 
-namespace facter { namespace logging {
+static void setup_logging_internal(ostream& os)
+{
+    // Initialize boost filesystem's locale to a UTF-8 default.
+    // Logging gets setup the same way via the default 2nd argument.
+#if !defined(__sun) || !defined(__GNUC__)
+    // Locale support in GCC on Solaris is busted, so skip it.
+    boost::filesystem::path::imbue(leatherman::locale::get_locale());
+#endif
+    lm::setup_logging(os);
+}
 
+static const char* lc_vars[] = {
+    "LC_CTYPE",
+    "LC_NUMERIC",
+    "LC_TIME",
+    "LC_COLLATE",
+    "LC_MONETARY",
+    "LC_MESSAGES",
+    "LC_PAPER",
+    "LC_ADDRESS",
+    "LC_TELEPHONE",
+    "LC_MEASUREMENT",
+    "LC_IDENTIFICATION",
+    "LC_ALL"
+};
+
+namespace facter { namespace logging {
     istream& operator>>(istream& in, level& lvl)
     {
         lm::log_level lm_level;
@@ -24,13 +51,27 @@ namespace facter { namespace logging {
 
     void setup_logging(ostream& os)
     {
-        // Initialize boost filesystem's locale to a UTF-8 default.
-        // Logging gets setup the same way via the default 2nd argument.
-#if !defined(__sun) || !defined(__GNUC__)
-        // Locale support in GCC on Solaris is busted, so skip it.
-        boost::filesystem::path::imbue(leatherman::locale::get_locale());
-#endif
-        lm::setup_logging(os);
+        try {
+            setup_logging_internal(os);
+        } catch (exception const&) {
+            for (auto var : lc_vars) {
+                environment::clear(var);
+            }
+            environment::set("LANG", "C");
+            try {
+                setup_logging_internal(os);
+            } catch (exception const& e) {
+                // If we fail again even with a clean environment, we
+                // need to signal to our consumer that things went
+                // sideways.
+                //
+                // Since logging is busted, we raise an exception that
+                // signals to the consumer that a special action must
+                // be taken to alert the user.
+                throw locale_error(e.what());
+            }
+            log(level::warning, "locale environment variables were bad; continuing with LANG=C");
+        }
     }
 
     void set_level(level lvl)

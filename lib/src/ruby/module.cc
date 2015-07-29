@@ -4,6 +4,7 @@
 #include <internal/ruby/confine.hpp>
 #include <internal/ruby/simple_resolution.hpp>
 #include <facter/facts/collection.hpp>
+#include <facter/logging/logging.hpp>
 #include <facter/util/directory.hpp>
 #include <facter/execution/execution.hpp>
 #include <facter/version.h>
@@ -107,8 +108,15 @@ extern "C" {
      */
     void LIBFACTER_EXPORT Init_libfacter()
     {
-        setup_logging(boost::nowide::cerr);
-        set_level(log_level::warning);
+        bool logging_init_failed = false;
+        string logging_init_error_msg;
+        try {
+            facter::logging::setup_logging(boost::nowide::cerr);
+            set_level(log_level::warning);
+        } catch(facter::logging::locale_error const& e) {
+            logging_init_failed = true;
+            logging_init_error_msg = e.what();
+        }
 
         // Initialize ruby
         auto ruby = facter::ruby::api::instance();
@@ -117,8 +125,13 @@ extern "C" {
         }
         ruby->initialize();
 
-        // Create the context
-        facter::ruby::require_context::create();
+        // If logging init failed, we'll raise a load error
+        // here. Otherwise we Create the context
+        if (logging_init_failed) {
+            ruby->rb_raise(*ruby->rb_eLoadError, "could not initialize facter due to a locale error: %s", logging_init_error_msg.c_str());
+        } else {
+            facter::ruby::require_context::create();
+        }
     }
 }
 
