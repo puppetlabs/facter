@@ -3,6 +3,7 @@
 #include <internal/ruby/confine.hpp>
 #include <internal/ruby/simple_resolution.hpp>
 #include <facter/facts/collection.hpp>
+#include <facter/logging/logging.hpp>
 #include <facter/version.h>
 #include <facter/export.h>
 #include <leatherman/util/environment.hpp>
@@ -112,20 +113,47 @@ extern "C" {
      */
     void LIBFACTER_EXPORT Init_libfacter()
     {
-        setup_logging(boost::nowide::cerr);
-        set_level(log_level::warning);
+        bool logging_init_failed = false;
+        string logging_init_error_msg;
+        try {
+            facter::logging::setup_logging(boost::nowide::cerr);
+            set_level(log_level::warning);
+        } catch(facter::logging::locale_error const& e) {
+            logging_init_failed = true;
+            logging_init_error_msg = e.what();
+        }
 
         // Initialize ruby
+        api* ruby = nullptr;
         try {
-            auto& ruby = api::instance();
-            ruby.initialize();
+            ruby = &api::instance();
         } catch (runtime_error& ex) {
-            LOG_WARNING("%1%: facts requiring Ruby will not be resolved.", ex.what());
+            if (!logging_init_failed) {
+                LOG_WARNING("%1%: facts requiring Ruby will not be resolved.", ex.what());
+            } else {
+                // This could only happen if some non-ruby library
+                // consumer called this function for some reason and
+                // we didn't have a libruby loaded. AND the locales
+                // are messed up so badly that even resetting locale
+                // environment variables fails. This seems so
+                // astronomically unlikely that I don't really think
+                // it's worth figuring out what we should do in this
+                // case - I'm honestly not even sure there's a correct
+                // behavior at this point.
+                // -- Branan
+            }
             return;
         }
 
-        // Create the context
-        facter::ruby::require_context::create();
+        ruby->initialize();
+
+        // If logging init failed, we'll raise a load error
+        // here. Otherwise we Create the context
+        if (logging_init_failed) {
+            ruby->rb_raise(*ruby->rb_eLoadError, "could not initialize facter due to a locale error: %s", logging_init_error_msg.c_str());
+        } else {
+            facter::ruby::require_context::create();
+        }
     }
 }
 
