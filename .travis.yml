@@ -21,25 +21,14 @@ addons:
       - libblkid1
 
 before_install:
-
   # Use a predefined install location; cppcheck requires the cfg location is defined at compile-time.
   - mkdir -p $USERDIR
   # grab a pre-built cmake 3.2.3
   - wget http://www.cmake.org/files/v3.2/cmake-3.2.3-Linux-x86_64.tar.gz
   - tar xzvf cmake-3.2.3-Linux-x86_64.tar.gz --strip 1 -C $USERDIR
-  # grab a pre-built cppcheck from s3
-  - wget https://s3.amazonaws.com/kylo-pl-bucket/pcre-8.36_install.tar.bz2
-  - tar xjvf pcre-8.36_install.tar.bz2 --strip 1 -C $USERDIR
-  - wget https://s3.amazonaws.com/kylo-pl-bucket/cppcheck-1.69_install.tar.bz2
-  - tar xjvf cppcheck-1.69_install.tar.bz2 --strip 1 -C $USERDIR
-  # grab a pre-built doxygen 1.8.10
-  - wget https://s3.amazonaws.com/kylo-pl-bucket/doxygen-1.8.10.linux.bin.tar.gz
-  - tar xzvf doxygen-1.8.10.linux.bin.tar.gz --strip 1 -C $USERDIR
   # Install dependencies of facter
   - wget https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1_install.tar.bz2
   - tar xjvf yaml-cpp-0.5.1_install.tar.bz2 --strip 1 -C $USERDIR
-  # Install coveralls.io update utility
-  - pip install --user cpp-coveralls
 
 script: ./scripts/travis_target.sh
 
@@ -50,6 +39,8 @@ env:
     - PATH=$USERDIR/bin:$PATH
     - LD_LIBRARY_PATH=$USERDIR/lib:$LD_LIBRARY_PATH
   matrix:
+    - TRAVIS_TARGET=COMMITS
+    - TRAVIS_TARGET=DOXYGEN
     - TRAVIS_TARGET=CPPLINT
     - TRAVIS_TARGET=CPPCHECK
     - TRAVIS_TARGET=RELEASE
