@@ -939,6 +939,12 @@ networking:
                     type: map
                     description: Represents a network interface.
                     elements:
+                        bindings:
+                            type: array
+                            description: The array of IPv4 address bindings for the interface.
+                        bindings6:
+                            type: array
+                            description: The array of IPv6 address bindings for the interface.
                         dhcp:
                             type: ip
                             description: The DHCP server for the network interface.
@@ -990,6 +996,9 @@ networking:
         network6:
             type: ip6
             description: The IPv6 network of the default network interface.
+        primary:
+            type: string
+            description: The name of the primary interface.
 
 operatingsystem:
     type: string
@@ -1721,20 +1730,20 @@ xen:
     resolution: |
         POSIX platforms: use `/usr/lib/xen-common/bin/xen-toolstack` to locate xen admin commands if available, otherwise fallback to `/usr/sbin/xl` or `/usr/sbin/xm`. Use the found command to execute the `list` query.
     caveats: |
-        POSIX platforms: confined to Xen privileged virtual machines
+        POSIX platforms: confined to Xen privileged virtual machines.
     elements:
         domains:
             type: array
-            description: list of strings identifying active Xen domains
+            description: list of strings identifying active Xen domains.
 
 xendomains:
     type: string
     hidden: true
-    description: Return a list of comma-separated active Xen domain names
+    description: Return a list of comma-separated active Xen domain names.
     resolution: |
-        POSIX platforms: see the `xen` structured fact
+        POSIX platforms: see the `xen` structured fact.
     caveats: |
-        POSIX platforms: confined to Xen privileged virtual machines
+        POSIX platforms: confined to Xen privileged virtual machines.
 
 zfs_featurenumbers:
     type: string

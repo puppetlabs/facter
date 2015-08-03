@@ -192,12 +192,10 @@ struct networking_resolver : resolvers::networking_resolver
         interface iface;
         iface.name = "interface1";
         iface.dhcp_server = "192.168.1.1";
-        iface.address.v4 = "127.0.0.1";
-        iface.address.v6 = "fe80::1";
-        iface.netmask.v4 = "255.0.0.0";
-        iface.netmask.v6 = "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff";
-        iface.network.v4 = "127.0.0.0";
-        iface.network.v6 = "::1";
+        iface.ipv4_bindings.emplace_back(binding { "127.0.0.1", "255.0.0.0", "127.0.0.0"});
+        iface.ipv4_bindings.emplace_back(binding { "123.123.123.123", "255.255.255.0", "123.123.123.0"});
+        iface.ipv6_bindings.emplace_back(binding { "fe80::1", "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "::1"});
+        iface.ipv6_bindings.emplace_back(binding { "fe80::2", "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "::2"});
         iface.macaddress = "00:00:00:00:00:00";
         iface.mtu = 12345;
         result.interfaces.emplace_back(move(iface));
