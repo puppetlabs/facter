@@ -149,6 +149,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
         kstat
         socket
         nsl
+        rt
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBFACTER_PLATFORM_SOURCES
