@@ -84,6 +84,10 @@ namespace facter { namespace facts { namespace linux {
          */
         constexpr static char const* archlinux = "/etc/arch-release";
         /**
+         * Release file for Manjaro Linux.
+         */
+        constexpr static char const* manjarolinux = "/etc/manjaro-release";
+        /**
          * Release file for VMWare ESX Linux.
          */
         constexpr static char const* vmware_esx = "/etc/vmware-release";
