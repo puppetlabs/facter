@@ -24,6 +24,7 @@ namespace facter { namespace facts { namespace linux {
 
      private:
         std::string read(std::string const& path);
+        static void parse_dmidecode_output(data& result, std::string& line, int& dmi_type);
     };
 
 }}}  // namespace facter::facts::linux
