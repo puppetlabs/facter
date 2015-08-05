@@ -10,6 +10,8 @@
 #include <boost/format.hpp>
 #include <array>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <fcntl.h>
@@ -75,19 +77,76 @@ namespace facter { namespace execution {
         return (boost::format("%1%: %2% (%3%).") % message % strerror(error) % error).str();
     }
 
+    static vector<gid_t> get_groups()
+    {
+        // Query for the number of groups
+        auto num = getgroups(0, nullptr);
+        if (num < 1) {
+            return {};
+        }
+
+        // Allocate a buffer for the groups
+        vector<gid_t> groups(static_cast<size_t>(num));
+        num = getgroups(groups.size(), groups.data());
+        if (static_cast<size_t>(num) != groups.size()) {
+            return {};
+        }
+        return groups;
+    }
+
+    static bool is_group_member(gid_t gid)
+    {
+        // Check for primary group
+        if (getgid() == gid || getegid() == gid) {
+            return true;
+        }
+
+        // Get the groups and search for the given gid
+        static auto groups = get_groups();
+        return find(groups.begin(), groups.end(), gid) != groups.end();
+    }
+
+    static bool is_executable(char const* path)
+    {
+        struct stat fs;
+        if (stat(path, &fs) != 0) {
+            return false;
+        }
+
+        auto euid = geteuid();
+
+        // If effectively running as root, any exec bit will do
+        if (euid == 0) {
+            return fs.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH);
+        }
+
+        // If the file is effectively owned, check for user exec bit
+        if (fs.st_uid == euid) {
+            return fs.st_mode & S_IXUSR;
+        }
+
+        // If the file is owned by a group we're a member of, check for the group exec bit
+        if (is_group_member(fs.st_gid)) {
+            return fs.st_mode & S_IXGRP;
+        }
+
+        // Lastly check for "others" exec bit
+        return fs.st_mode & S_IXOTH;
+    }
+
     string which(string const& file, vector<string> const& directories)
     {
         // If the file is already absolute, return it if it's executable
         path p = file;
         boost::system::error_code ec;
         if (p.is_absolute()) {
-            return is_regular_file(p, ec) && access(p.c_str(), X_OK) == 0 ? p.string() : string();
+            return is_regular_file(p, ec) && is_executable(p.c_str()) ? p.string() : string();
         }
 
         // Otherwise, check for an executable file under the given search paths
         for (auto const& dir : directories) {
             path p = path(dir) / file;
-            if (is_regular_file(p, ec) && access(p.c_str(), X_OK) == 0) {
+            if (is_regular_file(p, ec) && is_executable(p.c_str())) {
                 return p.string();
             }
         }
