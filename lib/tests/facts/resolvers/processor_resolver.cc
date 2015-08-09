@@ -41,30 +41,34 @@ struct test_processor_resolver : processor_resolver
     }
 };
 
+struct test_processor_resolver_no_physical_count : processor_resolver
+{
+ protected:
+    virtual data collect_data(collection& facts) override
+    {
+        data result;
+        result.isa = "isa";
+        result.logical_count = 4;
+        result.models = {
+            "processor1",
+            "processor2",
+            "processor3",
+            "processor4"
+        };
+        result.speed = 10 * 1000 * 1000 * 1000ull;
+        return result;
+    }
+};
+
 SCENARIO("using the processor resolver") {
     collection_fixture facts;
     WHEN("data is not present") {
         facts.add(make_shared<empty_processor_resolver>());
-        THEN("only the processor counts are present and are zero") {
-            REQUIRE(facts.size() == 3u);
-            auto count = facts.get<integer_value>(fact::physical_processor_count);
-            REQUIRE(count);
-            REQUIRE(count->value() == 0);
-            count = facts.get<integer_value>(fact::processor_count);
-            REQUIRE(count);
-            REQUIRE(count->value() == 0);
-            auto processors = facts.get<map_value>(fact::processors);
-            REQUIRE(processors);
-            REQUIRE(processors->size() == 2u);
-            count = processors->get<integer_value>("count");
-            REQUIRE(count);
-            REQUIRE(count->value() == 0);
-            count = processors->get<integer_value>("physicalcount");
-            REQUIRE(count);
-            REQUIRE(count->value() == 0);
+        THEN("facts should not be added") {
+            REQUIRE(facts.size() == 0u);
         }
     }
-    WHEN("data is present") {
+    WHEN("typical data is present") {
         facts.add(make_shared<test_processor_resolver>());
         THEN("a structured fact is added") {
             REQUIRE(facts.size() == 8u);
@@ -98,6 +102,46 @@ SCENARIO("using the processor resolver") {
             REQUIRE(count);
             REQUIRE(count->value() == 2);
             count = facts.get<integer_value>(fact::processor_count);
+            REQUIRE(count);
+            REQUIRE(count->value() == 4);
+            auto isa = facts.get<string_value>(fact::hardware_isa);
+            REQUIRE(isa);
+            REQUIRE(isa->value() == "isa");
+            for (size_t i = 0; i < 4; ++i) {
+                auto model = facts.get<string_value>(fact::processor + to_string(i));
+                REQUIRE(model);
+                REQUIRE(model->value() == "processor" + to_string(i + 1));
+            }
+        }
+    }
+    WHEN("data is present with no physical count") {
+        facts.add(make_shared<test_processor_resolver_no_physical_count>());
+        THEN("a structured fact is added, not including physical_processor_count") {
+            REQUIRE(facts.size() == 7u);
+            auto processors = facts.get<map_value>(fact::processors);
+            REQUIRE(processors);
+            REQUIRE(processors->size() == 4u);
+            auto count = processors->get<integer_value>("count");
+            REQUIRE(count);
+            REQUIRE(count->value() == 4);
+            auto isa = processors->get<string_value>("isa");
+            REQUIRE(isa);
+            REQUIRE(isa->value() == "isa");
+            auto models = processors->get<array_value>("models");
+            REQUIRE(models);
+            REQUIRE(models->size() == 4u);
+            for (size_t i = 0; i < 4; ++i) {
+                auto model = models->get<string_value>(i);
+                REQUIRE(model);
+                REQUIRE(model->value() == "processor" + to_string(i + 1));
+            }
+            auto speed = processors->get<string_value>("speed");
+            REQUIRE(speed);
+            REQUIRE(speed->value() == "10.00 GHz");
+        }
+        THEN("standard flat facts are added, not including physical_processor_count") {
+            REQUIRE(facts.size() == 7u);
+            auto count = facts.get<integer_value>(fact::processor_count);
             REQUIRE(count);
             REQUIRE(count->value() == 4);
             auto isa = facts.get<string_value>(fact::hardware_isa);
