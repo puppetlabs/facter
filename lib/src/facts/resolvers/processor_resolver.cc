@@ -37,11 +37,15 @@ namespace facter { namespace facts { namespace resolvers {
             cpus->add("isa", make_value<string_value>(move(data.isa)));
         }
 
-        facts.add(fact::processor_count, make_value<integer_value>(data.logical_count, true));
-        cpus->add("count", make_value<integer_value>(data.logical_count));
+        if (data.logical_count > 0) {
+            facts.add(fact::processor_count, make_value<integer_value>(data.logical_count, true));
+            cpus->add("count", make_value<integer_value>(data.logical_count));
+        }
 
-        facts.add(fact::physical_processor_count, make_value<integer_value>(data.physical_count, true));
-        cpus->add("physicalcount", make_value<integer_value>(data.physical_count));
+        if (data.physical_count > 0) {
+            facts.add(fact::physical_processor_count, make_value<integer_value>(data.physical_count, true));
+            cpus->add("physicalcount", make_value<integer_value>(data.physical_count));
+        }
 
         if (data.speed > 0) {
             cpus->add("speed", make_value<string_value>(frequency(data.speed)));
@@ -58,7 +62,9 @@ namespace facter { namespace facts { namespace resolvers {
             cpus->add("models", move(models));
         }
 
-        facts.add(fact::processors, move(cpus));
+        if (!cpus->empty()) {
+            facts.add(fact::processors, move(cpus));
+        }
     }
 
 }}}  // namespace facter::facts::resolvers
