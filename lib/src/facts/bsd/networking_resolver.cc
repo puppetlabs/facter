@@ -63,7 +63,8 @@ namespace facter { namespace facts { namespace bsd {
                     }
 
                     string ip = address_to_string(addr->ifa_addr, addr->ifa_netmask);
-                    if (!boost::starts_with(ip, "127.") && ip != "::1" && !boost::starts_with(ip, "fe80")) {
+                    if ((addr->ifa_addr->sa_family == AF_INET && !ignored_ipv4_address(ip)) ||
+                        (addr->ifa_addr->sa_family == AF_INET6 && !ignored_ipv6_address(ip))) {
                         data.primary_interface = name;
                         break;
                     }
@@ -75,8 +76,7 @@ namespace facter { namespace facts { namespace bsd {
 
             // Walk the addresses of this interface and populate the data
             for (; it != interface_map.end() && it->first == name; ++it) {
-                populate_address(iface, it->second);
-                populate_network(iface, it->second);
+                populate_binding(iface, it->second);
                 populate_mtu(iface, it->second);
             }
 
@@ -93,48 +93,33 @@ namespace facter { namespace facts { namespace bsd {
         return data;
     }
 
-    void networking_resolver::populate_address(interface& iface, ifaddrs const* addr) const
+    void networking_resolver::populate_binding(interface& iface, ifaddrs const* addr) const
     {
-        string* address = nullptr;
+        // If the address is a link address, populate the MAC
+        if (is_link_address(addr->ifa_addr)) {
+            iface.macaddress = address_to_string(addr->ifa_addr);
+            return;
+        }
+
+        // Populate the correct bindings list
+        vector<binding>* bindings = nullptr;
         if (addr->ifa_addr->sa_family == AF_INET) {
-            address = &iface.address.v4;
+            bindings = &iface.ipv4_bindings;
         } else if (addr->ifa_addr->sa_family == AF_INET6) {
-            address = &iface.address.v6;
-        } else if (is_link_address(addr->ifa_addr)) {
-            address = &iface.macaddress;
+            bindings = &iface.ipv6_bindings;
         }
 
-        if (!address) {
-            // Unsupported address
+        if (!bindings) {
             return;
         }
 
-        *address = address_to_string(addr->ifa_addr);
-    }
-
-    void networking_resolver::populate_network(interface& iface, ifaddrs const* addr) const
-    {
-        // Limit these facts to IPv4 and IPv6 with a netmask address
-        if ((addr->ifa_addr->sa_family != AF_INET &&
-             addr->ifa_addr->sa_family != AF_INET6) || !addr->ifa_netmask) {
-            return;
+        binding b;
+        b.address = address_to_string(addr->ifa_addr);
+        if (addr->ifa_netmask) {
+            b.netmask = address_to_string(addr->ifa_netmask);
+            b.network = address_to_string(addr->ifa_addr, addr->ifa_netmask);
         }
-
-        if (addr->ifa_addr->sa_family == AF_INET) {
-            // Check to see if the data already exists; interfaces can have multiple addresses of the same type
-            if (!iface.netmask.v4.empty()) {
-                return;
-            }
-            iface.netmask.v4 = address_to_string(addr->ifa_netmask);
-            iface.network.v4 = address_to_string(addr->ifa_addr, addr->ifa_netmask);
-        } else {
-            // Check to see if the data already exists; interfaces can have multiple addresses of the same type
-            if (!iface.netmask.v6.empty()) {
-                return;
-            }
-            iface.netmask.v6 = address_to_string(addr->ifa_netmask);
-            iface.network.v6 = address_to_string(addr->ifa_addr, addr->ifa_netmask);
-        }
+        bindings->emplace_back(std::move(b));
     }
 
     void networking_resolver::populate_mtu(interface& iface, ifaddrs const* addr) const

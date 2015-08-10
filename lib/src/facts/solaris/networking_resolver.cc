@@ -64,8 +64,7 @@ namespace facter { namespace facts { namespace solaris {
 
             // Walk the addresses for this interface
             do {
-                populate_address(iface, it->second);
-                populate_network(iface, it->second);
+                populate_binding(iface, it->second);
                 ++it;
             } while (it != interface_map.end() && it->first == name);
 
@@ -77,21 +76,39 @@ namespace facter { namespace facts { namespace solaris {
         return data;
     }
 
-    void networking_resolver::populate_address(interface& iface, lifreq const* addr) const
+    void networking_resolver::populate_binding(interface& iface, lifreq const* addr) const
     {
-        string* address = nullptr;
+        // Populate the correct bindings list
+        vector<binding>* bindings = nullptr;
         if (addr->lifr_addr.ss_family == AF_INET) {
-            address = &iface.address.v4;
-        } else if (addr->lifr_addr.ss_family == AF_INET6) {
-            address = &iface.address.v6;
+            bindings = &iface.ipv4_bindings;
+        } else if (addr->lifr_addr.ss_family == AF_INET) {
+            bindings = &iface.ipv6_bindings;
         }
 
-        if (!address) {
-            // Unsupported address
+        if (!bindings) {
             return;
         }
 
-        *address = address_to_string(reinterpret_cast<sockaddr const*>(&addr->lifr_addr));
+        // Create a binding
+        binding b;
+        b.address = address_to_string(reinterpret_cast<sockaddr const*>(&addr->lifr_addr));
+
+        // Get the netmask
+        scoped_descriptor ctl(socket(addr->lifr_addr.ss_family, SOCK_DGRAM, 0));
+        if (static_cast<int>(ctl) == -1) {
+            LOG_DEBUG("socket failed: %1% (%2%): netmask and network for interface %3% are unavailable.", strerror(errno), errno, addr->lifr_name);
+        } else {
+            lifreq netmask_addr = *addr;
+            if (ioctl(ctl, SIOCGLIFNETMASK, &netmask_addr) == -1) {
+                LOG_DEBUG("ioctl with SIOCGLIFNETMASK failed: %1% (%2%): netmask and network for interface %3% are unavailable.", strerror(errno), errno, addr->lifr_name);
+            } else {
+                b.netmask = address_to_string(reinterpret_cast<sockaddr const*>(&netmask_addr.lifr_addr));
+                b.network = address_to_string(reinterpret_cast<sockaddr const*>(&addr->lifr_addr), reinterpret_cast<sockaddr const*>(&netmask_addr.lifr_addr));
+            }
+        }
+
+        bindings->emplace_back(std::move(b));
     }
 
     void networking_resolver::populate_macaddress(interface& iface, lifreq const* addr) const
@@ -111,32 +128,6 @@ namespace facter { namespace facts { namespace solaris {
         }
 
         iface.macaddress = macaddress_to_string(reinterpret_cast<uint8_t const*>(arp.arp_ha.sa_data));
-    }
-
-    void networking_resolver::populate_network(interface& iface, lifreq const* addr) const
-    {
-        scoped_descriptor ctl(socket(addr->lifr_addr.ss_family, SOCK_DGRAM, 0));
-        if (static_cast<int>(ctl) == -1) {
-            LOG_DEBUG("socket failed: %1% (%2%): netmask and network for interface %3% are unavailable.", strerror(errno), errno, addr->lifr_name);
-            return;
-        }
-
-        lifreq netmask_addr = *addr;
-        if (ioctl(ctl, SIOCGLIFNETMASK, &netmask_addr) == -1) {
-            LOG_DEBUG("ioctl with SIOCGLIFNETMASK failed: %1% (%2%): netmask and network for interface %3% are unavailable.", strerror(errno), errno, addr->lifr_name);
-            return;
-        }
-
-        string netmask = address_to_string(reinterpret_cast<sockaddr const*>(&netmask_addr.lifr_addr));
-        string network = address_to_string(reinterpret_cast<sockaddr const*>(&addr->lifr_addr), reinterpret_cast<sockaddr const*>(&netmask_addr.lifr_addr));
-
-        if (addr->lifr_addr.ss_family == AF_INET) {
-            iface.netmask.v4 = move(netmask);
-            iface.network.v4 = move(network);
-        } else if (addr->lifr_addr.ss_family == AF_INET6) {
-            iface.netmask.v6 = move(netmask);
-            iface.network.v6 = move(network);
-        }
     }
 
     void networking_resolver::populate_mtu(interface& iface, lifreq const* addr) const

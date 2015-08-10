@@ -11,8 +11,6 @@ using namespace std;
 struct networking_utilities : facter::facts::windows::networking_resolver
 {
  public:
-    using networking_resolver::ignored_ipv4_address;
-    using networking_resolver::ignored_ipv6_address;
     using networking_resolver::create_ipv4_mask;
     using networking_resolver::create_ipv6_mask;
     using networking_resolver::mask_ipv4_address;
@@ -47,32 +45,6 @@ std::string networking_utilities::address_to_string<sockaddr_in6>(sockaddr_in6 c
 {
     auto masked = mask_ipv6_address(reinterpret_cast<sockaddr const*>(addr), *mask);
     return address_to_string(masked);
-}
-
-// IPv4 Tests
-SCENARIO("ignore IPv4 addresses") {
-    char const* ignored_addresses[] = {
-        "127.0.0.1",
-        "169.254.7.14",
-        "169.254.0.0",
-        "169.254.255.255"
-    };
-    for (auto s : ignored_addresses) {
-        REQUIRE(networking_utilities::ignored_ipv4_address(s));
-    }
-    char const* accepted_addresses[] = {
-        "169.253.0.0",
-        "169.255.0.0",
-        "100.100.100.100",
-        "0.0.0.0",
-        "1.1.1.1",
-        "10.0.18.142",
-        "192.168.0.1",
-        "255.255.255.255"
-    };
-    for (auto s : accepted_addresses) {
-        REQUIRE_FALSE(networking_utilities::ignored_ipv4_address(s));
-    }
 }
 
 static constexpr sockaddr_in make_sockaddr_in(u_char a, u_char b, u_char c, u_char d)
@@ -156,28 +128,6 @@ SCENARIO("IPv4 address with mask to string") {
     REQUIRE("200.0.154.12" == util.address_to_string(&outer, &max));
     REQUIRE("200.0.128.0" == util.address_to_string(&outer, &zoro));
     REQUIRE("128.0.0.0" == util.address_to_string(&outer, &v));
-}
-
-SCENARIO("ignore IPv6 adddresses") {
-    networking_utilities util;
-    char const* ignored_addresses[] = {
-        "::1",
-        "fe80::9c84:7ca1:794b:12ed",
-        "fe80::75f2:2f55:823b:a513%10"
-    };
-    for (auto s : ignored_addresses) {
-        REQUIRE(networking_utilities::ignored_ipv6_address(s));
-    }
-    char const* accepted_addresses[] = {
-        "::fe80:75f2:2f55:823b:a513",
-        "fe7f::75f2:2f55:823b:a513%10",
-        "::2",
-        "::fe01",
-        "::fe80"
-    };
-    for (auto s : accepted_addresses) {
-        REQUIRE_FALSE(networking_utilities::ignored_ipv6_address(s));
-    }
 }
 
 static sockaddr_in6 make_sockaddr_in6(array<u_char, 16> x)

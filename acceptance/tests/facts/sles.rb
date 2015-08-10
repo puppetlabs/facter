@@ -72,6 +72,23 @@ agents.each do |agent|
     assert_match(value, fact_on(agent, fact))
   end
 
+  step "Ensure a primary networking interface was determined."
+  primary_interface = fact_on(agent, 'networking.primary')
+  assert_not_equal("", primary_interface)
+
+  step "Ensure bindings for the primary networking interface are present."
+  expected_bindings = {
+                        "networking.interfaces.#{primary_interface}.bindings.0.address" => /\d+\.\d+\.\d+\.\d+/,
+                        "networking.interfaces.#{primary_interface}.bindings.0.netmask" => /\d+\.\d+\.\d+\.\d+/,
+                        "networking.interfaces.#{primary_interface}.bindings.0.network" => /\d+\.\d+\.\d+\.\d+/,
+                        "networking.interfaces.#{primary_interface}.bindings6.0.address" => /[a-f0-9:]+/,
+                        "networking.interfaces.#{primary_interface}.bindings6.0.netmask" => /[a-f0-9:]+/,
+                        "networking.interfaces.#{primary_interface}.bindings6.0.network" => /[a-f0-9:]+/
+                      }
+  expected_bindings.each do |fact, value|
+    assert_match(value, fact_on(agent, fact))
+  end
+
   step "Ensure the identity fact resolves as expected"
   expected_identity = {
                         'identity.gid'   => '0',
