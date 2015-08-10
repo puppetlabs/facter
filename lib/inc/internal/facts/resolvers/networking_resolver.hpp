@@ -5,6 +5,7 @@
 #pragma once
 
 #include <facter/facts/resolver.hpp>
+#include <facter/facts/map_value.hpp>
 #include <string>
 #include <vector>
 #include <boost/optional.hpp>
@@ -29,6 +30,21 @@ namespace facter { namespace facts { namespace resolvers {
         static std::string macaddress_to_string(uint8_t const* bytes);
 
         /**
+        * Returns whether the address is an ignored IPv4 address.
+        * Ignored addresses are local or auto-assigned private IP.
+        * @param addr The string representation of an IPv4 address.
+        * @return Returns true if an ignored IPv4 address.
+        */
+        static bool ignored_ipv4_address(std::string const& addr);
+
+        /**
+         * Returns whether the address is an ignored IPv6 address. Ignored addresses are local or link-local.
+         * @param addr The string representation of an IPv6 address.
+         * @return Returns true if an ignored IPv6 address.
+         */
+        static bool ignored_ipv6_address(std::string const& addr);
+
+        /**
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact collection that is resolving facts.
          */
@@ -36,19 +52,24 @@ namespace facter { namespace facts { namespace resolvers {
 
      protected:
         /**
-         * Represents an IP address.
+         * Represents an address binding.
          */
-        struct ipaddress
+        struct binding
         {
             /**
-             * Stores the IPv4 address.
+             * Stores the interface's address.
              */
-            std::string v4;
+            std::string address;
 
             /**
-             * Stores the IPv6 address.
+             * Stores the netmask represented as an address.
              */
-            std::string v6;
+            std::string netmask;
+
+            /**
+             * Stores the network address.
+             */
+            std::string network;
         };
 
         /**
@@ -67,19 +88,14 @@ namespace facter { namespace facts { namespace resolvers {
             std::string dhcp_server;
 
             /**
-             * Stores the interface's address.
+             * Stores the IPv4 bindings for the interface.
              */
-            ipaddress address;
+            std::vector<binding> ipv4_bindings;
 
             /**
-             * Stores the netmask represented as an address.
+             * Stores the IPv6 bindings for the interface.
              */
-            ipaddress netmask;
-
-            /**
-             * Stores the network address.
-             */
-            ipaddress network;
+            std::vector<binding> ipv6_bindings;
 
             /**
              * Stores the link layer (MAC) address.
@@ -129,6 +145,10 @@ namespace facter { namespace facts { namespace resolvers {
          * @return Returns the resolver data.
          */
         virtual data collect_data(collection& facts) = 0;
+
+     private:
+        static binding const* find_default_binding(std::vector<binding> const& bindings, std::function<bool(std::string const&)> const& ignored);
+        static void add_bindings(interface& iface, bool primary, bool ipv4, collection& facts, map_value& networking, map_value& iface_value);
     };
 
 }}}  // namespace facter::facts::resolvers

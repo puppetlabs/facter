@@ -52,8 +52,7 @@ namespace facter { namespace facts { namespace bsd {
         virtual std::string find_dhcp_server(std::string const& interface) const;
 
      private:
-        void populate_address(interface& iface, ifaddrs const* addr) const;
-        void populate_network(interface& iface, ifaddrs const* addr) const;
+        void populate_binding(interface& iface, ifaddrs const* addr) const;
         void populate_mtu(interface& iface, ifaddrs const* addr) const;
     };
 

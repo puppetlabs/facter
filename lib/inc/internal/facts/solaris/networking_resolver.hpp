@@ -38,9 +38,8 @@ namespace facter { namespace facts { namespace solaris {
         virtual uint8_t const* get_link_address_bytes(sockaddr const* addr) const override;
 
      private:
-        void populate_address(interface& iface, lifreq const* addr) const;
+        void populate_binding(interface& iface, lifreq const* addr) const;
         void populate_macaddress(interface& iface, lifreq const* addr) const;
-        void populate_network(interface& iface, lifreq const* addr) const;
         void populate_mtu(interface& iface, lifreq const* addr) const;
         std::string find_dhcp_server(std::string const& interface) const;
         std::string get_primary_interface() const;

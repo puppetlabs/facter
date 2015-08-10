@@ -39,21 +39,6 @@ namespace facter { namespace facts { namespace windows {
         virtual data collect_data(collection& facts) override;
 
         /**
-         * Returns whether the address is an ignored IPv4 address.
-         * Ignored addresses are local or auto-assigned private IP.
-         * @param addr The string representation of an IPv4 address.
-         * @return Returns true if an ignored IPv4 address.
-         */
-        static bool ignored_ipv4_address(std::string const& addr);
-
-        /**
-         * Returns whether the address is an ignored IPv6 address. Ignored addresses are local or link-local.
-         * @param addr The string representation of an IPv6 address.
-         * @return Returns true if an ignored IPv6 address.
-         */
-        static bool ignored_ipv6_address(std::string const& addr);
-
-        /**
          * Creates an IPv4 sockaddr_in of the mask. If masklen is too large, returns a full mask.
          * Windows only allows contiguous subnet masks, representing them by their length.
          * @param masklen Length of the contiguous mask.
