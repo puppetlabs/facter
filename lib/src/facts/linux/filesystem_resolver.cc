@@ -5,6 +5,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/regex.hpp>
 #include <mntent.h>
 #include <sys/vfs.h>
 #include <set>
@@ -21,6 +22,8 @@ using namespace boost::filesystem;
 
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
+
+namespace bs = boost::system;
 
 namespace facter { namespace facts { namespace linux {
 
@@ -152,7 +155,23 @@ namespace facter { namespace facts { namespace linux {
             }
 
             // Populate the size (the size is given in 512 byte blocks)
-            string blocks = file::read((path("/sys/class/block") / path(part.name).filename() / "/size").string());
+            // Check for /sys/class/block. Fall back to /sys/block if not present.
+            bs::error_code ec;
+            string blocks;
+            auto part_path = path(part.name).filename();
+            if (exists("/sys/class/block", ec) && !ec) {
+              blocks = file::read((path("/sys/class/block") / part_path / "/size").string());
+            } else {
+              boost::regex expression("\\d*(\\D+)\\d*");
+              boost::cmatch what;
+              if (boost::regex_match(part_path.string().c_str(), what, expression)) {
+                blocks = file::read((path("/sys/block") / what[1].str() / part_path / "/size").string());
+              } else {
+                LOG_WARNING("could not derive device name from partition '%1%'", part.name);
+              }
+            }
+            ec.clear();
+
             boost::trim(blocks);
             if (!blocks.empty()) {
                 try {
