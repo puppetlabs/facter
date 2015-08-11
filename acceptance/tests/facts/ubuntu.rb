@@ -90,7 +90,7 @@ agents.each do |agent|
 
   step "Ensure a primary networking interface was determined."
   primary_interface = fact_on(agent, 'networking.primary')
-  assert_not_equal("", primary_interface)
+  refute_empty(primary_interface)
 
   step "Ensure bindings for the primary networking interface are present."
   expected_bindings = {
