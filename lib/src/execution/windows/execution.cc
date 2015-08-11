@@ -358,6 +358,22 @@ namespace facter { namespace execution {
         option_set<execution_options> const& options,
         uint32_t timeout)
     {
+        // Since we use a job object in the windows world, we want to
+        // be sure we're not in a job object, or at least able to
+        // break our processes out if we are in one.
+        BOOL in_job;
+        bool use_job_object = true;
+        if (!IsProcessInJob(GetCurrentProcess(), nullptr, &in_job)) {
+            throw execution_exception("could not determine if facter is running in a job object");
+        }
+        if (in_job) {
+            JOBOBJECT_BASIC_LIMIT_INFORMATION limits;
+            if (!QueryInformationJobObject(nullptr, JobObjectBasicLimitInformation, &limits, sizeof(limits), nullptr)
+                || !(limits.LimitFlags & JOB_OBJECT_LIMIT_BREAKAWAY_OK)) {  // short-circuits if QueryInformationJobObject fails
+                use_job_object = false;
+            }
+        }
+
         // Search for the executable
         string executable = which(file);
         log_execution(executable.empty() ? file : executable, arguments);
@@ -477,7 +493,7 @@ namespace facter { namespace execution {
             NULL,           /* Don't allow child process to inherit process handle */
             NULL,           /* Don't allow child process to inherit thread handle */
             TRUE,           /* Inherit handles from the calling process for communication */
-            CREATE_NO_WINDOW,
+            use_job_object ? CREATE_NO_WINDOW | CREATE_BREAKAWAY_FROM_JOB : CREATE_NO_WINDOW,
             options[execution_options::merge_environment] ? NULL : modified_environ.data(),
             NULL,           /* Use existing current directory */
             &startupInfo,   /* STARTUPINFO for child process */
@@ -497,21 +513,28 @@ namespace facter { namespace execution {
 
         // Use a Job Object to group any child processes spawned by the CreateProcess invocation, so we can
         // easily stop them in case of a timeout.
-        scoped_resource<HANDLE> hJob(CreateJobObjectW(nullptr, nullptr), CloseHandle);
-        if (hJob == NULL) {
-            LOG_ERROR("failed to create job object: %1%.", system_error());
-            throw execution_exception("failed to create job object.");
-        } else if (!AssignProcessToJobObject(hJob, hProcess)) {
-            LOG_ERROR("failed to associate process with job object: %1%.", system_error());
-            throw execution_exception("failed to associate process with job object.");
+        scoped_resource<HANDLE> hJob;
+        if (use_job_object) {
+            hJob = scoped_resource<HANDLE>(CreateJobObjectW(nullptr, nullptr), CloseHandle);
+            if (hJob == NULL) {
+                LOG_ERROR("failed to create job object: %1%.", system_error());
+                throw execution_exception("failed to create job object.");
+            } else if (!AssignProcessToJobObject(hJob, hProcess)) {
+                LOG_ERROR("failed to associate process with job object: %1%.", system_error());
+                throw execution_exception("failed to associate process with job object.");
+            }
         }
 
         bool terminate = true;
         scope_exit reaper([&]() {
             if (terminate) {
                 // Terminate the process on an exception
-                if (!TerminateJobObject(hJob, -1)) {
-                    LOG_ERROR("failed to terminate process: %1%.", system_error());
+                if (use_job_object) {
+                    if (!TerminateJobObject(hJob, -1)) {
+                        LOG_ERROR("failed to terminate process: %1%.", system_error());
+                    }
+                } else {
+                    LOG_WARNING("could not terminate process %1% because a job object could not be used.", procInfo.dwProcessId);
                 }
             }
         });
