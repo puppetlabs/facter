@@ -192,6 +192,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "OpenBSD")
         "src/facts/openbsd/networking_resolver.cc"
         "src/util/bsd/scoped_ifaddrs.cc"
         "src/facts/openbsd/memory_resolver.cc"
+        "src/facts/openbsd/virtualization_resolver.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
     set(LIBFACTER_PLATFORM_SOURCES

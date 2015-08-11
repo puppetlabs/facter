@@ -235,35 +235,6 @@ namespace facter { namespace facts { namespace linux {
         return {};
     }
 
-    string virtualization_resolver::get_product_name_vm(collection& facts)
-    {
-        static vector<tuple<string, string>> vms = {
-            make_tuple("VMware",            string(vm::vmware)),
-            make_tuple("VirtualBox",        string(vm::virtualbox)),
-            make_tuple("Parallels",         string(vm::parallels)),
-            make_tuple("KVM",               string(vm::kvm)),
-            make_tuple("Virtual Machine",   string(vm::hyperv)),
-            make_tuple("RHEV Hypervisor",   string(vm::redhat_ev)),
-            make_tuple("oVirt Node",        string(vm::ovirt)),
-            make_tuple("HVM domU",          string(vm::xen_hardware)),
-            make_tuple("Bochs",             string(vm::bochs)),
-        };
-
-        auto product_name = facts.get<string_value>(fact::product_name);
-        if (!product_name) {
-            return {};
-        }
-
-        auto const& value = product_name->value();
-
-        for (auto const& vm : vms) {
-            if (value.find(get<0>(vm)) != string::npos) {
-                return get<1>(vm);
-            }
-        }
-        return {};
-    }
-
     string virtualization_resolver::get_lspci_vm()
     {
         static vector<tuple<boost::regex, string>> vms = {

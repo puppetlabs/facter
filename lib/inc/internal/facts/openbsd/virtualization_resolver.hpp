@@ -1,13 +1,12 @@
 /**
  * @file
- * Declares the Linux virtualization fact resolver.
+ * Declares the OpenBSD virtualization fact resolver.
  */
 #pragma once
 
 #include "../resolvers/virtualization_resolver.hpp"
-#include <string>
 
-namespace facter { namespace facts { namespace linux {
+namespace facter { namespace facts { namespace openbsd {
 
     /**
      * Responsible for resolving virtualization facts.
@@ -21,16 +20,6 @@ namespace facter { namespace facts { namespace linux {
          * @return Returns the name of the hypervisor or empty string if no hypervisor.
          */
         virtual std::string get_hypervisor(collection& facts) override;
-
-     private:
-        static std::string get_cgroup_vm();
-        static std::string get_gce_vm(collection& facts);
-        static std::string get_what_vm();
-        static std::string get_vserver_vm();
-        static std::string get_vmware_vm();
-        static std::string get_openvz_vm();
-        static std::string get_xen_vm();
-        static std::string get_lspci_vm();
     };
 
-}}}  // namespace facter::facts::linux
+}}}  // namespace facter::facts::osx
