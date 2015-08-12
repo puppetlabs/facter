@@ -292,18 +292,21 @@ endif()
 install(TARGETS libfacter DESTINATION ${LIBFACTER_INSTALL_DESTINATION})
 install(DIRECTORY inc/facter DESTINATION include)
 
+# Always generate facter.rb and spec_helper.rb, as they might be used in packaging
+# and testing on another machine.
+configure_file (
+    "facter.rb.in"
+    "${CMAKE_BINARY_DIR}/lib/facter.rb"
+)
+
+# Generate a file for ruby testing
+configure_file (
+    "spec_helper.rb.in"
+    "${CMAKE_CURRENT_LIST_DIR}/spec/spec_helper.rb"
+)
+
+# Disable actually installing facter.rb if Ruby is not present.
 if (RUBY_FOUND)
-    configure_file (
-        "facter.rb.in"
-        "${CMAKE_BINARY_DIR}/lib/facter.rb"
-    )
-
-    # Generate a file for ruby testing
-    configure_file (
-        "spec_helper.rb.in"
-        "${CMAKE_CURRENT_LIST_DIR}/spec/spec_helper.rb"
-    )
-
     message(STATUS "Ruby ${RUBY_VERSION} found.")
 
     if (APPLE)
@@ -317,10 +320,10 @@ if (RUBY_FOUND)
 
     set(RUBY_LIB_INSTALL "" CACHE PATH "Specify the location to install facter.rb")
     if(RUBY_LIB_INSTALL)
-      set(RUBY_VENDORDIR ${RUBY_LIB_INSTALL}) 
+        set(RUBY_VENDORDIR ${RUBY_LIB_INSTALL}) 
     else()
-      execute_process(COMMAND ${RUBY_EXECUTABLE} -rrbconfig -e "puts RbConfig::CONFIG['vendordir']" OUTPUT_VARIABLE RUBY_VENDORDIR_OUT)
-      string(STRIP ${RUBY_VENDORDIR_OUT} RUBY_VENDORDIR)
+        execute_process(COMMAND ${RUBY_EXECUTABLE} -rrbconfig -e "puts RbConfig::CONFIG['vendordir']" OUTPUT_VARIABLE RUBY_VENDORDIR_OUT)
+        string(STRIP ${RUBY_VENDORDIR_OUT} RUBY_VENDORDIR)
     endif()
     message(STATUS "\"make install\" will install facter.rb to ${RUBY_VENDORDIR}")
     install(FILES ${CMAKE_BINARY_DIR}/lib/facter.rb DESTINATION ${RUBY_VENDORDIR})
