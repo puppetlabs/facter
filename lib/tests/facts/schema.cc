@@ -121,6 +121,7 @@ struct filesystem_resolver : resolvers::filesystem_resolver
         p.label = "label";
         p.partition_label = "partlabel";
         p.mount = "mount";
+        p.backing_file = "/foo/bar";
         result.partitions.emplace_back(move(p));
         return result;
     }

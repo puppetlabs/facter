@@ -1,6 +1,8 @@
 #include <internal/facts/linux/filesystem_resolver.hpp>
 #include <internal/util/scoped_file.hpp>
+#include <internal/util/regex.hpp>
 #include <facter/util/file.hpp>
+#include <facter/util/directory.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
@@ -18,6 +20,7 @@ using namespace std;
 using namespace facter::facts;
 using namespace facter::util;
 using namespace boost::filesystem;
+namespace sys = boost::system;
 
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
@@ -41,17 +44,37 @@ namespace facter { namespace facts { namespace linux {
             LOG_ERROR("setmntent failed: %1% (%2%): mountpoints are unavailable.", strerror(errno), errno);
             return;
         }
+        string root_device;
         mntent entry;
         char buffer[4096];
         while (mntent *ptr = getmntent_r(file, &entry, buffer, sizeof(buffer))) {
+            string device = ptr->mnt_fsname;
+
             // Skip over anything that doesn't map to a device
-            if (!boost::starts_with(ptr->mnt_fsname, "/dev/")) {
+            if (!boost::starts_with(device, "/dev/")) {
                 continue;
+            }
+
+            // If the "root" device, lookup the actual device from the kernel options
+            // This is done because not all systems symlink /dev/root
+            if (device == "/dev/root") {
+                if (root_device.empty()) {
+                    boost::regex root_pattern("root=([^\\s]+)");
+                    file::each_line("/proc/cmdline", [&](string& line) {
+                        if (re_search(line, root_pattern, &root_device)) {
+                            return false;
+                        }
+                        return true;
+                    });
+                }
+                if (!root_device.empty()) {
+                    device = root_device;
+                }
             }
 
             mountpoint point;
             point.name = ptr->mnt_dir;
-            point.device = ptr->mnt_fsname;
+            point.device = std::move(device);
             point.filesystem = ptr->mnt_type;
             boost::split(point.options, ptr->mnt_opts, boost::is_any_of(","), boost::token_compress_on);
 
@@ -83,97 +106,140 @@ namespace facter { namespace facts { namespace linux {
 
     void filesystem_resolver::collect_partition_data(data& result)
     {
-        // Only return partition data if we're using libblkid
-#ifdef USE_BLKID
-        // The size of a block, in bytes, read in from /sys/class/block
-        const int block_size = 512;
-
-        // Get a default cache
-        blkid_cache cache;
-        if (blkid_get_cache(&cache, nullptr) < 0) {
-            LOG_ERROR("blkid_get_cache failed: %1% (%2%): partition data is unavailable.", strerror(errno), errno);
-            return;
-        }
-
-        // Probe all block devices
-        if (blkid_probe_all(cache) < 0) {
-            blkid_put_cache(cache);
-            LOG_ERROR("blkid_probe_all failed: %1% (%2%): partition data is unavailable.", strerror(errno), errno);
-            return;
-        }
-
-        // Begin iteration
-        auto iter = blkid_dev_iterate_begin(cache);
-        if (!iter) {
-            blkid_put_cache(cache);
-            LOG_ERROR("blkid_dev_iterate_begin failed: %1% (%2%): partition data is unavailable.", strerror(errno), errno);
-            return;
-        }
-
         // Populate a map of device -> mountpoint
-        map<string, string> device_mountpoints;
+        map<string, string> mountpoints;
         for (auto const& point : result.mountpoints) {
-            device_mountpoints.insert(make_pair(point.device, point.name));
+            mountpoints.insert(make_pair(point.device, point.name));
         }
 
-        // Loop each block device
-        blkid_dev device;
-        while (blkid_dev_next(iter, &device) == 0) {
-            partition part;
-            part.name = blkid_dev_devname(device);
+        void* cache = nullptr;
 
-            // Populate the tags
-            blkid_tag_iterate tag_iter;
-            tag_iter = blkid_tag_iterate_begin(device);
-            if (tag_iter) {
-                const char* tag_name;
-                const char* tag_value;
-                while (blkid_tag_next(tag_iter, &tag_name, &tag_value) == 0) {
-                    string* ptr = nullptr;
-                    string attribute = tag_name;
-                    boost::to_lower(attribute);
-                    if (attribute == "type") {
-                        ptr = &part.filesystem;
-                    } else if (attribute == "label") {
-                        ptr = &part.label;
-                    } else if (attribute == "partlabel") {
-                        ptr = &part.partition_label;
-                    } else if (attribute == "uuid") {
-                        ptr = &part.uuid;
-                    } else if (attribute == "partuuid") {
-                        ptr = &part.partition_uuid;
-                    }
-                    if (!ptr) {
-                        continue;
-                    }
-                    (*ptr) = tag_value;
-                }
-                blkid_tag_iterate_end(tag_iter);
-            }
-
-            // Populate the size (the size is given in 512 byte blocks)
-            string blocks = file::read((path("/sys/class/block") / path(part.name).filename() / "/size").string());
-            boost::trim(blocks);
-            if (!blocks.empty()) {
-                try {
-                    part.size = lexical_cast<uint64_t>(blocks) * block_size;
-                } catch (bad_lexical_cast& ex) {
-                }
-            }
-
-            // Populate the mountpoint if there is one
-            auto it = device_mountpoints.find(part.name);
-            if (it != device_mountpoints.end()) {
-                part.mount = it->second;
-            }
-
-            result.partitions.emplace_back(move(part));
+#ifdef USE_BLKID
+        blkid_cache actual = nullptr;
+        if (blkid_get_cache(&actual, nullptr) == 0) {
+            cache = actual;
+        } else {
+            LOG_DEBUG("blkid_get_cache failed: partition attributes are not available.");
         }
-        blkid_dev_iterate_end(iter);
-        blkid_put_cache(cache);
 #else
-        LOG_INFO("partition information is unavailable: facter was built without blkid support.");
+        LOG_DEBUG("facter was built without libblkid support: partition attributes are not available.");
+#endif  // USE_BLKID
+
+        directory::each_subdirectory("/sys/block", [&](string const& subdirectory) {
+            path block_device_path(subdirectory);
+
+            // For devices, look up partition subdirectories
+            sys::error_code ec;
+            if (is_directory(block_device_path / "device", ec)) {
+                directory::each_subdirectory(subdirectory, [&](string const& subdirectory) {
+                    // Ignore any subdirectory without a "partition" file
+                    sys::error_code ec;
+                    path partition_path(subdirectory);
+                    if (!is_regular_file(partition_path / "partition", ec)) {
+                        return true;
+                    }
+
+                    partition part;
+                    part.name = "/dev/" + partition_path.filename().string();
+                    populate_partition_attributes(part, subdirectory, cache, mountpoints);
+                    result.partitions.emplace_back(std::move(part));
+                    return true;
+                });
+            } else if (is_directory(block_device_path / "dm", ec)) {
+                // For mapped devices, lookup the mapping name
+                partition part;
+                string mapping_name = file::read((block_device_path / "dm" / "name").string());
+                boost::trim(mapping_name);
+                if (mapping_name.empty()) {
+                    mapping_name = "/dev/" + block_device_path.filename().string();
+                } else {
+                    mapping_name = "/dev/mapper/" + mapping_name;
+                }
+                part.name = std::move(mapping_name);
+
+                populate_partition_attributes(part, block_device_path.string(), cache, mountpoints);
+                result.partitions.emplace_back(std::move(part));
+            } else if (is_directory(block_device_path / "loop")) {
+                // Lookup the backing file
+                partition part;
+                part.name = "/dev/" + block_device_path.filename().string();
+                part.backing_file = file::read((block_device_path / "loop" / "backing_file").string());
+                boost::trim(part.backing_file);
+
+                populate_partition_attributes(part, block_device_path.string(), cache, mountpoints);
+                result.partitions.emplace_back(std::move(part));
+            }
+            return true;
+        });
+
+#ifdef USE_BLKID
+        // Cleanup the blkid cache if there is one
+        if (cache) {
+            blkid_put_cache(static_cast<blkid_cache>(cache));
+            cache = nullptr;
+        }
 #endif  // USE_BLKID
     }
 
+    void filesystem_resolver::populate_partition_attributes(partition& part, string const& device_directory, void* cache, map<string, string> const& mountpoints)
+    {
+#ifdef USE_BLKID
+        if (cache) {
+            auto device = blkid_get_dev(static_cast<blkid_cache>(cache), part.name.c_str(), 0);
+            if (!device) {
+                LOG_DEBUG("blkid_get_dev failed: partition attributes are unavailable for '%1%'.", part.name);
+            } else {
+                // Populate the attributes
+                auto it = blkid_tag_iterate_begin(device);
+                if (it) {
+                    const char* name;
+                    const char* value;
+                    while (blkid_tag_next(it, &name, &value) == 0) {
+                        string* ptr = nullptr;
+                        string attribute = name;
+                        boost::to_lower(attribute);
+                        if (attribute == "type") {
+                            ptr = &part.filesystem;
+                        } else if (attribute == "label") {
+                            ptr = &part.label;
+                        } else if (attribute == "partlabel") {
+                            ptr = &part.partition_label;
+                        } else if (attribute == "uuid") {
+                            ptr = &part.uuid;
+                        } else if (attribute == "partuuid") {
+                            ptr = &part.partition_uuid;
+                        }
+                        if (!ptr) {
+                            continue;
+                        }
+                        (*ptr) = value;
+                    }
+                    blkid_tag_iterate_end(it);
+                }
+            }
+        }
+#endif  // USE_BLKID
+
+        // Lookup the mountpoint
+        auto it = mountpoints.find(part.name);
+        if (it != mountpoints.end()) {
+            part.mount = it->second;
+        }
+
+        // The size of a block, in bytes
+        const int block_size = 512;
+
+        // Read the size
+        string blocks = file::read(device_directory + "/size");
+        boost::trim(blocks);
+        if (!blocks.empty()) {
+            try {
+                part.size = lexical_cast<uint64_t>(blocks) * block_size;
+            } catch (bad_lexical_cast& ex) {
+                LOG_DEBUG("cannot determine size of partition '%1%': '%2%' is not an integral value.", part.name, blocks);
+            }
+        }
+    }
+
 }}}  // namespace facter::facts::linux
+
