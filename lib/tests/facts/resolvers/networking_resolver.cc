@@ -384,6 +384,9 @@ SCENARIO("ignored IPv4 addresses") {
     char const* ignored_addresses[] = {
             "",
             "127.0.0.1",
+            "127.0.0.2",
+            "127.1.0.0",
+            "127.0.1.0",
             "169.254.7.14",
             "169.254.0.0",
             "169.254.255.255"
@@ -400,7 +403,8 @@ SCENARIO("ignored IPv4 addresses") {
             "1.1.1.1",
             "10.0.18.142",
             "192.168.0.1",
-            "255.255.255.255"
+            "255.255.255.255",
+            "128.0.0.1",
     };
     for (auto s : accepted_addresses) {
         CAPTURE(s);
