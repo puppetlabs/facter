@@ -190,6 +190,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "OpenBSD")
         "src/facts/bsd/uptime_resolver.cc"
         "src/facts/openbsd/dmi_resolver.cc"
         "src/facts/openbsd/networking_resolver.cc"
+        "src/facts/openbsd/processor_resolver.cc"
         "src/util/bsd/scoped_ifaddrs.cc"
         "src/facts/openbsd/memory_resolver.cc"
         "src/facts/openbsd/virtualization_resolver.cc"

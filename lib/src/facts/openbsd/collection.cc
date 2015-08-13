@@ -6,6 +6,7 @@
 #include <internal/facts/openbsd/memory_resolver.hpp>
 #include <internal/facts/openbsd/networking_resolver.hpp>
 #include <internal/facts/openbsd/virtualization_resolver.hpp>
+#include <internal/facts/openbsd/processor_resolver.hpp>
 #include <internal/facts/posix/identity_resolver.hpp>
 #include <internal/facts/posix/kernel_resolver.hpp>
 #include <internal/facts/posix/ssh_resolver.hpp>
@@ -30,6 +31,7 @@ namespace facter { namespace facts {
         add(make_shared<openbsd::dmi_resolver>());
         add(make_shared<openbsd::memory_resolver>());
         add(make_shared<openbsd::virtualization_resolver>());
+        add(make_shared<openbsd::processor_resolver>());
     }
 
 }}  // namespace facter::facts
