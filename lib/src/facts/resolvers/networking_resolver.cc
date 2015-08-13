@@ -165,7 +165,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
         // Excluding localhost and 169.254.x.x in Windows - this is the DHCP APIPA, meaning that if the node cannot
         // get an ip address from the dhcp server, it auto-assigns a private ip address
-        return addr.empty() || addr == "127.0.0.1" || boost::starts_with(addr, "169.254.");
+        return addr.empty() ||  boost::starts_with(addr, "127.") || boost::starts_with(addr, "169.254.");
     }
 
     bool networking_resolver::ignored_ipv6_address(string const& addr)
