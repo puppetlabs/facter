@@ -35,18 +35,18 @@ augeas:
     type: map
     description: Return information about augeas.
     resolution: |
-        All platforms: query augtool for augeas metadata.
+        All platforms: query augparse for augeas metadata.
     elements:
         version:
             type: string
-            description: The version of augtool.
+            description: The version of augparse.
 
 augeasversion:
     type: string
     hidden: true
     description: Return the version of augeas.
     resolution: |
-        All platforms: query augtool for the augeas version.
+        All platforms: query augparse for the augeas version.
 
 blockdevices:
     type: string

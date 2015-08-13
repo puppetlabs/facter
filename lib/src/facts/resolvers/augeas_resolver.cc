@@ -25,22 +25,22 @@ namespace facter { namespace facts { namespace resolvers {
 
     string augeas_resolver::get_version()
     {
-        string augtool = [] {
+        string augparse = [] {
 #ifdef FACTER_PATH
-            string fixed = which("augtool", {FACTER_PATH});
+            string fixed = which("augparse", {FACTER_PATH});
             if (fixed.empty()) {
-                LOG_WARNING("augtool not found at configured location %1%, using PATH instead", FACTER_PATH);
+                LOG_WARNING("augparse not found at configured location %1%, using PATH instead", FACTER_PATH);
             } else {
                 return fixed;
             }
 #endif
-            return string("augtool");
+            return string("augparse");
         }();
 
         string value;
-        boost::regex regexp("^augtool (\\d+\\.\\d+\\.\\d+)");
+        boost::regex regexp("^augparse (\\d+\\.\\d+\\.\\d+)");
         // Version info goes on stderr.
-        each_line(augtool, {"--version"}, nullptr, [&](string& line) {
+        each_line(augparse, {"--version"}, nullptr, [&](string& line) {
             if (re_search(line, regexp, &value)) {
                 return false;
             }
