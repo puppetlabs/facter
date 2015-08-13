@@ -1,0 +1,2 @@
+# dmidecode 2.12
+# No SMBIOS nor DMI entry point found, sorry.
