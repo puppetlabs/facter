@@ -1,16 +1,16 @@
-test_name "Facts should resolve as expected in Fedora 20 and 21"
+test_name "Facts should resolve as expected in Fedora 20, 21, and 22"
 
 #
 # This test is intended to ensure that facts specific to an OS configuration
-# resolve as expected in Fedora 20 and 21.
+# resolve as expected in Fedora 20, 21, and 22.
 #
 # Facts tested: os, processors, networking, identity, kernel
 #
 
-confine :to, :platform => /fedora-20|fedora-21/
+confine :to, :platform => /fedora-2[0-2]/
 
 agents.each do |agent|
-  os_version = agent['platform'] =~ /fedora-20/ ? '20' : '21'
+  /fedora-(?<os_version>\d\d)/ =~ agent['platform']
 
   if agent['platform'] =~ /x86_64/
     os_arch     = 'x86_64'
@@ -94,7 +94,12 @@ agents.each do |agent|
   end
 
   step "Ensure the kernel fact resolves as expected"
-  kernel_version = os_version == '21' ? '3.17' : '3.11'
+  kernel_version = case os_version
+    when '20' then '3.11'
+    when '21' then '3.17'
+    when '22' then '4.0'
+    else 'undefined'
+  end
 
   expected_kernel = {
                       'kernel'           => 'Linux',
