@@ -7,9 +7,12 @@ using namespace boost::filesystem;
 
 namespace facter { namespace util {
 
-    void directory::each_file(string const& directory, function<bool(string const&)> callback, string const& pattern)
+    static void each(std::string const& directory, file_type type, std::function<bool(std::string const&)> const& callback, string const& pattern)
     {
-        boost::regex regex(pattern);
+        boost::regex regex;
+        if (!pattern.empty()) {
+            regex = pattern;
+        }
 
         // Attempt to iterate the directory
         boost::system::error_code ec;
@@ -18,14 +21,15 @@ namespace facter { namespace util {
             return;
         }
 
-        // Call the callback for any matching files
+        // Call the callback for any matching entries
         directory_iterator end;
         for (; it != end; ++it) {
-            boost::system::error_code ec;
-            if (!is_regular_file(it->status(ec))) {
+            ec.clear();
+            auto status = it->status(ec);
+            if (ec || (status.type() != type)) {
                 continue;
             }
-            if (re_search(it->path().filename().string(), regex)) {
+            if (regex.empty() || re_search(it->path().filename().string(), regex)) {
                 if (!callback(it->path().string())) {
                     break;
                 }
@@ -33,30 +37,14 @@ namespace facter { namespace util {
         }
     }
 
-    void directory::each_subdirectory(string const& directory, function<bool(string const&)> callback, string const& pattern)
+    void directory::each_file(string const& directory, function<bool(string const&)> const& callback, string const& pattern)
     {
-        boost::regex regex(pattern);
+        each(directory, regular_file, callback, pattern);
+    }
 
-        // Attempt to iterate the directory
-        boost::system::error_code ec;
-        directory_iterator it = directory_iterator(directory, ec);
-        if (ec) {
-            return;
-        }
-
-        // Call the callback for any matching subdirectories
-        directory_iterator end;
-        for (; it != end; ++it) {
-            boost::system::error_code ec;
-            if (!is_directory(it->status(ec))) {
-                continue;
-            }
-            if (re_search(it->path().filename().string(), regex)) {
-                if (!callback(it->path().string())) {
-                    break;
-                }
-            }
-        }
+    void directory::each_subdirectory(string const& directory, function<bool(string const&)> const& callback, string const& pattern)
+    {
+        each(directory, directory_file, callback, pattern);
     }
 
 }}  // namespace facter::util

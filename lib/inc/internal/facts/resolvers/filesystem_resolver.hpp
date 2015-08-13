@@ -126,6 +126,11 @@ namespace facter { namespace facts { namespace resolvers {
              * Stores the partition mountpoint.
              */
             std::string mount;
+
+            /**
+             * Stores the backing file for partitions backed by a file.
+             */
+            std::string backing_file;
         };
 
         /**

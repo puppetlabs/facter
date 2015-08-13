@@ -1197,6 +1197,9 @@ partitions:
                 uuid:
                     type: string
                     description: The unique identifier of a partition.
+                backing_file:
+                    type: string
+                    description: The path to the file backing the partition.
 
 path:
     type: string

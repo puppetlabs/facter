@@ -31,7 +31,7 @@ struct test_filesystem_resolver : filesystem_resolver
         filesystems.emplace(move(filesystem));
     }
 
-    void add_partition(string name, string filesystem, uint64_t size, string uuid, string partuuid, string label, string partlabel, string mount)
+    void add_partition(string name, string filesystem, uint64_t size, string uuid, string partuuid, string label, string partlabel, string mount, string backing_file)
     {
         partition p;
         p.name = move(name);
@@ -42,6 +42,7 @@ struct test_filesystem_resolver : filesystem_resolver
         p.label = move(label);
         p.partition_label = move(partlabel);
         p.mount = move(mount);
+        p.backing_file = move(backing_file);
         partitions.emplace_back(move(p));
     }
 
@@ -149,7 +150,7 @@ SCENARIO("using the file system resolver") {
         const unsigned int count = 5;
         for (unsigned int i = 0; i < count; ++i) {
             string num = to_string(i);
-            resolver->add_partition("partition" + num, "filesystem" + num, 12345 + i, "uuid" + num, "partuuid" + num, "label" + num, "partlabel" + num, "mount" + num);
+            resolver->add_partition("partition" + num, "filesystem" + num, 12345 + i, "uuid" + num, "partuuid" + num, "label" + num, "partlabel" + num, "mount" + num, "file" + num);
         }
         THEN("a structured fact is added") {
             REQUIRE(facts.size() == 1u);
@@ -162,7 +163,7 @@ SCENARIO("using the file system resolver") {
 
                 auto partition = partitions->get<map_value>("partition" + num);
                 REQUIRE(partition);
-                REQUIRE(partition->size() == 8u);
+                REQUIRE(partition->size() == 9u);
 
                 auto filesystem = partition->get<string_value>("filesystem");
                 REQUIRE(filesystem);
@@ -195,6 +196,10 @@ SCENARIO("using the file system resolver") {
                 auto size = partition->get<string_value>("size");
                 REQUIRE(size);
                 REQUIRE(size->value() == "12.06 KiB");
+
+                auto file = partition->get<string_value>("backing_file");
+                REQUIRE(file);
+                REQUIRE(file->value() == "file" + num);
             }
         }
     }
