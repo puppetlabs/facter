@@ -1,3 +1,4 @@
+require 'puppet/acceptance/common_utils'
 require 'puppet/acceptance/install_utils'
 extend Puppet::Acceptance::InstallUtils
 require 'beaker/dsl/install_utils'
@@ -6,12 +7,9 @@ extend Beaker::DSL::InstallUtils
 test_name "Install Packages"
 
 step "Install repositories on target machines..." do
-
   sha = ENV['SHA']
-  repo_configs_dir = 'repo-configs'
-
   hosts.each do |host|
-    install_repos_on(host, 'puppet-agent', sha, repo_configs_dir)
+    install_repos_on(host, 'puppet-agent', sha, 'repo-configs')
   end
 end
 
@@ -32,20 +30,10 @@ PACKAGES = {
 
 install_packages_on(hosts, PACKAGES)
 
+# make sure install is sane, beaker has already added puppet and ruby
+# to PATH in ~/.ssh/environment
 agents.each do |agent|
-  case agent['platform']
-  when /windows/
-    arch = agent[:ruby_arch] || 'x86'
-    base_url = ENV['MSI_BASE_URL'] || "http://builds.puppetlabs.lan/puppet-agent/#{ENV['SHA']}/artifacts/windows"
-    filename = ENV['MSI_FILENAME'] || "puppet-agent-#{arch}.msi"
-
-    install_puppet_from_msi(agent, :url => "#{base_url}/#{filename}")
-  when /osx/
-    opts = {
-      :puppet_collection => 'PC1',
-      :puppet_agent_sha => ENV['SHA'],
-      :puppet_agent_version => ENV['SUITE_VERSION'] || ENV['SHA']
-    }
-    install_puppet_agent_dev_repo_on(agent, opts)
-  end
+  on agent, puppet('--version')
+  ruby = Puppet::Acceptance::CommandUtils.ruby_command(agent)
+  on agent, "#{ruby} --version"
 end
