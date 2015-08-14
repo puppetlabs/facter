@@ -269,6 +269,13 @@ set_target_properties(libfactersrc PROPERTIES POSITION_INDEPENDENT_CODE true)
 add_library(libfacter SHARED $<TARGET_OBJECTS:libfactersrc>)
 set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX "" IMPORT_SUFFIX ".so.a" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}")
 
+if(AIX)
+    # On AIX we need to be built such that we are "dynamically
+    # loadable". This also means specifying an entry point, which for
+    # a ruby module should be our ruby init fn.
+    set_target_properties(libfacter PROPERTIES LINK_FLAGS "-Wl,-G -eInit_libfacter")
+endif()
+
 # Link in additional libraries
 target_link_libraries(libfacter PRIVATE
     ${LIBFACTER_PLATFORM_LIBRARIES}
