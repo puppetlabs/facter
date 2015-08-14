@@ -21,8 +21,8 @@ using namespace facter::facts;
 using namespace facter::util;
 using namespace boost::filesystem;
 namespace sys = boost::system;
-using leatherman::file_util;
-using leatherman::util;
+namespace lth_file = leatherman::file_util;
+using namespace leatherman::util;
 
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
@@ -62,7 +62,7 @@ namespace facter { namespace facts { namespace linux {
             if (device == "/dev/root") {
                 if (root_device.empty()) {
                     boost::regex root_pattern("root=([^\\s]+)");
-                    file::each_line("/proc/cmdline", [&](string& line) {
+                    lth_file::each_line("/proc/cmdline", [&](string& line) {
                         if (re_search(line, root_pattern, &root_device)) {
                             return false;
                         }
@@ -93,7 +93,7 @@ namespace facter { namespace facts { namespace linux {
     void filesystem_resolver::collect_filesystem_data(data& result)
     {
         // Populate the partition data
-        each_line("/proc/filesystems", [&](string &line) {
+        lth_file::each_line("/proc/filesystems", [&](string &line) {
             boost::trim(line);
 
             // Ignore lines without devices or fuseblk
@@ -127,13 +127,13 @@ namespace facter { namespace facts { namespace linux {
         LOG_DEBUG("facter was built without libblkid support: partition attributes are not available.");
 #endif  // USE_BLKID
 
-        directory::each_subdirectory("/sys/block", [&](string const& subdirectory) {
+        lth_file::each_subdirectory("/sys/block", [&](string const& subdirectory) {
             path block_device_path(subdirectory);
 
             // For devices, look up partition subdirectories
             sys::error_code ec;
             if (is_directory(block_device_path / "device", ec)) {
-                directory::each_subdirectory(subdirectory, [&](string const& subdirectory) {
+                lth_file::each_subdirectory(subdirectory, [&](string const& subdirectory) {
                     // Ignore any subdirectory without a "partition" file
                     sys::error_code ec;
                     path partition_path(subdirectory);
@@ -150,7 +150,7 @@ namespace facter { namespace facts { namespace linux {
             } else if (is_directory(block_device_path / "dm", ec)) {
                 // For mapped devices, lookup the mapping name
                 partition part;
-                string mapping_name = file::read((block_device_path / "dm" / "name").string());
+                string mapping_name = lth_file::read((block_device_path / "dm" / "name").string());
                 boost::trim(mapping_name);
                 if (mapping_name.empty()) {
                     mapping_name = "/dev/" + block_device_path.filename().string();
@@ -165,7 +165,7 @@ namespace facter { namespace facts { namespace linux {
                 // Lookup the backing file
                 partition part;
                 part.name = "/dev/" + block_device_path.filename().string();
-                part.backing_file = file::read((block_device_path / "loop" / "backing_file").string());
+                part.backing_file = lth_file::read((block_device_path / "loop" / "backing_file").string());
                 boost::trim(part.backing_file);
 
                 populate_partition_attributes(part, block_device_path.string(), cache, mountpoints);
@@ -217,7 +217,6 @@ namespace facter { namespace facts { namespace linux {
                         (*ptr) = value;
                     }
                     blkid_tag_iterate_end(it);
->>>>>>> stable
                 }
             }
         }
@@ -233,7 +232,7 @@ namespace facter { namespace facts { namespace linux {
         const int block_size = 512;
 
         // Read the size
-        string blocks = file::read(device_directory + "/size");
+        string blocks = lth_file::read(device_directory + "/size");
         boost::trim(blocks);
         if (!blocks.empty()) {
             try {
