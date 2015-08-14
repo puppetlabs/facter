@@ -22,7 +22,15 @@ namespace facter { namespace facts { namespace linux {
          */
         virtual data collect_data(collection& facts) override;
 
-     private:
+        /**
+         * Parses the output of dmidecode.
+         * @param result The resulting data.
+         * @param line The line to parse.
+         * @param dmi_type The current DMI header type.
+         */
+        static void parse_dmidecode_output(data& result, std::string& line, int& dmi_type);
+
+    private:
         std::string read(std::string const& path);
     };
 

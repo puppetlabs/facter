@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../resolvers/filesystem_resolver.hpp"
+#include <map>
 
 namespace facter { namespace facts { namespace linux {
 
@@ -25,6 +26,7 @@ namespace facter { namespace facts { namespace linux {
         void collect_mountpoint_data(data& result);
         void collect_filesystem_data(data& result);
         void collect_partition_data(data& result);
+        void populate_partition_attributes(partition& part, std::string const& device_directory, void* cache, std::map<std::string, std::string> const& mountpoints);
     };
 
 }}}  // namespace facter::facts::linux

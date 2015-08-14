@@ -99,6 +99,9 @@ namespace facter { namespace facts { namespace resolvers {
                 if (!partition.partition_uuid.empty()) {
                     value->add("partuuid", make_value<string_value>(move(partition.partition_uuid)));
                 }
+                if (!partition.backing_file.empty()) {
+                    value->add("backing_file", make_value<string_value>(move(partition.backing_file)));
+                }
                 value->add("size_bytes", make_value<integer_value>(partition.size));
                 value->add("size", make_value<string_value>(si_string(partition.size)));
 
