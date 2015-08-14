@@ -1,5 +1,5 @@
 #include <internal/facts/linux/dmi_resolver.hpp>
-#include <internal/util/regex.hpp>
+#include <leatherman/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <leatherman/file_util/file.hpp>
 #include <leatherman/execution/execution.hpp>
@@ -9,7 +9,8 @@
 using namespace std;
 using namespace boost::filesystem;
 namespace bs = boost::system;
-using namespace leatherman::file_util;
+namespace lth_file = leatherman::file_util;
+using namespace leatherman::util;
 
 namespace facter { namespace facts { namespace linux {
 
@@ -37,7 +38,7 @@ namespace facter { namespace facts { namespace linux {
             LOG_DEBUG("/sys/class/dmi cannot be accessed: using dmidecode to query DMI information.");
 
             int dmi_type = -1;
-            execution::each_line("dmidecode", [&](string& line) {
+            leatherman::execution::each_line("dmidecode", [&](string& line) {
                 parse_dmidecode_output(result, line, dmi_type);
                 return true;
             });
@@ -174,7 +175,7 @@ namespace facter { namespace facts { namespace linux {
         }
 
         string value;
-        if (!read(path, value)) {
+        if (!lth_file::read(path, value)) {
             LOG_DEBUG("%1%: file could not be read.", path);
             return {};
         }
