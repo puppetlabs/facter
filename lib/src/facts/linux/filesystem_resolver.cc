@@ -127,20 +127,22 @@ namespace facter { namespace facts { namespace linux {
 
         directory::each_subdirectory("/sys/block", [&](string const& subdirectory) {
             path block_device_path(subdirectory);
+            auto block_device_filename = block_device_path.filename().string();
 
             // For devices, look up partition subdirectories
             sys::error_code ec;
             if (is_directory(block_device_path / "device", ec)) {
                 directory::each_subdirectory(subdirectory, [&](string const& subdirectory) {
-                    // Ignore any subdirectory without a "partition" file
-                    sys::error_code ec;
                     path partition_path(subdirectory);
-                    if (!is_regular_file(partition_path / "partition", ec)) {
+                    auto partition_name = partition_path.filename().string();
+
+                    // Ignore any subdirectory that does not start with the device file name
+                    if (!boost::starts_with(partition_name, block_device_filename)) {
                         return true;
                     }
 
                     partition part;
-                    part.name = "/dev/" + partition_path.filename().string();
+                    part.name = "/dev/" + partition_name;
                     populate_partition_attributes(part, subdirectory, cache, mountpoints);
                     result.partitions.emplace_back(std::move(part));
                     return true;
@@ -151,7 +153,7 @@ namespace facter { namespace facts { namespace linux {
                 string mapping_name = file::read((block_device_path / "dm" / "name").string());
                 boost::trim(mapping_name);
                 if (mapping_name.empty()) {
-                    mapping_name = "/dev/" + block_device_path.filename().string();
+                    mapping_name = "/dev/" + block_device_filename;
                 } else {
                     mapping_name = "/dev/mapper/" + mapping_name;
                 }
@@ -162,7 +164,7 @@ namespace facter { namespace facts { namespace linux {
             } else if (is_directory(block_device_path / "loop")) {
                 // Lookup the backing file
                 partition part;
-                part.name = "/dev/" + block_device_path.filename().string();
+                part.name = "/dev/" + block_device_filename;
                 part.backing_file = file::read((block_device_path / "loop" / "backing_file").string());
                 boost::trim(part.backing_file);
 
