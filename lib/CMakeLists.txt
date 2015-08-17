@@ -313,26 +313,29 @@ configure_file (
     "${CMAKE_CURRENT_LIST_DIR}/spec/spec_helper.rb"
 )
 
-# Disable actually installing facter.rb if Ruby is not present.
-if (RUBY_FOUND)
-    message(STATUS "Ruby ${RUBY_VERSION} found.")
+if (APPLE)
+    # Unfortunately the default DLEXT for most rubies on OSX is "bundle"
+    # Ruby calls dlopen for the extension, which doesn't care if the "bundle" really is a dylib
+    # Therefore, workaround this by symlinking "libfacter.bundle" to "libfacter.so"
+    add_custom_command(TARGET libfacter POST_BUILD COMMAND ln -sf libfacter.so libfacter.bundle WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+    message(STATUS "\"make install\" will create a symlink from ${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.bundle to ${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so")
+    install(CODE "EXECUTE_PROCESS(COMMAND ln -sf libfacter.so libfacter.bundle WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION})")
+endif()
 
-    if (APPLE)
-        # Unfortunately the default DLEXT for most rubies on OSX is "bundle"
-        # Ruby calls dlopen for the extension, which doesn't care if the "bundle" really is a dylib
-        # Therefore, workaround this by symlinking "libfacter.bundle" to "libfacter.so"
-        add_custom_command(TARGET libfacter POST_BUILD COMMAND ln -sf libfacter.so libfacter.bundle WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-        message(STATUS "\"make install\" will create a symlink from ${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.bundle to ${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so")
-        install(CODE "EXECUTE_PROCESS(COMMAND ln -sf libfacter.so libfacter.bundle WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION})")
-    endif()
+set(RUBY_LIB_INSTALL "" CACHE PATH "Specify the location to install facter.rb")
+if(RUBY_LIB_INSTALL)
+    set(RUBY_VENDORDIR ${RUBY_LIB_INSTALL}) 
+else()
+    # Disable actually installing facter.rb if Ruby is not present and RUBY_LIB_INSTALL not specified.
+    if (RUBY_FOUND)
+        message(STATUS "Ruby ${RUBY_VERSION} found.")
 
-    set(RUBY_LIB_INSTALL "" CACHE PATH "Specify the location to install facter.rb")
-    if(RUBY_LIB_INSTALL)
-        set(RUBY_VENDORDIR ${RUBY_LIB_INSTALL}) 
-    else()
         execute_process(COMMAND ${RUBY_EXECUTABLE} -rrbconfig -e "puts RbConfig::CONFIG['vendordir']" OUTPUT_VARIABLE RUBY_VENDORDIR_OUT)
         string(STRIP ${RUBY_VENDORDIR_OUT} RUBY_VENDORDIR)
     endif()
+endif()
+
+if(RUBY_VENDORDIR)
     message(STATUS "\"make install\" will install facter.rb to ${RUBY_VENDORDIR}")
     install(FILES ${CMAKE_BINARY_DIR}/lib/facter.rb DESTINATION ${RUBY_VENDORDIR})
 
