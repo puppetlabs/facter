@@ -118,8 +118,6 @@ namespace facter { namespace facts { namespace aix {
                 attribute = static_cast<CuAt*>(odm_get_next(CuAt_class, nullptr));
             }
 
-            result.physical_count++;
-
             if (result.speed == 0) {
                 result.speed = proc.frequency;
             } else if (result.speed != proc.frequency) {
