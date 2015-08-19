@@ -51,6 +51,10 @@ namespace facter { namespace execution {
          */
         redirect_stderr_to_null = (1 << 6),
         /**
+         * Preserve (do not quote) arguments.
+         */
+        preserve_arguments = (1 << 7),
+        /**
          * A combination of all throw options.
          */
         throw_on_failure = throw_on_nonzero_exit | throw_on_signal,

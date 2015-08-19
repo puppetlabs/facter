@@ -97,10 +97,11 @@ namespace facter { namespace execution {
             return {};
         }
 
-        string quote = result[0] == '"' || result[0] == '\'' ? string(1, result[0]) : "";
+        bool quoted = result[0] == '"' || result[0] == '\'';
+
         string file;
         string remainder;
-        if (!quote.empty()) {
+        if (quoted) {
             // Look for the ending quote for the command
             auto pos = result.find(result[0], 1);
             if (pos == string::npos) {
@@ -108,7 +109,7 @@ namespace facter { namespace execution {
                 file = result.substr(1);
             } else {
                 file = result.substr(1, pos - 1);
-                remainder = result.substr(pos);
+                remainder = result.substr(pos + 1);
             }
         } else {
             auto pos = command.find(' ');
@@ -124,7 +125,16 @@ namespace facter { namespace execution {
         if (file.empty()) {
             return {};
         }
-        return quote + file + remainder;
+
+        // If originally unquoted and the expanded file has a space, quote it
+        if (!quoted && file.find(' ') != string::npos) {
+            return "\"" + file + "\"" + remainder;
+        } else if (quoted) {
+            // Originally quoted, use the same quote characters
+            return result[0] + file + result[0] + remainder;
+        }
+        // Not quoted
+        return file + remainder;
     }
 
     tuple<bool, string, string> execute(
