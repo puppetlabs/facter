@@ -754,7 +754,19 @@ namespace facter { namespace ruby {
             try {
                 bool success = false;
                 string output, none;
-                tie(success, output, none) = execution::execute(execution::command_shell, {execution::command_args, expanded}, timeout);
+                tie(success, output, none) = execution::execute(
+                    execution::command_shell,
+                    {
+                        execution::command_args,
+                        expanded
+                    },
+                    timeout,
+                    {
+                        execution_options::trim_output,
+                        execution_options::merge_environment,
+                        execution_options::redirect_stderr_to_null,
+                        execution_options::preserve_arguments
+                    });
                 return ruby.utf8_value(output);
             } catch (timeout_exception const& ex) {
                 // Always raise for timeouts

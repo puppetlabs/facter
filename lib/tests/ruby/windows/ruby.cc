@@ -1,12 +1,16 @@
 #include <catch.hpp>
 #include <internal/ruby/api.hpp>
 #include <internal/ruby/ruby_value.hpp>
+#include <internal/util/scoped_env.hpp>
+#include <facter/util/environment.hpp>
 #include "../ruby_helper.hpp"
 #include "../../collection_fixture.hpp"
+#include "../../fixtures.hpp"
 
 using namespace std;
 using namespace facter::testing;
 using namespace facter::ruby;
+using namespace facter::util;
 
 SCENARIO("Windows custom facts written in Ruby") {
     collection_fixture facts;
@@ -24,4 +28,27 @@ SCENARIO("Windows custom facts written in Ruby") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar\"");
         }
     }
+}
+
+SCENARIO("Run command with space in path") {
+    collection_fixture facts;
+    REQUIRE(facts.size() == 0u);
+
+    // Setup ruby
+    auto ruby = api::instance();
+    REQUIRE(ruby);
+    REQUIRE(ruby->initialized());
+    ruby->include_stack_trace(true);
+
+    GIVEN("a directory with a space on the PATH") {
+        string path;
+        environment::get("PATH", path);
+        scoped_env var("PATH", path + environment::get_path_separator() + LIBFACTER_TESTS_DIRECTORY "/fixtures/execution/with space");
+        environment::reload_search_paths();
+        REQUIRE(load_custom_fact("command_with_space.rb", facts));
+        THEN("the command should execute successfully") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar\"");
+        }
+    }
+    environment::reload_search_paths();
 }
