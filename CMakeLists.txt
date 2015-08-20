@@ -140,6 +140,7 @@ include(leatherman)
 
 add_subdirectory(lib)
 add_subdirectory(exe)
+add_subdirectory(examples)
 
 # Add test executables for unit testing
 add_test(NAME "libfacter\\ tests" COMMAND libfacter_test)
