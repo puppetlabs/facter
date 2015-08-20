@@ -66,6 +66,17 @@ struct test_missing_fqdn_resolver : networking_resolver
     }
 };
 
+struct test_domain_with_trailing_dot : networking_resolver
+{
+ protected:
+    virtual data collect_data(collection& facts) override
+    {
+        data result;
+        result.domain = "domain.com.";
+        return result;
+    }
+};
+
 struct test_interface_resolver : networking_resolver
 {
  protected:
@@ -143,6 +154,28 @@ SCENARIO("using the networking resolver") {
             auto domain = networking->get<string_value>("domain");
             REQUIRE(domain);
             REQUIRE(domain->value() == "domain");
+        }
+        THEN("the FQDN fact is not present") {
+            auto fqdn = facts.get<string_value>(fact::fqdn);
+            REQUIRE_FALSE(fqdn);
+        }
+    }
+    WHEN("domain contains a trailing dot, the dot is removed") {
+        facts.add(make_shared<test_domain_with_trailing_dot>());
+        REQUIRE(facts.size() == 2u);
+        THEN("a flat fact is added") {
+            auto domain = facts.get<string_value>(fact::domain);
+            REQUIRE(domain);
+            REQUIRE(domain->value() == "domain.com");
+        }
+        THEN("a structured fact is added") {
+            auto networking = facts.get<map_value>(fact::networking);
+            REQUIRE(networking);
+            REQUIRE(networking->size() == 1u);
+
+            auto domain = networking->get<string_value>("domain");
+            REQUIRE(domain);
+            REQUIRE(domain->value() == "domain.com");
         }
         THEN("the FQDN fact is not present") {
             auto fqdn = facts.get<string_value>(fact::fqdn);
