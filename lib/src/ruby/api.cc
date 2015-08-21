@@ -103,19 +103,7 @@ namespace facter { namespace ruby {
 
     api::~api()
     {
-        // API is shutting down; free all remaining data objects
-        // Destructors may unregister the data object, so increment the iterator before freeing
-        for (auto it = _data_objects.begin(); it != _data_objects.end();) {
-            auto data = reinterpret_cast<RData*>(*it);
-            ++it;
-            if (data->dfree) {
-                data->dfree(data->data);
-                data->dfree = nullptr;
-            }
-        }
-        if (_initialized && _library.first_load()) {
-            ruby_cleanup(0);
-        }
+        uninitialize();
     }
 
     api* api::instance()
@@ -196,6 +184,26 @@ namespace facter { namespace ruby {
     bool api::initialized() const
     {
         return _initialized;
+    }
+
+    void api::uninitialize()
+    {
+        // API is shutting down; free all remaining data objects
+        // Destructors may unregister the data object, so increment the iterator before freeing
+        for (auto it = _data_objects.begin(); it != _data_objects.end();) {
+            auto data = reinterpret_cast<RData*>(*it);
+            ++it;
+            if (data->dfree) {
+                data->dfree(data->data);
+                data->dfree = nullptr;
+            }
+        }
+        _data_objects.clear();
+
+        if (_initialized && _library.first_load()) {
+            ruby_cleanup(0);
+            _initialized = false;
+        }
     }
 
     bool api::include_stack_trace() const
