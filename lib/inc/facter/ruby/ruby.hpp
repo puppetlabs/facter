@@ -40,4 +40,12 @@ namespace facter { namespace ruby {
      */
     LIBFACTER_EXPORT void load_custom_facts(facter::facts::collection& facts, std::vector<std::string> const& paths = {});
 
+    /**
+     * Uninitialize Ruby integration in Facter.
+     * This is unneeded if libfacter was loaded from Ruby. If libfacter instead loads Ruby's dynamic library
+     * you should call uninitialize before exiting to avoid dynamic library unload ordering issues with
+     * destructors and atexit handlers.
+     */
+    LIBFACTER_EXPORT void uninitialize();
+
 }}  // namespace facter::ruby
