@@ -47,6 +47,10 @@ namespace facter { namespace facts { namespace resolvers {
     {
         auto data = collect_data(facts);
 
+        // Some queries, such as /etc/resolv.conf, can return domains with a trailing dot (.).
+        // We want to strip the trailing dot, as it is not useful as a valid domain or fqdn.
+        boost::trim_right_if(data.domain, boost::is_any_of("."));
+
         // If no FQDN, set it to the hostname + domain
         if (!data.hostname.empty() && data.fqdn.empty()) {
             data.fqdn = data.hostname + (data.domain.empty() ? "" : ".") + data.domain;
