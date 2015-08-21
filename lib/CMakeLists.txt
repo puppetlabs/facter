@@ -108,6 +108,11 @@ if (AIX)
         "src/facts/aix/collection.cc"
         "src/facts/aix/kernel_resolver.cc"
         "src/facts/aix/operating_system_resolver.cc"
+        "src/facts/aix/processor_resolver.cc"
+    )
+
+    set(LIBFACTER_PLATFORM_LIBRARIES
+        odm
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     set(LIBFACTER_PLATFORM_SOURCES
