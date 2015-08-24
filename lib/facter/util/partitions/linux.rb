@@ -22,6 +22,10 @@ module Facter::Util::Partitions
       end
     end
 
+    def self.flushable?
+      false
+    end
+
     def self.uuid(partition)
       uuid = nil
       if File.exist?(DEVDISK_BY_UUID_DIRECTORY)
