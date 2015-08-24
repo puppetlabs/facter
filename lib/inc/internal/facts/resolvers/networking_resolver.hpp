@@ -149,6 +149,7 @@ namespace facter { namespace facts { namespace resolvers {
      private:
         static binding const* find_default_binding(std::vector<binding> const& bindings, std::function<bool(std::string const&)> const& ignored);
         static void add_bindings(interface& iface, bool primary, bool ipv4, collection& facts, map_value& networking, map_value& iface_value);
+        interface const* find_primary_interface(std::vector<interface> const& interfaces);
     };
 
 }}}  // namespace facter::facts::resolvers

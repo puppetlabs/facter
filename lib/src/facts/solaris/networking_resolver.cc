@@ -46,9 +46,6 @@ namespace facter { namespace facts { namespace solaris {
         }
 
         data.primary_interface = get_primary_interface();
-        if (data.primary_interface.empty()) {
-            LOG_DEBUG("no primary interface found.");
-        }
 
         // Walk the interfaces
         decltype(interface_map.begin()) it = interface_map.begin();
