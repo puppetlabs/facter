@@ -4,6 +4,7 @@
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include <sstream>
@@ -54,6 +55,15 @@ namespace facter { namespace facts { namespace resolvers {
         // If no FQDN, set it to the hostname + domain
         if (!data.hostname.empty() && data.fqdn.empty()) {
             data.fqdn = data.hostname + (data.domain.empty() ? "" : ".") + data.domain;
+        }
+
+        // If no primary interface was found, default to the first interface with a valid address
+        if (data.primary_interface.empty()) {
+            LOG_DEBUG("no primary interface found: using the first interface with an assigned address as the primary interface.");
+            auto primary = find_primary_interface(data.interfaces);
+            if (primary) {
+                data.primary_interface = primary->name;
+            }
         }
 
         auto networking = make_value<map_value>();
@@ -248,6 +258,23 @@ namespace facter { namespace facts { namespace resolvers {
             }
             iface_value.add(bindings_name, move(bindings_value));
         }
+    }
+
+    networking_resolver::interface const* networking_resolver::find_primary_interface(vector<interface> const& interfaces)
+    {
+        for (auto const& interface : interfaces) {
+            for (auto const& binding : interface.ipv4_bindings) {
+                if (!ignored_ipv4_address(binding.address)) {
+                    return &interface;
+                }
+            }
+            for (auto const& binding : interface.ipv6_bindings) {
+                if (!ignored_ipv6_address(binding.address)) {
+                    return &interface;
+                }
+            }
+        }
+        return nullptr;
     }
 
 }}}  // namespace facter::facts::posix

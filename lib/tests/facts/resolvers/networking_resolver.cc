@@ -103,6 +103,35 @@ struct test_interface_resolver : networking_resolver
     }
 };
 
+struct primary_interface_resolver : networking_resolver
+{
+ protected:
+    virtual data collect_data(collection& facts) override
+    {
+        data result;
+
+        interface lo0;
+        lo0.name = "lo0";
+        lo0.ipv4_bindings.emplace_back(binding { "127.0.0.1", "255.255.255.0", "127.0.0.0" });
+        lo0.ipv6_bindings.emplace_back(binding { "::1", "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "::1" });
+        result.interfaces.emplace_back(move(lo0));
+
+        interface en0;
+        en0.name = "en0";
+        en0.ipv4_bindings.emplace_back(binding { "123.123.123.123", "255.255.255.0", "123.123.123.0" });
+        en0.ipv6_bindings.emplace_back(binding { "fe80::6203:8ff:fe95:2d16", "ffff:ffff:ffff:ffff::", "fe80::" });
+        result.interfaces.emplace_back(move(en0));
+
+        interface en1;
+        en1.name = "en1";
+        en1.ipv4_bindings.emplace_back(binding { "123.123.123.124", "255.255.255.0", "123.123.123.0" });
+        en1.ipv6_bindings.emplace_back(binding { "fe80::6203:8ff:fe95:2d17", "ffff:ffff:ffff:ffff::", "fe80::" });
+        result.interfaces.emplace_back(move(en1));
+
+        return result;
+    }
+};
+
 SCENARIO("using the networking resolver") {
     collection_fixture facts;
     WHEN("data is not present") {
@@ -409,6 +438,13 @@ SCENARIO("using the networking resolver") {
                     REQUIRE(network->value() == "network6_" + num + "_" + interface_num);
                 }
             }
+        }
+    }
+    WHEN("the primary interface is not resolved") {
+        facts.add(make_shared<primary_interface_resolver>());
+        THEN("the first interface with a valid address should be treated as primary") {
+            REQUIRE(facts.query<string_value>("networking.primary"));
+            REQUIRE(facts.query<string_value>("networking.primary")->value() == "en0");
         }
     }
 }

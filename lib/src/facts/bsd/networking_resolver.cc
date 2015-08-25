@@ -41,9 +41,6 @@ namespace facter { namespace facts { namespace bsd {
         }
 
         data.primary_interface = get_primary_interface();
-        if (data.primary_interface.empty()) {
-            LOG_DEBUG("no primary interface found: using first interface with an assigned address.");
-        }
 
         // Start by getting the DHCP servers
         auto dhcp_servers = find_dhcp_servers();
@@ -52,24 +49,6 @@ namespace facter { namespace facts { namespace bsd {
         decltype(interface_map.begin()) it = interface_map.begin();
         while (it != interface_map.end()) {
             string const& name = it->first;
-
-            // If we don't have a primary interface yet, walk the addresses
-            // If there's a non-loopback address assigned, treat it as primary
-            if (data.primary_interface.empty()) {
-                for (auto addr_it = it; addr_it != interface_map.end() && addr_it->first == name; ++addr_it) {
-                    ifaddrs const *addr = addr_it->second;
-                    if (addr->ifa_addr->sa_family != AF_INET && addr->ifa_addr->sa_family != AF_INET6) {
-                        continue;
-                    }
-
-                    string ip = address_to_string(addr->ifa_addr, addr->ifa_netmask);
-                    if ((addr->ifa_addr->sa_family == AF_INET && !ignored_ipv4_address(ip)) ||
-                        (addr->ifa_addr->sa_family == AF_INET6 && !ignored_ipv6_address(ip))) {
-                        data.primary_interface = name;
-                        break;
-                    }
-                }
-            }
 
             interface iface;
             iface.name = name;
