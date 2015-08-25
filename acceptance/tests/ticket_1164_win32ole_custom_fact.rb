@@ -8,7 +8,7 @@ Facter.add('custom_fact') do
   setcode do
     require 'win32ole'
     locator = WIN32OLE.new('WbemScripting.SWbemLocator')
-    locator.ConnectServer('', "root/CIMV2", '', '', nil, nil, nil, nil)
+    locator.ConnectServer('', "root/CIMV2", '', '', nil, nil, nil, nil).to_s
   end
 end
 EOM
