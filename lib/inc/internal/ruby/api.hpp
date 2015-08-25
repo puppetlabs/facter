@@ -109,6 +109,13 @@ namespace facter {  namespace ruby {
         bool initialized() const;
 
         /**
+         * Called to uninitialize the API.
+         * Called during destruction, but can also be called earlier to cleanup Ruby, avoiding potential
+         * ordering conflicts between unloading the libfacter DLL and libruby DLL.
+         */
+        void uninitialize();
+
+        /**
          * Gets whether or not exception stack traces are included when formatting exception messages.
          * @return Returns true if stack traces will be included in exception messages or false if they will not be.
          */
