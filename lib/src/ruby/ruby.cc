@@ -54,4 +54,10 @@ namespace facter { namespace ruby {
     {
          load_custom_facts(facts, false, paths);
     }
+
+    void uninitialize()
+    {
+        api& ruby = api::instance();
+        ruby.uninitialize();
+    }
 }}  // namespace facter::ruby
