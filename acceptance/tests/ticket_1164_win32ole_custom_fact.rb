@@ -21,7 +21,7 @@ agents.each do |agent|
   # Test is assumed to have hung if it takes longer than 5 seconds.
   Timeout::timeout(5) do
     on agent, facter('--custom-dir', custom_dir, 'custom_fact') do
-      assert_equal(/#<WIN32OLE:0x\d+>/, stdout.chomp, 'Custom fact output does not match expected output')
+      assert_match(/#<WIN32OLE:0x[0-9a-f]+>/, stdout.chomp, 'Custom fact output does not match expected output')
     end
   end
 end
