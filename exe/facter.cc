@@ -2,6 +2,7 @@
 #include <facter/logging/logging.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/ruby/ruby.hpp>
+#include <leatherman/util/scope_exit.hpp>
 #include <boost/algorithm/string.hpp>
 // Note the caveats in nowide::cout/cerr; they're not synchronized with stdio.
 // Thus they can't be relied on to flush before program exit.
@@ -217,6 +218,11 @@ int main(int argc, char **argv)
 
         // Initialize Ruby in main
         bool ruby = (vm.count("no-ruby") == 0) && facter::ruby::initialize(vm.count("trace") == 1);
+        leatherman::util::scope_exit ruby_cleanup{[ruby]() {
+            if (ruby) {
+                facter::ruby::uninitialize();
+            }
+        }};
 
         // Build a set of queries from the command line
         set<string> queries;
