@@ -136,7 +136,6 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
         "src/facts/glib/load_average_resolver.cc"
         "src/facts/solaris/collection.cc"
         "src/facts/solaris/disk_resolver.cc"
-        "src/facts/solaris/uptime_resolver.cc"
         "src/facts/solaris/processor_resolver.cc"
         "src/facts/solaris/operating_system_resolver.cc"
         "src/facts/solaris/kernel_resolver.cc"
