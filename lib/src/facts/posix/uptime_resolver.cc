@@ -41,7 +41,7 @@ namespace facter { namespace facts { namespace posix {
         return -1;
     }
 
-    int64_t uptime_resolver::get_uptime()
+    int64_t uptime_resolver::get_uptime(collection& facts)
     {
         bool success;
         string output, none;

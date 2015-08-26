@@ -14,7 +14,7 @@ using namespace facter::testing;
 struct test_less_than_day_resolver : uptime_resolver
 {
  protected:
-    virtual int64_t get_uptime() override
+    virtual int64_t get_uptime(collection& facts) override
     {
         // 13 hours, 35 minutes, 6 seconds
         return (13 * 60 * 60) + (35 * 60) + 6;
@@ -24,7 +24,7 @@ struct test_less_than_day_resolver : uptime_resolver
 struct test_one_day_resolver : uptime_resolver
 {
  protected:
-    virtual int64_t get_uptime() override
+    virtual int64_t get_uptime(collection& facts) override
     {
         // 1 day, 2 hours, 12 minutes, 22 seconds
         return (1 * 24 * 60 * 60) + (2 * 60 * 60) + (12 * 60) + 22;
@@ -34,7 +34,7 @@ struct test_one_day_resolver : uptime_resolver
 struct test_more_than_day_resolver : uptime_resolver
 {
  protected:
-    virtual int64_t get_uptime() override
+    virtual int64_t get_uptime(collection& facts) override
     {
         // 3 day, 4 hours, 19 minutes, 45 seconds
         return (3 * 24 * 60 * 60) + (4 * 60 * 60) + (19 * 60) + 45;

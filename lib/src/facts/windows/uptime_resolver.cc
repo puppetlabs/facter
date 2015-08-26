@@ -31,7 +31,7 @@ namespace facter { namespace facts { namespace windows {
         return ptime(from_undelimited_string(iso_date), time_duration(hour, min, sec));
     }
 
-    int64_t uptime_resolver::get_uptime()
+    int64_t uptime_resolver::get_uptime(collection& facts)
     {
         auto vals = _wmi->query(wmi::operatingsystem, {wmi::lastbootuptime, wmi::localdatetime});
         if (vals.empty()) {
