@@ -16,9 +16,10 @@ namespace facter { namespace facts { namespace solaris {
      protected:
         /**
          * Gets the system uptime in seconds.
+         * @param facts The fact collection.
          * @return Returns the system uptime in seconds.
          */
-        virtual int64_t get_uptime() override;
+        virtual int64_t get_uptime(collection& facts) override;
     };
 
 }}}  // namespace facter::facts::solaris

@@ -335,7 +335,7 @@ protected:
 struct uptime_resolver : resolvers::uptime_resolver
 {
 protected:
-    virtual int64_t get_uptime() override
+    virtual int64_t get_uptime(collection& facts) override
     {
         return 1;
     }

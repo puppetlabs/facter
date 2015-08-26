@@ -28,9 +28,10 @@ namespace facter { namespace facts { namespace resolvers {
      protected:
         /**
          * Gets the system uptime in seconds.
+         * @param facts The fact collection. On Solaris we depend on the current zone.
          * @return Returns the system uptime in seconds.
          */
-        virtual int64_t get_uptime() = 0;
+        virtual int64_t get_uptime(collection& facts) = 0;
     };
 
 }}}  // namespace facter::facts::resolvers

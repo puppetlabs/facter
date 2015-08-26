@@ -24,7 +24,7 @@ namespace facter { namespace facts { namespace resolvers {
 
     void uptime_resolver::resolve(collection& facts)
     {
-        auto seconds = get_uptime();
+        auto seconds = get_uptime(facts);
         if (seconds < 0) {
             return;
         }

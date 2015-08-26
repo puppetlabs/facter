@@ -6,7 +6,7 @@ using namespace std;
 
 namespace facter { namespace facts { namespace bsd {
 
-    int64_t uptime_resolver::get_uptime()
+    int64_t uptime_resolver::get_uptime(collection& facts)
     {
         // this approach adapted from: http://stackoverflow.com/a/11676260/1004272
         timeval boottime;
@@ -17,7 +17,7 @@ namespace facter { namespace facts { namespace bsd {
             time_t now = time(NULL);
             return now - bsec;
         }
-        return posix::uptime_resolver::get_uptime();
+        return posix::uptime_resolver::get_uptime(facts);
     }
 
 }}}  // namespace facter::facts::bsd
