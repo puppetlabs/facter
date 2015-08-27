@@ -4,7 +4,7 @@ install:
   - git submodule update --init --recursive
 
   - choco install mingw-w64 -y -Version 4.8.3 -source https://www.myget.org/F/puppetlabs
-  - choco install cmake -Version 3.2.3 -y
+  - choco install cmake -y -Version 3.2.2 -source https://www.myget.org/F/puppetlabs
   - SET PATH=C:\Ruby21-x64\bin;C:\tools\mingw64\bin;%PATH%
 
   - ps: wget 'https://s3.amazonaws.com/kylo-pl-bucket/boost_1_57_0-x86_64_mingw-w64_4.8.3_win32_seh.7z' -OutFile "$pwd\boost.7z"
