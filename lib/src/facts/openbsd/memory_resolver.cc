@@ -19,7 +19,7 @@ namespace facter { namespace facts { namespace openbsd {
         data result;
 
         // Get the system page size
-        int pagesize_mib[] = { CTL_HW, HW_PAGESIZE};
+        int pagesize_mib[] = { CTL_HW, HW_PAGESIZE };
         int page_size = 0;
         size_t len = sizeof(page_size);
         if (sysctl(pagesize_mib, 2, &page_size, &len, nullptr, 0) == -1) {
@@ -36,6 +36,36 @@ namespace facter { namespace facts { namespace openbsd {
             result.mem_total = static_cast<u_int64_t>(uvmexp.npages) << uvmexp.pageshift;
             result.mem_free = static_cast<u_int64_t>(uvmexp.free) << uvmexp.pageshift;
         }
+
+        // NB: swapctl(2) for SWAP_NSWAP cannot fail
+        int nswaps = swapctl(SWAP_NSWAP, 0, 0);
+        vector<struct swapent> swapdev(nswaps);
+
+        if (swapctl(SWAP_STATS, swapdev.data(), nswaps) == -1) {
+             LOG_DEBUG("swapctl: SWAP_STATS failed: %1% (%2%)", strerror(errno), errno);
+             return result;
+        }
+
+        uint64_t swap_used = 0;
+        for (auto &&swap : swapdev) {
+            if (swap.se_flags & SWF_ENABLE) {
+                result.swap_total += swap.se_nblks * DEV_BSIZE;
+                swap_used += swap.se_inuse * DEV_BSIZE;
+            }
+        }
+
+        result.swap_free = result.swap_total - swap_used;
+
+        // 0 is for CTL_SWPENC_NAMES' "enable", see uvm_swap_encrypt.h
+        int swap_encrypted_mib[] = { CTL_VM, VM_SWAPENCRYPT, 0 };
+        int encrypted;
+        len = sizeof(encrypted);
+
+        if (sysctl(swap_encrypted_mib, 3, &encrypted, &len, nullptr, 0) == -1) {
+            LOG_DEBUG("sysctl failed: %1% (%2%): encrypted swap fact not available.", strerror(errno), errno);
+        }
+
+        result.swap_encryption = encrypted ? encryption_status::encrypted : encryption_status::not_encrypted;
 
         return result;
     }
