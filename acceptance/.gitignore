@@ -8,3 +8,4 @@ id_rsa-acceptance.pub
 preserved_config.yaml
 merged_options.rb
 junit
+tmp
