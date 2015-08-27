@@ -108,6 +108,7 @@ if (AIX)
         "src/facts/aix/collection.cc"
         "src/facts/aix/kernel_resolver.cc"
         "src/facts/aix/memory_resolver.cc"
+        "src/facts/aix/networking_resolver.cc"
         "src/facts/aix/operating_system_resolver.cc"
         "src/facts/aix/processor_resolver.cc"
     )
