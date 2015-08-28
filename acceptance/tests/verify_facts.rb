@@ -32,7 +32,8 @@ def validate_fact(name, node, fact_value, hidden)
               # YAML.load will automatically convert timestamp values to a Fixnum
               # so relax validation for uptime related facts
               #   YAML.load('foo: 1:23') => {"foo"=>4980}
-              fact_value.is_a? String or (fact_value.is_a? Fixnum and name =~ /.*uptime/)
+              # It also converts zfs_featurenumbers to a number, even though it's a comma-separated list.
+              fact_value.is_a? String or ((fact_value.is_a? Fixnum or fact_value.is_a? Bignum) and (name =~ /.*uptime/ or name =~ /.+_featurenumbers/))
             when 'ip'
               fact_value.is_a? String and fact_value =~ @ip_pattern
             when 'ip6'
