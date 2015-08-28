@@ -7,11 +7,21 @@ test_name "Facts should resolve as expected in Solaris 10"
 # Facts tested: os, processors, networking, identity, kernel
 #
 
-confine :to, :platform => /solaris-10/
+confine :to, :platform => /solaris-1[01]/
 
 agents.each do |agent|
-  os_version = '10'
-  os_kernel = /Generic_\d+-\d+/
+  case agent[:platform]
+  when /solaris-10/
+    os_version = '10'
+    os_release_full = /#{os_version}_u\d+/
+    os_kernel = /Generic_\d+-\d+/
+    os_kernel_major = os_kernel
+  when /solaris-11/
+    os_version = '11'
+    os_release_full = /#{os_version}\.\d+/
+    os_kernel = os_release_full
+    os_kernel_major = os_version
+  end
 
   step "Ensure the OS fact resolves as expected"
   expected_os = {
@@ -19,7 +29,7 @@ agents.each do |agent|
                   'os.family'               => 'Solaris',
                   'os.hardware'             => 'i86pc',
                   'os.name'                 => 'Solaris',
-                  'os.release.full'         => /#{os_version}_u\d+/,
+                  'os.release.full'         => os_release_full,
                   'os.release.major'        => os_version,
                   'os.release.minor'        => /\d+/,
                 }
@@ -83,9 +93,9 @@ agents.each do |agent|
   step "Ensure the kernel fact resolves as expected"
   expected_kernel = {
                       'kernel'           => 'SunOS',
-                      'kernelrelease'    => '5.10',
+                      'kernelrelease'    => "5.#{os_version}",
                       'kernelversion'    => os_kernel,
-                      'kernelmajversion' => os_kernel
+                      'kernelmajversion' => os_kernel_major
                     }
 
   expected_kernel.each do |fact, value|
