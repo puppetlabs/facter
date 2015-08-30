@@ -30,13 +30,14 @@ namespace facter { namespace util { namespace solaris {
     {
         kstat_t* kp = kstat_lookup(ctrl, const_cast<char*>(module.c_str()), instance, name.empty() ? nullptr : const_cast<char *>(name.c_str()));
         if (kp == nullptr) {
-            throw kstat_exception("kstat_lookup failed m:" + module + " i:" + to_string(instance) + " n:" + name + " err:" + strerror(errno));
+            throw kstat_exception("kstat_lookup of module " + module + "/" + to_string(instance) + "/" + name
+                    + " failed:" + string(strerror(errno)) + " (" + to_string(errno) + ")");
         }
 
         vector<k_stat_entry> arr;
         while (kp) {
             if (kstat_read(ctrl, kp, 0) == -1) {
-                throw kstat_exception("kstat_read failed");
+                throw kstat_exception("kstat_read failed: " + string(strerror(errno)) + " (" + to_string(errno) + ")");
             }
 
             bool insert = true;
