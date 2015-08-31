@@ -106,6 +106,7 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBFACTER_TESTS_PLATFORM_SOURCES
         "facts/linux/dmi_resolver.cc"
+        "facts/linux/filesystem_resolver.cc"
         "util/bsd/scoped_ifaddrs.cc"
     )
 endif()

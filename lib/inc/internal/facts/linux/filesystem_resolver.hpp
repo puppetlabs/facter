@@ -14,6 +14,14 @@ namespace facter { namespace facts { namespace linux {
      */
     struct filesystem_resolver : resolvers::filesystem_resolver
     {
+        /**
+         * Converts a string using the same format as blkid's "safe_print" function.
+         * The format uses M-<char> (higher than 128) and ^<char> (control character), while escaping quotes and backslashes.
+         * @param value The value to convert.
+         * @return Returns the converted value.
+         */
+        static std::string safe_convert(char const* value);
+
      protected:
         /**
          * Collects the DMI data.

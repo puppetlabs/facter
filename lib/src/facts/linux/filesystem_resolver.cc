@@ -27,6 +27,30 @@ using boost::bad_lexical_cast;
 
 namespace facter { namespace facts { namespace linux {
 
+    string filesystem_resolver::safe_convert(char const* value)
+    {
+        string result;
+
+        if (value) {
+            while (*value) {
+                unsigned char c = static_cast<unsigned char>(*value);
+                if (c >= 128) {
+                    result += "M-";
+                    c -= 128;
+                }
+                if (c < 32 || c == 0xf7) {
+                    result += '^';
+                    c ^= 0x40;
+                } else if (c == '"' || c == '\\') {
+                    result += '\\';
+                }
+                result += static_cast<char>(c);
+                ++value;
+            }
+        }
+        return result;
+    }
+
     filesystem_resolver::data filesystem_resolver::collect_data(collection& facts)
     {
         data result;
@@ -214,7 +238,7 @@ namespace facter { namespace facts { namespace linux {
                         if (!ptr) {
                             continue;
                         }
-                        (*ptr) = value;
+                        (*ptr) = safe_convert(value);
                     }
                     blkid_tag_iterate_end(it);
                 }
