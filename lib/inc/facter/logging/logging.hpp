@@ -68,8 +68,9 @@ namespace facter { namespace logging {
      * Sets up logging for the given stream.
      * The logging level is set to warning by default.
      * @param os The output stream to configure for logging.
+     * @param ns An optional namespace to override the default used by Facter for logging.
      */
-    LIBFACTER_EXPORT void setup_logging(std::ostream& os);
+    LIBFACTER_EXPORT void setup_logging(std::ostream& os, std::string ns = "");
 
     /**
      * Sets the current logging level.
