@@ -18,6 +18,16 @@ namespace facter { namespace facts { namespace solaris {
 
     string virtualization_resolver::get_hypervisor(collection& facts)
     {
+        // If in an LDom, the LDom facts will resolve and we can use them to identify
+        // that we're in a virtual LDom environment. They should only resolve on SPARC.
+        auto ldom_domainrole_control = facts.get<string_value>("ldom_domainrole_control");
+        if (ldom_domainrole_control && ldom_domainrole_control->value() == "false") {
+            auto ldom_domainrole_impl = facts.get<string_value>("ldom_domainrole_impl");
+            if (ldom_domainrole_impl) {
+                return ldom_domainrole_impl->value();
+            }
+        }
+
         // works for both x86 & sparc.
         bool success;
         string output, none;
@@ -26,65 +36,37 @@ namespace facter { namespace facts { namespace solaris {
             return vm::zone;
         }
 
-        auto isa = facts.get<string_value>(fact::hardware_isa);
-        if (!isa) {
-            return {};
-        }
-
         string guest_of;
 
-        if (isa->value() == "i386") {
-            static map<boost::regex, string> virtual_map = {
-                {boost::regex("VMware"),     string(vm::vmware)},
-                {boost::regex("VirtualBox"), string(vm::virtualbox)},
-                {boost::regex("Parallels"),  string(vm::parallels)},
-                {boost::regex("KVM"),        string(vm::kvm)},
-                {boost::regex("HVM domU"),   string(vm::xen_hardware)},
-                {boost::regex("oVirt Node"), string(vm::ovirt)}
-            };
+        static map<boost::regex, string> virtual_map = {
+            {boost::regex("Parallels"),  string(vm::parallels)},
+            {boost::regex("VM[wW]are"),  string(vm::vmware)},
+            {boost::regex("VirtualBox"), string(vm::virtualbox)},
+            {boost::regex("HVM domU"),   string(vm::xen_hardware)},
+            {boost::regex("KVM"),        string(vm::kvm)},
+            {boost::regex("oVirt Node"), string(vm::ovirt)}
+        };
 
-            // Use the same timeout as in Facter 2.x
-            const uint32_t timeout = 20;
-            try {
-                each_line(
-                    "/usr/sbin/prtdiag",
-                    [&](string& line) {
-                        for (auto const& it : virtual_map) {
-                            if (re_search(line, it.first)) {
-                                guest_of = it.second;
-                                return false;
-                            }
+        // Use the same timeout as in Facter 2.x
+        const uint32_t timeout = 20;
+        try {
+            each_line(
+                "/usr/sbin/prtdiag",
+                [&](string& line) {
+                    for (auto const& it : virtual_map) {
+                        if (re_search(line, it.first)) {
+                            guest_of = it.second;
+                            return false;
                         }
-                        return true;
-                    },
-                    nullptr,
-                    timeout);
-            } catch (timeout_exception const&) {
-                LOG_WARNING("execution of prtdiag has timed out after %1% seconds.", timeout);
-            }
-        } else if (isa->value() == "sparc") {
-            // Uses hints from
-            // http://serverfault.com/questions/153179/how-to-find-out-if-a-solaris-machine-is-virtualized-or-not
-            // interface stability is uncommited. Should we use it?
-            string role;
-
-            static boost::regex domain_role_root("Domain role:.*(root|guest)");
-            each_line("/usr/sbin/virtinfo", [&] (string& line) {
-                    if (re_search(line, domain_role_root, &role)) {
-                        if (role != "root") {
-                            guest_of = vm::ldom;
-                        }
-                        return false;
                     }
-                    if (line.find("virtinfo can only be run from the global zone") != string::npos) {
-                        guest_of = vm::zone;
-                        return false;
-                    }
-                    // virtinfo can alsy reply:
-                    // Virtual machines are not supported
                     return true;
-            });
+                },
+                nullptr,
+                timeout);
+        } catch (timeout_exception const&) {
+            LOG_WARNING("execution of prtdiag has timed out after %1% seconds.", timeout);
         }
+
         return guest_of;
     }
 }}}  // namespace facter::facts::solaris
