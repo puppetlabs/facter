@@ -5,6 +5,7 @@
 #include <leatherman/logging/logging.hpp>
 #include <leatherman/execution/execution.hpp>
 #include <leatherman/util/regex.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace leatherman::util;
@@ -16,8 +17,8 @@ namespace facter { namespace facts { namespace solaris {
     {
         data result;
 
-        auto arch = facts.get<string_value>(fact::architecture);
-        if (arch && arch->value() == "i86pc") {
+        auto isa = facts.get<string_value>(fact::hardware_isa);
+        if (isa && isa->value() == "i386") {
             static boost::regex bios_vendor_re("Vendor: (.+)");
             static boost::regex bios_version_re("Version String: (.+)");
             static boost::regex bios_release_re("Release Date: (.+)");
@@ -65,23 +66,24 @@ namespace facter { namespace facts { namespace solaris {
                 }
                 return result.chassis_type.empty() || result.chassis_asset_tag.empty();
             });
-        } else if (arch && arch->value() == "sparc") {
-            static boost::regex line_re("System Configuration: (.+) sun\\d.");
+        } else if (isa && isa->value() == "sparc") {
+            static boost::regex manufacturer_rx("^System Configuration: (.+) sun\\d.$");
+            static boost::regex productname_rx("^SUNW,(.*)$");
             // prtdiag is not implemented in all sparc machines, so we cant get product name this way.
+            int found = 0;
             each_line("/usr/sbin/prtconf", [&](string& line) {
-                if (re_search(line, line_re, &result.manufacturer)) {
-                    return false;
+                if (re_search(line, manufacturer_rx, &result.manufacturer)) {
+                    ++found;
+                } else if (re_search(line, productname_rx, &result.product_name)) {
+                    ++found;
                 }
-                return true;
+                return found < 2;
             });
+            boost::trim(result.manufacturer);
+            boost::trim(result.product_name);
 
             bool success;
             string output, none;
-            tie(success, output, none) = execute("/usr/sbin/uname", {"-a"});
-            if (success) {
-                re_search(output, boost::regex(".* sun\\d[vu] sparc SUNW,(.*)"), &result.product_name);
-            }
-
             tie(success, output, none) = execute("/usr/sbin/sneep");
             if (success) {
                 result.serial_number = output;
