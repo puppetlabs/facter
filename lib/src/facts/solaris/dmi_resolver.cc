@@ -74,11 +74,17 @@ namespace facter { namespace facts { namespace solaris {
                 }
                 return true;
             });
+
             bool success;
             string output, none;
             tie(success, output, none) = execute("/usr/sbin/uname", {"-a"});
             if (success) {
                 re_search(output, boost::regex(".* sun\\d[vu] sparc SUNW,(.*)"), &result.product_name);
+            }
+
+            tie(success, output, none) = execute("/usr/sbin/sneep");
+            if (success) {
+                result.serial_number = output;
             }
         }
         return result;
