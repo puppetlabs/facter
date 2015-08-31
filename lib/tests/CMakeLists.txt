@@ -19,6 +19,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/resolvers/filesystem_resolver.cc"
     "facts/resolvers/identity_resolver.cc"
     "facts/resolvers/kernel_resolver.cc"
+    "facts/resolvers/ldom_resolver.cc"
     "facts/resolvers/memory_resolver.cc"
     "facts/resolvers/networking_resolver.cc"
     "facts/resolvers/operating_system_resolver.cc"
