@@ -642,6 +642,11 @@ namespace facter { namespace facts {
          * The fact for Xen domains.
          */
         constexpr static char const* xendomains = "xendomains";
+
+        /**
+         * The structured fact for Solaris LDom facts.
+         */
+        constexpr static char const* ldom = "ldom";
     };
 
 }}  // namespace facter::facts

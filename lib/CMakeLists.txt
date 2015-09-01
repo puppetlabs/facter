@@ -36,6 +36,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/gce_resolver.cc"
     "src/facts/resolvers/identity_resolver.cc"
     "src/facts/resolvers/kernel_resolver.cc"
+    "src/facts/resolvers/ldom_resolver.cc"
     "src/facts/resolvers/load_average_resolver.cc"
     "src/facts/resolvers/memory_resolver.cc"
     "src/facts/resolvers/networking_resolver.cc"
@@ -147,6 +148,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "SunOS")
         "src/facts/solaris/zfs_resolver.cc"
         "src/facts/solaris/zone_resolver.cc"
         "src/facts/solaris/zpool_resolver.cc"
+        "src/facts/solaris/ldom_resolver.cc"
         "src/util/solaris/k_stat.cc"
         "src/util/solaris/scoped_kstat.cc"
     )
