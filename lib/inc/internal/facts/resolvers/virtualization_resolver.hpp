@@ -43,10 +43,10 @@ namespace facter { namespace facts { namespace resolvers {
         /**
          * Gets the product name which is matched against a list of known
          * hypervisors.
-         * @param facts The fact collection that is resolving facts.
+         * @param product_name The product_name fact to match against.
          * @return Returns the hypervisor product name if matched.
          */
-        static std::string get_product_name_vm(collection& facts);
+        static std::string get_product_name_vm(std::string const& product_name);
     };
 
 }}}  // namespace facter::facts::resolvers

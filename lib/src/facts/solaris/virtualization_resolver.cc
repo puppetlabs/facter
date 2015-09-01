@@ -4,14 +4,12 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <leatherman/execution/execution.hpp>
-#include <leatherman/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
 
 using namespace std;
 using namespace facter::facts;
-using namespace leatherman::util;
 using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace solaris {
@@ -38,28 +36,14 @@ namespace facter { namespace facts { namespace solaris {
 
         string guest_of;
 
-        static map<boost::regex, string> virtual_map = {
-            {boost::regex("Parallels"),  string(vm::parallels)},
-            {boost::regex("VM[wW]are"),  string(vm::vmware)},
-            {boost::regex("VirtualBox"), string(vm::virtualbox)},
-            {boost::regex("HVM domU"),   string(vm::xen_hardware)},
-            {boost::regex("KVM"),        string(vm::kvm)},
-            {boost::regex("oVirt Node"), string(vm::ovirt)}
-        };
-
         // Use the same timeout as in Facter 2.x
         const uint32_t timeout = 20;
         try {
             each_line(
                 "/usr/sbin/prtdiag",
                 [&](string& line) {
-                    for (auto const& it : virtual_map) {
-                        if (re_search(line, it.first)) {
-                            guest_of = it.second;
-                            return false;
-                        }
-                    }
-                    return true;
+                    guest_of = get_product_name_vm(line);
+                    return guest_of.empty();
                 },
                 nullptr,
                 timeout);
