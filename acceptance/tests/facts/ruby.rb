@@ -24,7 +24,7 @@ else
   end
 end
 
-ruby_version = '2.1.6'
+ruby_version = /2\.\d+\.\d+/
 expected_ruby = {
                   'ruby.platform' => ruby_platform,
                   'ruby.sitedir'  => /\/site_ruby/,
