@@ -3,7 +3,6 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
-#include <iostream>
 
 using namespace std;
 using namespace facter::facts;
