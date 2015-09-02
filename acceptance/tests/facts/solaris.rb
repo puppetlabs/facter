@@ -1,8 +1,8 @@
-test_name "Facts should resolve as expected in Solaris 10"
+test_name "Facts should resolve as expected in Solaris 10 and 11"
 
 #
 # This test is intended to ensure that facts specific to an OS configuration
-# resolve as expected in Solaris 10.
+# resolve as expected in Solaris 10 and 11.
 #
 # Facts tested: os, processors, networking, identity, kernel
 #
@@ -23,11 +23,22 @@ agents.each do |agent|
     os_kernel_major = os_version
   end
 
+  case agent[:platform]
+  when /sparc/
+    os_architecture = 'sun4v'
+    proc_models = /UltraSPARC.*/
+    proc_isa = /sparc/
+  else
+    os_architecture = 'i86pc'
+    proc_models = /"Intel\(r\).*"/
+    proc_isa = /i386/
+  end
+
   step "Ensure the OS fact resolves as expected"
   expected_os = {
-                  'os.architecture'         => 'i86pc',
+                  'os.architecture'         => os_architecture,
                   'os.family'               => 'Solaris',
-                  'os.hardware'             => 'i86pc',
+                  'os.hardware'             => os_architecture,
                   'os.name'                 => 'Solaris',
                   'os.release.full'         => os_release_full,
                   'os.release.major'        => os_version,
@@ -42,8 +53,8 @@ agents.each do |agent|
   expected_processors = {
                           'processors.count'         => /[1-9]/,
                           'processors.physicalcount' => /[1-9]/,
-                          'processors.isa'           => /i386/,
-                          'processors.models'        => /"Intel\(r\).*"/
+                          'processors.isa'           => proc_isa,
+                          'processors.models'        => proc_models
                         }
 
   expected_processors.each do |fact, value|
