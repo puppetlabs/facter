@@ -54,7 +54,7 @@ namespace facter { namespace facts { namespace solaris {
          to be resolved further using the `pkg info kernel` command (TODO).
          */
 
-        static boost::regex regexp_s10("Solaris \\d+ \\d+/\\d+ s(\\d+)x_u(\\d+)wos_");
+        static boost::regex regexp_s10("Solaris \\d+ \\d+/\\d+ s(\\d+)\\S_u(\\d+)wos_");
         static boost::regex regexp_s11("Solaris (\\d+)[.](\\d+)");
         static boost::regex regexp_s11b("Solaris (\\d+) ");
         lth_file::each_line("/etc/release", [&](string& line) {
