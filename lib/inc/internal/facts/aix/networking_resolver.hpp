@@ -39,10 +39,10 @@ namespace facter { namespace facts { namespace aix {
         virtual uint8_t const* get_link_address_bytes(sockaddr const* addr) const override;
 
      private:
-        using ndd_map = std::unordered_map<std::string, kinfo_ndd>;
+        using mtu_map = std::unordered_map<std::string, std::string>;
 
         std::string get_primary_interface() const;
-        ndd_map get_ndd_info() const;
+        mtu_map get_mtus() const;
         std::vector<interface> get_interfaces() const;
     };
 
