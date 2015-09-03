@@ -515,6 +515,21 @@ kernelversion:
         POSIX platforms: use the `uname` function to retrieve the kernel's version.
         Windows: use the file version of `kernel32.dll` to retrieve the kernel's version.
 
+ldom:
+    type: map
+    description: Return Solaris LDom information from the `virtinfo` utility.
+    resolution: |
+        Solaris: use the `virtinfo` utility to retrieve LDom information.
+    validate: false
+
+ldom_<name>:
+    pattern: ^ldom_.+$
+    hidden: true
+    type: string
+    description: Return Solaris LDom information.
+    resolution: |
+        Solaris: use the `virtinfo` utility to retrieve LDom information.
+
 load_averages:
     type: map
     description: Return the load average over the last 1, 5 and 15 minutes.

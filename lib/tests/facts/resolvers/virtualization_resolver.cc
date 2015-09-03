@@ -52,6 +52,15 @@ struct known_hypervisor_resolver : virtualization_resolver
     }
 };
 
+struct matched_hypervisor_resolver : virtualization_resolver
+{
+ protected:
+    virtual string get_hypervisor(collection& facts) override
+    {
+        return get_product_name_vm("VMware");
+    }
+};
+
 SCENARIO("using the virtualization resolver") {
     collection_fixture facts;
     WHEN("no hypervisor is returned") {
@@ -100,6 +109,18 @@ SCENARIO("using the virtualization resolver") {
             auto hypervisor = facts.get<string_value>(fact::virtualization);
             REQUIRE(hypervisor);
             REQUIRE(hypervisor->value() == string(vm::docker));
+        }
+    }
+    WHEN("a hypervisor is matched from product name") {
+        facts.add(make_shared<matched_hypervisor_resolver>());
+        THEN("the system is reported as virtual") {
+            REQUIRE(facts.size() == 2u);
+            auto is_virt = facts.get<boolean_value>(fact::is_virtual);
+            REQUIRE(is_virt);
+            REQUIRE(is_virt->value());
+            auto hypervisor = facts.get<string_value>(fact::virtualization);
+            REQUIRE(hypervisor);
+            REQUIRE(hypervisor->value() == string(vm::vmware));
         }
     }
 }

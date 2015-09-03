@@ -20,6 +20,7 @@
 #include <internal/facts/resolvers/gce_resolver.hpp>
 #include <internal/facts/resolvers/identity_resolver.hpp>
 #include <internal/facts/resolvers/kernel_resolver.hpp>
+#include <internal/facts/resolvers/ldom_resolver.hpp>
 #include <internal/facts/resolvers/load_average_resolver.hpp>
 #include <internal/facts/resolvers/memory_resolver.hpp>
 #include <internal/facts/resolvers/networking_resolver.hpp>
@@ -436,6 +437,8 @@ void add_all_facts(collection& facts)
     facts.add(fact::gce, make_value<map_value>());
     facts.add(make_shared<identity_resolver>());
     facts.add(make_shared<kernel_resolver>());
+    facts.add(fact::ldom, make_value<map_value>());
+    facts.add("ldom_domainname", make_value<string_value>("somedomain", true));
     facts.add(make_shared<load_average_resolver>());
     facts.add(make_shared<memory_resolver>());
     facts.add(make_shared<networking_resolver>());

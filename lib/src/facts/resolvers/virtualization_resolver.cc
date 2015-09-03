@@ -45,7 +45,7 @@ namespace facter { namespace facts { namespace resolvers {
         return hypervisors.count(hypervisor) == 0;
     }
 
-    string virtualization_resolver::get_product_name_vm(collection& facts)
+    string virtualization_resolver::get_product_name_vm(string const& product_name)
     {
         static vector<tuple<string, string>> vms = {
             make_tuple("VMware",            string(vm::vmware)),
@@ -59,15 +59,8 @@ namespace facter { namespace facts { namespace resolvers {
             make_tuple("Bochs",             string(vm::bochs)),
         };
 
-        auto product_name = facts.get<string_value>(fact::product_name);
-        if (!product_name) {
-            return {};
-        }
-
-        auto const& value = product_name->value();
-
         for (auto const& vm : vms) {
-            if (value.find(get<0>(vm)) != string::npos) {
+            if (product_name.find(get<0>(vm)) != string::npos) {
                 return get<1>(vm);
             }
         }

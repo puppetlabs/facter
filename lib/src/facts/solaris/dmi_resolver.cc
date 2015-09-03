@@ -5,6 +5,7 @@
 #include <leatherman/logging/logging.hpp>
 #include <leatherman/execution/execution.hpp>
 #include <leatherman/util/regex.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace leatherman::util;
@@ -16,8 +17,8 @@ namespace facter { namespace facts { namespace solaris {
     {
         data result;
 
-        auto arch = facts.get<string_value>(fact::architecture);
-        if (arch && arch->value() == "i86pc") {
+        auto isa = facts.get<string_value>(fact::hardware_isa);
+        if (isa && isa->value() == "i386") {
             static boost::regex bios_vendor_re("Vendor: (.+)");
             static boost::regex bios_version_re("Version String: (.+)");
             static boost::regex bios_release_re("Release Date: (.+)");
@@ -65,20 +66,27 @@ namespace facter { namespace facts { namespace solaris {
                 }
                 return result.chassis_type.empty() || result.chassis_asset_tag.empty();
             });
-        } else if (arch && arch->value() == "sparc") {
-            static boost::regex line_re("System Configuration: (.+) sun\\d.");
+        } else if (isa && isa->value() == "sparc") {
+            static boost::regex manufacturer_re("^System Configuration: (.+) sun\\d.$");
+            static boost::regex product_name_re("^SUNW,(.*)$");
             // prtdiag is not implemented in all sparc machines, so we cant get product name this way.
             each_line("/usr/sbin/prtconf", [&](string& line) {
-                if (re_search(line, line_re, &result.manufacturer)) {
-                    return false;
+                if (result.manufacturer.empty()) {
+                    re_search(line, manufacturer_re, &result.manufacturer);
                 }
-                return true;
+                if (result.product_name.empty()) {
+                    re_search(line, product_name_re, &result.product_name);
+                }
+                return result.manufacturer.empty() || result.product_name.empty();
             });
+            // Manufacturer appears to have two spaces before and after it, but we don't want to rely on that formatting.
+            boost::trim(result.manufacturer);
+
             bool success;
             string output, none;
-            tie(success, output, none) = execute("/usr/sbin/uname", {"-a"});
+            tie(success, output, none) = execute("/usr/sbin/sneep");
             if (success) {
-                re_search(output, boost::regex(".* sun\\d[vu] sparc SUNW,(.*)"), &result.product_name);
+                result.serial_number = output;
             }
         }
         return result;
