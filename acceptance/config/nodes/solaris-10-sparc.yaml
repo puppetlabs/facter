@@ -1,0 +1,6 @@
+---
+HOSTS:
+  solaris-10-sparc:
+    roles:
+      - agent
+    platform: solaris-10-sparc
