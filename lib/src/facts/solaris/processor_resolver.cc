@@ -54,9 +54,9 @@ namespace facter { namespace facts { namespace solaris {
     processor_resolver::data processor_resolver::collect_data(collection& facts)
     {
         auto result = posix::processor_resolver::collect_data(facts);
-        unordered_set<int> chips;
 
         try {
+            unordered_set<int> chips;
             k_stat kc;
             auto kv = kc["cpu_info"];
             for (auto const& ke : kv) {
@@ -70,15 +70,14 @@ namespace facter { namespace facts { namespace solaris {
                         result.speed = static_cast<int64_t>(ke.value<uint64_t>("current_clock_Hz"));
                     }
                 } catch (kstat_exception& ex) {
-                    LOG_DEBUG("failed to read processor data: %1%.", ex.what());
+                    LOG_DEBUG("failed to read processor data entry: %1%.", ex.what());
                 }
             }
             result.physical_count = chips.size();
         } catch (kstat_exception& ex) {
-            LOG_DEBUG("failed to read processor data: %1%.", ex.what());
-        }
+            LOG_DEBUG("failed to read processor data from kstat api: %1%.", ex.what());
 
-        if (chips.empty()) {
+            unordered_set<int> chips;
             string brand;
             int32_t chip_id;
             int64_t current_clock_hz;
