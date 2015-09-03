@@ -10,7 +10,6 @@
 #include <net/if_dl.h>
 #include <net/route.h>
 #include <netinet/in.h>
-#include <sys/ndd_var.h>
 #include <sys/kinfo.h>
 
 // This usage is recommended in several mailing lists, and is used at
@@ -65,12 +64,12 @@ namespace facter { namespace facts { namespace aix {
 
         // query the network device descriptors from the kernel. This
         // gives us physical information, such as mtu.
-        auto ndd_data = get_ndd_info();
+        auto mtus = get_mtus();
 
         for (auto& iface : data.interfaces) {
-            auto ndd_iter = ndd_data.find(iface.name);
-            if (ndd_iter != ndd_data.end()) {
-                iface.mtu = ndd_iter->second.ndd_mtu;
+            auto mtu_iter = mtus.find(iface.name);
+            if (mtu_iter != mtus.end()) {
+                iface.mtu = stoll(mtu_iter->second);
             }
         }
 
@@ -79,14 +78,17 @@ namespace facter { namespace facts { namespace aix {
         return data;
     }
 
-    networking_resolver::ndd_map networking_resolver::get_ndd_info() const {
-        auto ndd = getkerninfo<kinfo_ndd>(KINFO_NDD);
-
-        ndd_map result;
-        for (auto& device : ndd) {
-            result[device.ndd_name] = device;
-            result[device.ndd_alias] = device;
-        }
+    networking_resolver::mtu_map networking_resolver::get_mtus() const {
+        mtu_map result;
+        leatherman::execution::each_line("/usr/bin/netstat", {"-in"}, [&](std::string line) {
+            std::vector<std::string> fields;
+            boost::trim(line);
+            boost::split(fields, line, boost::is_space(), boost::token_compress_on);
+            if (boost::starts_with(fields[2], "link")) {
+                result[fields[0]] = fields[1];
+            }
+            return true;
+        });
         return result;
     }
 
