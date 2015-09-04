@@ -49,8 +49,10 @@ namespace facter { namespace logging {
         return os;
     }
 
-    void setup_logging(ostream& os)
+    void setup_logging(ostream& os, string ns)
     {
+        lm::override_namespace = ns.empty() ? LOG_NAMESPACE : move(ns);
+
         try {
             setup_logging_internal(os);
         } catch (exception const&) {
