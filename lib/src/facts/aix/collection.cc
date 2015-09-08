@@ -7,6 +7,7 @@
 #include <internal/facts/posix/ssh_resolver.hpp>
 #include <internal/facts/posix/identity_resolver.hpp>
 #include <internal/facts/posix/timezone_resolver.hpp>
+#include <internal/facts/posix/uptime_resolver.hpp>
 
 using namespace std;
 
@@ -20,5 +21,6 @@ namespace facter { namespace facts {
         add(make_shared<posix::ssh_resolver>());
         add(make_shared<posix::identity_resolver>());
         add(make_shared<posix::timezone_resolver>());
+        add(make_shared<posix::uptime_resolver>());
     }
 }}  // namespace facter::facts
