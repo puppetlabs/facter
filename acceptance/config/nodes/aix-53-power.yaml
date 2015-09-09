@@ -4,3 +4,4 @@ HOSTS:
     roles:
       - agent
     platform: aix-5.3-power
+    hypervisor: none

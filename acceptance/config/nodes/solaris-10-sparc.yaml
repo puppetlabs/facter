@@ -4,3 +4,4 @@ HOSTS:
     roles:
       - agent
     platform: solaris-10-sparc
+    hypervisor: none
