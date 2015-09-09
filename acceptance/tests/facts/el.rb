@@ -1,21 +1,29 @@
-test_name "Facts should resolve as expected in EL 5, 6 and 7"
+test_name "Facts should resolve as expected in EL 4, 5, 6 and 7"
 
 #
 # This test is intended to ensure that facts specific to an OS configuration
-# resolve as expected in EL 5, 6 and 7.
+# resolve as expected in EL 4, 5, 6 and 7.
 #
 # Facts tested: os, processors, networking, identity, kernel
 #
 
-confine :to, :platform => /el-5|el-6|el-7|centos-5|centos-6|centos-7/
+# Don't test on RedHat 4, as is does not include yum (See BKR-512)
+confine :to, :platform => /el-[5-7]|centos-[4-7]/
 
 agents.each do |agent|
-  if agent['platform'] =~ /el-5|centos-5/
+  case agent['platform']
+  when /centos-4/
+    os_version = '4'
+    kernel_version = '2.6'
+  when /(el|centos)-5/
     os_version = '5'
-  elsif agent['platform'] =~ /el-6|centos-6/
+    kernel_version = '2.6'
+  when /(el|centos)-6/
     os_version = '6'
+    kernel_version = '2.6'
   else
     os_version = '7'
+    kernel_version = '3.1'
   end
 
   if agent['platform'] =~ /x86_64/
@@ -103,11 +111,6 @@ agents.each do |agent|
   end
 
   step "Ensure the kernel fact resolves as expected"
-  if os_version == '5' || os_version == '6'
-    kernel_version = '2.6'
-  else
-    kernel_version = '3.1'
-  end
 
   expected_kernel = {
                       'kernel'           => 'Linux',
