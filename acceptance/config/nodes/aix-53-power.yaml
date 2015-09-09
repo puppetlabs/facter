@@ -1,0 +1,6 @@
+---
+HOSTS:
+  pe-aix-53-acceptance:
+    roles:
+      - agent
+    platform: aix-5.3-power
