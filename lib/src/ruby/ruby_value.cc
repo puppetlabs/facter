@@ -117,7 +117,7 @@ namespace facter { namespace ruby {
                 }
                 rapidjson::Value e;
                 to_json(ruby, element, allocator, e);
-                json.AddMember(ruby.rb_string_value_ptr(&key), e, allocator);
+                json.AddMember(rapidjson::Value(ruby.rb_string_value_ptr(&key), allocator), e, allocator);
                 return true;
             });
             return;
