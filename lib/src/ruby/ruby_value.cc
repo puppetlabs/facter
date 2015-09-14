@@ -87,7 +87,7 @@ namespace facter { namespace ruby {
             return;
         }
         if (ruby.is_fixednum(value)) {
-            json.SetInt64(ruby.rb_num2ulong(value));
+            json.SetInt64(ruby.rb_num2long(value));
             return;
         }
         if (ruby.is_float(value)) {
@@ -156,7 +156,7 @@ namespace facter { namespace ruby {
             return;
         }
         if (ruby.is_fixednum(value)) {
-            os << ruby.rb_num2ulong(value);
+            os << ruby.rb_num2long(value);
             return;
         }
         if (ruby.is_float(value)) {
@@ -242,7 +242,7 @@ namespace facter { namespace ruby {
             return;
         }
         if (ruby.is_fixednum(value)) {
-            emitter << ruby.rb_num2ulong(value);
+            emitter << ruby.rb_num2long(value);
             return;
         }
         if (ruby.is_float(value)) {
