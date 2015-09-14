@@ -46,6 +46,13 @@ namespace facter { namespace facts { namespace aix {
     {
         // Default to the base implementation
         auto result = posix::operating_system_resolver::collect_data(facts);
+
+        // on AIX, major version is hyphen-delimited. The base
+        // resolver can't figure this out for us.
+        vector<string> tokens;
+        boost::split(tokens, result.release, boost::is_any_of("-"));
+        result.major = tokens[0];
+
         result.architecture = getattr("proc0", "type");
         result.hardware = getattr("sys0", "modelname");
 
