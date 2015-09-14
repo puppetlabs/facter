@@ -13,7 +13,7 @@ using namespace std;
 namespace lth_file = leatherman::file_util;
 
 static std::string parse_rml_cache() {
-    const auto regex = boost::regex("(\\d+-\\d+-\\d+)_SP.*Service Pack");
+    const auto regex = boost::regex("^(\\d\\d-\\d+-\\d+)_SP.*Service Pack");
     string result;
     lth_file::each_line("/tmp/.oslevel.datafiles/.oslevel.rml.cache", [&](string& line) {
         string value;

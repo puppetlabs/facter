@@ -4,3 +4,6 @@ HOSTS:
     roles:
       - agent
     platform: solaris-11-sparc
+    hypervisor: none
+    ip: 10.32.77.138
+    vmhostname: sol11.delivery.puppetlabs.net
