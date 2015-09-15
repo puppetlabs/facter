@@ -71,7 +71,7 @@ namespace facter { namespace facts {
         for (auto const& kvp : _elements) {
             rapidjson::Value child;
             kvp.second->to_json(allocator, child);
-            value.AddMember(kvp.first.c_str(), child, allocator);
+            value.AddMember(rapidjson::StringRef(kvp.first.c_str(), kvp.first.size()), std::move(child), allocator);
         }
     }
 
