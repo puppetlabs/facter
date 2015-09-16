@@ -27,9 +27,7 @@ SCENARIO("using libfacter from Java") {
 
     GIVEN("the os fact") {
         try {
-            bool success;
-            string output, error;
-            tie(success, output, error) = execute(
+            auto exec = execute(
                 JAVA_EXECUTABLE,
                 {
                     "-jar",
@@ -46,15 +44,15 @@ SCENARIO("using libfacter from Java") {
                     execution_options::merge_environment,
                     execution_options::throw_on_failure
                 });
-            CAPTURE(output);
-            CAPTURE(error);
+            CAPTURE(exec.output);
+            CAPTURE(exec.error);
             THEN("the value should match") {
-                REQUIRE(success);
+                REQUIRE(exec.success);
                 ostringstream ss;
                 auto value = facts["os"];
                 REQUIRE(value);
                 value->write(ss);
-                REQUIRE(output == ss.str());
+                REQUIRE(exec.output == ss.str());
             }
         } catch (child_exit_exception const& ex) {
             CAPTURE(ex.output());
