@@ -8,6 +8,7 @@
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <rapidjson/reader.h>
+#include <rapidjson/error/en.h>
 #include <stack>
 #include <tuple>
 #include <stdexcept>
@@ -38,51 +39,51 @@ namespace facter { namespace facts { namespace resolvers {
         {
         }
 
-        void Null()
+        bool Null()
         {
             check_initialized();
             _key.clear();
+            return true;
         }
 
-        void Bool(bool b)
+        bool Bool(bool b)
         {
             add_value(make_value<boolean_value>(b));
+            return true;
         }
 
-        void Int(int i)
+        bool Int(int i)
         {
             Uint64(static_cast<uint64_t>(i));
+            return true;
         }
 
-        void Uint(unsigned int i)
+        bool Uint(unsigned int i)
         {
             Uint64(static_cast<uint64_t>(i));
+            return true;
         }
 
-        void Int64(int64_t i)
+        bool Int64(int64_t i)
         {
             Uint64(static_cast<uint64_t>(i));
+            return true;
         }
 
-        void Uint64(uint64_t i)
+        bool Uint64(uint64_t i)
         {
             add_value(make_value<integer_value>(i));
+            return true;
         }
 
-        void Double(double d)
+        bool Double(double d)
         {
             add_value(make_value<double_value>(d));
+            return true;
         }
 
-        void String(char const* s, SizeType len, bool copy)
+        bool String(char const* s, SizeType len, bool copy)
         {
-            // If the stack is empty or the top is a map and we don't have a key yet, set the key
-            if ((_stack.empty() || dynamic_cast<map_value*>(get<1>(_stack.top()).get())) && _key.empty()) {
-                check_initialized();
-                _key = s;
-                return;
-            }
-
             string value(s, len);
 
             // See https://cloud.google.com/compute/docs/metadata for information about these values
@@ -102,7 +103,7 @@ namespace facter { namespace facts { namespace resolvers {
                     array->add(make_value<string_value>(move(key)));
                 }
                 add_value(move(array));
-                return;
+                return true;
             }
             if (_key == "image" || _key == "machineType" || _key == "zone" || _key == "network") {
                 // These values are fully qualified, but we only want to display the last name
@@ -114,24 +115,33 @@ namespace facter { namespace facts { namespace resolvers {
             }
 
             add_value(make_value<string_value>(move(value)));
+            return true;
         }
 
-        void StartObject()
+        bool Key(const char* str, SizeType length, bool copy)
+        {
+            check_initialized();
+            _key = string(str, length);
+            return true;
+        }
+
+        bool StartObject()
         {
             if (!_initialized) {
                 _initialized = true;
-                return;
+                return true;
             }
 
             // Push a map onto the stack
             _stack.emplace(make_tuple(move(_key), make_value<map_value>()));
+            return true;
         }
 
-        void EndObject(SizeType count)
+        bool EndObject(SizeType count)
         {
             // Check to see if the stack is empty since we don't push for the top-level object
             if (_stack.empty()) {
-                return;
+                return true;
             }
 
             // Pop the data off the stack
@@ -141,17 +151,19 @@ namespace facter { namespace facts { namespace resolvers {
             // Restore the key and add the value
             _key = move(get<0>(top));
             add_value(move(get<1>(top)));
+            return true;
         }
 
-        void StartArray()
+        bool StartArray()
         {
             check_initialized();
 
             // Push an array onto the stack
             _stack.emplace(make_tuple(move(_key), make_value<array_value>()));
+            return true;
         }
 
-        void EndArray(SizeType count)
+        bool EndArray(SizeType count)
         {
             // Pop the data off the stack
             auto top = move(_stack.top());
@@ -160,6 +172,7 @@ namespace facter { namespace facts { namespace resolvers {
             // Restore the key and add the value
             _key = move(get<0>(top));
             add_value(move(get<1>(top)));
+            return true;
         }
 
      private:
@@ -239,10 +252,9 @@ namespace facter { namespace facts { namespace resolvers {
             Reader reader;
             StringStream ss(response.body().c_str());
             gce_event_handler handler(*data);
-            reader.Parse<0>(ss, handler);
-
-            if (reader.HasParseError()) {
-                LOG_ERROR("failed to parse GCE metadata: %1%.", reader.GetParseError());
+            auto result = reader.Parse(ss, handler);
+            if (!result) {
+                LOG_ERROR("failed to parse GCE metadata: %1%.", GetParseError_En(result.Code()));
                 return;
             }
 

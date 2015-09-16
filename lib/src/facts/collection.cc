@@ -466,6 +466,11 @@ namespace facter { namespace facts {
             _stream << c;
         }
 
+        void Flush()
+        {
+            _stream.flush();
+        }
+
      private:
          ostream& _stream;
     };
@@ -486,7 +491,7 @@ namespace facter { namespace facts {
             } else {
                 value.SetString("", 0);
             }
-            document.AddMember(key.c_str(), value, document.GetAllocator());
+            document.AddMember(StringRef(key.c_str(), key.size()), value, document.GetAllocator());
         });
 
         if (!queries.empty()) {

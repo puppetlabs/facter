@@ -607,4 +607,10 @@ SCENARIO("custom facts written in Ruby") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "true");
         }
     }
+    GIVEN("a fact that returns a negative number") {
+        REQUIRE(load_custom_fact("negative_number.rb", facts));
+        THEN("the value should be output as a signed value") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "-101");
+        }
+    }
 }

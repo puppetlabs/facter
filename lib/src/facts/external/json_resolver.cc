@@ -6,7 +6,8 @@
 #include <facter/facts/scalar_value.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <rapidjson/reader.h>
-#include <rapidjson/filestream.h>
+#include <rapidjson/filereadstream.h>
+#include <rapidjson/error/en.h>
 #include <boost/algorithm/string.hpp>
 #include <stack>
 #include <tuple>
@@ -27,72 +28,81 @@ namespace facter { namespace facts { namespace external {
         {
         }
 
-        void Null()
+        bool Null()
         {
             check_initialized();
 
             // Ignore this fact as values cannot be null
             _key.clear();
+            return true;
         }
 
-        void Bool(bool b)
+        bool Bool(bool b)
         {
             add_value(make_value<boolean_value>(b));
+            return true;
         }
 
-        void Int(int i)
+        bool Int(int i)
         {
             Int64(static_cast<uint64_t>(i));
+            return true;
         }
 
-        void Uint(unsigned int i)
+        bool Uint(unsigned int i)
         {
             Int64(static_cast<uint64_t>(i));
+            return true;
         }
 
-        void Int64(int64_t i)
+        bool Int64(int64_t i)
         {
             add_value(make_value<integer_value>(i));
+            return true;
         }
 
-        void Uint64(uint64_t i)
+        bool Uint64(uint64_t i)
         {
             Int64(static_cast<uint64_t>(i));
+            return true;
         }
 
-        void Double(double d)
+        bool Double(double d)
         {
             add_value(make_value<double_value>(d));
+            return true;
         }
 
-        void String(char const* s, SizeType len, bool copy)
+        bool String(char const* str, SizeType length, bool copy)
         {
-            // If the stack is empty or the top is a map and we don't have a key yet, set the key
-            if ((_stack.empty() || dynamic_cast<map_value*>(get<1>(_stack.top()).get())) && _key.empty()) {
-                check_initialized();
-                _key = s;
-                return;
-            }
-
-            add_value(make_value<string_value>(s));
+            add_value(make_value<string_value>(string(str, length)));
+            return true;
         }
 
-        void StartObject()
+        bool Key(const char* str, SizeType length, bool copy)
+        {
+            check_initialized();
+            _key = string(str, length);
+            return true;
+        }
+
+        bool StartObject()
         {
             if (!_initialized) {
                 _initialized = true;
-                return;
+                return true;
             }
 
             // Push a map onto the stack
             _stack.emplace(make_tuple(move(_key), make_value<map_value>()));
+            return true;
         }
 
-        void EndObject(SizeType count)
+        bool EndObject(SizeType count)
         {
             // Check to see if the stack is empty since we don't push for the top-level object
             if (_stack.empty()) {
-                return;
+                return true;
             }
 
             // Pop the data off the stack
@@ -102,17 +112,19 @@ namespace facter { namespace facts { namespace external {
             // Restore the key and add the value
             _key = move(get<0>(top));
             add_value(move(get<1>(top)));
+            return true;
         }
 
-        void StartArray()
+        bool StartArray()
         {
             check_initialized();
 
             // Push an array onto the stack
             _stack.emplace(make_tuple(move(_key), make_value<array_value>()));
+            return true;
         }
 
-        void EndArray(SizeType count)
+        bool EndArray(SizeType count)
         {
             // Pop the data off the stack
             auto top = move(_stack.top());
@@ -121,6 +133,7 @@ namespace facter { namespace facts { namespace external {
             // Restore the key and add the value
             _key = move(get<0>(top));
             add_value(move(get<1>(top)));
+            return true;
         }
 
      private:
@@ -185,14 +198,15 @@ namespace facter { namespace facts { namespace external {
         }
 
         // Use the existing FileStream class
-        FileStream stream(file);
+        char buffer[4096];
+        FileReadStream stream(file, buffer, sizeof(buffer));
 
         // Parse the file and report any errors
         Reader reader;
         json_event_handler handler(facts);
-        reader.Parse<0>(stream, handler);
-        if (reader.HasParseError()) {
-            throw external_fact_exception(reader.GetParseError());
+        auto result = reader.Parse(stream, handler);
+        if (!result) {
+            throw external_fact_exception(GetParseError_En(result.Code()));
         }
 
         LOG_DEBUG("completed resolving facts from JSON file \"%1%\".", path);
