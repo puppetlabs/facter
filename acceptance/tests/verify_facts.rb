@@ -29,11 +29,9 @@ def validate_fact(name, node, fact_value, hidden)
               # YAML-CPP seems to drop the decimal whenever it feels like it, so just match Int too.
               fact_value.is_a? Float or fact_value.is_a? Integer or fact_value.to_s =~ /^(\.inf|\.nan|-\.inf)$/
             when 'string'
-              # YAML.load will automatically convert timestamp values to a Fixnum
-              # so relax validation for uptime related facts
-              #   YAML.load('foo: 1:23') => {"foo"=>4980}
-              # It also converts zfs_featurenumbers to a number, even though it's a comma-separated list.
-              fact_value.is_a? String or ((fact_value.is_a? Fixnum or fact_value.is_a? Bignum) and (name =~ /.*uptime/ or name =~ /.+_featurenumbers/))
+              # Any string can be interpreted as a more specific type by ruby
+              # YAML.
+              true
             when 'ip'
               fact_value.is_a? String and fact_value =~ @ip_pattern
             when 'ip6'
@@ -59,8 +57,7 @@ def validate_fact(name, node, fact_value, hidden)
     elements = node['elements']
 
     # Validate the map's elements 'validate' is unset or true
-    validate_attribute = node['validate'] || true
-    if validate_attribute
+    if node['validate'].nil? || node['validate']
       # Nested facts are never hidden.
       validate_facts(fact_value, elements, false)
     end
