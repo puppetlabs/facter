@@ -17,13 +17,11 @@ namespace facter { namespace facts { namespace posix {
 
         bs::error_code ec;
         if (exists(xen_toolstack, ec) && !ec) {
-            bool success;
-            string output, error;
-            tie(success, output, error) = execute(xen_toolstack);
-            if (success) {
-                return output;
+            auto exec = execute(xen_toolstack);
+            if (exec.success) {
+                return exec.output;
             } else {
-                LOG_DEBUG("failure executing %1%: %2%", xen_toolstack, error);
+                LOG_DEBUG("failure executing %1%: %2%", xen_toolstack, exec.error);
                 return {};
             }
         } else {

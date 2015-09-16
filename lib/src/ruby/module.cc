@@ -812,9 +812,7 @@ namespace facter { namespace ruby {
 
         if (!expanded.empty()) {
             try {
-                bool success = false;
-                string output, none;
-                tie(success, output, none) = execute(
+                auto exec = execute(
                     command_shell,
                     {
                         command_args,
@@ -827,7 +825,7 @@ namespace facter { namespace ruby {
                         execution_options::redirect_stderr_to_null,
                         execution_options::preserve_arguments
                     });
-                return ruby.utf8_value(output);
+                return ruby.utf8_value(exec.output);
             } catch (timeout_exception const& ex) {
                 // Always raise for timeouts
                 ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), ex.what());

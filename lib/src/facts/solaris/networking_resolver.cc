@@ -173,13 +173,11 @@ namespace facter { namespace facts { namespace solaris {
 
     string networking_resolver::find_dhcp_server(string const& interface) const
     {
-        bool success;
-        string output, none;
-        tie(success, output, none) = execute("dhcpinfo", { "-i", interface, "ServerID" });
-        if (!success) {
+        auto exec = execute("dhcpinfo", { "-i", interface, "ServerID" });
+        if (!exec.success) {
             return {};
         }
-        return output;
+        return exec.output;
     }
 
 }}}  // namespace facter::facts::solaris

@@ -39,13 +39,10 @@ namespace facter { namespace facts { namespace aix   {
         // anyway).
         string version = parse_rml_cache();
         if (version.empty()) {
-            bool success;
-            string out;
-            string err;  // unused, but needed for tuple unpacking
-            std::tie(success, out, err) = execute("/usr/bin/oslevel", {"-s"}, 0, { execution_options::trim_output, execution_options::redirect_stderr_to_stdout, execution_options::merge_environment });
+            auto exec = execute("/usr/bin/oslevel", {"-s"}, 0, { execution_options::trim_output, execution_options::redirect_stderr_to_stdout, execution_options::merge_environment });
 
-            if (!success) {
-                LOG_WARNING("oslevel failed: %1%: kernel facts are unavailable", out);
+            if (!exec.success) {
+                LOG_WARNING("oslevel failed: %1%: kernel facts are unavailable", exec.output);
                 return result;
             }
 

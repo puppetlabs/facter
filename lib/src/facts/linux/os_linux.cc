@@ -329,11 +329,9 @@ namespace facter { namespace facts { namespace linux {
 
         // For VMware ESX, execute the vmware tool
         if (value.empty() && name == os::vmware_esx) {
-            bool success;
-            string output, none;
-            tie(success, output, none) = execute("vmware", { "-v" });
-            if (success) {
-                re_search(output, boost::regex("VMware ESX .*?(\\d.*)"), &value);
+            auto exec = execute("vmware", { "-v" });
+            if (exec.success) {
+                re_search(exec.output, boost::regex("VMware ESX .*?(\\d.*)"), &value);
             }
         }
 
