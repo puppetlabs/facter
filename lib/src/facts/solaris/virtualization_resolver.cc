@@ -27,10 +27,8 @@ namespace facter { namespace facts { namespace solaris {
         }
 
         // works for both x86 & sparc.
-        bool success;
-        string output, none;
-        tie(success, output, none) = execute("/usr/bin/zonename");
-        if (success && output != "global") {
+        auto exec = execute("/usr/bin/zonename");
+        if (exec.success && exec.output != "global") {
             return vm::zone;
         }
 
