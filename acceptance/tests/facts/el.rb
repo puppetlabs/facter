@@ -40,7 +40,7 @@ agents.each do |agent|
                   'os.architecture'         => os_arch,
                   'os.family'               => 'RedHat',
                   'os.hardware'             => os_hardware,
-                  'os.name'                 => /(RedHat|CentOS)/,
+                  'os.name'                 => /(RedHat|CentOS|Scientific|Oracle)/,
                   'os.release.full'         => /#{os_version}\.\d(\.\d)?/,
                   'os.release.major'        => os_version,
                   'os.release.minor'        => /\d/,
