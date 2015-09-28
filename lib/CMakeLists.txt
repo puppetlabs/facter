@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.2.2)
 
 set(LIBFACTER_VERSION_MAJOR 3)
 set(LIBFACTER_VERSION_MINOR 1)
-set(LIBFACTER_VERSION_PATCH 0)
+set(LIBFACTER_VERSION_PATCH 1)
 
 # Get the HEAD SHA1 commit message
 get_commit_string(LIBFACTER_COMMIT)
@@ -112,6 +112,7 @@ if (AIX)
         "src/facts/aix/networking_resolver.cc"
         "src/facts/aix/operating_system_resolver.cc"
         "src/facts/aix/processor_resolver.cc"
+        "src/facts/aix/serial_number_resolver.cc"
     )
 
     set(LIBFACTER_PLATFORM_LIBRARIES
