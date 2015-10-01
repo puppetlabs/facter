@@ -19,7 +19,7 @@ namespace facter { namespace facts {
      * @tparam T The underlying scalar type.
      */
     template <typename T>
-    struct scalar_value : value
+    struct LIBFACTER_EXPORT scalar_value : value
     {
         /**
          * Constructs a scalar_value.
