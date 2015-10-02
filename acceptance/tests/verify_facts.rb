@@ -51,7 +51,7 @@ def validate_fact(name, node, fact_value, hidden)
   fail "type of #{name} did not match schema, #{fact_value} of type #{fact_value.class} is not a #{node['type']}" unless is_type
 
   hidden_attribute = node['hidden'] || false
-  fail "hidden fact was displayed by default" if hidden_attribute != hidden
+  fail "hidden fact '#{name}' was displayed by default" if hidden_attribute != hidden
 
   if fact_value.is_a? Hash
     elements = node['elements']
