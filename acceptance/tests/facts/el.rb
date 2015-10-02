@@ -11,6 +11,7 @@ test_name "Facts should resolve as expected in EL 4, 5, 6 and 7"
 confine :to, :platform => /el-[5-7]|centos-[4-7]/
 
 agents.each do |agent|
+  # TODO: It might be time to start abstracting all of this logic away as more versions are continually added.
   case agent['platform']
   when /centos-4/
     os_version = '4'
@@ -23,7 +24,18 @@ agents.each do |agent|
     kernel_version = '2.6'
   else
     os_version = '7'
-    kernel_version = '3.1'
+    agent['template'] =~ /oracle/ ? kernel_version = '3.8' : kernel_version = '3.1'
+  end
+
+  case agent['template']
+  when /centos/
+    os_name = 'CentOS'
+  when /redhat/
+    os_name = 'RedHat'
+  when /scientific/
+    os_name = 'Scientific'
+  else
+    os_name = 'OracleLinux'
   end
 
   if agent['platform'] =~ /x86_64/
@@ -40,7 +52,7 @@ agents.each do |agent|
                   'os.architecture'         => os_arch,
                   'os.family'               => 'RedHat',
                   'os.hardware'             => os_hardware,
-                  'os.name'                 => /(RedHat|CentOS)/,
+                  'os.name'                 => os_name,
                   'os.release.full'         => /#{os_version}\.\d(\.\d)?/,
                   'os.release.major'        => os_version,
                   'os.release.minor'        => /\d/,
