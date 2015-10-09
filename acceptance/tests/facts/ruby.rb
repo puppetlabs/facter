@@ -14,6 +14,8 @@ when /windows/
   ruby_platform = agent['ruby_arch'] == 'x64' ? 'x64-mingw32' : 'i386-mingw32'
 when /osx/
   ruby_platform = /x86_64-darwin[\d.]+/
+when /aix/
+  ruby_platform = /powerpc-aix[\d.]+/
 when /solaris/
     if agent['platform'] =~ /sparc/
       ruby_platform = /sparc-solaris[\d.]+/
