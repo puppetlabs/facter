@@ -94,19 +94,19 @@ SCENARIO("using an array fact value") {
         }
         WHEN("serialized to JSON") {
             THEN("it should contain the same values") {
-                rapidjson::Value json_value;
-                MemoryPoolAllocator<> allocator;
-                value.to_json(allocator, json_value);
-                REQUIRE(json_value.IsArray());
-                REQUIRE(json_value.Size() == 3);
-                REQUIRE(json_value[0u].IsString());
-                REQUIRE(string(json_value[0u].GetString()) == "1");
-                REQUIRE(json_value[1u].IsNumber());
-                REQUIRE(json_value[1u].GetInt64() == 2ll);
-                REQUIRE(json_value[2u].IsArray());
-                REQUIRE(json_value[2u].Size() == 1);
-                REQUIRE(json_value[2u][0u].IsString());
-                REQUIRE(string(json_value[2u][0u].GetString()) == "element");
+                json_value json;
+                json_allocator allocator;
+                value.to_json(allocator, json);
+                REQUIRE(json.IsArray());
+                REQUIRE(json.Size() == 3);
+                REQUIRE(json[0u].IsString());
+                REQUIRE(string(json[0u].GetString()) == "1");
+                REQUIRE(json[1u].IsNumber());
+                REQUIRE(json[1u].GetInt64() == 2ll);
+                REQUIRE(json[2u].IsArray());
+                REQUIRE(json[2u].Size() == 1);
+                REQUIRE(json[2u][0u].IsString());
+                REQUIRE(string(json[2u][0u].GetString()) == "element");
             }
         }
         WHEN("serialized to text") {

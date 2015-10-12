@@ -31,11 +31,11 @@ SCENARIO("using a string fact value") {
         string_value value("foobar");
         WHEN("serialized to JSON") {
             THEN("it should have the same value") {
-                rapidjson::Value json_value;
-                MemoryPoolAllocator<> allocator;
-                value.to_json(allocator, json_value);
-                REQUIRE(json_value.IsString());
-                REQUIRE(json_value.GetString() == string("foobar"));
+                json_value json;
+                json_allocator allocator;
+                value.to_json(allocator, json);
+                REQUIRE(json.IsString());
+                REQUIRE(json.GetString() == string("foobar"));
             }
         }
         WHEN("serialized to YAML") {
@@ -65,11 +65,11 @@ SCENARIO("using a string fact value") {
         string_value value("fe80::");
         WHEN("serialized to JSON") {
             THEN("it should have the same value") {
-                rapidjson::Value json_value;
-                MemoryPoolAllocator<> allocator;
-                value.to_json(allocator, json_value);
-                REQUIRE(json_value.IsString());
-                REQUIRE(json_value.GetString() == string("fe80::"));
+                json_value json;
+                json_allocator allocator;
+                value.to_json(allocator, json);
+                REQUIRE(json.IsString());
+                REQUIRE(json.GetString() == string("fe80::"));
             }
         }
         WHEN("serialized to YAML") {
@@ -99,11 +99,11 @@ SCENARIO("using a string fact value") {
         string_value value("127.254.3.0");
         WHEN("serialized to JSON") {
             THEN("it should have the same value") {
-                rapidjson::Value json_value;
-                MemoryPoolAllocator<> allocator;
-                value.to_json(allocator, json_value);
-                REQUIRE(json_value.IsString());
-                REQUIRE(json_value.GetString() == string("127.254.3.0"));
+                json_value json;
+                json_allocator allocator;
+                value.to_json(allocator, json);
+                REQUIRE(json.IsString());
+                REQUIRE(json.GetString() == string("127.254.3.0"));
             }
         }
         WHEN("serialized to YAML") {
@@ -133,11 +133,11 @@ SCENARIO("using a string fact value") {
         string_value value("::1");
         WHEN("serialized to JSON") {
             THEN("it should have the same value") {
-                rapidjson::Value json_value;
-                MemoryPoolAllocator<> allocator;
-                value.to_json(allocator, json_value);
-                REQUIRE(json_value.IsString());
-                REQUIRE(json_value.GetString() == string("::1"));
+                json_value json;
+                json_allocator allocator;
+                value.to_json(allocator, json);
+                REQUIRE(json.IsString());
+                REQUIRE(json.GetString() == string("::1"));
             }
         }
         WHEN("serialized to YAML") {

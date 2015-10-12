@@ -64,12 +64,12 @@ namespace facter { namespace facts {
         return it->second.get();
     }
 
-    void map_value::to_json(Allocator& allocator, rapidjson::Value& value) const
+    void map_value::to_json(json_allocator& allocator, json_value& value) const
     {
         value.SetObject();
 
         for (auto const& kvp : _elements) {
-            rapidjson::Value child;
+            json_value child;
             kvp.second->to_json(allocator, child);
             value.AddMember(rapidjson::StringRef(kvp.first.c_str(), kvp.first.size()), std::move(child), allocator);
         }

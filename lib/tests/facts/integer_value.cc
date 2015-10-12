@@ -16,11 +16,11 @@ SCENARIO("using an integer fact value") {
         REQUIRE(value.value() == expected_value);
         WHEN("serialized to JSON") {
             THEN("it should have the same value") {
-                rapidjson::Value json_value;
-                MemoryPoolAllocator<> allocator;
-                value.to_json(allocator, json_value);
-                REQUIRE(json_value.IsNumber());
-                REQUIRE(json_value.GetInt64() == expected_value);
+                json_value json;
+                json_allocator allocator;
+                value.to_json(allocator, json);
+                REQUIRE(json.IsNumber());
+                REQUIRE(json.GetInt64() == expected_value);
             }
         }
         WHEN("serialized to YAML") {
@@ -44,11 +44,11 @@ SCENARIO("using an integer fact value") {
         REQUIRE(value.value() == expected_value);
         WHEN("serialized to JSON") {
             THEN("it should have the same value") {
-                rapidjson::Value json_value;
-                MemoryPoolAllocator<> allocator;
-                value.to_json(allocator, json_value);
-                REQUIRE(json_value.IsNumber());
-                REQUIRE(json_value.GetInt64() == expected_value);
+                json_value json;
+                json_allocator allocator;
+                value.to_json(allocator, json);
+                REQUIRE(json.IsNumber());
+                REQUIRE(json.GetInt64() == expected_value);
             }
         }
         WHEN("serialized to YAML") {

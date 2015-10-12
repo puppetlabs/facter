@@ -55,7 +55,7 @@ namespace facter { namespace ruby {
          * @param allocator The allocator to use for creating the JSON value.
          * @param value The returned JSON value.
          */
-        virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const override;
+        virtual void to_json(facts::json_allocator& allocator, facts::json_value& value) const override;
 
         /**
           * Writes the value to the given stream.
@@ -80,7 +80,7 @@ namespace facter { namespace ruby {
         leatherman::ruby::VALUE value() const;
 
      private:
-        static void to_json(leatherman::ruby::api const& ruby, leatherman::ruby::VALUE value, rapidjson::Allocator& allocator, rapidjson::Value& json);
+        static void to_json(leatherman::ruby::api const& ruby, leatherman::ruby::VALUE value, facts::json_allocator& allocator, facts::json_value& json);
         static void write(leatherman::ruby::api const& ruby, leatherman::ruby::VALUE value, std::ostream& os, bool quoted, unsigned int level);
         static void write(leatherman::ruby::api const& ruby, leatherman::ruby::VALUE value, YAML::Emitter& emitter);
 
