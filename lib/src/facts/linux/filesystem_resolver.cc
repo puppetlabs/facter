@@ -142,7 +142,13 @@ namespace facter { namespace facts { namespace linux {
 
 #ifdef USE_BLKID
         blkid_cache actual = nullptr;
-        if (blkid_get_cache(&actual, nullptr) == 0) {
+        if (blkid_get_cache(&actual, "/dev/null") == 0) {
+            // Do a probe since we're not using a cache file
+            if (blkid_probe_all(actual) != 0) {
+                LOG_DEBUG("blkid_probe_all failed: partition attributes are not available.");
+                blkid_put_cache(actual);
+                actual = nullptr;
+            }
             cache = actual;
         } else {
             LOG_DEBUG("blkid_get_cache failed: partition attributes are not available.");
