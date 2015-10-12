@@ -61,21 +61,33 @@ namespace facter { namespace facts { namespace posix {
     {
         data result;
 
-        // Get the hostname
+        // Get the maximum size of the host name
         int size = sysconf(_SC_HOST_NAME_MAX);
-        vector<char> name(size == -1 ? 1024 : size);
-        if (gethostname(name.data(), name.size()) != 0) {
+        if (size <= 0) {
+            size = 1024;
+        }
+        // Get the hostname (+1 to ensure a null is returned on platforms where maximum truncation may occur)
+        vector<char> name(size + 1);
+        if (gethostname(name.data(), size) != 0) {
             LOG_WARNING("gethostname failed: %1% (%2%): hostname is unavailable.", strerror(errno), errno);
         } else {
-            // Use everything up to the first period
-            result.hostname = name.data();
-            auto pos = result.hostname.find('.');
-            if (pos != string::npos) {
-                result.hostname = result.hostname.substr(0, pos);
+            // Check for fully-qualified hostname
+            auto it = find(name.begin(), name.end(), '.');
+            if (it != name.end()) {
+                LOG_DEBUG("using the FQDN returned by gethostname: %1%.", name.data());
+                result.hostname.assign(name.begin(), it);
+                if (++it != name.end()) {
+                    // Use the remainder of the string, up to the first null character
+                    result.domain = &*it;
+                }
+            } else {
+                // Not fully qualified; just set hostname
+                result.hostname = name.data();
             }
         }
 
-        if (!result.hostname.empty()) {
+        // If the hostname was not already fully qualified, attempt to resolve it
+        if (result.domain.empty() && !result.hostname.empty()) {
             // Retrieve the FQDN by resolving the hostname
             scoped_addrinfo info(result.hostname);
             if (info.result() != 0 && info.result() != EAI_NONAME) {
