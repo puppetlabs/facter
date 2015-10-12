@@ -67,15 +67,19 @@ namespace facter { namespace facts { namespace posix {
         if (gethostname(name.data(), name.size()) != 0) {
             LOG_WARNING("gethostname failed: %1% (%2%): hostname is unavailable.", strerror(errno), errno);
         } else {
-            // Use everything up to the first period
-            result.hostname = name.data();
-            auto pos = result.hostname.find('.');
-            if (pos != string::npos) {
-                result.hostname = result.hostname.substr(0, pos);
+            // Check for fully-qualified hostname
+            auto it = find(name.begin(), name.end(), '.');
+            if (it != name.end()) {
+                LOG_DEBUG("using the FQDN returned by gethostname: %1%.", name.data());
+                result.hostname.assign(name.begin(), it);
+                result.domain.assign(++it, name.end());
+            } else {
+                result.hostname = name.data();
             }
         }
 
-        if (!result.hostname.empty()) {
+        // If the hostname was not already fully qualified, attempt to resolve it
+        if (result.domain.empty() && !result.hostname.empty()) {
             // Retrieve the FQDN by resolving the hostname
             scoped_addrinfo info(result.hostname);
             if (info.result() != 0 && info.result() != EAI_NONAME) {
