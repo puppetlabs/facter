@@ -118,7 +118,7 @@ namespace facter { namespace facts { namespace posix {
                     result.domain.assign(parts[1].begin(), parts[1].end());
                     return false;
                 }
-                if (parts[0] == boost::as_literal("search")) {
+                if (search.empty() && parts[0] == boost::as_literal("search")) {
                     // Found a "search" entry, but keep looking for other domain entries
                     // We use the first search domain as the domain.
                     search.assign(parts[1].begin(), parts[1].end());
