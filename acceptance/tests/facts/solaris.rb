@@ -26,7 +26,7 @@ agents.each do |agent|
   case agent[:platform]
   when /sparc/
     os_architecture = 'sun4v'
-    proc_models = /UltraSPARC.*/
+    proc_models = /.*SPARC.*/
     proc_isa = /sparc/
   else
     os_architecture = 'i86pc'
@@ -64,12 +64,16 @@ agents.each do |agent|
   step "Ensure the Networking fact resolves with reasonable values for at least one interface"
 
   expected_networking = {
-                          "networking.dhcp"     => /10\.\d+\.\d+\.\d+/,
                           "networking.ip"       => /10\.\d+\.\d+\.\d+/,
                           "networking.mac"      => /[a-f0-9]{2}:/,
                           "networking.mtu"      => /\d+/,
                           "networking.netmask"  => /\d+\.\d+\.\d+\.\d+/,
                         }
+
+  # Our SPARC testing platforms don't use DHCP
+  if os_architecture == 'i86pc'
+    expected_networking["networking.dhcp"] = /10\.\d+\.\d+\.\d+/
+  end
 
   expected_networking.each do |fact, value|
     assert_match(value, fact_on(agent, fact))
