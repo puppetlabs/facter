@@ -161,7 +161,7 @@ namespace facter { namespace ruby {
 
     map<VALUE, module*> module::_instances;
 
-    module::module(collection& facts, vector<string> const& paths) :
+    module::module(collection& facts, vector<string> const& paths, bool logging_hooks) :
         _collection(facts),
         _loaded_all(false)
     {
@@ -219,9 +219,7 @@ namespace facter { namespace ruby {
         ruby.rb_define_singleton_method(_self, "warn", RUBY_METHOD_FUNC(ruby_warn), 1);
         ruby.rb_define_singleton_method(_self, "warnonce", RUBY_METHOD_FUNC(ruby_warnonce), 1);
         ruby.rb_define_singleton_method(_self, "log_exception", RUBY_METHOD_FUNC(ruby_log_exception), -1);
-        ruby.rb_define_singleton_method(_self, "debugging", RUBY_METHOD_FUNC(ruby_set_debugging), 1);
         ruby.rb_define_singleton_method(_self, "debugging?", RUBY_METHOD_FUNC(ruby_get_debugging), 0);
-        ruby.rb_define_singleton_method(_self, "trace", RUBY_METHOD_FUNC(ruby_set_trace), 1);
         ruby.rb_define_singleton_method(_self, "trace?", RUBY_METHOD_FUNC(ruby_get_trace), 0);
         ruby.rb_define_singleton_method(_self, "flush", RUBY_METHOD_FUNC(ruby_flush), 0);
         ruby.rb_define_singleton_method(_self, "list", RUBY_METHOD_FUNC(ruby_list), 0);
@@ -234,7 +232,14 @@ namespace facter { namespace ruby {
         ruby.rb_define_singleton_method(_self, "search_path", RUBY_METHOD_FUNC(ruby_search_path), 0);
         ruby.rb_define_singleton_method(_self, "search_external", RUBY_METHOD_FUNC(ruby_search_external), 1);
         ruby.rb_define_singleton_method(_self, "search_external_path", RUBY_METHOD_FUNC(ruby_search_external_path), 0);
-        ruby.rb_define_singleton_method(_self, "on_message", RUBY_METHOD_FUNC(ruby_on_message), 0);
+
+        // Only define these if requested to do so
+        // This prevents consumers of Facter from altering the logging behavior
+        if (logging_hooks) {
+            ruby.rb_define_singleton_method(_self, "debugging", RUBY_METHOD_FUNC(ruby_set_debugging), 1);
+            ruby.rb_define_singleton_method(_self, "trace", RUBY_METHOD_FUNC(ruby_set_trace), 1);
+            ruby.rb_define_singleton_method(_self, "on_message", RUBY_METHOD_FUNC(ruby_on_message), 0);
+        }
 
         // Define the execution module
         ruby.rb_define_singleton_method(execution, "which", RUBY_METHOD_FUNC(ruby_which), 1);
