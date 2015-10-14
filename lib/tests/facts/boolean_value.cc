@@ -15,11 +15,11 @@ SCENARIO("using a boolean fact value") {
         REQUIRE(value.value());
         WHEN("serialized to JSON") {
             THEN("it should serialize as true") {
-                rapidjson::Value json_value;
-                MemoryPoolAllocator<> allocator;
-                value.to_json(allocator, json_value);
-                REQUIRE(json_value.IsBool());
-                REQUIRE(json_value.GetBool());
+                json_value json;
+                json_allocator allocator;
+                value.to_json(allocator, json);
+                REQUIRE(json.IsBool());
+                REQUIRE(json.GetBool());
             }
         }
         WHEN("serialized to YAML") {
@@ -42,11 +42,11 @@ SCENARIO("using a boolean fact value") {
         REQUIRE_FALSE(value.value());
         WHEN("serialized to JSON") {
             THEN("it should serialize as false") {
-                rapidjson::Value json_value;
-                MemoryPoolAllocator<> allocator;
-                value.to_json(allocator, json_value);
-                REQUIRE(json_value.IsBool());
-                REQUIRE_FALSE(json_value.GetBool());
+                json_value json;
+                json_allocator allocator;
+                value.to_json(allocator, json);
+                REQUIRE(json.IsBool());
+                REQUIRE_FALSE(json.GetBool());
             }
         }
         WHEN("serialized to YAML") {

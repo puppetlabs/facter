@@ -79,23 +79,23 @@ SCENARIO("using a map fact value") {
         }
         WHEN("serialized to JSON") {
             THEN("it should contain the same values") {
-                rapidjson::Value json_value;
-                MemoryPoolAllocator<> allocator;
-                value.to_json(allocator, json_value);
-                REQUIRE(json_value.IsObject());
-                REQUIRE(json_value["string"].IsString());
-                REQUIRE(string(json_value["string"].GetString()) == "hello");
-                REQUIRE(json_value["integer"].IsNumber());
-                REQUIRE(json_value["integer"].GetInt64() == 5);
-                REQUIRE(json_value["array"].IsArray());
-                REQUIRE(json_value["array"].Size() == 2);
-                REQUIRE(json_value["array"][0u].IsString());
-                REQUIRE(string(json_value["array"][0u].GetString()) == "1");
-                REQUIRE(json_value["array"][1u].IsNumber());
-                REQUIRE(json_value["array"][1u].GetInt64() == 2);
-                REQUIRE(json_value["map"].IsObject());
-                REQUIRE(json_value["map"]["foo"].IsString());
-                REQUIRE(string(json_value["map"]["foo"].GetString()) == "bar");
+                json_value json;
+                json_allocator allocator;
+                value.to_json(allocator, json);
+                REQUIRE(json.IsObject());
+                REQUIRE(json["string"].IsString());
+                REQUIRE(string(json["string"].GetString()) == "hello");
+                REQUIRE(json["integer"].IsNumber());
+                REQUIRE(json["integer"].GetInt64() == 5);
+                REQUIRE(json["array"].IsArray());
+                REQUIRE(json["array"].Size() == 2);
+                REQUIRE(json["array"][0u].IsString());
+                REQUIRE(string(json["array"][0u].GetString()) == "1");
+                REQUIRE(json["array"][1u].IsNumber());
+                REQUIRE(json["array"][1u].GetInt64() == 2);
+                REQUIRE(json["map"].IsObject());
+                REQUIRE(json["map"]["foo"].IsString());
+                REQUIRE(string(json["map"]["foo"].GetString()) == "bar");
             }
         }
         WHEN("serialized to text") {

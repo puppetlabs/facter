@@ -84,7 +84,7 @@ namespace facter { namespace facts {
          * @param allocator The allocator to use for creating the JSON value.
          * @param value The returned JSON value.
          */
-        virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const override;
+        virtual void to_json(json_allocator& allocator, json_value& value) const override;
 
         /**
          * Gets the value in the map of the given name.

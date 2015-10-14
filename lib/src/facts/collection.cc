@@ -477,7 +477,7 @@ namespace facter { namespace facts {
 
     void collection::write_json(ostream& stream, set<string> const& queries, bool show_legacy)
     {
-        Document document;
+        json_document document;
         document.SetObject();
 
         auto builder = ([&](string const& key, value const* val) {
@@ -485,7 +485,7 @@ namespace facter { namespace facts {
             if (!show_legacy && queries.empty() && val && val->hidden()) {
                 return;
             }
-            rapidjson::Value value;
+            json_value value;
             if (val) {
                 val->to_json(document.GetAllocator(), value);
             } else {
