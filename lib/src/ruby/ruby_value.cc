@@ -39,7 +39,7 @@ namespace facter { namespace ruby {
         return *this;
     }
 
-    void ruby_value::to_json(Allocator& allocator, rapidjson::Value& value) const
+    void ruby_value::to_json(json_allocator& allocator, json_value& value) const
     {
         auto const& ruby = api::instance();
         to_json(ruby, _value, allocator, value);
@@ -64,7 +64,7 @@ namespace facter { namespace ruby {
         return _value;
     }
 
-    void ruby_value::to_json(api const& ruby, VALUE value, Allocator& allocator, rapidjson::Value& json)
+    void ruby_value::to_json(api const& ruby, VALUE value, json_allocator& allocator, json_value& json)
     {
         if (ruby.is_true(value)) {
             json.SetBool(true);
@@ -100,9 +100,9 @@ namespace facter { namespace ruby {
             json.Reserve(size, allocator);
 
             ruby.array_for_each(value, [&](VALUE element) {
-                rapidjson::Value e;
-                to_json(ruby, element, allocator, e);
-                json.PushBack(e, allocator);
+                json_value child;
+                to_json(ruby, element, allocator, child);
+                json.PushBack(child, allocator);
                 return true;
             });
             return;
@@ -115,9 +115,9 @@ namespace facter { namespace ruby {
                 if (!ruby.is_string(key)) {
                     key = ruby.rb_funcall(key, ruby.rb_intern("to_s"), 0);
                 }
-                rapidjson::Value e;
-                to_json(ruby, element, allocator, e);
-                json.AddMember(rapidjson::Value(ruby.rb_string_value_ptr(&key), allocator), e, allocator);
+                json_value child;
+                to_json(ruby, element, allocator, child);
+                json.AddMember(json_value(ruby.rb_string_value_ptr(&key), allocator), child, allocator);
                 return true;
             });
             return;

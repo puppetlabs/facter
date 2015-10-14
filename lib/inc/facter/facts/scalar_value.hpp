@@ -62,7 +62,7 @@ namespace facter { namespace facts {
          * @param allocator The allocator to use for creating the JSON value.
          * @param value The returned JSON value.
          */
-        virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const override;
+        virtual void to_json(json_allocator& allocator, json_value& value) const override;
 
         /**
          * Gets the underlying scalar value.
@@ -103,13 +103,13 @@ namespace facter { namespace facts {
 
     // Declare the specializations for JSON output
     template <>
-    void scalar_value<std::string>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
+    void scalar_value<std::string>::to_json(json_allocator& allocator, json_value& value) const;
     template <>
-    void scalar_value<int64_t>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
+    void scalar_value<int64_t>::to_json(json_allocator& allocator, json_value& value) const;
     template <>
-    void scalar_value<bool>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
+    void scalar_value<bool>::to_json(json_allocator& allocator, json_value& value) const;
     template <>
-    void scalar_value<double>::to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const;
+    void scalar_value<double>::to_json(json_allocator& allocator, json_value& value) const;
 
     // Declare the specializations for YAML output
     template <>

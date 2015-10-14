@@ -18,11 +18,9 @@ namespace YAML {
 // Forward delcare needed rapidjson classes.
 namespace rapidjson {
     class CrtAllocator;
-    template <typename BaseAllocator> class MemoryPoolAllocator;
     template <typename Encoding, typename Allocator> class GenericValue;
+    template <typename Encoding, typename Allocator, typename StackAllocator> class GenericDocument;
     template<typename CharType> struct UTF8;
-    typedef GenericValue<UTF8<char>, MemoryPoolAllocator<CrtAllocator>> Value;
-    typedef MemoryPoolAllocator<CrtAllocator> Allocator;
 }
 
 extern "C" {
@@ -33,6 +31,19 @@ extern "C" {
 }
 
 namespace facter { namespace facts {
+
+    /**
+     * Typedef for RapidJSON allocator.
+     */
+    typedef typename rapidjson::CrtAllocator json_allocator;
+    /**
+     * Typedef for RapidJSON value.
+     */
+    typedef typename rapidjson::GenericValue<rapidjson::UTF8<char>, json_allocator> json_value;
+    /**
+     * Typedef for RapidJSON document.
+     */
+    typedef typename rapidjson::GenericDocument<rapidjson::UTF8<char>, json_allocator, json_allocator> json_document;
 
     /**
      * Base class for values.
@@ -90,7 +101,7 @@ namespace facter { namespace facts {
          * @param allocator The allocator to use for creating the JSON value.
          * @param value The returned JSON value.
          */
-        virtual void to_json(rapidjson::Allocator& allocator, rapidjson::Value& value) const = 0;
+        virtual void to_json(json_allocator& allocator, json_value& value) const = 0;
 
         /**
           * Writes the value to the given stream.

@@ -53,13 +53,13 @@ namespace facter { namespace facts {
         }
     }
 
-    void array_value::to_json(Allocator& allocator, rapidjson::Value& value) const
+    void array_value::to_json(json_allocator& allocator, json_value& value) const
     {
         value.SetArray();
         value.Reserve(_elements.size(), allocator);
 
         for (auto const& element : _elements) {
-            rapidjson::Value child;
+            json_value child;
             element->to_json(allocator, child);
             value.PushBack(child, allocator);
         }

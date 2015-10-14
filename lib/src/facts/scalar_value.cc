@@ -12,25 +12,25 @@ using namespace YAML;
 namespace facter { namespace facts {
 
     template <>
-    void scalar_value<string>::to_json(Allocator& allocator, rapidjson::Value& value) const
+    void scalar_value<string>::to_json(json_allocator& allocator, json_value& value) const
     {
         value.SetString(_value.c_str(), _value.size());
     }
 
     template <>
-    void scalar_value<int64_t>::to_json(Allocator& allocator, rapidjson::Value& value) const
+    void scalar_value<int64_t>::to_json(json_allocator& allocator, json_value& value) const
     {
         value.SetInt64(_value);
     }
 
     template <>
-    void scalar_value<bool>::to_json(Allocator& allocator, rapidjson::Value& value) const
+    void scalar_value<bool>::to_json(json_allocator& allocator, json_value& value) const
     {
         value.SetBool(_value);
     }
 
     template <>
-    void scalar_value<double>::to_json(Allocator& allocator, rapidjson::Value& value) const
+    void scalar_value<double>::to_json(json_allocator& allocator, json_value& value) const
     {
         value.SetDouble(_value);
     }
