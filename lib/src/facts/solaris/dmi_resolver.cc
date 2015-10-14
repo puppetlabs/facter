@@ -82,11 +82,9 @@ namespace facter { namespace facts { namespace solaris {
             // Manufacturer appears to have two spaces before and after it, but we don't want to rely on that formatting.
             boost::trim(result.manufacturer);
 
-            bool success;
-            string output, none;
-            tie(success, output, none) = execute("/usr/sbin/sneep");
-            if (success) {
-                result.serial_number = output;
+            auto exec = execute("/usr/sbin/sneep");
+            if (exec.success) {
+                result.serial_number = exec.output;
             }
         }
         return result;

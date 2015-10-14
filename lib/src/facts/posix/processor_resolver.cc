@@ -12,11 +12,9 @@ namespace facter { namespace facts { namespace posix {
         data result;
 
         // Unfortunately there's no corresponding member in utsname for "processor", so we need to spawn
-        bool success;
-        string output, none;
-        tie(success, output, none) = execute("uname", { "-p" });
-        if (success) {
-            result.isa = output;
+        auto exec = execute("uname", { "-p" });
+        if (exec.success) {
+            result.isa = exec.output;
         }
         return result;
     }

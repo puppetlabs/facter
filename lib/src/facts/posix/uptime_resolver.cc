@@ -43,13 +43,11 @@ namespace facter { namespace facts { namespace posix {
 
     int64_t uptime_resolver::get_uptime()
     {
-        bool success;
-        string output, none;
-        tie(success, output, none) = execute("uptime");
-        if (!success) {
+        auto exec = execute("uptime");
+        if (!exec.success) {
             return -1;
         }
-        return parse_uptime(output);
+        return parse_uptime(exec.output);
     }
 
 }}}  // namespace facter::facts::posix
