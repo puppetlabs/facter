@@ -52,7 +52,7 @@ if ($arch -eq 64) {
 }
 $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExceptions}"
 
-$boostVer = "boost_1_57_0"
+$boostVer = "boost_1_58_0"
 $boostPkg = "${boostVer}-${mingwVer}"
 
 $yamlCppVer = "yaml-cpp-0.5.1"
@@ -122,15 +122,28 @@ if ($buildSource) {
     'toolset=gcc',
     "--build-type=minimal",
     "install",
-    "--with-program_options",
-    "--with-system",
-    "--with-filesystem",
-    "--with-date_time",
-    "--with-thread",
-    "--with-regex",
-    "--with-log",
-    "--with-locale",
+    '--with-atomic',
     "--with-chrono",
+    '--with-container',
+    "--with-date_time",
+    '--with-exception',
+    "--with-filesystem",
+    '--with-graph',
+    '--with-graph_parallel',
+    '--with-iostreams',
+    "--with-locale",
+    "--with-log",
+    '--with-math',
+    "--with-program_options",
+    "--with-random",
+    "--with-regex",
+    '--with-serialization',
+    '--with-signals',
+    "--with-system",
+    '--with-test',
+    "--with-thread",
+    '--with-timer',
+    '--with-wave',
     "--prefix=`"$toolsDir\$boostPkg`"",
     "boost.locale.iconv=off"
     "-j$cores"
