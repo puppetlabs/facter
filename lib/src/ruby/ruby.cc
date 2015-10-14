@@ -38,7 +38,7 @@ namespace facter { namespace ruby {
     void load_custom_facts(collection& facts, bool initialize_puppet, vector<string> const& paths)
     {
         api& ruby = api::instance();
-        module mod(facts, {});
+        module mod(facts, {}, !initialize_puppet);
         if (initialize_puppet) {
             try {
                 ruby.eval(load_puppet);

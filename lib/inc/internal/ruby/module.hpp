@@ -33,8 +33,9 @@ namespace facter { namespace ruby {
          * Constructs the Ruby Facter module.
          * @param facts The collection of facts to populate.
          * @param paths The search paths for loading custom facts.
+         * @param logging_hooks True if the logging hooks should be defined in the Facter API or false if not.
          */
-        module(facter::facts::collection& facts, std::vector<std::string> const& paths = {});
+        module(facter::facts::collection& facts, std::vector<std::string> const& paths = {}, bool logging_hooks = true);
 
         /**
          * Destructs the Facter module.
