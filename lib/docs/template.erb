@@ -11,7 +11,7 @@
 ## `<%= name %>`
 
 <% if schema['hidden'] -%>
-This fact is hidden in Facter's command-line output.
+This unstructured fact is deprecated and hidden in Facter's command-line output.
 
 <% end -%>
 **Type:** <%= schema['type'] %>
@@ -25,7 +25,6 @@ This fact is hidden in Facter's command-line output.
 
 <%= schema['elements'].map{|name, info| format_fact_element(name, info)}.join('') %>
 <% end -%>
-
 <% if schema['resolution'] -%>
 **Resolution:**
 
