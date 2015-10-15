@@ -326,9 +326,7 @@ env_windows_installdir:
     type: string
     description: Return the path of the directory in which Puppet was installed.
     resolution: |
-      Windows: This fact is specific to the Windows MSI generated environment, and is
-        set using the `environment.bat` script that configures the runtime environment
-        for all Puppet executables. Please see [the original commit in the puppet_for_the_win repo](https://github.com/puppetlabs/puppet_for_the_win/commit/0cc32c1a09550c13d725b200d3c0cc17d93ec262) for more information.
+      Windows: This fact is specific to the Windows MSI generated environment, and is set using the `environment.bat` script that configures the runtime environment for all Puppet executables. Please see [the original commit in the puppet_for_the_win repo](https://github.com/puppetlabs/puppet_for_the_win/commit/0cc32c1a09550c13d725b200d3c0cc17d93ec262) for more information.
     caveats: |
       This fact is specific to Windows, and will not resolve on any other platform.
 
