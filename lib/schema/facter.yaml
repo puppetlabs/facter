@@ -1780,7 +1780,7 @@ zfs_version:
         Solaris: the `zfs` utility must be present.
 
 zone_<name>_brand:
-    pattern: ^zone_\w+_brand$
+    pattern: ^zone_[\w\-\.]+_brand$
     type: string
     hidden: true
     description: Return the brand for the Solaris zone.
@@ -1790,7 +1790,7 @@ zone_<name>_brand:
         Solaris: the `zoneadm` utility must be present.
 
 zone_<name>_iptype:
-    pattern: ^zone_\w+_iptype$
+    pattern: ^zone_[\w\-\.]+_iptype$
     type: string
     hidden: true
     description: Return the IP type for the Solaris zone.
@@ -1800,7 +1800,7 @@ zone_<name>_iptype:
         Solaris: the `zoneadm` utility must be present.
 
 zone_<name>_name:
-    pattern: ^zone_\w+_name$
+    pattern: ^zone_[\w\-\.]+_name$
     type: string
     hidden: true
     description: Return the name for the Solaris zone.
@@ -1810,7 +1810,7 @@ zone_<name>_name:
         Solaris: the `zoneadm` utility must be present.
 
 zone_<name>_uuid:
-    pattern: ^zone_\w+_uuid$
+    pattern: ^zone_[\w\-\.]+_uuid$
     type: string
     hidden: true
     description: Return the unique identifier for the Solaris zone.
@@ -1820,7 +1820,7 @@ zone_<name>_uuid:
         Solaris: the `zoneadm` utility must be present.
 
 zone_<name>_id:
-    pattern: ^zone_\w+_id$
+    pattern: ^zone_[\w\-\.]+_id$
     type: string
     hidden: true
     description: Return the zone identifier for the Solaris zone.
@@ -1830,7 +1830,7 @@ zone_<name>_id:
         Solaris: the `zoneadm` utility must be present.
 
 zone_<name>_path:
-    pattern: ^zone_\w+_path$
+    pattern: ^zone_[\w\-\.]+_path$
     type: string
     hidden: true
     description: Return the zone path for the Solaris zone.
@@ -1840,7 +1840,7 @@ zone_<name>_path:
         Solaris: the `zoneadm` utility must be present.
 
 zone_<name>_status:
-    pattern: ^zone_\w+_status$
+    pattern: ^zone_[\w\-\.]+_status$
     type: string
     hidden: true
     description: Return the zone state for the Solaris zone.
