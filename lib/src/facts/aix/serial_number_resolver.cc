@@ -34,7 +34,7 @@ namespace facter { namespace facts { namespace aix {
         const auto regex = boost::regex("^IBM,\\d\\d(.+)");
         string serial;
         if (re_search(string(result.value), regex, &serial)) {
-             facts.add(fact::serial_number, make_value<string_value>(move(serial)));
+            facts.add(fact::serial_number, make_value<string_value>(move(serial), true));
         } else {
             LOG_DEBUG("Could not retrieve serial number: sys0 systemid did not match the expected format");
         }
