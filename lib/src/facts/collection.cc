@@ -4,6 +4,7 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
+#include <facter/ruby/ruby.hpp>
 #include <leatherman/file_util/directory.hpp>
 #include <leatherman/util/environment.hpp>
 #include <facter/util/string.hpp>
@@ -14,6 +15,7 @@
 #include <internal/facts/resolvers/ec2_resolver.hpp>
 #include <internal/facts/resolvers/gce_resolver.hpp>
 #include <internal/facts/resolvers/augeas_resolver.hpp>
+#include <internal/ruby/ruby_value.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -341,6 +343,7 @@ namespace facter { namespace facts {
         }
 
         bool in_quotes = false;
+        vector<string> segments;
         string segment;
         for (auto const& c : query) {
             if (c == '"') {
@@ -351,16 +354,32 @@ namespace facter { namespace facts {
                 segment += c;
                 continue;
             }
-            current = lookup(current, segment);
-            if (!current) {
-                return nullptr;
-            }
+            segments.emplace_back(move(segment));
             segment.clear();
         }
-
         if (!segment.empty()) {
-            current = lookup(current, segment);
+            segments.emplace_back(move(segment));
         }
+
+        auto segment_end = end(segments);
+        for (auto segment = begin(segments); segment != segment_end; ++segment) {
+            auto rb_val = dynamic_cast<ruby::ruby_value const *>(current);
+            if (rb_val) {
+                current = facter::ruby::lookup(current, segment, segment_end);
+                if (!current) {
+                    LOG_DEBUG("cannot lookup an element with \"%1%\" from Ruby fact", *segment);
+                }
+                // Once we hit Ruby there's no going back, so whatever we get from Ruby is the value.
+                return current;
+            } else {
+                current = lookup(current, *segment);
+            }
+            if (!current) {
+                // Break out early if there's no value for this segment
+                return nullptr;
+            }
+        }
+
         return current;
     }
 
