@@ -60,6 +60,10 @@ else
   bundle install --gemfile=lib/Gemfile
   make test ARGS=-V
 
+  if [ ${TRAVIS_TARGET} == DEBUG ]; then
+    valgrind --error-exitcode=1 ./bin/facter --no-ruby
+  fi
+
   # Make sure installation succeeds
   make DESTDIR=$USERDIR install
 
