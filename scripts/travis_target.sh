@@ -23,13 +23,14 @@ fi
 if [ ${TRAVIS_TARGET} == COMMITS ]; then
   shopt -s nocasematch
   git log --no-merges --pretty=%s master..$HEAD | while read line ; do
-    if [[ ! "$line" =~ ^\((maint|doc|packaging|fact-[0-9]+)\)|revert ]]; then
+    if [[ ! "$line" =~ ^\((maint|doc|docs|packaging|fact-[0-9]+)\)|revert ]]; then
       echo -e \
           "\n\n\n\tThis commit summary didn't match CONTRIBUTING.md guidelines:\n" \
           "\n\t\t$line\n" \
           "\tThe commit summary (i.e. the first line of the commit message) should start with one of:\n" \
           "\t\t(FACT-<digits>) # this is most common and should be a ticket at tickets.puppetlabs.com\n" \
           "\t\t(doc)\n" \
+          "\t\t(docs)\n" \
           "\t\t(maint)\n" \
           "\t\t(packaging)\n" \
           "\n\tThis test for the commit summary is case-insensitive.\n\n\n"
