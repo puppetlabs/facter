@@ -99,11 +99,25 @@ $env:PATH += [Environment]::GetFolderPath('ProgramFilesX86') + "\Git\cmd"
 echo $env:PATH
 cd $sourceDir
 
+function Invoke-External
+{
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory = $true)]
+    [ScriptBlock]
+    $cmd
+  )
+
+  $Global:LASTEXITCODE = 0
+  & $cmd
+  if ($LASTEXITCODE -ne 0) { throw ("Terminating.  Last command failed with exit code $LASTEXITCODE") }
+}
+
 ## Download facter and setup build directories
-git clone $facterFork facter
+Invoke-External { git clone $facterFork facter }
 cd facter
-git checkout $facterRef
-git submodule update --init --recursive
+Invoke-External { git checkout $facterRef }
+Invoke-External { git submodule update --init --recursive }
 mkdir -Force release
 cd release
 $buildDir=$pwd
@@ -114,11 +128,11 @@ cd $toolsDir
 if ($buildSource) {
   ## Download, build, and install Boost
   (New-Object net.webclient).DownloadFile("http://downloads.sourceforge.net/boost/$boostVer.7z", "$toolsDir\$boostVer.7z")
-  & 7za x "${boostVer}.7z" | FIND /V "ing "
+  Invoke-External { & 7za x "${boostVer}.7z" | FIND /V "ing " }
   cd $boostVer
 
-  .\bootstrap mingw
-  $args = @(
+  Invoke-External { .\bootstrap mingw }
+  $boost_args = @(
     'toolset=gcc',
     "--build-type=minimal",
     "install",
@@ -148,33 +162,33 @@ if ($buildSource) {
     "boost.locale.iconv=off"
     "-j$cores"
   )
-  .\b2 $args
+  Invoke-External { .\b2 $boost_args }
   cd $toolsDir
 
   ## Download, build, and install yaml-cpp
   (New-Object net.webclient).DownloadFile("https://yaml-cpp.googlecode.com/files/${yamlCppVer}.tar.gz", "$toolsDir\${yamlCppVer}.tar.gz")
-  & 7za x "${yamlCppVer}.tar.gz"
-  & 7za x "${yamlCppVer}.tar" | FIND /V "ing "
+  Invoke-External { & 7za x "${yamlCppVer}.tar.gz" }
+  Invoke-External { & 7za x "${yamlCppVer}.tar" | FIND /V "ing " }
   cd $yamlCppVer
   mkdir build
   cd build
 
-  $args = @(
+  $yamlcpp_args = @(
     '-G',
     "MinGW Makefiles",
     "-DBOOST_ROOT=`"$toolsDir\$boostPkg`"",
     "-DCMAKE_INSTALL_PREFIX=`"$toolsDir\$yamlPkg`"",
     ".."
   )
-  cmake $args
-  mingw32-make install -j $cores
+  Invoke-External { cmake $yamlcpp_args }
+  Invoke-External { mingw32-make install -j $cores }
   cd $toolsDir
 
   (New-Object net.webclient).DownloadFile("http://curl.haxx.se/download/${curlVer}.zip", "$toolsDir\${curlVer}.zip")
-  & 7za x "${curlVer}.zip" | FIND /V "ing "
+  Invoke-External { & 7za x "${curlVer}.zip" | FIND /V "ing " }
   cd $curlVer
 
-  mingw32-make mingw32
+  Invoke-External { mingw32-make mingw32 }
   mkdir -Path $toolsDir\$curlPkg\include
   cp -r include\curl $toolsDir\$curlPkg\include
   mkdir -Path $toolsDir\$curlPkg\lib
@@ -183,20 +197,20 @@ if ($buildSource) {
 } else {
   ## Download and unpack Boost from a pre-built package in S3
   (New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${boostPkg}.7z", "$toolsDir\${boostPkg}.7z")
-  & 7za x "${boostPkg}.7z" | FIND /V "ing "
+  Invoke-External { & 7za x "${boostPkg}.7z" | FIND /V "ing " }
 
   ## Download and unpack yaml-cpp from a pre-built package in S3
   (New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${yamlPkg}.7z", "$toolsDir\${yamlPkg}.7z")
-  & 7za x "${yamlPkg}.7z" | FIND /V "ing "
+  Invoke-External { & 7za x "${yamlPkg}.7z" | FIND /V "ing " }
 
   ## Download and unpack curl from a pre-built package in S3
   (New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${curlPkg}.7z", "$toolsDir\${curlPkg}.7z")
-  & 7za x "${curlPkg}.7z" | FIND /V "ing "
+  Invoke-External { & 7za x "${curlPkg}.7z" | FIND /V "ing " }
 }
 
 ## Build Facter
 cd $buildDir
-$args = @(
+$facter_args = @(
   '-G',
   "MinGW Makefiles",
   "-DBOOST_ROOT=`"$toolsDir\$boostPkg`"",
@@ -206,11 +220,11 @@ $args = @(
   "-DCURL_STATIC=ON",
   ".."
 )
-cmake $args
-mingw32-make -j $cores
+Invoke-External { cmake $facter_args }
+Invoke-External { mingw32-make -j $cores }
 
 ## Write out the version that was just built.
-git describe --long | Out-File -FilePath 'bin/VERSION' -Encoding ASCII -Force
+Invoke-External { git describe --long | Out-File -FilePath 'bin/VERSION' -Encoding ASCII -Force }
 
 ## Test the results.
-ctest -V 2>&1 | c++filt
+Invoke-External { mingw32-make test ARGS=-V }
