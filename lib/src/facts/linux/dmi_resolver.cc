@@ -38,7 +38,18 @@ namespace facter { namespace facts { namespace linux {
             LOG_DEBUG("/sys/class/dmi cannot be accessed: using dmidecode to query DMI information.");
 
             int dmi_type = -1;
-            leatherman::execution::each_line("dmidecode", [&](string& line) {
+            string dmidecode = [] {
+#ifdef FACTER_PATH
+            string fixed = which("dmidecode", {FACTER_PATH});
+            if (fixed.empty()) {
+                LOG_WARNING("dmidecode not found at configured location %1%, using PATH instead", FACTER_PATH);
+            } else {
+                return fixed;
+            }
+#endif
+            return string("dmidecode");
+        }();
+            leatherman::execution::each_line(dmidecode, [&](string& line) {
                 parse_dmidecode_output(result, line, dmi_type);
                 return true;
             });
