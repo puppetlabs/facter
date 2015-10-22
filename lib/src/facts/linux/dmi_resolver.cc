@@ -1,4 +1,5 @@
 #include <internal/facts/linux/dmi_resolver.hpp>
+#include <internal/util/agent.hpp>
 #include <leatherman/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <leatherman/file_util/file.hpp>
@@ -10,6 +11,7 @@ using namespace std;
 using namespace boost::filesystem;
 namespace bs = boost::system;
 namespace lth_file = leatherman::file_util;
+using namespace facter::util;
 using namespace leatherman::util;
 
 namespace facter { namespace facts { namespace linux {
@@ -38,17 +40,7 @@ namespace facter { namespace facts { namespace linux {
             LOG_DEBUG("/sys/class/dmi cannot be accessed: using dmidecode to query DMI information.");
 
             int dmi_type = -1;
-            string dmidecode = [] {
-#ifdef FACTER_PATH
-            string fixed = which("dmidecode", {FACTER_PATH});
-            if (fixed.empty()) {
-                LOG_WARNING("dmidecode not found at configured location %1%, using PATH instead", FACTER_PATH);
-            } else {
-                return fixed;
-            }
-#endif
-            return string("dmidecode");
-        }();
+            string dmidecode = agent::which("dmidecode");
             leatherman::execution::each_line(dmidecode, [&](string& line) {
                 parse_dmidecode_output(result, line, dmi_type);
                 return true;
