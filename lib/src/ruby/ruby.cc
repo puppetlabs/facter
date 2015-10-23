@@ -5,7 +5,7 @@
 #include <leatherman/ruby/api.hpp>
 #include <leatherman/logging/logging.hpp>
 
-#include <algorithm>
+#include <numeric>
 
 using namespace std;
 using namespace facter::facts;
