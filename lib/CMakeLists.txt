@@ -13,6 +13,12 @@ configure_file (
     "${CMAKE_CURRENT_LIST_DIR}/inc/facter/version.h"
 )
 
+# Generate a .gemspec file based on the above version numbers
+configure_file (
+    ".gemspec.in"
+    "${CMAKE_CURRENT_LIST_DIR}/../.gemspec"
+)
+
 # Set compiler-specific flags
 set(CMAKE_CXX_FLAGS ${FACTER_CXX_FLAGS})
 leatherman_logging_namespace("puppetlabs.facter")
