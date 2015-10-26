@@ -444,357 +444,428 @@ namespace facter { namespace ruby {
         return from_self(ruby.lookup({"Facter"}));
     }
 
+    static VALUE safe_eval(char const* scope, function<VALUE()> body)
+    {
+        try {
+            return body();
+        } catch (exception const& e) {
+            LOG_ERROR("%1% uncaught exception: %2%", scope, e.what());
+        }
+        return api::instance().nil_value();
+    }
+
     VALUE module::ruby_version(VALUE self)
     {
-        auto const& ruby = api::instance();
-        return ruby.lookup({ "Facter", "FACTERVERSION" });
+        return safe_eval("Facter.version", [&]() {
+            auto const& ruby = api::instance();
+            return ruby.lookup({ "Facter", "FACTERVERSION" });
+        });
     }
 
     VALUE module::ruby_add(int argc, VALUE* argv, VALUE self)
     {
-        auto const& ruby = api::instance();
+        return safe_eval("Facter.add", [&]() {
+            auto const& ruby = api::instance();
 
-        if (argc == 0 || argc > 2) {
-            ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
-        }
+            if (argc == 0 || argc > 2) {
+                ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
+            }
 
-        VALUE fact_self = from_self(self)->create_fact(argv[0]);
+            VALUE fact_self = from_self(self)->create_fact(argv[0]);
 
-        // Read the resolution name from the options hash, if present
-        volatile VALUE name = ruby.nil_value();
-        VALUE options = argc == 2 ? argv[1] : ruby.nil_value();
-        if (!ruby.is_nil(options)) {
-            name = ruby.rb_funcall(options, ruby.rb_intern("delete"), 1, ruby.to_symbol("name"));
-        }
+            // Read the resolution name from the options hash, if present
+            volatile VALUE name = ruby.nil_value();
+            VALUE options = argc == 2 ? argv[1] : ruby.nil_value();
+            if (!ruby.is_nil(options)) {
+                name = ruby.rb_funcall(options, ruby.rb_intern("delete"), 1, ruby.to_symbol("name"));
+            }
 
-        ruby.to_native<fact>(fact_self)->define_resolution(name, options);
-        return fact_self;
+            ruby.to_native<fact>(fact_self)->define_resolution(name, options);
+            return fact_self;
+        });
     }
 
     VALUE module::ruby_define_fact(int argc, VALUE* argv, VALUE self)
     {
-        auto const& ruby = api::instance();
+        return safe_eval("Facter.define_fact", [&]() {
+            auto const& ruby = api::instance();
 
-        if (argc == 0 || argc > 2) {
-            ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
-        }
+            if (argc == 0 || argc > 2) {
+                ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
+            }
 
-        VALUE fact_self = from_self(self)->create_fact(argv[0]);
+            VALUE fact_self = from_self(self)->create_fact(argv[0]);
 
-        // Call the block if one was given
-        if (ruby.rb_block_given_p()) {
-            ruby.rb_funcall_passing_block(fact_self, ruby.rb_intern("instance_eval"), 0, nullptr);
-        }
-        return fact_self;
+            // Call the block if one was given
+            if (ruby.rb_block_given_p()) {
+                ruby.rb_funcall_passing_block(fact_self, ruby.rb_intern("instance_eval"), 0, nullptr);
+            }
+            return fact_self;
+        });
     }
 
     VALUE module::ruby_value(VALUE self, VALUE name)
     {
-        return from_self(self)->fact_value(name);
+        return safe_eval("Facter.value", [&]() {
+            return from_self(self)->fact_value(name);
+        });
     }
 
     VALUE module::ruby_fact(VALUE self, VALUE name)
     {
-        return from_self(self)->load_fact(name);
+        return safe_eval("Facter.fact", [&]() {
+            return from_self(self)->load_fact(name);
+        });
     }
 
     VALUE module::ruby_debug(VALUE self, VALUE message)
     {
-        auto const& ruby = api::instance();
-        LOG_DEBUG(ruby.to_string(message));
-        return ruby.nil_value();
+        return safe_eval("Facter.debug", [&]() {
+            auto const& ruby = api::instance();
+            LOG_DEBUG(ruby.to_string(message));
+            return ruby.nil_value();
+        });
     }
 
     VALUE module::ruby_debugonce(VALUE self, VALUE message)
     {
-        auto const& ruby = api::instance();
+        return safe_eval("Facter.debugonce", [&]() {
+            auto const& ruby = api::instance();
 
-        string msg = ruby.to_string(message);
-        if (from_self(self)->_debug_messages.insert(msg).second) {
-            LOG_DEBUG(msg);
-        }
-        return ruby.nil_value();
+            string msg = ruby.to_string(message);
+            if (from_self(self)->_debug_messages.insert(msg).second) {
+                LOG_DEBUG(msg);
+            }
+            return ruby.nil_value();
+        });
     }
 
     VALUE module::ruby_warn(VALUE self, VALUE message)
     {
-        auto const& ruby = api::instance();
-        LOG_WARNING(ruby.to_string(message));
-        return ruby.nil_value();
+        return safe_eval("Facter.warn", [&]() {
+            auto const& ruby = api::instance();
+            LOG_WARNING(ruby.to_string(message));
+            return ruby.nil_value();
+        });
     }
 
     VALUE module::ruby_warnonce(VALUE self, VALUE message)
     {
-        auto const& ruby = api::instance();
+        return safe_eval("Facter.warnonce", [&]() {
+            auto const& ruby = api::instance();
 
-        string msg = ruby.to_string(message);
-        if (from_self(self)->_warning_messages.insert(msg).second) {
-            LOG_WARNING(msg);
-        }
-        return ruby.nil_value();
+            string msg = ruby.to_string(message);
+            if (from_self(self)->_warning_messages.insert(msg).second) {
+                LOG_WARNING(msg);
+            }
+            return ruby.nil_value();
+        });
     }
 
     VALUE module::ruby_set_debugging(VALUE self, VALUE value)
     {
-        auto const& ruby = api::instance();
+        return safe_eval("Facter.debugging", [&]() {
+            auto const& ruby = api::instance();
 
-        if (ruby.is_true(value)) {
-            set_level(log_level::debug);
-        } else {
-            set_level(log_level::warning);
-        }
-        return ruby_get_debugging(self);
+            if (ruby.is_true(value)) {
+                set_level(log_level::debug);
+            } else {
+                set_level(log_level::warning);
+            }
+            return ruby_get_debugging(self);
+        });
     }
 
     VALUE module::ruby_get_debugging(VALUE self)
     {
-        auto const& ruby = api::instance();
-        return is_enabled(log_level::debug) ? ruby.true_value() : ruby.false_value();
+        return safe_eval("Facter.debugging?", [&]() {
+            auto const& ruby = api::instance();
+            return is_enabled(log_level::debug) ? ruby.true_value() : ruby.false_value();
+        });
     }
 
     VALUE module::ruby_set_trace(VALUE self, VALUE value)
     {
-        auto& ruby = api::instance();
-        ruby.include_stack_trace(ruby.is_true(value));
-        return ruby_get_trace(self);
+        return safe_eval("Facter.trace", [&]() {
+            auto& ruby = api::instance();
+            ruby.include_stack_trace(ruby.is_true(value));
+            return ruby_get_trace(self);
+        });
     }
 
     VALUE module::ruby_get_trace(VALUE self)
     {
-        auto const& ruby = api::instance();
-        return ruby.include_stack_trace() ? ruby.true_value() : ruby.false_value();
+        return safe_eval("Facter.trace?", [&]() {
+            auto const& ruby = api::instance();
+            return ruby.include_stack_trace() ? ruby.true_value() : ruby.false_value();
+        });
     }
 
     VALUE module::ruby_log_exception(int argc, VALUE* argv, VALUE self)
     {
-        auto const& ruby = api::instance();
+        return safe_eval("Facter.log_exception", [&]() {
+            auto const& ruby = api::instance();
 
-        if (argc == 0 || argc > 2) {
-            ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
-        }
-
-        string message;
-        if (argc == 2) {
-            // Use the given argument provided it is not a symbol equal to :default
-            if (!ruby.is_symbol(argv[1]) || ruby.rb_to_id(argv[1]) != ruby.rb_intern("default")) {
-                message = ruby.to_string(argv[1]);
+            if (argc == 0 || argc > 2) {
+                ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
             }
-        }
 
-        LOG_ERROR(ruby.exception_to_string(argv[0], message));
-        return ruby.nil_value();
+            string message;
+            if (argc == 2) {
+                // Use the given argument provided it is not a symbol equal to :default
+                if (!ruby.is_symbol(argv[1]) || ruby.rb_to_id(argv[1]) != ruby.rb_intern("default")) {
+                    message = ruby.to_string(argv[1]);
+                }
+            }
+
+            LOG_ERROR(ruby.exception_to_string(argv[0], message));
+            return ruby.nil_value();
+        });
     }
 
     VALUE module::ruby_flush(VALUE self)
     {
-        auto const& ruby = api::instance();
+        return safe_eval("Facter.flush", [&]() {
+            auto const& ruby = api::instance();
 
-        for (auto& kvp : from_self(self)->_facts)
-        {
-            ruby.to_native<fact>(kvp.second)->flush();
-        }
-        return ruby.nil_value();
+            for (auto& kvp : from_self(self)->_facts)
+            {
+                ruby.to_native<fact>(kvp.second)->flush();
+            }
+            return ruby.nil_value();
+        });
     }
 
     VALUE module::ruby_list(VALUE self)
     {
-        auto const& ruby = api::instance();
-        module* instance = from_self(self);
+        return safe_eval("Facter.list", [&]() {
+            auto const& ruby = api::instance();
+            module* instance = from_self(self);
 
-        instance->resolve_facts();
+            instance->resolve_facts();
 
-        volatile VALUE array = ruby.rb_ary_new_capa(instance->facts().size());
+            volatile VALUE array = ruby.rb_ary_new_capa(instance->facts().size());
 
-        instance->facts().each([&](string const& name, value const*) {
-            ruby.rb_ary_push(array, ruby.utf8_value(name));
-            return true;
+            instance->facts().each([&](string const& name, value const*) {
+                ruby.rb_ary_push(array, ruby.utf8_value(name));
+                return true;
+            });
+
+            return array;
         });
-        return array;
     }
 
     VALUE module::ruby_to_hash(VALUE self)
     {
-        auto const& ruby = api::instance();
-        module* instance = from_self(self);
+        return safe_eval("Facter.to_hash", [&]() {
+            auto const& ruby = api::instance();
+            module* instance = from_self(self);
 
-        instance->resolve_facts();
+            instance->resolve_facts();
 
-        volatile VALUE hash = ruby.rb_hash_new();
+            volatile VALUE hash = ruby.rb_hash_new();
 
-        instance->facts().each([&](string const& name, value const* val) {
-            ruby.rb_hash_aset(hash, ruby.utf8_value(name), instance->to_ruby(val));
-            return true;
+            instance->facts().each([&](string const& name, value const* val) {
+                ruby.rb_hash_aset(hash, ruby.utf8_value(name), instance->to_ruby(val));
+                return true;
+            });
+
+            return hash;
         });
-        return hash;
     }
 
     VALUE module::ruby_each(VALUE self)
     {
-        auto const& ruby = api::instance();
-        module* instance = from_self(self);
+        return safe_eval("Facter.each", [&]() {
+            auto const& ruby = api::instance();
+            module* instance = from_self(self);
 
-        instance->resolve_facts();
+            instance->resolve_facts();
 
-        instance->facts().each([&](string const& name, value const* val) {
-            ruby.rb_yield_values(2, ruby.utf8_value(name), instance->to_ruby(val));
-            return true;
+            instance->facts().each([&](string const& name, value const* val) {
+                ruby.rb_yield_values(2, ruby.utf8_value(name), instance->to_ruby(val));
+                return true;
+            });
+
+            return self;
         });
-        return self;
     }
 
     VALUE module::ruby_clear(VALUE self)
     {
-        auto const& ruby = api::instance();
+        return safe_eval("Facter.clear", [&]() {
+            auto const& ruby = api::instance();
 
-        ruby_flush(self);
-        ruby_reset(self);
+            ruby_flush(self);
+            ruby_reset(self);
 
-        return ruby.nil_value();
+            return ruby.nil_value();
+        });
     }
 
     VALUE module::ruby_reset(VALUE self)
     {
-        auto const& ruby = api::instance();
-        module* instance = from_self(self);
+        return safe_eval("Facter.reset", [&]() {
+            auto const& ruby = api::instance();
+            module* instance = from_self(self);
 
-        instance->clear_facts();
-        instance->initialize_search_paths({});
-        instance->_external_search_paths.clear();
-        instance->_loaded_all = false;
-        instance->_loaded_files.clear();
+            instance->clear_facts();
+            instance->initialize_search_paths({});
+            instance->_external_search_paths.clear();
+            instance->_loaded_all = false;
+            instance->_loaded_files.clear();
 
-        return ruby.nil_value();
+            return ruby.nil_value();
+        });
     }
 
     VALUE module::ruby_loadfacts(VALUE self)
     {
-        auto const& ruby = api::instance();
+        return safe_eval("Facter.loadfacts", [&]() {
+            auto const& ruby = api::instance();
 
-        from_self(self)->load_facts();
-        return ruby.nil_value();
+            from_self(self)->load_facts();
+            return ruby.nil_value();
+        });
     }
 
     VALUE module::ruby_search(int argc, VALUE* argv, VALUE self)
     {
-        auto const& ruby = api::instance();
-        module* instance = from_self(self);
+        return safe_eval("Facter.search", [&]() {
+            auto const& ruby = api::instance();
+            module* instance = from_self(self);
 
-        for (int i = 0; i < argc; ++i) {
-            if (!ruby.is_string(argv[i])) {
-                continue;
+            for (int i = 0; i < argc; ++i) {
+                if (!ruby.is_string(argv[i])) {
+                    continue;
+                }
+                instance->_additional_search_paths.emplace_back(ruby.to_string(argv[i]));
+
+                // Get the canonical directory name
+                boost::system::error_code ec;
+                path directory = canonical(instance->_additional_search_paths.back(), ec);
+                if (ec) {
+                    continue;
+                }
+
+                instance->_search_paths.push_back(directory.string());
             }
-            instance->_additional_search_paths.emplace_back(ruby.to_string(argv[i]));
-
-            // Get the canonical directory name
-            boost::system::error_code ec;
-            path directory = canonical(instance->_additional_search_paths.back(), ec);
-            if (ec) {
-                continue;
-            }
-
-            instance->_search_paths.push_back(directory.string());
-        }
-        return ruby.nil_value();
+            return ruby.nil_value();
+        });
     }
 
     VALUE module::ruby_search_path(VALUE self)
     {
-        auto const& ruby = api::instance();
-        module* instance = from_self(self);
+        return safe_eval("Facter.search_path", [&]() {
+            auto const& ruby = api::instance();
+            module* instance = from_self(self);
 
-        volatile VALUE array = ruby.rb_ary_new_capa(instance->_additional_search_paths.size());
+            volatile VALUE array = ruby.rb_ary_new_capa(instance->_additional_search_paths.size());
 
-        for (auto const& path : instance->_additional_search_paths) {
-            ruby.rb_ary_push(array, ruby.utf8_value(path));
-        }
-        return array;
+            for (auto const& path : instance->_additional_search_paths) {
+                ruby.rb_ary_push(array, ruby.utf8_value(path));
+            }
+            return array;
+        });
     }
 
     VALUE module::ruby_search_external(VALUE self, VALUE paths)
     {
-        auto const& ruby = api::instance();
-        module* instance = from_self(self);
+        return safe_eval("Facter.search_external", [&]() {
+            auto const& ruby = api::instance();
+            module* instance = from_self(self);
 
-        ruby.array_for_each(paths, [&](VALUE element) {
-            if (!ruby.is_string(element)) {
+            ruby.array_for_each(paths, [&](VALUE element) {
+                if (!ruby.is_string(element)) {
+                    return true;
+                }
+                instance->_external_search_paths.emplace_back(ruby.to_string(element));
                 return true;
-            }
-            instance->_external_search_paths.emplace_back(ruby.to_string(element));
-            return true;
+            });
+            return ruby.nil_value();
         });
-        return ruby.nil_value();
     }
 
     VALUE module::ruby_search_external_path(VALUE self)
     {
-        auto const& ruby = api::instance();
-        module* instance = from_self(self);
+        return safe_eval("Facter.search_external_path", [&]() {
+            auto const& ruby = api::instance();
+            module* instance = from_self(self);
 
-        volatile VALUE array = ruby.rb_ary_new_capa(instance->_external_search_paths.size());
+            volatile VALUE array = ruby.rb_ary_new_capa(instance->_external_search_paths.size());
 
-        for (auto const& path : instance->_external_search_paths) {
-            ruby.rb_ary_push(array, ruby.utf8_value(path));
-        }
-        return array;
+            for (auto const& path : instance->_external_search_paths) {
+                ruby.rb_ary_push(array, ruby.utf8_value(path));
+            }
+            return array;
+        });
     }
 
     VALUE module::ruby_which(VALUE self, VALUE binary)
     {
-        // Note: self is Facter::Core::Execution
-        auto const& ruby = api::instance();
+        return safe_eval("Facter::Core::Execution::which", [&]() {
+            // Note: self is Facter::Core::Execution
+            auto const& ruby = api::instance();
 
-        string path = which(ruby.to_string(binary));
-        if (path.empty()) {
-            return ruby.nil_value();
-        }
+            string path = which(ruby.to_string(binary));
+            if (path.empty()) {
+                return ruby.nil_value();
+            }
 
-        return ruby.utf8_value(path);
+            return ruby.utf8_value(path);
+        });
     }
 
     VALUE module::ruby_exec(VALUE self, VALUE command)
     {
-        // Note: self is Facter::Core::Execution
-        auto const& ruby = api::instance();
-        return execute_command(ruby.to_string(command), ruby.nil_value(), false);
+        return safe_eval("Facter::Core::Execution::exec", [&]() {
+            // Note: self is Facter::Core::Execution
+            auto const& ruby = api::instance();
+            return execute_command(ruby.to_string(command), ruby.nil_value(), false);
+        });
     }
 
     VALUE module::ruby_execute(int argc, VALUE* argv, VALUE self)
     {
-        // Note: self is Facter::Core::Execution
-        auto const& ruby = api::instance();
+        return safe_eval("Facter::Core::Execution::execute", [&]() {
+            // Note: self is Facter::Core::Execution
+            auto const& ruby = api::instance();
 
-        if (argc == 0 || argc > 2) {
-            ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
-        }
+            if (argc == 0 || argc > 2) {
+                ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
+            }
 
-        if (argc == 1) {
-            return execute_command(ruby.to_string(argv[0]), ruby.nil_value(), true);
-        }
+            if (argc == 1) {
+                return execute_command(ruby.to_string(argv[0]), ruby.nil_value(), true);
+            }
 
-        // Unfortunately we have to call to_sym rather than using ID2SYM, which is Ruby version dependent
-        uint32_t timeout = 0;
-        volatile VALUE timeout_option = ruby.rb_hash_lookup(argv[1], ruby.to_symbol("timeout"));
-        if (ruby.is_fixednum(timeout_option)) {
-            timeout = static_cast<uint32_t>(ruby.rb_num2ulong(timeout_option));
-        }
+            // Unfortunately we have to call to_sym rather than using ID2SYM, which is Ruby version dependent
+            uint32_t timeout = 0;
+            volatile VALUE timeout_option = ruby.rb_hash_lookup(argv[1], ruby.to_symbol("timeout"));
+            if (ruby.is_fixednum(timeout_option)) {
+                timeout = static_cast<uint32_t>(ruby.rb_num2ulong(timeout_option));
+            }
 
-        // Get the on_fail option (defaults to :raise)
-        bool raise = false;
-        volatile VALUE raise_value = ruby.to_symbol("raise");
-        volatile VALUE fail_option = ruby.rb_hash_lookup2(argv[1], ruby.to_symbol("on_fail"), raise_value);
-        if (ruby.equals(fail_option, raise_value)) {
-            raise = true;
-            fail_option = ruby.nil_value();
-        }
-        return execute_command(ruby.to_string(argv[0]), fail_option, raise, timeout);
+            // Get the on_fail option (defaults to :raise)
+            bool raise = false;
+            volatile VALUE raise_value = ruby.to_symbol("raise");
+            volatile VALUE fail_option = ruby.rb_hash_lookup2(argv[1], ruby.to_symbol("on_fail"), raise_value);
+            if (ruby.equals(fail_option, raise_value)) {
+                raise = true;
+                fail_option = ruby.nil_value();
+            }
+            return execute_command(ruby.to_string(argv[0]), fail_option, raise, timeout);
+        });
     }
 
     VALUE module::ruby_on_message(VALUE self)
     {
-        auto const& ruby = api::instance();
+        return safe_eval("Facter.on_message", [&]() {
+            auto const& ruby = api::instance();
 
-        from_self(self)->_on_message_block = ruby.rb_block_given_p() ? ruby.rb_block_proc() : ruby.nil_value();
-        return ruby.nil_value();
+            from_self(self)->_on_message_block = ruby.rb_block_given_p() ? ruby.rb_block_proc() : ruby.nil_value();
+            return ruby.nil_value();
+        });
     }
 
     module* module::from_self(VALUE self)
