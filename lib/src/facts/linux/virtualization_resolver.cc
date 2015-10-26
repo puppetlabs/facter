@@ -1,4 +1,5 @@
 #include <internal/facts/linux/virtualization_resolver.hpp>
+#include <internal/util/agent.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
@@ -14,6 +15,7 @@
 
 using namespace std;
 using namespace facter::facts;
+using namespace facter::util;
 using namespace leatherman::util;
 using namespace leatherman::execution;
 using namespace boost::filesystem;
@@ -107,17 +109,7 @@ namespace facter { namespace facts { namespace linux {
 
     string virtualization_resolver::get_what_vm()
     {
-        string virt_what = [] {
-#ifdef FACTER_PATH
-            string fixed = which("virt-what", {FACTER_PATH});
-            if (fixed.empty()) {
-                LOG_WARNING("virt-what not found at configured location %1%, using PATH instead", FACTER_PATH);
-            } else {
-                return fixed;
-            }
-#endif
-            return string("virt-what");
-        }();
+        string virt_what = agent::which("virt-what");
         string value;
         each_line(virt_what, [&](string& line) {
             // Some versions of virt-what dump error/warning messages to stdout

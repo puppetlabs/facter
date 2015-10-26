@@ -1,4 +1,5 @@
 #include <internal/facts/resolvers/augeas_resolver.hpp>
+#include <internal/util/agent.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -8,6 +9,7 @@
 #include <leatherman/util/regex.hpp>
 
 using namespace std;
+using namespace facter::util;
 using namespace leatherman::util;
 using namespace leatherman::execution;
 
@@ -25,18 +27,7 @@ namespace facter { namespace facts { namespace resolvers {
 
     string augeas_resolver::get_version()
     {
-        string augparse = [] {
-#ifdef FACTER_PATH
-            string fixed = which("augparse", {FACTER_PATH});
-            if (fixed.empty()) {
-                LOG_WARNING("augparse not found at configured location %1%, using PATH instead", FACTER_PATH);
-            } else {
-                return fixed;
-            }
-#endif
-            return string("augparse");
-        }();
-
+        string augparse = agent::which("augparse");
         string value;
         boost::regex regexp("^augparse (\\d+\\.\\d+\\.\\d+)");
         // Version info goes on stderr.

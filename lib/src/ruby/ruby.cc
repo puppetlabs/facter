@@ -1,8 +1,11 @@
 #include <facter/ruby/ruby.hpp>
 #include <facter/logging/logging.hpp>
 #include <internal/ruby/module.hpp>
+#include <internal/ruby/ruby_value.hpp>
 #include <leatherman/ruby/api.hpp>
 #include <leatherman/logging/logging.hpp>
+
+#include <numeric>
 
 using namespace std;
 using namespace facter::facts;
@@ -53,6 +56,73 @@ namespace facter { namespace ruby {
     void load_custom_facts(collection& facts, vector<string> const& paths)
     {
          load_custom_facts(facts, false, paths);
+    }
+
+    value const* lookup(value const* value, vector<string>::iterator segment, vector<string>::iterator end) {
+        auto rb_value = dynamic_cast<ruby_value const*>(value);
+        if (!rb_value) {
+             return nullptr;
+        }
+
+        // Check for a cached lookup
+        auto key = accumulate(segment, end, string{}, [](const string& a, const string& b) -> string {
+                 if (b.find(".") != string::npos) {
+                     return a+".\""+b+"\"";
+                 } else {
+                     return a+"."+b;
+                 }
+             });
+        auto child_value = rb_value->child(key);
+        if (child_value) {
+            return child_value;
+        }
+
+        auto val = rb_value->value();  // now we're in ruby land
+        api& ruby = api::instance();
+
+        for (; segment != end; ++segment) {
+            if (ruby.is_array(val)) {
+                long index;
+                try {
+                    index = stol(*segment);
+                } catch (logic_error&) {
+                    LOG_DEBUG("cannot lookup an array element with \"%1%\": expected an integral value.", *segment);
+                    return nullptr;
+                }
+                if (index < 0) {
+                    LOG_DEBUG("cannot lookup an array element with \"%1%\": expected a non-negative value.", *segment);
+                    return nullptr;
+                }
+                long length = ruby.array_len(val);
+                if (0 == length) {
+                    LOG_DEBUG("cannot lookup an array element with \"%1%\": the array is empty.", *segment);
+                    return nullptr;
+                }
+
+                if (index >= length) {
+                    LOG_DEBUG("cannot lookup an array element with \"%1%\": expected an integral value between 0 and %2% (inclusive).", *segment, length - 1);
+                    return nullptr;
+                }
+
+                val = ruby.rb_ary_entry(val, index);
+            } else if (ruby.is_hash(val)) {
+                // if we're anything but an array, we look up by name
+                auto key = ruby.utf8_value(*segment);
+                auto result = ruby.rb_hash_lookup(val, key);
+                if (ruby.is_nil(result)) {
+                    // We also want to try looking up as a symbol
+                    key = ruby.to_symbol(*segment);
+                    result = ruby.rb_hash_lookup(val, key);
+                }
+                val = result;
+            } else {
+                LOG_DEBUG("cannot lookup element \"%1%\": container is not an array or hash", *segment);
+            }
+            if (ruby.is_nil(val)) {
+                return nullptr;
+            }
+        }
+        return rb_value->wrap_child(val, move(key));
     }
 
     void uninitialize()

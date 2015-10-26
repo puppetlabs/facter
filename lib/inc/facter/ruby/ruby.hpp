@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../facts/collection.hpp"
+#include "../facts/value.hpp"
 #include "../export.h"
 #include <vector>
 #include <string>
@@ -39,6 +40,16 @@ namespace facter { namespace ruby {
      * @param paths The paths to search for custom facts.
      */
     LIBFACTER_EXPORT void load_custom_facts(facter::facts::collection& facts, std::vector<std::string> const& paths = {});
+
+    /**
+     * Traverses a ruby fact and returns a new value based on the
+     * query segments passed in the range.
+     * @param value The original value to query
+     * @param segment The beginning of the query segment range
+     * @param end The end of the query segment range
+     * @return Returns a pointer to the value queried, or nullptr if it does not exist.
+     */
+    LIBFACTER_EXPORT facts::value const* lookup(facts::value const* value, std::vector<std::string>::iterator segment, std::vector<std::string>::iterator end);
 
     /**
      * Uninitialize Ruby integration in Facter.

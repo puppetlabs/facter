@@ -272,4 +272,17 @@ namespace facter { namespace ruby {
         emitter << Null;
     }
 
+    ruby_value const* ruby_value::wrap_child(VALUE child, string key) const {
+        return _children.emplace(move(key), std::unique_ptr<ruby_value>(new ruby_value(child))).first->second.get();
+    }
+
+    ruby_value const* ruby_value::child(const string& key) const {
+        auto child = _children.find(key);
+        if (child != end(_children)) {
+            return child->second.get();
+        } else {
+            return nullptr;
+        }
+    }
+
 }}  // namespace facter::ruby

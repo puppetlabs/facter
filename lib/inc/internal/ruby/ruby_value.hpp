@@ -8,6 +8,8 @@
 #include "fact.hpp"
 #include <facter/facts/value.hpp>
 
+#include <unordered_map>
+
 namespace facter { namespace ruby {
 
     /**
@@ -79,12 +81,39 @@ namespace facter { namespace ruby {
          */
         leatherman::ruby::VALUE value() const;
 
+        /**
+         * Exposes an owned ruby VALUE as a facter ruby_value
+         * @param child the owned child object to wrap
+         * @param key the query string for the child
+         * @return pointer to the ruby_value wrapper for the child object
+         */
+        ruby_value const* wrap_child(leatherman::ruby::VALUE child, std::string key) const;
+
+        /**
+         * Get a cached ruby_value wrapper for a child VALUE
+         * @param key the query string for the child
+         * @return pointer to the ruby_value wrapper, or nullptr if none exists
+         */
+        ruby_value const* child(const std::string& key) const;
+
      private:
         static void to_json(leatherman::ruby::api const& ruby, leatherman::ruby::VALUE value, facts::json_allocator& allocator, facts::json_value& json);
         static void write(leatherman::ruby::api const& ruby, leatherman::ruby::VALUE value, std::ostream& os, bool quoted, unsigned int level);
         static void write(leatherman::ruby::api const& ruby, leatherman::ruby::VALUE value, YAML::Emitter& emitter);
 
         leatherman::ruby::VALUE _value;
+
+        // This is mutable because of constness that's passed down
+        // from the collection object during dot-syntax fact
+        // querying. That query is const over the collection, which
+        // means the collection's actions on values also need to be
+        // const. Unfortunately, we need a place to stash the owning
+        // pointer to the new value that we extract from a ruby object
+        // during lookup. The logical place for that ownership is the
+        // parent ruby object (right here). So we get this cool
+        // mutable field that owns the C++ wrappers for looked-up ruby
+        // values.
+        mutable std::unordered_map<std::string, std::unique_ptr<ruby_value>> _children;
     };
 
 }}  // namespace facter::ruby

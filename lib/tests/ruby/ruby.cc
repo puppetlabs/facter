@@ -271,11 +271,17 @@ SCENARIO("custom facts written in Ruby") {
         THEN("the value is an array") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "[\n  1,\n  true,\n  false,\n  \"foo\",\n  12.4,\n  [\n    1\n  ],\n  {\n    foo => \"bar\"\n  }\n]");
         }
+        THEN("the members of the fact can be queried") {
+            REQUIRE(ruby_value_to_string(facts.query<ruby_value>("foo.5.0")) == "1");
+        }
     }
     GIVEN("a fact that resolves to a hash value") {
         REQUIRE(load_custom_fact("hash_fact.rb", facts));
         THEN("the value is a hash") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "{\n  int => 1,\n  bool_true => true,\n  bool_false => false,\n  double => 12.34,\n  string => \"foo\",\n  array => [\n    1,\n    2,\n    3\n  ]\n}");
+        }
+        THEN("the members of the fact can be queried") {
+            REQUIRE(ruby_value_to_string(facts.query<ruby_value>("foo.array.1")) == "2");
         }
     }
     GIVEN("a fact that resolves using Facter.value") {
