@@ -7,10 +7,10 @@ test_name "Facts should resolve as expected in Mac OS X 10.9 and 10.10"
 # Facts tested: os, processors, networking, identity, kernel
 #
 
-confine :to, :platform => /osx-mavericks|osx-yosemite/
+confine :to, :platform => /osx-10\.9|osx-10\.10/
 
 agents.each do |agent|
-  if agent['platform'] =~ /osx-mavericks/
+  if agent['platform'] =~ /osx-10\.9/
     os_version = '10.9'
     kernel_major = '13'
   else
