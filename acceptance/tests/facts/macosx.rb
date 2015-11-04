@@ -7,15 +7,22 @@ test_name "Facts should resolve as expected in Mac OS X 10.9 and 10.10"
 # Facts tested: os, processors, networking, identity, kernel
 #
 
-confine :to, :platform => /osx-10\.9|osx-10\.10/
+confine :to, :platform => /osx-/
 
 agents.each do |agent|
-  if agent['platform'] =~ /osx-10\.9/
-    os_version = '10.9'
+  match = agent['platform'].match(/osx-(10\.\d+)/)
+  fail_test("Unknown OSX platform #{agent['platform']}") if match.nil?
+
+  os_version = match[1]
+  case os_version
+  when '10.9'
     kernel_major = '13'
-  else
-    os_version = '10.10'
+  when '10.10'
     kernel_major = '14'
+  when '10.11'
+    kernel_major = '15'
+  else
+    fail_test("Unknown os_version #{os_version}")
   end
 
   step "Ensure the OS fact resolves as expected"
