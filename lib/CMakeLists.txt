@@ -15,7 +15,7 @@ configure_file (
 
 # Generate a .gemspec file based on the above version numbers
 configure_file (
-    ".gemspec.in"
+    "gemspec.in"
     "${CMAKE_CURRENT_LIST_DIR}/../.gemspec"
 )
 
