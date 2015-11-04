@@ -1,6 +1,7 @@
 #include <internal/facts/osx/operating_system_resolver.hpp>
 #include <leatherman/execution/execution.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/regex.hpp>
 #include <string>
 
 using namespace std;
@@ -36,6 +37,11 @@ namespace facter { namespace facts { namespace osx {
             // Continue only if we haven't populated the data
             return result.osx.product.empty() || result.osx.build.empty() || result.osx.version.empty();
         });
+
+        // If osx.build is missing the patch version, add '.0'
+        if (boost::regex_match(result.osx.version, boost::regex("^\\d+\\.\\d+$"))) {
+            result.osx.version += ".0";
+        }
 
         return result;
     }
