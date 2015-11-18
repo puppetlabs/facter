@@ -40,13 +40,13 @@ namespace facter { namespace facts { namespace windows {
         DWORD size = 0u;
         GetComputerNameExW(nameFormat, nullptr, &size);
         if (GetLastError() != ERROR_MORE_DATA) {
-            LOG_DEBUG("failure resolving hostname: %1%", system_error());
+            LOG_DEBUG("failure resolving hostname: %1%", leatherman::windows::system_error());
             return "";
         }
 
         wstring buffer(size, '\0');
         if (!GetComputerNameExW(nameFormat, &buffer[0], &size)) {
-            LOG_DEBUG("failure resolving hostname: %1%", system_error());
+            LOG_DEBUG("failure resolving hostname: %1%", leatherman::windows::system_error());
             return "";
         }
 
@@ -108,13 +108,13 @@ namespace facter { namespace facts { namespace windows {
             } else if (err == ERROR_BUFFER_OVERFLOW) {
                 pAddresses.resize(outBufLen);
             } else {
-                LOG_DEBUG("failure getting netmask info: %1%", system_error(err));
+                LOG_DEBUG("failure getting netmask info: %1%", leatherman::windows::system_error(err));
                 return {};
             }
         }
 
         if (err != ERROR_SUCCESS) {
-            LOG_DEBUG("failure getting netmask info: %1%", system_error(err));
+            LOG_DEBUG("failure getting netmask info: %1%", leatherman::windows::system_error(err));
             return {};
         }
 
@@ -163,13 +163,13 @@ namespace facter { namespace facts { namespace windows {
             } else if (err == ERROR_BUFFER_OVERFLOW) {
                 pAddresses.resize(outBufLen);
             } else {
-                LOG_DEBUG("failure resolving networking facts: %1%", system_error(err));
+                LOG_DEBUG("failure resolving networking facts: %1%", leatherman::windows::system_error(err));
                 return result;
             }
         }
 
         if (err != ERROR_SUCCESS) {
-            LOG_DEBUG("failure resolving networking facts: %1%", system_error(err));
+            LOG_DEBUG("failure resolving networking facts: %1%", leatherman::windows::system_error(err));
             return result;
         }
 

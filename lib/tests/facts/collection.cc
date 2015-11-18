@@ -466,7 +466,7 @@ SCENARIO("using the fact collection with a default external fact path") {
             LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/text",
         });
         REQUIRE_FALSE(facts.empty());
-        REQUIRE(facts.size() == 4);
+        REQUIRE(facts.size() == 4u);
         THEN("facts from both directories should be added") {
             REQUIRE(facts.get<string_value>("foo"));
             REQUIRE(facts.get<string_value>("txt_fact1"));
