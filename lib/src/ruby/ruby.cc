@@ -18,14 +18,14 @@ static const char load_puppet[] =
 "  $LOAD_PATH << Puppet[:libdir]\n"
 "end\n"
 "Facter.reset\n"
+"Facter.search_external([Puppet[:pluginfactdest]])\n"
 "if Puppet.respond_to? :initialize_facts\n"
 "  Puppet.initialize_facts\n"
 "else\n"
 "  Facter.add(:puppetversion) do\n"
 "    setcode { Puppet.version.to_s }\n"
 "  end\n"
-"end\n"
-"Facter.search_external([Puppet[:pluginfactdest]])";
+"end\n";
 
 namespace facter { namespace ruby {
 
