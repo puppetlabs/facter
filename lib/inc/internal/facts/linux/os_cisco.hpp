@@ -57,7 +57,17 @@ namespace facter { namespace facts { namespace linux {
                 return value;
             }
             auto val = _release_info.find("ID_LIKE");
-            return (val != _release_info.end()) ? val->second : std::string();
+            if (val != _release_info.end()) {
+                auto& family = val->second;
+                auto pos = family.find(" ");
+                // If multiple values are found in ID_LIKE, only return the
+                // first one (FACT-1246)
+                if (pos != std::string::npos) {
+                    return family.substr(0, pos);
+                }
+                return family;
+            }
+            return std::string();
         }
 
         /**
