@@ -40,7 +40,7 @@ namespace facter { namespace facts {
                 return {p.string()};
             }
 
-            LOG_WARNING("error finding COMMON_APPDATA, external facts unavailable: %1%", system_error());
+            LOG_WARNING("error finding COMMON_APPDATA, external facts unavailable: %1%", leatherman::windows::system_error());
         } else {
             auto home = user::home_dir();
             if (!home.empty()) {

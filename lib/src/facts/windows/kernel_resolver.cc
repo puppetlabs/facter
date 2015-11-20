@@ -68,7 +68,7 @@ namespace facter { namespace facts { namespace windows {
             result.release = move(*release);
             result.version = result.release;
         } else {
-            LOG_DEBUG("failed to retrieve kernel facts: %1%", system_error());
+            LOG_DEBUG("failed to retrieve kernel facts: %1%", leatherman::windows::system_error());
         }
 
         result.name = os::windows;
