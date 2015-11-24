@@ -6,6 +6,8 @@ install:
   - choco install mingw-w64 -y -Version 4.8.3 -source https://www.myget.org/F/puppetlabs
   - choco install cmake -y -Version 3.2.2 -source https://www.myget.org/F/puppetlabs
   - SET PATH=C:\Ruby21-x64\bin;C:\tools\mingw64\bin;%PATH%
+  - ps: $env:PATH = $env:PATH.Replace("Git\bin", "Git\cmd")
+  - ps: $env:PATH = $env:PATH.Replace("Git\usr\bin", "Git\cmd")
 
   - ps: wget 'https://s3.amazonaws.com/kylo-pl-bucket/boost_1_57_0-x86_64_mingw-w64_4.8.3_win32_seh.7z' -OutFile "$pwd\boost.7z"
   - ps: 7z.exe x boost.7z -oC:\tools | FIND /V "ing  "
@@ -17,9 +19,7 @@ install:
   - bundle install --jobs 4 --retry 2 --gemfile=lib/Gemfile --quiet
 
 build_script:
-  - ps: mv "C:\Program Files (x86)\Git\bin\sh.exe" "C:\Program Files (x86)\Git\bin\shxx.exe"
   - ps: cmake -G "MinGW Makefiles" -DBOOST_ROOT="C:\tools\boost_1_57_0-x86_64_mingw-w64_4.8.3_win32_seh" -DYAMLCPP_ROOT="C:\tools\yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_win32_seh" -DBOOST_STATIC=ON -DBOOST_NOWIDE_SKIP_TESTS=ON -DCMAKE_INSTALL_PREFIX="C:\Program Files\FACTER" .
-  - ps: mv "C:\Program Files (x86)\Git\bin\shxx.exe" "C:\Program Files (x86)\Git\bin\sh.exe"
   - ps: mingw32-make -j2
 
 test_script:
