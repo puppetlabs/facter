@@ -221,7 +221,7 @@ describe Facter::Processors::Windows do
       before :each do
         proc = stubs 'proc'
         proc.stubs(:Name).returns("Intel(R)    Celeron(R)   processor")
-        proc.stubs(:ole_respond_to?).with("NumberOfLogicalProcessors").returns(false)
+        proc.stubs(:ole_respond_to?).with(:NumberOfLogicalProcessors).returns(false)
         load(Array.new(2, proc))
       end
 
@@ -236,7 +236,7 @@ describe Facter::Processors::Windows do
       before :each do
         proc = stubs 'proc'
         proc.stubs(:NumberOfLogicalProcessors).returns(2)
-        proc.stubs(:ole_respond_to?).with("NumberOfLogicalProcessors").returns(true)
+        proc.stubs(:ole_respond_to?).with(:NumberOfLogicalProcessors).returns(true)
         proc.stubs(:Name).returns("Intel(R)    Celeron(R)   processor")
         load(Array.new(2, proc))
       end
