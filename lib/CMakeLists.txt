@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.2.2)
 
 set(LIBFACTER_VERSION_MAJOR 3)
 set(LIBFACTER_VERSION_MINOR 1)
-set(LIBFACTER_VERSION_PATCH 3)
+set(LIBFACTER_VERSION_PATCH 4)
 
 # Get the HEAD SHA1 commit message
 get_commit_string(LIBFACTER_COMMIT)
