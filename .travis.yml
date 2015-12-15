@@ -29,6 +29,8 @@ before_install:
   # Install dependencies of facter
   - wget https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1_install.tar.bz2
   - tar xjvf yaml-cpp-0.5.1_install.tar.bz2 --strip 1 -C $USERDIR
+  - wget https://github.com/puppetlabs/leatherman/releases/download/${LEATHERMAN_VERSION}/leatherman.tar.gz
+  - tar xzvf leatherman.tar.gz -C $USERDIR
 
 script: ./scripts/travis_target.sh
 
@@ -38,6 +40,7 @@ env:
     - PYTHONUSERBASE=$USERDIR
     - PATH=$USERDIR/bin:$PATH
     - LD_LIBRARY_PATH=$USERDIR/lib:$LD_LIBRARY_PATH
+    - LEATHERMAN_VERSION=0.3.4
   matrix:
     - TRAVIS_TARGET=COMMITS
     - TRAVIS_TARGET=DOXYGEN
