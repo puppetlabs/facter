@@ -11,11 +11,11 @@ class Facter::Core::Execution::Posix < Facter::Core::Execution::Base
 
   def which(bin)
     if absolute_path?(bin)
-      return bin if File.executable?(bin)
+      return bin if File.executable?(bin) and File.file?(bin)
     else
       search_paths.each do |dir|
         dest = File.join(dir, bin)
-        return dest if File.executable?(dest)
+        return dest if File.executable?(dest) and File.file?(dest)
       end
     end
     nil
