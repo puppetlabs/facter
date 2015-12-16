@@ -101,11 +101,6 @@ add_definitions(${LEATHERMAN_DEFINITIONS})
 
 # Include vendor libraries
 set(RAPIDJSON_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/vendor/rapidjson-0.11/include")
-if (WIN32)
-    # We disabled installing Boost.Nowide; add back the library we use.
-    # CMake doesn't allow install targets in a different directory, so get the file.
-    install(FILES ${CMAKE_BINARY_DIR}/bin/libnowide.dll DESTINATION bin)
-endif()
 
 # Build against our leatherman tooling
 set(LEATHERMAN_USE_LOCALE TRUE)

@@ -312,7 +312,7 @@ elseif (WIN32)
     add_definitions("-Dlibfacter_EXPORTS")
 endif()
 
-install(TARGETS libfacter DESTINATION ${LIBFACTER_INSTALL_DESTINATION})
+leatherman_install(libfacter)
 install(DIRECTORY inc/facter DESTINATION include)
 
 # Always generate facter.rb and spec_helper.rb, as they might be used in packaging
