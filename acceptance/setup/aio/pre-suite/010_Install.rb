@@ -7,7 +7,7 @@ extend Beaker::DSL::InstallUtils
 test_name "Install Packages"
 
 step "Install repositories on target machines..." do
-  sha = ENV['SHA']
+  sha = ENV['SHA'] || ENV['GIT_SHA']
   hosts.each do |host|
     install_repos_on(host, 'puppet-agent', sha, 'repo-configs')
   end
