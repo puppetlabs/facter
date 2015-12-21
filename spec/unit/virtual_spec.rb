@@ -410,6 +410,7 @@ describe "Virtual fact" do
         'xen-dom0' => 'xen0',
         'xen-domU' => 'xenu',
         'ibm_systemz' => 'zlinux',
+        "virtualbox\nkvm" => 'virtualbox',
       }
 
       virt_what_map.each do |input,output|
