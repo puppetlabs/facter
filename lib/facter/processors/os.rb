@@ -112,7 +112,7 @@ module Facter
         # get each physical processor
         Facter::Util::WMI.execquery("select * from Win32_Processor").each do |proc|
           # not supported before 2008
-          if proc.respond_to?(:NumberOfLogicalProcessors)
+          if proc.ole_respond_to?(:NumberOfLogicalProcessors)
             processor_num = proc.NumberOfLogicalProcessors
           else
             processor_num = 1
