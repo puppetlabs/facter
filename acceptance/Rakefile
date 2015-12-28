@@ -1,6 +1,13 @@
 require 'rake/clean'
 require 'pp'
 require 'yaml'
+require 'securerandom'
+require 'fileutils'
+require 'beaker-hostgenerator'
+
+$LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), 'lib'))
+require 'puppet/acceptance/git_utils'
+extend Puppet::Acceptance::GitUtils
 
 ONE_DAY_IN_SECS = 24 * 60 * 60
 PRESERVED_HOSTS_FILENAME = 'hosts_preserved.yml'
@@ -101,6 +108,29 @@ end
 def beaker_test(mode = :aio, options = {})
   options_file = write_merged_options_file(mode,options)
   args = generate_beaker_cli_flags(options_file)
+  tests = ENV['TESTS'] || ENV['TEST']
+  tests_opt = "--tests=#{tests}" if tests
+
+  # The 'if ...' suffix conditional below is a temporary measure which should go
+  # away once the pipeline changes are made so that TEST_TARGET is always
+  # intended for use with beaker-hostgenerator. So please remove that
+  # conditional (and this comment) once that pipeline change is made.
+  target = ENV['TEST_TARGET'] if ENV['TEST_TARGET'] && ENV['TEST_TARGET'][-1,1] == 'a'
+  if target
+    cli = BeakerHostGenerator::CLI.new([target, '--disable-default-role'])
+    ENV['CONFIG'] = "tmp/#{target}-#{SecureRandom.uuid}.yaml"
+    FileUtils.mkdir_p('tmp')
+    File.open(config, 'w') do |fh|
+      fh.print(cli.execute)
+    end
+    config_opt = "--hosts=#{config}"
+  elsif config
+    config_opt = "--hosts=#{config}"
+  end
+
+  overriding_options = ENV['OPTIONS']
+
+  args = ["--options-file", options_file, config_opt, tests_opt, overriding_options].compact
 
   begin
     sh("beaker", *args)
@@ -194,7 +224,8 @@ namespace :ci do
 
     USAGE = <<-EOS
 May specify project SHA environment variable, which can be a branch, release version number, or commit SHA.
-Also must set HOSTS=config/nodes/foo.yaml or include it in an options.rb for Beaker.
+Also must set CONFIG=config/nodes/foo.yaml or include it in an options.rb for Beaker,
+or specify TEST_TARGET in a form beaker-hostgenerator accepts, e.g. ubuntu1504-64a.
 You may set TESTS=path/to/test,and/more/tests.
 You may set additional Beaker OPTIONS='--more --options'
 If testing from git checkouts, you may optionally set the github fork to checkout from using FORK='other-puppet-fork'.
