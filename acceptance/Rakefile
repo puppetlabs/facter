@@ -114,14 +114,14 @@ def beaker_test(mode = :aio, options = {})
   target = ENV['TEST_TARGET'] if ENV['TEST_TARGET'] && ENV['TEST_TARGET'][-1,1] == 'a'
   if target
     cli = BeakerHostGenerator::CLI.new([target, '--disable-default-role'])
-    ENV['CONFIG'] = "tmp/#{target}-#{SecureRandom.uuid}.yaml"
+    ENV['HOSTS'] = "tmp/#{target}-#{SecureRandom.uuid}.yaml"
     FileUtils.mkdir_p('tmp')
-    File.open(config, 'w') do |fh|
+    File.open(hosts, 'w') do |fh|
       fh.print(cli.execute)
     end
-    config_opt = "--hosts=#{config}"
-  elsif config
-    config_opt = "--hosts=#{config}"
+    config_opt = "--hosts=#{hosts}"
+  elsif hosts
+    config_opt = "--hosts=#{hosts}"
   end
 
   overriding_options = ENV['OPTIONS']
