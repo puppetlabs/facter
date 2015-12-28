@@ -5,10 +5,6 @@ require 'securerandom'
 require 'fileutils'
 require 'beaker-hostgenerator'
 
-$LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), 'lib'))
-require 'puppet/acceptance/git_utils'
-extend Puppet::Acceptance::GitUtils
-
 ONE_DAY_IN_SECS = 24 * 60 * 60
 PRESERVED_HOSTS_FILENAME = 'hosts_preserved.yml'
 SUTS_FILENAME = 'sut.log'
