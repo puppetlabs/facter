@@ -11,7 +11,7 @@ def location_for(place, fake_version = nil)
 end
 
 gem "beaker", *location_for(ENV['BEAKER_VERSION'] || "~> 2.27")
-gem "beaker-hostgenerator", *location_for(ENV['BEAKER_HOSTGENERATOR_VERSION'] || "~> 0.2")
+gem "beaker-hostgenerator", *location_for(ENV['BEAKER_HOSTGENERATOR_VERSION'] || "~> 0.3.1")
 gem 'rake', "~> 10.1.0"
 gem "multi_json", "~> 1.8"
 
