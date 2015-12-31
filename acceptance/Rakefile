@@ -113,7 +113,7 @@ def beaker_test(mode = :aio, options = {})
   # conditional (and this comment) once that pipeline change is made.
   target = ENV['TEST_TARGET'] if ENV['TEST_TARGET'] && ENV['TEST_TARGET'][-1,1] == 'a'
   if target
-    cli = BeakerHostGenerator::CLI.new([target, '--disable-default-role'])
+    cli = BeakerHostGenerator::CLI.new([target, '--disable-default-role', '--osinfo-version', '1'])
     ENV['HOSTS'] = "tmp/#{target}-#{SecureRandom.uuid}.yaml"
     FileUtils.mkdir_p('tmp')
     File.open(hosts, 'w') do |fh|
