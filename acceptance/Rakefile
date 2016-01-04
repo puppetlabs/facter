@@ -215,7 +215,6 @@ def sha
 end
 
 namespace :ci do
-
   namespace :test do
 
     USAGE = <<-EOS
@@ -224,83 +223,59 @@ Also must set CONFIG=config/nodes/foo.yaml or include it in an options.rb for Be
 or specify TEST_TARGET in a form beaker-hostgenerator accepts, e.g. ubuntu1504-64a.
 You may set TESTS=path/to/test,and/more/tests.
 You may set additional Beaker OPTIONS='--more --options'
-If testing from git checkouts, you may optionally set the github fork to checkout from using FORK='other-puppet-fork'.
-You may also optionally set the git server to checkout from using GIT_SERVER='my.host.with.git.daemon', if you have set up a `git daemon` to pull local commits from.  (In this case, the FORK should be set to the path to the repository, and you will need to allow the git daemon to serve the repo (see `git help daemon`)).
 If there is a Beaker options hash in a ./local_options.rb, it will be included.  Commandline options set through the above environment variables will override settings in this file.
-EOS
-
-    desc <<-EOS
-Run the acceptance tests through Beaker and install packages on the configuration targets (only facter versions <3.0)
-#{USAGE}
-EOS
-    task :packages do
-      beaker_test(:packages)
-    end
+    EOS
 
     desc <<-EOS
 Run the acceptance tests through Beaker and install packages as part of the AIO puppet-agent installation.
-#{USAGE}
-EOS
+    #{USAGE}
+    EOS
     task :aio do
       beaker_test(:aio)
     end
+  end
+end
 
-    desc <<-EOS
-DEPRECATED: use the aio method for now. Run the acceptance tests through Beaker and install from git on the configuration targets.
+desc "DEPRECATED: Beaker now does this automatically."
+task :extract_preserved_config
+
+desc <<-EOS
+Run an acceptance test for a given node configuration and preserve the hosts.
 #{USAGE}
 EOS
-    task :git do
-      beaker_test(:git)
-    end
-  end
+task :test_and_preserve_hosts do
+  beaker_test(beaker_run_type, :preserve_hosts => 'always')
+end
 
-  desc "DEPRECATED: Beaker now does this automatically."
-  task :extract_preserved_config
+desc "List acceptance runs from the past day which had hosts preserved."
+task :list_preserved do
+  preserved = list_preserved_hosts
+  print_preserved(preserved)
+end
 
-  desc <<-EOS
-Run an acceptance test for a given node configuration and preserve the hosts.
-Defaults to a packages run, but you can set it to 'git' with TYPE='git'.
-#{USAGE}
-  EOS
-  task :test_and_preserve_hosts do
-    beaker_test(beaker_run_type, :preserve_hosts => 'always')
-  end
-
-  desc "List acceptance runs from the past day which had hosts preserved."
-  task :list_preserved do
-    preserved = list_preserved_hosts
-    print_preserved(preserved)
-  end
-
-  desc <<-EOS
+desc <<-EOS
 Shutdown and destroy any hosts that we have preserved for testing.  These should be reaped daily by scripts, but this will free up resources immediately.
 Specify a list of comma separated HOST_NAMES if you have a set of dynamic vcloud host names you want to purge outside of what can be grepped from the logs.
 You can go back through the last SECS_AGO logs.  Default is one day ago in secs.
-  EOS
-  task :destroy_preserved_hosts do
-    host_names = ENV['HOST_NAMES'].split(',') if ENV['HOST_NAMES']
-    secs_ago = ENV['SECS_AGO']
-    destroy_preserved_hosts(host_names, secs_ago)
-  end
+EOS
+task :destroy_preserved_hosts do
+  host_names = ENV['HOST_NAMES'].split(',') if ENV['HOST_NAMES']
+  secs_ago = ENV['SECS_AGO']
+  destroy_preserved_hosts(host_names, secs_ago)
+end
 
-  desc <<-EOS
+desc <<-EOS
 Rerun an acceptance test using hosts_preserved.yaml to skip provisioning.
-Or specify a CONFIG_NUMBER from `rake ci:list_preserved`.
-Uses the setup/rsync/pre-suite to rsync the local puppet source onto master and agent.
-You may specify an RSYNC_FILTER_FILE as well.
-You may skip purgeing and reinstalling puppet packages by including SKIP_PACKAGE_REINSTALL.
-Defaults to a packages run, but you can set it to 'git' with TYPE='git'.
-  EOS
-  task :test_against_preserved_hosts do
-    preserved = list_preserved_configurations
-    print_preserved(preserved)
-    config_number = (ENV['CONFIG_NUMBER'] || 0).to_i
-    config_path = preserved[config_number][0]
-    puts "Using ##{config_number}: #{config_path}"
-    beaker_test(beaker_run_type,
-      :hosts_file => "log/latest/#{PRESERVED_HOSTS_FILENAME}"
-    )
-  end
+EOS
+task :test_against_preserved_hosts do
+  preserved = list_preserved_configurations
+  print_preserved(preserved)
+  config_number = (ENV['CONFIG_NUMBER'] || 0).to_i
+  config_path = preserved[config_number][0]
+  puts "Using ##{config_number}: #{config_path}"
+  beaker_test(beaker_run_type,
+              :hosts_file => "log/latest/#{PRESERVED_HOSTS_FILENAME}"
+             )
 end
 
 task :default do
