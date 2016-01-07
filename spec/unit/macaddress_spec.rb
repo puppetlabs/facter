@@ -23,8 +23,11 @@ describe "macaddress fact" do
     end
 
     it "should return the macaddress of the first interface" do
-      Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
+      Facter::Util::IP.stubs(:exec_ifconfig).
         returns(ifconfig_fixture('linux_ifconfig_all_with_multiple_interfaces'))
+      routes = ifconfig_fixture("net_route_all_with_multiple_interfaces")
+      Facter::Util::IP.stubs(:read_proc_net_route).returns(routes)
+      Facter.collection.internal_loader.load(:interfaces)
 
       Facter.value(:macaddress).should == "00:12:3f:be:22:01"
     end
@@ -32,6 +35,7 @@ describe "macaddress fact" do
     it "should return nil when no macaddress can be found" do
       Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
         returns(ifconfig_fixture('linux_ifconfig_no_mac'))
+      Facter::Util::IP.stubs(:read_proc_net_route).returns("")
 
       proc { Facter.value(:macaddress) }.should_not raise_error
       Facter.value(:macaddress).should be_nil
@@ -41,6 +45,7 @@ describe "macaddress fact" do
     it "should return nil when no interface has a real macaddress" do
       Facter::Util::IP.stubs(:exec_ifconfig).with(["-a","2>/dev/null"]).
         returns(ifconfig_fixture('linux_ifconfig_venet'))
+      Facter::Util::IP.stubs(:read_proc_net_route).returns("")
 
       proc { Facter.value(:macaddress) }.should_not raise_error
       Facter.value(:macaddress).should be_nil

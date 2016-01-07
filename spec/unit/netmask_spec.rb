@@ -6,8 +6,21 @@ require 'facter/util/ip'
 
 shared_examples_for "netmask from ifconfig output" do |platform, address, fixture|
   it "correctly on #{platform}" do
-    Facter::Util::IP.stubs(:exec_ifconfig).returns(my_fixture_read(fixture))
+    Facter::Util::IP.stubs(:exec_ifconfig).returns(my_fixture_read("ifconfig_#{fixture}"))
     Facter.collection.internal_loader.load(:netmask)
+    begin
+      routes = my_fixture_read("net_route_#{fixture}")
+      Facter::Util::IP.stubs(:read_proc_net_route).returns(routes)
+    rescue RuntimeError
+      # We want to try to load proc/net/route fixtures, but skip if
+      # they don't exist for non-linux platforms. Ideally we'd get an
+      # IOError here, but the fixture machinery here is dumb and
+      # converts this to a RuntimeError. Hopefully anything that would
+      # error here would also cause the actual test to fail, so I'm
+      # not going to worry too hard.
+    end
+    Facter.collection.internal_loader.load(:interfaces)
+    Facter.collection.internal_loader.load(:ipaddress)
 
     Facter.fact(:netmask).value.should eq(address)
   end
@@ -21,10 +34,10 @@ describe "The netmask fact" do
 
     example_behavior_for "netmask from ifconfig output",
       "Archlinux (net-tools 1.60)", "255.255.255.0",
-      "ifconfig_net_tools_1.60.txt"
+      "net_tools_1.60.txt"
     example_behavior_for "netmask from ifconfig output",
       "Ubuntu 12.04", "255.255.255.255",
-      "ifconfig_ubuntu_1204.txt"
+      "ubuntu_1204.txt"
   end
 
   context "on AIX" do
@@ -34,7 +47,7 @@ describe "The netmask fact" do
 
     example_behavior_for "netmask from ifconfig output",
       "AIX 7", "255.255.255.0",
-      "ifconfig_aix_7.txt"
+      "aix_7.txt"
 
   end
 

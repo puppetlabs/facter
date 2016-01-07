@@ -26,8 +26,11 @@ describe "The IPv6 address fact" do
   it "should return ipaddress6 information for Linux" do
     Facter::Core::Execution.stubs(:exec).with('uname -s').returns('Linux')
     Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
-    Facter::Util::IP.stubs(:exec_ifconfig).with(["2>/dev/null"]).
+    Facter::Util::IP.stubs(:exec_ifconfig).
       returns(ifconfig_fixture('linux_ifconfig_all_with_multiple_interfaces'))
+    routes = ifconfig_fixture('net_route_all_with_multiple_interfaces')
+    Facter::Util::IP.stubs(:read_proc_net_route).returns(routes)
+    Facter.collection.internal_loader.load(:interfaces)
 
     Facter.value(:ipaddress6).should == "2610:10:20:209:212:3fff:febe:2201"
   end
@@ -35,8 +38,11 @@ describe "The IPv6 address fact" do
   it "should return ipaddress6 information for Linux with recent net-tools" do
     Facter::Core::Execution.stubs(:exec).with('uname -s').returns('Linux')
     Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
-    Facter::Util::IP.stubs(:exec_ifconfig).with(["2>/dev/null"]).
+    Facter::Util::IP.stubs(:exec_ifconfig).
       returns(ifconfig_fixture('ifconfig_net_tools_1.60.txt'))
+    routes = ifconfig_fixture('net_route_net_tools_1.60.txt')
+    Facter::Util::IP.stubs(:read_proc_net_route).returns(routes)
+    Facter.collection.internal_loader.load(:interfaces)
 
     Facter.value(:ipaddress6).should == "2610:10:20:209:212:3fff:febe:2201"
   end
@@ -44,8 +50,11 @@ describe "The IPv6 address fact" do
   it "should return ipaddress6 with fe80 in any other octet than the first for Linux" do
     Facter::Core::Execution.stubs(:exec).with('uname -s').returns('Linux')
     Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
-    Facter::Util::IP.stubs(:exec_ifconfig).with(["2>/dev/null"]).
+    Facter::Util::IP.stubs(:exec_ifconfig).
       returns(ifconfig_fixture('linux_ifconfig_all_with_multiple_interfaces_and_fe80'))
+    routes = ifconfig_fixture('net_route_all_with_multiple_interfaces')
+    Facter::Util::IP.stubs(:read_proc_net_route).returns(routes)
+    Facter.collection.internal_loader.load(:interfaces)
 
     Facter.value(:ipaddress6).should == "2610:10:20:209:212:3fff:fe80:2201"
   end
@@ -53,8 +62,11 @@ describe "The IPv6 address fact" do
   it "should not return ipaddress6 link-local address for Linux" do
     Facter::Core::Execution.stubs(:exec).with('uname -s').returns('Linux')
     Facter::Util::IP.stubs(:get_ifconfig).returns("/sbin/ifconfig")
-    Facter::Util::IP.stubs(:exec_ifconfig).with(["2>/dev/null"]).
+    Facter::Util::IP.stubs(:exec_ifconfig).
       returns(ifconfig_fixture('linux_ifconfig_all_with_multiple_interfaces_and_no_public_ipv6'))
+    routes = ifconfig_fixture('net_route_all_with_multiple_interfaces')
+    Facter::Util::IP.stubs(:read_proc_net_route).returns(routes)
+    Facter.collection.internal_loader.load(:interfaces)
 
     Facter.value(:ipaddress6).should be_false
   end

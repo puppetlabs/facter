@@ -337,4 +337,21 @@ module Facter::Util::IP
       network = ip.mask(subnet.to_s).to_s
     end
   end
+
+  def self.read_proc_net_route
+    File.read("/proc/net/route")
+  end
+
+  def self.linux_default_iface
+    routes = read_proc_net_route
+    iface = nil
+    routes.split("\n").each do |line|
+      parts = line.split
+      if parts[1] == "00000000"
+        iface = alphafy(parts[0])
+        break
+      end
+    end
+    iface
+  end
 end

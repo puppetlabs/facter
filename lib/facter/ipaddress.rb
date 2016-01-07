@@ -3,7 +3,9 @@
 # Purpose: Return the main IP address for a host.
 #
 # Resolution:
-#   On the Unixes does an ifconfig, and returns the first non 127.0.0.0/8
+#   On Linux and AIX, it examines the routing table and uses the IP address
+#   of the default interface.
+#   On other Unixes does an ifconfig, and returns the first non 127.0.0.0/8
 #   subnetted IP it finds.
 #   On Windows, it attempts to use the socket library and resolve the machine's
 #   hostname via DNS.
@@ -27,19 +29,8 @@ require 'facter/util/ip'
 Facter.add(:ipaddress) do
   confine :kernel => :linux
   setcode do
-    ip = nil
-    output = Facter::Util::IP.exec_ifconfig(["2>/dev/null"])
-    if output
-      regexp = /inet (?:addr:)?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-      output.split("\n").each do |line|
-        match = regexp.match(line)
-        if match and not /^127\./.match(match[1])
-          ip = match[1]
-          break
-        end
-      end
-    end
-    ip
+    iface = Facter::Util::IP.linux_default_iface
+    Facter.value("ipaddress_#{iface}")
   end
 end
 
