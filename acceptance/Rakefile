@@ -94,7 +94,7 @@ EOS
   tests_opt = "--tests=#{tests}" if tests
 
   target = ENV['TEST_TARGET']
-  if config and File.exists(config)
+  if config and File.exists?(config)
     config_opt = "--hosts=#{config}"
   elsif target
     cli = BeakerHostGenerator::CLI.new([target, '--disable-default-role', '--osinfo-version', '1'])
