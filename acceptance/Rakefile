@@ -108,16 +108,16 @@ def beaker_test(mode = :aio, options = {})
   tests_opt = "--tests=#{tests}" if tests
 
   target = ENV['TEST_TARGET']
-  if target
+  if config and File.exists?(config)
+    config_opt = "--hosts=#{config}"
+  elsif target
     cli = BeakerHostGenerator::CLI.new([target, '--disable-default-role', '--osinfo-version', '1'])
-    ENV['HOSTS'] = "tmp/#{target}-#{SecureRandom.uuid}.yaml"
+    ENV['BEAKER_HOSTS'] = "tmp/#{target}-#{SecureRandom.uuid}.yaml"
     FileUtils.mkdir_p('tmp')
-    File.open(hosts, 'w') do |fh|
+    File.open(config, 'w') do |fh|
       fh.print(cli.execute)
     end
-    config_opt = "--hosts=#{hosts}"
-  elsif hosts
-    config_opt = "--hosts=#{hosts}"
+    config_opt = "--hosts=#{config}"
   end
 
   overriding_options = ENV['OPTIONS']
@@ -207,7 +207,11 @@ def beaker_run_type
 end
 
 def sha
-  ENV['SHA'] || ENV['GIT_SHA']
+  ENV['SHA']
+end
+
+def config
+  ENV['BEAKER_HOSTS']
 end
 
 namespace :ci do
@@ -215,8 +219,8 @@ namespace :ci do
   namespace :test do
 
     USAGE = <<-EOS
-May specify project SHA environment variable, which can be a branch, release version number, or commit SHA.
-Also must set CONFIG=config/nodes/foo.yaml or include it in an options.rb for Beaker,
+Requires commit SHA to be put under test as environment variable: SHA='<sha>'.
+Also must set BEAKER_HOSTS=config/nodes/foo.yaml or include it in an options.rb for Beaker,
 or specify TEST_TARGET in a form beaker-hostgenerator accepts, e.g. ubuntu1504-64a.
 You may set TESTS=path/to/test,and/more/tests.
 You may set additional Beaker OPTIONS='--more --options'
