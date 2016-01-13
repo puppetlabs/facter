@@ -61,12 +61,12 @@ module HarnessOptions
   end
 end
 
-def hosts
-  if ENV['HOSTS']
-    ENV['HOSTS']
-  else
-    puts 'Warning: environment variable CONFIG deprecated. Please use HOSTS to match beaker options.'
-    ENV['CONFIG']
+def beaker_test(mode = :aio, options = {})
+  final_options = HarnessOptions.options(mode, options)
+
+  if mode == :git
+    final_options[:install] ||= []
+    final_options[:install] << "#{build_giturl('facter')}##{sha}"
   end
 end
 
@@ -230,14 +230,6 @@ If there is a Beaker options hash in a ./local_options.rb, it will be included. 
 EOS
 
     desc <<-EOS
-Run the acceptance tests through Beaker and install packages on the configuration targets (only facter versions <3.0)
-#{USAGE}
-EOS
-    task :packages do
-      beaker_test(:packages)
-    end
-
-    desc <<-EOS
 Run the acceptance tests through Beaker and install packages as part of the AIO puppet-agent installation.
 #{USAGE}
 EOS
@@ -288,8 +280,9 @@ Rerun an acceptance test using hosts_preserved.yaml to skip provisioning.
 Or specify a CONFIG_NUMBER from `rake ci:list_preserved`.
 Uses the setup/rsync/pre-suite to rsync the local puppet source onto master and agent.
 You may specify an RSYNC_FILTER_FILE as well.
-You may skip purgeing and reinstalling puppet packages by including SKIP_PACKAGE_REINSTALL.
-Defaults to a packages run, but you can set it to 'git' with TYPE='git'.
+You may skip purging and reinstalling puppet packages by including SKIP_PACKAGE_REINSTALL.
+You may skip rsyncing local puppet files over to the tests hosts by including SKIP_RSYNC.
+Defaults to an aio run, but you can set it to 'git' with TYPE='git'.
   EOS
   task :test_against_preserved_hosts do
     preserved = list_preserved_configurations
