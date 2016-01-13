@@ -61,7 +61,7 @@ SCENARIO("resolving external executable facts") {
         }
     }
     GIVEN("a relative path not on PATH") {
-        test_with_relative_path fixture("foo", "bar.bar", "");
+        test_with_relative_path fixture("foo", "bar.bat", "");
         THEN("the file cannot be resolved") {
             REQUIRE_FALSE(resolver.can_resolve("foo/bar.bat"));
         }
