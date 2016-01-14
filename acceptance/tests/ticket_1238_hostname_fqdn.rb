@@ -14,6 +14,7 @@ agents.each do |agent|
 
   step 'set hostname as fqdn' do
     on(agent, "hostname #{fqdn}")
+    sleep 1 # on Solaris 11 hostname returns before the hostname is updated
   end
 
   step 'validate facter honors fqdn' do
