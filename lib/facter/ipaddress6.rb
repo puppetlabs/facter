@@ -37,11 +37,12 @@ def get_address_after_token(output, token, return_first=false)
   ip
 end
 
+
 Facter.add(:ipaddress6) do
   confine :kernel => :linux
   setcode do
-    output = Facter::Util::IP.exec_ifconfig(["2>/dev/null"])
-    get_address_after_token(output, 'inet6(?: addr:)?')
+    iface = Facter::Util::IP.linux_default_iface
+    Facter.value("ipaddress6_#{iface}")
   end
 end
 
