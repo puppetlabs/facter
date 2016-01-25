@@ -16,16 +16,8 @@
 #
 require 'facter/util/netmask'
 
-Facter.add(:netmask) do
-  confine :kernel => :linux
-  setcode do
-    iface = Facter::Util::IP.linux_default_iface
-    Facter.value("netmask_#{iface}")
-  end
-end
-
 Facter.add("netmask") do
-  confine :kernel => [ :sunos, :freebsd, :openbsd, :netbsd, :darwin, :"gnu/kfreebsd", :dragonfly, :AIX ]
+  confine :kernel => [ :sunos, :linux, :freebsd, :openbsd, :netbsd, :darwin, :"gnu/kfreebsd", :dragonfly, :AIX ]
   setcode do
     Facter::NetMask.get_netmask
   end

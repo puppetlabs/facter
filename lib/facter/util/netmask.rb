@@ -5,6 +5,12 @@ module Facter::NetMask
 
     ops = nil
     case Facter.value(:kernel)
+    when 'Linux'
+      ops = {
+        :ifconfig_opts => ['2>/dev/null'],
+        :regex => %r{#{Facter.value(:ipaddress)}.*?(?:Mask:|netmask)\s*(#{ipregex})}x,
+        :munge => nil,
+      }
     when 'SunOS'
       ops = {
         :ifconfig_opts => ['-a'],
