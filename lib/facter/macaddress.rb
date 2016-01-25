@@ -12,10 +12,15 @@ require 'facter/util/macaddress'
 require 'facter/util/ip'
 
 Facter.add(:macaddress) do
-  confine :kernel => :linux
+  confine :kernel => 'Linux'
   setcode do
-    iface = Facter::Util::IP.linux_default_iface
-    Facter.value("macaddress_#{iface}")
+    ether = []
+    output = Facter::Util::IP.exec_ifconfig(["-a","2>/dev/null"])
+
+    String(output).each_line do |s|
+      ether.push($1) if s =~ /(?:ether|HWaddr) ((\w{1,2}:){5,}\w{1,2})/
+    end
+    Facter::Util::Macaddress.standardize(ether[0])
   end
 end
 
