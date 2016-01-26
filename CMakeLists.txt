@@ -150,3 +150,8 @@ else()
 endif()
 
 install(FILES ${PROJECT_SOURCE_DIR}/man/man8/facter.8 DESTINATION ${MANDIR})
+if (WIN32)
+  install(FILES ${PROJECT_SOURCE_DIR}/ext/windows/facter.bat DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+  install(FILES ${PROJECT_SOURCE_DIR}/ext/windows/facter_interactive.bat DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+  install(FILES ${PROJECT_SOURCE_DIR}/ext/windows/run_facter_interactive.bat DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+endif()
