@@ -150,7 +150,7 @@ module Facter::Memory
     when /AIX/i
       (Facter.value(:id) == "root") ? Facter::Core::Execution.exec('swap -l 2>/dev/null') : nil
     when /OpenBSD/i
-      Facter::Core::Execution.exec('swapctl -s')
+      Facter::Core::Execution.exec('swapctl -s 2>/dev/null')
     when /FreeBSD/i
       Facter::Core::Execution.exec('swapinfo -k')
     when /Darwin/i
