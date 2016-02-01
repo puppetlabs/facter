@@ -299,6 +299,7 @@ target_link_libraries(libfacter PRIVATE
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
     ${CURL_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 symbol_exports(libfacter "${CMAKE_CURRENT_LIST_DIR}/inc/facter/export.h")

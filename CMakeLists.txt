@@ -67,6 +67,9 @@ include(options)
 
 # We use program_options, system, filesystem, date_time, and regex directly.
 find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time regex)
+# date_time and regex need threads on some platforms, and find_package Boost only includes
+# pthreads if you require the Boost.Thread component.
+find_package(Threads)
 
 find_package(Ruby 1.9)
 
