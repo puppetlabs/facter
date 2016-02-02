@@ -125,6 +125,7 @@ target_link_libraries(libfacter_test
     ${OPENSSL_LIBRARIES}
     ${LEATHERMAN_LIBRARIES}
     ${CURL_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 # Generate a file containing the path to the fixtures
