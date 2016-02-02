@@ -179,7 +179,7 @@ describe "Memory facts" do
       Facter.fact(:kernel).stubs(:value).returns("OpenBSD")
 
       swapusage = "total: 4080510 512-blocks allocated, 461832 used, 3618678 available"
-      Facter::Core::Execution.stubs(:exec).with('swapctl -s').returns(swapusage)
+      Facter::Core::Execution.stubs(:exec).with('swapctl -s 2>/dev/null').returns(swapusage)
 
       Facter::Core::Execution.stubs(:exec).with('vmstat').returns(my_fixture_read('openbsd-vmstat'))
 
