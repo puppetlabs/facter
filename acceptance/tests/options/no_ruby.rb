@@ -1,4 +1,5 @@
 test_name "--no-ruby commandline option"
+confine :except, :platform => /cisco-7/
 
 require 'facter/acceptance/user_fact_utils'
 extend Facter::Acceptance::UserFactUtils

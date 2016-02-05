@@ -1,5 +1,5 @@
 test_name "#7039: Facter having issue handling multiple facts in a single file"
-confine :except, :platform => 'cisco-5'
+confine :except, :platform => /^cisco-/
 
 fact_file= %q{
 Facter.add(:test_fact1) do

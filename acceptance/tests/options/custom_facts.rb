@@ -1,5 +1,5 @@
 test_name "custom fact commandline options (--no-custom-facts and --custom-dir)"
-confine :except, :platform => 'cisco-5'
+confine :except, :platform => /^cisco-/
 
 require 'puppet/acceptance/common_utils'
 extend Puppet::Acceptance::CommandUtils
