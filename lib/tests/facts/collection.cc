@@ -373,7 +373,7 @@ SCENARIO("using the fact collection") {
             }
         }
         WHEN("a fact name contains dots") {
-            THEN("it not reqturn a value unless quoted") {
+            THEN("it not return a value unless quoted") {
                 REQUIRE_FALSE(facts.query("map.name.with.dots"));
             }
             THEN("it should return a value when quoted") {
