@@ -1,4 +1,5 @@
 #include <facter/util/string.hpp>
+#include <boost/regex.hpp>
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
@@ -111,6 +112,13 @@ namespace facter { namespace util {
     {
         // Empty strings should be quoted
         if (str.empty()) {
+            return true;
+        }
+
+        // Taken from http://yaml.org/type/bool.html.
+        // The string would be interpreted as a boolean, so quote it.
+        static boost::regex yaml_bool("y|Y|yes|Yes|YES|n|N|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF");
+        if (boost::regex_match(str, yaml_bool)) {
             return true;
         }
 
