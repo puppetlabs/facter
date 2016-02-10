@@ -230,4 +230,41 @@ SCENARIO("using a string fact value") {
             }
         }
     }
+
+    GIVEN("a boolean value") {
+        for (auto literal : {string("true"), string("false"), string("yes"), string("no")}) {
+            auto value = string_value(literal);
+
+            WHEN("serialized to JSON") {
+                THEN("it should have the same value") {
+                    json_value json;
+                    json_allocator allocator;
+                    value.to_json(allocator, json);
+                    REQUIRE(json.IsString());
+                    REQUIRE(json.GetString() == literal);
+                }
+            }
+            WHEN("serialized to YAML") {
+                THEN("it should be quoted") {
+                    Emitter emitter;
+                    value.write(emitter);
+                    REQUIRE(string(emitter.c_str()) == "\""+literal+"\"");
+                }
+            }
+            WHEN("serialized to text with quotes") {
+                THEN("it should be quoted") {
+                    ostringstream stream;
+                    value.write(stream);
+                    REQUIRE(stream.str() == "\""+literal+"\"");
+                }
+            }
+            WHEN("serialized to text without quotes") {
+                THEN("it should not be quoted") {
+                    ostringstream stream;
+                    value.write(stream, false);
+                    REQUIRE(stream.str() == literal);
+                }
+            }
+        }
+    }
 }

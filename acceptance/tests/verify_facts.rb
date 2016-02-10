@@ -29,7 +29,7 @@ def validate_fact(name, node, fact_value, hidden)
               # YAML-CPP seems to drop the decimal whenever it feels like it, so just match Int too.
               fact_value.is_a? Float or fact_value.is_a? Integer or fact_value.to_s =~ /^(\.inf|\.nan|-\.inf)$/
             when 'string'
-              fact_value.is_a? String or fact_value.is_a? TrueValue or fact_value.is_a? FalseValue
+              fact_value.is_a? String
             when 'ip'
               fact_value.is_a? String and fact_value =~ @ip_pattern
             when 'ip6'
