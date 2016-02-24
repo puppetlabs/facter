@@ -1,7 +1,7 @@
-require 'win32/security'
+require 'facter/util/windows'
 
 module Facter::Util::Root
   def self.root?
-    Win32::Security.elevated_security?
+    Facter::Util::Windows::User.admin?
   end
 end

@@ -43,6 +43,7 @@ mingw << :x64_mingw if Bundler::Dsl::VALID_PLATFORMS.include?(:x64_mingw)
 platform(*mingw) do
   gem 'ffi', '~> 1.9.5', :require => false
   gem 'win32-dir', '~> 0.4.8', :require => false
+  # Use of the win32-security gem is deprecated
   gem 'win32-security', '~> 0.2.5', :require => false
 end
 
