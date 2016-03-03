@@ -23,7 +23,6 @@ install:
   - ps: wget "https://github.com/puppetlabs/leatherman/releases/download/$env:LEATHERMAN_VERSION/leatherman.7z" -OutFile "$pwd\leatherman.7z"
   - ps: 7z.exe x leatherman.7z -oC:\tools | FIND /V "ing "
 
-  - gem install bundler --quiet --no-ri --no-rdoc
   - bundle install --jobs 4 --retry 2 --gemfile=lib/Gemfile --quiet
 
 build_script:
