@@ -1,8 +1,10 @@
 #include <internal/facts/linux/networking_resolver.hpp>
 #include <internal/util/posix/scoped_descriptor.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/file_util/file.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
+#include <algorithm>
 #include <cstring>
 #include <netpacket/packet.h>
 #include <net/if.h>
@@ -12,8 +14,17 @@ using namespace std;
 using namespace facter::util::posix;
 
 namespace lth_file = leatherman::file_util;
+namespace lth_exe  = leatherman::execution;
 
 namespace facter { namespace facts { namespace linux {
+
+    networking_resolver::data networking_resolver::collect_data(collection& facts)
+    {
+        read_routing_table();
+        data result = bsd::networking_resolver::collect_data(facts);
+        populate_from_routing_table(result);
+        return result;
+    }
 
     bool networking_resolver::is_link_address(sockaddr const* addr) const
     {
@@ -55,6 +66,13 @@ namespace facter { namespace facts { namespace linux {
 
     string networking_resolver::get_primary_interface() const
     {
+        // If we have a list of routes, then we'll determine the
+        // primary interface from that later on when we are processing
+        // them.
+        if (routes4.size()) {
+             return {};
+        }
+
         // Read /proc/net/route to determine the primary interface
         // We consider the primary interface to be the one that has 0.0.0.0 as the
         // routing destination.
@@ -71,4 +89,81 @@ namespace facter { namespace facts { namespace linux {
         return interface;
     }
 
+    void networking_resolver::read_routing_table()
+    {
+        auto ip_command = lth_exe::which("ip");
+        if (ip_command.empty()) {
+            LOG_DEBUG("Could not find the 'ip' command. Network bindings will not be populated from routing table");
+            return;
+        }
+
+        auto parse_route_line = [](string& line, std::vector<route>& routes) {
+            vector<boost::iterator_range<string::iterator>> parts;
+            boost::split(parts, line, boost::is_space(), boost::token_compress_on);
+            if (parts.size() % 2 != 1) {
+                LOG_WARNING("Could not process routing table entry: Expected a destination followed by key/value pairs, got '%1%'", line);
+                return true;
+            }
+
+            route r;
+            r.destination.assign(parts[0].begin(), parts[0].end());
+            // Iterate over key/value pairs and add the ones we care
+            // about to our routes entries
+            for (size_t i = 1; i < parts.size(); i += 2) {
+                std::string key(parts[i].begin(), parts[i].end());
+                if (key == "dev") {
+                    r.interface.assign(parts[i+1].begin(), parts[i+1].end());
+                }
+                if (key == "src") {
+                    r.source.assign(parts[i+1].begin(), parts[i+1].end());
+                }
+            }
+            routes.push_back(r);
+            return true;
+        };
+
+        lth_exe::each_line(ip_command, { "route", "show" }, [this, &parse_route_line](string& line) {
+            return parse_route_line(line, this->routes4);
+        });
+        lth_exe::each_line(ip_command, { "-6", "route", "show" }, [this, &parse_route_line](string& line) {
+            return parse_route_line(line, this->routes6);
+        });
+    }
+
+    void networking_resolver::populate_from_routing_table(networking_resolver::data& result) const
+    {
+        for (const auto& r : routes4) {
+            if (r.destination == "default" && result.primary_interface.empty()) {
+                 result.primary_interface = r.interface;
+            }
+            associate_src_with_iface(r, result, [](interface& iface) -> vector<binding>& {
+                return iface.ipv4_bindings;
+            });
+        }
+
+        for (const auto& r : routes6) {
+            associate_src_with_iface(r, result, [](interface& iface) -> vector<binding>& {
+                return iface.ipv6_bindings;
+            });
+        }
+    }
+
+    template<typename F>
+    void networking_resolver::associate_src_with_iface(const networking_resolver::route& r, networking_resolver::data& result, F get_bindings) const {
+        if (!r.source.empty()) {
+            auto iface = find_if(result.interfaces.begin(), result.interfaces.end(), [&](const interface& iface) {
+                return iface.name == r.interface;
+            });
+            if (iface != result.interfaces.end()) {
+                auto& bindings = get_bindings(*iface);
+                auto existing_binding = find_if(bindings.begin(), bindings.end(), [&](const binding& b) {
+                    return b.address == r.source;
+                });
+                if (existing_binding == bindings.end()) {
+                    binding b = { r.source, "", "" };
+                    bindings.emplace_back(move(b));
+                }
+            }
+        }
+    }
 }}}  // namespace facter::facts::linux
