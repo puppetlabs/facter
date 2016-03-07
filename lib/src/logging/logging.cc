@@ -12,7 +12,7 @@ static void setup_logging_internal(ostream& os)
 {
     // Initialize boost filesystem's locale to a UTF-8 default.
     // Logging gets setup the same way via the default 2nd argument.
-#if (!defined(__sun) && !defined(_AIX)) || !defined(__GNUC__)
+#ifdef LEATHERMAN_USE_LOCALES
     // Locale support in GCC on Solaris is busted, so skip it.
     boost::filesystem::path::imbue(leatherman::locale::get_locale());
 #endif
