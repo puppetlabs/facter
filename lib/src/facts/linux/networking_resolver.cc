@@ -6,6 +6,7 @@
 #include <boost/algorithm/string.hpp>
 #include <algorithm>
 #include <cstring>
+#include <unordered_set>
 #include <netpacket/packet.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
@@ -97,19 +98,36 @@ namespace facter { namespace facts { namespace linux {
             return;
         }
 
-        auto parse_route_line = [](string& line, std::vector<route>& routes) {
+        unordered_set<string> known_route_types {
+            "unicast",
+            "broadcast",
+            "local",
+            "nat",
+            "unreachable",
+            "prohibit",
+            "blackhole",
+            "throw"
+        };
+
+        auto parse_route_line = [&known_route_types](string& line, std::vector<route>& routes) {
             vector<boost::iterator_range<string::iterator>> parts;
             boost::split(parts, line, boost::is_space(), boost::token_compress_on);
-            if (parts.size() % 2 != 1) {
-                LOG_WARNING("Could not process routing table entry: Expected a destination followed by key/value pairs, got '%1%'", line);
-                return true;
+            size_t dst_idx = 0;
+            if (parts.size() % 2 == 0) {
+                std::string route_type(parts[0].begin(), parts[0].end());
+                if (known_route_types.find(route_type) == known_route_types.end()) {
+                    LOG_WARNING("Could not process routing table entry: Expected a destination followed by key/value pairs, got '%1%'", line);
+                    return true;
+                } else {
+                    dst_idx = 1;
+                }
             }
 
             route r;
-            r.destination.assign(parts[0].begin(), parts[0].end());
+            r.destination.assign(parts[dst_idx].begin(), parts[dst_idx].end());
             // Iterate over key/value pairs and add the ones we care
             // about to our routes entries
-            for (size_t i = 1; i < parts.size(); i += 2) {
+            for (size_t i = dst_idx+1; i < parts.size(); i += 2) {
                 std::string key(parts[i].begin(), parts[i].end());
                 if (key == "dev") {
                     r.interface.assign(parts[i+1].begin(), parts[i+1].end());
