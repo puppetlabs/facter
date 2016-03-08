@@ -111,6 +111,10 @@ namespace facter { namespace facts { namespace linux {
          * Release file for AristaEOS.
          */
         constexpr static char const* arista_eos = "/etc/Eos-release";
+        /**
+         * Release file for HuaweiOS.
+         */
+        constexpr static char const* huawei = "/etc/huawei-release";
     };
 
 }}}  // namespace facter::facts::linux
