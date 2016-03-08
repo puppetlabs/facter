@@ -46,7 +46,14 @@ Facter.define_fact(:ec2_userdata) do
     end
 
     setcode do
-      @querier.fetch
+      userdata = @querier.fetch
+      begin
+        Facter::Util::Normalization.normalize_string(userdata)
+      rescue Facter::Util::Normalization::NormalizationError => e
+        Facter.debug("Failed to read ec2 userdata: #{e.message}")
+        userdata = nil
+      end
+      userdata
     end
   end
 end
