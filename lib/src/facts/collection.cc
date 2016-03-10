@@ -125,9 +125,9 @@ namespace facter { namespace facts {
         // If dir is relative, make it an absolute path before passing to can_resolve.
         bool found = false;
         boost::system::error_code ec;
-        path search_dir = canonical(dir, ec);
+        path search_dir = absolute(dir);
 
-        if (ec || !is_directory(search_dir, ec)) {
+        if (!is_directory(search_dir, ec)) {
             // Warn the user if not using the default search directories
             string msg = ec ? ec.message() : "not a directory";
             if (warn) {
