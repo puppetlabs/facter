@@ -23,7 +23,9 @@ module Facter
 
       def get_osfamily
         case get_operatingsystem
-        when "RedHat", "Fedora", "CentOS", "Scientific", "SLC", "Ascendos", "CloudLinux", "PSBM", "OracleLinux", "OVS", "OEL", "Amazon", "XenServer"
+        when "RedHat", "Fedora", "CentOS", "Scientific", "SLC", "Ascendos",
+             "CloudLinux", "PSBM", "OracleLinux", "OVS", "OEL", "Amazon",
+             "XenServer", "VirtuozzoLinux"
           "RedHat"
         when "LinuxMint", "Ubuntu", "Debian"
           "Debian"
@@ -51,7 +53,8 @@ module Facter
         when "BlueWhite64"
           get_bluewhite_release_with_release_file
         when "CentOS", "RedHat", "Scientific", "SLC", "Ascendos", "CloudLinux", "PSBM",
-             "XenServer", "Fedora", "MeeGo", "OracleLinux", "OEL", "oel", "OVS", "ovs"
+             "XenServer", "Fedora", "MeeGo", "OracleLinux", "OEL", "oel", "OVS", "ovs",
+             "VirtuozzoLinux"
           get_redhatish_release_with_release_file
         when "Debian"
           get_debian_release_with_release_file
@@ -291,13 +294,14 @@ module Facter
       def get_redhat_operatingsystem_name
         txt = File.read("/etc/redhat-release")
         matches = {
-          "CentOS"     => "centos",
-          "Scientific" => "Scientific",
-          "CloudLinux" => "^cloudlinux",
-          "PSBM"       => "^Parallels Server Bare Metal",
-          "Ascendos"   => "Ascendos",
-          "XenServer"  => "^XenServer",
-          "XCP"        => "XCP"
+          "CentOS"         => "centos",
+          "Scientific"     => "Scientific",
+          "CloudLinux"     => "^cloudlinux",
+          "PSBM"           => "^Parallels Server Bare Metal",
+          "Ascendos"       => "Ascendos",
+          "XenServer"      => "^XenServer",
+          "XCP"            => "XCP",
+          "VirtuozzoLinux" => "^VirtuozzoLinux"
         }
 
         if txt =~ /CERN/
@@ -381,7 +385,8 @@ module Facter
 
       def get_redhatish_release_with_release_file
         case get_operatingsystem
-        when "CentOS", "RedHat", "Scientific", "SLC", "Ascendos", "CloudLinux", "PSBM", "XenServer"
+        when "CentOS", "RedHat", "Scientific", "SLC", "Ascendos", "CloudLinux",
+             "PSBM", "XenServer", "VirtuozzoLinux"
           releasefile = "/etc/redhat-release"
         when "Fedora"
           releasefile = "/etc/fedora-release"
