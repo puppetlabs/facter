@@ -3,7 +3,7 @@ confine :except, :platform => 'windows'
 agents.each do |host|
   step 'set an invalid value for locale and run facter'
   result = on host, 'LANG=ABCD facter facterversion'
-  if host['platform'] !~ /solaris|aix|cumulus/
+  if host['platform'] !~ /solaris|aix|cumulus|osx|cisco/
     fail_test 'facter did not warn about the locale' unless
       result.stderr.include? 'locale environment variables were bad; continuing with LANG=C'
   end

@@ -20,6 +20,13 @@ namespace facter { namespace facts { namespace linux {
     {
      protected:
         /**
+         * Collects the resolver data.
+         * @param facts The fact collection that is resolving facts.
+         * @return Returns the resolver data.
+         */
+        virtual data collect_data(collection& facts) override;
+
+        /**
          * Determines if the given sock address is a link layer address.
          * @param addr The socket address to check.
          * @returns Returns true if the socket address is a link layer address or false if it is not.
@@ -47,6 +54,24 @@ namespace facter { namespace facts { namespace linux {
          * @return Returns the primary interface or empty string if one could not be determined.
          */
         virtual std::string get_primary_interface() const override;
+
+     private:
+        struct route {
+            // In actuality routes are a destination associated with a
+            // bunch of key-value pairs, but we only require a couple
+            // of those values for our processing of network devices.
+            std::string destination;
+            std::string interface;
+            std::string source;
+        };
+
+        void read_routing_table();
+        void populate_from_routing_table(data&) const;
+        template <typename appender>
+        void associate_src_with_iface(const route&, data&, appender) const;
+
+        std::vector<route> routes4;
+        std::vector<route> routes6;
     };
 
 }}}  // namespace facter::facts::linux
