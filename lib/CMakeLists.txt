@@ -307,13 +307,8 @@ symbol_exports(libfacter "${CMAKE_CURRENT_LIST_DIR}/inc/facter/export.h")
 leatherman_install(libfacter)
 install(DIRECTORY inc/facter DESTINATION include)
 
-# Always generate facter.rb and spec_helper.rb, as they might be used in packaging
+# Always generate spec_helper.rb, as they might be used in packaging
 # and testing on another machine.
-configure_file (
-    "facter.rb.in"
-    "${CMAKE_BINARY_DIR}/lib/facter.rb"
-)
-
 # Generate a file for ruby testing
 configure_file (
     "spec_helper.rb.in"
@@ -343,6 +338,12 @@ else()
 endif()
 
 if(RUBY_VENDORDIR)
+    file(RELATIVE_PATH LIBFACTER_INSTALL_RELATIVE ${RUBY_VENDORDIR} ${CMAKE_INSTALL_PREFIX})
+    configure_file (
+        "facter.rb.in"
+        "${CMAKE_BINARY_DIR}/lib/facter.rb"
+    )
+
     message(STATUS "\"make install\" will install facter.rb to ${RUBY_VENDORDIR}")
     install(FILES ${CMAKE_BINARY_DIR}/lib/facter.rb DESTINATION ${RUBY_VENDORDIR})
 
