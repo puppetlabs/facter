@@ -41,6 +41,16 @@ describe "Per Interface IP facts" do
     fact = Facter.fact("macaddress_net0".intern)
     fact.value.should eq("00:12:34:56:78:90")
   end
+
+  it "should support ipv6 address starting by [180ef]" do
+    Facter.fact(:kernel).stubs(:value).returns("Linux")
+    Facter::Util::IP.stubs(:exec_ifconfig) \
+      .returns(my_fixture_read('ifconfig_net_tools_1.60_v6.txt'))
+    Facter.collection.internal_loader.load(:interfaces)
+    Facter.fact('ipaddress6_em1'.intern).value \
+      .should eq('1610:10:20:209:212:3fff:febe:2201')
+  end
+
 end
 
 describe "Netmask and MTU handling on Linux" do
