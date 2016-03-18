@@ -405,7 +405,7 @@ SCENARIO("using the networking resolver") {
                 REQUIRE(mtu->value() == i);
                 auto bindings = interface->get<array_value>("bindings");
                 REQUIRE(bindings);
-                REQUIRE(bindings->size() == 2);
+                REQUIRE(bindings->size() == 2u);
                 for (size_t binding_index = 0; binding_index < bindings->size(); ++binding_index) {
                     auto interface_num = to_string(binding_index);
                     auto binding = bindings->get<map_value>(binding_index);
@@ -422,7 +422,7 @@ SCENARIO("using the networking resolver") {
                 }
                 bindings = interface->get<array_value>("bindings6");
                 REQUIRE(bindings);
-                REQUIRE(bindings->size() == 2);
+                REQUIRE(bindings->size() == 2u);
                 for (size_t binding_index = 0; binding_index < bindings->size(); ++binding_index) {
                     auto interface_num = to_string(binding_index);
                     auto binding = bindings->get<map_value>(binding_index);

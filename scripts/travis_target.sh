@@ -39,9 +39,9 @@ if [ ${TRAVIS_TARGET} == COMMITS ]; then
   done
   exit 0
 elif [ ${TRAVIS_TARGET} == DEBUG ]; then
-  cmake -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=ON .
+  cmake -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=ON -DCMAKE_PREFIX_PATH=$USERDIR .
 else
-  cmake .
+  cmake -DCMAKE_PREFIX_PATH=$USERDIR .
 fi
 
 if [ ${TRAVIS_TARGET} == CPPLINT ]; then

@@ -19,7 +19,11 @@ namespace facter { namespace facts {
      * @tparam T The underlying scalar type.
      */
     template <typename T>
+#if __clang__ || (__GNUC__ >= 5)  // Currently limited to Clang and GCC 5 builds until we can minimally target GCC 5
+    struct LIBFACTER_EXPORT scalar_value : value
+#else
     struct scalar_value : value
+#endif
     {
         /**
          * Constructs a scalar_value.

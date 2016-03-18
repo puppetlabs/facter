@@ -17,10 +17,7 @@ Build Requirements
 * CMake >= 3.2.2
 * Boost C++ Libraries >= 1.54
 * yaml-cpp >= 0.5.1
-
-Currently the leatherman library is vendored as a git submodule.  To ensure submodules are initialized, please run:
-
-**`git submodule update --init`**
+* [leatherman](https://github.com/puppetlabs/leatherman) >= 0.3.4
 
 Optional Build Libraries
 ------------------------
@@ -34,15 +31,13 @@ Initial Setup
 
 Note: Testing custom facts requires Ruby 1.9+ with libruby built as a dynamic library; that often implies development builds of Ruby.
 
-### Setup on Fedora 20
+### Setup on Fedora 23
 
 The following will install all required tools and libraries:
 
-    yum install boost-devel openssl-devel yaml-cpp-devel libblkid-devel libcurl-devel gcc-c++ make wget tar
-    wget http://www.cmake.org/files/v3.2/cmake-3.2.3-Linux-x86_64.tar.gz
-    tar xzvf cmake-3.2.3-Linux-x86_64.tar.gz --strip 1 -C /usr/local
+    yum install boost-devel openssl-devel yaml-cpp-devel libblkid-devel libcurl-devel gcc-c++ make wget tar cmake
 
-### Setup on Mac OSX Mavericks (homebrew)
+### Setup on Mac OSX El Capitan (homebrew)
 
 This assumes Clang is installed and the system OpenSSL libraries will be used.
 
@@ -50,13 +45,11 @@ The following will install all required libraries:
 
     brew install cmake boost yaml-cpp
 
-### Setup on Ubuntu 14.04 (Trusty)
+### Setup on Ubuntu 15.10 (Trusty)
 
 The following will install most required tools and libraries:
 
-    apt-get install build-essential libboost-all-dev libssl-dev libyaml-cpp-dev libblkid-dev libcurl4-openssl-dev wget tar
-    wget http://www.cmake.org/files/v3.2/cmake-3.2.3-Linux-x86_64.tar.gz
-    tar xzvf cmake-3.2.3-Linux-x86_64.tar.gz --strip 1 -C /usr/local
+    apt-get install build-essential libboost-all-dev libssl-dev libyaml-cpp-dev libblkid-dev libcurl4-openssl-dev wget tar cmake
 
 ### Setup on Windows
 
@@ -119,6 +112,9 @@ In Powershell:
 
 Note that OpenSSL isn't needed on Windows.
 
+### Build and install Leatherman
+
+[Leatherman](https://github.com/puppetlabs/leatherman) is built similar to the Pre-Build instructions below. If building on Windows, install to the same `$install` location used for other dependencies.
 
 Pre-Build
 ---------

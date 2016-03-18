@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.2.2)
 
 set(LIBFACTER_VERSION_MAJOR 3)
 set(LIBFACTER_VERSION_MINOR 1)
-set(LIBFACTER_VERSION_PATCH 5)
+set(LIBFACTER_VERSION_PATCH 6)
 
 # Get the HEAD SHA1 commit message
 get_commit_string(LIBFACTER_COMMIT)
@@ -299,18 +299,10 @@ target_link_libraries(libfacter PRIVATE
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
     ${CURL_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
 )
 
-# Generate the export header
-include(GenerateExportHeader)
-generate_export_header(libfacter EXPORT_FILE_NAME "${CMAKE_CURRENT_LIST_DIR}/inc/facter/export.h")
-
-if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
-    add_compiler_export_flags()
-elseif (WIN32)
-    add_compiler_export_flags()
-    add_definitions("-Dlibfacter_EXPORTS")
-endif()
+symbol_exports(libfacter "${CMAKE_CURRENT_LIST_DIR}/inc/facter/export.h")
 
 leatherman_install(libfacter)
 install(DIRECTORY inc/facter DESTINATION include)

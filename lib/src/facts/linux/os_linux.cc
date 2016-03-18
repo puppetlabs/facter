@@ -46,6 +46,10 @@ namespace facter { namespace facts { namespace linux {
     {
         // Check for Debian variants
         bs::error_code ec;
+        if (is_regular_file(release_file::huawei, ec)) {
+          return os::huawei;
+        }
+
         if (is_regular_file(release_file::debian, ec)) {
             if (distro_id == os::ubuntu || distro_id == os::linux_mint) {
                 return distro_id;
@@ -206,6 +210,7 @@ namespace facter { namespace facts { namespace linux {
             { string(os::oracle_enterprise_linux),  string(os_family::redhat) },
             { string(os::amazon),                   string(os_family::redhat) },
             { string(os::xen_server),               string(os_family::redhat) },
+            { string(os::huawei),                   string(os_family::debian) },
             { string(os::linux_mint),               string(os_family::debian) },
             { string(os::ubuntu),                   string(os_family::debian) },
             { string(os::debian),                   string(os_family::debian) },
@@ -273,6 +278,12 @@ namespace facter { namespace facts { namespace linux {
         // Alpine uses the entire contents of the release file as the version
         if (value.empty() && name == os::alpine) {
             value = lth_file::read(release_file::alpine);
+            boost::trim_right(value);
+        }
+
+        // HuaweiOS uses the entire contents of the release file as the version
+        if (value.empty() && name == os::huawei) {
+            value = lth_file::read(release_file::huawei);
             boost::trim_right(value);
         }
 

@@ -17,6 +17,11 @@ include_directories(
 )
 
 add_executable(facter ${FACTER_SOURCES})
-target_link_libraries(facter libfacter ${Boost_PROGRAM_OPTIONS_LIBRARY} ${LEATHERMAN_UTIL_LIB} ${LEATHERMAN_NOWIDE_LIB})
+target_link_libraries(facter libfacter
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    ${LEATHERMAN_UTIL_LIB}
+    ${LEATHERMAN_NOWIDE_LIB}
+    ${CMAKE_THREAD_LIBS_INIT} # fix until Leatherman switches to private dependencies
+)
 
 leatherman_install(facter)

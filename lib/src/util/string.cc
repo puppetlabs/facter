@@ -1,4 +1,5 @@
 #include <facter/util/string.hpp>
+#include <boost/regex.hpp>
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
@@ -114,26 +115,40 @@ namespace facter { namespace util {
             return true;
         }
 
-        // Check that it doesn't start with the ':' special character. This interferes with parsing.
-        if (str[0] == ':') {
+        // Taken from http://yaml.org/type/bool.html.
+        // The string would be interpreted as a boolean, so quote it.
+        static boost::regex yaml_bool("y|Y|yes|Yes|YES|n|N|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF");
+        if (boost::regex_match(str, yaml_bool)) {
             return true;
         }
 
-        // Poor man's check for a numerical string
+        // A string starting with the ':' special character interferes with parsing.
+        // Other string patterns containing ':' can be unexpectedly parsed as sexagesimal.
+        // To be safe quote all strings that contain ':' characters.
+        if (str.find(':') != string::npos) {
+            return true;
+        }
+
+        // Poor man's check for a numerical string or list of numbers
         // May start with - or +
-        // May contain at most one . or ,
+        // May contain one . and one or more ,
         // All other characters should be digits
-        bool has_separator = false;
+        // Note: Ruby YAML interprets 1,2,3 as a number, but not 1.2.3.
+        // It doesn't appear to honor locales when parsing YAML.
+        bool has_dot = false;
         for (size_t i = 0; i < str.size(); ++i) {
             char c = str[i];
             if (i == 0 && (c == '+' || c == '-')) {
                 continue;
             }
-            if (c == '.' || c == ',') {
-                if (has_separator) {
+            if (c == ',') {
+                continue;
+            }
+            if (c == '.') {
+                if (has_dot) {
                     return false;
                 }
-                has_separator = true;
+                has_dot = true;
                 continue;
             }
             if (!isdigit(c)) {

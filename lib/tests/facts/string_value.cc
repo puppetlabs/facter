@@ -162,4 +162,109 @@ SCENARIO("using a string fact value") {
             }
         }
     }
+
+    GIVEN("a valid mac address") {
+        string_value value("00:50:56:55:42:45");
+        WHEN("serialized to JSON") {
+            THEN("it should have the same value") {
+                json_value json;
+                json_allocator allocator;
+                value.to_json(allocator, json);
+                REQUIRE(json.IsString());
+                REQUIRE(json.GetString() == string("00:50:56:55:42:45"));
+            }
+        }
+        WHEN("serialized to YAML") {
+            THEN("it should be quoted") {
+                Emitter emitter;
+                value.write(emitter);
+                REQUIRE(string(emitter.c_str()) == "\"00:50:56:55:42:45\"");
+            }
+        }
+        WHEN("serialized to text with quotes") {
+            THEN("it should be quoted") {
+                ostringstream stream;
+                value.write(stream);
+                REQUIRE(stream.str() == "\"00:50:56:55:42:45\"");
+                }
+            }
+        WHEN("serialized to text without quotes") {
+            THEN("it should not be quoted") {
+                ostringstream stream;
+                value.write(stream, false);
+                REQUIRE(stream.str() == "00:50:56:55:42:45");
+            }
+        }
+    }
+
+    GIVEN("a list of numbers") {
+        string_value value("1,2,3,4,5");
+        WHEN("serialized to JSON") {
+            THEN("it should have the same value") {
+                json_value json;
+                json_allocator allocator;
+                value.to_json(allocator, json);
+                REQUIRE(json.IsString());
+                REQUIRE(json.GetString() == string("1,2,3,4,5"));
+            }
+        }
+        WHEN("serialized to YAML") {
+            THEN("it should be quoted") {
+                Emitter emitter;
+                value.write(emitter);
+                REQUIRE(string(emitter.c_str()) == "\"1,2,3,4,5\"");
+            }
+        }
+        WHEN("serialized to text with quotes") {
+            THEN("it should be quoted") {
+                ostringstream stream;
+                value.write(stream);
+                REQUIRE(stream.str() == "\"1,2,3,4,5\"");
+                }
+            }
+        WHEN("serialized to text without quotes") {
+            THEN("it should not be quoted") {
+                ostringstream stream;
+                value.write(stream, false);
+                REQUIRE(stream.str() == "1,2,3,4,5");
+            }
+        }
+    }
+
+    GIVEN("a boolean value") {
+        for (auto literal : {string("true"), string("false"), string("yes"), string("no")}) {
+            auto value = string_value(literal);
+
+            WHEN("serialized to JSON") {
+                THEN("it should have the same value") {
+                    json_value json;
+                    json_allocator allocator;
+                    value.to_json(allocator, json);
+                    REQUIRE(json.IsString());
+                    REQUIRE(json.GetString() == literal);
+                }
+            }
+            WHEN("serialized to YAML") {
+                THEN("it should be quoted") {
+                    Emitter emitter;
+                    value.write(emitter);
+                    REQUIRE(string(emitter.c_str()) == "\""+literal+"\"");
+                }
+            }
+            WHEN("serialized to text with quotes") {
+                THEN("it should be quoted") {
+                    ostringstream stream;
+                    value.write(stream);
+                    REQUIRE(stream.str() == "\""+literal+"\"");
+                }
+            }
+            WHEN("serialized to text without quotes") {
+                THEN("it should not be quoted") {
+                    ostringstream stream;
+                    value.write(stream, false);
+                    REQUIRE(stream.str() == literal);
+                }
+            }
+        }
+    }
 }
