@@ -12,8 +12,7 @@
 #include <fcntl.h>
 #include <sys/vfs.h>
 #include <sys/statvfs.h>
-#include <set>
-#include <map>
+#include <unordered_set>
 
 using namespace std;
 using namespace facter::facts;
@@ -41,6 +40,8 @@ namespace facter { namespace facts { namespace solaris {
         }
 
         mnttab entry;
+        unordered_set<string> auto_home_paths;
+        vector<mountpoint> mountpoints;
         while (getmntent(file, &entry) == 0) {
             mountpoint point;
 
@@ -50,12 +51,28 @@ namespace facter { namespace facts { namespace solaris {
                 point.available = stats.f_frsize * stats.f_bfree;
             }
 
+            if (entry.mnt_special == string("auto_home")) {
+                auto_home_paths.emplace(entry.mnt_mountp);
+                continue;
+            } else if (entry.mnt_fstype == string("autofs")) {
+                continue;
+            }
+
             point.name = entry.mnt_mountp;
             point.device = entry.mnt_special;
             point.filesystem = entry.mnt_fstype;
             boost::split(point.options, entry.mnt_mntopts, boost::is_any_of(","), boost::token_compress_on);
 
-            result.mountpoints.emplace_back(move(point));
+            mountpoints.emplace_back(move(point));
+        }
+
+        for (auto& point : mountpoints) {
+            auto mount_parent = point.name.substr(0, point.name.find_last_of('/'));
+
+            // Only add entries that are not mounted from an auto_home setup
+            if (auto_home_paths.count(mount_parent) == 0) {
+                result.mountpoints.emplace_back(move(point));
+            }
         }
     }
 
