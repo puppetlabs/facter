@@ -27,14 +27,8 @@ module Facter
   else
     # Simply require libfacter.so; this will define all of the Facter API
     begin
-      # This is a cmake pre-processor check.  On *nix it will end up '' == '1'
-      # On windows, where we want the changes it will be '1' == '1'
-      if '${WIN32}' == '1'
-        facter_root = File.expand_path("#{File.dirname(__FILE__)}/..")
-        ENV['PATH'] = "#{File.join(facter_root, 'bin')}#{File::PATH_SEPARATOR}#{ENV['PATH']}"
-        ENV['FACTERDIR'] ||= facter_root
-      end
-      require "#{ENV['FACTERDIR'] || '${CMAKE_INSTALL_PREFIX}'}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so"
+      facter_dir = File.join(File.expand_path("#{File.dirname(__FILE__)}"), '${LIBFACTER_INSTALL_RELATIVE}')
+      require "#{ENV['FACTERDIR'] || facter_dir}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so"
     rescue LoadError
       raise LoadError.new('libfacter was not found. Please make sure it was installed to the expected location.')
     end
