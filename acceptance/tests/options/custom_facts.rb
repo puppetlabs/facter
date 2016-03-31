@@ -1,4 +1,5 @@
 test_name "custom fact commandline options (--no-custom-facts and --custom-dir)"
+confine :except, :platform => 'cisco_nexus' # see BKR-749
 
 require 'puppet/acceptance/common_utils'
 extend Puppet::Acceptance::CommandUtils
