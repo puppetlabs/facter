@@ -81,7 +81,8 @@ namespace facter { namespace facts { namespace linux {
         lth_file::each_line("/proc/net/route", [&interface](string& line) {
             vector<boost::iterator_range<string::iterator>> parts;
             boost::split(parts, line, boost::is_space(), boost::token_compress_on);
-            if (parts.size() > 1 && parts[1] == boost::as_literal("00000000")) {
+            if (parts.size() > 7 && parts[1] == boost::as_literal("00000000")
+                                 && parts[7] == boost::as_literal("00000000")) {
                 interface.assign(parts[0].begin(), parts[0].end());
                 return false;
             }
