@@ -22,6 +22,8 @@ when /solaris/
     else
       ruby_platform = /i386-solaris[\d.]+/
     end
+when /cisco_ios_xr/
+    ruby_platform = /x86_64-linux/
 else
   if agent['ruby_arch']
     ruby_platform = agent['ruby_arch'] == 'x64' ? 'x86_64-linux' : /i(4|6)86-linux/

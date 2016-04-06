@@ -1,4 +1,5 @@
 test_name "verify facts match the schema"
+confine :except, :platform => 'cisco_ios_xr'
 
 require 'yaml'
 require 'set'
