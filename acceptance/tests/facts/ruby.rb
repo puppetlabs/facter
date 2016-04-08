@@ -24,6 +24,8 @@ when /solaris/
     end
 when /cisco_ios_xr/
     ruby_platform = /x86_64-linux/
+when /huaweios/
+    ruby_platform = /powerpc-linux/
 else
   if agent['ruby_arch']
     ruby_platform = agent['ruby_arch'] == 'x64' ? 'x86_64-linux' : /i(4|6)86-linux/
