@@ -4,6 +4,12 @@
 #include <iostream>
 #include <sstream>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#include <boost/thread/thread.hpp>
+#include <boost/chrono/duration.hpp>
+#pragma GCC diagnostic pop
+
 using namespace std;
 using namespace boost::filesystem;
 
@@ -45,6 +51,11 @@ namespace facter { namespace testing {
     {
         if (!_dir.empty()) {
             remove_all(_dir);
+            // Wait for at most 5 seconds to ensure the directory is destroyed.
+            int count = 50;
+            while (exists(_dir) && --count > 0) {
+                boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+            }
         }
     }
 

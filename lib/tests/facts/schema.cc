@@ -42,6 +42,7 @@ using namespace std;
 using namespace facter::facts;
 using namespace leatherman::util;
 using namespace facter::testing;
+using Catch::Matchers::AnyOf;
 
 // For every base resolver, implement a resolver that outputs the minimum values to pass schema validation
 // We don't care about the actual data in the facts, only that it conforms to the schema
