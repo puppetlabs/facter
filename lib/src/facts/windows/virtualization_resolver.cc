@@ -27,6 +27,7 @@ namespace facter { namespace facts { namespace windows {
             make_tuple("VMware",            string(vm::vmware)),
             make_tuple("KVM",               string(vm::kvm)),
             make_tuple("Bochs",             string(vm::bochs)),
+            make_tuple("Google",            string(vm::gce)),
         };
 
         auto vals = _wmi->query(wmi::computersystem, {wmi::manufacturer, wmi::model});
