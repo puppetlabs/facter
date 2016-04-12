@@ -69,6 +69,7 @@ namespace facter { namespace facts { namespace linux {
         void populate_from_routing_table(data&) const;
         template <typename appender>
         void associate_src_with_iface(const route&, data&, appender) const;
+        std::string get_bond_master(const std::string& name) const;
 
         std::vector<route> routes4;
         std::vector<route> routes6;

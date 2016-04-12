@@ -24,6 +24,35 @@ namespace facter { namespace facts { namespace linux {
         read_routing_table();
         data result = bsd::networking_resolver::collect_data(facts);
         populate_from_routing_table(result);
+
+        // On linux, the macaddress of bonded interfaces is reported
+        // as the address of the bonding master. We want to report the
+        // original HW address, so we dig it out of /proc
+        for (auto& interface : result.interfaces) {
+            // For each interface we check if we're part of a bond,
+            // and update the `macaddress` fact if we are
+            auto bond_master = get_bond_master(interface.name);
+            if (!bond_master.empty()) {
+                bool in_our_block = false;
+                lth_file::each_line("/proc/net/bonding/"+bond_master, [&](string& line) {
+                    // /proc/net/bonding files are organized into chunks for each slave
+                    // interface. We want to grab the mac address for the block we're in.
+                    if (line == "Slave Interface: " + interface.name) {
+                        in_our_block = true;
+                    } else if (line.find("Slave Interface") != string::npos) {
+                        in_our_block = false;
+                    }
+
+                    // If we're in the block for our iface, we can grab the HW address
+                    if (in_our_block && line.find("Permanent HW addr: ") != string::npos) {
+                        auto split = line.find(':') + 2;
+                        interface.macaddress = line.substr(split, string::npos);
+                        return false;
+                    }
+                    return true;
+                });
+            }
+        }
         return result;
     }
 
@@ -183,5 +212,46 @@ namespace facter { namespace facts { namespace linux {
                 }
             }
         }
+    }
+
+    string networking_resolver::get_bond_master(const std::string& name) const {
+        static bool have_logged_about_bonding = false;
+        auto ip_command = lth_exe::which("ip");
+        if (ip_command.empty()) {
+            if (!have_logged_about_bonding) {
+                 LOG_DEBUG("Could not find the 'ip' command. Physical macaddress for bonded interfaces will be incorrect.");
+                 have_logged_about_bonding = true;
+            }
+            return {};
+        }
+
+        string bonding_master;
+
+        lth_exe::each_line(ip_command, {"link", "show", name}, [&bonding_master](string& line) {
+            if (line.find("SLAVE") != string::npos) {
+                vector<boost::iterator_range<string::iterator>> parts;
+                boost::split(parts, line, boost::is_space(), boost::token_compress_on);
+
+                // We have to use find_if here since a boost::iterator_range doesn't compare properly to a string.
+                auto master = find_if(parts.begin(), parts.end(), [](boost::iterator_range<string::iterator>& part){
+                    string p {part.begin(), part.end()};
+                    return p == "master";
+                });
+
+                // the actual master interface is in the output as
+                // "master <iface>". Once we've found the master
+                // string above, we get the next token and return that
+                // as our interface device.
+                if (master != parts.end()) {
+                    auto master_iface = master + 1;
+                    if (master_iface != parts.end()) {
+                        bonding_master.assign(master_iface->begin(), master_iface->end());
+                        return false;
+                    }
+                }
+            }
+            return true;
+        });
+        return bonding_master;
     }
 }}}  // namespace facter::facts::linux
