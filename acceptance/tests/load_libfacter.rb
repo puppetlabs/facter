@@ -9,7 +9,8 @@ agents.each do |agent|
     path = '/usr/local/bin:/bin:/usr/bin'
   end
 
-  on agent, "env PATH='#{path}:#{agent['privatebindir']}' ruby '#{facter_loader}'" do
+  # Ensure privatebindir comes first so we get the correct Ruby version.
+  on agent, "env PATH='#{agent['privatebindir']}:#{path}' ruby '#{facter_loader}'" do
     assert_empty stdout
     assert_empty stderr
   end
