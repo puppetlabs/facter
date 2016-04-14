@@ -571,6 +571,9 @@ namespace facter { namespace facts {
     void collection::add_common_facts(bool include_ruby_facts)
     {
         add("facterversion", make_value<string_value>(LIBFACTER_VERSION));
+#ifdef AIO_AGENT_VERSION
+        add("aio_agent_version", make_value<string_value>(AIO_AGENT_VERSION));
+#endif
 
         if (include_ruby_facts) {
             add(make_shared<resolvers::ruby_resolver>());

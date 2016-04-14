@@ -21,6 +21,12 @@
 #
 # Please keep the facts in alphabetical order.
 
+aio_agent_version:
+    type: string
+    description: Return the version of the puppet-agent package that installed facter.
+    resolution: |
+        All platforms: use the compile-time enabled version definition.
+
 architecture:
     type: string
     hidden: true
