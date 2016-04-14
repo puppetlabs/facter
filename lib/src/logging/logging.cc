@@ -54,10 +54,13 @@ namespace facter { namespace logging {
         try {
             setup_logging_internal(os);
         } catch (exception const&) {
+            log(level::warning, "locale environment variables were bad; continuing with LANG=C LC_ALL=C");
+
             for (auto var : lc_vars) {
                 environment::clear(var);
             }
             environment::set("LANG", "C");
+            environment::set("LC_ALL", "C");
             try {
                 setup_logging_internal(os);
             } catch (exception const& e) {
@@ -70,7 +73,6 @@ namespace facter { namespace logging {
                 // be taken to alert the user.
                 throw locale_error(e.what());
             }
-            log(level::warning, "locale environment variables were bad; continuing with LANG=C");
         }
     }
 
