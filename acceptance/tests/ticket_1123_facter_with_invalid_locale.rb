@@ -7,7 +7,7 @@ agents.each do |host|
   result = on host, 'LANG=ABCD facter facterversion'
   if host['platform'] !~ /solaris|aix|cumulus|osx/
     fail_test 'facter did not warn about the locale' unless
-      result.stderr.include? 'locale environment variables were bad; continuing with LANG=C'
+      result.stderr.include? 'locale environment variables were bad; continuing with LANG=C LC_ALL=C'
   end
   fail_test 'facter did not continue running' unless
     result.stdout =~ /^\d+\.\d+\.\d+$/
