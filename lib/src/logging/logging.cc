@@ -58,6 +58,7 @@ namespace facter { namespace logging {
                 environment::clear(var);
             }
             environment::set("LANG", "C");
+            environment::set("LC_ALL", "C");
             try {
                 setup_logging_internal(os);
             } catch (exception const& e) {
@@ -68,9 +69,12 @@ namespace facter { namespace logging {
                 // Since logging is busted, we raise an exception that
                 // signals to the consumer that a special action must
                 // be taken to alert the user.
-                throw locale_error(e.what());
+                throw locale_error(string("could not initialize logging, even with locale variables reset to LANG=C LC_ALL=C: ")
+                                   + e.what());
             }
-            log(level::warning, "locale environment variables were bad; continuing with LANG=C");
+            // We can't log the issue until after logging is setup. Rely on the exception for any other
+            // error reporting.
+            log(level::warning, "locale environment variables were bad; continuing with LANG=C LC_ALL=C");
         }
     }
 
