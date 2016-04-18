@@ -60,7 +60,7 @@ namespace facter { namespace ruby {
                     ruby.rb_gc_register_address(&values[0]);
                 } else if (ruby.is_array(_dependencies)) {
                     // Resize the vector now to ensure it is fully allocated before registering with GC
-                    values.resize(static_cast<size_t>(ruby.rb_num2ulong(ruby.rb_funcall(_dependencies, ruby.rb_intern("size"), 0))), ruby.nil_value());
+                    values.resize(ruby.num2size_t(ruby.rb_funcall(_dependencies, ruby.rb_intern("size"), 0)), ruby.nil_value());
                     for (auto& v : values) {
                         ruby.rb_gc_register_address(&v);
                     }
