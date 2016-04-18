@@ -210,7 +210,7 @@ namespace facter { namespace ruby {
                 } else if (key_id == weight_id) {
                     // Handle the weight option
                     has_weight = true;
-                    weight = static_cast<size_t>(ruby.rb_num2ulong(value));
+                    weight = ruby.num2size_t(value);
                 } else if (key_id == timeout_id) {
                     // Ignore timeout as it isn't supported
                     static bool timeout_warning = true;
