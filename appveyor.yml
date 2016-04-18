@@ -1,7 +1,7 @@
 version: 3.1.0.{build}
 clone_depth: 10
 environment:
-  LEATHERMAN_VERSION: 0.4.2
+  LEATHERMAN_VERSION: 0.5.1
 install:
   - git submodule update --init --recursive
 
