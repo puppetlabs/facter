@@ -901,6 +901,9 @@ namespace facter { namespace ruby {
                         execution_options::redirect_stderr_to_null,
                         execution_options::preserve_arguments
                     });
+                // Ruby can encode some additional information in the
+                // lower 8 bits. None of those set means "process exited normally"
+                ruby.rb_last_status_set(exec.exit_code << 8, static_cast<rb_pid_t>(exec.pid));
                 return ruby.utf8_value(exec.output);
             } catch (timeout_exception const& ex) {
                 // Always raise for timeouts
