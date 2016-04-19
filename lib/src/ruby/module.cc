@@ -843,7 +843,7 @@ namespace facter { namespace ruby {
             uint32_t timeout = 0;
             volatile VALUE timeout_option = ruby.rb_hash_lookup(argv[1], ruby.to_symbol("timeout"));
             if (ruby.is_fixednum(timeout_option)) {
-                timeout = static_cast<uint32_t>(ruby.rb_num2ulong(timeout_option));
+                timeout = ruby.num2size_t(timeout_option);
             }
 
             // Get the on_fail option (defaults to :raise)
@@ -901,6 +901,9 @@ namespace facter { namespace ruby {
                         execution_options::redirect_stderr_to_null,
                         execution_options::preserve_arguments
                     });
+                // Ruby can encode some additional information in the
+                // lower 8 bits. None of those set means "process exited normally"
+                ruby.rb_last_status_set(exec.exit_code << 8, static_cast<rb_pid_t>(exec.pid));
                 return ruby.utf8_value(exec.output);
             } catch (timeout_exception const& ex) {
                 // Always raise for timeouts
