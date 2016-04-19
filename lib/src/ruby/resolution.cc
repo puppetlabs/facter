@@ -185,7 +185,7 @@ namespace facter { namespace ruby {
 
         auto instance = ruby.to_native<resolution>(self);
         instance->_has_weight = true;
-        instance->_weight = static_cast<size_t>(ruby.rb_num2ulong(value));
+        instance->_weight = (ruby.num2size_t(value));
         return self;
     }
 
