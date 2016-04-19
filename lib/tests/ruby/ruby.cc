@@ -619,4 +619,10 @@ SCENARIO("custom facts written in Ruby") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "-101");
         }
     }
+    GIVEN("a fact that returns the exit code of its command") {
+        REQUIRE(load_custom_fact("uses_exit_code.rb", facts));
+        THEN("the value should be the exit code") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "99");
+        }
+    }
 }
