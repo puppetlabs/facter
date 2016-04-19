@@ -54,6 +54,11 @@ namespace facter { namespace facts {
         constexpr static char const* gce = "gce";
 
         /**
+         * The name for OpenStack-hosted virtual machine, when OpenStack defines the machine type.
+         */
+        constexpr static char const* openstack = "openstack";
+
+        /**
          * The name for Xen privileged domain virtual machine.
          */
         constexpr static char const* xen_privileged = "xen0";
