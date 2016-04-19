@@ -625,4 +625,10 @@ SCENARIO("custom facts written in Ruby") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "99");
         }
     }
+    GIVEN("a fact that returns a number larger than 32-bits") {
+        REQUIRE(load_custom_fact("bignum_fact_value.rb", facts));
+        THEN("the value should be output correctly") {
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("bignum_fact")) == "12345678901");
+        }
+    }
 }
