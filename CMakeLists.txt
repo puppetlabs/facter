@@ -65,8 +65,8 @@ find_package(Leatherman REQUIRED COMPONENTS ${LEATHERMAN_COMPONENTS})
 # we need for finding all our other libraries.
 include(options)
 
-# We use program_options, system, filesystem, date_time, and regex directly.
-find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time regex)
+# We use program_options, system, filesystem, date_time, and regex directly. Testing uses thread.
+find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time regex thread)
 # date_time and regex need threads on some platforms, and find_package Boost only includes
 # pthreads if you require the Boost.Thread component.
 find_package(Threads)
