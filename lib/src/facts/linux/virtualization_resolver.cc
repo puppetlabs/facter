@@ -237,7 +237,7 @@ namespace facter { namespace facts { namespace linux {
             make_tuple(boost::regex("XenSource"),                     string(vm::xen_hardware)),
             make_tuple(boost::regex("Microsoft Corporation Hyper-V"), string(vm::hyperv)),
             make_tuple(boost::regex("Class 8007: Google, Inc"),       string(vm::gce)),
-            make_tuple(boost::regex("virtio", boost::regex::icase),   string(vm::kvm)),
+            make_tuple(boost::regex("[Vv]irtio", boost::regex::icase),   string(vm::kvm)),
         };
 
         string value;
