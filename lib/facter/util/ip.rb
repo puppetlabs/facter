@@ -6,7 +6,7 @@ module Facter::Util::IP
   REGEX_MAP = {
     :linux => {
       :ipaddress  => /inet (?:addr:)?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-      :ipaddress6 => /inet6 (?:addr: )?((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
+      :ipaddress6 => /inet6 (?:addr: )?((?!(?:fe80|::1))(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
       :macaddress => /(?:ether|HWaddr)\s+((\w{1,2}:){5,}\w{1,2})/,
       :netmask  => /(?:Mask:|netmask )([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
       :mtu  => /MTU:?\s*(\d+)/i
@@ -14,14 +14,14 @@ module Facter::Util::IP
     :bsd   => {
       :aliases  => [:openbsd, :netbsd, :freebsd, :darwin, :"gnu/kfreebsd", :dragonfly],
       :ipaddress  => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-      :ipaddress6 => /inet6 ((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
+      :ipaddress6 => /inet6 ((?!(?:fe80|::1))(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
       :macaddress => /(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/,
       :netmask  => /netmask\s+0x(\w{8})/,
       :mtu => /mtu\s+(\d+)/
     },
     :sunos => {
       :ipaddress  => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-      :ipaddress6 => /inet6 ((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
+      :ipaddress6 => /inet6 ((?!(?:fe80|::1))(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
       :macaddress => /(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/,
       :netmask  => /netmask\s+(\w{8})/,
       :mtu => /mtu\s+(\d+)/
@@ -33,7 +33,7 @@ module Facter::Util::IP
     },
     :aix   => {
       :ipaddress  => /inet\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/,
-      :ipaddress6 => /inet6 ((?![fe80|::1])(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
+      :ipaddress6 => /inet6 ((?!(?:fe80|::1))(?>[0-9,a-f,A-F]*\:{1,2})+[0-9,a-f,A-F]{0,4})/,
       :netmask  => /netmask\s+0x(\w{8})/,
       :mtu => /mtu\s+(\d+)/,
       :macaddress => /^Hardware\sAddress:\s(\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2}:\w{1,2})/
