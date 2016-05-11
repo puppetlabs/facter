@@ -99,25 +99,57 @@ module Facter::Util::Windows::Process
   end
   module_function :elevated_security?
 
+  STATUS_SUCCESS = 0
+
+  def os_version(&block)
+    FFI::MemoryPointer.new(OSVERSIONINFOEX.size) do |ver_ptr|
+      ver = OSVERSIONINFOEX.new(ver_ptr)
+      ver[:dwOSVersionInfoSize] = OSVERSIONINFOEX.size
+
+      result = RtlGetVersion(ver_ptr)
+
+      if result != STATUS_SUCCESS
+        raise RuntimeError, 'Calling Windows RtlGetVersion failed'
+      end
+
+      yield ver
+    end
+
+    # ver_ptr has already had free called, so nothing to return
+    nil
+  end
+  module_function :os_version
+
   def windows_major_version
     ver = 0
 
-    FFI::MemoryPointer.new(OSVERSIONINFO.size) do |os_version_ptr|
-      os_version = OSVERSIONINFO.new(os_version_ptr)
-      os_version[:dwOSVersionInfoSize] = OSVERSIONINFO.size
-
-      result = GetVersionExW(os_version_ptr)
-
-      if result == FFI::WIN32_FALSE
-        raise Facter::Util::Windows::Error.new("GetVersionEx failed")
-      end
-
-      ver = os_version[:dwMajorVersion]
+    self.os_version do |version|
+      ver = version[:dwMajorVersion]
     end
 
     ver
   end
   module_function :windows_major_version
+
+  def os_version_string
+    ver = ''
+    self.os_version do |version|
+      ver = "#{version[:dwMajorVersion]}.#{version[:dwMinorVersion]}.#{version[:dwBuildNumber]}"
+    end
+
+    ver
+  end
+  module_function :os_version_string
+
+
+  SM_SERVERR2 = 89
+
+  def is_2003_r2?
+    # Peculiar API from user32 - the docs for SM_SERVER2 indicate
+    # The build number if the system is Windows Server 2003 R2; otherwise, 0.
+    GetSystemMetrics(SM_SERVERR2) != 0
+  end
+  module_function :is_2003_r2?
 
   def supports_elevated_security?
     windows_major_version >= 6
@@ -206,31 +238,48 @@ module Facter::Util::Windows::Process
   attach_function_private :GetTokenInformation,
                           [:handle, TOKEN_INFORMATION_CLASS, :lpvoid, :dword, :pdword ], :win32_bool
 
-  # https://msdn.microsoft.com/en-us/library/windows/desktop/ms724834%28v=vs.85%29.aspx
-  # typedef struct _OSVERSIONINFO {
-  #   DWORD dwOSVersionInfoSize;
-  #   DWORD dwMajorVersion;
-  #   DWORD dwMinorVersion;
-  #   DWORD dwBuildNumber;
-  #   DWORD dwPlatformId;
-  #   TCHAR szCSDVersion[128];
-  # } OSVERSIONINFO;
-  class OSVERSIONINFO < FFI::Struct
+  # https://msdn.microsoft.com/en-us/library/windows/hardware/ff563620(v=vs.85).aspx
+  # typedef struct _OSVERSIONINFOEXW {
+  #   ULONG  dwOSVersionInfoSize;
+  #   ULONG  dwMajorVersion;
+  #   ULONG  dwMinorVersion;
+  #   ULONG  dwBuildNumber;
+  #   ULONG  dwPlatformId;
+  #   WCHAR  szCSDVersion[128];
+  #   USHORT wServicePackMajor;
+  #   USHORT wServicePackMinor;
+  #   USHORT wSuiteMask;
+  #   UCHAR  wProductType;
+  #   UCHAR  wReserved;
+  # } RTL_OSVERSIONINFOEXW, *PRTL_OSVERSIONINFOEXW;
+  class OSVERSIONINFOEX < FFI::Struct
     layout(
-        :dwOSVersionInfoSize, :dword,
-        :dwMajorVersion, :dword,
-        :dwMinorVersion, :dword,
-        :dwBuildNumber, :dword,
-        :dwPlatformId, :dword,
-        :szCSDVersion, [:wchar, 128]
+      :dwOSVersionInfoSize, :win32_ulong,
+      :dwMajorVersion, :win32_ulong,
+      :dwMinorVersion, :win32_ulong,
+      :dwBuildNumber, :win32_ulong,
+      :dwPlatformId, :win32_ulong,
+      :szCSDVersion, [:wchar, 128],
+      :wServicePackMajor, :ushort,
+      :wServicePackMinor, :ushort,
+      :wSuiteMask, :ushort,
+      :wProductType, :uchar,
+      :wReserved, :uchar,
     )
   end
 
-  # https://msdn.microsoft.com/en-us/library/windows/desktop/ms724451(v=vs.85).aspx
-  # BOOL WINAPI GetVersionEx(
-  #   _Inout_  LPOSVERSIONINFO lpVersionInfo
+  # NTSTATUS -> :int32 (defined in winerror.h / ntstatus.h)
+  # https://msdn.microsoft.com/en-us/library/windows/hardware/ff561910(v=vs.85).aspx
+  # NTSTATUS RtlGetVersion(
+  #   _Out_ PRTL_OSVERSIONINFOW lpVersionInformation
   # );
-  ffi_lib :kernel32
-  attach_function_private :GetVersionExW,
-                          [:pointer], :win32_bool
+  ffi_lib 'ntoskrnl.exe'
+  attach_function :RtlGetVersion, [:pointer], :int32
+
+  # C++ int is a signed 32-bit integer
+  # int WINAPI GetSystemMetrics(
+  #   _In_ int nIndex
+  # );
+  ffi_lib :user32
+  attach_function :GetSystemMetrics, [:int32], :int32
 end

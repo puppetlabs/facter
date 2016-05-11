@@ -7,10 +7,7 @@ describe "Kernel release fact" do
   describe "on Windows" do
     before do
       Facter.fact(:kernel).stubs(:value).returns("windows")
-      require 'facter/util/wmi'
-      version = stubs 'version'
-      version.stubs(:Version).returns("test_kernel")
-      Facter::Util::WMI.stubs(:execquery).with("SELECT Version from Win32_OperatingSystem").returns([version])
+      Facter::Util::Windows::Process.stubs(:os_version_string).returns('test_kernel')
     end
 
     it "should return the kernel release" do

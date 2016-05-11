@@ -11,6 +11,7 @@
 # Caveats:
 #
 require 'facter/util/posix'
+require 'facter/util/windows'
 
 Facter.add(:kernelrelease) do
   setcode 'uname -r'
@@ -39,12 +40,6 @@ end
 Facter.add(:kernelrelease) do
   confine :kernel => "windows"
   setcode do
-    require 'facter/util/wmi'
-    version = ""
-    Facter::Util::WMI.execquery("SELECT Version from Win32_OperatingSystem").each do |ole|
-      version = "#{ole.Version}"
-      break
-    end
-    version
+    Facter::Util::Windows::Process.os_version_string
   end
 end

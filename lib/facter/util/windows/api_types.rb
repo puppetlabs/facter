@@ -75,10 +75,20 @@ module Facter::Util::Windows::ApiTypes
   FFI.typedef :pointer, :phandle
   FFI.typedef :pointer, :pbool
 
+  # any time LONG / ULONG is in a win32 API definition DO NOT USE platform specific width
+  # which is what FFI uses by default
+  # instead create new aliases for these very special cases
+  # NOTE: not a good idea to redefine FFI :ulong since other typedefs may rely on it
+  FFI.typedef :uint32, :win32_ulong
+  FFI.typedef :int32, :win32_long
   # FFI bool can be only 1 byte at times,
   # Win32 BOOL is a signed int, and is always 4 bytes, even on x64
   # https://blogs.msdn.com/b/oldnewthing/archive/2011/03/28/10146459.aspx
   FFI.typedef :int32, :win32_bool
+
+  # NOTE: FFI already defines (u)short as a 16-bit (un)signed like this:
+  # FFI.typedef :uint16, :ushort
+  # FFI.typedef :int16, :short
 
   # 8 bits per byte
   FFI.typedef :uchar, :byte
