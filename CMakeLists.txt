@@ -28,6 +28,12 @@ if (FACTER_RUBY)
     message(STATUS "Fixing lookup for libruby to ${FACTER_RUBY_PATH}")
 endif()
 
+set(AIO_AGENT_VERSION "" CACHE STRING "Creates an aio_agent_version fact with the specified value.")
+if (AIO_AGENT_VERSION)
+    add_definitions(-DAIO_AGENT_VERSION="${AIO_AGENT_VERSION}")
+    message(STATUS "Adding fact aio_agent_version=${AIO_AGENT_VERSION}")
+endif()
+
 enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
