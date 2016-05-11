@@ -2,6 +2,7 @@
 #include <facter/logging/logging.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/ruby/ruby.hpp>
+#include <leatherman/util/environment.hpp>
 #include <leatherman/util/scope_exit.hpp>
 #include <boost/algorithm/string.hpp>
 // Note the caveats in nowide::cout/cerr; they're not synchronized with stdio.
@@ -25,7 +26,9 @@
 using namespace std;
 using namespace facter::facts;
 using namespace facter::logging;
+using leatherman::util::environment;
 namespace po = boost::program_options;
+
 
 void help(po::options_description& desc)
 {
@@ -251,7 +254,16 @@ int main(int argc, char **argv)
         facts.add_default_facts(ruby);
 
         if (!vm.count("no-external-facts")) {
+          string inside_facter;
+          environment::get("INSIDE_FACTER", inside_facter);
+
+          if (inside_facter == "true") {
+            log(level::debug, "Environment variable INSIDE_FACTER is set to 'true'");
+            log(level::warning, "Facter was called recursively, skipping external facts. Add '--no-external-facts to silence this warning");
+          } else {
+            environment::set("INSIDE_FACTER", "true");
             facts.add_external_facts(external_directories);
+          }
         }
 
         // Add the environment facts
