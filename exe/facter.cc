@@ -259,7 +259,7 @@ int main(int argc, char **argv)
 
           if (inside_facter == "true") {
             log(level::debug, "Environment variable INSIDE_FACTER is set to 'true'");
-            log(level::warning, "Facter was called recursively, skipping external facts. Add '--no-external-facts to silence this warning");
+            log(level::warning, "Facter was called recursively, skipping external facts. Add '--no-external-facts' to silence this warning");
           } else {
             environment::set("INSIDE_FACTER", "true");
             facts.add_external_facts(external_directories);
