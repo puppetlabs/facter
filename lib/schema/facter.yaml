@@ -416,8 +416,8 @@ identity:
     type: map
     description: Return the identity information of the user running facter.
     resolution: |
-        POSIX platforms: use the `getegid`, `getpwuid_r`, `geteuid`, and `getgrgid_r` functions to retrieve the identity information.
-        Windows: use the `GetUserNameExW` function to retrieve the identity information.
+        POSIX platforms: use the `getegid`, `getpwuid_r`, `geteuid`, and `getgrgid_r` functions to retrieve the identity information; use the result of the UID == 0 test as the value of the superuser element
+        Windows: use the `GetUserNameExW` function to retrieve the identity information; use the `GetTokenInformation` to get the current process token elevation status and use it as the value of the superuser element on version of Windows supporting the token elevation, on older Windows versions use `CheckTokenMembership` to test whether the well known local Administrators SID is enabled in the current thread impersonation token and use the test result as the value of the superuser element
     elements:
         gid:
             type: integer
@@ -431,6 +431,9 @@ identity:
         user:
             type: string
             description: The user name of the user running facter.
+        superuser:
+            type: boolean
+            description: True if facter runs with superuser priviliges or false if not.
 
 interfaces:
     type: string

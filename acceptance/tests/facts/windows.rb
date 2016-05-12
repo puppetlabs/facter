@@ -77,7 +77,8 @@ agents.each do |agent|
 
   step "Ensure the identity fact resolves as expected"
   expected_identity = {
-                        'identity.user'   => /.*\\cyg_server/,
+                        'identity.user'      => /.*\\cyg_server/,
+                        'identity.superuser' => true
                       }
 
   expected_identity.each do |fact, value|

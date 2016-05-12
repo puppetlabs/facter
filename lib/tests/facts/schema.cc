@@ -139,6 +139,7 @@ struct identity_resolver : resolvers::identity_resolver
         result.group_name = "group";
         result.user_id = 456;
         result.user_name = "user";
+        result.superuser = false;
         return result;
     }
 };
