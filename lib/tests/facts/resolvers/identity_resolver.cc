@@ -30,6 +30,7 @@ struct test_identity_resolver : identity_resolver
         result.group_name = "foo";
         result.user_id = 456;
         result.user_name = "bar";
+        result.superuser = false;
         return result;
     }
 };
@@ -47,7 +48,7 @@ SCENARIO("using the identity resolver") {
         THEN("a structured fact is added") {
             auto identity = facts.get<map_value>(fact::identity);
             REQUIRE(identity);
-            REQUIRE(identity->size() == 4u);
+            REQUIRE(identity->size() == 5u);
 
             auto name = identity->get<string_value>("group");
             REQUIRE(name);
@@ -64,6 +65,10 @@ SCENARIO("using the identity resolver") {
             id = identity->get<integer_value>("uid");
             REQUIRE(id);
             REQUIRE(id->value() == 456);
+
+            auto superuser = identity->get<boolean_value>("superuser");
+            REQUIRE(superuser);
+            REQUIRE(superuser->value() == false);
         }
         THEN("flat facts are added") {
             auto name = facts.get<string_value>(fact::gid);

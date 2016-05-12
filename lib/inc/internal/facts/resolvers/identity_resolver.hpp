@@ -51,6 +51,14 @@ namespace facter { namespace facts { namespace resolvers {
              * Stores the name of the user's primary group.
              */
             std::string group_name;
+
+            /**
+             * Stores whether the user is a superuser (a user
+             * with the UID of 0 on *NIX systems or a member
+             * of the local Administrators group on Windows)
+             * or not.
+             */
+            boost::optional<bool> superuser;
         };
 
         /**

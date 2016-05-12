@@ -1,5 +1,6 @@
 #include <internal/facts/windows/identity_resolver.hpp>
 #include <leatherman/windows/system_error.hpp>
+#include <leatherman/windows/user.hpp>
 #include <leatherman/windows/windows.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/nowide/convert.hpp>
@@ -20,20 +21,25 @@ namespace facter { namespace facts { namespace windows {
         auto nameformat = NameSamCompatible;
         GetUserNameExW(nameformat, nullptr, &size);
         if (GetLastError() != ERROR_MORE_DATA) {
-            LOG_DEBUG("failure resolving identity facts: %1% (%2%)", leatherman::windows::system_error());
+            LOG_DEBUG("failure resolving identity facts: %1%", leatherman::windows::system_error());
             return result;
         }
 
         // Use the string as a raw buffer that supports move and ref operations.
         wstring buffer(size, '\0');
         if (!GetUserNameExW(nameformat, &buffer[0], &size)) {
-            LOG_DEBUG("failure resolving identity facts: %1% (%2%)", leatherman::windows::system_error());
+            LOG_DEBUG("failure resolving identity facts: %1%", leatherman::windows::system_error());
             return result;
         }
 
         // Resize the buffer to the returned string size.
         buffer.resize(size);
         result.user_name = boost::nowide::narrow(buffer);
+
+        // Check whether this thread runs with the privileges of the local
+        // Administrators group.
+        result.superuser = user::is_admin();
+
         return result;
     }
 }}}  // facter::facts::windows

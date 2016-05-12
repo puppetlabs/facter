@@ -34,6 +34,7 @@ namespace facter { namespace facts { namespace posix {
         } else {
             result.user_id = static_cast<int64_t>(uid);
             result.user_name = pwd.pw_name;
+            result.superuser = (uid == 0);
         }
 
         buffer_size = sysconf(_SC_GETGR_R_SIZE_MAX);
