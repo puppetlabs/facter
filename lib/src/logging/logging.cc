@@ -8,16 +8,22 @@ using namespace std;
 using namespace leatherman::util;
 namespace lm = leatherman::logging;
 
-static void setup_logging_internal(ostream& os)
+#ifdef LEATHERMAN_USE_LOCALES
+static void setup_logging_internal(ostream& os, bool use_locale)
 {
     // Initialize boost filesystem's locale to a UTF-8 default.
     // Logging gets setup the same way via the default 2nd argument.
-#ifdef LEATHERMAN_USE_LOCALES
-    // Locale support in GCC on Solaris is busted, so skip it.
-    boost::filesystem::path::imbue(leatherman::locale::get_locale());
-#endif
-    lm::setup_logging(os);
+    if (use_locale) {
+        boost::filesystem::path::imbue(leatherman::locale::get_locale());
+    }
+    lm::setup_logging(os, "", PROJECT_NAME, use_locale);
 }
+#else
+static void setup_logging_internal(ostream& os, bool)
+{
+    lm::setup_logging(os, "", PROJECT_NAME, false);
+}
+#endif
 
 static const char* lc_vars[] = {
     "LC_CTYPE",
@@ -52,7 +58,7 @@ namespace facter { namespace logging {
     void setup_logging(ostream& os)
     {
         try {
-            setup_logging_internal(os);
+            setup_logging_internal(os, true);
         } catch (exception const&) {
             for (auto var : lc_vars) {
                 environment::clear(var);
@@ -60,7 +66,10 @@ namespace facter { namespace logging {
             environment::set("LANG", "C");
             environment::set("LC_ALL", "C");
             try {
-                setup_logging_internal(os);
+                setup_logging_internal(os, true);
+                // We can't log the issue until after logging is setup. Rely on the exception for any other
+                // error reporting.
+                log(level::warning, "locale environment variables were bad; continuing with LANG=C LC_ALL=C");
             } catch (exception const& e) {
                 // If we fail again even with a clean environment, we
                 // need to signal to our consumer that things went
@@ -69,12 +78,14 @@ namespace facter { namespace logging {
                 // Since logging is busted, we raise an exception that
                 // signals to the consumer that a special action must
                 // be taken to alert the user.
-                throw locale_error(string("could not initialize logging, even with locale variables reset to LANG=C LC_ALL=C: ")
+                try {
+                    setup_logging_internal(os, false);
+                    log(level::warning, "Could not initialize locale, even with LC_* variables cleared. Continuing without localization support");
+                } catch (exception const& e) {
+                    throw locale_error(string("could not initialize logging, even with locale variables reset to LANG=C LC_ALL=C: ")
                                    + e.what());
+                }
             }
-            // We can't log the issue until after logging is setup. Rely on the exception for any other
-            // error reporting.
-            log(level::warning, "locale environment variables were bad; continuing with LANG=C LC_ALL=C");
         }
     }
 
