@@ -51,6 +51,15 @@ namespace facter { namespace facts { namespace resolvers {
              * Stores the name of the user's primary group.
              */
             std::string group_name;
+
+            /**
+             * Stores whether facter is running as a privileged
+             * process: With the effective UID of 0 on *NIX systems
+             * or with elevated privileges on Windows (or with the
+             * local Administrators group privileges on older versions
+             * of windows not supporting privileges elevation).
+             */
+            boost::optional<bool> privileged;
         };
 
         /**

@@ -38,6 +38,9 @@ namespace facter { namespace facts { namespace resolvers {
         if (data.group_id) {
             identity->add("gid", make_value<integer_value>(*data.group_id));
         }
+        if (data.privileged) {
+            identity->add("privileged", make_value<boolean_value>(*data.privileged));
+        }
 
         if (!identity->empty()) {
             facts.add(fact::identity, move(identity));

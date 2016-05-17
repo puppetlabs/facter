@@ -96,10 +96,11 @@ agents.each do |agent|
 
   step "Ensure the identity fact resolves as expected"
   expected_identity = {
-                        'identity.gid'   => '0',
-                        'identity.group' => 'wheel',
-                        'identity.uid'   => '0',
-                        'identity.user'  => 'root'
+                        'identity.gid'        => '0',
+                        'identity.group'      => 'wheel',
+                        'identity.uid'        => '0',
+                        'identity.user'       => 'root',
+                        'identity.privileged' => true
                       }
 
   expected_identity.each do |fact, value|
