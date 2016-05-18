@@ -1,35 +1,45 @@
-test_name "Facts should resolve as expected in Ubuntu 12.04, 14.04, and 14.10"
+test_name "Facts should resolve as expected in Ubuntu"
 
 #
 # This test is intended to ensure that facts specific to an OS configuration
-# resolve as expected in Ubuntu 12.04, 14.04, and 14.10
+# resolve as expected in all supported Ubuntu versions.
 #
 # Facts tested: os, processors, networking, identity, kernel
 #
 
-confine :to, :platform => /ubuntu-lucid|ubuntu-precise|ubuntu-trusty|ubuntu-utopic|ubuntu-vivid/
+confine :to, :platform => /ubuntu/
 
 agents.each do |agent|
-  if agent['platform'] =~ /ubuntu-lucid/
+  if agent['platform'] =~ /ubuntu-10.04/
     os_name    = 'lucid'
     os_version = '10.04'
     os_kernel  = '2.6'
-  elsif agent['platform'] =~ /ubuntu-precise/
+  elsif agent['platform'] =~ /ubuntu-12.04/
     os_name    = 'precise'
     os_version = '12.04'
     os_kernel  = '3.2'
-  elsif agent['platform'] =~ /ubuntu-trusty/
+  elsif agent['platform'] =~ /ubuntu-14.04/
     os_name    = 'trusty'
     os_version = '14.04'
     os_kernel  = '3.13'
-  elsif agent['platform'] =~ /ubuntu-utopic/
+  elsif agent['platform'] =~ /ubuntu-14.10/
     os_name    = 'utopic'
     os_version = '14.10'
     os_kernel  = '3.16'
-  elsif agent['platform'] =~ /ubuntu-vivid/
+  elsif agent['platform'] =~ /ubuntu-15.04/
     os_name    = 'vivid'
     os_version = '15.04'
     os_kernel  = '3.19'
+  elsif agent['platform'] =~ /ubuntu-15.10/
+    os_name    = 'wily'
+    os_version = '15.10'
+    os_kernel  = '4.2'
+  elsif agent['platform'] =~ /ubuntu-16.04/
+    os_name    = 'xenial'
+    os_version = '16.04'
+    os_kernel  = '4.4'
+  else
+    fail_test("Unknown Ubuntu platform: #{agent['platform']}")
   end
 
   if agent['platform'] =~ /x86_64|amd64/
