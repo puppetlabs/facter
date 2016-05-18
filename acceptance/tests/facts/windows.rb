@@ -1,23 +1,35 @@
-test_name "Facts should resolve as expected in Windows 2003R2, 2008R2 and 2012R2"
+test_name "Facts should resolve as expected on Windows platforms"
 
 #
 # This test is intended to ensure that facts specific to an OS configuration
-# resolve as expected in Windows 2003R2, 2008R2 and 2012R2.
+# resolve as expected on Windows platforms.
 #
 # Facts tested: os, processors, networking, identity, kernel
 #
 
-confine :to, :platform => /windows-2003r2|windows-2008|windows-2012r2/
+confine :to, :platform => /windows-/
 
 agents.each do |agent|
-  step "Ensure the OS fact resolves as expected"
+
+  # Get expected values based on platform name
   if agent['platform'] =~ /2003/
     os_version  = '2003 R2'
+    kernel_version = '5.2'
   elsif agent['platform'] =~ /2008/
     os_version  = '2008 R2'
-  else
+    kernel_version = '6.1'
+  elsif agent['platform'] =~ /2012/
     os_version  = '2012 R2'
+    kernel_version = '6.3'
+  elsif agent['platform'] =~ /-10/
+    os_version  = /^10\./
+    kernel_version = /^10\./
+  else
+    raise "Unknown agent platform of #{agent['platform']}"
   end
+
+
+  step "Ensure the OS fact resolves as expected"
 
   expected_os = {
                   'os.architecture'         => agent['platform'] =~ /64/ ? 'x64' : 'x86',
@@ -85,13 +97,6 @@ agents.each do |agent|
   end
 
   step "Ensure the kernel fact resolves as expected"
-  if os_version == '2003 R2'
-    kernel_version = '5.2'
-  elsif os_version == '2008 R2'
-    kernel_version = '6.1'
-  else
-    kernel_version = '6.3'
-  end
 
   expected_kernel = {
                       'kernel'           => 'windows',
