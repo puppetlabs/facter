@@ -50,7 +50,7 @@ agents.each do |agent|
   expected_processors = {
                           'processors.count'         => /[1-9]/,
                           'processors.physicalcount' => /[1-9]/,
-                          'processors.isa'           => agent['platform'] =~ /64/ ? 'x64' : 'x86',
+                          'processors.isa'           => /(x64|x86)/,
                           'processors.models'        => /"Intel\(R\).*"/
                         }
 
