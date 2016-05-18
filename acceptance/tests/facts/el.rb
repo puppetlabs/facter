@@ -116,7 +116,7 @@ agents.each do |agent|
                         'identity.group'      => 'root',
                         'identity.uid'        => '0',
                         'identity.user'       => 'root',
-                        'identity.privileged' => true
+                        'identity.privileged' => 'true'
                       }
 
   expected_identity.each do |fact, value|
