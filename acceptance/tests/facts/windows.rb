@@ -7,6 +7,7 @@ test_name "Facts should resolve as expected in Windows 2003R2, 2008R2 and 2012R2
 # Facts tested: os, processors, networking, identity, kernel
 #
 
+# TODO: need to add Windows 10 test here
 confine :to, :platform => /windows-2003r2|windows-2008|windows-2012r2/
 
 agents.each do |agent|
