@@ -9,3 +9,4 @@ preserved_config.yaml
 merged_options.rb
 junit
 tmp
+.bundle
