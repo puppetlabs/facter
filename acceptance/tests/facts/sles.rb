@@ -9,6 +9,8 @@ test_name "Facts should resolve as expected in SLES 10, 11 and 12"
 
 confine :to, :platform => /sles-10|sles-11|sles-12/
 
+@ip_regex = /^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}$/
+
 agents.each do |agent|
   if agent['platform'] =~ /sles-10/
     os_version = '10'
@@ -64,13 +66,13 @@ agents.each do |agent|
   step "Ensure the Networking fact resolves with reasonable values for at least one interface"
 
   expected_networking = {
-                          "networking.ip"       => /10\.\d+\.\d+\.\d+/,
+                          "networking.ip"       => @ip_regex,
                           "networking.ip6"      => /[a-f0-9]+:+/,
                           "networking.mac"      => /[a-f0-9]{2}:/,
                           "networking.mtu"      => /\d+/,
                           "networking.netmask"  => /\d+\.\d+\.\d+\.\d+/,
                           "networking.netmask6" => /[a-f0-9]+:/,
-                          "networking.network"  => /10\.\d+\.\d+\.\d+/,
+                          "networking.network"  => @ip_regex,
                           "networking.network6" => /([a-f0-9]+)?:([a-f0-9]+)?/
                         }
 
