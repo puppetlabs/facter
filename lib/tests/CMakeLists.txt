@@ -128,6 +128,8 @@ target_link_libraries(libfacter_test
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
+target_compile_definitions(libfacter_test PRIVATE "-Dlibfacter_EXPORTS")
+
 # Generate a file containing the path to the fixtures
 configure_file (
     "fixtures.hpp.in"
