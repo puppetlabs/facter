@@ -51,6 +51,12 @@ The following will install most required tools and libraries:
 
     apt-get install build-essential libboost-all-dev libssl-dev libyaml-cpp-dev libblkid-dev libcurl4-openssl-dev wget tar cmake
 
+### Setup on FreeBSD 10
+
+The following will install most required tools and libraries:
+
+    pkg install git ruby21 cmake boost-all yaml-cpp gcc49
+
 ### Setup on Windows
 
 [MinGW-w64](http://mingw-w64.sourceforge.net/) is used for full C++11 support, and [Chocolatey](https://chocolatey.org) can be used to install. You should have at least 2GB of memory for compilation.
@@ -207,7 +213,7 @@ Using the Ruby API requires that facter.rb is installed into the Ruby load path,
 
 ```ruby
     require 'facter'
-    
+
     # Use the Facter API...
     puts "kernel: #{Facter.value(:kernel)}"
 ```
