@@ -67,16 +67,9 @@ namespace facter { namespace facts { namespace solaris {
                 return result.chassis_type.empty() || result.chassis_asset_tag.empty();
             });
         } else if (isa && isa->value() == "sparc") {
-            static boost::regex manufacturer_re("^System Configuration: (.+) sun\\d.$");
-            static boost::regex product_name_re("^SUNW,(.*)$");
-            // prtdiag is not implemented in all sparc machines, so we cant get product name this way.
-            each_line("/usr/sbin/prtconf", [&](string& line) {
-                if (result.manufacturer.empty()) {
-                    re_search(line, manufacturer_re, &result.manufacturer);
-                }
-                if (result.product_name.empty()) {
-                    re_search(line, product_name_re, &result.product_name);
-                }
+            static boost::regex product_name_manufacturer_re("^System Configuration:\\s+(.+?)\\s+sun\\d+\\S+\\s+(.+)");
+            each_line("/usr/sbin/prtdiag", [&](string& line) {
+                re_search(line, product_name_manufacturer_re, &result.manufacturer, &result.product_name);
                 return result.manufacturer.empty() || result.product_name.empty();
             });
             // Manufacturer appears to have two spaces before and after it, but we don't want to rely on that formatting.
