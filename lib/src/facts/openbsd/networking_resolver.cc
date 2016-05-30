@@ -21,6 +21,18 @@ namespace facter { namespace facts { namespace openbsd {
         return addr && addr->sa_family == AF_LINK;
     }
 
+    uint8_t const* networking_resolver::get_link_address_bytes(sockaddr const* addr) const
+    {
+        if (!is_link_address(addr)) {
+            return nullptr;
+        }
+        sockaddr_dl const* link_addr = reinterpret_cast<sockaddr_dl const*>(addr);
+        if (link_addr->sdl_alen != 6) {
+            return nullptr;
+        }
+        return reinterpret_cast<uint8_t const*>(LLADDR(link_addr));
+     }
+
     boost::optional<uint64_t> networking_resolver::get_link_mtu(string const& interface, void* data) const
     {
         ifreq ifr;
