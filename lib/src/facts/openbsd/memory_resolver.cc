@@ -1,5 +1,5 @@
 #include <internal/facts/openbsd/memory_resolver.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <sys/types.h>
 #include <sys/param.h>
@@ -9,8 +9,7 @@
 #include <unistd.h>
 
 using namespace std;
-using namespace facter::execution;
-using namespace facter::util;
+using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace openbsd {
 
