@@ -49,12 +49,16 @@ namespace facter { namespace facts { namespace openbsd {
         uint64_t swap_used = 0;
         for (auto &&swap : swapdev) {
             if (swap.se_flags & SWF_ENABLE) {
-                result.swap_total += swap.se_nblks * DEV_BSIZE;
-                swap_used += swap.se_inuse * DEV_BSIZE;
+                result.swap_total += swap.se_nblks / (1024 / DEV_BSIZE);
+                swap_used += swap.se_inuse / (1024 / DEV_BSIZE);
             }
         }
 
         result.swap_free = result.swap_total - swap_used;
+
+        // Adjust for expected scale
+        result.swap_total *= 1024;
+        result.swap_free *= 1024;
 
         // 0 is for CTL_SWPENC_NAMES' "enable", see uvm_swap_encrypt.h
         int swap_encrypted_mib[] = { CTL_VM, VM_SWAPENCRYPT, 0 };
