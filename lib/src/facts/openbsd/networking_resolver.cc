@@ -1,6 +1,6 @@
 #include <internal/facts/openbsd/networking_resolver.hpp>
 #include <internal/util/bsd/scoped_ifaddrs.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <sys/sockio.h>
@@ -12,7 +12,7 @@
 using namespace std;
 using namespace facter::util;
 using namespace facter::util::bsd;
-using namespace facter::execution;
+using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace openbsd {
 

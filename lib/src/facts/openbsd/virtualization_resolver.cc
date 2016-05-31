@@ -3,12 +3,12 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
-#include <facter/execution/execution.hpp>
+#include <leatherman/execution/execution.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace facter::facts;
-using namespace facter::execution;
+using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace openbsd {
 
