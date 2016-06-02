@@ -73,6 +73,9 @@ namespace facter { namespace facts { namespace bsd {
             make_tuple<unsigned int, string>(MNT_JOURNALED,    "journaled"),
             make_tuple<unsigned int, string>(MNT_DEFWRITE,     "deferwrites"),
 #endif
+#ifdef __OpenBSD__
+            make_tuple<unsigned int, string>(MNT_WXALLOWED,     "wxallowed"),
+#endif
         };
 
         vector<string> options;
