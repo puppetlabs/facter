@@ -112,6 +112,15 @@ In Powershell:
 
 Note that OpenSSL isn't needed on Windows.
 
+### Setup on OpenBSD 6.0
+
+The following will install all required tools and libraries:
+
+	pkg_add boost cmake curl g++ ruby yaml-cpp
+
+Optionally `leatherman` can be installed from packages too if not
+built locally.
+
 ### Build and install Leatherman
 
 [Leatherman](https://github.com/puppetlabs/leatherman) is built similar to the Pre-Build instructions below. If building on Windows, install to the same `$install` location used for other dependencies.
