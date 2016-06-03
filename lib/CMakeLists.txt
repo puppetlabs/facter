@@ -305,6 +305,7 @@ target_link_libraries(libfacter PRIVATE
 )
 
 symbol_exports(libfacter "${CMAKE_CURRENT_LIST_DIR}/inc/facter/export.h")
+target_compile_definitions(libfactersrc PRIVATE "-Dlibfacter_EXPORTS")
 
 leatherman_install(libfacter)
 install(DIRECTORY inc/facter DESTINATION include)

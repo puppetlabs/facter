@@ -19,9 +19,9 @@ namespace facter { namespace facts { namespace solaris {
           result.current_zone_name = exec.output;
         }
 
-        static boost::regex zone_pattern("(\\d+):([^:]*):([^:]*):([^:]*):([^:]*):([^:]*):([^:]*)");
+        static boost::regex zone_pattern("(\\d+|-):([^:]*):([^:]*):([^:]*):([^:]*):([^:]*):([^:]*)");
 
-        each_line("/usr/sbin/zoneadm", {"list", "-p"}, [&](string& line) {
+        each_line("/usr/sbin/zoneadm", {"list", "-cp"}, [&](string& line) {
             zone z;
             if (re_search(line, zone_pattern, &z.id, &z.name, &z.status, &z.path, &z.uuid, &z.brand, &z.ip_type)) {
                 result.zones.emplace_back(move(z));
