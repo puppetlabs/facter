@@ -27,10 +27,11 @@ agents.each do |agent|
     agent['template'] =~ /oracle/ ? kernel_version = '3.8' : kernel_version = '3.1'
   end
 
-  case agent['template']
+  release_string = on(agent, 'cat /etc/*-release').stdout.downcase
+  case release_string
   when /centos/
     os_name = 'CentOS'
-  when /redhat/
+  when /red hat/
     os_name = 'RedHat'
   when /scientific/
     os_name = 'Scientific'
@@ -41,9 +42,15 @@ agents.each do |agent|
   if agent['platform'] =~ /x86_64/
     os_arch     = 'x86_64'
     os_hardware = 'x86_64'
+    processor_model_pattern = 'Intel\(R\)'
+  elsif agent['platform'] =~ /s390x/
+    os_arch     = 's390x'
+    os_hardware = 's390x'
+    processor_model_pattern = '' # s390x does not populate a model value in /proc/cpuinfo
   else
     os_arch     = 'i386'
     os_hardware = 'i686'
+    processor_model_pattern = 'Intel\(R\)'
   end
 
   step "Ensure the OS fact resolves as expected"
@@ -68,7 +75,7 @@ agents.each do |agent|
                           'processors.count'         => /[1-9]/,
                           'processors.physicalcount' => /[1-9]/,
                           'processors.isa'           => os_hardware,
-                          'processors.models'        => /"Intel\(R\).*"/
+                          'processors.models'        => /#{processor_model_pattern}/
                         }
 
   expected_processors.each do |fact, value|
