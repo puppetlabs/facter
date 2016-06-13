@@ -1,6 +1,7 @@
 test_name 'ticket 1123  facter should not crash with invalid locale setting'
 confine :except, :platform => 'windows'
 confine :except, :platform => /^cisco_/ # See CISCO-43
+confine :except, :platform => /^huawei/ # See HUAWEI-24
 
 agents.each do |host|
   step 'set an invalid value for locale and run facter'
