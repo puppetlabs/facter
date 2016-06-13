@@ -10,6 +10,8 @@ test_name "Facts should resolve as expected in EL 4, 5, 6 and 7"
 # Don't test on RedHat 4, as is does not include yum (See BKR-512)
 confine :to, :platform => /el-[5-7]|centos-[4-7]/
 
+@ip_regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+
 agents.each do |agent|
   # TODO: It might be time to start abstracting all of this logic away as more versions are continually added.
   case agent['platform']
@@ -31,12 +33,12 @@ agents.each do |agent|
   case release_string
   when /centos/
     os_name = 'CentOS'
-  when /red hat/
-    os_name = 'RedHat'
+  when /oracle/
+    os_name = 'OracleLinux'
   when /scientific/
     os_name = 'Scientific'
   else
-    os_name = 'OracleLinux'
+    os_name = 'RedHat'
   end
 
   if agent['platform'] =~ /x86_64/
@@ -85,14 +87,13 @@ agents.each do |agent|
   step "Ensure the Networking fact resolves with reasonable values for at least one interface"
 
   expected_networking = {
-                          "networking.dhcp"     => /10\.\d+\.\d+\.\d+/,
-                          "networking.ip"       => /10\.\d+\.\d+\.\d+/,
+                          "networking.ip"       => @ip_regex,
                           "networking.ip6"      => /[a-f0-9]+:+/,
                           "networking.mac"      => /[a-f0-9]{2}:/,
                           "networking.mtu"      => /\d+/,
                           "networking.netmask"  => /\d+\.\d+\.\d+\.\d+/,
                           "networking.netmask6" => /[a-f0-9]+:/,
-                          "networking.network"  => /10\.\d+\.\d+\.\d+/,
+                          "networking.network"  => @ip_regex,
                           "networking.network6" => /([a-f0-9]+)?:([a-f0-9]+)?/
                         }
 
