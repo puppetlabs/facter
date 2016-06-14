@@ -9,7 +9,7 @@ test_name "Facts should resolve as expected in SLES 10, 11 and 12"
 
 confine :to, :platform => /sles-10|sles-11|sles-12/
 
-@ip_regex = /^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}$/
+@ip_regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
 
 agents.each do |agent|
   if agent['platform'] =~ /sles-10/
