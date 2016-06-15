@@ -117,6 +117,11 @@ namespace facter { namespace facts { namespace linux {
                 return true;
             }
             // Take the first line that isn't an error/warning
+            // unless it's "xen", in which case we expect a second
+            // line with more useful information
+            if (line == "xen") {
+                return true;
+            }
             value = move(line);
             return false;
         });
