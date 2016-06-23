@@ -5,6 +5,7 @@ Gemfile.local
 Gemfile.lock
 /nbproject
 compile_commands.json
+.bundle
 
 # Generated files
 .gemspec
