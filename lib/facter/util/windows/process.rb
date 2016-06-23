@@ -273,7 +273,7 @@ module Facter::Util::Windows::Process
   # NTSTATUS RtlGetVersion(
   #   _Out_ PRTL_OSVERSIONINFOW lpVersionInformation
   # );
-  ffi_lib 'ntoskrnl.exe'
+  ffi_lib [FFI::CURRENT_PROCESS, 'ntoskrnl.exe']
   attach_function :RtlGetVersion, [:pointer], :int32
 
   # C++ int is a signed 32-bit integer
