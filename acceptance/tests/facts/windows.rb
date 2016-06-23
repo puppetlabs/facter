@@ -88,8 +88,13 @@ agents.each do |agent|
   end
 
   step "Ensure the identity fact resolves as expected"
+  # Regular expression to validate the username from facter in the form of '<domain>\<username>'
+  # Reference - https://msdn.microsoft.com/en-us/library/bb726984.aspx
+  # - The domain name can be any character or empty
+  # - Must contain a backslash between the domain and username
+  # - Username must be at least one character and not contain the following charaters; " / \ [ ] : ; | = , + * ? < >
   expected_identity = {
-                        'identity.user'       => /.*\\cyg_server/,
+                        'identity.user'       => /.*\\[^\\\/\"\[\]:|<>+=;,?*@]+$/,
                         'identity.privileged' => 'true'
                       }
 
