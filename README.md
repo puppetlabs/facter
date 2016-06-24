@@ -35,7 +35,7 @@ Note: Testing custom facts requires Ruby 1.9+ with libruby built as a dynamic li
 
 The following will install all required tools and libraries:
 
-    yum install boost-devel openssl-devel yaml-cpp-devel libblkid-devel libcurl-devel gcc-c++ make wget tar cmake
+    dnf install boost-devel openssl-devel yaml-cpp-devel libblkid-devel libcurl-devel gcc-c++ make wget tar cmake
 
 ### Setup on Mac OSX El Capitan (homebrew)
 
