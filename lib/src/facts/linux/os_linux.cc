@@ -99,6 +99,16 @@ namespace facter { namespace facts { namespace linux {
         return {};
     }
 
+    static string check_photon_linux()
+    {
+        string contents = lth_file::read(release_file::lsb);
+        boost::trim(contents);
+        if (re_search(contents, boost::regex("VMware Photon"))) {
+            return string(os::photon_os);
+        }
+        return {};
+    }
+
     static string check_suse_linux()
     {
         bs::error_code ec;
@@ -190,6 +200,10 @@ namespace facter { namespace facts { namespace linux {
             return value;
         }
 
+        value = check_photon_linux();
+        if (!value.empty()) {
+            return value;
+        }
         // This should happen after everything else because it's a relatively broad match
         return check_amazon();
     }
@@ -210,6 +224,7 @@ namespace facter { namespace facts { namespace linux {
             { string(os::oracle_enterprise_linux),  string(os_family::redhat) },
             { string(os::amazon),                   string(os_family::redhat) },
             { string(os::xen_server),               string(os_family::redhat) },
+            { string(os::photon_os),                string(os_family::redhat) },
             { string(os::huawei),                   string(os_family::debian) },
             { string(os::linux_mint),               string(os_family::debian) },
             { string(os::ubuntu),                   string(os_family::debian) },
@@ -306,6 +321,14 @@ namespace facter { namespace facts { namespace linux {
                 value = major + "." + minor;
             } else {
                 value = "unknown";
+            }
+        }
+        if (value.empty() && name == os::photon_os) {
+            string major, minor;
+            string contents = lth_file::read(release_file::lsb);
+            string pattern = "DISTRIB_RELEASE=\"(\\d+)\\.(\\d+)( ([a-zA-Z]+\\d+))?\"";
+            if (re_search(contents, boost::regex(pattern), &major, &minor)) {
+                value = major + "." + minor;
             }
         }
 
