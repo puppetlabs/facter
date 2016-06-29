@@ -10,7 +10,11 @@ test_name "Facts should resolve as expected in Ubuntu"
 confine :to, :platform => /ubuntu/
 
 agents.each do |agent|
-  if agent['platform'] =~ /ubuntu-12.04/
+  if agent['platform'] =~ /ubuntu-10.04/
+    os_name    = 'lucid'
+    os_version = '10.04'
+    os_kernel  = '2.6'
+  elsif agent['platform'] =~ /ubuntu-12.04/
     os_name    = 'precise'
     os_version = '12.04'
     os_kernel  = '3.2'
@@ -69,7 +73,7 @@ agents.each do |agent|
   expected_processors = {
                           'processors.count'         => /[1-9]/,
                           'processors.physicalcount' => /[1-9]/,
-                          'processors.isa'           => os_hardware,
+                          'processors.isa'           => os_name == 'lucid' ? 'unknown' : os_hardware,
                           'processors.models'        => /"Intel\(R\).*"/
                         }
 
