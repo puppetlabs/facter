@@ -246,7 +246,7 @@ SCENARIO("using the fact collection") {
                 LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/text",
         });
         REQUIRE_FALSE(facts.empty());
-        REQUIRE(facts.size() == 17u);
+        REQUIRE(facts.size() == 20u);
         WHEN("YAML files are present") {
             THEN("facts should be added") {
                 REQUIRE(facts.get<string_value>("yaml_fact1"));
@@ -256,6 +256,9 @@ SCENARIO("using the fact collection") {
                 REQUIRE(facts.get<array_value>("yaml_fact5"));
                 REQUIRE(facts.get<map_value>("yaml_fact6"));
                 REQUIRE(facts.get<string_value>("yaml_fact7"));
+                REQUIRE(facts.get<string_value>("not_bool"));
+                REQUIRE(facts.get<string_value>("not_int"));
+                REQUIRE(facts.get<string_value>("not_double"));
             }
         }
         WHEN("JSON files are present") {
