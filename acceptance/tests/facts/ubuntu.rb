@@ -13,31 +13,31 @@ agents.each do |agent|
   if agent['platform'] =~ /ubuntu-10.04/
     os_name    = 'lucid'
     os_version = '10.04'
-    os_kernel  = '2.6'
+    os_kernel  = /2.\d+/
   elsif agent['platform'] =~ /ubuntu-12.04/
     os_name    = 'precise'
     os_version = '12.04'
-    os_kernel  = '3.2'
+    os_kernel  = /3.\d+/
   elsif agent['platform'] =~ /ubuntu-14.04/
     os_name    = 'trusty'
     os_version = '14.04'
-    os_kernel  = '3.13'
+    os_kernel  = /3.\d+/
   elsif agent['platform'] =~ /ubuntu-14.10/
     os_name    = 'utopic'
     os_version = '14.10'
-    os_kernel  = '3.16'
+    os_kernel  = /3.\d+/
   elsif agent['platform'] =~ /ubuntu-15.04/
     os_name    = 'vivid'
     os_version = '15.04'
-    os_kernel  = '3.19'
+    os_kernel  = /3.\d+/
   elsif agent['platform'] =~ /ubuntu-15.10/
     os_name    = 'wily'
     os_version = '15.10'
-    os_kernel  = '4.2'
+    os_kernel  = /4.\d+/
   elsif agent['platform'] =~ /ubuntu-16.04/
     os_name    = 'xenial'
     os_version = '16.04'
-    os_kernel  = '4.4'
+    os_kernel  = /4.\d+/
   else
     fail_test("Unknown Ubuntu platform: #{agent['platform']}")
   end
