@@ -19,6 +19,7 @@ elif [ ${TRAVIS_TARGET} == DEBUG ]; then
   pip install --user cpp-coveralls
 fi
 
+
 # Generate build files
 if [ ${TRAVIS_TARGET} == COMMITS ]; then
   shopt -s nocasematch
@@ -55,6 +56,15 @@ elif [ ${TRAVIS_TARGET} == DOXYGEN ]; then
 elif [ ${TRAVIS_TARGET} == CPPCHECK ]; then
   make cppcheck
 else
+  # clone and install cpp-hocon
+  git clone https://github.com/puppetlabs/cpp-hocon.git
+  cd cpp-hocon
+  mkdir build
+  cd build
+  cmake ..
+  make install
+  cd ..
+
   make -j2
 
   # Install the bundle before testing

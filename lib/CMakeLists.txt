@@ -72,6 +72,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/ruby/simple_resolution.cc"
     "src/util/scoped_file.cc"
     "src/util/string.cc"
+    "src/config/config.cc"
 )
 
 # Set the POSIX sources if on a POSIX platform
@@ -296,6 +297,7 @@ endif()
 
 # Link in additional libraries
 target_link_libraries(libfacter PRIVATE
+    cpp-hocon
     ${LIBFACTER_PLATFORM_LIBRARIES}
     ${LEATHERMAN_LIBRARIES}
     ${Boost_LIBRARIES}
