@@ -142,6 +142,16 @@ namespace facter { namespace facts { namespace linux {
         auto parse_route_line = [&known_route_types](string& line, std::vector<route>& routes) {
             vector<boost::iterator_range<string::iterator>> parts;
             boost::split(parts, line, boost::is_space(), boost::token_compress_on);
+
+            // remove trailing "onlink" or "pervasive" flags
+            while (parts.size() > 0) {
+                auto last_token = parts.back();
+                if (last_token == "onlink" || last_token == "pervasive")
+                    parts.pop_back();
+                else
+                    break;
+            }
+
             size_t dst_idx = 0;
             if (parts.size() % 2 == 0) {
                 std::string route_type(parts[0].begin(), parts[0].end());
