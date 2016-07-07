@@ -37,8 +37,10 @@ namespace facter { namespace facts { namespace bsd {
             point.name = fs.f_mntonname;
             point.device = fs.f_mntfromname;
             point.filesystem = fs.f_fstypename;
-            point.size = fs.f_bsize * fs.f_blocks;
-            point.available = fs.f_bsize * fs.f_bfree;
+            point.size = (static_cast<uint64_t>(fs.f_bsize)
+                          * static_cast<uint64_t>(fs.f_blocks));
+            point.available = (static_cast<uint64_t>(fs.f_bsize)
+                               * static_cast<uint64_t>(fs.f_bfree));
             point.options = to_options(fs);
             result.mountpoints.emplace_back(move(point));
 
