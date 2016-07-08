@@ -105,17 +105,17 @@ SCENARIO("using the fact collection") {
         WHEN("writing all (hidden) facts") {
             THEN("it should serialize both facts to JSON") {
                 ostringstream ss;
-                facts.write(ss, format::json, set<string>{}, true);
+                facts.write(ss, format::json, set<string>{}, true, false);
                 REQUIRE(ss.str() == "{\n  \"foo\": \"bar\",\n  \"hidden_foo\": \"hidden_bar\"\n}");
             }
             THEN("it should serialize both facts to YAML") {
                 ostringstream ss;
-                facts.write(ss, format::yaml, set<string>{}, true);
+                facts.write(ss, format::yaml, set<string>{}, true, false);
                 REQUIRE(ss.str() == "foo: bar\nhidden_foo: hidden_bar");
             }
             THEN("it should serialize both facts to text") {
                 ostringstream ss;
-                facts.write(ss, format::hash, set<string>{}, true);
+                facts.write(ss, format::hash, set<string>{}, true, false);
                 REQUIRE(ss.str() == "foo => bar\nhidden_foo => hidden_bar");
             }
         }
@@ -139,17 +139,17 @@ SCENARIO("using the fact collection") {
         WHEN("querying hidden facts") {
             THEN("it should serialize both facts to JSON") {
                 ostringstream ss;
-                facts.write(ss, format::json, {"foo", "hidden_foo"}, true);
+                facts.write(ss, format::json, {"foo", "hidden_foo"}, true, false);
                 REQUIRE(ss.str() == "{\n  \"foo\": \"bar\",\n  \"hidden_foo\": \"hidden_bar\"\n}");
             }
             THEN("it should serialize both facts to YAML") {
                 ostringstream ss;
-                facts.write(ss, format::yaml, {"foo", "hidden_foo"}, true);
+                facts.write(ss, format::yaml, {"foo", "hidden_foo"}, true, false);
                 REQUIRE(ss.str() == "foo: bar\nhidden_foo: hidden_bar");
             }
             THEN("it should serialize both facts to text") {
                 ostringstream ss;
-                facts.write(ss, format::hash, {"foo", "hidden_foo"}, true);
+                facts.write(ss, format::hash, {"foo", "hidden_foo"}, true, false);
                 REQUIRE(ss.str() == "foo => bar\nhidden_foo => hidden_bar");
             }
         }
