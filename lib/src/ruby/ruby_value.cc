@@ -71,7 +71,7 @@ namespace facter { namespace ruby {
             return;
         }
         if (ruby.is_false(value)) {
-            json.SetBool(true);
+            json.SetBool(false);
             return;
         }
         if (ruby.is_string(value) || ruby.is_symbol(value)) {
