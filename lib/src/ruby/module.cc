@@ -1074,8 +1074,12 @@ namespace facter { namespace ruby {
         if (it == _facts.end()) {
             // Before adding the first fact, call facts to ensure the collection is populated
             facts();
-            it = _facts.insert(make_pair(fact_name, fact::create(name))).first;
-            ruby.rb_gc_register_address(&it->second);
+            // facts() may add entries to _facts, so check again to ensure entry has not already been added (avoid duplicate Ruby GC registration)
+            it = _facts.find(fact_name);
+            if (it == _facts.end()) {
+                it = _facts.insert(make_pair(fact_name, fact::create(name))).first;
+                ruby.rb_gc_register_address(&it->second);
+            }
         }
         return it->second;
     }
