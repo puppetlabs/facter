@@ -14,11 +14,18 @@ include_directories(
     ${YAMLCPP_INCLUDE_DIRS}
     ${LEATHERMAN_UTIL_INCLUDE}
     ${LEATHERMAN_NOWIDE_INCLUDE}
+    ${CPPHOCON_INCLUDE_DIRS}
+)
+
+link_directories(
+    ${CPPHOCON_LIBRARY_DIRS}
 )
 
 add_executable(facter ${FACTER_SOURCES})
 target_link_libraries(facter libfacter
+    ${CPPHOCON_LIBRARIES}
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    ${Boost_THREAD_LIBRARY}
     ${LEATHERMAN_UTIL_LIB}
     ${LEATHERMAN_NOWIDE_LIB}
     ${CMAKE_THREAD_LIBS_INIT} # fix until Leatherman switches to private dependencies

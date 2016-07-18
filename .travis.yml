@@ -31,6 +31,8 @@ before_install:
   - tar xjvf yaml-cpp-0.5.1_install.tar.bz2 --strip 1 -C $USERDIR
   - wget https://github.com/puppetlabs/leatherman/releases/download/${LEATHERMAN_VERSION}/leatherman.tar.gz
   - tar xzvf leatherman.tar.gz -C $USERDIR
+  - wget https://github.com/puppetlabs/cpp-hocon/releases/download/${CPPHOCON_VERSION}/cpp-hocon.tar.gz
+  - tar xzvf cpp-hocon.tar.gz -C $USERDIR
 
 script: ./scripts/travis_target.sh
 
@@ -41,6 +43,7 @@ env:
     - PATH=$USERDIR/bin:$PATH
     - LD_LIBRARY_PATH=$USERDIR/lib:$LD_LIBRARY_PATH
     - LEATHERMAN_VERSION=0.7.0
+    - CPPHOCON_VERSION=0.1.0
   matrix:
     - TRAVIS_TARGET=COMMITS
     - TRAVIS_TARGET=DOXYGEN
