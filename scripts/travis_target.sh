@@ -62,8 +62,9 @@ else
   mkdir build
   cd build
   cmake ..
-  make install
-  cd ..
+  make DESTDIR=$USERDIR install
+  cd ../..
+  export PATH=$USERDIR:$PATH
 
   make -j2
 
