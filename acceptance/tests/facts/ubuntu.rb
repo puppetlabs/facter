@@ -83,7 +83,7 @@ agents.each do |agent|
 
   step "Ensure the Networking fact resolves with reasonable values for at least one interface"
   expected_networking = {
-                          "networking.dhcp"     => /10\.\d+\.\d+\.\d+/,
+                          "networking.dhcp"     => /(?:10|192)\.\d+\.\d+\.\d+/,
                           "networking.ip"       => /10\.\d+\.\d+\.\d+/,
                           "networking.ip6"      => /[a-f0-9]+:+/,
                           "networking.mac"      => /[a-f0-9]{2}:/,
