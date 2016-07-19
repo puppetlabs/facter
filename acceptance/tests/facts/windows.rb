@@ -1,5 +1,7 @@
 test_name "Facts should resolve as expected on Windows platforms"
 
+@ip_regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+
 #
 # This test is intended to ensure that facts specific to an OS configuration
 # resolve as expected on Windows platforms.
@@ -61,12 +63,12 @@ agents.each do |agent|
   step "Ensure the Networking fact resolves with reasonable values for at least one interface"
 
   expected_networking = {
-                          "networking.dhcp"     => /10\.\d+\.\d+\.\d+/,
-                          "networking.ip"       => /10\.\d+\.\d+\.\d+/,
+                          "networking.dhcp"     => @ip_regex,
+                          "networking.ip"       => @ip_regex,
                           "networking.mac"      => /[a-f0-9]{2}:/,
                           "networking.mtu"      => /\d+/,
                           "networking.netmask"  => /\d+\.\d+\.\d+\.\d+/,
-                          "networking.network"  => /10\.\d+\.\d+\.\d+/,
+                          "networking.network"  => @ip_regex,
                         }
 
   expected_networking.each do |fact, value|
