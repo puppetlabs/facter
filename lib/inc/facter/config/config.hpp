@@ -9,6 +9,9 @@
 
 namespace facter { namespace config {
 
+    /**
+     * Singleton wrapper class for the HOCON object representing the Facter config file.
+     */
     class LIBFACTER_EXPORT config {
         public:
             /**
@@ -16,6 +19,7 @@ namespace facter { namespace config {
              * which wraps a cpp-hocon config object. This config
              * can be queried for specific settings.
              * @param file_path the full path to the config file
+             * @return a singleton access point for the config file
              */
             static config instance(std::string const& file_path);
 

@@ -23,6 +23,12 @@ install:
   - ps: wget "https://github.com/puppetlabs/leatherman/releases/download/$env:LEATHERMAN_VERSION/leatherman.7z" -OutFile "$pwd\leatherman.7z"
   - ps: 7z.exe x leatherman.7z -oC:\tools | FIND /V "ing "
 
+  - git clone https://github.com/puppetlabs/cpp-hocon.git
+  - cd cpp-hocon
+  - ps: cmake -G "MinGW Makefiles" -DBOOST_ROOT="C:\tools\boost_1_58_0-x86_64_mingw-w64_4.8.3_win32_seh" -DCMAKE_PREFIX_PATH="C:\tools\leatherman;C:\tools\curl-7.42.1-x86_64_min    gw-w64_4.8.3_win32_seh" -DCURL_STATIC=ON -DBOOST_STATIC=ON -Wno-dev .
+  - ps: mingw32-make install
+  - cd ..
+
   - bundle install --jobs 4 --retry 2 --gemfile=lib/Gemfile --quiet
 
 build_script:
