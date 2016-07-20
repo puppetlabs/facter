@@ -1,5 +1,7 @@
 test_name "Facts should resolve as expected in Solaris 10 and 11"
 
+@ip_regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+
 #
 # This test is intended to ensure that facts specific to an OS configuration
 # resolve as expected in Solaris 10 and 11.
@@ -64,7 +66,7 @@ agents.each do |agent|
   step "Ensure the Networking fact resolves with reasonable values for at least one interface"
 
   expected_networking = {
-                          "networking.ip"       => /10\.\d+\.\d+\.\d+/,
+                          "networking.ip"       => @ip_regex,
                           "networking.mac"      => /[a-f0-9]{2}:/,
                           "networking.mtu"      => /\d+/,
                           "networking.netmask"  => /\d+\.\d+\.\d+\.\d+/,
@@ -72,7 +74,7 @@ agents.each do |agent|
 
   # Our SPARC testing platforms don't use DHCP
   if os_architecture == 'i86pc'
-    expected_networking["networking.dhcp"] = /10\.\d+\.\d+\.\d+/
+    expected_networking["networking.dhcp"] = @ip_regex
   end
 
   expected_networking.each do |fact, value|
@@ -85,9 +87,9 @@ agents.each do |agent|
 
   step "Ensure bindings for the primary networking interface are present."
   expected_bindings = {
-                        "networking.interfaces.#{primary_interface}.bindings.0.address" => /\d+\.\d+\.\d+\.\d+/,
+                        "networking.interfaces.#{primary_interface}.bindings.0.address" => @ip_regex,
                         "networking.interfaces.#{primary_interface}.bindings.0.netmask" => /\d+\.\d+\.\d+\.\d+/,
-                        "networking.interfaces.#{primary_interface}.bindings.0.network" => /\d+\.\d+\.\d+\.\d+/
+                        "networking.interfaces.#{primary_interface}.bindings.0.network" => @ip_regex,
                       }
   expected_bindings.each do |fact, value|
     assert_match(value, fact_on(agent, fact))

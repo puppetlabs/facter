@@ -1,5 +1,7 @@
 test_name "Facts should resolve as expected in Ubuntu"
 
+@ip_regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+
 #
 # This test is intended to ensure that facts specific to an OS configuration
 # resolve as expected in all supported Ubuntu versions.
@@ -83,14 +85,14 @@ agents.each do |agent|
 
   step "Ensure the Networking fact resolves with reasonable values for at least one interface"
   expected_networking = {
-                          "networking.dhcp"     => /(?:10|192)\.\d+\.\d+\.\d+/,
-                          "networking.ip"       => /10\.\d+\.\d+\.\d+/,
+                          "networking.dhcp"     => @ip_regex,
+                          "networking.ip"       => @ip_regex,
                           "networking.ip6"      => /[a-f0-9]+:+/,
                           "networking.mac"      => /[a-f0-9]{2}:/,
                           "networking.mtu"      => /\d+/,
                           "networking.netmask"  => /\d+\.\d+\.\d+\.\d+/,
                           "networking.netmask6" => /[a-f0-9]+:/,
-                          "networking.network"  => /10\.\d+\.\d+\.\d+/,
+                          "networking.network"  => @ip_regex,
                           "networking.network6" => /([a-f0-9]+)?:([a-f0-9]+)?/
                         }
 
