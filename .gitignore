@@ -16,6 +16,7 @@ compile_commands.json
 /lib/spec/spec_helper.rb
 /debug*/
 /*release*/
+/*build*/
 /.idea/
 /linux-release/
 

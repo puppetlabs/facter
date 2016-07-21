@@ -298,7 +298,6 @@ endif()
 
 # Link in additional libraries
 target_link_libraries(libfacter PRIVATE
-    ${CPPHOCON_LIBRARIES}
     ${LIBFACTER_PLATFORM_LIBRARIES}
     ${LEATHERMAN_LIBRARIES}
     ${Boost_LIBRARIES}
