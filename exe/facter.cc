@@ -133,7 +133,8 @@ int main(int argc, char **argv)
             ("trace", "Enable backtraces for custom facts.")
             ("verbose", "Enable verbose (info) output.")
             ("version,v", "Print the version and exit.")
-            ("yaml,y", "Output in YAML format.");
+            ("yaml,y", "Output in YAML format.")
+            ("strict", "Enables more aggressive error reporting.");
 
         // Build a list of "hidden" options that are not visible on the command line
         po::options_description hidden_options("");
@@ -282,7 +283,8 @@ int main(int argc, char **argv)
         }
 
         bool show_legacy = vm.count("show-legacy");
-        facts.write(boost::nowide::cout, fmt, queries, show_legacy);
+        bool strict_errors = vm.count("strict");
+        facts.write(boost::nowide::cout, fmt, queries, show_legacy, strict_errors);
         boost::nowide::cout << endl;
     } catch (locale_error const& e) {
         boost::nowide::cerr << "failed to initialize logging system due to a locale error: " << e.what() << "\n" << endl;
