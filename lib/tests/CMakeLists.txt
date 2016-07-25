@@ -118,6 +118,7 @@ include_directories(
 
 add_executable(libfacter_test $<TARGET_OBJECTS:libfactersrc> ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_CATEGORY_SOURCES})
 target_link_libraries(libfacter_test
+    cpp-hocon
     ${POSIX_TESTS_LIBRARIES}
     ${LIBFACTER_TESTS_PLATFORM_LIBRARIES}
     ${YAMLCPP_LIBRARIES}

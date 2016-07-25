@@ -87,6 +87,7 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" AND NOT WITHOUT_BLKID)
     find_package(BLKID)
 endif()
 
+find_package(CPPHOCON REQUIRED)
 
 if (NOT WITHOUT_JRUBY AND NOT WIN32)
     find_package(JNI)

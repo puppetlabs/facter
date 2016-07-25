@@ -1,6 +1,7 @@
 #include <facter/version.h>
 #include <facter/logging/logging.hpp>
 #include <facter/facts/collection.hpp>
+#include <facter/config/config.hpp>
 #include <facter/ruby/ruby.hpp>
 #include <leatherman/util/environment.hpp>
 #include <leatherman/util/scope_exit.hpp>
@@ -26,6 +27,7 @@
 using namespace std;
 using namespace facter::facts;
 using namespace facter::logging;
+using namespace facter::config;
 using leatherman::util::environment;
 namespace po = boost::program_options;
 
@@ -110,8 +112,16 @@ int main(int argc, char **argv)
         // Setup logging
         setup_logging(boost::nowide::cerr);
 
+        auto conf = config::instance("/etc/puppetlabs/facter/facter.conf");
+
         vector<string> external_directories;
+        if (conf.has_setting("global.external-dir")) {
+            external_directories.emplace_back(conf.get_setting<string>("global.external-dir"));
+        }
         vector<string> custom_directories;
+        if (conf.has_setting("global.custom-dir")) {
+            custom_directories.emplace_back(conf.get_setting<string>("global.custom-dir"));
+        }
 
         // Build a list of options visible on the command line
         // Keep this list sorted alphabetically
