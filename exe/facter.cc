@@ -2,8 +2,10 @@
 #include <facter/logging/logging.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/ruby/ruby.hpp>
+#include <hocon/program_options.hpp>
 #include <leatherman/util/environment.hpp>
 #include <leatherman/util/scope_exit.hpp>
+#include <leatherman/file_util/file.hpp>
 #include <boost/algorithm/string.hpp>
 // Note the caveats in nowide::cout/cerr; they're not synchronized with stdio.
 // Thus they can't be relied on to flush before program exit.
@@ -24,6 +26,7 @@
 #include <iterator>
 
 using namespace std;
+using namespace hocon;
 using namespace facter::facts;
 using namespace facter::logging;
 using leatherman::util::environment;
@@ -113,27 +116,31 @@ int main(int argc, char **argv)
         vector<string> external_directories;
         vector<string> custom_directories;
 
+        string conf_dir = "/etc/puppetlabs/facter/facter.conf";
+
         // Build a list of options visible on the command line
         // Keep this list sorted alphabetically
         po::options_description visible_options("");
         visible_options.add_options()
             ("color", "Enables color output.")
+            ("config,c", po::value<string>(&conf_dir), "Specify the location of the config file.")
             ("custom-dir", po::value<vector<string>>(&custom_directories), "A directory to use for custom facts.")
-            ("debug,d", "Enable debug output.")
+            ("debug,d", po::bool_switch()->default_value(false), "Enable debug output.")
             ("external-dir", po::value<vector<string>>(&external_directories), "A directory to use for external facts.")
             ("help,h", "Print this help message.")
             ("json,j", "Output in JSON format.")
             ("show-legacy", "Show legacy facts when querying all facts.")
             ("log-level,l", po::value<level>()->default_value(level::warning, "warn"), "Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.")
             ("no-color", "Disables color output.")
-            ("no-custom-facts", "Disables custom facts.")
-            ("no-external-facts", "Disables external facts.")
-            ("no-ruby", "Disables loading Ruby, facts requiring Ruby, and custom facts.")
+            ("no-custom-facts", po::bool_switch()->default_value(false), "Disables custom facts.")
+            ("no-external-facts", po::bool_switch()->default_value(false), "Disables external facts.")
+            ("no-ruby", po::bool_switch()->default_value(false), "Disables loading Ruby, facts requiring Ruby, and custom facts.")
             ("puppet,p", "(Deprecated: use `puppet facts` instead) Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.")
-            ("trace", "Enable backtraces for custom facts.")
-            ("verbose", "Enable verbose (info) output.")
+            ("trace", po::bool_switch()->default_value(false), "Enable backtraces for custom facts.")
+            ("verbose", po::bool_switch()->default_value(false), "Enable verbose (info) output.")
             ("version,v", "Print the version and exit.")
-            ("yaml,y", "Output in YAML format.");
+            ("yaml,y", "Output in YAML format.")
+            ("strict", "Enables more aggressive error reporting.");
 
         // Build a list of "hidden" options that are not visible on the command line
         po::options_description hidden_options("");
@@ -148,10 +155,40 @@ int main(int argc, char **argv)
         po::positional_options_description positional_options;
         positional_options.add("query", -1);
 
+        // Build a list of options that can be set in the config file
+        po::options_description config_file_options("");
+        config_file_options.add_options()
+            ("custom-dir", po::value<vector<string>>(&custom_directories), "A directory to use for custom facts.")
+            ("debug", po::value<bool>(), "Enable debug output.")
+            ("external-dir", po::value<vector<string>>(&external_directories), "A directory to use for external facts.")
+            ("log-level", po::value<level>()->default_value(level::warning, "warn"), "Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.")
+            ("no-custom-facts", po::value<bool>(), "Disables custom facts.")
+            ("no-external-facts", po::value<bool>(), "Disables external facts.")
+            ("no-ruby", po::value<bool>(), "Disables loading Ruby, facts requiring Ruby, and custom facts.")
+            ("trace", po::value<bool>(), "Enable backtraces for custom facts.")
+            ("verbose", po::value<bool>(), "Enable verbose (info) output.");
+
         po::variables_map vm;
         try {
             po::store(po::command_line_parser(argc, argv).
                       options(command_line_options).positional(positional_options).run(), vm);
+
+            // Check for non-default config file location
+            if (vm.count("config")) {
+                conf_dir = vm["config"].as<string>();
+            }
+
+            if (leatherman::file_util::file_readable(conf_dir)) {
+                auto hocon_conf = hocon::config::parse_file_any_syntax(conf_dir)->resolve();
+                if (hocon_conf->has_path("global")) {
+                    auto global_settings = hocon_conf->get_object("global")->to_config();
+                    po::store(hocon::program_options::parse_hocon<char>(global_settings, config_file_options, true), vm);
+                }
+                if (hocon_conf->has_path("cli")) {
+                    auto cli_settings = hocon_conf->get_object("cli")->to_config();
+                    po::store(hocon::program_options::parse_hocon<char>(cli_settings, config_file_options, true), vm);
+                }
+            }
 
             // Check for a help option first before notifying
             if (vm.count("help")) {
@@ -168,22 +205,22 @@ int main(int argc, char **argv)
             if (vm.count("json") && vm.count("yaml")) {
                 throw po::error("json and yaml options conflict: please specify only one.");
             }
-            if (vm.count("no-external-facts") && vm.count("external-dir")) {
+            if (vm["no-external-facts"].as<bool>() && vm.count("external-dir")) {
                 throw po::error("no-external-facts and external-dir options conflict: please specify only one.");
             }
-            if (vm.count("no-custom-facts") && vm.count("custom-dir")) {
+            if (vm["no-custom-facts"].as<bool>() && vm.count("custom-dir")) {
                 throw po::error("no-custom-facts and custom-dir options conflict: please specify only one.");
             }
-            if ((vm.count("debug") + vm.count("verbose") + (vm["log-level"].defaulted() ? 0 : 1)) > 1) {
+            if ((vm["debug"].as<bool>() + vm["verbose"].as<bool>() + (vm["log-level"].defaulted() ? 0 : 1)) > 1) {
                 throw po::error("debug, verbose, and log-level options conflict: please specify only one.");
             }
-            if (vm.count("no-ruby") && vm.count("custom-dir")) {
+            if (vm["no-ruby"].as<bool>() && vm.count("custom-dir")) {
                 throw po::error("no-ruby and custom-dir options conflict: please specify only one.");
             }
-            if (vm.count("puppet") && vm.count("no-custom-facts")) {
+            if (vm.count("puppet") && vm["no-custom-facts"].as<bool>()) {
                 throw po::error("puppet and no-custom-facts options conflict: please specify only one.");
             }
-            if (vm.count("puppet") && vm.count("no-ruby")) {
+            if (vm.count("puppet") && vm["no-ruby"].as<bool>()) {
                 throw po::error("puppet and no-ruby options conflict: please specify only one.");
             }
         }
@@ -210,9 +247,9 @@ int main(int argc, char **argv)
 
         // Get the logging level
         auto lvl= vm["log-level"].as<level>();
-        if (vm.count("debug")) {
+        if (vm["debug"].as<bool>()) {
             lvl = level::debug;
-        } else if (vm.count("verbose")) {
+        } else if (vm["verbose"].as<bool>()) {
             lvl = level::info;
         }
         set_level(lvl);
@@ -220,7 +257,7 @@ int main(int argc, char **argv)
         log_command_line(argc, argv);
 
         // Initialize Ruby in main
-        bool ruby = (vm.count("no-ruby") == 0) && facter::ruby::initialize(vm.count("trace") == 1);
+        bool ruby = (!vm["no-ruby"].as<bool>()) && facter::ruby::initialize(vm["trace"].as<bool>());
         leatherman::util::scope_exit ruby_cleanup{[ruby]() {
             if (ruby) {
                 facter::ruby::uninitialize();
@@ -253,7 +290,14 @@ int main(int argc, char **argv)
         collection facts;
         facts.add_default_facts(ruby);
 
-        if (!vm.count("no-external-facts")) {
+        // Add the environment facts
+        facts.add_environment_facts();
+
+        if (ruby && !vm["no-custom-facts"].as<bool>()) {
+            facter::ruby::load_custom_facts(facts, vm.count("puppet"), custom_directories);
+        }
+
+        if (!vm["no-external-facts"].as<bool>()) {
           string inside_facter;
           environment::get("INSIDE_FACTER", inside_facter);
 
@@ -266,13 +310,6 @@ int main(int argc, char **argv)
           }
         }
 
-        // Add the environment facts
-        facts.add_environment_facts();
-
-        if (ruby && !vm.count("no-custom-facts")) {
-            facter::ruby::load_custom_facts(facts, vm.count("puppet"), custom_directories);
-        }
-
         // Output the facts
         format fmt = format::hash;
         if (vm.count("json")) {
@@ -282,7 +319,8 @@ int main(int argc, char **argv)
         }
 
         bool show_legacy = vm.count("show-legacy");
-        facts.write(boost::nowide::cout, fmt, queries, show_legacy);
+        bool strict_errors = vm.count("strict");
+        facts.write(boost::nowide::cout, fmt, queries, show_legacy, strict_errors);
         boost::nowide::cout << endl;
     } catch (locale_error const& e) {
         boost::nowide::cerr << "failed to initialize logging system due to a locale error: " << e.what() << "\n" << endl;
