@@ -272,6 +272,7 @@ include_directories(
     ${YAMLCPP_INCLUDE_DIRS}
     ${CURL_INCLUDE_DIRS}
     ${LEATHERMAN_INCLUDE_DIRS}
+    ${CPPHOCON_INCLUDE_DIRS}
 )
 
 link_directories(
@@ -279,6 +280,7 @@ link_directories(
     ${OPENSSL_LIBRARY_DIRS}
     ${YAMLCPP_LIBRARY_DIRS}
     ${CURL_LIBRARY_DIRS}
+    ${CPPHOCON_LIBRARY_DIRS}
 )
 
 # Add the library target without a prefix (name already has the 'lib') and use '.so' for all platforms (Ruby extension file extension)
@@ -296,6 +298,7 @@ endif()
 
 # Link in additional libraries
 target_link_libraries(libfacter PRIVATE
+    ${CPPHOCON_LIBRARIES}
     ${LIBFACTER_PLATFORM_LIBRARIES}
     ${LEATHERMAN_LIBRARIES}
     ${Boost_LIBRARIES}

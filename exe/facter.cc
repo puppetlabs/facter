@@ -2,6 +2,7 @@
 #include <facter/logging/logging.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/ruby/ruby.hpp>
+#include <hocon/program_options.hpp>
 #include <leatherman/util/environment.hpp>
 #include <leatherman/util/scope_exit.hpp>
 #include <boost/algorithm/string.hpp>
@@ -24,6 +25,7 @@
 #include <iterator>
 
 using namespace std;
+using namespace hocon;
 using namespace facter::facts;
 using namespace facter::logging;
 using leatherman::util::environment;
@@ -113,11 +115,14 @@ int main(int argc, char **argv)
         vector<string> external_directories;
         vector<string> custom_directories;
 
+        string conf_dir = "/etc/puppetlabs/facter/facter.conf";
+
         // Build a list of options visible on the command line
         // Keep this list sorted alphabetically
         po::options_description visible_options("");
         visible_options.add_options()
             ("color", "Enables color output.")
+            ("config,c", po::value<string>(&conf_dir), "Specify the location of the config file.")
             ("custom-dir", po::value<vector<string>>(&custom_directories), "A directory to use for custom facts.")
             ("debug,d", "Enable debug output.")
             ("external-dir", po::value<vector<string>>(&external_directories), "A directory to use for external facts.")
@@ -141,6 +146,8 @@ int main(int argc, char **argv)
         hidden_options.add_options()
             ("query", po::value<vector<string>>());
 
+        // TODO Build a list of global options available in the config file
+
         // Create the supported command line options (visible + hidden)
         po::options_description command_line_options;
         command_line_options.add(visible_options).add(hidden_options);
@@ -153,6 +160,13 @@ int main(int argc, char **argv)
         try {
             po::store(po::command_line_parser(argc, argv).
                       options(command_line_options).positional(positional_options).run(), vm);
+
+            // Check for non-default config file location
+            if (vm.count("config")) {
+                conf_dir = vm["config"].as<string>();
+            }
+
+            // TODO Load the file based on conf_dir and extract the global settings
 
             // Check for a help option first before notifying
             if (vm.count("help")) {
