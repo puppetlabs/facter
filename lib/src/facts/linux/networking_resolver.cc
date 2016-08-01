@@ -145,7 +145,7 @@ namespace facter { namespace facts { namespace linux {
 
             // remove trailing "onlink" or "pervasive" flags
             while (parts.size() > 0) {
-                auto last_token = parts.back();
+                std::string last_token(parts.back().begin(), parts.back().end());
                 if (last_token == "onlink" || last_token == "pervasive")
                     parts.pop_back();
                 else
