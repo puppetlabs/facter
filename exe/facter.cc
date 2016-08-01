@@ -160,7 +160,7 @@ int main(int argc, char **argv)
             ("custom-dir", po::value<vector<string>>(&custom_directories), "A directory to use for custom facts.")
             ("debug", po::value<bool>(), "Enable debug output.")
             ("external-dir", po::value<vector<string>>(&external_directories), "A directory to use for external facts.")
-            ("log-level", po::value<string>(), "Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.")
+            ("log-level", po::value<level>()->default_value(level::warning, "warn"), "Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.")
             ("no-custom-facts", po::value<bool>(), "Disables custom facts.")
             ("no-external-facts", po::value<bool>(), "Disables external facts.")
             ("no-ruby", po::value<bool>(), "Disables loading Ruby, facts requiring Ruby, and custom facts.")
@@ -183,8 +183,7 @@ int main(int argc, char **argv)
                     auto global_settings = hocon_conf->get_object("global")->to_config();
                     po::store(hocon::program_options::parse_hocon<char>(global_settings, config_file_options, true), vm);
                 }
-                if (hocon_conf->has_path("cli"))
-                {
+                if (hocon_conf->has_path("cli")) {
                     auto cli_settings = hocon_conf->get_object("cli")->to_config();
                     po::store(hocon::program_options::parse_hocon<char>(cli_settings, config_file_options, true), vm);
                 }

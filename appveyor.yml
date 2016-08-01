@@ -2,7 +2,7 @@ version: 3.1.0.{build}
 clone_depth: 10
 environment:
   LEATHERMAN_VERSION: 0.7.0
-  CPPHOCON_VERSION: 0.1.1
+  CPPHOCON_VERSION: 0.1.2
 install:
   - git submodule update --init --recursive
 
