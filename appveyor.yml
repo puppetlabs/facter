@@ -2,6 +2,7 @@ version: 3.1.0.{build}
 clone_depth: 10
 environment:
   LEATHERMAN_VERSION: 0.7.0
+  CPPHOCON_VERSION: 0.1.2
 install:
   - git submodule update --init --recursive
 
@@ -23,10 +24,13 @@ install:
   - ps: wget "https://github.com/puppetlabs/leatherman/releases/download/$env:LEATHERMAN_VERSION/leatherman.7z" -OutFile "$pwd\leatherman.7z"
   - ps: 7z.exe x leatherman.7z -oC:\tools | FIND /V "ing "
 
+  - ps: wget "https://github.com/puppetlabs/cpp-hocon/releases/download/$env:CPPHOCON_VERSION/cpp-hocon.7z" -OutFile "$pwd\cpp-hocon.7z"
+  - ps: 7z.exe x cpp-hocon.7z -oC:\tools | FIND /V "ing "
+
   - bundle install --jobs 4 --retry 2 --gemfile=lib/Gemfile --quiet
 
 build_script:
-  - ps: cmake -G "MinGW Makefiles" -DBOOST_ROOT="C:\tools\boost_1_57_0-x86_64_mingw-w64_4.8.3_win32_seh" -DYAMLCPP_ROOT="C:\tools\yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_win32_seh" -DBOOST_STATIC=ON -DCURL_STATIC=ON -DCMAKE_INSTALL_PREFIX="C:\Program Files\FACTER" -DCMAKE_PREFIX_PATH="C:\tools\leatherman;C:\tools\curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh" .
+  - ps: cmake -G "MinGW Makefiles" -DBOOST_ROOT="C:\tools\boost_1_57_0-x86_64_mingw-w64_4.8.3_win32_seh" -DYAMLCPP_ROOT="C:\tools\yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_win32_seh" -DBOOST_STATIC=ON -DCURL_STATIC=ON -DCMAKE_INSTALL_PREFIX="C:\Program Files\FACTER" -DCMAKE_PREFIX_PATH="C:\tools\leatherman;C:\tools\curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh;C:\tools\cpp-hocon" .
   - ps: mingw32-make -j2
 
 test_script:

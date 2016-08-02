@@ -12,15 +12,27 @@ include_directories(
     ../lib/inc # the libfacter headers
     ${Boost_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
+    ${LEATHERMAN_RUBY_INCLUDE}
+    ${LEATHERMAN_FILE_UTIL_INCLUDE}
     ${LEATHERMAN_UTIL_INCLUDE}
     ${LEATHERMAN_NOWIDE_INCLUDE}
+    ${CPPHOCON_INCLUDE_DIRS}
+)
+
+link_directories(
+    ${CPPHOCON_LIBRARY_DIRS}
 )
 
 add_executable(facter ${FACTER_SOURCES})
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    target_link_libraries(facter rt)
+endif()
+
 target_link_libraries(facter libfacter
-    ${Boost_PROGRAM_OPTIONS_LIBRARY}
-    ${LEATHERMAN_UTIL_LIB}
-    ${LEATHERMAN_NOWIDE_LIB}
+    ${CPPHOCON_LIBRARIES}
+    ${LEATHERMAN_LIBRARIES}
+    ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT} # fix until Leatherman switches to private dependencies
 )
 
