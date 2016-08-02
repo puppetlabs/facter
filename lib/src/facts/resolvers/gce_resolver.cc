@@ -239,6 +239,8 @@ namespace facter { namespace facts { namespace resolvers {
             lth_curl::request req("http://metadata/computeMetadata/v1beta1/?recursive=true&alt=json");
             req.connection_timeout(GCE_CONNECTION_TIMEOUT);
             req.timeout(GCE_SESSION_TIMEOUT);
+            if (!http_langs().empty())
+                req.add_header("Accept-Language", http_langs());
 
             lth_curl::client cli;
             auto response = cli.get(req);
