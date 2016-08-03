@@ -21,7 +21,7 @@ cli : {
 EOM
 
 agents.each do |agent|
-  custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajorversion')).stdout.chomp.to_f)
+  custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
 
   step "Agent #{agent}: create custom fact directory and executable custom fact"
   on(agent, "mkdir -p '#{custom_dir}'")
