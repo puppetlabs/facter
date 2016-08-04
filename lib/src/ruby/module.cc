@@ -4,6 +4,7 @@
 #include <internal/ruby/simple_resolution.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/logging/logging.hpp>
+#include <facter/util/config.hpp>
 #include <facter/version.h>
 #include <facter/export.h>
 #include <leatherman/util/environment.hpp>
@@ -23,6 +24,7 @@
 
 using namespace std;
 using namespace facter::facts;
+using namespace facter::util::config;
 using namespace leatherman::execution;
 using namespace leatherman::file_util;
 using namespace leatherman::util;
@@ -44,6 +46,7 @@ namespace facter { namespace ruby {
         {
             // Create a collection and a facter module
             _facts.reset(new collection());
+
             _module.reset(new module(*_facts));
 
             // Ruby doesn't have a proper way of notifying extensions that the VM is shutting down
@@ -170,8 +173,16 @@ namespace facter { namespace ruby {
             throw runtime_error("Ruby API is not initialized.");
         }
 
-        // Initialize the search paths
-        initialize_search_paths(paths);
+        // Load global settigs from config file
+        load_global_settings(load_default_config_file(), _config_file_settings);
+
+        // Initialize custom fact paths
+        vector<string> custom_fact_path = paths;
+        if (_config_file_settings.count("custom-dir")) {
+            auto config_paths = _config_file_settings["custom-dir"].as<vector<string>>();
+            custom_fact_path.insert(custom_fact_path.end(), config_paths.begin(), config_paths.end());
+        }
+        initialize_search_paths(custom_fact_path);
 
         // Register the block for logging callback with the GC
         _on_message_block = ruby.nil_value();
@@ -780,8 +791,15 @@ namespace facter { namespace ruby {
                     return true;
                 }
                 instance->_external_search_paths.emplace_back(ruby.to_string(element));
+
                 return true;
             });
+
+            // Add external path from config file
+            if (instance->_config_file_settings.count("external-dir")) {
+                auto config_paths = instance->_config_file_settings["external-dir"].as<vector<string>>();
+                instance->_external_search_paths.insert(instance->_external_search_paths.end(), config_paths.begin(), config_paths.end());
+            }
             return ruby.nil_value();
         });
     }
