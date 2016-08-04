@@ -65,6 +65,14 @@ EOM
       config_ext_file = File.join(config_dir, "ext.conf")
       create_remote_file(agent, config_ext_file, config_ext)
 
+      config_ext_list = <<EOM
+global : {
+    external-dir : [ "#{ext_fact_custom_dir}", "fake/external/dir" ]
+}
+EOM
+      config_ext_list_file = File.join(config_dir, "ext_list.conf")
+      create_remote_file(agent, config_ext_list_file, config_ext_list)
+
       step "setting no-external-facts to true should disable external facts" do
         on(agent, facter("--config '#{config_no_ext_file}' external_fact")) do
           assert_equal("", stdout.chomp, "Expected external fact to be disabled, but it resolved as #{stdout.chomp}")
@@ -74,6 +82,13 @@ EOM
       step "setting external-dir should specify location of external facts" do
         on(agent, facter("--config '#{config_ext_file}' external_fact")) do
           assert_equal("testvalue", stdout.chomp, "External fact output does not match expected output")
+        end
+      end
+
+      step "external-dir should support a list of directories" do
+        on(agent, facter("--config '#{config_ext_list_file}' external_fact")) do
+          assert_equal("testvalue", stdout.chomp, "External fact output does not match expected output")
+          assert_match(/skipping external facts for "fake\/external\/dir"/, stderr, "Did not attempt to search second external fact directory")
         end
       end
     end
