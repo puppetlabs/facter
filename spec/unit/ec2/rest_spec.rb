@@ -5,7 +5,7 @@ shared_examples_for "an ec2 rest querier" do
   describe "determining if the uri is reachable" do
     it "retries if the connection times out" do
       subject.stubs(:open).returns(stub(:read => nil))
-      Timeout.expects(:timeout).with(0.2).twice.raises(Timeout::Error).returns(true)
+      Timeout.expects(:timeout).with(0.5).twice.raises(Timeout::Error).returns(true)
       expect(subject).to be_reachable
     end
 
@@ -20,7 +20,7 @@ shared_examples_for "an ec2 rest querier" do
     end
 
     it "is false if the connection always times out" do
-      Timeout.expects(:timeout).with(0.2).times(3).raises(Timeout::Error)
+      Timeout.expects(:timeout).with(0.5).times(3).raises(Timeout::Error)
       expect(subject).to_not be_reachable
     end
   end
