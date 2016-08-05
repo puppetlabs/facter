@@ -57,7 +57,7 @@ namespace facter { namespace facts { namespace windows {
         // executables can be found.
         TCHAR szPath[MAX_PATH];
         if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_WINDOWS, NULL, 0, szPath))) {
-            LOG_DEBUG("error finding SYSTEMROOT: %1%", leatherman::windows::system_error());
+            LOG_DEBUG("error finding SYSTEMROOT: {1}", leatherman::windows::system_error());
         }
 
         auto pathNative = path(szPath) / "sysnative";

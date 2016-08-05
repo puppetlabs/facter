@@ -114,47 +114,59 @@ namespace facter { namespace logging {
     LIBFACTER_EXPORT void clear_logged_errors();
 
     /**
-     * Logs a given message.
-     * @param lvl The logging level to log with.
-     * @param message The message to log.
+     * Translate text using the locale initialized by this library.
+     * @param msg The string to translate.
+     * @return The translated string.
      */
-    LIBFACTER_EXPORT void log(level lvl, std::string const& message);
+    LIBFACTER_EXPORT std::string translate(std::string const& msg);
 
     /**
-     * Logs a given format message.
-     * @param lvl The logging level to log with.
-     * @param message The message being formatted.
+     * Format a text message.
+     * @tparam TArgs The format argument types.
+     * @param fmt The format string.
+     * @param args The format arguments.
+     * @return The formatted string.
      */
-    LIBFACTER_EXPORT void log(level lvl, boost::format& message);
-
-    /**
-     * Logs a given format message.
-     * @tparam T The type of the first argument.
-     * @tparam TArgs The types of the remaining arguments.
-     * @param lvl The logging level to log with.
-     * @param message The message being formatted.
-     * @param arg The first argument to the message.
-     * @param args The remaining arguments to the message.
-     */
-    template <typename T, typename... TArgs>
-    void log(level lvl, boost::format& message, T arg, TArgs... args)
+    template <typename... TArgs>
+    std::string format(std::string const& fmt, TArgs... args)
     {
-        message % arg;
-        log(lvl, message, std::forward<TArgs>(args)...);
+        boost::format msg{translate(fmt)};
+        (void) std::initializer_list<int>{ ((void)(msg % args), 0)... };
+        return msg.str();
     }
 
     /**
-     * Logs a given format message.
-     * @tparam TArgs The types of the arguments to format the message with.
+     * Format a text message.
+     * Alias for format(...); Convenience function for adding i18n support.
+     * @tparam TArgs The format argument types.
+     * @param fmt The format string.
+     * @param args The format arguments.
+     * @return The formatted string.
+     */
+    template<typename... TArgs>
+    inline std::string _(std::string const& fmt, TArgs&&... args)
+    {
+        return format(std::forward<decltype(fmt)>(fmt), std::forward<TArgs>(args)...);
+    }
+
+    /**
+     * Log a message.
      * @param lvl The logging level to log with.
-     * @param format The message format.
-     * @param args The remaining arguments to the message.
+     * @param msg The message to log.
+     */
+    LIBFACTER_EXPORT void log(level lvl, std::string const& msg);
+
+    /**
+     * Log a formatted message.
+     * @tparam TArgs The format argument types.
+     * @param lvl The logging level to log with.
+     * @param fmt The format string.
+     * @param args The format arguments.
      */
     template <typename... TArgs>
-    void log(level lvl, std::string const& format, TArgs... args)
+    inline void log(level lvl, std::string const& fmt, TArgs... args)
     {
-        boost::format message(format);
-        log(lvl, message, std::forward<TArgs>(args)...);
+        log(std::forward<decltype(lvl)>(lvl), format(fmt, std::forward<TArgs>(args)...));
     }
 
     /**

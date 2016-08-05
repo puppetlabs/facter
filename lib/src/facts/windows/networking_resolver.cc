@@ -40,13 +40,13 @@ namespace facter { namespace facts { namespace windows {
         DWORD size = 0u;
         GetComputerNameExW(nameFormat, nullptr, &size);
         if (GetLastError() != ERROR_MORE_DATA) {
-            LOG_DEBUG("failure resolving hostname: %1%", leatherman::windows::system_error());
+            LOG_DEBUG("failure resolving hostname: {1}", leatherman::windows::system_error());
             return "";
         }
 
         wstring buffer(size, '\0');
         if (!GetComputerNameExW(nameFormat, &buffer[0], &size)) {
-            LOG_DEBUG("failure resolving hostname: %1%", leatherman::windows::system_error());
+            LOG_DEBUG("failure resolving hostname: {1}", leatherman::windows::system_error());
             return "";
         }
 
@@ -58,7 +58,7 @@ namespace facter { namespace facts { namespace windows {
     {
         sockaddr_in mask = {AF_INET};
         if (_convertLengthToIpv4Mask && _convertLengthToIpv4Mask(masklen, &mask.sin_addr.S_un.S_addr) != NO_ERROR) {
-            LOG_DEBUG("failed creating IPv4 mask of length %1%", masklen);
+            LOG_DEBUG("failed creating IPv4 mask of length {1}", masklen);
         }
         return mask;
     }
@@ -69,7 +69,7 @@ namespace facter { namespace facts { namespace windows {
         const uint8_t incr = 32u;
         for (size_t i = 0; i < 16 && masklen > 0; i += 4, masklen -= min(masklen, incr)) {
             if (_convertLengthToIpv4Mask && _convertLengthToIpv4Mask(min(masklen, incr), reinterpret_cast<PULONG>(&mask.sin6_addr.u.Byte[i])) != NO_ERROR) {
-                LOG_DEBUG("failed creating IPv6 mask with component of length %1%", incr);
+                LOG_DEBUG("failed creating IPv6 mask with component of length {1}", incr);
                 break;
             }
         }
@@ -108,13 +108,13 @@ namespace facter { namespace facts { namespace windows {
             } else if (err == ERROR_BUFFER_OVERFLOW) {
                 pAddresses.resize(outBufLen);
             } else {
-                LOG_DEBUG("failure getting netmask info: %1%", leatherman::windows::system_error(err));
+                LOG_DEBUG("failure getting netmask info: {1}", leatherman::windows::system_error(err));
                 return {};
             }
         }
 
         if (err != ERROR_SUCCESS) {
-            LOG_DEBUG("failure getting netmask info: %1%", leatherman::windows::system_error(err));
+            LOG_DEBUG("failure getting netmask info: {1}", leatherman::windows::system_error(err));
             return {};
         }
 
@@ -129,7 +129,7 @@ namespace facter { namespace facts { namespace windows {
                 ip_masks.insert(make_pair(it->IpAddress.String, make_pair(string(it->IpMask.String), dhcp)));
             }
         }
-        LOG_DEBUG("found %1% netmask entries", ip_masks.size());
+        LOG_DEBUG("found {1} netmask entries", ip_masks.size());
         return ip_masks;
     }
 #endif
@@ -144,7 +144,7 @@ namespace facter { namespace facts { namespace windows {
             result.domain = registry::get_registry_string(registry::HKEY::LOCAL_MACHINE,
                 "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\", "Domain");
         } catch (registry_exception &e) {
-            LOG_DEBUG("failure getting networking::domain fact: %1%", e.what());
+            LOG_DEBUG("failure getting networking::domain fact: {1}", e.what());
         }
 
         // Get linked list of adapters.
@@ -163,13 +163,13 @@ namespace facter { namespace facts { namespace windows {
             } else if (err == ERROR_BUFFER_OVERFLOW) {
                 pAddresses.resize(outBufLen);
             } else {
-                LOG_DEBUG("failure resolving networking facts: %1%", leatherman::windows::system_error(err));
+                LOG_DEBUG("failure resolving networking facts: {1}", leatherman::windows::system_error(err));
                 return result;
             }
         }
 
         if (err != ERROR_SUCCESS) {
-            LOG_DEBUG("failure resolving networking facts: %1%", leatherman::windows::system_error(err));
+            LOG_DEBUG("failure resolving networking facts: {1}", leatherman::windows::system_error(err));
             return result;
         }
 
@@ -198,7 +198,7 @@ namespace facter { namespace facts { namespace windows {
                     try {
                         net_interface.dhcp_server = winsock.saddress_to_string(adapter.Dhcpv4Server);
                     } catch (wsa_exception &e) {
-                        LOG_DEBUG("failed to retrieve dhcp v4 server address for %1%: %2%", net_interface.name, e.what());
+                        LOG_DEBUG("failed to retrieve dhcp v4 server address for {1}: {2}", net_interface.name, e.what());
                     }
                 }
             }
@@ -212,7 +212,7 @@ namespace facter { namespace facts { namespace windows {
                         (it->Address.lpSockaddr->sa_family == AF_INET) ? " v4"
                         : (it->Address.lpSockaddr->sa_family == AF_INET6) ? " v6"
                         : "";
-                    LOG_DEBUG("failed to retrieve ip%1% address for %2%: %3%",
+                    LOG_DEBUG("failed to retrieve ip{1} address for {2}: {3}",
                         iptype, net_interface.name, e.what());
                 }
 
@@ -259,7 +259,7 @@ namespace facter { namespace facts { namespace windows {
                     } else {
 #ifdef WIN_SERVER_2003_SUPPORT
                         if (ipv6) {
-                            LOG_DEBUG("netmask for %1% (IPv6) is not supported on this platform", b.address);
+                            LOG_DEBUG("netmask for {1} (IPv6) is not supported on this platform", b.address);
                         } else {
                             auto ip_mask = adapterInfoMasks.find(b.address);
                             if (ip_mask != adapterInfoMasks.end()) {
@@ -269,7 +269,7 @@ namespace facter { namespace facts { namespace windows {
                                 auto masked = mask_ipv4_address(it->Address.lpSockaddr, mask);
                                 b.network = winsock.address_to_string(masked);
                             } else {
-                                LOG_DEBUG("could not find netmask for %1%", b.address);
+                                LOG_DEBUG("could not find netmask for {1}", b.address);
                             }
                         }
 #endif

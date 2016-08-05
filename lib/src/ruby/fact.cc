@@ -6,7 +6,11 @@
 #include <facter/facts/collection.hpp>
 #include <leatherman/util/environment.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/locale/locale.hpp>
 #include <algorithm>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 using namespace std;
 using namespace facter::facts;
@@ -64,7 +68,7 @@ namespace facter { namespace ruby {
 
         // Prevent cycles by raising an exception
         if (_resolving) {
-            ruby.rb_raise(*ruby.rb_eRuntimeError, "cycle detected while requesting value of fact \"%s\"", ruby.rb_string_value_ptr(&_name));
+            ruby.rb_raise(*ruby.rb_eRuntimeError, _("cycle detected while requesting value of fact \"{1}\"", ruby.rb_string_value_ptr(&_name)).c_str());
         }
 
         if (_resolved) {
@@ -118,7 +122,7 @@ namespace facter { namespace ruby {
                 _weight = weight;
                 return 0;
             }, [&](VALUE ex) {
-                LOG_ERROR("error while resolving custom fact \"%1%\": %2%", ruby.rb_string_value_ptr(&_name), ruby.exception_to_string(ex));
+                LOG_ERROR("error while resolving custom fact \"{1}\": {2}", ruby.rb_string_value_ptr(&_name), ruby.exception_to_string(ex));
 
                 // Failed, so set to nil
                 _value = ruby.nil_value();
@@ -151,7 +155,7 @@ namespace facter { namespace ruby {
         }
 
         if (!ruby.is_string(name)) {
-            ruby.rb_raise(*ruby.rb_eTypeError, "expected resolution name to be a String");
+            ruby.rb_raise(*ruby.rb_eTypeError, _("expected resolution name to be a String").c_str());
         }
 
         // Search for the resolution by name
@@ -170,7 +174,7 @@ namespace facter { namespace ruby {
         auto const& ruby = api::instance();
 
         if (!ruby.is_nil(name) && !ruby.is_string(name) && !ruby.is_symbol(name)) {
-            ruby.rb_raise(*ruby.rb_eTypeError, "expected resolution name to be a Symbol or String");
+            ruby.rb_raise(*ruby.rb_eTypeError, _("expected resolution name to be a Symbol or String").c_str());
         }
 
         if (ruby.is_symbol(name)) {
@@ -192,22 +196,22 @@ namespace facter { namespace ruby {
             ID timeout_id = ruby.rb_intern("timeout");
 
             if (!ruby.is_hash(options)) {
-                ruby.rb_raise(*ruby.rb_eTypeError, "expected a Hash for the options");
+                ruby.rb_raise(*ruby.rb_eTypeError, _("expected a Hash for the options").c_str());
             }
 
             ruby.hash_for_each(options, [&](VALUE key, VALUE value) {
                 if (!ruby.is_symbol(key)) {
-                    ruby.rb_raise(*ruby.rb_eTypeError, "expected a Symbol for options key");
+                    ruby.rb_raise(*ruby.rb_eTypeError, _("expected a Symbol for options key").c_str());
                 }
                 ID key_id = ruby.rb_to_id(key);
                 if (key_id == type_id) {
                     // Handle the type option
                     if (!ruby.is_symbol(value)) {
-                        ruby.rb_raise(*ruby.rb_eTypeError, "expected a Symbol for type option");
+                        ruby.rb_raise(*ruby.rb_eTypeError, _("expected a Symbol for type option").c_str());
                     }
                     ID type_id = ruby.rb_to_id(value);
                     if (type_id != simple_id && type_id != aggregate_id) {
-                        ruby.rb_raise(*ruby.rb_eArgError, "expected simple or aggregate for resolution type but was given %s", ruby.rb_id2name(type_id));
+                        ruby.rb_raise(*ruby.rb_eArgError, _("expected simple or aggregate for resolution type but was given {1}", ruby.rb_id2name(type_id)).c_str());
                     }
                     aggregate = (type_id == aggregate_id);
                 } else if (key_id == value_id) {
@@ -225,7 +229,7 @@ namespace facter { namespace ruby {
                         timeout_warning = false;
                     }
                 } else {
-                    ruby.rb_raise(*ruby.rb_eArgError, "unexpected option %s", ruby.rb_id2name(key_id));
+                    ruby.rb_raise(*ruby.rb_eArgError, _("unexpected option {1}", ruby.rb_id2name(key_id)).c_str());
                 }
                 return true;
             });
@@ -235,7 +239,7 @@ namespace facter { namespace ruby {
         VALUE resolution_self = find_resolution(name);
         if (ruby.is_nil(resolution_self)) {
             if (_resolutions.size() == MAXIMUM_RESOLUTIONS) {
-                ruby.rb_raise(*ruby.rb_eRuntimeError, "fact \"%s\" already has the maximum number of resolutions allowed (%d).", ruby.rb_string_value_ptr(&_name), MAXIMUM_RESOLUTIONS);
+                ruby.rb_raise(*ruby.rb_eRuntimeError, _("fact \"{1}\" already has the maximum number of resolutions allowed ({2}).", ruby.rb_string_value_ptr(&_name), MAXIMUM_RESOLUTIONS).c_str());
             }
 
             if (aggregate) {
@@ -247,12 +251,12 @@ namespace facter { namespace ruby {
         } else {
             if (aggregate && !ruby.is_a(resolution_self, ruby.lookup({ "Facter", "Core", "Aggregate"}))) {
                 ruby.rb_raise(*ruby.rb_eArgError,
-                    "cannot define an aggregate resolution with name \"%s\": a simple resolution with the same name already exists",
-                    ruby.rb_string_value_ptr(&name));
+                              _("cannot define an aggregate resolution with name \"{1}\": a simple resolution with the same name already exists",
+                                ruby.rb_string_value_ptr(&name)).c_str());
             } else if (!aggregate && !ruby.is_a(resolution_self, ruby.lookup({ "Facter", "Util", "Resolution"}))) {
                 ruby.rb_raise(*ruby.rb_eArgError,
-                    "cannot define a simple resolution with name \"%s\": an aggregate resolution with the same name already exists",
-                    ruby.rb_string_value_ptr(&name));
+                              _("cannot define a simple resolution with name \"{1}\": an aggregate resolution with the same name already exists",
+                                ruby.rb_string_value_ptr(&name)).c_str());
             }
         }
 
@@ -332,7 +336,7 @@ namespace facter { namespace ruby {
         auto const& ruby = api::instance();
 
         if (!ruby.is_string(name) && !ruby.is_symbol(name)) {
-            ruby.rb_raise(*ruby.rb_eTypeError, "expected a String or Symbol for fact name");
+            ruby.rb_raise(*ruby.rb_eTypeError, _("expected a String or Symbol for fact name").c_str());
         }
 
         ruby.to_native<fact>(self)->_name = name;
@@ -362,7 +366,7 @@ namespace facter { namespace ruby {
         auto const& ruby = api::instance();
 
         if (argc == 0 || argc > 2) {
-            ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
+            ruby.rb_raise(*ruby.rb_eArgError, _("wrong number of arguments ({1} for 2)", argc).c_str());
         }
 
         return ruby.to_native<fact>(self)->define_resolution(argv[0], argc > 1 ? argv[1] : ruby.nil_value());

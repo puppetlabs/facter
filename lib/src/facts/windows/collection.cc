@@ -40,7 +40,7 @@ namespace facter { namespace facts {
                 return {p.string()};
             }
 
-            LOG_WARNING("error finding COMMON_APPDATA, external facts unavailable: %1%", leatherman::windows::system_error());
+            LOG_WARNING("error finding COMMON_APPDATA, external facts unavailable: {1}", leatherman::windows::system_error());
         } else {
             auto home = user::home_dir();
             if (!home.empty()) {
@@ -84,7 +84,7 @@ namespace facter { namespace facts {
             add(make_shared<windows::virtualization_resolver>(shared_wmi));
             add(make_shared<windows::uptime_resolver>(shared_wmi));
         } catch (wmi_exception &e) {
-            LOG_ERROR("failed adding platform facts that require WMI: %1%", e.what());
+            LOG_ERROR("failed adding platform facts that require WMI: {1}", e.what());
         }
     }
 

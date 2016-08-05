@@ -4,10 +4,14 @@
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/locale/locale.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/nowide/fstream.hpp>
 #include <yaml-cpp/yaml.h>
 #include <yaml-cpp/eventhandler.h>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 using namespace std;
 using namespace YAML;
@@ -76,11 +80,11 @@ namespace facter { namespace facts { namespace external {
 
     void yaml_resolver::resolve(string const& path, collection& facts) const
     {
-        LOG_DEBUG("resolving facts from YAML file \"%1%\".", path);
+        LOG_DEBUG("resolving facts from YAML file \"{1}\".", path);
 
         boost::nowide::ifstream stream(path.c_str());
         if (!stream) {
-            throw external_fact_exception("file could not be opened.");
+            throw external_fact_exception(_("file could not be opened."));
         }
 
         try {
@@ -92,7 +96,7 @@ namespace facter { namespace facts { namespace external {
             throw external_fact_exception(ex.msg);
         }
 
-        LOG_DEBUG("completed resolving facts from YAML file \"%1%\".", path);
+        LOG_DEBUG("completed resolving facts from YAML file \"{1}\".", path);
     }
 
 }}}  // namespace facter::facts::external

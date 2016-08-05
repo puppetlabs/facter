@@ -1,6 +1,10 @@
 #include <internal/ruby/simple_resolution.hpp>
 #include <internal/ruby/module.hpp>
 #include <leatherman/execution/execution.hpp>
+#include <leatherman/locale/locale.hpp>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 using namespace std;
 using namespace facter::facts;
@@ -113,7 +117,7 @@ namespace facter { namespace ruby {
         auto const& ruby = api::instance();
 
         if (argc > 1) {
-            ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 1)", argc);
+            ruby.rb_raise(*ruby.rb_eArgError, _("wrong number of arguments ({1} for 1)", argc).c_str());
         }
 
         auto instance = ruby.to_native<simple_resolution>(self);
@@ -121,16 +125,16 @@ namespace facter { namespace ruby {
         if (argc == 0) {
             // No arguments, only a block is required
             if (!ruby.rb_block_given_p()) {
-                ruby.rb_raise(*ruby.rb_eArgError, "a block must be provided");
+                ruby.rb_raise(*ruby.rb_eArgError, _("a block must be provided").c_str());
             }
             instance->_block = ruby.rb_block_proc();
         } else if (argc == 1) {
             VALUE arg = argv[0];
             if (!ruby.is_string(arg) || ruby.is_true(ruby.rb_funcall(arg, ruby.rb_intern("empty?"), 0))) {
-                ruby.rb_raise(*ruby.rb_eTypeError, "expected a non-empty String for first argument");
+                ruby.rb_raise(*ruby.rb_eTypeError, _("expected a non-empty String for first argument").c_str());
             }
             if (ruby.rb_block_given_p()) {
-                ruby.rb_raise(*ruby.rb_eArgError, "a block is unexpected when passing a String");
+                ruby.rb_raise(*ruby.rb_eArgError, _("a block is unexpected when passing a String").c_str());
             }
             instance->_command = arg;
         }

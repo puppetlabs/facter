@@ -40,12 +40,12 @@ namespace facter { namespace facts { namespace openbsd {
         strncpy(ifr.ifr_name, interface.c_str(), sizeof(ifr.ifr_name));
         int s = socket(AF_INET, SOCK_DGRAM, 0);
         if (s < 0) {
-            LOG_WARNING("socket failed: %1% (%2%): interface MTU fact is unavailable for interface %3%.", strerror(errno), errno, interface);
+            LOG_WARNING("socket failed: {1} ({2}): interface MTU fact is unavailable for interface {3}.", strerror(errno), errno, interface);
             return boost::none;
         }
 
         if (ioctl(s, SIOCGIFMTU, &ifr) == -1) {
-            LOG_WARNING("ioctl failed: %1% (%2%): interface MTU fact is unavailable for interface %3%.", strerror(errno), errno, interface);
+            LOG_WARNING("ioctl failed: {1} ({2}): interface MTU fact is unavailable for interface {3}.", strerror(errno), errno, interface);
             return boost::none;
         }
 

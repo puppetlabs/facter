@@ -21,11 +21,11 @@ namespace facter { namespace facts { namespace posix {
             if (exec.success) {
                 return exec.output;
             } else {
-                LOG_DEBUG("failure executing %1%: %2%", xen_toolstack, exec.error);
+                LOG_DEBUG("failure executing {1}: {2}", xen_toolstack, exec.error);
                 return {};
             }
         } else {
-            LOG_TRACE("xen toolstack command not found: %1%", ec.message());
+            LOG_TRACE("xen toolstack command not found: {1}", ec.message());
 
             static vector<string> xen_commands{"/usr/sbin/xl", "/usr/sbin/xm"};
             for (auto const& cmd : xen_commands) {

@@ -1,6 +1,10 @@
 #include <internal/ruby/resolution.hpp>
 #include <internal/ruby/module.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/locale/locale.hpp>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 using namespace std;
 using namespace facter::facts;
@@ -105,7 +109,7 @@ namespace facter { namespace ruby {
         if (ruby.is_nil(confines)) {
             // No confines, only a block is required
             if (!ruby.rb_block_given_p()) {
-                ruby.rb_raise(*ruby.rb_eArgError, "a block must be provided");
+                ruby.rb_raise(*ruby.rb_eArgError, _("a block must be provided").c_str());
             }
             _confines.emplace_back(ruby::confine(ruby.nil_value(), ruby.nil_value(), ruby.rb_block_proc()));
         } else {
@@ -115,20 +119,20 @@ namespace facter { namespace ruby {
             if (ruby.is_string(confines)) {
                 // Argument is a string and a is block required
                 if (!ruby.rb_block_given_p()) {
-                    ruby.rb_raise(*ruby.rb_eArgError, "a block must be provided");
+                    ruby.rb_raise(*ruby.rb_eArgError, _("a block must be provided").c_str());
                 }
                 _confines.emplace_back(ruby::confine(confines, ruby.nil_value(), ruby.rb_block_proc()));
             } else if (ruby.is_hash(confines)) {
                 // Argument is a hash (block should not be given)
                 if (ruby.rb_block_given_p()) {
-                    ruby.rb_raise(*ruby.rb_eArgError, "a block is unexpected when passing a Hash");
+                    ruby.rb_raise(*ruby.rb_eArgError, _("a block is unexpected when passing a Hash").c_str());
                 }
                 ruby.hash_for_each(confines, [&](VALUE key, VALUE value) {
                     if (ruby.is_symbol(key)) {
                         key = ruby.rb_sym_to_s(key);
                     }
                     if (!ruby.is_string(key)) {
-                        ruby.rb_raise(*ruby.rb_eTypeError, "expected a String or Symbol for confine key");
+                        ruby.rb_raise(*ruby.rb_eTypeError, _("expected a String or Symbol for confine key").c_str());
                     }
                     if (ruby.is_symbol(value)) {
                         value = ruby.rb_sym_to_s(value);
@@ -137,7 +141,7 @@ namespace facter { namespace ruby {
                     return true;
                 });
             } else {
-                ruby.rb_raise(*ruby.rb_eTypeError, "expected argument to be a String, Symbol, or Hash");
+                ruby.rb_raise(*ruby.rb_eTypeError, _("expected argument to be a String, Symbol, or Hash").c_str());
             }
         }
     }
@@ -172,7 +176,7 @@ namespace facter { namespace ruby {
         auto const& ruby = api::instance();
 
         if (argc > 1) {
-            ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 1)", argc);
+            ruby.rb_raise(*ruby.rb_eArgError, _("wrong number of arguments ({1} for 1)", argc).c_str());
         }
 
         ruby.to_native<resolution>(self)->confine(argc == 0 ? ruby.nil_value() : argv[0]);
@@ -216,7 +220,7 @@ namespace facter { namespace ruby {
         auto const& ruby = api::instance();
 
         if (!ruby.rb_block_given_p()) {
-            ruby.rb_raise(*ruby.rb_eArgError, "a block must be provided");
+            ruby.rb_raise(*ruby.rb_eArgError, _("a block must be provided").c_str());
         }
 
         ruby.to_native<resolution>(self)->_flush_block = ruby.rb_block_proc();

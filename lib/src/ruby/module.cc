@@ -11,6 +11,7 @@
 #include <leatherman/execution/execution.hpp>
 #include <leatherman/file_util/directory.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/locale/locale.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/nowide/iostream.hpp>
@@ -21,6 +22,9 @@
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <internal/ruby/ruby_value.hpp>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 using namespace std;
 using namespace facter::facts;
@@ -131,7 +135,7 @@ extern "C" {
             ruby = &api::instance();
         } catch (runtime_error& ex) {
             if (!logging_init_failed) {
-                LOG_WARNING("%1%: facts requiring Ruby will not be resolved.", ex.what());
+                LOG_WARNING("{1}: facts requiring Ruby will not be resolved.", ex.what());
             } else {
                 // This could only happen if some non-ruby library
                 // consumer called this function for some reason and
@@ -152,7 +156,7 @@ extern "C" {
         // If logging init failed, we'll raise a load error
         // here. Otherwise we Create the context
         if (logging_init_failed) {
-            ruby->rb_raise(*ruby->rb_eLoadError, "could not initialize facter due to a locale error: %s", logging_init_error_msg.c_str());
+            ruby->rb_raise(*ruby->rb_eLoadError, _("could not initialize facter due to a locale error: {1}", logging_init_error_msg).c_str());
         } else {
             facter::ruby::require_context::create();
         }
@@ -169,7 +173,7 @@ namespace facter { namespace ruby {
     {
         auto const& ruby = api::instance();
         if (!ruby.initialized()) {
-            throw runtime_error("Ruby API is not initialized.");
+            throw runtime_error(_("Ruby API is not initialized.").c_str());
         }
 
         // Load global settigs from config file
@@ -287,7 +291,7 @@ namespace facter { namespace ruby {
             // Undefine the module
             ruby.rb_const_remove(*ruby.rb_cObject, ruby.rb_intern("Facter"));
         } catch (runtime_error& ex) {
-            LOG_WARNING("%1%: Ruby cleanup ended prematurely", ex.what());
+            LOG_WARNING("{1}: Ruby cleanup ended prematurely", ex.what());
             return;
         }
     }
@@ -317,7 +321,7 @@ namespace facter { namespace ruby {
         LOG_DEBUG("loading all custom facts.");
 
         for (auto const& directory : _search_paths) {
-            LOG_DEBUG("searching for custom facts in %1%.", directory);
+            LOG_DEBUG("searching for custom facts in {1}.", directory);
             each_file(directory, [&](string const& file) {
                 load_file(file);
                 return true;
@@ -459,7 +463,7 @@ namespace facter { namespace ruby {
         try {
             return body();
         } catch (exception const& e) {
-            LOG_ERROR("%1% uncaught exception: %2%", scope, e.what());
+            LOG_ERROR("{1} uncaught exception: {2}", scope, e.what());
         }
         return api::instance().nil_value();
     }
@@ -478,7 +482,7 @@ namespace facter { namespace ruby {
             auto const& ruby = api::instance();
 
             if (argc == 0 || argc > 2) {
-                ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
+                ruby.rb_raise(*ruby.rb_eArgError, _("wrong number of arguments ({1} for 2)", argc).c_str());
             }
 
             VALUE fact_self = from_self(self)->create_fact(argv[0]);
@@ -501,7 +505,7 @@ namespace facter { namespace ruby {
             auto const& ruby = api::instance();
 
             if (argc == 0 || argc > 2) {
-                ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
+                ruby.rb_raise(*ruby.rb_eArgError, _("wrong number of arguments ({1} for 2)", argc).c_str());
             }
 
             VALUE fact_self = from_self(self)->create_fact(argv[0]);
@@ -617,7 +621,7 @@ namespace facter { namespace ruby {
             auto const& ruby = api::instance();
 
             if (argc == 0 || argc > 2) {
-                ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
+                ruby.rb_raise(*ruby.rb_eArgError, _("wrong number of arguments ({1} for 2)", argc).c_str());
             }
 
             string message;
@@ -848,7 +852,7 @@ namespace facter { namespace ruby {
             auto const& ruby = api::instance();
 
             if (argc == 0 || argc > 2) {
-                ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
+                ruby.rb_raise(*ruby.rb_eArgError, _("wrong number of arguments ({1} for 2)", argc).c_str());
             }
 
             if (argc == 1) {
@@ -889,7 +893,7 @@ namespace facter { namespace ruby {
         auto it = _instances.find(self);
         if (it == _instances.end()) {
             auto const& ruby = api::instance();
-            ruby.rb_raise(*ruby.rb_eArgError, "unexpected self value %d", self);
+            ruby.rb_raise(*ruby.rb_eArgError, _("unexpected self value {1}", self).c_str());
             return nullptr;
         }
         return it->second;
@@ -929,9 +933,9 @@ namespace facter { namespace ruby {
         // Command was not found
         if (raise) {
             if (expanded.empty()) {
-                ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), "execution of command \"%s\" failed: command not found.", command.c_str());
+                ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), _("execution of command \"{1}\" failed: command not found.", command).c_str());
             }
-            ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), "execution of command \"%s\" failed.", command.c_str());
+            ruby.rb_raise(ruby.lookup({ "Facter", "Core", "Execution", "ExecutionFailure"}), _("execution of command \"{1}\" failed.", command).c_str());
         }
         return failure_default;
     }
@@ -981,7 +985,7 @@ namespace facter { namespace ruby {
             boost::system::error_code ec;
             path dir = canonical(directory, ec);
             if (ec) {
-                LOG_DEBUG("path \"%1%\" will not be searched for custom facts: %2%.", directory, ec.message());
+                LOG_DEBUG("path \"{1}\" will not be searched for custom facts: {2}.", directory, ec.message());
                 return {};
             }
             return dir.string();
@@ -1010,10 +1014,10 @@ namespace facter { namespace ruby {
         if (!_loaded_all) {
             // Next, attempt to load it by file
             string filename = fact_name + ".rb";
-            LOG_DEBUG("searching for custom fact \"%1%\".", fact_name);
+            LOG_DEBUG("searching for custom fact \"{1}\".", fact_name);
 
             for (auto const& directory : _search_paths) {
-                LOG_DEBUG("searching for %1% in %2%.", filename, directory);
+                LOG_DEBUG("searching for {1} in {2}.", filename, directory);
 
                 // Check to see if there's a file of a matching name in this directory
                 path full_path = path(directory) / filename;
@@ -1049,7 +1053,7 @@ namespace facter { namespace ruby {
         }
 
         // Couldn't find the fact
-        LOG_DEBUG("custom fact \"%1%\" was not found.", fact_name);
+        LOG_DEBUG("custom fact \"{1}\" was not found.", fact_name);
         return ruby.nil_value();
     }
 
@@ -1062,14 +1066,14 @@ namespace facter { namespace ruby {
 
         auto const& ruby = api::instance();
 
-        LOG_INFO("loading custom facts from %1%.", path);
+        LOG_INFO("loading custom facts from {1}.", path);
         ruby.rescue([&]() {
             // Do not construct C++ objects in a rescue callback
             // C++ stack unwinding will not take place if a Ruby exception is thrown!
             ruby.rb_load(ruby.utf8_value(path), 0);
             return 0;
         }, [&](VALUE ex) {
-            LOG_ERROR("error while resolving custom facts in %1%: %2%", path, ruby.exception_to_string(ex));
+            LOG_ERROR("error while resolving custom facts in {1}: {2}", path, ruby.exception_to_string(ex));
             return 0;
         });
     }
@@ -1079,7 +1083,7 @@ namespace facter { namespace ruby {
         auto const& ruby = api::instance();
 
         if (!ruby.is_string(name) && !ruby.is_symbol(name)) {
-            ruby.rb_raise(*ruby.rb_eTypeError, "expected a String or Symbol for fact name");
+            ruby.rb_raise(*ruby.rb_eTypeError, _("expected a String or Symbol for fact name").c_str());
         }
 
         name = normalize(name);
@@ -1120,7 +1124,7 @@ namespace facter { namespace ruby {
             name = "fatal";
         }
         if (!name) {
-            ruby.rb_raise(*ruby.rb_eArgError, "invalid log level specified.", 0);
+            ruby.rb_raise(*ruby.rb_eArgError, _("invalid log level specified.").c_str(), 0);
         }
         return ruby.to_symbol(name);
     }
