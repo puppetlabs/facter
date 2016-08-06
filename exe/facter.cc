@@ -290,6 +290,13 @@ int main(int argc, char **argv)
         collection facts;
         facts.add_default_facts(ruby);
 
+        // Add the environment facts
+        facts.add_environment_facts();
+
+        if (ruby && !vm["no-custom-facts"].as<bool>()) {
+            facter::ruby::load_custom_facts(facts, vm.count("puppet"), custom_directories);
+        }
+
         if (!vm["no-external-facts"].as<bool>()) {
           string inside_facter;
           environment::get("INSIDE_FACTER", inside_facter);
@@ -301,13 +308,6 @@ int main(int argc, char **argv)
             environment::set("INSIDE_FACTER", "true");
             facts.add_external_facts(external_directories);
           }
-        }
-
-        // Add the environment facts
-        facts.add_environment_facts();
-
-        if (ruby && !vm["no-custom-facts"].as<bool>()) {
-            facter::ruby::load_custom_facts(facts, vm.count("puppet"), custom_directories);
         }
 
         // Output the facts

@@ -20,7 +20,8 @@ namespace facter { namespace ruby {
 
     fact::fact() :
         _resolved(false),
-        _resolving(false)
+        _resolving(false),
+        _weight(0)
     {
         auto const& ruby = api::instance();
         _self = ruby.nil_value();
@@ -89,6 +90,7 @@ namespace facter { namespace ruby {
                 // Already in collection, do not add
                 add = false;
                 _value = facter->to_ruby(value);
+                _weight = value->weight();
             }
         }
 
@@ -96,6 +98,7 @@ namespace facter { namespace ruby {
             vector<VALUE>::iterator it;
             ruby.rescue([&]() {
                 volatile VALUE value = ruby.nil_value();
+                size_t weight = 0;
 
                 // Look through the resolutions and find the first allowed resolution that resolves
                 for (it = _resolutions.begin(); it != _resolutions.end(); ++it) {
@@ -105,24 +108,27 @@ namespace facter { namespace ruby {
                     }
                     value = res->value();
                     if (!ruby.is_nil(value)) {
+                        weight = res->weight();
                         break;
                     }
                 }
 
                 // Set the value to what was resolved
                 _value = value;
+                _weight = weight;
                 return 0;
             }, [&](VALUE ex) {
                 LOG_ERROR("error while resolving custom fact \"%1%\": %2%", ruby.rb_string_value_ptr(&_name), ruby.exception_to_string(ex));
 
                 // Failed, so set to nil
                 _value = ruby.nil_value();
+                _weight = 0;
                 return 0;
             });
         }
 
         if (add) {
-            facts.add(ruby.to_string(_name), ruby.is_nil(_value) ? nullptr : make_value<ruby::ruby_value>(_value));
+            facts.add_custom(ruby.to_string(_name), ruby.is_nil(_value) ? nullptr : make_value<ruby::ruby_value>(_value), _weight);
         }
 
         _resolved = true;

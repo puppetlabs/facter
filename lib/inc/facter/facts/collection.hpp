@@ -46,6 +46,11 @@ namespace facter { namespace facts {
     struct LIBFACTER_EXPORT collection
     {
         /**
+         * Inherent "has_weight" value for external facts.
+         */
+        constexpr static size_t external_fact_weight = 10000;
+
+        /**
          * Constructs a fact collection.
          */
         collection();
@@ -100,6 +105,21 @@ namespace facter { namespace facts {
          * @param value The value of the fact.
          */
         void add(std::string name, std::unique_ptr<value> value);
+
+        /**
+         * Adds a custom fact to the fact collection.
+         * @param name The name of the fact.
+         * @param value The value of the fact.
+         * @param weight The weight of the fact.
+         */
+        void add_custom(std::string name, std::unique_ptr<value> value, size_t weight);
+
+        /**
+         * Adds an external fact to the fact collection.
+         * @param name The name of the fact.
+         * @param value The value of the fact.
+         */
+        void add_external(std::string name, std::unique_ptr<value> value);
 
         /**
          * Adds external facts to the fact collection.
