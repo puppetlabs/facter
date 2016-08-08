@@ -4,29 +4,29 @@ test_name "Facts should resolve as expected in Debian 6 and 7"
 
 #
 # This test is intended to ensure that facts specific to an OS configuration
-# resolve as expected in Debian 6 and 7.
+# resolve as expected in Debian 6, 7 and 8.
 #
 # Facts tested: os, processors, networking, identity, kernel
 #
 
-confine :to, :platform => /debian-squeeze|debian-wheezy|debian-jessie/
+confine :to, :platform => /debian-6|debian-7|debian-8/
 
 agents.each do |agent|
-  if agent['platform'] =~ /squeeze/
+  if agent['platform'] =~ /debian-6/
     codename   = 'squeeze'
     os_version = '6'
     os_kernel = '2.6'
-  elsif agent['platform'] =~ /wheezy/
+  elsif agent['platform'] =~ /debian-7/
     codename   = 'wheezy'
     os_version = '7'
     os_kernel = '3.2'
-  elsif agent['platform'] =~ /jessie/
+  elsif agent['platform'] =~ /debian-8/
     codename   = 'jessie'
     os_version = '8'
     os_kernel = '3.16'
   end
 
-  if agent['platform'] =~ /x86_64/
+  if agent['platform'] =~ /amd64/
     os_arch     = 'amd64'
     os_hardware = 'x86_64'
   else
