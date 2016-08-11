@@ -105,17 +105,17 @@ SCENARIO("using the fact collection") {
         WHEN("writing all (hidden) facts") {
             THEN("it should serialize both facts to JSON") {
                 ostringstream ss;
-                facts.write(ss, format::json, set<string>{}, true);
+                facts.write(ss, format::json, set<string>{}, true, false);
                 REQUIRE(ss.str() == "{\n  \"foo\": \"bar\",\n  \"hidden_foo\": \"hidden_bar\"\n}");
             }
             THEN("it should serialize both facts to YAML") {
                 ostringstream ss;
-                facts.write(ss, format::yaml, set<string>{}, true);
+                facts.write(ss, format::yaml, set<string>{}, true, false);
                 REQUIRE(ss.str() == "foo: bar\nhidden_foo: hidden_bar");
             }
             THEN("it should serialize both facts to text") {
                 ostringstream ss;
-                facts.write(ss, format::hash, set<string>{}, true);
+                facts.write(ss, format::hash, set<string>{}, true, false);
                 REQUIRE(ss.str() == "foo => bar\nhidden_foo => hidden_bar");
             }
         }
@@ -139,17 +139,17 @@ SCENARIO("using the fact collection") {
         WHEN("querying hidden facts") {
             THEN("it should serialize both facts to JSON") {
                 ostringstream ss;
-                facts.write(ss, format::json, {"foo", "hidden_foo"}, true);
+                facts.write(ss, format::json, {"foo", "hidden_foo"}, true, false);
                 REQUIRE(ss.str() == "{\n  \"foo\": \"bar\",\n  \"hidden_foo\": \"hidden_bar\"\n}");
             }
             THEN("it should serialize both facts to YAML") {
                 ostringstream ss;
-                facts.write(ss, format::yaml, {"foo", "hidden_foo"}, true);
+                facts.write(ss, format::yaml, {"foo", "hidden_foo"}, true, false);
                 REQUIRE(ss.str() == "foo: bar\nhidden_foo: hidden_bar");
             }
             THEN("it should serialize both facts to text") {
                 ostringstream ss;
-                facts.write(ss, format::hash, {"foo", "hidden_foo"}, true);
+                facts.write(ss, format::hash, {"foo", "hidden_foo"}, true, false);
                 REQUIRE(ss.str() == "foo => bar\nhidden_foo => hidden_bar");
             }
         }
@@ -246,7 +246,7 @@ SCENARIO("using the fact collection") {
                 LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/text",
         });
         REQUIRE_FALSE(facts.empty());
-        REQUIRE(facts.size() == 17u);
+        REQUIRE(facts.size() == 20u);
         WHEN("YAML files are present") {
             THEN("facts should be added") {
                 REQUIRE(facts.get<string_value>("yaml_fact1"));
@@ -256,6 +256,9 @@ SCENARIO("using the fact collection") {
                 REQUIRE(facts.get<array_value>("yaml_fact5"));
                 REQUIRE(facts.get<map_value>("yaml_fact6"));
                 REQUIRE(facts.get<string_value>("yaml_fact7"));
+                REQUIRE(facts.get<string_value>("not_bool"));
+                REQUIRE(facts.get<string_value>("not_int"));
+                REQUIRE(facts.get<string_value>("not_double"));
             }
         }
         WHEN("JSON files are present") {

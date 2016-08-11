@@ -268,10 +268,10 @@ namespace facter { namespace facts {
 
     ostream& collection::write(ostream& stream, format fmt, set<string> const& queries)
     {
-        return write(stream, fmt, queries, false);
+        return write(stream, fmt, queries, false, false);
     }
 
-    ostream& collection::write(ostream& stream, format fmt, set<string> const& queries, bool show_legacy)
+    ostream& collection::write(ostream& stream, format fmt, set<string> const& queries, bool show_legacy, bool strict_errors)
     {
         if (queries.empty()) {
             // Resolve all facts
@@ -279,11 +279,11 @@ namespace facter { namespace facts {
         }
 
         if (fmt == format::hash) {
-            write_hash(stream, queries, show_legacy);
+            write_hash(stream, queries, show_legacy, strict_errors);
         } else if (fmt == format::json) {
-            write_json(stream, queries, show_legacy);
+            write_json(stream, queries, show_legacy, strict_errors);
         } else if (fmt == format::yaml) {
-            write_yaml(stream, queries, show_legacy);
+            write_yaml(stream, queries, show_legacy, strict_errors);
         }
         return stream;
     }
@@ -334,7 +334,7 @@ namespace facter { namespace facts {
         return it == _facts.end() ? nullptr : it->second.get();
     }
 
-    value const* collection::query_value(string const& query)
+    value const* collection::query_value(string const& query, bool strict_errors)
     {
         // First attempt to lookup a fact with the exact name of the query
         value const* current = get_value(query);
@@ -372,7 +372,7 @@ namespace facter { namespace facts {
                 // Once we hit Ruby there's no going back, so whatever we get from Ruby is the value.
                 return current;
             } else {
-                current = lookup(current, *segment);
+                current = lookup(current, *segment, strict_errors);
             }
             if (!current) {
                 // Break out early if there's no value for this segment
@@ -383,12 +383,17 @@ namespace facter { namespace facts {
         return current;
     }
 
-    value const* collection::lookup(value const* value, string const& name)
+    value const* collection::lookup(value const* value, string const& name, bool strict_errors)
     {
         if (!value) {
             value = get_value(name);
             if (!value) {
-                LOG_DEBUG("fact \"%1%\" does not exist.", name);
+                string message = "fact \"%1%\" does not exist.";
+                if (strict_errors) {
+                    LOG_ERROR(message, name);
+                } else {
+                    LOG_DEBUG(message, name);
+                }
             }
             return value;
         }
@@ -428,11 +433,11 @@ namespace facter { namespace facts {
         return nullptr;
     }
 
-    void collection::write_hash(ostream& stream, set<string> const& queries, bool show_legacy)
+    void collection::write_hash(ostream& stream, set<string> const& queries, bool show_legacy, bool strict_errors)
     {
         // If there's only one query, print the result without the name
         if (queries.size() == 1u) {
-            auto value = query_value(*queries.begin());
+            auto value = query_value(*queries.begin(), strict_errors);
             if (value) {
                 value->write(stream, false);
             }
@@ -460,7 +465,7 @@ namespace facter { namespace facts {
             // Print queried facts
             vector<pair<string, value const*>> facts;
             for (auto const& query : queries) {
-                facts.push_back(make_pair(query, this->query_value(query)));
+                facts.push_back(make_pair(query, this->query_value(query, strict_errors)));
             }
 
             for (auto const& kvp : facts) {
@@ -494,7 +499,7 @@ namespace facter { namespace facts {
          ostream& _stream;
     };
 
-    void collection::write_json(ostream& stream, set<string> const& queries, bool show_legacy)
+    void collection::write_json(ostream& stream, set<string> const& queries, bool show_legacy, bool strict_errors)
     {
         json_document document;
         document.SetObject();
@@ -515,7 +520,7 @@ namespace facter { namespace facts {
 
         if (!queries.empty()) {
             for (auto const& query : queries) {
-                builder(query, this->query_value(query));
+                builder(query, this->query_value(query, strict_errors));
             }
         } else {
             for (auto const& kvp : _facts) {
@@ -529,7 +534,7 @@ namespace facter { namespace facts {
         document.Accept(writer);
     }
 
-    void collection::write_yaml(ostream& stream, set<string> const& queries, bool show_legacy)
+    void collection::write_yaml(ostream& stream, set<string> const& queries, bool show_legacy, bool strict_errors)
     {
         Emitter emitter(stream);
         emitter << BeginMap;
@@ -554,7 +559,7 @@ namespace facter { namespace facts {
         if (!queries.empty()) {
             vector<pair<string, value const*>> facts;
             for (auto const& query : queries) {
-                facts.push_back(make_pair(query, this->query_value(query)));
+                facts.push_back(make_pair(query, this->query_value(query, strict_errors)));
             }
 
             for (auto const& kvp : facts) {

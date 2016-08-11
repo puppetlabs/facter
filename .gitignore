@@ -5,6 +5,7 @@ Gemfile.local
 Gemfile.lock
 /nbproject
 compile_commands.json
+.bundle
 
 # Generated files
 .gemspec
@@ -15,6 +16,7 @@ compile_commands.json
 /lib/spec/spec_helper.rb
 /debug*/
 /*release*/
+/*build*/
 /.idea/
 /linux-release/
 

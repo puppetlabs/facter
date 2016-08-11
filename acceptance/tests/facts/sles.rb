@@ -9,6 +9,8 @@ test_name "Facts should resolve as expected in SLES 10, 11 and 12"
 
 confine :to, :platform => /sles-10|sles-11|sles-12/
 
+@ip_regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+
 agents.each do |agent|
   if agent['platform'] =~ /sles-10/
     os_version = '10'
@@ -21,9 +23,15 @@ agents.each do |agent|
   if agent['platform'] =~ /x86_64/
     os_arch     = 'x86_64'
     os_hardware = 'x86_64'
+    processor_model_pattern = 'Intel\(R\)'
+  elsif agent['platform'] =~ /s390x/
+    os_arch     = 's390x'
+    os_hardware = 's390x'
+    processor_model_pattern = '' # s390x does not populate a model value in /proc/cpuinfo
   else
     os_arch     = 'i386'
     os_hardware = 'i686'
+    processor_model_pattern = 'Intel\(R\)'
   end
 
   step "Ensure the OS fact resolves as expected"
@@ -48,7 +56,7 @@ agents.each do |agent|
                           'processors.count'         => /[1-9]/,
                           'processors.physicalcount' => /[1-9]/,
                           'processors.isa'           => os_hardware,
-                          'processors.models'        => /"Intel\(R\).*"/
+                          'processors.models'        => /#{processor_model_pattern}/
                         }
 
   expected_processors.each do |fact, value|
@@ -58,13 +66,13 @@ agents.each do |agent|
   step "Ensure the Networking fact resolves with reasonable values for at least one interface"
 
   expected_networking = {
-                          "networking.ip"       => /10\.\d+\.\d+\.\d+/,
+                          "networking.ip"       => @ip_regex,
                           "networking.ip6"      => /[a-f0-9]+:+/,
                           "networking.mac"      => /[a-f0-9]{2}:/,
                           "networking.mtu"      => /\d+/,
                           "networking.netmask"  => /\d+\.\d+\.\d+\.\d+/,
                           "networking.netmask6" => /[a-f0-9]+:/,
-                          "networking.network"  => /10\.\d+\.\d+\.\d+/,
+                          "networking.network"  => @ip_regex,
                           "networking.network6" => /([a-f0-9]+)?:([a-f0-9]+)?/
                         }
 
@@ -91,10 +99,11 @@ agents.each do |agent|
 
   step "Ensure the identity fact resolves as expected"
   expected_identity = {
-                        'identity.gid'   => '0',
-                        'identity.group' => 'root',
-                        'identity.uid'   => '0',
-                        'identity.user'  => 'root'
+                        'identity.gid'        => '0',
+                        'identity.group'      => 'root',
+                        'identity.uid'        => '0',
+                        'identity.user'       => 'root',
+                        'identity.privileged' => 'true'
                       }
 
   expected_identity.each do |fact, value|

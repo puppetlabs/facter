@@ -57,6 +57,14 @@ SCENARIO("resolving external YAML facts") {
             REQUIRE(facts.get<string_value>("yaml_fact7"));
             REQUIRE_FALSE(facts.get<string_value>("YAML_fact7"));
             REQUIRE(facts.get<string_value>("yaml_fact7")->value() == "bar");
+            REQUIRE(facts.get<string_value>("yaml_fact7")->value() == "bar");
+            REQUIRE(facts.get<string_value>("yaml_fact7")->value() == "bar");
+            REQUIRE(facts.get<string_value>("not_bool"));
+            REQUIRE(facts.get<string_value>("not_bool")->value() == "true");
+            REQUIRE(facts.get<string_value>("not_int"));
+            REQUIRE(facts.get<string_value>("not_int")->value() == "123");
+            REQUIRE(facts.get<string_value>("not_double"));
+            REQUIRE(facts.get<string_value>("not_double")->value() == "123.456");
         }
     }
 }

@@ -27,13 +27,17 @@ namespace facter { namespace facts { namespace external {
             bool bool_val;
             int64_t int_val;
             double double_val;
-            if (convert<bool>::decode(node, bool_val)) {
-                val = make_value<boolean_value>(bool_val);
-            } else if (convert<int64_t>::decode(node, int_val)) {
-                val = make_value<integer_value>(int_val);
-            } else if (convert<double>::decode(node, double_val)) {
-                val = make_value<double_value>(double_val);
-            } else {
+            // If the node tag is "!", it was a quoted scalar and should be treated as a string
+            if (node.Tag() != "!") {
+                if (convert<bool>::decode(node, bool_val)) {
+                    val = make_value<boolean_value>(bool_val);
+                } else if (convert<int64_t>::decode(node, int_val)) {
+                    val = make_value<integer_value>(int_val);
+                } else if (convert<double>::decode(node, double_val)) {
+                    val = make_value<double_value>(double_val);
+                }
+            }
+            if (!val) {
                 val = make_value<string_value>(node.as<string>());
             }
         } else if (node.IsSequence()) {

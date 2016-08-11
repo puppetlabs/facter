@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.2.2)
 
 set(LIBFACTER_VERSION_MAJOR 3)
-set(LIBFACTER_VERSION_MINOR 3)
-set(LIBFACTER_VERSION_PATCH 1)
+set(LIBFACTER_VERSION_MINOR 4)
+set(LIBFACTER_VERSION_PATCH 0)
 
 # Get the HEAD SHA1 commit message
 get_commit_string(LIBFACTER_COMMIT)
@@ -190,11 +190,13 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
     set(LIBFACTER_PLATFORM_SOURCES
-        "src/facts/bsd/collection.cc"
+        "src/facts/freebsd/collection.cc"
         "src/facts/glib/load_average_resolver.cc"
         "src/facts/bsd/filesystem_resolver.cc"
         "src/facts/bsd/networking_resolver.cc"
         "src/facts/bsd/uptime_resolver.cc"
+        "src/facts/freebsd/processor_resolver.cc"
+        "src/facts/freebsd/dmi_resolver.cc"
         "src/util/bsd/scoped_ifaddrs.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "OpenBSD")
@@ -202,6 +204,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "OpenBSD")
         "src/facts/openbsd/collection.cc"
         "src/facts/glib/load_average_resolver.cc"
         "src/facts/bsd/filesystem_resolver.cc"
+        "src/facts/bsd/networking_resolver.cc"
         "src/facts/bsd/uptime_resolver.cc"
         "src/facts/openbsd/dmi_resolver.cc"
         "src/facts/openbsd/networking_resolver.cc"
@@ -269,6 +272,7 @@ include_directories(
     ${YAMLCPP_INCLUDE_DIRS}
     ${CURL_INCLUDE_DIRS}
     ${LEATHERMAN_INCLUDE_DIRS}
+    ${CPPHOCON_INCLUDE_DIRS}
 )
 
 link_directories(
@@ -276,6 +280,7 @@ link_directories(
     ${OPENSSL_LIBRARY_DIRS}
     ${YAMLCPP_LIBRARY_DIRS}
     ${CURL_LIBRARY_DIRS}
+    ${CPPHOCON_LIBRARY_DIRS}
 )
 
 # Add the library target without a prefix (name already has the 'lib') and use '.so' for all platforms (Ruby extension file extension)

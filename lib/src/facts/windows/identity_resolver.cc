@@ -1,5 +1,6 @@
 #include <internal/facts/windows/identity_resolver.hpp>
 #include <leatherman/windows/system_error.hpp>
+#include <leatherman/windows/user.hpp>
 #include <leatherman/windows/windows.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/nowide/convert.hpp>
@@ -34,6 +35,12 @@ namespace facter { namespace facts { namespace windows {
         // Resize the buffer to the returned string size.
         buffer.resize(size);
         result.user_name = boost::nowide::narrow(buffer);
+
+        // Check whether this thread is running with elevated privileges
+        // (or with the privileges of the local Administrators group on
+        // older versions of Windows not supporting privileges elevation).
+        result.privileged = user::is_admin();
+
         return result;
     }
 }}}  // facter::facts::windows

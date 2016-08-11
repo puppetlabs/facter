@@ -35,7 +35,7 @@ Note: Testing custom facts requires Ruby 1.9+ with libruby built as a dynamic li
 
 The following will install all required tools and libraries:
 
-    yum install boost-devel openssl-devel yaml-cpp-devel libblkid-devel libcurl-devel gcc-c++ make wget tar cmake
+    dnf install boost-devel openssl-devel yaml-cpp-devel libblkid-devel libcurl-devel gcc-c++ make wget tar cmake
 
 ### Setup on Mac OSX El Capitan (homebrew)
 
@@ -50,6 +50,12 @@ The following will install all required libraries:
 The following will install most required tools and libraries:
 
     apt-get install build-essential libboost-all-dev libssl-dev libyaml-cpp-dev libblkid-dev libcurl4-openssl-dev wget tar cmake
+
+### Setup on FreeBSD 10
+
+The following will install most required tools and libraries:
+
+    pkg install git ruby21 cmake boost-all yaml-cpp gcc49
 
 ### Setup on Windows
 
@@ -111,6 +117,15 @@ In Powershell:
     popd
 
 Note that OpenSSL isn't needed on Windows.
+
+### Setup on OpenBSD 6.0
+
+The following will install all required tools and libraries:
+
+	pkg_add boost cmake curl g++ ruby yaml-cpp
+
+Optionally `leatherman` can be installed from packages too if not
+built locally.
 
 ### Build and install Leatherman
 
@@ -207,7 +222,7 @@ Using the Ruby API requires that facter.rb is installed into the Ruby load path,
 
 ```ruby
     require 'facter'
-    
+
     # Use the Facter API...
     puts "kernel: #{Facter.value(:kernel)}"
 ```
