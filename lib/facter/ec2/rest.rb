@@ -20,14 +20,12 @@ module Facter
 
     class Base
       def reachable?(retry_limit = 3)
-        timeout = 0.2
+        timeout = 0.5
         able_to_connect = false
         attempts = 0
 
         begin
-          Timeout.timeout(timeout) do
-            open(@baseurl, :proxy => nil).read
-          end
+          open(@baseurl, :proxy => nil, :read_timeout => timeout).read
           able_to_connect = true
         rescue OpenURI::HTTPError => e
           if e.message.match /404 Not Found/i

@@ -4,23 +4,29 @@ require 'facter/ec2/rest'
 shared_examples_for "an ec2 rest querier" do
   describe "determining if the uri is reachable" do
     it "retries if the connection times out" do
-      subject.stubs(:open).returns(stub(:read => nil))
-      Timeout.expects(:timeout).with(0.2).twice.raises(Timeout::Error).returns(true)
+      (f_times_out = mock).stubs(:read).raises(Timeout::Error)
+      (f_ok = mock).stubs(:read).returns(StringIO.new("woo"))
+
+      subject.expects(:open).twice.returns(f_times_out).returns(f_ok)
       expect(subject).to be_reachable
     end
 
     it "retries if the connection is reset" do
-      subject.expects(:open).twice.raises(Errno::ECONNREFUSED).returns(StringIO.new("woo"))
+      (f_ok = mock).stubs(:read).returns(StringIO.new("woo"))
+
+      subject.expects(:open).twice.raises(Errno::ECONNREFUSED).returns(f_ok)
       expect(subject).to be_reachable
     end
 
     it "is false if the given uri returns a 404" do
-      subject.expects(:open).with(anything, :proxy => nil).once.raises(OpenURI::HTTPError.new("404 Not Found", StringIO.new("woo")))
+      subject.expects(:open).once.raises(OpenURI::HTTPError.new("404 Not Found", StringIO.new("boo")))
       expect(subject).to_not be_reachable
     end
 
     it "is false if the connection always times out" do
-      Timeout.expects(:timeout).with(0.2).times(3).raises(Timeout::Error)
+      (f_times_out = mock).stubs(:read).raises(Timeout::Error)
+
+      subject.expects(:open).times(3).returns(f_times_out)
       expect(subject).to_not be_reachable
     end
   end
