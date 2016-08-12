@@ -183,9 +183,14 @@ namespace facter { namespace ruby {
     {
         auto const& ruby = api::instance();
 
+        int64_t val = ruby.rb_num2ll(value);
+        if (val < 0) {
+            ruby.rb_raise(*ruby.rb_eTypeError, "expected a non-negative value for has_weight (not %lld)", val);
+        }
+
         auto instance = ruby.to_native<resolution>(self);
         instance->_has_weight = true;
-        instance->_weight = (ruby.num2size_t(value));
+        instance->_weight = static_cast<size_t>(val);
         return self;
     }
 

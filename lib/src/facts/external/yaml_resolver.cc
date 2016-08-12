@@ -65,7 +65,7 @@ namespace facter { namespace facts { namespace external {
         } else if (map_parent) {
             map_parent->add(string(name), move(val));
         } else {
-            facts.add(boost::to_lower_copy(name), move(val));
+            facts.add_external(boost::to_lower_copy(name), move(val));
         }
     }
 

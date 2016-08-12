@@ -70,7 +70,7 @@ namespace facter { namespace facts { namespace external {
                     // Add as a string fact
                     string fact = line.substr(0, pos);
                     boost::to_lower(fact);
-                    facts.add(move(fact), make_value<string_value>(line.substr(pos+1)));
+                    facts.add_external(move(fact), make_value<string_value>(line.substr(pos+1)));
                     return true;
                 },
                 [&](string const& line) {

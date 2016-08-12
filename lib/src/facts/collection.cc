@@ -117,7 +117,25 @@ namespace facter { namespace facts {
             return;
         }
 
+        // keep existing value if it has a larger weight value
+        if (old_value && old_value->weight() > value->weight())
+            return;
+
         _facts[move(name)] = move(value);
+    }
+
+    void collection::add_custom(string name, unique_ptr<value> value, size_t weight)
+    {
+        if (value)
+            value->weight(weight);
+        add(move(name), move(value));
+    }
+
+    void collection::add_external(string name, unique_ptr<value> value)
+    {
+        if (value)
+            value->weight(external_fact_weight);
+        add(move(name), move(value));
     }
 
     bool collection::add_external_facts_dir(vector<unique_ptr<external::resolver>> const& resolvers, string const& dir, bool warn)

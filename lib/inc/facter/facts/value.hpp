@@ -56,7 +56,8 @@ namespace facter { namespace facts {
          * @param hidden True if the fact is hidden from output by default or false if not.
          */
         value(bool hidden = false) :
-            _hidden(hidden)
+            _hidden(hidden),
+            _weight(0)
         {
         }
 
@@ -73,6 +74,7 @@ namespace facter { namespace facts {
         value(value&& other)
         {
             _hidden = other._hidden;
+            _weight = other._weight;
         }
 
         /**
@@ -84,6 +86,7 @@ namespace facter { namespace facts {
         value& operator=(value&& other)
         {
             _hidden = other._hidden;
+            _weight = other._weight;
             return *this;
         }
 
@@ -94,6 +97,24 @@ namespace facter { namespace facts {
         bool hidden() const
         {
             return _hidden;
+        }
+
+        /**
+         * Gets the weight of the fact.
+         * @return Returns the weight of the fact.
+         */
+        size_t weight() const
+        {
+            return _weight;
+        }
+
+        /**
+         * Sets the weight of the fact.
+         * @param weight The weight of the fact.
+         */
+        void weight(size_t weight)
+        {
+            _weight = weight;
         }
 
         /**
@@ -124,6 +145,7 @@ namespace facter { namespace facts {
         value& operator=(value const&) = delete;
 
         bool _hidden;
+        size_t _weight;
     };
 
     /**
