@@ -32,7 +32,7 @@ msgid ""
 "Options\n"
 "=======\n"
 "\n"
-"{1}\n"
+"%1%\n"
 "Description\n"
 "===========\n"
 "\n"
@@ -47,12 +47,20 @@ msgid ""
 "\n"
 "  facter kernel\n"
 "  facter networking.ip\n"
-"  facter processors.models.0"
+"  facter processors.models.0\n"
+"\n"
+"Config File\n"
+"===========\n"
+"\n"
+"Contains settings for configuring external and custom fact directories,\n"
+"setting command line options, and blocking facts.\n"
+"Loaded by default from %2%.\n"
+"See man page, README, or docs for more details."
 msgstr ""
 
 #. log
 #: exe/facter.cc
-msgid "executed with command line: {1}."
+msgid "executed with command line: %1%."
 msgstr ""
 
 #. log
@@ -62,7 +70,7 @@ msgstr ""
 
 #. log
 #: exe/facter.cc
-msgid "requested queries: {1}."
+msgid "requested queries: %1%."
 msgstr ""
 
 #: exe/facter.cc
@@ -98,9 +106,25 @@ msgid "Show legacy facts when querying all facts."
 msgstr ""
 
 #: exe/facter.cc
+msgid "Lists the names of all blockable fact groups."
+msgstr ""
+
+#: exe/facter.cc
+msgid "List the name of each cacheable group of facts"
+msgstr ""
+
+#: exe/facter.cc
 msgid ""
 "Set logging level.\n"
 "Supported levels are: none, trace, debug, info, warn, error, and fatal."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Disables fact blocking."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Disable loading and refreshing facts from the cache"
 msgstr ""
 
 #: exe/facter.cc
@@ -181,7 +205,7 @@ msgid "puppet and no-ruby options conflict: please specify only one."
 msgstr ""
 
 #: exe/facter.cc
-msgid "error: {1}"
+msgid "error: %1%"
 msgstr ""
 
 #. log
@@ -197,12 +221,12 @@ msgid ""
 msgstr ""
 
 #: exe/facter.cc
-msgid "failed to initialize logging system due to a locale error: {1}"
+msgid "failed to initialize logging system due to a locale error: %1%"
 msgstr ""
 
 #. log
 #: exe/facter.cc
-msgid "unhandled exception: {1}"
+msgid "unhandled exception: %1%"
 msgstr ""
 
 #. warning
@@ -343,6 +367,26 @@ msgid "reading \"{1}\" for dhclient lease information."
 msgstr ""
 
 #. debug
+#: lib/src/facts/cache.cc
+msgid "cache file for {1} facts contained invalid JSON, refreshing"
+msgstr ""
+
+#. debug
+#: lib/src/facts/cache.cc
+msgid "cache file for {1} facts was missing, refreshing"
+msgstr ""
+
+#. debug
+#: lib/src/facts/cache.cc
+msgid "loading cached values for {1} facts"
+msgstr ""
+
+#. debug
+#: lib/src/facts/cache.cc
+msgid "caching values for {1} facts"
+msgstr ""
+
+#. debug
 #: lib/src/facts/collection.cc
 msgid ""
 "fact \"{1}\" resolved to null and the existing value of {2} will be removed."
@@ -388,6 +432,16 @@ msgstr ""
 #: lib/src/facts/collection.cc
 msgid ""
 "setting fact \"{1}\" based on the value of environment variable \"{2}\"."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid "blocking collection of {1} facts."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid "{1} resolver cannot be blocked."
 msgstr ""
 
 #. debug
@@ -754,7 +808,7 @@ msgstr ""
 msgid "using the FQDN returned by gethostname: {1}."
 msgstr ""
 
-#. error
+#. warning
 #: lib/src/facts/posix/networking_resolver.cc
 msgid ""
 "getaddrinfo failed: {1} ({2}): hostname may not be externally resolvable."
@@ -1018,7 +1072,7 @@ msgstr ""
 
 #. warning
 #: lib/src/facts/windows/collection.cc
-msgid "error finding COMMON_APPDATA, external facts unavailable: {1}"
+msgid "external facts unavailable, %1%"
 msgstr ""
 
 #. debug
@@ -1073,16 +1127,6 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/windows/networking_resolver.cc
-msgid "failure getting netmask info: {1}"
-msgstr ""
-
-#. debug
-#: lib/src/facts/windows/networking_resolver.cc
-msgid "found {1} netmask entries"
-msgstr ""
-
-#. debug
-#: lib/src/facts/windows/networking_resolver.cc
 msgid "failure getting networking::domain fact: {1}"
 msgstr ""
 
@@ -1099,16 +1143,6 @@ msgstr ""
 #. debug
 #: lib/src/facts/windows/networking_resolver.cc
 msgid "failed to retrieve ip{1} address for {2}: {3}"
-msgstr ""
-
-#. debug
-#: lib/src/facts/windows/networking_resolver.cc
-msgid "netmask for {1} (IPv6) is not supported on this platform"
-msgstr ""
-
-#. debug
-#: lib/src/facts/windows/networking_resolver.cc
-msgid "could not find netmask for {1}"
 msgstr ""
 
 #. debug
@@ -1282,12 +1316,21 @@ msgstr ""
 
 #. debug
 #: lib/src/ruby/module.cc
+msgid "loading custom fact directories from config file"
+msgstr ""
+
+#. debug
+#: lib/src/ruby/module.cc
 msgid "searching for custom facts in {1}."
 msgstr ""
 
 #. error
 #: lib/src/ruby/module.cc
 msgid "{1} uncaught exception: {2}"
+msgstr ""
+
+#: lib/src/ruby/module.cc
+msgid "loading external fact directories from config file"
 msgstr ""
 
 #: lib/src/ruby/module.cc
