@@ -36,11 +36,13 @@ namespace facter { namespace facts { namespace resolvers {
     static const unsigned int EC2_CONNECTION_TIMEOUT = 200;
     static const unsigned int EC2_SESSION_TIMEOUT = 5000;
 
-    void query_metadata_value(lth_curl::client& cli, map_value& value, string const& url, string const& name)
+    static void query_metadata_value(lth_curl::client& cli, map_value& value, string const& url, string const& name, string const& http_langs)
     {
         lth_curl::request req(url + name);
         req.connection_timeout(EC2_CONNECTION_TIMEOUT);
         req.timeout(EC2_SESSION_TIMEOUT);
+        if (!http_langs.empty())
+            req.add_header("Accept-Language", http_langs);
 
         auto response = cli.get(req);
         if (response.status_code() != 200) {
@@ -54,7 +56,7 @@ namespace facter { namespace facts { namespace resolvers {
         value.add(name, make_value<string_value>(move(body)));
     }
 
-    void query_metadata(lth_curl::client& cli, map_value& value, string const& url)
+    static void query_metadata(lth_curl::client& cli, map_value& value, string const& url, string const& http_langs)
     {
         // Stores the metadata names to filter out
         static set<string> filter = {
@@ -64,6 +66,8 @@ namespace facter { namespace facts { namespace resolvers {
         lth_curl::request req(url);
         req.connection_timeout(EC2_CONNECTION_TIMEOUT);
         req.timeout(EC2_SESSION_TIMEOUT);
+        if (!http_langs.empty())
+            req.add_header("Accept-Language", http_langs);
 
         auto response = cli.get(req);
         if (response.status_code() != 200) {
@@ -89,13 +93,13 @@ namespace facter { namespace facts { namespace resolvers {
 
             // If the name does not end with a '/', then it is a key name; request the value
             if (name.back() != '/') {
-                query_metadata_value(cli, value, url, name);
+                query_metadata_value(cli, value, url, name, http_langs);
                 return true;
             }
 
             // Otherwise, this is a category; recurse down it
             auto child = make_value<map_value>();
-            query_metadata(cli, *child, url + name);
+            query_metadata(cli, *child, url + name, http_langs);
             trim_right_if(name, boost::is_any_of("/"));
             value.add(move(name), move(child));
             return true;
@@ -122,7 +126,7 @@ namespace facter { namespace facts { namespace resolvers {
 
         try
         {
-            query_metadata(cli, *metadata, EC2_METADATA_ROOT_URL);
+            query_metadata(cli, *metadata, EC2_METADATA_ROOT_URL, http_langs());
 
             if (!metadata->empty()) {
                 facts.add(fact::ec2_metadata, move(metadata));
@@ -147,6 +151,8 @@ namespace facter { namespace facts { namespace resolvers {
             lth_curl::request req(EC2_USERDATA_ROOT_URL);
             req.connection_timeout(EC2_CONNECTION_TIMEOUT);
             req.timeout(EC2_SESSION_TIMEOUT);
+            if (!http_langs().empty())
+                req.add_header("Accept-Language", http_langs());
 
             auto response = cli.get(req);
             if (response.status_code() != 200) {
