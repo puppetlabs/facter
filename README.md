@@ -18,6 +18,7 @@ Build Requirements
 * Boost C++ Libraries >= 1.54
 * yaml-cpp >= 0.5.1
 * [leatherman](https://github.com/puppetlabs/leatherman) >= 0.3.4
+* [cpp-hocon](https://github.com/puppetlabs/cpp-hocon) >= 0.1.0
 
 Optional Build Libraries
 ------------------------
@@ -127,9 +128,9 @@ The following will install all required tools and libraries:
 Optionally `leatherman` can be installed from packages too if not
 built locally.
 
-### Build and install Leatherman
+### Build and install Leatherman and cpp-hocon
 
-[Leatherman](https://github.com/puppetlabs/leatherman) is built similar to the Pre-Build instructions below. If building on Windows, install to the same `$install` location used for other dependencies.
+[Leatherman](https://github.com/puppetlabs/leatherman) and [cpp-hocon](https://github.com/puppetlabs/cpp-hocon) are built similar to the Pre-Build instructions below. If building on Windows, install to the same `$install` location used for other dependencies.
 
 Pre-Build
 ---------
