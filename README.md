@@ -227,6 +227,30 @@ Using the Ruby API requires that facter.rb is installed into the Ruby load path,
     puts "kernel: #{Facter.value(:kernel)}"
 ```
 
+Configuration
+-------------
+
+Facter can be configured via a HOCON config file of the following format:
+
+```
+global : {
+    external-dir     : [ "path1", "path2" ],
+    custom-dir       : [ "custom/path" ],
+    no-exernal-facts : false,
+    no-custom-facts  : false,
+    no-ruby          : false
+}
+cli : {
+    debug     : false,
+    trace     : true,
+    verbose   : false,
+    log-level : "warn"
+}
+```
+All options are respected when running Facter standalone, while calling Facter from Ruby will only load `external-dir` and `custom-dir`.
+
+The file will be loaded by default from `/etc/puppetlabs/facter/facter.conf` on Unix and `C:\ProgramData\PuppetLabs\facter\facter.conf` on Windows. A different location can be specified using the `--config` command line option.
+
 Uninstall
 ---------
 
