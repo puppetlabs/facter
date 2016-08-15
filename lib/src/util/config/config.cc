@@ -30,6 +30,13 @@ namespace facter { namespace util { namespace config {
         }
     }
 
+    void load_fact_settings(shared_config hocon_config, po::variables_map& vm) {
+        if (hocon_config && hocon_config->has_path("facts")) {
+            auto fact_settings = hocon_config->get_object("facts")->to_config();
+            po::store(hocon::program_options::parse_hocon<char>(fact_settings, fact_config_options(), true), vm);
+        }
+    }
+
     po::options_description global_config_options() {
         po::options_description global_options("");
         global_options.add_options()
@@ -49,5 +56,12 @@ namespace facter { namespace util { namespace config {
             ("trace", po::value<bool>()->default_value(false), "Enable backtraces for custom facts.")
             ("verbose", po::value<bool>()->default_value(false), "Enable verbose (info) output.");
         return cli_options;
+    }
+
+    po::options_description fact_config_options() {
+        po::options_description fact_settings("");
+        fact_settings.add_options()
+            ("blocklist", po::value<vector<string>>(), "A set of facts to block.");
+        return fact_settings;
     }
 }}}  // namespace facter::util::config;

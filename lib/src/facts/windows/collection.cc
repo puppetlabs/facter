@@ -68,7 +68,7 @@ namespace facter { namespace facts {
         return resolvers;
     }
 
-    void collection::add_platform_facts()
+    void collection::add_platform_facts(set<string> const& blocklist)
     {
         add(make_shared<windows::identity_resolver>());
         add(make_shared<windows::kernel_resolver>());

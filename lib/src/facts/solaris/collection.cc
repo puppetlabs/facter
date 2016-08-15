@@ -23,7 +23,7 @@ using namespace std;
 
 namespace facter { namespace facts {
 
-    void collection::add_platform_facts()
+    void collection::add_platform_facts(set<string> const& blocklist)
     {
         add(make_shared<solaris::kernel_resolver>());
         add(make_shared<solaris::operating_system_resolver>());

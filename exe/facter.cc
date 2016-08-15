@@ -170,6 +170,7 @@ int main(int argc, char **argv)
             if (hocon_conf) {
                 facter::util::config::load_global_settings(hocon_conf, vm);
                 facter::util::config::load_cli_settings(hocon_conf, vm);
+                facter::util::config::load_fact_settings(hocon_conf, vm);
             }
 
             // Check for a help option first before notifying
@@ -270,7 +271,12 @@ int main(int argc, char **argv)
         log_queries(queries);
 
         collection facts;
-        facts.add_default_facts(ruby);
+        set<string> blocklist;
+        if (vm.count("blocklist")) {
+            auto facts_to_block = vm["blocklist"].as<vector<string>>();
+            blocklist.insert(facts_to_block.begin(), facts_to_block.end());
+        }
+        facts.add_default_facts(ruby, blocklist);
 
         // Add the environment facts
         facts.add_environment_facts();

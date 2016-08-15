@@ -89,8 +89,9 @@ namespace facter { namespace facts {
         /**
          * Adds the default facts to the collection.
          * @param include_ruby_facts Whether or not to include facts which require Ruby in the collection.
+         * @param blocklist A set of facts that should not be collected
          */
-        void add_default_facts(bool include_ruby_facts);
+        void add_default_facts(bool include_ruby_facts, std::set<std::string> const& blocklist = {});
 
         /**
          * Adds a resolver to the fact collection.
@@ -259,11 +260,11 @@ namespace facter { namespace facts {
         LIBFACTER_NO_EXPORT void write_hash(std::ostream& stream, std::set<std::string> const& queries, bool show_legacy, bool strict_errors);
         LIBFACTER_NO_EXPORT void write_json(std::ostream& stream, std::set<std::string> const& queries, bool show_legacy, bool strict_errors);
         LIBFACTER_NO_EXPORT void write_yaml(std::ostream& stream, std::set<std::string> const& queries, bool show_legacy, bool strict_errors);
-        LIBFACTER_NO_EXPORT void add_common_facts(bool include_ruby_facts);
+        LIBFACTER_NO_EXPORT void add_common_facts(bool include_ruby_facts, std::set<std::string> const& blocklist = {});
         LIBFACTER_NO_EXPORT bool add_external_facts_dir(std::vector<std::unique_ptr<external::resolver>> const& resolvers, std::string const& directory, bool warn);
 
         // Platform specific members
-        LIBFACTER_NO_EXPORT void add_platform_facts();
+        LIBFACTER_NO_EXPORT void add_platform_facts(std::set<std::string> const& blocklist = {});
         LIBFACTER_NO_EXPORT std::vector<std::unique_ptr<external::resolver>> get_external_resolvers();
 
         std::map<std::string, std::unique_ptr<value>> _facts;
