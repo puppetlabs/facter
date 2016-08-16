@@ -5,6 +5,7 @@
 #pragma once
 
 #include <leatherman/ruby/api.hpp>
+#include <boost/program_options.hpp>
 #include "fact.hpp"
 #include <map>
 #include <set>
@@ -145,6 +146,7 @@ namespace facter { namespace ruby {
         leatherman::ruby::VALUE create_fact(leatherman::ruby::VALUE name);
         static leatherman::ruby::VALUE level_to_symbol(leatherman::logging::log_level level);
 
+        boost::program_options::variables_map _config_file_settings;
         facter::facts::collection& _collection;
         std::map<std::string, leatherman::ruby::VALUE> _facts;
         std::set<std::string> _debug_messages;
