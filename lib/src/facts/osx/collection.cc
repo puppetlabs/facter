@@ -18,22 +18,50 @@ using namespace std;
 
 namespace facter { namespace facts {
 
-    void collection::add_platform_facts()
+    void collection::add_platform_facts(set<string> const& blocklist)
     {
-        add(make_shared<posix::kernel_resolver>());
-        add(make_shared<osx::operating_system_resolver>());
-        add(make_shared<bsd::uptime_resolver>());
-        add(make_shared<osx::networking_resolver>());
-        add(make_shared<osx::processor_resolver>());
-        add(make_shared<osx::dmi_resolver>());
-        add(make_shared<posix::ssh_resolver>());
-        add(make_shared<osx::system_profiler_resolver>());
-        add(make_shared<osx::virtualization_resolver>());
-        add(make_shared<posix::identity_resolver>());
-        add(make_shared<posix::timezone_resolver>());
-        add(make_shared<bsd::filesystem_resolver>());
-        add(make_shared<osx::memory_resolver>());
-        add(make_shared<glib::load_average_resolver>());
+        if (!blocklist.count("kernel")) {
+            add(make_shared<posix::kernel_resolver>());
+        }
+        if (!blocklist.count("os")) {
+            add(make_shared<osx::operating_system_resolver>());
+        }
+        if (!blocklist.count("system_uptime")) {
+            add(make_shared<bsd::uptime_resolver>());
+        }
+        if (!blocklist.count("networking")) {
+            add(make_shared<osx::networking_resolver>());
+        }
+        if (!blocklist.count("processors")) {
+            add(make_shared<osx::processor_resolver>());
+        }
+        if (!blocklist.count("dmi")) {
+            add(make_shared<osx::dmi_resolver>());
+        }
+        if (!blocklist.count("ssh")) {
+            add(make_shared<posix::ssh_resolver>());
+        }
+        if (!blocklist.count("system_porfiler")) {
+            add(make_shared<osx::system_profiler_resolver>());
+        }
+        if (!blocklist.count("virtual")) {
+            add(make_shared<osx::virtualization_resolver>());
+        }
+        if (!blocklist.count("identity")) {
+            add(make_shared<posix::identity_resolver>());
+        }
+        if (!blocklist.count("timezone")) {
+            add(make_shared<posix::timezone_resolver>());
+        }
+        if (!blocklist.count("filesystems")) {
+            add(make_shared<bsd::filesystem_resolver>());
+        }
+        if (!blocklist.count("memory")) {
+            add(make_shared<osx::memory_resolver>());
+        }
+        if (!blocklist.count("load_averages")) {
+            add(make_shared<glib::load_average_resolver>());
+        }
     }
 
 }}  // namespace facter::facts

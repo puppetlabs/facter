@@ -14,7 +14,7 @@ using namespace std;
 
 namespace facter { namespace facts {
 
-    void collection::add_platform_facts()
+    void collection::add_platform_facts(set<string> const& blocklist)
     {
         add(make_shared<posix::kernel_resolver>());
         add(make_shared<resolvers::operating_system_resolver>());

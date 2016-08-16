@@ -60,10 +60,10 @@ namespace facter { namespace facts {
         return *this;
     }
 
-    void collection::add_default_facts(bool include_ruby_facts)
+    void collection::add_default_facts(bool include_ruby_facts, set<string> const& blocklist)
     {
-        add_common_facts(include_ruby_facts);
-        add_platform_facts();
+        add_common_facts(include_ruby_facts, blocklist);
+        add_platform_facts(blocklist);
     }
 
     void collection::add(shared_ptr<resolver> const& res)
@@ -591,7 +591,7 @@ namespace facter { namespace facts {
         emitter << EndMap;
     }
 
-    void collection::add_common_facts(bool include_ruby_facts)
+    void collection::add_common_facts(bool include_ruby_facts, set<string> const& blocklist)
     {
         add("facterversion", make_value<string_value>(LIBFACTER_VERSION));
 #ifdef AIO_AGENT_VERSION
@@ -601,10 +601,18 @@ namespace facter { namespace facts {
         if (include_ruby_facts) {
             add(make_shared<resolvers::ruby_resolver>());
         }
-        add(make_shared<resolvers::path_resolver>());
-        add(make_shared<resolvers::ec2_resolver>());
-        add(make_shared<resolvers::gce_resolver>());
-        add(make_shared<resolvers::augeas_resolver>());
+        if (!blocklist.count("path")) {
+            add(make_shared<resolvers::path_resolver>());
+        }
+        if (!blocklist.count("ec2")) {
+            add(make_shared<resolvers::ec2_resolver>());
+        }
+        if (!blocklist.count("gce")) {
+            add(make_shared<resolvers::gce_resolver>());
+        }
+        if (!blocklist.count("augeas")) {
+            add(make_shared<resolvers::augeas_resolver>());
+        }
     }
 
 }}  // namespace facter::facts

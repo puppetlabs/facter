@@ -531,7 +531,7 @@ SCENARIO("custom facts written in Ruby") {
         log_capture capture(level::debug);
         REQUIRE(load_custom_fact("on_message.rb", facts));
         THEN("no messages are logged") {
-            REQUIRE(capture.result().empty());
+            REQUIRE_FALSE(re_search(capture.result(), boost::regex("debug message")));
         }
     }
     GIVEN("a custom fact with a higher weight than a built-in fact") {

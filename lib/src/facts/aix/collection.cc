@@ -13,7 +13,7 @@
 using namespace std;
 
 namespace facter { namespace facts {
-    void collection::add_platform_facts() {
+    void collection::add_platform_facts(set<string> const& blocklist) {
         add(make_shared<aix::kernel_resolver>());
         add(make_shared<aix::memory_resolver>());
         add(make_shared<aix::networking_resolver>());
