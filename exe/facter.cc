@@ -2,10 +2,10 @@
 #include <facter/logging/logging.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/ruby/ruby.hpp>
+#include <facter/util/config.hpp>
 #include <hocon/program_options.hpp>
 #include <leatherman/util/environment.hpp>
 #include <leatherman/util/scope_exit.hpp>
-#include <leatherman/file_util/file.hpp>
 #include <boost/algorithm/string.hpp>
 // Note the caveats in nowide::cout/cerr; they're not synchronized with stdio.
 // Thus they can't be relied on to flush before program exit.
@@ -116,17 +116,21 @@ int main(int argc, char **argv)
         vector<string> external_directories;
         vector<string> custom_directories;
 
-        string conf_dir = "/etc/puppetlabs/facter/facter.conf";
-
         // Build a list of options visible on the command line
         // Keep this list sorted alphabetically
+        // Many of these options also can be specified in the config file,
+        // see facter::util::config. Because of differences between the way
+        // options are specified in the config file and on the command line,
+        // these options need to be specified separately (e.g. on the command
+        // line, flag presence indicates `true`, while in the config file, the
+        // boolean must be specified explicitly).
         po::options_description visible_options("");
         visible_options.add_options()
             ("color", "Enables color output.")
-            ("config,c", po::value<string>(&conf_dir), "Specify the location of the config file.")
-            ("custom-dir", po::value<vector<string>>(&custom_directories), "A directory to use for custom facts.")
+            ("config,c", po::value<string>(), "The location of the config file.")
+            ("custom-dir", po::value<vector<string>>(), "A directory to use for custom facts.")
             ("debug,d", po::bool_switch()->default_value(false), "Enable debug output.")
-            ("external-dir", po::value<vector<string>>(&external_directories), "A directory to use for external facts.")
+            ("external-dir", po::value<vector<string>>(), "A directory to use for external facts.")
             ("help,h", "Print this help message.")
             ("json,j", "Output in JSON format.")
             ("show-legacy", "Show legacy facts when querying all facts.")
@@ -155,39 +159,23 @@ int main(int argc, char **argv)
         po::positional_options_description positional_options;
         positional_options.add("query", -1);
 
-        // Build a list of options that can be set in the config file
-        po::options_description config_file_options("");
-        config_file_options.add_options()
-            ("custom-dir", po::value<vector<string>>(&custom_directories), "A directory to use for custom facts.")
-            ("debug", po::value<bool>(), "Enable debug output.")
-            ("external-dir", po::value<vector<string>>(&external_directories), "A directory to use for external facts.")
-            ("log-level", po::value<level>()->default_value(level::warning, "warn"), "Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.")
-            ("no-custom-facts", po::value<bool>(), "Disables custom facts.")
-            ("no-external-facts", po::value<bool>(), "Disables external facts.")
-            ("no-ruby", po::value<bool>(), "Disables loading Ruby, facts requiring Ruby, and custom facts.")
-            ("trace", po::value<bool>(), "Enable backtraces for custom facts.")
-            ("verbose", po::value<bool>(), "Enable verbose (info) output.");
-
         po::variables_map vm;
         try {
             po::store(po::command_line_parser(argc, argv).
                       options(command_line_options).positional(positional_options).run(), vm);
 
             // Check for non-default config file location
+            hocon::shared_config hocon_conf;
             if (vm.count("config")) {
-                conf_dir = vm["config"].as<string>();
+                string conf_dir = vm["config"].as<string>();
+                hocon_conf = facter::util::config::load_config_from(conf_dir);
+            } else {
+                hocon_conf = facter::util::config::load_default_config_file();
             }
 
-            if (leatherman::file_util::file_readable(conf_dir)) {
-                auto hocon_conf = hocon::config::parse_file_any_syntax(conf_dir)->resolve();
-                if (hocon_conf->has_path("global")) {
-                    auto global_settings = hocon_conf->get_object("global")->to_config();
-                    po::store(hocon::program_options::parse_hocon<char>(global_settings, config_file_options, true), vm);
-                }
-                if (hocon_conf->has_path("cli")) {
-                    auto cli_settings = hocon_conf->get_object("cli")->to_config();
-                    po::store(hocon::program_options::parse_hocon<char>(cli_settings, config_file_options, true), vm);
-                }
+            if (hocon_conf) {
+                facter::util::config::load_global_settings(hocon_conf, vm);
+                facter::util::config::load_cli_settings(hocon_conf, vm);
             }
 
             // Check for a help option first before notifying
@@ -299,6 +287,9 @@ int main(int argc, char **argv)
             log(level::warning, "Facter was called recursively, skipping external facts. Add '--no-external-facts' to silence this warning");
           } else {
             environment::set("INSIDE_FACTER", "true");
+            if (vm.count("external-dir")) {
+                external_directories = vm["external-dir"].as<vector<string>>();
+            }
             facts.add_external_facts(external_directories);
           }
         }
@@ -307,6 +298,9 @@ int main(int argc, char **argv)
         facts.add_environment_facts();
 
         if (ruby && !vm["no-custom-facts"].as<bool>()) {
+            if (vm.count("custom-dir")) {
+                custom_directories = vm["custom-dir"].as<vector<string>>();
+            }
             facter::ruby::load_custom_facts(facts, vm.count("puppet"), custom_directories);
         }
 

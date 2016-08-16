@@ -72,6 +72,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/ruby/simple_resolution.cc"
     "src/util/scoped_file.cc"
     "src/util/string.cc"
+    "src/util/config/config.cc"
 )
 
 # Set the POSIX sources if on a POSIX platform
@@ -88,6 +89,7 @@ if (UNIX)
         "src/facts/posix/xen_resolver.cc"
         "src/util/posix/scoped_addrinfo.cc"
         "src/util/posix/scoped_descriptor.cc"
+        "src/util/config/posix/config.cc"
     )
     if (OPENSSL_FOUND)
         set(LIBFACTER_STANDARD_SOURCES ${LIBFACTER_STANDARD_SOURCES} "src/util/posix/scoped_bio.cc")
@@ -225,6 +227,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
         "src/facts/windows/timezone_resolver.cc"
         "src/facts/windows/uptime_resolver.cc"
         "src/facts/windows/virtualization_resolver.cc"
+        "src/util/config/windows/config.cc"
     )
 
     # The GetPerformanceInfo symbol has moved around a lot between Windows versions;
@@ -298,6 +301,7 @@ endif()
 
 # Link in additional libraries
 target_link_libraries(libfacter PRIVATE
+    ${CPPHOCON_LIBRARIES}
     ${LIBFACTER_PLATFORM_LIBRARIES}
     ${LEATHERMAN_LIBRARIES}
     ${Boost_LIBRARIES}
