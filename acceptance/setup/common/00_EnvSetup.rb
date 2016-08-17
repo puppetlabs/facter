@@ -46,6 +46,9 @@ hosts.each do |host|
                  '1.9.3-x86'
                end
 
+    on host, 'mkdir .git'
+    on host, 'cmd /c git config pack.windowMemory 10m'
+    on host, 'cmd /c git config pack.packSizeLimit 20m'
     install_from_git(host, "/opt/puppet-git-repos",
                     :name => 'puppet-win32-ruby',
                     :path => build_giturl('puppet-win32-ruby'),
