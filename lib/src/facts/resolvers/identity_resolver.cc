@@ -19,7 +19,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void identity_resolver::resolve(collection &facts)
+    void identity_resolver::resolve(collection &facts, set<string> const& blocklist)
     {
         auto data = collect_data(facts);
 

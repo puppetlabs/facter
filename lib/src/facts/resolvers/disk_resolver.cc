@@ -23,7 +23,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void disk_resolver::resolve(collection& facts)
+    void disk_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         auto data = collect_data(facts);
 

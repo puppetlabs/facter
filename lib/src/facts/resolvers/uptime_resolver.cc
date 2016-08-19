@@ -22,7 +22,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void uptime_resolver::resolve(collection& facts)
+    void uptime_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         auto seconds = get_uptime();
         if (seconds < 0) {

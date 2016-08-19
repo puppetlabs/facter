@@ -23,7 +23,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void zfs_resolver::resolve(collection& facts)
+    void zfs_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         auto data = collect_data(facts);
 

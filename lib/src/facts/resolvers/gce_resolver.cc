@@ -221,7 +221,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void gce_resolver::resolve(collection& facts)
+    void gce_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         auto virtualization = facts.get<string_value>(fact::virtualization);
         if (!virtualization || virtualization->value() != vm::gce) {

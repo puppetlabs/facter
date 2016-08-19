@@ -24,7 +24,7 @@ namespace facter { namespace facts { namespace aix {
     {
     }
 
-    void serial_number_resolver::resolve(collection& facts) {
+    void serial_number_resolver::resolve(collection& facts, set<string> const& blocklist) {
         auto cu_at_query = odm_class<CuAt>::open("CuAt").query("name=sys0 and attribute=systemid");
         auto result = *cu_at_query.begin();
 

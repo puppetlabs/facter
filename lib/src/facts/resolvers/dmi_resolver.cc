@@ -70,7 +70,7 @@ namespace facter { namespace facts { namespace resolvers {
         return "Unknown";
     }
 
-    void dmi_resolver::resolve(collection& facts)
+    void dmi_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         auto data = collect_data(facts);
         auto dmi = make_value<map_value>();

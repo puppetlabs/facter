@@ -24,7 +24,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void ssh_resolver::resolve(collection& facts)
+    void ssh_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         auto data = collect_data(facts);
 

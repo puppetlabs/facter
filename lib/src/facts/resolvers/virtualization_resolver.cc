@@ -20,7 +20,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void virtualization_resolver::resolve(collection& facts)
+    void virtualization_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         auto hypervisor = get_hypervisor(facts);
 

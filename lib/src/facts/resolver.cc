@@ -28,6 +28,10 @@ namespace facter { namespace facts {
         }
     }
 
+    void resolver::log_fact_blockage(string fact_name) {
+        LOG_DEBUG("collection of %1% fact has been blocked", fact_name);
+    }
+
     resolver::~resolver()
     {
         // This needs to be defined here since we use incomplete types in the header

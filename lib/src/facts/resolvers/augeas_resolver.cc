@@ -40,7 +40,7 @@ namespace facter { namespace facts { namespace resolvers {
         return value;
     }
 
-    void augeas_resolver::resolve(collection& facts)
+    void augeas_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         auto version = get_version();
         if (version.empty()) {

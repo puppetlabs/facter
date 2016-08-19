@@ -27,7 +27,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void xen_resolver::resolve(collection& facts)
+    void xen_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         // Confine to fact virtual == xen0
         auto virt = facts.get<string_value>(fact::virtualization);

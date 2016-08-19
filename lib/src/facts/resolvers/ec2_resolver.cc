@@ -107,7 +107,7 @@ namespace facter { namespace facts { namespace resolvers {
     }
 #endif
 
-    void ec2_resolver::resolve(collection& facts)
+    void ec2_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
 #ifndef USE_CURL
         LOG_INFO("EC2 facts are unavailable: facter was built without libcurl support.");

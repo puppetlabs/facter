@@ -31,7 +31,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void zone_resolver::resolve(collection& facts)
+    void zone_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         auto data = collect_data(facts);
 
