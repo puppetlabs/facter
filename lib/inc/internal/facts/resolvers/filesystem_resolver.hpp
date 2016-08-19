@@ -158,9 +158,10 @@ namespace facter { namespace facts { namespace resolvers {
         /**
          * Collects the file system data.
          * @param facts The fact collection that is resolving facts.
+         * @param blocklist A list of facts that should not be collected.
          * @return Returns the file system data.
          */
-        virtual data collect_data(collection& facts) = 0;
+        virtual data collect_data(collection& facts, std::set<std::string> const& blocklist) = 0;
     };
 
 }}}  // namespace facter::facts::resolvers

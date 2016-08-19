@@ -47,7 +47,7 @@ struct test_filesystem_resolver : filesystem_resolver
     }
 
  protected:
-    virtual data collect_data(collection& facts) override
+    virtual data collect_data(collection& facts, set<string> const& blocklist) override
     {
         data result;
         result.mountpoints = move(mountpoints);

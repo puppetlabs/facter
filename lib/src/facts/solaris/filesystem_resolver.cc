@@ -1,3 +1,4 @@
+#include <facter/facts/fact.hpp>
 #include <internal/facts/solaris/filesystem_resolver.hpp>
 #include <internal/util/solaris/k_stat.hpp>
 #include <internal/util/scoped_file.hpp>
@@ -23,11 +24,21 @@ using namespace boost::filesystem;
 
 namespace facter { namespace facts { namespace solaris {
 
-    filesystem_resolver::data filesystem_resolver::collect_data(collection& facts)
+    filesystem_resolver::data filesystem_resolver::collect_data(collection& facts, set<string> const& blocklist)
     {
         data result;
-        collect_mountpoint_data(result);
-        collect_filesystem_data(result);
+
+        if (blocklist.count(fact::mountpoints)) {
+            log_fact_blockage(fact::mountpoints);
+        } else {
+            collect_mountpoint_data(result);
+        }
+
+        if (blocklist.count(fact::filesystems)) {
+            log_fact_blockage(fact::mountpoints);
+        } else {
+            collect_filesystem_data(result);
+        }
         return result;
     }
 
