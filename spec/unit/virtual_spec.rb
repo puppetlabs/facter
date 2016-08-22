@@ -17,14 +17,6 @@ describe "Virtual fact" do
     Facter::Util::Virtual.stubs(:virtualbox?).returns(false)
   end
 
-  it "should be zone on Solaris when a zone" do
-    Facter.fact(:kernel).stubs(:value).returns("SunOS")
-    Facter::Util::Virtual.stubs(:zone?).returns(true)
-    Facter::Util::Virtual.stubs(:vserver?).returns(false)
-    Facter::Util::Virtual.stubs(:xen?).returns(false)
-    Facter.fact(:virtual).value.should == "zone"
-  end
-
   it "should be jail on FreeBSD when a jail in kvm" do
     Facter.fact(:kernel).stubs(:value).returns("FreeBSD")
     Facter::Util::Virtual.stubs(:jail?).returns(true)
@@ -165,6 +157,15 @@ describe "Virtual fact" do
       Facter::Util::Resolution.stubs(:exec).with("vmware -v").returns false
       Facter.fact(:kernel).stubs(:value).returns("SunOS")
     end
+
+    it "should be zone on Solaris when a zone" do
+      Facter.fact(:kernel).stubs(:value).returns("SunOS")
+      Facter::Util::Virtual.stubs(:zone?).returns(true)
+      Facter::Util::Virtual.stubs(:vserver?).returns(false)
+      Facter::Util::Virtual.stubs(:xen?).returns(false)
+      Facter.fact(:virtual).value.should == "zone"
+    end
+
 
     it "should be vmware with VMWare vendor name from prtdiag" do
       Facter.fact(:hardwaremodel).stubs(:value).returns(nil)
