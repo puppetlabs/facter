@@ -71,11 +71,7 @@ Facter.add(:ipaddress) do
 
     output.split(/^\S/).each do |str|
       if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-        tmp = $1
-        unless tmp =~ /^127\./ or tmp == "0.0.0.0"
-          ip = tmp
-          break
-        end
+        ip = $1
       end
     end
 
