@@ -6,6 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Puppet Labs"]
+  s.add_dependency('trollop', '>= 2.0.0')
   s.date = "2012-08-08"
   s.description = "You can prove anything with facts!"
   s.email = "info@puppetlabs.com"
