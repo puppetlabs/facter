@@ -16,7 +16,7 @@ Facter.add(:osfamily) do
 
   setcode do
     case Facter.value(:operatingsystem)
-    when "RedHat", "Fedora", "CentOS", "Scientific", "SLC", "Ascendos", "CloudLinux", "PSBM", "OracleLinux", "OVS", "OEL"
+    when "RedHat", "Fedora", "CentOS", "Scientific", "SLC", "Ascendos", "CloudLinux", "PSBM", "OracleLinux", "OVS", "OEL", "Amazon"
       "RedHat"
     when "Ubuntu", "Debian"
       "Debian"
