@@ -146,7 +146,7 @@ describe Facter::Util::Resolution do
     describe "and the code is a block" do
       it "should warn but not fail if the code fails" do
         @resolve.setcode { raise "feh" }
-        @resolve.expects(:warn)
+        Facter.expects(:warn)
         @resolve.value.should be_nil
       end
 
@@ -190,6 +190,28 @@ describe Facter::Util::Resolution do
 
         Thread.expects(:new).yields
         Process.expects(:waitall)
+
+        @resolve.value
+      end
+
+      it 'include a stack trace when tracing is on' do
+        Facter.tracing(1)
+        @resolve.setcode { raise 'This is a test' }
+
+        # This basically ensures the array returns isn't 1 (indicating no stack
+        # trace) its not great, but I can't see a better way to do this in
+        # mocha.
+        Facter.expects(:warn).with(Not(responds_with(:length, 1)))
+
+        @resolve.value
+      end
+
+      it 'do not include a stack trace when tracing is off' do
+        Facter.tracing(0)
+        @resolve.setcode { raise 'This is a test' }
+
+        # This basically ensures the array length is only 1
+        Facter.expects(:warn).with(responds_with(:length, 1))
 
         @resolve.value
       end

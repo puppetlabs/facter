@@ -244,7 +244,9 @@ class Facter::Util::Resolution
       Thread.new { Process.waitall }
       return nil
     rescue => details
-      warn "Could not retrieve %s: %s" % [self.name, details]
+      base_error = ["Could not retrieve %s: %s" % [self.name, details]]
+      base_error.push(*details.backtrace) if Facter.tracing?
+      Facter.warn(base_error)
       return nil
     end
 

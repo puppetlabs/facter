@@ -57,7 +57,7 @@ module Facter
       end
 
     rescue => e
-      if options && options[:trace]
+      if Facter.tracing?
         raise e
       else
         $stderr.puts "Error: #{e}"
@@ -77,7 +77,7 @@ module Facter
       OptionParser.new do |opts|
         opts.on("-y", "--yaml")   { |v| options[:yaml]   = v }
         opts.on("-j", "--json")   { |v| options[:json]   = v }
-        opts.on(      "--trace")  { |v| options[:trace]  = v }
+        opts.on(      "--trace")  { |v| Facter.tracing(1) }
         opts.on("-d", "--debug")  { |v| Facter.debugging(1) }
         opts.on("-t", "--timing") { |v| Facter.timing(1) }
         opts.on("-p", "--puppet") { |v| load_puppet }
