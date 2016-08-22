@@ -103,16 +103,7 @@ class Facter::Util::Fact
 
   # Lock our searching process, so we never ge stuck in recursion.
   def searching
-    if searching?
-      Facter.debug "Caught recursion on %s" % @name
-
-      # return a cached value if we've got it
-      if @value
-        return @value
-      else
-        return nil
-      end
-    end
+    raise RuntimeError, "Caught recursion on #{@name}" if searching?
 
     # If we've gotten this far, we're not already searching, so go ahead and do so.
     @searching = true
