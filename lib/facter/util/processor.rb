@@ -87,6 +87,8 @@ module Processor
         elsif line.match(/\d+\s+((?:PA-RISC|Intel).*processors.*)/) then
           cpu = $1.to_s
           cpu.sub!(/processors/, "processor")
+        elsif line.match(/\s+(Intel.*Processor.*)/) then
+          cpu = $1.to_s
         end
       end
     end

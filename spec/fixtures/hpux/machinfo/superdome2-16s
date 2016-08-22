@@ -1,0 +1,31 @@
+CPU info:
+   Intel(R)  Itanium(R)  Processor 9340 (1.6 GHz, 15 MB)
+   4 cores, 8 logical processors per socket
+   4.79 GT/s QPI, CPU version E0
+          Active processor count:
+          2 sockets
+          6 cores (3 per socket)
+          12 logical processors (6 per socket)
+          LCPU attribute is enabled
+
+Memory: 14332 MB (14 GB)
+
+Firmware info:
+   Firmware revision:  004.044.000
+   FP SWA driver revision: 1.18
+   IPMI is supported on this system.
+   BMC firmware revision: 2.53
+
+Platform info:
+   Model:                  "ia64 hp Superdome2 16s"
+   Machine ID number:      STRING_WITH_DASHES
+   Machine serial number:  STRING
+
+OS info:
+   Nodename:  HOSTNAME
+   Release:   HP-UX B.11.31
+   Version:   U (unlimited-user license)
+   Machine:   ia64
+   ID Number: NUMBER
+   vmunix _release_version:
+@(#) $Revision: vmunix:    B.11.31_LR FLAVOR=perf

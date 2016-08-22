@@ -318,6 +318,8 @@ describe "processorX facts" do
       examples << [File.read(fixtures('hpux','machinfo','ia64-rx6600')), "Intel(R) Itanium 2 9100 series processor (1.59 GHz, 18 MB)"]
       examples << [File.read(fixtures('hpux','machinfo','ia64-rx8640')), "Intel(R) Itanium 2 9100 series"]
       examples << [File.read(fixtures('hpux','machinfo','hppa-rp4440')), "PA-RISC 8800 processor (1000 MHz, 64 MB)"]
+      examples << [File.read(fixtures('hpux','machinfo','superdome-server-SD32B')), "Intel(R) Itanium 2 9000 series"]
+      examples << [File.read(fixtures('hpux','machinfo','superdome2-16s')), "Intel(R)  Itanium(R)  Processor 9340 (1.6 GHz, 15 MB)"]
       examples
     end
 
