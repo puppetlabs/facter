@@ -18,7 +18,7 @@ Facter.add(:osfamily) do
     case Facter.value(:operatingsystem)
     when "RedHat", "Fedora", "CentOS", "Scientific", "SLC", "Ascendos", "CloudLinux", "PSBM", "OracleLinux", "OVS", "OEL"
       "RedHat"
-    when "Ubuntu", "Debian"
+    when "Ubuntu", "Debian", "Proxmox"
       "Debian"
     when "SLES", "SLED", "OpenSuSE", "SuSE"
       "Suse"

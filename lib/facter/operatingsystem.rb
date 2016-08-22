@@ -27,6 +27,8 @@ Facter.add(:operatingsystem) do
   setcode do
     if Facter.value(:lsbdistid) == "Ubuntu"
        "Ubuntu"
+    elsif FileTest.exists?("/usr/bin/pveversion")
+      "Proxmox"
     elsif FileTest.exists?("/etc/debian_version")
       "Debian"
     elsif FileTest.exists?("/etc/gentoo-release")
