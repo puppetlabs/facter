@@ -21,49 +21,47 @@ test_name 'FACT-1361 - C59029 networking facts should be fully populated' do
   }
 
   agents.each do |agent|
-    step "Ensure a primary networking interface was determined" do
-      primary_interface = fact_on(agent, 'networking.primary')
-      refute_empty(primary_interface)
+    primary_interface = fact_on(agent, 'networking.primary')
+    refute_empty(primary_interface)
 
-      expected_bindings = {
-          "\"networking.interfaces.#{primary_interface}.bindings.0.address\"" => @ip_regex,
-          "\"networking.interfaces.#{primary_interface}.bindings.0.netmask\"" => @netmask_regex,
-          "\"networking.interfaces.#{primary_interface}.bindings.0.network\"" => @ip_regex,
-          "\"networking.interfaces.#{primary_interface}.bindings6.0.address\"" => /[a-f0-9:]+/,
-          "\"networking.interfaces.#{primary_interface}.bindings6.0.netmask\"" => /[a-f0-9:]+/,
-          "\"networking.interfaces.#{primary_interface}.bindings6.0.network\"" => /[a-f0-9:]+/
-      }
+    expected_bindings = {
+        "\"networking.interfaces.#{primary_interface}.bindings.0.address\"" => @ip_regex,
+        "\"networking.interfaces.#{primary_interface}.bindings.0.netmask\"" => @netmask_regex,
+        "\"networking.interfaces.#{primary_interface}.bindings.0.network\"" => @ip_regex,
+        "\"networking.interfaces.#{primary_interface}.bindings6.0.address\"" => /[a-f0-9:]+/,
+        "\"networking.interfaces.#{primary_interface}.bindings6.0.netmask\"" => /[a-f0-9:]+/,
+        "\"networking.interfaces.#{primary_interface}.bindings6.0.network\"" => /[a-f0-9:]+/
+    }
 
-      case agent['platform']
-        when /solaris/, /eos/
-          #remove the invalid networking facts on Solaris or Arista
-          expected_networking.delete("networking.ip6")
-          expected_networking.delete("networking.netmask6")
-          expected_networking.delete("networking.network6")
+    case agent['platform']
+      when /solaris/, /eos/
+        #remove the invalid networking facts on Solaris or Arista
+        expected_networking.delete("networking.ip6")
+        expected_networking.delete("networking.netmask6")
+        expected_networking.delete("networking.network6")
 
-          #remove invalid bindings for the primary networking interface on AIX and Solaris
-          expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.address\"")
-          expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.netmask\"")
-          expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.network\"")
+        #remove invalid bindings for the primary networking interface on AIX and Solaris
+        expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.address\"")
+        expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.netmask\"")
+        expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.network\"")
 
-        when /sparc/, /aix/, /cisco/
-          #remove the invalid networking facts on SPARC, AIX, or Cisco
-          #Our SPARC testing platforms don't use DHCP
-          expected_networking.delete("networking.dhcp")
-          expected_networking.delete("networking.ip6")
-          expected_networking.delete("networking.netmask6")
-          expected_networking.delete("networking.network6")
+      when /sparc/, /aix/, /cisco/
+        #remove the invalid networking facts on SPARC, AIX, or Cisco
+        #Our SPARC testing platforms don't use DHCP
+        expected_networking.delete("networking.dhcp")
+        expected_networking.delete("networking.ip6")
+        expected_networking.delete("networking.netmask6")
+        expected_networking.delete("networking.network6")
 
-          #remove invalid bindings for the primary networking interface on SPARC or AIX
-          expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.address\"")
-          expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.netmask\"")
-          expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.network\"")
+        #remove invalid bindings for the primary networking interface on SPARC or AIX
+        expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.address\"")
+        expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.netmask\"")
+        expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.network\"")
 
-        when /sles/
-          #some sles VMs do not have networking.dhcp
-          expected_networking.delete("networking.dhcp")
+      when /sles/
+        #some sles VMs do not have networking.dhcp
+        expected_networking.delete("networking.dhcp")
 
-      end
     end
 
     step "Ensure the Networking fact resolves with reasonable values for at least one interface" do
