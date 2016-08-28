@@ -107,8 +107,16 @@ namespace facter { namespace facts {
         /**
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact collection that is resolving facts.
+         * @param blocklist A list of facts that should not be collected.
          */
-        virtual void resolve(collection& facts) = 0;
+        virtual void resolve(collection& facts, std::set<std::string> const& blocklist = std::set<std::string>()) = 0;
+
+    protected:
+        /**
+         * Logs a message that collection of the specified fact has been blocked.
+         * @param fact_name The name of the blocked fact
+         */
+        static void log_fact_blockage(std::string fact_name);
 
      private:
         std::string _name;

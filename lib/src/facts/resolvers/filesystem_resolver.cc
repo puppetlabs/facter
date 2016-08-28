@@ -23,9 +23,9 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void filesystem_resolver::resolve(collection& facts)
+    void filesystem_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
-        auto data = collect_data(facts);
+        auto data = collect_data(facts, blocklist);
 
         // Populate the mountpoints fact
         if (!data.mountpoints.empty()) {

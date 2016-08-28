@@ -30,11 +30,18 @@ namespace facter { namespace util { namespace config {
         }
     }
 
+    void load_fact_settings(shared_config hocon_config, po::variables_map& vm) {
+        if (hocon_config && hocon_config->has_path("facts")) {
+            auto fact_settings = hocon_config->get_object("facts")->to_config();
+            po::store(hocon::program_options::parse_hocon<char>(fact_settings, fact_config_options(), false), vm);
+        }
+    }
+
     po::options_description global_config_options() {
         po::options_description global_options("");
         global_options.add_options()
-            ("custom-dir", po::value<vector<string>>(), "A directory or list of directories to use for custom facts.")
-            ("external-dir", po::value<vector<string>>(), "A directory or list of directories to use for external facts.")
+            ("custom-dir", po::value<vector<string>>(), "A directory to use for custom facts.")
+            ("external-dir", po::value<vector<string>>(), "A directory to use for external facts.")
             ("no-custom-facts", po::value<bool>()->default_value(false), "Disables custom facts.")
             ("no-external-facts", po::value<bool>()->default_value(false), "Disables external facts.")
             ("no-ruby", po::value<bool>()->default_value(false), "Disables loading Ruby, facts requiring Ruby, and custom facts.");
@@ -49,5 +56,12 @@ namespace facter { namespace util { namespace config {
             ("trace", po::value<bool>()->default_value(false), "Enable backtraces for custom facts.")
             ("verbose", po::value<bool>()->default_value(false), "Enable verbose (info) output.");
         return cli_options;
+    }
+
+    po::options_description fact_config_options() {
+        po::options_description fact_settings("");
+        fact_settings.add_options()
+            ("blocklist", po::value<vector<string>>(), "A set of facts to block.");
+        return fact_settings;
     }
 }}}  // namespace facter::util::config;

@@ -44,7 +44,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void networking_resolver::resolve(collection& facts)
+    void networking_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         auto data = collect_data(facts);
 

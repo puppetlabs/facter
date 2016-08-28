@@ -17,9 +17,10 @@ namespace facter { namespace facts { namespace solaris {
         /**
          * Collects the file system data.
          * @param facts The fact collection that is resolving facts.
+         * @param blocklist A list of facts that should not be collected.
          * @return Returns the file system data.
          */
-        virtual data collect_data(collection& facts) override;
+        virtual data collect_data(collection& facts, std::set<std::string> const& blocklist) override;
 
      private:
         void collect_mountpoint_data(data& result);

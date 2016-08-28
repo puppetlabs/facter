@@ -14,7 +14,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void path_resolver::resolve(collection& facts)
+    void path_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         string path_val;
         if (environment::get("PATH", path_val)) {

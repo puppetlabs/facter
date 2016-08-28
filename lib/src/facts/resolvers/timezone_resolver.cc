@@ -3,6 +3,8 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 
+using namespace std;
+
 namespace facter { namespace facts { namespace resolvers {
 
     timezone_resolver::timezone_resolver() :
@@ -14,7 +16,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void timezone_resolver::resolve(collection& facts)
+    void timezone_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         auto timezone = get_timezone();
         if (timezone.empty()) {

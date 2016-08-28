@@ -118,12 +118,6 @@ int main(int argc, char **argv)
 
         // Build a list of options visible on the command line
         // Keep this list sorted alphabetically
-        // Many of these options also can be specified in the config file,
-        // see facter::util::config. Because of differences between the way
-        // options are specified in the config file and on the command line,
-        // these options need to be specified separately (e.g. on the command
-        // line, flag presence indicates `true`, while in the config file, the
-        // boolean must be specified explicitly).
         po::options_description visible_options("");
         visible_options.add_options()
             ("color", "Enables color output.")
@@ -176,6 +170,7 @@ int main(int argc, char **argv)
             if (hocon_conf) {
                 facter::util::config::load_global_settings(hocon_conf, vm);
                 facter::util::config::load_cli_settings(hocon_conf, vm);
+                facter::util::config::load_fact_settings(hocon_conf, vm);
             }
 
             // Check for a help option first before notifying
@@ -275,7 +270,12 @@ int main(int argc, char **argv)
 
         log_queries(queries);
 
-        collection facts;
+        set<string> blocklist;
+        if (vm.count("blocklist")) {
+            auto facts_to_block = vm["blocklist"].as<vector<string>>();
+            blocklist.insert(facts_to_block.begin(), facts_to_block.end());
+        }
+        collection facts(blocklist);
         facts.add_default_facts(ruby);
 
         // Add the environment facts

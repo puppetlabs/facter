@@ -99,7 +99,7 @@ struct dmi_resolver : resolvers::dmi_resolver
 struct filesystem_resolver : resolvers::filesystem_resolver
 {
  protected:
-    virtual data collect_data(collection& facts) override
+    virtual data collect_data(collection& facts, set<string> const& blocklist) override
     {
         data result;
 

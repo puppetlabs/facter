@@ -92,7 +92,7 @@ namespace facter { namespace facts { namespace resolvers {
         return rb_data;
     }
 
-    void ruby_resolver::resolve(collection& facts)
+    void ruby_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         auto rb_data = collect_data(facts);
 

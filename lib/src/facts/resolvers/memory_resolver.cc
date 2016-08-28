@@ -28,7 +28,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void memory_resolver::resolve(collection& facts)
+    void memory_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         data result = collect_data(facts);
 

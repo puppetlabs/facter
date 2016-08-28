@@ -18,7 +18,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void load_average_resolver::resolve(collection& facts)
+    void load_average_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         /* Get the load averages */
         auto averages = get_load_averages();

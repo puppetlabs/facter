@@ -1,3 +1,4 @@
+#include <facter/facts/fact.hpp>
 #include <internal/facts/linux/filesystem_resolver.hpp>
 #include <internal/util/scoped_file.hpp>
 #include <leatherman/file_util/file.hpp>
@@ -53,12 +54,26 @@ namespace facter { namespace facts { namespace linux {
         return result;
     }
 
-    filesystem_resolver::data filesystem_resolver::collect_data(collection& facts)
+    filesystem_resolver::data filesystem_resolver::collect_data(collection& facts, set<string> const& blocklist)
     {
         data result;
-        collect_mountpoint_data(result);
-        collect_filesystem_data(result);
-        collect_partition_data(result);
+        if (blocklist.count(fact::mountpoints)) {
+            LOG_DEBUG("collection of %1% fact has been blocked", fact::mountpoints);
+        } else {
+            collect_mountpoint_data(result);
+        }
+
+        if (blocklist.count(fact::filesystems)) {
+            LOG_DEBUG("collection of %1% fact has been blocked", fact::filesystems);
+        } else {
+            collect_filesystem_data(result);
+        }
+
+        if (blocklist.count(fact::partitions)) {
+            LOG_DEBUG("collection of %1% fact has been blocked", fact::partitions);
+        } else {
+            collect_partition_data(result);
+        }
         return result;
     }
 

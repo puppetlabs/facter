@@ -19,7 +19,7 @@ struct simple_resolver : facter::facts::resolver
     {
     }
 
-    virtual void resolve(collection& facts) override
+    virtual void resolve(collection& facts, set<string> const& blocklist) override
     {
         facts.add("foo", make_value<string_value>("bar"));
     }
@@ -31,7 +31,7 @@ struct multi_resolver : facter::facts::resolver
     {
     }
 
-    virtual void resolve(collection& facts) override
+    virtual void resolve(collection& facts, set<string> const& blocklist) override
     {
         facts.add("foo", make_value<string_value>("bar"));
         facts.add("bar", make_value<string_value>("foo"));

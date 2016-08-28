@@ -34,7 +34,7 @@ using namespace leatherman::file_util;
 
 namespace facter { namespace facts {
 
-    collection::collection()
+    collection::collection(set<string> blocklist) : _blocklist(move(blocklist))
     {
         // This needs to be defined here since we use incomplete types in the header
     }
@@ -56,6 +56,7 @@ namespace facter { namespace facts {
             _resolvers = std::move(other._resolvers);
             _resolver_map = std::move(other._resolver_map);
             _pattern_resolvers = std::move(other._pattern_resolvers);
+            _blocklist = std::move(other._blocklist);
         }
         return *this;
     }
@@ -313,7 +314,7 @@ namespace facter { namespace facts {
             auto resolver = _resolvers.front();
             remove(resolver);
             LOG_DEBUG("resolving %1% facts.", resolver->name());
-            resolver->resolve(*this);
+            resolver->resolve(*this, _blocklist);
         }
     }
 

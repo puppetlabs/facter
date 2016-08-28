@@ -21,7 +21,8 @@ namespace facter { namespace facts { namespace aix {
          /**
           * Called to resolve all the facts the resolver is responsible for.
           * @param facts The fact collection that is resolving facts.
+          * @param blocklist A list of facts that should not be collected.
           */
-         virtual void resolve(collection& facts) override;
+         virtual void resolve(collection& facts, std::set<std::string> const& blocklist) override;
     };
 }}}  // namespace facter::facts::aix

@@ -26,7 +26,7 @@ namespace facter { namespace facts { namespace resolvers {
     {
     }
 
-    void processor_resolver::resolve(collection& facts)
+    void processor_resolver::resolve(collection& facts, set<string> const& blocklist)
     {
         auto data = collect_data(facts);
 

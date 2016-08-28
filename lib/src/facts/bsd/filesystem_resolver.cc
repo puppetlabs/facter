@@ -1,3 +1,4 @@
+#include <facter/facts/fact.hpp>
 #include <internal/facts/bsd/filesystem_resolver.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <facter/util/string.hpp>
@@ -10,9 +11,16 @@ using namespace facter::util;
 
 namespace facter { namespace facts { namespace bsd {
 
-    filesystem_resolver::data filesystem_resolver::collect_data(collection& facts)
+    filesystem_resolver::data filesystem_resolver::collect_data(collection& facts, set<string> const& blocklist)
     {
         data result;
+
+        if (blocklist.count(fact::mountpoints) || blocklist.count(fact::filesystems)) {
+            // since these both come from the same data collection path, blocking one blocks the other
+            log_fact_blockage(fact::mountpoints);
+            log_fact_blockage(fact::filesystems);
+            return result;
+        }
 
         // First get the count of file systems
         int count = getfsstat(nullptr, 0, MNT_NOWAIT);
