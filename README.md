@@ -250,7 +250,7 @@ cli : {
 ```
 All options are respected when running Facter standalone, while calling Facter from Ruby will only load `external-dir` and `custom-dir`.
 
-The file will be loaded by default from `/etc/puppetlabs/facter/facter.conf` on Unix and `C:\ProgramData\PuppetLabs\facter\facter.conf` on Windows. A different location can be specified using the `--config` command line option.
+The file will be loaded by default from `/etc/puppetlabs/facter/facter.conf` on Unix and `C:\ProgramData\PuppetLabs\facter\etc\facter.conf` on Windows. A different location can be specified using the `--config` command line option.
 
 Uninstall
 ---------
