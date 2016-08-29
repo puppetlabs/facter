@@ -28,7 +28,7 @@ namespace facter { namespace facts { namespace resolvers {
         // Use rescue, because Ruby exceptions don't call destructors. The callback cb shouldn't
         // have any object construction/destruction in it.
         rb.rescue(cb, [&](VALUE ex) {
-            LOG_ERROR("error while resolving ruby %1% fact: %2%", label, rb.exception_to_string(ex));
+            LOG_ERROR("error while resolving ruby {1} fact: {2}", label, rb.exception_to_string(ex));
             return 0;
         });
     }

@@ -22,7 +22,7 @@ namespace facter { namespace util { namespace agent {
         if (!fixed.empty()) {
             return fixed;
         }
-        LOG_WARNING("%1% not found at configured location %2%, using PATH instead", exe, FACTER_PATH);
+        LOG_WARNING("{1} not found at configured location {2}, using PATH instead", exe, FACTER_PATH);
 #endif
         return exe;
     }

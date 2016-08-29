@@ -1,6 +1,7 @@
 #include <internal/facts/aix/networking_resolver.hpp>
 #include <leatherman/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/locale/locale.hpp>
 #include <boost/algorithm/string.hpp>
 
 #include <unordered_map>
@@ -11,6 +12,9 @@
 #include <net/route.h>
 #include <netinet/in.h>
 #include <sys/kinfo.h>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 // This usage is recommended in several mailing lists, and is used at
 // least in Samba to query mac addresses. I saw some references to old
@@ -34,13 +38,13 @@ static std::vector<T> getkerninfo(int query) {
     for (;;) {
         auto ksize = getkerninfo(query, nullptr, nullptr, 0);
         if (ksize == 0) {
-            throw std::runtime_error("getkerninfo call was unsuccessful");
+            throw std::runtime_error(_("getkerninfo call was unsuccessful"));
         }
         auto alloc_size = ksize;
         auto count = alloc_size/sizeof(T);
         std::vector<T> result(count);
         if (getkerninfo(query, reinterpret_cast<char*>(result.data()), &ksize, 0) == -1) {
-            throw std::runtime_error("getkerninfo call was unsuccessful");
+            throw std::runtime_error(_("getkerninfo call was unsuccessful"));
         }
 
         // getkerninfo updates the size variable to match our actual
@@ -177,22 +181,22 @@ namespace facter { namespace facts { namespace aix {
                 }
 
                 if (family == AF_MAX) {
-                    LOG_WARNING("got mixed address families for interface %1%, can't map them to a single binding.", ifaces[hdr->ifm_index].name);
+                    LOG_WARNING("got mixed address families for interface {1}, can't map them to a single binding.", ifaces[hdr->ifm_index].name);
                 } else if (family == AF_INET) {
-                    LOG_INFO("got ipv4 addresses for interface %1%", ifaces[hdr->ifm_index].name);
+                    LOG_INFO("got ipv4 addresses for interface {1}", ifaces[hdr->ifm_index].name);
                     ifaces[hdr->ifm_index].ipv4_bindings.push_back(addr_binding);
                 } else if (family == AF_INET6) {
-                    LOG_INFO("got ipv6 addresses for interface %1%", ifaces[hdr->ifm_index].name);
+                    LOG_INFO("got ipv6 addresses for interface {1}", ifaces[hdr->ifm_index].name);
                     ifaces[hdr->ifm_index].ipv6_bindings.push_back(addr_binding);
                 } else if (family != AF_UNSPEC) {
-                    LOG_INFO("skipping unknown address family %1% for interface %2%", family, ifaces[hdr->ifm_index].name);
+                    LOG_INFO("skipping unknown address family {1} for interface {2}", family, ifaces[hdr->ifm_index].name);
                 } else {
-                    LOG_INFO("somehow didn't get an address family for interface %1%", ifaces[hdr->ifm_index].name);
+                    LOG_INFO("somehow didn't get an address family for interface {1}", ifaces[hdr->ifm_index].name);
                 }
                 break;
             }
             default: {
-                LOG_INFO("got an unknown RT_IFLIST message: %1%", hdr->ifm_type);
+                LOG_INFO("got an unknown RT_IFLIST message: {1}", hdr->ifm_type);
                 break;
             }
             }

@@ -3,7 +3,11 @@
 #include <facter/facts/scalar_value.hpp>
 #include <leatherman/file_util/file.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/locale/locale.hpp>
 #include <boost/algorithm/string.hpp>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 using namespace std;
 
@@ -18,12 +22,12 @@ namespace facter { namespace facts { namespace external {
 
     void text_resolver::resolve(string const& path, collection& facts) const
     {
-        LOG_DEBUG("resolving facts from text file \"%1%\".", path);
+        LOG_DEBUG("resolving facts from text file \"{1}\".", path);
 
         if (!lth_file::each_line(path, [&facts](string& line) {
             auto pos = line.find('=');
             if (pos == string::npos) {
-                LOG_DEBUG("ignoring line in output: %1%", line);
+                LOG_DEBUG("ignoring line in output: {1}", line);
                 return true;
             }
             // Add as a string fact
@@ -32,10 +36,10 @@ namespace facter { namespace facts { namespace external {
             facts.add_external(move(fact), make_value<string_value>(line.substr(pos+1)));
             return true;
         })) {
-            throw external_fact_exception("file could not be opened.");
+            throw external_fact_exception(_("file could not be opened."));
         }
 
-        LOG_DEBUG("completed resolving facts from text file \"%1%\".", path);
+        LOG_DEBUG("completed resolving facts from text file \"{1}\".", path);
     }
 
 }}}  // namespace facter::facts::external

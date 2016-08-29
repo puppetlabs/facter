@@ -46,7 +46,7 @@ namespace facter { namespace facts { namespace resolvers {
 
         auto response = cli.get(req);
         if (response.status_code() != 200) {
-            LOG_DEBUG("request for %1% returned a status code of %2%.", req.url(), response.status_code());
+            LOG_DEBUG("request for {1} returned a status code of {2}.", req.url(), response.status_code());
             return;
         }
 
@@ -71,7 +71,7 @@ namespace facter { namespace facts { namespace resolvers {
 
         auto response = cli.get(req);
         if (response.status_code() != 200) {
-            LOG_DEBUG("request for %1% returned a status code of %2%.", req.url(), response.status_code());
+            LOG_DEBUG("request for {1} returned a status code of {2}.", req.url(), response.status_code());
             return;
         }
         util::each_line(response.body(), [&](string& name) {
@@ -119,7 +119,7 @@ namespace facter { namespace facts { namespace resolvers {
             return;
         }
 
-        LOG_DEBUG("querying EC2 instance metadata at %1%.", EC2_METADATA_ROOT_URL);
+        LOG_DEBUG("querying EC2 instance metadata at {1}.", EC2_METADATA_ROOT_URL);
 
         lth_curl::client cli;
         auto metadata = make_value<map_value>();
@@ -136,16 +136,16 @@ namespace facter { namespace facts { namespace resolvers {
             if (ex.req().url() == EC2_METADATA_ROOT_URL) {
                 // The very first query failed; most likely not an EC2 instance
                 LOG_DEBUG("EC2 facts are unavailable: not running under an EC2 instance or EC2 is not responding in a timely manner.");
-                LOG_TRACE("EC2 metadata request failed: %1%", ex.what());
+                LOG_TRACE("EC2 metadata request failed: {1}", ex.what());
                 return;
             }
-            LOG_ERROR("EC2 metadata request failed: %1%", ex.what());
+            LOG_ERROR("EC2 metadata request failed: {1}", ex.what());
         }
         catch (runtime_error& ex) {
-            LOG_ERROR("EC2 metadata request failed: %1%", ex.what());
+            LOG_ERROR("EC2 metadata request failed: {1}", ex.what());
         }
 
-        LOG_DEBUG("querying EC2 instance user data at %1%.", EC2_USERDATA_ROOT_URL);
+        LOG_DEBUG("querying EC2 instance user data at {1}.", EC2_USERDATA_ROOT_URL);
 
         try {
             lth_curl::request req(EC2_USERDATA_ROOT_URL);
@@ -156,13 +156,13 @@ namespace facter { namespace facts { namespace resolvers {
 
             auto response = cli.get(req);
             if (response.status_code() != 200) {
-                LOG_DEBUG("request for %1% returned a status code of %2%.", req.url(), response.status_code());
+                LOG_DEBUG("request for {1} returned a status code of {2}.", req.url(), response.status_code());
                 return;
             }
 
             facts.add(fact::ec2_userdata, make_value<string_value>(response.body()));
         } catch (runtime_error& ex) {
-            LOG_ERROR("EC2 user data request failed: %1%", ex.what());
+            LOG_ERROR("EC2 user data request failed: {1}", ex.what());
         }
 #endif
     }

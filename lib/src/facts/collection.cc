@@ -93,19 +93,19 @@ namespace facter { namespace facts {
                 ostringstream old_value_ss;
                 old_value->write(old_value_ss);
                 if (!value) {
-                    LOG_DEBUG("fact \"%1%\" resolved to null and the existing value of %2% will be removed.", name, old_value_ss.str());
+                    LOG_DEBUG("fact \"{1}\" resolved to null and the existing value of {2} will be removed.", name, old_value_ss.str());
                 } else {
                     ostringstream new_value_ss;
                     value->write(new_value_ss);
-                    LOG_DEBUG("fact \"%1%\" has changed from %2% to %3%.", name, old_value_ss.str(), new_value_ss.str());
+                    LOG_DEBUG("fact \"{1}\" has changed from {2} to {3}.", name, old_value_ss.str(), new_value_ss.str());
                 }
             } else {
                 if (!value) {
-                    LOG_DEBUG("fact \"%1%\" resolved to null and will not be added.", name);
+                    LOG_DEBUG("fact \"{1}\" resolved to null and will not be added.", name);
                 } else {
                     ostringstream new_value_ss;
                     value->write(new_value_ss);
-                    LOG_DEBUG("fact \"%1%\" has resolved to %2%.", name, new_value_ss.str());
+                    LOG_DEBUG("fact \"{1}\" has resolved to {2}.", name, new_value_ss.str());
                 }
             }
         }
@@ -149,14 +149,14 @@ namespace facter { namespace facts {
             // Warn the user if not using the default search directories
             string msg = ec ? ec.message() : "not a directory";
             if (warn) {
-                LOG_WARNING("skipping external facts for \"%1%\": %2%", dir, msg);
+                LOG_WARNING("skipping external facts for \"{1}\": {2}", dir, msg);
             } else {
-                LOG_DEBUG("skipping external facts for \"%1%\": %2%", dir, msg);
+                LOG_DEBUG("skipping external facts for \"{1}\": {2}", dir, msg);
             }
             return found;
         }
 
-        LOG_DEBUG("searching %1% for external facts.", search_dir);
+        LOG_DEBUG("searching {1} for external facts.", search_dir);
 
         each_file(search_dir.string(), [&](string const& path) {
             for (auto const& res : resolvers) {
@@ -166,7 +166,7 @@ namespace facter { namespace facts {
                         res->resolve(path, *this);
                     }
                     catch (external::external_fact_exception& ex) {
-                        LOG_ERROR("error while processing \"%1%\" for external facts: %2%", path, ex.what());
+                        LOG_ERROR("error while processing \"{1}\" for external facts: {2}", path, ex.what());
                     }
                     break;
                 }
@@ -206,7 +206,7 @@ namespace facter { namespace facts {
 
             auto fact_name = name.substr(7);
             boost::to_lower(fact_name);
-            LOG_DEBUG("setting fact \"%1%\" based on the value of environment variable \"%2%\".", fact_name, name);
+            LOG_DEBUG("setting fact \"{1}\" based on the value of environment variable \"{2}\".", fact_name, name);
 
             // Add the value based on the environment variable
             add(fact_name, make_value<string_value>(move(value)));
@@ -312,7 +312,7 @@ namespace facter { namespace facts {
         while (!_resolvers.empty()) {
             auto resolver = _resolvers.front();
             remove(resolver);
-            LOG_DEBUG("resolving %1% facts.", resolver->name());
+            LOG_DEBUG("resolving {1} facts.", resolver->name());
             resolver->resolve(*this);
         }
     }
@@ -325,7 +325,7 @@ namespace facter { namespace facts {
         while (it != range.second) {
             auto resolver = (it++)->second;
             remove(resolver);
-            LOG_DEBUG("resolving %1% facts.", resolver->name());
+            LOG_DEBUG("resolving {1} facts.", resolver->name());
             resolver->resolve(*this);
         }
 
@@ -338,7 +338,7 @@ namespace facter { namespace facts {
             }
             auto resolver = *(pattern_it++);
             remove(resolver);
-            LOG_DEBUG("resolving %1% facts.", resolver->name());
+            LOG_DEBUG("resolving {1} facts.", resolver->name());
             resolver->resolve(*this);
         }
     }
@@ -385,7 +385,7 @@ namespace facter { namespace facts {
             if (rb_val) {
                 current = facter::ruby::lookup(current, segment, segment_end);
                 if (!current) {
-                    LOG_DEBUG("cannot lookup an element with \"%1%\" from Ruby fact", *segment);
+                    LOG_DEBUG("cannot lookup an element with \"{1}\" from Ruby fact", *segment);
                 }
                 // Once we hit Ruby there's no going back, so whatever we get from Ruby is the value.
                 return current;
@@ -406,7 +406,7 @@ namespace facter { namespace facts {
         if (!value) {
             value = get_value(name);
             if (!value) {
-                string message = "fact \"%1%\" does not exist.";
+                string message = "fact \"{1}\" does not exist.";
                 if (strict_errors) {
                     LOG_ERROR(message, name);
                 } else {
@@ -420,7 +420,7 @@ namespace facter { namespace facts {
         if (map) {
             value = (*map)[name];
             if (!value) {
-                LOG_DEBUG("cannot lookup a hash element with \"%1%\": element does not exist.", name);
+                LOG_DEBUG("cannot lookup a hash element with \"{1}\": element does not exist.", name);
             }
             return value;
         }
@@ -431,19 +431,19 @@ namespace facter { namespace facts {
             try {
                 index = stoi(name);
             } catch (logic_error&) {
-                LOG_DEBUG("cannot lookup an array element with \"%1%\": expected an integral value.", name);
+                LOG_DEBUG("cannot lookup an array element with \"{1}\": expected an integral value.", name);
                 return nullptr;
             }
             if (index < 0) {
-                LOG_DEBUG("cannot lookup an array element with \"%1%\": expected a non-negative value.", name);
+                LOG_DEBUG("cannot lookup an array element with \"{1}\": expected a non-negative value.", name);
                 return nullptr;
             }
             if (array->empty()) {
-                LOG_DEBUG("cannot lookup an array element with \"%1%\": the array is empty.", name);
+                LOG_DEBUG("cannot lookup an array element with \"{1}\": the array is empty.", name);
                 return nullptr;
             }
             if (static_cast<size_t>(index) >= array->size()) {
-                LOG_DEBUG("cannot lookup an array element with \"%1%\": expected an integral value between 0 and %2% (inclusive).", name, array->size() - 1);
+                LOG_DEBUG("cannot lookup an array element with \"{1}\": expected an integral value between 0 and {2} (inclusive).", name, array->size() - 1);
                 return nullptr;
             }
             return (*array)[index];

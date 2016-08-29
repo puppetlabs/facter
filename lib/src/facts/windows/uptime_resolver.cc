@@ -2,8 +2,12 @@
 #include <leatherman/windows/wmi.hpp>
 #include <leatherman/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/locale/locale.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian_types.hpp>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 namespace facter { namespace facts { namespace windows {
 
@@ -25,7 +29,7 @@ namespace facter { namespace facts { namespace windows {
         string iso_date;
         int hour, min, sec;
         if (!re_search(wmitime, wmi_regex, &iso_date, &hour, &min, &sec)) {
-          throw runtime_error((boost::format("failed to parse %1% as a date/time") % wmitime).str());
+            throw runtime_error(_("failed to parse {1} as a date/time", wmitime));
         }
 
         return ptime(from_undelimited_string(iso_date), time_duration(hour, min, sec));

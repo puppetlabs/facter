@@ -32,36 +32,38 @@ using namespace facter::logging;
 using leatherman::util::environment;
 namespace po = boost::program_options;
 
+// Mark string for translation (alias for facter::logging::format)
+using facter::logging::_;
 
 void help(po::options_description& desc)
 {
     boost::nowide::cout <<
-        "Synopsis\n"
-        "========\n"
-        "\n"
-        "Collect and display facts about the system.\n"
-        "\n"
-        "Usage\n"
-        "=====\n"
-        "\n"
-        "  facter [options] [query] [query] [...]\n"
-        "\n"
-        "Options\n"
-        "=======\n\n" << desc <<
-        "\nDescription\n"
-        "===========\n"
-        "\n"
-        "Collect and display facts about the current system.  The library behind\n"
-        "facter is easy to extend, making facter an easy way to collect information\n"
-        "about a system.\n"
-        "\n"
-        "If no queries are given, then all facts will be returned.\n"
-        "\n"
-        "Example Queries\n"
-        "===============\n\n"
-        "  facter kernel\n"
-        "  facter networking.ip\n"
-        "  facter processors.models.0" << endl;
+        _("Synopsis\n"
+          "========\n"
+          "\n"
+          "Collect and display facts about the system.\n"
+          "\n"
+          "Usage\n"
+          "=====\n"
+          "\n"
+          "  facter [options] [query] [query] [...]\n"
+          "\n"
+          "Options\n"
+          "=======\n\n"
+          "{1}\nDescription\n"
+          "===========\n"
+          "\n"
+          "Collect and display facts about the current system.  The library behind\n"
+          "facter is easy to extend, making facter an easy way to collect information\n"
+          "about a system.\n"
+          "\n"
+          "If no queries are given, then all facts will be returned.\n"
+          "\n"
+          "Example Queries\n"
+          "===============\n\n"
+          "  facter kernel\n"
+          "  facter networking.ip\n"
+          "  facter processors.models.0", desc) << endl;
 }
 
 void log_command_line(int argc, char** argv)
@@ -76,7 +78,7 @@ void log_command_line(int argc, char** argv)
         }
         command_line << argv[i];
     }
-    log(level::info, "executed with command line: %1%.", command_line.str());
+    log(level::info, "executed with command line: {1}.", command_line.str());
 }
 
 void log_queries(set<string> const& queries)
@@ -100,7 +102,7 @@ void log_queries(set<string> const& queries)
         }
         output << query;
     }
-    log(level::info, "requested queries: %1%.", output.str());
+    log(level::info, "requested queries: {1}.", output.str());
 }
 
 int main(int argc, char **argv)
@@ -126,25 +128,25 @@ int main(int argc, char **argv)
         // boolean must be specified explicitly).
         po::options_description visible_options("");
         visible_options.add_options()
-            ("color", "Enables color output.")
-            ("config,c", po::value<string>(), "The location of the config file.")
-            ("custom-dir", po::value<vector<string>>(), "A directory to use for custom facts.")
-            ("debug,d", po::bool_switch()->default_value(false), "Enable debug output.")
-            ("external-dir", po::value<vector<string>>(), "A directory to use for external facts.")
-            ("help,h", "Print this help message.")
-            ("json,j", "Output in JSON format.")
-            ("show-legacy", "Show legacy facts when querying all facts.")
-            ("log-level,l", po::value<level>()->default_value(level::warning, "warn"), "Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.")
-            ("no-color", "Disables color output.")
-            ("no-custom-facts", po::bool_switch()->default_value(false), "Disables custom facts.")
-            ("no-external-facts", po::bool_switch()->default_value(false), "Disables external facts.")
-            ("no-ruby", po::bool_switch()->default_value(false), "Disables loading Ruby, facts requiring Ruby, and custom facts.")
-            ("puppet,p", "(Deprecated: use `puppet facts` instead) Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.")
-            ("trace", po::bool_switch()->default_value(false), "Enable backtraces for custom facts.")
-            ("verbose", po::bool_switch()->default_value(false), "Enable verbose (info) output.")
-            ("version,v", "Print the version and exit.")
-            ("yaml,y", "Output in YAML format.")
-            ("strict", "Enables more aggressive error reporting.");
+            ("color", _("Enables color output.").c_str())
+            ("config,c", po::value<string>(), _("The location of the config file.").c_str())
+            ("custom-dir", po::value<vector<string>>(), _("A directory to use for custom facts.").c_str())
+            ("debug,d", po::bool_switch()->default_value(false), _("Enable debug output.").c_str())
+            ("external-dir", po::value<vector<string>>(), _("A directory to use for external facts.").c_str())
+            ("help,h", _("Print this help message.").c_str())
+            ("json,j", _("Output in JSON format.").c_str())
+            ("show-legacy", _("Show legacy facts when querying all facts.").c_str())
+            ("log-level,l", po::value<level>()->default_value(level::warning, "warn"), _("Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.").c_str())
+            ("no-color", _("Disables color output.").c_str())
+            ("no-custom-facts", po::bool_switch()->default_value(false), _("Disables custom facts.").c_str())
+            ("no-external-facts", po::bool_switch()->default_value(false), _("Disables external facts.").c_str())
+            ("no-ruby", po::bool_switch()->default_value(false), _("Disables loading Ruby, facts requiring Ruby, and custom facts.").c_str())
+            ("puppet,p", _("(Deprecated: use `puppet facts` instead) Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.").c_str())
+            ("trace", po::bool_switch()->default_value(false), _("Enable backtraces for custom facts.").c_str())
+            ("verbose", po::bool_switch()->default_value(false), _("Enable verbose (info) output.").c_str())
+            ("version,v", _("Print the version and exit.").c_str())
+            ("yaml,y", _("Output in YAML format.").c_str())
+            ("strict", _("Enables more aggressive error reporting.").c_str());
 
         // Build a list of "hidden" options that are not visible on the command line
         po::options_description hidden_options("");
@@ -188,33 +190,33 @@ int main(int argc, char **argv)
 
             // Check for conflicting options
             if (vm.count("color") && vm.count("no-color")) {
-                throw po::error("color and no-color options conflict: please specify only one.");
+                throw po::error(_("color and no-color options conflict: please specify only one."));
             }
             if (vm.count("json") && vm.count("yaml")) {
-                throw po::error("json and yaml options conflict: please specify only one.");
+                throw po::error(_("json and yaml options conflict: please specify only one."));
             }
             if (vm["no-external-facts"].as<bool>() && vm.count("external-dir")) {
-                throw po::error("no-external-facts and external-dir options conflict: please specify only one.");
+                throw po::error(_("no-external-facts and external-dir options conflict: please specify only one."));
             }
             if (vm["no-custom-facts"].as<bool>() && vm.count("custom-dir")) {
-                throw po::error("no-custom-facts and custom-dir options conflict: please specify only one.");
+                throw po::error(_("no-custom-facts and custom-dir options conflict: please specify only one."));
             }
             if ((vm["debug"].as<bool>() + vm["verbose"].as<bool>() + (vm["log-level"].defaulted() ? 0 : 1)) > 1) {
-                throw po::error("debug, verbose, and log-level options conflict: please specify only one.");
+                throw po::error(_("debug, verbose, and log-level options conflict: please specify only one."));
             }
             if (vm["no-ruby"].as<bool>() && vm.count("custom-dir")) {
-                throw po::error("no-ruby and custom-dir options conflict: please specify only one.");
+                throw po::error(_("no-ruby and custom-dir options conflict: please specify only one."));
             }
             if (vm.count("puppet") && vm["no-custom-facts"].as<bool>()) {
-                throw po::error("puppet and no-custom-facts options conflict: please specify only one.");
+                throw po::error(_("puppet and no-custom-facts options conflict: please specify only one."));
             }
             if (vm.count("puppet") && vm["no-ruby"].as<bool>()) {
-                throw po::error("puppet and no-ruby options conflict: please specify only one.");
+                throw po::error(_("puppet and no-ruby options conflict: please specify only one."));
             }
         }
         catch (exception& ex) {
             colorize(boost::nowide::cerr, level::error);
-            boost::nowide::cerr << "error: " << ex.what() << "\n" << endl;
+            boost::nowide::cerr << _("error: {1}", ex.what()) << endl;
             colorize(boost::nowide::cerr);
             help(visible_options);
             return EXIT_FAILURE;
@@ -305,11 +307,11 @@ int main(int argc, char **argv)
         }
 
         // Output the facts
-        format fmt = format::hash;
+        facter::facts::format fmt = facter::facts::format::hash;
         if (vm.count("json")) {
-            fmt = format::json;
+            fmt = facter::facts::format::json;
         } else if (vm.count("yaml")) {
-            fmt = format::yaml;
+            fmt = facter::facts::format::yaml;
         }
 
         bool show_legacy = vm.count("show-legacy");
@@ -317,10 +319,10 @@ int main(int argc, char **argv)
         facts.write(boost::nowide::cout, fmt, queries, show_legacy, strict_errors);
         boost::nowide::cout << endl;
     } catch (locale_error const& e) {
-        boost::nowide::cerr << "failed to initialize logging system due to a locale error: " << e.what() << "\n" << endl;
+        boost::nowide::cerr << _("failed to initialize logging system due to a locale error: {1}", e.what()) << endl;
         return 2;  // special error code to indicate we failed harder than normal
     } catch (exception& ex) {
-        log(level::fatal, "unhandled exception: %1%", ex.what());
+        log(level::fatal, "unhandled exception: {1}", ex.what());
     }
 
     return error_logged() ? EXIT_FAILURE : EXIT_SUCCESS;

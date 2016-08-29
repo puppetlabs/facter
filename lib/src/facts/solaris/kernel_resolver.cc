@@ -11,7 +11,7 @@ namespace facter { namespace facts { namespace solaris {
         data result;
         struct utsname name;
         if (uname(&name) == -1) {
-            LOG_WARNING("uname failed: %1% (%2%): kernel facts are unavailable.", strerror(errno), errno);
+            LOG_WARNING("uname failed: {1} ({2}): kernel facts are unavailable.", strerror(errno), errno);
             return result;
         }
 

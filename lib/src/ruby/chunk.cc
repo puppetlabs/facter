@@ -1,5 +1,9 @@
 #include <internal/ruby/chunk.hpp>
 #include <internal/ruby/aggregate_resolution.hpp>
+#include <leatherman/locale/locale.hpp>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 using namespace std;
 using namespace leatherman::ruby;
@@ -37,7 +41,7 @@ namespace facter { namespace ruby {
 
         // Prevent cycles by raising an exception
         if (_resolving) {
-            ruby.rb_raise(*ruby.rb_eRuntimeError, "chunk dependency cycle detected");
+            ruby.rb_raise(*ruby.rb_eRuntimeError, _("chunk dependency cycle detected").c_str());
         }
 
         if (_resolved) {

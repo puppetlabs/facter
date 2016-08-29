@@ -67,7 +67,7 @@ namespace facter { namespace facts { namespace linux {
         // Populate the mountpoint data
         scoped_file file(setmntent("/etc/mtab", "r"));
         if (!static_cast<FILE *>(file)) {
-            LOG_ERROR("setmntent failed: %1% (%2%): mountpoints are unavailable.", strerror(errno), errno);
+            LOG_ERROR("setmntent failed: {1} ({2}): mountpoints are unavailable.", strerror(errno), errno);
             return;
         }
         string root_device;
@@ -223,7 +223,7 @@ namespace facter { namespace facts { namespace linux {
         if (cache) {
             auto device = blkid_get_dev(static_cast<blkid_cache>(cache), part.name.c_str(), 0);
             if (!device) {
-                LOG_DEBUG("blkid_get_dev failed: partition attributes are unavailable for '%1%'.", part.name);
+                LOG_DEBUG("blkid_get_dev failed: partition attributes are unavailable for '{1}'.", part.name);
             } else {
                 // Populate the attributes
                 auto it = blkid_tag_iterate_begin(device);
@@ -272,7 +272,7 @@ namespace facter { namespace facts { namespace linux {
             try {
                 part.size = lexical_cast<uint64_t>(blocks) * block_size;
             } catch (bad_lexical_cast& ex) {
-                LOG_DEBUG("cannot determine size of partition '%1%': '%2%' is not an integral value.", part.name, blocks);
+                LOG_DEBUG("cannot determine size of partition '{1}': '{2}' is not an integral value.", part.name, blocks);
             }
         }
     }

@@ -129,7 +129,7 @@ set(RAPIDJSON_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/vendor/rapidjson-0.11/include"
 #
 # Add cpplint and cppcheck targets
 #
-file(GLOB_RECURSE ALL_SOURCES lib/src/*.cc lib/inc/*.hpp lib/inc/version.h exe/*.cc exe/*.hpp exe/*.h)
+file(GLOB_RECURSE ALL_SOURCES lib/src/*.cc lib/inc/*.hpp lib/inc/*.h exe/*.cc exe/*.hpp exe/*.h)
 add_cpplint_files(${ALL_SOURCES})
 enable_cpplint()
 
@@ -141,6 +141,7 @@ include(leatherman)
 
 add_subdirectory(lib)
 add_subdirectory(exe)
+add_subdirectory(locales)
 
 # Add test executables for unit testing
 add_test(NAME "libfacter\\ tests" COMMAND libfacter_test)

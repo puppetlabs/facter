@@ -5,12 +5,16 @@
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/locale/locale.hpp>
 #include <rapidjson/reader.h>
 #include <rapidjson/filereadstream.h>
 #include <rapidjson/error/en.h>
 #include <boost/algorithm/string.hpp>
 #include <stack>
 #include <tuple>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 using namespace std;
 using namespace facter::facts;
@@ -144,7 +148,7 @@ namespace facter { namespace facts { namespace external {
             // If the stack is empty, just add it as a top-level fact
             if (_stack.empty()) {
                 if (_key.empty()) {
-                    throw external::external_fact_exception("expected non-empty key in object.");
+                    throw external::external_fact_exception(_("expected non-empty key in object."));
                 }
                 boost::to_lower(_key);
                 _facts.add_external(move(_key), move(val));
@@ -162,7 +166,7 @@ namespace facter { namespace facts { namespace external {
             auto map = dynamic_cast<map_value*>(current.get());
             if (map) {
                 if (_key.empty()) {
-                    throw external::external_fact_exception("expected non-empty key in object.");
+                    throw external::external_fact_exception(_("expected non-empty key in object."));
                 }
                 map->add(move(_key), move(val));
             }
@@ -171,7 +175,7 @@ namespace facter { namespace facts { namespace external {
         void check_initialized() const
         {
             if (!_initialized) {
-                throw external::external_fact_exception("expected document to contain an object.");
+                throw external::external_fact_exception(_("expected document to contain an object."));
             }
         }
 
@@ -188,13 +192,13 @@ namespace facter { namespace facts { namespace external {
 
     void json_resolver::resolve(string const& path, collection& facts) const
     {
-        LOG_DEBUG("resolving facts from JSON file \"%1%\".", path);
+        LOG_DEBUG("resolving facts from JSON file \"{1}\".", path);
 
         // Open the file
         // We used a scoped_file here because rapidjson expects a FILE*
         scoped_file file(path, "r");
         if (file == nullptr) {
-            throw external_fact_exception("file could not be opened.");
+            throw external_fact_exception(_("file could not be opened."));
         }
 
         // Use the existing FileStream class
@@ -209,7 +213,7 @@ namespace facter { namespace facts { namespace external {
             throw external_fact_exception(GetParseError_En(result.Code()));
         }
 
-        LOG_DEBUG("completed resolving facts from JSON file \"%1%\".", path);
+        LOG_DEBUG("completed resolving facts from JSON file \"{1}\".", path);
     }
 
 }}}  // namespace facter::facts::external

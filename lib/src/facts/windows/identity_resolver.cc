@@ -21,14 +21,14 @@ namespace facter { namespace facts { namespace windows {
         auto nameformat = NameSamCompatible;
         GetUserNameExW(nameformat, nullptr, &size);
         if (GetLastError() != ERROR_MORE_DATA) {
-            LOG_DEBUG("failure resolving identity facts: %1%", leatherman::windows::system_error());
+            LOG_DEBUG("failure resolving identity facts: {1}", leatherman::windows::system_error());
             return result;
         }
 
         // Use the string as a raw buffer that supports move and ref operations.
         wstring buffer(size, '\0');
         if (!GetUserNameExW(nameformat, &buffer[0], &size)) {
-            LOG_DEBUG("failure resolving identity facts: %1%", leatherman::windows::system_error());
+            LOG_DEBUG("failure resolving identity facts: {1}", leatherman::windows::system_error());
             return result;
         }
 

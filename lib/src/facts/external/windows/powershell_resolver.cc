@@ -22,14 +22,14 @@ namespace facter { namespace facts { namespace external {
             path p = file;
             return boost::iends_with(file, ".ps1") && is_regular_file(p);
         } catch (filesystem_error &e) {
-            LOG_TRACE("error reading status of path %1%: %2%", file, e.what());
+            LOG_TRACE("error reading status of path {1}: {2}", file, e.what());
             return false;
         }
     }
 
     void powershell_resolver::resolve(string const& file, collection& facts) const
     {
-        LOG_DEBUG("resolving facts from powershell script \"%1%\".", file);
+        LOG_DEBUG("resolving facts from powershell script \"{1}\".", file);
 
         try
         {
@@ -64,7 +64,7 @@ namespace facter { namespace facts { namespace external {
                 [&facts](string const& line) {
                     auto pos = line.find('=');
                     if (pos == string::npos) {
-                        LOG_DEBUG("ignoring line in output: %1%", line);
+                        LOG_DEBUG("ignoring line in output: {1}", line);
                         return true;
                     }
                     // Add as a string fact
@@ -89,14 +89,14 @@ namespace facter { namespace facts { namespace external {
 
             // Log a warning if there is error output from the command
             if (!error.empty()) {
-                LOG_WARNING("external fact file \"%1%\" had output on stderr: %2%", file, error);
+                LOG_WARNING("external fact file \"{1}\" had output on stderr: {2}", file, error);
             }
         }
         catch (execution_exception& ex) {
             throw external_fact_exception(ex.what());
         }
 
-        LOG_DEBUG("completed resolving facts from powershell script \"%1%\".", file);
+        LOG_DEBUG("completed resolving facts from powershell script \"{1}\".", file);
     }
 
 }}}  // namespace facter::facts::external

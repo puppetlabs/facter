@@ -61,14 +61,14 @@ namespace facter { namespace facts { namespace posix {
 
         // Log if we didn't find the file
         if (key_file.empty()) {
-            LOG_DEBUG("%1% could not be located.", filename);
+            LOG_DEBUG("{1} could not be located.", filename);
             return;
         }
 
         // Read the file's contents
         string contents = lth_file::read(key_file.string());
         if (contents.empty()) {
-            LOG_DEBUG("%1% could not be read.", key_file);
+            LOG_DEBUG("{1} could not be read.", key_file);
             return;
         }
 
@@ -76,7 +76,7 @@ namespace facter { namespace facts { namespace posix {
         vector<boost::iterator_range<string::iterator>> parts;
         boost::split(parts, contents, boost::is_any_of(" "), boost::token_compress_on);
         if (parts.size() < 2) {
-            LOG_DEBUG("unexpected contents for %1%.", key_file);
+            LOG_DEBUG("unexpected contents for {1}.", key_file);
             return;
         }
 
@@ -95,7 +95,7 @@ namespace facter { namespace facts { namespace posix {
         BIO* stream = BIO_push(b64, mem);
         int length = BIO_read(stream, key_bytes.data(), key_bytes.size());
         if (length < 1) {
-            LOG_DEBUG("failed to decode SSH key \"%1%\".", key.key);
+            LOG_DEBUG("failed to decode SSH key \"{1}\".", key.key);
             return;
         }
 

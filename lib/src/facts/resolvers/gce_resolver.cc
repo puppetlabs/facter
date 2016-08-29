@@ -6,12 +6,16 @@
 #include <facter/facts/map_value.hpp>
 #include <facter/facts/vm.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/locale/locale.hpp>
 #include <boost/algorithm/string.hpp>
 #include <rapidjson/reader.h>
 #include <rapidjson/error/en.h>
 #include <stack>
 #include <tuple>
 #include <stdexcept>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 #ifdef USE_CURL
 #include <leatherman/curl/client.hpp>
@@ -191,7 +195,7 @@ namespace facter { namespace facts { namespace resolvers {
             auto map = dynamic_cast<map_value*>(current);
             if (map) {
                 if (_key.empty()) {
-                    throw external::external_fact_exception("expected non-empty key in object.");
+                    throw external::external_fact_exception(_("expected non-empty key in object."));
                 }
                 map->add(move(_key), move(val));
                 return;
@@ -206,7 +210,7 @@ namespace facter { namespace facts { namespace resolvers {
         void check_initialized() const
         {
             if (!_initialized) {
-                throw external::external_fact_exception("expected document to contain an object.");
+                throw external::external_fact_exception(_("expected document to contain an object."));
             }
         }
 
@@ -245,7 +249,7 @@ namespace facter { namespace facts { namespace resolvers {
             lth_curl::client cli;
             auto response = cli.get(req);
             if (response.status_code() != 200) {
-                LOG_DEBUG("request for %1% returned a status code of %2%.", req.url(), response.status_code());
+                LOG_DEBUG("request for {1} returned a status code of {2}.", req.url(), response.status_code());
                 return;
             }
 
@@ -256,7 +260,7 @@ namespace facter { namespace facts { namespace resolvers {
             gce_event_handler handler(*data);
             auto result = reader.Parse(ss, handler);
             if (!result) {
-                LOG_ERROR("failed to parse GCE metadata: %1%.", GetParseError_En(result.Code()));
+                LOG_ERROR("failed to parse GCE metadata: {1}.", GetParseError_En(result.Code()));
                 return;
             }
 
@@ -264,7 +268,7 @@ namespace facter { namespace facts { namespace resolvers {
                 facts.add(fact::gce, move(data));
             }
         } catch (runtime_error& ex) {
-            LOG_ERROR("GCE metadata request failed: %1%", ex.what());
+            LOG_ERROR("GCE metadata request failed: {1}", ex.what());
         }
 #endif
     }
