@@ -11,9 +11,6 @@
 #include <utility>
 #include <leatherman/locale/locale.hpp>
 
-// Mark string for translation (alias for leatherman::locale::format)
-using leatherman::locale::_;
-
 namespace facter { namespace util { namespace aix {
 
     /**
@@ -66,13 +63,13 @@ namespace facter { namespace util { namespace aix {
           * Get the error string for an ODM error state.
           * @return an error string owned by the ODM subsystem
           */
-         static const char* error_string() {
+         static std::string error_string() {
              char* msg;
              int result = odm_err_msg(odmerrno, &msg);
              if (result < 0) {
-                 return _("failed to retrieve ODM error message");
+                 return leatherman::locale::format("failed to retrieve ODM error message");
              } else {
-                 return msg;
+                 return std::string(msg);
              }
          }
 
@@ -171,7 +168,7 @@ namespace facter { namespace util { namespace aix {
              iterator(T* data, ptr owner) : _data(data), _owner(owner) {
                  if (_data) {
                      if (!_owner) {
-                         throw std::logic_error(_("Tried to construct an iterator with valid data but no owner. Naughty naughty."));
+                         throw std::logic_error(leatherman::locale::format("Tried to construct an iterator with valid data but no owner. Naughty naughty."));
                      }
                      _owner->_locked = true;
                  } else {
@@ -204,7 +201,7 @@ namespace facter { namespace util { namespace aix {
               */
              iterator begin() {
                  if (_owner->_locked) {
-                     throw std::logic_error(_("Cannot iterate over the same ODM class concurrently"));
+                     throw std::logic_error(leatherman::locale::format("Cannot iterate over the same ODM class concurrently"));
                  }
                  auto data = static_cast<T*>(odm_get_first(_owner->_class, const_cast<char*>(_query.c_str()), nullptr));
                  if ((intptr_t)data < 0) {
