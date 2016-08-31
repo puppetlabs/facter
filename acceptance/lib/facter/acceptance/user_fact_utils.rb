@@ -42,6 +42,16 @@ module Facter
           '.sh'
         end
       end
+
+      # Retrieve the path to default location of facter.conf file.
+      #
+      def get_default_fact_dir(platform, version)
+        if platform =~ /windows/
+          File.join('C:', 'ProgramData', 'PuppetLabs', 'facter', 'etc')
+        else
+          File.join('/', 'etc', 'puppetlabs', 'facter')
+        end
+      end
     end
   end
 end
