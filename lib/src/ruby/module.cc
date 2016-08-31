@@ -179,13 +179,7 @@ namespace facter { namespace ruby {
         // Load global settigs from config file
         load_global_settings(load_default_config_file(), _config_file_settings);
 
-        // Initialize custom fact paths
-        vector<string> custom_fact_path = paths;
-        if (_config_file_settings.count("custom-dir")) {
-            auto config_paths = _config_file_settings["custom-dir"].as<vector<string>>();
-            custom_fact_path.insert(custom_fact_path.end(), config_paths.begin(), config_paths.end());
-        }
-        initialize_search_paths(custom_fact_path);
+        initialize_search_paths(paths);
 
         // Register the block for logging callback with the GC
         _on_message_block = ruby.nil_value();
@@ -319,6 +313,12 @@ namespace facter { namespace ruby {
         }
 
         LOG_DEBUG("loading all custom facts.");
+
+        LOG_DEBUG("loading custom fact directories from config file");
+        if (_config_file_settings.count("custom-dir")) {
+            auto config_paths = _config_file_settings["custom-dir"].as<vector<string>>();
+            _search_paths.insert(_search_paths.end(), config_paths.begin(), config_paths.end());
+        }
 
         for (auto const& directory : _search_paths) {
             LOG_DEBUG("searching for custom facts in {1}.", directory);
@@ -798,6 +798,7 @@ namespace facter { namespace ruby {
             });
 
             // Add external path from config file
+            LOG_DEBUG(_("loading external fact directories from config file"));
             if (instance->_config_file_settings.count("external-dir")) {
                 auto config_paths = instance->_config_file_settings["external-dir"].as<vector<string>>();
                 instance->_external_search_paths.insert(instance->_external_search_paths.end(), config_paths.begin(), config_paths.end());
