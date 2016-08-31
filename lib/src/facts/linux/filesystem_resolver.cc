@@ -75,9 +75,10 @@ namespace facter { namespace facts { namespace linux {
         char buffer[4096];
         while (mntent *ptr = getmntent_r(file, &entry, buffer, sizeof(buffer))) {
             string device = ptr->mnt_fsname;
+            string mtype = ptr->mnt_type;
 
-            // Skip over anything that doesn't map to a device
-            if (!boost::starts_with(device, "/dev/")) {
+            // Skip over anything that doesn't map to a device and is not tmpfs
+            if (!boost::starts_with(device, "/dev/") && mtype != "tmpfs") {
                 continue;
             }
 
