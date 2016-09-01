@@ -52,8 +52,9 @@ namespace facter { namespace facts {
 
         /**
          * Constructs a fact collection.
+         * @param blocklist the names of resolvers that should not be resolved
          */
-        collection();
+        collection(std::set<std::string> const& blocklist = {});
 
         /**
          * Destructor for fact collection.
@@ -270,6 +271,7 @@ namespace facter { namespace facts {
         std::list<std::shared_ptr<resolver>> _resolvers;
         std::multimap<std::string, std::shared_ptr<resolver>> _resolver_map;
         std::list<std::shared_ptr<resolver>> _pattern_resolvers;
+        std::set<std::string> _blocklist;
     };
 
 }}  // namespace facter::facts

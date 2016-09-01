@@ -34,7 +34,7 @@ using namespace leatherman::file_util;
 
 namespace facter { namespace facts {
 
-    collection::collection()
+    collection::collection(set<string> const& blocklist) : _blocklist(blocklist)
     {
         // This needs to be defined here since we use incomplete types in the header
     }
@@ -56,6 +56,7 @@ namespace facter { namespace facts {
             _resolvers = std::move(other._resolvers);
             _resolver_map = std::move(other._resolver_map);
             _pattern_resolvers = std::move(other._pattern_resolvers);
+            _blocklist = std::move(other._blocklist);
         }
         return *this;
     }
@@ -313,6 +314,16 @@ namespace facter { namespace facts {
             auto resolver = _resolvers.front();
             remove(resolver);
             LOG_DEBUG("resolving {1} facts.", resolver->name());
+
+            if (_blocklist.count(resolver->name())) {
+                if (resolver->is_blockable()) {
+                    LOG_DEBUG("blocking collection of {1} facts.", resolver->name());
+                    continue;
+                } else {
+                    LOG_DEBUG("{1} resolver cannot be blocked.", resolver->name());
+                }
+            }
+
             resolver->resolve(*this);
         }
     }
@@ -325,6 +336,12 @@ namespace facter { namespace facts {
         while (it != range.second) {
             auto resolver = (it++)->second;
             remove(resolver);
+
+            if (try_block(resolver)) {
+                LOG_WARNING("resolver for fact \"{1}\" has been blocked.", name);
+                continue;
+            }
+
             LOG_DEBUG("resolving {1} facts.", resolver->name());
             resolver->resolve(*this);
         }
@@ -338,6 +355,12 @@ namespace facter { namespace facts {
             }
             auto resolver = *(pattern_it++);
             remove(resolver);
+
+            if (try_block(resolver)) {
+                LOG_WARNING("resolver for fact \"{1}\" has been blocked.", name);
+                continue;
+            }
+
             LOG_DEBUG("resolving {1} facts.", resolver->name());
             resolver->resolve(*this);
         }

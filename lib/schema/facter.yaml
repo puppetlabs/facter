@@ -18,6 +18,7 @@
 #   - caveats (optional): describes any caveats to the fact.
 #   - elements (required for map types): contains the element values of a map value; each element is another entry.
 #   - validate (optional; default: true): true if a map value's elements should be validated or false if not.
+#   - blockgroup (optional): the block group of this fact; if not specified, the fact cannot be blocked
 #
 # Please keep the facts in alphabetical order.
 
@@ -317,6 +318,7 @@ ec2_metadata:
     caveats: |
         All platforms: `libfacter` must be built with `libcurl` support.
     validate: false
+    blockgroup: EC2
 
 ec2_userdata:
     type: string
@@ -327,6 +329,7 @@ ec2_userdata:
         EC2: query the EC2 user data endpoint and parse the response.
     caveats: |
         All platforms: `libfacter` must be built with `libcurl` support.
+    blockgroup: EC2
 
 env_windows_installdir:
     type: string
@@ -354,6 +357,7 @@ filesystems:
     caveats: |
         Linux: The proc file system must be mounted.
         Mac OSX: The usable file systems is limited to the file system of mounted devices.
+    blockgroup: file system
 
 fqdn:
     type: string
@@ -795,6 +799,7 @@ mountpoints:
         Linux: use the `setmntent` function to retrieve the mount points.
         Mac OSX: use the `getfsstat` function to retrieve the mount points.
         Solaris: parse the contents of `/etc/mnttab` to retrieve the mount points.
+    blockgroup: file system
     elements:
         <mountpoint>:
             pattern: .+
@@ -1191,6 +1196,7 @@ partitions:
         Linux: use `libblkid` to retrieve the disk partitions.
     caveats: |
         Linux: `libfacter` must be built with `libblkid` support.
+    blockgroup: file system
     elements:
         <partition>:
             pattern: \w+

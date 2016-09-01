@@ -23,6 +23,8 @@ namespace facter { namespace facts { namespace resolvers {
          * @param facts The fact collection that is resolving facts.
          */
         virtual void resolve(collection& facts) override;
+
+        bool is_blockable() const override;
     };
 
 }}}  // namespace facter::facts::resolvers

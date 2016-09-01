@@ -110,6 +110,12 @@ namespace facter { namespace facts {
          */
         virtual void resolve(collection& facts) = 0;
 
+        /**
+         * Determines if this resolver can be blocked from collecting its facts.
+         * @return Returns true if this resolver can be blocked, false otherwise
+         */
+        virtual bool is_blockable() const;
+
      private:
         std::string _name;
         std::vector<std::string> _names;
