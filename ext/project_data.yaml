@@ -16,7 +16,7 @@ gem_default_executables: 'facter'
 gem_platform_dependencies:
   universal-darwin:
     gem_runtime_dependencies:
-      CFPropertyList: '~> 2.2.6'
+      CFPropertyList: '~> 2.3.3'
   x86-mingw32:
     gem_runtime_dependencies:
       ffi: '~> 1.9.5'
