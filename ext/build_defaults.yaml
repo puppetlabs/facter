@@ -6,7 +6,7 @@ cows: 'base-precise-i386.cow base-precise-amd64.cow base-squeeze-i386.cow base-s
 pbuild_conf: '/etc/pbuilderrc'
 packager: 'puppetlabs'
 gpg_name: 'info@puppetlabs.com'
-gpg_key: '4BD6EC30'
+gpg_key: '7F438280EF8D349F'
 sign_tar: FALSE
 # a space separated list of mock configs
 final_mocks: 'pl-el-5-i386 pl-el-5-x86_64 pl-el-6-i386 pl-el-6-x86_64 pl-el-7-x86_64 pl-fedora-20-i386 pl-fedora-20-x86_64'
