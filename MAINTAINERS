@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "file_format": "This MAINTAINERS file format is described at https://github.com/puppetlabs/maintainers",
+  "issues": "https://tickets.puppet.com/browse/FACT",
+  "people": [
+    {
+      "github": "kylog",
+      "email": "kylo@puppet.com",
+      "name": "Kylo Ginsberg"
+    },
+    {
+      "github": "magisus",
+      "email": "maggie@puppet.com",
+      "name": "Maggie Dreyer"
+    },
+    {
+      "github": "MikaelSmith",
+      "email": "michael.smith@puppet.com",
+      "name": "Michael Smith"
+    },
+    {
+      "github": "branan",
+      "email": "branan@puppet.com",
+      "name": "Branan Riley"
+    },
+    {
+      "github": "whopper",
+      "email": "whopper@puppet.com",
+      "name": "Will Hopper"
+    },
+    {
+      "github": "peterhuene",
+      "email": "peter.huene@puppet.com",
+      "name": "Peter Huene"
+    }
+  ]
+}
