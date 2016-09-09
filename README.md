@@ -247,10 +247,15 @@ cli : {
     verbose   : false,
     log-level : "warn"
 }
+facts : {
+    blocklist : [ "file system", "EC2" ]
+}
 ```
-All options are respected when running Facter standalone, while calling Facter from Ruby will only load `external-dir` and `custom-dir`.
+All options are respected when running Facter standalone, while calling Facter from Ruby will only load `external-dir`, `custom-dir`, and the fact-specific configuration.
 
 The file will be loaded by default from `/etc/puppetlabs/facter/facter.conf` on Unix and `C:\ProgramData\PuppetLabs\facter\etc\facter.conf` on Windows. A different location can be specified using the `--config` command line option.
+
+Elements in the blocklist are fact groupings which will not be resolved when Facter runs. Valid elements correspond to the `blockgroup` field in the fact schema. If a fact does not have a blockgroup, it cannot be blocked.
 
 Uninstall
 ---------

@@ -17,6 +17,12 @@ namespace facter { namespace util { namespace config {
     LIBFACTER_EXPORT hocon::shared_config load_default_config_file();
 
     /**
+     * Returns the default location of the config file.
+     * @return the absolute path to the default config file
+     */
+    LIBFACTER_EXPORT std::string default_config_location();
+
+    /**
      * Parses the contents of the config pile at the specified path.
      * @param config_path the path to the config file
      * @return HOCON config object, or nullptr if no file was found
