@@ -262,6 +262,7 @@ namespace facter { namespace facts {
         LIBFACTER_NO_EXPORT void write_yaml(std::ostream& stream, std::set<std::string> const& queries, bool show_legacy, bool strict_errors);
         LIBFACTER_NO_EXPORT void add_common_facts(bool include_ruby_facts);
         LIBFACTER_NO_EXPORT bool add_external_facts_dir(std::vector<std::unique_ptr<external::resolver>> const& resolvers, std::string const& directory, bool warn);
+        LIBFACTER_NO_EXPORT bool try_block(std::shared_ptr<resolver> const& res);
 
         // Platform specific members
         LIBFACTER_NO_EXPORT void add_platform_facts();

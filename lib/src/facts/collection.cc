@@ -307,23 +307,30 @@ namespace facter { namespace facts {
         return stream;
     }
 
+    bool collection::try_block(shared_ptr<resolver> const& res) {
+        if (_blocklist.count(res->name())) {
+            if (res->is_blockable()) {
+                LOG_DEBUG("blocking collection of {1} facts.", res->name());
+                return true;
+            } else {
+                LOG_DEBUG("{1} resolver cannot be blocked.", res->name());
+            }
+        }
+        return false;
+    }
+
     void collection::resolve_facts()
     {
         // Remove the front of the resolvers list and resolve until no resolvers are left
         while (!_resolvers.empty()) {
             auto resolver = _resolvers.front();
             remove(resolver);
-            LOG_DEBUG("resolving {1} facts.", resolver->name());
 
-            if (_blocklist.count(resolver->name())) {
-                if (resolver->is_blockable()) {
-                    LOG_DEBUG("blocking collection of {1} facts.", resolver->name());
-                    continue;
-                } else {
-                    LOG_DEBUG("{1} resolver cannot be blocked.", resolver->name());
-                }
+            if (try_block(resolver)) {
+                continue;
             }
 
+            LOG_DEBUG("resolving {1} facts.", resolver->name());
             resolver->resolve(*this);
         }
     }
