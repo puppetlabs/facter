@@ -1,7 +1,7 @@
 # This test is intended to demonstrate that mount resource can mount tmpfs directory
-# and the mount facter mountpoints shouls show the mount on tmpfs
+# and the mount facter mountpoints should show the mount on tmpfs
 
-test_name "FACT-1052 - C98163 mountpoints fact should show mounts on tmpfs" do
+test_name "FACT-1502 - C98163 mountpoints fact should show mounts on tmpfs" do
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
