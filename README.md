@@ -76,7 +76,7 @@ For the remaining tasks, build commands can be executed in the shell from Start 
         .\bootstrap mingw
         .\b2 toolset=gcc --build-type=minimal install --prefix=$install --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log --with-locale --with-chrono boost.locale.iconv=off
 
-* build [yaml-cpp](https://code.google.com/p/yaml-cpp/downloads)
+* build [yaml-cpp](https://github.com/jbeder/yaml-cpp)
 
         cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=$install -DCMAKE_INSTALL_PREFIX=$install .
         mingw32-make install
@@ -90,6 +90,7 @@ For the remaining tasks, build commands can be executed in the shell from Start 
 In Powershell:
 
     choco install cmake 7zip.commandline -y
+    $env:PATH = "C:\Program Files\CMake\bin;$env:PATH"
     choco install mingw --params "/threads:win32" -y
     $env:PATH = "C:\tools\mingw64\bin;$env:PATH"
     $install = "C:\tools"
@@ -101,10 +102,10 @@ In Powershell:
     .\b2 toolset=gcc --build-type=minimal install --prefix=$install --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log --with-locale --with-chrono boost.locale.iconv=off
     popd
 
-    (New-Object Net.WebClient).DownloadFile("https://yaml-cpp.googlecode.com/files/yaml-cpp-0.5.1.tar.gz", "$pwd/yaml-cpp-0.5.1.tar.gz")
-    7za x yaml-cpp-0.5.1.tar.gz
-    7za x yaml-cpp-0.5.1.tar
-    pushd yaml-cpp-0.5.1
+    (New-Object Net.WebClient).DownloadFile("https://github.com/jbeder/yaml-cpp/archive/yaml-cpp-0.5.3.tar.gz", "$pwd/yaml-cpp-0.5.3.tar.gz")
+    7za x yaml-cpp-0.5.3.tar.gz
+    7za x yaml-cpp-0.5.3.tar
+    pushd yaml-cpp-yaml-cpp-0.5.3
     cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="$install" -DCMAKE_INSTALL_PREFIX="$install" .
     mingw32-make install
     popd
