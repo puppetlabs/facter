@@ -54,7 +54,7 @@ namespace facter { namespace facts {
          * Constructs a fact collection.
          * @param blocklist the names of resolvers that should not be resolved
          */
-        collection(std::set<std::string> const& blocklist = {});
+        collection(std::set<std::string> const& blocklist = std::set<std::string>());
 
         /**
          * Destructor for fact collection.
