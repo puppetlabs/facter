@@ -73,6 +73,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/util/scoped_file.cc"
     "src/util/string.cc"
     "src/util/config/config.cc"
+    "src/util/yaml.cc"
 )
 
 # Set the POSIX sources if on a POSIX platform
