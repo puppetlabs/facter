@@ -11,6 +11,7 @@
 #include <list>
 #include <map>
 #include <set>
+#include <unordered_map>
 #include <vector>
 #include <string>
 #include <memory>
@@ -53,8 +54,11 @@ namespace facter { namespace facts {
         /**
          * Constructs a fact collection.
          * @param blocklist the names of resolvers that should not be resolved
+         * @param ttls a map of resolver names to cache intervals (times-to-live)
+         *        for the facts they resolve
          */
-        collection(std::set<std::string> const& blocklist = std::set<std::string>());
+        collection(std::set<std::string> const& blocklist = std::set<std::string>(),
+                   std::unordered_map<std::string, int64_t> const& ttls = {});
 
         /**
          * Destructor for fact collection.
@@ -263,6 +267,7 @@ namespace facter { namespace facts {
         LIBFACTER_NO_EXPORT void add_common_facts(bool include_ruby_facts);
         LIBFACTER_NO_EXPORT bool add_external_facts_dir(std::vector<std::unique_ptr<external::resolver>> const& resolvers, std::string const& directory, bool warn);
         LIBFACTER_NO_EXPORT bool try_block(std::shared_ptr<resolver> const& res);
+        LIBFACTER_NO_EXPORT void resolve(std::shared_ptr<resolver> const& res);
 
         // Platform specific members
         LIBFACTER_NO_EXPORT void add_platform_facts();
@@ -273,6 +278,7 @@ namespace facter { namespace facts {
         std::multimap<std::string, std::shared_ptr<resolver>> _resolver_map;
         std::list<std::shared_ptr<resolver>> _pattern_resolvers;
         std::set<std::string> _blocklist;
+        std::unordered_map<std::string, int64_t> _ttls;
     };
 
 }}  // namespace facter::facts

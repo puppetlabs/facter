@@ -64,4 +64,18 @@ namespace facter { namespace util { namespace config {
             ("blocklist", po::value<vector<string>>(), "A set of facts to block.");
         return fact_settings;
     }
+
+    unordered_map<string, int64_t> load_ttls(shared_config hocon_config) {
+        unordered_map<string, int64_t> ttls;
+        if (hocon_config && hocon_config->has_path("facts.ttls")) {
+            auto ttl_objs = hocon_config->get_object_list("facts.ttls");
+            for (auto entry : ttl_objs) {
+                string fact = entry->key_set().front();
+                shared_config entry_conf = entry->to_config();
+                int64_t duration = entry_conf->get_duration(fact, time_unit::SECONDS);
+                ttls.insert({ fact, duration });
+            }
+        }
+        return ttls;
+    }
 }}}  // namespace facter::util::config;

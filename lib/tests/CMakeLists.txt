@@ -35,6 +35,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/resolvers/zone_resolver.cc"
     "facts/resolvers/zpool_resolver.cc"
     "facts/schema.cc"
+    "facts/cache.cc"
     "facts/string_value.cc"
     "logging/logging.cc"
     "log_capture.cc"

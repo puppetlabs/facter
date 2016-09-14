@@ -128,6 +128,7 @@ int main(int argc, char **argv)
 
         vector<string> external_directories;
         vector<string> custom_directories;
+        unordered_map<string, int64_t> ttls;
 
         // Build a list of options visible on the command line
         // Keep this list sorted alphabetically
@@ -190,7 +191,9 @@ int main(int argc, char **argv)
                 load_global_settings(hocon_conf, vm);
                 load_cli_settings(hocon_conf, vm);
                 load_fact_settings(hocon_conf, vm);
+                ttls = load_ttls(hocon_conf);
             }
+
 
             // Check for a help option first before notifying
             if (vm.count("help")) {
@@ -294,7 +297,7 @@ int main(int argc, char **argv)
             auto facts_to_block = vm["blocklist"].as<vector<string>>();
             blocklist.insert(facts_to_block.begin(), facts_to_block.end());
         }
-        collection facts(blocklist);
+        collection facts(blocklist, ttls);
         facts.add_default_facts(ruby);
 
         // Add the environment facts

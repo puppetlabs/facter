@@ -5,17 +5,18 @@
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/ruby/ruby.hpp>
-#include <leatherman/file_util/directory.hpp>
-#include <leatherman/util/environment.hpp>
 #include <facter/util/string.hpp>
 #include <facter/version.h>
-#include <leatherman/dynamic_library/dynamic_library.hpp>
 #include <internal/facts/resolvers/ruby_resolver.hpp>
 #include <internal/facts/resolvers/path_resolver.hpp>
 #include <internal/facts/resolvers/ec2_resolver.hpp>
 #include <internal/facts/resolvers/gce_resolver.hpp>
 #include <internal/facts/resolvers/augeas_resolver.hpp>
 #include <internal/ruby/ruby_value.hpp>
+#include <internal/facts/cache.hpp>
+#include <leatherman/dynamic_library/dynamic_library.hpp>
+#include <leatherman/file_util/directory.hpp>
+#include <leatherman/util/environment.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -34,7 +35,7 @@ using namespace leatherman::file_util;
 
 namespace facter { namespace facts {
 
-    collection::collection(set<string> const& blocklist) : _blocklist(blocklist)
+    collection::collection(set<string> const& blocklist, unordered_map<string, int64_t> const& ttls) : _blocklist(blocklist), _ttls(ttls)
     {
         // This needs to be defined here since we use incomplete types in the header
     }
@@ -57,6 +58,7 @@ namespace facter { namespace facts {
             _resolver_map = std::move(other._resolver_map);
             _pattern_resolvers = std::move(other._pattern_resolvers);
             _blocklist = std::move(other._blocklist);
+            _ttls = std::move(other._ttls);
         }
         return *this;
     }
@@ -319,20 +321,33 @@ namespace facter { namespace facts {
         return false;
     }
 
+    void collection::resolve(shared_ptr<resolver> const& res) {
+        remove(res);
+
+        // Check if the resolver has been blocked
+        if (try_block(res)) {
+            return;
+        }
+
+        // Check if the resolver should be cached
+        auto resolver_ttl = _ttls.find(res->name());
+        if (resolver_ttl != _ttls.end()) {
+           cache::use_cache(*this, res, (*resolver_ttl).second);
+           return;
+        }
+
+        // Resolve normally
+        LOG_DEBUG("resolving {1} facts.", res->name());
+        res->resolve(*this);
+    }
+
     void collection::resolve_facts()
     {
         // Remove the front of the resolvers list and resolve until no resolvers are left
         while (!_resolvers.empty()) {
             auto resolver = _resolvers.front();
-            remove(resolver);
-
-            if (try_block(resolver)) {
-                continue;
-            }
-
-            LOG_DEBUG("resolving {1} facts.", resolver->name());
-            resolver->resolve(*this);
-        }
+            resolve(resolver);
+       }
     }
 
     void collection::resolve_fact(string const& name)
@@ -342,15 +357,7 @@ namespace facter { namespace facts {
         auto it = range.first;
         while (it != range.second) {
             auto resolver = (it++)->second;
-            remove(resolver);
-
-            if (try_block(resolver)) {
-                LOG_WARNING("resolver for fact \"{1}\" has been blocked.", name);
-                continue;
-            }
-
-            LOG_DEBUG("resolving {1} facts.", resolver->name());
-            resolver->resolve(*this);
+            resolve(resolver);
         }
 
          // Resolve every resolver that matches the given name
@@ -361,15 +368,7 @@ namespace facter { namespace facts {
                 continue;
             }
             auto resolver = *(pattern_it++);
-            remove(resolver);
-
-            if (try_block(resolver)) {
-                LOG_WARNING("resolver for fact \"{1}\" has been blocked.", name);
-                continue;
-            }
-
-            LOG_DEBUG("resolving {1} facts.", resolver->name());
-            resolver->resolve(*this);
+            resolve(resolver);
         }
     }
 

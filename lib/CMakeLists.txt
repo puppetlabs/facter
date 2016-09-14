@@ -59,6 +59,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/zpool_resolver.cc"
     "src/facts/resolvers/zone_resolver.cc"
     "src/facts/resolvers/zfs_resolver.cc"
+    "src/facts/cache.cc"
     "src/facts/scalar_value.cc"
     "src/logging/logging.cc"
     "src/ruby/aggregate_resolution.cc"
@@ -87,6 +88,7 @@ if (UNIX)
         "src/facts/posix/timezone_resolver.cc"
         "src/facts/posix/uptime_resolver.cc"
         "src/facts/posix/xen_resolver.cc"
+        "src/facts/posix/cache.cc"
         "src/util/posix/scoped_addrinfo.cc"
         "src/util/posix/scoped_descriptor.cc"
         "src/util/config/posix/config.cc"
@@ -227,6 +229,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
         "src/facts/windows/timezone_resolver.cc"
         "src/facts/windows/uptime_resolver.cc"
         "src/facts/windows/virtualization_resolver.cc"
+        "src/facts/windows/cache.cc"
         "src/util/config/windows/config.cc"
     )
 

@@ -67,4 +67,18 @@ namespace facter { namespace util { namespace config {
      * @return names, values, and descriptions of fact blocking config options
      */
     LIBFACTER_EXPORT boost::program_options::options_description fact_config_options();
+
+    /**
+     * Returns a map of resolver names and durations (in milliseconds). The listed resolvers will
+     * have their output cached, then re-resolved no more frequently than the given interval.
+     * @param hocon_config the config object representing the parsed config file
+     * @return a map of resolvers to time-to-live durations (in milliseconds)
+     */
+    LIBFACTER_EXPORT std::unordered_map<std::string, int64_t> load_ttls(hocon::shared_config hocon_config);
+
+    /**
+     * Returns the directory of the fact cache.
+     * @return the absolute path to the fact cache
+     */
+    LIBFACTER_EXPORT std::string fact_cache_location();
 }}}  // namespace facter::util::config
