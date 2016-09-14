@@ -499,6 +499,11 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/external/execution_resolver.cc
+msgid "Could not parse executable fact output as YAML ({1})"
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/execution_resolver.cc
 #: lib/src/facts/external/text_resolver.cc
 #: lib/src/facts/external/windows/powershell_resolver.cc
 msgid "ignoring line in output: {1}"
@@ -1321,12 +1326,21 @@ msgstr ""
 
 #. debug
 #: lib/src/ruby/module.cc
+msgid "loading custom fact directories from config file"
+msgstr ""
+
+#. debug
+#: lib/src/ruby/module.cc
 msgid "searching for custom facts in {1}."
 msgstr ""
 
 #. error
 #: lib/src/ruby/module.cc
 msgid "{1} uncaught exception: {2}"
+msgstr ""
+
+#: lib/src/ruby/module.cc
+msgid "loading external fact directories from config file"
 msgstr ""
 
 #: lib/src/ruby/module.cc
