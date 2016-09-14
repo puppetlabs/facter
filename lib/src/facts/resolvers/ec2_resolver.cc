@@ -167,4 +167,8 @@ namespace facter { namespace facts { namespace resolvers {
 #endif
     }
 
+    bool ec2_resolver::is_blockable() const {
+        return true;
+    }
+
 }}}  // namespace facter::facts::resolvers

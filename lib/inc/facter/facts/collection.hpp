@@ -52,8 +52,9 @@ namespace facter { namespace facts {
 
         /**
          * Constructs a fact collection.
+         * @param blocklist the names of resolvers that should not be resolved
          */
-        collection();
+        collection(std::set<std::string> const& blocklist = {});
 
         /**
          * Destructor for fact collection.
@@ -261,6 +262,7 @@ namespace facter { namespace facts {
         LIBFACTER_NO_EXPORT void write_yaml(std::ostream& stream, std::set<std::string> const& queries, bool show_legacy, bool strict_errors);
         LIBFACTER_NO_EXPORT void add_common_facts(bool include_ruby_facts);
         LIBFACTER_NO_EXPORT bool add_external_facts_dir(std::vector<std::unique_ptr<external::resolver>> const& resolvers, std::string const& directory, bool warn);
+        LIBFACTER_NO_EXPORT bool try_block(std::shared_ptr<resolver> const& res);
 
         // Platform specific members
         LIBFACTER_NO_EXPORT void add_platform_facts();
@@ -270,6 +272,7 @@ namespace facter { namespace facts {
         std::list<std::shared_ptr<resolver>> _resolvers;
         std::multimap<std::string, std::shared_ptr<resolver>> _resolver_map;
         std::list<std::shared_ptr<resolver>> _pattern_resolvers;
+        std::set<std::string> _blocklist;
     };
 
 }}  // namespace facter::facts

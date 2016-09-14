@@ -29,6 +29,7 @@ using namespace std;
 using namespace hocon;
 using namespace facter::facts;
 using namespace facter::logging;
+using namespace facter::util::config;
 using leatherman::util::environment;
 namespace po = boost::program_options;
 
@@ -63,7 +64,17 @@ void help(po::options_description& desc)
           "===============\n\n"
           "  facter kernel\n"
           "  facter networking.ip\n"
-          "  facter processors.models.0", desc) << endl;
+          "  facter processors.models.0"
+          "\n"
+          "\n"
+          "Config File\n"
+          "===========\n"
+          "\n"
+          "Contains settings for configuring external and custom fact directories,\n"
+          "setting command line options, and blocking facts.\n"
+          "Loaded by default from {2}.\n"
+          "See man page, README, or docs for more details.",
+          desc, default_config_location()) << endl;
 }
 
 void log_command_line(int argc, char** argv)
@@ -170,14 +181,15 @@ int main(int argc, char **argv)
             hocon::shared_config hocon_conf;
             if (vm.count("config")) {
                 string conf_dir = vm["config"].as<string>();
-                hocon_conf = facter::util::config::load_config_from(conf_dir);
+                hocon_conf = load_config_from(conf_dir);
             } else {
-                hocon_conf = facter::util::config::load_default_config_file();
+                hocon_conf = load_default_config_file();
             }
 
             if (hocon_conf) {
-                facter::util::config::load_global_settings(hocon_conf, vm);
-                facter::util::config::load_cli_settings(hocon_conf, vm);
+                load_global_settings(hocon_conf, vm);
+                load_cli_settings(hocon_conf, vm);
+                load_fact_settings(hocon_conf, vm);
             }
 
             // Check for a help option first before notifying
@@ -277,7 +289,12 @@ int main(int argc, char **argv)
 
         log_queries(queries);
 
-        collection facts;
+        set<string> blocklist;
+        if (vm.count("blocklist")) {
+            auto facts_to_block = vm["blocklist"].as<vector<string>>();
+            blocklist.insert(facts_to_block.begin(), facts_to_block.end());
+        }
+        collection facts(blocklist);
         facts.add_default_facts(ruby);
 
         // Add the environment facts

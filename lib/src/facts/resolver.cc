@@ -98,4 +98,8 @@ namespace facter { namespace facts {
         return _http_langs;
     }
 
+    bool resolver::is_blockable() const
+    {
+        return false;
+    }
 }}  // namespace facter::facts

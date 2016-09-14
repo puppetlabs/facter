@@ -34,7 +34,7 @@ using namespace leatherman::file_util;
 
 namespace facter { namespace facts {
 
-    collection::collection()
+    collection::collection(set<string> const& blocklist) : _blocklist(blocklist)
     {
         // This needs to be defined here since we use incomplete types in the header
     }
@@ -56,6 +56,7 @@ namespace facter { namespace facts {
             _resolvers = std::move(other._resolvers);
             _resolver_map = std::move(other._resolver_map);
             _pattern_resolvers = std::move(other._pattern_resolvers);
+            _blocklist = std::move(other._blocklist);
         }
         return *this;
     }
@@ -306,12 +307,29 @@ namespace facter { namespace facts {
         return stream;
     }
 
+    bool collection::try_block(shared_ptr<resolver> const& res) {
+        if (_blocklist.count(res->name())) {
+            if (res->is_blockable()) {
+                LOG_DEBUG("blocking collection of {1} facts.", res->name());
+                return true;
+            } else {
+                LOG_DEBUG("{1} resolver cannot be blocked.", res->name());
+            }
+        }
+        return false;
+    }
+
     void collection::resolve_facts()
     {
         // Remove the front of the resolvers list and resolve until no resolvers are left
         while (!_resolvers.empty()) {
             auto resolver = _resolvers.front();
             remove(resolver);
+
+            if (try_block(resolver)) {
+                continue;
+            }
+
             LOG_DEBUG("resolving {1} facts.", resolver->name());
             resolver->resolve(*this);
         }
@@ -325,6 +343,12 @@ namespace facter { namespace facts {
         while (it != range.second) {
             auto resolver = (it++)->second;
             remove(resolver);
+
+            if (try_block(resolver)) {
+                LOG_WARNING("resolver for fact \"{1}\" has been blocked.", name);
+                continue;
+            }
+
             LOG_DEBUG("resolving {1} facts.", resolver->name());
             resolver->resolve(*this);
         }
@@ -338,6 +362,12 @@ namespace facter { namespace facts {
             }
             auto resolver = *(pattern_it++);
             remove(resolver);
+
+            if (try_block(resolver)) {
+                LOG_WARNING("resolver for fact \"{1}\" has been blocked.", name);
+                continue;
+            }
+
             LOG_DEBUG("resolving {1} facts.", resolver->name());
             resolver->resolve(*this);
         }

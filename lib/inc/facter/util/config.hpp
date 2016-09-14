@@ -17,6 +17,12 @@ namespace facter { namespace util { namespace config {
     LIBFACTER_EXPORT hocon::shared_config load_default_config_file();
 
     /**
+     * Returns the default location of the config file.
+     * @return the absolute path to the default config file
+     */
+    LIBFACTER_EXPORT std::string default_config_location();
+
+    /**
      * Parses the contents of the config pile at the specified path.
      * @param config_path the path to the config file
      * @return HOCON config object, or nullptr if no file was found
@@ -38,6 +44,13 @@ namespace facter { namespace util { namespace config {
     LIBFACTER_EXPORT void load_cli_settings(hocon::shared_config hocon_config, boost::program_options::variables_map& vm);
 
     /**
+     * Loads the "blocklist" section of the config file into the settings map.
+     * @param hocon_config the config object representing the parsed config file
+     * @param vm the key-value map in which to store the settings
+     */
+    LIBFACTER_EXPORT void load_fact_settings(hocon::shared_config hocon_config, boost::program_options::variables_map& vm);
+
+    /**
      * Returns a schema of the valid global options that can appear in the config file.
      * @return names, values, and descriptions of global Facter options
      */
@@ -48,4 +61,10 @@ namespace facter { namespace util { namespace config {
      * @return names, values, and descriptions of command line options
      */
     LIBFACTER_EXPORT boost::program_options::options_description cli_config_options();
+
+    /**
+     * Returns a schema for options dealing with block fact collection.
+     * @return names, values, and descriptions of fact blocking config options
+     */
+    LIBFACTER_EXPORT boost::program_options::options_description fact_config_options();
 }}}  // namespace facter::util::config
