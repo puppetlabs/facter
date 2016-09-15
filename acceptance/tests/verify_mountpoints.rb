@@ -27,8 +27,8 @@ test_name "FACT-1502 - C98163 mountpoints fact should show mounts on tmpfs" do
       }
     FILE
 
-    step "Apply the manifest to mount" do
-      on(agent, puppet("apply #{manifest}")) do
+    step "Apply the manifest to mount directory '#{dir}'" do
+      on(agent, puppet("apply #{manifest}"), :acceptable_exit_codes => [0,2]) do
         assert_no_match(/Error/, stdout, "Unexpected error was detected!")
       end
       on(agent, facter("mountpoints.#{dir}")) do
