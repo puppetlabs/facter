@@ -37,7 +37,8 @@ namespace facter { namespace facts { namespace external {
                 {
                     execution_options::trim_output,
                     execution_options::merge_environment,
-                    execution_options::throw_on_failure
+                    execution_options::throw_on_failure,
+                    execution_options::convert_newlines
                 });
 
             try {

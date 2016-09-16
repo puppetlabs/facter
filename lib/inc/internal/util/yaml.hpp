@@ -11,7 +11,7 @@ namespace YAML {
 }
 
 namespace facter { namespace facts {
-    class collection;
+    struct collection;
     struct array_value;
     struct map_value;
 }}
