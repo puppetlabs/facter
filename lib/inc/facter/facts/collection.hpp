@@ -41,6 +41,31 @@ namespace facter { namespace facts {
     };
 
     /**
+     * Stream adapter for using with rapidjson
+     */
+    namespace {
+        struct stream_adapter
+        {
+            explicit stream_adapter(std::ostream& stream) : _stream(stream)
+            {
+            }
+
+            void Put(char c)
+            {
+                _stream << c;
+            }
+
+            void Flush()
+            {
+                _stream.flush();
+            }
+
+         private:
+            std::ostream& _stream;
+        };
+    }
+
+    /**
      * Represents the fact collection.
      * The fact collection is responsible for resolving and storing facts.
      */

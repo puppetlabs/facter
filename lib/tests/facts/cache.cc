@@ -56,13 +56,14 @@ SCENARIO("loading facts from cache") {
 
     GIVEN("an existing cache directory with cached fact") {
         collection_fixture facts;
+        auto test_res = make_shared<simple_resolver>();
         boost_file::create_directories(cache_dir);
-        auto cache_file = cache_dir / "test_fact";
-        leatherman::file_util::atomic_write_to_file("{ \"test_fact\" : \"test_value\" }", cache_file.string());
+        auto cache_file = cache_dir / "foo";
+        leatherman::file_util::atomic_write_to_file("{ \"foo\" : \"bar\" }", cache_file.string());
 
         THEN("facts should be loaded from the cache") {
-            cache::load_facts_from_cache(cache_dir, { "test_fact" }, facts);
-            REQUIRE(facts.get_resolved("test_fact"));
+            cache::load_facts_from_cache(cache_dir, test_res, facts);
+            REQUIRE(facts.get_resolved("foo"));
         }
     }
 

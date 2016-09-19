@@ -526,26 +526,6 @@ namespace facter { namespace facts {
         }
     }
 
-    struct stream_adapter
-    {
-        explicit stream_adapter(ostream& stream) : _stream(stream)
-        {
-        }
-
-        void Put(char c)
-        {
-            _stream << c;
-        }
-
-        void Flush()
-        {
-            _stream.flush();
-        }
-
-     private:
-         ostream& _stream;
-    };
-
     void collection::write_json(ostream& stream, set<string> const& queries, bool show_legacy, bool strict_errors)
     {
         json_document document;

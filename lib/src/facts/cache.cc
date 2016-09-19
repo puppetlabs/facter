@@ -23,14 +23,22 @@ namespace facter { namespace facts { namespace cache {
         return static_cast<int64_t>(lifetime_seconds) < ttl;
     }
 
-    void load_facts_from_cache(boost_file::path const& cache_dir, vector<string> const& cached_facts, collection& facts) {
-        for (auto name : cached_facts) {
+    void load_facts_from_cache(boost_file::path const& cache_dir, shared_ptr<resolver> res, collection& facts) {
+        for (auto name : res->names()) {
             string cached_fact_file = (cache_dir / name).string();
             if (leatherman::file_util::file_readable(cached_fact_file)) {
-                json_resolver json_res;
-                json_res.resolve(cached_fact_file, facts);
+                try {
+                    json_resolver json_res;
+                    json_res.resolve(cached_fact_file, facts);
+                } catch (external_fact_exception& ex) {
+                    LOG_DEBUG("cache for {1} facts contained invalid JSON files, refreshing", res->name());
+                    refresh_cache(res, cache_dir, facts);
+                    return;
+                }
             } else {
-                LOG_DEBUG("no {1} fact cached", name);
+                LOG_DEBUG("cache for {1} facts was missing files, refreshing", res->name());
+                refresh_cache(res, cache_dir, facts);
+                return;
             }
         }
     }
@@ -49,35 +57,14 @@ namespace facter { namespace facts { namespace cache {
         boost_file::path cache_dir = boost_file::path(fact_cache_location() + res->name());
         if (boost_file::is_directory(cache_dir) && cache_is_valid(cache_dir, ttl)) {
             LOG_DEBUG("loading cached values for {1} facts", res->name());
-            load_facts_from_cache(cache_dir, res->names(), facts);
+            load_facts_from_cache(cache_dir, res, facts);
         } else {
             LOG_DEBUG("caching values for {1} facts", res->name());
             refresh_cache(res, cache_dir, facts);
         }
     }
 
-    struct stream_adapter
-    {
-        explicit stream_adapter(boost::nowide::ofstream& stream) : _stream(stream)
-        {
-        }
-
-        void Put(char c)
-        {
-            _stream << c;
-        }
-
-        void Flush()
-        {
-            _stream.flush();
-        }
-
-     private:
-        boost::nowide::ofstream& _stream;
-    };
-
-
-    void write_json_cache_file(collection& facts, boost_file::path const& file_path, string const& fact_name)
+    void write_json_cache_file(collection& facts, boost_file::path const& file_path, vector<string> const& fact_names)
     {
         json_document document;
         document.SetObject();
@@ -93,10 +80,9 @@ namespace facter { namespace facts { namespace cache {
         });
 
         auto fact_value = facts.get_resolved(fact_name);
-        if (!fact_value) {
-            return;
+        if (fact_value) {
+            builder(fact_name, fact_value);
         }
-        builder(fact_name, fact_value);
 
         string file_path_string = file_path.string();
         boost::nowide::ofstream stream(file_path_string);

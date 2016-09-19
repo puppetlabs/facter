@@ -22,7 +22,7 @@ namespace facter { namespace facts { namespace cache {
      * @param cached_facts the names of the facts to search for
      * @param facts to collection of facts to which to add
      */
-    void load_facts_from_cache(boost::filesystem::path const& cache_dir, std::vector<std::string> const& cached_facts, collection& facts);
+    void load_facts_from_cache(boost::filesystem::path const& cache_dir, std::shared_ptr<resolver> res, collection& facts);
 
     /**
      * Resolve facts from the given resolver and write them out to the cache, one fact per file.
