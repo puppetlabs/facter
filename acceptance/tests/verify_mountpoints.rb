@@ -6,6 +6,11 @@ test_name "FACT-1502 - C98163 mountpoints fact should show mounts on tmpfs" do
   extend Facter::Acceptance::UserFactUtils
 
   confine :except, :platform => 'windows'
+  confine :except, :platform => /osx/ # See PUP-4823
+  confine :except, :platform => /solaris/ # See PUP-5201
+  confine :except, :platform => /^eos-/ # Mount provider not supported on Arista EOS switches
+  confine :except, :platform => /^cisco_/ # See PUP-5826
+  confine :except, :platform => /^huawei/ # See PUP-6126
 
   agents.each do |agent|
     dir = '/tmp/tempdir'
