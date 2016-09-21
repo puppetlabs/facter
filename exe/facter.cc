@@ -149,6 +149,7 @@ int main(int argc, char **argv)
             ("json,j", _("Output in JSON format.").c_str())
             ("show-legacy", _("Show legacy facts when querying all facts.").c_str())
             ("log-level,l", po::value<level>()->default_value(level::warning, "warn"), _("Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.").c_str())
+            ("no-cache", _("Disable loading and refreshing facts from the cache").c_str())
             ("no-color", _("Disables color output.").c_str())
             ("no-custom-facts", po::bool_switch()->default_value(false), _("Disables custom facts.").c_str())
             ("no-external-facts", po::bool_switch()->default_value(false), _("Disables external facts.").c_str())
@@ -191,9 +192,10 @@ int main(int argc, char **argv)
                 load_global_settings(hocon_conf, vm);
                 load_cli_settings(hocon_conf, vm);
                 load_fact_settings(hocon_conf, vm);
-                ttls = load_ttls(hocon_conf);
+                if (!vm.count("no-cache")) {
+                    ttls = load_ttls(hocon_conf);
+                }
             }
-
 
             // Check for a help option first before notifying
             if (vm.count("help")) {
