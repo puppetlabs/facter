@@ -1,6 +1,7 @@
 #include <internal/util/windows/wsa.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <leatherman/locale/locale.hpp>
+#include <boost/format.hpp>
 #include <boost/nowide/convert.hpp>
 #include <Ws2tcpip.h>
 

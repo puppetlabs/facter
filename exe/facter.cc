@@ -51,7 +51,7 @@ void help(po::options_description& desc)
           "\n"
           "Options\n"
           "=======\n\n"
-          "{1}\nDescription\n"
+          "%1%\nDescription\n"
           "===========\n"
           "\n"
           "Collect and display facts about the current system.  The library behind\n"
@@ -72,7 +72,7 @@ void help(po::options_description& desc)
           "\n"
           "Contains settings for configuring external and custom fact directories,\n"
           "setting command line options, and blocking facts.\n"
-          "Loaded by default from {2}.\n"
+          "Loaded by default from %2%.\n"
           "See man page, README, or docs for more details.",
           desc, default_config_location()) << endl;
 }
@@ -89,7 +89,7 @@ void log_command_line(int argc, char** argv)
         }
         command_line << argv[i];
     }
-    log(level::info, "executed with command line: {1}.", command_line.str());
+    log(level::info, "executed with command line: %1%.", command_line.str());
 }
 
 void log_queries(set<string> const& queries)
@@ -113,7 +113,7 @@ void log_queries(set<string> const& queries)
         }
         output << query;
     }
-    log(level::info, "requested queries: {1}.", output.str());
+    log(level::info, "requested queries: %1%.", output.str());
 }
 
 int main(int argc, char **argv)
@@ -228,7 +228,7 @@ int main(int argc, char **argv)
         }
         catch (exception& ex) {
             colorize(boost::nowide::cerr, level::error);
-            boost::nowide::cerr << _("error: {1}", ex.what()) << endl;
+            boost::nowide::cerr << _("error: %1%", ex.what()) << endl;
             colorize(boost::nowide::cerr);
             help(visible_options);
             return EXIT_FAILURE;
@@ -336,10 +336,10 @@ int main(int argc, char **argv)
         facts.write(boost::nowide::cout, fmt, queries, show_legacy, strict_errors);
         boost::nowide::cout << endl;
     } catch (locale_error const& e) {
-        boost::nowide::cerr << _("failed to initialize logging system due to a locale error: {1}", e.what()) << endl;
+        boost::nowide::cerr << _("failed to initialize logging system due to a locale error: %1%", e.what()) << endl;
         return 2;  // special error code to indicate we failed harder than normal
     } catch (exception& ex) {
-        log(level::fatal, "unhandled exception: {1}", ex.what());
+        log(level::fatal, "unhandled exception: %1%", ex.what());
     }
 
     return error_logged() ? EXIT_FAILURE : EXIT_SUCCESS;
