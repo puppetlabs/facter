@@ -148,6 +148,7 @@ int main(int argc, char **argv)
             ("help,h", _("Print this help message.").c_str())
             ("json,j", _("Output in JSON format.").c_str())
             ("show-legacy", _("Show legacy facts when querying all facts.").c_str())
+            ("list-cache-groups", _("List the name of each cacheable group of facts").c_str())
             ("log-level,l", po::value<level>()->default_value(level::warning, "warn"), _("Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.").c_str())
             ("no-cache", _("Disable loading and refreshing facts from the cache").c_str())
             ("no-color", _("Disables color output.").c_str())
@@ -237,6 +238,17 @@ int main(int argc, char **argv)
             colorize(boost::nowide::cerr);
             help(visible_options);
             return EXIT_FAILURE;
+        }
+
+        // Check for listing fact groups
+        if (vm.count("list-cache-groups")) {
+            collection facts;
+            facts.add_default_facts(!vm.count("no-ruby"));
+            vector<string> fact_groups = facts.get_fact_groups();
+            for (auto group : fact_groups) {
+                boost::nowide::cout << group << endl;
+            }
+            return EXIT_SUCCESS;
         }
 
         // Check for printing the version

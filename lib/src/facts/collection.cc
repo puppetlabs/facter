@@ -273,6 +273,14 @@ namespace facter { namespace facts {
         return _facts.size();
     }
 
+    vector<string> collection::get_fact_groups() {
+        vector<string> fact_groups;
+        for (auto res : _resolvers) {
+            fact_groups.push_back(res->name());
+        }
+        return fact_groups;
+    }
+
     value const* collection::operator[](string const& name)
     {
         return get_value(name);

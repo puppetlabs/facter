@@ -274,6 +274,14 @@ namespace facter { namespace facts {
          */
         void resolve_facts();
 
+        /**
+         * Returns the names of all the resolvers currently in the collection.
+         * These names correspond to groups of facts, and are used to block
+         * collection of those facts or to allow caching them.
+         * @return a list of fact group names
+         */
+        std::vector<std::string> get_fact_groups();
+
      protected:
         /**
          *  Gets external fact directories for the current platform.
