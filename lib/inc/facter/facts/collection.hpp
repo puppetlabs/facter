@@ -287,11 +287,18 @@ namespace facter { namespace facts {
 
         /**
          * Returns the names of all the resolvers currently in the collection.
-         * These names correspond to groups of facts, and are used to block
-         * collection of those facts or to allow caching them.
+         * These names correspond to groups of facts, and are used to allow
+         * caching of those facts.
          * @return a list of fact group names
          */
         std::vector<std::string> get_fact_groups();
+
+        /**
+         * Returns the names of all blockable resolvers currently in the collection.
+         * These names correspond to groups of blockable facts.
+         * @return a list of blockable fact groups
+         */
+        std::vector<std::string> get_blockable_fact_groups();
 
      protected:
         /**

@@ -267,6 +267,16 @@ namespace facter { namespace facts {
         return _facts.empty() && _resolvers.empty();
     }
 
+    vector<string> collection::get_blockable_fact_groups() {
+        vector<string> blockgroups;
+        for (auto res : _resolvers) {
+            if (res->is_blockable()) {
+                blockgroups.push_back(res->name());
+            }
+        }
+        return blockgroups;
+    }
+
     size_t collection::size()
     {
         resolve_facts();
