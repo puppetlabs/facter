@@ -300,16 +300,21 @@ if(AIX)
 endif()
 
 # Link in additional libraries
+# Note: this assumes shared Leatherman and static Boost libraries
 target_link_libraries(libfacter PRIVATE
-    ${CPPHOCON_LIBRARIES}
     ${LIBFACTER_PLATFORM_LIBRARIES}
-    ${LEATHERMAN_LIBRARIES}
+    ${CPPHOCON_LIBRARIES}
     ${Boost_LIBRARIES}
+    ${LEATHERMAN_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
     ${CURL_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
 )
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND BOOST_STATIC AND LEATHERMAN_USE_LOCALES)
+    target_link_libraries(libfacter PRIVATE iconv)
+endif()
 
 symbol_exports(libfacter "${CMAKE_CURRENT_LIST_DIR}/inc/facter/export.h")
 target_compile_definitions(libfactersrc PRIVATE "-Dlibfacter_EXPORTS")
@@ -336,7 +341,7 @@ endif()
 
 set(RUBY_LIB_INSTALL "" CACHE PATH "Specify the location to install facter.rb")
 if(RUBY_LIB_INSTALL)
-    set(RUBY_VENDORDIR ${RUBY_LIB_INSTALL}) 
+    set(RUBY_VENDORDIR ${RUBY_LIB_INSTALL})
 else()
     # Disable actually installing facter.rb if Ruby is not present and RUBY_LIB_INSTALL not specified.
     if (RUBY_FOUND)

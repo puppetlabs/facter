@@ -130,6 +130,10 @@ target_link_libraries(libfacter_test
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND BOOST_STATIC AND LEATHERMAN_USE_LOCALES)
+    target_link_libraries(libfacter_test iconv)
+endif()
+
 target_compile_definitions(libfacter_test PRIVATE "-Dlibfacter_EXPORTS")
 
 # Generate a file containing the path to the fixtures
