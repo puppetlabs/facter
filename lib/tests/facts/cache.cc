@@ -34,15 +34,16 @@ SCENARIO("refreshing cache") {
     GIVEN("a resolver that needs to be cached") {
         collection_fixture facts;
         auto test_res = make_shared<simple_resolver>();
+        boost_file::create_directories(cache_dir);
 
         THEN("new JSON files should be written") {
-            auto cache_file = (cache_dir / "foo").string();
+            auto cache_file = (cache_dir / "test").string();
             REQUIRE_FALSE(leatherman::file_util::file_readable(cache_file));
 
-            cache::refresh_cache(test_res, cache_dir, facts);
+            cache::refresh_cache(test_res, cache_file, facts);
             REQUIRE(leatherman::file_util::file_readable(cache_file));
             string contents;
-            load_fixture("cache/foo", contents);
+            load_fixture("cache/test", contents);
             REQUIRE(contents.find("foo") != string::npos);
         }
     }
@@ -58,11 +59,11 @@ SCENARIO("loading facts from cache") {
         collection_fixture facts;
         auto test_res = make_shared<simple_resolver>();
         boost_file::create_directories(cache_dir);
-        auto cache_file = cache_dir / "foo";
+        auto cache_file = cache_dir / "test";
         leatherman::file_util::atomic_write_to_file("{ \"foo\" : \"bar\" }", cache_file.string());
 
         THEN("facts should be loaded from the cache") {
-            cache::load_facts_from_cache(cache_dir, test_res, facts);
+            cache::load_facts_from_cache(cache_file, test_res, facts);
             REQUIRE(facts.get_resolved("foo"));
         }
     }

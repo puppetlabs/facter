@@ -40,21 +40,32 @@ namespace facter { namespace facts {
         yaml
     };
 
-    /**
-     * Stream adapter for using with rapidjson
-     */
     namespace {
+        /**
+         * Stream adapter for using with rapidjson
+         */
         struct stream_adapter
         {
+            /**
+             * Constructs an adapter for use with rapidjson around the given stream.
+             * @param stream an output stream to which JSON will be written
+             */
             explicit stream_adapter(std::ostream& stream) : _stream(stream)
             {
             }
 
+            /**
+             * Adds a character to the stream.
+             * @param c the char to add
+             */
             void Put(char c)
             {
                 _stream << c;
             }
 
+            /**
+             * Flushes the stream.
+             */
             void Flush()
             {
                 _stream.flush();

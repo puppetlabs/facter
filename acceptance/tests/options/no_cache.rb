@@ -21,8 +21,7 @@ test_name "--no-cache command-line option causes the fact cache to be ignored" d
     config_file = File.join(config_dir, "facter.conf")
 
     cached_facts_dir = get_cached_facts_dir(agent['platform'], kernel_version)
-    cached_fact_dir = File.join(cached_facts_dir, cached_fact_name)
-    cached_fact_file = File.join(cached_fact_dir, cached_fact_name)
+    cached_fact_file = File.join(cached_facts_dir, cached_fact_name)
 
     teardown do
       on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0,1])

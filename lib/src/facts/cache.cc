@@ -16,51 +16,49 @@ namespace boost_file = boost::filesystem;
 
 namespace facter { namespace facts { namespace cache {
 
-    bool cache_is_valid(boost_file::path const& cache_dir, int64_t ttl) {
-        time_t last_mod = boost_file::last_write_time(cache_dir);
+    bool cache_is_valid(boost_file::path const& cache_file, int64_t ttl) {
+        time_t last_mod = boost_file::last_write_time(cache_file);
         time_t now;
         double lifetime_seconds = difftime(time(&now), last_mod);
         return static_cast<int64_t>(lifetime_seconds) < ttl;
     }
 
-    void load_facts_from_cache(boost_file::path const& cache_dir, shared_ptr<resolver> res, collection& facts) {
-        for (auto name : res->names()) {
-            string cached_fact_file = (cache_dir / name).string();
-            if (leatherman::file_util::file_readable(cached_fact_file)) {
-                try {
-                    json_resolver json_res;
-                    json_res.resolve(cached_fact_file, facts);
-                } catch (external_fact_exception& ex) {
-                    LOG_DEBUG("cache for {1} facts contained invalid JSON files, refreshing", res->name());
-                    refresh_cache(res, cache_dir, facts);
-                    return;
-                }
-            } else {
-                LOG_DEBUG("cache for {1} facts was missing files, refreshing", res->name());
-                refresh_cache(res, cache_dir, facts);
+    void load_facts_from_cache(boost_file::path const& cache_file, shared_ptr<resolver> res, collection& facts) {
+        string cache_file_path = cache_file.string();
+        if (leatherman::file_util::file_readable(cache_file_path)) {
+            try {
+                json_resolver json_res;
+                json_res.resolve(cache_file_path, facts);
+            } catch (external_fact_exception& ex) {
+                LOG_DEBUG("cache file for {1} facts contained invalid JSON, refreshing", res->name());
+                refresh_cache(res, cache_file, facts);
                 return;
             }
+        } else {
+            LOG_DEBUG("cache file for {1} facts was missing, refreshing", res->name());
+            refresh_cache(res, cache_file, facts);
+            return;
         }
     }
 
-    void refresh_cache(shared_ptr<resolver> res, boost_file::path const& cache_dir, collection& facts) {
+    void refresh_cache(shared_ptr<resolver> res, boost_file::path const& cache_file, collection& facts) {
         res->resolve(facts);
-        boost_file::remove_all(cache_dir);
-        boost_file::create_directories(cache_dir);
-        for (auto name : res->names()) {
-            boost_file::path fact_path = cache_dir / name;
-            write_json_cache_file(facts, fact_path.string(), name);
-        }
+        boost_file::remove(cache_file);
+        write_json_cache_file(facts, cache_file.string(), res->names());
     }
 
     void use_cache(collection& facts, shared_ptr<resolver> res, int64_t ttl) {
-        boost_file::path cache_dir = boost_file::path(fact_cache_location() + res->name());
-        if (boost_file::is_directory(cache_dir) && cache_is_valid(cache_dir, ttl)) {
+        boost_file::path cache_dir = boost_file::path(fact_cache_location());
+        if (!boost_file::is_directory(cache_dir)) {
+            boost_file::create_directories(cache_dir);
+        }
+        boost_file::path cache_file = cache_dir / res->name();
+        if (leatherman::file_util::file_readable(cache_file.string()) && cache_is_valid(cache_file, ttl)) {
             LOG_DEBUG("loading cached values for {1} facts", res->name());
-            load_facts_from_cache(cache_dir, res, facts);
+            load_facts_from_cache(cache_file, res, facts);
         } else {
             LOG_DEBUG("caching values for {1} facts", res->name());
-            refresh_cache(res, cache_dir, facts);
+            refresh_cache(res, cache_file, facts);
         }
     }
 
@@ -79,9 +77,11 @@ namespace facter { namespace facts { namespace cache {
             document.AddMember(StringRef(key.c_str(), key.size()), value, document.GetAllocator());
         });
 
-        auto fact_value = facts.get_resolved(fact_name);
-        if (fact_value) {
-            builder(fact_name, fact_value);
+        for (auto const& name : fact_names) {
+            auto fact_value = facts.get_resolved(name);
+            if (fact_value) {
+                builder(name, fact_value);
+            }
         }
 
         string file_path_string = file_path.string();
