@@ -50,13 +50,15 @@ namespace facter { namespace ruby {
         {
             // Create a collection and a facter module
             boost::program_options::variables_map vm;
-            load_fact_settings(load_default_config_file(), vm);
+            auto hocon_conf = load_default_config_file();
+            load_fact_settings(hocon_conf, vm);
             set<string> blocklist;
             if (vm.count("blocklist")) {
                 auto facts_to_block = vm["blocklist"].as<vector<string>>();
                 blocklist.insert(facts_to_block.begin(), facts_to_block.end());
             }
-            _facts.reset(new collection(blocklist));
+            auto ttls = load_ttls(hocon_conf);
+            _facts.reset(new collection(blocklist, ttls));
             _module.reset(new module(*_facts));
 
             // Ruby doesn't have a proper way of notifying extensions that the VM is shutting down
