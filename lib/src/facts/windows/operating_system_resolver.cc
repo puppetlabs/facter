@@ -100,8 +100,8 @@ namespace facter { namespace facts { namespace windows {
         // Override default release with Windows release names
         auto version = result.release.substr(0, lastDot);
         bool consumerrel = (wmi::get(vals, wmi::producttype) == "1");
-        if (version == "6.4") {
-            result.release = consumerrel ? "10" : result.release;
+        if (version == "10.0") {
+            result.release = consumerrel ? "10" : "2016";
         } else if (version == "6.3") {
             result.release = consumerrel ? "8.1" : "2012 R2";
         } else if (version == "6.2") {
