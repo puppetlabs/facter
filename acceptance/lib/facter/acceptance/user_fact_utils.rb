@@ -33,6 +33,20 @@ module Facter
         end
       end
 
+      # Retrieve the path of the standard cached facts directory.
+      #
+      def get_cached_facts_dir(platform, version)
+        if platform =~ /windows/
+          if version < 6.0
+            File.join('C:', 'Documents and Settings', 'All Users', 'Application Data', 'PuppetLabs', 'facter', 'cache', 'cached_facts')
+          else
+            File.join('C:', 'ProgramData', 'PuppetLabs', 'facter', 'cache', 'cached_facts')
+          end
+        else
+          File.join('/', 'opt', 'puppetlabs', 'facter', 'cache', 'cached_facts')
+        end
+      end
+
       # Retrieve the extension to use for an external fact script.
       # Windows uses '.bat' and everything else uses '.sh'
       def get_external_fact_script_extension(platform)

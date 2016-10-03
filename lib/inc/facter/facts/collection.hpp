@@ -11,6 +11,7 @@
 #include <list>
 #include <map>
 #include <set>
+#include <unordered_map>
 #include <vector>
 #include <string>
 #include <memory>
@@ -39,6 +40,42 @@ namespace facter { namespace facts {
         yaml
     };
 
+    namespace {
+        /**
+         * Stream adapter for using with rapidjson
+         */
+        struct stream_adapter
+        {
+            /**
+             * Constructs an adapter for use with rapidjson around the given stream.
+             * @param stream an output stream to which JSON will be written
+             */
+            explicit stream_adapter(std::ostream& stream) : _stream(stream)
+            {
+            }
+
+            /**
+             * Adds a character to the stream.
+             * @param c the char to add
+             */
+            void Put(char c)
+            {
+                _stream << c;
+            }
+
+            /**
+             * Flushes the stream.
+             */
+            void Flush()
+            {
+                _stream.flush();
+            }
+
+         private:
+            std::ostream& _stream;
+        };
+    }
+
     /**
      * Represents the fact collection.
      * The fact collection is responsible for resolving and storing facts.
@@ -53,8 +90,11 @@ namespace facter { namespace facts {
         /**
          * Constructs a fact collection.
          * @param blocklist the names of resolvers that should not be resolved
+         * @param ttls a map of resolver names to cache intervals (times-to-live)
+         *        for the facts they resolve
          */
-        collection(std::set<std::string> const& blocklist = std::set<std::string>());
+        collection(std::set<std::string> const& blocklist = std::set<std::string>(),
+                   std::unordered_map<std::string, int64_t> const& ttls = {});
 
         /**
          * Destructor for fact collection.
@@ -245,6 +285,14 @@ namespace facter { namespace facts {
          */
         void resolve_facts();
 
+        /**
+         * Returns the names of all the resolvers currently in the collection.
+         * These names correspond to groups of facts, and are used to block
+         * collection of those facts or to allow caching them.
+         * @return a list of fact group names
+         */
+        std::vector<std::string> get_fact_groups();
+
      protected:
         /**
          *  Gets external fact directories for the current platform.
@@ -263,6 +311,7 @@ namespace facter { namespace facts {
         LIBFACTER_NO_EXPORT void add_common_facts(bool include_ruby_facts);
         LIBFACTER_NO_EXPORT bool add_external_facts_dir(std::vector<std::unique_ptr<external::resolver>> const& resolvers, std::string const& directory, bool warn);
         LIBFACTER_NO_EXPORT bool try_block(std::shared_ptr<resolver> const& res);
+        LIBFACTER_NO_EXPORT void resolve(std::shared_ptr<resolver> const& res);
 
         // Platform specific members
         LIBFACTER_NO_EXPORT void add_platform_facts();
@@ -273,6 +322,7 @@ namespace facter { namespace facts {
         std::multimap<std::string, std::shared_ptr<resolver>> _resolver_map;
         std::list<std::shared_ptr<resolver>> _pattern_resolvers;
         std::set<std::string> _blocklist;
+        std::unordered_map<std::string, int64_t> _ttls;
     };
 
 }}  // namespace facter::facts
