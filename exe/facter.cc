@@ -148,8 +148,10 @@ int main(int argc, char **argv)
             ("help,h", _("Print this help message.").c_str())
             ("json,j", _("Output in JSON format.").c_str())
             ("show-legacy", _("Show legacy facts when querying all facts.").c_str())
+            ("list-block-groups", _("Lists the names of all blockable fact groups.").c_str())
             ("list-cache-groups", _("List the name of each cacheable group of facts").c_str())
             ("log-level,l", po::value<level>()->default_value(level::warning, "warn"), _("Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.").c_str())
+            ("no-block", _("Disables fact blocking.").c_str())
             ("no-cache", _("Disable loading and refreshing facts from the cache").c_str())
             ("no-color", _("Disables color output.").c_str())
             ("no-custom-facts", po::bool_switch()->default_value(false), _("Disables custom facts.").c_str())
@@ -257,6 +259,16 @@ int main(int argc, char **argv)
             return EXIT_SUCCESS;
         }
 
+        if (vm.count("list-block-groups")) {
+            collection facts;
+            facts.add_default_facts(!vm.count("no-ruby"));
+            vector<string> blockable_facts = facts.get_blockable_fact_groups();
+            for (auto fact_group : blockable_facts) {
+                boost::nowide::cout << fact_group << endl;
+            }
+            return EXIT_SUCCESS;
+        }
+
         // Set colorization; if no option was specified, use the default
         if (vm.count("color")) {
             set_colorization(true);
@@ -307,7 +319,7 @@ int main(int argc, char **argv)
         log_queries(queries);
 
         set<string> blocklist;
-        if (vm.count("blocklist")) {
+        if (vm.count("blocklist") && !vm.count("no-block")) {
             auto facts_to_block = vm["blocklist"].as<vector<string>>();
             blocklist.insert(facts_to_block.begin(), facts_to_block.end());
         }
