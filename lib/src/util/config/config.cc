@@ -70,8 +70,10 @@ namespace facter { namespace util { namespace config {
         if (hocon_config && hocon_config->has_path("facts.ttls")) {
             auto ttl_objs = hocon_config->get_object_list("facts.ttls");
             for (auto entry : ttl_objs) {
-                string fact = entry->key_set().front();
                 shared_config entry_conf = entry->to_config();
+                // triple-quote this string so that cpp-hocon will correctly parse it as a single path element
+                // and ignore otherwise reserved characters
+                string fact = "\"\"\"" + entry->key_set().front() + "\"\"\"";
                 int64_t duration = entry_conf->get_duration(fact, time_unit::SECONDS);
                 ttls.insert({ fact, duration });
             }
