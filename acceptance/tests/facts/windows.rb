@@ -22,7 +22,10 @@ agents.each do |agent|
     os_version  = '2012 R2'
     kernel_version = '6.3'
   elsif agent['platform'] =~ /-10/
-    os_version  = /^10\./
+    os_version  = '10'
+    kernel_version = /^10\./
+  elsif agent['platform'] =~ /2016/
+    os_version = '2016'
     kernel_version = /^10\./
   else
     raise "Unknown agent platform of #{agent['platform']}"
