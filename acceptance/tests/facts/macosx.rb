@@ -21,8 +21,6 @@ agents.each do |agent|
     kernel_major = '14'
   when '10.11'
     kernel_major = '15'
-  when '10.12'
-    kernel_major = '16'
   else
     fail_test("Unknown os_version #{os_version}")
   end
