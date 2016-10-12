@@ -250,13 +250,18 @@ cli : {
 }
 facts : {
     blocklist : [ "file system", "EC2" ]
+    ttls : [
+        { "timezone" : 30 days },
+    ]
 }
 ```
 All options are respected when running Facter standalone, while calling Facter from Ruby will only load `external-dir`, `custom-dir`, and the fact-specific configuration.
 
 The file will be loaded by default from `/etc/puppetlabs/facter/facter.conf` on Unix and `C:\ProgramData\PuppetLabs\facter\etc\facter.conf` on Windows. A different location can be specified using the `--config` command line option.
 
-Elements in the blocklist are fact groupings which will not be resolved when Facter runs. Valid elements correspond to the `blockgroup` field in the fact schema. If a fact does not have a blockgroup, it cannot be blocked.
+Elements in the blocklist are fact groupings which will not be resolved when Facter runs. Use the `--list-block-group` command line option to see valid blockable groups.
+
+Elements in the ttls section are key-value pairs of fact groupings that will be cached with the duration for which to cache them. Cached facts are stored as JSON in `/opt/puppetlabs/facter/cache/cached_facts` on Unix and `C:\ProgramData\PuppetLabs\facter\cache\cached_facts` on Windows. Use the `--list-cache-groups` command line option to see valid cacheable groups.
 
 Uninstall
 ---------
