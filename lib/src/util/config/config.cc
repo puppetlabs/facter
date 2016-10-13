@@ -73,8 +73,8 @@ namespace facter { namespace util { namespace config {
                 shared_config entry_conf = entry->to_config();
                 // triple-quote this string so that cpp-hocon will correctly parse it as a single path element
                 // and ignore otherwise reserved characters
-                string fact = "\"\"\"" + entry->key_set().front() + "\"\"\"";
-                int64_t duration = entry_conf->get_duration(fact, time_unit::SECONDS);
+                string fact = entry->key_set().front();
+                int64_t duration = entry_conf->get_duration("\"\"\"" + fact + "\"\"\"", time_unit::SECONDS);
                 ttls.insert({ fact, duration });
             }
         }
