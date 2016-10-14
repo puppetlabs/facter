@@ -15,6 +15,7 @@
 #include <internal/facts/windows/uptime_resolver.hpp>
 #include <internal/facts/windows/virtualization_resolver.hpp>
 #include <leatherman/util/environment.hpp>
+#include <leatherman/windows/file_util.hpp>
 #include <leatherman/windows/system_error.hpp>
 #include <leatherman/windows/user.hpp>
 #include <leatherman/windows/windows.hpp>
@@ -34,13 +35,11 @@ namespace facter { namespace facts {
     {
         if (user::is_admin()) {
             // Get the common data path
-            TCHAR szPath[MAX_PATH];
-            if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, szPath))) {
-                path p = path(szPath) / "PuppetLabs" / "facter" / "facts.d";
-                return {p.string()};
+            try {
+                path p = file_util::get_programdata_dir() / "PuppetLabs" / "facter" / "facts.d";
+            } catch (file_util::unknown_folder_exception &e) {
+                LOG_WARNING("external facts unavailable, %1%", e.what());
             }
-
-            LOG_WARNING("error finding COMMON_APPDATA, external facts unavailable: {1}", leatherman::windows::system_error());
         } else {
             auto home = user::home_dir();
             if (!home.empty()) {

@@ -15,8 +15,6 @@
   #undef interface
 #endif
 
-#define WIN_SERVER_2003_SUPPORT
-
 using namespace std;
 using namespace facter::util;
 using namespace facter::util::windows;
@@ -26,13 +24,6 @@ namespace facter { namespace facts { namespace windows {
 
     networking_resolver::networking_resolver()
     {
-        // Find ConvertLengthToIpv4Mask and save it to _convertLengthToIpv4Mask. Won't be found on
-        // Windows Server 2003, but in 2003 we get masks as strings so this function isn't needed.
-        auto func = GetProcAddress(GetModuleHandleW(L"Iphlpapi"), "ConvertLengthToIpv4Mask");
-        if (nullptr != func) {
-            typedef int (WINAPI *LPFN_CONVLEN) (ULONG, PULONG);
-            _convertLengthToIpv4Mask = reinterpret_cast<LPFN_CONVLEN>(func);
-        }
     }
 
     static string get_computername(COMPUTER_NAME_FORMAT nameFormat)
@@ -57,7 +48,7 @@ namespace facter { namespace facts { namespace windows {
     sockaddr_in networking_resolver::create_ipv4_mask(uint8_t masklen)
     {
         sockaddr_in mask = {AF_INET};
-        if (_convertLengthToIpv4Mask && _convertLengthToIpv4Mask(masklen, &mask.sin_addr.S_un.S_addr) != NO_ERROR) {
+        if (ConvertLengthToIpv4Mask(masklen, &mask.sin_addr.S_un.S_addr) != NO_ERROR) {
             LOG_DEBUG("failed creating IPv4 mask of length {1}", masklen);
         }
         return mask;
@@ -68,7 +59,7 @@ namespace facter { namespace facts { namespace windows {
         sockaddr_in6 mask = {AF_INET6};
         const uint8_t incr = 32u;
         for (size_t i = 0; i < 16 && masklen > 0; i += 4, masklen -= min(masklen, incr)) {
-            if (_convertLengthToIpv4Mask && _convertLengthToIpv4Mask(min(masklen, incr), reinterpret_cast<PULONG>(&mask.sin6_addr.u.Byte[i])) != NO_ERROR) {
+            if (ConvertLengthToIpv4Mask(min(masklen, incr), reinterpret_cast<PULONG>(&mask.sin6_addr.u.Byte[i])) != NO_ERROR) {
                 LOG_DEBUG("failed creating IPv6 mask with component of length {1}", incr);
                 break;
             }
@@ -91,48 +82,6 @@ namespace facter { namespace facts { namespace windows {
         }
         return masked;
     }
-
-#ifdef WIN_SERVER_2003_SUPPORT
-    // Provided to get network masks on Windows Server 2003.
-    // Returns a map of IP addresses to their network masks and dhcp servers (if enabled),
-    // obtained using GetAdapterInfo. Only works for IPv4.
-    static map<string, pair<string, string>> legacy_get_masks()
-    {
-        ULONG outBufLen = 15000;
-        vector<char> pAddresses(outBufLen);
-        DWORD err;
-        for (int i = 0; i < 3; ++i) {
-            err = GetAdaptersInfo(reinterpret_cast<PIP_ADAPTER_INFO>(pAddresses.data()), &outBufLen);
-            if (err == ERROR_SUCCESS) {
-                break;
-            } else if (err == ERROR_BUFFER_OVERFLOW) {
-                pAddresses.resize(outBufLen);
-            } else {
-                LOG_DEBUG("failure getting netmask info: {1}", leatherman::windows::system_error(err));
-                return {};
-            }
-        }
-
-        if (err != ERROR_SUCCESS) {
-            LOG_DEBUG("failure getting netmask info: {1}", leatherman::windows::system_error(err));
-            return {};
-        }
-
-        map<string, pair<string, string>> ip_masks;
-        for (auto pCurAddr = reinterpret_cast<PIP_ADAPTER_INFO>(pAddresses.data());
-            pCurAddr; pCurAddr = pCurAddr->Next) {
-            string dhcp;
-            if (pCurAddr->DhcpEnabled) {
-                dhcp = pCurAddr->DhcpServer.IpAddress.String;
-            }
-            for (auto it = &(pCurAddr->IpAddressList); it; it = it->Next) {
-                ip_masks.insert(make_pair(it->IpAddress.String, make_pair(string(it->IpMask.String), dhcp)));
-            }
-        }
-        LOG_DEBUG("found {1} netmask entries", ip_masks.size());
-        return ip_masks;
-    }
-#endif
 
     networking_resolver::data networking_resolver::collect_data(collection& facts)
     {
@@ -175,7 +124,6 @@ namespace facter { namespace facts { namespace windows {
 
         facter::util::windows::wsa winsock;
 
-        map<string, pair<string, string>> adapterInfoMasks;
         for (auto pCurAddr = reinterpret_cast<PIP_ADAPTER_ADDRESSES>(pAddresses.data());
             pCurAddr; pCurAddr = pCurAddr->Next) {
             if (pCurAddr->OperStatus != IfOperStatusUp ||
@@ -220,59 +168,24 @@ namespace facter { namespace facts { namespace windows {
                     continue;
                 }
 
-#ifdef WIN_SERVER_2003_SUPPORT
-                // Use length of IP_ADAPTER_ADDRESSES. The length of the unicast address struct doesn't differ between LH and XP
-                // due to padding, so it can't be used.
-                if (pCurAddr->Length < sizeof(IP_ADAPTER_ADDRESSES_LH)) {
-                    if (adapterInfoMasks.empty()) {
-                        adapterInfoMasks = legacy_get_masks();
-                    }
-
-                    // Set the DHCP server on Windows Server 2003.
-                    auto ip_mask = adapterInfoMasks.find(addr);
-                    if (ip_mask != adapterInfoMasks.end()) {
-                        net_interface.dhcp_server = ip_mask->second.second;
-                    }
-                }
-#endif
-
                 if (it->Address.lpSockaddr->sa_family == AF_INET || it->Address.lpSockaddr->sa_family == AF_INET6) {
                     bool ipv6 = it->Address.lpSockaddr->sa_family == AF_INET6;
 
                     binding b;
                     b.address = addr;
 
-                    if (adapterInfoMasks.empty()) {
-                        // Need to do lookup based on the structure length.
-                        auto adapterAddr = reinterpret_cast<IP_ADAPTER_UNICAST_ADDRESS_LH&>(*it);
-                        if (ipv6) {
-                            auto mask = create_ipv6_mask(adapterAddr.OnLinkPrefixLength);
-                            auto masked = mask_ipv6_address(it->Address.lpSockaddr, mask);
-                            b.netmask = winsock.address_to_string(mask);
-                            b.network = winsock.address_to_string(masked);
-                        } else {
-                            auto mask = create_ipv4_mask(adapterAddr.OnLinkPrefixLength);
-                            auto masked = mask_ipv4_address(it->Address.lpSockaddr, mask);
-                            b.netmask = winsock.address_to_string(mask);
-                            b.network = winsock.address_to_string(masked);
-                        }
+                    // Need to do lookup based on the structure length.
+                    auto adapterAddr = reinterpret_cast<IP_ADAPTER_UNICAST_ADDRESS_LH&>(*it);
+                    if (ipv6) {
+                        auto mask = create_ipv6_mask(adapterAddr.OnLinkPrefixLength);
+                        auto masked = mask_ipv6_address(it->Address.lpSockaddr, mask);
+                        b.netmask = winsock.address_to_string(mask);
+                        b.network = winsock.address_to_string(masked);
                     } else {
-#ifdef WIN_SERVER_2003_SUPPORT
-                        if (ipv6) {
-                            LOG_DEBUG("netmask for {1} (IPv6) is not supported on this platform", b.address);
-                        } else {
-                            auto ip_mask = adapterInfoMasks.find(b.address);
-                            if (ip_mask != adapterInfoMasks.end()) {
-                                b.netmask = ip_mask->second.first;
-
-                                auto mask = winsock.string_to_address<sockaddr_in, AF_INET>(b.netmask);
-                                auto masked = mask_ipv4_address(it->Address.lpSockaddr, mask);
-                                b.network = winsock.address_to_string(masked);
-                            } else {
-                                LOG_DEBUG("could not find netmask for {1}", b.address);
-                            }
-                        }
-#endif
+                        auto mask = create_ipv4_mask(adapterAddr.OnLinkPrefixLength);
+                        auto masked = mask_ipv4_address(it->Address.lpSockaddr, mask);
+                        b.netmask = winsock.address_to_string(mask);
+                        b.network = winsock.address_to_string(masked);
                     }
 
                     if (ipv6) {
