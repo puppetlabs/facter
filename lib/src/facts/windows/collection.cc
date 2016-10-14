@@ -37,6 +37,7 @@ namespace facter { namespace facts {
             // Get the common data path
             try {
                 path p = file_util::get_programdata_dir() / "PuppetLabs" / "facter" / "facts.d";
+                return {p.string()};
             } catch (file_util::unknown_folder_exception &e) {
                 LOG_WARNING("external facts unavailable, %1%", e.what());
             }
