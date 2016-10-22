@@ -26,16 +26,17 @@ EOM
       create_remote_file(agent, custom_fact, erroring_custom_fact)
       on(agent, "chmod +x '#{custom_fact}'")
 
-      teardown do
-        on(agent, "rm -f '#{custom_fact}'")
-      end
-
-      config_dir = agent.tmpdir("config_dir")
+      config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
       config_file = File.join(config_dir, "facter.conf")
+      on(agent, "mkdir -p '#{config_dir}'")
       create_remote_file(agent, config_file, config)
 
+      teardown do
+        on(agent, "rm -rf '#{custom_dir}' '#{config_dir}'", :acceptable_exit_codes => [0,1])
+      end
+
       step "trace setting should provide a backtrace for a custom fact with errors" do
-        on(agent, facter("--custom-dir '#{custom_dir}' --config '#{config_file}' custom_fact"), :acceptable_exit_codes => [1])
+        on(agent, facter("--custom-dir '#{custom_dir}' custom_fact"), :acceptable_exit_codes => [1])
         assert_match(/backtrace:\s+#{custom_fact}/, stderr, "Expected a backtrace for erroneous custom fact")
       end
     end

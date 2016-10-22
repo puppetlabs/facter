@@ -111,4 +111,8 @@ namespace facter { namespace facts { namespace resolvers {
         }
     }
 
+    bool filesystem_resolver::is_blockable() const {
+        return true;
+    }
+
 }}}  // namespace facter::facts::resolvers

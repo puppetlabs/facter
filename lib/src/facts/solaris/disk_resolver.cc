@@ -27,7 +27,7 @@ namespace facter { namespace facts { namespace solaris {
             }
             return result;
         } catch (kstat_exception& ex) {
-            LOG_DEBUG("disk information is unavailable: %1%.", ex.what());
+            LOG_DEBUG("disk information is unavailable: {1}.", ex.what());
             return {};
         }
     }

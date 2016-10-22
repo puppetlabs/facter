@@ -46,7 +46,7 @@ namespace facter { namespace facts { namespace solaris {
                 nullptr,
                 timeout);
         } catch (timeout_exception const&) {
-            LOG_WARNING("execution of prtdiag has timed out after %1% seconds.", timeout);
+            LOG_WARNING("execution of prtdiag has timed out after {1} seconds.", timeout);
         }
 
         return guest_of;

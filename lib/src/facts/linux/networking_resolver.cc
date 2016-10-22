@@ -83,12 +83,12 @@ namespace facter { namespace facts { namespace linux {
 
         scoped_descriptor sock(socket(AF_INET, SOCK_DGRAM, 0));
         if (static_cast<int>(sock) < 0) {
-            LOG_WARNING("socket failed: %1% (%2%): interface MTU fact is unavailable for interface %3%.", strerror(errno), errno, interface);
+            LOG_WARNING("socket failed: {1} ({2}): interface MTU fact is unavailable for interface {3}.", strerror(errno), errno, interface);
             return boost::none;
         }
 
         if (ioctl(sock, SIOCGIFMTU, &req) == -1) {
-            LOG_WARNING("ioctl failed: %1% (%2%): interface MTU fact is unavailable for interface %3%.", strerror(errno), errno, interface);
+            LOG_WARNING("ioctl failed: {1} ({2}): interface MTU fact is unavailable for interface {3}.", strerror(errno), errno, interface);
             return boost::none;
         }
         return req.ifr_mtu;
@@ -156,7 +156,7 @@ namespace facter { namespace facts { namespace linux {
             if (parts.size() % 2 == 0) {
                 std::string route_type(parts[0].begin(), parts[0].end());
                 if (known_route_types.find(route_type) == known_route_types.end()) {
-                    LOG_WARNING("Could not process routing table entry: Expected a destination followed by key/value pairs, got '%1%'", line);
+                    LOG_WARNING("Could not process routing table entry: Expected a destination followed by key/value pairs, got '{1}'", line);
                     return true;
                 } else {
                     dst_idx = 1;

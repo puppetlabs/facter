@@ -26,7 +26,7 @@ namespace facter { namespace facts { namespace linux {
 
         boost::system::error_code ec;
         if (!is_directory(root_directory, ec)) {
-            LOG_DEBUG("%1%: %2%: disk facts are unavailable.", root_directory, ec.message());
+            LOG_DEBUG("{1}: {2}: disk facts are unavailable.", root_directory, ec.message());
             return result;
         }
 
@@ -55,7 +55,7 @@ namespace facter { namespace facts { namespace linux {
                     boost::trim(blocks);
                     d.size = lexical_cast<uint64_t>(blocks) * block_size;
                 } catch (bad_lexical_cast& ex) {
-                    LOG_DEBUG("size of disk %1% is invalid: size information is unavailable.", d.name);
+                    LOG_DEBUG("size of disk {1} is invalid: size information is unavailable.", d.name);
                 }
             }
 

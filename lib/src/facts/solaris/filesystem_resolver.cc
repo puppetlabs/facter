@@ -35,7 +35,7 @@ namespace facter { namespace facts { namespace solaris {
     {
         scoped_file file(fopen("/etc/mnttab", "r"));
         if (!static_cast<FILE*>(file)) {
-            LOG_ERROR("fopen of /etc/mnttab failed: %1% (%2%): mountpoint data is unavailable.", strerror(errno), errno);
+            LOG_ERROR("fopen of /etc/mnttab failed: {1} ({2}): mountpoint data is unavailable.", strerror(errno), errno);
             return;
         }
 

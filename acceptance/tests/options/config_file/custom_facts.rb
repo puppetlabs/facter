@@ -21,10 +21,6 @@ EOM
       custom_fact = File.join(custom_dir, 'custom_fact.rb')
       create_remote_file(agent, custom_fact, custom_fact_content)
 
-      teardown do
-        on(agent, "rm -f '#{custom_fact}'")
-      end
-
       config_custom = <<EOM
 global : {
     custom-dir : "#{custom_dir}"
@@ -46,6 +42,10 @@ EOM
 
       config_no_custom_file = File.join(config_dir, "no_custom.conf")
       create_remote_file(agent, config_no_custom_file, config_no_custom)
+
+      teardown do
+        on(agent, "rm -rf '#{custom_dir}' '#{config_dir}'", :acceptable_exit_codes => [0,1])
+      end
 
       step "setting custom-dir in config file should specify location to look for custom facts" do
         on(agent, facter("--config '#{config_custom_file}' custom_fact")) do

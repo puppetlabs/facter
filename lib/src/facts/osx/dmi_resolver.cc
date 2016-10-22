@@ -15,13 +15,13 @@ namespace facter { namespace facts { namespace osx {
 
         // OSX only supports the product name
         if (sysctl(mib, sizeof(mib) / sizeof(mib[0]), nullptr, &length, nullptr, 0) == -1) {
-            LOG_DEBUG("sysctl failed: %1% (%2%): DMI facts are unavailable.", strerror(errno), errno);
+            LOG_DEBUG("sysctl failed: {1} ({2}): DMI facts are unavailable.", strerror(errno), errno);
             return result;
         }
 
         vector<char> model_name(length);
         if (sysctl(mib, sizeof(mib) / sizeof(mib[0]), model_name.data(), &length, nullptr, 0) == -1) {
-            LOG_DEBUG("sysctl failed: %1% (%2%): DMI facts are unavailable.", strerror(errno), errno);
+            LOG_DEBUG("sysctl failed: {1} ({2}): DMI facts are unavailable.", strerror(errno), errno);
             return result;
         }
 

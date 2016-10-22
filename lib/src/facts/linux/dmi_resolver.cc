@@ -173,13 +173,13 @@ namespace facter { namespace facts { namespace linux {
     {
         bs::error_code ec;
         if (!is_regular_file(path, ec)) {
-            LOG_DEBUG("%1%: %2%.", path, ec.message());
+            LOG_DEBUG("{1}: {2}.", path, ec.message());
             return {};
         }
 
         string value;
         if (!lth_file::read(path, value)) {
-            LOG_DEBUG("%1%: file could not be read.", path);
+            LOG_DEBUG("{1}: file could not be read.", path);
             return {};
         }
 

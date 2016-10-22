@@ -15,8 +15,6 @@
   #undef interface
 #endif
 
-#define WIN_SERVER_2003_SUPPORT
-
 using namespace std;
 using namespace facter::util;
 using namespace facter::util::windows;
@@ -26,13 +24,6 @@ namespace facter { namespace facts { namespace windows {
 
     networking_resolver::networking_resolver()
     {
-        // Find ConvertLengthToIpv4Mask and save it to _convertLengthToIpv4Mask. Won't be found on
-        // Windows Server 2003, but in 2003 we get masks as strings so this function isn't needed.
-        auto func = GetProcAddress(GetModuleHandleW(L"Iphlpapi"), "ConvertLengthToIpv4Mask");
-        if (nullptr != func) {
-            typedef int (WINAPI *LPFN_CONVLEN) (ULONG, PULONG);
-            _convertLengthToIpv4Mask = reinterpret_cast<LPFN_CONVLEN>(func);
-        }
     }
 
     static string get_computername(COMPUTER_NAME_FORMAT nameFormat)
@@ -40,13 +31,13 @@ namespace facter { namespace facts { namespace windows {
         DWORD size = 0u;
         GetComputerNameExW(nameFormat, nullptr, &size);
         if (GetLastError() != ERROR_MORE_DATA) {
-            LOG_DEBUG("failure resolving hostname: %1%", leatherman::windows::system_error());
+            LOG_DEBUG("failure resolving hostname: {1}", leatherman::windows::system_error());
             return "";
         }
 
         wstring buffer(size, '\0');
         if (!GetComputerNameExW(nameFormat, &buffer[0], &size)) {
-            LOG_DEBUG("failure resolving hostname: %1%", leatherman::windows::system_error());
+            LOG_DEBUG("failure resolving hostname: {1}", leatherman::windows::system_error());
             return "";
         }
 
@@ -57,8 +48,8 @@ namespace facter { namespace facts { namespace windows {
     sockaddr_in networking_resolver::create_ipv4_mask(uint8_t masklen)
     {
         sockaddr_in mask = {AF_INET};
-        if (_convertLengthToIpv4Mask && _convertLengthToIpv4Mask(masklen, &mask.sin_addr.S_un.S_addr) != NO_ERROR) {
-            LOG_DEBUG("failed creating IPv4 mask of length %1%", masklen);
+        if (ConvertLengthToIpv4Mask(masklen, &mask.sin_addr.S_un.S_addr) != NO_ERROR) {
+            LOG_DEBUG("failed creating IPv4 mask of length {1}", masklen);
         }
         return mask;
     }
@@ -68,8 +59,8 @@ namespace facter { namespace facts { namespace windows {
         sockaddr_in6 mask = {AF_INET6};
         const uint8_t incr = 32u;
         for (size_t i = 0; i < 16 && masklen > 0; i += 4, masklen -= min(masklen, incr)) {
-            if (_convertLengthToIpv4Mask && _convertLengthToIpv4Mask(min(masklen, incr), reinterpret_cast<PULONG>(&mask.sin6_addr.u.Byte[i])) != NO_ERROR) {
-                LOG_DEBUG("failed creating IPv6 mask with component of length %1%", incr);
+            if (ConvertLengthToIpv4Mask(min(masklen, incr), reinterpret_cast<PULONG>(&mask.sin6_addr.u.Byte[i])) != NO_ERROR) {
+                LOG_DEBUG("failed creating IPv6 mask with component of length {1}", incr);
                 break;
             }
         }
@@ -92,48 +83,6 @@ namespace facter { namespace facts { namespace windows {
         return masked;
     }
 
-#ifdef WIN_SERVER_2003_SUPPORT
-    // Provided to get network masks on Windows Server 2003.
-    // Returns a map of IP addresses to their network masks and dhcp servers (if enabled),
-    // obtained using GetAdapterInfo. Only works for IPv4.
-    static map<string, pair<string, string>> legacy_get_masks()
-    {
-        ULONG outBufLen = 15000;
-        vector<char> pAddresses(outBufLen);
-        DWORD err;
-        for (int i = 0; i < 3; ++i) {
-            err = GetAdaptersInfo(reinterpret_cast<PIP_ADAPTER_INFO>(pAddresses.data()), &outBufLen);
-            if (err == ERROR_SUCCESS) {
-                break;
-            } else if (err == ERROR_BUFFER_OVERFLOW) {
-                pAddresses.resize(outBufLen);
-            } else {
-                LOG_DEBUG("failure getting netmask info: %1%", leatherman::windows::system_error(err));
-                return {};
-            }
-        }
-
-        if (err != ERROR_SUCCESS) {
-            LOG_DEBUG("failure getting netmask info: %1%", leatherman::windows::system_error(err));
-            return {};
-        }
-
-        map<string, pair<string, string>> ip_masks;
-        for (auto pCurAddr = reinterpret_cast<PIP_ADAPTER_INFO>(pAddresses.data());
-            pCurAddr; pCurAddr = pCurAddr->Next) {
-            string dhcp;
-            if (pCurAddr->DhcpEnabled) {
-                dhcp = pCurAddr->DhcpServer.IpAddress.String;
-            }
-            for (auto it = &(pCurAddr->IpAddressList); it; it = it->Next) {
-                ip_masks.insert(make_pair(it->IpAddress.String, make_pair(string(it->IpMask.String), dhcp)));
-            }
-        }
-        LOG_DEBUG("found %1% netmask entries", ip_masks.size());
-        return ip_masks;
-    }
-#endif
-
     networking_resolver::data networking_resolver::collect_data(collection& facts)
     {
         data result;
@@ -144,7 +93,7 @@ namespace facter { namespace facts { namespace windows {
             result.domain = registry::get_registry_string(registry::HKEY::LOCAL_MACHINE,
                 "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\", "Domain");
         } catch (registry_exception &e) {
-            LOG_DEBUG("failure getting networking::domain fact: %1%", e.what());
+            LOG_DEBUG("failure getting networking::domain fact: {1}", e.what());
         }
 
         // Get linked list of adapters.
@@ -163,19 +112,18 @@ namespace facter { namespace facts { namespace windows {
             } else if (err == ERROR_BUFFER_OVERFLOW) {
                 pAddresses.resize(outBufLen);
             } else {
-                LOG_DEBUG("failure resolving networking facts: %1%", leatherman::windows::system_error(err));
+                LOG_DEBUG("failure resolving networking facts: {1}", leatherman::windows::system_error(err));
                 return result;
             }
         }
 
         if (err != ERROR_SUCCESS) {
-            LOG_DEBUG("failure resolving networking facts: %1%", leatherman::windows::system_error(err));
+            LOG_DEBUG("failure resolving networking facts: {1}", leatherman::windows::system_error(err));
             return result;
         }
 
         facter::util::windows::wsa winsock;
 
-        map<string, pair<string, string>> adapterInfoMasks;
         for (auto pCurAddr = reinterpret_cast<PIP_ADAPTER_ADDRESSES>(pAddresses.data());
             pCurAddr; pCurAddr = pCurAddr->Next) {
             if (pCurAddr->OperStatus != IfOperStatusUp ||
@@ -198,7 +146,7 @@ namespace facter { namespace facts { namespace windows {
                     try {
                         net_interface.dhcp_server = winsock.saddress_to_string(adapter.Dhcpv4Server);
                     } catch (wsa_exception &e) {
-                        LOG_DEBUG("failed to retrieve dhcp v4 server address for %1%: %2%", net_interface.name, e.what());
+                        LOG_DEBUG("failed to retrieve dhcp v4 server address for {1}: {2}", net_interface.name, e.what());
                     }
                 }
             }
@@ -212,7 +160,7 @@ namespace facter { namespace facts { namespace windows {
                         (it->Address.lpSockaddr->sa_family == AF_INET) ? " v4"
                         : (it->Address.lpSockaddr->sa_family == AF_INET6) ? " v6"
                         : "";
-                    LOG_DEBUG("failed to retrieve ip%1% address for %2%: %3%",
+                    LOG_DEBUG("failed to retrieve ip{1} address for {2}: {3}",
                         iptype, net_interface.name, e.what());
                 }
 
@@ -220,59 +168,24 @@ namespace facter { namespace facts { namespace windows {
                     continue;
                 }
 
-#ifdef WIN_SERVER_2003_SUPPORT
-                // Use length of IP_ADAPTER_ADDRESSES. The length of the unicast address struct doesn't differ between LH and XP
-                // due to padding, so it can't be used.
-                if (pCurAddr->Length < sizeof(IP_ADAPTER_ADDRESSES_LH)) {
-                    if (adapterInfoMasks.empty()) {
-                        adapterInfoMasks = legacy_get_masks();
-                    }
-
-                    // Set the DHCP server on Windows Server 2003.
-                    auto ip_mask = adapterInfoMasks.find(addr);
-                    if (ip_mask != adapterInfoMasks.end()) {
-                        net_interface.dhcp_server = ip_mask->second.second;
-                    }
-                }
-#endif
-
                 if (it->Address.lpSockaddr->sa_family == AF_INET || it->Address.lpSockaddr->sa_family == AF_INET6) {
                     bool ipv6 = it->Address.lpSockaddr->sa_family == AF_INET6;
 
                     binding b;
                     b.address = addr;
 
-                    if (adapterInfoMasks.empty()) {
-                        // Need to do lookup based on the structure length.
-                        auto adapterAddr = reinterpret_cast<IP_ADAPTER_UNICAST_ADDRESS_LH&>(*it);
-                        if (ipv6) {
-                            auto mask = create_ipv6_mask(adapterAddr.OnLinkPrefixLength);
-                            auto masked = mask_ipv6_address(it->Address.lpSockaddr, mask);
-                            b.netmask = winsock.address_to_string(mask);
-                            b.network = winsock.address_to_string(masked);
-                        } else {
-                            auto mask = create_ipv4_mask(adapterAddr.OnLinkPrefixLength);
-                            auto masked = mask_ipv4_address(it->Address.lpSockaddr, mask);
-                            b.netmask = winsock.address_to_string(mask);
-                            b.network = winsock.address_to_string(masked);
-                        }
+                    // Need to do lookup based on the structure length.
+                    auto adapterAddr = reinterpret_cast<IP_ADAPTER_UNICAST_ADDRESS_LH&>(*it);
+                    if (ipv6) {
+                        auto mask = create_ipv6_mask(adapterAddr.OnLinkPrefixLength);
+                        auto masked = mask_ipv6_address(it->Address.lpSockaddr, mask);
+                        b.netmask = winsock.address_to_string(mask);
+                        b.network = winsock.address_to_string(masked);
                     } else {
-#ifdef WIN_SERVER_2003_SUPPORT
-                        if (ipv6) {
-                            LOG_DEBUG("netmask for %1% (IPv6) is not supported on this platform", b.address);
-                        } else {
-                            auto ip_mask = adapterInfoMasks.find(b.address);
-                            if (ip_mask != adapterInfoMasks.end()) {
-                                b.netmask = ip_mask->second.first;
-
-                                auto mask = winsock.string_to_address<sockaddr_in, AF_INET>(b.netmask);
-                                auto masked = mask_ipv4_address(it->Address.lpSockaddr, mask);
-                                b.network = winsock.address_to_string(masked);
-                            } else {
-                                LOG_DEBUG("could not find netmask for %1%", b.address);
-                            }
-                        }
-#endif
+                        auto mask = create_ipv4_mask(adapterAddr.OnLinkPrefixLength);
+                        auto masked = mask_ipv4_address(it->Address.lpSockaddr, mask);
+                        b.netmask = winsock.address_to_string(mask);
+                        b.network = winsock.address_to_string(masked);
                     }
 
                     if (ipv6) {
