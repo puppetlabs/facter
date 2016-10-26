@@ -273,7 +273,6 @@ endif()
 # Set include directories
 include_directories(
     inc
-    ${RAPIDJSON_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
