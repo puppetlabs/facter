@@ -23,6 +23,11 @@ struct simple_resolver : facter::facts::resolver
     {
         facts.add("foo", make_value<string_value>("bar"));
     }
+
+    bool is_blockable() const override
+    {
+        return true;
+    }
 };
 
 struct multi_resolver : facter::facts::resolver
@@ -35,6 +40,11 @@ struct multi_resolver : facter::facts::resolver
     {
         facts.add("foo", make_value<string_value>("bar"));
         facts.add("bar", make_value<string_value>("foo"));
+    }
+
+    bool is_blockable() const override
+    {
+        return true;
     }
 };
 
@@ -476,6 +486,28 @@ SCENARIO("using the fact collection with a default external fact path") {
             REQUIRE(facts.get<string_value>("txt_fact2"));
             REQUIRE_FALSE(facts.get<string_value>("txt_fact3"));
             REQUIRE(facts.get<string_value>("txt_fact4"));
+        }
+    }
+}
+
+SCENARIO("using the fact collection with a blocklist") {
+    collection_fixture facts({ "test" });
+    REQUIRE(facts.size() == 0u);
+    REQUIRE(facts.empty());
+
+    GIVEN("a resolver that adds a single fact") {
+        facts.add(make_shared<simple_resolver>());
+        THEN("the fact should not be resolved") {
+            REQUIRE(facts.size() == 0u);
+            REQUIRE_FALSE(facts.get<string_value>("foo"));
+        }
+    }
+    GIVEN("a resolver that adds multiple facts") {
+        facts.add(make_shared<multi_resolver>());
+        THEN("none of the facts should resolve") {
+            REQUIRE(facts.size() == 0u);
+            REQUIRE_FALSE(facts.get<string_value>("foo"));
+            REQUIRE_FALSE(facts.get<string_value>("bar"));
         }
     }
 }

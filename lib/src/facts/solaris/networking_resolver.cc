@@ -20,21 +20,21 @@ namespace facter { namespace facts { namespace solaris {
 
         scoped_descriptor ctl(socket(AF_INET, SOCK_DGRAM, 0));
         if (static_cast<int>(ctl) == -1) {
-            LOG_DEBUG("socket failed %1% (%2%): interface information is unavailable.", strerror(errno), errno);
+            LOG_DEBUG("socket failed {1} ({2}): interface information is unavailable.", strerror(errno), errno);
             return data;
         }
 
         // (patterned on bsd impl)
         lifnum ifnr{AF_UNSPEC, 0, 0};
         if (ioctl(ctl, SIOCGLIFNUM, &ifnr) == -1) {
-            LOG_DEBUG("ioctl with SIOCGLIFNUM failed: %1% (%2%): interface information is unavailable.", strerror(errno), errno);
+            LOG_DEBUG("ioctl with SIOCGLIFNUM failed: {1} ({2}): interface information is unavailable.", strerror(errno), errno);
             return data;
         }
 
         vector<lifreq> buffer(ifnr.lifn_count);
         lifconf lifc = {AF_UNSPEC, 0, static_cast<int>(buffer.size() * sizeof(lifreq)), reinterpret_cast<caddr_t>(buffer.data())};
         if (ioctl(ctl, SIOCGLIFCONF, &lifc) == -1) {
-            LOG_DEBUG("ioctl with SIOCGLIFCONF failed: %1% (%2%): interface information is unavailable.", strerror(errno), errno);
+            LOG_DEBUG("ioctl with SIOCGLIFCONF failed: {1} ({2}): interface information is unavailable.", strerror(errno), errno);
             return data;
         }
 
@@ -94,11 +94,11 @@ namespace facter { namespace facts { namespace solaris {
         // Get the netmask
         scoped_descriptor ctl(socket(addr->lifr_addr.ss_family, SOCK_DGRAM, 0));
         if (static_cast<int>(ctl) == -1) {
-            LOG_DEBUG("socket failed: %1% (%2%): netmask and network for interface %3% are unavailable.", strerror(errno), errno, addr->lifr_name);
+            LOG_DEBUG("socket failed: {1} ({2}): netmask and network for interface {3} are unavailable.", strerror(errno), errno, addr->lifr_name);
         } else {
             lifreq netmask_addr = *addr;
             if (ioctl(ctl, SIOCGLIFNETMASK, &netmask_addr) == -1) {
-                LOG_DEBUG("ioctl with SIOCGLIFNETMASK failed: %1% (%2%): netmask and network for interface %3% are unavailable.", strerror(errno), errno, addr->lifr_name);
+                LOG_DEBUG("ioctl with SIOCGLIFNETMASK failed: {1} ({2}): netmask and network for interface {3} are unavailable.", strerror(errno), errno, addr->lifr_name);
             } else {
                 b.netmask = address_to_string(reinterpret_cast<sockaddr const*>(&netmask_addr.lifr_addr));
                 b.network = address_to_string(reinterpret_cast<sockaddr const*>(&addr->lifr_addr), reinterpret_cast<sockaddr const*>(&netmask_addr.lifr_addr));
@@ -112,7 +112,7 @@ namespace facter { namespace facts { namespace solaris {
     {
         scoped_descriptor ctl(socket(addr->lifr_addr.ss_family, SOCK_DGRAM, 0));
         if (static_cast<int>(ctl) == -1) {
-            LOG_DEBUG("socket failed: %1% (%2%): link level address for interface %3% is unavailable.", strerror(errno), errno, addr->lifr_name);
+            LOG_DEBUG("socket failed: {1} ({2}): link level address for interface {3} is unavailable.", strerror(errno), errno, addr->lifr_name);
             return;
         }
 
@@ -120,7 +120,7 @@ namespace facter { namespace facts { namespace solaris {
         sockaddr_in* arp_addr = reinterpret_cast<sockaddr_in*>(&arp.arp_pa);
         arp_addr->sin_addr.s_addr = reinterpret_cast<sockaddr_in const*>(&addr->lifr_addr)->sin_addr.s_addr;
         if (ioctl(ctl, SIOCGARP, &arp) == -1) {
-            LOG_DEBUG("ioctl with SIOCGARP failed: %1% (%2%): link level address for %3% is unavailable.", strerror(errno), errno, addr->lifr_name);
+            LOG_DEBUG("ioctl with SIOCGARP failed: {1} ({2}): link level address for {3} is unavailable.", strerror(errno), errno, addr->lifr_name);
             return;
         }
 
@@ -131,13 +131,13 @@ namespace facter { namespace facts { namespace solaris {
     {
         scoped_descriptor ctl(socket(addr->lifr_addr.ss_family, SOCK_DGRAM, 0));
         if (static_cast<int>(ctl) == -1) {
-            LOG_DEBUG("socket failed: %1% (%2%): MTU for interface %3% is unavailable.", strerror(errno), errno, addr->lifr_name);
+            LOG_DEBUG("socket failed: {1} ({2}): MTU for interface {3} is unavailable.", strerror(errno), errno, addr->lifr_name);
             return;
         }
 
         lifreq mtu = *addr;
         if (ioctl(ctl, SIOCGLIFMTU, &mtu) == -1) {
-            LOG_DEBUG("ioctl with SIOCGLIFMTU failed: %1% (%2%): MTU for interface %3% is unavailable.", strerror(errno), errno, addr->lifr_name);
+            LOG_DEBUG("ioctl with SIOCGLIFMTU failed: {1} ({2}): MTU for interface {3} is unavailable.", strerror(errno), errno, addr->lifr_name);
             return;
         }
 

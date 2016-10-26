@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.2.2)
 
 set(LIBFACTER_VERSION_MAJOR 3)
-set(LIBFACTER_VERSION_MINOR 4)
-set(LIBFACTER_VERSION_PATCH 1)
+set(LIBFACTER_VERSION_MINOR 5)
+set(LIBFACTER_VERSION_PATCH 0)
 
 # Get the HEAD SHA1 commit message
 get_commit_string(LIBFACTER_COMMIT)
@@ -59,6 +59,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/zpool_resolver.cc"
     "src/facts/resolvers/zone_resolver.cc"
     "src/facts/resolvers/zfs_resolver.cc"
+    "src/facts/cache.cc"
     "src/facts/scalar_value.cc"
     "src/logging/logging.cc"
     "src/ruby/aggregate_resolution.cc"
@@ -73,6 +74,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/util/scoped_file.cc"
     "src/util/string.cc"
     "src/util/config/config.cc"
+    "src/util/yaml.cc"
 )
 
 # Set the POSIX sources if on a POSIX platform
@@ -87,6 +89,7 @@ if (UNIX)
         "src/facts/posix/timezone_resolver.cc"
         "src/facts/posix/uptime_resolver.cc"
         "src/facts/posix/xen_resolver.cc"
+        "src/facts/posix/cache.cc"
         "src/util/posix/scoped_addrinfo.cc"
         "src/util/posix/scoped_descriptor.cc"
         "src/util/config/posix/config.cc"
@@ -227,6 +230,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
         "src/facts/windows/timezone_resolver.cc"
         "src/facts/windows/uptime_resolver.cc"
         "src/facts/windows/virtualization_resolver.cc"
+        "src/facts/windows/cache.cc"
         "src/util/config/windows/config.cc"
     )
 
@@ -300,16 +304,21 @@ if(AIX)
 endif()
 
 # Link in additional libraries
+# Note: this assumes shared Leatherman and static Boost libraries
 target_link_libraries(libfacter PRIVATE
-    ${CPPHOCON_LIBRARIES}
     ${LIBFACTER_PLATFORM_LIBRARIES}
-    ${LEATHERMAN_LIBRARIES}
+    ${CPPHOCON_LIBRARIES}
     ${Boost_LIBRARIES}
+    ${LEATHERMAN_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
     ${CURL_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
 )
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND BOOST_STATIC AND LEATHERMAN_USE_LOCALES)
+    target_link_libraries(libfacter PRIVATE iconv)
+endif()
 
 symbol_exports(libfacter "${CMAKE_CURRENT_LIST_DIR}/inc/facter/export.h")
 target_compile_definitions(libfactersrc PRIVATE "-Dlibfacter_EXPORTS")
@@ -336,7 +345,7 @@ endif()
 
 set(RUBY_LIB_INSTALL "" CACHE PATH "Specify the location to install facter.rb")
 if(RUBY_LIB_INSTALL)
-    set(RUBY_VENDORDIR ${RUBY_LIB_INSTALL}) 
+    set(RUBY_VENDORDIR ${RUBY_LIB_INSTALL})
 else()
     # Disable actually installing facter.rb if Ruby is not present and RUBY_LIB_INSTALL not specified.
     if (RUBY_FOUND)

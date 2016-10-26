@@ -18,6 +18,7 @@ Build Requirements
 * Boost C++ Libraries >= 1.54
 * yaml-cpp >= 0.5.1
 * [leatherman](https://github.com/puppetlabs/leatherman) >= 0.3.4
+* [cpp-hocon](https://github.com/puppetlabs/cpp-hocon) >= 0.1.0
 
 Optional Build Libraries
 ------------------------
@@ -128,9 +129,9 @@ The following will install all required tools and libraries:
 Optionally `leatherman` can be installed from packages too if not
 built locally.
 
-### Build and install Leatherman
+### Build and install Leatherman and cpp-hocon
 
-[Leatherman](https://github.com/puppetlabs/leatherman) is built similar to the Pre-Build instructions below. If building on Windows, install to the same `$install` location used for other dependencies.
+[Leatherman](https://github.com/puppetlabs/leatherman) and [cpp-hocon](https://github.com/puppetlabs/cpp-hocon) are built similar to the Pre-Build instructions below. If building on Windows, install to the same `$install` location used for other dependencies.
 
 Pre-Build
 ---------
@@ -247,10 +248,15 @@ cli : {
     verbose   : false,
     log-level : "warn"
 }
+facts : {
+    blocklist : [ "file system", "EC2" ]
+}
 ```
-All options are respected when running Facter standalone, while calling Facter from Ruby will only load `external-dir` and `custom-dir`.
+All options are respected when running Facter standalone, while calling Facter from Ruby will only load `external-dir`, `custom-dir`, and the fact-specific configuration.
 
-The file will be loaded by default from `/etc/puppetlabs/facter/facter.conf` on Unix and `C:\ProgramData\PuppetLabs\facter\facter.conf` on Windows. A different location can be specified using the `--config` command line option.
+The file will be loaded by default from `/etc/puppetlabs/facter/facter.conf` on Unix and `C:\ProgramData\PuppetLabs\facter\etc\facter.conf` on Windows. A different location can be specified using the `--config` command line option.
+
+Elements in the blocklist are fact groupings which will not be resolved when Facter runs. Valid elements correspond to the `blockgroup` field in the fact schema. If a fact does not have a blockgroup, it cannot be blocked.
 
 Uninstall
 ---------

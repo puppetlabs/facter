@@ -25,11 +25,6 @@ struct networking_utilities : facter::facts::windows::networking_resolver
     template <typename T>
     std::string address_to_string(T const* addr, T const* mask) { return {}; }
 
-    bool test_mask()
-    {
-        return static_cast<bool>(_convertLengthToIpv4Mask);
-    }
-
     facter::util::windows::wsa winsock;
 };
 
@@ -75,17 +70,15 @@ static const ipv4_case ip4_masks[] = {
 SCENARIO("create IPv4 masks") {
     networking_utilities util;
 
-    if (util.test_mask()) {
-        // Test various valid masklen, too large masklen, verify output.
-        for (auto const& item : ip4_masks) {
-            auto mask = util.create_ipv4_mask(item.masklen);
-            REQUIRE(mask == item.addr);
-        }
-
-        // Verify the boolean operator behaves as expected.
-        REQUIRE(ip4_masks[0].addr != ip4_masks[1].addr);
-        REQUIRE(ip4_masks[0].addr != ip4_masks[6].addr);
+    // Test various valid masklen, too large masklen, verify output.
+    for (auto const& item : ip4_masks) {
+        auto mask = util.create_ipv4_mask(item.masklen);
+        REQUIRE(mask == item.addr);
     }
+
+    // Verify the boolean operator behaves as expected.
+    REQUIRE(ip4_masks[0].addr != ip4_masks[1].addr);
+    REQUIRE(ip4_masks[0].addr != ip4_masks[6].addr);
 }
 
 SCENARIO("IPv4 address to string") {
@@ -167,17 +160,15 @@ static const ipv6_case ip6_masks[] = {
 SCENARIO("create IPv6 mask") {
     networking_utilities util;
 
-    if (util.test_mask()) {
-        // Test various valid masklen, too large masklen, verify output.
-        for (auto const& item : ip6_masks) {
-            auto mask = util.create_ipv6_mask(item.masklen);
-            REQUIRE(item.addr == mask);
-        }
-
-        // Verify the boolean operator behaves as expected.
-        REQUIRE(ip6_masks[0].addr != ip6_masks[1].addr);
-        REQUIRE(ip6_masks[0].addr != ip6_masks[6].addr);
+    // Test various valid masklen, too large masklen, verify output.
+    for (auto const& item : ip6_masks) {
+        auto mask = util.create_ipv6_mask(item.masklen);
+        REQUIRE(item.addr == mask);
     }
+
+    // Verify the boolean operator behaves as expected.
+    REQUIRE(ip6_masks[0].addr != ip6_masks[1].addr);
+    REQUIRE(ip6_masks[0].addr != ip6_masks[6].addr);
 }
 
 SCENARIO("IPv6 address to string") {

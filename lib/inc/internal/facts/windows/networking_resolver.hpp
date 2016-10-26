@@ -69,11 +69,6 @@ namespace facter { namespace facts { namespace windows {
          * @return A new sockaddr_in6 structure representing the masked IPv6 address.
          */
         static sockaddr_in6 mask_ipv6_address(sockaddr const* addr, sockaddr_in6 const& mask);
-
-        /**
-         * Stores a pointer to ConvertLengthToIpv4Mask, which is used post-Windows Server 2003.
-         */
-        std::function<int(unsigned long, unsigned long*)> _convertLengthToIpv4Mask;
     };
 
 }}}  // namespace facter::facts::windows

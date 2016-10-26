@@ -20,7 +20,7 @@ namespace facter { namespace facts { namespace osx {
         // Get the physical count of processors
         size = sizeof(result.physical_count);
         if (sysctlbyname("hw.physicalcpu_max", &result.physical_count, &size, nullptr, 0) == -1) {
-            LOG_DEBUG("sysctlbyname failed: %1% (%2%): physical processor count is unavailable.", strerror(errno), errno);
+            LOG_DEBUG("sysctlbyname failed: {1} ({2}): physical processor count is unavailable.", strerror(errno), errno);
         }
 
         // For each logical processor, collect the model name
@@ -36,7 +36,7 @@ namespace facter { namespace facts { namespace osx {
                     break;
                 }
                 if (errno != ENOMEM) {
-                    LOG_DEBUG("sysctlbyname failed: %1% (%2%): processor models are unavailable.", strerror(errno), errno);
+                    LOG_DEBUG("sysctlbyname failed: {1} ({2}): processor models are unavailable.", strerror(errno), errno);
                     break;
                 }
                 buffer.resize(buffer.size() * 2);
@@ -46,7 +46,7 @@ namespace facter { namespace facts { namespace osx {
         // Set the speed
         size = sizeof(result.speed);
         if (sysctlbyname("hw.cpufrequency_max", &result.speed, &size, nullptr, 0) == -1) {
-            LOG_DEBUG("sysctlbyname failed: %1% (%2%): processor speed is unavailable.", strerror(errno), errno);
+            LOG_DEBUG("sysctlbyname failed: {1} ({2}): processor speed is unavailable.", strerror(errno), errno);
         }
 
         return result;

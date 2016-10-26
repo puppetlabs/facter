@@ -17,7 +17,7 @@ namespace facter { namespace facts { namespace bsd {
         // First get the count of file systems
         int count = getfsstat(nullptr, 0, MNT_NOWAIT);
         if (count == -1) {
-            LOG_ERROR("getfsstat failed: %1% (%2%): file system facts are unavailable.", strerror(errno), errno);
+            LOG_ERROR("getfsstat failed: {1} ({2}): file system facts are unavailable.", strerror(errno), errno);
             return result;
         }
 
@@ -25,7 +25,7 @@ namespace facter { namespace facts { namespace bsd {
         vector<struct statfs> filesystems(count);
         count = getfsstat(filesystems.data(), filesystems.size() * sizeof(struct statfs), MNT_NOWAIT);
         if (count == -1) {
-            LOG_ERROR("getfsstat failed: %1% (%2%): file system facts are unavailable.", strerror(errno), errno);
+            LOG_ERROR("getfsstat failed: {1} ({2}): file system facts are unavailable.", strerror(errno), errno);
             return result;
         }
 

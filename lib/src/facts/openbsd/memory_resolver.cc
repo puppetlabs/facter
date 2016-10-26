@@ -22,13 +22,13 @@ namespace facter { namespace facts { namespace openbsd {
         int page_size = 0;
         size_t len = sizeof(page_size);
         if (sysctl(pagesize_mib, 2, &page_size, &len, nullptr, 0) == -1) {
-            LOG_DEBUG("sysctl failed: %1% (%2%): system page size is unknown.", strerror(errno), errno);
+            LOG_DEBUG("sysctl failed: {1} ({2}): system page size is unknown.", strerror(errno), errno);
         } else {
             int uvmexp_mib[] = { CTL_VM, VM_UVMEXP };
             struct uvmexp uvmexp;
             len = sizeof(uvmexp);
             if (sysctl(uvmexp_mib, 2, &uvmexp, &len, nullptr, 0) == -1) {
-                LOG_DEBUG("sysctl uvmexp failed: %1% (%2%): free memory is not available.", strerror(errno), errno);
+                LOG_DEBUG("sysctl uvmexp failed: {1} ({2}): free memory is not available.", strerror(errno), errno);
             }
 
             // Should we account for the buffer cache?
@@ -41,7 +41,7 @@ namespace facter { namespace facts { namespace openbsd {
         vector<struct swapent> swapdev(nswaps);
 
         if (swapctl(SWAP_STATS, swapdev.data(), nswaps) == -1) {
-             LOG_DEBUG("swapctl: SWAP_STATS failed: %1% (%2%)", strerror(errno), errno);
+             LOG_DEBUG("swapctl: SWAP_STATS failed: {1} ({2})", strerror(errno), errno);
              return result;
         }
 
@@ -65,7 +65,7 @@ namespace facter { namespace facts { namespace openbsd {
         len = sizeof(encrypted);
 
         if (sysctl(swap_encrypted_mib, 3, &encrypted, &len, nullptr, 0) == -1) {
-            LOG_DEBUG("sysctl failed: %1% (%2%): encrypted swap fact not available.", strerror(errno), errno);
+            LOG_DEBUG("sysctl failed: {1} ({2}): encrypted swap fact not available.", strerror(errno), errno);
         }
 
         result.swap_encryption = encrypted ? encryption_status::encrypted : encryption_status::not_encrypted;

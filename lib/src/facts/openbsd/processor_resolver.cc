@@ -19,7 +19,7 @@ namespace facter { namespace facts { namespace openbsd {
         mib[1] = HW_NCPU;
 
         if (sysctl(mib, 2, &result.logical_count, &len, nullptr, 0) == -1) {
-            LOG_DEBUG("sysctl hw.ncpu failed: %1% (%2%): logical processor count is unavailable.", strerror(errno), errno);
+            LOG_DEBUG("sysctl hw.ncpu failed: {1} ({2}): logical processor count is unavailable.", strerror(errno), errno);
         }
 
         // For each logical processor, collect the model name
@@ -37,7 +37,7 @@ namespace facter { namespace facts { namespace openbsd {
                     break;
                 }
                 if (errno != ENOMEM) {
-                    LOG_DEBUG("sysctl hw.model failed: %1% (%2%): processor models are unavailable.", strerror(errno), errno);
+                    LOG_DEBUG("sysctl hw.model failed: {1} ({2}): processor models are unavailable.", strerror(errno), errno);
                     break;
                 }
                 buffer.resize(buffer.size() * 2);
@@ -48,7 +48,7 @@ namespace facter { namespace facts { namespace openbsd {
         len = sizeof(result.speed);
         mib[1] = HW_CPUSPEED;
         if (sysctl(mib, 2, &result.speed, &len, nullptr, 0) == -1) {
-            LOG_DEBUG("sysctl hw.cpuspeed failed: %1% (%2%): processor speed is unavailable.", strerror(errno), errno);
+            LOG_DEBUG("sysctl hw.cpuspeed failed: {1} ({2}): processor speed is unavailable.", strerror(errno), errno);
         }
         // Scale the speed to something resolve() can correctly map
         result.speed *= 1000 * 1000;

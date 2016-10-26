@@ -30,6 +30,13 @@ namespace facter { namespace util { namespace config {
         }
     }
 
+    void load_fact_settings(shared_config hocon_config, po::variables_map& vm) {
+        if (hocon_config && hocon_config->has_path("facts")) {
+            auto fact_settings = hocon_config->get_object("facts")->to_config();
+            po::store(hocon::program_options::parse_hocon<char>(fact_settings, fact_config_options(), true), vm);
+        }
+    }
+
     po::options_description global_config_options() {
         po::options_description global_options("");
         global_options.add_options()
@@ -49,5 +56,28 @@ namespace facter { namespace util { namespace config {
             ("trace", po::value<bool>()->default_value(false), "Enable backtraces for custom facts.")
             ("verbose", po::value<bool>()->default_value(false), "Enable verbose (info) output.");
         return cli_options;
+    }
+
+    po::options_description fact_config_options() {
+        po::options_description fact_settings("");
+        fact_settings.add_options()
+            ("blocklist", po::value<vector<string>>(), "A set of facts to block.");
+        return fact_settings;
+    }
+
+    unordered_map<string, int64_t> load_ttls(shared_config hocon_config) {
+        unordered_map<string, int64_t> ttls;
+        if (hocon_config && hocon_config->has_path("facts.ttls")) {
+            auto ttl_objs = hocon_config->get_object_list("facts.ttls");
+            for (auto entry : ttl_objs) {
+                shared_config entry_conf = entry->to_config();
+                // triple-quote this string so that cpp-hocon will correctly parse it as a single path element
+                // and ignore otherwise reserved characters
+                string fact = entry->key_set().front();
+                int64_t duration = entry_conf->get_duration("\"\"\"" + fact + "\"\"\"", time_unit::SECONDS);
+                ttls.insert({ fact, duration });
+            }
+        }
+        return ttls;
     }
 }}}  // namespace facter::util::config;

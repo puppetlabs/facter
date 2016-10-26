@@ -35,7 +35,7 @@ static string getattr(string object, string field)
         0);
 
     if (result == "") {
-        LOG_WARNING("Could not get a value from lsattr -El %1% -a %2%", object, field);
+        LOG_WARNING("Could not get a value from lsattr -El {1} -a {2}", object, field);
     }
     return result;
 }

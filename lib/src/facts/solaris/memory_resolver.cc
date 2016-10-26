@@ -29,7 +29,7 @@ namespace facter { namespace facts { namespace solaris {
             result.mem_total = ke.value<ulong_t>("physmem") * page_size;
             result.mem_free = ke.value<ulong_t>("pagesfree") * page_size;
         } catch (kstat_exception &ex) {
-            LOG_DEBUG("failed to read memory facts from kstat api: %1%.", ex.what());
+            LOG_DEBUG("failed to read memory facts from kstat api: {1}.", ex.what());
 
             uint64_t physmem, pagesfree;
 
@@ -51,7 +51,7 @@ namespace facter { namespace facts { namespace solaris {
         // http://www.brendangregg.com/K9Toolkit/swapinfo
         int num = 0;
         if ((num = swapctl(SC_GETNSWP,  0)) == -1) {
-            LOG_DEBUG("swapctl failed: %1% (%2%): swap information is unavailable", strerror(errno), errno);
+            LOG_DEBUG("swapctl failed: {1} ({2}): swap information is unavailable", strerror(errno), errno);
             return result;
         }
         if (num == 0) {
@@ -74,7 +74,7 @@ namespace facter { namespace facts { namespace solaris {
         }
 
         if (swapctl(SC_LIST, swaps) == -1) {
-            LOG_DEBUG("swapctl with SC_LIST failed: %1% (%2%): swap information is unavailable", strerror(errno), errno);
+            LOG_DEBUG("swapctl with SC_LIST failed: {1} ({2}): swap information is unavailable", strerror(errno), errno);
             return result;
         }
 
