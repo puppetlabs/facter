@@ -4,6 +4,9 @@
 #include <leatherman/locale/locale.hpp>
 #include <boost/filesystem.hpp>
 
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
+
 using namespace std;
 using namespace leatherman::util;
 namespace lm = leatherman::logging;
@@ -82,8 +85,7 @@ namespace facter { namespace logging {
                     setup_logging_internal(os, false);
                     log(level::warning, "Could not initialize locale, even with LC_* variables cleared. Continuing without localization support");
                 } catch (exception const& e) {
-                    throw locale_error(string("could not initialize logging, even with locale variables reset to LANG=C LC_ALL=C: ")
-                                   + e.what());
+                    throw locale_error(_("could not initialize logging, even with locale variables reset to LANG=C LC_ALL=C: {1}", e.what()));
                 }
             }
         }
@@ -124,14 +126,21 @@ namespace facter { namespace logging {
         lm::clear_error_logged_flag();
     }
 
-    void log(level lvl, string const& message)
+    std::string translate(std::string const& msg)
     {
-        lm::log(LOG_NAMESPACE, static_cast<lm::log_level>(lvl), 0, message);
+#ifdef LEATHERMAN_I18N
+        return leatherman::locale::translate(msg);
+#else
+        // When locales are disabled, use boost::format, which expects %N% style formatting
+        static const boost::regex match{"\\{(\\d+)\\}"};
+        static const std::string repl{"%\\1%"};
+        return boost::regex_replace(leatherman::locale::translate(msg), match, repl);
+#endif
     }
 
-    void log(level lvl, boost::format& message)
+    void log(level lvl, string const& message)
     {
-        log(lvl, message.str());
+        lm::log(LOG_NAMESPACE, static_cast<lm::log_level>(lvl), 0, translate(message));
     }
 
     void colorize(ostream &os, level lvl)

@@ -28,9 +28,9 @@ namespace facter { namespace facts { namespace posix {
         int err = getpwuid_r(uid, &pwd, buffer.data(), buffer.size(), &pwd_ptr);
 
         if (err != 0) {
-            LOG_WARNING("getpwuid_r failed: %1% (%2%)", strerror(err), err);
+            LOG_WARNING("getpwuid_r failed: {1} ({2})", strerror(err), err);
         } else if (pwd_ptr == NULL) {
-            LOG_WARNING("effective uid %1% does not have a passwd entry.", uid);
+            LOG_WARNING("effective uid {1} does not have a passwd entry.", uid);
         } else {
             result.user_id = static_cast<int64_t>(uid);
             result.user_name = pwd.pw_name;
@@ -51,9 +51,9 @@ namespace facter { namespace facts { namespace posix {
         err = getgrgid_r(gid, &grp, buffer.data(), buffer.size(), &grp_ptr);
 
         if (err != 0) {
-            LOG_WARNING("getgrgid_r failed: %1% (%2%)", strerror(err), err);
+            LOG_WARNING("getgrgid_r failed: {1} ({2})", strerror(err), err);
         } else if (grp_ptr == NULL) {
-            LOG_WARNING("effective gid %1% does not have a group entry.", gid);
+            LOG_WARNING("effective gid {1} does not have a group entry.", gid);
         } else {
             result.group_id = static_cast<int64_t>(gid);
             result.group_name = grp.gr_name;

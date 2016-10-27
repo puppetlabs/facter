@@ -12,7 +12,7 @@ namespace facter { namespace facts { namespace windows {
     {
         PERFORMANCE_INFORMATION statex;
         if (!GetPerformanceInfo(&statex, sizeof(statex))) {
-            LOG_DEBUG("resolving memory facts failed: %1%", system_error());
+            LOG_DEBUG("resolving memory facts failed: {1}", system_error());
             return {};
         }
 

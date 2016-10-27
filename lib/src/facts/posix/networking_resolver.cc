@@ -69,12 +69,12 @@ namespace facter { namespace facts { namespace posix {
         // Get the hostname (+1 to ensure a null is returned on platforms where maximum truncation may occur)
         vector<char> name(size + 1);
         if (gethostname(name.data(), size) != 0) {
-            LOG_WARNING("gethostname failed: %1% (%2%): hostname is unavailable.", strerror(errno), errno);
+            LOG_WARNING("gethostname failed: {1} ({2}): hostname is unavailable.", strerror(errno), errno);
         } else {
             // Check for fully-qualified hostname
             auto it = find(name.begin(), name.end(), '.');
             if (it != name.end()) {
-                LOG_DEBUG("using the FQDN returned by gethostname: %1%.", name.data());
+                LOG_DEBUG("using the FQDN returned by gethostname: {1}.", name.data());
                 result.hostname.assign(name.begin(), it);
                 if (++it != name.end()) {
                     // Use the remainder of the string, up to the first null character
@@ -91,9 +91,9 @@ namespace facter { namespace facts { namespace posix {
             // Retrieve the FQDN by resolving the hostname
             scoped_addrinfo info(result.hostname);
             if (info.result() != 0 && info.result() != EAI_NONAME) {
-                LOG_WARNING("getaddrinfo failed: %1% (%2%): hostname may not be externally resolvable.", gai_strerror(info.result()), info.result());
+                LOG_WARNING("getaddrinfo failed: {1} ({2}): hostname may not be externally resolvable.", gai_strerror(info.result()), info.result());
             } else if (!info || info.result() == EAI_NONAME || result.hostname == static_cast<addrinfo*>(info)->ai_canonname) {
-                LOG_DEBUG("hostname \"%1%\" could not be resolved: hostname may not be externally resolvable.", result.hostname);
+                LOG_DEBUG("hostname \"{1}\" could not be resolved: hostname may not be externally resolvable.", result.hostname);
             } else {
                 result.fqdn = static_cast<addrinfo*>(info)->ai_canonname;
             }

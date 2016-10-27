@@ -102,6 +102,7 @@ namespace facter { namespace ruby {
         std::vector<leatherman::ruby::VALUE> _resolutions;
         bool _resolved;
         bool _resolving;
+        size_t _weight;
     };
 
 }}  // namespace facter::ruby

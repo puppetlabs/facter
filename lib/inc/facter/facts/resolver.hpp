@@ -99,15 +99,28 @@ namespace facter { namespace facts {
         bool is_match(std::string const& name) const;
 
         /**
+         * Gets list of languages accepted by the fact resolver for HTTP requests.
+         * @return Returns the fact resolver's accepted languages (comma-separated list of language tags formatted for the HTTP Accept-Language header.)
+         */
+        std::string const& http_langs();
+
+        /**
          * Called to resolve all facts the resolver is responsible for.
          * @param facts The fact collection that is resolving facts.
          */
         virtual void resolve(collection& facts) = 0;
 
+        /**
+         * Determines if this resolver can be blocked from collecting its facts.
+         * @return Returns true if this resolver can be blocked, false otherwise
+         */
+        virtual bool is_blockable() const;
+
      private:
         std::string _name;
         std::vector<std::string> _names;
         std::vector<boost::regex> _regexes;
+        std::string _http_langs;
     };
 
 }}  // namespace facter::facts

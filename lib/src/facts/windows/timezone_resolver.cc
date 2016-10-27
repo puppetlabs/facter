@@ -13,13 +13,13 @@ namespace facter { namespace facts { namespace windows {
         tm localtime;
 
         if (localtime_s(&localtime, &since_epoch)) {
-            LOG_WARNING("localtime failed: timezone is unavailable: %1% (%2%)", strerror(errno), errno);
+            LOG_WARNING("localtime failed: timezone is unavailable: {1} ({2})", strerror(errno), errno);
             return {};
         }
 
         wchar_t buffer[256] = {};
         if (wcsftime(buffer, (sizeof(buffer) / sizeof(wchar_t)) - 1, L"%Z", &localtime) == 0) {
-            LOG_WARNING("wcsftime failed: timezone is unavailable: %1% (%2%)", strerror(errno), errno);
+            LOG_WARNING("wcsftime failed: timezone is unavailable: {1} ({2})", strerror(errno), errno);
             return {};
         }
         return boost::nowide::narrow(buffer);

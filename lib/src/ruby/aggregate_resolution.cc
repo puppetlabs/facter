@@ -1,5 +1,9 @@
 #include <internal/ruby/aggregate_resolution.hpp>
 #include <internal/ruby/chunk.hpp>
+#include <leatherman/locale/locale.hpp>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 using namespace std;
 using namespace leatherman::ruby;
@@ -71,7 +75,7 @@ namespace facter { namespace ruby {
         }
 
         if (!ruby.is_symbol(name)) {
-            ruby.rb_raise(*ruby.rb_eTypeError, "expected chunk name to be a Symbol");
+            ruby.rb_raise(*ruby.rb_eTypeError, _("expected chunk name to be a Symbol").c_str());
         }
 
         auto it = _chunks.find(name);
@@ -87,11 +91,11 @@ namespace facter { namespace ruby {
 
         // A block is required
         if (!ruby.rb_block_given_p()) {
-            ruby.rb_raise(*ruby.rb_eArgError, "a block must be provided");
+            ruby.rb_raise(*ruby.rb_eArgError, _("a block must be provided").c_str());
         }
 
         if (!ruby.is_symbol(name)) {
-            ruby.rb_raise(*ruby.rb_eTypeError, "expected chunk name to be a Symbol");
+            ruby.rb_raise(*ruby.rb_eTypeError, _("expected chunk name to be a Symbol").c_str());
         }
 
         volatile VALUE dependencies = ruby.nil_value();
@@ -102,23 +106,23 @@ namespace facter { namespace ruby {
             ID require_id = ruby.rb_intern("require");
             ruby.hash_for_each(options, [&](VALUE key, VALUE value) {
                 if (!ruby.is_symbol(key)) {
-                    ruby.rb_raise(*ruby.rb_eTypeError, "expected a Symbol for options key");
+                    ruby.rb_raise(*ruby.rb_eTypeError, _("expected a Symbol for options key").c_str());
                 }
                 ID key_id = ruby.rb_to_id(key);
                 if (key_id == require_id) {
                     if (ruby.is_array((value))) {
                         ruby.array_for_each(value, [&](VALUE element) {
                             if (!ruby.is_symbol(element)) {
-                                ruby.rb_raise(*ruby.rb_eTypeError, "expected a Symbol or Array of Symbol for require option");
+                                ruby.rb_raise(*ruby.rb_eTypeError, _("expected a Symbol or Array of Symbol for require option").c_str());
                             }
                             return true;
                         });
                     } else if (!ruby.is_symbol(value)) {
-                        ruby.rb_raise(*ruby.rb_eTypeError, "expected a Symbol or Array of Symbol for require option");
+                        ruby.rb_raise(*ruby.rb_eTypeError, _("expected a Symbol or Array of Symbol for require option").c_str());
                     }
                     dependencies = value;
                 } else {
-                    ruby.rb_raise(*ruby.rb_eArgError, "unexpected option %s", ruby.rb_id2name(key_id));
+                    ruby.rb_raise(*ruby.rb_eArgError, _("unexpected option {1}", ruby.rb_id2name(key_id)).c_str());
                 }
                 return true;
             });
@@ -181,7 +185,7 @@ namespace facter { namespace ruby {
     {
         auto const& ruby = api::instance();
         if (argc == 0 || argc > 2) {
-            ruby.rb_raise(*ruby.rb_eArgError, "wrong number of arguments (%d for 2)", argc);
+            ruby.rb_raise(*ruby.rb_eArgError, _("wrong number of arguments ({1} for 2)", argc).c_str());
         }
 
         ruby.to_native<aggregate_resolution>(self)->define_chunk(argv[0], argc > 1 ? argv[1] : ruby.nil_value());
@@ -194,7 +198,7 @@ namespace facter { namespace ruby {
 
         // A block is required
         if (!ruby.rb_block_given_p()) {
-            ruby.rb_raise(*ruby.rb_eArgError, "a block must be provided");
+            ruby.rb_raise(*ruby.rb_eArgError, _("a block must be provided").c_str());
         }
 
         ruby.to_native<aggregate_resolution>(self)->_block = ruby.rb_block_proc();
@@ -205,7 +209,7 @@ namespace facter { namespace ruby {
     {
         api const* ruby = reinterpret_cast<api const*>(context);
         if (argc != 3) {
-            ruby->rb_raise(*ruby->rb_eArgError, "wrong number of arguments (%d for 3)", argc);
+            ruby->rb_raise(*ruby->rb_eArgError, _("wrong number of arguments ({1} for 3)", argc).c_str());
         }
 
         // Recurse on left and right
@@ -232,11 +236,11 @@ namespace facter { namespace ruby {
             volatile VALUE inspect_right = ruby.rb_funcall(right, ruby.rb_intern("inspect"), 0);
             volatile VALUE class_left = ruby.rb_funcall(ruby.rb_funcall(left, ruby.rb_intern("class"), 0), ruby.rb_intern("to_s"), 0);
             volatile VALUE class_right = ruby.rb_funcall(ruby.rb_funcall(right, ruby.rb_intern("class"), 0), ruby.rb_intern("to_s"), 0);
-            ruby.rb_raise(*ruby.rb_eRuntimeError, "cannot merge %s:%s and %s:%s",
+            ruby.rb_raise(*ruby.rb_eRuntimeError, _("cannot merge {1}:{2} and {3}:{4}",
                     ruby.rb_string_value_ptr(&inspect_left),
                     ruby.rb_string_value_ptr(&class_left),
                     ruby.rb_string_value_ptr(&inspect_right),
-                    ruby.rb_string_value_ptr(&class_right));
+                    ruby.rb_string_value_ptr(&class_right)).c_str());
         }
 
         return result;

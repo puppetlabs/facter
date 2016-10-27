@@ -1,14 +1,15 @@
 version: 3.1.0.{build}
 clone_depth: 10
 environment:
-  LEATHERMAN_VERSION: 0.8.1
-  CPPHOCON_VERSION: 0.1.2
+  LEATHERMAN_VERSION: 0.9.2
+  CPPHOCON_VERSION: 0.1.4
 install:
   - git submodule update --init --recursive
 
   - choco install mingw-w64 -y -Version 4.8.3 -source https://www.myget.org/F/puppetlabs
   - choco install cmake -y -Version 3.2.2 -source https://www.myget.org/F/puppetlabs
-  - SET PATH=C:\Ruby21-x64\bin;C:\tools\mingw64\bin;%PATH%
+  - choco install -y gettext -Version 0.19.6 -source https://www.myget.org/F/puppetlabs
+  - SET PATH=C:\Ruby21-x64\bin;C:\tools\mingw64\bin;C:\Program Files\gettext-iconv;%PATH%
   - ps: $env:PATH = $env:PATH.Replace("Git\bin", "Git\cmd")
   - ps: $env:PATH = $env:PATH.Replace("Git\usr\bin", "Git\cmd")
 

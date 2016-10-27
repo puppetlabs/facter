@@ -1,7 +1,12 @@
 #include <internal/util/windows/wsa.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/locale/locale.hpp>
+#include <boost/format.hpp>
 #include <boost/nowide/convert.hpp>
 #include <Ws2tcpip.h>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 using namespace std;
 
@@ -12,7 +17,7 @@ namespace facter { namespace util { namespace windows {
     {
     }
 
-    string format_err(char const* s, int err)
+    string format_err(string const& s, int err)
     {
         return str(boost::format("%1% (%2%)") % s % boost::io::group(hex, showbase, err));
     }
@@ -25,11 +30,11 @@ namespace facter { namespace util { namespace windows {
         auto err = WSAStartup(wVersionRequested, &wsaData);
 
         if (err != 0) {
-            throw wsa_exception(format_err("WSAStartup failed with error", err));
+            throw wsa_exception(format_err(_("WSAStartup failed with error"), err));
         }
 
         if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2) {
-            throw wsa_exception("could not find a usable version of Winsock.dll");
+            throw wsa_exception(_("could not find a usable version of Winsock.dll"));
         }
     }
 
@@ -47,7 +52,7 @@ namespace facter { namespace util { namespace windows {
         DWORD size = INET6_ADDRSTRLEN+1;
         wchar_t buffer[INET6_ADDRSTRLEN+1];
         if (0 != WSAAddressToStringW(addr.lpSockaddr, addr.iSockaddrLength, NULL, buffer, &size)) {
-            throw wsa_exception(format_err("address to string translation failed", WSAGetLastError()));
+            throw wsa_exception(format_err(_("address to string translation failed"), WSAGetLastError()));
         }
 
         return boost::nowide::narrow(buffer);
@@ -57,7 +62,7 @@ namespace facter { namespace util { namespace windows {
     {
         auto addrW = boost::nowide::widen(addr);
         if (0 != WSAStringToAddressW(&addrW[0], sock->sa_family, NULL, sock, &size)) {
-            throw wsa_exception(format_err("string to address translation failed", WSAGetLastError()));
+            throw wsa_exception(format_err(_("string to address translation failed"), WSAGetLastError()));
         }
     }
 
