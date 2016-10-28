@@ -265,6 +265,7 @@ namespace facter { namespace facts { namespace linux {
                 { string(os::oracle_enterprise_linux),  string(release_file::oracle_enterprise_linux) },
                 { string(os::oracle_vm_linux),          string(release_file::oracle_vm_linux) },
                 { string(os::arista_eos),               string(release_file::arista_eos) },
+                { string(os::gentoo),                   string(release_file::gentoo) },
         };
 
         string value;
