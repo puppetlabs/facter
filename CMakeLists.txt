@@ -130,9 +130,6 @@ set(FACTER_CXX_FLAGS "${LEATHERMAN_CXX_FLAGS}")
 
 add_definitions(${LEATHERMAN_DEFINITIONS})
 
-# Include vendor libraries
-set(RAPIDJSON_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/vendor/rapidjson-0.11/include")
-
 #
 # Add cpplint and cppcheck targets
 #
