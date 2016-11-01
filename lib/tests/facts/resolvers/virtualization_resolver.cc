@@ -14,30 +14,42 @@ using namespace facter::testing;
 struct empty_virtualization_resolver : virtualization_resolver
 {
  protected:
-    virtual string get_hypervisor(collection& facts) override
+    string get_hypervisor(collection& facts) override
     {
-        return {};
+        return "";
+    }
+    string get_cloud_provider(collection& facts) override
+    {
+        return "";
     }
 };
 
 struct unknown_hypervisor_resolver : virtualization_resolver
 {
  protected:
-    virtual string get_hypervisor(collection& facts) override
+    string get_hypervisor(collection& facts) override
     {
         return "foobar";
+    }
+    string get_cloud_provider(collection& facts) override
+    {
+        return "provider";
     }
 };
 
 struct unknown_non_virtual_hypervisor_resolver : virtualization_resolver
 {
  protected:
-    virtual string get_hypervisor(collection& facts) override
+    string get_hypervisor(collection& facts) override
     {
         return "foobar";
     }
+    string get_cloud_provider(collection& facts) override
+    {
+        return "provider";
+    }
 
-    virtual bool is_virtual(string const& hypervisor) override
+    bool is_virtual(string const& hypervisor) override
     {
         return hypervisor != "foobar";
     }
@@ -46,18 +58,26 @@ struct unknown_non_virtual_hypervisor_resolver : virtualization_resolver
 struct known_hypervisor_resolver : virtualization_resolver
 {
  protected:
-    virtual string get_hypervisor(collection& facts) override
+    string get_hypervisor(collection& facts) override
     {
         return vm::docker;
+    }
+    string get_cloud_provider(collection& facts) override
+    {
+        return "provider";
     }
 };
 
 struct matched_hypervisor_resolver : virtualization_resolver
 {
  protected:
-    virtual string get_hypervisor(collection& facts) override
+    string get_hypervisor(collection& facts) override
     {
         return get_product_name_vm("VMware");
+    }
+    string get_cloud_provider(collection& facts) override
+    {
+        return "provider";
     }
 };
 
@@ -78,7 +98,7 @@ SCENARIO("using the virtualization resolver") {
     WHEN("an unknown virtual hypervisor is returned") {
         facts.add(make_shared<unknown_hypervisor_resolver>());
         THEN("the system is reported as virtual") {
-            REQUIRE(facts.size() == 2u);
+            REQUIRE(facts.size() == 3u);
             auto is_virt = facts.get<boolean_value>(fact::is_virtual);
             REQUIRE(is_virt);
             REQUIRE(is_virt->value());
@@ -90,7 +110,7 @@ SCENARIO("using the virtualization resolver") {
     WHEN("an unknown physical hypervisor is returned") {
         facts.add(make_shared<unknown_non_virtual_hypervisor_resolver>());
         THEN("the system is reported as virtual") {
-            REQUIRE(facts.size() == 2u);
+            REQUIRE(facts.size() == 3u);
             auto is_virt = facts.get<boolean_value>(fact::is_virtual);
             REQUIRE(is_virt);
             REQUIRE_FALSE(is_virt->value());
@@ -99,10 +119,10 @@ SCENARIO("using the virtualization resolver") {
             REQUIRE(hypervisor->value() == "foobar");
         }
     }
-    WHEN("an known hypervisor is returned") {
+    WHEN("a known hypervisor is returned") {
         facts.add(make_shared<known_hypervisor_resolver>());
         THEN("the system is reported as virtual") {
-            REQUIRE(facts.size() == 2u);
+            REQUIRE(facts.size() == 3u);
             auto is_virt = facts.get<boolean_value>(fact::is_virtual);
             REQUIRE(is_virt);
             REQUIRE(is_virt->value());
@@ -114,7 +134,7 @@ SCENARIO("using the virtualization resolver") {
     WHEN("a hypervisor is matched from product name") {
         facts.add(make_shared<matched_hypervisor_resolver>());
         THEN("the system is reported as virtual") {
-            REQUIRE(facts.size() == 2u);
+            REQUIRE(facts.size() == 3u);
             auto is_virt = facts.get<boolean_value>(fact::is_virtual);
             REQUIRE(is_virt);
             REQUIRE(is_virt->value());

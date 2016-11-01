@@ -287,7 +287,7 @@ If when running the tests you encounter this error message:
 
 "could not locate a ruby library"
 
-You may need to use a different static ruby library in Leatherman. To do
+You may need to use a different shared ruby library in Leatherman. To do
 this, run this command, where the location below is the default for a
 puppet agent installation:
 
