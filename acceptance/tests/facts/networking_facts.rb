@@ -33,7 +33,7 @@ test_name 'FACT-1361 - C59029 networking facts should be fully populated' do
         "\"networking.interfaces.#{primary_interface}.bindings6.0.network\"" => /[a-f0-9:]+/
     }
 
-    if agent['platform'] =~ /solaris|eos|sparc|aix|cisco/
+    if agent['platform'] =~ /eos|solaris|aix|cisco/
       #remove the invalid networking facts on eccentric platforms
       expected_networking.delete("networking.ip6")
       expected_networking.delete("networking.netmask6")
@@ -45,10 +45,20 @@ test_name 'FACT-1361 - C59029 networking facts should be fully populated' do
       expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.network\"")
     end
 
-    if agent['platform'] =~ /sparc|aix|cisco|sles/
+    if agent['platform'] =~ /aix|sparc|cisco|huawei|s390x/
       # some of our testing platforms do not use DHCP
       expected_networking.delete("networking.dhcp")
     end
+
+    if agent['platform'] =~ /cisco/
+      # Cisco main interface does not define netmask or network
+      expected_networking.delete("networking.network")
+      expected_networking.delete("networking.netmask")
+
+      #remove invalid bindings for Cisco's primary networking interface
+      expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings.0.netmask\"")
+      expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings.0.network\"")
+    end    
 
     step "Ensure the Networking fact resolves with reasonable values for at least one interface" do
       expected_networking.each do |fact, value|
