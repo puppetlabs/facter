@@ -33,36 +33,32 @@ test_name 'FACT-1361 - C59029 networking facts should be fully populated' do
         "\"networking.interfaces.#{primary_interface}.bindings6.0.network\"" => /[a-f0-9:]+/
     }
 
-    case agent['platform']
-      when /solaris/, /eos/
-        #remove the invalid networking facts on Solaris or Arista
-        expected_networking.delete("networking.ip6")
-        expected_networking.delete("networking.netmask6")
-        expected_networking.delete("networking.network6")
+    if agent['platform'] =~ /eos|solaris|aix|cisco/
+      #remove the invalid networking facts on eccentric platforms
+      expected_networking.delete("networking.ip6")
+      expected_networking.delete("networking.netmask6")
+      expected_networking.delete("networking.network6")
 
-        #remove invalid bindings for the primary networking interface on AIX and Solaris
-        expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.address\"")
-        expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.netmask\"")
-        expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.network\"")
-
-      when /sparc/, /aix/, /cisco/
-        #remove the invalid networking facts on SPARC, AIX, or Cisco
-        #Our SPARC testing platforms don't use DHCP
-        expected_networking.delete("networking.dhcp")
-        expected_networking.delete("networking.ip6")
-        expected_networking.delete("networking.netmask6")
-        expected_networking.delete("networking.network6")
-
-        #remove invalid bindings for the primary networking interface on SPARC or AIX
-        expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.address\"")
-        expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.netmask\"")
-        expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.network\"")
-
-      when /sles/
-        #some sles VMs do not have networking.dhcp
-        expected_networking.delete("networking.dhcp")
-
+      #remove invalid bindings for the primary networking interface eccentric platforms
+      expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.address\"")
+      expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.netmask\"")
+      expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.network\"")
     end
+
+    if agent['platform'] =~ /aix|sparc|cisco|huawei|s390x/
+      # some of our testing platforms do not use DHCP
+      expected_networking.delete("networking.dhcp")
+    end
+
+    if agent['platform'] =~ /cisco/
+      # Cisco main interface does not define netmask or network
+      expected_networking.delete("networking.network")
+      expected_networking.delete("networking.netmask")
+
+      #remove invalid bindings for Cisco's primary networking interface
+      expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings.0.netmask\"")
+      expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings.0.network\"")
+    end    
 
     step "Ensure the Networking fact resolves with reasonable values for at least one interface" do
       expected_networking.each do |fact, value|
