@@ -71,7 +71,7 @@ void help(po::options_description& desc)
           "===========\n"
           "\n"
           "Contains settings for configuring external and custom fact directories,\n"
-          "setting command line options, and blocking facts.\n"
+          "setting command line options, and blocking and caching facts.\n"
           "Loaded by default from %2%.\n"
           "See man page, README, or docs for more details.",
           desc, default_config_location()) << endl;
@@ -140,29 +140,29 @@ int main(int argc, char **argv)
         // boolean must be specified explicitly).
         po::options_description visible_options("");
         visible_options.add_options()
-            ("color", _("Enables color output.").c_str())
+            ("color", _("Enable color output.").c_str())
             ("config,c", po::value<string>(), _("The location of the config file.").c_str())
             ("custom-dir", po::value<vector<string>>(), _("A directory to use for custom facts.").c_str())
             ("debug,d", po::bool_switch()->default_value(false), _("Enable debug output.").c_str())
             ("external-dir", po::value<vector<string>>(), _("A directory to use for external facts.").c_str())
             ("help,h", _("Print this help message.").c_str())
             ("json,j", _("Output in JSON format.").c_str())
-            ("show-legacy", _("Show legacy facts when querying all facts.").c_str())
-            ("list-block-groups", _("Lists the names of all blockable fact groups.").c_str())
-            ("list-cache-groups", _("List the name of each cacheable group of facts").c_str())
+            ("list-block-groups", _("List the names of all blockable fact groups.").c_str())
+            ("list-cache-groups", _("List the names of all cacheable fact groups.").c_str())
             ("log-level,l", po::value<level>()->default_value(level::warning, "warn"), _("Set logging level.\nSupported levels are: none, trace, debug, info, warn, error, and fatal.").c_str())
-            ("no-block", _("Disables fact blocking.").c_str())
+            ("no-block", _("Disable fact blocking.").c_str())
             ("no-cache", _("Disable loading and refreshing facts from the cache").c_str())
-            ("no-color", _("Disables color output.").c_str())
-            ("no-custom-facts", po::bool_switch()->default_value(false), _("Disables custom facts.").c_str())
-            ("no-external-facts", po::bool_switch()->default_value(false), _("Disables external facts.").c_str())
-            ("no-ruby", po::bool_switch()->default_value(false), _("Disables loading Ruby, facts requiring Ruby, and custom facts.").c_str())
+            ("no-color", _("Disable color output.").c_str())
+            ("no-custom-facts", po::bool_switch()->default_value(false), _("Disable custom facts.").c_str())
+            ("no-external-facts", po::bool_switch()->default_value(false), _("Disable external facts.").c_str())
+            ("no-ruby", po::bool_switch()->default_value(false), _("Disable loading Ruby, facts requiring Ruby, and custom facts.").c_str())
             ("puppet,p", _("(Deprecated: use `puppet facts` instead) Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.").c_str())
+            ("show-legacy", _("Show legacy facts when querying all facts.").c_str())
             ("trace", po::bool_switch()->default_value(false), _("Enable backtraces for custom facts.").c_str())
             ("verbose", po::bool_switch()->default_value(false), _("Enable verbose (info) output.").c_str())
             ("version,v", _("Print the version and exit.").c_str())
             ("yaml,y", _("Output in YAML format.").c_str())
-            ("strict", _("Enables more aggressive error reporting.").c_str());
+            ("strict", _("Enable more aggressive error reporting.").c_str());
 
         // Build a list of "hidden" options that are not visible on the command line
         po::options_description hidden_options("");

@@ -53,7 +53,7 @@ msgid ""
 "===========\n"
 "\n"
 "Contains settings for configuring external and custom fact directories,\n"
-"setting command line options, and blocking facts.\n"
+"setting command line options, and blocking and caching facts.\n"
 "Loaded by default from %2%.\n"
 "See man page, README, or docs for more details."
 msgstr ""
@@ -74,7 +74,7 @@ msgid "requested queries: %1%."
 msgstr ""
 
 #: exe/facter.cc
-msgid "Enables color output."
+msgid "Enable color output."
 msgstr ""
 
 #: exe/facter.cc
@@ -102,15 +102,11 @@ msgid "Output in JSON format."
 msgstr ""
 
 #: exe/facter.cc
-msgid "Show legacy facts when querying all facts."
+msgid "List the names of all blockable fact groups."
 msgstr ""
 
 #: exe/facter.cc
-msgid "Lists the names of all blockable fact groups."
-msgstr ""
-
-#: exe/facter.cc
-msgid "List the name of each cacheable group of facts"
+msgid "List the names of all cacheable fact groups."
 msgstr ""
 
 #: exe/facter.cc
@@ -120,7 +116,7 @@ msgid ""
 msgstr ""
 
 #: exe/facter.cc
-msgid "Disables fact blocking."
+msgid "Disable fact blocking."
 msgstr ""
 
 #: exe/facter.cc
@@ -128,25 +124,29 @@ msgid "Disable loading and refreshing facts from the cache"
 msgstr ""
 
 #: exe/facter.cc
-msgid "Disables color output."
+msgid "Disable color output."
 msgstr ""
 
 #: exe/facter.cc
-msgid "Disables custom facts."
+msgid "Disable custom facts."
 msgstr ""
 
 #: exe/facter.cc
-msgid "Disables external facts."
+msgid "Disable external facts."
 msgstr ""
 
 #: exe/facter.cc
-msgid "Disables loading Ruby, facts requiring Ruby, and custom facts."
+msgid "Disable loading Ruby, facts requiring Ruby, and custom facts."
 msgstr ""
 
 #: exe/facter.cc
 msgid ""
 "(Deprecated: use `puppet facts` instead) Load the Puppet libraries, thus "
 "allowing Facter to load Puppet-specific facts."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Show legacy facts when querying all facts."
 msgstr ""
 
 #: exe/facter.cc
@@ -166,7 +166,7 @@ msgid "Output in YAML format."
 msgstr ""
 
 #: exe/facter.cc
-msgid "Enables more aggressive error reporting."
+msgid "Enable more aggressive error reporting."
 msgstr ""
 
 #: exe/facter.cc
