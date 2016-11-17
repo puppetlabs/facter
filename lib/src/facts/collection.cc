@@ -277,6 +277,15 @@ namespace facter { namespace facts {
         return blockgroups;
     }
 
+    vector<string> collection::get_facts_in_group(string const& fact_group) {
+        for (auto res : _resolvers) {
+            if (res->name() == fact_group) {
+                return res->names();
+            }
+        }
+        return {};
+    }
+
     size_t collection::size()
     {
         resolve_facts();

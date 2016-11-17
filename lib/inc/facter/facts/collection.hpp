@@ -300,6 +300,13 @@ namespace facter { namespace facts {
          */
         std::vector<std::string> get_blockable_fact_groups();
 
+        /**
+         * Returns the names of all the facts associated with a given resolver.
+         * @param fact_group the name of the resolver
+         * @return the names of facts collected by the resolver
+         */
+        std::vector<std::string> get_facts_in_group(std::string const& fact_group);
+
      protected:
         /**
          *  Gets external fact directories for the current platform.

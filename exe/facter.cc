@@ -249,6 +249,9 @@ int main(int argc, char **argv)
             vector<string> fact_groups = facts.get_fact_groups();
             for (auto group : fact_groups) {
                 boost::nowide::cout << group << endl;
+                for (auto fact : facts.get_facts_in_group(group)) {
+                    boost::nowide::cout << "  - " << fact << endl;
+                }
             }
             return EXIT_SUCCESS;
         }
@@ -262,9 +265,12 @@ int main(int argc, char **argv)
         if (vm.count("list-block-groups")) {
             collection facts;
             facts.add_default_facts(!vm.count("no-ruby"));
-            vector<string> blockable_facts = facts.get_blockable_fact_groups();
-            for (auto fact_group : blockable_facts) {
-                boost::nowide::cout << fact_group << endl;
+            vector<string> fact_groups = facts.get_blockable_fact_groups();
+            for (auto group : fact_groups) {
+                boost::nowide::cout << group << endl;
+                for (auto fact : facts.get_facts_in_group(group)) {
+                    boost::nowide::cout << "  - " << fact << endl;
+                }
             }
             return EXIT_SUCCESS;
         }
