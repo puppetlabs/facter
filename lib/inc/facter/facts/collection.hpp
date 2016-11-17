@@ -286,26 +286,20 @@ namespace facter { namespace facts {
         void resolve_facts();
 
         /**
-         * Returns the names of all the resolvers currently in the collection.
-         * These names correspond to groups of facts, and are used to allow
+         * Returns the names of all the resolvers currently in the collection,
+         * along with their associated facts. The group names are used to allow
          * caching of those facts.
-         * @return a list of fact group names
+         * @return a map of group names to their associated fact names
          */
-        std::vector<std::string> get_fact_groups();
+        std::map<std::string, std::vector<std::string>> get_fact_groups();
 
         /**
-         * Returns the names of all blockable resolvers currently in the collection.
-         * These names correspond to groups of blockable facts.
-         * @return a list of blockable fact groups
+         * Returns the names of all blockable resolvers currently in the collection,
+         * along with their associated facts. The group names are used to allow
+         * blocking of those facts.
+         * @return a map of blockable group names to their associated fact names
          */
-        std::vector<std::string> get_blockable_fact_groups();
-
-        /**
-         * Returns the names of all the facts associated with a given resolver.
-         * @param fact_group the name of the resolver
-         * @return the names of facts collected by the resolver
-         */
-        std::vector<std::string> get_facts_in_group(std::string const& fact_group);
+        std::map<std::string, std::vector<std::string>> get_blockable_fact_groups();
 
      protected:
         /**

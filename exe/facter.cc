@@ -116,6 +116,15 @@ void log_queries(set<string> const& queries)
     log(level::info, "requested queries: %1%.", output.str());
 }
 
+void print_fact_groups(map<string, vector<string>> const& fact_groups) {
+    for (auto group : fact_groups) {
+        boost::nowide::cout << group.first << endl;
+        for (auto fact : group.second) {
+            boost::nowide::cout << "  - " << fact << endl;
+        }
+    }
+}
+
 int main(int argc, char **argv)
 {
     try
@@ -246,13 +255,7 @@ int main(int argc, char **argv)
         if (vm.count("list-cache-groups")) {
             collection facts;
             facts.add_default_facts(!vm.count("no-ruby"));
-            vector<string> fact_groups = facts.get_fact_groups();
-            for (auto group : fact_groups) {
-                boost::nowide::cout << group << endl;
-                for (auto fact : facts.get_facts_in_group(group)) {
-                    boost::nowide::cout << "  - " << fact << endl;
-                }
-            }
+            print_fact_groups(facts.get_fact_groups());
             return EXIT_SUCCESS;
         }
 
@@ -265,13 +268,7 @@ int main(int argc, char **argv)
         if (vm.count("list-block-groups")) {
             collection facts;
             facts.add_default_facts(!vm.count("no-ruby"));
-            vector<string> fact_groups = facts.get_blockable_fact_groups();
-            for (auto group : fact_groups) {
-                boost::nowide::cout << group << endl;
-                for (auto fact : facts.get_facts_in_group(group)) {
-                    boost::nowide::cout << "  - " << fact << endl;
-                }
-            }
+            print_fact_groups(facts.get_blockable_fact_groups());
             return EXIT_SUCCESS;
         }
 
