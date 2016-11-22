@@ -6,12 +6,22 @@ homepage: 'https://github.com/puppetlabs/facter'
 summary: 'Facter, a system inventory tool'
 description: 'You can prove anything with facts!'
 # files to be packaged into a tarball and released with deb/rpm
-files: '[A-Z]* exe ext lib locales man scripts vendor cmake'
+files:
+  - '[A-Z]*'
+  - exe
+  - ext
+  - lib
+  - locales
+  - man
+  - scripts
+  - vendor
+  - cmake
 # space separated list of files to *exclude* from the tarball
 # note that each listing in files, above, is recursively copied into the tarball, so
 # 'tar\_excludes' only needs to include any undesired subdirectories/files of the 'files'
 # list to exclude
-tar_excludes: 'ext/packaging'
+tar_excludes:
+  - ext/packaging
 # Array of templates or globs of templates to evaluate. Note that without this key, the packaging will
 # default to searching for any files in `ext` with the extension '.erb' and evaluate them. When this
 # key is supplied, its values override the defaults, and all desired erb files must be specified with a path or glob.
