@@ -117,9 +117,9 @@ void log_queries(set<string> const& queries)
 }
 
 void print_fact_groups(map<string, vector<string>> const& fact_groups) {
-    for (auto group : fact_groups) {
+    for (auto& group : fact_groups) {
         boost::nowide::cout << group.first << endl;
-        for (auto fact : group.second) {
+        for (auto& fact : group.second) {
             boost::nowide::cout << "  - " << fact << endl;
         }
     }
