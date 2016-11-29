@@ -267,11 +267,19 @@ namespace facter { namespace facts {
         return _facts.empty() && _resolvers.empty();
     }
 
-    vector<string> collection::get_blockable_fact_groups() {
-        vector<string> blockgroups;
+    map<string, vector<string>> collection::get_fact_groups() {
+        map<string, vector<string>> fact_groups;
+        for (auto res : _resolvers) {
+            fact_groups.emplace(res->name(), res->names());
+        }
+        return fact_groups;
+    }
+
+    map<string, vector<string>> collection::get_blockable_fact_groups() {
+        map<string, vector<string>> blockgroups;
         for (auto res : _resolvers) {
             if (res->is_blockable()) {
-                blockgroups.push_back(res->name());
+                blockgroups.emplace(res->name(), res->names());
             }
         }
         return blockgroups;
@@ -281,14 +289,6 @@ namespace facter { namespace facts {
     {
         resolve_facts();
         return _facts.size();
-    }
-
-    vector<string> collection::get_fact_groups() {
-        vector<string> fact_groups;
-        for (auto res : _resolvers) {
-            fact_groups.push_back(res->name());
-        }
-        return fact_groups;
     }
 
     value const* collection::operator[](string const& name)
