@@ -265,9 +265,17 @@ if (JRUBY_SUPPORT)
     )
 
     include(UseJava)
-    add_jar(facter-jruby "${CMAKE_BINARY_DIR}/lib/com/puppetlabs/Facter.java" OUTPUT_NAME facter OUTPUT_DIR "${CMAKE_BINARY_DIR}/lib" ENTRY_POINT com/puppetlabs/Facter)
+    add_jar(facter-jruby-jar "${CMAKE_BINARY_DIR}/lib/com/puppetlabs/Facter.java" OUTPUT_NAME facter OUTPUT_DIR "${CMAKE_BINARY_DIR}/lib" ENTRY_POINT com/puppetlabs/Facter)
 
-    add_custom_command(TARGET facter-jruby POST_BUILD COMMAND javah ARGS -d "${CMAKE_CURRENT_LIST_DIR}/src/java" com.puppetlabs.Facter WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+    # javah does not atomically write the header file, so parallel builds can
+    # read it before it finishes writing if not careful.
+    add_custom_command(OUTPUT "${CMAKE_CURRENT_LIST_DIR}/src/java/com_puppetlabs_Facter.h"
+                       COMMAND javah ARGS -classpath facter.jar -d "${CMAKE_CURRENT_LIST_DIR}/src/java" com.puppetlabs.Facter
+                       WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+                       DEPENDS facter-jruby-jar)
+    # Anything that depends on facter-jruby wants both the jar AND the completely written header.
+    add_custom_target(facter-jruby DEPENDS facter-jruby-jar "${CMAKE_CURRENT_LIST_DIR}/src/java/com_puppetlabs_Facter.h")
+    set(LIBFACTER_COMMON_SOURCES ${LIBFACTER_COMMON_SOURCES} src/java/com_puppetlabs_Facter.h)
 endif()
 
 # Set include directories
