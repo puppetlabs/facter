@@ -499,7 +499,7 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/external/execution_resolver.cc
-msgid "Could not parse executable fact output as YAML ({1})"
+msgid "Could not parse executable fact output as YAML or JSON ({1})"
 msgstr ""
 
 #. debug
