@@ -184,6 +184,14 @@ chassistype:
     caveats: |
         Linux: kernel 2.6+ is required due to the reliance on sysfs.
 
+cloud:
+    type: map
+    description: Information about the cloud instance of the node. This is currently only populated on Linux nodes running in Microsoft Azure.
+    elements:
+        provider:
+            type: string
+            description: The cloud provider for the node.
+
 dhcp_servers:
     type: map
     hidden: true

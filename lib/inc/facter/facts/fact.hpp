@@ -439,6 +439,10 @@ namespace facter { namespace facts {
          * The fact for whether or not the machine is virtual or physical.
          */
         constexpr static char const* is_virtual = "is_virtual";
+        /**
+         * The fact for the cloud info, including provider, for a node.
+         */
+        constexpr static char const* cloud = "cloud";
 
         /**
          * The structured fact for identity information.
