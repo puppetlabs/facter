@@ -94,7 +94,7 @@ namespace facter { namespace facts {
          *        for the facts they resolve
          */
         collection(std::set<std::string> const& blocklist = std::set<std::string>(),
-                   std::unordered_map<std::string, int64_t> const& ttls = {});
+                   std::unordered_map<std::string, int64_t> const& ttls = std::unordered_map<std::string, int64_t>{});
 
         /**
          * Destructor for fact collection.
