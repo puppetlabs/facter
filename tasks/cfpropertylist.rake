@@ -2,7 +2,7 @@ task 'cfpropertylist' do
   if defined? Pkg::Config and Pkg::Config.project_root
     cfp_version = "2.3.3"
     libdir = File.join(Pkg::Config.project_root, "lib")
-    source = "https://github.com/ckruse/CFPropertyList/archive/cfpropertylist-#{cfp_version}.tar.gz"
+    source = "https://github.com/ckruse/CFPropertyList/archive/cfpropertyList-#{cfp_version}.tar.gz"
     target_dir = Pkg::Util::File.mktemp
     target = File.join(target_dir, "cfpropertylist")
     Pkg::Util::Net.fetch_uri(source, target)
