@@ -586,6 +586,23 @@ msgstr ""
 msgid "kenv lookup for {1} failed: {2} ({3})"
 msgstr ""
 
+#. warning
+#: lib/src/facts/freebsd/networking_resolver.cc
+#: lib/src/facts/linux/networking_resolver.cc
+#: lib/src/facts/openbsd/networking_resolver.cc
+msgid ""
+"socket failed: {1} ({2}): interface MTU fact is unavailable for interface "
+"{3}."
+msgstr ""
+
+#. warning
+#: lib/src/facts/freebsd/networking_resolver.cc
+#: lib/src/facts/linux/networking_resolver.cc
+#: lib/src/facts/openbsd/networking_resolver.cc
+msgid ""
+"ioctl failed: {1} ({2}): interface MTU fact is unavailable for interface {3}."
+msgstr ""
+
 #. debug
 #: lib/src/facts/freebsd/processor_resolver.cc
 #: lib/src/facts/openbsd/processor_resolver.cc
@@ -667,21 +684,6 @@ msgstr ""
 #: lib/src/facts/linux/filesystem_resolver.cc
 msgid ""
 "cannot determine size of partition '{1}': '{2}' is not an integral value."
-msgstr ""
-
-#. warning
-#: lib/src/facts/linux/networking_resolver.cc
-#: lib/src/facts/openbsd/networking_resolver.cc
-msgid ""
-"socket failed: {1} ({2}): interface MTU fact is unavailable for interface "
-"{3}."
-msgstr ""
-
-#. warning
-#: lib/src/facts/linux/networking_resolver.cc
-#: lib/src/facts/openbsd/networking_resolver.cc
-msgid ""
-"ioctl failed: {1} ({2}): interface MTU fact is unavailable for interface {3}."
 msgstr ""
 
 #. debug
