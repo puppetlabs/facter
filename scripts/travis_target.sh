@@ -75,6 +75,9 @@ else
   if [ ${TRAVIS_TARGET} == DEBUG ]; then
     # Ignore coveralls failures, keep service success uncoupled
     coveralls --gcov gcov-4.8 --gcov-options '\-lp' -e vendor >/dev/null || true
+  else
+    # Ensure the gem is buildable
+    gem build .gemspec
   fi
 fi
 

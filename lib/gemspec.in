@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = "facter"
-  version = "@LIBFACTER_VERSION_MAJOR@.@LIBFACTER_VERSION_MINOR@.@LIBFACTER_VERSION_PATCH@"
+  version = "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@"
   mdata = version.match(/(\d+\.\d+\.\d+)/)
   s.version = mdata ? mdata[1] : version
 
