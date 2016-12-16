@@ -4,6 +4,9 @@
 #include <internal/ruby/ruby_value.hpp>
 #include <leatherman/ruby/api.hpp>
 #include <leatherman/logging/logging.hpp>
+#ifdef _WIN32
+#include <internal/util/windows/wsa.hpp>
+#endif
 
 #include <numeric>
 
@@ -47,6 +50,13 @@ namespace facter { namespace ruby {
 
     void load_custom_facts(collection& facts, bool initialize_puppet, vector<string> const& paths)
     {
+#ifdef _WIN32
+        // Initialize WSA before resolving custom facts. The Ruby runtime does this only when running
+        // in a Ruby process, it leaves it up to us when embedding it. See
+        // https://github.com/ruby/ruby/blob/v2_1_9/ruby.c#L2011-L2022 for comments.
+        // The only piece we seem to need out of rb_w32_sysinit is WSAStartup.
+        util::windows::wsa winsocket;
+#endif
         api& ruby = api::instance();
         module mod(facts, {}, !initialize_puppet);
         if (initialize_puppet) {
