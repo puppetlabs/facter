@@ -53,6 +53,7 @@ if (RUBY_FOUND)
     set(LIBFACTER_TESTS_COMMON_SOURCES
         ${LIBFACTER_TESTS_COMMON_SOURCES}
         "ruby/ruby.cc"
+        "ruby/ruby_dirfacts.cc"
         "ruby/ruby_helper.cc")
 
     if (WIN32)
