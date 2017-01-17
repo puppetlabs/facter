@@ -297,12 +297,10 @@ namespace facter { namespace ruby {
         for (auto dir : paths) {
             _additional_search_paths.emplace_back(dir);
 
-            // Get the canonical directory name
-            boost::system::error_code ec;
-            path directory = canonical(_additional_search_paths.back(), ec);
-            if (ec) {
-                continue;
-            }
+            // Get the absolute directory name
+            // Absolute is used over canonical because canonical on Windows won't recognize paths as valid if
+            // they resolve to symlinks to non-NTFS volumes.
+            path directory = absolute(_additional_search_paths.back());
 
             _search_paths.push_back(directory.string());
         }
@@ -751,12 +749,8 @@ namespace facter { namespace ruby {
                 }
                 instance->_additional_search_paths.emplace_back(ruby.to_string(argv[i]));
 
-                // Get the canonical directory name
-                boost::system::error_code ec;
-                path directory = canonical(instance->_additional_search_paths.back(), ec);
-                if (ec) {
-                    continue;
-                }
+                // Get the absolute directory name
+                path directory = absolute(instance->_additional_search_paths.back());
 
                 instance->_search_paths.push_back(directory.string());
             }
@@ -945,12 +939,9 @@ namespace facter { namespace ruby {
 
         // Look for "facter" subdirectories on the load path
         for (auto const& directory : ruby.get_load_path()) {
-            // Get the canonical directory name
+            // Get the absolute directory name
             boost::system::error_code ec;
-            path dir = canonical(directory, ec);
-            if (ec) {
-                continue;
-            }
+            path dir = absolute(directory);
 
             // Ignore facter itself if it's on the load path
             if (is_regular_file(dir / "facter.rb", ec)) {
@@ -975,15 +966,10 @@ namespace facter { namespace ruby {
         // Insert the given paths last
         _search_paths.insert(_search_paths.end(), paths.begin(), paths.end());
 
-        // Do a canonical transform
+        // Do a absolute transform
         transform(_search_paths.begin(), _search_paths.end(), _search_paths.begin(), [](string const& directory) -> string {
-            // Get the canonical directory name
-            boost::system::error_code ec;
-            path dir = canonical(directory, ec);
-            if (ec) {
-                LOG_DEBUG("path \"%1%\" will not be searched for custom facts: %2%.", directory, ec.message());
-                return {};
-            }
+            // Get the absolute directory name
+            path dir = absolute(directory);
             return dir.string();
         });
 
