@@ -114,8 +114,6 @@ endif()
 if (AIX)
     set(LIBFACTER_PLATFORM_SOURCES
         "src/facts/aix/collection.cc"
-        "src/facts/aix/disk_resolver.cc"
-        "src/facts/aix/filesystem_resolver.cc"
         "src/facts/aix/kernel_resolver.cc"
         "src/facts/aix/memory_resolver.cc"
         "src/facts/aix/networking_resolver.cc"
@@ -126,7 +124,6 @@ if (AIX)
 
     set(LIBFACTER_PLATFORM_LIBRARIES
         odm
-        lvm
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     set(LIBFACTER_PLATFORM_SOURCES
