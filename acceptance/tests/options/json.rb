@@ -6,7 +6,7 @@ test_name "--json command-line option results in valid JSON output" do
 
   require 'json'
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   content = <<EOM
 Facter.add('structured_fact') do

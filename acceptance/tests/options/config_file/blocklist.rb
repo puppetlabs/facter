@@ -2,7 +2,7 @@
 # the corresponding facts do not resolve.
 test_name "facts can be blocked via a list in the config file" do
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   agents.each do |agent|
     step "facts should be blocked when Facter is run from the command line" do

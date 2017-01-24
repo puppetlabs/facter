@@ -4,7 +4,7 @@
 test_name "--trace command-line option enables backtraces for custom facts" do
 
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   content = <<EOM
 Facter.add('custom_fact') do

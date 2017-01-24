@@ -6,7 +6,7 @@
 test_name "external fact commandline options (--no-external-facts and --external-dir)" do
 
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   unix_content = <<EOM
 #!/bin/sh

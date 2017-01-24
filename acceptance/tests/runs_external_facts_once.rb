@@ -1,7 +1,7 @@
 test_name "#22944: Facter executes external executable facts many times"
 
 require 'facter/acceptance/user_fact_utils'
-extend Facter::Acceptance::UserFactUtils
+extend ::Facter::Acceptance::UserFactUtils
 
 agents.each do |agent|
   step "Agent #{agent}: create external executable fact"

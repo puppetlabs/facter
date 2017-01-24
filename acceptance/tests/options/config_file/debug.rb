@@ -2,7 +2,7 @@
 # causes DEBUG information to be printed to stderr.
 test_name "setting the debug config field to true prints debug info to stderr" do
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   config = <<EOM
 cli : {

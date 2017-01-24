@@ -3,7 +3,7 @@
 test_name "no-ruby config field flag disables requiring Ruby" do
 
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   config = <<EOM
 global : {

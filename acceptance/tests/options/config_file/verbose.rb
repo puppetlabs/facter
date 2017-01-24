@@ -2,7 +2,7 @@
 # config file causes INFO level logging to output to stderr.
 test_name "verbose config field prints verbose information to stderr" do
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   config = <<EOM
 cli : {

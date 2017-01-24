@@ -3,7 +3,7 @@
 
 test_name "FACT-1502 - C98163 mountpoints fact should show mounts on tmpfs" do
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   confine :except, :platform => 'windows'
   confine :except, :platform => /osx/ # See PUP-4823

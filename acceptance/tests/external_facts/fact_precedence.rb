@@ -1,7 +1,7 @@
 test_name "Fact precedence and resolution order (external & custom facts)"
 
 require 'facter/acceptance/user_fact_utils'
-extend Facter::Acceptance::UserFactUtils
+extend ::Facter::Acceptance::UserFactUtils
 
 # Use a static external fact
 ext_fact = "test: 'EXTERNAL'"

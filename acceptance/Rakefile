@@ -7,7 +7,7 @@ require 'beaker-hostgenerator'
 
 $LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), 'lib'))
 require 'puppet/acceptance/git_utils'
-extend Puppet::Acceptance::GitUtils
+extend ::Puppet::Acceptance::GitUtils
 
 ONE_DAY_IN_SECS = 24 * 60 * 60
 REPO_CONFIGS_DIR = "repo-configs"

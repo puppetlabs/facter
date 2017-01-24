@@ -3,7 +3,7 @@
 # logging level.
 test_name "log-level setting can be used to specific logging level" do
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   config = <<EOM
 cli : {

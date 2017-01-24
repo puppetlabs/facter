@@ -5,7 +5,7 @@
 test_name "executable external facts can return structured data" do
 
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   unix_fact_yaml = <<EOM
 #!/bin/sh

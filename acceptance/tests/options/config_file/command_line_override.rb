@@ -5,7 +5,7 @@
 # line.
 test_name "flags set on the command line override config file settings" do
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   config = <<EOM
 global : {
