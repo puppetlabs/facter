@@ -207,7 +207,8 @@ You can install facter into your system:
     $ make && sudo make install
 
 By default, facter will install files into `/usr/local/bin`, `/usr/local/lib`, and `/usr/local/include`.
-If the project is configured with Ruby in the PATH, facter.rb will be installed to that Ruby's vendor dir.
+If the project is configured with Ruby in the PATH, *facter.rb* will be installed to that Ruby's vendor dir.
+The install location for *facter.rb* can be overridden using by setting RUBY_LIB_INSTALL.
 
 To install to a different location, set the install prefix:
 
