@@ -38,7 +38,7 @@ namespace facter { namespace facts { namespace aix {
                 line[first_char] != '%')  {  // skip defaultvfs line
                 vector<string> tokens;
                 boost::split(tokens, line, boost::is_space(), boost::token_compress_on);
-                _filesystems.emplace(make_pair(stoi(tokens[1]), tokens[0]));
+                _filesystems.emplace(make_pair(stoul(tokens[1]), tokens[0]));
                 result.filesystems.emplace(move(tokens[0]));
             }
             return true;
@@ -89,11 +89,11 @@ namespace facter { namespace facts { namespace aix {
                     // AAAAAAAABBBBBBBBCCCCCCCCDDDDDDDD.EEEE format
                     // First four chunks are hexadecimal 32-bit integers.
                     // After the dot is a decimal integer
-                    id.vg_id.word1 = stoi(string(at.value, 8), nullptr, 16);
-                    id.vg_id.word2 = stoi(string(at.value+8, 8), nullptr, 16);
-                    id.vg_id.word3 = stoi(string(at.value+16, 8), nullptr, 16);
-                    id.vg_id.word4 = stoi(string(at.value+24, 8), nullptr, 16);
-                    id.minor_num = stoi(string(at.value+33), nullptr, 10);
+                    id.vg_id.word1 = stoul(string(at.value, 8), nullptr, 16);
+                    id.vg_id.word2 = stoul(string(at.value+8, 8), nullptr, 16);
+                    id.vg_id.word3 = stoul(string(at.value+16, 8), nullptr, 16);
+                    id.vg_id.word4 = stoul(string(at.value+24, 8), nullptr, 16);
+                    id.minor_num = stoul(string(at.value+33), nullptr, 10);
 
                     struct querylv* lv;
                     if (0 != lvm_querylv(&id, &lv, nullptr)) {
