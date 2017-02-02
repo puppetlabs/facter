@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.2.2)
 
-set(LIBFACTER_VERSION_MAJOR 3)
-set(LIBFACTER_VERSION_MINOR 5)
-set(LIBFACTER_VERSION_PATCH 2)
-
 # Get the HEAD SHA1 commit message
 get_commit_string(LIBFACTER_COMMIT)
 
@@ -118,6 +114,8 @@ endif()
 if (AIX)
     set(LIBFACTER_PLATFORM_SOURCES
         "src/facts/aix/collection.cc"
+        "src/facts/aix/disk_resolver.cc"
+        "src/facts/aix/filesystem_resolver.cc"
         "src/facts/aix/kernel_resolver.cc"
         "src/facts/aix/memory_resolver.cc"
         "src/facts/aix/networking_resolver.cc"
@@ -128,6 +126,7 @@ if (AIX)
 
     set(LIBFACTER_PLATFORM_LIBRARIES
         odm
+        lvm
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     set(LIBFACTER_PLATFORM_SOURCES
@@ -202,6 +201,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
         "src/facts/bsd/uptime_resolver.cc"
         "src/facts/freebsd/processor_resolver.cc"
         "src/facts/freebsd/dmi_resolver.cc"
+        "src/facts/freebsd/networking_resolver.cc"
         "src/util/bsd/scoped_ifaddrs.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "OpenBSD")
@@ -273,7 +273,6 @@ endif()
 # Set include directories
 include_directories(
     inc
-    ${RAPIDJSON_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
@@ -294,7 +293,7 @@ link_directories(
 add_library(libfactersrc OBJECT ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_STANDARD_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
 set_target_properties(libfactersrc PROPERTIES POSITION_INDEPENDENT_CODE true)
 add_library(libfacter SHARED $<TARGET_OBJECTS:libfactersrc>)
-set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX "" IMPORT_SUFFIX ".so.a" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}")
+set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX "" IMPORT_SUFFIX ".so.a" VERSION ${PROJECT_VERSION})
 
 if(AIX)
     # On AIX we need to be built such that we are "dynamically

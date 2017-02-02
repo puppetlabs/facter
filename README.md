@@ -207,7 +207,8 @@ You can install facter into your system:
     $ make && sudo make install
 
 By default, facter will install files into `/usr/local/bin`, `/usr/local/lib`, and `/usr/local/include`.
-If the project is configured with Ruby in the PATH, facter.rb will be installed to that Ruby's vendor dir.
+If the project is configured with Ruby in the PATH, *facter.rb* will be installed to that Ruby's vendor dir.
+The install location for *facter.rb* can be overridden using by setting RUBY_LIB_INSTALL.
 
 To install to a different location, set the install prefix:
 
@@ -279,3 +280,16 @@ To generate API documentation, install doxygen 1.8.7 or later.
     $ doxygen
 
 To view the documentation, open `lib/html/index.html` in a web browser.
+
+Debugging
+---------
+
+If when running the tests you encounter this error message:
+
+"could not locate a ruby library"
+
+You may need to use a different shared ruby library in Leatherman. To do
+this, run this command, where the location below is the default for a
+puppet agent installation:
+
+    $ export LEATHERMAN_RUBY=/opt/puppetlabs/puppet/lib/libruby.dylib

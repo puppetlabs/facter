@@ -5,11 +5,6 @@
   "internal_list": "https://groups.google.com/a/puppet.com/forum/?hl=en#!forum/discuss-facter-maintainers",
   "people": [
     {
-      "github": "kylog",
-      "email": "kylo@puppet.com",
-      "name": "Kylo Ginsberg"
-    },
-    {
       "github": "magisus",
       "email": "maggie@puppet.com",
       "name": "Maggie Dreyer"

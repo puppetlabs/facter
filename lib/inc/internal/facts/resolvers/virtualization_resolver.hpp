@@ -10,6 +10,36 @@
 namespace facter { namespace facts { namespace resolvers {
 
     /**
+     *  Represents cloud data.
+     */
+    struct cloud_
+    {
+        /**
+         * Stores the cloud provider.
+         */
+        std::string provider;
+    };
+
+    /**
+     *  Represents virtualization data.
+     */
+    struct data
+    {
+        /**
+         * Stores the cloud data.
+         */
+        cloud_ cloud;
+        /**
+         * Stores the hypervisor data.
+         */
+        std::string hypervisor;
+        /**
+         * Stores the is_virtual data.
+         */
+        bool is_virtual;
+    };
+
+    /**
      * Responsible for resolving virtualization facts.
      */
     struct virtualization_resolver : resolver
@@ -34,6 +64,13 @@ namespace facter { namespace facts { namespace resolvers {
         virtual std::string get_hypervisor(collection& facts) = 0;
 
         /**
+         * Gets the name of the cloud provider.
+         * @param facts The fact collection that is resolving facts.
+         * @return Returns the name of the cloud provider or empty string if no cloud provider.
+         */
+        virtual std::string get_cloud_provider(collection& facts);
+
+        /**
          * Determines if the given hypervisor is considered to be virtual.
          * @param hypervisor The hypervisor to check.
          * @return Returns true if the hypervisor is virtual or false if it is physical.
@@ -47,6 +84,13 @@ namespace facter { namespace facts { namespace resolvers {
          * @return Returns the hypervisor product name if matched.
          */
         static std::string get_product_name_vm(std::string const& product_name);
+
+        /**
+         * Collects the virtualization data.
+         * @param facts The fact collection that is resolving facts.
+         * @return Returns the virtualization data.
+         */
+        virtual data collect_data(collection& facts);
     };
 
 }}}  // namespace facter::facts::resolvers

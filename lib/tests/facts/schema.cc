@@ -361,6 +361,11 @@ protected:
         // The xen fact only resolves if virtualization is xen_privileged.
         return vm::xen_privileged;
     }
+
+    virtual string get_cloud_provider(collection& facts) override
+    {
+        return "azure";
+    }
 };
 
 struct xen_resolver : resolvers::xen_resolver
