@@ -13,6 +13,12 @@ facts : {
 }
 EOM
 
+  config_no_cache = <<EOM
+facts : {
+  ttls : [ ]
+}
+EOM
+
   # This fact must be resolvable on ALL platforms
   # Do NOT use the 'kernel' fact as it is used to configure the tests
   cached_factname = 'uptime'
@@ -156,6 +162,23 @@ EOM
             assert_match(/loading cached values for .+ facts/, stdout, "Expected debug message to state that values are read from cache")
             assert_match(/cachedfact/, stdout, "Expected fact to match the cached fact file")
           end
+        end
+      end
+
+      step "should clean out unused cache files on each facter run" do
+        step "Agent #{agent}: create config file with no cached facts" do
+          # Set up a known cached fact
+          on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
+          on(agent, facter(""))
+          create_remote_file(agent, cached_fact_file, cached_fact_content)
+
+          # Create config file with no caching
+          no_cache_config_file = File.join(config_dir, "no-cache.conf")
+          create_remote_file(agent, no_cache_config_file, config_no_cache)
+
+          on(agent, facter("--config '#{no_cache_config_file}'"))
+          # Expect cache file to not exist
+          on(agent, "cat '#{cached_fact_file}'", :acceptable_exit_codes => [1])
         end
       end
 
