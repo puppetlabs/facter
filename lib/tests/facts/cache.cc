@@ -71,3 +71,30 @@ SCENARIO("loading facts from cache") {
     // Clean up directory
     boost_file::remove_all(cache_dir);
 }
+
+SCENARIO("cleaning the cache") {
+    boost_file::path cache_dir(LIBFACTER_TESTS_DIRECTORY + string("/fixtures/cache"));
+
+    GIVEN("an existing cache directory with a fact that should no longer be cached") {
+        boost_file::create_directories(cache_dir);
+        // unused cache file
+        auto unused_cache_file = (cache_dir / "unused").string();
+        leatherman::file_util::atomic_write_to_file("{ \"foo\" : \"bar\" }",
+                unused_cache_file);
+        // used cached file
+        auto used_cache_file = (cache_dir / "test").string();
+        leatherman::file_util::atomic_write_to_file("{ \"foo\" : \"bar\" }",
+                used_cache_file);
+
+        THEN("unused cache file should be deleted") {
+            // cache "test", but not "unused"
+            cache::clean_cache(unordered_map<string, int64_t>({
+                        make_pair("test", 600)
+                        }), cache_dir.string());
+            REQUIRE_FALSE(leatherman::file_util::file_readable(unused_cache_file));
+            REQUIRE(leatherman::file_util::file_readable(used_cache_file));
+        }
+    }
+
+    boost_file::remove_all(cache_dir);
+}

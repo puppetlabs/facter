@@ -92,9 +92,11 @@ namespace facter { namespace facts {
          * @param blocklist the names of resolvers that should not be resolved
          * @param ttls a map of resolver names to cache intervals (times-to-live)
          *        for the facts they resolve
+         * @param ignore_cache true if the cache should not be consulted when resolving facts
          */
         collection(std::set<std::string> const& blocklist = std::set<std::string>(),
-                   std::unordered_map<std::string, int64_t> const& ttls = std::unordered_map<std::string, int64_t>{});
+                   std::unordered_map<std::string, int64_t> const& ttls = std::unordered_map<std::string, int64_t>{},
+                   bool ignore_cache = false);
 
         /**
          * Destructor for fact collection.
@@ -331,6 +333,7 @@ namespace facter { namespace facts {
         std::list<std::shared_ptr<resolver>> _pattern_resolvers;
         std::set<std::string> _blocklist;
         std::unordered_map<std::string, int64_t> _ttls;
+        bool _ignore_cache;
     };
 
 }}  // namespace facter::facts
