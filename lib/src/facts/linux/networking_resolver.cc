@@ -143,6 +143,13 @@ namespace facter { namespace facts { namespace linux {
             vector<boost::iterator_range<string::iterator>> parts;
             boost::split(parts, line, boost::is_space(), boost::token_compress_on);
 
+            // skip links that are linkdown
+            if (std::find_if(parts.cbegin(), parts.cend(), [](const boost::iterator_range<string::iterator>& range) {
+                return std::string(range.begin(), range.end()) == "linkdown";
+            }) != parts.cend()) {
+                return true;
+            }
+
             // remove trailing "onlink" or "pervasive" flags
             while (parts.size() > 0) {
                 std::string last_token(parts.back().begin(), parts.back().end());

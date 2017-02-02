@@ -30,6 +30,23 @@ struct simple_resolver : facter::facts::resolver
     }
 };
 
+struct unblockable_resolver : facter::facts::resolver
+{
+    unblockable_resolver() : resolver("unblockable", { "foo" })
+    {
+    }
+
+    virtual void resolve(collection& facts) override
+    {
+        facts.add("foo", make_value<string_value>("bar"));
+    }
+
+    bool is_blockable() const override
+    {
+        return false;
+    }
+};
+
 struct multi_resolver : facter::facts::resolver
 {
     multi_resolver() : resolver("test", { "foo", "bar" })
@@ -510,4 +527,50 @@ SCENARIO("using the fact collection with a blocklist") {
             REQUIRE_FALSE(facts.get<string_value>("bar"));
         }
     }
+}
+
+SCENARIO("querying blockable and cacheable fact groups") {
+    collection_fixture facts;
+    REQUIRE(facts.size() == 0u);
+    REQUIRE(facts.empty());
+
+    GIVEN("a blockable resolver that adds a single fact") {
+        facts.add(make_shared<simple_resolver>());
+        THEN("resolver and its fact should be listed as blockable") {
+            auto blockable = facts.get_blockable_fact_groups();
+            REQUIRE(blockable.size() == 1);
+            REQUIRE(blockable["test"] == vector<string>({"foo"}));
+        }
+        THEN("resolver and its fact should be listed as in the collection") {
+            auto facts_present = facts.get_fact_groups();
+            REQUIRE(facts_present.size() == 1);
+            REQUIRE(facts_present["test"] == vector<string>({"foo"}));
+        }
+    }
+    GIVEN("a blockable resolver that adds multiple facts") {
+        facts.add(make_shared<multi_resolver>());
+        THEN("resolver and its facts should be listed as blockable") {
+            auto blockable = facts.get_blockable_fact_groups();
+            REQUIRE(blockable.size() == 1);
+            REQUIRE(blockable["test"] == vector<string>({"foo", "bar"}));
+        }
+        THEN("resolver and its facts should be listed as in the collection") {
+            auto facts_present = facts.get_fact_groups();
+            REQUIRE(facts_present.size() == 1);
+            REQUIRE(facts_present["test"] == vector<string>({"foo", "bar"}));
+        }
+    }
+    GIVEN("a unblockable resolver that adds a single fact") {
+        facts.add(make_shared<unblockable_resolver>());
+        THEN("resolver and its facts should not be listed as blockable") {
+            auto blockable = facts.get_blockable_fact_groups();
+            REQUIRE(blockable.size() == 0);
+        }
+        THEN("resolver and its fact should be listed as in the collection") {
+            auto facts_present = facts.get_fact_groups();
+            REQUIRE(facts_present.size() == 1);
+            REQUIRE(facts_present["unblockable"] == vector<string>({"foo"}));
+        }
+    }
+
 }
