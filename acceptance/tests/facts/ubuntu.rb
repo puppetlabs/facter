@@ -38,6 +38,10 @@ agents.each do |agent|
     os_name    = 'xenial'
     os_version = '16.04'
     os_kernel  = /4.\d+/
+  elsif agent['platform'] =~ /ubuntu-16.10/
+    os_name    = 'yakkety'
+    os_version = '16.10'
+    os_kernel  = /4.\d+/
   else
     fail_test("Unknown Ubuntu platform: #{agent['platform']}")
   end
