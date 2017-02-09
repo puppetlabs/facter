@@ -479,7 +479,7 @@ SCENARIO("custom facts written in Ruby") {
         THEN("an error is logged") {
             auto output = capture.result();
             CAPTURE(output);
-            REQUIRE(re_search(output, boost::regex("ERROR puppetlabs\\.facter - .* execution of command \"not a command\" failed")));
+            REQUIRE(re_search(output, boost::regex("ERROR puppetlabs\\.facter - .* execution of command \"the_most_interesting_command_in_the_world\" failed")));
         }
     }
     GIVEN("a fact resolution that uses Facter::Core::Execution#execute with a default value") {
