@@ -1,4 +1,4 @@
-test_name "Facts should resolve as expected in AIX 5.3, 6.1, and 7.1"
+test_name "Facts should resolve as expected in AIX 5.3, 6.1, 7.1 and 7.2"
 
 #
 # This test is intended to ensure that facts specific to an OS configuration
@@ -20,6 +20,9 @@ agents.each do |agent|
   when /aix-7.1/
     kernel_release = /^7100-\d+-\d+-\d+/
     kernel_major_version = '7100'
+  when /aix-7.2/
+    kernel_release = /^7200-\d+-\d+-\d+/
+    kernel_major_version = '7200'
   end
 
   os_arch     = /[Pp]ower[Pp][Cc]/
