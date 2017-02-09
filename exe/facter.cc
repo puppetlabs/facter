@@ -204,9 +204,7 @@ int main(int argc, char **argv)
                 load_global_settings(hocon_conf, vm);
                 load_cli_settings(hocon_conf, vm);
                 load_fact_settings(hocon_conf, vm);
-                if (!vm.count("no-cache")) {
-                    ttls = load_ttls(hocon_conf);
-                }
+                ttls = load_ttls(hocon_conf);
             }
 
             // Check for a help option first before notifying
@@ -326,7 +324,8 @@ int main(int argc, char **argv)
             auto facts_to_block = vm["blocklist"].as<vector<string>>();
             blocklist.insert(facts_to_block.begin(), facts_to_block.end());
         }
-        collection facts(blocklist, ttls);
+        bool ignore_cache = vm.count("no-cache");
+        collection facts(blocklist, ttls, ignore_cache);
         facts.add_default_facts(ruby);
 
         // Add the environment facts

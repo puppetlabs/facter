@@ -59,4 +59,13 @@ namespace facter { namespace facts { namespace cache {
      * @return the timespan in seconds since last modification
      */
     int64_t get_file_lifetime(boost::filesystem::path file_path);
+
+    /**
+     * Removes the cache file for any resolver that does not appear in the
+     * supplied list of fact groups.
+     * @param facts_to_cache the list of fact groups that should be cached
+     * @param cache_location the absolute path to the fact cache directory
+     */
+    void clean_cache(std::unordered_map<std::string, int64_t> const& facts_to_cache,
+            std::string cache_location = fact_cache_location());
 }}}  // namespace facter::facts::cache

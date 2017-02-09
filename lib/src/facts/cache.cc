@@ -7,6 +7,7 @@
 #include <leatherman/file_util/directory.hpp>
 #include <leatherman/file_util/file.hpp>
 #include <boost/nowide/fstream.hpp>
+#include <boost/system/error_code.hpp>
 #include <time.h>
 
 using namespace std;
@@ -15,6 +16,27 @@ using namespace facter::facts::external;
 namespace boost_file = boost::filesystem;
 
 namespace facter { namespace facts { namespace cache {
+
+    void clean_cache(unordered_map<string, int64_t> const& facts_to_cache, string cache_location) {
+        boost_file::path cache_dir = boost_file::path(cache_location);
+        if (!boost_file::is_directory(cache_dir)) {
+            return;
+        }
+        for (boost_file::directory_iterator itr(cache_dir);
+                itr != boost_file::directory_iterator();
+                ++itr) {
+            boost_file::path cache_file = itr->path();
+            if (!facts_to_cache.count(cache_file.filename().string())) {
+                boost::system::error_code ec;
+                boost_file::remove(cache_file, ec);
+                if (!ec) {
+                    LOG_DEBUG("Deleting unused cache file {1}", cache_file.string());
+                } else {
+                    continue;
+                }
+            }
+        }
+    }
 
     bool cache_is_valid(boost_file::path const& cache_file, int64_t ttl) {
         time_t last_mod = boost_file::last_write_time(cache_file);

@@ -35,7 +35,8 @@ using namespace leatherman::file_util;
 
 namespace facter { namespace facts {
 
-    collection::collection(set<string> const& blocklist, unordered_map<string, int64_t> const& ttls) : _blocklist(blocklist), _ttls(ttls)
+    collection::collection(set<string> const& blocklist, unordered_map<string, int64_t> const& ttls, bool ignore_cache) :
+        _blocklist(blocklist), _ttls(ttls), _ignore_cache(ignore_cache)
     {
         // This needs to be defined here since we use incomplete types in the header
     }
@@ -349,7 +350,7 @@ namespace facter { namespace facts {
 
         // Check if the resolver should be cached
         auto resolver_ttl = _ttls.find(res->name());
-        if (resolver_ttl != _ttls.end()) {
+        if (!_ignore_cache && resolver_ttl != _ttls.end()) {
            cache::use_cache(*this, res, (*resolver_ttl).second);
            return;
         }
@@ -361,6 +362,10 @@ namespace facter { namespace facts {
 
     void collection::resolve_facts()
     {
+        // Delete any unused cache files
+        if (!_ignore_cache) {
+            cache::clean_cache(_ttls);
+        }
         // Remove the front of the resolvers list and resolve until no resolvers are left
         while (!_resolvers.empty()) {
             auto resolver = _resolvers.front();
