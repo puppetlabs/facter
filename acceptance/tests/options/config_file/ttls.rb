@@ -123,7 +123,7 @@ EOM
         end
 
         # Expect the fact file to exist
-        on(agent,"cat #{cached_fact_file}", :acceptable_exit_codes => [0])
+        assert(agent.file_exist?("#{cached_fact_file}"), "Expected cache file to exist")
       end
 
       # When calling Facter from Puppet
@@ -178,7 +178,7 @@ EOM
 
           on(agent, facter("--config '#{no_cache_config_file}'"))
           # Expect cache file to not exist
-          on(agent, "cat '#{cached_fact_file}'", :acceptable_exit_codes => [1])
+          refute(agent.file_exist?("#{cached_fact_file}"), "Expected cache file to be absent")
         end
       end
 
