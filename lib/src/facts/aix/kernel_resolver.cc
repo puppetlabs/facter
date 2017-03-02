@@ -42,7 +42,7 @@ namespace facter { namespace facts { namespace aix   {
             auto exec = execute("/usr/bin/oslevel", {"-s"}, 0, { execution_options::trim_output, execution_options::redirect_stderr_to_stdout, execution_options::merge_environment });
 
             if (!exec.success) {
-                LOG_WARNING("oslevel failed: %1%: kernel facts are unavailable", exec.output);
+                LOG_WARNING("oslevel failed: {1}: kernel facts are unavailable", exec.output);
                 return result;
             }
 

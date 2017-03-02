@@ -14,9 +14,17 @@ elif [ ${TRAVIS_TARGET} == DOXYGEN ]; then
   # grab a pre-built doxygen 1.8.7 from s3
   wget https://s3.amazonaws.com/kylo-pl-bucket/doxygen_install.tar.bz2
   tar xjvf doxygen_install.tar.bz2 --strip 1 -C $USERDIR
-elif [ ${TRAVIS_TARGET} == DEBUG ]; then
-  # Install coveralls.io update utility
-  pip install --user cpp-coveralls
+elif [[ ${TRAVIS_TARGET} == DEBUG || ${TRAVIS_TARGET} == RELEASE ]]; then
+  # Prepare for generating FACTER.pot and ensure it happens every time.
+  # Ensure this happens before calling CMake.
+  wget https://s3.amazonaws.com/kylo-pl-bucket/gettext-0.19.6_install.tar.bz2
+  tar xjf gettext-0.19.6_install.tar.bz2 --strip 1 -C $USERDIR
+  rm -f locales/FACTER.pot
+
+  if [ ${TRAVIS_TARGET} == DEBUG ]; then
+    # Install coveralls.io update utility
+    pip install --user cpp-coveralls
+  fi
 fi
 
 # Generate build files
@@ -67,6 +75,9 @@ else
   if [ ${TRAVIS_TARGET} == DEBUG ]; then
     # Ignore coveralls failures, keep service success uncoupled
     coveralls --gcov gcov-4.8 --gcov-options '\-lp' -e vendor >/dev/null || true
+  else
+    # Ensure the gem is buildable
+    gem build .gemspec
   fi
 fi
 

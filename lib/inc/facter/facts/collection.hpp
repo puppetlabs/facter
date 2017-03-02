@@ -11,6 +11,7 @@
 #include <list>
 #include <map>
 #include <set>
+#include <unordered_map>
 #include <vector>
 #include <string>
 #include <memory>
@@ -39,6 +40,42 @@ namespace facter { namespace facts {
         yaml
     };
 
+    namespace {
+        /**
+         * Stream adapter for using with rapidjson
+         */
+        struct stream_adapter
+        {
+            /**
+             * Constructs an adapter for use with rapidjson around the given stream.
+             * @param stream an output stream to which JSON will be written
+             */
+            explicit stream_adapter(std::ostream& stream) : _stream(stream)
+            {
+            }
+
+            /**
+             * Adds a character to the stream.
+             * @param c the char to add
+             */
+            void Put(char c)
+            {
+                _stream << c;
+            }
+
+            /**
+             * Flushes the stream.
+             */
+            void Flush()
+            {
+                _stream.flush();
+            }
+
+         private:
+            std::ostream& _stream;
+        };
+    }
+
     /**
      * Represents the fact collection.
      * The fact collection is responsible for resolving and storing facts.
@@ -46,9 +83,18 @@ namespace facter { namespace facts {
     struct LIBFACTER_EXPORT collection
     {
         /**
-         * Constructs a fact collection.
+         * Inherent "has_weight" value for external facts.
          */
-        collection();
+        constexpr static size_t external_fact_weight = 10000;
+
+        /**
+         * Constructs a fact collection.
+         * @param blocklist the names of resolvers that should not be resolved
+         * @param ttls a map of resolver names to cache intervals (times-to-live)
+         *        for the facts they resolve
+         */
+        collection(std::set<std::string> const& blocklist = std::set<std::string>(),
+                   std::unordered_map<std::string, int64_t> const& ttls = std::unordered_map<std::string, int64_t>{});
 
         /**
          * Destructor for fact collection.
@@ -100,6 +146,21 @@ namespace facter { namespace facts {
          * @param value The value of the fact.
          */
         void add(std::string name, std::unique_ptr<value> value);
+
+        /**
+         * Adds a custom fact to the fact collection.
+         * @param name The name of the fact.
+         * @param value The value of the fact.
+         * @param weight The weight of the fact.
+         */
+        void add_custom(std::string name, std::unique_ptr<value> value, size_t weight);
+
+        /**
+         * Adds an external fact to the fact collection.
+         * @param name The name of the fact.
+         * @param value The value of the fact.
+         */
+        void add_external(std::string name, std::unique_ptr<value> value);
 
         /**
          * Adds external facts to the fact collection.
@@ -224,6 +285,22 @@ namespace facter { namespace facts {
          */
         void resolve_facts();
 
+        /**
+         * Returns the names of all the resolvers currently in the collection,
+         * along with their associated facts. The group names are used to allow
+         * caching of those facts.
+         * @return a map of group names to their associated fact names
+         */
+        std::map<std::string, std::vector<std::string>> get_fact_groups();
+
+        /**
+         * Returns the names of all blockable resolvers currently in the collection,
+         * along with their associated facts. The group names are used to allow
+         * blocking of those facts.
+         * @return a map of blockable group names to their associated fact names
+         */
+        std::map<std::string, std::vector<std::string>> get_blockable_fact_groups();
+
      protected:
         /**
          *  Gets external fact directories for the current platform.
@@ -241,6 +318,8 @@ namespace facter { namespace facts {
         LIBFACTER_NO_EXPORT void write_yaml(std::ostream& stream, std::set<std::string> const& queries, bool show_legacy, bool strict_errors);
         LIBFACTER_NO_EXPORT void add_common_facts(bool include_ruby_facts);
         LIBFACTER_NO_EXPORT bool add_external_facts_dir(std::vector<std::unique_ptr<external::resolver>> const& resolvers, std::string const& directory, bool warn);
+        LIBFACTER_NO_EXPORT bool try_block(std::shared_ptr<resolver> const& res);
+        LIBFACTER_NO_EXPORT void resolve(std::shared_ptr<resolver> const& res);
 
         // Platform specific members
         LIBFACTER_NO_EXPORT void add_platform_facts();
@@ -250,6 +329,8 @@ namespace facter { namespace facts {
         std::list<std::shared_ptr<resolver>> _resolvers;
         std::multimap<std::string, std::shared_ptr<resolver>> _resolver_map;
         std::list<std::shared_ptr<resolver>> _pattern_resolvers;
+        std::set<std::string> _blocklist;
+        std::unordered_map<std::string, int64_t> _ttls;
     };
 
 }}  // namespace facter::facts

@@ -35,6 +35,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/resolvers/zone_resolver.cc"
     "facts/resolvers/zpool_resolver.cc"
     "facts/schema.cc"
+    "facts/cache.cc"
     "facts/string_value.cc"
     "logging/logging.cc"
     "log_capture.cc"
@@ -100,6 +101,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set(LIBFACTER_TESTS_PLATFORM_SOURCES
         "facts/linux/dmi_resolver.cc"
         "facts/linux/filesystem_resolver.cc"
+        "facts/linux/virtualization_resolver.cc"
         "util/bsd/scoped_ifaddrs.cc"
     )
 endif()
@@ -130,6 +132,10 @@ target_link_libraries(libfacter_test
     ${CURL_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
 )
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND BOOST_STATIC AND LEATHERMAN_USE_LOCALES)
+    target_link_libraries(libfacter_test iconv)
+endif()
 
 target_compile_definitions(libfacter_test PRIVATE "-Dlibfacter_EXPORTS")
 

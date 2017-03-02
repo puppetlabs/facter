@@ -18,6 +18,7 @@
 #   - caveats (optional): describes any caveats to the fact.
 #   - elements (required for map types): contains the element values of a map value; each element is another entry.
 #   - validate (optional; default: true): true if a map value's elements should be validated or false if not.
+#   - blockgroup (optional): the block group of this fact; if not specified, the fact cannot be blocked
 #
 # Please keep the facts in alphabetical order.
 
@@ -183,6 +184,14 @@ chassistype:
     caveats: |
         Linux: kernel 2.6+ is required due to the reliance on sysfs.
 
+cloud:
+    type: map
+    description: Information about the cloud instance of the node. This is currently only populated on Linux nodes running in Microsoft Azure.
+    elements:
+        provider:
+            type: string
+            description: The cloud provider for the node.
+
 dhcp_servers:
     type: map
     hidden: true
@@ -205,6 +214,7 @@ disks:
     type: map
     description: Return the disk (block) devices attached to the system.
     resolution: |
+        AIX: query the ODM for all disk devices
         Linux: parse the contents of `/sys/block/<device>/`.
         Solaris: use the `kstat` function to query disk information.
     caveats: |
@@ -317,6 +327,7 @@ ec2_metadata:
     caveats: |
         All platforms: `libfacter` must be built with `libcurl` support.
     validate: false
+    blockgroup: EC2
 
 ec2_userdata:
     type: string
@@ -327,6 +338,7 @@ ec2_userdata:
         EC2: query the EC2 user data endpoint and parse the response.
     caveats: |
         All platforms: `libfacter` must be built with `libcurl` support.
+    blockgroup: EC2
 
 env_windows_installdir:
     type: string
@@ -348,12 +360,14 @@ filesystems:
     type: string
     description: Return the usable file systems for block or disk devices.
     resolution: |
+        AIX: parse the contents of `/etc/vfs` to retrieve the usable file systems.
         Linux: parse the contents of `/proc/filesystems` to retrieve the usable file systems.
         Mac OSX: use the `getfsstat` function to retrieve the usable file systems.
         Solaris: use the `sysdef` utility to retrieve the usable file systems.
     caveats: |
         Linux: The proc file system must be mounted.
         Mac OSX: The usable file systems is limited to the file system of mounted devices.
+    blockgroup: file system
 
 fqdn:
     type: string
@@ -792,9 +806,11 @@ mountpoints:
     type: map
     description: Return the current mount points of the system.
     resolution: |
+        AIX: use the `mntctl` function to retrieve the mount points.
         Linux: use the `setmntent` function to retrieve the mount points.
         Mac OSX: use the `getfsstat` function to retrieve the mount points.
         Solaris: parse the contents of `/etc/mnttab` to retrieve the mount points.
+    blockgroup: file system
     elements:
         <mountpoint>:
             pattern: .+
@@ -1188,9 +1204,11 @@ partitions:
     type: map
     description: Return the disk partitions of the system.
     resolution: |
+        AIX: use the ODM to retrieve list of logical volumes; use `lvm_querylv` function to get details
         Linux: use `libblkid` to retrieve the disk partitions.
     caveats: |
         Linux: `libfacter` must be built with `libblkid` support.
+    blockgroup: file system
     elements:
         <partition>:
             pattern: \w+

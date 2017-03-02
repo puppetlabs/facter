@@ -30,7 +30,7 @@ namespace facter { namespace facts { namespace openbsd {
         len = sizeof(value) - 1;
 
         if (sysctl(mib, 2, &value, &len, nullptr, 0) == -1) {
-            LOG_DEBUG("sysctl_lookup failed: %1% (%2%).", strerror(errno), errno);
+            LOG_DEBUG("sysctl_lookup failed: {1} ({2}).", strerror(errno), errno);
             return "";
         }
 

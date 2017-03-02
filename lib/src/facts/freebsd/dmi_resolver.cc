@@ -14,7 +14,7 @@ namespace facter { namespace facts { namespace freebsd {
         result.bios_version = kenv_lookup("smbios.bios.version");
         result.bios_release_date = kenv_lookup("smbios.bios.reldate");
         result.uuid = kenv_lookup("smbios.system.uuid");
-        result.serial_number = kenv_lookup("smbios.planar.serial");
+        result.serial_number = kenv_lookup("smbios.system.serial");
         result.product_name = kenv_lookup("smbios.system.product");
         result.manufacturer = kenv_lookup("smbios.system.maker");
 
@@ -25,9 +25,9 @@ namespace facter { namespace facts { namespace freebsd {
     {
         char buffer[100] = {};
 
-        LOG_DEBUG("kenv lookup for %s", file);
+        LOG_DEBUG("kenv lookup for {1}", file);
         if (kenv(KENV_GET, file, buffer, sizeof(buffer) - 1) == -1) {
-            LOG_WARNING("kenv lookup for %1% failed: %2% (%3%)", file, strerror(errno), errno);
+            LOG_WARNING("kenv lookup for {1} failed: {2} ({3})", file, strerror(errno), errno);
             return "";
         }
         return buffer;

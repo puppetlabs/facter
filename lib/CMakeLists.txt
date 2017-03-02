@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.2.2)
 
-set(LIBFACTER_VERSION_MAJOR 3)
-set(LIBFACTER_VERSION_MINOR 4)
-set(LIBFACTER_VERSION_PATCH 2)
-
 # Get the HEAD SHA1 commit message
 get_commit_string(LIBFACTER_COMMIT)
 
@@ -59,6 +55,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/zpool_resolver.cc"
     "src/facts/resolvers/zone_resolver.cc"
     "src/facts/resolvers/zfs_resolver.cc"
+    "src/facts/cache.cc"
     "src/facts/scalar_value.cc"
     "src/logging/logging.cc"
     "src/ruby/aggregate_resolution.cc"
@@ -73,6 +70,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/util/scoped_file.cc"
     "src/util/string.cc"
     "src/util/config/config.cc"
+    "src/util/yaml.cc"
 )
 
 # Set the POSIX sources if on a POSIX platform
@@ -87,6 +85,7 @@ if (UNIX)
         "src/facts/posix/timezone_resolver.cc"
         "src/facts/posix/uptime_resolver.cc"
         "src/facts/posix/xen_resolver.cc"
+        "src/facts/posix/cache.cc"
         "src/util/posix/scoped_addrinfo.cc"
         "src/util/posix/scoped_descriptor.cc"
         "src/util/config/posix/config.cc"
@@ -115,6 +114,8 @@ endif()
 if (AIX)
     set(LIBFACTER_PLATFORM_SOURCES
         "src/facts/aix/collection.cc"
+        "src/facts/aix/disk_resolver.cc"
+        "src/facts/aix/filesystem_resolver.cc"
         "src/facts/aix/kernel_resolver.cc"
         "src/facts/aix/memory_resolver.cc"
         "src/facts/aix/networking_resolver.cc"
@@ -125,6 +126,7 @@ if (AIX)
 
     set(LIBFACTER_PLATFORM_LIBRARIES
         odm
+        lvm
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
     set(LIBFACTER_PLATFORM_SOURCES
@@ -199,6 +201,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
         "src/facts/bsd/uptime_resolver.cc"
         "src/facts/freebsd/processor_resolver.cc"
         "src/facts/freebsd/dmi_resolver.cc"
+        "src/facts/freebsd/networking_resolver.cc"
         "src/util/bsd/scoped_ifaddrs.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "OpenBSD")
@@ -227,6 +230,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
         "src/facts/windows/timezone_resolver.cc"
         "src/facts/windows/uptime_resolver.cc"
         "src/facts/windows/virtualization_resolver.cc"
+        "src/facts/windows/cache.cc"
         "src/util/config/windows/config.cc"
     )
 
@@ -261,15 +265,22 @@ if (JRUBY_SUPPORT)
     )
 
     include(UseJava)
-    add_jar(facter-jruby "${CMAKE_BINARY_DIR}/lib/com/puppetlabs/Facter.java" OUTPUT_NAME facter OUTPUT_DIR "${CMAKE_BINARY_DIR}/lib" ENTRY_POINT com/puppetlabs/Facter)
+    add_jar(facter-jruby-jar "${CMAKE_BINARY_DIR}/lib/com/puppetlabs/Facter.java" OUTPUT_NAME facter OUTPUT_DIR "${CMAKE_BINARY_DIR}/lib" ENTRY_POINT com/puppetlabs/Facter)
 
-    add_custom_command(TARGET facter-jruby POST_BUILD COMMAND javah ARGS -d "${CMAKE_CURRENT_LIST_DIR}/src/java" com.puppetlabs.Facter WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+    # javah does not atomically write the header file, so parallel builds can
+    # read it before it finishes writing if not careful.
+    add_custom_command(OUTPUT "${CMAKE_CURRENT_LIST_DIR}/src/java/com_puppetlabs_Facter.h"
+                       COMMAND javah ARGS -classpath facter.jar -d "${CMAKE_CURRENT_LIST_DIR}/src/java" com.puppetlabs.Facter
+                       WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+                       DEPENDS facter-jruby-jar)
+    # Anything that depends on facter-jruby wants both the jar AND the completely written header.
+    add_custom_target(facter-jruby DEPENDS facter-jruby-jar "${CMAKE_CURRENT_LIST_DIR}/src/java/com_puppetlabs_Facter.h")
+    set(LIBFACTER_COMMON_SOURCES ${LIBFACTER_COMMON_SOURCES} src/java/com_puppetlabs_Facter.h)
 endif()
 
 # Set include directories
 include_directories(
     inc
-    ${RAPIDJSON_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
@@ -290,7 +301,7 @@ link_directories(
 add_library(libfactersrc OBJECT ${LIBFACTER_COMMON_SOURCES} ${LIBFACTER_STANDARD_SOURCES} ${LIBFACTER_PLATFORM_SOURCES})
 set_target_properties(libfactersrc PROPERTIES POSITION_INDEPENDENT_CODE true)
 add_library(libfacter SHARED $<TARGET_OBJECTS:libfactersrc>)
-set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX "" IMPORT_SUFFIX ".so.a" VERSION "${LIBFACTER_VERSION_MAJOR}.${LIBFACTER_VERSION_MINOR}.${LIBFACTER_VERSION_PATCH}")
+set_target_properties(libfacter PROPERTIES PREFIX "" SUFFIX ".so" IMPORT_PREFIX "" IMPORT_SUFFIX ".so.a" VERSION ${PROJECT_VERSION})
 
 if(AIX)
     # On AIX we need to be built such that we are "dynamically
@@ -300,16 +311,21 @@ if(AIX)
 endif()
 
 # Link in additional libraries
+# Note: this assumes shared Leatherman and static Boost libraries
 target_link_libraries(libfacter PRIVATE
-    ${CPPHOCON_LIBRARIES}
     ${LIBFACTER_PLATFORM_LIBRARIES}
-    ${LEATHERMAN_LIBRARIES}
+    ${CPPHOCON_LIBRARIES}
     ${Boost_LIBRARIES}
+    ${LEATHERMAN_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
     ${CURL_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
 )
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND BOOST_STATIC AND LEATHERMAN_USE_LOCALES)
+    target_link_libraries(libfacter PRIVATE iconv)
+endif()
 
 symbol_exports(libfacter "${CMAKE_CURRENT_LIST_DIR}/inc/facter/export.h")
 target_compile_definitions(libfactersrc PRIVATE "-Dlibfacter_EXPORTS")
@@ -336,7 +352,7 @@ endif()
 
 set(RUBY_LIB_INSTALL "" CACHE PATH "Specify the location to install facter.rb")
 if(RUBY_LIB_INSTALL)
-    set(RUBY_VENDORDIR ${RUBY_LIB_INSTALL}) 
+    set(RUBY_VENDORDIR ${RUBY_LIB_INSTALL})
 else()
     # Disable actually installing facter.rb if Ruby is not present and RUBY_LIB_INSTALL not specified.
     if (RUBY_FOUND)

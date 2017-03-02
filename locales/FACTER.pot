@@ -1,0 +1,1472 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Puppet <docs@puppet.com>
+# This file is distributed under the same license as the FACTER package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: FACTER 3.6.0\n"
+"Report-Msgid-Bugs-To: docs@puppet.com\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: exe/facter.cc
+msgid ""
+"Synopsis\n"
+"========\n"
+"\n"
+"Collect and display facts about the system.\n"
+"\n"
+"Usage\n"
+"=====\n"
+"\n"
+"  facter [options] [query] [query] [...]\n"
+"\n"
+"Options\n"
+"=======\n"
+"\n"
+"%1%\n"
+"Description\n"
+"===========\n"
+"\n"
+"Collect and display facts about the current system.  The library behind\n"
+"facter is easy to extend, making facter an easy way to collect information\n"
+"about a system.\n"
+"\n"
+"If no queries are given, then all facts will be returned.\n"
+"\n"
+"Example Queries\n"
+"===============\n"
+"\n"
+"  facter kernel\n"
+"  facter networking.ip\n"
+"  facter processors.models.0\n"
+"\n"
+"Config File\n"
+"===========\n"
+"\n"
+"Contains settings for configuring external and custom fact directories,\n"
+"setting command line options, and blocking and caching facts.\n"
+"Loaded by default from %2%.\n"
+"See man page, README, or docs for more details."
+msgstr ""
+
+#. log
+#: exe/facter.cc
+msgid "executed with command line: %1%."
+msgstr ""
+
+#. log
+#: exe/facter.cc
+msgid "resolving all facts."
+msgstr ""
+
+#. log
+#: exe/facter.cc
+msgid "requested queries: %1%."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Enable color output."
+msgstr ""
+
+#: exe/facter.cc
+msgid "The location of the config file."
+msgstr ""
+
+#: exe/facter.cc
+msgid "A directory to use for custom facts."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Enable debug output."
+msgstr ""
+
+#: exe/facter.cc
+msgid "A directory to use for external facts."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Print this help message."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Output in JSON format."
+msgstr ""
+
+#: exe/facter.cc
+msgid "List the names of all blockable fact groups."
+msgstr ""
+
+#: exe/facter.cc
+msgid "List the names of all cacheable fact groups."
+msgstr ""
+
+#: exe/facter.cc
+msgid ""
+"Set logging level.\n"
+"Supported levels are: none, trace, debug, info, warn, error, and fatal."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Disable fact blocking."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Disable loading and refreshing facts from the cache"
+msgstr ""
+
+#: exe/facter.cc
+msgid "Disable color output."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Disable custom facts."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Disable external facts."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Disable loading Ruby, facts requiring Ruby, and custom facts."
+msgstr ""
+
+#: exe/facter.cc
+msgid ""
+"(Deprecated: use `puppet facts` instead) Load the Puppet libraries, thus "
+"allowing Facter to load Puppet-specific facts."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Show legacy facts when querying all facts."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Enable backtraces for custom facts."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Enable verbose (info) output."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Print the version and exit."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Output in YAML format."
+msgstr ""
+
+#: exe/facter.cc
+msgid "Enable more aggressive error reporting."
+msgstr ""
+
+#: exe/facter.cc
+msgid "color and no-color options conflict: please specify only one."
+msgstr ""
+
+#: exe/facter.cc
+msgid "json and yaml options conflict: please specify only one."
+msgstr ""
+
+#: exe/facter.cc
+msgid ""
+"no-external-facts and external-dir options conflict: please specify only one."
+msgstr ""
+
+#: exe/facter.cc
+msgid ""
+"no-custom-facts and custom-dir options conflict: please specify only one."
+msgstr ""
+
+#: exe/facter.cc
+msgid ""
+"debug, verbose, and log-level options conflict: please specify only one."
+msgstr ""
+
+#: exe/facter.cc
+msgid "no-ruby and custom-dir options conflict: please specify only one."
+msgstr ""
+
+#: exe/facter.cc
+msgid "puppet and no-custom-facts options conflict: please specify only one."
+msgstr ""
+
+#: exe/facter.cc
+msgid "puppet and no-ruby options conflict: please specify only one."
+msgstr ""
+
+#: exe/facter.cc
+msgid "error: %1%"
+msgstr ""
+
+#. log
+#: exe/facter.cc
+msgid "Environment variable INSIDE_FACTER is set to 'true'"
+msgstr ""
+
+#. log
+#: exe/facter.cc
+msgid ""
+"Facter was called recursively, skipping external facts. Add '--no-external-"
+"facts' to silence this warning"
+msgstr ""
+
+#: exe/facter.cc
+msgid "failed to initialize logging system due to a locale error: %1%"
+msgstr ""
+
+#. log
+#: exe/facter.cc
+msgid "unhandled exception: %1%"
+msgstr ""
+
+#. warning
+#: lib/inc/internal/util/agent.hpp
+msgid "{1} not found at configured location {2}, using PATH instead"
+msgstr ""
+
+#: lib/inc/internal/util/aix/odm.hpp
+msgid "failed to retrieve ODM error message"
+msgstr ""
+
+#: lib/inc/internal/util/aix/odm.hpp
+msgid ""
+"Tried to construct an iterator with valid data but no owner. Naughty naughty."
+msgstr ""
+
+#: lib/inc/internal/util/aix/odm.hpp
+msgid "Cannot iterate over the same ODM class concurrently"
+msgstr ""
+
+#. warning
+#: lib/src/facts/aix/kernel_resolver.cc
+msgid "oslevel failed: {1}: kernel facts are unavailable"
+msgstr ""
+
+#. warning
+#: lib/src/facts/aix/kernel_resolver.cc
+msgid ""
+"Could not parse rml cache even after regenerating with oslevel: kernel facts "
+"are unavailable. Try running 'oslevel -s' to debug."
+msgstr ""
+
+#: lib/src/facts/aix/networking_resolver.cc
+msgid "getkerninfo call was unsuccessful"
+msgstr ""
+
+#. warning
+#: lib/src/facts/aix/networking_resolver.cc
+msgid ""
+"got mixed address families for interface {1}, can't map them to a single "
+"binding."
+msgstr ""
+
+#. info
+#: lib/src/facts/aix/networking_resolver.cc
+msgid "got ipv4 addresses for interface {1}"
+msgstr ""
+
+#. info
+#: lib/src/facts/aix/networking_resolver.cc
+msgid "got ipv6 addresses for interface {1}"
+msgstr ""
+
+#. info
+#: lib/src/facts/aix/networking_resolver.cc
+msgid "skipping unknown address family {1} for interface {2}"
+msgstr ""
+
+#. info
+#: lib/src/facts/aix/networking_resolver.cc
+msgid "somehow didn't get an address family for interface {1}"
+msgstr ""
+
+#. info
+#: lib/src/facts/aix/networking_resolver.cc
+msgid "got an unknown RT_IFLIST message: {1}"
+msgstr ""
+
+#. warning
+#: lib/src/facts/aix/operating_system_resolver.cc
+msgid "Could not get a value from lsattr -El {1} -a {2}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/aix/processor_resolver.cc
+msgid "got a processor type: {1}"
+msgstr ""
+
+#: lib/src/facts/aix/processor_resolver.cc
+msgid "PdDvLn=%1%"
+msgstr ""
+
+#. debug
+#: lib/src/facts/aix/processor_resolver.cc
+msgid "got a processor: {1}"
+msgstr ""
+
+#: lib/src/facts/aix/processor_resolver.cc
+msgid "name=%1%"
+msgstr ""
+
+#. debug
+#: lib/src/facts/aix/processor_resolver.cc
+msgid "got attribute {1}={2} for processor {3}"
+msgstr ""
+
+#. info
+#: lib/src/facts/aix/processor_resolver.cc
+msgid "don't know what to do with processor attribute {1}"
+msgstr ""
+
+#. warning
+#: lib/src/facts/aix/processor_resolver.cc
+msgid ""
+"mismatched processor frequencies found; facter will only report one of them"
+msgstr ""
+
+#. debug
+#: lib/src/facts/aix/serial_number_resolver.cc
+msgid ""
+"Could not retrieve serial number: sys0 systemid did not match the expected "
+"format"
+msgstr ""
+
+#. debug
+#: lib/src/facts/array_value.cc
+msgid "null value cannot be added to array."
+msgstr ""
+
+#. error
+#: lib/src/facts/bsd/filesystem_resolver.cc
+msgid "getfsstat failed: {1} ({2}): file system facts are unavailable."
+msgstr ""
+
+#. warning
+#: lib/src/facts/bsd/networking_resolver.cc
+msgid "getifaddrs failed: {1} ({2}): interface information is unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/bsd/networking_resolver.cc
+msgid "searching \"{1}\" for dhclient lease files."
+msgstr ""
+
+#. debug
+#: lib/src/facts/bsd/networking_resolver.cc
+msgid "reading \"{1}\" for dhclient lease information."
+msgstr ""
+
+#. debug
+#: lib/src/facts/cache.cc
+msgid "cache file for {1} facts contained invalid JSON, refreshing"
+msgstr ""
+
+#. debug
+#: lib/src/facts/cache.cc
+msgid "cache file for {1} facts was missing, refreshing"
+msgstr ""
+
+#. debug
+#: lib/src/facts/cache.cc
+msgid "loading cached values for {1} facts"
+msgstr ""
+
+#. debug
+#: lib/src/facts/cache.cc
+msgid "caching values for {1} facts"
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid ""
+"fact \"{1}\" resolved to null and the existing value of {2} will be removed."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid "fact \"{1}\" has changed from {2} to {3}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid "fact \"{1}\" resolved to null and will not be added."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid "fact \"{1}\" has resolved to {2}."
+msgstr ""
+
+#. warning
+#. debug
+#: lib/src/facts/collection.cc
+msgid "skipping external facts for \"{1}\": {2}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid "searching {1} for external facts."
+msgstr ""
+
+#. error
+#: lib/src/facts/collection.cc
+msgid "error while processing \"{1}\" for external facts: {2}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid "no external facts were found."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid ""
+"setting fact \"{1}\" based on the value of environment variable \"{2}\"."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid "blocking collection of {1} facts."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid "{1} resolver cannot be blocked."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid "resolving {1} facts."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid "cannot lookup an element with \"{1}\" from Ruby fact"
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+msgid "cannot lookup a hash element with \"{1}\": element does not exist."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+#: lib/src/ruby/ruby.cc
+msgid ""
+"cannot lookup an array element with \"{1}\": expected an integral value."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+#: lib/src/ruby/ruby.cc
+msgid ""
+"cannot lookup an array element with \"{1}\": expected a non-negative value."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+#: lib/src/ruby/ruby.cc
+msgid "cannot lookup an array element with \"{1}\": the array is empty."
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
+#: lib/src/ruby/ruby.cc
+msgid ""
+"cannot lookup an array element with \"{1}\": expected an integral value "
+"between 0 and {2} (inclusive)."
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/execution_resolver.cc
+msgid "checking execution on {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/execution_resolver.cc
+msgid "resolving facts from executable file \"{1}\"."
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/execution_resolver.cc
+msgid "Could not parse executable fact output as YAML or JSON ({1})"
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/execution_resolver.cc
+#: lib/src/facts/external/text_resolver.cc
+#: lib/src/facts/external/windows/powershell_resolver.cc
+msgid "ignoring line in output: {1}"
+msgstr ""
+
+#. warning
+#: lib/src/facts/external/execution_resolver.cc
+#: lib/src/facts/external/windows/powershell_resolver.cc
+msgid "external fact file \"{1}\" had output on stderr: {2}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/execution_resolver.cc
+msgid "completed resolving facts from executable file \"{1}\"."
+msgstr ""
+
+#: lib/src/facts/external/json_resolver.cc
+#: lib/src/facts/resolvers/gce_resolver.cc
+msgid "expected non-empty key in object."
+msgstr ""
+
+#: lib/src/facts/external/json_resolver.cc
+#: lib/src/facts/resolvers/gce_resolver.cc
+msgid "expected document to contain an object."
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/json_resolver.cc
+msgid "resolving facts from JSON file \"{1}\"."
+msgstr ""
+
+#: lib/src/facts/external/json_resolver.cc
+#: lib/src/facts/external/text_resolver.cc
+#: lib/src/facts/external/yaml_resolver.cc
+msgid "file could not be opened."
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/json_resolver.cc
+msgid "completed resolving facts from JSON file \"{1}\"."
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/text_resolver.cc
+msgid "resolving facts from text file \"{1}\"."
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/text_resolver.cc
+msgid "completed resolving facts from text file \"{1}\"."
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/windows/powershell_resolver.cc
+msgid "resolving facts from powershell script \"{1}\"."
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/windows/powershell_resolver.cc
+msgid "completed resolving facts from powershell script \"{1}\"."
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/yaml_resolver.cc
+msgid "resolving facts from YAML file \"{1}\"."
+msgstr ""
+
+#. debug
+#: lib/src/facts/external/yaml_resolver.cc
+msgid "completed resolving facts from YAML file \"{1}\"."
+msgstr ""
+
+#. debug
+#: lib/src/facts/freebsd/dmi_resolver.cc
+msgid "kenv lookup for {1}"
+msgstr ""
+
+#. warning
+#: lib/src/facts/freebsd/dmi_resolver.cc
+msgid "kenv lookup for {1} failed: {2} ({3})"
+msgstr ""
+
+#. warning
+#: lib/src/facts/freebsd/networking_resolver.cc
+#: lib/src/facts/linux/networking_resolver.cc
+#: lib/src/facts/openbsd/networking_resolver.cc
+msgid ""
+"socket failed: {1} ({2}): interface MTU fact is unavailable for interface "
+"{3}."
+msgstr ""
+
+#. warning
+#: lib/src/facts/freebsd/networking_resolver.cc
+#: lib/src/facts/linux/networking_resolver.cc
+#: lib/src/facts/openbsd/networking_resolver.cc
+msgid ""
+"ioctl failed: {1} ({2}): interface MTU fact is unavailable for interface {3}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/freebsd/processor_resolver.cc
+#: lib/src/facts/openbsd/processor_resolver.cc
+msgid ""
+"sysctl hw.ncpu failed: {1} ({2}): logical processor count is unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/freebsd/processor_resolver.cc
+#: lib/src/facts/openbsd/processor_resolver.cc
+msgid "sysctl hw.model failed: {1} ({2}): processor models are unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/freebsd/processor_resolver.cc
+#: lib/src/facts/openbsd/processor_resolver.cc
+msgid "sysctl hw.cpuspeed failed: {1} ({2}): processor speed is unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/glib/load_average_resolver.cc
+msgid "failed to retrieve load averages: {1} ({2})."
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/disk_resolver.cc
+msgid "{1}: {2}: disk facts are unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/disk_resolver.cc
+msgid "size of disk {1} is invalid: size information is unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/dmi_resolver.cc
+msgid ""
+"/sys/class/dmi cannot be accessed: using dmidecode to query DMI information."
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/dmi_resolver.cc
+msgid "{1}: {2}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/dmi_resolver.cc
+msgid "{1}: file could not be read."
+msgstr ""
+
+#. error
+#: lib/src/facts/linux/filesystem_resolver.cc
+msgid "setmntent failed: {1} ({2}): mountpoints are unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/filesystem_resolver.cc
+msgid "blkid_probe_all failed: partition attributes are not available."
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/filesystem_resolver.cc
+msgid "blkid_get_cache failed: partition attributes are not available."
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/filesystem_resolver.cc
+msgid ""
+"facter was built without libblkid support: partition attributes are not "
+"available."
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/filesystem_resolver.cc
+msgid "blkid_get_dev failed: partition attributes are unavailable for '{1}'."
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/filesystem_resolver.cc
+msgid ""
+"cannot determine size of partition '{1}': '{2}' is not an integral value."
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/networking_resolver.cc
+msgid ""
+"Could not find the 'ip' command. Network bindings will not be populated from "
+"routing table"
+msgstr ""
+
+#. warning
+#: lib/src/facts/linux/networking_resolver.cc
+msgid ""
+"Could not process routing table entry: Expected a destination followed by "
+"key/value pairs, got '{1}'"
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/networking_resolver.cc
+msgid ""
+"Could not find the 'ip' command. Physical macaddress for bonded interfaces "
+"will be incorrect."
+msgstr ""
+
+#. debug
+#: lib/src/facts/map_value.cc
+msgid "null value cannot be added to map."
+msgstr ""
+
+#. debug
+#: lib/src/facts/openbsd/dmi_resolver.cc
+msgid "sysctl_lookup failed: {1} ({2})."
+msgstr ""
+
+#. debug
+#: lib/src/facts/openbsd/memory_resolver.cc
+#: lib/src/facts/osx/memory_resolver.cc
+msgid "sysctl failed: {1} ({2}): system page size is unknown."
+msgstr ""
+
+#. debug
+#: lib/src/facts/openbsd/memory_resolver.cc
+msgid "sysctl uvmexp failed: {1} ({2}): free memory is not available."
+msgstr ""
+
+#. debug
+#: lib/src/facts/openbsd/memory_resolver.cc
+msgid "swapctl: SWAP_STATS failed: {1} ({2})"
+msgstr ""
+
+#. debug
+#: lib/src/facts/openbsd/memory_resolver.cc
+msgid "sysctl failed: {1} ({2}): encrypted swap fact not available."
+msgstr ""
+
+#. debug
+#: lib/src/facts/osx/dmi_resolver.cc
+msgid "sysctl failed: {1} ({2}): DMI facts are unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/osx/memory_resolver.cc
+msgid "sysctl failed: {1} ({2}): total memory size is not available."
+msgstr ""
+
+#. debug
+#: lib/src/facts/osx/memory_resolver.cc
+msgid "host_statistics64 failed: {1} ({2}): free memory size is not available."
+msgstr ""
+
+#. debug
+#: lib/src/facts/osx/memory_resolver.cc
+msgid "sysctl failed: {1} ({2}): swap data is not available."
+msgstr ""
+
+#. debug
+#: lib/src/facts/osx/processor_resolver.cc
+msgid "sysctlbyname failed: logical processor count is unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/osx/processor_resolver.cc
+msgid ""
+"sysctlbyname failed: {1} ({2}): physical processor count is unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/osx/processor_resolver.cc
+msgid "sysctlbyname failed: {1} ({2}): processor models are unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/osx/processor_resolver.cc
+msgid "sysctlbyname failed: {1} ({2}): processor speed is unavailable."
+msgstr ""
+
+#. warning
+#: lib/src/facts/posix/identity_resolver.cc
+msgid "getpwuid_r failed: {1} ({2})"
+msgstr ""
+
+#. warning
+#: lib/src/facts/posix/identity_resolver.cc
+msgid "effective uid {1} does not have a passwd entry."
+msgstr ""
+
+#. warning
+#: lib/src/facts/posix/identity_resolver.cc
+msgid "getgrgid_r failed: {1} ({2})"
+msgstr ""
+
+#. warning
+#: lib/src/facts/posix/identity_resolver.cc
+msgid "effective gid {1} does not have a group entry."
+msgstr ""
+
+#. warning
+#: lib/src/facts/posix/kernel_resolver.cc
+#: lib/src/facts/solaris/kernel_resolver.cc
+msgid "uname failed: {1} ({2}): kernel facts are unavailable."
+msgstr ""
+
+#. warning
+#: lib/src/facts/posix/networking_resolver.cc
+msgid "gethostname failed: {1} ({2}): hostname is unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/posix/networking_resolver.cc
+msgid "using the FQDN returned by gethostname: {1}."
+msgstr ""
+
+#. warning
+#: lib/src/facts/posix/networking_resolver.cc
+msgid ""
+"getaddrinfo failed: {1} ({2}): hostname may not be externally resolvable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/posix/networking_resolver.cc
+msgid ""
+"hostname \"{1}\" could not be resolved: hostname may not be externally "
+"resolvable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/posix/operatingsystem_resolver.cc
+msgid "uname failed: {1} ({2}): OS hardware is unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/posix/ssh_resolver.cc
+msgid "{1} could not be located."
+msgstr ""
+
+#. debug
+#: lib/src/facts/posix/ssh_resolver.cc
+msgid "{1} could not be read."
+msgstr ""
+
+#. debug
+#: lib/src/facts/posix/ssh_resolver.cc
+msgid "unexpected contents for {1}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/posix/ssh_resolver.cc
+msgid "failed to decode SSH key \"{1}\"."
+msgstr ""
+
+#: lib/src/facts/posix/ssh_resolver.cc
+msgid "SSHFP %1% 1 %2%"
+msgstr ""
+
+#: lib/src/facts/posix/ssh_resolver.cc
+msgid "SSHFP %1% 2 %2%"
+msgstr ""
+
+#. info
+#: lib/src/facts/posix/ssh_resolver.cc
+msgid ""
+"facter was built without OpenSSL support: SSH fingerprint information is "
+"unavailable."
+msgstr ""
+
+#. warning
+#: lib/src/facts/posix/timezone_resolver.cc
+msgid "localtime_r failed: timezone is unavailable."
+msgstr ""
+
+#. warning
+#: lib/src/facts/posix/timezone_resolver.cc
+msgid "strftime failed: timezone is unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/posix/xen_resolver.cc
+msgid "failure executing {1}: {2}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/ec2_resolver.cc
+#: lib/src/facts/resolvers/gce_resolver.cc
+msgid "request for {1} returned a status code of {2}."
+msgstr ""
+
+#. info
+#: lib/src/facts/resolvers/ec2_resolver.cc
+msgid "EC2 facts are unavailable: facter was built without libcurl support."
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/ec2_resolver.cc
+msgid "EC2 facts are unavailable: not running under an EC2 instance."
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/ec2_resolver.cc
+msgid "querying EC2 instance metadata at {1}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/ec2_resolver.cc
+msgid ""
+"EC2 facts are unavailable: not running under an EC2 instance or EC2 is not "
+"responding in a timely manner."
+msgstr ""
+
+#. error
+#: lib/src/facts/resolvers/ec2_resolver.cc
+msgid "EC2 metadata request failed: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/ec2_resolver.cc
+msgid "querying EC2 instance user data at {1}."
+msgstr ""
+
+#. error
+#: lib/src/facts/resolvers/ec2_resolver.cc
+msgid "EC2 user data request failed: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/gce_resolver.cc
+msgid "not running under a GCE instance."
+msgstr ""
+
+#. info
+#: lib/src/facts/resolvers/gce_resolver.cc
+msgid "GCE facts are unavailable: facter was built without libcurl support."
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/gce_resolver.cc
+msgid "querying GCE metadata."
+msgstr ""
+
+#. error
+#: lib/src/facts/resolvers/gce_resolver.cc
+msgid "failed to parse GCE metadata: {1}."
+msgstr ""
+
+#. error
+#: lib/src/facts/resolvers/gce_resolver.cc
+msgid "GCE metadata request failed: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/networking_resolver.cc
+msgid ""
+"no primary interface found: using the first interface with an assigned "
+"address as the primary interface."
+msgstr ""
+
+#: lib/src/facts/resolvers/networking_resolver.cc
+#, c-format
+msgid "%02x:%02x:%02x:%02x:%02x:%02x"
+msgstr ""
+
+#. error
+#: lib/src/facts/resolvers/ruby_resolver.cc
+msgid "error while resolving ruby {1} fact: {2}"
+msgstr ""
+
+#: lib/src/facts/resolvers/uptime_resolver.cc
+#, c-format
+msgid "%d:%02d hours"
+msgstr ""
+
+#: lib/src/facts/resolvers/uptime_resolver.cc
+#, c-format
+msgid "%d days"
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/disk_resolver.cc
+msgid "disk information is unavailable: {1}."
+msgstr ""
+
+#. error
+#: lib/src/facts/solaris/filesystem_resolver.cc
+msgid "fopen of /etc/mnttab failed: {1} ({2}): mountpoint data is unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/memory_resolver.cc
+msgid "failed to read memory facts from kstat api: {1}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/memory_resolver.cc
+msgid "swapctl failed: {1} ({2}): swap information is unavailable"
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/memory_resolver.cc
+msgid "swapctl with SC_LIST failed: {1} ({2}): swap information is unavailable"
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/networking_resolver.cc
+msgid "socket failed {1} ({2}): interface information is unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/networking_resolver.cc
+msgid ""
+"ioctl with SIOCGLIFNUM failed: {1} ({2}): interface information is "
+"unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/networking_resolver.cc
+msgid ""
+"ioctl with SIOCGLIFCONF failed: {1} ({2}): interface information is "
+"unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/networking_resolver.cc
+msgid ""
+"socket failed: {1} ({2}): netmask and network for interface {3} are "
+"unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/networking_resolver.cc
+msgid ""
+"ioctl with SIOCGLIFNETMASK failed: {1} ({2}): netmask and network for "
+"interface {3} are unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/networking_resolver.cc
+msgid ""
+"socket failed: {1} ({2}): link level address for interface {3} is "
+"unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/networking_resolver.cc
+msgid ""
+"ioctl with SIOCGARP failed: {1} ({2}): link level address for {3} is "
+"unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/networking_resolver.cc
+msgid "socket failed: {1} ({2}): MTU for interface {3} is unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/networking_resolver.cc
+msgid ""
+"ioctl with SIOCGLIFMTU failed: {1} ({2}): MTU for interface {3} is "
+"unavailable."
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/processor_resolver.cc
+msgid "failed to read processor data entry: {1}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/solaris/processor_resolver.cc
+msgid "failed to read processor data from kstat api: {1}."
+msgstr ""
+
+#. warning
+#: lib/src/facts/solaris/virtualization_resolver.cc
+msgid "execution of prtdiag has timed out after {1} seconds."
+msgstr ""
+
+#. warning
+#: lib/src/facts/windows/collection.cc
+msgid "external facts unavailable, %1%"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/collection.cc
+msgid "HOME environment variable not set, external facts unavailable"
+msgstr ""
+
+#. error
+#: lib/src/facts/windows/collection.cc
+msgid "failed adding platform facts that require WMI: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/dmi_resolver.cc
+msgid "WMI query returned no results for {1} with value {2}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/dmi_resolver.cc
+msgid "WMI query returned no results for {1} with values {2} and {3}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/identity_resolver.cc
+msgid "failure resolving identity facts: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/kernel_resolver.cc
+msgid "failed to retrieve kernel facts: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/memory_resolver.cc
+msgid "resolving memory facts failed: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/networking_resolver.cc
+msgid "failure resolving hostname: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/networking_resolver.cc
+msgid "failed creating IPv4 mask of length {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/networking_resolver.cc
+msgid "failed creating IPv6 mask with component of length {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/networking_resolver.cc
+msgid "failure getting networking::domain fact: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/networking_resolver.cc
+msgid "failure resolving networking facts: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/networking_resolver.cc
+msgid "failed to retrieve dhcp v4 server address for {1}: {2}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/networking_resolver.cc
+msgid "failed to retrieve ip{1} address for {2}: {3}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/operating_system_resolver.cc
+msgid "error finding SYSTEMROOT: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/processor_resolver.cc
+msgid "WMI processor Name, Architecture query returned no results."
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/processor_resolver.cc
+msgid "Unable to determine processor type: unknown architecture"
+msgstr ""
+
+#. warning
+#: lib/src/facts/windows/timezone_resolver.cc
+msgid "localtime failed: timezone is unavailable: {1} ({2})"
+msgstr ""
+
+#. warning
+#: lib/src/facts/windows/timezone_resolver.cc
+msgid "wcsftime failed: timezone is unavailable: {1} ({2})"
+msgstr ""
+
+#: lib/src/facts/windows/uptime_resolver.cc
+msgid "failed to parse {1} as a date/time"
+msgstr ""
+
+#. log
+#: lib/src/logging/logging.cc
+msgid "locale environment variables were bad; continuing with LANG=C LC_ALL=C"
+msgstr ""
+
+#. log
+#: lib/src/logging/logging.cc
+msgid ""
+"Could not initialize locale, even with LC_* variables cleared. Continuing "
+"without localization support"
+msgstr ""
+
+#: lib/src/logging/logging.cc
+msgid ""
+"could not initialize logging, even with locale variables reset to LANG=C "
+"LC_ALL=C: {1}"
+msgstr ""
+
+#: lib/src/ruby/aggregate_resolution.cc
+msgid "expected chunk name to be a Symbol"
+msgstr ""
+
+#: lib/src/ruby/aggregate_resolution.cc
+#: lib/src/ruby/resolution.cc
+#: lib/src/ruby/simple_resolution.cc
+msgid "a block must be provided"
+msgstr ""
+
+#: lib/src/ruby/aggregate_resolution.cc
+#: lib/src/ruby/fact.cc
+msgid "expected a Symbol for options key"
+msgstr ""
+
+#: lib/src/ruby/aggregate_resolution.cc
+msgid "expected a Symbol or Array of Symbol for require option"
+msgstr ""
+
+#: lib/src/ruby/aggregate_resolution.cc
+#: lib/src/ruby/fact.cc
+msgid "unexpected option {1}"
+msgstr ""
+
+#: lib/src/ruby/aggregate_resolution.cc
+#: lib/src/ruby/fact.cc
+#: lib/src/ruby/module.cc
+msgid "wrong number of arguments ({1} for 2)"
+msgstr ""
+
+#: lib/src/ruby/aggregate_resolution.cc
+msgid "wrong number of arguments ({1} for 3)"
+msgstr ""
+
+#: lib/src/ruby/aggregate_resolution.cc
+msgid "cannot merge {1}:{2} and {3}:{4}"
+msgstr ""
+
+#: lib/src/ruby/chunk.cc
+msgid "chunk dependency cycle detected"
+msgstr ""
+
+#: lib/src/ruby/fact.cc
+msgid "cycle detected while requesting value of fact \"{1}\""
+msgstr ""
+
+#. error
+#: lib/src/ruby/fact.cc
+msgid "error while resolving custom fact \"{1}\": {2}"
+msgstr ""
+
+#: lib/src/ruby/fact.cc
+msgid "expected resolution name to be a String"
+msgstr ""
+
+#: lib/src/ruby/fact.cc
+msgid "expected resolution name to be a Symbol or String"
+msgstr ""
+
+#: lib/src/ruby/fact.cc
+msgid "expected a Hash for the options"
+msgstr ""
+
+#: lib/src/ruby/fact.cc
+msgid "expected a Symbol for type option"
+msgstr ""
+
+#: lib/src/ruby/fact.cc
+msgid "expected simple or aggregate for resolution type but was given {1}"
+msgstr ""
+
+#. warning
+#: lib/src/ruby/fact.cc
+msgid "timeout option is not supported for custom facts and will be ignored."
+msgstr ""
+
+#: lib/src/ruby/fact.cc
+msgid ""
+"fact \"{1}\" already has the maximum number of resolutions allowed ({2})."
+msgstr ""
+
+#: lib/src/ruby/fact.cc
+msgid ""
+"cannot define an aggregate resolution with name \"{1}\": a simple resolution "
+"with the same name already exists"
+msgstr ""
+
+#: lib/src/ruby/fact.cc
+msgid ""
+"cannot define a simple resolution with name \"{1}\": an aggregate resolution "
+"with the same name already exists"
+msgstr ""
+
+#: lib/src/ruby/fact.cc
+#: lib/src/ruby/module.cc
+msgid "expected a String or Symbol for fact name"
+msgstr ""
+
+#. warning
+#: lib/src/ruby/module.cc
+#: lib/src/ruby/ruby.cc
+msgid "{1}: facts requiring Ruby will not be resolved."
+msgstr ""
+
+#: lib/src/ruby/module.cc
+msgid "could not initialize facter due to a locale error: {1}"
+msgstr ""
+
+#: lib/src/ruby/module.cc
+msgid "Ruby API is not initialized."
+msgstr ""
+
+#. warning
+#: lib/src/ruby/module.cc
+msgid "{1}: Ruby cleanup ended prematurely"
+msgstr ""
+
+#. debug
+#: lib/src/ruby/module.cc
+msgid "loading all custom facts."
+msgstr ""
+
+#. debug
+#: lib/src/ruby/module.cc
+msgid "loading custom fact directories from config file"
+msgstr ""
+
+#. debug
+#: lib/src/ruby/module.cc
+msgid "searching for custom facts in {1}."
+msgstr ""
+
+#. error
+#: lib/src/ruby/module.cc
+msgid "{1} uncaught exception: {2}"
+msgstr ""
+
+#: lib/src/ruby/module.cc
+msgid "loading external fact directories from config file"
+msgstr ""
+
+#: lib/src/ruby/module.cc
+msgid "unexpected self value {1}"
+msgstr ""
+
+#: lib/src/ruby/module.cc
+msgid "execution of command \"{1}\" failed: command not found."
+msgstr ""
+
+#: lib/src/ruby/module.cc
+msgid "execution of command \"{1}\" failed."
+msgstr ""
+
+#. debug
+#: lib/src/ruby/module.cc
+msgid "path \"{1}\" will not be searched for custom facts: {2}."
+msgstr ""
+
+#. debug
+#: lib/src/ruby/module.cc
+msgid "searching for custom fact \"{1}\"."
+msgstr ""
+
+#. debug
+#: lib/src/ruby/module.cc
+msgid "searching for {1} in {2}."
+msgstr ""
+
+#. debug
+#: lib/src/ruby/module.cc
+msgid "custom fact \"{1}\" was not found."
+msgstr ""
+
+#. info
+#: lib/src/ruby/module.cc
+msgid "loading custom facts from {1}."
+msgstr ""
+
+#. error
+#: lib/src/ruby/module.cc
+msgid "error while resolving custom facts in {1}: {2}"
+msgstr ""
+
+#: lib/src/ruby/module.cc
+msgid "invalid log level specified."
+msgstr ""
+
+#: lib/src/ruby/resolution.cc
+msgid "a block is unexpected when passing a Hash"
+msgstr ""
+
+#: lib/src/ruby/resolution.cc
+msgid "expected a String or Symbol for confine key"
+msgstr ""
+
+#: lib/src/ruby/resolution.cc
+msgid "expected argument to be a String, Symbol, or Hash"
+msgstr ""
+
+#: lib/src/ruby/resolution.cc
+#: lib/src/ruby/simple_resolution.cc
+msgid "wrong number of arguments ({1} for 1)"
+msgstr ""
+
+#. warning
+#: lib/src/ruby/resolution.cc
+msgid "timeout= is not supported for custom facts and will be ignored."
+msgstr ""
+
+#. log
+#: lib/src/ruby/ruby.cc
+msgid "Could not load puppet; some facts may be unavailable: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/ruby/ruby.cc
+msgid "cannot lookup element \"{1}\": container is not an array or hash"
+msgstr ""
+
+#: lib/src/ruby/simple_resolution.cc
+msgid "expected a non-empty String for first argument"
+msgstr ""
+
+#: lib/src/ruby/simple_resolution.cc
+msgid "a block is unexpected when passing a String"
+msgstr ""
+
+#: lib/src/util/solaris/k_stat.cc
+msgid "kstat_open failed"
+msgstr ""
+
+#: lib/src/util/solaris/k_stat.cc
+msgid "kstat_lookup of module {1}/{2}/{3} failed: {4} ({5})"
+msgstr ""
+
+#: lib/src/util/solaris/k_stat.cc
+msgid "kstat_read failed: {1} ({2})"
+msgstr ""
+
+#: lib/src/util/solaris/k_stat.cc
+msgid "kstat_data_lookup failed for {1}"
+msgstr ""
+
+#: lib/src/util/solaris/k_stat.cc
+msgid "invalid datatype {1} {2}"
+msgstr ""
+
+#: lib/src/util/windows/wsa.cc
+msgid "%1% (%2%)"
+msgstr ""
+
+#. debug
+#: lib/src/util/windows/wsa.cc
+msgid "initializing Winsock"
+msgstr ""
+
+#: lib/src/util/windows/wsa.cc
+msgid "WSAStartup failed with error"
+msgstr ""
+
+#: lib/src/util/windows/wsa.cc
+msgid "could not find a usable version of Winsock.dll"
+msgstr ""
+
+#: lib/src/util/windows/wsa.cc
+msgid "address to string translation failed"
+msgstr ""
+
+#: lib/src/util/windows/wsa.cc
+msgid "string to address translation failed"
+msgstr ""

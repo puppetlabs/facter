@@ -22,7 +22,7 @@ bool load_custom_fact(string const& filename, collection& facts)
         ruby.rb_load(ruby.utf8_value(file), 0);
         return ruby.true_value();
     }, [&](VALUE ex) {
-        LOG_ERROR("error while resolving custom facts in %1%: %2%", file, ruby.exception_to_string(ex));
+        LOG_ERROR("error while resolving custom facts in {1}: {2}", file, ruby.exception_to_string(ex));
         return ruby.false_value();
     });
 

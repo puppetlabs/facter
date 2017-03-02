@@ -13,10 +13,10 @@ Collect and display facts about the system\.
 .
 .nf
 
-facter [\-\-color] [\-\-custom\-dir DIR] [\-d|\-\-debug] [\-\-external\-dir DIR] [\-\-help]
-  [\-j|\-\-json] [\-l|\-\-log\-level LEVEL (=warn)] [\-\-no\-color] [\-\-no\-custom\-facts]
-  [\-\-no\-external\-facts] [\-\-trace] [\-\-verbose] [\-v|\-\-version] [\-y|\-\-yaml]
-  [fact] [fact] [\.\.\.]
+facter [\-\-color] [\-\-config] [\-\-custom\-dir DIR] [\-d|\-\-debug] [\-\-external\-dir DIR] [\-\-help]
+  [\-j|\-\-json] [\-\-list\-block\-groups] [\-\-list\-cache\-groups] [\-l|\-\-log\-level LEVEL (=warn)]
+  [\-\-no\-block] [\-\-no\-cache] [\-\-no\-color] [\-\-no\-custom\-facts] [\-\-no\-external\-facts]
+  [\-\-trace] [\-\-verbose] [\-v|\-\-version] [\-y|\-\-yaml] [\-\-strict] [fact] [fact] [\.\.\.]
 .
 .fi
 .
@@ -26,29 +26,44 @@ Collect and display facts about the current system\. The library behind Facter i
 .P
 If no queries are given, then all facts will be returned\.
 .
+.P
+Many of the command line options can also be set via the HOCON config file. This file can also be used to block or cache certain fact groups\.
+.
 .SH "OPTIONS"
 .
 .nf
-      \fB\-\-color\fR                      Enables color output\.
+      \fB\-\-color\fR                      Enable color output\.
+      \fB\-\-config\fR                     A custom location for the config file\.
       \fB\-\-custom-dir\fR arg             A directory to use for custom facts\.
 \fB\-d, [ \-\-debug ]\fR                    Enable debug output\.
       \fB\-\-external-dir\fR arg           A directory to use for external facts\.
       \fB\-\-help\fR                       Print help and usage information\.
 \fB\-j, [ \-\-json ]\fR                     Output facts in JSON format\.
+      \fB\-\-list\-block\-groups\fR          List the names of all blockable fact groups\.
+      \fB\-\-list\-cache\-groups\fR          List the names of all cacheable fact groups\.
       \fB\-\-show-legacy\fR                Show legacy facts when querying all facts\.
 \fB\-l, [ \-\-log-level ]\fR arg (=warn)    Set logging level\.
                                    Supported levels are: none, trace, debug,
                                    info, warn, error, and fatal\.
-      \fB\-\-no-color\fR                   Disables color output\.
-      \fB\-\-no-custom-fact\fR             Disables custom facts\.
-      \fB\-\-no-external-facts\fR          Disables external facts\.
-      \fB\-\-no-ruby\fR                    Disables loading Ruby, facts requiring Ruby, and custom facts\.
-      \fB\-\-trace\fR                      Enables backtraces for custom facts\.
-      \fB\-\-verbose\fR                    Enables verbose (info) output\.
+      \fB\-\-no\-block\fR                   Disable fact blocking\.
+      \fB\-\-no\-cache\fR                   Disable fact caching\.
+      \fB\-\-no-color\fR                   Disable color output\.
+      \fB\-\-no-custom-fact\fR             Disable custom facts\.
+      \fB\-\-no-external-facts\fR          Disable external facts\.
+      \fB\-\-no-ruby\fR                    Disable loading Ruby, facts requiring Ruby, and custom facts\.
+      \fB\-\-trace\fR                      Enable backtraces for custom facts\.
+      \fB\-\-verbose\fR                    Enable verbose (info) output\.
 \fB\-v, [ \-\-version ]\fR                  Print the version and exit\.
 \fB\-y, [ \-\-yaml ]\fR                     Output facts in YAML format\.
 .
 .fi
+.
+.SH "FILES"
+.
+.nf
+\fI/etc/puppetlabs/facter/facter.conf\fR
+.RS
+A HOCON config file that can be used to specify directories for custom and external facts, set various command line options, and specify facts to block. See example below for details, or visit the GitHub README.
 .
 .SH "EXAMPLE"
 Display all facts:
@@ -146,6 +161,42 @@ $ facter \-\-json os.name os.release.major processors.isa
 .
 .IP "" 0
 .
+.P
+An example config file.
+.
+.IP "" 4
+.
+.nf
+
+# always loaded (CLI and as Ruby module)
+global : {
+    external-dir : "~/external/facts",
+    custom-dir   :  [
+       "~/custom/facts",
+       "~/custom/facts/more-facts"
+    ],
+    no-external-facts : false,
+    no-custom-facts   : false,
+    no-ruby           : false
+}
+# loaded when running from the command line
+cli : {
+    debug     : false,
+    trace     : true,
+    verbose   : false,
+    log-level : "info"
+}
+# always loaded, fact-sepcific configuration
+facts : {
+    # for valid blocklist entries, use --list-block-groups
+    blocklist : [ "file system", "EC2" ],
+    # for valid time-to-live entries, use --list-cache-groups
+    ttls : [ { "timezone" : 30 days } ]
+}
+.
+.fi
+.
+.IP "" 0
 .SH "AUTHOR"
 Luke Kanies
 .

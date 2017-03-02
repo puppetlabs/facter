@@ -36,10 +36,6 @@ EOM
       create_remote_file(agent, ext_fact_custom_dir, content)
       on(agent, "chmod +x '#{ext_fact_factsd}' '#{ext_fact_custom_dir}'")
 
-      teardown do
-        on(agent, "rm -f '#{ext_fact_factsd}' '#{ext_fact_custom_dir}'")
-      end
-
       config_no_ext = <<EOM
 global : {
     no-external-facts : true
@@ -72,6 +68,10 @@ global : {
 EOM
       config_ext_list_file = File.join(config_dir, "ext_list.conf")
       create_remote_file(agent, config_ext_list_file, config_ext_list)
+
+      teardown do
+        on(agent, "rm -rf '#{ext_fact_factsd}' '#{ext_fact_custom_dir}' '#{config_dir}'", :acceptable_exit_codes => [0,1])
+      end
 
       step "setting no-external-facts to true should disable external facts" do
         on(agent, facter("--config '#{config_no_ext_file}' external_fact")) do

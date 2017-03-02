@@ -96,6 +96,15 @@ struct dmi_resolver : resolvers::dmi_resolver
     }
 };
 
+struct ec2_resolver : resolvers::ec2_resolver
+{
+    void resolve(collection& facts) override
+    {
+        facts.add(fact::ec2_metadata, make_value<map_value>());
+        facts.add(fact::ec2_userdata, make_value<string_value>("user data"));
+    }
+};
+
 struct filesystem_resolver : resolvers::filesystem_resolver
 {
  protected:
@@ -352,6 +361,11 @@ protected:
         // The xen fact only resolves if virtualization is xen_privileged.
         return vm::xen_privileged;
     }
+
+    virtual string get_cloud_provider(collection& facts) override
+    {
+        return "azure";
+    }
 };
 
 struct xen_resolver : resolvers::xen_resolver
@@ -434,8 +448,7 @@ void add_all_facts(collection& facts)
     facts.add(make_shared<dmi_resolver>());
     facts.add(make_shared<filesystem_resolver>());
     // TODO: refactor the EC2 resolver to use the "collect_data" pattern
-    facts.add(fact::ec2_metadata, make_value<map_value>());
-    facts.add(fact::ec2_userdata, make_value<string_value>("user data"));
+    facts.add(make_shared<ec2_resolver>());
     // TODO: refactor the GCE resolver to use the "collect_data" pattern
     facts.add(fact::gce, make_value<map_value>());
     facts.add(make_shared<identity_resolver>());
@@ -475,7 +488,8 @@ void validate_attributes(YAML::Node const& node)
             Catch::Equals("resolution")).add(
             Catch::Equals("caveats")).add(
             Catch::Equals("elements")).add(
-            Catch::Equals("validate"))
+            Catch::Equals("validate")).add(
+            Catch::Equals("blockgroup"))
         );
     }
 
@@ -558,6 +572,13 @@ void validate_attributes(YAML::Node const& node)
         REQUIRE(caveats_attribute.IsScalar());
         auto caveats = caveats_attribute.as<string>();
         REQUIRE_FALSE(caveats.empty());
+    }
+
+    auto blockgroup_attribute = node["blockgroup"];
+    if (blockgroup_attribute) {
+        REQUIRE(blockgroup_attribute.IsScalar());
+        auto blockgroup = blockgroup_attribute.as<string>();
+        REQUIRE_FALSE(blockgroup.empty());
     }
 
     // Recurse on elements
@@ -710,6 +731,25 @@ SCENARIO("validating schema") {
                 validate_fact(fact, fact_value, false);
                 return true;
             });
+        }
+        THEN("blocked facts are not resolved") {
+            set<string> blocked_facts;
+            set<string> blockgroups;
+            for (auto const& fact : schema) {
+                auto fact_name = fact.first.as<string>();
+                auto blockgroup = fact.second["blockgroup"];
+                if (blockgroup) {
+                    blockgroups.insert(blockgroup.as<string>());
+                    blocked_facts.insert(fact_name);
+                }
+            }
+            collection_fixture with_blocked(blockgroups);
+            add_all_facts(with_blocked);
+            with_blocked.resolve_facts();
+            for (auto const& fact : blocked_facts) {
+                CAPTURE(fact);
+                REQUIRE_FALSE(with_blocked.get<map_value>(fact));
+            }
         }
     }
 }

@@ -45,7 +45,7 @@ namespace facter { namespace facts { namespace aix {
         vector<string> processor_types;
         auto pd_dv_query = odm_class<PdDv>::open("PdDv").query("class=processor");
         for (auto& pd_dv : pd_dv_query) {
-            LOG_DEBUG("got a processor type: %1%", pd_dv.uniquetype);
+            LOG_DEBUG("got a processor type: {1}", pd_dv.uniquetype);
             processor_types.push_back(pd_dv.uniquetype);
         }
 
@@ -54,7 +54,7 @@ namespace facter { namespace facts { namespace aix {
             string query = (boost::format("PdDvLn=%1%") % type).str();
             auto cu_dv_query = odm_class<CuDv>::open("CuDv").query(query);
             for (auto& cu_dv : cu_dv_query) {
-                LOG_DEBUG("got a processor: %1%", cu_dv.name);
+                LOG_DEBUG("got a processor: {1}", cu_dv.name);
                 processor_names.push_back(cu_dv.name);
             }
         }
@@ -64,7 +64,7 @@ namespace facter { namespace facts { namespace aix {
             physical_processor proc;
             auto cu_at_query = odm_class<CuAt>::open("CuAt").query(query);
             for (auto& cu_at : cu_at_query) {
-                LOG_DEBUG("got attribute %1%=%2% for processor %3%", cu_at.attribute, cu_at.value, name);
+                LOG_DEBUG("got attribute {1}={2} for processor {3}", cu_at.attribute, cu_at.value, name);
                 if (cu_at.attribute == string("frequency")) {
                     proc.frequency = stoll(cu_at.value);
                 } else if (cu_at.attribute == string("type")) {
@@ -74,7 +74,7 @@ namespace facter { namespace facts { namespace aix {
                 } else if (cu_at.attribute == string("smt_enabled")) {
                     proc.smt_enabled = (cu_at.value == string("true"));
                 } else {
-                    LOG_INFO("don't know what to do with processor attribute %1%", cu_at.attribute)
+                    LOG_INFO("don't know what to do with processor attribute {1}", cu_at.attribute)
                 }
             }
 

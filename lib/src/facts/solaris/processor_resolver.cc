@@ -70,12 +70,12 @@ namespace facter { namespace facts { namespace solaris {
                         result.speed = static_cast<int64_t>(ke.value<uint64_t>("current_clock_Hz"));
                     }
                 } catch (kstat_exception& ex) {
-                    LOG_DEBUG("failed to read processor data entry: %1%.", ex.what());
+                    LOG_DEBUG("failed to read processor data entry: {1}.", ex.what());
                 }
             }
             result.physical_count = chips.size();
         } catch (kstat_exception& ex) {
-            LOG_DEBUG("failed to read processor data from kstat api: %1%.", ex.what());
+            LOG_DEBUG("failed to read processor data from kstat api: {1}.", ex.what());
 
             unordered_set<int> chips;
             string brand;

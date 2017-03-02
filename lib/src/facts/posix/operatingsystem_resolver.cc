@@ -16,7 +16,7 @@ namespace facter { namespace facts { namespace posix {
         struct utsname name;
         memset(&name, 0, sizeof(name));
         if (uname(&name) == -1) {
-            LOG_DEBUG("uname failed: %1% (%2%): OS hardware is unavailable.", strerror(errno), errno);
+            LOG_DEBUG("uname failed: {1} ({2}): OS hardware is unavailable.", strerror(errno), errno);
         } else {
             result.hardware = name.machine;
         }

@@ -251,6 +251,7 @@ namespace facter { namespace facts { namespace linux {
     {
         // Map of release files that contain a "release X.X.X" on the first line
         static map<string, string> const release_files = {
+                { string(os::amazon),                   string(release_file::amazon) },
                 { string(os::centos),                   string(release_file::redhat) },
                 { string(os::redhat),                   string(release_file::redhat) },
                 { string(os::scientific),               string(release_file::redhat) },
@@ -265,6 +266,7 @@ namespace facter { namespace facts { namespace linux {
                 { string(os::oracle_enterprise_linux),  string(release_file::oracle_enterprise_linux) },
                 { string(os::oracle_vm_linux),          string(release_file::oracle_vm_linux) },
                 { string(os::arista_eos),               string(release_file::arista_eos) },
+                { string(os::gentoo),                   string(release_file::gentoo) },
         };
 
         string value;
@@ -367,11 +369,6 @@ namespace facter { namespace facts { namespace linux {
             if (exec.success) {
                 re_search(exec.output, boost::regex("VMware ESX .*?(\\d.*)"), &value);
             }
-        }
-
-        // For Amazon, use the distro release
-        if (value.empty() && name == os::amazon) {
-            return distro_release;
         }
 
         return value;

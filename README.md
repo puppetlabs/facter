@@ -18,6 +18,7 @@ Build Requirements
 * Boost C++ Libraries >= 1.54
 * yaml-cpp >= 0.5.1
 * [leatherman](https://github.com/puppetlabs/leatherman) >= 0.3.4
+* [cpp-hocon](https://github.com/puppetlabs/cpp-hocon) >= 0.1.0
 
 Optional Build Libraries
 ------------------------
@@ -128,9 +129,9 @@ The following will install all required tools and libraries:
 Optionally `leatherman` can be installed from packages too if not
 built locally.
 
-### Build and install Leatherman
+### Build and install Leatherman and cpp-hocon
 
-[Leatherman](https://github.com/puppetlabs/leatherman) is built similar to the Pre-Build instructions below. If building on Windows, install to the same `$install` location used for other dependencies.
+[Leatherman](https://github.com/puppetlabs/leatherman) and [cpp-hocon](https://github.com/puppetlabs/cpp-hocon) are built similar to the Pre-Build instructions below. If building on Windows, install to the same `$install` location used for other dependencies.
 
 Pre-Build
 ---------
@@ -206,7 +207,8 @@ You can install facter into your system:
     $ make && sudo make install
 
 By default, facter will install files into `/usr/local/bin`, `/usr/local/lib`, and `/usr/local/include`.
-If the project is configured with Ruby in the PATH, facter.rb will be installed to that Ruby's vendor dir.
+If the project is configured with Ruby in the PATH, *facter.rb* will be installed to that Ruby's vendor dir.
+The install location for *facter.rb* can be overridden using by setting RUBY_LIB_INSTALL.
 
 To install to a different location, set the install prefix:
 
@@ -247,10 +249,20 @@ cli : {
     verbose   : false,
     log-level : "warn"
 }
+facts : {
+    blocklist : [ "file system", "EC2" ]
+    ttls : [
+        { "timezone" : 30 days },
+    ]
+}
 ```
-All options are respected when running Facter standalone, while calling Facter from Ruby will only load `external-dir` and `custom-dir`.
+All options are respected when running Facter standalone, while calling Facter from Ruby will only load `external-dir`, `custom-dir`, and the fact-specific configuration.
 
-The file will be loaded by default from `/etc/puppetlabs/facter/facter.conf` on Unix and `C:\ProgramData\PuppetLabs\facter\facter.conf` on Windows. A different location can be specified using the `--config` command line option.
+The file will be loaded by default from `/etc/puppetlabs/facter/facter.conf` on Unix and `C:\ProgramData\PuppetLabs\facter\etc\facter.conf` on Windows. A different location can be specified using the `--config` command line option.
+
+Elements in the blocklist are fact groupings which will not be resolved when Facter runs. Use the `--list-block-group` command line option to see valid blockable groups.
+
+Elements in the ttls section are key-value pairs of fact groupings that will be cached with the duration for which to cache them. Cached facts are stored as JSON in `/opt/puppetlabs/facter/cache/cached_facts` on Unix and `C:\ProgramData\PuppetLabs\facter\cache\cached_facts` on Windows. Use the `--list-cache-groups` command line option to see valid cacheable groups.
 
 Uninstall
 ---------
@@ -268,3 +280,16 @@ To generate API documentation, install doxygen 1.8.7 or later.
     $ doxygen
 
 To view the documentation, open `lib/html/index.html` in a web browser.
+
+Debugging
+---------
+
+If when running the tests you encounter this error message:
+
+"could not locate a ruby library"
+
+You may need to use a different shared ruby library in Leatherman. To do
+this, run this command, where the location below is the default for a
+puppet agent installation:
+
+    $ export LEATHERMAN_RUBY=/opt/puppetlabs/puppet/lib/libruby.dylib

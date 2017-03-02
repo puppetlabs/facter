@@ -4,14 +4,10 @@
 #include <facter/facts/collection.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
-#include <leatherman/execution/execution.hpp>
 #include <leatherman/file_util/file.hpp>
-#include <leatherman/logging/logging.hpp>
 #include <leatherman/util/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <vector>
-#include <tuple>
 
 using namespace std;
 using namespace facter::facts;
@@ -24,6 +20,34 @@ namespace bs = boost::system;
 namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace linux {
+
+    string virtualization_resolver::get_cloud_provider(collection& facts)
+    {
+        // Check for Azure
+        std::string provider = get_azure(facts);
+
+        return provider;
+    }
+
+    string virtualization_resolver::get_azure(collection& facts, string const& leases_file)
+    {
+        std::string provider;
+        if (boost::filesystem::exists(leases_file))
+        {
+            lth_file::each_line(leases_file, [&](string& line) {
+                // Search for DHCP option 245. This is an accepted method of determining
+                // whether a machine is running inside Azure. Source:
+                // https://social.msdn.microsoft.com/Forums/azure/en-US/f7fbbee6-370a-41c2-a384-d14ab2a0ac12/what-is-the-correct-method-in-linux-on-azure-to-test-if-you-are-an-azure-vm-?forum=WAVirtualMachinesforWindows
+                if (line.find("option 245") != std::string::npos ||
+                        line.find("option unknown-245") != std::string::npos) {
+                    provider = "azure";
+                    return false;
+                }
+                return true;
+            });
+        }
+        return provider;
+    }
 
     string virtualization_resolver::get_hypervisor(collection& facts)
     {

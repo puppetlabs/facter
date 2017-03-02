@@ -1,7 +1,9 @@
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/collection.hpp>
 #include <leatherman/util/regex.hpp>
+#include <leatherman/util/environment.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <boost/locale/info.hpp>
 
 using namespace std;
 using namespace leatherman::util;
@@ -42,6 +44,7 @@ namespace facter { namespace facts {
             _name = std::move(other._name);
             _names = std::move(other._names);
             _regexes = std::move(other._regexes);
+            _http_langs = std::move(other._http_langs);
         }
         return *this;
     }
@@ -72,4 +75,31 @@ namespace facter { namespace facts {
         return false;
     }
 
+    string const& resolver::http_langs()
+    {
+#ifdef LEATHERMAN_USE_LOCALES
+        if (_http_langs.empty()) {
+            // build Accept-Language list for HTTP-based resolvers
+            const auto& loc = leatherman::locale::get_locale();
+            if (std::has_facet<boost::locale::info>(loc)) {
+                const auto& info = std::use_facet<boost::locale::info>(loc);
+                string lang = info.language();
+                // use country code when available; add fallback to base lang
+                if (!info.country().empty())
+                    lang += "-" + info.country() + ", " + info.language();
+                // always include English (en) as a fallback
+                if (info.language() != "en")
+                    lang += ", en";
+                std::transform(lang.begin(), lang.end(), lang.begin(), ::tolower);
+                _http_langs = lang;
+            }
+        }
+#endif
+        return _http_langs;
+    }
+
+    bool resolver::is_blockable() const
+    {
+        return false;
+    }
 }}  // namespace facter::facts

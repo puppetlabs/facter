@@ -1,13 +1,17 @@
 #include <internal/util/solaris/k_stat.hpp>
 #include <sys/kstat.h>
 #include <cstring>
+#include <leatherman/locale/locale.hpp>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 using namespace std;
 
 namespace facter { namespace util { namespace solaris {
     k_stat::k_stat() {
         if (ctrl == nullptr) {
-            throw kstat_exception("kstat_open failed");
+            throw kstat_exception(_("kstat_open failed"));
         }
     }
 
@@ -30,14 +34,20 @@ namespace facter { namespace util { namespace solaris {
     {
         kstat_t* kp = kstat_lookup(ctrl, const_cast<char*>(module.c_str()), instance, name.empty() ? nullptr : const_cast<char *>(name.c_str()));
         if (kp == nullptr) {
-            throw kstat_exception("kstat_lookup of module " + module + "/" + to_string(instance) + "/" + name
-                    + " failed:" + string(strerror(errno)) + " (" + to_string(errno) + ")");
+            throw kstat_exception(_("kstat_lookup of module {1}/{2}/{3} failed: {4} ({5})",
+                                    module,
+                                    to_string(instance),
+                                    name,
+                                    string(strerror(errno)),
+                                    to_string(errno)));
         }
 
         vector<k_stat_entry> arr;
         while (kp) {
             if (kstat_read(ctrl, kp, 0) == -1) {
-                throw kstat_exception("kstat_read failed: " + string(strerror(errno)) + " (" + to_string(errno) + ")");
+                throw kstat_exception(_("kstat_read failed: {1} ({2})",
+                                        string(strerror(errno)),
+                                        to_string(errno)));
             }
 
             bool insert = true;
@@ -88,7 +98,7 @@ namespace facter { namespace util { namespace solaris {
     {
         kstat_named_t* knp = reinterpret_cast<kstat_named_t*>(kstat_data_lookup(k_stat, const_cast<char*>(attrib.c_str())));
         if (knp == nullptr) {
-            throw kstat_exception("kstat_data_lookup failed for " + attrib);
+            throw kstat_exception(_("kstat_data_lookup failed for {1}", attrib));
         }
         return knp;
     }
@@ -97,10 +107,10 @@ namespace facter { namespace util { namespace solaris {
     {
         kstat_named_t* knp = reinterpret_cast<kstat_named_t*>(kstat_data_lookup(k_stat, const_cast<char*>(attrib.c_str())));
         if (knp == nullptr) {
-            throw kstat_exception("kstat_data_lookup failed for " + attrib);
+            throw kstat_exception(_("kstat_data_lookup failed for {1}", attrib));
         }
         if (knp->data_type != datatype) {
-            throw kstat_exception("invalid datatype " + attrib + " "+ to_string(knp->data_type));
+            throw kstat_exception(_("invalid datatype {1} {2}", attrib, to_string(knp->data_type)));
         }
         return knp;
     }
@@ -150,6 +160,6 @@ namespace facter { namespace util { namespace solaris {
         } else if (res->data_type == KSTAT_DATA_CHAR) {
             return string(res->value.c);
         }
-        throw kstat_exception("invalid datatype " + attrib + " "+ to_string(res->data_type));
+        throw kstat_exception(_("invalid datatype {1} {2}", attrib, to_string(res->data_type)));
     }
 }}}  // namespace facter::util::solaris

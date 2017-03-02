@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2.2)
-project(FACTER)
+project(FACTER VERSION 3.6.1)
 
 # Set this early, so it's available. AIX gets weird, man.
 if("${CMAKE_SYSTEM_NAME}" MATCHES "AIX")
@@ -71,8 +71,15 @@ find_package(Leatherman REQUIRED COMPONENTS ${LEATHERMAN_COMPONENTS})
 # we need for finding all our other libraries.
 include(options)
 
+if (LEATHERMAN_USE_LOCALES)
+    add_definitions(-DLEATHERMAN_I18N)
+    SET(BOOST_COMPONENTS locale)
+endif()
+
 # We use program_options, system, filesystem, date_time, and regex directly. Testing uses thread and chrono.
-find_package(Boost 1.54 REQUIRED COMPONENTS program_options system filesystem date_time regex thread chrono)
+list(APPEND BOOST_COMPONENTS program_options system filesystem date_time regex thread chrono)
+
+find_package(Boost 1.54 REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 # date_time and regex need threads on some platforms, and find_package Boost only includes
 # pthreads if you require the Boost.Thread component.
 find_package(Threads)
@@ -123,13 +130,10 @@ set(FACTER_CXX_FLAGS "${LEATHERMAN_CXX_FLAGS}")
 
 add_definitions(${LEATHERMAN_DEFINITIONS})
 
-# Include vendor libraries
-set(RAPIDJSON_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/vendor/rapidjson-0.11/include")
-
 #
 # Add cpplint and cppcheck targets
 #
-file(GLOB_RECURSE ALL_SOURCES lib/src/*.cc lib/inc/*.hpp lib/inc/version.h exe/*.cc exe/*.hpp exe/*.h)
+file(GLOB_RECURSE ALL_SOURCES lib/src/*.cc lib/inc/*.hpp lib/inc/*.h exe/*.cc exe/*.hpp exe/*.h)
 add_cpplint_files(${ALL_SOURCES})
 enable_cpplint()
 
@@ -141,6 +145,7 @@ include(leatherman)
 
 add_subdirectory(lib)
 add_subdirectory(exe)
+add_subdirectory(locales)
 
 # Add test executables for unit testing
 add_test(NAME "libfacter\\ tests" COMMAND libfacter_test)

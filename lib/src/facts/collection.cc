@@ -5,17 +5,18 @@
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <facter/ruby/ruby.hpp>
-#include <leatherman/file_util/directory.hpp>
-#include <leatherman/util/environment.hpp>
 #include <facter/util/string.hpp>
 #include <facter/version.h>
-#include <leatherman/dynamic_library/dynamic_library.hpp>
 #include <internal/facts/resolvers/ruby_resolver.hpp>
 #include <internal/facts/resolvers/path_resolver.hpp>
 #include <internal/facts/resolvers/ec2_resolver.hpp>
 #include <internal/facts/resolvers/gce_resolver.hpp>
 #include <internal/facts/resolvers/augeas_resolver.hpp>
 #include <internal/ruby/ruby_value.hpp>
+#include <internal/facts/cache.hpp>
+#include <leatherman/dynamic_library/dynamic_library.hpp>
+#include <leatherman/file_util/directory.hpp>
+#include <leatherman/util/environment.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -34,7 +35,7 @@ using namespace leatherman::file_util;
 
 namespace facter { namespace facts {
 
-    collection::collection()
+    collection::collection(set<string> const& blocklist, unordered_map<string, int64_t> const& ttls) : _blocklist(blocklist), _ttls(ttls)
     {
         // This needs to be defined here since we use incomplete types in the header
     }
@@ -56,6 +57,8 @@ namespace facter { namespace facts {
             _resolvers = std::move(other._resolvers);
             _resolver_map = std::move(other._resolver_map);
             _pattern_resolvers = std::move(other._pattern_resolvers);
+            _blocklist = std::move(other._blocklist);
+            _ttls = std::move(other._ttls);
         }
         return *this;
     }
@@ -93,19 +96,19 @@ namespace facter { namespace facts {
                 ostringstream old_value_ss;
                 old_value->write(old_value_ss);
                 if (!value) {
-                    LOG_DEBUG("fact \"%1%\" resolved to null and the existing value of %2% will be removed.", name, old_value_ss.str());
+                    LOG_DEBUG("fact \"{1}\" resolved to null and the existing value of {2} will be removed.", name, old_value_ss.str());
                 } else {
                     ostringstream new_value_ss;
                     value->write(new_value_ss);
-                    LOG_DEBUG("fact \"%1%\" has changed from %2% to %3%.", name, old_value_ss.str(), new_value_ss.str());
+                    LOG_DEBUG("fact \"{1}\" has changed from {2} to {3}.", name, old_value_ss.str(), new_value_ss.str());
                 }
             } else {
                 if (!value) {
-                    LOG_DEBUG("fact \"%1%\" resolved to null and will not be added.", name);
+                    LOG_DEBUG("fact \"{1}\" resolved to null and will not be added.", name);
                 } else {
                     ostringstream new_value_ss;
                     value->write(new_value_ss);
-                    LOG_DEBUG("fact \"%1%\" has resolved to %2%.", name, new_value_ss.str());
+                    LOG_DEBUG("fact \"{1}\" has resolved to {2}.", name, new_value_ss.str());
                 }
             }
         }
@@ -117,7 +120,25 @@ namespace facter { namespace facts {
             return;
         }
 
+        // keep existing value if it has a larger weight value
+        if (old_value && old_value->weight() > value->weight())
+            return;
+
         _facts[move(name)] = move(value);
+    }
+
+    void collection::add_custom(string name, unique_ptr<value> value, size_t weight)
+    {
+        if (value)
+            value->weight(weight);
+        add(move(name), move(value));
+    }
+
+    void collection::add_external(string name, unique_ptr<value> value)
+    {
+        if (value)
+            value->weight(external_fact_weight);
+        add(move(name), move(value));
     }
 
     bool collection::add_external_facts_dir(vector<unique_ptr<external::resolver>> const& resolvers, string const& dir, bool warn)
@@ -131,14 +152,14 @@ namespace facter { namespace facts {
             // Warn the user if not using the default search directories
             string msg = ec ? ec.message() : "not a directory";
             if (warn) {
-                LOG_WARNING("skipping external facts for \"%1%\": %2%", dir, msg);
+                LOG_WARNING("skipping external facts for \"{1}\": {2}", dir, msg);
             } else {
-                LOG_DEBUG("skipping external facts for \"%1%\": %2%", dir, msg);
+                LOG_DEBUG("skipping external facts for \"{1}\": {2}", dir, msg);
             }
             return found;
         }
 
-        LOG_DEBUG("searching %1% for external facts.", search_dir);
+        LOG_DEBUG("searching {1} for external facts.", search_dir);
 
         each_file(search_dir.string(), [&](string const& path) {
             for (auto const& res : resolvers) {
@@ -148,7 +169,7 @@ namespace facter { namespace facts {
                         res->resolve(path, *this);
                     }
                     catch (external::external_fact_exception& ex) {
-                        LOG_ERROR("error while processing \"%1%\" for external facts: %2%", path, ex.what());
+                        LOG_ERROR("error while processing \"{1}\" for external facts: {2}", path, ex.what());
                     }
                     break;
                 }
@@ -188,7 +209,7 @@ namespace facter { namespace facts {
 
             auto fact_name = name.substr(7);
             boost::to_lower(fact_name);
-            LOG_DEBUG("setting fact \"%1%\" based on the value of environment variable \"%2%\".", fact_name, name);
+            LOG_DEBUG("setting fact \"{1}\" based on the value of environment variable \"{2}\".", fact_name, name);
 
             // Add the value based on the environment variable
             add(fact_name, make_value<string_value>(move(value)));
@@ -246,6 +267,24 @@ namespace facter { namespace facts {
         return _facts.empty() && _resolvers.empty();
     }
 
+    map<string, vector<string>> collection::get_fact_groups() {
+        map<string, vector<string>> fact_groups;
+        for (auto res : _resolvers) {
+            fact_groups.emplace(res->name(), res->names());
+        }
+        return fact_groups;
+    }
+
+    map<string, vector<string>> collection::get_blockable_fact_groups() {
+        map<string, vector<string>> blockgroups;
+        for (auto res : _resolvers) {
+            if (res->is_blockable()) {
+                blockgroups.emplace(res->name(), res->names());
+            }
+        }
+        return blockgroups;
+    }
+
     size_t collection::size()
     {
         resolve_facts();
@@ -288,15 +327,45 @@ namespace facter { namespace facts {
         return stream;
     }
 
+    bool collection::try_block(shared_ptr<resolver> const& res) {
+        if (_blocklist.count(res->name())) {
+            if (res->is_blockable()) {
+                LOG_DEBUG("blocking collection of {1} facts.", res->name());
+                return true;
+            } else {
+                LOG_DEBUG("{1} resolver cannot be blocked.", res->name());
+            }
+        }
+        return false;
+    }
+
+    void collection::resolve(shared_ptr<resolver> const& res) {
+        remove(res);
+
+        // Check if the resolver has been blocked
+        if (try_block(res)) {
+            return;
+        }
+
+        // Check if the resolver should be cached
+        auto resolver_ttl = _ttls.find(res->name());
+        if (resolver_ttl != _ttls.end()) {
+           cache::use_cache(*this, res, (*resolver_ttl).second);
+           return;
+        }
+
+        // Resolve normally
+        LOG_DEBUG("resolving {1} facts.", res->name());
+        res->resolve(*this);
+    }
+
     void collection::resolve_facts()
     {
         // Remove the front of the resolvers list and resolve until no resolvers are left
         while (!_resolvers.empty()) {
             auto resolver = _resolvers.front();
-            remove(resolver);
-            LOG_DEBUG("resolving %1% facts.", resolver->name());
-            resolver->resolve(*this);
-        }
+            resolve(resolver);
+       }
     }
 
     void collection::resolve_fact(string const& name)
@@ -306,9 +375,7 @@ namespace facter { namespace facts {
         auto it = range.first;
         while (it != range.second) {
             auto resolver = (it++)->second;
-            remove(resolver);
-            LOG_DEBUG("resolving %1% facts.", resolver->name());
-            resolver->resolve(*this);
+            resolve(resolver);
         }
 
          // Resolve every resolver that matches the given name
@@ -319,9 +386,7 @@ namespace facter { namespace facts {
                 continue;
             }
             auto resolver = *(pattern_it++);
-            remove(resolver);
-            LOG_DEBUG("resolving %1% facts.", resolver->name());
-            resolver->resolve(*this);
+            resolve(resolver);
         }
     }
 
@@ -367,7 +432,7 @@ namespace facter { namespace facts {
             if (rb_val) {
                 current = facter::ruby::lookup(current, segment, segment_end);
                 if (!current) {
-                    LOG_DEBUG("cannot lookup an element with \"%1%\" from Ruby fact", *segment);
+                    LOG_DEBUG("cannot lookup an element with \"{1}\" from Ruby fact", *segment);
                 }
                 // Once we hit Ruby there's no going back, so whatever we get from Ruby is the value.
                 return current;
@@ -388,7 +453,7 @@ namespace facter { namespace facts {
         if (!value) {
             value = get_value(name);
             if (!value) {
-                string message = "fact \"%1%\" does not exist.";
+                string message = "fact \"{1}\" does not exist.";
                 if (strict_errors) {
                     LOG_ERROR(message, name);
                 } else {
@@ -402,7 +467,7 @@ namespace facter { namespace facts {
         if (map) {
             value = (*map)[name];
             if (!value) {
-                LOG_DEBUG("cannot lookup a hash element with \"%1%\": element does not exist.", name);
+                LOG_DEBUG("cannot lookup a hash element with \"{1}\": element does not exist.", name);
             }
             return value;
         }
@@ -413,19 +478,19 @@ namespace facter { namespace facts {
             try {
                 index = stoi(name);
             } catch (logic_error&) {
-                LOG_DEBUG("cannot lookup an array element with \"%1%\": expected an integral value.", name);
+                LOG_DEBUG("cannot lookup an array element with \"{1}\": expected an integral value.", name);
                 return nullptr;
             }
             if (index < 0) {
-                LOG_DEBUG("cannot lookup an array element with \"%1%\": expected a non-negative value.", name);
+                LOG_DEBUG("cannot lookup an array element with \"{1}\": expected a non-negative value.", name);
                 return nullptr;
             }
             if (array->empty()) {
-                LOG_DEBUG("cannot lookup an array element with \"%1%\": the array is empty.", name);
+                LOG_DEBUG("cannot lookup an array element with \"{1}\": the array is empty.", name);
                 return nullptr;
             }
             if (static_cast<size_t>(index) >= array->size()) {
-                LOG_DEBUG("cannot lookup an array element with \"%1%\": expected an integral value between 0 and %2% (inclusive).", name, array->size() - 1);
+                LOG_DEBUG("cannot lookup an array element with \"{1}\": expected an integral value between 0 and {2} (inclusive).", name, array->size() - 1);
                 return nullptr;
             }
             return (*array)[index];
@@ -478,26 +543,6 @@ namespace facter { namespace facts {
             }
         }
     }
-
-    struct stream_adapter
-    {
-        explicit stream_adapter(ostream& stream) : _stream(stream)
-        {
-        }
-
-        void Put(char c)
-        {
-            _stream << c;
-        }
-
-        void Flush()
-        {
-            _stream.flush();
-        }
-
-     private:
-         ostream& _stream;
-    };
 
     void collection::write_json(ostream& stream, set<string> const& queries, bool show_legacy, bool strict_errors)
     {

@@ -22,7 +22,7 @@ namespace facter { namespace facts { namespace bsd {
         // Scope the head ifaddrs ptr
         scoped_ifaddrs addrs;
         if (!addrs) {
-            LOG_WARNING("getifaddrs failed: %1% (%2%): interface information is unavailable.", strerror(errno), errno);
+            LOG_WARNING("getifaddrs failed: {1} ({2}): interface information is unavailable.", strerror(errno), errno);
             return data;
         }
 
@@ -131,9 +131,9 @@ namespace facter { namespace facts { namespace bsd {
         };
 
         for (auto const& dir : dhclient_search_directories) {
-            LOG_DEBUG("searching \"%1%\" for dhclient lease files.", dir);
+            LOG_DEBUG("searching \"{1}\" for dhclient lease files.", dir);
             lth_file::each_file(dir, [&](string const& path) {
-                LOG_DEBUG("reading \"%1%\" for dhclient lease information.", path);
+                LOG_DEBUG("reading \"{1}\" for dhclient lease information.", path);
 
                 // Each lease entry should have the interface declaration before the options
                 // We respect the last lease for an interface in the file
