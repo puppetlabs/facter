@@ -33,6 +33,26 @@ module Facter
         end
       end
 
+      # Retrieve the path of the facts.d directory in /etc/facter on Unix systems
+      #
+      def get_etc_factsd_dir(platform)
+        if platform =~ /windows/
+          raise "get_etc_factsd_dir: not a supported directory on Windows"
+        else
+          File.join('/', 'etc', 'facter', 'facts.d')
+        end
+      end
+
+      # Retrieve the path of the facts.d diretory in /etc/puppetlabs/facter on Unix systems
+      #
+      def get_etc_puppetlabs_factsd_dir(platform)
+        if platform =~ /windows/
+          raise "get_etc_puppetlabs_factsd_dir: not a supported directory on Windows"
+        else
+          File.join('/', 'etc', 'puppetlabs', 'facter', 'facts.d')
+        end
+      end
+
       # Retrieve the extension to use for an external fact script.
       # Windows uses '.bat' and everything else uses '.sh'
       def get_external_fact_script_extension(platform)
