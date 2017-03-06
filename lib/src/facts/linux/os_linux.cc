@@ -50,6 +50,10 @@ namespace facter { namespace facts { namespace linux {
           return os::huawei;
         }
 
+        if (is_regular_file(release_file::devuan, ec)) {
+          return os::devuan;
+        }
+
         if (is_regular_file(release_file::debian, ec)) {
             if (distro_id == os::ubuntu || distro_id == os::linux_mint) {
                 return distro_id;
@@ -229,6 +233,7 @@ namespace facter { namespace facts { namespace linux {
             { string(os::linux_mint),               string(os_family::debian) },
             { string(os::ubuntu),                   string(os_family::debian) },
             { string(os::debian),                   string(os_family::debian) },
+            { string(os::devuan),                   string(os_family::debian) },
             { string(os::suse_enterprise_server),   string(os_family::suse) },
             { string(os::suse_enterprise_desktop),  string(os_family::suse) },
             { string(os::open_suse),                string(os_family::suse) },
@@ -289,6 +294,12 @@ namespace facter { namespace facts { namespace linux {
         // Debian uses the entire contents of the release file as the version
         if (value.empty() && name == os::debian) {
             value = lth_file::read(release_file::debian);
+            boost::trim_right(value);
+        }
+
+        // Devuan uses the entire contents of the release file as the version
+        if (value.empty() && name == os::devuan) {
+            value = lth_file::read(release_file::devuan);
             boost::trim_right(value);
         }
 

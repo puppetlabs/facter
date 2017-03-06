@@ -40,6 +40,10 @@ namespace facter { namespace facts { namespace linux {
          */
         constexpr static char const* debian = "/etc/debian_version";
         /**
+         * Version file for Devuan Linux.
+         */
+        constexpr static char const* devuan = "/etc/devuan_version";
+        /**
          * Release file for Alpine Linux.
          */
         constexpr static char const* alpine = "/etc/alpine-release";
