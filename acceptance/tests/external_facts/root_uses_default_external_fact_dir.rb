@@ -1,7 +1,7 @@
 test_name "Root default external facts directory (facts.d) is searched for facts"
 
 require 'facter/acceptance/user_fact_utils'
-extend Facter::Acceptance::UserFactUtils
+extend ::Facter::Acceptance::UserFactUtils
 
 #
 # The first of these tests is intended to ensure that executable external facts placed into the

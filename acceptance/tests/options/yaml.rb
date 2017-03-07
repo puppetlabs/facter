@@ -6,7 +6,7 @@ test_name "--yaml command-line option results in valid YAML output" do
 
   require 'yaml'
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   content = <<EOM
 Facter.add('structured_fact') do

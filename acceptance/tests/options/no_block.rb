@@ -2,7 +2,7 @@
 # fact blocking, desptie a blocklist being specified in the config file.
 test_name "the `--no-block` command line flag prevents facts from being blocked" do
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   agents.each do |agent|
     # default facter.conf

@@ -7,7 +7,7 @@
 # in the directory paths defined with external-dir and custome-dir in the facter.conf file
 test_name "config file is loaded when Facter is run from Puppet" do
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   agents.each do |agent|
     # create paths for default facter.conf, external-dir, and custom-dir

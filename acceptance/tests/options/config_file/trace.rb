@@ -2,7 +2,7 @@
 # enables backtrace reporting for errors in custom facts.
 test_name "trace config field enables backtraces for custom facts" do
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   erroring_custom_fact = <<EOM
 Facter.add('custom_fact') do

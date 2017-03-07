@@ -3,7 +3,7 @@
 # covers various failures in the caching mechanism
 test_name "ttls config field stores and retreives cached facts" do
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   config = <<EOM
 facts : {

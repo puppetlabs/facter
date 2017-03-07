@@ -1,5 +1,5 @@
 test_name "Install packages and repositories on target machines..." do
-  extend Beaker::DSL::InstallUtils
+  extend ::Beaker::DSL::InstallUtils
 
   SourcePath  = Beaker::DSL::InstallUtils::SourcePath
   GitURI      = Beaker::DSL::InstallUtils::GitURI

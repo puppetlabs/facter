@@ -10,10 +10,10 @@ test_name "custom fact commandline options (--no-custom-facts and --custom-dir)"
   confine :except, :platform => 'cisco_nexus' # see BKR-749
 
   require 'puppet/acceptance/common_utils'
-  extend Puppet::Acceptance::CommandUtils
+  extend ::Puppet::Acceptance::CommandUtils
 
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   content = <<EOM
 Facter.add('custom_fact') do

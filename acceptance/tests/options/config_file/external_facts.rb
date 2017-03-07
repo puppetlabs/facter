@@ -3,7 +3,7 @@
 # setting disables external fact lookup.
 test_name "external-dir and no-external-facts config fields allow control of external fact lookup" do
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   unix_content = <<EOM
 #!/bin/sh

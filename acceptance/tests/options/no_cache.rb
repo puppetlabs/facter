@@ -3,7 +3,7 @@
 # be queried nor refreshed.
 test_name "--no-cache command-line option causes the fact cache to be ignored" do
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   # the uptime fact should be resolvable on ALL systems
   # Note: do NOT use the kernel fact, as it is used to configure the tests

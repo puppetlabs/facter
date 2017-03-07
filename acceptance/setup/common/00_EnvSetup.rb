@@ -3,11 +3,11 @@ test_name "Setup environment"
 step "Ensure Git and Ruby"
 
 require 'puppet/acceptance/install_utils'
-extend Puppet::Acceptance::InstallUtils
+extend ::Puppet::Acceptance::InstallUtils
 require 'puppet/acceptance/git_utils'
-extend Puppet::Acceptance::GitUtils
+extend ::Puppet::Acceptance::GitUtils
 require 'beaker/dsl/install_utils'
-extend Beaker::DSL::InstallUtils
+extend ::Beaker::DSL::InstallUtils
 
 PACKAGES = {
   :redhat => [

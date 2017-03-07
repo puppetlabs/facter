@@ -3,7 +3,7 @@
 # by setting the global.no-custom-facts field to true.
 test_name "custom-dir and no-custom-facts config fields allow control of custom fact lookup" do
   require 'facter/acceptance/user_fact_utils'
-  extend Facter::Acceptance::UserFactUtils
+  extend ::Facter::Acceptance::UserFactUtils
 
   custom_fact_content = <<EOM
 Facter.add('custom_fact') do
