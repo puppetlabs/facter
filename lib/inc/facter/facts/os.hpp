@@ -78,6 +78,10 @@ namespace facter { namespace facts {
          */
         constexpr static char const* debian = "Debian";
         /**
+         * The Devuan Linux operating system.
+         */
+        constexpr static char const* devuan = "Devuan";
+        /**
          * The SuSE Linux Enterprise Server operating system.
          */
         constexpr static char const* suse_enterprise_server = "SLES";
