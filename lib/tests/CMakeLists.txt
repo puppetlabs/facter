@@ -83,6 +83,10 @@ set(LIBFACTER_TESTS_PLATFORM_LIBRARIES
 )
 
 if (WIN32)
+    list(APPEND LIBFACTER_TESTS_PLATFORM_LIBRARIES Mswsock)
+endif()
+
+if (WIN32)
     set(LIBFACTER_TESTS_CATEGORY_SOURCES
         "facts/windows/collection.cc"
         "facts/windows/networking_resolver.cc"
@@ -118,8 +122,21 @@ include_directories(
     ${CPPHOCON_INCLUDE_DIRS}
 )
 
-add_executable(libfacter_test $<TARGET_OBJECTS:libfactersrc> ${LIBFACTER_TESTS_COMMON_SOURCES} ${LIBFACTER_TESTS_PLATFORM_SOURCES} ${LIBFACTER_TESTS_CATEGORY_SOURCES})
+# On EL 4, we run into a linking error when trying to create libraries or
+# executables that link in a static library with code using threads. As I
+# described in https://gcc.gnu.org/ml/gcc-help/2015-08/msg00035.html, we get
+# the error undefined reference to symbol '__tls_get_addr@@GLIBC_2.3'.
+# Build mock_server as a separate shared library to avoid this error.
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+add_library(mock-server mock_server.cc)
+target_link_libraries(mock-server PRIVATE ${Boost_LIBRARIES})
+
+add_executable(libfacter_test $<TARGET_OBJECTS:libfactersrc>
+    ${LIBFACTER_TESTS_COMMON_SOURCES}
+    ${LIBFACTER_TESTS_PLATFORM_SOURCES}
+    ${LIBFACTER_TESTS_CATEGORY_SOURCES})
 target_link_libraries(libfacter_test
+    mock-server
     ${CPPHOCON_LIBRARIES}
     ${POSIX_TESTS_LIBRARIES}
     ${LIBFACTER_TESTS_PLATFORM_LIBRARIES}
