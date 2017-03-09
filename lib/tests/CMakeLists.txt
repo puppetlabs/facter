@@ -128,25 +128,31 @@ include_directories(
 # the error undefined reference to symbol '__tls_get_addr@@GLIBC_2.3'.
 # Build mock_server as a separate shared library to avoid this error.
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
-add_library(mock-server mock_server.cc)
-target_link_libraries(mock-server PRIVATE ${Boost_LIBRARIES})
+add_library(mock-server SHARED mock_server.cc)
+target_link_libraries(mock-server PRIVATE
+    ${Boost_THREAD_LIBRARY}
+    ${Boost_SYSTEM_LIBRARY}
+    ${LIBFACTER_TESTS_PLATFORM_LIBRARIES})
 
 add_executable(libfacter_test $<TARGET_OBJECTS:libfactersrc>
     ${LIBFACTER_TESTS_COMMON_SOURCES}
     ${LIBFACTER_TESTS_PLATFORM_SOURCES}
     ${LIBFACTER_TESTS_CATEGORY_SOURCES})
-target_link_libraries(libfacter_test
-    mock-server
-    ${CPPHOCON_LIBRARIES}
-    ${POSIX_TESTS_LIBRARIES}
-    ${LIBFACTER_TESTS_PLATFORM_LIBRARIES}
-    ${YAMLCPP_LIBRARIES}
-    ${Boost_LIBRARIES}
-    ${OPENSSL_LIBRARIES}
-    ${LEATHERMAN_LIBRARIES}
-    ${CURL_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT}
-)
+# On Windows, mock-server comes after Boost libraries to avoid double
+# definition of boost::system::system_category() on Windows. On Linux, it
+# comes before to avoid picking up incomplete Boost.Asio symbols included
+# by Boost.Log in Leatherman logging.
+if (WIN32)
+    target_link_libraries(libfacter_test
+        ${LIBS}
+        ${LIBFACTER_TESTS_PLATFORM_LIBRARIES}
+        mock-server)
+else()
+    target_link_libraries(libfacter_test
+        mock-server
+        ${LIBS}
+        ${LIBFACTER_TESTS_PLATFORM_LIBRARIES})
+endif()
 
 target_compile_definitions(libfacter_test PRIVATE "-Dlibfacter_EXPORTS")
 

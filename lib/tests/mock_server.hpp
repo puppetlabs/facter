@@ -1,6 +1,7 @@
 #pragma once
 
 #pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
