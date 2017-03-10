@@ -7,6 +7,8 @@
 #include "../collection_fixture.hpp"
 #include "./ruby_helper.hpp"
 
+#include "../mock_server.hpp"
+
 using namespace std;
 using namespace facter::ruby;
 using namespace facter::testing;
@@ -24,6 +26,7 @@ SCENARIO("directories of custom facts written in Ruby") {
     string fixtures = LIBFACTER_TESTS_DIRECTORY "/fixtures/ruby/";
 
     GIVEN("a fact that performs network activity") {
+        facter::mock_server m(42000);
         load_custom_facts(facts, vector<string>{fixtures+"custom_dir"});
         THEN("the network location should resolve") {
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("sometest")) == "\"Yay\"");
