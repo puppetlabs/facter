@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.6.0\n"
+"Project-Id-Version: FACTER 3.6.2\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -247,6 +247,62 @@ msgstr ""
 msgid "Cannot iterate over the same ODM class concurrently"
 msgstr ""
 
+#. debug
+#: lib/inc/internal/util/aix/vmount.hpp
+msgid "Required space for mountpoints is {1}"
+msgstr ""
+
+#. debug
+#: lib/inc/internal/util/aix/vmount.hpp
+msgid "Got {1} mountpoints"
+msgstr ""
+
+#. debug
+#: lib/src/facts/aix/disk_resolver.cc
+msgid "got a disk type: {1}"
+msgstr ""
+
+#: lib/src/facts/aix/disk_resolver.cc
+#: lib/src/facts/aix/processor_resolver.cc
+msgid "PdDvLn=%1%"
+msgstr ""
+
+#. debug
+#: lib/src/facts/aix/disk_resolver.cc
+msgid "got a disk: {1}"
+msgstr ""
+
+#: lib/src/facts/aix/disk_resolver.cc
+msgid "/dev/%1%"
+msgstr ""
+
+#. warning
+#: lib/src/facts/aix/disk_resolver.cc
+msgid ""
+"Expected a Disk or SCSI disk device, got device code '{1}'. This is probably "
+"a Facter bug. Please report it, and include this error message."
+msgstr ""
+
+#. warning
+#: lib/src/facts/aix/filesystem_resolver.cc
+msgid "Could not get fs data for {1}: {2}"
+msgstr ""
+
+#: lib/src/facts/aix/filesystem_resolver.cc
+#: lib/src/facts/aix/processor_resolver.cc
+msgid "name=%1%"
+msgstr ""
+
+#. warning
+#: lib/src/facts/aix/filesystem_resolver.cc
+msgid "Could not get info for partition '{1}' from the LVM subsystem"
+msgstr ""
+
+#. warning
+#: lib/src/facts/aix/filesystem_resolver.cc
+msgid "querylv returned success but we got a null LV. WTF?"
+msgstr ""
+
 #. warning
 #: lib/src/facts/aix/kernel_resolver.cc
 msgid "oslevel failed: {1}: kernel facts are unavailable"
@@ -305,17 +361,9 @@ msgstr ""
 msgid "got a processor type: {1}"
 msgstr ""
 
-#: lib/src/facts/aix/processor_resolver.cc
-msgid "PdDvLn=%1%"
-msgstr ""
-
 #. debug
 #: lib/src/facts/aix/processor_resolver.cc
 msgid "got a processor: {1}"
-msgstr ""
-
-#: lib/src/facts/aix/processor_resolver.cc
-msgid "name=%1%"
 msgstr ""
 
 #. debug
@@ -1350,11 +1398,6 @@ msgstr ""
 
 #: lib/src/ruby/module.cc
 msgid "execution of command \"{1}\" failed."
-msgstr ""
-
-#. debug
-#: lib/src/ruby/module.cc
-msgid "path \"{1}\" will not be searched for custom facts: {2}."
 msgstr ""
 
 #. debug

@@ -310,18 +310,30 @@ if(AIX)
     set_target_properties(libfacter PROPERTIES LINK_FLAGS "-Wl,-G -eInit_libfacter")
 endif()
 
-# Link in additional libraries
-# Note: this assumes shared Leatherman and static Boost libraries
-target_link_libraries(libfacter PRIVATE
-    ${LIBFACTER_PLATFORM_LIBRARIES}
-    ${CPPHOCON_LIBRARIES}
-    ${Boost_LIBRARIES}
-    ${LEATHERMAN_LIBRARIES}
+set(LIBS ${CPPHOCON_LIBRARIES})
+
+# Static libraries should come before shared libraries, or you can end up
+# with some really annoying link errors. However, we can configure whether
+# Boost and Leatherman are linked statically or dynamically.
+if (LEATHERMAN_SHARED)
+    # If Leatherman is shared, Boost should come first because
+    # it's static, or the order doesn't matter.
+    list(APPEND LIBS ${Boost_LIBRARIES} ${LEATHERMAN_LIBRARIES})
+else()
+    # If Leatherman is static, it should come first as it depends
+    # on Boost.
+    list(APPEND LIBS ${LEATHERMAN_LIBRARIES} ${Boost_LIBRARIES})
+endif()
+
+list(APPEND LIBS
     ${OPENSSL_LIBRARIES}
     ${YAMLCPP_LIBRARIES}
     ${CURL_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
 )
+
+# Link in additional libraries
+target_link_libraries(libfacter PRIVATE ${LIBS} ${LIBFACTER_PLATFORM_LIBRARIES})
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND BOOST_STATIC AND LEATHERMAN_USE_LOCALES)
     target_link_libraries(libfacter PRIVATE iconv)
