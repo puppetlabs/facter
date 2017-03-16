@@ -2,7 +2,8 @@
 # saved at the default location without any special command line flags.
 # On Unix, this location is /etc/puppetlabs/facter/facter.conf.
 # On Windows, it is C:\ProgramData\PuppetLabs\facter\etc\facter.conf
-test_name "config file is loaded from default location" do
+test_name "C99991: config file is loaded from default location" do
+
   config = <<EOM
 cli : {
     debug : true

@@ -1,7 +1,7 @@
 # This test is intended to ensure that the --trace command-line option works
 # properly. This option provides backtraces for erroring custom Ruby facts.
 # To test, we try to resolve an erroneous custom fact and catch the backtrace.
-test_name "--trace command-line option enables backtraces for custom facts" do
+test_name "C99982: --trace command-line option enables backtraces for custom facts" do
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
