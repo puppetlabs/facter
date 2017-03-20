@@ -1,6 +1,7 @@
 # This test is intended to demonstrate that setting the cli.trace field to true
 # enables backtrace reporting for errors in custom facts.
-test_name "trace config field enables backtraces for custom facts" do
+test_name "C99988: trace config field enables backtraces for custom facts" do
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 

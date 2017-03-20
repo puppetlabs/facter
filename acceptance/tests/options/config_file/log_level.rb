@@ -1,7 +1,7 @@
 # This test ensures that the cli.log-level config file setting works
 # properly. The value of the setting should be a string indicating the
 # logging level.
-test_name "log-level setting can be used to specific logging level" do
+test_name "C99990: log-level setting can be used to specific logging level" do
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 

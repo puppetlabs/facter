@@ -1,6 +1,6 @@
 # This test is intended to ensure that the --debug command-line option works
 # properly. This option prints debugging information to stderr.
-test_name "--debug command-line option prints debugging information to stderr" do
+test_name "C63191: --debug command-line option prints debugging information to stderr" do
 
   agents.each do |agent|
     step "Agent #{agent}: retrieve debug info from stderr using --debug option" do
