@@ -2,7 +2,7 @@
 # properly. This option causes Facter to output facts in JSON format.
 # A custom fact is used to test for parity between Facter's output and
 # the expected JSON output.
-test_name "--json command-line option results in valid JSON output" do
+test_name "C99966, C98083: --json command-line option results in valid JSON output" do
 
   require 'json'
   require 'facter/acceptance/user_fact_utils'
