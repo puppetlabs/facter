@@ -45,17 +45,10 @@ EOM
           create_remote_file(agent, custom_fact, custom_fact_content)
 
           teardown do
-<<<<<<< HEAD
             on(agent, "rm -rf '#{custom_dir}'", :acceptable_exit_codes => [0,1])
           end
 
           on(agent, facter("custom_fact", :environment => { 'FACTERLIB' => custom_dir })) do
-=======
-            on(agent, "rm -f '#{custom_fact}'")
-          end
-
-          on(agent, facter("--config '#{config_file}' custom_fact", :environment => { 'FACTERLIB' => custom_dir })) do
->>>>>>> LTS-1.7
             assert_equal("", stdout.chomp, "Expected custom fact to be disabled when no-ruby is true, but it resolved as #{stdout.chomp}")
           end
         end
