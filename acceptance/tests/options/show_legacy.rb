@@ -1,6 +1,6 @@
 # This test is intended to demonstrate that the `--show-legacy` command line option
 # causes hidden old facts to appear in the fact list.
-test_name "--show-legacy command-line option results in output with legacy (hidden) facts" do
+test_name "C87580: --show-legacy command-line option results in output with legacy (hidden) facts" do
 
   agents.each do |agent|
     step "Agent #{agent}: retrieve legacy output using a hash" do
