@@ -1,6 +1,6 @@
 # This test is intended to demonstrate that setting the cli.debug field to true
 # causes DEBUG information to be printed to stderr.
-test_name "setting the debug config field to true prints debug info to stderr" do
+test_name "C99965: setting the debug config field to true prints debug info to stderr" do
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 

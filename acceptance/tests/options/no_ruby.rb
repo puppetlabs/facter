@@ -3,7 +3,7 @@
 # when using the --no-ruby fact, and also checks that the 'No Ruby' warning does
 # not appear in stderr. The second test ensures that custom facts are not resolved
 # when the --no-ruby option is present.
-test_name "--no-ruby commandline option" do
+test_name "C99987: --no-ruby commandline option" do
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
@@ -30,6 +30,10 @@ EOM
         on(agent, "mkdir -p '#{custom_dir}'")
         custom_fact = File.join(custom_dir, 'custom_fact.rb')
         create_remote_file(agent, custom_fact, content)
+
+        teardown do
+          on(agent, "rm -f '#{custom_fact}'")
+        end
 
         on(agent, facter('--no-ruby custom_fact', :environment => { 'FACTERLIB' => custom_dir })) do
           assert_equal("", stdout.chomp, "Expected custom fact to be disabled while using --no-ruby option, but it resolved as #{stdout.chomp}")

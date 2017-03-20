@@ -2,7 +2,7 @@
 # properly. This option causes Facter to output facts in YAML format.
 # A custom fact is used to test for parity between Facter's output and
 # the expected YAML output.
-test_name "--yaml command-line option results in valid YAML output" do
+test_name "C99967: --yaml command-line option results in valid YAML output" do
 
   require 'yaml'
   require 'facter/acceptance/user_fact_utils'

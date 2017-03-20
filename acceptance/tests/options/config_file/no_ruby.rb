@@ -1,6 +1,6 @@
 # This test is intended to demonstrate that the global.no-ruby config file field
 # disables requiring Ruby and prevents custom fact lookup.
-test_name "no-ruby config field flag disables requiring Ruby" do
+test_name "C99964: no-ruby config field flag disables requiring Ruby" do
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
