@@ -25,7 +25,7 @@ EOM
         on(agent, "rm -rf '#{custom_dir}'")
       end
 
-      step "Agent #{agent}: --custom-dir option should resoolve custom facts from the specific directory" do
+      step "Agent #{agent}: --custom-dir option should resolve custom facts from the specific directory" do
         on(agent, facter("--custom-dir '#{custom_dir}' custom_fact")) do
           assert_equal("single_fact", stdout.chomp, "Custom fact output does not match expected output #{stdout.chomp}")
         end
