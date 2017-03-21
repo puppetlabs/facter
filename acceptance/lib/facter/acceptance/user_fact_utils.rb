@@ -62,6 +62,24 @@ module Facter
           '.sh'
         end
       end
+
+      def external_fact_content(platform, key='external_fact', value='test_value')
+        unix_content = <<EOM
+#!/bin/sh
+echo "#{key}=#{value}"
+EOM
+
+        win_content = <<EOM
+@echo off
+echo #{key}=#{value}
+EOM
+
+        if platform =~ /windows/
+          win_content
+        else
+          unix_content
+        end
+      end
     end
   end
 end
