@@ -45,7 +45,7 @@ module Facter
 
         begin
           Timeout.timeout(timeout) do
-            body = open(@url).read
+            body = open(@url, :proxy => nil).read
           end
         rescue *CONNECTION_ERRORS => e
           attempts = attempts + 1
