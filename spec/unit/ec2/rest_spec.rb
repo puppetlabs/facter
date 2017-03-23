@@ -148,18 +148,18 @@ describe Facter::EC2::Userdata do
 
   describe "reaching the userdata" do
     it "queries the userdata URI" do
-      subject.expects(:open).with('http://0.0.0.0/latest/user-data/').returns(response)
+      subject.expects(:open).with('http://0.0.0.0/latest/user-data/', {:proxy => nil}).returns(response)
       subject.fetch
     end
 
     it "returns the result of the query without modification" do
       response.string = "clooouuuuud"
-      subject.expects(:open).with('http://0.0.0.0/latest/user-data/').returns(response)
+      subject.expects(:open).with('http://0.0.0.0/latest/user-data/', {:proxy => nil}).returns(response)
       expect(subject.fetch).to eq  "clooouuuuud"
     end
 
     it "is nil if the URI returned a 404" do
-      subject.expects(:open).with('http://0.0.0.0/latest/user-data/').once.raises(OpenURI::HTTPError.new("404 Not Found", StringIO.new("woo")))
+      subject.expects(:open).with('http://0.0.0.0/latest/user-data/', {:proxy => nil}).once.raises(OpenURI::HTTPError.new("404 Not Found", StringIO.new("woo")))
       expect(subject.fetch).to be_nil
     end
   end
