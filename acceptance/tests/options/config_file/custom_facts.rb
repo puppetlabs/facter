@@ -1,61 +1,40 @@
-# This test is intended to demonstrate that the directory for custom facts can be specified from
-# the config file using the global.custom-dir field, and that custom fact collection can be disabled
-# by setting the global.no-custom-facts field to true.
-test_name "custom-dir and no-custom-facts config fields allow control of custom fact lookup" do
+# This test verifies that facter can load facts from a single custom-dir specified
+# in the configuration file
+test_name "C98143: config custom-dir allows single custom fact directory" do
+  tag 'risk:low'
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
-  custom_fact_content = <<EOM
-Facter.add('custom_fact') do
+  content = <<EOM
+Facter.add('config_fact') do
   setcode do
-   "testvalue"
+    "config_value"
   end
 end
 EOM
 
   agents.each do |agent|
-    custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
-
-    step "Agent #{agent}: create custom fact and config file" do
-      on(agent, "mkdir -p '#{custom_dir}'")
+    step "Agent #{agent}: create custom fact directory and a custom fact and config file" do
+      custom_dir = agent.tmpdir('custom_dir')
       custom_fact = File.join(custom_dir, 'custom_fact.rb')
-      create_remote_file(agent, custom_fact, custom_fact_content)
-
-      config_custom = <<EOM
-global : {
-    custom-dir : "#{custom_dir}"
-}
-EOM
-
+      create_remote_file(agent, custom_fact, content)
       config_dir = agent.tmpdir("config_dir")
-      config_custom_file = File.join(config_dir, "custom.conf")
-      create_remote_file(agent, config_custom_file, config_custom)
-
-      config_no_custom = <<EOM
+      config_file = File.join(config_dir, "facter.conf")
+      config_content = <<EOM
 global : {
-    no-custom-facts : true
-}
-cli : {
-    debug : true
+    custom-dir : "#{custom_dir}",
 }
 EOM
-
-      config_no_custom_file = File.join(config_dir, "no_custom.conf")
-      create_remote_file(agent, config_no_custom_file, config_no_custom)
+      create_remote_file(agent, config_file, config_content)
 
       teardown do
-        on(agent, "rm -rf '#{custom_dir}' '#{config_dir}'", :acceptable_exit_codes => [0,1])
+        on(agent, "rm -rf '#{custom_dir}' '#{config_dir}'")
       end
 
-      step "setting custom-dir in config file should specify location to look for custom facts" do
-        on(agent, facter("--config '#{config_custom_file}' custom_fact")) do
-          assert_equal("testvalue", stdout.chomp, "Custom fact output does not match expected output")
-        end
-      end
-
-      step "setting no-custom-facts to true should prevent custom fact lookup" do
-        on(agent, facter("--config '#{config_no_custom_file}'")) do
-          assert_no_match(/loading all custom facts/, stderr, "Facter should not load custom facts")
+      step "Agent #{agent}: resolve a fact from the configured custom-dir path" do
+        on(agent, facter("--config '#{config_file}' config_fact")) do |facter_output|
+          assert_equal("config_value", facter_output.stdout.chomp, "Incorrect custom fact value")
         end
       end
     end
