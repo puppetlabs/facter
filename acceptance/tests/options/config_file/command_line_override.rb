@@ -30,21 +30,14 @@ EOM
     end
 
     step "--debug flag should override debug=false in config file" do
-       on(agent, facter("--debug")) do
-         assert_match(/DEBUG/, stderr, "Expected DEBUG information in stderr")
-       end
-     end
-
-     step "--external_dir flag should override external_dir in config file" do
-       on(agent, facter("--external-dir 'cmd/line/dir'")) do
-         assert_match(/cmd\/line\/dir/, stderr, "Facter should attempt to find external fact dir 'cmd/line/dir'")
-         assert_no_match(/config\/file\/dir/, stderr, "Facter should not attempt to find external fact dir 'config/file/dir'")
+       on(agent, facter("--debug")) do |facter_output|
+         assert_match(/DEBUG/, facter_output.stderr, "Expected DEBUG information in stderr")
        end
      end
 
     step "conflict logic applies across settings sources" do
-      on(agent, facter("--no-external-facts"), :acceptable_exit_codes => [1]) do
-       assert_match(/no-external-facts and external-dir options conflict/, stderr, "Facter should have warned about conflicting settings")
+      on(agent, facter("--no-external-facts"), :acceptable_exit_codes => [1]) do |facter_output|
+       assert_match(/no-external-facts and external-dir options conflict/, facter_output.stderr, "Facter should have warned about conflicting settings")
       end
     end
   end
