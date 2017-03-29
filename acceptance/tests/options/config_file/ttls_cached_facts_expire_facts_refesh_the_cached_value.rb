@@ -1,17 +1,26 @@
-# This test verifies that a ttls configured cached facts when initially called
-# create a json cache file
-test_name "C99973: ttls configured cached facts create json cache files" do
+# This test verifies that cached facts that are expired are refreshed
+test_name "C100040: ttls configured facts that are expired are refreshed" do
+  tag 'risk:high'
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
   # This fact must be resolvable on ALL platforms
   # Do NOT use the 'kernel' fact as it is used to configure the tests
   cached_factname = 'uptime'
+
   config = <<EOM
 facts : {
     ttls : [
         { "#{cached_factname}" : 30 days }
     ]
+}
+EOM
+
+  cached_fact_value = "EXPIRED_CACHED_FACT_VALUE"
+  cached_fact_content = <<EOM
+{
+  "#{cached_factname}": "#{cached_fact_value}"
 }
 EOM
 
@@ -32,13 +41,19 @@ EOM
         on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
       end
 
-      step "should create a JSON file for a fact that is to be cached" do
+      step "should refresh an expired cached fact" do
+        # Setup a known cached fact
         on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
-        on(agent, facter("--debug")) do |facter_output|
-          assert_match(/caching values for .+ facts/, facter_output.stderr, "Expected debug message to state that values will be cached")
-        end
+        on(agent, facter(""))
+        create_remote_file(agent, cached_fact_file, cached_fact_content)
+        # Change the modified date to sometime in the far distant past
+        on(agent, "touch -mt 198001010000 '#{cached_fact_file}'")
+        # Force facter to recache
+        on(agent, facter("#{cached_factname}"))
+
+        # Read cached fact file content
         on(agent, "cat #{cached_fact_file}", :acceptable_exit_codes => [0]) do |cat_output|
-          assert_match(/#{cached_factname}/, cat_output.stdout, "Expected cached fact file to contain fact information")
+          assert_no_match(/#{cached_fact_value}/, cat_output.stdout, "Expected cached fact file to be refreshed")
         end
       end
     end
