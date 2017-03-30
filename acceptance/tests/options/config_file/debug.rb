@@ -1,8 +1,6 @@
 # This test is intended to demonstrate that setting the cli.debug field to true
 # causes DEBUG information to be printed to stderr.
 test_name "C99965: setting the debug config field to true prints debug info to stderr" do
-  tag 'risk:high'
-
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
@@ -24,8 +22,8 @@ EOM
       end
 
       step "debug output should print when config file is loaded" do
-        on(agent, facter("")) do |facter_output|
-          assert_match(/DEBUG/, facter_output.stderr, "Expected DEBUG information in stderr")
+        on(agent, facter("")) do
+          assert_match(/DEBUG/, stderr, "Expected DEBUG information in stderr")
         end
       end
     end

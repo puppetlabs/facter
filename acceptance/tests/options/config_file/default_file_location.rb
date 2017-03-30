@@ -3,7 +3,6 @@
 # On Unix, this location is /etc/puppetlabs/facter/facter.conf.
 # On Windows, it is C:\ProgramData\PuppetLabs\facter\etc\facter.conf
 test_name "C99991: config file is loaded from default location" do
-  tag 'risk:high'
 
   config = <<EOM
 cli : {
@@ -28,8 +27,8 @@ EOM
       end
 
       step "config file should be loaded automatically and turn DEBUG output on" do
-        on(agent, facter("")) do |facter_output|
-          assert_match(/DEBUG/, facter_output.stderr, "Expected DEBUG information in stderr")
+        on(agent, facter("")) do 
+          assert_match(/DEBUG/, stderr, "Expected DEBUG information in stderr")
         end
       end
     end
