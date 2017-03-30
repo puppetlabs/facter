@@ -1,7 +1,6 @@
 # This test is intended to demonstrate that the global.no-ruby config file field
-# disables custom fact lookup.
-test_name "C100045: config no-ruby to true should disable custom facts" do
-  tag 'risk:high'
+# disables requiring Ruby and prevents custom fact lookup.
+test_name "C99964: no-ruby config field flag disables requiring Ruby" do
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
@@ -31,6 +30,13 @@ EOM
         on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0,1])
       end
 
+      step "no-ruby option should disable Ruby and facts requiring Ruby" do
+        on(agent, facter("ruby")) do
+          assert_equal("", stdout.chomp, "Expected Ruby and Ruby fact to be disabled, but got output: #{stdout.chomp}")
+          assert_equal("", stderr.chomp, "Expected no warnings about Ruby on stderr, but got output: #{stderr.chomp}")
+        end
+      end
+
       step "no-ruby option should disable custom facts" do
         step "Agent #{agent}: create custom fact directory and custom fact" do
           custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
@@ -42,8 +48,8 @@ EOM
             on(agent, "rm -rf '#{custom_dir}'", :acceptable_exit_codes => [0,1])
           end
 
-          on(agent, facter("custom_fact", :environment => { 'FACTERLIB' => custom_dir })) do |facter_output|
-            assert_equal("", facter_output.stdout.chomp, "Expected custom fact to be disabled when no-ruby is true")
+          on(agent, facter("custom_fact", :environment => { 'FACTERLIB' => custom_dir })) do
+            assert_equal("", stdout.chomp, "Expected custom fact to be disabled when no-ruby is true, but it resolved as #{stdout.chomp}")
           end
         end
       end
