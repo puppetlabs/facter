@@ -1,12 +1,14 @@
-# This test verifies that a ttls configured cached facts when initially called
-# create a json cache file
-test_name "C99973: ttls configured cached facts create json cache files" do
+# This test verifies that corrupt facts are refreshed with new values
+test_name "C100042: ttls configured cached facts that are corrupt are refreshed with new values" do
+  tag 'risk:high'
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
   # This fact must be resolvable on ALL platforms
   # Do NOT use the 'kernel' fact as it is used to configure the tests
   cached_factname = 'uptime'
+
   config = <<EOM
 facts : {
     ttls : [
@@ -32,13 +34,18 @@ EOM
         on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
       end
 
-      step "should create a JSON file for a fact that is to be cached" do
+      step "should refresh a cached fact if cache file is corrupt" do
+        # Setup a known cached fact
         on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
-        on(agent, facter("--debug")) do |facter_output|
-          assert_match(/caching values for .+ facts/, facter_output.stderr, "Expected debug message to state that values will be cached")
+        on(agent, facter(""))
+        # Corrupt the cached fact file
+        create_remote_file(agent, cached_fact_file, 'ThisIsNotvalidJSON')
+
+        on(agent, facter("#{cached_factname}")) do
+          assert_match(/.+/, stdout, "Expected fact to be resolved")
         end
         on(agent, "cat #{cached_fact_file}", :acceptable_exit_codes => [0]) do |cat_output|
-          assert_match(/#{cached_factname}/, cat_output.stdout, "Expected cached fact file to contain fact information")
+          assert_match(/#{cached_factname}/, cat_output.stdout, "Expected cachced fact to contain the fact name")
         end
       end
     end
