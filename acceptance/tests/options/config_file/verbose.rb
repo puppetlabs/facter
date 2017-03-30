@@ -1,6 +1,8 @@
 # This test is intended to demonstrate that setting cli.verbose to true in the 
 # config file causes INFO level logging to output to stderr.
 test_name "C99989: verbose config field prints verbose information to stderr" do
+  tag 'risk:medium'
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
@@ -22,8 +24,8 @@ EOM
       end
 
       step "debug output should print when config file is loaded" do
-        on(agent, facter("")) do
-          assert_match(/INFO/, stderr, "Expected stderr to contain verbose (INFO) statements")
+        on(agent, facter("")) do |facter_output|
+          assert_match(/INFO/, facter_output.stderr, "Expected stderr to contain verbose (INFO) statements")
         end
       end
     end
