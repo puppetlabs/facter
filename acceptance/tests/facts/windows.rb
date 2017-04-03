@@ -12,19 +12,31 @@ confine :to, :platform => /windows-/
 agents.each do |agent|
 
   # Get expected values based on platform name
-  if agent['platform'] =~ /2003/
+  if agent['platform'] =~ /-2003/
     os_version  = '2003 R2'
     kernel_version = '5.2'
-  elsif agent['platform'] =~ /2008/
+  elsif agent['platform'] =~ /-2008r2/
     os_version  = '2008 R2'
     kernel_version = '6.1'
-  elsif agent['platform'] =~ /2012/
+  elsif agent['platform'] =~ /-2008/
+    os_version  = '2008'
+    kernel_version = '6.0'
+  elsif agent['platform'] =~ /-2012r2/
     os_version  = '2012 R2'
+    kernel_version = '6.3'
+  elsif agent['platform'] =~ /-2012/
+    os_version  = '2012'
+    kernel_version = '6.2'
+  elsif agent['platform'] =~ /-7/
+    os_version  = '7'
+    kernel_version = '6.1'
+  elsif agent['platform'] =~ /-8\.1/
+    os_version  = '8.1'
     kernel_version = '6.3'
   elsif agent['platform'] =~ /-10/
     os_version  = '10'
     kernel_version = /^10\./
-  elsif agent['platform'] =~ /2016/
+  elsif agent['platform'] =~ /-2016/
     os_version = '2016'
     kernel_version = /^10\./
   else
