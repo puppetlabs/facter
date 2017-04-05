@@ -4,8 +4,10 @@
 # On Windows, it is C:\ProgramData\PuppetLabs\facter\etc\facter.conf
 #
 # The test also verifies that facter will search for external facts and custom facts
-# in the directory paths defined with external-dir and custome-dir in the facter.conf file
-test_name "config file is loaded when Facter is run from Puppet" do
+# in the directory paths defined with external-dir and custom-dir in the facter.conf file
+test_name "C98141: config file is loaded when Facter is run from Puppet" do
+  tag 'risk:high'
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
@@ -61,10 +63,10 @@ test_name "config file is loaded when Facter is run from Puppet" do
     end
 
     step "running `puppet facts` should load the config file automatically and search all external-dir and custom-dir paths" do
-      on(agent, puppet('facts')) do
-        assert_match(/This is external fact 1 in #{ext_fact_dir1} directory/, stdout, "Expected external fact")
-        assert_match(/This is external fact 2 in #{ext_fact_dir2} directory/, stdout, "Expected external fact")
-        assert_match(/This is a custom fact in #{cust_fact_dir} directory/, stdout, "Expected custom fact")
+      on(agent, puppet('facts')) do |puppet_facts_output|
+        assert_match(/This is external fact 1 in #{ext_fact_dir1} directory/, puppet_facts_output.stdout, "Expected external fact")
+        assert_match(/This is external fact 2 in #{ext_fact_dir2} directory/, puppet_facts_output.stdout, "Expected external fact")
+        assert_match(/This is a custom fact in #{cust_fact_dir} directory/, puppet_facts_output.stdout, "Expected custom fact")
       end
     end
   end

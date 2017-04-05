@@ -1,6 +1,7 @@
 # This test is intended to demonstrate that setting the cli.trace field to true
 # enables backtrace reporting for errors in custom facts.
 test_name "C99988: trace config field enables backtraces for custom facts" do
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
@@ -33,12 +34,13 @@ EOM
       create_remote_file(agent, config_file, config)
 
       teardown do
-        on(agent, "rm -rf '#{custom_dir}' '#{config_dir}'", :acceptable_exit_codes => [0,1])
+        on(agent, "rm -rf '#{custom_dir}' '#{config_dir}'", :acceptable_exit_codes => [0, 1])
       end
 
       step "trace setting should provide a backtrace for a custom fact with errors" do
-        on(agent, facter("--custom-dir '#{custom_dir}' custom_fact"), :acceptable_exit_codes => [1])
-        assert_match(/backtrace:\s+#{custom_fact}/, stderr, "Expected a backtrace for erroneous custom fact")
+        on(agent, facter("--custom-dir '#{custom_dir}' custom_fact"), :acceptable_exit_codes => [1]) do |facter_output|
+          assert_match(/backtrace:\s+#{custom_fact}/, facter_output.stderr, "Expected a backtrace for erroneous custom fact")
+        end
       end
     end
   end
