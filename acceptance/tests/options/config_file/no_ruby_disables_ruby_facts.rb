@@ -1,14 +1,14 @@
-# This test is intended to demonstrate that setting the cli.debug field to true
-# causes DEBUG information to be printed to stderr.
-test_name "C99965: setting the debug config field to true prints debug info to stderr" do
+# This test verifies that the global.no-ruby config file field disables
+# ruby facts
+test_name "C99964: no-ruby config field flag disables requiring Ruby" do
   tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
   config = <<EOM
-cli : {
-    debug : true
+global : {
+    no-ruby : true
 }
 EOM
 
@@ -23,12 +23,12 @@ EOM
         on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0,1])
       end
 
-      step "debug output should print when config file is loaded" do
-        on(agent, facter("")) do |facter_output|
-          assert_match(/DEBUG/, facter_output.stderr, "Expected DEBUG information in stderr")
+      step "no-ruby option should disable Ruby and facts requiring Ruby" do
+        on(agent, facter("ruby")) do |facter_output|
+          assert_equal("", facter_output.stdout.chomp, "Expected Ruby and Ruby fact to be disabled")
+          assert_equal("", facter_output.stderr.chomp, "Expected no warnings about Ruby on stderr")
         end
       end
     end
   end
 end
-
