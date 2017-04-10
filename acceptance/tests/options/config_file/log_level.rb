@@ -2,6 +2,8 @@
 # properly. The value of the setting should be a string indicating the
 # logging level.
 test_name "C99990: log-level setting can be used to specific logging level" do
+  tag 'risk:high'
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
@@ -19,12 +21,12 @@ EOM
       create_remote_file(agent, config_file, config)
 
       teardown do
-        on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0,1])
+        on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0, 1])
       end
 
       step "log-level set to debug should print DEBUG output to stderr" do
-        on(agent, facter("")) do
-          assert_match(/DEBUG/, stderr, "Expected DEBUG information in stderr")
+        on(agent, facter("")) do |facter_output|
+          assert_match(/DEBUG/, facter_output.stderr, "Expected DEBUG information in stderr")
         end
       end
     end
