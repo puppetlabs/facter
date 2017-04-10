@@ -1,8 +1,7 @@
 # This test is intended to verify that the `--no-cache` command line flag will
-# cause the cache to be ignored. During a run with this flag, the cache will neither
-# be queried nor refreshed.
-test_name "C99968: --no-cache command-line option causes the fact cache to be ignored" do
-  tag 'risk:medium'
+# cause facter to not load already cached facts
+test_name "C100123: --no-cache command-line option does not load facts from the cache" do
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
@@ -41,13 +40,6 @@ EOM
       create_remote_file(agent, config_file, config)
     end
 
-    step "facter should not cache facts when --no-cache is specified" do
-      on(agent, facter("--no-cache")) do |facter_output|
-        assert_no_match(/caching/, facter_output.stderr, "facter should not have tried to cache any facts")
-        assert_no_match(/#{bad_cached_fact_value}/, facter_output.stdout, "facter should not have loaded the cached value")
-      end
-    end
-
     step "facter should not load facts from the cache when --no-cache is specified" do
       # clear the fact cache
       on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
@@ -60,27 +52,6 @@ EOM
       on(agent, facter("--no-cache #{cached_fact_name}")) do |facter_output|
         assert_no_match(/loading cached values for .+ fact/, facter_output.stderr, "facter should not have tried to load any cached facts")
         assert_no_match(/#{bad_cached_fact_value}/, facter_output.stdout, "facter should not have loaded the cached value")
-      end
-    end
-
-    step "facter should not refresh an expired cache when --no-cache is specified" do
-      # clear the fact cache
-      on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
-
-      # run once to cache the uptime fact
-      on(agent, facter(""))
-
-      # override cached content
-      create_remote_file(agent, cached_fact_file, bad_cached_content)
-      # update the modify time on the new cached fact to prompt a refresh
-      on(agent, "touch -mt 0301010000 '#{cached_fact_file}'")
-
-      on(agent, facter("--no-cache")) do |facter_output|
-        assert_no_match(/caching/, facter_output.stderr, "facter should not have tried to refresh the cache")
-      end
-
-      on(agent, "cat '#{cached_fact_file}'", :acceptable_exit_codes => [0]) do |cat_output|
-        assert_match(/#{bad_cached_content}/, cat_output.stdout, "facter should not have updated the cached value")
       end
     end
   end
