@@ -1,6 +1,8 @@
-# This tests is inteded to verify that passing the `--no-block` command to facter will prevent
-# fact blocking, desptie a blocklist being specified in the config file.
-test_name "the `--no-block` command line flag prevents facts from being blocked" do
+# This tests is intended to verify that passing the `--no-block` command to facter will prevent
+# fact blocking, despite a blocklist being specified in the config file.
+test_name "C99971: the `--no-block` command line flag prevents facts from being blocked" do
+  tag 'risk:medium'
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
@@ -24,8 +26,8 @@ test_name "the `--no-block` command line flag prevents facts from being blocked"
     end
 
     step "no facts should be blocked when `--no-block` is specified" do
-      on(agent, facter("--no-block")) do 
-        assert_no_match(/blocking collection of .+ facts/, stderr, "Expected no facts to be blocked")
+      on(agent, facter("--no-block")) do |facter_output|
+        assert_no_match(/blocking collection of .+ facts/, facter_output.stderr, "Expected no facts to be blocked")
       end
     end
   end
