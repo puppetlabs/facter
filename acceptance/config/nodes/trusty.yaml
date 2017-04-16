@@ -1,0 +1,18 @@
+HOSTS:
+  agent-trusty-x86_64:
+    roles:
+      - agent
+    platform: ubuntu-trusty-x86_64
+    template: ubuntu-1404-x86_64
+    hypervisor: vcloud
+  agent-trusty-i386:
+    roles:
+      - agent
+    platform: ubuntu-trusty-i386
+    template: ubuntu-1404-i386
+    hypervisor: vcloud
+CONFIG:
+  datastore: instance0
+  resourcepool: delivery/Quality Assurance/FOSS/Dynamic
+  folder: Delivery/Quality Assurance/FOSS/Dynamic
+  pooling_api: http://vmpooler.delivery.puppetlabs.net/
