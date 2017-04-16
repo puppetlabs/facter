@@ -22,8 +22,16 @@ PACKAGES = {
   :debian_ruby18 => [
     'libjson-ruby',
   ],
-  :solaris => [
-    ['git', 'developer/versioning/git'],
+  :solaris10 => [
+    ['git',         'git'],
+    ['ruby',        'ruby18'],
+    ['ruby-dev',    'ruby18_dev'],
+    ['gcc',         'gcc4core'],
+    ['ruby18_gcc4', 'ruby18_dev'],
+    ['ruby-json',   'rb18_json_1_5_3'],
+  ],
+  :solaris11 => [
+    ['git',  'developer/versioning/git'],
     ['ruby', 'runtime/ruby-18'],
     # there isn't a package for json, so it is installed later via gems
   ],
@@ -32,6 +40,19 @@ PACKAGES = {
     # there isn't a need for json on windows because it is bundled in ruby 1.9
   ],
 }
+
+hosts.each do |host|
+  case host['platform']
+  when  /solaris-11/
+    on host, 'if ((`pkg publisher | wc -l` < 2)); then pkg set-publisher -P -g http://pkg.oracle.com/solaris/release/ solaris; fi'
+  when  /solaris-10/
+    on host, 'mkdir -p /var/lib'
+    on host, 'ln -s /opt/csw/bin/pkgutil /usr/bin/pkgutil'
+    on host, 'ln -s /opt/csw/bin/gem18 /usr/bin/gem'
+    on host, 'ln -s /opt/csw/bin/git /usr/bin/git'
+    on host, 'ln -s /opt/csw/bin/ruby18 /usr/bin/ruby'
+  end
+end
 
 install_packages_on(hosts, PACKAGES, :check_if_exists => true)
 
@@ -57,7 +78,7 @@ hosts.each do |host|
     on host, 'cd /; icacls bin /reset /T'
     on host, 'ruby --version'
     on host, 'cmd /c gem list'
-  when /solaris/
+  when /solaris-11/
     step "#{host} Install json from rubygems"
     on host, 'gem install json'
   end

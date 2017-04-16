@@ -1,4 +1,8 @@
 {
+  :type => 'git',
+  :install => [
+    'facter',
+  ],
   :pre_suite => [
     'setup/common/pre-suite/000-delete-puppet-when-none.rb',
     'setup/common/00_EnvSetup.rb',

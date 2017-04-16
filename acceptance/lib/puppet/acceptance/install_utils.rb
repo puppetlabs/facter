@@ -10,7 +10,8 @@ module Puppet
         :redhat        => /fedora|el-|centos/,
         :debian        => /debian|ubuntu/,
         :debian_ruby18 => /debian|ubuntu-lucid|ubuntu-precise/,
-        :solaris       => /solaris/,
+        :solaris11     => /solaris-11/,
+        :solaris10     => /solaris-10/,
         :windows       => /windows/,
       }.freeze
 
