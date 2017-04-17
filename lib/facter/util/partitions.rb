@@ -44,4 +44,16 @@ module Facter::Util::Partitions
   def self.available?
     !self.list.empty?
   end
+
+  def self.flushable?
+    implementation.flushable?
+  end
+
+  def self.flushed?
+    implementation.flushed?
+  end
+
+  def self.flush!
+    implementation.flush!
+  end
 end

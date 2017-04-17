@@ -36,4 +36,7 @@ Facter.add(:partitions) do
     end
     partitions
   end
+  on_flush do
+    Facter::Util::Partitions.flush! if Facter::Util::Partitions.flushable?
+  end
 end
