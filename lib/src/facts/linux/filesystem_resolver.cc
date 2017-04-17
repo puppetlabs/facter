@@ -218,6 +218,35 @@ namespace facter { namespace facts { namespace linux {
 #endif  // USE_BLKID
     }
 
+#ifdef USE_BLKID
+    // This exists as a reimplementation of blkid's "safe_print" function which exists internally to
+    // print values that contain non-ASCII characters.  It will convert non-printable
+    // ASCII characters using the '^' and M- notation.
+    static string safe_convert(char const* value)
+    {
+        string result;
+
+        if (value) {
+            while (*value) {
+                unsigned char c = static_cast<unsigned char>(*value);
+                if (c >= 128) {
+                    result += "M-";
+                    c -= 128;
+                }
+                if (c < 32 || c == 0xf7) {
+                    result += '^';
+                    c ^= 0x40;
+                } else if (c == '"' || c == '\\') {
+                    result += '\\';
+                }
+                result += static_cast<char>(c);
+                ++value;
+            }
+        }
+        return result;
+    }
+#endif
+
     void filesystem_resolver::populate_partition_attributes(partition& part, string const& device_directory, void* cache, map<string, string> const& mountpoints)
     {
 #ifdef USE_BLKID
