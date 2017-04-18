@@ -113,6 +113,22 @@ describe Facter do
       expect(Facter.value('snowman_fact')).to eq('olaf')
     end
 
+    it 'should find encoded search paths' do
+      snowman_path = File.expand_path('../../../lib/tests/fixtures/facts/external/zö', File.dirname(__FILE__))
+      encoded_path = snowman_path.encode("Windows-1252")
+      Facter.search(encoded_path)
+      expect(Facter.search_path).to eq([snowman_path])
+      expect(Facter.value('snowman_fact')).to eq('olaf')
+    end
+
+    it 'should find encoded external search paths' do
+      snowman_path = File.expand_path('../../../lib/tests/fixtures/facts/external/zö', File.dirname(__FILE__))
+      encoded_path = snowman_path.encode("Windows-1252")
+      Facter.search_external([encoded_path])
+      expect(Facter.search_external_path).to eq([snowman_path])
+      expect(Facter.value('snowman_fact')).to eq('olaf')
+    end
+
     it 'should support stubbing for confine testing' do
       Facter.fact(:osfamily).expects(:value).at_least(1).returns 'foo'
       expect(Facter.fact(:osfamily).value).to eq('foo')
