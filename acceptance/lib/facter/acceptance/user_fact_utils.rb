@@ -106,6 +106,17 @@ EOM
           unix_content
         end
       end
+
+      # Return the content for a custom fact
+      #
+      def custom_fact_content(key='custom_fact', value='custom_value', *args)
+        <<-EOM
+  Facter.add('#{key}') do
+    setcode {'#{value}'}
+    #{args.empty? ? '' : args.join('\n')}
+  end
+        EOM
+      end
     end
   end
 end
