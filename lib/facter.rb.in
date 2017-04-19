@@ -28,14 +28,10 @@ module Facter
     # Simply require libfacter.so; this will define all of the Facter API
     begin
       facter_dir = ENV['FACTERDIR'] || File.join(File.expand_path("#{File.dirname(__FILE__)}"), '${LIBFACTER_INSTALL_RELATIVE}')
-      #
       # This is a cmake pre-processor check. On *nix it will end up '' == '1'
       # On windows, where we want the changes it will be '1' == '1'
-      #
-      # Facter requires the extra inclusion of puppet/bin as the libfacter.so
-      # lib requires libraries and executables from that directory
       if '${WIN32}' == '1'
-        ENV['PATH'] = "#{File.join(facter_dir, 'bin')}#{File::PATH_SEPARATOR}#{File.join(facter_dir, '../puppet/bin')}#{File::PATH_SEPARATOR}#{ENV['PATH']}"
+        ENV['PATH'] = "#{File.join(facter_dir, 'bin')}#{File::PATH_SEPARATOR}#{ENV['PATH']}"
       end
       require "#{facter_dir}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so"
     rescue LoadError
