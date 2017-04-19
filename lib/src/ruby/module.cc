@@ -397,7 +397,7 @@ namespace facter { namespace ruby {
             return ruby.utf8_value(ptr->value());
         }
         if (auto ptr = dynamic_cast<integer_value const*>(val)) {
-            return ruby.rb_ll2inum(static_cast<SIGNED_VALUE>(ptr->value()));
+            return ruby.rb_ll2inum(static_cast<LONG_LONG>(ptr->value()));
         }
         if (auto ptr = dynamic_cast<boolean_value const*>(val)) {
             return ptr->value() ? ruby.true_value() : ruby.false_value();
