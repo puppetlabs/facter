@@ -1,13 +1,15 @@
-test_name "Non-root default user external facts directory is searched for facts" do
+# verify that facter run as a non-root user honor facts in the users home directory:
+# ~/.facter/facts.d
+# ~/.puppetlabs/opt/facter/facts.d
+test_name "C64580: Non-root default user external facts directory is searched for facts" do
+  tag 'risk:high'
 
-  confine :except, :platform => 'aix'     # bug FACT-1586
+  confine :except, :platform => 'aix' # bug FACT-1586
 
   confine :except, :platform => 'windows' # this test is for unix systems
-  confine :except, :platform => 'osx'     # does not support managehome
+  confine :except, :platform => 'osx' # does not support managehome
   confine :except, :platform => 'solaris' # does not work with managehome on solaris boxes
-  confine :except, :platform => 'eos-'    # does not support user creation ARISTA-37
-
-  # TestRail: C64580
+  confine :except, :platform => 'eos-' # does not support user creation ARISTA-37
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
@@ -64,8 +66,9 @@ test_name "Non-root default user external facts directory is searched for facts"
   agents.each do |agent|
     non_root_user = "nonroot"
 
-    step "Agent #{agent}: create a #{non_root_user} to run facter with"
-    on(agent, "puppet resource user #{non_root_user} ensure=present managehome=true shell='#{user_shell(agent)}'")
+    step "Agent #{agent}: create a #{non_root_user} to run facter with" do
+      on(agent, "puppet resource user #{non_root_user} ensure=present managehome=true shell='#{user_shell(agent)}'")
+    end
 
     user_home = get_home_dir(agent, non_root_user)
 
@@ -82,56 +85,68 @@ test_name "Non-root default user external facts directory is searched for facts"
     facter_path = on(agent, "which facter").stdout.chomp
 
     teardown do
-      on(agent, "rm -rf #{user_base_facts_dir} #{user_base_puppetlabs_dir}")
+      on(agent, "rm -rf '#{user_base_facts_dir}' '#{user_base_puppetlabs_dir}'")
       on(agent, puppet("resource user #{non_root_user} ensure=absent managehome=true"))
     end
 
-    step "Agent #{agent}: create facts directory (#{user_facts_dir})"
-    on(agent, "rm -rf #{user_facts_dir}")
-    on(agent, "mkdir -p #{user_facts_dir}")
-
-    step "Agent #{agent}: create and resolve a custom fact in #{user_facts_dir}"
-    create_remote_file(agent, user_facts_path, ext_user_fact('USER_TEST_FACTER'))
-
-    step "Agent #{agent}: chown and chmod the facts to the user #{non_root_user}"
-    on(agent, "chown -R #{non_root_user} #{user_base_facts_dir}")
-    on(agent, "chmod -R a+rx #{user_base_facts_dir}")
-
-    step "Agent #{agent}: run facter as #{non_root_user} and make sure we get the fact"
-    on(agent, %Q[su #{non_root_user} -c "#{facter_path} test"]) do
-      assert_match(/USER_TEST_FACTER/, stdout, "Fact from #{user_facts_dir} did not resolve correctly")
+    step "Agent #{agent}: create facts directory (#{user_facts_dir})" do
+      on(agent, "rm -rf '#{user_facts_dir}'")
+      on(agent, "mkdir -p '#{user_facts_dir}'")
     end
 
-    step "Agent #{agent}: remove #{user_facts_path}"
-    on(agent, "rm -rf #{user_facts_path}")
-
-    step "Agent #{agent}: create facts directory (#{user_puppetlabs_facts_dir})"
-    on(agent, "rm -rf #{user_puppetlabs_facts_dir}")
-    on(agent, "mkdir -p #{user_puppetlabs_facts_dir}")
-
-    step "Agent #{agent}: create and resolve a custom fact in #{user_puppetlabs_facts_dir}"
-    create_remote_file(agent, user_puppetlabs_facts_path, ext_user_fact('USER_TEST_PUPPETLABS'))
-
-    step "Agent #{agent}: chown and chmod the facts to the user #{non_root_user}"
-    on(agent, "chown -R #{non_root_user} #{user_base_puppetlabs_dir}")
-    on(agent, "chmod -R a+rx #{user_base_puppetlabs_dir}")
-
-    step "Agent #{agent}: run facter as #{non_root_user} and make sure we get the fact"
-    on(agent, %Q[su #{non_root_user} -c "#{facter_path} test"]) do
-      assert_match(/USER_TEST_PUPPETLABS/, stdout, "Fact from #{user_puppetlabs_facts_dir} did not resolve correctly")
+    step "Agent #{agent}: create and resolve a custom fact in #{user_facts_dir}" do
+      create_remote_file(agent, user_facts_path, ext_user_fact('USER_TEST_FACTER'))
     end
 
-    step "Agent #{agent}: create and resolve a custom fact in #{user_puppetlabs_facts_dir}"
-    create_remote_file(agent, user_facts_path, ext_user_fact('USER_PRECEDENCE_FACTER'))
-    create_remote_file(agent, user_puppetlabs_facts_path, ext_user_fact('USER_PRECEDENCE_PUPPETLABS'))
+    step "Agent #{agent}: chown and chmod the facts to the user #{non_root_user}" do
+      on(agent, "chown -R #{non_root_user} '#{user_base_facts_dir}'")
+      on(agent, "chmod -R a+rx '#{user_base_facts_dir}'")
+    end
 
-    step "Agent #{agent}: chown and chmod the facts to the user #{non_root_user}"
-    on(agent, "chown -R #{non_root_user} #{user_base_facts_dir} #{user_base_puppetlabs_dir}")
-    on(agent, "chmod -R a+rx #{user_base_facts_dir} #{user_base_puppetlabs_dir}")
+    step "Agent #{agent}: run facter as #{non_root_user} and make sure we get the fact" do
+      on(agent, %Q[su #{non_root_user} -c "'#{facter_path}' test"]) do |facter_output|
+        assert_match(/USER_TEST_FACTER/, facter_output.stdout, "Fact from #{user_facts_dir} did not resolve correctly")
+      end
+    end
 
-    step "Agent #{agent}: run facter as #{non_root_user} and .facter will take precedence over .puppetlabs"
-    on(agent, %Q[su #{non_root_user} -c "#{facter_path} test"]) do
-      assert_match(/USER_PRECEDENCE_FACTER/, stdout, "Fact from #{user_puppetlabs_facts_dir} did not resolve correctly")
+    step "Agent #{agent}: remove #{user_facts_path}" do
+      on(agent, "rm -rf '#{user_facts_path}'")
+    end
+
+    step "Agent #{agent}: create facts directory (#{user_puppetlabs_facts_dir})" do
+      on(agent, "rm -rf '#{user_puppetlabs_facts_dir}'")
+      on(agent, "mkdir -p '#{user_puppetlabs_facts_dir}'")
+    end
+
+    step "Agent #{agent}: create and resolve a custom fact in #{user_puppetlabs_facts_dir}" do
+      create_remote_file(agent, user_puppetlabs_facts_path, ext_user_fact('USER_TEST_PUPPETLABS'))
+    end
+
+    step "Agent #{agent}: chown and chmod the facts to the user #{non_root_user}" do
+      on(agent, "chown -R #{non_root_user} '#{user_base_puppetlabs_dir}'")
+      on(agent, "chmod -R a+rx '#{user_base_puppetlabs_dir}'")
+    end
+
+    step "Agent #{agent}: run facter as #{non_root_user} and make sure we get the fact" do
+      on(agent, %Q[su #{non_root_user} -c "'#{facter_path}' test"]) do |facter_output|
+        assert_match(/USER_TEST_PUPPETLABS/, facter_output.stdout, "Fact from #{user_puppetlabs_facts_dir} did not resolve correctly")
+      end
+    end
+
+    step "Agent #{agent}: create and resolve a custom fact in #{user_puppetlabs_facts_dir}" do
+      create_remote_file(agent, user_facts_path, ext_user_fact('USER_PRECEDENCE_FACTER'))
+      create_remote_file(agent, user_puppetlabs_facts_path, ext_user_fact('USER_PRECEDENCE_PUPPETLABS'))
+    end
+
+    step "Agent #{agent}: chown and chmod the facts to the user #{non_root_user}" do
+      on(agent, "chown -R #{non_root_user} '#{user_base_facts_dir}' '#{user_base_puppetlabs_dir}'")
+      on(agent, "chmod -R a+rx '#{user_base_facts_dir}' '#{user_base_puppetlabs_dir}'")
+    end
+
+    step "Agent #{agent}: run facter as #{non_root_user} and .facter will take precedence over .puppetlabs" do
+      on(agent, %Q[su #{non_root_user} -c "'#{facter_path}' test"]) do |facter_output|
+        assert_match(/USER_PRECEDENCE_FACTER/, facter_output.stdout, "Fact from #{user_puppetlabs_facts_dir} did not resolve correctly")
+      end
     end
   end
 end
