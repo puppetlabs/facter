@@ -123,7 +123,7 @@ module Facter
       end
 
       def fetch
-        open(@baseurl).read
+        open(@baseurl, :proxy => nil).read
       rescue OpenURI::HTTPError => e
         if e.message.match /404 Not Found/i
           return nil

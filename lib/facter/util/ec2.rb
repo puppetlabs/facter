@@ -13,7 +13,7 @@ module Facter::Util::EC2
     def can_connect?(wait_sec=2)
       Facter.warnonce("#{self}.#{__method__} is deprecated; see the Facter::EC2 classes instead")
       url = "http://169.254.169.254:80/"
-      Timeout::timeout(wait_sec) {open(url)}
+      Timeout::timeout(wait_sec) {open(url, :proxy => nil)}
       return true
     rescue Timeout::Error
       return false
@@ -100,7 +100,7 @@ module Facter::Util::EC2
   #
   # @return [String] containing the body of the response
   def self.read_uri(uri)
-    open(uri).read
+    open(uri, :proxy => nil).read
   end
   private_class_method :read_uri
 end
