@@ -1,15 +1,22 @@
-test_name 'ticket 1123  facter should not crash with invalid locale setting'
-confine :except, :platform => 'windows'
-confine :except, :platform => /^cisco_/ # See CISCO-43
-confine :except, :platform => /^huawei/ # See HUAWEI-24
+test_name 'C89524: facter should not crash with invalid locale setting' do
+  tag 'risk:high'
 
-agents.each do |host|
-  step 'set an invalid value for locale and run facter'
-  result = on host, 'LANG=ABCD facter facterversion'
-  if host['platform'] !~ /solaris|aix|cumulus|osx/
-    fail_test 'facter did not warn about the locale' unless
-      result.stderr.include? 'locale environment variables were bad; continuing with LANG=C LC_ALL=C'
+  confine :except, :platform => 'windows'
+  confine :except, :platform => /^cisco_/ # See CISCO-43
+  confine :except, :platform => /^huawei/ # See HUAWEI-24
+
+  agents.each do |agent|
+    step 'facter should run when started with an invalid locale' do
+      on(agent, facter('facterversion'), :environment => {'LANG' => 'ABCD'}) do |facter_output|
+        assert_match(/^\d+\.\d+\.\d+$/, facter_output.stdout, 'facter did not continue running')
+
+        if agent['platform'] !~ /solaris|aix|cumulus|osx/
+          step 'facter should return an error message when started with an invalid locale' do
+            assert_match(/locale environment variables were bad; continuing with LANG=C LC_ALL=C/, facter_output.stderr,
+                         'Expected facter to return a locale error message')
+          end
+        end
+      end
+    end
   end
-  fail_test 'facter did not continue running' unless
-    result.stdout =~ /^\d+\.\d+\.\d+$/
 end
