@@ -1,9 +1,11 @@
-# This test is intended to demonstrate that mount resource can mount tmpfs directory
-# and the mount facter mountpoints should show the mount on tmpfs
+# This test is intended to demonstrate that mount resource can mount tmpfs file systems
+# and the mount facter mountpoints should show the mount as tmpfs
+test_name 'C98163: mountpoints fact should show mounts on tmpfs' do
+  tag 'risk:high'
 
-test_name "FACT-1502 - C98163 mountpoints fact should show mounts on tmpfs" do
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
+
 
   confine :except, :platform => 'windows'
   confine :except, :platform => /osx/ # See PUP-4823
@@ -14,17 +16,11 @@ test_name "FACT-1502 - C98163 mountpoints fact should show mounts on tmpfs" do
   confine :except, :platform => /^huawei/ # See PUP-6126
 
   agents.each do |agent|
-    dir = '/tmp/tempdir'
-    on(agent, "mkdir -p #{dir}")
-    manifest  = 'mount_manifest.pp'
-
-    teardown do
-      on(agent, "umount #{dir}")
-      on(agent, "rm -rf #{dir} #{manifest}")
-    end
-
-    create_remote_file(agent, manifest, <<-FILE)
-      mount {"#{dir}":
+    mount_point = '/tmp/mountdir'
+    manifest_dir = agent.tmpdir('tmpfs')
+    manifest = File.join(manifest_dir, 'mount_manifest.pp')
+    manifest_content = <<-FILE
+      mount {"#{mount_point}":
         ensure  => mounted,
         options => 'noexec',
         fstype  => 'tmpfs',
@@ -32,15 +28,26 @@ test_name "FACT-1502 - C98163 mountpoints fact should show mounts on tmpfs" do
         atboot  => true,
       }
     FILE
+    on(agent, "mkdir -p #{mount_point}")
+    create_remote_file(agent, manifest, manifest_content)
 
-    step "Apply the manifest to mount directory '#{dir}'" do
-      on(agent, puppet("apply #{manifest}"), :acceptable_exit_codes => [0,2]) do
-        assert_no_match(/Error/, stdout, "Unexpected error was detected!")
+    teardown do
+      on(agent, "umount #{mount_point}")
+      on(agent, "rm -rf #{mount_point} #{manifest_dir}")
+    end
+
+    step "Apply the manifest to mount directory '#{mount_point}'" do
+      on(agent, puppet("apply #{manifest}"), :acceptable_exit_codes => [0,2]) do |puppet_apply|
+        assert_no_match(/Error/, puppet_apply.stdout, 'Unexpected error on stdout was detected!')
+        assert_no_match(/ERROR/, puppet_apply.stderr, 'Unexpected error on stderr was detected!')
       end
-      on(agent, facter("mountpoints.#{dir}")) do
-        assert_match(/filesystem\s+=>\s+\"tmpfs\"/, stdout, "Unexpected error was detected!")
-        assert_match(/device\s+=>\s+\"tmpfs\"/, stdout, "Unexpected error was detected!")
-        assert_match(/noexec/, stdout, "Unexpected error was detected!")
+    end
+
+    step 'verify tmpfs mount point seen by facter' do
+      on(agent, facter("mountpoints.#{mount_point}")) do |facter_output|
+        assert_match(/filesystem\s+=>\s+\"tmpfs\"/, facter_output.stdout, 'filesystem is the wrong type')
+        assert_match(/device\s+=>\s+\"tmpfs\"/, facter_output.stdout, 'device is not a tmpfs')
+        assert_match(/noexec/, facter_output.stdout, 'expected to see noexec option')
       end
     end
   end

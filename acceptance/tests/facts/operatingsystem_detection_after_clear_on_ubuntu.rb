@@ -1,20 +1,26 @@
-require "puppet/acceptance/common_utils"
+test_name 'C14891: Facter should properly detect operatingsystem on Ubuntu after a Facter.clear' do
+  tag 'risk:high'
 
-test_name "#7670: Facter should properly detect operatingsystem on Ubuntu after a clear"
+  confine :to, :platform => /ubuntu/
 
-script_contents = <<-OS_DETECT
+  require "puppet/acceptance/common_utils"
+
+  script_contents = <<-OS_DETECT
   require 'facter'
   Facter['operatingsystem'].value
   Facter.clear
   exit Facter['operatingsystem'].value == 'Ubuntu'
-OS_DETECT
+  OS_DETECT
 
-script_name = "/tmp/facter_os_detection_test_#{$$}"
+  agents.each do |agent|
+    script_dir = agent.tmpdir('ubuntu')
+    script_name = File.join(script_dir, "facter_os_detection_test")
+    create_remote_file(agent, script_name, script_contents)
 
-agents.each do |agent|
-  next unless agent['platform'].include? 'ubuntu'
+    teardown do
+      on(agent, "rm -rf '#{script_dir}'")
+    end
 
-  create_remote_file(agent, script_name, script_contents)
-
-  on(agent, "#{Puppet::Acceptance::CommandUtils.ruby_command(agent)} #{script_name}")
+    on(agent, "#{Puppet::Acceptance::CommandUtils.ruby_command(agent)} #{script_name}", :acceptable_exit_codes => 0)
+  end
 end
