@@ -258,6 +258,8 @@ Facter.add("virtual") do
         'xenu'
       when /ibm_systemz/i
         'zlinux'
+      when /virtualbox/i
+        'virtualbox'
       else
         output.to_s.split("\n").last
       end
