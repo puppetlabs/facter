@@ -1,31 +1,41 @@
-test_name 'Ruby can load libfacter'
+test_name 'C100161: Ruby can load libfacter without raising an error' do
+  tag 'risk:high'
 
-agents.each do |agent|
-  on agent, "env PATH=\"#{agent['privatebindir']}:${PATH}\" which ruby"
-  ruby_path = stdout.chomp
+  require 'puppet/acceptance/common_utils'
+  extend Puppet::Acceptance::CommandUtils
 
-  root_dir = ruby_path
-  while File.basename(root_dir).downcase != 'puppet'
-    new_root_dir = File.dirname(root_dir)
-    if new_root_dir == root_dir
-      break
-    else
-      root_dir = new_root_dir
+  def puppet_ruby_path_to_puppet_install_dir(puppet_ruby_path)
+    # find the "puppet" directory which should be the root of the install
+    puppet_dir = puppet_ruby_path
+    while File.basename(puppet_dir).downcase != 'puppet'
+      new_puppet_dir = File.dirname(puppet_dir)
+      if new_puppet_dir == puppet_dir
+        break
+      else
+        puppet_dir = new_puppet_dir
+      end
     end
+    puppet_dir
   end
 
-  if agent.platform.variant == 'windows'
-    root_dir = on(agent, "cygpath -w '#{root_dir}'").stdout.chomp
-    facter_loader = "#{root_dir}/facter/lib/facter.rb"
-    path = '/cygdrive/c/Windows/system32:/cygdrive/c/Windows'
-  else
-    facter_loader = "#{root_dir}/lib/ruby/vendor_ruby/facter.rb"
-    path = '/usr/local/bin:/bin:/usr/bin'
-  end
+  agents.each do |agent|
+    # on Windows we have to figure out where facter.rb is so we can include the path
+    if agent['platform'] =~ /windows/
+      # figure out the root of the puppet installation
+      puppet_ruby_path = on(agent, "env PATH=\"#{agent['privatebindir']}:${PATH}\" which ruby").stdout.chomp
+      cygwin_puppet_root = puppet_ruby_path_to_puppet_install_dir(puppet_ruby_path)
+      puppet_root = on(agent, "cygpath -w '#{cygwin_puppet_root}'").stdout.chomp
+      include_facter_lib = "-I '#{puppet_root}/facter/lib'"
+    else
+      # facter.rb is already in the load path for ruby
+      include_facter_lib = ""
+    end
 
-  # Ensure privatebindir comes first so we get the correct Ruby version.
-  on agent, "env PATH=#{path} \"#{ruby_path}\" \"#{facter_loader}\"" do
-    assert_empty stdout
-    assert_empty stderr
+    # Run Puppet's ruby and load facter.rb
+    # if we fail to load the .jar or .so, ruby will see an error raised for us to detect
+    on(agent, "#{ruby_command(agent)} -e \"require 'facter'\" #{include_facter_lib} ") do |ruby_result|
+      assert_empty(ruby_result.stdout, 'Expected libfacter to load without any output on stdout')
+      assert_empty(ruby_result.stderr, 'Expected libfacter to load without any output on stderr')
+    end
   end
 end
