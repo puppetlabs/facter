@@ -1,4 +1,5 @@
-test_name 'FACT-1361 - C59029 networking facts should be fully populated' do
+test_name 'C59029: networking facts should be fully populated' do
+  tag 'risk:high'
 
 #
 # This test is intended to ensure that networking facts resolves
@@ -58,7 +59,7 @@ test_name 'FACT-1361 - C59029 networking facts should be fully populated' do
       #remove invalid bindings for Cisco's primary networking interface
       expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings.0.netmask\"")
       expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings.0.network\"")
-    end    
+    end
 
     step "Ensure the Networking fact resolves with reasonable values for at least one interface" do
       expected_networking.each do |fact, value|
