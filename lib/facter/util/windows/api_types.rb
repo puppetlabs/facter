@@ -37,6 +37,27 @@ module Facter::Util::Windows::ApiTypes
       str.encode(dst_encoding)
     end
 
+    # @param max_char_length [Integer] Maximum number of wide chars to return (typically excluding NULLs), *not* bytes
+    # @param null_terminator [Symbol] Number of number of null wchar characters, *not* bytes, that determine the end of the string
+    #   null_terminator = :single_null, then the terminating sequence is two bytes of zero.   This is UNIT16 = 0
+    #   null_terminator = :double_null, then the terminating sequence is four bytes of zero.  This is UNIT32 = 0
+    def read_arbitrary_wide_string_up_to(max_char_length = 512, null_terminator = :single_null)
+      if null_terminator != :single_null && null_terminator != :double_null
+        raise _("Unable to read wide strings with %{null_terminator} terminal nulls") % { null_terminator: null_terminator }
+      end
+
+      terminator_width = null_terminator == :single_null ? 1 : 2
+      reader_method = null_terminator == :single_null ? :get_uint16 : :get_uint32
+
+      # Look for a null terminating characters; if found, read up to that null (exclusive)
+      (0...max_char_length - terminator_width).each do |i|
+        return read_wide_string(i) if send(reader_method, (i * 2)) == 0
+      end
+
+      # String is longer than the max; read just to the max
+      read_wide_string(max_char_length)
+    end
+
     def read_win32_local_pointer(&block)
       ptr = nil
       begin
@@ -66,6 +87,9 @@ module Facter::Util::Windows::ApiTypes
   FFI.typedef :uint32, :dword
   FFI.typedef :uintptr_t, :handle
 
+  # buffer_inout is similar to pointer (platform specific), but optimized for buffers
+  FFI.typedef :buffer_inout, :lpwstr
+
   # pointer in FFI is platform specific
   # NOTE: for API calls with reserved lpvoid parameters, pass a FFI::Pointer::NULL
   FFI.typedef :pointer, :lpcvoid
@@ -85,6 +109,9 @@ module Facter::Util::Windows::ApiTypes
   # Win32 BOOL is a signed int, and is always 4 bytes, even on x64
   # https://blogs.msdn.com/b/oldnewthing/archive/2011/03/28/10146459.aspx
   FFI.typedef :int32, :win32_bool
+
+  # Same as a LONG, a 32-bit signed integer
+  FFI.typedef :int32, :hresult
 
   # NOTE: FFI already defines (u)short as a 16-bit (un)signed like this:
   # FFI.typedef :uint16, :ushort

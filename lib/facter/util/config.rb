@@ -22,8 +22,8 @@ module Facter::Util::Config
   end
 
   def self.windows_data_dir
-    if Dir.const_defined? 'COMMON_APPDATA' then
-      Dir::COMMON_APPDATA
+    if Facter::Util::Config.is_windows?
+      Facter::Util::Windows::Dir.get_common_appdata()
     else
       nil
     end
@@ -60,7 +60,7 @@ module Facter::Util::Config
   end
 
   if Facter::Util::Config.is_windows?
-    require 'win32/dir'
+    require 'facter/util/windows/dir'
     require 'facter/util/windows_root'
   else
     require 'facter/util/unix_root'
