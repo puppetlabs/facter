@@ -42,7 +42,6 @@ mingw << :x64_mingw if Bundler::Dsl::VALID_PLATFORMS.include?(:x64_mingw)
 
 platform(*mingw) do
   gem 'ffi', '~> 1.9.5', :require => false
-  gem 'win32-dir', '~> 0.4.8', :require => false
 end
 
 gem 'facter', ">= 1.0.0", :path => File.expand_path("..", __FILE__)
