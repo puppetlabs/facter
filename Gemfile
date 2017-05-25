@@ -33,10 +33,6 @@ data['gem_platform_dependencies'].each_pair do |gem_platform, info|
   end
 end
 
-platform(:mingw_19) do
-  gem 'win32console', '~> 1.3.2', :require => false
-end
-
 mingw = [:mingw]
 mingw << :x64_mingw if Bundler::Dsl::VALID_PLATFORMS.include?(:x64_mingw)
 
