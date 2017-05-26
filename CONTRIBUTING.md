@@ -90,9 +90,10 @@ a ticket number.
 
 # Additional Resources
 
-* [More information on contributing](http://links.puppet.com/contribute-to-puppet)
+* [Puppet community guidelines](https://docs.puppet.com/community/community_guidelines.html)
 * [Bug tracker (Jira)](https://tickets.puppetlabs.com/browse/FACT)
 * [Contributor License Agreement](http://links.puppet.com/cla)
 * [General GitHub documentation](http://help.github.com/)
 * [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
 * #puppet-dev IRC channel on freenode.org
+* [puppet-dev mailing list](https://groups.google.com/forum/#!forum/puppet-dev)
