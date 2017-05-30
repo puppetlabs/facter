@@ -37,7 +37,13 @@ mingw = [:mingw]
 mingw << :x64_mingw if Bundler::Dsl::VALID_PLATFORMS.include?(:x64_mingw)
 
 platform(*mingw) do
-  gem 'ffi', '~> 1.9.5', :require => false
+  # FFI dropped 1.9.3 support in 1.9.16, and 1.9.15 was an incomplete release.
+  # 1.9.18 is required to support Ruby 2.4
+  if RUBY_VERSION < '2.0.0'
+    gem 'ffi', '<= 1.9.14', :require => false
+  else
+    gem 'ffi', '~> 1.9.18', :require => false
+  end
 end
 
 gem 'facter', ">= 1.0.0", :path => File.expand_path("..", __FILE__)
