@@ -89,11 +89,18 @@ namespace facter { namespace facts { namespace aix {
                     // AAAAAAAABBBBBBBBCCCCCCCCDDDDDDDD.EEEE format
                     // First four chunks are hexadecimal 32-bit integers.
                     // After the dot is a decimal integer
-                    id.vg_id.word1 = stoul(string(at.value, 8), nullptr, 16);
-                    id.vg_id.word2 = stoul(string(at.value+8, 8), nullptr, 16);
-                    id.vg_id.word3 = stoul(string(at.value+16, 8), nullptr, 16);
-                    id.vg_id.word4 = stoul(string(at.value+24, 8), nullptr, 16);
-                    id.minor_num = stoul(string(at.value+33), nullptr, 10);
+                    // Volume groups from the 90s only have 64-bit IDs,
+                    // rather than the full 128.
+
+                    auto vgid = string(at.value);
+                    auto length = vgid.find_first_of('.');
+                    id.vg_id.word1 = stoul(vgid.substr(0, 8), nullptr, 16);
+                    id.vg_id.word2 = stoul(vgid.substr(8, 8), nullptr, 16);
+                    if (length == 32) {
+                        id.vg_id.word3 = stoul(vgid.substr(16, 8), nullptr, 16);
+                        id.vg_id.word4 = stoul(vgid.substr(24, 8), nullptr, 16);
+                    }
+                    id.minor_num = stoul(vgid.substr(length+1, string::npos), nullptr, 10);
 
                     struct querylv* lv;
                     if (0 != lvm_querylv(&id, &lv, nullptr)) {
