@@ -80,7 +80,15 @@ module Facter::Util::IP
 
   def self.get_all_interface_output
     case Facter.value(:kernel)
-    when 'Linux', 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly', 'AIX'
+    when 'Linux'
+      # In RHEL7, ifconfig command is deprecated and it's not installed (provided by the net-tools package). The ip command is favoured.
+      if Facter.value(:osfamily) == "RedHat" and Facter.value(:operatingsystemmajrelease).to_i == 7
+        output = Facter::Util::IP.exec_ip(["link", "2>/dev/null"])
+        output.gsub!(/^\d+:\s*/, "")            # delete leading number
+      else
+        output = Facter::Util::IP.exec_ifconfig(["-a","2>/dev/null"])
+      end
+    when 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly', 'AIX'
       output = Facter::Util::IP.exec_ifconfig(["-a","2>/dev/null"])
     when 'SunOS'
       output = Facter::Util::IP.exec_ifconfig(["-a"])
@@ -99,6 +107,13 @@ module Facter::Util::IP
 
 
   ##
+  # exec_ip uses the Linux ip command
+  #
+  # @return [String] the output of `ip #{arguments} 2>/dev/null` or nil
+  def self.exec_ip(additional_arguments=[])
+    Facter::Core::Execution.exec("#{self.get_ip} #{additional_arguments.join(' ')}")
+  end
+  ##
   # exec_ifconfig uses the ifconfig command
   #
   # @return [String] the output of `ifconfig #{arguments} 2>/dev/null` or nil
@@ -111,6 +126,14 @@ module Facter::Util::IP
   # @return [String] path to the ifconfig binary
   def self.get_ifconfig
     common_paths=["/bin/ifconfig","/sbin/ifconfig","/usr/sbin/ifconfig"]
+    common_paths.select{|path| File.executable?(path)}.first
+  end
+  ##
+  # get_ip looks up the ip binary
+  #
+  # @return [String] path to the ip binary
+  def self.get_ip
+    common_paths=["/sbin/ip","/usr/sbin/ip"]
     common_paths.select{|path| File.executable?(path)}.first
   end
 
@@ -150,8 +173,14 @@ module Facter::Util::IP
     ib_mac_address
   end
 
-  def self.ifconfig_interface(interface)
-    output = Facter::Util::IP.exec_ifconfig(["'#{interface}'","2>/dev/null"])
+  if Facter.value(:osfamily) == "RedHat" and Facter.value(:operatingsystemmajrelease).to_i == 7
+    def self.ip_interface(interface)
+      output = Facter::Util::IP.exec_ip(["addr show","'#{interface}'","2>/dev/null"])
+    end
+  else
+    def self.ifconfig_interface(interface)
+      output = Facter::Util::IP.exec_ifconfig(["'#{interface}'","2>/dev/null"])
+    end
   end
 
   def self.get_single_interface_output(interface)
@@ -160,13 +189,20 @@ module Facter::Util::IP
     when 'OpenBSD', 'NetBSD', 'FreeBSD', 'Darwin', 'GNU/kFreeBSD', 'DragonFly'
       output = Facter::Util::IP.ifconfig_interface(interface)
     when 'Linux'
-      ifconfig_output = Facter::Util::IP.ifconfig_interface(interface)
-      if interface =~ /^ib/ then
-        real_mac_address = get_infiniband_macaddress(interface)
-        output = ifconfig_output.sub(%r{(?:ether|HWaddr)\s+((\w{1,2}:){5,}\w{1,2})}, "HWaddr #{real_mac_address}")
+      if Facter.value(:osfamily) == "RedHat" and Facter.value(:operatingsystemmajrelease).to_i == 7
+        ip_output = Facter::Util::IP.ip_interface(interface)
+	# Add netmask to the output in a format that works with the existing regex
+        mask = `ip addr show #{interface} | grep -w inet|awk {' print $2 '} | xargs -I {} ipcalc {} --netmask|awk -F '=' {' print "Mask:"$2 '}`
+        output = ip_output + mask
       else
-        output = ifconfig_output
-      end
+        ifconfig_output = Facter::Util::IP.ifconfig_interface(interface)
+        if interface =~ /^ib/ then
+          real_mac_address = get_infiniband_macaddress(interface)
+          output = ifconfig_output.sub(%r{(?:ether|HWaddr)\s+((\w{1,2}:){5,}\w{1,2})}, "HWaddr #{real_mac_address}")
+        else
+          output = ifconfig_output
+        end
+    end
     when 'SunOS'
       output = Facter::Util::IP.exec_ifconfig([interface])
     when 'HP-UX'
