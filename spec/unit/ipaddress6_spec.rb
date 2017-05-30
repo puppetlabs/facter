@@ -93,6 +93,7 @@ describe "The IPv6 address fact" do
     end
 
     it "should return nil if the system doesn't have ipv6 installed", :if => Facter::Util::Config.is_windows? do
+      require 'win32/registry'
       Facter::Util::Resolution.any_instance.expects(:warn).never
       Facter::Util::Registry.stubs(:hklm_read).raises(Win32::Registry::Error, 2)
 
