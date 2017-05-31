@@ -25,6 +25,9 @@ module HarnessOptions
     :timesync => false,
     :repo_proxy => true,
     :add_el_extras => true,
+    :epel_7_pkg => "epel-release-7-8.noarch.rpm",
+    :epel_6_pkg => "epel-release-6-8.noarch.rpm",
+    :epel_5_pkg => "epel-release-5-4.noarch.rpm",
     :preserve_hosts => 'onfail',
   }
 
