@@ -10,6 +10,11 @@ def location_for(place, fake_version = nil)
   end
 end
 
+if RUBY_VERSION =~ /^1\./
+  gem 'addressable', '< 2.5.0'
+  gem 'nokogiri', '< 1.6.8'
+end
+
 # mime-types 3 added a dependency on mime-types-data which has a
 # requirement on ruby >= 2. We pin to mime-types 2.99.2 or less on
 # ruby 1.x
