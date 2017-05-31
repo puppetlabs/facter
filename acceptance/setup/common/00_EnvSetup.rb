@@ -46,13 +46,11 @@ hosts.each do |host|
                  '1.9.3-x86'
                end
 
-    on host, 'mkdir .git'
-    on host, 'cmd /c git config pack.windowMemory 10m'
-    on host, 'cmd /c git config pack.packSizeLimit 20m'
-    install_from_git(host, "/opt/puppet-git-repos",
-                    :name => 'puppet-win32-ruby',
-                    :path => build_giturl('puppet-win32-ruby'),
-                    :rev  => revision)
+    win_path = on(host, 'cygpath -m /opt/puppet-git-repos').stdout.chomp
+    install_from_git_on(host, win_path,
+                        :name => 'puppet-win32-ruby',
+                        :path => build_git_url('puppet-win32-ruby'),
+                        :rev  => revision)
     on host, 'cd /opt/puppet-git-repos/puppet-win32-ruby; cp -r ruby/* /'
     on host, 'cd /lib; icacls ruby /grant "Everyone:(OI)(CI)(RX)"'
     on host, 'cd /lib; icacls ruby /reset /T'

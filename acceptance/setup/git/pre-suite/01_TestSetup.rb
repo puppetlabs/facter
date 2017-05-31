@@ -19,11 +19,17 @@ test_name "Install packages and repositories on target machines..." do
 
     repositories.each do |repository|
       step "Install #{repository[:name]}"
-      install_from_git host, SourcePath, repository
+      path = if host['platform'] =~ /windows/
+               on(host, 'cygpath -m /opt/puppet-git-repos').stdout.chomp
+             else
+               SourcePath
+             end
+
+      install_from_git_on host, path, repository
 
       if index == 1
         versions[repository[:name]] = find_git_repo_versions(host,
-                                                             SourcePath,
+                                                             path,
                                                              repository)
       end
     end
