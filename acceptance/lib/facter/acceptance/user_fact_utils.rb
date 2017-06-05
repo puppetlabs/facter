@@ -117,6 +117,16 @@ EOM
   end
         EOM
       end
+
+      # Return the correct shell path for Unix system under test
+      #
+      def user_shell(agent)
+        if agent['platform'] =~ /aix/
+          '/usr/bin/bash'
+        else
+          '/bin/bash'
+        end
+      end
     end
   end
 end

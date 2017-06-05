@@ -681,6 +681,7 @@ void validate_fact(YAML::Node const& node, value const* fact_value, bool require
     }
 }
 
+// TestRail C62454
 SCENARIO("validating schema") {
     boost::nowide::ifstream stream(LIBFACTER_TESTS_DIRECTORY "/../schema/facter.yaml");
 
