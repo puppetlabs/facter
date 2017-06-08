@@ -28,6 +28,7 @@ struct test_timezone_resolver : timezone_resolver
     }
 };
 
+// TestRail C69635
 SCENARIO("using the timezone resolver") {
     collection_fixture facts;
     WHEN("data is not present") {
