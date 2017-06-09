@@ -13,7 +13,7 @@ test_name "C96148: verify partitions facts" do
       ['uuid', /^[-a-zA-Z0-9]+$/],
       ['partuuid', /^[-a-f0-9]+$/],
       ['mount', /^\/.*/],
-      ['label', /\w+/],
+      ['label', /.*/],
       ['partlabel', /\w+/],
   ]
 
