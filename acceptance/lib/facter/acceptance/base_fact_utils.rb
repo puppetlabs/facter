@@ -200,6 +200,10 @@ module Facter
           os_arch                 = 'x86_64'
           os_hardware             = 'x86_64'
           processor_model_pattern = /(Intel\(R\).*)|(AMD.*)/
+        elsif agent['platform'] =~ /ppc|power|64le/
+          os_arch                 = 'ppc64le'
+          os_hardware             = 'ppc64le'
+          processor_model_pattern = // # facter doesn't figure out the processor type on these machines
         elsif agent['platform'] =~ /s390x/
           os_arch                 = 's390x'
           os_hardware             = 's390x'
@@ -462,9 +466,15 @@ module Facter
         if agent['platform'] =~ /x86_64|amd64/
           os_arch     = 'amd64'
           os_hardware = 'x86_64'
+          processor_model_pattern = /(Intel\(R\).*)|(AMD.*)/
+        elsif agent['platform'] =~ /ppc|power|64le/
+          os_arch                 = 'ppc64le'
+          os_hardware             = 'ppc64le'
+          processor_model_pattern = // # facter doesn't figure out the processor type on these machines
         else
           os_arch     = 'i386'
           os_hardware = 'i686'
+          processor_model_pattern = /(Intel\(R\).*)|(AMD.*)/
         end
 
         expected_facts = {
@@ -482,7 +492,7 @@ module Facter
             'processors.count'         => /[1-9]/,
             'processors.physicalcount' => /[1-9]/,
             'processors.isa'           => os_hardware,
-            'processors.models'        => /(Intel\(R\).*)|(AMD.*)/,
+            'processors.models'        => processor_model_pattern,
             'kernel'                   => 'Linux',
             'kernelrelease'            => /\d+\.\d+\.\d+/,
             'kernelversion'            => /\d+\.\d+\.\d+/,
