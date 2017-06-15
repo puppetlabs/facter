@@ -1,5 +1,6 @@
 test_name 'C93827: facter fqdn should return the hostname when its a fully qualified domain name' do
   tag 'risk:high'
+  require 'timeout'
 
   confine :except, :platform => 'windows'
 
@@ -16,7 +17,15 @@ test_name 'C93827: facter fqdn should return the hostname when its a fully quali
 
     step "set hostname as #{fqdn}" do
       on(agent, "hostname #{fqdn}")
-      sleep 1 # on Solaris 11 hostname returns before the hostname is updated
+      begin
+        Timeout.timeout(20) do
+          until on(agent, 'hostname').stdout =~ /#{fqdn}/
+            sleep(0.25) # on Solaris 11 hostname returns before the hostname is updated
+          end
+        end
+      rescue Timeout::Error
+        raise "Failed to reset the hostname of the test machine to #{fqdn}"
+      end
     end
 
     step 'validate facter uses hostname as the fqdn if its a fully qualified domain name' do
