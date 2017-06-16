@@ -25,7 +25,15 @@ namespace facter { namespace facts { namespace posix {
         uid_t uid = geteuid();
         struct passwd pwd;
         struct passwd *pwd_ptr;
-        int err = getpwuid_r(uid, &pwd, buffer.data(), buffer.size(), &pwd_ptr);
+        int err = -1;
+
+        do {
+            err = getpwuid_r(uid, &pwd, buffer.data(), buffer.size(), &pwd_ptr);
+            if (err == ERANGE) {
+                buffer.resize(buffer.size() + 1024);
+            }
+        } while (err == EINTR || err == ERANGE);
+
 
         if (err != 0) {
             LOG_WARNING("getpwuid_r failed: {1} ({2})", strerror(err), err);
@@ -48,7 +56,13 @@ namespace facter { namespace facts { namespace posix {
         gid_t gid = getegid();
         struct group grp;
         struct group *grp_ptr;
-        err = getgrgid_r(gid, &grp, buffer.data(), buffer.size(), &grp_ptr);
+
+        do {
+            err = getgrgid_r(gid, &grp, buffer.data(), buffer.size(), &grp_ptr);
+            if (err == ERANGE) {
+                buffer.resize(buffer.size() + 1024);
+            }
+        } while (err == EINTR || err == ERANGE);
 
         if (err != 0) {
             LOG_WARNING("getgrgid_r failed: {1} ({2})", strerror(err), err);
