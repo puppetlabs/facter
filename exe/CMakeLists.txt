@@ -24,7 +24,6 @@ link_directories(
 )
 
 add_executable(facter ${FACTER_SOURCES})
-set_target_properties(facter PROPERTIES VERSION ${PROJECT_VERSION})
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(facter rt)
