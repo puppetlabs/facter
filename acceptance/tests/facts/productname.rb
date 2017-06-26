@@ -3,6 +3,7 @@ test_name "C89604: verify productname fact" do
 
   confine :except, :platform => 'aix' # not supported on
   confine :except, :platform => 'huawei' # not supported on
+  confine :except, :platform => 'ppc64' # not supported on linux on powerpc
 
   agents.each do |agent|
     step("verify the fact productname") do
