@@ -17,7 +17,7 @@ Build Requirements
 * CMake >= 3.2.2
 * Boost C++ Libraries >= 1.54
 * yaml-cpp >= 0.5.1
-* [leatherman](https://github.com/puppetlabs/leatherman) >= 0.3.4
+* [leatherman](https://github.com/puppetlabs/leatherman) >= 1.0.0
 * [cpp-hocon](https://github.com/puppetlabs/cpp-hocon) >= 0.1.0
 
 Optional Build Libraries
