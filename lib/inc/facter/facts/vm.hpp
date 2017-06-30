@@ -142,6 +142,11 @@ namespace facter { namespace facts {
          * The name of FreeBSD jails
          */
         constexpr static char const* jail = "jail";
+
+        /**
+         * The name for OpenBSD vmm
+         */
+        constexpr static char const* vmm = "vmm";
     };
 
 }}  // namespace facter::facts
