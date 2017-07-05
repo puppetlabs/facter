@@ -36,6 +36,12 @@ test_name "Facts should resolve as expected on EL" do
         os_name = 'OracleLinux'
       when /scientific/
         os_name = 'Scientific'
+      when /amazon/
+        os_name = 'Amazon'
+        if os_version == '6'
+          os_version = '2017'
+          kernel_version = '4.9'
+        end
       else
         os_name = 'RedHat'
     end
