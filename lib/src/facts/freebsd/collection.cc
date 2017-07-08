@@ -10,6 +10,7 @@
 #include <internal/facts/posix/timezone_resolver.hpp>
 #include <internal/facts/resolvers/operating_system_resolver.hpp>
 #include <internal/facts/freebsd/networking_resolver.hpp>
+#include <internal/facts/freebsd/virtualization_resolver.hpp>
 
 using namespace std;
 
@@ -28,6 +29,7 @@ namespace facter { namespace facts {
         add(make_shared<glib::load_average_resolver>());
         add(make_shared<freebsd::processor_resolver>());
         add(make_shared<freebsd::dmi_resolver>());
+        add(make_shared<freebsd::virtualization_resolver>());
     }
 
 }}  // namespace facter::facts
