@@ -49,7 +49,7 @@ namespace facter { namespace facts { namespace resolvers {
         });
 
         // Get the ZFS features
-        static boost::regex zfs_feature("\\s*(\\d+)[ ]");
+        static boost::regex zfs_feature("^\\s*(\\d+)[ ]");
         each_line(zfs_command(), {"upgrade", "-v"}, [&] (string& line) {
             string feature;
             if (re_search(line, zfs_feature, &feature)) {
