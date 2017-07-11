@@ -22,4 +22,4 @@ namespace facter { namespace facts { namespace openbsd {
         virtual std::string get_hypervisor(collection& facts) override;
     };
 
-}}}  // namespace facter::facts::osx
+}}}  // namespace facter::facts::openbsd
