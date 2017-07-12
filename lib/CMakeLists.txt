@@ -21,9 +21,9 @@ leatherman_logging_namespace("puppetlabs.facter")
 
 # Set the common (platform-independent) sources
 set(LIBFACTER_COMMON_SOURCES
+    "src/cwrapper.cc"
     "src/facts/array_value.cc"
     "src/facts/collection.cc"
-    "src/facts/cwrapper.cc"
     "src/facts/external/execution_resolver.cc"
     "src/facts/external/json_resolver.cc"
     "src/facts/external/resolver.cc"
