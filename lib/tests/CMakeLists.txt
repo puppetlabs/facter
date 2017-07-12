@@ -43,6 +43,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "util/string.cc"
     "fixtures.cc"
     "collection_fixture.cc"
+    "cwrapper.cc"
 )
 
 # Set compiler-specific flags
