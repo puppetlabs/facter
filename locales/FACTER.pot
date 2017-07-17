@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.6.4\n"
+"Project-Id-Version: FACTER 3.6.6\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -301,18 +301,6 @@ msgstr ""
 #. warning
 #: lib/src/facts/aix/filesystem_resolver.cc
 msgid "querylv returned success but we got a null LV. WTF?"
-msgstr ""
-
-#. warning
-#: lib/src/facts/aix/kernel_resolver.cc
-msgid "oslevel failed: {1}: kernel facts are unavailable"
-msgstr ""
-
-#. warning
-#: lib/src/facts/aix/kernel_resolver.cc
-msgid ""
-"Could not parse rml cache even after regenerating with oslevel: kernel facts "
-"are unavailable. Try running 'oslevel -s' to debug."
 msgstr ""
 
 #: lib/src/facts/aix/networking_resolver.cc
