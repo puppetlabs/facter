@@ -8,7 +8,7 @@ module Facter::NetMask
     when 'Linux'
       ops = {
         :ifconfig_opts => ['2>/dev/null'],
-        :regex => %r{#{Facter.value(:ipaddress)}.*?(?:Mask:|netmask)\s*(#{ipregex})}x,
+        :regex => %r{#{Facter.value(:ipaddress)}[^\d].*?(?:Mask:|netmask)\s*(#{ipregex})}x,
         :munge => nil,
       }
     when 'SunOS'
