@@ -208,7 +208,7 @@ module Puppet
             arch = $3
 
             deb = fetch(
-              "http://apt.puppetlabs.com/",
+              "http://apt.puppetlabs.com",
               "puppetlabs-release-%s.deb" % version,
               platform_configs_dir
             )
