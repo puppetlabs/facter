@@ -41,7 +41,7 @@ namespace facter { namespace facts { namespace resolvers {
 
         // Get the zpool version and features
         static boost::regex zpool_version("ZFS pool version (\\d+)[.]");
-        static boost::regex zpool_feature("\\s*(\\d+)[ ]");
+        static boost::regex zpool_feature("^\\s*(\\d+)[ ]");
         each_line(zpool_command(), {"upgrade", "-v"}, [&] (string& line) {
             if (re_search(line, zpool_version, &result.version)) {
                 return true;
