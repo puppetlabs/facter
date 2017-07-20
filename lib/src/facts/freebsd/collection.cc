@@ -12,6 +12,7 @@
 #include <internal/facts/freebsd/networking_resolver.hpp>
 #include <internal/facts/freebsd/zfs_resolver.hpp>
 #include <internal/facts/freebsd/zpool_resolver.hpp>
+#include <internal/facts/freebsd/virtualization_resolver.hpp>
 
 using namespace std;
 
@@ -32,6 +33,7 @@ namespace facter { namespace facts {
         add(make_shared<freebsd::dmi_resolver>());
         add(make_shared<freebsd::zfs_resolver>());
         add(make_shared<freebsd::zpool_resolver>());
+        add(make_shared<freebsd::virtualization_resolver>());
     }
 
 }}  // namespace facter::facts
