@@ -206,6 +206,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
         "src/facts/freebsd/zfs_resolver.cc"
         "src/facts/freebsd/zpool_resolver.cc"
         "src/facts/freebsd/virtualization_resolver.cc"
+        "src/facts/freebsd/memory_resolver.cc"
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "OpenBSD")
     set(LIBFACTER_PLATFORM_SOURCES
