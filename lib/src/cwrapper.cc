@@ -12,7 +12,8 @@
 #include <boost/program_options.hpp>
 #pragma GCC diagnostic pop
 
-#include "stdlib.h"
+#include <stdlib.h>
+#include <stdio.h>
 #include <sstream>
 
 namespace po = boost::program_options;
@@ -47,9 +48,14 @@ uint8_t get_default_facts(char **result) {
                     true);  // strict_errors flag
 
         auto json_facts = stream.str();
-        *result = new char [json_facts.length()+1];
-        std::strcpy(*result, json_facts.c_str());
-    } catch (const std::exception& e) {
+        auto l = json_facts.length()+1;
+        *result = new char [l];
+        auto rc = std::snprintf(*result, l, "%s", json_facts.c_str());
+
+        if (rc < 0 || static_cast<unsigned int>(rc) >= l) {
+            return EXIT_FAILURE;
+        }
+    } catch (const std::exception&) {
         return EXIT_FAILURE;
     }
 

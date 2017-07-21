@@ -10,7 +10,7 @@ package facter
 // - make
 // - make install
 
-// NB(ale): getting a few ld warnings (direct access) for boost::log
+// NB(ale): getting few ld warnings (direct access) for Boost.Log (Boost v1.64)
 
 /*
 #cgo LDFLAGS: -fPIC -lfacter -laugeas -lcpp-hocon -lyaml-cpp -l:leatherman_execution.a -l:leatherman_logging.a -l:leatherman_locale.a -l:leatherman_ruby.a -l:leatherman_dynamic_library.a -l:leatherman_util.a -l:leatherman_file_util.a -l:leatherman_curl.a -lboost_log-mt -lboost_log_setup-mt -lboost_thread-mt -lboost_date_time -lboost_filesystem-mt -lboost_system-mt -lboost_chrono-mt -lboost_regex-mt -lboost_atomic-mt -lboost_program_options-mt -lboost_locale-mt -liconv -lcurl -lcrypto -ldl -lz -lstdc++ -lm
