@@ -72,7 +72,7 @@ namespace facter { namespace facts { namespace posix {
             return;
         }
 
-        // The SSH file format should be <algo> <key> <hostname>
+        // The SSH public key file format is <algo> <key> <comment>
         vector<boost::iterator_range<string::iterator>> parts;
         boost::split(parts, contents, boost::is_any_of(" "), boost::token_compress_on);
         if (parts.size() < 2) {
@@ -80,7 +80,8 @@ namespace facter { namespace facts { namespace posix {
             return;
         }
 
-        // Assign the key
+        // Assign the key and its type
+        key.type.assign(parts[0].begin(), parts[0].end());
         key.key.assign(parts[1].begin(), parts[1].end());
 
         // Only fingerprint if we are using OpenSSL

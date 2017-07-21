@@ -310,15 +310,19 @@ protected:
     {
         data result;
         result.dsa.key = "dsa:key";
+        result.dsa.type = "dsa:type";
         result.dsa.digest.sha1 = "dsa:sha1";
         result.dsa.digest.sha256 = "dsa:sha256";
         result.ecdsa.key = "ecdsa:key";
+        result.ecdsa.type = "ecdsa:type";
         result.ecdsa.digest.sha1 = "ecdsa:sha1";
         result.ecdsa.digest.sha256 = "ecdsa:sha256";
         result.ed25519.key = "ed25519:key";
+        result.ed25519.type = "ed25519:type";
         result.ed25519.digest.sha1 = "ed25519:sha1";
         result.ed25519.digest.sha256 = "ed25519:sha256";
         result.rsa.key = "rsa:key";
+        result.rsa.type = "rsa:type";
         result.rsa.digest.sha1 = "rsa:sha1";
         result.rsa.digest.sha256 = "rsa:sha256";
         return result;
