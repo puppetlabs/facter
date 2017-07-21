@@ -50,6 +50,9 @@ test_name "C15288: Facts should resolve as expected on Ubuntu" do
     if agent['platform'] =~ /x86_64|amd64/
       os_arch     = 'amd64'
       os_hardware = 'x86_64'
+    elsif agent['platform'] =~ /ppc64el/
+      os_arch     = 'ppc64le'
+      os_hardware = 'ppc64le'
     else
       os_arch     = 'i386'
       os_hardware = 'i686'
@@ -80,7 +83,7 @@ test_name "C15288: Facts should resolve as expected on Ubuntu" do
           'processors.count'         => /[1-9]/,
           'processors.physicalcount' => /[1-9]/,
           'processors.isa'           => os_name == 'lucid' ? 'unknown' : os_hardware,
-          'processors.models'        => /"Intel\(R\).*"/
+          'processors.models'        => os_arch == 'ppc64le' ? '' : /"Intel\(R\).*"/
       }
 
       expected_processors.each do |fact, value|
