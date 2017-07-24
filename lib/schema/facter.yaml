@@ -1894,6 +1894,14 @@ zones:
     caveats: |
         Solaris: the `zoneadm` utility must be present.
 
+zpool_featureflags:
+    type: string
+    description: Return the comma-delimited feature flags for ZFS storage pools.
+    resolution: |
+        Solaris: use the `zpool` utility to retrieve the feature numbers for ZFS storage pools
+    caveats: |
+        Solaris: the `zpool` utility must be present.
+
 zpool_featurenumbers:
     type: string
     description: Return the comma-delimited feature numbers for ZFS storage pools.

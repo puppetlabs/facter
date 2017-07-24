@@ -43,6 +43,10 @@ namespace facter { namespace facts { namespace resolvers {
              */
             std::string version;
             /**
+             * Stores the zpool feature flags.
+             */
+            std::vector<std::string> feature_flags;
+            /**
              * Stores the zpool version numbers.
              */
             std::vector<std::string> versions;
