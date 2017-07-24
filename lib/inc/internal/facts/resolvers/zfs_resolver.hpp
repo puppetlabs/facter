@@ -43,9 +43,9 @@ namespace facter { namespace facts { namespace resolvers {
              */
             std::string version;
             /**
-             * Stores the ZFS feature numbers.
+             * Stores the ZFS version numbers.
              */
-            std::vector<std::string> features;
+            std::vector<std::string> versions;
         };
 
         /**
