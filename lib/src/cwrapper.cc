@@ -50,11 +50,7 @@ uint8_t get_default_facts(char **result) {
         auto json_facts = stream.str();
         auto l = json_facts.length()+1;
         *result = new char [l];
-        auto rc = std::snprintf(*result, l, "%s", json_facts.c_str());
-
-        if (rc < 0 || static_cast<unsigned int>(rc) >= l) {
-            return EXIT_FAILURE;
-        }
+        strncpy(*result, json_facts.c_str(), l);
     } catch (const std::exception&) {
         return EXIT_FAILURE;
     }
