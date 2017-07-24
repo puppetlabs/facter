@@ -37,7 +37,7 @@ struct test_zpool_resolver : zpool_resolver
     {
         data result;
         result.version = "1";
-        result.features = { "1", "2", "3" };
+        result.versions = { "1", "2", "3" };
         return result;
     }
 };
@@ -57,7 +57,7 @@ SCENARIO("using the zpool resolver") {
             auto value = facts.get<string_value>(fact::zpool_version);
             REQUIRE(value);
             REQUIRE(value->value() == "1");
-            value = facts.get<string_value>(fact::zpool_featurenumbers);
+            value = facts.get<string_value>(fact::zpool_versionnumbers);
             REQUIRE(value);
             REQUIRE(value->value() == "1,2,3");
         }

@@ -18,7 +18,7 @@ namespace facter { namespace facts { namespace resolvers {
             "ZFS storage pool",
             {
                 fact::zpool_version,
-                fact::zpool_featurenumbers,
+                fact::zpool_versionnumbers,
             })
     {
     }
@@ -30,8 +30,8 @@ namespace facter { namespace facts { namespace resolvers {
         if (!data.version.empty()) {
             facts.add(fact::zpool_version, make_value<string_value>(move(data.version)));
         }
-        if (!data.features.empty()) {
-            facts.add(fact::zpool_featurenumbers, make_value<string_value>(boost::join(data.features, ",")));
+        if (!data.versions.empty()) {
+            facts.add(fact::zpool_versionnumbers, make_value<string_value>(boost::join(data.versions, ",")));
         }
     }
 
@@ -39,16 +39,16 @@ namespace facter { namespace facts { namespace resolvers {
     {
         data result;
 
-        // Get the zpool version and features
+        // Get the zpool version
         static boost::regex zpool_version("ZFS pool version (\\d+)[.]");
-        static boost::regex zpool_feature("^\\s*(\\d+)[ ]");
+        static boost::regex zpool_supported_version("^\\s*(\\d+)[ ]");
         each_line(zpool_command(), {"upgrade", "-v"}, [&] (string& line) {
             if (re_search(line, zpool_version, &result.version)) {
                 return true;
             }
-            string feature;
-            if (re_search(line, zpool_feature, &feature)) {
-                result.features.emplace_back(move(feature));
+            string version;
+            if (re_search(line, zpool_supported_version, &version)) {
+                result.versions.emplace_back(move(version));
             }
             return true;
         });
