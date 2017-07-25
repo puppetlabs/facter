@@ -12,6 +12,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 option(YAMLCPP_STATIC "Use yaml-cpp's static libraries" OFF)
+option(BUILD_SHARED_LIBS "Build libfacter as a shared library" ON)
 
 set(FACTER_PATH "" CACHE PATH "Specify the location to look for specific binaries before trying PATH.")
 if (FACTER_PATH)
