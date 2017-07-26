@@ -62,7 +62,7 @@ namespace facter { namespace facts { namespace resolvers {
             case UNKNOWN:
                 if (re_search(line, zpool_version, &result.version)) {
                 } else if (re_search(line, zpool_feature_flags)) {
-                    result.version = "1000";
+                    result.version = "5000";
                 } else if (re_search(line, zpool_supported_feature_header)) {
                     state = FEATURES;
                 } else if (re_search(line, zpool_supported_versions_header)) {
