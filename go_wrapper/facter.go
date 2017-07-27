@@ -1,3 +1,5 @@
+// +build linux,cgo
+
 package facter
 
 // NB(ale): to install on Mac the expected static libiconv from source:
@@ -25,7 +27,6 @@ import (
 	"fmt"
 	"unsafe"
 )
-
 
 // GetFacts collects default facts as a C string in JSON format
 func GetFacts() (string, error) {
