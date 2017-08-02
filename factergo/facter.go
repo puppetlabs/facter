@@ -1,6 +1,6 @@
 // +build linux,cgo
 
-package facter
+package factergo
 
 // NB(ale): to install on Mac the expected static libiconv from source:
 // - download from https://www.gnu.org/software/libiconv/#TOCdownloading

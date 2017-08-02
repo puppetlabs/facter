@@ -1,4 +1,4 @@
-package facter
+package factergo
 
 import (
 	"encoding/json"
