@@ -174,7 +174,7 @@ namespace facter { namespace facts {
                     }
                     break;
                 }
-            } # always
+            }
             return true;
         });
         return found;
