@@ -303,18 +303,6 @@ msgstr ""
 msgid "querylv returned success but we got a null LV. WTF?"
 msgstr ""
 
-#. warning
-#: lib/src/facts/aix/kernel_resolver.cc
-msgid "oslevel failed: {1}: kernel facts are unavailable"
-msgstr ""
-
-#. warning
-#: lib/src/facts/aix/kernel_resolver.cc
-msgid ""
-"Could not parse rml cache even after regenerating with oslevel: kernel facts "
-"are unavailable. Try running 'oslevel -s' to debug."
-msgstr ""
-
 #: lib/src/facts/aix/networking_resolver.cc
 msgid "getkerninfo call was unsuccessful"
 msgstr ""
