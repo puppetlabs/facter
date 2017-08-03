@@ -5,6 +5,7 @@ test_name "C96148: verify dmi facts" do
   confine :except, :platform => 'huawei' # no dmi support
   confine :except, :platform => 'osx' # no dmi support
   confine :except, :platform => 'sparc' # no dmi support
+  confine :except, :platform => 'ppc64' # no dmi support on linux on powerpc
 
   require 'json'
   require 'facter/acceptance/base_fact_utils'
