@@ -26,29 +26,10 @@ describe Facter::Operatingsystem::Windows do
       [6,3,9600, 3] => "2012 R2",
       [10,0,10586, 1] => "10",     # Kernel version for Windows 10
       [10,0,14300, 2] => "Nano",   # current Nano kernel version
+      [10,0,14393, 2] => "2016",
+      [10,0,14393, 3] => "2016",
     }.each do |os_values, expected_output|
       it "should be #{expected_output}  with Version #{os_values[0]}.#{os_values[1]}.#{os_values[2]}  and ProductType #{os_values[3]}" do
-        os = stub('os')
-        os.stubs(:[]).with(:dwMajorVersion).returns(os_values[0])
-        os.stubs(:[]).with(:dwMinorVersion).returns(os_values[1])
-        os.stubs(:[]).with(:dwBuildNumber).returns(os_values[2])
-        os.stubs(:[]).with(:wProductType).returns(os_values[3])
-        Facter::Util::Windows::Process.expects(:os_version).yields(os)
-        release = subject.get_operatingsystemrelease
-        expect(release).to eq expected_output
-      end
-    end
-
-    {
-      # Note: this is the kernel version for the Windows 10 technical preview,
-      # which is subject to change. These tests cover any future Windows server
-      # releases with a kernel version of 6.4.x, none of which have been released
-      # as of October 2014.
-      [10,0,10586, 2] => "10-NewKernel",
-      [10,0,10586, 3] => "10-NewKernel",
-    }.each do |os_values, expected_output|
-      it "should be the kernel release for unknown future server releases" do
-        Facter.fact(:kernelrelease).stubs(:value).returns("10-NewKernel")
         os = stub('os')
         os.stubs(:[]).with(:dwMajorVersion).returns(os_values[0])
         os.stubs(:[]).with(:dwMinorVersion).returns(os_values[1])
