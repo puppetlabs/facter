@@ -13,7 +13,7 @@ module Facter
               if os[:dwBuildNumber] == 14300
                 'Nano'
               else
-                os[:wProductType] == 1 ? '10' : Facter[:kernelrelease].value
+                os[:wProductType] == 1 ? '10' : '2016'
               end
             when '6.3'
               os[:wProductType] == 1 ? "8.1" : "2012 R2"
