@@ -329,9 +329,6 @@ int main(int argc, char **argv)
         collection facts(blocklist, ttls);
         facts.add_default_facts(ruby);
 
-        // Add the environment facts
-        facts.add_environment_facts();
-
         if (ruby && !vm["no-custom-facts"].as<bool>()) {
             if (vm.count("custom-dir")) {
                 custom_directories = vm["custom-dir"].as<vector<string>>();
@@ -354,6 +351,9 @@ int main(int argc, char **argv)
             facts.add_external_facts(external_directories);
           }
         }
+
+        // Add the environment facts
+        facts.add_environment_facts();
 
         // Output the facts
         facter::facts::format fmt = facter::facts::format::hash;
