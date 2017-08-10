@@ -20,7 +20,7 @@ module Facter::Util::Windows::Process
               "OpenProcessToken(#{handle}, #{desired_access.to_s(8)}, #{token_handle_ptr})")
         end
 
-        yield token_handle = token_handle_ptr.read_handle
+        yield token_handle = Facter::Util::Windows::FFI.read_handle(token_handle_ptr)
       end
 
       token_handle

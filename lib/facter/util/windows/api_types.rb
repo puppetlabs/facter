@@ -18,13 +18,13 @@ module Facter::Util::Windows::ApiTypes
     end
     #
     alias_method :read_dword, :read_uint32
-
-    def read_handle
-      type_size == 4 ? read_uint32 : read_uint64
-    end
   end
 
   class ::Facter::Util::Windows::FFI
+
+    def self.read_handle(ffi_pointer)
+      ffi_pointer.type_size == 4 ? ffi_pointer.read_uint32 : ffi_pointer.read_uint64
+    end
 
     def self.read_wide_string(ffi_pointer, char_length, dst_encoding = Encoding::UTF_8)
       # char_length is number of wide chars (typically excluding NULLs), *not* bytes
