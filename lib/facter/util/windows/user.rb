@@ -35,7 +35,7 @@ module Facter::Util::Windows::User
       end
 
       FFI::MemoryPointer.new(:win32_bool, 1) do |ismember_pointer|
-        if CheckTokenMembership(FFI::Pointer::NULL_HANDLE, sid_pointer, ismember_pointer) == FFI::WIN32_FALSE
+        if CheckTokenMembership(Facter::Util::Windows::FFI::NULL_HANDLE, sid_pointer, ismember_pointer) == FFI::WIN32_FALSE
           raise Facter::Util::Windows::Error.new("Failed to check membership")
         end
 

@@ -8,11 +8,8 @@ module Facter::Util::Windows::ApiTypes
     ERROR_SUCCESS = 0
   end
 
-  class ::FFI::Pointer
-    NULL_HANDLE = 0
-  end
-
   class ::Facter::Util::Windows::FFI
+    NULL_HANDLE = 0
 
     def self.read_win32_bool(ffi_pointer)
       # BOOL is always a 32-bit integer in Win32
@@ -62,7 +59,7 @@ module Facter::Util::Windows::ApiTypes
         yield ptr
       ensure
         if ptr && ! ptr.null?
-          if FFI::WIN32::LocalFree(ptr.address) != FFI::Pointer::NULL_HANDLE
+          if FFI::WIN32::LocalFree(ptr.address) != NULL_HANDLE
             Puppet.debug "LocalFree memory leak"
           end
         end
