@@ -3,12 +3,12 @@ require 'ffi'
 module Facter::Util::Windows::ApiTypes
   module ::FFI
     WIN32_FALSE = 0
-
-    # standard Win32 error codes
-    ERROR_SUCCESS = 0
   end
 
   class ::Facter::Util::Windows::FFI
+    # standard Win32 error codes
+    ERROR_SUCCESS = 0
+
     NULL_HANDLE = 0
 
     def self.read_win32_bool(ffi_pointer)
