@@ -45,7 +45,7 @@ class Facter::Util::Windows::Error < RuntimeError
       end
 
       # returns an FFI::Pointer with autorelease set to false, which is what we want
-      buffer_ptr.read_win32_local_pointer do |wide_string_ptr|
+      Facter::Util::Windows::FFI.read_win32_local_pointer(buffer_ptr) do |wide_string_ptr|
         if wide_string_ptr.null?
           raise Facter::Error.new("FormatMessageW failed to allocate buffer for code #{code}")
         end

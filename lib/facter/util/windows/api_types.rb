@@ -49,11 +49,13 @@ module Facter::Util::Windows::ApiTypes
       # String is longer than the max; read just to the max
       read_wide_string(max_char_length)
     end
+  end
 
-    def read_win32_local_pointer(&block)
+  class ::Facter::Util::Windows::FFI
+    def self.read_win32_local_pointer(ffi_pointer, &block)
       ptr = nil
       begin
-        ptr = read_pointer
+        ptr = ffi_pointer.read_pointer
         yield ptr
       ensure
         if ptr && ! ptr.null?
