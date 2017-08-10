@@ -37,7 +37,7 @@ module Facter::Util::Windows::Process
     # to determine buffer size
     FFI::MemoryPointer.new(:dword, 1) do |return_length_ptr|
       result = GetTokenInformation(token_handle, token_information, nil, 0, return_length_ptr)
-      return_length = return_length_ptr.read_dword
+      return_length = Facter::Util::Windows::FFI.read_dword(return_length_ptr)
 
       if return_length <= 0
         raise Facter::Util::Windows::Error.new(

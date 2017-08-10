@@ -16,11 +16,12 @@ module Facter::Util::Windows::ApiTypes
       # some Win32 APIs return 1 for true, while others are non-0
       read_int32 != FFI::WIN32_FALSE
     end
-    #
-    alias_method :read_dword, :read_uint32
   end
 
   class ::Facter::Util::Windows::FFI
+    def self.read_dword(ffi_pointer)
+      ffi_pointer.read_uint32
+    end
 
     def self.read_handle(ffi_pointer)
       ffi_pointer.type_size == 4 ? ffi_pointer.read_uint32 : ffi_pointer.read_uint64
