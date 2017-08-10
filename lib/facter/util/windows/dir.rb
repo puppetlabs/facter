@@ -18,7 +18,7 @@ module Facter::Util::Windows::Dir
         raise Facter::Util::Windows::Error.new("Could not find COMMON_APPDATA path")
       end
 
-      common_appdata = buffer_ptr.read_arbitrary_wide_string_up_to(MAX_PATH + 1)
+      common_appdata = Facter::Util::Windows::FFI.read_arbitrary_wide_string_up_to(buffer_ptr, MAX_PATH + 1)
     end
 
     common_appdata
