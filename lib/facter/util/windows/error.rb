@@ -66,6 +66,8 @@ class Facter::Util::Windows::Error < RuntimeError
   FORMAT_MESSAGE_ARGUMENT_ARRAY    = 0x00002000
   FORMAT_MESSAGE_MAX_WIDTH_MASK    = 0x000000FF
 
+  private
+
   ffi_convention :stdcall
 
   # https://msdn.microsoft.com/en-us/library/windows/desktop/ms679351(v=vs.85).aspx
@@ -80,6 +82,6 @@ class Facter::Util::Windows::Error < RuntimeError
   # );
   # NOTE: since we're not preallocating the buffer, use a :pointer for lpBuffer
   ffi_lib :kernel32
-  attach_function_private :FormatMessageW,
-                          [:dword, :lpcvoid, :dword, :dword, :pointer, :dword, :pointer], :dword
+  attach_function :FormatMessageW,
+                  [:dword, :lpcvoid, :dword, :dword, :pointer, :dword, :pointer], :dword
 end

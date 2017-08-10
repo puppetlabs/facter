@@ -48,6 +48,8 @@ module Facter::Util::Windows::User
   end
   module_function :check_token_membership
 
+  private
+
   ffi_convention :stdcall
 
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa376389(v=vs.85).aspx
@@ -57,8 +59,10 @@ module Facter::Util::Windows::User
   #   _Out_     PBOOL IsMember
   # );
   ffi_lib :advapi32
-  attach_function_private :CheckTokenMembership,
-                          [:handle, :pointer, :pbool], :win32_bool
+  attach_function :CheckTokenMembership,
+                  [:handle, :pointer, :pbool], :win32_bool
+
+  public
 
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa379650(v=vs.85).aspx
   WELL_KNOWN_SID_TYPE = enum(
@@ -159,6 +163,8 @@ module Facter::Util::Windows::User
       :WinCapabilityRemovableStorageSid             , 94
   )
 
+  private
+
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa446585(v=vs.85).aspx
   # BOOL WINAPI CreateWellKnownSid(
   #   _In_       WELL_KNOWN_SID_TYPE WellKnownSidType,
@@ -167,14 +173,14 @@ module Facter::Util::Windows::User
   #   _Inout_    DWORD *cbSid
   # );
   ffi_lib :advapi32
-  attach_function_private :CreateWellKnownSid,
-                          [WELL_KNOWN_SID_TYPE, :pointer, :pointer, :lpdword], :win32_bool
+  attach_function :CreateWellKnownSid,
+                  [WELL_KNOWN_SID_TYPE, :pointer, :pointer, :lpdword], :win32_bool
 
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa379151(v=vs.85).aspx
   # BOOL WINAPI IsValidSid(
   #   _In_  PSID pSid
   # );
   ffi_lib :advapi32
-  attach_function_private :IsValidSid,
-                          [:pointer], :win32_bool
+  attach_function :IsValidSid,
+                  [:pointer], :win32_bool
 end

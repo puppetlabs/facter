@@ -25,6 +25,8 @@ module Facter::Util::Windows::Dir
   end
   module_function :get_common_appdata
 
+  private
+
   ffi_convention :stdcall
 
   # https://msdn.microsoft.com/en-us/library/windows/desktop/bb762181(v=vs.85).aspx
@@ -36,6 +38,6 @@ module Facter::Util::Windows::Dir
   #   _Out_ LPTSTR pszPath
   # );
   ffi_lib :shell32
-  attach_function_private :SHGetFolderPathW,
+  attach_function :SHGetFolderPathW,
     [:handle, :int32, :handle, :dword, :lpwstr], :hresult
 end

@@ -156,12 +156,14 @@ module Facter::Util::Windows::Process
   end
   module_function :supports_elevated_security?
 
+  private
+
   ffi_convention :stdcall
 
   # https://msdn.microsoft.com/en-us/library/windows/desktop/ms683179(v=vs.85).aspx
   # HANDLE WINAPI GetCurrentProcess(void);
   ffi_lib :kernel32
-  attach_function_private :GetCurrentProcess, [], :handle
+  attach_function :GetCurrentProcess, [], :handle
 
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa379295(v=vs.85).aspx
   # BOOL WINAPI OpenProcessToken(
@@ -170,9 +172,10 @@ module Facter::Util::Windows::Process
   #   _Out_  PHANDLE TokenHandle
   # );
   ffi_lib :advapi32
-  attach_function_private :OpenProcessToken,
-                          [:handle, :dword, :phandle], :win32_bool
+  attach_function :OpenProcessToken,
+                  [:handle, :dword, :phandle], :win32_bool
 
+  public
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa379626(v=vs.85).aspx
   TOKEN_INFORMATION_CLASS = enum(
       :TokenUser, 1,
@@ -226,6 +229,8 @@ module Facter::Util::Windows::Process
     layout :TokenIsElevated, :dword
   end
 
+  private
+
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa446671(v=vs.85).aspx
   # BOOL WINAPI GetTokenInformation(
   #   _In_       HANDLE TokenHandle,
@@ -235,8 +240,10 @@ module Facter::Util::Windows::Process
   #   _Out_      PDWORD ReturnLength
   # );
   ffi_lib :advapi32
-  attach_function_private :GetTokenInformation,
-                          [:handle, TOKEN_INFORMATION_CLASS, :lpvoid, :dword, :pdword ], :win32_bool
+  attach_function :GetTokenInformation,
+                  [:handle, TOKEN_INFORMATION_CLASS, :lpvoid, :dword, :pdword ], :win32_bool
+
+  public
 
   # https://msdn.microsoft.com/en-us/library/windows/hardware/ff563620(v=vs.85).aspx
   # typedef struct _OSVERSIONINFOEXW {
@@ -267,6 +274,8 @@ module Facter::Util::Windows::Process
       :wReserved, :uchar,
     )
   end
+
+  private
 
   # NTSTATUS -> :int32 (defined in winerror.h / ntstatus.h)
   # https://msdn.microsoft.com/en-us/library/windows/hardware/ff561910(v=vs.85).aspx

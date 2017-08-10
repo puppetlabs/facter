@@ -8,14 +8,6 @@ module Facter::Util::Windows::ApiTypes
     ERROR_SUCCESS = 0
   end
 
-  module ::FFI::Library
-    # Wrapper method for attach_function + private
-    def attach_function_private(*args)
-      attach_function(*args)
-      private args[0]
-    end
-  end
-
   class ::FFI::Pointer
     NULL_HANDLE = 0
 
@@ -126,6 +118,7 @@ module Facter::Util::Windows::ApiTypes
 
     ffi_convention :stdcall
 
+    private
     # https://msdn.microsoft.com/en-us/library/windows/desktop/aa366730(v=vs.85).aspx
     # HLOCAL WINAPI LocalFree(
     #   _In_  HLOCAL hMem
@@ -138,6 +131,6 @@ module Facter::Util::Windows::ApiTypes
     #   _In_  HANDLE hObject
     # );
     ffi_lib :kernel32
-    attach_function_private :CloseHandle, [:handle], :win32_bool
+    attach_function :CloseHandle, [:handle], :win32_bool
   end
 end
