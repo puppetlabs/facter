@@ -1,12 +1,9 @@
 require 'ffi'
 
 module Facter::Util::Windows::ApiTypes
-  module ::FFI
-    WIN32_FALSE = 0
-  end
-
   class ::Facter::Util::Windows::FFI
     # standard Win32 error codes
+    WIN32_FALSE = 0
     ERROR_SUCCESS = 0
 
     NULL_HANDLE = 0
@@ -14,7 +11,7 @@ module Facter::Util::Windows::ApiTypes
     def self.read_win32_bool(ffi_pointer)
       # BOOL is always a 32-bit integer in Win32
       # some Win32 APIs return 1 for true, while others are non-0
-      ffi_pointer.read_int32 != FFI::WIN32_FALSE
+      ffi_pointer.read_int32 != WIN32_FALSE
     end
 
     def self.read_dword(ffi_pointer)

@@ -25,17 +25,17 @@ module Facter::Util::Windows::User
       FFI::MemoryPointer.new(:dword, 1) do |size_pointer|
         size_pointer.write_uint32(SECURITY_MAX_SID_SIZE)
 
-        if CreateWellKnownSid(:WinBuiltinAdministratorsSid, FFI::Pointer::NULL, sid_pointer, size_pointer) == FFI::WIN32_FALSE
+        if CreateWellKnownSid(:WinBuiltinAdministratorsSid, FFI::Pointer::NULL, sid_pointer, size_pointer) == Facter::Util::Windows::FFI::WIN32_FALSE
           raise Facter::Util::Windows::Error.new("Failed to create administrators SID")
         end
       end
 
-      if IsValidSid(sid_pointer) == FFI::WIN32_FALSE
+      if IsValidSid(sid_pointer) == Facter::Util::Windows::FFI::WIN32_FALSE
         raise RuntimeError,"Invalid SID"
       end
 
       FFI::MemoryPointer.new(:win32_bool, 1) do |ismember_pointer|
-        if CheckTokenMembership(Facter::Util::Windows::FFI::NULL_HANDLE, sid_pointer, ismember_pointer) == FFI::WIN32_FALSE
+        if CheckTokenMembership(Facter::Util::Windows::FFI::NULL_HANDLE, sid_pointer, ismember_pointer) == Facter::Util::Windows::FFI::WIN32_FALSE
           raise Facter::Util::Windows::Error.new("Failed to check membership")
         end
 

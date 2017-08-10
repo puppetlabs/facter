@@ -39,7 +39,7 @@ class Facter::Util::Windows::Error < RuntimeError
       length = FormatMessageW(flags, FFI::Pointer::NULL, code, dwLanguageId,
                               buffer_ptr, 0, FFI::Pointer::NULL)
 
-      if length == FFI::WIN32_FALSE
+      if length == Facter::Util::Windows::FFI::WIN32_FALSE
         # can't raise same error type here or potentially recurse infinitely
         raise Facter::Error.new("FormatMessageW could not format code #{code}")
       end

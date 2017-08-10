@@ -15,7 +15,7 @@ module Facter::Util::Windows::Process
     begin
       FFI::MemoryPointer.new(:handle, 1) do |token_handle_ptr|
         result = OpenProcessToken(handle, desired_access, token_handle_ptr)
-        if result == FFI::WIN32_FALSE
+        if result == Facter::Util::Windows::FFI::WIN32_FALSE
           raise Facter::Util::Windows::Error.new(
               "OpenProcessToken(#{handle}, #{desired_access.to_s(8)}, #{token_handle_ptr})")
         end
@@ -49,7 +49,7 @@ module Facter::Util::Windows::Process
         result = GetTokenInformation(token_handle, token_information,
                                      token_information_buf, return_length, return_length_ptr)
 
-        if result == FFI::WIN32_FALSE
+        if result == Facter::Util::Windows::FFI::WIN32_FALSE
           raise Facter::Util::Windows::Error.new(
               "GetTokenInformation(#{token_handle}, #{token_information}, #{token_information_buf}, " +
                   "#{return_length}, #{return_length_ptr})")
