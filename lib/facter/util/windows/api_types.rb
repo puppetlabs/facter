@@ -10,15 +10,16 @@ module Facter::Util::Windows::ApiTypes
 
   class ::FFI::Pointer
     NULL_HANDLE = 0
-
-    def read_win32_bool
-      # BOOL is always a 32-bit integer in Win32
-      # some Win32 APIs return 1 for true, while others are non-0
-      read_int32 != FFI::WIN32_FALSE
-    end
   end
 
   class ::Facter::Util::Windows::FFI
+
+    def self.read_win32_bool(ffi_pointer)
+      # BOOL is always a 32-bit integer in Win32
+      # some Win32 APIs return 1 for true, while others are non-0
+      ffi_pointer.read_int32 != FFI::WIN32_FALSE
+    end
+
     def self.read_dword(ffi_pointer)
       ffi_pointer.read_uint32
     end

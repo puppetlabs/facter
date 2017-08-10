@@ -40,7 +40,7 @@ module Facter::Util::Windows::User
         end
 
         # Is administrators SID enabled in calling thread's access token?
-        is_admin = ismember_pointer.read_win32_bool
+        is_admin = Facter::Util::Windows::FFI.read_win32_bool(ismember_pointer)
       end
     end
 
