@@ -50,7 +50,7 @@ class Facter::Util::Windows::Error < RuntimeError
           raise Facter::Error.new("FormatMessageW failed to allocate buffer for code #{code}")
         end
 
-        error_string = wide_string_ptr.read_wide_string(length)
+        error_string = Facter::Util::Windows::FFI.read_wide_string(wide_string_ptr, length)
       end
     end
 

@@ -22,15 +22,15 @@ module Facter::Util::Windows::ApiTypes
     def read_handle
       type_size == 4 ? read_uint32 : read_uint64
     end
-
-    def read_wide_string(char_length, dst_encoding = Encoding::UTF_8)
-      # char_length is number of wide chars (typically excluding NULLs), *not* bytes
-      str = get_bytes(0, char_length * 2).force_encoding('UTF-16LE')
-      str.encode(dst_encoding)
-    end
   end
 
   class ::Facter::Util::Windows::FFI
+
+    def self.read_wide_string(ffi_pointer, char_length, dst_encoding = Encoding::UTF_8)
+      # char_length is number of wide chars (typically excluding NULLs), *not* bytes
+      str = ffi_pointer.get_bytes(0, char_length * 2).force_encoding('UTF-16LE')
+      str.encode(dst_encoding)
+    end
 
     # @param max_char_length [Integer] Maximum number of wide chars to return (typically excluding NULLs), *not* bytes
     # @param null_terminator [Symbol] Number of number of null wchar characters, *not* bytes, that determine the end of the string
@@ -46,11 +46,11 @@ module Facter::Util::Windows::ApiTypes
 
       # Look for a null terminating characters; if found, read up to that null (exclusive)
       (0...max_char_length - terminator_width).each do |i|
-        return ffi_pointer.read_wide_string(i) if ffi_pointer.send(reader_method, (i * 2)) == 0
+        return read_wide_string(ffi_pointer, i) if ffi_pointer.send(reader_method, (i * 2)) == 0
       end
 
       # String is longer than the max; read just to the max
-      ffi_pointer.read_wide_string(max_char_length)
+      read_wide_string(ffi_pointer, max_char_length)
     end
 
     def self.read_win32_local_pointer(ffi_pointer, &block)
