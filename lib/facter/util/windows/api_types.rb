@@ -56,7 +56,7 @@ module Facter::Util::Windows::ApiTypes
         yield ptr
       ensure
         if ptr && ! ptr.null?
-          if FFI::WIN32::LocalFree(ptr.address) != NULL_HANDLE
+          if WIN32.LocalFree(ptr.address) != NULL_HANDLE
             Puppet.debug "LocalFree memory leak"
           end
         end
@@ -112,7 +112,7 @@ module Facter::Util::Windows::ApiTypes
   FFI.typedef :uchar, :byte
   FFI.typedef :uint16, :wchar
 
-  module ::FFI::WIN32
+  module ::Facter::Util::Windows::FFI::WIN32
     extend ::FFI::Library
 
     ffi_convention :stdcall

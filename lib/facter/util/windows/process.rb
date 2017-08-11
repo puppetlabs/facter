@@ -25,7 +25,7 @@ module Facter::Util::Windows::Process
 
       token_handle
     ensure
-      FFI::WIN32.CloseHandle(token_handle) if token_handle
+      Facter::Util::Windows::FFI::WIN32.CloseHandle(token_handle) if token_handle
     end
 
     # token_handle has had CloseHandle called against it, so nothing to return
@@ -94,7 +94,7 @@ module Facter::Util::Windows::Process
     rescue Facter::Util::Windows::Error => e
       raise e if e.code != ERROR_NO_SUCH_PRIVILEGE
     ensure
-      FFI::WIN32.CloseHandle(handle) if handle
+      Facter::Util::Windows::FFI::WIN32.CloseHandle(handle) if handle
     end
   end
   module_function :elevated_security?
