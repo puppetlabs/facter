@@ -127,8 +127,12 @@ endif()
 # Pull in common cflags setting from leatherman
 include(cflags)
 set(FACTER_CXX_FLAGS "${LEATHERMAN_CXX_FLAGS}")
-
 add_definitions(${LEATHERMAN_DEFINITIONS})
+
+# Enable DEP/ASLR switches on windows versions
+if (WIN32)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--nxcompat -Wl,--dynamicbase")
+endif()
 
 #
 # Add cpplint and cppcheck targets
