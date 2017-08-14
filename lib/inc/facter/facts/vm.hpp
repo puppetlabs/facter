@@ -147,6 +147,11 @@ namespace facter { namespace facts {
          * The name for OpenBSD vmm
          */
         constexpr static char const* vmm = "vmm";
+
+        /**
+         * The name for FreeBSD bhyve
+         */
+        constexpr static char const* bhyve = "bhyve";
     };
 
 }}  // namespace facter::facts
