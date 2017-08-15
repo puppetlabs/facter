@@ -15,17 +15,17 @@ module Facter::Util::Windows::Process
     begin
       FFI::MemoryPointer.new(:handle, 1) do |token_handle_ptr|
         result = OpenProcessToken(handle, desired_access, token_handle_ptr)
-        if result == FFI::WIN32_FALSE
+        if result == Facter::Util::Windows::FFI::WIN32_FALSE
           raise Facter::Util::Windows::Error.new(
               "OpenProcessToken(#{handle}, #{desired_access.to_s(8)}, #{token_handle_ptr})")
         end
 
-        yield token_handle = token_handle_ptr.read_handle
+        yield token_handle = Facter::Util::Windows::FFI.read_handle(token_handle_ptr)
       end
 
       token_handle
     ensure
-      FFI::WIN32.CloseHandle(token_handle) if token_handle
+      Facter::Util::Windows::FFI::WIN32.CloseHandle(token_handle) if token_handle
     end
 
     # token_handle has had CloseHandle called against it, so nothing to return
@@ -37,7 +37,7 @@ module Facter::Util::Windows::Process
     # to determine buffer size
     FFI::MemoryPointer.new(:dword, 1) do |return_length_ptr|
       result = GetTokenInformation(token_handle, token_information, nil, 0, return_length_ptr)
-      return_length = return_length_ptr.read_dword
+      return_length = Facter::Util::Windows::FFI.read_dword(return_length_ptr)
 
       if return_length <= 0
         raise Facter::Util::Windows::Error.new(
@@ -49,7 +49,7 @@ module Facter::Util::Windows::Process
         result = GetTokenInformation(token_handle, token_information,
                                      token_information_buf, return_length, return_length_ptr)
 
-        if result == FFI::WIN32_FALSE
+        if result == Facter::Util::Windows::FFI::WIN32_FALSE
           raise Facter::Util::Windows::Error.new(
               "GetTokenInformation(#{token_handle}, #{token_information}, #{token_information_buf}, " +
                   "#{return_length}, #{return_length_ptr})")
@@ -94,7 +94,7 @@ module Facter::Util::Windows::Process
     rescue Facter::Util::Windows::Error => e
       raise e if e.code != ERROR_NO_SUCH_PRIVILEGE
     ensure
-      FFI::WIN32.CloseHandle(handle) if handle
+      Facter::Util::Windows::FFI::WIN32.CloseHandle(handle) if handle
     end
   end
   module_function :elevated_security?
@@ -156,12 +156,14 @@ module Facter::Util::Windows::Process
   end
   module_function :supports_elevated_security?
 
+  private
+
   ffi_convention :stdcall
 
   # https://msdn.microsoft.com/en-us/library/windows/desktop/ms683179(v=vs.85).aspx
   # HANDLE WINAPI GetCurrentProcess(void);
   ffi_lib :kernel32
-  attach_function_private :GetCurrentProcess, [], :handle
+  attach_function :GetCurrentProcess, [], :handle
 
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa379295(v=vs.85).aspx
   # BOOL WINAPI OpenProcessToken(
@@ -170,9 +172,10 @@ module Facter::Util::Windows::Process
   #   _Out_  PHANDLE TokenHandle
   # );
   ffi_lib :advapi32
-  attach_function_private :OpenProcessToken,
-                          [:handle, :dword, :phandle], :win32_bool
+  attach_function :OpenProcessToken,
+                  [:handle, :dword, :phandle], :win32_bool
 
+  public
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa379626(v=vs.85).aspx
   TOKEN_INFORMATION_CLASS = enum(
       :TokenUser, 1,
@@ -226,6 +229,8 @@ module Facter::Util::Windows::Process
     layout :TokenIsElevated, :dword
   end
 
+  private
+
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa446671(v=vs.85).aspx
   # BOOL WINAPI GetTokenInformation(
   #   _In_       HANDLE TokenHandle,
@@ -235,8 +240,10 @@ module Facter::Util::Windows::Process
   #   _Out_      PDWORD ReturnLength
   # );
   ffi_lib :advapi32
-  attach_function_private :GetTokenInformation,
-                          [:handle, TOKEN_INFORMATION_CLASS, :lpvoid, :dword, :pdword ], :win32_bool
+  attach_function :GetTokenInformation,
+                  [:handle, TOKEN_INFORMATION_CLASS, :lpvoid, :dword, :pdword ], :win32_bool
+
+  public
 
   # https://msdn.microsoft.com/en-us/library/windows/hardware/ff563620(v=vs.85).aspx
   # typedef struct _OSVERSIONINFOEXW {
@@ -267,6 +274,8 @@ module Facter::Util::Windows::Process
       :wReserved, :uchar,
     )
   end
+
+  private
 
   # NTSTATUS -> :int32 (defined in winerror.h / ntstatus.h)
   # https://msdn.microsoft.com/en-us/library/windows/hardware/ff561910(v=vs.85).aspx

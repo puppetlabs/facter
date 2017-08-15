@@ -25,28 +25,30 @@ module Facter::Util::Windows::User
       FFI::MemoryPointer.new(:dword, 1) do |size_pointer|
         size_pointer.write_uint32(SECURITY_MAX_SID_SIZE)
 
-        if CreateWellKnownSid(:WinBuiltinAdministratorsSid, FFI::Pointer::NULL, sid_pointer, size_pointer) == FFI::WIN32_FALSE
+        if CreateWellKnownSid(:WinBuiltinAdministratorsSid, FFI::Pointer::NULL, sid_pointer, size_pointer) == Facter::Util::Windows::FFI::WIN32_FALSE
           raise Facter::Util::Windows::Error.new("Failed to create administrators SID")
         end
       end
 
-      if IsValidSid(sid_pointer) == FFI::WIN32_FALSE
+      if IsValidSid(sid_pointer) == Facter::Util::Windows::FFI::WIN32_FALSE
         raise RuntimeError,"Invalid SID"
       end
 
       FFI::MemoryPointer.new(:win32_bool, 1) do |ismember_pointer|
-        if CheckTokenMembership(FFI::Pointer::NULL_HANDLE, sid_pointer, ismember_pointer) == FFI::WIN32_FALSE
+        if CheckTokenMembership(Facter::Util::Windows::FFI::NULL_HANDLE, sid_pointer, ismember_pointer) == Facter::Util::Windows::FFI::WIN32_FALSE
           raise Facter::Util::Windows::Error.new("Failed to check membership")
         end
 
         # Is administrators SID enabled in calling thread's access token?
-        is_admin = ismember_pointer.read_win32_bool
+        is_admin = Facter::Util::Windows::FFI.read_win32_bool(ismember_pointer)
       end
     end
 
     is_admin
   end
   module_function :check_token_membership
+
+  private
 
   ffi_convention :stdcall
 
@@ -57,8 +59,10 @@ module Facter::Util::Windows::User
   #   _Out_     PBOOL IsMember
   # );
   ffi_lib :advapi32
-  attach_function_private :CheckTokenMembership,
-                          [:handle, :pointer, :pbool], :win32_bool
+  attach_function :CheckTokenMembership,
+                  [:handle, :pointer, :pbool], :win32_bool
+
+  public
 
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa379650(v=vs.85).aspx
   WELL_KNOWN_SID_TYPE = enum(
@@ -159,6 +163,8 @@ module Facter::Util::Windows::User
       :WinCapabilityRemovableStorageSid             , 94
   )
 
+  private
+
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa446585(v=vs.85).aspx
   # BOOL WINAPI CreateWellKnownSid(
   #   _In_       WELL_KNOWN_SID_TYPE WellKnownSidType,
@@ -167,14 +173,14 @@ module Facter::Util::Windows::User
   #   _Inout_    DWORD *cbSid
   # );
   ffi_lib :advapi32
-  attach_function_private :CreateWellKnownSid,
-                          [WELL_KNOWN_SID_TYPE, :pointer, :pointer, :lpdword], :win32_bool
+  attach_function :CreateWellKnownSid,
+                  [WELL_KNOWN_SID_TYPE, :pointer, :pointer, :lpdword], :win32_bool
 
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa379151(v=vs.85).aspx
   # BOOL WINAPI IsValidSid(
   #   _In_  PSID pSid
   # );
   ffi_lib :advapi32
-  attach_function_private :IsValidSid,
-                          [:pointer], :win32_bool
+  attach_function :IsValidSid,
+                  [:pointer], :win32_bool
 end

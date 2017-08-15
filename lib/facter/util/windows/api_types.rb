@@ -1,39 +1,30 @@
 require 'ffi'
 
 module Facter::Util::Windows::ApiTypes
-  module ::FFI
-    WIN32_FALSE = 0
-
+  class ::Facter::Util::Windows::FFI
     # standard Win32 error codes
+    WIN32_FALSE = 0
     ERROR_SUCCESS = 0
-  end
 
-  module ::FFI::Library
-    # Wrapper method for attach_function + private
-    def attach_function_private(*args)
-      attach_function(*args)
-      private args[0]
-    end
-  end
-
-  class ::FFI::Pointer
     NULL_HANDLE = 0
 
-    def read_win32_bool
+    def self.read_win32_bool(ffi_pointer)
       # BOOL is always a 32-bit integer in Win32
       # some Win32 APIs return 1 for true, while others are non-0
-      read_int32 != FFI::WIN32_FALSE
-    end
-    #
-    alias_method :read_dword, :read_uint32
-
-    def read_handle
-      type_size == 4 ? read_uint32 : read_uint64
+      ffi_pointer.read_int32 != WIN32_FALSE
     end
 
-    def read_wide_string(char_length, dst_encoding = Encoding::UTF_8)
+    def self.read_dword(ffi_pointer)
+      ffi_pointer.read_uint32
+    end
+
+    def self.read_handle(ffi_pointer)
+      ffi_pointer.type_size == 4 ? ffi_pointer.read_uint32 : ffi_pointer.read_uint64
+    end
+
+    def self.read_wide_string(ffi_pointer, char_length, dst_encoding = Encoding::UTF_8)
       # char_length is number of wide chars (typically excluding NULLs), *not* bytes
-      str = get_bytes(0, char_length * 2).force_encoding('UTF-16LE')
+      str = ffi_pointer.get_bytes(0, char_length * 2).force_encoding('UTF-16LE')
       str.encode(dst_encoding)
     end
 
@@ -41,7 +32,7 @@ module Facter::Util::Windows::ApiTypes
     # @param null_terminator [Symbol] Number of number of null wchar characters, *not* bytes, that determine the end of the string
     #   null_terminator = :single_null, then the terminating sequence is two bytes of zero.   This is UNIT16 = 0
     #   null_terminator = :double_null, then the terminating sequence is four bytes of zero.  This is UNIT32 = 0
-    def read_arbitrary_wide_string_up_to(max_char_length = 512, null_terminator = :single_null)
+    def self.read_arbitrary_wide_string_up_to(ffi_pointer, max_char_length = 512, null_terminator = :single_null)
       if null_terminator != :single_null && null_terminator != :double_null
         raise _("Unable to read wide strings with %{null_terminator} terminal nulls") % { null_terminator: null_terminator }
       end
@@ -51,21 +42,21 @@ module Facter::Util::Windows::ApiTypes
 
       # Look for a null terminating characters; if found, read up to that null (exclusive)
       (0...max_char_length - terminator_width).each do |i|
-        return read_wide_string(i) if send(reader_method, (i * 2)) == 0
+        return read_wide_string(ffi_pointer, i) if ffi_pointer.send(reader_method, (i * 2)) == 0
       end
 
       # String is longer than the max; read just to the max
-      read_wide_string(max_char_length)
+      read_wide_string(ffi_pointer, max_char_length)
     end
 
-    def read_win32_local_pointer(&block)
+    def self.read_win32_local_pointer(ffi_pointer, &block)
       ptr = nil
       begin
-        ptr = read_pointer
+        ptr = ffi_pointer.read_pointer
         yield ptr
       ensure
         if ptr && ! ptr.null?
-          if FFI::WIN32::LocalFree(ptr.address) != FFI::Pointer::NULL_HANDLE
+          if WIN32.LocalFree(ptr.address) != NULL_HANDLE
             Puppet.debug "LocalFree memory leak"
           end
         end
@@ -121,11 +112,12 @@ module Facter::Util::Windows::ApiTypes
   FFI.typedef :uchar, :byte
   FFI.typedef :uint16, :wchar
 
-  module ::FFI::WIN32
+  module ::Facter::Util::Windows::FFI::WIN32
     extend ::FFI::Library
 
     ffi_convention :stdcall
 
+    private
     # https://msdn.microsoft.com/en-us/library/windows/desktop/aa366730(v=vs.85).aspx
     # HLOCAL WINAPI LocalFree(
     #   _In_  HLOCAL hMem
@@ -138,6 +130,6 @@ module Facter::Util::Windows::ApiTypes
     #   _In_  HANDLE hObject
     # );
     ffi_lib :kernel32
-    attach_function_private :CloseHandle, [:handle], :win32_bool
+    attach_function :CloseHandle, [:handle], :win32_bool
   end
 end

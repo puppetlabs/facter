@@ -18,12 +18,14 @@ module Facter::Util::Windows::Dir
         raise Facter::Util::Windows::Error.new("Could not find COMMON_APPDATA path")
       end
 
-      common_appdata = buffer_ptr.read_arbitrary_wide_string_up_to(MAX_PATH + 1)
+      common_appdata = Facter::Util::Windows::FFI.read_arbitrary_wide_string_up_to(buffer_ptr, MAX_PATH + 1)
     end
 
     common_appdata
   end
   module_function :get_common_appdata
+
+  private
 
   ffi_convention :stdcall
 
@@ -36,6 +38,6 @@ module Facter::Util::Windows::Dir
   #   _Out_ LPTSTR pszPath
   # );
   ffi_lib :shell32
-  attach_function_private :SHGetFolderPathW,
+  attach_function :SHGetFolderPathW,
     [:handle, :int32, :handle, :dword, :lpwstr], :hresult
 end

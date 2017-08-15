@@ -39,18 +39,18 @@ class Facter::Util::Windows::Error < RuntimeError
       length = FormatMessageW(flags, FFI::Pointer::NULL, code, dwLanguageId,
                               buffer_ptr, 0, FFI::Pointer::NULL)
 
-      if length == FFI::WIN32_FALSE
+      if length == Facter::Util::Windows::FFI::WIN32_FALSE
         # can't raise same error type here or potentially recurse infinitely
         raise Facter::Error.new("FormatMessageW could not format code #{code}")
       end
 
       # returns an FFI::Pointer with autorelease set to false, which is what we want
-      buffer_ptr.read_win32_local_pointer do |wide_string_ptr|
+      Facter::Util::Windows::FFI.read_win32_local_pointer(buffer_ptr) do |wide_string_ptr|
         if wide_string_ptr.null?
           raise Facter::Error.new("FormatMessageW failed to allocate buffer for code #{code}")
         end
 
-        error_string = wide_string_ptr.read_wide_string(length)
+        error_string = Facter::Util::Windows::FFI.read_wide_string(wide_string_ptr, length)
       end
     end
 
@@ -66,6 +66,8 @@ class Facter::Util::Windows::Error < RuntimeError
   FORMAT_MESSAGE_ARGUMENT_ARRAY    = 0x00002000
   FORMAT_MESSAGE_MAX_WIDTH_MASK    = 0x000000FF
 
+  private
+
   ffi_convention :stdcall
 
   # https://msdn.microsoft.com/en-us/library/windows/desktop/ms679351(v=vs.85).aspx
@@ -80,6 +82,6 @@ class Facter::Util::Windows::Error < RuntimeError
   # );
   # NOTE: since we're not preallocating the buffer, use a :pointer for lpBuffer
   ffi_lib :kernel32
-  attach_function_private :FormatMessageW,
-                          [:dword, :lpcvoid, :dword, :dword, :pointer, :dword, :pointer], :dword
+  attach_function :FormatMessageW,
+                  [:dword, :lpcvoid, :dword, :dword, :pointer, :dword, :pointer], :dword
 end
