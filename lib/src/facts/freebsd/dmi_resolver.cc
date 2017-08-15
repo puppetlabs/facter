@@ -16,6 +16,9 @@ namespace facter { namespace facts { namespace freebsd {
         result.uuid = kenv_lookup("smbios.system.uuid");
         result.serial_number = kenv_lookup("smbios.system.serial");
         result.product_name = kenv_lookup("smbios.system.product");
+        if (result.product_name.length() == 0) {
+            result.product_name = result.bios_vendor;
+        }
         result.manufacturer = kenv_lookup("smbios.system.maker");
 
         return result;
