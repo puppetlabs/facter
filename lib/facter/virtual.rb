@@ -217,6 +217,8 @@ Facter.add("virtual") do
           result = "bochs"
         when /OpenStack/
           result = "openstack"
+        when /Google Compute Engine/
+          result = "gce"
         end
 
         if result.nil? and computersystem.manufacturer =~ /Xen/
