@@ -7,8 +7,8 @@ environment:
 init:
   - |
       choco install mingw-w64 -y -Version 4.8.3 -source https://www.myget.org/F/puppetlabs
-      choco install cmake -y -Version 3.2.2 -source https://www.myget.org/F/puppetlabs
       choco install -y gettext -Version 0.19.6 -source https://www.myget.org/F/puppetlabs
+      cmake --version
   - ps: |
       $env:PATH = $env:PATH.Replace("Git\bin", "Git\cmd")
       $env:PATH = $env:PATH.Replace("Git\usr\bin", "Git\cmd")
