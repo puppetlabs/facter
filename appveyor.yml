@@ -29,7 +29,6 @@ init:
       7z.exe x $env:temp\cpp-hocon.7z -oC:\tools | FIND /V "ing "
 
 install:
-  - git submodule update --init --recursive
   - SET PATH=C:\Ruby21-x64\bin;C:\tools\mingw64\bin;C:\Program Files\gettext-iconv;%PATH%
   - bundle install --jobs 4 --retry 2 --gemfile=lib/Gemfile --quiet
 
