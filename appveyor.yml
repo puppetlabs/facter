@@ -33,9 +33,11 @@ install:
   - bundle install --jobs 4 --retry 2 --gemfile=lib/Gemfile --quiet
 
 build_script:
-  - ps: cmake -G "MinGW Makefiles" -DBOOST_ROOT="C:\tools\boost_1_57_0-x86_64_mingw-w64_4.8.3_win32_seh" -DYAMLCPP_ROOT="C:\tools\yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_win32_seh" -DBOOST_STATIC=ON -DCURL_STATIC=ON -DCMAKE_INSTALL_PREFIX="C:\Program Files\FACTER" -DCMAKE_PREFIX_PATH="C:\tools\leatherman;C:\tools\curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh;C:\tools\cpp-hocon" .
-  - ps: mingw32-make -j2
+  - ps: |
+      cmake -G "MinGW Makefiles" -DBOOST_ROOT="C:\tools\boost_1_57_0-x86_64_mingw-w64_4.8.3_win32_seh" -DYAMLCPP_ROOT="C:\tools\yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_win32_seh" -DBOOST_STATIC=ON -DCURL_STATIC=ON -DCMAKE_INSTALL_PREFIX="C:\Program Files\FACTER" -DCMAKE_PREFIX_PATH="C:\tools\leatherman;C:\tools\curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh;C:\tools\cpp-hocon" .
+      mingw32-make -j2
 
 test_script:
-  - ps: ctest -V 2>&1 | %{ if ($_ -is [System.Management.Automation.ErrorRecord]) { $_ | c++filt } else { $_ } }
-  - ps: mingw32-make install
+  - ps: |
+      ctest -V 2>&1 | %{ if ($_ -is [System.Management.Automation.ErrorRecord]) { $_ | c++filt } else { $_ } }
+      mingw32-make install
