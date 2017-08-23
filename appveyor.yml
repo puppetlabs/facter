@@ -3,31 +3,34 @@ clone_depth: 10
 environment:
   LEATHERMAN_VERSION: 0.99.0
   CPPHOCON_VERSION: 0.1.4
+
+init:
+  - |
+      choco install mingw-w64 -y -Version 4.8.3 -source https://www.myget.org/F/puppetlabs
+      choco install cmake -y -Version 3.2.2 -source https://www.myget.org/F/puppetlabs
+      choco install -y gettext -Version 0.19.6 -source https://www.myget.org/F/puppetlabs
+  - ps: |
+      $env:PATH = $env:PATH.Replace("Git\bin", "Git\cmd")
+      $env:PATH = $env:PATH.Replace("Git\usr\bin", "Git\cmd")
+
+      wget 'https://s3.amazonaws.com/kylo-pl-bucket/boost_1_57_0-x86_64_mingw-w64_4.8.3_win32_seh.7z' -OutFile "$env:temp\boost.7z"
+      7z.exe x $env:temp\boost.7z -oC:\tools | FIND /V "ing  "
+
+      wget 'https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_win32_seh.7z' -OutFile "$env:temp\yaml-cpp.7z"
+      7z.exe x $env:temp\yaml-cpp.7z -oC:\tools | FIND /V "ing  "
+
+      wget 'https://s3.amazonaws.com/kylo-pl-bucket/curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh.7z' -OutFile "$env:temp\curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh.7z"
+      7z.exe x "$env:temp\curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh.7z" -oC:\tools | FIND /V "ing "
+
+      wget "https://github.com/puppetlabs/leatherman/releases/download/$env:LEATHERMAN_VERSION/leatherman.7z" -OutFile "$env:temp\leatherman.7z"
+      7z.exe x $env:temp\leatherman.7z -oC:\tools | FIND /V "ing "
+
+      wget "https://github.com/puppetlabs/cpp-hocon/releases/download/$env:CPPHOCON_VERSION/cpp-hocon.7z" -OutFile "$env:temp\cpp-hocon.7z"
+      7z.exe x $env:temp\cpp-hocon.7z -oC:\tools | FIND /V "ing "
+
 install:
   - git submodule update --init --recursive
-
-  - choco install mingw-w64 -y -Version 4.8.3 -source https://www.myget.org/F/puppetlabs
-  - choco install cmake -y -Version 3.2.2 -source https://www.myget.org/F/puppetlabs
-  - choco install -y gettext -Version 0.19.6 -source https://www.myget.org/F/puppetlabs
   - SET PATH=C:\Ruby21-x64\bin;C:\tools\mingw64\bin;C:\Program Files\gettext-iconv;%PATH%
-  - ps: $env:PATH = $env:PATH.Replace("Git\bin", "Git\cmd")
-  - ps: $env:PATH = $env:PATH.Replace("Git\usr\bin", "Git\cmd")
-
-  - ps: wget 'https://s3.amazonaws.com/kylo-pl-bucket/boost_1_57_0-x86_64_mingw-w64_4.8.3_win32_seh.7z' -OutFile "$pwd\boost.7z"
-  - ps: 7z.exe x boost.7z -oC:\tools | FIND /V "ing  "
-
-  - ps: wget 'https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_win32_seh.7z' -OutFile "$pwd\yaml-cpp.7z"
-  - ps: 7z.exe x yaml-cpp.7z -oC:\tools | FIND /V "ing  "
-
-  - ps: wget 'https://s3.amazonaws.com/kylo-pl-bucket/curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh.7z' -OutFile "$pwd\curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh.7z"
-  - ps: 7z.exe x "curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh.7z" -oC:\tools | FIND /V "ing "
-
-  - ps: wget "https://github.com/puppetlabs/leatherman/releases/download/$env:LEATHERMAN_VERSION/leatherman.7z" -OutFile "$pwd\leatherman.7z"
-  - ps: 7z.exe x leatherman.7z -oC:\tools | FIND /V "ing "
-
-  - ps: wget "https://github.com/puppetlabs/cpp-hocon/releases/download/$env:CPPHOCON_VERSION/cpp-hocon.7z" -OutFile "$pwd\cpp-hocon.7z"
-  - ps: 7z.exe x cpp-hocon.7z -oC:\tools | FIND /V "ing "
-
   - bundle install --jobs 4 --retry 2 --gemfile=lib/Gemfile --quiet
 
 build_script:
