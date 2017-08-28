@@ -49,7 +49,7 @@ namespace facter { namespace facts { namespace aix {
     {
         for (const auto& mount : mountctl()) {
             mountpoint m;
-            if (mount.vmt_gfstype == MNT_PROCFS) {
+            if (mount.vmt_gfstype == MNT_PROCFS || mount.vmt_gfstype == MNT_AHAFS) {
                 continue;
             }
             m.filesystem = _filesystems[mount.vmt_gfstype];
