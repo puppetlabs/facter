@@ -419,6 +419,14 @@ hostname:
         POSIX platforms: use the `gethostname` function to retrieve the host name
         Windows: use the `GetComputerNameExW` function to retrieve the host name.
 
+hypervisors:
+    type: map
+    description: |
+        Experimental fact: Return the names of any detected hypervisors and any collected metadata about them.
+    resolution: |
+        All platforms: Use the external `whereami` library to gather hypervisor data, if available.
+    validate: false
+
 id:
     type: string
     hidden: true

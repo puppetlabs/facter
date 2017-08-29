@@ -97,6 +97,11 @@ endif()
 
 find_package(CPPHOCON REQUIRED)
 
+find_package(WHEREAMI)
+if (WHEREAMI_FOUND)
+    add_definitions(-DUSE_WHEREAMI)
+endif()
+
 if (NOT WITHOUT_JRUBY AND NOT WIN32)
     find_package(JNI)
     set_package_properties(JNI PROPERTIES DESCRIPTION "Java Native Interface (JNI) is a programming framework that enables Java code running in a Java Virtual Machine (JVM) to call and be called by native applications.")
