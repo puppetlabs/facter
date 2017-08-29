@@ -212,7 +212,9 @@ namespace facter { namespace facts {
             LOG_DEBUG("setting fact \"{1}\" based on the value of environment variable \"{2}\".", fact_name, name);
 
             // Add the value based on the environment variable
-            add(fact_name, make_value<string_value>(move(value)));
+            auto fact_value = make_value<string_value>(move(value));
+            fact_value->weight(external_fact_weight);
+            add(fact_name, move(fact_value));
             if (callback) {
                 callback(fact_name);
             }

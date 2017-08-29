@@ -1439,7 +1439,7 @@ msgstr ""
 msgid "timeout= is not supported for custom facts and will be ignored."
 msgstr ""
 
-#. log
+#. warning
 #: lib/src/ruby/ruby.cc
 msgid "Could not load puppet; some facts may be unavailable: {1}"
 msgstr ""
