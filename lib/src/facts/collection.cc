@@ -100,7 +100,11 @@ namespace facter { namespace facts {
                 } else {
                     ostringstream new_value_ss;
                     value->write(new_value_ss);
-                    LOG_DEBUG("fact \"{1}\" has changed from {2} to {3}.", name, old_value_ss.str(), new_value_ss.str());
+                    if (old_value->weight() > value->weight()) {
+                      LOG_DEBUG("new value for fact \"{1}\" ignored, because it's a lower weight", name);
+                    } else {
+                      LOG_DEBUG("fact \"{1}\" has changed from {2} to {3}.", name, old_value_ss.str(), new_value_ss.str());
+                    }
                 }
             } else {
                 if (!value) {
