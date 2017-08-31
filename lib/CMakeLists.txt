@@ -37,6 +37,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/ec2_resolver.cc"
     "src/facts/resolvers/filesystem_resolver.cc"
     "src/facts/resolvers/gce_resolver.cc"
+    "src/facts/resolvers/hypervisors_resolver.cc"
     "src/facts/resolvers/identity_resolver.cc"
     "src/facts/resolvers/kernel_resolver.cc"
     "src/facts/resolvers/ldom_resolver.cc"
@@ -301,6 +302,7 @@ link_directories(
     ${YAMLCPP_LIBRARY_DIRS}
     ${CURL_LIBRARY_DIRS}
     ${CPPHOCON_LIBRARY_DIRS}
+    ${WHEREAMI_LIBRARY_DIRS}
 )
 
 # Add the library target without a prefix (name already has the 'lib') and use '.so' for all platforms (Ruby extension file extension)
@@ -338,6 +340,7 @@ list(APPEND LIBS
     ${YAMLCPP_LIBRARIES}
     ${CURL_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
+    ${WHEREAMI_LIBRARIES}
 )
 
 # Link in additional libraries
