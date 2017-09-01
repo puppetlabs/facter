@@ -320,7 +320,7 @@ if(AIX)
     set_target_properties(libfacter PROPERTIES LINK_FLAGS "-Wl,-G -eInit_libfacter")
 endif()
 
-set(LIBS ${CPPHOCON_LIBRARIES})
+set(LIBS ${CPPHOCON_LIBRARIES} ${WHEREAMI_LIBRARIES})
 
 # Static libraries should come before shared libraries, or you can end up
 # with some really annoying link errors. However, we can configure whether
@@ -340,7 +340,6 @@ list(APPEND LIBS
     ${YAMLCPP_LIBRARIES}
     ${CURL_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
-    ${WHEREAMI_LIBRARIES}
 )
 
 # Link in additional libraries
