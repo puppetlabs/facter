@@ -30,7 +30,7 @@ namespace facter { namespace facts { namespace freebsd {
 
         LOG_DEBUG("kenv lookup for {1}", file);
         if (kenv(KENV_GET, file, buffer, sizeof(buffer) - 1) == -1) {
-            LOG_WARNING("kenv lookup for {1} failed: {2} ({3})", file, strerror(errno), errno);
+            LOG_INFO("kenv lookup for {1} failed: {2} ({3})", file, strerror(errno), errno);
             return "";
         }
         return buffer;
