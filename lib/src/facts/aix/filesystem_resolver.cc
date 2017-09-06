@@ -49,9 +49,17 @@ namespace facter { namespace facts { namespace aix {
     {
         for (const auto& mount : mountctl()) {
             mountpoint m;
+            // AIX Version 5.3 does not define the MNT_AHAFS variable.
+            // Anything above aix 5.3 will have _AIXVERSION_610 defined.
+#ifndef _AIXVERSION_610
             if (mount.vmt_gfstype == MNT_PROCFS) {
                 continue;
             }
+#else
+            if (mount.vmt_gfstype == MNT_PROCFS || mount.vmt_gfstype == MNT_AHAFS) {
+                continue;
+            }
+#endif
             m.filesystem = _filesystems[mount.vmt_gfstype];
             m.device = reinterpret_cast<char*>(vmt2dataptr(&mount, VMT_OBJECT));
             m.name = reinterpret_cast<char*>(vmt2dataptr(&mount, VMT_STUB));
