@@ -435,6 +435,11 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/collection.cc
+msgid "new value for fact \"{1}\" ignored, because it's a lower weight"
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
 msgid "fact \"{1}\" has changed from {2} to {3}."
 msgstr ""
 
@@ -1454,7 +1459,7 @@ msgstr ""
 msgid "timeout= is not supported for custom facts and will be ignored."
 msgstr ""
 
-#. log
+#. warning
 #: lib/src/ruby/ruby.cc
 msgid "Could not load puppet; some facts may be unavailable: {1}"
 msgstr ""
