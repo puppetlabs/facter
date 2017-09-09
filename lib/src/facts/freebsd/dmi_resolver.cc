@@ -20,6 +20,10 @@ namespace facter { namespace facts { namespace freebsd {
             result.product_name = result.bios_vendor;
         }
         result.manufacturer = kenv_lookup("smbios.system.maker");
+        // Fix for Proxmox VMs
+        if (result.manufacturer == "QEMU") {
+            result.product_name = "KVM";
+        }
 
         return result;
     }
