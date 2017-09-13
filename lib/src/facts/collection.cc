@@ -364,7 +364,11 @@ namespace facter { namespace facts {
 
         // Resolve normally
         LOG_DEBUG("resolving {1} facts.", res->name());
-        res->resolve(*this);
+        try {
+            res->resolve(*this);
+        } catch (std::runtime_error &e) {
+            LOG_WARNING("exception resolving {1} facts, some facts will not be available: {2}", res->name(), e.what());
+        }
     }
 
     void collection::resolve_facts()
