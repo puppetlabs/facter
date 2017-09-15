@@ -1,27 +1,21 @@
 version: 3.1.0.{build}
 clone_depth: 10
 environment:
-  LEATHERMAN_VERSION: 1.4.3
-  CPPHOCON_VERSION: 0.1.7
+  LEATHERMAN_VERSION: 1.4.4
+  CPPHOCON_VERSION: 0.1.8
 
 init:
   - |
-      choco install mingw-w64 -y -Version 4.8.3 -source https://www.myget.org/F/puppetlabs
+      choco install -y mingw-w64 -Version 5.2.0 -source https://www.myget.org/F/puppetlabs
+      choco install -y cmake -Version 3.2.2 -source https://www.myget.org/F/puppetlabs
       choco install -y gettext -Version 0.19.6 -source https://www.myget.org/F/puppetlabs
+      choco install -y pl-toolchain-x64 -Version 2015.12.01.1 -source https://www.myget.org/F/puppetlabs
+      choco install -y pl-boost-x64 -Version 1.58.0.2 -source https://www.myget.org/F/puppetlabs
+      choco install -y pl-openssl-x64 -Version 1.0.24.1 -source https://www.myget.org/F/puppetlabs
+      choco install -y pl-curl-x64 -Version 7.46.0.1 -source https://www.myget.org/F/puppetlabs
+      choco install -y pl-yaml-cpp-x64 -Version 0.5.1.2 -source https://www.myget.org/F/puppetlabs
       cmake --version
   - ps: |
-      $env:PATH = $env:PATH.Replace("Git\bin", "Git\cmd")
-      $env:PATH = $env:PATH.Replace("Git\usr\bin", "Git\cmd")
-
-      wget 'https://s3.amazonaws.com/kylo-pl-bucket/boost_1_57_0-x86_64_mingw-w64_4.8.3_win32_seh.7z' -OutFile "$env:temp\boost.7z"
-      7z.exe x $env:temp\boost.7z -oC:\tools | FIND /V "ing  "
-
-      wget 'https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_win32_seh.7z' -OutFile "$env:temp\yaml-cpp.7z"
-      7z.exe x $env:temp\yaml-cpp.7z -oC:\tools | FIND /V "ing  "
-
-      wget 'https://s3.amazonaws.com/kylo-pl-bucket/curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh.7z' -OutFile "$env:temp\curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh.7z"
-      7z.exe x "$env:temp\curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh.7z" -oC:\tools | FIND /V "ing "
-
       wget "https://github.com/puppetlabs/leatherman/releases/download/$env:LEATHERMAN_VERSION/leatherman.7z" -OutFile "$env:temp\leatherman.7z"
       7z.exe x $env:temp\leatherman.7z -oC:\tools | FIND /V "ing "
 
@@ -29,12 +23,15 @@ init:
       7z.exe x $env:temp\cpp-hocon.7z -oC:\tools | FIND /V "ing "
 
 install:
-  - SET PATH=C:\Ruby21-x64\bin;C:\tools\mingw64\bin;C:\Program Files\gettext-iconv;%PATH%
+    # Minimize environment polution; previously we were linking against the wrong OpenSSL DLLs.
+    # Include Ruby and Powershell for unit tests.
+  - SET PATH=C:\tools\pl-build-tools\bin;C:\tools\mingw64\bin;C:\ProgramData\chocolatey\bin;C:\Ruby22-x64\bin;C:\Program Files\7-Zip;C:\Windows\system32;C:\Windows;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Program Files\gettext-iconv
+  - ps: rm -r C:\OpenSSL-Win64
   - bundle install --jobs 4 --retry 2 --gemfile=lib/Gemfile --quiet
 
 build_script:
   - ps: |
-      cmake -G "MinGW Makefiles" -DBOOST_ROOT="C:\tools\boost_1_57_0-x86_64_mingw-w64_4.8.3_win32_seh" -DYAMLCPP_ROOT="C:\tools\yaml-cpp-0.5.1-x86_64_mingw-w64_4.8.3_win32_seh" -DBOOST_STATIC=ON -DCURL_STATIC=ON -DCMAKE_INSTALL_PREFIX="C:\Program Files\FACTER" -DCMAKE_PREFIX_PATH="C:\tools\leatherman;C:\tools\curl-7.42.1-x86_64_mingw-w64_4.8.3_win32_seh;C:\tools\cpp-hocon" .
+      cmake -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE="C:\tools\pl-build-tools\pl-build-toolchain.cmake" -DCMAKE_PREFIX_PATH="C:\tools\leatherman;C:\tools\cpp-hocon" -DCMAKE_INSTALL_PREFIX="C:\Program Files\FACTER" -DBOOST_STATIC=ON .
       mingw32-make -j2
 
 test_script:
