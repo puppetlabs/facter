@@ -27,6 +27,10 @@ test_name "Facts should resolve as expected on SLES" do
       os_arch                 = 's390x'
       os_hardware             = 's390x'
       processor_model_pattern = '' # s390x does not populate a model value in /proc/cpuinfo
+    elsif agent['platform'] =~ /ppc64le/
+      os_arch                 = 'ppc64le'
+      os_hardware             = 'ppc64le'
+      processor_model_pattern = '' # Power8 does not populate a model value in /proc/cpuinfo
     else
       os_arch                 = 'i386'
       os_hardware             = 'i686'
@@ -83,6 +87,7 @@ test_name "Facts should resolve as expected on SLES" do
         kernel_version = '3.0'
       elsif os_version == '12'
         kernel_version = '3.12'
+        kernel_version = '4.4' if os_arch == 'ppc64le'
       end
 
       expected_kernel = {
