@@ -495,6 +495,11 @@ msgstr ""
 msgid "resolving {1} facts."
 msgstr ""
 
+#. warning
+#: lib/src/facts/collection.cc
+msgid "exception resolving {1} facts, some facts will not be available: {2}"
+msgstr ""
+
 #. debug
 #: lib/src/facts/collection.cc
 msgid "cannot lookup an element with \"{1}\" from Ruby fact"

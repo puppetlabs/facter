@@ -69,4 +69,8 @@ namespace facter { namespace facts { namespace resolvers {
     }
 #endif
 
+    bool hypervisors_resolver_base::is_blockable() const {
+        return true;
+    }
+
 }}}  // namespace facter::facts::resolvers
