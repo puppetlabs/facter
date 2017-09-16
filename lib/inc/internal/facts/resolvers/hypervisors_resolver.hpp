@@ -43,6 +43,7 @@ namespace facter { namespace facts { namespace resolvers {
          */
         virtual void resolve(collection& facts) override;
 
+        bool is_blockable() const override;
      protected:
         /**
          * Collects hypervisor data

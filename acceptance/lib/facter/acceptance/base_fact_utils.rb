@@ -374,6 +374,10 @@ module Facter
           os_arch                 = 'x86_64'
           os_hardware             = 'x86_64'
           processor_model_pattern = /(Intel\(R\).*)|(AMD.*)/
+        elsif agent['platform'] =~ /ppc|power|64le/
+          os_arch                 = 'ppc64le'
+          os_hardware             = 'ppc64le'
+          processor_model_pattern = // # facter doesn't figure out the processor type on these machines
         elsif agent['platform'] =~ /s390x/
           os_arch                 = 's390x'
           os_hardware             = 's390x'
