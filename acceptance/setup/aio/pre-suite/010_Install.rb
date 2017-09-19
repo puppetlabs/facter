@@ -5,12 +5,8 @@ extend Beaker::DSL::InstallUtils
 test_name "Install Packages"
 
 step "Install puppet-agent..." do
-  opts = {
-    :puppet_collection    => 'PC1',
-    :puppet_agent_sha     => ENV['SHA'],
-    :puppet_agent_version => ENV['SUITE_VERSION'] || ENV['SHA']
-  }
-  install_puppet_agent_dev_repo_on(hosts, opts)
+  dev_builds_url  = ENV['DEV_BUILDS_URL'] || 'http://builds.delivery.puppetlabs.net'
+  install_from_build_data_url('puppet-agent', "#{dev_builds_url}/puppet-agent/#{ENV['SHA']}/artifacts/#{ENV['SHA']}.yaml")
 end
 
 # make sure install is sane, beaker has already added puppet and ruby
