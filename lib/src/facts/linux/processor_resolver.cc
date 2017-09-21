@@ -16,26 +16,24 @@ namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace linux {
 
-    processor_resolver::data processor_resolver::collect_data(collection& facts)
+    void processor_resolver::add_cpu_data(data& data, std::string const& root)
     {
-        auto result = posix::processor_resolver::collect_data(facts);
-
         unordered_set<string> cpus;
-        lth_file::each_subdirectory("/sys/devices/system/cpu", [&](string const& cpu_directory) {
-            ++result.logical_count;
+        lth_file::each_subdirectory(root + "/sys/devices/system/cpu", [&](string const& cpu_directory) {
+            ++data.logical_count;
             string id = lth_file::read((path(cpu_directory) / "/topology/physical_package_id").string());
             boost::trim(id);
             if (id.empty() || cpus.emplace(move(id)).second) {
                 // Haven't seen this processor before
-                ++result.physical_count;
+                ++data.physical_count;
             }
             return true;
         }, "^cpu\\d+$");
 
         // To determine model information, parse /proc/cpuinfo
-        bool have_counts = result.logical_count > 0;
+        bool have_counts = data.logical_count > 0;
         string id;
-        lth_file::each_line("/proc/cpuinfo", [&](string& line) {
+        lth_file::each_line(root + "/proc/cpuinfo", [&](string& line) {
             // Split the line on colon
             auto pos = line.find(":");
             if (pos == string::npos) {
@@ -50,28 +48,33 @@ namespace facter { namespace facts { namespace linux {
                 // Start of a logical processor
                 id = move(value);
                 if (!have_counts) {
-                    ++result.logical_count;
+                    ++data.logical_count;
                 }
             } else if (!id.empty() && key == "model name") {
                 // Add the model for this logical processor
-                result.models.emplace_back(move(value));
+                data.models.emplace_back(move(value));
             } else if (!have_counts && key == "physical id" && cpus.emplace(move(value)).second) {
                 // Couldn't determine physical count from sysfs, but CPU topology is present, so use it
-                ++result.physical_count;
+                ++data.physical_count;
             }
             return true;
         });
 
         // Read in the max speed from the first cpu
         // The speed is in kHz
-        string speed = lth_file::read("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq");
+        string speed = lth_file::read(root + "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq");
         if (!speed.empty()) {
             try {
-                result.speed = stoi(speed) * static_cast<int64_t>(1000);
+                data.speed = stoi(speed) * static_cast<int64_t>(1000);
             } catch (invalid_argument&) {
             }
         }
+    }
 
+    processor_resolver::data processor_resolver::collect_data(collection& facts)
+    {
+        auto result = posix::processor_resolver::collect_data(facts);
+        add_cpu_data(result);
         return result;
     }
 
