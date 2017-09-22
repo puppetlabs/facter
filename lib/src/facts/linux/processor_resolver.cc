@@ -27,14 +27,14 @@ namespace facter { namespace facts { namespace linux {
         boost::trim(key);
         value = line.substr(pos + 1);
         boost::trim(value);
-      
+
         return true;
     }
 
     processor_resolver::ArchitectureType processor_resolver::architecture_type(data const& data, std::string const& root)
     {
         if (!data.isa.empty()) {
-            return (boost::starts_with(data.isa, "ppc64")) ? POWER : GENERIC;
+            return (boost::starts_with(data.isa, "ppc64")) ? ArchitectureType::POWER : ArchitectureType::X86;
         }
 
         // use /proc/cpuinfo
@@ -44,7 +44,7 @@ namespace facter { namespace facts { namespace linux {
             // if we already know that we're on a Power machine, we can just skip
             // the remaining lines
             if (seen_all) {
-                return true;
+                return false;
             }
 
             string key, value;
@@ -56,15 +56,15 @@ namespace facter { namespace facts { namespace linux {
                 to_be_seen = unordered_set<string>{{"cpu", "clock", "revision"}};
             } else if (find(to_be_seen.begin(), to_be_seen.end(), key) != to_be_seen.end()) {
                 to_be_seen.erase(key);
-		seen_all = to_be_seen.empty();
+                seen_all = to_be_seen.empty();
             }
             return true;
         });
 
-        return seen_all ? POWER : GENERIC;
+        return seen_all ? ArchitectureType::POWER : ArchitectureType::X86;
     }
 
-    void processor_resolver::add_generic_cpu_data(data& data, bool have_counts, std::string const& root)
+    void processor_resolver::add_x86_cpu_data(data& data, bool have_counts, std::string const& root)
     {
         unordered_set<string> cpus;
         string id;
@@ -114,12 +114,11 @@ namespace facter { namespace facts { namespace linux {
                 // Parse out the processor speed (in MHz)
                 string speed;
                 if (lth_util::re_search(value, boost::regex("(\\d+).*MHz"), &speed)) {
-                    data.speed = stoi(speed);
+                    data.speed = stoi(speed) * static_cast<int64_t>(1000);
                 }
             }
             return true;
         });
-
     }
 
     void processor_resolver::add_cpu_data(data& data, std::string const& root)
@@ -137,13 +136,13 @@ namespace facter { namespace facts { namespace linux {
         }, "^cpu\\d+$");
 
         bool have_counts = data.logical_count > 0;
-        
-        if (architecture_type(data, root) == GENERIC) {
-            add_generic_cpu_data(data, have_counts, root);
+
+        if (architecture_type(data, root) == ArchitectureType::X86) {
+            add_x86_cpu_data(data, have_counts, root);
         } else {
-            add_power_cpu_data(data, have_counts, root); 
+            add_power_cpu_data(data, have_counts, root);
         }
-       
+
         if (data.speed != 0) {
             return;
         }

@@ -14,7 +14,10 @@ namespace facter { namespace facts { namespace linux {
     struct processor_resolver : posix::processor_resolver
     {
      protected:
-        enum ArchitectureType {POWER, GENERIC};
+        /**
+         * The architecture type of the linux machine.
+         */ 
+        enum class ArchitectureType {POWER, X86};
 
 	/**
 	 * The check consists of the following.
@@ -28,8 +31,9 @@ namespace facter { namespace facts { namespace linux {
          *
          * @param data The currently collected data
          * @param root Path to the root directory of the system
+         * @return Returns the architecture type of the machine
 	 */ 
-	ArchitectureType architecture_type(data const& data, std::string const& root);
+        ArchitectureType architecture_type(data const& data, std::string const& root);
 
        /**
         * Adds the cpu-specific data to the currently collected data.
@@ -46,8 +50,8 @@ namespace facter { namespace facts { namespace linux {
         virtual data collect_data(collection& facts) override;
 
      private:
-        void add_generic_cpu_data(data& data, bool have_counts, std::string const& root);
-        void add_power_cpu_data(data& data, bool have_counts, std::string const& root);
+        void add_x86_cpu_data(data& data, bool have_counts, std::string const& root = "");
+        void add_power_cpu_data(data& data, bool have_counts, std::string const& root = "");
     };
 
 }}}  // namespace facter::facts::linux
