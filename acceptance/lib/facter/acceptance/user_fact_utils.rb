@@ -117,6 +117,13 @@ EOM
   end
         EOM
       end
+
+      # Returns a boolean indicating whether or not the host
+      # is a power linux machine
+      def power_linux?(host)
+        variant, _, arch, __ = host['platform'].to_array
+        variant =~ /el|sles|ubuntu/ && arch =~ /ppc64/
+      end
     end
   end
 end
