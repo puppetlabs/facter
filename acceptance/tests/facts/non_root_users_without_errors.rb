@@ -25,7 +25,13 @@ test_name "C59196: running facter as a non-root user should not produce permissi
 
     step "Agent #{agent}: run facter as #{non_root_user} and get no errors" do
       on(agent, %Q[su #{non_root_user} -c "'#{facter_path}'"]) do |facter_results|
-        assert_empty(facter_results.stderr.chomp, "Expected no errors from facter when run as user #{non_root_user}")
+        # NOTE: stderr should be empty here. The other case for power linux machines is
+        # necessary until FACT-1765 is resolved.
+        if power_linux?(agent)
+          assert_match(/dmidecode not found at configured location/, facter_results.stderr.chomp, 'Facter should have written a warning regarding a missing dmidecode component')
+        else
+          assert_empty(facter_results.stderr.chomp, 'Facter should not have written to stderr')
+        end
       end
     end
   end
