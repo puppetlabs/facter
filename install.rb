@@ -138,14 +138,11 @@ def prepare_installation
     InstallOptions.ri  = false
   end
 
-
-  if $haveman
-    InstallOptions.man = true
-    if is_windows?
-      InstallOptions.man  = false
-    end
-  else
+  # defaut man page creattion to false on windows, true otherwise
+  if is_windows?
     InstallOptions.man = false
+  else
+    InstallOptions.man = true
   end
 
   ARGV.options do |opts|
@@ -157,7 +154,7 @@ def prepare_installation
     opts.on('--[no-]ri', 'Prevents the creation of RI output.', 'Default off on mswin32.') do |onri|
       InstallOptions.ri = onri
     end
-    opts.on('--[no-]man', 'Presents the creation of man pages.', 'Default on.') do |onman|
+    opts.on('--[no-]man', 'Prevents the creation of man pages.', 'Default on, off for mswin32.') do |onman|
     InstallOptions.man = onman
     end
     opts.on('--destdir[=OPTIONAL]', 'Installation prefix for all targets', 'Default essentially /') do |destdir|
