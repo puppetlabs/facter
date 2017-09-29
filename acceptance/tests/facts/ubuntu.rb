@@ -83,7 +83,7 @@ test_name "C15288: Facts should resolve as expected on Ubuntu" do
           'processors.count'         => /[1-9]/,
           'processors.physicalcount' => /[1-9]/,
           'processors.isa'           => os_name == 'lucid' ? 'unknown' : os_hardware,
-          'processors.models'        => os_arch == 'ppc64le' ? '' : /"Intel\(R\).*"/
+          'processors.models'        => os_arch == 'ppc64le' ? 'POWER8' : /"Intel\(R\).*"/
       }
 
       expected_processors.each do |fact, value|

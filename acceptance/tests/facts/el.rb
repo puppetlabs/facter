@@ -57,7 +57,7 @@ test_name "Facts should resolve as expected on EL" do
     elsif agent['platform'] =~ /ppc64le/
       os_arch                 = 'ppc64le'
       os_hardware             = 'ppc64le'
-      processor_model_pattern = '' # Power8 does not populate a model value in /proc/cpuinfo
+      processor_model_pattern = 'POWER8'
     else
       os_arch                 = 'i386'
       os_hardware             = 'i686'
