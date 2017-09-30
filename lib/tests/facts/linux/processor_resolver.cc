@@ -109,7 +109,8 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                     // physical count
                     make_tuple("Model B", "1", "0", 15),
                     make_tuple("Model C", "2", "1", 20),
-                    make_tuple("Model D", "3", "2", 35), 
+                    // ensure that some arbitrary string is also recognized as a valid physical cpu
+                    make_tuple("Model D", "3", "some physical id", 35), 
                     // ensure that empty CPU ids are recognized as a valid physical cpu
                     make_tuple("Model E", "4", "", 35) 
                 });
@@ -133,7 +134,6 @@ SCENARIO("resolving processor-specific facts for linux machines") {
         WHEN("/sys/devices/system/cpu contains cpu information and /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq does not exist") {
             THEN("the processor facts are correctly resolved, but the speed is not calculated") {
                 fixture.reset();
-    
                 // here, speed is in KHz
                 vector<cpu_param> cpu_params({
                     make_tuple("Model A", "0", "0", boost::optional<int64_t>()),
@@ -141,10 +141,12 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                     // physical count
                     make_tuple("Model B", "1", "0", 15),
                     make_tuple("Model C", "2", "1", 20),
-                    make_tuple("Model D", "3", "2", 35), 
+                    // ensure that some arbitrary string is also recognized as a valid physical cpu
+                    make_tuple("Model D", "3", "some physical id", 35), 
                     // ensure that empty CPU ids are recognized as a valid physical cpu
                     make_tuple("Model E", "4", "", 35) 
                 });
+
                 setup_linux_processor_fixture(fixture, cpu_params);
                 fixture.write_cpuinfo();
                 auto result = resolver.collect_cpu_data(root_dir);
@@ -213,11 +215,16 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                     // physical count
                     make_tuple("Model B", "1", "0", 15),
                     make_tuple("Model C", "2", "1", 20),
-                    make_tuple("Model D", "3", "2", 35), 
+                    // ensure that some arbitrary string is also recognized as a valid physical cpu
+                    make_tuple("Model D", "3", "some physical id", 35), 
                     // ensure that empty CPU ids are recognized as a valid physical cpu
-                    make_tuple("Model E", "4", "", 35) 
+                    make_tuple("Model E", "4", "", 35),
+                    // ensure that negative ids are not included in the physical count
+                    // this entry simulates an invalid power cpu
+                    make_tuple("Invalid CPU", "5", "-1", 35),
                 });
-                setup_linux_processor_fixture(fixture, cpu_params);
+                vector<int> ids = setup_linux_processor_fixture(fixture, cpu_params);
+                fixture.get_cpu(ids.back()).erase_all_info();
                 fixture.write_cpuinfo();
                 auto result = resolver.collect_cpu_data(root_dir);
 
@@ -231,6 +238,35 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                 }
 
                 REQUIRE(result.speed == 15000);
+            }
+        }
+
+        WHEN("/sys/devices/system/cpu contains cpu information but cpu0 is invalid") {
+            THEN("the processor facts are correctly resolved, but the speed is not calculated") {
+                fixture.reset(architecture_type::POWER);
+    
+                // here, speed is in KHz
+                vector<cpu_param> cpu_params({
+                    make_tuple("Model A", "0", "-1", 15),
+                    make_tuple("Model B", "0", "-1", -1)
+                });
+                vector<int> ids = setup_linux_processor_fixture(fixture, cpu_params);
+                fixture.get_cpu(ids.front()).erase_all_info();
+                fixture.write_cpuinfo();
+
+                auto result = resolver.collect_cpu_data(root_dir);
+
+                REQUIRE(result.logical_count == 1);
+                // /proc/cpuinfo does not have any "physical_id" entries for power architectures
+                REQUIRE(result.physical_count == 0);
+
+                array<string, 1> EXPECTED_MODELS{{"Model B"}};
+                REQUIRE(result.models.size() == EXPECTED_MODELS.size());
+                for (size_t i = 0; i < result.models.size(); ++i) {
+                  REQUIRE(result.models[i] == EXPECTED_MODELS[i]);
+                }
+
+                REQUIRE(result.speed == 0);
             }
         }
     

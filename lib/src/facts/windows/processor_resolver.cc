@@ -33,7 +33,7 @@ namespace facter { namespace facts { namespace windows {
             models.emplace_back(wmi::get(procobj, wmi::name));
             if (!isa.empty()) {
                 continue;
-            } 
+            }
 
             // Query for architecture and transform numerical ID into a string based on
             // https://msdn.microsoft.com/en-us/library/aa394373%28v=vs.85%29.aspx.
