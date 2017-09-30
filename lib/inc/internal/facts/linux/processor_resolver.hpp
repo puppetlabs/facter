@@ -50,6 +50,7 @@ namespace facter { namespace facts { namespace linux {
         virtual data collect_data(collection& facts) override;
 
      private:
+        void maybe_add_speed(data& data, std::string const& speed);
         void add_x86_cpu_data(data& data, bool have_counts, std::string const& root = "");
         void add_power_cpu_data(data& data, bool have_counts, std::string const& root = "");
     };

@@ -3,6 +3,7 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/scalar_value.hpp>
+#include <facter/util/string.hpp>
 #include <leatherman/file_util/file.hpp>
 #include <leatherman/file_util/directory.hpp>
 #include <leatherman/util/regex.hpp>
@@ -12,6 +13,7 @@
 
 using namespace std;
 using namespace boost::filesystem;
+using facter::util::maybe_stoi;
 
 namespace lth_file = leatherman::file_util;
 namespace lth_util = leatherman::util;
@@ -64,6 +66,13 @@ namespace facter { namespace facts { namespace linux {
         return seen_all ? ArchitectureType::POWER : ArchitectureType::X86;
     }
 
+    void processor_resolver::maybe_add_speed(data& data, std::string const& speed) {
+        auto maybe_speed = maybe_stoi(speed);
+        if (maybe_speed && maybe_speed.get() > 0) {
+            data.speed = maybe_speed.get() * static_cast<int64_t>(1000);
+        }
+    }
+
     void processor_resolver::add_x86_cpu_data(data& data, bool have_counts, std::string const& root)
     {
         unordered_set<string> cpus;
@@ -114,7 +123,7 @@ namespace facter { namespace facts { namespace linux {
                 // Parse out the processor speed (in MHz)
                 string speed;
                 if (lth_util::re_search(value, boost::regex("(\\d+).*MHz"), &speed)) {
-                    data.speed = stoi(speed) * static_cast<int64_t>(1000);
+                    maybe_add_speed(data, speed);
                 }
             }
             return true;
@@ -150,12 +159,7 @@ namespace facter { namespace facts { namespace linux {
         // Read in the max speed from the first cpu
         // The speed is in kHz
         string speed = lth_file::read(root + "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq");
-        if (!speed.empty()) {
-            try {
-                data.speed = stoi(speed) * static_cast<int64_t>(1000);
-            } catch (invalid_argument&) {
-            }
-        }
+        maybe_add_speed(data, speed);
     }
 
     processor_resolver::data processor_resolver::collect_data(collection& facts)

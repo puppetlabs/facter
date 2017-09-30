@@ -32,6 +32,7 @@ using namespace YAML;
 using namespace boost::filesystem;
 using namespace leatherman::util;
 using namespace leatherman::file_util;
+using facter::util::maybe_stoi;
 
 namespace facter { namespace facts {
 
@@ -479,29 +480,33 @@ namespace facter { namespace facts {
         }
 
         auto array = dynamic_cast<array_value const*>(value);
-        if (array) {
-            int index;
-            try {
-                index = stoi(name);
-            } catch (logic_error&) {
-                LOG_DEBUG("cannot lookup an array element with \"{1}\": expected an integral value.", name);
-                return nullptr;
-            }
-            if (index < 0) {
-                LOG_DEBUG("cannot lookup an array element with \"{1}\": expected a non-negative value.", name);
-                return nullptr;
-            }
-            if (array->empty()) {
-                LOG_DEBUG("cannot lookup an array element with \"{1}\": the array is empty.", name);
-                return nullptr;
-            }
-            if (static_cast<size_t>(index) >= array->size()) {
-                LOG_DEBUG("cannot lookup an array element with \"{1}\": expected an integral value between 0 and {2} (inclusive).", name, array->size() - 1);
-                return nullptr;
-            }
-            return (*array)[index];
+        if (!array) {
+            return nullptr;
         }
-        return nullptr;
+
+        auto maybe_index = maybe_stoi(name);;
+        if (!maybe_index) {
+            LOG_DEBUG("cannot lookup an array element with \"{1}\": expected an integral value.", name);
+            return nullptr;
+        }
+
+        int index = maybe_index.get();
+        if (index < 0) {
+            LOG_DEBUG("cannot lookup an array element with \"{1}\": expected a non-negative value.", name);
+            return nullptr;
+        }
+
+        if (array->empty()) {
+            LOG_DEBUG("cannot lookup an array element with \"{1}\": the array is empty.", name);
+            return nullptr;
+        }
+
+        if (static_cast<size_t>(index) >= array->size()) {
+            LOG_DEBUG("cannot lookup an array element with \"{1}\": expected an integral value between 0 and {2} (inclusive).", name, array->size() - 1);
+            return nullptr;
+        }
+
+        return (*array)[index];
     }
 
     void collection::write_hash(ostream& stream, set<string> const& queries, bool show_legacy, bool strict_errors)

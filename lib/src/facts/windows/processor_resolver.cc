@@ -1,3 +1,4 @@
+#include <facter/util/string.hpp>
 #include <internal/facts/windows/processor_resolver.hpp>
 #include <leatherman/windows/wmi.hpp>
 #include <leatherman/util/regex.hpp>
@@ -6,6 +7,7 @@
 using namespace std;
 using namespace leatherman::util;
 using namespace leatherman::windows;
+using facter::util::maybe_stoi;
 
 namespace facter { namespace facts { namespace windows {
 
@@ -29,39 +31,44 @@ namespace facter { namespace facts { namespace windows {
 
         for (auto const& procobj : procs) {
             models.emplace_back(wmi::get(procobj, wmi::name));
+            if (!isa.empty()) {
+                continue;
+            } 
 
-            if (isa.empty()) {
-                // Query for architecture and transform numerical ID into a string based on
-                // https://msdn.microsoft.com/en-us/library/aa394373%28v=vs.85%29.aspx.
-                // Use the architecture of the first result.
-                int architecture = stoi(wmi::get(procobj, wmi::architecture));
+            // Query for architecture and transform numerical ID into a string based on
+            // https://msdn.microsoft.com/en-us/library/aa394373%28v=vs.85%29.aspx.
+            // Use the architecture of the first result.
+            auto maybe_architecture = maybe_stoi(wmi::get(procobj, wmi::architecture));
+            if (!maybe_architecture) {
+                continue;
+            }
 
-                switch (architecture) {
-                    case 0:
-                        isa = "x86";
-                        break;
-                    case 1:
-                        isa = "MIPS";
-                        break;
-                    case 2:
-                        isa = "Alpha";
-                        break;
-                    case 3:
-                        isa = "PowerPC";
-                        break;
-                    case 5:
-                        isa = "ARM";
-                        break;
-                    case 6:
-                        isa = "Itanium-based systems";
-                        break;
-                    case 9:
-                        isa = "x64";
-                        break;
-                    default:
-                        LOG_DEBUG("Unable to determine processor type: unknown architecture");
-                        break;
-                }
+            int architecture = maybe_architecture.get();
+            switch (architecture) {
+                case 0:
+                    isa = "x86";
+                    break;
+                case 1:
+                    isa = "MIPS";
+                    break;
+                case 2:
+                    isa = "Alpha";
+                    break;
+                case 3:
+                    isa = "PowerPC";
+                    break;
+                case 5:
+                    isa = "ARM";
+                    break;
+                case 6:
+                    isa = "Itanium-based systems";
+                    break;
+                case 9:
+                    isa = "x64";
+                    break;
+                default:
+                    LOG_DEBUG("Unable to determine processor type: unknown architecture");
+                    break;
             }
         }
 
@@ -69,7 +76,10 @@ namespace facter { namespace facts { namespace windows {
         // the entire query to return empty if used.
         auto logicalprocs = _wmi.query(wmi::processor, {wmi::numberoflogicalprocessors});
         for (auto const& objs : logicalprocs) {
-            logical_count += stoi(wmi::get(objs, wmi::numberoflogicalprocessors));
+            auto maybe_logical_count = maybe_stoi(wmi::get(objs, wmi::numberoflogicalprocessors));
+            if (maybe_logical_count) {
+                logical_count += maybe_logical_count.get();
+            }
         }
 
         if (logical_count == 0) {

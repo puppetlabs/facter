@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../export.h"
+#include <boost/optional.hpp>
 #include <string>
 #include <vector>
 #include <functional>
@@ -59,5 +60,13 @@ namespace facter { namespace util {
      * @return Returns true if the string needs to be quoted or false if it may not need to be.
      */
     bool needs_quotation(std::string const& str);
+
+    /**
+     * Converts the given string to an integer, if it is a valid integer.
+     * @param str The string to convert.
+     * @return Returns the converted string if the string is a valid integer,
+     * otherwise it returns "nothing"
+     */
+    boost::optional<int> maybe_stoi(std::string const& str);
 
 }}  // namespace facter::util
