@@ -19,7 +19,8 @@ namespace lth_file = leatherman::file_util;
 namespace lth_util = leatherman::util;
 
 namespace facter { namespace facts { namespace linux {
-    static bool split_line(string const& line, string& key, string& value) {
+    static bool split_line(string const& line, string& key, string& value)
+    {
         // Split the line on colon
         auto pos = line.find(":");
         if (pos == string::npos) {
@@ -66,7 +67,8 @@ namespace facter { namespace facts { namespace linux {
         return seen_all ? ArchitectureType::POWER : ArchitectureType::X86;
     }
 
-    void processor_resolver::maybe_add_speed(data& data, std::string const& speed) {
+    void processor_resolver::maybe_add_speed(data& data, std::string const& speed)
+    {
         auto maybe_speed = maybe_stoi(speed);
         if (maybe_speed && maybe_speed.get() > 0) {
             data.speed = maybe_speed.get() * static_cast<int64_t>(1000);
