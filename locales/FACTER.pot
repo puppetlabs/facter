@@ -632,7 +632,7 @@ msgstr ""
 msgid "kenv lookup for {1}"
 msgstr ""
 
-#. warning
+#. info
 #: lib/src/facts/freebsd/dmi_resolver.cc
 msgid "kenv lookup for {1} failed: {2} ({3})"
 msgstr ""
