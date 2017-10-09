@@ -68,7 +68,7 @@ namespace facter { namespace facts { namespace posix {
         }
         // Get the hostname (+1 to ensure a null is returned on platforms where maximum truncation may occur)
         vector<char> name(size + 1);
-        if (gethostname(name.data(), size) != 0) {
+        if (gethostname(name.data(), size + 1) != 0) {
             LOG_WARNING("gethostname failed: {1} ({2}): hostname is unavailable.", strerror(errno), errno);
         } else {
             // Check for fully-qualified hostname
