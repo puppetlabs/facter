@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../posix/processor_resolver.hpp"
+#include <functional>
 
 namespace facter { namespace facts { namespace linux {
 
@@ -50,8 +51,10 @@ namespace facter { namespace facts { namespace linux {
         virtual data collect_data(collection& facts) override;
 
      private:
-        void add_x86_cpu_data(data& data, bool have_counts, std::string const& root = "");
-        void add_power_cpu_data(data& data, bool have_counts, std::string const& root = "");
+        void maybe_add_speed(data& data, std::string const& speed);
+        bool compute_cpu_counts(data& data, std::string const& root, std::function<bool(std::string const&)> is_valid_id);
+        bool add_x86_cpu_data(data& data, std::string const& root = "");
+        bool add_power_cpu_data(data& data, std::string const& root = "");
     };
 
 }}}  // namespace facter::facts::linux

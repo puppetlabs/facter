@@ -20,6 +20,7 @@ struct linux_cpu_fixture
     virtual void set_speed(int64_t speed);
     void set_info(std::string const& key, std::string const& value);
     void erase_info(std::string const& key);
+    void erase_all_info();
     std::string get_info();
 
 protected:
