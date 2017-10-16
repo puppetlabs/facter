@@ -1,3 +1,4 @@
+#include <facter/util/string.hpp>
 #include <internal/facts/aix/processor_resolver.hpp>
 #include <internal/util/aix/odm.hpp>
 #include <leatherman/logging/logging.hpp>
@@ -10,6 +11,7 @@
 
 using namespace std;
 using namespace facter::util::aix;
+using facter::util::maybe_stoi;
 
 struct physical_processor
 {
@@ -70,7 +72,10 @@ namespace facter { namespace facts { namespace aix {
                 } else if (cu_at.attribute == string("type")) {
                     proc.type = cu_at.value;
                 } else if (cu_at.attribute == string("smt_threads")) {
-                    proc.smt_threads = stoi(cu_at.value);
+                    auto smt_threads = maybe_stoi(cu_at.value);
+                    if (smt_threads) {
+                        proc.smt_threads = smt_threads.get();
+                    }
                 } else if (cu_at.attribute == string("smt_enabled")) {
                     proc.smt_enabled = (cu_at.value == string("true"));
                 } else {

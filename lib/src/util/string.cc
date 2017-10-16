@@ -160,4 +160,11 @@ namespace facter { namespace util {
         return true;
     }
 
+    boost::optional<int> maybe_stoi(string const& str) {
+        try {
+            return stoi(str);
+        } catch (invalid_argument&) {
+            return boost::optional<int>();
+        }
+    }
 }}  // namespace facter::util
