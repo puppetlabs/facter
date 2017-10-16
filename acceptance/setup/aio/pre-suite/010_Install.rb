@@ -42,8 +42,8 @@ step "Enable FIPS on agent hosts..." do
  # There might be a better way to do some things below but till then...
  # The TODO's need to be followed up
 
-  agents.each do |agent|
-    next if agent == master # Only on agents.
+ # agents.each do |agent|
+ #   next if agent == master # Only on agents.
 
     # Do this only on rhel7, rhel6, f24, f25
     use_system_openssl = ENV['USE_SYSTEM_OPENSSL']
@@ -106,5 +106,5 @@ step "Enable FIPS on agent hosts..." do
       on agent, puppet('config set digest_algorithm sha256')
       
     end
-  end
+  # end
 end
