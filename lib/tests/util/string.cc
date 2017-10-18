@@ -279,13 +279,13 @@ SCENARIO("converting strings to integers") {
     GIVEN("a string that is a valid integer") {
         THEN("it should be converted to its integer representation") {
             auto oint = maybe_stoi("12");
-            REQUIRE(oint);
-            REQUIRE(oint.get() == 12);
+            REQUIRE(oint.is_initialized());
+            REQUIRE(oint.get_value_or(0) == 12);
         }
     }
     GIVEN("a string that is not a valid integer") {
         THEN("nothing should be returned") {
-            REQUIRE_FALSE(maybe_stoi("foo"));
+            REQUIRE_FALSE(maybe_stoi("foo").is_initialized());
         }
     }
 }
