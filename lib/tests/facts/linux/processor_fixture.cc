@@ -95,6 +95,11 @@ void linux_cpu_fixture::erase_info(std::string const& key)
     _info.erase(key);
 }
 
+void linux_cpu_fixture::erase_all_info()
+{
+    _info = map<string, string, key_cmp>(default_cpu_info_key_cmp);
+}
+
 std::string linux_cpu_fixture::get_info()
 {
     ostringstream buf;
