@@ -503,16 +503,16 @@ void validate_attributes(YAML::Node const& node)
     for (auto const& attribute : node) {
         auto attribute_name = attribute.first.as<string>();
         CAPTURE(attribute_name);
-        REQUIRE_THAT(attribute_name, AnyOf(
-            Catch::Equals("pattern"),
-            Catch::Equals("type")).add(
-            Catch::Equals("hidden")).add(
-            Catch::Equals("description")).add(
-            Catch::Equals("resolution")).add(
-            Catch::Equals("caveats")).add(
-            Catch::Equals("elements")).add(
-            Catch::Equals("validate")).add(
-            Catch::Equals("blockgroup"))
+        REQUIRE_THAT(attribute_name,
+            Catch::Equals("pattern") ||
+            Catch::Equals("type") ||
+            Catch::Equals("hidden") ||
+            Catch::Equals("description") ||
+            Catch::Equals("resolution") ||
+            Catch::Equals("caveats") ||
+            Catch::Equals("elements") ||
+            Catch::Equals("validate") ||
+            Catch::Equals("blockgroup")
         );
     }
 
@@ -529,16 +529,16 @@ void validate_attributes(YAML::Node const& node)
     REQUIRE(type_attribute);
     REQUIRE(type_attribute.IsScalar());
     auto type = type_attribute.as<string>();
-    REQUIRE_THAT(type, AnyOf(
-        Catch::Equals("integer"),
-        Catch::Equals("double")).add(
-        Catch::Equals("string")).add(
-        Catch::Equals("boolean")).add(
-        Catch::Equals("array")).add(
-        Catch::Equals("map")).add(
-        Catch::Equals("ip")).add(
-        Catch::Equals("ip6")).add(
-        Catch::Equals("mac"))
+    REQUIRE_THAT(type,
+        Catch::Equals("integer") ||
+        Catch::Equals("double") ||
+        Catch::Equals("string") ||
+        Catch::Equals("boolean") ||
+        Catch::Equals("array") ||
+        Catch::Equals("map") ||
+        Catch::Equals("ip") ||
+        Catch::Equals("ip6") ||
+        Catch::Equals("mac")
     );
 
     // Check map types
