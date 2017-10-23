@@ -174,6 +174,20 @@ extern "C" {
 
 namespace facter { namespace ruby {
 
+    static string canonicalize(string p)
+    {
+        // Get the canonical/absolute directory name
+        // If it can be resolved, use canonical to avoid duplicate search paths.
+        // Fall back to absolute because canonical on Windows won't recognize paths as valid if
+        // they resolve to symlinks to non-NTFS volumes.
+        boost::system::error_code ec;
+        auto directory = canonical(p, ec);
+        if (ec) {
+            return absolute(p).string();
+        }
+        return directory.string();
+    }
+
     map<VALUE, module*> module::_instances;
 
     module::module(collection& facts, vector<string> const& paths, bool logging_hooks) :
@@ -303,13 +317,7 @@ namespace facter { namespace ruby {
     {
         for (auto dir : paths) {
             _additional_search_paths.emplace_back(dir);
-
-            // Get the absolute directory name
-            // Absolute is used over canonical because canonical on Windows won't recognize paths as valid if
-            // they resolve to symlinks to non-NTFS volumes.
-            path directory = absolute(_additional_search_paths.back());
-
-            _search_paths.push_back(directory.string());
+            _search_paths.emplace_back(canonicalize(_additional_search_paths.back()));
         }
     }
 
@@ -760,12 +768,9 @@ namespace facter { namespace ruby {
                 if (!ruby.is_string(argv[i])) {
                     continue;
                 }
+
                 instance->_additional_search_paths.emplace_back(ruby.to_string(argv[i]));
-
-                // Get the absolute directory name
-                path directory = absolute(instance->_additional_search_paths.back());
-
-                instance->_search_paths.push_back(directory.string());
+                instance->_search_paths.emplace_back(canonicalize(instance->_additional_search_paths.back()));
             }
             return ruby.nil_value();
         });
@@ -953,20 +958,19 @@ namespace facter { namespace ruby {
 
         // Look for "facter" subdirectories on the load path
         for (auto const& directory : ruby.get_load_path()) {
-            // Get the absolute directory name
             boost::system::error_code ec;
-            path dir = absolute(directory);
+            // Use forward-slash to keep this consistent with Ruby conventions.
+            auto dir = canonicalize(directory) + "/facter";
 
             // Ignore facter itself if it's on the load path
-            if (is_regular_file(dir / "facter.rb", ec)) {
+            if (is_regular_file(dir, ec)) {
                 continue;
             }
 
-            dir = dir / "facter";
             if (!is_directory(dir, ec)) {
                 continue;
             }
-            _search_paths.push_back(dir.string());
+            _search_paths.push_back(dir);
         }
 
         // Append the FACTERLIB paths
@@ -980,11 +984,9 @@ namespace facter { namespace ruby {
         // Insert the given paths last
         _search_paths.insert(_search_paths.end(), paths.begin(), paths.end());
 
-        // Do a absolute transform
+        // Do a canonical/absolute transform
         transform(_search_paths.begin(), _search_paths.end(), _search_paths.begin(), [](string const& directory) -> string {
-            // Get the absolute directory name
-            path dir = absolute(directory);
-            return dir.string();
+            return canonicalize(directory);
         });
 
         // Remove anything that is empty using the erase-remove idiom.
