@@ -23,6 +23,12 @@ test_name "Facts should resolve as expected on EL" do
       when /(el|centos)-6/
         os_version     = '6'
         kernel_version = '2.6'
+      when /el-7-aarch64/
+        # We're using CentOS 7.4 for our aarch64 builds and testing
+        # because older versions have significant (kernel) differences
+        # with RHEL 7 aarch64:
+        os_version = '7'
+        kernel_version = '4.11'
       else
         os_version = '7'
         agent['template'] =~ /oracle/ ? kernel_version = '3.8' : kernel_version = '3.1'
@@ -58,6 +64,10 @@ test_name "Facts should resolve as expected on EL" do
       os_arch                 = 'ppc64le'
       os_hardware             = 'ppc64le'
       processor_model_pattern = 'POWER8'
+    elsif agent['platform'] =~ /aarch64/
+      os_arch                 = 'aarch64'
+      os_hardware             = 'aarch64'
+      processor_model_pattern = '' # aarch64 does not populate a model value in /proc/cpuinfo
     else
       os_arch                 = 'i386'
       os_hardware             = 'i686'
