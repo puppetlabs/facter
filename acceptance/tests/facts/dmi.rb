@@ -24,13 +24,13 @@ test_name "C96148: verify dmi facts" do
                              'dmi.product.uuid'      => /[-0-9A-Fa-f]+/,
                             })
     end
-    unless agent['platform'] =~ /windows|cisco/
+    unless agent['platform'] =~ /windows|cisco|aarch64/
       expected_facts.merge!({'dmi.chassis.asset_tag' => /\w+/})
     end
-    unless agent['platform'] =~ /cisco/
+    unless agent['platform'] =~ /cisco|aarch64/
       expected_facts.merge!({'dmi.product.serial_number' => /\w+/})
     end
-    unless agent['platform'] =~ /windows|cisco|solaris/
+    unless agent['platform'] =~ /windows|cisco|solaris|aarch64/
       expected_facts.merge!({'dmi.board.asset_tag'     => /\w+|/,
                              'dmi.board.manufacturer'  => /\w+/,
                              'dmi.board.product'       => /\w+/,
