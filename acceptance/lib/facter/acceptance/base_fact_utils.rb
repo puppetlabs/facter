@@ -208,6 +208,10 @@ module Facter
           os_arch                 = 's390x'
           os_hardware             = 's390x'
           processor_model_pattern = // # s390x does not populate a model value in /proc/cpuinfo
+        elsif agent['platform'] =~ /aarch64/
+          os_arch                 = 'aarch64'
+          os_hardware             = 'aarch64'
+          processor_model_pattern = // # aarch64 does not populate a model value in /proc/cpuinfo
         else
           os_arch                 = 'i386'
           os_hardware             = 'i686'

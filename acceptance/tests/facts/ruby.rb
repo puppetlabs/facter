@@ -32,9 +32,9 @@ test_name "C100305: The Ruby fact should resolve as expected in AIO" do
           ruby_platform = /powerpc-linux/
         else
           if agent['ruby_arch']
-            ruby_platform = agent['ruby_arch'] == 'x64' ? /(x86_64|powerpc64le)-linux/ : /(i486|i686|s390x)-linux/
+            ruby_platform = agent['ruby_arch'] == 'x64' ? /(x86_64|powerpc64le|aarch64)-linux/ : /(i486|i686|s390x)-linux/
           else
-            ruby_platform = agent['platform'] =~ /64/ ? /(x86_64|powerpc64le)-linux/ : /(i486|i686|s390x)-linux/
+            ruby_platform = agent['platform'] =~ /64/ ? /(x86_64|powerpc64le|aarch64)-linux/ : /(i486|i686|s390x)-linux/
           end
       end
 
