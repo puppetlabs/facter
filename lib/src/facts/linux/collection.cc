@@ -14,6 +14,7 @@
 #include <internal/facts/linux/memory_resolver.hpp>
 #include <internal/facts/glib/load_average_resolver.hpp>
 #include <internal/facts/posix/xen_resolver.hpp>
+#include <internal/facts/linux/fips_resolver.hpp>
 
 
 using namespace std;
@@ -37,6 +38,7 @@ namespace facter { namespace facts {
         add(make_shared<linux::memory_resolver>());
         add(make_shared<glib::load_average_resolver>());
         add(make_shared<posix::xen_resolver>());
+        add(make_shared<linux::fips_resolver>());
     }
 
 }}  // namespace facter::facts
