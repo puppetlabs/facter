@@ -4,6 +4,8 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/string.hpp>
 #include <leatherman/util/regex.hpp>
+#include <facter/facts/array_value.hpp>
+#include <facter/facts/map_value.hpp>
 #include "../../../fixtures.hpp"
 #include "../../../log_capture.hpp"
 
@@ -41,6 +43,64 @@ SCENARIO("resolving external powershell facts") {
                 REQUIRE(facts.get<string_value>("ps1_fact4"));
                 REQUIRE_FALSE(facts.get<string_value>("PS1_fact4"));
                 REQUIRE(facts.get<string_value>("ps1_fact4")->value() == "value2");
+            }
+        }
+        WHEN("the output is json") {
+            THEN("it populates facts from the json") {
+                resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/json.ps1", facts);
+                REQUIRE(!facts.empty());
+
+                REQUIRE_FALSE(facts.get<string_value>("PS1_JSON_FACT1"));
+                REQUIRE(facts.get<string_value>("ps1_json_fact1"));
+                REQUIRE(facts.get<string_value>("ps1_json_fact1")->value() == "value1");
+
+                REQUIRE(facts.get<integer_value>("ps1_json_fact2"));
+                REQUIRE(facts.get<integer_value>("ps1_json_fact2")->value() == 2);
+
+                REQUIRE(facts.get<boolean_value>("ps1_json_fact3"));
+                REQUIRE(facts.get<boolean_value>("ps1_json_fact3")->value());
+
+                auto array = facts.get<array_value>("ps1_json_fact4");
+                REQUIRE(array);
+                REQUIRE(array->size() == 2u);
+
+                REQUIRE_FALSE(facts.get<boolean_value>("ps1_json_fact5"));
+
+                auto map = facts.get<map_value>("ps1_json_fact6");
+                REQUIRE(map);
+                REQUIRE(map->size() == 2u);
+            }
+        }
+        WHEN("the output is yaml") {
+            THEN("it populates facts from the yaml") {
+                resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/yaml.ps1", facts);
+                REQUIRE(!facts.empty());
+
+                REQUIRE_FALSE(facts.get<integer_value>("PS1_YAML_FACT1"));
+                REQUIRE(facts.get<string_value>("ps1_yaml_fact1"));
+                REQUIRE(facts.get<string_value>("ps1_yaml_fact1")->value() == "yaml");
+
+                REQUIRE(facts.get<integer_value>("ps1_yaml_fact2"));
+                REQUIRE(facts.get<integer_value>("ps1_yaml_fact2")->value() == 2);
+
+                REQUIRE(facts.get<string_value>("ps1_yaml_fact3"));
+                REQUIRE(facts.get<string_value>("ps1_yaml_fact3")->value() == "one value\nbut\nmany lines\n");
+
+                auto array1 = facts.get<array_value>("ps1_yaml_fact4");
+                REQUIRE(array1);
+                REQUIRE(array1->size() == 2u);
+
+                auto array2 = facts.get<array_value>("ps1_yaml_fact5");
+                REQUIRE(array2);
+                REQUIRE(array2->size() == 3u);
+
+                auto map1 = facts.get<map_value>("ps1_yaml_fact6");
+                REQUIRE(map1);
+                REQUIRE(map1->size() == 3u);
+
+                auto map2 = facts.get<map_value>("ps1_yaml_fact7");
+                REQUIRE(map2);
+                REQUIRE(map2->size() == 1u);
             }
         }
         WHEN("messages are logged to stderr") {
