@@ -369,6 +369,14 @@ filesystems:
         Mac OSX: The usable file systems is limited to the file system of mounted devices.
     blockgroup: file system
 
+fips_enabled:
+    type: boolean
+    description: Return whether the platform is in FIPS mode
+    resolution: |
+        Linux: parse the contents of `/proc/sys/crypto/fips_enabled` which if non-zero indicates fips mode has been enabled.
+    caveats: |
+        Linux: Limited to linux redhat family only
+
 fqdn:
     type: string
     hidden: true
