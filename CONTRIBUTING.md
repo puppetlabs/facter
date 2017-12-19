@@ -7,6 +7,8 @@ get things working in your environment. There are a few guidelines that we
 need contributors to follow so that we can have a chance of keeping on
 top of things.
 
+foo
+
 ## Getting Started
 
 * Make sure you have a [Jira account](http://tickets.puppetlabs.com)
