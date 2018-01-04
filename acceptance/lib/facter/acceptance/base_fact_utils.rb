@@ -193,6 +193,9 @@ module Facter
             os_name = 'OracleLinux'
           when /scientific/
             os_name = 'Scientific'
+          when /amazon/
+            os_name = 'Amazon'
+            os_version = '2017'
           else
             os_name = 'RedHat'
         end
