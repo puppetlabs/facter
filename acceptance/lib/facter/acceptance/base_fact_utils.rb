@@ -187,6 +187,9 @@ module Facter
         end
         release_string = on(agent, 'cat /etc/*-release').stdout.downcase
         case release_string
+          when /amazon_linux/
+            os_name = 'Amazon'
+            os_version = '2'
           when /amazon/
             os_name = 'Amazon'
             os_version = '2017'
