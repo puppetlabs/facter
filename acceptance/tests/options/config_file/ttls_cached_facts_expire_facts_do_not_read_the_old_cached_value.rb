@@ -7,7 +7,7 @@ test_name "C100037: ttls configured cached valued that are expired are not retur
 
   # This fact must be resolvable on ALL platforms
   # Do NOT use the 'kernel' fact as it is used to configure the tests
-  cached_factname = 'uptime'
+  cached_factname = 'timezone'
 
   config = <<EOM
 facts : {

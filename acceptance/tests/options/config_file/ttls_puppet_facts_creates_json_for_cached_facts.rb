@@ -8,7 +8,7 @@ test_name "C100038: with ttls configured create cached facts when run from puppe
 
   # This fact must be resolvable on ALL platforms
   # Do NOT use the 'kernel' fact as it is used to configure the tests
-  cached_factname = 'uptime'
+  cached_factname = 'timezone'
   config = <<EOM
 facts : {
     ttls : [
