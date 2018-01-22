@@ -1024,6 +1024,13 @@ msgstr ""
 msgid "%02x:%02x:%02x:%02x:%02x:%02x"
 msgstr ""
 
+#: lib/src/facts/resolvers/networking_resolver.cc
+#, c-format
+msgid ""
+"%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:"
+"%02x:%02x:%02x:%02x:%02x"
+msgstr ""
+
 #. error
 #: lib/src/facts/resolvers/ruby_resolver.cc
 msgid "error while resolving ruby {1} fact: {2}"
