@@ -21,6 +21,17 @@ top of things.
 All new facts should also be included in `lib/schema/facter.yaml`. Without this
 facts won't pass acceptance tests.
 
+## Running repo version
+
+When you want to reproduce a certain problem on the source code from git, you can use this:
+
+````
+# if bundler is not already installed
+gem install bundler
+bundle install --path=.bundle/gems
+bundle exec facter
+````
+
 ## Making Changes
 
 * Create a topic branch from where you want to base your work.
