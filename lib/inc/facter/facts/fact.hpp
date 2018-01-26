@@ -659,6 +659,11 @@ namespace facter { namespace facts {
          * The structured fact for Solaris LDom facts.
          */
         constexpr static char const* ldom = "ldom";
+
+        /**
+         * The fips mode fact for RHEL/Linux* facts.
+         */
+        constexpr static char const* fips_enabled = "fips_enabled";
     };
 
 }}  // namespace facter::facts
