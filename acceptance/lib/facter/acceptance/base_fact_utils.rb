@@ -187,15 +187,16 @@ module Facter
         end
         release_string = on(agent, 'cat /etc/*-release').stdout.downcase
         case release_string
+          when /amazon/
+            os_name = 'Amazon'
+            # This parses: VERSION_ID="2017.09"
+            os_version = on(agent, 'grep VERSION_ID /etc/os-release | cut --delimiter=\" --fields=2 | cut --delimiter=. --fields=1').stdout.chomp
           when /centos/
             os_name = 'CentOS'
           when /oracle/
             os_name = 'OracleLinux'
           when /scientific/
             os_name = 'Scientific'
-          when /amazon/
-            os_name = 'Amazon'
-            os_version = '2017'
           else
             os_name = 'RedHat'
         end
