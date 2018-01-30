@@ -53,6 +53,10 @@ namespace facter { namespace facts { namespace windows {
             return vm::xen;
         }
 
+        if (manufacturer.find("Amazon EC2") != string::npos) {
+            return vm::kvm;
+        }
+
         return {};
     }
 
