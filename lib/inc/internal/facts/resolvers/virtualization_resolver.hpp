@@ -78,12 +78,11 @@ namespace facter { namespace facts { namespace resolvers {
         virtual bool is_virtual(std::string const& hypervisor);
 
         /**
-         * Gets the product name which is matched against a list of known
-         * hypervisors.
-         * @param product_name The product_name fact to match against.
-         * @return Returns the hypervisor product name if matched.
+         * Gets the name of the hypervisor based on other facts and a set of matching strings
+         * @param facts The fact collection that is resolving facts
+         * @return Returns the hypervisor name if matched.
          */
-        static std::string get_product_name_vm(std::string const& product_name);
+        static std::string get_fact_vm(collection& facts);
 
         /**
          * Collects the virtualization data.

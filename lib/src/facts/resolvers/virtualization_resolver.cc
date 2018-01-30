@@ -71,9 +71,10 @@ namespace facter { namespace facts { namespace resolvers {
         return hypervisors.count(hypervisor) == 0;
     }
 
-    string virtualization_resolver::get_product_name_vm(string const& product_name)
+    string virtualization_resolver::get_fact_vm(collection& facts)
     {
-        static vector<tuple<string, string>> vms = {
+        // First, attempt to match on the SMBIOS reported product name
+        static vector<tuple<string, string>> product_names = {
             make_tuple("VMware",            string(vm::vmware)),
             make_tuple("VirtualBox",        string(vm::virtualbox)),
             make_tuple("Parallels",         string(vm::parallels)),
@@ -85,11 +86,31 @@ namespace facter { namespace facts { namespace resolvers {
             make_tuple("Bochs",             string(vm::bochs)),
         };
 
-        for (auto const& vm : vms) {
-            if (product_name.find(get<0>(vm)) != string::npos) {
-                return get<1>(vm);
+        auto product_name = facts.get<string_value>(fact::product_name);
+
+        if (product_name) {
+            for (auto const& vm : product_names) {
+                if (product_name->value().find(get<0>(vm)) != string::npos) {
+                    return get<1>(vm);
+                }
             }
         }
+
+        // Next, try the reported BIOS vendor
+        static vector<tuple<string, string>> vendor_names = {
+            make_tuple("Amazon EC2",        string(vm::kvm)),
+        };
+
+        auto vendor_name = facts.get<string_value>(fact::bios_vendor);
+
+        if (vendor_name) {
+            for (auto const& vm : vendor_names) {
+                if (vendor_name->value().find(get<0>(vm)) != string::npos) {
+                    return get<1>(vm);
+                }
+            }
+        }
+
         return {};
     }
 
