@@ -68,12 +68,31 @@ struct known_hypervisor_resolver : virtualization_resolver
     }
 };
 
-struct matched_hypervisor_resolver : virtualization_resolver
+struct matched_product_hypervisor_resolver : virtualization_resolver
 {
  protected:
     string get_hypervisor(collection& facts) override
     {
-        return get_product_name_vm("VMware");
+        facts.add(fact::product_name, make_value<string_value>("VMware"));
+        auto result = get_fact_vm(facts);
+        facts.remove(fact::product_name);
+        return result;
+    }
+    string get_cloud_provider(collection& facts) override
+    {
+        return "provider";
+    }
+};
+
+struct matched_vendor_hypervisor_resolver : virtualization_resolver
+{
+ protected:
+    string get_hypervisor(collection& facts) override
+    {
+        facts.add(fact::bios_vendor, make_value<string_value>("Amazon EC2"));
+        auto result = get_fact_vm(facts);
+        facts.remove(fact::bios_vendor);
+        return result;
     }
     string get_cloud_provider(collection& facts) override
     {
@@ -131,8 +150,9 @@ SCENARIO("using the virtualization resolver") {
             REQUIRE(hypervisor->value() == string(vm::docker));
         }
     }
+
     WHEN("a hypervisor is matched from product name") {
-        facts.add(make_shared<matched_hypervisor_resolver>());
+        facts.add(make_shared<matched_product_hypervisor_resolver>());
         THEN("the system is reported as virtual") {
             REQUIRE(facts.size() == 3u);
             auto is_virt = facts.get<boolean_value>(fact::is_virtual);
@@ -142,5 +162,14 @@ SCENARIO("using the virtualization resolver") {
             REQUIRE(hypervisor);
             REQUIRE(hypervisor->value() == string(vm::vmware));
         }
+    }
+    WHEN("a hypervisor is matched from the vendor name") {
+        facts.add(make_shared<matched_vendor_hypervisor_resolver>());
+        auto is_virt = facts.get<boolean_value>(fact::is_virtual);
+        REQUIRE(is_virt);
+        REQUIRE(is_virt->value());
+        auto hypervisor = facts.get<string_value>(fact::virtualization);
+        REQUIRE(hypervisor);
+        REQUIRE(hypervisor->value() == string(vm::kvm));
     }
 }
