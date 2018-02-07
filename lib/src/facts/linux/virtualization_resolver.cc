@@ -84,12 +84,9 @@ namespace facter { namespace facts { namespace linux {
             value = get_xen_vm();
         }
 
-        // Next check the DMI product name for the VM
+        // Next check other facts for the VM
         if (value.empty()) {
-            auto product_name = facts.get<string_value>(fact::product_name);
-            if (product_name) {
-                value = get_product_name_vm(product_name->value());
-            }
+            value = get_fact_vm(facts);
         }
 
         // Lastly, resort to lspci to look for hardware related to certain VMs
