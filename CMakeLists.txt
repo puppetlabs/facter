@@ -119,9 +119,11 @@ include(FeatureSummary)
 feature_summary(WHAT ALL)
 
 # Set RPATH if not installing to a system library directory
-list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" INSTALL_IS_SYSTEM_DIR)
+# TODO: Once a new version of Leatherman is released, update this
+# to use the set_cmake_install_rpath macro
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}" INSTALL_IS_SYSTEM_DIR)
 if ("${INSTALL_IS_SYSTEM_DIR}" STREQUAL "-1")
-    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 endif()
 
 # Pull in common cflags setting from leatherman

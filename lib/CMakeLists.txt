@@ -251,8 +251,7 @@ endif()
 if (WIN32)
     set(LIBFACTER_INSTALL_DESTINATION bin)
 else()
-    # TODO: lib64 for certain operating systems?
-    set(LIBFACTER_INSTALL_DESTINATION lib)
+    set(LIBFACTER_INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 
 if (JRUBY_SUPPORT)

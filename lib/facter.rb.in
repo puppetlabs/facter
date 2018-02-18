@@ -37,7 +37,8 @@ module Facter
       if '${WIN32}' == '1'
         ENV['PATH'] = "#{File.join(facter_dir, 'bin')}#{File::PATH_SEPARATOR}#{File.join(facter_dir, '../puppet/bin')}#{File::PATH_SEPARATOR}#{ENV['PATH']}"
       end
-      require "#{facter_dir}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so"
+      libfacter_dir = ENV['LIBFACTER_DIR'] || '${LIBFACTER_INSTALL_DESTINATION}'
+      require "#{facter_dir}/#{libfacter_dir}/libfacter.so"
     rescue LoadError
       raise LoadError.new('libfacter was not found. Please make sure it was installed to the expected location.')
     end

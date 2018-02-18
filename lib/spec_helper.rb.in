@@ -1,5 +1,9 @@
-# Set FACTERDIR so that facter.rb can find libfacter.so
+# Set FACTERDIR and LIBFACTER_DIR so that facter.rb can find libfacter.so.
+# Note for non-Windows platforms libfacter.so will always be in the 'lib'
+# directory, which will not always match up with LIBFACTER_INSTALL_DESTINATION
+# (e.g. on Fedora 26, LIBFACTER_INSTALL_DESTINATION is 'lib64')
 ENV['FACTERDIR'] = '${CMAKE_BINARY_DIR}'
+ENV['LIBFACTER_DIR'] = 'lib' unless '${WIN32}' == '1'
 
 # Add the location of libfacter.so to the path for Windows
 ENV['PATH'] = '${CMAKE_BINARY_DIR}/${LIBFACTER_INSTALL_DESTINATION}' + File::PATH_SEPARATOR + ENV['PATH']
