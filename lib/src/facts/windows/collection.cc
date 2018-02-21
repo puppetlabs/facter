@@ -75,6 +75,7 @@ namespace facter { namespace facts {
         add(make_shared<windows::memory_resolver>());
         add(make_shared<windows::networking_resolver>());
         add(make_shared<windows::timezone_resolver>());
+        add(make_shared<windows::uptime_resolver>());
 
         try {
             shared_ptr<wmi> shared_wmi = make_shared<wmi>();
@@ -82,7 +83,6 @@ namespace facter { namespace facts {
             add(make_shared<windows::operating_system_resolver>(shared_wmi));
             add(make_shared<windows::processor_resolver>(shared_wmi));
             add(make_shared<windows::virtualization_resolver>(shared_wmi));
-            add(make_shared<windows::uptime_resolver>(shared_wmi));
         } catch (wmi_exception &e) {
             LOG_ERROR("failed adding platform facts that require WMI: {1}", e.what());
         }
