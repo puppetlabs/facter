@@ -39,7 +39,7 @@ module Facter
       end
       require "#{facter_dir}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so"
     rescue LoadError
-      raise LoadError.new('libfacter was not found. Please make sure it was installed to the expected location.')
+      raise LoadError, "libfacter was not found. Please make sure it was installed to the expected location.\n" + ($!.message || ''), $!.backtrace
     end
   end
 end
