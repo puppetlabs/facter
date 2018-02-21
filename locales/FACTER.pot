@@ -1209,10 +1209,6 @@ msgstr ""
 msgid "wcsftime failed: timezone is unavailable: {1} ({2})"
 msgstr ""
 
-#: lib/src/facts/windows/uptime_resolver.cc
-msgid "failed to parse {1} as a date/time"
-msgstr ""
-
 #. log
 #: lib/src/logging/logging.cc
 msgid "locale environment variables were bad; continuing with LANG=C LC_ALL=C"
