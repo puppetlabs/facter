@@ -1,10 +1,7 @@
 #include <internal/facts/windows/uptime_resolver.hpp>
-#include <leatherman/windows/wmi.hpp>
+#include <leatherman/windows/windows.hpp>
 #include <leatherman/util/regex.hpp>
-#include <leatherman/logging/logging.hpp>
 #include <leatherman/locale/locale.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/gregorian/gregorian_types.hpp>
 
 // Mark string for translation (alias for leatherman::locale::format)
 using leatherman::locale::_;
@@ -14,37 +11,16 @@ namespace facter { namespace facts { namespace windows {
     using namespace std;
     using namespace leatherman::util;
     using namespace leatherman::windows;
-    using namespace boost::posix_time;
-    using namespace boost::gregorian;
 
-    uptime_resolver::uptime_resolver(shared_ptr<wmi> wmi_conn) :
-        resolvers::uptime_resolver(),
-        _wmi(move(wmi_conn))
+    uptime_resolver::uptime_resolver() :
+        resolvers::uptime_resolver()
     {
-    }
-
-    static ptime get_ptime(string const& wmitime)
-    {
-        static boost::regex wmi_regex("^(\\d{8,})(\\d{2})(\\d{2})(\\d{2})\\.");
-        string iso_date;
-        int hour, min, sec;
-        if (!re_search(wmitime, wmi_regex, &iso_date, &hour, &min, &sec)) {
-            throw runtime_error(_("failed to parse {1} as a date/time", wmitime));
-        }
-
-        return ptime(from_undelimited_string(iso_date), time_duration(hour, min, sec));
     }
 
     int64_t uptime_resolver::get_uptime()
     {
-        auto vals = _wmi->query(wmi::operatingsystem, {wmi::lastbootuptime, wmi::localdatetime});
-        if (vals.empty()) {
-            return -1;
-        }
-
-        ptime boottime = get_ptime(wmi::get(vals, wmi::lastbootuptime));
-        ptime now = get_ptime(wmi::get(vals, wmi::localdatetime));
-        return (now - boottime).total_seconds();
+        uint64_t tickCount = GetTickCount64();
+        return (int64_t)(tickCount / 1000);  // seconds
     }
 
 }}}  // namespace facter::facts::windows

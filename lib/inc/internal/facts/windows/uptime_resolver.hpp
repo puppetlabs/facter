@@ -18,9 +18,8 @@ namespace facter { namespace facts { namespace windows {
     {
         /**
          * Constructs the uptime_resolver.
-         * @param wmi_conn The WMI connection to use when resolving facts.
          */
-        uptime_resolver(std::shared_ptr<leatherman::windows::wmi> wmi_conn = std::make_shared<leatherman::windows::wmi>());
+        uptime_resolver();
 
      protected:
         /**
@@ -28,9 +27,6 @@ namespace facter { namespace facts { namespace windows {
          * @return Returns the system uptime in seconds.
          */
         virtual int64_t get_uptime() override;
-
-     private:
-        std::shared_ptr<leatherman::windows::wmi> _wmi;
     };
 
 }}}  // namespace facter::facts::windows
