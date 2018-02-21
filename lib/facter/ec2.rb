@@ -20,7 +20,7 @@ require 'facter/ec2/rest' unless defined?(Facter::EC2)
 Facter.define_fact(:ec2_metadata) do
   define_resolution(:rest) do
     confine do
-      Facter.value(:virtual).match /^(xen|kvm)/
+      Facter.value(:virtual).match /^(xen|kvm|ec2)/
     end
 
     @querier = Facter::EC2::Metadata.new
@@ -37,7 +37,7 @@ end
 Facter.define_fact(:ec2_userdata) do
   define_resolution(:rest) do
     confine do
-      Facter.value(:virtual).match /^(xen|kvm)/
+      Facter.value(:virtual).match /^(xen|kvm|ec2)/
     end
 
     @querier = Facter::EC2::Userdata.new
