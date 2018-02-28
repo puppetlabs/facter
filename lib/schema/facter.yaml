@@ -1505,6 +1505,9 @@ ssh:
                 key:
                     type: string
                     description: The DSA public key.
+                type:
+                    type: string
+                    description: The exact type of the key, i.e. "ssh-dss".
         ecdsa:
             type: map
             description: Represents the public key and fingerprints for the ECDSA algorithm.
@@ -1522,6 +1525,9 @@ ssh:
                 key:
                     type: string
                     description: The ECDSA public key.
+                type:
+                    type: string
+                    description: The exact type of the key, e.g. "ecdsa-sha2-nistp256".
         ed25519:
             type: map
             description: Represents the public key and fingerprints for the Ed25519 algorithm.
@@ -1539,6 +1545,9 @@ ssh:
                 key:
                     type: string
                     description: The Ed25519 public key.
+                type:
+                    type: string
+                    description: The exact type of the key, i.e. "ssh-ed25519".
         rsa:
             type: map
             description: Represents the public key and fingerprints for the RSA algorithm.
@@ -1556,6 +1565,9 @@ ssh:
                 key:
                     type: string
                     description: The RSA public key.
+                type:
+                    type: string
+                    description: The exact type of the key, i.e. "ssh-rsa".
 
 ssh<algorithm>key:
     pattern: ^ssh\w*key$

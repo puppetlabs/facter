@@ -57,6 +57,12 @@ namespace facter { namespace facts { namespace resolvers {
              * Stores the SSH key's fingerprint.
              */
             fingerprint digest;
+
+            /**
+             * Stores the SSH key type. One of ssh-dss, ssh-rsa, ssh-ed25519,
+             * ecdsa-sha2-nistp256, ecdsa-sha2-nistp384, or ecdsa-sha2-nistp512
+             */
+            std::string type;
         };
 
         /**

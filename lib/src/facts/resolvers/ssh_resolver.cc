@@ -50,6 +50,7 @@ namespace facter { namespace facts { namespace resolvers {
 
         facts.add(string(key_fact_name), make_value<string_value>(key.key, true));
         key_value->add("key", make_value<string_value>(move(key.key)));
+        key_value->add("type", make_value<string_value>(move(key.type)));
 
         string fingerprint;
         if (!key.digest.sha1.empty()) {
