@@ -7,6 +7,7 @@
 #include <facter/ruby/ruby.hpp>
 #include <facter/util/string.hpp>
 #include <facter/version.h>
+#include <internal/facts/resolvers/hypervisors_resolver.hpp>
 #include <internal/facts/resolvers/ruby_resolver.hpp>
 #include <internal/facts/resolvers/path_resolver.hpp>
 #include <internal/facts/resolvers/ec2_resolver.hpp>
@@ -32,6 +33,7 @@ using namespace YAML;
 using namespace boost::filesystem;
 using namespace leatherman::util;
 using namespace leatherman::file_util;
+using facter::util::maybe_stoi;
 
 namespace facter { namespace facts {
 
@@ -101,7 +103,11 @@ namespace facter { namespace facts {
                 } else {
                     ostringstream new_value_ss;
                     value->write(new_value_ss);
-                    LOG_DEBUG("fact \"{1}\" has changed from {2} to {3}.", name, old_value_ss.str(), new_value_ss.str());
+                    if (old_value->weight() > value->weight()) {
+                      LOG_DEBUG("new value for fact \"{1}\" ignored, because it's a lower weight", name);
+                    } else {
+                      LOG_DEBUG("fact \"{1}\" has changed from {2} to {3}.", name, old_value_ss.str(), new_value_ss.str());
+                    }
                 }
             } else {
                 if (!value) {
@@ -213,7 +219,9 @@ namespace facter { namespace facts {
             LOG_DEBUG("setting fact \"{1}\" based on the value of environment variable \"{2}\".", fact_name, name);
 
             // Add the value based on the environment variable
-            add(fact_name, make_value<string_value>(move(value)));
+            auto fact_value = make_value<string_value>(move(value));
+            fact_value->weight(external_fact_weight);
+            add(fact_name, move(fact_value));
             if (callback) {
                 callback(fact_name);
             }
@@ -357,7 +365,11 @@ namespace facter { namespace facts {
 
         // Resolve normally
         LOG_DEBUG("resolving {1} facts.", res->name());
-        res->resolve(*this);
+        try {
+            res->resolve(*this);
+        } catch (std::runtime_error &e) {
+            LOG_WARNING("exception resolving {1} facts, some facts will not be available: {2}", res->name(), e.what());
+        }
     }
 
     void collection::resolve_facts()
@@ -478,29 +490,33 @@ namespace facter { namespace facts {
         }
 
         auto array = dynamic_cast<array_value const*>(value);
-        if (array) {
-            int index;
-            try {
-                index = stoi(name);
-            } catch (logic_error&) {
-                LOG_DEBUG("cannot lookup an array element with \"{1}\": expected an integral value.", name);
-                return nullptr;
-            }
-            if (index < 0) {
-                LOG_DEBUG("cannot lookup an array element with \"{1}\": expected a non-negative value.", name);
-                return nullptr;
-            }
-            if (array->empty()) {
-                LOG_DEBUG("cannot lookup an array element with \"{1}\": the array is empty.", name);
-                return nullptr;
-            }
-            if (static_cast<size_t>(index) >= array->size()) {
-                LOG_DEBUG("cannot lookup an array element with \"{1}\": expected an integral value between 0 and {2} (inclusive).", name, array->size() - 1);
-                return nullptr;
-            }
-            return (*array)[index];
+        if (!array) {
+            return nullptr;
         }
-        return nullptr;
+
+        auto maybe_index = maybe_stoi(name);;
+        if (!maybe_index) {
+            LOG_DEBUG("cannot lookup an array element with \"{1}\": expected an integral value.", name);
+            return nullptr;
+        }
+
+        int index = maybe_index.get();
+        if (index < 0) {
+            LOG_DEBUG("cannot lookup an array element with \"{1}\": expected a non-negative value.", name);
+            return nullptr;
+        }
+
+        if (array->empty()) {
+            LOG_DEBUG("cannot lookup an array element with \"{1}\": the array is empty.", name);
+            return nullptr;
+        }
+
+        if (static_cast<size_t>(index) >= array->size()) {
+            LOG_DEBUG("cannot lookup an array element with \"{1}\": expected an integral value between 0 and {2} (inclusive).", name, array->size() - 1);
+            return nullptr;
+        }
+
+        return (*array)[index];
     }
 
     void collection::write_hash(ostream& stream, set<string> const& queries, bool show_legacy, bool strict_errors)
@@ -637,6 +653,9 @@ namespace facter { namespace facts {
         add(make_shared<resolvers::ec2_resolver>());
         add(make_shared<resolvers::gce_resolver>());
         add(make_shared<resolvers::augeas_resolver>());
+#ifdef USE_WHEREAMI
+        add(make_shared<resolvers::hypervisors_resolver>());
+#endif
     }
 
 }}  // namespace facter::facts

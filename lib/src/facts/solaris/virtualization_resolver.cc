@@ -32,23 +32,7 @@ namespace facter { namespace facts { namespace solaris {
             return vm::zone;
         }
 
-        string guest_of;
-
-        // Use the same timeout as in Facter 2.x
-        const uint32_t timeout = 20;
-        try {
-            each_line(
-                "/usr/sbin/prtdiag",
-                [&](string& line) {
-                    guest_of = get_product_name_vm(line);
-                    return guest_of.empty();
-                },
-                nullptr,
-                timeout);
-        } catch (timeout_exception const&) {
-            LOG_WARNING("execution of prtdiag has timed out after {1} seconds.", timeout);
-        }
-
-        return guest_of;
+        // Look for hypervisor matches based on other facts
+        return get_fact_vm(facts);
     }
 }}}  // namespace facter::facts::solaris

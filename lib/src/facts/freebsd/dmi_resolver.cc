@@ -16,7 +16,14 @@ namespace facter { namespace facts { namespace freebsd {
         result.uuid = kenv_lookup("smbios.system.uuid");
         result.serial_number = kenv_lookup("smbios.system.serial");
         result.product_name = kenv_lookup("smbios.system.product");
+        if (result.product_name.length() == 0) {
+            result.product_name = result.bios_vendor;
+        }
         result.manufacturer = kenv_lookup("smbios.system.maker");
+        // Fix for Proxmox VMs
+        if (result.manufacturer == "QEMU") {
+            result.product_name = "KVM";
+        }
 
         return result;
     }
@@ -27,7 +34,7 @@ namespace facter { namespace facts { namespace freebsd {
 
         LOG_DEBUG("kenv lookup for {1}", file);
         if (kenv(KENV_GET, file, buffer, sizeof(buffer) - 1) == -1) {
-            LOG_WARNING("kenv lookup for {1} failed: {2} ({3})", file, strerror(errno), errno);
+            LOG_INFO("kenv lookup for {1} failed: {2} ({3})", file, strerror(errno), errno);
             return "";
         }
         return buffer;

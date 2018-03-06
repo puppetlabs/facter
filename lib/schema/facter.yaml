@@ -234,7 +234,7 @@ disks:
                     caveats: Only present on Solaris.
                 size:
                     type: string
-                    description: The display size of the disk or block device (e.g. "1 GiB").
+                    description: The display size of the disk or block device, such as "1 GiB".
                 size_bytes:
                     type: integer
                     description: The size of the disk or block device, in bytes.
@@ -369,6 +369,14 @@ filesystems:
         Mac OSX: The usable file systems is limited to the file system of mounted devices.
     blockgroup: file system
 
+fips_enabled:
+    type: boolean
+    description: Return whether the platform is in FIPS mode
+    resolution: |
+        Linux: parse the contents of `/proc/sys/crypto/fips_enabled` which if non-zero indicates fips mode has been enabled.
+    caveats: |
+        Linux: Limited to linux redhat family only
+
 fqdn:
     type: string
     hidden: true
@@ -418,6 +426,14 @@ hostname:
     resolution: |
         POSIX platforms: use the `gethostname` function to retrieve the host name
         Windows: use the `GetComputerNameExW` function to retrieve the host name.
+
+hypervisors:
+    type: map
+    description: |
+        Experimental fact: Return the names of any detected hypervisors and any collected metadata about them.
+    resolution: |
+        All platforms: Use the external `whereami` library to gather hypervisor data, if available.
+    validate: false
 
 id:
     type: string
@@ -714,7 +730,7 @@ memory:
             elements:
                 available:
                     type: string
-                    description: The display size of the available amount of swap memory (e.g. "1 GiB").
+                    description: The display size of the available amount of swap memory, such as "1 GiB".
                 available_bytes:
                     type: integer
                     description: The size of the available amount of swap memory, in bytes.
@@ -726,13 +742,13 @@ memory:
                     description: True if the swap is encrypted or false if not.
                 total:
                     type: string
-                    description: The display size of the total amount of swap memory (e.g. "1 GiB").
+                    description: The display size of the total amount of swap memory, such as "1 GiB".
                 total_bytes:
                     type: integer
                     description: The size of the total amount of swap memory, in bytes.
                 used:
                     type: string
-                    description: The display size of the used amount of swap memory (e.g. "1 GiB").
+                    description: The display size of the used amount of swap memory, such as "1 GiB".
                 used_bytes:
                     type: integer
                     description: The size of the used amount of swap memory, in bytes.
@@ -742,7 +758,7 @@ memory:
             elements:
                 available:
                     type: string
-                    description: The display size of the available amount of system memory (e.g. "1 GiB").
+                    description: The display size of the available amount of system memory, such as "1 GiB".
                 available_bytes:
                     type: integer
                     description: The size of the available amount of system memory, in bytes.
@@ -751,13 +767,13 @@ memory:
                     description: The capacity percentage (0% is empty, 100% is full).
                 total:
                     type: string
-                    description: The display size of the total amount of system memory (e.g. "1 GiB").
+                    description: The display size of the total amount of system memory, such as "1 GiB".
                 total_bytes:
                     type: integer
                     description: The size of the total amount of system memory, in bytes.
                 used:
                     type: string
-                    description: The display size of the used amount of system memory (e.g. "1 GiB").
+                    description: The display size of the used amount of system memory, such as "1 GiB".
                 used_bytes:
                     type: integer
                     description: The size of the used amount of system memory, in bytes.
@@ -765,7 +781,7 @@ memory:
 memoryfree:
     type: string
     hidden: true
-    description: Return the display size of the free system memory (e.g. "1 GiB").
+    description: Return the display size of the free system memory, such as "1 GiB".
     resolution: |
         Linux: parse the contents of `/proc/meminfo` to retrieve the free system memory.
         Mac OSX: use the `sysctl` function to retrieve the free system memory.
@@ -785,7 +801,7 @@ memoryfree_mb:
 memorysize:
     type: string
     hidden: true
-    description: Return the display size of the total system memory (e.g. "1 GiB").
+    description: Return the display size of the total system memory, such as "1 GiB".
     resolution: |
         Linux: parse the contents of `/proc/meminfo` to retrieve the total system memory.
         Mac OSX: use the `sysctl` function to retrieve the total system memory.
@@ -819,7 +835,7 @@ mountpoints:
             elements:
                 available:
                     type: string
-                    description: The display size of the available space (e.g. "1 GiB").
+                    description: The display size of the available space, such as "1 GiB".
                 available_bytes:
                     type: integer
                     description: The size of the available space, in bytes.
@@ -837,13 +853,13 @@ mountpoints:
                     description: The mount options.
                 size:
                     type: string
-                    description: The display size of the total space (e.g. "1 GiB").
+                    description: The display size of the total space, such as "1 GiB".
                 size_bytes:
                     type: integer
                     description: The size of the total space, in bytes.
                 used:
                     type: string
-                    description: The display size of the used space (e.g. "1 GiB").
+                    description: The display size of the used space, such as "1 GiB".
                 used_bytes:
                     type: integer
                     description: The size of the used space, in bytes.
@@ -1058,7 +1074,7 @@ operatingsystemmajrelease:
         Solaris: parse the contents of `/etc/release` to retrieve the OS major release.
         Windows: use WMI to retrieve the OS major release.
     caveats: |
-        Linux: for Ubuntu, the major release is X.Y (e.g. "10.4").
+        Linux: for Ubuntu, the major release is X.Y, such as "10.4".
 
 operatingsystemrelease:
     type: string
@@ -1196,7 +1212,7 @@ osfamily:
     description: Return the family of the operating system.
     resolution: |
         All platforms: default to the kernel name.
-        Linux: map various Linux distributions to their base distribution (e.g. Ubuntu is a "Debian" distro).
+        Linux: map various Linux distributions to their base distribution. For example, Ubuntu is a "Debian" distro.
         Solaris: map various Solaris-based operating systems to the "Solaris" family.
         Windows: use "windows" as the family name.
 
@@ -1232,7 +1248,7 @@ partitions:
                     description: The unique identifier of a GPT partition.
                 size:
                     type: string
-                    description: The display size of the partition (e.g. "1 GiB").
+                    description: The display size of the partition, such as "1 GiB".
                 size_bytes:
                     type: integer
                     description: The size of the partition, in bytes.
@@ -1307,7 +1323,7 @@ processors:
             description: The count of physical processors.
         speed:
             type: string
-            description: The speed of the processors (e.g. "2.0 GHz").
+            description: The speed of the processors, such as "2.0 GHz".
 
 productname:
     type: string
@@ -1489,6 +1505,9 @@ ssh:
                 key:
                     type: string
                     description: The DSA public key.
+                type:
+                    type: string
+                    description: The exact type of the key, i.e. "ssh-dss".
         ecdsa:
             type: map
             description: Represents the public key and fingerprints for the ECDSA algorithm.
@@ -1506,6 +1525,9 @@ ssh:
                 key:
                     type: string
                     description: The ECDSA public key.
+                type:
+                    type: string
+                    description: The exact type of the key, e.g. "ecdsa-sha2-nistp256".
         ed25519:
             type: map
             description: Represents the public key and fingerprints for the Ed25519 algorithm.
@@ -1523,6 +1545,9 @@ ssh:
                 key:
                     type: string
                     description: The Ed25519 public key.
+                type:
+                    type: string
+                    description: The exact type of the key, i.e. "ssh-ed25519".
         rsa:
             type: map
             description: Represents the public key and fingerprints for the RSA algorithm.
@@ -1540,6 +1565,9 @@ ssh:
                 key:
                     type: string
                     description: The RSA public key.
+                type:
+                    type: string
+                    description: The exact type of the key, i.e. "ssh-rsa".
 
 ssh<algorithm>key:
     pattern: ^ssh\w*key$
@@ -1571,7 +1599,7 @@ swapencrypted:
 swapfree:
     type: string
     hidden: true
-    description: Return the display size of the free swap memory (e.g. "1 GiB").
+    description: Return the display size of the free swap memory, such as "1 GiB".
     resolution: |
         Linux: parse the contents of `/proc/meminfo` to retrieve the free swap memory.
         Mac OSX: use the `sysctl` function to retrieve the free swap memory.
@@ -1589,7 +1617,7 @@ swapfree_mb:
 swapsize:
     type: string
     hidden: true
-    description: Return the display size of the total swap memory (e.g. "1 GiB").
+    description: Return the display size of the total swap memory, such as "1 GiB".
     resolution: |
         Linux: parse the contents of `/proc/meminfo` to retrieve the total swap memory.
         Mac OSX: use the `sysctl` function to retrieve the total swap memory.

@@ -30,7 +30,12 @@ uint8_t get_default_facts(char **result) {
 
         auto json_facts = stream.str();
         auto l = json_facts.length()+1;
+
         *result = static_cast<char*>(malloc(sizeof(char)*l));
+        if (*result == nullptr) {
+            return EXIT_FAILURE;
+        }
+
         strncpy(*result, json_facts.c_str(), l);
     } catch (const std::exception&) {
         return EXIT_FAILURE;

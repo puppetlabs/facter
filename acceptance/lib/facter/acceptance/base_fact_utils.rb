@@ -187,6 +187,10 @@ module Facter
         end
         release_string = on(agent, 'cat /etc/*-release').stdout.downcase
         case release_string
+          when /amazon/
+            os_name = 'Amazon'
+            # This parses: VERSION_ID="2017.09"
+            os_version = on(agent, 'grep VERSION_ID /etc/os-release | cut --delimiter=\" --fields=2 | cut --delimiter=. --fields=1').stdout.chomp
           when /centos/
             os_name = 'CentOS'
           when /oracle/
@@ -208,6 +212,10 @@ module Facter
           os_arch                 = 's390x'
           os_hardware             = 's390x'
           processor_model_pattern = // # s390x does not populate a model value in /proc/cpuinfo
+        elsif agent['platform'] =~ /aarch64/
+          os_arch                 = 'aarch64'
+          os_hardware             = 'aarch64'
+          processor_model_pattern = // # aarch64 does not populate a model value in /proc/cpuinfo
         else
           os_arch                 = 'i386'
           os_hardware             = 'i686'
@@ -374,6 +382,10 @@ module Facter
           os_arch                 = 'x86_64'
           os_hardware             = 'x86_64'
           processor_model_pattern = /(Intel\(R\).*)|(AMD.*)/
+        elsif agent['platform'] =~ /ppc|power|64le/
+          os_arch                 = 'ppc64le'
+          os_hardware             = 'ppc64le'
+          processor_model_pattern = // # facter doesn't figure out the processor type on these machines
         elsif agent['platform'] =~ /s390x/
           os_arch                 = 's390x'
           os_hardware             = 's390x'

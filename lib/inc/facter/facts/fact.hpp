@@ -440,10 +440,13 @@ namespace facter { namespace facts {
          */
         constexpr static char const* is_virtual = "is_virtual";
         /**
+         * The fact for all detected hypervisors
+         */
+        constexpr static char const* hypervisors = "hypervisors";
+        /**
          * The fact for the cloud info, including provider, for a node.
          */
         constexpr static char const* cloud = "cloud";
-
         /**
          * The structured fact for identity information.
          */
@@ -656,6 +659,11 @@ namespace facter { namespace facts {
          * The structured fact for Solaris LDom facts.
          */
         constexpr static char const* ldom = "ldom";
+
+        /**
+         * The fips mode fact for RHEL/Linux* facts.
+         */
+        constexpr static char const* fips_enabled = "fips_enabled";
     };
 
 }}  // namespace facter::facts

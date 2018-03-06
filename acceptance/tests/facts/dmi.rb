@@ -5,6 +5,7 @@ test_name "C96148: verify dmi facts" do
   confine :except, :platform => 'huawei' # no dmi support
   confine :except, :platform => 'osx' # no dmi support
   confine :except, :platform => 'sparc' # no dmi support
+  confine :except, :platform => 'ppc64' # no dmi support on linux on powerpc
 
   require 'json'
   require 'facter/acceptance/base_fact_utils'
@@ -23,13 +24,13 @@ test_name "C96148: verify dmi facts" do
                              'dmi.product.uuid'      => /[-0-9A-Fa-f]+/,
                             })
     end
-    unless agent['platform'] =~ /windows|cisco/
+    unless agent['platform'] =~ /windows|cisco|aarch64|el-/
       expected_facts.merge!({'dmi.chassis.asset_tag' => /\w+/})
     end
-    unless agent['platform'] =~ /cisco/
+    unless agent['platform'] =~ /cisco|aarch64|el-/
       expected_facts.merge!({'dmi.product.serial_number' => /\w+/})
     end
-    unless agent['platform'] =~ /windows|cisco|solaris/
+    unless agent['platform'] =~ /windows|cisco|solaris|aarch64|el-/
       expected_facts.merge!({'dmi.board.asset_tag'     => /\w+|/,
                              'dmi.board.manufacturer'  => /\w+/,
                              'dmi.board.product'       => /\w+/,

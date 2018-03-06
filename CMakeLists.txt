@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2.2)
-project(FACTER VERSION 3.7.0)
+project(FACTER VERSION 3.11.0)
 
 # Set this early, so it's available. AIX gets weird, man.
 if("${CMAKE_SYSTEM_NAME}" MATCHES "AIX")
@@ -97,6 +97,11 @@ endif()
 
 find_package(CPPHOCON REQUIRED)
 
+find_package(WHEREAMI)
+if (WHEREAMI_FOUND)
+    add_definitions(-DUSE_WHEREAMI)
+endif()
+
 if (NOT WITHOUT_JRUBY AND NOT WIN32)
     find_package(JNI)
     set_package_properties(JNI PROPERTIES DESCRIPTION "Java Native Interface (JNI) is a programming framework that enables Java code running in a Java Virtual Machine (JVM) to call and be called by native applications.")
@@ -128,8 +133,12 @@ endif()
 # Pull in common cflags setting from leatherman
 include(cflags)
 set(FACTER_CXX_FLAGS "${LEATHERMAN_CXX_FLAGS}")
-
 add_definitions(${LEATHERMAN_DEFINITIONS})
+
+# Enable DEP/ASLR switches on windows versions
+if (WIN32)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--nxcompat -Wl,--dynamicbase")
+endif()
 
 #
 # Add cpplint and cppcheck targets

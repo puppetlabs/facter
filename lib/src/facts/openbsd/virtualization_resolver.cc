@@ -14,12 +14,7 @@ namespace facter { namespace facts { namespace openbsd {
 
     string virtualization_resolver::get_hypervisor(collection& facts)
     {
-        auto product_name = facts.get<string_value>(fact::product_name);
-        if (product_name) {
-            return get_product_name_vm(product_name->value());
-        }
-
-        return {};
+        return get_fact_vm(facts);
     }
 
 } } }  // namespace facter::facts::openbsd

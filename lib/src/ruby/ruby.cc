@@ -63,7 +63,7 @@ namespace facter { namespace ruby {
             try {
                 ruby.eval(load_puppet);
             } catch (exception& ex) {
-                log(facter::logging::level::warning, "Could not load puppet; some facts may be unavailable: {1}", ex.what());
+                LOG_WARNING("Could not load puppet; some facts may be unavailable: {1}", ex.what());
             }
         }
         mod.search(paths);

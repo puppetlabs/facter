@@ -36,7 +36,9 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/resolvers/dmi_resolver.cc"
     "src/facts/resolvers/ec2_resolver.cc"
     "src/facts/resolvers/filesystem_resolver.cc"
+    "src/facts/resolvers/fips_resolver.cc"
     "src/facts/resolvers/gce_resolver.cc"
+    "src/facts/resolvers/hypervisors_resolver.cc"
     "src/facts/resolvers/identity_resolver.cc"
     "src/facts/resolvers/kernel_resolver.cc"
     "src/facts/resolvers/ldom_resolver.cc"
@@ -178,6 +180,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         "src/facts/linux/disk_resolver.cc"
         "src/facts/linux/dmi_resolver.cc"
         "src/facts/linux/filesystem_resolver.cc"
+        "src/facts/linux/fips_resolver.cc"
         "src/facts/linux/kernel_resolver.cc"
         "src/facts/linux/memory_resolver.cc"
         "src/facts/linux/networking_resolver.cc"
@@ -257,8 +260,7 @@ endif()
 if (WIN32)
     set(LIBFACTER_INSTALL_DESTINATION bin)
 else()
-    # TODO: lib64 for certain operating systems?
-    set(LIBFACTER_INSTALL_DESTINATION lib)
+    set(LIBFACTER_INSTALL_DESTINATION lib${LIB_SUFFIX})
 endif()
 
 if (JRUBY_SUPPORT)
@@ -301,6 +303,7 @@ link_directories(
     ${YAMLCPP_LIBRARY_DIRS}
     ${CURL_LIBRARY_DIRS}
     ${CPPHOCON_LIBRARY_DIRS}
+    ${WHEREAMI_LIBRARY_DIRS}
 )
 
 # Add the library target without a prefix (name already has the 'lib') and use '.so' for all platforms (Ruby extension file extension)
@@ -318,7 +321,7 @@ if(AIX)
     set_target_properties(libfacter PROPERTIES LINK_FLAGS "-Wl,-G -eInit_libfacter")
 endif()
 
-set(LIBS ${CPPHOCON_LIBRARIES})
+set(LIBS ${CPPHOCON_LIBRARIES} ${WHEREAMI_LIBRARIES})
 
 # Static libraries should come before shared libraries, or you can end up
 # with some really annoying link errors. However, we can configure whether

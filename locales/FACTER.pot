@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.7.0\n"
+"Project-Id-Version: FACTER 3.11.0\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -262,8 +262,7 @@ msgstr ""
 msgid "got a disk type: {1}"
 msgstr ""
 
-#: lib/src/facts/aix/disk_resolver.cc
-#: lib/src/facts/aix/processor_resolver.cc
+#: lib/src/facts/aix/disk_resolver.cc lib/src/facts/aix/processor_resolver.cc
 msgid "PdDvLn=%1%"
 msgstr ""
 
@@ -435,6 +434,11 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/collection.cc
+msgid "new value for fact \"{1}\" ignored, because it's a lower weight"
+msgstr ""
+
+#. debug
+#: lib/src/facts/collection.cc
 msgid "fact \"{1}\" has changed from {2} to {3}."
 msgstr ""
 
@@ -490,6 +494,11 @@ msgstr ""
 msgid "resolving {1} facts."
 msgstr ""
 
+#. warning
+#: lib/src/facts/collection.cc
+msgid "exception resolving {1} facts, some facts will not be available: {2}"
+msgstr ""
+
 #. debug
 #: lib/src/facts/collection.cc
 msgid "cannot lookup an element with \"{1}\" from Ruby fact"
@@ -501,28 +510,24 @@ msgid "cannot lookup a hash element with \"{1}\": element does not exist."
 msgstr ""
 
 #. debug
-#: lib/src/facts/collection.cc
-#: lib/src/ruby/ruby.cc
+#: lib/src/facts/collection.cc lib/src/ruby/ruby.cc
 msgid ""
 "cannot lookup an array element with \"{1}\": expected an integral value."
 msgstr ""
 
 #. debug
-#: lib/src/facts/collection.cc
-#: lib/src/ruby/ruby.cc
+#: lib/src/facts/collection.cc lib/src/ruby/ruby.cc
 msgid ""
 "cannot lookup an array element with \"{1}\": expected a non-negative value."
 msgstr ""
 
 #. debug
-#: lib/src/facts/collection.cc
-#: lib/src/ruby/ruby.cc
+#: lib/src/facts/collection.cc lib/src/ruby/ruby.cc
 msgid "cannot lookup an array element with \"{1}\": the array is empty."
 msgstr ""
 
 #. debug
-#: lib/src/facts/collection.cc
-#: lib/src/ruby/ruby.cc
+#: lib/src/facts/collection.cc lib/src/ruby/ruby.cc
 msgid ""
 "cannot lookup an array element with \"{1}\": expected an integral value "
 "between 0 and {2} (inclusive)."
@@ -540,6 +545,7 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/external/execution_resolver.cc
+#: lib/src/facts/external/windows/powershell_resolver.cc
 msgid "Could not parse executable fact output as YAML or JSON ({1})"
 msgstr ""
 
@@ -1124,11 +1130,6 @@ msgid "failed to read processor data from kstat api: {1}."
 msgstr ""
 
 #. warning
-#: lib/src/facts/solaris/virtualization_resolver.cc
-msgid "execution of prtdiag has timed out after {1} seconds."
-msgstr ""
-
-#. warning
 #: lib/src/facts/windows/collection.cc
 msgid "external facts unavailable, %1%"
 msgstr ""
@@ -1254,14 +1255,12 @@ msgstr ""
 msgid "expected chunk name to be a Symbol"
 msgstr ""
 
-#: lib/src/ruby/aggregate_resolution.cc
-#: lib/src/ruby/resolution.cc
+#: lib/src/ruby/aggregate_resolution.cc lib/src/ruby/resolution.cc
 #: lib/src/ruby/simple_resolution.cc
 msgid "a block must be provided"
 msgstr ""
 
-#: lib/src/ruby/aggregate_resolution.cc
-#: lib/src/ruby/fact.cc
+#: lib/src/ruby/aggregate_resolution.cc lib/src/ruby/fact.cc
 msgid "expected a Symbol for options key"
 msgstr ""
 
@@ -1269,13 +1268,11 @@ msgstr ""
 msgid "expected a Symbol or Array of Symbol for require option"
 msgstr ""
 
-#: lib/src/ruby/aggregate_resolution.cc
-#: lib/src/ruby/fact.cc
+#: lib/src/ruby/aggregate_resolution.cc lib/src/ruby/fact.cc
 msgid "unexpected option {1}"
 msgstr ""
 
-#: lib/src/ruby/aggregate_resolution.cc
-#: lib/src/ruby/fact.cc
+#: lib/src/ruby/aggregate_resolution.cc lib/src/ruby/fact.cc
 #: lib/src/ruby/module.cc
 msgid "wrong number of arguments ({1} for 2)"
 msgstr ""
@@ -1343,14 +1340,12 @@ msgid ""
 "with the same name already exists"
 msgstr ""
 
-#: lib/src/ruby/fact.cc
-#: lib/src/ruby/module.cc
+#: lib/src/ruby/fact.cc lib/src/ruby/module.cc
 msgid "expected a String or Symbol for fact name"
 msgstr ""
 
 #. warning
-#: lib/src/ruby/module.cc
-#: lib/src/ruby/ruby.cc
+#: lib/src/ruby/module.cc lib/src/ruby/ruby.cc
 msgid "{1}: facts requiring Ruby will not be resolved."
 msgstr ""
 
@@ -1444,8 +1439,7 @@ msgstr ""
 msgid "expected argument to be a String, Symbol, or Hash"
 msgstr ""
 
-#: lib/src/ruby/resolution.cc
-#: lib/src/ruby/simple_resolution.cc
+#: lib/src/ruby/resolution.cc lib/src/ruby/simple_resolution.cc
 msgid "wrong number of arguments ({1} for 1)"
 msgstr ""
 
@@ -1454,7 +1448,7 @@ msgstr ""
 msgid "timeout= is not supported for custom facts and will be ignored."
 msgstr ""
 
-#. log
+#. warning
 #: lib/src/ruby/ruby.cc
 msgid "Could not load puppet; some facts may be unavailable: {1}"
 msgstr ""

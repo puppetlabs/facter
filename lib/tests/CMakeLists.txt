@@ -107,6 +107,8 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         "facts/linux/dmi_resolver.cc"
         "facts/linux/filesystem_resolver.cc"
         "facts/linux/virtualization_resolver.cc"
+        "facts/linux/processor_fixture.cc"
+        "facts/linux/processor_resolver.cc"
         "util/bsd/scoped_ifaddrs.cc"
     )
 endif()

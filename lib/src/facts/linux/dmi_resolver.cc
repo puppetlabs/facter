@@ -1,5 +1,8 @@
 #include <internal/facts/linux/dmi_resolver.hpp>
 #include <internal/util/agent.hpp>
+#include <facter/facts/collection.hpp>
+#include <facter/facts/fact.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <leatherman/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <leatherman/file_util/file.hpp>
@@ -37,6 +40,13 @@ namespace facter { namespace facts { namespace linux {
             result.uuid                 = read("/sys/class/dmi/id/product_uuid");
             result.chassis_type         = to_chassis_description(read("/sys/class/dmi/id/chassis_type"));
         } else {
+            // dmidecode does not work on power machines, so if we're on one, then there's no need
+            // to proceed any further
+            auto isa = facts.get<string_value>(fact::hardware_isa);
+            if (isa && boost::starts_with(isa->value(), "ppc64")) {
+                return result;
+            }
+
             LOG_DEBUG("/sys/class/dmi cannot be accessed: using dmidecode to query DMI information.");
 
             int dmi_type = -1;

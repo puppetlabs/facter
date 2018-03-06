@@ -17,7 +17,9 @@
 #include <internal/facts/resolvers/dmi_resolver.hpp>
 #include <internal/facts/resolvers/ec2_resolver.hpp>
 #include <internal/facts/resolvers/filesystem_resolver.hpp>
+#include <internal/facts/resolvers/fips_resolver.hpp>
 #include <internal/facts/resolvers/gce_resolver.hpp>
+#include <internal/facts/resolvers/hypervisors_resolver.hpp>
 #include <internal/facts/resolvers/identity_resolver.hpp>
 #include <internal/facts/resolvers/kernel_resolver.hpp>
 #include <internal/facts/resolvers/ldom_resolver.hpp>
@@ -135,6 +137,37 @@ struct filesystem_resolver : resolvers::filesystem_resolver
         p.backing_file = "/foo/bar";
         result.partitions.emplace_back(move(p));
         return result;
+    }
+};
+
+struct fips_resolver : resolvers::fips_resolver
+{
+ protected:
+    virtual data collect_data(collection& facts) override
+    {
+        data result;
+        result.is_fips_mode_enabled = false;
+        return result;
+    }
+};
+
+using hypervisor_data = std::unordered_map<std::string, std::unordered_map<std::string, boost::variant<std::string, bool, int>>>;
+
+struct hypervisors_resolver_test : resolvers::hypervisors_resolver_base
+{
+    virtual hypervisor_data collect_data(collection& facts)
+    {
+        hypervisor_data results;
+
+        unordered_map<std::string, boost::variant<std::string, bool, int>> metadata {
+            {"string_value", string{"string"}}, // boost assumes const char* values are bools when bool is among the variants
+            {"integer_value", 42},
+            {"boolean_value", true},
+        };
+
+        results.insert({"hypervisor_name", metadata});
+
+        return results;
     }
 };
 
@@ -289,15 +322,19 @@ protected:
     {
         data result;
         result.dsa.key = "dsa:key";
+        result.dsa.type = "dsa:type";
         result.dsa.digest.sha1 = "dsa:sha1";
         result.dsa.digest.sha256 = "dsa:sha256";
         result.ecdsa.key = "ecdsa:key";
+        result.ecdsa.type = "ecdsa:type";
         result.ecdsa.digest.sha1 = "ecdsa:sha1";
         result.ecdsa.digest.sha256 = "ecdsa:sha256";
         result.ed25519.key = "ed25519:key";
+        result.ed25519.type = "ed25519:type";
         result.ed25519.digest.sha1 = "ed25519:sha1";
         result.ed25519.digest.sha256 = "ed25519:sha256";
         result.rsa.key = "rsa:key";
+        result.rsa.type = "rsa:type";
         result.rsa.digest.sha1 = "rsa:sha1";
         result.rsa.digest.sha256 = "rsa:sha256";
         return result;
@@ -448,9 +485,11 @@ void add_all_facts(collection& facts)
     facts.add(make_shared<disk_resolver>());
     facts.add(make_shared<dmi_resolver>());
     facts.add(make_shared<filesystem_resolver>());
+    facts.add(make_shared<fips_resolver>());
     // TODO: refactor the EC2 resolver to use the "collect_data" pattern
     facts.add(make_shared<ec2_resolver>());
     // TODO: refactor the GCE resolver to use the "collect_data" pattern
+    facts.add(make_shared<hypervisors_resolver_test>());
     facts.add(fact::gce, make_value<map_value>());
     facts.add(make_shared<identity_resolver>());
     facts.add(make_shared<kernel_resolver>());
@@ -481,16 +520,16 @@ void validate_attributes(YAML::Node const& node)
     for (auto const& attribute : node) {
         auto attribute_name = attribute.first.as<string>();
         CAPTURE(attribute_name);
-        REQUIRE_THAT(attribute_name, AnyOf(
-            Catch::Equals("pattern"),
-            Catch::Equals("type")).add(
-            Catch::Equals("hidden")).add(
-            Catch::Equals("description")).add(
-            Catch::Equals("resolution")).add(
-            Catch::Equals("caveats")).add(
-            Catch::Equals("elements")).add(
-            Catch::Equals("validate")).add(
-            Catch::Equals("blockgroup"))
+        REQUIRE_THAT(attribute_name,
+            Catch::Equals("pattern") ||
+            Catch::Equals("type") ||
+            Catch::Equals("hidden") ||
+            Catch::Equals("description") ||
+            Catch::Equals("resolution") ||
+            Catch::Equals("caveats") ||
+            Catch::Equals("elements") ||
+            Catch::Equals("validate") ||
+            Catch::Equals("blockgroup")
         );
     }
 
@@ -507,16 +546,16 @@ void validate_attributes(YAML::Node const& node)
     REQUIRE(type_attribute);
     REQUIRE(type_attribute.IsScalar());
     auto type = type_attribute.as<string>();
-    REQUIRE_THAT(type, AnyOf(
-        Catch::Equals("integer"),
-        Catch::Equals("double")).add(
-        Catch::Equals("string")).add(
-        Catch::Equals("boolean")).add(
-        Catch::Equals("array")).add(
-        Catch::Equals("map")).add(
-        Catch::Equals("ip")).add(
-        Catch::Equals("ip6")).add(
-        Catch::Equals("mac"))
+    REQUIRE_THAT(type,
+        Catch::Equals("integer") ||
+        Catch::Equals("double") ||
+        Catch::Equals("string") ||
+        Catch::Equals("boolean") ||
+        Catch::Equals("array") ||
+        Catch::Equals("map") ||
+        Catch::Equals("ip") ||
+        Catch::Equals("ip6") ||
+        Catch::Equals("mac")
     );
 
     // Check map types
