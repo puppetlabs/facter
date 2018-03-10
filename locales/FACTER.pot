@@ -628,7 +628,7 @@ msgstr ""
 msgid "kenv lookup for {1}"
 msgstr ""
 
-#. warning
+#. info
 #: lib/src/facts/freebsd/dmi_resolver.cc
 msgid "kenv lookup for {1} failed: {2} ({3})"
 msgstr ""
@@ -1227,10 +1227,6 @@ msgstr ""
 #. warning
 #: lib/src/facts/windows/timezone_resolver.cc
 msgid "wcsftime failed: timezone is unavailable: {1} ({2})"
-msgstr ""
-
-#: lib/src/facts/windows/uptime_resolver.cc
-msgid "failed to parse {1} as a date/time"
 msgstr ""
 
 #. log
