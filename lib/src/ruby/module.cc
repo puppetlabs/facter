@@ -132,7 +132,7 @@ extern "C" {
         string logging_init_error_msg;
         try {
             facter::logging::setup_logging(boost::nowide::cerr);
-            set_level(log_level::warning);
+            set_level(log_level::debug);
         } catch(facter::logging::locale_error const& e) {
             logging_init_failed = true;
             logging_init_error_msg = e.what();
