@@ -36,9 +36,18 @@ namespace facter { namespace facts { namespace aix {
 
                 {
                     string device = (boost::format("/dev/%1%") % d.name).str();
-                    scoped_descriptor fd(open(device.c_str(), O_RDONLY));
+                    auto descriptor = open(device.c_str(), O_RDONLY);
+                    if (descriptor < 0) {
+                        LOG_DEBUG("Could not open device %1% for reading: %2% (%3%). Disk facts will not be populated for this device", d.name, strerror(errno), errno);
+                        continue;
+                    }
+                    scoped_descriptor fd(descriptor);
                     devinfo info;
-                    ioctl(fd, IOCINFO, &info);
+                    auto result = ioctl(fd, IOCINFO, &info);
+                    if (result < 0) {
+                        LOG_DEBUG("Ioctl IOCINFO failed for device %1%: %2% (%3%). Disk facts will not be populated for this device", d.name, strerror(errno), errno);
+                        continue;
+                    }
                     switch (info.devtype) {
                     case DD_DISK:
                     case DD_SCDISK:
