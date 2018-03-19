@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.11.0\n"
+"Project-Id-Version: FACTER 3.11.1\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -273,6 +273,20 @@ msgstr ""
 
 #: lib/src/facts/aix/disk_resolver.cc
 msgid "/dev/%1%"
+msgstr ""
+
+#. debug
+#: lib/src/facts/aix/disk_resolver.cc
+msgid ""
+"Could not open device %1% for reading: %2% (%3%). Disk facts will not be "
+"populated for this device"
+msgstr ""
+
+#. debug
+#: lib/src/facts/aix/disk_resolver.cc
+msgid ""
+"Ioctl IOCINFO failed for device %1%: %2% (%3%). Disk facts will not be "
+"populated for this device"
 msgstr ""
 
 #. warning
