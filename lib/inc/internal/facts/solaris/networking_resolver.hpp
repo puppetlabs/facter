@@ -37,6 +37,13 @@ namespace facter { namespace facts { namespace solaris {
         */
         virtual uint8_t const* get_link_address_bytes(sockaddr const* addr) const override;
 
+        /**
+         * Gets the length of the link address.
+         * @param addr The socket address representing the link address.
+         * @return Returns the length of the address or 0 if not a link address.
+         */
+        virtual uint8_t get_link_address_length(sockaddr const* addr) const override;
+
      private:
         void populate_binding(interface& iface, lifreq const* addr) const;
         void populate_macaddress(interface& iface, lifreq const* addr) const;
