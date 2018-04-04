@@ -24,11 +24,10 @@ namespace facter { namespace facts { namespace resolvers {
 
         /**
          * Utility function to convert the bytes of a MAC address to a string.
-         * @param bytes The bytes of the MAC address; accepts 6-byte and 20-byte addresses.
-         * @param byte_count The number of bytes in the MAC address; defaults to be 6 bytes long.
+         * @param bytes The bytes of the MAC address; expected to be 6 bytes long.
          * @returns Returns the MAC address as a string or an empty string if the address is the "NULL" MAC address.
          */
-        static std::string macaddress_to_string(uint8_t const* bytes, uint8_t byte_count = 6);
+        static std::string macaddress_to_string(uint8_t const* bytes);
 
         /**
         * Returns whether the address is an ignored IPv4 address.

@@ -29,13 +29,6 @@ namespace facter { namespace facts { namespace osx {
         virtual uint8_t const* get_link_address_bytes(sockaddr const* addr) const override;
 
         /**
-         * Gets the length of the link address.
-         * @param addr The socket address representing the link address.
-         * @return Returns the length of the address or 0 if not a link address.
-         */
-        virtual uint8_t get_link_address_length(sockaddr const* addr) const override;
-
-        /**
          * Gets the MTU of the link layer data.
          * @param interface The name of the link layer interface.
          * @param data The data pointer from the link layer interface.
