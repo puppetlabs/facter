@@ -201,6 +201,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
         "src/facts/freebsd/collection.cc"
         "src/facts/glib/load_average_resolver.cc"
         "src/facts/bsd/filesystem_resolver.cc"
+        "src/facts/freebsd/filesystem_resolver.cc"
         "src/facts/bsd/networking_resolver.cc"
         "src/facts/bsd/uptime_resolver.cc"
         "src/facts/freebsd/processor_resolver.cc"
@@ -212,6 +213,11 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD")
         "src/facts/freebsd/virtualization_resolver.cc"
         "src/facts/freebsd/memory_resolver.cc"
         "src/facts/freebsd/operating_system_resolver.cc"
+        "src/util/freebsd/geom.cc"
+        "src/facts/freebsd/disk_resolver.cc"
+    )
+    set(LIBFACTER_PLATFORM_LIBRARIES
+        geom
     )
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "OpenBSD")
     set(LIBFACTER_PLATFORM_SOURCES
