@@ -38,6 +38,13 @@ namespace facter { namespace facts { namespace aix {
         */
         virtual uint8_t const* get_link_address_bytes(sockaddr const* addr) const override;
 
+        /**
+         * Gets the length of the link address.
+         * @param addr The socket address representing the link address.
+         * @return Returns the length of the address or 0 if not a link address.
+         */
+        virtual uint8_t get_link_address_length(sockaddr const* addr) const override;
+
      private:
         using mtu_map = std::unordered_map<std::string, std::string>;
 
