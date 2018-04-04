@@ -67,19 +67,10 @@ namespace facter { namespace facts { namespace linux {
             return nullptr;
         }
         sockaddr_ll const* link_addr = reinterpret_cast<sockaddr_ll const*>(addr);
-        if (link_addr->sll_halen != 6 && link_addr->sll_halen != 20) {
+        if (link_addr->sll_halen != 6) {
             return nullptr;
         }
         return reinterpret_cast<uint8_t const*>(link_addr->sll_addr);
-    }
-
-    uint8_t networking_resolver::get_link_address_length(sockaddr const* addr) const
-    {
-        if (!is_link_address(addr)) {
-            return 0;
-        }
-        sockaddr_ll const* link_addr = reinterpret_cast<sockaddr_ll const*>(addr);
-        return link_addr->sll_halen;
     }
 
     boost::optional<uint64_t> networking_resolver::get_link_mtu(string const& interface, void* data) const

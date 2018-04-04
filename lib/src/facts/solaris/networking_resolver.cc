@@ -171,11 +171,6 @@ namespace facter { namespace facts { namespace solaris {
         return nullptr;
     }
 
-    uint8_t networking_resolver::get_link_address_length(const sockaddr * addr) const
-    {
-        return 0;
-    }
-
     string networking_resolver::find_dhcp_server(string const& interface) const
     {
         auto exec = execute("dhcpinfo", { "-i", interface, "ServerID" });

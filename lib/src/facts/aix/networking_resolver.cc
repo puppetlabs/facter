@@ -241,10 +241,5 @@ namespace facter { namespace facts { namespace aix {
         return nullptr;
     }
 
-    uint8_t networking_resolver::get_link_address_length(const sockaddr * addr) const
-    {
-        return 0;
-    }
-
 
 }}}  // namespace facter::facts::aix

@@ -49,9 +49,8 @@ namespace facter { namespace facts { namespace posix {
             return buffer;
         } else if (is_link_address(addr)) {
             auto link_addr = get_link_address_bytes(addr);
-            uint8_t link_addr_len = get_link_address_length(addr);
             if (link_addr) {
-                return macaddress_to_string(reinterpret_cast<uint8_t const*>(link_addr), link_addr_len);
+                return macaddress_to_string(reinterpret_cast<uint8_t const*>(link_addr));
             }
         }
 

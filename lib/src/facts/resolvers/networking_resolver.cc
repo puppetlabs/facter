@@ -151,15 +151,15 @@ namespace facter { namespace facts { namespace resolvers {
         }
     }
 
-    string networking_resolver::macaddress_to_string(uint8_t const* bytes, uint8_t byte_count)
+    string networking_resolver::macaddress_to_string(uint8_t const* bytes)
     {
-        if (!bytes || (byte_count != 6 && byte_count != 20)) {
+        if (!bytes) {
             return {};
         }
 
         // Ignore MAC address "0"
         bool nonzero = false;
-        for (size_t i = 0; i < byte_count; ++i) {
+        for (size_t i = 0; i < 6; ++i) {
             if (bytes[i] != 0) {
                 nonzero = true;
                 break;
@@ -169,26 +169,10 @@ namespace facter { namespace facts { namespace resolvers {
             return {};
         }
 
-        if (byte_count == 6) {
-            return (boost::format("%02x:%02x:%02x:%02x:%02x:%02x") %
-                    static_cast<int>(bytes[0]) % static_cast<int>(bytes[1]) %
-                    static_cast<int>(bytes[2]) % static_cast<int>(bytes[3]) %
-                    static_cast<int>(bytes[4]) % static_cast<int>(bytes[5])).str();
-        } else if (byte_count == 20) {
-            return (boost::format("%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x") %
-                    static_cast<int>(bytes[0]) % static_cast<int>(bytes[1]) %
-                    static_cast<int>(bytes[2]) % static_cast<int>(bytes[3]) %
-                    static_cast<int>(bytes[4]) % static_cast<int>(bytes[5]) %
-                    static_cast<int>(bytes[6]) % static_cast<int>(bytes[7]) %
-                    static_cast<int>(bytes[8]) % static_cast<int>(bytes[9]) %
-                    static_cast<int>(bytes[10]) % static_cast<int>(bytes[11]) %
-                    static_cast<int>(bytes[12]) % static_cast<int>(bytes[13]) %
-                    static_cast<int>(bytes[14]) % static_cast<int>(bytes[15]) %
-                    static_cast<int>(bytes[16]) % static_cast<int>(bytes[17]) %
-                    static_cast<int>(bytes[18]) % static_cast<int>(bytes[19])).str();
-        } else {
-            return {};
-        }
+        return (boost::format("%02x:%02x:%02x:%02x:%02x:%02x") %
+                static_cast<int>(bytes[0]) % static_cast<int>(bytes[1]) %
+                static_cast<int>(bytes[2]) % static_cast<int>(bytes[3]) %
+                static_cast<int>(bytes[4]) % static_cast<int>(bytes[5])).str();
     }
 
     bool networking_resolver::ignored_ipv4_address(string const& addr)
