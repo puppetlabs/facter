@@ -84,6 +84,7 @@ namespace facter { namespace facts { namespace linux {
                 make_tuple(boost::regex("(?i)scientific linux CERN"),         string(os::scientific_cern)),
                 make_tuple(boost::regex("(?i)scientific linux release"),      string(os::scientific)),
                 make_tuple(boost::regex("(?im)^cloudlinux"),                  string(os::cloud_linux)),
+                make_tuple(boost::regex("(?im)^virtuozzo linux"),             string(os::virtuozzo_linux)),
                 make_tuple(boost::regex("(?i)Ascendos"),                      string(os::ascendos)),
                 make_tuple(boost::regex("(?im)^XenServer"),                   string(os::xen_server)),
                 make_tuple(boost::regex("XCP"),                               string(os::zen_cloud_platform)),

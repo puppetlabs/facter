@@ -42,6 +42,10 @@ namespace facter { namespace facts {
          */
         constexpr static char const* cloud_linux = "CloudLinux";
         /**
+         * The Virtuozzo Linux operating system.
+         */
+        constexpr static char const* virtuozzo_linux = "VirtuozzoLinux";
+        /**
          * The Parallels Server Bare Metal operating system.
          */
         constexpr static char const* psbm = "PSBM";
