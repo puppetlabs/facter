@@ -279,8 +279,18 @@ if (JRUBY_SUPPORT)
 
     # javah does not atomically write the header file, so parallel builds can
     # read it before it finishes writing if not careful.
+    # JDK versions after 9 don't provide javah. Use javac in these cases
+
+    if(Java_VERSION VERSION_LESS "10")
+	    set(JAVAH_COMMAND javah)
+	    set(JAVAH_ARG -classpath facter.jar -d "${CMAKE_CURRENT_LIST_DIR}/src/java" com.puppetlabs.Facter)
+    else()
+	    set(JAVAH_COMMAND javac)
+	    set(JAVAH_ARG -h  "${CMAKE_CURRENT_LIST_DIR}/src/java" com/puppetlabs/Facter.java)
+    endif()
+
     add_custom_command(OUTPUT "${CMAKE_CURRENT_LIST_DIR}/src/java/com_puppetlabs_Facter.h"
-                       COMMAND javah ARGS -classpath facter.jar -d "${CMAKE_CURRENT_LIST_DIR}/src/java" com.puppetlabs.Facter
+                       COMMAND ${JAVAH_COMMAND} ARGS ${JAVAH_ARG}
                        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
                        DEPENDS facter-jruby-jar)
     # Anything that depends on facter-jruby wants both the jar AND the completely written header.
