@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.11.1\n"
+"Project-Id-Version: FACTER 3.11.2\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -413,6 +413,16 @@ msgstr ""
 #. debug
 #: lib/src/facts/bsd/networking_resolver.cc
 msgid "reading \"{1}\" for dhclient lease information."
+msgstr ""
+
+#. debug
+#: lib/src/facts/bsd/networking_resolver.cc
+msgid "searching \"{1}\" for systemd-networkd DHCP lease files"
+msgstr ""
+
+#. debug
+#: lib/src/facts/bsd/networking_resolver.cc
+msgid "searching \"{1}\" for systemd-networkd DHCP lease information"
 msgstr ""
 
 #. debug
