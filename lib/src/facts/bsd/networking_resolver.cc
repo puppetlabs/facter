@@ -1,15 +1,21 @@
+#include <facter/util/string.hpp>
 #include <internal/facts/bsd/networking_resolver.hpp>
 #include <internal/util/bsd/scoped_ifaddrs.hpp>
 #include <leatherman/execution/execution.hpp>
 #include <leatherman/file_util/file.hpp>
 #include <leatherman/file_util/directory.hpp>
 #include <leatherman/logging/logging.hpp>
+#include <leatherman/util/regex.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 #include <netinet/in.h>
+#include <unordered_map>
 
 using namespace std;
 using namespace facter::util::bsd;
 using namespace leatherman::execution;
+using namespace leatherman::util;
+using facter::util::maybe_stoi;
 
 namespace lth_file = leatherman::file_util;
 
@@ -117,11 +123,8 @@ namespace facter { namespace facts { namespace bsd {
         // that has a non-loopback address
         return {};
     }
-
-    map<string, string> networking_resolver::find_dhcp_servers() const
+    void networking_resolver::find_dhclient_dhcp_servers(std::map<std::string, std::string>& servers) const
     {
-        map<string, string> servers;
-
         static vector<string> const dhclient_search_directories = {
             "/var/lib/dhclient",
             "/var/lib/dhcp",
@@ -153,6 +156,59 @@ namespace facter { namespace facts { namespace bsd {
                 return true;
             }, "^dhclient.*lease.*$");
         }
+    }
+
+    void networking_resolver::find_networkd_dhcp_servers(std::map<std::string, std::string>& servers) const
+    {
+        // Files in this lease directory are not part of systemd's public API,
+        // and they include warnings against parsing them, but they seem to be
+        // the only way to get this information for now.
+        // Each file is named after the interface's index number.
+        static const string networkd_lease_directory = "/run/systemd/netif/leases/";
+
+        if (!boost::filesystem::is_directory(networkd_lease_directory)) return;
+
+        static boost::regex ip_link_re("^(\\d+):\\s+([^:]+)");
+        unordered_map<int, string> iface_index_names;
+        string key, value;
+
+        // Gather a map of interface indices and their interface names from `ip link show` --
+        // Only the index is known in the lease files.
+        each_line("ip", {"link", "show"}, [&](string line) {
+            if (re_search(line, ip_link_re, &key, &value)) {
+                iface_index_names.insert(make_pair(stoi(key), value));
+            }
+            return true;
+        });
+
+        LOG_DEBUG("searching \"{1}\" for systemd-networkd DHCP lease files", networkd_lease_directory);
+
+        lth_file::each_file(networkd_lease_directory, [&](string const& path) {
+            LOG_DEBUG("searching \"{1}\" for systemd-networkd DHCP lease information", path);
+            string server_address;
+
+            static boost::regex server_address_re("^SERVER_ADDRESS=(.*)$");
+            lth_file::each_line(path, [&](string& line) {
+                boost::trim(line);
+                if (re_search(line, server_address_re, &server_address)) {
+                    boost::filesystem::path p {path};
+                    auto iface_index = maybe_stoi(p.filename().string());
+                    if (!iface_index) return true;
+                    servers.emplace(make_pair(iface_index_names[iface_index.get()], server_address));
+                }
+                return true;
+            });
+            return true;
+        });
+    }
+
+    map<string, string> networking_resolver::find_dhcp_servers() const
+    {
+        map<string, string> servers;
+
+        find_networkd_dhcp_servers(servers);
+        if (servers.empty()) find_dhclient_dhcp_servers(servers);
+
         return servers;
     }
 
