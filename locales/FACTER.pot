@@ -416,6 +416,16 @@ msgid "reading \"{1}\" for dhclient lease information."
 msgstr ""
 
 #. debug
+#: lib/src/facts/bsd/networking_resolver.cc
+msgid "searching \"{1}\" for systemd-networkd DHCP lease files"
+msgstr ""
+
+#. debug
+#: lib/src/facts/bsd/networking_resolver.cc
+msgid "searching \"{1}\" for systemd-networkd DHCP lease information"
+msgstr ""
+
+#. debug
 #: lib/src/facts/cache.cc
 msgid "Deleting unused cache file {1}"
 msgstr ""
