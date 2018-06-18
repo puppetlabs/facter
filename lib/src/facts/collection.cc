@@ -163,7 +163,7 @@ namespace facter { namespace facts {
             } else {
                 LOG_DEBUG("skipping external facts for \"{1}\": {2}", dir, msg);
             }
-            return found;
+            return false;
         }
 
         LOG_DEBUG("searching {1} for external facts.", search_dir);
@@ -172,8 +172,8 @@ namespace facter { namespace facts {
             for (auto const& res : resolvers) {
                 if (res->can_resolve(path)) {
                     try {
-                        found = true;
                         res->resolve(path, *this);
+                        found = true;
                     }
                     catch (external::external_fact_exception& ex) {
                         LOG_ERROR("error while processing \"{1}\" for external facts: {2}", path, ex.what());

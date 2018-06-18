@@ -25,11 +25,10 @@ namespace facter { namespace facts {
                 directories.emplace_back(home + "/.puppetlabs/opt/facter/facts.d");
                 directories.emplace_back(home + "/.facter/facts.d");
             }
-        } else {
-            directories.emplace_back("/opt/puppetlabs/facter/facts.d");
-            directories.emplace_back("/etc/facter/facts.d");
-            directories.emplace_back("/etc/puppetlabs/facter/facts.d");
         }
+        directories.emplace_back("/opt/puppetlabs/facter/facts.d");
+        directories.emplace_back("/etc/facter/facts.d");
+        directories.emplace_back("/etc/puppetlabs/facter/facts.d");
         return directories;
     }
 
