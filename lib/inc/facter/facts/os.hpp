@@ -70,6 +70,10 @@ namespace facter { namespace facts {
          */
         constexpr static char const* xen_server = "XenServer";
         /**
+         * The XCP-ng Linux operating system.
+         */
+        constexpr static char const* xcp_ng = "XCP-ng";
+        /**
          * The Mint Linux operating system.
          */
         constexpr static char const* linux_mint = "LinuxMint";
