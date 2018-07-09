@@ -30,44 +30,36 @@ namespace facter { namespace util { namespace solaris {
         return lookup(entry.first, -1, entry.second);
     }
 
+// I believe precedence to be sufficiently obvious in this function,
+// but this is a worthwhile diagnostic in most cases. We disable it
+// here, instead of globally.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wparentheses"
     vector<k_stat_entry> k_stat::lookup(string const& module, int instance, string const& name)
     {
-        kstat_t* kp = kstat_lookup(ctrl, const_cast<char*>(module.c_str()), instance, name.empty() ? nullptr : const_cast<char *>(name.c_str()));
-        if (kp == nullptr) {
-            throw kstat_exception(_("kstat_lookup of module {1}/{2}/{3} failed: {4} ({5})",
-                                    module,
-                                    to_string(instance),
-                                    name,
-                                    string(strerror(errno)),
-                                    to_string(errno)));
-        }
-
+        kstat_t* kp = static_cast<kstat_ctl_t*>(ctrl)->kc_chain;
         vector<k_stat_entry> arr;
-        while (kp) {
-            if (kstat_read(ctrl, kp, 0) == -1) {
-                throw kstat_exception(_("kstat_read failed: {1} ({2})",
-                                        string(strerror(errno)),
-                                        to_string(errno)));
+        do {
+            if (!module.empty() && module != kp->ks_module ||
+                !name.empty() && name != kp->ks_name ||
+                instance != -1 && instance != kp->ks_instance) {
+                continue;
             }
-
-            bool insert = true;
-            if (!module.empty() && module != kp->ks_module) {
-                insert = false;
+            while (kstat_read(ctrl, kp, 0) == -1) {
+                if (errno == EAGAIN) {
+                    continue;
+                } else {
+                    throw kstat_exception(_("kstat_read failed: {1} ({2})",
+                                            string(strerror(errno)),
+                                            to_string(errno)));
+                }
             }
-            if (instance != -1 && instance != kp->ks_instance) {
-                insert = false;
-            }
-            if (!name.empty() && name != kp->ks_name) {
-                insert = false;
-            }
-            if (insert) {
-                arr.push_back(k_stat_entry(kp));
-            }
-            kp = kp->ks_next;
-        }
+            arr.push_back(k_stat_entry(kp));
+        } while (kp = kp->ks_next);
 
         return arr;
     }
+#pragma GCC diagnostic pop
 
     k_stat_entry::k_stat_entry(kstat_t* kp) :
         k_stat(kp)
