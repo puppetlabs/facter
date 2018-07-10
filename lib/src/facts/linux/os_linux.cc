@@ -285,8 +285,10 @@ namespace facter { namespace facts { namespace linux {
             })) {
                 if (boost::ends_with(contents, "(Rawhide)")) {
                     value = "Rawhide";
-                } else {
+                } else if (contents.find("release") != string::npos) {
                     re_search(contents, boost::regex("release (\\d[\\d.]*)"), &value);
+                } else {
+                    re_search(contents, boost::regex("Amazon Linux (\\d+)"), &value);
                 }
             }
         }
