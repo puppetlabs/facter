@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.11.2\n"
+"Project-Id-Version: FACTER 3.11.3\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1495,10 +1495,6 @@ msgstr ""
 
 #: lib/src/util/solaris/k_stat.cc
 msgid "kstat_open failed"
-msgstr ""
-
-#: lib/src/util/solaris/k_stat.cc
-msgid "kstat_lookup of module {1}/{2}/{3} failed: {4} ({5})"
 msgstr ""
 
 #: lib/src/util/solaris/k_stat.cc
