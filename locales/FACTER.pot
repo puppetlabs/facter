@@ -1510,10 +1510,6 @@ msgid "kstat_open failed"
 msgstr ""
 
 #: lib/src/util/solaris/k_stat.cc
-msgid "kstat_lookup of module {1}/{2}/{3} failed: {4} ({5})"
-msgstr ""
-
-#: lib/src/util/solaris/k_stat.cc
 msgid "kstat_read failed: {1} ({2})"
 msgstr ""
 
