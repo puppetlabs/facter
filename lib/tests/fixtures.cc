@@ -6,6 +6,7 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#pragma GCC diagnostic ignored "-Wunused-variable"
 #include <boost/thread/thread.hpp>
 #include <boost/chrono/duration.hpp>
 #pragma GCC diagnostic pop
