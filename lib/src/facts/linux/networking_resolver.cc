@@ -148,7 +148,7 @@ namespace facter { namespace facts { namespace linux {
             "throw"
         };
 
-        auto parse_route_line = [&known_route_types](string& line, std::vector<route>& routes) {
+        auto parse_route_line = [&known_route_types](string& line, int family, std::vector<route>& routes) {
             vector<boost::iterator_range<string::iterator>> parts;
             boost::split(parts, line, boost::is_space(), boost::token_compress_on);
 
@@ -181,6 +181,18 @@ namespace facter { namespace facts { namespace linux {
 
             route r;
             r.destination.assign(parts[dst_idx].begin(), parts[dst_idx].end());
+
+            // Check if we queried for the IPV6 routing tables. If yes, then check if our
+            // destination address is missing a ':'. If yes, then IPV6 is disabled since
+            // IPV6 addresses have a ':' in them. Our ip command has mistakenly outputted IPV4
+            // information. This is bogus data that we want to flush.
+            //
+            // See FACT-1475 for more details.
+            if (family == AF_INET6 && r.destination.find(':') == string::npos) {
+              routes = {};
+              return false;
+            }
+
             // Iterate over key/value pairs and add the ones we care
             // about to our routes entries
             for (size_t i = dst_idx+1; i < parts.size(); i += 2) {
@@ -197,10 +209,10 @@ namespace facter { namespace facts { namespace linux {
         };
 
         lth_exe::each_line(ip_command, { "route", "show" }, [this, &parse_route_line](string& line) {
-            return parse_route_line(line, this->routes4);
+            return parse_route_line(line, AF_INET, this->routes4);
         });
         lth_exe::each_line(ip_command, { "-6", "route", "show" }, [this, &parse_route_line](string& line) {
-            return parse_route_line(line, this->routes6);
+            return parse_route_line(line, AF_INET6, this->routes6);
         });
     }
 
