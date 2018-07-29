@@ -61,11 +61,13 @@ namespace facter { namespace facts { namespace linux {
 
     operating_system_resolver::selinux_data operating_system_resolver::collect_selinux_data()
     {
+        static string SELINUX_CONFIG_FILE("/etc/selinux/config");
+
         selinux_data result;
         result.supported = true;
 
         string mountpoint = get_selinux_mountpoint();
-        result.enabled = !mountpoint.empty();
+        result.enabled = !mountpoint.empty() && exists(SELINUX_CONFIG_FILE);
         if (!result.enabled) {
             return result;
         }
@@ -87,7 +89,7 @@ namespace facter { namespace facts { namespace linux {
         // Parse the SELinux config for mode and policy
         static boost::regex mode_regex("(?m)^SELINUX=(\\w+)$");
         static boost::regex policy_regex("(?m)^SELINUXTYPE=(\\w+)$");
-        lth_file::each_line("/etc/selinux/config", [&](string& line) {
+        lth_file::each_line(SELINUX_CONFIG_FILE, [&](string& line) {
             if (re_search(line, mode_regex, &result.config_mode)) {
                 return true;
             }
