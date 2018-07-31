@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.11.3\n"
+"Project-Id-Version: FACTER 3.11.4\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -352,9 +352,42 @@ msgstr ""
 msgid "got an unknown RT_IFLIST message: {1}"
 msgstr ""
 
-#. warning
 #: lib/src/facts/aix/operating_system_resolver.cc
-msgid "Could not get a value from lsattr -El {1} -a {2}"
+msgid "name = %1% AND attribute = %2%"
+msgstr ""
+
+#. debug
+#: lib/src/facts/aix/operating_system_resolver.cc
+msgid "Could not get a value from the ODM for {1}'s '{2}' attribute."
+msgstr ""
+
+#: lib/src/facts/aix/operating_system_resolver.cc
+msgid "name = %1%"
+msgstr ""
+
+#. debug
+#: lib/src/facts/aix/operating_system_resolver.cc
+msgid ""
+"Could not get a value from the ODM for {1}'s '{2}' attribute: There is no "
+"CuDv entry for {1}."
+msgstr ""
+
+#: lib/src/facts/aix/operating_system_resolver.cc
+msgid "uniquetype = %1% AND attribute = %2%"
+msgstr ""
+
+#. debug
+#: lib/src/facts/aix/operating_system_resolver.cc
+msgid ""
+"Could not get a value from the ODM for {1}'s '{2}' attribute: There is no "
+"PdAt entry for {1} with {2}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/aix/operating_system_resolver.cc
+msgid ""
+"Could not get a value for the OS architecture. Your machine does not have "
+"any processors!"
 msgstr ""
 
 #. debug
