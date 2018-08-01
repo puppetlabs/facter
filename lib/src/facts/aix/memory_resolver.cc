@@ -9,6 +9,15 @@
 using namespace std;
 using namespace facter::util::aix;
 
+// This routine is useful to encapsulate knowledge of the PAGE_SIZE
+// in one place and to also handle implicit conversions of numeric
+// values to uint64_t, which is what we use to represent bytes. Otherwise,
+// we risk accidentally capturing an overflowed value in our computed
+// memory facts.
+static uint64_t pages_to_bytes(uint64_t num_pages) {
+    return num_pages * PAGE_SIZE;
+}
+
 namespace facter { namespace facts { namespace aix {
     memory_resolver::data memory_resolver::collect_data(collection& facts)
     {
@@ -19,8 +28,8 @@ namespace facter { namespace facts { namespace aix {
         if (res < 0) {
             throw system_error(errno, system_category());
         }
-        result.mem_total = info.memsizepgs * PAGE_SIZE;
-        result.mem_free = info.numfrb * PAGE_SIZE;
+        result.mem_total = pages_to_bytes(info.memsizepgs);
+        result.mem_free = pages_to_bytes(info.numfrb);
 
         auto cu_at_query = odm_class<CuAt>::open("CuAt").query("value=paging and attribute=type");
         for (auto& cu_at : cu_at_query) {
@@ -39,8 +48,9 @@ namespace facter { namespace facts { namespace aix {
                     throw system_error(errno, system_category());
                 }
             }
-            result.swap_total += info.size * PAGE_SIZE;
-            result.swap_free += info.free * PAGE_SIZE;
+
+            result.swap_total += pages_to_bytes(info.size);
+            result.swap_free += pages_to_bytes(info.free);
         }
 
         return result;
