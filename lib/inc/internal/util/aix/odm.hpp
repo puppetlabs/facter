@@ -117,7 +117,18 @@ namespace facter { namespace util { namespace aix {
               * @return true if the iterators are not equal
               */
              bool operator != (const iterator& rhs) {
-                 return _data != rhs._data && _owner != rhs._owner;
+                 return _owner != rhs._owner || _data != rhs._data;
+             }
+
+             /**
+              * equality comparison.
+              * @param rhs the other iterator to compare to
+              * @return true if the iterators are equal
+              */
+             bool operator == (const iterator& rhs) {
+                 // We could do !(*this != rhs) here, but it's better to inline
+                 // the expression for performance reasons. It's simple enough.
+                 return _owner == rhs._owner && _data == rhs._data;
              }
 
              /**
@@ -148,6 +159,14 @@ namespace facter { namespace util { namespace aix {
               */
              const T& operator*() const{
                  return *_data;
+             }
+
+             /**
+              * arrow operator
+              * @return a pointer to the held ODM data structure
+              */
+             const T* operator->() const{
+                 return _data;
              }
 
              /**
