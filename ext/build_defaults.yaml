@@ -1,6 +1,4 @@
 ---
-packaging_url: 'git@github.com:puppetlabs/packaging --branch=1.0.x'
-packaging_repo: 'packaging'
 deb_build_mirrors:
   - deb http://pl-build-tools.delivery.puppetlabs.net/debian __DIST__ main
 packager: 'puppetlabs'
