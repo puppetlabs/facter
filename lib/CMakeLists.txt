@@ -91,6 +91,7 @@ if (UNIX)
         "src/facts/posix/cache.cc"
         "src/util/posix/scoped_addrinfo.cc"
         "src/util/posix/scoped_descriptor.cc"
+        "src/util/posix/utmpx_file.cc"
         "src/util/config/posix/config.cc"
     )
     if (OPENSSL_FOUND)
