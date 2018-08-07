@@ -316,6 +316,10 @@ msgstr ""
 msgid "querylv returned success but we got a null LV. WTF?"
 msgstr ""
 
+#: lib/src/facts/aix/load_average_resolver.cc
+msgid "failed to retrieve the load averages"
+msgstr ""
+
 #: lib/src/facts/aix/networking_resolver.cc
 msgid "getkerninfo call was unsuccessful"
 msgstr ""
