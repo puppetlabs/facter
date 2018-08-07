@@ -2,6 +2,7 @@
 #include <internal/facts/aix/disk_resolver.hpp>
 #include <internal/facts/aix/filesystem_resolver.hpp>
 #include <internal/facts/aix/kernel_resolver.hpp>
+#include <internal/facts/aix/load_average_resolver.hpp>
 #include <internal/facts/aix/memory_resolver.hpp>
 #include <internal/facts/aix/networking_resolver.hpp>
 #include <internal/facts/aix/operating_system_resolver.hpp>
@@ -19,6 +20,7 @@ namespace facter { namespace facts {
         add(make_shared<aix::disk_resolver>());
         add(make_shared<aix::filesystem_resolver>());
         add(make_shared<aix::kernel_resolver>());
+        add(make_shared<aix::load_average_resolver>());
         add(make_shared<aix::memory_resolver>());
         add(make_shared<aix::networking_resolver>());
         add(make_shared<aix::operating_system_resolver>());

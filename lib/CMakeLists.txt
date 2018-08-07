@@ -121,6 +121,7 @@ if (AIX)
         "src/facts/aix/disk_resolver.cc"
         "src/facts/aix/filesystem_resolver.cc"
         "src/facts/aix/kernel_resolver.cc"
+        "src/facts/aix/load_average_resolver.cc"
         "src/facts/aix/memory_resolver.cc"
         "src/facts/aix/networking_resolver.cc"
         "src/facts/aix/operating_system_resolver.cc"
