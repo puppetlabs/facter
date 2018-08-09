@@ -1,6 +1,7 @@
 #include <internal/facts/aix/memory_resolver.hpp>
 #include <internal/util/aix/odm.hpp>
 
+#include <leatherman/logging/logging.hpp>
 #include <sys/vminfo.h>
 #include <sys/cfgodm.h>
 #include <sys/limits.h>
@@ -33,10 +34,14 @@ namespace facter { namespace facts { namespace aix {
                 // swapqry the things that have an attribute we
                 // expect, but ignore any errno values that look like
                 // "this just wasn't a good device to query"
+                // ENXIO: No such device address.
                 if (errno != ENODEV &&
                     errno != ENOENT &&
-                    errno != ENOTBLK) {
-                    throw system_error(errno, system_category());
+                    errno != ENOTBLK &&
+                    errno != ENXIO) {
+                    throw system_error(errno, system_category(), device);
+                } else {
+                    LOG_DEBUG("cannot use device {1}: error is {2}", device, errno);
                 }
             }
             result.swap_total += info.size * PAGE_SIZE;
