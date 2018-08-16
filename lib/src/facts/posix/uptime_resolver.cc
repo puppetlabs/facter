@@ -1,10 +1,19 @@
 #include <internal/facts/posix/uptime_resolver.hpp>
+#include <internal/util/posix/utmpx_file.hpp>
 #include <leatherman/util/regex.hpp>
 #include <leatherman/execution/execution.hpp>
+#include <leatherman/logging/logging.hpp>
+#include <leatherman/locale/locale.hpp>
+
+#include <ctime>
+
+// Mark string for translation (alias for leatherman::locale::format)
+using leatherman::locale::_;
 
 using namespace std;
 using namespace leatherman::util;
 using namespace leatherman::execution;
+using namespace facter::util::posix;
 
 namespace facter { namespace facts { namespace posix {
 
@@ -43,6 +52,16 @@ namespace facter { namespace facts { namespace posix {
 
     int64_t uptime_resolver::get_uptime()
     {
+        LOG_DEBUG(_("Attempting to calculate the uptime from the utmpx file"));
+        utmpx query;
+        query.ut_type = BOOT_TIME;
+        utmpx_file file;
+        auto ent = file.query(query);
+        if (ent) {
+          return time(NULL) - ent->ut_tv.tv_sec;
+        }
+        LOG_DEBUG(_("Could not calculate the uptime from the utmpx file"));
+
         auto exec = execute("uptime");
         if (!exec.success) {
             return -1;

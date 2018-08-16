@@ -91,6 +91,7 @@ if (UNIX)
         "src/facts/posix/cache.cc"
         "src/util/posix/scoped_addrinfo.cc"
         "src/util/posix/scoped_descriptor.cc"
+        "src/util/posix/utmpx_file.cc"
         "src/util/config/posix/config.cc"
     )
     if (OPENSSL_FOUND)
@@ -120,6 +121,7 @@ if (AIX)
         "src/facts/aix/disk_resolver.cc"
         "src/facts/aix/filesystem_resolver.cc"
         "src/facts/aix/kernel_resolver.cc"
+        "src/facts/aix/load_average_resolver.cc"
         "src/facts/aix/memory_resolver.cc"
         "src/facts/aix/networking_resolver.cc"
         "src/facts/aix/operating_system_resolver.cc"
