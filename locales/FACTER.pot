@@ -320,6 +320,11 @@ msgstr ""
 msgid "failed to retrieve the load averages"
 msgstr ""
 
+#. debug
+#: lib/src/facts/aix/memory_resolver.cc
+msgid "cannot use device {1}: error is {2}"
+msgstr ""
+
 #: lib/src/facts/aix/networking_resolver.cc
 msgid "getkerninfo call was unsuccessful"
 msgstr ""
