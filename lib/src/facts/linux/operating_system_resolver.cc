@@ -2,8 +2,7 @@
 #include <internal/facts/linux/release_file.hpp>
 #include <internal/facts/linux/os_linux.hpp>
 #include <internal/facts/linux/os_cisco.hpp>
-#include <internal/facts/linux/os_coreos.hpp>
-#include <internal/facts/linux/os_cumulus.hpp>
+#include <internal/facts/linux/os_osrelease.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/map_value.hpp>
@@ -29,13 +28,11 @@ namespace facter { namespace facts { namespace linux {
 
     static unique_ptr<os_linux> get_os()
     {
-        auto release_info = os_linux::key_value_file(release_file::os, {"NAME", "CISCO_RELEASE_INFO", "ID"});
-        auto const& name = release_info["NAME"];
+        auto release_info = os_linux::key_value_file(release_file::os, {"ID", "CISCO_RELEASE_INFO"});
         auto const& id = release_info["ID"];
-        if (name == "Cumulus Linux") {
-            return unique_ptr<os_linux>(new os_cumulus());
-        } else if (name == "CoreOS" || id == "coreos") {
-            return unique_ptr<os_linux>(new os_coreos());
+        if (id == "coreos" || id == "cumulus-linux" || id == "opensuse" ||
+            id == "opensuse-leap" || id== "sled" || id == "sles") {
+            return unique_ptr<os_linux>(new os_osrelease());
         } else {
             auto const& cisco = release_info["CISCO_RELEASE_INFO"];
             boost::system::error_code ec;
