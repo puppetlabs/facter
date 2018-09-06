@@ -7,6 +7,7 @@
 #include <internal/facts/linux/os_linux.hpp>
 #include <facter/facts/os.hpp>
 #include <facter/facts/os_family.hpp>
+#include <boost/regex.hpp>
 #include <iostream>
 using namespace std;
 
@@ -81,7 +82,16 @@ namespace facter { namespace facts { namespace linux {
         virtual std::string get_release(std::string const& name, std::string const& distro_release) const override
         {
             auto val = _release_info.find("VERSION_ID");
-            return (val != _release_info.end()) ? val->second : std::string();
+            if (val != _release_info.end()) {
+                if (boost::regex_match(val->second, boost::regex("^\\d+$"))) {
+                    // FACT-1880: when VERSION_ID doesn't specify a point-release,
+                    // return the major version with ".0" appended so that
+                    // os.release.minor always returns a value.
+                    return val->second + ".0";
+                }
+                return val->second;
+            }
+            return std::string();
         }
     };
 
