@@ -1242,7 +1242,11 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/windows/kernel_resolver.cc
-msgid "failed to retrieve kernel facts: {1}"
+msgid "failed to get the OS version information from RtlGetVersion"
+msgstr ""
+
+#: lib/src/facts/windows/kernel_resolver.cc
+msgid "%1%.%2%.%3%"
 msgstr ""
 
 #. debug
@@ -1543,14 +1547,6 @@ msgstr ""
 msgid "a block is unexpected when passing a String"
 msgstr ""
 
-#: lib/src/util/posix/utmpx_file.cc
-msgid "only one utmpx_file instance can exist at a time!"
-msgstr ""
-
-#: lib/src/util/posix/utmpx_file.cc
-msgid "Reading the utmpx file ..."
-msgstr ""
-
 #: lib/src/util/freebsd/geom.cc
 msgid "Skipping config {1} because it has a null value"
 msgstr ""
@@ -1561,6 +1557,14 @@ msgstr ""
 
 #: lib/src/util/freebsd/geom.cc
 msgid "The GEOM class \"{1}\" was not found"
+msgstr ""
+
+#: lib/src/util/posix/utmpx_file.cc
+msgid "only one utmpx_file instance can exist at a time!"
+msgstr ""
+
+#: lib/src/util/posix/utmpx_file.cc
+msgid "Reading the utmpx file ..."
 msgstr ""
 
 #: lib/src/util/solaris/k_stat.cc
