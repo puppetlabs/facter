@@ -523,7 +523,7 @@ module Facter
         elsif agent['platform'] =~ /2008/
           os_version = '2008 R2'
         elsif agent['platform'] =~ /2012/
-          os_version = '2012 R2'
+          os_version = agent['platform'] =~ /R2/ ? '2012 R2' : '2012'
         elsif agent['platform'] =~ /-10/
           os_version = '10'
         elsif agent['platform'] =~ /2016/
