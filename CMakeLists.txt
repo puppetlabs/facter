@@ -11,6 +11,9 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
 
+include(CheckIncludeFile)
+CHECK_INCLUDE_FILE(utmpx.h HAVE_UTMPX_H -DHAVE_UTMPX_H)
+
 option(YAMLCPP_STATIC "Use yaml-cpp's static libraries" OFF)
 option(BUILD_SHARED_LIBS "Build libfacter as a shared library" ON)
 

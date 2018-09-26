@@ -91,11 +91,14 @@ if (UNIX)
         "src/facts/posix/cache.cc"
         "src/util/posix/scoped_addrinfo.cc"
         "src/util/posix/scoped_descriptor.cc"
-        "src/util/posix/utmpx_file.cc"
         "src/util/config/posix/config.cc"
     )
     if (OPENSSL_FOUND)
         set(LIBFACTER_STANDARD_SOURCES ${LIBFACTER_STANDARD_SOURCES} "src/util/posix/scoped_bio.cc")
+    endif()
+
+    if (HAVE_UTMPX_H)
+        set(LIBFACTER_STANDARD_SOURCES ${LIBFACTER_STANDARD_SOURCES} "src/util/posix/utmpx_file.cc")
     endif()
 
     if (NOT AIX)
