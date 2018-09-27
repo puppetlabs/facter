@@ -30,6 +30,27 @@ static const char load_puppet[] =
 "  end\n"
 "end\n";
 
+// This struct redirects stdout to stderr in the ruby runtime for the
+// duration of its lifetime. We use this to ensure that any custom
+// facts writing to stdout during their initialization or execution
+// won't corrupt json/yaml output from the facter executable.
+struct RbStdoutGuard {
+    VALUE old_stdout;
+    api& ruby;
+
+    RbStdoutGuard(api& ruby) :ruby(ruby) {
+        LOG_DEBUG("Redirecting ruby's stdout to stderr");
+        auto rb_stderr = ruby.rb_gv_get("$stderr");
+        old_stdout = ruby.rb_gv_get("$stdout");
+        ruby.rb_gv_set("$stdout", rb_stderr);
+    }
+
+    ~RbStdoutGuard() {
+        LOG_DEBUG("Restoring Ruby's stdout");
+        ruby.rb_gv_set("$stdout", old_stdout);
+    }
+};
+
 namespace facter { namespace ruby {
 
     bool initialize(bool include_stack_trace)
@@ -48,7 +69,7 @@ namespace facter { namespace ruby {
         return true;
     }
 
-    void load_custom_facts(collection& facts, bool initialize_puppet, vector<string> const& paths)
+    void load_custom_facts(collection& facts, bool initialize_puppet, bool redirect_stdout, vector<string> const& paths)
     {
 #ifdef _WIN32
         // Initialize WSA before resolving custom facts. The Ruby runtime does this only when running
@@ -67,12 +88,23 @@ namespace facter { namespace ruby {
             }
         }
         mod.search(paths);
-        mod.resolve_facts();
+        if (redirect_stdout) {
+            // Redirect stdout->stderr for custom facts.
+            RbStdoutGuard stdout_guard{ruby};
+            mod.resolve_facts();
+        } else {
+            mod.resolve_facts();
+        }
     }
 
     void load_custom_facts(collection& facts, vector<string> const& paths)
     {
-         load_custom_facts(facts, false, paths);
+        load_custom_facts(facts, false, false, paths);
+    }
+
+    void load_custom_facts(collection& facts, bool initialize_puppet, vector<string> const& paths)
+    {
+        load_custom_facts(facts, initialize_puppet, false, paths);
     }
 
     value const* lookup(value const* value, vector<string>::iterator segment, vector<string>::iterator end) {

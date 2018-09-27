@@ -332,7 +332,8 @@ int main(int argc, char **argv)
             if (vm.count("custom-dir")) {
                 custom_directories = vm["custom-dir"].as<vector<string>>();
             }
-            facter::ruby::load_custom_facts(facts, vm.count("puppet"), custom_directories);
+            bool redirect_ruby_stdout = vm.count("json") || vm.count("yaml");
+            facter::ruby::load_custom_facts(facts, vm.count("puppet"), redirect_ruby_stdout, custom_directories);
         }
 
         if (!vm["no-external-facts"].as<bool>()) {
