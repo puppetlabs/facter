@@ -1,54 +1,33 @@
-language: cpp
-compiler:
-  - gcc
-dist: precise
-sudo: false
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - boost-latest
-    packages:
-      - gcc-4.8
-      - g++-4.8
-      - libboost-filesystem1.55-dev
-      - libboost-program-options1.55-dev
-      - libboost-regex1.55-dev
-      - libboost-date-time1.55-dev
-      - libboost-thread1.55-dev
-      - libboost-log1.55-dev
-      - libboost-locale1.55-dev
-      - libboost-chrono1.55-dev
-      - libblkid1
+sudo: required
+services:
+  - docker
 
 before_install:
-  # Use a predefined install location; cppcheck requires the cfg location is defined at compile-time.
-  - mkdir -p $USERDIR
-  # grab a pre-built cmake 3.2.3
-  - wget https://s3.amazonaws.com/kylo-pl-bucket/cmake-3.2.3-Linux-x86_64.tar.gz
-  - tar xzvf cmake-3.2.3-Linux-x86_64.tar.gz --strip 1 -C $USERDIR
-  # Install dependencies of facter
-  - wget https://s3.amazonaws.com/kylo-pl-bucket/yaml-cpp-0.5.1_install.tar.bz2
-  - tar xjvf yaml-cpp-0.5.1_install.tar.bz2 --strip 1 -C $USERDIR
-  - wget https://github.com/puppetlabs/leatherman/releases/download/${LEATHERMAN_VERSION}/leatherman.tar.gz
-  - tar xzvf leatherman.tar.gz -C $USERDIR
-  - wget https://github.com/puppetlabs/cpp-hocon/releases/download/${CPPHOCON_VERSION}/cpp-hocon.tar.gz
-  - tar xzvf cpp-hocon.tar.gz -C $USERDIR
+  - docker pull gcr.io/cpp-projects/cpp-ci:1
 
-script: ./scripts/travis_target.sh
+script:
+  - >
+    docker run -v `pwd`:/facter gcr.io/cpp-projects/cpp-ci:1 /bin/bash -c "
+    wget https://github.com/puppetlabs/leatherman/releases/download/${LEATHERMAN_VERSION}/leatherman-dynamic.tar.gz &&
+    tar xzvf leatherman-dynamic.tar.gz --strip 1 -C / &&
+    wget https://github.com/puppetlabs/cpp-hocon/releases/download/${CPPHOCON_VERSION}/cpp-hocon-dynamic.tar.gz &&
+    tar xzvf cpp-hocon-dynamic.tar.gz --strip 1 -C / &&
+    cd /facter &&
+    cmake $EXTRA_VARS . &&
+    mkdir dest &&
+    make $TARGET DESTDIR=/facter/dest VERBOSE=1 -j2 &&
+    { [[ '$COVERALLS' != 'ON' ]] || coveralls --gcov-options '\-lp' -r . -b . -e src -e vendor >/dev/null || true; }
+    "
 
 env:
   global:
-    - USERDIR=/tmp/userdir
-    - PYTHONUSERBASE=$USERDIR
-    - PATH=$USERDIR/bin:$PATH
-    - LD_LIBRARY_PATH=$USERDIR/lib:$LD_LIBRARY_PATH
-    - LEATHERMAN_VERSION=0.99.0
-    - CPPHOCON_VERSION=0.1.4
+    - LEATHERMAN_VERSION=1.4.4
+    - CPPHOCON_VERSION=0.1.8
   matrix:
-    - TRAVIS_TARGET=COMMITS
-    - TRAVIS_TARGET=DOXYGEN
-    - TRAVIS_TARGET=CPPLINT
-    - TRAVIS_TARGET=CPPCHECK
-    - TRAVIS_TARGET=RELEASE
-    - TRAVIS_TARGET=DEBUG
+    - TARGET=cpplint
+    - TARGET=cppcheck
+    - TARGET="all test install ARGS=-V" EXTRA_VARS=""
+    - TARGET="all test install ARGS=-V" EXTRA_VARS="-DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=ON" COVERALLS=ON
+
+notifications:
+  email: false
