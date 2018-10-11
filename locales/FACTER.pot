@@ -1529,6 +1529,16 @@ msgstr ""
 msgid "timeout= is not supported for custom facts and will be ignored."
 msgstr ""
 
+#. debug
+#: lib/src/ruby/ruby.cc
+msgid "Redirecting ruby's stdout to stderr"
+msgstr ""
+
+#. debug
+#: lib/src/ruby/ruby.cc
+msgid "Restoring Ruby's stdout"
+msgstr ""
+
 #. warning
 #: lib/src/ruby/ruby.cc
 msgid "Could not load puppet; some facts may be unavailable: {1}"
