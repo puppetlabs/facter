@@ -15,13 +15,13 @@ test_name "C96148: verify dmi facts" do
     expected_facts = {
         'dmi.manufacturer' => /\w+/,
         'dmi.product.name' => /\w+/,
+        'dmi.product.uuid' => /[-0-9A-Fa-f]+/,
     }
     unless agent['platform'] =~ /windows/
       expected_facts.merge!({'dmi.bios.release_date' => /\d+\/\d+\/\d+/,
                              'dmi.bios.vendor'       => /\w+/,
                              'dmi.bios.version'      => /\d+/,
                              'dmi.chassis.type'      => /\w+/,
-                             'dmi.product.uuid'      => /[-0-9A-Fa-f]+/,
                             })
     end
     unless agent['platform'] =~ /windows|cisco|aarch64|el-/
