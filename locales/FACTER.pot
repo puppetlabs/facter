@@ -1227,11 +1227,6 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/windows/dmi_resolver.cc
-msgid "WMI query returned no results for {1} with value {2}."
-msgstr ""
-
-#. debug
-#: lib/src/facts/windows/dmi_resolver.cc
 msgid "WMI query returned no results for {1} with values {2} and {3}."
 msgstr ""
 
