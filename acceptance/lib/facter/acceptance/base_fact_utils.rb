@@ -528,6 +528,8 @@ module Facter
           os_version = '10'
         elsif agent['platform'] =~ /2016/
           os_version = '2016'
+        elsif agent['platform'] =~ /2019/
+          os_version = '2019'
         else
           fail_test "Unknown Windows version #{agent['platform']}"
         end
