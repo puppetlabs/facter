@@ -1290,6 +1290,13 @@ msgid "error finding SYSTEMROOT: {1}"
 msgstr ""
 
 #. debug
+#: lib/src/facts/windows/operating_system_resolver.cc
+msgid ""
+"Could not resolve the OS release and OS major version facts from the kernel "
+"version fact"
+msgstr ""
+
+#. debug
 #: lib/src/facts/windows/processor_resolver.cc
 msgid "WMI processor Name, Architecture query returned no results."
 msgstr ""
