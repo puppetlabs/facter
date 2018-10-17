@@ -2,7 +2,9 @@
 #include <leatherman/windows/system_error.hpp>
 #include <leatherman/windows/wmi.hpp>
 #include <leatherman/windows/windows.hpp>
+#include <facter/facts/fact.hpp>
 #include <facter/facts/collection.hpp>
+#include <facter/facts/scalar_value.hpp>
 #include <facter/facts/os_family.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <leatherman/util/regex.hpp>
@@ -10,6 +12,7 @@
 #include <winnt.h>
 #include <Shlobj.h>
 #include <map>
+#include <string>
 #include <boost/filesystem.hpp>
 
 using namespace std;
@@ -101,7 +104,26 @@ namespace facter { namespace facts { namespace windows {
         auto version = result.release.substr(0, lastDot);
         bool consumerrel = (wmi::get(vals, wmi::producttype) == "1");
         if (version == "10.0") {
-            result.release = consumerrel ? "10" : "2016";
+            // Calculate the build number to distinguish between
+            // Windows Server 2016 and 2019. Note that the kernel
+            // version is written as <major>.<minor>.<build_number>
+            auto kernel_version_fact = facts.get<string_value>(fact::kernel_version);
+            if (! kernel_version_fact) {
+                LOG_DEBUG("Could not resolve the OS release and OS major version facts from the kernel version fact");
+                return result;
+            }
+            auto kernel_version = kernel_version_fact->value();
+            auto build_number_as_str = kernel_version.substr(
+                kernel_version.find_last_of('.') + 1);
+            auto build_number = stol(build_number_as_str);
+
+            if (consumerrel) {
+              result.release = "10";
+            } else if (build_number >= 17623L) {
+              result.release = "2019";
+            } else {
+              result.release = "2016";
+            }
         } else if (version == "6.3") {
             result.release = consumerrel ? "8.1" : "2012 R2";
         } else if (version == "6.2") {
