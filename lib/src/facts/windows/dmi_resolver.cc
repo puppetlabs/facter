@@ -17,11 +17,12 @@ namespace facter { namespace facts { namespace windows {
     {
         data result;
 
-        auto vals = _wmi->query(wmi::computersystemproduct, {wmi::name});
+        auto vals = _wmi->query(wmi::computersystemproduct, {wmi::name, wmi::uuid});
         if (vals.empty()) {
-            LOG_DEBUG("WMI query returned no results for {1} with value {2}.", wmi::computersystemproduct, wmi::name);
+            LOG_DEBUG("WMI query returned no results for {1} with values {2} and {3}.", wmi::computersystemproduct, wmi::name, wmi::uuid);
         } else {
             result.product_name = wmi::get(vals, wmi::name);
+            result.uuid = wmi::get(vals, wmi::uuid);
         }
 
         vals = _wmi->query(wmi::bios, {wmi::manufacturer, wmi::serialnumber});

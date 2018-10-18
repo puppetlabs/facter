@@ -27,6 +27,17 @@ namespace facter { namespace ruby {
      * Calling this function from an arbitrary stack depth may result in segfaults during Ruby GC.
      * @param facts The collection to populate with custom facts.
      * @param initialize_puppet Whether puppet should be loaded to find additional facts.
+     * @param redirect_stdout Whether Ruby's stdout should be redirected to stderr
+     * @param paths The paths to search for custom facts.
+     */
+    LIBFACTER_EXPORT void load_custom_facts(facter::facts::collection& facts, bool initialize_puppet, bool redirect_stdout, std::vector<std::string> const& paths = {});
+
+    /**
+     * Loads custom facts into the given collection.
+     * Important: this function should be called from main().
+     * Calling this function from an arbitrary stack depth may result in segfaults during Ruby GC.
+     * @param facts The collection to populate with custom facts.
+     * @param initialize_puppet Whether puppet should be loaded to find additional facts.
      * @param paths The paths to search for custom facts.
      */
     LIBFACTER_EXPORT void load_custom_facts(facter::facts::collection& facts, bool initialize_puppet, std::vector<std::string> const& paths = {});
