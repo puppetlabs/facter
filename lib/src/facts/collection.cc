@@ -309,6 +309,8 @@ namespace facter { namespace facts {
     {
         resolve_facts();
 
+        // We intentionally are using find_if with no return value as a "map until" construct.
+        // cppcheck-suppress ignoredReturnValue
         find_if(begin(_facts), end(_facts), [&func](map<string, unique_ptr<value>>::value_type const& it) {
             return !func(it.first, it.second.get());
         });
