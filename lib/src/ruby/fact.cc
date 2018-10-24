@@ -83,53 +83,69 @@ namespace facter { namespace ruby {
         });
 
         _resolving = true;
-
-        // If no resolutions or the top resolution has a weight of 0, first check the native collection for the fact
-        // This way we treat the "built-in" as implicitly having a resolution with weight 0
         bool add = true;
-        if (_resolutions.empty() || ruby.to_native<resolution>(_resolutions.front())->weight() == 0) {
-            // Check to see the value is in the collection
-            auto value = facts[ruby.to_string(_name)];
-            if (value) {
-                // Already in collection, do not add
-                add = false;
-                _value = facter->to_ruby(value);
-                _weight = value->weight();
-            }
-        }
 
-        if (ruby.is_nil(_value)) {
-            vector<VALUE>::iterator it;
-            ruby.rescue([&]() {
-                volatile VALUE value = ruby.nil_value();
-                size_t weight = 0;
+        vector<VALUE>::iterator it;
+        ruby.rescue([&]() {
+            volatile VALUE value = ruby.nil_value();
+            size_t weight = 0;
 
-                // Look through the resolutions and find the first allowed resolution that resolves
-                for (it = _resolutions.begin(); it != _resolutions.end(); ++it) {
-                    auto res = ruby.to_native<resolution>(*it);
-                    if (!res->suitable(*facter)) {
-                        continue;
-                    }
-                    value = res->value();
-                    if (!ruby.is_nil(value)) {
-                        weight = res->weight();
-                        break;
-                    }
+            // Look through the resolutions and find the first allowed resolution that resolves
+            for (it = _resolutions.begin(); it != _resolutions.end(); ++it) {
+                auto res = ruby.to_native<resolution>(*it);
+                if (!res->suitable(*facter)) {
+                    continue;
                 }
+                value = res->value();
+                if (!ruby.is_nil(value)) {
+                    weight = res->weight();
+                    break;
+                }
+            }
 
-                // Set the value to what was resolved
-                _value = value;
-                _weight = weight;
-                return 0;
-            }, [&](VALUE ex) {
-                LOG_ERROR("error while resolving custom fact \"{1}\": {2}", ruby.rb_string_value_ptr(&_name), ruby.exception_to_string(ex));
+            // Set the value to what was resolved
+            _value = value;
+            _weight = weight;
 
-                // Failed, so set to nil
-                _value = ruby.nil_value();
-                _weight = 0;
+            if (! ruby.is_nil(_value) && _weight != 0) {
                 return 0;
-            });
-        }
+            }
+
+            // There's two possibilities here:
+            //   1. None of our resolvers could resolve the value
+            //   2. A resolver of weight 0 resolved the value
+            //
+            // In both cases, we attempt to use the "built-in" fact's
+            // value. This serves as a fallback resolver for Case (1)
+            // while for Case (2), we want built-in values to take
+            // precedence over 0-weight custom facts.
+
+            auto builtin_value = facts[ruby.to_string(_name)];
+            if (! builtin_value) {
+              return 0;
+            }
+            auto builtin_ruby_value = facter->to_ruby(builtin_value);
+
+            // We need this check for Case (2). Otherwise, we risk
+            // overwriting our resolved value in the small chance
+            // that builtin_value exists, but its ruby value is
+            // nil.
+            if (! ruby.is_nil(builtin_ruby_value)) {
+              // Already in collection, do not add
+              add = false;
+              _value = builtin_ruby_value;
+              _weight = builtin_value->weight();
+            }
+
+            return 0;
+        }, [&](VALUE ex) {
+            LOG_ERROR("error while resolving custom fact \"{1}\": {2}", ruby.rb_string_value_ptr(&_name), ruby.exception_to_string(ex));
+
+            // Failed, so set to nil
+            _value = ruby.nil_value();
+            _weight = 0;
+            return 0;
+        });
 
         if (add) {
             facts.add_custom(ruby.to_string(_name), ruby.is_nil(_value) ? nullptr : make_value<ruby::ruby_value>(_value), _weight);

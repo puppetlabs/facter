@@ -67,7 +67,7 @@ struct multi_resolver : facter::facts::resolver
 
 struct temp_variable
 {
-    temp_variable(string name, string const& value) :
+    temp_variable(string&& name, string const& value) :
         _name(move(name))
     {
         environment::set(_name, value);
