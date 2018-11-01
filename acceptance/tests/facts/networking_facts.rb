@@ -26,12 +26,12 @@ test_name 'C59029: networking facts should be fully populated' do
     refute_empty(primary_interface)
 
     expected_bindings = {
-        "\"networking.interfaces.#{primary_interface}.bindings.0.address\"" => @ip_regex,
-        "\"networking.interfaces.#{primary_interface}.bindings.0.netmask\"" => @netmask_regex,
-        "\"networking.interfaces.#{primary_interface}.bindings.0.network\"" => @ip_regex,
-        "\"networking.interfaces.#{primary_interface}.bindings6.0.address\"" => /[a-f0-9:]+/,
-        "\"networking.interfaces.#{primary_interface}.bindings6.0.netmask\"" => /[a-f0-9:]+/,
-        "\"networking.interfaces.#{primary_interface}.bindings6.0.network\"" => /[a-f0-9:]+/
+        "networking.interfaces.#{primary_interface}.bindings.0.address" => @ip_regex,
+        "networking.interfaces.#{primary_interface}.bindings.0.netmask" => @netmask_regex,
+        "networking.interfaces.#{primary_interface}.bindings.0.network" => @ip_regex,
+        "networking.interfaces.#{primary_interface}.bindings6.0.address" => /[a-f0-9:]+/,
+        "networking.interfaces.#{primary_interface}.bindings6.0.netmask" => /[a-f0-9:]+/,
+        "networking.interfaces.#{primary_interface}.bindings6.0.network" => /[a-f0-9:]+/
     }
 
     if agent['platform'] =~ /eos|solaris|aix|cisco/
@@ -41,9 +41,9 @@ test_name 'C59029: networking facts should be fully populated' do
       expected_networking.delete("networking.network6")
 
       #remove invalid bindings for the primary networking interface eccentric platforms
-      expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.address\"")
-      expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.netmask\"")
-      expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings6.0.network\"")
+      expected_bindings.delete("networking.interfaces.#{primary_interface}.bindings6.0.address")
+      expected_bindings.delete("networking.interfaces.#{primary_interface}.bindings6.0.netmask")
+      expected_bindings.delete("networking.interfaces.#{primary_interface}.bindings6.0.network")
     end
 
     if agent['platform'] =~ /aix|sparc|cisco|huawei|sles|s390x/
@@ -57,19 +57,19 @@ test_name 'C59029: networking facts should be fully populated' do
       expected_networking.delete("networking.netmask")
 
       #remove invalid bindings for Cisco's primary networking interface
-      expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings.0.netmask\"")
-      expected_bindings.delete("\"networking.interfaces.#{primary_interface}.bindings.0.network\"")
+      expected_bindings.delete("networking.interfaces.#{primary_interface}.bindings.0.netmask")
+      expected_bindings.delete("networking.interfaces.#{primary_interface}.bindings.0.network")
     end
 
     step "Ensure the Networking fact resolves with reasonable values for at least one interface" do
       expected_networking.each do |fact, value|
-        assert_match(value, fact_on(agent, fact))
+        assert_match(value, fact_on(agent, fact).to_s)
       end
     end
 
     step "Ensure bindings for the primary networking interface are present" do
       expected_bindings.each do |fact, value|
-        assert_match(value, fact_on(agent, fact))
+        assert_match(value, fact_on(agent, fact).to_s)
       end
     end
   end
