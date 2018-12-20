@@ -37,6 +37,8 @@ module Facter
           "Archlinux"
         when "Mageia", "Mandriva", "Mandrake"
           "Mandrake"
+        when "ALT Linux", "ALT Starter Kit", "ALT Workstation", "ALT Server"
+          "ALT"
         else
           Facter.value("kernel")
         end
@@ -46,6 +48,8 @@ module Facter
         case get_operatingsystem
         when "Alpine"
           get_alpine_release_with_release_file
+        when "ALT", "ALT Starter Kit", "ALT Workstation", "ALT Server"
+          get_alt_release_with_release_file
         when "Amazon"
           get_amazon_release_with_lsb
         when "AristaEOS"
@@ -247,7 +251,6 @@ module Facter
           "AristaEOS"   => "/etc/Eos-release",
           "Debian"      => "/etc/debian_version",
           "Gentoo"      => "/etc/gentoo-release",
-          "Fedora"      => "/etc/fedora-release",
           "Mageia"      => "/etc/mageia-release",
           "Mandriva"    => "/etc/mandriva-release",
           "Mandrake"    => "/etc/mandrake-release",
@@ -276,6 +279,10 @@ module Facter
             else
               operatingsystem = "OEL"
             end
+          elsif FileTest.exists?("/etc/altlinux-release")
+            operatingsystem = get_alt_operatingsystem_name
+          elsif FileTest.exists?("/etc/fedora-release")
+            operatingsystem = "Fedora"
           elsif FileTest.exists?("/etc/redhat-release")
             operatingsystem = get_redhat_operatingsystem_name
           elsif FileTest.exists?("/etc/SuSE-release")
@@ -312,6 +319,22 @@ module Facter
 
           match
         end
+      end
+
+      # Uses a regex search on /etc/altlinux-release to determine OS
+      #
+      # @return [String]
+      def get_alt_operatingsystem_name
+        txt = File.read("/etc/os-release")
+        matches = {
+          "ALT Starter Kit"      => "^NAME=\"ALT( Linux)? starter kit",
+          "ALT Workstation"      => "^NAME=\"ALT( Linux)? Workstation",
+          "ALT Server"           => "^NAME=\"ALT( Linux)? Server",
+        }
+        match = regex_search_release_file_for_operatingsystem(matches, txt)
+        match = "ALT Linux" if match == nil
+
+        match
       end
 
       # Uses a regex search on /etc/SuSE-release to determine OS
@@ -408,6 +431,10 @@ module Facter
             match[1]
           end
         end
+      end
+
+      def get_alt_release_with_release_file
+        regex_search_releasefile_for_release(/VERSION_ID=([0-9.]+)/m, "/etc/os-release")
       end
 
       def get_debian_release_with_release_file
