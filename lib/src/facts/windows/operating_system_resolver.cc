@@ -63,15 +63,17 @@ namespace facter { namespace facts { namespace windows {
             LOG_DEBUG("error finding SYSTEMROOT: {1}", leatherman::windows::system_error());
         }
 
-        auto pathNative = path(szPath) / "sysnative";
-        boost::system::error_code ec;
-        if (is_directory(pathNative, ec)) {
-            return pathNative.string();
+        BOOL isWow = FALSE;
+
+        if (!IsWow64Process(GetCurrentProcess(), &isWow)) {
+            LOG_DEBUG("Could not determine if we are running in WOW64: {1}", leatherman::windows::system_error());
         }
 
-        LOG_TRACE("sysnative path does not exist");
-        auto path32 = path(szPath) / "system32";
-        return path32.string();
+        if (isWow) {
+            return ((path(szPath) / "sysnative").string());
+        } else {
+            return ((path(szPath) / "system32").string());
+        }
     }
 
     operating_system_resolver::operating_system_resolver(shared_ptr<wmi> wmi_conn) :
