@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.11.5\n"
+"Project-Id-Version: FACTER 3.11.7\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1287,6 +1287,11 @@ msgstr ""
 #. debug
 #: lib/src/facts/windows/operating_system_resolver.cc
 msgid "error finding SYSTEMROOT: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/operating_system_resolver.cc
+msgid "Could not determine if we are running in WOW64: {1}"
 msgstr ""
 
 #. debug
