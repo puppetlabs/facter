@@ -31,7 +31,7 @@ namespace facter { namespace facts { namespace linux {
         auto release_info = os_linux::key_value_file(release_file::os, {"ID", "CISCO_RELEASE_INFO"});
         auto const& id = release_info["ID"];
         if (id == "coreos" || id == "cumulus-linux" || id == "opensuse" ||
-            id == "opensuse-leap" || id== "sled" || id == "sles") {
+            id == "opensuse-leap" || id== "sled" || id == "sles" || id == "ubuntu") {
             return unique_ptr<os_linux>(new os_osrelease());
         } else {
             auto const& cisco = release_info["CISCO_RELEASE_INFO"];
