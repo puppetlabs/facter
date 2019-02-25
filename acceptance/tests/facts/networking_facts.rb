@@ -46,7 +46,7 @@ test_name 'C59029: networking facts should be fully populated' do
       expected_bindings.delete("networking.interfaces.#{primary_interface}.bindings6.0.network")
     end
 
-    if agent['platform'] =~ /aix|sparc|cisco|huawei|sles|s390x|el-8/
+    if agent['platform'] =~ /aix|sparc|cisco|huawei|sles|s390x/
       # some of our testing platforms do not use DHCP
       expected_networking.delete("networking.dhcp")
     end
