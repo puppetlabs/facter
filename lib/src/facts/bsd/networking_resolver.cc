@@ -157,6 +157,37 @@ namespace facter { namespace facts { namespace bsd {
             }, "^dhclient.*lease.*$");
         }
     }
+    void networking_resolver::find_nm_internal_dhcp_servers(std::map<std::string, std::string>& servers) const
+    {
+        static vector <string> const nm_search_directories = {
+                "/var/lib/NetworkManager"
+        };
+
+        for (auto const& dir : nm_search_directories) {
+            LOG_DEBUG("searching \"{1}\" for NetworkManager internal lease files", dir)
+            lth_file::each_file(dir, [&](string const& path) {
+                LOG_DEBUG("reading \"{1}\" for NetworkManager lease information.", path);
+
+                vector<string> parts;
+
+                boost::split(parts, path, boost::is_any_of("-"));
+                auto filename = parts.back();
+
+                boost::split(parts, filename, boost::is_any_of("."));
+
+                string interface = parts[0];
+
+                lth_file::each_line(path, [&](string &line) {
+                    if (boost::starts_with(line, "SERVER_ADDRESS")) {
+                        string server = line.substr(15);
+                        servers.emplace(make_pair(move(interface), move(server)));
+                    }
+                    return true;
+                });
+                return true;
+            }, "^internal.*lease.*$");
+        }
+    }
 
     void networking_resolver::find_networkd_dhcp_servers(std::map<std::string, std::string>& servers) const
     {
@@ -208,6 +239,7 @@ namespace facter { namespace facts { namespace bsd {
 
         find_networkd_dhcp_servers(servers);
         if (servers.empty()) find_dhclient_dhcp_servers(servers);
+        if (servers.empty()) find_nm_internal_dhcp_servers(servers);
 
         return servers;
     }

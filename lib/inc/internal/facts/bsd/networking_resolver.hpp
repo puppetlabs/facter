@@ -54,6 +54,7 @@ namespace facter { namespace facts { namespace bsd {
      private:
         void find_dhclient_dhcp_servers(std::map<std::string, std::string>& servers) const;
         void find_networkd_dhcp_servers(std::map<std::string, std::string>& servers) const;
+        void find_nm_internal_dhcp_servers(std::map<std::string, std::string>& servers) const;
         void populate_binding(interface& iface, ifaddrs const* addr) const;
         void populate_mtu(interface& iface, ifaddrs const* addr) const;
     };
