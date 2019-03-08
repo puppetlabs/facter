@@ -61,7 +61,9 @@ namespace facter { namespace util { namespace config {
     po::options_description fact_config_options() {
         po::options_description fact_settings("");
         fact_settings.add_options()
-            ("blocklist", po::value<vector<string>>(), "A set of facts to block.");
+            ("blocklist", po::value<vector<string>>(), "A set of facts to block.")
+            ("interface_filter", po::value<string>(), "Regex to exclude interfaces.")
+            ("mountpoint_filter", po::value<string>(), "Regex to exclude mountpoints.");
         return fact_settings;
     }
 

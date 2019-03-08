@@ -6,9 +6,13 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/util/string.hpp>
 #include <boost/algorithm/string.hpp>
+#include <facter/util/config.hpp>
+#include <leatherman/logging/logging.hpp>
+#include <regex>
 
 using namespace std;
 using namespace facter::util;
+using namespace facter::util::config;
 
 namespace facter { namespace facts { namespace resolvers {
 
@@ -27,12 +31,29 @@ namespace facter { namespace facts { namespace resolvers {
     {
         auto data = collect_data(facts);
 
+        boost::program_options::variables_map vm;
+        auto hocon_conf = load_default_config_file();
+        load_fact_settings(hocon_conf, vm);
+        string mountpoint_filter = "";
+        if (vm.count("mountpoint_filter")) {
+            mountpoint_filter = vm["mountpoint_filter"].as<string>();
+        }
+        regex mountpoint_filter_re(mountpoint_filter);
+
+
         // Populate the mountpoints fact
         if (!data.mountpoints.empty()) {
             auto mountpoints = make_value<map_value>();
             for (auto& mountpoint : data.mountpoints) {
                 if (mountpoint.name.empty()) {
                     continue;
+                }
+
+                if (mountpoint_filter != "") {
+                    if (regex_match(mountpoint.name, mountpoint_filter_re)) {
+                        LOG_DEBUG("skip mountpoint \"" + mountpoint.name + "\"");
+                        continue;
+                    }
                 }
 
                 uint64_t used = mountpoint.size - mountpoint.available;

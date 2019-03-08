@@ -8,8 +8,11 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include <sstream>
+#include <facter/util/config.hpp>
+#include <regex>
 
 using namespace std;
+using namespace facter::util::config;
 
 namespace facter { namespace facts { namespace resolvers {
 
@@ -46,6 +49,16 @@ namespace facter { namespace facts { namespace resolvers {
 
     void networking_resolver::resolve(collection& facts)
     {
+       
+        boost::program_options::variables_map vm;
+        auto hocon_conf = load_default_config_file();
+        load_fact_settings(hocon_conf, vm);
+        string interface_filter = "";
+        if (vm.count("interface_filter")) {
+            interface_filter = vm["interface_filter"].as<string>();
+        }
+        regex interface_filter_re(interface_filter);
+
         auto data = collect_data(facts);
 
         // Some queries, such as /etc/resolv.conf, can return domains with a trailing dot (.).
@@ -73,6 +86,14 @@ namespace facter { namespace facts { namespace resolvers {
         auto dhcp_servers = make_value<map_value>(true);
         auto interfaces = make_value<map_value>();
         for (auto& interface : data.interfaces) {
+
+            if (interface_filter != "") {
+                if (regex_match(interface.name, interface_filter_re)) {
+                    LOG_DEBUG("skip interface \"" + interface.name + "\"");
+                    continue;
+                }
+            }
+            
             bool primary = interface.name == data.primary_interface;
             auto value = make_value<map_value>();
 
