@@ -16,6 +16,10 @@ module Facter
       # No-op; we don't support custom facts under JRuby
     end
 
+    def self.reset()
+      # No-op; we treat facts as immutable under JRuby
+    end
+
     def self.version
       Java::ComPuppetlabs::Facter.lookup("facterversion")
     end
