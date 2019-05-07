@@ -37,6 +37,10 @@ struct test_os_resolver : operating_system_resolver
         result.osx.product = "Mac OS X";
         result.osx.build = "14A388b";
         result.osx.version = "10.10";
+        result.win.release_id = "1904";
+        result.win.edition_id = "ServerStandard";
+        result.win.installation_type = "Server";
+        result.win.product_name = "Windows 2019 Standard Edition";
         result.win.system32 = "C:\\WINDOWS\\sysnative";
         result.architecture = "amd64";
         result.hardware = "x86-64";
@@ -61,7 +65,7 @@ SCENARIO("using the operating system resolver") {
     }
     WHEN("data is present") {
         facts.add(make_shared<test_os_resolver>());
-        REQUIRE(facts.size() == 26u);
+        REQUIRE(facts.size() == 30u);
         THEN("a structured fact is added") {
             auto os = facts.get<map_value>(fact::os);
             REQUIRE(os);
@@ -140,7 +144,19 @@ SCENARIO("using the operating system resolver") {
             REQUIRE(minor->value() == "0");
             auto windows = os->get<map_value>("windows");
             REQUIRE(windows);
-            REQUIRE(windows->size() == 1u);
+            REQUIRE(windows->size() == 5u);
+            auto edition_id = facts.get<string_value>(fact::windows_edition_id);
+            REQUIRE(edition_id);
+            REQUIRE(edition_id->value() == "ServerStandard");
+            auto installation_type = facts.get<string_value>(fact::windows_installation_type);
+            REQUIRE(installation_type);
+            REQUIRE(installation_type->value() == "Server");
+            auto product_name = facts.get<string_value>(fact::windows_product_name);
+            REQUIRE(product_name);
+            REQUIRE(product_name->value() == "Windows 2019 Standard Edition");
+            auto release_id = facts.get<string_value>(fact::windows_release_id);
+            REQUIRE(release_id);
+            REQUIRE(release_id->value() == "1904");
             auto system32 = windows->get<string_value>("system32");
             REQUIRE(system32);
             REQUIRE(system32->value() == "C:\\WINDOWS\\sysnative");
@@ -221,6 +237,18 @@ SCENARIO("using the operating system resolver") {
             minor = facts.get<string_value>(fact::macosx_productversion_minor);
             REQUIRE(minor);
             REQUIRE(minor->value() == "0");
+            auto edition_id = facts.get<string_value>(fact::windows_edition_id);
+            REQUIRE(edition_id);
+            REQUIRE(edition_id->value() == "ServerStandard");
+            auto installation_type = facts.get<string_value>(fact::windows_installation_type);
+            REQUIRE(installation_type);
+            REQUIRE(installation_type->value() == "Server");
+            auto product_name = facts.get<string_value>(fact::windows_product_name);
+            REQUIRE(product_name);
+            REQUIRE(product_name->value() == "Windows 2019 Standard Edition");
+            auto release_id = facts.get<string_value>(fact::windows_release_id);
+            REQUIRE(release_id);
+            REQUIRE(release_id->value() == "1904");
             auto system32 = facts.get<string_value>(fact::windows_system32);
             REQUIRE(system32);
             REQUIRE(system32->value() == "C:\\WINDOWS\\sysnative");

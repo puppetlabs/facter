@@ -268,6 +268,10 @@ struct operating_system_resolver : resolvers::operating_system_resolver
         result.osx.product = "product";
         result.osx.build = "build";
         result.osx.version = "10.10";
+        result.win.release_id = "1904";
+        result.win.edition_id = "ServerStandard";
+        result.win.installation_type = "Server";
+        result.win.product_name = "Windows 2019 Standard Edition";
         result.win.system32 = "system32";
         result.architecture = "arch";
         result.hardware = "hardware";
