@@ -11,11 +11,11 @@ public class Facter {
         // Look for libfacter in the same place as facter.rb does
         String facterDir = System.getenv("FACTERDIR");
         if (facterDir == null) {
-            facterDir = "${CMAKE_INSTALL_PREFIX}/${LIBFACTER_INSTALL_DESTINATION}";
+            facterDir = "${CMAKE_INSTALL_PREFIX}";
         }
 
         // Load the library
-        System.load(facterDir.replaceAll("/$", "") + "/libfacter.so");
+        System.load(facterDir.replaceAll("/$", "") + "/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so");
     }
 
     /**
