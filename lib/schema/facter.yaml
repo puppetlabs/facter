@@ -1202,6 +1202,18 @@ os:
             type: map
             description: Represents information about Windows.
             elements:
+                edition_id:
+                    type: string
+                    description: Specify the edition variant. (ServerStandard|Professional|Enterprise)
+                installation_type:
+                    type: string
+                    description: Specify the installation type. (Server|Server Core|Client)
+                product_name:
+                    type: string
+                    description: Specify the textual product name.
+                release_id:
+                    type: string
+                    description: Windows Build Version of the form YYMM.
                 system32:
                     type: string
                     description: The path to the System32 directory.
@@ -1631,6 +1643,34 @@ swapsize_mb:
         Linux: parse the contents of `/proc/meminfo` to retrieve the total swap memory.
         Mac OSX: use the `sysctl` function to retrieve the total swap memory.
         Solaris: use the `swapctl` function to retrieve the total swap memory.
+
+windows_edition_id:
+    type: string
+    hidden: true
+    description: Return the type of Windows edition, Server or Desktop Edition variant.
+    resolution: |
+        Windows: query the registry to retrieve the type of edition (ServerStandard|Professional|Enterprise).
+
+windows_installation_type:
+    type: string
+    hidden: true
+    description: Return Windows installation type (Server|Server Core|Client).
+    resolution: |
+        Windows: query the registry to retrive data to differentiate Server, Server Core, Client.
+
+windows_product_name:
+    type: string
+    hidden: true
+    description: Return Windows textual product name.
+    resolution: |
+        Windows: uery the registry to retrive textual product name.
+
+windows_release_id:
+    type: string
+    hidden: true
+    description: Return Windows Build Version of the form YYMM.
+    resolution: |
+        Windows: query the registry to retrieve the build version number.
 
 system32:
     type: string
