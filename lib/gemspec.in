@@ -16,6 +16,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.summary = "Facter, a system inventory tool"
   s.specification_version = 3
-  s.required_ruby_version = '~> 2.1.7'
+  s.required_ruby_version = '~> 2.1'
 
 end
