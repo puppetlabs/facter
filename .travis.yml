@@ -8,6 +8,8 @@ before_install:
 script:
   - >
     docker run -v `pwd`:/facter gcr.io/cpp-projects/cpp-ci:1 /bin/bash -c "
+    apk add --no-cache openjdk8 &&
+    export JAVA_HOME=/usr/lib/jvm/default-jvm &&
     wget https://github.com/puppetlabs/leatherman/releases/download/${LEATHERMAN_VERSION}/leatherman-dynamic.tar.gz &&
     tar xzvf leatherman-dynamic.tar.gz --strip 1 -C / &&
     wget https://github.com/puppetlabs/cpp-hocon/releases/download/${CPPHOCON_VERSION}/cpp-hocon-dynamic.tar.gz &&
