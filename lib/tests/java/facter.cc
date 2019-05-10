@@ -18,11 +18,8 @@ SCENARIO("using libfacter from Java") {
 
     path jar_path = path(BINARY_DIRECTORY) / "lib" / "facter.jar";
 
-    string system_path;
-    environment::get("PATH", system_path);
-
     CAPTURE(JAVA_EXECUTABLE);
-    CAPTURE(LIBFACTER_OUTPUT_DIRECTORY);
+    CAPTURE(BINARY_DIRECTORY);
     CAPTURE(jar_path);
 
     GIVEN("the os fact") {
@@ -35,8 +32,7 @@ SCENARIO("using libfacter from Java") {
                     "os"
                 },
                 {
-                    { "FACTERDIR", LIBFACTER_OUTPUT_DIRECTORY },
-                    { "PATH", string(LIBFACTER_OUTPUT_DIRECTORY) + environment::get_path_separator() + system_path }
+                    { "FACTERDIR", BINARY_DIRECTORY }
                 },
                 0,
                 {
