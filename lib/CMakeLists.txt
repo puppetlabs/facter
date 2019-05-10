@@ -288,10 +288,10 @@ if (JRUBY_SUPPORT)
     # JDK versions after 9 don't provide javah. Use javac in these cases
 
     if(Java_VERSION VERSION_LESS "10")
-	    set(JAVAH_COMMAND javah)
+	    set(JAVAH_COMMAND ${Java_JAVAH_EXECUTABLE})
 	    set(JAVAH_ARG -classpath facter.jar -d "${CMAKE_CURRENT_LIST_DIR}/src/java" com.puppetlabs.Facter)
     else()
-	    set(JAVAH_COMMAND javac)
+	    set(JAVAH_COMMAND ${Java_JAVAC_EXECUTABLE})
 	    set(JAVAH_ARG -h  "${CMAKE_CURRENT_LIST_DIR}/src/java" com/puppetlabs/Facter.java)
     endif()
 
