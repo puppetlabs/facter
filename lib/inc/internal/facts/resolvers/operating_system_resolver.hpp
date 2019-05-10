@@ -85,6 +85,22 @@ namespace facter { namespace facts { namespace resolvers {
         struct windows
         {
             /**
+             * Stores the Windows Server or Desktop Edition variant 
+             */
+            std::string edition_id;
+            /**
+             * Stores the Windows differentiate Server, Server Core, Client (Desktop)
+             */
+            std::string installation_type;
+            /**
+             * Stores the Windows textual product name
+             */
+            std::string product_name;
+            /**
+             * Stores the Windows Build Version.
+             */
+            std::string release_id;
+            /**
              * Stores the native system32 directory, the location native OS executables can be found.
              * For 32-bit facter on 32-bit Windows, typically: 'C:\\Windows\\system32'.
              * For 32-bit facter on 64-bit Windows, typically: 'C:\\Windows\\sysnative'.

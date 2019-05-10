@@ -1,4 +1,5 @@
 #include <internal/facts/windows/operating_system_resolver.hpp>
+#include <leatherman/windows/registry.hpp>
 #include <leatherman/windows/system_error.hpp>
 #include <leatherman/windows/wmi.hpp>
 #include <leatherman/windows/windows.hpp>
@@ -76,6 +77,55 @@ namespace facter { namespace facts { namespace windows {
         }
     }
 
+    static string get_release_id()
+    {
+        string releaseID;
+        try {
+            releaseID = registry::get_registry_string(registry::HKEY::LOCAL_MACHINE,
+                "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\", "ReleaseId");
+        } catch (registry_exception &e) {
+            LOG_DEBUG("failure getting ReleaseId: {1}", e.what());
+        }
+        return releaseID;
+    }
+
+    static string get_edition_id()
+    {
+        string editionID;
+        try {
+            editionID = registry::get_registry_string(registry::HKEY::LOCAL_MACHINE,
+                "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\", "EditionID");
+        } catch (registry_exception &e) {
+            LOG_DEBUG("failure getting EditionID: {1}", e.what());
+        }
+        return editionID;
+    }
+
+    static string get_installation_type()
+    {
+        string installation_type;
+        try {
+            installation_type = registry::get_registry_string(registry::HKEY::LOCAL_MACHINE,
+                "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\", "InstallationType");
+        } catch (registry_exception &e) {
+            LOG_DEBUG("failure getting InstallationType: {1}", e.what());
+        }
+        return installation_type;
+    }
+
+    static string get_product_name()
+    {
+        string product_name;
+        try {
+            product_name = registry::get_registry_string(registry::HKEY::LOCAL_MACHINE,
+                "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\", "ProductName");
+        } catch (registry_exception &e) {
+            LOG_DEBUG("failure getting ProductName: {1}", e.what());
+        }
+        return product_name;
+    }
+
+
     operating_system_resolver::operating_system_resolver(shared_ptr<wmi> wmi_conn) :
         resolvers::operating_system_resolver(),
         _wmi(move(wmi_conn))
@@ -91,6 +141,10 @@ namespace facter { namespace facts { namespace windows {
         result.hardware = get_hardware();
         result.architecture = get_architecture(result.hardware);
         result.win.system32 = get_system32();
+        result.win.release_id = get_release_id();
+        result.win.edition_id = get_edition_id();
+        result.win.installation_type = get_installation_type();
+        result.win.product_name = get_product_name();
 
         auto lastDot = result.release.rfind('.');
         if (lastDot == string::npos) {

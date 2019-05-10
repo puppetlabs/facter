@@ -427,6 +427,26 @@ namespace facter { namespace facts {
         constexpr static char const* macosx_productversion_minor = "macosx_productversion_minor";
 
         /**
+        * The fact for Windows to specify if is Server or Desktop Edition variant 
+        */
+        constexpr static char const* windows_edition_id = "windows_edition_id";
+
+        /**
+        * The fact for Windows to differentiate Server, Server Core, Client (Desktop)
+        */
+        constexpr static char const* windows_installation_type = "windows_installation_type";
+
+        /**
+        * The fact for Windows textual product name
+        */
+        constexpr static char const* windows_product_name = "windows_product_name";
+
+        /**
+         * The fact for Windows Build Version.
+         */
+        constexpr static char const* windows_release_id = "windows_release_id";
+
+        /**
          * The fact for Windows native system32 directory.
          */
         constexpr static char const* windows_system32 = "system32";
