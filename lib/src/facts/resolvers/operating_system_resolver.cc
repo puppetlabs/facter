@@ -36,6 +36,10 @@ namespace facter { namespace facts { namespace resolvers {
                 fact::macosx_productversion,
                 fact::macosx_productversion_major,
                 fact::macosx_productversion_minor,
+                fact::windows_edition_id,
+                fact::windows_installation_type,
+                fact::windows_product_name,
+                fact::windows_release_id,
                 fact::windows_system32,
                 fact::selinux,
                 fact::selinux_enforced,
@@ -186,6 +190,26 @@ namespace facter { namespace facts { namespace resolvers {
 
         // Populate Windows-specific data
         auto windows = make_value<map_value>();
+        if (!data.win.edition_id.empty()) {
+            facts.add(fact::windows_edition_id, make_value<string_value>(data.win.edition_id, true));
+            windows->add("edition_id", make_value<string_value>(move(data.win.edition_id)));
+        }
+
+        if (!data.win.installation_type.empty()) {
+            facts.add(fact::windows_installation_type, make_value<string_value>(data.win.installation_type, true));
+            windows->add("installation_type", make_value<string_value>(move(data.win.installation_type)));
+        }
+
+        if (!data.win.product_name.empty()) {
+            facts.add(fact::windows_product_name, make_value<string_value>(data.win.product_name, true));
+            windows->add("product_name", make_value<string_value>(move(data.win.product_name)));
+        }
+
+        if (!data.win.release_id.empty()) {
+            facts.add(fact::windows_release_id, make_value<string_value>(data.win.release_id, true));
+            windows->add("release_id", make_value<string_value>(move(data.win.release_id)));
+        }
+
         if (!data.win.system32.empty()) {
             facts.add(fact::windows_system32, make_value<string_value>(data.win.system32, true));
             windows->add("system32", make_value<string_value>(move(data.win.system32)));
