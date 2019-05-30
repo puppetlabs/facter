@@ -69,7 +69,8 @@ struct disk_resolver : resolvers::disk_resolver
             "vendor",
             "model",
             "product",
-            1234
+            1234,
+            "serial_number"
         });
         return result;
     }

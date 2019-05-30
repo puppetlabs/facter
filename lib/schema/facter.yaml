@@ -232,6 +232,9 @@ disks:
                     type: string
                     description: The product name of the disk or block device.
                     caveats: Only present on Solaris.
+                serial_number:
+                    type: string
+                    description: The serial number of the disk or block device.
                 size:
                     type: string
                     description: The display size of the disk or block device, such as "1 GiB".

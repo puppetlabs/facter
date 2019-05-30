@@ -48,6 +48,9 @@ namespace facter { namespace facts { namespace resolvers {
             facts.add(string(fact::block_device) + "_" + disk.name + "_size" , make_value<integer_value>(static_cast<int64_t>(disk.size), true));
             value->add("size_bytes", make_value<integer_value>(disk.size));
             value->add("size", make_value<string_value>(si_string(disk.size)));
+            if (!disk.serial_number.empty()) {
+                value->add("serial_number", make_value<string_value>(move(disk.serial_number)));
+            }
 
             if (names.tellp() != 0) {
                 names << ',';
