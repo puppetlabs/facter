@@ -138,6 +138,7 @@ namespace facter { namespace facts { namespace linux {
         }
 
         unordered_set<string> known_route_types {
+            "anycast",
             "unicast",
             "broadcast",
             "local",
