@@ -119,10 +119,20 @@ namespace facter { namespace facts { namespace bsd {
 
     string networking_resolver::get_primary_interface() const
     {
-        // By default, use the fallback logic of looking for the first interface
-        // that has a non-loopback address
-        return {};
+        string interface;
+        each_line("route", { "-n", "get",  "default" }, [&interface](string& line){
+            boost::trim(line);
+            if (boost::starts_with(line, "interface: ")) {
+                interface = line.substr(11);
+                boost::trim(interface);
+                return false;
+            }
+            return true;
+        });
+        LOG_DEBUG("got primary interface: \"{1}\"", interface);
+        return interface;
     }
+
     void networking_resolver::find_dhclient_dhcp_servers(std::map<std::string, std::string>& servers) const
     {
         static vector<string> const dhclient_search_directories = {
