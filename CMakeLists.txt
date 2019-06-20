@@ -52,7 +52,7 @@ SET(LEATHERMAN_COMPONENTS locale catch nowide logging util file_util dynamic_lib
 
 # We look for curl early, because whether or not we link to the leatherman curl library
 # is dependant on whether or not we find curl on the system.
-if ((("${CMAKE_SYSTEM_NAME}" MATCHES "Linux|OpenBSD") OR WIN32) AND NOT WITHOUT_CURL)
+if ((("${CMAKE_SYSTEM_NAME}" MATCHES "FreeBSD|Linux|OpenBSD") OR WIN32) AND NOT WITHOUT_CURL)
     find_package(CURL)
     if (CURL_FOUND)
         add_definitions(-DUSE_CURL)
