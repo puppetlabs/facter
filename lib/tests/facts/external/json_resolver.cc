@@ -28,12 +28,12 @@ SCENARIO("resolving external JSON facts") {
     }
     GIVEN("a non-existent file to resolve") {
         THEN("it should throw an exception") {
-            REQUIRE_THROWS_AS(resolver.resolve("doesnotexist.json", facts), external_fact_exception);
+            REQUIRE_THROWS_AS(resolver.resolve("doesnotexist.json", facts), external_fact_exception&);
         }
     }
     GIVEN("invalid JSON") {
         THEN("it should throw an exception") {
-            REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/invalid.json", facts), external_fact_exception);
+            REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/invalid.json", facts), external_fact_exception&);
         }
     }
     GIVEN("valid JSON") {

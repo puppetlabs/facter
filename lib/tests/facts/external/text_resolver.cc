@@ -26,7 +26,7 @@ SCENARIO("resolving external text facts") {
     }
     GIVEN("a non-existent file to resolve") {
         THEN("it should throw an exception") {
-            REQUIRE_THROWS_AS(resolver.resolve("doesnotexist.txt", facts), external_fact_exception);
+            REQUIRE_THROWS_AS(resolver.resolve("doesnotexist.txt", facts), external_fact_exception&);
         }
     }
     GIVEN("a text file to resolve") {

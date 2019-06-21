@@ -27,7 +27,7 @@ SCENARIO("resolving external executable facts") {
     GIVEN("an executable file") {
         WHEN("the execution fails") {
             THEN("an exception is thrown") {
-                REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/failed", facts), external_fact_exception);
+                REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/posix/execution/failed", facts), external_fact_exception&);
             }
         }
         WHEN("the execution succeeds") {
