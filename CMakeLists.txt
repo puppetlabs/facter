@@ -97,6 +97,10 @@ endif()
 
 find_package(CPPHOCON REQUIRED)
 
+if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
+    find_package(UDEV)
+endif()
+
 find_package(WHEREAMI)
 if (WHEREAMI_FOUND)
     add_definitions(-DUSE_WHEREAMI)
