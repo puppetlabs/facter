@@ -6,6 +6,10 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
+#ifdef USE_UDEV
+#include <libudev.h>
+#endif  // USE_UDEV
+
 using namespace std;
 using namespace boost::filesystem;
 using boost::lexical_cast;
@@ -29,6 +33,11 @@ namespace facter { namespace facts { namespace linux {
             LOG_DEBUG("{1}: {2}: disk facts are unavailable.", root_directory, ec.message());
             return result;
         }
+
+#ifdef USE_UDEV
+        struct udev *udev;
+        udev = udev_new();
+#endif  // USE_UDEV
 
         lth_file::each_subdirectory(root_directory, [&](string const& dir) {
             path device_directory(dir);
@@ -71,9 +80,27 @@ namespace facter { namespace facts { namespace linux {
                 boost::trim(d.model);
             }
 
+#ifdef USE_UDEV
+            auto dev = udev_device_new_from_subsystem_sysname(udev, "block", d.name.c_str());
+            if (dev) {
+                const char *serial;
+                serial = udev_device_get_property_value(dev, "ID_SCSI_SERIAL");
+                if (!serial)
+                    serial = udev_device_get_property_value(dev, "ID_SERIAL_SHORT");
+
+                if (serial)
+                    d.serial_number = serial;
+            }
+#endif  // USE_UDEV
+
             result.disks.emplace_back(move(d));
             return true;
         });
+
+#ifdef USE_UDEV
+        udev_unref(udev);
+#endif  // USE_UDEV
+
         return result;
     }
 

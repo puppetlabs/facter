@@ -21,6 +21,7 @@ namespace facter { namespace facts { namespace freebsd {
                     d.name = provider.name();
                     d.size = provider.mediasize();
                     d.model = provider.config("descr");
+                    d.serial_number = provider.config("ident");
                     result.disks.push_back(move(d));
                 }
             }
