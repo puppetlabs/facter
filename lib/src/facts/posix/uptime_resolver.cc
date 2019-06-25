@@ -1,5 +1,7 @@
 #include <internal/facts/posix/uptime_resolver.hpp>
+#ifdef HAVE_UTMPX_H
 #include <internal/util/posix/utmpx_file.hpp>
+#endif
 #include <leatherman/util/regex.hpp>
 #include <leatherman/execution/execution.hpp>
 #include <leatherman/logging/logging.hpp>
@@ -13,7 +15,9 @@ using leatherman::locale::_;
 using namespace std;
 using namespace leatherman::util;
 using namespace leatherman::execution;
+#ifdef HAVE_UTMPX_H
 using namespace facter::util::posix;
+#endif
 
 namespace facter { namespace facts { namespace posix {
 
@@ -52,6 +56,7 @@ namespace facter { namespace facts { namespace posix {
 
     int64_t uptime_resolver::get_uptime()
     {
+#ifdef HAVE_UTMPX_H
         LOG_DEBUG(_("Attempting to calculate the uptime from the utmpx file"));
         utmpx query;
         query.ut_type = BOOT_TIME;
@@ -61,6 +66,7 @@ namespace facter { namespace facts { namespace posix {
           return time(NULL) - ent->ut_tv.tv_sec;
         }
         LOG_DEBUG(_("Could not calculate the uptime from the utmpx file"));
+#endif
 
         auto exec = execute("uptime");
         if (!exec.success) {
