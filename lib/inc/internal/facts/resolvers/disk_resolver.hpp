@@ -57,6 +57,11 @@ namespace facter { namespace facts { namespace resolvers {
              * Stores the size of the disk.
              */
             uint64_t size;
+
+            /**
+             * Stores the serial number of the disk
+             */
+            std::string serial_number;
         };
 
         /**
