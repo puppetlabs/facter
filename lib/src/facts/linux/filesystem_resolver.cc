@@ -77,8 +77,8 @@ namespace facter { namespace facts { namespace linux {
             string device = ptr->mnt_fsname;
             string mtype = ptr->mnt_type;
 
-            // Skip over anything that doesn't map to a device and is not tmpfs
-            if (!boost::starts_with(device, "/dev/") && mtype != "tmpfs") {
+            // Skip over any non-tmpfs mount under /proc or /sys
+            if (mtype != "tmpfs" && (boost::starts_with(ptr->mnt_dir, "/proc") || boost::starts_with(ptr->mnt_dir, "/sys"))) {
                 continue;
             }
 
