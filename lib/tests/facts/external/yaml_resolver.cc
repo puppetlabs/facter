@@ -28,12 +28,12 @@ SCENARIO("resolving external YAML facts") {
     }
     GIVEN("a non-existent file to resolve") {
         THEN("it should throw an exception") {
-            REQUIRE_THROWS_AS(resolver.resolve("doesnotexist.yaml", facts), external_fact_exception);
+            REQUIRE_THROWS_AS(resolver.resolve("doesnotexist.yaml", facts), external_fact_exception&);
         }
     }
     GIVEN("invalid YAML") {
         THEN("it should throw an exception") {
-            REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/yaml/invalid.yaml", facts), external_fact_exception);
+            REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/yaml/invalid.yaml", facts), external_fact_exception&);
         }
     }
     GIVEN("valid YAML") {

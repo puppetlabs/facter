@@ -88,7 +88,7 @@ namespace facter { namespace facts { namespace linux {
         // Nothing useful for us, so we need to use ioctl to query the MTU
         ifreq req;
         memset(&req, 0, sizeof(req));
-        strncpy(req.ifr_name, interface.c_str(), sizeof(req.ifr_name));
+        strncpy(req.ifr_name, interface.c_str(), sizeof(req.ifr_name) - 1);
 
         scoped_descriptor sock(socket(AF_INET, SOCK_DGRAM, 0));
         if (static_cast<int>(sock) < 0) {
