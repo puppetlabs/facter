@@ -160,28 +160,14 @@ namespace facter { namespace facts { namespace linux {
                 return true;
             }
 
-            // remove trailing "onlink" or "pervasive" flags
-            while (parts.size() > 0) {
-                std::string last_token(parts.back().begin(), parts.back().end());
-                if (last_token == "onlink" || last_token == "pervasive")
-                    parts.pop_back();
-                else
-                    break;
-            }
-
-            size_t dst_idx = 0;
-            if (parts.size() % 2 == 0) {
-                std::string route_type(parts[0].begin(), parts[0].end());
-                if (known_route_types.find(route_type) == known_route_types.end()) {
-                    LOG_WARNING("Could not process routing table entry: Expected a destination followed by key/value pairs, got '{1}'", line);
-                    return true;
-                } else {
-                    dst_idx = 1;
-                }
+            // FACT-1282
+            std::string route_type(parts[0].begin(), parts[0].end());
+            if (known_route_types.find(route_type) != known_route_types.end()) {
+                parts.erase(parts.begin());
             }
 
             route r;
-            r.destination.assign(parts[dst_idx].begin(), parts[dst_idx].end());
+            r.destination.assign(parts[0].begin(), parts[0].end());
 
             // Check if we queried for the IPV6 routing tables. If yes, then check if our
             // destination address is missing a ':'. If yes, then IPV6 is disabled since
@@ -196,7 +182,7 @@ namespace facter { namespace facts { namespace linux {
 
             // Iterate over key/value pairs and add the ones we care
             // about to our routes entries
-            for (size_t i = dst_idx+1; i < parts.size(); i += 2) {
+            for (size_t i = 1; i < parts.size(); i += 2) {
                 std::string key(parts[i].begin(), parts[i].end());
                 if (key == "dev") {
                     r.interface.assign(parts[i+1].begin(), parts[i+1].end());

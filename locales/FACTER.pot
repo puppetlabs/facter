@@ -831,13 +831,6 @@ msgid ""
 "routing table"
 msgstr ""
 
-#. warning
-#: lib/src/facts/linux/networking_resolver.cc
-msgid ""
-"Could not process routing table entry: Expected a destination followed by "
-"key/value pairs, got '{1}'"
-msgstr ""
-
 #. debug
 #: lib/src/facts/linux/networking_resolver.cc
 msgid ""
