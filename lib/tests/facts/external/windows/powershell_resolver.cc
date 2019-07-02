@@ -28,7 +28,7 @@ SCENARIO("resolving external powershell facts") {
     GIVEN("a powershell file") {
         WHEN("the execution fails") {
             THEN("an exception is thrown") {
-                REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/failed.ps1", facts), external_fact_exception);
+                REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/failed.ps1", facts), external_fact_exception&);
             }
         }
         WHEN("the execution succeeds") {

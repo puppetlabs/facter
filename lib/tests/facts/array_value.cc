@@ -21,7 +21,7 @@ SCENARIO("using an array fact value") {
     }
     GIVEN("an out of range index") {
         THEN("get() raises out_of_range") {
-            REQUIRE_THROWS_AS(value.get<string_value>(0), std::out_of_range);
+            REQUIRE_THROWS_AS(value.get<string_value>(0), std::out_of_range&);
         }
         THEN("operator[] returns nullptr") {
             REQUIRE_FALSE(value[42]);
