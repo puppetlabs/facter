@@ -61,6 +61,14 @@ namespace facter { namespace facts { namespace resolvers {
             { "22", "Storage Chassis" },
             { "23", "Rack Mount Chassis" },
             { "24", "Sealed-Case PC" },
+            { "25", "Multi-system" },
+            { "26", "CompactPCI" },
+            { "27", "AdvancedTCA" },
+            { "28", "Blade" },
+            { "29", "Blade Enclosure" },
+            { "30", "Tablet" },
+            { "31", "Convertible" },
+            { "32", "Detachable" },
         };
 
         auto it = descriptions.find(type);
