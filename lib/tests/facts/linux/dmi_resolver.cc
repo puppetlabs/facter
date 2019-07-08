@@ -6,6 +6,7 @@
 using namespace std;
 using namespace facter::util;
 using namespace facter::testing;
+using namespace facter::facts::linux;
 
 struct dmi_output : facter::facts::linux::dmi_resolver
 {
@@ -113,4 +114,23 @@ SCENARIO("parsing full dmidecode output in an alternative format") {
         REQUIRE(output.uuid == "735AE71B-8655-4AE2-9CA9-172C1BBEDAB5");
         REQUIRE(output.chassis_type == "Other");
     }
+}
+
+SCENARIO("Verify chassis_type for new id's", "id"){
+    //new ids are not mapped to unkown
+    for(int id = 25; id < 33; id =id +1){
+    REQUIRE( dmi_resolver::to_chassis_description(std::to_string(id)) != "Unknown");
+    }
+    //new ids are recognised
+    REQUIRE( dmi_resolver::to_chassis_description("24") == "Sealed-Case PC");
+    REQUIRE( dmi_resolver::to_chassis_description("25") == "Multi-system");
+    REQUIRE( dmi_resolver::to_chassis_description("26") == "CompactPCI");
+    REQUIRE( dmi_resolver::to_chassis_description("27") == "AdvancedTCA");
+    REQUIRE( dmi_resolver::to_chassis_description("28") == "Blade");
+    REQUIRE( dmi_resolver::to_chassis_description("29") == "Blade Enclosure");
+    REQUIRE( dmi_resolver::to_chassis_description("30") == "Tablet");
+    REQUIRE( dmi_resolver::to_chassis_description("31") == "Convertible");
+    REQUIRE( dmi_resolver::to_chassis_description("32") == "Detachable");
+    //out of range id are maped to unknown
+    REQUIRE( dmi_resolver::to_chassis_description("33") == "Unknown");
 }
