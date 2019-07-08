@@ -182,7 +182,6 @@ SCENARIO("converting percentages to strings") {
         WHEN("off by one") {
             THEN("it should not be 100%") {
                 REQUIRE(percentage(numeric_limits<uint64_t>::max() - 1, numeric_limits<uint64_t>::max()) == "99.99%");
-
             }
         }
         WHEN("both are maximum") {
@@ -191,7 +190,6 @@ SCENARIO("converting percentages to strings") {
             }
         }
     }
-
 }
 
 SCENARIO("converting frequencies to strings") {

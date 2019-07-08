@@ -572,5 +572,4 @@ SCENARIO("querying blockable and cacheable fact groups") {
             REQUIRE(facts_present["unblockable"] == vector<string>({"foo"}));
         }
     }
-
 }
