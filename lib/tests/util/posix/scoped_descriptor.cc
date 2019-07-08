@@ -7,7 +7,6 @@ using namespace std;
 using namespace facter::util::posix;
 
 SCENARIO("constructing a POSIX scoped descriptor") {
-
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
 
     {

@@ -161,7 +161,7 @@ struct hypervisors_resolver_test : resolvers::hypervisors_resolver_base
         hypervisor_data results;
 
         unordered_map<std::string, boost::variant<std::string, bool, int>> metadata {
-            {"string_value", string{"string"}}, // boost assumes const char* values are bools when bool is among the variants
+            {"string_value", string{"string"}},  // boost assumes const char* values are bools when bool is among the variants
             {"integer_value", 42},
             {"boolean_value", true},
         };
@@ -534,8 +534,7 @@ void validate_attributes(YAML::Node const& node)
             Catch::Equals("caveats") ||
             Catch::Equals("elements") ||
             Catch::Equals("validate") ||
-            Catch::Equals("blockgroup")
-        );
+            Catch::Equals("blockgroup"));
     }
 
     // If pattern is present, it must be a non-empty string
@@ -560,8 +559,7 @@ void validate_attributes(YAML::Node const& node)
         Catch::Equals("map") ||
         Catch::Equals("ip") ||
         Catch::Equals("ip6") ||
-        Catch::Equals("mac")
-    );
+        Catch::Equals("mac"));
 
     // Check map types
     auto elements = node["elements"];

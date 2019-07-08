@@ -46,7 +46,7 @@ struct test_xen_resolver : xen_resolver
 
 // CATCH doesn't behave well with constexpr, so create memory for
 // the string here before using it in the test.
-static string xen_privileged = vm::xen_privileged;
+static std::string xen_privileged = vm::xen_privileged;
 
 SCENARIO("using the Xen resolver on a privileged VM") {
     collection_fixture facts;
