@@ -5,8 +5,8 @@
 #include <sstream>
 
 using namespace std;
-using key_cmp = std::function<bool(std::string const&, std::string const&)>; 
-using architecture_type = test_linux_processor_resolver::ArchitectureType; 
+using key_cmp = std::function<bool(std::string const&, std::string const&)>;
+using architecture_type = test_linux_processor_resolver::ArchitectureType;
 namespace fs = boost::filesystem;
 
 static void reset_directory(fs::path const& path)
@@ -17,7 +17,7 @@ static void reset_directory(fs::path const& path)
 
 template <typename T>
 static void write_value(boost::filesystem::path const& path, T const& value) {
-  boost::nowide::ofstream ofs(path.string()); 
+  boost::nowide::ofstream ofs(path.string());
   ofs << value;
 }
 
@@ -39,7 +39,7 @@ static key_cmp default_cpu_info_key_cmp = [](const std::string& k1, const std::s
       "microcode",
       "physical id"
     };
-  
+
     return key_index(KEYS, k1) < key_index(KEYS, k2);
 };
 
@@ -51,7 +51,7 @@ static key_cmp power_cpu_info_key_cmp = [](const std::string& k1, const std::str
       "clock",
       "revision"
     };
-  
+
     return key_index(KEYS, k1) < key_index(KEYS, k2);
 };
 
@@ -76,13 +76,13 @@ void linux_cpu_fixture::set_logical_id(std::string const& logical_id)
 
 void linux_cpu_fixture::set_physical_id(std::string const& physical_id)
 {
-    write_value(_topology / "physical_package_id", physical_id);  
+    write_value(_topology / "physical_package_id", physical_id);
     _info["physical id"] = physical_id;
 }
 
 void linux_cpu_fixture::set_speed(int64_t speed)
 {
-    write_value(_cpufreq / "cpuinfo_max_freq", speed);  
+    write_value(_cpufreq / "cpuinfo_max_freq", speed);
 }
 
 void linux_cpu_fixture::set_info(std::string const& key, std::string const& value)
@@ -104,7 +104,7 @@ std::string linux_cpu_fixture::get_info()
 {
     ostringstream buf;
     for (auto& entry : _info) {
-        buf << entry.first << "    :    " << entry.second << endl; 
+        buf << entry.first << "    :    " << entry.second << endl;
     }
     return buf.str();
 }
@@ -113,12 +113,12 @@ void linux_cpu_fixture::init_info(std::string const& model_name)
 {
     _info = map<string, string, key_cmp>(default_cpu_info_key_cmp);
 
-    _info["vendor_id"] = "GenuineIntel"; 
-    _info["cpu_family"] = "6"; 
-    _info["model"] = "69"; 
-    _info["model name"] = model_name; 
-    _info["stepping"] = "1"; 
-    _info["microcode"] = "0x17"; 
+    _info["vendor_id"] = "GenuineIntel";
+    _info["cpu_family"] = "6";
+    _info["model"] = "69";
+    _info["model name"] = model_name;
+    _info["stepping"] = "1";
+    _info["microcode"] = "0x17";
 }
 
 
@@ -141,7 +141,7 @@ void linux_power_cpu_fixture::set_physical_id(std::string const& physical_id)
 
 void linux_power_cpu_fixture::set_speed(int64_t speed)
 {
-    linux_cpu_fixture::set_speed(speed); 
+    linux_cpu_fixture::set_speed(speed);
     _info["clock"] = to_string(speed) + "MHz";
 }
 
@@ -149,8 +149,8 @@ void linux_power_cpu_fixture::init_info(std::string const& model_name)
 {
     _info = map<string, string, key_cmp>(power_cpu_info_key_cmp);
 
-    _info["cpu"] = model_name; 
-    _info["revision"] = "2.1 (pvr 004b 0201)"; 
+    _info["cpu"] = model_name;
+    _info["revision"] = "2.1 (pvr 004b 0201)";
 }
 
 
@@ -172,7 +172,7 @@ linux_processor_fixture::~linux_processor_fixture()
 
 int linux_processor_fixture::add_cpu(std::string const& model_name)
 {
-    _cpus.push_back(unique_ptr<linux_cpu_fixture>(make_cpu(_sys, _next_id, model_name))); 
+    _cpus.push_back(unique_ptr<linux_cpu_fixture>(make_cpu(_sys, _next_id, model_name)));
     return _next_id++;
 }
 
@@ -193,7 +193,7 @@ void linux_processor_fixture::write_cpuinfo()
 
 void linux_processor_fixture::add_to_sys_dir(std::string const& dir_name)
 {
-    fs::create_directory(_sys / dir_name); 
+    fs::create_directory(_sys / dir_name);
 }
 
 void linux_processor_fixture::clear_sys_dir()
@@ -213,7 +213,6 @@ void linux_processor_fixture::reset(test_linux_processor_resolver::ArchitectureT
         return (arch_type == architecture_type::X86) ?
             new linux_cpu_fixture(sys_dir, id, model_name)
         :   new linux_power_cpu_fixture(sys_dir, id, model_name);
- 
     };
 }
 
@@ -222,7 +221,7 @@ test_linux_processor_resolver::test_linux_data test_linux_processor_resolver::co
 {
     test_linux_data data;
     add_cpu_data(data, root);
-    return data; 
+    return data;
 }
 
 test_linux_processor_resolver::ArchitectureType test_linux_processor_resolver::architecture_type(test_linux_data const& data, std::string const& root)
@@ -235,7 +234,7 @@ std::vector<int> setup_linux_processor_fixture(linux_processor_fixture& fixture,
     std::vector<int> ids;
 
     for (auto& cpu_param : cpu_params) {
-        auto& model_name = get<0>(cpu_param);   
+        auto& model_name = get<0>(cpu_param);
         auto& logical_id = get<1>(cpu_param);
         auto& physical_id = get<2>(cpu_param);
         auto& speed = get<3>(cpu_param);

@@ -65,7 +65,7 @@ struct linux_processor_fixture
 
 private:
     std::vector<std::unique_ptr<linux_cpu_fixture>> _cpus;
-    std::function<linux_cpu_fixture*(boost::filesystem::path const&, int, std::string const&)> make_cpu;  
+    std::function<linux_cpu_fixture*(boost::filesystem::path const&, int, std::string const&)> make_cpu;
     int _next_id;
 
     boost::filesystem::path _root;

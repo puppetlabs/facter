@@ -143,7 +143,7 @@ endif()
 #
 # Add cpplint and cppcheck targets
 #
-file(GLOB_RECURSE ALL_SOURCES lib/src/*.cc lib/inc/*.hpp lib/inc/*.h exe/*.cc exe/*.hpp exe/*.h)
+file(GLOB_RECURSE ALL_SOURCES lib/src/*.cc lib/inc/*.hpp lib/inc/*.h exe/*.cc exe/*.hpp exe/*.h lib/tests/*.cc lib/tests/*.hpp)
 add_cpplint_files(${ALL_SOURCES})
 enable_cpplint()
 
