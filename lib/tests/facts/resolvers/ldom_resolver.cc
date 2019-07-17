@@ -82,5 +82,4 @@ SCENARIO("Using the Solaris LDom resolver") {
             REQUIRE(sval_4->value() == "false");
         }
     }
-
 }

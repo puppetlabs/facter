@@ -114,3 +114,4 @@ SCENARIO("parsing full dmidecode output in an alternative format") {
         REQUIRE(output.chassis_type == "Other");
     }
 }
+
