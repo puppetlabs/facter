@@ -101,7 +101,7 @@ SCENARIO("resolving processor-specific facts for linux machines") {
         WHEN("/sys/devices/system/cpu contains cpu information and /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq exists") {
             THEN("the processor facts are correctly resolved, and the speed is set to cpu0's speed") {
                 fixture.reset();
-    
+
                 // here, speed is in KHz
                 vector<cpu_param> cpu_params({
                     make_tuple("Model A", "0", "0", 10),
@@ -110,9 +110,9 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                     make_tuple("Model B", "1", "0", 15),
                     make_tuple("Model C", "2", "1", 20),
                     // ensure that some arbitrary string is also recognized as a valid physical cpu
-                    make_tuple("Model D", "3", "some physical id", 35), 
+                    make_tuple("Model D", "3", "some physical id", 35),
                     // ensure that empty CPU ids are recognized as a valid physical cpu
-                    make_tuple("Model E", "4", "", 35) 
+                    make_tuple("Model E", "4", "", 35)
                 });
                 setup_linux_processor_fixture(fixture, cpu_params);
                 fixture.write_cpuinfo();
@@ -126,11 +126,11 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                 for (size_t i = 0; i < result.models.size(); ++i) {
                     REQUIRE(result.models[i] == EXPECTED_MODELS[i]);
                 }
-    
+
                 REQUIRE(result.speed == 10000);
             }
         }
-    
+
         WHEN("/sys/devices/system/cpu contains cpu information and /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq does not exist") {
             THEN("the processor facts are correctly resolved, but the speed is not calculated") {
                 fixture.reset();
@@ -142,9 +142,9 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                     make_tuple("Model B", "1", "0", 15),
                     make_tuple("Model C", "2", "1", 20),
                     // ensure that some arbitrary string is also recognized as a valid physical cpu
-                    make_tuple("Model D", "3", "some physical id", 35), 
+                    make_tuple("Model D", "3", "some physical id", 35),
                     // ensure that empty CPU ids are recognized as a valid physical cpu
-                    make_tuple("Model E", "4", "", 35) 
+                    make_tuple("Model E", "4", "", 35)
                 });
 
                 setup_linux_processor_fixture(fixture, cpu_params);
@@ -163,11 +163,11 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                 REQUIRE(result.speed == 0);
             }
         }
-    
+
         WHEN("/sys/devices/system/cpu does not contain cpu information") {
             THEN("the processor facts are correctly resolved, with the logical and physical counts are obtained from /proc/cpuinfo") {
                 fixture.reset();
-    
+
                 // here, speed is in KHz
                 vector<cpu_param> cpu_params({
                     make_tuple("Model A", "0", "0", boost::optional<int64_t>()),
@@ -175,10 +175,10 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                     // physical count
                     make_tuple("Model B", "1", "0", 15),
                     make_tuple("Model C", "2", "1", 20),
-                    make_tuple("Model D", "3", "2", 35), 
+                    make_tuple("Model D", "3", "2", 35),
                     // ensure that a CPU with an empty logical ID's model name
                     // is not collected
-                    make_tuple("Model E", "", "3", 35) 
+                    make_tuple("Model E", "", "3", 35)
                 });
                 setup_linux_processor_fixture(fixture, cpu_params);
                 fixture.write_cpuinfo();
@@ -216,7 +216,7 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                     make_tuple("Model B", "1", "0", 15),
                     make_tuple("Model C", "2", "1", 20),
                     // ensure that some arbitrary string is also recognized as a valid physical cpu
-                    make_tuple("Model D", "3", "some physical id", 35), 
+                    make_tuple("Model D", "3", "some physical id", 35),
                     // ensure that empty CPU ids are recognized as a valid physical cpu
                     make_tuple("Model E", "4", "", 35),
                     // ensure that negative ids are not included in the physical count
@@ -244,7 +244,7 @@ SCENARIO("resolving processor-specific facts for linux machines") {
         WHEN("/sys/devices/system/cpu contains cpu information but cpu0 is invalid") {
             THEN("the processor facts are correctly resolved, but the speed is not calculated") {
                 fixture.reset(architecture_type::POWER);
-    
+
                 // here, speed is in KHz
                 vector<cpu_param> cpu_params({
                     make_tuple("Model A", "0", "-1", 15),
@@ -269,11 +269,11 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                 REQUIRE(result.speed == 0);
             }
         }
-    
+
         WHEN("/sys/devices/system/cpu does not contain cpu information") {
             THEN("the processor facts are correctly resolved, with the speed being read from the 'clock' entry, but the physical count is not computed") {
                 fixture.reset(architecture_type::POWER);
-    
+
                 // here, speed is in KHz
                 vector<cpu_param> cpu_params({
                     make_tuple("Model A", "0", "0", boost::optional<int64_t>()),
@@ -281,7 +281,7 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                     // physical count
                     make_tuple("Model B", "1", "0", 15),
                     make_tuple("Model C", "2", "1", 20),
-                    make_tuple("Model D", "3", "2", 35), 
+                    make_tuple("Model D", "3", "2", 35),
                     // ensure that a CPU with an empty logical ID's model name
                     // is not collected
                     make_tuple("Model E", "", "3", 35)
