@@ -25,7 +25,7 @@ module Facter
         attempts = 0
 
         begin
-          open(@baseurl, :proxy => nil, :read_timeout => timeout, :open_timeout => timeout).read
+          open(@baseurl, :proxy => nil, :read_timeout => timeout).read
           able_to_connect = true
         rescue OpenURI::HTTPError => e
           if e.message.match /404 Not Found/i
