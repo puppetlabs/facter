@@ -13,9 +13,9 @@ static void session(tcp::socket sock) {
           boost::system::error_code error;
           sock.read_some(boost::asio::buffer(data), error);
           if (error == boost::asio::error::eof) {
-              break; // Connection closed cleanly by peer.
+              break;  // Connection closed cleanly by peer.
           } else if (error) {
-              throw boost::system::system_error(error); // Some other error.
+              throw boost::system::system_error(error);  // Some other error.
           }
 
           std::string response = "HTTP/1.1 301 Moved Permanently\nContent-length: 0\nLocation: https://puppet.com/\nConnection: close\n\n";
