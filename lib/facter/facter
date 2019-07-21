@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+
+require 'thor'
+require '../../lib/facter/ng/version'
+
+module Facter
+   class Cli < Thor
+      class_option :color, type: :boolean, aliases: :c
+      class_option :c, type: :string
+      class_option :custom_dir, type: :string
+      class_option :d, type: :boolean
+      class_option :external_dir
+      class_option :json, type: :boolean, aliases: :j
+      class_option :list_block_groups, type: :boolean
+      class_option :list_cache_groups, type: :boolean
+      class_option :log_level, type: :string, aliases: :l
+      class_option :no_block, type: :boolean
+      class_option :no_cache, type: :boolean
+      class_option :no_custom_facts, type: :boolean
+      class_option :no_external_facts, type: :boolean
+
+      # maybe this is not relevant anymore
+      class_option :no_ruby, type: :boolean
+
+      # this is deprecated, maybe we should remove it
+      class_option :puppet, type: :boolean
+
+      class_option :show_legacy, type: :boolean
+
+      desc "query", "query"
+      def query(*args)
+         puts "Query"
+      end
+
+
+      desc "--version, -v", "Print the version"
+      map ["--version", "-v"] => :version
+      def version
+         puts "#{Facter::Ng::VERSION}"
+      end
+
+      desc "external_dir", "external_dir"
+      def external_dir()
+         puts "External dir"
+      end
+
+      desc "help", "Help for all arguments"
+      def help()
+         File.open("help.txt", "r") do |file|
+            file.each_line do |line|
+               puts line
+            end
+         end
+      end
+
+      default_task :query
+   end
+end
+
+
+ARGV.unshift(Facter::Cli.default_task) unless Facter::Cli.all_tasks.has_key?(ARGV[0]) || Facter::Cli.instance_variable_get(:@map).has_key?(ARGV[0])
+Facter::Cli.start(ARGV)
