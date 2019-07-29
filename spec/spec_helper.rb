@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "facter/ng"
+require "cli.rb/ng"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
