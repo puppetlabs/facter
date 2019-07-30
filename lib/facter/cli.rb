@@ -108,15 +108,6 @@ module Facter
       puts "#{VERSION}"
     end
 
-    desc 'help', 'Help for all arguments'
-    def help()
-      File.open(HELP_FILE, 'r') do |file|
-        file.each_line do |line|
-          puts line
-          end
-      end
-    end
-
     default_task :query
   end
 end
