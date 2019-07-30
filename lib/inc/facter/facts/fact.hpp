@@ -427,7 +427,7 @@ namespace facter { namespace facts {
         constexpr static char const* macosx_productversion_minor = "macosx_productversion_minor";
 
         /**
-        * The fact for Windows to specify if is Server or Desktop Edition variant 
+        * The fact for Windows to specify if is Server or Desktop Edition variant
         */
         constexpr static char const* windows_edition_id = "windows_edition_id";
 
@@ -684,6 +684,11 @@ namespace facter { namespace facts {
          * The fips mode fact for RHEL/Linux* facts.
          */
         constexpr static char const* fips_enabled = "fips_enabled";
+
+        /**
+         * The fact for Aix NIM type (master/client)
+         */
+        constexpr static char const* nim_type = "nim_type";
     };
 
 }}  // namespace facter::facts
