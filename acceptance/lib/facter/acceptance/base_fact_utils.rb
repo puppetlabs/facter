@@ -137,7 +137,7 @@ module Facter
 
       # Debian
       def debian_expected_facts(agent)
-        version = agent['platform'].match(/debian-(\d)/)
+        version = agent['platform'].match(/debian-(\d{1,2})/)
         if version.nil?
           os_version = /\d+/
         else
@@ -154,7 +154,7 @@ module Facter
         expected_facts = {
             'os.architecture'          => os_arch,
             'os.distro.codename'       => /\w+/,
-            'os.distro.description'    => /Debian GNU\/Linux #{os_version}\.\d/,
+            'os.distro.description'    => /Debian GNU\/Linux #{os_version}(\.\d)?/,
             'os.distro.id'             => 'Debian',
             'os.distro.release.full'   => /#{os_version}\.\d+/,
             'os.distro.release.major'  => os_version,

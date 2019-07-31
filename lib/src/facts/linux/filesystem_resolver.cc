@@ -73,6 +73,7 @@ namespace facter { namespace facts { namespace linux {
         string root_device;
         mntent entry;
         char buffer[4096];
+        map<string, mountpoint> mountpoints_map;
         while (mntent *ptr = getmntent_r(file, &entry, buffer, sizeof(buffer))) {
             string device = ptr->mnt_fsname;
             string mtype = ptr->mnt_type;
@@ -113,8 +114,19 @@ namespace facter { namespace facts { namespace linux {
                                    * static_cast<uint64_t>(stats.f_bfree));
             }
 
-            result.mountpoints.emplace_back(move(point));
+            auto iterator = mountpoints_map.find(point.name);
+            if (iterator != mountpoints_map.end()){
+                if (boost::starts_with(point.device, "/dev/") || point.filesystem == "tmpfs")
+                    iterator->second = point;
+            } else {
+                mountpoints_map[point.name] = point;
+            }
         }
+
+        result.mountpoints.reserve(mountpoints_map.size());
+        for_each(mountpoints_map.begin(), mountpoints_map.end(),
+            [&](const map<string, mountpoint>::value_type& p)
+            { result.mountpoints.emplace_back(p.second); });
     }
 
     void filesystem_resolver::collect_filesystem_data(data& result)

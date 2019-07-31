@@ -361,6 +361,11 @@ msgstr ""
 msgid "got an unknown RT_IFLIST message: {1}"
 msgstr ""
 
+#. debug
+#: lib/src/facts/aix/nim_resolver.cc
+msgid "Could not read `/etc/niminfo`"
+msgstr ""
+
 #: lib/src/facts/aix/operating_system_resolver.cc
 msgid "name = %1% AND attribute = %2%"
 msgstr ""
