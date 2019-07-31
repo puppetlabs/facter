@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'thor'
 
@@ -91,21 +92,22 @@ module Facter
                  desc: 'Enable more aggressive error reporting.'
 
     # this is deprecated, maybe we should remove it
-    class_option :puppet, type: :boolean, aliases: :p, desc: '(Deprecated: use `puppet facts` instead) Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
+    class_option :puppet,
+                 type: :boolean,
+                 aliases: :p,
+                 desc: '(Deprecated: use `puppet facts` instead) Load the Puppet libraries,
+                         thus allowing Facter to load Puppet-specific facts.'
 
     desc 'query', 'query'
     def query(*args)
-      if options[:color]
-        puts 'color'
-      end
+      puts 'color' if options[:color]
       puts args
     end
-
 
     desc '--version, -v', 'Print the version'
     map ['--version', '-v'] => :version
     def version
-      puts "#{VERSION}"
+      puts VERSION.to_s
     end
 
     default_task :query
