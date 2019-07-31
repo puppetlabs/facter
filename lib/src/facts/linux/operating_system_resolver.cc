@@ -144,6 +144,9 @@ namespace facter { namespace facts { namespace linux {
 
         auto release = implementation->get_release(result.name, result.distro.release);
         if (!release.empty()) {
+            if (result.name == os::debian) {  // on debian 10 final iso, versions from lsb_release and /etc/debian_version are different
+                result.distro.release = release;
+            }
             result.release = move(release);
             tie(result.major, result.minor) = implementation->parse_release(result.name, result.release);
         }

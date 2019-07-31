@@ -127,6 +127,7 @@ if (AIX)
         "src/facts/aix/load_average_resolver.cc"
         "src/facts/aix/memory_resolver.cc"
         "src/facts/aix/networking_resolver.cc"
+        "src/facts/aix/nim_resolver.cc"
         "src/facts/aix/operating_system_resolver.cc"
         "src/facts/aix/processor_resolver.cc"
         "src/facts/aix/serial_number_resolver.cc"
