@@ -107,7 +107,7 @@ module Facter
     desc '--version, -v', 'Print the version'
     map ['--version', '-v'] => :version
     def version
-      puts VERSION.to_s
+      puts FACTER_VERSION.to_s
     end
 
     default_task :query

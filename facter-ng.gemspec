@@ -6,7 +6,7 @@ require_relative 'config/config'
 
 Gem::Specification.new do |spec|
   spec.name          = 'cli.rb-ng'
-  spec.version       = VERSION
+  spec.version       = FACTER_VERSION
   spec.authors       = ['Bogdan Irimie']
   spec.email         = ['irimie.bogdan@puppet.com']
 
