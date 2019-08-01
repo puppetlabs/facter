@@ -172,7 +172,9 @@ namespace facter { namespace facts { namespace windows {
                     bool ipv6 = it->Address.lpSockaddr->sa_family == AF_INET6;
 
                     binding b;
-                    b.address = addr;
+
+                    // IpAddress6 contains interface identifier, and should be removed when returning the ipaddress6
+                    b.address = ipv6 ? addr.substr(0, addr.find('%')) : addr;
 
                     // Need to do lookup based on the structure length.
                     auto adapterAddr = reinterpret_cast<IP_ADAPTER_UNICAST_ADDRESS_LH&>(*it);
@@ -181,6 +183,8 @@ namespace facter { namespace facts { namespace windows {
                         auto masked = mask_ipv6_address(it->Address.lpSockaddr, mask);
                         b.netmask = winsock.address_to_string(mask);
                         b.network = winsock.address_to_string(masked);
+                    // Network6 also contains the interface identifier, so it should be removed
+                        b.network = b.network.substr(0, b.network.find('%'));
                     } else {
                         auto mask = create_ipv4_mask(adapterAddr.OnLinkPrefixLength);
                         auto masked = mask_ipv4_address(it->Address.lpSockaddr, mask);
