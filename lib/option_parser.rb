@@ -2,21 +2,25 @@ module Facter
   class OptionParser
     def self.parse(fact_name, fact_list)
       tokens = fact_name.split('.')
-      size = tokens.size - 1
+      size = tokens.size
       results = []
 
       size.times do |i|
         elem = 0..size - i
 
-        if fact_list.key?(tokens[elem].join('.'))
-          found_fact = fact_list[tokens[elem].join('.')]
+        # fact_list.keys.select{|key|}
+        fact_list.each do |key, value|
+          if key.to_s.match?(tokens[elem].join('.'))
+            search_tokens = tokens - tokens[elem]
+            results << [value, search_tokens]
+          end
+        end
 
-          search_tokens = tokens - tokens[elem]
-
-          results << [found_fact, search_tokens]
+        if results.size > 0
+          break
         end
       end
-      results # flatten?
+      results
     end
   end
 end

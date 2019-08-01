@@ -10,7 +10,7 @@ module Facter
         matched_facts << Facter::OptionParser.parse(searched_fact, facts)
       end
 
-      resolve_matched_facts(matched_facts)
+      resolve_matched_facts(matched_facts.flatten(1))
     end
 
     def resolve_matched_facts(matched_facts)
@@ -19,8 +19,8 @@ module Facter
 
       matched_facts.each do |matched_fact|
         threads << Thread.new do
-          klass = token_to_class(matched_fact[0][0])
-          klass.new(matched_fact[0][1]).call_the_resolver!
+          klass = token_to_class(matched_fact[0])
+          klass.new(matched_fact[1]).call_the_resolver!
         end
       end
 
@@ -28,6 +28,8 @@ module Facter
         t.join
         results.merge!(t.value)
       end
+
+      puts results.inspect
     end
 
     def token_to_class(str)

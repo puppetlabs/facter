@@ -2,7 +2,6 @@ module Facter
   module Linux
     class NetworkIP
       def initialize(*args)
-        binding.pry
         puts 'Dispatching to resolve: ' + args.inspect
       end
 
