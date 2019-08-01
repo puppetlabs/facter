@@ -8,7 +8,7 @@ module Facter
       size.times do |i|
         elem = 0..size - i
 
-        if fact_list.key?( tokens[elem].join('.') )
+        if fact_list.key?(tokens[elem].join('.'))
           found_fact = fact_list[tokens[elem].join('.')]
 
           search_tokens = tokens - tokens[elem]
