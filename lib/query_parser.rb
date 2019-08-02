@@ -15,7 +15,7 @@ module Facter
           end
         end
 
-        return resolvable_fact_list if resolvable_fact_list.empty?
+        return resolvable_fact_list if resolvable_fact_list.any?
       end
 
       resolvable_fact_list
