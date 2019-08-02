@@ -7,7 +7,7 @@ module Facter
 
       searched_facts.each do |searched_fact|
 
-        matched_facts << Facter::OptionParser.parse(searched_fact, facts)
+        matched_facts << Facter::QueryParser.parse(searched_fact, facts)
       end
 
       resolve_matched_facts(matched_facts.flatten(1))
