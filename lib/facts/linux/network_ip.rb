@@ -1,6 +1,13 @@
 module Facter
   module Linux
     class NetworkIP
+      FACT_NAME = 'networking.ip'.freeze
+      @aliases =[]
+
+      # def self.fact_name
+      #   @@fact_name
+      # end
+
       def initialize(*args)
         puts 'Dispatching to resolve: ' + args.inspect
       end

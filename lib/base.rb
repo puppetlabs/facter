@@ -19,8 +19,8 @@ module Facter
 
       matched_facts.each do |matched_fact|
         threads << Thread.new do
-          klass = token_to_class(matched_fact[0])
-          klass.new(matched_fact[1]).call_the_resolver!
+          fact_class = matched_fact.fact_class
+          fact_class.new(matched_fact.filter_tokens).call_the_resolver!
         end
       end
 
@@ -32,9 +32,9 @@ module Facter
       puts results.inspect
     end
 
-    def token_to_class(str)
-      Kernel.const_get('Facter::Linux::'+str)
-    end
+    # def token_to_class(str)
+    #   Kernel.const_get('Facter::Linux::'+str)
+    # end
   end
 
   def self.new(args)

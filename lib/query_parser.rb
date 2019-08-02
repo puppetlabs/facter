@@ -11,7 +11,11 @@ module Facter
         fact_list.each do |fact_name, klass_name|
           if fact_name.match?(tokens[elem].join('.'))
             filter_tokens = tokens - tokens[elem]
-            resolvable_fact_list << [klass_name, filter_tokens]
+
+            fact = LoadedFact.new
+            fact.filter_tokens = filter_tokens
+            fact.fact_class = klass_name
+            resolvable_fact_list << fact # [klass_name, filter_tokens]
           end
         end
 
