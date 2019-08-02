@@ -1,9 +1,17 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'bundler/setup'
+require "bundler/setup"
+require 'pry-byebug'
 require_relative '../config/config'
-require_relative '../lib/facter/cli'
+require_relative '../lib/cli'
+require_relative '../lib/base'
+require_relative '../lib/fact_loader'
+require_relative '../lib/query_parser'
+
+os = :linux
+require_relative "../lib/facts/#{os.to_s}/network_interface"
+require_relative "../lib/facts/#{os.to_s}/network_ip"
 
 ARGV.unshift(Facter::Cli.default_task) unless
   Facter::Cli.all_tasks.key?(ARGV[0]) ||
