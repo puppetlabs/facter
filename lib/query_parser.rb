@@ -1,7 +1,7 @@
 module Facter
   class QueryParser
-    def self.parse(fact_name, fact_list)
-      tokens = fact_name.split('.')
+    def self.parse(query, fact_list)
+      tokens = query.split('.')
       size = tokens.size
       resolvable_fact_list = []
 
@@ -10,12 +10,12 @@ module Facter
 
         fact_list.each do |fact_name, klass_name|
           if fact_name.match?(tokens[elem].join('.'))
-            search_tokens = tokens - tokens[elem]
-            resolvable_fact_list << [klass_name, search_tokens]
+            filter_tokens = tokens - tokens[elem]
+            resolvable_fact_list << [klass_name, filter_tokens]
           end
         end
 
-        return resolvable_fact_list if resolvable_fact_list.size > 0
+        return resolvable_fact_list if resolvable_fact_list.empty?
       end
 
       resolvable_fact_list
