@@ -5,10 +5,10 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require_relative 'config/config'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'cli.rb-ng'
+  spec.name          = "cli.rb-ng"
   spec.version       = FACTER_VERSION
-  spec.authors       = ['Bogdan Irimie']
-  spec.email         = ['irimie.bogdan@puppet.com']
+  spec.authors       = ["Bogdan Irimie"]
+  spec.email         = ["irimie.bogdan@puppet.com"]
 
   spec.summary       = 'New version of Facter'
   spec.description   = 'New version of Facter'
@@ -19,8 +19,8 @@ Gem::Specification.new do |spec|
   if spec.respond_to?(:metadata)
 
   else
-    raise 'RubyGems 2.0 or newer is required to protect against ' \
-      'public gem pushes.'
+    raise "RubyGems 2.0 or newer is required to protect against " \
+      "public gem pushes."
   end
 
   # Specify which files should be added to the gem when it is released.
@@ -35,6 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency "pry-byebug", "~> 3.0"
 
   spec.add_runtime_dependency 'thor', '~> 0.20.3'
 end

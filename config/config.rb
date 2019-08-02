@@ -2,6 +2,7 @@
 
 require 'pathname'
 
-ROOT_DIR       = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
-VERSION_FILE   = ROOT_DIR.join('VERSION')
-FACTER_VERSION = File.read(VERSION_FILE)
+FACTER_VERSION       = "0.0.1"
+ROOT_DIR      = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
+HELP_FILE     = ROOT_DIR.join('help.txt')
+
