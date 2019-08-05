@@ -73,4 +73,21 @@ test_name 'C59029: networking facts should be fully populated' do
       end
     end
   end
+
+  # Verify that IP Address v6 and network v6 is retrieved correctly and does not contain the interface identifier
+  agents.each do |agent|
+    if agent['platform'] =~ /windows/
+      step("verify that ipaddress6 is retrieved correctly") do
+        on(agent, facter("ipaddress6")) do |facter_result|
+          assert_match(/^[a-fA-F0-9:]+$/, facter_result.stdout.chomp)
+        end
+      end
+
+      step("verify that network6 is retrieved correctly") do
+        on(agent, facter("network6")) do |facter_result|
+          assert_match(/([a-fA-F0-9:]+)?:([a-fA-F0-9:]+)?$/, facter_result.stdout.chomp)
+        end
+      end
+    end
+  end
 end
