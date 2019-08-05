@@ -109,6 +109,11 @@ namespace facter { namespace facts {
         constexpr static char const* kvm = "kvm";
 
         /**
+         * The name for AHV (Nutanix) virtual machine.
+         */
+        constexpr static char const* ahv = "ahv";
+
+        /**
          * The name for Bochs virtual machine.
          */
         constexpr static char const* bochs = "bochs";
