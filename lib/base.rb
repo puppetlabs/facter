@@ -6,7 +6,6 @@ module Facter
       matched_facts = []
 
       searched_facts.each do |searched_fact|
-
         matched_facts << Facter::QueryParser.parse(searched_fact, facts)
       end
 
@@ -31,28 +30,9 @@ module Facter
 
       puts results.inspect
     end
-
-    # def token_to_class(str)
-    #   Kernel.const_get('Facter::Linux::'+str)
-    # end
   end
 
   def self.new(args)
     Facter::Base.new(args)
   end
 end
-
-
-
-# class NetworkInterface < Fact
-
-#   def initialize(search)
-
-#   end
-
-# end
-
-
-# class Fact
-
-# end
