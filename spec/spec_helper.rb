@@ -6,7 +6,10 @@ Coveralls.wear!
 require 'bundler/setup'
 require_relative '../lib/fact_loader'
 require_relative '../lib/facts/linux/network_interface'
-require_relative 'facter/fact_loader_test'
+
+SimpleCov.start do
+  track_files 'lib/**/*.rb'
+end
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
