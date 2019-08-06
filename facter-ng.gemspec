@@ -36,7 +36,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency "pry-byebug", "~> 3.0"
+  spec.add_development_dependency 'coveralls', '~> 0.8.23'
+
 
   spec.add_runtime_dependency 'thor', '~> 0.20.3'
-  spec.add_runtime_dependency 'coveralls', '~> 0.8.23'
 end
