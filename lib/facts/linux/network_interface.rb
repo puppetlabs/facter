@@ -1,8 +1,17 @@
 module Facter
   module Linux
     class NetworkInterface
+      FACT_NAME = 'networking.interface'.freeze
+      @aliases =[]
+
+      # def self.fact_name
+      #   @@fact_name
+      # end
+
       def initialize(*args)
         puts 'Dispatching to resolve: ' + args.inspect
+        # constants = Linux.constants
+        # puts constants
       end
 
       def call_the_resolver!

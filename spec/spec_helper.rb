@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
+require 'coveralls'
+Coveralls.wear!
+
 require 'bundler/setup'
-require 'cli.rb/ng'
+require_relative '../lib/fact_loader'
+require_relative '../lib/facts/linux/network_interface'
+require_relative 'facter/fact_loader_test'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
