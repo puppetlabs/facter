@@ -1,9 +1,9 @@
 source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
 group :development, :test do
-    gem 'rake', "~> 10.1.0"
-    gem 'rspec', "~> 2.11.0"
-    gem 'mocha', "~> 0.10.5"
+    gem 'rake'
+    gem 'rspec'
+    gem 'mocha'
 end
 
 if File.exists? "#{__FILE__}.local"
