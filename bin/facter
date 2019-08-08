@@ -3,6 +3,7 @@
 
 require "bundler/setup"
 require 'pry-byebug'
+require 'open3'
 require_relative '../config/config'
 require_relative '../lib/cli'
 require_relative '../lib/base'
@@ -13,6 +14,10 @@ require_relative '../lib/models/loaded_fact'
 os = :linux
 require_relative "../lib/facts/#{os.to_s}/network_interface"
 require_relative "../lib/facts/#{os.to_s}/network_ip"
+require_relative "../lib/facts/#{os.to_s}/os"
+require_relative "../lib/resolvers/base_resolver"
+require_relative "../lib/resolvers/#{os.to_s}/os_resolver"
+
 
 ARGV.unshift(Facter::Cli.default_task) unless
   Facter::Cli.all_tasks.key?(ARGV[0]) ||
