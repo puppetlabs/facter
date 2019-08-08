@@ -8,6 +8,9 @@ rvm:
   - jruby-head
 cache:
   bundler: true
+branches:
+  only:
+    - master
 before_install:
   - gem update --system
   - gem install bundler
