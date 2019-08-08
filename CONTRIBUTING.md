@@ -28,6 +28,23 @@ facts won't pass acceptance tests.
   * This is usually the master branch.
   * Only target release branches if you are certain your fix must be on that
     branch.
+  * If you use facter as part of the [puppet-agent](https://github.com/puppetlabs/puppet-agent),
+    double-check the base branch to make sure your fix gets in the correct
+    stream.
+
+    | facter | puppet-agent |
+    |--------|--------------|
+    | 3.11.x | 5.5.x        |
+    | 3.12.x | 6.0.x        |
+    | 3.13.x | 6.4.x        |
+    | master | master       |
+
+    For example, if you use puppet5 you will want to base your work on top of
+    the `3.11.x` branch, so your fix would end up in a subsequent release of
+    puppet-agent `5.5.x`.
+
+    Once merged, your work will be automatically promoted to the other release
+    streams when our internal CI passes.
   * To quickly create a topic branch based on master, run `git checkout -b
     fix/master/my_contribution master`. Please avoid working directly on the
     `master` branch.
