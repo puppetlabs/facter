@@ -15,8 +15,11 @@ os = :linux
 require_relative "../lib/facts/#{os.to_s}/network_interface"
 require_relative "../lib/facts/#{os.to_s}/network_ip"
 require_relative "../lib/facts/#{os.to_s}/os"
+require_relative "../lib/facts/#{os.to_s}/os/name"
+require_relative "../lib/facts/#{os.to_s}/os/family"
 require_relative "../lib/resolvers/base_resolver"
 require_relative "../lib/resolvers/#{os.to_s}/os_resolver"
+require_relative "../lib/resolvers/#{os.to_s}/os_resolver_2"
 
 
 ARGV.unshift(Facter::Cli.default_task) unless

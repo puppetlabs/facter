@@ -1,4 +1,8 @@
 class OsResolver < BaseResolver
+  @@name
+  @@family
+  @@release
+
   class << self
     def resolve(search = [])
       search.flatten!(1)
