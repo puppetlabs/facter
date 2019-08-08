@@ -7,10 +7,15 @@ require 'bundler/setup'
 require_relative '../lib/fact_loader'
 require_relative '../lib/facts/linux/network_interface'
 
+# Configure SimpleCov
 SimpleCov.start do
   track_files 'lib/**/*.rb'
 end
 
+# default_coverage = 10
+# SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
+
+# Configure RSpec
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
