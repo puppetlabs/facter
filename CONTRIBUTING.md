@@ -9,12 +9,13 @@ top of things.
 
 ## Getting Started
 
-* Make sure you have a [Jira account](http://tickets.puppetlabs.com)
-* Make sure you have a [GitHub account](https://github.com/signup/free)
-* Submit a ticket for your issue, assuming one does not already exist.
+* Make sure you have a [Jira account](https://tickets.puppetlabs.com).
+* Make sure you have a [GitHub account](https://github.com/signup/free).
+* Submit a Jira ticket for your issue if one does not already exist.
   * Clearly describe the issue including steps to reproduce when it is a bug.
   * Make sure you fill in the earliest version that you know has the issue.
-* Fork the repository on GitHub
+  * A ticket is not necessary for [trivial changes](https://puppet.com/community/trivial-patch-exemption-policy)
+* Fork the repository on GitHub.
 
 ## New Facts
 
@@ -27,9 +28,8 @@ facts won't pass acceptance tests.
   * This is usually the master branch.
   * Only target release branches if you are certain your fix must be on that
     branch.
-  * To quickly create a topic branch based on master; `git branch
-    fix/master/my_contribution master` then checkout the new branch with `git
-    checkout fix/master/my_contribution`.  Please avoid working directly on the
+  * To quickly create a topic branch based on master, run `git checkout -b
+    fix/master/my_contribution master`. Please avoid working directly on the
     `master` branch.
 * Make commits of logical units.
 * Check for unnecessary whitespace with `git diff --check` before committing.
@@ -39,7 +39,10 @@ facts won't pass acceptance tests.
 * If you have cppcheck in your path you can run `make cppcheck` to ensure your
   code passes static analysis. cppcheck runs as part of Travis CI and could
   fail the CI build.
-* Make sure your commit messages are in the proper format.
+* Make sure your commit messages are in the proper format. If the commit
+  addresses an issue filed in the
+  [Facter Jira project](https://tickets.puppetlabs.com/browse/FACT), start
+  the first line of the commit with the issue number in parentheses.
 
 ````
     (FACT-1234) Make the example in CONTRIBUTING imperative and concrete
@@ -60,25 +63,30 @@ facts won't pass acceptance tests.
 
 ## Making Trivial Changes
 
-### Documentation
+For [changes of a trivial nature](https://puppet.com/community/trivial-patch-exemption-policy), it is not always necessary to create a new
+ticket in Jira. In this case, it is appropriate to start the first line of a
+commit with one of  `(docs)`, `(maint)`, or `(packaging)` instead of a ticket
+number.
 
-For changes of a trivial nature to comments and documentation, it is not
-always necessary to create a new ticket in Jira. In this case, it is
-appropriate to start the first line of a commit with '(doc)' instead of
-a ticket number.
+If a Jira ticket exists for the documentation commit, you can include it
+after the `(docs)` token.
 
-````
-    (doc) Add documentation commit example to CONTRIBUTING
+```
+    (docs)(DOCUMENT-000) Add docs commit example to CONTRIBUTING
 
     There is no example for contributing a documentation commit
     to the Facter repository. This is a problem because the contributor
     is left to assume how a commit of this nature may appear.
 
-    The first line is a real life imperative statement with '(doc)' in
-    place of what would have been the ticket number in a
+    The first line is a real-life imperative statement with '(docs)' in
+    place of what would have been the FACT project ticket number in a
     non-documentation related commit. The body describes the nature of
     the new documentation or comments added.
-````
+```
+
+For commits that address trivial repository maintenance tasks or packaging
+issues, start the first line of the commit with `(maint)` or `(packaging)`,
+respectively.
 
 ## Submitting Changes
 
