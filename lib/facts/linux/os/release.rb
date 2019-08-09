@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module Facter
   module Linux
     class OsRelease
-      FACT_NAME = 'os.release'.freeze
+      FACT_NAME = 'os.release'
       @aliases = []
 
       def initialize(*args)

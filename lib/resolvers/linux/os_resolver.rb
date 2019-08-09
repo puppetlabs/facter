@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OsResolver < BaseResolver
   class << self
     # rubocop:disable Style/ClassVars

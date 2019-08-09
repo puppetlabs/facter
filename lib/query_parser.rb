@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Facter
   class QueryParser
     # Searches for facts that could resolve a user query.
@@ -26,6 +28,7 @@ module Facter
 
         fact_list.each do |fact_name, klass_name|
           next unless fact_name.match?(tokens[elem].join('.'))
+
           filter_tokens = tokens - tokens[elem]
 
           fact = LoadedFact.new

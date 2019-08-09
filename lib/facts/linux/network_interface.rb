@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module Facter
   module Linux
     class NetworkInterface
-      FACT_NAME = 'networking.interface'.freeze
+      FACT_NAME = 'networking.interface'
       @aliases = []
 
       # def self.fact_name

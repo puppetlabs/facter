@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module Facter
   module Linux
     class NetworkIP
-      FACT_NAME = 'networking.ip'.freeze
+      FACT_NAME = 'networking.ip'
       @aliases = []
 
       # def self.fact_name
