@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe '.load facts for OS' do
+describe '.load facts for OS' do
+  
   it 'load one fact' do
     allow_any_instance_of(Module).to receive(:constants).and_return([:NetworkInterface])
     fact_hash = Facter::FactLoader.load(:linux)
