@@ -10,6 +10,7 @@ require_relative '../lib/facts/linux/network_interface'
 # Configure SimpleCov
 SimpleCov.start do
   track_files 'lib/**/*.rb'
+  add_filter 'spec'
 end
 
 default_coverage = 10
