@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module Facter
   module Linux
     class NetworkInterface
-      FACT_NAME = 'networking.interface'.freeze
-      @aliases =[]
+      FACT_NAME = 'networking.interface'
+      @aliases = []
 
       # def self.fact_name
       #   @@fact_name
@@ -15,16 +17,11 @@ module Facter
       end
 
       def call_the_resolver!
-        {'interface' => 'l0'}
+        { 'interface' => 'l0' }
       end
     end
   end
 end
-
-
-
-
-
 
 # fact_list = {
 #   'networking' => 'Network',

@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module Facter
   module Linux
     class OsFamily
-      FACT_NAME = 'os.family'.freeze
-      @aliases =[]
+      FACT_NAME = 'os.family'
+      @aliases = []
 
       def initialize(*args)
         @args = args

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Facter
   class Base
     def initialize(searched_facts)

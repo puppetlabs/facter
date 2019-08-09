@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Facter
   class QueryParser
     # Searches for facts that could resolve a user query.
@@ -15,6 +17,7 @@ module Facter
     # fact_list - is a list with all facts for the current operating system
     #
     # Returns a list of LoadedFact objects that resolve the users query.
+    # rubocop:disable Metrics/AbcSize
     def self.parse(query, fact_list)
       tokens = query.split('.')
       size = tokens.size
@@ -24,14 +27,14 @@ module Facter
         elem = 0..size - i
 
         fact_list.each do |fact_name, klass_name|
-          if fact_name.match?(tokens[elem].join('.'))
-            filter_tokens = tokens - tokens[elem]
+          next unless fact_name.match?(tokens[elem].join('.'))
 
-            fact = LoadedFact.new
-            fact.filter_tokens = filter_tokens
-            fact.fact_class = klass_name
-            resolvable_fact_list << fact # [klass_name, filter_tokens]
-          end
+          filter_tokens = tokens - tokens[elem]
+
+          fact = LoadedFact.new
+          fact.filter_tokens = filter_tokens
+          fact.fact_class = klass_name
+          resolvable_fact_list << fact # [klass_name, filter_tokens]
         end
 
         return resolvable_fact_list if resolvable_fact_list.any?
@@ -39,5 +42,6 @@ module Facter
 
       resolvable_fact_list
     end
+    # rubocop:enable Metrics/AbcSize
   end
 end

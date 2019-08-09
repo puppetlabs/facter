@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module Facter
   module Linux
     class NetworkIP
-      FACT_NAME = 'networking.ip'.freeze
-      @aliases =[]
+      FACT_NAME = 'networking.ip'
+      @aliases = []
 
       # def self.fact_name
       #   @@fact_name
@@ -13,7 +15,7 @@ module Facter
       end
 
       def call_the_resolver!
-        {'ip' => 'l92.l68.O.l'}
+        { 'ip' => 'l92.l68.O.l' }
       end
     end
   end
