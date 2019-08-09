@@ -11,7 +11,16 @@ require_relative '../lib/facts/linux/network_interface'
 require_relative '../lib/resolvers/base_resolver'
 require_relative '../lib/resolvers/linux/os_resolver'
 
+# Configure SimpleCov
+SimpleCov.start do
+  track_files 'lib/**/*.rb'
+  add_filter 'spec'
+end
 
+default_coverage = 8
+SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
+
+# Configure RSpec
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'

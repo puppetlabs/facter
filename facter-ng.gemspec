@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require_relative 'config/config'
 
 Gem::Specification.new do |spec|
-  spec.name          = "cli.rb-ng"
+  spec.name          = "facter"
   spec.version       = FACTER_VERSION
   spec.authors       = ["Bogdan Irimie"]
   spec.email         = ["irimie.bogdan@puppet.com"]
@@ -33,10 +33,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler', '~> 2.0'
+  spec.add_development_dependency 'coveralls', '~> 0.8.23'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency "pry-byebug", "~> 3.0"
-  spec.add_development_dependency 'coveralls', '~> 0.8.23'
 
 
   spec.add_runtime_dependency 'thor', '~> 0.20.3'

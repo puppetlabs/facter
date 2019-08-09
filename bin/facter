@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 require "bundler/setup"
-require 'pry-byebug'
 require 'open3'
 require_relative '../config/config'
 require_relative '../lib/cli'
