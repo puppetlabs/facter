@@ -12,8 +12,8 @@ SimpleCov.start do
   track_files 'lib/**/*.rb'
 end
 
-# default_coverage = 10
-# SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
+default_coverage = 10
+SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
 
 # Configure RSpec
 RSpec.configure do |config|
