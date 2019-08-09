@@ -15,6 +15,7 @@ module Facter
     # fact_list - is a list with all facts for the current operating system
     #
     # Returns a list of LoadedFact objects that resolve the users query.
+    # rubocop:disable Metrics/AbcSize
     def self.parse(query, fact_list)
       tokens = query.split('.')
       size = tokens.size
@@ -38,5 +39,6 @@ module Facter
 
       resolvable_fact_list
     end
+    # rubocop:enable Metrics/AbcSize
   end
 end

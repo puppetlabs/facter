@@ -17,6 +17,6 @@ before_install:
   - bundle install
 
 script:
-#  - bundle exec rubocop
+  - bundle exec rubocop
 #  - bundle exec rubycritic --no-browser -s 80 -f console
   - bundle exec rake spec
