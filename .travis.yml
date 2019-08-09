@@ -15,6 +15,7 @@ before_install:
   - gem update --system
   - gem install bundler
   - bundle install
+  - export LANG=en_US.UTF-8
 
 script:
   - bundle exec rubocop
