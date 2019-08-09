@@ -10,8 +10,8 @@ module Facter
       end
 
       def call_the_resolver!
-        fact = OsResolver2.resolve(:name)
-        return {FACT_NAME => fact}
+        fact = OsResolver.resolve(:name)
+        { FACT_NAME => fact }
       end
     end
   end

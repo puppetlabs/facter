@@ -1,7 +1,7 @@
 module Facter
   module Linux
-    class Os
-      FACT_NAME = 'os'.freeze
+    class OsRelease
+      FACT_NAME = 'os.release'.freeze
       @aliases =[]
 
       def initialize(*args)
@@ -10,7 +10,8 @@ module Facter
       end
 
       def call_the_resolver!
-        OsResolver.resolve(@args)
+        fact = OsResolver.resolve(:release)
+        { FACT_NAME => fact }
       end
     end
   end
