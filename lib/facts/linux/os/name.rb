@@ -2,7 +2,7 @@ module Facter
   module Linux
     class OsName
       FACT_NAME = 'os.name'.freeze
-      @aliases =[]
+      @aliases = []
 
       def initialize(*args)
         @args = args

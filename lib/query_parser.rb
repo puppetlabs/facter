@@ -24,14 +24,13 @@ module Facter
         elem = 0..size - i
 
         fact_list.each do |fact_name, klass_name|
-          if fact_name.match?(tokens[elem].join('.'))
-            filter_tokens = tokens - tokens[elem]
+          next unless fact_name.match?(tokens[elem].join('.'))
+          filter_tokens = tokens - tokens[elem]
 
-            fact = LoadedFact.new
-            fact.filter_tokens = filter_tokens
-            fact.fact_class = klass_name
-            resolvable_fact_list << fact # [klass_name, filter_tokens]
-          end
+          fact = LoadedFact.new
+          fact.filter_tokens = filter_tokens
+          fact.fact_class = klass_name
+          resolvable_fact_list << fact # [klass_name, filter_tokens]
         end
 
         return resolvable_fact_list if resolvable_fact_list.any?

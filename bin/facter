@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require "bundler/setup"
+require 'bundler/setup'
 require 'open3'
 require_relative '../config/config'
 require_relative '../lib/cli'
@@ -11,14 +11,13 @@ require_relative '../lib/query_parser'
 require_relative '../lib/models/loaded_fact'
 
 os = :linux
-require_relative "../lib/facts/#{os.to_s}/network_interface"
-require_relative "../lib/facts/#{os.to_s}/network_ip"
-require_relative "../lib/facts/#{os.to_s}/os/name"
-require_relative "../lib/facts/#{os.to_s}/os/family"
-require_relative "../lib/facts/#{os.to_s}/os/release"
-require_relative "../lib/resolvers/base_resolver"
-require_relative "../lib/resolvers/#{os.to_s}/os_resolver"
-
+require_relative "../lib/facts/#{os}/network_interface"
+require_relative "../lib/facts/#{os}/network_ip"
+require_relative "../lib/facts/#{os}/os/name"
+require_relative "../lib/facts/#{os}/os/family"
+require_relative "../lib/facts/#{os}/os/release"
+require_relative '../lib/resolvers/base_resolver'
+require_relative "../lib/resolvers/#{os}/os_resolver"
 
 ARGV.unshift(Facter::Cli.default_task) unless
   Facter::Cli.all_tasks.key?(ARGV[0]) ||

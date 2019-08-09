@@ -1,5 +1,2 @@
 class BaseResolver
-
-
-
 end
