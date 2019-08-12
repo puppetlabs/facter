@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'thor'
-
 module Facter
   class Cli < Thor
     class_option :color,
