@@ -11,7 +11,7 @@ require_relative '../lib/query_parser'
 require_relative '../lib/models/loaded_fact'
 require_relative '../lib/models/fact_collection'
 require_relative '../lib/models/fact'
-require_relative '../lib/fact_formater'
+require_relative '../lib/fact_formatter'
 
 os = :linux
 require_relative "../lib/facts/#{os}/network_interface"

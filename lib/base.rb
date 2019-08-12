@@ -20,7 +20,10 @@ module Facter
         end
       end
 
-      join_threads(threads)
+      fact_collection = join_threads(threads)
+
+      fact_formatter = FactFormatter.new(fact_collection)
+      puts fact_formatter.to_h
     end
 
     def join_threads(threads)
@@ -32,8 +35,7 @@ module Facter
         fact_collection.bury(*fact.name.split('.') << fact.value)
       end
 
-      fact_formater = FactFormater.new(fact_collection)
-      puts fact_formater.to_h
+      fact_collection
     end
   end
 

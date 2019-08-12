@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facter
-  class FactFormater
+  class FactFormatter
     def initialize(fact_collection)
       @fact_collection = fact_collection
     end
