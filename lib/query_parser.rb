@@ -2,6 +2,8 @@
 
 module Facter
   class QueryParser
+    @log = Logging.logger[self]
+
     # Searches for facts that could resolve a user query.
     # There are 3 types of facts:
     #   root facts
@@ -19,7 +21,7 @@ module Facter
     # Returns a list of LoadedFact objects that resolve the users query.
     def self.parse(query_list, loaded_fact_hash)
       matched_facts = []
-
+      @log.info "User query is: #{query_list}"
       query_list.each do |query|
         matched_facts << search_for_facts(query, loaded_fact_hash)
       end

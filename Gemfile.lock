@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     facter (0.0.1)
+      logging (~> 2.2.2)
       thor (~> 0.20.3)
 
 GEM
@@ -52,6 +53,11 @@ GEM
     launchy (2.4.3-java)
       addressable (~> 2.3)
       spoon (~> 0.0.1)
+    little-plugger (1.1.4)
+    logging (2.2.2)
+      little-plugger (~> 1.1)
+      multi_json (~> 1.10)
+    multi_json (1.13.1)
     parallel (1.17.0)
     parser (2.6.3.0)
       ast (~> 2.4.0)
