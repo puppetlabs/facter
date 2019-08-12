@@ -21,14 +21,6 @@ matrix:
       script:
         - bundle exec rake spec
 
-    - rvm: 2.4
-      script:
-        - bundle exec rake spec
-
-    - rvm: 2.3
-      script:
-        - bundle exec rake spec
-
     - rvm: jruby-head
       script:
         - bundle exec rake spec
