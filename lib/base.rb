@@ -16,7 +16,6 @@ module Facter
 
     def resolve_matched_facts(matched_facts)
       threads = []
-      results = {}
 
       matched_facts.each do |matched_fact|
         threads << Thread.new do
@@ -25,12 +24,20 @@ module Facter
         end
       end
 
+      join_threads(threads)
+    end
+
+    def join_threads(threads)
+      fact_collection = FactCollection.new
+
       threads.each do |t|
         t.join
-        results.merge!(t.value)
+        fact = t.value
+        fact_collection.bury(*fact.name.split('.') << fact.value)
       end
 
-      puts results.inspect
+      fact_formater = FactFormater.new(fact_collection)
+      puts fact_formater.to_h
     end
   end
 

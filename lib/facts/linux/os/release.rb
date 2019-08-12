@@ -12,8 +12,9 @@ module Facter
       end
 
       def call_the_resolver!
-        fact = OsResolver.resolve(:release)
-        { FACT_NAME => fact }
+        fact_value = OsResolver.resolve(:release)
+
+        Fact.new(FACT_NAME, fact_value)
       end
     end
   end
