@@ -4,6 +4,7 @@
 require 'open3'
 require 'json'
 require 'thor'
+
 require_relative '../config/config'
 require_relative '../lib/cli'
 require_relative '../lib/base'

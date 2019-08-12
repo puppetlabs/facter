@@ -23,7 +23,7 @@ module Facter
       fact_collection = join_threads(threads)
 
       fact_formatter = FactFormatter.new(fact_collection)
-      puts fact_formatter.to_h
+      puts fact_formatter.to_pretty_h
     end
 
     def join_threads(threads)

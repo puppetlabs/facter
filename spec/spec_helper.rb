@@ -14,9 +14,10 @@ require_relative '../lib/resolvers/linux/os_resolver'
 require_relative '../lib/query_parser'
 require_relative '../lib/models/loaded_fact'
 require_relative '../lib/models/fact_collection'
+require_relative '../lib/fact_formatter'
 
-require_relative "../lib/facts/linux/os/name"
-require_relative "../lib/facts/linux/os/family"
+require_relative '../lib/facts/linux/os/name'
+require_relative '../lib/facts/linux/os/family'
 
 # Configure SimpleCov
 SimpleCov.start do

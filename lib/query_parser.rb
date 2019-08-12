@@ -27,7 +27,6 @@ module Facter
       matched_facts.flatten(1)
     end
 
-    private
     def self.search_for_facts(query, loaded_fact_hash)
       resolvable_fact_list = []
       query_tokens = query.split('.')
