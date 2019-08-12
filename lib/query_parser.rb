@@ -17,31 +17,42 @@ module Facter
     # fact_list - is a list with all facts for the current operating system
     #
     # Returns a list of LoadedFact objects that resolve the users query.
-    # rubocop:disable Metrics/AbcSize
-    def self.parse(query, fact_list)
-      tokens = query.split('.')
-      size = tokens.size
+    def self.parse(query_list, fact_list)
+      matched_facts = []
+
+      query_list.each do |query|
+        matched_facts << search_for_facts(query, fact_list)
+      end
+
+      matched_facts
+    end
+
+    def self.search_for_facts(query, fact_list)
       resolvable_fact_list = []
+      query_tokens = query.split('.')
+      size = query_tokens.size
 
       size.times do |i|
-        elem = 0..size - i
-
-        fact_list.each do |fact_name, klass_name|
-          next unless fact_name.match?(tokens[elem].join('.'))
-
-          filter_tokens = tokens - tokens[elem]
-
-          fact = LoadedFact.new
-          fact.filter_tokens = filter_tokens
-          fact.fact_class = klass_name
-          resolvable_fact_list << fact # [klass_name, filter_tokens]
-        end
+        query_token_range = 0..size - i
+        resolvable_fact_list = get_all_facts_that_match_tokens(query_tokens, query_token_range, fact_list)
 
         return resolvable_fact_list if resolvable_fact_list.any?
       end
 
       resolvable_fact_list
     end
-    # rubocop:enable Metrics/AbcSize
+
+    def self.get_all_facts_that_match_tokens(query_tokens, query_token_range, fact_list)
+      resolvable_fact_list = []
+
+      fact_list.each do |fact_name, klass_name|
+        next unless fact_name.match?(query_tokens[query_token_range].join('.'))
+
+        filter_tokens = query_tokens - query_tokens[query_token_range]
+        resolvable_fact_list << LoadedFact.new(klass_name, filter_tokens)
+      end
+
+      resolvable_fact_list
+    end
   end
 end

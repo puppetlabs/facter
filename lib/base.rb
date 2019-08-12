@@ -3,14 +3,10 @@
 module Facter
   class Base
     def initialize(searched_facts)
-      facts = Facter::FactLoader.load(:linux)
-      searched_facts ||= facts
-      matched_facts = []
+      fact_list = Facter::FactLoader.load(:linux)
+      searched_facts ||= fact_list
 
-      searched_facts.each do |searched_fact|
-        matched_facts << Facter::QueryParser.parse(searched_fact, facts)
-      end
-
+      matched_facts = Facter::QueryParser.parse(searched_facts, fact_list)
       resolve_matched_facts(matched_facts.flatten(1))
     end
 
