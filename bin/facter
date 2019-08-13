@@ -1,14 +1,19 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'bundler/setup'
 require 'open3'
+require 'json'
+require 'thor'
+
 require_relative '../config/config'
 require_relative '../lib/cli'
 require_relative '../lib/base'
 require_relative '../lib/fact_loader'
 require_relative '../lib/query_parser'
 require_relative '../lib/models/loaded_fact'
+require_relative '../lib/models/fact_collection'
+require_relative '../lib/models/fact'
+require_relative '../lib/fact_formatter'
 
 os = :linux
 require_relative "../lib/facts/#{os}/network_interface"

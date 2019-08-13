@@ -3,20 +3,15 @@
 module Facter
   class Base
     def initialize(searched_facts)
-      facts = Facter::FactLoader.load(:linux)
-      searched_facts ||= facts
-      matched_facts = []
+      loaded_facts_hash = Facter::FactLoader.load(:linux)
+      searched_facts ||= loaded_facts_hash
 
-      searched_facts.each do |searched_fact|
-        matched_facts << Facter::QueryParser.parse(searched_fact, facts)
-      end
-
-      resolve_matched_facts(matched_facts.flatten(1))
+      matched_facts = Facter::QueryParser.parse(searched_facts, loaded_facts_hash)
+      resolve_matched_facts(matched_facts)
     end
 
     def resolve_matched_facts(matched_facts)
       threads = []
-      results = {}
 
       matched_facts.each do |matched_fact|
         threads << Thread.new do
@@ -25,12 +20,22 @@ module Facter
         end
       end
 
+      fact_collection = join_threads(threads)
+
+      fact_formatter = FactFormatter.new(fact_collection)
+      puts fact_formatter.to_pretty_h
+    end
+
+    def join_threads(threads)
+      fact_collection = FactCollection.new
+
       threads.each do |t|
         t.join
-        results.merge!(t.value)
+        fact = t.value
+        fact_collection.bury(*fact.name.split('.') << fact.value)
       end
 
-      puts results.inspect
+      fact_collection
     end
   end
 

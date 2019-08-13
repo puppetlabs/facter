@@ -6,10 +6,6 @@ module Facter
       FACT_NAME = 'networking.ip'
       @aliases = []
 
-      # def self.fact_name
-      #   @@fact_name
-      # end
-
       def initialize(*args)
         puts 'Dispatching to resolve: ' + args.inspect
       end
