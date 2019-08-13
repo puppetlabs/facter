@@ -11,9 +11,8 @@ module Facter
       # end
 
       def initialize(*args)
-        puts 'Dispatching to resolve: ' + args.inspect
-        # constants = Linux.constants
-        # puts constants
+        @log = Logging.logger[self]
+        @log.debug 'Dispatching to resolve: ' + args.inspect
       end
 
       def call_the_resolver!

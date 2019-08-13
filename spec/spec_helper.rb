@@ -5,6 +5,7 @@ Coveralls.wear!
 
 require 'open3'
 require 'thor'
+require 'logging'
 
 require 'bundler/setup'
 require_relative '../lib/fact_loader'

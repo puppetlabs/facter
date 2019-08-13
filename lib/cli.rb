@@ -99,8 +99,6 @@ module Facter
     desc 'query', 'query'
     def query(*args)
       Facter.new(args)
-      puts 'color' if options[:color]
-      puts 'args: ' + args.inspect
     end
 
     desc '--version, -v', 'Print the version'
