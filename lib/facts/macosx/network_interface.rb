@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facter
-  module Linux
+  module Macosx
     class NetworkInterface
       FACT_NAME = 'networking.interface'
       @aliases = []
@@ -11,8 +11,9 @@ module Facter
       # end
 
       def initialize(*args)
-        @log = Logging.logger[self]
-        @log.debug 'Dispatching to resolve: ' + args.inspect
+        puts 'Dispatching to resolve: ' + args.inspect
+        # constants = Linux.constants
+        # puts constants
       end
 
       def call_the_resolver!
