@@ -6,6 +6,7 @@ require 'json'
 require 'thor'
 
 require_relative '../config/config'
+require_relative '../config/logger'
 require_relative '../lib/cli'
 require_relative '../lib/base'
 require_relative '../lib/fact_loader'
