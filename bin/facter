@@ -4,29 +4,30 @@
 require 'open3'
 require 'json'
 require 'thor'
+require 'pry-byebug'
 
-require_relative '../config/config'
-require_relative '../config/logger'
-require_relative '../lib/cli'
-require_relative '../lib/base'
-require_relative '../lib/fact_loader'
-require_relative '../lib/query_parser'
-require_relative '../lib/models/loaded_fact'
-require_relative '../lib/models/fact_collection'
-require_relative '../lib/models/fact'
-require_relative '../lib/fact_formatter'
+require './lib/resolvers/base_resolver'
 
-os = :linux
-require_relative "../lib/facts/#{os}/network_interface"
-require_relative "../lib/facts/#{os}/network_ip"
-require_relative "../lib/facts/#{os}/os/name"
-require_relative "../lib/facts/#{os}/os/family"
-require_relative "../lib/facts/#{os}/os/release"
-require_relative '../lib/resolvers/base_resolver'
-require_relative "../lib/resolvers/#{os}/os_resolver"
+def load_dir(*dirs)
+  Dir.glob(File.join('./', dirs, '*.rb'), &method(:require))
+end
+load_dir(['config'])
+load_dir(['lib'])
+
+def load_lib_dirs(*dirs)
+  # binding.pry
+  load_dir(['lib', dirs])
+end
+
+load_lib_dirs('resolvers')
+load_lib_dirs('utils')
+load_lib_dirs('models')
+
+os = OsDetector.detect_family
+
+load_lib_dirs('facts', os.to_s, '**')
 
 ARGV.unshift(Facter::Cli.default_task) unless
   Facter::Cli.all_tasks.key?(ARGV[0]) ||
   Facter::Cli.instance_variable_get(:@map).key?(ARGV[0])
-
 Facter::Cli.start(ARGV)

@@ -4,8 +4,8 @@ describe 'query parser' do
   it 'queries for os fact' do
     query_list = ['os.name']
 
-    os_class = Class.const_get('Facter::Linux::OsName')
-    os_name = Class.const_get('Facter::Linux::OsFamily')
+    os_class = Class.const_get('Facter::Ubuntu::OsName')
+    os_name = Class.const_get('Facter::Ubuntu::OsFamily')
     loaded_facts_hash = { 'os.name' => os_class,
                           'os.family' => os_name }
     matched_facts = Facter::QueryParser.parse(query_list, loaded_facts_hash)
@@ -17,8 +17,8 @@ describe 'query parser' do
   it 'finds no facts' do
     query_list = ['no.fact.found']
 
-    os_class = Class.const_get('Facter::Linux::OsName')
-    os_name = Class.const_get('Facter::Linux::OsFamily')
+    os_class = Class.const_get('Facter::Ubuntu::OsName')
+    os_name = Class.const_get('Facter::Ubuntu::OsFamily')
     loaded_facts_hash = { 'os.name' => os_class,
                           'os.family' => os_name }
     matched_facts = Facter::QueryParser.parse(query_list, loaded_facts_hash)

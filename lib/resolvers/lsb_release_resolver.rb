@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
-class OsResolver < BaseResolver
+class LsbReleaseResolver < BaseResolver
+  # "Distributor ID"
+  # "Description"
+  # "Release"
+  # "Codename"
+
   class << self
     # rubocop:disable Style/ClassVars
     @@semaphore = Mutex.new
@@ -13,13 +18,10 @@ class OsResolver < BaseResolver
 
         return result unless result.nil?
 
-        output, _status = Open3.capture2('uname -a')
-        version = output.match(/\d{1,2}\.\d{1,2}\.\d{1,2}/).to_s
-        family = output.split(' ')[0]
+        output, _status = Open3.capture2('lsb_release -a')
+        release_info = output.delete("\t").split("\n").map { |e| e.split(':') }
 
-        @@fact_list[:name] = family
-        @@fact_list[:family] = family
-        @@fact_list[:release] = version
+        @@fact_list = Hash[*release_info.flatten]
 
         return @@fact_list[fact_name]
       end
