@@ -6,3 +6,10 @@ Metrics/LineLength:
 
 Metrics/MethodLength:
   Max: 20
+
+Metrics/BlockLength:
+  Exclude:
+    - !ruby/regexp /(?:(?!.+_spec.rb).)*$/
+Style/ClassVars:
+  Exclude:
+    - !ruby/regexp /(?:(?!.+_resolver.rb).)*$/

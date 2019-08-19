@@ -7,10 +7,8 @@ class LsbReleaseResolver < BaseResolver
   # "Codename"
 
   class << self
-    # rubocop:disable Style/ClassVars
     @@semaphore = Mutex.new
     @@fact_list ||= {}
-    # rubocop:enable Style/ClassVars
 
     def resolve(fact_name)
       @@semaphore.synchronize do

@@ -51,7 +51,7 @@ module Facter
       resolvable_fact_list = []
 
       loaded_fact_hash.each do |fact_name, klass_name|
-        next if fact_name.match(query_tokens[query_token_range].join('.')).nil?
+        next if fact_name.match("^#{query_tokens[query_token_range].join('.')}($|\\.)").nil?
 
         filter_tokens = query_tokens - query_tokens[query_token_range]
         resolvable_fact_list << LoadedFact.new('', klass_name, filter_tokens)

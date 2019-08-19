@@ -5,7 +5,7 @@ module Facter
     def initialize(searched_facts)
       os = OsDetector.detect_family
       loaded_facts_hash = Facter::FactLoader.load(os)
-      searched_facts ||= loaded_facts_hash
+      searched_facts = loaded_facts_hash.keys unless searched_facts.any?
 
       matched_facts = Facter::QueryParser.parse(searched_facts, loaded_facts_hash)
       resolve_matched_facts(matched_facts)
