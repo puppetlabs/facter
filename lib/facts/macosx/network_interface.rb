@@ -6,10 +6,6 @@ module Facter
       FACT_NAME = 'networking.interface'
       @aliases = []
 
-      # def self.fact_name
-      #   @@fact_name
-      # end
-
       def initialize(*args)
         puts 'Dispatching to resolve: ' + args.inspect
         # constants = Linux.constants
@@ -17,7 +13,7 @@ module Facter
       end
 
       def call_the_resolver!
-        { 'interface' => 'l0' }
+        Fact.new(FACT_NAME, 'l0')
       end
     end
   end
