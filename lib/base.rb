@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "#{ROOT_DIR}/lib/loader"
+
 module Facter
   class Base
     def initialize(searched_facts)
@@ -41,6 +43,14 @@ module Facter
   end
 
   def self.new(args)
+    Facter::Base.new(args)
+  end
+
+  def self.to_hash
+    Facter::Base.new([])
+  end
+
+  def self.value(*args)
     Facter::Base.new(args)
   end
 end
