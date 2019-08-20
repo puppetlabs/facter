@@ -16,7 +16,7 @@ module Facter
       end
 
       def call_the_resolver!
-        { 'interface' => 'l0' }
+        Fact.new(FACT_NAME, 'l0')
       end
     end
   end
