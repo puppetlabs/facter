@@ -3,8 +3,9 @@
 module Facter
   class Base
     def initialize(searched_facts)
-      loaded_facts_hash = Facter::FactLoader.load(:linux)
-      searched_facts ||= loaded_facts_hash
+      os = OsDetector.detect_family
+      loaded_facts_hash = Facter::FactLoader.load(os)
+      searched_facts = loaded_facts_hash.keys unless searched_facts.any?
 
       matched_facts = Facter::QueryParser.parse(searched_facts, loaded_facts_hash)
       resolve_matched_facts(matched_facts)
@@ -23,7 +24,7 @@ module Facter
       fact_collection = join_threads(threads)
 
       fact_formatter = FactFormatter.new(fact_collection)
-      puts fact_formatter.to_pretty_h
+      puts fact_formatter.to_h
     end
 
     def join_threads(threads)
