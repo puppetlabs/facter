@@ -17,13 +17,16 @@ class LsbReleaseResolver < BaseResolver
       end
     end
 
-    def read_lsb_release_file(fact_name)
-      output, _status = Open3.capture2('lsb_release -a')
-      release_info = output.delete("\t").split("\n").map { |e| e.split(':') }
+        return result unless result.nil?
 
-      @@fact_list = Hash[*release_info.flatten]
+        output, _status = Open3.capture2('lsb_release -a')
+        release_info = output.delete("\t").split("\n").map { |e| e.split(':') }
 
-      @@fact_list[fact_name]
+        @@fact_list = Hash[*release_info.flatten]
+      	@@fact_list[:slug] = @@fact_list['Distributor ID'].downcase
+
+        @@fact_list[fact_name]
+      end
     end
   end
 end
