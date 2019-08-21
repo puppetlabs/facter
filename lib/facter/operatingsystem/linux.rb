@@ -389,7 +389,7 @@ module Facter
           lsbdistrelease
         else
           if release = Facter::Util::FileRead.read('/etc/system-release')
-            if match = /\d+\.\d+/.match(release)
+            if match = /\d+\.?\d*/.match(release)
               match[0]
             end
           end
