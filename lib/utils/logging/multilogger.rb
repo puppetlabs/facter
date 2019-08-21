@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'logger'
 
-# MultiLogger is an implementation of Ruby logger which can tee the log to
+# MultiLogger is an implementation of Ruby logging which can tee the log to
 # multiple endpoints.
 # This class reeks of :reek:TooManyMethods.
 class MultiLogger < Logger
@@ -8,7 +10,7 @@ class MultiLogger < Logger
   # like a Logger.
   attr_reader :loggers
 
-  # For things like level and progname, retrieve from the first active logger.
+  # For things like level and progname, retrieve from the first active logging.
   # There's an implicit assumption that these will be the same across all
   # contained loggers.
 
@@ -41,16 +43,7 @@ class MultiLogger < Logger
     loggers.first.datetime_format
   end
 
-  # Any method not defined on standard Logger class, just send it on to anyone
-  # who will listen.
-  # This method reeks of :reek:FeatureEnvy.
-  def method_missing(name, *args, &block)
-    loggers.each do |logger|
-      logger.send(name, args, &block) if logger.respond_to?(name)
-    end
-  end
-
-  # Returns +true+ iff the current severity level allows for the printing of
+  # Returns +true+ if the current severity level allows for the printing of
   # +DEBUG+ messages.
   def debug?
     loggers.first.level <= DEBUG
@@ -99,7 +92,7 @@ class MultiLogger < Logger
     @loggers = loggers
   end
 
-  # Methods that write to logs just write to each contained logger in turn
+  # Methods that write to logs just write to each contained logging in turn
   def add(severity, message = nil, progname = nil, &block)
     loggers.each { |logger| logger.add(severity, message, progname, &block) }
   end
@@ -136,4 +129,4 @@ class MultiLogger < Logger
   def close
     loggers.each(&:close)
   end
-end # class MultiLogger
+end

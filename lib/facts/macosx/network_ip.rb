@@ -7,7 +7,8 @@ module Facter
       @aliases = []
 
       def initialize(*args)
-        puts 'Dispatching to resolve: ' + args.inspect
+        @log = Log.new
+        @log.debug 'Dispatching to resolve: ' + args.inspect
       end
 
       def call_the_resolver!

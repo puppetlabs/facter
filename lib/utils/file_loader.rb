@@ -6,10 +6,13 @@ require 'json'
 require "#{ROOT_DIR}/lib/resolvers/base_resolver"
 require "#{ROOT_DIR}/lib/facter"
 
+require "#{ROOT_DIR}/lib/utils/logging/multilogger"
+require "#{ROOT_DIR}/lib/utils/logging/logger"
+
 def load_dir(*dirs)
   Dir.glob(File.join(ROOT_DIR, dirs, '*.rb'), &method(:require))
 end
-load_dir(['lib', 'utils', 'logger'])
+
 load_dir(['config'])
 
 def load_lib_dirs(*dirs)
