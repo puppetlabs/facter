@@ -3,6 +3,7 @@
 
 require 'thor'
 require "#{ROOT_DIR}/lib/facter"
+require "#{ROOT_DIR}/lib/cli"
 
 ARGV.unshift(Facter::Cli.default_task) unless
   Facter::Cli.all_tasks.key?(ARGV[0]) ||
