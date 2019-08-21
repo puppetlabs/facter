@@ -34,6 +34,7 @@ module Facter
       stdout_logger = Logger.new(STDOUT)
 
       @logger = MultiLogger.new([stdout_logger, file_logger])
+      @logger.level = :info
     end
 
     def debug(msg)
