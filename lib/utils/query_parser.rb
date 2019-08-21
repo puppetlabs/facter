@@ -22,6 +22,9 @@ module Facter
     def self.parse(query_list, loaded_fact_hash)
       matched_facts = []
       @log.debug "User query is: #{query_list}"
+      @uq = query_list
+      query_list = loaded_fact_hash.keys unless query_list.any?
+
 
       query_list.each do |query|
         @log.debug "Query is #{query}"
@@ -54,7 +57,10 @@ module Facter
         next if fact_name.match("^#{query_tokens[query_token_range].join('.')}($|\\.)").nil?
 
         filter_tokens = query_tokens - query_tokens[query_token_range]
-        resolvable_fact_list << LoadedFact.new('', klass_name, filter_tokens)
+
+        user_query = @uq.any? ? query_tokens[query_token_range].join('.') : ''
+        lf = LoadedFact.new(fact_name, klass_name, filter_tokens, nil, user_query)
+        resolvable_fact_list << lf
       end
 
       @log.debug "List of resolvable facts: #{resolvable_fact_list.inspect}"
