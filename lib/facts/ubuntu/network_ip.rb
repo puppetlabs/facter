@@ -7,11 +7,11 @@ module Facter
       @aliases = []
 
       def initialize(*args)
-        @log = Logging.logger[self]
+        @log = Log.new
         @log.debug 'Dispatching to resolve: ' + args.inspect
       end
 
-      def call_the_resolver!
+      def call_the_resolver
         Fact.new(FACT_NAME, 'l92.l68.O.l')
       end
     end

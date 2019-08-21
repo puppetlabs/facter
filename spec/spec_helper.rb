@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+ENV['RACK_ENV'] = 'test'
+
 require 'coveralls'
 Coveralls.wear!
 
@@ -8,6 +10,12 @@ require 'thor'
 require 'logging'
 
 require_relative '../lib/resolvers/base_resolver'
+
+require 'pathname'
+
+ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
+require "#{ROOT_DIR}/lib/utils/file_loader"
+
 Dir.glob(File.join('./lib', '/**/*/', '*.rb'), &method(:require))
 
 # Configure SimpleCov

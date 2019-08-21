@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facter
-  class FactCollection < ::Thor::CoreExt::HashWithIndifferentAccess
+  class FactCollection < Hash
     def initialize
       super
     end
