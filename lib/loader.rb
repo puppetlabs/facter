@@ -6,6 +6,7 @@ require 'pathname'
 
 ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
 require "#{ROOT_DIR}/lib/resolvers/base_resolver"
+require "#{ROOT_DIR}/lib/facter"
 
 def load_dir(*dirs)
   Dir.glob(File.join(ROOT_DIR, dirs, '*.rb'), &method(:require))
