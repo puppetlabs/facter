@@ -22,7 +22,7 @@
 # Logging.logger.root.level = :info
 
 require 'logger'
-require "#{ROOT_DIR}/lib/utils/multilogger"
+require "#{ROOT_DIR}/lib/utils/logger/multilogger"
 
 
 # logger.debug "Debug message"

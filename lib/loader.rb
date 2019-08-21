@@ -9,8 +9,8 @@ require "#{ROOT_DIR}/lib/facter"
 def load_dir(*dirs)
   Dir.glob(File.join(ROOT_DIR, dirs, '*.rb'), &method(:require))
 end
+load_dir(['lib', 'utils', 'logger'])
 load_dir(['config'])
-# load_dir(['lib'])
 
 def load_lib_dirs(*dirs)
   load_dir(['lib', dirs])
