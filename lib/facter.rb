@@ -22,7 +22,7 @@ module Facter
       matched_facts.each do |matched_fact|
         threads << Thread.new do
           fact_class = matched_fact.fact_class
-          fact_class.new(matched_fact.filter_tokens).call_the_resolver!
+          fact_class.new(matched_fact.filter_tokens).call_the_resolver
         end
       end
 

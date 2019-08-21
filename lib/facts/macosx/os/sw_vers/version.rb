@@ -12,7 +12,7 @@ module Facter
         @log.debug 'Dispatching to resolve: ' + args.inspect
       end
 
-      def call_the_resolver!
+      def call_the_resolver
         fact_value = SwVersResolver.resolve('ProductVersion')
         versions = fact_value.split('.')
 

@@ -12,7 +12,7 @@ module Facter
         @log.debug 'Dispatching to resolve: ' + args.inspect
       end
 
-      def call_the_resolver!
+      def call_the_resolver
         fact_value = UnameResolver.resolve(:release)
         release_strings = fact_value.split('.')
         Fact.new(FACT_NAME,
