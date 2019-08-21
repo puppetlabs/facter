@@ -27,16 +27,17 @@ require "#{ROOT_DIR}/lib/utils/multilogger"
 
 # logger.debug "Debug message"
 # logger.info "Test message"
+module Facter
+  class Lg
+    def initialize
+      file_logger = Logger.new(File.new("#{ROOT_DIR}/example.log", 'a'))
+      stdout_logger = Logger.new(STDOUT)
 
-class Lg
-  def initialize
-    file_logger = Logger.new(File.new("#{ROOT_DIR}/example.log", 'a'))
-    stdout_logger = Logger.new(STDOUT)
+      @logger = MultiLogger.new([stdout_logger, file_logger])
+    end
 
-    @logger = MultiLogger.new([stdout_logger, file_logger])
-  end
-
-  def debug(msg)
-    @logger.debug(msg)
+    def debug(msg)
+      @logger.debug(msg)
+    end
   end
 end

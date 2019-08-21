@@ -11,7 +11,7 @@ module Facter
       # end
 
       def initialize(*args)
-        @log = Logging.logger[self]
+        @log = Lg.new
         @log.debug 'Dispatching to resolve: ' + args.inspect
       end
 
