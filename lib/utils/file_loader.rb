@@ -23,6 +23,6 @@ load_lib_dirs('resolvers')
 load_lib_dirs('utils')
 load_lib_dirs('models')
 
-os = OsDetector.detect_family
+os = ENV['RACK_ENV'] == 'test' ? '' : OsDetector.detect_family
 
 load_lib_dirs('facts', os.to_s, '**')
