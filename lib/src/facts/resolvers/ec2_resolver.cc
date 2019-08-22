@@ -5,6 +5,7 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
 #include <facter/util/string.hpp>
+#include <leatherman/util/environment.hpp>
 #include <leatherman/util/regex.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
@@ -34,7 +35,7 @@ namespace facter { namespace facts { namespace resolvers {
     static const char* EC2_METADATA_ROOT_URL = "http://169.254.169.254/latest/meta-data/";
     static const char* EC2_USERDATA_ROOT_URL = "http://169.254.169.254/latest/user-data/";
     static const unsigned int EC2_CONNECTION_TIMEOUT = 600;
-    static const unsigned int EC2_SESSION_TIMEOUT = 5000;
+    static const unsigned int EC2_SESSION_TIMEOUT = environment::get_int("EC2_SESSION_TIMEOUT", 5000);
 
     static void query_metadata_value(lth_curl::client& cli, map_value& value, string const& url, string const& name, string const& http_langs)
     {
