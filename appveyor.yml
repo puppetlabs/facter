@@ -1,7 +1,7 @@
 version: 3.1.0.{build}
 clone_depth: 10
 environment:
-  LEATHERMAN_VERSION: 1.4.4
+  LEATHERMAN_VERSION: 1.6.1
   CPPHOCON_VERSION: 0.1.8
 
 init:
