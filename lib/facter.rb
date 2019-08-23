@@ -10,13 +10,11 @@ module Facter
     def initialize(searched_facts)
       os = OsDetector.detect_family
       loaded_facts_hash = Facter::FactLoader.load(os)
-      # searched_facts = loaded_facts_hash.keys unless searched_facts.any?
-
       matched_facts = Facter::QueryParser.parse(searched_facts, loaded_facts_hash)
-      resolve_matched_facts(matched_facts)
+      resolve_matched_facts(searched_facts, matched_facts)
     end
 
-    def resolve_matched_facts(matched_facts)
+    def resolve_matched_facts(searched_facts, matched_facts)
       threads = []
 
       matched_facts.each do |matched_fact|
@@ -28,26 +26,25 @@ module Facter
 
       # fact_collection = join_threads(threads, matched_facts)
       join_threads(threads, matched_facts)
-      fact_collection = filter_facts(matched_facts)
+      fact_collection = build_fact_collection(matched_facts)
 
-      fact_formatter = FactFormatter.new(fact_collection)
+      fact_formatter = FactFormatter.new(searched_facts, fact_collection)
       puts fact_formatter.to_h
     end
 
-    def filter_facts(matched_facts)
+    def build_fact_collection(matched_facts)
       fact_collection = FactCollection.new
 
       matched_facts.each do |fact|
-        fact_name_list = fact.fact_name.split('.')
-        user_query_list = fact.user_query.split('.')
-        diff = fact_name_list - user_query_list
-        diff = diff.join('.')
-        # puts diff
-
-        fact_collection.bury(*diff.split('.') << fact.value)
+        value = filter_fact(fact)
+        fact_collection.bury(*fact.fact_name.split('.') + fact.filter_tokens << value)
       end
 
       fact_collection
+    end
+
+    def filter_fact(fact)
+      fact.filter_tokens.any? ? fact.value.dig(*fact.filter_tokens.map(&:to_sym)) : fact.value
     end
 
     def join_threads(threads, matched_facts)

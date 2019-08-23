@@ -25,7 +25,6 @@ module Facter
       @uq = query_list
       query_list = loaded_fact_hash.keys unless query_list.any?
 
-
       query_list.each do |query|
         @log.debug "Query is #{query}"
         matched_facts << search_for_facts(query, loaded_fact_hash)
@@ -41,7 +40,7 @@ module Facter
 
       size.times do |i|
         query_token_range = 0..size - i
-        resolvable_fact_list = get_all_facts_that_match_tokens(query_tokens, query_token_range, loaded_fact_hash)
+        resolvable_fact_list = get_facts_matching_tokens(query_tokens, query_token_range, loaded_fact_hash)
 
         return resolvable_fact_list if resolvable_fact_list.any?
       end
@@ -49,7 +48,7 @@ module Facter
       resolvable_fact_list
     end
 
-    def self.get_all_facts_that_match_tokens(query_tokens, query_token_range, loaded_fact_hash)
+    def self.get_facts_matching_tokens(query_tokens, query_token_range, loaded_fact_hash)
       @log.debug "Checking query tokens #{query_tokens[query_token_range].join('.')}"
       resolvable_fact_list = []
 

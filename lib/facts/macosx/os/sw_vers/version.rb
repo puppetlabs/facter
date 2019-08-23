@@ -15,7 +15,7 @@ module Facter
       def call_the_resolver
         fact_value = SwVersResolver.resolve('ProductVersion')
         versions = fact_value.split('.')
-        ver = {'full' => fact_value, 'major' => "#{versions[0]}.#{versions[1]}", 'minor' => versions[-1]}
+        ver = { 'full' => fact_value, 'major' => "#{versions[0]}.#{versions[1]}", 'minor' => versions[-1] }
 
         if @filter_tokens.any?
           #   filter_by tokens
