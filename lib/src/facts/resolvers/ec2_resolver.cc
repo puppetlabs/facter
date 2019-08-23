@@ -35,7 +35,11 @@ namespace facter { namespace facts { namespace resolvers {
     static const char* EC2_METADATA_ROOT_URL = "http://169.254.169.254/latest/meta-data/";
     static const char* EC2_USERDATA_ROOT_URL = "http://169.254.169.254/latest/user-data/";
     static const unsigned int EC2_CONNECTION_TIMEOUT = 600;
+#ifdef HAS_LTH_GET_INT
     static const unsigned int EC2_SESSION_TIMEOUT = environment::get_int("EC2_SESSION_TIMEOUT", 5000);
+#else
+    static const unsigned int EC2_SESSION_TIMEOUT = 5000;
+#endif
 
     static void query_metadata_value(lth_curl::client& cli, map_value& value, string const& url, string const& name, string const& http_langs)
     {
