@@ -55,15 +55,19 @@ module Facter
       loaded_fact_hash.each do |fact_name, klass_name|
         next if fact_name.match("^#{query_tokens[query_token_range].join('.')}($|\\.)").nil?
 
-        filter_tokens = query_tokens - query_tokens[query_token_range]
-
-        user_query = @uq.any? ? query_tokens[query_token_range].join('.') : ''
-        lf = LoadedFact.new(fact_name, klass_name, filter_tokens, nil, user_query)
-        resolvable_fact_list << lf
+        loaded_fact = construct_loaded_fact(query_tokens, query_token_range, fact_name, klass_name)
+        resolvable_fact_list << loaded_fact
       end
 
       @log.debug "List of resolvable facts: #{resolvable_fact_list.inspect}"
       resolvable_fact_list
+    end
+
+    def self.construct_loaded_fact(query_tokens, query_token_range, fact_name, klass_name)
+      filter_tokens = query_tokens - query_tokens[query_token_range]
+
+      user_query = @uq.any? ? query_tokens[query_token_range].join('.') : ''
+      LoadedFact.new(fact_name, klass_name, filter_tokens, nil, user_query)
     end
   end
 end

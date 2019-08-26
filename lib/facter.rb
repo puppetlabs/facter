@@ -29,7 +29,7 @@ module Facter
       fact_collection = build_fact_collection(matched_facts)
 
       fact_formatter = FactFormatter.new(searched_facts, fact_collection)
-      puts fact_formatter.to_h
+      puts fact_formatter.to_hocon
     end
 
     def build_fact_collection(matched_facts)

@@ -12,6 +12,10 @@ module Facter
     end
 
     def to_h
+      JSON.pretty_generate(@fact_collection).gsub(':', ' =>')
+    end
+
+    def to_hocon
       printable_hash = to_printable
 
       if @searched_facts.length == 1
@@ -29,9 +33,13 @@ module Facter
       pretty_json = JSON.pretty_generate(hash)
       pretty_json.gsub!(':', ' =>')
       pretty_json = pretty_json[1..-2]
+
+      # remove " from all elements that are not children
       pretty_json.gsub!(/\"(.*)\"\ =>/, '\1 =>')
 
-      pretty_json.split('\n').map! { |line| line.gsub(/^  /, '') }
+      # remove empty lines
+      pretty_json.gsub!(/^$\n/, '')
+      pretty_json.split("\n").map! { |line| line.gsub(/^  /, '') }
     end
 
     # Sort nested hash.

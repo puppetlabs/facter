@@ -24,7 +24,7 @@ SimpleCov.start do
   add_filter 'spec'
 end
 
-default_coverage = 8
+default_coverage = 50
 SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
 
 # Configure RSpec
