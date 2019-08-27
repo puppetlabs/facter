@@ -38,10 +38,9 @@ module Facter
         end
       end
 
-      # fact_collection = join_threads(threads, matched_facts)
       join_threads!(threads, searched_facts)
 
-      filter_facts!(searched_facts)
+      FactFilter.new.filter_facts!(searched_facts)
       resolved_facts = build_fact_collection(searched_facts)
 
       fact_formatter = FactFormatter.new(user_query, resolved_facts)
@@ -63,13 +62,6 @@ module Facter
     def enrich_searched_fact_with_value!(searched_facts, fact)
       matched_fact = searched_facts.select { |elem| elem.name == fact.name }
       matched_fact.first.value = fact.value
-    end
-
-    def filter_facts!(searched_facts)
-      searched_facts.each do |fact|
-        value = fact.filter_tokens.any? ? fact.value.dig(*fact.filter_tokens.map(&:to_sym)) : fact.value
-        fact.value = value
-      end
     end
 
     def build_fact_collection(searched_facts)
