@@ -29,6 +29,17 @@ module Facter
     private
 
     def resolve_matched_facts(user_query, searched_facts)
+      threads = start_threads(searched_facts)
+      join_threads!(threads, searched_facts)
+
+      FactFilter.new.filter_facts!(searched_facts)
+      fact_collection = FactCollection.new.build_fact_collection!(searched_facts)
+
+      fact_formatter = FactFormatter.new(user_query, fact_collection)
+      puts fact_formatter.to_hocon
+    end
+
+    def start_threads(searched_facts)
       threads = []
 
       searched_facts.each do |searched_fact|
@@ -38,18 +49,10 @@ module Facter
         end
       end
 
-      join_threads!(threads, searched_facts)
-
-      FactFilter.new.filter_facts!(searched_facts)
-      resolved_facts = build_fact_collection(searched_facts)
-
-      fact_formatter = FactFormatter.new(user_query, resolved_facts)
-      puts fact_formatter.to_hocon
+      threads
     end
 
     def join_threads!(threads, searched_facts)
-      # fact_collection = FactCollection.new
-
       threads.each do |thread|
         thread.join
         fact = thread.value
@@ -62,16 +65,6 @@ module Facter
     def enrich_searched_fact_with_value!(searched_facts, fact)
       matched_fact = searched_facts.select { |elem| elem.name == fact.name }
       matched_fact.first.value = fact.value
-    end
-
-    def build_fact_collection(searched_facts)
-      fact_collection = FactCollection.new
-
-      searched_facts.each do |fact|
-        fact_collection.bury(*fact.name.split('.') + fact.filter_tokens << fact.value)
-      end
-
-      fact_collection
     end
   end
 end

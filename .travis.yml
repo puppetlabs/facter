@@ -5,9 +5,6 @@ cache:
 branches:
   only:
     - master
-env:
-  global:
-    - CC_TEST_REPORTER_ID=c271ea6d1a90e42f558451cd7bbd0e01ea025c9ca167df8b79b469189f48b4a0
 before_install:
   - gem update --system
   - gem install bundler

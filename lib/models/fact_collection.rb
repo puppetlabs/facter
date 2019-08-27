@@ -19,5 +19,13 @@ module Facter
 
       self
     end
+
+    def build_fact_collection!(searched_facts)
+      searched_facts.each do |fact|
+        bury(*fact.name.split('.') + fact.filter_tokens << fact.value)
+      end
+
+      self
+    end
   end
 end
