@@ -51,16 +51,33 @@ module Facter
     def join_threads!(threads, searched_facts)
       threads.each do |thread|
         thread.join
-        fact = thread.value
-        enrich_searched_fact_with_value!(searched_facts, fact)
+        facts = thread.value
+        enrich_searched_fact_with_value!(searched_facts, facts)
       end
 
       searched_facts
     end
 
-    def enrich_searched_fact_with_value!(searched_facts, fact)
-      matched_fact = searched_facts.select { |elem| elem.name == fact.name }
-      matched_fact.first.value = fact.value
+    def enrich_searched_fact_with_value!(searched_facts, facts)
+      # matched_facts = searched_facts.select { |elem|  facts.select { |fact| fact.name.match(elem.name)}.any?  }
+      # matched_facts.each do |matched_fact|
+      #   matched_fact.value = facts[matched_fact.name].value
+      # end
+
+      searched_facts.each do |searched_fact|
+        if searched_fact.name.end_with?('regexfact')
+          searched_fact.name = searched_fact.name[0..-10]
+        end
+
+        matched_facts = facts.select { |fact| fact.name.match(searched_fact.name) }
+        if matched_facts.any?
+          searched_fact.value = matched_facts.first.value
+          # should create a searched_fact for each fact
+          if searched_fact.name.end_with?('_')
+            searched_fact.name = matched_facts.first.name
+          end
+        end
+      end
     end
   end
 end

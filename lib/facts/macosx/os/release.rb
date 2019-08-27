@@ -15,10 +15,10 @@ module Facter
       def call_the_resolver
         fact_value = UnameResolver.resolve(:release)
         release_strings = fact_value.split('.')
-        Fact.new(FACT_NAME,
+        [Fact.new(FACT_NAME,
                  full: fact_value,
                  major: release_strings[0],
-                 minor: release_strings[1])
+                 minor: release_strings[1])]
       end
     end
   end

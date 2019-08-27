@@ -53,7 +53,10 @@ module Facter
       resolvable_fact_list = []
 
       loaded_fact_hash.each do |fact_name, klass_name|
-        next if fact_name.match("^#{query_tokens[query_token_range].join('.')}($|\\.)").nil?
+        query_fact = query_tokens[query_token_range].join('.')
+        next unless query_fact.match?("^#{fact_name}$")
+
+        # next if fact_name.match("^#{query_tokens[query_token_range].join('.')}($|\\.)").nil?
 
         loaded_fact = construct_loaded_fact(query_tokens, query_token_range, fact_name, klass_name)
         resolvable_fact_list << loaded_fact
@@ -67,7 +70,11 @@ module Facter
       filter_tokens = query_tokens - query_tokens[query_token_range]
 
       user_query = @uq.any? ? query_tokens[query_token_range].join('.') : ''
-      SearchedFact.new(fact_name, klass_name, filter_tokens, user_query)
+      if fact_name.end_with? '.*'
+        SearchedFact.new(user_query, klass_name, filter_tokens, user_query)
+      else
+        SearchedFact.new(fact_name, klass_name, filter_tokens, user_query)
+      end
     end
   end
 end

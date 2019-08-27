@@ -3,7 +3,7 @@
 module Facter
   module Macosx
     class NetworkInterface
-      FACT_NAME = 'networking.interface'
+      FACT_NAME = 'ipaddress_.*'
       @aliases = []
 
       def initialize(*args)
@@ -12,7 +12,7 @@ module Facter
       end
 
       def call_the_resolver
-        Fact.new(FACT_NAME, 'l0')
+        [Fact.new('ipaddress_ens160', 'l0'), Fact.new('ipaddress_2', 'l0')]
       end
     end
   end
