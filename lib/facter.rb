@@ -6,10 +6,6 @@ ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DI
 require "#{ROOT_DIR}/lib/utils/file_loader"
 
 module Facter
-  def self.new(args)
-    Facter::Base.new(args)
-  end
-
   def self.to_hash
     Facter::Base.new([])
   end

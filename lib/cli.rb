@@ -98,7 +98,7 @@ module Facter
 
     desc 'query', 'query'
     def query(*args)
-      Facter.new(args)
+      Facter.value(*args)
     end
 
     desc '--version, -v', 'Print the version'

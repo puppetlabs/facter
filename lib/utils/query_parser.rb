@@ -67,7 +67,7 @@ module Facter
       filter_tokens = query_tokens - query_tokens[query_token_range]
 
       user_query = @uq.any? ? query_tokens[query_token_range].join('.') : ''
-      SearchedFact.new(fact_name, klass_name, filter_tokens, nil, user_query)
+      SearchedFact.new(fact_name, klass_name, filter_tokens, user_query)
     end
   end
 end
