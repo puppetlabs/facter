@@ -153,6 +153,19 @@ enable_cppcheck()
 # Pull in helper macros for working with leatherman libraries
 include(leatherman)
 
+set(CMAKE_REQUIRED_LIBRARIES ${LEATHERMAN_LIBRARIES})
+CHECK_CXX_SOURCE_COMPILES("
+#include <leatherman/util/environment.hpp>
+int main() {
+    int a = leatherman::util::environment::get_int(\"A\", 1000);
+    return 0;
+}
+" HAS_LTH_GET_INT)
+
+if (HAS_LTH_GET_INT)
+    add_definitions(-DHAS_LTH_GET_INT)
+endif()
+
 add_subdirectory(lib)
 add_subdirectory(exe)
 add_subdirectory(locales)
