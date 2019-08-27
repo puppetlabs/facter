@@ -9,4 +9,4 @@ rspec
 rubocop
 
 # run lint with ui
-rubycritic
+rubycritic --no-browser -s 80 -f console

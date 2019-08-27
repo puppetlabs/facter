@@ -22,6 +22,8 @@ module Facter
     def self.parse(query_list, loaded_fact_hash)
       matched_facts = []
       @log.debug "User query is: #{query_list}"
+      @uq = query_list
+      query_list = loaded_fact_hash.keys unless query_list.any?
 
       query_list.each do |query|
         @log.debug "Query is #{query}"
@@ -38,7 +40,7 @@ module Facter
 
       size.times do |i|
         query_token_range = 0..size - i
-        resolvable_fact_list = get_all_facts_that_match_tokens(query_tokens, query_token_range, loaded_fact_hash)
+        resolvable_fact_list = get_facts_matching_tokens(query_tokens, query_token_range, loaded_fact_hash)
 
         return resolvable_fact_list if resolvable_fact_list.any?
       end
@@ -46,19 +48,26 @@ module Facter
       resolvable_fact_list
     end
 
-    def self.get_all_facts_that_match_tokens(query_tokens, query_token_range, loaded_fact_hash)
+    def self.get_facts_matching_tokens(query_tokens, query_token_range, loaded_fact_hash)
       @log.debug "Checking query tokens #{query_tokens[query_token_range].join('.')}"
       resolvable_fact_list = []
 
       loaded_fact_hash.each do |fact_name, klass_name|
         next if fact_name.match("^#{query_tokens[query_token_range].join('.')}($|\\.)").nil?
 
-        filter_tokens = query_tokens - query_tokens[query_token_range]
-        resolvable_fact_list << LoadedFact.new('', klass_name, filter_tokens)
+        loaded_fact = construct_loaded_fact(query_tokens, query_token_range, fact_name, klass_name)
+        resolvable_fact_list << loaded_fact
       end
 
       @log.debug "List of resolvable facts: #{resolvable_fact_list.inspect}"
       resolvable_fact_list
+    end
+
+    def self.construct_loaded_fact(query_tokens, query_token_range, fact_name, klass_name)
+      filter_tokens = query_tokens - query_tokens[query_token_range]
+
+      user_query = @uq.any? ? query_tokens[query_token_range].join('.') : ''
+      SearchedFact.new(fact_name, klass_name, filter_tokens, nil, user_query)
     end
   end
 end

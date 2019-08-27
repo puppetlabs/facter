@@ -8,7 +8,7 @@ module Facter
 
       def initialize(*args)
         @log = Log.new
-        @args = args
+        @filter_tokens = args
         @log.debug 'Dispatching to resolve: ' + args.inspect
       end
 
