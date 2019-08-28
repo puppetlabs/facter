@@ -65,15 +65,15 @@ module Facter
       # end
 
       searched_facts.each do |searched_fact|
-        if searched_fact.name.end_with?('regexfact')
-          searched_fact.name = searched_fact.name[0..-10]
-        end
+        # if searched_fact.name.end_with?('.*')
+        #   searched_fact.name = searched_fact.name[0..-10]
+        # end
 
         matched_facts = facts.select { |fact| fact.name.match(searched_fact.name) }
         if matched_facts.any?
           searched_fact.value = matched_facts.first.value
           # should create a searched_fact for each fact
-          if searched_fact.name.end_with?('_')
+          if searched_fact.name.end_with?('.*')
             searched_fact.name = matched_facts.first.name
           end
         end

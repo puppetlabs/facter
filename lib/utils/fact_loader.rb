@@ -22,7 +22,7 @@ module Facter
       classes.each do |class_name|
         klass = Class.const_get("Facter::#{os}::" + class_name.to_s)
         # fact_name = klass::FACT_NAME
-        fact_name = klass::FACT_NAME.end_with?('.*') ? klass::FACT_NAME.gsub('.*', 'regexfact') : klass::FACT_NAME
+        fact_name = klass::FACT_NAME
         loaded_facts.merge!(fact_name => klass)
       end
 
