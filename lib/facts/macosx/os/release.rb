@@ -16,9 +16,9 @@ module Facter
         fact_value = UnameResolver.resolve(:release)
         release_strings = fact_value.split('.')
         [Fact.new(FACT_NAME,
-                 full: fact_value,
-                 major: release_strings[0],
-                 minor: release_strings[1])]
+                  full: fact_value,
+                  major: release_strings[0],
+                  minor: release_strings[1])]
       end
     end
   end

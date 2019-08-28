@@ -26,7 +26,7 @@ module Facter
 
     def resolve_matched_facts(user_query, searched_facts)
       threads = start_threads(searched_facts)
-      join_threads!(threads, searched_facts)
+      searched_facts = join_threads(threads, searched_facts)
 
       FactFilter.new.filter_facts!(searched_facts)
       fact_collection = FactCollection.new.build_fact_collection!(searched_facts)
@@ -41,43 +41,46 @@ module Facter
       searched_facts.each do |searched_fact|
         threads << Thread.new do
           fact_class = searched_fact.fact_class
-          fact_class.new(searched_fact.filter_tokens).call_the_resolver
+          if searched_fact.name.end_with?('.*')
+            start_index = searched_fact.name[0..-3].length
+            filter_criteria = searched_fact.user_query[start_index..searched_fact.user_query.length]
+            fact_class.new(searched_fact.filter_tokens).call_the_resolver(filter_criteria)
+          else
+            fact_class.new(searched_fact.filter_tokens).call_the_resolver
+          end
         end
       end
 
       threads
     end
 
-    def join_threads!(threads, searched_facts)
+    def join_threads(threads, searched_facts)
+      facts = []
+
       threads.each do |thread|
         thread.join
-        facts = thread.value
-        enrich_searched_fact_with_value!(searched_facts, facts)
+        # facts = thread.value
+        facts << thread.value
+        # enrich_searched_fact_with_value!(searched_facts, facts)
       end
+      facts.flatten!
 
-      searched_facts
+      enrich_searched_fact_with_values(searched_facts, facts)
     end
 
-    def enrich_searched_fact_with_value!(searched_facts, facts)
-      # matched_facts = searched_facts.select { |elem|  facts.select { |fact| fact.name.match(elem.name)}.any?  }
-      # matched_facts.each do |matched_fact|
-      #   matched_fact.value = facts[matched_fact.name].value
-      # end
+    def enrich_searched_fact_with_values(searched_facts, facts)
+      complete_searched_facts = []
 
-      searched_facts.each do |searched_fact|
-        # if searched_fact.name.end_with?('.*')
-        #   searched_fact.name = searched_fact.name[0..-10]
-        # end
-
-        matched_facts = facts.select { |fact| fact.name.match(searched_fact.name) }
-        if matched_facts.any?
-          searched_fact.value = matched_facts.first.value
-          # should create a searched_fact for each fact
-          if searched_fact.name.end_with?('.*')
-            searched_fact.name = matched_facts.first.name
-          end
-        end
+      facts.each do |fact|
+        matched_facts = searched_facts.select { |searched_fact| fact.name.match(searched_fact.name) }
+        matched_fact = matched_facts.first
+        searched_fact = SearchedFact.new(fact.name,
+                                         matched_fact.fact_class, matched_fact.filter_tokens, matched_fact.user_query)
+        searched_fact.value = fact.value
+        complete_searched_facts << searched_fact
       end
+
+      complete_searched_facts
     end
   end
 end
