@@ -122,10 +122,6 @@ class MultiLogger < Logger
     loggers.each { |logger| logger.fatal(progname, &block) }
   end
 
-  def unknown(progname = nil, &block)
-    loggers.each { |logger| logger.unknown(progname, &block) }
-  end
-
   def close
     loggers.each(&:close)
   end

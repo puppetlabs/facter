@@ -9,6 +9,9 @@ before_install:
   - gem update --system
   - gem install bundler
   - bundle install
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 matrix:
   include:
     - rvm: 2.6
@@ -32,4 +35,5 @@ matrix:
     - rvm: jruby-head
       script:
         - bundle exec rake spec
-
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

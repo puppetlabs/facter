@@ -12,16 +12,7 @@ class ProcessorsResolver < BaseResolver
     def resolve(fact_name)
       @@semaphore.synchronize do
         result ||= @@fact_list[fact_name]
-
-        return result if result
-
-        win = Win32Ole.new
-        proc = win.exec_query('SELECT Name,Architecture,NumberOfLogicalProcessors FROM Win32_Processor')
-
-        result = iterate_proc(proc)
-        build_fact_list(result)
-
-        @@fact_list[fact_name]
+        result || read_fact_from_win32_processor(fact_name)
       end
     end
 
@@ -30,6 +21,16 @@ class ProcessorsResolver < BaseResolver
     end
 
     private
+
+    def read_fact_from_win32_processor(fact_name)
+      win = Win32Ole.new
+      proc = win.exec_query('SELECT Name,Architecture,NumberOfLogicalProcessors FROM Win32_Processor')
+
+      result = iterate_proc(proc)
+      build_fact_list(result)
+
+      @@fact_list[fact_name]
+    end
 
     def iterate_proc(result)
       models = []
@@ -50,12 +51,13 @@ class ProcessorsResolver < BaseResolver
     end
 
     def find_isa(arch)
-      architecture_array = %w[x86 MIPS Alpha PowerPC ARM Itanium x64]
-      isa = architecture_array[arch]
+      architecture_hash =
+        { 0 => 'x86', 1 => 'MIPS', 2 => 'Alpha', 3 => 'PowerPC', 5 => 'ARM', 6 => 'Itanium', 9 => 'x64' }
+      isa = architecture_hash[arch]
 
       return isa if isa
 
-      raise 'Unable to determine processor type: unknown architecture'
+      Facter::Log.new.debug 'Unable to determine processor type: unknown architecture'
     end
 
     def build_fact_list(result)

@@ -9,11 +9,14 @@ require 'open3'
 require 'thor'
 require 'logging'
 
+require_relative '../lib/resolvers/base_resolver'
 require_relative '../spec/kernel_mock'
 
 require 'pathname'
 
 ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
+
+require "#{ROOT_DIR}/lib/utils/file_loader"
 
 Dir.glob(File.join('./lib', '/**/*/', '*.rb'), &method(:require))
 
@@ -23,7 +26,7 @@ SimpleCov.start do
   add_filter 'spec'
 end
 
-default_coverage = 8
+default_coverage = 50
 SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
 
 # Configure RSpec

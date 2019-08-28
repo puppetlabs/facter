@@ -12,15 +12,7 @@ class VirtualizationResolver < BaseResolver
     def resolve(fact_name)
       @@semaphore.synchronize do
         result ||= @@fact_list[fact_name]
-
-        return result if result
-
-        win = Win32Ole.new
-        comp = win.exec_query('SELECT Manufacturer,Model FROM Win32_ComputerSystem').to_enum.first
-        hypervisor = determine_hypervisor_by_model(comp) || determine_hypervisor_by_manufacturer(comp)
-        build_fact_list(hypervisor)
-
-        @@fact_list[fact_name]
+        result || read_fact_from_computer_system(fact_name)
       end
     end
 
@@ -29,6 +21,15 @@ class VirtualizationResolver < BaseResolver
     end
 
     private
+
+    def read_fact_from_computer_system(fact_name)
+      win = Win32Ole.new
+      comp = win.exec_query('SELECT Manufacturer,Model FROM Win32_ComputerSystem').to_enum.first
+      hypervisor = determine_hypervisor_by_model(comp) || determine_hypervisor_by_manufacturer(comp)
+      build_fact_list(hypervisor)
+
+      @@fact_list[fact_name]
+    end
 
     def determine_hypervisor_by_model(comp)
       model_hash = { 'VirtualBox' => 'virtualbox', 'VMware' => 'vmware', 'KVM' => 'kvm',
@@ -51,8 +52,7 @@ class VirtualizationResolver < BaseResolver
 
     def build_fact_list(hypervisor)
       @@fact_list[:virtual] = hypervisor
-      @@fact_list[:is_virtual] = 'false'
-      @@fact_list[:is_virtual] = 'true' unless hypervisor =~ /physical/
+      @@fact_list[:is_virtual] = (!hypervisor.include?('physical')).to_s
     end
   end
 end

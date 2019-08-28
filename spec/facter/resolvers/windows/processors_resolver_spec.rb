@@ -67,9 +67,9 @@ describe 'Windows ProcessorsResolver' do
     end
 
     it 'should raise error' do
-      expect { ProcessorsResolver.resolve(:isa) }.to raise_error(
-        'Unable to determine processor type: unknown architecture'
-      )
+      allow_any_instance_of(Facter::Log).to receive(:debug)
+        .with('Unable to determine processor type: unknown architecture')
+      ProcessorsResolver.resolve(:isa)
     end
   end
 end
