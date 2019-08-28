@@ -55,12 +55,7 @@ module Facter
       loaded_fact_hash.each do |fact_name, klass_name|
         query_fact = query_tokens[query_token_range].join('.')
 
-        # TODO this should be improved
-        if query_fact.end_with?('.*') || query_fact.match?("^#{fact_name}$")
-          next unless query_fact.match?("^#{fact_name}$")
-        elsif fact_name.match("^#{query_tokens[query_token_range].join('.')}($|\\.)").nil?
-          next
-        end
+        next unless found_fact?(fact_name, query_fact)
 
         loaded_fact = construct_loaded_fact(query_tokens, query_token_range, fact_name, klass_name)
         resolvable_fact_list << loaded_fact
@@ -68,6 +63,15 @@ module Facter
 
       @log.debug "List of resolvable facts: #{resolvable_fact_list.inspect}"
       resolvable_fact_list
+    end
+
+    def self.found_fact?(fact_name, query_fact)
+      return false if fact_name.end_with?('.*') && !query_fact.match?("^#{fact_name}$")
+
+      return false if !fact_name.end_with?('.*') &&
+                      fact_name.match("^#{query_fact}($|\\.)").nil?
+
+      true
     end
 
     def self.construct_loaded_fact(query_tokens, query_token_range, fact_name, klass_name)

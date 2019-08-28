@@ -40,18 +40,22 @@ module Facter
 
       searched_facts.each do |searched_fact|
         threads << Thread.new do
-          fact_class = searched_fact.fact_class
-          if searched_fact.name.end_with?('.*')
-            start_index = searched_fact.name[0..-3].length
-            filter_criteria = searched_fact.user_query[start_index..searched_fact.user_query.length]
-            fact_class.new(searched_fact.filter_tokens).call_the_resolver(filter_criteria)
-          else
-            fact_class.new(searched_fact.filter_tokens).call_the_resolver
-          end
+          create_fact(searched_fact)
         end
       end
 
       threads
+    end
+
+    def create_fact(searched_fact)
+      fact_class = searched_fact.fact_class
+      if searched_fact.name.end_with?('.*')
+        fact_without_wildcard = searched_fact.name[0..-3]
+        filter_criteria = searched_fact.user_query.split(fact_without_wildcard).last
+        fact_class.new(searched_fact.filter_tokens).call_the_resolver(filter_criteria)
+      else
+        fact_class.new(searched_fact.filter_tokens).call_the_resolver
+      end
     end
 
     def join_threads(threads, searched_facts)
@@ -61,7 +65,6 @@ module Facter
         thread.join
         # facts = thread.value
         facts << thread.value
-        # enrich_searched_fact_with_value!(searched_facts, facts)
       end
       facts.flatten!
 
