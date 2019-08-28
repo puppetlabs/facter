@@ -23,7 +23,7 @@ module Facter
           puts value
         end
 
-        [Fact.new(FACT_NAME, ver)]
+        Fact.new(FACT_NAME, ver)
       end
     end
   end
