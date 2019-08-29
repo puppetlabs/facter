@@ -16,10 +16,10 @@ describe 'Windows VirtualizationResolver' do
     let(:model) { 'VirtualBox' }
     let(:manufacturer) {}
 
-    it 'should detect virtual machine model' do
+    it 'detects virtual machine model' do
       expect(VirtualizationResolver.resolve(:virtual)).to eql('virtualbox')
     end
-    it 'should detect that is virtual' do
+    it 'detects that is virtual' do
       expect(VirtualizationResolver.resolve(:is_virtual)).to eql('true')
     end
   end
@@ -31,10 +31,10 @@ describe 'Windows VirtualizationResolver' do
     let(:model) { 'VMware' }
     let(:manufacturer) {}
 
-    it 'should detect virtual machine model' do
+    it 'detects virtual machine model' do
       expect(VirtualizationResolver.resolve(:virtual)).to eql('vmware')
     end
-    it 'should detect that is virtual' do
+    it 'detects that is virtual' do
       expect(VirtualizationResolver.resolve(:is_virtual)).to eql('true')
     end
   end
@@ -46,40 +46,10 @@ describe 'Windows VirtualizationResolver' do
     let(:model) { 'KVM10' }
     let(:manufacturer) {}
 
-    it 'should detect virtual machine model' do
+    it 'detects virtual machine model' do
       expect(VirtualizationResolver.resolve(:virtual)).to eql('kvm')
     end
-    it 'should detect that is virtual' do
-      expect(VirtualizationResolver.resolve(:is_virtual)).to eql('true')
-    end
-  end
-
-  context '#resolve Bochs VM' do
-    after do
-      VirtualizationResolver.invalidate_cache
-    end
-    let(:model) { 'Bochs' }
-    let(:manufacturer) {}
-
-    it 'should detect virtual machine model' do
-      expect(VirtualizationResolver.resolve(:virtual)).to eql('bochs')
-    end
-    it 'should detect that is virtual' do
-      expect(VirtualizationResolver.resolve(:is_virtual)).to eql('true')
-    end
-  end
-
-  context '#resolve Google VM' do
-    after do
-      VirtualizationResolver.invalidate_cache
-    end
-    let(:model) { 'Google' }
-    let(:manufacturer) {}
-
-    it 'should detect virtual machine model' do
-      expect(VirtualizationResolver.resolve(:virtual)).to eql('gce')
-    end
-    it 'should detect that is virtual' do
+    it 'detects that is virtual' do
       expect(VirtualizationResolver.resolve(:is_virtual)).to eql('true')
     end
   end
@@ -91,10 +61,10 @@ describe 'Windows VirtualizationResolver' do
     let(:model) { 'OpenStack' }
     let(:manufacturer) {}
 
-    it 'should detect virtual machine model' do
+    it 'detects virtual machine model' do
       expect(VirtualizationResolver.resolve(:virtual)).to eql('openstack')
     end
-    it 'should detect that is virtual' do
+    it 'detects that is virtual' do
       expect(VirtualizationResolver.resolve(:is_virtual)).to eql('true')
     end
   end
@@ -106,10 +76,10 @@ describe 'Windows VirtualizationResolver' do
     let(:model) { 'Virtual Machine' }
     let(:manufacturer) { 'Microsoft' }
 
-    it 'should detect virtual machine model' do
+    it 'detects virtual machine model' do
       expect(VirtualizationResolver.resolve(:virtual)).to eql('hyperv')
     end
-    it 'should detect that is virtual' do
+    it 'detects that is virtual' do
       expect(VirtualizationResolver.resolve(:is_virtual)).to eql('true')
     end
   end
@@ -121,10 +91,10 @@ describe 'Windows VirtualizationResolver' do
     let(:model) { '' }
     let(:manufacturer) { 'Xen' }
 
-    it 'should detect virtual machine model' do
+    it 'detects virtual machine model' do
       expect(VirtualizationResolver.resolve(:virtual)).to eql('xen')
     end
-    it 'should detect that is virtual' do
+    it 'detects that is virtual' do
       expect(VirtualizationResolver.resolve(:is_virtual)).to eql('true')
     end
   end
@@ -136,10 +106,10 @@ describe 'Windows VirtualizationResolver' do
     let(:model) { '' }
     let(:manufacturer) { 'Amazon EC2' }
 
-    it 'should detect virtual machine model' do
+    it 'detects virtual machine model' do
       expect(VirtualizationResolver.resolve(:virtual)).to eql('kvm')
     end
-    it 'should detect that is virtual' do
+    it 'detects that is virtual' do
       expect(VirtualizationResolver.resolve(:is_virtual)).to eql('true')
     end
   end
@@ -148,10 +118,10 @@ describe 'Windows VirtualizationResolver' do
     let(:model) { '' }
     let(:manufacturer) { '' }
 
-    it 'should detect virtual machine model' do
+    it 'detects virtual machine model' do
       expect(VirtualizationResolver.resolve(:virtual)).to eql('physical')
     end
-    it 'should detect that is virtual' do
+    it 'detects that is not virtual' do
       expect(VirtualizationResolver.resolve(:is_virtual)).to eql('false')
     end
   end
@@ -160,10 +130,10 @@ describe 'Windows VirtualizationResolver' do
     let(:model) { '' }
     let(:manufacturer) { 'Amazon EC2' }
 
-    it 'should detect virtual machine model' do
+    it 'detects virtual machine model' do
       expect(VirtualizationResolver.resolve(:virtual)).to eql('physical')
     end
-    it 'should detect that is virtual' do
+    it 'detects that is virtual' do
       expect(VirtualizationResolver.resolve(:is_virtual)).to eql('false')
     end
   end

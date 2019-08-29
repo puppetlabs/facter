@@ -10,10 +10,10 @@ describe 'Windows DMIComputerSystemResolver' do
   end
 
   context '#resolve' do
-    it 'should detect virtual machine model' do
+    it 'detects virtual machine name' do
       expect(DMIComputerSystemResolver.resolve(:name)).to eql('VMware7,1')
     end
-    it 'should detect that is virtual' do
+    it 'detects uuid of virtual machine' do
       expect(DMIComputerSystemResolver.resolve(:uuid)).to eql('C5381A42-359D-F15B-7A62-4B6ECBA079DE')
     end
   end

@@ -11,10 +11,10 @@ describe 'Windows DMIBiosResolver' do
   end
 
   context '#resolve' do
-    it 'should detect virtual machine model' do
+    it 'detects virtual machine manufacturer' do
       expect(DMIBiosResolver.resolve(:manufacturer)).to eql('VMware, Inc.')
     end
-    it 'should detect that is virtual' do
+    it 'detects virtual machine serial number' do
       expect(DMIBiosResolver.resolve(:serial_number)).to eql('VMware-42 1a 38 c5 9d 35 5b f1-7a 62 4b 6e cb a0 79 de')
     end
   end

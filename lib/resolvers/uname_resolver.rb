@@ -8,18 +8,17 @@ class UnameResolver < BaseResolver
     def resolve(fact_name)
       @@semaphore.synchronize do
         result ||= @@fact_list[fact_name]
-
-        return result unless result.nil?
-
-        output, _status = Open3.capture2('uname -a')
-
-        build_fact_list(output)
-
-        @@fact_list[fact_name]
+        result || uname_system_call(fact_name)
       end
     end
 
     private
+
+    def uname_system_call(fact_name)
+      output, _status = Open3.capture2('uname -a')
+      build_fact_list(output)
+      @@fact_list[fact_name]
+    end
 
     def build_fact_list(output)
       version = output.match(/\d{1,2}\.\d{1,2}\.\d{1,2}/).to_s

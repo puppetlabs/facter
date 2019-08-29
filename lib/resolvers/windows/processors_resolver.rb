@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ProcessorsResolver < BaseResolver
+  @log = Facter::Log.new
+
   class << self
     # Count
     # Isa
@@ -57,7 +59,7 @@ class ProcessorsResolver < BaseResolver
 
       return isa if isa
 
-      Facter::Log.new.debug 'Unable to determine processor type: unknown architecture'
+      @log.debug 'Unable to determine processor type: unknown architecture'
     end
 
     def build_fact_list(result)

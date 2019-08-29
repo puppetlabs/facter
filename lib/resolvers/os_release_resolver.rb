@@ -18,16 +18,17 @@ class OsReleaseResolver < BaseResolver
     def resolve(fact_name)
       @@semaphore.synchronize do
         result ||= @@fact_list[fact_name]
-
-        return result unless result.nil?
-
-        output, _status = Open3.capture2('cat /etc/os-release')
-        release_info = output.delete('\"').split("\n").map { |e| e.split('=') }
-
-        @@fact_list = Hash[*release_info.flatten]
-
-        return @@fact_list[fact_name]
+        result || read_os_release_file(fact_name)
       end
+    end
+
+    def read_os_release_file(fact_name)
+      output, _status = Open3.capture2('cat /etc/os-release')
+      release_info = output.delete('\"').split("\n").map { |e| e.split('=') }
+
+      @@fact_list = Hash[*release_info.flatten]
+
+      @@fact_list[fact_name]
     end
   end
 end
