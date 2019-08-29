@@ -5,24 +5,26 @@ module Facter
     @log = Log.new
 
     # Searches for facts that could resolve a user query.
-    # There are 3 types of facts:
+    # There are 4 types of facts:
     #   root facts
     #     e.g. networking
     #   child facts
     #     e.g. networking.dhcp
     #   composite facts
     #     e.g. networking.interfaces.en0.bindings.address
-    # Because a root fact will always be resolved by the collection of child facts,
-    # we can return one or more child facts.
+    #   regex facts (legacy)
+    #     e.g. impaddress_end160
+    #
+    # Because a root fact will always be resolved by a collection of child facts,
+    # we can return one or more child facts for each parent.
     #
     # query -  is the user input used to search for facts
-    # fact_list - is a list with all facts for the current operating system
+    # loaded_fact_hash - is a list with all facts for the current operating system
     #
-    # Returns a list of LoadedFact objects that resolve the users query.
+    # Returns a list of SearchedFact objects that resolve the users query.
     def self.parse(query_list, loaded_fact_hash)
       matched_facts = []
       @log.debug "User query is: #{query_list}"
-      @uq = query_list
       query_list = loaded_fact_hash.keys unless query_list.any?
 
       query_list.each do |query|
@@ -76,8 +78,8 @@ module Facter
 
     def self.construct_loaded_fact(query_tokens, query_token_range, fact_name, klass_name)
       filter_tokens = query_tokens - query_tokens[query_token_range]
+      user_query = query_tokens[query_token_range].join('.')
 
-      user_query = @uq.any? ? query_tokens[query_token_range].join('.') : ''
       SearchedFact.new(fact_name, klass_name, filter_tokens, user_query)
     end
   end

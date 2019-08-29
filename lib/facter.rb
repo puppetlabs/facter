@@ -17,7 +17,12 @@ module Facter
   class Base
     def initialize(user_query)
       os = OsDetector.detect_family
-      loaded_facts_hash = Facter::FactLoader.load(os)
+      loaded_facts_hash = if user_query.empty?
+                            Facter::FactLoader.load(os, false)
+                          else
+                            Facter::FactLoader.load(os, true)
+                          end
+
       searched_facts = Facter::QueryParser.parse(user_query, loaded_facts_hash)
       resolve_matched_facts(user_query, searched_facts)
     end
@@ -63,7 +68,6 @@ module Facter
 
       threads.each do |thread|
         thread.join
-        # facts = thread.value
         facts << thread.value
       end
       facts.flatten!

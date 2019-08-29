@@ -4,6 +4,7 @@ module Facter
   module Macosx
     class NetworkInterface
       FACT_NAME = 'ipaddress_.*'
+      FACT_TYPE = :legacy
       @aliases = []
 
       def initialize(*args)
