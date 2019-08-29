@@ -17,10 +17,11 @@ module Facter
   class Base
     def initialize(user_query)
       os = OsDetector.detect_family
-      loaded_facts_hash = if user_query.empty?
-                            Facter::FactLoader.load(os, false)
-                          else
+      legacy_flag = false
+      loaded_facts_hash = if user_query.any? || legacy_flag
                             Facter::FactLoader.load(os, true)
+                          else
+                            Facter::FactLoader.load(os, false)
                           end
 
       searched_facts = Facter::QueryParser.parse(user_query, loaded_facts_hash)
