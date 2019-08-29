@@ -12,6 +12,8 @@ class VirtualizationResolver < BaseResolver
     def resolve(fact_name)
       @@semaphore.synchronize do
         result ||= @@fact_list[fact_name]
+        return result if result
+
         result || read_fact_from_computer_system(fact_name)
       end
     end
