@@ -6,9 +6,15 @@ module Facter
       FACT_NAME = 'os.release'
 
       def call_the_resolver
-        fact_value = UnameResolver.resolve(:release)
+        release = {
+          'release' => {
+            'full' => DebianVersionResolver.resolve(:full),
+            'major' => DebianVersionResolver.resolve(:major),
+            'minor' => DebianVersionResolver.resolve(:minor)
+          }
+        }
 
-        Fact.new(FACT_NAME, fact_value)
+        Fact.new(FACT_NAME, release)
       end
     end
   end

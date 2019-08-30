@@ -12,23 +12,30 @@ class UnameResolver < BaseResolver
       end
     end
 
-    private
-
     def uname_system_call(fact_name)
-      output, _status = Open3.capture2('uname -a')
+      output, _status = Open3.capture2('uname -m &&
+        uname -n &&
+        uname -p &&
+        uname -r &&
+        uname -s &&
+        uname -v')
+
       build_fact_list(output)
+
       @@fact_list[fact_name]
     end
 
-    def build_fact_list(output)
-      version = output.match(/\d{1,2}\.\d{1,2}\.\d{1,2}/).to_s
-      output_strings = output.split(' ')
+    private
 
-      @@fact_list[:release] = version
-      @@fact_list[:name] = output_strings[0]
-      @@fact_list[:family] = output_strings[0]
-      @@fact_list[:architecture] = output_strings[-1]
-      @@fact_list[:hardware] = output_strings[-1]
+    def build_fact_list(output)
+      uname_results = output.split("\n")
+
+      @@fact_list[:machine] = uname_results[0].strip
+      @@fact_list[:nodename] = uname_results[1].strip
+      @@fact_list[:processor] = uname_results[2].strip
+      @@fact_list[:kernelrelease] = uname_results[3].strip
+      @@fact_list[:kernelname] = uname_results[4].strip
+      @@fact_list[:kernelversion] = uname_results[5].strip
     end
   end
 end

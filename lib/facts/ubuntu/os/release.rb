@@ -6,9 +6,17 @@ module Facter
       FACT_NAME = 'os.release'
 
       def call_the_resolver
-        fact_value = UnameResolver.resolve(:release)
+        fact_value = LsbReleaseResolver.resolve('Release')
+        versions = fact_value.split('.')
+        release = {
+          'release' => {
+            'full' => fact_value,
+            'major' => versions[0],
+            'minor' => versions[1]
+          }
+        }
 
-        Fact.new(FACT_NAME, fact_value)
+        Fact.new(FACT_NAME, release)
       end
     end
   end

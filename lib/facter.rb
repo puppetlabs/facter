@@ -49,8 +49,7 @@ module Facter
 
       searched_facts.each do |searched_fact|
         threads << Thread.new do
-          fact_class = searched_fact.fact_class
-          fact_class.new(searched_fact.filter_tokens).call_the_resolver
+          create_fact(searched_fact)
         end
       end
 
@@ -62,9 +61,9 @@ module Facter
       if searched_fact.name.end_with?('.*')
         fact_without_wildcard = searched_fact.name[0..-3]
         filter_criteria = searched_fact.user_query.split(fact_without_wildcard).last
-        fact_class.new(searched_fact.filter_tokens).call_the_resolver(filter_criteria)
+        fact_class.new.call_the_resolver(filter_criteria)
       else
-        fact_class.new(searched_fact.filter_tokens).call_the_resolver
+        fact_class.new.call_the_resolver
       end
     end
 
