@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 class VirtualizationResolver < BaseResolver
+  @log = Facter::Log.new
+
   class << self
-    # Manufacturer
-    # Name
-    # SerialNumber
-    # UUID
+    # Virtual
+    # Is_Virtual
+
     @@semaphore = Mutex.new
     @@fact_list ||= {}
 
@@ -24,7 +25,11 @@ class VirtualizationResolver < BaseResolver
 
     def read_fact_from_computer_system(fact_name)
       win = Win32Ole.new
-      comp = win.exec_query('SELECT Manufacturer,Model FROM Win32_ComputerSystem').to_enum.first
+      comp = win.return_first('SELECT Manufacturer,Model FROM Win32_ComputerSystem')
+      unless comp
+        @log.debug 'WMI query returned no results for Win32_ComputerSystem with values Manufacturer and Model.'
+        return
+      end
       hypervisor = determine_hypervisor_by_model(comp) || determine_hypervisor_by_manufacturer(comp)
       build_fact_list(hypervisor)
 

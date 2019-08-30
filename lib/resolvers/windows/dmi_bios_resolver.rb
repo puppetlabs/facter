@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class DMIBiosResolver < BaseResolver
+  @log = Facter::Log.new
+
   class << self
     # Manufacturer
     # SerialNumber
@@ -14,12 +16,20 @@ class DMIBiosResolver < BaseResolver
       end
     end
 
+    def invalidate_cache
+      @@fact_list = {}
+    end
+
     private
 
     def read_fact_from_bios(fact_name)
       win = Win32Ole.new
 
-      bios = win.exec_query('SELECT Manufacturer,SerialNumber from Win32_BIOS').to_enum.first
+      bios = win.return_first('SELECT Manufacturer,SerialNumber from Win32_BIOS')
+      unless bios
+        @log.debug 'WMI query returned no results for Win32_BIOS with values Manufacturer and SerialNumber.'
+        return
+      end
 
       build_fact_list(bios)
 

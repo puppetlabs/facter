@@ -7,32 +7,37 @@ require "#{ROOT_DIR}/lib/utils/file_loader"
 
 module Facter
   def self.to_hash
-    Facter::Base.new([])
+    Facter::Base.new.resolve_facts([])
+  end
+
+  def self.to_hocon(*args)
+    fact_collection = Facter::Base.new.resolve_facts(args)
+    FactFormatter.new(args, fact_collection).to_hocon
   end
 
   def self.value(*args)
-    Facter::Base.new(args)
+    Facter::Base.new.resolve_facts(args)
   end
 
   class Base
-    def initialize(user_query)
+    def initialize
       os = OsDetector.detect_family
-      loaded_facts_hash = Facter::FactLoader.load(os)
-      searched_facts = Facter::QueryParser.parse(user_query, loaded_facts_hash)
-      resolve_matched_facts(user_query, searched_facts)
+      @loaded_facts_hash = Facter::FactLoader.load(os)
     end
 
-    private
+    def resolve_facts(user_query)
+      searched_facts = Facter::QueryParser.parse(user_query, @loaded_facts_hash)
 
-    def resolve_matched_facts(user_query, searched_facts)
       threads = start_threads(searched_facts)
       join_threads!(threads, searched_facts)
 
       FactFilter.new.filter_facts!(searched_facts)
       fact_collection = FactCollection.new.build_fact_collection!(searched_facts)
 
-      FactFormatter.new(user_query, fact_collection)
+      fact_collection
     end
+
+    private
 
     def start_threads(searched_facts)
       threads = []
