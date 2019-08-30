@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+
+module Facter
+  module Windows
+    class ProcessorsPhysicalcount
+      FACT_NAME = 'processors.physicalcount'
+
+      def call_the_resolver
+        fact_value = ProcessorsResolver.resolve(:physicalcount)
+
+        Fact.new(FACT_NAME, fact_value)
+      end
+    end
+  end
+end
