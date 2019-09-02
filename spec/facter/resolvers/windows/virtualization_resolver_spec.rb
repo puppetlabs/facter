@@ -3,16 +3,16 @@
 describe 'Windows VirtualizationResolver' do
   before do
     win = double('Win32Ole')
-    comp = double('WIN32OLE', Model: model, Manufacturer: manufacturer)
 
     allow(Win32Ole).to receive(:new).and_return(win)
-    allow(win).to receive(:exec_query).with('SELECT Manufacturer,Model FROM Win32_ComputerSystem').and_return([comp])
+    allow(win).to receive(:return_first).with('SELECT Manufacturer,Model FROM Win32_ComputerSystem').and_return(comp)
   end
 
   context '#resolve VirtualBox' do
     after do
       VirtualizationResolver.invalidate_cache
     end
+    let(:comp) { double('WIN32OLE', Model: model, Manufacturer: manufacturer) }
     let(:model) { 'VirtualBox' }
     let(:manufacturer) {}
 
@@ -28,6 +28,7 @@ describe 'Windows VirtualizationResolver' do
     after do
       VirtualizationResolver.invalidate_cache
     end
+    let(:comp) { double('WIN32OLE', Model: model, Manufacturer: manufacturer) }
     let(:model) { 'VMware' }
     let(:manufacturer) {}
 
@@ -43,6 +44,7 @@ describe 'Windows VirtualizationResolver' do
     after do
       VirtualizationResolver.invalidate_cache
     end
+    let(:comp) { double('WIN32OLE', Model: model, Manufacturer: manufacturer) }
     let(:model) { 'KVM10' }
     let(:manufacturer) {}
 
@@ -58,6 +60,7 @@ describe 'Windows VirtualizationResolver' do
     after do
       VirtualizationResolver.invalidate_cache
     end
+    let(:comp) { double('WIN32OLE', Model: model, Manufacturer: manufacturer) }
     let(:model) { 'OpenStack' }
     let(:manufacturer) {}
 
@@ -73,6 +76,7 @@ describe 'Windows VirtualizationResolver' do
     after do
       VirtualizationResolver.invalidate_cache
     end
+    let(:comp) { double('WIN32OLE', Model: model, Manufacturer: manufacturer) }
     let(:model) { 'Virtual Machine' }
     let(:manufacturer) { 'Microsoft' }
 
@@ -88,6 +92,7 @@ describe 'Windows VirtualizationResolver' do
     after do
       VirtualizationResolver.invalidate_cache
     end
+    let(:comp) { double('WIN32OLE', Model: model, Manufacturer: manufacturer) }
     let(:model) { '' }
     let(:manufacturer) { 'Xen' }
 
@@ -103,6 +108,7 @@ describe 'Windows VirtualizationResolver' do
     after do
       VirtualizationResolver.invalidate_cache
     end
+    let(:comp) { double('WIN32OLE', Model: model, Manufacturer: manufacturer) }
     let(:model) { '' }
     let(:manufacturer) { 'Amazon EC2' }
 
@@ -115,6 +121,7 @@ describe 'Windows VirtualizationResolver' do
   end
 
   context '#resolve Physical Machine' do
+    let(:comp) { double('WIN32OLE', Model: model, Manufacturer: manufacturer) }
     let(:model) { '' }
     let(:manufacturer) { '' }
 
@@ -127,6 +134,7 @@ describe 'Windows VirtualizationResolver' do
   end
 
   context '#resolve should cache facts in the same run' do
+    let(:comp) { double('WIN32OLE', Model: model, Manufacturer: manufacturer) }
     let(:model) { '' }
     let(:manufacturer) { 'Amazon EC2' }
 
@@ -134,6 +142,37 @@ describe 'Windows VirtualizationResolver' do
       expect(VirtualizationResolver.resolve(:virtual)).to eql('physical')
     end
     it 'detects that is virtual' do
+      expect(VirtualizationResolver.resolve(:is_virtual)).to eql('false')
+    end
+  end
+
+  context '#resolve  when WMI query returns nil' do
+    before do
+      VirtualizationResolver.invalidate_cache
+    end
+    let(:comp) { nil }
+
+    it 'logs that query failed and virtual nil' do
+      allow_any_instance_of(Facter::Log).to receive(:debug)
+        .with('WMI query returned no results'\
+                                                ' for Win32_ComputerSystem with values Manufacturer and Model.')
+      expect(VirtualizationResolver.resolve(:virtual)).to eql(nil)
+    end
+    it 'detects that is_virtual nil' do
+      expect(VirtualizationResolver.resolve(:is_virtual)).to eql(nil)
+    end
+  end
+
+  context '#resolve when WMI query returns nil for Model and Manufacturer' do
+    before do
+      VirtualizationResolver.invalidate_cache
+    end
+    let(:comp) { double('WIN32OLE', Model: nil, Manufacturer: nil) }
+
+    it 'detects that is physical' do
+      expect(VirtualizationResolver.resolve(:virtual)).to eql('physical')
+    end
+    it 'detects that is_virtual is false do' do
       expect(VirtualizationResolver.resolve(:is_virtual)).to eql('false')
     end
   end

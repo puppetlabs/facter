@@ -11,6 +11,13 @@ class Win32Ole
     @conn.Security_.ImpersonationLevel = RPC_C_IMP_LEVEL_IMPERSONATE
   end
 
+  def return_first(query)
+    result = exec_query(query)
+    return result.to_enum.first if result
+
+    nil
+  end
+
   def exec_query(query)
     @conn.execquery(query)
   end

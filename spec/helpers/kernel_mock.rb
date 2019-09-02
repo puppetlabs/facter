@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-LIBS_TO_SKIP = ['win32ole'].freeze
+LIBS_TO_SKIP = %w[win32ole ffi].freeze
 module Kernel
   alias old_require require
   def require(path)
