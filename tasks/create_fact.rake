@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 desc '...'
-task :create_fact, [:os, :fact_name] do |task, args|
+task :create_fact, [:os, :fact_name] do |_, args|
   require_relative 'fact_generator/fact_creator'
 
   fact_creator = FactCreator.new

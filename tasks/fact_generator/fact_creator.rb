@@ -14,7 +14,7 @@ class FactCreator
     facts = JSON.parse(facts_json_string)
 
     facts.each do |fact|
-      operating_system =  fact['os']
+      operating_system = fact['os']
       fact_name = fact['fact_name']
 
       path = create_directory_path(operating_system, fact_name)
@@ -24,7 +24,6 @@ class FactCreator
   end
 
   def create_fact(operating_system, fact_name)
-
     puts fact_name
     puts operating_system
 
@@ -43,9 +42,7 @@ class FactCreator
   end
 
   def create_directory_structure(path)
-    unless File.directory?(path)
-      FileUtils.mkdir_p(path)
-    end
+    FileUtils.mkdir_p(path) unless File.directory?(path)
   end
 
   def create_fact_file(path, fact_name, operating_system)
@@ -53,21 +50,20 @@ class FactCreator
     fact_file_name = fact_tokens.reverse.first + '.rb'
     fact_file_with_path = File.join(path, fact_file_name)
 
-    unless File.exist?(fact_file_with_path)
-      fact_file = File.new(File.join(path, fact_file_name), 'w')
+    return if File.exist?(fact_file_with_path)
 
-      fact_class_content = create_fact_from_template(fact_name, operating_system)
-      fact_file.write(fact_class_content)
-    end
+    fact_file = File.new(File.join(path, fact_file_name), 'w')
+    fact_class_content = create_fact_from_template(fact_name, operating_system)
+    fact_file.write(fact_class_content)
   end
 
   def create_fact_from_template(fact_name, operating_system)
-    fact_tokens = fact_name.split('.')
-    template = ERB.new(File.read(File.join(ROOT_DIR,'tasks', 'fact_generator', 'fact.erb')))
+    delimiters = ['.', '_']
+    fact_tokens = fact_name.split(Regexp.union(delimiters))
+    template = ERB.new(File.read(File.join(ROOT_DIR, 'tasks', 'fact_generator', 'fact.erb')))
 
     os_name = operating_system.capitalize
-    camelcase_fact_name = fact_tokens.map {|token| token.capitalize}.join('')
-    template.result( binding )
+    camelcase_fact_name = fact_tokens.map(&:capitalize).join('')
+    template.result(binding)
   end
-
 end
