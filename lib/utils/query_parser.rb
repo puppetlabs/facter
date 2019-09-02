@@ -68,7 +68,7 @@ module Facter
     end
 
     def self.found_fact?(fact_name, query_fact)
-      return false if fact_name.end_with?('.*') && !query_fact.match?("^#{fact_name}$")
+      return false if fact_name.end_with?('.*') && query_fact.match("^#{fact_name}$").nil?
 
       return false if !fact_name.end_with?('.*') &&
                       fact_name.match("^#{query_fact}($|\\.)").nil?

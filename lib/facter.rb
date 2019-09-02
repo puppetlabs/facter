@@ -20,7 +20,7 @@ module Facter
   end
 
   class Base
-    def initialize
+    def resolve_facts(user_query)
       os = OsDetector.detect_family
       legacy_flag = false
       loaded_facts_hash = if user_query.any? || legacy_flag
@@ -30,22 +30,19 @@ module Facter
                           end
 
       searched_facts = Facter::QueryParser.parse(user_query, loaded_facts_hash)
-      resolve_matched_facts(user_query, searched_facts)
+      resolve_matched_facts(searched_facts)
     end
 
-    def resolve_facts(user_query)
-      searched_facts = Facter::QueryParser.parse(user_query, @loaded_facts_hash)
+    private
 
+    def resolve_matched_facts(searched_facts)
       threads = start_threads(searched_facts)
       searched_facts = join_threads(threads, searched_facts)
 
       FactFilter.new.filter_facts!(searched_facts)
-      fact_collection = FactCollection.new.build_fact_collection!(searched_facts)
 
-      fact_collection
+      FactCollection.new.build_fact_collection!(searched_facts)
     end
-
-    private
 
     def start_threads(searched_facts)
       threads = []
