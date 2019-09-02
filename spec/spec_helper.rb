@@ -16,7 +16,6 @@ require 'pathname'
 ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
 
 require "#{ROOT_DIR}/lib/utils/file_loader"
-require "#{ROOT_DIR}/lib/facter"
 
 Dir.glob(File.join('./lib', '/**/*/', '*.rb'), &method(:require))
 

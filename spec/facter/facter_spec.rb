@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe 'facter' do
-  it 'return one fact' do
+  it 'returns one fact' do
     allow(OsDetector).to receive(:detect_family).and_return('ubuntu')
     os_fact = Facter::Fact.new('os.name', 'ubuntu')
     allow_any_instance_of(Facter::Ubuntu::OsName).to receive(:call_the_resolver).and_return(os_fact)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe '.load facts for OS' do
-  it 'load one legacy fact' do
+describe '.loads facts for OS' do
+  it 'loads one legacy fact' do
     allow_any_instance_of(Module).to receive(:constants).and_return([:NetworkInterface])
     fact_hash = Facter::FactLoader.load_with_legacy(:ubuntu)
     network_interface_class = Class.const_get('Facter::Ubuntu::NetworkInterface')
