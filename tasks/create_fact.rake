@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-desc '...'
+desc 'Create a fact template for the specified arguments'
 task :create_fact, [:os, :fact_name] do |_, args|
   require_relative 'fact_generator/fact_creator'
 
@@ -8,7 +8,7 @@ task :create_fact, [:os, :fact_name] do |_, args|
   fact_creator.create_fact(args[:os], args[:fact_name])
 end
 
-desc '...'
+desc 'Create one or multiple facts by reading descriptions from facts.json'
 task :create_facts do
   require_relative 'fact_generator/fact_creator'
 
