@@ -24,9 +24,9 @@ module Facter
       os = OsDetector.detect_family
       legacy_flag = false
       loaded_facts_hash = if user_query.any? || legacy_flag
-                            Facter::FactLoader.load(os, true)
+                            Facter::FactLoader.load_with_legacy(os)
                           else
-                            Facter::FactLoader.load(os, false)
+                            Facter::FactLoader.load(os)
                           end
 
       searched_facts = Facter::QueryParser.parse(user_query, loaded_facts_hash)

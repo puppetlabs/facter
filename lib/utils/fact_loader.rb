@@ -11,7 +11,7 @@ module Facter
     #     "networking.interface" => Facter::Linux::NetworkInterface,
     #     "networking.ip" => Facter::Linux::NetworkIP
     # }
-    def self.load(operating_system, load_legacy)
+    def self.load(operating_system)
       loaded_facts = {}
       os = operating_system.capitalize
 
@@ -21,15 +21,29 @@ module Facter
       classes.each do |class_name|
         klass = Class.const_get("Facter::#{os}::" + class_name.to_s)
 
-        if load_legacy
-          # load all facts
-          fact_name = klass::FACT_NAME
-          loaded_facts.merge!(fact_name => klass)
-        elsif !fact_legacy?(klass)
-          # only non legacy facts
-          fact_name = klass::FACT_NAME
-          loaded_facts.merge!(fact_name => klass)
-        end
+        next if fact_legacy?(klass)
+
+        # only non legacy facts
+        fact_name = klass::FACT_NAME
+        loaded_facts.merge!(fact_name => klass)
+      end
+
+      loaded_facts
+    end
+
+    def self.load_with_legacy(operating_system)
+      loaded_facts = {}
+      os = operating_system.capitalize
+
+      # select only classes
+      classes = get_all_classes_for_os(os)
+
+      classes.each do |class_name|
+        klass = Class.const_get("Facter::#{os}::" + class_name.to_s)
+
+        # load all facts
+        fact_name = klass::FACT_NAME
+        loaded_facts.merge!(fact_name => klass)
       end
 
       loaded_facts
