@@ -9,8 +9,14 @@ require 'erb'
 ROOT_DIR = Pathname.new(File.expand_path('../..', __dir__)) unless defined?(ROOT_DIR)
 
 require "#{ROOT_DIR}/tasks/fact_generator/path"
+require "#{ROOT_DIR}/lib/utils/logging/multilogger"
+require "#{ROOT_DIR}/lib/utils/logging/logger"
 
 class FactCreator
+  def initialize
+    @log = Facter::Log.new
+  end
+
   def create_facts
     facts_json_string = File.read(File.join(ROOT_DIR, 'tasks', 'fact_generator', 'facts.json'))
     facts = JSON.parse(facts_json_string)
@@ -18,16 +24,12 @@ class FactCreator
     facts.each do |fact|
       operating_system = fact['os']
       fact_name = fact['fact_name']
-
-      path = create_directory_path(operating_system, fact_name)
-      create_directory_structure(path)
-      create_fact_files(path, fact_name, operating_system)
+      create_fact(operating_system, fact_name)
     end
   end
 
   def create_fact(operating_system, fact_name)
-    puts fact_name
-    puts operating_system
+    @log.info("Creating fact with name #{fact_name} for os #{operating_system}")
 
     path = create_directory_path(operating_system, fact_name)
     create_directory_structure(path)

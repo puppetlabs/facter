@@ -4,6 +4,8 @@ desc 'Create a fact template for the specified arguments'
 task :create_fact, [:os, :fact_name] do |_, args|
   require_relative 'fact_generator/fact_creator'
 
+  abort 'Usage: rake \'create_facts[os,fact_name]\'' if !args[:os] || !args[:fact_name]
+
   fact_creator = FactCreator.new
   fact_creator.create_fact(args[:os], args[:fact_name])
 end
