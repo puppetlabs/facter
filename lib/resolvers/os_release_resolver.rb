@@ -27,6 +27,7 @@ class OsReleaseResolver < BaseResolver
       release_info = output.delete('\"').split("\n").map { |e| e.split('=') }
 
       @@fact_list = Hash[*release_info.flatten]
+      @@fact_list[:slug] = @@fact_list['ID'].downcase
 
       @@fact_list[fact_name]
     end

@@ -22,6 +22,7 @@ class LsbReleaseResolver < BaseResolver
       release_info = output.delete("\t").split("\n").map { |e| e.split(':') }
 
       @@fact_list = Hash[*release_info.flatten]
+      @@fact_list[:slug] = @@fact_list['Distributor ID'].downcase
 
       @@fact_list[fact_name]
     end

@@ -7,7 +7,6 @@ Coveralls.wear!
 
 require 'open3'
 require 'thor'
-require 'logging'
 
 require_relative '../lib/resolvers/base_resolver'
 require_relative '../spec/helpers/kernel_mock'
@@ -27,7 +26,7 @@ SimpleCov.start do
   add_filter 'spec'
 end
 
-default_coverage = 50
+default_coverage = 70
 SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
 
 # Configure RSpec

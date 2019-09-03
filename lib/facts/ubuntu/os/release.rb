@@ -4,18 +4,19 @@ module Facter
   module Ubuntu
     class OsRelease
       FACT_NAME = 'os.release'
-      @aliases = []
-
-      def initialize(*args)
-        @log = Log.new
-        @filter_tokens = args
-        @log.debug 'Dispatching to resolve: ' + args.inspect
-      end
 
       def call_the_resolver
-        fact_value = UnameResolver.resolve(:release)
+        fact_value = LsbReleaseResolver.resolve('Release')
+        versions = fact_value.split('.')
+        release = {
+          'release' => {
+            'full' => fact_value,
+            'major' => versions[0],
+            'minor' => versions[1]
+          }
+        }
 
-        Fact.new(FACT_NAME, fact_value)
+        Fact.new(FACT_NAME, release)
       end
     end
   end

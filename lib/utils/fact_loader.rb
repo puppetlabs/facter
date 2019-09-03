@@ -14,18 +14,50 @@ module Facter
     def self.load(operating_system)
       loaded_facts = {}
       os = operating_system.capitalize
-      os_module_name = Module.const_get("Facter::#{os}")
 
       # select only classes
-      classes = os_module_name.constants.select { |c| os_module_name.const_get(c).is_a? Class }
+      classes = get_all_classes_for_os(os)
 
       classes.each do |class_name|
         klass = Class.const_get("Facter::#{os}::" + class_name.to_s)
+
+        next if fact_legacy?(klass)
+
+        # only non legacy facts
         fact_name = klass::FACT_NAME
         loaded_facts.merge!(fact_name => klass)
       end
 
       loaded_facts
+    end
+
+    def self.load_with_legacy(operating_system)
+      loaded_facts = {}
+      os = operating_system.capitalize
+
+      # select only classes
+      classes = get_all_classes_for_os(os)
+
+      classes.each do |class_name|
+        klass = Class.const_get("Facter::#{os}::" + class_name.to_s)
+
+        # load all facts
+        fact_name = klass::FACT_NAME
+        loaded_facts.merge!(fact_name => klass)
+      end
+
+      loaded_facts
+    end
+
+    def self.get_all_classes_for_os(opperating_system)
+      os_module_name = Module.const_get("Facter::#{opperating_system}")
+
+      # select only classes
+      os_module_name.constants.select { |c| os_module_name.const_get(c).is_a? Class }
+    end
+
+    def self.fact_legacy?(klass)
+      klass.const_defined?('FACT_TYPE') && klass::FACT_TYPE.equal?(:legacy)
     end
   end
 end
