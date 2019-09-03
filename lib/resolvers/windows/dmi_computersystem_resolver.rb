@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class DMIComputerSystemResolver < BaseResolver
+  @log = Facter::Log.new
+
   class << self
     # Name
     # UUID
@@ -16,11 +18,19 @@ class DMIComputerSystemResolver < BaseResolver
       end
     end
 
+    def invalidate_cache
+      @@fact_list = {}
+    end
+
     private
 
     def read_fact_from_computer_system(fact_name)
       win = Win32Ole.new
-      computersystem = win.exec_query('SELECT Name,UUID FROM Win32_ComputerSystemProduct').to_enum.first
+      computersystem = win.return_first('SELECT Name,UUID FROM Win32_ComputerSystemProduct')
+      unless computersystem
+        @log.debug 'WMI query returned no results for Win32_ComputerSystemProduct with values Name and UUID.'
+        return
+      end
 
       build_fact_list(computersystem)
 

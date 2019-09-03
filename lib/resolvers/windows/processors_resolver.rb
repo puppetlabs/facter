@@ -29,6 +29,11 @@ class ProcessorsResolver < BaseResolver
     def read_fact_from_win32_processor(fact_name)
       win = Win32Ole.new
       proc = win.exec_query('SELECT Name,Architecture,NumberOfLogicalProcessors FROM Win32_Processor')
+      unless proc
+        @log.debug 'WMI query returned no results'\
+        'for Win32_Processor with values Name, Architecture and NumberOfLogicalProcessors.'
+        return
+      end
 
       result = iterate_proc(proc)
       build_fact_list(result)
@@ -43,7 +48,7 @@ class ProcessorsResolver < BaseResolver
 
       result.each do |proc|
         models << proc.Name
-        logical_count += proc.NumberOfLogicalProcessors
+        logical_count += proc.NumberOfLogicalProcessors if proc.NumberOfLogicalProcessors
 
         next if isa
 

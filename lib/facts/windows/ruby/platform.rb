@@ -13,5 +13,3 @@ module Facter
     end
   end
 end
-
-

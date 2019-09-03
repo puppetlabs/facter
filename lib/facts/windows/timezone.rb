@@ -2,11 +2,11 @@
 
 module Facter
   module Windows
-    class IdentityPrivileged
-      FACT_NAME = 'identity.privileged'
+    class Timezone
+      FACT_NAME = 'timezone'
 
       def call_the_resolver
-        fact_value = IdentityResolver.resolve(:privileged)
+        fact_value = TimezoneResolver.resolve(:timezone)
 
         Fact.new(FACT_NAME, fact_value)
       end

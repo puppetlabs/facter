@@ -2,8 +2,6 @@
 
 class RubyResolver < BaseResolver
   class << self
-    # Manufacturer
-    # SerialNumber
     @@semaphore = Mutex.new
     @@fact_list ||= {}
 
@@ -24,5 +22,3 @@ class RubyResolver < BaseResolver
     end
   end
 end
-
-

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class FacterversionResolver < BaseResolver
+class PathResolver < BaseResolver
   class << self
     @@semaphore = Mutex.new
     @@fact_list ||= {}
@@ -8,15 +8,14 @@ class FacterversionResolver < BaseResolver
     def resolve(fact_name)
       @@semaphore.synchronize do
         result ||= @@fact_list[fact_name]
-        result || read_version_file
+        result || read_path_from_env
       end
     end
 
     private
 
-    def read_version_file
-      version_file = ::File.join(ROOT_DIR, 'VERSION')
-      @@fact_list[:facterversion] = ::File.read(version_file)
+    def read_path_from_env
+      @@fact_list[:path] = ENV['PATH']
     end
   end
 end

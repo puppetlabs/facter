@@ -2,11 +2,11 @@
 
 module Facter
   module Windows
-    class IdentityPrivileged
-      FACT_NAME = 'identity.privileged'
+    class SystemUptimeUptime
+      FACT_NAME = 'system_uptime.uptime'
 
       def call_the_resolver
-        fact_value = IdentityResolver.resolve(:privileged)
+        fact_value = UptimeResolver.resolve(:uptime)
 
         Fact.new(FACT_NAME, fact_value)
       end
