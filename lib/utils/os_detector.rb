@@ -14,7 +14,6 @@ class OsDetector
           :macosx
         when /linux/
           check_os_release
-
         when /solaris|bsd/
           :unix
         when /aix/
@@ -26,7 +25,13 @@ class OsDetector
     end
 
     def check_os_release
-      OsReleaseResolver.resolve('NAME').downcase
+      slug = ''
+      [OsReleaseResolver, RedHatReleaseResolver, SuseReleaseResolver].each do |resolver|
+        slug = resolver.resolve(:slug)
+        puts 'detected linux family: ' + slug.inspect
+        break if slug
+      end
+      slug
     end
   end
 end

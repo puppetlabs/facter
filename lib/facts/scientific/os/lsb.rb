@@ -1,16 +1,9 @@
 # frozen_string_literal: true
 
 module Facter
-  module Ubuntu
+  module Scientific
     class OsLsbRelease
       FACT_NAME = 'os.lsb'
-      @aliases = []
-
-      def initialize(*args)
-        @log = Log.new
-        @filter_tokens = args
-        @log.debug 'Dispatching to resolve: ' + args.inspect
-      end
 
       def call_the_resolver
         lsb = {

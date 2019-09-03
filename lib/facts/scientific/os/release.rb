@@ -1,18 +1,16 @@
 # frozen_string_literal: true
 
 module Facter
-  module Ubuntu
+  module Scientific
     class OsRelease
       FACT_NAME = 'os.release'
 
       def call_the_resolver
-        fact_value = LsbReleaseResolver.resolve('Release')
-        versions = fact_value.split('.')
         release = {
           'release' => {
-            'full' => fact_value,
-            'major' => versions[0],
-            'minor' => versions[1]
+            'full' => DebianVersionResolver.resolve(:full),
+            'major' => DebianVersionResolver.resolve(:major),
+            'minor' => DebianVersionResolver.resolve(:minor)
           }
         }
 

@@ -4,16 +4,9 @@ module Facter
   module Macosx
     class OsFamily
       FACT_NAME = 'os.family'
-      @aliases = []
-
-      def initialize(*args)
-        @log = Log.new
-        @filter_tokens = args
-        @log.debug 'Dispatching to resolve: ' + args.inspect
-      end
 
       def call_the_resolver
-        fact_value = UnameResolver.resolve(:family)
+        fact_value = UnameResolver.resolve(:kernelname)
         Fact.new(FACT_NAME, fact_value)
       end
     end

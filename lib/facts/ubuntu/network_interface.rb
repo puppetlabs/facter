@@ -3,12 +3,9 @@
 module Facter
   module Ubuntu
     class NetworkInterface
-      FACT_NAME = 'networking.interface'
+      FACT_NAME = 'ipaddress_.*'
+      FACT_TYPE = :legacy
       @aliases = []
-
-      # def self.fact_name
-      #   @@fact_name
-      # end
 
       def initialize(*args)
         @log = Log.new
@@ -16,31 +13,12 @@ module Facter
       end
 
       def call_the_resolver(filter_criteria)
-        @log.debug(filter_criteria)
-        Fact.new(FACT_NAME, 'l0')
+        # resolve for ipaddress_filter_criteria
+        return Fact.new('ipaddress_ens160', 'l0') if filter_criteria == 'ens160'
+        return Fact.new('ipaddress_2', 'l2') if filter_criteria == '2'
+
+        [Fact.new('ipaddress_ens160', 'l0'), Fact.new('ipaddress_2', 'l2')]
       end
     end
   end
 end
-
-# fact_list = {
-#   'networking' => 'Network',
-#   'networking.interface' => 'NetworkInterface'
-# }
-
-# fact = 'networking.interface.i1.address'
-# # networking.interface.i2.address
-
-# tokens = fact.split('.')
-# size = tokens.size-1
-
-# size.times do |i|
-#   elem = 0..size - i
-#   if fact_list.has_key?(tokens[elem].join('.'))
-#     found_fact = fact_list[tokens[elem].join('.')]
-#     result = [found_fact, tokens - tokens[elem]]
-
-#     puts result.inspect
-
-#   end
-# end

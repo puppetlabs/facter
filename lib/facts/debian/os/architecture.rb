@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 module Facter
-  module Macosx
+  module Debian
     class OsArchitecture
       FACT_NAME = 'os.architecture'
 
       def call_the_resolver
-        fact_value = UnameResolver.resolve(:processor)
+        fact_value = UnameResolver.resolve(:machine)
+        fact_value = 'amd64' if fact_value == 'x86_64'
+
         Fact.new(FACT_NAME, fact_value)
       end
     end
