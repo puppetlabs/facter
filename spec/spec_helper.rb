@@ -7,7 +7,6 @@ Coveralls.wear!
 
 require 'open3'
 require 'thor'
-require 'logging'
 
 require_relative '../lib/resolvers/base_resolver'
 require_relative '../spec/helpers/kernel_mock'

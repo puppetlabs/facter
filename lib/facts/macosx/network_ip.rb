@@ -12,7 +12,7 @@ module Facter
       end
 
       def call_the_resolver
-        Fact.new(FACT_NAME, 'l92.l68.O.l')
+        Fact.new(FACT_NAME, 'l92.l68.O.1')
       end
     end
   end
