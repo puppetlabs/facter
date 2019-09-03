@@ -24,9 +24,14 @@ class OsReleaseResolver < BaseResolver
 
     def read_os_release_file(fact_name)
       output, _status = Open3.capture2('cat /etc/os-release')
-      release_info = output.delete('\"').split("\n").map { |e| e.split('=') }
+      pairs = []
 
-      @@fact_list = Hash[*release_info.flatten]
+      output.each_line do |line|
+        pairs << line.strip.delete('"').split('=', 2)
+      end
+
+      @@fact_list = Hash[*pairs.flatten]
+
       @@fact_list[:slug] = @@fact_list['ID'].downcase
 
       @@fact_list[fact_name]

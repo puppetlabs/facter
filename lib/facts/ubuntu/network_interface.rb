@@ -5,8 +5,7 @@ module Facter
     class NetworkInterface
       FACT_NAME = 'networking.interface'
 
-      def call_the_resolver(filter_criteria)
-        @log.debug(filter_criteria)
+      def call_the_resolver
         Fact.new(FACT_NAME, 'l0')
       end
     end
