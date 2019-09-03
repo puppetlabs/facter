@@ -68,21 +68,27 @@ module Facter
     end
 
     def join_threads(threads, searched_facts)
-      facts = []
+      resolved_facts = []
 
       threads.each do |thread|
         thread.join
-        facts << thread.value
+        resolved_facts << thread.value
       end
-      facts.flatten!
+      resolved_facts.flatten!
 
-      enrich_searched_fact_with_values(searched_facts, facts)
+      enrich_searched_facts_with_values(searched_facts, resolved_facts)
     end
 
-    def enrich_searched_fact_with_values(searched_facts, facts)
+    # Create new searched facts from existing searched facts and add values from resolved facts.
+    #
+    # For normal facts, the new searched fact is identical to the old one, but has the value added to it.
+    #
+    # For legacy facts, we might create 0 or more searched facts that contain no wildcards
+    # in name and have values added from resolved facts.
+    def enrich_searched_facts_with_values(searched_facts, resolved_facts)
       complete_searched_facts = []
 
-      facts.each do |fact|
+      resolved_facts.each do |fact|
         matched_facts = searched_facts.select { |searched_fact| fact.name.match(searched_fact.name) }
         matched_fact = matched_facts.first
         searched_fact = SearchedFact.new(fact.name,
