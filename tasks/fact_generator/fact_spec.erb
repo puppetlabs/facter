@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+describe '<%= camelcase_fact_name %>>' do
+  it 'returns a fact' do
+    fact = Facter::<%= os_name %>::<%= camelcase_fact_name %>.new
+    expected_fact = Facter::Fact.new('<%= fact_name %>', 'value')
+
+    expect(fact.call_the_resolver).to eq(expected_fact)
+  end
+end
