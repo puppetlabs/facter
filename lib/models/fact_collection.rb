@@ -6,6 +6,14 @@ module Facter
       super
     end
 
+    def build_fact_collection!(searched_facts)
+      searched_facts.each do |fact|
+        bury(*fact.name.split('.') + fact.filter_tokens << fact.value) if fact.value
+      end
+
+      self
+    end
+
     def bury(*args)
       raise ArgumentError, '2 or more arguments required' if args.count < 2
 
@@ -15,14 +23,6 @@ module Facter
         arg = args.shift
         self[arg] = FactCollection.new unless self[arg]
         self[arg].bury(*args) unless args.empty?
-      end
-
-      self
-    end
-
-    def build_fact_collection!(searched_facts)
-      searched_facts.each do |fact|
-        bury(*fact.name.split('.') + fact.filter_tokens << fact.value)
       end
 
       self
