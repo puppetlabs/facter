@@ -3,10 +3,10 @@
 describe '.loads facts for OS' do
   it 'loads one legacy fact' do
     allow_any_instance_of(Module).to receive(:constants).and_return([:NetworkInterface])
-    fact_hash = Facter::FactLoader.load(:ubuntu)
+    fact_hash = Facter::FactLoader.load_with_legacy(:ubuntu)
     network_interface_class = Class.const_get('Facter::Ubuntu::NetworkInterface')
 
-    expect(fact_hash['networking.interface']).to eq(network_interface_class)
+    expect(fact_hash['ipaddress_.*']).to eq(network_interface_class)
   end
 
   it 'loads one non legacy fact' do
