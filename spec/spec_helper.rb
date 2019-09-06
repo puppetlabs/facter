@@ -10,7 +10,7 @@ require 'thor'
 
 require_relative '../lib/resolvers/base_resolver'
 require_relative '../spec/helpers/kernel_mock'
-require_relative '../spec/helpers/ffi_library'
+require_relative '../spec/helpers/ffi_mock'
 
 require 'pathname'
 

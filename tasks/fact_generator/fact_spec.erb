@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
-describe '<%= camelcase_fact_name %>>' do
-  it 'returns a fact' do
-    fact = Facter::<%= os_name %>::<%= camelcase_fact_name %>.new
-    expected_fact = Facter::Fact.new('<%= fact_name %>', 'value')
+describe '<%= os_name %> <%= camelcase_fact_name %>' do
+  context '#call_the_resolver' do
+    it 'returns a fact' do
+      expected_fact = double(Facter::Fact, name: '<%= fact_name %>', value: 'value')
+      allow(<resolver_name>).to receive(:resolve).with(<resolver_fact>).and_return('value')
+      allow(Facter::Fact).to receive(:new).with('<%= fact_name %>', 'value').and_return(expected_fact)
 
-    expect(fact.call_the_resolver).to eq(expected_fact)
+      fact = Facter::<%= os_name %>::<%= camelcase_fact_name %>.new
+      expect(fact.call_the_resolver).to eq(expected_fact)
+    end
   end
 end

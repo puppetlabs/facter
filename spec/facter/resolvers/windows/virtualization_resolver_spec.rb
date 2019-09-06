@@ -172,7 +172,7 @@ describe 'Windows VirtualizationResolver' do
     it 'detects that is physical' do
       expect(VirtualizationResolver.resolve(:virtual)).to eql('physical')
     end
-    it 'detects that is_virtual is false do' do
+    it 'detects that is_virtual is false' do
       expect(VirtualizationResolver.resolve(:is_virtual)).to eql('false')
     end
   end
