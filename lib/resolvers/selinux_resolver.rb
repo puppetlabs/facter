@@ -12,22 +12,23 @@ class SELinuxResolver < BaseResolver
     def resolve(fact_name)
       @@semaphore.synchronize do
         result ||= @@fact_list[fact_name]
-
-        return result unless result.nil?
-
-        output, _s = Open3.capture2('cat /proc/self/mounts')
-        @@fact_list[:enabled] = false
-
-        output.each_line do |line|
-          next unless line.match(/selinuxfs/)
-
-          @@fact_list[:enabled] = true
-          @@fact_list[:mountpoint] = line
-          break
-        end
-
-        @@fact_list[fact_name]
+        result || read_lsb_release_file(fact_name)
       end
+    end
+
+    def read_lsb_release_file(fact_name)
+      output, _s = Open3.capture2('cat /proc/self/mounts')
+      @@fact_list[:enabled] = false
+
+      output.each_line do |line|
+        next unless line.match(/selinuxfs/)
+
+        @@fact_list[:enabled] = true
+        @@fact_list[:mountpoint] = line
+        break
+      end
+
+      @@fact_list[fact_name]
     end
 
     def invalidate_cache
