@@ -15,7 +15,7 @@ module Facter
         {
           full: "#{version}.0",
           major: version,
-          minor: 0,
+          minor: 0
         }
       end
     end
