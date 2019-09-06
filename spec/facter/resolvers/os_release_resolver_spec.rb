@@ -4,18 +4,7 @@ describe 'OsReleaseResolver' do
   before do
     allow(Open3).to receive(:capture2)
       .with('cat /etc/os-release')
-      .and_return('NAME="Ubuntu"
-VERSION="18.04.1 LTS (Bionic Beaver)"
-ID=ubuntu
-ID_LIKE=debian
-PRETTY_NAME="Ubuntu 18.04.1 LTS"
-VERSION_ID="18.04"
-HOME_URL="https://www.ubuntu.com/"
-SUPPORT_URL="https://help.ubuntu.com/"
-BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
-PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
-VERSION_CODENAME=bionic
-UBUNTU_CODENAME=bionic')
+      .and_return(load_fixture('os_release').read)
   end
 
   it 'returns os NAME' do

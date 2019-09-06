@@ -1,0 +1,6 @@
+sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+udev /dev devtmpfs rw,nosuid,relatime,size=3023708k,nr_inodes=755927,mode=755 0 0
+devpts /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000 0 0
+selinuxfs /sys/fs/selinux selinuxfs rw,relatime 0 0
+/dev/mapper/localhost--vg-root / ext4 rw,relatime,errors=remount-ro,data=ordered 0 0

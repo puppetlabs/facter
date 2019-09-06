@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Facter
-  module Scientific
-    class OsName
-      FACT_NAME = 'os.name'
+  module Fedora
+    class OsArchitecture
+      FACT_NAME = 'os.architecture'
 
       def call_the_resolver
         fact_value = UnameResolver.resolve(:machine)
