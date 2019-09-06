@@ -19,7 +19,7 @@ class SELinuxResolver < BaseResolver
         @@fact_list[:enabled] = false
 
         output.each_line do |line|
-          next unless line.match?(/selinuxfs/)
+          next unless line.match(/selinuxfs/)
 
           @@fact_list[:enabled] = true
           @@fact_list[:mountpoint] = line
