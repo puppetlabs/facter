@@ -2,8 +2,8 @@
 # frozen_string_literal: true
 
 require 'thor'
-require "#{ROOT_DIR}/lib/facter"
-require "#{ROOT_DIR}/lib/cli"
+require "#{ROOT_DIR}/lib/framework/core/facter"
+require "#{ROOT_DIR}/lib/framework/cli/cli"
 
 ARGV.unshift(Facter::Cli.default_task) unless
   Facter::Cli.all_tasks.key?(ARGV[0]) ||

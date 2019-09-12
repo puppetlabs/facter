@@ -10,7 +10,7 @@ module Facter
         versions = fact_value.split('.')
         ver = { 'full' => fact_value, 'major' => "#{versions[0]}.#{versions[1]}", 'minor' => versions[-1] }
 
-        Fact.new(FACT_NAME, ver)
+        ResolvedFact.new(FACT_NAME, ver)
       end
     end
   end

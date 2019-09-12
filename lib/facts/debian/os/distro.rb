@@ -17,7 +17,7 @@ module Facter
           }
         }
 
-        Fact.new(FACT_NAME, distro)
+        ResolvedFact.new(FACT_NAME, distro)
       end
 
       def resolver(key)

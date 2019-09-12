@@ -9,7 +9,7 @@ module Facter
         fact_value = UnameResolver.resolve(:machine)
         fact_value = 'amd64' if fact_value == 'x86_64'
 
-        Fact.new(FACT_NAME, fact_value)
+        ResolvedFact.new(FACT_NAME, fact_value)
       end
     end
   end

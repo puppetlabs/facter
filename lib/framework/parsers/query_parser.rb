@@ -25,6 +25,7 @@ module Facter
     def self.parse(query_list, loaded_fact_hash)
       matched_facts = []
       @log.debug "User query is: #{query_list}"
+      @query_list = query_list
       query_list = loaded_fact_hash.keys unless query_list.any?
 
       query_list.each do |query|
@@ -79,7 +80,7 @@ module Facter
 
     def self.construct_loaded_fact(query_tokens, query_token_range, fact_name, klass_name)
       filter_tokens = query_tokens - query_tokens[query_token_range]
-      user_query = query_tokens[query_token_range].join('.')
+      user_query = @query_list.any? ? query_tokens.join('.') : ''
 
       SearchedFact.new(fact_name, klass_name, filter_tokens, user_query)
     end

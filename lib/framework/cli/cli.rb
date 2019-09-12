@@ -98,7 +98,7 @@ module Facter
 
     desc 'query', 'query'
     def query(*args)
-      puts Facter.to_hocon(*args)
+      puts Facter.to_user_output(@options, *args)
     end
 
     desc '--version, -v', 'Print the version'

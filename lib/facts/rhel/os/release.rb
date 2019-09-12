@@ -8,7 +8,7 @@ module Facter
       def call_the_resolver
         version = OsReleaseResolver.resolve('VERSION_ID')
 
-        Fact.new(FACT_NAME, build_fact_list(version))
+        ResolvedFact.new(FACT_NAME, build_fact_list(version))
       end
 
       def build_fact_list(version)
