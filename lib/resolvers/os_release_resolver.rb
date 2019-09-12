@@ -32,7 +32,7 @@ class OsReleaseResolver < BaseResolver
 
       @@fact_list = Hash[*pairs.flatten]
 
-      @@fact_list[:slug] = @@fact_list['ID'].downcase
+      @@fact_list[:identifier] = @@fact_list['ID'].downcase
 
       @@fact_list[fact_name]
     end

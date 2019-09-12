@@ -8,7 +8,7 @@ require "#{ROOT_DIR}/lib/framework/logging/multilogger"
 require "#{ROOT_DIR}/lib/framework/logging/logger"
 
 require "#{ROOT_DIR}/lib/resolvers/base_resolver"
-
+require "#{ROOT_DIR}/lib/framework/detector/current_os"
 require "#{ROOT_DIR}/lib/framework/core/facter"
 
 def load_dir(*dirs)
@@ -26,7 +26,7 @@ load_lib_dirs('utils')
 load_lib_dirs('framework', 'core')
 load_lib_dirs('models')
 
-os = ENV['RACK_ENV'] == 'test' ? '' : OsDetector.detect_family
+os = ENV['RACK_ENV'] == 'test' ? '' : CurrentOs.instance.identifier
 
 load_lib_dirs('facts', os.to_s, '**')
 load_lib_dirs('resolvers', os.to_s, '**') if os.to_s =~ /win/

@@ -35,14 +35,14 @@ class RedHatReleaseResolver < BaseResolver
       codename = version_codename[1].strip
       @@fact_list[:codename] = codename.gsub(/[()]/, '')
 
-      @@fact_list[:slug] = slug(@@fact_list[:name])
+      @@fact_list[:identifier] = identifier(@@fact_list[:name])
     end
 
-    def slug(name)
-      slug = name.strip.downcase
-      slug = 'rhel' if @@fact_list[:name].strip == 'Red Hat Enterprise Linux'
+    def identifier(name)
+      identifier = name.strip.downcase
+      identifier = 'rhel' if @@fact_list[:name].strip == 'Red Hat Enterprise Linux'
 
-      slug
+      identifier
     end
   end
 end

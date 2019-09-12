@@ -22,7 +22,7 @@ module Facter
 
   class Base
     def resolve_facts(user_query)
-      os = OsDetector.detect_family
+      os = CurrentOs.instance.identifier
       legacy_flag = true
       loaded_facts_hash = if user_query.any? || legacy_flag
                             Facter::FactLoader.load_with_legacy(os)

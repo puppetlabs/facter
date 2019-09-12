@@ -22,7 +22,7 @@ class SuseReleaseResolver < BaseResolver
         @@fact_list[:name] = output_strings[0]
         @@fact_list[:version] = output_strings[1]
 
-        @@fact_list[:slug] = @@fact_list[:name].downcase
+        @@fact_list[:identifier] = @@fact_list[:name].downcase
 
         return @@fact_list[fact_name]
       end

@@ -20,8 +20,8 @@ describe 'SuseReleaseResolver' do
     expect(result).to eq('11.1')
   end
 
-  it 'returns the slug' do
-    result = SuseReleaseResolver.resolve(:slug)
+  it 'returns the identifier' do
+    result = SuseReleaseResolver.resolve(:identifier)
 
     expect(result).to eq('opensuse')
   end
