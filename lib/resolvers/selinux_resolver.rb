@@ -5,34 +5,34 @@ class SELinuxResolver < BaseResolver
   # :version
   # :codename
 
-  class << self
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
+  @semaphore = Mutex.new
+  @fact_list ||= {}
 
+  class << self
     def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      @semaphore.synchronize do
+        result ||= @fact_list[fact_name]
         result || read_lsb_release_file(fact_name)
       end
     end
 
     def read_lsb_release_file(fact_name)
       output, _s = Open3.capture2('cat /proc/self/mounts')
-      @@fact_list[:enabled] = false
+      @fact_list[:enabled] = false
 
       output.each_line do |line|
         next unless line.match(/selinuxfs/)
 
-        @@fact_list[:enabled] = true
-        @@fact_list[:mountpoint] = line
+        @fact_list[:enabled] = true
+        @fact_list[:mountpoint] = line
         break
       end
 
-      @@fact_list[fact_name]
+      @fact_list[fact_name]
     end
 
     def invalidate_cache
-      @@fact_list = {}
+      @fact_list = {}
     end
   end
 end

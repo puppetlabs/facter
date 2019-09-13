@@ -2,23 +2,22 @@
 
 class VirtualizationResolver < BaseResolver
   @log = Facter::Log.new
+  @semaphore = Mutex.new
+  @fact_list ||= {}
 
   class << self
     # Virtual
     # Is_Virtual
 
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
-
     def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      @semaphore.synchronize do
+        result ||= @fact_list[fact_name]
         result || read_fact_from_computer_system(fact_name)
       end
     end
 
     def invalidate_cache
-      @@fact_list = {}
+      @fact_list = {}
     end
 
     private
@@ -33,7 +32,7 @@ class VirtualizationResolver < BaseResolver
       hypervisor = determine_hypervisor_by_model(comp) || determine_hypervisor_by_manufacturer(comp)
       build_fact_list(hypervisor)
 
-      @@fact_list[fact_name]
+      @fact_list[fact_name]
     end
 
     def determine_hypervisor_by_model(comp)
@@ -56,8 +55,8 @@ class VirtualizationResolver < BaseResolver
     end
 
     def build_fact_list(hypervisor)
-      @@fact_list[:virtual] = hypervisor
-      @@fact_list[:is_virtual] = (!hypervisor.include?('physical')).to_s
+      @fact_list[:virtual] = hypervisor
+      @fact_list[:is_virtual] = (!hypervisor.include?('physical')).to_s
     end
   end
 end

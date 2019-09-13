@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class RubyResolver < BaseResolver
-  class << self
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
+  @semaphore = Mutex.new
+  @fact_list ||= {}
 
+  class << self
     def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      @semaphore.synchronize do
+        result ||= @fact_list[fact_name]
         result || retrieve_ruby_information(fact_name)
       end
     end
@@ -15,10 +15,10 @@ class RubyResolver < BaseResolver
     private
 
     def retrieve_ruby_information(fact_name)
-      @@fact_list[:sitedir] = RbConfig::CONFIG['sitelibdir']
-      @@fact_list[:platform] = RUBY_PLATFORM
-      @@fact_list[:version] = RUBY_VERSION
-      @@fact_list[fact_name]
+      @fact_list[:sitedir] = RbConfig::CONFIG['sitelibdir']
+      @fact_list[:platform] = RUBY_PLATFORM
+      @fact_list[:version] = RUBY_VERSION
+      @fact_list[fact_name]
     end
   end
 end

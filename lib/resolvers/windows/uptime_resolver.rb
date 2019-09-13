@@ -4,20 +4,19 @@ require 'date'
 
 class UptimeResolver < BaseResolver
   @log = Facter::Log.new
+  @semaphore = Mutex.new
+  @fact_list ||= {}
 
   class << self
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
-
     def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      @semaphore.synchronize do
+        result ||= @fact_list[fact_name]
         result || calculate_system_uptime(fact_name)
       end
     end
 
     def invalidate_cache
-      @@fact_list = {}
+      @fact_list = {}
     end
 
     private
@@ -54,7 +53,7 @@ class UptimeResolver < BaseResolver
       result[:uptime] = determine_uptime(result)
       build_fact_list(result)
 
-      @@fact_list[fact_name]
+      @fact_list[fact_name]
     end
 
     def determine_uptime(result_hash)
@@ -70,10 +69,10 @@ class UptimeResolver < BaseResolver
     end
 
     def build_fact_list(system_uptime)
-      @@fact_list[:days] = system_uptime[:days]
-      @@fact_list[:hours] = system_uptime[:hours]
-      @@fact_list[:seconds] = system_uptime[:seconds]
-      @@fact_list[:uptime] = system_uptime[:uptime]
+      @fact_list[:days] = system_uptime[:days]
+      @fact_list[:hours] = system_uptime[:hours]
+      @fact_list[:seconds] = system_uptime[:seconds]
+      @fact_list[:uptime] = system_uptime[:uptime]
     end
   end
 end

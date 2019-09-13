@@ -3,19 +3,19 @@
 class IdentityResolver < BaseResolver
   NAME_SAM_COMPATIBLE = 2
   @log = Facter::Log.new
-  class << self
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
+  @semaphore = Mutex.new
+  @fact_list ||= {}
 
+  class << self
     def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      @semaphore.synchronize do
+        result ||= @fact_list[fact_name]
         result || build_fact_list(fact_name)
       end
     end
 
     def invalidate_cache
-      @@fact_list = {}
+      @fact_list = {}
     end
 
     private
@@ -43,9 +43,9 @@ class IdentityResolver < BaseResolver
 
     def build_fact_list(fact_name)
       result = find_username
-      @@fact_list[:user] = result ? result[:user] : nil
-      @@fact_list[:privileged] = result ? result[:privileged] : nil
-      @@fact_list[fact_name]
+      @fact_list[:user] = result ? result[:user] : nil
+      @fact_list[:privileged] = result ? result[:privileged] : nil
+      @fact_list[fact_name]
     end
   end
 end

@@ -5,13 +5,13 @@ class RedHatReleaseResolver < BaseResolver
   # :version
   # :codename
 
-  class << self
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
+  @semaphore = Mutex.new
+  @fact_list ||= {}
 
+  class << self
     def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      @semaphore.synchronize do
+        result ||= @fact_list[fact_name]
 
         return result unless result.nil?
 
@@ -19,7 +19,7 @@ class RedHatReleaseResolver < BaseResolver
 
         build_fact_list(output)
 
-        return @@fact_list[fact_name]
+        return @fact_list[fact_name]
       end
     end
 
@@ -30,17 +30,17 @@ class RedHatReleaseResolver < BaseResolver
       output_strings.map!(&:strip)
       version_codename = output_strings[1].split(' ')
 
-      @@fact_list[:name] = output_strings[0].strip
-      @@fact_list[:version] = version_codename[0].strip
+      @fact_list[:name] = output_strings[0].strip
+      @fact_list[:version] = version_codename[0].strip
       codename = version_codename[1].strip
-      @@fact_list[:codename] = codename.gsub(/[()]/, '')
+      @fact_list[:codename] = codename.gsub(/[()]/, '')
 
-      @@fact_list[:identifier] = identifier(@@fact_list[:name])
+      @fact_list[:identifier] = identifier(@fact_list[:name])
     end
 
     def identifier(name)
       identifier = name.strip.downcase
-      identifier = 'rhel' if @@fact_list[:name].strip == 'Red Hat Enterprise Linux'
+      identifier = 'rhel' if @fact_list[:name].strip == 'Red Hat Enterprise Linux'
 
       identifier
     end

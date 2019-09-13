@@ -2,22 +2,22 @@
 
 class DMIBiosResolver < BaseResolver
   @log = Facter::Log.new
+  @semaphore = Mutex.new
+  @fact_list ||= {}
 
   class << self
     # Manufacturer
     # SerialNumber
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
 
     def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      @semaphore.synchronize do
+        result ||= @fact_list[fact_name]
         result || read_fact_from_bios(fact_name)
       end
     end
 
     def invalidate_cache
-      @@fact_list = {}
+      @fact_list = {}
     end
 
     private
@@ -33,12 +33,12 @@ class DMIBiosResolver < BaseResolver
 
       build_fact_list(bios)
 
-      @@fact_list[fact_name]
+      @fact_list[fact_name]
     end
 
     def build_fact_list(bios)
-      @@fact_list[:manufacturer] = bios.Manufacturer
-      @@fact_list[:serial_number] = bios.SerialNumber
+      @fact_list[:manufacturer] = bios.Manufacturer
+      @fact_list[:serial_number] = bios.SerialNumber
     end
   end
 end

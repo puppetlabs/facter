@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class TimezoneResolver < BaseResolver
-  class << self
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
+  @semaphore = Mutex.new
+  @fact_list ||= {}
 
+  class << self
     def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      @semaphore.synchronize do
+        result ||= @fact_list[fact_name]
         result || determine_timezone
       end
     end
@@ -15,7 +15,7 @@ class TimezoneResolver < BaseResolver
     private
 
     def determine_timezone
-      @@fact_list[:timezone] = Time.now.localtime.strftime('%Z')
+      @fact_list[:timezone] = Time.now.localtime.strftime('%Z')
     end
   end
 end

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class FacterversionResolver < BaseResolver
-  class << self
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
+  @semaphore = Mutex.new
+  @fact_list ||= {}
 
+  class << self
     def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      @semaphore.synchronize do
+        result ||= @fact_list[fact_name]
         result || read_version_file
       end
     end
@@ -16,7 +16,7 @@ class FacterversionResolver < BaseResolver
 
     def read_version_file
       version_file = ::File.join(ROOT_DIR, 'VERSION')
-      @@fact_list[:facterversion] = ::File.read(version_file)
+      @fact_list[:facterversion] = ::File.read(version_file)
     end
   end
 end

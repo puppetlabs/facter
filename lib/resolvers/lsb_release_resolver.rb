@@ -6,13 +6,13 @@ class LsbReleaseResolver < BaseResolver
   # "Release"
   # "Codename"
 
-  class << self
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
+  @semaphore = Mutex.new
+  @fact_list ||= {}
 
+  class << self
     def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      @semaphore.synchronize do
+        result ||= @fact_list[fact_name]
         result || read_lsb_release_file(fact_name)
       end
     end
@@ -21,10 +21,10 @@ class LsbReleaseResolver < BaseResolver
       output, _status = Open3.capture2('lsb_release -a')
       release_info = output.delete("\t").split("\n").map { |e| e.split(':') }
 
-      @@fact_list = Hash[*release_info.flatten]
-      @@fact_list[:identifier] = @@fact_list['Distributor ID'].downcase
+      @fact_list = Hash[*release_info.flatten]
+      @fact_list[:identifier] = @fact_list['Distributor ID'].downcase
 
-      @@fact_list[fact_name]
+      @fact_list[fact_name]
     end
   end
 end

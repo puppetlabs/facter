@@ -2,22 +2,22 @@
 
 class DMIComputerSystemResolver < BaseResolver
   @log = Facter::Log.new
+  @semaphore = Mutex.new
+  @fact_list ||= {}
 
   class << self
     # Name
     # UUID
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
 
     def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      @semaphore.synchronize do
+        result ||= @fact_list[fact_name]
         result || read_fact_from_computer_system(fact_name)
       end
     end
 
     def invalidate_cache
-      @@fact_list = {}
+      @fact_list = {}
     end
 
     private
@@ -32,12 +32,12 @@ class DMIComputerSystemResolver < BaseResolver
 
       build_fact_list(computersystem)
 
-      @@fact_list[fact_name]
+      @fact_list[fact_name]
     end
 
     def build_fact_list(computersys)
-      @@fact_list[:name] = computersys.Name
-      @@fact_list[:uuid] = computersys.UUID
+      @fact_list[:name] = computersys.Name
+      @fact_list[:uuid] = computersys.UUID
     end
   end
 end

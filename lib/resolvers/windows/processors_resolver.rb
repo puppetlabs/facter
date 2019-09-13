@@ -2,24 +2,24 @@
 
 class ProcessorsResolver < BaseResolver
   @log = Facter::Log.new
+  @semaphore = Mutex.new
+  @fact_list ||= {}
 
   class << self
     # Count
     # Isa
     # Models
     # PhysicalCount
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
 
     def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      @semaphore.synchronize do
+        result ||= @fact_list[fact_name]
         result || read_fact_from_win32_processor(fact_name)
       end
     end
 
     def invalidate_cache
-      @@fact_list = {}
+      @fact_list = {}
     end
 
     private
@@ -36,7 +36,7 @@ class ProcessorsResolver < BaseResolver
       result = iterate_proc(proc)
       build_fact_list(result)
 
-      @@fact_list[fact_name]
+      @fact_list[fact_name]
     end
 
     def iterate_proc(result)
@@ -68,10 +68,10 @@ class ProcessorsResolver < BaseResolver
     end
 
     def build_fact_list(result)
-      @@fact_list[:count] = result[:logical_count]
-      @@fact_list[:isa] = result[:isa]
-      @@fact_list[:models] = result[:models]
-      @@fact_list[:physicalcount] = result[:models].size
+      @fact_list[:count] = result[:logical_count]
+      @fact_list[:isa] = result[:isa]
+      @fact_list[:models] = result[:models]
+      @fact_list[:physicalcount] = result[:models].size
     end
   end
 end

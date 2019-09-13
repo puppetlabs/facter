@@ -11,13 +11,13 @@ class OsReleaseResolver < BaseResolver
   # "SUPPORT_URL",
   # "BUG_REPORT_URL"
 
-  class << self
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
+  @semaphore = Mutex.new
+  @fact_list ||= {}
 
+  class << self
     def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      @semaphore.synchronize do
+        result ||= @fact_list[fact_name]
         result || read_os_release_file(fact_name)
       end
     end
@@ -30,11 +30,11 @@ class OsReleaseResolver < BaseResolver
         pairs << line.strip.delete('"').split('=', 2)
       end
 
-      @@fact_list = Hash[*pairs.flatten]
+      @fact_list = Hash[*pairs.flatten]
 
-      @@fact_list[:identifier] = @@fact_list['ID'].downcase
+      @fact_list[:identifier] = @fact_list['ID'].downcase
 
-      @@fact_list[fact_name]
+      @fact_list[fact_name]
     end
   end
 end
