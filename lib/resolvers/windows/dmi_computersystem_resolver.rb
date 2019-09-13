@@ -16,10 +16,6 @@ class DMIComputerSystemResolver < BaseResolver
       end
     end
 
-    def invalidate_cache
-      @fact_list = {}
-    end
-
     private
 
     def read_fact_from_computer_system(fact_name)

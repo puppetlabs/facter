@@ -14,10 +14,6 @@ class IdentityResolver < BaseResolver
       end
     end
 
-    def invalidate_cache
-      @fact_list = {}
-    end
-
     private
 
     def find_username

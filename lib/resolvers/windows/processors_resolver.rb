@@ -18,10 +18,6 @@ class ProcessorsResolver < BaseResolver
       end
     end
 
-    def invalidate_cache
-      @fact_list = {}
-    end
-
     private
 
     def read_fact_from_win32_processor(fact_name)

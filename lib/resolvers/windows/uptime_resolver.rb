@@ -15,10 +15,6 @@ class UptimeResolver < BaseResolver
       end
     end
 
-    def invalidate_cache
-      @fact_list = {}
-    end
-
     private
 
     def substract_system_uptime_from_ole

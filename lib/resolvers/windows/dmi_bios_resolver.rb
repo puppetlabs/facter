@@ -16,10 +16,6 @@ class DMIBiosResolver < BaseResolver
       end
     end
 
-    def invalidate_cache
-      @fact_list = {}
-    end
-
     private
 
     def read_fact_from_bios(fact_name)
