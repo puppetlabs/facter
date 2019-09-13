@@ -9,8 +9,8 @@ require 'erb'
 ROOT_DIR = Pathname.new(File.expand_path('../..', __dir__)) unless defined?(ROOT_DIR)
 
 require "#{ROOT_DIR}/tasks/fact_generator/path"
-require "#{ROOT_DIR}/lib/utils/logging/multilogger"
-require "#{ROOT_DIR}/lib/utils/logging/logger"
+require "#{ROOT_DIR}/lib/framework/logging/multilogger"
+require "#{ROOT_DIR}/lib/framework/logging/logger"
 
 class FactCreator
   def initialize
