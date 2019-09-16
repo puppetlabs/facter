@@ -2,30 +2,34 @@
 
 require 'pathname'
 
-ROOT_DIR = Pathname.new(File.expand_path('../..', __dir__)) unless defined?(ROOT_DIR)
+ROOT_DIR = Pathname.new(File.expand_path('../../..', __dir__)) unless defined?(ROOT_DIR)
 require "#{ROOT_DIR}/lib/framework/core/file_loader"
 
 module Facter
   def self.to_hash
-    Facter::Base.new.resolve_facts([])
+    resolved_facts = Facter::Base.new.resolve_facts
+    ResolverManager.invalidate_all_caches
+    FactCollection.new.build_fact_collection!(resolved_facts)
   end
 
   def self.to_user_output(options, *args)
-    resolved_facts = Facter::Base.new.resolve_facts(args)
+    resolved_facts = Facter::Base.new.resolve_facts(options, args)
     ResolverManager.invalidate_all_caches
     fact_formatter = Facter::FormatterFactory.build(options)
     fact_formatter.format(resolved_facts)
   end
 
-  def self.value(*args)
-    Facter::Base.new.resolve_facts(args)
+  def self.value(user_query)
+    resolved_facts = Facter::Base.new.resolve_facts({}, [user_query])
+    ResolverManager.invalidate_all_caches
+    fact_collection = FactCollection.new.build_fact_collection!(resolved_facts)
+    fact_collection.dig(*user_query.split('.'))
   end
 
   class Base
-    def resolve_facts(user_query)
+    def resolve_facts(options = {}, user_query = [])
       os = CurrentOs.instance.identifier
-      legacy_flag = true
-      loaded_facts_hash = if user_query.any? || legacy_flag
+      loaded_facts_hash = if user_query.any? || options[:show_legacy]
                             Facter::FactLoader.load_with_legacy(os)
                           else
                             Facter::FactLoader.load(os)
