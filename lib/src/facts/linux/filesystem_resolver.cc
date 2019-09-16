@@ -83,6 +83,11 @@ namespace facter { namespace facts { namespace linux {
                 continue;
             }
 
+            // Skip over automounts
+            if (mtype == "autofs") {
+                continue;
+            }
+
             // If the "root" device, lookup the actual device from the kernel options
             // This is done because not all systems symlink /dev/root
             if (device == "/dev/root") {
