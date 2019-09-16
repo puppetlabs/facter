@@ -15,13 +15,13 @@ describe 'CurrentOs' do
   it 'detects linux distro when host_os is linux' do
     RbConfig::CONFIG['host_os'] = 'linux'
 
-    expect(Facter::Resolver::OsReleaseResolver).to receive(:resolve).with(:identifier)
-    expect(Facter::Resolver::RedHatReleaseResolver).to receive(:resolve).with(:identifier)
-    expect(Facter::Resolver::SuseReleaseResolver).to receive(:resolve).with(:identifier)
+    expect(Facter::Resolvers::OsReleaseResolver).to receive(:resolve).with(:identifier)
+    expect(Facter::Resolvers::RedHatReleaseResolver).to receive(:resolve).with(:identifier)
+    expect(Facter::Resolvers::SuseReleaseResolver).to receive(:resolve).with(:identifier)
 
-    expect(Facter::Resolver::OsReleaseResolver).to receive(:resolve).with(:version)
-    expect(Facter::Resolver::RedHatReleaseResolver).to receive(:resolve).with(:version)
-    expect(Facter::Resolver::SuseReleaseResolver).to receive(:resolve).with(:version)
+    expect(Facter::Resolvers::OsReleaseResolver).to receive(:resolve).with(:version)
+    expect(Facter::Resolvers::RedHatReleaseResolver).to receive(:resolve).with(:version)
+    expect(Facter::Resolvers::SuseReleaseResolver).to receive(:resolve).with(:version)
     CurrentOs.instance
   end
 end

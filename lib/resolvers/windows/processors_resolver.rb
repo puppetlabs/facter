@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facter
-  module Resolver
+  module Resolvers
     class ProcessorsResolver < BaseResolver
       @log = Facter::Log.new
       @semaphore = Mutex.new

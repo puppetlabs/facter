@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.release'
 
       def call_the_resolver
-        fact_value = Resolver::UnameResolver.resolve(:kernelrelease)
+        fact_value = Resolvers::UnameResolver.resolve(:kernelrelease)
         release_strings = fact_value.split('.')
         ResolvedFact.new(FACT_NAME,
                          full: fact_value,

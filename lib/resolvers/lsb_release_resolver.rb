@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facter
-  module Resolver
+  module Resolvers
     class LsbReleaseResolver < BaseResolver
       # "Distributor ID"
       # "Description"

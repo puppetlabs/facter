@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facter
-  module Resolver
+  module Resolvers
     class IdentityResolver < BaseResolver
       NAME_SAM_COMPATIBLE = 2
       @log = Facter::Log.new

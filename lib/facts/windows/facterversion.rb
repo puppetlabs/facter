@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'facterversion'
 
       def call_the_resolver
-        fact_value = Resolver::FacterversionResolver.resolve(:facterversion)
+        fact_value = Resolvers::FacterversionResolver.resolve(:facterversion)
 
         Fact.new(FACT_NAME, fact_value)
       end

@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'dmi.product.uuid'
 
       def call_the_resolver
-        fact_value = Resolver::DMIComputerSystemResolver.resolve(:uuid)
+        fact_value = Resolvers::DMIComputerSystemResolver.resolve(:uuid)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

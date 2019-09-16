@@ -3,7 +3,7 @@
 require 'date'
 
 module Facter
-  module Resolver
+  module Resolvers
     class UptimeResolver < BaseResolver
       @log = Facter::Log.new
       @semaphore = Mutex.new

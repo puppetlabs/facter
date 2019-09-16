@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.macosx.product'
 
       def call_the_resolver
-        fact_value = Resolver::SwVersResolver.resolve('ProductName')
+        fact_value = Resolvers::SwVersResolver.resolve('ProductName')
         ResolvedFact.new(FACT_NAME, fact_value)
       end
     end

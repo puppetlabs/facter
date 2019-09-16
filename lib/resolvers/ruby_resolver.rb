@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facter
-  module Resolver
+  module Resolvers
     class RubyResolver < BaseResolver
       @semaphore = Mutex.new
       @fact_list ||= {}

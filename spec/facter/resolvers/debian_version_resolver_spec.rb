@@ -8,19 +8,19 @@ describe 'DebianVersionResolver' do
   end
 
   it 'returns full' do
-    result = Facter::Resolver::DebianVersionResolver.resolve(:full)
+    result = Facter::Resolvers::DebianVersionResolver.resolve(:full)
 
     expect(result).to eq('10.01')
   end
 
   it 'returns major' do
-    result = Facter::Resolver::DebianVersionResolver.resolve(:major)
+    result = Facter::Resolvers::DebianVersionResolver.resolve(:major)
 
     expect(result).to eq('10')
   end
 
   it 'returns minor' do
-    result = Facter::Resolver::DebianVersionResolver.resolve(:minor)
+    result = Facter::Resolvers::DebianVersionResolver.resolve(:minor)
 
     expect(result).to eq('1')
   end

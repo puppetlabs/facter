@@ -17,37 +17,37 @@ describe 'UnameResolver' do
         Darwin Kernel Version 18.2.0: Fri Oct  5 19:41:49 PDT 2018; root:xnu-4903.221.2~2/RELEASE_X86_64')
   end
   it 'returns machine' do
-    result = Facter::Resolver::UnameResolver.resolve(:machine)
+    result = Facter::Resolvers::UnameResolver.resolve(:machine)
 
     expect(result).to eq('x86_64')
   end
 
   it 'returns nodename' do
-    result = Facter::Resolver::UnameResolver.resolve(:nodename)
+    result = Facter::Resolvers::UnameResolver.resolve(:nodename)
 
     expect(result).to eq('wifi.tsr.corp.puppet.net')
   end
 
   it 'returns processor' do
-    result = Facter::Resolver::UnameResolver.resolve(:processor)
+    result = Facter::Resolvers::UnameResolver.resolve(:processor)
 
     expect(result).to eq('i386')
   end
 
   it 'returns kernelrelease' do
-    result = Facter::Resolver::UnameResolver.resolve(:kernelrelease)
+    result = Facter::Resolvers::UnameResolver.resolve(:kernelrelease)
 
     expect(result).to eq('18.2.0')
   end
 
   it 'returns kernelname' do
-    result = Facter::Resolver::UnameResolver.resolve(:kernelname)
+    result = Facter::Resolvers::UnameResolver.resolve(:kernelname)
 
     expect(result).to eq('Darwin')
   end
 
   it 'returns kernelversion' do
-    result = Facter::Resolver::UnameResolver.resolve(:kernelversion)
+    result = Facter::Resolvers::UnameResolver.resolve(:kernelversion)
 
     expect(result).to include('root:xnu-4903.221.2~2/RELEASE_X86_64')
   end

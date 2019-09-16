@@ -31,9 +31,9 @@ class CurrentOs
   end
 
   def detect_distro
-    [Facter::Resolver::OsReleaseResolver,
-     Facter::Resolver::RedHatReleaseResolver,
-     Facter::Resolver::SuseReleaseResolver].each do |resolver|
+    [Facter::Resolvers::OsReleaseResolver,
+     Facter::Resolvers::RedHatReleaseResolver,
+     Facter::Resolvers::SuseReleaseResolver].each do |resolver|
       @identifier = resolver.resolve(:identifier)
       @version = resolver.resolve(:version)
       break if @identifier
