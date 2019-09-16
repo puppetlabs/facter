@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'identity.privileged'
 
       def call_the_resolver
-        fact_value = IdentityResolver.resolve(:privileged)
+        fact_value = Resolver::IdentityResolver.resolve(:privileged)
 
         Fact.new(FACT_NAME, fact_value)
       end

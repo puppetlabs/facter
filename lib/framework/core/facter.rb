@@ -12,6 +12,7 @@ module Facter
 
   def self.to_user_output(options, *args)
     resolved_facts = Facter::Base.new.resolve_facts(args)
+    ResolverManager.invalidate_all_caches
     fact_formatter = Facter::FormatterFactory.build(options)
     fact_formatter.format(resolved_facts)
   end

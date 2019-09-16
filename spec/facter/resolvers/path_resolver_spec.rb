@@ -3,7 +3,7 @@
 describe 'PathResolver' do
   context '#resolve path' do
     it 'detects path' do
-      expect(PathResolver.resolve(:path)).to eql(ENV['PATH'])
+      expect(Facter::Resolver::PathResolver.resolve(:path)).to eql(ENV['PATH'])
     end
   end
 end

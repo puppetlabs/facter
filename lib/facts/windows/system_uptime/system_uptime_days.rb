@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'system_uptime.days'
 
       def call_the_resolver
-        fact_value = UptimeResolver.resolve(:days)
+        fact_value = Resolver::UptimeResolver.resolve(:days)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

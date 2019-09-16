@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'path'
 
       def call_the_resolver
-        fact_value = PathResolver.resolve(:path)
+        fact_value = Resolver::PathResolver.resolve(:path)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

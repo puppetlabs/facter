@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.family'
 
       def call_the_resolver
-        fact_value = OsReleaseResolver.resolve('ID_LIKE')
+        fact_value = Resolver::OsReleaseResolver.resolve('ID_LIKE')
 
         ResolvedFact.new(FACT_NAME, fact_value.capitalize)
       end

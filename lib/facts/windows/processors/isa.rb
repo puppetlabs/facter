@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'processors.isa'
 
       def call_the_resolver
-        fact_value = ProcessorsResolver.resolve(:isa)
+        fact_value = Resolver::ProcessorsResolver.resolve(:isa)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

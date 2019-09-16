@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'is_virtual'
 
       def call_the_resolver
-        fact_value = VirtualizationResolver.resolve(:is_virtual)
+        fact_value = Resolver::VirtualizationResolver.resolve(:is_virtual)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

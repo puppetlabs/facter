@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.release'
 
       def call_the_resolver
-        fact_value = LsbReleaseResolver.resolve('Release')
+        fact_value = Resolver::LsbReleaseResolver.resolve('Release')
         versions = fact_value.split('.')
         release = {
           'release' => {

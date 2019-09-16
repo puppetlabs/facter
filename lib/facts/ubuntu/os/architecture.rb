@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.architecture'
 
       def call_the_resolver
-        fact_value = UnameResolver.resolve(:machine)
+        fact_value = Resolver::UnameResolver.resolve(:machine)
         fact_value = 'amd64' if fact_value == 'x86_64'
 
         ResolvedFact.new(FACT_NAME, fact_value)

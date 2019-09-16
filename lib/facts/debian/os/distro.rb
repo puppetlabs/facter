@@ -21,7 +21,7 @@ module Facter
       end
 
       def resolver(key)
-        LsbReleaseResolver.resolve(key)
+        Resolver::LsbReleaseResolver.resolve(key)
       end
     end
   end

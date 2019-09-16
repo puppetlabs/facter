@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'ruby.platform'
 
       def call_the_resolver
-        fact_value = RubyResolver.resolve(:platform)
+        fact_value = Resolver::RubyResolver.resolve(:platform)
 
         Fact.new(FACT_NAME, fact_value)
       end

@@ -3,7 +3,7 @@
 describe 'TimezoneResolver' do
   context '#resolve timezone' do
     it 'detects timezone' do
-      expect(TimezoneResolver.resolve(:timezone)).to eql(Time.now.localtime.strftime('%Z'))
+      expect(Facter::Resolver::TimezoneResolver.resolve(:timezone)).to eql(Time.now.localtime.strftime('%Z'))
     end
   end
 end

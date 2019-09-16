@@ -8,19 +8,19 @@ describe 'RedHatReleaseResolver' do
   end
 
   it 'returns os NAME' do
-    result = RedHatReleaseResolver.resolve(:name)
+    result = Facter::Resolver::RedHatReleaseResolver.resolve(:name)
 
     expect(result).to eq('Red Hat Enterprise Linux Server')
   end
 
   it 'returns os VERSION_ID' do
-    result = RedHatReleaseResolver.resolve(:version)
+    result = Facter::Resolver::RedHatReleaseResolver.resolve(:version)
 
     expect(result).to eq('5.10')
   end
 
   it 'returns os VERSION_CODENAME' do
-    result = RedHatReleaseResolver.resolve(:codename)
+    result = Facter::Resolver::RedHatReleaseResolver.resolve(:codename)
 
     expect(result).to eq('Tikanga')
   end

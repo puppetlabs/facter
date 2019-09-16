@@ -4,7 +4,7 @@ describe 'Windows DmiProductUUID' do
   context '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'dmi.product.uuid', value: 'value')
-      allow(DMIComputerSystemResolver).to receive(:resolve).with(:uuid).and_return('value')
+      allow(Facter::Resolver::DMIComputerSystemResolver).to receive(:resolve).with(:uuid).and_return('value')
       allow(Facter::ResolvedFact).to receive(:new).with('dmi.product.uuid', 'value').and_return(expected_fact)
 
       fact = Facter::Windows::DmiProductUUID.new

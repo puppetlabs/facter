@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.name'
 
       def call_the_resolver
-        fact_value = LsbReleaseResolver.resolve('Distributor ID')
+        fact_value = Resolver::LsbReleaseResolver.resolve('Distributor ID')
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

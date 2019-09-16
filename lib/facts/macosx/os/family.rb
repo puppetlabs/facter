@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.family'
 
       def call_the_resolver
-        fact_value = UnameResolver.resolve(:kernelname)
+        fact_value = Resolver::UnameResolver.resolve(:kernelname)
         ResolvedFact.new(FACT_NAME, fact_value)
       end
     end

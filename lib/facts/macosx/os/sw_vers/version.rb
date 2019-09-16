@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.macosx.version'
 
       def call_the_resolver
-        fact_value = SwVersResolver.resolve('ProductVersion')
+        fact_value = Resolver::SwVersResolver.resolve('ProductVersion')
         versions = fact_value.split('.')
         ver = { 'full' => fact_value, 'major' => "#{versions[0]}.#{versions[1]}", 'minor' => versions[-1] }
 
