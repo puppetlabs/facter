@@ -69,12 +69,12 @@ module Facter
       end
     end
 
+    Trimmer = Struct.new(:start, :end)
     def extract_filter_criteria(searched_fact)
       name_tokens = searched_fact.name.split('.*')
-      starting_position = name_tokens[0].length
-      ending_position = -(name_tokens[1] || '').length - 1
+      trimmer = Trimmer.new(name_tokens[0].length, -(name_tokens[1] || '').length - 1)
 
-      searched_fact.user_query[starting_position..ending_position]
+      searched_fact.user_query[trimmer.start..trimmer.end]
     end
 
     def join_threads(threads, searched_facts)
