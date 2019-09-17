@@ -10,6 +10,7 @@ module Facter
         def resolve(fact_name)
           @semaphore.synchronize do
             result ||= @fact_list[fact_name]
+            subscribe_to_manager
             result || uname_system_call(fact_name)
           end
         end

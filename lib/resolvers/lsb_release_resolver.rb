@@ -15,6 +15,7 @@ module Facter
         def resolve(fact_name)
           @semaphore.synchronize do
             result ||= @fact_list[fact_name]
+            subscribe_to_manager
             result || read_lsb_release_file(fact_name)
           end
         end

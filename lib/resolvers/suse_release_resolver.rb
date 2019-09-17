@@ -14,7 +14,7 @@ module Facter
         def resolve(fact_name)
           @semaphore.synchronize do
             result ||= @fact_list[fact_name]
-
+            subscribe_to_manager
             return result unless result.nil?
 
             output, _status = Open3.capture2('cat /etc/SuSE-release')

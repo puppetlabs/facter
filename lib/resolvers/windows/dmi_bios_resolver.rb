@@ -14,6 +14,7 @@ module Facter
         def resolve(fact_name)
           @semaphore.synchronize do
             result ||= @fact_list[fact_name]
+            subscribe_to_manager
             result || read_fact_from_bios(fact_name)
           end
         end

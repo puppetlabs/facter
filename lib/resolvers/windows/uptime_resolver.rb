@@ -13,6 +13,7 @@ module Facter
         def resolve(fact_name)
           @semaphore.synchronize do
             result ||= @fact_list[fact_name]
+            subscribe_to_manager
             result || calculate_system_uptime(fact_name)
           end
         end
