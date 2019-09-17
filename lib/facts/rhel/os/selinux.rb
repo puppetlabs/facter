@@ -8,7 +8,7 @@ module Facter
       def call_the_resolver
         selinux = Resolvers::SELinuxResolver.resolve(:enabled)
 
-        Fact.new(FACT_NAME, build_fact_list(selinux))
+        ResolvedFact.new(FACT_NAME, build_fact_list(selinux))
       end
 
       def build_fact_list(selinux)

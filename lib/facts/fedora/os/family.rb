@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.family'
 
       def call_the_resolver
-        Fact.new(FACT_NAME, 'RedHat')
+        ResolvedFact.new(FACT_NAME, 'RedHat')
       end
     end
   end

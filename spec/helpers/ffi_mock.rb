@@ -2,6 +2,8 @@
 
 module FFI
   ERROR_MORE_DATA = 234
+  CURRENT_PROCESS = 0
+
   @error_number = nil
   def self.typedef(arg1, arg2); end
 
@@ -30,5 +32,17 @@ module FFI
 
   class MemoryPointer
     def initialize; end
+  end
+
+  class Struct
+    def self.layout(*); end
+
+    def self.size; end
+
+    def initialize(*); end
+
+    def [](*); end
+
+    def []=(*); end
   end
 end
