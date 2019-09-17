@@ -60,9 +60,12 @@ module Facter
 
     def create_fact(searched_fact)
       fact_class = searched_fact.fact_class
-      if searched_fact.name.end_with?('.*')
-        fact_without_wildcard = searched_fact.name[0..-3]
-        filter_criteria = searched_fact.user_query.split(fact_without_wildcard).last
+      if searched_fact.name.include?('.*')
+        name_tokens = searched_fact.name.split('.*')
+        starting_position = name_tokens[0].length
+        ending_position = -(name_tokens[1] || '').length - 1
+        filter_criteria = searched_fact.user_query[starting_position .. ending_position]
+
         fact_class.new.call_the_resolver(filter_criteria)
       else
         fact_class.new.call_the_resolver
