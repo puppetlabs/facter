@@ -61,15 +61,20 @@ module Facter
     def create_fact(searched_fact)
       fact_class = searched_fact.fact_class
       if searched_fact.name.include?('.*')
-        name_tokens = searched_fact.name.split('.*')
-        starting_position = name_tokens[0].length
-        ending_position = -(name_tokens[1] || '').length - 1
-        filter_criteria = searched_fact.user_query[starting_position .. ending_position]
+        filter_criteria = extract_filter_criteria(searched_fact)
 
         fact_class.new.call_the_resolver(filter_criteria)
       else
         fact_class.new.call_the_resolver
       end
+    end
+
+    def extract_filter_criteria(searched_fact)
+      name_tokens = searched_fact.name.split('.*')
+      starting_position = name_tokens[0].length
+      ending_position = -(name_tokens[1] || '').length - 1
+
+      searched_fact.user_query[starting_position..ending_position]
     end
 
     def join_threads(threads, searched_facts)
