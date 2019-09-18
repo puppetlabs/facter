@@ -240,7 +240,8 @@ namespace facter { namespace facts { namespace resolvers {
 
         try
         {
-            lth_curl::request req("http://metadata.google.internal/computeMetadata/v1beta1/?recursive=true&alt=json");
+            lth_curl::request req("http://metadata.google.internal/computeMetadata/v1/?recursive=true&alt=json");
+            req.add_header("Metadata-Flavor", "Google");
             req.connection_timeout(GCE_CONNECTION_TIMEOUT);
             req.timeout(GCE_SESSION_TIMEOUT);
             if (!http_langs().empty())
