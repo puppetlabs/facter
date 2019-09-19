@@ -63,13 +63,21 @@ module Facter
 
     def create_fact(searched_fact)
       fact_class = searched_fact.fact_class
-      if searched_fact.name.end_with?('.*')
-        fact_without_wildcard = searched_fact.name[0..-3]
-        filter_criteria = searched_fact.user_query.split(fact_without_wildcard).last
+      if searched_fact.name.include?('.*')
+        filter_criteria = extract_filter_criteria(searched_fact)
+
         fact_class.new.call_the_resolver(filter_criteria)
       else
         fact_class.new.call_the_resolver
       end
+    end
+
+    Trimmer = Struct.new(:start, :end)
+    def extract_filter_criteria(searched_fact)
+      name_tokens = searched_fact.name.split('.*')
+      trimmer = Trimmer.new(name_tokens[0].length, -(name_tokens[1] || '').length - 1)
+
+      searched_fact.user_query[trimmer.start..trimmer.end]
     end
 
     def join_threads(threads, searched_facts)

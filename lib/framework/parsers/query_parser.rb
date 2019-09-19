@@ -69,7 +69,7 @@ module Facter
     end
 
     def self.found_fact?(fact_name, query_fact)
-      fact_with_wildcard = fact_name.end_with?('.*')
+      fact_with_wildcard = fact_name.include?('.*')
 
       return false if fact_with_wildcard && !query_fact.match("^#{fact_name}$")
 
