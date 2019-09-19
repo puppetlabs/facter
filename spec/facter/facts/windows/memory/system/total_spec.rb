@@ -4,7 +4,7 @@ describe 'Windows MemorySystemTotal' do
   context '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'memory.system.total', value: '1.0 KiB')
-      allow(MemoryResolver).to receive(:resolve).with(:total_bytes).and_return(1024)
+      allow(Facter::Resolvers::MemoryResolver).to receive(:resolve).with(:total_bytes).and_return(1024)
       allow(Facter::ResolvedFact).to receive(:new).with('memory.system.total', '1.0 KiB').and_return(expected_fact)
 
       fact = Facter::Windows::MemorySystemTotal.new

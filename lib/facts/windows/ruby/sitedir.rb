@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'ruby.sitedir'
 
       def call_the_resolver
-        fact_value = RubyResolver.resolve(:sitedir)
+        fact_value = Resolvers::RubyResolver.resolve(:sitedir)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

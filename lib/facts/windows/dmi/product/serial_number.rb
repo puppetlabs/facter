@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'dmi.product.serial_number'
 
       def call_the_resolver
-        fact_value = DMIBiosResolver.resolve(:serial_number)
+        fact_value = Resolvers::DMIBiosResolver.resolve(:serial_number)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

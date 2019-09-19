@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'memory.system.used_bytes'
 
       def call_the_resolver
-        fact_value = MemoryResolver.resolve(:used_bytes)
+        fact_value = Resolvers::MemoryResolver.resolve(:used_bytes)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

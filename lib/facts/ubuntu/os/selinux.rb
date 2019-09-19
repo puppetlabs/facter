@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.selinux'
 
       def call_the_resolver
-        selinux = SELinuxResolver.resolve(:enabled)
+        selinux = Resolvers::SELinuxResolver.resolve(:enabled)
 
         ResolvedFact.new(FACT_NAME, build_fact_list(selinux))
       end

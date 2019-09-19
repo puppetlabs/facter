@@ -9,19 +9,19 @@ describe 'SuseReleaseResolver' do
   end
 
   it 'returns os NAME' do
-    result = SuseReleaseResolver.resolve(:name)
+    result = Facter::Resolvers::SuseReleaseResolver.resolve(:name)
 
     expect(result).to eq('openSUSE')
   end
 
   it 'returns os VERSION_ID' do
-    result = SuseReleaseResolver.resolve(:version)
+    result = Facter::Resolvers::SuseReleaseResolver.resolve(:version)
 
     expect(result).to eq('11.1')
   end
 
   it 'returns the identifier' do
-    result = SuseReleaseResolver.resolve(:identifier)
+    result = Facter::Resolvers::SuseReleaseResolver.resolve(:identifier)
 
     expect(result).to eq('opensuse')
   end

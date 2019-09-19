@@ -3,9 +3,8 @@
 describe 'facter' do
   before do
     RbConfig::CONFIG['host_os'] = 'linux'
-    allow(OsReleaseResolver).to receive(:resolve).with(:identifier).and_return('Ubuntu')
-    allow(OsReleaseResolver).to receive(:resolve).with(:version).and_return('18.04')
-    # include MockHelper
+    allow(Facter::Resolvers::OsReleaseResolver).to receive(:resolve).with(:identifier).and_return('Ubuntu')
+    allow(Facter::Resolvers::OsReleaseResolver).to receive(:resolve).with(:version).and_return('18.04')
   end
   it 'returns one fact' do
     ubuntu_os_name = double(Facter::Ubuntu::OsName)

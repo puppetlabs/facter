@@ -1,28 +1,32 @@
 # frozen_string_literal: true
 
-class EosReleaseResolver < BaseResolver
-  # :name
-  # :version
-  # :codename
+module Facter
+  module Resolvers
+    class EosReleaseResolver < BaseResolver
+      # :name
+      # :version
+      # :codename
 
-  class << self
-    @@semaphore = Mutex.new
-    @@fact_list ||= {}
+      @semaphore = Mutex.new
+      @fact_list ||= {}
 
-    def resolve(fact_name)
-      @@semaphore.synchronize do
-        result ||= @@fact_list[fact_name]
+      class << self
+        def resolve(fact_name)
+          @semaphore.synchronize do
+            result ||= @fact_list[fact_name]
+            subscribe_to_manager
+            return result unless result.nil?
 
-        return result unless result.nil?
+            output, _status = Open3.capture2('cat /etc/Eos-release')
 
-        output, _status = Open3.capture2('cat /etc/Eos-release')
+            output_strings = output.split(' ')
 
-        output_strings = output.split(' ')
+            @fact_list[:name] = output_strings[0]
+            @fact_list[:version] = output_strings[-1]
 
-        @@fact_list[:name] = output_strings[0]
-        @@fact_list[:version] = output_strings[-1]
-
-        return @@fact_list[fact_name]
+            return @fact_list[fact_name]
+          end
+        end
       end
     end
   end

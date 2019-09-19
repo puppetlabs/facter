@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.release'
 
       def call_the_resolver
-        fact_value = UnameResolver.resolve(:release)
+        fact_value = Resolvers::UnameResolver.resolve(:release)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

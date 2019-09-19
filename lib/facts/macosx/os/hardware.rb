@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.hardware'
 
       def call_the_resolver
-        fact_value = UnameResolver.resolve(:machine)
+        fact_value = Resolvers::UnameResolver.resolve(:machine)
         ResolvedFact.new(FACT_NAME, fact_value)
       end
     end

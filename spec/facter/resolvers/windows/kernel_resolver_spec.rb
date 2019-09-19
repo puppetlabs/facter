@@ -16,7 +16,7 @@ describe 'Windows KernelResolver' do
     allow(ver).to receive(:[]).with(:dwBuildNumber).and_return(buildnr)
   end
   after do
-    KernelResolver.invalidate_cache
+    Facter::Resolvers::KernelResolver.invalidate_cache
   end
 
   context '#resolve' do
@@ -26,13 +26,13 @@ describe 'Windows KernelResolver' do
     let(:buildnr) { 123 }
 
     it 'detects kernel version' do
-      expect(KernelResolver.resolve(:kernelversion)).to eql('10.0.123')
+      expect(Facter::Resolvers::KernelResolver.resolve(:kernelversion)).to eql('10.0.123')
     end
     it 'detects kernel major version' do
-      expect(KernelResolver.resolve(:kernelmajorversion)).to eql('10.0')
+      expect(Facter::Resolvers::KernelResolver.resolve(:kernelmajorversion)).to eql('10.0')
     end
     it 'detects kernel name' do
-      expect(KernelResolver.resolve(:kernel)).to eql('windows')
+      expect(Facter::Resolvers::KernelResolver.resolve(:kernel)).to eql('windows')
     end
   end
 
@@ -44,13 +44,13 @@ describe 'Windows KernelResolver' do
 
     it 'logs debug message and kernel version nil' do
       allow_any_instance_of(Facter::Log).to receive(:debug).with('Calling Windows RtlGetVersion failed')
-      expect(KernelResolver.resolve(:kernelversion)).to eql(nil)
+      expect(Facter::Resolvers::KernelResolver.resolve(:kernelversion)).to eql(nil)
     end
     it 'detects that kernel major version is nil' do
-      expect(KernelResolver.resolve(:kernelmajorversion)).to eql(nil)
+      expect(Facter::Resolvers::KernelResolver.resolve(:kernelmajorversion)).to eql(nil)
     end
     it 'detects that kernel name is nil' do
-      expect(KernelResolver.resolve(:kernel)).to eql(nil)
+      expect(Facter::Resolvers::KernelResolver.resolve(:kernel)).to eql(nil)
     end
   end
 end

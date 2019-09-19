@@ -10,9 +10,9 @@ require 'thor'
 require 'fileutils'
 
 require_relative '../lib/resolvers/base_resolver'
-require_relative 'helpers/kernel_mock'
-require_relative 'helpers/ffi_mock'
-require_relative 'helpers/mocks'
+require_relative 'mocks/kernel_mock'
+require_relative 'mocks/ffi_mock'
+require_relative 'mocks/util'
 
 require 'pathname'
 
