@@ -53,8 +53,7 @@ class ProcessorsResolver < BaseResolver
         isa = find_isa(proc.Architecture)
       end
 
-      logical_count = models.count if logical_count.zero?
-      { models: models, isa: isa, logical_count: logical_count }
+      { models: models, isa: isa, logical_count: logical_count.zero? ? models.count : logical_count }
     end
 
     def find_isa(arch)
