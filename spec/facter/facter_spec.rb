@@ -28,6 +28,63 @@ describe 'facter' do
     expect(fact_hash).to eq(expected_resolved_fact_list)
   end
 
+  it 'returns one custom fact' do
+    network_interface_class = Facter::Ubuntu::NetworkInterface
+    networking_interface_mock = double(Facter::Ubuntu::NetworkInterface)
+    loaded_facts = { 'ipaddress_.*_legacy' => network_interface_class }
+    options = {}
+    os_name = 'ubuntu'
+    fact_name = 'ipaddress_.*_legacy'
+    resolved_fact_name = 'ipaddress_ens160_legacy'
+    user_query = 'ipaddress_ens160_legacy'
+    fact_value = '127.0.0.1'
+
+    allow(CurrentOs.instance)
+      .to receive(:identifier)
+      .and_return(os_name)
+
+    allow(Facter::FactLoader)
+      .to receive(:load_with_legacy)
+      .with(os_name)
+      .and_return(loaded_facts)
+
+    allow_any_instance_of(Facter::QueryParser)
+      .to receive(:parse)
+      .with([user_query], loaded_facts)
+
+    regex_resolved_fact =
+      double(Facter::ResolvedFact, name: resolved_fact_name, value: fact_value, user_query: nil, filter_tokens: [])
+
+    allow(regex_resolved_fact)
+      .to receive(:value=)
+      .with(fact_value)
+
+    allow(regex_resolved_fact)
+      .to receive(:name=)
+      .with(fact_name)
+
+    allow_any_instance_of(Facter::Ubuntu::NetworkInterface)
+      .to receive(:new)
+      .and_return(networking_interface_mock)
+
+    allow_any_instance_of(Facter::Ubuntu::NetworkInterface)
+      .to receive(:call_the_resolver)
+      .and_return(regex_resolved_fact)
+
+    allow(regex_resolved_fact)
+      .to receive(:user_query=)
+
+    allow(regex_resolved_fact)
+      .to receive(:filter_tokens=)
+
+    stub_const('Facter::Ubuntu::NetworkInterface', fact_name)
+    resolved_fact_array = Facter::Base.new.resolve_facts(options, [user_query])
+
+    expected_resolved_fact_list = [regex_resolved_fact]
+
+    expect(resolved_fact_array).to eq(expected_resolved_fact_list)
+  end
+
   it 'returns the value of the user query' do
     user_query = 'os.name'
     query_result = 'ubuntu'
