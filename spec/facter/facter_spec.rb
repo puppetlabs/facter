@@ -5,6 +5,7 @@ describe 'facter' do
     RbConfig::CONFIG['host_os'] = 'linux'
     allow(OsReleaseResolver).to receive(:resolve).with(:identifier).and_return('Ubuntu')
     allow(OsReleaseResolver).to receive(:resolve).with(:version).and_return('18.04')
+    # include MockHelper
   end
   it 'returns one fact' do
     ubuntu_os_name = double(Facter::Ubuntu::OsName)
@@ -26,6 +27,31 @@ describe 'facter' do
     expected_resolved_fact_list = [os_fact]
 
     expect(fact_hash).to eq(expected_resolved_fact_list)
+  end
+
+  context '#legacy facts' do
+    let(:loaded_facts) { { 'ipaddress_.*_legacy' => network_interface_class } }
+    let(:network_interface_class) { Facter::Ubuntu::NetworkInterface }
+    let(:options) { {} }
+    let(:os_name) { 'ubuntu' }
+
+    it 'returns one legacy fact' do
+      fact_name = 'ipaddress_.*_legacy'
+      user_query = 'ipaddress_ens160_legacy'
+      resolved_fact_name = 'ipaddress_ens160_legacy'
+      resolved_fact_value = '127.0.0.1'
+
+      mock_os(os_name)
+      mock_fact_loader_with_legacy(os_name, loaded_facts)
+      mock_query_parser([user_query], loaded_facts)
+      regex_resolved_fact = mock_resolved_fact(resolved_fact_name, resolved_fact_value)
+      mock_fact(Facter::Ubuntu::NetworkInterface, regex_resolved_fact, fact_name)
+
+      resolved_fact_array = Facter::Base.new.resolve_facts(options, [user_query])
+      expected_resolved_fact_list = [regex_resolved_fact]
+
+      expect(resolved_fact_array).to eq(expected_resolved_fact_list)
+    end
   end
 
   it 'returns the value of the user query' do

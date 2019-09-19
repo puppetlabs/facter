@@ -12,7 +12,7 @@ module Facter
     end
 
     private_class_method def self.get_resolved_facts_for_searched_fact(searched_fact, resolved_facts)
-      if searched_fact.name.end_with?('.*')
+      if searched_fact.name.include?('.*')
         resolved_facts
           .select { |resolved_fact| resolved_fact.name.match(searched_fact.user_query) }
           .reject(&:user_query)
