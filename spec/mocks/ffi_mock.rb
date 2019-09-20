@@ -3,6 +3,7 @@
 module FFI
   ERROR_MORE_DATA = 234
   CURRENT_PROCESS = 0
+  MAX_PATH = 32_767
 
   @error_number = nil
   def self.typedef(arg1, arg2); end
@@ -44,5 +45,11 @@ module FFI
     def [](*); end
 
     def []=(*); end
+  end
+
+  class Union
+    def self.layout(*); end
+
+    def self.size; end
   end
 end
