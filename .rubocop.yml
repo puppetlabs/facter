@@ -13,3 +13,6 @@ Metrics/BlockLength:
 Style/ClassVars:
   Exclude:
     - !ruby/regexp /(?:(?!.+_resolver.rb).)*$/
+Naming/ClassAndModuleCamelCase:
+  Exclude:
+    - 'spec/mocks/**/*'

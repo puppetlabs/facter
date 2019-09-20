@@ -4,20 +4,15 @@ module Facter
   module Resolvers
     class MemoryResolver < BaseResolver
       @log = Facter::Log.new
+      @semaphore = Mutex.new
+      @fact_list ||= {}
       class << self
-        @@semaphore = Mutex.new
-        @@fact_list ||= {}
-
         def resolve(fact_name)
-          @@semaphore.synchronize do
-            result ||= @@fact_list[fact_name]
+          @semaphore.synchronize do
+            result ||= @fact_list[fact_name]
             subscribe_to_manager
             result || validate_info(fact_name)
           end
-        end
-
-        def invalidate_cache
-          @@fact_list = {}
         end
 
         private
@@ -29,25 +24,36 @@ module Facter
             return
           end
 
-          state = PerformanceInformation.new(state_ptr)
+          PerformanceInformation.new(state_ptr)
+        end
+
+        def calculate_memory
+          state = read_performance_information
+          return unless state
+
           total_bytes = state[:PhysicalTotal] * state[:PageSize]
           available_bytes = state[:PhysicalAvailable] * state[:PageSize]
+          if total_bytes.zero? || available_bytes.zero?
+            @log.debug 'Available or Total bytes are zero could not proceed further'
+            return
+          end
+
           { total_bytes: total_bytes, available_bytes: available_bytes, used_bytes: total_bytes - available_bytes }
         end
 
         def validate_info(fact_name)
-          result = read_performance_information
+          result = calculate_memory
           return unless result
 
           build_facts_list(result)
-          @@fact_list[fact_name]
+          @fact_list[fact_name]
         end
 
         def build_facts_list(result)
-          @@fact_list[:total_bytes] = result[:total_bytes]
-          @@fact_list[:available_bytes] = result[:available_bytes]
-          @@fact_list[:used_bytes] = result[:used_bytes]
-          @@fact_list[:capacity] = format('%.2f', (result[:used_bytes] / result[:total_bytes].to_f * 100)) + '%'
+          @fact_list[:total_bytes] = result[:total_bytes]
+          @fact_list[:available_bytes] = result[:available_bytes]
+          @fact_list[:used_bytes] = result[:used_bytes]
+          @fact_list[:capacity] = format('%.2f', (result[:used_bytes] / result[:total_bytes].to_f * 100)) + '%'
         end
       end
     end

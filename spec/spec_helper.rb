@@ -12,6 +12,7 @@ require 'fileutils'
 require_relative '../lib/resolvers/base_resolver'
 require_relative 'mocks/kernel_mock'
 require_relative 'mocks/ffi_mock'
+require_relative 'mocks/win32_mock'
 require_relative 'mocks/util'
 
 require 'pathname'
