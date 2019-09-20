@@ -22,7 +22,7 @@ class CurrentOs
                   when /linux/
                     detect_distro
                   when /solaris|bsd/
-                    :unix
+                    :solaris # TODO: break up login.
                   when /aix/
                     :aix
                   else

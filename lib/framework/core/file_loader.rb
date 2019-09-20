@@ -30,7 +30,7 @@ load_lib_dirs('models')
 os = ENV['RACK_ENV'] == 'test' ? '' : CurrentOs.instance.identifier
 
 load_lib_dirs('facts', os.to_s, '**')
-load_lib_dirs('resolvers', os.to_s, '**') if os.to_s =~ /win|aix/
+load_lib_dirs('resolvers', os.to_s, '**') if os.to_s =~ /win|aix|solaris/
 
 require "#{ROOT_DIR}/lib/framework/utils/utils"
 require "#{ROOT_DIR}/lib/framework/formatters/formatter_factory"
