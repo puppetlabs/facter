@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.release'
 
       def call_the_resolver
-        fact_value = OsLevelResolver.resolve(:build)
+        fact_value = Resolvers::OsLevel.resolve(:build)
         major = fact_value.split('-')[0]
 
         ResolvedFact.new(

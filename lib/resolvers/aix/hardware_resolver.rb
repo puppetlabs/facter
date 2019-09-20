@@ -2,16 +2,14 @@
 
 module Facter
   module Resolvers
-    class HardwareResolver < BaseResolver
+    class Hardware < BaseResolver
       # :hardware
-
+      @semaphore = Mutex.new
+      @fact_list ||= {}
       class << self
-        @@semaphore = Mutex.new
-        @@fact_list ||= {}
-
         def resolve(fact_name)
-          @@semaphore.synchronize do
-            result ||= @@fact_list[fact_name]
+          @semaphore.synchronize do
+            result ||= @fact_list[fact_name]
             subscribe_to_manager
             result || read_hardware(fact_name)
           end
@@ -25,14 +23,16 @@ module Facter
 
           result = odmquery.execute
 
+          return unless result
+
           result.each_line do |line|
             if line.include?('value')
-              @@fact_list[:hardware] = line.split('=')[1].strip.delete('\"')
+              @fact_list[:hardware] = line.split('=')[1].strip.delete('\"')
               break
             end
           end
 
-          @@fact_list[fact_name]
+          @fact_list[fact_name]
         end
       end
     end
