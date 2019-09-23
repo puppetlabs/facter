@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class OsLevelResolver < BaseResolver
+    class OsLevel < BaseResolver
       # build
 
       class << self

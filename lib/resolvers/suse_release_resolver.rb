@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class SuseReleaseResolver < BaseResolver
+    class SuseRelease < BaseResolver
       # :name
       # :version
       # :codename
@@ -15,19 +15,19 @@ module Facter
           @semaphore.synchronize do
             result ||= @fact_list[fact_name]
             subscribe_to_manager
-            return result unless result.nil?
-
-            output, _status = Open3.capture2('cat /etc/SuSE-release')
-
-            output_strings = output.split(' ')
-
-            @fact_list[:name] = output_strings[0]
-            @fact_list[:version] = output_strings[1]
-
-            @fact_list[:identifier] = @fact_list[:name].downcase
-
-            return @fact_list[fact_name]
+            result || read_suse_release(fact_name)
           end
+        end
+
+        def read_suse_release(fact_name)
+          output, _status = Open3.capture2('cat /etc/SuSE-release')
+          output_strings = output.split(' ')
+
+          @fact_list[:name] = output_strings[0]
+          @fact_list[:version] = output_strings[1]
+          @fact_list[:identifier] = @fact_list[:name].downcase
+
+          @fact_list[fact_name]
         end
       end
     end

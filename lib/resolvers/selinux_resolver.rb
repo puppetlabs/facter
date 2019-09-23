@@ -33,10 +33,6 @@ module Facter
 
           @fact_list[fact_name]
         end
-
-        def invalidate_cache
-          @fact_list = {}
-        end
       end
     end
   end
