@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.windows.system32'
 
       def call_the_resolver
-        fact_value = Resolvers::System32Resolver.resolve(:system32)
+        fact_value = Resolvers::System32.resolve(:system32)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

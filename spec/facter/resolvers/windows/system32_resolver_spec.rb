@@ -17,7 +17,7 @@ describe 'Windows System32Resolver' do
     allow(System32FFI).to receive(:IsWow64Process).with(2, bool_ptr).and_return(bool)
   end
   after do
-    Facter::Resolvers::System32Resolver.invalidate_cache
+    Facter::Resolvers::System32.invalidate_cache
   end
 
   context '#resolve when is wow 64 process' do
@@ -27,7 +27,7 @@ describe 'Windows System32Resolver' do
     let(:is_wow) { true }
 
     it 'detects sysnative dir' do
-      expect(Facter::Resolvers::System32Resolver.resolve(:system32)).to eql("#{win_path}\\sysnative")
+      expect(Facter::Resolvers::System32.resolve(:system32)).to eql("#{win_path}\\sysnative")
     end
   end
 
@@ -38,7 +38,7 @@ describe 'Windows System32Resolver' do
     let(:is_wow) { false }
 
     it 'detects system32 dir' do
-      expect(Facter::Resolvers::System32Resolver.resolve(:system32)).to eql("#{win_path}\\system32")
+      expect(Facter::Resolvers::System32.resolve(:system32)).to eql("#{win_path}\\system32")
     end
   end
 
@@ -50,7 +50,7 @@ describe 'Windows System32Resolver' do
 
     it 'detects system32 dir is nil and prints debug message' do
       allow_any_instance_of(Facter::Log).to receive(:debug).with('SHGetFolderPath failed')
-      expect(Facter::Resolvers::System32Resolver.resolve(:system32)).to eql(nil)
+      expect(Facter::Resolvers::System32.resolve(:system32)).to eql(nil)
     end
   end
 
@@ -62,7 +62,7 @@ describe 'Windows System32Resolver' do
 
     it 'detects system32 dir is nil and prints debug message' do
       allow_any_instance_of(Facter::Log).to receive(:debug).with('IsWow64Process failed')
-      expect(Facter::Resolvers::System32Resolver.resolve(:system32)).to eql(nil)
+      expect(Facter::Resolvers::System32.resolve(:system32)).to eql(nil)
     end
   end
 end

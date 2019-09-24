@@ -8,7 +8,7 @@ describe 'Windows DMIBiosResolver' do
     allow(win).to receive(:return_first).with('SELECT Manufacturer,SerialNumber from Win32_BIOS').and_return(comp)
   end
   after do
-    Facter::Resolvers::DMIBiosResolver.invalidate_cache
+    Facter::Resolvers::DMIBios.invalidate_cache
   end
 
   context '#resolve' do
@@ -18,10 +18,10 @@ describe 'Windows DMIBiosResolver' do
     end
 
     it 'detects virtual machine manufacturer' do
-      expect(Facter::Resolvers::DMIBiosResolver.resolve(:manufacturer)).to eql('VMware, Inc.')
+      expect(Facter::Resolvers::DMIBios.resolve(:manufacturer)).to eql('VMware, Inc.')
     end
     it 'detects virtual machine serial number' do
-      expect(Facter::Resolvers::DMIBiosResolver.resolve(:serial_number))
+      expect(Facter::Resolvers::DMIBios.resolve(:serial_number))
         .to eql('VMware-42 1a 38 c5 9d 35 5b f1-7a 62 4b 6e cb a0 79 de')
     end
   end
@@ -32,10 +32,10 @@ describe 'Windows DMIBiosResolver' do
     it 'logs debug message and serial_number is nil' do
       allow_any_instance_of(Facter::Log).to receive(:debug)
         .with('WMI query returned no results for Win32_BIOS with values Manufacturer and SerialNumber.')
-      expect(Facter::Resolvers::DMIBiosResolver.resolve(:serial_number)).to eql(nil)
+      expect(Facter::Resolvers::DMIBios.resolve(:serial_number)).to eql(nil)
     end
     it 'detects manufacturer as nil' do
-      expect(Facter::Resolvers::DMIBiosResolver.resolve(:manufacturer)).to eql(nil)
+      expect(Facter::Resolvers::DMIBios.resolve(:manufacturer)).to eql(nil)
     end
   end
 
@@ -46,10 +46,10 @@ describe 'Windows DMIBiosResolver' do
     end
 
     it 'detects SerialNumber as nil' do
-      expect(Facter::Resolvers::DMIBiosResolver.resolve(:serial_number)).to eql(nil)
+      expect(Facter::Resolvers::DMIBios.resolve(:serial_number)).to eql(nil)
     end
     it 'detects manufacturer as nil' do
-      expect(Facter::Resolvers::DMIBiosResolver.resolve(:manufacturer)).to eql(nil)
+      expect(Facter::Resolvers::DMIBios.resolve(:manufacturer)).to eql(nil)
     end
   end
 end

@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class HardwareArchitectureResolver < BaseResolver
+    class HardwareArchitecture < BaseResolver
       @semaphore = Mutex.new
       @fact_list ||= {}
       class << self

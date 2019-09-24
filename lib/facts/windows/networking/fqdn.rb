@@ -10,9 +10,9 @@ module Facter
         hostname = Resolvers::Hostname.resolve(:hostname)
         return ResolvedFact.new(FACT_NAME, nil) if !hostname || hostname.empty?
 
-        fact_value = [hostname, domain].join('.') if domain && !domain.empty?
+        fact_value = [hostname, domain].compact.join('.')
 
-        ResolvedFact.new(FACT_NAME, fact_value || hostname)
+        ResolvedFact.new(FACT_NAME, fact_value)
       end
     end
   end

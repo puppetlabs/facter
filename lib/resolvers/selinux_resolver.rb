@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class SELinuxResolver < BaseResolver
+    class SELinux < BaseResolver
       # :name
       # :version
       # :codename

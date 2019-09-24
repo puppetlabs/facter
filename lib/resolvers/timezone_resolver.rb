@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class TimezoneResolver < BaseResolver
+    class Timezone < BaseResolver
       @semaphore = Mutex.new
       @fact_list ||= {}
 

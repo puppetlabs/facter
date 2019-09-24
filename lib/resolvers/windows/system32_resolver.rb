@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class System32Resolver < BaseResolver
+    class System32 < BaseResolver
       @log = Facter::Log.new
       @semaphore = Mutex.new
       @fact_list ||= {}

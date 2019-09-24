@@ -67,12 +67,6 @@ class MultiLogger < Logger
     loggers.first.level <= ERROR
   end
 
-  # Returns +true+ iff the current severity level allows for the printing of
-  # +FATAL+ messages.
-  def fatal?
-    loggers.first.level <= FATAL
-  end
-
   #
   # === Synopsis
   #
@@ -98,10 +92,6 @@ class MultiLogger < Logger
   end
   alias log add
 
-  def <<(msg)
-    loggers.each { |logger| logger << msg }
-  end
-
   def debug(progname = nil, &block)
     loggers.each { |logger| logger.debug(progname, &block) }
   end
@@ -116,10 +106,6 @@ class MultiLogger < Logger
 
   def error(progname = nil, &block)
     loggers.each { |logger| logger.error(progname, &block) }
-  end
-
-  def fatal(progname = nil, &block)
-    loggers.each { |logger| logger.fatal(progname, &block) }
   end
 
   def close

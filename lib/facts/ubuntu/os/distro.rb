@@ -22,7 +22,7 @@ module Facter
       end
 
       def resolver(key)
-        Resolvers::LsbReleaseResolver.resolve(key)
+        Resolvers::LsbRelease.resolve(key)
       end
     end
   end

@@ -9,7 +9,7 @@ describe 'Windows UptimeResolver' do
                                         .and_return(comp)
   end
   after do
-    Facter::Resolvers::UptimeResolver.invalidate_cache
+    Facter::Resolvers::Uptime.invalidate_cache
   end
 
   context '#resolve system_uptime when system is up for 1 hour' do
@@ -18,16 +18,16 @@ describe 'Windows UptimeResolver' do
     let(:last_bootup_time) { '20010203030506+0700' }
 
     it 'resolves uptime' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:uptime)).to eql('1:0 hours')
+      expect(Facter::Resolvers::Uptime.resolve(:uptime)).to eql('1:0 hours')
     end
     it 'resolves seconds' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:seconds)).to eql(3600)
+      expect(Facter::Resolvers::Uptime.resolve(:seconds)).to eql(3600)
     end
     it 'resolves hours' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:hours)).to eql(1)
+      expect(Facter::Resolvers::Uptime.resolve(:hours)).to eql(1)
     end
     it 'resolves days' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:days)).to eql(0)
+      expect(Facter::Resolvers::Uptime.resolve(:days)).to eql(0)
     end
   end
 
@@ -37,16 +37,16 @@ describe 'Windows UptimeResolver' do
     let(:last_bootup_time) { '20010203030506+0700' }
 
     it 'resolves uptime' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:uptime)).to eql('1:45 hours')
+      expect(Facter::Resolvers::Uptime.resolve(:uptime)).to eql('1:45 hours')
     end
     it 'resolves seconds' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:seconds)).to eql(6300)
+      expect(Facter::Resolvers::Uptime.resolve(:seconds)).to eql(6300)
     end
     it 'resolves hours' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:hours)).to eql(1)
+      expect(Facter::Resolvers::Uptime.resolve(:hours)).to eql(1)
     end
     it 'resolves days' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:days)).to eql(0)
+      expect(Facter::Resolvers::Uptime.resolve(:days)).to eql(0)
     end
   end
 
@@ -56,16 +56,16 @@ describe 'Windows UptimeResolver' do
     let(:last_bootup_time) { '20010203030506+0700' }
 
     it 'resolves uptime' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:uptime)).to eql('1:45 hours')
+      expect(Facter::Resolvers::Uptime.resolve(:uptime)).to eql('1:45 hours')
     end
     it 'resolves seconds' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:seconds)).to eql(6320)
+      expect(Facter::Resolvers::Uptime.resolve(:seconds)).to eql(6320)
     end
     it 'resolves hours' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:hours)).to eql(1)
+      expect(Facter::Resolvers::Uptime.resolve(:hours)).to eql(1)
     end
     it 'resolves days' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:days)).to eql(0)
+      expect(Facter::Resolvers::Uptime.resolve(:days)).to eql(0)
     end
   end
 
@@ -75,16 +75,16 @@ describe 'Windows UptimeResolver' do
     let(:last_bootup_time) { '20010203040506+0700' }
 
     it 'resolves uptime' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:days)).to eql(1)
+      expect(Facter::Resolvers::Uptime.resolve(:days)).to eql(1)
     end
     it 'resolves seconds' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:seconds)).to eql(86_400)
+      expect(Facter::Resolvers::Uptime.resolve(:seconds)).to eql(86_400)
     end
     it 'resolves hours' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:hours)).to eql(24)
+      expect(Facter::Resolvers::Uptime.resolve(:hours)).to eql(24)
     end
     it 'resolvese uptime' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:uptime)).to eql('1 day')
+      expect(Facter::Resolvers::Uptime.resolve(:uptime)).to eql('1 day')
     end
   end
 
@@ -94,16 +94,16 @@ describe 'Windows UptimeResolver' do
     let(:last_bootup_time) { '20010201120506+0700' }
 
     it 'resolves uptime' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:days)).to eql(2)
+      expect(Facter::Resolvers::Uptime.resolve(:days)).to eql(2)
     end
     it 'resolves seconds' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:seconds)).to eql(230_400)
+      expect(Facter::Resolvers::Uptime.resolve(:seconds)).to eql(230_400)
     end
     it 'resolves hours' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:hours)).to eql(64)
+      expect(Facter::Resolvers::Uptime.resolve(:hours)).to eql(64)
     end
     it 'resolves uptime' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:uptime)).to eql('2 days')
+      expect(Facter::Resolvers::Uptime.resolve(:uptime)).to eql('2 days')
     end
   end
 
@@ -115,10 +115,10 @@ describe 'Windows UptimeResolver' do
     it 'logs that is unable to determine system uptime and all facts are nil' do
       allow_any_instance_of(Facter::Log).to receive(:debug)
         .with('Unable to determine system uptime!')
-      expect(Facter::Resolvers::UptimeResolver.resolve(:days)).to eql(nil)
-      expect(Facter::Resolvers::UptimeResolver.resolve(:uptime)).to eql(nil)
-      expect(Facter::Resolvers::UptimeResolver.resolve(:seconds)).to eql(nil)
-      expect(Facter::Resolvers::UptimeResolver.resolve(:hours)).to eql(nil)
+      expect(Facter::Resolvers::Uptime.resolve(:days)).to eql(nil)
+      expect(Facter::Resolvers::Uptime.resolve(:uptime)).to eql(nil)
+      expect(Facter::Resolvers::Uptime.resolve(:seconds)).to eql(nil)
+      expect(Facter::Resolvers::Uptime.resolve(:hours)).to eql(nil)
     end
   end
 
@@ -131,12 +131,12 @@ describe 'Windows UptimeResolver' do
         'for Win32_OperatingSystem with values LocalDateTime and LastBootUpTime.')
       allow_any_instance_of(Facter::Log).to receive(:debug)
         .with('Unable to determine system uptime!')
-      expect(Facter::Resolvers::UptimeResolver.resolve(:days)).to eql(nil)
+      expect(Facter::Resolvers::Uptime.resolve(:days)).to eql(nil)
     end
     it 'detects that seconds, hours and uptime are nil' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:uptime)).to eql(nil)
-      expect(Facter::Resolvers::UptimeResolver.resolve(:seconds)).to eql(nil)
-      expect(Facter::Resolvers::UptimeResolver.resolve(:hours)).to eql(nil)
+      expect(Facter::Resolvers::Uptime.resolve(:uptime)).to eql(nil)
+      expect(Facter::Resolvers::Uptime.resolve(:seconds)).to eql(nil)
+      expect(Facter::Resolvers::Uptime.resolve(:hours)).to eql(nil)
     end
   end
 
@@ -146,12 +146,12 @@ describe 'Windows UptimeResolver' do
     it 'logs that is unable to determine system uptime and days fact is nil' do
       allow_any_instance_of(Facter::Log).to receive(:debug)
         .with('Unable to determine system uptime!')
-      expect(Facter::Resolvers::UptimeResolver.resolve(:days)).to eql(nil)
+      expect(Facter::Resolvers::Uptime.resolve(:days)).to eql(nil)
     end
     it 'detects that seconds, hours and uptime are nil' do
-      expect(Facter::Resolvers::UptimeResolver.resolve(:uptime)).to eql(nil)
-      expect(Facter::Resolvers::UptimeResolver.resolve(:seconds)).to eql(nil)
-      expect(Facter::Resolvers::UptimeResolver.resolve(:hours)).to eql(nil)
+      expect(Facter::Resolvers::Uptime.resolve(:uptime)).to eql(nil)
+      expect(Facter::Resolvers::Uptime.resolve(:seconds)).to eql(nil)
+      expect(Facter::Resolvers::Uptime.resolve(:hours)).to eql(nil)
     end
   end
 end

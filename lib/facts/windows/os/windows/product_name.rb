@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.windows.product_name'
 
       def call_the_resolver
-        fact_value = Resolvers::ProductReleaseResolver.resolve(:product_name)
+        fact_value = Resolvers::ProductRelease.resolve(:product_name)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

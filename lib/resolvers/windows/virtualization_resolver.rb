@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class VirtualizationResolver < BaseResolver
+    class Virtualization < BaseResolver
       @log = Facter::Log.new
       @semaphore = Mutex.new
       @fact_list ||= {}

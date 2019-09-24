@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class WinOsReleaseResolver < BaseResolver
+    class WinOsRelease < BaseResolver
       @log = Facter::Log.new
       @semaphore = Mutex.new
       @fact_list ||= {}
@@ -27,7 +27,7 @@ module Facter
           end
           consumerrel = op_sys.ProductType == '1'
           description = op_sys.OtherTypeDescription
-          version = KernelResolver.resolve(:kernelmajorversion)
+          version = Kernel.resolve(:kernelmajorversion)
           return unless version
 
           if version =~ /10.0/
@@ -38,7 +38,7 @@ module Facter
         end
 
         def check_version_10(consumerrel)
-          kernel_version = KernelResolver.resolve(:kernelversion)
+          kernel_version = Kernel.resolve(:kernelversion)
           build_number = kernel_version[/([^.]*)$/].to_i
           if consumerrel
             '10'

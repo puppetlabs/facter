@@ -7,10 +7,10 @@ describe 'Windows WinOsReleaseResolver' do
     allow(Win32Ole).to receive(:new).and_return(win)
     allow(win).to receive(:return_first).with('SELECT ProductType,OtherTypeDescription FROM Win32_OperatingSystem')
                                         .and_return(comp)
-    allow(Facter::Resolvers::KernelResolver). to receive(:resolve).with(:kernelmajorversion).and_return(version)
+    allow(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernelmajorversion).and_return(version)
   end
   after do
-    Facter::Resolvers::WinOsReleaseResolver.invalidate_cache
+    Facter::Resolvers::WinOsRelease.invalidate_cache
   end
 
   context '#resolve when query fails' do
@@ -21,7 +21,8 @@ describe 'Windows WinOsReleaseResolver' do
       allow_any_instance_of(Facter::Log).to receive(:debug)
         .with('WMI query returned no results for Win32_OperatingSystem'\
                    'with values ProductType and OtherTypeDescription.')
-      expect(Facter::Resolvers::WinOsReleaseResolver.resolve(:full)).to eql(nil)
+
+      expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql(nil)
     end
   end
 
@@ -32,13 +33,13 @@ describe 'Windows WinOsReleaseResolver' do
     let(:type) {}
 
     it 'facts are nil' do
-      expect(Facter::Resolvers::WinOsReleaseResolver.resolve(:full)).to eql(nil)
+      expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql(nil)
     end
   end
 
   context '#resolve kernel version is 10' do
     before do
-      allow(Facter::Resolvers::KernelResolver).to receive(:resolve).with(:kernelversion).and_return(full_version)
+      allow(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernelversion).and_return(full_version)
     end
     let(:comp) { double('Win32Ole', ProductType: prod, OtherTypeDescription: type) }
     let(:version) { '10.0' }
@@ -47,13 +48,13 @@ describe 'Windows WinOsReleaseResolver' do
     let(:type) {}
 
     it 'facts are nil' do
-      expect(Facter::Resolvers::WinOsReleaseResolver.resolve(:full)).to eql('10')
+      expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql('10')
     end
   end
 
   context '#resolve kernel version is 2019' do
     before do
-      allow(Facter::Resolvers::KernelResolver).to receive(:resolve).with(:kernelversion).and_return(full_version)
+      allow(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernelversion).and_return(full_version)
     end
     let(:comp) { double('Win32Ole', ProductType: prod, OtherTypeDescription: type) }
     let(:version) { '10.0' }
@@ -62,13 +63,13 @@ describe 'Windows WinOsReleaseResolver' do
     let(:type) {}
 
     it 'facts are nil' do
-      expect(Facter::Resolvers::WinOsReleaseResolver.resolve(:full)).to eql('2019')
+      expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql('2019')
     end
   end
 
   context '#resolve kernel version is 2016' do
     before do
-      allow(Facter::Resolvers::KernelResolver).to receive(:resolve).with(:kernelversion).and_return(full_version)
+      allow(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernelversion).and_return(full_version)
     end
     let(:comp) { double('Win32Ole', ProductType: prod, OtherTypeDescription: type) }
     let(:version) { '10.0' }
@@ -77,7 +78,7 @@ describe 'Windows WinOsReleaseResolver' do
     let(:type) {}
 
     it 'facts are nil' do
-      expect(Facter::Resolvers::WinOsReleaseResolver.resolve(:full)).to eql('2016')
+      expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql('2016')
     end
   end
 
@@ -88,7 +89,7 @@ describe 'Windows WinOsReleaseResolver' do
     let(:type) {}
 
     it 'facts are nil' do
-      expect(Facter::Resolvers::WinOsReleaseResolver.resolve(:full)).to eql('8.1')
+      expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql('8.1')
     end
   end
 
@@ -99,7 +100,7 @@ describe 'Windows WinOsReleaseResolver' do
     let(:type) {}
 
     it 'facts are nil' do
-      expect(Facter::Resolvers::WinOsReleaseResolver.resolve(:full)).to eql('2012 R2')
+      expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql('2012 R2')
     end
   end
 
@@ -110,7 +111,7 @@ describe 'Windows WinOsReleaseResolver' do
     let(:type) {}
 
     it 'facts are nil' do
-      expect(Facter::Resolvers::WinOsReleaseResolver.resolve(:full)).to eql('XP')
+      expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql('XP')
     end
   end
 
@@ -121,7 +122,7 @@ describe 'Windows WinOsReleaseResolver' do
     let(:type) {}
 
     it 'facts are nil' do
-      expect(Facter::Resolvers::WinOsReleaseResolver.resolve(:full)).to eql('2003')
+      expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql('2003')
     end
   end
 
@@ -132,7 +133,7 @@ describe 'Windows WinOsReleaseResolver' do
     let(:type) { 'R2' }
 
     it 'facts are nil' do
-      expect(Facter::Resolvers::WinOsReleaseResolver.resolve(:full)).to eql('2003 R2')
+      expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql('2003 R2')
     end
   end
 end

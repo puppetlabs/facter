@@ -8,19 +8,19 @@ describe 'SwVersResolver' do
   end
 
   it 'returns os ProductName' do
-    result = Facter::Resolvers::SwVersResolver.resolve('ProductName')
+    result = Facter::Resolvers::SwVers.resolve('ProductName')
 
     expect(result).to eq('Mac OS X')
   end
 
   it 'returns os ProductVersion' do
-    result = Facter::Resolvers::SwVersResolver.resolve('ProductVersion')
+    result = Facter::Resolvers::SwVers.resolve('ProductVersion')
 
     expect(result).to eq('10.14.1')
   end
 
   it 'returns os BuildVersion' do
-    result = Facter::Resolvers::SwVersResolver.resolve('BuildVersion')
+    result = Facter::Resolvers::SwVers.resolve('BuildVersion')
 
     expect(result).to eq('18B75')
   end
