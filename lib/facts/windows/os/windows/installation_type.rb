@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.windows.installation_type'
 
       def call_the_resolver
-        fact_value = Resolvers::ProductReleaseResolver.resolve(:installation_type)
+        fact_value = Resolvers::ProductRelease.resolve(:installation_type)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

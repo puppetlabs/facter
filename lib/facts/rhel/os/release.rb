@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.release'
 
       def call_the_resolver
-        version = Resolvers::OsReleaseResolver.resolve('VERSION_ID')
+        version = Resolvers::OsRelease.resolve('VERSION_ID')
 
         ResolvedFact.new(FACT_NAME, build_fact_list(version))
       end

@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class UnameResolver < BaseResolver
+    class Uname < BaseResolver
       @semaphore = Mutex.new
       @fact_list ||= {}
 

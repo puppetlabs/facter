@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'kernelmajversion'
 
       def call_the_resolver
-        fact_value = Resolvers::KernelResolver.resolve(:kernelmajorversion)
+        fact_value = Resolvers::Kernel.resolve(:kernelmajorversion)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

@@ -13,7 +13,7 @@ describe 'Windows ProductReleaseResolver' do
     allow(reg).to receive(:close)
   end
   after do
-    Facter::Resolvers::ProductReleaseResolver.invalidate_cache
+    Facter::Resolvers::ProductRelease.invalidate_cache
   end
 
   context '#resolve' do
@@ -23,19 +23,19 @@ describe 'Windows ProductReleaseResolver' do
     let(:release) { '1809' }
 
     it 'detects edition id' do
-      expect(Facter::Resolvers::ProductReleaseResolver.resolve(:edition_id)).to eql(ed)
+      expect(Facter::Resolvers::ProductRelease.resolve(:edition_id)).to eql(ed)
     end
 
     it 'detects installation type' do
-      expect(Facter::Resolvers::ProductReleaseResolver.resolve(:installation_type)).to eql(install)
+      expect(Facter::Resolvers::ProductRelease.resolve(:installation_type)).to eql(install)
     end
 
     it 'detects product name' do
-      expect(Facter::Resolvers::ProductReleaseResolver.resolve(:product_name)).to eql(prod)
+      expect(Facter::Resolvers::ProductRelease.resolve(:product_name)).to eql(prod)
     end
 
     it 'detects release id' do
-      expect(Facter::Resolvers::ProductReleaseResolver.resolve(:release_id)).to eql(release)
+      expect(Facter::Resolvers::ProductRelease.resolve(:release_id)).to eql(release)
     end
   end
 end

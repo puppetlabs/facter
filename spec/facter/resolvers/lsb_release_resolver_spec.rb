@@ -8,25 +8,25 @@ describe 'LsbReleaseResolver' do
   end
 
   it 'returns os Distributor ID' do
-    result = Facter::Resolvers::LsbReleaseResolver.resolve('Distributor ID')
+    result = Facter::Resolvers::LsbRelease.resolve('Distributor ID')
 
     expect(result).to eq('Ubuntu')
   end
 
   it 'returns os Description' do
-    result = Facter::Resolvers::LsbReleaseResolver.resolve('Description')
+    result = Facter::Resolvers::LsbRelease.resolve('Description')
 
     expect(result).to eq('Ubuntu 18.04.1 LTS')
   end
 
   it 'returns os release' do
-    result = Facter::Resolvers::LsbReleaseResolver.resolve('Release')
+    result = Facter::Resolvers::LsbRelease.resolve('Release')
 
     expect(result).to eq('18.04')
   end
 
   it 'returns os Codename' do
-    result = Facter::Resolvers::LsbReleaseResolver.resolve('Codename')
+    result = Facter::Resolvers::LsbRelease.resolve('Codename')
 
     expect(result).to eq('bionic')
   end

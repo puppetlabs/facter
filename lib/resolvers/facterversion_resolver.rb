@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class FacterversionResolver < BaseResolver
+    class Facterversion < BaseResolver
       @semaphore = Mutex.new
       @fact_list ||= {}
 

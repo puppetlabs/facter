@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class LsbReleaseResolver < BaseResolver
+    class LsbRelease < BaseResolver
       # "Distributor ID"
       # "Description"
       # "Release"

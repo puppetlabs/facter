@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class MemoryResolver < BaseResolver
+    class Memory < BaseResolver
       @log = Facter::Log.new
       @semaphore = Mutex.new
       @fact_list ||= {}

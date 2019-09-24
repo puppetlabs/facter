@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.release'
 
       def call_the_resolver
-        fact_value = Resolvers::WinOsReleaseResolver.resolve(:full)
+        fact_value = Resolvers::WinOsRelease.resolve(:full)
 
         ResolvedFact.new(FACT_NAME, full: fact_value, major: fact_value)
       end
