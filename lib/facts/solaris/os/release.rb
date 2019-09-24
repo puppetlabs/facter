@@ -6,13 +6,13 @@ module Facter
       FACT_NAME = 'os.release'
 
       def call_the_resolver
-        release_value = Facter::Resolvers::SolarisOsReleaseResolver.resolve(:release)
-        major_value = Facter::Resolvers::SolarisOsReleaseResolver.resolve(:major)
-        minor_value = Facter::Resolvers::SolarisOsReleaseResolver.resolve(:minor)
+        full_value = Facter::Resolvers::SolarisRelease.resolve(:full)
+        major_value = Facter::Resolvers::SolarisRelease.resolve(:major)
+        minor_value = Facter::Resolvers::SolarisRelease.resolve(:minor)
         os_release = {
-            release:release_value,
-            major: major_value,
-            minor:minor_value
+          full: full_value,
+          major: major_value,
+          minor: minor_value
         }
         ResolvedFact.new(FACT_NAME, os_release)
       end

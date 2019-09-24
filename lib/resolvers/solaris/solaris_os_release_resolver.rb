@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class SolarisOsReleaseResolver < BaseResolver
+    class SolarisRelease < BaseResolver
       @log = Facter::Log.new
       @semaphore = Mutex.new
       @fact_list ||= {}
@@ -13,32 +13,41 @@ module Facter
           @semaphore.synchronize do
             result ||= @fact_list[fact_name]
             subscribe_to_manager
-            result || read_os_release_file(fact_name)
+            result || build_release_facts(fact_name)
           end
         end
 
         private
 
-        def read_os_release_file(fact_name)
-          first_line, error = Open3.capture2('cat /etc/release')[0]
-          if error
-            @log.error('Could not build release fact because of missing file /etc/release')
-            return nil
-          end
+        def build_release_facts(fact_name)
+          result = read_os_release_file
+          return unless result
+
           @os_version_regex_patterns.each do |os_version_regex|
-            major, minor = search_for_os_version(/#{os_version_regex}/, first_line)
-            next unless major && minor
+            major, minor = search_for_os_version(/#{os_version_regex}/, result)
+            next unless major || minor
+
             @fact_list[:major] = major
             @fact_list[:minor] = minor
-            @fact_list[:release] = major == 10 ? major + '_u' + minor : major + '.' + minor
+            @fact_list[:full] = major == '10' ? major + '_u' + minor : major + '.' + minor
+            break
           end
-            @fact_list[fact_name]
+          @fact_list[fact_name]
         end
 
-        def search_for_os_version(regex_pattern, line)
-          result = line.match(regex_pattern)
+        def search_for_os_version(regex_pattern, text)
+          result = text.match(regex_pattern)
           major, minor = result.captures if result
           return [major, minor] if major && minor
+        end
+
+        def read_os_release_file
+          output, status = Open3.capture2('cat /etc/release')
+          if !status.to_s.include?('exit 0') || output.empty?
+            @log.error('Could not build release fact because of missing or empty file /etc/release')
+            return
+          end
+          output
         end
       end
     end
