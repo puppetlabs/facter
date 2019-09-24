@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class RedHatReleaseResolver < BaseResolver
+    class RedHatRelease < BaseResolver
       # :name
       # :version
       # :codename

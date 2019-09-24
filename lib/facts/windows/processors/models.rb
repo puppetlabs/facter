@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'processors.models'
 
       def call_the_resolver
-        fact_value = Resolvers::ProcessorsResolver.resolve(:models)
+        fact_value = Resolvers::Processors.resolve(:models)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

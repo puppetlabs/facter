@@ -2,22 +2,17 @@
 
 module Facter
   module Resolvers
-    class KernelResolver < BaseResolver
+    class Kernel < BaseResolver
       @log = Facter::Log.new
+      @semaphore = Mutex.new
+      @fact_list ||= {}
       class << self
-        @@semaphore = Mutex.new
-        @@fact_list ||= {}
-
         def resolve(fact_name)
-          @@semaphore.synchronize do
-            result ||= @@fact_list[fact_name]
+          @semaphore.synchronize do
+            result ||= @fact_list[fact_name]
             subscribe_to_manager
             result || read_os_version_information(fact_name)
           end
-        end
-
-        def invalidate_cache
-          @@fact_list = {}
         end
 
         private
@@ -35,13 +30,13 @@ module Facter
           result = { major: ver[:dwMajorVersion], minor: ver[:dwMinorVersion], build: ver[:dwBuildNumber] }
           build_facts_list(result)
 
-          @@fact_list[fact_name]
+          @fact_list[fact_name]
         end
 
         def build_facts_list(result)
-          @@fact_list[:kernelversion] = "#{result[:major]}.#{result[:minor]}.#{result[:build]}"
-          @@fact_list[:kernelmajorversion] = "#{result[:major]}.#{result[:minor]}"
-          @@fact_list[:kernel] = 'windows'
+          @fact_list[:kernelversion] = "#{result[:major]}.#{result[:minor]}.#{result[:build]}"
+          @fact_list[:kernelmajorversion] = "#{result[:major]}.#{result[:minor]}"
+          @fact_list[:kernel] = 'windows'
         end
       end
     end

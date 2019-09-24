@@ -2,11 +2,11 @@
 
 module Facter
   module Windows
-    class KernelMajorVersion
-      FACT_NAME = 'kernelmajorversion'
+    class NetworkingDomain
+      FACT_NAME = 'networking.domain'
 
       def call_the_resolver
-        fact_value = Resolvers::KernelResolver.resolve(:kernelmajorversion)
+        fact_value = Resolvers::Domain.resolve(:domain)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

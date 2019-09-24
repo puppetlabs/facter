@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'os.architecture'
 
       def call_the_resolver
-        fact_value = ArchitectureResolver.resolve(:architecture)
+        fact_value = Resolvers::Architecture.resolve(:architecture)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

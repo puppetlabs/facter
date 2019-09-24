@@ -2,21 +2,18 @@
 
 module Facter
   module Resolvers
-    class ProcessorsResolver < BaseResolver
+    class Processors < BaseResolver
       @log = Facter::Log.new
       @semaphore = Mutex.new
       @fact_list ||= {}
-
       class << self
         # Count
         # Isa
         # Models
         # PhysicalCount
-
         def resolve(fact_name)
           @semaphore.synchronize do
             result ||= @fact_list[fact_name]
-            subscribe_to_manager
             result || read_fact_from_win32_processor(fact_name)
           end
         end
@@ -28,13 +25,11 @@ module Facter
           proc = win.exec_query('SELECT Name,Architecture,NumberOfLogicalProcessors FROM Win32_Processor')
           unless proc
             @log.debug 'WMI query returned no results'\
-        'for Win32_Processor with values Name, Architecture and NumberOfLogicalProcessors.'
+            'for Win32_Processor with values Name, Architecture and NumberOfLogicalProcessors.'
             return
           end
-
           result = iterate_proc(proc)
           build_fact_list(result)
-
           @fact_list[fact_name]
         end
 
@@ -42,14 +37,10 @@ module Facter
           models = []
           isa = nil
           logical_count = 0
-
           result.each do |proc|
             models << proc.Name
             logical_count += proc.NumberOfLogicalProcessors if proc.NumberOfLogicalProcessors
-
-            next if isa
-
-            isa = find_isa(proc.Architecture)
+            isa ||= find_isa(proc.Architecture)
           end
 
           { models: models, isa: isa, logical_count: logical_count.zero? ? models.count : logical_count }
@@ -59,7 +50,6 @@ module Facter
           architecture_hash =
             { 0 => 'x86', 1 => 'MIPS', 2 => 'Alpha', 3 => 'PowerPC', 5 => 'ARM', 6 => 'Itanium', 9 => 'x64' }
           isa = architecture_hash[arch]
-
           return isa if isa
 
           @log.debug 'Unable to determine processor type: unknown architecture'

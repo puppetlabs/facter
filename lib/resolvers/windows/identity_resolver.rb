@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class IdentityResolver < BaseResolver
+    class Identity < BaseResolver
       NAME_SAM_COMPATIBLE = 2
       @log = Facter::Log.new
       @semaphore = Mutex.new
@@ -13,7 +13,7 @@ module Facter
           @semaphore.synchronize do
             result ||= @fact_list[fact_name]
             subscribe_to_manager
-            result || build_fact_list(fact_name)
+            result || retrieve_facts(fact_name)
           end
         end
 
@@ -26,6 +26,7 @@ module Facter
             @log.debug "failure resolving identity facts: #{FFI.errno}"
             return
           end
+
           name_ptr = FFI::MemoryPointer.new(:wchar, size_ptr.read_uint32)
           if IdentityFFI::GetUserNameExW(NAME_SAM_COMPATIBLE, name_ptr, size_ptr) == FFI::WIN32_FALSE
             @log.debug "failure resolving identity facts: #{FFI.errno}"
@@ -40,11 +41,17 @@ module Facter
           result && result != FFI::WIN32_FALSE
         end
 
-        def build_fact_list(fact_name)
+        def retrieve_facts(fact_name)
           result = find_username
-          @fact_list[:user] = result ? result[:user] : nil
-          @fact_list[:privileged] = result ? result[:privileged] : nil
+          return unless result
+
+          build_fact_list(result)
           @fact_list[fact_name]
+        end
+
+        def build_fact_list(facts)
+          @fact_list[:user] = facts[:user]
+          @fact_list[:privileged] = facts[:privileged]
         end
       end
     end

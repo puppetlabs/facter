@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class SELinuxResolver < BaseResolver
+    class SELinux < BaseResolver
       # :name
       # :version
       # :codename
@@ -32,10 +32,6 @@ module Facter
           end
 
           @fact_list[fact_name]
-        end
-
-        def invalidate_cache
-          @fact_list = {}
         end
       end
     end

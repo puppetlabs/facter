@@ -11,9 +11,9 @@ module Facter
           'description' => resolver('Description'),
           'id' => resolver('Distributor ID'),
           'release' => {
-            'full' => DebianVersionResolver.resolve(:full),
-            'major' => DebianVersionResolver.resolve(:major),
-            'minor' => DebianVersionResolver.resolve(:minor)
+            'full' => Resolvers::DebianVersion.resolve(:full),
+            'major' => Resolvers::DebianVersion.resolve(:major),
+            'minor' => Resolvers::DebianVersion.resolve(:minor)
           }
         }
 

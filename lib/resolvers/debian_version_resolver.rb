@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class DebianVersionResolver < BaseResolver
+    class DebianVersion < BaseResolver
       # :major
       # :minor
       # :full

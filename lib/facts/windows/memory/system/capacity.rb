@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'memory.system.capacity'
 
       def call_the_resolver
-        fact_value = Resolvers::MemoryResolver.resolve(:capacity)
+        fact_value = Resolvers::Memory.resolve(:capacity)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

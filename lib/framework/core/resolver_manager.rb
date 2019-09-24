@@ -12,7 +12,7 @@ module Facter
     end
 
     def self.invalidate_all_caches
-      @resolvers.each(&:invalidate_cache)
+      @resolvers.uniq.each(&:invalidate_cache)
       @resolvers = []
     end
   end

@@ -4,7 +4,7 @@ require 'date'
 
 module Facter
   module Resolvers
-    class UptimeResolver < BaseResolver
+    class Uptime < BaseResolver
       @log = Facter::Log.new
       @semaphore = Mutex.new
       @fact_list ||= {}

@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class OsReleaseResolver < BaseResolver
+    class OsRelease < BaseResolver
       # "PRETTY_NAME",
       # "NAME",
       # "VERSION_ID",

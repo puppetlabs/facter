@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class PathResolver < BaseResolver
+    class Path < BaseResolver
       @semaphore = Mutex.new
       @fact_list ||= {}
 

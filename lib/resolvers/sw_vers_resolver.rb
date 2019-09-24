@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class SwVersResolver < BaseResolver
+    class SwVers < BaseResolver
       # ProductName
       # ProductVersion
       # BuildVersion
