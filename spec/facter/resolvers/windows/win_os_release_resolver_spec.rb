@@ -21,6 +21,7 @@ describe 'Windows WinOsReleaseResolver' do
       allow_any_instance_of(Facter::Log).to receive(:debug)
         .with('WMI query returned no results for Win32_OperatingSystem'\
                    'with values ProductType and OtherTypeDescription.')
+
       expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql(nil)
     end
   end

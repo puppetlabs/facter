@@ -104,6 +104,72 @@ describe 'Windows MemoryResolver' do
     end
   end
 
+  context '#resolve when total bytes is 0' do
+    let(:status) { 1 }
+    let(:total) { 0 }
+    let(:page_size) { 4096 }
+    let(:available) { 23 }
+
+    it 'detects total_bytes as nil' do
+      allow_any_instance_of(Facter::Log).to receive(:debug)
+        .with('Available or Total bytes are zero could not proceed further')
+      expect(Facter::Resolvers::Memory.resolve(:total_bytes)).to eql(nil)
+    end
+    it 'detects available bytes as nil' do
+      expect(Facter::Resolvers::Memory.resolve(:available_bytes)).to eql(nil)
+    end
+    it 'determines used bytes as nil' do
+      expect(Facter::Resolvers::Memory.resolve(:used_bytes)).to eql(nil)
+    end
+    it 'determines capacity as nil' do
+      expect(Facter::Resolvers::Memory.resolve(:capacity)).to eql(nil)
+    end
+  end
+
+  context '#resolve when available bytes is 0' do
+    let(:status) { 1 }
+    let(:total) { 3242 }
+    let(:page_size) { 4096 }
+    let(:available) { 0 }
+
+    it 'detects total bytes as nil' do
+      allow_any_instance_of(Facter::Log).to receive(:debug)
+        .with('Available or Total bytes are zero could not proceed further')
+      expect(Facter::Resolvers::Memory.resolve(:total_bytes)).to eql(nil)
+    end
+    it 'detects available bytes as nil' do
+      expect(Facter::Resolvers::Memory.resolve(:available_bytes)).to eql(nil)
+    end
+    it 'determines used bytes as nil' do
+      expect(Facter::Resolvers::Memory.resolve(:used_bytes)).to eql(nil)
+    end
+    it 'determines capacity as nil' do
+      expect(Facter::Resolvers::Memory.resolve(:capacity)).to eql(nil)
+    end
+  end
+
+  context '#resolve when page size is 0' do
+    let(:status) { 1 }
+    let(:total) { 3242 }
+    let(:page_size) { 0 }
+    let(:available) { 4096 }
+
+    it 'detects total bytes as nil' do
+      allow_any_instance_of(Facter::Log).to receive(:debug)
+        .with('Available or Total bytes are zero could not proceed further')
+      expect(Facter::Resolvers::Memory.resolve(:total_bytes)).to eql(nil)
+    end
+    it 'detects available bytes as nil' do
+      expect(Facter::Resolvers::Memory.resolve(:available_bytes)).to eql(nil)
+    end
+    it 'determines used bytes as nil' do
+      expect(Facter::Resolvers::Memory.resolve(:used_bytes)).to eql(nil)
+    end
+    it 'determines capacity as nil' do
+      expect(Facter::Resolvers::Memory.resolve(:capacity)).to eql(nil)
+    end
+  end
+
   context '#resolve when GetPerformanceInfo function fails' do
     let(:status) { FFI::WIN32_FALSE }
     let(:total) { 1_048_313 }
