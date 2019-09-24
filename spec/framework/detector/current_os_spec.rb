@@ -29,7 +29,7 @@ describe 'CurrentOs' do
 
   it 'raise error if it could not detect os' do
     RbConfig::CONFIG['host_os'] = 'os'
-    expect { CurrentOs.instance.identifier }.to raise_error(RuntimeError)
+    expect { CurrentOs.instance.identifier }.to raise_error(RuntimeError, 'unknown os: "os"')
   end
 
   it 'detects linux distro when host_os is linux' do
