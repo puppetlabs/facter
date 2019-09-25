@@ -6,7 +6,6 @@ describe 'SolarisOsRelease' do
     allow(Open3).to receive(:capture2)
       .with('cat /etc/release')
       .and_return([output, status])
-    # allow_any_instance_of(Process::Status).to receive(:to_s).and_return(st)
   end
   after do
     Facter::Resolvers::SolarisRelease.invalidate_cache
@@ -29,6 +28,15 @@ describe 'SolarisOsRelease' do
     it 'returns os MAJOR' do
       result = Facter::Resolvers::SolarisRelease.resolve(:major)
       expect(result).to eq('10')
+    end
+  end
+
+  context 'when os release ends with no minor version' do
+    let(:output) { 'Oracle Solaris 11 X86' }
+    let(:st) { 'exit 0' }
+    it 'should return append 0 to minor version if no minor version is in file but regex pattern matches ' do
+      result = Facter::Resolvers::SolarisRelease.resolve(:full)
+      expect(result).to eq('11.0')
     end
   end
 
