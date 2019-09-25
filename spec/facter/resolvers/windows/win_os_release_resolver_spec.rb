@@ -136,4 +136,15 @@ describe 'Windows WinOsReleaseResolver' do
       expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql('2003 R2')
     end
   end
+
+  context '#resolve version is 4.2' do
+    let(:comp) { double('Win32Ole', ProductType: prod, OtherTypeDescription: type) }
+    let(:version) { '4.2' }
+    let(:prod) { '2' }
+    let(:type) { 'R2' }
+
+    it 'facts are nil' do
+      expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql('4.2')
+    end
+  end
 end

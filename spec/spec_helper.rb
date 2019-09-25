@@ -13,6 +13,7 @@ require_relative '../lib/resolvers/base_resolver'
 require_relative 'mocks/kernel_mock'
 require_relative 'mocks/ffi_mock'
 require_relative 'mocks/win32_mock'
+require_relative 'mocks/win32ole_mock'
 require_relative 'mocks/util'
 
 require 'pathname'
@@ -30,7 +31,7 @@ SimpleCov.start do
   add_filter 'spec'
 end
 
-default_coverage = 80
+default_coverage = 90
 SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
 
 # Configure RSpec

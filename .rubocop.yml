@@ -16,3 +16,6 @@ Style/ClassVars:
 Naming/ClassAndModuleCamelCase:
   Exclude:
     - 'spec/mocks/**/*'
+Naming/MethodName:
+  Exclude:
+    - 'spec/mocks/**/*'

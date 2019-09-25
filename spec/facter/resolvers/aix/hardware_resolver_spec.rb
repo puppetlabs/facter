@@ -20,6 +20,13 @@ describe 'AIX HardwareResolver' do
     end
   end
 
+  context '#resolve' do
+    let(:result) { 'test = hardware' }
+    it 'detects architecture as nil' do
+      expect(Facter::Resolvers::Hardware.resolve(:hardware)).to eql(nil)
+    end
+  end
+
   context '#resolve when fails to retrieve fact' do
     let(:result) { nil }
     it 'detects virtual machine manufacturer' do

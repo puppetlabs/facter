@@ -3,15 +3,15 @@
 module Facter
   module Resolvers
     class OsRelease < BaseResolver
-      # "PRETTY_NAME",
-      # "NAME",
-      # "VERSION_ID",
-      # "VERSION",
-      # "ID",
-      # "ANSI_COLOR",
-      # "HOME_URL",
-      # "SUPPORT_URL",
-      # "BUG_REPORT_URL"
+      # :pretty_name
+      # :name
+      # :version_id
+      # :version
+      # :id
+      # :ansi_color
+      # :home_url
+      # :support_url
+      # :bug_report_url
 
       @semaphore = Mutex.new
       @fact_list ||= {}
@@ -33,9 +33,11 @@ module Facter
             pairs << line.strip.delete('"').split('=', 2)
           end
 
-          @fact_list = Hash[*pairs.flatten]
+          result = Hash[*pairs.flatten]
 
-          @fact_list[:identifier] = @fact_list['ID'].downcase
+          @fact_list = result.transform_keys! { |key| key.downcase.to_sym }
+
+          @fact_list[:identifier] = @fact_list[:id]
 
           @fact_list[fact_name]
         end

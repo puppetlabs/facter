@@ -3,10 +3,10 @@
 module Facter
   module Resolvers
     class LsbRelease < BaseResolver
-      # "Distributor ID"
-      # "Description"
-      # "Release"
-      # "Codename"
+      # :distributor_id
+      # :description
+      # :release
+      # :codename
 
       @semaphore = Mutex.new
       @fact_list ||= {}
@@ -24,8 +24,9 @@ module Facter
           output, _status = Open3.capture2('lsb_release -a')
           release_info = output.delete("\t").split("\n").map { |e| e.split(':') }
 
-          @fact_list = Hash[*release_info.flatten]
-          @fact_list[:identifier] = @fact_list['Distributor ID'].downcase
+          result = Hash[*release_info.flatten]
+          @fact_list = result.transform_keys! { |key| key.downcase.gsub(/\s/, '_').to_sym }
+          @fact_list[:identifier] = @fact_list[:distributor_id]
 
           @fact_list[fact_name]
         end

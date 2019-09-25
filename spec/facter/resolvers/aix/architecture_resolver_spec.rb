@@ -20,6 +20,13 @@ describe 'AIX ArchitectureResolver' do
     end
   end
 
+  context '#resolve' do
+    let(:result) { 'test = x86' }
+    it 'detects architecture as nil' do
+      expect(Facter::Resolvers::Architecture.resolve(:architecture)).to eql(nil)
+    end
+  end
+
   context '#resolve when fails to retrieve fact' do
     let(:result) { nil }
     it 'detects virtual machine manufacturer' do

@@ -6,13 +6,13 @@ module Facter
       FACT_NAME = 'os.distro'
 
       def call_the_resolver
-        versions = resolver('Release').split('.')
+        versions = resolver(:release).split('.')
         distro = {
-          'codename' => resolver('Codename'),
-          'description' => resolver('Description'),
-          'id' => resolver('Distributor ID'),
+          'codename' => resolver(:codename),
+          'description' => resolver(:description),
+          'id' => resolver(:distributor_id),
           'release' => {
-            'full' => resolver('Release'),
+            'full' => resolver(:release),
             'major' => versions[0],
             'minor' => versions[1]
           }
