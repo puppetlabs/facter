@@ -3,9 +3,9 @@
 module Facter
   module Resolvers
     class SwVers < BaseResolver
-      # ProductName
-      # ProductVersion
-      # BuildVersion
+      # :productname
+      # :productversion
+      # :buildversion
       #
       @semaphore = Mutex.new
       @fact_list ||= {}
