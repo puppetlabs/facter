@@ -143,7 +143,7 @@ describe 'Windows WinOsReleaseResolver' do
     let(:prod) { '2' }
     let(:type) { 'R2' }
 
-    it 'facts are nil' do
+    it 'returns 4.2' do
       expect(Facter::Resolvers::WinOsRelease.resolve(:full)).to eql('4.2')
     end
   end

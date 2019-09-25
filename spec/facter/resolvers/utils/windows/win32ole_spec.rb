@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe '' do
+describe 'Win32Ole' do
   before do
     result = double(WIN32OLE)
     allow(WIN32OLE).to receive(:new).with('WbemScripting.SWbemLocator').and_return(result)
@@ -10,20 +10,20 @@ describe '' do
     allow(result).to receive(:execquery).with(query).and_return(query_result)
   end
 
-  context '#return_first returns nil' do
+  context '#return_first when query result is nil' do
     let(:query) { 'query' }
     let(:query_result) {}
-    it '' do
+    it 'returns nil' do
       win = Win32Ole.new
       output = win.return_first(query)
       expect(output).to eq(nil)
     end
   end
 
-  context '#return_first returns a value' do
+  context '#return_first' do
     let(:query) { 'query' }
     let(:query_result) { ['something'] }
-    it '' do
+    it 'returns first element' do
       win = Win32Ole.new
       output = win.return_first(query)
       expect(output).to eq('something')

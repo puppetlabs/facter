@@ -25,9 +25,9 @@ module Facter
           release_info = output.delete("\t").split("\n").map { |e| e.split(':') }
 
           result = Hash[*release_info.flatten]
-          @fact_list = result.transform_keys! { |key| key.downcase.gsub(/\s/, '_').to_sym }
-          @fact_list[:identifier] = @fact_list[:distributor_id]
+          result.each { |k, v| @fact_list[k.downcase.gsub(/\s/, '_').to_sym] = v }
 
+          @fact_list[:identifier] = @fact_list[:distributor_id]
           @fact_list[fact_name]
         end
       end
