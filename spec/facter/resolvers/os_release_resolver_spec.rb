@@ -8,25 +8,25 @@ describe 'OsReleaseResolver' do
   end
 
   it 'returns os NAME' do
-    result = Facter::Resolvers::OsRelease.resolve('NAME')
+    result = Facter::Resolvers::OsRelease.resolve(:name)
 
     expect(result).to eq('Ubuntu')
   end
 
   it 'returns os PRETTY_NAME' do
-    result = Facter::Resolvers::OsRelease.resolve('PRETTY_NAME')
+    result = Facter::Resolvers::OsRelease.resolve(:pretty_name)
 
     expect(result).to eq('Ubuntu 18.04.1 LTS')
   end
 
   it 'returns os VERSION_ID' do
-    result = Facter::Resolvers::OsRelease.resolve('VERSION_ID')
+    result = Facter::Resolvers::OsRelease.resolve(:version_id)
 
     expect(result).to eq('18.04')
   end
 
   it 'returns os VERSION_CODENAME' do
-    result = Facter::Resolvers::OsRelease.resolve('VERSION_CODENAME')
+    result = Facter::Resolvers::OsRelease.resolve(:version_codename)
 
     expect(result).to eq('bionic')
   end
