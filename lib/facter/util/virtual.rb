@@ -106,6 +106,10 @@ module Facter::Util::Virtual
     end
   end
 
+  def self.ec2?
+    File.read("/sys/devices/virtual/dmi/id/bios_vendor") =~ /Amazon EC2/ rescue false
+  end
+
   def self.kvm?
      txt = if FileTest.exists?("/proc/cpuinfo")
        File.read("/proc/cpuinfo")

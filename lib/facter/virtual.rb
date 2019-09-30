@@ -145,6 +145,10 @@ Facter.add("virtual") do
       next "xenu" if FileTest.exists?("/proc/xen") || FileTest.exists?("/dev/xvda1")
     end
 
+    if Facter::Util::Virtual.ec2?
+      next "ec2" if FileTest.exists?("/dev/nvme0")
+    end
+
     next "virtualbox" if Facter::Util::Virtual.virtualbox?
     next Facter::Util::Virtual.kvm_type if Facter::Util::Virtual.kvm?
     next "rhev" if Facter::Util::Virtual.rhev?
