@@ -19,10 +19,10 @@ gem_platform_dependencies:
       CFPropertyList: '~> 2.2'
   x86-mingw32:
     gem_runtime_dependencies:
-      ffi: '~> 1.9.5'
+      ffi: '~> 1.9'
   x64-mingw32:
     gem_runtime_dependencies:
-      ffi: '~> 1.9.5'
+      ffi: '~> 1.9'
 bundle_platforms:
   universal-darwin: ruby
   x86-mingw32: mingw

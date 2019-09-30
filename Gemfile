@@ -1,4 +1,14 @@
-source ENV['GEM_SOURCE'] || "https://rubygems.org"
+source ENV['GEM_SOURCE'] || 'https://artifactory.delivery.puppetlabs.net/artifactory/api/gems/rubygems/'
+
+def location_for(place, fake_version = nil)
+  if place =~ /^(git[:@][^#]*)#(.*)/
+    [fake_version, { :git => $1, :branch => $2, :require => false }].compact
+  elsif place =~ /^file:\/\/(.*)/
+    ['>= 0', { :path => File.expand_path($1), :require => false }]
+  else
+    [place, { :require => false }]
+  end
+end
 
 # C Ruby (MRI) or Rubinius, but NOT Windows
 platforms :ruby do
@@ -17,6 +27,8 @@ group :development, :test do
   gem 'json-schema', "~> 2.6.2", :platforms => :ruby
   gem 'puppetlabs_spec_helper'
 end
+
+gem 'packaging', *location_for(ENV['PACKAGING_LOCATION'] || '~> 0.99') if RUBY_VERSION.to_f >= 2.3
 
 require 'yaml'
 data = YAML.load_file(File.join(File.dirname(__FILE__), 'ext', 'project_data.yaml'))
@@ -39,10 +51,12 @@ mingw << :x64_mingw if Bundler::Dsl::VALID_PLATFORMS.include?(:x64_mingw)
 platform(*mingw) do
   # FFI dropped 1.9.3 support in 1.9.16, and 1.9.15 was an incomplete release.
   # 1.9.18 is required to support Ruby 2.4
-  if RUBY_VERSION < '2.0.0'
+  if RUBY_VERSION.to_f < 2.0
     gem 'ffi', '<= 1.9.14', :require => false
-  else
+  elsif RUBY_VERSION.to_f < 2.6
     gem 'ffi', '~> 1.9.18', :require => false
+  else
+    gem 'ffi', '~> 1.10', :require => false
   end
 end
 

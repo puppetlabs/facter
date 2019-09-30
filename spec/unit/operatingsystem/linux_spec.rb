@@ -278,6 +278,15 @@ describe Facter::Operatingsystem::Linux do
       expect(release).to eq "2014.03"
     end
 
+    it "should parse major release only from /etc/system-release" do
+      subject.expects(:get_operatingsystem).returns("Amazon")
+      subject.expects(:get_lsbdistrelease).returns(nil)
+      Facter::Util::FileRead.expects(:read).with('/etc/system-release').returns("Amazon Linux release 2 (Karoo)")
+      release = subject.get_operatingsystemrelease
+      expect(release).to eq "2"
+    end
+
+    
     it "should fall back to kernelrelease fact for gnu/kfreebsd" do
       Facter.fact(:kernelrelease).stubs(:value).returns("1.2.3")
       subject.expects(:get_operatingsystem).returns("GNU/kFreeBSD")

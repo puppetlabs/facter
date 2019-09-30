@@ -153,6 +153,7 @@ Facter.add("virtual") do
     next Facter::Util::Virtual.kvm_type if Facter::Util::Virtual.kvm?
     next "rhev" if Facter::Util::Virtual.rhev?
     next "ovirt" if Facter::Util::Virtual.ovirt?
+    next "nitro" if Facter::Util::Virtual.nitro?
 
     # Parse lspci
     output = Facter::Util::Virtual.lspci
@@ -227,6 +228,10 @@ Facter.add("virtual") do
 
         if result.nil? and computersystem.manufacturer =~ /Xen/
           result = "xen"
+        end
+
+        if result.nil? and computersystem.manufacturer =~ /Amazon/
+          result = "nitro"
         end
 
         break

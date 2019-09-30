@@ -146,6 +146,10 @@ module Facter::Util::Virtual
     File.read("/sys/devices/virtual/dmi/id/product_name") =~ /Google/ rescue false
   end
 
+  def self.nitro?
+    File.read("/sys/devices/virtual/dmi/id/bios_vendor") =~ /Amazon/ rescue false
+  end
+
   def self.jail?
     path = case Facter.value(:kernel)
       when "FreeBSD" then "/sbin"
