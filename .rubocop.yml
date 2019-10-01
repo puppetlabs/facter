@@ -6,6 +6,11 @@ Metrics/LineLength:
 
 Metrics/MethodLength:
   Max: 20
+  Exclude:
+    - 'lib/custom_facts/util/values.rb'
+    - 'lib/custom_facts/util/confine.rb'
+    - 'lib/custom_facts/core/execution/windows.rb'
+    - 'lib/custom_facts/core/execution/base.rb'
 
 Metrics/BlockLength:
   Exclude:
@@ -16,6 +21,78 @@ Style/ClassVars:
 Naming/ClassAndModuleCamelCase:
   Exclude:
     - 'spec/mocks/**/*'
+
+Metrics/AbcSize:
+  Exclude:
+    - 'spec/custom_facts/util/parser_spec.rb'
+    - 'spec/custom_facts/core/logging_spec.rb'
+    - 'lib/custom_facts/util/values.rb'
+    - 'lib/custom_facts/util/loader.rb'
+    - 'lib/custom_facts/util/confine.rb'
+    - 'lib/custom_facts/util/confine.rb'
+    - 'lib/custom_facts/core/execution/windows.rb'
+    - 'lib/custom_facts/core/execution/base.rb'
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - 'spec/custom_facts/util/normalization_spec.rb'
+    - 'spec/custom_facts/shared_contexts/platform.rb'
+    - 'spec/custom_facts/core/execution/windows_spec.rb'
+    - 'spec/custom_facts/core/execution/posix_spec.rb'
+    - 'lib/custom_facts/util/resolution.rb'
+    - 'lib/custom_facts/core/execution/windows.rb'
+    - 'lib/custom_facts/core/execution/posix.rb'
+
+Style/CaseEquality:
+  Exclude:
+    - 'spec/custom_facts/util/confine_spec.rb'
+    - 'lib/custom_facts/util/confine.rb'
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - 'lib/custom_facts/util/values.rb'
+    - 'lib/custom_facts/util/confine.rb'
+    - 'lib/custom_facts/core/execution/windows.rb'
+    - 'lib/custom_facts/core/execution/posix.rb'
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'lib/custom_facts/util/values.rb'
+    - 'lib/custom_facts/util/confine.rb'
+    - 'lib/custom_facts/core/execution/windows.rb'
+    - 'lib/custom_facts/core/execution/posix.rb'
+
+Lint/RescueException:
+  Exclude:
+    - 'lib/custom_facts/util/parser.rb'
+
+Metrics/ClassLength:
+  Exclude:
+    - 'lib/custom_facts/util/fact.rb'
+
+Style/DoubleNegation:
+  Exclude:
+    - 'lib/custom_facts/util/confine.rb'
+    - 'lib/custom_facts/util/confine.rb'
+    - 'lib/custom_facts/core/execution/windows.rb'
+    - 'lib/custom_facts/core/execution/posix.rb'
+
+Naming/AccessorMethodName:
+  Exclude:
+    - 'lib/custom_facts/core/suitable.rb'
+
+Style/StderrPuts:
+  Exclude:
+    - 'lib/custom_facts/core/logging.rb'
+
+Style/ModuleFunction:
+  Exclude:
+    - 'lib/custom_facts/core/logging.rb'
+
 Naming/MethodName:
   Exclude:
     - 'spec/mocks/**/*'
+
+Naming/PredicateName:
+  Exclude:
+    - 'lib/custom_facts/core/suitable.rb'
