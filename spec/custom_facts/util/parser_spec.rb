@@ -47,7 +47,7 @@ describe LegacyFacter::Util::Parser do
       # YAML data with an error
       allow(File).to receive(:read).with(data_file).and_return(data_in_yaml + '}')
       allow(LegacyFacter).to receive(:warn).at_least(:one)
-      expect(-> { LegacyFacter::Util::Parser.parser_for(data_file).results }).not_to raise_error
+      expect { LegacyFacter::Util::Parser.parser_for(data_file).results }.not_to raise_error
     end
   end
 

@@ -17,11 +17,11 @@ describe LegacyFacter::Util::Confine do
   end
 
   it 'should fail if no fact name is provided' do
-    expect(-> { LegacyFacter::Util::Confine.new(nil, :test) }).to raise_error(ArgumentError)
+    expect { LegacyFacter::Util::Confine.new(nil, :test) }.to raise_error(ArgumentError)
   end
 
   it 'should fail if no values were provided' do
-    expect(-> { LegacyFacter::Util::Confine.new('yay') }).to raise_error(ArgumentError)
+    expect { LegacyFacter::Util::Confine.new('yay') }.to raise_error(ArgumentError)
   end
 
   it 'should have a method for testing whether it matches' do
