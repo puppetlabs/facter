@@ -25,6 +25,8 @@ Facts are the nuggets of information that will be provided by facter e.g. `os.na
 Resolvers have the role of gathering data from the system. 
 For example a resolver can execute a command on the system, can read a file or any operation that retries some data from a single source on the system. 
 
+![Facter user interaction](docs/diagrams/facter_user_interaction.png?raw=true)
+
 ## Getting started
 After cloning the project, you can run facter by executing `./bin/facter`. 
 The command will output all the facts that facter detected for the current os.
