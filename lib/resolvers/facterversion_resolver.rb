@@ -19,7 +19,7 @@ module Facter
 
         def read_version_file
           version_file = ::File.join(ROOT_DIR, 'VERSION')
-          @fact_list[:facterversion] = ::File.read(version_file)
+          @fact_list[:facterversion] = ::File.read(version_file).chomp('')
         end
       end
     end
