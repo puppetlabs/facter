@@ -96,3 +96,15 @@ Naming/MethodName:
 Naming/PredicateName:
   Exclude:
     - 'lib/custom_facts/core/suitable.rb'
+
+Style/MethodMissingSuper:
+  Exclude:
+    - 'lib/facter-ng.rb'
+
+Style/MissingRespondToMissing:
+  Exclude:
+    - 'lib/facter-ng.rb'
+
+Naming/FileName:
+  Exclude:
+    - 'lib/facter-ng.rb'

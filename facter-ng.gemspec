@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require_relative 'config/config'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'facter'
+  spec.name          = 'facter-ng'
   spec.version       = FACTER_VERSION
   spec.authors       = ['Bogdan Irimie']
   spec.email         = ['irimie.bogdan@puppet.com']
@@ -27,8 +27,8 @@ Gem::Specification.new do |spec|
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
   spec.files = `git ls-files`.split("\n").select { |file_name| file_name.match('^((?!spec).)*$') }
 
-  spec.bindir        = 'exe'
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  spec.bindir        = 'bin'
+  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler', '~> 2.0'
@@ -38,6 +38,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '~> 0.74.0'
   spec.add_development_dependency 'rubycritic', '~> 4.1.0'
 
-  spec.add_runtime_dependency 'logging', '~> 2.2.2'
   spec.add_runtime_dependency 'thor', '~> 0.20.3'
 end
