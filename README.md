@@ -1,6 +1,44 @@
 # facter-ng
-New version of Puppet Facter written in Ruby 
 
 [![Build Status](https://travis-ci.org/puppetlabs/facter-ng.svg?branch=master)](https://travis-ci.org/puppetlabs/facter-ng?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/puppetlabs/facter-ng/badge.svg?branch=master)](https://coveralls.io/github/puppetlabs/facter-ng?branch=master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/bf43445f767f2d64170a/maintainability)](https://codeclimate.com/github/puppetlabs/facter-ng/maintainability)
+
+Facter is a command-line tool that gathers basic facts about nodes (systems) such as hardware details, network settings, OS type and version, and more. These facts are made available as variables in your Puppet manifests and can be used to inform conditional expressions in Puppet.
+
+## Supported platforms
+* Linux
+* macOS
+* Windows
+* Solaris
+* AIX
+
+## Requirements
+* Ruby 2.3+
+
+## Basic concepts
+The project has three main parts, the framework, facts and resolvers. 
+In the framework we implement functionality that is agnostic of specific facts like parsing user input, formatting output, etc.
+
+Facts are the nuggets of information that will be provided by facter e.g. `os.name`, `networking.interfaces`, etc.
+
+Resolvers have the role of gathering data from the system. 
+For example a resolver can execute a command on the system, can read a file or any operation that retries some data from a single source on the system. 
+
+![Facter user interaction](docs/diagrams/facter_user_interaction.png?raw=true)
+
+## Getting started
+After cloning the project, you can run facter by executing `./bin/facter`. 
+The command will output all the facts that facter detected for the current os.
+
+In order to generate a fact, we can use the rake task `rake 'create_fact[<os>,<fact_name>]'` e.g. `rake 'create_fact[ubuntu,facterversion]'`
+When generating a fact, the unit test for that fact is also generated. Facts should call on or more resolvers in order to obtain the data they need.
+
+The implementation can be validated locally by running the `./check.sh` script. 
+
+## Goals - fast, easy, compatible
+* Gain performance similar to the C++ version of Facter. We plan to achieve this goal by gathering multiple facts with only one call and by using the faster Win32 API rather than WMI for the Windows implementation. 
+* Facilitate community contribution. At the moment, C++ presents a possible impediment for community contributions. 
+* Enable native integration with other Ruby-based projects such as Bolt and puppet.
+* Enable native integration for custom facts.
+* Provide 100% compatibility with C++ Facter (drop-in replacement).
