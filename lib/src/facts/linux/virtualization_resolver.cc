@@ -5,7 +5,9 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
 #include <leatherman/file_util/file.hpp>
+#include <leatherman/file_util/directory.hpp>
 #include <leatherman/util/regex.hpp>
+#include <leatherman/logging/logging.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -23,29 +25,45 @@ namespace facter { namespace facts { namespace linux {
 
     string virtualization_resolver::get_cloud_provider(collection& facts)
     {
-        // Check for Azure
-        std::string provider = get_azure(facts);
-
+        std::string provider = get_azure();
         return provider;
     }
 
-    string virtualization_resolver::get_azure(collection& facts, string const& leases_file)
+    string virtualization_resolver::get_azure()
     {
         std::string provider;
-        if (boost::filesystem::exists(leases_file))
-        {
-            lth_file::each_line(leases_file, [&](string& line) {
-                // Search for DHCP option 245. This is an accepted method of determining
-                // whether a machine is running inside Azure. Source:
-                // https://social.msdn.microsoft.com/Forums/azure/en-US/f7fbbee6-370a-41c2-a384-d14ab2a0ac12/what-is-the-correct-method-in-linux-on-azure-to-test-if-you-are-an-azure-vm-?forum=WAVirtualMachinesforWindows
-                if (line.find("option 245") != std::string::npos ||
-                        line.find("option unknown-245") != std::string::npos) {
-                    provider = "azure";
-                    return false;
-                }
-                return true;
-            });
+        static vector<string> const dhclient_search_directories = {
+            "/var/lib/dhcp",
+            "/var/lib/NetworkManager"
+        };
+
+        for (auto const& dir : dhclient_search_directories) {
+            LOG_DEBUG("searching \"{1}\" for dhclient lease files.", dir);
+            lth_file::each_file(dir, [&](string const& leases_file) {
+                LOG_DEBUG("reading \"{1}\" for dhclient lease azure information.", leases_file);
+                provider = get_azure_from_leases_file(leases_file);
+                return provider.empty();
+            }, "^dhclient.*lease.*$");
+            if (!provider.empty())
+              break;
         }
+        return provider;
+    }
+
+    // Search for DHCP option 245. This is an accepted method of determining
+    // whether a machine is running inside Azure. Source:
+    // https://social.msdn.microsoft.com/Forums/azure/en-US/f7fbbee6-370a-41c2-a384-d14ab2a0ac12/what-is-the-correct-method-in-linux-on-azure-to-test-if-you-are-an-azure-vm-?forum=WAVirtualMachinesforWindows
+    string virtualization_resolver::get_azure_from_leases_file(string leases_file)
+    {
+        string provider;
+        lth_file::each_line(leases_file, [&](string& line) {
+            if (line.find("option 245") != std::string::npos || line.find("option unknown-245") != std::string::npos) {
+                LOG_DEBUG("found azure option in \"{1}\" lease file.", leases_file);
+                provider = "azure";
+                return false;
+            }
+            return true;
+        });
         return provider;
     }
 
