@@ -60,8 +60,8 @@ module LegacyFacter
       end
 
       if LegacyFacter::Util::Config.windows?
-        require_relative 'custom_facts/util/windows/dir'
-        require_relative 'custom_facts/util/windows_root'
+        require_relative 'windows/dir'
+        require_relative 'windows_root'
       else
         require_relative 'unix_root'
       end

@@ -12,6 +12,17 @@ require "#{ROOT_DIR}/lib/custom_facts/core/execution/windows"
 require "#{ROOT_DIR}/lib/custom_facts/core/execution/posix"
 require "#{ROOT_DIR}/lib/custom_facts/util/values"
 require "#{ROOT_DIR}/lib/custom_facts/util/confine"
+
+
+#require "#{ROOT_DIR}/lib/custom_facts/util/windows_root"
+
+#require "#{ROOT_DIR}/lib/custom_facts/util/windows/api_types"
+#require "#{ROOT_DIR}/lib/custom_facts/util/windows/error"
+#require "#{ROOT_DIR}/lib/custom_facts/util/windows/user"
+#require "#{ROOT_DIR}/lib/custom_facts/util/windows/process"
+
+#require "#{ROOT_DIR}/lib/custom_facts/util/windows"
+#require "#{ROOT_DIR}/lib/custom_facts/util/windows/dir"
 require "#{ROOT_DIR}/lib/custom_facts/util/config"
 require "#{ROOT_DIR}/lib/custom_facts/util/normalization"
 require "#{ROOT_DIR}/lib/custom_facts/core/execution"
