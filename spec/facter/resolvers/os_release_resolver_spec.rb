@@ -5,6 +5,8 @@ describe 'OsReleaseResolver' do
     allow(Open3).to receive(:capture2)
       .with('cat /etc/os-release')
       .and_return(load_fixture('os_release').read)
+
+    Facter::Resolvers::OsRelease.invalidate_cache
   end
 
   it 'returns os NAME' do

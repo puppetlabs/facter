@@ -101,7 +101,7 @@ describe LegacyFacter::Util::Normalization do
     end
   end
 
-  [:sym, Object.new, Set.new].each do |val|
+  [Object.new, Set.new].each do |val|
     it "rejects #{val.inspect}:#{val.class}" do
       expect do
         subject.normalize(val)

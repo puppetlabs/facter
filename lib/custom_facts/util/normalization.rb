@@ -5,7 +5,7 @@ module LegacyFacter
     module Normalization
       class NormalizationError < StandardError; end
 
-      VALID_TYPES = [Integer, Float, TrueClass, FalseClass, NilClass, String, Array, Hash].freeze
+      VALID_TYPES = [Integer, Float, TrueClass, FalseClass, NilClass, Symbol, String, Array, Hash].freeze
 
       module_function
 
@@ -16,7 +16,7 @@ module LegacyFacter
       # @return [void]
       def normalize(value)
         case value
-        when Integer, Float, TrueClass, FalseClass, NilClass
+        when Integer, Float, TrueClass, FalseClass, NilClass, Symbol
           value
         when String
           normalize_string(value)

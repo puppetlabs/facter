@@ -7,14 +7,14 @@ def mock_os(os_name)
 end
 
 def mock_fact_loader_with_legacy(os_name, loaded_facts_hash)
-  allow(Facter::FactLoader)
+  allow(Facter::InternalFactLoader)
     .to receive(:load_with_legacy)
     .with(os_name)
     .and_return(loaded_facts_hash)
 end
 
 def mock_fact_loader(os_name, loaded_fact_hash)
-  allow(Facter::FactLoader)
+  allow(Facter::InternalFactLoader)
     .to receive(:load)
     .with(os_name)
     .and_return(loaded_fact_hash)

@@ -89,6 +89,26 @@ module LegacyFacter
         @facts.keys
       end
 
+      # Build a hash of external facts
+      def external_facts
+        return unless @external_facts.nil?
+
+        facts_before_load = @facts.clone
+        load_external_facts
+
+        @external_facts = @facts.dup.delete_if { |k, _| facts_before_load.key?(k) }
+      end
+
+      # Builds a hash of custom facts
+      def custom_facts
+        return unless @custom_facts.nil?
+
+        facts_before_load = @facts.clone
+        internal_loader.load_all
+
+        @custom_facts = @facts.dup.delete_if { |k, _| facts_before_load.key?(k) }
+      end
+
       def load(name)
         internal_loader.load(name)
         load_external_facts
@@ -117,6 +137,8 @@ module LegacyFacter
 
       def value(name)
         fact = fact(name)
+        return Facter.core_value(name) if fact.nil?
+
         fact&.value
       end
 
