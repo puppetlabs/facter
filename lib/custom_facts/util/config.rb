@@ -60,6 +60,11 @@ module LegacyFacter
       end
 
       if LegacyFacter::Util::Config.windows?
+        require_relative 'windows/api_types'
+        require_relative 'windows/error'
+        require_relative 'windows/user'
+        require_relative 'windows/process'
+
         require_relative 'windows/dir'
         require_relative 'windows_root'
       else

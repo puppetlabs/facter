@@ -1,4 +1,3 @@
-require_relative '../windows'
 
 # represents an error resulting from a Win32 error code
 class LegacyFacter::Util::Windows::Error < RuntimeError

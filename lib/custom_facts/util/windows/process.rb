@@ -1,4 +1,3 @@
-require_relative '../windows'
 require 'ffi'
 
 module LegacyFacter::Util::Windows::Process
