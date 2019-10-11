@@ -12,7 +12,9 @@ module LegacyFacter
         S_OK           = 0x0
         MAX_PATH       = 260
 
-        def get_common_appdata
+        module_function
+
+        def common_appdata
           common_appdata = ''
 
           # this pointer actually points to a :lpwstr (pointer) since we're letting Windows allocate for us
@@ -27,9 +29,6 @@ module LegacyFacter
 
           common_appdata
         end
-        module_function :get_common_appdata
-
-        private
 
         ffi_convention :stdcall
 

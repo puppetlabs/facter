@@ -25,7 +25,7 @@ module LegacyFacter
       end
 
       def self.windows_data_dir
-        LegacyFacter::Util::Windows::Dir.get_common_appdata if LegacyFacter::Util::Config.windows?
+        LegacyFacter::Util::Windows::Dir.common_appdata if LegacyFacter::Util::Config.windows?
       end
 
       def self.external_facts_dirs=(dir)
