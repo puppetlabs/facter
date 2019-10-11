@@ -14,27 +14,6 @@ require "#{ROOT_DIR}/lib/custom_facts/util/values"
 require "#{ROOT_DIR}/lib/custom_facts/util/confine"
 
 require "#{ROOT_DIR}/lib/custom_facts/util/config"
-require "#{ROOT_DIR}/lib/custom_facts/util/windows"
-# require "#{ROOT_DIR}/lib/custom_facts/util/windows/api_types"
-# require "#{ROOT_DIR}/lib/custom_facts/util/windows/error"
-# require "#{ROOT_DIR}/lib/custom_facts/util/windows/user"
-# require "#{ROOT_DIR}/lib/custom_facts/util/windows/process"
-
-# if LegacyFacter::Util::Config.windows?
-#   require_relative 'windows/api_types'
-#   require_relative 'windows/error'
-#   require_relative 'windows/user'
-#   require_relative 'windows/process'
-#
-#   require_relative 'windows/dir'
-#   require_relative 'windows_root'
-# else
-#   require_relative 'unix_root'
-# end
-
-
-# require "#{ROOT_DIR}/lib/custom_facts/util/windows/dir"
-# require "#{ROOT_DIR}/lib/custom_facts/util/windows_root"
 
 require "#{ROOT_DIR}/lib/custom_facts/util/normalization"
 require "#{ROOT_DIR}/lib/custom_facts/core/execution"
