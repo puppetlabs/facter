@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'ffi'
 
 module LegacyFacter
@@ -10,18 +8,16 @@ module LegacyFacter
 
         COMMON_APPDATA = 0x0023
         S_OK           = 0x0
-        MAX_PATH       = 260
+        MAX_PATH       = 260;
 
-        module_function
-
-        def common_appdata
+        def get_common_appdata
           common_appdata = ''
 
           # this pointer actually points to a :lpwstr (pointer) since we're letting Windows allocate for us
           ::FFI::MemoryPointer.new(:pointer, ((MAX_PATH + 1) * 2)) do |buffer_ptr|
             # hwndOwner, nFolder, hToken, dwFlags, pszPath
             if SHGetFolderPathW(0, COMMON_APPDATA, 0, 0, buffer_ptr) != S_OK
-              raise LegacyFacter::Util::Windows::Error, 'Could not find COMMON_APPDATA path'
+              raise LegacyFacter::Util::Windows::Error.new("Could not find COMMON_APPDATA path")
             end
 
             common_appdata = LegacyFacter::Util::Windows::FFI.read_arbitrary_wide_string_up_to(buffer_ptr, MAX_PATH + 1)
@@ -29,6 +25,9 @@ module LegacyFacter
 
           common_appdata
         end
+        module_function :get_common_appdata
+
+        private
 
         ffi_convention :stdcall
 
@@ -42,7 +41,7 @@ module LegacyFacter
         # );
         ffi_lib :shell32
         attach_function :SHGetFolderPathW,
-                        %i[handle int32 handle dword lpwstr], :hresult
+                        [:handle, :int32, :handle, :dword, :lpwstr], :hresult
       end
     end
   end

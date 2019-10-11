@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'ffi'
 
 module LegacyFacter
@@ -38,8 +36,7 @@ module LegacyFacter
         #   null_terminator = :double_null, then the terminating sequence is four bytes of zero.  This is UNIT32 = 0
         def self.read_arbitrary_wide_string_up_to(ffi_pointer, max_char_length = 512, null_terminator = :single_null)
           if null_terminator != :single_null && null_terminator != :double_null
-            raise format(_('Unable to read wide strings with %{null_terminator} terminal nulls'),
-                         null_terminator: null_terminator)
+            raise _("Unable to read wide strings with %{null_terminator} terminal nulls") % { null_terminator: null_terminator }
           end
 
           terminator_width = null_terminator == :single_null ? 1 : 2
@@ -47,21 +44,23 @@ module LegacyFacter
 
           # Look for a null terminating characters; if found, read up to that null (exclusive)
           (0...max_char_length - terminator_width).each do |i|
-            return read_wide_string(ffi_pointer, i) if ffi_pointer.send(reader_method, (i * 2)).zero?
+            return read_wide_string(ffi_pointer, i) if ffi_pointer.send(reader_method, (i * 2)) == 0
           end
 
           # String is longer than the max; read just to the max
           read_wide_string(ffi_pointer, max_char_length)
         end
 
-        def self.read_win32_local_pointer(ffi_pointer)
+        def self.read_win32_local_pointer(ffi_pointer, &block)
           ptr = nil
           begin
             ptr = ffi_pointer.read_pointer
             yield ptr
           ensure
-            if ptr && !ptr.null?
-              Puppet.debug 'LocalFree memory leak' if WIN32.LocalFree(ptr.address) != NULL_HANDLE
+            if ptr && ! ptr.null?
+              if WIN32.LocalFree(ptr.address) != NULL_HANDLE
+                Puppet.debug "LocalFree memory leak"
+              end
             end
           end
 
@@ -122,6 +121,7 @@ module LegacyFacter
 
           ffi_convention :stdcall
 
+          private
           # https://msdn.microsoft.com/en-us/library/windows/desktop/aa366730(v=vs.85).aspx
           # HLOCAL WINAPI LocalFree(
           #   _In_  HLOCAL hMem
