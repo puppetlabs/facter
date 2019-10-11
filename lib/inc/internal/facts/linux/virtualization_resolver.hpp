@@ -30,11 +30,16 @@ namespace facter { namespace facts { namespace linux {
 
         /**
          * Gets whether the machine is running in Azure.
-         * @param facts The fact collection that is resolving facts.
-         * @param leases_file The location of where the leases file exists.
          * @return Returns "azure" if running on azure, otherwise an empty string.
          */
-        static std::string get_azure(collection& facts, std::string const& leases_file = "/var/lib/dhcp/dhclient.eth0.leases");
+        static std::string get_azure();
+
+        /**
+         * Checks whether the azure dhcp option (245) is present in leases_file file.
+         * @param leases_file The file containing leases information.
+         * @return Returns "azure" if found, otherwise an empty string.
+         */
+        static std::string get_azure_from_leases_file(std::string leases_file);
 
      private:
         static std::string get_cgroup_vm();
