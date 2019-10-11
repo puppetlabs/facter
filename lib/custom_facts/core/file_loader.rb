@@ -12,9 +12,7 @@ require "#{ROOT_DIR}/lib/custom_facts/core/execution/windows"
 require "#{ROOT_DIR}/lib/custom_facts/core/execution/posix"
 require "#{ROOT_DIR}/lib/custom_facts/util/values"
 require "#{ROOT_DIR}/lib/custom_facts/util/confine"
-
 require "#{ROOT_DIR}/lib/custom_facts/util/config"
-
 require "#{ROOT_DIR}/lib/custom_facts/util/normalization"
 require "#{ROOT_DIR}/lib/custom_facts/core/execution"
 require "#{ROOT_DIR}/lib/custom_facts/core/resolvable"
