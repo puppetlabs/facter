@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ffi'
 
 module LegacyFacter::Util::Windows::Process
@@ -9,14 +11,13 @@ module LegacyFacter::Util::Windows::Process
   end
   module_function :get_current_process
 
-  def open_process_token(handle, desired_access, &block)
+  def open_process_token(handle, desired_access)
     token_handle = nil
     begin
       FFI::MemoryPointer.new(:handle, 1) do |token_handle_ptr|
         result = OpenProcessToken(handle, desired_access, token_handle_ptr)
         if result == LegacyFacter::Util::Windows::FFI::WIN32_FALSE
-          raise LegacyFacter::Util::Windows::Error.new(
-              "OpenProcessToken(#{handle}, #{desired_access.to_s(8)}, #{token_handle_ptr})")
+          raise LegacyFacter::Util::Windows::Error, "OpenProcessToken(#{handle}, #{desired_access.to_s(8)}, #{token_handle_ptr})"
         end
 
         yield token_handle = LegacyFacter::Util::Windows::FFI.read_handle(token_handle_ptr)
@@ -32,15 +33,14 @@ module LegacyFacter::Util::Windows::Process
   end
   module_function :open_process_token
 
-  def get_token_information(token_handle, token_information, &block)
+  def get_token_information(token_handle, token_information)
     # to determine buffer size
     FFI::MemoryPointer.new(:dword, 1) do |return_length_ptr|
       result = GetTokenInformation(token_handle, token_information, nil, 0, return_length_ptr)
       return_length = LegacyFacter::Util::Windows::FFI.read_dword(return_length_ptr)
 
       if return_length <= 0
-        raise LegacyFacter::Util::Windows::Error.new(
-            "GetTokenInformation(#{token_handle}, #{token_information}, nil, 0, #{return_length_ptr})")
+        raise LegacyFacter::Util::Windows::Error, "GetTokenInformation(#{token_handle}, #{token_information}, nil, 0, #{return_length_ptr})"
       end
 
       # re-call API with properly sized buffer for all results
@@ -49,9 +49,8 @@ module LegacyFacter::Util::Windows::Process
                                      token_information_buf, return_length, return_length_ptr)
 
         if result == LegacyFacter::Util::Windows::FFI::WIN32_FALSE
-          raise LegacyFacter::Util::Windows::Error.new(
-              "GetTokenInformation(#{token_handle}, #{token_information}, #{token_information_buf}, " +
-                  "#{return_length}, #{return_length_ptr})")
+          raise LegacyFacter::Util::Windows::Error, "GetTokenInformation(#{token_handle}, #{token_information}, #{token_information_buf}, " \
+                "#{return_length}, #{return_length_ptr})"
         end
 
         yield token_information_buf
@@ -100,16 +99,14 @@ module LegacyFacter::Util::Windows::Process
 
   STATUS_SUCCESS = 0
 
-  def os_version(&block)
+  def os_version
     FFI::MemoryPointer.new(OSVERSIONINFOEX.size) do |ver_ptr|
       ver = OSVERSIONINFOEX.new(ver_ptr)
       ver[:dwOSVersionInfoSize] = OSVERSIONINFOEX.size
 
       result = RtlGetVersion(ver_ptr)
 
-      if result != STATUS_SUCCESS
-        raise RuntimeError, 'Calling Windows RtlGetVersion failed'
-      end
+      raise 'Calling Windows RtlGetVersion failed' if result != STATUS_SUCCESS
 
       yield ver
     end
@@ -122,7 +119,7 @@ module LegacyFacter::Util::Windows::Process
   def windows_major_version
     ver = 0
 
-    self.os_version do |version|
+    os_version do |version|
       ver = version[:dwMajorVersion]
     end
 
@@ -132,14 +129,13 @@ module LegacyFacter::Util::Windows::Process
 
   def os_version_string
     ver = ''
-    self.os_version do |version|
+    os_version do |version|
       ver = "#{version[:dwMajorVersion]}.#{version[:dwMinorVersion]}.#{version[:dwBuildNumber]}"
     end
 
     ver
   end
   module_function :os_version_string
-
 
   SM_SERVERR2 = 89
 
@@ -172,52 +168,53 @@ module LegacyFacter::Util::Windows::Process
   # );
   ffi_lib :advapi32
   attach_function :OpenProcessToken,
-                  [:handle, :dword, :phandle], :win32_bool
+                  %i[handle dword phandle], :win32_bool
 
   public
+
   # https://msdn.microsoft.com/en-us/library/windows/desktop/aa379626(v=vs.85).aspx
   TOKEN_INFORMATION_CLASS = enum(
-      :TokenUser, 1,
-      :TokenGroups,
-      :TokenPrivileges,
-      :TokenOwner,
-      :TokenPrimaryGroup,
-      :TokenDefaultDacl,
-      :TokenSource,
-      :TokenType,
-      :TokenImpersonationLevel,
-      :TokenStatistics,
-      :TokenRestrictedSids,
-      :TokenSessionId,
-      :TokenGroupsAndPrivileges,
-      :TokenSessionReference,
-      :TokenSandBoxInert,
-      :TokenAuditPolicy,
-      :TokenOrigin,
-      :TokenElevationType,
-      :TokenLinkedToken,
-      :TokenElevation,
-      :TokenHasRestrictions,
-      :TokenAccessInformation,
-      :TokenVirtualizationAllowed,
-      :TokenVirtualizationEnabled,
-      :TokenIntegrityLevel,
-      :TokenUIAccess,
-      :TokenMandatoryPolicy,
-      :TokenLogonSid,
-      :TokenIsAppContainer,
-      :TokenCapabilities,
-      :TokenAppContainerSid,
-      :TokenAppContainerNumber,
-      :TokenUserClaimAttributes,
-      :TokenDeviceClaimAttributes,
-      :TokenRestrictedUserClaimAttributes,
-      :TokenRestrictedDeviceClaimAttributes,
-      :TokenDeviceGroups,
-      :TokenRestrictedDeviceGroups,
-      :TokenSecurityAttributes,
-      :TokenIsRestricted,
-      :MaxTokenInfoClass
+    :TokenUser, 1,
+    :TokenGroups,
+    :TokenPrivileges,
+    :TokenOwner,
+    :TokenPrimaryGroup,
+    :TokenDefaultDacl,
+    :TokenSource,
+    :TokenType,
+    :TokenImpersonationLevel,
+    :TokenStatistics,
+    :TokenRestrictedSids,
+    :TokenSessionId,
+    :TokenGroupsAndPrivileges,
+    :TokenSessionReference,
+    :TokenSandBoxInert,
+    :TokenAuditPolicy,
+    :TokenOrigin,
+    :TokenElevationType,
+    :TokenLinkedToken,
+    :TokenElevation,
+    :TokenHasRestrictions,
+    :TokenAccessInformation,
+    :TokenVirtualizationAllowed,
+    :TokenVirtualizationEnabled,
+    :TokenIntegrityLevel,
+    :TokenUIAccess,
+    :TokenMandatoryPolicy,
+    :TokenLogonSid,
+    :TokenIsAppContainer,
+    :TokenCapabilities,
+    :TokenAppContainerSid,
+    :TokenAppContainerNumber,
+    :TokenUserClaimAttributes,
+    :TokenDeviceClaimAttributes,
+    :TokenRestrictedUserClaimAttributes,
+    :TokenRestrictedDeviceClaimAttributes,
+    :TokenDeviceGroups,
+    :TokenRestrictedDeviceGroups,
+    :TokenSecurityAttributes,
+    :TokenIsRestricted,
+    :MaxTokenInfoClass
   )
 
   # https://msdn.microsoft.com/en-us/library/windows/desktop/bb530717(v=vs.85).aspx
@@ -240,7 +237,7 @@ module LegacyFacter::Util::Windows::Process
   # );
   ffi_lib :advapi32
   attach_function :GetTokenInformation,
-                  [:handle, TOKEN_INFORMATION_CLASS, :lpvoid, :dword, :pdword ], :win32_bool
+                  [:handle, TOKEN_INFORMATION_CLASS, :lpvoid, :dword, :pdword], :win32_bool
 
   public
 
@@ -270,7 +267,7 @@ module LegacyFacter::Util::Windows::Process
       :wServicePackMinor, :ushort,
       :wSuiteMask, :ushort,
       :wProductType, :uchar,
-      :wReserved, :uchar,
+      :wReserved, :uchar
     )
   end
 

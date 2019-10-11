@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 # represents an error resulting from a Win32 error code
 class LegacyFacter::Util::Windows::Error < RuntimeError
@@ -27,10 +28,10 @@ class LegacyFacter::Util::Windows::Error < RuntimeError
     # 5.US English
     dwLanguageId = 0
     flags = FORMAT_MESSAGE_ALLOCATE_BUFFER |
-        FORMAT_MESSAGE_FROM_SYSTEM |
-        FORMAT_MESSAGE_ARGUMENT_ARRAY |
-        FORMAT_MESSAGE_IGNORE_INSERTS |
-        FORMAT_MESSAGE_MAX_WIDTH_MASK
+            FORMAT_MESSAGE_FROM_SYSTEM |
+            FORMAT_MESSAGE_ARGUMENT_ARRAY |
+            FORMAT_MESSAGE_IGNORE_INSERTS |
+            FORMAT_MESSAGE_MAX_WIDTH_MASK
     error_string = ''
 
     # this pointer actually points to a :lpwstr (pointer) since we're letting Windows allocate for us
@@ -40,14 +41,12 @@ class LegacyFacter::Util::Windows::Error < RuntimeError
 
       if length == LegacyFacter::Util::Windows::FFI::WIN32_FALSE
         # can't raise same error type here or potentially recurse infinitely
-        raise LegacyFacter::Error.new("FormatMessageW could not format code #{code}")
+        raise LegacyFacter::Error, "FormatMessageW could not format code #{code}"
       end
 
       # returns an FFI::Pointer with autorelease set to false, which is what we want
       LegacyFacter::Util::Windows::FFI.read_win32_local_pointer(buffer_ptr) do |wide_string_ptr|
-        if wide_string_ptr.null?
-          raise LegacyFacter::Error.new("FormatMessageW failed to allocate buffer for code #{code}")
-        end
+        raise LegacyFacter::Error, "FormatMessageW failed to allocate buffer for code #{code}" if wide_string_ptr.null?
 
         error_string = LegacyFacter::Util::Windows::FFI.read_wide_string(wide_string_ptr, length)
       end
@@ -82,5 +81,5 @@ class LegacyFacter::Util::Windows::Error < RuntimeError
   # NOTE: since we're not preallocating the buffer, use a :pointer for lpBuffer
   ffi_lib :kernel32
   attach_function :FormatMessageW,
-                  [:dword, :lpcvoid, :dword, :dword, :pointer, :dword, :pointer], :dword
+                  %i[dword lpcvoid dword dword pointer dword pointer], :dword
 end
