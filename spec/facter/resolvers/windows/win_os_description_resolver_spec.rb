@@ -26,7 +26,7 @@ describe 'Windows WinOsDescription' do
 
   context '#resolve' do
     let(:comp) { double('Win32Ole', ProductType: prod, OtherTypeDescription: type) }
-    let(:prod) { '1' }
+    let(:prod) { 1 }
     let(:type) {}
 
     it 'returns consumerrel true' do

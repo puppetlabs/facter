@@ -25,7 +25,7 @@ module Facter
                        'with values ProductType and OtherTypeDescription.'
             return
           end
-          @fact_list[:consumerrel] = op_sys.ProductType == '1'
+          @fact_list[:consumerrel] = (op_sys.ProductType == 1)
           @fact_list[:description] = op_sys.OtherTypeDescription
           @fact_list[fact_name]
         end
