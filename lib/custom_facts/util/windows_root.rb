@@ -4,7 +4,7 @@ module LegacyFacter
   module Util
     module Root
       def self.root?
-        LegacyFacter::Util::Windows::User.admin?
+        Facter::Resolvers::Identity.resolve(:privileged)
       end
     end
   end

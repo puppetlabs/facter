@@ -11,7 +11,6 @@ Metrics/MethodLength:
     - 'lib/custom_facts/util/confine.rb'
     - 'lib/custom_facts/core/execution/windows.rb'
     - 'lib/custom_facts/core/execution/base.rb'
-    - 'lib/custom_facts/util/windows/error.rb'
 
 Metrics/BlockLength:
   Exclude:
@@ -22,7 +21,6 @@ Style/ClassVars:
 Naming/ClassAndModuleCamelCase:
   Exclude:
     - 'spec/mocks/**/*'
-    - 'lib/custom_facts/util/windows/process.rb'
 
 Metrics/AbcSize:
   Exclude:
@@ -110,13 +108,3 @@ Style/MissingRespondToMissing:
 Naming/FileName:
   Exclude:
     - 'lib/facter-ng.rb'
-
-Metrics/ModuleLength:
-  Exclude:
-    - 'lib/custom_facts/util/windows/user.rb'
-    - 'lib/custom_facts/util/windows/process.rb'
-
-Naming/VariableName:
-  Exclude:
-    - 'lib/custom_facts/util/windows/error.rb'
-    - 'lib/custom_facts/util/windows/process.rb'
