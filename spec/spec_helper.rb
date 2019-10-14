@@ -28,7 +28,7 @@ Dir.glob(File.join('./lib/resolvers', '/**/*/', '*.rb'), &method(:require))
 # Configure SimpleCov
 SimpleCov.start do
   track_files 'lib/**/*.rb'
-  add_filter 'spec'
+  add_filter 'spec/**/*.rb'
 end
 
 default_coverage = 90

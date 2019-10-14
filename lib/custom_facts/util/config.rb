@@ -25,7 +25,7 @@ module LegacyFacter
       end
 
       def self.windows_data_dir
-        LegacyFacter::Util::Windows::Dir.get_common_appdata if LegacyFacter::Util::Config.windows?
+        Facter::Resolvers::System32.resolve(:system32) if LegacyFacter::Util::Config.windows?
       end
 
       def self.external_facts_dirs=(dir)
@@ -39,29 +39,21 @@ module LegacyFacter
       def self.setup_default_ext_facts_dirs
         if LegacyFacter::Util::Root.root?
           windows_dir = windows_data_dir
-          if windows_dir.nil?
-            # Note: Beginning with Facter 3, /opt/puppetlabs/custom_facts/facts.d will be the only
-            # default external fact directory.
-            @external_facts_dirs = ['/opt/puppetlabs/custom_facts/facts.d',
-                                    '/etc/custom_facts/facts.d',
-                                    '/etc/puppetlabs/custom_facts/facts.d']
-          else
-            @external_facts_dirs = [File.join(windows_dir, 'PuppetLabs', 'custom_facts', 'facts.d')]
-          end
+          @external_facts_dirs = if windows_dir
+                                   [File.join(windows_dir, 'PuppetLabs', 'custom_facts', 'facts.d')]
+                                 else
+                                   ['/opt/puppetlabs/custom_facts/facts.d']
+                                 end
         elsif ENV['HOME']
-          # Note: Beginning with Facter 3, ~/.puppetlabs/opt/custom_facts/facts.d will be the only
-          # default external fact directory.
           @external_facts_dirs =
-            [File.expand_path(File.join(ENV['HOME'], '.puppetlabs', 'opt', 'custom_facts', 'facts.d')),
-             File.expand_path(File.join(ENV['HOME'], '.custom_facts', 'facts.d'))]
+            [File.expand_path(File.join(ENV['HOME'], '.puppetlabs', 'opt', 'custom_facts', 'facts.d'))]
         else
           @external_facts_dirs = []
         end
       end
 
       if LegacyFacter::Util::Config.windows?
-        require_relative 'custom_facts/util/windows/dir'
-        require_relative 'custom_facts/util/windows_root'
+        require_relative 'windows_root'
       else
         require_relative 'unix_root'
       end
