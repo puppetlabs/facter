@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.12.5\n"
+"Project-Id-Version: FACTER 3.14.5\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -430,7 +430,7 @@ msgid ""
 "mismatched processor frequencies found; facter will only report one of them"
 msgstr ""
 
-#. debug
+#. warning
 #: lib/src/facts/aix/serial_number_resolver.cc
 msgid ""
 "Could not retrieve serial number: sys0 systemid did not match the expected "
@@ -459,6 +459,7 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/bsd/networking_resolver.cc
+#: lib/src/facts/linux/virtualization_resolver.cc
 msgid "searching \"{1}\" for dhclient lease files."
 msgstr ""
 
@@ -841,6 +842,16 @@ msgstr ""
 msgid ""
 "Could not find the 'ip' command. Physical macaddress for bonded interfaces "
 "will be incorrect."
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/virtualization_resolver.cc
+msgid "reading \"{1}\" for dhclient lease azure information."
+msgstr ""
+
+#. debug
+#: lib/src/facts/linux/virtualization_resolver.cc
+msgid "found azure option in \"{1}\" lease file."
 msgstr ""
 
 #. debug
