@@ -18,7 +18,7 @@ module LegacyFacter
         def open_process_token(handle, desired_access)
           token_handle = nil
           begin
-            FFI::MemoryPointer.new(:handle, 1) do |token_handle_ptr|
+            ::FFI::MemoryPointer.new(:handle, 1) do |token_handle_ptr|
               result = OpenProcessToken(handle, desired_access, token_handle_ptr)
               if result == LegacyFacter::Util::Windows::FFI::WIN32_FALSE
                 raise LegacyFacter::Util::Windows::Error,
@@ -39,7 +39,7 @@ module LegacyFacter
 
         def get_token_information(token_handle, token_information)
           # to determine buffer size
-          FFI::MemoryPointer.new(:dword, 1) do |return_length_ptr|
+          ::FFI::MemoryPointer.new(:dword, 1) do |return_length_ptr|
             result = GetTokenInformation(token_handle, token_information, nil, 0, return_length_ptr)
             return_length = LegacyFacter::Util::Windows::FFI.read_dword(return_length_ptr)
 
@@ -49,7 +49,7 @@ module LegacyFacter
             end
 
             # re-call API with properly sized buffer for all results
-            FFI::MemoryPointer.new(return_length) do |token_information_buf|
+            ::FFI::MemoryPointer.new(return_length) do |token_information_buf|
               result = GetTokenInformation(token_handle, token_information,
                                            token_information_buf, return_length, return_length_ptr)
 
@@ -103,7 +103,7 @@ module LegacyFacter
         STATUS_SUCCESS = 0
 
         def os_version
-          FFI::MemoryPointer.new(OSVERSIONINFOEX.size) do |ver_ptr|
+          ::FFI::MemoryPointer.new(OSVERSIONINFOEX.size) do |ver_ptr|
             ver = OSVERSIONINFOEX.new(ver_ptr)
             ver[:dwOSVersionInfoSize] = OSVERSIONINFOEX.size
 
@@ -215,7 +215,7 @@ module LegacyFacter
         # typedef struct _TOKEN_ELEVATION {
         #   DWORD TokenIsElevated;
         # } TOKEN_ELEVATION, *PTOKEN_ELEVATION;
-        class TOKEN_ELEVATION < FFI::Struct
+        class TOKEN_ELEVATION < ::FFI::Struct
           layout :TokenIsElevated, :dword
         end
 
@@ -245,7 +245,7 @@ module LegacyFacter
         #   UCHAR  wProductType;
         #   UCHAR  wReserved;
         # } RTL_OSVERSIONINFOEXW, *PRTL_OSVERSIONINFOEXW;
-        class OSVERSIONINFOEX < FFI::Struct
+        class OSVERSIONINFOEX < ::FFI::Struct
           layout(
             :dwOSVersionInfoSize, :win32_ulong,
             :dwMajorVersion, :win32_ulong,
@@ -266,7 +266,7 @@ module LegacyFacter
         # NTSTATUS RtlGetVersion(
         #   _Out_ PRTL_OSVERSIONINFOW lpVersionInformation
         # );
-        ffi_lib [FFI::CURRENT_PROCESS, :ntdll]
+        ffi_lib [::FFI::CURRENT_PROCESS, :ntdll]
         attach_function :RtlGetVersion, [:pointer], :int32
 
         # C++ int is a signed 32-bit integer
