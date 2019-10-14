@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module Facter
-  module Windows
-    class SystemUptimeHours
-      FACT_NAME = 'system_uptime.hours'
+  module Ubuntu
+    class SystemUptimeUptime
+      FACT_NAME = 'system_uptime.uptime'
 
       def call_the_resolver
-        fact_value = Resolvers::Windows::Uptime.resolve(:hours)
+        fact_value = Facter::Resolvers::Uptime.resolve(:uptime)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end
