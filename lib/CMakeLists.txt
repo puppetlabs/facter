@@ -17,6 +17,11 @@ configure_file (
 
 # Set compiler-specific flags
 set(CMAKE_CXX_FLAGS ${FACTER_CXX_FLAGS})
+if (WIN32)
+    # Disable unused-variable variable for boost ipv6 compilation on windows
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-variable")
+endif()
+
 leatherman_logging_namespace("puppetlabs.facter")
 
 # Set the common (platform-independent) sources
