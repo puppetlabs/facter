@@ -176,6 +176,26 @@ describe Facter::Util::IP do
     Facter::Util::IP.get_single_interface_output("ib0").should == correct_ifconfig_interface
   end
 
+  it "should return correct macaddress information for infiniband on Linux CentOS 7" do
+    correct_ifconfig_interface = my_fixture_read("linux_get_single_interface_ib0_centos7")
+
+    Facter::Util::IP.expects(:get_single_interface_output).with("ib0").returns(correct_ifconfig_interface)
+    Facter.stubs(:value).with(:kernel).returns("Linux")
+
+    Facter::Util::IP.get_interface_value("ib0", "macaddress").should == "80:00:00:03:fe:80:00:00:00:00:00:00:00:11:75:00:00:6f:02:fe"
+  end
+
+  it "should replace the incorrect macaddress with the correct macaddress in ifconfig for infiniband on Linux CentOS 7" do
+    ifconfig_interface = my_fixture_read("linux_ifconfig_ib0_centos7")
+    correct_ifconfig_interface = my_fixture_read("linux_get_single_interface_ib0_centos7")
+
+    Facter::Util::IP.expects(:get_infiniband_macaddress).with("ib0").returns("80:00:00:03:fe:80:00:00:00:00:00:00:00:11:75:00:00:6f:02:fe")
+    Facter::Util::IP.expects(:ifconfig_interface).with("ib0").returns(ifconfig_interface)
+    Facter.stubs(:value).with(:kernel).returns("Linux")
+
+    Facter::Util::IP.get_single_interface_output("ib0").should == correct_ifconfig_interface
+  end
+
   it "should return fake macaddress information for infiniband on Linux when neither sysfs or /sbin/ip are available" do
     ifconfig_interface = my_fixture_read("linux_ifconfig_ib0")
 
