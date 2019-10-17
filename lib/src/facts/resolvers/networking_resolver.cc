@@ -7,6 +7,7 @@
 #include <leatherman/logging/logging.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/asio/ip/address_v6.hpp>
 #include <sstream>
 
 using namespace std;
@@ -25,6 +26,7 @@ namespace facter { namespace facts { namespace resolvers {
                 fact::netmask6,
                 fact::network,
                 fact::network6,
+                fact::scope6,
                 fact::macaddress,
                 fact::interfaces,
                 fact::domain,
@@ -39,6 +41,7 @@ namespace facter { namespace facts { namespace resolvers {
                 string("^") + fact::netmask6 + "_",
                 string("^") + fact::network + "_",
                 string("^") + fact::network6 + "_",
+                string("^") + fact::scope6 + "_",
                 string("^") + fact::macaddress + "_",
             })
     {
@@ -151,6 +154,32 @@ namespace facter { namespace facts { namespace resolvers {
         }
     }
 
+    string networking_resolver::get_scope(const string& address)
+    {
+        std::ostringstream ostream;
+        boost::asio::ip::address_v6 addr;
+        try {
+            addr = boost::asio::ip::address_v6::from_string(address);
+        } catch (boost::exception &e) {
+            return ostream.str();
+        }
+
+        if (addr.is_v4_compatible()) {
+            ostream << "compat,";
+        }
+
+        if (addr.is_link_local())
+            ostream << "link";
+        else if (addr.is_site_local())
+            ostream << "site";
+        else if (addr.is_loopback())
+            ostream << "host";
+        else
+            ostream << "global";
+
+        return ostream.str();
+    }
+
     string networking_resolver::macaddress_to_string(uint8_t const* bytes, uint8_t byte_count)
     {
         if (!bytes || (byte_count != 6 && byte_count != 20)) {
@@ -230,11 +259,19 @@ namespace facter { namespace facts { namespace resolvers {
         if (binding) {
             if (!binding->address.empty()) {
                 facts.add(string(ip_fact) + "_" + iface.name, make_value<string_value>(binding->address, true));
+                iface_value.add(ip_name, make_value<string_value>(binding->address));
+                if (!ipv4) {
+                    facts.add(string(fact::scope6) + "_" + iface.name, make_value<string_value>(get_scope(binding->address), true));
+                    iface_value.add("scope6", make_value<string_value>(get_scope(binding->address)));
+                }
                 if (primary) {
                     facts.add(ip_fact, make_value<string_value>(binding->address, true));
                     networking.add(ip_name, make_value<string_value>(binding->address));
+                    if (!ipv4) {
+                        facts.add(fact::scope6, make_value<string_value>(get_scope(binding->address), true));
+                        networking.add("scope6", make_value<string_value>(get_scope(binding->address)));
+                    }
                 }
-                iface_value.add(ip_name, make_value<string_value>(binding->address));
             }
             if (!binding->netmask.empty()) {
                 facts.add(string(netmask_fact) + "_" + iface.name, make_value<string_value>(binding->netmask, true));
