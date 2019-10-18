@@ -7,6 +7,7 @@ module Facter
 
       def call_the_resolver
         fact_value = Resolvers::OsRelease.resolve(:id_like)
+        fact_value ||= Resolvers::OsRelease.resolve(:id)
 
         ResolvedFact.new(FACT_NAME, fact_value.capitalize)
       end

@@ -8,6 +8,7 @@ module Facter
       # :version_id
       # :version
       # :id
+      # :id_like
       # :ansi_color
       # :home_url
       # :support_url
@@ -37,6 +38,7 @@ module Facter
           result.each { |k, v| @fact_list[k.downcase.to_sym] = v }
 
           @fact_list[:identifier] = @fact_list[:id]
+
           @fact_list[fact_name]
         end
       end
