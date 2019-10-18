@@ -22,6 +22,10 @@ module FFI
     def ffi_lib(arg); end
 
     def attach_function(function, args, return_type); end
+
+    def enum(*); end
+
+    def GetAdaptersAddresses(*); end
   end
 
   class Pointer
@@ -32,7 +36,7 @@ module FFI
   end
 
   class MemoryPointer
-    def initialize; end
+    def initialize(*); end
   end
 
   class Struct

@@ -2,11 +2,11 @@
 
 module Facter
   module Windows
-    class NetworkingDomain
-      FACT_NAME = 'networking.domain'
+    class NetworkingNetwork6
+      FACT_NAME = 'networking.network6'
 
       def call_the_resolver
-        fact_value = Resolvers::Networking.resolve(:domain)
+        fact_value = Resolvers::Networking.resolve(:network6)
 
         ResolvedFact.new(FACT_NAME, fact_value)
       end

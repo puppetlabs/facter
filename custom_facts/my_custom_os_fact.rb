@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-LegacyFacter.add(:os) do
+LegacyFacter.add(:oss) do
   has_weight(10_000)
   setcode do
     'my_custom_os'

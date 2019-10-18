@@ -24,7 +24,7 @@ module Facter
             return
           end
 
-          windows = path_ptr.read_wide_string(MAX_PATH).strip
+          windows = path_ptr.read_wide_string_with_length(MAX_PATH).strip
 
           bool_ptr = FFI::MemoryPointer.new(:win32_bool, 1)
           if System32FFI::IsWow64Process(System32FFI::GetCurrentProcess(), bool_ptr) == FFI::WIN32_FALSE

@@ -3,7 +3,7 @@
 describe 'Windows IdentityResolver' do
   before do
     size_ptr = double('FFI::MemoryPointer', read_uint32: 1)
-    name_ptr = double('FFI::MemoryPointer', read_wide_string: user_name)
+    name_ptr = double('FFI::MemoryPointer', read_wide_string_with_length: user_name)
 
     allow(FFI::MemoryPointer).to receive(:new).with(:win32_ulong, 1).and_return(size_ptr)
     allow(IdentityFFI).to receive(:GetUserNameExW).with(2, FFI::Pointer::NULL, size_ptr)

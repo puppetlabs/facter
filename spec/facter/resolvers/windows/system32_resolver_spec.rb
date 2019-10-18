@@ -2,7 +2,7 @@
 
 describe 'Windows System32Resolver' do
   before do
-    path_ptr = double('FFI::MemoryPointer', read_wide_string: win_path)
+    path_ptr = double('FFI::MemoryPointer', read_wide_string_with_length: win_path)
     bool_ptr = double('FFI::MemoryPointer', read_win32_bool: is_wow)
 
     allow(FFI::MemoryPointer).to receive(:new).with(:wchar, FFI::MAX_PATH + 1).and_return(path_ptr)
@@ -10,7 +10,7 @@ describe 'Windows System32Resolver' do
       .with(0, System32FFI::CSIDL_WINDOWS, 0, 0, path_ptr)
       .and_return(status)
 
-    allow(path_ptr).to receive(:read_wide_string).with(FFI::MAX_PATH).and_return(win_path)
+    allow(path_ptr).to receive(:read_wide_string_with_length).with(FFI::MAX_PATH).and_return(win_path)
 
     allow(FFI::MemoryPointer).to receive(:new).with(:win32_bool, 1).and_return(bool_ptr)
     allow(System32FFI).to receive(:GetCurrentProcess).and_return(2)
