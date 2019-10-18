@@ -1031,6 +1031,9 @@ networking:
                         network6:
                             type: ip6
                             description: The IPv6 network for the network interface.
+                        scope6:
+                            type: string
+                            description: The IPv6 scope for the network interface.
         ip:
             type: ip
             description: The IPv4 address of the default network interface.
@@ -1058,6 +1061,9 @@ networking:
         primary:
             type: string
             description: The name of the primary interface.
+        scope6:
+            type: string
+            description: The IPv6 scope of the default network interface.
 
 operatingsystem:
     type: string
@@ -1396,6 +1402,27 @@ rubyversion:
         All platforms: use `RUBY_VERSION` from the Ruby loaded by facter.
     caveats: |
         All platforms: facter must be able to locate `libruby`.
+
+scope6:
+    type: string
+    hidden: true
+    description: Return the IPv6 scope for the default network interface.
+    resolution: |
+        Linux: parse the contents of /proc/net/if_inet6 to retrieve the network interface scope.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface scope.
+        Solaris: use the `ioctl` function to retrieve the network interface scope.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface scope.
+
+scope6_<interface>:
+    pattern: ^scope6_.+$
+    type: string
+    hidden: true
+    description: Return the IPv6 scope for the default network interface.
+    resolution: |
+        Linux: parse the contents of /proc/net/if_inet6 to retrieve the network interface scope.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface scope.
+        Solaris: use the `ioctl` function to retrieve the network interface scope.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface scope.
 
 selinux:
     type: boolean
