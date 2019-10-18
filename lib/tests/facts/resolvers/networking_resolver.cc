@@ -264,7 +264,7 @@ SCENARIO("using the networking resolver") {
     }
     WHEN("network interfaces are present") {
         facts.add(make_shared<test_interface_resolver>());
-        REQUIRE(facts.size() == 50u);
+        REQUIRE(facts.size() == 56u);
         THEN("the DHCP servers fact is present") {
             auto dhcp_servers = facts.get<map_value>(fact::dhcp_servers);
             REQUIRE(dhcp_servers);
@@ -311,6 +311,8 @@ SCENARIO("using the networking resolver") {
                 auto network6 = facts.get<string_value>(fact::network6 + string("_iface_") + num);
                 REQUIRE(network6);
                 REQUIRE(network6->value() == "network6_" + num + "_0");
+                auto scope6 = facts.get<string_value>(fact::scope6 + string("_iface_") + num);
+                REQUIRE(scope6);
             }
         }
         THEN("the system fact facts are present") {
@@ -335,11 +337,13 @@ SCENARIO("using the networking resolver") {
             auto network6 = facts.get<string_value>(fact::network6);
             REQUIRE(network6);
             REQUIRE(network6->value() == "network6_2_0");
+            auto scope6 = facts.get<string_value>(fact::scope6);
+            REQUIRE(scope6);
         }
         THEN("the networking structured fact is present") {
             auto networking = facts.get<map_value>(fact::networking);
             REQUIRE(networking);
-            REQUIRE(networking->size() == 11u);
+            REQUIRE(networking->size() == 12u);
             auto primary = networking->get<string_value>("primary");
             REQUIRE(primary);
             REQUIRE(primary->value() == "iface_2");
@@ -367,6 +371,8 @@ SCENARIO("using the networking resolver") {
             auto network6 = networking->get<string_value>("network6");
             REQUIRE(network6);
             REQUIRE(network6->value() == "network6_2_0");
+            auto scope6 = networking->get<string_value>("scope6");
+            REQUIRE(scope6);
             auto mtu = networking->get<integer_value>("mtu");
             REQUIRE(mtu);
             REQUIRE(mtu->value() == 2);

@@ -117,6 +117,10 @@ namespace facter { namespace facts {
          */
         constexpr static char const* network6 = "network6";
         /**
+         * The fact for IPv6 scope.
+         */
+        constexpr static char const* scope6 = "scope6";
+        /**
          * The fact for interface MAC address.
          */
         constexpr static char const* macaddress = "macaddress";
