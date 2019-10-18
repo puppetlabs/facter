@@ -153,6 +153,30 @@ enable_cppcheck()
 # Pull in helper macros for working with leatherman libraries
 include(leatherman)
 
+# Guard to make sure we don't compile what we don't have in Leatherman
+if (WIN32)
+    set(CMAKE_REQUIRED_INCLUDES ${LEATHERMAN_INCLUDE_DIRS})
+    set(CMAKE_REQUIRED_LIBRARIES ${LEATHERMAN_LIBRARIES})
+    set(CMAKE_REQUIRED_FLAGS "-std=c++11")
+    CHECK_CXX_SOURCE_COMPILES("
+    #include \"leatherman/windows/registry.hpp\"
+
+    using namespace leatherman::windows;
+    int main() {
+		int test = 0;
+        try {
+            test = registry::get_registry_dword(registry::HKEY::LOCAL_MACHINE, \"RandomSubkey\", \"RandomValue\");
+        } catch (registry_exception &e) {
+            return test;
+        }
+    }
+    " HAS_LTH_GET_DWORD)
+
+    if (HAS_LTH_GET_DWORD)
+        add_definitions(-DHAS_LTH_GET_DWORD)
+    endif()
+endif()
+
 add_subdirectory(lib)
 add_subdirectory(exe)
 add_subdirectory(locales)
