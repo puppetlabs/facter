@@ -1255,6 +1255,11 @@ msgid "WMI query returned no results for {1} with values {2} and {3}."
 msgstr ""
 
 #. debug
+#: lib/src/facts/windows/fips_resolver.cc
+msgid "failure getting fips_mode: {1}"
+msgstr ""
+
+#. debug
 #: lib/src/facts/windows/identity_resolver.cc
 msgid "failure resolving identity facts: {1}"
 msgstr ""
