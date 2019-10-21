@@ -251,6 +251,12 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
         "src/util/config/windows/config.cc"
     )
 
+    if (HAS_LTH_GET_DWORD)
+        set(LIBFACTER_PLATFORM_SOURCES
+            ${LIBFACTER_PLATFORM_SOURCES}
+            "src/facts/windows/fips_resolver.cc"
+        )
+    endif()
     # The GetPerformanceInfo symbol has moved around a lot between Windows versions;
     # these options tie it to the backwards-compatible version.
     set(LIBFACTER_PLATFORM_LIBRARIES

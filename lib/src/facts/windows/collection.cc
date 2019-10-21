@@ -5,6 +5,7 @@
 #include <internal/facts/external/execution_resolver.hpp>
 #include <internal/facts/external/windows/powershell_resolver.hpp>
 #include <internal/facts/windows/dmi_resolver.hpp>
+#include <internal/facts/windows/fips_resolver.hpp>
 #include <internal/facts/windows/identity_resolver.hpp>
 #include <internal/facts/windows/kernel_resolver.hpp>
 #include <internal/facts/windows/memory_resolver.hpp>
@@ -70,6 +71,9 @@ namespace facter { namespace facts {
 
     void collection::add_platform_facts()
     {
+#ifdef HAS_LTH_GET_DWORD
+        add(make_shared<windows::fips_resolver>());
+#endif
         add(make_shared<windows::identity_resolver>());
         add(make_shared<windows::kernel_resolver>());
         add(make_shared<windows::memory_resolver>());

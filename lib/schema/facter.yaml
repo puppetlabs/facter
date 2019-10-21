@@ -374,6 +374,7 @@ fips_enabled:
     description: Return whether the platform is in FIPS mode
     resolution: |
         Linux: parse the contents of `/proc/sys/crypto/fips_enabled` which if non-zero indicates fips mode has been enabled.
+        Windows: check if key `HKEY_LOCAL_MACHINE/System/CurrentControlSet/Control/Lsa/FipsAlgorithmPolicy/Enabled` is 1 or 0
     caveats: |
         Linux: Limited to linux redhat family only
 
