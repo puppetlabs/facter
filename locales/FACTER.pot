@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.12.5\n"
+"Project-Id-Version: FACTER 3.13.5\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1252,6 +1252,11 @@ msgstr ""
 #. debug
 #: lib/src/facts/windows/dmi_resolver.cc
 msgid "WMI query returned no results for {1} with values {2} and {3}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/fips_resolver.cc
+msgid "failure getting fips_mode: {1}"
 msgstr ""
 
 #. debug
