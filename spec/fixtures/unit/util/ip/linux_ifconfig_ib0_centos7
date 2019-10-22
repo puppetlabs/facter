@@ -1,0 +1,8 @@
+ib0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 2044
+        inet 10.55.200.50  netmask 255.255.0.0  broadcast 10.55.255.255
+Infiniband hardware address can be incorrect! Please read BUGS section in ifconfig(8).
+        infiniband 80:00:00:03:FE:80:00:00:00:00:00:00:00:00:00:00:00:00:00:00  txqueuelen 256  (InfiniBand)
+        RX packets 26603237  bytes 15921365732 (14.8 GiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 22735277  bytes 4196650455 (3.9 GiB)
+        TX errors 0  dropped 2 overruns 0  carrier 0  collisions 0

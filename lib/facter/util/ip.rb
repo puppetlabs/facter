@@ -163,7 +163,7 @@ module Facter::Util::IP
       ifconfig_output = Facter::Util::IP.ifconfig_interface(interface)
       if interface =~ /^ib/ then
         real_mac_address = get_infiniband_macaddress(interface)
-        output = ifconfig_output.sub(%r{(?:ether|HWaddr)\s+((\w{1,2}:){5,}\w{1,2})}, "HWaddr #{real_mac_address}")
+        output = ifconfig_output.sub(%r{(?:ether|HWaddr|infiniband)\s+((\w{1,2}:){5,}\w{1,2})}, "HWaddr #{real_mac_address}")
       else
         output = ifconfig_output
       end
