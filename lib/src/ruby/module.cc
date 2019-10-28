@@ -883,7 +883,14 @@ namespace facter { namespace ruby {
                 raise = true;
                 fail_option = ruby.nil_value();
             }
-            return execute_command(ruby.to_string(argv[0]), fail_option, raise, timeout);
+
+            bool expand = true;
+            volatile VALUE expand_option = ruby.rb_hash_lookup2(argv[1], ruby.to_symbol("expand"), ruby.true_value());
+            if (ruby.is_false(expand_option)) {
+                expand = false;
+            }
+
+            return execute_command(ruby.to_string(argv[0]), fail_option, raise, timeout, expand);
         });
     }
 
@@ -908,13 +915,13 @@ namespace facter { namespace ruby {
         return it->second;
     }
 
-    VALUE module::execute_command(std::string const& command, VALUE failure_default, bool raise, uint32_t timeout)
+    VALUE module::execute_command(std::string const& command, VALUE failure_default, bool raise, uint32_t timeout, bool expand)
     {
         auto const& ruby = api::instance();
-
-        // Expand the command
-        auto expanded = expand_command(command);
-
+        
+        // Expand the command only if expand is true,
+        auto expanded = expand_command(command, leatherman::util::environment::search_paths(), expand);
+        
         if (!expanded.empty()) {
             try {
                 auto exec = execute(

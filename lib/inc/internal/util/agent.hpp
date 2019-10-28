@@ -18,11 +18,22 @@ namespace facter { namespace util { namespace agent {
      */
     inline std::string which(const std::string& exe) {
 #ifdef FACTER_PATH
-        std::string fixed = leatherman::execution::which(exe, {FACTER_PATH});
+    std::string fixed = leatherman::execution::which(exe, {FACTER_PATH}, true);
+    if (!fixed.empty()) {
+        return fixed;
+    }
+    LOG_WARNING("{1} not found at configured location {2}, using PATH instead", exe, FACTER_PATH);
+#endif
+    return exe;
+}
+
+    inline std::string which(const std::string& exe, bool expand) {
+#ifdef FACTER_PATH
+        std::string fixed = leatherman::execution::which(exe, {FACTER_PATH}, expand);
         if (!fixed.empty()) {
             return fixed;
         }
-        LOG_WARNING("{1} not found at configured location {2}, using PATH instead", exe, FACTER_PATH);
+        LOG_WARNING("{1} not found at configured location {2}, using PATH instead, parameter expand is {3}", exe, FACTER_PATH, expand);
 #endif
         return exe;
     }
