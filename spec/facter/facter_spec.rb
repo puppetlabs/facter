@@ -8,7 +8,7 @@ describe 'Facter' do
   let(:empty_fact_collection) { {} }
 
   before do
-    allow(Facter::ResolverManager).to receive(:invalidate_all_caches)
+    allow(Facter::CacheManager).to receive(:invalidate_all_caches)
   end
 
   describe '#to_hash' do

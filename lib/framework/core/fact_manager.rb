@@ -7,36 +7,46 @@ module Facter
     include Singleton
 
     def initialize
-      @core_fact_mgr = CoreFactManager.new
-      @custom_fact_mgr = CustomFactManager.new
-      @fact_loader = InternalFactLoader.new
-      @custom_fact_loader = ExternalFactLoader.new
+      @internal_fact_mgr = InternalFactManager.new
+      @external_fact_mgr = ExternalFactManager.new
+      @fact_loader = FactLoader.instance
     end
 
     def resolve_facts(options = {}, user_query = [])
-      loaded_facts_hash = user_query.any? || options[:show_legacy] ? load_all_facts : load_core_with_custom
-      searched_facts = QueryParser.parse(user_query, loaded_facts_hash)
+      options = enhance_options(options, user_query)
 
-      core_facts = resolve_core_facts(searched_facts)
-      custom_facts = resolve_custom_facts(searched_facts)
+      loaded_facts = @fact_loader.load(options)
+      searched_facts = QueryParser.parse(user_query, loaded_facts)
+      internal_facts = @internal_fact_mgr.resolve_facts(searched_facts)
+      external_facts = @external_fact_mgr.resolve_facts(searched_facts)
 
-      resolved_facts = override_core_facts(core_facts, custom_facts)
+      resolved_facts = override_core_facts(internal_facts, external_facts)
       FactFilter.new.filter_facts!(resolved_facts)
 
       resolved_facts
     end
 
-    def resolve_core(_options = {}, user_query = [])
-      loaded_facts_hash = @fact_loader.core_facts
+    def resolve_core(options = {}, user_query = [])
+      options = enhance_options(options, user_query)
+
+      @fact_loader.load(options)
+      loaded_facts_hash = @fact_loader.internal_facts
 
       searched_facts = QueryParser.parse(user_query, loaded_facts_hash)
-      resolved_facts = resolve_core_facts(searched_facts)
+      resolved_facts = @internal_fact_mgr.resolve_facts(searched_facts)
       FactFilter.new.filter_facts!(resolved_facts)
 
       resolved_facts
     end
 
     private
+
+    def enhance_options(options, user_query)
+      options = options.dup
+      options[:user_query] = true if user_query.any?
+
+      options
+    end
 
     def override_core_facts(core_facts, custom_facts)
       return core_facts unless custom_facts
@@ -50,30 +60,6 @@ module Facter
 
     def root_fact_name(fact)
       fact.name.split('.').first
-    end
-
-    def load_all_facts
-      loaded_facts_hash = {}
-      loaded_facts_hash.merge!(@fact_loader.facts)
-      loaded_facts_hash.merge!(@custom_fact_loader.facts)
-    end
-
-    def load_core_with_custom
-      loaded_facts_hash = {}
-      loaded_facts_hash.merge!(@fact_loader.core_facts)
-      loaded_facts_hash.merge!(@custom_fact_loader.facts)
-    end
-
-    def resolve_core_facts(searched_facts)
-      @core_fact_mgr.resolve_facts(searched_facts.reject { |searched_fact| searched_fact.fact_class.nil? })
-    end
-
-    def resolve_custom_facts(searched_facts)
-      custom_facts = @custom_fact_loader.facts
-      searched_custom_facts =
-        searched_facts.select { |searched_fact| custom_facts.fetch(searched_fact.name, 'no_value').nil? }
-
-      @custom_fact_mgr.resolve_facts(searched_custom_facts)
     end
   end
 end

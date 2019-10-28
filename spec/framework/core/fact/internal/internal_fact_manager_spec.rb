@@ -10,10 +10,10 @@ describe 'CoreFactManager' do
       allow(ubuntu_os_name).to receive(:new).and_return(ubuntu_os_name)
       allow(ubuntu_os_name).to receive(:call_the_resolver).and_return(resolved_fact)
 
-      searched_fact =
-        double(Facter::SearchedFact, name: 'os', fact_class: ubuntu_os_name, filter_tokens: [], user_query: '')
+      searched_fact = double(Facter::SearchedFact, name: 'os', fact_class: ubuntu_os_name, filter_tokens: [],
+                                                   user_query: '', type: :core)
 
-      core_fact_manager = Facter::CoreFactManager.new
+      core_fact_manager = Facter::InternalFactManager.new
       resolved_facts = core_fact_manager.resolve_facts([searched_fact])
 
       expect(resolved_facts).to eq([resolved_fact])
@@ -27,9 +27,9 @@ describe 'CoreFactManager' do
       allow(ubuntu_networking_interface).to receive(:call_the_resolver).and_return(resolved_fact)
 
       searched_fact = double(Facter::SearchedFact, name: 'ipaddress_.*', fact_class: ubuntu_networking_interface,
-                                                   filter_tokens: [], user_query: '')
+                                                   filter_tokens: [], user_query: '', type: :legacy)
 
-      core_fact_manager = Facter::CoreFactManager.new
+      core_fact_manager = Facter::InternalFactManager.new
       resolved_facts = core_fact_manager.resolve_facts([searched_fact])
 
       expect(resolved_facts).to eq([resolved_fact])

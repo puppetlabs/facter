@@ -16,11 +16,10 @@ describe 'InternalFactLoader' do
         stub_const('Facter::Ubuntu::NetworkInterface::FACT_NAME', 'ipaddress_.*')
 
         internal_fact_loader = Facter::InternalFactLoader.new
-        legacy_facts_hash = internal_fact_loader.legacy_facts
+        legacy_facts = internal_fact_loader.legacy_facts
 
-        network_interface_class = Class.const_get('Facter::Ubuntu::NetworkInterface')
-
-        expect(legacy_facts_hash['ipaddress_.*']).to eq(network_interface_class)
+        expect(legacy_facts.size).to eq(1)
+        expect(legacy_facts.first.type).to eq(:legacy)
       end
 
       it 'loads one core fact' do
@@ -32,13 +31,13 @@ describe 'InternalFactLoader' do
         stub_const('Facter::Ubuntu::OsName::FACT_NAME', 'os.name')
 
         internal_fact_loader = Facter::InternalFactLoader.new
-        core_facts_hash = internal_fact_loader.core_facts
+        core_facts = internal_fact_loader.core_facts
 
-        os_name_class = Class.const_get('Facter::Ubuntu::OsName')
-        expect(core_facts_hash['os.name']).to eq(os_name_class)
+        expect(core_facts.size).to eq(1)
+        expect(core_facts.first.type).to eq(:core)
       end
 
-      it 'loads one core fact and one legacy fact' do
+      it 'loads one legacy fact and one core fact' do
         allow_any_instance_of(Facter::ClassDiscoverer)
           .to receive(:discover_classes)
           .with(:Ubuntu)
@@ -48,13 +47,12 @@ describe 'InternalFactLoader' do
         stub_const('Facter::Ubuntu::OsName::FACT_NAME', 'os.name')
 
         internal_fact_loader = Facter::InternalFactLoader.new
-        all_facts_hash = internal_fact_loader.facts
+        all_facts = internal_fact_loader.facts
 
-        network_interface_class = Class.const_get('Facter::Ubuntu::NetworkInterface')
-        os_name_class = Class.const_get('Facter::Ubuntu::OsName')
-
-        expect(all_facts_hash['ipaddress_.*']).to eq(network_interface_class)
-        expect(all_facts_hash['os.name']).to eq(os_name_class)
+        expect(all_facts.size).to eq(2)
+        expect(all_facts.first.type).to eq(:legacy)
+        all_facts.shift
+        expect(all_facts.first.type).to eq(:core)
       end
 
       it 'loads no facts' do

@@ -19,18 +19,18 @@ module Facter
     # we can return one or more child facts for each parent.
     #
     # query -  is the user input used to search for facts
-    # loaded_fact_hash - is a list with all facts for the current operating system
+    # loaded_fact - is a list with all facts for the current operating system
     #
     # Returns a list of SearchedFact objects that resolve the users query.
-    def self.parse(query_list, loaded_fact_hash)
+    def self.parse(query_list, loaded_fact)
       matched_facts = []
       @log.debug "User query is: #{query_list}"
       @query_list = query_list
-      query_list = loaded_fact_hash.keys unless query_list.any?
+      query_list = loaded_fact.map(&:name) unless query_list.any?
 
       query_list.each do |query|
         @log.debug "Query is #{query}"
-        found_facts = search_for_facts(query, loaded_fact_hash)
+        found_facts = search_for_facts(query, loaded_fact)
         found_facts = create_search_fact_for_custom_fact(query) if found_facts.empty?
         matched_facts << found_facts
       end
@@ -39,7 +39,7 @@ module Facter
     end
 
     def self.create_search_fact_for_custom_fact(query)
-      [SearchedFact.new(query, nil, [], query)]
+      [SearchedFact.new(query, nil, [], query, :custom)]
     end
 
     def self.search_for_facts(query, loaded_fact_hash)
@@ -62,13 +62,13 @@ module Facter
       @log.debug "Checking query tokens #{query_tokens[query_token_range].join('.')}"
       resolvable_fact_list = []
 
-      loaded_fact_hash.each do |fact_name, klass_name|
+      loaded_fact_hash.each do |loaded_fact|
         query_fact = query_tokens[query_token_range].join('.')
 
-        next unless found_fact?(fact_name, query_fact)
+        next unless found_fact?(loaded_fact.name, query_fact)
 
-        loaded_fact = construct_loaded_fact(query_tokens, query_token_range, fact_name, klass_name)
-        resolvable_fact_list << loaded_fact
+        searched_fact = construct_loaded_fact(query_tokens, query_token_range, loaded_fact)
+        resolvable_fact_list << searched_fact
       end
 
       @log.debug "List of resolvable facts: #{resolvable_fact_list.inspect}"
@@ -85,11 +85,13 @@ module Facter
       true
     end
 
-    def self.construct_loaded_fact(query_tokens, query_token_range, fact_name, klass_name)
+    def self.construct_loaded_fact(query_tokens, query_token_range, loaded_fact)
       filter_tokens = query_tokens - query_tokens[query_token_range]
       user_query = @query_list.any? ? query_tokens.join('.') : ''
-      fact_name = fact_name.to_s
-      SearchedFact.new(fact_name, klass_name, filter_tokens, user_query)
+      fact_name = loaded_fact.name.to_s
+      klass_name = loaded_fact.klass
+      type = loaded_fact.type
+      SearchedFact.new(fact_name, klass_name, filter_tokens, user_query, type)
     end
   end
 end

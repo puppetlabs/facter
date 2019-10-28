@@ -8,7 +8,7 @@ module Facter
       end
 
       def self.subscribe_to_manager
-        Facter::ResolverManager.subscribe(self)
+        Facter::CacheManager.subscribe(self)
       end
     end
   end

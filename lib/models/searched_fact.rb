@@ -2,13 +2,14 @@
 
 module Facter
   class SearchedFact
-    attr_accessor :name, :fact_class, :filter_tokens, :user_query
+    attr_accessor :name, :fact_class, :filter_tokens, :user_query, :type
 
-    def initialize(fact_name, fact_class, filter_tokens, user_query)
+    def initialize(fact_name, fact_class, filter_tokens, user_query, type)
       @name = fact_name
       @fact_class = fact_class
       @filter_tokens = filter_tokens
       @user_query = user_query
+      @type = type
     end
   end
 end

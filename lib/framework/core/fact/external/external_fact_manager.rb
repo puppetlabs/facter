@@ -1,14 +1,19 @@
 # frozen_string_literal: true
 
 module Facter
-  class CustomFactManager
+  class ExternalFactManager
     def resolve_facts(searched_facts)
-      custom_facts(searched_facts)
+      searched_facts = filter_external_facts(searched_facts)
+      external_facts(searched_facts)
     end
 
     private
 
-    def custom_facts(custom_facts)
+    def filter_external_facts(searched_facts)
+      searched_facts.select { |searched_fact| %i[custom external].include?(searched_fact.type) }
+    end
+
+    def external_facts(custom_facts)
       LegacyFacter.search("#{ROOT_DIR}/custom_facts")
       LegacyFacter.search_external(["#{ROOT_DIR}/external_facts"])
 

@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 module Facter
-  class CoreFactManager
+  class InternalFactManager
     def resolve_facts(searched_facts)
+      searched_facts = filter_internal_facts(searched_facts)
+
       threads = start_threads(searched_facts)
       resolved_facts = join_threads(threads, searched_facts)
 
@@ -10,6 +12,10 @@ module Facter
     end
 
     private
+
+    def filter_internal_facts(searched_facts)
+      searched_facts.select { |searched_fact| %i[core legacy].include? searched_fact.type }
+    end
 
     def start_threads(searched_facts)
       threads = []
