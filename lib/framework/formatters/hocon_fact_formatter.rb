@@ -9,6 +9,7 @@ module Facter
     def format(resolved_facts)
       user_queries = resolved_facts.uniq(&:user_query).map(&:user_query)
 
+      return if user_queries.count < 1
       return format_for_multiple_user_queries(user_queries, resolved_facts) if user_queries.count > 1
 
       user_query = user_queries.first
