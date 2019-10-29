@@ -137,9 +137,16 @@ module LegacyFacter
 
       def value(name)
         fact = fact(name)
+
         return Facter.core_value(name) if fact.nil?
 
-        fact&.value
+        value = fact&.value
+        weight = fact&.used_resolution_weight || 0
+
+        core_value = Facter.core_value(name)
+        return core_value if weight <= 0 && core_value
+
+        value
       end
 
       private

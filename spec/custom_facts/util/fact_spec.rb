@@ -149,6 +149,26 @@ describe LegacyFacter::Util::Fact do
 
       expect(fact.value).to eq '1'
     end
+
+    it 'sets weight of the resolution that gave the value' do
+      fact.add do
+        has_weight 1
+        setcode { '1' }
+      end
+
+      fact.add do
+        has_weight 2
+        setcode { nil }
+      end
+
+      fact.add do
+        has_weight 0
+        setcode { '0' }
+      end
+
+      expect(fact.value).to eq '1'
+      expect(fact.used_resolution_weight).to eq 1
+    end
   end
 
   describe '#flush' do

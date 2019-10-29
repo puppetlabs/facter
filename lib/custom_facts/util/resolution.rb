@@ -16,6 +16,8 @@ module LegacyFacter
       attr_accessor :code
       attr_writer :value
 
+      attr_reader :weight
+
       extend LegacyFacter::Core::Execution
 
       class << self

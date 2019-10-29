@@ -40,4 +40,10 @@ describe 'HoconFactFormatter' do
 
     expect(formatted_output).to eq(expected_output)
   end
+
+  it 'formats to hocon for empty resolved fact array' do
+    formatted_output = Facter::HoconFactFormatter.new.format([])
+
+    expect(formatted_output).to eq(nil)
+  end
 end

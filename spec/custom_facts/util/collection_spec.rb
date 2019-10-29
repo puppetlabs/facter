@@ -132,7 +132,33 @@ describe LegacyFacter::Util::Collection do
     it 'should treat strings and symbols equivalently' do
       expect(collection.value(:yayness)).to eq 'result'
     end
+
+    describe 'when the fact is a core fact' do
+      it 'should call the core_value method' do
+        expect(Facter).to receive(:core_value).with('core_fact')
+        collection.value('core_fact')
+      end
+    end
+
+    describe 'when the weight of the resolution is 0' do
+      it 'should return core facts value is it exists' do
+        expect(Facter).to receive(:core_value).with('yayness').and_return('core_result')
+        expect(collection.value('yayness')).to eq('core_result')
+      end
+    end
+
+    describe 'when the weight of the resolution is greater than 0' do
+      it 'shoudl return the custom fact value' do
+        expect(collection.value('yayness')).to eq('result')
+      end
+    end
   end
+
+  # describe 'when retriving a core fact' do
+  #   before do
+  #     # @fact = collection.add('YayNess', value: 'result')
+  #   end
+  # end
 
   it "should return the fact's value when the array index method is used" do
     collection.add('myfact', value: 'foo')
