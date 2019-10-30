@@ -17,7 +17,7 @@ matrix:
     - rvm: 2.6
       script:
         - bundle exec rubocop
-        - bundle exec rubycritic --no-browser -s 80 -f console
+        - bundle exec rubycritic --no-browser -s 70 -f console
         - bundle exec rake spec
 
     - rvm: 2.5
