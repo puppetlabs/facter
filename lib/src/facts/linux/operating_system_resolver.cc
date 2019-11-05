@@ -156,6 +156,7 @@ namespace facter { namespace facts { namespace linux {
         // For certain distros, use "x86" for "i386"
         if (result.architecture == "x86_64" && (
              result.name == os::debian ||
+             result.name == os::linux_mint ||
              result.name == os::gentoo ||
              result.name == os::kfreebsd ||
              result.name == os::ubuntu)) {
