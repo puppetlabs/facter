@@ -8,6 +8,7 @@ static VALUE find(VALUE _self, VALUE leaf_param) {
   int result[5] = {0};
   unsigned int leaf = FIX2UINT(leaf_param);
   unsigned int subleaf = 0;
+  VALUE b = rb_ary_new();
 
 #if defined(__i386__) && defined(__PIC__)
         // ebx is used for PIC purposes on i386, so we need to manually
@@ -25,8 +26,9 @@ static VALUE find(VALUE _self, VALUE leaf_param) {
             : "=a" (result[0]), "=b" (result[1]), "=c" (result[2]), "=d" (result[3])
             : "a" (leaf), "c" (subleaf));
 #endif
-
-  return rb_str_new_cstr((char*)&result[1]);
+    rb_ary_push(b, INT2FIX(result[0]));
+    rb_ary_push(b, rb_str_new_cstr((char*)&result[1]));
+  return b;
 }
 
 void
