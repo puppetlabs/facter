@@ -6,10 +6,11 @@ require 'singleton'
 class CurrentOs
   include Singleton
 
-  attr_reader :identifier, :version
+  attr_reader :identifier, :version, :hierarchy
 
   def initialize(*_args)
     @identifier = detect
+    @hierarchy = create_hierarchy(@identifier)
   end
 
   def detect
@@ -30,6 +31,8 @@ class CurrentOs
                   end
   end
 
+  private
+
   def detect_distro
     [Facter::Resolvers::OsRelease,
      Facter::Resolvers::RedHatRelease,
@@ -40,5 +43,20 @@ class CurrentOs
     end
     @identifier = 'ubuntu' if @identifier == 'debian'
     @identifier
+  end
+
+  def create_hierarchy(operating_system)
+    return [] unless operating_system
+
+    case operating_system.to_sym
+    when :ubuntu
+      ['Ubuntu']
+    when :debian
+      ['Ubuntu']
+    when :fedora
+      ['Fedora']
+    else
+      [operating_system.to_s.capitalize]
+    end
   end
 end

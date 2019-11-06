@@ -7,7 +7,7 @@ module Facter
     def initialize(name, klass, type)
       @name = name
       @klass = klass
-      @type = type
+      @type = type.nil? ? :core : type
     end
   end
 end

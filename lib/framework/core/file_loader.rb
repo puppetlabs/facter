@@ -32,7 +32,9 @@ load_lib_dirs('framework', 'core', 'fact', 'external')
 
 os = ENV['RACK_ENV'] == 'test' ? '' : CurrentOs.instance.identifier
 
-load_lib_dirs('facts', os.to_s, '**')
+os_hierarchy = CurrentOs.instance.hierarchy
+os_hierarchy.each { |operating_system| load_lib_dirs('facts', operating_system.downcase, '**') }
+
 load_lib_dirs('resolvers', os.to_s, '**') if os.to_s =~ /win|aix|solaris/
 
 require "#{ROOT_DIR}/lib/custom_facts/core/legacy_facter"
