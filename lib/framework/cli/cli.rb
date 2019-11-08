@@ -48,25 +48,25 @@ module Facter
                  type: :string,
                  desc: 'Set logging level. Supported levels are: none, trace, debug, info, warn, error, and fatal.'
 
-    class_option :no_block,
+    class_option :block,
                  type: :boolean,
                  desc: 'Disable fact blocking.'
 
-    class_option :no_cache,
+    class_option :cache,
                  type: :boolean,
                  desc: 'Disable loading and refreshing facts from the cache'
 
-    class_option :no_custom_facts,
+    class_option :custom_facts,
                  type: :boolean,
                  default: false,
                  desc: 'Disable custom facts.'
 
-    class_option :no_external_facts,
+    class_option :external_facts,
                  type: :boolean,
                  default: false,
                  desc: 'Disable external facts.'
 
-    class_option :no_ruby,
+    class_option :ruby,
                  type: :boolean,
                  desc: 'Disable loading Ruby, facts requiring Ruby, and custom facts.'
 
@@ -95,8 +95,8 @@ module Facter
     class_option :puppet,
                  type: :boolean,
                  aliases: :p,
-                 desc: '(Deprecated: use `puppet facts` instead) Load the Puppet libraries,
-                         thus allowing Facter to load Puppet-specific facts.'
+                 desc: '(Deprecated: use `puppet facts` instead) Load the Puppet libraries,' \
+                       'thus allowing Facter to load Puppet-specific facts.'
 
     desc 'query', 'query'
     def query(*args)

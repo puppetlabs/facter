@@ -42,10 +42,14 @@ module Facter
     private
 
     def enhance_options(options, user_query)
-      options = options.dup
-      options[:user_query] = true if user_query.any?
+      options_augmenter = OptionsAugmenter.new(options)
 
-      options
+      options_augmenter.augment_with_query_options!(user_query)
+      options_augmenter.augment_with_facts_options!
+      options_augmenter.augment_with_global_options!
+      options_augmenter.augment_with_cli_options!
+
+      options_augmenter.options
     end
 
     def override_core_facts(core_facts, custom_facts)
