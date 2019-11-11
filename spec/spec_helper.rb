@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require 'pathname'
+
+ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
+
 ENV['RACK_ENV'] = 'test'
 
 require 'coveralls'
@@ -10,15 +14,8 @@ require 'thor'
 require 'fileutils'
 
 require_relative '../lib/resolvers/base_resolver'
-require_relative 'mocks/kernel_mock'
-require_relative 'mocks/ffi_mock'
-require_relative 'mocks/win32_mock'
-require_relative 'mocks/win32ole_mock'
-require_relative 'mocks/util'
 
-require 'pathname'
-
-ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
+Dir[ROOT_DIR.join('spec/mocks/*.rb')].each { |file| require file }
 
 require "#{ROOT_DIR}/lib/framework/core/file_loader"
 
