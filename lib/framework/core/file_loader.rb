@@ -22,6 +22,8 @@ load_lib_dirs('framework', 'core', 'options')
 require "#{ROOT_DIR}/lib/framework/config/config_reader"
 require "#{ROOT_DIR}/lib/framework/config/block_list"
 require "#{ROOT_DIR}/lib/facter-ng"
+require "#{ROOT_DIR}/lib/resolvers/utils/fingerprint.rb"
+require "#{ROOT_DIR}/lib/resolvers/utils/ssh.rb"
 
 load_dir(['config'])
 
