@@ -84,7 +84,7 @@ describe 'DmiResolver' do
         allow(File).to receive(:read).with('/sys/class/dmi/id/chassis_type').and_return(chassis_type)
         result = Facter::Resolvers::Linux::DmiBios.resolve(:chassis_type)
 
-        expect(result).to eq('Pizza Box')
+        expect(result).to eq('Low Profile Desktop')
       end
     end
     context 'when sys_vendor file exists' do
