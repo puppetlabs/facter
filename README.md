@@ -29,7 +29,9 @@ For example a resolver can execute a command on the system, can read a file or a
 ![Facter user interaction](docs/diagrams/facter_user_interaction.png?raw=true)
 
 ## Getting started
-After cloning the project, you can run facter by executing `./bin/facter`. 
+After cloning the project, run `build_native_extensions.sh` and `bundle install` to install all dependencies.
+
+You can run facter by executing `./bin/facter`. 
 The command will output all the facts that facter detected for the current os.
 
 In order to generate a fact, we can use the rake task `rake 'create_fact[<os>,<fact_name>]'` e.g. `rake 'create_fact[ubuntu,facterversion]'`
