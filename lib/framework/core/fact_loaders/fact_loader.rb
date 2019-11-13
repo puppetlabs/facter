@@ -37,6 +37,7 @@ module Facter
         @internal_facts = @internal_loader.core_facts
       end
 
+      @internal_facts = block_facts(@internal_facts, options)
       @facts.concat(@internal_facts)
     end
 
@@ -53,6 +54,16 @@ module Facter
       end
 
       @facts.concat(@external_facts)
+    end
+
+    def block_facts(facts, options)
+      blocked_facts = options[:blocked_facts] || []
+
+      facts = facts.reject do |fact|
+        blocked_facts.select { |blocked_fact| fact.name.match(/^#{blocked_fact}/) }.any?
+      end
+
+      facts
     end
   end
 end

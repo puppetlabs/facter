@@ -46,5 +46,31 @@ describe 'FactLoader' do
       loaded_facts = Facter::FactLoader.instance.load(options)
       expect(loaded_facts).to eq(facts_to_load)
     end
+
+    it 'blocks one internal fact' do
+      options = { blocked_facts: ['os.name'] }
+
+      facts_to_load = [loaded_fact_os_name]
+
+      allow(internal_fact_loader_double).to receive(:core_facts).and_return(facts_to_load)
+      allow(external_fact_loader_double).to receive(:custom_facts).and_return([])
+      allow(external_fact_loader_double).to receive(:external_facts).and_return([])
+
+      loaded_facts = Facter::FactLoader.instance.load(options)
+      expect(loaded_facts.size).to eq(0)
+    end
+
+    it 'does not blocks external facts' do
+      options = { blocked_facts: ['custom_fact'] }
+
+      facts_to_load = [loaded_fact_custom_fact]
+
+      allow(internal_fact_loader_double).to receive(:core_facts).and_return([])
+      allow(external_fact_loader_double).to receive(:custom_facts).and_return(facts_to_load)
+      allow(external_fact_loader_double).to receive(:external_facts).and_return([])
+
+      loaded_facts = Facter::FactLoader.instance.load(options)
+      expect(loaded_facts).to eq(facts_to_load)
+    end
   end
 end
