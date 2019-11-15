@@ -28,7 +28,6 @@ Gem::Specification.new do |spec|
   spec.files = `git ls-files`.split("\n").select { |file_name| file_name.match('^((?!spec).)*$') }
 
   spec.bindir = 'bin'
-  spec.extensions << 'ext/extconf.rb'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 

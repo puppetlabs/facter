@@ -14,7 +14,7 @@ module Facter
       private
 
       def vmware?
-        Resolvers::CpuidSource.resolve(:vendor) == 'VMwareVMware' ||
+        Resolvers::Virtualization.resolve(:virtual) == 'vmware' ||
           Resolvers::DMIBios.resolve(:manufacturer) == 'VMware, Inc.'
       end
     end
