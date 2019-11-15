@@ -12,12 +12,12 @@ module Facter
       @internal_facts = []
       @external_facts = []
       @facts = []
-
-      @internal_loader = InternalFactLoader.new
-      @external_fact_loader = ExternalFactLoader.new
     end
 
     def load(options)
+      @internal_loader ||= InternalFactLoader.new
+      @external_fact_loader ||= ExternalFactLoader.new(options)
+
       load_internal_facts(options)
       load_external_facts(options)
 

@@ -14,9 +14,6 @@ module Facter
     end
 
     def external_facts(custom_facts)
-      LegacyFacter.search("#{ROOT_DIR}/custom_facts")
-      LegacyFacter.search_external(["#{ROOT_DIR}/external_facts"])
-
       resolved_custom_facts = []
 
       custom_facts.each do |custom_fact|
