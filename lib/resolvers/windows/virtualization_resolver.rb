@@ -23,14 +23,14 @@ module Facter
 
         def read_fact_from_computer_system(fact_name)
           win = Win32Ole.new
-          comp = win.return_first('SELECT Manufacturer,Model FROM Win32_ComputerSystem')
+          comp = win.exec_query('SELECT Manufacturer,Model,OEMStringArray FROM Win32_ComputerSystem')
           unless comp
-            @log.debug 'WMI query returned no results for Win32_ComputerSystem with values Manufacturer and Model.'
+            @log.debug 'WMI query returned no results for Win32_ComputerSystem with values'\
+            ' Manufacturer, Model and OEMStringArray.'
             return
           end
-          hypervisor = determine_hypervisor_by_model(comp) || determine_hypervisor_by_manufacturer(comp)
-          build_fact_list(hypervisor)
 
+          build_fact_list(comp)
           @fact_list[fact_name]
         end
 
@@ -53,7 +53,13 @@ module Facter
           end
         end
 
-        def build_fact_list(hypervisor)
+        def build_fact_list(comp)
+          @fact_list[:oem_strings] = []
+          @fact_list[:oem_strings] += comp.to_enum.map(&:OEMStringArray).flatten
+
+          comp = comp.to_enum.first
+          hypervisor = determine_hypervisor_by_model(comp) || determine_hypervisor_by_manufacturer(comp)
+
           @fact_list[:virtual] = hypervisor
           @fact_list[:is_virtual] = (!hypervisor.include?('physical')).to_s
         end
