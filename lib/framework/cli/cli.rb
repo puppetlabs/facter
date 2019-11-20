@@ -14,6 +14,7 @@ module Facter
 
     class_option :custom_dir,
                  type: :string,
+                 repeatable: true,
                  desc: 'A directory to use for custom facts.'
 
     class_option :debug,
@@ -23,6 +24,7 @@ module Facter
 
     class_option :external_dir,
                  type: :string,
+                 repeatable: true,
                  desc: 'A directory to use for external facts.'
 
     class_option :help,
