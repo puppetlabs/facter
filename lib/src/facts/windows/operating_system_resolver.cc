@@ -59,21 +59,23 @@ namespace facter { namespace facts { namespace windows {
         // includes native facter), system32 points to 32-bit executables; Windows invisibly redirects it. It also
         // provides a link at %SYSTEMROOT%\sysnative for the 64-bit versions. Return the system path where OS-native
         // executables can be found.
-        TCHAR szPath[MAX_PATH];
-        if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_WINDOWS, NULL, 0, szPath))) {
-            LOG_DEBUG("error finding SYSTEMROOT: {1}", leatherman::windows::system_error());
-        }
-
         BOOL isWow = FALSE;
-
         if (!IsWow64Process(GetCurrentProcess(), &isWow)) {
             LOG_DEBUG("Could not determine if we are running in WOW64: {1}", leatherman::windows::system_error());
         }
 
         if (isWow) {
+            TCHAR szPath[MAX_PATH];
+            if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_WINDOWS, NULL, 0, szPath))) {
+                LOG_DEBUG("error finding SYSTEMROOT: {1}", leatherman::windows::system_error());
+            }
             return ((path(szPath) / "sysnative").string());
         } else {
-            return ((path(szPath) / "system32").string());
+            TCHAR szWPath[MAX_PATH];
+            if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, 0, szWPath))) {
+                LOG_DEBUG("error finding Windows System folder: {1}", leatherman::windows::system_error());
+            }
+            return (path(szWPath).string());
         }
     }
 
