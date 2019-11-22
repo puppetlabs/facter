@@ -116,7 +116,8 @@ namespace facter { namespace facts { namespace linux {
                 point.size = (static_cast<uint64_t>(stats.f_frsize)
                               * static_cast<uint64_t>(stats.f_blocks));
                 point.available = (static_cast<uint64_t>(stats.f_frsize)
-                                   * static_cast<uint64_t>(stats.f_bfree));
+                                   * static_cast<uint64_t>(stats.f_bavail));
+                point.free = (static_cast<uint64_t>(stats.f_frsize) * static_cast<uint64_t>(stats.f_bfree));
             }
 
             auto iterator = mountpoints_map.find(point.name);

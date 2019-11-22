@@ -40,7 +40,8 @@ namespace facter { namespace facts { namespace resolvers {
              */
             mountpoint() :
                 size(0),
-                available(0)
+                available(0),
+                free(0)
             {
             }
 
@@ -68,6 +69,11 @@ namespace facter { namespace facts { namespace resolvers {
              * Stores the available size of the mountpoint.
              */
             uint64_t available;
+
+            /**
+             * Stores the free size of the mountpoint.
+             */
+            uint64_t free;
 
             /**
              * Stores the mountpoint options.
