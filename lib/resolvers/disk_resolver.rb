@@ -31,6 +31,7 @@ module Facter
 
             result = File.read(file_path).strip
             @fact_list[fact_name] = fact_name.to_s =~ /size/ ? result.to_i * 1024 : result
+            @fact_list[fact_name]
           end
 
           def compose_file_path(fact_name)

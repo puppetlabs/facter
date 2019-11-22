@@ -6,6 +6,7 @@ ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DI
 
 ENV['RACK_ENV'] = 'test'
 
+require 'bundler/setup'
 require 'coveralls'
 Coveralls.wear!
 
