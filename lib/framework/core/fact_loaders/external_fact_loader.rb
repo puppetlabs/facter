@@ -24,7 +24,7 @@ module Facter
 
     def directories_to_search(options)
       LegacyFacter.search(*options[:custom_dir]) if options[:custom_dir] && !options[:no_custom_facts]
-      LegacyFacter.search_external(options[:external_dir]) if options[:external_dir] && !options[:no_external_facts]
+      LegacyFacter.search_external(options[:external_dir]) if options[:external_dir] && options[:external_facts]
     end
 
     def load_custom_facts

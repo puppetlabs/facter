@@ -61,7 +61,7 @@ describe 'FactLoader' do
     end
 
     it 'does not blocks external facts' do
-      options = { blocked_facts: ['custom_fact'] }
+      options = { custom_facts: true, blocked_facts: ['custom_fact'] }
 
       facts_to_load = [loaded_fact_custom_fact]
 
