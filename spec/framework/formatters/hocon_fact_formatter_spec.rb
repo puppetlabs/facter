@@ -46,4 +46,14 @@ describe 'HoconFactFormatter' do
 
     expect(formatted_output).to eq(nil)
   end
+
+  it 'returns empty string when the fact value is nil' do
+    resolved_fact1 =
+      double(Facter::ResolvedFact, name: 'my_external_fact',
+                                   value: nil, user_query: 'my_external_fact', filter_tokens: [])
+    resolved_fact_list = [resolved_fact1]
+
+    formatted_output = Facter::HoconFactFormatter.new.format(resolved_fact_list)
+    expect(formatted_output).to eq('')
+  end
 end

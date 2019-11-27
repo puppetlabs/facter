@@ -52,7 +52,7 @@ module Facter
       fact_collection = Facter::Utils.sort_hash_by_key(fact_collection)
       fact_value = fact_collection.dig(*user_query.split('.'))
 
-      pretty_json = hash_to_hocon(fact_value)
+      pretty_json = fact_value ? hash_to_hocon(fact_value) : ''
 
       @log.debug('Remove quotes from value if it is a simple string')
       pretty_json.gsub(/^"(.*)\"/, '\1')
