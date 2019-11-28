@@ -44,10 +44,11 @@ module Facter
     def enhance_options(options, user_query)
       options_augmenter = OptionsAugmenter.new(options)
 
-      options_augmenter.augment_with_query_options!(user_query)
       options_augmenter.augment_with_facts_options!
       options_augmenter.augment_with_global_options!
       options_augmenter.augment_with_cli_options!
+      options_augmenter.augment_with_query_options!(user_query)
+      options_augmenter.augment_with_defaults!
 
       options_augmenter.options
     end

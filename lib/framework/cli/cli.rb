@@ -60,12 +60,10 @@ module Facter
 
     class_option :custom_facts,
                  type: :boolean,
-                 default: true,
                  desc: 'Disable custom facts.'
 
     class_option :external_facts,
                  type: :boolean,
-                 default: true,
                  desc: 'Disable external facts.'
 
     class_option :ruby,

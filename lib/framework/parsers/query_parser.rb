@@ -31,15 +31,10 @@ module Facter
       query_list.each do |query|
         @log.debug "Query is #{query}"
         found_facts = search_for_facts(query, loaded_fact)
-        found_facts = create_search_fact_for_custom_fact(query) if found_facts.empty?
         matched_facts << found_facts
       end
 
       matched_facts.flatten(1)
-    end
-
-    def self.create_search_fact_for_custom_fact(query)
-      [SearchedFact.new(query, nil, [], query, :custom)]
     end
 
     def self.search_for_facts(query, loaded_fact_hash)

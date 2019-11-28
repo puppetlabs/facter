@@ -5,7 +5,8 @@ module Facter
     include Facter::CliOptions
     include Facter::GlobalOptions
     include Facter::FactsOptions
-    include Facter::QueryOptions
+    include Facter::HelperOptions
+    include Facter::DefaultOptions
 
     attr_reader :options
 

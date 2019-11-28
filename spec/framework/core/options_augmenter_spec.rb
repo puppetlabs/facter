@@ -94,8 +94,8 @@ describe 'OptionsAugmenter' do
         expect(augmented_options[:custom_facts]).to eq(false)
       end
 
-      it 'sets no-ruby to true' do
-        expect(augmented_options[:no_ruby]).to eq(true)
+      it 'sets ruby to false' do
+        expect(augmented_options[:ruby]).to eq(false)
       end
     end
 
@@ -125,8 +125,8 @@ describe 'OptionsAugmenter' do
         expect(augmented_options[:custom_facts]).to eq(true)
       end
 
-      it 'sets no-ruby to false' do
-        expect(augmented_options[:no_ruby]).to eq(false)
+      it 'sets ruby to true' do
+        expect(augmented_options[:ruby]).to eq(true)
       end
     end
   end
