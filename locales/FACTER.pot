@@ -234,6 +234,13 @@ msgstr ""
 msgid "{1} not found at configured location {2}, using PATH instead"
 msgstr ""
 
+#. warning
+#: lib/inc/internal/util/agent.hpp
+msgid ""
+"{1} not found at configured location {2}, using PATH instead, parameter "
+"expand is {3}"
+msgstr ""
+
 #: lib/inc/internal/util/aix/odm.hpp
 msgid "failed to retrieve ODM error message"
 msgstr ""
