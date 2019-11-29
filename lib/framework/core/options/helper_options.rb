@@ -7,7 +7,7 @@ module Facter
       @options[:custom_facts] = false if @options[:ruby] == false
 
       # convert array or string to array
-      @options[:external_dir] = [*@options[:external_dir]]
+      @options[:external_dir] = [*@options[:external_dir]] unless @options[:external_dir].nil?
     end
   end
 end
