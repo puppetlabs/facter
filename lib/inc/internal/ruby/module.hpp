@@ -138,7 +138,7 @@ namespace facter { namespace ruby {
 
         // Helper functions
         static module* from_self(leatherman::ruby::VALUE self);
-        static leatherman::ruby::VALUE execute_command(std::string const& command, leatherman::ruby::VALUE failure_default, bool raise, uint32_t timeout = 0);
+        static leatherman::ruby::VALUE execute_command(std::string const& command, leatherman::ruby::VALUE failure_default, bool raise, uint32_t timeout = 0, bool expand = true);
 
         void initialize_search_paths(std::vector<std::string> const& paths);
         leatherman::ruby::VALUE load_fact(leatherman::ruby::VALUE value);
