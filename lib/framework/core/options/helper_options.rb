@@ -12,7 +12,9 @@ module Facter
 
     def array_or_string_to_array(option_external_dir)
       external_dirs = [] << option_external_dir
-      external_dirs.flatten!
+      external_dirs = external_dirs.flatten
+
+      external_dirs
     end
   end
 end
