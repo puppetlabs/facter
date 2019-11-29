@@ -918,10 +918,10 @@ namespace facter { namespace ruby {
     VALUE module::execute_command(std::string const& command, VALUE failure_default, bool raise, uint32_t timeout, bool expand)
     {
         auto const& ruby = api::instance();
-        
+
         // Expand the command only if expand is true,
         auto expanded = expand_command(command, leatherman::util::environment::search_paths(), expand);
-        
+
         if (!expanded.empty()) {
             try {
                 auto exec = execute(
