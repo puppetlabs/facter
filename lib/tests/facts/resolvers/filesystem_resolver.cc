@@ -14,7 +14,7 @@ using namespace facter::testing;
 
 struct test_filesystem_resolver : filesystem_resolver
 {
-    void add_mountpoint(string name, string device, string filesystem, uint64_t size, uint64_t available, reserved, vector<string> options)
+    void add_mountpoint(string name, string device, string filesystem, uint64_t size, uint64_t available, uint64_t reserved, vector<string> options)
     {
         mountpoint mp;
         mp.name = move(name);
