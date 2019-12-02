@@ -31,8 +31,8 @@ EOM
       step "Agent #{agent}: retrieve output using the --yaml option" do
         on(agent, facter("--custom-dir '#{custom_dir}' --yaml structured_fact")) do
           begin
-            expected = {"structured_fact" => {"foo" => {"nested" => "value1"}, "bar" => "value2", "baz" => "value3" }}.to_yaml.gsub("---\n", '')
-            assert_equal(expected, stdout, "YAML output does not match expected output")
+            expected = {"structured_fact" => {"foo" => {"nested" => "value1"}, "bar" => "value2", "baz" => "value3" }}
+            assert_equal(expected, YAML.load(stdout), "YAML output does not match expected output")
           rescue
             fail_test "Couldn't parse output as YAML"
           end
