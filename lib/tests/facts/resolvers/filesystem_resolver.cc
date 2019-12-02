@@ -14,7 +14,7 @@ using namespace facter::testing;
 
 struct test_filesystem_resolver : filesystem_resolver
 {
-    void add_mountpoint(string name, string device, string filesystem, uint64_t size, uint64_t available, vector<string> options)
+    void add_mountpoint(string name, string device, string filesystem, uint64_t size, uint64_t available, reserved, vector<string> options)
     {
         mountpoint mp;
         mp.name = move(name);
@@ -22,6 +22,7 @@ struct test_filesystem_resolver : filesystem_resolver
         mp.filesystem = move(filesystem);
         mp.size = size;
         mp.available = available;
+        mp.free = available + reserved;
         mp.options = move(options);
         mountpoints.emplace_back(move(mp));
     }
@@ -75,7 +76,7 @@ SCENARIO("using the file system resolver") {
         const unsigned int count = 5;
         for (unsigned int i = 0; i < count; ++i) {
             string num = to_string(i);
-            resolver->add_mountpoint("mount" + num, "device" + num, "filesystem" + num, 12345, 1000, {"option1" + num, "option2" + num, "option3" + num});
+            resolver->add_mountpoint("mount" + num, "device" + num, "filesystem" + num, 12345, 1000, 0, {"option1" + num, "option2" + num, "option3" + num});
         }
         THEN("a structured fact is added") {
             REQUIRE(facts.size() == 1u);
