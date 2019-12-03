@@ -32,6 +32,10 @@ module Facter
                  type: :boolean,
                  desc: 'Print this help message.'
 
+    class_option :hocon,
+                 type: :boolean,
+                 desc: 'Output in Hocon format.'
+
     class_option :json,
                  aliases: :j,
                  type: :boolean,

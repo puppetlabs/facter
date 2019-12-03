@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'HoconFactFormatter' do
-  it 'formats to hocon when no user query' do
+describe 'LegacyFactFormatter' do
+  it 'formats to legacy when no user query' do
     resolved_fact1 =
       double(Facter::ResolvedFact, name: 'os.name', value: 'Darwin', user_query: '', filter_tokens: [])
     resolved_fact2 =
@@ -10,39 +10,39 @@ describe 'HoconFactFormatter' do
       double(Facter::ResolvedFact, name: 'os.architecture', value: 'x86_64', user_query: '', filter_tokens: [])
     resolved_fact_list = [resolved_fact1, resolved_fact2, resolved_fact3]
 
-    formatted_output = Facter::HoconFactFormatter.new.format(resolved_fact_list)
+    formatted_output = Facter::LegacyFactFormatter.new.format(resolved_fact_list)
 
-    expected_output = "os={\n  \s\sarchitecture=\"x86_64\"\n  \s\sfamily=Darwin\n  \s\sname=Darwin\n}\n"
+    expected_output = "os => {\n  architecture => \"x86_64\",\n  family => \"Darwin\",\n  name => \"Darwin\"\n}"
 
     expect(formatted_output).to eq(expected_output)
   end
 
-  it 'formats to hocon for a single user query' do
+  it 'formats to legacy for a single user query' do
     resolved_fact =
       double(Facter::ResolvedFact, name: 'os.name', value: 'Darwin', user_query: 'os.name', filter_tokens: [])
     resolved_fact_list = [resolved_fact]
-    formatted_output = Facter::HoconFactFormatter.new.format(resolved_fact_list)
+    formatted_output = Facter::LegacyFactFormatter.new.format(resolved_fact_list)
 
     expected_output = 'Darwin'
 
     expect(formatted_output).to eq(expected_output)
   end
 
-  it 'formats to hocon for multiple user queries' do
+  it 'formats to legacy for multiple user queries' do
     resolved_fact1 =
       double(Facter::ResolvedFact, name: 'os.name', value: 'Darwin', user_query: 'os.name', filter_tokens: [])
     resolved_fact2 =
       double(Facter::ResolvedFact, name: 'os.family', value: 'Darwin', user_query: 'os.family', filter_tokens: [])
     resolved_fact_list = [resolved_fact1, resolved_fact2]
-    formatted_output = Facter::HoconFactFormatter.new.format(resolved_fact_list)
+    formatted_output = Facter::LegacyFactFormatter.new.format(resolved_fact_list)
 
-    expected_output = "\"os.family\"=Darwin\n\"os.name\"=Darwin\n"
+    expected_output = "os.family => Darwin\nos.name => Darwin"
 
     expect(formatted_output).to eq(expected_output)
   end
 
-  it 'formats to hocon for empty resolved fact array' do
-    formatted_output = Facter::HoconFactFormatter.new.format([])
+  it 'formats to legacy for empty resolved fact array' do
+    formatted_output = Facter::LegacyFactFormatter.new.format([])
 
     expect(formatted_output).to eq(nil)
   end
@@ -53,7 +53,7 @@ describe 'HoconFactFormatter' do
                                    value: nil, user_query: 'my_external_fact', filter_tokens: [])
     resolved_fact_list = [resolved_fact1]
 
-    formatted_output = Facter::HoconFactFormatter.new.format(resolved_fact_list)
+    formatted_output = Facter::LegacyFactFormatter.new.format(resolved_fact_list)
     expect(formatted_output).to eq('')
   end
 end

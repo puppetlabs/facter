@@ -3,10 +3,11 @@
 module Facter
   class FormatterFactory
     def self.build(options)
-      return Facter::JsonFactFormatter.new if options[:json]
-      return Facter::YamlFactFormatter.new if options[:yaml]
+      return JsonFactFormatter.new if options[:json]
+      return YamlFactFormatter.new if options[:yaml]
+      return HoconFactFormatter.new if options[:hocon]
 
-      Facter::HoconFactFormatter.new
+      LegacyFactFormatter.new
     end
   end
 end

@@ -4,6 +4,7 @@ require 'open3'
 require 'json'
 require 'yaml'
 require 'hocon'
+require 'hocon/config_value_factory'
 
 def load_dir(*dirs)
   Dir.glob(File.join(ROOT_DIR, dirs, '*.rb'), &method(:require))
@@ -35,6 +36,7 @@ load_lib_dirs('models')
 load_lib_dirs('framework', 'core', 'fact_loaders')
 load_lib_dirs('framework', 'core', 'fact', 'internal')
 load_lib_dirs('framework', 'core', 'fact', 'external')
+load_lib_dirs('framework', 'formatters')
 
 os = ENV['RACK_ENV'] == 'test' ? '' : CurrentOs.instance.identifier
 
@@ -45,10 +47,6 @@ load_lib_dirs('resolvers', os.to_s, '**') if os.to_s =~ /win|aix|solaris/
 
 require "#{ROOT_DIR}/lib/custom_facts/core/legacy_facter"
 require "#{ROOT_DIR}/lib/framework/utils/utils"
-require "#{ROOT_DIR}/lib/framework/formatters/formatter_factory"
-require "#{ROOT_DIR}/lib/framework/formatters/hocon_fact_formatter"
-require "#{ROOT_DIR}/lib/framework/formatters/json_fact_formatter"
-require "#{ROOT_DIR}/lib/framework/formatters/yaml_fact_formatter"
 
 require "#{ROOT_DIR}/lib/framework/core/fact_augmenter"
 require "#{ROOT_DIR}/lib/framework/parsers/query_parser"
