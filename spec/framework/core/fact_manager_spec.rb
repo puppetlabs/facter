@@ -44,7 +44,6 @@ describe 'FactManager' do
     it 'resolves all core facts' do
       ubuntu_os_name = double(Facter::Ubuntu::OsName)
       user_query = []
-      options = {}
 
       loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.name', klass: ubuntu_os_name, type: :core)
       loaded_facts = [loaded_fact_os_name]
@@ -68,7 +67,7 @@ describe 'FactManager' do
         .with([searched_fact])
         .and_return([resolved_fact])
 
-      resolved_facts = Facter::FactManager.instance.resolve_core(options, user_query)
+      resolved_facts = Facter::FactManager.instance.resolve_core(user_query)
       expect(resolved_facts).to eq([resolved_fact])
     end
   end

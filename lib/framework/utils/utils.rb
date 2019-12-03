@@ -11,5 +11,9 @@ module Facter
         seed
       end
     end
+
+    def self.deep_copy(obj)
+      Marshal.load(Marshal.dump(obj))
+    end
   end
 end

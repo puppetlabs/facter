@@ -26,10 +26,7 @@ module Facter
       resolved_facts
     end
 
-    def resolve_core(options = {}, user_query = [])
-      options = enhance_options(options, user_query)
-
-      @fact_loader.load(options)
+    def resolve_core(user_query = [])
       loaded_facts_hash = @fact_loader.internal_facts
 
       searched_facts = QueryParser.parse(user_query, loaded_facts_hash)

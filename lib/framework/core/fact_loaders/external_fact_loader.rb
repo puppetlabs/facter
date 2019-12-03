@@ -19,7 +19,7 @@ module Facter
     private
 
     def all_facts
-      @facts = @custom_facts.concat(@external_facts)
+      @facts = Utils.deep_copy(@custom_facts).concat(@external_facts)
     end
 
     def directories_to_search(options)

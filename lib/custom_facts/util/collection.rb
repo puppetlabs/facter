@@ -91,22 +91,22 @@ module LegacyFacter
 
       # Build a hash of external facts
       def external_facts
-        return unless @external_facts.nil?
+        return @external_facts unless @external_facts.nil?
 
-        facts_before_load = @facts.clone
+        facts_before_load = Facter::Utils.deep_copy(@facts)
         load_external_facts
 
-        @external_facts = @facts.dup.delete_if { |k, _| facts_before_load.key?(k) }
+        @external_facts = Facter::Utils.deep_copy(@facts).delete_if { |k, _| facts_before_load.key?(k) }
       end
 
       # Builds a hash of custom facts
       def custom_facts
-        return unless @custom_facts.nil?
+        return @custom_facts unless @custom_facts.nil?
 
-        facts_before_load = @facts.clone
+        facts_before_load = Facter::Utils.deep_copy(@facts)
         internal_loader.load_all
 
-        @custom_facts = @facts.dup.delete_if { |k, _| facts_before_load.key?(k) }
+        @custom_facts = Facter::Utils.deep_copy(@facts).delete_if { |k, _| facts_before_load.key?(k) }
       end
 
       def load(name)
