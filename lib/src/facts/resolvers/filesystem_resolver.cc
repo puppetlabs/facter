@@ -35,7 +35,8 @@ namespace facter { namespace facts { namespace resolvers {
                     continue;
                 }
 
-                uint64_t used = mountpoint.size - mountpoint.available;
+                uint64_t used = mountpoint.size - mountpoint.free;
+                uint64_t total = used + mountpoint.available;
 
                 auto value = make_value<map_value>();
 
@@ -51,7 +52,7 @@ namespace facter { namespace facts { namespace resolvers {
                 value->add("available", make_value<string_value>(si_string(mountpoint.available)));
                 value->add("used_bytes", make_value<integer_value>(used));
                 value->add("used", make_value<string_value>(si_string(used)));
-                value->add("capacity", make_value<string_value>(percentage(used, mountpoint.size)));
+                value->add("capacity", make_value<string_value>(percentage(used, total)));
 
                 if (!mountpoint.options.empty()) {
                     auto options = make_value<array_value>();
