@@ -74,15 +74,18 @@ namespace facter { namespace facts { namespace linux {
         bool cpu0_valid = false;
 
         lth_file::each_subdirectory(root + "/sys/devices/system/cpu", [&](string const& cpu_directory) {
-            bool at_cpu0 = data.logical_count == 0;
-            data.logical_count++;
-            string id = lth_file::read((path(cpu_directory) / "/topology/physical_package_id").string());
-            boost::trim(id);
-            if (id.empty() || (is_valid_id(id) && cpus.emplace(move(id)).second)) {
-                // Haven't seen this processor before
-                ++data.physical_count;
-                if (at_cpu0) {
-                    cpu0_valid = true;
+            string physical_id_path = (path(cpu_directory) / "/topology/physical_package_id").string();
+            if (lth_file::file_readable(physical_id_path)) {
+                bool at_cpu0 = data.logical_count == 0;
+                data.logical_count++;
+                string id = lth_file::read(physical_id_path);
+                boost::trim(id);
+                if ((is_valid_id(id) && cpus.emplace(move(id)).second)) {
+                    // Haven't seen this processor before
+                    ++data.physical_count;
+                    if (at_cpu0) {
+                        cpu0_valid = true;
+                    }
                 }
             }
 
