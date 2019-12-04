@@ -30,8 +30,8 @@ module Facter
     def load_custom_facts
       custom_facts_to_load = LegacyFacter.collection.custom_facts
 
-      custom_facts_to_load&.each do |k, _v|
-        loaded_fact = LoadedFact.new(k.to_s, nil, :custom)
+      custom_facts_to_load&.each do |custom_fact_name|
+        loaded_fact = LoadedFact.new(custom_fact_name.to_s, nil, :custom)
         @custom_facts << loaded_fact
       end
     end
@@ -39,8 +39,8 @@ module Facter
     def load_external_facts
       external_facts_to_load = LegacyFacter.collection.external_facts
 
-      external_facts_to_load&.each do |k, _v|
-        loaded_fact = LoadedFact.new(k.to_s, nil, :external)
+      external_facts_to_load&.each do |external_fact_name|
+        loaded_fact = LoadedFact.new(external_fact_name.to_s, nil, :external)
         @external_facts << loaded_fact
       end
     end

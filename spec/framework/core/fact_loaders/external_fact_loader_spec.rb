@@ -7,11 +7,11 @@ describe 'ExternalFactLoader' do
     before do
       allow(LegacyFacter).to receive(:collection).and_return(collection)
       allow(collection).to receive(:external_facts).and_return({})
-      allow(collection).to receive(:custom_facts).and_return({})
+      allow(collection).to receive(:custom_facts).and_return([])
     end
 
     it 'loads one custom fact' do
-      allow(collection).to receive(:custom_facts).and_return('custom_fact' => nil)
+      allow(collection).to receive(:custom_facts).and_return(['custom_fact'])
       external_fact_loader = Facter::ExternalFactLoader.new({})
 
       expect(external_fact_loader.facts.size).to eq(1)
@@ -19,7 +19,7 @@ describe 'ExternalFactLoader' do
     end
 
     it 'loads no custom facts' do
-      allow(collection).to receive(:custom_facts).and_return({})
+      allow(collection).to receive(:custom_facts).and_return([])
       external_fact_loader = Facter::ExternalFactLoader.new({})
 
       expect(external_fact_loader.facts).to eq([])
@@ -27,8 +27,8 @@ describe 'ExternalFactLoader' do
 
     context 'options' do
       before do
-        allow(collection).to receive(:custom_facts).and_return({})
-        allow(collection).to receive(:external_facts).and_return({})
+        allow(collection).to receive(:custom_facts).and_return([])
+        allow(collection).to receive(:external_facts).and_return([])
       end
 
       context 'custom fact options' do
