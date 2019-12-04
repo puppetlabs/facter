@@ -172,7 +172,7 @@ describe 'OptionsAugmenter' do
     end
   end
 
-  describe '#augment_with_query_options' do
+  describe '#augment_with_helper_options' do
     it 'sets user_query' do
       options_augmenter.augment_with_query_options!(['os'])
       augmented_options = options_augmenter.options
@@ -185,6 +185,24 @@ describe 'OptionsAugmenter' do
       augmented_options = options_augmenter.options
 
       expect(augmented_options[:user_query]).to be_nil
+    end
+
+    context 'ruby facts is false' do
+      let(:options_augmenter) { Facter::OptionsAugmenter.new(ruby: false) }
+
+      before do
+        options_augmenter.augment_with_query_options!([])
+      end
+
+      let(:augmented_options) { options_augmenter.options }
+
+      it 'blocks ruby facts' do
+        expect(augmented_options[:blocked_facts]).to eq(['ruby'])
+      end
+
+      it 'sets custom_facts to false' do
+        expect(augmented_options[:custom_facts]).to be_falsey
+      end
     end
   end
 end
