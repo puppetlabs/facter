@@ -72,7 +72,7 @@ describe LegacyFacter::Util::Loader do
     let(:loader) { LegacyFacter::Util::Loader.new }
 
     it 'should include the facter subdirectory of all paths in ruby LOAD_PATH' do
-      dirs = $LOAD_PATH.collect { |d| File.expand_path('custom_facts', d) }
+      dirs = $LOAD_PATH.collect { |d| File.expand_path('facter', d) }
       allow(loader).to receive(:valid_search_path?).and_return(true)
       allow(File).to receive(:directory?).and_return true
 
