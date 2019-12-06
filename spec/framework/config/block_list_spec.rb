@@ -8,7 +8,9 @@ describe 'BlockList' do
   describe '#blocked_facts' do
     it 'converts block to facts' do
       expect(File).to receive(:exist?).and_return(true)
-      expect(Hocon).to receive(:load).with('block_groups.conf').and_return('blocked_group' => %w[fact1 fact2])
+      expect(Hocon).to receive(:load)
+        .with(File.join(ROOT_DIR, 'block_groups.conf'))
+        .and_return('blocked_group' => %w[fact1 fact2])
 
       config_reader = double(Facter::ConfigReader)
       expect(Facter::ConfigReader).to receive(:new).and_return(config_reader)
