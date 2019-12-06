@@ -7,13 +7,13 @@ module Facter
     attr_reader :block_groups
 
     def initialize(block_list_path = nil)
-      @block_groups_file_path = block_list_path || 'block_groups.conf'
+      @block_groups_file_path = block_list_path || File.join(ROOT_DIR, 'block_groups.conf')
+      load_block_groups
     end
 
     # Breakes down blocked groups in blocked facts
     def blocked_facts
       fact_list = []
-      load_block_groups
 
       @block_list.each do |group_name|
         facts_for_block = @block_groups[group_name]
@@ -28,6 +28,7 @@ module Facter
 
     def load_block_groups
       @block_groups = File.exist?(@block_groups_file_path) ? Hocon.load(@block_groups_file_path) : {}
+      # TODO: Should receive config file path in constructor
       @block_list = ConfigReader.new.block_list || {}
     end
   end
