@@ -17,7 +17,7 @@ module Facter
         Timeout::Error,
       ]
 
-      METADATA_URL = "http://metadata/computeMetadata/v1beta1/?recursive=true&alt=json"
+      METADATA_URL = "http://metadata/computeMetadata/v1/?recursive=true&alt=json"
 
       def initialize(url = METADATA_URL)
         @url = url
@@ -45,7 +45,7 @@ module Facter
 
         begin
           Timeout.timeout(timeout) do
-            body = open(@url, :proxy => nil).read
+            body = open(@url, options={:proxy => nil, "Metadata-Flavor" => "Google"}).read
           end
         rescue *CONNECTION_ERRORS => e
           attempts = attempts + 1
