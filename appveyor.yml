@@ -37,4 +37,7 @@ build_script:
 test_script:
   - ps: |
       ctest -V 2>&1 | %{ if ($_ -is [System.Management.Automation.ErrorRecord]) { $_ | c++filt } else { $_ } }
-      mingw32-make install
+      mingw32-make 
+      if ($LastExitCode -ne 0) {
+            throw "Exec: $ErrorMessage"
+        }
