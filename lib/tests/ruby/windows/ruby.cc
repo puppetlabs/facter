@@ -46,7 +46,7 @@ SCENARIO("Run command with space in path") {
         environment::reload_search_paths();
         REQUIRE(load_custom_fact("command_with_space.rb", facts));
         THEN("the command should execute successfully") {
-            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar\"");
+            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) == "\"bar3453\"");
         }
     }
     environment::reload_search_paths();
