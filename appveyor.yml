@@ -35,5 +35,6 @@ build_script:
 
 test_script:
   - ps: |
-      ctest -V 2>&1 | %{ if ($_ -is [System.Management.Automation.ErrorRecord]) { $_ | c++filt } else { $_ } }
+      ctest -V 2>&1
+      echo $?
       mingw32-make 
