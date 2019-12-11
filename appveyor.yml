@@ -1,4 +1,3 @@
-version: 3.1.0.{build}
 clone_depth: 10
 environment:
   LEATHERMAN_VERSION: 1.9.1
@@ -36,7 +35,5 @@ build_script:
 
 test_script:
   - ps: |
-      ctest -V 2>&1 | %{ if ($LastExitCode -ne 0) {
-            throw "Exec: $ErrorMessage"
-        } }
+      ctest -V 2>&1 | %{ if ($_ -is [System.Management.Automation.ErrorRecord]) { $_ | c++filt } else { $_ } }
       mingw32-make 
