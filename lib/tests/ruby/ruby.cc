@@ -513,7 +513,7 @@ SCENARIO("custom facts written in Ruby") {
             auto output = capture.result();
             CAPTURE(output);
             REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) != "\"\"");
-            REQUIRE(re_search(output, boost::regex("bin/sh -c cd /opt/puppetlabs && ls")));
+            REQUIRE(re_search(output, boost::regex("cd /opt/puppetlabs && ls")));
         }
     }
     GIVEN("a fact that uses timeout") {
