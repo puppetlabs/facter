@@ -14,8 +14,7 @@ def load_lib_dirs(*dirs)
   load_dir(['lib', dirs])
 end
 
-require "#{ROOT_DIR}/lib/framework/logging/multilogger"
-require "#{ROOT_DIR}/lib/framework/logging/logger"
+load_lib_dirs('framework', 'logging')
 require "#{ROOT_DIR}/lib/resolvers/base_resolver"
 require "#{ROOT_DIR}/lib/framework/detector/current_os"
 

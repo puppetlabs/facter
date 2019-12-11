@@ -4,9 +4,9 @@ module Facter
   class Log
     def initialize
       file_logger = Logger.new(File.new("#{ROOT_DIR}/example.log", 'a'))
-      stdout_logger = Logger.new(STDOUT)
+      legacy_logger = LegacyLogger.new
 
-      @logger = MultiLogger.new([stdout_logger, file_logger])
+      @logger = MultiLogger.new([legacy_logger, file_logger])
       @logger.level = :info
     end
 
