@@ -4,12 +4,12 @@ module Facter
   class ExternalFactLoader
     attr_reader :custom_facts, :external_facts, :facts
 
-    def initialize(options)
+    def initialize
       @custom_facts = []
       @external_facts = []
       @facts = []
 
-      directories_to_search(options)
+      directories_to_search
       load_custom_facts
       load_external_facts
 
@@ -22,9 +22,9 @@ module Facter
       @facts = Utils.deep_copy(@custom_facts).concat(@external_facts)
     end
 
-    def directories_to_search(options)
-      LegacyFacter.search(*options[:custom_dir]) if options[:custom_dir] && options[:custom_facts]
-      LegacyFacter.search_external(options[:external_dir]) if options[:external_dir] && options[:external_facts]
+    def directories_to_search
+      LegacyFacter.search(*Options.custom_dir) if Options.custom_dir?
+      LegacyFacter.search_external(Options.external_dir) if Options.external_dir?
     end
 
     def load_custom_facts

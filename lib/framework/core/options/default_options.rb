@@ -10,16 +10,20 @@ module Facter
     private
 
     def cli_defaults
-      @options[:debug] = false if @options[:debug].nil?
-      @options[:trace] = false if @options[:trace].nil?
-      @options[:verbose] = false if @options[:verbose].nil?
-      @options[:log_level] = 'error' unless @options[:log_level]
+      @options[:debug] = false
+      @options[:trace] = false
+      @options[:verbose] = false
+      @options[:log_level] = :warn
+
+      @options[:show_legacy] = false
     end
 
     def global_defaults
-      @options[:custom_facts] = true if @options[:custom_facts].nil?
-      @options[:external_facts] = true if @options[:external_facts].nil?
-      @options[:ruby] = true if @options[:ruby].nil?
+      @options[:custom_facts] = true
+      @options[:custom_dir] = []
+      @options[:external_facts] = true
+      @options[:external_dir] = []
+      @options[:ruby] = true
     end
   end
 end

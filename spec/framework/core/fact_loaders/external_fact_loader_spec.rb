@@ -12,7 +12,7 @@ describe 'ExternalFactLoader' do
 
     it 'loads one custom fact' do
       allow(collection).to receive(:custom_facts).and_return(['custom_fact'])
-      external_fact_loader = Facter::ExternalFactLoader.new({})
+      external_fact_loader = Facter::ExternalFactLoader.new
 
       expect(external_fact_loader.facts.size).to eq(1)
       expect(external_fact_loader.facts.first.name).to eq('custom_fact')
@@ -20,7 +20,7 @@ describe 'ExternalFactLoader' do
 
     it 'loads no custom facts' do
       allow(collection).to receive(:custom_facts).and_return([])
-      external_fact_loader = Facter::ExternalFactLoader.new({})
+      external_fact_loader = Facter::ExternalFactLoader.new
 
       expect(external_fact_loader.facts).to eq([])
     end
@@ -32,54 +32,35 @@ describe 'ExternalFactLoader' do
       end
 
       context 'custom fact options' do
-        it 'received a custom dir' do
-          options = { custom_dir: ['custom_fact_dir'], custom_facts: true }
-          expect(LegacyFacter).to receive(:search).with('custom_fact_dir')
-          Facter::ExternalFactLoader.new(options)
-        end
-
-        it 'does not receive a custom dir' do
-          options = {}
-          expect(LegacyFacter).not_to receive(:search)
-          Facter::ExternalFactLoader.new(options)
-        end
-
         it 'blocks custom facts' do
-          options = { custom_dir: ['custom_fact_dir'], custom_facts: false }
+          expect(Facter::Options).to receive(:custom_dir?).and_return(false)
           expect(LegacyFacter).not_to receive(:search)
-          Facter::ExternalFactLoader.new(options)
+          Facter::ExternalFactLoader.new
         end
 
         it 'does not blocks custom facts' do
-          options = { custom_dir: ['custom_fact_dir'], custom_facts: true }
+          expect(Facter::Options).to receive(:custom_dir?).and_return(true)
+          expect(Facter::Options).to receive(:custom_dir).and_return(['custom_fact_dir'])
+
           expect(LegacyFacter).to receive(:search).with('custom_fact_dir')
-          Facter::ExternalFactLoader.new(options)
+          Facter::ExternalFactLoader.new
         end
       end
 
       context 'external fact options' do
-        it 'received an external dir' do
-          options = { external_dir: ['external_fact_dir'], external_facts: true }
-          expect(LegacyFacter).to receive(:search_external).with(['external_fact_dir'])
-          Facter::ExternalFactLoader.new(options)
-        end
-
-        it 'does not receive an external dir' do
-          options = {}
-          expect(LegacyFacter).not_to receive(:search_external)
-          Facter::ExternalFactLoader.new(options)
-        end
-
         it 'blocks external facts' do
-          options = { external_dir: ['external_fact_dir'], external_facts: false }
+          allow(Facter::Options).to receive(:external_dir?).and_return(false)
+
           expect(LegacyFacter).not_to receive(:search_external)
-          Facter::ExternalFactLoader.new(options)
+          Facter::ExternalFactLoader.new
         end
 
         it 'does not blocks external facts' do
-          options = { external_dir: ['external_fact_dir'], external_facts: true }
+          allow(Facter::Options).to receive(:external_dir?).and_return(true)
+          allow(Facter::Options).to receive(:external_dir).and_return(['external_fact_dir'])
+
           expect(LegacyFacter).to receive(:search_external).with(['external_fact_dir'])
-          Facter::ExternalFactLoader.new(options)
+          Facter::ExternalFactLoader.new
         end
       end
     end

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'singleton'
-
 module Facter
   class FactManager
     include Singleton
@@ -12,10 +11,9 @@ module Facter
       @fact_loader = FactLoader.instance
     end
 
-    def resolve_facts(options = {}, user_query = [])
-      options = enhance_options(options, user_query)
-
-      loaded_facts = @fact_loader.load(options)
+    def resolve_facts(cli_options = {}, user_query = [])
+      enhance_options(cli_options, user_query)
+      loaded_facts = @fact_loader.load(Options.get)
       searched_facts = QueryParser.parse(user_query, loaded_facts)
       internal_facts = @internal_fact_mgr.resolve_facts(searched_facts)
       external_facts = @external_fact_mgr.resolve_facts(searched_facts)
@@ -38,16 +36,12 @@ module Facter
 
     private
 
-    def enhance_options(options, user_query)
-      options_augmenter = OptionsAugmenter.new(options)
-
-      options_augmenter.augment_with_facts_options!
-      options_augmenter.augment_with_global_options!
-      options_augmenter.augment_with_cli_options!
-      options_augmenter.augment_with_query_options!(user_query)
-      options_augmenter.augment_with_defaults!
-
-      options_augmenter.options
+    def enhance_options(cli_options, user_query)
+      options = Options.instance
+      options.augment_with_defaults!
+      options.augment_with_config_file_options!(cli_options[:config])
+      options.augment_with_cli_options!(cli_options)
+      options.augment_with_helper_options!(user_query)
     end
 
     def override_core_facts(core_facts, custom_facts)

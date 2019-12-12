@@ -16,7 +16,7 @@ module Facter
 
     def load(options)
       @internal_loader ||= InternalFactLoader.new
-      @external_fact_loader ||= ExternalFactLoader.new(options)
+      @external_fact_loader ||= ExternalFactLoader.new
 
       load_internal_facts(options)
       load_external_facts(options)
@@ -28,6 +28,7 @@ module Facter
 
     def load_internal_facts(options)
       @log.debug('Loading internal facts')
+
       if options[:user_query] || options[:show_legacy]
         # if we have a user query, then we must search in core facts and legacy facts
         @log.debug('Loading all internal facts')
