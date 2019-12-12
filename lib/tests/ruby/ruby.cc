@@ -497,25 +497,6 @@ SCENARIO("custom facts written in Ruby") {
             REQUIRE(re_search(output, boost::regex("ERROR puppetlabs\\.facter - .* command timed out after 1 seconds")));
         }
     }
-    GIVEN("a fact resolution that uses Facter::Core::Execution#execute with expand value set to true") {
-        log_capture capture(level::debug);
-        REQUIRE(load_custom_fact("execute_expand_true.rb", facts));
-        THEN("first command should be expanded to absolute path") {
-            auto output = capture.result();
-            CAPTURE(output);
-            REQUIRE(re_search(output, boost::regex("cd /opt/puppetlabs && ls")));
-        }
-    }
-    GIVEN("a fact resolution that uses Facter::Core::Execution#execute with expand value set to false") {
-        log_capture capture(level::debug);
-        REQUIRE(load_custom_fact("execute_expand_false.rb", facts));
-        THEN("first command should not be expanded to absolute path") {
-            auto output = capture.result();
-            CAPTURE(output);
-            REQUIRE(ruby_value_to_string(facts.get<ruby_value>("foo")) != "\"\"");
-            REQUIRE(re_search(output, boost::regex("bin/sh -c cd /opt/puppetlabs && ls")));
-        }
-    }
     GIVEN("a fact that uses timeout") {
         log_capture capture(level::warning);
         REQUIRE(load_custom_fact("timeout.rb", facts));
