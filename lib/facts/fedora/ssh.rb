@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facter
-  module Sles
+  module Fedora
     class Ssh
       FACT_NAME = 'ssh'
 
