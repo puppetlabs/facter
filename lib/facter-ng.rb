@@ -3,7 +3,9 @@
 require 'pathname'
 
 ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
+
 require "#{ROOT_DIR}/lib/framework/core/file_loader"
+require "#{ROOT_DIR}/lib/framework/core/options/options_validator"
 
 module Facter
   def self.to_hash

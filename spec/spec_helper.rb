@@ -18,7 +18,8 @@ require_relative '../lib/resolvers/base_resolver'
 
 Dir[ROOT_DIR.join('spec/mocks/*.rb')].each { |file| require file }
 
-require "#{ROOT_DIR}/lib/framework/core/file_loader"
+require "#{ROOT_DIR}/lib/facter-ng"
+require "#{ROOT_DIR}/lib/framework/cli/cli"
 
 Dir.glob(File.join('./lib/facts', '/**/*/', '*.rb'), &method(:require))
 Dir.glob(File.join('./lib/resolvers', '/**/*/', '*.rb'), &method(:require))

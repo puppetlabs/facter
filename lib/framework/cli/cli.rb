@@ -3,6 +3,8 @@
 
 module Facter
   class Cli < Thor
+    check_unknown_options!
+
     class_option :color,
                  type: :boolean,
                  desc: 'Enable color output.'
@@ -119,6 +121,10 @@ module Facter
     map ['--list-block-groups'] => :list_block_groups
     def list_block_groups(*_args)
       puts Facter::BlockList.instance.block_groups.to_yaml.lines[1..-1].join
+    end
+
+    def self.exit_on_failure?
+      true
     end
 
     default_task :query
