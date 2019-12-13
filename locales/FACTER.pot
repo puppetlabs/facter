@@ -461,6 +461,7 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/bsd/networking_resolver.cc
+#: lib/src/facts/solaris/networking_resolver.cc
 msgid "got primary interface: \"{1}\""
 msgstr ""
 
@@ -1532,6 +1533,10 @@ msgstr ""
 
 #: lib/src/ruby/module.cc
 msgid "unexpected self value {1}"
+msgstr ""
+
+#: lib/src/ruby/module.cc
+msgid "Cause: {1}"
 msgstr ""
 
 #: lib/src/ruby/module.cc
