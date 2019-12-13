@@ -201,6 +201,42 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                 REQUIRE(result.speed == 0);
             }
         }
+
+        WHEN("/sys/devices/system/cpu contains cpu information but some cpus are offline") {
+            THEN("the processor facts are correctly resolved for online cpus") {
+                fixture.reset();
+
+                // here, speed is in KHz
+                vector<cpu_param> cpu_params({
+                    make_tuple("Model A", "0", "0", 10),
+                    // ensure that duplicate CPUs are not counted twice in the
+                    // physical count
+                    make_tuple("Model B", "1", "0", 15),
+                    make_tuple("Model C", "2", "1", 20),
+                    make_tuple("Model D", "3", "2", 35),
+                    make_tuple("Model E", "4", "3", 35)
+                });
+                vector<int> ids = setup_linux_processor_fixture(fixture, cpu_params);
+                fixture.write_cpuinfo();
+
+                // for this test, we want to ensure that Model D and Model E cpus are disabled, meaning the last 2 cpus will not have the topology folder
+                int number_cpu_to_disable = 2;
+                vector<cpu_param> disabled_cpu_params(cpu_params.end() - number_cpu_to_disable, cpu_params.end());
+
+                for (auto& cpu_param : disabled_cpu_params) {
+                    string logical_id = get<1>(cpu_param);
+                    // Remove the topology foder for offline cpus
+                    string topology_folder = root_dir + "/sys/devices/system/cpu"+ "/cpu"+logical_id + "/topology";
+                    fs::remove_all(topology_folder);
+                }
+
+                auto result = resolver.collect_cpu_data(root_dir);
+
+                // logical and physical count should count cpus without offline cpus
+                REQUIRE(result.logical_count == 3);
+                REQUIRE(result.physical_count == 2);
+            }
+        }
     }
     GIVEN("a power architecture") {
         WHEN("/sys/devices/system/cpu contains cpu information and /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq exists") {

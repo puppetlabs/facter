@@ -30,11 +30,9 @@ install:
   - bundle install --jobs 4 --retry 2 --gemfile=lib/Gemfile --quiet
 
 build_script:
-  - ps: |
-      cmake -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE="C:\tools\pl-build-tools\pl-build-toolchain.cmake" -DCMAKE_PREFIX_PATH="C:\tools\leatherman;C:\tools\cpp-hocon" -DCMAKE_INSTALL_PREFIX="C:\Program Files\FACTER" -DBOOST_STATIC=ON .
-      mingw32-make -j2
+  - ps: cmake -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE="C:\tools\pl-build-tools\pl-build-toolchain.cmake" -DCMAKE_PREFIX_PATH="C:\tools\leatherman;C:\tools\cpp-hocon" -DCMAKE_INSTALL_PREFIX="C:\Program Files\FACTER" -DBOOST_STATIC=ON .
+  - mingw32-make -j2
 
 test_script:
-  - ps: |
-      ctest -V 2>&1 | %{ if ($_ -is [System.Management.Automation.ErrorRecord]) { $_ | c++filt } else { $_ } }
-      mingw32-make install
+  - ps: ctest -V 2>&1 | %{ if ($_ -is [System.Management.Automation.ErrorRecord]) { $_ | c++filt } else { $_ } }
+  - ps: mingw32-make install
