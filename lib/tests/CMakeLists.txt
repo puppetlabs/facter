@@ -93,6 +93,7 @@ if (WIN32)
     set(LIBFACTER_TESTS_CATEGORY_SOURCES
         "facts/windows/collection.cc"
         "facts/windows/networking_resolver.cc"
+        "facts/windows/operating_system_resolver.cc"
         "facts/external/windows/execution_resolver.cc"
         "facts/external/windows/powershell_resolver.cc"
     )

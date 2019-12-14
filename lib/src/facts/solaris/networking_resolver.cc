@@ -146,18 +146,18 @@ namespace facter { namespace facts { namespace solaris {
 
     string networking_resolver::get_primary_interface() const
     {
-        string value;
-        each_line("netstat", { "-rn"}, [&value](string& line) {
+        string interface;
+        each_line("route", { "-n", "get",  "default" }, [&interface](string& line){
             boost::trim(line);
-            if (boost::starts_with(line, "default")) {
-                vector<string> fields;
-                boost::split(fields, line, boost::is_space(), boost::token_compress_on);
-                value = fields.size() < 6 ? "" : fields[5];
+            if (boost::starts_with(line, "interface: ")) {
+                interface = line.substr(11);
+                boost::trim(interface);
                 return false;
             }
             return true;
         });
-        return value;
+        LOG_DEBUG("got primary interface: \"{1}\"", interface);
+        return interface;
     }
 
     bool networking_resolver::is_link_address(const sockaddr* addr) const

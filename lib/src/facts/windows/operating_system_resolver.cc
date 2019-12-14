@@ -1,4 +1,5 @@
 #include <internal/facts/windows/operating_system_resolver.hpp>
+#include <leatherman/util/environment.hpp>
 #include <leatherman/windows/registry.hpp>
 #include <leatherman/windows/system_error.hpp>
 #include <leatherman/windows/wmi.hpp>
@@ -59,15 +60,16 @@ namespace facter { namespace facts { namespace windows {
         // includes native facter), system32 points to 32-bit executables; Windows invisibly redirects it. It also
         // provides a link at %SYSTEMROOT%\sysnative for the 64-bit versions. Return the system path where OS-native
         // executables can be found.
-        TCHAR szPath[MAX_PATH];
-        if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_WINDOWS, NULL, 0, szPath))) {
-            LOG_DEBUG("error finding SYSTEMROOT: {1}", leatherman::windows::system_error());
+        BOOL isWow = FALSE;
+        if (!IsWow64Process(GetCurrentProcess(), &isWow)) {
+            LOG_DEBUG("Could not determine if we are running in WOW64: {1}",
+                    leatherman::windows::system_error());
         }
 
-        BOOL isWow = FALSE;
-
-        if (!IsWow64Process(GetCurrentProcess(), &isWow)) {
-            LOG_DEBUG("Could not determine if we are running in WOW64: {1}", leatherman::windows::system_error());
+        string szPath;
+        if (!environment::get("SystemRoot", szPath)) {
+            LOG_DEBUG("error finding SYSTEMROOT: {1}",
+                    leatherman::windows::system_error());
         }
 
         if (isWow) {

@@ -920,8 +920,12 @@ namespace facter { namespace ruby {
         auto const& ruby = api::instance();
 
         // Expand the command only if expand is true,
-        auto expanded = expand_command(command, leatherman::util::environment::search_paths(), expand);
-
+        std::string expanded;
+        try{
+            expanded = expand_command(command, leatherman::util::environment::search_paths(), expand);
+        } catch (const std::invalid_argument &ex) {
+            ruby.rb_raise(*ruby.rb_eArgError, _("Cause: {1}",  ex.what()).c_str());
+        }
         if (!expanded.empty()) {
             try {
                 auto exec = execute(
