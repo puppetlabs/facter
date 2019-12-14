@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.14.6\n"
+"Project-Id-Version: FACTER 3.14.7\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -461,6 +461,7 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/bsd/networking_resolver.cc
+#: lib/src/facts/solaris/networking_resolver.cc
 msgid "got primary interface: \"{1}\""
 msgstr ""
 
@@ -1322,12 +1323,12 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/windows/operating_system_resolver.cc
-msgid "error finding SYSTEMROOT: {1}"
+msgid "Could not determine if we are running in WOW64: {1}"
 msgstr ""
 
 #. debug
 #: lib/src/facts/windows/operating_system_resolver.cc
-msgid "Could not determine if we are running in WOW64: {1}"
+msgid "error finding SYSTEMROOT: {1}"
 msgstr ""
 
 #. debug
@@ -1532,6 +1533,10 @@ msgstr ""
 
 #: lib/src/ruby/module.cc
 msgid "unexpected self value {1}"
+msgstr ""
+
+#: lib/src/ruby/module.cc
+msgid "Cause: {1}"
 msgstr ""
 
 #: lib/src/ruby/module.cc
