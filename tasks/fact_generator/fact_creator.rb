@@ -10,6 +10,7 @@ ROOT_DIR = Pathname.new(File.expand_path('../..', __dir__)) unless defined?(ROOT
 
 require "#{ROOT_DIR}/tasks/fact_generator/path"
 require "#{ROOT_DIR}/lib/framework/logging/multilogger"
+require "#{ROOT_DIR}/lib/framework/logging/legacy_logger"
 require "#{ROOT_DIR}/lib/framework/logging/logger"
 
 class FactCreator
