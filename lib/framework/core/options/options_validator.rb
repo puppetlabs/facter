@@ -31,7 +31,7 @@ module Facter
     end
 
     def self.write_error_and_exit(message)
-      log = Facter::Log.new
+      log = Facter::Log.new(self)
       log.error(message)
       Cli.start(['--help'])
       exit 1

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'rbconfig'
-require 'singleton'
 
 class CurrentOs
   include Singleton

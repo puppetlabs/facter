@@ -7,7 +7,7 @@ module Facter
         # :systems
         @semaphore = Mutex.new
         @fact_list ||= {}
-        @log = Facter::Log.new
+        @log = Facter::Log.new(self)
         class << self
           def resolve(fact_name)
             @semaphore.synchronize do

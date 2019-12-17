@@ -3,7 +3,7 @@
 module Facter
   module Resolvers
     class SolarisRelease < BaseResolver
-      @log = Facter::Log.new
+      @log = Facter::Log.new(self)
       @semaphore = Mutex.new
       @fact_list ||= {}
       @os_version_regex_patterns = ['Solaris \d+ \d+/\d+ s(\d+)[sx]?_u(\d+)wos_',

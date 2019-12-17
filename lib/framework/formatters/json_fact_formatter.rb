@@ -3,7 +3,7 @@
 module Facter
   class JsonFactFormatter
     def initialize
-      @log = Facter::Log.new
+      @log = Facter::Log.new(self)
     end
 
     def format(resolved_facts)

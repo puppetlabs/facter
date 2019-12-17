@@ -7,7 +7,7 @@ module Facter
     attr_reader :internal_facts, :external_facts, :facts
 
     def initialize
-      @log = Log.new
+      @log = Log.new(self)
 
       @internal_facts = []
       @external_facts = []

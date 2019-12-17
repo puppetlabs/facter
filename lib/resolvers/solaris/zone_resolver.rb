@@ -3,7 +3,7 @@
 module Facter
   module Resolvers
     class SolarisZone < BaseResolver
-      @log = Facter::Log.new
+      @log = Facter::Log.new(self)
       @semaphore = Mutex.new
       @fact_list ||= {}
       class << self

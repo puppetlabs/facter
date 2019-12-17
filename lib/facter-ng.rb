@@ -40,7 +40,7 @@ module Facter
   end
 
   def self.method_missing(name, *args, &block)
-    log = Facter::Log.new
+    log = Facter::Log.new(self)
     log.debug(
       "--#{name}-- not implemented but required" \
       'with params:' \

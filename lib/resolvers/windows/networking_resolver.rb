@@ -5,7 +5,7 @@ require 'ipaddr'
 module Facter
   module Resolvers
     class Networking < BaseResolver
-      @log = Facter::Log.new
+      @log = Facter::Log.new(self)
       @semaphore = Mutex.new
       @fact_list ||= {}
       class << self

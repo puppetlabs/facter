@@ -2,7 +2,7 @@
 
 module Facter
   class QueryParser
-    @log = Log.new
+    @log = Log.new(self)
 
     # Searches for facts that could resolve a user query.
     # There are 4 types of facts:

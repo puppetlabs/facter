@@ -11,6 +11,11 @@ module Facter
       @stdout_logger.level = @stderr_logger.level = value
     end
 
+    def formatter=(format)
+      @stdout_logger.formatter = format
+      @stderr_logger.formatter = format
+    end
+
     def info(msg)
       @stdout_logger.info(msg)
     end

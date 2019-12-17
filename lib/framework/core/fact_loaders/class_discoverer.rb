@@ -5,7 +5,7 @@ module Facter
     include Singleton
 
     def initialize
-      @log = Log.new
+      @log = Log.new(self)
     end
 
     def discover_classes(operating_system)

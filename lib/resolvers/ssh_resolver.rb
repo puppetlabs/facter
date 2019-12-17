@@ -6,7 +6,7 @@ require 'digest/sha1'
 module Facter
   module Resolvers
     class SshResolver < BaseResolver
-      @log = Facter::Log.new
+      @log = Facter::Log.new(self)
       @semaphore = Mutex.new
       @fact_list ||= {}
       @file_names = %w[ssh_host_rsa_key.pub ssh_host_dsa_key.pub ssh_host_ecdsa_key.pub ssh_host_ed25519_key.pub]

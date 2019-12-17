@@ -4,7 +4,7 @@ module Facter
   module Resolvers
     class Identity < BaseResolver
       NAME_SAM_COMPATIBLE = 2
-      @log = Facter::Log.new
+      @log = Facter::Log.new(self)
       @semaphore = Mutex.new
       @fact_list ||= {}
 

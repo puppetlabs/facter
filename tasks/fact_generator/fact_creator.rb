@@ -15,7 +15,7 @@ require "#{ROOT_DIR}/lib/framework/logging/logger"
 
 class FactCreator
   def initialize
-    @log = Facter::Log.new
+    @log = Facter::Log.new(self)
   end
 
   def create_facts

@@ -8,7 +8,7 @@ module Facter
       @aliases = []
 
       def initialize(*args)
-        @log = Log.new
+        @log = Log.new(self)
         @log.debug 'Dispatching to resolve: ' + args.inspect
       end
 

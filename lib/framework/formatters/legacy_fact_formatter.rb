@@ -3,7 +3,7 @@
 module Facter
   class LegacyFactFormatter
     def initialize
-      @log = Log.new
+      @log = Log.new(self)
     end
 
     def format(resolved_facts)

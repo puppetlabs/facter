@@ -4,6 +4,7 @@ module Facter
   module Macosx
     class OsName
       FACT_NAME = 'os.name'
+      @log = Facter::Log.new(self)
 
       def call_the_resolver
         fact_value = Resolvers::Uname.resolve(:kernelname)

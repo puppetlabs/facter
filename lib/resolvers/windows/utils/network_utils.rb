@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NetworkUtils
-  @log = Facter::Log.new
+  @log = Facter::Log.new(self)
   class << self
     def address_to_string(addr)
       return if addr[:lpSockaddr] == FFI::Pointer::NULL

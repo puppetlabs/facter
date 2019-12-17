@@ -3,7 +3,7 @@
 module Facter
   class YamlFactFormatter
     def initialize
-      @log = Log.new
+      @log = Log.new(self)
     end
 
     def format(fact_hash)
