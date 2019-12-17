@@ -2,13 +2,17 @@
 
 describe '<%= os_name %> <%= camelcase_fact_name %>' do
   context '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: '<%= fact_name %>', value: 'value')
-      allow(<resolver_name>).to receive(:resolve).with(<resolver_fact>).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('<%= fact_name %>', 'value').and_return(expected_fact)
+    let(:value) { <fact_value> }
+    let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: '<%= fact_name %>', value: value) }
+    subject(:fact) { Facter::<%= os_name %>::<%= camelcase_fact_name %>.new }
 
-      fact = Facter::<%= os_name %>::<%= camelcase_fact_name %>.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      expect(<resolver_name>).to receive(:resolve).with(<resolver_fact>).and_return(value)
+      expect(Facter::ResolvedFact).to receive(:new).with('<%= fact_name %>', value).and_return(expected_resolved_fact)
+    end
+
+    it 'returns <%= fact_name %> fact' do
+      expect(fact.call_the_resolver).to eq(expected_resolved_fact)
     end
   end
 end
