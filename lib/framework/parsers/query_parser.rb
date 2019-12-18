@@ -44,7 +44,7 @@ module Facter
       size = query_tokens.size
 
       size.times do |i|
-        query_token_range = 0..size - i -1
+        query_token_range = 0..size - i - 1
         resolvable_fact_list = get_facts_matching_tokens(query_tokens, query_token_range, loaded_fact_hash)
 
         return resolvable_fact_list if resolvable_fact_list.any?
