@@ -5,8 +5,8 @@ describe 'QueryParser' do
     it 'creates one core searched fact' do
       query_list = ['os.name']
 
-      os_name_class = Class.const_get('Facter::Ubuntu::OsName')
-      os_family_class = Class.const_get('Facter::Ubuntu::OsFamily')
+      os_name_class = 'Facter::Ubuntu::OsName'
+      os_family_class = 'Facter::Ubuntu::OsFamily'
 
       loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.name', klass: os_name_class, type: :core)
       loaded_fact_os_family = double(Facter::LoadedFact, name: 'os.family', klass: os_family_class, type: :core)
@@ -18,11 +18,24 @@ describe 'QueryParser' do
       expect(matched_facts.first.fact_class).to eq(os_name_class)
     end
 
+    it 'compose filter_tokens correctly' do
+      query_list = ['os.release.arry.1.val2']
+
+      os_name_class = 'Facter::Ubuntu::OsName'
+
+      loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.release', klass: os_name_class, type: :core)
+      loaded_facts = [loaded_fact_os_name]
+
+      matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
+
+      expect(matched_facts.first.filter_tokens).to eq([:arry, 1, :val2])
+    end
+
     it 'creates one legacy fact' do
       query_list = ['ipaddress_ens160']
 
-      networking_class = Class.const_get('Facter::Ubuntu::NetworkInterface')
-      os_family_class = Class.const_get('Facter::Ubuntu::OsFamily')
+      networking_class = 'Facter::Ubuntu::NetworkInterface'
+      os_family_class = 'Facter::Ubuntu::OsFamily'
 
       loaded_fact_networking = double(Facter::LoadedFact, name: 'ipaddress_.*', klass: networking_class, type: :legacy)
       loaded_fact_os_family = double(Facter::LoadedFact, name: 'os.family', klass: os_family_class, type: :core)
@@ -36,7 +49,7 @@ describe 'QueryParser' do
 
     it 'creates one custom searched fact' do
       query_list = ['custom_fact']
-      os_name_class = Class.const_get('Facter::Ubuntu::OsName')
+      os_name_class = 'Facter::Ubuntu::OsName'
 
       loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.name', klass: os_name_class, type: :core)
       loaded_fact_custom_fact = double(Facter::LoadedFact, name: 'custom_fact', klass: nil, type: :custom)
@@ -51,7 +64,7 @@ describe 'QueryParser' do
 
     it 'queries if param is symbol' do
       query_list = [:path]
-      path_class = Class.const_get('Facter::Ubuntu::Path')
+      path_class = 'Facter::Ubuntu::Path'
       loaded_fact_path = double(Facter::LoadedFact, name: 'path', klass: path_class, type: :core)
       loaded_facts = [loaded_fact_path]
 

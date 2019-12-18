@@ -10,7 +10,7 @@ describe 'FactCollector' do
     resolved_fact.user_query = 'os'
 
     fact_collection.build_fact_collection!([resolved_fact])
-    expected_hash = { 'os' => { 'version' => fact_value } }
+    expected_hash = { os: { version: fact_value } }
 
     expect(fact_collection).to eq(expected_hash)
   end

@@ -150,7 +150,7 @@ module Facter
           bindings.each do |binding|
             return binding unless NetworkUtils.ignored_ip_address(binding[:address])
           end
-          nil
+          bindings.empty? ? nil : bindings.first
         end
 
         def populate_interface(bind, interface)

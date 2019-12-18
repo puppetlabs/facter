@@ -8,7 +8,7 @@ module Facter
         user_queries.each do |user_query|
           fact_collection = build_fact_collection_for_user_query(user_query, resolved_facts)
 
-          printable_value = fact_collection.dig(*user_query.split('.'))
+          printable_value = fact_collection.dig(*user_query.split('.').map(&:to_sym))
           facts_to_display.merge!(user_query => printable_value)
         end
 
@@ -23,7 +23,7 @@ module Facter
       def retrieve_fact_value_for_single_query(user_query, resolved_facts)
         fact_collection = build_fact_collection_for_user_query(user_query, resolved_facts)
         fact_collection = Facter::Utils.sort_hash_by_key(fact_collection)
-        fact_collection.dig(*user_query.split('.'))
+        fact_collection.dig(*user_query.split('.').map(&:to_sym))
       end
 
       private

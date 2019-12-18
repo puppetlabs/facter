@@ -45,6 +45,8 @@ module Facter
 
       fact_value = Facter::FormatterHelper.retrieve_fact_value_for_single_query(user_query, resolved_facts)
 
+      return fact_value if fact_value.is_a?(String)
+
       pretty_json = fact_value ? hash_to_facter_format(fact_value) : ''
 
       @log.debug('Remove quotes from value if it is a simple string')

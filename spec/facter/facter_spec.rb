@@ -4,7 +4,7 @@ describe 'Facter' do
   let(:fact_name) { 'os.name' }
   let(:fact_value) { 'ubuntu' }
   let(:os_fact) { double(Facter::ResolvedFact, name: fact_name, value: fact_value, user_query: '', filter_tokens: []) }
-  let(:fact_collection) { { 'os' => { 'name' => 'Ubuntu' } } }
+  let(:fact_collection) { { os: { name: 'Ubuntu' } } }
   let(:empty_fact_collection) { {} }
 
   before do

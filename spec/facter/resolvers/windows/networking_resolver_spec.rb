@@ -5,7 +5,8 @@ describe 'Windows Networking Resolver' do
     let(:size_ptr) { double(FFI::MemoryPointer) }
     let(:adapter_address) { double(FFI::MemoryPointer) }
     before do
-      allow(FFI::MemoryPointer).to receive(:new).with(NetworkingFFI::BUFFER_LENGTH).and_return(size_ptr)
+      allow(FFI::MemoryPointer).to receive(:new)
+        .with(NetworkingFFI::BUFFER_LENGTH).and_return(size_ptr)
       allow(FFI::MemoryPointer).to receive(:new)
         .with(IpAdapterAddressesLh.size, NetworkingFFI::BUFFER_LENGTH)
         .and_return(adapter_address)
@@ -28,16 +29,12 @@ describe 'Windows Networking Resolver' do
     context 'when fails to retrieve networking information after 3 tries' do
       let(:error_code) { NetworkingFFI::ERROR_BUFFER_OVERFLOW }
       before do
-        allow(FFI::MemoryPointer).to receive(:new)
-          .with(IpAdapterAddressesLh.size, NetworkingFFI::BUFFER_LENGTH)
-          .and_return(adapter_address)
-        allow(NetworkingFFI).to receive(:GetAdaptersAddresses)
-          .with(NetworkingFFI::AF_UNSPEC, 14, FFI::Pointer::NULL, adapter_address, size_ptr)
-          .and_return(error_code)
-        allow(FFI::MemoryPointer).to receive(:new)
-          .with(IpAdapterAddressesLh.size, NetworkingFFI::BUFFER_LENGTH)
-          .and_return(adapter_address)
-        allow(NetworkingFFI).to receive(:GetAdaptersAddresses)
+        allow(FFI::MemoryPointer).to receive(:new).exactly(4).times
+                                                  .with(IpAdapterAddressesLh.size, NetworkingFFI::BUFFER_LENGTH)
+                                                  .and_return(adapter_address)
+        allow(NetworkingFFI)
+          .to receive(:GetAdaptersAddresses)
+          .exactly(3).times
           .with(NetworkingFFI::AF_UNSPEC, 14, FFI::Pointer::NULL, adapter_address, size_ptr)
           .and_return(error_code)
       end
@@ -48,12 +45,10 @@ describe 'Windows Networking Resolver' do
 
     context 'when it succeeded to retrieve networking information but all interface are down' do
       let(:error_code) { NetworkingFFI::ERROR_SUCCES }
-      let(:adapter) { double(IpAdapterAddressesLh) }
+      let(:adapter) {  OpenStruct.new(OperStatus: NetworkingFFI::IF_OPER_STATUS_DOWN, Next: next_adapter) }
       let(:next_adapter) { double(FFI::Pointer) }
       before do
         allow(IpAdapterAddressesLh).to receive(:read_list).with(adapter_address).and_yield(adapter)
-        allow(adapter).to receive(:[]).with(:OperStatus).and_return(NetworkingFFI::IF_OPER_STATUS_DOWN)
-        allow(adapter).to receive(:[]).with(:Next).and_return(next_adapter)
         allow(IpAdapterAddressesLh).to receive(:new).with(next_adapter).and_return(adapter)
         allow(adapter).to receive(:to_ptr).and_return(FFI::Pointer::NULL)
       end
@@ -65,29 +60,20 @@ describe 'Windows Networking Resolver' do
 
     context "when it succeeded to retrieve networking information but the interface hasn't got an address" do
       let(:error_code) { NetworkingFFI::ERROR_SUCCES }
-      let(:adapter) { double(IpAdapterAddressesLh) }
+      let(:adapter) do
+        OpenStruct.new(OperStatus: NetworkingFFI::IF_OPER_STATUS_UP, IfType: NetworkingFFI::IF_TYPE_ETHERNET_CSMACD,
+                       DnsSuffix: dns_ptr, FriendlyName: friendly_name_ptr, Flags: 0, Mtu: 1500,
+                       FirstUnicastAddress: ptr)
+      end
+      let(:dns_ptr) { double(FFI::Pointer, read_wide_string_without_length: '10.122.0.2') }
+      let(:friendly_name_ptr) { double(FFI::Pointer, read_wide_string_without_length: 'Ethernet0') }
       let(:ptr) { double(FFI::Pointer) }
-      let(:unicast) { double(IpAdapterUnicastAddressLH) }
+      let(:unicast) { OpenStruct.new(Address: ptr, Next: ptr, to_ptr: FFI::Pointer::NULL) }
       before do
-        # iterate list
         allow(IpAdapterAddressesLh).to receive(:read_list).with(adapter_address).and_yield(adapter)
-        allow(adapter).to receive(:[]).with(:OperStatus).and_return(NetworkingFFI::IF_OPER_STATUS_UP)
-        allow(adapter).to receive(:[]).with(:IfType).and_return(NetworkingFFI::IF_TYPE_ETHERNET_CSMACD)
-        allow(adapter).to receive(:[]).with(:DnsSuffix).and_return(ptr)
-        allow(ptr).to receive(:read_wide_string_without_length).and_return('10.122.0.2')
-        allow(adapter).to receive(:[]).with(:FriendlyName).and_return(ptr)
-        allow(ptr).to receive(:read_wide_string_without_length).and_return('Ethernet0')
-        # build interface info
-        allow(adapter).to receive(:[]).with(:Flags).and_return(0)
-        allow(adapter).to receive(:[]).with(:Mtu).and_return(1500)
-        allow(adapter).to receive(:[]).with(:FirstUnicastAddress).and_return(ptr)
-        # find ip_addresses
         allow(IpAdapterUnicastAddressLH).to receive(:read_list).with(ptr).and_yield(unicast)
-        allow(unicast).to receive(:[]).with(:Address).and_return(ptr)
         allow(NetworkUtils).to receive(:address_to_string).with(ptr).and_return(nil)
-        allow(unicast).to receive(:[]).with(:Next).and_return(ptr)
         allow(IpAdapterUnicastAddressLH).to receive(:new).with(ptr).and_return(unicast)
-        allow(unicast).to receive(:to_ptr).and_return(FFI::Pointer::NULL)
         allow(NetworkUtils).to receive(:find_mac_address).with(adapter).and_return('00:50:56:9A:F8:6B')
       end
 
@@ -107,13 +93,19 @@ describe 'Windows Networking Resolver' do
       end
     end
 
-    context "when it succeeded to retrieve networking information but the interface hasn't got an address" do
+    context 'when it succeeded to retrieve networking information but the interface has an address' do
       let(:error_code) { NetworkingFFI::ERROR_SUCCES }
-      let(:adapter) { double(IpAdapterAddressesLh) }
+      let(:adapter) do
+        OpenStruct.new(OperStatus: NetworkingFFI::IF_OPER_STATUS_UP, IfType: NetworkingFFI::IF_TYPE_ETHERNET_CSMACD,
+                       DnsSuffix: dns_ptr, FriendlyName: friendly_name_ptr, Flags: 0, Mtu: 1500,
+                       FirstUnicastAddress: ptr, Next: ptr, to_ptr: FFI::Pointer::NULL)
+      end
       let(:ptr) { double(FFI::Pointer) }
-      let(:unicast) { double(IpAdapterUnicastAddressLH) }
-      let(:address) { double(SocketAddress) }
-      let(:sock_address) { double(SockAddr) }
+      let(:dns_ptr) { double(FFI::Pointer, read_wide_string_without_length: '10.122.0.2') }
+      let(:friendly_name_ptr) { double(FFI::Pointer, read_wide_string_without_length: 'Ethernet0') }
+      let(:unicast) { OpenStruct.new(Address: address, Next: ptr, to_ptr: FFI::Pointer::NULL, OnLinkPrefixLength: 24) }
+      let(:address) { OpenStruct.new(lpSockaddr: ptr) }
+      let(:sock_address) { OpenStruct.new(sa_family: NetworkingFFI::AF_INET) }
       let(:binding) do
         {
           address: '10.16.127.3',
@@ -122,43 +114,14 @@ describe 'Windows Networking Resolver' do
         }
       end
       before do
-        # iterate list
         allow(IpAdapterAddressesLh).to receive(:read_list).with(adapter_address).and_yield(adapter)
-        allow(adapter).to receive(:[]).with(:OperStatus).and_return(NetworkingFFI::IF_OPER_STATUS_UP)
-        allow(adapter).to receive(:[]).with(:IfType).and_return(NetworkingFFI::IF_TYPE_ETHERNET_CSMACD)
-        allow(adapter).to receive(:[]).with(:DnsSuffix).and_return(ptr)
-        allow(ptr).to receive(:read_wide_string_without_length).and_return('10.122.0.2')
-        allow(adapter).to receive(:[]).with(:FriendlyName).and_return(ptr)
-        allow(ptr).to receive(:read_wide_string_without_length).and_return('Ethernet0')
-        # build_interface_info
-        allow(adapter).to receive(:[]).with(:Flags).and_return(0)
-        allow(adapter).to receive(:[]).with(:Mtu).and_return(1500)
-        allow(adapter).to receive(:[]).with(:FirstUnicastAddress).and_return(ptr)
-        # find_ip_addresses
         allow(IpAdapterUnicastAddressLH).to receive(:read_list).with(ptr).and_yield(unicast)
-        allow(unicast).to receive(:[]).with(:Address).and_return(address)
         allow(NetworkUtils).to receive(:address_to_string).with(address).and_return('10.16.127.3')
-        allow(unicast).to receive(:[]).with(:Address).and_return(address)
-        allow(address).to receive(:[]).with(:lpSockaddr).and_return(ptr)
         allow(SockAddr).to receive(:new).with(ptr).and_return(sock_address)
-        # add_ip_data
-        # find_bindings
-        allow(sock_address).to receive(:[]).with(:sa_family).and_return(NetworkingFFI::AF_INET)
-        allow(unicast).to receive(:[]).with(:OnLinkPrefixLength).and_return(24)
-        # back to add_ip_data
-        # back to find_ip_addresses
-        # find_primary_interface
-        allow(sock_address).to receive(:[]).with(:sa_family).and_return(NetworkingFFI::AF_INET)
         allow(NetworkUtils).to receive(:ignored_ip_address).with('10.16.127.3').and_return(false)
-        allow(unicast).to receive(:[]).with(:Next).and_return(ptr)
         allow(IpAdapterUnicastAddressLH).to receive(:new).with(ptr).and_return(unicast)
-        allow(unicast).to receive(:to_ptr).and_return(FFI::Pointer::NULL)
-        # back to build_interface_info
         allow(NetworkUtils).to receive(:find_mac_address).with(adapter).and_return('00:50:56:9A:F8:6B')
-        # back to iterate_list
-        allow(adapter).to receive(:[]).with(:Next).and_return(ptr)
         allow(IpAdapterAddressesLh).to receive(:new).with(ptr).and_return(adapter)
-        allow(adapter).to receive(:to_ptr).and_return(FFI::Pointer::NULL)
       end
 
       it 'returns interface' do
@@ -171,6 +134,53 @@ describe 'Windows Networking Resolver' do
             mtu: 1500,
             netmask: IPAddr.new('255.255.255.0/255.255.255.0'),
             network: IPAddr.new('10.16.127.0/255.255.255.0')
+          }
+        }
+        expect(Facter::Resolvers::Networking.resolve(:interfaces)).to eql(result)
+      end
+    end
+
+    context 'when it succeeded to retrieve networking information but the interface has an ipv6 address' do
+      let(:error_code) { NetworkingFFI::ERROR_SUCCES }
+      let(:adapter) do
+        OpenStruct.new(OperStatus: NetworkingFFI::IF_OPER_STATUS_UP, IfType: NetworkingFFI::IF_TYPE_ETHERNET_CSMACD,
+                       DnsSuffix: dns_ptr, FriendlyName: friendly_name_ptr, Flags: 0, Mtu: 1500,
+                       FirstUnicastAddress: ptr, Next: ptr, to_ptr: FFI::Pointer::NULL)
+      end
+      let(:ptr) { double(FFI::Pointer) }
+      let(:dns_ptr) { double(FFI::Pointer, read_wide_string_without_length: '10.122.0.2') }
+      let(:friendly_name_ptr) { double(FFI::Pointer, read_wide_string_without_length: 'Ethernet0') }
+      let(:unicast) { OpenStruct.new(Address: address, Next: ptr, to_ptr: FFI::Pointer::NULL, OnLinkPrefixLength: 24) }
+      let(:address) { OpenStruct.new(lpSockaddr: ptr) }
+      let(:sock_address) { OpenStruct.new(sa_family: NetworkingFFI::AF_INET) }
+      let(:binding) do
+        {
+          address: 'fe80::7ca0:ab22:703a:b329',
+          netmask: IPAddr.new('ffff:ff00:0000:0000:0000:0000:0000:0000/ffff:ff00:0000:0000:0000:0000:0000:0000'),
+          network: IPAddr.new('fe80:0000:0000:0000:0000:0000:0000:0000/ffff:ff00:0000:0000:0000:0000:0000:0000')
+        }
+      end
+      before do
+        allow(IpAdapterAddressesLh).to receive(:read_list).with(adapter_address).and_yield(adapter)
+        allow(IpAdapterUnicastAddressLH).to receive(:read_list).with(ptr).and_yield(unicast)
+        allow(NetworkUtils).to receive(:address_to_string).with(address).and_return('fe80::7ca0:ab22:703a:b329')
+        allow(SockAddr).to receive(:new).with(ptr).and_return(sock_address)
+        allow(NetworkUtils).to receive(:ignored_ip_address).with('fe80::7ca0:ab22:703a:b329')
+        allow(IpAdapterUnicastAddressLH).to receive(:new).with(ptr).and_return(unicast)
+        allow(NetworkUtils).to receive(:find_mac_address).with(adapter).and_return('00:50:56:9A:F8:6B')
+        allow(IpAdapterAddressesLh).to receive(:new).with(ptr).and_return(adapter)
+      end
+
+      it 'returns interface' do
+        result = {
+          Ethernet0: {
+            bindings6: [binding],
+            dhcp: nil,
+            ip6: 'fe80::7ca0:ab22:703a:b329',
+            mac: '00:50:56:9A:F8:6B',
+            mtu: 1500,
+            netmask6: IPAddr.new('ffff:ff00:0000:0000:0000:0000:0000:0000/ffff:ff00:0000:0000:0000:0000:0000:0000'),
+            network6: IPAddr.new('fe80:0000:0000:0000:0000:0000:0000:0000/ffff:ff00:0000:0000:0000:0000:0000:0000')
           }
         }
         expect(Facter::Resolvers::Networking.resolve(:interfaces)).to eql(result)
