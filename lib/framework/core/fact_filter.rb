@@ -7,9 +7,19 @@ module Facter
   class FactFilter
     def filter_facts!(searched_facts)
       searched_facts.each do |fact|
-        value = fact.filter_tokens.any? ? fact.value.dig(*fact.filter_tokens.map(&:to_sym)) : fact.value
-        fact.value = value
+        fact.value = symbolize_all_keys(fact.value) if fact.value.is_a?(Hash)
+        fact.value = fact.filter_tokens.any? ? fact.value.dig(*fact.filter_tokens.map(&:to_sym)) : fact.value
       end
+    end
+
+    private
+
+    def symbolize_all_keys(hash)
+      symbolized_hash = {}
+      hash.each do |k, v|
+        symbolized_hash[k.to_sym] = v.is_a?(Hash) ? symbolize_all_keys(v) : v
+      end
+      symbolized_hash
     end
   end
 end
