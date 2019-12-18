@@ -2,11 +2,11 @@
 
 module Facter
   module Fedora
-    class LoadAverage
-      FACT_NAME = 'load_average'
+    class LoadAverages
+      FACT_NAME = 'load_averages'
 
       def call_the_resolver
-        fact_value = Resolvers::Linux::LoadAverage.resolve(:loadavrg)
+        fact_value = Resolvers::Linux::LoadAverages.resolve(:load_averages)
         ResolvedFact.new(FACT_NAME, fact_value)
       end
     end
