@@ -3,7 +3,7 @@
 describe 'OsLevel' do
   before do
     allow(Open3).to receive(:capture2)
-      .with('oslevel -s')
+      .with('/usr/bin/oslevel -s 2>/dev/null')
       .and_return('build')
   end
 
