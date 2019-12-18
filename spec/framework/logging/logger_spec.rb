@@ -3,7 +3,7 @@
 describe 'Logger' do
   let(:file_logger_double) { double(Logger) }
   let(:legacy_logger_double) { double(Facter::LegacyLogger) }
-  let(:multi_logger_double) { double(MultiLogger) }
+  let(:multi_logger_double) { double(Facter::MultiLogger) }
 
   before do
     Facter::Log.class_variable_set(:@@file_logger, file_logger_double)

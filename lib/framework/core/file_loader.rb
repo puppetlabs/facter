@@ -6,6 +6,7 @@ require 'yaml'
 require 'hocon'
 require 'hocon/config_value_factory'
 require 'singleton'
+require 'logger'
 
 def load_dir(*dirs)
   Dir.glob(File.join(ROOT_DIR, dirs, '*.rb'), &method(:require))
@@ -17,7 +18,10 @@ end
 
 load_lib_dirs('framework', 'core', 'options')
 require "#{ROOT_DIR}/lib/framework/core/options"
-load_lib_dirs('framework', 'logging')
+require "#{ROOT_DIR}/lib/framework/logging/legacy_logger"
+require "#{ROOT_DIR}/lib/framework/logging/multilogger"
+require "#{ROOT_DIR}/lib/framework/logging/logger"
+
 require "#{ROOT_DIR}/lib/resolvers/base_resolver"
 require "#{ROOT_DIR}/lib/framework/detector/current_os"
 
