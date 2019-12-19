@@ -9,7 +9,10 @@ require 'singleton'
 require 'logger'
 
 def load_dir(*dirs)
-  Dir.glob(File.join(ROOT_DIR, dirs, '*.rb'), &method(:require))
+  folder_path = File.join(ROOT_DIR, dirs)
+  return unless Dir.exist?(folder_path.tr('*', ''))
+
+  Dir.glob(File.join(folder_path, '*.rb'), &method(:require))
 end
 
 def load_lib_dirs(*dirs)
@@ -48,7 +51,7 @@ os = ENV['RACK_ENV'] == 'test' ? '' : CurrentOs.instance.identifier
 os_hierarchy = CurrentOs.instance.hierarchy
 os_hierarchy.each { |operating_system| load_lib_dirs('facts', operating_system.downcase, '**') }
 
-load_lib_dirs('resolvers', os.to_s, '**') if os.to_s =~ /win|aix|solaris/
+load_lib_dirs('resolvers', os.to_s, '**')
 
 require "#{ROOT_DIR}/lib/custom_facts/core/legacy_facter"
 require "#{ROOT_DIR}/lib/framework/utils/utils"
