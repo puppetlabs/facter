@@ -36,6 +36,7 @@ module Facter
         fact_name = klass::FACT_NAME
 
         load_fact(fact_name, klass)
+        [*klass::ALIASES].each { |fact_alias| load_fact(fact_alias, klass) } if klass.const_defined?('ALIASES')
       end
     end
 
