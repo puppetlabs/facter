@@ -82,7 +82,7 @@ module Facter
 
     def remove_comma_and_quation(output)
       @log.debug('Remove unnecessary comma and quotation marks on root facts')
-      output.split("\n").map! { |line| line.match(/^[\s]+/) ? line : line.gsub(/,|\"/, '') }.join("\n")
+      output.split("\n").map! { |line| line.match(/^[\s]+/) ? line : line.gsub(/,$|\"/, '') }.join("\n")
     end
   end
 end
