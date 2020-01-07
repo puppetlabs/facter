@@ -11,10 +11,17 @@ module Facter
         result = determine_exponent(bytes)
         return bytes.to_s + ' bytes' if result[:exp] > units.size
 
-        result[:converted_number].to_s + " #{units[result[:exp] - 1]}iB"
+        converted_number = pad_number(result[:converted_number])
+        converted_number + " #{units[result[:exp] - 1]}iB"
       end
 
       private
+
+      def pad_number(number)
+        number = number.to_s
+        number << '0' if number.split('.').last.length == 1
+        number
+      end
 
       def determine_exponent(bytes)
         exp = (Math.log2(bytes) / 10.0).floor

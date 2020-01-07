@@ -39,5 +39,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'bundler', '~> 2.0'
   spec.add_runtime_dependency 'hocon', '1.3.0'
+  spec.add_runtime_dependency 'sys-filesystem', '~> 1.3'
   spec.add_runtime_dependency 'thor', '~> 1.0.1'
 end
