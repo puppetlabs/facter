@@ -49,7 +49,7 @@ module Facter
 
         def build_uptime_text(days, hours, minutes)
           case days
-          when 0 then "#{hours}:#{format('%02d', minutes)} hours"
+          when 0 then "#{hours}:#{format('%<minutes>02d', minutes: minutes)} hours"
           when 1 then '1 day'
           else
             "#{days} days"

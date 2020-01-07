@@ -39,7 +39,7 @@ describe 'MemoryResolver' do
 
   it 'returns swap capacity' do
     result = Facter::Resolvers::Linux::Memory.resolve(:swap_capacity)
-    swap_capacity = format('%.2f', (swap_used / swap_total.to_f * 100)) + '%'
+    swap_capacity = format('%<swap_capacity>.2f', swap_capacity: (swap_used / swap_total.to_f * 100)) + '%'
 
     expect(result).to eq(swap_capacity)
   end
@@ -52,7 +52,7 @@ describe 'MemoryResolver' do
 
   it 'returns system capacity' do
     result = Facter::Resolvers::Linux::Memory.resolve(:capacity)
-    system_capacity = format('%.2f', (used / total.to_f * 100)) + '%'
+    system_capacity = format('%<capacity>.2f', capacity: (used / total.to_f * 100)) + '%'
 
     expect(result).to eq(system_capacity)
   end

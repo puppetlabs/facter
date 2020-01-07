@@ -30,7 +30,8 @@ class NetworkUtils
     end
 
     def find_mac_address(adapter)
-      adapter[:PhysicalAddress].first(adapter[:PhysicalAddressLength]).map { |e| format('%02x', e.to_i) }
+      adapter[:PhysicalAddress].first(adapter[:PhysicalAddressLength])
+                               .map { |e| format('%<mac_address>02x', mac_address: e.to_i) }
                                .join(':').upcase
     end
 

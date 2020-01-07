@@ -67,10 +67,12 @@ describe 'LegacyFactFormatter' do
 
   context 'when the fact value is nil' do
     let(:resolved_fact) do
-      double(Facter::ResolvedFact, name: 'my_external_fact',
-                                   value: nil, user_query: 'my_external_fact', filter_tokens: [])
+      Facter::ResolvedFact.new('my_external_fact', nil)
     end
     it 'returns empty string' do
+      resolved_fact.user_query = 'my_external_fact'
+      resolved_fact.filter_tokens = []
+
       formatted_output = Facter::LegacyFactFormatter.new.format([resolved_fact])
       expect(formatted_output).to eq('')
     end
