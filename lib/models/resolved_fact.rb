@@ -8,9 +8,15 @@ module Facter
     def initialize(name, value = '', type = :core)
       @name = name
       @value = value
-      logger = Log.new(self)
-      type =~ /core|legacy/ ? @type = type : logger.warn('The specified type is invalid!')
-      @type ||= :unknown
+      type =~ /core|legacy/ ? @type = type : (raise ArgumentError, 'The type provided for fact is not legacy or core!')
+    end
+
+    def legacy?
+      type == :legacy
+    end
+
+    def core?
+      type == :core
     end
   end
 end

@@ -21,6 +21,7 @@ describe 'InternalFactManager' do
 
     it 'resolved one legacy fact' do
       ubuntu_networking_interface = double(Facter::Ubuntu::NetworkInterface)
+
       resolved_fact = mock_resolved_fact('ipaddress_ens160', '192.168.5.121', nil, [], :legacy)
 
       allow(ubuntu_networking_interface).to receive(:new).and_return(ubuntu_networking_interface)
