@@ -42,7 +42,7 @@ module Facter
         def retrieve_system_profiler(fact_name)
           @log.debug 'Executing command: system_profiler SPSoftwareDataType SPHardwareDataType'
           output, _status = Open3.capture2('system_profiler SPHardwareDataType SPSoftwareDataType')
-          system_profiler = output.scan(/.*:[ ].*$/).collect!(&:strip).map { |e| e.split(': ') }.to_h
+          system_profiler = output.scan(/.*:[ ].*$/).map { |e| e.strip.match(/(.*?): (.*)/).captures }.to_h
           NAME_HASH.each { |key, v| @fact_list[key] = system_profiler[v] }
           @fact_list[fact_name]
         end

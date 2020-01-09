@@ -16,7 +16,7 @@ describe 'Macosx System Profile Resolver' do
   it 'returns boot_rom_version' do
     result = Facter::Resolvers::SystemProfiler.resolve(:boot_rom_version)
 
-    expect(result).to eq('194.0.0.0.0')
+    expect(result).to eq('1037.60.58.0.0 (iBridge: 17.16.12551.0.0,0)')
   end
 
   it 'returns boot_volume' do
@@ -46,7 +46,7 @@ describe 'Macosx System Profile Resolver' do
   it 'returns kernel_version' do
     result = Facter::Resolvers::SystemProfiler.resolve(:kernel_version)
 
-    expect(result).to eq('Darwin 18.7.0')
+    expect(result).to eq('Darwin 19.2.0')
   end
 
   it 'returns l2_cache_per_core' do
@@ -118,12 +118,12 @@ describe 'Macosx System Profile Resolver' do
   it 'returns system_version' do
     result = Facter::Resolvers::SystemProfiler.resolve(:system_version)
 
-    expect(result).to eq('macOS 10.14.6 (18G95)')
+    expect(result).to eq('macOS 10.15.2 (19C57)')
   end
   it 'returns uptime' do
     result = Facter::Resolvers::SystemProfiler.resolve(:uptime)
 
-    expect(result).to eq('26 days 22:12')
+    expect(result).to eq('3:28')
   end
   it 'returns username' do
     result = Facter::Resolvers::SystemProfiler.resolve(:username)
