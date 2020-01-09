@@ -2,13 +2,22 @@
 
 describe 'Windows NetworkingNetwork6' do
   context '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'networking.network6', value: 'value')
-      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:network6).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('networking.network6', 'value').and_return(expected_fact)
+    let(:value) { 'fe80::' }
+    subject(:fact) { Facter::Windows::NetworkingNetwork6.new }
 
-      fact = Facter::Windows::NetworkingNetwork6.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:network6).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::Networking' do
+      expect(Facter::Resolvers::Networking).to receive(:resolve).with(:network6)
+      fact.call_the_resolver
+    end
+
+    it 'returns network ipv6 fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'networking.network6', value: value),
+                        an_object_having_attributes(name: 'network6', value: value, type: :legacy))
     end
   end
 end

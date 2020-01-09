@@ -2,13 +2,22 @@
 
 describe 'Windows OsWindowsReleaseID' do
   context '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'os.windows.release_id', value: 'value')
-      allow(Facter::Resolvers::ProductRelease).to receive(:resolve).with(:release_id).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('os.windows.release_id', 'value').and_return(expected_fact)
+    let(:value) { '1607' }
+    subject(:fact) { Facter::Windows::OsWindowsReleaseID.new }
 
-      fact = Facter::Windows::OsWindowsReleaseID.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::ProductRelease).to receive(:resolve).with(:release_id).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::ProductRelease' do
+      expect(Facter::Resolvers::ProductRelease).to receive(:resolve).with(:release_id)
+      fact.call_the_resolver
+    end
+
+    it 'returns os release id fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'os.windows.release_id', value: value),
+                        an_object_having_attributes(name: 'windows_release_id', value: value, type: :legacy))
     end
   end
 end

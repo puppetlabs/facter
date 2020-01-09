@@ -2,13 +2,22 @@
 
 describe 'Windows DmiManufacturer' do
   context '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'dmi.manufacturer', value: 'VMware, Inc.')
-      allow(Facter::Resolvers::DMIBios).to receive(:resolve).with(:manufacturer).and_return('VMware, Inc.')
-      allow(Facter::ResolvedFact).to receive(:new).with('dmi.manufacturer', 'VMware, Inc.').and_return(expected_fact)
+    let(:value) { 'VMware, Inc.' }
+    subject(:fact) { Facter::Windows::DmiManufacturer.new }
 
-      fact = Facter::Windows::DmiManufacturer.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::DMIBios).to receive(:resolve).with(:manufacturer).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::DMIBios' do
+      expect(Facter::Resolvers::DMIBios).to receive(:resolve).with(:manufacturer)
+      fact.call_the_resolver
+    end
+
+    it 'returns manufacturer fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'dmi.manufacturer', value: value),
+                        an_object_having_attributes(name: 'manufacturer', value: value, type: :legacy))
     end
   end
 end

@@ -2,13 +2,22 @@
 
 describe 'Windows DmiProductUUID' do
   context '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'dmi.product.uuid', value: 'value')
-      allow(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:uuid).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('dmi.product.uuid', 'value').and_return(expected_fact)
+    let(:value) { '030D1A42-B70A-2898-7898-5E85A0AD1847' }
+    subject(:fact) { Facter::Windows::DmiProductUUID.new }
 
-      fact = Facter::Windows::DmiProductUUID.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:uuid).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::DMIComputerSystem' do
+      expect(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:uuid)
+      fact.call_the_resolver
+    end
+
+    it 'returns product uuid fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'dmi.product.uuid', value: value),
+                        an_object_having_attributes(name: 'uuid', value: value, type: :legacy))
     end
   end
 end

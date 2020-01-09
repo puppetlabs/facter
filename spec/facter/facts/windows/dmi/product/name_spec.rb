@@ -2,13 +2,22 @@
 
 describe 'Windows DmiProductName' do
   context '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'dmi.product.name', value: 'value')
-      allow(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:name).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('dmi.product.name', 'value').and_return(expected_fact)
+    let(:value) { 'VMware7,1' }
+    subject(:fact) { Facter::Windows::DmiProductName.new }
 
-      fact = Facter::Windows::DmiProductName.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:name).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::DMIComputerSystem' do
+      expect(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:name)
+      fact.call_the_resolver
+    end
+
+    it 'returns product name fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'dmi.product.name', value: value),
+                        an_object_having_attributes(name: 'productname', value: value, type: :legacy))
     end
   end
 end

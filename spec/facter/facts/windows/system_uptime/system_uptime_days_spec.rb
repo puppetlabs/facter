@@ -2,13 +2,22 @@
 
 describe 'Windows SystemUptimeDays' do
   context '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'system_uptime.days', value: 'value')
-      allow(Facter::Resolvers::Windows::Uptime).to receive(:resolve).with(:days).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('system_uptime.days', 'value').and_return(expected_fact)
+    let(:value) { '2' }
+    subject(:fact) { Facter::Windows::SystemUptimeDays.new }
 
-      fact = Facter::Windows::SystemUptimeDays.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::Windows::Uptime).to receive(:resolve).with(:days).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::Windows::Uptime' do
+      expect(Facter::Resolvers::Windows::Uptime).to receive(:resolve).with(:days)
+      fact.call_the_resolver
+    end
+
+    it 'returns days since last boot' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'system_uptime.days', value: value),
+                        an_object_having_attributes(name: 'uptime_days', value: value, type: :legacy))
     end
   end
 end
