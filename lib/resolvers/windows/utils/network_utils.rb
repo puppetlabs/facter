@@ -44,5 +44,21 @@ class NetworkUtils
              end
       { address: addr, netmask: mask, network: ip.mask(mask_length) }
     end
+
+    def get_scope(sockaddr)
+      require 'socket'
+      scope6 = String.new
+      addrinfo = Addrinfo.new(['AF_INET6', 0, nil, sockaddr], :INET6)
+
+      scope6 << 'compat,' if addrinfo.ipv6_v4compat?
+      scope6 << if addrinfo.ipv6_linklocal?
+                  'link'
+                elsif addrinfo.ipv6_sitelocal?
+                  'site'
+                elsif addrinfo.ipv6_loopback?
+                  'host'
+                else 'global'
+                end
+    end
   end
 end

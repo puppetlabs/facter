@@ -18,13 +18,12 @@ module Facter
         private
 
         def retrieve_windows_binaries_path
-          path_ptr = FFI::MemoryPointer.new(:wchar, MAX_PATH + 1)
-          if System32FFI::SHGetFolderPathW(0, System32FFI::CSIDL_WINDOWS, 0, 0, path_ptr) != System32FFI::H_OK
-            @log.debug 'SHGetFolderPath failed'
-            return
-          end
+          windows_path = ENV['SystemRoot']
 
-          windows = path_ptr.read_wide_string_with_length(MAX_PATH).strip
+          if !windows_path || windows_path.empty?
+            @log.debug 'Unable to find correct value for SystemRoot enviroment variable'
+            return nil
+          end
 
           bool_ptr = FFI::MemoryPointer.new(:win32_bool, 1)
           if System32FFI::IsWow64Process(System32FFI::GetCurrentProcess(), bool_ptr) == FFI::WIN32_FALSE
@@ -32,7 +31,7 @@ module Facter
             return
           end
 
-          @fact_list[:system32] = construct_path(bool_ptr, windows)
+          @fact_list[:system32] = construct_path(bool_ptr, windows_path)
         end
 
         def construct_path(bool_ptr, windows)

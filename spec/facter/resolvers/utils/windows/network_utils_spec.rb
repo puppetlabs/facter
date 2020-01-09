@@ -129,4 +129,38 @@ describe 'NetworkUtils' do
       end
     end
   end
+
+  describe '#get_scope' do
+    context "address's scope should be link" do
+      let(:address) { 'fe80::b13f:903e:5f5:3b52' }
+
+      it 'returns scope6' do
+        expect(NetworkUtils.get_scope(address)).to eql('link')
+      end
+    end
+
+    context "address's scope should be global" do
+      let(:address) { '::ffff:192.0.2.128' }
+
+      it 'returns scope6' do
+        expect(NetworkUtils.get_scope(address)).to eql('global')
+      end
+    end
+
+    context "address's scope should be ipv4 compatible" do
+      let(:address) { '::192.0.2.128' }
+
+      it 'returns scope6' do
+        expect(NetworkUtils.get_scope(address)).to eql('compat,global')
+      end
+    end
+
+    context "address's scope should be site" do
+      let(:address) { 'fec0::' }
+
+      it 'returns scope6' do
+        expect(NetworkUtils.get_scope(address)).to eql('site')
+      end
+    end
+  end
 end

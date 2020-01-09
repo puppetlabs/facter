@@ -160,6 +160,7 @@ module Facter
             interface[:ip6] = bind[:address]
             interface[:netmask6] = bind[:netmask]
             interface[:network6] = bind[:network]
+            interface[:scope6] =  NetworkUtils.get_scope(bind[:address])
           else
             interface[:network] = bind[:network]
             interface[:netmask] = bind[:netmask]
@@ -170,7 +171,7 @@ module Facter
         def set_networking_other_facts(value, interface_name)
           return unless @fact_list[:primary] == interface_name
 
-          %i[mtu dhcp mac ip ip6 netmask netmask6 network network6].each do |key|
+          %i[mtu dhcp mac ip ip6 scope6 netmask netmask6 network network6].each do |key|
             @fact_list[key] = value[key]
           end
         end

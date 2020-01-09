@@ -180,7 +180,8 @@ describe 'Windows Networking Resolver' do
             mac: '00:50:56:9A:F8:6B',
             mtu: 1500,
             netmask6: IPAddr.new('ffff:ff00:0000:0000:0000:0000:0000:0000/ffff:ff00:0000:0000:0000:0000:0000:0000'),
-            network6: IPAddr.new('fe80:0000:0000:0000:0000:0000:0000:0000/ffff:ff00:0000:0000:0000:0000:0000:0000')
+            network6: IPAddr.new('fe80:0000:0000:0000:0000:0000:0000:0000/ffff:ff00:0000:0000:0000:0000:0000:0000'),
+            scope6: 'link'
           }
         }
         expect(Facter::Resolvers::Networking.resolve(:interfaces)).to eql(result)
