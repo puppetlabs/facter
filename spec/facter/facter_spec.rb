@@ -124,4 +124,29 @@ describe 'Facter' do
       expect(resolved_facts_hash).to be nil
     end
   end
+
+  describe '#search' do
+    it 'sends call to LegacyFacter' do
+      dirs = ['/dir1', '/dir2']
+
+      expect(LegacyFacter).to receive(:search).with(dirs)
+      Facter.search(dirs)
+    end
+  end
+
+  describe '#search_external' do
+    it 'sends call to LegacyFacter' do
+      dirs = ['/dir1', '/dir2']
+
+      expect(LegacyFacter).to receive(:search_external).with(dirs)
+      Facter.search_external(dirs)
+    end
+  end
+
+  describe '#reset' do
+    it 'sends call to LegacyFacter' do
+      expect(LegacyFacter).to receive(:reset).once
+      Facter.reset
+    end
+  end
 end

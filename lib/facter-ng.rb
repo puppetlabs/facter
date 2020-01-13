@@ -22,6 +22,7 @@ module Facter
   end
 
   def self.value(user_query)
+    user_query = user_query.to_s
     resolved_facts = Facter::FactManager.instance.resolve_facts({}, [user_query])
     CacheManager.invalidate_all_caches
     fact_collection = FactCollection.new.build_fact_collection!(resolved_facts)
@@ -30,6 +31,18 @@ module Facter
 
   def self.add(name, options = {}, &block)
     LegacyFacter.add(name, options, &block)
+  end
+
+  def self.reset
+    LegacyFacter.reset
+  end
+
+  def self.search(*dirs)
+    LegacyFacter.search(*dirs)
+  end
+
+  def self.search_external(dirs)
+    LegacyFacter.search_external(dirs)
   end
 
   def self.core_value(user_query)
