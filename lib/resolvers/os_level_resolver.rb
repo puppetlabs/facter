@@ -5,16 +5,14 @@ module Facter
     class OsLevel < BaseResolver
       # build
 
-      class << self
-        @@semaphore = Mutex.new
-        @@fact_list ||= {}
+      @@semaphore = Mutex.new
+      @@fact_list ||= {}
 
-        def resolve(fact_name)
-          @@semaphore.synchronize do
-            result ||= @@fact_list[fact_name]
-            subscribe_to_manager
-            result || read_oslevel(fact_name)
-          end
+      class << self
+        private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { read_oslevel(fact_name) }
         end
 
         def read_oslevel(fact_name)

@@ -7,15 +7,11 @@ module Facter
       @semaphore = Mutex.new
       @fact_list ||= {}
       class << self
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            result || retrieve_hostname
-          end
-        end
-
         private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { retrieve_hostname }
+        end
 
         def retrieve_hostname
           output, _status = Open3.capture2('hostname')

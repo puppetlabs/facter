@@ -2,6 +2,10 @@
 
 describe 'FipsEnabledResolver' do
   describe '#resolve' do
+    before do
+      Facter::Resolvers::Linux::FipsEnabled.invalidate_cache
+    end
+
     context 'when fips is not enabled' do
       it 'returns fips is not enabled' do
         allow(File).to receive(:read).with('/proc/sys/crypto/fips_enabled').and_return('0')

@@ -12,15 +12,11 @@ module Facter
       @file_names = %w[ssh_host_rsa_key.pub ssh_host_dsa_key.pub ssh_host_ecdsa_key.pub ssh_host_ed25519_key.pub]
       @file_paths = %w[/etc/ssh /usr/local/etc/ssh /etc /usr/local/etc /etc/opt/ssh]
       class << self
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            result || retrieve_info(fact_name)
-          end
-        end
-
         private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { retrieve_info(fact_name) }
+        end
 
         def retrieve_info(fact_name)
           ssh_list = []

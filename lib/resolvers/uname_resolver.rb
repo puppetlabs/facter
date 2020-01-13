@@ -7,12 +7,10 @@ module Facter
       @fact_list ||= {}
 
       class << self
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            result || uname_system_call(fact_name)
-          end
+        private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { uname_system_call(fact_name) }
         end
 
         def uname_system_call(fact_name)
@@ -27,8 +25,6 @@ module Facter
 
           @fact_list[fact_name]
         end
-
-        private
 
         def build_fact_list(output)
           uname_results = output.split("\n")

@@ -11,15 +11,11 @@ module Facter
         class << self
           #:model
 
-          def resolve(fact_name)
-            @semaphore.synchronize do
-              result ||= @fact_list[fact_name]
-              subscribe_to_manager
-              result || read_facts
-            end
-          end
-
           private
+
+          def post_resolve(fact_name)
+            @fact_list.fetch(fact_name) { read_facts }
+          end
 
           def read_facts
             # OSX only supports the product name

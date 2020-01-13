@@ -29,15 +29,11 @@ module Facter
                     username: 'User Name' }.freeze
 
       class << self
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            result || retrieve_system_profiler(fact_name)
-          end
-        end
-
         private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { retrieve_system_profiler(fact_name) }
+        end
 
         def retrieve_system_profiler(fact_name)
           @log.debug 'Executing command: system_profiler SPSoftwareDataType SPHardwareDataType'

@@ -7,12 +7,10 @@ module Facter
       @fact_list ||= {}
 
       class << self
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            result || read_lpar(fact_name)
-          end
+        private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { read_lpar(fact_name) }
         end
 
         def read_lpar(fact_name)
@@ -23,8 +21,6 @@ module Facter
           end
           @fact_list[fact_name]
         end
-
-        private
 
         def populate_lpar_data(key_value)
           @fact_list[:lpar_partition_name]   = key_value[1]      if key_value[0] == 'Partition Name'

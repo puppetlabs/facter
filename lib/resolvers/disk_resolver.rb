@@ -17,12 +17,10 @@ module Facter
           # :sda_size
           # :sda_vendor
 
-          def resolve(fact_name)
-            @semaphore.synchronize do
-              result ||= @fact_list[fact_name]
-              subscribe_to_manager
-              result || read_facts(fact_name)
-            end
+          private
+
+          def post_resolve(fact_name)
+            @fact_list.fetch(fact_name) { read_facts(fact_name) }
           end
 
           def read_facts(fact_name)

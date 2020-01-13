@@ -11,15 +11,11 @@ module Facter
         # Virtual
         # Is_Virtual
 
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            result || read_fact_from_computer_system(fact_name)
-          end
-        end
-
         private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { read_fact_from_computer_system(fact_name) }
+        end
 
         def read_fact_from_computer_system(fact_name)
           win = Win32Ole.new

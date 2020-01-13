@@ -11,12 +11,10 @@ module Facter
       @fact_list ||= {}
 
       class << self
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            result || software_version_system_call(fact_name)
-          end
+        private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { software_version_system_call(fact_name) }
         end
 
         def software_version_system_call(fact_name)

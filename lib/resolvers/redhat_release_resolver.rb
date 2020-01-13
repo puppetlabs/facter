@@ -11,21 +11,19 @@ module Facter
       @fact_list ||= {}
 
       class << self
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            return result unless result.nil?
+        private
 
-            output, _status = Open3.capture2('cat /etc/redhat-release')
-
-            build_fact_list(output)
-
-            return @fact_list[fact_name]
-          end
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { read_redhat_release(fact_name) }
         end
 
-        private
+        def read_redhat_release(fact_name)
+          output, _status = Open3.capture2('cat /etc/redhat-release')
+
+          build_fact_list(output)
+
+          @fact_list[fact_name]
+        end
 
         def build_fact_list(output)
           output_strings = output.split('release')

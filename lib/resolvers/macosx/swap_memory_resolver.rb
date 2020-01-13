@@ -8,15 +8,11 @@ module Facter
         @fact_list ||= {}
         @log = Facter::Log.new(self)
         class << self
-          def resolve(fact_name)
-            @semaphore.synchronize do
-              result ||= @fact_list[fact_name]
-              subscribe_to_manager
-              result || read_swap_memory(fact_name)
-            end
-          end
-
           private
+
+          def post_resolve(fact_name)
+            @fact_list.fetch(fact_name) { read_swap_memory(fact_name) }
+          end
 
           def read_swap_memory(fact_name) # rubocop:disable Metrics/AbcSize
             output = Open3.capture2('sysctl -n vm.swapusage').first

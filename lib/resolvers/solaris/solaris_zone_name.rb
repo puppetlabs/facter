@@ -7,15 +7,11 @@ module Facter
       @semaphore = Mutex.new
       @fact_list ||= {}
       class << self
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            result || build_current_zone_name_fact(fact_name)
-          end
-        end
-
         private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { build_current_zone_name_fact(fact_name) }
+        end
 
         def build_current_zone_name_fact(fact_name)
           zone_name_output, status = Open3.capture2('/bin/zonename')

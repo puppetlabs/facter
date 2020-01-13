@@ -7,15 +7,11 @@ module Facter
       @fact_list ||= {}
 
       class << self
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            result || read_oslevel(fact_name)
-          end
-        end
-
         private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { read_oslevel(fact_name) }
+        end
 
         def read_oslevel(fact_name)
           output, _status = Open3.capture2('/usr/bin/oslevel -s 2>/dev/null')

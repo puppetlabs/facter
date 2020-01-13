@@ -9,15 +9,11 @@ module Facter
       @os_version_regex_patterns = ['Solaris \d+ \d+/\d+ s(\d+)[sx]?_u(\d+)wos_',
                                     'Solaris (\d+)[.](\d+)', 'Solaris (\d+)']
       class << self
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            result || build_release_facts(fact_name)
-          end
-        end
-
         private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { build_release_facts(fact_name) }
+        end
 
         def build_release_facts(fact_name)
           result = read_os_release_file

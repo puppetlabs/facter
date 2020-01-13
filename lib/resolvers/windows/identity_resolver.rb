@@ -9,15 +9,11 @@ module Facter
       @fact_list ||= {}
 
       class << self
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            result || retrieve_facts(fact_name)
-          end
-        end
-
         private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { retrieve_facts(fact_name) }
+        end
 
         def find_username
           size_ptr = FFI::MemoryPointer.new(:win32_ulong, 1)

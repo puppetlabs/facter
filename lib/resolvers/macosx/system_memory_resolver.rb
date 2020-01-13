@@ -8,15 +8,11 @@ module Facter
         @fact_list ||= {}
         @log = Facter::Log.new(self)
         class << self
-          def resolve(fact_name)
-            @semaphore.synchronize do
-              result ||= @fact_list[fact_name]
-              subscribe_to_manager
-              result || calculate_system_memory(fact_name)
-            end
-          end
-
           private
+
+          def post_resolve(fact_name)
+            @fact_list.fetch(fact_name) { calculate_system_memory(fact_name) }
+          end
 
           def calculate_system_memory(fact_name)
             read_total_memory_in_bytes

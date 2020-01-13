@@ -7,12 +7,10 @@ module Facter
       @fact_list ||= {}
 
       class << self
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            result || read_wpar(fact_name)
-          end
+        private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { read_wpar(fact_name) }
         end
 
         def read_wpar(fact_name)
@@ -25,8 +23,6 @@ module Facter
           end
           @fact_list[fact_name]
         end
-
-        private
 
         def populate_wpar_data(key_value)
           @fact_list[:wpar_key]              = key_value[1].to_i if key_value[0] == 'WPAR Key'

@@ -7,15 +7,11 @@ module Facter
       @semaphore = Mutex.new
       @fact_list ||= {}
       class << self
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            subscribe_to_manager
-            result || validate_info(fact_name)
-          end
-        end
-
         private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { validate_info(fact_name) }
+        end
 
         def read_performance_information
           state_ptr = FFI::MemoryPointer.new(PerformanceInformation.size)

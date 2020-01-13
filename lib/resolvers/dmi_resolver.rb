@@ -22,15 +22,11 @@ module Facter
           # :product_name
           # :product_uuid
 
-          def resolve(fact_name)
-            @semaphore.synchronize do
-              result ||= @fact_list[fact_name]
-              subscribe_to_manager
-              result || read_facts(fact_name)
-            end
-          end
-
           private
+
+          def post_resolve(fact_name)
+            @fact_list.fetch(fact_name) { read_facts(fact_name) }
+          end
 
           # File.read("/sys/class/dmi/id/#{file}")
           def read_facts(fact_name)

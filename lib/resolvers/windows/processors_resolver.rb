@@ -11,14 +11,12 @@ module Facter
         # Isa
         # Models
         # PhysicalCount
-        def resolve(fact_name)
-          @semaphore.synchronize do
-            result ||= @fact_list[fact_name]
-            result || read_fact_from_win32_processor(fact_name)
-          end
-        end
 
         private
+
+        def post_resolve(fact_name)
+          @fact_list.fetch(fact_name) { read_fact_from_win32_processor(fact_name) }
+        end
 
         def read_fact_from_win32_processor(fact_name)
           win = Win32Ole.new
