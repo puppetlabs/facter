@@ -38,7 +38,6 @@ module Facter
       end
 
       resolved_facts.flatten!
-      resolved_facts.uniq!(&:name)
 
       FactAugmenter.augment_resolved_facts(searched_facts, resolved_facts)
     end

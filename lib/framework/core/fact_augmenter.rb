@@ -21,7 +21,7 @@ module Facter
           .uniq(&:name)
       else
         resolved_facts
-          .select { |resolved_fact| searched_fact.name.match(resolved_fact.name) }
+          .select { |resolved_fact| searched_fact.name.eql?(resolved_fact.name) }
           .reject(&:user_query)
           .uniq(&:name)
       end

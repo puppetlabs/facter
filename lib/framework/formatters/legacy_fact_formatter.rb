@@ -8,7 +8,6 @@ module Facter
 
     def format(resolved_facts)
       user_queries = resolved_facts.uniq(&:user_query).map(&:user_query)
-      replace_nil_with_empty_string(resolved_facts)
 
       return if user_queries.count < 1
       return format_for_multiple_user_queries(user_queries, resolved_facts) if user_queries.count > 1
@@ -19,10 +18,6 @@ module Facter
     end
 
     private
-
-    def replace_nil_with_empty_string(resolved_facts)
-      resolved_facts.select { |fact| fact.value.nil? }.map! { |fact| fact.value = '' }
-    end
 
     def format_for_no_query(resolved_facts)
       @log.debug('Formatting for no user query')
@@ -37,6 +32,8 @@ module Facter
       @log.debug('Formatting for multiple user queries')
 
       facts_to_display = Facter::FormatterHelper.retrieve_facts_to_display_for_user_query(user_queries, resolved_facts)
+
+      facts_to_display.each { |k, v| facts_to_display[k] = v.nil? ? '' : v }
       pretty_json = hash_to_facter_format(facts_to_display)
       pretty_json = remove_enclosing_accolades(pretty_json)
       pretty_json = remove_comma_and_quation(pretty_json)
@@ -52,7 +49,7 @@ module Facter
 
       return fact_value if fact_value.is_a?(String)
 
-      pretty_json = hash_to_facter_format(fact_value)
+      pretty_json = fact_value.nil? ? '' : hash_to_facter_format(fact_value)
 
       @log.debug('Remove quotes from value if it is a simple string')
       pretty_json.gsub(/^"(.*)\"/, '\1')
