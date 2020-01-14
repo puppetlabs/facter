@@ -2,8 +2,8 @@
 
 module Facter
   module Fedora
-    class Filesystem
-      FACT_NAME = 'filesystem'
+    class Filesystems
+      FACT_NAME = 'filesystems'
 
       def call_the_resolver
         fact_value = Resolvers::Linux::Filesystems.resolve(:systems)

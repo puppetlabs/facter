@@ -2,22 +2,22 @@
 
 describe 'Debian OsArchitecture' do
   context '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'os.architecture', value: 'value')
-      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('os.architecture', 'value').and_return(expected_fact)
+    let(:value) { 'x86_64' }
+    subject(:fact) { Facter::Debian::OsArchitecture.new }
 
-      fact = Facter::Debian::OsArchitecture.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return(value)
     end
 
-    it 'returns a amd64 if resolver returns x86_64' do
-      expected_fact = double(Facter::ResolvedFact, name: 'os.architecture', value: 'amd64')
-      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return('x86_64')
-      allow(Facter::ResolvedFact).to receive(:new).with('os.architecture', 'amd64').and_return(expected_fact)
+    it 'calls Facter::Resolvers::Uname' do
+      expect(Facter::Resolvers::Uname).to receive(:resolve).with(:machine)
+      fact.call_the_resolver
+    end
 
-      fact = Facter::Debian::OsArchitecture.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    it 'returns architecture fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'os.architecture', value: 'amd64'),
+                        an_object_having_attributes(name: 'architecture', value: 'amd64', type: :legacy))
     end
   end
 end

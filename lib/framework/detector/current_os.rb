@@ -41,6 +41,7 @@ class CurrentOs
       break if @identifier
     end
     @identifier = 'ubuntu' if @identifier == 'debian'
+    @identifier = 'fedora' if @identifier == 'amzn'
     @identifier
   end
 

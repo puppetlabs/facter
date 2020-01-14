@@ -8,6 +8,8 @@ module Facter
       def call_the_resolver
         mountpoints = Resolvers::Linux::Mountpoints.resolve(FACT_NAME.to_sym)
 
+        return ResolvedFact.new(FACT_NAME, mountpoints) unless mountpoints
+
         fact = {}
         mountpoints.each do |mnt|
           fact[mnt[:path].to_sym] = mnt.reject { |k| k == :path }

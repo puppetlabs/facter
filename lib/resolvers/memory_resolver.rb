@@ -30,7 +30,10 @@ module Facter
           end
 
           def read_swap(output)
-            @fact_list[:swap_total] = kilobytes_to_bytes(output.match(/SwapTotal:\s+(\d+)\s/)[1])
+            total = output.match(/SwapTotal:\s+(\d+)\s/)[1]
+            return if total.to_i.zero?
+
+            @fact_list[:swap_total] = kilobytes_to_bytes(total)
             @fact_list[:swap_free] = kilobytes_to_bytes(output.match(/SwapFree:\s+(\d+)\s/)[1])
             @fact_list[:swap_used_bytes] = compute_used(@fact_list[:swap_total], @fact_list[:swap_free])
             @fact_list[:swap_capacity] = compute_capacity(@fact_list[:swap_used_bytes], @fact_list[:swap_total])

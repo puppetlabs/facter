@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe 'Fedora OsArchitecture' do
+describe 'Opensuse OsArchitecture' do
   context '#call_the_resolver' do
     let(:value) { 'x86_64' }
-    subject(:fact) { Facter::Fedora::OsArchitecture.new }
+    subject(:fact) { Facter::Opensuse::OsArchitecture.new }
 
     before do
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return(value)

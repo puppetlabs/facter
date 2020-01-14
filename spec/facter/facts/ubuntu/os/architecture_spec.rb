@@ -2,22 +2,43 @@
 
 describe 'Ubuntu OsArchitecture' do
   context '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'os.architecture', value: 'value')
-      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('os.architecture', 'value').and_return(expected_fact)
+    subject(:fact) { Facter::Ubuntu::OsArchitecture.new }
+    context 'when resolver does not return x86_64' do
+      let(:value) { 'i86pc' }
 
-      fact = Facter::Ubuntu::OsArchitecture.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+      before do
+        allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return(value)
+      end
+
+      it 'calls Facter::Resolvers::Uname' do
+        expect(Facter::Resolvers::Uname).to receive(:resolve).with(:machine)
+        fact.call_the_resolver
+      end
+
+      it 'returns architecture fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+          contain_exactly(an_object_having_attributes(name: 'os.architecture', value: value),
+                          an_object_having_attributes(name: 'architecture', value: value, type: :legacy))
+      end
     end
 
-    it 'returns amd64 if resolver returns x86_64' do
-      expected_fact = double(Facter::ResolvedFact, name: 'os.architecture', value: 'amd64')
-      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return('x86_64')
-      allow(Facter::ResolvedFact).to receive(:new).with('os.architecture', 'amd64').and_return(expected_fact)
+    context 'when resolver returns x86_64' do
+      let(:value) { 'x86_64' }
 
-      fact = Facter::Ubuntu::OsArchitecture.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+      before do
+        allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return(value)
+      end
+
+      it 'calls Facter::Resolvers::Uname' do
+        expect(Facter::Resolvers::Uname).to receive(:resolve).with(:machine)
+        fact.call_the_resolver
+      end
+
+      it 'returns architecture fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+          contain_exactly(an_object_having_attributes(name: 'os.architecture', value: 'amd64'),
+                          an_object_having_attributes(name: 'architecture', value: 'amd64', type: :legacy))
+      end
     end
   end
 end
