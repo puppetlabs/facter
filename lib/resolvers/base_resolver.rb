@@ -3,6 +3,10 @@
 module Facter
   module Resolvers
     class BaseResolver
+      def self.log
+        @log ||= Log.new(self)
+      end
+
       def self.invalidate_cache
         @fact_list = {}
       end
@@ -17,7 +21,7 @@ module Facter
           post_resolve(fact_name)
         end
       rescue LoadError => e
-        @log.error("resolving fact #{fact_name}, but #{e}")
+        log.error("resolving fact #{fact_name}, but #{e}")
         @fact_list[fact_name] = nil
       end
 

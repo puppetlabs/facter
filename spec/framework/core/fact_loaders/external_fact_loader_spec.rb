@@ -1,67 +1,100 @@
 # frozen_string_literal: true
 
 describe 'ExternalFactLoader' do
-  describe '#initialize' do
-    let(:collection) { double(LegacyFacter::Util::Collection) }
+  let(:collection) { double(LegacyFacter::Util::Collection) }
 
-    before do
-      allow(LegacyFacter).to receive(:collection).and_return(collection)
-      allow(collection).to receive(:external_facts).and_return({})
-      allow(collection).to receive(:custom_facts).and_return([])
+  before do
+    allow(LegacyFacter).to receive(:collection).and_return(collection)
+    allow(collection).to receive(:external_facts).and_return({})
+    allow(collection).to receive(:custom_facts).and_return([])
+  end
+
+  describe '#custom_facts' do
+    context 'load one custom fact' do
+      before do
+        allow(collection).to receive(:custom_facts).and_return(['custom_fact'])
+        allow(Facter::Options).to receive(:custom_dir?).and_return(true)
+        allow(Facter::Options).to receive(:custom_dir).and_return(['custom_fact_dir'])
+      end
+
+      it 'returns one custom fact' do
+        external_fact_loader = Facter::ExternalFactLoader.new
+        expect(external_fact_loader.custom_facts.size).to eq(1)
+      end
+
+      it 'returns custom fact with name custom_fact' do
+        external_fact_loader = Facter::ExternalFactLoader.new
+        expect(external_fact_loader.custom_facts.first.name).to eq('custom_fact')
+      end
     end
 
-    it 'loads one custom fact' do
-      allow(collection).to receive(:custom_facts).and_return(['custom_fact'])
-      external_fact_loader = Facter::ExternalFactLoader.new
-
-      expect(external_fact_loader.facts.size).to eq(1)
-      expect(external_fact_loader.facts.first.name).to eq('custom_fact')
-    end
-
-    it 'loads no custom facts' do
-      allow(collection).to receive(:custom_facts).and_return([])
-      external_fact_loader = Facter::ExternalFactLoader.new
-
-      expect(external_fact_loader.facts).to eq([])
-    end
-
-    context 'options' do
+    context 'loads no custom facts' do
       before do
         allow(collection).to receive(:custom_facts).and_return([])
+      end
+
+      it 'return no custom facts' do
+        external_fact_loader = Facter::ExternalFactLoader.new
+        expect(external_fact_loader.custom_facts).to eq([])
+      end
+    end
+
+    context 'blocks custom facts' do
+      before do
+        allow(collection).to receive(:custom_facts).and_return([])
+      end
+
+      it 'does not load custom facts (does not call LegacyFacter.search)' do
+        expect(Facter::Options).to receive(:custom_dir?).and_return(false)
+        expect(LegacyFacter).not_to receive(:search)
+
+        external_fact_loader = Facter::ExternalFactLoader.new
+        external_fact_loader.custom_facts
+      end
+    end
+  end
+
+  describe '#external_facts' do
+    context 'loads one external fact' do
+      before do
+        allow(collection).to receive(:external_facts).and_return(['external_fact'])
+        allow(Facter::Options).to receive(:external_dir?).and_return(true)
+        allow(Facter::Options).to receive(:external_dir).and_return(['external_fact_dir'])
+      end
+
+      it 'returns one external fact' do
+        external_fact_loader = Facter::ExternalFactLoader.new
+        expect(external_fact_loader.external_facts.size).to eq(1)
+      end
+
+      it 'returns external fact with name external_fact' do
+        external_fact_loader = Facter::ExternalFactLoader.new
+        expect(external_fact_loader.external_facts.first.name).to eq('external_fact')
+      end
+    end
+
+    context 'loads no external facts' do
+      before do
         allow(collection).to receive(:external_facts).and_return([])
       end
 
-      context 'custom fact options' do
-        it 'blocks custom facts' do
-          expect(Facter::Options).to receive(:custom_dir?).and_return(false)
-          expect(LegacyFacter).not_to receive(:search)
-          Facter::ExternalFactLoader.new
-        end
+      it 'return no external facts' do
+        external_fact_loader = Facter::ExternalFactLoader.new
+        expect(external_fact_loader.external_facts).to eq([])
+      end
+    end
 
-        it 'does not blocks custom facts' do
-          expect(Facter::Options).to receive(:custom_dir?).and_return(true)
-          expect(Facter::Options).to receive(:custom_dir).and_return(['custom_fact_dir'])
-
-          expect(LegacyFacter).to receive(:search).with('custom_fact_dir')
-          Facter::ExternalFactLoader.new
-        end
+    context 'blocks external facts' do
+      before do
+        allow(collection).to receive(:external_facts).and_return([])
       end
 
-      context 'external fact options' do
-        it 'blocks external facts' do
-          allow(Facter::Options).to receive(:external_dir?).and_return(false)
+      it 'does not load custom facts (does not call LegacyFacter.search_external)' do
+        expect(Facter::Options).to receive(:external_dir?).and_return(false)
+        expect(LegacyFacter).not_to receive(:search_external)
 
-          expect(LegacyFacter).not_to receive(:search_external)
-          Facter::ExternalFactLoader.new
-        end
-
-        it 'does not blocks external facts' do
-          allow(Facter::Options).to receive(:external_dir?).and_return(true)
-          allow(Facter::Options).to receive(:external_dir).and_return(['external_fact_dir'])
-
-          expect(LegacyFacter).to receive(:search_external).with(['external_fact_dir'])
-          Facter::ExternalFactLoader.new
-        end
+        external_fact_loader = Facter::ExternalFactLoader.new
+        external_fact_loader.external_facts
       end
     end
   end
