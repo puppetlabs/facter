@@ -61,6 +61,22 @@ namespace facter { namespace facts { namespace resolvers {
         };
 
         /**
+         * Represents information about FreeBSD.
+         */
+        struct freebsd_data
+        {
+            /**
+             * Stores FreeBSD branch.
+             */
+            std::string branch;
+
+            /**
+             * Stores FreeBSD patchlevel.
+             */
+            std::string patchlevel;
+        };
+
+        /**
          * Represents information about Mac OSX.
          */
         struct mac
@@ -209,6 +225,11 @@ namespace facter { namespace facts { namespace resolvers {
              * Stores information about the OS distribution.
              */
             distribution distro;
+
+            /**
+             * Stores information about FreeBSD.
+             */
+            freebsd_data freebsd;
 
             /**
              * Stores information about Mac OSX.

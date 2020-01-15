@@ -266,6 +266,8 @@ struct operating_system_resolver : resolvers::operating_system_resolver
         result.distro.release = "1.2.3";
         result.distro.codename = "codename";
         result.distro.description = "description";
+        result.freebsd.branch = "BRANCH";
+        result.freebsd.patchlevel = "4";
         result.osx.product = "product";
         result.osx.build = "build";
         result.osx.version = "10.10";

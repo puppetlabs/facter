@@ -1184,6 +1184,12 @@ os:
                 minor:
                     type: string
                     description: The minor release of the operating system.
+                patchlevel:
+                    type: string
+                    description: The patchlevel of the operating system.
+                branch:
+                    type: string
+                    description: The branch the operating system was cut from.
         selinux:
             type: map
             description: Represents information about Security-Enhanced Linux (SELinux).
