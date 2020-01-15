@@ -7,7 +7,7 @@ describe 'InternalFactLoader' do
 
   describe '#initialize' do
     context 'load facts' do
-      it 'loads one legacy fact' do
+      it 'loads one legacy fact and sees it as core' do
         allow_any_instance_of(Facter::ClassDiscoverer)
           .to receive(:discover_classes)
           .with(:Ubuntu)
@@ -17,9 +17,11 @@ describe 'InternalFactLoader' do
 
         internal_fact_loader = Facter::InternalFactLoader.new
         legacy_facts = internal_fact_loader.legacy_facts
+        core_facts = internal_fact_loader.core_facts
 
-        expect(legacy_facts.size).to eq(1)
-        expect(legacy_facts.first.type).to eq(:legacy)
+        expect(legacy_facts.size).to eq(0)
+        expect(core_facts.size).to eq(1)
+        expect(core_facts.first.type).to eq(:core)
       end
 
       it 'loads one core fact' do
@@ -50,7 +52,7 @@ describe 'InternalFactLoader' do
         all_facts = internal_fact_loader.facts
 
         expect(all_facts.size).to eq(2)
-        expect(all_facts.first.type).to eq(:legacy)
+        expect(all_facts.first.type).to eq(:core)
         all_facts.shift
         expect(all_facts.first.type).to eq(:core)
       end

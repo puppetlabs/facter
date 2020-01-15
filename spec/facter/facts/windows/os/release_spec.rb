@@ -2,18 +2,29 @@
 
 describe 'Windows OsRelease' do
   context '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'os.release', value: { full: 'release', major: 'release' })
+    let(:value) { '2019' }
+    subject(:fact) { Facter::Windows::OsRelease.new }
+
+    before do
       allow(Facter::Resolvers::WinOsDescription).to receive(:resolve).with(:consumerrel).and_return('consumerrel')
       allow(Facter::Resolvers::WinOsDescription).to receive(:resolve).with(:description).and_return('description')
-      allow(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernelmajorversion).and_return('kernel_maj_version')
+      allow(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernelmajorversion).and_return(value)
       allow(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernelversion).and_return('kernel_version')
-      allow(Facter::WindowsReleaseFinder).to receive(:find_release).and_return('release')
-      allow(Facter::ResolvedFact).to receive(:new).with('os.release', full: 'release', major: 'release')
-                                                  .and_return(expected_fact)
+    end
 
-      fact = Facter::Windows::OsRelease.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    it 'calls Facter::Resolvers::WinOsDescription and Facter::Resolvers::Kernel resolvers' do
+      expect(Facter::Resolvers::WinOsDescription).to receive(:resolve).with(:consumerrel)
+      expect(Facter::Resolvers::WinOsDescription).to receive(:resolve).with(:description)
+      expect(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernelmajorversion)
+      expect(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernelversion)
+      fact.call_the_resolver
+    end
+
+    it 'returns release fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'os.release', value: { full: value, major: value }),
+                        an_object_having_attributes(name: 'operatingsystemmajrelease', value: value, type: :legacy),
+                        an_object_having_attributes(name: 'operatingsystemrelease', value: value, type: :legacy))
     end
   end
 end

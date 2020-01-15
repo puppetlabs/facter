@@ -4,8 +4,10 @@ module Facter
   module Windows
     class OsRelease
       FACT_NAME = 'os.release'
+      ALIASES = %w[operatingsystemmajrelease operatingsystemrelease].freeze
 
       def call_the_resolver
+        arr = []
         input = {
           consumerrel: description_resolver(:consumerrel),
           description: description_resolver(:description),
@@ -14,7 +16,9 @@ module Facter
         }
 
         fact_value = WindowsReleaseFinder.find_release(input)
-        ResolvedFact.new(FACT_NAME, full: fact_value, major: fact_value)
+        arr << ResolvedFact.new(FACT_NAME, full: fact_value, major: fact_value)
+        ALIASES.each { |aliass| arr << ResolvedFact.new(aliass, fact_value, :legacy) }
+        arr
       end
 
       def description_resolver(key)

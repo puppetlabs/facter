@@ -19,7 +19,7 @@ module Facter
           def read_fact_from_registry(fact_name)
             reg = ::Win32::Registry::HKEY_LOCAL_MACHINE
                   .open('System\\CurrentControlSet\\Control\\Lsa\\FipsAlgorithmPolicy')
-            reg.each { |name, _value| @fact_list[:fips_enabled] = reg[name] != 0 if name == 'Enabled' }
+            @fact_list[:fips_enabled] = reg['Enabled'] != 0 if reg.any? { |name, _value| name == 'Enabled' }
             reg.close
 
             @fact_list[:fips_enabled] ||= false
