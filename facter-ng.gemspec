@@ -25,7 +25,16 @@ Gem::Specification.new do |spec|
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  spec.files = `git ls-files`.split("\n").select { |file_name| file_name.match('^((?!spec).)*$') }
+  # On our internal Jenkins, there is no git. As it is a clean machine, we don't need to worry about anything else.
+  spec.files = if system('git --help > /dev/null')
+                 `git ls-files -z`.split("\x0")
+               else
+                 Dir.glob('**/*')
+               end
+
+  spec.files.reject! do |f|
+    f.match(%r{^(test|spec|features)/})
+  end
 
   spec.bindir = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
