@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.14.7\n"
+"Project-Id-Version: FACTER 1.14.8\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -141,8 +141,8 @@ msgstr ""
 
 #: exe/facter.cc
 msgid ""
-"(Deprecated: use `puppet facts` instead) Load the Puppet libraries, thus "
-"allowing Facter to load Puppet-specific facts."
+"Load the Puppet libraries, thus allowing Facter to load Puppet-specific "
+"facts."
 msgstr ""
 
 #: exe/facter.cc
