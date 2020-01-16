@@ -81,6 +81,15 @@ namespace facter { namespace facts { namespace resolvers {
             facts.add(fact::operating_system_release, make_value<string_value>(data.release, true));
             value->add("full", make_value<string_value>(move(data.release)));
 
+            // Populate FreeBSD-specific data
+            if (!data.freebsd.branch.empty()) {
+                value->add("branch", make_value<string_value>(move(data.freebsd.branch)));
+            }
+
+            if (!data.freebsd.patchlevel.empty()) {
+                value->add("patchlevel", make_value<string_value>(move(data.freebsd.patchlevel)));
+            }
+
             os->add("release", move(value));
         }
 
