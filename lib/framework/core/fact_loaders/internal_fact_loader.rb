@@ -15,7 +15,7 @@ module Facter
     def initialize
       @facts = []
 
-      os_descendents = CurrentOs.instance.hierarchy
+      os_descendents = OsDetector.instance.hierarchy
       load_all_oses(os_descendents)
     end
 

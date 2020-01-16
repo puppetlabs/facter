@@ -6,26 +6,23 @@ module Facter
       FACT_NAME = 'os.distro'
 
       def call_the_resolver
+        versions = resolver(:release).split('.')
         distro = {
-          'codename' => resolver_lsb(:codename),
-          'description' => resolver_lsb(:description),
-          'id' => resolver_lsb(:distributor_id),
+          'codename' => resolver(:codename),
+          'description' => resolver(:description),
+          'id' => resolver(:distributor_id),
           'release' => {
-            'full' => resolver_version(:full),
-            'major' => resolver_version(:major),
-            'minor' => resolver_version(:minor)
+            'full' => resolver(:release),
+            'major' => versions[0],
+            'minor' => versions[1]
           }
         }
 
         ResolvedFact.new(FACT_NAME, distro)
       end
 
-      def resolver_lsb(key)
+      def resolver(key)
         Resolvers::LsbRelease.resolve(key)
-      end
-
-      def resolver_version(key)
-        Resolvers::DebianVersion.resolve(key)
       end
     end
   end

@@ -8,5 +8,5 @@ rspec
 # run linting
 rubocop
 
-# run lint with ui
-rubycritic --no-browser -f console
+# It will be disabled untill we rewrite it's rules
+# rubycritic --no-browser -f console

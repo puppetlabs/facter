@@ -26,7 +26,7 @@ require "#{ROOT_DIR}/lib/framework/logging/multilogger"
 require "#{ROOT_DIR}/lib/framework/logging/logger"
 
 require "#{ROOT_DIR}/lib/resolvers/base_resolver"
-require "#{ROOT_DIR}/lib/framework/detector/current_os"
+require "#{ROOT_DIR}/lib/framework/detector/os_detector"
 
 require "#{ROOT_DIR}/lib/framework/config/config_reader"
 require "#{ROOT_DIR}/lib/framework/config/block_list"
@@ -46,9 +46,9 @@ load_lib_dirs('framework', 'core', 'fact', 'internal')
 load_lib_dirs('framework', 'core', 'fact', 'external')
 load_lib_dirs('framework', 'formatters')
 
-os = ENV['RACK_ENV'] == 'test' ? '' : CurrentOs.instance.identifier
+os = ENV['RACK_ENV'] == 'test' ? '' : OsDetector.instance.identifier
 
-os_hierarchy = CurrentOs.instance.hierarchy
+os_hierarchy = OsDetector.instance.hierarchy
 os_hierarchy.each { |operating_system| load_lib_dirs('facts', operating_system.downcase, '**') }
 
 load_lib_dirs('resolvers', os.to_s, '**')

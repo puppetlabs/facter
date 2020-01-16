@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 def mock_os(os_name)
-  allow(CurrentOs.instance)
+  allow(OsDetector.instance)
     .to receive(:identifier)
     .and_return(os_name)
 end

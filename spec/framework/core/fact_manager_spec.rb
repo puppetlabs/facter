@@ -3,7 +3,7 @@
 describe 'FactManager' do
   describe '#resolve_facts' do
     it 'resolved all facts' do
-      ubuntu_os_name = double(Facter::Ubuntu::OsName)
+      ubuntu_os_name = double(Facter::Debian::OsName)
       user_query = []
       options = {}
 
@@ -42,7 +42,7 @@ describe 'FactManager' do
 
   describe '#resolve_core' do
     it 'resolves all core facts' do
-      ubuntu_os_name = double(Facter::Ubuntu::OsName)
+      ubuntu_os_name = double(Facter::Debian::OsName)
       user_query = []
 
       loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.name', klass: ubuntu_os_name, type: :core)

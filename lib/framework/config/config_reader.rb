@@ -33,7 +33,7 @@ module Facter
     private
 
     def default_path
-      os = CurrentOs.instance.identifier
+      os = OsDetector.instance.identifier
 
       windows_path = File.join('C:', 'ProgramData', 'PuppetLabs', 'facter', 'etc', 'facter.conf')
       linux_path = File.join('/', 'etc', 'puppetlabs', 'facter', 'facter.conf')
