@@ -130,6 +130,14 @@ namespace facter { namespace facts {
         collection& operator=(collection&& other);
 
         /**
+         * Gets the blocklist associated with the collection.
+         * @return Returns set of blocked groups.
+         */
+        std::set<std::string> blocklist() const {
+            return _blocklist;
+        }
+
+        /**
          * Adds the default facts to the collection.
          * @param include_ruby_facts Whether or not to include facts which require Ruby in the collection.
          */

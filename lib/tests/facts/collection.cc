@@ -536,10 +536,11 @@ SCENARIO("querying blockable and cacheable fact groups") {
 
     GIVEN("a blockable resolver that adds a single fact") {
         facts.add(make_shared<simple_resolver>());
-        THEN("resolver and its fact should be listed as blockable") {
+        THEN("resolver and its fact should be listed as blockable alongside legacy facts") {
             auto blockable = facts.get_blockable_fact_groups();
-            REQUIRE(blockable.size() == 1);
+            REQUIRE(blockable.size() == 2);
             REQUIRE(blockable["test"] == vector<string>({"foo"}));
+            REQUIRE(blockable["legacy"] == vector<string>());
         }
         THEN("resolver and its fact should be listed as in the collection") {
             auto facts_present = facts.get_fact_groups();
@@ -549,10 +550,11 @@ SCENARIO("querying blockable and cacheable fact groups") {
     }
     GIVEN("a blockable resolver that adds multiple facts") {
         facts.add(make_shared<multi_resolver>());
-        THEN("resolver and its facts should be listed as blockable") {
+        THEN("resolver and its facts should be listed as blockable alongside legacy facts") {
             auto blockable = facts.get_blockable_fact_groups();
-            REQUIRE(blockable.size() == 1);
+            REQUIRE(blockable.size() == 2);
             REQUIRE(blockable["test"] == vector<string>({"foo", "bar"}));
+            REQUIRE(blockable["legacy"] == vector<string>());
         }
         THEN("resolver and its facts should be listed as in the collection") {
             auto facts_present = facts.get_fact_groups();
@@ -562,9 +564,10 @@ SCENARIO("querying blockable and cacheable fact groups") {
     }
     GIVEN("a unblockable resolver that adds a single fact") {
         facts.add(make_shared<unblockable_resolver>());
-        THEN("resolver and its facts should not be listed as blockable") {
+        THEN("resolver and its facts should not be listed as blockable alongside legacy facts") {
             auto blockable = facts.get_blockable_fact_groups();
-            REQUIRE(blockable.size() == 0);
+            REQUIRE(blockable.size() == 1);
+            REQUIRE(blockable["legacy"] == vector<string>());
         }
         THEN("resolver and its fact should be listed as in the collection") {
             auto facts_present = facts.get_fact_groups();

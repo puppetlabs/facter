@@ -256,6 +256,8 @@ facts : {
     ]
 }
 ```
+To block legacy facts when using `Facter.to_hash`, you must add `legacy` to the blocklist in `facter.conf`
+
 All options are respected when running Facter standalone, while calling Facter from Ruby will only load `external-dir`, `custom-dir`, and the fact-specific configuration.
 
 The file will be loaded by default from `/etc/puppetlabs/facter/facter.conf` on Unix and `C:\ProgramData\PuppetLabs\facter\etc\facter.conf` on Windows. A different location can be specified using the `--config` command line option.

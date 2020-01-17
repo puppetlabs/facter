@@ -291,6 +291,10 @@ namespace facter { namespace facts {
                 blockgroups.emplace(res->name(), res->names());
             }
         }
+
+        // Add legacy facts to the list of fact groups that can be blocked
+        blockgroups.emplace("legacy", vector<string>());
+
         return blockgroups;
     }
 

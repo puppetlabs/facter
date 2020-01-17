@@ -204,6 +204,9 @@ namespace facter { namespace ruby {
 
         initialize_search_paths(paths);
 
+        auto blocklist = facts.blocklist();
+        _hide_legacy = blocklist.find("legacy") != blocklist.end();
+
         // Register the block for logging callback with the GC
         _on_message_block = ruby.nil_value();
         ruby.rb_gc_register_address(&_on_message_block);
@@ -695,6 +698,10 @@ namespace facter { namespace ruby {
             volatile VALUE hash = ruby.rb_hash_new();
 
             instance->facts().each([&](string const& name, value const* val) {
+                // Check and skip legacy facts if needed
+                if (instance->hide_legacy() && val->hidden()){
+                    return true;
+                }
                 ruby.rb_hash_aset(hash, ruby.utf8_value(name), instance->to_ruby(val));
                 return true;
             });

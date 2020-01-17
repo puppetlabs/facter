@@ -93,6 +93,14 @@ namespace facter { namespace ruby {
         facter::facts::collection& facts();
 
         /**
+         * Gets hide_legacy.
+         * @return Returns boolean.
+         */
+         bool hide_legacy() const {
+            return _hide_legacy;
+         }
+
+        /**
          * Gets the module's self.
          * @return Returns the module's self.
          */
@@ -158,6 +166,7 @@ namespace facter { namespace ruby {
         bool _loaded_all;
         leatherman::ruby::VALUE _self;
         leatherman::ruby::VALUE _on_message_block;
+        bool _hide_legacy;
 
         static std::map<leatherman::ruby::VALUE, module*> _instances;
     };
