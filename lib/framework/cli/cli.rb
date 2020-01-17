@@ -108,7 +108,9 @@ module Facter
     desc 'query', 'Default method', hide: true
     desc '[options] [query] [query] [...]', ''
     def query(*args)
-      puts Facter.to_user_output(@options, *args)
+      output, status = Facter.to_user_output(@options, *args)
+      puts output
+      exit status
     end
 
     desc '--version, -v', 'Print the version', hide: true

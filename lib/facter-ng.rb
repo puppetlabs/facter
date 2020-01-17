@@ -18,7 +18,16 @@ module Facter
     resolved_facts = Facter::FactManager.instance.resolve_facts(options, args)
     CacheManager.invalidate_all_caches
     fact_formatter = Facter::FormatterFactory.build(options)
-    fact_formatter.format(resolved_facts)
+
+    if Options.instance[:strict]
+      missing_names = args - resolved_facts.map(&:user_query).uniq
+      if missing_names.count.positive?
+        status = 1
+        log_errors(missing_names)
+      end
+    end
+
+    [fact_formatter.format(resolved_facts), status || 0]
   end
 
   def self.value(user_query)
@@ -63,5 +72,13 @@ module Facter
       'called by:' \
       "#{caller}"
     )
+  end
+
+  def self.log_errors(missing_names)
+    logger = Log.new(self)
+
+    missing_names.each do |missing_name|
+      logger.error("fact \"#{missing_name}\" does not exist.", true)
+    end
   end
 end

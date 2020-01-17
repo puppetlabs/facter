@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Facter
+  RED = 31
+
   class Log
     @@file_logger = Logger.new(File.new("#{ROOT_DIR}/example.log", 'a'))
     @@legacy_logger = LegacyLogger.new
@@ -51,8 +53,13 @@ module Facter
       @@logger.warn(@class_name + ' --- ' + msg)
     end
 
-    def error(msg)
+    def error(msg, colorize = false)
+      msg = colorize(msg, RED) if colorize
       @@logger.error(@class_name + ' --- ' + msg)
+    end
+
+    def colorize(msg, color)
+      "\e[#{color}m#{msg}\e[0m"
     end
   end
 end

@@ -17,6 +17,7 @@ module Facter
 
       loaded_facts = @fact_loader.load(Options.get)
       searched_facts = QueryParser.parse(user_query, loaded_facts)
+
       internal_facts = @internal_fact_mgr.resolve_facts(searched_facts)
       external_facts = @external_fact_mgr.resolve_facts(searched_facts)
 

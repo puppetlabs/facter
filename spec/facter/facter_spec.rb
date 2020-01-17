@@ -3,7 +3,9 @@
 describe 'Facter' do
   let(:fact_name) { 'os.name' }
   let(:fact_value) { 'ubuntu' }
-  let(:os_fact) { double(Facter::ResolvedFact, name: fact_name, value: fact_value, user_query: '', filter_tokens: []) }
+  let(:os_fact) do
+    double(Facter::ResolvedFact, name: fact_name, value: fact_value, user_query: fact_name, filter_tokens: [])
+  end
   let(:fact_collection) { { os: { name: 'Ubuntu' } } }
   let(:empty_fact_collection) { {} }
 
@@ -36,7 +38,7 @@ describe 'Facter' do
   end
 
   describe '#to_user_output' do
-    it 'returns one fact' do
+    it 'returns one fact and status 0' do
       user_query = 'os.name'
       options = {}
       expected_json_output = '{"os" : {"name": "ubuntu"}'
@@ -49,10 +51,10 @@ describe 'Facter' do
       allow(Facter::FormatterFactory).to receive(:build).with(options).and_return(json_fact_formatter)
 
       formated_facts = Facter.to_user_output({}, [user_query])
-      expect(formated_facts).to eq(expected_json_output)
+      expect(formated_facts).to eq([expected_json_output, 0])
     end
 
-    it 'returns no facts' do
+    it 'returns no facts and status 0' do
       user_query = 'os.name'
       options = {}
       expected_json_output = '{}'
@@ -65,7 +67,43 @@ describe 'Facter' do
       allow(Facter::FormatterFactory).to receive(:build).with(options).and_return(json_fact_formatter)
 
       formatted_facts = Facter.to_user_output({}, [user_query])
-      expect(formatted_facts).to eq(expected_json_output)
+      expect(formatted_facts).to eq([expected_json_output, 0])
+    end
+
+    context '--strict' do
+      it 'returns no fact and status 1' do
+        user_query = 'os.name'
+        options = {}
+        expected_json_output = '{}'
+
+        allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([])
+        allow_any_instance_of(Facter::Options).to receive(:[]).with(:strict).and_return(true)
+
+        json_fact_formatter = double(Facter::JsonFactFormatter)
+        allow(json_fact_formatter).to receive(:format).with([]).and_return(expected_json_output)
+
+        allow(Facter::FormatterFactory).to receive(:build).with(options).and_return(json_fact_formatter)
+
+        formatted_facts = Facter.to_user_output({}, user_query)
+        expect(formatted_facts).to eq([expected_json_output, 1])
+      end
+
+      it 'returns one fact and status 0' do
+        user_query = 'os.name'
+        options = {}
+        expected_json_output = '{"os" : {"name": "ubuntu"}'
+
+        allow_any_instance_of(Facter::Options).to receive(:[]).with(:strict).and_return(true)
+        allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([os_fact])
+
+        json_fact_formatter = double(Facter::JsonFactFormatter)
+        allow(json_fact_formatter).to receive(:format).with([os_fact]).and_return(expected_json_output)
+
+        allow(Facter::FormatterFactory).to receive(:build).with(options).and_return(json_fact_formatter)
+
+        formated_facts = Facter.to_user_output({}, user_query)
+        expect(formated_facts).to eq([expected_json_output, 0])
+      end
     end
   end
 
