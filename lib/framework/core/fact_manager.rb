@@ -42,6 +42,7 @@ module Facter
     def enhance_options(cli_options, user_query)
       options = Options.instance
       options.augment_with_defaults!
+      options.augment_with_to_hash_defaults! if cli_options[:to_hash]
       options.augment_with_config_file_options!(cli_options[:config])
       options.augment_with_cli_options!(cli_options)
       options.augment_with_helper_options!(user_query)

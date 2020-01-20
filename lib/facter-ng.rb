@@ -9,7 +9,8 @@ require "#{ROOT_DIR}/lib/framework/core/options/options_validator"
 
 module Facter
   def self.to_hash
-    resolved_facts = Facter::FactManager.instance.resolve_facts
+    options = { to_hash: true }
+    resolved_facts = Facter::FactManager.instance.resolve_facts(options)
     CacheManager.invalidate_all_caches
     FactCollection.new.build_fact_collection!(resolved_facts)
   end

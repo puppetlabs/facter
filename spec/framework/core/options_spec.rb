@@ -55,6 +55,16 @@ describe 'Options' do
     end
   end
 
+  describe '#augment_with_to_hash_defaults!' do
+    before do
+      Facter::Options.instance.augment_with_to_hash_defaults!
+    end
+
+    it 'sets show_legacy to true' do
+      expect(options[:show_legacy]).to be_truthy
+    end
+  end
+
   describe '#augment_with_config_file_options!' do
     context 'sets options from config file' do
       let(:config_reader_double) { double(Facter::ConfigReader) }
@@ -69,7 +79,7 @@ describe 'Options' do
         allow(config_reader_double).to receive(:global).and_return(
           'no-custom-facts' => false, 'custom-dir' => %w[custom_dir1 custom_dir2],
           'no-external-facts' => false, 'external-dir' => %w[external_dir1 external_dir2],
-          'no-ruby' => false
+          'no-ruby' => false, 'show-legacy' => true
         )
         allow(config_reader_double).to receive(:ttls).and_return([{ 'timezone' => '30 days' }])
 
@@ -113,6 +123,10 @@ describe 'Options' do
 
       it 'sets ruby to true' do
         expect(options[:ruby]).to be_truthy
+      end
+
+      it 'sets show_legacy to true' do
+        expect(options[:show_legacy]).to be_truthy
       end
 
       it 'sets blocked_facts' do

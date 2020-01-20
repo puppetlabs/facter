@@ -7,6 +7,10 @@ module Facter
       global_defaults
     end
 
+    def augment_with_to_hash_defaults!
+      @options[:show_legacy] = true
+    end
+
     private
 
     def cli_defaults

@@ -10,6 +10,7 @@ module Facter
       augment_custom(conf_reader.global)
       augment_external(conf_reader.global)
       augment_ruby(conf_reader.global)
+      augment_show_legacy(conf_reader.global)
       augment_facts(conf_reader.ttls)
     end
 
@@ -46,6 +47,12 @@ module Facter
       return unless global_conf
 
       @options[:ruby] = !global_conf['no-ruby'] unless global_conf['no-ruby'].nil?
+    end
+
+    def augment_show_legacy(global_conf)
+      return unless global_conf
+
+      @options[:show_legacy] = global_conf['show-legacy'] unless global_conf['show-legacy'].nil?
     end
 
     def augment_facts(ttls)
