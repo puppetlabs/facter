@@ -7,7 +7,7 @@ describe 'Macosx SystemProfilerSerialNumber' do
     subject(:fact) { Facter::Macosx::SystemProfilerSerialNumber.new }
 
     before do
-      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:serial_number).and_return(value)
+      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:serial_number_system).and_return(value)
       expect(Facter::ResolvedFact).to receive(:new)
         .with('system_profiler.serial_number', value)
         .and_return(expected_resolved_fact)

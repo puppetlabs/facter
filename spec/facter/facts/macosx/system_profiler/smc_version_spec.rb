@@ -7,7 +7,7 @@ describe 'Macosx SystemProfilerSmcVersion' do
     subject(:fact) { Facter::Macosx::SystemProfilerSmcVersion.new }
 
     before do
-      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:smc_version).and_return(value)
+      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:smc_version_system).and_return(value)
       expect(Facter::ResolvedFact).to receive(:new)
         .with('system_profiler.smc_version', value)
         .and_return(expected_resolved_fact)

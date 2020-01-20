@@ -7,7 +7,7 @@ describe 'Macosx SystemProfilerUsername' do
     subject(:fact) { Facter::Macosx::SystemProfilerUsername.new }
 
     before do
-      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:username).and_return(value)
+      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:user_name).and_return(value)
       expect(Facter::ResolvedFact).to receive(:new)
         .with('system_profiler.username', value)
         .and_return(expected_resolved_fact)

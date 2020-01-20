@@ -32,7 +32,7 @@ describe 'Macosx System Profile Resolver' do
   end
 
   it 'returns cores' do
-    result = Facter::Resolvers::SystemProfiler.resolve(:cores)
+    result = Facter::Resolvers::SystemProfiler.resolve(:total_number_of_cores)
 
     expect(result).to eq('4')
   end
@@ -91,8 +91,8 @@ describe 'Macosx System Profile Resolver' do
     expect(result).to eq('2.8 GHz')
   end
 
-  it 'returns processors' do
-    result = Facter::Resolvers::SystemProfiler.resolve(:processors)
+  it 'returns number_of_processors' do
+    result = Facter::Resolvers::SystemProfiler.resolve(:number_of_processors)
 
     expect(result).to eq('1')
   end
@@ -104,13 +104,13 @@ describe 'Macosx System Profile Resolver' do
   end
 
   it 'returns serial_number' do
-    result = Facter::Resolvers::SystemProfiler.resolve(:serial_number)
+    result = Facter::Resolvers::SystemProfiler.resolve(:serial_number_system)
 
     expect(result).to eq('123456789AAA')
   end
 
   it 'returns smc_version' do
-    result = Facter::Resolvers::SystemProfiler.resolve(:smc_version)
+    result = Facter::Resolvers::SystemProfiler.resolve(:smc_version_system)
 
     expect(result).to eq('2.29f24')
   end
@@ -120,13 +120,13 @@ describe 'Macosx System Profile Resolver' do
 
     expect(result).to eq('macOS 10.15.2 (19C57)')
   end
-  it 'returns uptime' do
-    result = Facter::Resolvers::SystemProfiler.resolve(:uptime)
+  it 'returns time_since_boot' do
+    result = Facter::Resolvers::SystemProfiler.resolve(:time_since_boot)
 
     expect(result).to eq('3:28')
   end
   it 'returns username' do
-    result = Facter::Resolvers::SystemProfiler.resolve(:username)
+    result = Facter::Resolvers::SystemProfiler.resolve(:user_name)
 
     expect(result).to eq('Test1 Test2 (test1.test2)')
   end

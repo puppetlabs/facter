@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'system_profiler.uptime'
 
       def call_the_resolver
-        fact_value = Facter::Resolvers::SystemProfiler.resolve(:uptime)
+        fact_value = Facter::Resolvers::SystemProfiler.resolve(:time_since_boot)
         ResolvedFact.new(FACT_NAME, fact_value)
       end
     end

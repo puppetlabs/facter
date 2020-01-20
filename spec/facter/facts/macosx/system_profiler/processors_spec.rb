@@ -7,7 +7,7 @@ describe 'Macosx SystemProfilerProcessors' do
     subject(:fact) { Facter::Macosx::SystemProfilerProcessors.new }
 
     before do
-      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:processors).and_return(value)
+      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:number_of_processors).and_return(value)
       expect(Facter::ResolvedFact).to receive(:new)
         .with('system_profiler.processors', value)
         .and_return(expected_resolved_fact)

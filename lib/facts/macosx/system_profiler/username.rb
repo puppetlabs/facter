@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'system_profiler.username'
 
       def call_the_resolver
-        fact_value = Facter::Resolvers::SystemProfiler.resolve(:username)
+        fact_value = Facter::Resolvers::SystemProfiler.resolve(:user_name)
         ResolvedFact.new(FACT_NAME, fact_value)
       end
     end

@@ -6,7 +6,7 @@ module Facter
       FACT_NAME = 'system_profiler.processors'
 
       def call_the_resolver
-        fact_value = Facter::Resolvers::SystemProfiler.resolve(:processors)
+        fact_value = Facter::Resolvers::SystemProfiler.resolve(:number_of_processors)
         ResolvedFact.new(FACT_NAME, fact_value)
       end
     end

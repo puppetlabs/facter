@@ -7,7 +7,7 @@ describe 'Macosx SystemProfilerUptime' do
     subject(:fact) { Facter::Macosx::SystemProfilerUptime.new }
 
     before do
-      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:uptime).and_return(value)
+      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:time_since_boot).and_return(value)
       expect(Facter::ResolvedFact).to receive(:new)
         .with('system_profiler.uptime', value)
         .and_return(expected_resolved_fact)
