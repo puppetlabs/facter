@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Resolvers::Linux::Mountpoints do
+describe Facter::Resolvers::Macosx::Mountpoints do
   let(:mount) do
     double(Sys::Filesystem::Mount,
            mount_point: '/', mount_time: nil,
@@ -15,9 +15,9 @@ describe Facter::Resolvers::Linux::Mountpoints do
   end
 
   let(:fact) do
-    [{ available: '63.31 GiB',
-       available_bytes: 67_979_685_888,
-       capacity: '84.64%',
+    [{ available: '85.44 GiB',
+       available_bytes: 91_745_386_496,
+       capacity: '80.33%',
        device: '/dev/nvme0n1p2',
        filesystem: 'ext4',
        options: %w[rw noatime],
@@ -34,11 +34,8 @@ describe Facter::Resolvers::Linux::Mountpoints do
   end
 
   before do
-    allow(File).to receive(:read)
-      .with('/proc/cmdline')
-      .and_return(load_fixture('cmdline_root_device').read)
-    allow(Sys::Filesystem).to receive(:mounts).and_return([mount])
-    allow(Sys::Filesystem).to receive(:stat).with(mount.mount_point).and_return(stat)
+    allow(Facter::FilesystemHelper).to receive(:read_mountpoints).and_return([mount])
+    allow(Facter::FilesystemHelper).to receive(:read_mountpoint_stats).with(mount.mount_point).and_return(stat)
 
     # mock sys/filesystem methods
     allow(stat).to receive(:bytes_total).and_return(stat.blocks * stat.fragment_size)
@@ -55,7 +52,7 @@ describe Facter::Resolvers::Linux::Mountpoints do
   end
 
   it 'drops automounts and non-tmpfs mounts under /proc or /sys' do
-    allow(Sys::Filesystem).to receive(:mounts).and_return(ignored_mounts)
+    allow(Facter::FilesystemHelper).to receive(:read_mountpoints).and_return(ignored_mounts)
     result = described_class.resolve(:mountpoints)
     expect(result).to be_empty
   end
@@ -67,7 +64,7 @@ describe Facter::Resolvers::Linux::Mountpoints do
 
     it 'looks up the actual device if /dev/root' do
       result = described_class.resolve(:mountpoints)
-      expect(result.first[:device]).to eq('/dev/mmcblk0p2')
+      expect(result.first[:device]).to eq('/dev/root')
     end
   end
 end

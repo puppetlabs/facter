@@ -33,6 +33,7 @@ require "#{ROOT_DIR}/lib/framework/config/block_list"
 require "#{ROOT_DIR}/lib/facter-ng"
 require "#{ROOT_DIR}/lib/resolvers/utils/fingerprint.rb"
 require "#{ROOT_DIR}/lib/resolvers/utils/ssh.rb"
+require "#{ROOT_DIR}/lib/resolvers/utils/filesystem_helper.rb"
 
 load_dir(['config'])
 
