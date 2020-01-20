@@ -2,13 +2,22 @@
 
 describe 'Macosx OsFamily' do
   context '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'os.family', value: 'value')
-      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelname).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('os.family', 'value').and_return(expected_fact)
+    let(:value) { 'Darwin' }
+    subject(:fact) { Facter::Macosx::OsFamily.new }
 
-      fact = Facter::Macosx::OsFamily.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelname).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::Uname' do
+      expect(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelname)
+      fact.call_the_resolver
+    end
+
+    it 'returns os family fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'os.family', value: value),
+                        an_object_having_attributes(name: 'osfamily', value: value, type: :legacy))
     end
   end
 end
