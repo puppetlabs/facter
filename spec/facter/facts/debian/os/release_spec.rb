@@ -1,15 +1,27 @@
 # frozen_string_literal: true
 
-describe 'Ubuntu OsRelease' do
+describe 'Debian OsRelease' do
   context '#call_the_resolver' do
-    let(:value) { { 'release' => { 'full' => '10.9', 'major' => '10', 'minor' => '9' } } }
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'os.release', value: value)
-      allow(Facter::Resolvers::LsbRelease).to receive(:resolve).with(:release).and_return('10.9')
-      allow(Facter::ResolvedFact).to receive(:new).with('os.release', value).and_return(expected_fact)
+    let(:value) { '10.9' }
+    let(:value_final) {  { 'full' => '10.9', 'major' => '10', 'minor' => '9' } }
+    subject(:fact) { Facter::Debian::OsRelease.new }
 
-      fact = Facter::Debian::OsRelease.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::LsbRelease).to receive(:resolve).with(:release).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::LsbRelease' do
+      expect(Facter::Resolvers::LsbRelease).to receive(:resolve).with(:release)
+      fact.call_the_resolver
+    end
+
+    it 'returns release fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'os.release', value: value_final),
+                        an_object_having_attributes(name: 'operatingsystemmajrelease', value: value_final['major'],
+                                                    type: :legacy),
+                        an_object_having_attributes(name: 'operatingsystemrelease', value: value_final['full'],
+                                                    type: :legacy))
     end
   end
 end

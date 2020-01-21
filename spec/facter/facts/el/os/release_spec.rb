@@ -1,15 +1,24 @@
 # frozen_string_literal: true
 
-describe 'Fedora OsRelease' do
+describe 'El OsRelease' do
   context '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'os.release', value: { full: 'value', major: 'value' })
-      allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version_id).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('os.release', full: 'value', major: 'value')
-                                                  .and_return(expected_fact)
+    let(:value) { '10.9' }
+    subject(:fact) { Facter::El::OsRelease.new }
 
-      fact = Facter::El::OsRelease.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version_id).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::OsRelease' do
+      expect(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version_id)
+      fact.call_the_resolver
+    end
+
+    it 'returns release fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'os.release', value: { full: value, major: value }),
+                        an_object_having_attributes(name: 'operatingsystemmajrelease', value: value, type: :legacy),
+                        an_object_having_attributes(name: 'operatingsystemrelease', value: value, type: :legacy))
     end
   end
 end

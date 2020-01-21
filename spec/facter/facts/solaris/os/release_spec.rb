@@ -2,16 +2,28 @@
 
 describe 'Solaris OsRelease' do
   context '#call_the_resolver' do
-    let(:release_fact) { { full: '10_u11', minor: '11', major: '10' } }
+    let(:value) { { full: '10_u11', minor: '11', major: '10' } }
+    subject(:fact) { Facter::Solaris::OsRelease.new }
 
-    it 'returns a os_release fact' do
-      expected_fact = double(Facter::Solaris::OsRelease, name: 'os.release', value: release_fact)
+    before do
       allow(Facter::Resolvers::SolarisRelease).to receive(:resolve).with(:full).and_return('10_u11')
       allow(Facter::Resolvers::SolarisRelease).to receive(:resolve).with(:major).and_return('10')
       allow(Facter::Resolvers::SolarisRelease).to receive(:resolve).with(:minor).and_return('11')
-      allow(Facter::ResolvedFact).to receive(:new).with('os.release', release_fact).and_return(expected_fact)
-      fact = Facter::Solaris::OsRelease.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    end
+
+    it 'calls Facter::Resolvers::OsRelease' do
+      expect(Facter::Resolvers::SolarisRelease).to receive(:resolve).with(:full)
+      expect(Facter::Resolvers::SolarisRelease).to receive(:resolve).with(:major)
+      expect(Facter::Resolvers::SolarisRelease).to receive(:resolve).with(:minor)
+      fact.call_the_resolver
+    end
+
+    it 'returns release fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'os.release', value: value),
+                        an_object_having_attributes(name: 'operatingsystemmajrelease',
+                                                    value: value[:major], type: :legacy),
+                        an_object_having_attributes(name: 'operatingsystemrelease', value: value[:full], type: :legacy))
     end
   end
 end

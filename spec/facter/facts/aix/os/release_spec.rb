@@ -2,14 +2,25 @@
 
 describe 'AIX OsRelease' do
   context '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'os.release', value: { full: 'value', major: 'value' })
-      allow(Facter::Resolvers::OsLevel).to receive(:resolve).with(:build).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('os.release', full: 'value', major: 'value')
-                                                  .and_return(expected_fact)
+    let(:value) { '12.0.1 ' }
+    subject(:fact) { Facter::Aix::OsRelease.new }
 
-      fact = Facter::Aix::OsRelease.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::OsLevel).to receive(:resolve).with(:build).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::OsLevel' do
+      expect(Facter::Resolvers::OsLevel).to receive(:resolve).with(:build)
+      fact.call_the_resolver
+    end
+
+    it 'returns release fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'os.release', value: { full: value.strip,
+                                                                                 major: value.split('-')[0] }),
+                        an_object_having_attributes(name: 'operatingsystemmajrelease', value: value.split('-')[0],
+                                                    type: :legacy),
+                        an_object_having_attributes(name: 'operatingsystemrelease', value: value.strip, type: :legacy))
     end
   end
 end
