@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facter
-  module Aix
+  module Solaris
     class RubyVersion
       FACT_NAME = 'ruby.version'
       ALIASES = 'rubyversion'

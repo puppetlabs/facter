@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe 'Aix RubyVersion' do
+describe 'Solaris RubyVersion' do
   context '#call_the_resolver' do
     let(:value) { '2.4.5' }
-    subject(:fact) { Facter::Aix::RubyVersion.new }
+    subject(:fact) { Facter::Solaris::RubyVersion.new }
 
     before do
       allow(Facter::Resolvers::Ruby).to receive(:resolve).with(:version).and_return(value)
