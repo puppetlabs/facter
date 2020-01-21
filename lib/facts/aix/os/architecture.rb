@@ -5,6 +5,7 @@ module Facter
     class OsArchitecture
       FACT_NAME = 'os.architecture'
       ALIASES = 'architecture'
+
       def call_the_resolver
         fact_value = Resolvers::Architecture.resolve(:architecture)
 

@@ -36,7 +36,7 @@ describe 'InternalFactLoader' do
         internal_fact_loader = Facter::InternalFactLoader.new
         core_facts = internal_fact_loader.core_facts
 
-        expect(core_facts.size).to eq(1)
+        expect(core_facts.size).to eq(2)
         expect(core_facts.first.type).to eq(:core)
       end
 
