@@ -4,12 +4,11 @@ module Facter
   module Debian
     class NetworkingFqdn
       FACT_NAME = 'networking.fqdn'
+      ALIASES = 'fqdn'
 
       def call_the_resolver
-        hostname = Resolvers::Hostname.resolve(:hostname)
-        domain = Resolvers::NetworkingDomain.resolve(:networking_domain)
-        fact_value = hostname + '.' + domain
-        ResolvedFact.new(FACT_NAME, fact_value)
+        fact_value = Resolvers::Hostname.resolve(:fqdn)
+        [ResolvedFact.new(FACT_NAME, fact_value), ResolvedFact.new(ALIASES, fact_value, :legacy)]
       end
     end
   end

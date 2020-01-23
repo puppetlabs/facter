@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe 'Debian NetworkingFqdn' do
+describe 'Sles NetworkingFqdn' do
   context '#call_the_resolver' do
     let(:value) { 'host.domain' }
-    subject(:fact) { Facter::Debian::NetworkingFqdn.new }
+    subject(:fact) { Facter::Sles::NetworkingFqdn.new }
 
     before do
       allow(Facter::Resolvers::Hostname).to receive(:resolve).with(:fqdn).and_return(value)

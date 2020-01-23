@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 module Facter
-  module Debian
-    class NetworkingHostname
-      FACT_NAME = 'networking.hostname'
-      ALIASES = 'hostname'
+  module Solaris
+    class NetworkingFqdn
+      FACT_NAME = 'networking.fqdn'
+      ALIASES = 'fqdn'
 
       def call_the_resolver
-        fact_value = Facter::Resolvers::Hostname.resolve(:hostname)
+        fact_value = Facter::Resolvers::Hostname.resolve(:fqdn)
         [ResolvedFact.new(FACT_NAME, fact_value), ResolvedFact.new(ALIASES, fact_value, :legacy)]
       end
     end

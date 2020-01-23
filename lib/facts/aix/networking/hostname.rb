@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facter
-  module Debian
+  module Aix
     class NetworkingHostname
       FACT_NAME = 'networking.hostname'
       ALIASES = 'hostname'
