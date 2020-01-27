@@ -19,6 +19,7 @@ compile_commands.json
 /*build*/
 /.idea/
 /linux-release/
+/acceptance/.beaker
 
 facts.md
 
