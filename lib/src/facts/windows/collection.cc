@@ -1,9 +1,4 @@
 #include <facter/facts/collection.hpp>
-#include <internal/facts/external/json_resolver.hpp>
-#include <internal/facts/external/text_resolver.hpp>
-#include <internal/facts/external/yaml_resolver.hpp>
-#include <internal/facts/external/execution_resolver.hpp>
-#include <internal/facts/external/windows/powershell_resolver.hpp>
 #include <internal/facts/windows/dmi_resolver.hpp>
 #include <internal/facts/windows/fips_resolver.hpp>
 #include <internal/facts/windows/identity_resolver.hpp>
@@ -54,19 +49,6 @@ namespace facter { namespace facts {
         }
 
         return {};
-    }
-
-    vector<unique_ptr<external::resolver>> collection::get_external_resolvers()
-    {
-        vector<unique_ptr<external::resolver>> resolvers;
-        resolvers.emplace_back(new text_resolver());
-        resolvers.emplace_back(new yaml_resolver());
-        resolvers.emplace_back(new json_resolver());
-
-        // The execution resolver is a catch-all for Windows executable types: .bat, .cmd, .com, .exe
-        resolvers.emplace_back(new execution_resolver());
-        resolvers.emplace_back(new powershell_resolver());
-        return resolvers;
     }
 
     void collection::add_platform_facts()

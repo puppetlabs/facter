@@ -15,16 +15,11 @@ namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace external {
 
-    bool text_resolver::can_resolve(string const& path) const
+    void text_resolver::resolve(collection& facts) const
     {
-        return boost::iends_with(path, ".txt");
-    }
+        LOG_DEBUG("resolving facts from text file \"{1}\".", _path);
 
-    void text_resolver::resolve(string const& path, collection& facts) const
-    {
-        LOG_DEBUG("resolving facts from text file \"{1}\".", path);
-
-        if (!lth_file::each_line(path, [&facts](string& line) {
+        if (!lth_file::each_line(_path, [&facts](string& line) {
             auto pos = line.find('=');
             if (pos == string::npos) {
                 LOG_DEBUG("ignoring line in output: {1}", line);
@@ -39,7 +34,7 @@ namespace facter { namespace facts { namespace external {
             throw external_fact_exception(_("file could not be opened."));
         }
 
-        LOG_DEBUG("completed resolving facts from text file \"{1}\".", path);
+        LOG_DEBUG("completed resolving facts from text file \"{1}\".", _path);
     }
 
 }}}  // namespace facter::facts::external
