@@ -75,7 +75,7 @@ if (UNIX)
         "util/posix/scoped_descriptor.cc"
     )
     if (OPENSSL_FOUND)
-        set(LIBFACTER_TESTS_CATEGORY_SOURCES ${LIBFACTER_TESTS_CATEGORY_SOURCES} "util/posix/scoped_bio.cc")
+        set(LIBFACTER_TESTS_CATEGORY_SOURCES ${LIBFACTER_TESTS_CATEGORY_SOURCES} "util/scoped_bio.cc")
     endif()
 
      set(POSIX_TESTS_LIBRARIES ${POSIX_LIBRARIES})
@@ -97,6 +97,9 @@ if (WIN32)
         "facts/external/windows/execution_resolver.cc"
         "facts/external/windows/powershell_resolver.cc"
     )
+    if (OPENSSL_FOUND)
+        set(LIBFACTER_TESTS_CATEGORY_SOURCES ${LIBFACTER_TESTS_CATEGORY_SOURCES} "util/scoped_bio.cc")
+    endif()
 endif()
 
 # Set the platform-specific sources

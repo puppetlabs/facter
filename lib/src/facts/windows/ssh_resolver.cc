@@ -1,7 +1,14 @@
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#include <internal/facts/posix/ssh_resolver.hpp>
+#include <internal/facts/windows/ssh_resolver.hpp>
 #include <leatherman/file_util/file.hpp>
 #include <facter/util/string.hpp>
+
+#include <leatherman/util/environment.hpp>
+#include <leatherman/windows/file_util.hpp>
+#include <leatherman/windows/system_error.hpp>
+#include <leatherman/windows/user.hpp>
+#include <leatherman/windows/windows.hpp>
+#include <leatherman/logging/logging.hpp>
+#include <boost/algorithm/string.hpp>
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
@@ -23,7 +30,9 @@ using namespace boost::filesystem;
 namespace bs = boost::system;
 namespace lth_file = leatherman::file_util;
 
-namespace facter { namespace facts { namespace posix {
+using namespace leatherman::util;
+
+namespace facter { namespace facts { namespace windows {
 
     ssh_resolver::data ssh_resolver::collect_data(collection& facts)
     {
@@ -37,26 +46,22 @@ namespace facter { namespace facts { namespace posix {
 
     void ssh_resolver::populate_key(std::string const& filename, int type, ssh_key& key)
     {
-        static vector<string> const search_directories = {
-            "/etc/ssh",
-            "/usr/local/etc/ssh",
-            "/etc",
-            "/usr/local/etc",
-            "/etc/opt/ssh"
-        };
+        string dataPath;
+        if (!environment::get("programdata", dataPath)) {
+            LOG_DEBUG("error finding programdata: {1}", leatherman::windows::system_error());
+        }
+        // https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_keymanagement
+        // Since there is no user associated with the sshd service, the host keys are stored under \ProgramData\ssh.
+        string sshPath = ((path(dataPath) / "ssh").string());
 
-        // Search the directories for the fact's key file
+        // Search in sshPath for the fact's key file
         path key_file;
-        for (auto const& directory : search_directories) {
-            key_file = directory;
-            key_file /= filename;
+        key_file = sshPath;
+        key_file /= filename;
 
-            bs::error_code ec;
-            if (!is_regular_file(key_file, ec)) {
-                key_file.clear();
-                continue;
-            }
-            break;
+        bs::error_code ec;
+        if (!is_regular_file(key_file, ec)) {
+            key_file.clear();
         }
 
         // Log if we didn't find the file
@@ -113,4 +118,4 @@ namespace facter { namespace facts { namespace posix {
 #endif  // USE_OPENSSL
     }
 
-}}}  // namespace facter::facts::posix
+}}}  // namespace facter::facts::windows

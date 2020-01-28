@@ -100,7 +100,7 @@ if (UNIX)
         "src/util/config/posix/config.cc"
     )
     if (OPENSSL_FOUND)
-        set(LIBFACTER_STANDARD_SOURCES ${LIBFACTER_STANDARD_SOURCES} "src/util/posix/scoped_bio.cc")
+        set(LIBFACTER_STANDARD_SOURCES ${LIBFACTER_STANDARD_SOURCES} "src/util/scoped_bio.cc")
     endif()
 
     if (NOT AIX)
@@ -117,6 +117,9 @@ if (WIN32)
         "src/facts/windows/collection.cc"
         "src/util/windows/wsa.cc"
     )
+    if (OPENSSL_FOUND)
+        set(LIBFACTER_STANDARD_SOURCES ${LIBFACTER_STANDARD_SOURCES} "src/util/scoped_bio.cc")
+    endif()
 endif()
 
 # Set the platform-specific sources
@@ -242,6 +245,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
         "src/facts/windows/kernel_resolver.cc"
         "src/facts/windows/memory_resolver.cc"
         "src/facts/windows/networking_resolver.cc"
+        "src/facts/windows/ssh_resolver.cc"
         "src/facts/windows/operating_system_resolver.cc"
         "src/facts/windows/processor_resolver.cc"
         "src/facts/windows/timezone_resolver.cc"

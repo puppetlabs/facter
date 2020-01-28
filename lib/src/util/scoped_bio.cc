@@ -1,10 +1,10 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#include <internal/util/posix/scoped_bio.hpp>
+#include <internal/util/scoped_bio.hpp>
 
 using namespace std;
 using namespace leatherman::util;
 
-namespace facter { namespace util { namespace posix {
+namespace facter { namespace util {
 
     // Remove const-ness before calling BIO_new. This is "unsafe",
     // but in isolation here will not cause issues. Allows the code to work
@@ -26,4 +26,4 @@ namespace facter { namespace util { namespace posix {
         }
     }
 
-}}}  // namespace facter::util::posix
+}}  // namespace facter::util

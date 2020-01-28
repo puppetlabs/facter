@@ -10,6 +10,7 @@
 #include <internal/facts/windows/kernel_resolver.hpp>
 #include <internal/facts/windows/memory_resolver.hpp>
 #include <internal/facts/windows/networking_resolver.hpp>
+#include <internal/facts/windows/ssh_resolver.hpp>
 #include <internal/facts/windows/operating_system_resolver.hpp>
 #include <internal/facts/windows/processor_resolver.hpp>
 #include <internal/facts/windows/timezone_resolver.hpp>
@@ -78,6 +79,7 @@ namespace facter { namespace facts {
         add(make_shared<windows::kernel_resolver>());
         add(make_shared<windows::memory_resolver>());
         add(make_shared<windows::networking_resolver>());
+        add(make_shared<windows::ssh_resolver>());
         add(make_shared<windows::timezone_resolver>());
         add(make_shared<windows::uptime_resolver>());
 
