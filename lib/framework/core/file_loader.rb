@@ -47,12 +47,9 @@ load_lib_dirs('framework', 'core', 'fact', 'internal')
 load_lib_dirs('framework', 'core', 'fact', 'external')
 load_lib_dirs('framework', 'formatters')
 
-os = ENV['RACK_ENV'] == 'test' ? '' : OsDetector.instance.identifier
-
 os_hierarchy = OsDetector.instance.hierarchy
 os_hierarchy.each { |operating_system| load_lib_dirs('facts', operating_system.downcase, '**') }
-
-load_lib_dirs('resolvers', os.to_s, '**')
+os_hierarchy.each { |operating_system| load_lib_dirs('resolvers', operating_system.downcase, '**') }
 
 require "#{ROOT_DIR}/lib/custom_facts/core/legacy_facter"
 require "#{ROOT_DIR}/lib/framework/utils/utils"
