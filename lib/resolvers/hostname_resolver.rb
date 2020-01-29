@@ -17,26 +17,26 @@ module Facter
           output, _status = Open3.capture2('hostname')
 
           # get domain
-          if output =~ /.*?\.(.+$)/
-            domain = Regexp.last_match(1)
-          elsif File.exist?('/etc/resolv.conf')
-            domain = read_domain
-          end
+          domain = read_domain(output)
 
           # get hostname
           hostname = output =~ /(.*?)\./ ? Regexp.last_match(1) : output
-          @fact_list[:hostname] ||= hostname
-          @fact_list[:domain] ||= domain
-          @fact_list[:fqdn] ||= "#{hostname}.#{domain}"
+          @fact_list[:hostname] ||= hostname&.strip
+          @fact_list[:domain] ||= domain&.strip
+          @fact_list[:fqdn] ||= "#{@fact_list[:hostname]}.#{@fact_list[:domain]}"
           @fact_list[fact_name]
         end
 
-        def read_domain
-          file = File.read('/etc/resolv.conf')
-          if file.match(/^search\s+(\S+)/)
+        def read_domain(output)
+          if output =~ /.*?\.(.+$)/
             domain = Regexp.last_match(1)
-          elsif file.match(/^domain\s+(\S+)/)
-            domain = Regexp.last_match(1)
+          elsif File.exist?('/etc/resolv.conf')
+            file = File.read('/etc/resolv.conf')
+            if file.match(/^search\s+(\S+)/)
+              domain = Regexp.last_match(1)
+            elsif file.match(/^domain\s+(\S+)/)
+              domain = Regexp.last_match(1)
+            end
           end
           domain
         end
