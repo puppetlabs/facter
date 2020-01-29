@@ -6,9 +6,9 @@ module Facter
       FACT_NAME = 'interfaces'
 
       def call_the_resolver
-        fact_value = Resolvers::Networking.resolve(:interfaces).keys.join(',')
+        fact_value = Resolvers::Networking.resolve(:interfaces)
 
-        ResolvedFact.new(FACT_NAME, fact_value, :legacy)
+        ResolvedFact.new(FACT_NAME, fact_value ? fact_value.keys.join(',') : nil, :legacy)
       end
     end
   end

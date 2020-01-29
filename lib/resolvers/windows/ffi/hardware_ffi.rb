@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "#{ROOT_DIR}/lib/resolvers/windows/ffi/ffi"
+require "#{ROOT_DIR}/lib/resolvers/windows/ffi/system_info"
+
 module HardwareFFI
   extend FFI::Library
 

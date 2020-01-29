@@ -12,7 +12,8 @@ def load_dir(*dirs)
   folder_path = File.join(ROOT_DIR, dirs)
   return unless Dir.exist?(folder_path.tr('*', ''))
 
-  Dir.glob(File.join(folder_path, '*.rb'), &method(:require))
+  files_to_require = Dir.glob(File.join(folder_path, '*.rb')).reject { |file| file =~ %r{/ffi/} }
+  files_to_require.each(&method(:require))
 end
 
 def load_lib_dirs(*dirs)

@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 describe 'Windows Interfaces' do
+  subject(:fact) { Facter::Windows::Interfaces.new }
+
+  before do
+    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
+  end
+
   context '#call_the_resolver' do
     let(:interfaces) { { 'eth0' => { ip6: 'fe80::99bf:da20:ad3:9bfe' }, 'en1' => { ip6: 'fe80::99bf:da20:ad3:9bfe' } } }
-    subject(:fact) { Facter::Windows::Interfaces.new }
-
-    before do
-      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
-    end
 
     it 'calls Facter::Resolvers::Networking' do
       expect(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces)
@@ -17,6 +18,15 @@ describe 'Windows Interfaces' do
     it 'returns interfaces names' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'interfaces', value: interfaces.keys.join(','), type: :legacy)
+    end
+  end
+
+  context '#call_the_resolver when resolver returns nil' do
+    let(:interfaces) { nil }
+
+    it 'returns nil' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'interfaces', value: interfaces, type: :legacy)
     end
   end
 end

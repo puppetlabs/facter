@@ -5,8 +5,8 @@ module Facter
     class OsLevel < BaseResolver
       # build
 
-      @@semaphore = Mutex.new
-      @@fact_list ||= {}
+      @semaphore = Mutex.new
+      @fact_list ||= {}
 
       class << self
         private
@@ -17,10 +17,10 @@ module Facter
 
         def read_oslevel(fact_name)
           output, _status = Open3.capture2('/usr/bin/oslevel -s 2>/dev/null')
-          @@fact_list[:build] = output
-          @@fact_list[:kernel] = 'AIX'
+          @fact_list[:build] = output
+          @fact_list[:kernel] = 'AIX'
 
-          @@fact_list[fact_name]
+          @fact_list[fact_name]
         end
       end
     end

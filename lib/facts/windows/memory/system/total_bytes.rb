@@ -10,7 +10,7 @@ module Facter
         fact_value = Resolvers::Memory.resolve(:total_bytes)
 
         [ResolvedFact.new(FACT_NAME, fact_value),
-         ResolvedFact.new(ALIASES, (fact_value / (1024.0 * 1024.0)).round(2), :legacy)]
+         ResolvedFact.new(ALIASES, fact_value ? (fact_value / (1024.0 * 1024.0)).round(2) : nil, :legacy)]
       end
     end
   end

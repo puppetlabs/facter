@@ -14,6 +14,7 @@ module Facter
         end
 
         def read_architecture(fact_name)
+          require_relative 'utils/odm_query'
           odmquery = ODMQuery.new
           odmquery
             .equals('name', 'proc0')

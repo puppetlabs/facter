@@ -14,6 +14,7 @@ module Facter
         end
 
         def read_hardware(fact_name)
+          require_relative 'utils/odm_query'
           odmquery = Facter::ODMQuery.new
           odmquery
             .equals('name', 'sys0')

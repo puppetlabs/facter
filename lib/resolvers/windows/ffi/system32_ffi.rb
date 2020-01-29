@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "#{ROOT_DIR}/lib/resolvers/windows/ffi/ffi"
+
 module System32FFI
   extend FFI::Library
 

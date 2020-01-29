@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "#{ROOT_DIR}/lib/resolvers/windows/ffi/ffi"
+require "#{ROOT_DIR}/lib/resolvers/windows/ffi/os_version_info_ex"
+
 module KernelFFI
   extend FFI::Library
 

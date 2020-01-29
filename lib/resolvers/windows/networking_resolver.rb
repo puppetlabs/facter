@@ -16,6 +16,8 @@ module Facter
         end
 
         def read_network_information(fact_name)
+          require "#{ROOT_DIR}/lib/resolvers/windows/ffi/networking_ffi"
+
           size_ptr = FFI::MemoryPointer.new(NetworkingFFI::BUFFER_LENGTH)
           adapter_addresses = FFI::MemoryPointer.new(IpAdapterAddressesLh.size, NetworkingFFI::BUFFER_LENGTH)
           flags = NetworkingFFI::GAA_FLAG_SKIP_ANYCAST |

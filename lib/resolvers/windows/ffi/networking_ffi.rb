@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require "#{ROOT_DIR}/lib/resolvers/windows/ffi/ffi"
+require "#{ROOT_DIR}/lib/resolvers/windows/ffi/network_utils"
+require "#{ROOT_DIR}/lib/resolvers/windows/ffi/ip_adapter_addresses_lh"
+
 module NetworkingFFI
   extend FFI::Library
 

@@ -16,7 +16,7 @@ module Facter
         }
 
         fact_value = WindowsReleaseFinder.find_release(input)
-        arr << ResolvedFact.new(FACT_NAME, full: fact_value, major: fact_value)
+        arr << ResolvedFact.new(FACT_NAME, ({ full: fact_value, major: fact_value } if fact_value))
         ALIASES.each { |aliass| arr << ResolvedFact.new(aliass, fact_value, :legacy) }
         arr
       end

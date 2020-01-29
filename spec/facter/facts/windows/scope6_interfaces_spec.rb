@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 describe 'Windows Scope6Interfaces' do
+  subject(:fact) { Facter::Windows::Scope6Interfaces.new }
+
+  before do
+    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
+  end
+
   context '#call_the_resolver' do
     let(:interfaces) { { 'eth0' => { scope6: 'link' }, 'en1' => { scope6: 'global' } } }
-    subject(:fact) { Facter::Windows::Scope6Interfaces.new }
-
-    before do
-      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
-    end
 
     it 'calls Facter::Resolvers::Networking' do
       expect(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces)
@@ -20,6 +21,14 @@ describe 'Windows Scope6Interfaces' do
                                                     value: interfaces['eth0'][:scope6], type: :legacy),
                         an_object_having_attributes(name: 'scope6_en1',
                                                     value: interfaces['en1'][:scope6], type: :legacy))
+    end
+  end
+
+  context '#call_the_resolver when resolver returns nil' do
+    let(:interfaces) { nil }
+
+    it 'returns nil' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and contain_exactly
     end
   end
 end

@@ -14,6 +14,8 @@ module Facter
         end
 
         def read_os_version_information(fact_name)
+          require "#{ROOT_DIR}/lib/resolvers/windows/ffi/kernel_ffi"
+
           ver_ptr = FFI::MemoryPointer.new(OsVersionInfoEx.size)
           ver = OsVersionInfoEx.new(ver_ptr)
           ver[:dwOSVersionInfoSize] = OsVersionInfoEx.size

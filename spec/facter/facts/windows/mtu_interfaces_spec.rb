@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 describe 'Windows MtuInterfaces' do
+  subject(:fact) { Facter::Windows::MtuInterfaces.new }
+
+  before do
+    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
+  end
+
   context '#call_the_resolver' do
     let(:interfaces) { { 'eth0' => { mtu: 1500 }, 'en1' => { mtu: 1500 } } }
-    subject(:fact) { Facter::Windows::MtuInterfaces.new }
-
-    before do
-      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
-    end
 
     it 'calls Facter::Resolvers::Networking' do
       expect(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces)
@@ -18,6 +19,14 @@ describe 'Windows MtuInterfaces' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'mtu_eth0', value: interfaces['eth0'][:mtu], type: :legacy),
                         an_object_having_attributes(name: 'mtu_en1', value: interfaces['en1'][:mtu], type: :legacy))
+    end
+  end
+
+  context '#call_the_resolver when resolver reeturns nil' do
+    let(:interfaces) { nil }
+
+    it 'returns nil' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and contain_exactly
     end
   end
 end

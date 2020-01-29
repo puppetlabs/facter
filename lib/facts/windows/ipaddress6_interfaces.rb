@@ -8,7 +8,7 @@ module Facter
       def call_the_resolver
         arr = []
         interfaces = Resolvers::Networking.resolve(:interfaces)
-        interfaces.each do |interface_name, info|
+        interfaces&.each do |interface_name, info|
           arr << ResolvedFact.new("ipaddress6_#{interface_name}", info[:ip6], :legacy) if info[:ip6]
         end
 
