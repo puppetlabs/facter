@@ -1,3 +1,3 @@
 # frozen_string_literal: true
 
-FACTER_VERSION = '4.0.3'
+FACTER_VERSION = '4.0.4'
