@@ -17,6 +17,9 @@ module LegacyFacter
       # @deprecated
       attr_accessor :ldapname
 
+      # Fact options e.g. fact_type
+      attr_accessor :options
+
       attr_accessor :used_resolution_weight
 
       # Creates a new fact, with no resolution mechanisms. See {Facter.add}
@@ -49,6 +52,7 @@ module LegacyFacter
       #
       # @api private
       def add(options = {}, &block)
+        @options = options
         define_resolution(nil, options, &block)
       end
 

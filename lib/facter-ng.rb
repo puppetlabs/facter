@@ -40,6 +40,7 @@ module Facter
   end
 
   def self.add(name, options = {}, &block)
+    options[:fact_type] = :custom
     LegacyFacter.add(name, options, &block)
   end
 

@@ -16,10 +16,17 @@ module Facter
 
     private
 
+    # The search paths must be set before creating the fact collection.
+    # If we set them after, they will not be visible.
+    def load_search_paths
+      LegacyFacter.search(*Options.custom_dir) if Options.custom_dir?
+      LegacyFacter.search_external(Options.external_dir) if Options.external_dir?
+    end
+
     def load_custom_facts
       custom_facts = []
 
-      LegacyFacter.search(*Options.custom_dir) if Options.custom_dir?
+      load_search_paths
       custom_facts_to_load = LegacyFacter.collection.custom_facts
 
       custom_facts_to_load&.each do |custom_fact_name|
@@ -33,7 +40,7 @@ module Facter
     def load_external_facts
       external_facts = []
 
-      LegacyFacter.search_external(Options.external_dir) if Options.external_dir?
+      load_search_paths
       external_facts_to_load = LegacyFacter.collection.external_facts
 
       external_facts_to_load&.each do |external_fact_name|

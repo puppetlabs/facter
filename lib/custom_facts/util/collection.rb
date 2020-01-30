@@ -93,20 +93,18 @@ module LegacyFacter
       def external_facts
         return @external_facts unless @external_facts.nil?
 
-        facts_before_load = Facter::Utils.deep_copy(@facts.keys)
         load_external_facts
-
-        @external_facts = Facter::Utils.deep_copy(@facts.keys) - facts_before_load
+        external_facts = @facts.reject { |_k, v| v.options[:fact_type] }
+        @external_facts = Facter::Utils.deep_copy(external_facts.keys)
       end
 
       # Builds a hash of custom facts
       def custom_facts
         return @custom_facts unless @custom_facts.nil?
 
-        facts_before_load = Facter::Utils.deep_copy(@facts.keys)
         internal_loader.load_all
-
-        @custom_facts = Facter::Utils.deep_copy(@facts.keys) - facts_before_load
+        custom_facts = @facts.select { |_k, v| v.options[:fact_type] }
+        @custom_facts = Facter::Utils.deep_copy(custom_facts.keys)
       end
 
       def load(name)

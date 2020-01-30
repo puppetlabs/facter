@@ -88,13 +88,13 @@ module LegacyFacter
       end
 
       def options(options)
-        @name = options.delete(:name) if options[:name]
+        accepted_option = %i[name value timeout has_weight fact_type]
 
-        @value = options.delete(:value) if options.key?(:value)
+        accepted_option.each do |option_name|
+          instance_variable_set("@#{option_name}", options.delete(option_name)) if options.key?(option_name)
+        end
 
-        @timeout = options.delete(:timeout) if options.key?(:timeout)
-
-        @weight = options.delete(:has_weight) if options.key?(:has_weight)
+        @weight = @has_weight if @has_weight
 
         raise ArgumentError, "Invalid resolution options #{options.keys.inspect}" unless options.keys.empty?
       end
