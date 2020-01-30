@@ -254,6 +254,14 @@ int main(int argc, char **argv)
             collection facts;
             facts.add_default_facts(!vm.count("no-ruby"));
             print_fact_groups(facts.get_fact_groups());
+
+            if (!vm["no-external-facts"].as<bool>()) {
+                vector<string> external_directories;
+                if (vm.count("external-dir")) {
+                    external_directories = vm["external-dir"].as<vector<string>>();
+                }
+                print_fact_groups(facts.get_external_facts_groups(external_directories));
+            }
             return EXIT_SUCCESS;
         }
 

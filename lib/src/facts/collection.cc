@@ -180,6 +180,14 @@ namespace facter { namespace facts {
         });
     }
 
+    map<string, vector<string>> collection::get_external_facts_groups(vector<string> const& directories)
+    {
+        map<string, vector<string>> external_facts_groups;
+        for (auto const& it : get_external_facts_files(directories)) {
+          external_facts_groups[it.second->name()] = {};
+        }
+        return external_facts_groups;
+    }
     collection::external_files_list collection::get_external_facts_files(vector<string> const& directories)
     {
         external_files_list external_facts_files;
@@ -200,7 +208,29 @@ namespace facter { namespace facts {
         if (external_facts_files.empty()) {
             LOG_DEBUG("no external facts were found.");
         } else {
+          map<string, string> known_external_facts_cache_groups;
             for (auto const& kvp : external_facts_files) {
+                // Check if the resolver should be cached
+                auto resolver_ttl = _ttls.find(kvp.second->name());
+                if (!_ignore_cache && resolver_ttl != _ttls.end()) {
+                    auto resolver = kvp.second;
+                    auto it = known_external_facts_cache_groups.find(resolver->name());
+
+                    if ( it != known_external_facts_cache_groups.end() ) {
+                      LOG_ERROR(
+                          "Caching is enabled for group \"{1}\" while there "
+                          "are at least two external facts files with "
+                          "the same filename. To fix this either remove "
+                          "\"{1}\" from cached "
+                          "groups or rename one of the "
+                          "files:\n\"{2}\"\n\"{3}\" ",
+                          resolver->name(), kvp.first, it->second);
+                      break;
+                    }
+                    known_external_facts_cache_groups.insert(make_pair(resolver->name(), kvp.first));
+                    cache::use_cache(*this, resolver, (*resolver_ttl).second);
+                    continue;
+                }
                 try {
                     kvp.second->resolve(*this);
                 }

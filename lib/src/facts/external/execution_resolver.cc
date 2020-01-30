@@ -18,7 +18,7 @@ using namespace facter::util::yaml;
 
 namespace facter { namespace facts { namespace external {
 
-    void execution_resolver::resolve(collection& facts) const
+    void execution_resolver::resolve(collection& facts)
     {
         LOG_DEBUG("resolving facts from executable file \"{1}\".", _path);
 
@@ -36,7 +36,7 @@ namespace facter { namespace facts { namespace external {
             try {
                 auto node = YAML::Load(result.output);
                 for (auto const& kvp : node) {
-                    add_value(kvp.first.as<string>(), kvp.second, facts);
+                    add_value(kvp.first.as<string>(), kvp.second, facts, _names);
 
                     // If YAML doesn't correctly parse, it will
                     // sometimes just return an empty node instead of
@@ -62,6 +62,7 @@ namespace facter { namespace facts { namespace external {
                     // Add as a string fact
                     string fact = line.substr(0, pos);
                     boost::to_lower(fact);
+                    _names.push_back(fact);
                     facts.add_external(move(fact), make_value<string_value>(line.substr(pos+1)));
                 }
             }

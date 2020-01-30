@@ -16,7 +16,7 @@ using namespace leatherman::execution;
 
 namespace facter { namespace facts { namespace external {
 
-    void powershell_resolver::resolve(collection& facts) const
+    void powershell_resolver::resolve(collection& facts)
     {
         LOG_DEBUG("resolving facts from powershell script \"{1}\".", _path);
 
@@ -60,7 +60,7 @@ namespace facter { namespace facts { namespace external {
                 for (auto const& kvp : node) {
                     string key = kvp.first.as<string>();
                     boost::to_lower(key);
-                    add_value(key, kvp.second, facts);
+                    add_value(key, kvp.second, facts, _names);
 
                     // If YAML doesn't correctly parse, it will
                     // sometimes just return an empty node instead of
@@ -76,7 +76,7 @@ namespace facter { namespace facts { namespace external {
 
             if (!resolved) {
                 // YAML/JSON parse not successful; Look for key=value pairs
-                leatherman::util::each_line(result.output, [&facts](string const& line) {
+                leatherman::util::each_line(result.output, [&facts, this](string const& line) {
                     auto pos = line.find('=');
                     if (pos == string::npos) {
                         LOG_DEBUG("ignoring line in output: {1}", line);
@@ -86,6 +86,7 @@ namespace facter { namespace facts { namespace external {
                     string fact = line.substr(0, pos);
                     boost::to_lower(fact);
                     string value = line.substr(pos + 1);
+                    _names.push_back(fact);
                     facts.add_external(move(fact), make_value<string_value>(move(value)));
                     return true;
                 });
