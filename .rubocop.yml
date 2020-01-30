@@ -106,12 +106,12 @@ Naming/PredicateName:
 
 Style/MethodMissingSuper:
   Exclude:
-    - 'lib/facter-ng.rb'
+    - 'lib/facter.rb'
 
 Style/MissingRespondToMissing:
   Exclude:
-    - 'lib/facter-ng.rb'
+    - 'lib/facter.rb'
 
 Naming/FileName:
   Exclude:
-    - 'lib/facter-ng.rb'
+    - 'lib/facter.rb'

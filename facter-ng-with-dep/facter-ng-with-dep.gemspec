@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require_relative '../config/config'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'facter-ng'
+  spec.name          = 'facter'
   spec.version       = FACTER_VERSION
   spec.authors       = ['Puppet']
   spec.email         = ['team-nw@puppet.com']
