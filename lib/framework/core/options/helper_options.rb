@@ -12,6 +12,15 @@ module Facter
 
       # convert array or string to array
       @options[:external_dir] = [*@options[:external_dir]] unless @options[:external_dir].nil?
+
+      @options[:log_level] = log_level || :unknown
+    end
+
+    private
+
+    def log_level
+      return :debug if @options[:debug]
+      return :trace if @options[:trace]
     end
   end
 end

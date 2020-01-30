@@ -66,21 +66,26 @@ module Facter
   def self.method_missing(name, *args, &block)
     log = Facter::Log.new(self)
     log.debug(
-      "--#{name}-- not implemented but required" \
-      'with params:' \
-      "#{args.inspect}" \
-      'with block:' \
-      "#{block.inspect}" \
-      'called by:' \
-      "#{caller}"
+      "--#{name}-- not implemented but required \n" \
+      'with params: ' \
+      "#{args.inspect} \n" \
+      'with block: ' \
+      "#{block.inspect}  \n" \
+      "called by:  \n" \
+      "#{caller} \n"
     )
   end
 
+  def self.debug(msg)
+    @logger ||= Log.new(self)
+    @logger.debug(msg)
+  end
+
   def self.log_errors(missing_names)
-    logger = Log.new(self)
+    @logger ||= Log.new(self)
 
     missing_names.each do |missing_name|
-      logger.error("fact \"#{missing_name}\" does not exist.", true)
+      @logger.error("fact \"#{missing_name}\" does not exist.", true)
     end
   end
 end
