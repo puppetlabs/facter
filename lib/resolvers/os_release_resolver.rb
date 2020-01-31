@@ -32,12 +32,17 @@ module Facter
             pairs << line.strip.delete('"').split('=', 2)
           end
 
-          result = Hash[*pairs.flatten]
-          result.each { |k, v| @fact_list[k.downcase.to_sym] = v }
-
-          @fact_list[:identifier] = @fact_list[:id]
+          fill_fact_list(pairs)
 
           @fact_list[fact_name]
+        end
+
+        def fill_fact_list(pairs)
+          result = Hash[*pairs.flatten]
+          result.each { |k, v| @fact_list[k.downcase.to_sym] = v }
+          @fact_list[:name] = @fact_list[:name].split(' ')[0].strip if @fact_list[:name]
+
+          @fact_list[:identifier] = @fact_list[:id]
         end
       end
     end

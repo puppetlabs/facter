@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facter
-  module Fedora
+  module El
     class Disks
       FACT_NAME = 'disks'
 
