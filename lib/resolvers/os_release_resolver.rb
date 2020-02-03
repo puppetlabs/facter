@@ -25,7 +25,12 @@ module Facter
         end
 
         def read_os_release_file(fact_name)
-          output, _status = Open3.capture2('cat /etc/os-release')
+          unless File.exist?('/etc/os-release')
+            @fact_list[:name] = nil
+            return
+          end
+
+          output = File.read('/etc/os-release')
           pairs = []
 
           output.each_line do |line|

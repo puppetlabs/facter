@@ -2,8 +2,12 @@
 
 describe 'OsReleaseResolver' do
   before do
-    allow(Open3).to receive(:capture2)
-      .with('cat /etc/os-release')
+    allow(File).to receive(:exist?)
+      .with('/etc/os-release')
+      .and_return(true)
+
+    allow(File).to receive(:read)
+      .with('/etc/os-release')
       .and_return(load_fixture('os_release').read)
 
     Facter::Resolvers::OsRelease.invalidate_cache
