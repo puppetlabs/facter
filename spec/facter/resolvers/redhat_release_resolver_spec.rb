@@ -10,7 +10,7 @@ describe 'RedHatReleaseResolver' do
   it 'returns os NAME' do
     result = Facter::Resolvers::RedHatRelease.resolve(:name)
 
-    expect(result).to eq('Red Hat Enterprise Linux Server')
+    expect(result).to eq('RedHat')
   end
 
   it 'returns os VERSION_ID' do

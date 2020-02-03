@@ -33,6 +33,7 @@ module Facter
           end
 
           fill_fact_list(pairs)
+          process_name
 
           @fact_list[fact_name]
         end
@@ -40,9 +41,18 @@ module Facter
         def fill_fact_list(pairs)
           result = Hash[*pairs.flatten]
           result.each { |k, v| @fact_list[k.downcase.to_sym] = v }
-          @fact_list[:name] = @fact_list[:name].split(' ')[0].strip if @fact_list[:name]
 
           @fact_list[:identifier] = @fact_list[:id]
+        end
+
+        def process_name
+          return unless @fact_list[:name]
+
+          @fact_list[:name] = if @fact_list[:name].downcase.start_with?('red')
+                                @fact_list[:name].split(' ')[0..1].join
+                              else
+                                @fact_list[:name].split(' ')[0].strip
+                              end
         end
       end
     end

@@ -30,7 +30,7 @@ module Facter
           output_strings.map!(&:strip)
           version_codename = output_strings[1].split(' ')
 
-          @fact_list[:name] = output_strings[0].strip
+          @fact_list[:name] = name(output_strings[0])
           @fact_list[:version] = version_codename[0].strip
           codename = version_codename[1].strip
           @fact_list[:codename] = codename.gsub(/[()]/, '')
@@ -38,9 +38,13 @@ module Facter
           @fact_list[:identifier] = identifier(@fact_list[:name])
         end
 
+        def name(name)
+          name.strip.split(' ')[0..1].join
+        end
+
         def identifier(name)
           identifier = name.strip.downcase
-          identifier = 'rhel' if @fact_list[:name].strip == 'Red Hat Enterprise Linux'
+          identifier = 'rhel' if @fact_list[:name].strip.casecmp('Red Hat Enterprise Linux')
 
           identifier
         end
