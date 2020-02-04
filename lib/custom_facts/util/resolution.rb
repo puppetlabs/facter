@@ -88,13 +88,11 @@ module LegacyFacter
       end
 
       def options(options)
-        accepted_option = %i[name value timeout has_weight fact_type]
+        accepted_option = %i[name value timeout weight fact_type]
 
         accepted_option.each do |option_name|
           instance_variable_set("@#{option_name}", options.delete(option_name)) if options.key?(option_name)
         end
-
-        @weight = @has_weight if @has_weight
 
         raise ArgumentError, "Invalid resolution options #{options.keys.inspect}" unless options.keys.empty?
       end
