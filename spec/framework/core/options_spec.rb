@@ -224,6 +224,7 @@ describe 'Options' do
   describe '#augment_with_helper_options!' do
     before do
       cli_options = { 'ruby' => false, 'external_dir' => 'external_dir' }
+      Facter::Options.instance.augment_with_defaults!
       Facter::Options.instance.augment_with_cli_options!(cli_options)
       Facter::Options.instance.augment_with_helper_options!(%w[first_user_query second_user_query])
     end

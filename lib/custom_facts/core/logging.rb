@@ -10,6 +10,8 @@ module LegacyFacter
       # @api private
       RESET = "\e[0m"
 
+      RED = "\e[31m"
+
       # @api private
       @@debug = false
       # @api private
@@ -119,7 +121,7 @@ module LegacyFacter
 
         arr.concat(exception.backtrace) if trace
 
-        arr.flatten.join("\n")
+        "#{RED}#{arr.flatten.join("\n")}#{RESET}"
       end
 
       # Print an exception message, and optionally a backtrace if trace is set

@@ -39,7 +39,8 @@ describe LegacyFacter::Core::Resolvable do
 
     it 'logs a warning if an exception was raised' do
       expect(subject).to receive(:resolve_value).and_raise RuntimeError, 'kaboom!'
-      expect(LegacyFacter).to receive(:warn).with(/Could not retrieve .*: kaboom!/)
+      expect(LegacyFacter).to receive(:warn).with("\e[31merror while resolving custom fact fact='stub fact'," \
+                                                                              " resolution='resolvable': kaboom!\e[0m")
       expect(subject.value).to eq nil
     end
   end

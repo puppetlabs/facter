@@ -8,7 +8,7 @@ describe 'OptionsValidator' do
 
       it 'writes message and exit' do
         allow_any_instance_of(Facter::Log).to receive(:error).with('--puppet and --no-ruby options conflict:'\
-                                                                                            ' please specify only one.')
+                                                                                    ' please specify only one.', true)
         allow(Facter::Cli).to receive(:start).with(['--help'])
 
         expect { Facter::OptionsValidator.validate(options) }.to raise_error(SystemExit) do |error|
@@ -23,7 +23,7 @@ describe 'OptionsValidator' do
 
       it 'writes message and exit' do
         allow_any_instance_of(Facter::Log).to receive(:error).with('option --puppet '\
-                                                                                  'cannot be specified more than once.')
+                                                                         'cannot be specified more than once.', true)
         allow(Facter::Cli).to receive(:start).with(['--help'])
 
         expect { Facter::OptionsValidator.validate(options) }.to raise_error(SystemExit) do |error|

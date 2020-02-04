@@ -55,6 +55,7 @@ module Facter
     class_option :log_level,
                  aliases: :l,
                  type: :string,
+                 default: '',
                  desc: 'Set logging level. Supported levels are: none, trace, debug, info, warn, error, and fatal.'
 
     class_option :block,
@@ -98,12 +99,10 @@ module Facter
                  type: :boolean,
                  desc: 'Enable more aggressive error reporting.'
 
-    # this is deprecated, maybe we should remove it
     class_option :puppet,
                  type: :boolean,
                  aliases: :p,
-                 desc: '(Deprecated: use `puppet facts` instead) Load the Puppet libraries,' \
-                       'thus allowing Facter to load Puppet-specific facts.'
+                 desc: 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
 
     desc 'query', 'Default method', hide: true
     desc '[options] [query] [query] [...]', ''

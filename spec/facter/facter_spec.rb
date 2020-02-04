@@ -172,6 +172,13 @@ describe 'Facter' do
     end
   end
 
+  describe '#search_path' do
+    it 'sends call to LegacyFacter' do
+      expect(LegacyFacter).to receive(:search_path).once
+      Facter.search_path
+    end
+  end
+
   describe '#search_external' do
     it 'sends call to LegacyFacter' do
       dirs = ['/dir1', '/dir2']
@@ -181,10 +188,31 @@ describe 'Facter' do
     end
   end
 
+  describe '#search_external_path' do
+    it 'sends call to LegacyFacter' do
+      expect(LegacyFacter).to receive(:search_external_path).once
+      Facter.search_external_path
+    end
+  end
+
   describe '#reset' do
     it 'sends call to LegacyFacter' do
       expect(LegacyFacter).to receive(:reset).once
       Facter.reset
+    end
+  end
+
+  describe '#trace' do
+    it 'sends call to LegacyFacter' do
+      expect(LegacyFacter).to receive(:trace).with(true).once
+      Facter.trace(true)
+    end
+  end
+
+  describe '#trace?' do
+    it 'sends call to LegacyFacter' do
+      expect(LegacyFacter).to receive(:trace?).once
+      Facter.trace?
     end
   end
 end

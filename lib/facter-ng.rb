@@ -31,6 +31,19 @@ module Facter
     [fact_formatter.format(resolved_facts), status || 0]
   end
 
+  def self.version
+    version_file = ::File.join(ROOT_DIR, 'VERSION')
+    ::File.read(version_file).strip
+  end
+
+  def self.trace?
+    LegacyFacter.trace?
+  end
+
+  def self.trace(bool)
+    LegacyFacter.trace(bool)
+  end
+
   def self.value(user_query)
     user_query = user_query.to_s
     resolved_facts = Facter::FactManager.instance.resolve_facts({}, [user_query])
@@ -52,8 +65,16 @@ module Facter
     LegacyFacter.search(*dirs)
   end
 
+  def self.search_path
+    LegacyFacter.search_path
+  end
+
   def self.search_external(dirs)
     LegacyFacter.search_external(dirs)
+  end
+
+  def self.search_external_path
+    LegacyFacter.search_external_path
   end
 
   def self.core_value(user_query)
@@ -65,7 +86,7 @@ module Facter
 
   def self.method_missing(name, *args, &block)
     log = Facter::Log.new(self)
-    log.debug(
+    log.error(
       "--#{name}-- not implemented but required \n" \
       'with params: ' \
       "#{args.inspect} \n" \
@@ -74,6 +95,7 @@ module Facter
       "called by:  \n" \
       "#{caller} \n"
     )
+    nil
   end
 
   def self.debug(msg)

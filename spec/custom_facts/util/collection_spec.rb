@@ -80,7 +80,7 @@ describe LegacyFacter::Util::Collection do
     end
 
     it 'logs a warning if the fact could not be defined' do
-      expect(LegacyFacter).to receive(:warn).with('Unable to add fact newfact: kaboom!')
+      expect(LegacyFacter).to receive(:warn).with("\e[31mUnable to add fact newfact: kaboom!\e[0m")
 
       collection.define_fact(:newfact) do
         raise 'kaboom!'
