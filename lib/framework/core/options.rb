@@ -37,6 +37,10 @@ module Facter
       @options[:external_dir]
     end
 
+    def change_log_level(log_level)
+      @options[:debug] = log_level
+    end
+
     def self.method_missing(name, *args, &block)
       Facter::Options.instance.send(name.to_s, *args, &block)
     rescue NoMethodError

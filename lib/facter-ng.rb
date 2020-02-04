@@ -85,8 +85,8 @@ module Facter
   end
 
   def self.method_missing(name, *args, &block)
-    log = Facter::Log.new(self)
-    log.error(
+    @logger ||= Log.new(self)
+    @logger.error(
       "--#{name}-- not implemented but required \n" \
       'with params: ' \
       "#{args.inspect} \n" \
@@ -99,8 +99,19 @@ module Facter
   end
 
   def self.debug(msg)
+    return unless debugging?
+
     @logger ||= Log.new(self)
     @logger.debug(msg)
+    nil
+  end
+
+  def self.debugging?
+    Options.instance[:debug]
+  end
+
+  def self.debugging(debug_bool)
+    Options.instance.change_log_level(debug_bool)
   end
 
   def self.log_errors(missing_names)

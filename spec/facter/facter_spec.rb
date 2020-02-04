@@ -215,4 +215,43 @@ describe 'Facter' do
       Facter.trace?
     end
   end
+
+  describe '#debug' do
+    let(:message) { 'test' }
+    before do
+      allow(Facter::Options.instance).to receive(:[]).with(:debug).and_return(is_debug)
+    end
+
+    context 'when log level is debug' do
+      let(:is_debug) { true }
+
+      it 'logs a debug message' do
+        expect_any_instance_of(Facter::Log).to receive(:debug).with(message)
+        expect(Facter.debug(message)).to eql(nil)
+      end
+    end
+
+    context 'when log level is not debug' do
+      let(:is_debug) { false }
+
+      it "doesn't log anything" do
+        expect_any_instance_of(Facter::Log).not_to receive(:debug).with(message)
+        expect(Facter.debug(message)).to eql(nil)
+      end
+    end
+  end
+
+  describe '#debugging' do
+    it 'sets log level to debug' do
+      expect(Facter::Options.instance).to receive(:change_log_level).with(true)
+      Facter.debugging(true)
+    end
+  end
+
+  describe '#debugging?' do
+    it 'returns that log_level is not debug' do
+      expect(Facter::Options.instance).to receive(:[]).with(:debug).and_return(false)
+      Facter.debugging?
+    end
+  end
 end

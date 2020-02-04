@@ -14,19 +14,19 @@ module Facter
     private
 
     def cli_defaults
-      @options[:debug] = false
-      @options[:trace] = false
-      @options[:verbose] = false
-      @options[:log_level] = :warn
-      @options[:show_legacy] = false
+      @options[:debug] ||= false
+      @options[:trace] ||= false
+      @options[:verbose] ||= false
+      @options[:log_level] ||= :warn
+      @options[:show_legacy] ||= false
     end
 
     def global_defaults
-      @options[:custom_facts] = true
-      @options[:custom_dir] = []
-      @options[:external_facts] = true
-      @options[:external_dir] = []
-      @options[:ruby] = true
+      @options[:custom_facts] ||= true
+      @options[:custom_dir] ||= []
+      @options[:external_facts] ||= true
+      @options[:external_dir] ||= []
+      @options[:ruby] ||= true
     end
   end
 end
