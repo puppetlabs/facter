@@ -74,11 +74,7 @@ if (UNIX)
         "util/posix/scoped_addrinfo.cc"
         "util/posix/scoped_descriptor.cc"
     )
-    if (OPENSSL_FOUND)
-        set(LIBFACTER_TESTS_CATEGORY_SOURCES ${LIBFACTER_TESTS_CATEGORY_SOURCES} "util/scoped_bio.cc")
-    endif()
-
-     set(POSIX_TESTS_LIBRARIES ${POSIX_LIBRARIES})
+    set(POSIX_TESTS_LIBRARIES ${POSIX_LIBRARIES})
 endif()
 
 set(LIBFACTER_TESTS_PLATFORM_LIBRARIES
@@ -87,9 +83,6 @@ set(LIBFACTER_TESTS_PLATFORM_LIBRARIES
 
 if (WIN32)
     list(APPEND LIBFACTER_TESTS_PLATFORM_LIBRARIES Mswsock)
-endif()
-
-if (WIN32)
     set(LIBFACTER_TESTS_CATEGORY_SOURCES
         "facts/windows/collection.cc"
         "facts/windows/networking_resolver.cc"
@@ -97,9 +90,10 @@ if (WIN32)
         "facts/external/windows/execution_resolver.cc"
         "facts/external/windows/powershell_resolver.cc"
     )
-    if (OPENSSL_FOUND)
-        set(LIBFACTER_TESTS_CATEGORY_SOURCES ${LIBFACTER_TESTS_CATEGORY_SOURCES} "util/scoped_bio.cc")
-    endif()
+endif()
+
+if (OPENSSL_FOUND)
+    set(LIBFACTER_TESTS_CATEGORY_SOURCES ${LIBFACTER_TESTS_CATEGORY_SOURCES} "util/scoped_bio.cc")
 endif()
 
 # Set the platform-specific sources
