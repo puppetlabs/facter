@@ -49,7 +49,8 @@ module Facter
     resolved_facts = Facter::FactManager.instance.resolve_facts({}, [user_query])
     CacheManager.invalidate_all_caches
     fact_collection = FactCollection.new.build_fact_collection!(resolved_facts)
-    fact_collection.dig(*user_query.split('.').map(&:to_sym))
+    splitted_user_query = Facter::Utils.split_user_query(user_query)
+    fact_collection.dig(*splitted_user_query)
   end
 
   def self.add(name, options = {}, &block)
@@ -81,7 +82,8 @@ module Facter
     user_query = user_query.to_s
     resolved_facts = Facter::FactManager.instance.resolve_core([user_query])
     fact_collection = FactCollection.new.build_fact_collection!(resolved_facts)
-    fact_collection.dig(*user_query.split('.').map(&:to_sym))
+    splitted_user_query = Facter::Utils.split_user_query(user_query)
+    fact_collection.dig(*splitted_user_query)
   end
 
   def self.method_missing(name, *args, &block)

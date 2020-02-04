@@ -8,7 +8,7 @@ module Facter
 
     def build_fact_collection!(facts)
       facts.each do |fact|
-        bury(*fact.name.split('.').map(&:to_sym) + fact.filter_tokens << fact.value) unless fact.value.nil?
+        bury(*fact.name.split('.') + fact.filter_tokens << fact.value) unless fact.value.nil?
       end
 
       self

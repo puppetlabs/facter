@@ -9,6 +9,14 @@ describe 'LegacyFactFormatter' do
     Facter::ResolvedFact.new('resolved_fact2', 'resolved_fact2_value')
   end
 
+  let(:nested_fact1) do
+    Facter::ResolvedFact.new('my.nested.fact1', 'my_nested_fact_value')
+  end
+
+  let(:nested_fact2) do
+    Facter::ResolvedFact.new('my.nested.fact2', 'my_nested_fact_value')
+  end
+
   let(:nil_resolved_fact1) do
     Facter::ResolvedFact.new('nil_resolved_fact1', nil)
   end
@@ -31,6 +39,12 @@ describe 'LegacyFactFormatter' do
 
     resolved_fact2.user_query = 'resolved_fact2'
     resolved_fact2.filter_tokens = []
+
+    nested_fact1.user_query = 'my.nested.fact1.4'
+    nested_fact1.filter_tokens = [4]
+
+    nested_fact2.user_query = 'my.nested.fact2.3'
+    nested_fact2.filter_tokens = [3]
 
     nil_resolved_fact1.user_query = 'nil_resolved_fact1'
     nil_resolved_fact1.filter_tokens = []
@@ -100,6 +114,12 @@ describe 'LegacyFactFormatter' do
         expect(formatted_output).to eq('resolved_fact1_value')
       end
 
+      it 'returns a single value for a nested fact' do
+        formatted_output = Facter::LegacyFactFormatter.new.format([nested_fact1])
+
+        expect(formatted_output).to eq('my_nested_fact_value')
+      end
+
       context 'formats to legacy for a single user query that contains :' do
         let(:resolved_fact) do
           double(Facter::ResolvedFact, name: 'networking.ip6', value: 'fe80::7ca0:ab22:703a:b329',
@@ -139,11 +159,20 @@ describe 'LegacyFactFormatter' do
   context 'format when multiple user queries' do
     context 'facts have values' do
       let(:expected_output) { "resolved_fact1 => resolved_fact1_value\nresolved_fact2 => resolved_fact2_value" }
+      let(:nested_expected_output) do
+        "my.nested.fact1.4 => my_nested_fact_value\nmy.nested.fact2.3 => my_nested_fact_value"
+      end
 
       it 'returns output' do
         formatted_output = Facter::LegacyFactFormatter.new.format([resolved_fact1, resolved_fact2])
 
         expect(formatted_output).to eq(expected_output)
+      end
+
+      it 'returns output for multiple user queries' do
+        formatted_output = Facter::LegacyFactFormatter.new.format([nested_fact1, nested_fact2])
+
+        expect(formatted_output).to eq(nested_expected_output)
       end
     end
 
