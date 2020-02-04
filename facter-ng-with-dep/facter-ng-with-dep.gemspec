@@ -7,8 +7,8 @@ require_relative '../config/config'
 Gem::Specification.new do |spec|
   spec.name          = 'facter-ng'
   spec.version       = FACTER_VERSION
-  spec.authors       = ['Bogdan Irimie']
-  spec.email         = ['irimie.bogdan@puppet.com']
+  spec.authors       = ['Puppet']
+  spec.email         = ['team-nw@puppet.com']
 
   spec.summary       = 'New version of Facter'
   spec.description   = 'New version of Facter'
@@ -20,6 +20,8 @@ Gem::Specification.new do |spec|
                else
                  Dir.glob('**/*')
                end
+
+  spec.required_ruby_version = '~> 2.3'
 
   spec.bindir = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
