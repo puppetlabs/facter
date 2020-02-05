@@ -254,4 +254,11 @@ describe 'Facter' do
       Facter.debugging?
     end
   end
+
+  describe '#clear' do
+    it 'sends call to LegacyFacter' do
+      expect(LegacyFacter).to receive(:clear).once
+      Facter.clear
+    end
+  end
 end
