@@ -18,6 +18,8 @@ module Facter
       @internal_loader ||= InternalFactLoader.new
       @external_fact_loader ||= ExternalFactLoader.new
 
+      @facts = []
+      @external_facts = []
       load_internal_facts(options)
       load_external_facts(options)
 
