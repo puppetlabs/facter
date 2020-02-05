@@ -55,7 +55,6 @@ module Facter
     class_option :log_level,
                  aliases: :l,
                  type: :string,
-                 default: '',
                  desc: 'Set logging level. Supported levels are: none, trace, debug, info, warn, error, and fatal.'
 
     class_option :block,
