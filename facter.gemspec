@@ -22,12 +22,13 @@ Gem::Specification.new do |spec|
                  Dir.glob('**/*')
                end
 
+  spec.required_ruby_version = '~> 2.3'
   spec.files.reject! do |f|
     f.match(%r{^(test|spec|features)/})
   end
 
   spec.files.reject! do |f|
-    f == "bin/facter-ng"
+    f == 'bin/facter-ng'
   end
 
   spec.bindir = 'bin'
