@@ -115,3 +115,4 @@ Style/MissingRespondToMissing:
 Naming/FileName:
   Exclude:
     - 'lib/facter.rb'
+    - 'agent/lib/facter-ng.rb'
