@@ -135,6 +135,66 @@ describe 'Facter' do
     end
   end
 
+  describe '#fact' do
+    it 'returns a fact' do
+      user_query = 'os.name'
+
+      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([os_fact])
+      allow_any_instance_of(Facter::FactCollection)
+        .to receive(:build_fact_collection!)
+        .with([os_fact])
+        .and_return(fact_collection)
+
+      result = Facter.fact(user_query)
+      expect(result).to be_instance_of(Facter::Util::Fact)
+      expect(result.value).to eq('Ubuntu')
+    end
+
+    it 'return no value' do
+      user_query = 'os.name'
+
+      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([])
+      allow_any_instance_of(Facter::FactCollection)
+        .to receive(:build_fact_collection!)
+        .with([])
+        .and_return(empty_fact_collection)
+
+      result = Facter.fact(user_query)
+      expect(result).to be_instance_of(Facter::Util::Fact)
+      expect(result.value).to eq(nil)
+    end
+  end
+
+  describe '#[]' do
+    it 'returns a fact' do
+      user_query = 'os.name'
+
+      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([os_fact])
+      allow_any_instance_of(Facter::FactCollection)
+        .to receive(:build_fact_collection!)
+        .with([os_fact])
+        .and_return(fact_collection)
+
+      result = Facter[user_query]
+      expect(result).to be_instance_of(Facter::Util::Fact)
+      expect(result.value).to eq('Ubuntu')
+    end
+
+    it 'return no value' do
+      user_query = 'os.name'
+
+      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([])
+      allow_any_instance_of(Facter::FactCollection)
+        .to receive(:build_fact_collection!)
+        .with([])
+        .and_return(empty_fact_collection)
+
+      result = Facter[user_query]
+      expect(result).to be_instance_of(Facter::Util::Fact)
+      expect(result.value).to eq(nil)
+    end
+  end
+
   describe '#core_value' do
     it 'searched in core facts and returns a value' do
       user_query = 'os.name'
@@ -160,6 +220,13 @@ describe 'Facter' do
 
       resolved_facts_hash = Facter.core_value(user_query)
       expect(resolved_facts_hash).to be nil
+    end
+  end
+
+  describe '#clear' do
+    it 'sends call to LegacyFacter' do
+      expect(LegacyFacter).to receive(:clear).once
+      Facter.clear
     end
   end
 
@@ -252,13 +319,6 @@ describe 'Facter' do
     it 'returns that log_level is not debug' do
       expect(Facter::Options.instance).to receive(:[]).with(:debug).and_return(false)
       Facter.debugging?
-    end
-  end
-
-  describe '#clear' do
-    it 'sends call to LegacyFacter' do
-      expect(LegacyFacter).to receive(:clear).once
-      Facter.clear
     end
   end
 end

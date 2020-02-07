@@ -12,6 +12,11 @@ Metrics/MethodLength:
     - 'lib/custom_facts/core/execution/windows.rb'
     - 'lib/custom_facts/core/execution/base.rb'
 
+Metrics/ModuleLength:
+  Max: 100
+  Exclude:
+    - 'lib/facter-ng.rb'
+
 Metrics/BlockLength:
   Exclude:
     - !ruby/regexp /(?:(?!.+_spec.rb).)*$/

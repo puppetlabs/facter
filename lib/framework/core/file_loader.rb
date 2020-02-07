@@ -54,6 +54,7 @@ os_hierarchy.each { |operating_system| load_lib_dirs('resolvers', operating_syst
 
 require "#{ROOT_DIR}/lib/custom_facts/core/legacy_facter"
 require "#{ROOT_DIR}/lib/framework/utils/utils"
+require "#{ROOT_DIR}/lib/util/fact.rb"
 
 require "#{ROOT_DIR}/lib/framework/core/fact_augmenter"
 require "#{ROOT_DIR}/lib/framework/parsers/query_parser"

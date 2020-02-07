@@ -8,6 +8,10 @@ require "#{ROOT_DIR}/lib/framework/core/file_loader"
 require "#{ROOT_DIR}/lib/framework/core/options/options_validator"
 
 module Facter
+  def self.[](name)
+    fact(name)
+  end
+
   def self.add(name, options = {}, &block)
     options[:fact_type] = :custom
     LegacyFacter.add(name, options, &block)
@@ -39,6 +43,13 @@ module Facter
 
   def self.debugging(debug_bool)
     Options.instance.change_log_level(debug_bool)
+  end
+
+  def self.fact(name)
+    fact = Facter::Util::Fact.new(name)
+    val = value(name)
+    fact.add({}) { setcode { val } }
+    fact
   end
 
   def self.log_errors(missing_names)
