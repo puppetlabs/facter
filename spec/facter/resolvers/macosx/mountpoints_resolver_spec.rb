@@ -15,17 +15,16 @@ describe Facter::Resolvers::Macosx::Mountpoints do
   end
 
   let(:fact) do
-    [{ available: '85.44 GiB',
-       available_bytes: 91_745_386_496,
-       capacity: '80.33%',
-       device: '/dev/nvme0n1p2',
-       filesystem: 'ext4',
-       options: %w[rw noatime],
-       path: '/',
-       size: '434.42 GiB',
-       size_bytes: 466_449_743_872,
-       used: '348.97 GiB',
-       used_bytes: 374_704_357_376 }]
+    { '/' => { available: '85.44 GiB',
+               available_bytes: 91_745_386_496,
+               capacity: '80.33%',
+               device: '/dev/nvme0n1p2',
+               filesystem: 'ext4',
+               options: %w[rw noatime],
+               size: '434.42 GiB',
+               size_bytes: 466_449_743_872,
+               used: '348.97 GiB',
+               used_bytes: 374_704_357_376 } }
   end
 
   let(:ignored_mounts) do
@@ -47,8 +46,7 @@ describe Facter::Resolvers::Macosx::Mountpoints do
 
   it 'correctly builds the mountpoints fact' do
     result = described_class.resolve(:mountpoints)
-
-    expect(result).to eq(fact)
+    expect(result).to match(fact)
   end
 
   it 'drops automounts and non-tmpfs mounts under /proc or /sys' do
@@ -64,7 +62,7 @@ describe Facter::Resolvers::Macosx::Mountpoints do
 
     it 'looks up the actual device if /dev/root' do
       result = described_class.resolve(:mountpoints)
-      expect(result.first[:device]).to eq('/dev/root')
+      expect(result['/'][:device]).to eq('/dev/root')
     end
   end
 end
