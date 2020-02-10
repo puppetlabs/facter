@@ -16,7 +16,7 @@ module Facter
           end
 
           def read_mounts # rubocop:disable Metrics/AbcSize
-            mounts = []
+            mounts = {}
             FilesystemHelper.read_mountpoints.each do |fs|
               device = fs.name
               filesystem = fs.mount_type
@@ -25,21 +25,35 @@ module Facter
 
               next if path =~ %r{^/(proc|sys)} && filesystem != 'tmpfs' || filesystem == 'autofs'
 
+              mounts[path] = read_stats(path).tap do |hash|
+                hash[:device] = device
+                hash[:filesystem] = filesystem
+                hash[:options] = options if options.any?
+              end
+            end
+
+            @fact_list[:mountpoints] = mounts
+          end
+
+          def read_stats(path)
+            begin
               stats = FilesystemHelper.read_mountpoint_stats(path)
               size_bytes = stats.bytes_total
-
               used_bytes = stats.bytes_used
               available_bytes = size_bytes - used_bytes
-              capacity = FilesystemHelper.compute_capacity(used_bytes, size_bytes)
-
-              size = Facter::BytesToHumanReadable.convert(size_bytes)
-              available = Facter::BytesToHumanReadable.convert(available_bytes)
-              used = Facter::BytesToHumanReadable.convert(used_bytes)
-
-              mounts << Hash[FilesystemHelper::MOUNT_KEYS.zip(FilesystemHelper::MOUNT_KEYS
-                .map { |v| binding.local_variable_get(v) })]
+            rescue Sys::Filesystem::Error
+              size_bytes = used_bytes = available_bytes = 0
             end
-            @fact_list[:mountpoints] = mounts
+
+            {
+              size_bytes: size_bytes,
+              used_bytes: used_bytes,
+              available_bytes: available_bytes,
+              capacity: FilesystemHelper.compute_capacity(used_bytes, size_bytes),
+              size: Facter::BytesToHumanReadable.convert(size_bytes),
+              available: Facter::BytesToHumanReadable.convert(available_bytes),
+              used: Facter::BytesToHumanReadable.convert(used_bytes)
+            }
           end
         end
       end
