@@ -185,18 +185,13 @@ namespace facter { namespace facts { namespace external {
         stack<tuple<string, unique_ptr<value>>> _stack;
     };
 
-    bool json_resolver::can_resolve(string const& path) const
+    void json_resolver::resolve(collection& facts) const
     {
-        return boost::iends_with(path, ".json");
-    }
-
-    void json_resolver::resolve(string const& path, collection& facts) const
-    {
-        LOG_DEBUG("resolving facts from JSON file \"{1}\".", path);
+        LOG_DEBUG("resolving facts from JSON file \"{1}\".", _path);
 
         // Open the file
         // We used a scoped_file here because rapidjson expects a FILE*
-        scoped_file file(path, "r");
+        scoped_file file(_path, "r");
         if (file == nullptr) {
             throw external_fact_exception(_("file could not be opened."));
         }
@@ -213,7 +208,7 @@ namespace facter { namespace facts { namespace external {
             throw external_fact_exception(GetParseError_En(result.Code()));
         }
 
-        LOG_DEBUG("completed resolving facts from JSON file \"{1}\".", path);
+        LOG_DEBUG("completed resolving facts from JSON file \"{1}\".", _path);
     }
 
 }}}  // namespace facter::facts::external

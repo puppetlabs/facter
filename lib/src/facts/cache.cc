@@ -49,8 +49,8 @@ namespace facter { namespace facts { namespace cache {
         string cache_file_path = cache_file.string();
         if (leatherman::file_util::file_readable(cache_file_path)) {
             try {
-                json_resolver json_res;
-                json_res.resolve(cache_file_path, facts);
+                json_resolver json_res(cache_file_path);
+                json_res.resolve(facts);
             } catch (external_fact_exception& ex) {
                 LOG_DEBUG("cache file for {1} facts contained invalid JSON, refreshing", res->name());
                 refresh_cache(res, cache_file, facts);

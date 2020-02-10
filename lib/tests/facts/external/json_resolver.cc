@@ -13,32 +13,23 @@ using namespace facter::testing;
 
 SCENARIO("resolving external JSON facts") {
     collection_fixture facts;
-    json_resolver resolver;
 
-    GIVEN("a non-JSON file extension") {
-        THEN("it should not be able to resolve") {
-            REQUIRE_FALSE(resolver.can_resolve("foo.txt"));
-        }
-    }
-    GIVEN("a JSON file extension") {
-        THEN("it should be able to resolve") {
-            REQUIRE(resolver.can_resolve("foo.json"));
-            REQUIRE(resolver.can_resolve("FoO.jsOn"));
-        }
-    }
     GIVEN("a non-existent file to resolve") {
         THEN("it should throw an exception") {
-            REQUIRE_THROWS_AS(resolver.resolve("doesnotexist.json", facts), external_fact_exception&);
+            json_resolver resolver("doesnotexist.json");
+            REQUIRE_THROWS_AS(resolver.resolve(facts), external_fact_exception&);
         }
     }
     GIVEN("invalid JSON") {
         THEN("it should throw an exception") {
-            REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/invalid.json", facts), external_fact_exception&);
+            json_resolver resolver(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/invalid.json");
+            REQUIRE_THROWS_AS(resolver.resolve(facts), external_fact_exception&);
         }
     }
     GIVEN("valid JSON") {
         THEN("it should populate the facts") {
-            resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/facts.json", facts);
+            json_resolver resolver(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/json/facts.json");
+            resolver.resolve(facts);
             REQUIRE_FALSE(facts.empty());
             REQUIRE(facts.get<string_value>("json_fact1"));
             REQUIRE(facts.get<string_value>("json_fact1")->value() == "foo");

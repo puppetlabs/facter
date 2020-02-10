@@ -311,6 +311,7 @@ namespace facter { namespace facts {
         virtual std::vector<std::string> get_external_fact_directories() const;
 
      private:
+        typedef std::list<std::pair<std::string, std::shared_ptr<external::resolver>>> external_files_list;
         LIBFACTER_NO_EXPORT void resolve_fact(std::string const& name);
         LIBFACTER_NO_EXPORT value const* get_value(std::string const& name);
         LIBFACTER_NO_EXPORT value const* query_value(std::string const& query, bool strict_errors);
@@ -319,13 +320,14 @@ namespace facter { namespace facts {
         LIBFACTER_NO_EXPORT void write_json(std::ostream& stream, std::set<std::string> const& queries, bool show_legacy, bool strict_errors);
         LIBFACTER_NO_EXPORT void write_yaml(std::ostream& stream, std::set<std::string> const& queries, bool show_legacy, bool strict_errors);
         LIBFACTER_NO_EXPORT void add_common_facts(bool include_ruby_facts);
-        LIBFACTER_NO_EXPORT bool add_external_facts_dir(std::vector<std::unique_ptr<external::resolver>> const& resolvers, std::string const& directory, bool warn);
+        LIBFACTER_NO_EXPORT void get_external_facts_files_from_dir(external_files_list& files,
+                                                                   std::string const& directory, bool warn);
+        LIBFACTER_NO_EXPORT external_files_list get_external_facts_files(std::vector<std::string> const& directories);
         LIBFACTER_NO_EXPORT bool try_block(std::shared_ptr<resolver> const& res);
         LIBFACTER_NO_EXPORT void resolve(std::shared_ptr<resolver> const& res);
 
         // Platform specific members
         LIBFACTER_NO_EXPORT void add_platform_facts();
-        LIBFACTER_NO_EXPORT std::vector<std::unique_ptr<external::resolver>> get_external_resolvers();
 
         std::map<std::string, std::unique_ptr<value>> _facts;
         std::list<std::shared_ptr<resolver>> _resolvers;
