@@ -6,7 +6,7 @@ set -e
 rspec
 
 # run linting
-rubocop
+rubocop --parallel
 
 # It will be disabled untill we rewrite it's rules
 # rubycritic --no-browser -f console

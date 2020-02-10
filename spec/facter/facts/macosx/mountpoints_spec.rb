@@ -41,7 +41,6 @@ describe Facter::Macosx::Mountpoints do
       end
 
       it 'returns mountpoints information' do
-        require 'pry-byebug'
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'mountpoints', value: parsed_fact)
       end
