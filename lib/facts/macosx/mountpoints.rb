@@ -9,12 +9,7 @@ module Facter
         mountpoints = Resolvers::Macosx::Mountpoints.resolve(FACT_NAME.to_sym)
         return ResolvedFact.new(FACT_NAME, nil) unless mountpoints
 
-        fact = {}
-        mountpoints.each do |mnt|
-          fact[mnt[:path].to_sym] = mnt.reject { |k| k == :path }
-        end
-
-        ResolvedFact.new(FACT_NAME, fact)
+        ResolvedFact.new(FACT_NAME, mountpoints)
       end
     end
   end
