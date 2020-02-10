@@ -15,7 +15,7 @@ describe Facter::Macosx::Mountpoints do
                  size: '434.42 GiB',
                  size_bytes: 466_449_743_872,
                  used: '348.97 GiB',
-                 used_bytes: 374_704_357_376 }}
+                 used_bytes: 374_704_357_376 } }
       end
 
       let(:parsed_fact) do
