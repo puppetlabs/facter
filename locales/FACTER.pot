@@ -558,14 +558,19 @@ msgstr ""
 msgid "searching {1} for external facts."
 msgstr ""
 
-#. error
+#. warning
 #: lib/src/facts/collection.cc
-msgid "error while processing \"{1}\" for external facts: {2}"
+msgid "skipping file \"{1}\": {2}"
 msgstr ""
 
 #. debug
 #: lib/src/facts/collection.cc
 msgid "no external facts were found."
+msgstr ""
+
+#. error
+#: lib/src/facts/collection.cc
+msgid "error while processing \"%1%\" for external facts: %2%"
 msgstr ""
 
 #. debug
@@ -626,11 +631,6 @@ msgstr ""
 msgid ""
 "cannot lookup an array element with \"{1}\": expected an integral value "
 "between 0 and {2} (inclusive)."
-msgstr ""
-
-#. debug
-#: lib/src/facts/external/execution_resolver.cc
-msgid "checking execution on {1}"
 msgstr ""
 
 #. debug
@@ -932,6 +932,11 @@ msgstr ""
 #. debug
 #: lib/src/facts/osx/processor_resolver.cc
 msgid "sysctlbyname failed: {1} ({2}): processor speed is unavailable."
+msgstr ""
+
+#: lib/src/facts/posix/external_resolvers_factory.cc
+#: lib/src/facts/windows/external_resolvers_factory.cc
+msgid "No resolver for external facts file {1}"
 msgstr ""
 
 #. warning
