@@ -29,6 +29,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/cwrapper.cc"
     "src/facts/array_value.cc"
     "src/facts/collection.cc"
+    "src/facts/external_resolvers_factory.cc"
     "src/facts/external/execution_resolver.cc"
     "src/facts/external/json_resolver.cc"
     "src/facts/external/resolver.cc"
@@ -85,6 +86,7 @@ set(LIBFACTER_COMMON_SOURCES
 if (UNIX)
     set(LIBFACTER_STANDARD_SOURCES
         "src/facts/posix/collection.cc"
+        "src/facts/posix/external_resolvers_factory.cc"
         "src/facts/posix/identity_resolver.cc"
         "src/facts/posix/networking_resolver.cc"
         "src/facts/posix/operatingsystem_resolver.cc"
@@ -115,6 +117,7 @@ if (WIN32)
     set(LIBFACTER_STANDARD_SOURCES
         "src/facts/external/windows/powershell_resolver.cc"
         "src/facts/windows/collection.cc"
+        "src/facts/windows/external_resolvers_factory.cc"
         "src/util/windows/wsa.cc"
     )
 endif()

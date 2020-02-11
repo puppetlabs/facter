@@ -9,4 +9,9 @@ namespace facter { namespace facts { namespace external {
     {
     }
 
+      external_fact_no_resolver::external_fact_no_resolver(std::string const& message) :
+        runtime_error(message)
+    {
+    }
+
 }}}  // namespace facter::facts::external

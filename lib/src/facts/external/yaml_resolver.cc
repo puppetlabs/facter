@@ -16,16 +16,11 @@ using namespace facter::util::yaml;
 
 namespace facter { namespace facts { namespace external {
 
-    bool yaml_resolver::can_resolve(string const& path) const
+    void yaml_resolver::resolve(collection& facts) const
     {
-        return boost::iends_with(path, ".yaml");
-    }
+        LOG_DEBUG("resolving facts from YAML file \"{1}\".", _path);
 
-    void yaml_resolver::resolve(string const& path, collection& facts) const
-    {
-        LOG_DEBUG("resolving facts from YAML file \"{1}\".", path);
-
-        boost::nowide::ifstream stream(path.c_str());
+        boost::nowide::ifstream stream(_path.c_str());
         if (!stream) {
             throw external_fact_exception(_("file could not be opened."));
         }
@@ -39,7 +34,7 @@ namespace facter { namespace facts { namespace external {
             throw external_fact_exception(ex.msg);
         }
 
-        LOG_DEBUG("completed resolving facts from YAML file \"{1}\".", path);
+        LOG_DEBUG("completed resolving facts from YAML file \"{1}\".", _path);
     }
 
 }}}  // namespace facter::facts::external

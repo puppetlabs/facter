@@ -13,32 +13,23 @@ using namespace facter::testing;
 
 SCENARIO("resolving external YAML facts") {
     collection_fixture facts;
-    yaml_resolver resolver;
 
-    GIVEN("a non-YAML file extension") {
-        THEN("it should not be able to resolve") {
-            REQUIRE_FALSE(resolver.can_resolve("foo.txt"));
-        }
-    }
-    GIVEN("a YAML file extension") {
-        THEN("it should be able to resolve") {
-            REQUIRE(resolver.can_resolve("foo.yaml"));
-            REQUIRE(resolver.can_resolve("FoO.yAmL"));
-        }
-    }
     GIVEN("a non-existent file to resolve") {
         THEN("it should throw an exception") {
-            REQUIRE_THROWS_AS(resolver.resolve("doesnotexist.yaml", facts), external_fact_exception&);
+            yaml_resolver resolver("doesnotexist.yaml");
+            REQUIRE_THROWS_AS(resolver.resolve(facts), external_fact_exception&);
         }
     }
     GIVEN("invalid YAML") {
         THEN("it should throw an exception") {
-            REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/yaml/invalid.yaml", facts), external_fact_exception&);
+            yaml_resolver resolver(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/yaml/invalid.yaml");
+            REQUIRE_THROWS_AS(resolver.resolve(facts), external_fact_exception&);
         }
     }
     GIVEN("valid YAML") {
         THEN("it should populate the facts") {
-            resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/yaml/facts.yaml", facts);
+            yaml_resolver resolver(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/yaml/facts.yaml");
+            resolver.resolve(facts);
             REQUIRE_FALSE(facts.empty());
             REQUIRE(facts.get<string_value>("yaml_fact1"));
             REQUIRE(facts.get<string_value>("yaml_fact1")->value() == "foo");
