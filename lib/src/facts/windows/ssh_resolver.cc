@@ -8,12 +8,15 @@
 #include <leatherman/logging/logging.hpp>
 #include <boost/algorithm/string.hpp>
 
+using namespace std;
 using namespace boost::filesystem;
 using namespace leatherman::util;
 
+namespace bs = boost::system;
+
 namespace facter { namespace facts {
 
-    path ssh_resolver::retrieve_key_file(std::string const& filename)
+    path ssh_resolver::retrieve_key_file(string const& filename)
     {
         string dataPath;
 

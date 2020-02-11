@@ -3,7 +3,24 @@
 #include <facter/facts/fact.hpp>
 #include <facter/facts/scalar_value.hpp>
 
+#include <facter/util/string.hpp>
+#include <leatherman/file_util/file.hpp>
+#include <leatherman/logging/logging.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/format.hpp>
+
+#ifdef USE_OPENSSL
+#include <internal/util/scoped_bio.hpp>
+#include <openssl/sha.h>
+#include <openssl/evp.h>
+using namespace facter::util;
+#endif  // USE_OPENSSL
+
 using namespace std;
+using namespace facter::util;
+using namespace boost::filesystem;
+
+namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace resolvers {
 

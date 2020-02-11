@@ -19,7 +19,7 @@ struct ssh_resolver : resolvers::ssh_resolver
      * @param filename The searched key file name.
      * @return Returns the key file's path
      */
-    virtual path retrieve_key_file(std::string const& filename) override;
+    virtual boost::filesystem::path retrieve_key_file(std::string const& filename) override;
 };
 
 }}  // namespace facter::facts

@@ -1,11 +1,14 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #include <internal/facts/ssh_resolver.hpp>
 
+using namespace std;
 using namespace boost::filesystem;
+
+namespace bs = boost::system;
 
 namespace facter { namespace facts {
 
-    path ssh_resolver::retrieve_key_file(std::string const& filename)
+    path ssh_resolver::retrieve_key_file(string const& filename)
     {
         path key_file;
 

@@ -4,31 +4,10 @@
  */
 #pragma once
 
-#include <leatherman/file_util/file.hpp>
-#include <facter/util/string.hpp>
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/map_value.hpp>
-#include <leatherman/logging/logging.hpp>
-#include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/format.hpp>
-#include <tuple>
 #include <string>
-#include <vector>
-
-#ifdef USE_OPENSSL
-#include <internal/util/scoped_bio.hpp>
-#include <openssl/sha.h>
-#include <openssl/evp.h>
-using namespace facter::util;
-#endif  // USE_OPENSSL
-
-using namespace std;
-using namespace facter::util;
-using namespace boost::filesystem;
-
-namespace bs = boost::system;
-namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace resolvers {
 
@@ -118,7 +97,7 @@ namespace facter { namespace facts { namespace resolvers {
          * @param filename The searched key file name.
          * @return Returns the key file's path
          */
-        virtual path retrieve_key_file(std::string const& filename) = 0;
+        virtual boost::filesystem::path retrieve_key_file(std::string const& filename) = 0;
 
         /**
          * Collects the resolver data.
