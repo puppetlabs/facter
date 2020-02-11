@@ -41,6 +41,7 @@
 #include <internal/facts/resolvers/zpool_resolver.hpp>
 
 using namespace std;
+using namespace boost::filesystem;
 using namespace facter::facts;
 using namespace leatherman::util;
 using namespace facter::testing;

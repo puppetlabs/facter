@@ -7,6 +7,7 @@
 #include "../../collection_fixture.hpp"
 
 using namespace std;
+using namespace boost::filesystem;
 using namespace facter::facts;
 using namespace facter::facts::resolvers;
 using namespace facter::testing;
