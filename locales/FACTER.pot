@@ -993,41 +993,6 @@ msgstr ""
 msgid "uname failed: {1} ({2}): OS hardware is unavailable."
 msgstr ""
 
-#. debug
-#: lib/src/facts/posix/ssh_resolver.cc
-msgid "{1} could not be located."
-msgstr ""
-
-#. debug
-#: lib/src/facts/posix/ssh_resolver.cc
-msgid "{1} could not be read."
-msgstr ""
-
-#. debug
-#: lib/src/facts/posix/ssh_resolver.cc
-msgid "unexpected contents for {1}."
-msgstr ""
-
-#. debug
-#: lib/src/facts/posix/ssh_resolver.cc
-msgid "failed to decode SSH key \"{1}\"."
-msgstr ""
-
-#: lib/src/facts/posix/ssh_resolver.cc
-msgid "SSHFP %1% 1 %2%"
-msgstr ""
-
-#: lib/src/facts/posix/ssh_resolver.cc
-msgid "SSHFP %1% 2 %2%"
-msgstr ""
-
-#. info
-#: lib/src/facts/posix/ssh_resolver.cc
-msgid ""
-"facter was built without OpenSSL support: SSH fingerprint information is "
-"unavailable."
-msgstr ""
-
 #. warning
 #: lib/src/facts/posix/timezone_resolver.cc
 msgid "localtime_r failed: timezone is unavailable."
@@ -1141,6 +1106,41 @@ msgstr ""
 #. error
 #: lib/src/facts/resolvers/ruby_resolver.cc
 msgid "error while resolving ruby {1} fact: {2}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/ssh_resolver.cc
+msgid "{1} could not be located."
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/ssh_resolver.cc
+msgid "{1} could not be read."
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/ssh_resolver.cc
+msgid "unexpected contents for {1}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/ssh_resolver.cc
+msgid "failed to decode SSH key \"{1}\"."
+msgstr ""
+
+#: lib/src/facts/resolvers/ssh_resolver.cc
+msgid "SSHFP %1% 1 %2%"
+msgstr ""
+
+#: lib/src/facts/resolvers/ssh_resolver.cc
+msgid "SSHFP %1% 2 %2%"
+msgstr ""
+
+#. info
+#: lib/src/facts/resolvers/ssh_resolver.cc
+msgid ""
+"facter was built without OpenSSL support: SSH fingerprint information is "
+"unavailable."
 msgstr ""
 
 #: lib/src/facts/resolvers/uptime_resolver.cc
@@ -1371,6 +1371,11 @@ msgstr ""
 #. debug
 #: lib/src/facts/windows/processor_resolver.cc
 msgid "Unable to determine processor type: unknown architecture"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/ssh_resolver.cc
+msgid "error finding programdata: {1}"
 msgstr ""
 
 #. warning
