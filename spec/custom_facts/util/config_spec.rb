@@ -57,7 +57,7 @@ describe LegacyFacter::Util::Config do
       allow(LegacyFacter::Util::Config).to receive(:windows_data_dir).and_return(nil)
       LegacyFacter::Util::Config.setup_default_ext_facts_dirs
       expect(LegacyFacter::Util::Config.external_facts_dirs)
-        .to eq ['/opt/puppetlabs/custom_facts/facts.d']
+        .to eq ['/opt/puppetlabs/facter/facts.d']
     end
 
     it 'should return the default value for windows 2008' do
@@ -65,7 +65,7 @@ describe LegacyFacter::Util::Config do
       allow(LegacyFacter::Util::Config).to receive(:windows_data_dir).and_return('C:\\ProgramData')
       LegacyFacter::Util::Config.setup_default_ext_facts_dirs
       expect(LegacyFacter::Util::Config.external_facts_dirs)
-        .to eq [File.join('C:\\ProgramData', 'PuppetLabs', 'custom_facts', 'facts.d')]
+        .to eq [File.join('C:\\ProgramData', 'PuppetLabs', 'facter', 'facts.d')]
     end
 
     it 'should return the default value for windows 2003R2' do
@@ -73,14 +73,14 @@ describe LegacyFacter::Util::Config do
       allow(LegacyFacter::Util::Config).to receive(:windows_data_dir).and_return('C:\\Documents')
       LegacyFacter::Util::Config.setup_default_ext_facts_dirs
       expect(LegacyFacter::Util::Config.external_facts_dirs)
-        .to eq [File.join('C:\\Documents', 'PuppetLabs', 'custom_facts', 'facts.d')]
+        .to eq [File.join('C:\\Documents', 'PuppetLabs', 'facter', 'facts.d')]
     end
 
     it "returns the old and new (AIO) paths under user's home directory when not root" do
       allow(LegacyFacter::Util::Root).to receive(:root?).and_return(false)
       LegacyFacter::Util::Config.setup_default_ext_facts_dirs
       expect(LegacyFacter::Util::Config.external_facts_dirs)
-        .to eq [File.expand_path(File.join('~', '.puppetlabs', 'opt', 'custom_facts', 'facts.d'))]
+        .to eq [File.expand_path(File.join('~', '.puppetlabs', 'opt', 'facter', 'facts.d'))]
     end
 
     it 'includes additional values when user appends to the list' do

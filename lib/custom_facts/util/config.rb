@@ -25,7 +25,7 @@ module LegacyFacter
       end
 
       def self.windows_data_dir
-        Facter::Resolvers::System32.resolve(:system32) if LegacyFacter::Util::Config.windows?
+        ENV['ProgramData'] || ENV['APPDATA'] if LegacyFacter::Util::Config.windows?
       end
 
       def self.external_facts_dirs=(dir)
@@ -40,13 +40,13 @@ module LegacyFacter
         if LegacyFacter::Util::Root.root?
           windows_dir = windows_data_dir
           @external_facts_dirs = if windows_dir
-                                   [File.join(windows_dir, 'PuppetLabs', 'custom_facts', 'facts.d')]
+                                   [File.join(windows_dir, 'PuppetLabs', 'facter', 'facts.d')]
                                  else
-                                   ['/opt/puppetlabs/custom_facts/facts.d']
+                                   ['/opt/puppetlabs/facter/facts.d']
                                  end
         elsif ENV['HOME']
           @external_facts_dirs =
-            [File.expand_path(File.join(ENV['HOME'], '.puppetlabs', 'opt', 'custom_facts', 'facts.d'))]
+            [File.expand_path(File.join(ENV['HOME'], '.puppetlabs', 'opt', 'facter', 'facts.d'))]
         else
           @external_facts_dirs = []
         end
