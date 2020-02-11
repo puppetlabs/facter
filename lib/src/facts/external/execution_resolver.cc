@@ -18,22 +18,14 @@ using namespace facter::util::yaml;
 
 namespace facter { namespace facts { namespace external {
 
-    bool execution_resolver::can_resolve(string const& path) const
+    void execution_resolver::resolve(collection& facts) const
     {
-        // If the path can be resolved as an executable, this resolver can handle it.
-        // However, only allow absolute paths.
-        LOG_DEBUG("checking execution on {1}", path);
-        return !which(path, {}).empty();
-    }
-
-    void execution_resolver::resolve(string const& path, collection& facts) const
-    {
-        LOG_DEBUG("resolving facts from executable file \"{1}\".", path);
+        LOG_DEBUG("resolving facts from executable file \"{1}\".", _path);
 
         try
         {
             bool resolved = false;
-            auto result = execute(path, 0,
+            auto result = execute(_path, 0,
                 {
                     execution_options::trim_output,
                     execution_options::merge_environment,
@@ -76,14 +68,14 @@ namespace facter { namespace facts { namespace external {
 
             // Log a warning if there is error output from the command
             if (!result.error.empty()) {
-                LOG_WARNING("external fact file \"{1}\" had output on stderr: {2}", path, result.error);
+                LOG_WARNING("external fact file \"{1}\" had output on stderr: {2}", _path, result.error);
             }
         }
         catch (execution_exception& ex) {
             throw external_fact_exception(ex.what());
         }
 
-        LOG_DEBUG("completed resolving facts from executable file \"{1}\".", path);
+        LOG_DEBUG("completed resolving facts from executable file \"{1}\".", _path);
     }
 
 }}}  // namespace facter::facts::external

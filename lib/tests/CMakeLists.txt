@@ -11,6 +11,7 @@ set(LIBFACTER_TESTS_COMMON_SOURCES
     "facts/external/text_resolver.cc"
     "facts/external/yaml_resolver.cc"
     "facts/collection.cc"
+    "facts/external_resolvers_factory.cc"
     "facts/integer_value.cc"
     "facts/map_value.cc"
     "facts/resolvers/augeas_resolver.cc"
@@ -69,6 +70,7 @@ endif()
 if (UNIX)
     set(LIBFACTER_TESTS_CATEGORY_SOURCES
         "facts/posix/collection.cc"
+        "facts/posix/external_resolvers_factory.cc"
         "facts/posix/uptime_resolver.cc"
         "facts/external/posix/execution_resolver.cc"
         "util/posix/scoped_addrinfo.cc"
@@ -92,6 +94,7 @@ endif()
 if (WIN32)
     set(LIBFACTER_TESTS_CATEGORY_SOURCES
         "facts/windows/collection.cc"
+        "facts/windows/external_resolvers_factory.cc"
         "facts/windows/networking_resolver.cc"
         "facts/windows/operating_system_resolver.cc"
         "facts/external/windows/execution_resolver.cc"
