@@ -570,6 +570,16 @@ msgstr ""
 
 #. error
 #: lib/src/facts/collection.cc
+msgid ""
+"Caching is enabled for group \"{1}\" while there are at least two external "
+"facts files with the same filename. To fix this either remove \"{1}\" from "
+"cached groups or rename one of the files:\n"
+"\"{2}\"\n"
+"\"{3}\" "
+msgstr ""
+
+#. error
+#: lib/src/facts/collection.cc
 msgid "error while processing \"%1%\" for external facts: %2%"
 msgstr ""
 
