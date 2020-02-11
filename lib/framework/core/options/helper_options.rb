@@ -30,7 +30,7 @@ module Facter
                                                             " '--log-level' is missing")
       end
       unless OptionsValidator::LOG_LEVEL.include?(
-        @options[:log_level]
+        @options[:log_level].to_sym
       )
         OptionsValidator.write_error_and_exit("invalid log level #{@options[:log_level]}  : expected none, trace,"\
                                                                                 ' debug, info, warn, error, or fatal.')
