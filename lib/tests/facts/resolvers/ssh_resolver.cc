@@ -14,16 +14,21 @@ using namespace facter::testing;
 struct empty_ssh_resolver : ssh_resolver
 {
  protected:
-    virtual data collect_data(collection& facts) override
+    data collect_data(collection& facts) override
     {
         return {};
+    }
+
+    virtual path retrieve_key_file(std::string const& filename) override
+    {
+        return path("");
     }
 };
 
 struct test_ssh_resolver : ssh_resolver
 {
  protected:
-    virtual data collect_data(collection& facts) override
+    data collect_data(collection& facts) override
     {
         data result;
         result.dsa.key = "dsa:key";
@@ -43,6 +48,11 @@ struct test_ssh_resolver : ssh_resolver
         result.rsa.digest.sha1 = "rsa:sha1";
         result.rsa.digest.sha256 = "rsa:sha256";
         return result;
+    }
+
+    virtual path retrieve_key_file(std::string const& filename) override
+    {
+        return path(filename);
     }
 };
 
