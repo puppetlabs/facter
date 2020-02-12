@@ -78,6 +78,7 @@ describe 'Facter' do
 
         allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([])
         allow_any_instance_of(Facter::Options).to receive(:[]).with(:strict).and_return(true)
+        allow(OsDetector).to receive(:detect).and_return(:solaris)
 
         json_fact_formatter = double(Facter::JsonFactFormatter)
         allow(json_fact_formatter).to receive(:format).with([]).and_return(expected_json_output)

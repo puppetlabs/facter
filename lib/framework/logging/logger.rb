@@ -42,20 +42,20 @@ module Facter
     end
 
     def debug(msg)
-      @@logger.debug(@class_name + ' --- ' + msg)
+      @@logger.debug(@class_name + ' - ' + msg)
     end
 
     def info(msg)
-      @@logger.info(@class_name + ' --- ' + msg)
+      @@logger.info(@class_name + ' - ' + msg)
     end
 
     def warn(msg)
-      @@logger.warn(@class_name + ' --- ' + msg)
+      @@logger.warn(@class_name + ' - ' + msg)
     end
 
     def error(msg, colorize = false)
-      msg = colorize(msg, RED) if colorize
-      @@logger.error(@class_name + ' --- ' + msg)
+      msg = colorize(msg, RED) if colorize && !OsDetector.instance.detect.eql?(:windows)
+      @@logger.error(@class_name + ' - ' + msg)
     end
 
     def colorize(msg, color)
