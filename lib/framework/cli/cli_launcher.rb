@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'thor'
-require "#{ROOT_DIR}/lib/facter-ng"
+require "#{ROOT_DIR}/lib/facter"
 require "#{ROOT_DIR}/lib/framework/cli/cli"
 
 Facter::OptionsValidator.validate(ARGV)

@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require_relative 'config/config'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'facter-ng'
+  spec.name          = 'facter'
   spec.version       = FACTER_VERSION
   spec.authors       = ['Puppet']
   spec.email         = ['team-nw@puppet.com']
@@ -22,8 +22,13 @@ Gem::Specification.new do |spec|
                  Dir.glob('**/*')
                end
 
+  spec.required_ruby_version = '~> 2.3'
   spec.files.reject! do |f|
     f.match(%r{^(test|spec|features)/})
+  end
+
+  spec.files.reject! do |f|
+    f == 'bin/facter-ng'
   end
 
   spec.bindir = 'bin'

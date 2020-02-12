@@ -15,7 +15,7 @@ Metrics/MethodLength:
 Metrics/ModuleLength:
   Max: 100
   Exclude:
-    - 'lib/facter-ng.rb'
+    - 'lib/facter.rb'
 
 Metrics/BlockLength:
   Exclude:
@@ -106,12 +106,13 @@ Naming/PredicateName:
 
 Style/MethodMissingSuper:
   Exclude:
-    - 'lib/facter-ng.rb'
+    - 'lib/facter.rb'
 
 Style/MissingRespondToMissing:
   Exclude:
-    - 'lib/facter-ng.rb'
+    - 'lib/facter.rb'
 
 Naming/FileName:
   Exclude:
-    - 'lib/facter-ng.rb'
+    - 'lib/facter.rb'
+    - 'agent/lib/facter-ng.rb'
