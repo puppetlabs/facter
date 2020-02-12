@@ -16,23 +16,18 @@ using namespace leatherman::util;
 
 SCENARIO("resolving external executable facts") {
     collection_fixture facts;
-    execution_resolver resolver;
 
-    GIVEN("a non-executable file") {
-        THEN("the file cannot be resolved") {
-            REQUIRE_FALSE(resolver.can_resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/not_executable"));
-            REQUIRE_FALSE(resolver.can_resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/ruby_script.rb"));
-        }
-    }
     GIVEN("an executable file") {
         WHEN("the execution fails") {
             THEN("an exception is thrown") {
-                REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/failed.cmd", facts), external_fact_exception&);
+                execution_resolver resolver(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/failed.cmd");;
+                REQUIRE_THROWS_AS(resolver.resolve(facts), external_fact_exception&);
             }
         }
         WHEN("the execution succeeds") {
             THEN("it populates facts") {
-                resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/facts.bat", facts);
+                execution_resolver resolver(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/facts.bat");
+                resolver.resolve(facts);
                 REQUIRE(!facts.empty());
                 REQUIRE(facts.get<string_value>("exe_fact1"));
                 REQUIRE(facts.get<string_value>("exe_fact1")->value() == "value1");
@@ -47,7 +42,8 @@ SCENARIO("resolving external executable facts") {
         WHEN("messages are logged to stderr") {
             THEN("a warning is generated") {
                 log_capture capture(level::warning);
-                resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/error_message.bat", facts);
+                execution_resolver resolver(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/error_message.bat");
+                resolver.resolve(facts);
                 REQUIRE(facts.size() == 1u);
                 REQUIRE(facts.get<string_value>("foo"));
                 REQUIRE(facts.get<string_value>("foo")->value() == "bar");
@@ -55,15 +51,6 @@ SCENARIO("resolving external executable facts") {
                 CAPTURE(output);
                 REQUIRE(re_search(output, boost::regex("WARN  puppetlabs\\.facter - external fact file \".*error_message.bat\" had output on stderr: error message!")));
             }
-        }
-        THEN("the file can be resolved") {
-            REQUIRE(resolver.can_resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/facts.bat"));
-        }
-    }
-    GIVEN("a relative path not on PATH") {
-        test_with_relative_path fixture("foo", "bar.bat", "");
-        THEN("the file cannot be resolved") {
-            REQUIRE_FALSE(resolver.can_resolve("foo/bar.bat"));
         }
     }
 }

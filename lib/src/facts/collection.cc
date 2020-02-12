@@ -1,4 +1,5 @@
 #include <facter/facts/collection.hpp>
+#include <facter/facts/external_resolvers_factory.hpp>
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/value.hpp>
 #include <facter/facts/scalar_value.hpp>
@@ -148,10 +149,10 @@ namespace facter { namespace facts {
         add(move(name), move(value));
     }
 
-    bool collection::add_external_facts_dir(vector<unique_ptr<external::resolver>> const& resolvers, string const& dir, bool warn)
+    void collection::get_external_facts_files_from_dir(external_files_list& files,
+                                                       string const& dir, bool warn)
     {
         // If dir is relative, make it an absolute path before passing to can_resolve.
-        bool found = false;
         boost::system::error_code ec;
         path search_dir = absolute(dir);
 
@@ -163,46 +164,80 @@ namespace facter { namespace facts {
             } else {
                 LOG_DEBUG("skipping external facts for \"{1}\": {2}", dir, msg);
             }
-            return found;
+            return;
         }
 
         LOG_DEBUG("searching {1} for external facts.", search_dir);
-
+        external_resolvers_factory erf;
         each_file(search_dir.string(), [&](string const& path) {
-            for (auto const& res : resolvers) {
-                if (res->can_resolve(path)) {
-                    try {
-                        found = true;
-                        res->resolve(path, *this);
-                    }
-                    catch (external::external_fact_exception& ex) {
-                        LOG_ERROR("error while processing \"{1}\" for external facts: {2}", path, ex.what());
-                    }
-                    break;
-                }
+            try {
+                auto resolver = erf.get_resolver(path);
+                files.push_back(make_pair(path, resolver));
+            } catch (external::external_fact_no_resolver& e) {
+                LOG_WARNING("skipping file \"{1}\": {2}", path, e.what());
             }
             return true;
         });
-        return found;
+    }
+
+    map<string, vector<string>> collection::get_external_facts_groups(vector<string> const& directories)
+    {
+        map<string, vector<string>> external_facts_groups;
+        for (auto const& it : get_external_facts_files(directories)) {
+          external_facts_groups[it.second->name()] = {};
+        }
+        return external_facts_groups;
+    }
+    collection::external_files_list collection::get_external_facts_files(vector<string> const& directories)
+    {
+        external_files_list external_facts_files;
+        // Build a list of pairs of files and the resolver that can resolve it
+        // Start with default Facter search directories, then user-specified directories.
+        for (auto const& dir : get_external_fact_directories()) {
+            get_external_facts_files_from_dir(external_facts_files, dir, false);
+        }
+        for (auto const& dir : directories) {
+            get_external_facts_files_from_dir(external_facts_files, dir, true);
+        }
+        return external_facts_files;
     }
 
     void collection::add_external_facts(vector<string> const& directories)
     {
-        auto resolvers = get_external_resolvers();
-
-        // Build a map between a file and the resolver that can resolve it
-        // Start with default Facter search directories, then user-specified directories.
-        bool found = false;
-        for (auto const& dir : get_external_fact_directories()) {
-            found |= add_external_facts_dir(resolvers, dir, false);
-        }
-
-        for (auto const& dir : directories) {
-            found |= add_external_facts_dir(resolvers, dir, true);
-        }
-
-        if (!found) {
+        external_files_list external_facts_files = get_external_facts_files(directories);
+        if (external_facts_files.empty()) {
             LOG_DEBUG("no external facts were found.");
+        } else {
+          map<string, string> known_external_facts_cache_groups;
+            for (auto const& kvp : external_facts_files) {
+                // Check if the resolver should be cached
+                auto resolver_ttl = _ttls.find(kvp.second->name());
+                if (!_ignore_cache && resolver_ttl != _ttls.end()) {
+                    auto resolver = kvp.second;
+                    auto it = known_external_facts_cache_groups.find(resolver->name());
+
+                    if ( it != known_external_facts_cache_groups.end() ) {
+                      LOG_ERROR(
+                          "Caching is enabled for group \"{1}\" while there "
+                          "are at least two external facts files with "
+                          "the same filename. To fix this either remove "
+                          "\"{1}\" from cached "
+                          "groups or rename one of the "
+                          "files:\n\"{2}\"\n\"{3}\" ",
+                          resolver->name(), kvp.first, it->second);
+                      break;
+                    }
+                    known_external_facts_cache_groups.insert(make_pair(resolver->name(), kvp.first));
+                    cache::use_cache(*this, resolver, (*resolver_ttl).second);
+                    continue;
+                }
+                try {
+                    kvp.second->resolve(*this);
+                }
+                catch (external::external_fact_exception& ex) {
+                    LOG_ERROR("error while processing \"%1%\" for external facts: %2%", kvp.first, ex.what());
+                }
+            }
         }
     }
 

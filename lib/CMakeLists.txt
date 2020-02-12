@@ -29,6 +29,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/cwrapper.cc"
     "src/facts/array_value.cc"
     "src/facts/collection.cc"
+    "src/facts/external_resolvers_factory.cc"
     "src/facts/external/execution_resolver.cc"
     "src/facts/external/json_resolver.cc"
     "src/facts/external/resolver.cc"
@@ -85,6 +86,7 @@ set(LIBFACTER_COMMON_SOURCES
 if (UNIX)
     set(LIBFACTER_STANDARD_SOURCES
         "src/facts/posix/collection.cc"
+        "src/facts/posix/external_resolvers_factory.cc"
         "src/facts/posix/identity_resolver.cc"
         "src/facts/posix/networking_resolver.cc"
         "src/facts/posix/operatingsystem_resolver.cc"
@@ -98,9 +100,6 @@ if (UNIX)
         "src/util/posix/scoped_descriptor.cc"
         "src/util/config/posix/config.cc"
     )
-    if (OPENSSL_FOUND)
-        set(LIBFACTER_STANDARD_SOURCES ${LIBFACTER_STANDARD_SOURCES} "src/util/posix/scoped_bio.cc")
-    endif()
 
     if (HAVE_UTMPX_H)
         set(LIBFACTER_STANDARD_SOURCES ${LIBFACTER_STANDARD_SOURCES} "src/util/posix/utmpx_file.cc")
@@ -118,8 +117,13 @@ if (WIN32)
     set(LIBFACTER_STANDARD_SOURCES
         "src/facts/external/windows/powershell_resolver.cc"
         "src/facts/windows/collection.cc"
+        "src/facts/windows/external_resolvers_factory.cc"
         "src/util/windows/wsa.cc"
     )
+endif()
+
+if (OPENSSL_FOUND)
+    set(LIBFACTER_STANDARD_SOURCES ${LIBFACTER_STANDARD_SOURCES} "src/util/scoped_bio.cc")
 endif()
 
 # Set the platform-specific sources
@@ -252,6 +256,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
         "src/facts/windows/kernel_resolver.cc"
         "src/facts/windows/memory_resolver.cc"
         "src/facts/windows/networking_resolver.cc"
+        "src/facts/windows/ssh_resolver.cc"
         "src/facts/windows/operating_system_resolver.cc"
         "src/facts/windows/processor_resolver.cc"
         "src/facts/windows/timezone_resolver.cc"

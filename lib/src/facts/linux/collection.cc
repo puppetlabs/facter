@@ -8,7 +8,7 @@
 #include <internal/facts/linux/processor_resolver.hpp>
 #include <internal/facts/linux/uptime_resolver.hpp>
 #include <internal/facts/linux/virtualization_resolver.hpp>
-#include <internal/facts/posix/ssh_resolver.hpp>
+#include <internal/facts/ssh_resolver.hpp>
 #include <internal/facts/posix/timezone_resolver.hpp>
 #include <internal/facts/linux/filesystem_resolver.hpp>
 #include <internal/facts/linux/memory_resolver.hpp>
@@ -30,7 +30,7 @@ namespace facter { namespace facts {
         add(make_shared<linux::dmi_resolver>());
         add(make_shared<linux::processor_resolver>());
         add(make_shared<linux::uptime_resolver>());
-        add(make_shared<posix::ssh_resolver>());
+        add(make_shared<ssh_resolver>());
         add(make_shared<linux::virtualization_resolver>());
         add(make_shared<posix::identity_resolver>());
         add(make_shared<posix::timezone_resolver>());

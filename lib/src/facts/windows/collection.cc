@@ -1,15 +1,11 @@
 #include <facter/facts/collection.hpp>
-#include <internal/facts/external/json_resolver.hpp>
-#include <internal/facts/external/text_resolver.hpp>
-#include <internal/facts/external/yaml_resolver.hpp>
-#include <internal/facts/external/execution_resolver.hpp>
-#include <internal/facts/external/windows/powershell_resolver.hpp>
 #include <internal/facts/windows/dmi_resolver.hpp>
 #include <internal/facts/windows/fips_resolver.hpp>
 #include <internal/facts/windows/identity_resolver.hpp>
 #include <internal/facts/windows/kernel_resolver.hpp>
 #include <internal/facts/windows/memory_resolver.hpp>
 #include <internal/facts/windows/networking_resolver.hpp>
+#include <internal/facts/ssh_resolver.hpp>
 #include <internal/facts/windows/operating_system_resolver.hpp>
 #include <internal/facts/windows/processor_resolver.hpp>
 #include <internal/facts/windows/timezone_resolver.hpp>
@@ -56,24 +52,12 @@ namespace facter { namespace facts {
         return {};
     }
 
-    vector<unique_ptr<external::resolver>> collection::get_external_resolvers()
-    {
-        vector<unique_ptr<external::resolver>> resolvers;
-        resolvers.emplace_back(new text_resolver());
-        resolvers.emplace_back(new yaml_resolver());
-        resolvers.emplace_back(new json_resolver());
-
-        // The execution resolver is a catch-all for Windows executable types: .bat, .cmd, .com, .exe
-        resolvers.emplace_back(new execution_resolver());
-        resolvers.emplace_back(new powershell_resolver());
-        return resolvers;
-    }
-
     void collection::add_platform_facts()
     {
 #ifdef HAS_LTH_GET_DWORD
         add(make_shared<windows::fips_resolver>());
 #endif
+        add(make_shared<ssh_resolver>());
         add(make_shared<windows::identity_resolver>());
         add(make_shared<windows::kernel_resolver>());
         add(make_shared<windows::memory_resolver>());
