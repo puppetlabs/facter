@@ -7,7 +7,7 @@
 #include <internal/facts/osx/system_profiler_resolver.hpp>
 #include <internal/facts/osx/virtualization_resolver.hpp>
 #include <internal/facts/bsd/uptime_resolver.hpp>
-#include <internal/facts/posix/ssh_resolver.hpp>
+#include <internal/facts/ssh_resolver.hpp>
 #include <internal/facts/posix/identity_resolver.hpp>
 #include <internal/facts/posix/timezone_resolver.hpp>
 #include <internal/facts/bsd/filesystem_resolver.hpp>
@@ -26,7 +26,7 @@ namespace facter { namespace facts {
         add(make_shared<osx::networking_resolver>());
         add(make_shared<osx::processor_resolver>());
         add(make_shared<osx::dmi_resolver>());
-        add(make_shared<posix::ssh_resolver>());
+        add(make_shared<ssh_resolver>());
         add(make_shared<osx::system_profiler_resolver>());
         add(make_shared<osx::virtualization_resolver>());
         add(make_shared<posix::identity_resolver>());

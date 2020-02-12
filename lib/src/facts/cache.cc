@@ -45,12 +45,12 @@ namespace facter { namespace facts { namespace cache {
         return static_cast<int64_t>(lifetime_seconds) < ttl;
     }
 
-    void load_facts_from_cache(boost_file::path const& cache_file, shared_ptr<resolver> res, collection& facts) {
+    void load_facts_from_cache(boost_file::path const& cache_file, shared_ptr<base_resolver> res, collection& facts) {
         string cache_file_path = cache_file.string();
         if (leatherman::file_util::file_readable(cache_file_path)) {
             try {
-                json_resolver json_res;
-                json_res.resolve(cache_file_path, facts);
+                json_resolver json_res(cache_file_path);
+                json_res.resolve(facts);
             } catch (external_fact_exception& ex) {
                 LOG_DEBUG("cache file for {1} facts contained invalid JSON, refreshing", res->name());
                 refresh_cache(res, cache_file, facts);
@@ -63,13 +63,13 @@ namespace facter { namespace facts { namespace cache {
         }
     }
 
-    void refresh_cache(shared_ptr<resolver> res, boost_file::path const& cache_file, collection& facts) {
+    void refresh_cache(shared_ptr<base_resolver> res, boost_file::path const& cache_file, collection& facts) {
         res->resolve(facts);
         boost_file::remove(cache_file);
         write_json_cache_file(facts, cache_file.string(), res->names());
     }
 
-    void use_cache(collection& facts, shared_ptr<resolver> res, int64_t ttl) {
+    void use_cache(collection& facts, shared_ptr<base_resolver> res, int64_t ttl) {
         boost_file::path cache_dir = boost_file::path(fact_cache_location());
         if (!boost_file::is_directory(cache_dir)) {
             boost_file::create_directories(cache_dir);

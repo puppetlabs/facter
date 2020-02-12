@@ -13,7 +13,7 @@ namespace facter { namespace facts { namespace cache {
      * @param res the resolver that should be cached
      * @param ttl the duration in seconds for which the cahced value is considered valid
      */
-    void use_cache(collection& facts, std::shared_ptr<resolver> res, int64_t ttl);
+    void use_cache(collection& facts, std::shared_ptr<base_resolver> res, int64_t ttl);
 
     /**
      * Checks the given directory for cached facts of the given names.
@@ -22,7 +22,7 @@ namespace facter { namespace facts { namespace cache {
      * @param cached_facts the names of the facts to search for
      * @param facts to collection of facts to which to add
      */
-    void load_facts_from_cache(boost::filesystem::path const& cache_file, std::shared_ptr<resolver> res, collection& facts);
+    void load_facts_from_cache(boost::filesystem::path const& cache_file, std::shared_ptr<base_resolver> res, collection& facts);
 
     /**
      * Resolve facts from the given resolver and write them out to the cache, one file per resolver.
@@ -30,7 +30,7 @@ namespace facter { namespace facts { namespace cache {
      * @param cache_file the path to the JSON cache file for this resolver
      * @param facts the collection of facts to which to add
      */
-    void refresh_cache(std::shared_ptr<resolver> res, boost::filesystem::path const& cache_file, collection& facts);
+    void refresh_cache(std::shared_ptr<base_resolver> res, boost::filesystem::path const& cache_file, collection& facts);
 
     /**
      * Returns the location of the fact cache directory.

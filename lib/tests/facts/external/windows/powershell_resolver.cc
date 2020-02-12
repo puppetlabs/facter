@@ -18,22 +18,18 @@ using namespace facter::facts::external;
 
 SCENARIO("resolving external powershell facts") {
     collection_fixture facts;
-    powershell_resolver resolver;
 
-    GIVEN("a non-powershell file") {
-        THEN("the file cannot be resolved") {
-            REQUIRE_FALSE(resolver.can_resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/execution/not_executable"));
-        }
-    }
     GIVEN("a powershell file") {
         WHEN("the execution fails") {
             THEN("an exception is thrown") {
-                REQUIRE_THROWS_AS(resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/failed.ps1", facts), external_fact_exception&);
+                powershell_resolver resolver(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/failed.ps1");
+                REQUIRE_THROWS_AS(resolver.resolve(facts), external_fact_exception&);
             }
         }
         WHEN("the execution succeeds") {
             THEN("it populates facts") {
-                resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/facts.ps1", facts);
+                powershell_resolver resolver(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/facts.ps1");
+                resolver.resolve(facts);
                 REQUIRE(!facts.empty());
                 REQUIRE(facts.get<string_value>("ps1_fact1"));
                 REQUIRE(facts.get<string_value>("ps1_fact1")->value() == "value1");
@@ -47,7 +43,8 @@ SCENARIO("resolving external powershell facts") {
         }
         WHEN("the output is json") {
             THEN("it populates facts from the json") {
-                resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/json.ps1", facts);
+                powershell_resolver resolver(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/json.ps1");
+                resolver.resolve(facts);
                 REQUIRE(!facts.empty());
 
                 REQUIRE_FALSE(facts.get<string_value>("PS1_JSON_FACT1"));
@@ -73,7 +70,8 @@ SCENARIO("resolving external powershell facts") {
         }
         WHEN("the output is yaml") {
             THEN("it populates facts from the yaml") {
-                resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/yaml.ps1", facts);
+                powershell_resolver resolver(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/yaml.ps1");
+                resolver.resolve(facts);
                 REQUIRE(!facts.empty());
 
                 REQUIRE_FALSE(facts.get<integer_value>("PS1_YAML_FACT1"));
@@ -106,7 +104,8 @@ SCENARIO("resolving external powershell facts") {
         WHEN("messages are logged to stderr") {
             THEN("a warning is generated") {
                 log_capture capture(level::warning);
-                resolver.resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/error_message.ps1", facts);
+                powershell_resolver resolver(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/error_message.ps1");
+                resolver.resolve(facts);
                 REQUIRE(facts.size() == 1u);
                 REQUIRE(facts.get<string_value>("foo"));
                 REQUIRE(facts.get<string_value>("foo")->value() == "bar");
@@ -114,9 +113,6 @@ SCENARIO("resolving external powershell facts") {
                 CAPTURE(output);
                 REQUIRE(re_search(output, boost::regex("WARN  puppetlabs\\.facter - external fact file \".*error_message.ps1\" had output on stderr: error message!")));
             }
-        }
-        THEN("the file can be resolved") {
-            REQUIRE(resolver.can_resolve(LIBFACTER_TESTS_DIRECTORY "/fixtures/facts/external/windows/powershell/facts.ps1"));
         }
     }
 }

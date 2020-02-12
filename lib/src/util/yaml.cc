@@ -18,6 +18,7 @@ namespace facter { namespace util { namespace yaml {
         string const& name,
         Node const& node,
         collection& facts,
+        vector<std::string>& names,
         array_value* array_parent,
         map_value* map_parent)
     {
@@ -44,14 +45,14 @@ namespace facter { namespace util { namespace yaml {
             // For arrays, convert to a array value
             auto array = make_value<array_value>();
             for (auto const& child : node) {
-                add_value({}, child, facts, array.get());
+                add_value({}, child, facts, names, array.get());
             }
             val = move(array);
         } else if (node.IsMap()) {
             // For maps, convert to a map value
             auto map = make_value<map_value>();
             for (auto const& child : node) {
-                add_value(child.first.as<string>(), child.second, facts, nullptr, map.get());
+                add_value(child.first.as<string>(), child.second, facts, names, nullptr, map.get());
             }
             val = move(map);
         } else if (!node.IsNull()) {
@@ -66,6 +67,7 @@ namespace facter { namespace util { namespace yaml {
             map_parent->add(string(name), move(val));
         } else {
             facts.add_external(boost::to_lower_copy(name), move(val));
+            names.push_back(boost::to_lower_copy(name));
         }
     }
 }}}
