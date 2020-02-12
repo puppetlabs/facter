@@ -5,6 +5,7 @@
 #include <internal/facts/windows/kernel_resolver.hpp>
 #include <internal/facts/windows/memory_resolver.hpp>
 #include <internal/facts/windows/networking_resolver.hpp>
+#include <internal/facts/ssh_resolver.hpp>
 #include <internal/facts/windows/operating_system_resolver.hpp>
 #include <internal/facts/windows/processor_resolver.hpp>
 #include <internal/facts/windows/timezone_resolver.hpp>
@@ -56,6 +57,7 @@ namespace facter { namespace facts {
 #ifdef HAS_LTH_GET_DWORD
         add(make_shared<windows::fips_resolver>());
 #endif
+        add(make_shared<ssh_resolver>());
         add(make_shared<windows::identity_resolver>());
         add(make_shared<windows::kernel_resolver>());
         add(make_shared<windows::memory_resolver>());

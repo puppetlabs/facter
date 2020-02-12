@@ -1,11 +1,11 @@
 #include <facter/facts/collection.hpp>
+#include <internal/facts/ssh_resolver.hpp>
 #include <internal/facts/solaris/kernel_resolver.hpp>
 #include <internal/facts/posix/identity_resolver.hpp>
 #include <internal/facts/solaris/operating_system_resolver.hpp>
 #include <internal/facts/solaris/networking_resolver.hpp>
 #include <internal/facts/solaris/processor_resolver.hpp>
 #include <internal/facts/posix/uptime_resolver.hpp>
-#include <internal/facts/posix/ssh_resolver.hpp>
 #include <internal/facts/posix/timezone_resolver.hpp>
 #include <internal/facts/solaris/filesystem_resolver.hpp>
 #include <internal/facts/solaris/disk_resolver.hpp>
@@ -25,12 +25,12 @@ namespace facter { namespace facts {
 
     void collection::add_platform_facts()
     {
+        add(make_shared<ssh_resolver>());
         add(make_shared<solaris::kernel_resolver>());
         add(make_shared<solaris::operating_system_resolver>());
         add(make_shared<solaris::networking_resolver>());
         add(make_shared<solaris::processor_resolver>());
         add(make_shared<posix::uptime_resolver>());
-        add(make_shared<posix::ssh_resolver>());
         add(make_shared<posix::identity_resolver>());
         add(make_shared<posix::timezone_resolver>());
         add(make_shared<solaris::filesystem_resolver>());

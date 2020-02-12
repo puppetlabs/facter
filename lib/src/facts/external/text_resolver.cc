@@ -15,11 +15,11 @@ namespace lth_file = leatherman::file_util;
 
 namespace facter { namespace facts { namespace external {
 
-    void text_resolver::resolve(collection& facts) const
+    void text_resolver::resolve(collection& facts)
     {
         LOG_DEBUG("resolving facts from text file \"{1}\".", _path);
 
-        if (!lth_file::each_line(_path, [&facts](string& line) {
+        if (!lth_file::each_line(_path, [&facts, this](string& line) {
             auto pos = line.find('=');
             if (pos == string::npos) {
                 LOG_DEBUG("ignoring line in output: {1}", line);
@@ -28,6 +28,7 @@ namespace facter { namespace facts { namespace external {
             // Add as a string fact
             string fact = line.substr(0, pos);
             boost::to_lower(fact);
+            _names.push_back(fact);
             facts.add_external(move(fact), make_value<string_value>(line.substr(pos+1)));
             return true;
         })) {

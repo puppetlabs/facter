@@ -16,7 +16,7 @@ using namespace facter::util::yaml;
 
 namespace facter { namespace facts { namespace external {
 
-    void yaml_resolver::resolve(collection& facts) const
+    void yaml_resolver::resolve(collection& facts)
     {
         LOG_DEBUG("resolving facts from YAML file \"{1}\".", _path);
 
@@ -28,7 +28,7 @@ namespace facter { namespace facts { namespace external {
         try {
             Node node = YAML::Load(stream);
             for (auto const& kvp : node) {
-                add_value(kvp.first.as<string>(), kvp.second, facts);
+                add_value(kvp.first.as<string>(), kvp.second, facts, _names);
             }
         } catch (Exception& ex) {
             throw external_fact_exception(ex.msg);
