@@ -51,7 +51,7 @@ namespace facter { namespace facts { namespace cache {
      * @param file_path the path to the cache file
      * @param fact_name the name of the fact to cache
      */
-    void write_json_cache_file(collection& facts, boost::filesystem::path const& file_path, std::vector<std::string> const& fact_names);
+    void write_json_cache_file(const collection& facts, boost::filesystem::path const& file_path, std::vector<std::string> const& fact_names);
 
     /**
      * Returns the timespan in seconds since the file was last modified.
@@ -68,4 +68,19 @@ namespace facter { namespace facts { namespace cache {
      */
     void clean_cache(std::unordered_map<std::string, int64_t> const& facts_to_cache,
             std::string cache_location = fact_cache_location());
+
+    /**
+     * Caches the custom facts from cached_facts
+     * @param collection the collection of facts to which to add
+     * @param ttls the duration in seconds for which the cached custom facts file is considered valid
+     */
+    bool load_cached_custom_facts(collection& collection, int64_t ttl);
+
+    /**
+     * Creates a cache file for the given custom facts list in JSON format.
+     * @param facts the collection of facts
+     * @param cached_custom_facts_list the name of the facts to cache
+     */
+    void write_cached_custom_facts(const collection& facts, const std::vector<std::string>& cached_custom_facts_list);
+
 }}}  // namespace facter::facts::cache
