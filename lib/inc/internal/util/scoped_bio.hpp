@@ -7,7 +7,7 @@
 #include <leatherman/util/scoped_resource.hpp>
 #include <openssl/bio.h>
 
-namespace facter { namespace util { namespace posix {
+namespace facter { namespace util {
 
     /**
      * Represents a scoped OpenSSL BIO object.
@@ -31,4 +31,4 @@ namespace facter { namespace util { namespace posix {
         static void free(BIO* bio);
     };
 
-}}}  // namespace facter::util::posix
+}}  // namespace facter::util

@@ -303,6 +303,13 @@ namespace facter { namespace facts {
          */
         std::map<std::string, std::vector<std::string>> get_blockable_fact_groups();
 
+        /**
+         *  Gets external fact groups (practically files names)
+         *  @param directories The directories to search for external facts.  If empty, the default search paths will be used.
+         * @return a map of group names to their associated fact names (empty)
+         */
+        std::map<std::string, std::vector<std::string>> get_external_facts_groups(std::vector<std::string> const& directories);
+
      protected:
         /**
          *  Gets external fact directories for the current platform.
@@ -322,6 +329,7 @@ namespace facter { namespace facts {
         LIBFACTER_NO_EXPORT void add_common_facts(bool include_ruby_facts);
         LIBFACTER_NO_EXPORT void get_external_facts_files_from_dir(external_files_list& files,
                                                                    std::string const& directory, bool warn);
+
         LIBFACTER_NO_EXPORT external_files_list get_external_facts_files(std::vector<std::string> const& directories);
         LIBFACTER_NO_EXPORT bool try_block(std::shared_ptr<resolver> const& res);
         LIBFACTER_NO_EXPORT void resolve(std::shared_ptr<resolver> const& res);

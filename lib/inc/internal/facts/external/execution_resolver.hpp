@@ -20,7 +20,7 @@ namespace facter { namespace facts { namespace external {
          * @param path The path to the file to resolve facts from.
          * @param facts The fact collection to populate the external facts into.
          */
-        virtual void resolve(collection &facts) const;
+        virtual void resolve(collection &facts);
     };
 
 }}}  // namespace facter::facts::external

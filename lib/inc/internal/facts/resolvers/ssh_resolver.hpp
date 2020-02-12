@@ -6,6 +6,7 @@
 
 #include <facter/facts/resolver.hpp>
 #include <facter/facts/map_value.hpp>
+#include <boost/filesystem.hpp>
 #include <string>
 
 namespace facter { namespace facts { namespace resolvers {
@@ -92,14 +93,22 @@ namespace facter { namespace facts { namespace resolvers {
         };
 
         /**
+         * Retrieves the fact's key file
+         * @param filename The searched key file name.
+         * @return Returns the key file's path
+         */
+        virtual boost::filesystem::path retrieve_key_file(std::string const& filename) = 0;
+
+        /**
          * Collects the resolver data.
          * @param facts The fact collection that is resolving facts.
          * @return Returns the resolver data.
          */
-        virtual data collect_data(collection& facts) = 0;
+        virtual data collect_data(collection& facts);
 
      private:
         void add_key(collection& facts, map_value& value, ssh_key& key, std::string const& name, std::string const& key_fact_name, std::string const& fingerprint_fact_name);
+        void populate_key(std::string const& filename, int type, ssh_key& key);
     };
 
 }}}  // namespace facter::facts::resolvers
