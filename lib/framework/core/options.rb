@@ -4,13 +4,23 @@ module Facter
   class Options
     include Facter::DefaultOptions
     include Facter::ConfigFileOptions
-    include Facter::CliOptions
+    include Facter::PriorityOptions
     include Facter::HelperOptions
 
     include Singleton
 
+    attr_accessor :priority_options
+
     def initialize
       @options = {}
+      @priority_options = {}
+    end
+
+    def refresh(user_query = [])
+      @user_query = user_query
+      initialize_options
+
+      @options
     end
 
     def get
@@ -37,10 +47,6 @@ module Facter
       @options[:external_dir]
     end
 
-    def change_log_level(log_level)
-      @options[:debug] = log_level
-    end
-
     def self.method_missing(name, *args, &block)
       Facter::Options.instance.send(name.to_s, *args, &block)
     rescue NoMethodError
@@ -48,5 +54,15 @@ module Facter
     end
 
     def self.respond_to_missing?(name, include_private) end
+
+    private
+
+    def initialize_options
+      augment_with_defaults!
+      augment_with_to_hash_defaults! if @priority_options[:to_hash]
+      augment_with_config_file_options!(@priority_options[:config])
+      augment_with_priority_options!(@priority_options)
+      augment_with_helper_options!(@user_query)
+    end
   end
 end

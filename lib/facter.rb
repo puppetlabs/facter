@@ -8,6 +8,8 @@ require "#{ROOT_DIR}/lib/framework/core/file_loader"
 require "#{ROOT_DIR}/lib/framework/core/options/options_validator"
 
 module Facter
+  @options = Options.instance
+
   def self.[](name)
     fact(name)
   end
@@ -38,11 +40,14 @@ module Facter
   end
 
   def self.debugging?
-    Options.instance[:debug]
+    Options[:debug]
   end
 
   def self.debugging(debug_bool)
-    Options.instance.change_log_level(debug_bool)
+    @options.priority_options = { debug: true }
+    @options.refresh
+
+    debug_bool
   end
 
   def self.fact(name)
@@ -64,12 +69,12 @@ module Facter
     @logger ||= Log.new(self)
     @logger.error(
       "--#{name}-- not implemented but required \n" \
-  'with params: ' \
-  "#{args.inspect} \n" \
-  'with block: ' \
-  "#{block.inspect}  \n" \
-  "called by:  \n" \
-  "#{caller} \n"
+      'with params: ' \
+      "#{args.inspect} \n" \
+      'with block: ' \
+      "#{block.inspect}  \n" \
+      "called by:  \n" \
+      "#{caller} \n"
     )
     nil
   end
@@ -95,24 +100,22 @@ module Facter
   end
 
   def self.to_hash
-    options = { to_hash: true }
-    resolved_facts = Facter::FactManager.instance.resolve_facts(options)
+    @options.priority_options = { to_hash: true }
+    @options.refresh
+    resolved_facts = Facter::FactManager.instance.resolve_facts(@options)
     CacheManager.invalidate_all_caches
     FactCollection.new.build_fact_collection!(resolved_facts)
   end
 
-  def self.to_user_output(options, *args)
-    resolved_facts = Facter::FactManager.instance.resolve_facts(options, args)
-    CacheManager.invalidate_all_caches
-    fact_formatter = Facter::FormatterFactory.build(options)
+  def self.to_user_output(cli_options, *args)
+    @options.priority_options = cli_options
+    @options.refresh(args)
 
-    if Options.instance[:strict]
-      missing_names = args - resolved_facts.map(&:user_query).uniq
-      if missing_names.count.positive?
-        status = 1
-        log_errors(missing_names)
-      end
-    end
+    resolved_facts = Facter::FactManager.instance.resolve_facts(@options, args)
+    CacheManager.invalidate_all_caches
+    fact_formatter = Facter::FormatterFactory.build(@options)
+
+    status = error_check(args, resolved_facts)
 
     [fact_formatter.format(resolved_facts), status || 0]
   end
@@ -126,8 +129,9 @@ module Facter
   end
 
   def self.value(user_query)
+    @options.refresh([user_query])
     user_query = user_query.to_s
-    resolved_facts = Facter::FactManager.instance.resolve_facts({}, [user_query])
+    resolved_facts = Facter::FactManager.instance.resolve_facts(@options, [user_query])
     CacheManager.invalidate_all_caches
     fact_collection = FactCollection.new.build_fact_collection!(resolved_facts)
     splitted_user_query = Facter::Utils.split_user_query(user_query)
@@ -137,5 +141,19 @@ module Facter
   def self.version
     version_file = ::File.join(ROOT_DIR, 'VERSION')
     ::File.read(version_file).strip
+  end
+
+  private_class_method def self.error_check(args, resolved_facts)
+    if Options.instance[:strict]
+      missing_names = args - resolved_facts.map(&:user_query).uniq
+      if missing_names.count.positive?
+        status = 1
+        log_errors(missing_names)
+      else
+        status = nil
+      end
+    end
+
+    status
   end
 end

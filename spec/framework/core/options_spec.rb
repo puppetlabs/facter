@@ -203,7 +203,7 @@ describe 'Options' do
     before do
       Facter::Options.instance.augment_with_defaults!
       cli_options = { 'ruby' => false, 'external_facts' => false, 'custom_dir' => ['custom_dir'] }
-      Facter::Options.instance.augment_with_cli_options!(cli_options)
+      Facter::Options.instance.augment_with_priority_options!(cli_options)
     end
 
     context 'override default with cli facts' do
@@ -225,7 +225,7 @@ describe 'Options' do
     before do
       cli_options = { 'ruby' => false, 'external_dir' => 'external_dir' }
       Facter::Options.instance.augment_with_defaults!
-      Facter::Options.instance.augment_with_cli_options!(cli_options)
+      Facter::Options.instance.augment_with_priority_options!(cli_options)
       Facter::Options.instance.augment_with_helper_options!(%w[first_user_query second_user_query])
     end
 
@@ -249,7 +249,7 @@ describe 'Options' do
   describe '#get' do
     before do
       cli_options = { 'ruby' => true }
-      Facter::Options.instance.augment_with_cli_options!(cli_options)
+      Facter::Options.instance.augment_with_priority_options!(cli_options)
     end
 
     it 'sets ruby option' do
@@ -261,7 +261,7 @@ describe 'Options' do
     context 'custom dir is true' do
       before do
         cli_options = { 'custom_facts' => true, 'custom_dir' => %w[custom_dir1 custom_dir2] }
-        Facter::Options.instance.augment_with_cli_options!(cli_options)
+        Facter::Options.instance.augment_with_priority_options!(cli_options)
       end
 
       it 'returns that custom dir exists' do
@@ -272,7 +272,7 @@ describe 'Options' do
     context 'custom dir is false' do
       before do
         cli_options = { 'custom_facts' => false, 'custom_dir' => %w[custom_dir1 custom_dir2] }
-        Facter::Options.instance.augment_with_cli_options!(cli_options)
+        Facter::Options.instance.augment_with_priority_options!(cli_options)
       end
 
       it 'returns that custom dir dos not exists' do
@@ -284,7 +284,7 @@ describe 'Options' do
   describe '#customn_dir' do
     before do
       cli_options = { 'custom_dir' => %w[custom_dir1 custom_dir2] }
-      Facter::Options.instance.augment_with_cli_options!(cli_options)
+      Facter::Options.instance.augment_with_priority_options!(cli_options)
     end
 
     it 'returns custom dirs' do
@@ -296,7 +296,7 @@ describe 'Options' do
     context 'external dir is true' do
       before do
         cli_options = { 'external_facts' => true, 'external_dir' => %w[external_dir1 external_dir2] }
-        Facter::Options.instance.augment_with_cli_options!(cli_options)
+        Facter::Options.instance.augment_with_priority_options!(cli_options)
       end
 
       it 'returns that external dir exists' do
@@ -307,7 +307,7 @@ describe 'Options' do
     context 'external dir is false' do
       before do
         cli_options = { 'external_facts' => false, 'external_dir' => %w[external_dir1 external_dir2] }
-        Facter::Options.instance.augment_with_cli_options!(cli_options)
+        Facter::Options.instance.augment_with_priority_options!(cli_options)
       end
 
       it 'returns that external dir does not exists' do
@@ -319,11 +319,49 @@ describe 'Options' do
   describe '#external_dir' do
     before do
       cli_options = { 'external_dir' => %w[external_dir1 external_dir2] }
-      Facter::Options.instance.augment_with_cli_options!(cli_options)
+      Facter::Options.instance.augment_with_priority_options!(cli_options)
     end
 
     it 'returns external dirs' do
       expect(Facter::Options.instance.external_dir).to eq(%w[external_dir1 external_dir2])
+    end
+  end
+
+  describe '#refresh' do
+    before do
+      cli_options = { 'external_dir' => %w[external_dir1 external_dir2] }
+      Facter::Options.instance.augment_with_priority_options!(cli_options)
+    end
+
+    let(:subject) { Facter::Options.instance }
+
+    context 'with persistent options' do
+      it 'sets debug to true' do
+        subject.priority_options = { debug: true }
+        expect(subject.refresh[:debug]).to eq(true)
+      end
+
+      it 'sets debug to false' do
+        subject.priority_options = { debug: false }
+        expect(subject.refresh[:debug]).to eq(false)
+      end
+    end
+
+    context 'priority options have the highest priority' do
+      before do
+        Facter::Options.instance.augment_with_defaults!
+      end
+
+      let(:subject) { Facter::Options.instance }
+
+      it 'sets debug to true' do
+        expect(subject.refresh[:debug]).to eq(false)
+      end
+
+      it 'sets debug to false' do
+        subject.priority_options = { debug: false }
+        expect(subject.refresh[:debug]).to eq(false)
+      end
     end
   end
 end

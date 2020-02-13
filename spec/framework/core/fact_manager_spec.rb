@@ -5,7 +5,9 @@ describe 'FactManager' do
     it 'resolved all facts' do
       ubuntu_os_name = double(Facter::Debian::OsName)
       user_query = []
-      options = {}
+
+      options = Facter::Options.instance
+      options.refresh
 
       loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.name', klass: ubuntu_os_name, type: :core)
       loaded_fact_custom_fact = double(Facter::LoadedFact, name: 'custom_fact', klass: nil, type: :custom)

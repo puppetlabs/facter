@@ -12,7 +12,6 @@ module Facter
     end
 
     def resolve_facts(options = {}, user_query = [])
-      options = enhance_options(options, user_query)
       Log.level = options.get[:log_level]
 
       loaded_facts = @fact_loader.load(Options.get)
@@ -38,17 +37,6 @@ module Facter
     end
 
     private
-
-    def enhance_options(cli_options, user_query)
-      options = Options.instance
-      options.augment_with_defaults!
-      options.augment_with_to_hash_defaults! if cli_options[:to_hash]
-      options.augment_with_config_file_options!(cli_options[:config])
-      options.augment_with_cli_options!(cli_options)
-      options.augment_with_helper_options!(user_query)
-
-      options
-    end
 
     def override_core_facts(core_facts, custom_facts)
       return core_facts unless custom_facts

@@ -185,14 +185,14 @@ describe 'Options' do
     end
   end
 
-  describe '#augment_with_cli_options!' do
+  describe '#augment_with_priority_options!' do
     before do
       Facter::Options.instance.augment_with_defaults!
-      cli_options = { 'ruby' => false, 'external_facts' => false, 'custom_dir' => ['custom_dir'] }
-      Facter::Options.instance.augment_with_cli_options!(cli_options)
+      priority_options = { 'ruby' => false, 'external_facts' => false, 'custom_dir' => ['custom_dir'] }
+      Facter::Options.instance.augment_with_priority_options!(priority_options)
     end
 
-    context 'override default with cli facts' do
+    context 'override default with priority facts' do
       it 'sets ruby to true' do
         expect(options[:ruby]).to be_falsey
       end
@@ -209,8 +209,8 @@ describe 'Options' do
 
   describe '#augment_with_helper_options!' do
     before do
-      cli_options = { 'ruby' => false, 'external_dir' => 'external_dir' }
-      Facter::Options.instance.augment_with_cli_options!(cli_options)
+      priority_options = { 'ruby' => false, 'external_dir' => 'external_dir' }
+      Facter::Options.instance.augment_with_priority_options!(priority_options)
       Facter::Options.instance.augment_with_helper_options!(%w[first_user_query second_user_query])
     end
 
@@ -233,8 +233,8 @@ describe 'Options' do
 
   describe '#get' do
     before do
-      cli_options = { 'ruby' => true }
-      Facter::Options.instance.augment_with_cli_options!(cli_options)
+      priority_options = { 'ruby' => true }
+      Facter::Options.instance.augment_with_priority_options!(priority_options)
     end
 
     it 'sets ruby option' do
@@ -245,8 +245,8 @@ describe 'Options' do
   describe '#custom_dir?' do
     context 'custom dir is true' do
       before do
-        cli_options = { 'custom_facts' => true, 'custom_dir' => %w[custom_dir1 custom_dir2] }
-        Facter::Options.instance.augment_with_cli_options!(cli_options)
+        priority_options = { 'custom_facts' => true, 'custom_dir' => %w[custom_dir1 custom_dir2] }
+        Facter::Options.instance.augment_with_priority_options!(priority_options)
       end
 
       it 'returns that custom dir exists' do
@@ -256,8 +256,8 @@ describe 'Options' do
 
     context 'custom dir is false' do
       before do
-        cli_options = { 'custom_facts' => false, 'custom_dir' => %w[custom_dir1 custom_dir2] }
-        Facter::Options.instance.augment_with_cli_options!(cli_options)
+        priority_options = { 'custom_facts' => false, 'custom_dir' => %w[custom_dir1 custom_dir2] }
+        Facter::Options.instance.augment_with_priority_options!(priority_options)
       end
 
       it 'returns that custom dir dos not exists' do
@@ -268,8 +268,8 @@ describe 'Options' do
 
   describe '#customn_dir' do
     before do
-      cli_options = { 'custom_dir' => %w[custom_dir1 custom_dir2] }
-      Facter::Options.instance.augment_with_cli_options!(cli_options)
+      priority_options = { 'custom_dir' => %w[custom_dir1 custom_dir2] }
+      Facter::Options.instance.augment_with_priority_options!(priority_options)
     end
 
     it 'returns custom dirs' do
@@ -280,8 +280,8 @@ describe 'Options' do
   describe '#external_dir?' do
     context 'external dir is true' do
       before do
-        cli_options = { 'external_facts' => true, 'external_dir' => %w[external_dir1 external_dir2] }
-        Facter::Options.instance.augment_with_cli_options!(cli_options)
+        priority_options = { 'external_facts' => true, 'external_dir' => %w[external_dir1 external_dir2] }
+        Facter::Options.instance.augment_with_priority_options!(priority_options)
       end
 
       it 'returns that external dir exists' do
@@ -291,8 +291,8 @@ describe 'Options' do
 
     context 'external dir is false' do
       before do
-        cli_options = { 'external_facts' => false, 'external_dir' => %w[external_dir1 external_dir2] }
-        Facter::Options.instance.augment_with_cli_options!(cli_options)
+        priority_options = { 'external_facts' => false, 'external_dir' => %w[external_dir1 external_dir2] }
+        Facter::Options.instance.augment_with_priority_options!(priority_options)
       end
 
       it 'returns that external dir does not exists' do
@@ -303,8 +303,8 @@ describe 'Options' do
 
   describe '#external_dir' do
     before do
-      cli_options = { 'external_dir' => %w[external_dir1 external_dir2] }
-      Facter::Options.instance.augment_with_cli_options!(cli_options)
+      priority_options = { 'external_dir' => %w[external_dir1 external_dir2] }
+      Facter::Options.instance.augment_with_priority_options!(priority_options)
     end
 
     it 'returns external dirs' do
