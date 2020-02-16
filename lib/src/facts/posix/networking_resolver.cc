@@ -93,7 +93,7 @@ namespace facter { namespace facts { namespace posix {
             scoped_addrinfo info(result.hostname);
             if (info.result() != 0 && info.result() != EAI_NONAME) {
                 LOG_WARNING("getaddrinfo failed: {1} ({2}): hostname may not be externally resolvable.", gai_strerror(info.result()), info.result());
-            } else if (!info || info.result() == EAI_NONAME || result.hostname == static_cast<addrinfo*>(info)->ai_canonname) {
+            } else if (!info || info.result() == EAI_NONAME || !static_cast<addrinfo*>(info)->ai_canonname || result.hostname == static_cast<addrinfo*>(info)->ai_canonname) {
                 LOG_DEBUG("hostname \"{1}\" could not be resolved: hostname may not be externally resolvable.", result.hostname);
             } else {
                 result.fqdn = static_cast<addrinfo*>(info)->ai_canonname;
