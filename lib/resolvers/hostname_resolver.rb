@@ -32,9 +32,9 @@ module Facter
             domain = Regexp.last_match(1)
           elsif File.exist?('/etc/resolv.conf')
             file = File.read('/etc/resolv.conf')
-            if file.match(/^search\s+(\S+)/)
+            if file =~ /^search\s+(\S+)/
               domain = Regexp.last_match(1)
-            elsif file.match(/^domain\s+(\S+)/)
+            elsif file =~ /^domain\s+(\S+)/
               domain = Regexp.last_match(1)
             end
           end

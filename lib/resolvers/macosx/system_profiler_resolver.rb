@@ -53,7 +53,7 @@ module Facter
 
         def normalize_factlist
           @fact_list = @fact_list.map do |k, v|
-            [k.downcase.gsub(' ', '_').delete("\(\)").to_sym, v]
+            [k.downcase.tr(' ', '_').delete("\(\)").to_sym, v]
           end.to_h
         end
       end

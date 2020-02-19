@@ -23,7 +23,7 @@ module Facter
         end
 
         def build_fact_list(reg)
-          @fact_list[:kvm] = reg.keys.include?('netkvm')
+          @fact_list[:kvm] = reg.key?('netkvm')
         end
       end
     end

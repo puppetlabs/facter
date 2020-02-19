@@ -178,7 +178,7 @@ describe LegacyFacter::Util::Collection do
     collection.add(:one)
     collection.add(:two)
 
-    expect(collection.list.sort { |a, b| a.to_s <=> b.to_s }).to eq %i[one two]
+    expect(collection.list.sort_by(&:to_s)).to eq %i[one two]
   end
 
   describe 'when returning a hash of values' do

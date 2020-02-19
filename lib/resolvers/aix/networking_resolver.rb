@@ -23,7 +23,7 @@ module Facter
           end
 
           def get_primary_interface_info(output)
-            primary_interface_info = output.select { |line| line =~ /=>/ }.first.split(' ')
+            primary_interface_info = output.find { |line| line =~ /=>/ }.split(' ')
             @fact_list[:primary] = primary_interface_info[5]
             @fact_list[:ip] = primary_interface_info[1]
           end

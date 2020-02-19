@@ -48,7 +48,7 @@ module LegacyFacter
         return unless debugging?
 
         if msg.nil? || msg.empty?
-          invoker = caller[0].slice(/.*:\d+/)
+          invoker = caller(1..1).first.slice(/.*:\d+/)
           self.warn "#{self.class}#debug invoked with invalid message #{msg.inspect}:#{msg.class} at #{invoker}"
         elsif @@message_callback
           @@message_callback.call(:debug, msg)
@@ -79,7 +79,7 @@ module LegacyFacter
       # @return [void]
       def warn(msg)
         if msg.nil? || msg.empty?
-          invoker = caller[0].slice(/.*:\d+/)
+          invoker = caller(1..1).first.slice(/.*:\d+/)
           msg = "#{self.class}#debug invoked with invalid message #{msg.inspect}:#{msg.class} at #{invoker}"
         end
         if @@message_callback

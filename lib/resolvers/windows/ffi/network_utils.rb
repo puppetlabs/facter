@@ -47,7 +47,7 @@ class NetworkUtils
 
     def get_scope(sockaddr)
       require 'socket'
-      scope6 = String.new
+      scope6 = []
       addrinfo = Addrinfo.new(['AF_INET6', 0, nil, sockaddr], :INET6)
 
       scope6 << 'compat,' if addrinfo.ipv6_v4compat?
@@ -59,6 +59,7 @@ class NetworkUtils
                   'host'
                 else 'global'
                 end
+      scope6.join
     end
   end
 end

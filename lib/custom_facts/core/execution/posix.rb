@@ -44,7 +44,7 @@ module LegacyFacter
 
           return unless exe && (expanded = which(exe))
 
-          expanded = "'#{expanded}'" if expanded.match(/\s/)
+          expanded = "'#{expanded}'" if expanded =~ /\s/
           expanded << " #{args}" if args
 
           expanded

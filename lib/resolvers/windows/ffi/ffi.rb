@@ -39,14 +39,14 @@ module FFI
     def read_wide_string_without_length
       wide_character = get_bytes(0, 2)
       i = 2
-      str = String.new
+      str = []
 
       while wide_character.encode('UTF-16LE') != END_OF_WCHAR_STRING
-        str += wide_character
+        str << wide_character
         wide_character = get_bytes(i, 2)
         i += 2
       end
-      str.force_encoding('UTF-16LE').encode('UTF-8')
+      str.join.force_encoding('UTF-16LE').encode('UTF-8')
     end
 
     def read_win32_bool

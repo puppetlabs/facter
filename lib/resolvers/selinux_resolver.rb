@@ -22,7 +22,7 @@ module Facter
           @fact_list[:enabled] = false
 
           output.each_line do |line|
-            next unless line.match(/selinuxfs/)
+            next unless line =~ /selinuxfs/
 
             @fact_list[:enabled] = true
             @fact_list[:mountpoint] = line
