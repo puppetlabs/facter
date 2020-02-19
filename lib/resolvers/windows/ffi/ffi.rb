@@ -23,13 +23,10 @@ ERROR_MORE_DATA = 234
 MAX_PATH = 32_767
 
 module FFI
-  WIN32_FALSE = 0
+  WIN32FALSE = 0
   END_OF_WCHAR_STRING = "\0\0".encode('UTF-16LE')
 
   class Pointer
-    alias write_dword write_uint32
-    alias read_dword read_uint32
-
     def read_wide_string_with_length(char_length)
       # char_length is number of wide chars (typically excluding NULLs), *not* bytes
       str = get_bytes(0, char_length * 2).force_encoding('UTF-16LE')
@@ -52,14 +49,14 @@ module FFI
     def read_win32_bool
       # BOOL is always a 32-bit integer in Win32
       # some Win32 APIs return 1 for true, while others are non-0
-      read_int32 != FFI::WIN32_FALSE
+      read_int32 != WIN32FALSE
     end
   end
 
   class Struct
     def self.read_list(first_address)
       instance = new(first_address)
-      while instance.to_ptr != FFI::Pointer::NULL
+      while instance.to_ptr != Pointer::NULL
         yield(instance)
         instance = new(instance[:Next])
       end

@@ -24,7 +24,7 @@ module Facter
           end
 
           bool_ptr = FFI::MemoryPointer.new(:win32_bool, 1)
-          if System32FFI::IsWow64Process(System32FFI::GetCurrentProcess(), bool_ptr) == FFI::WIN32_FALSE
+          if System32FFI::IsWow64Process(System32FFI::GetCurrentProcess(), bool_ptr) == FFI::WIN32FALSE
             @log.debug 'IsWow64Process failed'
             return
           end

@@ -105,7 +105,7 @@ describe 'Windows MemoryResolver' do
   end
 
   context '#resolve when GetPerformanceInfo function fails' do
-    let(:status) { FFI::WIN32_FALSE }
+    let(:status) { FFI::WIN32FALSE }
     let(:total) { 1_048_313 }
     let(:page_size) { 4096 }
     let(:available) { 824_031 }

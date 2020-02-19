@@ -23,7 +23,9 @@ module Facter
         end
 
         def build_fact_list(reg)
-          @fact_list[:kvm] = reg.key?('netkvm')
+          # rubocop:disable Performance/InefficientHashSearch
+          @fact_list[:kvm] = reg.keys.include?('netkvm')
+          # rubocop:enable Performance/InefficientHashSearch
         end
       end
     end

@@ -26,7 +26,7 @@ module Facter
           end
 
           name_ptr = FFI::MemoryPointer.new(:wchar, size_ptr.read_uint32)
-          if IdentityFFI::GetUserNameExW(NAME_SAM_COMPATIBLE, name_ptr, size_ptr) == FFI::WIN32_FALSE
+          if IdentityFFI::GetUserNameExW(NAME_SAM_COMPATIBLE, name_ptr, size_ptr) == FFI::WIN32FALSE
             @log.debug "failure resolving identity facts: #{FFI.errno}"
             return
           end
@@ -36,7 +36,7 @@ module Facter
 
         def privileged?
           result = IdentityFFI::IsUserAnAdmin()
-          result && result != FFI::WIN32_FALSE
+          result && result != FFI::WIN32FALSE
         end
 
         def retrieve_facts(fact_name)

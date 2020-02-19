@@ -17,7 +17,7 @@ module Facter
           require "#{ROOT_DIR}/lib/resolvers/windows/ffi/memory_ffi"
 
           state_ptr = FFI::MemoryPointer.new(PerformanceInformation.size)
-          if MemoryFFI::GetPerformanceInfo(state_ptr, state_ptr.size) == FFI::WIN32_FALSE
+          if MemoryFFI::GetPerformanceInfo(state_ptr, state_ptr.size) == FFI::WIN32FALSE
             @log.debug 'Resolving memory facts failed'
             return
           end
