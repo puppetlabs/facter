@@ -46,7 +46,6 @@ describe LegacyFacter::Util::Loader do
       ' \/'
     ].each do |dir|
       it "should be false for relative path #{dir}" do
-        puts loader.inspect
         expect(loader.send(:valid_search_path?, dir)).to be false
       end
     end

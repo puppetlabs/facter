@@ -54,3 +54,4 @@ build-iPhoneSimulator/
 
 .rspec_status
 Gemfile.lock
+Gemfile.local
