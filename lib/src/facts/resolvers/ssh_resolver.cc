@@ -118,6 +118,7 @@ namespace facter { namespace facts { namespace resolvers {
             return;
         }
 
+        boost::trim(contents);
         // The SSH public key file format is <algo> <key> <comment>
         vector<boost::iterator_range<string::iterator>> parts;
         boost::split(parts, contents, boost::is_any_of(" "), boost::token_compress_on);
