@@ -26,13 +26,13 @@ class Facter::Util::Fact
   # @api private
   def initialize(name, options = {})
     @name = name.to_s.downcase.intern
+    @recursion_key = "facter_searching_#{@name}".intern
 
     extract_ldapname_option!(options)
 
     @ldapname ||= @name.to_s
 
     @resolves = []
-    @searching = false
 
     @value = nil
   end
@@ -132,7 +132,15 @@ class Facter::Util::Fact
 
   # Are we in the midst of a search?
   def searching?
-    @searching
+    Thread.current[@recursion_key]
+  end
+
+  def mark_searching
+    Thread.current[@recursion_key] = true
+  end
+
+  def end_searching
+    Thread.current[@recursion_key] = false
   end
 
   # Lock our searching process, so we never ge stuck in recursion.
@@ -140,11 +148,11 @@ class Facter::Util::Fact
     raise RuntimeError, "Caught recursion on #{@name}" if searching?
 
     # If we've gotten this far, we're not already searching, so go ahead and do so.
-    @searching = true
+    mark_searching
     begin
       yield
     ensure
-      @searching = false
+      end_searching
     end
   end
 
