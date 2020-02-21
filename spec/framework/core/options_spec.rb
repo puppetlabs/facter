@@ -8,6 +8,7 @@ describe 'Options' do
   end
 
   let(:options) { Facter::Options.instance.get }
+  let(:priority_options) { Facter::Options.instance.priority_options }
 
   describe '#augment_with_defaults!' do
     before do
@@ -66,14 +67,14 @@ describe 'Options' do
   end
 
   describe '#augment_with_config_file_options!' do
-    context 'sets options from config file' do
+    context 'sets options from config file with cli' do
       let(:config_reader_double) { double(Facter::ConfigReader) }
       let(:block_list_double) { double(Facter::BlockList) }
 
       before do
         allow(Facter::ConfigReader).to receive(:new).with('config_path').and_return(config_reader_double)
         allow(config_reader_double).to receive(:cli).and_return(
-          'debug' => true, 'trace' => true, 'verbose' => true, 'log-level' => :err
+          'debug' => false, 'trace' => true, 'verbose' => true, 'log-level' => :warn
         )
 
         allow(config_reader_double).to receive(:global).and_return(
@@ -86,11 +87,12 @@ describe 'Options' do
         allow(Facter::BlockList).to receive(:instance).and_return(block_list_double)
         allow(block_list_double).to receive(:blocked_facts).and_return(%w[block_fact1 blocked_fact2])
 
+        priority_options[:is_cli] = true
         Facter::Options.instance.augment_with_config_file_options!('config_path')
       end
 
       it 'sets debug to true' do
-        expect(options[:debug]).to be_truthy
+        expect(options[:debug]).to be_falsey
       end
 
       it 'sets trace to true' do
@@ -102,7 +104,7 @@ describe 'Options' do
       end
 
       it 'sets logs level to error' do
-        expect(options[:log_level]).to eq(:err)
+        expect(options[:log_level]).to eq(:warn)
       end
 
       it 'sets custom-facts to true' do
@@ -138,6 +140,79 @@ describe 'Options' do
       end
     end
 
+    context 'sets options from config file with no cli' do
+      let(:config_reader_double) { double(Facter::ConfigReader) }
+      let(:block_list_double) { double(Facter::BlockList) }
+
+      before do
+        allow(Facter::ConfigReader).to receive(:new).with('config_path').and_return(config_reader_double)
+        allow(config_reader_double).to receive(:cli).and_return(
+          'debug' => false, 'trace' => true, 'verbose' => true, 'log-level' => :warn
+        )
+
+        allow(config_reader_double).to receive(:global).and_return(
+          'no-custom-facts' => false, 'custom-dir' => %w[custom_dir1 custom_dir2],
+          'no-external-facts' => false, 'external-dir' => %w[external_dir1 external_dir2],
+          'no-ruby' => false, 'show-legacy' => true
+        )
+        allow(config_reader_double).to receive(:ttls).and_return([{ 'timezone' => '30 days' }])
+
+        allow(Facter::BlockList).to receive(:instance).and_return(block_list_double)
+        allow(block_list_double).to receive(:blocked_facts).and_return(%w[block_fact1 blocked_fact2])
+
+        priority_options[:is_cli] = false
+        Facter::Options.instance.augment_with_config_file_options!('config_path')
+      end
+
+      it 'sets debug to nil' do
+        expect(options[:debug]).to be_nil
+      end
+
+      it 'sets trace to nil' do
+        expect(options[:trace]).to be_nil
+      end
+
+      it 'sets verbose to nil' do
+        expect(options[:verbose]).to be_nil
+      end
+
+      it 'sets logs level to nil' do
+        expect(options[:log_level]).to be_nil
+      end
+
+      it 'sets custom-facts to nil' do
+        expect(options[:custom_facts]).to be_nil
+      end
+
+      it 'sets custom-dir' do
+        expect(options[:custom_dir]).to eq(%w[custom_dir1 custom_dir2])
+      end
+
+      it 'sets external-facts to nil' do
+        expect(options[:external_facts]).to be_nil
+      end
+
+      it 'sets external-dir' do
+        expect(options[:external_dir]).to eq(%w[external_dir1 external_dir2])
+      end
+
+      it 'sets ruby to nil' do
+        expect(options[:ruby]).to be_nil
+      end
+
+      it 'sets show_legacy to true' do
+        expect(options[:show_legacy]).to be_truthy
+      end
+
+      it 'sets blocked_facts' do
+        expect(options[:blocked_facts]).to eq(%w[block_fact1 blocked_fact2])
+      end
+
+      it 'sets ttls' do
+        expect(options[:ttls]).to eq([{ 'timezone' => '30 days' }])
+      end
+    end
+
     context 'override default options' do
       let(:config_reader_double) { double(Facter::ConfigReader) }
       let(:block_list_double) { double(Facter::BlockList) }
@@ -145,7 +220,7 @@ describe 'Options' do
       before do
         allow(Facter::ConfigReader).to receive(:new).with('config_path').and_return(config_reader_double)
         allow(config_reader_double).to receive(:cli).and_return(
-          'debug' => true, 'trace' => true, 'verbose' => true, 'log-level' => :err
+          'debug' => true, 'trace' => true
         )
 
         allow(config_reader_double).to receive(:global).and_return(
@@ -157,6 +232,7 @@ describe 'Options' do
         allow(Facter::BlockList).to receive(:instance).and_return(block_list_double)
         allow(block_list_double).to receive(:blocked_facts).and_return(%w[block_fact1 blocked_fact2])
 
+        priority_options[:is_cli] = true
         Facter::Options.instance.augment_with_defaults!
         Facter::Options.instance.augment_with_config_file_options!('config_path')
       end
@@ -167,14 +243,6 @@ describe 'Options' do
 
       it 'sets trace to true' do
         expect(options[:trace]).to be_truthy
-      end
-
-      it 'sets verbose to true' do
-        expect(options[:verbose]).to be_truthy
-      end
-
-      it 'sets logs level to error' do
-        expect(options[:log_level]).to eq(:err)
       end
 
       it 'sets custom-facts to true' do
@@ -196,6 +264,43 @@ describe 'Options' do
       it 'sets ttls' do
         expect(options[:ttls]).to eq([{ 'timezone' => '30 days' }])
       end
+    end
+  end
+
+  context 'override default options log_level' do
+    let(:config_reader_double) { double(Facter::ConfigReader) }
+    let(:block_list_double) { double(Facter::BlockList) }
+
+    before do
+      allow(Facter::ConfigReader).to receive(:new).with('config_path').and_return(config_reader_double)
+      allow(config_reader_double).to receive(:cli).and_return('log-level' => :err)
+      allow(config_reader_double).to receive(:global).and_return(
+        'no-custom-facts' => true, 'no-external-facts' => true, 'no-ruby' => true
+      )
+
+      allow(config_reader_double).to receive(:ttls).and_return([{ 'timezone' => '30 days' }])
+
+      allow(Facter::BlockList).to receive(:instance).and_return(block_list_double)
+      allow(block_list_double).to receive(:blocked_facts).and_return(%w[block_fact1 blocked_fact2])
+      priority_options[:is_cli] = true
+      Facter::Options.instance.augment_with_defaults!
+      Facter::Options.instance.augment_with_config_file_options!('config_path')
+    end
+
+    it 'sets debug to true' do
+      expect(options[:debug]).to be_falsey
+    end
+
+    it 'sets trace to true' do
+      expect(options[:trace]).to be_falsey
+    end
+
+    it 'sets verbose to true' do
+      expect(options[:verbose]).to be_falsey
+    end
+
+    it 'sets logs level to error' do
+      expect(options[:log_level]).to eq(:err)
     end
   end
 

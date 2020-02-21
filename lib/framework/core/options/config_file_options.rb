@@ -6,10 +6,12 @@ module Facter
       conf_reader = Facter::ConfigReader.new(config_path)
 
       augment_config_path(config_path)
-      augment_cli(conf_reader.cli)
+      if @priority_options[:is_cli]
+        augment_cli(conf_reader.cli)
+        augment_ruby(conf_reader.global)
+      end
       augment_custom(conf_reader.global)
       augment_external(conf_reader.global)
-      augment_ruby(conf_reader.global)
       augment_show_legacy(conf_reader.global)
       augment_facts(conf_reader.ttls)
     end
@@ -32,15 +34,19 @@ module Facter
     def augment_custom(file_global_conf)
       return unless file_global_conf
 
-      @options[:custom_facts] = !file_global_conf['no-custom-facts'] unless file_global_conf['no-custom-facts'].nil?
-      @options[:custom_dir] = file_global_conf['custom-dir'] unless file_global_conf['custom-dir'].nil?
+      if @priority_options[:is_cli]
+        @options[:custom_facts] = !file_global_conf['no-custom-facts'] unless file_global_conf['no-custom-facts'].nil?
+      end
+      @options[:custom_dir] = [file_global_conf['custom-dir']].flatten unless file_global_conf['custom-dir'].nil?
     end
 
     def augment_external(global_conf)
       return unless global_conf
 
-      @options[:external_facts] = !global_conf['no-external-facts'] unless global_conf['no-external-facts'].nil?
-      @options[:external_dir] = global_conf['external-dir'] unless global_conf['external-dir'].nil?
+      if @priority_options[:is_cli]
+        @options[:external_facts] = !global_conf['no-external-facts'] unless global_conf['no-external-facts'].nil?
+      end
+      @options[:external_dir] = [global_conf['external-dir']].flatten unless global_conf['external-dir'].nil?
     end
 
     def augment_ruby(global_conf)

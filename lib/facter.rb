@@ -44,7 +44,7 @@ module Facter
   end
 
   def self.debugging(debug_bool)
-    @options.priority_options = { debug: true }
+    @options.priority_options = { debug: debug_bool }
     @options.refresh
 
     debug_bool
@@ -108,7 +108,7 @@ module Facter
   end
 
   def self.to_user_output(cli_options, *args)
-    @options.priority_options = cli_options
+    @options.priority_options = { is_cli: true }.merge!(cli_options.map { |(k, v)| [k.to_sym, v] }.to_h)
     @options.refresh(args)
 
     resolved_facts = Facter::FactManager.instance.resolve_facts(@options, args)

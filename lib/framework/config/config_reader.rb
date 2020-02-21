@@ -18,7 +18,6 @@ module Facter
     end
 
     def global
-      # puts @conf['global']
       @conf['global']
     end
 

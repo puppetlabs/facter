@@ -7,6 +7,8 @@ module Facter
       global_defaults
     end
 
+    DEFAULT_LOG_LEVEL = :warn
+
     def augment_with_to_hash_defaults!
       @options[:show_legacy] = true
     end
@@ -17,7 +19,7 @@ module Facter
       @options[:debug] ||= false
       @options[:trace] ||= false
       @options[:verbose] ||= false
-      @options[:log_level] ||= :warn
+      @options[:log_level] ||= DEFAULT_LOG_LEVEL
       @options[:show_legacy] ||= false
     end
 

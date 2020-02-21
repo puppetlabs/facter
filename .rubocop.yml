@@ -32,6 +32,7 @@ Naming/ClassAndModuleCamelCase:
     - 'spec/mocks/**/*'
 
 Metrics/AbcSize:
+  Max: 16
   Exclude:
     - 'spec/custom_facts/util/parser_spec.rb'
     - 'spec/custom_facts/core/logging_spec.rb'
