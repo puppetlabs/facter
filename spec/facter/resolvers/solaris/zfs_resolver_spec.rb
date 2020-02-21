@@ -23,7 +23,7 @@ describe 'SolarisZFS' do
 
     it 'returns zfs featurenumbers fact' do
       result = Facter::Resolvers::Solaris::ZFS.resolve(:zfs_featurenumbers)
-      expect(result).to eq('1, 2, 3, 4, 5, 6')
+      expect(result).to eq('1,2,3,4,5,6')
     end
   end
 
