@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows NetworkingIp' do
-  context '#call_the_resolver' do
-    let(:value) { '0.16.121.255' }
+describe Facter::Windows::NetworkingIp do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::NetworkingIp.new }
+
+    let(:value) { '0.16.121.255' }
 
     before do
       allow(Facter::Resolvers::Networking).to receive(:resolve).with(:ip).and_return(value)

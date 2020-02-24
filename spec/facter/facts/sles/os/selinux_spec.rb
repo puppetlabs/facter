@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Sles OsSelinux' do
-  context '#call_the_resolver' do
+describe Facter::Sles::OsSelinux do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'os.selinux', value: { enabled: 'value' })
       allow(Facter::Resolvers::SELinux).to receive(:resolve).with(:enabled).and_return('value')

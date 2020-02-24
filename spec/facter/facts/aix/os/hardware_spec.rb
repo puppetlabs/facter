@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'AIX OsHardware' do
-  context '#call_the_resolver' do
+describe Facter::Aix::OsHardware do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'os.hardware', value: 'value')
       allow(Facter::Resolvers::Hardware).to receive(:resolve).with(:hardware).and_return('value')

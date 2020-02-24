@@ -45,18 +45,18 @@ describe Facter::Resolvers::Linux::Mountpoints do
     allow(stat).to receive(:bytes_available).and_return(stat.blocks_available * stat.fragment_size)
     allow(stat).to receive(:bytes_free).and_return(stat.blocks_free * stat.fragment_size)
     allow(stat).to receive(:bytes_used).and_return(stat.bytes_total - stat.bytes_free)
-    described_class.invalidate_cache
+    Facter::Resolvers::Linux::Mountpoints.invalidate_cache
   end
 
   it 'correctly builds the mountpoints fact' do
-    result = described_class.resolve(:mountpoints)
+    result = Facter::Resolvers::Linux::Mountpoints.resolve(:mountpoints)
 
     expect(result).to eq(fact)
   end
 
   it 'drops automounts and non-tmpfs mounts under /proc or /sys' do
     allow(Sys::Filesystem).to receive(:mounts).and_return(ignored_mounts)
-    result = described_class.resolve(:mountpoints)
+    result = Facter::Resolvers::Linux::Mountpoints.resolve(:mountpoints)
     expect(result).to be_empty
   end
 
@@ -66,7 +66,7 @@ describe Facter::Resolvers::Linux::Mountpoints do
     end
 
     it 'looks up the actual device if /dev/root' do
-      result = described_class.resolve(:mountpoints)
+      result = Facter::Resolvers::Linux::Mountpoints.resolve(:mountpoints)
       expect(result.first[:device]).to eq('/dev/mmcblk0p2')
     end
   end

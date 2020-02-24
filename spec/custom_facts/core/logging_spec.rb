@@ -3,9 +3,9 @@
 require_relative '../../spec_helper_legacy'
 
 describe LegacyFacter::Core::Logging do
-  subject { described_class }
+  subject { LegacyFacter::Core::Logging }
 
-  after(:each) do
+  after do
     subject.debugging(false)
     subject.timing(false)
     subject.on_message
@@ -14,12 +14,13 @@ describe LegacyFacter::Core::Logging do
   describe 'emitting debug messages' do
     it "doesn't log a message when debugging is disabled" do
       subject.debugging(false)
-      expect(subject).to receive(:puts).never
+      expect(subject).not_to receive(:puts)
       subject.debug('foo')
     end
 
     describe 'and debugging is enabled' do
       before { subject.debugging(true) }
+
       it 'emits a warning when called with nil' do
         expect(subject).to receive(:warn).with(/invalid message nil:NilClass/)
         subject.debug(nil)
@@ -104,7 +105,7 @@ describe LegacyFacter::Core::Logging do
   end
 
   describe 'without a logging callback' do
-    before :each do
+    before do
       subject.timing(true)
       subject.debugging(true)
       subject.on_message
@@ -139,7 +140,7 @@ describe LegacyFacter::Core::Logging do
   end
 
   describe 'with a logging callback' do
-    before :each do
+    before do
       subject.debugging(true)
       subject.timing(true)
       subject.on_message
@@ -163,7 +164,7 @@ describe LegacyFacter::Core::Logging do
         raise 'unexpected logging level'
       end
       subject.on_message
-      expect(called).to be
+      expect(called).to be true
       true
     end
 
@@ -189,7 +190,7 @@ describe LegacyFacter::Core::Logging do
 
     it 'does not call puts for debug or debugonce' do
       subject.on_message {}
-      expect(subject).to receive(:puts).never
+      expect(subject).not_to receive(:puts)
       subject.debug('debug message')
       subject.debugonce('debug once message')
     end
@@ -201,7 +202,7 @@ describe LegacyFacter::Core::Logging do
 
     it 'does not call Kernel.warn for warn or warnonce' do
       subject.on_message {}
-      expect(Kernel).to receive(:warn).never
+      expect(Kernel).not_to receive(:warn)
       subject.warn('warn message')
       subject.warnonce('warn once message')
     end
@@ -213,7 +214,7 @@ describe LegacyFacter::Core::Logging do
 
     it 'does not call $stderr.puts for show_time' do
       subject.on_message {}
-      expect($stderr).to receive(:puts).never
+      expect($stderr).not_to receive(:puts)
       subject.show_time('debug message')
     end
 

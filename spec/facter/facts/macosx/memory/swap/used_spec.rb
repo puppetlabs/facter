@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Macosx MemorySwapUsed' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::MemorySwapUsed do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'memory.swap.used', value: '1.0 KiB')
 

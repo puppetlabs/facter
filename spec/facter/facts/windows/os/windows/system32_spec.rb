@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows OsWindowsSystem32' do
-  context '#call_the_resolver' do
-    let(:value) { 'C:\Windows\system32' }
+describe Facter::Windows::OsWindowsSystem32 do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::OsWindowsSystem32.new }
+
+    let(:value) { 'C:\Windows\system32' }
 
     before do
       allow(Facter::Resolvers::System32).to receive(:resolve).with(:system32).and_return(value)

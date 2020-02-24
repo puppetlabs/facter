@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'DebianVersionResolver' do
+describe Facter::Resolvers::DebianVersion do
   before do
     allow(Open3).to receive(:capture2)
       .with('cat /etc/debian_version')

@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows DmiProductName' do
-  context '#call_the_resolver' do
-    let(:value) { 'VMware7,1' }
+describe Facter::Windows::DmiProductName do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::DmiProductName.new }
+
+    let(:value) { 'VMware7,1' }
 
     before do
       allow(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:name).and_return(value)

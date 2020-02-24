@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Macosx OsMacosxVersion' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::OsMacosxVersion do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'os.macosx.version',
                                                    value: { 'full' => '10.9.8', 'major' => '10.9', 'minor' => '8' })

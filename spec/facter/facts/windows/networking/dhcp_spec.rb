@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Windows NetworkingDhcp' do
-  context '#call_the_resolver' do
+describe Facter::Windows::NetworkingDhcp do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'networking.dhcp', value: 'value')
       allow(Facter::Resolvers::Networking).to receive(:resolve).with(:dhcp).and_return('value')

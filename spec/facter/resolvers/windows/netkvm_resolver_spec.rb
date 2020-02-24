@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Windows NetKVM' do
+describe Facter::Resolvers::NetKVM do
   describe '#resolve' do
     before do
       allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open)
@@ -9,6 +9,7 @@ describe 'Windows NetKVM' do
       allow(reg).to receive(:keys?)
       allow(reg).to receive(:close)
     end
+
     after do
       Facter::Resolvers::NetKVM.invalidate_cache
     end
@@ -17,7 +18,7 @@ describe 'Windows NetKVM' do
       let(:reg) { { 'puppet' => 'labs' } }
 
       it 'returns false' do
-        expect(Facter::Resolvers::NetKVM.resolve(:kvm)).to eql(false)
+        expect(Facter::Resolvers::NetKVM.resolve(:kvm)).to be(false)
       end
     end
 
@@ -25,7 +26,7 @@ describe 'Windows NetKVM' do
       let(:reg) { { 'puppet' => 'labs', 'netkvm' => 'info' } }
 
       it 'returns true' do
-        expect(Facter::Resolvers::NetKVM.resolve(:kvm)).to eql(true)
+        expect(Facter::Resolvers::NetKVM.resolve(:kvm)).to be(true)
       end
     end
   end

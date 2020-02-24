@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'LoadAveragesResolver' do
+describe Facter::Resolvers::Linux::LoadAverages do
   let(:load_averages) { { '1m' => 0.00, '5m' => 0.03, '15m' => 0.03 } }
 
   before do

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-describe 'Windows Ipaddress6Interfaces' do
+describe Facter::Windows::Ipaddress6Interfaces do
   subject(:fact) { Facter::Windows::Ipaddress6Interfaces.new }
 
   before do
     allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
   end
 
-  context '#call_the_resolver' do
+  describe '#call_the_resolver' do
     let(:interfaces) { { 'eth0' => { ip6: 'fe80::99bf:da20:ad3:9bfe' }, 'en1' => { ip6: 'fe80::99bf:da20:ad3:9bfe' } } }
 
     it 'calls Facter::Resolvers::Networking' do
@@ -24,7 +24,7 @@ describe 'Windows Ipaddress6Interfaces' do
     end
   end
 
-  context '#call_the_resolver when resolver returns nil' do
+  describe '#call_the_resolver when resolver returns nil' do
     let(:interfaces) { nil }
 
     it 'returns nil' do

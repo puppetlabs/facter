@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Wpar' do
-  context '#oslevel 6.1+' do
+describe Facter::Resolvers::Wpar do
+  describe '#oslevel 6.1+' do
     before do
       lparstat_w = load_fixture('lparstat_w').read
       expect(Open3).to receive(:capture2)
@@ -16,11 +16,11 @@ describe 'Wpar' do
     end
   end
 
-  context '#oslevel 6.0' do
+  describe '#oslevel 6.0' do
     before do
       expect(Open3).to receive(:capture2)
         .with('/usr/bin/lparstat -W 2>/dev/null')
-        .and_return(['', OpenStruct.new(success?: false)]).exactly(2).times
+        .and_return(['', OpenStruct.new(success?: false)]).twice
 
       Facter::Resolvers::Wpar.invalidate_cache
     end

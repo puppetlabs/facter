@@ -29,7 +29,7 @@ describe LegacyFacter::Util::Fact do
   end
 
   describe 'looking up resolutions by name' do
-    subject(:fact) { described_class.new('yay') }
+    subject(:fact) { LegacyFacter::Util::Fact.new('yay') }
 
     it 'returns nil if no such resolution exists' do
       expect(fact.resolution('nope')).to be_nil

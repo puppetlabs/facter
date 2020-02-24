@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Aix Ssh' do
-  context '#call_the_resolver' do
+describe Facter::Aix::Ssh do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       ssh1 = Facter::Ssh.new(Facter::FingerPrint.new('test', 'test'), 'ecdsa', 'test', 'ecdsa')
       ssh2 = Facter::Ssh.new(Facter::FingerPrint.new('test2', 'test2'), 'rsa', 'test2', 'rsa')

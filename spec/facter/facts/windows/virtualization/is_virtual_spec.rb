@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Windows IsVirtual' do
-  context '#call_the_resolver' do
+describe Facter::Windows::IsVirtual do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'is_virtual', value: 'value')
       allow(Facter::Resolvers::Virtualization).to receive(:resolve).with(:is_virtual).and_return('value')

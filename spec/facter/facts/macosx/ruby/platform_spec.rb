@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Macosx RubyPlatform' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::RubyPlatform do
+  describe '#call_the_resolver' do
     let(:value) { 'x86_64-linux' }
 
     it 'returns a fact' do

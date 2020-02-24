@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Windows HypervisorsVirtualbox' do
+describe Facter::Windows::HypervisorsVirtualbox do
   describe '#call_the_resolver' do
     context 'when is not Virtualbox hypervisor' do
       it 'returns nil' do

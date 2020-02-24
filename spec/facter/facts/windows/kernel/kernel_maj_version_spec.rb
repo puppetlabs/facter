@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Windows KernelMajVersion' do
-  context '#call_the_resolver' do
+describe Facter::Windows::KernelMajVersion do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'kernelmajversion', value: 'value')
       allow(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernelmajorversion).and_return('value')

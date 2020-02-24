@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'LoadAveragesResolver' do
+describe Facter::Resolvers::Aix::LoadAverages do
   let(:load_averages) { [0.01, 0.02, 0.03] }
 
   before do

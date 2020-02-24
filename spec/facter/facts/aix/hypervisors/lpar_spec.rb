@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Aix HypervisorsLpar' do
-  context '#call_the_resolver' do
+describe Facter::Aix::HypervisorsLpar do
+  describe '#call_the_resolver' do
     it 'returns a lpar hypervisor fact' do
       expected_fact_name = 'hypervisors.lpar'
       expected_fact_value = { partition_number: 13, partition_name: 'aix6-7' }

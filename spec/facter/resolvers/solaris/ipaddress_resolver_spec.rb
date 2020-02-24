@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'IpaddressResolver' do
+describe Facter::Resolvers::Solaris::Ipaddress do
   describe '#resolve' do
     after do
       Facter::Resolvers::Solaris::Ipaddress.invalidate_cache
@@ -22,7 +22,7 @@ describe 'IpaddressResolver' do
 
       it 'detects that ip is nil' do
         allow(Open3).to receive(:capture2).with('route -n get default | grep interface').and_return(route)
-        expect(Facter::Resolvers::Solaris::Ipaddress.resolve(:ip)).to eql(nil)
+        expect(Facter::Resolvers::Solaris::Ipaddress.resolve(:ip)).to be(nil)
       end
     end
   end

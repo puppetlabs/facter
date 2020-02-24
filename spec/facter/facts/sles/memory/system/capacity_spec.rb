@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Sles MemorySystemCapacity' do
-  context '#call_the_resolver' do
+describe Facter::Sles::MemorySystemCapacity do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'memory.system.capacity', value: '21.50%')
       allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:capacity).and_return('21.50%')

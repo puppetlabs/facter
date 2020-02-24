@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Windows OsRelease' do
+describe Facter::Windows::OsRelease do
   subject(:fact) { Facter::Windows::OsRelease.new }
 
   before do
@@ -10,7 +10,7 @@ describe 'Windows OsRelease' do
     allow(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernelversion).and_return(value)
   end
 
-  context '#call_the_resolver' do
+  describe '#call_the_resolver' do
     let(:value) { '2019' }
 
     it 'calls Facter::Resolvers::WinOsDescription and Facter::Resolvers::Kernel resolvers' do
@@ -29,7 +29,7 @@ describe 'Windows OsRelease' do
     end
   end
 
-  context '#call_the_resolver when resolvers return nil' do
+  describe '#call_the_resolver when resolvers return nil' do
     let(:value) { nil }
 
     it 'returns release fact as nil' do

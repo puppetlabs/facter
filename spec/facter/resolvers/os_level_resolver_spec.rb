@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'OsLevel' do
+describe Facter::Resolvers::OsLevel do
   before do
     allow(Open3).to receive(:capture2)
       .with('/usr/bin/oslevel -s 2>/dev/null')

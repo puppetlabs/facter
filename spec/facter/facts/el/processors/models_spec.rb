@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Fedora ProcessorsModels' do
-  context '#call_the_resolver' do
+describe Facter::El::ProcessorsModels do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'processors.models', value: 'value')
       allow(Facter::Resolvers::Linux::Processors).to receive(:resolve).with(:models).and_return('value')

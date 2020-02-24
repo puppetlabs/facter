@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'El NetworkingHostname' do
-  context '#call_the_resolver' do
-    let(:value) { 'host' }
+describe Facter::El::NetworkingHostname do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::El::NetworkingHostname.new }
+
+    let(:value) { 'host' }
 
     before do
       allow(Facter::Resolvers::Hostname).to receive(:resolve).with(:hostname).and_return(value)

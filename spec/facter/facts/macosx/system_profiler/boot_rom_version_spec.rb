@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-describe 'Macosx SystemProfilerBootRomVersion' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::SystemProfilerBootRomVersion do
+  describe '#call_the_resolver' do
+    subject(:fact) { Facter::Macosx::SystemProfilerBootRomVersion.new }
+
     let(:value) { '194.0.0.0.0' }
     let(:expected_resolved_fact) do
       double(Facter::ResolvedFact, name: 'system_profiler.boot_rom_version', value: value)
     end
-    subject(:fact) { Facter::Macosx::SystemProfilerBootRomVersion.new }
 
     before do
       expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:boot_rom_version).and_return(value)

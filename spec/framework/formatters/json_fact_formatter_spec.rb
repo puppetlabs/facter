@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'JsonFactFormatter' do
+describe Facter::JsonFactFormatter do
   it 'formats to json when no user query' do
     resolved_fact1 =
       double(Facter::ResolvedFact, name: 'os.name', value: 'Darwin', user_query: '', filter_tokens: [])

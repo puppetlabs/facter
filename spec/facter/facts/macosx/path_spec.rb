@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Macosx Path' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::Path do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'path', value: 'value')
       allow(Facter::Resolvers::Path).to receive(:resolve).with(:path).and_return('value')

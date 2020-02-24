@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-describe 'Sles NetworkingInterfaces' do
-  context '#call_the_resolver' do
+describe Facter::Sles::NetworkingInterfaces do
+  describe '#call_the_resolver' do
+    subject(:fact) { Facter::Sles::NetworkingInterfaces.new }
+
     let(:value) do
       {
         'ens160' => {
@@ -15,8 +17,6 @@ describe 'Sles NetworkingInterfaces' do
         }
       }
     end
-
-    subject(:fact) { Facter::Sles::NetworkingInterfaces.new }
 
     before do
       allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:interfaces).and_return(value)

@@ -39,11 +39,11 @@ describe LegacyFacter::Core::Suitable do
       subject.confine('one', &block)
     end
 
-    it 'should accept a single block parameter' do
+    it 'accepts a single block parameter' do
       subject.confine { true }
     end
 
-    it 'should create a Util::Confine instance for the provided block parameter' do
+    it 'creates a Util::Confine instance for the provided block parameter' do
       block = -> { true }
       expect(LegacyFacter::Util::Confine).to receive :new
 
@@ -88,14 +88,14 @@ describe LegacyFacter::Core::Suitable do
       subject.confine operatingsystem: 'Redhat'
       expect(subject.confines.first).to receive(:true?).and_return(false)
 
-      expect(subject).to_not be_suitable
+      expect(subject).not_to be_suitable
     end
 
     it 'recalculates suitability on every invocation' do
       subject.confine kernel: 'Linux'
 
       expect(subject.confines.first).to receive(:true?).and_return(false)
-      expect(subject).to_not be_suitable
+      expect(subject).not_to be_suitable
 
       expect(subject.confines.first).to receive(:true?).and_return(true)
       expect(subject).to be_suitable

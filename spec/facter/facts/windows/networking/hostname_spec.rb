@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows NetworkingHostname' do
-  context '#call_the_resolver' do
-    let(:value) { 'hostname' }
+describe Facter::Windows::NetworkingHostname do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::NetworkingHostname.new }
+
+    let(:value) { 'hostname' }
 
     before do
       allow(Facter::Resolvers::Hostname).to receive(:resolve).with(:hostname).and_return(value)

@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'AIX OsRelease' do
-  context '#call_the_resolver' do
-    let(:value) { '12.0.1 ' }
+describe Facter::Aix::OsRelease do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Aix::OsRelease.new }
+
+    let(:value) { '12.0.1 ' }
 
     before do
       allow(Facter::Resolvers::OsLevel).to receive(:resolve).with(:build).and_return(value)

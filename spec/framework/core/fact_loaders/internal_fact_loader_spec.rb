@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'InternalFactLoader' do
+describe Facter::InternalFactLoader do
   before do
     allow_any_instance_of(OsDetector).to receive(:hierarchy).and_return([:Debian])
   end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Windows HypervisorsVmware' do
+describe Facter::Windows::HypervisorsVmware do
   describe '#call_the_resolver' do
     context 'when is not VMware hypervisor' do
       it 'returns nil' do

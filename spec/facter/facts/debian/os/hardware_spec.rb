@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Ubuntu OsHardware' do
-  context '#call_the_resolver' do
+describe Facter::Debian::OsHardware do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'os.hardware', value: 'value')
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return('value')

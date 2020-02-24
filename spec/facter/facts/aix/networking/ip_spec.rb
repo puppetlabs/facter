@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Aix NetworkingIp' do
-  context '#call_the_resolver' do
-    let(:value) { '0.16.121.255' }
+describe Facter::Aix::NetworkingIp do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Aix::NetworkingIp.new }
+
+    let(:value) { '0.16.121.255' }
 
     before do
       allow(Facter::Resolvers::Aix::Networking).to receive(:resolve).with(:ip).and_return(value)

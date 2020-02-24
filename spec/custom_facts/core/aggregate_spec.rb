@@ -3,9 +3,9 @@
 require_relative '../../spec_helper_legacy'
 
 describe LegacyFacter::Core::Aggregate do
-  let(:fact) { double('stub_fact', name: 'stub_fact') }
+  subject { LegacyFacter::Core::Aggregate.new('aggregated', fact) }
 
-  subject { described_class.new('aggregated', fact) }
+  let(:fact) { double('stub_fact', name: 'stub_fact') }
 
   it 'can be resolved' do
     expect(subject).to be_a_kind_of LegacyFacter::Core::Resolvable

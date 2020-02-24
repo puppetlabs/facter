@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Solaris OsHardware' do
-  context '#call_the_resolver' do
+describe Facter::Solaris::OsHardware do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'os.hardware', value: 'i86pc')
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return('i86pc')

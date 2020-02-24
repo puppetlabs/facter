@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-describe 'Macosx SystemProfilerUptime' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::SystemProfilerUptime do
+  describe '#call_the_resolver' do
+    subject(:fact) { Facter::Macosx::SystemProfilerUptime.new }
+
     let(:value) { '26 days 22:12' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'system_profiler.uptime', value: value) }
-    subject(:fact) { Facter::Macosx::SystemProfilerUptime.new }
 
     before do
       expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:time_since_boot).and_return(value)

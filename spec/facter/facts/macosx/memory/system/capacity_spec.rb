@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Macosx MemorySystemCapacity' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::MemorySystemCapacity do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'memory.system.capacity', value: '15.53%')
 

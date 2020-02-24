@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Macosx OsFamily' do
-  context '#call_the_resolver' do
-    let(:value) { 'Darwin' }
+describe Facter::Macosx::OsFamily do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Macosx::OsFamily.new }
+
+    let(:value) { 'Darwin' }
 
     before do
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelname).and_return(value)

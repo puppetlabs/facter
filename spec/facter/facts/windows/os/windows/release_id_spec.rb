@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows OsWindowsReleaseID' do
-  context '#call_the_resolver' do
-    let(:value) { '1607' }
+describe Facter::Windows::OsWindowsReleaseID do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::OsWindowsReleaseID.new }
+
+    let(:value) { '1607' }
 
     before do
       allow(Facter::Resolvers::ProductRelease).to receive(:resolve).with(:release_id).and_return(value)

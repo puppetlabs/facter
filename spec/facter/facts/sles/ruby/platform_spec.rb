@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Sles RubyPlatform' do
-  context '#call_the_resolver' do
+describe Facter::Sles::RubyPlatform do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       value = 'x86_64-linux'
 

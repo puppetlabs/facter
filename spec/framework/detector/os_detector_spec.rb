@@ -2,7 +2,7 @@
 
 require 'rbconfig'
 
-describe 'CurrentOs' do
+describe OsDetector do
   before do
     Singleton.__init__(OsDetector)
   end

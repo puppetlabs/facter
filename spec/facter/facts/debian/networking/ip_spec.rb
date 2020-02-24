@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Debian NetworkingIp' do
-  context '#call_the_resolver' do
-    let(:value) { '10.16.122.163' }
+describe Facter::Debian::NetworkingIp do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Debian::NetworkingIp.new }
+
+    let(:value) { '10.16.122.163' }
 
     before do
       allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:ip).and_return(value)

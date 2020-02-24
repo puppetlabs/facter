@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Macosx Augeas' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::Augeas do
+  describe '#call_the_resolver' do
     it 'returns augeas fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'augeas.version', value: '1.12.0')
       allow(Facter::Resolvers::Augeas).to receive(:resolve).with(:augeas_version).and_return('1.12.0')

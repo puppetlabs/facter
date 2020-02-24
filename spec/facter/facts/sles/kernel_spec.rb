@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Sles Kernel' do
-  context '#call_the_resolver' do
+describe Facter::Sles::Kernel do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'kernel', value: 'Linux')
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelname).and_return('Linux')

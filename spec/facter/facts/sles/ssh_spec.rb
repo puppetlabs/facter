@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Sles Ssh' do
-  context '#call_the_resolver' do
+describe Facter::Sles::Ssh do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       result = []
       ssh = Facter::Ssh.new(Facter::FingerPrint.new('test', 'test'), 'ecdsa', 'test', 'ecdsa')

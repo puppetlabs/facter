@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows OsWindowsInstallationType' do
-  context '#call_the_resolver' do
-    let(:value) { 'Server' }
+describe Facter::Windows::OsWindowsInstallationType do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::OsWindowsInstallationType.new }
+
+    let(:value) { 'Server' }
 
     before do
       allow(Facter::Resolvers::ProductRelease).to receive(:resolve).with(:installation_type).and_return(value)

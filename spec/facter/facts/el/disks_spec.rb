@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-describe 'El disks' do
+describe Facter::El::Disks do
+  subject(:fact) { Facter::El::Disks.new }
+
   let(:disk) do
     {
       disks: {
@@ -14,10 +16,8 @@ describe 'El disks' do
     }
   end
 
-  subject(:fact) { Facter::El::Disks.new }
-
-  context '#call_the_resolver' do
-    before(:each) do
+  describe '#call_the_resolver' do
+    before do
       allow(Facter::Resolvers::Linux::Disk).to receive(:resolve).with(:disks).and_return(disk)
     end
 

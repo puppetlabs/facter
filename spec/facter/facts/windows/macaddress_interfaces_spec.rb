@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-describe 'Windows MacaddressInterfaces' do
+describe Facter::Windows::MacaddressInterfaces do
   subject(:fact) { Facter::Windows::MacaddressInterfaces.new }
 
   before do
     allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
   end
 
-  context '#call_the_resolver' do
+  describe '#call_the_resolver' do
     let(:interfaces) { { 'eth0' => { mac: '10.16.117.100' }, 'en1' => { mac: '10.16.117.255' } } }
 
     it 'calls Facter::Resolvers::Networking' do
@@ -24,7 +24,7 @@ describe 'Windows MacaddressInterfaces' do
     end
   end
 
-  context '#call_the_resolver when resolver returns nil' do
+  describe '#call_the_resolver when resolver returns nil' do
     let(:interfaces) { nil }
 
     it 'returns nil' do

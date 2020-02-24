@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Sles OsArchitecture' do
-  context '#call_the_resolver' do
-    let(:value) { 'x86_64' }
+describe Facter::Sles::OsArchitecture do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Sles::OsArchitecture.new }
+
+    let(:value) { 'x86_64' }
 
     before do
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return(value)

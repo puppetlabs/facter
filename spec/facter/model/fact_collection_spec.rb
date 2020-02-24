@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'FactCollector' do
+describe Facter::FactCollection do
   it 'adds elements to fact collection' do
     fact_value = '1.2.3'
 

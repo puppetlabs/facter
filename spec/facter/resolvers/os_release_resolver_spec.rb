@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'OsReleaseResolver' do
+describe Facter::Resolvers::OsRelease do
   before do
     allow(File).to receive(:exist?)
       .with('/etc/os-release')

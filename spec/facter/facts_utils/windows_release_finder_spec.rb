@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-describe 'WindowsReleaseFinder' do
+describe Facter::WindowsReleaseFinder do
   let(:input) { { consumerrel: cons, description: desc, kernel_version: k_version, version: version } }
 
-  context '#find windows release when version nil' do
+  describe '#find windows release when version nil' do
     let(:cons) { false }
     let(:desc) {}
     let(:k_version) {}
     let(:version) { nil }
 
     it 'returns nil' do
-      expect(Facter::WindowsReleaseFinder.find_release(input)).to eql(nil)
+      expect(Facter::WindowsReleaseFinder.find_release(input)).to be(nil)
     end
   end
 
-  context '#find windows release when version is 10' do
+  describe '#find windows release when version is 10' do
     let(:cons) { true }
     let(:desc) {}
     let(:k_version) { '10.0.123' }
@@ -25,7 +25,7 @@ describe 'WindowsReleaseFinder' do
     end
   end
 
-  context '#find windows release when version is 2019' do
+  describe '#find windows release when version is 2019' do
     let(:cons) { false }
     let(:desc) {}
     let(:k_version) { '10.0.17623' }
@@ -36,7 +36,7 @@ describe 'WindowsReleaseFinder' do
     end
   end
 
-  context '#find windows release when version is 2016' do
+  describe '#find windows release when version is 2016' do
     let(:cons) { false }
     let(:desc) {}
     let(:k_version) { '10.0.176' }
@@ -47,7 +47,7 @@ describe 'WindowsReleaseFinder' do
     end
   end
 
-  context '#find windows release when version is 8.1' do
+  describe '#find windows release when version is 8.1' do
     let(:cons) { true }
     let(:desc) {}
     let(:k_version) {}
@@ -58,7 +58,7 @@ describe 'WindowsReleaseFinder' do
     end
   end
 
-  context '#find windows release when version is 2012 R2' do
+  describe '#find windows release when version is 2012 R2' do
     let(:cons) { false }
     let(:desc) {}
     let(:k_version) {}
@@ -69,7 +69,7 @@ describe 'WindowsReleaseFinder' do
     end
   end
 
-  context '#find windows release when version is XP' do
+  describe '#find windows release when version is XP' do
     let(:cons) { true }
     let(:desc) {}
     let(:k_version) {}
@@ -80,7 +80,7 @@ describe 'WindowsReleaseFinder' do
     end
   end
 
-  context '#find windows release when version is 2003' do
+  describe '#find windows release when version is 2003' do
     let(:cons) { false }
     let(:desc) {}
     let(:k_version) {}
@@ -91,7 +91,7 @@ describe 'WindowsReleaseFinder' do
     end
   end
 
-  context '#find windows release when version is 2003 R2' do
+  describe '#find windows release when version is 2003 R2' do
     let(:cons) { false }
     let(:desc) { 'R2' }
     let(:k_version) {}
@@ -102,7 +102,7 @@ describe 'WindowsReleaseFinder' do
     end
   end
 
-  context '#find windows release when version is 4.2' do
+  describe '#find windows release when version is 4.2' do
     let(:cons) { false }
     let(:desc) { 'R2' }
     let(:k_version) {}

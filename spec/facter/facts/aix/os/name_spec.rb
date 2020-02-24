@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'AIX OsName' do
-  context '#call_the_resolver' do
-    let(:value) { 'AIX' }
+describe Facter::Aix::OsName do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Aix::OsName.new }
+
+    let(:value) { 'AIX' }
 
     before do
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelname).and_return(value)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Windows ProcessorsResolver' do
+describe Facter::Resolvers::Processors do
   before do
     win = double('Win32Ole')
 
@@ -8,28 +8,32 @@ describe 'Windows ProcessorsResolver' do
     allow(win).to receive(:exec_query).with('SELECT Name,Architecture,NumberOfLogicalProcessors FROM Win32_Processor')
                                       .and_return(proc)
   end
+
   after do
     Facter::Resolvers::Processors.invalidate_cache
   end
 
-  context '#resolve' do
+  describe '#resolve' do
     let(:proc) { [double('proc', Name: 'Pretty_Name', Architecture: 0, NumberOfLogicalProcessors: 2)] }
 
     it 'detects models of processors' do
       expect(Facter::Resolvers::Processors.resolve(:models)).to eql(['Pretty_Name'])
     end
+
     it 'detects isa' do
       expect(Facter::Resolvers::Processors.resolve(:isa)).to eql('x86')
     end
+
     it 'counts proccesors' do
-      expect(Facter::Resolvers::Processors.resolve(:count)).to eql(2)
+      expect(Facter::Resolvers::Processors.resolve(:count)).to be(2)
     end
+
     it 'counts physical processors' do
-      expect(Facter::Resolvers::Processors.resolve(:physicalcount)).to eql(1)
+      expect(Facter::Resolvers::Processors.resolve(:physicalcount)).to be(1)
     end
   end
 
-  context '#resolve when number of logical processors is 0' do
+  describe '#resolve when number of logical processors is 0' do
     let(:proc) do
       [double('proc', Name: 'Pretty_Name', Architecture: 0, NumberOfLogicalProcessors: 0),
        double('proc', Name: 'Awesome_Name', Architecture: 10, NumberOfLogicalProcessors: 0)]
@@ -38,55 +42,60 @@ describe 'Windows ProcessorsResolver' do
     it 'detects models' do
       expect(Facter::Resolvers::Processors.resolve(:models)).to eql(%w[Pretty_Name Awesome_Name])
     end
+
     it 'detects isa' do
       expect(Facter::Resolvers::Processors.resolve(:isa)).to eql('x86')
     end
+
     it 'counts proccesors' do
-      expect(Facter::Resolvers::Processors.resolve(:count)).to eql(2)
+      expect(Facter::Resolvers::Processors.resolve(:count)).to be(2)
     end
+
     it 'counts physical processors' do
-      expect(Facter::Resolvers::Processors.resolve(:physicalcount)).to eql(2)
+      expect(Facter::Resolvers::Processors.resolve(:physicalcount)).to be(2)
     end
   end
 
-  context '#resolve logs a debug message when is an unknown architecture' do
+  describe '#resolve logs a debug message when is an unknown architecture' do
     let(:proc) { [double('proc', Name: 'Pretty_Name', Architecture: 10, NumberOfLogicalProcessors: 0)] }
 
     it 'logs that is unknown architecture' do
       allow_any_instance_of(Facter::Log).to receive(:debug)
         .with('Unable to determine processor type: unknown architecture')
-      expect(Facter::Resolvers::Processors.resolve(:isa)).to eql(nil)
+      expect(Facter::Resolvers::Processors.resolve(:isa)).to be(nil)
     end
   end
 
-  context '#resolve when WMI query returns nil' do
+  describe '#resolve when WMI query returns nil' do
     let(:proc) { nil }
 
     it 'logs that query failed and isa nil' do
       allow_any_instance_of(Facter::Log).to receive(:debug)
         .with('WMI query returned no results'\
         'for Win32_Processor with values Name, Architecture and NumberOfLogicalProcessors.')
-      expect(Facter::Resolvers::Processors.resolve(:isa)).to eql(nil)
+      expect(Facter::Resolvers::Processors.resolve(:isa)).to be(nil)
     end
+
     it 'detects that models, count and physicalcount nil' do
-      expect(Facter::Resolvers::Processors.resolve(:models)).to eql(nil)
-      expect(Facter::Resolvers::Processors.resolve(:count)).to eql(nil)
-      expect(Facter::Resolvers::Processors.resolve(:physicalcount)).to eql(nil)
+      expect(Facter::Resolvers::Processors.resolve(:models)).to be(nil)
+      expect(Facter::Resolvers::Processors.resolve(:count)).to be(nil)
+      expect(Facter::Resolvers::Processors.resolve(:physicalcount)).to be(nil)
     end
   end
 
-  context '#resolve when WMI query returns nil for Name, Architecture and NumberOfLogicalProcessors' do
+  describe '#resolve when WMI query returns nil for Name, Architecture and NumberOfLogicalProcessors' do
     let(:proc) { [double('proc', Name: nil, Architecture: nil, NumberOfLogicalProcessors: nil)] }
 
     it 'detects that isa is nil' do
       allow_any_instance_of(Facter::Log).to receive(:debug)
         .with('Unable to determine processor type: unknown architecture')
-      expect(Facter::Resolvers::Processors.resolve(:isa)).to eql(nil)
+      expect(Facter::Resolvers::Processors.resolve(:isa)).to be(nil)
     end
+
     it 'detects that models, count and physicalcount nil' do
       expect(Facter::Resolvers::Processors.resolve(:models)).to eql([nil])
-      expect(Facter::Resolvers::Processors.resolve(:count)).to eql(1)
-      expect(Facter::Resolvers::Processors.resolve(:physicalcount)).to eql(1)
+      expect(Facter::Resolvers::Processors.resolve(:count)).to be(1)
+      expect(Facter::Resolvers::Processors.resolve(:physicalcount)).to be(1)
     end
   end
 end

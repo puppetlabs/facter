@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Fedora MemorySystemTotal' do
-  context '#call_the_resolver' do
+describe Facter::El::MemorySystemTotal do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'memory.system.total', value: '1.0 KiB')
       allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:total).and_return(1024)

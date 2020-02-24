@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows NetworkingMac' do
-  context '#call_the_resolver' do
-    let(:value) { '00:50:56:9A:7E:98' }
+describe Facter::Windows::NetworkingMac do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::NetworkingMac.new }
+
+    let(:value) { '00:50:56:9A:7E:98' }
 
     before do
       allow(Facter::Resolvers::Networking).to receive(:resolve).with(:mac).and_return(value)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'RedHatReleaseResolver' do
+describe Facter::Resolvers::RedHatRelease do
   before do
     allow(Open3).to receive(:capture2)
       .with('cat /etc/redhat-release')

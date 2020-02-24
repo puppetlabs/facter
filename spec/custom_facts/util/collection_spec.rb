@@ -13,19 +13,19 @@ describe LegacyFacter::Util::Collection do
   end
   let(:collection) { LegacyFacter::Util::Collection.new(internal_loader, external_loader) }
 
-  it 'should delegate its load_all method to its loader' do
+  it 'delegates its load_all method to its loader' do
     expect(internal_loader).to receive(:load_all)
 
     collection.load_all
   end
 
   describe 'when adding facts' do
-    it 'should create a new fact if no fact with the same name already exists' do
+    it 'creates a new fact if no fact with the same name already exists' do
       collection.add(:myname)
       expect(collection.fact(:myname).name).to eq :myname
     end
 
-    it 'should accept options' do
+    it 'accepts options' do
       collection.add(:myname, timeout: 1) {}
     end
 
@@ -39,7 +39,7 @@ describe LegacyFacter::Util::Collection do
     end
 
     describe 'and a block is provided' do
-      it 'should use the block to add a resolution to the fact' do
+      it 'uses the block to add a resolution to the fact' do
         fact = double 'fact'
         # allow(fact).to receive(:extract_ldapname_option!)
         expect(LegacyFacter::Util::Fact).to receive(:new).and_return(fact)
@@ -49,7 +49,7 @@ describe LegacyFacter::Util::Collection do
         collection.add(:myname) {}
       end
 
-      it 'should discard resolutions that throw an exception when added' do
+      it 'discards resolutions that throw an exception when added' do
         expect(LegacyFacter).to receive(:warn).with(/Unable to add resolve .* kaboom!/)
         expect do
           collection.add('yay') do
@@ -93,24 +93,24 @@ describe LegacyFacter::Util::Collection do
       @fact = collection.add('YayNess')
     end
 
-    it 'should return the fact instance specified by the name' do
+    it 'returns the fact instance specified by the name' do
       expect(collection.fact('YayNess')).to equal(@fact)
     end
 
-    it 'should be case-insensitive' do
+    it 'is case-insensitive' do
       expect(collection.fact('yayness')).to equal(@fact)
     end
 
-    it 'should treat strings and symbols equivalently' do
+    it 'treats strings and symbols equivalently' do
       expect(collection.fact(:yayness)).to equal(@fact)
     end
 
-    it 'should use its loader to try to load the fact if no fact can be found' do
+    it 'uses its loader to try to load the fact if no fact can be found' do
       expect(collection.internal_loader).to receive(:load).with(:testing)
       collection.fact('testing')
     end
 
-    it 'should return nil if it cannot find or load the fact' do
+    it 'returns nil if it cannot find or load the fact' do
       expect(collection.internal_loader).to receive(:load).with(:testing)
       expect(collection.fact('testing')).to be nil
     end
@@ -121,27 +121,27 @@ describe LegacyFacter::Util::Collection do
       @fact = collection.add('YayNess', value: 'result')
     end
 
-    it 'should return the result of calling :value on the fact' do
+    it 'returns the result of calling :value on the fact' do
       expect(collection.value('YayNess')).to eq 'result'
     end
 
-    it 'should be case-insensitive' do
+    it 'is case-insensitive' do
       expect(collection.value('yayness')).to eq 'result'
     end
 
-    it 'should treat strings and symbols equivalently' do
+    it 'treats strings and symbols equivalently' do
       expect(collection.value(:yayness)).to eq 'result'
     end
 
     describe 'when the fact is a core fact' do
-      it 'should call the core_value method' do
+      it 'calls the core_value method' do
         expect(Facter).to receive(:core_value).with('core_fact')
         collection.value('core_fact')
       end
     end
 
     describe 'when the weight of the resolution is 0' do
-      it 'should return core facts value is it exists' do
+      it 'returns core facts value is it exists' do
         expect(Facter).to receive(:core_value).with('yayness').and_return('core_result')
         expect(collection.value('yayness')).to eq('core_result')
       end
@@ -160,13 +160,13 @@ describe LegacyFacter::Util::Collection do
   #   end
   # end
 
-  it "should return the fact's value when the array index method is used" do
+  it "returns the fact's value when the array index method is used" do
     collection.add('myfact', value: 'foo')
 
     expect(collection['myfact']).to eq 'foo'
   end
 
-  it 'should have a method for flushing all facts' do
+  it 'has a method for flushing all facts' do
     fact = collection.add('YayNess')
 
     expect(fact).to receive(:flush)
@@ -174,7 +174,7 @@ describe LegacyFacter::Util::Collection do
     collection.flush
   end
 
-  it 'should have a method that returns all fact names' do
+  it 'has a method that returns all fact names' do
     collection.add(:one)
     collection.add(:two)
 
@@ -182,13 +182,13 @@ describe LegacyFacter::Util::Collection do
   end
 
   describe 'when returning a hash of values' do
-    it 'should return a hash of fact names and values with the fact names as strings' do
+    it 'returns a hash of fact names and values with the fact names as strings' do
       collection.add(:one, value: 'me')
 
       expect(collection.to_hash).to eq 'one' => 'me'
     end
 
-    it 'should not include facts that did not return a value' do
+    it 'does not include facts that did not return a value' do
       collection.add(:two, value: nil)
 
       expect(collection.to_hash).not_to be_include(:two)
@@ -201,7 +201,7 @@ describe LegacyFacter::Util::Collection do
       collection.add(:two, value: 'TWO')
     end
 
-    it 'should yield each fact name and the fact value' do
+    it 'yields each fact name and the fact value' do
       facts = {}
       collection.each do |fact, value|
         facts[fact] = value
@@ -209,13 +209,13 @@ describe LegacyFacter::Util::Collection do
       expect(facts).to eq 'one' => 'ONE', 'two' => 'TWO'
     end
 
-    it 'should convert the fact name to a string' do
+    it 'converts the fact name to a string' do
       collection.each do |fact, _value|
         expect(fact).to be_instance_of(String)
       end
     end
 
-    it 'should only yield facts that have values' do
+    it 'onlies yield facts that have values' do
       collection.add(:nil_fact, value: nil)
       facts = {}
       collection.each do |fact, value|
@@ -227,7 +227,7 @@ describe LegacyFacter::Util::Collection do
   end
 
   describe 'when no facts are loaded' do
-    it 'should warn when no facts were loaded' do
+    it 'warns when no facts were loaded' do
       expect(LegacyFacter)
         .to receive(:warnonce)
         .with("No facts loaded from #{internal_loader.search_path.join(File::PATH_SEPARATOR)}").once

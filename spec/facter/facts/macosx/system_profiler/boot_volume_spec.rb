@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-describe 'Macosx SystemProfilerBootVolume' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::SystemProfilerBootVolume do
+  describe '#call_the_resolver' do
+    subject(:fact) { Facter::Macosx::SystemProfilerBootVolume.new }
+
     let(:value) { 'Macintosh HD' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'system_profiler.boot_volume', value: value) }
-    subject(:fact) { Facter::Macosx::SystemProfilerBootVolume.new }
 
     before do
       expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:boot_volume).and_return(value)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Sles MemorySwapCapacity' do
-  context '#call_the_resolver' do
+describe Facter::Sles::MemorySwapCapacity do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'memory.swap.capacity', value: '0.00%')
       allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:swap_capacity).and_return('0.00%')

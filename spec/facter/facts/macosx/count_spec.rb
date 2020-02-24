@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Macosx ProcessorsCount' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::ProcessorsCount do
+  describe '#call_the_resolver' do
     it 'returns processors fact' do
       value = '4'
 

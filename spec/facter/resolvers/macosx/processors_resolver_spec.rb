@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'MacOSX ProcessorsResolver' do
+describe Facter::Resolvers::Macosx::Processors do
   let(:logicalcount) { 4 }
   let(:models) do
     ['Intel(R) Xeon(R) CPU E5-2697 v4 @ 2.30GHz', 'Intel(R) Xeon(R) CPU E5-2697 v4 @ 2.30GHz',
@@ -8,6 +8,7 @@ describe 'MacOSX ProcessorsResolver' do
   end
   let(:physical_processors) { 1 }
   let(:speed_expected) { '2.30 GHz' }
+
   output = ['hw.logicalcpu_max: 4',
             'hw.physicalcpu_max: 1',
             'machdep.cpu.brand_string: Intel(R) Xeon(R) CPU E5-2697 v4 @ 2.30GHz',
@@ -18,11 +19,13 @@ describe 'MacOSX ProcessorsResolver' do
       .with('sysctl hw.logicalcpu_max hw.physicalcpu_max machdep.cpu.brand_string hw.cpufrequency_max')
       .and_return(output)
   end
+
   it 'returns number of processors' do
     result = Facter::Resolvers::Macosx::Processors.resolve(:logicalcount)
 
     expect(result).to eq(logicalcount)
   end
+
   it 'returns number of physical processors' do
     result = Facter::Resolvers::Macosx::Processors.resolve(:physicalcount)
 
@@ -34,6 +37,7 @@ describe 'MacOSX ProcessorsResolver' do
 
     expect(result).to eq(models)
   end
+
   it 'returns speed of processors' do
     result = Facter::Resolvers::Macosx::Processors.resolve(:speed)
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Fedora Filesystems' do
-  context '#call_the_resolver' do
+describe Facter::El::Filesystems do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       value = 'ext2,ext3,ext4,xfs'
       expected_fact = double(Facter::ResolvedFact, name: 'filesystems', value: value)

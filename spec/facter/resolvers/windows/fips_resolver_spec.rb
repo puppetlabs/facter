@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-describe 'Windows Fips' do
+describe Facter::Resolvers::Windows::Fips do
   describe '#resolve' do
     let(:reg) { { 'Enabled' => is_fips } }
+
     before do
       allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open)
         .with('System\\CurrentControlSet\\Control\\Lsa\\FipsAlgorithmPolicy').and_return(reg)
@@ -17,7 +18,7 @@ describe 'Windows Fips' do
       let(:is_fips) { 255 }
 
       it 'detects that fips is enabled' do
-        expect(Facter::Resolvers::Windows::Fips.resolve(:fips_enabled)).to eql(true)
+        expect(Facter::Resolvers::Windows::Fips.resolve(:fips_enabled)).to be(true)
       end
     end
 
@@ -25,7 +26,7 @@ describe 'Windows Fips' do
       let(:is_fips) { 0 }
 
       it "detects that fips isn't enabled" do
-        expect(Facter::Resolvers::Windows::Fips.resolve(:fips_enabled)).to eql(false)
+        expect(Facter::Resolvers::Windows::Fips.resolve(:fips_enabled)).to be(false)
       end
     end
   end

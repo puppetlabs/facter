@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'SwVersResolver' do
+describe Facter::Resolvers::SwVers do
   before do
     allow(Open3).to receive(:capture2)
       .with('sw_vers')

@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows OsArchitecture' do
-  context '#call_the_resolver' do
-    let(:value) { 'x64' }
+describe Facter::Windows::OsArchitecture do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::OsArchitecture.new }
+
+    let(:value) { 'x64' }
 
     before do
       allow(Facter::Resolvers::HardwareArchitecture).to receive(:resolve).with(:architecture).and_return(value)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Ubuntu SystemUptimeDays' do
-  context '#call_the_resolver' do
+describe Facter::Debian::SystemUptimeDays do
+  describe '#call_the_resolver' do
     let(:value) { { days: 6 } }
 
     it 'returns a fact' do

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Fedora Path' do
-  context '#call_the_resolver' do
+describe Facter::El::Path do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       value = '/Users/User/.rvm/gems/ruby-2.4.6/bin:/Users/User/.rvm/gems/ruby-2.4.6@global/bin'
 

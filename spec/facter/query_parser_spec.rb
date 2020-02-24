@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'QueryParser' do
+describe Facter::QueryParser do
   describe '#parse' do
     it 'creates one core searched fact' do
       query_list = ['os.name']

@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Solaris RubyPlatform' do
-  context '#call_the_resolver' do
-    let(:value) { 'x86_64-linux' }
+describe Facter::Solaris::RubyPlatform do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Solaris::RubyPlatform.new }
+
+    let(:value) { 'x86_64-linux' }
 
     before do
       allow(Facter::Resolvers::Ruby).to receive(:resolve).with(:platform).and_return(value)

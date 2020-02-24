@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Windows HypervisorsXen' do
+describe Facter::Windows::HypervisorsXen do
   describe '#call_the_resolver' do
     context 'when is not xen hypervisor' do
       it 'returns nil' do

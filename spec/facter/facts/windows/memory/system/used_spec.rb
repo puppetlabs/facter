@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Windows MemorySystemUsed' do
-  context '#call_the_resolver' do
+describe Facter::Windows::MemorySystemUsed do
+  describe '#call_the_resolver' do
     let(:value) { '1.00 KiB' }
 
     it 'returns a fact' do

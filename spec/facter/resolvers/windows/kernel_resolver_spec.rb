@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Windows KernelResolver' do
+describe Facter::Resolvers::Kernel do
   before do
     ver_ptr = double('FFI::MemoryPointer')
     ver = double('OsVersionInfoEx', size: nil)
@@ -15,11 +15,12 @@ describe 'Windows KernelResolver' do
     allow(ver).to receive(:[]).with(:dwMinorVersion).and_return(min)
     allow(ver).to receive(:[]).with(:dwBuildNumber).and_return(buildnr)
   end
+
   after do
     Facter::Resolvers::Kernel.invalidate_cache
   end
 
-  context '#resolve' do
+  describe '#resolve' do
     let(:status) { KernelFFI::STATUS_SUCCESS }
     let(:maj) { 10 }
     let(:min) { 0 }
@@ -28,15 +29,17 @@ describe 'Windows KernelResolver' do
     it 'detects kernel version' do
       expect(Facter::Resolvers::Kernel.resolve(:kernelversion)).to eql('10.0.123')
     end
+
     it 'detects kernel major version' do
       expect(Facter::Resolvers::Kernel.resolve(:kernelmajorversion)).to eql('10.0')
     end
+
     it 'detects kernel name' do
       expect(Facter::Resolvers::Kernel.resolve(:kernel)).to eql('windows')
     end
   end
 
-  context '#resolve when RtlGetVersion function fails to get os version information' do
+  describe '#resolve when RtlGetVersion function fails to get os version information' do
     let(:status) { 10 }
     let(:maj) { 10 }
     let(:min) { 0 }
@@ -44,13 +47,15 @@ describe 'Windows KernelResolver' do
 
     it 'logs debug message and kernel version nil' do
       allow_any_instance_of(Facter::Log).to receive(:debug).with('Calling Windows RtlGetVersion failed')
-      expect(Facter::Resolvers::Kernel.resolve(:kernelversion)).to eql(nil)
+      expect(Facter::Resolvers::Kernel.resolve(:kernelversion)).to be(nil)
     end
+
     it 'detects that kernel major version is nil' do
-      expect(Facter::Resolvers::Kernel.resolve(:kernelmajorversion)).to eql(nil)
+      expect(Facter::Resolvers::Kernel.resolve(:kernelmajorversion)).to be(nil)
     end
+
     it 'detects that kernel name is nil' do
-      expect(Facter::Resolvers::Kernel.resolve(:kernel)).to eql(nil)
+      expect(Facter::Resolvers::Kernel.resolve(:kernel)).to be(nil)
     end
   end
 end

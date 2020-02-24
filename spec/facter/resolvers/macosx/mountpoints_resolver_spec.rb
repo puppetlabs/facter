@@ -48,17 +48,17 @@ describe Facter::Resolvers::Macosx::Mountpoints do
     allow(stat).to receive(:bytes_available).and_return(stat.blocks_available * stat.fragment_size)
     allow(stat).to receive(:bytes_free).and_return(stat.blocks_free * stat.fragment_size)
     allow(stat).to receive(:bytes_used).and_return(stat.bytes_total - stat.bytes_free)
-    described_class.invalidate_cache
+    Facter::Resolvers::Macosx::Mountpoints.invalidate_cache
   end
 
   it 'correctly builds the mountpoints fact' do
-    result = described_class.resolve(:mountpoints)
+    result = Facter::Resolvers::Macosx::Mountpoints.resolve(:mountpoints)
     expect(result).to match(fact)
   end
 
   it 'drops automounts and non-tmpfs mounts under /proc or /sys' do
     allow(Facter::FilesystemHelper).to receive(:read_mountpoints).and_return(ignored_mounts)
-    result = described_class.resolve(:mountpoints)
+    result = Facter::Resolvers::Macosx::Mountpoints.resolve(:mountpoints)
     expect(result).to be_empty
   end
 
@@ -68,7 +68,7 @@ describe Facter::Resolvers::Macosx::Mountpoints do
     end
 
     it 'looks up the actual device if /dev/root' do
-      result = described_class.resolve(:mountpoints)
+      result = Facter::Resolvers::Macosx::Mountpoints.resolve(:mountpoints)
       expect(result['/'][:device]).to eq('/dev/root')
     end
 
@@ -92,7 +92,7 @@ describe Facter::Resolvers::Macosx::Mountpoints do
       end
 
       it 'fallbacks to default values' do
-        result = described_class.resolve(:mountpoints)
+        result = Facter::Resolvers::Macosx::Mountpoints.resolve(:mountpoints)
         expect(result).to eq(expected_fact)
       end
     end

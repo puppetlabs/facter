@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Facter' do
+describe Facter do
   let(:fact_name) { 'os.name' }
   let(:fact_value) { 'ubuntu' }
   let(:os_fact) do
@@ -282,6 +282,7 @@ describe 'Facter' do
 
   describe '#debug' do
     let(:message) { 'test' }
+
     before do
       allow(Facter::Options.instance).to receive(:[]).with(:debug).and_return(is_debug)
     end
@@ -291,7 +292,7 @@ describe 'Facter' do
 
       it 'logs a debug message' do
         expect_any_instance_of(Facter::Log).to receive(:debug).with(message)
-        expect(Facter.debug(message)).to eql(nil)
+        expect(Facter.debug(message)).to be(nil)
       end
     end
 
@@ -300,7 +301,7 @@ describe 'Facter' do
 
       it "doesn't log anything" do
         expect_any_instance_of(Facter::Log).not_to receive(:debug).with(message)
-        expect(Facter.debug(message)).to eql(nil)
+        expect(Facter.debug(message)).to be(nil)
       end
     end
   end

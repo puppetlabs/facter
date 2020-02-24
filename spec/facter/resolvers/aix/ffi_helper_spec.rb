@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'FfiHelper' do
+describe Facter::Aix::FfiHelper do
   let(:averages) { double('FFI::MemoryPointer') }
   let(:averages_size) { double('FFI::MemoryPointer') }
 

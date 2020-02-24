@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Sles Path' do
-  context '#call_the_resolver' do
+describe Facter::Sles::Path do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       value = '/Users/User/.rvm/gems/ruby-2.4.6/bin:/Users/User/.rvm/gems/ruby-2.4.6@global/bin'
       expected_fact = double(Facter::ResolvedFact, name: 'path', value: value)

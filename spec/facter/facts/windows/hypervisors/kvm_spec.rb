@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Windows HypervisorsKvm' do
+describe Facter::Windows::HypervisorsKvm do
   describe '#call_the_resolver' do
     context 'when is not kvm hypervisor' do
       it 'returns nil' do

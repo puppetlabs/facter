@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Logger' do
+describe Logger do
   let(:file_logger_double) { double(Logger) }
   let(:legacy_logger_double) { double(Facter::LegacyLogger) }
   let(:multi_logger_double) { double(Facter::MultiLogger) }

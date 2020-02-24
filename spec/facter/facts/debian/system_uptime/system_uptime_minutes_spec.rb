@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Ubuntu SystemUptimeMinutes' do
-  context '#call_the_resolver' do
+describe Facter::Debian::SystemUptimeMinutes do
+  describe '#call_the_resolver' do
     let(:value) { { minutes: 3600 } }
 
     it 'returns a fact' do

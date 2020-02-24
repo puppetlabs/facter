@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'BlockList' do
+describe Facter::BlockList do
   before do
     Singleton.__init__(Facter::BlockList)
   end

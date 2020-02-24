@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'EosRelease' do
+describe Facter::Resolvers::EosRelease do
   before do
     allow(Open3).to receive(:capture2)
       .with('cat /etc/Eos-release')

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'UptimeParser' do
+describe Facter::UptimeParser do
   describe '.uptime_seconds_unix' do
     let(:uptime_proc_file_cmd) { '/bin/cat /proc/uptime 2>/dev/null' }
     let(:kern_boottime_cmd) { 'sysctl -n kern.boottime 2>/dev/null' }

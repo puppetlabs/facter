@@ -30,7 +30,7 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
-  config.before :each do
+  config.before do
     # Ensure that we don't accidentally cache facts and environment
     # between test cases.
     allow(LegacyFacter::Util::Loader).to receive(:load_all)
@@ -42,7 +42,7 @@ RSpec.configure do |config|
     ENV.each_key { |k| @old_env[k] = ENV[k] }
   end
 
-  config.after :each do
+  config.after do
     # Restore environment variables after execution of each test
     @old_env.each_pair { |k, v| ENV[k] = v }
     to_remove = ENV.keys.reject { |key| @old_env.include? key }

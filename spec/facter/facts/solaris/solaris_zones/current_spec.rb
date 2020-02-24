@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Solaris SolarisZonesCurrent' do
-  context '#call_the_resolver' do
+describe Facter::Solaris::SolarisZonesCurrent do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'solaris_zones.current', value: 'global')
       allow(Facter::Resolvers::SolarisZoneName).to receive(:resolve).with(:current_zone_name).and_return('global')

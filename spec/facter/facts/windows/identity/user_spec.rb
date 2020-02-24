@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows IdentityUser' do
-  context '#call_the_resolver' do
-    let(:value) { 'User\Administrator' }
+describe Facter::Windows::IdentityUser do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::IdentityUser.new }
+
+    let(:value) { 'User\Administrator' }
 
     before do
       allow(Facter::Resolvers::Identity).to receive(:resolve).with(:user).and_return(value)

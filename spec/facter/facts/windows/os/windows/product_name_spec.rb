@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows OsWindowsProductName' do
-  context '#call_the_resolver' do
-    let(:value) { 'Windows Server 2016 Standard' }
+describe Facter::Windows::OsWindowsProductName do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::OsWindowsProductName.new }
+
+    let(:value) { 'Windows Server 2016 Standard' }
 
     before do
       allow(Facter::Resolvers::ProductRelease).to receive(:resolve).with(:product_name).and_return(value)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'NetworkingResolver' do
+describe Facter::Resolvers::Aix::Networking do
   before do
     allow(Open3).to receive(:capture2)
       .with('netstat -rn')

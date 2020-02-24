@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Macosx Kernelmajversion' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::Kernelmajversion do
+  describe '#call_the_resolver' do
     let(:resolver_result) { '18.7.0' }
     let(:fact_value) { '18.7' }
 

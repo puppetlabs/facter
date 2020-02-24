@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows NetworkingDomain' do
-  context '#call_the_resolver' do
-    let(:value) { 'domain.net' }
+describe Facter::Windows::NetworkingDomain do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::NetworkingDomain.new }
+
+    let(:value) { 'domain.net' }
 
     before do
       allow(Facter::Resolvers::Networking).to receive(:resolve).with(:domain).and_return(value)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Windows Kernel' do
-  context '#call_the_resolver' do
+describe Facter::Windows::Kernel do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'kernel', value: 'value')
       allow(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernel).and_return('value')

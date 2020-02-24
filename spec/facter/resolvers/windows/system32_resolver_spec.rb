@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Windows System32Resolver' do
+describe Facter::Resolvers::System32 do
   before do
     allow(ENV).to receive(:[]).with('SystemRoot').and_return(win_path)
 
@@ -9,11 +9,12 @@ describe 'Windows System32Resolver' do
     allow(System32FFI).to receive(:GetCurrentProcess).and_return(2)
     allow(System32FFI).to receive(:IsWow64Process).with(2, bool_ptr).and_return(bool)
   end
+
   after do
     Facter::Resolvers::System32.invalidate_cache
   end
 
-  context '#resolve when is wow 64 process' do
+  describe '#resolve when is wow 64 process' do
     let(:win_path) { 'C:\\Windows' }
     let(:bool) { 1 }
     let(:is_wow) { true }
@@ -23,7 +24,7 @@ describe 'Windows System32Resolver' do
     end
   end
 
-  context '#resolve when it is not wow 64 process' do
+  describe '#resolve when it is not wow 64 process' do
     let(:win_path) { 'C:\\Windows' }
     let(:bool) { 1 }
     let(:is_wow) { false }
@@ -33,7 +34,7 @@ describe 'Windows System32Resolver' do
     end
   end
 
-  context '#resolve when env variable is not set' do
+  describe '#resolve when env variable is not set' do
     let(:win_path) { '' }
     let(:bool) { 1 }
     let(:is_wow) { false }
@@ -41,11 +42,11 @@ describe 'Windows System32Resolver' do
     it 'detects system32 dir is nil and prints debug message' do
       allow_any_instance_of(Facter::Log).to receive(:debug).with('Unable to find correct value for SystemRoot'\
                                                                                             ' enviroment variable')
-      expect(Facter::Resolvers::System32.resolve(:system32)).to eql(nil)
+      expect(Facter::Resolvers::System32.resolve(:system32)).to be(nil)
     end
   end
 
-  context '#resolve when env variable is found as nil' do
+  describe '#resolve when env variable is found as nil' do
     let(:win_path) { nil }
     let(:bool) { 1 }
     let(:is_wow) { false }
@@ -53,18 +54,18 @@ describe 'Windows System32Resolver' do
     it 'detects system32 dir is nil and prints debug message' do
       allow_any_instance_of(Facter::Log).to receive(:debug).with('Unable to find correct value for SystemRoot'\
                                                                                             ' enviroment variable')
-      expect(Facter::Resolvers::System32.resolve(:system32)).to eql(nil)
+      expect(Facter::Resolvers::System32.resolve(:system32)).to be(nil)
     end
   end
 
-  context '#resolve when IsWow64Process fails' do
+  describe '#resolve when IsWow64Process fails' do
     let(:win_path) { 'C:\\Windows' }
     let(:bool) { 0 }
     let(:is_wow) { false }
 
     it 'detects system32 dir is nil and prints debug message' do
       allow_any_instance_of(Facter::Log).to receive(:debug).with('IsWow64Process failed')
-      expect(Facter::Resolvers::System32.resolve(:system32)).to eql(nil)
+      expect(Facter::Resolvers::System32.resolve(:system32)).to be(nil)
     end
   end
 end

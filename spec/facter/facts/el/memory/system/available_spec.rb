@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Fedora MemorySystemAvailable' do
-  context '#call_the_resolver' do
+describe Facter::El::MemorySystemAvailable do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'memory.system.available', value: '1.0 KiB')
       allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:memfree).and_return(1024)

@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Solaris NetworkingIpaddress' do
-  context '#call_the_resolver' do
-    let(:value) { '10.0.0.1' }
+describe Facter::Solaris::NetworkingIpaddress do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Solaris::NetworkingIpaddress.new }
+
+    let(:value) { '10.0.0.1' }
 
     before do
       allow(Facter::Resolvers::Solaris::Ipaddress).to receive(:resolve).with(:ip).and_return(value)

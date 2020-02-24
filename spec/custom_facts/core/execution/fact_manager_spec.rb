@@ -4,7 +4,7 @@ require_relative '../../../spec_helper_legacy'
 
 describe LegacyFacter::Core::Execution::Base do
   describe '#with_env' do
-    it "should execute the caller's block with the specified env vars" do
+    it "executes the caller's block with the specified env vars" do
       test_env = { 'LANG' => 'C', 'LC_ALL' => 'C', 'FOO' => 'BAR' }
       subject.with_env test_env do
         test_env.keys.each do |key|
@@ -13,7 +13,7 @@ describe LegacyFacter::Core::Execution::Base do
       end
     end
 
-    it 'should restore pre-existing environment variables to their previous values' do
+    it 'restores pre-existing environment variables to their previous values' do
       orig_env = {}
       new_env = {}
       # an arbitrary sentinel value to use to temporarily set the environment vars to
@@ -40,7 +40,7 @@ describe LegacyFacter::Core::Execution::Base do
       end
     end
 
-    it "should not be affected by a 'return' statement in the yield block" do
+    it "is not affected by a 'return' statement in the yield block" do
       @sentinel_var = :resolution_test_foo.to_s
 
       # the intent of this test case is to test a yield block that contains a return statement.  However, it's illegal

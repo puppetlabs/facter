@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'HoconFactFormatter' do
+describe Facter::HoconFactFormatter do
   it 'formats to hocon when no user query' do
     resolved_fact1 =
       double(Facter::ResolvedFact, name: 'os.name', value: 'Darwin', user_query: '', filter_tokens: [])

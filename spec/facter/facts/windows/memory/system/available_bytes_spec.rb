@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-describe 'Windows MemorySystemAvailableBytes' do
+describe Facter::Windows::MemorySystemAvailableBytes do
   subject(:fact) { Facter::Windows::MemorySystemAvailableBytes.new }
+
   before do
     allow(Facter::Resolvers::Memory).to receive(:resolve).with(:available_bytes).and_return(value)
   end
 
-  context '#call_the_resolver' do
+  describe '#call_the_resolver' do
     let(:value) { 3_331_551_232 }
     let(:value_mb) { 3177.21 }
 
@@ -22,7 +23,7 @@ describe 'Windows MemorySystemAvailableBytes' do
     end
   end
 
-  context '#call_the_resolver when resolver returns nil' do
+  describe '#call_the_resolver when resolver returns nil' do
     let(:value) { nil }
 
     it 'returns available memory fact as nil' do

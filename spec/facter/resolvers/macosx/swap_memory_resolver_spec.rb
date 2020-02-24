@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'SwapMemoryResolver' do
+describe Facter::Resolvers::Macosx::SwapMemory do
   let(:available_bytes) { 1_729_363_968 }
   let(:total_bytes) { 3_221_225_472 }
   let(:used_bytes) { 1_491_861_504 }

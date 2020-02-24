@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'FipsEnabledResolver' do
+describe Facter::Resolvers::Linux::FipsEnabled do
   describe '#resolve' do
     before do
       Facter::Resolvers::Linux::FipsEnabled.invalidate_cache

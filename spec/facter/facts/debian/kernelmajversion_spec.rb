@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Ubuntu Kernelmajversion' do
+describe Facter::Debian::Kernelmajversion do
   shared_examples 'kernelmajversion fact expectation' do
     it 'returns the correct major version' do
       expected_fact = double(Facter::ResolvedFact, name: 'kernelmajversion', value: value)

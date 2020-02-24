@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows ProcessorsIsa' do
-  context '#call_the_resolver' do
-    let(:value) { 'x86_64' }
+describe Facter::Windows::ProcessorsIsa do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::ProcessorsIsa.new }
+
+    let(:value) { 'x86_64' }
 
     before do
       allow(Facter::Resolvers::Processors).to receive(:resolve).with(:isa).and_return(value)

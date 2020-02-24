@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'ConfigReader' do
+describe Facter::ConfigReader do
   before do
     mock_os(:linux)
   end

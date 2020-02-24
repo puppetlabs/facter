@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Ubuntu MemorySwapCapacity' do
-  context '#call_the_resolver' do
+describe Facter::Debian::MemorySwapCapacity do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'memory.swap.capacity', value: 2048)
       allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:swap_capacity).and_return(2048)

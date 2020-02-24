@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Solaris OsRelease' do
-  context '#call_the_resolver' do
-    let(:value) { { full: '10_u11', minor: '11', major: '10' } }
+describe Facter::Solaris::OsRelease do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Solaris::OsRelease.new }
+
+    let(:value) { { full: '10_u11', minor: '11', major: '10' } }
 
     before do
       allow(Facter::Resolvers::SolarisRelease).to receive(:resolve).with(:full).and_return('10_u11')

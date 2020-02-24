@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Fedora Kernelmajversion' do
+describe Facter::El::Kernelmajversion do
   shared_examples 'kernelmajversion fact expectation' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'kernelmajversion', value: value)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Ubuntu RubySitedir' do
-  context '#call_the_resolver' do
+describe Facter::Debian::RubySitedir do
+  describe '#call_the_resolver' do
     let(:value) { '/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.6.3' }
 
     it 'returns a fact' do

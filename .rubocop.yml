@@ -1,6 +1,9 @@
 ---
+inherit_from: .rubocop_todo.yml
+
 require:
   - rubocop-performance
+  - rubocop-rspec
 
 Documentation:
   Enabled: false
@@ -24,9 +27,11 @@ Metrics/ModuleLength:
 Metrics/BlockLength:
   Exclude:
     - !ruby/regexp /(?:(?!.+_spec.rb).)*$/
+
 Style/ClassVars:
   Exclude:
     - !ruby/regexp /(?:(?!.+_resolver.rb).)*$/
+
 Naming/ClassAndModuleCamelCase:
   Exclude:
     - 'spec/mocks/**/*'
@@ -121,3 +126,9 @@ Naming/FileName:
   Exclude:
     - 'lib/facter.rb'
     - 'agent/lib/facter-ng.rb'
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/DescribedClass:
+  EnforcedStyle: explicit

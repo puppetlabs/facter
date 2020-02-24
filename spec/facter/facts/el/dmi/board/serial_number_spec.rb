@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Fedora DmiBoardSerialNumber' do
-  context '#call_the_resolver' do
+describe Facter::El::DmiBoardSerialNumber do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       value = 'None'
       expected_fact = double(Facter::ResolvedFact, name: 'dmi.board.serial_number', value: value)

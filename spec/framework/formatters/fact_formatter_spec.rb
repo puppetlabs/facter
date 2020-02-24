@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'FormatterFactory' do
+describe Facter::FormatterFactory do
   it 'creates a json formatter' do
     options = { json: true }
     json_fact_formatter = Facter::FormatterFactory.build(options)

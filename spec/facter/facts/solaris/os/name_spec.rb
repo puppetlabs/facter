@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Solaris OsName' do
-  context '#call_the_resolver' do
-    let(:value) { 'Solaris' }
+describe Facter::Solaris::OsName do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Solaris::OsName.new }
+
+    let(:value) { 'Solaris' }
 
     before do
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelname).and_return(value)

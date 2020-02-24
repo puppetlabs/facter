@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'ResolverManager' do
+describe Facter::CacheManager do
   it 'registers resolver subscription' do
     uname_resolver = double(Facter::Resolvers::Uname)
     Facter::CacheManager.subscribe(uname_resolver)

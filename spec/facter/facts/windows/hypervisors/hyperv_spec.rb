@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Windows HypervisorsHyperv' do
+describe Facter::Windows::HypervisorsHyperv do
   describe '#call_the_resolver' do
     context 'when is not HyperV hypervisor' do
       it 'returns nil' do

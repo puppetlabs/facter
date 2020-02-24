@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'UnameResolver' do
+describe Facter::Resolvers::Uname do
   before do
     allow(Open3).to receive(:capture2)
       .with('uname -m &&
@@ -16,6 +16,7 @@ describe 'UnameResolver' do
         Darwin
         Darwin Kernel Version 18.2.0: Fri Oct  5 19:41:49 PDT 2018; root:xnu-4903.221.2~2/RELEASE_X86_64')
   end
+
   it 'returns machine' do
     result = Facter::Resolvers::Uname.resolve(:machine)
 

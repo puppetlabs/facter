@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'FactManager' do
+describe Facter::FactManager do
   describe '#resolve_facts' do
     it 'resolved all facts' do
       ubuntu_os_name = double(Facter::Debian::OsName)

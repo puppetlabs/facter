@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Ubuntu Kernel' do
-  context '#call_the_resolver' do
+describe Facter::Debian::Kernel do
+  describe '#call_the_resolver' do
     let(:value) { 'Linux' }
 
     it 'returns a fact' do

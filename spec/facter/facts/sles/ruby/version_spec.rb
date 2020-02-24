@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'SLES RubyVersion' do
-  context '#call_the_resolver' do
-    let(:value) { '2.4.5' }
+describe Facter::Sles::RubyVersion do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Sles::RubyVersion.new }
+
+    let(:value) { '2.4.5' }
 
     before do
       allow(Facter::Resolvers::Ruby).to receive(:resolve).with(:version).and_return(value)

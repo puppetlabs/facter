@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-describe 'Ubuntu OsArchitecture' do
-  context '#call_the_resolver' do
+describe Facter::Debian::OsArchitecture do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Debian::OsArchitecture.new }
+
     context 'when resolver does not return x86_64' do
       let(:value) { 'i86pc' }
 

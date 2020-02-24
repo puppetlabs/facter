@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'SuseRelease' do
+describe Facter::Resolvers::SuseRelease do
   before do
     allow(Open3).to receive(:capture2)
       .with('cat /etc/SuSE-release')

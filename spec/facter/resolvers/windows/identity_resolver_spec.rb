@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Windows IdentityResolver' do
+describe Facter::Resolvers::Identity do
   before do
     size_ptr = double('FFI::MemoryPointer', read_uint32: 1)
     name_ptr = double('FFI::MemoryPointer', read_wide_string_with_length: user_name)
@@ -12,11 +12,12 @@ describe 'Windows IdentityResolver' do
     allow(IdentityFFI).to receive(:GetUserNameExW).with(2, name_ptr, size_ptr).and_return(error_geting_user?)
     allow(IdentityFFI).to receive(:IsUserAnAdmin).and_return(admin?)
   end
+
   after do
     Facter::Resolvers::Identity.invalidate_cache
   end
 
-  context '#resolve when user is administrator' do
+  describe '#resolve when user is administrator' do
     let(:user_name) { 'MG93C9IN9WKOITF\Administrator' }
     let(:error_number) { FFI::ERROR_MORE_DATA }
     let(:error_geting_user?) { 1 }
@@ -25,12 +26,13 @@ describe 'Windows IdentityResolver' do
     it 'detects user' do
       expect(Facter::Resolvers::Identity.resolve(:user)).to eql('MG93C9IN9WKOITF\Administrator')
     end
+
     it 'detects that user is administrator' do
-      expect(Facter::Resolvers::Identity.resolve(:privileged)).to eql(true)
+      expect(Facter::Resolvers::Identity.resolve(:privileged)).to be(true)
     end
   end
 
-  context '#resolve when user is not administrator' do
+  describe '#resolve when user is not administrator' do
     let(:user_name) { 'MG93C9IN9WKOITF\User' }
     let(:error_number) { FFI::ERROR_MORE_DATA }
     let(:error_geting_user?) { 1 }
@@ -39,12 +41,13 @@ describe 'Windows IdentityResolver' do
     it 'detects user' do
       expect(Facter::Resolvers::Identity.resolve(:user)).to eql('MG93C9IN9WKOITF\User')
     end
+
     it 'detects that user is not administrator' do
-      expect(Facter::Resolvers::Identity.resolve(:privileged)).to eql(false)
+      expect(Facter::Resolvers::Identity.resolve(:privileged)).to be(false)
     end
   end
 
-  context '#resolve when' do
+  describe '#resolve when' do
     let(:user_name) { 'MG93C9IN9WKOITF\User' }
     let(:error_number) { FFI::ERROR_MORE_DATA }
     let(:error_geting_user?) { 1 }
@@ -53,12 +56,13 @@ describe 'Windows IdentityResolver' do
     it 'detects user' do
       expect(Facter::Resolvers::Identity.resolve(:user)).to eql('MG93C9IN9WKOITF\User')
     end
+
     it 'could not determine if user is admin' do
-      expect(Facter::Resolvers::Identity.resolve(:privileged)).to eql(nil)
+      expect(Facter::Resolvers::Identity.resolve(:privileged)).to be(nil)
     end
   end
 
-  context '#resolve when error code is different than ERROR_MORE_DATA' do
+  describe '#resolve when error code is different than ERROR_MORE_DATA' do
     let(:user_name) { '' }
     let(:error_number) { nil }
     let(:error_geting_user?) { 1 }
@@ -67,16 +71,17 @@ describe 'Windows IdentityResolver' do
     it 'logs debug message when trying to resolve user' do
       allow_any_instance_of(Facter::Log).to receive(:debug)
         .with("failure resolving identity facts: #{error_number}")
-      expect(Facter::Resolvers::Identity.resolve(:user)).to eql(nil)
+      expect(Facter::Resolvers::Identity.resolve(:user)).to be(nil)
     end
+
     it 'logs debug message when trying to find if user is privileged' do
       allow_any_instance_of(Facter::Log).to receive(:debug)
         .with("failure resolving identity facts: #{error_number}")
-      expect(Facter::Resolvers::Identity.resolve(:privileged)).to eql(nil)
+      expect(Facter::Resolvers::Identity.resolve(:privileged)).to be(nil)
     end
   end
 
-  context '#resolve when there is an error getting user name' do
+  describe '#resolve when there is an error getting user name' do
     let(:user_name) { '' }
     let(:error_number) { FFI::ERROR_MORE_DATA }
     let(:error_geting_user?) { 0 }
@@ -85,12 +90,13 @@ describe 'Windows IdentityResolver' do
     it 'logs debug message when trying to resolve user' do
       allow_any_instance_of(Facter::Log).to receive(:debug)
         .with("failure resolving identity facts: #{error_number}")
-      expect(Facter::Resolvers::Identity.resolve(:user)).to eql(nil)
+      expect(Facter::Resolvers::Identity.resolve(:user)).to be(nil)
     end
+
     it 'logs debug message when trying to find if user is privileged' do
       allow_any_instance_of(Facter::Log).to receive(:debug)
         .with("failure resolving identity facts: #{error_number}")
-      expect(Facter::Resolvers::Identity.resolve(:privileged)).to eql(nil)
+      expect(Facter::Resolvers::Identity.resolve(:privileged)).to be(nil)
     end
   end
 end

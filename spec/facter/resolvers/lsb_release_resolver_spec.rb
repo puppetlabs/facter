@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'LsbReleaseResolver' do
+describe Facter::Resolvers::LsbRelease do
   before do
     allow(Open3).to receive(:capture2)
       .with('lsb_release -a')

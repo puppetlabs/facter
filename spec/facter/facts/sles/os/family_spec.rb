@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Sles OsFamily' do
-  context '#call_the_resolver' do
-    let(:value) { 'RedHat' }
+describe Facter::Sles::OsFamily do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Sles::OsFamily.new }
+
+    let(:value) { 'RedHat' }
 
     it 'returns os family fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \

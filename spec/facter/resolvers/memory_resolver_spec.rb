@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-describe 'MemoryResolver' do
+describe Facter::Resolvers::Linux::Memory do
+  subject(:resolver) { Facter::Resolvers::Linux::Memory }
+
   before do
     allow(File).to receive(:read)
       .with('/proc/meminfo')
@@ -10,7 +12,6 @@ describe 'MemoryResolver' do
   after do
     Facter::Resolvers::Linux::Memory.invalidate_cache
   end
-  subject(:resolver) { Facter::Resolvers::Linux::Memory }
 
   context 'when there is swap memory' do
     let(:total) { 4_036_680 * 1024 }

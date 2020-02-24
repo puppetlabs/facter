@@ -2,7 +2,7 @@
 
 require 'ostruct'
 
-describe 'IdentityResolver' do
+describe Facter::Resolvers::PosxIdentity do
   before do
     allow(Etc).to receive(:getpwuid)
       .and_return(OpenStruct.new(name: 'test1.test2',
@@ -26,6 +26,7 @@ describe 'IdentityResolver' do
 
   shared_examples_for 'a resolved fact' do |fact_name, value|
     subject { Facter::Resolvers::PosxIdentity.resolve(fact_name) }
+
     it { is_expected.to eql(value) }
   end
 

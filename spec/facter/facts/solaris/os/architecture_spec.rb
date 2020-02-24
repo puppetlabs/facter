@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Solaris OsArchitecture' do
-  context '#call_the_resolver' do
-    let(:value) { 'i86pc' }
+describe Facter::Solaris::OsArchitecture do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Solaris::OsArchitecture.new }
+
+    let(:value) { 'i86pc' }
 
     before do
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return(value)

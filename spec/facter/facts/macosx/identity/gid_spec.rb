@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-describe 'Macosx IdentityGid' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::IdentityGid do
+  describe '#call_the_resolver' do
+    subject(:fact) { Facter::Macosx::IdentityGid.new }
+
     let(:value) { '20' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'identity.gid', value: value) }
-    subject(:fact) { Facter::Macosx::IdentityGid.new }
 
     before do
       expect(Facter::Resolvers::PosxIdentity).to receive(:resolve).with(:gid).and_return(value)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Sles MemorySwapUsedBytes' do
-  context '#call_the_resolver' do
+describe Facter::Sles::MemorySwapUsedBytes do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'memory.swap.used_bytes', value: '1342128128')
       allow(Facter::Resolvers::Linux::Memory).to receive(:resolve)

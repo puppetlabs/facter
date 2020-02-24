@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'El OsName' do
-  context '#call_the_resolver' do
-    let(:value) { 'RedHat' }
+describe Facter::El::OsName do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::El::OsName.new }
+
+    let(:value) { 'RedHat' }
 
     before do
       allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:name).and_return(value)

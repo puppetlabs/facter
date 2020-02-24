@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-describe 'Macosx IdentityGroup' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::IdentityGroup do
+  describe '#call_the_resolver' do
+    subject(:fact) { Facter::Macosx::IdentityGroup.new }
+
     let(:value) { 'staff' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'identity.group', value: value) }
-    subject(:fact) { Facter::Macosx::IdentityGroup.new }
 
     before do
       expect(Facter::Resolvers::PosxIdentity).to receive(:resolve).with(:group).and_return(value)

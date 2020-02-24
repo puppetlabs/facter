@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'FactLoader' do
+describe Facter::FactLoader do
   describe '#load' do
     let(:internal_fact_loader_double) { double(Facter::InternalFactLoader) }
     let(:external_fact_loader_double) { double(Facter::ExternalFactLoader) }
@@ -14,7 +14,7 @@ describe 'FactLoader' do
     end
     let(:loaded_fact_custom_fact) { double(Facter::LoadedFact, name: 'custom_fact', klass: nil, type: :custom) }
 
-    before(:each) do
+    before do
       Singleton.__init__(Facter::FactLoader)
 
       allow(Facter::InternalFactLoader).to receive(:new).and_return(internal_fact_loader_double)

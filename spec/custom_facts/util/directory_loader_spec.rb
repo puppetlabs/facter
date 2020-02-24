@@ -7,9 +7,10 @@ describe LegacyFacter::Util::DirectoryLoader do
   include PuppetlabsSpec::Files
 
   subject { LegacyFacter::Util::DirectoryLoader.new(tmpdir('directory_loader')) }
+
   let(:collection) { LegacyFacter::Util::Collection.new(double('internal loader'), subject) }
 
-  it 'should make the directory available' do
+  it 'makes the directory available' do
     expect(subject.directory).to be_instance_of(String)
   end
 
@@ -24,15 +25,15 @@ describe LegacyFacter::Util::DirectoryLoader do
       .to raise_error LegacyFacter::Util::DirectoryLoader::NoSuchDirectoryError
   end
 
-  it "should do nothing bad when dir doesn't exist" do
+  it "does nothing bad when dir doesn't exist" do
     fakepath = '/foobar/path'
     my_loader = LegacyFacter::Util::DirectoryLoader.new(fakepath)
     expect(FileTest.exists?(my_loader.directory)).to be false
-    expect { my_loader.load(collection) }.to_not raise_error
+    expect { my_loader.load(collection) }.not_to raise_error
   end
 
   describe 'when loading facts from disk' do
-    it 'should be able to load files from disk and set facts' do
+    it 'is able to load files from disk and set facts' do
       data = { 'f1' => 'one', 'f2' => 'two' }
       write_to_file('data.yaml', YAML.dump(data))
 
@@ -42,9 +43,9 @@ describe LegacyFacter::Util::DirectoryLoader do
       expect(collection.value('f2')).to eq 'two'
     end
 
-    it "should ignore files that begin with '.'" do
+    it "ignores files that begin with '.'" do
       not_to_be_used_collection = double('collection should not be used')
-      expect(not_to_be_used_collection).to receive(:add).never
+      expect(not_to_be_used_collection).not_to receive(:add)
 
       data = { 'f1' => 'one', 'f2' => 'two' }
       write_to_file('.data.yaml', YAML.dump(data))
@@ -53,7 +54,7 @@ describe LegacyFacter::Util::DirectoryLoader do
     end
 
     %w[bak orig].each do |ext|
-      it "should ignore files with an extension of '#{ext}'" do
+      it "ignores files with an extension of '#{ext}'" do
         expect(LegacyFacter).to receive(:warn).with(/#{ext}/)
         write_to_file('data' + ".#{ext}", 'foo=bar')
 
@@ -61,7 +62,7 @@ describe LegacyFacter::Util::DirectoryLoader do
       end
     end
 
-    it 'should warn when trying to parse unknown file types' do
+    it 'warns when trying to parse unknown file types' do
       write_to_file('file.unknownfiletype', 'stuff=bar')
       expect(LegacyFacter).to receive(:warn).with(/file.unknownfiletype/)
 
@@ -84,7 +85,7 @@ describe LegacyFacter::Util::DirectoryLoader do
     describe 'given a custom weight' do
       subject { LegacyFacter::Util::DirectoryLoader.new(tmpdir('directory_loader'), 10) }
 
-      it 'should set that weight for loaded external facts' do
+      it 'sets that weight for loaded external facts' do
         collection.add('f1', value: 'higher_weight_fact') { has_weight(11) }
         data = { 'f1' => 'external_fact' }
         write_to_file('data.yaml', YAML.dump(data))

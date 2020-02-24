@@ -3,7 +3,7 @@
 require_relative '../../spec_helper_legacy'
 
 describe LegacyFacter::Core::DirectedGraph do
-  subject(:graph) { described_class.new }
+  subject(:graph) { LegacyFacter::Core::DirectedGraph.new }
 
   describe 'detecting cycles' do
     it 'is acyclic if the graph is empty' do
@@ -34,7 +34,7 @@ describe LegacyFacter::Core::DirectedGraph do
     it 'is cyclic if there is a loop in the graph' do
       graph[:one] = [:two]
       graph[:two] = [:one]
-      expect(graph).to_not be_acyclic
+      expect(graph).not_to be_acyclic
     end
 
     it 'can return the cycles in the graph' do

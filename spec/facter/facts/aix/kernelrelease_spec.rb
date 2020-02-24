@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Aix Kernelrelease' do
-  context '#call_the_resolver' do
+describe Facter::Aix::Kernelrelease do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'kernelrelease', value: '6100-09-00-0000')
       allow(Facter::Resolvers::OsLevel).to receive(:resolve).with(:build).and_return('6100-09-00-0000')

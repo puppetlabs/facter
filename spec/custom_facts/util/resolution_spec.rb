@@ -4,7 +4,7 @@
 require_relative '../../spec_helper_legacy'
 
 describe Facter::Util::Resolution do
-  subject(:resolution) { described_class.new(:foo, stub_fact) }
+  subject(:resolution) { Facter::Util::Resolution.new(:foo, stub_fact) }
 
   let(:stub_fact) { double('fact', name: :stubfact) }
 
@@ -48,7 +48,7 @@ describe Facter::Util::Resolution do
     it 'prefers a command over a block' do
       block = -> {}
       resolution.setcode('foo', &block)
-      expect(resolution.code).to_not eq block
+      expect(resolution.code).not_to eq block
     end
 
     it 'fails if neither a string nor block has been provided' do

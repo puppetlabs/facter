@@ -13,46 +13,46 @@ describe LegacyFacter::Util::Config do
       end
     end
 
-    it 'should not set @external_facts_dirs' do
+    it 'does not set @external_facts_dirs' do
       LegacyFacter::Util::Config.setup_default_ext_facts_dirs
       expect(LegacyFacter::Util::Config.external_facts_dirs).to be_empty
     end
   end
 
   describe 'is_windows? function' do
-    it "should detect windows if Ruby RbConfig::CONFIG['host_os'] returns a windows OS" do
+    it "detects windows if Ruby RbConfig::CONFIG['host_os'] returns a windows OS" do
       host_os = %w[mswin win32 dos mingw cygwin]
       host_os.each do |h|
         allow(RbConfig::CONFIG).to receive(:[]).with('host_os').and_return(h)
-        expect(LegacyFacter::Util::Config.windows?).to be_truthy
+        expect(LegacyFacter::Util::Config).to be_windows
       end
     end
 
-    it "should not detect windows if Ruby RbConfig::CONFIG['host_os'] returns a non-windows OS" do
+    it "does not detect windows if Ruby RbConfig::CONFIG['host_os'] returns a non-windows OS" do
       host_os = %w[darwin linux]
       host_os.each do |h|
         allow(RbConfig::CONFIG).to receive(:[]).with('host_os').and_return(h)
-        expect(LegacyFacter::Util::Config.windows?).to be_falsey
+        expect(LegacyFacter::Util::Config).not_to be_windows
       end
     end
   end
 
   describe 'is_mac? function' do
-    it "should detect mac if Ruby RbConfig::CONFIG['host_os'] returns darwin" do
+    it "detects mac if Ruby RbConfig::CONFIG['host_os'] returns darwin" do
       host_os = ['darwin']
       host_os.each do |h|
         allow(RbConfig::CONFIG).to receive(:[]).with('host_os').and_return(h)
-        expect(LegacyFacter::Util::Config.mac?).to be_truthy
+        expect(LegacyFacter::Util::Config).to be_mac
       end
     end
   end
 
   describe 'external_facts_dirs' do
-    before :each do
+    before do
       allow(LegacyFacter::Util::Root).to receive(:root?).and_return(true)
     end
 
-    it 'should return the default value for linux' do
+    it 'returns the default value for linux' do
       allow(LegacyFacter::Util::Config).to receive(:windows?).and_return(false)
       allow(LegacyFacter::Util::Config).to receive(:windows_data_dir).and_return(nil)
       LegacyFacter::Util::Config.setup_default_ext_facts_dirs
@@ -60,7 +60,7 @@ describe LegacyFacter::Util::Config do
         .to eq ['/opt/puppetlabs/facter/facts.d']
     end
 
-    it 'should return the default value for windows 2008' do
+    it 'returns the default value for windows 2008' do
       allow(LegacyFacter::Util::Config).to receive(:windows?).and_return(true)
       allow(LegacyFacter::Util::Config).to receive(:windows_data_dir).and_return('C:\\ProgramData')
       LegacyFacter::Util::Config.setup_default_ext_facts_dirs
@@ -68,7 +68,7 @@ describe LegacyFacter::Util::Config do
         .to eq [File.join('C:\\ProgramData', 'PuppetLabs', 'facter', 'facts.d')]
     end
 
-    it 'should return the default value for windows 2003R2' do
+    it 'returns the default value for windows 2003R2' do
       allow(LegacyFacter::Util::Config).to receive(:windows?).and_return(true)
       allow(LegacyFacter::Util::Config).to receive(:windows_data_dir).and_return('C:\\Documents')
       LegacyFacter::Util::Config.setup_default_ext_facts_dirs
@@ -91,7 +91,7 @@ describe LegacyFacter::Util::Config do
       expect(LegacyFacter::Util::Config.external_facts_dirs).to eq original_values + [new_value]
     end
 
-    it 'should only output new values when explicitly set' do
+    it 'onlies output new values when explicitly set' do
       LegacyFacter::Util::Config.setup_default_ext_facts_dirs
       new_value = ['/usr/share/newdir']
       LegacyFacter::Util::Config.external_facts_dirs = new_value
@@ -100,19 +100,19 @@ describe LegacyFacter::Util::Config do
   end
 
   describe 'override_binary_dir' do
-    it 'should return the default value for linux' do
+    it 'returns the default value for linux' do
       allow(LegacyFacter::Util::Config).to receive(:windows?).and_return(false)
       LegacyFacter::Util::Config.setup_default_override_binary_dir
       expect(LegacyFacter::Util::Config.override_binary_dir).to eq '/opt/puppetlabs/puppet/bin'
     end
 
-    it 'should return nil for windows' do
+    it 'returns nil for windows' do
       allow(LegacyFacter::Util::Config).to receive(:windows?).and_return(true)
       LegacyFacter::Util::Config.setup_default_override_binary_dir
       expect(LegacyFacter::Util::Config.override_binary_dir).to eq nil
     end
 
-    it 'should output new values when explicitly set' do
+    it 'outputs new values when explicitly set' do
       LegacyFacter::Util::Config.setup_default_override_binary_dir
       new_value = '/usr/share/newdir'
       LegacyFacter::Util::Config.override_binary_dir = new_value

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe 'BytesToHumanReadable' do
+describe Facter::BytesToHumanReadable do
   describe '.convert' do
     it 'returns nil if bytes variable is nil' do
-      expect(Facter::BytesToHumanReadable.convert(nil)).to eql(nil)
+      expect(Facter::BytesToHumanReadable.convert(nil)).to be(nil)
     end
 
     it 'returns next unit if result is 1024 after conversion' do

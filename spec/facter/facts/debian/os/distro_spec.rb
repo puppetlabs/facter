@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Ubuntu OsLsbRelease' do
-  context '#call_the_resolver' do
+describe Facter::Debian::OsLsbRelease do
+  describe '#call_the_resolver' do
     let(:value) do
       { 'codename' => 'value1',
         'description' => 'value2',

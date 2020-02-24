@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Solaris RubySitedir' do
-  context '#call_the_resolver' do
-    let(:value) { '/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.5.0' }
+describe Facter::Solaris::RubySitedir do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Solaris::RubySitedir.new }
+
+    let(:value) { '/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.5.0' }
 
     before do
       allow(Facter::Resolvers::Ruby).to receive(:resolve).with(:sitedir).and_return(value)

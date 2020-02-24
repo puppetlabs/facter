@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Windows IdentityPrivileged' do
-  context '#call_the_resolver' do
+describe Facter::Windows::IdentityPrivileged do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'identity.privileged', value: 'value')
       allow(Facter::Resolvers::Identity).to receive(:resolve).with(:privileged).and_return('value')

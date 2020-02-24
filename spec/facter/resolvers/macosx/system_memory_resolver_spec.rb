@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'SystemMemoryResolver' do
+describe Facter::Resolvers::Macosx::SystemMemory do
   let(:available_bytes) { 5_590_519_808 }
   let(:total_bytes) { 34_359_738_368 }
   let(:used_bytes) { 28_769_218_560 }

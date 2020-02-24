@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-describe 'SshResolver' do
+describe Facter::Resolvers::SshResolver do
   describe '#folders' do
     describe 'When /etc folder exists' do
       let(:paths) { %w[/etc/ssh /usr/local/etc/ssh /etc /usr/local/etc /etc/opt/ssh] }
       let(:file_names) { %w[ssh_host_rsa_key.pub ssh_host_dsa_key.pub ssh_host_ecdsa_key.pub ssh_host_ed25519_key.pub] }
+
       before do
         paths.each { |path| allow(File).to receive(:directory?).with(path).and_return(false) unless path == '/etc' }
         allow(File).to receive(:directory?).with('/etc').and_return(true)

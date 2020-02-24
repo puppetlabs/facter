@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Sles Timezone' do
-  context '#call_the_resolver' do
+describe Facter::Sles::Timezone do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       value = 'EEST'
 

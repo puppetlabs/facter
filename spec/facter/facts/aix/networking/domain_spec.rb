@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Aix NetworkingDomain' do
-  context '#call_the_resolver' do
-    let(:value) { 'domain' }
+describe Facter::Aix::NetworkingDomain do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Aix::NetworkingDomain.new }
+
+    let(:value) { 'domain' }
 
     before do
       allow(Facter::Resolvers::Hostname).to receive(:resolve).with(:domain).and_return(value)

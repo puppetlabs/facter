@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Options' do
+describe Facter::Options do
   before do
     Singleton.__init__(Facter::ConfigReader)
     Singleton.__init__(Facter::BlockList)
@@ -223,7 +223,7 @@ describe 'Options' do
     end
 
     it 'adds ruby to block list' do
-      expect(options[:blocked_facts].include?('ruby')).to be_truthy
+      expect(options[:blocked_facts]).to include('ruby')
     end
 
     it 'converts external dir string to array' do
@@ -250,7 +250,7 @@ describe 'Options' do
       end
 
       it 'returns that custom dir exists' do
-        expect(Facter::Options.instance.custom_dir?).to be_truthy
+        expect(Facter::Options.instance).to be_custom_dir
       end
     end
 
@@ -261,7 +261,7 @@ describe 'Options' do
       end
 
       it 'returns that custom dir dos not exists' do
-        expect(Facter::Options.instance.custom_dir?).to be_falsey
+        expect(Facter::Options.instance).not_to be_custom_dir
       end
     end
   end
@@ -285,7 +285,7 @@ describe 'Options' do
       end
 
       it 'returns that external dir exists' do
-        expect(Facter::Options.instance.external_dir?).to be_truthy
+        expect(Facter::Options.instance).to be_external_dir
       end
     end
 
@@ -296,7 +296,7 @@ describe 'Options' do
       end
 
       it 'returns that external dir does not exists' do
-        expect(Facter::Options.instance.external_dir?).to be_falsey
+        expect(Facter::Options.instance).not_to be_external_dir
       end
     end
   end

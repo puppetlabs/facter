@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows ProcessorsPhysicalcount' do
-  context '#call_the_resolver' do
-    let(:value) { '2' }
+describe Facter::Windows::ProcessorsPhysicalcount do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::ProcessorsPhysicalcount.new }
+
+    let(:value) { '2' }
 
     before do
       allow(Facter::Resolvers::Processors).to receive(:resolve).with(:physicalcount).and_return(value)

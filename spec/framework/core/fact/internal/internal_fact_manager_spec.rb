@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'InternalFactManager' do
+describe Facter::InternalFactManager do
   describe '#resolve_facts' do
     it 'resolved one core fact' do
       ubuntu_os_name = double(Facter::Debian::OsName)

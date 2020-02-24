@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'SELinuxResolver' do
-  after(:each) do
+describe Facter::Resolvers::SELinux do
+  after do
     Facter::Resolvers::SELinux.invalidate_cache
   end
+
   it 'returns false when selinux is not enabled' do
     allow(Open3).to receive(:capture2)
       .with('cat /proc/self/mounts')

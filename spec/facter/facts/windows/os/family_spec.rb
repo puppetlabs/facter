@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows OsFamily' do
-  context '#call_the_resolver' do
-    let(:value) { 'windows' }
+describe Facter::Windows::OsFamily do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::OsFamily.new }
+
+    let(:value) { 'windows' }
 
     before do
       allow(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernel).and_return(value)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Ubuntu Path' do
-  context '#call_the_resolver' do
+describe Facter::Debian::Path do
+  describe '#call_the_resolver' do
     let(:value) do
       '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:' \
       '/bin:/usr/games:/usr/local/games'

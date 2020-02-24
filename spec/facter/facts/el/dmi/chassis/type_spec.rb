@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Fedora DmiChassisType' do
-  context '#call_the_resolver' do
+describe Facter::El::DmiChassisType do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       value = 'Low Profile Desktop'
       expected_fact = double(Facter::ResolvedFact, name: 'dmi.chassis.type', value: value)

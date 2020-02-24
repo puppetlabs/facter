@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Ubuntu Kernelrelease' do
-  context '#call_the_resolver' do
+describe Facter::Debian::Kernelrelease do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'kernelrelease', value: 'value')
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelrelease).and_return('value')

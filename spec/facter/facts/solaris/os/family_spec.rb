@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Solaris OsFamily' do
-  context '#call_the_resolver' do
-    let(:value) { 'Solaris' }
+describe Facter::Solaris::OsFamily do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Solaris::OsFamily.new }
+
+    let(:value) { 'Solaris' }
 
     it 'returns os family fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \

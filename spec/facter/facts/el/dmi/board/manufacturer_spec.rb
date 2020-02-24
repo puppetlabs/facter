@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Fedora DmiBoardManufacturer' do
-  context '#call_the_resolver' do
+describe Facter::El::DmiBoardManufacturer do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       value = 'Intel Corporation'
       expected_fact = double(Facter::ResolvedFact, name: 'dmi.board.manufacturer', value: value)

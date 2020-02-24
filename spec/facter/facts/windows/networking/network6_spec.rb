@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows NetworkingNetwork6' do
-  context '#call_the_resolver' do
-    let(:value) { 'fe80::' }
+describe Facter::Windows::NetworkingNetwork6 do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::NetworkingNetwork6.new }
+
+    let(:value) { 'fe80::' }
 
     before do
       allow(Facter::Resolvers::Networking).to receive(:resolve).with(:network6).and_return(value)

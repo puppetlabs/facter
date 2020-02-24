@@ -3,8 +3,9 @@
 require_relative '../../spec_helper_legacy'
 
 describe LegacyFacter::Core::Execution do
-  subject { described_class }
-  let(:impl) { described_class.impl }
+  subject { LegacyFacter::Core::Execution }
+
+  let(:impl) { LegacyFacter::Core::Execution.impl }
 
   it 'delegates #search_paths to the implementation' do
     expect(impl).to receive(:search_paths)

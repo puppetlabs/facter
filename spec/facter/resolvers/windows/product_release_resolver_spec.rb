@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Windows ProductReleaseResolver' do
+describe Facter::Resolvers::ProductRelease do
   describe '#resolve' do
     context 'when all fields exist in registry' do
       let(:reg) { { 'EditionID' => ed, 'InstallationType' => install, 'ProductName' => prod, 'ReleaseId' => release } }
@@ -14,9 +14,11 @@ describe 'Windows ProductReleaseResolver' do
         allow(reg).to receive(:[]).with('ReleaseId').and_return(release)
         allow(reg).to receive(:close)
       end
+
       after do
         Facter::Resolvers::ProductRelease.invalidate_cache
       end
+
       let(:ed) { 'ServerStandard' }
       let(:install) { 'Server' }
       let(:prod) { 'Windows Server 2019 Standard' }
@@ -50,9 +52,11 @@ describe 'Windows ProductReleaseResolver' do
         allow(reg).to receive(:[]).with('ReleaseId').and_return(release)
         allow(reg).to receive(:close)
       end
+
       after do
         Facter::Resolvers::ProductRelease.invalidate_cache
       end
+
       let(:ed) { 'ServerStandard' }
       let(:prod) { 'Windows Server 2019 Standard' }
       let(:release) { '1809' }
@@ -62,7 +66,7 @@ describe 'Windows ProductReleaseResolver' do
       end
 
       it 'detects installation type as nil' do
-        expect(Facter::Resolvers::ProductRelease.resolve(:installation_type)).to eql(nil)
+        expect(Facter::Resolvers::ProductRelease.resolve(:installation_type)).to be(nil)
       end
 
       it 'detects product name' do

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'FactFilter' do
+describe Facter::FactFilter do
   describe '#filter_facts!' do
     context 'value is a hash' do
       context 'hash keys are symbols' do

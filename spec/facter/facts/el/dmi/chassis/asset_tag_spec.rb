@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Fedora DmiChassisAssetTag' do
-  context '#call_the_resolver' do
+describe Facter::El::DmiChassisAssetTag do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       value = 'No Asset Tag'
       expected_fact = double(Facter::ResolvedFact, name: 'dmi.chassis.asset_tag', value: value)

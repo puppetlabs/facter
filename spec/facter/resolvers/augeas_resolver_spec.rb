@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Augeas' do
+describe Facter::Resolvers::Augeas do
   before do
     allow(Open3).to receive(:capture2)
       .with('augparse --version 2>&1')

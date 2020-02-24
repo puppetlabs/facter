@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'ExternalFactLoader' do
+describe Facter::ExternalFactLoader do
   let(:collection) { double(LegacyFacter::Util::Collection) }
 
   before do

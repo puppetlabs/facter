@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'El NetworkingPrimary' do
-  context '#call_the_resolver' do
-    let(:value) { 'ens160' }
+describe Facter::El::NetworkingPrimary do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::El::NetworkingPrimary.new }
+
+    let(:value) { 'ens160' }
 
     before do
       allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:primary_interface).and_return(value)

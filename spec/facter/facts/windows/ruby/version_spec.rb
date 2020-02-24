@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Windows RubyVersion' do
-  context '#call_the_resolver' do
-    let(:value) { '2.5.7' }
+describe Facter::Windows::RubyVersion do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Windows::RubyVersion.new }
+
+    let(:value) { '2.5.7' }
 
     before do
       allow(Facter::Resolvers::Ruby).to receive(:resolve).with(:version).and_return(value)

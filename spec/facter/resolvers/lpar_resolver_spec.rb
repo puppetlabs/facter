@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'Lpar' do
+describe Facter::Resolvers::Lpar do
   before do
     lparstat_i = load_fixture('lparstat_i').read
     expect(Open3).to receive(:capture2)

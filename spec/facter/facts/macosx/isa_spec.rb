@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Macosx ProcessorsIsa' do
-  context '#call_the_resolver' do
+describe Facter::Macosx::ProcessorsIsa do
+  describe '#call_the_resolver' do
     it 'returns processors fact' do
       value = 'i386'
 

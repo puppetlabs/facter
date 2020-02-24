@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Ubuntu MemorySwapAvailableBytes' do
-  context '#call_the_resolver' do
+describe Facter::Debian::MemorySwapAvailableBytes do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'memory.swap.available_bytes', value: 3072)
       allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:swap_free).and_return(3072)

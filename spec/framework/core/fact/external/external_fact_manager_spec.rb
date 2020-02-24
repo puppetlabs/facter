@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'CustomFactManager' do
+describe Facter::ExternalFactManager do
   describe '#resolve' do
     it 'resolved one custom fact' do
       custom_fact_name = 'my_custom_fact'

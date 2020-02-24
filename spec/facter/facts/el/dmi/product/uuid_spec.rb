@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe 'Fedora DmiProductUuid' do
-  context '#call_the_resolver' do
+describe Facter::El::DmiProductUuid do
+  describe '#call_the_resolver' do
     it 'returns a fact' do
       value = '421aa929-318f-fae9-7d69-2e2321b00c45'
       expected_fact = double(Facter::ResolvedFact, name: 'dmi.product.uuid', value: value)

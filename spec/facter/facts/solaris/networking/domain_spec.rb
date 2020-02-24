@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe 'Solaris NetworkingDomain' do
-  context '#call_the_resolver' do
-    let(:value) { 'domain' }
+describe Facter::Solaris::NetworkingDomain do
+  describe '#call_the_resolver' do
     subject(:fact) { Facter::Solaris::NetworkingDomain.new }
+
+    let(:value) { 'domain' }
 
     before do
       allow(Facter::Resolvers::Hostname).to receive(:resolve).with(:domain).and_return(value)

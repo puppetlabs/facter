@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-describe 'DmiResolver' do
+describe Facter::Resolvers::Linux::DmiBios do
   describe '#resolve' do
-    let(:test_dir) { '/sys/class/dmi' }
     subject(:resolver) { Facter::Resolvers::Linux::DmiBios }
+
+    let(:test_dir) { '/sys/class/dmi' }
+
     before do
       allow(File).to receive(:directory?).with(test_dir).and_return(true)
       allow(File).to receive(:exist?).with("/sys/class/dmi/id/#{file}").and_return(true)
@@ -27,6 +29,7 @@ describe 'DmiResolver' do
         expect(resolver.resolve(:bios_vendor)).to eq(file_content)
       end
     end
+
     context 'when bios_version file exists' do
       let(:file_content) { '6.00' }
       let(:file) { 'bios_version' }
@@ -35,6 +38,7 @@ describe 'DmiResolver' do
         expect(resolver.resolve(:bios_version)).to eq(file_content)
       end
     end
+
     context 'when board_vendor file exists' do
       let(:file_content) { 'Intel Corporation' }
       let(:file) { 'board_vendor' }
@@ -43,6 +47,7 @@ describe 'DmiResolver' do
         expect(resolver.resolve(:board_vendor)).to eq(file_content)
       end
     end
+
     context 'when board_name file exists' do
       let(:file_content) { '440BX Desktop Reference Platform' }
       let(:file) { 'board_name' }
@@ -51,6 +56,7 @@ describe 'DmiResolver' do
         expect(resolver.resolve(:board_name)).to eq(file_content)
       end
     end
+
     context 'when board_serial file exists' do
       let(:file_content) { 'None' }
       let(:file) { 'board_serial' }
@@ -59,6 +65,7 @@ describe 'DmiResolver' do
         expect(resolver.resolve(:board_serial)).to eq(file_content)
       end
     end
+
     context 'when chassis_asset_tag file exists' do
       let(:file_content) { 'No Asset Tag' }
       let(:file) { 'chassis_asset_tag' }
@@ -67,6 +74,7 @@ describe 'DmiResolver' do
         expect(resolver.resolve(:chassis_asset_tag)).to eq(file_content)
       end
     end
+
     context 'when chassis_type file exists' do
       let(:file_content) { '4' }
       let(:file) { 'chassis_type' }
@@ -75,6 +83,7 @@ describe 'DmiResolver' do
         expect(resolver.resolve(:chassis_type)).to eq('Low Profile Desktop')
       end
     end
+
     context 'when sys_vendor file exists' do
       let(:file_content) { 'VMware, Inc.' }
       let(:file) { 'sys_vendor' }
@@ -83,6 +92,7 @@ describe 'DmiResolver' do
         expect(resolver.resolve(:sys_vendor)).to eq(file_content)
       end
     end
+
     context 'when product_name file exists' do
       let(:file_content) { 'VMware Virtual Platform' }
       let(:file) { 'product_name' }
@@ -91,6 +101,7 @@ describe 'DmiResolver' do
         expect(resolver.resolve(:product_name)).to eq(file_content)
       end
     end
+
     context 'when product_serial file exists' do
       let(:file_content) { 'VMware-42 1a 02 ea e6 27 76 b8-a1 23 a7 8a d3 12 ee cf' }
       let(:file) { 'product_serial' }
@@ -99,6 +110,7 @@ describe 'DmiResolver' do
         expect(resolver.resolve(:product_serial)).to eq(file_content)
       end
     end
+
     context 'when product_uuid file exists' do
       let(:file_content) { 'ea021a42-27e6-b876-a123-a78ad312eecf' }
       let(:file) { 'product_uuid' }
