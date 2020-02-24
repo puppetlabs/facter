@@ -173,7 +173,7 @@ module LegacyFacter
       def announce_when_no_suitable_resolution(resolutions)
         return unless resolutions.empty?
 
-        LegacyFacter.debug format('Found no suitable resolves of %<resolver_lengths for %<name>s',
+        LegacyFacter.debug format('Found no suitable resolves of %<resolver_length> for %<name>s',
                                   resolver_length: @resolves.length, name: @name)
       end
 

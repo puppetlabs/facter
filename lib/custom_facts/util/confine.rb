@@ -46,7 +46,7 @@ module LegacyFacter
           end
         end
 
-        unless (fact = LegacyFacter[@fact])
+        unless (fact = Facter[@fact])
           LegacyFacter.debug format('No fact for %<fact>s', fact: @fact)
           return false
         end

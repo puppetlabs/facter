@@ -36,17 +36,17 @@ describe LegacyFacter::Util::Confine do
 
     before do
       @fact = double 'fact'
-      allow(LegacyFacter).to receive(:[]).and_return @fact
+      allow(Facter).to receive(:[]).and_return @fact
     end
 
     it 'returns false if the fact does not exist' do
-      expect(LegacyFacter).to receive(:[]).with('yay').and_return nil
+      expect(Facter).to receive(:[]).with('yay').and_return nil
 
       expect(LegacyFacter::Util::Confine.new('yay', 'test').true?).to be false
     end
 
     it 'uses the returned fact to get the value' do
-      expect(LegacyFacter).to receive(:[]).with('yay').and_return @fact
+      expect(Facter).to receive(:[]).with('yay').and_return @fact
 
       expect(@fact).to receive(:value).and_return nil
 
