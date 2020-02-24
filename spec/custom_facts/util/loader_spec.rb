@@ -258,7 +258,7 @@ describe LegacyFacter::Util::Loader do
     end
 
     it 'should load all facts from the environment' do
-      LegacyFacter::Util::Resolution.with_env 'facter_one' => 'yayness', 'facter_two' => 'boo' do
+      Facter::Util::Resolution.with_env 'facter_one' => 'yayness', 'facter_two' => 'boo' do
         loader.load_all
       end
       expect(LegacyFacter.value(:one)).to eq 'yayness'

@@ -9,7 +9,7 @@
 # satisfied for a fact to be considered _suitable_.
 #
 # @api public
-module LegacyFacter
+module Facter
   module Util
     class Resolution
       # @api private

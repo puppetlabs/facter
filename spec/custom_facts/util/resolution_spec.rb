@@ -3,17 +3,17 @@
 
 require_relative '../../spec_helper_legacy'
 
-describe LegacyFacter::Util::Resolution do
+describe Facter::Util::Resolution do
   subject(:resolution) { described_class.new(:foo, stub_fact) }
 
   let(:stub_fact) { double('fact', name: :stubfact) }
 
   it 'requires a name' do
-    expect { LegacyFacter::Util::Resolution.new }.to raise_error(ArgumentError)
+    expect { Facter::Util::Resolution.new }.to raise_error(ArgumentError)
   end
 
   it 'requires a fact' do
-    expect { LegacyFacter::Util::Resolution.new('yay') }.to raise_error(ArgumentError)
+    expect { Facter::Util::Resolution.new('yay') }.to raise_error(ArgumentError)
   end
 
   it 'can return its name' do

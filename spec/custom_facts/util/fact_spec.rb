@@ -6,7 +6,7 @@ require_relative '../../spec_helper_legacy'
 describe LegacyFacter::Util::Fact do
   subject(:fact) { LegacyFacter::Util::Fact.new('yay') }
 
-  let(:resolution) { LegacyFacter::Util::Resolution.new('yay', fact) }
+  let(:resolution) { Facter::Util::Resolution.new('yay', fact) }
 
   it 'requires a name' do
     expect { LegacyFacter::Util::Fact.new }.to raise_error(ArgumentError)
@@ -51,7 +51,7 @@ describe LegacyFacter::Util::Fact do
     end
 
     it 'creates a new resolution if no such resolution exists' do
-      expect(LegacyFacter::Util::Resolution).to receive(:new).once.with('named', fact).and_return(res)
+      expect(Facter::Util::Resolution).to receive(:new).once.with('named', fact).and_return(res)
 
       fact.define_resolution('named')
 
@@ -60,12 +60,12 @@ describe LegacyFacter::Util::Fact do
 
     it 'creates a simple resolution when the type is nil' do
       fact.define_resolution('named')
-      expect(fact.resolution('named')).to be_a_kind_of LegacyFacter::Util::Resolution
+      expect(fact.resolution('named')).to be_a_kind_of Facter::Util::Resolution
     end
 
     it 'creates a simple resolution when the type is :simple' do
       fact.define_resolution('named', type: :simple)
-      expect(fact.resolution('named')).to be_a_kind_of LegacyFacter::Util::Resolution
+      expect(fact.resolution('named')).to be_a_kind_of Facter::Util::Resolution
     end
 
     it 'creates an aggregate resolution when the type is :aggregate' do
@@ -81,7 +81,7 @@ describe LegacyFacter::Util::Fact do
     # end
 
     it 'returns existing resolutions by name' do
-      expect(LegacyFacter::Util::Resolution).to receive(:new).once.with('named', fact).and_return(res)
+      expect(Facter::Util::Resolution).to receive(:new).once.with('named', fact).and_return(res)
 
       fact.define_resolution('named')
       fact.define_resolution('named')

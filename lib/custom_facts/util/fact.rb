@@ -48,7 +48,7 @@ module LegacyFacter
       #
       # @param options [Hash] A hash of options to set on the resolution
       #
-      # @return [LegacyFacter::Util::Resolution]
+      # @return [Facter::Util::Resolution]
       #
       # @api private
       def add(options = {}, &block)
@@ -61,7 +61,7 @@ module LegacyFacter
       #
       # @param resolution_name [String] The name of the resolve to define or look up
       # @param options [Hash] A hash of options to set on the resolution
-      # @return [LegacyFacter::Util::Resolution]
+      # @return [Facter::Util::Resolution]
       #
       # @api public
       def define_resolution(resolution_name, options = {}, &block)
@@ -82,7 +82,7 @@ module LegacyFacter
       #
       # @param name [String]
       #
-      # @return [LegacyFacter::Util::Resolution, nil] The resolution if exists, nil if
+      # @return [Facter::Util::Resolution, nil] The resolution if exists, nil if
       #   it doesn't exist or name is nil
       def resolution(name)
         return nil if name.nil?
@@ -192,7 +192,7 @@ module LegacyFacter
         else
           case resolution_type
           when :simple
-            resolve = LegacyFacter::Util::Resolution.new(resolution_name, self)
+            resolve = Facter::Util::Resolution.new(resolution_name, self)
           when :aggregate
             resolve = LegacyFacter::Core::Aggregate.new(resolution_name, self)
           else
