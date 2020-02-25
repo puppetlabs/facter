@@ -119,7 +119,10 @@ module LegacyFacter
           arr << message
         end
 
-        arr.concat(exception.backtrace) if trace
+        if trace
+          arr << 'backtrace:'
+          arr.concat(exception.backtrace)
+        end
 
         "#{RED}#{arr.flatten.join("\n")}#{RESET}"
       end

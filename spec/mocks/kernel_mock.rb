@@ -6,4 +6,6 @@ module Kernel
   def require(path)
     old_require(path) unless LIBS_TO_SKIP.include?(path)
   end
+
+  def at_exit(&block); end
 end

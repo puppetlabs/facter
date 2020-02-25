@@ -222,4 +222,20 @@ describe LegacyFacter::Core::Logging do
       log_message(:info, 'timing message')
     end
   end
+
+  describe '#format_exception' do
+    class FlushFakeError < StandardError; end
+
+    context 'when trace options is true' do
+      let(:trace) { true }
+      let(:message) { 'Some error message' }
+      let(:exception) { FlushFakeError.new }
+      let(:expected_message) { "\e[31mSome error message\nbacktrace:\nprog.rb:2:in `a'\e[0m" }
+
+      it 'format exception to display backtrace' do
+        exception.set_backtrace("prog.rb:2:in `a'")
+        expect(LegacyFacter.format_exception(exception, message, trace)).to eql(expected_message)
+      end
+    end
+  end
 end

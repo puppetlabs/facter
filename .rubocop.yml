@@ -47,6 +47,7 @@ Metrics/AbcSize:
     - 'lib/custom_facts/util/confine.rb'
     - 'lib/custom_facts/core/execution/windows.rb'
     - 'lib/custom_facts/core/execution/base.rb'
+    - 'lib/custom_facts/core/resolvable.rb'
 
 Style/FrozenStringLiteralComment:
   Exclude:

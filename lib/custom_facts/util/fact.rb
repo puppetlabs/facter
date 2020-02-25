@@ -163,7 +163,11 @@ module LegacyFacter
 
       def find_first_real_value(resolutions)
         resolutions.each do |resolve|
-          value = resolve.value
+          begin
+            value = resolve.value
+          rescue Facter::ResolveCustomFactError
+            break
+          end
           @used_resolution_weight = resolve.weight
           return value unless value.nil?
         end

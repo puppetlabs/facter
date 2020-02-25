@@ -40,7 +40,6 @@ load_dir(['config'])
 
 load_lib_dirs('resolvers')
 load_lib_dirs('facts_utils')
-load_lib_dirs('utils')
 load_lib_dirs('framework', 'core')
 load_lib_dirs('models')
 load_lib_dirs('framework', 'core', 'fact_loaders')
@@ -53,8 +52,8 @@ os_hierarchy.each { |operating_system| load_lib_dirs('facts', operating_system.d
 os_hierarchy.each { |operating_system| load_lib_dirs('resolvers', operating_system.downcase, '**') }
 
 require "#{ROOT_DIR}/lib/custom_facts/core/legacy_facter"
-require "#{ROOT_DIR}/lib/framework/utils/utils"
-require "#{ROOT_DIR}/lib/util/fact.rb"
+load_lib_dirs('framework', 'utils')
+load_lib_dirs('util')
 
 require "#{ROOT_DIR}/lib/framework/core/fact_augmenter"
 require "#{ROOT_DIR}/lib/framework/parsers/query_parser"

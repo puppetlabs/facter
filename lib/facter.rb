@@ -8,6 +8,8 @@ require "#{ROOT_DIR}/lib/framework/core/file_loader"
 require "#{ROOT_DIR}/lib/framework/core/options/options_validator"
 
 module Facter
+  class ResolveCustomFactError < StandardError; end
+
   @options = Options.instance
 
   def self.[](name)
