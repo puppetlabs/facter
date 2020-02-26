@@ -224,8 +224,6 @@ describe LegacyFacter::Core::Logging do
   end
 
   describe '#format_exception' do
-    class FlushFakeError < StandardError; end
-
     context 'when trace options is true' do
       let(:trace) { true }
       let(:message) { 'Some error message' }
