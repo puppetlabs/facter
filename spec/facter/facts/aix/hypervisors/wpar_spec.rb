@@ -4,7 +4,7 @@ describe Facter::Aix::HypervisorsWpar do
   describe '#call_the_resolver' do
     it 'returns a wpar only hypervisor fact' do
       expected_fact_name = 'hypervisors.wpar'
-      expected_fact_value = { key: 13, configured_id: 14 }
+      expected_fact_value = { 'key' => 13, 'configured_id' => 14 }
       allow(Facter::Resolvers::Wpar).to receive(:resolve).with(:wpar_key).and_return(13)
       allow(Facter::Resolvers::Wpar).to receive(:resolve).with(:wpar_configured_id).and_return(14)
 

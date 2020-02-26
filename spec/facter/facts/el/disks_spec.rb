@@ -5,12 +5,12 @@ describe Facter::El::Disks do
 
   let(:disk) do
     {
-      disks: {
-        sda: {
-          model: 'Virtual disk',
-          size: '20.00 GiB',
-          size_bytes: 21_474_836_480,
-          vendor: 'VMware'
+      'disks' => {
+        'sda' => {
+          'model' => 'Virtual disk',
+          'size' => '20.00 GiB',
+          'size_bytes' => 21_474_836_480,
+          'vendor' => 'VMware'
         }
       }
     }

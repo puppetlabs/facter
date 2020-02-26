@@ -17,6 +17,10 @@ describe Facter::LegacyFactFormatter do
     Facter::ResolvedFact.new('my.nested.fact2', 'my_nested_fact_value')
   end
 
+  let(:nested_fact3) do
+    Facter::ResolvedFact.new('my.nested.fact3', 'value')
+  end
+
   let(:nil_resolved_fact1) do
     Facter::ResolvedFact.new('nil_resolved_fact1', nil)
   end
@@ -45,6 +49,9 @@ describe Facter::LegacyFactFormatter do
 
     nested_fact2.user_query = 'my.nested.fact2.3'
     nested_fact2.filter_tokens = [3]
+
+    nested_fact3.user_query = 'my.nested.fact3.my_nested_fact_value.1.another'
+    nested_fact3.filter_tokens = ['my_nested_fact_value', 1, 'another']
 
     nil_resolved_fact1.user_query = 'nil_resolved_fact1'
     nil_resolved_fact1.filter_tokens = []
@@ -174,6 +181,14 @@ describe Facter::LegacyFactFormatter do
         formatted_output = Facter::LegacyFactFormatter.new.format([nested_fact1, nested_fact2])
 
         expect(formatted_output).to eq(nested_expected_output)
+      end
+
+      context 'when value is a hash' do
+        it "returns 'value'" do
+          formatted_output = Facter::LegacyFactFormatter.new.format([nested_fact3])
+
+          expect(formatted_output).to eq('value')
+        end
       end
     end
 

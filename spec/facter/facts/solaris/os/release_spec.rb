@@ -4,7 +4,7 @@ describe Facter::Solaris::OsRelease do
   describe '#call_the_resolver' do
     subject(:fact) { Facter::Solaris::OsRelease.new }
 
-    let(:value) { { full: '10_u11', minor: '11', major: '10' } }
+    let(:value) { { 'full' => '10_u11', 'minor' => '11', 'major' => '10' } }
 
     before do
       allow(Facter::Resolvers::SolarisRelease).to receive(:resolve).with(:full).and_return('10_u11')
@@ -23,8 +23,9 @@ describe Facter::Solaris::OsRelease do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'os.release', value: value),
                         an_object_having_attributes(name: 'operatingsystemmajrelease',
-                                                    value: value[:major], type: :legacy),
-                        an_object_having_attributes(name: 'operatingsystemrelease', value: value[:full], type: :legacy))
+                                                    value: value['major'], type: :legacy),
+                        an_object_having_attributes(name: 'operatingsystemrelease', value: value['full'],
+                                                    type: :legacy))
     end
   end
 end

@@ -28,7 +28,7 @@ describe Facter::QueryParser do
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
 
-      expect(matched_facts.first.filter_tokens).to eq([:arry, 1, :val2])
+      expect(matched_facts.first.filter_tokens).to eq(['arry', 1, 'val2'])
     end
 
     it 'creates one legacy fact' do

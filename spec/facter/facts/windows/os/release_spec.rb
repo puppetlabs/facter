@@ -23,7 +23,7 @@ describe Facter::Windows::OsRelease do
 
     it 'returns release fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-        contain_exactly(an_object_having_attributes(name: 'os.release', value: { full: value, major: value }),
+        contain_exactly(an_object_having_attributes(name: 'os.release', value: { 'full' => value, 'major' => value }),
                         an_object_having_attributes(name: 'operatingsystemmajrelease', value: value, type: :legacy),
                         an_object_having_attributes(name: 'operatingsystemrelease', value: value, type: :legacy))
     end

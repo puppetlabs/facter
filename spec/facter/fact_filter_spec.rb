@@ -9,7 +9,7 @@ describe Facter::FactFilter do
 
         before do
           resolved_fact.user_query = 'os.release.major'
-          resolved_fact.filter_tokens = [:major]
+          resolved_fact.filter_tokens = ['major']
         end
 
         it 'filters hash value inside fact' do
@@ -24,7 +24,7 @@ describe Facter::FactFilter do
 
         before do
           resolved_fact.user_query = 'my.fact./key1'
-          resolved_fact.filter_tokens = ['/key1'.to_sym]
+          resolved_fact.filter_tokens = ['/key1']
         end
 
         it 'filters hash value inside fact' do
@@ -86,7 +86,7 @@ describe Facter::FactFilter do
     resolved_fact = Facter::ResolvedFact.new('os.release', fact_value)
 
     resolved_fact.user_query = 'os.release.arry.1.val2'
-    resolved_fact.filter_tokens = [:arry, 1, :val2]
+    resolved_fact.filter_tokens = ['arry', 1, 'val2']
 
     Facter::FactFilter.new.filter_facts!([resolved_fact])
 

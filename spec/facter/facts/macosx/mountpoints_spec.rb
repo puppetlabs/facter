@@ -19,16 +19,16 @@ describe Facter::Macosx::Mountpoints do
       end
 
       let(:parsed_fact) do
-        { '/': { available: '63.31 GiB',
-                 available_bytes: 67_979_685_888,
-                 capacity: '84.64%',
-                 device: '/dev/nvme0n1p2',
-                 filesystem: 'ext4',
-                 options: %w[rw noatime],
-                 size: '434.42 GiB',
-                 size_bytes: 466_449_743_872,
-                 used: '348.97 GiB',
-                 used_bytes: 374_704_357_376 } }
+        { '/' => { 'available' => '63.31 GiB',
+                   'available_bytes' => 67_979_685_888,
+                   'capacity' => '84.64%',
+                   'device' => '/dev/nvme0n1p2',
+                   'filesystem' => 'ext4',
+                   'options' => %w[rw noatime],
+                   'size' => '434.42 GiB',
+                   'size_bytes' => 466_449_743_872,
+                   'used' => '348.97 GiB',
+                   'used_bytes' => 374_704_357_376 } }
       end
 
       before do

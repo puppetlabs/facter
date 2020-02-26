@@ -17,7 +17,8 @@ describe Facter::Sles::OsRelease do
 
     it 'returns release fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-        contain_exactly(an_object_having_attributes(name: 'os.release', value: { full: value, major: '10', minor: 0 }),
+        contain_exactly(an_object_having_attributes(name: 'os.release', value: { 'full' => value, 'major' => '10',
+                                                                                 'minor' => 0 }),
                         an_object_having_attributes(name: 'operatingsystemmajrelease', value: '10', type: :legacy),
                         an_object_having_attributes(name: 'operatingsystemrelease', value: value, type: :legacy))
     end
