@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::El::FipsEnabled do
+describe Facter::Debian::FipsEnabled do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::El::FipsEnabled.new }
+    subject(:fact) { Facter::Debian::FipsEnabled.new }
 
     let(:value) { true }
 
