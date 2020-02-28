@@ -23,6 +23,7 @@ Metrics/ModuleLength:
   Max: 100
   Exclude:
     - 'lib/facter.rb'
+    - 'lib/facter-ng.rb'
 
 Metrics/BlockLength:
   Exclude:

@@ -4,7 +4,7 @@ module Facter
   class BlockList
     include Singleton
 
-    attr_reader :block_groups
+    attr_reader :block_groups, :block_list
 
     def initialize(block_list_path = nil)
       @block_groups_file_path = block_list_path || File.join(ROOT_DIR, 'block_groups.conf')

@@ -24,6 +24,7 @@ module Facter
     end
 
     def global_defaults
+      @options[:block] ||= true
       @options[:custom_facts] ||= true
       @options[:custom_dir] ||= []
       @options[:external_facts] ||= true

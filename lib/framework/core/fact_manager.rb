@@ -11,9 +11,7 @@ module Facter
       @log = Log.new(self)
     end
 
-    def resolve_facts(options = {}, user_query = [])
-      Log.level = options.get[:log_level]
-
+    def resolve_facts(user_query = [])
       loaded_facts = @fact_loader.load(Options.get)
       searched_facts = QueryParser.parse(user_query, loaded_facts)
 

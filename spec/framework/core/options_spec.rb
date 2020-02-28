@@ -304,6 +304,37 @@ describe Facter::Options do
     end
   end
 
+  context 'log_level option conflict in config file' do
+    let(:config_reader_double) { double(Facter::ConfigReader) }
+    let(:block_list_double) { double(Facter::BlockList) }
+    let(:log) { instance_spy(Facter::Log) }
+
+    before do
+      allow(Facter::ConfigReader).to receive(:new).with('config_path').and_return(config_reader_double)
+      allow(config_reader_double).to receive(:cli).and_return('debug' => true, 'verbose' => true)
+      allow(config_reader_double).to receive(:global).and_return(
+        'no-custom-facts' => true, 'no-external-facts' => true, 'no-ruby' => true
+      )
+
+      allow(config_reader_double).to receive(:ttls).and_return([{ 'timezone' => '30 days' }])
+
+      allow(Facter::BlockList).to receive(:instance).and_return(block_list_double)
+      allow(block_list_double).to receive(:blocked_facts).and_return(%w[block_fact1 blocked_fact2])
+      priority_options[:config] = 'config_path'
+      priority_options[:is_cli] = true
+
+      allow(Facter::Log).to receive(:new).and_return(log)
+      allow(log).to receive(:error).with(
+        'debug, verbose, and log-level options conflict: please specify only one.', true
+      )
+      allow(Facter::Cli).to receive(:start).with(['--help'])
+    end
+
+    it 'prints help and exit' do
+      expect { Facter::Options.instance.refresh }.to raise_error(SystemExit)
+    end
+  end
+
   describe '#augment_with_cli_options!' do
     before do
       Facter::Options.instance.augment_with_defaults!

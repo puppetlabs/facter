@@ -22,7 +22,6 @@ end
 
 load_lib_dirs('framework', 'core', 'options')
 require "#{ROOT_DIR}/lib/framework/core/options"
-require "#{ROOT_DIR}/lib/framework/logging/legacy_logger"
 require "#{ROOT_DIR}/lib/framework/logging/multilogger"
 require "#{ROOT_DIR}/lib/framework/logging/logger"
 
@@ -31,7 +30,6 @@ require "#{ROOT_DIR}/lib/framework/detector/os_detector"
 
 require "#{ROOT_DIR}/lib/framework/config/config_reader"
 require "#{ROOT_DIR}/lib/framework/config/block_list"
-require "#{ROOT_DIR}/lib/facter"
 require "#{ROOT_DIR}/lib/resolvers/utils/fingerprint.rb"
 require "#{ROOT_DIR}/lib/resolvers/utils/ssh.rb"
 require "#{ROOT_DIR}/lib/resolvers/utils/filesystem_helper.rb"

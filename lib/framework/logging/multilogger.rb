@@ -86,6 +86,10 @@ module Facter
       @loggers = loggers
     end
 
+    def add_logger(logger)
+      @loggers << logger
+    end
+
     # Methods that write to logs just write to each contained logging in turn
     def add(severity, message = nil, progname = nil, &block)
       loggers.each { |logger| logger.add(severity, message, progname, &block) }

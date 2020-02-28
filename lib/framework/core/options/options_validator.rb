@@ -33,6 +33,7 @@ module Facter
     end
 
     def self.write_error_and_exit(message)
+      Options.augment_with_priority_options!(is_cli: true)
       log = Facter::Log.new(self)
       log.error(message, true)
       Cli.start(['--help'])

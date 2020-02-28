@@ -6,9 +6,6 @@ describe Facter::FactManager do
       ubuntu_os_name = double(Facter::Debian::OsName)
       user_query = []
 
-      options = Facter::Options.instance
-      options.refresh
-
       loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.name', klass: ubuntu_os_name, type: :core)
       loaded_fact_custom_fact = double(Facter::LoadedFact, name: 'custom_fact', klass: nil, type: :custom)
       loaded_facts = [loaded_fact_os_name, loaded_fact_custom_fact]
@@ -36,7 +33,7 @@ describe Facter::FactManager do
         .to receive(:resolve_facts)
         .with([searched_fact1, searched_fact2])
 
-      resolved_facts = Facter::FactManager.instance.resolve_facts(options, user_query)
+      resolved_facts = Facter::FactManager.instance.resolve_facts(user_query)
 
       expect(resolved_facts).to eq([resolved_fact])
     end

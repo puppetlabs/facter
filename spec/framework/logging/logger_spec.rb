@@ -2,22 +2,18 @@
 
 describe Logger do
   let(:file_logger_double) { double(Logger) }
-  let(:legacy_logger_double) { double(Facter::LegacyLogger) }
   let(:multi_logger_double) { double(Facter::MultiLogger) }
 
   before do
     Facter::Log.class_variable_set(:@@file_logger, file_logger_double)
-    Facter::Log.class_variable_set(:@@legacy_logger, legacy_logger_double)
     Facter::Log.class_variable_set(:@@logger, multi_logger_double)
 
     allow(file_logger_double).to receive(:formatter=)
-    allow(legacy_logger_double).to receive(:formatter=)
   end
 
   describe '#initialize' do
     it 'sets formatters' do
       expect(file_logger_double).to receive(:formatter=)
-      expect(legacy_logger_double).to receive(:formatter=)
 
       Facter::Log.new(Class)
     end
