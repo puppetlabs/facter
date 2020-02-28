@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::El::DmiBoardManufacturer do
+describe Facter::Debian::DmiBoardManufacturer do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::El::DmiBoardManufacturer.new }
+    subject(:fact) { Facter::Debian::DmiBoardManufacturer.new }
 
     let(:manufacturer) { 'Intel Corporation' }
 

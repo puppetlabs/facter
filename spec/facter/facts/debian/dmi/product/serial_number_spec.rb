@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::El::DmiProductSerialNumber do
+describe Facter::Debian::DmiProductSerialNumber do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::El::DmiProductSerialNumber.new }
+    subject(:fact) { Facter::Debian::DmiProductSerialNumber.new }
 
     let(:serial_number) { 'VMware-42 1a a9 29 31 8f fa e9-7d 69 2e 23 21 b0 0c 45' }
 

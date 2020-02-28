@@ -2,14 +2,23 @@
 
 describe Facter::El::DmiManufacturer do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      value = 'VMware, Inc.'
-      expected_fact = double(Facter::ResolvedFact, name: 'dmi.manufacturer', value: value)
-      allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:sys_vendor).and_return(value)
-      allow(Facter::ResolvedFact).to receive(:new).with('dmi.manufacturer', value).and_return(expected_fact)
+    subject(:fact) { Facter::El::DmiManufacturer.new }
 
-      fact = Facter::El::DmiManufacturer.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:sys_vendor) { 'VMware, Inc.' }
+
+    before do
+      allow(Facter::Resolvers::Linux::DmiBios).to \
+        receive(:resolve).with(:sys_vendor).and_return(sys_vendor)
+    end
+
+    it 'calls Facter::Resolvers::Linux::DmiBios' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:sys_vendor)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'dmi.manufacturer', value: sys_vendor)
     end
   end
 end

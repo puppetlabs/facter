@@ -2,14 +2,23 @@
 
 describe Facter::El::DmiBiosReleaseDate do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      value = '07/03/2018'
-      expected_fact = double(Facter::ResolvedFact, name: 'dmi.bios.release_date', value: value)
-      allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_date).and_return(value)
-      allow(Facter::ResolvedFact).to receive(:new).with('dmi.bios.release_date', value).and_return(expected_fact)
+    subject(:fact) { Facter::El::DmiBiosReleaseDate.new }
 
-      fact = Facter::El::DmiBiosReleaseDate.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:date) { '07/03/2018' }
+
+    before do
+      allow(Facter::Resolvers::Linux::DmiBios).to \
+        receive(:resolve).with(:bios_date).and_return(date)
+    end
+
+    it 'calls Facter::Resolvers::Linux::DmiBios' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:bios_date)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'dmi.bios.release_date', value: date)
     end
   end
 end

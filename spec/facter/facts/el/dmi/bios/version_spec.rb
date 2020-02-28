@@ -2,14 +2,23 @@
 
 describe Facter::El::DmiBiosVersion do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      value = '6.00'
-      expected_fact = double(Facter::ResolvedFact, name: 'dmi.bios.version', value: value)
-      allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_version).and_return(value)
-      allow(Facter::ResolvedFact).to receive(:new).with('dmi.bios.version', value).and_return(expected_fact)
+    subject(:fact) { Facter::El::DmiBiosVersion.new }
 
-      fact = Facter::El::DmiBiosVersion.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:version) { '6.00' }
+
+    before do
+      allow(Facter::Resolvers::Linux::DmiBios).to \
+        receive(:resolve).with(:bios_version).and_return(version)
+    end
+
+    it 'calls Facter::Resolvers::Linux::DmiBios' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:bios_version)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'dmi.bios.version', value: version)
     end
   end
 end
