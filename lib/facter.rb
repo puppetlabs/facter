@@ -43,6 +43,10 @@ module Facter
       nil
     end
 
+    def on_message(&block)
+      Facter::Log.on_message(&block)
+    end
+
     def debugging?
       Options[:debug]
     end

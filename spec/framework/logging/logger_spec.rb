@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 describe Logger do
-  let(:file_logger_double) { double(Logger) }
-  let(:multi_logger_double) { double(Facter::MultiLogger) }
+  subject(:log) { Facter::Log.new(Class) }
+
+  let(:file_logger_double) { instance_spy(Logger) }
+  let(:multi_logger_double) { instance_spy(Facter::MultiLogger, level: :warn) }
 
   before do
     Facter::Log.class_variable_set(:@@file_logger, file_logger_double)
@@ -12,69 +14,93 @@ describe Logger do
   end
 
   describe '#initialize' do
-    it 'sets formatters' do
-      expect(file_logger_double).to receive(:formatter=)
-
-      Facter::Log.new(Class)
+    it 'sets file_logger formatters' do
+      log
+      expect(file_logger_double).to have_received(:formatter=)
     end
   end
 
   describe '#debug' do
+    before do
+      allow(Facter).to receive(:debugging?).and_return(true)
+    end
+
+    let(:handler) { instance_spy(Logger) }
+
+    it 'noops of debugging is not set' do
+      allow(Facter).to receive(:debugging?).and_return(false)
+      log.debug('info_message')
+      expect(multi_logger_double).not_to have_received(:debug)
+    end
+
+    it 'logs a warn if message is nil' do
+      log.debug(nil)
+      expect(multi_logger_double).to have_received(:warn).with(/debug invoked with invalid message/)
+    end
+
+    it 'logs a warn if message is empty' do
+      log.debug('')
+      expect(multi_logger_double).to have_received(:warn).with(/debug invoked with invalid message/)
+    end
+
     it 'writes debug message' do
-      expect(multi_logger_double).to receive(:debug).with('Class - debug_message')
-      log = Facter::Log.new(Class)
       log.debug('debug_message')
+      expect(multi_logger_double).to have_received(:debug).with('Class - debug_message')
+    end
+
+    it 'provides on_message hook' do
+      Facter.on_message do |level, message|
+        handler.debug("on_message called with level: #{level}, message: #{message}")
+      end
+
+      log.debug('test')
+
+      expect(handler).to have_received(:debug).with('on_message called with level: debug, message: test')
     end
   end
 
   describe '#info' do
     it 'writes info message' do
-      expect(multi_logger_double).to receive(:info).with('Class - info_message')
-      log = Facter::Log.new(Class)
       log.info('info_message')
+      expect(multi_logger_double).to have_received(:info).with('Class - info_message')
     end
   end
 
   describe '#warn' do
     it 'writes warn message' do
-      expect(multi_logger_double).to receive(:warn).with('Class - warn_message')
-      log = Facter::Log.new(Class)
       log.warn('warn_message')
+      expect(multi_logger_double).to have_received(:warn).with('Class - warn_message')
     end
   end
 
   describe '#error' do
     it 'writes error message with color on macosx' do
       allow(OsDetector.instance).to receive(:detect).and_return(:macosx)
-      expect(multi_logger_double).to receive(:error).with("Class - \e[31merror_message\e[0m")
-      log = Facter::Log.new(Class)
       log.error('error_message', true)
+      expect(multi_logger_double).to have_received(:error).with("Class - \e[31merror_message\e[0m")
     end
 
     it 'writes error message not colorized on Windows' do
       allow(OsDetector.instance).to receive(:detect).and_return(:windows)
-      expect(multi_logger_double).to receive(:error).with('Class - error_message')
-      log = Facter::Log.new(Class)
       log.error('error_message', true)
+      expect(multi_logger_double).to have_received(:error).with('Class - error_message')
     end
 
     it 'writes error message' do
-      expect(multi_logger_double).to receive(:error).with('Class - error_message')
-      log = Facter::Log.new(Class)
       log.error('error_message')
+      expect(multi_logger_double).to have_received(:error).with('Class - error_message')
     end
   end
 
   describe '#level=' do
     it 'sets the log level' do
-      expect(multi_logger_double).to receive(:level=).with(:error)
       Facter::Log.level = :error
+      expect(multi_logger_double).to have_received(:level=).with(:error)
     end
   end
 
   describe '#level' do
     it 'get the log level' do
-      expect(multi_logger_double).to receive(:level).and_return(:warn)
       expect(Facter::Log.level).to eq(:warn)
     end
   end
