@@ -2,10 +2,12 @@
 
 describe Facter::ClassDiscoverer do
   describe '#discover_classes' do
+    let(:result) { [Facter::Windows::NetworkInterfaces, Facter::Windows::OsName] }
+
     it 'loads all classes' do
       allow_any_instance_of(Module).to receive(:constants).and_return(%i[NetworkInterfaces OsName])
 
-      expect(Facter::ClassDiscoverer.instance.discover_classes('Windows')).to eq(%i[NetworkInterfaces OsName])
+      expect(Facter::ClassDiscoverer.instance.discover_classes('Windows')).to eq(result)
     end
 
     it 'loads no classes' do

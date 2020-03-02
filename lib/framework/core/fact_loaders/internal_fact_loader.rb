@@ -32,16 +32,13 @@ module Facter
       classes = ClassDiscoverer.instance.discover_classes(operating_system)
 
       classes.each do |class_name|
-        klass = klass(operating_system, class_name)
-        fact_name = klass::FACT_NAME
+        fact_name = class_name::FACT_NAME
 
-        load_fact(fact_name, klass)
-        [*klass::ALIASES].each { |fact_alias| load_fact(fact_alias, klass) } if klass.const_defined?('ALIASES')
+        load_fact(fact_name, class_name)
+        next unless class_name.const_defined?('ALIASES')
+
+        [*class_name::ALIASES].each { |fact_alias| load_fact(fact_alias, class_name) }
       end
-    end
-
-    def klass(operating_system, class_name)
-      Class.const_get("Facter::#{operating_system}::" + class_name.to_s)
     end
 
     def load_fact(fact_name, klass)
