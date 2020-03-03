@@ -69,6 +69,10 @@ describe Facter do
     end
 
     context '--strict' do
+      before do
+        allow(Facter::Options).to receive(:[]).with(:config)
+      end
+
       it 'returns no fact and status 1' do
         user_query = 'os.name'
         expected_json_output = '{}'
