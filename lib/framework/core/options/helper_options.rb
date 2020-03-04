@@ -27,7 +27,11 @@ module Facter
     end
 
     def log_level
-      :debug if @options[:debug] || @options[:log_level] == :trace
+      if @options[:debug] || @options[:log_level] == :trace
+        :debug
+      elsif @options[:verbose]
+        :info
+      end
     end
 
     def validate_log_level

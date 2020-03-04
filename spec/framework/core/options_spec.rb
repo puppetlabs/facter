@@ -463,6 +463,18 @@ describe Facter::Options do
     end
   end
 
+  describe '#verbose' do
+    before do
+      cli_options = { 'verbose' => true }
+      Facter::Options.instance.augment_with_priority_options!(cli_options)
+      Facter::Options.instance.augment_with_helper_options!([])
+    end
+
+    it 'returns log_level info' do
+      expect(options[:log_level]).to eq(:info)
+    end
+  end
+
   describe '#refresh' do
     before do
       cli_options = { 'external_dir' => %w[external_dir1 external_dir2] }
