@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Aix
-    class OsHardware
-      FACT_NAME = 'os.hardware'
+    module Os
+      class Hardware
+        FACT_NAME = 'os.hardware'
 
-      def call_the_resolver
-        fact_value = Resolvers::Hardware.resolve(:hardware)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::Hardware.resolve(:hardware)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

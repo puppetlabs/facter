@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::DmiManufacturer do
+describe Facts::Windows::Dmi::Manufacturer do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::DmiManufacturer.new }
+    subject(:fact) { Facts::Windows::Dmi::Manufacturer.new }
 
     let(:value) { 'VMware, Inc.' }
 

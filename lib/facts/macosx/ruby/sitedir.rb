@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Macosx
-    class RubySitedir
-      FACT_NAME = 'ruby.sitedir'
+    module Ruby
+      class Sitedir
+        FACT_NAME = 'ruby.sitedir'
 
-      def call_the_resolver
-        fact_value = Resolvers::Ruby.resolve(:sitedir)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::Ruby.resolve(:sitedir)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

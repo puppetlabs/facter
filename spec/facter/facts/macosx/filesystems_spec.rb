@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::Filesystems do
+describe Facts::Macosx::Filesystems do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::Filesystems.new }
+    subject(:fact) { Facts::Macosx::Filesystems.new }
 
     let(:value) { 'apfs,autofs,devfs' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'filesystems', value: value) }

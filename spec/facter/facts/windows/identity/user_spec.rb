@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::IdentityUser do
+describe Facts::Windows::Identity::User do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::IdentityUser.new }
+    subject(:fact) { Facts::Windows::Identity::User.new }
 
     let(:value) { 'User\Administrator' }
 

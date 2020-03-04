@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
-    class OsWindowsEditionID
-      FACT_NAME = 'os.windows.edition_id'
-      ALIASES = 'windows_edition_id'
+    module Os
+      module Windows
+        class EditionId
+          FACT_NAME = 'os.windows.edition_id'
+          ALIASES = 'windows_edition_id'
 
-      def call_the_resolver
-        fact_value = Resolvers::ProductRelease.resolve(:edition_id)
+          def call_the_resolver
+            fact_value = Facter::Resolvers::ProductRelease.resolve(:edition_id)
 
-        [ResolvedFact.new(FACT_NAME, fact_value), ResolvedFact.new(ALIASES, fact_value, :legacy)]
+            [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
+          end
+        end
       end
     end
   end

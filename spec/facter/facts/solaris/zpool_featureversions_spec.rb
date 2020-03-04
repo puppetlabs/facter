@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Solaris::ZPoolFeatureNumbers do
+describe Facts::Solaris::ZpoolFeaturenumbers do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Solaris::ZPoolFeatureNumbers.new }
+    subject(:fact) { Facts::Solaris::ZpoolFeaturenumbers.new }
 
     let(:zpool_featurenumbers) { '1,2,3,4,5,6,7' }
 

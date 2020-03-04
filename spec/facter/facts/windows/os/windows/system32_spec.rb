@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::OsWindowsSystem32 do
+describe Facts::Windows::Os::Windows::System32 do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::OsWindowsSystem32.new }
+    subject(:fact) { Facts::Windows::Os::Windows::System32.new }
 
     let(:value) { 'C:\Windows\system32' }
 

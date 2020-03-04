@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Solaris::Zone do
+describe Facts::Solaris::SolarisZones::Zone do
   describe '#call_the_resolver' do
     # let(:zone_name){"global"}
     it 'returns a fact' do
@@ -21,7 +21,7 @@ describe Facter::Solaris::Zone do
       allow(Facter::Resolvers::SolarisZone).to receive(:resolve).with(:zone).and_return(array_of_hashes)
       allow(Facter::ResolvedFact).to receive(:new).with('solaris_zones.zones', result_fact).and_return(expected_fact)
 
-      fact = Facter::Solaris::Zone.new
+      fact = Facts::Solaris::SolarisZones::Zone.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

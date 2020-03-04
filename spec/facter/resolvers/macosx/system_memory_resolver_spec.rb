@@ -26,12 +26,12 @@ describe Facter::Resolvers::Macosx::SystemMemory do
     expect(result).to eq(total_bytes)
   end
 
-  it 'returns total system memory in bytes' do
+  it 'returns used system memory in bytes' do
     result = Facter::Resolvers::Macosx::SystemMemory.resolve(:used_bytes)
     expect(result).to eq(used_bytes)
   end
 
-  it 'returns total system memory in bytes' do
+  it 'returns memory capacity' do
     result = Facter::Resolvers::Macosx::SystemMemory.resolve(:capacity)
     expect(result).to eq(capacity)
   end

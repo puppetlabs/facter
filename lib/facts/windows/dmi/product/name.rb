@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
-    class DmiProductName
-      FACT_NAME = 'dmi.product.name'
-      ALIASES = 'productname'
+    module Dmi
+      module Product
+        class Name
+          FACT_NAME = 'dmi.product.name'
+          ALIASES = 'productname'
 
-      def call_the_resolver
-        fact_value = Resolvers::DMIComputerSystem.resolve(:name)
+          def call_the_resolver
+            fact_value = Facter::Resolvers::DMIComputerSystem.resolve(:name)
 
-        [ResolvedFact.new(FACT_NAME, fact_value), ResolvedFact.new(ALIASES, fact_value, :legacy)]
+            [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
+          end
+        end
       end
     end
   end

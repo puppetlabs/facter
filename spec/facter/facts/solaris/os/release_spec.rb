@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Solaris::OsRelease do
+describe Facts::Solaris::Os::Release do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Solaris::OsRelease.new }
+    subject(:fact) { Facts::Solaris::Os::Release.new }
 
     let(:value) { { 'full' => '10_u11', 'minor' => '11', 'major' => '10' } }
 

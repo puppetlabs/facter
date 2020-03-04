@@ -77,7 +77,7 @@ describe LegacyFacter::Util::Confine do
       expect(confined([3, 4], [3, 4])).to be true
     end
 
-    it "returns true if any of the provided symbol values matches the fact's string value" do
+    it "returns true if any of the provided symbol values matches the fact's value as a string" do
       expect(confined(:one, 'one')).to be true
     end
 

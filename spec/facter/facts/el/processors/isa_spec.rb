@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::El::ProcessorsIsa do
+describe Facts::El::Processors::Isa do
   describe '#call_the_resolver' do
     it 'returns a fact' do
       value = 'x86_64'
@@ -9,7 +9,7 @@ describe Facter::El::ProcessorsIsa do
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelrelease).and_return(value)
       allow(Facter::ResolvedFact).to receive(:new).with('processors.isa', value).and_return(expected_fact)
 
-      fact = Facter::El::ProcessorsIsa.new
+      fact = Facts::El::Processors::Isa.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::OsName do
+describe Facts::Macosx::Os::Name do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::OsName.new }
+    subject(:fact) { Facts::Macosx::Os::Name.new }
 
     let(:value) { 'Darwin' }
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::Disks do
-  subject(:fact) { Facter::Debian::Disks.new }
+describe Facts::Debian::Disks do
+  subject(:fact) { Facts::Debian::Disks.new }
 
   let(:disk) do
     {

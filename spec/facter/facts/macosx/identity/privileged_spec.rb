@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::IdentityPrivileged do
+describe Facts::Macosx::Identity::Privileged do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::IdentityPrivileged.new }
+    subject(:fact) { Facts::Macosx::Identity::Privileged.new }
 
     let(:value) { 'false' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'identity.privileged', value: value) }

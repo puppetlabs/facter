@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::El::NetworkingIp do
+describe Facts::El::Networking::Ip do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::El::NetworkingIp.new }
+    subject(:fact) { Facts::El::Networking::Ip.new }
 
     let(:value) { '10.16.122.163' }
 

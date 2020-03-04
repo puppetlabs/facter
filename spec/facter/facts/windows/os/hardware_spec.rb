@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::OsHardware do
+describe Facts::Windows::Os::Hardware do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::OsHardware.new }
+    subject(:fact) { Facts::Windows::Os::Hardware.new }
 
     let(:value) { 'x86_64' }
 

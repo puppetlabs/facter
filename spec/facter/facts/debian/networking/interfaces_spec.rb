@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::NetworkingInterfaces do
+describe Facts::Debian::Networking::Interfaces do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Debian::NetworkingInterfaces.new }
+    subject(:fact) { Facts::Debian::Networking::Interfaces.new }
 
     let(:value) do
       {

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::El::ProcessorsPhysicalcount do
+describe Facts::El::Processors::Physicalcount do
   describe '#call_the_resolver' do
     it 'returns a fact' do
       value = '1'
@@ -9,7 +9,7 @@ describe Facter::El::ProcessorsPhysicalcount do
       allow(Facter::Resolvers::Linux::Processors).to receive(:resolve).with(:physical_count).and_return(value)
       allow(Facter::ResolvedFact).to receive(:new).with('processors.physicalcount', value).and_return(expected_fact)
 
-      fact = Facter::El::ProcessorsPhysicalcount.new
+      fact = Facts::El::Processors::Physicalcount.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

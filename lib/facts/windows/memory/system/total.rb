@@ -1,16 +1,20 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
-    class MemorySystemTotal
-      FACT_NAME = 'memory.system.total'
-      ALIASES = 'memorysize'
+    module Memory
+      module System
+        class Total
+          FACT_NAME = 'memory.system.total'
+          ALIASES = 'memorysize'
 
-      def call_the_resolver
-        fact_value = Resolvers::Memory.resolve(:total_bytes)
-        fact_value = BytesToHumanReadable.convert(fact_value)
+          def call_the_resolver
+            fact_value = Facter::Resolvers::Memory.resolve(:total_bytes)
+            fact_value = Facter::BytesToHumanReadable.convert(fact_value)
 
-        [ResolvedFact.new(FACT_NAME, fact_value), ResolvedFact.new(ALIASES, fact_value, :legacy)]
+            [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
+          end
+        end
       end
     end
   end

@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module El
-    class SystemUptimeSeconds
-      FACT_NAME = 'system_uptime.seconds'
+    module SystemUptime
+      class Seconds
+        FACT_NAME = 'system_uptime.seconds'
 
-      def call_the_resolver
-        fact_value = Resolvers::Uptime.resolve(:seconds)
-        ResolvedFact.new(FACT_NAME, fact_value)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::Uptime.resolve(:seconds)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

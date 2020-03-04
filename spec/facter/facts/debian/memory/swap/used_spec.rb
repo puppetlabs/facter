@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::MemorySwapUsed do
+describe Facts::Debian::Memory::Swap::Used do
   describe '#call_the_resolver' do
     let(:value) { '1.00 KiB' }
 
@@ -9,7 +9,7 @@ describe Facter::Debian::MemorySwapUsed do
       allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:swap_used_bytes).and_return(1024)
       allow(Facter::ResolvedFact).to receive(:new).with('memory.swap.used', value).and_return(expected_fact)
 
-      fact = Facter::Debian::MemorySwapUsed.new
+      fact = Facts::Debian::Memory::Swap::Used.new
       expect(Facter::BytesToHumanReadable.convert(1024)).to eq(value)
       expect(fact.call_the_resolver).to eq(expected_fact)
     end

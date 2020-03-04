@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::LoadAverages do
-  subject(:fact) { Facter::Debian::LoadAverages.new }
+describe Facts::Debian::LoadAverages do
+  subject(:fact) { Facts::Debian::LoadAverages.new }
 
   let(:averages) do
     {

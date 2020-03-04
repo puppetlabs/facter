@@ -1,16 +1,19 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Debian
-    class OsFamily
-      FACT_NAME = 'os.family'
-      ALIASES = 'osfamily'
+    module Os
+      class Family
+        FACT_NAME = 'os.family'
+        ALIASES = 'osfamily'
 
-      def call_the_resolver
-        fact_value = Resolvers::OsRelease.resolve(:id_like)
-        fact_value ||= Resolvers::OsRelease.resolve(:id)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::OsRelease.resolve(:id_like)
+          fact_value ||= Facter::Resolvers::OsRelease.resolve(:id)
 
-        [ResolvedFact.new(FACT_NAME, fact_value.capitalize), ResolvedFact.new(ALIASES, fact_value.capitalize, :legacy)]
+          [Facter::ResolvedFact.new(FACT_NAME, fact_value.capitalize),
+           Facter::ResolvedFact.new(ALIASES, fact_value.capitalize, :legacy)]
+        end
       end
     end
   end

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::El::DmiChassisType do
+describe Facts::El::Dmi::Chassis::Type do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::El::DmiChassisType.new }
+    subject(:fact) { Facts::El::Dmi::Chassis::Type.new }
 
     let(:type) { 'Low Profile Desktop' }
 

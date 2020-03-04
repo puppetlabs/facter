@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::El::MemorySystemUsed do
+describe Facts::El::Memory::System::Used do
   describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'memory.system.used', value: '1.0 KiB')
@@ -8,7 +8,7 @@ describe Facter::El::MemorySystemUsed do
       allow(Facter::ResolvedFact).to receive(:new).with('memory.system.used', '1.0 KiB').and_return(expected_fact)
       expect(Facter::BytesToHumanReadable).to receive(:convert).with(1024).and_return('1.0 KiB')
 
-      fact = Facter::El::MemorySystemUsed.new
+      fact = Facts::El::Memory::System::Used.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

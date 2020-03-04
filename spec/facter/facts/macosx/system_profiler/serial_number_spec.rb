@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::SystemProfilerSerialNumber do
+describe Facts::Macosx::SystemProfiler::SerialNumber do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::SystemProfilerSerialNumber.new }
+    subject(:fact) { Facts::Macosx::SystemProfiler::SerialNumber.new }
 
     let(:value) { 'C02WW1LAG8WL' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'system_profiler.serial_number', value: value) }

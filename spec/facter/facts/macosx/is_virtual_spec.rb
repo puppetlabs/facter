@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::IsVirtual do
+describe Facts::Macosx::IsVirtual do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::IsVirtual.new }
+    subject(:fact) { Facts::Macosx::IsVirtual.new }
 
     before do
       allow(Facter::Resolvers::SystemProfiler).to receive(:resolve)

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::NetworkingScope6 do
+describe Facts::Windows::Networking::Scope6 do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::NetworkingScope6.new }
+    subject(:fact) { Facts::Windows::Networking::Scope6.new }
 
     let(:value) { 'link' }
 

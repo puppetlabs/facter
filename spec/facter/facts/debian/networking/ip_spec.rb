@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::NetworkingIp do
+describe Facts::Debian::Networking::Ip do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Debian::NetworkingIp.new }
+    subject(:fact) { Facts::Debian::Networking::Ip.new }
 
     let(:value) { '10.16.122.163' }
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::DmiBiosVersion do
+describe Facts::Debian::Dmi::Bios::Version do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Debian::DmiBiosVersion.new }
+    subject(:fact) { Facts::Debian::Dmi::Bios::Version.new }
 
     let(:version) { '6.00' }
 

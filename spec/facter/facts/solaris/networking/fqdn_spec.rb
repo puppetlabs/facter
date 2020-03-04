@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Solaris::NetworkingFqdn do
+describe Facts::Solaris::Networking::Fqdn do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Solaris::NetworkingFqdn.new }
+    subject(:fact) { Facts::Solaris::Networking::Fqdn.new }
 
     let(:value) { 'host.domain' }
 

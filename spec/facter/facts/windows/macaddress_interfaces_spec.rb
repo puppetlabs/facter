@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::MacaddressInterfaces do
-  subject(:fact) { Facter::Windows::MacaddressInterfaces.new }
+describe Facts::Windows::MacaddressInterfaces do
+  subject(:fact) { Facts::Windows::MacaddressInterfaces.new }
 
   before do
     allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)

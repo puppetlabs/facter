@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::SystemUptimeUptime do
+describe Facts::Macosx::SystemUptime::Uptime do
   describe '#call_the_resolver' do
     let(:value) { '10 days' }
 
@@ -9,7 +9,7 @@ describe Facter::Macosx::SystemUptimeUptime do
       allow(Facter::Resolvers::Uptime).to receive(:resolve).with(:uptime).and_return(value)
       allow(Facter::ResolvedFact).to receive(:new).with('system_uptime.uptime', value).and_return(expected_fact)
 
-      fact = Facter::Macosx::SystemUptimeUptime.new
+      fact = Facts::Macosx::SystemUptime::Uptime.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

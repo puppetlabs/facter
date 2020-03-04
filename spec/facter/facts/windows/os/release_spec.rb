@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::OsRelease do
-  subject(:fact) { Facter::Windows::OsRelease.new }
+describe Facts::Windows::Os::Release do
+  subject(:fact) { Facts::Windows::Os::Release.new }
 
   before do
     allow(Facter::Resolvers::WinOsDescription).to receive(:resolve).with(:consumerrel).and_return(value)

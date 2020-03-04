@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Aix
     class Kernelrelease
       FACT_NAME = 'kernelrelease'
@@ -8,7 +8,7 @@ module Facter
       def call_the_resolver
         fact_value = Facter::Resolvers::OsLevel.resolve(:build).strip
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+        Facter::ResolvedFact.new(FACT_NAME, fact_value)
       end
     end
   end

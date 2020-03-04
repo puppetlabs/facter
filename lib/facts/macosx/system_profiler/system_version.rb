@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Macosx
-    class SystemProfilerSystemVersion
-      FACT_NAME = 'system_profiler.system_version'
+    module SystemProfiler
+      class SystemVersion
+        FACT_NAME = 'system_profiler.system_version'
 
-      def call_the_resolver
-        fact_value = Facter::Resolvers::SystemProfiler.resolve(:system_version)
-        ResolvedFact.new(FACT_NAME, fact_value)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::SystemProfiler.resolve(:system_version)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

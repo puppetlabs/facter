@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::HypervisorsVmware do
+describe Facts::Windows::Hypervisors::Vmware do
   describe '#call_the_resolver' do
     context 'when is not VMware hypervisor' do
       it 'returns nil' do
@@ -9,7 +9,7 @@ describe Facter::Windows::HypervisorsVmware do
         allow(Facter::Resolvers::DMIBios).to receive(:resolve).with(:manufacturer).and_return('value')
         allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.vmware', nil).and_return(expected_fact)
 
-        fact = Facter::Windows::HypervisorsVmware.new
+        fact = Facts::Windows::Hypervisors::Vmware.new
         expect(fact.call_the_resolver).to eq(expected_fact)
       end
     end
@@ -20,7 +20,7 @@ describe Facter::Windows::HypervisorsVmware do
         allow(Facter::Resolvers::Virtualization).to receive(:resolve).with(:virtual).and_return('vmware')
         allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.vmware', {}).and_return(expected_fact)
 
-        fact = Facter::Windows::HypervisorsVmware.new
+        fact = Facts::Windows::Hypervisors::Vmware.new
         expect(fact.call_the_resolver).to eq(expected_fact)
       end
     end
@@ -32,7 +32,7 @@ describe Facter::Windows::HypervisorsVmware do
         allow(Facter::Resolvers::DMIBios).to receive(:resolve).with(:manufacturer).and_return('VMware, Inc.')
         allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.vmware', {}).and_return(expected_fact)
 
-        fact = Facter::Windows::HypervisorsVmware.new
+        fact = Facts::Windows::Hypervisors::Vmware.new
         expect(fact.call_the_resolver).to eq(expected_fact)
       end
     end

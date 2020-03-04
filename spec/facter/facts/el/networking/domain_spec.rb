@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::El::NetworkingDomain do
+describe Facts::El::Networking::Domain do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::El::NetworkingDomain.new }
+    subject(:fact) { Facts::El::Networking::Domain.new }
 
     let(:value) { 'domain' }
 

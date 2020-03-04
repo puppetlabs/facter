@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::RubySitedir do
+describe Facts::Windows::Ruby::Sitedir do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::RubySitedir.new }
+    subject(:fact) { Facts::Windows::Ruby::Sitedir.new }
 
     let(:value) { 'C:/Program Files/Puppet Labs/Puppet/puppet/lib/ruby/site_ruby/2.5.0' }
 

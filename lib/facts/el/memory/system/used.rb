@@ -1,14 +1,18 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module El
-    class MemorySystemUsed
-      FACT_NAME = 'memory.system.used'
+    module Memory
+      module System
+        class Used
+          FACT_NAME = 'memory.system.used'
 
-      def call_the_resolver
-        fact_value = Resolvers::Linux::Memory.resolve(:used_bytes)
-        fact_value = BytesToHumanReadable.convert(fact_value)
-        ResolvedFact.new(FACT_NAME, fact_value)
+          def call_the_resolver
+            fact_value = Facter::Resolvers::Linux::Memory.resolve(:used_bytes)
+            fact_value = Facter::BytesToHumanReadable.convert(fact_value)
+            Facter::ResolvedFact.new(FACT_NAME, fact_value)
+          end
+        end
       end
     end
   end

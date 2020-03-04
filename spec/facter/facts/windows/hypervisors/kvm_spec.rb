@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::HypervisorsKvm do
+describe Facts::Windows::Hypervisors::Kvm do
   describe '#call_the_resolver' do
     context 'when is not kvm hypervisor' do
       it 'returns nil' do
@@ -10,7 +10,7 @@ describe Facter::Windows::HypervisorsKvm do
         allow(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:name).and_return('value')
         allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.kvm', nil).and_return(expected_fact)
 
-        fact = Facter::Windows::HypervisorsKvm.new
+        fact = Facts::Windows::Hypervisors::Kvm.new
         expect(fact.call_the_resolver).to eq(expected_fact)
       end
     end
@@ -22,7 +22,7 @@ describe Facter::Windows::HypervisorsKvm do
         allow(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:name).and_return('Parallels')
         allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.kvm', nil).and_return(expected_fact)
 
-        fact = Facter::Windows::HypervisorsKvm.new
+        fact = Facts::Windows::Hypervisors::Kvm.new
         expect(fact.call_the_resolver).to eq(expected_fact)
       end
     end
@@ -35,7 +35,7 @@ describe Facter::Windows::HypervisorsKvm do
         allow(Facter::Resolvers::DMIBios).to receive(:resolve).with(:manufacturer).and_return('value')
         allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.kvm', openstack: true).and_return(expected_fact)
 
-        fact = Facter::Windows::HypervisorsKvm.new
+        fact = Facts::Windows::Hypervisors::Kvm.new
         expect(fact.call_the_resolver).to eq(expected_fact)
       end
     end
@@ -49,7 +49,7 @@ describe Facter::Windows::HypervisorsKvm do
         allow(Facter::Resolvers::DMIBios).to receive(:resolve).with(:manufacturer).and_return('Google')
         allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.kvm', google: true).and_return(expected_fact)
 
-        fact = Facter::Windows::HypervisorsKvm.new
+        fact = Facts::Windows::Hypervisors::Kvm.new
         expect(fact.call_the_resolver).to eq(expected_fact)
       end
     end

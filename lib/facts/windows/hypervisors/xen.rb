@@ -1,20 +1,22 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
-    class HypervisorsXen
-      FACT_NAME = 'hypervisors.xen'
+    module Hypervisors
+      class Xen
+        FACT_NAME = 'hypervisors.xen'
 
-      def call_the_resolver
-        fact_value = { context: hvm? ? 'hvm' : 'pv' } if Resolvers::Virtualization.resolve(:virtual) == 'xen'
+        def call_the_resolver
+          fact_value = { context: hvm? ? 'hvm' : 'pv' } if Facter::Resolvers::Virtualization.resolve(:virtual) == 'xen'
 
-        ResolvedFact.new(FACT_NAME, fact_value)
-      end
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
 
-      private
+        private
 
-      def hvm?
-        Resolvers::DMIComputerSystem.resolve(:name) =~ /^HVM/
+        def hvm?
+          Facter::Resolvers::DMIComputerSystem.resolve(:name) =~ /^HVM/
+        end
       end
     end
   end

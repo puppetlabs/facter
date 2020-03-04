@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::Kernelversion do
+describe Facts::Debian::Kernelversion do
   shared_examples 'kernelversion fact expectation' do
     it 'returns the correct kernelversion' do
       expected_fact = double(Facter::ResolvedFact, name: 'kernelversion', value: value)
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelrelease).and_return(input)
       allow(Facter::ResolvedFact).to receive(:new).with('kernelversion', value).and_return(expected_fact)
 
-      fact = Facter::Debian::Kernelversion.new
+      fact = Facts::Debian::Kernelversion.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

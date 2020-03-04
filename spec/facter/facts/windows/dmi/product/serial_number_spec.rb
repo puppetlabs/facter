@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::DmiProductSerialNumber do
+describe Facts::Windows::Dmi::Product::SerialNumber do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::DmiProductSerialNumber.new }
+    subject(:fact) { Facts::Windows::Dmi::Product::SerialNumber.new }
 
     let(:value) { 'VMware-42 1a 0d 03 0a b7 98 28-78 98 5e 85 a0 ad 18 47' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'dmi.product.serial_number', value: value) }

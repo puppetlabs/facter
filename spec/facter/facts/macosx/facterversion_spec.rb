@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::Facterversion do
+describe Facts::Macosx::Facterversion do
   describe '#call_the_resolver' do
     let(:value) { '0.0.5' }
 
@@ -9,7 +9,7 @@ describe Facter::Macosx::Facterversion do
       allow(Facter::Resolvers::Facterversion).to receive(:resolve).with(:facterversion).and_return(value)
       allow(Facter::ResolvedFact).to receive(:new).with('facterversion', value).and_return(expected_fact)
 
-      fact = Facter::Macosx::Facterversion.new
+      fact = Facts::Macosx::Facterversion.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

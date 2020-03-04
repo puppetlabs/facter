@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::El::NetworkingInterfaces do
+describe Facts::El::Networking::Interfaces do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::El::NetworkingInterfaces.new }
+    subject(:fact) { Facts::El::Networking::Interfaces.new }
 
     let(:value) do
       {

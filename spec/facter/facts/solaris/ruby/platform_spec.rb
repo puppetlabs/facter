@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Solaris::RubyPlatform do
+describe Facts::Solaris::Ruby::Platform do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Solaris::RubyPlatform.new }
+    subject(:fact) { Facts::Solaris::Ruby::Platform.new }
 
     let(:value) { 'x86_64-linux' }
 

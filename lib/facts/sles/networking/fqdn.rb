@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Sles
-    class NetworkingFqdn
-      FACT_NAME = 'networking.fqdn'
-      ALIASES = 'fqdn'
+    module Networking
+      class Fqdn
+        FACT_NAME = 'networking.fqdn'
+        ALIASES = 'fqdn'
 
-      def call_the_resolver
-        fact_value = Facter::Resolvers::Hostname.resolve(:fqdn)
-        [ResolvedFact.new(FACT_NAME, fact_value), ResolvedFact.new(ALIASES, fact_value, :legacy)]
+        def call_the_resolver
+          fact_value = Facter::Resolvers::Hostname.resolve(:fqdn)
+          [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
+        end
       end
     end
   end

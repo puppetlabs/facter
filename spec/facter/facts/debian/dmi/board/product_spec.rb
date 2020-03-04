@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::DmiBoardProduct do
+describe Facts::Debian::Dmi::Board::Product do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Debian::DmiBoardProduct.new }
+    subject(:fact) { Facts::Debian::Dmi::Board::Product.new }
 
     let(:product) { '440BX Desktop Reference Platform' }
 

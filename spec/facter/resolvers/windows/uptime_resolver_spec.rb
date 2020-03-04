@@ -106,7 +106,7 @@ describe Facter::Resolvers::Windows::Uptime do
     let(:local_time) { '20010204040506+0700' }
     let(:last_bootup_time) { '20010201120506+0700' }
 
-    it 'resolves uptime' do
+    it 'resolves uptime days' do
       expect(Facter::Resolvers::Windows::Uptime.resolve(:days)).to be(2)
     end
 
@@ -118,7 +118,7 @@ describe Facter::Resolvers::Windows::Uptime do
       expect(Facter::Resolvers::Windows::Uptime.resolve(:hours)).to be(64)
     end
 
-    it 'resolves uptime' do
+    it 'resolves total uptime' do
       expect(Facter::Resolvers::Windows::Uptime.resolve(:uptime)).to eql('2 days')
     end
   end

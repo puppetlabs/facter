@@ -1,28 +1,30 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Debian
-    class OsLsbRelease
-      FACT_NAME = 'os.distro'
+    module Os
+      class Distro
+        FACT_NAME = 'os.distro'
 
-      def call_the_resolver
-        versions = resolver(:release).split('.')
-        distro = {
-          'codename' => resolver(:codename),
-          'description' => resolver(:description),
-          'id' => resolver(:distributor_id),
-          'release' => {
-            'full' => resolver(:release),
-            'major' => versions[0],
-            'minor' => versions[1]
+        def call_the_resolver
+          versions = resolver(:release).split('.')
+          distro = {
+            'codename' => resolver(:codename),
+            'description' => resolver(:description),
+            'id' => resolver(:distributor_id),
+            'release' => {
+              'full' => resolver(:release),
+              'major' => versions[0],
+              'minor' => versions[1]
+            }
           }
-        }
 
-        ResolvedFact.new(FACT_NAME, distro)
-      end
+          Facter::ResolvedFact.new(FACT_NAME, distro)
+        end
 
-      def resolver(key)
-        Resolvers::LsbRelease.resolve(key)
+        def resolver(key)
+          Facter::Resolvers::LsbRelease.resolve(key)
+        end
       end
     end
   end

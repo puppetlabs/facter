@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::DmiBoardSerialNumber do
+describe Facts::Debian::Dmi::Board::SerialNumber do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Debian::DmiBoardSerialNumber.new }
+    subject(:fact) { Facts::Debian::Dmi::Board::SerialNumber.new }
 
     let(:serial_number) { 'None' }
 

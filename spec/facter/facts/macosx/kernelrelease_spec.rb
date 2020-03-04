@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::Kernelrelease do
+describe Facts::Macosx::Kernelrelease do
   describe '#call_the_resolver' do
     let(:value) { '18.7.0' }
 
@@ -9,7 +9,7 @@ describe Facter::Macosx::Kernelrelease do
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelrelease).and_return(value)
       allow(Facter::ResolvedFact).to receive(:new).with('kernelrelease', value).and_return(expected_fact)
 
-      fact = Facter::Macosx::Kernelrelease.new
+      fact = Facts::Macosx::Kernelrelease.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

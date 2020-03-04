@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::NetworkingNetmask do
+describe Facts::Windows::Networking::Netmask do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::NetworkingNetmask.new }
+    subject(:fact) { Facts::Windows::Networking::Netmask.new }
 
     let(:value) { '255.255.240.0' }
 

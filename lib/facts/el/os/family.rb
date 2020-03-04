@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module El
-    class OsFamily
-      FACT_NAME = 'os.family'
-      ALIASES = 'osfamily'
+    module Os
+      class Family
+        FACT_NAME = 'os.family'
+        ALIASES = 'osfamily'
 
-      def call_the_resolver
-        [ResolvedFact.new(FACT_NAME, 'RedHat'), ResolvedFact.new(ALIASES, 'RedHat', :legacy)]
+        def call_the_resolver
+          [Facter::ResolvedFact.new(FACT_NAME, 'RedHat'), Facter::ResolvedFact.new(ALIASES, 'RedHat', :legacy)]
+        end
       end
     end
   end

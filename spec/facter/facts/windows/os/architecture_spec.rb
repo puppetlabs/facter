@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::OsArchitecture do
+describe Facts::Windows::Os::Architecture do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::OsArchitecture.new }
+    subject(:fact) { Facts::Windows::Os::Architecture.new }
 
     let(:value) { 'x64' }
 

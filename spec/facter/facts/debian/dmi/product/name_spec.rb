@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::DmiProductName do
+describe Facts::Debian::Dmi::Product::Name do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Debian::DmiProductName.new }
+    subject(:fact) { Facts::Debian::Dmi::Product::Name.new }
 
     let(:product_name) { 'VMware Virtual Platform' }
 

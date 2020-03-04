@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::SystemProfilerL2CachePerCore do
+describe Facts::Macosx::SystemProfiler::L2CachePerCore do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::SystemProfilerL2CachePerCore.new }
+    subject(:fact) { Facts::Macosx::SystemProfiler::L2CachePerCore.new }
 
     let(:value) { '256 KB' }
     let(:expected_resolved_fact) do

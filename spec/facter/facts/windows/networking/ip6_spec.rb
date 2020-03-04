@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::NetworkingIp6 do
+describe Facts::Windows::Networking::Ip6 do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::NetworkingIp6.new }
+    subject(:fact) { Facts::Windows::Networking::Ip6.new }
 
     let(:value) { 'fe80::5989:97ff:75ae:dae7' }
 

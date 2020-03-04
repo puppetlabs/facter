@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module El
-    class OsRelease
-      FACT_NAME = 'os.release'
-      ALIASES = %w[operatingsystemmajrelease operatingsystemrelease].freeze
+    module Os
+      class Release
+        FACT_NAME = 'os.release'
+        ALIASES = %w[operatingsystemmajrelease operatingsystemrelease].freeze
 
-      def call_the_resolver
-        version = Resolvers::OsRelease.resolve(:version_id)
+        def call_the_resolver
+          version = Facter::Resolvers::OsRelease.resolve(:version_id)
 
-        [ResolvedFact.new(FACT_NAME, full: version, major: version),
-         ResolvedFact.new(ALIASES.first, version, :legacy),
-         ResolvedFact.new(ALIASES.last, version, :legacy)]
+          [Facter::ResolvedFact.new(FACT_NAME, full: version, major: version),
+           Facter::ResolvedFact.new(ALIASES.first, version, :legacy),
+           Facter::ResolvedFact.new(ALIASES.last, version, :legacy)]
+        end
       end
     end
   end

@@ -1,21 +1,23 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
-    class HypervisorsVmware
-      FACT_NAME = 'hypervisors.vmware'
+    module Hypervisors
+      class Vmware
+        FACT_NAME = 'hypervisors.vmware'
 
-      def call_the_resolver
-        fact_value = {} if vmware?
+        def call_the_resolver
+          fact_value = {} if vmware?
 
-        ResolvedFact.new(FACT_NAME, fact_value)
-      end
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
 
-      private
+        private
 
-      def vmware?
-        Resolvers::Virtualization.resolve(:virtual) == 'vmware' ||
-          Resolvers::DMIBios.resolve(:manufacturer) == 'VMware, Inc.'
+        def vmware?
+          Facter::Resolvers::Virtualization.resolve(:virtual) == 'vmware' ||
+            Facter::Resolvers::DMIBios.resolve(:manufacturer) == 'VMware, Inc.'
+        end
       end
     end
   end

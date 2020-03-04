@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
-    class NetworkingScope6
-      FACT_NAME = 'networking.scope6'
+    module Networking
+      class Scope6
+        FACT_NAME = 'networking.scope6'
 
-      def call_the_resolver
-        fact_value = Resolvers::Networking.resolve(:scope6)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::Networking.resolve(:scope6)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

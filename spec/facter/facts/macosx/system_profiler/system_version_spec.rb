@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::SystemProfilerSystemVersion do
+describe Facts::Macosx::SystemProfiler::SystemVersion do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::SystemProfilerSystemVersion.new }
+    subject(:fact) { Facts::Macosx::SystemProfiler::SystemVersion.new }
 
     let(:value) { 'macOS 10.14.6 (18G95)' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'system_profiler.system_version', value: value) }

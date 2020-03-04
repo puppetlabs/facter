@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Sles::MemorySystemAvailableBytes do
+describe Facts::Sles::Memory::System::AvailableBytes do
   describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'memory.system.available_bytes', value: 4_900_515_840)
@@ -11,7 +11,7 @@ describe Facter::Sles::MemorySystemAvailableBytes do
         .with('memory.system.available_bytes', 4_900_515_840)
         .and_return(expected_fact)
 
-      fact = Facter::Sles::MemorySystemAvailableBytes.new
+      fact = Facts::Sles::Memory::System::AvailableBytes.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

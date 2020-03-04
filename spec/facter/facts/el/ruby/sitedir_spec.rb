@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::El::RubySitedir do
+describe Facts::El::Ruby::Sitedir do
   describe '#call_the_resolver' do
     it 'returns a fact' do
       value = '/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.5.0'
@@ -9,7 +9,7 @@ describe Facter::El::RubySitedir do
       allow(Facter::Resolvers::Ruby).to receive(:resolve).with(:sitedir).and_return(value)
       allow(Facter::ResolvedFact).to receive(:new).with('ruby.sitedir', value).and_return(expected_fact)
 
-      fact = Facter::El::RubySitedir.new
+      fact = Facts::El::Ruby::Sitedir.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

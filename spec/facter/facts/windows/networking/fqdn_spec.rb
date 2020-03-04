@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::NetworkingFqdn do
+describe Facts::Windows::Networking::Fqdn do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::NetworkingFqdn.new }
+    subject(:fact) { Facts::Windows::Networking::Fqdn.new }
 
     before do
       allow(Facter::Resolvers::Networking).to receive(:resolve).with(:domain).and_return(domain_name)

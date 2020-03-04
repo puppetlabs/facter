@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Macosx
-    class MemorySystemTotalBytes
-      FACT_NAME = 'memory.system.total_bytes'
+    module Memory
+      module System
+        class TotalBytes
+          FACT_NAME = 'memory.system.total_bytes'
 
-      def call_the_resolver
-        fact_value = Resolvers::Macosx::SystemMemory.resolve(:total_bytes)
-        ResolvedFact.new(FACT_NAME, fact_value)
+          def call_the_resolver
+            fact_value = Facter::Resolvers::Macosx::SystemMemory.resolve(:total_bytes)
+            Facter::ResolvedFact.new(FACT_NAME, fact_value)
+          end
+        end
       end
     end
   end

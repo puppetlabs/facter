@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Aix
     class Ssh
       FACT_NAME = 'ssh'
 
       def call_the_resolver
-        ResolvedFact.new(FACT_NAME, fact_value)
+        Facter::ResolvedFact.new(FACT_NAME, fact_value)
       end
 
       private
@@ -16,7 +16,7 @@ module Facter
       end
 
       def resolver_data
-        Resolvers::SshResolver.resolve(:ssh)
+        Facter::Resolvers::SshResolver.resolve(:ssh)
       end
 
       def create_ssh_fact(ssh)

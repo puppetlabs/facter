@@ -1,19 +1,21 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
-    class NetworkingFqdn
-      FACT_NAME = 'networking.fqdn'
-      ALIASES = 'fqdn'
+    module Networking
+      class Fqdn
+        FACT_NAME = 'networking.fqdn'
+        ALIASES = 'fqdn'
 
-      def call_the_resolver
-        domain = Resolvers::Networking.resolve(:domain)
-        hostname = Resolvers::Hostname.resolve(:hostname)
-        return ResolvedFact.new(FACT_NAME, nil) if !hostname || hostname.empty?
+        def call_the_resolver
+          domain = Facter::Resolvers::Networking.resolve(:domain)
+          hostname = Facter::Resolvers::Hostname.resolve(:hostname)
+          return Facter::ResolvedFact.new(FACT_NAME, nil) if !hostname || hostname.empty?
 
-        fact_value = [hostname, domain].compact.join('.')
+          fact_value = [hostname, domain].compact.join('.')
 
-        [ResolvedFact.new(FACT_NAME, fact_value), ResolvedFact.new(ALIASES, fact_value, :legacy)]
+          [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
+        end
       end
     end
   end

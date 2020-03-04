@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::DmiBiosVendor do
+describe Facts::Debian::Dmi::Bios::Vendor do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Debian::DmiBiosVendor.new }
+    subject(:fact) { Facts::Debian::Dmi::Bios::Vendor.new }
 
     let(:vendor) { 'Phoenix Technologies LTD' }
 

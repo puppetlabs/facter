@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
-    class IsVirtual
-      FACT_NAME = 'is_virtual'
+    module Virtualization
+      class IsVirtual
+        FACT_NAME = 'is_virtual'
 
-      def call_the_resolver
-        fact_value = Resolvers::Virtualization.resolve(:is_virtual)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::Virtualization.resolve(:is_virtual)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

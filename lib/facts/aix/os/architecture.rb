@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Aix
-    class OsArchitecture
-      FACT_NAME = 'os.architecture'
-      ALIASES = 'architecture'
+    module Os
+      class Architecture
+        FACT_NAME = 'os.architecture'
+        ALIASES = 'architecture'
 
-      def call_the_resolver
-        fact_value = Resolvers::Architecture.resolve(:architecture)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::Architecture.resolve(:architecture)
 
-        [ResolvedFact.new(FACT_NAME, fact_value), ResolvedFact.new(ALIASES, fact_value, :legacy)]
+          [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
+        end
       end
     end
   end

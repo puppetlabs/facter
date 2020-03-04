@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Aix::LoadAverages do
+describe Facts::Aix::LoadAverages do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Aix::LoadAverages.new }
+    subject(:fact) { Facts::Aix::LoadAverages.new }
 
     let(:value) { { '1m' => 0.01, '5m' => 0.02, '15m' => 0.03 } }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'load_averages', value: value) }

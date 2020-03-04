@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Solaris::ZFSVersion do
+describe Facts::Solaris::ZfsVersion do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Solaris::ZFSVersion.new }
+    subject(:fact) { Facts::Solaris::ZfsVersion.new }
 
     let(:version) { '6' }
 

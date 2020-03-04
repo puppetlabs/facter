@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::El::DmiBiosVersion do
+describe Facts::El::Dmi::Bios::Version do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::El::DmiBiosVersion.new }
+    subject(:fact) { Facts::El::Dmi::Bios::Version.new }
 
     let(:version) { '6.00' }
 

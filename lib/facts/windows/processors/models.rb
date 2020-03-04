@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
-    class ProcessorsModels
-      FACT_NAME = 'processors.models'
+    module Processors
+      class Models
+        FACT_NAME = 'processors.models'
 
-      def call_the_resolver
-        fact_value = Resolvers::Processors.resolve(:models)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::Processors.resolve(:models)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

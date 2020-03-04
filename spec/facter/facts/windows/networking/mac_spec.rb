@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::NetworkingMac do
+describe Facts::Windows::Networking::Mac do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::NetworkingMac.new }
+    subject(:fact) { Facts::Windows::Networking::Mac.new }
 
     let(:value) { '00:50:56:9A:7E:98' }
 

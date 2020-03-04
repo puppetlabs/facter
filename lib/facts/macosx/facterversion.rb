@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Macosx
     class Facterversion
       FACT_NAME = 'facterversion'
 
       def call_the_resolver
-        fact_value = Resolvers::Facterversion.resolve(:facterversion)
+        fact_value = Facter::Resolvers::Facterversion.resolve(:facterversion)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+        Facter::ResolvedFact.new(FACT_NAME, fact_value)
       end
     end
   end

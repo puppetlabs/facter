@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::SystemProfilerUsername do
+describe Facts::Macosx::SystemProfiler::Username do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::SystemProfilerUsername.new }
+    subject(:fact) { Facts::Macosx::SystemProfiler::Username.new }
 
     let(:value) { 'Test1 Test2 (test1.test2)' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'system_profiler.username', value: value) }

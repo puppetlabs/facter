@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::Scope6Interfaces do
-  subject(:fact) { Facter::Windows::Scope6Interfaces.new }
+describe Facts::Windows::Scope6Interfaces do
+  subject(:fact) { Facts::Windows::Scope6Interfaces.new }
 
   before do
     allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)

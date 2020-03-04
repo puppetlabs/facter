@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::OsArchitecture do
+describe Facts::Macosx::Os::Architecture do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::OsArchitecture.new }
+    subject(:fact) { Facts::Macosx::Os::Architecture.new }
 
     let(:value) { 'x86_64' }
 

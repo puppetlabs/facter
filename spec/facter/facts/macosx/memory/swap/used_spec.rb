@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::MemorySwapUsed do
+describe Facts::Macosx::Memory::Swap::Used do
   describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'memory.swap.used', value: '1.0 KiB')
@@ -10,7 +10,7 @@ describe Facter::Macosx::MemorySwapUsed do
 
       expect(Facter::BytesToHumanReadable).to receive(:convert).with(1024).and_return('1.0 KiB')
 
-      fact = Facter::Macosx::MemorySwapUsed.new
+      fact = Facts::Macosx::Memory::Swap::Used.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

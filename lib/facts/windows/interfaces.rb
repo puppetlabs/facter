@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
     class Interfaces
       FACT_NAME = 'interfaces'
 
       def call_the_resolver
-        fact_value = Resolvers::Networking.resolve(:interfaces)
+        fact_value = Facter::Resolvers::Networking.resolve(:interfaces)
 
-        ResolvedFact.new(FACT_NAME, fact_value ? fact_value.keys.join(',') : nil, :legacy)
+        Facter::ResolvedFact.new(FACT_NAME, fact_value ? fact_value.keys.join(',') : nil, :legacy)
       end
     end
   end

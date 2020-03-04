@@ -1,14 +1,18 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
-    class MemorySystemCapacity
-      FACT_NAME = 'memory.system.capacity'
+    module Memory
+      module System
+        class Capacity
+          FACT_NAME = 'memory.system.capacity'
 
-      def call_the_resolver
-        fact_value = Resolvers::Memory.resolve(:capacity)
+          def call_the_resolver
+            fact_value = Facter::Resolvers::Memory.resolve(:capacity)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+            Facter::ResolvedFact.new(FACT_NAME, fact_value)
+          end
+        end
       end
     end
   end

@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Macosx
-    class OsFamily
-      FACT_NAME = 'os.family'
-      ALIASES = 'osfamily'
+    module Os
+      class Family
+        FACT_NAME = 'os.family'
+        ALIASES = 'osfamily'
 
-      def call_the_resolver
-        fact_value = Resolvers::Uname.resolve(:kernelname)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::Uname.resolve(:kernelname)
 
-        [ResolvedFact.new(FACT_NAME, fact_value), ResolvedFact.new(ALIASES, fact_value, :legacy)]
+          [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
+        end
       end
     end
   end

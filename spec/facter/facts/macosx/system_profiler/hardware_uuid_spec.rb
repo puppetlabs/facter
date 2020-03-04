@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::SystemProfilerHardwareUuid do
+describe Facts::Macosx::SystemProfiler::HardwareUuid do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::SystemProfilerHardwareUuid.new }
+    subject(:fact) { Facts::Macosx::SystemProfiler::HardwareUuid.new }
 
     let(:value) { '7C3B701F-B88A-56C6-83F4-ACBD450075C4' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'system_profiler.hardware_uuid', value: value) }

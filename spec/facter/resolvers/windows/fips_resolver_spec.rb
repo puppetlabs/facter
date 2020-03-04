@@ -22,7 +22,7 @@ describe Facter::Resolvers::Windows::Fips do
       end
     end
 
-    context 'when field exists in registry' do
+    context "when field doesn't exists in registry" do
       let(:is_fips) { 0 }
 
       it "detects that fips isn't enabled" do

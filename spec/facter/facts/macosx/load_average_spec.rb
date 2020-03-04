@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::LoadAverages do
+describe Facts::Macosx::LoadAverages do
   describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'load_averages', value: 'value')
@@ -8,7 +8,7 @@ describe Facter::Macosx::LoadAverages do
       allow(Facter::Resolvers::Macosx::LoadAverages).to receive(:resolve).with(:load_averages).and_return('value')
       allow(Facter::ResolvedFact).to receive(:new).with('load_averages', 'value').and_return(expected_fact)
 
-      fact = Facter::Macosx::LoadAverages.new
+      fact = Facts::Macosx::LoadAverages.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

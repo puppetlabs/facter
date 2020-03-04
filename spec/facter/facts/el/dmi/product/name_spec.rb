@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::El::DmiProductName do
+describe Facts::El::Dmi::Product::Name do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::El::DmiProductName.new }
+    subject(:fact) { Facts::El::Dmi::Product::Name.new }
 
     let(:product_name) { 'VMware Virtual Platform' }
 

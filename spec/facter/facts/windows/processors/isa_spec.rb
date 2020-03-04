@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::ProcessorsIsa do
+describe Facts::Windows::Processors::Isa do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::ProcessorsIsa.new }
+    subject(:fact) { Facts::Windows::Processors::Isa.new }
 
     let(:value) { 'x86_64' }
 

@@ -12,7 +12,7 @@ describe Facter::InternalFactLoader do
         allow_any_instance_of(Facter::ClassDiscoverer)
           .to receive(:discover_classes)
           .with(:Windows)
-          .and_return([Facter::Windows::NetworkInterfaces])
+          .and_return([Facts::Windows::NetworkInterfaces])
 
         stub_const('Facter::Windows::NetworkInterfaces::FACT_NAME', 'network_.*')
 
@@ -29,7 +29,7 @@ describe Facter::InternalFactLoader do
         allow_any_instance_of(Facter::ClassDiscoverer)
           .to receive(:discover_classes)
           .with(:Debian)
-          .and_return([Facter::Debian::OsName])
+          .and_return([Facts::Debian::Os::Name])
 
         stub_const('Facter::Debian::OsName::FACT_NAME', 'os.name')
 
@@ -46,7 +46,7 @@ describe Facter::InternalFactLoader do
         allow_any_instance_of(Facter::ClassDiscoverer)
           .to receive(:discover_classes)
           .with(:Windows)
-          .and_return([Facter::Windows::NetworkInterfaces, Facter::Windows::OsName])
+          .and_return([Facts::Windows::NetworkInterfaces, Facts::Windows::Os::Name])
 
         stub_const('Facter::Windows::NetworkInterface::FACT_NAME', 'network_.*')
         stub_const('Facter::Windows::OsName::FACT_NAME', 'os.name')

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-describe Facter::El::Kernelmajversion do
+describe Facts::El::Kernelmajversion do
   shared_examples 'kernelmajversion fact expectation' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'kernelmajversion', value: value)
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelrelease).and_return(value)
       allow(Facter::ResolvedFact).to receive(:new).with('kernelmajversion', value).and_return(expected_fact)
 
-      fact = Facter::El::Kernelmajversion.new
+      fact = Facts::El::Kernelmajversion.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

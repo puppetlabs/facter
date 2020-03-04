@@ -150,33 +150,6 @@ describe LegacyFacter::Util::Parser do
       end
 
       it 'returns script parser if on windows' do
-        expect(LegacyFacter::Util::Config).to receive(:windows?).and_return(true).at_least(:once)
-        cmds.each do |cmd|
-          expect(LegacyFacter::Util::Parser.parser_for(cmd))
-            .to be_an_instance_of(LegacyFacter::Util::Parser::ScriptParser)
-        end
-      end
-    end
-
-    context 'exe, bat, cmd, and com files' do
-      let(:cmds) { ['/tmp/foo.bat', '/tmp/foo.cmd', '/tmp/foo.exe', '/tmp/foo.com'] }
-
-      before do
-        cmds.each do |cmd|
-          allow(File).to receive(:executable?).with(cmd).and_return(true)
-          allow(File).to receive(:file?).with(cmd).and_return(true)
-        end
-      end
-
-      it 'returns nothing parser if not on windows' do
-        allow(LegacyFacter::Util::Config).to receive(:windows?).and_return(false)
-        cmds.each do |cmd|
-          expect(LegacyFacter::Util::Parser.parser_for(cmd))
-            .to be_an_instance_of(LegacyFacter::Util::Parser::NothingParser)
-        end
-      end
-
-      it 'returns script parser if on windows' do
         allow(LegacyFacter::Util::Config).to receive(:windows?).and_return(true)
         cmds.each do |cmd|
           expect(LegacyFacter::Util::Parser.parser_for(cmd))

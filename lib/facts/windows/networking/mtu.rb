@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
-    class NetworkingMtu
-      FACT_NAME = 'networking.mtu'
+    module Networking
+      class Mtu
+        FACT_NAME = 'networking.mtu'
 
-      def call_the_resolver
-        fact_value = Resolvers::Networking.resolve(:mtu)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::Networking.resolve(:mtu)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

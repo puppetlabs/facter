@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::SystemProfilerModelName do
+describe Facts::Macosx::SystemProfiler::ModelName do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::SystemProfilerModelName.new }
+    subject(:fact) { Facts::Macosx::SystemProfiler::ModelName.new }
 
     let(:value) { 'MacBook Pro' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'system_profiler.model_name', value: value) }

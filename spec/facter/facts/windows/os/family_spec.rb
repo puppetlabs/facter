@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::OsFamily do
+describe Facts::Windows::Os::Family do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::OsFamily.new }
+    subject(:fact) { Facts::Windows::Os::Family.new }
 
     let(:value) { 'windows' }
 

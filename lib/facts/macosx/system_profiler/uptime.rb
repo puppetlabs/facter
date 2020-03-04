@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Macosx
-    class SystemProfilerUptime
-      FACT_NAME = 'system_profiler.uptime'
+    module SystemProfiler
+      class Uptime
+        FACT_NAME = 'system_profiler.uptime'
 
-      def call_the_resolver
-        fact_value = Facter::Resolvers::SystemProfiler.resolve(:time_since_boot)
-        ResolvedFact.new(FACT_NAME, fact_value)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::SystemProfiler.resolve(:time_since_boot)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Aix::Ssh do
+describe Facts::Aix::Ssh do
   describe '#call_the_resolver' do
     it 'returns a fact' do
       ssh1 = Facter::Ssh.new(Facter::FingerPrint.new('test', 'test'), 'ecdsa', 'test', 'ecdsa')
@@ -22,7 +22,7 @@ describe Facter::Aix::Ssh do
       allow(Facter::Resolvers::SshResolver).to receive(:resolve).with(:ssh).and_return(result)
       allow(Facter::ResolvedFact).to receive(:new).with('ssh', result_fact).and_return(expected_fact)
 
-      fact = Facter::Aix::Ssh.new
+      fact = Facts::Aix::Ssh.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

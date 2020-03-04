@@ -1,21 +1,23 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
-    class HypervisorsHyperv
-      FACT_NAME = 'hypervisors.hyperv'
+    module Hypervisors
+      class Hyperv
+        FACT_NAME = 'hypervisors.hyperv'
 
-      def call_the_resolver
-        fact_value = {} if hyperv?
+        def call_the_resolver
+          fact_value = {} if hyperv?
 
-        ResolvedFact.new(FACT_NAME, fact_value)
-      end
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
 
-      private
+        private
 
-      def hyperv?
-        Resolvers::Virtualization.resolve(:virtual) == 'hyperv' ||
-          Resolvers::DMIBios.resolve(:manufacturer).include?('Microsoft')
+        def hyperv?
+          Facter::Resolvers::Virtualization.resolve(:virtual) == 'hyperv' ||
+            Facter::Resolvers::DMIBios.resolve(:manufacturer).include?('Microsoft')
+        end
       end
     end
   end

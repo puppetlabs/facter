@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Debian
-    class NetworkingPrimary
-      FACT_NAME = 'networking.primary'
+    module Networking
+      class Primary
+        FACT_NAME = 'networking.primary'
 
-      def call_the_resolver
-        fact_value = Resolvers::NetworkingLinux.resolve(:primary_interface)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::NetworkingLinux.resolve(:primary_interface)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

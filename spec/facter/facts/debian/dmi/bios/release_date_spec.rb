@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::DmiBiosReleaseDate do
+describe Facts::Debian::Dmi::Bios::ReleaseDate do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Debian::DmiBiosReleaseDate.new }
+    subject(:fact) { Facts::Debian::Dmi::Bios::ReleaseDate.new }
 
     let(:date) { '07/03/2018' }
 

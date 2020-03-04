@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::OsLsbRelease do
+describe Facts::Debian::Os::Distro do
   describe '#call_the_resolver' do
     let(:value) do
       { 'codename' => 'value1',
@@ -17,7 +17,7 @@ describe Facter::Debian::OsLsbRelease do
       allow(Facter::Resolvers::LsbRelease).to receive(:resolve).with(:release).and_return('10.9')
       allow(Facter::ResolvedFact).to receive(:new).with('os.distro', value).and_return(expected_fact)
 
-      fact = Facter::Debian::OsLsbRelease.new
+      fact = Facts::Debian::Os::Distro.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Solaris
-    class ZPoolVersion
+    class ZpoolVersion
       FACT_NAME = 'zpool_version'
 
       def call_the_resolver
-        fact_value = Resolvers::Solaris::ZPool.resolve(:zpool_version)
-        ResolvedFact.new(FACT_NAME, fact_value)
+        fact_value = Facter::Resolvers::Solaris::ZPool.resolve(:zpool_version)
+        Facter::ResolvedFact.new(FACT_NAME, fact_value)
       end
     end
   end

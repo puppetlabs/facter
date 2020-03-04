@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
     class Netmask6Interfaces
       FACT_NAME = 'netmask6_.*'
 
       def call_the_resolver
         arr = []
-        interfaces = Resolvers::Networking.resolve(:interfaces)
+        interfaces = Facter::Resolvers::Networking.resolve(:interfaces)
         interfaces&.each do |interface_name, info|
-          arr << ResolvedFact.new("netmask6_#{interface_name}", info[:netmask6], :legacy) if info[:netmask6]
+          arr << Facter::ResolvedFact.new("netmask6_#{interface_name}", info[:netmask6], :legacy) if info[:netmask6]
         end
 
         arr

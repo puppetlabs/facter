@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module El
     class Kernelversion
       FACT_NAME = 'kernelversion'
 
       def call_the_resolver
-        fact_value = Resolvers::Uname.resolve(:kernelrelease)
-        ResolvedFact.new(FACT_NAME, version(fact_value))
+        fact_value = Facter::Resolvers::Uname.resolve(:kernelrelease)
+        Facter::ResolvedFact.new(FACT_NAME, version(fact_value))
       end
 
       private

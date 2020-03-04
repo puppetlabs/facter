@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
     class FipsEnabled
       FACT_NAME = 'fips_enabled'
 
       def call_the_resolver
-        fact_value = Resolvers::Windows::Fips.resolve(:fips_enabled)
+        fact_value = Facter::Resolvers::Windows::Fips.resolve(:fips_enabled)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+        Facter::ResolvedFact.new(FACT_NAME, fact_value)
       end
     end
   end

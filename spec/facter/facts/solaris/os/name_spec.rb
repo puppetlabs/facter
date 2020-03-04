@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Solaris::OsName do
+describe Facts::Solaris::Os::Name do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Solaris::OsName.new }
+    subject(:fact) { Facts::Solaris::Os::Name.new }
 
     let(:value) { 'Solaris' }
 

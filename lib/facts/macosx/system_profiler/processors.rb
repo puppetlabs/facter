@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Macosx
-    class SystemProfilerProcessors
-      FACT_NAME = 'system_profiler.processors'
+    module SystemProfiler
+      class Processors
+        FACT_NAME = 'system_profiler.processors'
 
-      def call_the_resolver
-        fact_value = Facter::Resolvers::SystemProfiler.resolve(:number_of_processors)
-        ResolvedFact.new(FACT_NAME, fact_value)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::SystemProfiler.resolve(:number_of_processors)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

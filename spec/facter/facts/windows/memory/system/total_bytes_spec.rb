@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::MemorySystemTotalBytes do
-  subject(:fact) { Facter::Windows::MemorySystemTotalBytes.new }
+describe Facts::Windows::Memory::System::TotalBytes do
+  subject(:fact) { Facts::Windows::Memory::System::TotalBytes.new }
 
   before do
     allow(Facter::Resolvers::Memory).to receive(:resolve).with(:total_bytes).and_return(value)

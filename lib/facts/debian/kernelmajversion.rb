@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Debian
     class Kernelmajversion
       FACT_NAME = 'kernelmajversion'
 
       def call_the_resolver
-        full_version = Resolvers::Uname.resolve(:kernelrelease)
+        full_version = Facter::Resolvers::Uname.resolve(:kernelrelease)
 
-        ResolvedFact.new(FACT_NAME, major_version(full_version))
+        Facter::ResolvedFact.new(FACT_NAME, major_version(full_version))
       end
 
       private

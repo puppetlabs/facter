@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::RubyPlatform do
+describe Facts::Windows::Ruby::Platform do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::RubyPlatform.new }
+    subject(:fact) { Facts::Windows::Ruby::Platform.new }
 
     let(:value) { 'x64-mingw32' }
 

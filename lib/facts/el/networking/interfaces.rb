@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module El
-    class NetworkingInterfaces
-      FACT_NAME = 'networking.interfaces'
+    module Networking
+      class Interfaces
+        FACT_NAME = 'networking.interfaces'
 
-      def call_the_resolver
-        fact_value = Resolvers::NetworkingLinux.resolve(:interfaces)
-        ResolvedFact.new(FACT_NAME, fact_value)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::NetworkingLinux.resolve(:interfaces)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

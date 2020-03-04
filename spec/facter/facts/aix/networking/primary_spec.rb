@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Aix::NetworkingPrimary do
+describe Facts::Aix::Networking::Primary do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Aix::NetworkingPrimary.new }
+    subject(:fact) { Facts::Aix::Networking::Primary.new }
 
     let(:value) { 'en0' }
 

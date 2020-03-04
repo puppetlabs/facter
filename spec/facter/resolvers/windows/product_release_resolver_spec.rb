@@ -4,6 +4,11 @@ describe Facter::Resolvers::ProductRelease do
   describe '#resolve' do
     context 'when all fields exist in registry' do
       let(:reg) { { 'EditionID' => ed, 'InstallationType' => install, 'ProductName' => prod, 'ReleaseId' => release } }
+      let(:ed) { 'ServerStandard' }
+      let(:install) { 'Server' }
+      let(:prod) { 'Windows Server 2019 Standard' }
+      let(:release) { '1809' }
+
       before do
         allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open)
           .with('SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion')
@@ -18,11 +23,6 @@ describe Facter::Resolvers::ProductRelease do
       after do
         Facter::Resolvers::ProductRelease.invalidate_cache
       end
-
-      let(:ed) { 'ServerStandard' }
-      let(:install) { 'Server' }
-      let(:prod) { 'Windows Server 2019 Standard' }
-      let(:release) { '1809' }
 
       it 'detects edition id' do
         expect(Facter::Resolvers::ProductRelease.resolve(:edition_id)).to eql(ed)
@@ -43,6 +43,10 @@ describe Facter::Resolvers::ProductRelease do
 
     context "when InstallationType doen't exist in registry" do
       let(:reg) { { 'EditionID' => ed, 'ProductName' => prod, 'ReleaseId' => release } }
+      let(:ed) { 'ServerStandard' }
+      let(:prod) { 'Windows Server 2019 Standard' }
+      let(:release) { '1809' }
+
       before do
         allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open)
           .with('SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion')
@@ -56,10 +60,6 @@ describe Facter::Resolvers::ProductRelease do
       after do
         Facter::Resolvers::ProductRelease.invalidate_cache
       end
-
-      let(:ed) { 'ServerStandard' }
-      let(:prod) { 'Windows Server 2019 Standard' }
-      let(:release) { '1809' }
 
       it 'detects edition id' do
         expect(Facter::Resolvers::ProductRelease.resolve(:edition_id)).to eql(ed)

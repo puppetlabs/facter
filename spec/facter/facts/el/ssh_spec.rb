@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::El::Ssh do
+describe Facts::El::Ssh do
   describe '#call_the_resolver' do
     it 'returns a fact' do
       result = []
@@ -15,7 +15,7 @@ describe Facter::El::Ssh do
       allow(Facter::Resolvers::SshResolver).to receive(:resolve).with(:ssh).and_return(result)
       allow(Facter::ResolvedFact).to receive(:new).with('ssh', result_fact).and_return(expected_fact)
 
-      fact = Facter::El::Ssh.new
+      fact = Facts::El::Ssh.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

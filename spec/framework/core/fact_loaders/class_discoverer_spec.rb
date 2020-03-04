@@ -2,10 +2,10 @@
 
 describe Facter::ClassDiscoverer do
   describe '#discover_classes' do
-    let(:result) { [Facter::Windows::NetworkInterfaces, Facter::Windows::OsName] }
+    let(:result) { [Facts::Windows::NetworkInterfaces, Facts::Windows::FipsEnabled] }
 
     it 'loads all classes' do
-      allow_any_instance_of(Module).to receive(:constants).and_return(%i[NetworkInterfaces OsName])
+      allow_any_instance_of(Module).to receive(:constants).and_return(%i[NetworkInterfaces FipsEnabled])
 
       expect(Facter::ClassDiscoverer.instance.discover_classes('Windows')).to eq(result)
     end

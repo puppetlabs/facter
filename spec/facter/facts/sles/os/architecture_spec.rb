@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Sles::OsArchitecture do
+describe Facts::Sles::Os::Architecture do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Sles::OsArchitecture.new }
+    subject(:fact) { Facts::Sles::Os::Architecture.new }
 
     let(:value) { 'x86_64' }
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::Timezone do
+describe Facts::Macosx::Timezone do
   describe '#call_the_resolver' do
     let(:value) { 'EET' }
 
@@ -9,7 +9,7 @@ describe Facter::Macosx::Timezone do
       allow(Facter::Resolvers::Timezone).to receive(:resolve).with(:timezone).and_return(value)
       allow(Facter::ResolvedFact).to receive(:new).with('timezone', value).and_return(expected_fact)
 
-      fact = Facter::Macosx::Timezone.new
+      fact = Facts::Macosx::Timezone.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

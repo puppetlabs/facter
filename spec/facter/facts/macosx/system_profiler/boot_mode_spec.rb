@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::SystemProfilerBootMode do
+describe Facts::Macosx::SystemProfiler::BootMode do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::SystemProfilerBootMode.new }
+    subject(:fact) { Facts::Macosx::SystemProfiler::BootMode.new }
 
     let(:value) { 'Normal' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'system_profiler.boot_mode', value: value) }

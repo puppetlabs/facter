@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Sles
     class Ssh
       FACT_NAME = 'ssh'
 
       def call_the_resolver
-        result = Resolvers::SshResolver.resolve(:ssh)
+        result = Facter::Resolvers::SshResolver.resolve(:ssh)
         ssh_facts = {}
         result.each { |ssh| ssh_facts.merge!(create_ssh_fact(ssh)) }
-        ResolvedFact.new(FACT_NAME, ssh_facts)
+        Facter::ResolvedFact.new(FACT_NAME, ssh_facts)
       end
 
       private

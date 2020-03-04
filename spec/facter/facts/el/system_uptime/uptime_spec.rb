@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::El::SystemUptimeUptime do
+describe Facts::El::SystemUptime::Uptime do
   describe '#call_the_resolver' do
     it 'returns a fact' do
       value = '4:27 hours'
@@ -9,7 +9,7 @@ describe Facter::El::SystemUptimeUptime do
       allow(Facter::Resolvers::Uptime).to receive(:resolve).with(:uptime).and_return(value)
       allow(Facter::ResolvedFact).to receive(:new).with('system_uptime.uptime', value).and_return(expected_fact)
 
-      fact = Facter::El::SystemUptimeUptime.new
+      fact = Facts::El::SystemUptime::Uptime.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

@@ -1,20 +1,22 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Debian
-    class OsSelinux
-      FACT_NAME = 'os.selinux'
+    module Os
+      class Selinux
+        FACT_NAME = 'os.selinux'
 
-      def call_the_resolver
-        selinux = Resolvers::SELinux.resolve(:enabled)
+        def call_the_resolver
+          selinux = Facter::Resolvers::SELinux.resolve(:enabled)
 
-        ResolvedFact.new(FACT_NAME, build_fact_list(selinux))
-      end
+          Facter::ResolvedFact.new(FACT_NAME, build_fact_list(selinux))
+        end
 
-      def build_fact_list(selinux)
-        {
-          enabled: selinux
-        }
+        def build_fact_list(selinux)
+          {
+            enabled: selinux
+          }
+        end
       end
     end
   end

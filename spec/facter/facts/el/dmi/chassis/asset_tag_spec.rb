@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::El::DmiChassisAssetTag do
+describe Facts::El::Dmi::Chassis::AssetTag do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::El::DmiChassisAssetTag.new }
+    subject(:fact) { Facts::El::Dmi::Chassis::AssetTag.new }
 
     let(:tag) { 'No Asset Tag' }
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::ProcessorsCount do
+describe Facts::Windows::Processors::Count do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::ProcessorsCount.new }
+    subject(:fact) { Facts::Windows::Processors::Count.new }
 
     let(:value) { '2' }
 

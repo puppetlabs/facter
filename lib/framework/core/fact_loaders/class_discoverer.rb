@@ -9,7 +9,7 @@ module Facter
     end
 
     def discover_classes(operating_system)
-      os_module_name = Module.const_get("Facter::#{operating_system}") # TODO: change this to Facts
+      os_module_name = Module.const_get("Facts::#{operating_system}")
 
       # select only classes
       find_nested_classes(os_module_name, discovered_classes = [])

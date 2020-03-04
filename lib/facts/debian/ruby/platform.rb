@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Debian
-    class RubyPlatform
-      FACT_NAME = 'ruby.platform'
+    module Ruby
+      class Platform
+        FACT_NAME = 'ruby.platform'
 
-      def call_the_resolver
-        fact_value = Resolvers::Ruby.resolve(:platform)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::Ruby.resolve(:platform)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

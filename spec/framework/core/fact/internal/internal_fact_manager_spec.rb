@@ -3,7 +3,7 @@
 describe Facter::InternalFactManager do
   describe '#resolve_facts' do
     it 'resolved one core fact' do
-      ubuntu_os_name = double(Facter::Debian::OsName)
+      ubuntu_os_name = double(Facts::Debian::Os::Name)
 
       resolved_fact = mock_resolved_fact('os', 'Ubuntu', nil, [])
 
@@ -20,7 +20,7 @@ describe Facter::InternalFactManager do
     end
 
     it 'resolved one legacy fact' do
-      windows_networking_interface = double(Facter::Windows::NetworkInterfaces)
+      windows_networking_interface = double(Facts::Windows::NetworkInterfaces)
 
       resolved_fact = mock_resolved_fact('network_Ethernet0', '192.168.5.121', nil, [], :legacy)
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::DmiProductUuid do
+describe Facts::Debian::Dmi::Product::Uuid do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Debian::DmiProductUuid.new }
+    subject(:fact) { Facts::Debian::Dmi::Product::Uuid.new }
 
     let(:product_uuid) { '421aa929-318f-fae9-7d69-2e2321b00c45' }
 

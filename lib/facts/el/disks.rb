@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module El
     class Disks
       FACT_NAME = 'disks'
 
       def call_the_resolver
-        disks = Resolvers::Linux::Disk.resolve(:disks)
+        disks = Facter::Resolvers::Linux::Disk.resolve(:disks)
 
-        ResolvedFact.new(FACT_NAME, disks)
+        Facter::ResolvedFact.new(FACT_NAME, disks)
       end
     end
   end

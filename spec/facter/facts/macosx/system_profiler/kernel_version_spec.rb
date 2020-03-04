@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::SystemProfilerKernelVersion do
+describe Facts::Macosx::SystemProfiler::KernelVersion do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::SystemProfilerKernelVersion.new }
+    subject(:fact) { Facts::Macosx::SystemProfiler::KernelVersion.new }
 
     let(:value) { 'Darwin 18.7.0' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'system_profiler.kernel_version', value: value) }

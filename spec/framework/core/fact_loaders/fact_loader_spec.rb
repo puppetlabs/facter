@@ -5,8 +5,8 @@ describe Facter::FactLoader do
     let(:internal_fact_loader_double) { double(Facter::InternalFactLoader) }
     let(:external_fact_loader_double) { double(Facter::ExternalFactLoader) }
 
-    let(:ubuntu_os_name) { double(Facter::Debian::OsName) }
-    let(:networking_class) { double(Facter::Windows::NetworkInterfaces) }
+    let(:ubuntu_os_name) { double(Facts::Debian::Os::Name) }
+    let(:networking_class) { double(Facts::Windows::NetworkInterfaces) }
 
     let(:loaded_fact_os_name) { double(Facter::LoadedFact, name: 'os.name', klass: ubuntu_os_name, type: :core) }
     let(:loaded_fact_networking) do

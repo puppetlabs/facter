@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::SystemProfilerSecureVirtualMemory do
+describe Facts::Macosx::SystemProfiler::SecureVirtualMemory do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::SystemProfilerSecureVirtualMemory.new }
+    subject(:fact) { Facts::Macosx::SystemProfiler::SecureVirtualMemory.new }
 
     let(:value) { 'Enabled' }
     let(:expected_resolved_fact) do

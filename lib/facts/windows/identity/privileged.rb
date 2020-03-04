@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Windows
-    class IdentityPrivileged
-      FACT_NAME = 'identity.privileged'
+    module Identity
+      class Privileged
+        FACT_NAME = 'identity.privileged'
 
-      def call_the_resolver
-        fact_value = Resolvers::Identity.resolve(:privileged)
+        def call_the_resolver
+          fact_value = Facter::Resolvers::Identity.resolve(:privileged)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        end
       end
     end
   end

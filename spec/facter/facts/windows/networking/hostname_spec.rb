@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::NetworkingHostname do
+describe Facts::Windows::Networking::Hostname do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::NetworkingHostname.new }
+    subject(:fact) { Facts::Windows::Networking::Hostname.new }
 
     let(:value) { 'hostname' }
 

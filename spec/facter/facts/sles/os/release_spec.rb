@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Sles::OsRelease do
+describe Facts::Sles::Os::Release do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Sles::OsRelease.new }
+    subject(:fact) { Facts::Sles::Os::Release.new }
 
     let(:value) { '10.0' }
 

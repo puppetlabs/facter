@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Sles::Facterversion do
+describe Facts::Sles::Facterversion do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Sles::Facterversion.new }
+    subject(:fact) { Facts::Sles::Facterversion.new }
 
     let(:value) { '4.0.3' }
 

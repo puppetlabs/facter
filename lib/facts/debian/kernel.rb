@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Debian
     class Kernel
       FACT_NAME = 'kernel'
 
       def call_the_resolver
-        fact_value = Resolvers::Uname.resolve(:kernelname)
+        fact_value = Facter::Resolvers::Uname.resolve(:kernelname)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+        Facter::ResolvedFact.new(FACT_NAME, fact_value)
       end
     end
   end

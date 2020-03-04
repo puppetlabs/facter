@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::SystemProfilerSmcVersion do
+describe Facts::Macosx::SystemProfiler::SmcVersion do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Macosx::SystemProfilerSmcVersion.new }
+    subject(:fact) { Facts::Macosx::SystemProfiler::SmcVersion.new }
 
     let(:value) { '2.29f24' }
     let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'system_profiler.smc_version', value: value) }

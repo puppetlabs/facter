@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Solaris::OsArchitecture do
+describe Facts::Solaris::Os::Architecture do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Solaris::OsArchitecture.new }
+    subject(:fact) { Facts::Solaris::Os::Architecture.new }
 
     let(:value) { 'i86pc' }
 

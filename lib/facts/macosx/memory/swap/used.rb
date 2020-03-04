@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Macosx
-    class MemorySwapUsed
-      FACT_NAME = 'memory.swap.used'
+    module Memory
+      module Swap
+        class Used
+          FACT_NAME = 'memory.swap.used'
 
-      def call_the_resolver
-        fact_value = Resolvers::Macosx::SwapMemory.resolve(:used_bytes)
-        fact_value = BytesToHumanReadable.convert(fact_value)
+          def call_the_resolver
+            fact_value = Facter::Resolvers::Macosx::SwapMemory.resolve(:used_bytes)
+            fact_value = Facter::BytesToHumanReadable.convert(fact_value)
 
-        ResolvedFact.new(FACT_NAME, fact_value)
+            Facter::ResolvedFact.new(FACT_NAME, fact_value)
+          end
+        end
       end
     end
   end

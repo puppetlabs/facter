@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Solaris::ZPoolVersion do
+describe Facts::Solaris::ZpoolVersion do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Solaris::ZPoolVersion.new }
+    subject(:fact) { Facts::Solaris::ZpoolVersion.new }
 
     let(:version) { '5' }
 

@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-module Facter
+module Facts
   module Macosx
     class IsVirtual
       FACT_NAME = 'is_virtual'
 
       def call_the_resolver
-        ResolvedFact.new(FACT_NAME, virtual?)
+        Facter::ResolvedFact.new(FACT_NAME, virtual?)
       end
 
       private

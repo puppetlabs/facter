@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::HypervisorsHyperv do
+describe Facts::Windows::Hypervisors::Hyperv do
   describe '#call_the_resolver' do
     context 'when is not HyperV hypervisor' do
       it 'returns nil' do
@@ -9,7 +9,7 @@ describe Facter::Windows::HypervisorsHyperv do
         allow(Facter::Resolvers::DMIBios).to receive(:resolve).with(:manufacturer).and_return('value')
         allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.hyperv', nil).and_return(expected_fact)
 
-        fact = Facter::Windows::HypervisorsHyperv.new
+        fact = Facts::Windows::Hypervisors::Hyperv.new
         expect(fact.call_the_resolver).to eq(expected_fact)
       end
     end
@@ -20,7 +20,7 @@ describe Facter::Windows::HypervisorsHyperv do
         allow(Facter::Resolvers::Virtualization).to receive(:resolve).with(:virtual).and_return('hyperv')
         allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.hyperv', {}).and_return(expected_fact)
 
-        fact = Facter::Windows::HypervisorsHyperv.new
+        fact = Facts::Windows::Hypervisors::Hyperv.new
         expect(fact.call_the_resolver).to eq(expected_fact)
       end
     end
@@ -32,7 +32,7 @@ describe Facter::Windows::HypervisorsHyperv do
         allow(Facter::Resolvers::DMIBios).to receive(:resolve).with(:manufacturer).and_return('Microsoft Enterprise')
         allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.hyperv', {}).and_return(expected_fact)
 
-        fact = Facter::Windows::HypervisorsHyperv.new
+        fact = Facts::Windows::Hypervisors::Hyperv.new
         expect(fact.call_the_resolver).to eq(expected_fact)
       end
     end

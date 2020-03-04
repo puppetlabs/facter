@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::El::Filesystems do
+describe Facts::El::Filesystems do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::El::Filesystems.new }
+    subject(:fact) { Facts::El::Filesystems.new }
 
     let(:value) { 'ext2,ext3,ext4,xfs' }
 

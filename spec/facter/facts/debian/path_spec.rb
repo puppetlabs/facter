@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Debian::Path do
+describe Facts::Debian::Path do
   describe '#call_the_resolver' do
     let(:value) do
       '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:' \
@@ -20,7 +20,7 @@ describe Facter::Debian::Path do
         .with('path', value)
         .and_return(expected_fact)
 
-      fact = Facter::Debian::Path.new
+      fact = Facts::Debian::Path.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

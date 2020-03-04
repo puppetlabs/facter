@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Macosx::OsRelease do
+describe Facts::Macosx::Os::Release do
   describe '#call_the_resolver' do
     it 'returns a fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'os.release',
@@ -10,7 +10,7 @@ describe Facter::Macosx::OsRelease do
         .with('os.release', full: '10.9', major: '10', minor: '9')
         .and_return(expected_fact)
 
-      fact = Facter::Macosx::OsRelease.new
+      fact = Facts::Macosx::Os::Release.new
       expect(fact.call_the_resolver).to eq(expected_fact)
     end
   end

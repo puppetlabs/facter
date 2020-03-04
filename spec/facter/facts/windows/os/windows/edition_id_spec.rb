@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Windows::OsWindowsEditionID do
+describe Facts::Windows::Os::Windows::EditionId do
   describe '#call_the_resolver' do
-    subject(:fact) { Facter::Windows::OsWindowsEditionID.new }
+    subject(:fact) { Facts::Windows::Os::Windows::EditionId.new }
 
     let(:value) { 'ServerStandard' }
 
