@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::El::Ssh do
+describe Facts::Debian::Ssh do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::El::Ssh.new }
+    subject(:fact) { Facts::Debian::Ssh.new }
 
     let(:ssh) do
       [Facter::Ssh.new(Facter::FingerPrint.new('test', 'test'), 'ecdsa', 'test', 'ecdsa')]
