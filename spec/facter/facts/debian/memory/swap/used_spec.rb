@@ -2,16 +2,25 @@
 
 describe Facts::Debian::Memory::Swap::Used do
   describe '#call_the_resolver' do
-    let(:value) { '1.00 KiB' }
+    subject(:fact) { Facts::Debian::Memory::Swap::Used.new }
 
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'memory.swap.used', value: value)
-      allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:swap_used_bytes).and_return(1024)
-      allow(Facter::ResolvedFact).to receive(:new).with('memory.swap.used', value).and_return(expected_fact)
+    let(:resolver_value) { 1024 }
+    let(:value) { '1.0 Kib' }
 
-      fact = Facts::Debian::Memory::Swap::Used.new
-      expect(Facter::BytesToHumanReadable.convert(1024)).to eq(value)
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::Linux::Memory).to \
+        receive(:resolve).with(:swap_used_bytes).and_return(resolver_value)
+      allow(Facter::BytesToHumanReadable).to receive(:convert).with(resolver_value).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::Linux::Memory' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Linux::Memory).to have_received(:resolve).with(:swap_used_bytes)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'memory.swap.used', value: value)
     end
   end
 end
