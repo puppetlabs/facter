@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::El::Processors::Isa do
+describe Facts::Debian::Processors::Isa do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::El::Processors::Isa.new }
+    subject(:fact) { Facts::Debian::Processors::Isa.new }
 
     let(:processors_arch) { 'x86_64' }
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::El::Processors::Models do
+describe Facts::Debian::Processors::Models do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::El::Processors::Models.new }
+    subject(:fact) { Facts::Debian::Processors::Models.new }
 
     let(:models) { ['Intel(R) Core(TM) i7-4980HQ CPU @ 2.80GHz', 'Intel(R) Core(TM) i7-4980HQ CPU @ 2.80GHz'] }
 

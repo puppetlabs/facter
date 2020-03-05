@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::El::Processors::Count do
+describe Facts::Debian::Processors::Count do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::El::Processors::Count.new }
+    subject(:fact) { Facts::Debian::Processors::Count.new }
 
     let(:processors_count) { '4' }
 

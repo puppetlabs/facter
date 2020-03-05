@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facts
-  module El
+  module Debian
     module Processors
       class Isa
         FACT_NAME = 'processors.isa'
