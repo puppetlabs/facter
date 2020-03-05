@@ -10,7 +10,9 @@ module Facter
       # convert array or string to array
       @options[:external_dir] = [*@options[:external_dir]] unless @options[:external_dir].nil?
 
-      @options[:log_level] = log_level || @options[:log_level]
+      @options[:log_level] = log_level || @options[:log_level].to_sym
+      @options[:debug] = true if @options[:log_level] == :debug
+
       validate_log_level
 
       Log.level = @options[:log_level]
