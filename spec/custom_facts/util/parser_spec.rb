@@ -34,6 +34,29 @@ describe LegacyFacter::Util::Parser do
     end
   end
 
+  describe 'parse_executable_output' do
+    subject(:parser) { LegacyFacter::Util::Parser::Base.new('myfile.sh') }
+
+    let(:yaml_data) { "one: two\nthree: four\n" }
+    let(:keyvalue) { "one=two\nthree=four\n" }
+
+    it 'receives yaml and returns hash' do
+      expect(parser.parse_executable_output(yaml_data)).to eq data
+    end
+
+    it 'receives keyvalue and returns hash' do
+      expect(parser.parse_executable_output(keyvalue)).to eq data
+    end
+
+    it 'raises no exception on nil' do
+      expect(parser.parse_executable_output(nil)).to be_empty
+    end
+
+    it 'returns {} on invalid data' do
+      expect(parser.parse_executable_output('random')).to be_empty
+    end
+  end
+
   describe 'yaml' do
     let(:data_in_yaml) { YAML.dump(data) }
     let(:data_file) { '/tmp/foo.yaml' }
@@ -96,6 +119,7 @@ describe LegacyFacter::Util::Parser do
     let(:ext) { LegacyFacter::Util::Config.windows? ? '.bat' : '.sh' }
     let(:cmd) { "/tmp/foo#{ext}" }
     let(:data_in_txt) { "one=two\nthree=four\n" }
+    let(:yaml_data) { "one: two\nthree: four\n" }
 
     def expects_script_to_return(path, content, result)
       allow(LegacyFacter::Core::Execution).to receive(:exec).with(path).and_return(content)
@@ -117,6 +141,10 @@ describe LegacyFacter::Util::Parser do
 
     it 'does not parse a directory' do
       expects_parser_to_return_nil_for_directory(cmd)
+    end
+
+    it 'returns structured data' do
+      expects_script_to_return(cmd, yaml_data, data)
     end
 
     it 'returns an empty hash when the script returns nil' do
@@ -174,6 +202,11 @@ describe LegacyFacter::Util::Parser do
 
       it 'parses output from powershell' do
         allow(LegacyFacter::Core::Execution).to receive(:exec).and_return(data_in_txt)
+        expects_to_parse_powershell(ps1, data)
+      end
+
+      it 'parses yaml output from powershell' do
+        allow(LegacyFacter::Core::Execution).to receive(:exec).and_return(yaml_data)
         expects_to_parse_powershell(ps1, data)
       end
 
