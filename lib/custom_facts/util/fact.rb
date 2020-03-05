@@ -20,6 +20,7 @@ module LegacyFacter
       # Fact options e.g. fact_type
       attr_accessor :options
 
+      # Weight of the resolution that was used to obtain the fact value
       attr_accessor :used_resolution_weight
 
       # Creates a new fact, with no resolution mechanisms. See {Facter.add}
@@ -39,6 +40,7 @@ module LegacyFacter
 
         @resolves = []
         @searching = false
+        @used_resolution_weight = 0
 
         @value = nil
       end
@@ -169,7 +171,7 @@ module LegacyFacter
           rescue Facter::ResolveCustomFactError
             break
           end
-          @used_resolution_weight = resolve.weight
+          @used_resolution_weight = resolve.weight || 0
           return value unless value.nil?
         end
         nil

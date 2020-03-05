@@ -118,7 +118,9 @@ describe LegacyFacter::Util::Collection do
 
   describe "when returning a fact's value" do
     before do
-      @fact = collection.add('YayNess', value: 'result')
+      collection.add('YayNess', value: 'result', weight: 0)
+      collection.add('my_fact', value: 'my_fact_value', weight: 0)
+      collection.add('nil_core_value_custom', value: 'custom_fact_value', weight: 0)
     end
 
     it 'returns the result of calling :value on the fact' do
@@ -133,23 +135,78 @@ describe LegacyFacter::Util::Collection do
       expect(collection.value(:yayness)).to eq 'result'
     end
 
-    describe 'when the fact is a core fact' do
-      it 'calls the core_value method' do
-        expect(Facter).to receive(:core_value).with('core_fact')
-        collection.value('core_fact')
-      end
-    end
-
     describe 'when the weight of the resolution is 0' do
-      it 'returns core facts value is it exists' do
-        expect(Facter).to receive(:core_value).with('yayness').and_return('core_result')
-        expect(collection.value('yayness')).to eq('core_result')
+      before do
+        allow(Facter).to receive(:core_value).with('yayness').and_return('core_result')
+        allow(Facter).to receive(:core_value).with('my_fact').and_return(nil)
+        allow(Facter).to receive(:core_value).with('non_existing_fact')
+        allow(Facter).to receive(:core_value).with('nil_core_value_custom').and_return(nil)
+      end
+
+      context 'when there is a custom fact with the name in collection' do
+        it 'calls Facter.core_value' do
+          collection.value('yayness')
+
+          expect(Facter).to have_received(:core_value).with('yayness')
+        end
+
+        it 'returns core facts value' do
+          expect(collection.value('yayness')).to eq('core_result')
+        end
+      end
+
+      context 'when there is no custom fact with the name in collection' do
+        it 'calls Facter.core_value' do
+          collection.value('non_existing_fact')
+
+          expect(Facter).to have_received(:core_value).with('non_existing_fact')
+        end
+
+        it 'returns custom facts value' do
+          expect(collection.value('my_fact')).to eq('my_fact_value')
+        end
+      end
+
+      context 'when core fact is nil and custom fact has value' do
+        it 'returns custom fact' do
+          expect(collection.value('nil_core_value_custom')).to eq('custom_fact_value')
+        end
       end
     end
 
     describe 'when the weight of the resolution is greater than 0' do
-      it 'shoudl return the custom fact value' do
-        expect(collection.value('yayness')).to eq('result')
+      before do
+        collection.add('100_weight_fact', value: 'my_weight_fact_value', weight: 100)
+        collection.add('100_weight_nil_fact', value: nil, weight: 100)
+
+        allow(Facter).to receive(:core_value).with('100_weight_fact').and_return('core_result')
+        allow(Facter).to receive(:core_value).with('100_weight_nil_fact').and_return('core_100_weight_nil_fact_value')
+        allow(Facter).to receive(:core_value).with('core_fact_only').and_return('core_fact_only_value')
+        allow(Facter).to receive(:core_value).with('no_fact').and_return(nil)
+      end
+
+      context 'when there is a custom fact with the name in collection' do
+        it 'returns the custom fact value' do
+          expect(collection.value('100_weight_fact')).to eq('my_weight_fact_value')
+        end
+      end
+
+      context 'when the custom fact returns nil' do
+        it 'returns core fact value' do
+          expect(collection.value('100_weight_nil_fact')).to eq('core_100_weight_nil_fact_value')
+        end
+      end
+
+      context 'when no custom fact and one core fact with the name' do
+        it 'returns the core fact value' do
+          expect(collection.value('core_fact_only')).to eq('core_fact_only_value')
+        end
+      end
+
+      context 'when no custom fact and no core fact with the name' do
+        it 'returns nil' do
+          expect(collection.value('no_fact')).to be_nil
+        end
       end
     end
   end
