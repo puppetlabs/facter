@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::Windows::Timezone do
+describe Facts::Solaris::Timezone do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::Windows::Timezone.new }
+    subject(:fact) { Facts::Solaris::Timezone.new }
 
     let(:timezone) { 'UTC' }
 
