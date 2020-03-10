@@ -11,7 +11,7 @@ module LegacyFacter
     class Fact
       # The name of the fact
       # @return [String]
-      attr_accessor :name
+      attr_reader :name
 
       # @return [String]
       # @deprecated
