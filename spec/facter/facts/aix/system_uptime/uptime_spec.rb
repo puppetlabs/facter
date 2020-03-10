@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::Macosx::SystemUptime::Uptime do
+describe Facts::Aix::SystemUptime::Uptime do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::Macosx::SystemUptime::Uptime.new }
+    subject(:fact) { Facts::Aix::SystemUptime::Uptime.new }
 
     let(:uptime) { '10 days' }
 

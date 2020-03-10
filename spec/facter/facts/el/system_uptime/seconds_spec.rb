@@ -2,15 +2,23 @@
 
 describe Facts::El::SystemUptime::Seconds do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      value = '16059'
+    subject(:fact) { Facts::El::SystemUptime::Seconds.new }
 
-      expected_fact = double(Facter::ResolvedFact, name: 'system_uptime.seconds', value: value)
-      allow(Facter::Resolvers::Uptime).to receive(:resolve).with(:seconds).and_return(value)
-      allow(Facter::ResolvedFact).to receive(:new).with('system_uptime.seconds', value).and_return(expected_fact)
+    let(:seconds) { '123094' }
 
-      fact = Facts::El::SystemUptime::Seconds.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::Uptime).to \
+        receive(:resolve).with(:seconds).and_return(seconds)
+    end
+
+    it 'calls Facter::Resolvers::Uptime' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Uptime).to have_received(:resolve).with(:seconds)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'system_uptime.seconds', value: seconds)
     end
   end
 end
