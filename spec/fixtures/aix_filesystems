@@ -1,0 +1,11 @@
+# Comment line
+# Another comment line
+#
+# This is a test
+%defaultvfs	jfs2	nfs
+#
+cdrfs	5	none			none
+procfs	6	none			none
+sfs	16	none			none
+namefs	1	none			none
+ahafs	39	none			none
