@@ -265,8 +265,21 @@ describe Facter do
 
   describe '#reset' do
     it 'sends call to LegacyFacter' do
-      expect(LegacyFacter).to receive(:reset).once
+      allow(LegacyFacter).to receive(:reset)
       Facter.reset
+      expect(LegacyFacter).to have_received(:reset).once
+    end
+
+    it 'adds custom facts dirs' do
+      allow(LegacyFacter).to receive(:search)
+      Facter.reset
+      expect(LegacyFacter).to have_received(:search).once
+    end
+
+    it 'add external facts dirs' do
+      allow(LegacyFacter).to receive(:search_external)
+      Facter.reset
+      expect(LegacyFacter).to have_received(:search_external).once
     end
   end
 

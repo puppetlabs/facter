@@ -86,6 +86,8 @@ module Facter
 
     def reset
       LegacyFacter.reset
+      LegacyFacter.search(*Options.custom_dir)
+      LegacyFacter.search_external(Options.external_dir)
     end
 
     def search(*dirs)
