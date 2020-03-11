@@ -1,0 +1,159 @@
+*
+*
+*
+* Devices
+*
+scsi_vhci, instance #0
+pci, instance #0
+        pci15ad,1976 (driver not attached)
+        pci8086,7191, instance #0
+        isa, instance #0
+                i8042, instance #0
+                        keyboard, instance #0
+                        mouse, instance #0
+                motherboard (driver not attached)
+                lp, instance #0 (driver not attached)
+                asy, instance #0 (driver not attached)
+                asy, instance #1 (driver not attached)
+                fdc (driver not attached)
+                pit_beep, instance #0
+        pci-ide, instance #0
+                ide, instance #0
+                        sd, instance #0
+                ide, instance #1 (driver not attached)
+        pci15ad,1976 (driver not attached)
+        pci15ad,740 (driver not attached)
+        display, instance #0
+        pci15ad,1976, instance #0
+                sd, instance #1
+        pci15ad,790, instance #1
+        pci15ad,7a0, instance #0
+                pci15ad,7b0, instance #0
+        pci15ad,7a0, instance #1
+        pci15ad,7a0, instance #2
+        pci15ad,7a0, instance #3
+        pci15ad,7a0, instance #4
+fw, instance #0
+        sb, instance #1
+                cpu, instance #0 (driver not attached)
+                cpu, instance #1 (driver not attached)
+fcoe, instance #0
+iscsi, instance #0
+options, instance #0
+*
+* Loadable Objects
+*
+* Loadable Object Path = /platform/i86pc/kernel
+*
+drv/amd64/xsvc
+drv/amd64/vga_arbiter
+amd64/unix
+cpu/amd64/cpu.generic
+cpu/amd64/cpu_ms.AuthenticAMD
+cpu/amd64/cpu_ms.AuthenticAMD.15
+cpu/amd64/cpu_ms.GenuineIntel
+cpu/amd64/cpu_ms.GenuineIntel.6.45
+        hard link:  cpu/amd64/cpu_ms.GenuineIntel.6.62
+cpu/amd64/cpu_ms.GenuineIntel.6.46
+        hard link:  cpu/amd64/cpu_ms.GenuineIntel.6.47
+drv/amd64/acpinex
+dacf/amd64/consconfig_dacf
+drv/amd64/amd_iommu
+drv/amd64/acpippm
+drv/amd64/cpudrv
+drv/amd64/intel_iommu
+drv/amd64/isa
+drv/amd64/npe
+drv/amd64/pci
+drv/amd64/ppm
+misc/amd64/gfx_private
+tod/amd64/zvtod
+drv/amd64/cpc
+        hard link:  sys/amd64/cpc
+misc/amd64/drmach_acpi
+drv/amd64/dr
+misc/amd64/cpr
+kmdb/amd64/zvpsm
+kmdb/amd64/pcplusmp
+kmdb/amd64/unix
+kmdb/amd64/uppc
+kmdb/amd64/apix
+kmdb/amd64/iommu
+drv/amd64/pci-ide
+drv/amd64/zvpci_stub
+drv/amd64/zvmm
+*
+* Loadable Object Path = /kernel
+*
+misc/amd64/dadk
+drv/amd64/cmdk
+misc/amd64/gda
+misc/amd64/strategy
+drv/amd64/cxge
+drv/amd64/cxgen
+drv/amd64/nge
+drv/amd64/rum
+fs/amd64/hsfs
+drv/amd64/ahci
+misc/qlc/amd64/qlc_fw_8100
+drv/amd64/rdsv3
+misc/amd64/nfssrv
+drv/amd64/fcip
+crypto/amd64/rsa
+drv/amd64/imraid_sas
+drv/amd64/ibp
+crypto/amd64/sha1
+        hard link:  misc/amd64/sha1
+crypto/amd64/arcfour
+crypto/amd64/blowfish
+crypto/amd64/aes
+crypto/amd64/camellia
+crypto/amd64/des
+crypto/amd64/ecc
+crypto/amd64/md5
+        hard link:  misc/amd64/md5
+crypto/amd64/intelrd
+drv/amd64/cryptoadm
+misc/amd64/bignum
+misc/amd64/kcf
+crypto/amd64/sha2
+        hard link:  misc/amd64/sha2
+crypto/amd64/sha3
+        hard link:  misc/amd64/sha3
+crypto/amd64/swrand
+drv/amd64/sdpib
+        hard link:  strmod/amd64/sdpib
+socketmod/amd64/socksdp
+drv/amd64/lmrc
+fs/amd64/udfs
+drv/amd64/ntxn
+drv/amd64/uvfs
+        hard link:  fs/amd64/uvfs
+drv/amd64/bge
+misc/amd64/fssnap_if
+fs/amd64/ufs
+drv/amd64/fcoe
+fs/amd64/nfs
+        hard link:  sys/amd64/nfs
+misc/amd64/klmmod
+misc/amd64/klmops
+misc/amd64/nfs_dlboot
+drv/amd64/usbftdi
+drv/amd64/qlcnic
+drv/amd64/fcsm
+sched/amd64/RT_DPTBL
+sched/amd64/FX_DPTBL
+pcbe/amd64/uncore.GenuineIntel.6.45
+pcbe/amd64/pcbe.AuthenticAMD.21
+pcbe/amd64/pcbe.GenuineIntel.15
+pcbe/amd64/pcbe.GenuineIntel.6.26
+pcbe/amd64/pcbe.GenuineIntel.6.60
+pcbe/amd64/pcbe.GenuineIntel.6
+pcbe/amd64/pcbe.GenuineIntel.6.78
+pcbe/amd64/pcbe.GenuineIntel.6.15
+drv/amd64/uncore
+pcbe/amd64/pcbe.AuthenticAMD
+pcbe/amd64/pcbe.GenuineIntel.6.42
+drv/amd64/zcons
+fs/amd64/pcfs
+drv/amd64/pool
