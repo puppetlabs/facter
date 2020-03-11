@@ -19,6 +19,8 @@ module Facter
           end
 
           def read_cpuinfo(fact_name)
+            return unless File.readable?('/proc/cpuinfo')
+
             cpuinfo_output = File.read('/proc/cpuinfo')
             read_processors(cpuinfo_output) # + model names
 

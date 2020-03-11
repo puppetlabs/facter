@@ -4,6 +4,7 @@ describe Facter::Resolvers::Linux::Filesystems do
   let(:systems) { 'ext2,ext3,ext4,xfs' }
 
   before do
+    allow(File).to receive(:readable?).with('/proc/filesystems').and_return(true)
     allow(File).to receive(:read)
       .with('/proc/filesystems')
       .and_return(load_fixture('filesystems').read)

@@ -8,7 +8,7 @@ describe Facter::Resolvers::Linux::DmiBios do
 
     before do
       allow(File).to receive(:directory?).with(test_dir).and_return(true)
-      allow(File).to receive(:exist?).with("/sys/class/dmi/id/#{file}").and_return(true)
+      allow(File).to receive(:readable?).with("/sys/class/dmi/id/#{file}").and_return(true)
       allow(File).to receive(:read).with("/sys/class/dmi/id/#{file}").and_return(file_content)
     end
 

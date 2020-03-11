@@ -15,6 +15,8 @@ module Facter
           end
 
           def read_meminfo_file(fact_name)
+            return unless File.readable?('/proc/meminfo')
+
             meminfo_output = File.read('/proc/meminfo')
             read_system(meminfo_output)
             read_swap(meminfo_output)

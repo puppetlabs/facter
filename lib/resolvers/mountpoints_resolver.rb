@@ -16,6 +16,8 @@ module Facter
           end
 
           def root_device
+            return unless File.readable?('/proc/cmdline')
+
             cmdline = File.read('/proc/cmdline')
             match = cmdline.match(/root=([^\s]+)/)
             match&.captures&.first

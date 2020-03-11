@@ -16,6 +16,8 @@ module Facter
           end
 
           def read_filesystems(fact_name)
+            return unless File.readable?('/proc/filesystems')
+
             output = File.read('/proc/filesystems')
             filesystems = []
             output.each_line do |line|

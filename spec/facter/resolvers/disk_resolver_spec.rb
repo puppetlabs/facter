@@ -11,11 +11,11 @@ describe Facter::Resolvers::Linux::Disk do
 
     before do
       allow(Dir).to receive(:entries).with('/sys/block').and_return(['.', '..', 'sr0', 'sda'])
-      allow(File).to receive(:exist?).with('/sys/block/sr0/size').and_return(true)
-      allow(File).to receive(:exist?).with('/sys/block/sda/size').and_return(true)
+      allow(File).to receive(:readable?).with('/sys/block/sr0/size').and_return(true)
+      allow(File).to receive(:readable?).with('/sys/block/sda/size').and_return(true)
       paths.each do |_key, value|
         disks.each do |disk|
-          allow(File).to receive(:exist?).with("/sys/block/#{disk}#{value}").and_return(false) unless value =~ /size/
+          allow(File).to receive(:readable?).with("/sys/block/#{disk}#{value}").and_return(false) unless value =~ /size/
         end
       end
       allow(File).to receive(:read).and_return(size)

@@ -2,7 +2,7 @@
 
 describe Facter::Resolvers::OsRelease do
   before do
-    allow(File).to receive(:exist?)
+    allow(File).to receive(:readable?)
       .with('/etc/os-release')
       .and_return(true)
 

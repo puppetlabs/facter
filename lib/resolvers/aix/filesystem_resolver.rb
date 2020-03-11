@@ -15,7 +15,7 @@ module Facter
           end
 
           def read_vtf_file(fact_name)
-            return unless File.exist?('/etc/vfs')
+            return unless File.readable?('/etc/vfs')
 
             file_content = File.readlines('/etc/vfs').map do |line|
               next if line =~ /#|%/ # skip lines that are comments or defaultvfs line

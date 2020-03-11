@@ -25,7 +25,7 @@ module Facter
         end
 
         def read_os_release_file(fact_name)
-          unless File.exist?('/etc/os-release')
+          unless File.readable?('/etc/os-release')
             @fact_list[:name] = nil
             return
           end

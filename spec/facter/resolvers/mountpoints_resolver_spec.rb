@@ -34,6 +34,7 @@ describe Facter::Resolvers::Linux::Mountpoints do
   end
 
   before do
+    allow(File).to receive(:readable?).with('/proc/cmdline').and_return(true)
     allow(File).to receive(:read)
       .with('/proc/cmdline')
       .and_return(load_fixture('cmdline_root_device').read)

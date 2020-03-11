@@ -35,7 +35,7 @@ module Facter
                        product_uuid]
             return unless File.directory?('/sys/class/dmi')
 
-            if files.include?(fact_name.to_s) && File.exist?("/sys/class/dmi/id/#{fact_name}")
+            if files.include?(fact_name.to_s) && File.readable?("/sys/class/dmi/id/#{fact_name}")
               @fact_list[fact_name] = File.read("/sys/class/dmi/id/#{fact_name}").strip
               chassis_to_name(@fact_list[fact_name]) if fact_name == :chassis_type
 

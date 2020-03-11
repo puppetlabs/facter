@@ -9,6 +9,7 @@ describe Facter::Resolvers::Linux::Processors do
   let(:physical_processors) { 1 }
 
   before do
+    allow(File).to receive(:readable?).with('/proc/cpuinfo').and_return(true)
     allow(File).to receive(:read)
       .with('/proc/cpuinfo')
       .and_return(load_fixture('cpuinfo').read)
