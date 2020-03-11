@@ -2,22 +2,31 @@
 
 describe Facts::Sles::Ssh do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      result = []
-      ssh = Facter::Ssh.new(Facter::FingerPrint.new('test', 'test'), 'ecdsa', 'test', 'ecdsa')
-      result << ssh
-      result_fact = { ssh.name.to_sym =>
-                               { 'fingerprints'.to_sym =>
-                                     { 'sha1'.to_sym => ssh.fingerprint.sha1,
-                                       'sha256'.to_sym => ssh.fingerprint.sha256 },
-                                 'key'.to_sym => ssh.key,
-                                 'type'.to_sym => ssh.type } }
-      expected_fact = double(Facter::ResolvedFact, name: 'ssh', value: result_fact)
-      allow(Facter::Resolvers::SshResolver).to receive(:resolve).with(:ssh).and_return(result)
-      allow(Facter::ResolvedFact).to receive(:new).with('ssh', result_fact).and_return(expected_fact)
+    subject(:fact) { Facts::Sles::Ssh.new }
 
-      fact = Facts::Sles::Ssh.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:ssh) do
+      [Facter::Ssh.new(Facter::FingerPrint.new('test', 'test'), 'ecdsa', 'test', 'ecdsa')]
+    end
+    let(:value) do
+      { 'ecdsa' => { 'fingerprints' =>
+                         { 'sha1' => 'test', 'sha256' => 'test' },
+                     'key' => 'test',
+                     'type' => 'ecdsa' } }
+    end
+
+    before do
+      allow(Facter::Resolvers::SshResolver).to \
+        receive(:resolve).with(:ssh).and_return(ssh)
+    end
+
+    it 'calls Facter::Resolvers::SshResolver' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::SshResolver).to have_received(:resolve).with(:ssh)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'ssh', value: value)
     end
   end
 end

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-describe Facts::Windows::Interfaces do
-  subject(:fact) { Facts::Windows::Interfaces.new }
+describe Facts::Sles::Interfaces do
+  subject(:fact) { Facts::Sles::Interfaces.new }
 
   before do
-    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
+    allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:interfaces).and_return(interfaces)
   end
 
   describe '#call_the_resolver' do
@@ -12,12 +12,12 @@ describe Facts::Windows::Interfaces do
 
     it 'calls Facter::Resolvers::Networking' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:interfaces)
+      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:interfaces)
     end
 
     it 'returns interfaces names' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'interfaces', value: interfaces.keys.join(','), type: :legacy)
+        have_attributes(name: 'interfaces', value: interfaces.keys.sort.join(','), type: :legacy)
     end
   end
 

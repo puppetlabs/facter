@@ -2,17 +2,22 @@
 
 describe Facts::Sles::Memory::Swap::UsedBytes do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'memory.swap.used_bytes', value: '1342128128')
-      allow(Facter::Resolvers::Linux::Memory).to receive(:resolve)
-        .with(:used_bytes)
-        .and_return('1342128128')
-      allow(Facter::ResolvedFact).to receive(:new)
-        .with('memory.swap.used_bytes', '1342128128')
-        .and_return(expected_fact)
+    subject(:fact) { Facts::Sles::Memory::Swap::UsedBytes.new }
 
-      fact = Facts::Sles::Memory::Swap::UsedBytes.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:value) {  1024 }
+
+    before do
+      allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:swap_used_bytes).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::Memory' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Linux::Memory).to have_received(:resolve).with(:swap_used_bytes)
+    end
+
+    it 'returns free memory fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'memory.swap.used_bytes', value: value)
     end
   end
 end

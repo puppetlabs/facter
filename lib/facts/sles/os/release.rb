@@ -18,9 +18,9 @@ module Facts
 
         def build_fact_list(version)
           {
-            full: "#{version}.0",
-            major: version,
-            minor: 0
+            full: version,
+            major: version.split('.').first,
+            minor: version.split('.').last
           }
         end
       end
