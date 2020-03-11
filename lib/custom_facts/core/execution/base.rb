@@ -49,37 +49,28 @@ module LegacyFacter
               return on_fail
             end
 
-            out = ''
-
             begin
-              wait_for_child = true
-              out = `#{expanded_command}`.chomp
-              wait_for_child = false
+              out, stderr, _status_ = Open3.capture3(expanded_command.to_s)
+              log_stderr_from_file(stderr, expanded_command)
             rescue StandardError => e
               return on_fail unless on_fail == :raise
 
               raise LegacyFacter::Core::Execution::ExecutionFailure.new,
                     "Failed while executing '#{expanded_command}': #{e.message}"
-            ensure
-              if wait_for_child
-                # We need to ensure that if this command exits early then any spawned
-                # children will be reaped. Process execution is frequently
-                # terminated using Timeout.timeout but since the timeout isn't in
-                # this scope we can't rescue the raised exception. The best that
-                # we can do is determine if the child has exited, and if it hasn't
-                # then we need to spawn a thread to wait for the child.
-                #
-                # Due to the limitations of Ruby 1.8 there aren't good ways to
-                # asynchronously run a command and grab the PID of that command
-                # using the standard library. The best we can do is blindly wait
-                # on all processes and hope for the best. This issue is described
-                # at https://tickets.puppetlabs.com/browse/FACT-150
-                Thread.new { Process.waitall }
-              end
             end
 
-            out
+            out.strip
           end
+        end
+
+        private
+
+        def log_stderr_from_file(msg, command)
+          return if !msg || msg.empty?
+
+          file_name = command.split('/').last
+          logger = Facter::Log.new(file_name)
+          logger.warn(msg.strip)
         end
       end
     end

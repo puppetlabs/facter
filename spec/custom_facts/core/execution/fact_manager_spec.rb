@@ -68,9 +68,29 @@ describe LegacyFacter::Core::Execution::Base do
     end
 
     it 'expands the command before running it' do
-      allow(subject).to receive(:`).with('/bin/foo').and_return('')
+      allow(Open3).to receive(:capture3).with('/bin/foo').and_return('')
       expect(subject).to receive(:expand_command).with('foo').and_return '/bin/foo'
       subject.execute('foo')
+    end
+
+    context 'when there are stderr messages from file' do
+      subject(:executor) { LegacyFacter::Core::Execution::Posix.new }
+
+      let(:logger) { instance_spy(Facter::Log) }
+      let(:command) { '/bin/foo' }
+
+      before do
+        allow(Open3).to receive(:capture3).with(command).and_return(['', 'some error'])
+        allow(Facter::Log).to receive(:new).with('foo').and_return(logger)
+
+        allow(File).to receive(:executable?).with(command).and_return(true)
+        allow(File).to receive(:file?).with(command).and_return(true)
+      end
+
+      it 'loggs warning messages on stderr' do
+        executor.execute(command)
+        expect(logger).to have_received(:warn).with('some error')
+      end
     end
 
     describe 'and the command is not present' do
@@ -87,7 +107,7 @@ describe LegacyFacter::Core::Execution::Base do
 
     describe 'when command execution fails' do
       before do
-        expect(subject).to receive(:`).with('/bin/foo').and_raise('kaboom!')
+        allow(Open3).to receive(:capture3).with('/bin/foo').and_raise('kaboom!')
         expect(subject).to receive(:expand_command).with('foo').and_return('/bin/foo')
       end
 
@@ -100,26 +120,15 @@ describe LegacyFacter::Core::Execution::Base do
       end
     end
 
-    it 'launches a thread to wait on children if the command was interrupted' do
-      expect(subject).to receive(:`).with('/bin/foo').and_raise('kaboom!')
-      expect(subject).to receive(:expand_command).with('foo').and_return '/bin/foo'
-
-      allow(LegacyFacter).to receive(:warn)
-      expect(Thread).to receive(:new).and_yield
-      expect(Process).to receive(:waitall).once
-
-      subject.execute('foo', on_fail: nil)
-    end
-
     it 'returns the output of the command' do
-      expect(subject).to receive(:`).with('/bin/foo').and_return('hi')
+      allow(Open3).to receive(:capture3).with('/bin/foo').and_return('hi')
       expect(subject).to receive(:expand_command).with('foo').and_return '/bin/foo'
 
       expect(subject.execute('foo')).to eq 'hi'
     end
 
     it 'strips off trailing newlines' do
-      expect(subject).to receive(:`).with('/bin/foo').and_return "hi\n"
+      allow(Open3).to receive(:capture3).with('/bin/foo').and_return "hi\n"
       expect(subject).to receive(:expand_command).with('foo').and_return '/bin/foo'
 
       expect(subject.execute('foo')).to eq 'hi'
