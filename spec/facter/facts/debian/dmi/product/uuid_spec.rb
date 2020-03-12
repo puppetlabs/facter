@@ -16,7 +16,7 @@ describe Facts::Debian::Dmi::Product::Uuid do
       expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:product_uuid)
     end
 
-    it 'returns a resolved fact' do
+    it 'returns product uuid fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'dmi.product.uuid', value: product_uuid)
     end

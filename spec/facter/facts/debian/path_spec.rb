@@ -7,7 +7,7 @@ describe Facts::Debian::Path do
       '/bin:/usr/games:/usr/local/games'
     end
 
-    it 'returns a fact' do
+    it 'returns path fact' do
       expected_fact = double(Facter::ResolvedFact, name: :path, value: value)
 
       allow(Facter::Resolvers::Path)

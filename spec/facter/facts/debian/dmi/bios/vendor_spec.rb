@@ -16,9 +16,10 @@ describe Facts::Debian::Dmi::Bios::Vendor do
       expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:bios_vendor)
     end
 
-    it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'dmi.bios.vendor', value: vendor)
+    it 'returns bios vendor fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'dmi.bios.vendor', value: vendor),
+                        an_object_having_attributes(name: 'bios_vendor', value: vendor, type: :legacy))
     end
   end
 end

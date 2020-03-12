@@ -16,9 +16,10 @@ describe Facts::Debian::Processors::Isa do
       expect(Facter::Resolvers::Uname).to have_received(:resolve).with(:processor)
     end
 
-    it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'processors.isa', value: processors_arch)
+    it 'returns processors isa fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'processors.isa', value: processors_arch),
+                        an_object_having_attributes(name: 'hardwareisa', value: processors_arch, type: :legacy))
     end
   end
 end

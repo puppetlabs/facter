@@ -4,7 +4,7 @@ describe Facts::Debian::Kernel do
   describe '#call_the_resolver' do
     let(:value) { 'Linux' }
 
-    it 'returns a fact' do
+    it 'returns kernel fact' do
       expected_fact = double(Facter::ResolvedFact, name: 'kernel', value: value)
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelname).and_return(value)
       allow(Facter::ResolvedFact).to receive(:new).with('kernel', value).and_return(expected_fact)

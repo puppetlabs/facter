@@ -16,7 +16,7 @@ describe Facts::Debian::Dmi::Product::SerialNumber do
       expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:product_serial)
     end
 
-    it 'returns a resolved fact' do
+    it 'returns product serial number fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'dmi.product.serial_number', value: serial_number)
     end

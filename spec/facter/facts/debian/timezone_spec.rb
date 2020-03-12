@@ -16,7 +16,7 @@ describe Facts::Debian::Timezone do
       expect(Facter::Resolvers::Timezone).to have_received(:resolve).with(:timezone)
     end
 
-    it 'returns a resolved fact' do
+    it 'returns timezone fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'timezone', value: timezone)
     end

@@ -16,9 +16,10 @@ describe Facts::Debian::Dmi::Bios::Version do
       expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:bios_version)
     end
 
-    it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'dmi.bios.version', value: version)
+    it 'returns bios version fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'dmi.bios.version', value: version),
+                        an_object_having_attributes(name: 'bios_version', value: version, type: :legacy))
     end
   end
 end

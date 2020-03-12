@@ -16,9 +16,10 @@ describe Facts::Debian::Processors::Count do
       expect(Facter::Resolvers::Linux::Processors).to have_received(:resolve).with(:processors)
     end
 
-    it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'processors.count', value: processors_count)
+    it 'returns processors count fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'processors.count', value: processors_count),
+                        an_object_having_attributes(name: 'processorcount', value: processors_count, type: :legacy))
     end
   end
 end

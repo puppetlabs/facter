@@ -16,9 +16,10 @@ describe Facts::Debian::Dmi::Bios::ReleaseDate do
       expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:bios_date)
     end
 
-    it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'dmi.bios.release_date', value: date)
+    it 'returns bios release date fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'dmi.bios.release_date', value: date),
+                        an_object_having_attributes(name: 'bios_release_date', value: date, type: :legacy))
     end
   end
 end

@@ -16,9 +16,10 @@ describe Facts::Debian::Dmi::Chassis::Type do
       expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:chassis_type)
     end
 
-    it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'dmi.chassis.type', value: type)
+    it 'returns chassis type fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'dmi.chassis.type', value: type),
+                        an_object_having_attributes(name: 'chassistype', value: type, type: :legacy))
     end
   end
 end

@@ -16,7 +16,7 @@ describe Facts::Debian::Processors::Models do
       expect(Facter::Resolvers::Linux::Processors).to have_received(:resolve).with(:models)
     end
 
-    it 'returns a resolved fact' do
+    it 'returns processors models fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'processors.models', value: models)
     end

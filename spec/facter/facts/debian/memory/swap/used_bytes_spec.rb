@@ -16,7 +16,7 @@ describe Facts::Debian::Memory::Swap::UsedBytes do
       expect(Facter::Resolvers::Linux::Memory).to have_received(:resolve).with(:swap_used_bytes)
     end
 
-    it 'returns a resolved fact' do
+    it 'returns swap used memory in bytes fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'memory.swap.used_bytes', value: value)
     end

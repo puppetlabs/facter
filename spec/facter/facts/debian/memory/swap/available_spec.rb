@@ -18,9 +18,10 @@ describe Facts::Debian::Memory::Swap::Available do
       expect(Facter::Resolvers::Linux::Memory).to have_received(:resolve).with(:swap_free)
     end
 
-    it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'memory.swap.available', value: value)
+    it 'returns swap available memory fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'memory.swap.available', value: value),
+                        an_object_having_attributes(name: 'swapfree', value: value, type: :legacy))
     end
   end
 end

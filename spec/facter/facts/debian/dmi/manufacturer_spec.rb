@@ -16,9 +16,10 @@ describe Facts::Debian::Dmi::Manufacturer do
       expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:sys_vendor)
     end
 
-    it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'dmi.manufacturer', value: sys_vendor)
+    it 'returns manufacturer fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'dmi.manufacturer', value: sys_vendor),
+                        an_object_having_attributes(name: 'manufacturer', value: sys_vendor, type: :legacy))
     end
   end
 end
