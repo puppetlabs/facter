@@ -17,7 +17,6 @@ module Facter
           end
 
           def read_facts(fact_name)
-            @fact_list[:disks] = {}
             build_disks_hash
 
             FILE_PATHS.each do |key, file|
@@ -29,16 +28,25 @@ module Facter
                 result = File.read(file_path).strip
 
                 # Linux always considers sectors to be 512 bytes long independently of the devices real block size.
-                value[key] = file =~ /size/ ? result.to_i * 512 : result
+                value[key] = file =~ /size/ ? construct_size(value, result) : result
               end
             end
 
+            @fact_list[:disks] = nil if @fact_list[:disks].empty?
             @fact_list[fact_name]
           end
 
           def build_disks_hash
+            @fact_list[:disks] = {}
             directories = Dir.entries(DIR).reject { |dir| dir =~ /\.+/ }
             directories.each { |disk| @fact_list[:disks].merge!(disk => {}) }
+            @fact_list[:disks].select! { |disk, _fact| File.readable?(File.join(DIR, disk, 'device')) }
+          end
+
+          def construct_size(facts, value)
+            value = value.to_i * 512
+            facts[:size_bytes] = value
+            facts[:size] = Facter::BytesToHumanReadable.convert(value)
           end
         end
       end
