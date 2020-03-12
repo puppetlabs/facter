@@ -17,8 +17,9 @@ describe Facts::El::Dmi::Product::Uuid do
     end
 
     it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'dmi.product.uuid', value: product_uuid)
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'dmi.product.uuid', value: product_uuid),
+                        an_object_having_attributes(name: 'uuid', value: product_uuid, type: :legacy))
     end
   end
 end

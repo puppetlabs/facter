@@ -2,14 +2,23 @@
 
 describe Facts::El::Os::Selinux do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'os.selinux', value: { enabled: 'value' })
-      allow(Facter::Resolvers::SELinux).to receive(:resolve).with(:enabled).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('os.selinux', enabled: 'value')
-                                                  .and_return(expected_fact)
+    subject(:fact) { Facts::El::Os::Selinux.new }
 
-      fact = Facts::El::Os::Selinux.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:selinux) { false }
+
+    before do
+      allow(Facter::Resolvers::SELinux).to receive(:resolve).with(:enabled).and_return(selinux)
+    end
+
+    it 'calls Facter::Resolvers::SELinux' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::SELinux).to have_received(:resolve).with(:enabled)
+    end
+
+    it 'returns architecture fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'os.selinux', value: { 'enabled' => selinux }),
+                        an_object_having_attributes(name: 'selinux', value: selinux, type: :legacy))
     end
   end
 end

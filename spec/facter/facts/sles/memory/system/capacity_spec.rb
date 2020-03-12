@@ -2,13 +2,23 @@
 
 describe Facts::Sles::Memory::System::Capacity do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'memory.system.capacity', value: '21.50%')
-      allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:capacity).and_return('21.50%')
-      allow(Facter::ResolvedFact).to receive(:new).with('memory.system.capacity', '21.50%').and_return(expected_fact)
+    subject(:fact) { Facts::Sles::Memory::System::Capacity.new }
 
-      fact = Facts::Sles::Memory::System::Capacity.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:value) { '5.3%' }
+
+    before do
+      allow(Facter::Resolvers::Linux::Memory).to \
+        receive(:resolve).with(:capacity).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::Linux::Memory' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Linux::Memory).to have_received(:resolve).with(:capacity)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'memory.system.capacity', value: value)
     end
   end
 end

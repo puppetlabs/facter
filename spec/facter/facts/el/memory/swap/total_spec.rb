@@ -2,14 +2,23 @@
 
 describe Facts::El::Memory::Swap::Total do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'memory.swap.total', value: '1.0 KiB')
-      allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:swap_total).and_return(1024)
-      allow(Facter::ResolvedFact).to receive(:new).with('memory.swap.total', '1.0 KiB').and_return(expected_fact)
-      expect(Facter::BytesToHumanReadable).to receive(:convert).with(1024).and_return('1.0 KiB')
+    subject(:fact) { Facts::El::Memory::Swap::Total.new }
 
-      fact = Facts::El::Memory::Swap::Total.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:value) { '1.00 KiB' }
+
+    before do
+      allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:swap_total).and_return(1024)
+    end
+
+    it 'calls Facter::Resolvers::Memory' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Linux::Memory).to have_received(:resolve).with(:swap_total)
+    end
+
+    it 'returns free memory fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'memory.swap.total', value: value),
+                        an_object_having_attributes(name: 'swapsize', value: value, type: :legacy))
     end
   end
 end

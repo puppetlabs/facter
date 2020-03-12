@@ -2,15 +2,23 @@
 
 describe Facts::Sles::Memory::System::UsedBytes do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'memory.system.used_bytes', value: 1_342_128_128)
-      allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:used_bytes).and_return(1_342_128_128)
-      allow(Facter::ResolvedFact).to receive(:new)
-        .with('memory.system.used_bytes', 1_342_128_128)
-        .and_return(expected_fact)
+    subject(:fact) { Facts::Sles::Memory::System::UsedBytes.new }
 
-      fact = Facts::Sles::Memory::System::UsedBytes.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:value) { 1024 }
+
+    before do
+      allow(Facter::Resolvers::Linux::Memory).to \
+        receive(:resolve).with(:used_bytes).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::Linux::Memory' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Linux::Memory).to have_received(:resolve).with(:used_bytes)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'memory.system.used_bytes', value: value)
     end
   end
 end

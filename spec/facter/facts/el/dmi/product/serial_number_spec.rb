@@ -17,8 +17,9 @@ describe Facts::El::Dmi::Product::SerialNumber do
     end
 
     it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'dmi.product.serial_number', value: serial_number)
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'dmi.product.serial_number', value: serial_number),
+                        an_object_having_attributes(name: 'serialnumber', value: serial_number, type: :legacy))
     end
   end
 end

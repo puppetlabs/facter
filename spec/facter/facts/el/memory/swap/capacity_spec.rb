@@ -2,13 +2,23 @@
 
 describe Facts::El::Memory::Swap::Capacity do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'memory.swap.capacity', value: 1024)
-      allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:swap_capacity).and_return(1024)
-      allow(Facter::ResolvedFact).to receive(:new).with('memory.swap.capacity', 1024).and_return(expected_fact)
+    subject(:fact) { Facts::El::Memory::Swap::Capacity.new }
 
-      fact = Facts::El::Memory::Swap::Capacity.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:value) { '7.4%' }
+
+    before do
+      allow(Facter::Resolvers::Linux::Memory).to \
+        receive(:resolve).with(:swap_capacity).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::Linux::Memory' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Linux::Memory).to have_received(:resolve).with(:swap_capacity)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'memory.swap.capacity', value: value)
     end
   end
 end

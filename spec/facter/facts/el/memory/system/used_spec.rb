@@ -2,14 +2,25 @@
 
 describe Facts::El::Memory::System::Used do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'memory.system.used', value: '1.0 KiB')
-      allow(Facter::Resolvers::Linux::Memory).to receive(:resolve).with(:used_bytes).and_return(1024)
-      allow(Facter::ResolvedFact).to receive(:new).with('memory.system.used', '1.0 KiB').and_return(expected_fact)
-      expect(Facter::BytesToHumanReadable).to receive(:convert).with(1024).and_return('1.0 KiB')
+    subject(:fact) { Facts::El::Memory::System::Used.new }
 
-      fact = Facts::El::Memory::System::Used.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:resolver_value) { 1024 }
+    let(:value) { '1.0 Kib' }
+
+    before do
+      allow(Facter::Resolvers::Linux::Memory).to \
+        receive(:resolve).with(:used_bytes).and_return(resolver_value)
+      allow(Facter::BytesToHumanReadable).to receive(:convert).with(resolver_value).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::Linux::Memory' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Linux::Memory).to have_received(:resolve).with(:used_bytes)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'memory.system.used', value: value)
     end
   end
 end

@@ -4,11 +4,10 @@ describe Facts::El::SystemUptime::Uptime do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::El::SystemUptime::Uptime.new }
 
-    let(:uptime) { '10 days' }
+    let(:value) { '9:42 hours' }
 
     before do
-      allow(Facter::Resolvers::Uptime).to \
-        receive(:resolve).with(:uptime).and_return(uptime)
+      allow(Facter::Resolvers::Uptime).to receive(:resolve).with(:uptime).and_return(value)
     end
 
     it 'calls Facter::Resolvers::Uptime' do
@@ -16,9 +15,10 @@ describe Facts::El::SystemUptime::Uptime do
       expect(Facter::Resolvers::Uptime).to have_received(:resolve).with(:uptime)
     end
 
-    it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'system_uptime.uptime', value: uptime)
+    it 'returns time since last boot' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'system_uptime.uptime', value: value),
+                        an_object_having_attributes(name: 'uptime', value: value, type: :legacy))
     end
   end
 end

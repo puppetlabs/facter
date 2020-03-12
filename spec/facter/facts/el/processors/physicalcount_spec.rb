@@ -17,8 +17,11 @@ describe Facts::El::Processors::Physicalcount do
     end
 
     it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'processors.physicalcount', value: physical_count)
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'processors.physicalcount',
+                                                    value: physical_count),
+                        an_object_having_attributes(name: 'physicalprocessorcount',
+                                                    value: physical_count, type: :legacy))
     end
   end
 end
