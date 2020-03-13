@@ -21,17 +21,24 @@ module Facter
               output, _status = Open3.capture2("ipconfig getifaddr #{primary_interface}")
               ip = output.strip
             end
-            @fact_list[fact_name] = ip
+            @fact_list[:ip] = ip
             @fact_list[fact_name]
           end
 
           def read_primary_interface
+            find_all_interfaces
             iface = nil
             output, _status = Open3.capture2('route -n get default')
             output.split(/^\S/).each do |str|
               iface = Regexp.last_match(1) if str.strip =~ /interface: (\S+)/
             end
             iface
+          end
+
+          def find_all_interfaces
+            output, _status = Open3.capture2('ifconfig -a 2>/dev/null')
+            output = output.scan(/^\S+/).collect { |i| i.sub(/:$/, '') }.uniq
+            @fact_list[:interfaces] = output.collect { |iface| iface.gsub(/[^a-z0-9_]/i, '_') }.join(',')
           end
         end
       end

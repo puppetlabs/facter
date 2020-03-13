@@ -19,7 +19,6 @@ module Facter
 
           retrieve_default_interface_and_ip
           retrieve_interface_info
-
           @fact_list[fact_name]
         end
 
