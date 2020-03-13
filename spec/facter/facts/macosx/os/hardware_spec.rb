@@ -2,13 +2,23 @@
 
 describe Facts::Macosx::Os::Hardware do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'os.hardware', value: 'value')
-      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('os.hardware', 'value').and_return(expected_fact)
+    subject(:fact) { Facts::Macosx::Os::Hardware.new }
 
-      fact = Facts::Macosx::Os::Hardware.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:value) { 'value' }
+
+    before do
+      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::Uname' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Uname).to have_received(:resolve).with(:machine)
+    end
+
+    it 'returns augeas fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'os.hardware', value: value),
+                        an_object_having_attributes(name: 'hardwaremodel', value: value, type: :legacy))
     end
   end
 end

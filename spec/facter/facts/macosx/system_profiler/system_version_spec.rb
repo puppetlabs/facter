@@ -5,17 +5,21 @@ describe Facts::Macosx::SystemProfiler::SystemVersion do
     subject(:fact) { Facts::Macosx::SystemProfiler::SystemVersion.new }
 
     let(:value) { 'macOS 10.14.6 (18G95)' }
-    let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'system_profiler.system_version', value: value) }
 
     before do
-      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:system_version).and_return(value)
-      expect(Facter::ResolvedFact).to receive(:new)
-        .with('system_profiler.system_version', value)
-        .and_return(expected_resolved_fact)
+      allow(Facter::Resolvers::SystemProfiler).to \
+        receive(:resolve).with(:system_version).and_return(value)
     end
 
-    it 'returns system_profiler.system_version fact' do
-      expect(fact.call_the_resolver).to eq(expected_resolved_fact)
+    it 'calls Facter::Resolvers::SystemProfiler' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::SystemProfiler).to have_received(:resolve).with(:system_version)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'system_profiler.system_version', value: value),
+                        an_object_having_attributes(name: 'sp_os_version', value: value, type: :legacy))
     end
   end
 end

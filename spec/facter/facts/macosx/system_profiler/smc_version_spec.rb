@@ -5,17 +5,21 @@ describe Facts::Macosx::SystemProfiler::SmcVersion do
     subject(:fact) { Facts::Macosx::SystemProfiler::SmcVersion.new }
 
     let(:value) { '2.29f24' }
-    let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'system_profiler.smc_version', value: value) }
 
     before do
-      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:smc_version_system).and_return(value)
-      expect(Facter::ResolvedFact).to receive(:new)
-        .with('system_profiler.smc_version', value)
-        .and_return(expected_resolved_fact)
+      allow(Facter::Resolvers::SystemProfiler).to \
+        receive(:resolve).with(:smc_version_system).and_return(value)
     end
 
-    it 'returns system_profiler.smc_version fact' do
-      expect(fact.call_the_resolver).to eq(expected_resolved_fact)
+    it 'calls Facter::Resolvers::SystemProfiler' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::SystemProfiler).to have_received(:resolve).with(:smc_version_system)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'system_profiler.smc_version', value: value),
+                        an_object_having_attributes(name: 'sp_smc_version_system', value: value, type: :legacy))
     end
   end
 end

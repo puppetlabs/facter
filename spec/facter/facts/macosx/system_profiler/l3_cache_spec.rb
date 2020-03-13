@@ -5,17 +5,21 @@ describe Facts::Macosx::SystemProfiler::L3Cache do
     subject(:fact) { Facts::Macosx::SystemProfiler::L3Cache.new }
 
     let(:value) { '6 MB' }
-    let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'system_profiler.l3_cache', value: value) }
 
     before do
-      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:l3_cache).and_return(value)
-      expect(Facter::ResolvedFact).to receive(:new)
-        .with('system_profiler.l3_cache', value)
-        .and_return(expected_resolved_fact)
+      allow(Facter::Resolvers::SystemProfiler).to \
+        receive(:resolve).with(:l3_cache).and_return(value)
     end
 
-    it 'returns system_profiler.l3_cache fact' do
-      expect(fact.call_the_resolver).to eq(expected_resolved_fact)
+    it 'calls Facter::Resolvers::SystemProfiler' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::SystemProfiler).to have_received(:resolve).with(:l3_cache)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'system_profiler.l3_cache', value: value),
+                        an_object_having_attributes(name: 'sp_l3_cache', value: value, type: :legacy))
     end
   end
 end

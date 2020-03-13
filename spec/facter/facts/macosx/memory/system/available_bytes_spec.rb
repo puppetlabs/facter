@@ -2,14 +2,24 @@
 
 describe Facts::Macosx::Memory::System::AvailableBytes do
   describe '#call_the_resolver' do
+    subject(:fact) { Facts::Macosx::Memory::System::AvailableBytes.new }
+
+    let(:value) { 1024 * 1024 }
+    let(:value_mb) { 1 }
+
+    before do
+      allow(Facter::Resolvers::Macosx::SystemMemory).to receive(:resolve).with(:available_bytes).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::Macosx::SystemMemory' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Macosx::SystemMemory).to have_received(:resolve).with(:available_bytes)
+    end
+
     it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'memory.system.available_bytes', value: 1024)
-
-      allow(Facter::Resolvers::Macosx::SystemMemory).to receive(:resolve).with(:available_bytes).and_return(1024)
-      allow(Facter::ResolvedFact).to receive(:new).with('memory.system.available_bytes', 1024).and_return(expected_fact)
-
-      fact = Facts::Macosx::Memory::System::AvailableBytes.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'memory.system.available_bytes', value: value),
+                        an_object_having_attributes(name: 'memoryfree_mb', value: value_mb, type: :legacy))
     end
   end
 end

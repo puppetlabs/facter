@@ -5,19 +5,21 @@ describe Facts::Macosx::SystemProfiler::SecureVirtualMemory do
     subject(:fact) { Facts::Macosx::SystemProfiler::SecureVirtualMemory.new }
 
     let(:value) { 'Enabled' }
-    let(:expected_resolved_fact) do
-      double(Facter::ResolvedFact, name: 'system_profiler.secure_virtual_memory', value: value)
-    end
 
     before do
-      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:secure_virtual_memory).and_return(value)
-      expect(Facter::ResolvedFact).to receive(:new)
-        .with('system_profiler.secure_virtual_memory', value)
-        .and_return(expected_resolved_fact)
+      allow(Facter::Resolvers::SystemProfiler).to \
+        receive(:resolve).with(:secure_virtual_memory).and_return(value)
     end
 
-    it 'returns system_profiler.secure_virtual_memory fact' do
-      expect(fact.call_the_resolver).to eq(expected_resolved_fact)
+    it 'calls Facter::Resolvers::SystemProfiler' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::SystemProfiler).to have_received(:resolve).with(:secure_virtual_memory)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'system_profiler.secure_virtual_memory', value: value),
+                        an_object_having_attributes(name: 'sp_secure_vm', value: value, type: :legacy))
     end
   end
 end

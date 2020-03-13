@@ -17,8 +17,9 @@ describe Facts::Macosx::SystemUptime::Seconds do
     end
 
     it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'system_uptime.seconds', value: seconds)
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'system_uptime.seconds', value: seconds),
+                        an_object_having_attributes(name: 'uptime_seconds', value: seconds, type: :legacy))
     end
   end
 end

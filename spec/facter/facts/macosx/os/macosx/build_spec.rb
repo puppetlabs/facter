@@ -17,8 +17,9 @@ describe Facts::Macosx::Os::Macosx::Build do
     end
 
     it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'os.macosx.build', value: version)
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'os.macosx.build', value: version),
+                        an_object_having_attributes(name: 'macosx_buildversion', value: version, type: :legacy))
     end
   end
 end

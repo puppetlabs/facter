@@ -5,19 +5,21 @@ describe Facts::Macosx::SystemProfiler::ModelIdentifier do
     subject(:fact) { Facts::Macosx::SystemProfiler::ModelIdentifier.new }
 
     let(:value) { 'MacBookPro11,4' }
-    let(:expected_resolved_fact) do
-      double(Facter::ResolvedFact, name: 'system_profiler.model_identifier', value: value)
-    end
 
     before do
-      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve).with(:model_identifier).and_return(value)
-      expect(Facter::ResolvedFact).to receive(:new)
-        .with('system_profiler.model_identifier', value)
-        .and_return(expected_resolved_fact)
+      allow(Facter::Resolvers::SystemProfiler).to \
+        receive(:resolve).with(:model_identifier).and_return(value)
     end
 
-    it 'returns system_profiler.model_identifier fact' do
-      expect(fact.call_the_resolver).to eq(expected_resolved_fact)
+    it 'calls Facter::Resolvers::SystemProfiler' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::SystemProfiler).to have_received(:resolve).with(:model_identifier)
+    end
+
+    it 'returns a resolved fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'system_profiler.model_identifier', value: value),
+                        an_object_having_attributes(name: 'sp_machine_model', value: value, type: :legacy))
     end
   end
 end
