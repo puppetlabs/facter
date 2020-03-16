@@ -10,6 +10,7 @@ module Facter
       # :codename
 
       @semaphore = Mutex.new
+      @log = Facter::Log.new(self)
       @fact_list ||= {}
 
       class << self
@@ -26,13 +27,19 @@ module Facter
         end
 
         def lsb_release_installed?
-          output, _status = Open3.capture2('which lsb_release')
+          output, stderr, _status = Open3.capture3('which lsb_release')
+          @log.debug(stderr) unless stderr.empty?
           @fact_list[:lsb_release_installed] = !output.empty?
         end
 
         def read_lsb_release_file
-          output, _status = Open3.capture2('lsb_release -a')
-          release_info = output.delete("\t").split("\n").map { |e| e.split(':', 2) }
+          output, stderr, _status = Open3.capture3('lsb_release -a')
+          @log.debug(stderr) unless stderr.empty?
+          build_fact_list(output)
+        end
+
+        def build_fact_list(info)
+          release_info = info.delete("\t").split("\n").map { |e| e.split(':', 2) }
 
           result = Hash[*release_info.flatten]
           result.each { |k, v| @fact_list[k.downcase.gsub(/\s/, '_').to_sym] = v }
