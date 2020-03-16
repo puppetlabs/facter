@@ -14,7 +14,8 @@ module Facter
         end
 
         def build_zone_fact(fact_name)
-          zone_adm_output, status = Open3.capture2('/usr/sbin/zoneadm list -cp')
+          command = '/usr/sbin/zoneadm list -cp'
+          zone_adm_output, status = Open3.capture2(command)
           unless status.to_s.include?('exit 0')
             @log.debug("Command #{command} returned status: #{status}")
             return
@@ -32,17 +33,16 @@ module Facter
           zones_fact = []
           zones_result.each_line do |zone_line|
             id, name, status, path, uuid, brand, ip_type = zone_line.split(':')
-            zone_fact = {
+            zones_fact << {
               brand: brand,
               id: id,
-              ip_type: ip_type.chomp,
+              iptype: ip_type.chomp,
               name: name,
               uuid: uuid,
               status: status,
               path: path
 
             }
-            zones_fact << zone_fact
           end
           zones_fact
         end

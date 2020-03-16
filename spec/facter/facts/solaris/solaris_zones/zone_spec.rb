@@ -1,28 +1,45 @@
 # frozen_string_literal: true
 
 describe Facts::Solaris::SolarisZones::Zone do
-  describe '#call_the_resolver' do
-    # let(:zone_name){"global"}
-    it 'returns a fact' do
-      zone_name = 'global'
-      array_of_hashes = [{ brand: 'solaris',
-                           id: '0',
-                           ip_type: 'shared',
-                           name: 'global',
-                           uuid: '',
-                           status: nil,
-                           path: nil }]
-      result_fact = { zone_name.to_sym => {   brand: 'solaris',
-                                              id: '0',
-                                              ip_type: 'shared',
-                                              status: nil,
-                                              path: nil } }
-      expected_fact = double(Facter::ResolvedFact, name: 'solaris_zones.zones', value: result_fact)
-      allow(Facter::Resolvers::SolarisZone).to receive(:resolve).with(:zone).and_return(array_of_hashes)
-      allow(Facter::ResolvedFact).to receive(:new).with('solaris_zones.zones', result_fact).and_return(expected_fact)
+  subject(:fact) { Facts::Solaris::SolarisZones::Zone.new }
 
-      fact = Facts::Solaris::SolarisZones::Zone.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+  let(:zone_name) { 'global' }
+  let(:result) do
+    { brand: 'solaris',
+      id: '0',
+      iptype: 'shared',
+      name: 'global',
+      uuid: nil,
+      status: nil,
+      path: nil }
+  end
+
+  let(:result_fact) do
+    { zone_name => { 'brand' => 'solaris',
+                     'id' => '0',
+                     'ip_type' => 'shared',
+                     'status' => nil,
+                     'path' => nil } }
+  end
+
+  before do
+    allow(Facter::Resolvers::SolarisZone).to receive(:resolve).with(:zone).and_return([result])
+  end
+
+  describe '#call_the_resolver' do
+    it 'returns a fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(
+          an_object_having_attributes(name: 'solaris_zones.zones', value: result_fact, type: :core),
+          an_object_having_attributes(name: 'zone_global_id', value: result[:id], type: :legacy),
+          an_object_having_attributes(name: 'zone_global_uuid', value: result[:uuid], type: :legacy),
+          an_object_having_attributes(name: 'zone_global_name', value: result[:name], type: :legacy),
+          an_object_having_attributes(name: 'zone_global_path', value: result[:path], type: :legacy),
+          an_object_having_attributes(name: 'zone_global_status', value: result[:status], type: :legacy),
+          an_object_having_attributes(name: 'zone_global_brand', value: result[:brand], type: :legacy),
+          an_object_having_attributes(name: 'zone_global_iptype', value: result[:iptype], type: :legacy),
+          an_object_having_attributes(name: 'zones', value: 1, type: :legacy)
+        )
     end
   end
 end

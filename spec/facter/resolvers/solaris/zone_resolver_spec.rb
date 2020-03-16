@@ -20,7 +20,7 @@ describe Facter::Resolvers::SolarisZone do
     it 'returns zone fact' do
       hash_fact = [{ brand: 'solaris',
                      id: '0',
-                     ip_type: 'shared',
+                     iptype: 'shared',
                      name: 'global',
                      uuid: '',
                      status: 'running',

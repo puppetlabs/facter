@@ -1,14 +1,21 @@
 # frozen_string_literal: true
 
 describe Facts::Solaris::SolarisZones::Current do
+  subject(:fact) { Facts::Solaris::SolarisZones::Current.new }
+
+  let(:value) { 'global' }
+
+  before do
+    allow(Facter::Resolvers::SolarisZoneName).to receive(:resolve).with(:current_zone_name).and_return('global')
+  end
+
   describe '#call_the_resolver' do
     it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'solaris_zones.current', value: 'global')
-      allow(Facter::Resolvers::SolarisZoneName).to receive(:resolve).with(:current_zone_name).and_return('global')
-      allow(Facter::ResolvedFact).to receive(:new).with('solaris_zones.current', 'global').and_return(expected_fact)
-
-      fact = Facts::Solaris::SolarisZones::Current.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(
+          an_object_having_attributes(name: 'solaris_zones.current', value: value, type: :core),
+          an_object_having_attributes(name: 'zonename', value: value, type: :legacy)
+        )
     end
   end
 end

@@ -16,9 +16,9 @@ describe Facts::Solaris::Ruby::Sitedir do
     end
 
     it 'return ruby sitedir fact' do
-      expect(fact.call_the_resolver)
-        .to be_an_instance_of(Facter::ResolvedFact)
-        .and have_attributes(name: 'ruby.sitedir', value: value)
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'ruby.sitedir', value: value),
+                        an_object_having_attributes(name: 'rubysitedir', value: value, type: :legacy))
     end
   end
 end
