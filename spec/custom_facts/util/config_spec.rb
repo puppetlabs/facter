@@ -8,7 +8,7 @@ describe LegacyFacter::Util::Config do
 
   describe "ENV['HOME'] is unset", unless: LegacyFacter::Util::Root.root? do
     around do |example|
-      LegacyFacter::Core::Execution.with_env('HOME' => nil) do
+      Facter::Core::Execution.with_env('HOME' => nil) do
         example.run
       end
     end

@@ -69,7 +69,7 @@ module LegacyFacter
       #     evaluates to `false` or `nil` then the confined fact will not be
       #     evaluated.
       #   @example Confine the fact to systems with a specific file.
-      #       confine { File.exist? '/bin/foo' }
+      #       confine { File.readable? '/bin/foo' }
       def confine(confines = nil, &block)
         case confines
         when Hash

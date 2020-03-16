@@ -13,11 +13,11 @@ module LegacyFacter
 
         def which(bin)
           if absolute_path?(bin)
-            return bin if File.executable?(bin) && File.file?(bin)
+            return bin if File.executable?(bin) && FileTest.file?(bin)
           else
             search_paths.each do |dir|
               dest = File.join(dir, bin)
-              return dest if File.executable?(dest) && File.file?(dest)
+              return dest if File.executable?(dest) && FileTest.file?(dest)
             end
           end
           nil

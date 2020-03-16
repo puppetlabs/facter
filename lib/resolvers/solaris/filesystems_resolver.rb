@@ -15,7 +15,7 @@ module Facter
           end
 
           def read_sysdef_file(fact_name)
-            return unless File.exist?('/usr/sbin/sysdef')
+            return unless File.readable?('/usr/sbin/sysdef')
 
             file_content, _status = Open3.capture2('/usr/sbin/sysdef')
             files = file_content.split("\n").map do |line|

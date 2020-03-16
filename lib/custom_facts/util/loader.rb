@@ -25,7 +25,7 @@ module LegacyFacter
           # Load individual files
           file = File.join(dir, filename)
 
-          load_file(file) if File.file?(file)
+          load_file(file) if FileTest.file?(file)
         end
       end
 
@@ -42,7 +42,7 @@ module LegacyFacter
           # dir is already an absolute path
           Dir.glob(File.join(dir, '*.rb')).each do |path|
             # exclude dirs that end with .rb
-            load_file(path) if File.file?(path)
+            load_file(path) if FileTest.file?(path)
           end
         end
 

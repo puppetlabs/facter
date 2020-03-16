@@ -4,7 +4,7 @@ describe Facter::Resolvers::Hostname do
   describe '#resolve' do
     before do
       allow(Open3).to receive(:capture2).with('hostname').and_return(host)
-      allow(File).to receive(:exist?).with('/etc/resolv.conf').and_return(true)
+      allow(File).to receive(:readable?).with('/etc/resolv.conf').and_return(true)
       allow(File).to receive(:read)
         .with('/etc/resolv.conf')
         .and_return("nameserver 10.10.0.10\nnameserver 10.10.1.10\nsearch baz\ndomain baz\n")

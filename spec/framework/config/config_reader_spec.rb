@@ -11,19 +11,19 @@ describe Facter::ConfigReader do
     context 'read config' do
       it 'uses facter.conf' do
         expect(Hocon).to receive(:load).with(linux_config_path)
-        expect(File).to receive(:exist?).with(linux_config_path).and_return(true)
+        expect(File).to receive(:readable?).with(linux_config_path).and_return(true)
 
         Facter::ConfigReader.new
       end
 
       it 'uses provided existing file' do
-        expect(File).to receive(:exist?).with('/my_conf.conf').and_return(true)
+        expect(File).to receive(:readable?).with('/my_conf.conf').and_return(true)
         expect(Hocon).to receive(:load).with('/my_conf.conf')
         Facter::ConfigReader.new('/my_conf.conf')
       end
 
       it 'uses provided inexistent file' do
-        expect(File).to receive(:exist?).with('/my_conf.conf').and_return(false)
+        expect(File).to receive(:readable?).with('/my_conf.conf').and_return(false)
         expect(Hocon).not_to receive(:load)
         Facter::ConfigReader.new('/my_conf.conf')
       end
@@ -32,7 +32,7 @@ describe Facter::ConfigReader do
 
   describe '#block_list' do
     before do
-      expect(File).to receive(:exist?).with(linux_config_path).and_return(true)
+      expect(File).to receive(:readable?).with(linux_config_path).and_return(true)
     end
 
     it 'loads block list' do
@@ -58,7 +58,7 @@ describe Facter::ConfigReader do
 
   describe '#ttls' do
     before do
-      expect(File).to receive(:exist?).with(linux_config_path).and_return(true)
+      expect(File).to receive(:readable?).with(linux_config_path).and_return(true)
     end
 
     it 'loads ttls' do
@@ -88,7 +88,7 @@ describe Facter::ConfigReader do
 
   describe '#global' do
     before do
-      expect(File).to receive(:exist?).with(linux_config_path).and_return(true)
+      expect(File).to receive(:readable?).with(linux_config_path).and_return(true)
     end
 
     it 'loads global config' do
@@ -108,7 +108,7 @@ describe Facter::ConfigReader do
 
   describe '#cli' do
     before do
-      expect(File).to receive(:exist?).with(linux_config_path).and_return(true)
+      expect(File).to receive(:readable?).with(linux_config_path).and_return(true)
     end
 
     it 'loads cli config' do

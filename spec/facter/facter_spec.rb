@@ -6,10 +6,15 @@ describe Facter do
   let(:os_fact) do
     double(Facter::ResolvedFact, name: fact_name, value: fact_value, user_query: fact_name, filter_tokens: [])
   end
-  let(:fact_collection) { { 'os' => { 'name' => 'Ubuntu' } } }
-  let(:empty_fact_collection) { {} }
+  let(:fact_collection) do
+    fact_collection = Facter::FactCollection.new
+    fact_collection ['os'] = Facter::FactCollection['name' => 'Ubuntu']
+    fact_collection
+  end
+  let(:empty_fact_collection) { Facter::FactCollection.new }
 
   before do
+    Facter.clear
     allow(Facter::CacheManager).to receive(:invalidate_all_caches)
   end
 
@@ -147,7 +152,7 @@ describe Facter do
         .and_return(fact_collection)
 
       result = Facter.fact(user_query)
-      expect(result).to be_instance_of(Facter::Util::Fact)
+      expect(result).to be_instance_of(Facter::ResolvedFact)
       expect(result.value).to eq('Ubuntu')
     end
 
@@ -161,8 +166,7 @@ describe Facter do
         .and_return(empty_fact_collection)
 
       result = Facter.fact(user_query)
-      expect(result).to be_instance_of(Facter::Util::Fact)
-      expect(result.value).to eq(nil)
+      expect(result).to be_nil
     end
   end
 
@@ -177,7 +181,7 @@ describe Facter do
         .and_return(fact_collection)
 
       result = Facter[user_query]
-      expect(result).to be_instance_of(Facter::Util::Fact)
+      expect(result).to be_instance_of(Facter::ResolvedFact)
       expect(result.value).to eq('Ubuntu')
     end
 
@@ -191,8 +195,7 @@ describe Facter do
         .and_return(empty_fact_collection)
 
       result = Facter[user_query]
-      expect(result).to be_instance_of(Facter::Util::Fact)
-      expect(result.value).to eq(nil)
+      expect(result).to be_nil
     end
   end
 

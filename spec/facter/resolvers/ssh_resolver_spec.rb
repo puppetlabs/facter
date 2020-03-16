@@ -11,14 +11,14 @@ describe Facter::Resolvers::SshResolver do
 
       file_names.each do |file_name|
         unless file_name == 'ssh_host_rsa_key.pub'
-          allow(File).to receive(:file?).with('/etc/' + file_name)
-                                        .and_return(false)
+          allow(FileTest).to receive(:file?).with('/etc/' + file_name)
+                                            .and_return(false)
         end
       end
 
-      allow(File).to receive(:file?).with('/etc/ssh_host_ecdsa_key.pub').and_return(true)
-      allow(File).to receive(:file?).with('/etc/ssh_host_rsa_key.pub').and_return(true)
-      allow(File).to receive(:file?).with('/etc/ssh_host_ed25519_key.pub').and_return(true)
+      allow(FileTest).to receive(:file?).with('/etc/ssh_host_ecdsa_key.pub').and_return(true)
+      allow(FileTest).to receive(:file?).with('/etc/ssh_host_rsa_key.pub').and_return(true)
+      allow(FileTest).to receive(:file?).with('/etc/ssh_host_ed25519_key.pub').and_return(true)
       expect(File).to receive(:read).with('/etc/ssh_host_ecdsa_key.pub').and_return(ecdsa_content)
       expect(File).to receive(:read).with('/etc/ssh_host_rsa_key.pub').and_return(rsa_content)
       expect(File).to receive(:read).with('/etc/ssh_host_ed25519_key.pub').and_return(ed25519_content)

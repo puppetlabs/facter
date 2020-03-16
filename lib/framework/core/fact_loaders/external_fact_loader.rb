@@ -3,7 +3,7 @@
 module Facter
   class ExternalFactLoader
     def custom_facts
-      @custom_facts ||= load_custom_facts
+      @custom_facts = load_custom_facts
     end
 
     def external_facts

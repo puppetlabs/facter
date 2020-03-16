@@ -79,7 +79,7 @@ module LegacyFacter
   # @return [String] the version -- for example: "1.6.14-6-gea42046" or nil if the VERSION
   #   file does not exist.
   def self.read_version_file(path)
-    File.read(path).chomp if File.exist?(path)
+    File.read(path).chomp if File.readable?(path)
   end
   private_class_method :read_version_file
 end

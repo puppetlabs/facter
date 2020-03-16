@@ -2,10 +2,10 @@
 
 require_relative '../../spec_helper_legacy'
 
-describe LegacyFacter::Core::Execution do
-  subject { LegacyFacter::Core::Execution }
+describe Facter::Core::Execution do
+  subject { Facter::Core::Execution }
 
-  let(:impl) { LegacyFacter::Core::Execution.impl }
+  let(:impl) { Facter::Core::Execution.impl }
 
   it 'delegates #search_paths to the implementation' do
     expect(impl).to receive(:search_paths)

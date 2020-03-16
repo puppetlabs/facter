@@ -13,8 +13,13 @@ module Facter
   @options = Options.instance
   Log.add_legacy_logger(STDOUT)
   @logger = Log.new(self)
+  @already_searched = {}
 
   class << self
+    def clear_messages
+      @logger.debug('clear_messages is not implemented')
+    end
+
     def [](name)
       fact(name)
     end
@@ -25,6 +30,7 @@ module Facter
     end
 
     def clear
+      @already_searched = {}
       LegacyFacter.clear
     end
 
@@ -58,11 +64,11 @@ module Facter
       debug_bool
     end
 
-    def fact(name)
-      fact = Facter::Util::Fact.new(name)
-      val = value(name)
-      fact.add({}) { setcode { val } }
-      fact
+    def fact(user_query)
+      user_query = user_query.to_s
+      resolve_fact(user_query)
+
+      @already_searched[user_query]
     end
 
     def log_errors(missing_names)
@@ -141,13 +147,9 @@ module Facter
     end
 
     def value(user_query)
-      @options.refresh([user_query])
       user_query = user_query.to_s
-      resolved_facts = Facter::FactManager.instance.resolve_facts([user_query])
-      CacheManager.invalidate_all_caches
-      fact_collection = FactCollection.new.build_fact_collection!(resolved_facts)
-      splitted_user_query = Facter::Utils.split_user_query(user_query)
-      fact_collection.dig(*splitted_user_query)
+      resolve_fact(user_query)
+      @already_searched[user_query]&.value
     end
 
     def version
@@ -156,6 +158,27 @@ module Facter
     end
 
     private
+
+    def add_fact_to_searched_facts(user_query, value)
+      @already_searched[user_query] ||= ResolvedFact.new(user_query, value)
+      @already_searched[user_query].value = value
+    end
+
+    def resolve_fact(user_query)
+      @options.refresh([user_query])
+      user_query = user_query.to_s
+      resolved_facts = Facter::FactManager.instance.resolve_facts([user_query])
+      CacheManager.invalidate_all_caches
+      fact_collection = FactCollection.new.build_fact_collection!(resolved_facts)
+      splitted_user_query = Facter::Utils.split_user_query(user_query)
+
+      begin
+        value = fact_collection.value(*splitted_user_query)
+        add_fact_to_searched_facts(user_query, value)
+      rescue KeyError
+        nil
+      end
+    end
 
     def log_blocked_facts
       block_list = BlockList.instance.block_list

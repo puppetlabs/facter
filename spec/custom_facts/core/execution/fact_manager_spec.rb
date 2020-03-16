@@ -84,7 +84,7 @@ describe LegacyFacter::Core::Execution::Base do
         allow(Facter::Log).to receive(:new).with('foo').and_return(logger)
 
         allow(File).to receive(:executable?).with(command).and_return(true)
-        allow(File).to receive(:file?).with(command).and_return(true)
+        allow(FileTest).to receive(:file?).with(command).and_return(true)
       end
 
       it 'loggs warning messages on stderr' do
@@ -96,7 +96,7 @@ describe LegacyFacter::Core::Execution::Base do
     describe 'and the command is not present' do
       it 'raises an error when the :on_fail behavior is :raise' do
         expect(subject).to receive(:expand_command).with('foo').and_return(nil)
-        expect { subject.execute('foo') }.to raise_error(LegacyFacter::Core::Execution::ExecutionFailure)
+        expect { subject.execute('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
       end
 
       it 'returns the given value when :on_fail is set to a value' do
@@ -112,7 +112,7 @@ describe LegacyFacter::Core::Execution::Base do
       end
 
       it 'raises an error when the :on_fail behavior is :raise' do
-        expect { subject.execute('foo') }.to raise_error(LegacyFacter::Core::Execution::ExecutionFailure)
+        expect { subject.execute('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
       end
 
       it 'returns the given value when :on_fail is set to a value' do

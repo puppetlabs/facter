@@ -161,7 +161,7 @@ module LegacyFacter
       end
 
       def sort_by_weight(resolutions)
-        resolutions.sort { |a, b| b.weight.to_i <=> a.weight.to_i }
+        resolutions.sort { |a, b| b.weight <=> a.weight }
       end
 
       def find_first_real_value(resolutions)
@@ -171,7 +171,7 @@ module LegacyFacter
           rescue Facter::ResolveCustomFactError
             break
           end
-          @used_resolution_weight = resolve.weight || 0
+          @used_resolution_weight = resolve.weight
           return value unless value.nil?
         end
         nil

@@ -24,7 +24,7 @@ module Facter
             next unless File.directory?(file_path)
 
             @file_names.each do |file_name|
-              next unless File.file?(File.join(file_path, file_name))
+              next unless FileTest.file?(File.join(file_path, file_name))
 
               key_type, key = File.read(File.join(file_path, file_name)).split(' ')
               key_name = determine_ssh_key_name(key_type)

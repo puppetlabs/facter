@@ -11,6 +11,11 @@ module Facter
       @log = Log.new(self)
     end
 
+    def searched_facts(user_query = [])
+      loaded_facts = @fact_loader.load(Options.get)
+      QueryParser.parse(user_query, loaded_facts)
+    end
+
     def resolve_facts(user_query = [])
       loaded_facts = @fact_loader.load(Options.get)
       searched_facts = QueryParser.parse(user_query, loaded_facts)

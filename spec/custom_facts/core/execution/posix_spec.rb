@@ -15,7 +15,7 @@ describe LegacyFacter::Core::Execution::Posix, unless: LegacyFacter::Util::Confi
 
     context 'and provided with an absolute path' do
       it 'returns the binary if executable' do
-        expect(File).to receive(:file?).with('/opt/foo').and_return true
+        expect(FileTest).to receive(:file?).with('/opt/foo').and_return true
         expect(File).to receive(:executable?).with('/opt/foo').and_return true
         expect(subject.which('/opt/foo')).to eq '/opt/foo'
       end
@@ -26,7 +26,7 @@ describe LegacyFacter::Core::Execution::Posix, unless: LegacyFacter::Util::Confi
       end
 
       it 'returns nil if the binary is not a file' do
-        expect(File).to receive(:file?).with('/opt/foo').and_return false
+        expect(FileTest).to receive(:file?).with('/opt/foo').and_return false
         expect(File).to receive(:executable?).with('/opt/foo').and_return true
         expect(subject.which('/opt/foo')).to be nil
       end
@@ -34,11 +34,11 @@ describe LegacyFacter::Core::Execution::Posix, unless: LegacyFacter::Util::Confi
 
     context 'and not provided with an absolute path' do
       it 'returns the absolute path if found' do
-        expect(File).not_to receive(:file?).with('/bin/foo')
+        expect(FileTest).not_to receive(:file?).with('/bin/foo')
         expect(File).to receive(:executable?).with('/bin/foo').and_return false
-        expect(File).to receive(:file?).with('/sbin/foo').and_return true
+        expect(FileTest).to receive(:file?).with('/sbin/foo').and_return true
         expect(File).to receive(:executable?).with('/sbin/foo').and_return true
-        expect(File).not_to receive(:file?).with('/usr/sbin/foo')
+        expect(FileTest).not_to receive(:file?).with('/usr/sbin/foo')
         expect(File).not_to receive(:executable?).with('/usr/sbin/foo')
         expect(subject.which('foo')).to eq '/sbin/foo'
       end
