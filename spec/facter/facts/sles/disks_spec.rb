@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facts::El::Disks do
-  subject(:fact) { Facts::El::Disks.new }
+describe Facts::Sles::Disks do
+  subject(:fact) { Facts::Sles::Disks.new }
 
   let(:disk) do
     {
