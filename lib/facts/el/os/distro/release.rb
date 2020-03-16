@@ -10,6 +10,8 @@ module Facts
 
           def call_the_resolver
             fact_value = Facter::Resolvers::LsbRelease.resolve(:release)
+            return Facter::ResolvedFact.new(FACT_NAME, nil) unless fact_value
+
             versions = fact_value.split('.')
             release = {
               'full' => fact_value,

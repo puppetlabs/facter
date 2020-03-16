@@ -25,5 +25,18 @@ describe Facts::Debian::Os::Distro::Release do
                         an_object_having_attributes(name: 'lsbminordistrelease',
                                                     value: release['minor'], type: :legacy))
     end
+
+    context 'when lsb_release is not installed' do
+      let(:value) { nil }
+
+      before do
+        allow(Facter::Resolvers::LsbRelease).to receive(:resolve).with(:release).and_return(value)
+      end
+
+      it 'returns release fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
+          .and have_attributes(name: 'os.distro.release', value: value)
+      end
+    end
   end
 end
