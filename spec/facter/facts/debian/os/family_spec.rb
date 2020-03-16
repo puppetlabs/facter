@@ -12,8 +12,8 @@ describe Facts::Debian::Os::Family do
       end
 
       it 'calls Facter::Resolvers::OsRelease' do
-        expect(Facter::Resolvers::OsRelease).to receive(:resolve).with(:id_like)
         fact.call_the_resolver
+        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:id_like)
       end
 
       it 'returns os family fact' do

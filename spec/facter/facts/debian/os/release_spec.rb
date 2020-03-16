@@ -12,8 +12,8 @@ describe Facts::Debian::Os::Release do
     end
 
     it 'calls Facter::Resolvers::LsbRelease' do
-      expect(Facter::Resolvers::LsbRelease).to receive(:resolve).with(:release)
       fact.call_the_resolver
+      expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:release)
     end
 
     it 'returns release fact' do

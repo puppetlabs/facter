@@ -12,8 +12,8 @@ describe Facts::Debian::Os::Architecture do
       end
 
       it 'calls Facter::Resolvers::Uname' do
-        expect(Facter::Resolvers::Uname).to receive(:resolve).with(:machine)
         fact.call_the_resolver
+        expect(Facter::Resolvers::Uname).to have_received(:resolve).with(:machine)
       end
 
       it 'returns architecture fact' do
@@ -31,8 +31,8 @@ describe Facts::Debian::Os::Architecture do
       end
 
       it 'calls Facter::Resolvers::Uname' do
-        expect(Facter::Resolvers::Uname).to receive(:resolve).with(:machine)
         fact.call_the_resolver
+        expect(Facter::Resolvers::Uname).to have_received(:resolve).with(:machine)
       end
 
       it 'returns architecture fact' do

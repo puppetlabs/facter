@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::Debian::Os::Name do
+describe Facts::Debian::Os::Distro::Id do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::Debian::Os::Name.new }
+    subject(:fact) { Facts::Debian::Os::Distro::Id.new }
 
     let(:value) { 'Debian' }
 
@@ -15,10 +15,10 @@ describe Facts::Debian::Os::Name do
       expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:distributor_id)
     end
 
-    it 'returns operating system name fact' do
+    it 'returns release fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-        contain_exactly(an_object_having_attributes(name: 'os.name', value: value),
-                        an_object_having_attributes(name: 'operatingsystem', value: value, type: :legacy))
+        contain_exactly(an_object_having_attributes(name: 'os.distro.id', value: value),
+                        an_object_having_attributes(name: 'lsbdistid', value: value, type: :legacy))
     end
   end
 end

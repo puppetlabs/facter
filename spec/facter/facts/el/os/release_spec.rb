@@ -11,8 +11,8 @@ describe Facts::El::Os::Release do
     end
 
     it 'calls Facter::Resolvers::OsRelease' do
-      expect(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version_id)
       fact.call_the_resolver
+      expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version_id)
     end
 
     it 'returns release fact' do

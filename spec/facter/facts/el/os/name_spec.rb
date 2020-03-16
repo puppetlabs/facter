@@ -11,8 +11,8 @@ describe Facts::El::Os::Name do
     end
 
     it 'calls Facter::Resolvers::OsRelease' do
-      expect(Facter::Resolvers::OsRelease).to receive(:resolve).with(:name)
       fact.call_the_resolver
+      expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:name)
     end
 
     it 'returns operating system name fact' do
