@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facts
-  module Aix
+  module Windows
     module Augeas
       class Version
         FACT_NAME = 'augeas.version'

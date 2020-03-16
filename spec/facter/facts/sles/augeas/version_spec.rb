@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::Aix::Augeas::Version do
+describe Facts::Sles::Augeas::Version do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::Aix::Augeas::Version.new }
+    subject(:fact) { Facts::Sles::Augeas::Version.new }
 
     let(:version) { '1.12.0' }
 
