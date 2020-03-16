@@ -339,6 +339,10 @@ namespace facter { namespace facts {
         return _facts.size();
     }
 
+    const std::unordered_map<std::string, int64_t>& collection::get_ttls() {
+        return _ttls;
+    }
+
     value const* collection::operator[](string const& name)
     {
         return get_value(name);

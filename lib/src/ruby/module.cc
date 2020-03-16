@@ -22,6 +22,7 @@
 #include <facter/facts/array_value.hpp>
 #include <facter/facts/map_value.hpp>
 #include <internal/ruby/ruby_value.hpp>
+#include <internal/facts/cache.hpp>
 
 // Mark string for translation (alias for leatherman::locale::format)
 using leatherman::locale::_;
@@ -354,10 +355,34 @@ namespace facter { namespace ruby {
         load_facts();
 
         auto const& ruby = api::instance();
+        LOG_DEBUG(_("loading external fact directories from config file"));
+        boost::program_options::variables_map vm;
+        auto hocon_conf = load_default_config_file();
+        load_fact_settings(hocon_conf, vm);
+        vector<string> cached_custom_facts_list;
+        if (vm.count(cached_custom_facts)) {
+            auto facts_to_cache = vm[cached_custom_facts].as<vector<string>>();
+            cached_custom_facts_list.insert(cached_custom_facts_list.end(), facts_to_cache.begin(), facts_to_cache.end());
+        }
 
-        // Get the value from all facts
-        for (auto const& kvp : _facts) {
-            ruby.to_native<fact>(kvp.second)->value();
+        auto ttls = _collection.get_ttls();
+        bool custom_cache_file_loaded = false;
+        bool custom_cache_enabled = !cached_custom_facts_list.empty() || ttls.count(cached_custom_facts);
+        if (custom_cache_enabled) {
+            custom_cache_file_loaded = cache::load_cached_custom_facts(_collection, ttls.find(cached_custom_facts)->second);
+        }
+
+        auto cached_fact = ([&](string const& key) {
+            return custom_cache_file_loaded && std::find(cached_custom_facts_list.begin(), cached_custom_facts_list.end(), key) != cached_custom_facts_list.end();
+        });
+
+        for (auto const& kvp_name_value : _facts) {
+            if (!cached_fact(kvp_name_value.first)) {
+                ruby.to_native<fact>(kvp_name_value.second)->value();
+            }
+        }
+        if (custom_cache_enabled && !custom_cache_file_loaded) {
+            cache::write_cached_custom_facts(_collection, cached_custom_facts_list);
         }
     }
 
