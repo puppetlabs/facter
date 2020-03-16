@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.11.12\n"
+"Project-Id-Version: FACTER 3.11.13\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -522,6 +522,26 @@ msgid "caching values for {1} facts"
 msgstr ""
 
 #. debug
+#: lib/src/facts/cache.cc
+msgid "Loading cached custom facts from file \"{1}\""
+msgstr ""
+
+#. debug
+#: lib/src/facts/cache.cc
+msgid "Custom facts cache file contained invalid JSON, refreshing"
+msgstr ""
+
+#. debug
+#: lib/src/facts/cache.cc
+msgid "Custom facts cache file expired/missing. Refreshing"
+msgstr ""
+
+#. debug
+#: lib/src/facts/cache.cc
+msgid "Saving cached custom facts to {1}"
+msgstr ""
+
+#. debug
 #: lib/src/facts/collection.cc
 msgid ""
 "fact \"{1}\" resolved to null and the existing value of {2} will be removed."
@@ -559,6 +579,7 @@ msgid "searching {1} for external facts."
 msgstr ""
 
 #. warning
+#. debug
 #: lib/src/facts/collection.cc
 msgid "skipping file \"{1}\": {2}"
 msgstr ""
@@ -1542,13 +1563,13 @@ msgstr ""
 msgid "searching for custom facts in {1}."
 msgstr ""
 
+#: lib/src/ruby/module.cc
+msgid "loading external fact directories from config file"
+msgstr ""
+
 #. error
 #: lib/src/ruby/module.cc
 msgid "{1} uncaught exception: {2}"
-msgstr ""
-
-#: lib/src/ruby/module.cc
-msgid "loading external fact directories from config file"
 msgstr ""
 
 #: lib/src/ruby/module.cc
