@@ -6,9 +6,13 @@ module Facter
     attr_accessor :user_query, :filter_tokens, :value
 
     def initialize(name, value = '', type = :core)
+      unless type =~ /core|legacy|custom/
+        raise ArgumentError, 'The type provided for fact is not legacy, core or custom!'
+      end
+
       @name = name
       @value = Utils.deep_stringify_keys(value)
-      type =~ /core|legacy/ ? @type = type : (raise ArgumentError, 'The type provided for fact is not legacy or core!')
+      @type = type
     end
 
     def legacy?

@@ -87,30 +87,28 @@ describe Facter::LegacyFactFormatter do
       end
 
       context 'root level fact' do
-        it 'prints facts with nill values' do
+        it 'prints no values if all facts are nil' do
           formatted_output = Facter::LegacyFactFormatter.new.format([nil_resolved_fact1, nil_resolved_fact2])
-          expect(formatted_output).to eq("nil_resolved_fact1 => null\nnil_resolved_fact2 => null")
+          expect(formatted_output).to eq('')
         end
 
-        it 'prints one fact with nil value and one fact with a value' do
+        it 'prints only the fact that is not nil' do
           formatted_output = Facter::LegacyFactFormatter.new.format([nil_resolved_fact1, resolved_fact2])
-          expect(formatted_output).to eq("nil_resolved_fact1 => null\nresolved_fact2 => resolved_fact2_value")
+          expect(formatted_output).to eq('resolved_fact2 => resolved_fact2_value')
         end
       end
 
       context 'facts are nested' do
-        it 'prints facts with nil values' do
+        it 'prints no values if all facts are nil' do
           formatted_output = Facter::LegacyFactFormatter.new.format([nil_nested_fact1, nil_nested_fact2])
-          expect(formatted_output).to eq("my => {\n  nested => {\n    fact1 => null,\n    fact2 => null\n  }\n}")
+          expect(formatted_output).to eq('')
         end
 
-        it 'prints one fact with nil value and one fact with a value' do
+        it 'prints only the fact that is not nil' do
           formatted_output =
             Facter::LegacyFactFormatter.new.format([nil_nested_fact1, nil_nested_fact2, resolved_fact2])
-          facter_output = "my => {\n  nested => {\n    fact1 => null,\n    fact2 => null\n  }\n}\n" \
-                          'resolved_fact2 => resolved_fact2_value'
 
-          expect(formatted_output).to eq(facter_output)
+          expect(formatted_output).to eq('resolved_fact2 => resolved_fact2_value')
         end
       end
     end
@@ -133,7 +131,7 @@ describe Facter::LegacyFactFormatter do
       context 'formats to legacy for a single user query that contains :' do
         let(:resolved_fact) do
           double(Facter::ResolvedFact, name: 'networking.ip6', value: 'fe80::7ca0:ab22:703a:b329',
-                                       user_query: 'networking.ip6', filter_tokens: [])
+                                       user_query: 'networking.ip6', filter_tokens: [], type: :core)
         end
 
         it 'returns single value without replacing : with =>' do
@@ -155,7 +153,7 @@ describe Facter::LegacyFactFormatter do
       context 'facts are nested' do
         it 'returns empty strings for first level query' do
           formatted_output = Facter::LegacyFactFormatter.new.format([nil_nested_fact1])
-          expect(formatted_output).to eq("{\n  nested => {\n    fact1 => null\n  }\n}")
+          expect(formatted_output).to eq('')
         end
 
         it 'returns empty strings for leaf level query' do

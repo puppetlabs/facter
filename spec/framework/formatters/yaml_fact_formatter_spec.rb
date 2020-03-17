@@ -3,11 +3,14 @@
 describe Facter::YamlFactFormatter do
   it 'formats to yaml when no user query' do
     resolved_fact1 =
-      double(Facter::ResolvedFact, name: 'os.name', value: 'Darwin', user_query: '', filter_tokens: [])
+      double(Facter::ResolvedFact, name: 'os.name', value: 'Darwin',
+                                   user_query: '', filter_tokens: [], type: :core)
     resolved_fact2 =
-      double(Facter::ResolvedFact, name: 'os.family', value: 'Darwin', user_query: '', filter_tokens: [])
+      double(Facter::ResolvedFact, name: 'os.family', value: 'Darwin',
+                                   user_query: '', filter_tokens: [], type: :core)
     resolved_fact3 =
-      double(Facter::ResolvedFact, name: 'os.architecture', value: 'x86_64', user_query: '', filter_tokens: [])
+      double(Facter::ResolvedFact, name: 'os.architecture', value: 'x86_64',
+                                   user_query: '', filter_tokens: [], type: :core)
     resolved_fact_list = [resolved_fact1, resolved_fact2, resolved_fact3]
 
     double
@@ -21,7 +24,8 @@ describe Facter::YamlFactFormatter do
 
   it 'formats to yaml for a single user query' do
     resolved_fact =
-      double(Facter::ResolvedFact, name: 'os.name', value: 'Darwin', user_query: 'os.name', filter_tokens: [])
+      double(Facter::ResolvedFact, name: 'os.name', value: 'Darwin',
+                                   user_query: 'os.name', filter_tokens: [], type: :core)
     resolved_fact_list = [resolved_fact]
     formatted_output = Facter::YamlFactFormatter.new.format(resolved_fact_list)
 
@@ -32,9 +36,12 @@ describe Facter::YamlFactFormatter do
 
   it 'formats to yaml for multiple user queries' do
     resolved_fact1 =
-      double(Facter::ResolvedFact, name: 'os.name', value: 'Darwin', user_query: 'os.name', filter_tokens: [])
+      double(Facter::ResolvedFact, name: 'os.name', value: 'Darwin',
+                                   user_query: 'os.name', filter_tokens: [], type: :core)
     resolved_fact2 =
-      double(Facter::ResolvedFact, name: 'os.family', value: 'Darwin', user_query: 'os.family', filter_tokens: [])
+      double(Facter::ResolvedFact, name: 'os.family', value: 'Darwin',
+                                   user_query: 'os.family', filter_tokens: [], type: :core)
+
     resolved_fact_list = [resolved_fact1, resolved_fact2]
     formatted_output = Facter::YamlFactFormatter.new.format(resolved_fact_list)
 

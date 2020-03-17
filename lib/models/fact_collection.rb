@@ -8,7 +8,9 @@ module Facter
 
     def build_fact_collection!(facts)
       facts.each do |fact|
-        bury(*fact.name.split('.') + fact.filter_tokens << fact.value)
+        next if fact.type == :core && fact.value.nil?
+
+        bury_fact(fact)
       end
 
       self
@@ -32,6 +34,12 @@ module Facter
       end
 
       self
+    end
+
+    private
+
+    def bury_fact(fact)
+      bury(*fact.name.split('.') + fact.filter_tokens << fact.value)
     end
   end
 end

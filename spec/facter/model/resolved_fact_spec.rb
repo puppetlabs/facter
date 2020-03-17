@@ -29,7 +29,7 @@ describe Facter::ResolvedFact do
     it 'raises an ArgumentError' do
       expect do
         Facter::ResolvedFact.new('fact_name', 'fact_value', :type)
-      end.to raise_error(ArgumentError, 'The type provided for fact is not legacy or core!')
+      end.to raise_error(ArgumentError, 'The type provided for fact is not legacy, core or custom!')
     end
   end
 end

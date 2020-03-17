@@ -18,7 +18,7 @@ module Facter
 
       custom_facts.each do |custom_fact|
         fact_value = LegacyFacter.value(custom_fact.name)
-        resolved_fact = ResolvedFact.new(custom_fact.name, fact_value)
+        resolved_fact = ResolvedFact.new(custom_fact.name, fact_value, :custom)
         resolved_fact.filter_tokens = []
         resolved_fact.user_query = custom_fact.user_query
 

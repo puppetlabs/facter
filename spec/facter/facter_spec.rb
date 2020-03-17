@@ -8,7 +8,7 @@ describe Facter do
   end
   let(:fact_collection) do
     fact_collection = Facter::FactCollection.new
-    fact_collection ['os'] = Facter::FactCollection['name' => 'Ubuntu']
+    fact_collection['os'] = Facter::FactCollection['name' => 'Ubuntu']
     fact_collection
   end
   let(:empty_fact_collection) { Facter::FactCollection.new }
