@@ -21,6 +21,8 @@
 
 namespace facter { namespace facts {
 
+    static const std::string cached_custom_facts("cached-custom-facts");
+
     /**
      * The supported output format for the fact collection.
      */
@@ -294,6 +296,12 @@ namespace facter { namespace facts {
          * @return a map of group names to their associated fact names
          */
         std::map<std::string, std::vector<std::string>> get_fact_groups();
+
+        /**
+         * Returns the time-to-live time for each fact from the facter.conf file
+         * @return a map of fact names to their associated time-to-live value
+         */
+        const std::unordered_map<std::string, int64_t>& get_ttls();
 
         /**
          * Returns the names of all blockable resolvers currently in the collection,

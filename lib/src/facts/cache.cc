@@ -84,7 +84,7 @@ namespace facter { namespace facts { namespace cache {
         }
     }
 
-    void write_json_cache_file(collection& facts, boost_file::path const& file_path, vector<string> const& fact_names)
+    void write_json_cache_file(const collection& facts, boost_file::path const& file_path, vector<string> const& fact_names)
     {
         json_document document;
         document.SetObject();
@@ -114,4 +114,39 @@ namespace facter { namespace facts { namespace cache {
         document.Accept(writer);
     }
 
+    boost_file::path custom_fact_cache_file_location() {
+        boost_file::path cache_dir = boost_file::path(facter::facts::cache::fact_cache_location());
+        if (!boost_file::is_directory(cache_dir))
+            boost_file::create_directories(cache_dir);
+        boost_file::path custom_fact_cache_file_location = cache_dir / cached_custom_facts;
+
+        return custom_fact_cache_file_location;
+    }
+
+    bool load_cached_custom_facts(collection& collection,  int64_t ttl)
+    {
+        boost_file::path cache_file = custom_fact_cache_file_location();
+        if (leatherman::file_util::file_readable(cache_file.string()) && cache::cache_is_valid(cache_file, ttl)) {
+            try {
+                LOG_DEBUG("Loading cached custom facts from file \"{1}\"", cache_file.string());
+                facts::external::json_resolver json_res(cache_file.string());
+                json_res.resolve(collection);
+                return true;
+            } catch (exception& ex) {
+                LOG_DEBUG("Custom facts cache file contained invalid JSON, refreshing");
+                return false;
+            }
+       } else {
+            LOG_DEBUG("Custom facts cache file expired/missing. Refreshing");
+            boost_file::remove(cache_file);
+       }
+       return false;
+    }
+
+    void write_cached_custom_facts(const collection& facts, const std::vector<std::string>& cached_custom_facts_list)
+    {
+        boost_file::path cache_file = custom_fact_cache_file_location();
+        LOG_DEBUG("Saving cached custom facts to {1}", cache_file);
+        write_json_cache_file(facts, cache_file, cached_custom_facts_list);
+    }
 }}}  // namespace facter::facts::cache
