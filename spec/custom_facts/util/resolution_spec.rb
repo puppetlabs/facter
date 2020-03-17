@@ -101,6 +101,10 @@ describe Facter::Util::Resolution do
       expect(resolution.weight).to eq 27
     end
 
+    it 'fact_type does not raise error' do
+      expect { resolution.options(fact_type: 'simple') }.not_to raise_error(ArgumentError)
+    end
+
     it 'fails on unhandled options' do
       expect do
         resolution.options(foo: 'bar')

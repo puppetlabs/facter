@@ -49,8 +49,8 @@ module LegacyFacter
       end
 
       def options(options)
-        accepted_option = %i[name timeout weight fact_type]
-        accepted_option.each do |option_name|
+        accepted_options = %i[name timeout weight fact_type]
+        accepted_options.each do |option_name|
           instance_variable_set("@#{option_name}", options.delete(option_name)) if options.key?(option_name)
         end
         raise ArgumentError, "Invalid aggregate options #{options.keys.inspect}" unless options.keys.empty?
