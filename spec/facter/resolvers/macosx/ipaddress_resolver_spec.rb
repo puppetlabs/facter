@@ -13,7 +13,8 @@ describe Facter::Resolvers::Macosx::Ipaddress do
     end
 
     let(:interfaces) { load_fixture('ifconfig_mac').read }
-    let(:interfaces_reuslt) { 'lo0,gif0,stf0,XHC20' }
+    let(:interfaces_reuslt) { 'en0,lo0,gif0,stf0,XHC20' }
+    let(:macaddress) { '64:5a:ed:ea:c3:25' }
 
     context 'when returns ip' do
       let(:route) { load_fixture('osx_route').read }
@@ -25,6 +26,10 @@ describe Facter::Resolvers::Macosx::Ipaddress do
 
       it 'detects interfaces' do
         expect(Facter::Resolvers::Macosx::Ipaddress.resolve(:interfaces)).to eql(interfaces_reuslt)
+      end
+
+      it 'detects macaddress' do
+        expect(Facter::Resolvers::Macosx::Ipaddress.resolve(:macaddress)).to eql(macaddress)
       end
     end
 

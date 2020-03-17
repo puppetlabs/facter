@@ -19,7 +19,14 @@ module Facter
 
           retrieve_default_interface_and_ip
           retrieve_interface_info
+          retrieve_macaddress
           @fact_list[fact_name]
+        end
+
+        def retrieve_macaddress
+          output, _status = Open3.capture2("ip link show #{@fact_list[:primary_interface]}")
+          macaddress = */ether ([^ ]*) /.match(output)
+          @fact_list[:macaddress] = macaddress[1]
         end
 
         def retrieve_interface_info

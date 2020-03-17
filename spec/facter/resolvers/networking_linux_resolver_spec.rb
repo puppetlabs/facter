@@ -5,13 +5,13 @@ describe Facter::Resolvers::NetworkingLinux do
     before do
       allow(Open3).to receive(:capture2)
         .with('ip -o address')
-        .and_return(load_fixture('ip_o_address_linux'))
+        .and_return(load_fixture('ip_o_address_linux').read)
       allow(Open3).to receive(:capture2)
         .with('ip route get 1')
-        .and_return(load_fixture('ip_route__get_1_linux'))
+        .and_return(load_fixture('ip_route__get_1_linux').read)
       allow(Open3).to receive(:capture2)
-        .with('ip address')
-        .and_return(load_fixture('ip_address_linux'))
+        .with('ip link show ens160')
+        .and_return(load_fixture('ip_address_linux').read)
     end
 
     let(:result) do
@@ -37,6 +37,7 @@ describe Facter::Resolvers::NetworkingLinux do
         }
       }
     end
+    let(:macaddress) { '00:50:56:9a:ec:fb' }
 
     it 'returns the default ip' do
       expect(Facter::Resolvers::NetworkingLinux.resolve(:ip)).to eq('10.16.122.163')
@@ -44,6 +45,10 @@ describe Facter::Resolvers::NetworkingLinux do
 
     it 'returns all the interfaces' do
       expect(Facter::Resolvers::NetworkingLinux.resolve(:interfaces)).to eq(result)
+    end
+
+    it 'return macaddress' do
+      expect(Facter::Resolvers::NetworkingLinux.resolve(:macaddress)).to eq(macaddress)
     end
   end
 end
