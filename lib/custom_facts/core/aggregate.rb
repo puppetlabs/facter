@@ -49,12 +49,10 @@ module LegacyFacter
       end
 
       def options(options)
-        @name = options.delete(:name) if options[:name]
-
-        @timeout = options.delete(:timeout) if options.key?(:timeout)
-
-        @weight = options.delete(:has_weight) if options.key?(:has_weight)
-
+        accepted_option = %i[name timeout weight fact_type]
+        accepted_option.each do |option_name|
+          instance_variable_set("@#{option_name}", options.delete(option_name)) if options.key?(option_name)
+        end
         raise ArgumentError, "Invalid aggregate options #{options.keys.inspect}" unless options.keys.empty?
       end
 

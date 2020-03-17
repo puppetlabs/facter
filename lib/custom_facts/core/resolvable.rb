@@ -5,7 +5,7 @@ require 'timeout'
 # The resolvable mixin defines behavior for evaluating and returning fact
 # resolutions.
 #
-# Classes including this mixin should implement at #name method describing
+# Classes including this mixin should implement a #name method describing
 # the value being resolved and a #resolve_value that actually executes the code
 # to resolve the value.
 module LegacyFacter

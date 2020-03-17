@@ -20,6 +20,7 @@ module LegacyFacter
       # @api public
       def has_weight(weight)
         @weight = weight
+        self
       end
 
       # Sets the conditions for this resolution to be used.  This method accepts

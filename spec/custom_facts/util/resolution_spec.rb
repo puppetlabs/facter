@@ -108,17 +108,23 @@ describe Facter::Util::Resolution do
     end
   end
 
+  describe '#has_weight' do
+    it 'returns the class instance' do
+      expect(resolution.has_weight(42)).to be(resolution)
+    end
+  end
+
   describe 'evaluating' do
     it 'evaluates the block in the context of the given resolution' do
-      expect(subject).to receive(:weight).with(5)
-      subject.evaluate { weight(5) }
+      expect(resolution).to receive(:weight).with(5)
+      resolution.evaluate { weight(5) }
     end
 
     it 'raises a warning if the resolution is evaluated twice' do
       expect(LegacyFacter).to receive(:warn).with(/Already evaluated foo at.*reevaluating anyways/)
 
-      subject.evaluate {}
-      subject.evaluate {}
+      resolution.evaluate {}
+      resolution.evaluate {}
     end
   end
 end
