@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facts
-  module Macosx
+  module Solaris
     module Identity
       class Group
         FACT_NAME = 'identity.group'

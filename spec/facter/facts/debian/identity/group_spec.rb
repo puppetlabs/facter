@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::Macosx::Identity::Group do
+describe Facts::Debian::Identity::Group do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::Macosx::Identity::Group.new }
+    subject(:fact) { Facts::Debian::Identity::Group.new }
 
     let(:value) { 'staff' }
 

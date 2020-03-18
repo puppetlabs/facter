@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::Macosx::Identity::Gid do
+describe Facts::Solaris::Identity::Gid do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::Macosx::Identity::Gid.new }
+    subject(:fact) { Facts::Solaris::Identity::Gid.new }
 
     let(:value) { '20' }
 

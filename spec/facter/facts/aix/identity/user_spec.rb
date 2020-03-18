@@ -15,7 +15,7 @@ describe Facts::Aix::Identity::User do
       expect(Facter::Resolvers::PosxIdentity).to have_received(:resolve).with(:user)
     end
 
-    it 'returns user name' do
+    it 'returns id and identity user fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'identity.user', value: value),
                         an_object_having_attributes(name: 'id', value: value, type: :legacy))
