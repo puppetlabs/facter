@@ -328,6 +328,87 @@ describe LegacyFacter::Util::Collection do
     end
   end
 
+  describe '#custom_facts' do
+    it 'loads no facts' do
+      expect(collection.custom_facts).to be_empty
+    end
+
+    context 'when custom facts are valid' do
+      before do
+        collection.instance_variable_set(:@custom_facts, ['my_custom_fact'])
+        collection.instance_variable_set(:@valid_custom_facts, true)
+      end
+
+      it 'return one custom fact' do
+        expect(collection.custom_facts.size).to eq(1)
+      end
+
+      it 'returns already loaded custom facts' do
+        expect(collection.custom_facts.first).to eq('my_custom_fact')
+      end
+    end
+
+    context 'when custom fact are invalid' do
+      before do
+        collection.add('my_fact', fact_type: :custom) {}
+      end
+
+      it 'returns one fact' do
+        expect(collection.custom_facts.size).to eq(1)
+      end
+
+      it 'returns my_fact custom fact' do
+        expect(collection.custom_facts.first).to eq(:my_fact)
+      end
+    end
+
+    context 'when reload custom facts' do
+      before do
+        collection.instance_variable_set(:@custom_facts, ['old_fact'])
+        collection.instance_variable_set(:@valid_custom_facts, false)
+        collection.instance_variable_set(:@loaded, false)
+        collection.add('new_fact', fact_type: :custom) {}
+      end
+
+      it 'loads all internal facts' do
+        collection.custom_facts
+
+        expect(internal_loader).to have_received(:load_all)
+      end
+
+      it 'loads one fact' do
+        expect(collection.custom_facts.size). to eq(1)
+      end
+
+      it 'loads the new fact' do
+        expect(collection.custom_facts.first). to eq(:new_fact)
+      end
+    end
+
+    context "when don't reload custom facts" do
+      before do
+        collection.instance_variable_set(:@custom_facts, ['old_fact'])
+        collection.instance_variable_set(:@valid_custom_facts, false)
+        collection.instance_variable_set(:@loaded, true)
+        collection.add('new_fact', fact_type: :custom) {}
+      end
+
+      it 'loads no internal facts' do
+        collection.custom_facts
+
+        expect(internal_loader).not_to have_received(:load_all)
+      end
+
+      it 'loads one fact' do
+        expect(collection.custom_facts.size). to eq(1)
+      end
+
+      it 'loads the new fact' do
+        expect(collection.custom_facts.first). to eq(:new_fact)
+      end
+    end
+  end
+
   class SingleFactLoader
     def initialize(name, value)
       @name = name
