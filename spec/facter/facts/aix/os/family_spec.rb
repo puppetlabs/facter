@@ -11,8 +11,8 @@ describe Facts::Aix::Os::Family do
     end
 
     it 'calls Facter::Resolvers::Uname' do
-      expect(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelname)
       fact.call_the_resolver
+      expect(Facter::Resolvers::Uname).to have_received(:resolve).with(:kernelname)
     end
 
     it 'returns os family fact' do

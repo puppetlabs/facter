@@ -16,9 +16,10 @@ describe Facts::Aix::SystemUptime::Uptime do
       expect(Facter::Resolvers::Uptime).to have_received(:resolve).with(:uptime)
     end
 
-    it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'system_uptime.uptime', value: uptime)
+    it 'returns system uptime fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(have_attributes(name: 'system_uptime.uptime', value: uptime),
+                        have_attributes(name: 'uptime', value: uptime, type: :legacy))
     end
   end
 end

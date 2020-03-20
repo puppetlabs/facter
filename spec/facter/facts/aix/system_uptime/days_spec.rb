@@ -16,9 +16,10 @@ describe Facts::Aix::SystemUptime::Days do
       expect(Facter::Resolvers::Uptime).to have_received(:resolve).with(:days)
     end
 
-    it 'returns a resolved fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'system_uptime.days', value: days)
+    it 'returns system uptime fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'system_uptime.days', value: days),
+                        an_object_having_attributes(name: 'uptime_days', value: days, type: :legacy))
     end
   end
 end
