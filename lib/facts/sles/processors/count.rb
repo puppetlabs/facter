@@ -5,7 +5,7 @@ module Facts
     module Processors
       class Count
         FACT_NAME = 'processors.count'
-        ALIASES = 'processorscount'
+        ALIASES = 'processorcount'
 
         def call_the_resolver
           fact_value = Facter::Resolvers::Linux::Processors.resolve(:processors)

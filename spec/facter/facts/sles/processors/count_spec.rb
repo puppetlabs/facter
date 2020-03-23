@@ -19,7 +19,7 @@ describe Facts::Sles::Processors::Count do
     it 'returns a resolved fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'processors.count', value: processors_count),
-                        an_object_having_attributes(name: 'processorscount', value: processors_count, type: :legacy))
+                        an_object_having_attributes(name: 'processorcount', value: processors_count, type: :legacy))
     end
   end
 end
