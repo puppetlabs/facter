@@ -78,6 +78,7 @@ Metrics/CyclomaticComplexity:
     - 'lib/custom_facts/util/confine.rb'
     - 'lib/custom_facts/core/execution/windows.rb'
     - 'lib/custom_facts/core/execution/posix.rb'
+    - 'lib/framework/detector/os_detector.rb'
 
 Lint/RescueException:
   Exclude:
