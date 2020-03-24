@@ -108,6 +108,8 @@ module Facter
     def query(*args)
       output, status = Facter.to_user_output(@options, *args)
       puts output
+
+      status = 1 if Facter::Log.errors?
       exit status
     end
 

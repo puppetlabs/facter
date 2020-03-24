@@ -11,6 +11,7 @@ module Facter
     @@logger = MultiLogger.new([@@file_logger])
     @@logger.level = :warn
     @@message_callback = nil
+    @@has_errors = false
 
     class << self
       def on_message(&block)
@@ -23,6 +24,10 @@ module Facter
 
       def level
         @@logger.level
+      end
+
+      def errors?
+        @@has_errors
       end
     end
 
@@ -88,6 +93,7 @@ module Facter
     end
 
     def error(msg, colorize = false)
+      @@has_errors = true
       msg = colorize(msg, RED) if colorize && !OsDetector.instance.detect.eql?(:windows)
       @@logger.error(@class_name + ' - ' + msg)
     end

@@ -69,8 +69,7 @@ describe LegacyFacter::Core::Aggregate do
       aggregate_res.chunk(:first, require: [:second]) {}
       aggregate_res.chunk(:second, require: [:first]) {}
 
-      expect(LegacyFacter).to receive(:warn).with(/dependency cycles: .*[:first, :second]/)
-
+      expect_any_instance_of(Facter::Log).to receive(:error).with(/dependency cycles: .*[:first, :second]/)
       expect { aggregate_res.value }.to raise_error(Facter::ResolveCustomFactError)
     end
 

@@ -15,6 +15,7 @@ module LegacyFacter
       # @return [Integer]
       # @api public
       attr_accessor :timeout
+      attr_reader :logger
 
       # Return the timeout period for resolving a value.
       # (see #timeout)
@@ -61,6 +62,7 @@ module LegacyFacter
       def value
         result = nil
 
+        @logger = Facter::Log.new(self)
         with_timing do
           Timeout.timeout(limit) do
             result = resolve_value
@@ -68,15 +70,19 @@ module LegacyFacter
         end
 
         LegacyFacter::Util::Normalization.normalize(result)
-      rescue Timeout::Error => e
-        LegacyFacter.log_exception(e, "Timed out after #{limit} seconds while resolving #{qualified_name}")
+      rescue Timeout::Error
+        @logger.error("Timed out after #{limit} seconds while resolving #{qualified_name}")
+
         nil
       rescue LegacyFacter::Util::Normalization::NormalizationError => e
-        LegacyFacter.log_exception(e, "Fact resolution #{qualified_name} resolved to an invalid value: #{e.message}")
+        @logger.error("Fact resolution #{qualified_name} resolved to an invalid value: #{e.message}")
+
         nil
       rescue StandardError => e
-        LegacyFacter.log_exception(e, "Error while resolving custom fact #{qualified_name}: #{e.message}")
-        at_exit { exit 1 }
+        puts @logger.inspect
+
+        @logger.error("Error while resolving custom fact #{qualified_name}: #{e.message}")
+
         raise Facter::ResolveCustomFactError
       end
 
