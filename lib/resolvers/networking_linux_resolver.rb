@@ -4,12 +4,13 @@ module Facter
   module Resolvers
     class NetworkingLinux < BaseResolver
       @semaphore = Mutex.new
+      @fact_list = {}
 
       class << self
         private
 
         def post_resolve(fact_name)
-          retrieve_network_info(fact_name) if @fact_list.nil?
+          @fact_list.fetch(fact_name) { retrieve_network_info(fact_name) }
 
           @fact_list[fact_name]
         end

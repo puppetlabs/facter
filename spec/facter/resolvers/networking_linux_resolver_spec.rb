@@ -8,10 +8,12 @@ describe Facter::Resolvers::NetworkingLinux do
         .and_return(load_fixture('ip_o_address_linux').read)
       allow(Open3).to receive(:capture2)
         .with('ip route get 1')
-        .and_return(load_fixture('ip_route__get_1_linux').read)
+        .and_return(load_fixture('ip_route_get_1_linux').read)
       allow(Open3).to receive(:capture2)
         .with('ip link show ens160')
         .and_return(load_fixture('ip_address_linux').read)
+
+      Facter::Resolvers::NetworkingLinux.invalidate_cache
     end
 
     let(:result) do
@@ -49,6 +51,25 @@ describe Facter::Resolvers::NetworkingLinux do
 
     it 'return macaddress' do
       expect(Facter::Resolvers::NetworkingLinux.resolve(:macaddress)).to eq(macaddress)
+    end
+
+    context 'when caching' do
+      it 'returns from cache' do
+        Facter::Resolvers::NetworkingLinux.resolve(:ip)
+        Facter::Resolvers::NetworkingLinux.resolve(:ip)
+
+        expect(Open3).to have_received(:capture2).with('ip route get 1').once
+      end
+    end
+
+    context 'when invalidate caching' do
+      it 'resolved again the fact' do
+        Facter::Resolvers::NetworkingLinux.resolve(:ip)
+        Facter::Resolvers::NetworkingLinux.invalidate_cache
+        Facter::Resolvers::NetworkingLinux.resolve(:ip)
+
+        expect(Open3).to have_received(:capture2).with('ip route get 1').twice
+      end
     end
   end
 end

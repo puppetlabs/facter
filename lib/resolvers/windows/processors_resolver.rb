@@ -3,9 +3,8 @@
 module Facter
   module Resolvers
     class Processors < BaseResolver
-      @log = Facter::Log.new(self)
       @semaphore = Mutex.new
-      @fact_list ||= {}
+      @fact_list = {}
       class << self
         # Count
         # Isa
@@ -22,7 +21,7 @@ module Facter
           win = Win32Ole.new
           proc = win.exec_query('SELECT Name,Architecture,NumberOfLogicalProcessors FROM Win32_Processor')
           unless proc
-            @log.debug 'WMI query returned no results'\
+            log.debug 'WMI query returned no results'\
             'for Win32_Processor with values Name, Architecture and NumberOfLogicalProcessors.'
             return
           end
@@ -50,7 +49,7 @@ module Facter
           isa = architecture_hash[arch]
           return isa if isa
 
-          @log.debug 'Unable to determine processor type: unknown architecture'
+          log.debug 'Unable to determine processor type: unknown architecture'
         end
 
         def build_fact_list(result)

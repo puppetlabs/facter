@@ -28,22 +28,20 @@ module Facter
       # time_since_boot
       # smc_version_system
 
-      @log = Facter::Log.new(self)
       @semaphore = Mutex.new
+      @fact_list = {}
 
       class << self
         private
 
         def post_resolve(fact_name)
-          retrieve_system_profiler(fact_name) if @fact_list.nil?
-
-          @fact_list[fact_name]
+          @fact_list.fetch(fact_name) { retrieve_system_profiler(fact_name) }
         end
 
         def retrieve_system_profiler(fact_name)
           @fact_list ||= {}
 
-          @log.debug 'Executing command: system_profiler SPSoftwareDataType SPHardwareDataType'
+          log.debug 'Executing command: system_profiler SPSoftwareDataType SPHardwareDataType'
           output, _status = Open3.capture2('system_profiler SPHardwareDataType SPSoftwareDataType')
           @fact_list = output.scan(/.*:[ ].*$/).map { |e| e.strip.match(/(.*?): (.*)/).captures }.to_h
           normalize_factlist
