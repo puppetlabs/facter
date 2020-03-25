@@ -57,6 +57,13 @@ module LegacyFacter
 
           expanded
         end
+
+        def execute(command, options = {})
+          expand = options.fetch(:expand, true)
+          raise ArgumentError.new, 'Unsupported argument on Windows expand with value false' unless expand
+
+          super(command, options)
+        end
       end
     end
   end

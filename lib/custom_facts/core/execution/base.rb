@@ -33,12 +33,17 @@ module LegacyFacter
 
         def execute(command, options = {})
           on_fail = options.fetch(:on_fail, :raise)
+          expand = options.fetch(:expand, true)
 
           # Set LC_ALL and LANG to force i18n to C for the duration of this exec;
           # this ensures that any code that parses the
           # output of the command can expect it to be in a consistent / predictable format / locale
           with_env 'LC_ALL' => 'C', 'LANG' => 'C' do
-            expanded_command = expand_command(command)
+            expanded_command = if !expand && builtin_command?(command)
+                                 command
+                               else
+                                 expand_command(command)
+                               end
 
             if expanded_command.nil?
               if on_fail == :raise
@@ -49,17 +54,7 @@ module LegacyFacter
               return on_fail
             end
 
-            begin
-              out, stderr, _status_ = Open3.capture3(expanded_command.to_s)
-              log_stderr_from_file(stderr, expanded_command)
-            rescue StandardError => e
-              return on_fail unless on_fail == :raise
-
-              raise Facter::Core::Execution::ExecutionFailure.new,
-                    "Failed while executing '#{expanded_command}': #{e.message}"
-            end
-
-            out.strip
+            execute_command(expanded_command, on_fail)
           end
         end
 
@@ -71,6 +66,25 @@ module LegacyFacter
           file_name = command.split('/').last
           logger = Facter::Log.new(file_name)
           logger.warn(msg.strip)
+        end
+
+        def builtin_command?(command)
+          output, _status = Open3.capture2("type #{command}")
+          output.chomp =~ /builtin/ ? true : false
+        end
+
+        def execute_command(command, on_fail)
+          begin
+            out, stderr, _status_ = Open3.capture3(command.to_s)
+            log_stderr_from_file(stderr, command)
+          rescue StandardError => e
+            return on_fail unless on_fail == :raise
+
+            raise Facter::Core::Execution::ExecutionFailure.new,
+                  "Failed while executing '#{command}': #{e.message}"
+          end
+
+          out.strip
         end
       end
     end

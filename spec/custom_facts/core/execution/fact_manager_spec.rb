@@ -73,6 +73,46 @@ describe LegacyFacter::Core::Execution::Base do
       subject.execute('foo')
     end
 
+    context 'with expand on posix' do
+      subject(:execution_base) { LegacyFacter::Core::Execution::Posix.new }
+
+      let(:test_env) { { 'LANG' => 'C', 'LC_ALL' => 'C', 'PATH' => '/sbin' } }
+
+      before do
+        test_env.each do |key, value|
+          allow(ENV).to receive(:[]).with(key).and_return(value)
+          allow(File).to receive(:executable?).with('/bin/foo').and_return(true)
+          allow(FileTest).to receive(:file?).with('/bin/foo').and_return(true)
+        end
+      end
+
+      it 'does not expant builtin command' do
+        allow(Open3).to receive(:capture3).with('/bin/foo').and_return('')
+        allow(Open3).to receive(:capture2).with('type /bin/foo').and_return('builtin')
+        execution_base.execute('/bin/foo', expand: false)
+      end
+    end
+
+    context 'with expand on windows' do
+      subject(:execution_base) { LegacyFacter::Core::Execution::Windows.new }
+
+      let(:test_env) { { 'LANG' => 'C', 'LC_ALL' => 'C', 'PATH' => '/sbin' } }
+
+      before do
+        test_env.each do |key, value|
+          allow(ENV).to receive(:[]).with(key).and_return(value)
+        end
+      end
+
+      it 'throws exception' do
+        allow(Open3).to receive(:capture3).with('foo').and_return('')
+        allow(Open3).to receive(:capture2).with('type foo').and_return('builtin')
+        expect { execution_base.execute('foo', expand: false) }
+          .to raise_error(ArgumentError,
+                          'Unsupported argument on Windows expand with value false')
+      end
+    end
+
     context 'when there are stderr messages from file' do
       subject(:executor) { LegacyFacter::Core::Execution::Posix.new }
 

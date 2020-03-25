@@ -8,6 +8,18 @@ describe LegacyFacter::Core::Execution::Windows, as_platform: :windows do
     end
   end
 
+  describe '#execute' do
+    context 'with expand false' do
+      subject(:executor) { LegacyFacter::Core::Execution::Windows.new }
+
+      it 'raises exception' do
+        expect { executor.execute('c:\foo.exe', expand: false) }
+          .to raise_error(ArgumentError,
+                          'Unsupported argument on Windows expand with value false')
+      end
+    end
+  end
+
   describe '#which' do
     before do
       allow(subject)
