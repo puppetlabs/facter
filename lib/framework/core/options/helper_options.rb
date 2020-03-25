@@ -16,7 +16,7 @@ module Facter
       validate_log_level
 
       Log.level = @options[:log_level]
-      LegacyFacter.trace(@options[:trace])
+      Facter.trace(@options[:trace])
     end
 
     private

@@ -12,8 +12,10 @@ describe Facter do
     fact_collection
   end
   let(:empty_fact_collection) { Facter::FactCollection.new }
+  let(:logger) { instance_spy(Facter::Log) }
 
   before do
+    Facter.instance_variable_set(:@logger, logger)
     Facter.clear
     allow(Facter::CacheManager).to receive(:invalidate_all_caches)
   end
@@ -79,6 +81,8 @@ describe Facter do
       end
 
       it 'returns no fact and status 1' do
+        allow(logger).to receive(:error).with('fact "os.name" does not exist.', true)
+
         user_query = 'os.name'
         expected_json_output = '{}'
 
@@ -286,17 +290,19 @@ describe Facter do
     end
   end
 
-  describe '#trace' do
-    it 'sends call to LegacyFacter' do
-      expect(LegacyFacter).to receive(:trace).with(true).once
-      Facter.trace(true)
+  describe '#trace?' do
+    it 'returns trace variable' do
+      expect(Facter).not_to be_trace
     end
   end
 
-  describe '#trace?' do
-    it 'sends call to LegacyFacter' do
-      expect(LegacyFacter).to receive(:trace?).once
-      Facter.trace?
+  describe '#trace' do
+    after do
+      Facter.trace(false)
+    end
+
+    it 'trace variable is true' do
+      expect(Facter.trace(true)).to be_truthy
     end
   end
 
@@ -311,7 +317,7 @@ describe Facter do
       let(:is_debug) { true }
 
       it 'logs a debug message' do
-        expect_any_instance_of(Facter::Log).to receive(:debug).with(message)
+        allow(logger).to receive(:debug).with('test')
         expect(Facter.debug(message)).to be(nil)
       end
     end
@@ -343,6 +349,28 @@ describe Facter do
     it 'returns that log_level is not debug' do
       expect(Facter::Options.instance).to receive(:[]).with(:debug).and_return(false)
       Facter.debugging?
+    end
+  end
+
+  describe '#log_exception' do
+    context 'when trace options is true' do
+      before do
+        Facter.trace(true)
+      end
+
+      after do
+        Facter.trace(false)
+      end
+
+      let(:message) { 'Some error message' }
+      let(:exception) { FlushFakeError.new }
+      let(:expected_message) { "Some error message\nbacktrace:\nprog.rb:2:in `a'" }
+
+      it 'format exception to display backtrace' do
+        exception.set_backtrace("prog.rb:2:in `a'")
+        Facter.log_exception(exception, message)
+        expect(logger).to have_received(:error).with(expected_message)
+      end
     end
   end
 end

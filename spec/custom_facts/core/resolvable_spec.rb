@@ -15,8 +15,6 @@ describe LegacyFacter::Core::Resolvable do
 
   subject(:resolvable) { ResolvableClass.new('resolvable') }
 
-  let(:logger) { instance_double(Facter::Log) }
-
   it 'has a default timeout of 0 seconds' do
     expect(resolvable.limit).to eq 0
   end
@@ -39,13 +37,10 @@ describe LegacyFacter::Core::Resolvable do
       expect(resolvable.value).to eq('stuff')
     end
 
-    it 'logs a warning if an exception was raised' do
-      allow(Facter::Log).to receive(:new).and_return(logger)
-      resolvable.instance_variable_set(:@logger, logger)
-
-      expect(resolvable).to receive(:resolve_value).and_raise RuntimeError, 'kaboom!'
-      expect(resolvable.logger).to receive(:error)
-        .with("Error while resolving custom fact fact='stub fact', " \
+    it 'logs a error if an exception was raised' do
+      allow(resolvable).to receive(:resolve_value).and_raise RuntimeError, 'kaboom!'
+      expect(Facter).to receive(:log_exception)
+        .with(RuntimeError, "Error while resolving custom fact fact='stub fact', " \
           "resolution='resolvable': kaboom!")
       expect { resolvable.value }.to raise_error(Facter::ResolveCustomFactError)
     end
@@ -61,10 +56,7 @@ describe LegacyFacter::Core::Resolvable do
     end
 
     it 'returns nil if the timeout was reached' do
-      allow(Facter::Log).to receive(:new).and_return(logger)
-      resolvable.instance_variable_set(:@logger, logger)
-
-      expect(resolvable.logger).to receive(:error).with(/Timed out after 0\.1 seconds while resolving/)
+      expect(Facter).to receive(:log_exception).with(Timeout::Error, /Timed out after 0\.1 seconds while resolving/)
       expect(Timeout).to receive(:timeout).and_raise Timeout::Error
 
       resolvable.timeout = 0.1

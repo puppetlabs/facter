@@ -14,6 +14,7 @@ module Facter
   Log.add_legacy_logger(STDOUT)
   @logger = Log.new(self)
   @already_searched = {}
+  @trace = false
 
   class << self
     def clear_messages
@@ -201,7 +202,7 @@ module Facter
     #
     # @api public
     def trace?
-      LegacyFacter.trace?
+      @trace
     end
 
     # Enable or disable trace
@@ -212,6 +213,7 @@ module Facter
     # @api public
     def trace(bool)
       LegacyFacter.trace(bool)
+      @trace = bool
     end
 
     # Gets the value for a fact. Returns `nil` if no such fact exists.
@@ -254,6 +256,21 @@ module Facter
       status = error_check(args, resolved_facts)
 
       [fact_formatter.format(resolved_facts), status || 0]
+    end
+
+    def log_exception(exception, message = :default)
+      arr = []
+      if message == :default
+        arr << exception.message
+      elsif message
+        arr << message
+      end
+      if @trace
+        arr << 'backtrace:'
+        arr.concat(exception.backtrace)
+      end
+
+      @logger.error(arr.flatten.join("\n"))
     end
 
     private
