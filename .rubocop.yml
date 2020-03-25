@@ -18,6 +18,7 @@ Metrics/MethodLength:
     - 'lib/custom_facts/util/confine.rb'
     - 'lib/custom_facts/core/execution/windows.rb'
     - 'lib/custom_facts/core/execution/base.rb'
+    - 'lib/framework/detector/os_detector.rb'
 
 Metrics/ModuleLength:
   Max: 100
