@@ -193,7 +193,7 @@ module Facter
       log_blocked_facts
 
       resolved_facts = Facter::FactManager.instance.resolve_facts
-      CacheManager.invalidate_all_caches
+      SessionCache.invalidate_all_caches
       FactCollection.new.build_fact_collection!(resolved_facts)
     end
 
@@ -251,7 +251,7 @@ module Facter
       log_blocked_facts
 
       resolved_facts = Facter::FactManager.instance.resolve_facts(args)
-      CacheManager.invalidate_all_caches
+      SessionCache.invalidate_all_caches
       fact_formatter = Facter::FormatterFactory.build(@options)
 
       status = error_check(args, resolved_facts)
@@ -289,7 +289,7 @@ module Facter
       @options.refresh([user_query])
       user_query = user_query.to_s
       resolved_facts = Facter::FactManager.instance.resolve_facts([user_query])
-      CacheManager.invalidate_all_caches
+      SessionCache.invalidate_all_caches
       fact_collection = FactCollection.new.build_fact_collection!(resolved_facts)
       splitted_user_query = Facter::Utils.split_user_query(user_query)
 

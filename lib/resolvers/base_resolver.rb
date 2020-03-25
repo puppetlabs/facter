@@ -12,7 +12,7 @@ module Facter
       end
 
       def self.subscribe_to_manager
-        Facter::CacheManager.subscribe(self)
+        Facter::SessionCache.subscribe(self)
       end
 
       def self.resolve(fact_name)

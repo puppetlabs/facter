@@ -17,7 +17,7 @@ describe Facter do
   before do
     Facter.instance_variable_set(:@logger, logger)
     Facter.clear
-    allow(Facter::CacheManager).to receive(:invalidate_all_caches)
+    allow(Facter::SessionCache).to receive(:invalidate_all_caches)
   end
 
   describe '#to_hash' do

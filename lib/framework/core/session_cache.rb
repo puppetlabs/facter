@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facter
-  class CacheManager
+  class SessionCache
     @semaphore = Mutex.new
     @resolvers = []
 
