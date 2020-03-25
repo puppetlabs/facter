@@ -24,7 +24,7 @@ module LegacyFacter
       # @param name [Symbol] The name of the fact to define
       # @param options [Hash] A hash of options to set on the fact
       #
-      # @return [LegacyFacter::Util::Fact] The fact that was defined
+      # @return [Facter::Util::Fact] The fact that was defined
       def define_fact(name, options = {}, &block)
         fact = create_or_return_fact(name, options)
 
@@ -41,7 +41,7 @@ module LegacyFacter
       # @param name [Symbol] The name of the fact to define
       # @param options [Hash] A hash of options to set on the fact and resolution
       #
-      # @return [LegacyFacter::Util::Fact] The fact that was defined
+      # @return [Facter::Util::Fact] The fact that was defined
       def add(name, options = {}, &block)
         fact = create_or_return_fact(name, options)
 
@@ -163,7 +163,7 @@ module LegacyFacter
         fact = @facts[name]
 
         if fact.nil?
-          fact = LegacyFacter::Util::Fact.new(name, options)
+          fact = Facter::Util::Fact.new(name, options)
           @facts[name] = fact
         else
           fact.extract_ldapname_option!(options)

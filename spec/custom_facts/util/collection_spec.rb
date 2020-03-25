@@ -30,8 +30,8 @@ describe LegacyFacter::Util::Collection do
     end
 
     it 'passes resolution specific options to the fact' do
-      fact = LegacyFacter::Util::Fact.new(:myname)
-      expect(LegacyFacter::Util::Fact).to receive(:new).with(:myname, timeout: 'myval').and_return(fact)
+      fact = Facter::Util::Fact.new(:myname)
+      expect(Facter::Util::Fact).to receive(:new).with(:myname, timeout: 'myval').and_return(fact)
 
       expect(fact).to receive(:add).with(timeout: 'myval')
 
@@ -42,7 +42,7 @@ describe LegacyFacter::Util::Collection do
       it 'uses the block to add a resolution to the fact' do
         fact = double 'fact'
         # allow(fact).to receive(:extract_ldapname_option!)
-        expect(LegacyFacter::Util::Fact).to receive(:new).and_return(fact)
+        expect(Facter::Util::Fact).to receive(:new).and_return(fact)
 
         expect(fact).to receive(:add)
 
@@ -63,8 +63,8 @@ describe LegacyFacter::Util::Collection do
 
   describe 'when only defining facts' do
     it 'creates a new fact if no such fact exists' do
-      fact = LegacyFacter::Util::Fact.new(:newfact)
-      expect(LegacyFacter::Util::Fact).to receive(:new).with(:newfact, {}).and_return fact
+      fact = Facter::Util::Fact.new(:newfact)
+      expect(Facter::Util::Fact).to receive(:new).with(:newfact, {}).and_return fact
       expect(collection.define_fact(:newfact)).to equal fact
     end
 

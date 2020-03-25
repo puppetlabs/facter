@@ -2,7 +2,7 @@
 
 require_relative '../../../spec_helper_legacy'
 
-describe LegacyFacter::Core::Execution::Base do
+describe Facter::Core::Execution::Base do
   describe '#with_env' do
     it "executes the caller's block with the specified env vars" do
       test_env = { 'LANG' => 'C', 'LC_ALL' => 'C', 'FOO' => 'BAR' }
@@ -114,7 +114,7 @@ describe LegacyFacter::Core::Execution::Base do
     end
 
     context 'when there are stderr messages from file' do
-      subject(:executor) { LegacyFacter::Core::Execution::Posix.new }
+      subject(:executor) { Facter::Core::Execution::Posix.new }
 
       let(:logger) { instance_spy(Facter::Log) }
       let(:command) { '/bin/foo' }

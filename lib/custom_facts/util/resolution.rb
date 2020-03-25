@@ -38,7 +38,7 @@ module Facter
       attr_accessor :name
 
       # @!attribute [r] fact
-      # @return [LegacyFacter::Util::Fact]
+      # @return [Facter::Util::Fact]
       # @api private
       attr_reader :fact
 
@@ -115,7 +115,7 @@ module Facter
       def setcode(string = nil, &block)
         if string
           @code = proc do
-            output = LegacyFacter::Core::Execution.execute(string, on_fail: nil)
+            output = Facter::Core::Execution.execute(string, on_fail: nil)
             if output.nil? || output.empty?
               nil
             else

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module LegacyFacter
+module Facter
   module Core
     module Execution
       class Base

@@ -1,7 +1,7 @@
-module LegacyFacter
+module Facter
   module Core
     module Execution
-      class Windows < LegacyFacter::Core::Execution::Base
+      class Windows < Facter::Core::Execution::Base
         def search_paths
           ENV['PATH'].split(File::PATH_SEPARATOR)
         end

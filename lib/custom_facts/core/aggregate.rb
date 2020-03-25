@@ -11,7 +11,7 @@
 #
 # @api public
 # @since 2.0.0
-module LegacyFacter
+module Facter
   module Core
     class Aggregate
       include LegacyFacter::Core::Suitable
@@ -33,7 +33,7 @@ module LegacyFacter
       attr_reader :confines
 
       # @!attribute [r] fact
-      # @return [LegacyFacter::Util::Fact]
+      # @return [Facter::Util::Fact]
       # @api private
       attr_reader :fact
 

@@ -1,6 +1,6 @@
 require_relative '../../../spec_helper_legacy'
 
-describe LegacyFacter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.windows? do
+describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.windows? do
   describe '#search_paths' do
     it 'uses the PATH environment variable plus /sbin and /usr/sbin on unix' do
       expect(ENV).to receive(:[]).with('PATH').and_return '/bin:/usr/bin'

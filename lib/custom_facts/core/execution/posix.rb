@@ -1,7 +1,7 @@
-module LegacyFacter
+module Facter
   module Core
     module Execution
-      class Posix < LegacyFacter::Core::Execution::Base
+      class Posix < Facter::Core::Execution::Base
         DEFAULT_SEARCH_PATHS = ['/sbin', '/usr/sbin'].freeze
 
         def search_paths

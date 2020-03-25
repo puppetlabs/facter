@@ -25,7 +25,7 @@ module Facter
     # Alias method for Facter.fact()
     # @param name [string] fact name
     #
-    # @return [LegacyFacter::Util::Fact, nil] The fact object, or nil if no fact
+    # @return [Facter::Util::Fact, nil] The fact object, or nil if no fact
     #   is found.
     #
     # @api public
@@ -40,7 +40,7 @@ module Facter
     #   supplied here
     # @param block [Proc] a block defining a fact resolution
     #
-    # @return [LegacyFacter::Util::Fact] the fact object, which includes any previously
+    # @return [Facter::Util::Fact] the fact object, which includes any previously
     #   defined resolutions
     #
     # @api public
@@ -115,7 +115,7 @@ module Facter
     #
     # @param name [String] the name of the fact
     #
-    # @return [LegacyFacter::Util::Fact, nil] The fact object, or nil if no fact
+    # @return [Facter::Util::Fact, nil] The fact object, or nil if no fact
     #   is found.
     #
     # @api public

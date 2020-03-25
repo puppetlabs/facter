@@ -73,7 +73,7 @@ module LegacyFacter
   #
   # @param name [String] the name of the fact
   #
-  # @return [LegacyFacter::Util::Fact, nil] The fact object, or nil if no fact
+  # @return [Facter::Util::Fact, nil] The fact object, or nil if no fact
   #   is found.
   #
   # @api public
@@ -131,7 +131,7 @@ module LegacyFacter
   # @param name [Symbol] The name of the fact to define
   # @param options [Hash] A hash of options to set on the fact
   #
-  # @return [LegacyFacter::Util::Fact] The fact that was defined
+  # @return [Facter::Util::Fact] The fact that was defined
   #
   # @api public
   # @see {Facter::Util::Collection#define_fact}
@@ -152,7 +152,7 @@ module LegacyFacter
   #   {Facter::Util::Resolution#timeout timeout} for this resolution
   # @param block [Proc] a block defining a fact resolution
   #
-  # @return [LegacyFacter::Util::Fact] the fact object, which includes any previously
+  # @return [Facter::Util::Fact] the fact object, which includes any previously
   #   defined resolutions
   #
   # @api public

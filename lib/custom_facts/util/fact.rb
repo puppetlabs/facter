@@ -6,7 +6,7 @@
 # Create facts using {Facter.add}
 #
 # @api public
-module LegacyFacter
+module Facter
   module Util
     class Fact
       # The name of the fact
@@ -201,7 +201,7 @@ module LegacyFacter
           when :simple
             resolve = Facter::Util::Resolution.new(resolution_name, self)
           when :aggregate
-            resolve = LegacyFacter::Core::Aggregate.new(resolution_name, self)
+            resolve = Facter::Core::Aggregate.new(resolution_name, self)
           else
             raise ArgumentError,
                   "Expected resolution type to be one of (:simple, :aggregate) but was #{resolution_type}"

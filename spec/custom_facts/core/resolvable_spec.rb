@@ -6,7 +6,7 @@ describe LegacyFacter::Core::Resolvable do
   class ResolvableClass
     def initialize(name)
       @name = name
-      @fact = LegacyFacter::Util::Fact.new('stub fact')
+      @fact = Facter::Util::Fact.new('stub fact')
     end
     attr_accessor :name, :resolve_value
     attr_reader :fact

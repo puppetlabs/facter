@@ -8,9 +8,9 @@ module Facter
       # require_relative 'execution/posix'
 
       @@impl = if LegacyFacter::Util::Config.windows?
-                 LegacyFacter::Core::Execution::Windows.new
+                 Facter::Core::Execution::Windows.new
                else
-                 LegacyFacter::Core::Execution::Posix.new
+                 Facter::Core::Execution::Posix.new
                end
 
       def self.impl

@@ -2,8 +2,8 @@
 
 require_relative '../../spec_helper_legacy'
 
-describe LegacyFacter::Core::Aggregate do
-  subject(:aggregate_res) { LegacyFacter::Core::Aggregate.new('aggregated', fact) }
+describe Facter::Core::Aggregate do
+  subject(:aggregate_res) { Facter::Core::Aggregate.new('aggregated', fact) }
 
   let(:fact) { double('stub_fact', name: 'stub_fact') }
 
