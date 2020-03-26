@@ -3,7 +3,10 @@
 describe Facter::Resolvers::SolarisZone do
   before do
     status = double(Process::Status, to_s: st)
-    expect(Open3).to receive(:capture2)
+    allow(File).to receive(:executable?)
+      .with('/usr/sbin/zoneadm')
+      .and_return(true)
+    allow(Open3).to receive(:capture2)
       .with('/usr/sbin/zoneadm list -cp')
       .ordered
       .and_return([output, status])

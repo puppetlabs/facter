@@ -14,6 +14,8 @@ module Facter
         end
 
         def build_current_zone_name_fact(fact_name)
+          return unless File.executable?('/bin/zonename')
+
           zone_name_output, status = Open3.capture2('/bin/zonename')
           unless status.to_s.include?('exit 0')
             @log.debug("Command #{command} returned status: #{status}")

@@ -21,6 +21,8 @@ module Facts
           zones = {}
 
           results = Facter::Resolvers::SolarisZone.resolve(:zone)
+          return Facter::ResolvedFact.new(FACT_NAME, nil) unless results
+
           results&.each do |result|
             zones.merge!(parse_result(result))
             resolved_facts << create_legacy_zone_facts(result)

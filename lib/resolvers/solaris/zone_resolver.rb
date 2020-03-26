@@ -14,6 +14,8 @@ module Facter
         end
 
         def build_zone_fact(fact_name)
+          return unless File.executable?('/usr/sbin/zoneadm')
+
           command = '/usr/sbin/zoneadm list -cp'
           zone_adm_output, status = Open3.capture2(command)
           unless status.to_s.include?('exit 0')
