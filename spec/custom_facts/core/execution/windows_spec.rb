@@ -10,7 +10,7 @@ describe Facter::Core::Execution::Windows, as_platform: :windows do
 
   describe '#execute' do
     context 'with expand false' do
-      subject(:executor) { LegacyFacter::Core::Execution::Windows.new }
+      subject(:executor) { Facter::Core::Execution::Windows.new }
 
       it 'raises exception' do
         expect { executor.execute('c:\foo.exe', expand: false) }

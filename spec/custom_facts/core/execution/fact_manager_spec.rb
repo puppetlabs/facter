@@ -74,7 +74,7 @@ describe Facter::Core::Execution::Base do
     end
 
     context 'with expand on posix' do
-      subject(:execution_base) { LegacyFacter::Core::Execution::Posix.new }
+      subject(:execution_base) { Facter::Core::Execution::Posix.new }
 
       let(:test_env) { { 'LANG' => 'C', 'LC_ALL' => 'C', 'PATH' => '/sbin' } }
 
@@ -94,7 +94,7 @@ describe Facter::Core::Execution::Base do
     end
 
     context 'with expand on windows' do
-      subject(:execution_base) { LegacyFacter::Core::Execution::Windows.new }
+      subject(:execution_base) { Facter::Core::Execution::Windows.new }
 
       let(:test_env) { { 'LANG' => 'C', 'LC_ALL' => 'C', 'PATH' => '/sbin' } }
 
