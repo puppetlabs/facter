@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 describe Facter::SessionCache do
+  let(:uname_resolver) { spy(Facter::Resolvers::Uname) }
+
   it 'registers resolver subscription' do
-    uname_resolver = double(Facter::Resolvers::Uname)
     Facter::SessionCache.subscribe(uname_resolver)
-    expect(uname_resolver).to receive(:invalidate_cache)
     Facter::SessionCache.invalidate_all_caches
+
+    expect(uname_resolver).to have_received(:invalidate_cache)
   end
 end

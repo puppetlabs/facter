@@ -4,35 +4,87 @@ describe Facts::Debian::Os::Release do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Debian::Os::Release.new }
 
-    before do
-      allow(Facter::Resolvers::LsbRelease).to receive(:resolve).with(:release).and_return(value)
-    end
-
-    context 'when lsb_release installed' do
-      let(:value) { '10.9' }
-      let(:value_final) { { 'full' => '10.9', 'major' => '10', 'minor' => '9' } }
-
-      it 'calls Facter::Resolvers::LsbRelease' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:release)
+    context 'when os is Ubuntu' do
+      before do
+        allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:name).and_return(name)
+        allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version_id).and_return(value)
       end
 
-      it 'returns release fact' do
-        expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-          contain_exactly(an_object_having_attributes(name: 'os.release', value: value_final),
-                          an_object_having_attributes(name: 'operatingsystemmajrelease', value: value_final['major'],
-                                                      type: :legacy),
-                          an_object_having_attributes(name: 'operatingsystemrelease', value: value_final['full'],
-                                                      type: :legacy))
+      let(:name) { 'Ubuntu' }
+
+      context 'when version_id is retrieved successful' do
+        let(:value) { '18.04' }
+        let(:value_final) { { 'full' => '18.04', 'major' => '18', 'minor' => '4' } }
+
+        it 'calls Facter::Resolvers::OsRelease with :name' do
+          fact.call_the_resolver
+          expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:name)
+        end
+
+        it 'calls Facter::Resolvers::OsRelease with :version_id' do
+          fact.call_the_resolver
+          expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version_id)
+        end
+
+        it 'returns release fact' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+            contain_exactly(an_object_having_attributes(name: 'os.release', value: value_final),
+                            an_object_having_attributes(name: 'operatingsystemmajrelease', value: value_final['major'],
+                                                        type: :legacy),
+                            an_object_having_attributes(name: 'operatingsystemrelease', value: value_final['full'],
+                                                        type: :legacy))
+        end
+      end
+
+      context 'when version_id could not be retrieve' do
+        let(:value) { nil }
+
+        it 'returns release fact as nil' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'os.release', value: value)
+        end
       end
     end
 
-    context 'when lsb_release uninstalled' do
-      let(:value) { nil }
+    context 'when os is Debian' do
+      let(:name) { 'Debian' }
 
-      it 'returns release fact as nil' do
-        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-          have_attributes(name: 'os.release', value: value)
+      before do
+        allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:name).and_return(name)
+        allow(Facter::Resolvers::DebianVersion).to receive(:resolve).with(:version).and_return(value)
+      end
+
+      context 'when version_id is retrieved successful' do
+        let(:value) { '10.02' }
+        let(:value_final) { { 'full' => '10.02', 'major' => '10', 'minor' => '2' } }
+
+        it 'calls Facter::Resolvers::OsRelease with :name' do
+          fact.call_the_resolver
+          expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:name)
+        end
+
+        it 'calls Facter::Resolvers::DebianVersion' do
+          fact.call_the_resolver
+          expect(Facter::Resolvers::DebianVersion).to have_received(:resolve).with(:version)
+        end
+
+        it 'returns release fact' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+            contain_exactly(an_object_having_attributes(name: 'os.release', value: value_final),
+                            an_object_having_attributes(name: 'operatingsystemmajrelease', value: value_final['major'],
+                                                        type: :legacy),
+                            an_object_having_attributes(name: 'operatingsystemrelease', value: value_final['full'],
+                                                        type: :legacy))
+        end
+      end
+
+      context 'when version_id could not be retrieve' do
+        let(:value) { nil }
+
+        it 'returns release fact as nil' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'os.release', value: value)
+        end
       end
     end
   end

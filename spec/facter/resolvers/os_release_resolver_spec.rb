@@ -9,7 +9,9 @@ describe Facter::Resolvers::OsRelease do
     allow(File).to receive(:read)
       .with('/etc/os-release')
       .and_return(load_fixture('os_release').read)
+  end
 
+  after do
     Facter::Resolvers::OsRelease.invalidate_cache
   end
 

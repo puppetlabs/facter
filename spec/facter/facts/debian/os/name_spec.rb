@@ -7,12 +7,12 @@ describe Facts::Debian::Os::Name do
     let(:value) { 'Debian' }
 
     before do
-      allow(Facter::Resolvers::LsbRelease).to receive(:resolve).with(:distributor_id).and_return(value)
+      allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:name).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::LsbRelease' do
+    it 'calls Facter::Resolvers::OsRelease' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:distributor_id)
+      expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:name)
     end
 
     it 'returns operating system name fact' do

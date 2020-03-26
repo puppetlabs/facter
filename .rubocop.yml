@@ -136,3 +136,6 @@ RSpec/ExampleLength:
 
 RSpec/DescribedClass:
   EnforcedStyle: explicit
+
+RSpec/NestedGroups:
+  Max: 5

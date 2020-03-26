@@ -18,13 +18,11 @@ module Facter
         end
 
         def read_debian_version(fact_name)
-          output, _status = Open3.capture2('cat /etc/debian_version')
-          full_version = output.delete("\n")
-          versions = full_version.split('.')
+          return unless File.readable?('/etc/debian_version')
 
-          @fact_list[:full] = full_version
-          @fact_list[:major] = versions[0]
-          @fact_list[:minor] = versions[1].gsub(/^0([1-9])/, '\1')
+          verion = File.read('/etc/debian_version')
+
+          @fact_list[:version] = verion.strip
 
           @fact_list[fact_name]
         end
