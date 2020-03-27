@@ -6,12 +6,12 @@ require_relative '../../spec_helper_legacy'
 describe LegacyFacter::Util::DirectoryLoader do
   include PuppetlabsSpec::Files
 
-  subject { LegacyFacter::Util::DirectoryLoader.new(tmpdir('directory_loader')) }
+  subject(:dir_loader) { LegacyFacter::Util::DirectoryLoader.new(tmpdir('directory_loader')) }
 
-  let(:collection) { LegacyFacter::Util::Collection.new(double('internal loader'), subject) }
+  let(:collection) { LegacyFacter::Util::Collection.new(double('internal loader'), dir_loader) }
 
   it 'makes the directory available' do
-    expect(subject.directory).to be_instance_of(String)
+    expect(dir_loader.directory).to be_instance_of(String)
   end
 
   # it "can be created with a given directory" do
@@ -37,7 +37,7 @@ describe LegacyFacter::Util::DirectoryLoader do
       data = { 'f1' => 'one', 'f2' => 'two' }
       write_to_file('data.yaml', YAML.dump(data))
 
-      subject.load(collection)
+      dir_loader.load(collection)
 
       expect(collection.value('f1')).to eq 'one'
       expect(collection.value('f2')).to eq 'two'
@@ -50,7 +50,7 @@ describe LegacyFacter::Util::DirectoryLoader do
       data = { 'f1' => 'one', 'f2' => 'two' }
       write_to_file('.data.yaml', YAML.dump(data))
 
-      subject.load(not_to_be_used_collection)
+      dir_loader.load(not_to_be_used_collection)
     end
 
     %w[bak orig].each do |ext|
@@ -58,7 +58,7 @@ describe LegacyFacter::Util::DirectoryLoader do
         expect(LegacyFacter).to receive(:warn).with(/#{ext}/)
         write_to_file('data' + ".#{ext}", 'foo=bar')
 
-        subject.load(collection)
+        dir_loader.load(collection)
       end
     end
 
@@ -66,7 +66,7 @@ describe LegacyFacter::Util::DirectoryLoader do
       write_to_file('file.unknownfiletype', 'stuff=bar')
       expect(LegacyFacter).to receive(:warn).with(/file.unknownfiletype/)
 
-      subject.load(collection)
+      dir_loader.load(collection)
     end
 
     it 'external facts should almost always precedence over all other facts' do
@@ -77,20 +77,20 @@ describe LegacyFacter::Util::DirectoryLoader do
       data = { 'f1' => 'external_fact' }
       write_to_file('data.yaml', YAML.dump(data))
 
-      subject.load(collection)
+      dir_loader.load(collection)
 
       expect(collection.value('f1')).to eq 'external_fact'
     end
 
     describe 'given a custom weight' do
-      subject { LegacyFacter::Util::DirectoryLoader.new(tmpdir('directory_loader'), 10) }
+      subject(:dir_loader) { LegacyFacter::Util::DirectoryLoader.new(tmpdir('directory_loader'), 10) }
 
       it 'sets that weight for loaded external facts' do
         collection.add('f1', value: 'higher_weight_fact') { has_weight(11) }
         data = { 'f1' => 'external_fact' }
         write_to_file('data.yaml', YAML.dump(data))
 
-        subject.load(collection)
+        dir_loader.load(collection)
 
         expect(collection.value('f1')).to eq 'higher_weight_fact'
       end
@@ -98,7 +98,7 @@ describe LegacyFacter::Util::DirectoryLoader do
   end
 
   def write_to_file(file_name, to_write)
-    file = File.join(subject.directory, file_name)
+    file = File.join(dir_loader.directory, file_name)
     File.open(file, 'w') { |f| f.print to_write }
   end
 end

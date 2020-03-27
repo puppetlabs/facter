@@ -3,152 +3,152 @@
 require_relative '../../spec_helper_legacy'
 
 describe LegacyFacter::Core::Logging do
-  subject { LegacyFacter::Core::Logging }
+  subject(:logging) { LegacyFacter::Core::Logging }
 
   after do
-    subject.debugging(false)
-    subject.timing(false)
-    subject.on_message
+    logging.debugging(false)
+    logging.timing(false)
+    logging.on_message
   end
 
   describe 'emitting debug messages' do
     it "doesn't log a message when debugging is disabled" do
-      subject.debugging(false)
-      expect(subject).not_to receive(:puts)
-      subject.debug('foo')
+      logging.debugging(false)
+      expect(logging).not_to receive(:puts)
+      logging.debug('foo')
     end
 
     describe 'and debugging is enabled' do
-      before { subject.debugging(true) }
+      before { logging.debugging(true) }
 
       it 'emits a warning when called with nil' do
-        expect(subject).to receive(:warn).with(/invalid message nil:NilClass/)
-        subject.debug(nil)
+        expect(logging).to receive(:warn).with(/invalid message nil:NilClass/)
+        logging.debug(nil)
       end
 
       it 'emits a warning when called with an empty string' do
-        expect(subject).to receive(:warn).with(/invalid message "":String/)
-        subject.debug('')
+        expect(logging).to receive(:warn).with(/invalid message "":String/)
+        logging.debug('')
       end
 
       it 'prints the message when logging is enabled' do
-        expect(subject).to receive(:puts).with(/foo/)
-        subject.debug('foo')
+        expect(logging).to receive(:puts).with(/foo/)
+        logging.debug('foo')
       end
     end
   end
 
   describe 'when warning' do
     it 'emits a warning when given a string' do
-      subject.debugging(true)
+      logging.debugging(true)
       expect(Kernel).to receive(:warn).with('foo')
-      subject.warn('foo')
+      logging.warn('foo')
     end
 
     it 'emits a warning regardless of log level' do
-      subject.debugging(false)
+      logging.debugging(false)
       expect(Kernel).to receive(:warn).with('foo')
-      subject.warn 'foo'
+      logging.warn 'foo'
     end
 
     it 'emits a warning if nil is passed' do
       expect(Kernel).to receive(:warn).with(/invalid message nil:NilClass/)
-      subject.warn(nil)
+      logging.warn(nil)
     end
 
     it 'emits a warning if an empty string is passed' do
       expect(Kernel).to receive(:warn).with(/invalid message "":String/)
-      subject.warn('')
+      logging.warn('')
     end
   end
 
   describe 'when warning once' do
     it 'only logs a given warning string once' do
-      expect(subject).to receive(:warn).with('foo').once
-      subject.warnonce('foo')
-      subject.warnonce('foo')
+      expect(logging).to receive(:warn).with('foo').once
+      logging.warnonce('foo')
+      logging.warnonce('foo')
     end
   end
 
   describe 'when setting the debugging mode' do
     it 'is enabled when the given value is true' do
-      subject.debugging(true)
-      expect(subject.debugging?).to be true
+      logging.debugging(true)
+      expect(logging.debugging?).to be true
     end
 
     it 'is disabled when the given value is false' do
-      subject.debugging(false)
-      expect(subject.debugging?).to be false
+      logging.debugging(false)
+      expect(logging.debugging?).to be false
     end
 
     it 'is disabled when the given value is nil' do
-      subject.debugging(nil)
-      expect(subject.debugging?).to be nil
+      logging.debugging(nil)
+      expect(logging.debugging?).to be nil
     end
   end
 
   describe 'when setting the timing mode' do
     it 'is enabled when the given value is true' do
-      subject.timing(true)
-      expect(subject.timing?).to be true
+      logging.timing(true)
+      expect(logging.timing?).to be true
     end
 
     it 'is disabled when the given value is false' do
-      subject.timing(false)
-      expect(subject.timing?).to be false
+      logging.timing(false)
+      expect(logging.timing?).to be false
     end
 
     it 'is disabled when the given value is nil' do
-      subject.timing(nil)
-      expect(subject.timing?).to be nil
+      logging.timing(nil)
+      expect(logging.timing?).to be nil
     end
   end
 
   describe 'without a logging callback' do
     before do
-      subject.timing(true)
-      subject.debugging(true)
-      subject.on_message
+      logging.timing(true)
+      logging.debugging(true)
+      logging.on_message
     end
 
     it 'calls puts for debug' do
-      expect(subject).to receive(:puts).with(subject::GREEN + 'foo' + subject::RESET).once
-      subject.debug('foo')
+      expect(logging).to receive(:puts).with(logging::GREEN + 'foo' + logging::RESET).once
+      logging.debug('foo')
     end
 
     it 'calls puts for debugonce' do
-      expect(subject).to receive(:puts).with(subject::GREEN + 'foo' + subject::RESET).once
-      subject.debugonce('foo')
-      subject.debugonce('foo')
+      expect(logging).to receive(:puts).with(logging::GREEN + 'foo' + logging::RESET).once
+      logging.debugonce('foo')
+      logging.debugonce('foo')
     end
 
     it 'calls Kernel.warn for warn' do
       expect(Kernel).to receive(:warn).with('foo').once
-      subject.warn('foo')
+      logging.warn('foo')
     end
 
     it 'calls Kernel.warn for warnonce' do
       expect(Kernel).to receive(:warn).with('foo').once
-      subject.warnonce('foo')
-      subject.warnonce('foo')
+      logging.warnonce('foo')
+      logging.warnonce('foo')
     end
 
     it 'calls $stderr.puts for timing' do
-      expect($stderr).to receive(:puts).with(subject::GREEN + 'foo' + subject::RESET).once
-      subject.show_time('foo')
+      expect($stderr).to receive(:puts).with(logging::GREEN + 'foo' + logging::RESET).once
+      logging.show_time('foo')
     end
   end
 
   describe 'with a logging callback' do
     before do
-      subject.debugging(true)
-      subject.timing(true)
-      subject.on_message
+      logging.debugging(true)
+      logging.timing(true)
+      logging.on_message
     end
 
     def log_message(level, message)
       called = false
-      subject.on_message do |lvl, msg|
+      logging.on_message do |lvl, msg|
         called = true
         expect(lvl).to eq(level)
         expect(msg).to eq(message)
@@ -163,14 +163,14 @@ describe LegacyFacter::Core::Logging do
       else
         raise 'unexpected logging level'
       end
-      subject.on_message
+      logging.on_message
       expect(called).to be true
       true
     end
 
     def log_message_once(level, message)
       calls = 0
-      subject.on_message do |lvl, msg|
+      logging.on_message do |lvl, msg|
         expect(lvl).to eq(level)
         expect(msg).to eq(message)
         calls += 1
@@ -189,10 +189,10 @@ describe LegacyFacter::Core::Logging do
     end
 
     it 'does not call puts for debug or debugonce' do
-      subject.on_message {}
-      expect(subject).not_to receive(:puts)
-      subject.debug('debug message')
-      subject.debugonce('debug once message')
+      logging.on_message {}
+      expect(logging).not_to receive(:puts)
+      logging.debug('debug message')
+      logging.debugonce('debug once message')
     end
 
     it 'passes debug messages to callback' do
@@ -201,10 +201,10 @@ describe LegacyFacter::Core::Logging do
     end
 
     it 'does not call Kernel.warn for warn or warnonce' do
-      subject.on_message {}
+      logging.on_message {}
       expect(Kernel).not_to receive(:warn)
-      subject.warn('warn message')
-      subject.warnonce('warn once message')
+      logging.warn('warn message')
+      logging.warnonce('warn once message')
     end
 
     it 'passes warning messages to callback' do
@@ -213,9 +213,9 @@ describe LegacyFacter::Core::Logging do
     end
 
     it 'does not call $stderr.puts for show_time' do
-      subject.on_message {}
+      logging.on_message {}
       expect($stderr).not_to receive(:puts)
-      subject.show_time('debug message')
+      logging.show_time('debug message')
     end
 
     it 'passes info messages to callback' do

@@ -48,8 +48,8 @@ describe Facter::Util::Fact do
 
   describe 'when adding resolution mechanisms using #add' do
     it 'delegates to #define_resolution with an anonymous resolution' do
-      expect(subject).to receive(:define_resolution).with(nil, {})
-      subject.add
+      expect(fact).to receive(:define_resolution).with(nil, {})
+      fact.add
     end
   end
 
@@ -203,13 +203,13 @@ describe Facter::Util::Fact do
     end
 
     it 'invokes #flush on all resolutions' do
-      simple = subject.add(type: :simple)
+      simple = fact.add(type: :simple)
       expect(simple).to receive(:flush)
 
-      aggregate = subject.add(type: :aggregate)
+      aggregate = fact.add(type: :aggregate)
       expect(aggregate).to receive(:flush)
 
-      subject.flush
+      fact.flush
     end
   end
 end

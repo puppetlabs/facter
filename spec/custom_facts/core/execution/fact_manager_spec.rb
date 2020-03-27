@@ -3,10 +3,12 @@
 require_relative '../../../spec_helper_legacy'
 
 describe Facter::Core::Execution::Base do
+  subject(:executor) { Facter::Core::Execution::Posix.new }
+
   describe '#with_env' do
     it "executes the caller's block with the specified env vars" do
       test_env = { 'LANG' => 'C', 'LC_ALL' => 'C', 'FOO' => 'BAR' }
-      subject.with_env test_env do
+      executor.with_env test_env do
         test_env.keys.each do |key|
           expect(ENV[key]).to eq test_env[key]
         end
@@ -28,7 +30,7 @@ describe Facter::Core::Execution::Base do
       end
 
       # verify that, during the 'with_env', the new values are used
-      subject.with_env new_env do
+      executor.with_env new_env do
         orig_env.keys.each do |key|
           expect(ENV[key]).to eq new_env[key]
         end
@@ -49,7 +51,7 @@ describe Facter::Core::Execution::Base do
         ENV[@sentinel_var] = 'foo'
         new_env = { @sentinel_var => 'bar' }
 
-        subject.with_env new_env do
+        executor.with_env new_env do
           expect(ENV[@sentinel_var]).to eq 'bar'
           return
         end
@@ -63,19 +65,17 @@ describe Facter::Core::Execution::Base do
 
   describe '#execute' do
     it 'switches LANG and LC_ALL to C when executing the command' do
-      expect(subject).to receive(:with_env).with('LC_ALL' => 'C', 'LANG' => 'C')
-      subject.execute('foo')
+      expect(executor).to receive(:with_env).with('LC_ALL' => 'C', 'LANG' => 'C')
+      executor.execute('foo')
     end
 
     it 'expands the command before running it' do
       allow(Open3).to receive(:capture3).with('/bin/foo').and_return('')
-      expect(subject).to receive(:expand_command).with('foo').and_return '/bin/foo'
-      subject.execute('foo')
+      expect(executor).to receive(:expand_command).with('foo').and_return '/bin/foo'
+      executor.execute('foo')
     end
 
     context 'with expand on posix' do
-      subject(:execution_base) { Facter::Core::Execution::Posix.new }
-
       let(:test_env) { { 'LANG' => 'C', 'LC_ALL' => 'C', 'PATH' => '/sbin' } }
 
       before do
@@ -89,7 +89,7 @@ describe Facter::Core::Execution::Base do
       it 'does not expant builtin command' do
         allow(Open3).to receive(:capture3).with('/bin/foo').and_return('')
         allow(Open3).to receive(:capture2).with('type /bin/foo').and_return('builtin')
-        execution_base.execute('/bin/foo', expand: false)
+        executor.execute('/bin/foo', expand: false)
       end
     end
 
@@ -114,8 +114,6 @@ describe Facter::Core::Execution::Base do
     end
 
     context 'when there are stderr messages from file' do
-      subject(:executor) { Facter::Core::Execution::Posix.new }
-
       let(:logger) { instance_spy(Facter::Log) }
       let(:command) { '/bin/foo' }
 
@@ -135,43 +133,43 @@ describe Facter::Core::Execution::Base do
 
     describe 'and the command is not present' do
       it 'raises an error when the :on_fail behavior is :raise' do
-        expect(subject).to receive(:expand_command).with('foo').and_return(nil)
-        expect { subject.execute('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
+        expect(executor).to receive(:expand_command).with('foo').and_return(nil)
+        expect { executor.execute('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
       end
 
       it 'returns the given value when :on_fail is set to a value' do
-        expect(subject).to receive(:expand_command).with('foo').and_return(nil)
-        expect(subject.execute('foo', on_fail: nil)).to be_nil
+        expect(executor).to receive(:expand_command).with('foo').and_return(nil)
+        expect(executor.execute('foo', on_fail: nil)).to be_nil
       end
     end
 
     describe 'when command execution fails' do
       before do
         allow(Open3).to receive(:capture3).with('/bin/foo').and_raise('kaboom!')
-        allow(subject).to receive(:expand_command).with('foo').and_return('/bin/foo')
+        allow(executor).to receive(:expand_command).with('foo').and_return('/bin/foo')
       end
 
       it 'raises an error when the :on_fail behavior is :raise' do
-        expect { subject.execute('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
+        expect { executor.execute('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
       end
 
       it 'returns the given value when :on_fail is set to a value' do
-        expect(subject.execute('foo', on_fail: nil)).to be_nil
+        expect(executor.execute('foo', on_fail: nil)).to be_nil
       end
     end
 
     it 'returns the output of the command' do
       allow(Open3).to receive(:capture3).with('/bin/foo').and_return('hi')
-      expect(subject).to receive(:expand_command).with('foo').and_return '/bin/foo'
+      expect(executor).to receive(:expand_command).with('foo').and_return '/bin/foo'
 
-      expect(subject.execute('foo')).to eq 'hi'
+      expect(executor.execute('foo')).to eq 'hi'
     end
 
     it 'strips off trailing newlines' do
       allow(Open3).to receive(:capture3).with('/bin/foo').and_return "hi\n"
-      expect(subject).to receive(:expand_command).with('foo').and_return '/bin/foo'
+      expect(executor).to receive(:expand_command).with('foo').and_return '/bin/foo'
 
-      expect(subject.execute('foo')).to eq 'hi'
+      expect(executor.execute('foo')).to eq 'hi'
     end
   end
 end
