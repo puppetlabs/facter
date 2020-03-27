@@ -148,7 +148,7 @@ describe Facter::Core::Execution::Base do
     describe 'when command execution fails' do
       before do
         allow(Open3).to receive(:capture3).with('/bin/foo').and_raise('kaboom!')
-        expect(subject).to receive(:expand_command).with('foo').and_return('/bin/foo')
+        allow(subject).to receive(:expand_command).with('foo').and_return('/bin/foo')
       end
 
       it 'raises an error when the :on_fail behavior is :raise' do

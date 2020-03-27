@@ -32,7 +32,7 @@ describe Facter::ConfigReader do
 
   describe '#block_list' do
     before do
-      expect(File).to receive(:readable?).with(linux_config_path).and_return(true)
+      allow(File).to receive(:readable?).with(linux_config_path).and_return(true)
     end
 
     it 'loads block list' do
@@ -58,7 +58,7 @@ describe Facter::ConfigReader do
 
   describe '#ttls' do
     before do
-      expect(File).to receive(:readable?).with(linux_config_path).and_return(true)
+      allow(File).to receive(:readable?).with(linux_config_path).and_return(true)
     end
 
     it 'loads ttls' do
@@ -88,7 +88,7 @@ describe Facter::ConfigReader do
 
   describe '#global' do
     before do
-      expect(File).to receive(:readable?).with(linux_config_path).and_return(true)
+      allow(File).to receive(:readable?).with(linux_config_path).and_return(true)
     end
 
     it 'loads global config' do
@@ -108,7 +108,7 @@ describe Facter::ConfigReader do
 
   describe '#cli' do
     before do
-      expect(File).to receive(:readable?).with(linux_config_path).and_return(true)
+      allow(File).to receive(:readable?).with(linux_config_path).and_return(true)
     end
 
     it 'loads cli config' do

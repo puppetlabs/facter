@@ -5,10 +5,10 @@ describe Facter::Aix::FfiHelper do
   let(:averages_size) { double('FFI::MemoryPointer') }
 
   before do
-    expect(FFI::MemoryPointer).to receive(:new).with(:long_long, 3).and_return(averages)
-    expect(FFI::MemoryPointer).to receive(:new).with(:int, 1).and_return(averages_size)
-    expect(averages).to receive(:size).and_return(24)
-    expect(averages_size).to receive(:write_int).with(24)
+    allow(FFI::MemoryPointer).to receive(:new).with(:long_long, 3).and_return(averages)
+    allow(FFI::MemoryPointer).to receive(:new).with(:int, 1).and_return(averages_size)
+    allow(averages).to receive(:size).and_return(24)
+    allow(averages_size).to receive(:write_int).with(24)
   end
 
   after do
