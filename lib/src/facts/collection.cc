@@ -174,11 +174,7 @@ namespace facter { namespace facts {
                 auto resolver = erf.get_resolver(path);
                 files.push_back(make_pair(path, resolver));
             } catch (external::external_fact_no_resolver& e) {
-                if (warn) {
-                    LOG_WARNING("skipping file \"{1}\": {2}", path, e.what());
-                } else {
-                    LOG_DEBUG("skipping file \"{1}\": {2}", path, e.what());
-                }
+                LOG_DEBUG("skipping file \"{1}\": {2}", path, e.what());
             }
             return true;
         });
