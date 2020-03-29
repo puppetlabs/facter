@@ -7,6 +7,8 @@
 test_name 'Should handle same filename in two external directories only if ttl is not enabled' do
   tag 'risk:high'
 
+  confine :to, :platform => /Skipped/
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 

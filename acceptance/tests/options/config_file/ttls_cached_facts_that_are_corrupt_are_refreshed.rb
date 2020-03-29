@@ -2,6 +2,8 @@
 test_name "C100042: ttls configured cached facts that are corrupt are refreshed with new values" do
   tag 'risk:high'
 
+  confine :to, :platform => /Skipped/
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 

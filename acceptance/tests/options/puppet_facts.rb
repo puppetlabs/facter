@@ -2,6 +2,8 @@
 test_name "C14783: facter -p loads facts from puppet" do
   tag 'risk:high'
 
+  confine :to, :platform => /Skipped/
+
   agents.each do |agent|
     external_dir = agent.puppet['pluginfactdest']
     external_file = File.join(external_dir, "external.txt")

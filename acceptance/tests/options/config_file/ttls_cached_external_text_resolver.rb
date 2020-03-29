@@ -3,6 +3,8 @@
 test_name "ttls configured cached external text resolver creates and read json cache files" do
   tag 'risk:medium'
 
+  confine :to, :platform => /Skipped/
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
@@ -22,7 +24,7 @@ test_name "ttls configured cached external text resolver creates and read json c
       external_fact_content = <<EOM
 #{cached_fact_name}=#{initial_fact_value}
 EOM
-      
+
       create_remote_file(agent, external_fact, external_fact_content)
 
       config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)

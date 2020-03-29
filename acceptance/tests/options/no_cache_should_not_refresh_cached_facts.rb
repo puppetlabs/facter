@@ -3,6 +3,8 @@
 test_name "C100124: --no-cache does not refresh expired cached facts" do
   tag 'risk:high'
 
+  confine :to, :platform => /Skipped/
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
@@ -11,7 +13,7 @@ test_name "C100124: --no-cache does not refresh expired cached facts" do
   cached_fact_name = "uptime"
   bad_cached_fact_value = "CACHED_FACT_VALUE"
   bad_cached_content = <<EOM
-{ 
+{
   "#{cached_fact_name}": "fake #{bad_cached_fact_value}"
 }
 EOM
