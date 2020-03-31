@@ -25,7 +25,6 @@ RSpec/AnyInstance:
     - 'spec/facter/resolvers/windows/virtualization_resolver_spec.rb'
     - 'spec/facter/resolvers/windows/win_os_description_resolver_spec.rb'
     - 'spec/framework/core/fact_loaders/class_discoverer_spec.rb'
-    - 'spec/framework/core/fact_loaders/internal_fact_loader_spec.rb'
     - 'spec/framework/core/fact_manager_spec.rb'
     - 'spec/framework/core/options/options_validator_spec.rb'
     - 'spec/mocks/util.rb'
@@ -51,7 +50,6 @@ RSpec/ContextWording:
     - 'spec/facter/resolvers/utils/windows/network_utils_spec.rb'
     - 'spec/framework/config/config_reader_spec.rb'
     - 'spec/framework/core/fact_loaders/external_fact_loader_spec.rb'
-    - 'spec/framework/core/fact_loaders/internal_fact_loader_spec.rb'
     - 'spec/framework/core/options_spec.rb'
     - 'spec/framework/formatters/legacy_fact_formatter_spec.rb'
 

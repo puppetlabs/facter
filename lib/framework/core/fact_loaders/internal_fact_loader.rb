@@ -16,13 +16,13 @@ module Facter
       @facts = []
 
       os_descendents = OsDetector.instance.hierarchy
-      load_all_oses(os_descendents)
+      load_all_oses_in_descending_order(os_descendents)
     end
 
     private
 
-    def load_all_oses(os_descendents)
-      os_descendents.each do |os|
+    def load_all_oses_in_descending_order(os_descendents)
+      os_descendents.reverse_each do |os|
         load_for_os(os)
       end
     end
@@ -34,15 +34,19 @@ module Facter
       classes.each do |class_name|
         fact_name = class_name::FACT_NAME
 
-        load_fact(fact_name, class_name)
+        # if fact is already loaded, skip it
+        next if @facts.any? { |fact| fact.name == fact_name }
+
+        type = fact_name.end_with?('.*') ? :legacy : :core
+        load_fact(fact_name, class_name, type)
         next unless class_name.const_defined?('ALIASES')
 
-        [*class_name::ALIASES].each { |fact_alias| load_fact(fact_alias, class_name) }
+        [*class_name::ALIASES].each { |fact_alias| load_fact(fact_alias, class_name, :legacy) }
       end
     end
 
-    def load_fact(fact_name, klass)
-      loaded_fact = LoadedFact.new(fact_name, klass)
+    def load_fact(fact_name, klass, type)
+      loaded_fact = LoadedFact.new(fact_name, klass, type)
       @facts << loaded_fact
     end
   end
