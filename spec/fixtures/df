@@ -1,0 +1,4 @@
+Filesystem    512-blocks      Used Available Capacity Mounted on
+/dev/hd4         4194304    780504   3413800      19% /
+/dev/hd2        10485760   4530640   5955120      44% /usr
+/proc                  -         -         -       - /proc
