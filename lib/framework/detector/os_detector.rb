@@ -54,6 +54,8 @@ class OsDetector
       %w[Debian]
     when :elementary
       %w[Debian]
+    when :raspbian
+      %w[Debian]
     when :fedora
       %w[El]
     when :amzn

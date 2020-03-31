@@ -27,7 +27,7 @@ module Facts
           def determine_release_for_os
             os_name = Facter::Resolvers::OsRelease.resolve(:name)
 
-            if os_name =~ /Debian/
+            if os_name =~ /Debian|Raspbian/
               Facter::Resolvers::DebianVersion.resolve(:version)
             else
               Facter::Resolvers::OsRelease.resolve(:version_id)
