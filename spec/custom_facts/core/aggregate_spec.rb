@@ -69,7 +69,7 @@ describe Facter::Core::Aggregate do
       aggregate_res.chunk(:first, require: [:second]) {}
       aggregate_res.chunk(:second, require: [:first]) {}
 
-      expect_any_instance_of(Facter::Log).to receive(:error).with(/dependency cycles: .*[:first, :second]/)
+      expect(Facter).to receive(:log_exception).with(StandardError, /dependency cycles: .*[:first, :second]/)
       expect { aggregate_res.value }.to raise_error(Facter::ResolveCustomFactError)
     end
 

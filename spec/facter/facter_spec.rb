@@ -6,35 +6,38 @@ describe Facter do
   let(:os_fact) do
     double(Facter::ResolvedFact, name: fact_name, value: fact_value, user_query: fact_name, filter_tokens: [])
   end
-  let(:fact_collection) do
-    fact_collection = Facter::FactCollection.new
-    fact_collection['os'] = Facter::FactCollection['name' => 'Ubuntu']
-    fact_collection
-  end
   let(:empty_fact_collection) { Facter::FactCollection.new }
   let(:logger) { instance_spy(Facter::Log) }
+  let(:fact_manager_spy) { instance_spy(Facter::FactManager) }
+  let(:fact_collection_spy) { instance_spy(Facter::FactCollection) }
 
   before do
     Facter.instance_variable_set(:@logger, logger)
     Facter.clear
     allow(Facter::SessionCache).to receive(:invalidate_all_caches)
+    allow(Facter::FactManager).to receive(:instance).and_return(fact_manager_spy)
+    allow(Facter::FactCollection).to receive(:new).and_return(fact_collection_spy)
+  end
+
+  after do
+    Facter.remove_instance_variable(:@logger)
   end
 
   describe '#to_hash' do
     it 'returns one resolved fact' do
-      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([os_fact])
-      allow_any_instance_of(Facter::FactCollection)
+      allow(fact_manager_spy).to receive(:resolve_facts).and_return([os_fact])
+      allow(fact_collection_spy)
         .to receive(:build_fact_collection!)
         .with([os_fact])
-        .and_return(fact_collection)
+        .and_return(fact_collection_spy)
 
       resolved_facts_hash = Facter.to_hash
-      expect(resolved_facts_hash).to eq(fact_collection)
+      expect(resolved_facts_hash).to eq(fact_collection_spy)
     end
 
     it 'return no resolved facts' do
-      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([])
-      allow_any_instance_of(Facter::FactCollection)
+      allow(fact_manager_spy).to receive(:resolve_facts).and_return([])
+      allow(fact_collection_spy)
         .to receive(:build_fact_collection!)
         .with([])
         .and_return(empty_fact_collection)
@@ -49,7 +52,7 @@ describe Facter do
       user_query = 'os.name'
       expected_json_output = '{"os" : {"name": "ubuntu"}'
 
-      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([os_fact])
+      allow(fact_manager_spy).to receive(:resolve_facts).and_return([os_fact])
 
       json_fact_formatter = double(Facter::JsonFactFormatter)
       allow(json_fact_formatter).to receive(:format).with([os_fact]).and_return(expected_json_output)
@@ -64,7 +67,7 @@ describe Facter do
       user_query = 'os.name'
       expected_json_output = '{}'
 
-      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([])
+      allow(fact_manager_spy).to receive(:resolve_facts).and_return([])
 
       json_fact_formatter = double(Facter::JsonFactFormatter)
       allow(json_fact_formatter).to receive(:format).with([]).and_return(expected_json_output)
@@ -86,8 +89,8 @@ describe Facter do
         user_query = 'os.name'
         expected_json_output = '{}'
 
-        allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([])
-        allow_any_instance_of(Facter::Options).to receive(:[]).with(:strict).and_return(true)
+        allow(fact_manager_spy).to receive(:resolve_facts).and_return([])
+        allow(Facter::Options.instance).to receive(:[]).with(:strict).and_return(true)
         allow(OsDetector).to receive(:detect).and_return(:solaris)
 
         json_fact_formatter = double(Facter::JsonFactFormatter)
@@ -103,8 +106,8 @@ describe Facter do
         user_query = 'os.name'
         expected_json_output = '{"os" : {"name": "ubuntu"}'
 
-        allow_any_instance_of(Facter::Options).to receive(:[]).with(:strict).and_return(true)
-        allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([os_fact])
+        allow(Facter::Options.instance).to receive(:[]).with(:strict).and_return(true)
+        allow(fact_manager_spy).to receive(:resolve_facts).and_return([os_fact])
 
         json_fact_formatter = double(Facter::JsonFactFormatter)
         allow(json_fact_formatter).to receive(:format).with([os_fact]).and_return(expected_json_output)
@@ -121,11 +124,12 @@ describe Facter do
     it 'returns a value' do
       user_query = 'os.name'
 
-      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([os_fact])
-      allow_any_instance_of(Facter::FactCollection)
+      allow(fact_manager_spy).to receive(:resolve_facts).and_return([os_fact])
+      allow(fact_collection_spy)
         .to receive(:build_fact_collection!)
         .with([os_fact])
-        .and_return(fact_collection)
+        .and_return(fact_collection_spy)
+      allow(fact_collection_spy).to receive(:value).with('os', 'name').and_return('Ubuntu')
 
       resolved_facts_hash = Facter.value(user_query)
       expect(resolved_facts_hash).to eq('Ubuntu')
@@ -134,11 +138,12 @@ describe Facter do
     it 'return no value' do
       user_query = 'os.name'
 
-      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([])
-      allow_any_instance_of(Facter::FactCollection)
+      allow(fact_manager_spy).to receive(:resolve_facts).and_return([])
+      allow(fact_collection_spy)
         .to receive(:build_fact_collection!)
         .with([])
         .and_return(empty_fact_collection)
+      allow(fact_collection_spy).to receive(:value).with('os', 'name').and_return(nil)
 
       resolved_facts_hash = Facter.value(user_query)
       expect(resolved_facts_hash).to be nil
@@ -149,11 +154,12 @@ describe Facter do
     it 'returns a fact' do
       user_query = 'os.name'
 
-      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([os_fact])
-      allow_any_instance_of(Facter::FactCollection)
+      allow(fact_manager_spy).to receive(:resolve_facts).and_return([os_fact])
+      allow(fact_collection_spy)
         .to receive(:build_fact_collection!)
         .with([os_fact])
-        .and_return(fact_collection)
+        .and_return(fact_collection_spy)
+      allow(fact_collection_spy).to receive(:value).with('os', 'name').and_return('Ubuntu')
 
       result = Facter.fact(user_query)
       expect(result).to be_instance_of(Facter::ResolvedFact)
@@ -163,11 +169,12 @@ describe Facter do
     it 'return no value' do
       user_query = 'os.name'
 
-      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([])
-      allow_any_instance_of(Facter::FactCollection)
+      allow(fact_manager_spy).to receive(:resolve_facts).and_return([])
+      allow(fact_collection_spy)
         .to receive(:build_fact_collection!)
         .with([])
-        .and_return(empty_fact_collection)
+        .and_return(fact_collection_spy)
+      allow(fact_collection_spy).to receive(:value).with('os', 'name').and_raise(KeyError)
 
       result = Facter.fact(user_query)
       expect(result).to be_nil
@@ -178,11 +185,12 @@ describe Facter do
     it 'returns a fact' do
       user_query = 'os.name'
 
-      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([os_fact])
-      allow_any_instance_of(Facter::FactCollection)
+      allow(fact_manager_spy).to receive(:resolve_facts).and_return([os_fact])
+      allow(fact_collection_spy)
         .to receive(:build_fact_collection!)
         .with([os_fact])
-        .and_return(fact_collection)
+        .and_return(fact_collection_spy)
+      allow(fact_collection_spy).to receive(:value).with('os', 'name').and_return('Ubuntu')
 
       result = Facter[user_query]
       expect(result).to be_instance_of(Facter::ResolvedFact)
@@ -192,11 +200,12 @@ describe Facter do
     it 'return no value' do
       user_query = 'os.name'
 
-      allow_any_instance_of(Facter::FactManager).to receive(:resolve_facts).and_return([])
-      allow_any_instance_of(Facter::FactCollection)
+      allow(fact_manager_spy).to receive(:resolve_facts).and_return([])
+      allow(fact_collection_spy)
         .to receive(:build_fact_collection!)
         .with([])
-        .and_return(empty_fact_collection)
+        .and_return(fact_collection_spy)
+      allow(fact_collection_spy).to receive(:value).with('os', 'name').and_raise(KeyError)
 
       result = Facter[user_query]
       expect(result).to be_nil
@@ -207,11 +216,12 @@ describe Facter do
     it 'searched in core facts and returns a value' do
       user_query = 'os.name'
 
-      allow_any_instance_of(Facter::FactManager).to receive(:resolve_core).and_return([os_fact])
-      allow_any_instance_of(Facter::FactCollection)
+      allow(fact_manager_spy).to receive(:resolve_core).and_return([os_fact])
+      allow(fact_collection_spy)
         .to receive(:build_fact_collection!)
         .with([os_fact])
-        .and_return(fact_collection)
+        .and_return(fact_collection_spy)
+      allow(fact_collection_spy).to receive(:dig).with('os', 'name').and_return('Ubuntu')
 
       resolved_facts_hash = Facter.core_value(user_query)
       expect(resolved_facts_hash).to eq('Ubuntu')
@@ -220,11 +230,12 @@ describe Facter do
     it 'searches ion core facts and return no value' do
       user_query = 'os.name'
 
-      allow_any_instance_of(Facter::FactManager).to receive(:resolve_core).and_return([])
-      allow_any_instance_of(Facter::FactCollection)
+      allow(fact_manager_spy).to receive(:resolve_core).and_return([])
+      allow(fact_collection_spy)
         .to receive(:build_fact_collection!)
         .with([])
-        .and_return(empty_fact_collection)
+        .and_return(fact_collection_spy)
+      allow(fact_collection_spy).to receive(:dig).with('os', 'name').and_return(nil)
 
       resolved_facts_hash = Facter.core_value(user_query)
       expect(resolved_facts_hash).to be nil
@@ -326,7 +337,7 @@ describe Facter do
       let(:is_debug) { false }
 
       it "doesn't log anything" do
-        expect_any_instance_of(Facter::Log).not_to receive(:debug).with(message)
+        expect(logger).not_to receive(:debug).with(message)
         expect(Facter.debug(message)).to be(nil)
       end
     end

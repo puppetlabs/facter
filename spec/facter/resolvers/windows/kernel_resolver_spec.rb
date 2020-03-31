@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Kernel do
+  let(:logger) { instance_spy(Facter::Log) }
+
   before do
     ver_ptr = double('FFI::MemoryPointer')
     ver = double('OsVersionInfoEx', size: nil)
@@ -14,6 +16,8 @@ describe Facter::Resolvers::Kernel do
     allow(ver).to receive(:[]).with(:dwMajorVersion).and_return(maj)
     allow(ver).to receive(:[]).with(:dwMinorVersion).and_return(min)
     allow(ver).to receive(:[]).with(:dwBuildNumber).and_return(buildnr)
+
+    Facter::Resolvers::Kernel.instance_variable_set(:@log, logger)
   end
 
   after do
@@ -46,7 +50,7 @@ describe Facter::Resolvers::Kernel do
     let(:buildnr) { 123 }
 
     it 'logs debug message and kernel version nil' do
-      allow_any_instance_of(Facter::Log).to receive(:debug).with('Calling Windows RtlGetVersion failed')
+      allow(logger).to receive(:debug).with('Calling Windows RtlGetVersion failed')
       expect(Facter::Resolvers::Kernel.resolve(:kernelversion)).to be(nil)
     end
 

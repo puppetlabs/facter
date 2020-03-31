@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 describe Facter::FactManager do
+  let(:internal_manager) { instance_spy(Facter::InternalFactManager) }
+  let(:external_manager) { instance_spy(Facter::ExternalFactManager) }
+
+  before do
+    Singleton.__init__(Facter::FactManager)
+    allow(Facter::InternalFactManager).to receive(:new).and_return(internal_manager)
+    allow(Facter::ExternalFactManager).to receive(:new).and_return(external_manager)
+  end
+
   describe '#resolve_facts' do
     it 'resolved all facts' do
       ubuntu_os_name = double(Facts::Debian::Os::Name)
@@ -10,7 +19,7 @@ describe Facter::FactManager do
       loaded_fact_custom_fact = double(Facter::LoadedFact, name: 'custom_fact', klass: nil, type: :custom)
       loaded_facts = [loaded_fact_os_name, loaded_fact_custom_fact]
 
-      allow_any_instance_of(Facter::FactLoader).to receive(:load).and_return(loaded_facts)
+      allow(Facter::FactLoader.instance).to receive(:load).and_return(loaded_facts)
 
       searched_fact1 = double(Facter::SearchedFact, name: 'os', fact_class: ubuntu_os_name, filter_tokens: [],
                                                     user_query: '', type: :core)
@@ -24,12 +33,12 @@ describe Facter::FactManager do
         .with(user_query, loaded_facts)
         .and_return([searched_fact1, searched_fact2])
 
-      allow_any_instance_of(Facter::InternalFactManager)
+      allow(internal_manager)
         .to receive(:resolve_facts)
         .with([searched_fact1, searched_fact2])
         .and_return([resolved_fact])
 
-      allow_any_instance_of(Facter::ExternalFactManager)
+      allow(external_manager)
         .to receive(:resolve_facts)
         .with([searched_fact1, searched_fact2])
 
@@ -47,9 +56,8 @@ describe Facter::FactManager do
       loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.name', klass: ubuntu_os_name, type: :core)
       loaded_facts = [loaded_fact_os_name]
 
-      # allow_any_instance_of(Facter::InternalFactLoader).to receive(:core_facts).and_return(loaded_facts)
-      allow_any_instance_of(Facter::FactLoader).to receive(:load).and_return(loaded_facts)
-      allow_any_instance_of(Facter::FactLoader).to receive(:internal_facts).and_return(loaded_facts)
+      allow(Facter::FactLoader.instance).to receive(:load).and_return(loaded_facts)
+      allow(Facter::FactLoader.instance).to receive(:internal_facts).and_return(loaded_facts)
 
       searched_fact = double(Facter::SearchedFact, name: 'os', fact_class: ubuntu_os_name, filter_tokens: [],
                                                    user_query: '', type: :core)
@@ -61,7 +69,7 @@ describe Facter::FactManager do
         .with(user_query, loaded_facts)
         .and_return([searched_fact])
 
-      allow_any_instance_of(Facter::InternalFactManager)
+      allow(internal_manager)
         .to receive(:resolve_facts)
         .with([searched_fact])
         .and_return([resolved_fact])

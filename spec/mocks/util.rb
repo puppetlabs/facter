@@ -21,7 +21,8 @@ def mock_fact_loader(os_name, loaded_fact_hash)
 end
 
 def mock_query_parser(user_query, loaded_fact_hash)
-  allow_any_instance_of(Facter::QueryParser)
+  query_parser_spy = instance_spy(Facter::QueryParser)
+  allow(query_parser_spy)
     .to receive(:parse)
     .with(user_query, loaded_fact_hash)
 end
@@ -52,13 +53,13 @@ def mock_resolved_fact(fact_name, fact_value, user_query = nil, filter_tokens = 
 end
 
 def mock_fact(fact_class_name, resolved_fact_to_return, fact_name = nil)
-  fact_mock = double(fact_class_name)
+  fact_mock = instance_spy(fact_class_name)
 
-  allow_any_instance_of(fact_class_name)
+  allow(fact_class_name)
     .to receive(:new)
     .and_return(fact_mock)
 
-  allow_any_instance_of(fact_class_name)
+  allow(fact_class_name)
     .to receive(:call_the_resolver)
     .and_return(resolved_fact_to_return)
 

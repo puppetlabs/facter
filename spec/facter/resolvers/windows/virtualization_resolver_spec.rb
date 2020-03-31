@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Virtualization do
+  let(:logger) { instance_spy(Facter::Log) }
+
   before do
     win = double('Win32Ole')
 
     allow(Win32Ole).to receive(:new).and_return(win)
     allow(win).to receive(:exec_query).with('SELECT Manufacturer,Model,OEMStringArray FROM Win32_ComputerSystem')
                                       .and_return(comp)
+    Facter::Resolvers::Virtualization.instance_variable_set(:@log, logger)
   end
 
   describe '#resolve VirtualBox' do
@@ -180,7 +183,7 @@ describe Facter::Resolvers::Virtualization do
     let(:comp) { nil }
 
     it 'logs that query failed and virtual nil' do
-      allow_any_instance_of(Facter::Log).to receive(:debug)
+      allow(logger).to receive(:debug)
         .with('WMI query returned no results'\
                                       ' for Win32_ComputerSystem with values Manufacturer, Model and OEMStringArray.')
       expect(Facter::Resolvers::Virtualization.resolve(:virtual)).to be(nil)

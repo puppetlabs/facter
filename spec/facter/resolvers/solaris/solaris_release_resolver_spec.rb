@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::SolarisRelease do
+  let(:logger) { instance_spy(Facter::Log) }
+
   before do
     status = double(Process::Status, to_s: st)
     allow(Open3).to receive(:capture2)
       .with('cat /etc/release')
       .and_return([output, status])
+    Facter::Resolvers::SolarisRelease.instance_variable_set(:@log, logger)
   end
 
   after do
@@ -49,7 +52,7 @@ describe Facter::Resolvers::SolarisRelease do
     let(:st) { 'exit 0' }
 
     it 'returns result nil if file is empty' do
-      allow_any_instance_of(Facter::Log).to receive(:error)
+      allow(logger).to receive(:error)
         .with('Could not build release fact because of missing or empty file /etc/release')
       result = Facter::Resolvers::SolarisRelease.resolve(:full)
       expect(result).to eq(nil)
@@ -61,7 +64,7 @@ describe Facter::Resolvers::SolarisRelease do
     let(:st) { 'exit 1' }
 
     it 'returns result nil if exit status != 0' do
-      allow_any_instance_of(Facter::Log).to receive(:error)
+      allow(logger).to receive(:error)
         .with('Could not build release fact because of missing or empty file /etc/release')
       result = Facter::Resolvers::SolarisRelease.resolve(:full)
       expect(result).to eq(nil)

@@ -2,6 +2,7 @@
 
 describe NetworkUtils do
   describe '#address_to_strig' do
+    let(:logger) { instance_spy(Facter::Log) }
     let(:addr) { double('SocketAddress') }
     let(:size) { double(FFI::MemoryPointer) }
     let(:buffer) { double(FFI::MemoryPointer) }
@@ -16,6 +17,8 @@ describe NetworkUtils do
       allow(NetworkingFFI).to receive(:WSAAddressToStringW)
         .with(address, length, FFI::Pointer::NULL, buffer, size).and_return(error)
       allow(NetworkUtils).to receive(:extract_address).with(buffer).and_return('10.123.0.2')
+
+      NetworkUtils.instance_variable_set(:@log, logger)
     end
 
     context 'when lpSockaddr is null' do
@@ -44,7 +47,7 @@ describe NetworkUtils do
       let(:error) { 1 }
 
       it 'returns nil and logs debug message' do
-        allow_any_instance_of(Facter::Log).to receive(:debug).with('address to string translation failed!')
+        allow(logger).to receive(:debug).with('address to string translation failed!')
         expect(NetworkUtils.address_to_string(addr)).to be(nil)
       end
     end

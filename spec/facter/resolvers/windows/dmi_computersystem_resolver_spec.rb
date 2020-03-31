@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::DMIComputerSystem do
+  let(:logger) { instance_spy(Facter::Log) }
+
   before do
     win = double('Win32Ole')
 
     allow(Win32Ole).to receive(:new).and_return(win)
     allow(win).to receive(:return_first).with('SELECT Name,UUID FROM Win32_ComputerSystemProduct').and_return(comp)
+
+    Facter::Resolvers::DMIComputerSystem.instance_variable_set(:@log, logger)
   end
 
   after do
@@ -28,7 +32,7 @@ describe Facter::Resolvers::DMIComputerSystem do
     let(:comp) {}
 
     it 'logs debug message and name is nil' do
-      allow_any_instance_of(Facter::Log).to receive(:debug)
+      allow(logger).to receive(:debug)
         .with('WMI query returned no results for Win32_ComputerSystemProduct with values Name and UUID.')
       expect(Facter::Resolvers::DMIComputerSystem.resolve(:name)).to be(nil)
     end

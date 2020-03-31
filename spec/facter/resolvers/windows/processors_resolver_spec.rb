@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Processors do
+  let(:logger) { instance_spy(Facter::Log) }
+
   before do
     win = double('Win32Ole')
 
     allow(Win32Ole).to receive(:new).and_return(win)
     allow(win).to receive(:exec_query).with('SELECT Name,Architecture,NumberOfLogicalProcessors FROM Win32_Processor')
                                       .and_return(proc)
+    Facter::Resolvers::Processors.instance_variable_set(:@log, logger)
   end
 
   after do
@@ -60,7 +63,7 @@ describe Facter::Resolvers::Processors do
     let(:proc) { [double('proc', Name: 'Pretty_Name', Architecture: 10, NumberOfLogicalProcessors: 0)] }
 
     it 'logs that is unknown architecture' do
-      allow_any_instance_of(Facter::Log).to receive(:debug)
+      allow(logger).to receive(:debug)
         .with('Unable to determine processor type: unknown architecture')
       expect(Facter::Resolvers::Processors.resolve(:isa)).to be(nil)
     end
@@ -70,7 +73,7 @@ describe Facter::Resolvers::Processors do
     let(:proc) { nil }
 
     it 'logs that query failed and isa nil' do
-      allow_any_instance_of(Facter::Log).to receive(:debug)
+      allow(logger).to receive(:debug)
         .with('WMI query returned no results'\
         'for Win32_Processor with values Name, Architecture and NumberOfLogicalProcessors.')
       expect(Facter::Resolvers::Processors.resolve(:isa)).to be(nil)
@@ -87,7 +90,7 @@ describe Facter::Resolvers::Processors do
     let(:proc) { [double('proc', Name: nil, Architecture: nil, NumberOfLogicalProcessors: nil)] }
 
     it 'detects that isa is nil' do
-      allow_any_instance_of(Facter::Log).to receive(:debug)
+      allow(logger).to receive(:debug)
         .with('Unable to determine processor type: unknown architecture')
       expect(Facter::Resolvers::Processors.resolve(:isa)).to be(nil)
     end

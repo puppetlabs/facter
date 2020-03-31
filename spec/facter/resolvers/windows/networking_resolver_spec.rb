@@ -2,6 +2,7 @@
 
 describe Facter::Resolvers::Networking do
   describe '#resolve' do
+    let(:logger) { instance_spy(Facter::Log) }
     let(:size_ptr) { double(FFI::MemoryPointer) }
     let(:adapter_address) { double(FFI::MemoryPointer) }
 
@@ -14,6 +15,8 @@ describe Facter::Resolvers::Networking do
       allow(NetworkingFFI).to receive(:GetAdaptersAddresses)
         .with(NetworkingFFI::AF_UNSPEC, 14, FFI::Pointer::NULL, adapter_address, size_ptr)
         .and_return(error_code)
+
+      Facter::Resolvers::Networking.instance_variable_set(:@log, logger)
     end
 
     after do
@@ -24,7 +27,7 @@ describe Facter::Resolvers::Networking do
       let(:error_code) { NetworkingFFI::ERROR_NO_DATA }
 
       it 'logs debug message and returns nil' do
-        allow_any_instance_of(Facter::Log).to receive(:debug).with('Unable to retrieve networking facts!')
+        allow(logger).to receive(:debug).with('Unable to retrieve networking facts!')
         expect(Facter::Resolvers::Networking.resolve(:interfaces)).to be(nil)
       end
     end
