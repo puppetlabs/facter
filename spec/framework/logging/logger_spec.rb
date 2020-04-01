@@ -13,13 +13,6 @@ describe Logger do
     allow(file_logger_double).to receive(:formatter=)
   end
 
-  describe '#initialize' do
-    it 'sets file_logger formatters' do
-      log
-      expect(file_logger_double).to have_received(:formatter=)
-    end
-  end
-
   describe '#debug' do
     before do
       allow(Facter).to receive(:debugging?).and_return(true)

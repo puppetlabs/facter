@@ -6,9 +6,8 @@ module Facter
   RED = 31
 
   class Log
-    @@file_logger = Logger.new(File.new("#{ROOT_DIR}/example.log", 'a'))
     @@legacy_logger = nil
-    @@logger = MultiLogger.new([@@file_logger])
+    @@logger = MultiLogger.new([])
     @@logger.level = :warn
     @@message_callback = nil
     @@has_errors = false
@@ -33,7 +32,6 @@ module Facter
 
     def initialize(logged_class)
       determine_callers_name(logged_class)
-      set_format_for_file_logger
     end
 
     def self.add_legacy_logger(output)
@@ -55,13 +53,6 @@ module Facter
                     else # when class is singleton
                       sender_self.class.name
                     end
-    end
-
-    def set_format_for_file_logger
-      @@file_logger.formatter = proc do |severity, datetime, _progname, msg|
-        datetime = datetime.strftime(@datetime_format || '%Y-%m-%d %H:%M:%S.%6N ')
-        "[#{datetime}] #{severity} #{msg} \n"
-      end
     end
 
     def self.set_format_for_legacy_logger
