@@ -8,6 +8,9 @@ require:
 Documentation:
   Enabled: false
 
+Style/TrivialAccessors:
+  AllowDSLWriters: true
+
 Metrics/LineLength:
   Max: 120
 

@@ -58,7 +58,7 @@ module LegacyFacter
         def results
           parse_results
         rescue Exception => e
-          LegacyFacter.log_exception(e, "Failed to handle #{filename} as #{self.class} facts: #{e.message}")
+          Facter.log_exception(e, "Failed to handle #{filename} as #{self.class} facts: #{e.message}")
           nil
         end
 

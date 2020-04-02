@@ -252,7 +252,7 @@ describe LegacyFacter::Util::Loader do
       expect(FileTest).to receive(:file?).with('/one/dir/a.rb').and_return true
 
       expect(Kernel).to receive(:load).with('/one/dir/a.rb').and_raise(LoadError)
-      expect(LegacyFacter).to receive(:warn)
+      expect(Facter).to receive(:log_exception).with(LoadError, 'Error loading fact /one/dir/a.rb: LoadError')
 
       expect { loader.load_all }.not_to raise_error
     end

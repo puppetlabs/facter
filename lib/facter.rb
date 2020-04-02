@@ -213,7 +213,6 @@ module Facter
     #
     # @api public
     def trace(bool)
-      LegacyFacter.trace(bool)
       @trace = bool
     end
 

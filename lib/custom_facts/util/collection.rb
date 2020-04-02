@@ -32,7 +32,7 @@ module LegacyFacter
 
         fact
       rescue StandardError => e
-        LegacyFacter.log_exception(e, "Unable to add fact #{name}: #{e}")
+        Facter.log_exception(e, "Unable to add fact #{name}: #{e}")
       end
 
       # Add a resolution mechanism for a named fact.  This does not distinguish

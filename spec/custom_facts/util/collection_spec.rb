@@ -79,8 +79,8 @@ describe LegacyFacter::Util::Collection do
       expect(fact.ldapname).to eq 'NewFact'
     end
 
-    it 'logs a warning if the fact could not be defined' do
-      expect(LegacyFacter).to receive(:warn).with("\e[31mUnable to add fact newfact: kaboom!\e[0m")
+    it 'logs an error if the fact could not be defined' do
+      expect(Facter).to receive(:log_exception).with(StandardError, 'Unable to add fact newfact: kaboom!')
 
       collection.define_fact(:newfact) do
         raise 'kaboom!'
