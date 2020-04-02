@@ -13,12 +13,24 @@ describe Facts::Windows::Os::Release do
   describe '#call_the_resolver' do
     let(:value) { '2019' }
 
-    it 'calls Facter::Resolvers::WinOsDescription and Facter::Resolvers::Kernel resolvers' do
-      expect(Facter::Resolvers::WinOsDescription).to receive(:resolve).with(:consumerrel)
-      expect(Facter::Resolvers::WinOsDescription).to receive(:resolve).with(:description)
-      expect(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernelmajorversion)
-      expect(Facter::Resolvers::Kernel).to receive(:resolve).with(:kernelversion)
+    it 'calls Facter::Resolvers::WinOsDescription with consumerrel' do
       fact.call_the_resolver
+      expect(Facter::Resolvers::WinOsDescription).to have_received(:resolve).with(:consumerrel)
+    end
+
+    it 'calls Facter::Resolvers::WinOsDescription with description' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::WinOsDescription).to have_received(:resolve).with(:description)
+    end
+
+    it 'calls Facter::Resolvers::Kernel with kernelmajorversion' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Kernel).to have_received(:resolve).with(:kernelmajorversion)
+    end
+
+    it 'calls Facter::Resolvers::Kernel with kernelversion' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Kernel).to have_received(:resolve).with(:kernelversion)
     end
 
     it 'returns release fact' do

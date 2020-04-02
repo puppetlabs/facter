@@ -40,8 +40,8 @@ describe LegacyFacter::Util::Normalization do
 
       it 'normalizes a frozen string returning a non-frozen string' do
         str = 'factvalue'.encode(Encoding::UTF_16LE).freeze
+
         normalized_str = normalization.normalize(str)
-        expect(normalized_str.encoding).to eq(Encoding::UTF_8)
         expect(normalized_str).not_to be_frozen
       end
 

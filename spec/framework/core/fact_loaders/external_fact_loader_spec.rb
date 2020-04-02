@@ -45,7 +45,7 @@ describe Facter::ExternalFactLoader do
       end
 
       it 'does not load custom facts (does not call LegacyFacter.search)' do
-        expect(Facter::Options).to receive(:custom_dir?).and_return(false)
+        allow(Facter::Options).to receive(:custom_dir?).and_return(false)
         expect(LegacyFacter).not_to receive(:search)
 
         external_fact_loader = Facter::ExternalFactLoader.new
@@ -90,7 +90,7 @@ describe Facter::ExternalFactLoader do
       end
 
       it 'does not load custom facts (does not call LegacyFacter.search_external)' do
-        expect(Facter::Options).to receive(:external_dir?).and_return(false)
+        allow(Facter::Options).to receive(:external_dir?).and_return(false)
         expect(LegacyFacter).not_to receive(:search_external)
 
         external_fact_loader = Facter::ExternalFactLoader.new

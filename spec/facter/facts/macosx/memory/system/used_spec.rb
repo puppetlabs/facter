@@ -2,16 +2,23 @@
 
 describe Facts::Macosx::Memory::System::Used do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'memory.system.used', value: '1.0 KiB')
+    subject(:fact) { Facts::Macosx::Memory::System::Used.new }
 
-      allow(Facter::Resolvers::Macosx::SystemMemory).to receive(:resolve).with(:used_bytes).and_return(1024)
-      allow(Facter::ResolvedFact).to receive(:new).with('memory.system.used', '1.0 KiB').and_return(expected_fact)
+    let(:resolver_result) { 1024 }
+    let(:fact_value) { '1.00 KiB' }
 
-      expect(Facter::BytesToHumanReadable).to receive(:convert).with(1024).and_return('1.0 KiB')
+    before do
+      allow(Facter::Resolvers::Macosx::SystemMemory).to receive(:resolve).with(:used_bytes).and_return(resolver_result)
+    end
 
-      fact = Facts::Macosx::Memory::System::Used.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    it 'calls Facter::Resolvers::Macosx::SwapMemory' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Macosx::SystemMemory).to have_received(:resolve).with(:used_bytes)
+    end
+
+    it 'returns a memory.system.used fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'memory.system.used', value: fact_value)
     end
   end
 end

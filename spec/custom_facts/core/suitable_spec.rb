@@ -21,9 +21,9 @@ describe LegacyFacter::Core::Suitable do
     it 'creates a Facter::Util::Confine object for the confine call' do
       suitable_obj.confine kernel: 'Linux'
       conf = suitable_obj.confines.first
-      expect(conf).to be_a_kind_of LegacyFacter::Util::Confine
-      expect(conf.fact).to eq :kernel
-      expect(conf.values).to eq ['Linux']
+      expect(conf).to be_an_instance_of(LegacyFacter::Util::Confine).and(
+        having_attributes(fact: :kernel, values: ['Linux'])
+      )
     end
   end
 
@@ -82,7 +82,7 @@ describe LegacyFacter::Core::Suitable do
       suitable_obj.confine kernel: 'Linux'
       suitable_obj.confine operatingsystem: 'Redhat'
 
-      suitable_obj.confines.each { |confine| expect(confine).to receive(:true?).and_return(true) }
+      suitable_obj.confines.each { |confine| allow(confine).to receive(:true?).and_return(true) }
 
       expect(suitable_obj).to be_suitable
     end
@@ -90,7 +90,7 @@ describe LegacyFacter::Core::Suitable do
     it 'is false if any confines for the object evaluate to false' do
       suitable_obj.confine kernel: 'Linux'
       suitable_obj.confine operatingsystem: 'Redhat'
-      expect(suitable_obj.confines.first).to receive(:true?).and_return(false)
+      allow(suitable_obj.confines.first).to receive(:true?).and_return(false)
 
       expect(suitable_obj).not_to be_suitable
     end
@@ -98,10 +98,9 @@ describe LegacyFacter::Core::Suitable do
     it 'recalculates suitability on every invocation' do
       suitable_obj.confine kernel: 'Linux'
 
-      expect(suitable_obj.confines.first).to receive(:true?).and_return(false)
-      expect(suitable_obj).not_to be_suitable
+      allow(suitable_obj.confines.first).to receive(:true?).and_return(false)
+      allow(suitable_obj.confines.first).to receive(:true?).and_return(true)
 
-      expect(suitable_obj.confines.first).to receive(:true?).and_return(true)
       expect(suitable_obj).to be_suitable
     end
   end

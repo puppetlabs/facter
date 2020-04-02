@@ -31,30 +31,45 @@ describe Facter::Core::Execution::Windows, as_platform: :windows do
     end
 
     context 'when it is provided with an absolute path' do
-      it 'returns the binary if executable' do
-        expect(File).to receive(:executable?).with('C:\Tools\foo.exe').and_return true
-        expect(File).to receive(:executable?).with('\\\\remote\dir\foo.exe').and_return true
+      it 'returns the path to binary if executable' do
+        allow(File).to receive(:executable?).with('C:\Tools\foo.exe').and_return true
 
         expect(executor.which('C:\Tools\foo.exe')).to eq 'C:\Tools\foo.exe'
+      end
+
+      it 'returns the binary if executable' do
+        allow(File).to receive(:executable?).with('\\\\remote\dir\foo.exe').and_return true
+
         expect(executor.which('\\\\remote\dir\foo.exe')).to eq '\\\\remote\dir\foo.exe'
       end
 
-      it 'returns nil if the binary is not executable' do
-        expect(File).to receive(:executable?).with('C:\Tools\foo.exe').and_return false
-        expect(File).to receive(:executable?).with('\\\\remote\dir\foo.exe').and_return false
+      it 'returns nil if the binary path is not executable' do
+        allow(File).to receive(:executable?).with('C:\Tools\foo.exe').and_return false
 
         expect(executor.which('C:\Tools\foo.exe')).to be nil
+      end
+
+      it 'returns nil if the binary is not executable' do
+        allow(File).to receive(:executable?).with('\\\\remote\dir\foo.exe').and_return false
+
         expect(executor.which('\\\\remote\dir\foo.exe')).to be nil
       end
     end
 
     context 'when it is not provided with an absolute path' do
       it 'returns the absolute path if found' do
-        expect(File).to receive(:executable?).with('C:\Windows\system32\foo.exe').and_return false
-        expect(File).to receive(:executable?).with('C:\Windows\foo.exe').and_return true
-        expect(File).not_to receive(:executable?).with('C:\Windows\System32\Wbem\foo.exe')
+        allow(File).to receive(:executable?).with('C:\Windows\system32\foo.exe').and_return false
+        allow(File).to receive(:executable?).with('C:\Windows\foo.exe').and_return true
 
         expect(executor.which('foo.exe')).to eq 'C:\Windows\foo.exe'
+      end
+
+      it "won't check all paths if one is executable" do
+        allow(File).to receive(:executable?).with('C:\Windows\system32\foo.exe').and_return false
+        allow(File).to receive(:executable?).with('C:\Windows\foo.exe').and_return true
+
+        expect(File).not_to receive(:executable?).with('C:\Windows\System32\Wbem\foo.exe')
+        executor.which('foo.exe')
       end
 
       it 'returns the absolute path with file extension if found' do
@@ -82,30 +97,30 @@ describe Facter::Core::Execution::Windows, as_platform: :windows do
 
   describe '#expand_command' do
     it 'expands binary' do
-      expect(executor).to receive(:which).with('cmd').and_return 'C:\Windows\System32\cmd'
+      allow(executor).to receive(:which).with('cmd').and_return 'C:\Windows\System32\cmd'
 
       expect(executor.expand_command(
                'cmd /c echo foo > C:\bar'
              )).to eq 'C:\Windows\System32\cmd /c echo foo > C:\bar'
     end
 
-    it 'expands double quoted binary' do
-      expect(executor).to receive(:which).with('my foo').and_return 'C:\My Tools\my foo.exe'
+    it 'returns nil if not found' do
+      allow(executor).to receive(:which).with('my foo').and_return 'C:\My Tools\my foo.exe'
       expect(executor.expand_command('"my foo" /a /b')).to eq '"C:\My Tools\my foo.exe" /a /b'
     end
 
     it 'does not expand single quoted binary' do
-      expect(executor).to receive(:which).with('\'C:\My').and_return nil
+      allow(executor).to receive(:which).with('\'C:\My').and_return nil
       expect(executor.expand_command('\'C:\My Tools\foo.exe\' /a /b')).to be nil
     end
 
     it 'quotes expanded binary if found in path with spaces' do
-      expect(executor).to receive(:which).with('foo').and_return 'C:\My Tools\foo.exe'
+      allow(executor).to receive(:which).with('foo').and_return 'C:\My Tools\foo.exe'
       expect(executor.expand_command('foo /a /b')).to eq '"C:\My Tools\foo.exe" /a /b'
     end
 
-    it 'returns nil if not found' do
-      expect(executor).to receive(:which).with('foo').and_return nil
+    it 'returns nil if command not found' do
+      allow(executor).to receive(:which).with('foo').and_return nil
       expect(executor.expand_command('foo /a | stuff >> NUL')).to be nil
     end
   end

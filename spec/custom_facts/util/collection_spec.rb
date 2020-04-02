@@ -31,7 +31,7 @@ describe LegacyFacter::Util::Collection do
 
     it 'passes resolution specific options to the fact' do
       fact = Facter::Util::Fact.new(:myname)
-      expect(Facter::Util::Fact).to receive(:new).with(:myname, timeout: 'myval').and_return(fact)
+      allow(Facter::Util::Fact).to receive(:new).with(:myname, timeout: 'myval').and_return(fact)
 
       expect(fact).to receive(:add).with(timeout: 'myval')
 
@@ -41,8 +41,7 @@ describe LegacyFacter::Util::Collection do
     describe 'and a block is provided' do
       it 'uses the block to add a resolution to the fact' do
         fact = double 'fact'
-        # allow(fact).to receive(:extract_ldapname_option!)
-        expect(Facter::Util::Fact).to receive(:new).and_return(fact)
+        allow(Facter::Util::Fact).to receive(:new).and_return(fact)
 
         expect(fact).to receive(:add)
 
@@ -50,13 +49,13 @@ describe LegacyFacter::Util::Collection do
       end
 
       it 'discards resolutions that throw an exception when added' do
-        expect(LegacyFacter).to receive(:warn).with(/Unable to add resolve .* kaboom!/)
+        allow(LegacyFacter).to receive(:warn).with(/Unable to add resolve .* kaboom!/)
         expect do
           collection.add('yay') do
             raise 'kaboom!'
           end
         end.not_to raise_error
-        expect(collection.value('yay')).to be_nil
+        collection.value('yay')
       end
     end
   end
@@ -64,7 +63,7 @@ describe LegacyFacter::Util::Collection do
   describe 'when only defining facts' do
     it 'creates a new fact if no such fact exists' do
       fact = Facter::Util::Fact.new(:newfact)
-      expect(Facter::Util::Fact).to receive(:new).with(:newfact, {}).and_return fact
+      allow(Facter::Util::Fact).to receive(:new).with(:newfact, {}).and_return fact
       expect(collection.define_fact(:newfact)).to equal fact
     end
 
@@ -111,7 +110,7 @@ describe LegacyFacter::Util::Collection do
     end
 
     it 'returns nil if it cannot find or load the fact' do
-      expect(collection.internal_loader).to receive(:load).with(:testing)
+      allow(collection.internal_loader).to receive(:load).with(:testing)
       expect(collection.fact('testing')).to be nil
     end
   end
@@ -210,12 +209,6 @@ describe LegacyFacter::Util::Collection do
       end
     end
   end
-
-  # describe 'when retriving a core fact' do
-  #   before do
-  #     # @fact = collection.add('YayNess', value: 'result')
-  #   end
-  # end
 
   it "returns the fact's value when the array index method is used" do
     collection.add('myfact', value: 'foo')

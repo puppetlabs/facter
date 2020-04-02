@@ -16,20 +16,14 @@ describe LegacyFacter::Util::Parser do
     end
 
     it 'matches extensions when subclass uses match_extension with an array' do
-      expect(LegacyFacter::Util::Parser.extension_matches?('myfile.ext1', %w[ext1 ext2 ext3])).to be true
-      expect(LegacyFacter::Util::Parser.extension_matches?('myfile.ext2', %w[ext1 ext2 ext3])).to be true
       expect(LegacyFacter::Util::Parser.extension_matches?('myfile.ext3', %w[ext1 ext2 ext3])).to be true
     end
 
     it 'matches extension ignoring case on file' do
-      expect(LegacyFacter::Util::Parser.extension_matches?('myfile.EXT1', 'ext1')).to be true
       expect(LegacyFacter::Util::Parser.extension_matches?('myfile.ExT1', 'ext1')).to be true
-      expect(LegacyFacter::Util::Parser.extension_matches?('myfile.exT1', 'ext1')).to be true
     end
 
     it 'matches extension ignoring case for match_extension' do
-      expect(LegacyFacter::Util::Parser.extension_matches?('myfile.EXT1', 'EXT1')).to be true
-      expect(LegacyFacter::Util::Parser.extension_matches?('myfile.ExT1', 'EXT1')).to be true
       expect(LegacyFacter::Util::Parser.extension_matches?('myfile.exT1', 'EXT1')).to be true
     end
   end

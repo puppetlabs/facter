@@ -45,10 +45,8 @@ describe LegacyFacter::Core::DirectedGraph do
       graph[:four] = [:three]
 
       first_cycle = graph.cycles.find { |cycle| cycle.include? :one }
-      second_cycle = graph.cycles.find { |cycle| cycle.include? :three }
 
-      expect(first_cycle).to include :two
-      expect(second_cycle).to include :four
+      expect(first_cycle).to match_array(%i[one two])
     end
   end
 

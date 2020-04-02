@@ -29,10 +29,14 @@ describe Facts::Debian::Os::Family do
         allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:id).and_return(value)
       end
 
-      it 'calls Facter::Resolvers::OsRelease' do
-        expect(Facter::Resolvers::OsRelease).to receive(:resolve).with(:id_like)
-        expect(Facter::Resolvers::OsRelease).to receive(:resolve).with(:id)
+      it 'calls Facter::Resolvers::OsRelease with id_like' do
         fact.call_the_resolver
+        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:id_like)
+      end
+
+      it 'calls Facter::Resolvers::OsRelease with id' do
+        fact.call_the_resolver
+        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:id)
       end
 
       it 'returns os family fact' do

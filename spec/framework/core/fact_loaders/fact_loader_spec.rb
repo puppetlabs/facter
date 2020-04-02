@@ -82,10 +82,9 @@ describe Facter::FactLoader do
       allow(external_fact_loader_double).to receive(:custom_facts).and_return([])
       allow(external_fact_loader_double).to receive(:external_facts).and_return([])
 
-      loaded_facts = Facter::FactLoader.instance.load(options)
-      expect(loaded_facts).to eq(facts_to_load)
-      loaded_facts = Facter::FactLoader.instance.load(options)
-      expect(loaded_facts).to eq(facts_to_load)
+      loaded_facts1 = Facter::FactLoader.instance.load(options)
+      loaded_facts2 = Facter::FactLoader.instance.load(options)
+      expect(loaded_facts1).to eq(loaded_facts2)
     end
 
     it 'loads the same amount of custom facts everytime' do
@@ -97,10 +96,9 @@ describe Facter::FactLoader do
       allow(external_fact_loader_double).to receive(:custom_facts).and_return(facts_to_load)
       allow(external_fact_loader_double).to receive(:external_facts).and_return([])
 
-      loaded_facts = Facter::FactLoader.instance.load(options)
-      expect(loaded_facts.size).to eq(1)
-      loaded_facts = Facter::FactLoader.instance.load(options)
-      expect(loaded_facts.size).to eq(1)
+      loaded_facts1 = Facter::FactLoader.instance.load(options)
+      loaded_facts2 = Facter::FactLoader.instance.load(options)
+      expect(loaded_facts1).to eq(loaded_facts2)
     end
   end
 end

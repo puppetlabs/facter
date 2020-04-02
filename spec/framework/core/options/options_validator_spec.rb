@@ -13,9 +13,10 @@ describe Facter::OptionsValidator do
                                                                                     ' please specify only one.', true)
         allow(Facter::Cli).to receive(:start).with(['--help'])
 
-        expect { Facter::OptionsValidator.validate(options) }.to raise_error(SystemExit) do |error|
-          expect(error.status).to eql(error_code)
-        end
+        expect { Facter::OptionsValidator.validate(options) }.to raise_error(
+          an_instance_of(SystemExit)
+              .and(having_attributes(status: error_code))
+        )
       end
     end
 
@@ -28,9 +29,10 @@ describe Facter::OptionsValidator do
                                                                          'cannot be specified more than once.', true)
         allow(Facter::Cli).to receive(:start).with(['--help'])
 
-        expect { Facter::OptionsValidator.validate(options) }.to raise_error(SystemExit) do |error|
-          expect(error.status).to eql(error_code)
-        end
+        expect { Facter::OptionsValidator.validate(options) }.to raise_error(
+          an_instance_of(SystemExit)
+              .and(having_attributes(status: error_code))
+        )
       end
     end
 

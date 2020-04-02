@@ -40,7 +40,7 @@ module Facter
             if error == NetworkingFFI::ERROR_BUFFER_OVERFLOW
               adapter_addresses = FFI::MemoryPointer.new(IpAdapterAddressesLh.size, NetworkingFFI::BUFFER_LENGTH)
             else
-              @log.info 'Unable to retrieve networking facts!'
+              @log.debug 'Unable to retrieve networking facts!'
               return nil
             end
           end

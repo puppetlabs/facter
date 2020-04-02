@@ -32,16 +32,39 @@ describe OsDetector do
     expect { OsDetector.instance.identifier }.to raise_error(RuntimeError, 'unknown os: "os"')
   end
 
-  it 'detects linux distro when host_os is linux' do
-    RbConfig::CONFIG['host_os'] = 'linux'
+  context 'when host_os is linux' do
+    before do
+      RbConfig::CONFIG['host_os'] = 'linux'
 
-    expect(Facter::Resolvers::OsRelease).to receive(:resolve).with(:identifier)
-    expect(Facter::Resolvers::RedHatRelease).to receive(:resolve).with(:identifier)
-    expect(Facter::Resolvers::SuseRelease).to receive(:resolve).with(:identifier)
+      allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:identifier)
+      allow(Facter::Resolvers::RedHatRelease).to receive(:resolve).with(:identifier).and_return('RedHat')
 
-    expect(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version)
-    expect(Facter::Resolvers::RedHatRelease).to receive(:resolve).with(:version)
-    expect(Facter::Resolvers::SuseRelease).to receive(:resolve).with(:version)
-    OsDetector.instance
+      allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version)
+      allow(Facter::Resolvers::RedHatRelease).to receive(:resolve).with(:version)
+    end
+
+    it 'detects linux distro' do
+      expect(OsDetector.instance.detect).to eql('RedHat')
+    end
+
+    it 'calls Facter::Resolvers::OsRelease with identifier' do
+      OsDetector.instance
+      expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:identifier)
+    end
+
+    it 'calls Facter::Resolvers::RedHatRelease with identifier' do
+      OsDetector.instance
+      expect(Facter::Resolvers::RedHatRelease).to have_received(:resolve).with(:identifier)
+    end
+
+    it 'calls Facter::Resolvers::OsRelease with version' do
+      OsDetector.instance
+      expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version)
+    end
+
+    it 'calls Facter::Resolvers::RedHatRelease with version' do
+      OsDetector.instance
+      expect(Facter::Resolvers::RedHatRelease).to have_received(:resolve).with(:version)
+    end
   end
 end

@@ -14,10 +14,14 @@ describe Facts::Windows::Networking::Fqdn do
       let(:hostname) { 'hostname' }
       let(:value) { "#{hostname}.#{domain_name}" }
 
-      it 'calls Facter::Resolvers::Networking and Facter::Resolvers::Hostname' do
-        expect(Facter::Resolvers::Networking).to receive(:resolve).with(:domain)
-        expect(Facter::Resolvers::Hostname).to receive(:resolve).with(:hostname)
+      it 'calls Facter::Resolvers::Networking' do
         fact.call_the_resolver
+        expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:domain)
+      end
+
+      it 'calls Facter::Resolvers::Hostname' do
+        fact.call_the_resolver
+        expect(Facter::Resolvers::Hostname).to have_received(:resolve).with(:hostname)
       end
 
       it 'returns fqdn fact' do

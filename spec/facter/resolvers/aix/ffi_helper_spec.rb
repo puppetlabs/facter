@@ -16,14 +16,14 @@ describe Facter::Aix::FfiHelper do
   end
 
   it 'returns load average' do
-    expect(Facter::Aix::FfiHelper::Libc).to receive(:getkerninfo).and_return(0)
-    expect(averages).to receive(:read_array_of_long_long).with(3).and_return([655.36, 1310.72, 1966.08])
+    allow(Facter::Aix::FfiHelper::Libc).to receive(:getkerninfo).and_return(0)
+    allow(averages).to receive(:read_array_of_long_long).with(3).and_return([655.36, 1310.72, 1966.08])
 
     expect(Facter::Aix::FfiHelper.read_load_averages).to eq([0.01, 0.02, 0.03])
   end
 
   it 'does not return load average' do
-    expect(Facter::Aix::FfiHelper::Libc).to receive(:getkerninfo).and_return(-1)
+    allow(Facter::Aix::FfiHelper::Libc).to receive(:getkerninfo).and_return(-1)
     expect(Facter::Aix::FfiHelper.read_load_averages).to be_nil
   end
 end

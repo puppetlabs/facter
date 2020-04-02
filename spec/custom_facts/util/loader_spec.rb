@@ -100,16 +100,15 @@ describe LegacyFacter::Util::Loader do
       allow(File).to receive(:directory?).with('/two').and_return true
 
       paths = loader.search_path
-      expect(paths).to include('/one')
-      expect(paths).to include('/two')
+      expect(paths).to include('/one', '/two')
     end
 
     it 'warns on invalid search paths registered with Facter' do
-      expect(LegacyFacter).to receive(:search_path).and_return %w[/one two/three]
+      allow(LegacyFacter).to receive(:search_path).and_return %w[/one two/three]
       allow(loader).to receive(:valid_search_path?).and_return false
       allow(loader).to receive(:valid_search_path?).with('/one').and_return true
       allow(loader).to receive(:valid_search_path?).with('two/three').and_return false
-      expect(LegacyFacter)
+      allow(LegacyFacter)
         .to receive(:warn)
         .with('Excluding two/three from search path. Fact file paths must be an absolute directory').once
 
@@ -117,12 +116,11 @@ describe LegacyFacter::Util::Loader do
       allow(File).to receive(:directory?).with('/one').and_return true
 
       paths = loader.search_path
-      expect(paths).to include('/one')
-      expect(paths).not_to include('two/three')
+      expect(paths).to match_array(['/one'])
     end
 
     it 'strips paths that are valid paths but not are not present' do
-      expect(LegacyFacter).to receive(:search_path).and_return %w[/one /two]
+      allow(LegacyFacter).to receive(:search_path).and_return %w[/one /two]
       allow(loader).to receive(:valid_search_path?).and_return false
       allow(loader).to receive(:valid_search_path?).with('/one').and_return true
       allow(loader).to receive(:valid_search_path?).with('/two').and_return true
@@ -132,8 +130,7 @@ describe LegacyFacter::Util::Loader do
       allow(File).to receive(:directory?).with('/two').and_return false
 
       paths = loader.search_path
-      expect(paths).to include('/one')
-      expect(paths).not_to include('/two')
+      expect(paths).to match_array(['/one'])
     end
 
     describe 'and the FACTERLIB environment variable is set' do
@@ -165,20 +162,18 @@ describe LegacyFacter::Util::Loader do
     it 'loads any files in the search path with names matching the fact name' do
       loader = loader_from(search_path: %w[/one/dir /two/dir])
 
-      expect(loader).to receive(:search_path).and_return %w[/one/dir /two/dir]
+      allow(loader).to receive(:search_path).and_return %w[/one/dir /two/dir]
       allow(FileTest).to receive(:file?).and_return false
       allow(FileTest).to receive(:file?).with('/one/dir/testing.rb').and_return true
 
       expect(Kernel).to receive(:load).with('/one/dir/testing.rb')
-
       loader.load(:testing)
     end
 
     it 'does not load any ruby files from subdirectories matching the fact name in the search path' do
       loader = LegacyFacter::Util::Loader.new
       allow(FileTest).to receive(:file?).and_return false
-      expect(FileTest).to receive(:file?).with('/one/dir/testing.rb').and_return true
-      expect(Kernel).to receive(:load).with('/one/dir/testing.rb')
+      allow(FileTest).to receive(:file?).with('/one/dir/testing.rb').and_return true
 
       allow(File).to receive(:directory?).with('/one/dir/testing').and_return true
       allow(loader).to receive(:search_path).and_return %w[/one/dir]
@@ -189,15 +184,16 @@ describe LegacyFacter::Util::Loader do
         allow(Kernel).to receive(:load).with(f)
       end
 
+      expect(Kernel).to receive(:load).with('/one/dir/testing.rb')
       loader.load(:testing)
     end
 
     it "does not load files that don't end in '.rb'" do
       loader = LegacyFacter::Util::Loader.new
-      expect(loader).to receive(:search_path).and_return %w[/one/dir]
+      allow(loader).to receive(:search_path).and_return %w[/one/dir]
       allow(FileTest).to receive(:file?).and_return false
-      expect(FileTest).to receive(:file?).with('/one/dir/testing.rb').and_return false
-      expect(File).not_to receive(:readable?).with('/one/dir/testing')
+      allow(FileTest).to receive(:file?).with('/one/dir/testing.rb').and_return false
+
       expect(Kernel).not_to receive(:load)
 
       loader.load(:testing)
@@ -220,7 +216,7 @@ describe LegacyFacter::Util::Loader do
       allow(Dir).to receive(:glob).with('/two/dir/*.rb').and_return %w[/two/dir/c.rb /two/dir/d.rb]
 
       %w[/one/dir/a.rb /one/dir/b.rb /two/dir/c.rb /two/dir/d.rb].each do |f|
-        expect(FileTest).to receive(:file?).with(f).and_return true
+        allow(FileTest).to receive(:file?).with(f).and_return true
         expect(Kernel).to receive(:load).with(f)
       end
 
@@ -228,41 +224,49 @@ describe LegacyFacter::Util::Loader do
     end
 
     it 'does not try to load subdirectories of search paths' do
-      expect(loader).to receive(:search_path).and_return %w[/one/dir /two/dir]
+      allow(loader).to receive(:search_path).and_return %w[/one/dir /two/dir]
 
       # a.rb is a directory
-      expect(Dir).to receive(:glob).with('/one/dir/*.rb').and_return %w[/one/dir/a.rb /one/dir/b.rb]
-      expect(FileTest).to receive(:file?).with('/one/dir/a.rb').and_return false
-      expect(FileTest).to receive(:file?).with('/one/dir/b.rb').and_return true
-      expect(Kernel).to receive(:load).with('/one/dir/b.rb')
+      allow(Dir).to receive(:glob).with('/one/dir/*.rb').and_return %w[/one/dir/a.rb /one/dir/b.rb]
+      allow(FileTest).to receive(:file?).with('/one/dir/a.rb').and_return false
+      allow(FileTest).to receive(:file?).with('/one/dir/b.rb').and_return true
+      allow(Kernel).to receive(:load).with('/one/dir/b.rb')
 
       # c.rb is a directory
-      expect(Dir).to receive(:glob).with('/two/dir/*.rb').and_return %w[/two/dir/c.rb /two/dir/d.rb]
-      expect(FileTest).to receive(:file?).with('/two/dir/c.rb').and_return false
-      expect(FileTest).to receive(:file?).with('/two/dir/d.rb').and_return true
+      allow(Dir).to receive(:glob).with('/two/dir/*.rb').and_return %w[/two/dir/c.rb /two/dir/d.rb]
+      allow(FileTest).to receive(:file?).with('/two/dir/c.rb').and_return false
+      allow(FileTest).to receive(:file?).with('/two/dir/d.rb').and_return true
       expect(Kernel).to receive(:load).with('/two/dir/d.rb')
 
       loader.load_all
     end
 
     it 'does not raise an exception when a file is unloadable' do
-      expect(loader).to receive(:search_path).and_return %w[/one/dir]
+      allow(loader).to receive(:search_path).and_return %w[/one/dir]
 
-      expect(Dir).to receive(:glob).with('/one/dir/*.rb').and_return %w[/one/dir/a.rb]
-      expect(FileTest).to receive(:file?).with('/one/dir/a.rb').and_return true
+      allow(Dir).to receive(:glob).with('/one/dir/*.rb').and_return %w[/one/dir/a.rb]
+      allow(FileTest).to receive(:file?).with('/one/dir/a.rb').and_return true
 
-      expect(Kernel).to receive(:load).with('/one/dir/a.rb').and_raise(LoadError)
-      expect(Facter).to receive(:log_exception).with(LoadError, 'Error loading fact /one/dir/a.rb: LoadError')
+      allow(Facter).to receive(:log_exception).with(LoadError, 'Error loading fact /one/dir/a.rb: LoadError')
+      allow(Kernel).to receive(:load).with('/one/dir/a.rb').and_raise(LoadError)
 
       expect { loader.load_all }.not_to raise_error
     end
 
-    it 'loads all facts from the environment' do
-      Facter::Util::Resolution.with_env 'facter_one' => 'yayness', 'facter_two' => 'boo' do
-        loader.load_all
+    context 'when loads all facts from the environment' do
+      before do
+        Facter::Util::Resolution.with_env 'facter_one' => 'yayness', 'facter_two' => 'boo' do
+          loader.load_all
+        end
       end
-      expect(LegacyFacter.value(:one)).to eq 'yayness'
-      expect(LegacyFacter.value(:two)).to eq 'boo'
+
+      it 'loaded fact one' do
+        expect(LegacyFacter.value(:one)).to eq 'yayness'
+      end
+
+      it 'loaded fact two' do
+        expect(LegacyFacter.value(:two)).to eq 'boo'
+      end
     end
 
     it 'onlies load all facts one time' do

@@ -76,7 +76,7 @@ describe Facter::Util::Fact do
     end
 
     it 'creates a new resolution if no such resolution exists' do
-      expect(Facter::Util::Resolution).to receive(:new).once.with('named', fact).and_return(res)
+      allow(Facter::Util::Resolution).to receive(:new).once.with('named', fact).and_return(res)
 
       fact.define_resolution('named')
 
@@ -106,7 +106,7 @@ describe Facter::Util::Fact do
     # end
 
     it 'returns existing resolutions by name' do
-      expect(Facter::Util::Resolution).to receive(:new).once.with('named', fact).and_return(res)
+      allow(Facter::Util::Resolution).to receive(:new).once.with('named', fact).and_return(res)
 
       fact.define_resolution('named')
       fact.define_resolution('named')
@@ -192,20 +192,23 @@ describe Facter::Util::Fact do
         setcode { '0' }
       end
 
-      expect(fact.value).to eq '1'
-      expect(fact.used_resolution_weight).to eq 1
+      expect(fact).to be_an_instance_of(Facter::Util::Fact).and(
+        having_attributes(value: '1', used_resolution_weight: 1)
+      )
     end
   end
 
   describe '#flush' do
-    subject do
-      Facter::Util::Fact.new(:foo)
-    end
+    subject(:fact) { Facter::Util::Fact.new(:foo) }
 
-    it 'invokes #flush on all resolutions' do
+    it 'invokes #flush on simple resolutions' do
       simple = fact.add(type: :simple)
       expect(simple).to receive(:flush)
 
+      fact.flush
+    end
+
+    it 'invokes #flush on aggregate resolutions' do
       aggregate = fact.add(type: :aggregate)
       expect(aggregate).to receive(:flush)
 

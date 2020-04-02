@@ -65,11 +65,11 @@ describe Facter::Core::Aggregate do
   end
 
   describe 'handling interactions between chunks' do
-    it 'generates a warning when there is a dependency cycle in chunks' do
+    it 'generates an error when there is a dependency cycle in chunks' do
       aggregate_res.chunk(:first, require: [:second]) {}
       aggregate_res.chunk(:second, require: [:first]) {}
 
-      expect(Facter).to receive(:log_exception).with(StandardError, /dependency cycles: .*[:first, :second]/)
+      allow(Facter).to receive(:log_exception).with(StandardError, /dependency cycles: .*[:first, :second]/)
       expect { aggregate_res.value }.to raise_error(Facter::ResolveCustomFactError)
     end
 
@@ -80,20 +80,24 @@ describe Facter::Core::Aggregate do
       end
 
       output = aggregate_res.value
-      expect(output).to include 'foo'
-      expect(output).to include 'foo bar'
+      expect(output).to match_array(['foo', 'foo bar'])
+    end
+
+    it 'clones and freezes chunk results' do
+      aggregate_res.chunk(:first) { 'foo' }
+      aggregate_res.chunk(:second, require: [:first]) do |first|
+        expect(first).to be_frozen
+      end
     end
 
     it 'clones and freezes chunk results passed to other chunks' do
       aggregate_res.chunk(:first) { 'foo' }
       aggregate_res.chunk(:second, require: [:first]) do |first|
-        expect(first).to be_frozen
+        allow(first).to be_frozen
       end
 
       aggregate_res.aggregate do |chunks|
-        chunks.values.each do |chunk|
-          expect(chunk).to be_frozen
-        end
+        expect_all(chunks).to be_frozen
       end
     end
   end

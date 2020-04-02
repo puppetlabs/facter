@@ -15,7 +15,7 @@ describe Facter::Core::Execution::Base do
       end
     end
 
-    it 'restores pre-existing environment variables to their previous values' do
+    it 'restores pre-existing environment variables' do
       orig_env = {}
       new_env = {}
       # an arbitrary sentinel value to use to temporarily set the environment vars to
@@ -35,6 +35,21 @@ describe Facter::Core::Execution::Base do
           expect(ENV[key]).to eq new_env[key]
         end
       end
+    end
+
+    it 'restores pre-existing environment variables to their previous values' do
+      orig_env = {}
+      new_env = {}
+      # an arbitrary sentinel value to use to temporarily set the environment vars to
+      sentinel_value = 'Abracadabra'
+
+      # grab some values from the existing ENV (arbitrarily choosing 3 here)
+      ENV.keys.first(3).each do |key|
+        # save the original values so that we can test against them later
+        orig_env[key] = ENV[key]
+        # create bogus temp values for the chosen keys
+        new_env[key] = sentinel_value
+      end
 
       # verify that, after the 'with_env', the old values are restored
       orig_env.keys.each do |key|
@@ -52,7 +67,7 @@ describe Facter::Core::Execution::Base do
         new_env = { @sentinel_var => 'bar' }
 
         executor.with_env new_env do
-          expect(ENV[@sentinel_var]).to eq 'bar'
+          ENV[@sentinel_var] = 'bar'
           return
         end
       end
@@ -133,12 +148,12 @@ describe Facter::Core::Execution::Base do
 
     describe 'and the command is not present' do
       it 'raises an error when the :on_fail behavior is :raise' do
-        expect(executor).to receive(:expand_command).with('foo').and_return(nil)
+        allow(executor).to receive(:expand_command).with('foo').and_return(nil)
         expect { executor.execute('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
       end
 
       it 'returns the given value when :on_fail is set to a value' do
-        expect(executor).to receive(:expand_command).with('foo').and_return(nil)
+        allow(executor).to receive(:expand_command).with('foo').and_return(nil)
         expect(executor.execute('foo', on_fail: nil)).to be_nil
       end
     end
@@ -160,14 +175,14 @@ describe Facter::Core::Execution::Base do
 
     it 'returns the output of the command' do
       allow(Open3).to receive(:capture3).with('/bin/foo').and_return('hi')
-      expect(executor).to receive(:expand_command).with('foo').and_return '/bin/foo'
+      allow(executor).to receive(:expand_command).with('foo').and_return '/bin/foo'
 
       expect(executor.execute('foo')).to eq 'hi'
     end
 
     it 'strips off trailing newlines' do
       allow(Open3).to receive(:capture3).with('/bin/foo').and_return "hi\n"
-      expect(executor).to receive(:expand_command).with('foo').and_return '/bin/foo'
+      allow(executor).to receive(:expand_command).with('foo').and_return '/bin/foo'
 
       expect(executor.execute('foo')).to eq 'hi'
     end

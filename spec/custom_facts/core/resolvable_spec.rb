@@ -31,15 +31,14 @@ describe LegacyFacter::Core::Resolvable do
     end
 
     it 'normalizes the resolved value' do
-      # Facter::Util::Normalization.expects(:normalize).returns 'stuff'
-      expect(LegacyFacter::Util::Normalization).to receive(:normalize).and_return('stuff')
+      allow(LegacyFacter::Util::Normalization).to receive(:normalize).and_return('stuff')
       resolvable.resolve_value = 'stuff'
       expect(resolvable.value).to eq('stuff')
     end
 
-    it 'logs a error if an exception was raised' do
+    it 'raises ResolveCustomFactError' do
       allow(resolvable).to receive(:resolve_value).and_raise RuntimeError, 'kaboom!'
-      expect(Facter).to receive(:log_exception)
+      allow(Facter).to receive(:log_exception)
         .with(RuntimeError, "Error while resolving custom fact fact='stub fact', " \
           "resolution='resolvable': kaboom!")
       expect { resolvable.value }.to raise_error(Facter::ResolveCustomFactError)
@@ -49,15 +48,15 @@ describe LegacyFacter::Core::Resolvable do
   describe 'timing out' do
     it 'uses #limit instead of #timeout to determine the timeout period' do
       expect(resolvable).not_to receive(:timeout)
-      expect(resolvable).to receive(:limit).and_return(25)
-      expect(Timeout).to receive(:timeout).with(25)
+      allow(resolvable).to receive(:limit).and_return(25)
+      allow(Timeout).to receive(:timeout).with(25)
 
       resolvable.value
     end
 
     it 'returns nil if the timeout was reached' do
-      expect(Facter).to receive(:log_exception).with(Timeout::Error, /Timed out after 0\.1 seconds while resolving/)
-      expect(Timeout).to receive(:timeout).and_raise Timeout::Error
+      allow(Facter).to receive(:log_exception).with(Timeout::Error, /Timed out after 0\.1 seconds while resolving/)
+      allow(Timeout).to receive(:timeout).and_raise Timeout::Error
 
       resolvable.timeout = 0.1
 

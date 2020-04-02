@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Processors do
+  subject(:resolver) { Facter::Resolvers::Processors }
+
   let(:logger) { instance_spy(Facter::Log) }
 
   before do
@@ -9,30 +11,30 @@ describe Facter::Resolvers::Processors do
     allow(Win32Ole).to receive(:new).and_return(win)
     allow(win).to receive(:exec_query).with('SELECT Name,Architecture,NumberOfLogicalProcessors FROM Win32_Processor')
                                       .and_return(proc)
-    Facter::Resolvers::Processors.instance_variable_set(:@log, logger)
+    resolver.instance_variable_set(:@log, logger)
   end
 
   after do
-    Facter::Resolvers::Processors.invalidate_cache
+    resolver.invalidate_cache
   end
 
   describe '#resolve' do
     let(:proc) { [double('proc', Name: 'Pretty_Name', Architecture: 0, NumberOfLogicalProcessors: 2)] }
 
     it 'detects models of processors' do
-      expect(Facter::Resolvers::Processors.resolve(:models)).to eql(['Pretty_Name'])
+      expect(resolver.resolve(:models)).to eql(['Pretty_Name'])
     end
 
     it 'detects isa' do
-      expect(Facter::Resolvers::Processors.resolve(:isa)).to eql('x86')
+      expect(resolver.resolve(:isa)).to eql('x86')
     end
 
     it 'counts proccesors' do
-      expect(Facter::Resolvers::Processors.resolve(:count)).to be(2)
+      expect(resolver.resolve(:count)).to be(2)
     end
 
     it 'counts physical processors' do
-      expect(Facter::Resolvers::Processors.resolve(:physicalcount)).to be(1)
+      expect(resolver.resolve(:physicalcount)).to be(1)
     end
   end
 
@@ -43,19 +45,19 @@ describe Facter::Resolvers::Processors do
     end
 
     it 'detects models' do
-      expect(Facter::Resolvers::Processors.resolve(:models)).to eql(%w[Pretty_Name Awesome_Name])
+      expect(resolver.resolve(:models)).to eql(%w[Pretty_Name Awesome_Name])
     end
 
     it 'detects isa' do
-      expect(Facter::Resolvers::Processors.resolve(:isa)).to eql('x86')
+      expect(resolver.resolve(:isa)).to eql('x86')
     end
 
     it 'counts proccesors' do
-      expect(Facter::Resolvers::Processors.resolve(:count)).to be(2)
+      expect(resolver.resolve(:count)).to be(2)
     end
 
     it 'counts physical processors' do
-      expect(Facter::Resolvers::Processors.resolve(:physicalcount)).to be(2)
+      expect(resolver.resolve(:physicalcount)).to be(2)
     end
   end
 
@@ -65,7 +67,7 @@ describe Facter::Resolvers::Processors do
     it 'logs that is unknown architecture' do
       allow(logger).to receive(:debug)
         .with('Unable to determine processor type: unknown architecture')
-      expect(Facter::Resolvers::Processors.resolve(:isa)).to be(nil)
+      expect(resolver.resolve(:isa)).to be(nil)
     end
   end
 
@@ -76,13 +78,19 @@ describe Facter::Resolvers::Processors do
       allow(logger).to receive(:debug)
         .with('WMI query returned no results'\
         'for Win32_Processor with values Name, Architecture and NumberOfLogicalProcessors.')
-      expect(Facter::Resolvers::Processors.resolve(:isa)).to be(nil)
+      expect(resolver.resolve(:isa)).to be(nil)
     end
 
-    it 'detects that models, count and physicalcount nil' do
-      expect(Facter::Resolvers::Processors.resolve(:models)).to be(nil)
-      expect(Facter::Resolvers::Processors.resolve(:count)).to be(nil)
-      expect(Facter::Resolvers::Processors.resolve(:physicalcount)).to be(nil)
+    it 'detects that models fact is nil' do
+      expect(resolver.resolve(:models)).to be(nil)
+    end
+
+    it 'detects that count fact is nil' do
+      expect(resolver.resolve(:count)).to be(nil)
+    end
+
+    it 'detects that physicalcount fact is nil' do
+      expect(resolver.resolve(:physicalcount)).to be(nil)
     end
   end
 
@@ -92,13 +100,19 @@ describe Facter::Resolvers::Processors do
     it 'detects that isa is nil' do
       allow(logger).to receive(:debug)
         .with('Unable to determine processor type: unknown architecture')
-      expect(Facter::Resolvers::Processors.resolve(:isa)).to be(nil)
+      expect(resolver.resolve(:isa)).to be(nil)
     end
 
-    it 'detects that models, count and physicalcount nil' do
-      expect(Facter::Resolvers::Processors.resolve(:models)).to eql([nil])
-      expect(Facter::Resolvers::Processors.resolve(:count)).to be(1)
-      expect(Facter::Resolvers::Processors.resolve(:physicalcount)).to be(1)
+    it 'detects that models is an array' do
+      expect(resolver.resolve(:models)).to eql([nil])
+    end
+
+    it 'detects count fact' do
+      expect(resolver.resolve(:count)).to be(1)
+    end
+
+    it 'detects physicalcount' do
+      expect(resolver.resolve(:physicalcount)).to be(1)
     end
   end
 end

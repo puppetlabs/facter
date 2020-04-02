@@ -132,13 +132,18 @@ describe Facter::Resolvers::Windows::Uptime do
     let(:local_time) { '20010201110506+0700' }
     let(:last_bootup_time) { '20010201120506+0700' }
 
+    before do
+      allow(logger).to receive(:debug).with('Unable to determine system uptime!')
+    end
+
     it 'logs that is unable to determine system uptime and all facts are nil' do
-      allow(logger).to receive(:debug)
-        .with('Unable to determine system uptime!')
-      expect(Facter::Resolvers::Windows::Uptime.resolve(:days)).to be(nil)
+      Facter::Resolvers::Windows::Uptime.resolve(:days)
+
+      expect(logger).to have_received(:debug).with('Unable to determine system uptime!')
+    end
+
+    it 'uptime fact is nil' do
       expect(Facter::Resolvers::Windows::Uptime.resolve(:uptime)).to be(nil)
-      expect(Facter::Resolvers::Windows::Uptime.resolve(:seconds)).to be(nil)
-      expect(Facter::Resolvers::Windows::Uptime.resolve(:hours)).to be(nil)
     end
   end
 
@@ -154,9 +159,15 @@ describe Facter::Resolvers::Windows::Uptime do
       expect(Facter::Resolvers::Windows::Uptime.resolve(:days)).to be(nil)
     end
 
-    it 'detects that seconds, hours and uptime are nil' do
+    it 'detects uptime fact is nil' do
       expect(Facter::Resolvers::Windows::Uptime.resolve(:uptime)).to be(nil)
+    end
+
+    it 'detects uptime.seconds fact is nil' do
       expect(Facter::Resolvers::Windows::Uptime.resolve(:seconds)).to be(nil)
+    end
+
+    it 'detects uptime.hours fact is nil' do
       expect(Facter::Resolvers::Windows::Uptime.resolve(:hours)).to be(nil)
     end
   end
@@ -170,9 +181,15 @@ describe Facter::Resolvers::Windows::Uptime do
       expect(Facter::Resolvers::Windows::Uptime.resolve(:days)).to be(nil)
     end
 
-    it 'detects that seconds, hours and uptime are nil' do
+    it 'detects uptime fact is nil' do
       expect(Facter::Resolvers::Windows::Uptime.resolve(:uptime)).to be(nil)
+    end
+
+    it 'detects uptime.seconds fact is nil' do
       expect(Facter::Resolvers::Windows::Uptime.resolve(:seconds)).to be(nil)
+    end
+
+    it 'detects uptime.hours fact is nil' do
       expect(Facter::Resolvers::Windows::Uptime.resolve(:hours)).to be(nil)
     end
   end

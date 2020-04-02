@@ -40,13 +40,13 @@ describe LegacyFacter::Util::Confine do
     end
 
     it 'returns false if the fact does not exist' do
-      expect(Facter).to receive(:[]).with('yay').and_return nil
+      allow(Facter).to receive(:[]).with('yay').and_return nil
 
       expect(LegacyFacter::Util::Confine.new('yay', 'test').true?).to be false
     end
 
     it 'uses the returned fact to get the value' do
-      expect(Facter).to receive(:[]).with('yay').and_return @fact
+      allow(Facter).to receive(:[]).with('yay').and_return @fact
 
       expect(@fact).to receive(:value).and_return nil
 
@@ -122,7 +122,7 @@ describe LegacyFacter::Util::Confine do
     end
 
     it 'accepts and evaluate a block argument against the fact' do
-      expect(@fact).to receive(:value).and_return 'foo'
+      allow(@fact).to receive(:value).and_return 'foo'
       confine = LegacyFacter::Util::Confine.new(:yay) { |f| f === 'foo' }
       expect(confine.true?).to be true
     end
@@ -133,8 +133,11 @@ describe LegacyFacter::Util::Confine do
       expect(confine.true?).to be false
     end
 
-    it 'accepts and evaluate only a block argument' do
+    it 'accepts and evaluate only a block argument with true' do
       expect(LegacyFacter::Util::Confine.new { true }.true?).to be true
+    end
+
+    it 'accepts and evaluate only a block argument with false' do
       expect(LegacyFacter::Util::Confine.new { false }.true?).to be false
     end
 

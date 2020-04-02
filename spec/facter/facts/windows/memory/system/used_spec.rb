@@ -2,16 +2,23 @@
 
 describe Facts::Windows::Memory::System::Used do
   describe '#call_the_resolver' do
-    let(:value) { '1.00 KiB' }
+    subject(:fact) { Facts::Windows::Memory::System::Used.new }
 
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'memory.system.used', value: value)
-      allow(Facter::Resolvers::Memory).to receive(:resolve).with(:used_bytes).and_return(1024)
-      allow(Facter::ResolvedFact).to receive(:new).with('memory.system.used', value).and_return(expected_fact)
+    let(:resolver_result) { 1024 }
+    let(:fact_value) { '1.00 KiB' }
 
-      fact = Facts::Windows::Memory::System::Used.new
-      expect(Facter::BytesToHumanReadable.convert(1024)).to eq(value)
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    before do
+      allow(Facter::Resolvers::Memory).to receive(:resolve).with(:used_bytes).and_return(resolver_result)
+    end
+
+    it 'calls Facter::Resolvers::Macosx::SwapMemory' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Memory).to have_received(:resolve).with(:used_bytes)
+    end
+
+    it 'returns a memory.system.used fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'memory.system.used', value: fact_value)
     end
   end
 end

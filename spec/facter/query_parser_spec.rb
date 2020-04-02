@@ -14,8 +14,8 @@ describe Facter::QueryParser do
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
 
-      expect(matched_facts.size).to eq(1)
-      expect(matched_facts.first.fact_class).to eq(os_name_class)
+      expect(matched_facts).to be_an_instance_of(Array).and \
+        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: os_name_class)))
     end
 
     it 'compose filter_tokens correctly' do
@@ -43,8 +43,8 @@ describe Facter::QueryParser do
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
 
-      expect(matched_facts.size).to eq(1)
-      expect(matched_facts.first.fact_class).to eq(networking_class)
+      expect(matched_facts).to be_an_instance_of(Array).and \
+        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: networking_class)))
     end
 
     it 'creates one custom searched fact' do
@@ -57,9 +57,8 @@ describe Facter::QueryParser do
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
 
-      expect(matched_facts.size).to eq(1)
-      expect(matched_facts.first.fact_class).to be_nil
-      expect(matched_facts.first.type).to eq(:custom)
+      expect(matched_facts).to be_an_instance_of(Array).and \
+        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: nil, type: :custom)))
     end
 
     it 'queries if param is symbol' do
@@ -70,8 +69,8 @@ describe Facter::QueryParser do
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
 
-      expect(matched_facts.size).to eq(1)
-      expect(matched_facts.first.fact_class).to eq(path_class)
+      expect(matched_facts).to be_an_instance_of(Array).and \
+        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: path_class)))
     end
   end
 end

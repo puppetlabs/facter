@@ -2,16 +2,28 @@
 
 describe Facts::Aix::Hypervisors::Wpar do
   describe '#call_the_resolver' do
-    it 'returns a wpar only hypervisor fact' do
-      expected_fact_name = 'hypervisors.wpar'
-      expected_fact_value = { 'key' => 13, 'configured_id' => 14 }
-      allow(Facter::Resolvers::Wpar).to receive(:resolve).with(:wpar_key).and_return(13)
-      allow(Facter::Resolvers::Wpar).to receive(:resolve).with(:wpar_configured_id).and_return(14)
+    subject(:fact) { Facts::Aix::Hypervisors::Wpar.new }
 
-      fact = Facts::Aix::Hypervisors::Wpar.new.call_the_resolver
+    let(:value) { { 'key' => 13, 'configured_id' => 14 } }
 
-      expect(fact.name).to eq(expected_fact_name)
-      expect(fact.value).to eq(expected_fact_value)
+    before do
+      allow(Facter::Resolvers::Wpar).to receive(:resolve).with(:wpar_key).and_return(value['key'])
+      allow(Facter::Resolvers::Wpar).to receive(:resolve).with(:wpar_configured_id).and_return(value['configured_id'])
+    end
+
+    it 'calls Facter::Resolvers::Wpar with wpar_key' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Wpar).to have_received(:resolve).with(:wpar_key)
+    end
+
+    it 'calls Facter::Resolvers::Wpar with wpar_configured_id' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Wpar).to have_received(:resolve).with(:wpar_configured_id)
+    end
+
+    it 'returns a hypervisors.wpar fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'hypervisors.wpar', value: value)
     end
   end
 end

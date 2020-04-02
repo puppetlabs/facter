@@ -5,7 +5,7 @@ describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.wind
 
   describe '#search_paths' do
     it 'uses the PATH environment variable plus /sbin and /usr/sbin on unix' do
-      expect(ENV).to receive(:[]).with('PATH').and_return '/bin:/usr/bin'
+      allow(ENV).to receive(:[]).with('PATH').and_return '/bin:/usr/bin'
       expect(posix_executor.search_paths). to eq %w[/bin /usr/bin /sbin /usr/sbin]
     end
   end
@@ -17,38 +17,35 @@ describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.wind
 
     context 'when provided with an absolute path' do
       it 'returns the binary if executable' do
-        expect(FileTest).to receive(:file?).with('/opt/foo').and_return true
-        expect(File).to receive(:executable?).with('/opt/foo').and_return true
+        allow(File).to receive(:executable?).with('/opt/foo').and_return(true)
+        allow(FileTest).to receive(:file?).with('/opt/foo').and_return true
         expect(posix_executor.which('/opt/foo')).to eq '/opt/foo'
       end
 
       it 'returns nil if the binary is not executable' do
-        expect(File).to receive(:executable?).with('/opt/foo').and_return false
+        allow(File).to receive(:executable?).with('/opt/foo').and_return(false)
         expect(posix_executor.which('/opt/foo')).to be nil
       end
 
       it 'returns nil if the binary is not a file' do
-        expect(FileTest).to receive(:file?).with('/opt/foo').and_return false
-        expect(File).to receive(:executable?).with('/opt/foo').and_return true
+        allow(File).to receive(:executable?).with('/opt/foo').and_return(true)
+        allow(FileTest).to receive(:file?).with('/opt/foo').and_return false
         expect(posix_executor.which('/opt/foo')).to be nil
       end
     end
 
     context "when it isn't provided with an absolute path" do
       it 'returns the absolute path if found' do
-        expect(FileTest).not_to receive(:file?).with('/bin/foo')
-        expect(File).to receive(:executable?).with('/bin/foo').and_return false
-        expect(FileTest).to receive(:file?).with('/sbin/foo').and_return true
-        expect(File).to receive(:executable?).with('/sbin/foo').and_return true
-        expect(FileTest).not_to receive(:file?).with('/usr/sbin/foo')
-        expect(File).not_to receive(:executable?).with('/usr/sbin/foo')
+        allow(File).to receive(:executable?).with('/bin/foo').and_return false
+        allow(FileTest).to receive(:file?).with('/sbin/foo').and_return true
+        allow(File).to receive(:executable?).with('/sbin/foo').and_return true
         expect(posix_executor.which('foo')).to eq '/sbin/foo'
       end
 
       it 'returns nil if not found' do
-        expect(File).to receive(:executable?).with('/bin/foo').and_return false
-        expect(File).to receive(:executable?).with('/sbin/foo').and_return false
-        expect(File).to receive(:executable?).with('/usr/sbin/foo').and_return false
+        allow(File).to receive(:executable?).with('/bin/foo').and_return false
+        allow(File).to receive(:executable?).with('/sbin/foo').and_return false
+        allow(File).to receive(:executable?).with('/usr/sbin/foo').and_return false
         expect(posix_executor.which('foo')).to be nil
       end
     end
@@ -56,27 +53,27 @@ describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.wind
 
   describe '#expand_command' do
     it 'expands binary' do
-      expect(posix_executor).to receive(:which).with('foo').and_return '/bin/foo'
+      allow(posix_executor).to receive(:which).with('foo').and_return '/bin/foo'
       expect(posix_executor.expand_command('foo -a | stuff >> /dev/null')).to eq '/bin/foo -a | stuff >> /dev/null'
     end
 
     it 'expands double quoted binary' do
-      expect(posix_executor).to receive(:which).with('/tmp/my foo').and_return '/tmp/my foo'
+      allow(posix_executor).to receive(:which).with('/tmp/my foo').and_return '/tmp/my foo'
       expect(posix_executor.expand_command('"/tmp/my foo" bar')).to eq "'/tmp/my foo' bar"
     end
 
     it 'expands single quoted binary' do
-      expect(posix_executor).to receive(:which).with('my foo').and_return '/home/bob/my path/my foo'
+      allow(posix_executor).to receive(:which).with('my foo').and_return '/home/bob/my path/my foo'
       expect(posix_executor.expand_command("'my foo' -a")).to eq "'/home/bob/my path/my foo' -a"
     end
 
     it 'quotes expanded binary if found in path with spaces' do
-      expect(posix_executor).to receive(:which).with('foo.sh').and_return '/home/bob/my tools/foo.sh'
+      allow(posix_executor).to receive(:which).with('foo.sh').and_return '/home/bob/my tools/foo.sh'
       expect(posix_executor.expand_command('foo.sh /a /b')).to eq "'/home/bob/my tools/foo.sh' /a /b"
     end
 
     it 'returns nil if not found' do
-      expect(posix_executor).to receive(:which).with('foo').and_return nil
+      allow(posix_executor).to receive(:which).with('foo').and_return nil
       expect(posix_executor.expand_command('foo -a | stuff >> /dev/null')).to be nil
     end
   end
