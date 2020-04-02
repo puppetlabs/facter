@@ -16,7 +16,7 @@ describe Facter::Resolvers::SolarisZone do
     Facter::Resolvers::SolarisZone.invalidate_cache
   end
 
-  context 'Resolve zone facts' do
+  context 'when can resolve zone facts' do
     let(:zone_name_output) { 'global' }
     let(:st) { 'exit 0' }
 

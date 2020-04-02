@@ -36,8 +36,8 @@ describe Facts::Macosx::IsVirtual do
       fact.call_the_resolver
     end
 
-    context 'on virtual machine' do
-      context 'on vmware' do
+    context 'when on virtual machine' do
+      context 'with hypervisor vmware' do
         before do
           allow(Facter::Resolvers::SystemProfiler)
             .to receive(:resolve)
@@ -54,7 +54,7 @@ describe Facts::Macosx::IsVirtual do
         end
       end
 
-      context 'on VirtualBox' do
+      context 'when hypervisor VirtualBox' do
         before do
           allow(Facter::Resolvers::SystemProfiler)
             .to receive(:resolve)
@@ -71,7 +71,7 @@ describe Facts::Macosx::IsVirtual do
         end
       end
 
-      context 'on Parallels' do
+      context 'when hypervisor Parallels' do
         before do
           allow(Facter::Resolvers::SystemProfiler)
             .to receive(:resolve)
@@ -89,7 +89,7 @@ describe Facts::Macosx::IsVirtual do
       end
     end
 
-    context 'on physical machine' do
+    context 'when on physical machine' do
       it 'returns resolved fact with false value' do
         expect(fact.call_the_resolver)
           .to be_an_instance_of(Facter::ResolvedFact)

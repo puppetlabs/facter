@@ -15,7 +15,7 @@ describe Facter::Resolvers::Solaris::ZFS do
 
   let(:st) { 'exit 0' }
 
-  context 'Resolve zfs facts' do
+  context 'when zfs command is found' do
     let(:output) { load_fixture('zfs').read }
 
     it 'returns zfs version fact' do
@@ -29,7 +29,7 @@ describe Facter::Resolvers::Solaris::ZFS do
     end
   end
 
-  context 'Resolve zfs facts when zfs command is not found' do
+  context 'when zfs command is not found' do
     let(:output) { 'zfs command not found' }
 
     it 'returns nil for zfs version fact' do

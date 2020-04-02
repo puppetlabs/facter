@@ -15,7 +15,7 @@ describe Facter::Resolvers::Solaris::ZPool do
 
   let(:st) { 'exit 0' }
 
-  context 'Resolve ZPool facts' do
+  context 'when zpool command is found' do
     let(:output) { load_fixture('zpool').read }
 
     it 'return zpool version fact' do
@@ -30,7 +30,7 @@ describe Facter::Resolvers::Solaris::ZPool do
     end
   end
 
-  context 'Resolve ZPool facts if zpool command is not found' do
+  context 'when zpool command is not found' do
     let(:output) { 'zpool command not found' }
 
     it 'returns nil for zpool version fact' do

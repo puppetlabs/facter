@@ -8,25 +8,23 @@ describe Facter::ConfigReader do
   let(:linux_config_path) { '/etc/puppetlabs/facter/facter.conf' }
 
   describe '#refresh_config' do
-    context 'read config' do
-      it 'uses facter.conf' do
-        expect(Hocon).to receive(:load).with(linux_config_path)
-        expect(File).to receive(:readable?).with(linux_config_path).and_return(true)
+    it 'uses facter.conf' do
+      expect(Hocon).to receive(:load).with(linux_config_path)
+      expect(File).to receive(:readable?).with(linux_config_path).and_return(true)
 
-        Facter::ConfigReader.new
-      end
+      Facter::ConfigReader.new
+    end
 
-      it 'uses provided existing file' do
-        expect(File).to receive(:readable?).with('/my_conf.conf').and_return(true)
-        expect(Hocon).to receive(:load).with('/my_conf.conf')
-        Facter::ConfigReader.new('/my_conf.conf')
-      end
+    it 'uses provided existing file' do
+      expect(File).to receive(:readable?).with('/my_conf.conf').and_return(true)
+      expect(Hocon).to receive(:load).with('/my_conf.conf')
+      Facter::ConfigReader.new('/my_conf.conf')
+    end
 
-      it 'uses provided inexistent file' do
-        expect(File).to receive(:readable?).with('/my_conf.conf').and_return(false)
-        expect(Hocon).not_to receive(:load)
-        Facter::ConfigReader.new('/my_conf.conf')
-      end
+    it 'uses provided inexistent file' do
+      expect(File).to receive(:readable?).with('/my_conf.conf').and_return(false)
+      expect(Hocon).not_to receive(:load)
+      Facter::ConfigReader.new('/my_conf.conf')
     end
   end
 

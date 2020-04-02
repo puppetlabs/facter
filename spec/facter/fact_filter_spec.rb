@@ -2,8 +2,8 @@
 
 describe Facter::FactFilter do
   describe '#filter_facts!' do
-    context 'value is a hash' do
-      context 'hash keys are symbols' do
+    context 'when value is a hash' do
+      context 'with hash keys as symbols' do
         let(:fact_value) { { full: '18.7.0', major: '18', minor: 7 } }
         let(:resolved_fact) { Facter::ResolvedFact.new('os.release', fact_value) }
 
@@ -18,7 +18,7 @@ describe Facter::FactFilter do
         end
       end
 
-      context 'hash keys are strings and symbols' do
+      context 'when hash keys are strings and symbols' do
         let(:fact_value) { { '/key1' => 'value_1', key2: 'value_2' } }
         let(:resolved_fact) { Facter::ResolvedFact.new('my.fact', fact_value) }
 
@@ -34,7 +34,7 @@ describe Facter::FactFilter do
       end
     end
 
-    context 'value is a string' do
+    context 'with value string' do
       let(:fact_value) { 'value_1' }
       let(:resolved_fact) { Facter::ResolvedFact.new('my.fact', fact_value) }
 
@@ -49,7 +49,7 @@ describe Facter::FactFilter do
       end
     end
 
-    context 'filter legacy' do
+    context 'when filter legacy' do
       let(:fact_value) { 'value_1' }
       let(:legacy_resolved_fact) { Facter::ResolvedFact.new('operatingsystem', fact_value, :legacy) }
       let(:core_resolved_fact) { Facter::ResolvedFact.new('os.name', fact_value, :core) }

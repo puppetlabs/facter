@@ -10,7 +10,7 @@ describe Facter::ExternalFactLoader do
   end
 
   describe '#custom_facts' do
-    context 'load one custom fact' do
+    context 'when one custom fact is loaded' do
       before do
         allow(collection).to receive(:custom_facts).and_return(['custom_fact'])
         allow(Facter::Options).to receive(:custom_dir?).and_return(true)
@@ -28,7 +28,7 @@ describe Facter::ExternalFactLoader do
       end
     end
 
-    context 'loads no custom facts' do
+    context 'when no custom facts are loaded' do
       before do
         allow(collection).to receive(:custom_facts).and_return([])
       end
@@ -39,7 +39,7 @@ describe Facter::ExternalFactLoader do
       end
     end
 
-    context 'blocks custom facts' do
+    context 'when it blocks custom facts' do
       before do
         allow(collection).to receive(:custom_facts).and_return([])
       end
@@ -55,7 +55,7 @@ describe Facter::ExternalFactLoader do
   end
 
   describe '#external_facts' do
-    context 'loads one external fact' do
+    context 'when loads one external fact' do
       before do
         allow(collection).to receive(:external_facts).and_return(['external_fact'])
         allow(Facter::Options).to receive(:external_dir?).and_return(true)
@@ -73,7 +73,7 @@ describe Facter::ExternalFactLoader do
       end
     end
 
-    context 'loads no external facts' do
+    context 'when loads no external facts' do
       before do
         allow(collection).to receive(:external_facts).and_return([])
       end
@@ -84,7 +84,7 @@ describe Facter::ExternalFactLoader do
       end
     end
 
-    context 'blocks external facts' do
+    context 'when it blocks external facts' do
       before do
         allow(collection).to receive(:external_facts).and_return([])
       end

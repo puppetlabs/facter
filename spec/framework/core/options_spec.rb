@@ -67,7 +67,7 @@ describe Facter::Options do
   end
 
   describe '#augment_with_config_file_options!' do
-    context 'sets options from config file with cli' do
+    context 'when sets options from config file with cli' do
       let(:config_reader_double) { double(Facter::ConfigReader) }
       let(:block_list_double) { double(Facter::BlockList) }
 
@@ -140,7 +140,7 @@ describe Facter::Options do
       end
     end
 
-    context 'sets options from config file with no cli' do
+    context 'when sets options from config file with no cli' do
       let(:config_reader_double) { double(Facter::ConfigReader) }
       let(:block_list_double) { double(Facter::BlockList) }
 
@@ -213,7 +213,7 @@ describe Facter::Options do
       end
     end
 
-    context 'override default options' do
+    context 'when overridea default options' do
       let(:config_reader_double) { double(Facter::ConfigReader) }
       let(:block_list_double) { double(Facter::BlockList) }
 
@@ -267,7 +267,7 @@ describe Facter::Options do
     end
   end
 
-  context 'override default options log_level' do
+  context 'when overrides default options log_level' do
     let(:config_reader_double) { double(Facter::ConfigReader) }
     let(:block_list_double) { double(Facter::BlockList) }
 
@@ -304,7 +304,7 @@ describe Facter::Options do
     end
   end
 
-  context 'log_level option conflict in config file' do
+  context 'when log_level option conflicts in config file' do
     let(:config_reader_double) { double(Facter::ConfigReader) }
     let(:block_list_double) { double(Facter::BlockList) }
     let(:log) { instance_spy(Facter::Log) }
@@ -342,7 +342,7 @@ describe Facter::Options do
       Facter::Options.instance.augment_with_priority_options!(cli_options)
     end
 
-    context 'override default with cli facts' do
+    context 'when overrides default with cli facts' do
       it 'sets ruby to true' do
         expect(options[:ruby]).to be_falsey
       end
@@ -394,7 +394,7 @@ describe Facter::Options do
   end
 
   describe '#custom_dir?' do
-    context 'custom dir is true' do
+    context 'when custom dir is true' do
       before do
         cli_options = { 'custom_facts' => true, 'custom_dir' => %w[custom_dir1 custom_dir2] }
         Facter::Options.instance.augment_with_priority_options!(cli_options)
@@ -405,7 +405,7 @@ describe Facter::Options do
       end
     end
 
-    context 'custom dir is false' do
+    context 'when custom dir is false' do
       before do
         cli_options = { 'custom_facts' => false, 'custom_dir' => %w[custom_dir1 custom_dir2] }
         Facter::Options.instance.augment_with_priority_options!(cli_options)
@@ -429,7 +429,7 @@ describe Facter::Options do
   end
 
   describe '#external_dir?' do
-    context 'external dir is true' do
+    context 'when external dir is true' do
       before do
         cli_options = { 'external_facts' => true, 'external_dir' => %w[external_dir1 external_dir2] }
         Facter::Options.instance.augment_with_priority_options!(cli_options)
@@ -440,7 +440,7 @@ describe Facter::Options do
       end
     end
 
-    context 'external dir is false' do
+    context 'when external dir is false' do
       before do
         cli_options = { 'external_facts' => false, 'external_dir' => %w[external_dir1 external_dir2] }
         Facter::Options.instance.augment_with_priority_options!(cli_options)
@@ -495,7 +495,7 @@ describe Facter::Options do
       end
     end
 
-    context 'priority options have the highest priority' do
+    context 'when priority options have the highest priority' do
       before do
         Facter::Options.instance.augment_with_defaults!
       end

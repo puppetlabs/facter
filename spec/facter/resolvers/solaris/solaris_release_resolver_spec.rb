@@ -15,7 +15,7 @@ describe Facter::Resolvers::SolarisRelease do
     Facter::Resolvers::SolarisRelease.invalidate_cache
   end
 
-  context 'Resolve os release facts' do
+  context 'when can resolve os release facts' do
     let(:output) { load_fixture('os_release_solaris').read }
     let(:st) { 'exit 0' }
 

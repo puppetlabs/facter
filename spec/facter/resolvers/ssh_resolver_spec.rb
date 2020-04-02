@@ -59,7 +59,7 @@ describe Facter::Resolvers::SshResolver do
       Facter::Resolvers::SshResolver.invalidate_cache
     end
 
-    context 'ecdsa file exists' do
+    context 'when ecdsa file exists' do
       let(:ecdsa_content) { load_fixture('ecdsa').read.strip! }
       let(:rsa_content) { load_fixture('rsa').read.strip! }
       let(:ed25519_content) { load_fixture('ed25519').read.strip! }

@@ -78,7 +78,7 @@ describe Facter do
       expect(formatted_facts).to eq([expected_json_output, 0])
     end
 
-    context '--strict' do
+    context 'when provided with --strict option' do
       before do
         allow(Facter::Options).to receive(:[]).with(:config)
       end

@@ -15,7 +15,7 @@ describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.wind
       allow(posix_executor).to receive(:search_paths).and_return ['/bin', '/sbin', '/usr/sbin']
     end
 
-    context 'and provided with an absolute path' do
+    context 'when provided with an absolute path' do
       it 'returns the binary if executable' do
         expect(FileTest).to receive(:file?).with('/opt/foo').and_return true
         expect(File).to receive(:executable?).with('/opt/foo').and_return true
@@ -34,7 +34,7 @@ describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.wind
       end
     end
 
-    context 'and not provided with an absolute path' do
+    context "when it isn't provided with an absolute path" do
       it 'returns the absolute path if found' do
         expect(FileTest).not_to receive(:file?).with('/bin/foo')
         expect(File).to receive(:executable?).with('/bin/foo').and_return false

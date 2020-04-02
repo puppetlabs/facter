@@ -11,7 +11,9 @@ describe Facter::Core::Execution::Windows, as_platform: :windows do
   end
 
   describe '#execute' do
-    context 'with expand false' do
+    context 'when expand is false' do
+      subject(:executor) { Facter::Core::Execution::Windows.new }
+
       it 'raises exception' do
         expect { executor.execute('c:\foo.exe', expand: false) }
           .to raise_error(ArgumentError,
@@ -28,7 +30,7 @@ describe Facter::Core::Execution::Windows, as_platform: :windows do
       allow(ENV).to receive(:[]).with('PATHEXT').and_return nil
     end
 
-    context 'and provided with an absolute path' do
+    context 'when it is provided with an absolute path' do
       it 'returns the binary if executable' do
         expect(File).to receive(:executable?).with('C:\Tools\foo.exe').and_return true
         expect(File).to receive(:executable?).with('\\\\remote\dir\foo.exe').and_return true
@@ -46,7 +48,7 @@ describe Facter::Core::Execution::Windows, as_platform: :windows do
       end
     end
 
-    context 'and not provided with an absolute path' do
+    context 'when it is not provided with an absolute path' do
       it 'returns the absolute path if found' do
         expect(File).to receive(:executable?).with('C:\Windows\system32\foo.exe').and_return false
         expect(File).to receive(:executable?).with('C:\Windows\foo.exe').and_return true
