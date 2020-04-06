@@ -4,6 +4,10 @@ describe Facter::OptionsValidator do
   describe '#validate' do
     let(:logger) { instance_spy(Facter::Log) }
 
+    before do
+      allow(Facter::Log).to receive(:new).and_return(logger)
+    end
+
     context 'when options are invalid pairs' do
       let(:options) { ['--puppet', '--no-ruby'] }
       let(:error_code) { 1 }

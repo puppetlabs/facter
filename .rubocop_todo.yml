@@ -329,7 +329,6 @@ RSpec/VerifiedDoubles:
     - 'spec/facter/resolvers/windows/virtualization_resolver_spec.rb'
     - 'spec/facter/resolvers/windows/win_os_description_resolver_spec.rb'
     - 'spec/framework/config/block_list_spec.rb'
-    - 'spec/framework/core/fact/internal/internal_fact_manager_spec.rb'
     - 'spec/framework/core/fact_loaders/external_fact_loader_spec.rb'
     - 'spec/framework/core/fact_loaders/fact_loader_spec.rb'
     - 'spec/framework/core/fact_manager_spec.rb'
