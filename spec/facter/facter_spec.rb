@@ -166,6 +166,20 @@ describe Facter do
       expect(result).to be_instance_of(Facter::ResolvedFact).and(having_attributes(value: 'Ubuntu'))
     end
 
+    it 'can be interpolated' do
+      user_query = 'os.name'
+
+      allow(fact_manager_spy).to receive(:resolve_facts).and_return([os_fact])
+      allow(fact_collection_spy)
+        .to receive(:build_fact_collection!)
+        .with([os_fact])
+        .and_return(fact_collection_spy)
+      allow(fact_collection_spy).to receive(:value).with('os', 'name').and_return('Ubuntu')
+      # rubocop:disable Style/UnneededInterpolation
+      expect("#{Facter.fact(user_query)}").to eq('Ubuntu')
+      # rubocop:enable Style/UnneededInterpolation
+    end
+
     it 'return no value' do
       user_query = 'os.name'
 

@@ -23,6 +23,17 @@ describe Facter::ResolvedFact do
     it 'responds to core? method with false' do
       expect(resolved_fact.core?).to be(true)
     end
+
+    # rubocop:disable Style/UnneededInterpolation
+    it 'can be interpolated' do
+      expect("#{resolved_fact}").to eq('fact_value')
+    end
+
+    it 'interpolation of nil value will be empty string' do
+      resolved = Facter::ResolvedFact.new('fact_name', nil)
+      expect("#{resolved}").to eq('')
+    end
+    # rubocop:enable Style/UnneededInterpolation
   end
 
   context 'when is an invalid type' do
