@@ -200,5 +200,33 @@ describe Facter::InternalFactLoader do
         expect(internal_fact_loader.core_facts).to be_empty
       end
     end
+
+    context 'when loading legacy fact without wildcard' do
+      before do
+        allow(class_discoverer_mock)
+          .to receive(:discover_classes)
+          .with(:Debian)
+          .and_return([Facts::Debian::Lsbdistid])
+        allow(Facter::ClassDiscoverer).to receive(:instance).and_return(class_discoverer_mock)
+
+        stub_const('Facts::Debian::Lsbdistid::FACT_NAME', 'lsbdistid')
+      end
+
+      it 'loads one fact' do
+        expect(internal_fact_loader.facts.size).to eq(1)
+      end
+
+      it 'loads one legacy fact' do
+        expect(internal_fact_loader.legacy_facts.size).to eq(1)
+      end
+
+      it 'does not contain a wildcard at the end' do
+        expect(internal_fact_loader.legacy_facts.first.name).not_to end_with('.*')
+      end
+
+      it 'loads no core facts' do
+        expect(internal_fact_loader.core_facts).to be_empty
+      end
+    end
   end
 end

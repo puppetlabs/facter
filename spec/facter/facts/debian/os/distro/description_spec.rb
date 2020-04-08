@@ -7,18 +7,17 @@ describe Facts::Debian::Os::Distro::Description do
     let(:value) { 'Debian GNU/Linux 9.0 (stretch)' }
 
     before do
-      allow(Facter::Resolvers::LsbRelease).to receive(:resolve).with(:description).and_return(value)
+      allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:pretty_name).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::LsbRelease' do
+    it 'calls Facter::Resolvers::OsRelease' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:description)
+      expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:pretty_name)
     end
 
-    it 'returns release fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-        contain_exactly(an_object_having_attributes(name: 'os.distro.description', value: value),
-                        an_object_having_attributes(name: 'lsbdistdescription', value: value, type: :legacy))
+    it 'returns os.distro.description fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'os.distro.description', value: value)
     end
   end
 end

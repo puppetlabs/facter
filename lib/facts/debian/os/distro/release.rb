@@ -6,7 +6,6 @@ module Facts
       module Distro
         class Release
           FACT_NAME = 'os.distro.release'
-          ALIASES = %w[lsbdistrelease lsbmajdistrelease lsbminordistrelease].freeze
 
           def call_the_resolver
             fact_value = determine_release_for_os
@@ -16,10 +15,7 @@ module Facts
             versions = fact_value.split('.')
             release = { 'full' => fact_value, 'major' => versions[0], 'minor' => versions[1].gsub(/^0([1-9])/, '\1') }
 
-            [Facter::ResolvedFact.new(FACT_NAME, release),
-             Facter::ResolvedFact.new(ALIASES[0], fact_value, :legacy),
-             Facter::ResolvedFact.new(ALIASES[1], release['major'], :legacy),
-             Facter::ResolvedFact.new(ALIASES[2], release['minor'], :legacy)]
+            Facter::ResolvedFact.new(FACT_NAME, release)
           end
 
           private

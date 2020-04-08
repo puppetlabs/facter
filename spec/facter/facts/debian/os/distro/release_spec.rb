@@ -27,13 +27,8 @@ describe Facts::Debian::Os::Distro::Release do
         end
 
         it 'returns release fact' do
-          expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-            contain_exactly(an_object_having_attributes(name: 'os.distro.release', value: value_final),
-                            an_object_having_attributes(name: 'lsbdistrelease', value: value, type: :legacy),
-                            an_object_having_attributes(name: 'lsbmajdistrelease',
-                                                        value: value_final['major'], type: :legacy),
-                            an_object_having_attributes(name: 'lsbminordistrelease',
-                                                        value: value_final['minor'], type: :legacy))
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'os.distro.release', value: value_final)
         end
       end
 
@@ -70,13 +65,8 @@ describe Facts::Debian::Os::Distro::Release do
         end
 
         it 'returns release fact' do
-          expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-            contain_exactly(an_object_having_attributes(name: 'os.distro.release', value: value_final),
-                            an_object_having_attributes(name: 'lsbdistrelease', value: value, type: :legacy),
-                            an_object_having_attributes(name: 'lsbmajdistrelease',
-                                                        value: value_final['major'], type: :legacy),
-                            an_object_having_attributes(name: 'lsbminordistrelease',
-                                                        value: value_final['minor'], type: :legacy))
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'os.distro.release', value: value_final)
         end
       end
 
